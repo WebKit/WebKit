@@ -1,5 +1,12 @@
 2002-08-28  Darin Adler  <darin@apple.com>
 
+	- fixed 3032148 -- Button not disabled in page
+
+        * kwq/KWQWidget.mm: (QWidget::setEnabled): Call setEnabled:
+	on the NSView if it implements it.
+
+2002-08-28  Darin Adler  <darin@apple.com>
+
 	- fixed 3030212 -- Problems rendering pages that specify "x-mac-roman" character
 	set (like our Danish help pages)
 

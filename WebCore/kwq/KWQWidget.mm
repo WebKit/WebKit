@@ -92,8 +92,12 @@ void QWidget::setActiveWindow()
     [[data->view window] makeKeyAndOrderFront:nil];
 }
 
-void QWidget::setEnabled(bool) 
+void QWidget::setEnabled(bool enabled)
 {
+    id view = data->view;
+    if ([view respondsToSelector:@selector(setEnabled:)]) {
+        [view setEnabled:enabled];
+    }
 }
 
 long QWidget::winId() const
