@@ -1,3 +1,47 @@
+2003-04-09  David Hyatt  <hyatt@apple.com>
+
+        This first fix is a refinement of the patch I produced to fix <nobr>
+	on cnn.com recently.  It wasn't quite good enough to plug the
+	regression on other sites.  This fix just checks the object
+	we're currently breaking on (which is what I meant to do) and
+	not the last object examined (which will always just be the
+	previous object you looked at).
+
+	The code currently in the tree would work if you had two objects
+	like this:
+
+	[Normal Whitespace] [Nowrap Whitespace]
+
+	but not if you had three:
+
+	[Normal][Nowrap][Nowrap]
+
+	Since when you looked at the third object, |last| would be the
+	previous nowrap object and not the normal object.  The line break
+	properly stays at the normal object as long as nowrap objects are
+	encountered, so this patch basically does what the original was
+	intended to do.
+
+	This fixes the line break problems on 1800flowers.com, a line break
+	problem on the bugzilla.mozilla.org layout test, a problem
+	on the zdnet layout test, and 3207196 a regression on livejournal.
+
+	The second fix in this patch is a simple reversal of 
+	containsOnlyWhitespace.  The method on RenderText was 
+	backwards!  No logical changes have been made... I just inverted
+	all the callers, and then I patched the method.
+        
+        The third fix is to make images check for == normal instead of != nowrap
+        in a few places, thus preventing incorrect line break points from being
+        set up.
+        
+        Reviewed by gramps
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+        (RenderText::containsOnlyWhitespace):
+
 2003-04-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

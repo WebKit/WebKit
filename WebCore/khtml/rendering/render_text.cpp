@@ -1020,9 +1020,8 @@ void RenderText::calcMinMaxWidth()
             currMinWidth += w;
             currMaxWidth += w;
             
-            // Add in wordspacing to our maxwidth, but not if this is the last word, or if we hit
-            // a breakable character that is not a space.
-            if (wordSpacing && containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
+            // Add in wordspacing to our maxwidth, but not if this is the last word.
+            if (wordSpacing && !containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
                 currMaxWidth += wordSpacing;
 
             if (firstWord) {
@@ -1073,7 +1072,7 @@ bool RenderText::containsOnlyWhitespace(unsigned int from, unsigned int len) con
     for (currPos = from; 
          currPos < from+len && (str->s[currPos] == '\n' || str->s[currPos].direction() == QChar::DirWS); 
          currPos++);
-    return currPos < (from+len);
+    return currPos >= (from+len);
 }
 
 int RenderText::minXPos() const
