@@ -47,7 +47,7 @@ static WebDefaultEditingDelegate *sharedDelegate = nil;
     return YES;
 }
 
-- (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange
+- (BOOL)webView:(WebView *)webView shouldChangeSelectedDOMRange:(DOMRange *)currentRange toDOMRange:(DOMRange *)proposedRange stillSelecting:(BOOL)flag
 {
     return YES;
 }

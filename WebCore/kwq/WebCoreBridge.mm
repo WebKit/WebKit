@@ -75,6 +75,7 @@
 #import "WebCoreSettings.h"
 
 #import <AppKit/NSView.h>
+#import <WebKit/WebArchive.h>
 
 using DOM::AtomicString;
 using DOM::DocumentImpl;
@@ -91,8 +92,10 @@ using DOM::NodeImpl;
 using DOM::Range;
 
 using khtml::Decoder;
+using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
 using khtml::EditCommandImpl;
+using khtml::PasteMarkupCommand;
 using khtml::parseURL;
 using khtml::RenderCanvas;
 using khtml::RenderImage;
@@ -384,6 +387,7 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)isSelectionEditable
 {
+    // EDIT FIXME: This needs to consider the entire selected range
 	NodeImpl *startNode = _part->selection().startNode();
 	return startNode ? startNode->isContentEditable() : NO;
 }
@@ -415,16 +419,6 @@ static bool initializedKJS = FALSE;
     _part->setSelection(selection);
     
     return YES;
-}
-
-- (void)pasteMarkupString:(NSString *)markupString
-{
-    _part->pasteMarkupString(QString::fromNSString(markupString));
-}
-
-- (void)deleteSelection
-{
-    _part->deleteSelection();
 }
 
 - (BOOL)haveSelection
@@ -1291,6 +1285,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->xmlDocImpl()->getOrCreateAccObjectCache()->accObject(root);
 }
 
+- (void)setDrawsBackground:(BOOL)drawsBackground
+{
+    if (_part && _part->view())
+        _part->view()->setTransparent(!drawsBackground);
+}
+
 - (void)undoEditing:(id)arg
 {
     ASSERT([arg isKindOfClass:[KWQEditCommand class]]);
@@ -1353,7 +1353,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
 }
 
-- (void)insertText:(NSString *)text
+- (void)replaceSelectionWithNode:(DOMNode *)node
+{
+    ERROR("unimplemented");
+}
+
+- (void)replaceSelectionWithText:(NSString *)text
 {
     if (!_part || !_part->xmlDocImpl())
         return;
@@ -1362,12 +1367,39 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     TypingCommand::insertText(_part->xmlDocImpl(), s);
 }
 
-- (void)insertNewline
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString
+{
+    if (!_part || !_part->xmlDocImpl() || !markupString)
+        return;
+    
+    PasteMarkupCommand cmd(_part->xmlDocImpl(), markupString);
+    cmd.apply();
+}
+
+- (void)replaceSelectionWithWebArchive:(WebArchive *)archive
+{
+    ERROR("unimplemented");
+}
+
+- (void)replaceSelectionWithNewline
 {
     if (!_part || !_part->xmlDocImpl())
         return;
     
     TypingCommand::insertNewline(_part->xmlDocImpl());
+}
+
+- (void)deleteSelection
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    KHTMLSelection selection(_part->selection());
+    if (selection.state() != KHTMLSelection::RANGE)
+        return;
+    
+    DeleteSelectionCommand cmd(_part->xmlDocImpl());
+    cmd.apply();
 }
 
 - (void)deleteKeyPressed
@@ -1378,10 +1410,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
 }
 
-- (void)setDrawsBackground:(BOOL)drawsBackground
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
 {
-    if (_part && _part->view())
-        _part->view()->setTransparent(!drawsBackground);
+    ERROR("unimplemented");
 }
 
 @end

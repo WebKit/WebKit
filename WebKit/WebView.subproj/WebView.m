@@ -5,6 +5,7 @@
 
 #import <WebKit/WebViewInternal.h>
 
+#import <WebKit/DOM.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBaseNetscapePluginView.h>
@@ -2028,21 +2029,56 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @end
 
+//==========================================================================================
+// Editing
 
-/*!
-    @implementation WebView (WebEditingExtras)
-*/
-@implementation WebView (WebEditingExtras)
+@interface WebView (WebViewEditingInternal)
 
-- (void)editingKeyDown:(NSEvent *)event
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
+- (WebBridge *)_bridgeForCurrentSelection;
+- (BOOL)_currentSelectionIsEditable;
+
+@end
+
+@implementation WebView (WebViewEditingInternal)
+
+- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
 {
-    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
+    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange stillSelecting:NO]) {
+        [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
+    }
 }
 
 - (WebBridge *)_bridgeForCurrentSelection
 {
     // FIXME: This needs to be changed to deal properly with subframes.
     return [[self mainFrame] _bridge];
+}
+
+- (BOOL)_currentSelectionIsEditable
+{
+    return [[self _bridgeForCurrentSelection] isSelectionEditable];
+}
+
+@end
+
+@implementation WebView (WebViewCSS)
+
+- (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+@end
+
+@implementation WebView (WebViewEditing)
+
+- (void)_editingKeyDown:(NSEvent *)event
+{
+    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 }
 
 - (void)setSelectedDOMRange:(DOMRange *)range
@@ -2055,56 +2091,62 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[self _bridgeForCurrentSelection] selectedDOMRange];
 }
 
-- (void)insertText:(NSString *)string
+- (void)setEditable:(BOOL)flag
 {
-    [self insertText:string replacingDOMRange:[self selectedDOMRange]];
+    _private->editable = flag;
 }
 
-- (void)_alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity
+- (BOOL)isEditable
 {
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
-    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange]) {
-        [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
+    return _private->editable;
+}
+
+- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style
+{
+    ERROR("unimplemented");
+}
+
+- (DOMCSSStyleDeclaration *)typingStyle
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (void)setSmartInsertDeleteEnabled:(BOOL)flag
+{
+    ERROR("unimplemented");
+}
+
+- (BOOL)smartInsertDeleteEnabled
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
+- (void)setContinuousSpellCheckingEnabled:(BOOL)flag
+{
+    ERROR("unimplemented");
+}
+
+- (BOOL)isContinuousSpellCheckingEnabled
+{
+    ERROR("unimplemented");
+    return NO;
+}
+
+- (int)spellCheckerDocumentTag
+{
+    ERROR("unimplemented");
+    return 0;
+}
+
+- (NSUndoManager *)undoManager
+{
+    NSUndoManager *undoManager = [[self _editingDelegateForwarder] undoManagerForWebView:self];
+    if (undoManager) {
+        return undoManager;
     }
-}
-
-- (void)selectWord:(id)sender
-{
-}
-
-- (void)moveRight:(id)sender
-{
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
-}
-
-- (void)moveRightAndModifySelection:(id)sender
-{
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
-}
-
-- (void)moveLeft:(id)sender
-{
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
-}
-
-- (void)moveLeftAndModifySelection:(id)sender
-{
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
-}
-
-- (void)deleteBackward:(id)sender
-{
-    [[self _bridgeForCurrentSelection] deleteKeyPressed];
-}
-
-- (void)insertNewline:(id)sender
-{
-    [[self _bridgeForCurrentSelection] insertNewline];
-}
-
-- (void)insertParagraphSeparator:(id)sender
-{
+    return [super undoManager];
 }
 
 - (void)setEditingDelegate:(id)delegate
@@ -2119,23 +2161,816 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->editingDelegate;
 }
 
-- (NSUndoManager *)undoManager
-{
-    NSUndoManager *undoManager = [[self _editingDelegateForwarder] undoManagerForWebView:self];
-    if (undoManager) {
-        return undoManager;
-    }
-    return [super undoManager];
-}
-
 @end
 
 @implementation WebView (WebViewUndoableEditing)
 
+- (void)insertNode:(DOMNode *)node replacingDOMRange:(DOMRange *)range
+{
+    if (!range)
+        return;
+        
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge setSelectedDOMRange:range];
+    [bridge replaceSelectionWithNode:node];
+}    
+
 - (void)insertText:(NSString *)text replacingDOMRange:(DOMRange *)range
 {
-    // FIXME: handle switching selections
-    [[self _bridgeForCurrentSelection] insertText:text];
+    if (!range)
+        return;
+
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge setSelectedDOMRange:range];
+    [bridge replaceSelectionWithText:text];
+}
+
+- (void)insertMarkupString:(NSString *)markupString replacingDOMRange:(DOMRange *)range
+{
+    if (!range)
+        return;
+
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge setSelectedDOMRange:range];
+    [bridge replaceSelectionWithMarkupString:markupString];
+}
+
+- (void)insertWebArchive:(WebArchive *)webArchive replacingDOMRange:(DOMRange *)range
+{
+    if (!range)
+        return;
+
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge setSelectedDOMRange:range];
+    [bridge replaceSelectionWithWebArchive:webArchive];
+}
+
+- (void)deleteDOMRange:(DOMRange *)range
+{
+    if (!range)
+        return;
+
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge setSelectedDOMRange:range];
+    [bridge deleteSelection];
+}
+    
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style toElementsInDOMRange:(DOMRange *)range
+{
+    if (!range)
+        return;
+
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge setSelectedDOMRange:range];
+    [bridge applyStyle:style toElementsInDOMRange:range];
+}
+
+@end
+
+
+/*!
+    @implementation WebView (WebViewEditingActions)
+*/
+@implementation WebView (WebViewEditingActions)
+
+- (void)centerSelectionInVisibleArea:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(centerSelectionInVisibleArea:) with:sender];
+}
+
+- (void)moveBackward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveBackward:) with:sender];
+}
+
+- (void)moveBackwardAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveBackwardAndModifySelection:) with:sender];
+}
+
+- (void)moveDown:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveDown:) with:sender];
+}
+
+- (void)moveDownAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveDownAndModifySelection:) with:sender];
+}
+
+- (void)moveForward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveForward:) with:sender];
+}
+
+- (void)moveForwardAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveForwardAndModifySelection:) with:sender];
+}
+
+- (void)moveLeft:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByCharacter];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveLeft:) with:sender];
+}
+
+- (void)moveLeftAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByCharacter];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveLeftAndModifySelection:) with:sender];
+}
+
+- (void)moveRight:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByCharacter];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveRight:) with:sender];
+}
+
+- (void)moveRightAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByCharacter];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveRightAndModifySelection:) with:sender];
+}
+
+- (void)moveToBeginningOfDocument:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveToBeginningOfDocument:) with:sender];
+}
+
+- (void)moveToBeginningOfLine:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveToBeginningOfLine:) with:sender];
+}
+
+- (void)moveToBeginningOfParagraph:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveToBeginningOfParagraph:) with:sender];
+}
+
+- (void)moveToEndOfDocument:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveToEndOfDocument:) with:sender];
+}
+
+- (void)moveToEndOfLine:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveToEndOfLine:) with:sender];
+}
+
+- (void)moveToEndOfParagraph:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveToEndOfParagraph:) with:sender];
+}
+
+- (void)moveUp:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveUp:) with:sender];
+}
+
+- (void)moveUpAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveUpAndModifySelection:) with:sender];
+}
+
+- (void)moveWordBackward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordBackward:) with:sender];
+}
+
+- (void)moveWordBackwardAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordBackwardAndModifySelection:) with:sender];
+}
+
+- (void)moveWordForward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordForward:) with:sender];
+}
+
+- (void)moveWordForwardAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordForwardAndModifySelection:) with:sender];
+}
+
+- (void)moveWordLeft:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordLeft:) with:sender];
+}
+
+- (void)moveWordLeftAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordLeftAndModifySelection:) with:sender];
+}
+
+- (void)moveWordRight:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordRight:) with:sender];
+}
+
+- (void)moveWordRightAndModifySelection:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(moveWordRightAndModifySelection:) with:sender];
+}
+
+- (void)pageDown:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(pageDown:) with:sender];
+}
+
+- (void)pageUp:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(pageUp:) with:sender];
+}
+
+- (void)scrollLineDown:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(scrollLineDown:) with:sender];
+}
+
+- (void)scrollLineUp:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(scrollLineUp:) with:sender];
+}
+
+- (void)scrollPageDown:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:sender];
+}
+
+- (void)scrollPageUp:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:sender];
+}
+
+
+    /* Selections */
+
+- (void)selectAll:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(selectAll:) with:sender];
+}
+
+- (void)selectParagraph:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(selectParagraph:) with:sender];
+}
+
+- (void)selectLine:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(selectLine:) with:sender];
+}
+
+- (void)selectWord:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(selectWord:) with:sender];
+}
+
+
+    /* "Edit menu" actions */
+
+- (void)copy:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(copy:) with:sender];
+}
+
+- (void)cut:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(cut:) with:sender];
+}
+
+- (void)paste:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(paste:) with:sender];
+}
+
+- (void)copyFont:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(copyFont:) with:sender];
+}
+
+- (void)pasteFont:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(pasteFont:) with:sender];
+}
+
+- (void)delete:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(delete:) with:sender];
+}
+
+- (void)pasteAsPlainText:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(pasteAsPlainText:) with:sender];
+}
+
+- (void)pasteAsRichText:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(pasteAsRichText:) with:sender];
+}
+
+
+    /* Fonts */
+
+- (void)changeFont:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(changeFont:) with:sender];
+}
+
+- (void)changeAttributes:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(changeAttributes:) with:sender];
+}
+
+- (void)changeDocumentBackgroundColor:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(changeDocumentBackgroundColor:) with:sender];
+}
+
+
+    /* Colors */
+
+- (void)changeColor:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(changeColor:) with:sender];
+}
+
+
+	/* Alignment */
+
+- (void)alignCenter:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(alignCenter:) with:sender];
+}
+
+- (void)alignJustified:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(alignJustified:) with:sender];
+}
+
+- (void)alignLeft:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(alignLeft:) with:sender];
+}
+
+- (void)alignRight:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(alignRight:) with:sender];
+}
+
+
+    /* Insertions and Indentations */
+
+- (void)indent:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(indent:) with:sender];
+}
+
+- (void)insertTab:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(insertTab:) with:sender];
+}
+
+- (void)insertBacktab:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(insertBacktab:) with:sender];
+}
+
+- (void)insertNewline:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        [[self _bridgeForCurrentSelection] replaceSelectionWithNewline];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(insertNewline:) with:sender];
+}
+
+- (void)insertParagraphSeparator:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(insertParagraphSeparator:) with:sender];
+}
+
+
+    /* Case changes */
+
+- (void)changeCaseOfLetter:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(changeCaseOfLetter:) with:sender];
+}
+
+- (void)uppercaseWord:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(uppercaseWord:) with:sender];
+}
+
+- (void)lowercaseWord:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(lowercaseWord:) with:sender];
+}
+
+- (void)capitalizeWord:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(capitalizeWord:) with:sender];
+}
+
+
+    /* Deletions */
+
+- (void)deleteForward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteForward:) with:sender];
+}
+
+- (void)deleteBackward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        [[self _bridgeForCurrentSelection] deleteKeyPressed];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteBackward:) with:sender];
+}
+
+- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteBackwardByDecomposingPreviousCharacter:) with:sender];
+}
+
+- (void)deleteWordForward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteWordForward:) with:sender];
+}
+
+- (void)deleteWordBackward:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteWordBackward:) with:sender];
+}
+
+- (void)deleteToBeginningOfLine:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteToBeginningOfLine:) with:sender];
+}
+
+- (void)deleteToEndOfLine:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteToEndOfLine:) with:sender];
+}
+
+- (void)deleteToBeginningOfParagraph:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteToBeginningOfParagraph:) with:sender];
+}
+
+- (void)deleteToEndOfParagraph:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(deleteToEndOfParagraph:) with:sender];
+}
+
+
+    /* Completion */
+
+- (void)complete:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(complete:) with:sender];
+}
+
+
+    /* Spelling */
+
+- (void)checkSpelling:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(checkSpelling:) with:sender];
+}
+
+- (void)showGuessPanel:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(showGuessPanel:) with:sender];
+}
+
+
+    /* Finding */
+    
+- (void)performFindPanelAction:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(performFindPanelAction:) with:sender];
+}
+
+
+	/* Speech */
+
+- (void)startSpeaking:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(startSpeaking:) with:sender];
+}
+
+- (void)stopSpeaking:(id)sender
+{
+    if ([self _currentSelectionIsEditable]) {
+        ERROR("unimplemented");
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(stopSpeaking:) with:sender];
+}
+
+	/* Text input */
+
+- (void)insertText:(NSString *)text
+{
+    if ([self _currentSelectionIsEditable]) {
+        [[self _bridgeForCurrentSelection] replaceSelectionWithText:text];
+        return;
+    }
+    [[self nextResponder] tryToPerform:@selector(insertText:) with:text];
 }
 
 @end

@@ -1,3 +1,25 @@
+2004-04-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Added support for methods added to flesh out the WebKit 
+        editing API.
+
+        * khtml/khtml_part.h: Removed pasteMarkupString and deleteSelection functions.
+        All this work is now done in WebCoreBridge.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge isSelectionEditable]): Added a FIXME.
+        (-[WebCoreBridge setDrawsBackground:]): Moved this since CVS merged this in the
+        middle of editing code.
+        (-[WebCoreBridge replaceSelectionWithNode:]): New method.
+        (-[WebCoreBridge replaceSelectionWithText:]): Replaces insertText:
+        (-[WebCoreBridge replaceSelectionWithMarkupString:]): New method.
+        (-[WebCoreBridge replaceSelectionWithWebArchive:]): New method.
+        (-[WebCoreBridge replaceSelectionWithNewline]): Replaces insertNewline:
+        (-[WebCoreBridge deleteSelection]): New method.
+        (-[WebCoreBridge applyStyle:toElementsInDOMRange:]): New method.
+
 2004-04-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -1,3 +1,118 @@
+2004-04-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Stubbed in the entire WebKit editing API, improving some
+        methods already present in minor ways, and adding those 
+        methods not yet present.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge editingKeyDown:]):
+        * WebView.subproj/WebDefaultEditingDelegate.m:
+        (-[WebDefaultEditingDelegate webView:shouldChangeSelectedDOMRange:toDOMRange:stillSelecting:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pasteMarkupString:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _alterCurrentSelection:direction:granularity:]):
+        (-[WebView _currentSelectionIsEditable]):
+        (-[WebView computedStyleForElement:pseudoElement:]):
+        (-[WebView _editingKeyDown:]):
+        (-[WebView setEditable:]):
+        (-[WebView isEditable]):
+        (-[WebView setTypingStyle:]):
+        (-[WebView typingStyle]):
+        (-[WebView setSmartInsertDeleteEnabled:]):
+        (-[WebView smartInsertDeleteEnabled]):
+        (-[WebView setContinuousSpellCheckingEnabled:]):
+        (-[WebView isContinuousSpellCheckingEnabled]):
+        (-[WebView spellCheckerDocumentTag]):
+        (-[WebView undoManager]):
+        (-[WebView insertNode:replacingDOMRange:]):
+        (-[WebView insertText:replacingDOMRange:]):
+        (-[WebView insertMarkupString:replacingDOMRange:]):
+        (-[WebView insertWebArchive:replacingDOMRange:]):
+        (-[WebView deleteDOMRange:]):
+        (-[WebView applyStyle:toElementsInDOMRange:]):
+        (-[WebView centerSelectionInVisibleArea:]):
+        (-[WebView moveBackward:]):
+        (-[WebView moveBackwardAndModifySelection:]):
+        (-[WebView moveDown:]):
+        (-[WebView moveDownAndModifySelection:]):
+        (-[WebView moveForward:]):
+        (-[WebView moveForwardAndModifySelection:]):
+        (-[WebView moveLeft:]):
+        (-[WebView moveLeftAndModifySelection:]):
+        (-[WebView moveRight:]):
+        (-[WebView moveRightAndModifySelection:]):
+        (-[WebView moveToBeginningOfDocument:]):
+        (-[WebView moveToBeginningOfLine:]):
+        (-[WebView moveToBeginningOfParagraph:]):
+        (-[WebView moveToEndOfDocument:]):
+        (-[WebView moveToEndOfLine:]):
+        (-[WebView moveToEndOfParagraph:]):
+        (-[WebView moveUp:]):
+        (-[WebView moveUpAndModifySelection:]):
+        (-[WebView moveWordBackward:]):
+        (-[WebView moveWordBackwardAndModifySelection:]):
+        (-[WebView moveWordForward:]):
+        (-[WebView moveWordForwardAndModifySelection:]):
+        (-[WebView moveWordLeft:]):
+        (-[WebView moveWordLeftAndModifySelection:]):
+        (-[WebView moveWordRight:]):
+        (-[WebView moveWordRightAndModifySelection:]):
+        (-[WebView pageDown:]):
+        (-[WebView pageUp:]):
+        (-[WebView scrollLineDown:]):
+        (-[WebView scrollLineUp:]):
+        (-[WebView scrollPageDown:]):
+        (-[WebView scrollPageUp:]):
+        (-[WebView selectAll:]):
+        (-[WebView selectParagraph:]):
+        (-[WebView selectLine:]):
+        (-[WebView selectWord:]):
+        (-[WebView copy:]):
+        (-[WebView cut:]):
+        (-[WebView paste:]):
+        (-[WebView copyFont:]):
+        (-[WebView pasteFont:]):
+        (-[WebView delete:]):
+        (-[WebView pasteAsPlainText:]):
+        (-[WebView pasteAsRichText:]):
+        (-[WebView changeFont:]):
+        (-[WebView changeAttributes:]):
+        (-[WebView changeDocumentBackgroundColor:]):
+        (-[WebView changeColor:]):
+        (-[WebView alignCenter:]):
+        (-[WebView alignJustified:]):
+        (-[WebView alignLeft:]):
+        (-[WebView alignRight:]):
+        (-[WebView indent:]):
+        (-[WebView insertTab:]):
+        (-[WebView insertBacktab:]):
+        (-[WebView insertNewline:]):
+        (-[WebView insertParagraphSeparator:]):
+        (-[WebView changeCaseOfLetter:]):
+        (-[WebView uppercaseWord:]):
+        (-[WebView lowercaseWord:]):
+        (-[WebView capitalizeWord:]):
+        (-[WebView deleteForward:]):
+        (-[WebView deleteBackward:]):
+        (-[WebView deleteBackwardByDecomposingPreviousCharacter:]):
+        (-[WebView deleteWordForward:]):
+        (-[WebView deleteWordBackward:]):
+        (-[WebView deleteToBeginningOfLine:]):
+        (-[WebView deleteToEndOfLine:]):
+        (-[WebView deleteToBeginningOfParagraph:]):
+        (-[WebView deleteToEndOfParagraph:]):
+        (-[WebView complete:]):
+        (-[WebView checkSpelling:]):
+        (-[WebView showGuessPanel:]):
+        (-[WebView performFindPanelAction:]):
+        (-[WebView startSpeaking:]):
+        (-[WebView stopSpeaking:]):
+        (-[WebView insertText:]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-04-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

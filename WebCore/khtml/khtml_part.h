@@ -589,11 +589,6 @@ public:
   void clearSelection();
 
   /**
-      * Deletes the nodes of the current selection.
-   */
-  void deleteSelection();
-  
-  /**
    * Invalidates the current selection.
    */
   void invalidateSelection();
@@ -652,11 +647,6 @@ public:
    * Called when editing has been reapplied.
    */
   void reappliedEditing(khtml::EditCommand &);
-
-  /**
-   * Pastes a markup string (such as an HTML string) at the current caret position.
-   */
-  void pasteMarkupString(const QString &markupString);
 
   /**
    * Convenience method to show the document's view.

@@ -582,7 +582,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)_pasteMarkupString:(NSString *)markupString
 {
     if ([markupString length] > 0) {
-        [[self _bridge] pasteMarkupString:markupString];
+        [[self _bridge] replaceSelectionWithMarkupString:markupString];
     }
 }
 
