@@ -260,28 +260,6 @@ CSSStyleDeclarationImpl *ApplyStyleCommand::style() const
 }
 
 //------------------------------------------------------------------------------------------
-// DeleteCollapsibleWhitespaceCommand
-
-DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentImpl *document)
-    : CompositeEditCommand(new DeleteCollapsibleWhitespaceCommandImpl(document))
-{
-}
-
-DeleteCollapsibleWhitespaceCommand::DeleteCollapsibleWhitespaceCommand(DocumentImpl *document, const Selection &selection)
-    : CompositeEditCommand(new DeleteCollapsibleWhitespaceCommandImpl(document, selection))
-{
-}
-
-DeleteCollapsibleWhitespaceCommand::~DeleteCollapsibleWhitespaceCommand()
-{
-}
-	
-DeleteCollapsibleWhitespaceCommandImpl *DeleteCollapsibleWhitespaceCommand::impl() const
-{
-    return static_cast<DeleteCollapsibleWhitespaceCommandImpl *>(get());
-}
-
-//------------------------------------------------------------------------------------------
 // DeleteSelectionCommand
 
 DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document)
@@ -610,35 +588,6 @@ NodeImpl *RemoveNodeCommand::node() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
     return impl()->node();
-}
-
-//------------------------------------------------------------------------------------------
-// RemoveNodeAndPruneCommand
-
-RemoveNodeAndPruneCommand::RemoveNodeAndPruneCommand(DocumentImpl *document, NodeImpl *pruneNode, NodeImpl *stopNode)
-    : CompositeEditCommand(new RemoveNodeAndPruneCommandImpl(document, pruneNode, stopNode))
-{
-}
-
-RemoveNodeAndPruneCommand::~RemoveNodeAndPruneCommand()
-{
-}
-
-RemoveNodeAndPruneCommandImpl *RemoveNodeAndPruneCommand::impl() const
-{
-    return static_cast<RemoveNodeAndPruneCommandImpl *>(get());
-}
-
-NodeImpl *RemoveNodeAndPruneCommand::pruneNode() const
-{
-    IF_IMPL_NULL_RETURN_ARG(0);
-    return impl()->pruneNode();
-}
-
-NodeImpl *RemoveNodeAndPruneCommand::stopNode() const
-{
-    IF_IMPL_NULL_RETURN_ARG(0);
-    return impl()->stopNode();
 }
 
 //------------------------------------------------------------------------------------------

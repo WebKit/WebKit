@@ -49,7 +49,6 @@ namespace khtml {
 class AppendNodeCommandImpl;
 class ApplyStyleCommandImpl;
 class CompositeEditCommandImpl;
-class DeleteCollapsibleWhitespaceCommandImpl;
 class DeleteSelectionCommandImpl;
 class DeleteTextCommandImpl;
 class EditCommand;
@@ -64,7 +63,6 @@ class ReplaceSelectionCommandImpl;
 class RemoveCSSPropertyCommandImpl;
 class RemoveNodeAttributeCommandImpl;
 class RemoveNodeCommandImpl;
-class RemoveNodeAndPruneCommandImpl;
 class RemoveNodePreservingChildrenCommandImpl;
 class SetNodeAttributeCommandImpl;
 class SplitTextNodeCommandImpl;
@@ -78,7 +76,6 @@ enum ECommandID {
     AppendNodeCommandID,
     ApplyStyleCommandID,
     CompositeEditCommandID,
-    DeleteCollapsibleWhitespaceCommandID,
     DeleteSelectionCommandID,
     DeleteTextCommandID,
     InputNewlineCommandID,
@@ -91,7 +88,6 @@ enum ECommandID {
     RemoveCSSPropertyCommandID,
     RemoveNodeAttributeCommandID,
     RemoveNodeCommandID,
-    RemoveNodeAndPruneCommandID,
     RemoveNodePreservingChildrenCommandID,
     SetNodeAttributeCommandID,
     SplitTextNodeCommandID,
@@ -208,21 +204,6 @@ public:
 
 private:
     inline ApplyStyleCommandImpl *impl() const;
-};
-
-//------------------------------------------------------------------------------------------
-// DeleteCollapsibleWhitespaceCommand
-
-class DeleteCollapsibleWhitespaceCommand : public CompositeEditCommand
-{
-public:
-	DeleteCollapsibleWhitespaceCommand(DOM::DocumentImpl *document);
-	DeleteCollapsibleWhitespaceCommand(DOM::DocumentImpl *document, const DOM::Selection &selection);
-    
-	virtual ~DeleteCollapsibleWhitespaceCommand();
-
-private:
-    inline DeleteCollapsibleWhitespaceCommandImpl *impl() const;
 };
 
 //------------------------------------------------------------------------------------------
@@ -410,22 +391,6 @@ public:
     
 private:
     inline RemoveNodeCommandImpl *impl() const;
-};
-
-//------------------------------------------------------------------------------------------
-// RemoveNodeAndPruneCommand
-
-class RemoveNodeAndPruneCommand : public CompositeEditCommand
-{
-public:
-	RemoveNodeAndPruneCommand(DOM::DocumentImpl *, DOM::NodeImpl *pruneNode, DOM::NodeImpl *stopNode=0);
-	virtual ~RemoveNodeAndPruneCommand();
-
-    DOM::NodeImpl *pruneNode() const;
-    DOM::NodeImpl *stopNode() const;
-    
-private:
-    inline RemoveNodeAndPruneCommandImpl *impl() const;
 };
 
 //------------------------------------------------------------------------------------------

@@ -312,6 +312,8 @@ Position Position::previousWordBoundary() const
     while (tries < 2) {
         if (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE) {
             DOMString t = pos.node()->nodeValue();
+            if (t.isEmpty())
+                return *this;
             QChar *chars = t.unicode();
             uint len = t.length();
             int start, end;
@@ -348,6 +350,8 @@ Position Position::nextWordBoundary() const
     while (tries < 2) {
         if (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE) {
             DOMString t = pos.node()->nodeValue();
+            if (t.isEmpty())
+                return *this;
             QChar *chars = t.unicode();
             uint len = t.length();
             int start, end;
@@ -610,7 +614,7 @@ Position Position::nextLinePosition(int x) const
     return Position(rootElement, rootElement->childNodeCount());
 }
 
-Position Position::equivalentUpstreamPosition() const
+Position Position::upstream(bool stayInBlock) const
 {
     if (!node())
         return Position();
@@ -618,10 +622,12 @@ Position Position::equivalentUpstreamPosition() const
     NodeImpl *block = node()->enclosingBlockFlowElement();
     
     PositionIterator it(*this);            
-    for (; !it.atStart(); it.previous()) {   
-        NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
-        if (block != currentBlock)
-            return it.next();
+    for (; !it.atStart(); it.previous()) {
+        if (stayInBlock) {
+            NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
+            if (block != currentBlock)
+                return it.next();
+        }
 
         RenderObject *renderer = it.current().node()->renderer();
         if (!renderer)
@@ -660,7 +666,7 @@ Position Position::equivalentUpstreamPosition() const
     return it.current();
 }
 
-Position Position::equivalentDownstreamPosition() const
+Position Position::downstream(bool stayInBlock) const
 {
     if (!node())
         return Position();
@@ -669,9 +675,11 @@ Position Position::equivalentDownstreamPosition() const
     
     PositionIterator it(*this);            
     for (; !it.atEnd(); it.next()) {   
-        NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
-        if (block != currentBlock)
-            return it.previous();
+        if (stayInBlock) {
+            NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
+            if (block != currentBlock)
+                return it.previous();
+        }
 
         RenderObject *renderer = it.current().node()->renderer();
         if (!renderer)
@@ -871,7 +879,7 @@ bool Position::inRenderedContent() const
 
 bool Position::inRenderedText() const
 {
-    if (!node()->isTextNode())
+    if (isEmpty() || !node()->isTextNode())
         return false;
         
     RenderObject *renderer = node()->renderer();
@@ -887,6 +895,30 @@ bool Position::inRenderedText() const
             return false;
         }
         if (offset() >= box->m_start && offset() <= box->m_start + box->m_len)
+            return true;
+    }
+    
+    return false;
+}
+
+bool Position::isRenderedCharacter() const
+{
+    if (isEmpty() || !node()->isTextNode())
+        return false;
+        
+    RenderObject *renderer = node()->renderer();
+    if (!renderer)
+        return false;
+    
+    RenderText *textRenderer = static_cast<RenderText *>(renderer);
+    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+        if (offset() < box->m_start) {
+            // The offset we're looking for is before this node
+            // this means the offset must be in content that is
+            // not rendered. Return false.
+            return false;
+        }
+        if (offset() >= box->m_start && offset() < box->m_start + box->m_len)
             return true;
     }
     
@@ -1149,10 +1181,61 @@ bool Position::inLastEditableInContainingEditableBlock() const
     return true;
 }
 
+static inline bool isWS(const QChar &c)
+{
+    return c.isSpace() && c != QChar(0xa0);
+}
+
+Position Position::leadingWhitespacePosition() const
+{
+    if (isEmpty())
+        return Position();
+    
+    if (upstream(StayInBlock).node()->id() == ID_BR)
+        return Position();
+    
+    Position prev = previousCharacterPosition();
+    if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
+        DOMString string = static_cast<TextImpl *>(prev.node())->data();
+        if (isWS(string[prev.offset()]))
+            return prev;
+    }
+
+    return Position();
+}
+
+Position Position::trailingWhitespacePosition() const
+{
+    if (isEmpty())
+        return Position();
+
+    if (node()->isTextNode()) {
+        TextImpl *textNode = static_cast<TextImpl *>(node());
+        if (offset() < (long)textNode->length()) {
+            DOMString string = static_cast<TextImpl *>(node())->data();
+            if (isWS(string[offset()]))
+                return *this;
+            return Position();
+        }
+    }
+
+    if (downstream(StayInBlock).node()->id() == ID_BR)
+        return Position();
+
+    Position next = nextCharacterPosition();
+    if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
+        DOMString string = static_cast<TextImpl *>(next.node())->data();
+        if (isWS(string[0]))
+            return next;
+    }
+
+    return Position();
+}
+
 void Position::debugPosition(const char *msg) const
 {
     if (isEmpty())
-        fprintf(stderr, "Position [%s]: empty\n");
+        fprintf(stderr, "Position [%s]: empty\n", msg);
     else
         fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, getTagName(node()->id()).string().latin1(), node(), offset());
 }

@@ -354,7 +354,7 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     DocumentImpl *doc = dynamic_cast<DocumentImpl *>(o->element());
     if (!doc || !doc->part())
         return;
-        
+    
     Selection selection = doc->part()->selection();
     if (selection.state() == Selection::NONE)
         return;
@@ -371,8 +371,8 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     NodeImpl *rootNode = doc->getElementById("root");
     
     if (selection.state() == Selection::CARET) {
-        Position upstream = startPosition.equivalentUpstreamPosition();
-        Position downstream = startPosition.equivalentDownstreamPosition();
+        Position upstream = startPosition.upstream(DOM::StayInBlock);
+        Position downstream = startPosition.downstream(DOM::StayInBlock);
         QString positionString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
         QString upstreamString = nodePositionRelativeToRoot(upstream.node(), rootNode);
         QString downstreamString = nodePositionRelativeToRoot(downstream.node(), rootNode);
@@ -383,14 +383,14 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
     }
     else if (selection.state() == Selection::RANGE) {
         QString startString = nodePositionRelativeToRoot(startPosition.node(), rootNode);
-        Position upstreamStart = startPosition.equivalentUpstreamPosition();
+        Position upstreamStart = startPosition.upstream(DOM::StayInBlock);
         QString upstreamStartString = nodePositionRelativeToRoot(upstreamStart.node(), rootNode);
-        Position downstreamStart = startPosition.equivalentDownstreamPosition();
+        Position downstreamStart = startPosition.downstream(DOM::StayInBlock);
         QString downstreamStartString = nodePositionRelativeToRoot(downstreamStart.node(), rootNode);
         QString endString = nodePositionRelativeToRoot(endPosition.node(), rootNode);
-        Position upstreamEnd = endPosition.equivalentUpstreamPosition();
+        Position upstreamEnd = endPosition.upstream(DOM::StayInBlock);
         QString upstreamEndString = nodePositionRelativeToRoot(upstreamEnd.node(), rootNode);
-        Position downstreamEnd = endPosition.equivalentDownstreamPosition();
+        Position downstreamEnd = endPosition.downstream(DOM::StayInBlock);
         QString downstreamEndString = nodePositionRelativeToRoot(downstreamEnd.node(), rootNode);
         ts << "selection is RANGE:\n" <<
             "start:      position " << startPosition.offset() << " of " << startString << "\n" <<

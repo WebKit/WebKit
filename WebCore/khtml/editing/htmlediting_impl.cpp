@@ -77,6 +77,7 @@ using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::Selection;
+using DOM::StayInBlock;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
 
@@ -124,90 +125,6 @@ static inline bool isWS(const Position &pos)
     return isWS(string[pos.offset()]);
 }
 
-static bool shouldPruneNode(NodeImpl *node)
-{
-    if (!node)
-        return false;
-
-    RenderObject *renderer = node->renderer();
-    if (!renderer)
-        return true;
-
-    if (node->hasChildNodes())
-        return false;
-        
-    if (node->rootEditableElement() == node)
-        return false;
-        
-    if (renderer->isBR() || renderer->isReplaced())
-        return false;
-        
-    if (node->isTextNode()) {
-        TextImpl *text = static_cast<TextImpl *>(node);
-        if (text->length() == 0)
-            return true;
-        return false;
-    }
-    
-    if (!node->isHTMLElement() && !node->isXMLElementNode())
-        return false;
-    
-    if (node->id() == ID_BODY)
-        return false;
-            
-    if (!node->isContentEditable())
-        return false;
-            
-    return true;
-}
-
-static Position leadingWhitespacePosition(const Position &pos)
-{
-    ASSERT(pos.notEmpty());
-
-    Selection selection(pos);
-    Position prev = pos.previousCharacterPosition();
-    if (prev != pos && prev.node()->inSameContainingBlockFlowElement(pos.node()) && prev.node()->isTextNode()) {
-        DOMString string = static_cast<TextImpl *>(prev.node())->data();
-        if (isWS(string[prev.offset()]))
-            return prev;
-    }
-
-    return Position();
-}
-
-static Position trailingWhitespacePosition(const Position &pos)
-{
-    ASSERT(pos.notEmpty());
-
-    if (pos.node()->isTextNode()) {
-        TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-        if (pos.offset() >= (long)textNode->length()) {
-            Position next = pos.nextCharacterPosition();
-            if (next != pos && next.node()->inSameContainingBlockFlowElement(pos.node()) && next.node()->isTextNode()) {
-                DOMString string = static_cast<TextImpl *>(next.node())->data();
-                if (isWS(string[0]))
-                    return next;
-            }
-        }
-        else {
-            DOMString string = static_cast<TextImpl *>(pos.node())->data();
-            if (isWS(string[pos.offset()]))
-                return pos;
-        }
-    }
-
-    return Position();
-}
-
-static bool textNodesAreJoinable(TextImpl *text1, TextImpl *text2)
-{
-    ASSERT(text1);
-    ASSERT(text2);
-    
-    return (text1->nextSibling() == text2);
-}
-
 static DOMString &nonBreakingSpaceString()
 {
     static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
@@ -222,7 +139,12 @@ static DOMString &styleSpanClassString()
 
 static void debugPosition(const char *prefix, const Position &pos)
 {
-    LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
+    if (!prefix)
+        prefix = "";
+    if (pos.isEmpty())
+        LOG(Editing, "%s <empty>", prefix);
+    else
+        LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
 }
 
 //------------------------------------------------------------------------------------------
@@ -311,7 +233,7 @@ void EditCommandImpl::apply()
     ASSERT(m_document);
     ASSERT(m_document->part());
     ASSERT(state() == NotApplied);
-    
+ 
     doApply();
     
     m_state = Applied;
@@ -499,12 +421,6 @@ void CompositeEditCommandImpl::removeNode(NodeImpl *removeChild)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::removeNodeAndPrune(NodeImpl *pruneNode, NodeImpl *stopNode)
-{
-    RemoveNodeAndPruneCommand cmd(document(), pruneNode, stopNode);
-    applyCommandToComposite(cmd);
-}
-
 void CompositeEditCommandImpl::removeNodePreservingChildren(NodeImpl *removeChild)
 {
     RemoveNodePreservingChildrenCommand cmd(document(), removeChild);
@@ -564,18 +480,6 @@ void CompositeEditCommandImpl::deleteSelection(const Selection &selection)
         DeleteSelectionCommand cmd(document(), selection);
         applyCommandToComposite(cmd);
     }
-}
-
-void CompositeEditCommandImpl::deleteCollapsibleWhitespace()
-{
-    DeleteCollapsibleWhitespaceCommand cmd(document());
-    applyCommandToComposite(cmd);
-}
-
-void CompositeEditCommandImpl::deleteCollapsibleWhitespace(const Selection &selection)
-{
-    DeleteCollapsibleWhitespaceCommand cmd(document(), selection);
-    applyCommandToComposite(cmd);
 }
 
 void CompositeEditCommandImpl::removeCSSProperty(CSSStyleDeclarationImpl *decl, int property)
@@ -639,6 +543,39 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
 
     return element;
 }
+
+void CompositeEditCommandImpl::deleteUnrenderedText(const Position &pos)
+{
+    Position ending = pos.upstream();
+    Position upstream = pos.upstream(StayInBlock);
+    Position downstream = pos.downstream(StayInBlock);
+    
+    NodeImpl *node = upstream.node();
+    while (node != downstream.node()) {
+        NodeImpl *next = node->traverseNextNode();
+        if (node->isTextNode()) {
+            if (!node->renderer() || !static_cast<RenderText *>(node->renderer())->firstTextBox())
+                removeNode(node);
+            else {
+                TextImpl *text = static_cast<TextImpl *>(node);
+                if ((int)text->length() > text->caretMaxOffset())
+                    deleteText(text, text->caretMaxOffset(), text->length() - text->caretMaxOffset());
+            }
+        }
+        node = next;
+    }
+    if (downstream.node()->isTextNode()) {
+        if (!node->renderer() || !static_cast<RenderText *>(node->renderer())->firstTextBox())
+            removeNode(downstream.node());
+        else {
+            TextImpl *text = static_cast<TextImpl *>(downstream.node());
+            if (text->caretMinOffset() > 0)
+                deleteText(text, 0, text->caretMinOffset());
+        }
+    }
+    setEndingSelection(ending);
+}
+
 
 //==========================================================================================
 // Concrete commands
@@ -716,15 +653,15 @@ void ApplyStyleCommandImpl::doApply()
         return;
 
     // adjust to the positions we want to use for applying style
-    Position start(endingSelection().start().equivalentDownstreamPosition().equivalentRangeCompliantPosition());
-    Position end(endingSelection().end().equivalentUpstreamPosition());
+    Position start(endingSelection().start().downstream().equivalentRangeCompliantPosition());
+    Position end(endingSelection().end().upstream(StayInBlock));
 
     // Remove style from the selection.
     // Use the upstream position of the start for removing style.
     // This will ensure we remove all traces of the relevant styles from the selection
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
-    removeStyle(start.equivalentUpstreamPosition(), end);
+    removeStyle(start.upstream(StayInBlock), end);
     
     bool splitStart = splitTextAtStartIfNeeded(start, end); 
     if (splitStart) {
@@ -844,7 +781,7 @@ bool ApplyStyleCommandImpl::nodeFullySelected(const NodeImpl *node) const
 {
     ASSERT(node);
 
-    Position end(endingSelection().end().equivalentUpstreamPosition());
+    Position end(endingSelection().end().upstream(StayInBlock));
     
     if (node == end.node())
         return end.offset() >= node->caretMaxOffset();
@@ -981,166 +918,6 @@ Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
 }
 
 //------------------------------------------------------------------------------------------
-// DeleteCollapsibleWhitespaceCommandImpl
-
-DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document)
-    : CompositeEditCommandImpl(document), m_charactersDeleted(0), m_hasSelectionToCollapse(false)
-{
-}
-
-DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl(DocumentImpl *document, const Selection &selection)
-    : CompositeEditCommandImpl(document), m_charactersDeleted(0), m_selectionToCollapse(selection), m_hasSelectionToCollapse(true)
-{
-}
-
-DeleteCollapsibleWhitespaceCommandImpl::~DeleteCollapsibleWhitespaceCommandImpl()
-{
-}
-
-int DeleteCollapsibleWhitespaceCommandImpl::commandID() const
-{
-    return DeleteCollapsibleWhitespaceCommandID;
-}
-
-static bool shouldDeleteUpstreamPosition(const Position &pos)
-{
-    if (!pos.node()->isTextNode())
-        return false;
-        
-    RenderObject *renderer = pos.node()->renderer();
-    if (!renderer)
-        return true;
-        
-    TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-    if (pos.offset() >= (long)textNode->length())
-        return false;
-
-    if (pos.isLastRenderedPositionInEditableBlock())
-        return false;
-
-    if (pos.isFirstRenderedPositionOnLine() || pos.isLastRenderedPositionOnLine())
-        return false;
-
-    RenderText *textRenderer = static_cast<RenderText *>(renderer);
-
-    for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-        if (pos.offset() < box->m_start) {
-            return true;
-        }
-        if (pos.offset() >= box->m_start && pos.offset() < box->m_start + box->m_len)
-            return false;
-    }
-    
-    return true;
-}
-
-Position DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const Position &pos)
-{
-    Position upstream = pos.equivalentUpstreamPosition();
-    Position downstream = pos.equivalentDownstreamPosition();
-    
-    bool del = shouldDeleteUpstreamPosition(upstream);
-
-    LOG(Editing, "pos:        %s [%p:%d]\n", getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
-    if (upstream == downstream) {
-        LOG(Editing, "same:       %s [%p:%d]\n", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
-    }
-    else {
-        LOG(Editing, "upstream:   %s %s [%p:%d]\n", del ? "DELETE" : "SKIP", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
-        PositionIterator it(upstream);
-        for (it.next(); it.current() != downstream; it.next()) {
-            if (it.current().node()->isTextNode() && (long)static_cast<TextImpl *>(it.current().node())->length() == it.current().offset())
-                LOG(Editing, "   node:    AT END %s [%p:%d]\n", getTagName(it.current().node()->id()).string().latin1(), it.current().node(), it.current().offset());
-            else
-                LOG(Editing, "   node:    DELETE %s [%p:%d]\n", getTagName(it.current().node()->id()).string().latin1(), it.current().node(), it.current().offset());
-        }
-        LOG(Editing, "downstream: %s [%p:%d]\n", getTagName(downstream.node()->id()).string().latin1(), downstream.node(), downstream.offset());
-    }
-
-    if (upstream == downstream)
-        return upstream;
-        
-    PositionIterator it(upstream);
-    Position deleteStart = upstream;
-    if (!del) {
-        deleteStart = it.peekNext();
-        if (deleteStart == downstream)
-            return upstream;
-    }
-    
-    Position endingPosition = upstream;
-    
-    while (it.current() != downstream) {
-        Position next = it.peekNext();
-        if (next.node() != deleteStart.node()) {
-            if (deleteStart.node()->isTextNode()) {
-                TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
-                unsigned long count = it.current().offset() - deleteStart.offset();
-                if (count == textNode->length()) {
-                    LOG(Editing, "   removeNodeAndPrune 1: [%p]\n", textNode);
-                    if (textNode == endingPosition.node())
-                        endingPosition = Position(next.node(), next.node()->caretMinOffset());
-                    removeNodeAndPrune(textNode);
-                }
-                else {
-                    LOG(Editing, "   deleteText 1: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), it.current().offset() - deleteStart.offset());
-                    deleteText(textNode, deleteStart.offset(), count);
-                }
-            }
-            deleteStart = next;
-        }
-        else if (next == downstream) {
-            if (downstream.node()->isTextNode()) {
-                ASSERT(deleteStart.node() == downstream.node());
-                TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
-                unsigned long count = downstream.offset() - deleteStart.offset();
-                ASSERT(count <= textNode->length());
-                if (count == textNode->length()) {
-                    LOG(Editing, "   removeNodeAndPrune 2: [%p]\n", textNode);
-                    removeNodeAndPrune(textNode);
-                }
-                else {
-                    LOG(Editing, "   deleteText 2: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), count);
-                    deleteText(textNode, deleteStart.offset(), count);
-                    m_charactersDeleted = count;
-                    endingPosition = Position(downstream.node(), downstream.offset() - m_charactersDeleted);
-                }
-            }
-        }
-        
-        it.setPosition(next);
-    }
-    
-    return endingPosition;
-}
-
-void DeleteCollapsibleWhitespaceCommandImpl::doApply()
-{
-    // If selection has not been set to a custom selection when the command was created,
-    // use the current ending selection.
-    if (!m_hasSelectionToCollapse)
-        m_selectionToCollapse = endingSelection();
-    int state = m_selectionToCollapse.state();
-    if (state == Selection::CARET) {
-        Position endPosition = deleteWhitespace(m_selectionToCollapse.start());
-        setEndingSelection(endPosition);
-        LOG(Editing, "-----------------------------------------------------\n");
-    }
-    else if (state == Selection::RANGE) {
-        Position startPosition = deleteWhitespace(m_selectionToCollapse.start());
-        LOG(Editing, "-----------------------------------------------------\n");
-        Position endPosition = m_selectionToCollapse.end();
-        if (m_charactersDeleted > 0 && startPosition.node() == endPosition.node()) {
-            LOG(Editing, "adjust end position by %d\n", m_charactersDeleted);
-            endPosition = Position(endPosition.node(), endPosition.offset() - m_charactersDeleted);
-        }
-        endPosition = deleteWhitespace(endPosition);
-        setEndingSelection(Selection(startPosition, endPosition));
-        LOG(Editing, "=====================================================\n");
-    }
-}
-
-//------------------------------------------------------------------------------------------
 // DeleteSelectionCommandImpl
 
 DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DocumentImpl *document)
@@ -1160,71 +937,6 @@ DeleteSelectionCommandImpl::~DeleteSelectionCommandImpl()
 int DeleteSelectionCommandImpl::commandID() const
 {
     return DeleteSelectionCommandID;
-}
-
-void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
-{
-    Selection selection = endingSelection();
-
-    if (selection.state() != Selection::CARET)
-        return;
-
-    Position pos(selection.start());
-    
-    if (!pos.node()->isTextNode())
-        return;
-
-    TextImpl *textNode = static_cast<TextImpl *>(pos.node());
-    
-    if (pos.offset() == 0) {
-        PositionIterator it(pos);
-        Position prev = it.previous();
-        if (prev == pos)
-            return;
-        if (prev.node()->isTextNode()) {
-            TextImpl *prevTextNode = static_cast<TextImpl *>(prev.node());
-            if (textNodesAreJoinable(prevTextNode, textNode)) {
-                joinTextNodes(prevTextNode, textNode);
-                setEndingSelection(Position(textNode, prevTextNode->length()));
-                LOG(Editing, "joinTextNodesWithSameStyle [1]\n");
-            }
-        }
-    }
-    else if (pos.offset() == (long)textNode->length()) {
-        PositionIterator it(pos);
-        Position next = it.next();
-        if (next == pos)
-            return;
-        if (next.node()->isTextNode()) {
-            TextImpl *nextTextNode = static_cast<TextImpl *>(next.node());
-            if (textNodesAreJoinable(textNode, nextTextNode)) {
-                joinTextNodes(textNode, nextTextNode);
-                setEndingSelection(Position(nextTextNode, pos.offset()));
-                LOG(Editing, "joinTextNodesWithSameStyle [2]\n");
-            }
-        }
-    }
-}
-
-bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const Position &start, const Position &end)
-{
-    // Returns whether the range contains only whitespace characters.
-    // This is inclusive of the start, but not of the end.
-    PositionIterator it(start);
-    while (!it.atEnd()) {
-        if (!it.current().node()->isTextNode())
-            return false;
-        const DOMString &text = static_cast<TextImpl *>(it.current().node())->data();
-        // EDIT FIXME: signed/unsigned mismatch
-        if (text.length() > INT_MAX)
-            return false;
-        if (it.current().offset() < (int)text.length() && !isWS(text[it.current().offset()]))
-            return false;
-        it.next();
-        if (it.current() == end)
-            break;
-    }
-    return true;
 }
 
 CSSStyleDeclarationImpl *DeleteSelectionCommandImpl::computeTypingStyle(const Position &pos) const
@@ -1282,20 +994,26 @@ void DeleteSelectionCommandImpl::doApply()
     if (m_selectionToDelete.state() != Selection::RANGE)
         return;
 
-    deleteCollapsibleWhitespace(m_selectionToDelete);
-    Selection selection = endingSelection();
+    Position upstreamStart(m_selectionToDelete.start().upstream(StayInBlock));
+    Position downstreamStart(m_selectionToDelete.start().downstream());
+    Position upstreamEnd(m_selectionToDelete.end().upstream(StayInBlock));
+    Position downstreamEnd(m_selectionToDelete.end().downstream());
+    Position endingPosition;
 
-    Position upstreamStart(selection.start().equivalentUpstreamPosition());
-    Position downstreamStart(selection.start().equivalentDownstreamPosition());
-    Position upstreamEnd(selection.end().equivalentUpstreamPosition());
-    Position downstreamEnd(selection.end().equivalentDownstreamPosition());
-
-    if (upstreamStart == downstreamEnd)
-        // after collapsing whitespace, selection is empty...no work to do
-        return;
-
-    NodeImpl *startBlock = upstreamStart.node()->enclosingBlockFlowElement();
-    NodeImpl *endBlock = downstreamEnd.node()->enclosingBlockFlowElement();
+    // Save away whitespace situation before doing any deletions
+    Position leading = upstreamStart.leadingWhitespacePosition();
+    Position trailing = downstreamEnd.trailingWhitespacePosition();
+    bool trailingValid = true;
+    
+    debugPosition("upstreamStart    ", upstreamStart);
+    debugPosition("downstreamStart  ", downstreamStart);
+    debugPosition("upstreamEnd      ", upstreamEnd);
+    debugPosition("downstreamEnd    ", downstreamEnd);
+    debugPosition("leading          ", leading);
+    debugPosition("trailing         ", trailing);
+    
+    NodeImpl *startBlock = downstreamStart.node()->enclosingBlockFlowElement();
+    NodeImpl *endBlock = upstreamEnd.node()->enclosingBlockFlowElement();
     if (!startBlock || !endBlock)
         // Can't figure out what blocks we're in. This can happen if
         // the document structure is not what we are expecting, like if
@@ -1303,93 +1021,6 @@ void DeleteSelectionCommandImpl::doApply()
         // has been changed to display: inline. Some day it might
         // be nice to be able to deal with this, but for now, bail.
         return;
-    bool startBlockEndBlockAreSiblings = startBlock->parentNode() == endBlock->parentNode();
-
-    Position endingPosition;
-    bool adjustEndingPositionDownstream = false;
-
-    bool onlyWhitespace = containsOnlyWhitespace(upstreamStart, downstreamEnd);
- 
-    bool startCompletelySelected = !onlyWhitespace &&
-        (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset() &&
-        ((downstreamStart.node() != upstreamEnd.node()) ||
-         (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset())));
-
-    bool endCompletelySelected = !onlyWhitespace &&
-        (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset() &&
-        ((downstreamStart.node() != upstreamEnd.node()) ||
-         (downstreamStart.offset() <= downstreamStart.node()->caretMinOffset())));
-
-    unsigned long startRenderedOffset = downstreamStart.renderedOffset();
-    
-    bool startAtStartOfRootEditableElement = startRenderedOffset == 0 && downstreamStart.inFirstEditableInRootEditableElement();
-    bool startAtStartOfBlock = startAtStartOfRootEditableElement || 
-        (startRenderedOffset == 0 && downstreamStart.inFirstEditableInContainingEditableBlock());
-    bool endAtEndOfBlock = downstreamEnd.isLastRenderedPositionInEditableBlock();
-
-    debugPosition("upstreamStart:       ", upstreamStart);
-    debugPosition("downstreamStart:     ", downstreamStart);
-    debugPosition("upstreamEnd:         ", upstreamEnd);
-    debugPosition("downstreamEnd:       ", downstreamEnd);
-    LOG(Editing,  "start selected:      %s", startCompletelySelected ? "YES" : "NO");
-    LOG(Editing,  "at start block:      %s", startAtStartOfBlock ? "YES" : "NO");
-    LOG(Editing,  "at start root block: %s", startAtStartOfRootEditableElement ? "YES" : "NO");
-    LOG(Editing,  "at end block:        %s", endAtEndOfBlock ? "YES" : "NO");
-    LOG(Editing,  "only whitespace:     %s", onlyWhitespace ? "YES" : "NO");
-
-    // Determine where to put the caret after the deletion
-    if (startAtStartOfBlock) {
-        LOG(Editing,  "ending position case 1");
-        endingPosition = Position(startBlock, 0);
-        adjustEndingPositionDownstream = true;
-    }
-    else if (!startCompletelySelected) {
-        LOG(Editing,  "ending position case 2");
-        endingPosition = upstreamStart;
-        if (upstreamStart.node()->id() == ID_BR && upstreamStart.offset() == 1)
-            adjustEndingPositionDownstream = true;
-    }
-    else if (upstreamStart != downstreamStart) {
-        LOG(Editing,  "ending position case 3");
-        endingPosition = upstreamStart;
-        if (upstreamStart.node()->id() == ID_BR && upstreamStart.offset() == 1)
-            adjustEndingPositionDownstream = true;
-    }
-   
-    //
-    // Figure out the whitespace conversions to do
-    //
-    if ((startAtStartOfBlock && !endAtEndOfBlock) || (!startCompletelySelected && adjustEndingPositionDownstream)) {
-        // convert trailing whitespace
-        Position trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
-        if (trailing.notEmpty()) {
-            debugPosition("convertTrailingWhitespace: ", trailing);
-            Position collapse = trailing.nextCharacterPosition();
-            if (collapse != trailing)
-                deleteCollapsibleWhitespace(collapse);
-            TextImpl *textNode = static_cast<TextImpl *>(trailing.node());
-            replaceText(textNode, trailing.offset(), 1, nonBreakingSpaceString());
-        }
-    }
-    else if (!startAtStartOfBlock && endAtEndOfBlock) {
-        // convert leading whitespace
-        Position leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
-        if (leading.notEmpty()) {
-            debugPosition("convertLeadingWhitespace:  ", leading);
-            TextImpl *textNode = static_cast<TextImpl *>(leading.node());
-            replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
-        }
-    }
-    else if (!startAtStartOfBlock && !endAtEndOfBlock) {
-        // convert contiguous whitespace
-        Position leading = leadingWhitespacePosition(upstreamStart.equivalentUpstreamPosition());
-        Position trailing = trailingWhitespacePosition(downstreamEnd.equivalentDownstreamPosition());
-        if (leading.notEmpty() && trailing.notEmpty()) {
-            debugPosition("convertLeadingWhitespace [contiguous]:  ", leading);
-            TextImpl *textNode = static_cast<TextImpl *>(leading.node());
-            replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
-        }
-    }
 
     //
     // Figure out the typing style and set it on the part.
@@ -1399,88 +1030,78 @@ void DeleteSelectionCommandImpl::doApply()
     // cut command.
     //
     document()->part()->setTypingStyle(computeTypingStyle(downstreamStart));
-
-    //
-    // Do the delete
-    //
-    NodeImpl *n = downstreamStart.node()->traverseNextNode();
-
-    // work on start node
-    if (startCompletelySelected) {
-        LOG(Editing,  "start node delete case 1");
-        removeNodeAndPrune(downstreamStart.node(), startBlock);
-        // Fix up ending position if the prune operation removed the position's node from the document
-        if (!endingPosition.node()->inDocument())
-            endingPosition = upstreamStart;
+    
+    NodeImpl *startNode = upstreamStart.node();
+    int startOffset = upstreamStart.offset();
+    if (startOffset >= startNode->caretMaxOffset()) {
+        // None of the first node is to be deleted, so move to next.
+        startNode = startNode->traverseNextNode();
+        startOffset = 0;
     }
-    else if (onlyWhitespace && isWS(upstreamStart)) {
-        // Selection only contains whitespace. This is really a special-case to 
-        // handle significant whitespace that is collapsed at the end of a line,
-        // but also handles deleting a space in mid-line.
-        LOG(Editing,  "start node delete case 2");
-        ASSERT(upstreamStart.node()->isTextNode());
-        TextImpl *text = static_cast<TextImpl *>(upstreamStart.node());
-        int offset = upstreamStart.offset();
-        // EDIT FIXME: Signed/unsigned mismatch
-        int length = text->length();
-        if (length == upstreamStart.offset())
-            offset--;
-        deleteText(text, offset, 1);
-    }
-    else if (downstreamStart.node()->isTextNode()) {
-        LOG(Editing,  "start node delete case 3");
-        TextImpl *text = static_cast<TextImpl *>(downstreamStart.node());
-        int endOffset = text == upstreamEnd.node() ? upstreamEnd.offset() : text->length();
-        if (endOffset > downstreamStart.offset()) {
-            deleteText(text, downstreamStart.offset(), endOffset - downstreamStart.offset());
+
+    if (startNode == downstreamEnd.node()) {
+        // handle delete in one node
+        if (!startNode->renderer() || 
+            (startOffset <= startNode->caretMinOffset() && downstreamEnd.offset() >= startNode->caretMaxOffset())) {
+            // just delete
+            removeNode(startNode);
+        }
+        else {
+            // in a text node that needs to be trimmed
+            TextImpl *text = static_cast<TextImpl *>(startNode);
+            deleteText(text, startOffset, downstreamEnd.offset() - startOffset);
+            trailingValid = false;
         }
     }
     else {
-        // we have clipped the end of a non-text element
-        // the offset must be 1 here. if it is, do nothing and move on.
-        LOG(Editing,  "start node delete case 4");
-        ASSERT(downstreamStart.offset() == 1);
-    }
-
-    if (!onlyWhitespace && downstreamStart.node() != upstreamEnd.node()) {
-        // work on intermediate nodes
-        while (n != upstreamEnd.node()) {
-            NodeImpl *d = n;
-            n = n->nextNodeConsideringAtomicNodes();
-            if (d->renderer() && d->renderer()->isEditable())
-                removeNodeAndPrune(d, startBlock);
-            // Fix up ending position if the prune operation removed the position's node from the document
-            if (!endingPosition.node()->inDocument())
-                endingPosition = Position(n, n->caretMinOffset());
+        NodeImpl *node = startNode;
+        
+        if (startOffset > 0) {
+            // in a text node that needs to be trimmed
+            TextImpl *text = static_cast<TextImpl *>(node);
+            deleteText(text, startOffset, text->length() - startOffset);
+            node = node->traverseNextNode();
         }
         
-        // work on end node
-        ASSERT(n == upstreamEnd.node());
-        if (endCompletelySelected) {
-            removeNodeAndPrune(upstreamEnd.node(), startBlock);
-            // Fix up ending position if the prune operation removed the position's node from the document
-            if (!endingPosition.node()->inDocument())
-                endingPosition = downstreamEnd;
-        }
-        else if (upstreamEnd.node()->isTextNode()) {
-            if (upstreamEnd.offset() > 0) {
-                TextImpl *text = static_cast<TextImpl *>(upstreamEnd.node());
-                deleteText(text, 0, upstreamEnd.offset());
+        // handle deleting all nodes that are completely selected
+        while (node && node != downstreamEnd.node()) {
+            if (!downstreamEnd.node()->isAncestor(node)) {
+                NodeImpl *nextNode = node->traverseNextSibling();
+                removeNode(node);
+                node = nextNode;
+            }
+            else {
+                NodeImpl *n = node->lastChild();
+                while (n && n->lastChild())
+                    n = n->lastChild();
+                if (n == downstreamEnd.node() && downstreamEnd.offset() >= downstreamEnd.node()->caretMaxOffset()) {
+                    NodeImpl *nextNode = node->traverseNextSibling();
+                    removeNode(node);
+                    node = nextNode;
+                } 
+                else {
+                    node = node->traverseNextNode();
+                }
             }
         }
-        else {
-            // we have clipped the beginning of a non-text element
-            // the offset must be 0 here. if it is, do nothing and move on.
-            ASSERT(downstreamStart.offset() == 0);
+
+        if (upstreamEnd.node() != startNode && upstreamEnd.node()->inDocument() && upstreamEnd.offset() >= upstreamEnd.node()->caretMinOffset()) {
+            // in a text node that needs to be trimmed
+            // offset must be less than the max offset, otherwise it would have been deleted in the while
+            // loop just above.
+            ASSERT(upstreamEnd.offset() < upstreamEnd.node()->caretMaxOffset());
+            TextImpl *text = static_cast<TextImpl *>(upstreamEnd.node());
+            if (upstreamEnd.offset() > 0) {
+                deleteText(text, 0, upstreamEnd.offset());
+                trailingValid = false;
+            }
+            if (!upstreamStart.node()->inDocument())
+                endingPosition = Position(text, 0);
         }
     }
-
-    // Do block merge if start and end of selection are in different blocks
-    // and the blocks are siblings. This is a first cut at this rule arrived
-    // at by doing a bunch of edits and settling on the behavior that made
-    // the most sense. This could change in the future as we get more
-    // experience with how this should behave.
-    if (startBlock != endBlock && startBlockEndBlockAreSiblings) {
+    
+    // Do block merge if start and end of selection are in different blocks.
+    if (endBlock != startBlock && endBlock->inDocument()) {
         LOG(Editing,  "merging content to start block");
         NodeImpl *node = endBlock->firstChild();
         while (node) {
@@ -1489,20 +1110,66 @@ void DeleteSelectionCommandImpl::doApply()
             removeNode(moveNode);
             appendNode(moveNode, startBlock);
         }
+        removeNode(endBlock);
+    }
+      
+    // Figure out where the end position should be
+    if (endingPosition.notEmpty())
+        goto FixupWhitespace;
+
+    endingPosition = upstreamStart;
+    if (endingPosition.node()->inDocument())
+        goto FixupWhitespace;
+    
+    endingPosition = downstreamEnd;
+    if (endingPosition.node()->inDocument())
+        goto FixupWhitespace;
+
+    endingPosition = Position(startBlock, 0);
+    if (endingPosition.node()->inDocument())
+        goto FixupWhitespace;
+
+    endingPosition = Position(endBlock, 0);
+    if (endingPosition.node()->inDocument())
+        goto FixupWhitespace;
+
+    endingPosition = Position(document()->documentElement(), 0);
+
+    // Perform whitespace fixup
+    FixupWhitespace:
+
+    if (leading.notEmpty() || trailing.notEmpty())
+        document()->updateLayout();
+
+    debugPosition("endingPosition   ", endingPosition);
+    
+    if (leading.notEmpty() && !leading.isRenderedCharacter()) {
+        LOG(Editing, "replace leading");
+        TextImpl *textNode = static_cast<TextImpl *>(leading.node());
+        replaceText(textNode, leading.offset(), 1, nonBreakingSpaceString());
     }
 
-    if (adjustEndingPositionDownstream) {
-        LOG(Editing,  "adjust ending position downstream");
-        endingPosition = endingPosition.equivalentDownstreamPosition();
+    if (trailing.notEmpty()) {
+        if (trailingValid) {
+            if (!trailing.isRenderedCharacter()) {
+                LOG(Editing, "replace trailing [valid]");
+                TextImpl *textNode = static_cast<TextImpl *>(trailing.node());
+                replaceText(textNode, trailing.offset(), 1, nonBreakingSpaceString());
+            }
+        }
+        else {
+            Position pos = endingPosition.downstream(StayInBlock);
+            pos = Position(pos.node(), pos.offset() - 1);
+            if (isWS(pos) && !pos.isRenderedCharacter()) {
+                LOG(Editing, "replace trailing [invalid]");
+                TextImpl *textNode = static_cast<TextImpl *>(pos.node());
+                replaceText(textNode, pos.offset(), 1, nonBreakingSpaceString());
+                endingPosition = pos;
+            }
+        }
     }
 
-    // Fall back to the start block if the ending position is not in the document.
-    if (!endingPosition.node()->inDocument())
-        endingPosition = Position(startBlock, 0);
-    debugPosition("ending position:     ", endingPosition);
     setEndingSelection(endingPosition);
-
-    LOG(Editing, "-----------------------------------------------------\n");
 }
 
 //------------------------------------------------------------------------------------------
@@ -1513,6 +1180,7 @@ DeleteTextCommandImpl::DeleteTextCommandImpl(DocumentImpl *document, TextImpl *n
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);
+    ASSERT(m_offset < (long)m_node->length());
     ASSERT(m_count >= 0);
     
     m_node->ref();
@@ -1573,7 +1241,7 @@ void InputNewlineCommandImpl::insertNodeAfterPosition(NodeImpl *node, const Posi
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
     // the BR *after* the block.
-    Position upstream(pos.equivalentUpstreamPosition());
+    Position upstream(pos.upstream(StayInBlock));
     NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
     if (cb == pos.node())
         appendNode(node, cb);
@@ -1586,7 +1254,7 @@ void InputNewlineCommandImpl::insertNodeBeforePosition(NodeImpl *node, const Pos
     // Insert the BR after the caret position. In the case the
     // position is a block, do an append. We don't want to insert
     // the BR *before* the block.
-    Position upstream(pos.equivalentUpstreamPosition());
+    Position upstream(pos.upstream(StayInBlock));
     NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
     if (cb == pos.node())
         appendNode(node, cb);
@@ -1597,6 +1265,8 @@ void InputNewlineCommandImpl::insertNodeBeforePosition(NodeImpl *node, const Pos
 void InputNewlineCommandImpl::doApply()
 {
     deleteSelection();
+    deleteUnrenderedText(endingSelection().start());
+    
     Selection selection = endingSelection();
 
     int exceptionCode = 0;
@@ -1610,7 +1280,7 @@ void InputNewlineCommandImpl::doApply()
     if (typingStyle && typingStyle->length() > 0)
         nodeToInsert = applyTypingStyle(breakNode);
     
-    Position pos(selection.start().equivalentDownstreamPosition());
+    Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEndOfBlock = pos.isLastRenderedPositionInEditableBlock();
     
@@ -1638,12 +1308,28 @@ void InputNewlineCommandImpl::doApply()
         // Split a text node
         LOG(Editing, "input newline case 3");
         ASSERT(pos.node()->isTextNode());
+        
+        // See if there is trailing whitespace we need to consider
+        // Note: leading whitespace just works. Blame the web.
+        Position trailing = pos.downstream(StayInBlock).trailingWhitespacePosition();
+
+        // Do the split
         TextImpl *textNode = static_cast<TextImpl *>(pos.node());
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
-        deleteText(textNode, 0, selection.start().offset());
+        deleteText(textNode, 0, pos.offset());
         insertNodeBefore(textBeforeNode, textNode);
         insertNodeBefore(nodeToInsert, textNode);
-        setEndingSelection(Position(textNode, 0));
+        Position endingPosition = Position(textNode, 0);
+        
+        // Handle whitespace that occurs after the split
+        document()->updateLayout();
+        if (trailing.notEmpty() && !endingPosition.isRenderedCharacter()) {
+            // Clear out all whitespace and insert one non-breaking space
+            deleteUnrenderedText(endingPosition);
+            insertText(textNode, 0, nonBreakingSpaceString());
+        }
+        
+        setEndingSelection(endingPosition);
     }
 }
 
@@ -1703,9 +1389,9 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
     
     Position pos = selection.start();
     if (adjustDownstream)
-        pos = pos.equivalentDownstreamPosition();
+        pos = pos.downstream(StayInBlock);
     else
-        pos = pos.equivalentUpstreamPosition();
+        pos = pos.upstream(StayInBlock);
     
     if (!pos.node()->isTextNode()) {
         NodeImpl *textNode = document()->createEditingTextNode("");
@@ -1751,7 +1437,7 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
             }
             
             TextImpl *editingTextNode = document()->createEditingTextNode("");
-            NodeImpl *node = endingSelection().start().equivalentUpstreamPosition().node();
+            NodeImpl *node = endingSelection().start().upstream(StayInBlock).node();
             insertNodeAfter(applyTypingStyle(editingTextNode), node);
             pos = Position(editingTextNode, 0);
         }
@@ -1762,13 +1448,13 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
 void InputTextCommandImpl::execute(const DOMString &text)
 {
     Selection selection = endingSelection();
-    bool adjustDownstream = selection.start().isFirstRenderedPositionOnLine();
+    bool adjustDownstream = selection.start().downstream(StayInBlock).isFirstRenderedPositionOnLine();
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == Selection::RANGE)
         deleteSelection();
-    else
-        deleteCollapsibleWhitespace();
+    
+    deleteUnrenderedText(endingSelection().start());
     
     // Make sure the document is set up to receive text
     Position pos = prepareForTextInsertion(adjustDownstream);
@@ -1818,7 +1504,7 @@ void InputTextCommandImpl::insertSpace(TextImpl *textNode, unsigned long offset)
         // By checking the character at the downstream position, we can
         // check if there is a rendered WS at the caret
         Position pos(textNode, offset);
-        Position downstream = pos.equivalentDownstreamPosition();
+        Position downstream = pos.downstream();
         if (downstream.offset() < (long)text.length() && isWS(text[downstream.offset()]))
             count--; // leave this WS in
         if (count > 0)
@@ -2030,8 +1716,6 @@ void ReplaceSelectionCommandImpl::doApply()
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.state() == Selection::RANGE)
         deleteSelection();
-    else
-        deleteCollapsibleWhitespace();
     
     selection = endingSelection();
     ASSERT(!selection.isEmpty());
@@ -2041,7 +1725,7 @@ void ReplaceSelectionCommandImpl::doApply()
         ASSERT(!lastChild);
     } else if (firstChild == lastChild && firstChild->isTextNode()) {
         // Simple text paste. Treat as if the text were typed.
-        Position upstreamStart(selection.start().equivalentUpstreamPosition());
+        Position upstreamStart(selection.start().upstream(StayInBlock));
         inputText(static_cast<TextImpl *>(firstChild)->data());
         if (m_selectReplacement) {
             // Select what was inserted.
@@ -2289,45 +1973,6 @@ void RemoveNodeCommandImpl::doUnapply()
 }
 
 //------------------------------------------------------------------------------------------
-// RemoveNodeAndPruneCommandImpl
-
-RemoveNodeAndPruneCommandImpl::RemoveNodeAndPruneCommandImpl(DocumentImpl *document, NodeImpl *pruneNode, NodeImpl *stopNode)
-    : CompositeEditCommandImpl(document), m_pruneNode(pruneNode), m_stopNode(stopNode)
-{
-    ASSERT(m_pruneNode);
-    m_pruneNode->ref();
-    if (m_stopNode)
-        m_stopNode->ref();
-}
-
-RemoveNodeAndPruneCommandImpl::~RemoveNodeAndPruneCommandImpl()
-{
-    m_pruneNode->deref();
-    if (m_stopNode)
-        m_stopNode->deref();
-}
-
-int RemoveNodeAndPruneCommandImpl::commandID() const
-{
-    return RemoveNodeAndPruneCommandID;
-}
-
-void RemoveNodeAndPruneCommandImpl::doApply()
-{
-    NodeImpl *editableBlock = m_pruneNode->enclosingBlockFlowElement();
-    NodeImpl *pruneNode = m_pruneNode;
-    NodeImpl *node = pruneNode->previousNodeConsideringAtomicNodes();
-    removeNode(pruneNode);
-    while (1) {
-        if (node == m_stopNode || editableBlock != node->enclosingBlockFlowElement() || !shouldPruneNode(node))
-            break;
-        pruneNode = node;
-        node = node->previousNodeConsideringAtomicNodes();
-        removeNode(pruneNode);
-    }
-}
-
-//------------------------------------------------------------------------------------------
 // RemoveNodePreservingChildrenCommandImpl
 
 RemoveNodePreservingChildrenCommandImpl::RemoveNodePreservingChildrenCommandImpl(DocumentImpl *document, NodeImpl *node)
@@ -2571,7 +2216,7 @@ void TypingCommandImpl::issueCommandForDeleteKey()
         if (pos.inRenderedContent())
             selectionToDelete = Selection(pos.previousCharacterPosition(), pos);
         else
-            selectionToDelete = Selection(pos.equivalentUpstreamPosition().previousCharacterPosition(), pos.equivalentDownstreamPosition());
+            selectionToDelete = Selection(pos.upstream(StayInBlock).previousCharacterPosition(), pos.downstream());
     }
     deleteSelection(selectionToDelete);
     typingAddedToOpenCommand();
@@ -2588,7 +2233,6 @@ void TypingCommandImpl::deleteKeyPressed()
 // right thing, but less efficiently and with the cost of more
 // objects.
     issueCommandForDeleteKey();
-    typingAddedToOpenCommand();
 #if 0    
     if (m_cmds.count() == 0) {
         issueCommandForDeleteKey();

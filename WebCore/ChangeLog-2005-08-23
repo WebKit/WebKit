@@ -1,3 +1,62 @@
+2004-08-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Rewrite of the command that deletes a selection. I deleted great 
+        big swaths of bug-ridden code to accomplish this and replaced it
+        with code that is much cleaner and smarter.
+        
+        Also, renamed equivalentUpstreamPosition and equivalentDownstreamPosition to
+        upstream to downstream, respectively.
+        
+        Added a couple of new helper methods.
+        
+        * khtml/editing/htmlediting.cpp: DeleteCollapsibleWhitespaceCommand and
+        RemoveNodeAndPruneCommand now obsolete. A huge win.
+        * khtml/editing/htmlediting.h: Ditto.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::debugPosition): Fix printf which had a placeholder, but no argument passed in the varargs.
+        (khtml::CompositeEditCommandImpl::deleteUnrenderedText): New helper. Much simplified and cleaner
+        version of 
+        (khtml::ApplyStyleCommandImpl::doApply): upstream/downstream name change
+        (khtml::ApplyStyleCommandImpl::nodeFullySelected):  upstream/downstream name change
+        (khtml::DeleteSelectionCommandImpl::doApply):  upstream/downstream name change
+        (khtml::DeleteTextCommandImpl::DeleteTextCommandImpl): Add an assert to check that the
+        passed offset is less than the length of the text node.
+        (khtml::InputNewlineCommandImpl::insertNodeAfterPosition): upstream/downstream name change
+        (khtml::InputNewlineCommandImpl::insertNodeBeforePosition): upstream/downstream name change
+        (khtml::InputNewlineCommandImpl::doApply): upstream/downstream name change
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): upstream/downstream name change
+        (khtml::InputTextCommandImpl::execute): upstream/downstream name change
+        (khtml::InputTextCommandImpl::insertSpace): upstream/downstream name change
+        (khtml::ReplaceSelectionCommandImpl::doApply): upstream/downstream name change
+        (khtml::TypingCommandImpl::issueCommandForDeleteKey): upstream/downstream name change
+        (khtml::TypingCommandImpl::deleteKeyPressed):
+        * khtml/editing/htmlediting_impl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousWordBoundary):
+        (DOM::Position::nextWordBoundary):
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        (DOM::Position::inRenderedText): Add null check.
+        (DOM::Position::isRenderedCharacter): New helper.
+        (DOM::isWS): New helper in this file.
+        (DOM::Position::leadingWhitespacePosition): New helper. Factored out from htmlediting_impl.cpp.
+        (DOM::Position::trailingWhitespacePosition): Ditto.
+        (DOM::Position::debugPosition): Add null check.
+        * khtml/xml/dom_position.h:
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::toRange): upstream/downstream name change
+        (DOM::Selection::validate): upstream/downstream name change
+        (DOM::Selection::debugPosition): upstream/downstream name change
+        * layout-tests/editing/deleting/delete-block-contents-003-expected.txt: Updated tests with new expected results.
+        * layout-tests/editing/deleting/delete-contiguous-ws-001-expected.txt: Ditto.
+        * layout-tests/editing/deleting/delete-selection-001-expected.txt: Ditto.
+        * layout-tests/editing/deleting/delete-trailing-ws-001-expected.txt: Ditto.
+        * layout-tests/editing/inserting/insert-br-case1-expected.txt: Ditto.
+        * layout-tests/editing/inserting/insert-br-case2-expected.txt: Ditto.
+        * layout-tests/editing/style/style-3681552-fix-002-expected.txt: Ditto.
+
 2004-08-17  Trey Matteson  <trey@apple.com>
 
 	Various spelling fixes.

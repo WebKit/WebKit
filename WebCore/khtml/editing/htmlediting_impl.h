@@ -142,8 +142,6 @@ protected:
     //
     void appendNode(DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
     void applyCommandToComposite(EditCommand &);
-    void deleteCollapsibleWhitespace();
-    void deleteCollapsibleWhitespace(const DOM::Selection &selection);
     void deleteKeyPressed();
     void deleteSelection();
     void deleteSelection(const DOM::Selection &selection);
@@ -157,13 +155,13 @@ protected:
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
     void removeNodeAttribute(DOM::ElementImpl *, int attribute);
     void removeNode(DOM::NodeImpl *removeChild);
-    void removeNodeAndPrune(DOM::NodeImpl *pruneNode, DOM::NodeImpl *stopNode=0);
     void removeNodePreservingChildren(DOM::NodeImpl *node);
     void replaceText(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText);
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, long offset);
 
     DOM::ElementImpl *applyTypingStyle(DOM::NodeImpl *) const;
+    void deleteUnrenderedText(const DOM::Position &pos);
 
     QValueList<EditCommand> m_cmds;
 };
@@ -226,29 +224,6 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// DeleteCollapsibleWhitespaceCommandImpl
-
-class DeleteCollapsibleWhitespaceCommandImpl : public CompositeEditCommandImpl
-{ 
-public:
-	DeleteCollapsibleWhitespaceCommandImpl(DOM::DocumentImpl *document);
-	DeleteCollapsibleWhitespaceCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
-    
-	virtual ~DeleteCollapsibleWhitespaceCommandImpl();
-	
-    virtual int commandID() const;
-
-	virtual void doApply();
-
-private:
-    DOM::Position deleteWhitespace(const DOM::Position &pos);
-
-    unsigned long m_charactersDeleted;
-    DOM::Selection m_selectionToCollapse;
-    bool m_hasSelectionToCollapse;
-};
-
-//------------------------------------------------------------------------------------------
 // DeleteSelectionCommandImpl
 
 class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
@@ -266,7 +241,6 @@ public:
 private:
     void deleteDownstreamWS(const DOM::Position &start);
     bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
-    void joinTextNodesWithSameStyle();
     DOM::CSSStyleDeclarationImpl *computeTypingStyle(const DOM::Position &pos) const;
 
     DOM::Selection m_selectionToDelete;
@@ -514,27 +488,6 @@ private:
     DOM::NodeImpl *m_parent;    
     DOM::NodeImpl *m_removeChild;
     DOM::NodeImpl *m_refChild;    
-};
-
-//------------------------------------------------------------------------------------------
-// RemoveNodeAndPruneCommandImpl
-
-class RemoveNodeAndPruneCommandImpl : public CompositeEditCommandImpl
-{
-public:
-	RemoveNodeAndPruneCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *pruneNode, DOM::NodeImpl *stopNode=0);
-	virtual ~RemoveNodeAndPruneCommandImpl();
-	
-    virtual int commandID() const;
-
-	virtual void doApply();
-
-    DOM::NodeImpl *pruneNode() const { return m_pruneNode; }
-    DOM::NodeImpl *stopNode() const { return m_stopNode; }
-
-private:
-    DOM::NodeImpl *m_pruneNode;
-    DOM::NodeImpl *m_stopNode;
 };
 
 //------------------------------------------------------------------------------------------

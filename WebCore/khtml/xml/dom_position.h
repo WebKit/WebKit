@@ -38,6 +38,8 @@ class NodeImpl;
 // NSSelectionAffinityDownstream = 1
 enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
+static const bool StayInBlock = true;
+
 class Position
 {
 public:
@@ -73,8 +75,11 @@ public:
     Position previousWordBoundary() const;
     Position nextWordBoundary() const;
 
-    Position equivalentUpstreamPosition() const;
-    Position equivalentDownstreamPosition() const;
+    Position leadingWhitespacePosition() const;
+    Position trailingWhitespacePosition() const;
+
+    Position upstream(bool stayInBlock=false) const;
+    Position downstream(bool stayInBlock=false) const;
     Position equivalentRangeCompliantPosition() const;
     Position equivalentShallowPosition() const;
     Position equivalentDeepPosition() const;
@@ -83,6 +88,7 @@ public:
     bool atStartOfRootEditableElement() const;
     bool inRenderedContent() const;
     bool inRenderedText() const;
+    bool isRenderedCharacter() const;
     bool rendersOnSameLine(const Position &pos) const;
     bool rendersInDifferentPosition(const Position &pos) const;
     bool isFirstRenderedPositionOnLine() const;
