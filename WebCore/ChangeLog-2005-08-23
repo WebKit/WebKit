@@ -1,3 +1,12 @@
+2003-02-28  David Hyatt  <hyatt@apple.com>
+
+	Exclude <BR>s from the text-dec check.  Really fixes 3185121.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_line.cpp:
+        (shouldDrawDecoration):
+
 2003-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
