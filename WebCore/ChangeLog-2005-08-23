@@ -3,7 +3,7 @@
         - one more small step to make -[KWQPageState dealloc] safer
 
         * kwq/KWQPageState.mm: (-[KWQPageState dealloc]): Only do the real detach() if the
-        document is already in the detached state; we don't want to detach twice.
+        document is already in the detached state; we don't want to detach prematurely.
 
 2003-12-23  John Sullivan  <sullivan@apple.com>
 
