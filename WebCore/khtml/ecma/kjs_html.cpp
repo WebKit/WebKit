@@ -3019,6 +3019,11 @@ Value KJS::HTMLCollection::getNamedItems(ExecState *exec, const Identifier &prop
 #ifdef KJS_VERBOSE
       kdDebug(6070) << "returning single node" << endl;
 #endif
+#if APPLE_CHANGES
+	  if (!node.isNull() && node.handle()->id() == ID_APPLET) {
+	    return getRuntimeObject(exec,node);
+	  }
+#endif
       return getDOMNode(exec,node);
     }
     else // multiple items, return a collection
