@@ -29,7 +29,8 @@
 
 @implementation WCPlugin
 
-- (BOOL)initializeWithPath:(NSString *)pluginPath{
+- (BOOL)initializeWithPath:(NSString *)pluginPath
+{
     NSFileManager *fileManager;
     NSDictionary *fileInfo;
     SInt16 resRef;
@@ -80,7 +81,8 @@
     return TRUE;
 }
 
-- (void)getPluginInfoForResourceFile:(SInt16)resRef{
+- (void)getPluginInfoForResourceFile:(SInt16)resRef
+{
     Str255 theString;
     char temp[300], description[600]; // I wish I didn't have to use these C strings
     NSMutableArray *mime; // mime is an array containing the mime type, extension(s) and descriptions for that mime type.
@@ -122,7 +124,8 @@
     [mimeTypes retain];
 }
 
-- (void)load{    
+- (void)load
+{    
     OSErr err;
     FSSpec spec;
     FSRef fref; 
@@ -140,7 +143,7 @@
         tempBundle = [NSBundle bundleWithPath:path];
         executableFile = [NSFileHandle fileHandleForReadingAtPath:[tempBundle executablePath]];
         data = [executableFile readDataOfLength:8];
-        if(!strcmp([data bytes], "Joy!peff")){
+        if(!memcmp([data bytes], "Joy!peff", 8)){
             isCFM = TRUE;
         }else{
             isCFM = FALSE;
@@ -259,7 +262,8 @@
     isLoaded = TRUE;
 }
 
-- (void)unload{
+- (void)unload
+{
     NPP_Shutdown();
     if(isBundle){
         CFBundleUnloadExecutable(bundle);
