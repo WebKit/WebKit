@@ -1,5 +1,21 @@
 2003-07-23  Dave Hyatt  <hyatt@apple.com>
 
+	Clean up the mess left by a couple of previous checkins.  I had
+	patched computeLength and computeLengthFloat to take a CSSStyleSelector,
+	but then I came up with a simpler solution that didn't require that
+	the selector be passed in as an argument.  I forgot, however, to revert
+	the functions back to their original forms.  This patch does that.
+	
+        Reviewed by john
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::computeLength):
+        (CSSPrimitiveValueImpl::computeLengthFloat):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssstyleselector.cpp:
+
+2003-07-23  Dave Hyatt  <hyatt@apple.com>
+
 	Temporary hack to ensure that the layout tests will not all
 	be failures if/when the layout tests regression gets fixed.
 	Will remove once we can run the tests.

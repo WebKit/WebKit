@@ -500,10 +500,9 @@ void CSSPrimitiveValueImpl::cleanup()
     m_type = 0;
 }
 
-int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics,
-                                          khtml::CSSStyleSelector* selector )
+int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics )
 {
-    double result = computeLengthFloat( style, devMetrics, selector );
+    double result = computeLengthFloat( style, devMetrics );
 #if APPLE_CHANGES
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -515,9 +514,9 @@ int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDevic
 }
 
 int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics, 
-                                          khtml::CSSStyleSelector* selector, double multiplier )
+                                          double multiplier )
 {
-    double result = multiplier * computeLengthFloat( style, devMetrics, selector );
+    double result = multiplier * computeLengthFloat( style, devMetrics );
 #if APPLE_CHANGES
     // This conversion is imprecise, often resulting in values of, e.g., 44.99998.  We
     // need to go ahead and round if we're really close to the next integer value.
@@ -529,7 +528,7 @@ int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDevic
 }
 
 double CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics,
-                                                  khtml::CSSStyleSelector* selector, bool applyZoomFactor )
+                                                  bool applyZoomFactor )
 {
     unsigned short type = primitiveType();
 
@@ -543,7 +542,7 @@ double CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPa
     switch(type)
     {
     case CSSPrimitiveValue::CSS_EMS:
-        factor = (selector && applyZoomFactor) ?
+        factor = applyZoomFactor ?
           style->htmlFont().getFontDef().computedSize :
           style->htmlFont().getFontDef().specifiedSize;
         break;
