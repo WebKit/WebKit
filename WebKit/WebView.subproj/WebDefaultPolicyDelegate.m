@@ -9,7 +9,7 @@
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebAssertions.h>
 
@@ -35,7 +35,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 
 
 - (void)webView: (WebView *)wv decideContentPolicyForMIMEType:(NSString *)type
-				 andRequest:(WebRequest *)request
+				 andRequest:(NSURLRequest *)request
 				    inFrame:(WebFrame *)frame
 		           decisionListener:(WebPolicyDecisionListener *)listener;
 {
@@ -58,7 +58,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 }
 
 - (void)webView: (WebView *)wv decideNavigationPolicyForAction:(NSDictionary *)actionInformation 
-			     andRequest:(WebRequest *)request
+			     andRequest:(NSURLRequest *)request
 				inFrame:(WebFrame *)frame
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {
@@ -75,7 +75,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 }
 
 - (void)webView: (WebView *)wv decideNewWindowPolicyForAction:(NSDictionary *)actionInformation 
-			     andRequest:(WebRequest *)request
+			     andRequest:(NSURLRequest *)request
 			   newFrameName:(NSString *)frameName
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {

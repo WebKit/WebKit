@@ -9,7 +9,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
 
 #import <WebKit/WebDataSourcePrivate.h>
@@ -62,12 +62,12 @@
     [super dealloc];
 }
 
-- (void)startLoading:(WebRequest *)r
+- (void)startLoading:(NSURLRequest *)r
 {
     [resource loadWithDelegate:self];
 }
 
-- (BOOL)loadWithRequest:(WebRequest *)r
+- (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(resource == nil);
     
@@ -129,7 +129,7 @@
     return downloadDelegate;
 }
 
--(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
+-(NSURLRequest *)resource:(WebResource *)h willSendRequest:(NSURLRequest *)newRequest
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);

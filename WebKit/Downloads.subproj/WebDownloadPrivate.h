@@ -7,14 +7,14 @@
 
 #import <WebKit/WebDownload.h>
 
-@class WebRequest;
+@class NSURLRequest;
 @class WebResource;
 @class WebResponse;
 @class WebResourceDelegateProxy;
 
 @interface WebDownload (WebPrivate)
 + _downloadWithLoadingResource:(WebResource *)resource
-                       request:(WebRequest *)request
+                       request:(NSURLRequest *)request
                       response:(WebResponse *)response
                       delegate:(id)delegate
                          proxy:(WebResourceDelegateProxy *)proxy;

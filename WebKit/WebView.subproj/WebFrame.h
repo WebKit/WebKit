@@ -13,7 +13,7 @@
 @class WebError;
 @class WebFramePrivate;
 @class WebFrameView;
-@class WebRequest;
+@class NSURLRequest;
 
 /*!
     @class WebFrame
@@ -58,7 +58,7 @@
     @method loadRequest:
     @param request The web request to load.
 */
--(void)loadRequest:(WebRequest *)request;
+-(void)loadRequest:(NSURLRequest *)request;
 
 /*!
     @method dataSource

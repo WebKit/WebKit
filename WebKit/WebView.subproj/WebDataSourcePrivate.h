@@ -12,7 +12,7 @@
 @class WebHistoryItem;
 @class WebIconLoader;
 @class WebMainResourceClient;
-@class WebRequest;
+@class NSURLRequest;
 @class WebResponse;
 @class WebSubresourceClient;
 @class WebView;
@@ -32,16 +32,16 @@
     // This should only be used by the resourceLoadDelegate's
     // identifierForInitialRequest:fromDatasource: method.  It is
     // not guaranteed to remain unchanged, as requests are mutable.
-    WebRequest *originalRequest;
+    NSURLRequest *originalRequest;
     
     // A copy of the original request used to create the data source.
     // We have to copy the request because requests are mutable.
-    WebRequest *originalRequestCopy;
+    NSURLRequest *originalRequestCopy;
     
     // The 'working' request for this datasource.  It may be mutated
     // several times from the original request to include additional
     // headers, cookie information, canonicalization and redirects.
-    WebRequest *request;
+    NSURLRequest *request;
     
     WebResponse *response;
 
@@ -91,7 +91,7 @@
 
     // The last request that we checked click policy for - kept around
     // so we can avoid asking again needlessly.
-    WebRequest *lastCheckedRequest;
+    NSURLRequest *lastCheckedRequest;
 
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the
@@ -133,7 +133,7 @@
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;
 - (void)_setURL:(NSURL *)URL;
-- (void)_setRequest:(WebRequest *)request;
+- (void)_setRequest:(NSURLRequest *)request;
 - (void)_setResponse:(WebResponse *)response;
 - (void)_layoutChildren;
 - (void)_clearErrors;
@@ -162,11 +162,11 @@
 - (void)_finishedLoading;
 - (void)_receivedError:(WebError *)error complete:(BOOL)isComplete;
 - (void)_defersCallbacksChanged;
-- (WebRequest *)_originalRequest;
+- (NSURLRequest *)_originalRequest;
 - (NSDictionary *)_triggeringAction;
 - (void)_setTriggeringAction:(NSDictionary *)action;
-- (WebRequest *)_lastCheckedRequest;
-- (void)_setLastCheckedRequest:(WebRequest *)request;
+- (NSURLRequest *)_lastCheckedRequest;
+- (void)_setLastCheckedRequest:(NSURLRequest *)request;
 - (void)_setJustOpenedForTargetedLink:(BOOL)justOpened;
 - (BOOL)_justOpenedForTargetedLink;
 - (void)_setStoredInPageCache:(BOOL)f;

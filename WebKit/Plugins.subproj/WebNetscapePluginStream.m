@@ -10,12 +10,12 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResource.h>
 
 @implementation WebNetscapePluginStream
 
-- initWithRequest:(WebRequest *)theRequest
+- initWithRequest:(NSURLRequest *)theRequest
     pluginPointer:(NPP)thePluginPointer
        notifyData:(void *)theNotifyData
 {

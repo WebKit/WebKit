@@ -4,7 +4,7 @@
 */
 
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/WebResponse.h>
 
@@ -28,12 +28,12 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
     return sharedDelegate;
 }
 
-- webView: (WebView *)wv identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource
+- webView: (WebView *)wv identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
     return [[[NSObject alloc] init] autorelease];
 }
 
--(WebRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (WebRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
+-(NSURLRequest *)webView: (WebView *)wv resource:identifier willSendRequest: (NSURLRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
 {
     return newRequest;
 }

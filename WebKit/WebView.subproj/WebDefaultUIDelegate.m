@@ -4,7 +4,7 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebView.h>
@@ -29,7 +29,7 @@ static WebDefaultWindowOperationsDelegate *sharedDelegate = nil;
 }
 
 
-- (WebView *)webView: (WebView *)wv createWindowWithRequest:(WebRequest *)request;
+- (WebView *)webView: (WebView *)wv createWindowWithRequest:(NSURLRequest *)request;
 {
     return nil;
 }

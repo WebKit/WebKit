@@ -49,14 +49,14 @@ typedef struct {
 
 @interface WebPluginRequest : NSObject
 {
-    WebRequest *_request;
+    NSURLRequest *_request;
     NSString *_frameName;
     void *_notifyData;
 }
 
-- (id)initWithRequest:(WebRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData;
+- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData;
 
-- (WebRequest *)request;
+- (NSURLRequest *)request;
 - (NSString *)frameName;
 - (void *)notifyData;
 
@@ -1007,7 +1007,7 @@ typedef struct {
 
 @implementation WebBaseNetscapePluginView (WebNPPCallbacks)
 
-- (WebRequest *)requestWithURLCString:(const char *)URLCString
+- (NSURLRequest *)requestWithURLCString:(const char *)URLCString
 {
     if (!URLCString) {
         return nil;
@@ -1021,12 +1021,12 @@ typedef struct {
         return nil;
     }
     
-    return [WebRequest requestWithURL:URL];
+    return [NSURLRequest requestWithURL:URL];
 }
 
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
 {
-    WebRequest *request = [pluginRequest request];
+    NSURLRequest *request = [pluginRequest request];
     NSString *frameName = [pluginRequest frameName];
     void *notifyData = [pluginRequest notifyData];
 
@@ -1077,7 +1077,7 @@ typedef struct {
     }
 }
 
-- (NPError)loadRequest:(WebRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
+- (NPError)loadRequest:(NSURLRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
 {
     if (![request URL]) {
         return NPERR_INVALID_URL;
@@ -1111,7 +1111,7 @@ typedef struct {
 {
     LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URLCString, cTarget);
 
-    WebRequest *request = [self requestWithURLCString:URLCString];
+    NSURLRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
 
@@ -1119,7 +1119,7 @@ typedef struct {
 {
     LOG(Plugins, "NPN_GetURL: %s target: %s", URLCString, cTarget);
 
-    WebRequest *request = [self requestWithURLCString:URLCString];
+    NSURLRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:NULL];
 }
 
@@ -1163,7 +1163,7 @@ typedef struct {
         return NPERR_INVALID_PARAM;
     }
 
-    WebRequest *request = [self requestWithURLCString:URLCString];
+    NSURLRequest *request = [self requestWithURLCString:URLCString];
     [request setRequestMethod:@"POST"];
     
     if (allowHeaders) {
@@ -1279,7 +1279,7 @@ typedef struct {
 
 @implementation WebPluginRequest
 
-- (id)initWithRequest:(WebRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData
+- (id)initWithRequest:(NSURLRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData
 {
     [super init];
     _request = [request retain];
@@ -1295,7 +1295,7 @@ typedef struct {
     [super dealloc];
 }
 
-- (WebRequest *)request
+- (NSURLRequest *)request
 {
     return _request;
 }

@@ -11,7 +11,7 @@
 @class WebError;
 @class WebFrame;
 @class WebResource;
-@class WebRequest;
+@class NSURLRequest;
 @class WebResponse;
 
 @protocol WebDocumentRepresentation;
@@ -35,7 +35,7 @@
     @param request The request to use in creating a datasource.
     @result Returns an initialized WebDataSource.
 */
-- (id)initWithRequest:(WebRequest *)request;
+- (id)initWithRequest:(NSURLRequest *)request;
 
 /*!
     @method data
@@ -67,13 +67,13 @@
     @result Returns a reference to the original request that created the
     datasource.  This request will be unmodified by WebKit. 
 */
-- (WebRequest *)initialRequest;
+- (NSURLRequest *)initialRequest;
 
 /*!
     @method request
     @result Returns the request that was used to create this datasource.
 */
--(WebRequest *)request;
+-(NSURLRequest *)request;
 
 /*!
     @method response

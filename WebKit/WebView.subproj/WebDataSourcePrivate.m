@@ -34,7 +34,7 @@
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebHTTPRequest.h>
 
@@ -310,20 +310,20 @@
 
 - (void)_setURL:(NSURL *)URL
 {
-    WebRequest *newRequest = [_private->request copy];
+    NSURLRequest *newRequest = [_private->request copy];
     [_private->request release];
     [newRequest setURL:URL];
     _private->request = newRequest;
 }
 
-- (void)_setRequest:(WebRequest *)request
+- (void)_setRequest:(NSURLRequest *)request
 {
     // We should never be getting a redirect callback after the data
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
     ASSERT(!_private->committed);
 
-    WebRequest *oldRequest = _private->request;
+    NSURLRequest *oldRequest = _private->request;
     
     _private->request = [request retain];
 
@@ -638,7 +638,7 @@
     [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
-- (WebRequest *)_originalRequest
+- (NSURLRequest *)_originalRequest
 {
     return _private->originalRequestCopy;
 }
@@ -656,16 +656,16 @@
 }
 
 
-- (WebRequest *)_lastCheckedRequest
+- (NSURLRequest *)_lastCheckedRequest
 {
     // It's OK not to make a copy here because we know the caller
     // isn't going to modify this request
     return [[_private->lastCheckedRequest retain] autorelease];
 }
 
-- (void)_setLastCheckedRequest:(WebRequest *)request
+- (void)_setLastCheckedRequest:(NSURLRequest *)request
 {
-    WebRequest *oldRequest = _private->lastCheckedRequest;
+    NSURLRequest *oldRequest = _private->lastCheckedRequest;
     _private->lastCheckedRequest = [request copy];
     [oldRequest release];
 }

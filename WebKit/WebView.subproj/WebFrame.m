@@ -22,7 +22,7 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
 
@@ -94,16 +94,16 @@
     return [_private dataSource];
 }
 
-- (void)loadRequest:(WebRequest *)request
+- (void)loadRequest:(NSURLRequest *)request
 {
     WebFrameLoadType loadType;
 
     // note this copies request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    WebRequest *r = [newDataSource request];
+    NSURLRequest *r = [newDataSource request];
     [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
     if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
-        [r setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+        [r setCachePolicy:NSURLRequestReloadIgnoringCacheData];
         loadType = WebFrameLoadTypeSame;
     } else {
         loadType = WebFrameLoadTypeStandard;
@@ -137,8 +137,8 @@
 
     // initWithRequest copies the request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:[dataSource request]];
-    WebRequest *request = [newDataSource request];
-    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+    NSURLRequest *request = [newDataSource request];
+    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
 
     // If we're about to rePOST, set up action so the app can warn the user
     if ([[request requestMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {

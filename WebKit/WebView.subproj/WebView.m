@@ -455,7 +455,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 {
     NSString *URLString = [sender stringValue];
     
-    [[self mainFrame] loadRequest: [WebRequest requestWithURL: [NSURL URLWithString: URLString]]];
+    [[self mainFrame] loadRequest: [NSURLRequest requestWithURL: [NSURL URLWithString: URLString]]];
 }
 
 - (IBAction)goBack:(id)sender

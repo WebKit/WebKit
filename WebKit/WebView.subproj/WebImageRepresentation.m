@@ -10,7 +10,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 
 @implementation WebImageRepresentation
 

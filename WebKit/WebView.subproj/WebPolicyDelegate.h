@@ -12,7 +12,7 @@
 @class WebFrame;
 @class WebPolicyPrivate;
 @class WebResponse;
-@class WebRequest;
+@class NSURLRequest;
 
 
 /*!
@@ -117,7 +117,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
    on every redirect.
 */
 - (void)webView:(WebView *)webView decideNavigationPolicyForAction:(NSDictionary *)actionInformation
-                             andRequest:(WebRequest *)request
+                             andRequest:(NSURLRequest *)request
                                 inFrame:(WebFrame *)frame
                        decisionListener:(id<WebPolicyDecisionListener>)listener;
 
@@ -138,7 +138,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
      in its action. This is to avoid possible confusion about the modifiers.
 */
 - (void)webView:(WebView *)webView decideNewWindowPolicyForAction:(NSDictionary *)actionInformation
-                            andRequest:(WebRequest *)request
+                            andRequest:(NSURLRequest *)request
                           newFrameName:(NSString *)frameName
                       decisionListener:(id<WebPolicyDecisionListener>)listener;
 
@@ -151,7 +151,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @param listener The object to call when the decision is made
 */
 - (void)webView:(WebView *)webView decideContentPolicyForMIMEType:(NSString *)type
-                                 andRequest:(WebRequest *)request
+                                 andRequest:(NSURLRequest *)request
                                     inFrame:(WebFrame *)frame
                            decisionListener:(id<WebPolicyDecisionListener>)listener;
 

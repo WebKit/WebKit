@@ -10,17 +10,17 @@
 
 @class WebNetscapePluginEmbeddedView;
 @class WebResource;
-@class WebRequest;
+@class NSURLRequest;
 
 
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {
     WebNetscapePluginEmbeddedView *view;
     NSMutableData *resourceData;
-    WebRequest *_startingRequest;
+    NSURLRequest *_startingRequest;
 }
 
-- initWithRequest:(WebRequest *)theRequest
+- initWithRequest:(NSURLRequest *)theRequest
     pluginPointer:(NPP)thePluginPointer
        notifyData:(void *)theNotifyData;
 

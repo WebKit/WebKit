@@ -9,7 +9,7 @@
 
 @class WebDownloadPrivate;
 @class WebError;
-@class WebRequest;
+@class NSURLRequest;
 @class WebResponse;
 
 @protocol WebDownloadDecisionListener;
@@ -31,7 +31,7 @@
     @abstract Initializes a WebDownload object.
     @param request The request to download. Must not be nil.
 */
-- initWithRequest:(WebRequest *)request;
+- initWithRequest:(NSURLRequest *)request;
 
 /*!
     @method loadWithDelegate:
@@ -60,7 +60,7 @@
     @param download The download that just started downloading.
     @param request The request that the download started from.
  */
-- (void)download:(WebDownload *)download didStartFromRequest:(WebRequest *)request;
+- (void)download:(WebDownload *)download didStartFromRequest:(NSURLRequest *)request;
 
 /*!
     @method download:willSendRequest:
@@ -74,7 +74,7 @@
     @result The request to be used; either the request parameter or a replacement. If nil is returned,
     the download is cancelled.
 */
-- (WebRequest *)download:(WebDownload *)download willSendRequest:(WebRequest *)request;
+- (NSURLRequest *)download:(WebDownload *)download willSendRequest:(NSURLRequest *)request;
 
 /*!
     @method download:didReceiveResponse:

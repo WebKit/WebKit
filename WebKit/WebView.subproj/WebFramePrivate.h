@@ -14,7 +14,7 @@
 @class WebFrameBridge;
 @class WebFrameView;
 @class WebHistoryItem;
-@class WebRequest;
+@class NSURLRequest;
 @class WebPolicyDecisionListener;
 @class WebView;
 
@@ -70,7 +70,7 @@ typedef enum {
 
     WebPolicyDecisionListener *listener;
     // state we'll need to continue after waiting for the policy delegate's decision
-    WebRequest *policyRequest;
+    NSURLRequest *policyRequest;
     NSString *policyFrameName;
     id policyTarget;
     SEL policySelector;
@@ -124,12 +124,12 @@ typedef enum {
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
 
-- (void)_addExtraFieldsToRequest:(WebRequest *)request alwaysFromRequest: (BOOL)f;
+- (void)_addExtraFieldsToRequest:(NSURLRequest *)request alwaysFromRequest: (BOOL)f;
 
 
-- (void)_checkNewWindowPolicyForRequest:(WebRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 
-- (void)_checkNavigationPolicyForRequest:(WebRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
+- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 
 - (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
 
@@ -138,7 +138,7 @@ typedef enum {
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values;
 
-- (void)_loadRequest:(WebRequest *)request inFrameNamed:(NSString *)frameName;
+- (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
 
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory;
 - (void)_clientRedirectCancelled;

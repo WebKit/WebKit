@@ -13,7 +13,7 @@
 
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebHTTPRequest.h>
 
 #define WebIconLoaderWeeksWorthOfSeconds (60 * 60 * 24 * 7)
@@ -84,7 +84,7 @@
         return;
     }
     
-    WebRequest *request = [[WebRequest alloc] initWithURL:_private->URL];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:_private->URL];
     [request setPageNotFoundCacheLifetime:WebIconLoaderWeeksWorthOfSeconds];
     _private->handle = [[WebResource alloc] initWithRequest:request];
     [_private->handle loadWithDelegate:self];
@@ -108,7 +108,7 @@
     }
 }
 
--(WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)request
+-(NSURLRequest *)resource:(WebResource *)resource willSendRequest:(NSURLRequest *)request
 {
     return request;
 }

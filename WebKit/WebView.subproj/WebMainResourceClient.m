@@ -11,7 +11,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebMutableResponse.h>
 
@@ -91,7 +91,7 @@
     [self cancelWithError:[self interruptForPolicyChangeError]];
 }
 
--(void)continueAfterNavigationPolicy:(WebRequest *)_request formState:(WebFormState *)state
+-(void)continueAfterNavigationPolicy:(NSURLRequest *)_request formState:(WebFormState *)state
 {
     [[dataSource _controller] setDefersCallbacks:NO];
     if (!_request) {
@@ -99,7 +99,7 @@
     }
 }
 
--(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
+-(NSURLRequest *)resource:(WebResource *)h willSendRequest:(NSURLRequest *)newRequest
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
@@ -137,7 +137,7 @@
 -(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResponse *)r
 {
     [[dataSource _controller] setDefersCallbacks:NO];
-    WebRequest *req = [dataSource request];
+    NSURLRequest *req = [dataSource request];
 
     switch (contentPolicy) {
     case WebPolicyUse:
@@ -265,7 +265,7 @@
     [self receivedError:error];
 }
 
-- (void)startLoading:(WebRequest *)r
+- (void)startLoading:(NSURLRequest *)r
 {
     if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
 	[self resource:resource willSendRequest:r];
@@ -298,7 +298,7 @@
     delegate = theDelegate;
 }
 
-- (WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)request
+- (NSURLRequest *)resource:(WebResource *)resource willSendRequest:(NSURLRequest *)request
 {
     ASSERT(delegate);
     return [delegate resource:resource willSendRequest:request];

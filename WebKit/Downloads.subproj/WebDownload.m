@@ -21,7 +21,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/WebResponse.h>
 
@@ -55,7 +55,7 @@ typedef struct WebFSRefParam
     BOOL encounteredCloseError;
 
     WebResource *resource;
-    WebRequest *request;
+    NSURLRequest *request;
     WebResponse *response;
     WebResourceDelegateProxy *proxy;
 
@@ -77,7 +77,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 #pragma mark LOADING
 - (void)_downloadStarted;
 - (void)_downloadEnded;
-- (void)_setRequest:(WebRequest *)request;
+- (void)_setRequest:(NSURLRequest *)request;
 - (void)_setResponse:(WebResponse *)response;
 #pragma mark CREATING
 - (NSString *)_pathWithUniqueFilenameForPath:(NSString *)path;
@@ -158,7 +158,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @implementation WebDownload
 
-- initWithRequest:(WebRequest *)request
+- initWithRequest:(NSURLRequest *)request
 {
     ASSERT(request);
     
@@ -177,7 +177,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 }
 
 - _initWithLoadingResource:(WebResource *)resource
-                   request:(WebRequest *)request
+                   request:(NSURLRequest *)request
                   response:(WebResponse *)response
                   delegate:(id)delegate
                      proxy:(WebResourceDelegateProxy *)proxy
@@ -200,7 +200,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
 
     if ([_private->delegate respondsToSelector:@selector(download:willSendRequest:)]) {
-        WebRequest *request = [_private->delegate download:self willSendRequest:_private->request];
+        NSURLRequest *request = [_private->delegate download:self willSendRequest:_private->request];
         if (request != _private->request) {
             // If the request is altered, cancel the resource and start a new one.
             [self cancel];
@@ -228,7 +228,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 }
 
 + _downloadWithLoadingResource:(WebResource *)resource
-                       request:(WebRequest *)request
+                       request:(NSURLRequest *)request
                       response:(WebResponse *)response
                       delegate:(id)delegate
                          proxy:(WebResourceDelegateProxy *)proxy
@@ -303,7 +303,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
 }
 
-- (void)_setRequest:(WebRequest *)request
+- (void)_setRequest:(NSURLRequest *)request
 {
     if (_private->request != request) {
         [_private->request release];
@@ -319,9 +319,9 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
 }
 
--(WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)theRequest
+-(NSURLRequest *)resource:(WebResource *)resource willSendRequest:(NSURLRequest *)theRequest
 {
-    WebRequest *request = nil;
+    NSURLRequest *request = nil;
     
     if ([_private->delegate respondsToSelector:@selector(download:willSendRequest:)]) {
         request = [_private->delegate download:self willSendRequest:theRequest];

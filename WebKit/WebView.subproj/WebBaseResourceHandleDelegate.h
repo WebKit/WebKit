@@ -9,7 +9,7 @@
 @class WebDataSource;
 @class WebError;
 @class WebResource;
-@class WebRequest;
+@class NSURLRequest;
 @class WebResponse;
 
 @protocol WebResourceDelegate;
@@ -19,7 +19,7 @@
 @protected
     WebDataSource *dataSource;
     WebResource *resource;
-    WebRequest *request;
+    NSURLRequest *request;
 @private
     WebView *controller;
     WebResponse *response;
@@ -31,10 +31,10 @@
     BOOL defersCallbacks;
 }
 
-- (BOOL)loadWithRequest:(WebRequest *)request;
+- (BOOL)loadWithRequest:(NSURLRequest *)request;
 
 // this method exists only to be subclassed, don't call it directly
-- (void)startLoading:(WebRequest *)r;
+- (void)startLoading:(NSURLRequest *)r;
 
 - (void)setDataSource:(WebDataSource *)d;
 - (WebDataSource *)dataSource;

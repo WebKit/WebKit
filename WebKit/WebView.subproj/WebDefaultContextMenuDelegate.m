@@ -18,7 +18,7 @@
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 
 @implementation WebDefaultContextMenuDelegate
 
@@ -105,7 +105,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     linkURL = [element objectForKey:WebElementLinkURLKey];
 
     if (linkURL) {
-        if([WebResource canInitWithRequest:[WebRequest requestWithURL:linkURL]]){
+        if([WebResource canInitWithRequest:[NSURLRequest requestWithURL:linkURL]]){
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadLinkToDisk]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];
@@ -142,7 +142,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebView *controller = [webFrame webView];
     
-    WebRequest *request = [WebRequest requestWithURL:URL];
+    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
     if (referrer) {
 	[request setReferrer:referrer];

@@ -104,10 +104,10 @@
 {
     ASSERT(frame != nil);
 
-    WebRequest *request = nil;
+    NSURLRequest *request = nil;
 
     if (URL != nil && [URL length] > 0) {
-	request = [WebRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+	request = [NSURLRequest requestWithURL:[NSURL _web_URLWithString:URL]];
 	[request setReferrer:[self referrer]];
     }
 
@@ -281,7 +281,7 @@
     ASSERT(frame != nil);
     ASSERT(response != nil);
 
-    WebRequest *request = [[WebRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
     WebView *c = [frame webView];
     id delegate = [c resourceLoadDelegate];
     id _delegate = [c _resourceLoadDelegateForwarder];
@@ -302,7 +302,7 @@
 
 - (BOOL)isReloading
 {
-    return [[[self dataSource] request] requestCachePolicy] == WebRequestCachePolicyLoadFromOrigin;
+    return [[[self dataSource] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
 - (void)reportClientRedirectToURL:(NSString *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory
@@ -670,7 +670,7 @@ static BOOL loggedObjectCacheSize = NO;
 - (void)loadEmptyDocumentSynchronously
 {
     NSURL *url = [[NSURL alloc] initWithString:@""];
-    WebRequest *request = [[WebRequest alloc] initWithURL:url];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
     [frame loadRequest:request];
     [request release];
     [url release];

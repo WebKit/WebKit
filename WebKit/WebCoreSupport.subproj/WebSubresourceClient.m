@@ -13,7 +13,7 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceDelegate.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebResponse.h>
 
@@ -45,8 +45,8 @@
     
     [source _addSubresourceClient:client];
 
-    WebRequest *newRequest = [[WebRequest alloc] initWithURL:URL];
-    [newRequest setRequestCachePolicy:[[source request] requestCachePolicy]];
+    NSURLRequest *newRequest = [[NSURLRequest alloc] initWithURL:URL];
+    [newRequest setCachePolicy:[[source request] cachePolicy]];
     [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
     [newRequest setReferrer:referrer];
     
@@ -78,7 +78,7 @@
     [[dataSource _controller] _receivedError:error fromDataSource:dataSource];
 }
 
--(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
+-(NSURLRequest *)resource:(WebResource *)h willSendRequest:(NSURLRequest *)newRequest
 {
     // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on

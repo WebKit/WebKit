@@ -17,13 +17,13 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 
 @implementation WebDataSource
 
--(id)initWithRequest:(WebRequest *)request
+-(id)initWithRequest:(NSURLRequest *)request
 {
     self = [super init];
     if (!self) {
@@ -64,12 +64,12 @@
     return _private->webFrame;
 }
 
--(WebRequest *)initialRequest
+-(NSURLRequest *)initialRequest
 {
     return _private->originalRequest;
 }
 
--(WebRequest *)request
+-(NSURLRequest *)request
 {
     return _private->request;
 }

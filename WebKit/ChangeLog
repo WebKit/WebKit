@@ -1,3 +1,115 @@
+2003-03-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Changed WebRequest to NSURLRequest. Several other names,        
+        like some constants whose names were based on WebRequest,
+        changed as well.
+
+        * Downloads.subproj/WebDownload.h:
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload initWithRequest:]):
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]):
+        (+[WebDownload _downloadWithLoadingResource:request:response:delegate:proxy:]):
+        (-[WebDownload _setRequest:]):
+        (-[WebDownload resource:willSendRequest:]):
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]):
+        (-[WebIconLoader resource:willSendRequest:]):
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView requestWithURLCString:]):
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        (-[WebBaseNetscapePluginView getURLNotify:target:notifyData:]):
+        (-[WebBaseNetscapePluginView getURL:target:]):
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+        (-[WebPluginRequest initWithRequest:frameName:notifyData:]):
+        (-[WebPluginRequest request]):
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView viewDidMoveToWindow]):
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]):
+        (-[WebBridge isReloading]):
+        (-[WebBridge loadEmptyDocumentSynchronously]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient resource:willSendRequest:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate startLoading:]):
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]):
+        (-[WebBaseResourceHandleDelegate resource:willSendRequest:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithRequest:]):
+        (-[WebDataSource initialRequest]):
+        (-[WebDataSource request]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setURL:]):
+        (-[WebDataSource _setRequest:]):
+        (-[WebDataSource _originalRequest]):
+        (-[WebDataSource _lastCheckedRequest]):
+        (-[WebDataSource _setLastCheckedRequest:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate webView:contextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:]):
+        (-[WebDefaultPolicyDelegate webView:decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:identifierForInitialRequest:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate webView:resource:willSendRequest:fromDataSource:]):
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):
+        (-[WebFrame reload]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem]):
+        (-[WebFrame _loadItem:fromItem:withLoadType:]):
+        (-[WebFrame _loadRequest:triggeringAction:loadType:formState:]):
+        (-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]):
+        (-[WebFrame _checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]):
+        (-[WebFrame _continueAfterNewWindowPolicy:]):
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrame _continueAfterNavigationPolicy:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]):
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+        (-[WebFrame _continueLoadRequestAfterNewWindowPolicy:frameName:formState:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        (-[WebFrame _loadRequest:inFrameNamed:]):
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView concludeDragOperation:]):
+        * WebView.subproj/WebImageRepresentation.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterNavigationPolicy:formState:]):
+        (-[WebMainResourceClient resource:willSendRequest:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient startLoading:]):
+        (-[WebResourceDelegateProxy resource:willSendRequest:]):
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView takeStringURLFrom:]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _downloadURL:toDirectory:]):
+        (-[WebView _openNewWindowWithRequest:]):
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3081681 - text/calendar should be downloaded instead of displayed

@@ -31,7 +31,7 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebSynchronousResult.h>
@@ -121,7 +121,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 @end
 
 @interface WebFrame (ForwardDecls)
-- (void)_loadRequest:(WebRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState;
 
 - (NSDictionary *)_actionInformationForLoadType:(WebFrameLoadType)loadType isFormSubmission:(BOOL)isFormSubmission event:(NSEvent *)event originalURL:(NSURL *)URL;
 
@@ -267,7 +267,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 - (WebHistoryItem *)_createItem
 {
     WebDataSource *dataSrc = [self dataSource];
-    WebRequest *request = [dataSrc request];
+    NSURLRequest *request = [dataSrc request];
     NSURL *URL = [request URL];
     WebHistoryItem *bfItem;
 
@@ -1084,7 +1084,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];            
         }
         else {
-            WebRequest *request = [[WebRequest alloc] initWithURL:itemURL];
+            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:itemURL];
             [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
@@ -1102,11 +1102,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // This trick has a small bug (3123893) where we might find a cache hit, but then
                 // have the item vanish when we try to use it in the ensuing nav.  This should be
                 // extremely rare, but in that case the user will get an error on the navigation.
-                [request setRequestCachePolicy:WebRequestCachePolicyUseCacheDontLoad];
+                [request setCachePolicy:NSURLRequestReturnCacheDataDontLoad];
                 WebSynchronousResult *result = [WebResource sendSynchronousRequest:request];
                 if ([[result response] error]) {
                     // Not in WF cache
-                    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
                     action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:itemURL];
                 } else {
                     // We can use the cache, don't use navType=resubmit
@@ -1115,12 +1115,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             } else {
                 switch (loadType) {
                     case WebFrameLoadTypeReload:
-                        [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+                        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
                         break;
                     case WebFrameLoadTypeBack:
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeIndexedBackForward:
-                        [request setRequestCachePolicy:WebRequestCachePolicyUseCacheElseLoad];
+                        [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
                         break;
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
@@ -1208,7 +1208,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
-- (void)_loadRequest:(WebRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
+- (void)_loadRequest:(NSURLRequest *)request triggeringAction:(NSDictionary *)action loadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setTriggeringAction:action];
@@ -1289,7 +1289,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->listener release];
     _private->listener = nil;
 
-    WebRequest *request = _private->policyRequest;
+    NSURLRequest *request = _private->policyRequest;
     NSString *frameName = _private->policyFrameName;
     id target = _private->policyTarget;
     SEL selector = _private->policySelector;
@@ -1315,7 +1315,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [formState release];
 }
 
-- (void)_checkNewWindowPolicyForRequest:(WebRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
+- (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
 {
     WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc]
         _initWithTarget:self action:@selector(_continueAfterNewWindowPolicy:)];
@@ -1338,7 +1338,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 -(void)_continueAfterNewWindowPolicy:(WebPolicyAction)policy
 {
-    WebRequest *request = [[_private->policyRequest retain] autorelease];
+    NSURLRequest *request = [[_private->policyRequest retain] autorelease];
     NSString *frameName = [[_private->policyFrameName retain] autorelease];
     id target = [[_private->policyTarget retain] autorelease];
     SEL selector = _private->policySelector;
@@ -1367,7 +1367,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 }
 
 
-- (void)_checkNavigationPolicyForRequest:(WebRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
+- (void)_checkNavigationPolicyForRequest:(NSURLRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
 {
     NSDictionary *action = [dataSource _triggeringAction];
     if (action == nil) {
@@ -1410,7 +1410,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 -(void)_continueAfterNavigationPolicy:(WebPolicyAction)policy
 {
-    WebRequest *request = [[_private->policyRequest retain] autorelease];
+    NSURLRequest *request = [[_private->policyRequest retain] autorelease];
     id target = [[_private->policyTarget retain] autorelease];
     SEL selector = _private->policySelector;
     WebFormState *formState = [[_private->policyFormState retain] autorelease];
@@ -1441,7 +1441,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:formState];
 }
 
--(void)_continueFragmentScrollAfterNavigationPolicy:(WebRequest *)request formState:(WebFormState *)formState
+-(void)_continueFragmentScrollAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
     if (!request) {
         return;
@@ -1480,7 +1480,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:dataSrc];
 }
 
-- (void)_addExtraFieldsToRequest:(WebRequest *)request alwaysFromRequest: (BOOL)f
+- (void)_addExtraFieldsToRequest:(NSURLRequest *)request alwaysFromRequest: (BOOL)f
 {
     [request setUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
@@ -1496,7 +1496,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 
 
--(void)_continueLoadRequestAfterNewWindowPolicy:(WebRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
+-(void)_continueLoadRequestAfterNewWindowPolicy:(NSURLRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
 {
     if (!request) {
         return;
@@ -1523,11 +1523,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     BOOL isFormSubmission = (values != nil);
 
-    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     [request setReferrer:referrer];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
-        [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+        [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     }
 
     // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
@@ -1650,9 +1650,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
     // as an action to be returned from the cache without submitting.
-    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: YES];
-    [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+    [request setCachePolicy:NSURLRequestReloadIgnoringCacheData];
     [request setRequestMethod:@"POST"];
     [request setRequestData:data];
     [request setContentType:contentType];
@@ -1749,8 +1749,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
 
-    WebRequest *request = [[dataSource request] copy];
-    [request setRequestCachePolicy:WebRequestCachePolicyUseCacheElseLoad];
+    NSURLRequest *request = [[dataSource request] copy];
+    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [request release];
     
@@ -1866,7 +1866,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->provisionalDataSource _startLoading];
 }
 
--(void)_continueLoadRequestAfterNavigationPolicy:(WebRequest *)request formState:(WebFormState *)formState
+-(void)_continueLoadRequestAfterNavigationPolicy:(NSURLRequest *)request formState:(WebFormState *)formState
 {
     if (!request) {
         [self _resetBackForwardListToCurrent];
@@ -1955,7 +1955,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
 }    
 
-- (void)_loadRequest:(WebRequest *)request inFrameNamed:(NSString *)frameName
+- (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName
 {
     if (frameName == nil) {
 	[self loadRequest:request];

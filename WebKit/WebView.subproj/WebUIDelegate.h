@@ -6,7 +6,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 
 /*!
     @protocol WebOpenPanelResultListener
@@ -50,7 +50,7 @@
     @param request The request to load.
     @result The WebView for the new window.
 */
-- (WebView *)webView:(WebView *)webView createWindowWithRequest:(WebRequest *)request;
+- (WebView *)webView:(WebView *)webView createWindowWithRequest:(NSURLRequest *)request;
 
 /*!
     @method showWindow

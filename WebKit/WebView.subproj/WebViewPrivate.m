@@ -30,7 +30,7 @@
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/NSURLRequest.h>
 
 #import <WebCore/WebCoreSettings.h>
 
@@ -248,7 +248,7 @@
 {
     ASSERT(URL);
 
-    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
     WebDownload *download = [[WebDownload alloc] initWithRequest:request];
     [request release];
     
@@ -307,7 +307,7 @@
     return frame;
 }
 
-- (WebView *)_openNewWindowWithRequest:(WebRequest *)request
+- (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request
 {
     id wd = [self windowOperationsDelegate];
     WebView *newWindowController = nil;

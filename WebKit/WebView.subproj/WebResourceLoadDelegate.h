@@ -8,7 +8,7 @@
 @class WebDataSource;
 @class WebPluginError;
 @class WebResponse;
-@class WebRequest;
+@class NSURLRequest;
 
 /*!
     @category  WebResourceLoadDelegate
@@ -36,7 +36,7 @@
     @result An identifier that will be passed back to the implementor for each callback.
     The identifier will be retained.
 */
-- webView:(WebView *)sender identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource;
+- webView:(WebView *)sender identifierForInitialRequest: (NSURLRequest *)request fromDataSource: (WebDataSource *)dataSource;
 
 /*!
     @method resource:willSendRequest:fromDataSource:
@@ -50,7 +50,7 @@
     @result Returns the request, which may be mutated by the implementor, although typically
     will be request.
 */
--(WebRequest *)webView:(WebView *)sender resource:identifier willSendRequest: (WebRequest *)request fromDataSource:(WebDataSource *)dataSource;
+-(NSURLRequest *)webView:(WebView *)sender resource:identifier willSendRequest: (NSURLRequest *)request fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveResponse:fromDataSource:
