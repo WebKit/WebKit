@@ -113,18 +113,13 @@ bool KJS::operator==(const KJS::CString& c1, const KJS::CString& c2)
   return (strcmp(c1.c_str(), c2.c_str()) == 0);
 }
 
-UChar UChar::null;
+UChar UChar::null((char)0);
 UString::Rep UString::Rep::null = { 0, 0, 0, 1 };
 UString::Rep UString::Rep::empty = { 0, 0, 0, 1 };
 UString UString::null;
 const int normalStatBufferSize = 4096;
 static char *statBuffer = 0;
 static int statBufferSize = 0;
-
-UChar::UChar(const UCharReference &c)
-    : uc( c.unicode() )
-{
-}
 
 UChar UChar::toLower() const
 {

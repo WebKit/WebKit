@@ -1,3 +1,12 @@
+2002-08-16  Darin Adler  <darin@apple.com>
+
+	Fix the Development build.
+
+        * kjs/object.cpp: Take out a use of ReferenceType.
+
+        * kjs/ustring.h: Added a bit more inlining.
+        * kjs/ustring.cpp: Moved the function out of here.
+
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
 	Final step of the Reference change. Completely separate Reference
