@@ -164,9 +164,13 @@ void TextIterator::advance()
             }
         }
 
+        if (m_node == m_endNode) {
+            return;
+        }
+
         NodeImpl *next = m_handledChildren ? 0 : m_node->firstChild();
         m_offset = 0;
-        if (!next && m_node != m_endNode) {
+        if (!next) {
             next = m_node->nextSibling();
             while (!next && m_node->parentNode()) {
                 m_node = m_node->parentNode();
@@ -177,7 +181,7 @@ void TextIterator::advance()
                     return;
                 }
                 if (m_node == m_endNode) {
-                    break;
+                    return;
                 }
                 next = m_node->nextSibling();
             }

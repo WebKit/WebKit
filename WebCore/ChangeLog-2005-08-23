@@ -1,8 +1,16 @@
+2004-09-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3805627> -[DOMRange _text] sometimes includes all text to the end of the document for certain ranges
+
+        * khtml/misc/khtml_text_operations.cpp: (khtml::TextIterator::advance):
+        Correctly handle the case when we are already on m_endNode. The concept here is that
+        m_endNode is a node you must never "leave" when iterating.
+
 === Safari-164 ===
 
 2004-09-17  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * layout-tests/editing/selection/unrendered-004-expected.txt: Updated expected results.
 
@@ -361,8 +369,6 @@
 
 2004-09-14  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * khtml/css/parser.cpp: Did not regenerate this file from parser.y before last checkin.
 
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
@@ -577,8 +583,6 @@
 
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added a couple new layout tests to cover recent changes.
 
         * layout-tests/editing/editing.js: Added some new functions to do by-word selection movement.
@@ -655,8 +659,6 @@
         do the right thing. Now calls CaretPosition equivalents.
 
 2004-09-13  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         This test was broken. The result is that it was not testing what it was supposed to 
         be testing. I fixed the test and updated the expected results.
@@ -1316,8 +1318,6 @@
 
 2004-09-02  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         * khtml/editing/htmlediting_impl.h: Fix some inconsistent use of whitespace. No code change.
 
 2004-09-02  Ken Kocienda  <kocienda@apple.com>
@@ -1532,8 +1532,6 @@
 
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added more editing layout tests.
 
         * layout-tests/editing/deleting/delete-tab-001-expected.txt: Added.
@@ -1570,8 +1568,6 @@
 
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-
         Checked in incorrect results for these tests. There are the right ones.
 
         * layout-tests/editing/deleting/collapse-whitespace-3587601-fix-expected.txt
@@ -1579,8 +1575,6 @@
 
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added more editing layout tests.
 
         * layout-tests/editing/deleting/collapse-whitespace-3587601-fix-expected.txt: Added.
@@ -1597,8 +1591,6 @@
 
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by me
-        
         Added more editing layout tests. Renamed some others.
 
         * layout-tests/editing/inserting/insert-br-001-expected.txt: Added.
@@ -1625,8 +1617,6 @@
         * layout-tests/editing/inserting/insert-text-with-newlines.html: Added.
 
 2004-08-31  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by me
 
         * layout-tests/editing/editing.js: Modified typeCharacterCommand so it can accept a character
         as an argument.
