@@ -574,10 +574,11 @@ void HTMLFrameSetElementImpl::attach()
 
 void HTMLFrameSetElementImpl::defaultEventHandler(EventImpl *evt)
 {
-    if (evt->isMouseEvent() && !noresize && m_render)
+    if (evt->isMouseEvent() && !noresize && m_render) {
         static_cast<khtml::RenderFrameSet *>(m_render)->userResize(static_cast<MouseEventImpl*>(evt));
+        evt->setDefaultHandled();
+    }
 
-    evt->setDefaultHandled();
     HTMLElementImpl::defaultEventHandler(evt);
 }
 

@@ -1,3 +1,16 @@
+2003-10-22  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3460652 -- REGRESSION (100-110+): Can't tab out of a 
+	frameset page
+
+        Reviewed by Darin (actually he made the change on my machine)
+
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameSetElementImpl::defaultEventHandler):
+	only set defaultHandled for the one event that we actually
+	handle (mouse event to resize frame borders); this was always
+	being set, hence preventing key events from being used elsewhere.
+
 2003-10-22  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3454067.  RenderText's repaint wasn't called because of recent changes to de-virtualize repaint.  Modified getAbsoluteRepaintRect() to return containing block's getAbsoluteRepaintRect().
