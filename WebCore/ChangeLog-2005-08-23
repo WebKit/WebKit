@@ -1,3 +1,13 @@
+2004-12-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - a garbage collection fix
+
+        * kwq/KWQFoundationExtras.h: (KWQCFAutorelease): Added a more-extensive comment and fixed the BUILDING_ON_PANTHER
+        #ifndef to use #if (in practice, either is OK).
+        * kwq/KWQKURL.mm: (KURL::getNSURL): Use KWQCFAutorelease instead of autorelease.
+
 2004-12-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3923255, specified percentage heights of divs with overflow auto inside tables not honored.

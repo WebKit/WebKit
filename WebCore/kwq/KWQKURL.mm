@@ -26,6 +26,7 @@
 #import "KWQKURL.h"
 
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
 #import "KWQMemArray.h"
@@ -1479,11 +1480,10 @@ NSURL *KURL::getNSURL() const
         // (e.g calls to NSURL -path). However, this function is not tolerant of illegal UTF-8 sequences, which
         // could either be a malformed string or bytes in a different encoding, like shift-jis, so we fall back
         // onto using ISO Latin 1 in those cases.
-        result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingUTF8, NULL, TRUE);
+        result = KWQCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingUTF8, NULL, TRUE));
         if (!result) {
-            result = (NSURL *)CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE);
+            result = KWQCFAutorelease(CFURLCreateAbsoluteURLWithBytes(NULL, bytes, urlString.length(), kCFStringEncodingISOLatin1, NULL, TRUE));
         }
-        [result autorelease];
     }
     else {
         result = [NSURL URLWithString:@""];

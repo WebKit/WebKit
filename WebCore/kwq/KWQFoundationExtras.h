@@ -60,15 +60,18 @@ static inline id KWQRetainNSRelease(id obj)
     return obj;
 }
 
-// CF objects need to be "made collectable" for autorelease to work
-// properly in GC
+// Use KWQCFAutorelease to return an object made by a CoreFoundation
+// "create" or "copy" function as an autoreleased and garbage collected
+// object. CF objects need to be "made collectable" for autorelease to work
+// properly under GC.
+
 static inline id KWQCFAutorelease(CFTypeRef obj)
 {
-#ifndef BUILDING_ON_PANTHER
+#if !BUILDING_ON_PANTHER
     CFMakeCollectable(obj);
 #endif
-    [(id) obj autorelease];
-    return (id) obj;
+    [(id)obj autorelease];
+    return (id)obj;
 }
 
 // Definitions for GC-specific methods for Panther.
