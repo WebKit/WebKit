@@ -892,6 +892,11 @@ function:
       $$.id = 0;
       $$.unit = Value::Function;
       $$.function = f;
+  } |
+  FUNCTION maybe_space error {
+      $$.id = 0;
+      $$.unit = Value::Function;
+      $$.function = 0;
   }
   ;
 /*

@@ -1,3 +1,16 @@
+2003-03-24  David Hyatt  <hyatt@apple.com>
+
+	Add error-handling case to deal with a common CSS malformation:
+
+	clip: rect( )
+
+	The bug is 3206171.
+	
+        Reviewed by darin
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
 2003-03-22  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
