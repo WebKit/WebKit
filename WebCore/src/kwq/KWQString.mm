@@ -1033,12 +1033,20 @@ QString &QString::replace(const QRegExp &, const QString &)
     return *this;
 }
 
-void QString::truncate(uint)
+void QString::truncate(uint newLen)
 {
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (s) {
+        if (newLen) {
+            CFIndex len = CFStringGetLength(s);
+            if (len && (newLen < len)) {
+                CFStringDelete(s, CFRangeMake(newLen, len - newLen));
+            }
+        } else {
+            CFRelease(s);
+            s = NULL;
+        }
+    }
 }
 
 void QString::fill(QChar, int)
