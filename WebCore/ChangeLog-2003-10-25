@@ -1,3 +1,15 @@
+2003-01-04  Trey Matteson  <trey@apple.com>
+
+	3098388 - Pressing the back button goes back two levels at allmusic.com	
+
+	When processing an assignment to document.location, allow items to be added
+	to history.  This parallels the existing treatment of window.location.href.
+
+        Reviewed by Richard, Darin
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::putValue):  Pass false for lockHistory arg of scheduleRedirection()
+
 2003-01-04  Richard Williamson   <rjw@apple.com>
 
         I checked in kjs_window.cpp by accident.  The only change
