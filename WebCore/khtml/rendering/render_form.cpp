@@ -1314,7 +1314,7 @@ void RenderTextArea::detach(RenderArena *arena)
 void RenderTextArea::handleFocusOut()
 {
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
-    if ( w && element()->m_dirtyvalue ) {
+    if ( w && element() && element()->m_dirtyvalue ) {
         element()->m_value = text();
         element()->m_dirtyvalue = false;
         element()->onChange();

@@ -2,6 +2,18 @@
 
         Reviewed by Dave.
 
+	 - fixed 3332460 - nil-deref in khtml::RenderWidget::eventFilter with onchange handler
+
+        * khtml/rendering/render_form.cpp:
+        (RenderTextArea::handleFocusOut): Check if we still have an
+	element. It could have gone away while handling an event that
+	replaced some or all of the document, and if we're gonna be
+	destroyed soon then there's no point doing this work anyway.
+
+2003-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
 	- fixed 3332460 - nil-deref in khtml::RenderWidget::eventFilter with onchange handler
 	
         * khtml/rendering/render_replaced.cpp:
