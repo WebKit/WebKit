@@ -61,9 +61,9 @@
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
 #define QSTRING_TO_NSSTRING(aString) \
-    (NSString *)(aString.getCFMutableString())
+    [[(NSString *)(aString.getCFMutableString()) retain] autorelease]
 #define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
-    [(NSString *)(aString.getCFMutableString()) substringToIndex: l]
+    [[[(NSString *)(aString.getCFMutableString()) substringToIndex: l] retain] autorelease]
 #define NSSTRING_TO_QSTRING(aString) \
     QString::fromCFMutableString((CFMutableStringRef)aString)
 #endif

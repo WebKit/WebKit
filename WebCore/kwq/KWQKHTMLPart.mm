@@ -109,32 +109,15 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData
 {
-    NSArray *byteBlocks;
     char *bytes;
-    int byteBlockCount;
-    id object;
-    id <WCByteBlock> byteBlock;
 
     if (!m_data) {
         m_data = [data retain];
     }
-
-    byteBlocks = nil;
-    if ([data respondsToSelector:@selector(byteBlocksForRange:)]) {
-        object = data;
-        byteBlocks = [object byteBlocksForRange:NSMakeRange(offset, length)];  
-    }
-    if (byteBlocks) {
-        byteBlockCount = [byteBlocks count];
-        for (int i = 0; i < byteBlockCount; i++) {
-            byteBlock = [byteBlocks objectAtIndex:i];
-            m_part->slotData(sender, (const char *)[byteBlock bytes], [byteBlock byteLength]);
-        }
-    }
-    else {
-        bytes = ((char *)[data bytes]) + offset;    
-        m_part->slotData(sender, (const char *)bytes, length);
-    }
+    
+    bytes = ((char *)[data bytes]) + offset;    
+    
+    m_part->slotData(sender, (const char *)bytes, length);
 }
 
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData
@@ -190,6 +173,7 @@ public:
 
     QString m_strSelectedURL;
     QString m_referrer;
+    QString m_documentSource;
 
     bool m_bMousePressed;
     DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
@@ -232,6 +216,8 @@ public:
         m_onlyLocalReferences = 0;
 
         m_frameNameId = 1;
+        
+        m_documentSource = "";
     }
 
     ~KHTMLPartPrivate()
@@ -421,7 +407,7 @@ void KHTMLPart::setJScriptEnabled( bool enable )
 
 bool KHTMLPart::jScriptEnabled() const
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
     return TRUE;
 }
 
@@ -651,8 +637,16 @@ void KHTMLPart::write(const char *str, int len)
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     totalWriteTime += thisTime;
-    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %e, total = %e\n", len, thisTime, totalWriteTime);
+    KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %f, total = %f\n", len, thisTime, totalWriteTime);
 #endif
+
+    d->m_documentSource += str;
+}
+
+
+QString KHTMLPart::documentSource()
+{
+    return d->m_documentSource;
 }
 
 
@@ -669,6 +663,7 @@ void KHTMLPart::write( const QString &str )
     Tokenizer* t = d->m_doc->tokenizer();
     if(t)
         t->write( str, true );
+    d->m_documentSource += str;
 }
 
 
