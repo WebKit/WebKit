@@ -474,9 +474,6 @@ static BOOL forceRealHitTest = NO;
 	return;
     }
 
-    // FIXME: This cursor change should probably be moved to WebCore.
-    [[NSCursor arrowCursor] set];
-    
     NSPoint mouseDownPoint = [_private->mouseDownEvent locationInWindow];
     float deltaX = ABS([event locationInWindow].x - mouseDownPoint.x);
     float deltaY = ABS([event locationInWindow].y - mouseDownPoint.y);

@@ -1,3 +1,17 @@
+2003-01-24  Trey Matteson  <trey@apple.com>
+
+	Chris pointed out a FIXME that led to a more contained way to make sure the cursor
+	is correct during and after image/text/URL dragging.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView draggedImage:endedAt:operation:]):  No need to reset the cursor at
+	the end of dragging.  WC deals with it.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _handleMouseDragged:]):  No need to set the cursor to arrow, WC
+	deals with it.
+
 2003-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

@@ -138,11 +138,6 @@ enum FrameBorderStyle {
 - (void)mouseMoved:(NSEvent *)event;
 - (void)mouseDragged:(NSEvent *)event;
 
-// Resets the cursor to arrow.  This is useful to flush everyone's idea of the current cursor,
-// so we aren't foiled by optimizations where a layer doesn't change the cursor because of its
-// (incorrect) idea of what the cursor already is.
-- (void)resetCursor;
-
 - (NSView *)nextKeyView;
 - (NSView *)previousKeyView;
 

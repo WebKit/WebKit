@@ -1,3 +1,17 @@
+2003-01-24  Trey Matteson  <trey@apple.com>
+
+	Chris pointed out a FIXME that led to a more contained way to make sure the cursor
+	is correct during and after image/text/URL dragging.
+
+        Reviewed by Chris.
+
+        * kwq/KWQKHTMLPart.h: Back out just-added resetCursor method.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Reset cursor to arrow when image drag starts.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:  Back out just-added resetCursor method, which is no
+	longer needed by WebKit.
+
 2003-01-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
