@@ -24,6 +24,7 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceHandlePrivate.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebCookieConstants.h>
 

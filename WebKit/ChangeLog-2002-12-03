@@ -1,3 +1,12 @@
+2002-10-01  Ken Kocienda  <kocienda@apple.com>
+
+        Implemented WebResourceRequest "category" design for extending a
+        request with protocol-specific data.
+
+        * WebCoreSupport.subproj/WebBridge.m: Now imports WebHTTPResourceRequest.h.
+        * WebCoreSupport.subproj/WebSubresourceClient.m: Ditto.
+        * WebView.subproj/WebMainResourceClient.m: Ditto.
+
 2002-10-01  Chris Blumenberg  <cblu@apple.com>
 
 	- Added debug drawing
