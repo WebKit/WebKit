@@ -1,3 +1,16 @@
+2005-02-23  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3959996> REGRESSION (Mail): cursor moves to beginning of document when click is past end
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): Skip blocks that are invisible or have no height when 
+        looking for a child to pass off to. And save away the last visible block with a height to pass off
+        to if there is no child at the right y-coordinate.
+
 2005-02-23  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

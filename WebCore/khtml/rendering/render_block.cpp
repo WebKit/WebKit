@@ -2606,8 +2606,9 @@ VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
     }
     
     // see if any child blocks exist at this y coordinate
+    RenderObject *lastVisibleChild = 0;
     for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
-        if (renderer->isFloatingOrPositioned())
+        if (renderer->height() == 0 || renderer->style()->visibility() != VISIBLE || renderer->isFloatingOrPositioned())
             continue;
         renderer->absolutePosition(absx, top);
         RenderObject *next = renderer->nextSibling();
@@ -2620,11 +2621,12 @@ VisiblePosition RenderBlock::positionForCoordinates(int _x, int _y)
         if (_y >= top && _y < bottom) {
             return renderer->positionForCoordinates(_x, _y);
         }
+        lastVisibleChild = renderer;
     }
 
-    // pass along to the first child
-    if (firstChild())
-        return firstChild()->positionForCoordinates(_x, _y);
+    // pass along to the last child we saw that had a height and is visible.
+    if (lastVisibleChild)
+        return lastVisibleChild->positionForCoordinates(_x, _y);
     
     // still no luck...return this render object's element and offset 0
     return VisiblePosition(element(), 0, DOWNSTREAM);
