@@ -56,6 +56,7 @@ public:
 template <class T> class QListIterator {
 public:
     QListIterator(const QList<T> &);
+    uint count() const;
     T *toFirst();
     T *toLast();
     T *current() const;
