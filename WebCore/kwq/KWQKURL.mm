@@ -365,7 +365,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 
         static QTextCodec UTF8Codec(kCFStringEncodingUTF8);
 
-        QCString decoded = (codec ? codec : &UTF8Codec)->fromUnicode(s)
+        QCString decoded = (codec ? codec : &UTF8Codec)->fromUnicode(s);
         strBuffer = strdup(decoded);
         str = strBuffer;
     }
