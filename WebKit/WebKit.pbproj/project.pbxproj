@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 36;
+	objectVersion = 38;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -213,6 +213,7 @@
 				F58BAB3B025036CA01C1A526,
 				9CAE9D080252A4130ECA16EA,
 				F59EAE400253C7EE018635CA,
+				F5883BE2025E5E9D01000102,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -225,6 +226,7 @@
 				F515C2B90238249C01C1A525,
 				F5B67131023EDF8901C1A525,
 				25B2A7C5025D0A880ECA149E,
+				F5883BDF025E5C6A01000102,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -255,6 +257,7 @@
 				F5F084C0024BDCA701CA1520,
 				F58BAB390250363E01C1A526,
 				F59EAE420253C8DE018635CA,
+				F5883BE3025E5E9D01000102,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -284,6 +287,7 @@
 				089C1666FE841158C02AAC07,
 				35F3577401986B740ACA1520,
 				F5B67130023EDF8901C1A525,
+				F5883BDE025E5C6A01000102,
 				25B2A7C4025D0A880ECA149E,
 			);
 			isa = PBXGroup;
@@ -1114,6 +1118,42 @@
 			settings = {
 			};
 		};
+		F5883BDE025E5C6A01000102 = {
+			isa = PBXFileReference;
+			name = nullplugin.tiff;
+			path = Resources/nullplugin.tiff;
+			refType = 4;
+		};
+		F5883BDF025E5C6A01000102 = {
+			fileRef = F5883BDE025E5C6A01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5883BE0025E5E9D01000102 = {
+			isa = PBXFileReference;
+			name = IFNullPluginView.h;
+			path = Plugins.subproj/IFNullPluginView.h;
+			refType = 4;
+		};
+		F5883BE1025E5E9D01000102 = {
+			isa = PBXFileReference;
+			name = IFNullPluginView.mm;
+			path = Plugins.subproj/IFNullPluginView.mm;
+			refType = 4;
+		};
+		F5883BE2025E5E9D01000102 = {
+			fileRef = F5883BE0025E5E9D01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5883BE3025E5E9D01000102 = {
+			fileRef = F5883BE1025E5E9D01000102;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F58BAB380250363E01C1A526 = {
 			isa = PBXFileReference;
 			name = IFLoadProgress.mm;
@@ -1284,6 +1324,8 @@
 			children = (
 				F5EBC45502134BC301CA1520,
 				F5EBC45602134BC301CA1520,
+				F5883BE0025E5E9D01000102,
+				F5883BE1025E5E9D01000102,
 			);
 			isa = PBXGroup;
 			name = Plugins;

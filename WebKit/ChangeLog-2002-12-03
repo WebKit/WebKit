@@ -1,3 +1,16 @@
+2002-04-05  Chris Blumenberg  <cblu@apple.com>
+
+	* Plugins.subproj/IFNullPluginView.h: Added.
+	* Plugins.subproj/IFNullPluginView.mm: Added.
+	 (-[IFNullPluginView initWithFrame:mimeType:arguments:]), (-[IFNullPluginView
+	findSuperview:]), (-[IFNullPluginView drawRect:]):
+	* Resources/nullplugin.tiff: Added.
+	* WebKit.pbproj/project.pbxproj:
+
+        An IFNullPluginView is now created when no plug-in for a requested
+        mime type is found. IFNullPluginView displays a null plug-in icon
+        and will eventually report this error to the WebController.
+
 2002-04-05  Richard Williamson  <rjw@apple.com>
 
         Back out some changes to lazily dealloc frame.

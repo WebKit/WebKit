@@ -33,7 +33,6 @@
 - initWithFrame: (NSRect) r plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
 @end
 
-
 static WCIFPluginMakeFunc WCIFPluginMake = NULL;
 
 void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func)
@@ -41,11 +40,23 @@ void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func)
     WCIFPluginMake = func;
 }
 
+@interface IFNullPluginView : NSObject
+- initWithFrame: (NSRect) r mimeType:(NSString *)mime arguments:(NSDictionary *)arguments;
+@end
+
+static WCIFNullPluginMakeFunc WCIFNullPluginMake = NULL;
+
+void WCSetIFNullPluginMakeFunc(WCIFNullPluginMakeFunc func)
+{
+    WCIFNullPluginMake = func;
+}
+
+
 
 WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, const QStringList &args)
 {
     NSMutableDictionary *arguments;
-    NSString *arg, *mimeType, *URL;
+    NSString *arg, *mime=nil, *URL;
     NSRange r1, r2, r3;
     WCPlugin *plugin;
     uint i;
@@ -66,18 +77,18 @@ WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, c
     if(serviceType.isNull()){
         plugin = [[WCPluginDatabase installedPlugins] getPluginForExtension:[URL pathExtension]];
         if(plugin != nil){
-            mimeType = [plugin mimeTypeForURL:URL];
+            mime = [plugin mimeTypeForURL:URL];
         }
     }else{
         plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
-        mimeType = QSTRING_TO_NSSTRING(serviceType);
+        mime = QSTRING_TO_NSSTRING(serviceType);
     }
+    
     if(plugin == nil){
-        //FIXME: Error dialog should be shown here
-        printf("Could not find plugin for mime: %s or URL: %s\n", serviceType.latin1(), url.latin1());
-        return;
+        setView(WCIFNullPluginMake(NSMakeRect(0,0,0,0), mime, arguments));
+    }else{
+        setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, URL, mime, arguments, NP_EMBED));
     }
-    setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, URL, mimeType, arguments, NP_EMBED));
 }
 
 WCPluginWidget::~WCPluginWidget()
@@ -86,6 +97,11 @@ WCPluginWidget::~WCPluginWidget()
 }
 
 void * WCIFPluginMakeFunction()
+{
+    return WCIFPluginMake;
+}
+
+void * WCIFNullPluginMakeFunction()
 {
     return WCIFPluginMake;
 }

@@ -1,3 +1,14 @@
+2002-04-05  Chris Blumenberg  <cblu@apple.com>
+
+	* src/kwq/WCPluginWidget.h:
+	* src/kwq/WCPluginWidget.mm: (WCSetIFNullPluginMakeFunc),
+	(WCPluginWidget::WCPluginWidget), (WCIFPluginMakeFunction),
+	(WCIFNullPluginMakeFunction):
+
+	An IFNullPluginView is now created when no plug-in for a requested
+	mime type is found. IFNullPluginView displays a null plug-in icon
+	and will eventually report this error to the WebController. 
+
 2002-04-05  Richard Williamson  <rjw@apple.com>
 
         Hacks to support:
