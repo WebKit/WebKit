@@ -1,3 +1,20 @@
+2003-08-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3344259 -- flipped image when copying from Safari in 1000s of colors mode
+
+        The workaround is to turn off the NSImage cache. Andrew says this won't have any
+        practical repercussions other than making the bug go away.
+        
+        Seems to have a side effect of speeding up the cvs-base page load test!
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithMIMEType:]): Set mode to NSImageCacheNever.
+        (-[WebImageRenderer initWithData:MIMEType:]): Ditto.
+        (-[WebImageRenderer initWithContentsOfFile:]): Ditto.
+        (-[WebImageRenderer _adjustSizeToPixelDimensions]): Don't set mode to NSImageCacheDefault.
+
 2003-08-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

@@ -43,9 +43,13 @@ static NSMutableSet *activeImageRenderers;
 {
     self = [super init];
     if (self != nil) {
+        // Work around issue with flipped images and TIFF by never using the image cache.
+        // See bug 3344259 and related bugs.
+        [self setCacheMode:NSImageCacheNever];
+
+        loadStatus = NSImageRepLoadStatusUnknownType;
         MIMEType = [MIME copy];
         isNull = YES;
-        loadStatus = NSImageRepLoadStatusUnknownType;
     }
     return self;
 }
@@ -54,12 +58,13 @@ static NSMutableSet *activeImageRenderers;
 {
     self = [super initWithData:data];
     if (self != nil) {
-        MIMEType = [MIME copy];
-        if ([data length] > 0)
-            isNull = NO;
-        else
-            isNull = YES;
+        // Work around issue with flipped images and TIFF by never using the image cache.
+        // See bug 3344259 and related bugs.
+        [self setCacheMode:NSImageCacheNever];
+
         loadStatus = NSImageRepLoadStatusUnknownType;
+        MIMEType = [MIME copy];
+        isNull = [data length] == 0;
     }
     return self;
 }
@@ -69,8 +74,11 @@ static NSMutableSet *activeImageRenderers;
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
     self = [super initWithContentsOfFile:imagePath];
-    if (self){
-        isNull = NO;
+    if (self != nil) {
+        // Work around issue with flipped images and TIFF by never using the image cache.
+        // See bug 3344259 and related bugs.
+        [self setCacheMode:NSImageCacheNever];
+
         loadStatus = NSImageRepLoadStatusUnknownType;
     }
     return self;
@@ -116,7 +124,6 @@ static NSMutableSet *activeImageRenderers;
     // Ignore any absolute size in the image and always use pixel dimensions.
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSSize size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
-    [self setCacheMode: NSImageCacheDefault];
     [imageRep setSize:size];
     [self setScalesWhenResized:YES];
     [self setSize:size];
