@@ -141,6 +141,8 @@
         return [[[WebBookmarkList alloc] init] autorelease];
     } else if (type == WebBookmarkTypeLeaf) {
         return [[[WebBookmarkLeaf alloc] init] autorelease];
+    } else if (type == WebBookmarkTypeProxy) {
+        return [[[WebBookmarkProxy alloc] init] autorelease];
     }
 
     return nil;
