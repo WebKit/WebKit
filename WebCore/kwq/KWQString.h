@@ -87,31 +87,31 @@ public:
 
     // member functions --------------------------------------------------------
 
-    QChar lower() const;
-    QChar upper() const;
+    ushort unicode() const;
+    uchar cell() const;
+    uchar row() const;
     char latin1() const;
     bool isNull() const;
-    bool isDigit() const;
     bool isSpace() const;
+    bool isDigit() const;
     bool isLetter() const;
     bool isLetterOrNumber() const;
     bool isPunct() const;
-    uchar cell() const;
-    uchar row() const;
+    QChar lower() const;
+    QChar upper() const;
     Direction direction() const;
     bool mirrored() const;
     QChar mirroredChar() const;
-    ushort unicode() const;
 
     // operators ---------------------------------------------------------------
 
-    friend int operator==(char, QChar);
-    friend int operator==(QChar, char);
-    friend int operator==(QChar, QChar);
-    friend int operator!=(QChar, QChar);
-    friend int operator!=(char, QChar);
-    friend int operator!=(QChar, char);
     operator char() const;
+    friend int operator==(QChar, QChar);
+    friend int operator==(QChar, char);
+    friend int operator==(char, QChar);
+    friend int operator!=(QChar, QChar);
+    friend int operator!=(QChar, char);
+    friend int operator!=(char, QChar);
 
     // data members ------------------------------------------------------------
 
