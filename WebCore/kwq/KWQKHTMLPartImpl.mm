@@ -468,7 +468,10 @@ void KWQKHTMLPartImpl::updatePolicyBaseURL()
 
 void KWQKHTMLPartImpl::setPolicyBaseURL(const DOM::DOMString &s)
 {
-    part->docImpl()->setPolicyBaseURL(s);
+    // XML documents will cause this to return null.  docImpl() is
+    // an HTMLdocument only. -dwh
+    if (part->docImpl())
+        part->docImpl()->setPolicyBaseURL(s);
     ConstFrameIt end = d->m_frames.end();
     for (ConstFrameIt it = d->m_frames.begin(); it != end; ++it) {
         ReadOnlyPart *subpart = (*it).m_part;

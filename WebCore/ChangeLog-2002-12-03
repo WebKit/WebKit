@@ -1,3 +1,14 @@
+2002-10-22  David Hyatt  <hyatt@apple.com>
+
+	Get XML files closer.  An XML doc is at least made.  No
+	parsing works yet though.
+	
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::setPolicyBaseURL):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setContentType:]):
+
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3023814 - contexual menus and dragging doesn't work for some images

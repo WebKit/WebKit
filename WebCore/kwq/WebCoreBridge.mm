@@ -763,6 +763,13 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return part->impl->selectionEndOffset();
 }
 
+- (void)setContentType:(NSString*)contentType
+{
+    KParts::URLArgs args( part->browserExtension()->urlArgs() );
+    args.serviceType = QString::fromNSString(contentType);
+    part->browserExtension()->setURLArgs(args);
+}
+
 - (void)setName:(NSString *)name
 {
     part->setName(QString::fromNSString(name));
