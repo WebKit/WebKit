@@ -412,8 +412,8 @@
     [[self _bridge] mouseDown:event];
 }
 
-#define DragStartXHysteresis  		2.0
-#define DragStartYHysteresis  		1.0
+#define DragStartXHysteresis  		5.0
+#define DragStartYHysteresis  		5.0
 
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
@@ -434,12 +434,12 @@
     float deltaX = ABS([event locationInWindow].x - _private->mouseDownPoint.x);
     float deltaY = ABS([event locationInWindow].y - _private->mouseDownPoint.y);
 
+    NSPoint point = [self convertPoint:_private->mouseDownPoint fromView:nil];
+    NSDictionary *element = [self _elementAtPoint: point];
+    NSURL *linkURL = [element objectForKey: WebContextMenuElementLinkURLKey];
+    NSURL *imageURL = [element objectForKey: WebContextMenuElementImageURLKey];
+    
     if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
-        NSPoint point = [self convertPoint:_private->mouseDownPoint fromView:nil];
-        NSDictionary *element = [self _elementAtPoint: point];
-        NSURL *linkURL = [element objectForKey: WebContextMenuElementLinkURLKey];
-        NSURL *imageURL = [element objectForKey: WebContextMenuElementImageURLKey];
-
         if(imageURL || linkURL){
             [_private->draggedURL release];
             
@@ -521,9 +521,10 @@
         }
     }
 
-    // Give khtml a crack at the event only if we haven't started
-    // a drag.
-    [[self _bridge] mouseDragged:event];
+    // Give khtml a crack at the event only if we haven't started,
+    // or potentially starated, a drag
+    if (!linkURL && !imageURL)
+        [[self _bridge] mouseDragged:event];
 }
 
 

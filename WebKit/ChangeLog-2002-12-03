@@ -1,3 +1,11 @@
+2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
+
+        Changed drag hysteresis to 5 and disallow selection initiation within
+        a link.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
 2002-09-12  Darin Adler  <darin@apple.com>
 
 	Prep work for fixes to the text encoding for subframes.
