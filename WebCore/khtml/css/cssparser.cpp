@@ -765,6 +765,11 @@ bool CSSParser::parseValue( int propId, bool important )
 	    valid_primitive = true;
 	break;
 
+    case CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:   // normal | match
+	if (id == CSS_VAL_NORMAL || id == CSS_VAL_MATCH)
+	    valid_primitive = true;
+	break;
+
     case CSS_PROP_TEXT_INDENT:          // <length> | <percentage> | inherit
     case CSS_PROP_PADDING_TOP:          //// <padding-width> | inherit
     case CSS_PROP_PADDING_RIGHT:        //   Which is defined as

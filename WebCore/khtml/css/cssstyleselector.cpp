@@ -2388,6 +2388,7 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         return;
     }
     break;
+    
 // uri || inherit
     case CSS_PROP_BACKGROUND_IMAGE:
         HANDLE_BACKGROUND_VALUE(backgroundImage, BackgroundImage, value)
@@ -2563,6 +2564,26 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
             break;
         }
         style->setKHTMLLineBreak(b);
+        break;
+    }
+
+    case CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
+    {
+        HANDLE_INHERIT_AND_INITIAL(matchNearestMailBlockquoteColor, MatchNearestMailBlockquoteColor)
+
+        if (!primitiveValue->getIdent()) return;
+
+        EMatchNearestMailBlockquoteColor c;
+        switch(primitiveValue->getIdent()) {
+        case CSS_VAL_NORMAL:
+            c = BCNORMAL;
+            break;
+        case CSS_VAL_MATCH:
+        default:
+            c = MATCH;
+            break;
+        }
+        style->setMatchNearestMailBlockquoteColor(c);
         break;
     }
 

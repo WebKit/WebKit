@@ -1133,6 +1133,15 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         }
         ASSERT_NOT_REACHED();
         return 0;
+    case CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR:
+        switch (style->matchNearestMailBlockquoteColor()) {
+            case khtml::BCNORMAL:
+                return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);
+            case khtml::MATCH:
+                return new CSSPrimitiveValueImpl(CSS_VAL_MATCH);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_Z_INDEX:
         if (style->hasAutoZIndex())
             return new CSSPrimitiveValueImpl(CSS_VAL_NORMAL);

@@ -201,6 +201,12 @@ static DOMString &blockPlaceholderClassString()
     return blockPlaceholderClassString;
 }
 
+static DOMString &matchNearestBlockquoteColorString()
+{
+    static DOMString matchNearestBlockquoteColorString = "match";
+    return matchNearestBlockquoteColorString;
+}
+
 static void derefNodesInList(QPtrList<NodeImpl> &list)
 {
     for (QPtrListIterator<NodeImpl> it(list); it.current(); ++it)
@@ -4278,16 +4284,24 @@ void ReplacementFragment::removeBlockquoteColorsIfNeeded(NodeImpl *node, CSSMuta
 {
     if (!node || !style)
         return;
+
+    // In either of the color-matching tests below, set the color to a pseudo-color that will
+    // make the content take on the color of the nearest-enclosing blockquote (if any) after
+    // being pasted in.
         
-    if (NodeImpl *blockquote = closestMailBlockquote(node)) {
+    if (NodeImpl *blockquote = nearestMailBlockquote(node)) {
         CSSComputedStyleDeclarationImpl *blockquoteStyle = Position(blockquote, 0).computedStyle();
         if (blockquoteStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR)) {
-            // This is not quite right.
-            // The speculation now is that we want to set the color here to a pseudo-color that would
-            // make the content take on the color of the nearest-enclosing blockquote (if any) after
-            // being pasted in. However, this is not entirely clear, and requires more study.
-            // For now, just remove the blockquoted color.
-            style->removeProperty(CSS_PROP_COLOR);
+            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
+            return;
+        }
+    }
+    
+    NodeImpl *documentElement = node->getDocument() ? node->getDocument()->documentElement() : 0;
+    if (documentElement) {
+        CSSComputedStyleDeclarationImpl *documentStyle = Position(documentElement, 0).computedStyle();
+        if (documentStyle->getPropertyValue(CSS_PROP_COLOR) == style->getPropertyValue(CSS_PROP_COLOR)) {
+            style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
         }
     }
 }
@@ -4713,9 +4727,24 @@ void ReplaceSelectionCommand::applyStyleToInsertedNodes()
             Position pos(node, 0);
             CSSComputedStyleDeclarationImpl *currentStyle = pos.computedStyle();
             currentStyle->ref();
+
+            // Check for the special "match nearest blockquote color" property and resolve to the correct
+            // color if necessary.
+            DOMString matchColorCheck = desiredStyle->getPropertyValue(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
+            if (matchColorCheck == matchNearestBlockquoteColorString()) {
+                NodeImpl *blockquote = nearestMailBlockquote(node);
+                Position pos(blockquote ? blockquote : node->getDocument()->documentElement(), 0);
+                CSSComputedStyleDeclarationImpl *style = pos.computedStyle();
+                DOMString desiredColor = desiredStyle->getPropertyValue(CSS_PROP_COLOR);
+                DOMString nearestColor = style->getPropertyValue(CSS_PROP_COLOR);
+                if (desiredColor != nearestColor)
+                    desiredStyle->setProperty(CSS_PROP_COLOR, nearestColor);
+            }
+            desiredStyle->removeProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR);
+
             currentStyle->diff(desiredStyle);
             
-            // Only add in block perperties if the node is at the start of a 
+            // Only add in block properties if the node is at the start of a 
             // paragraph. This matches AppKit.
             if (!isStartOfParagraph(VisiblePosition(pos, DOWNSTREAM)))
                 desiredStyle->removeBlockProperties();
@@ -5494,7 +5523,7 @@ bool isProbablyBlock(const NodeImpl *node)
     return false;
 }
 
-NodeImpl *closestMailBlockquote(const NodeImpl *node)
+NodeImpl *nearestMailBlockquote(const NodeImpl *node)
 {
     for (NodeImpl *n = const_cast<NodeImpl *>(node); n; n = n->parentNode()) {
         if (isMailBlockquote(n))

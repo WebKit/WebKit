@@ -1,5 +1,41 @@
 2005-02-19  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Maciej
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::matchNearestBlockquoteColorString): New function which abstracts away the CSS property we use
+        for this pseudo-color.
+        (khtml::ReplacementFragment::removeBlockquoteColorsIfNeeded): Set the new nearestBlockquoteColorString
+        psuedo-color here, rather than removing colors as was done before.
+        (khtml::ReplaceSelectionCommand::applyStyleToInsertedNodes): Check for the pseudo-color in the desired
+        style, and determine the real color based on the nearest blockquote (or none) to the node.
+        (khtml::nearestMailBlockquote): Name change from closestMailBlockquote to match new property better.
+
+        All the rest of this change is the mechanical coding you need to do to add a new CSS property, in this
+        case, -khtml-match-nearest-mail-blockquote-color.
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue)
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty)
+        * khtml/css/cssvalues.c:
+        (findValue)
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::matchNearestMailBlockquoteColor)
+        (khtml::RenderStyle::setMatchNearestMailBlockquoteColor)
+        (khtml::RenderStyle::initialMatchNearestMailBlockquoteColor)
+
+2005-02-19  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Chris
 
         Fix for these bugs:
