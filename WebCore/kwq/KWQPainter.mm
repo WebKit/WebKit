@@ -453,9 +453,12 @@ void QPainter::drawText (int x, int y, const QString &qstring, int len, TextDire
 }
 
 
-void QPainter::drawText (int x, int y, const QString &qstring, int len, int pos, TextDirection dir)
+void QPainter::drawText (int x, int y, const QString &qstring, int pos, int len, TextDirection dir)
 {
-    _logNotYetImplemented();
+    if (pos != 0)
+        drawText(x, y, qstring.mid(pos, len), len, dir);
+    else
+        drawText(x, y, qstring, len, dir);
 }
 
 

@@ -38,15 +38,16 @@ using namespace khtml;
 void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, int len,
         int toAdd, QPainter::TextDirection d, int from, int to, QColor bg ) const
 {
-#ifdef APPLE_CHANGES
-    p->drawText(x, y, QConstString(str + pos, slen - pos).string(), len, d);
-#else
     QString qstr = QConstString(str, slen).string();
 
     // hack for fonts that don't have a welldefined nbsp
     if ( !fontDef.hasNbsp ) {
+#ifdef APPLE_CHANGES    
+	qstr.truncate( slen );
+#else
 	// str.setLength() always does a deep copy, so the replacement code below is safe.
 	qstr.setLength( slen );
+#endif	
 	QChar *uc = (QChar *)qstr.unicode();
 	for( int i = 0; i < slen; i++ )
 	    if ( (uc+i)->unicode() == 0xa0 )
@@ -94,7 +95,6 @@ void Font::drawText( QPainter *p, int x, int y, QChar *str, int slen, int pos, i
 		x += chw;
 	}
     }
-#endif
 }
 
 

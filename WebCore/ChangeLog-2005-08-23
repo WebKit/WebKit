@@ -1,4 +1,21 @@
 2002-06-25  Richard Williamson  <rjw@apple.com>
+        
+        Support for khtml style selection drawing.  Ugly,
+        we'll want to make this more Mac like.
+
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+            Enable khtml code path.  Removed APPLE_CHANGES
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::charWidth):
+            Implemented in terms of width().
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+            Implemented.
+        * kwq/qt/qfontmetrics.h:
+            Added QFontMetrics::charWidth.
+
+2002-06-25  Richard Williamson  <rjw@apple.com>
 
         Support for rudimentary plain text 'copy'.
         

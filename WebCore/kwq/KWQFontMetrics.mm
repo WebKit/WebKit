@@ -114,6 +114,12 @@ int QFontMetrics::width(QChar qc) const
     return [data->getRenderer() widthForCharacters:&c length:1];
 }
 
+int QFontMetrics::charWidth(QString &s, int pos) const
+{
+    return width(s[pos]);
+}
+
+
 int QFontMetrics::width(char c) const
 {
     UniChar ch = (uchar) c;
