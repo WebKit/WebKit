@@ -1,3 +1,12 @@
+2004-10-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3853262> REGRESSION(166-168) gmail gets blank page when loading
+
+        Reviewed by kocienda, adele.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget): remove infinite frame recursion check for iframes
+
 2004-10-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

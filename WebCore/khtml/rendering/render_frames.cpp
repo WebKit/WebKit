@@ -845,9 +845,6 @@ void RenderPartObject::updateWidget()
       url = o->url.string();
       if (url.isEmpty()) {
 	  url = "about:blank";
-      } else if (part->completeURL(url) == part->baseURL()) {
-          // Avoid infinite recursion. If the frame's URL is the same as the part's URL, infinite frames may be created.
-          return;
       }
       KHTMLView *v = static_cast<KHTMLView *>(m_view);
       bool requestSucceeded = v->part()->requestFrame( this, url, o->name.string(), QStringList(), QStringList(), true );
