@@ -284,15 +284,24 @@ static BOOL alwaysUseATSU = NO;
 {
     [super init];
     
+    // Quartz can only handle fonts with these glyph packings.  Other packings have
+    // been deprecated.
+    if ([font glyphPacking] != NSNativeShortGlyphPacking &&
+        [font glyphPacking] != NSTwoByteGlyphPacking) {
+        // Apparantly there are many deprecated fonts out there with unsupported packing types.
+        // Log and use fallback font.
+        // This change fixes the many crashes reported in 3782533.  Most likely, the
+        // problem is encountered when people upgrade from OS 9, or have OS 9
+        // fonts installed on OS X.
+        NSLog (@"%s:%d  Unable to use deprecated font %@ %f, using system font instead", __FILE__, __LINE__, [font displayName], [font pointSize]);
+        font = [NSFont systemFontOfSize:[font pointSize]];
+    }
+        
     maxSubstituteFontWidthMaps = NUM_SUBSTITUTE_FONT_MAPS;
     substituteFontWidthMaps = calloc (1, maxSubstituteFontWidthMaps * sizeof(SubstituteFontWidthMap));
     font = [(p ? [f printerFont] : [f screenFont]) retain];
     usingPrinterFont = p;
     
-    if ([font glyphPacking] != NSNativeShortGlyphPacking &&
-        [font glyphPacking] != NSTwoByteGlyphPacking)
-        FATAL_ALWAYS ("%@: Don't know how to pack glyphs for font %@ %f", self, [font displayName], [font pointSize]);
-        
     if (![self _setupFont]){
         // Ack!  Something very bad happened, like a corrupt font.  Try
         // looking for an alternate 'base' font for this renderer.

@@ -1,3 +1,18 @@
+2004-09-10  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3782533> CrashTracer: .1459 crashes at com.apple.WebKit: -[WebTextRenderer initWithFont:usingPrinterFont:] + 0x138
+
+        We were explicitly failing when we encountered deprecated fonts.
+        (Those with unsupported glyph packings).
+        Deprecated fonts should only appear on a system that have 
+        stuff migrated from OS 9.  Ugh, thats probably why we've never seen
+        the problem here.
+        
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]):
+
 2004-09-10  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.
