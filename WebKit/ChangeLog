@@ -1,3 +1,30 @@
+2002-09-23  Darin Adler  <darin@apple.com>
+
+	- fixed 3052543 -- iframes don't work with z-index
+	- fixed 3057382 -- code to prevent subviews from drawing not working
+	perfectly for subframes
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView isOpaque]): Change this back to always return YES. We handle
+	this issue at another level now.
+        (-[WebHTMLView drawRect:]): Clip to the passed-in rect. This was the big change
+	that fixed most of the trouble.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Remove _isMainFrame.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView initialize]): Add an imposter for NSView too, so we can make opaqueAncestor
+	do what we need it to do. This will only work if the application doesn't also poseAsClass
+	NSView, but it does work.
+        (-[WebNSView opaqueAncestor]): Always return the topmost WebHTMLView if the object is
+	inside one, even if there is an intervening opaque object.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView setFrame:]): Do the display call at the window level so the topmost WebHTMLView
+	always gets involved.
+        * WebView.subproj/WebViewPrivate.h: Remove _controller, since we already have a public
+	controller method. Add _isMainFrame.
+        * WebView.subproj/WebViewPrivate.m: (-[WebView _isMainFrame]): Added.
+
 2002-09-23  Maciej Stachowiak  <mjs@apple.com>
 
         * Panels.subproj/WebStandardPanels.h: Added inline header docs.

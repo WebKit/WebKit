@@ -393,10 +393,13 @@ void QWidget::paint(QPainter *p, const QRect &r)
     if (p->paintingDisabled()) {
         return;
     }
+    
+    // Need to get to superview here for the same reason as in setFrameGeometry.
     NSView *view = getView();
-#if 0
-    NSRect rect = NSIntersectionRect([view convertRect:r fromView:[view superview]], [view bounds]);
-    NSLog(@"%@, rect is %@, bounds rect is %@", view, NSStringFromRect(rect), NSStringFromRect([view bounds]));
-#endif
-    [view displayRectIgnoringOpacity:[view bounds]];
+    if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
+        view = [view superview];
+        ASSERT(view);
+    }
+    
+    [view displayRectIgnoringOpacity:[view convertRect:r fromView:[view superview]]];
 }

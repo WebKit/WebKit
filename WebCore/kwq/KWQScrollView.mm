@@ -241,17 +241,17 @@ void QScrollView::resizeContents(int w, int h)
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
+    updateContents(QRect(x, y, w, h));
+}
+
+void QScrollView::updateContents(const QRect &rect)
+{
     NSView *view = getView();
 
     if ([view _KWQ_isScrollView])
         view = [view _KWQ_getDocumentView];
 
-    [view displayRect: NSMakeRect (x, y, w, h)];
-}
-
-void QScrollView::updateContents(const QRect &rect)
-{
-    return updateContents(rect.x(), rect.y(), rect.width(), rect.height());
+    [view setNeedsDisplayInRect:rect];
 }
 
 void QScrollView::repaintContents(int x, int y, int w, int h, bool erase)

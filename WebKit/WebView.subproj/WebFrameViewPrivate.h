@@ -31,7 +31,6 @@
 - (void)_setDocumentView:(id <WebDocumentView>)view;
 - (void)_makeDocumentViewForDataSource:(WebDataSource *)dataSource;
 - (void)_setController:(WebController *)controller;
-- (WebController *)_controller;
 - (int)_marginWidth;
 - (int)_marginHeight;
 - (void)_setMarginWidth:(int)w;
@@ -53,4 +52,5 @@
 - (void)_goForward;
 + (NSMutableDictionary *)_viewTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
+- (BOOL)_isMainFrame;
 @end

@@ -309,7 +309,7 @@
 
 - (BOOL)isOpaque
 {
-    return [self _isMainFrame];
+    return YES;
 }
 
 
@@ -359,6 +359,9 @@
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
+    [NSGraphicsContext saveGraphicsState];
+    NSRectClip(rect);
+
     NSView *focusView = [NSView focusView];
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
         [[WebTextRendererFactory sharedFactory] startCoalesceTextDrawing];
@@ -369,6 +372,8 @@
 
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
         [[WebTextRendererFactory sharedFactory] endCoalesceTextDrawing];
+
+    [NSGraphicsContext restoreGraphicsState];
 
 #ifdef DEBUG_LAYOUT
     NSRect vframe = [self frame];

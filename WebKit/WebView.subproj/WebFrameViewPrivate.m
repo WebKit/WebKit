@@ -82,11 +82,6 @@
     _private->controller = controller;    
 }
 
-- (WebController *)_controller
-{
-    return _private->controller;
-}
-
 - (NSClipView *)_contentView
 {
     return [[self frameScrollView] contentView];
@@ -239,12 +234,17 @@
 
 - (void)_goBack
 {
-    [[self _controller] goBack];
+    [_private->controller goBack];
 }
 
 - (void)_goForward
 {
-    [[self _controller] goForward];
+    [_private->controller goForward];
+}
+
+- (BOOL)_isMainFrame
+{
+    return [_private->controller mainFrame] == [_private->controller frameForView:self];
 }
 
 @end

@@ -34,9 +34,15 @@
 @interface NSView (WebNSViewDisplayExtras)
 - (void)_web_stopIfPluginView;
 - (void)_web_propagateDirtyRectToAncestor;
+- (void)_web_dumpDirtyRects;
 @end
 
 @interface WebNSTextView : NSTextView
+{
+}
+@end
+
+@interface WebNSView : NSView
 {
 }
 @end
@@ -56,6 +62,7 @@
 + (void)initialize
 {
     [[WebNSTextView class] poseAsClass:[NSTextView class]];
+    [[WebNSView class] poseAsClass:[NSView class]];
 }
 
 - (void)_adjustFrames
@@ -78,19 +85,13 @@
 
 - (WebController *)_controller
 {
-    return [[self _web_parentWebView] _controller];
+    return [[self _web_parentWebView] controller];
 }
 
 - (WebFrame *)_frame
 {
     WebView *webView = [self _web_parentWebView];
-    return [[webView _controller] frameForView:webView];
-}
-
-- (BOOL)_isMainFrame
-{
-    WebFrame *frame = [self _frame];
-    return frame == [[frame controller] mainFrame];
+    return [[webView controller] frameForView:webView];
 }
 
 // Required so view can access the part's selection.
@@ -127,7 +128,7 @@ BOOL _modifierTrackingEnabled = FALSE;
     [elementInfo addEntriesFromDictionary: elementInfoWC];
 
     WebView *webView = [self _web_parentWebView];
-    WebFrame *webFrame = [[webView _controller] frameForView:webView];
+    WebFrame *webFrame = [[webView controller] frameForView:webView];
     [elementInfo setObject:webFrame forKey:WebContextMenuElementFrameKey];
        
     return elementInfo;
@@ -164,7 +165,6 @@ BOOL _modifierTrackingEnabled = FALSE;
     }
     return NO;
 }
-
 
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
@@ -295,6 +295,25 @@ static BOOL inDrawRect;
     inDrawRect = YES;
     [super _drawRect:rect clip:clip];
     inDrawRect = NO;
+}
+
+@end
+
+@implementation WebNSView
+
+- (NSView *)opaqueAncestor
+{
+    if (![self isOpaque]) {
+        return [super opaqueAncestor];
+    }
+    NSView *opaqueAncestor = self;
+    NSView *superview = self;
+    while ((superview = [superview superview])) {
+        if ([superview isKindOfClass:[WebHTMLView class]]) {
+            opaqueAncestor = superview;
+        }
+    }
+    return opaqueAncestor;
 }
 
 @end

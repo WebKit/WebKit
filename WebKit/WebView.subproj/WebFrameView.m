@@ -104,8 +104,8 @@ enum {
     // We have to force a display now, rather than depend on
     // setNeedsDisplay: or we will get drawing turds under the
     // scrollbar frames.
-    if ([self inLiveResize])
-        [[self frameScrollView] display];
+    if ([self inLiveResize] && [self _isMainFrame])
+        [[self window] displayIfNeeded];
 }
 
 - (void)viewDidEndLiveResize
@@ -139,7 +139,7 @@ enum {
 }
 
 
-- (BOOL) isDocumentHTML
+- (BOOL)isDocumentHTML
 {
     return [[[self documentView] className] isEqualToString:@"WebHTMLView"];
 }

@@ -141,11 +141,11 @@ void QPainter::drawRect(int x, int y, int w, int h)
         
     if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
-        [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
+        NSRectFill(NSMakeRect(x, y, w, h));
     }
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();
-        [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
+        NSFrameRect(NSMakeRect(x, y, w, h));
     }
 }
 
@@ -407,10 +407,10 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
     if (data->state.paintingDisabled)
         return;
-        
+    
     if (brush.style() == SolidPattern) {
         [brush.color().getNSColor() set];
-        [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
+        NSRectFill(NSMakeRect(x, y, w, h));
     }
 }
 
