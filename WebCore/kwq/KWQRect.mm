@@ -30,7 +30,7 @@
 using std::max;
 using std::min;
 
-QRect::QRect() : xp(0), yp(0), w(1), h(1)
+QRect::QRect() : xp(0), yp(0), w(0), h(0)
 {
 }
 

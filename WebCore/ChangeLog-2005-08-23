@@ -2,6 +2,18 @@
 
         Reviewed by John.
 
+        - did some QRect-related changes to facilitate later bug fixing
+
+        * kwq/KWQPainter.h: Added fillRect overload that takes QRect to match the real Qt one.
+        * kwq/KWQPainter.mm: (QPainter::fillRect): Added overload that takes QRect.
+
+        * kwq/KWQRect.mm: (QRect::QRect): Change default constructed QRect to have a width and
+        height of 0 rather than 1. Contrary to what we believed earlier, this is what Qt does.
+
+2004-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3799512> REGRESSION (Mail): caret flashes 1 pixel too far to the left
 
         * khtml/rendering/render_text.cpp: (RenderText::caretRect): Added one to the horizontal position

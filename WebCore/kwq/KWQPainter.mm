@@ -767,6 +767,11 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
         _fillRect(x, y, w, h, brush.color());
 }
 
+void QPainter::fillRect(const QRect &rect, const QBrush &brush)
+{
+    fillRect(rect.left(), rect.top(), rect.width(), rect.height(), brush);
+}
+
 void QPainter::addClip(const QRect &rect)
 {
     [NSBezierPath clipRect:rect];
