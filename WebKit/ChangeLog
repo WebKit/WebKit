@@ -1,3 +1,11 @@
+2003-03-28  Richard Williamson  <rjw@apple.com>
+
+        Fix typo in comments that broke headerdoc.
+        
+        Reviewed by me.
+
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

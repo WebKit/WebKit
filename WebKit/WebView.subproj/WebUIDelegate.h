@@ -260,7 +260,7 @@
 - (NSString *)webView: (WebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
 
 /*!
-    @message runOpenPanelForFileButtonWithResultListener:
+    @method runOpenPanelForFileButtonWithResultListener:
     @abstract Display a file open panel for a file input control.
     @param resultListener The object to call back with the results.
     @discussion This method is passed a callback object instead of giving a return
