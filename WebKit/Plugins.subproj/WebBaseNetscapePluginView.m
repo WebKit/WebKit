@@ -1194,7 +1194,7 @@ typedef struct {
         // Find the frame given the target string.
         NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
 
-	[request HTTPSetReferrer:[[[[[self webFrame] dataSource] request] URL] absoluteString]];
+	[request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] absoluteString]];
         // Make a request, but don't do it right away because it could make the plugin view go away.
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc]
             initWithRequest:request frameName:target notifyData:notifyData];
@@ -1263,7 +1263,7 @@ typedef struct {
     }
 
     NSMutableURLRequest *request = [self requestWithURLCString:URLCString];
-    [request HTTPSetMethod:@"POST"];
+    [request setHTTPMethod:@"POST"];
     
     if (allowHeaders) {
         if ([postData _web_startsWithBlankLine]) {
@@ -1287,7 +1287,7 @@ typedef struct {
 		[header removeObjectForKey:@"Content-Length"];
 
                 if ([header count] > 0) {
-                    [request HTTPSetAllHeaderFields:header];
+                    [request setAllHTTPHeaderFields:header];
                 }
                 // Everything after the blank line is the actual content of the POST.
                 postData = [postData subdataWithRange:NSMakeRange(location, dataLength)];
@@ -1299,7 +1299,7 @@ typedef struct {
         }
     }
 
-    [request HTTPSetBody:postData];
+    [request setHTTPBody:postData];
     return [self loadRequest:request inTarget:target withNotifyData:notifyData];
 }
 

@@ -117,7 +117,7 @@
     // URL of the main frame which doesn't change when we redirect.
     if ([dataSource webFrame] == [[dataSource _controller] mainFrame]) {
         mutableRequest = [newRequest mutableCopy];
-        [mutableRequest HTTPSetCookiePolicyBaseURL:URL];
+        [mutableRequest setHTTPCookiePolicyBaseURL:URL];
     }
 
     // If we're fielding a redirect in response to a POST, force a load from origin, since

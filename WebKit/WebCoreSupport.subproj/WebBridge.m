@@ -107,7 +107,7 @@
 
     if (URL != nil && [URL length] > 0) {
 	request = [NSMutableURLRequest requestWithURL:[NSURL _web_URLWithString:URL]];
-	[request HTTPSetReferrer:[self referrer]];
+	[request setHTTPReferrer:[self referrer]];
     }
 
     WebView *currentController = [frame webView];

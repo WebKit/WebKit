@@ -51,11 +51,11 @@
 
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
     [newRequest setCachePolicy:[[source request] cachePolicy]];
-    [newRequest HTTPSetReferrer:referrer];
+    [newRequest setHTTPReferrer:referrer];
     
     WebView *_controller = [source _controller];
-    [newRequest HTTPSetCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
-    [newRequest HTTPSetUserAgent:[_controller userAgentForURL:URL]];
+    [newRequest setHTTPCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
+    [newRequest setHTTPUserAgent:[_controller userAgentForURL:URL]];
     
     BOOL succeeded = [client loadWithRequest:newRequest];
     [newRequest release];

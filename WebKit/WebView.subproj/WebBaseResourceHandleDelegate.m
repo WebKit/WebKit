@@ -133,7 +133,7 @@
     NSURLRequest *clientRequest, *updatedRequest;
     BOOL haveDataSchemeRequest = NO;
     
-    [mutableRequest HTTPSetUserAgent:[controller userAgentForURL:[newRequest URL]]];
+    [mutableRequest setHTTPUserAgent:[controller userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
 
     clientRequest = [newRequest _webDataRequestExternalRequest];

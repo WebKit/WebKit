@@ -126,7 +126,7 @@
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
     if (referrer) {
-	[request HTTPSetReferrer:referrer];
+	[request setHTTPReferrer:referrer];
     }
     
     [controller _openNewWindowWithRequest:request];

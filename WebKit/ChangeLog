@@ -1,3 +1,29 @@
+2003-04-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Tweaked some HTTP-specific NSURLRequest method names as specified
+        in the API errata list.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        (-[WebBaseNetscapePluginView _postURLNotify:target:len:buf:file:notifyData:allowHeaders:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate openNewWindowWithURL:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _addExtraFieldsToRequest:alwaysFromRequest:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+
 2003-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
