@@ -85,8 +85,8 @@ static NSNumber *IFURLFilePosixPermissions;
 
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
-    [archiver encodeRootObject:key];
-    [archiver encodeRootObject:object];
+    [archiver encodeObject:key];
+    [archiver encodeObject:object];
     
     // FIXME: [kocienda] Radar 2859368 (IFURLFileDatabase must set correct permissions when creating files)
     attributes = [NSDictionary dictionaryWithObjectsAndKeys:
