@@ -1,5 +1,13 @@
 2004-08-18  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::copy): Roll back silly last minute change that broke this code.
+        Note to self: read code before making changes to it.
+
+2004-08-18  Ken Kocienda  <kocienda@apple.com>
+
         Coded by Darin and Ken
 
         * khtml/css/css_computedstyle.cpp: Added CopyProperties static array. This contains

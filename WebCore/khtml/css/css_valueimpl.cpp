@@ -430,7 +430,7 @@ CSSStyleDeclarationImpl *CSSStyleDeclarationImpl::copy() const
     for (QPtrListIterator<CSSProperty> it(*values()); it.current(); ++it) {
         CSSProperty *property = it.current();
         if (getPropertyCSSValue(property->id())) {
-            list->append(new CSSProperty(property));
+            list->append(new CSSProperty(*property));
         }
     }
     return new CSSStyleDeclarationImpl(0, list);
