@@ -1,5 +1,10 @@
 2002-03-22  Chris Blumenberg  <cblu@apple.com>
 
+	* MIME.subproj/IFMIMEDatabase.h:
+	Added a list of mime type that WebKit will be capable of handling
+
+2002-03-22  Chris Blumenberg  <cblu@apple.com>
+
 	* WebKit.pbproj/project.pbxproj:
 	Added the MIME clases to WebKit.
 

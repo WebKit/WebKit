@@ -14,9 +14,41 @@
 }
 
 /*
-sharedMIMEDatabase creates a dictionary of MIME type keys and IFMIMEHandlers objects. sharedMIMEDatabase should only create entries in the dictionary for mime types that WebKit handles internally including plug-in types.
+IFMIMEDatabase creates a dictionary of MIME type keys and IFMIMEHandlers objects. IFMIMEDatabase should only create entries in the dictionary for mime types that WebKit handles internally including plug-in types.
 
-At some point, sharedMIMEDatabase might interact with the defaults to provide for customization.
+At some point, IFMIMEDatabase might interact with the defaults to provide for customization.
+
+Types that WebKit can/will handle internally (thanks to AppKit):
+
+Text types:
+text/html
+text/plain
+text/richtext
+application/rtf
+
+Image types (taken from [NSImage imageFileTypes]): 
+image/pict
+application/postscript (eps)
+image/tiff
+image/x-quicktime
+image/x-targa
+image/x-sgi
+image/x-rgb
+image/x-macpaint
+image/png
+image/gif
+image/jpg
+image/x-bmp
+image/tiff
+image/x-tiff
+
+Image mime types not found, but handleable:
+psd (photoshop)
+fpx
+cur
+ico (window's icon)
+fax
+
 */
 
 + (IFMIMEDatabase *)sharedMIMEDatabase;
