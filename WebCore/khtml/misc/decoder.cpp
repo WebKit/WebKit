@@ -303,13 +303,14 @@ void Decoder::setEncoding(const char *_encoding, bool force)
 #endif
     bool b;
     m_codec = KGlobal::charsets()->codecForName(enc, b);
-#if !APPLE_CHANGES
+
     if(m_codec->mibEnum() == 11)  {
-        // iso8859-8 (visually ordered)
-        m_codec = QTextCodec::codecForName("iso8859-8-i");
-        visualRTL = true;
+        // visually ordered unless one of the following
+        if( !(enc == "iso-8859-8-i" || enc == "iso_8859-8-i"
+                || enc == "csiso88598i" || enc == "logical") )
+            visualRTL = true;
     }
-#endif
+
     if( !b ) // in case the codec didn't exist, we keep the old one (fixes some sites specifying invalid codecs)
 	m_codec = old;
     else

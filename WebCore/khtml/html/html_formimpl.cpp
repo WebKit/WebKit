@@ -245,11 +245,6 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
     if(!codec)
         codec = QTextCodec::codecForLocale();
 
-    // we need to map visual hebrew to logical hebrew, as the web
-    // server alsways expects responses in logical ordering
-    if ( codec->mibEnum() == 11 )
-	codec = QTextCodec::codecForMib( 85 );
-
 #if APPLE_CHANGES
     QString encCharset = codec->name();
     QChar encChars[encCharset.length()];

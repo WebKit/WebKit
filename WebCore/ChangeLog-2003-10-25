@@ -1,3 +1,19 @@
+2003-01-13  Richard Williamson   <rjw@apple.com>
+
+        Fix for 3139120.  This patch was contributed by Mitz Pettel.  It correctly
+        handles the visually ordered encodings.  The patch also picks up changes
+        from kde that accounts for european numbers correctly in bidiReorderLine().
+        
+        Reviewed by Dave.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::formData):
+        * khtml/misc/decoder.cpp:
+        (Decoder::setEncoding):
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::bidiReorderLine):
+        * khtml/rendering/bidi.h:
+
 2003-01-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

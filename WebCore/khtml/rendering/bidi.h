@@ -62,12 +62,12 @@ namespace khtml {
 
 	    // add level of run (cases I1 & I2)
 	    if( level % 2 ) {
-		if(dir == QChar::DirL || dir == QChar::DirAN)
+		if(dir == QChar::DirL || dir == QChar::DirAN || dir == QChar::DirEN)
 		    level++;
 	    } else {
 		if( dir == QChar::DirR )
 		    level++;
-		else if( dir == QChar::DirAN )
+		else if( dir == QChar::DirAN || dir == QChar::DirEN)
 		    level += 2;
 	    }
 	}
