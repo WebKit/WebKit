@@ -1,3 +1,11 @@
+2003-01-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Nobody, fixing an accidental commit.
+
+        * khtml/khtml_part.cpp:
+	* khtml/html/html_documentimpl.cpp:
+        * khtml/xml/dom_docimpl.h:
+
 2003-01-21  Darin Adler  <darin@apple.com>
 
         Everything else reviewed by Maciej, dtd.cpp and htmlparser.cpp changes reviewed by Dave.
