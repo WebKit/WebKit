@@ -1,5 +1,14 @@
 2004-12-17  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Changes in layout resulting from giving <p> elements no margin rather than 0.1em margin.
+
+        * layout-tests/editing/inserting/insert-div-013-expected.txt
+        * layout-tests/editing/inserting/insert-div-014-expected.txt
+
+2004-12-17  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
