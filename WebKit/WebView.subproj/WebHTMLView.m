@@ -138,7 +138,7 @@
 
 - (void)addMouseMovedObserver
 {
-    if ([[self window] isMainWindow] && ![self _insideAnotherHTMLView]) {
+    if ([[self window] isKeyWindow] && ![self _insideAnotherHTMLView]) {
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
             name:NSMouseMovedNotification object:nil];
         [self _frameOrBoundsChanged];
@@ -185,10 +185,10 @@
 {
     NSWindow *window = [self window];
     if (window) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeMain:)
-            name:NSWindowDidBecomeMainNotification object:window];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignMain:)
-            name:NSWindowDidResignMainNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidBecomeKey:)
+            name:NSWindowDidBecomeKeyNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignKey:)
+            name:NSWindowDidResignKeyNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:)
             name:NSWindowWillCloseNotification object:window];
     }
@@ -199,9 +199,9 @@
     NSWindow *window = [self window];
     if (window) {
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidBecomeMainNotification object:window];
+            name:NSWindowDidBecomeKeyNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
-            name:NSWindowDidResignMainNotification object:window];
+            name:NSWindowDidResignKeyNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowWillCloseNotification object:window];
     }
@@ -584,13 +584,13 @@
     return YES;
 }
 
-- (void)windowDidBecomeMain:(NSNotification *)notification
+- (void)windowDidBecomeKey:(NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
     [self addMouseMovedObserver];
 }
 
-- (void)windowDidResignMain: (NSNotification *)notification
+- (void)windowDidResignKey: (NSNotification *)notification
 {
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];

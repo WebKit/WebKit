@@ -486,6 +486,10 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     //kdDebug( 6000 ) << "mouseDblClickEvent: x=" << xm << ", y=" << ym << endl;
 
     d->isDoubleClick = true;
+#if APPLE_CHANGES
+    // We get this instead of a second mouse-up 
+    d->mousePressed = false;
+#endif
 
     DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseDblClick );
     m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );

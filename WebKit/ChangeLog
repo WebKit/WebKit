@@ -1,3 +1,26 @@
+2003-01-28  Trey Matteson  <trey@apple.com>
+
+	2940179 - Arrow cursor should change to link cursor after click of link in non-frontmost window
+	3158240 - cursor does not track when switching from panels to safari windows
+
+	Two changes here:  First, we post fake mousemoved events to get the cursor fixed up
+	without checking if the mouse is down (WC deals with that now).  That fixes 2940179,
+	because the button is down when we get notified of becoming key.
+
+	Second, we observe key window instead of main window notifications everywhere, so we
+	update the cursor when clicking between a panel and our doc windows.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addMouseMovedObserver]):  s/main/key/g
+        (-[WebHTMLView addWindowObservers]):    s/main/key/g
+        (-[WebHTMLView removeWindowObservers]):  s/main/key/g
+        (-[WebHTMLView windowDidBecomeKey:]):  s/main/key/g
+        (-[WebHTMLView windowDidResignKey:]):  s/main/key/g
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _frameOrBoundsChanged]):  Always post mousemoved event.
+
 2003-01-28  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3158304 -- Assertion failure cancelling "Add Bookmark"

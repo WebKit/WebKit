@@ -1,3 +1,19 @@
+2003-01-28  Trey Matteson  <trey@apple.com>
+
+	2940179 - Arrow cursor should change to link cursor after click of link in non-frontmost window
+
+	3158238 - cursor shape does not track after double-click to activate a window
+
+        Reviewed by Darin.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseDoubleClickEvent):  We get this when the mouse
+	goes up the second time, so clear d->mousePressed.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::mouseMoved):  Pitch any mousemoved that comes through while
+	we think the mouse is down.  Those screw up our tracking, like 3137661.  This is
+	part of the 2940179 fix.
+
 2003-01-27  Trey Matteson  <trey@apple.com>
 
 	3157146 REGRESSION: using a pop-up menu turns the cursor into an I-beam

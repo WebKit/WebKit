@@ -186,15 +186,10 @@ static BOOL forceRealHitTest = NO;
         [self setNeedsLayout:YES];
         [self setNeedsDisplay:YES];
     }
-    
-    // Don't update mouseover while mouse is down.
-    int mouseIsDown;
-    PSbuttondown(&mouseIsDown);
-    if (!mouseIsDown) {
-        SEL selector = @selector(_updateMouseoverWithFakeEvent);
-        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:nil];
-        [self performSelector:selector withObject:nil afterDelay:0];
-    }
+
+    SEL selector = @selector(_updateMouseoverWithFakeEvent);
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:nil];
+    [self performSelector:selector withObject:nil afterDelay:0];
 }
 
 - (NSDictionary *)_elementAtPoint:(NSPoint)point

@@ -1216,7 +1216,9 @@ void KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking(NSEvent *downEvent)
 
 void KWQKHTMLPart::mouseMoved(NSEvent *event)
 {
-    if (!d->m_view) {
+    // Reject a mouse moved if the button is down - screws up tracking during autoscroll
+    // These happen because WK sometimes has to fake up moved events.
+    if (!d->m_view || d->m_bMousePressed) {
         return;
     }
     
