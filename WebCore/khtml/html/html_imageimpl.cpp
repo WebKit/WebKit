@@ -233,10 +233,6 @@ long HTMLImageElementImpl::width() const
 	docimpl->updateLayout();
     }
 
-    if (!m_renderer) {
-	return 0;
-    }
-
     return m_render->contentWidth();
 }
 
@@ -248,17 +244,13 @@ long HTMLImageElementImpl::height() const
 	bool ok;
 	long height = attrHeight.string().toLong(&ok);
 	if (ok) {
-	  return Number(height);
+	  return height;
 	}
     }
 
     DOM::DocumentImpl* docimpl = getDocument();
     if (docimpl) {
 	docimpl->updateLayout();
-    }
-
-    if (!m_renderer) {
-	return 0;
     }
 
     return m_render->contentHeight();
