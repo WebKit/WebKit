@@ -1,3 +1,27 @@
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
+	More plumbing for contextual menu support.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setContextMenuHandler:]): added
+        (-[WebController contextMenuHandler]): added
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate init]): alloc WebDefaultContextMenuHandler
+        (-[WebControllerPrivate dealloc]): dealloc WebDefaultContextMenuHandler
+        (-[WebController _defaultContextMenuHandler]):
+        * WebView.subproj/WebDefaultContextMenuHandler.h: Added.
+        * WebView.subproj/WebDefaultContextMenuHandler.m: Added.
+        (-[WebDefaultContextMenuHandler contextMenuItemsForElementInfo:defaultMenuItems:]): new
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): call contextMenuHandlers
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _setController:]): added comment
+        (-[WebHTMLView _controller]): added
+
 2002-07-24  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/WebTextRenderer.m:

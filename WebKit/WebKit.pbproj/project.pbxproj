@@ -261,6 +261,7 @@
 				F53444D302E87D4B018635CA,
 				F5934C8A02E894F50197FBCF,
 				F649E40602EE0D1901CA2ACD,
+				354F260002EF441D0ACA2ACA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -341,6 +342,7 @@
 				F53444D102E87CBA018635CA,
 				F5934C8B02E894F50197FBCF,
 				F649E40702EE0D1901CA2ACD,
+				354F260102EF441D0ACA2ACA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -690,6 +692,28 @@
 				ATTRIBUTES = (
 					Public,
 				);
+			};
+		};
+		354F25FE02EF441D0ACA2ACA = {
+			isa = PBXFileReference;
+			path = WebDefaultContextMenuHandler.h;
+			refType = 4;
+		};
+		354F25FF02EF441D0ACA2ACA = {
+			isa = PBXFileReference;
+			path = WebDefaultContextMenuHandler.m;
+			refType = 4;
+		};
+		354F260002EF441D0ACA2ACA = {
+			fileRef = 354F25FE02EF441D0ACA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		354F260102EF441D0ACA2ACA = {
+			fileRef = 354F25FF02EF441D0ACA2ACA;
+			isa = PBXBuildFile;
+			settings = {
 			};
 		};
 		35F3577E0198AAB80ACA1520 = {
@@ -1059,6 +1083,8 @@
 				9CF0E24A021361B00ECA16EA,
 				F649E40402EE0D1901CA2ACD,
 				F649E40502EE0D1901CA2ACD,
+				354F25FE02EF441D0ACA2ACA,
+				354F25FF02EF441D0ACA2ACA,
 			);
 			isa = PBXGroup;
 			name = WebView;

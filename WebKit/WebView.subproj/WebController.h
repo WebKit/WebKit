@@ -111,17 +111,16 @@
 #define WebContextImage    @"WebContextImage"
 #define WebContextFrame    @"WebContextFrame"
 
-#ifdef READY_FOR_PRIME_TIME
+
 /*
    ============================================================================= 
 */
-@protocol WebContextMenuHandler
-// Returns the array of menu items for this node that will be displayed in the context menu.
-// Typically this would be implemented by returning the results of WebView defaultContextMenuItemsForNode:
-// after making any desired changes or additions.
-- (NSArray *)contextMenuItemsForNode: (WebDOMNode *);
+@protocol WebContextMenuHandler <NSObject>
+// Returns the array of NSMenuItems that will be displayed in the context menu 
+// for the dictionary representation of the clicked element.
+- (NSArray *)contextMenuItemsForElementInfo: (NSDictionary *)elementInfo  defaultMenuItems: (NSArray *)menuItems;
 @end
-#endif
+
 
 
 /*
@@ -154,6 +153,9 @@
 
 - (void)setDownloadProgressHandler: (id<WebResourceProgressHandler>)handler;
 - (id<WebResourceProgressHandler>)downloadProgressHandler;
+
+- (void)setContextMenuHandler: (id<WebContextMenuHandler>)handler;
+- (id<WebContextMenuHandler>)contextMenuHandler;
 
 + (WebURLPolicy)defaultURLPolicyForURL: (NSURL *)url;
 

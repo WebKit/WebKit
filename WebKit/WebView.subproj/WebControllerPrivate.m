@@ -6,6 +6,7 @@
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDefaultContextMenuHandler.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -25,6 +26,7 @@
 {
     mainFrame = nil;
     backForwardList = [[WebBackForwardList alloc] init];
+    defaultContextMenuHandler = [[WebDefaultContextMenuHandler alloc] init];
     return self;
 }
 
@@ -57,7 +59,8 @@
     [resourceProgressHandler release];
     [policyHandler release];
     [backForwardList release];
-
+    [defaultContextMenuHandler release];
+    
     [super dealloc];
 }
 
@@ -65,6 +68,11 @@
 
 
 @implementation WebController (WebPrivate)
+
+- (id<WebContextMenuHandler>)_defaultContextMenuHandler
+{
+    return _private->defaultContextMenuHandler;
+}
 
 - (void)_receivedProgress:(WebLoadProgress *)progress forResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {

@@ -9,6 +9,7 @@
 #import <WebKit/WebHTMLView.h>
 
 @class WebBridge;
+@class WebController;
 
 @interface WebHTMLViewPrivate : NSObject
 {
@@ -26,6 +27,7 @@
 
 @interface WebHTMLView (WebPrivate)
 - (void)_reset;
+- (WebController *)_controller;
 - (void)_setController: (WebController *)controller;
 - (WebBridge *)_bridge;
 - (void)_adjustFrames;

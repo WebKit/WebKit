@@ -10,6 +10,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
@@ -208,33 +209,35 @@
     return _private->canDragTo;
 }
 
-// Returns an array of built-in context menu items for this node.
-// Generally called by WebContextMenuHandlers from contextMenuItemsForNode:
-#ifdef TENTATIVE_API
-- (NSArray *)defaultContextMenuItemsForNode: (WebDOMNode *)
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebView::defaultContextMenuItemsForNode: is not implemented"];
-    return nil;
-}
-#endif
-
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
+    id <WebContextMenuHandler> contextMenuHandler, defaultContextMenuHandler;
+    NSArray *menuItems, *defaultMenuItems;
     NSDictionary *elementInfo;
     NSPoint point;
-
+    unsigned i;
+    
     point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
     elementInfo = [self _elementInfoAtPoint:point];
+    //NSLog([elementInfo description]);
 
-    /*
-    NSLog([elementInfo description]);
-    NSMenu *menu = [[NSMenu alloc] init];
-    [menu addItemWithTitle:@"Copy" action:@selector(copy:) keyEquivalent:@""];
-    return menu;
-    */
+    defaultContextMenuHandler = [[self _controller] _defaultContextMenuHandler];
+    defaultMenuItems = [defaultContextMenuHandler contextMenuItemsForElementInfo: elementInfo  defaultMenuItems: nil];
+    contextMenuHandler = [[self _controller] contextMenuHandler];
 
-    return nil;
+    if(contextMenuHandler){
+        menuItems = [contextMenuHandler contextMenuItemsForElementInfo: elementInfo  defaultMenuItems: defaultMenuItems];
+    } else {
+        menuItems = defaultMenuItems;
+    }
     
+    NSMenu *menu = [[[NSMenu alloc] init] autorelease];
+
+    for(i=0; i<[menuItems count]; i++){
+        [menu addItem:[menuItems objectAtIndex:i]];
+    }
+        
+    return nil;
 }
 
 - (void)setContextMenusEnabled: (BOOL)flag

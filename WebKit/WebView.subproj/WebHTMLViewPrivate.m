@@ -65,10 +65,16 @@
     [WebImageRenderer stopAnimationsInView:self];
 }
 
+//FIXME: WebHTMLView doesn't seem to use _private->controller so is _setController needed?
 - (void)_setController:(WebController *)controller
 {
     // Not retained; the controller owns the view.
     _private->controller = controller;    
+}
+
+- (WebController *)_controller
+{
+    return [[self _web_parentWebView] _controller];
 }
 
 // Required so view can access the part's selection.

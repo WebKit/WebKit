@@ -124,6 +124,17 @@
     return _private->downloadProgressHandler;
 }
 
+- (void)setContextMenuHandler: (id<WebContextMenuHandler>)handler
+{
+    [handler retain];
+    [_private->contextMenuHandler release];
+    _private->contextMenuHandler = handler;
+}
+
+- (id<WebContextMenuHandler>)contextMenuHandler
+{
+    return _private->contextMenuHandler;
+}
 
 - (void)setPolicyHandler:(id <WebControllerPolicyHandler>)handler
 {
