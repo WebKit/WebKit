@@ -214,11 +214,16 @@
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
     [[[frame controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
+    if (seconds == 0.0) {
+        // used to set loadType to internal, to prevent a redirect from going in the backforward list
+        _doingInternalLoad = YES;
+    }
 }
 
 - (void)reportClientRedirectCancelled
 {
     [[[frame controller] locationChangeDelegate] clientRedirectCancelledForFrame:frame];
+    _doingInternalLoad = NO;
 }
 
 - (void)setFrame:(WebFrame *)webFrame
@@ -302,6 +307,11 @@
         WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
         [request setReferrer:[self referrer]];
         [self loadRequest:request];
+        if (_doingInternalLoad) {
+            // client side redirects shouldn't be treated like user navigations
+            [frame _setLoadType:WebFrameLoadTypeInternal];
+            _doingInternalLoad = NO;
+        }
         [request release];
     }
 }

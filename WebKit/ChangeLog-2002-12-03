@@ -1,3 +1,22 @@
+2002-10-28  Trey Matteson  <trey@apple.com>
+
+	Fixed 3041616 - Extra page added in back button history
+
+	Client-side redirects would always put an extra item in the backforward list.
+	According to Darin this is a regression all the way back from functionality moving
+	from WebBrowser to WebKit.	
+
+        * WebCoreSupport.subproj/WebBridge.h:
+	Added state to know if we're doing an "internal" type of load
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]):
+	Set internalLoad bit if delay==0
+        (-[WebBridge reportClientRedirectCancelled]):
+	Clear internalLoad
+        (-[WebBridge loadURL:]):
+	Set frame's loadType if doing an internal load (similar to what we do when loading
+	child frames)
+
 2002-10-28  Darin Adler  <darin@apple.com>
 
 	- fixed storage leak of WebNetscapePluginPackage objects
