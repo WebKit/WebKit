@@ -336,7 +336,9 @@ void QLineEdit::setMaxResults(int maxResults)
         NSButtonCell* buttonCell = [searchCell searchButtonCell];
         if (!buttonCell)
             [searchCell resetSearchButtonCell];
-        if (!cellMenu && maxResults > 0)
+        if (cellMenu && !maxResults)
+	    [searchCell setSearchMenuTemplate:nil];
+        else if (!cellMenu && maxResults)
             [searchCell setSearchMenuTemplate:[[WebCoreViewFactory sharedFactory] cellMenuForSearchField]];
     }
     
