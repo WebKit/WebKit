@@ -23,11 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qguardedptr.h>
+#import "qguardedptr.h"
+
+#import "qobject.h"
 
 KWQGuardedPtrBase::KWQGuardedPtrBase(QObject *o)
 {
     if (o) {
-        iterator = QPtrListIterator<QObject>(o->guardedPtrDummyList);
+        iterator = QPtrListIterator<QObject>(o->_guardedPtrDummyList);
     }
 }

@@ -23,15 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <qobject.h>
+#import "qobject.h"
 
-#import <qvariant.h>
-#import <qguardedptr.h>
-#import <KWQAssertions.h>
-#import <KWQSignal.h>
-#import <KWQSlot.h>
+#import "qvariant.h"
+#import "KWQAssertions.h"
 
-const QObject *QObject::m_sender;
+const QObject *QObject::_sender;
 
 static CFMutableDictionaryRef timerDictionaries;
 
@@ -48,8 +45,8 @@ static CFMutableDictionaryRef timerDictionaries;
 
 KWQSignal *QObject::findSignal(const char *signalName) const
 {
-    for (KWQSignal *signal = m_signalListHead; signal; signal = signal->m_next) {
-        if (KWQNamesMatch(signalName, signal->m_name)) {
+    for (KWQSignal *signal = _signalListHead; signal; signal = signal->_next) {
+        if (KWQNamesMatch(signalName, signal->_name)) {
             return signal;
         }
     }
@@ -68,7 +65,6 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
 #if !ERROR_DISABLED
         if (1
             && !KWQNamesMatch(member, SIGNAL(setStatusBarText(const QString &)))
-            && !KWQNamesMatch(member, SLOT(parentDestroyed()))
             && !KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const QByteArray &)))
             && !KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))
             && !KWQNamesMatch(member, SLOT(slotHistoryChanged()))
@@ -76,11 +72,10 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
             && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
             && !KWQNamesMatch(member, SLOT(slotLoaderRequestDone(khtml::DocLoader *, khtml::CachedObject *)))
             && !KWQNamesMatch(member, SLOT(slotLoaderRequestStarted(khtml::DocLoader *, khtml::CachedObject *)))
-            && !KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL &)))
+            && !KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL &))) // FIXME: Should implement this one?
             && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
             && !KWQNamesMatch(member, SLOT(slotShowDocument(const QString &, const QString &)))
-            && !KWQNamesMatch(member, SLOT(slotViewCleared()))
-            && !KWQNamesMatch(member, SLOT(slotWidgetDestructed()))
+            && !KWQNamesMatch(member, SLOT(slotViewCleared())) // FIXME: Should implement this one!
             )
 	ERROR("connecting member %s to signal %s, but that signal was not found", member, signalName);
 #endif
@@ -104,25 +99,27 @@ void QObject::disconnect(const QObject *sender, const char *signalName, const QO
 }
 
 KWQObjectSenderScope::KWQObjectSenderScope(const QObject *o)
-    : m_savedSender(QObject::m_sender)
+    : _savedSender(QObject::_sender)
 {
-    QObject::m_sender = o;
+    QObject::_sender = o;
 }
 
 KWQObjectSenderScope::~KWQObjectSenderScope()
 {
-    QObject::m_sender = m_savedSender;
+    QObject::_sender = _savedSender;
 }
 
 QObject::QObject(QObject *parent, const char *name)
-    : m_signalListHead(0), m_signalsBlocked(false), m_eventFilterObject(0)
+    : _signalListHead(0), _signalsBlocked(false)
+    , _destroyed(this, SIGNAL(destroyed()))
+    , _eventFilterObject(0)
 {
-    guardedPtrDummyList.append(this);
+    _guardedPtrDummyList.append(this);
 }
 
 QObject::~QObject()
 {
-    ASSERT(m_signalListHead == 0);
+    ASSERT(_signalListHead == &_destroyed);
     killTimers();
 }
 

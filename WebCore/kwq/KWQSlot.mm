@@ -25,11 +25,12 @@
 
 #import "KWQSlot.h"
 
-#import <KWQAssertions.h>
+#import "KWQAssertions.h"
 
-#import <dom_docimpl.h>
-#import <khtml_part.h>
-#import <render_form.h>
+#import "dom_docimpl.h"
+#import "khtml_part.h"
+#import "kjs_window.h"
+#import "render_form.h"
 
 using DOM::DocumentImpl;
 using khtml::RenderCheckBox;
@@ -38,7 +39,9 @@ using khtml::RenderFormElement;
 using khtml::RenderLineEdit;
 using khtml::RenderSelect;
 using khtml::RenderTextArea;
+using khtml::RenderWidget;
 using KIO::Job;
+using KJS::WindowQObject;
 
 enum FunctionNumber {
     signalFinishedParsing,
@@ -49,13 +52,15 @@ enum FunctionNumber {
     slotClicked,
     slotFinishedParsing,
     slotParentCompleted,
+    slotParentDestroyed,
     slotRedirect,
     slotReturnPressed,
     slotSelected,
     slotSelectionChanged,
     slotStateChanged,
     slotTextChanged,
-    slotTextChangedWithString
+    slotTextChangedWithString,
+    slotWidgetDestructed
 };
 
 KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
@@ -84,6 +89,9 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     } else if (KWQNamesMatch(member, SLOT(slotParentCompleted()))) {
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotParentCompleted;
+    } else if (KWQNamesMatch(member, SLOT(parentDestroyed()))) {
+        ASSERT(dynamic_cast<WindowQObject *>(object));
+        m_function = slotParentDestroyed;
     } else if (KWQNamesMatch(member, SLOT(slotRedirect()))) {
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotRedirect;
@@ -105,6 +113,9 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     } else if (KWQNamesMatch(member, SLOT(slotTextChanged(const QString &)))) {
         ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
         m_function = slotTextChangedWithString;
+    } else if (KWQNamesMatch(member, SLOT(slotWidgetDestructed()))) {
+        ASSERT(dynamic_cast<RenderWidget *>(object));
+        m_function = slotWidgetDestructed;
     } else {
         ERROR("trying to create a slot for unknown member %s", member);
         return;
@@ -130,9 +141,11 @@ void KWQSlot::call() const
         CASE(slotClicked, RenderFormElement, slotClicked)
         CASE(slotFinishedParsing, KHTMLPart, slotFinishedParsing)
         CASE(slotParentCompleted, KHTMLPart, slotParentCompleted)
+        CASE(slotParentDestroyed, WindowQObject, parentDestroyed)
         CASE(slotRedirect, KHTMLPart, slotRedirect)
         CASE(slotSelectionChanged, RenderSelect, slotSelectionChanged)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
+        CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
         
         case slotReturnPressed: {
             RenderLineEdit *edit = dynamic_cast<RenderLineEdit *>(m_object.pointer());

@@ -26,7 +26,9 @@
 #ifndef KWQSLOT_H
 #define KWQSLOT_H
 
-#import <qguardedptr.h>
+#include "qguardedptr.h"
+
+class QString;
 
 namespace KIO {
     class Job;

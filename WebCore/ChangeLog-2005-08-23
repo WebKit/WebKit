@@ -1,3 +1,22 @@
+2002-09-30  Darin Adler  <darin@apple.com>
+
+        * kwq/qt/qobject.h: Add the destroyed signal.
+        * kwq/KWQObject.mm:
+        (QObject::connect): Remove names of parentDestroyed and slotWidgetDestructed
+	from the list of "slots OK to fail to connect without complaining".
+        (QObject::QObject): Initialize the destroyed signal.
+
+        * kwq/qt/qguardedptr.h:
+        * kwq/KWQGuardedPtr.mm:
+        * kwq/KWQSignal.h:
+        * kwq/KWQSlot.h:
+	Rearrange includes so qobject.h can include KWQSignal.h.
+
+        * kwq/KWQSignal.mm: Tweak.
+
+        * kwq/KWQSlot.mm: Added support for the parentDestroyed slot in KJS::WindowQObject
+	and the slotWidgetDestructed slot in khtml::RenderWidget.
+
 2002-09-28  Darin Adler  <darin@apple.com>
 
 	Turn -Werror back on. There must have been some miscommunication

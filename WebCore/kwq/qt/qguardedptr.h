@@ -26,7 +26,9 @@
 #ifndef QGUARDEDPTR_H_
 #define QGUARDEDPTR_H_
 
-#include "qobject.h"
+#include "qptrlist.h"
+
+class QObject;
 
 class KWQGuardedPtrBase {
 public:

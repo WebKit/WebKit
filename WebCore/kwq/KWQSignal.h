@@ -27,6 +27,7 @@
 #define KWQSIGNAL_H
 
 #include "KWQSlot.h"
+#include "qvaluelist.h"
 
 class KWQSignal {
 public:
@@ -47,10 +48,10 @@ private:
     KWQSignal(const KWQSignal &);
     KWQSignal &operator=(const KWQSignal &);
     
-    QObject *m_object;
-    KWQSignal *m_next;
-    const char *m_name;
-    QValueList<KWQSlot> m_slots;
+    QObject *_object;
+    KWQSignal *_next;
+    const char *_name;
+    QValueList<KWQSlot> _slots;
     
     friend class QObject;
 };
