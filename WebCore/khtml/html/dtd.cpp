@@ -99,7 +99,7 @@ const unsigned short DOM::tagPriority[] = {
     0, // ID_ISINDEX
     1, // ID_KBD
     0, // ID_KEYGEN
-    1, // ID_LABEL
+    5, // ID_LABEL
     1, // ID_LAYER
     1, // ID_LEGEND
     3, // ID_LI

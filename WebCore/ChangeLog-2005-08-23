@@ -1,3 +1,11 @@
+2004-12-25  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Hyatt.
+
+	Fixed: <rdar://problem/3505072> hang in KHTMLParser::parseToken (consulting.soroos.net)
+	
+        * khtml/html/dtd.cpp: <label> needed a much higher priority such that it will close block elements.  Malformed HTML (ugh) is the only reason why we need to do this. 
+
 2004-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
