@@ -8,7 +8,7 @@
 
 #import <WebCore/WebCoreViewFactory.h>
 
-@interface WebViewFactory : WebCoreViewFactory
+@interface WebViewFactory : WebCoreViewFactory <WebCoreViewFactory>
 {
 }
 

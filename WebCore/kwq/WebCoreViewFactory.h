@@ -28,20 +28,6 @@
 @class NSString;
 @class NSView;
 
-@interface WebCoreViewFactory : NSObject
-{
-}
-
-+ (WebCoreViewFactory *)sharedFactory;
-- init;
-
-- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
-- (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
-
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)URL parameters:(NSDictionary *)parameters;
-
-@end
-
 @protocol WebCorePluginInfo <NSObject>
 
 - (NSString *)name;
@@ -50,4 +36,26 @@
 - (NSDictionary *)MIMEToExtensionsDictionary;
 - (NSDictionary *)MIMEToDescriptionDictionary;
 
+@end
+
+@protocol WebCoreViewFactory
+
+- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
+- (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
+
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)URL parameters:(NSDictionary *)parameters;
+
+- (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
+
+@end
+
+@interface WebCoreViewFactory : NSObject
+{
+}
+
++ (WebCoreViewFactory *)sharedFactory;
+
+@end
+
+@interface WebCoreViewFactory (SubclassResponsibility) <WebCoreViewFactory>
 @end

@@ -45,19 +45,4 @@ static WebCoreViewFactory *sharedFactory;
     return self;
 }
 
-- (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
-{
-    return nil;
-}
-
-- (NSArray *)pluginsInfo
-{
-    return nil;
-}
-
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
-{
-    return nil;
-}
-
 @end

@@ -1,3 +1,17 @@
+2002-10-21  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQInputDialog.mm: (QInputDialog::getText): Call the view factory to do the
+	heavy lifting.
+
+        * kwq/WebCoreViewFactory.h: Add runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:.
+	Use a protocol for the subclass responsibility.
+        * kwq/WebCoreViewFactory.m: Remove stub methods not needed because of the subclass responsibility
+	technique we are using.
+
+        * kwq/qt/qstylesheet.h: Made this inline, since it does nothing.
+        * kwq/KWQStyleSheet.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQStyleSheet.mm.
+
 2002-10-21  David Hyatt  <hyatt@apple.com>
 
 	Implement support for a new @-rule called @konq-quirks.  This

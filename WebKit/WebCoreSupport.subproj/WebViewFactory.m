@@ -88,4 +88,9 @@
                                                        arguments:parameters] autorelease];
 }
 
+- (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
+{
+    return NO;
+}
+
 @end

@@ -24,10 +24,13 @@
  */
 
 #import <qinputdialog.h>
-#import <KWQLogging.h>
 
-QString QInputDialog::getText(const QString &, const QString &, QLineEdit::EchoMode, const QString &, bool *)
+#import <WebCoreViewFactory.h>
+
+QString QInputDialog::getText(const QString &, const QString &prompt, QLineEdit::EchoMode, const QString &defaultValue, bool *ok)
 {
-    FATAL("not implemented");
-    return QString();
+    NSString *result;
+    *ok = [[WebCoreViewFactory sharedFactory] runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
+        defaultText:defaultValue.getNSString() returningText:&result];
+    return *ok ? QString::fromNSString(result) : QString();
 }

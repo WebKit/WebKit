@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,15 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QSTYLESHEET_H_
-#define QSTYLESHEET_H_
+#ifndef QSTYLESHEET_H
+#define QSTYLESHEET_H
 
-class QString;
+#include <qstring.h>
 
 class QStyleSheet
 {
  public:
-    static QString convertFromPlainText(const QString &);
+    static QString convertFromPlainText(const QString &s) { return s; }
 };
 
-#endif /* QSTYLESHEET_H_ */
+#endif /* QSTYLESHEET_H */
