@@ -106,7 +106,7 @@ public:
         paintBuffer=0;
         formCompletions=0;
         layoutTimerId = 0;
-        layoutTimerParsing = false;
+        allDataReceivedWhenTimerSet = false;
         mousePressed = false;
         tooltip = 0;
         doFullRepaint = true;
@@ -160,7 +160,7 @@ public:
 	isDoubleClick = false;
 	scrollingSelf = false;
 	layoutTimerId = 0;
-        layoutTimerParsing = false;
+        allDataReceivedWhenTimerSet = false;
         mousePressed = false;
         doFullRepaint = true;
         layoutSchedulingEnabled = true;
@@ -203,7 +203,7 @@ public:
     int prevMouseX, prevMouseY;
     bool scrollingSelf;
     int layoutTimerId;
-    bool layoutTimerParsing;
+    bool allDataReceivedWhenTimerSet;
     
     bool layoutSchedulingEnabled;
     bool layoutSuppressed;
@@ -542,7 +542,7 @@ void KHTMLView::layout()
     d->layoutSchedulingEnabled=false;
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
-    d->layoutTimerParsing = false;
+    d->allDataReceivedWhenTimerSet = false;
 
     if (!m_part) {
         // FIXME: Do we need to set _width here?
@@ -1845,7 +1845,7 @@ void KHTMLView::scheduleRelayout()
     if (d->layoutTimerId || (m_part->xmlDocImpl() && !m_part->xmlDocImpl()->shouldScheduleLayout()))
         return;
 
-    d->layoutTimerParsing = m_part->xmlDocImpl() && !m_part->xmlDocImpl()->allDataReceived();
+    d->allDataReceivedWhenTimerSet = m_part->xmlDocImpl() && !m_part->xmlDocImpl()->allDataReceived();
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
     if (!m_part->xmlDocImpl()->ownerElement())
@@ -1857,7 +1857,7 @@ void KHTMLView::scheduleRelayout()
 
 bool KHTMLView::haveDelayedLayoutScheduled()
 {
-    return d->layoutTimerId && d->layoutTimerParsing;
+    return d->layoutTimerId && d->allDataReceivedWhenTimerSet;
 }
 
 void KHTMLView::unscheduleRelayout()
@@ -1867,7 +1867,7 @@ void KHTMLView::unscheduleRelayout()
 
     killTimer(d->layoutTimerId);
     d->layoutTimerId = 0;
-    d->layoutTimerParsing = false;
+    d->allDataReceivedWhenTimerSet = false;
 }
 
 bool KHTMLView::isTransparent() const

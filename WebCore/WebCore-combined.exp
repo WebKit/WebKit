@@ -238,7 +238,7 @@ __ZN5QRectC1Eiiii
 __ZN5QRectC1Ev
 __ZN5QSizeC1Eii
 __ZN5QSizeC1Ev
-__ZN5QTime7elapsedEv
+__ZNK5QTime7elapsedEv
 __ZN5QTime7restartEv
 __ZN5QTimeC1Eii
 __ZN5QTimeC1Ev
