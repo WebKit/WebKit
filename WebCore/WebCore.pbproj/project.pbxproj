@@ -144,7 +144,7 @@
 				SECTORDER_FLAGS = "";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS)";
-				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
+				WARNING_COMMONFLAGS = "-Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WARNING_CPLUSPLUSFLAGS = "$(WARNING_COMMONFLAGS)";
 				WRAPPER_EXTENSION = framework;
 			};
@@ -3943,6 +3943,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				SKIP_INSTALL = YES;
+				ppc = YES;
 				i386 = YES;
 			};
 			isa = PBXBuildStyle;

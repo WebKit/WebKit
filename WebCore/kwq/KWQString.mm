@@ -1004,7 +1004,7 @@ QString &QString::operator=(char ch)
     return *this = QString(QChar(ch));
 }
 
-inline QChar QString::at(uint i) const
+QChar QString::at(uint i) const
 {
     QStringData *thisData = *dataHandle;
     

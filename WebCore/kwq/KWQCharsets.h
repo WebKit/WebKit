@@ -34,5 +34,5 @@ CFStringEncoding KWQCFStringEncodingFromMIB(int mib);
 CFStringRef KWQCFStringEncodingToIANACharsetName(CFStringEncoding encoding);
 int KWQCFStringEncodingToMIB(CFStringEncoding encoding);
 
-#endif KWQCHARSETS_H_
+#endif /* KWQCHARSETS_H_ */
 
