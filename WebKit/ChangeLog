@@ -1,5 +1,44 @@
 2004-09-24  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3813917> REGRESSION (125-163): The font panel will change the font of any web page
+        
+        We were doing a laughably bad job at preventing edits in documents that were not editable.
+        This change fixes the specific case of the bug mentioned above, and makes an attempt to
+        fix similar bugs by checking for whether the view is in editing mode before making edits.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _canEdit]): Renamed from _canType. Used in many more places in the code now.
+        (-[WebHTMLView _isMoveDrag]): Change around code to make the meaning more clear. This one
+        was actually performing a correct check before.
+        (-[WebHTMLView keyDown:]): Renamed _canType to _canEdit.
+        (-[WebHTMLView paste:]): Don't beep if can't paste. This matches AppKit. Any paste-related beeps
+        will come from failure to handle key equivalent. Menu validation will kick in to dim menu.
+        (-[WebHTMLView _applyStyleToSelection:]): Bail if !_canEdit.
+        (-[WebHTMLView pasteAsPlainText:]): Ditto.
+        (-[WebHTMLView _alignSelectionUsingCSSValue:]): Ditto.
+        (-[WebHTMLView insertNewline:]): Ditto.
+        (-[WebHTMLView insertParagraphSeparator:]): Ditto.
+        (-[WebHTMLView _changeWordCaseWithSelector:]): Ditto.
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:]): Ditto.
+        (-[WebHTMLView complete:]): Ditto.
+        (-[WebHTMLView _changeSpellingToWord:]): Ditto. Some code rearranging to eliminate bridge local variable.
+        (-[WebHTMLView ignoreSpelling:]): Ditto.
+        (-[WebHTMLView yank:]): Bail if !_canEdit.
+        (-[WebHTMLView yankAndSelect:]): Ditto.
+        (-[WebHTMLView deleteToMark:]): Ditto.
+        (-[WebHTMLView swapWithMark:]): Ditto.
+        (-[WebHTMLView transpose:]): Ditto.
+        (-[WebHTMLView _updateFontPanel]): Ditto. Some code rearranging to eliminate bridge local variable.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Bail if !_canEdit.
+        (-[WebHTMLView _insertText:selectInsertedText:]): Ditto. Some code rearranging to eliminate bridge local variable.
+        * WebView.subproj/WebHTMLViewPrivate.h: Renamed _canType to _canEdit.
+
+2004-09-24  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * WebCoreSupport.subproj/WebDashboardRegion.h: Check in file copied from WebCore.

@@ -56,7 +56,7 @@
 - (BOOL)_canCut;
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;
-- (BOOL)_canType;
+- (BOOL)_canEdit;
 - (BOOL)_hasSelection;
 - (BOOL)_hasSelectionOrInsertionPoint;
 - (BOOL)_isEditable;

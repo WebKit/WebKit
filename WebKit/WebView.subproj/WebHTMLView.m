@@ -1198,7 +1198,7 @@ static WebHTMLView *lastHitView = nil;
     return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
 }
 
-- (BOOL)_canType
+- (BOOL)_canEdit
 {
     return [self _hasSelectionOrInsertionPoint] && [self _isEditable];
 }
@@ -2247,7 +2247,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_isMoveDrag
 {
     return _private->initiatedDrag && 
-    [[self _bridge] isSelectionEditable] &&
+    ([self _isEditable] && [self _hasSelection]) &&
     ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) == 0;
 }
 
@@ -2635,7 +2635,7 @@ static WebHTMLView *lastHitView = nil;
     } else {
         // We're going to process a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
-        if ([self _canType] && [self _interceptEditingKeyEvent:event]) {
+        if ([self _canEdit] && [self _interceptEditingKeyEvent:event]) {
             // Consumed by key bindings manager.
         } else {
             callSuper = YES;
@@ -2978,7 +2978,6 @@ static WebHTMLView *lastHitView = nil;
         return;     // DHTML did the whole operation
     }
     if (![self _canPaste]) {
-        NSBeep();
         return;
     }
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
@@ -3046,7 +3045,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style
 {
-    if (style == nil || [style length] == 0)
+    if (style == nil || [style length] == 0 || ![self _canEdit])
         return;
     WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
@@ -3073,6 +3072,9 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)pasteAsPlainText:(id)sender
 {
+    if (![self _canEdit])
+        return;
+        
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     NSString *text = [pasteboard stringForType:NSStringPboardType];
     WebBridge *bridge = [self _bridge];
@@ -3357,6 +3359,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue
 {
+    if (![self _canEdit])
+        return;
+        
     // FIXME 3675191: This doesn't work yet. Maybe it's blocked by 3654850, or maybe something other than
     // just applyStyle: needs to be called for block-level attributes like this.
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
@@ -3397,6 +3402,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)insertNewline:(id)sender
 {
+    if (![self _canEdit])
+        return;
+        
     // Perhaps we should make this delegate call sensitive to the real DOM operation we actually do.
     WebBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:@"\n" givenAction:WebViewInsertActionTyped]) {
@@ -3406,12 +3414,18 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)insertParagraphSeparator:(id)sender
 {
+    if (![self _canEdit])
+        return;
+
     // FIXME: Should this do something different? Do we have the equivalent of a paragraph separator?
     [self insertNewline:sender];
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector
 {
+    if (![self _canEdit])
+        return;
+
     WebBridge *bridge = [self _bridge];
     [self selectWord:nil];
     NSString *word = [[bridge selectedString] performSelector:selector];
@@ -3440,8 +3454,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     // Delete the selection, if there is one.
     // If not, make a selection using the passed-in direction and granularity.
-    if (![self _isEditable])
+    if (![self _canEdit])
         return NO;
+        
     DOMRange *range;
     BOOL prepend = NO;
     BOOL smartDeleteOK = NO;
@@ -3527,6 +3542,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)complete:(id)sender
 {
+    if (![self _canEdit])
+        return;
+
     if (!_private->compController) {
         _private->compController = [[WebTextCompleteController alloc] initWithHTMLView:self];
     }
@@ -3564,11 +3582,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)_changeSpellingToWord:(NSString *)newWord
 {
-    WebBridge *bridge = [self _bridge];
-    if (![bridge isSelectionEditable]) {
+    if (![self _canEdit])
         return;
-    }
-    
+
     // Don't correct to empty string.  (AppKit checked this, we might as well too.)
     if (![NSSpellChecker sharedSpellChecker]) {
         ERROR("No NSSpellChecker");
@@ -3580,7 +3596,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 
     if ([self _shouldReplaceSelectionWithText:newWord givenAction:WebViewInsertActionPasted]) {
-        [bridge replaceSelectionWithText:newWord selectReplacement:YES smartReplace:NO];
+        [[self _bridge] replaceSelectionWithText:newWord selectReplacement:YES smartReplace:NO];
     }
 }
 
@@ -3591,10 +3607,8 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)ignoreSpelling:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
-    if (![bridge isSelectionEditable]) {
+    if (![self _canEdit])
         return;
-    }
     
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     if (!checker) {
@@ -3676,12 +3690,18 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)yank:(id)sender
 {
+    if (![self _canEdit])
+        return;
+        
     [self insertText:_NSYankFromKillRing()];
     _NSSetKillRingToYankedState();
 }
 
 - (void)yankAndSelect:(id)sender
 {
+    if (![self _canEdit])
+        return;
+
     [self _insertText:_NSYankPreviousFromKillRing() selectInsertedText:YES];
     _NSSetKillRingToYankedState();
 }
@@ -3705,6 +3725,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)deleteToMark:(id)sender
 {
+    if (![self _canEdit])
+        return;
+
     DOMRange *mark = [[self _bridge] markDOMRange];
     if (mark == nil) {
         [self delete:sender];
@@ -3739,6 +3762,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)swapWithMark:(id)sender
 {
+    if (![self _canEdit])
+        return;
+
     WebBridge *bridge = [self _bridge];
     DOMRange *mark = [bridge markDOMRange];
     if (mark == nil) {
@@ -3757,6 +3783,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)transpose:(id)sender
 {
+    if (![self _canEdit])
+        return;
+
     WebBridge *bridge = [self _bridge];
     DOMRange *r = [bridge rangeOfCharactersAroundCaret];
     if (!r) {
@@ -3916,11 +3945,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
     // sure if we need to do something similar.
     
-    WebBridge *bridge = [self _bridge];
-
-    if (![bridge isSelectionEditable]) {
+    if (![self _canEdit])
         return;
-    }
     
     NSWindow *window = [self window];
     // FIXME: is this first-responder check correct? What happens if a subframe is editable and is first responder?
@@ -3929,7 +3955,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     
     BOOL multiple = NO;
-    NSFont *font = [bridge fontForSelection:&multiple];
+    NSFont *font = [[self _bridge] fontForSelection:&multiple];
 
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.
@@ -4058,7 +4084,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 {
     WebBridge *bridge = [self _bridge];
 
-    if (![bridge isSelectionEditable])
+    if (![self _isEditable])
 	return;
 
     _private->ignoreMarkedTextSelectionChange = YES;
@@ -4110,14 +4136,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText
 {
-    if (text == nil) {
+    if (text == nil || (![self _isEditable] && ![self hasMarkedText])) {
         return;
-    }
-
-    WebBridge *bridge = [self _bridge];
-
-    if (![bridge isSelectionEditable] && ![self hasMarkedText]) {
-	return;
     }
 
     if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
@@ -4130,7 +4150,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     // If we had marked text, we replace that, instead of the selection/caret.
     [self _selectMarkedText];
 
-    [bridge insertText:text selectInsertedText:selectText];
+    [[self _bridge] insertText:text selectInsertedText:selectText];
 
     _private->ignoreMarkedTextSelectionChange = NO;
 
