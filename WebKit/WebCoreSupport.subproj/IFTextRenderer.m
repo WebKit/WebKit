@@ -87,8 +87,7 @@ static void freeWidthMap (WidthMap *map)
 {
     if (!map)
 	return;
-    if (map->next)
-        freeWidthMap (map->next);
+    freeWidthMap (map->next);
     free (map->widths);
     free (map);
 }
@@ -98,8 +97,7 @@ static void freeGlyphMap (GlyphMap *map)
 {
     if (!map)
 	return;
-    if (map->next)
-        freeGlyphMap (map->next);
+    freeGlyphMap (map->next);
     free (map->glyphs);
     free (map);
 }
@@ -201,13 +199,14 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 {
     unsigned int i, numGlyphs = glyphs->numGlyphs;
-    ATSLayoutRecord *glyphRecords;
+    ATSLayoutRecord *glyphRecord;
 
-    glyphRecords = (ATSLayoutRecord *)glyphs->firstRecord;
-    for (i = 0; i < numGlyphs; i++){
-        if (glyphRecords[i].glyphID == 0){
+    glyphRecord = (ATSLayoutRecord *)glyphs->firstRecord;
+    for (i = 0; i < numGlyphs; i++) {
+        if (glyphRecord->glyphID == 0) {
             return YES;
         }
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphs->recordSize);
     }
     return NO;
 }
@@ -248,9 +247,9 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 
 /* Convert non-breaking spaces into spaces. */
-- (void)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs
+- (void)convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
 {
-    int i;
+    unsigned i;
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     UniChar *buffer = localBuffer;
     OSStatus status;
@@ -277,11 +276,11 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         characters = buffer;
     }
     
+    status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
+    
     if (buffer != localBuffer) {
         free(buffer);
     }
-    
-    status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
 }
 
 
@@ -332,19 +331,27 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 - (int)widthForString:(NSString *)string
 {
-    UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
-    const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
-    const UniChar *internalBuffer;
+    UniChar localCharacterBuffer[LOCAL_GLYPH_BUFFER_SIZE];
+    UniChar *characterBuffer = localCharacterBuffer;
+    const UniChar *usedCharacterBuffer = CFStringGetCharactersPtr((CFStringRef)string);
+    unsigned int length;
+    int width;
 
-    if (!_internalBuffer) {
-        // FIXME: Handle case where string is larger than LOCAL_GLYPH_BUFFER_SIZE?
-        CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, CFStringGetLength((CFStringRef)string)), &localBuffer[0]);
-        internalBuffer = &localBuffer[0];
+    // Get the characters from the string into a buffer.
+    length = [string length];
+    if (!usedCharacterBuffer) {
+        if (length > LOCAL_GLYPH_BUFFER_SIZE)
+            characterBuffer = (UniChar *)malloc(length * sizeof(UniChar));
+        [string getCharacters:characterBuffer];
+        usedCharacterBuffer = characterBuffer;
     }
-    else
-        internalBuffer = _internalBuffer;
 
-    return [self widthForCharacters:internalBuffer length:[string length]];
+    width = [self widthForCharacters:usedCharacterBuffer length:length];
+    
+    if (characterBuffer != localCharacterBuffer)
+        free(characterBuffer);
+
+    return width;
 }
 
 
@@ -377,25 +384,25 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 - (bool) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs
 {
-    ATSGlyphVector _glyphVector;
+    ATSGlyphVector glyphVector;
     unsigned int j;
     CGGlyph *glyphBufPtr;
-    ATSLayoutRecord *glyphRecords;
+    ATSLayoutRecord *glyphRecord;
 
-    ATSInitializeGlyphVector(numCharacters, 0, &_glyphVector);
-    [self convertCharacters: characters length: numCharacters glyphs: &_glyphVector];
-    if (hasMissingGlyphs (&_glyphVector))
+    ATSInitializeGlyphVector(numCharacters, 0, &glyphVector);
+    [self convertCharacters: characters length: numCharacters toGlyphs: &glyphVector];
+    if (hasMissingGlyphs (&glyphVector))
         return NO;
 
-    *numGlyphs = _glyphVector.numGlyphs;
+    *numGlyphs = glyphVector.numGlyphs;
     *glyphBuffer = glyphBufPtr = (CGGlyph *)malloc (*numGlyphs * sizeof(CGGlyph));
-    glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
+    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
     for (j = 0; j < *numGlyphs; j++){
-        *glyphBufPtr++ = glyphRecords->glyphID;
-        glyphRecords++;
+        *glyphBufPtr++ = glyphRecord->glyphID;
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
     }
     
-    ATSClearGlyphVector(&_glyphVector);
+    ATSClearGlyphVector(&glyphVector);
 
     return YES;
 }
@@ -404,25 +411,23 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 - (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
     UniChar localCharacterBuffer[LOCAL_GLYPH_BUFFER_SIZE];
-    UniChar *characterBuffer = 0, *_usedCharacterBuffer;
-    const UniChar *usedCharacterBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
+    UniChar *characterBuffer = localCharacterBuffer;
+    const UniChar *usedCharacterBuffer = CFStringGetCharactersPtr((CFStringRef)string);
     unsigned int length;
 
-    // Get the unichar buffer from the string.
+    // Get the characters from the string into a buffer.
     length = [string length];
-    if (!usedCharacterBuffer){
+    if (!usedCharacterBuffer) {
         if (length > LOCAL_GLYPH_BUFFER_SIZE)
-            _usedCharacterBuffer = characterBuffer = (UniChar *)malloc(length * sizeof(UniChar));
-        else
-            _usedCharacterBuffer = &localCharacterBuffer[0];
-        CFStringGetCharacters((CFStringRef)string, CFRangeMake(0, length), _usedCharacterBuffer);
-        usedCharacterBuffer = _usedCharacterBuffer;
+            characterBuffer = (UniChar *)malloc(length * sizeof(UniChar));
+        [string getCharacters:characterBuffer];
+        usedCharacterBuffer = characterBuffer;
     }
 
     [self drawCharacters: usedCharacterBuffer length: length atPoint: point withColor: color];
     
-    if (characterBuffer)
-        free (characterBuffer);
+    if (characterBuffer != localCharacterBuffer)
+        free(characterBuffer);
 }
 
 
@@ -535,10 +540,8 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 #endif
     
 cleanup:
-    if (glyphBuffer)
-        free (glyphBuffer);
-    if (slowGlyphBuffer)
-        free (slowGlyphBuffer);
+    free (glyphBuffer);
+    free (slowGlyphBuffer);
 }
 
 
@@ -579,22 +582,23 @@ cleanup:
 {
     float totalWidth = 0;
     unsigned int i, numGlyphs;
-    ATSGlyphVector _glyphVector;
+    ATSGlyphVector glyphVector;
     IFGlyphWidth glyphWidth;
-    ATSLayoutRecord *glyphRecords;
+    ATSLayoutRecord *glyphRecord;
     ATSGlyphRef glyphID;
     
     
-    ATSInitializeGlyphVector(length, 0, &_glyphVector);
-    [self convertCharacters: (const unichar *)characters length: (int)length glyphs: (ATSGlyphVector *)&_glyphVector];
-    numGlyphs = _glyphVector.numGlyphs;
-    glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
+    ATSInitializeGlyphVector(length, 0, &glyphVector);
+    [self convertCharacters: characters length: length toGlyphs: &glyphVector];
+    numGlyphs = glyphVector.numGlyphs;
+    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
     for (i = 0; i < numGlyphs; i++){
-        glyphID = glyphRecords[i].glyphID;
+        glyphID = glyphRecord->glyphID;
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
         glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
         totalWidth += glyphWidth;
     }
-    ATSClearGlyphVector(&_glyphVector);
+    ATSClearGlyphVector(&glyphVector);
     
     return totalWidth;
 }
@@ -641,7 +645,7 @@ cleanup:
         totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
     }
 
-    return ROUND_TO_INT(totalWidth);
+    return totalWidth;
 }
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
@@ -664,10 +668,9 @@ cleanup:
 - (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c
 {
     GlyphMap *map = (GlyphMap *)calloc (1, sizeof(GlyphMap));
-    ATSLayoutRecord *glyphRecords;
-    ATSGlyphVector _glyphVector;
+    ATSLayoutRecord *glyphRecord;
+    ATSGlyphVector glyphVector;
     UniChar end, start;
-    unsigned int _end;
     unsigned int blockSize;
     
     if (characterToGlyphMap == 0)
@@ -675,11 +678,7 @@ cleanup:
     else
         blockSize = INCREMENTAL_BLOCK_SIZE;
     start = (c / blockSize) * blockSize;
-    _end = ((unsigned int)start) + blockSize; 
-    if (_end > 0xffff)
-        end = 0xffff;
-    else
-        end = _end;
+    end = start + (blockSize - 1);
         
     WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) adding glyphs for 0x%04x to 0x%04x\n", DEBUG_OBJECT(font), c, start, end);
 
@@ -696,18 +695,18 @@ cleanup:
             buffer[i] = i+start;
     }
 
-    ATSInitializeGlyphVector(count, 0, &_glyphVector);
-    [self convertCharacters: &buffer[0] length: count glyphs: &_glyphVector];
-    if (_glyphVector.numGlyphs != count)
+    ATSInitializeGlyphVector(count, 0, &glyphVector);
+    [self convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
+    if (glyphVector.numGlyphs != count)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
             
     map->glyphs = (ATSGlyphRef *)malloc (count * sizeof(ATSGlyphRef));
-    glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
-    for (i = 0; i < count; i++){
-        ATSGlyphRef glyphID = glyphRecords[i].glyphID;
-        map->glyphs[i] = glyphID;
+    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
+    for (i = 0; i < count; i++) {
+        map->glyphs[i] = glyphRecord->glyphID;
+        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
     }
-    ATSClearGlyphVector(&_glyphVector);
+    ATSClearGlyphVector(&glyphVector);
     
     if (characterToGlyphMap == 0)
         characterToGlyphMap = map;
