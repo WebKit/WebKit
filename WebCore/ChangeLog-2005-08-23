@@ -1,5 +1,30 @@
 2002-11-15  David Hyatt  <hyatt@apple.com>
 
+	Make <form> inside <table> stay inside the <table> but demote
+	itself to a leaf.  Then the children of the <form> are treated
+	as though they occurred underneath the <table> itself.  Everything
+	KHTML does with this is completely wrong but this band-aid should
+	hopefully suffice until 1.0.
+
+	Also allowing <input type="hidden"> to be constructed and attached
+	under <table>s.  Since they have no render objects this is safe.
+	Again, total hack, since CSS2 anonymous table construction should be
+	implemented and that would have fixed all this.
+
+	This collection of hacks makes travelocity render correctly on the
+	PLT.
+	
+        * khtml/css/html4.css:
+        * khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::addChild):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+
+2002-11-15  David Hyatt  <hyatt@apple.com>
+
 	Fix Hixie's blog.  Background images can be transparent, so
 	if the root's color isn't valid always do a fixup even if you
 	have a valid background image.

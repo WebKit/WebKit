@@ -258,7 +258,8 @@ void KHTMLParser::parseToken(Token *t)
         popOneBlock();
     }
 
-    if ( !insertNode(n, t->flat) ) {
+    if (!insertNode(n, t->flat)) 
+    {
         // we couldn't insert the node...
         
         if(n->isElementNode())
@@ -317,7 +318,10 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         if(tagPriority[id] != 0 && !flat)
         {
             pushBlock(id, tagPriority[id]);
-            current = newNode;
+            if (newNode == current)
+                popBlock(id);
+            else
+                current = newNode;
 #if SPEED_DEBUG < 2
             if(!n->attached() && HTMLWidget ) {
                 // ### get rid of init. it has no reason for existance.
@@ -467,9 +471,18 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             ElementImpl *e = static_cast<ElementImpl *>(n);
             DOMString type = e->getAttribute(ATTR_TYPE);
 
-            if ( strcasecmp( type, "hidden" ) != 0 )
-                break;
-            // Fall through!
+            if ( strcasecmp( type, "hidden" ) == 0 && form) {
+                form->addChild(n);
+#if SPEED_DEBUG < 2
+                if(!n->attached() && HTMLWidget) {
+                    n->init();
+                    if (!n->attached())
+                        n->attach();
+                }
+#endif
+                return true;
+            }
+            break;
         }
         case ID_TEXT:
             // ignore text inside the following elements.

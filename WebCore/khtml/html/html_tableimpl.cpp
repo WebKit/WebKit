@@ -304,6 +304,12 @@ NodeImpl *HTMLTableElementImpl::addChild(NodeImpl *child)
         //if(incremental && !columnPos[totalCols]);// calcColWidth();
         return setTBody(static_cast<HTMLTableSectionElementImpl *>(child));
         break;
+    case ID_FORM:
+        // First add the child.
+        HTMLElementImpl::addChild(child);
+        // Now simply return ourselves as the newnode.  This has the effect of
+        // demoting the form to a leaf and moving it safely out of the way.
+        return this;
     }
     return 0;
 }
