@@ -1,3 +1,16 @@
+2004-04-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for Emerson truncation problem using apple-line-clamp.  Always dirty positioned objects so that they
+	will move when the height changes.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::markPositionedObjectsForLayout):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutVerticalBox):
+
 2004-04-26  Richard Williamson   <rjw@apple.com>
 
 	Added support for specifying composite operation on an

@@ -1132,6 +1132,16 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
     }
 }
 
+void RenderBlock::markPositionedObjectsForLayout()
+{
+    if (m_positionedObjects) {
+        RenderObject* r;
+        QPtrListIterator<RenderObject> it(*m_positionedObjects);
+        for (; (r = it.current()); ++it)
+            r->setChildNeedsLayout(true);
+    }
+}
+
 void RenderBlock::getAbsoluteRepaintRectIncludingFloats(QRect& bounds, QRect& fullBounds)
 {
     bounds = fullBounds = getAbsoluteRepaintRect();

@@ -140,7 +140,8 @@ public:
     void clearFloats();
     int getClearDelta(RenderObject *child);
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
-    
+    void markPositionedObjectsForLayout();
+
     virtual bool containsFloats() { return m_floatingObjects!=0; }
     virtual bool containsFloat(RenderObject* o);
 
