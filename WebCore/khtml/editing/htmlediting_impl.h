@@ -152,7 +152,7 @@ protected:
     void deleteSelection();
     void deleteSelection(const DOM::Selection &selection);
     void deleteText(DOM::TextImpl *node, long offset, long count);
-    void inputText(const DOM::DOMString &text);
+    void inputText(const DOM::DOMString &text, bool selectInsertedText = false);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAt(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
     void insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);

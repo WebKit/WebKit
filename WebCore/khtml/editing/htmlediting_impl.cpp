@@ -501,11 +501,11 @@ void CompositeEditCommandImpl::joinTextNodes(TextImpl *text1, TextImpl *text2)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::inputText(const DOMString &text)
+void CompositeEditCommandImpl::inputText(const DOMString &text, bool selectInsertedText)
 {
     InputTextCommand cmd(document());
     applyCommandToComposite(cmd);
-    cmd.input(text);
+    cmd.input(text, selectInsertedText);
 }
 
 void CompositeEditCommandImpl::insertText(TextImpl *node, long offset, const DOMString &text)
@@ -1552,16 +1552,12 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
             LOG(Editing, "prepareForTextInsertion case 1");
             appendNode(nodeToInsert, pos.node());
         }
-        else if (pos.node()->id() == ID_BR && pos.offset() == 1) {
-            LOG(Editing, "prepareForTextInsertion case 2");
-            insertNodeAfter(nodeToInsert, pos.node());
-        }
         else if (pos.node()->caretMinOffset() == pos.offset()) {
-            LOG(Editing, "prepareForTextInsertion case 3");
+            LOG(Editing, "prepareForTextInsertion case 2");
             insertNodeBefore(nodeToInsert, pos.node());
         }
         else if (pos.node()->caretMaxOffset() == pos.offset()) {
-            LOG(Editing, "prepareForTextInsertion case 4");
+            LOG(Editing, "prepareForTextInsertion case 3");
             insertNodeAfter(nodeToInsert, pos.node());
         }
         else
@@ -1913,12 +1909,8 @@ void ReplaceSelectionCommandImpl::doApply()
         if (addTrailingSpace) {
             text += " ";
         }
-        inputText(text);
-        if (m_selectReplacement) {
-            // Select what was inserted.
-            setEndingSelection(Selection(selection.base(), endingSelection().extent()));
-        }
-        else {
+        inputText(text, m_selectReplacement);
+        if (!m_selectReplacement) {
             // Mark misspellings in the inserted content.
             markMisspellingsInSelection(Selection(upstreamStart, endingSelection().extent()));
         }
