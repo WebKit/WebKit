@@ -2034,7 +2034,7 @@ DOMString HTMLLegendElementImpl::type() const
 // -------------------------------------------------------------------------
 
 HTMLSelectElementImpl::HTMLSelectElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
-    : HTMLGenericFormElementImpl(doc, f)
+    : HTMLGenericFormElementImpl(doc, f), m_options(0)
 {
     m_multiple = false;
     m_recalcListItems = false;

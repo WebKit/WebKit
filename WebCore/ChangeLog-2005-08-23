@@ -1,3 +1,12 @@
+2004-05-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        - fixed <rdar://problem/3665813>: (iBench is crashing in TOT)
+
+        * khtml/html/html_formimpl.cpp: (HTMLSelectElementImpl::HTMLSelectElementImpl):
+        Initialize m_options to 0.
+
 2004-05-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard
