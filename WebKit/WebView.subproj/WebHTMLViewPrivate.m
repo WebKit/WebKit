@@ -475,12 +475,6 @@ static WebHTMLView *lastHitView = nil;
     [self _setToolTip:[element objectForKey:WebCoreElementTitleKey]];
 }
 
-- (BOOL)_interceptKeyEvent:(NSEvent *)event toView:(NSView *)view
-{
-    return [[self _bridge] interceptKeyEvent:event toView:view];
-}
-
-
 + (NSArray *)_pasteboardTypes
 {
     return [NSArray arrayWithObjects:

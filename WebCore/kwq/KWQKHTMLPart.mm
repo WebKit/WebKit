@@ -1300,6 +1300,9 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
         return false;
     }
     NodeImpl *node = doc->focusNode();
+    if (!node && docImpl()) {
+	node = docImpl()->body();
+    }
     if (!node) {
 	return false;
     }
@@ -1316,7 +1319,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 		     stateForCurrentEvent(),
 		     QString::fromNSString([event characters]),
 		     [event isARepeat]);
-    bool result = node->dispatchKeyEvent(&qEvent);
+    bool result = !node->dispatchKeyEvent(&qEvent);
 
     // We want to send both a down and a press for the initial key event.
     // This is a temporary hack; we need to do this a better way.
@@ -1327,7 +1330,9 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 			 stateForCurrentEvent(),
 			 QString::fromNSString([event characters]),
 			 true);
-        node->dispatchKeyEvent(&qEvent);
+        if (!node->dispatchKeyEvent(&qEvent)) {
+	    result = true;
+	}
     }
 
     ASSERT(_currentEvent == event);

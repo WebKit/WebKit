@@ -1,3 +1,31 @@
+2003-09-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3375281 - Keyboard event handlers not fired if focus not in form field
+	- fixed 3242927 - KeyPressed Event in Javascript don't work
+	- fixed 3375353 - keyboard event.target not updated when blurring from form items
+	- fixed 3183754 - returning false from key press handlers does not prevent typing or form submission
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+	(NodeImpl::dispatchKeyEvent): Force false when defaultHandled instead of
+	based on a weird rule appropriate for KDE but not for us.
+        * kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPart::keyEvent): If there's no focus node, give the event
+	to the body element instead of giving up. Also, reverse
+	expectedsense of return value dispatchKeyEvent, since it returns
+	true if it *didn't* swallow the event. And finally, let the key press
+	event as well as the key down event for the initial NSKeyDown block
+	default handling.
+	* kwq/KWQListBox.mm:
+        (-[KWQTableView keyDown:]): Respect return value from interceptKeyEvent:
+        (-[KWQTableView keyUp:]): ditto
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView keyDown:]): ditto
+        (-[KWQTextAreaTextView keyUp:]): ditto
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField textView:shouldHandleEvent:]): ditto
+
 2003-09-30  David Hyatt  <hyatt@apple.com>
 
 	Improvements to layout transitions and scrollbar appearance/disappearance.  

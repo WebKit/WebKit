@@ -1,3 +1,18 @@
+2003-09-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3375281 - Keyboard event handlers not fired if focus not in form field
+	- fixed 3242927 - KeyPressed Event in Javascript don't work
+	- fixed 3375353 - keyboard event.target not updated when blurring from form items
+	- fixed 3183754 - returning false from key press handlers does not prevent typing or form submission
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView keyDown:]): Ask the bridge before passing the event along.
+        (-[WebHTMLView keyUp:]): Likewise.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m: Remove dead code.
+
 2003-09-30  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3422138.  We weren't sending a didChange call for isLoading until the load was complete!  Also [WebView isLoading] wasn't accounting for provisional datasources.
