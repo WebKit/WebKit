@@ -112,6 +112,14 @@ void RenderApplet::layout()
         //kdDebug(6100) << "setting applet widget to size: " << m_width << ", " << m_height << endl;
         m_widget->resize(m_width-marginLeft()-marginRight()-paddingLeft()-paddingRight(),
                          m_height-marginTop()-marginBottom()-paddingTop()-paddingBottom());
+#if APPLE_CHANGES
+        // showApplet creates the java view if it hasn't already been created.
+        // When doing this, it replaces the widget's view with the newly created java view.
+        // Since this replacement doesn't actually occur until the widget gets its first paint,
+        // showApplet adds itself to the main view so that applets start even when not visible.
+        // We have to do this move so the widget knows where to place itself when adding itself.
+        m_widget->move(xPos(), yPos());
+#endif
         tmp->showApplet();
     }
 

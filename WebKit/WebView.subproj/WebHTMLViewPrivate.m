@@ -88,8 +88,8 @@ static BOOL forceRealHitTest = NO;
 
 - (void)dealloc
 {
-    [pluginController HTMLViewWillBeDeallocated];
-
+    [pluginController destroyAllPlugins];
+    
     [mouseDownEvent release];
     [dragElement release];
     [draggingImageURL release];

@@ -74,7 +74,7 @@
     }
 }
 
-- (void)HTMLViewWillBeDeallocated
+- (void)destroyAllPlugins
 {
     LOG(Plugins, "destroying all plug-ins");
     

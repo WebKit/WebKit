@@ -624,16 +624,18 @@ static bool initializedObjectCacheSize = FALSE;
         return nil;
     }
 
-    NSRect rect = [self selectionRect];  
+    NSRect rect = [self selectionRect];
+    NSRect bounds = [view bounds];
     NSImage *selectionImage = [[[NSImage alloc] initWithSize:rect.size] autorelease];
     [selectionImage setFlipped:YES];
     [selectionImage lockFocus];
 
     [NSGraphicsContext saveGraphicsState];
-    CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort], -NSMinX(rect), -NSMinY(rect));
+    CGContextTranslateCTM((CGContext *)[[NSGraphicsContext currentContext] graphicsPort],
+                          -(NSMinX(rect) - NSMinX(bounds)), -(NSMinY(rect) - NSMinY(bounds)));
 
     _drawSelectionOnly = YES;
-    [view drawRect:[view bounds]];
+    [view drawRect:rect];
     _drawSelectionOnly = NO;
 
     [NSGraphicsContext restoreGraphicsState];

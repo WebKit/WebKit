@@ -189,6 +189,8 @@
             name:NSWindowDidBecomeMainNotification object:window];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowDidResignMain:)
             name:NSWindowDidResignMainNotification object:window];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:)
+            name:NSWindowWillCloseNotification object:window];
     }
 }
 
@@ -200,6 +202,8 @@
             name:NSWindowDidBecomeMainNotification object:window];
         [[NSNotificationCenter defaultCenter] removeObserver:self
             name:NSWindowDidResignMainNotification object:window];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSWindowWillCloseNotification object:window];
     }
 }
 
@@ -590,6 +594,11 @@
 {
     ASSERT([notification object] == [self window]);
     [self removeMouseMovedObserver];
+}
+
+- (void)windowWillClose:(NSNotification *)notification
+{	
+    [[self _pluginController] destroyAllPlugins];
 }
 
 - (void)mouseDown: (NSEvent *)event

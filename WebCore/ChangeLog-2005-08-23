@@ -1,3 +1,16 @@
+2003-01-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3152053 - Safari: Java 141: Only visible applets are instantiated on web page
+
+        Reviewed by dave.
+
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::layout): move the widget before calling showApplet
+        * kwq/KWQKJavaAppletWidget.mm:
+        (KJavaAppletWidget::showApplet): add the java view to the main view immediately instead of waiting for first paint
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectionImage]): tweak
+
 2003-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -1,3 +1,19 @@
+2003-01-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3156230 - REGRESSION: Java 141: Safari Does Not Stop Applets When Browser Window Closes
+
+        Reviewed by dave.
+
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController destroyAllPlugins]): renamed from HTMLViewWillBeDeallocated because it may get called before the dealloc
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addWindowObservers]): observe NSWindowWillCloseNotification
+        (-[WebHTMLView removeWindowObservers]): remove observer for NSWindowWillCloseNotification
+        (-[WebHTMLView windowWillClose:]): call destroyAllPlugins
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLViewPrivate dealloc]): call destroyAllPlugins
+
 2003-01-27  Richard Williamson   <rjw@apple.com>
 
         Fixed 3139909.  Fake the resource load delegate messages (minus willSendRequest)
