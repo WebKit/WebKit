@@ -54,7 +54,6 @@
         return nil;
     }
 
-    _list = [[NSMutableArray alloc] init];
     _title = [[dict objectForKey:TitleKey] copy];
 
     NSArray *storedChildren = [dict objectForKey:ChildrenKey];

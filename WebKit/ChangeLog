@@ -1,3 +1,14 @@
+2003-01-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3156197 -- leak in -[WebBookmarkList initFromDictionaryRepresentation:withGroup:]
+
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList initFromDictionaryRepresentation:withGroup:]):
+	Fixed storage leak by not allocating the list here, because [self init] will
+        be called and that will allocate the list.
+
 2003-01-26  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin and Ken.
