@@ -57,33 +57,49 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 						const KParts::WindowArgs &winArgs, 
 						KParts::ReadOnlyPart **partResult)
 { 
-    WebCoreBridge *bridge = [m_part->impl->bridge() openNewWindowWithURL:url.getNSURL()];
+    NSString *frameName = urlArgs.frameName.length() == 0 ? nil : urlArgs.frameName.getNSString();
 
+    WebCoreBridge *bridge;
+
+    if (frameName != nil) {
+	bridge = [m_part->impl->bridge() frameNamed:frameName];
+	if (bridge != nil) {
+	    if (!url.isEmpty()) {
+		[bridge openURL:url.getNSURL()];
+	    }
+	    *partResult = [bridge part];
+	    return;
+	}
+    }
+
+    NSURL *cocoaURL = url.isEmpty() ? nil : url.getNSURL();
+    bridge = [m_part->impl->bridge() openNewWindowWithURL:cocoaURL frameName:frameName];
+    
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
     }
-
+    
     if (!winArgs.statusBarVisible) {
 	[bridge setStatusBarVisible:NO];
     }
-
+    
     if (!winArgs.scrollbarsVisible) {
 	[bridge setScrollbarsVisible:NO];
     }
-
+    
     if (!winArgs.resizable) {
 	[[bridge window] setShowsResizeIndicator:NO];
     }
-
+    
     if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {
-
+	
 	NSRect screenFrame = [[[bridge window] screen] frame];
 	NSRect frame = [[bridge window] frame];
-
+	
 	if (winArgs.xSet) {
 	    frame.origin.x = winArgs.x;
 	}
-
+	
 	if (winArgs.ySet) {
 	    if (winArgs.heightSet) {
 		frame.origin.y = screenFrame.size.height - winArgs.y + frame.size.height - winArgs.height;
@@ -91,7 +107,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 		frame.origin.y = screenFrame.size.height - winArgs.y;
 	    }
 	}
-
+	
 	if (winArgs.widthSet) {
 	    frame.size.width = winArgs.width;
 	}
@@ -102,7 +118,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 	
 	[bridge setWindowFrame:frame];
     }
-
+    
     [[[bridge window] windowController] showWindow:nil];
 
     *partResult = [bridge part];

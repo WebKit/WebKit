@@ -7,6 +7,7 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerSets.h>
 #import <WebKit/WebControllerPolicyHandler.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -35,15 +36,19 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
 
 - init
 {
-    return [self initWithView: nil provisionalDataSource: nil];
+    return [self initWithView: nil provisionalDataSource: nil controllerSetName: nil];
 }
 
-- initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource
+- initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controllerSetName: (NSString *)name;
 {
     [super init];
     
     _private = [[WebControllerPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: @"_top" webView: view provisionalDataSource: dataSource controller: self];
+    _private->controllerSetName = [name retain];
+    if (_private->controllerSetName != nil) {
+	[WebControllerSets addController:self toSetNamed:_private->controllerSetName];
+    }
 
     [self setUseBackForwardList: YES];
     
@@ -54,6 +59,10 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
 
 - (void)dealloc
 {
+    if (_private->controllerSetName != nil) {
+	[WebControllerSets removeController:self fromSetNamed:_private->controllerSetName];
+    }
+
     --WebControllerCount;
     
     [_private release];
@@ -244,7 +253,23 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
 
 - (WebFrame *)frameNamed: (NSString *)name
 {
-    return [[self mainFrame] frameNamed: name];
+    // Try this controller first
+    WebFrame *frame = [self _frameInThisWindowNamed:name];
+
+    if (frame != nil) {
+	return frame;
+    }
+
+    // Try other controllers in the same set
+    if (_private->controllerSetName != nil) {
+	NSEnumerator *enumerator = [WebControllerSets controllersInSetNamed:_private->controllerSetName];
+	WebController *controller;
+	while ((controller = [enumerator nextObject]) != nil && frame == nil) {
+	    frame = [controller _frameInThisWindowNamed:name];
+	}
+    }
+
+    return frame;
 }
 
 - (WebFrame *)mainFrame

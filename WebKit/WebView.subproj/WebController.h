@@ -142,7 +142,7 @@ extern NSString *WebContextMenuElementFrameKey;
 - init;
 
 // Designated initializer.
-- initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource;
+- initWithView: (WebView *)view provisionalDataSource: (WebDataSource *)dataSource controllerSetName: (NSString *)name;
 
 - (void)setWindowContext: (id<WebWindowContext>)context;
 - (id<WebWindowContext>)windowContext;

@@ -32,6 +32,9 @@
     NSLock *userAgentLock;
     
     BOOL defersCallbacks;
+
+    NSString *controllerSetName;
+    NSString *topLevelFrameName;
 }
 @end
 
@@ -49,5 +52,8 @@
 
 - (BOOL)_defersCallbacks;
 - (void)_setDefersCallbacks:(BOOL)defers;
+
+- (void)_setTopLevelFrameName:(NSString *)name;
+- (WebFrame *)_frameInThisWindowNamed:(NSString *)name;
 
 @end

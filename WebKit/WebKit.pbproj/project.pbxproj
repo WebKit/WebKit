@@ -272,6 +272,7 @@
 				F528E3EE031E91AD01CA2ACA,
 				931A72D303265920008635CE,
 				93AEB17F032C1735008635CE,
+				6523FAD1032DA06B005EFCFF,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -359,6 +360,7 @@
 				F560BEBF030DAF4401C1A526,
 				F528E3ED031E91AD01CA2ACA,
 				93AEB180032C1735008635CE,
+				6523FAD2032DA06B005EFCFF,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1095,6 +1097,40 @@
 //392
 //393
 //394
+//650
+//651
+//652
+//653
+//654
+		6523FACF032DA06B005EFCFF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebControllerSets.h;
+			refType = 4;
+		};
+		6523FAD0032DA06B005EFCFF = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebControllerSets.m;
+			refType = 4;
+		};
+		6523FAD1032DA06B005EFCFF = {
+			fileRef = 6523FACF032DA06B005EFCFF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		6523FAD2032DA06B005EFCFF = {
+			fileRef = 6523FAD0032DA06B005EFCFF;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//650
+//651
+//652
+//653
+//654
 //930
 //931
 //932
@@ -1188,6 +1224,8 @@
 				F649E40502EE0D1901CA2ACD,
 				354F25FE02EF441D0ACA2ACA,
 				354F25FF02EF441D0ACA2ACA,
+				6523FACF032DA06B005EFCFF,
+				6523FAD0032DA06B005EFCFF,
 			);
 			isa = PBXGroup;
 			name = WebView;

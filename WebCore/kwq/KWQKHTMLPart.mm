@@ -124,9 +124,11 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
         }
     } else {
         frame = [_bridge descendantFrameNamed:frameName.getNSString()];
+	if (frame == nil) {
+	    frame = [_bridge frameNamed:frameName.getNSString()];
+	}
         if (frame == nil) {
-            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name. New window will not be named until 2942073 is fixed.\n", frameName.getNSString());
-            frame = [_bridge descendantFrameNamed:@"_blank"];
+	    frame = [bridge() openNewWindowWithURL:nil frameName:frameName.getNSString()];
         }
     }
     
@@ -184,7 +186,7 @@ void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, co
     
     // Open new window on command-click
     if (state & MetaButton) {
-        [_bridge openNewWindowWithURL:cocoaURL];
+        [_bridge openNewWindowWithURL:cocoaURL frameName:nil];
         return;
     }
     

@@ -1,3 +1,38 @@
+2002-09-10  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of fix for:
+
+	2952837 - Slide shows on homepage.mac.com don't show pictures, captions
+	2942073 - Deferring [BrowserDocument goToInitialURL] can cause problems
+	3021360 - second window pops up on 'Search' at chrysler.com
+	3030485 - Unexpected new window created with no scroll bars at sony.com
+
+	This is done by adding a concept of named controller sets, so that
+	less browser-like uses of WebKit won't be affected.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+	(-[WebBridge openNewWindowWithURL:frameName:]): Pass frameName
+	parameter to controller initializer.
+	
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController init]): Pass nil for controllerSetName.
+	
+        (-[WebController dealloc]):
+        (-[WebController frameNamed:]): Check other windows in the same set too.
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]):
+        (-[WebController _setDefersCallbacks:]):
+        (-[WebController _setTopLevelFrameName:]):
+        (-[WebController _frameInThisWindowNamed:]):
+        * WebView.subproj/WebControllerSets.h: Added.
+        * WebView.subproj/WebControllerSets.m: Added.
+	(+[WebControllerSets addController:toSetNamed:]): Method to
+	maintain controller sets.
+        (+[WebControllerSets removeController:fromSetNamed:]): Likewise.
+        * WebKit.pbproj/project.pbxproj: Add new files.
+
 2002-09-10  Ken Kocienda  <kocienda@apple.com>
 
         Changed API for setting the WebResourceClient for a request/load.

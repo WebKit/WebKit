@@ -71,6 +71,9 @@
     [userAgentOverride release];
     [userAgentLock release];
     
+    [controllerSetName release];
+    [topLevelFrameName release];
+
     [super dealloc];
 }
 
@@ -218,6 +221,21 @@
 
     _private->defersCallbacks = defers;
     [_private->mainFrame _defersCallbacksChanged];
+}
+
+- (void)_setTopLevelFrameName:(NSString *)name
+{
+    [_private->topLevelFrameName release];
+    _private->topLevelFrameName = [name retain];
+}
+
+- (WebFrame *)_frameInThisWindowNamed:(NSString *)name
+{
+    if ([_private->topLevelFrameName isEqualToString:name]) {
+	return [self mainFrame];
+    } else {
+	return [[self mainFrame] frameNamed:name];
+    }
 }
 
 @end

@@ -87,11 +87,13 @@
     return [newFrame _bridge];
 }
 
-- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL frameName:(NSString *)name
 {
     ASSERT(frame != nil);
 
     WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:URL];
+    [newController _setTopLevelFrameName:name];
+
     WebFrame *newFrame = [newController mainFrame];
 
     return [newFrame _bridge];
