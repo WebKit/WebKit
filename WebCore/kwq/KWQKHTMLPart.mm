@@ -1580,6 +1580,8 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     }
     d->m_decoder = decoder;
 
+    doc->setParseMode ([state parseMode]);
+    
     updatePolicyBaseURL();
         
     restoreWindowProperties (windowProperties);

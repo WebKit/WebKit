@@ -50,6 +50,7 @@ using KJS::SavedBuiltins;
     doc->ref();
     document = doc;
     document->setInPageCache(YES);
+    parseMode = document->parseMode();
     document->view()->ref();
     mousePressNode = static_cast<KWQKHTMLPart *>(document->part())->mousePressNode();
     if (mousePressNode) {
@@ -61,6 +62,8 @@ using KJS::SavedBuiltins;
     interpreterBuiltins = ib;
     return self;
 }
+
+- (DOM::DocumentImpl::ParseMode)parseMode { return parseMode; }
 
 - (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa
 {
