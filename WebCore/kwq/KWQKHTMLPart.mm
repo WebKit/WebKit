@@ -1843,6 +1843,40 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     _currentEvent = oldCurrentEvent;
 }
 
+bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
+{
+    DocumentImpl *doc = d->m_doc;
+    KHTMLView *v = d->m_view;
+    if (!doc || !v) {
+        return false;
+    }
+
+    NSEvent *oldCurrentEvent = _currentEvent;
+    _currentEvent = [event retain];
+    
+    QMouseEvent qev(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
+        buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
+
+    int xm, ym;
+    v->viewportToContents(qev.x(), qev.y(), xm, ym);
+
+    NodeImpl::MouseEvent mev(qev.stateAfter(), NodeImpl::MousePress);
+    doc->prepareMouseEvent(false, xm, ym, &mev);
+
+    // Sending an event can result in the destruction of the view and part.
+    // We ref so that happens after we return from the KHTMLView function.
+    v->ref();
+    bool swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
+        mev.innerNode.handle(), true, 0, &qev, true, NodeImpl::MousePress);
+    v->deref();
+
+    ASSERT(_currentEvent == event);
+    [event release];
+    _currentEvent = oldCurrentEvent;
+
+    return swallowEvent;
+}
+
 struct ListItemInfo {
     unsigned start;
     unsigned end;

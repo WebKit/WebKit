@@ -161,6 +161,8 @@ enum FrameBorderStyle {
 - (void)mouseMoved:(NSEvent *)event;
 - (void)mouseDragged:(NSEvent *)event;
 
+- (BOOL)sendContextMenuEvent:(NSEvent *)event; // return YES if event is eaten by WebCore
+
 - (NSView *)nextKeyView;
 - (NSView *)previousKeyView;
 

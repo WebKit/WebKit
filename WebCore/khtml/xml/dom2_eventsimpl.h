@@ -77,6 +77,7 @@ public:
 	BLUR_EVENT,
 	RESIZE_EVENT,
 	SCROLL_EVENT,
+        CONTEXTMENU_EVENT,
 	// khtml events (not part of DOM)
 	KHTML_DBLCLICK_EVENT, // for html ondblclick
 	KHTML_CLICK_EVENT, // for html onclick

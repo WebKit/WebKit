@@ -1,3 +1,15 @@
+2003-08-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3299893 -- oncontextmenu support
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]): Call sendContextMenuEvent: on the bridge, and
+        don't show a menu if the event is handled over in WebCore.
+        (-[WebHTMLView mouseDown:]): Don't send a mouse down event in the case where we
+        already sent a context menu event and decided not to put up a real context menu.
+
 2003-08-18  Richard Williamson  <rjw@apple.com>
 
 	Fix build problem from last checkin.

@@ -2,6 +2,36 @@
 
         Reviewed by Maciej.
 
+        - fixed 3299893 -- oncontextmenu support
+
+        * kwq/WebCoreBridge.h: Added sendContextMenuEvent: method.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge sendContextMenuEvent:]): Added.
+        Calls sendContextMenuEvent on the part.
+
+        * kwq/KWQKHTMLPart.h: Added sendContextMenuEvent member function.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::sendContextMenuEvent): Added. Sets up
+        a suitable mouse event and calls dispatchMouseEvent for CONTEXTMENU_EVENT.
+
+        * khtml/ecma/kjs_dom.cpp: Added oncontextmenu to DOMNode's list of properties.
+        (DOMNode::getValueProperty): Added case for OnContextMenu.
+        (DOMNode::putValue): Added case for OnContextMenu.
+        * khtml/ecma/kjs_dom.h: Added constant for OnContextMenu.
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::parseAttribute):
+        Added case for ATTR_ONCONTEXTMENU.
+        * khtml/misc/htmlattrs.in: Added oncontextmenu.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId): Added case for CONTEXTMENU_EVENT.
+        (EventImpl::idToType): Added case for CONTEXTMENU_EVENT.
+        * khtml/xml/dom2_eventsimpl.h: Added CONTEXTMENU_EVENT.
+
+        * khtml/ecma/kjs_dom.lut.h: Regenerated.
+        * khtml/misc/htmlattrs.c: Regenerated.
+        * khtml/misc/htmlattrs.h: Regenerated.
+
+2003-08-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed 3381295 -- regular expression matches for text with UTF-16 surrogates will give incorrect results
 
         * kwq/KWQRegExp.mm: (QRegExp::match): Removed local copy of convertCharacterOffsetsToUTF8ByteOffsets

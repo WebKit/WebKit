@@ -79,6 +79,7 @@ onabort
 onblur
 onchange
 onclick
+oncontextmenu
 ondblclick
 onerror
 onfocus

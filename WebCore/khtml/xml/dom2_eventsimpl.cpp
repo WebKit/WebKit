@@ -219,6 +219,8 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return RESIZE_EVENT;
     else if (type == "scroll")
 	return SCROLL_EVENT;
+    else if (type == "contextmenu")
+	return CONTEXTMENU_EVENT;
     // ignore: KHTML_DBLCLICK_EVENT
     // ignore: KHTML_CLICK_EVENT
     return UNKNOWN_EVENT;
@@ -283,6 +285,8 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
 	    return "resize";
 	case SCROLL_EVENT:
 	    return "scroll";
+        case CONTEXTMENU_EVENT:
+            return "contextmenu";
 	// khtml extensions
 	case KHTML_DBLCLICK_EVENT:
             return "dblclick";

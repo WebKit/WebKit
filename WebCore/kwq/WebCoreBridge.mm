@@ -528,6 +528,11 @@ static BOOL nowPrinting(WebCoreBridge *self)
     _part->mouseMoved(event);
 }
 
+- (BOOL)sendContextMenuEvent:(NSEvent *)event
+{
+    return _part->sendContextMenuEvent(event);
+}
+
 - (id <WebDOMElement>)elementForView:(NSView *)view
 {
     // FIXME: implemetented currently for only a subset of the KWQ widgets

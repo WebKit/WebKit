@@ -105,6 +105,7 @@ bool DOMNode::toBoolean(ExecState *) const
   onblur	DOMNode::OnBlur			DontDelete
   onchange	DOMNode::OnChange		DontDelete
   onclick	DOMNode::OnClick		DontDelete
+  oncontextmenu	DOMNode::OnContextMenu		DontDelete
   ondblclick	DOMNode::OnDblClick		DontDelete
   ondragdrop	DOMNode::OnDragDrop		DontDelete
   onerror	DOMNode::OnError		DontDelete
@@ -187,6 +188,8 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     return getListener(DOM::EventImpl::CHANGE_EVENT);
   case OnClick:
     return getListener(DOM::EventImpl::KHTML_CLICK_EVENT);
+  case OnContextMenu:
+    return getListener(DOM::EventImpl::CONTEXTMENU_EVENT);
   case OnDblClick:
     return getListener(DOM::EventImpl::KHTML_DBLCLICK_EVENT);
   case OnDragDrop:
@@ -299,6 +302,9 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
     break;
   case OnClick:
     setListener(exec,DOM::EventImpl::KHTML_CLICK_EVENT,value);
+    break;
+  case OnContextMenu:
+    setListener(exec,DOM::EventImpl::CONTEXTMENU_EVENT,value);
     break;
   case OnDblClick:
     setListener(exec,DOM::EventImpl::KHTML_DBLCLICK_EVENT,value);

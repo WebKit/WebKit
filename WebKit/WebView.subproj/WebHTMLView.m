@@ -380,11 +380,13 @@
     [self layoutToPageWidth:0.0];
 }
 
-- (NSMenu *)menuForEvent:(NSEvent *)theEvent
-{    
-    NSPoint point = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+- (NSMenu *)menuForEvent:(NSEvent *)event
+{
+    if ([[self _bridge] sendContextMenuEvent:event]) {
+        return nil;
+    }
+    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
     NSDictionary *element = [self _elementAtPoint:point];
-
     return [[self _webView] _menuForElement:element];
 }
 
@@ -691,6 +693,12 @@
 
 - (void)mouseDown:(NSEvent *)event
 {
+    // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
+    // We don't want to pass them along to KHTML a second time.
+    if ([event modifierFlags] & NSControlKeyMask) {
+        return;
+    }
+    
     _private->ignoringMouseDraggedEvents = NO;
     
     // Record the mouse down position so we can determine drag hysteresis.
@@ -700,7 +708,7 @@
     // Don't do any mouseover while the mouse is down.
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
-    // Let khtml get a chance to deal with the event.
+    // Let KHTML get a chance to deal with the event.
     [[self _bridge] mouseDown:event];
 }
 
