@@ -496,6 +496,7 @@
     // has been around long enough for everyone to have it.
     if ([response respondsToSelector:@selector(_calculatedExpiration)]) {
         NSTimeInterval expiration = [response _calculatedExpiration];
+        expiration += kCFAbsoluteTimeIntervalSince1970;
         return expiration > MAX_TIME_T ? MAX_TIME_T : expiration;
     }
 

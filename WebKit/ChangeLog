@@ -1,3 +1,12 @@
+2004-04-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin and Dave (many weeks ago....I am so ashamed for not landing)
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge expiresTimeForResponse:]): Now adds in the difference between
+        the Mac OS X epoch and the "standard" unix epoch when passing back a time
+        that WebCore will use for its cache expiration determinations. 
+
 2004-04-07  Richard Williamson   <rjw@apple.com>
 
 	Fix for 3604388.  The runtime version check (_CFExecutableLinkedOnOrAfter) used by many of
