@@ -1,3 +1,26 @@
+2003-08-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3343681 -- clicking on a disabled submit button submits the form!
+
+        This turned out to be a problem with code in dispatchGenericEvent that sent
+        DOMActivate events even when the form element was disabled.
+
+        * khtml/xml/dom_nodeimpl.h: Add virtual disabled() member function.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchGenericEvent): Don't send DOM activate events for disabled elements.
+        (NodeImpl::handleLocalEvents): Don't send mouse events for disabled elements. But we do
+        want those events to pass through the bubble and capture phases, just avoid triggering
+        any listeners on this node itself.
+        (NodeImpl::disabled): Added default implementation that returns false.
+
+        * khtml/html/html_formimpl.h: Removed the disabled() function's inline implementation
+        since it's now virtual and it's not helpful to inline virtual functions.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::disabled): Moved this method into the .cpp file since it's
+        now virtual and it's not helpful to inline virtual functions.
+
 2003-08-18  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

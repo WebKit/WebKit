@@ -244,6 +244,12 @@ public:
      */
     virtual void defaultEventHandler(EventImpl *evt);
 
+    /**
+     * Used for disabled form elements; if true, prevents mouse events from being dispatched
+     * to event listeners, and prevents DOMActivate events from being sent at all.
+     */
+    virtual bool disabled() const;
+
     virtual bool isReadOnly();
     virtual bool childTypeAllowed( unsigned short /*type*/ ) { return false; }
     virtual unsigned long childNodeCount();
