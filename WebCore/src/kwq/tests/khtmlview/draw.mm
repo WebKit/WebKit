@@ -66,13 +66,16 @@ int main( int argc, char **argv )
     // by WebPageDocument.
     // [[WebPageDocument alloc] initWithURL: (NSURL *)url];
     KHTMLPart *w = new KHTMLPart();
-    w->openURL (url);
 
     // Create the KHTMLView.  This will eventually be covered by the
     // WebPageView. 
     // [[WebPageView alloc] initWithFrame: (NSRect)rect document: (WebPageDocument *)doc]
     KHTMLView   *htmlView = new KHTMLView (w, 0);
     KWQHTMLView *kwqHTMLView = [[[KWQHTMLView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: htmlView] autorelease];
+        
+    w->setView (htmlView);
+
+    w->openURL (url);
     
     htmlView->setView (kwqHTMLView);
     

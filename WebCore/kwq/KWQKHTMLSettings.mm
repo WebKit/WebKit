@@ -27,45 +27,59 @@
 
 #include <khtml_settings.h>
 
+KHTMLSettings::KHTMLSettings()
+{
+    m_fontSizes.clear();
+    m_fontSizes << 6;
+    m_fontSizes << 8;
+    m_fontSizes << 10;
+    m_fontSizes << 12;
+    m_fontSizes << 14;
+    m_fontSizes << 16;
+    m_fontSizes << 18;
+    m_fontSizes << 20;
+}
+
 QString KHTMLSettings::stdFontName() const
 {
-    _logNotYetImplemented();
+    return QString ("Arial");
 }
 
 
 QString KHTMLSettings::fixedFontName() const
 {
-    _logNotYetImplemented();
+    return QString ("Courier");
 }
 
 
 QString KHTMLSettings::serifFontName() const
 {
-    _logNotYetImplemented();
+    return QString ("Times-Roman");
 }
 
 
 QString KHTMLSettings::sansSerifFontName() const
 {
-    _logNotYetImplemented();
+    return QString ("Arial");
 }
 
 
 QString KHTMLSettings::cursiveFontName() const
 {
-    _logNotYetImplemented();
+    return QString ("Times-Roman");
 }
 
 
 QString KHTMLSettings::fantasyFontName() const
 {
-    _logNotYetImplemented();
+    return QString ("Times-Roman");
 }
 
 
 QString KHTMLSettings::settingsToCSS() const
 {
     _logNotYetImplemented();
+    return "";
 }
 
 QFont::CharSet KHTMLSettings::charset() const
@@ -88,7 +102,7 @@ const QString &KHTMLSettings::encoding() const
 
 int KHTMLSettings::minFontSize() const
 {
-    _logNotYetImplemented();
+    return 6;
 }
 
 
@@ -112,7 +126,7 @@ void KHTMLSettings::setScript( QFont::CharSet c )
 
 const QValueList<int> &KHTMLSettings::fontSizes() const
 {
-    _logNotYetImplemented();
+    return m_fontSizes;
 }
 
 

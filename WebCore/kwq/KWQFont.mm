@@ -106,7 +106,7 @@ void QFont::setFamily(const QString &qfamilyName)
     NSFont *oldFont = data->font;
     
     familyName = QSTRING_TO_NSSTRING(qfamilyName);
-    data->font = [[[NSFontManager sharedFontManager] convertFont: data->font toFamily: familyName] retain];
+    data->font = [[[NSFontManager sharedFontManager] convertFont: oldFont toFamily: familyName] retain];
 
     [oldFont release];
 }
@@ -116,7 +116,7 @@ void QFont::setPixelSizeFloat(float sz)
 {
     NSFont *oldFont = data->font;
 
-    data->font = [[[NSFontManager sharedFontManager] convertFont: data->font toSize: sz] retain];
+    data->font = [[[NSFontManager sharedFontManager] convertFont: oldFont toSize: sz] retain];
 
     [oldFont release];
 }

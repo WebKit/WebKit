@@ -37,6 +37,7 @@
 
 #include <qcolor.h>
 
+
 QRgb qRgb(int r, int g, int b)
 {
     return r << 16 | g << 8 | b;
@@ -65,11 +66,11 @@ QColor::QColor(int r, int g, int b)
 }
 
 
-QColor::QColor(const char *)
+QColor::QColor(const char *n)
 {
-    if ( !globals_init )
-	initGlobalColors();
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+ //   if ( !globals_init )
+//	initGlobalColors();
+//    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
     // FIXME: need to implement real construction of color based on string
     _initialize (0,0,0);
 }
@@ -106,12 +107,16 @@ QColor::QColor(const QColor &copyFrom)
 QString QColor::name() const
 {
     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    // FIXME!  Must map onto named colors.
+    return "white";
 }
 
 
-void QColor::setNamedColor(const QString&)
+void QColor::setNamedColor(const QString&n)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    //NSLog (@"WARNING %s:%s %d (NOT YET IMPLEMENTED) color = %s\n", __FILE__, __FUNCTION__, __LINE__, n.ascii());
+    NSLog (@"WARNING %s:%s %d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    // Do something better here.
 }
 
 

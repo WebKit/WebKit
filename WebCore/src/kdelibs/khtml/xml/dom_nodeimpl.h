@@ -193,7 +193,12 @@ public:
     virtual khtml::RenderStyle *style() const { return 0; }
 
     virtual void setRenderer(khtml::RenderObject *object) { m_render = object; }
+#ifdef _KWQ_
+    khtml::RenderObject *renderer() const;
+#else
     virtual khtml::RenderObject *renderer() const { return m_render; }
+#endif
+
 
     virtual DOM::CSSStyleDeclarationImpl *styleRules() { return 0; }
 

@@ -27,24 +27,30 @@
 
 #include <kglobalsettings.h>
 
+#include <kwqdebug.h>
 
 QFont KGlobalSettings::generalFont()
 {
+    return QFont();
 }
 
 
 QFont KGlobalSettings::windowTitleFont()
 {
+    return QFont();
 }
 
 
 QFont KGlobalSettings::menuFont()
 {
+    return QFont();
 }
 
 
 int KGlobalSettings::contrast()
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 

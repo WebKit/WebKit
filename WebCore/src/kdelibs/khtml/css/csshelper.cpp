@@ -141,9 +141,10 @@ DOMString khtml::parseURL(const DOMString &url)
 
 void khtml::setFontSize( QFont &f,  int  pixelsize, const KHTMLSettings *s, QPaintDeviceMetrics *devMetrics )
 {
-    QFontDatabase db;
-
     float size = pixelsize;
+
+#ifndef _KWQ_
+    QFontDatabase db;
 
     float toPix = 1.;
     if ( !khtml::printpainter )
@@ -182,7 +183,7 @@ void khtml::setFontSize( QFont &f,  int  pixelsize, const KHTMLSettings *s, QPai
 //         else if ( size > 4 && size < 16 )
 //             size = float( int( ( size + 1 ) / 2 )*2 );
     }
-
+#endif
     //qDebug(" -->>> using %f pixel font", size);
 
     f.setPixelSizeFloat( size );

@@ -77,7 +77,9 @@ static CSSStyleSelector::Encodedurl *encodedurl;
 CSSStyleSelector::CSSStyleSelector(DocumentImpl * doc)
 {
     strictParsing = doc->parseMode() == DocumentImpl::Strict;
-    if(!defaultStyle) loadDefaultStyle(doc->view()?doc->view()->part()->settings():0);
+    if(!defaultStyle){
+        loadDefaultStyle(doc->view()?doc->view()->part()->settings():0);
+    }
 
     selectors = 0;
     selectorCache = 0;

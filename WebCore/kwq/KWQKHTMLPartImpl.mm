@@ -91,6 +91,8 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 class KHTMLPartPrivate
 {
 public:
+    KHTMLView *m_view;
+    
     DOM::DocumentImpl *m_doc;
     khtml::Decoder *m_decoder;
 
@@ -114,10 +116,12 @@ public:
             cache_init = true;
         }
         m_part = part;
+        m_view = 0L;
         m_doc = new HTMLDocumentImpl();
         m_decoder = 0L;
         m_bFirstData = true;
-        m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
+        //m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
+        m_settings = new KHTMLSettings();
         m_haveEncoding = false;
         m_recv = [[KHTMLPartNotificationReceiver alloc] init];
         m_recv->m_part = part;
@@ -171,7 +175,7 @@ void KHTMLPart::slotData(id <WCURICacheData> data)
 bool KHTMLPart::openURL( const KURL &url )
 {
     // Close the previous URL.
-    //closeURL();
+    closeURL();
     
     //if ( args.doPost() && (url.protocol().startsWith("http")) )
     //{
@@ -208,9 +212,9 @@ bool KHTMLPart::openURL( const KURL &url )
 
 bool KHTMLPart::closeURL()
 {
-    if (d && d->m_doc) {
-        recursive(0, d->m_doc);
-    }
+    //if (d && d->m_doc) {
+    //    recursive(0, d->m_doc);
+    //}
 
     // Cancel any pending loads.
     
@@ -335,10 +339,10 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
 {
     //d->m_referrer = url.url();
     
-    d->m_doc = new HTMLDocumentImpl();
+    d->m_doc = new HTMLDocumentImpl(d->m_view);
     d->m_doc->ref();
     //FIXME: do we need this? 
-    //d->m_doc->attach( d->m_view );
+    d->m_doc->attach( d->m_view );
     d->m_doc->setURL( url.url() );
 
     /* FIXME: we'll need to make this work....
@@ -451,7 +455,9 @@ void KHTMLPart::setBaseURL( const KURL &url )
 
 KURL KHTMLPart::baseURL() const
 {
-    _logNeverImplemented();
+    // FIXME!
+    _logPartiallyImplemented();
+    return KURL();
 }
 
 
@@ -643,7 +649,7 @@ DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
 
 const KHTMLSettings *KHTMLPart::settings() const
 {
-    _logNotYetImplemented();
+    return d->m_settings;
 }
 
 
@@ -673,7 +679,12 @@ void KHTMLPart::scheduleRedirection( int delay, const QString &url )
 
 KHTMLView *KHTMLPart::view() const
 {
-    _logNotYetImplemented();
+    return d->m_view;
+}
+
+void KHTMLPart::setView(KHTMLView *view)
+{
+    d->m_view = view;
 }
 
 

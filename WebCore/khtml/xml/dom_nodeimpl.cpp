@@ -180,6 +180,14 @@ NodeImpl *NodeImpl::addChild(NodeImpl *)
   return 0;
 }
 
+#ifdef _KWQ_
+khtml::RenderObject *NodeImpl::renderer() const
+{
+    return m_render;
+}
+#endif
+
+
 QString NodeImpl::toHTML() const
 {
     NodeImpl* fc = firstChild();
