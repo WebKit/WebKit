@@ -1,3 +1,24 @@
+2004-04-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3628309>: Fedex tracking page so slow it seems like a hang (site change?)
+	<rdar://problem/3608061>: "ATI Developer site so slow it seems like a hang"
+	<rdar://problem/3612130>: "Reproducible hang in JavaScript at www.tfl.gov.uk"
+	<rdar://problem/3626022>: "Safari was consuming > 100% CPU on dual-G5 Mac, sample shows JavaScript"
+	<rdar://problem/3632348>: "www.whatis.com search for "pivot table" leads to JavaScript hang"
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): The "text" property for anchors should be
+	innerText, not innerHTML.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::innerText): Make sure not to include all the text after an
+	element if it has no children.
+        * layout-tests/fast/dom/anchor-text-expected.txt: Added.
+        * layout-tests/fast/dom/anchor-text.html: Added.
+        * layout-tests/fast/dom/inner-text-expected.txt: Added.
+        * layout-tests/fast/dom/inner-text.html: Added.
+
 2004-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

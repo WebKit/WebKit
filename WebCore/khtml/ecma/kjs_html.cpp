@@ -1544,7 +1544,7 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
     case AnchorShape:           return String(anchor.shape());
     case AnchorTabIndex:        return Number(anchor.tabIndex());
     case AnchorTarget:          return String(anchor.target());
-    case AnchorText:            return String(anchor.innerHTML());
+    case AnchorText:            return String(anchor.innerText());
     case AnchorType:            return String(anchor.type());
     }
   }

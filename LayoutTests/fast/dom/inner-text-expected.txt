@@ -1,0 +1,11 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x62
+  RenderBlock {HTML} at (0,0) size 800x62
+    RenderBody {BODY} at (8,8) size 784x46
+      RenderImage {IMG} at (0,0) size 24x24
+      RenderText {TEXT} at (24,10) size 225x18
+        text run at (24,10) width 225: " This text should only appear once. "
+      RenderText {TEXT} at (249,10) size 466x36
+        text run at (249,10) width 217: "This text should only appear once."
+        text run at (0,28) width 378: "document.write(document.getElementById(\"x\").innerText);"
