@@ -125,20 +125,16 @@ static void URLFileReaderInit()
     }
     
     if (data) {
-#ifdef WEBFOUNDATION_DEBUG
         if (mappedBytes) {
-            WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - mmaped disk cache file - %@", path);
+            WEBFOUNDATIONLOGLEVEL1(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - mmaped disk cache file - %@", path);
         }
         else {
-            WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - fs read disk cache file - %@", path);
+            WEBFOUNDATIONLOGLEVEL1(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - fs read disk cache file - %@", path);
         }
-#endif
         return self;
     }
     else {
-#ifdef WEBFOUNDATION_DEBUG
-        WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - no disk cache file - %@", path);
-#endif
+        WEBFOUNDATIONLOGLEVEL1(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - no disk cache file - %@", path);
         [self dealloc];
         return nil;
     }
@@ -371,9 +367,7 @@ static void URLFileReaderInit()
     [self open];
     [mutex unlock];
 
-#ifdef WEBFOUNDATION_DEBUG
-    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - removeAllObjects");
-#endif
+    WEBFOUNDATIONLOGLEVEL(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - removeAllObjects");
 }
 
 -(id)objectForKey:(id)key
@@ -424,9 +418,7 @@ static void URLFileReaderInit()
             }
         }
     NS_HANDLER
-#ifdef WEBFOUNDATION_DEBUG
-        WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - cannot unarchive cache file - %@", key);
-#endif
+        WEBFOUNDATIONLOGLEVEL1(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - cannot unarchive cache file - %@", key);
         result = nil;
     NS_ENDHANDLER
 
@@ -454,9 +446,7 @@ static void URLFileReaderInit()
     NSArchiver *archiver;
     NSFileManager *defaultManager;
 
-#ifdef WEBFOUNDATION_DEBUG
-    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performSetObject - %@ - %@", key, [IFURLFileDatabase uniqueFilePathForKey:key]);
-#endif
+    WEBFOUNDATIONLOGLEVEL2(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performSetObject - %@ - %@", key, [IFURLFileDatabase uniqueFilePathForKey:key]);
 
     result = NO;
 
@@ -496,9 +486,7 @@ static void URLFileReaderInit()
 {
     NSString *filePath;
 
-#ifdef WEBFOUNDATION_DEBUG
-    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performRemoveObjectForKey - %@", key);
-#endif
+    WEBFOUNDATIONLOGLEVEL1(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performRemoveObjectForKey - %@", key);
 
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
