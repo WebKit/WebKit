@@ -1,5 +1,15 @@
 2002-11-05  Maciej Stachowiak  <mjs@apple.com>
 
+	- fixed 3083732 - SJ: window comes out blank on samsung site
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Don't start loading if the URL is exactly the same as the parent
+	URL. We may need a more stringent check, but this seems to match
+	the tolerance of other browsers OK.
+
+2002-11-05  Maciej Stachowiak  <mjs@apple.com>
+
 	Added request and frame to click policy callback.
 	
         * WebView.subproj/WebControllerPolicyDelegate.h:

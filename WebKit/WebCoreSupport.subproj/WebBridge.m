@@ -306,7 +306,11 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
 
-    [newFrame _loadURL:URL loadType:WebFrameLoadTypeInternal clientRedirect:NO triggeringEvent:nil];
+    // We must avoid loading the document itself as a subframe, like
+    // other browsers do, otherwise bugs like Radar 3083732
+    if (![[[URL _web_URLByRemovingFragment] absoluteURL] isEqual:[[[frame dataSource] URL] absoluteURL]]) {
+	[newFrame _loadURL:URL loadType:WebFrameLoadTypeInternal clientRedirect:NO triggeringEvent:nil];
+    }
 
     return [newFrame _bridge];
 }
