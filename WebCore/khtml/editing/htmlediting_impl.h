@@ -57,11 +57,23 @@ namespace khtml {
 //------------------------------------------------------------------------------------------
 // StyleChange
 
-struct StyleChange {
-    StyleChange() : applyBold(false), applyItalic(false) {}
-    DOM::DOMString cssStyle;
-    bool applyBold;
-    bool applyItalic;
+class StyleChange {
+public:
+    StyleChange() : m_applyBold(false), m_applyItalic(false) {}
+    explicit StyleChange(DOM::CSSStyleDeclarationImpl *);
+    StyleChange(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
+
+    DOM::DOMString cssStyle() { return m_cssStyle; }
+    bool applyBold() { return m_applyBold; }
+    bool applyItalic() { return m_applyItalic; }
+
+private:
+    void init(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
+    static bool currentlyHasStyle(const DOM::Position &, const DOM::CSSProperty *);
+    
+    DOM::DOMString m_cssStyle;
+    bool m_applyBold;
+    bool m_applyItalic;
 };
 
 //------------------------------------------------------------------------------------------
@@ -204,8 +216,6 @@ private:
     bool nodeFullySelected(const DOM::NodeImpl *node) const;
 
     // style-application helpers
-    bool currentlyHasStyle(const DOM::Position &, const DOM::CSSProperty *) const;
-    StyleChange computeStyleChange(const DOM::Position &, DOM::CSSStyleDeclarationImpl *);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
     DOM::NodeImpl *splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
     void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);

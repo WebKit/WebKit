@@ -2,6 +2,30 @@
 
         Reviewed by Darin
 
+        Some consolidation in style application code.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::StyleChange::StyleChange): Made this a full-on class and added a couple of 
+        members and a constructors to make a StyleChange from a CSSStyleDeclarationImpl, as
+        well as from a CSSStyleDeclarationImpl and a Position.
+        (khtml::StyleChange::init): Common init function for StyleChange constructors.
+        (khtml::StyleChange::currentlyHasStyle): Moved this here from ApplyStyleCommandImpl.
+        (khtml::CompositeEditCommandImpl::applyTypingStyle): Tweak to adjust to new StyleChange
+        interface.
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded): Ditto.
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::StyleChange::StyleChange):
+        (khtml::StyleChange::cssStyle): New accessor.
+        (khtml::StyleChange::applyBold): Ditto.
+        (khtml::StyleChange::applyItalic): Ditto.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::computedStyle): New helper.
+        * khtml/xml/dom_position.h: Ditto.
+
+2004-08-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
         Fix for this bug:
         <rdar://problem/3751098> HTML email has one set of SPAN tags per character in the message
         

@@ -28,6 +28,7 @@
 
 namespace DOM {
 
+class CSSStyleDeclarationImpl;
 class ElementImpl;
 class NodeImpl;
 
@@ -49,6 +50,7 @@ public:
     long offset() const { return m_offset; }
 
     ElementImpl *element() const;
+    CSSStyleDeclarationImpl *computedStyle() const;
 
     long renderedOffset() const;
 

@@ -47,7 +47,6 @@
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
-#include "xml/dom2_viewsimpl.h"
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
@@ -224,6 +223,63 @@ static DOMString &styleSpanClassString()
 static void debugPosition(const char *prefix, const Position &pos)
 {
     LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
+}
+
+//------------------------------------------------------------------------------------------
+// StyleChange
+
+StyleChange::StyleChange(CSSStyleDeclarationImpl *style) 
+    : m_applyBold(false), m_applyItalic(false)
+{
+    init(style, Position());
+}
+
+StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &position)
+     : m_applyBold(false), m_applyItalic(false)
+{
+    init(style, position);
+}
+
+void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
+{
+    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
+        CSSProperty *property = it.current();
+
+        // If position is empty or the position passed in already has the 
+        // style, just move on.
+        if (position.notEmpty() && currentlyHasStyle(position, property))
+            continue;
+
+        // Figure out the manner of change that is needed.
+        switch (property->id()) {
+            case CSS_PROP_FONT_WEIGHT:
+                if (strcasecmp(property->value()->cssText(), "bold") == 0)
+                    m_applyBold = true;
+                else
+                    m_cssStyle += property->cssText();
+                break;
+            case CSS_PROP_FONT_STYLE: {
+                    DOMString cssText(property->value()->cssText());
+                    if (strcasecmp(cssText, "italic") == 0 || strcasecmp(cssText, "oblique") == 0)
+                        m_applyItalic = true;
+                    else
+                        m_cssStyle += property->cssText();
+                }
+                break;
+            default:
+                m_cssStyle += property->cssText();
+                break;
+        }
+    }
+}
+
+bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *property)
+{
+    ASSERT(pos.notEmpty());
+    CSSStyleDeclarationImpl *style = pos.computedStyle();
+    ASSERT(style);
+    CSSValueImpl *value = style->getPropertyCSSValue(property->id());
+    return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
 }
 
 //------------------------------------------------------------------------------------------
@@ -546,37 +602,13 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
     // and ApplyStyleCommandImpl::computeStyleChange.
     // Both function do similar work, and the common parts could be factored out.
 
-    CSSStyleDeclarationImpl *style = document()->part()->typingStyle();
-    StyleChange styleChange;
+    StyleChange styleChange(document()->part()->typingStyle());
 
-    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
-        CSSProperty *property = it.current();
-        switch (property->id()) {
-            case CSS_PROP_FONT_WEIGHT:
-                if (strcasecmp(property->value()->cssText(), "bold") == 0)
-                    styleChange.applyBold = true;
-                else
-                    styleChange.cssStyle += property->cssText();
-                break;
-            case CSS_PROP_FONT_STYLE: {
-                    DOMString cssText(property->value()->cssText());
-                    if (strcasecmp(cssText, "italic") == 0 || strcasecmp(cssText, "oblique") == 0)
-                        styleChange.applyItalic = true;
-                    else
-                        styleChange.cssStyle += property->cssText();
-                }
-                break;
-            default:
-                styleChange.cssStyle += property->cssText();
-                break;
-        }
-    }
-    
     NodeImpl *childToAppend = child;
     ElementImpl *element = 0;
     int exceptionCode = 0;
 
-    if (styleChange.applyItalic) {
+    if (styleChange.applyItalic()) {
         ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
         ASSERT(exceptionCode == 0);
         italicElement->appendChild(childToAppend, exceptionCode);
@@ -585,7 +617,7 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
         childToAppend = italicElement;
     }
 
-    if (styleChange.applyBold) {
+    if (styleChange.applyBold()) {
         ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
         ASSERT(exceptionCode == 0);
         boldElement->appendChild(childToAppend, exceptionCode);
@@ -594,10 +626,10 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
         childToAppend = boldElement;
     }
 
-    if (styleChange.cssStyle.length() > 0) {
+    if (styleChange.cssStyle().length() > 0) {
         ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
         ASSERT(exceptionCode == 0);
-        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
+        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
         styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
         styleElement->appendChild(childToAppend, exceptionCode);
         ASSERT(exceptionCode == 0);
@@ -880,74 +912,31 @@ void ApplyStyleCommandImpl::applyStyleIfNeeded(NodeImpl *startNode, NodeImpl *en
     // FIXME: This function should share code with CompositeEditCommandImpl::applyTypingStyle.
     // Both function do similar work, and the common parts could be factored out.
 
-    StyleChange styleChange = computeStyleChange(Position(startNode, 0), style());
+    StyleChange styleChange(style(), Position(startNode, 0));
     int exceptionCode = 0;
     
-    if (styleChange.cssStyle.length() > 0) {
+    if (styleChange.cssStyle().length() > 0) {
         ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
         ASSERT(exceptionCode == 0);
-        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle);
+        styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
         styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
         insertNodeBefore(styleElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, styleElement);
     }
 
-    if (styleChange.applyBold) {
+    if (styleChange.applyBold()) {
         ElementImpl *boldElement = document()->createHTMLElement("B", exceptionCode);
         ASSERT(exceptionCode == 0);
         insertNodeBefore(boldElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, boldElement);
     }
 
-    if (styleChange.applyItalic) {
+    if (styleChange.applyItalic()) {
         ElementImpl *italicElement = document()->createHTMLElement("I", exceptionCode);
         ASSERT(exceptionCode == 0);
         insertNodeBefore(italicElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, italicElement);
     }
-}
-
-bool ApplyStyleCommandImpl::currentlyHasStyle(const Position &pos, const CSSProperty *property) const
-{
-    ASSERT(pos.notEmpty());
-    CSSStyleDeclarationImpl *decl = document()->defaultView()->getComputedStyle(pos.element(), 0);
-    ASSERT(decl);
-    CSSValueImpl *value = decl->getPropertyCSSValue(property->id());
-    return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
-}
-
-StyleChange ApplyStyleCommandImpl::computeStyleChange(const Position &insertionPoint, CSSStyleDeclarationImpl *style)
-{
-    ASSERT(insertionPoint.notEmpty());
-    ASSERT(style);
-
-    StyleChange styleChange;
-
-    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
-        CSSProperty *property = it.current();
-        if (!currentlyHasStyle(insertionPoint, property)) {
-            switch (property->id()) {
-                case CSS_PROP_FONT_WEIGHT:
-                    if (strcasecmp(property->value()->cssText(), "bold") == 0)
-                        styleChange.applyBold = true;
-                    else
-                        styleChange.cssStyle += property->cssText();
-                    break;
-                case CSS_PROP_FONT_STYLE: {
-                        DOMString cssText(property->value()->cssText());
-                        if (strcasecmp(cssText, "italic") == 0 || strcasecmp(cssText, "oblique") == 0)
-                            styleChange.applyItalic = true;
-                        else
-                            styleChange.cssStyle += property->cssText();
-                    }
-                    break;
-                default:
-                    styleChange.cssStyle += property->cssText();
-                    break;
-            }
-        }
-    }
-    return styleChange;
 }
 
 Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
