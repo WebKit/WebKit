@@ -1,5 +1,13 @@
 2004-12-16  Adele Amchan  <adele@apple.com>
 
+        Change by Richard, reviewed by me.
+
+	Fix for: <rdar://problem/3923983> background image decoding prevents page with 0Kb image from finishing to load
+
+        * khtml/misc/loader.cpp: (CachedImage::data): Added call to notifyFinished so the 0Kb image case finishes loading.
+
+2004-12-16  Adele Amchan  <adele@apple.com>
+
         Reviewed by Chris.
 
         Fix for: <rdar://problem/3534824> VIP: some navigation links on safeway.com don't work due to a JavaScript quirk

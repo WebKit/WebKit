@@ -1028,6 +1028,8 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
     // to perform incremental decoding.
     if (eof && !p) {
         p = new QPixmap(_buffer.buffer(), KWQResponseMIMEType(m_response));
+        if (m_decoderCallback)
+            m_decoderCallback->notifyFinished();
         canDraw = true;
     } else {
         // Always attempt to load the image incrementally.
