@@ -2,6 +2,25 @@
 
         Reviewed by Ken.
 
+	- fixed 3126042 -- Failure to send onkeypress event on key down causes forms to submit incorrectly
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::keyEvent): Fixed the code to send the second event with repeat
+	set equal to true. Before it was constructing the event but never sending it because result was true.
+	Also fixed a problem where it was considering sending a second mouse up event. What we're doing here
+	is a bit of a hack and probably should be fixed -- it seems that the behavior in dispatchKeyEvent where
+	it sends only a down and not a press for the a non-autorepeat event is a KHTML bug that we should fix
+	instead of work around eventually.
+        
+        - fix to something that made this harder to debug
+
+        * khtml/xml/dom2_eventsimpl.cpp: (KeyEventImpl::KeyEventImpl): Logging the type was showing the wrong
+	type, and I narrowed it down to this code here. Changing m_id after the fact doesn't change the type
+	string, so you need to compute the correct ID and pass it to the constructor.
+
+2002-12-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
 	- fixed 3125886 -- Failure to set document onkeypress handler causes return key to submit forms incorrectly
 
 	The handler was getting ignored because the property setting code never got to the DOMNode level.

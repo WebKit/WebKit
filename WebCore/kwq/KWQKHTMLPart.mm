@@ -678,19 +678,18 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 		     stateForCurrentEvent(),
 		     QString::fromNSString([event characters]),
 		     [event isARepeat]);
-
     bool result = node->dispatchKeyEvent(&qEvent);
 
-    // We want to send both a down and a press for the initial key event
-    if (![event isARepeat]) {
-	QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
+    // We want to send both a down and a press for the initial key event.
+    // This is a temporary hack; we need to do this a better way.
+    if ([event type] == NSKeyDown && ![event isARepeat]) {
+	QKeyEvent qEvent(QEvent::KeyPress,
 			 [event keyCode],
 			 ascii,
 			 stateForCurrentEvent(),
 			 QString::fromNSString([event characters]),
 			 true);
-	
-	result = result && node->dispatchKeyEvent(&qEvent);
+        node->dispatchKeyEvent(&qEvent);
     }
 
     _currentEvent = oldCurrentEvent;
