@@ -8,18 +8,40 @@
 
 #import <WebKit/IFBookmark.h>
 #import <WebKit/IFBookmarkGroup.h>
+#import <WebKit/IFBookmarkGroup_Private.h>
+#import <WebKit/WebKitDebug.h>
 
 // to get NSRequestConcreteImplementation
 #import <Foundation/NSPrivateDecls.h>
 
 @implementation IFBookmark
 
+static unsigned _highestUsedID = 0;
+
++ (NSString *)_generateUniqueIdentifier
+{
+    return [[NSNumber numberWithInt:_highestUsedID++] stringValue];
+}
+
+- (id)init
+{
+    [super init];
+    _identifier = [[IFBookmark _generateUniqueIdentifier] retain];
+    return self;
+}
+
 - (void)dealloc
 {
-    [_parent release];
-    [_group release];
-    
+    WEBKIT_ASSERT (_group == nil);
+
+    [_identifier release];    
     [super dealloc];
+}
+
+- (NSString *)identifier
+{
+    WEBKIT_ASSERT(_identifier != nil);
+    return [[_identifier retain] autorelease];
 }
 
 - (id)copyWithZone:(NSZone *)zone
@@ -121,8 +143,8 @@
 
 - (void)_setParent:(IFBookmark *)parent
 {
-    [parent retain];
-    [_parent release];
+    // Don't retain parent, to avoid circular ownership that prevents dealloc'ing
+    // when a parent with children is removed from a group and has no other references.
     _parent = parent;
 }
 
@@ -133,9 +155,15 @@
 
 - (void)_setGroup:(IFBookmarkGroup *)group
 {
-    [group retain];
+    if (group == _group) {
+        return;
+    }
+
+    [_group _removedBookmark:self];
     [_group release];
-    _group = group;
+
+    _group = [group retain];
+    [group _addedBookmark:self];
 }
 
 - (id)_initFromDictionaryRepresentation:(NSDictionary *)dict withGroup:(IFBookmarkGroup *)group

@@ -19,6 +19,7 @@ typedef enum {
 @interface IFBookmark : NSObject <NSCopying> {
     IFBookmark *_parent;
     IFBookmarkGroup *_group;
+    NSString *_identifier;
 }
 
 - (NSString *)title;
@@ -55,6 +56,9 @@ typedef enum {
 
 // The group that this bookmark belongs to.
 - (IFBookmarkGroup *)group;
+
+// An NSString that can be used to uniquely identify this bookmark; use with +[IFBookmarkGroup bookmarkForIdentifier];
+- (NSString *)identifier;
 
 
 @end

@@ -1,3 +1,51 @@
+2002-06-09  John Sullivan  <sullivan@apple.com>
+
+	WebKit part of fix for 2949646 (Can't drag & drop bookmarks
+	into auto-expanded folder). To get this to work right, I gave
+	each bookmark a unique (per-session) identifier.
+
+	While working on this, I found and fixed some leaks of bookmarks.
+
+	* Bookmarks.subproj/IFBookmark.h:
+	New -[identifier] method and _identifier ivar.
+
+	* Bookmarks.subproj/IFBookmark.m:
+	(+[IFBookmark _generateUniqueIdentifier]):
+	(-[IFBookmark init]):
+	(-[IFBookmark dealloc]):
+	Remember unique identifier in each bookmark as it is created;
+	delete when dealloc'd.
+
+	(-[IFBookmark identifier]): Return unique identifier.
+
+	(-[IFBookmark _setParent:]): Don't retain parent, to avoid
+	circular ownership.
+
+	(-[IFBookmark _setGroup:]): Tell coming and going group.
+
+	* Bookmarks.subproj/IFBookmarkGroup.h:
+	New +[bookmarkForIdentifier] method and _bookmarksByID ivar.
+
+	* Bookmarks.subproj/IFBookmarkGroup_Private.h:
+	Declarations of _removedBookmark: and _addedBookmark:
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup initWithFile:]): alloc _bookmarksByID.
+	(-[IFBookmarkGroup dealloc]): release _bookmarksByID.
+	(-[IFBookmarkGroup _setTopBookmark:]): Don't bail out early;
+	would now cause leak.
+	(-[IFBookmarkGroup _removedBookmark:]): New method, removes
+	bookmark from _bookmarksByID.
+	(-[IFBookmarkGroup _addedBookmark:]): New method, adds bookmark to
+	_bookmarksByID.
+	(-[IFBookmarkGroup bookmarkForIdentifier:]): Looks up bookmark from
+	_bookmarksByID dictionary.
+	(-[IFBookmarkGroup _loadBookmarkGroupGuts]): autorelease newTopbookmark; 
+	this had been leaking.
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList _initFromDictionaryRepresentation:withGroup:]):
+	autorelease children before adding them to parent; this had been leaking.
+
 2002-06-09  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFTextRenderer.m:

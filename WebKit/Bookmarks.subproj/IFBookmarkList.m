@@ -61,14 +61,14 @@
             
             typeString = [childAsDictionary objectForKey:IFBookmarkTypeKey];
             if ([typeString isEqualToString:IFBookmarkTypeListValue]) {
-                child = [[IFBookmarkList alloc] _initFromDictionaryRepresentation:childAsDictionary
-                                                                        withGroup:group];
+                child = [[[IFBookmarkList alloc] _initFromDictionaryRepresentation:childAsDictionary
+                                                                        withGroup:group] autorelease];
             } else if ([typeString isEqualToString:IFBookmarkTypeLeafValue]) {
-                child = [[IFBookmarkLeaf alloc] _initFromDictionaryRepresentation:childAsDictionary
-                                                                        withGroup:group];
+                child = [[[IFBookmarkLeaf alloc] _initFromDictionaryRepresentation:childAsDictionary
+                                                                        withGroup:group] autorelease];
             } else if ([typeString isEqualToString:IFBookmarkTypeSeparatorValue]) {
-                child = [[IFBookmarkSeparator alloc] _initFromDictionaryRepresentation:childAsDictionary
-                                                                             withGroup:group];
+                child = [[[IFBookmarkSeparator alloc] _initFromDictionaryRepresentation:childAsDictionary
+                                                                             withGroup:group] autorelease];
             }
 
             if (child != nil) {
@@ -241,12 +241,12 @@
 {
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == nil);
     WEBKIT_ASSERT_VALID_ARG (bookmark, ![_list containsObject:bookmark]);
-    
+
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];
     [bookmark _setGroup:[self group]];
     
-    [[self group] _bookmarkChildrenDidChange:self]; 
+    [[self group] _bookmarkChildrenDidChange:self];
 }
 
 - (void)_setGroup:(IFBookmarkGroup *)group

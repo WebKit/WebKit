@@ -31,6 +31,8 @@
         return nil;
     }
 
+    _bookmarksByID = [[NSMutableDictionary dictionary] retain];
+
     _file = [file retain];
     [self _setTopBookmark:nil];
 
@@ -44,6 +46,7 @@
 {
     [_topBookmark release];
     [_file release];
+    [_bookmarksByID release];
     [super dealloc];
 }
 
@@ -76,31 +79,19 @@
 
 - (void)_setTopBookmark:(IFBookmark *)newTopBookmark
 {
-    BOOL hadChildren, hasChildrenNow;
-
     WEBKIT_ASSERT_VALID_ARG (newTopBookmark, newTopBookmark == nil ||
                              [newTopBookmark bookmarkType] == IFBookmarkTypeList);
-
-    hadChildren = [_topBookmark numberOfChildren] > 0;
-    hasChildrenNow = newTopBookmark != nil && [newTopBookmark numberOfChildren] > 0;
     
-    // bail out early if nothing needs resetting
-    if (!hadChildren && _topBookmark != nil && !hasChildrenNow) {
-        return;
-    }
-
     [_topBookmark _setGroup:nil];
     [_topBookmark autorelease];
 
     if (newTopBookmark) {
         _topBookmark = [newTopBookmark retain];
     } else {
-        _topBookmark = [[[IFBookmarkList alloc] initWithTitle:nil image:nil group:self] retain];
+        _topBookmark = [[IFBookmarkList alloc] initWithTitle:nil image:nil group:self];
     }
 
-    if (hadChildren || hasChildrenNow) {
-        [self _sendChangeNotificationForBookmark:_topBookmark childrenChanged:YES];
-    }
+    [self _sendChangeNotificationForBookmark:_topBookmark childrenChanged:YES];
 }
 
 - (void)_bookmarkDidChange:(IFBookmark *)bookmark
@@ -113,6 +104,23 @@
     WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark bookmarkType] == IFBookmarkTypeList);
     
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
+}
+
+- (void)_removedBookmark:(IFBookmark *)bookmark
+{
+    WEBKIT_ASSERT ([_bookmarksByID objectForKey:[bookmark identifier]] == bookmark);
+    [_bookmarksByID removeObjectForKey:[bookmark identifier]];
+}
+
+- (void)_addedBookmark:(IFBookmark *)bookmark
+{
+    WEBKIT_ASSERT ([_bookmarksByID objectForKey:[bookmark identifier]] == nil);
+    [_bookmarksByID setObject:bookmark forKey:[bookmark identifier]];
+}
+
+- (IFBookmark *)bookmarkForIdentifier:(NSString *)identifier
+{
+    return [_bookmarksByID objectForKey:identifier];
 }
 
 - (void)removeBookmark:(IFBookmark *)bookmark
@@ -203,7 +211,7 @@
     }
 
     _loading = YES;
-    newTopBookmark = [[IFBookmarkList alloc] _initFromDictionaryRepresentation:dictionary withGroup:self];
+    newTopBookmark = [[[IFBookmarkList alloc] _initFromDictionaryRepresentation:dictionary withGroup:self] autorelease];
     [self _setTopBookmark:newTopBookmark];
     _loading = NO;
 
