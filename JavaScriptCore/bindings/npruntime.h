@@ -38,6 +38,8 @@
  * pointers instead of objects.
  * Added NP_IsValidIdentifier().
  *
+ * Revision 5 (March 17, 2004):
+ * Added context parameter to result callbacks from JavaScriptObject functions.
  */
 #ifndef _NP_RUNTIME_H_
 #define _NP_RUNTIME_H_
@@ -101,7 +103,12 @@ typedef NP_Object NP_JavaScriptObject;
 */
 
 typedef uint32_t NP_Identifier;
+
+/*
+    NP_UTF8 strings are null terminated.
+*/
 typedef char NP_UTF8;
+
 typedef uint16_t NP_UTF16;
 
 /*
@@ -171,8 +178,10 @@ struct NP_Object {
 };
 
 /*
-    If the class has a create interface this function invokes that interface,
-    otherwise a NP_Object is allocated and returned.
+    If the class has an allocate interface this function invokes that interface,
+    otherwise a NP_Object is allocated and returned.  If a class has an allocate
+    interface it is the responsibility of that interface to set the initial retain
+    count to 1.
 */
 NP_Object *NP_CreateObject (NP_Class *aClass);
 
@@ -217,15 +226,15 @@ typedef NP_Object NP_String;
     Calls made from JavaScript to the plugin will always be made on the main
     user agent thread, this include calls to NP_JavaScriptResultInterface callbacks.
 */
-typedef void (*NP_JavaScriptResultInterface)(NP_Object *obj);
+typedef void (*NP_JavaScriptResultInterface)(NP_Object *obj, void *resultContext);
 
-void NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount, NP_JavaScriptResultInterface result);
-void NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script, NP_JavaScriptResultInterface result);
-void NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_JavaScriptResultInterface result);
+void NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount, NP_JavaScriptResultInterface resultCallback);
+void NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script, NP_JavaScriptResultInterface resultCallback, void *resultContext);
+void NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_JavaScriptResultInterface resultCallback, void *resultContext);
 void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object *value);
 void NP_RemoveProperty (NP_JavaScriptObject *obj, NP_Identifier propertyName);
-void NP_ToString (NP_JavaScriptObject *obj, NP_JavaScriptResultInterface result);
-void NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index, NP_JavaScriptResultInterface result);
+void NP_ToString (NP_JavaScriptObject *obj, NP_JavaScriptResultInterface result, void *resultContext);
+void NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index, NP_JavaScriptResultInterface resultCallback, void *resultContext);
 void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object *value);
 
 /*

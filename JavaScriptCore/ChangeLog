@@ -1,3 +1,17 @@
+2004-03-17  Richard Williamson   <rjw@apple.com>
+
+	Added a context parameter to result callbacks use by JavaScriptObject functions.  This was a change requested by Eric Carlson on the QT plugin team.
+
+        Reviewed by Ken.
+
+        * bindings/NP_jsobject.cpp:
+        (NP_Call):
+        (NP_Evaluate):
+        (NP_GetProperty):
+        (NP_ToString):
+        (NP_GetPropertyAtIndex):
+        * bindings/NP_runtime.h:
+
 2004-03-16  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3590169.  Regression (crash) caused by the switch to MethodLists.  Crash when attempting to invoke a method from JavaScript to Java that is not implemented.
