@@ -229,7 +229,6 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
 
 KHTMLView::~KHTMLView()
 {
-#ifndef APPLE_CHANGES
     if (m_part)
     {
         //WABA: Is this Ok? Do I need to deref it as well?
@@ -238,7 +237,6 @@ KHTMLView::~KHTMLView()
         if (doc)
             doc->detach();
     }
-#endif /* APPLE_CHANGES not defined */
     delete d; d = 0;
 }
 

@@ -242,8 +242,7 @@ static QString splitUrlTarget(const QString &url, QString *target=0)
    return result;
 }
 
-KHTMLPart::KHTMLPart(
-)
+KHTMLPart::KHTMLPart()
 {
     init();
 }
@@ -253,23 +252,22 @@ KHTMLPart::KHTMLPart(const KURL &url)
     init();
 }
 
-void KHTMLPart::init
-(
-)
+void KHTMLPart::init()
 {
     d = new KHTMLPartPrivate(this);
 }
 
 KHTMLPart::~KHTMLPart()
 {
-    if ( d->m_doc )
-            d->m_doc->detach();
+    if ( d->m_doc != NULL ) {
+        d->m_doc->detach();
 
-    if (d->m_doc->refCount() != 1)
-        fprintf (stdout, "Warning:  document reference count not 1 as expected,  ref = %d\n", d->m_doc->refCount());
-    if ( d->m_doc )
-        d->m_doc->deref();
-    
+	if (d->m_doc->refCount() != 1) {
+	    fprintf (stdout, "Warning:  document reference count not 1 as expected,  ref = %d\n", d->m_doc->refCount());
+	}
+	d->m_doc->deref();
+    }
+
     d->m_doc = 0;
 
     delete d;

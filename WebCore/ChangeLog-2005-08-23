@@ -1,3 +1,20 @@
+2002-03-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed the following post-merge crashers:
+
+	2885602 - Alexander crashes when clicking on a particular link in Google groups
+	2885564 - Alexander crashes on load failures
+	
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): Fix
+	Radar 2885602 by detaching the document from the view when the
+	view is destroyed. This was making the document reference a
+	destroyed view later.
+
+	* src/kwq/KWQKHTMLPart.mm: 
+	(KHTMLPart::~KHTMLPart): Fix Radar 2885564 by checking if m_doc is
+	NULL, since it's now inititally set to NULL.
+	(KHTMLPart::KHTMLPart, KHTMLPart::init): Formatting tweaks.
+	
 2002-03-20  Maciej Stachowiak  <mjs@apple.com>
 
 	Merged the following changes from LABYRINTH_KDE_3_MERGE branch:

@@ -100,8 +100,6 @@ number_object.lut.h: number_object.cpp
 string_object.lut.h: string_object.cpp
 	./create_hash_table string_object.cpp -i > string_object.lut.h
 
-
-
 BUILT_SOURCES = $(GRAMMAR_FILES) $(LUT_FILES) grammar-stamp
 
 CLEANFILES = $(BUILT_SOURCES)
