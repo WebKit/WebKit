@@ -197,6 +197,26 @@ void CSSSelector::extractPseudoType() const
             case 'l':
                 if (value == "link")
                     _pseudoType = PseudoLink;
+                else if (value == "lang(")
+                    _pseudoType = PseudoLang;
+                else if (value == "last-child")
+                    _pseudoType = PseudoLastChild;
+                break;
+            case 'n':
+                if (value == "not(")
+                    _pseudoType = PseudoNot;
+                break;
+            case 'o':
+                if (value == "only-child")
+                    _pseudoType = PseudoOnlyChild;
+                break;
+            case 'r':
+                if (value == "root")
+                    _pseudoType = PseudoRoot;
+                break;
+            case 's':
+                if (value == "selection")
+                    _pseudoType = PseudoSelection;
                 break;
             case 't':
                 if (value == "target")

@@ -496,7 +496,7 @@ public:
     static void cleanup();
 
     // static pseudo styles. Dynamic ones are produced on the fly.
-    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER };
+    enum PseudoId { NOPSEUDO, FIRST_LINE, FIRST_LETTER, BEFORE, AFTER, SELECTION };
 
 protected:
 

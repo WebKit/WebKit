@@ -573,7 +573,7 @@ element_name:
 	}
     }
     | '*' {
-	$$ = 0xffff;
+	$$ = -1;
     }
   ;
 
@@ -584,11 +584,13 @@ specifier_list:
     }
     | specifier_list specifier {
 	$$ = $1;
-        CSSSelector *end = $1;
-        while( end->tagHistory )
-            end = end->tagHistory;
-        end->relation = CSSSelector::SubSelector;
-        end->tagHistory = $2;
+        if ($$) {
+            CSSSelector *end = $1;
+            while( end->tagHistory )
+                end = end->tagHistory;
+            end->relation = CSSSelector::SubSelector;
+            end->tagHistory = $2;
+        }
     }
     | specifier_list error {
         delete $1;
@@ -683,15 +685,21 @@ ident_or_string:
 
 pseudo:
     ':' IDENT {
-	$$ = new CSSSelector();
-	$$->match = CSSSelector::Pseudo;
-	$$->value = domString($2);
+        $$ = new CSSSelector();
+        $$->match = CSSSelector::Pseudo;
+        $$->value = domString($2);
     }
-    | ':' FUNCTION maybe_space IDENT maybe_space ')' {
-	$$ = new CSSSelector();
-	$$->match = CSSSelector::Pseudo;
-	$$->_pseudoType = CSSSelector::PseudoFunction;
-	$$->value = domString($4);
+    |
+    ':' ':' IDENT {
+        $$ = new CSSSelector();
+        $$->match = CSSSelector::Pseudo;
+        $$->value = domString($3);
+    }
+    | ':' FUNCTION maybe_space simple_selector maybe_space ')' {
+        $$ = new CSSSelector();
+        $$->match = CSSSelector::Pseudo;
+        $$->simpleSelector = $4;
+        $$->value = domString($2);
     }
   ;
 

@@ -84,7 +84,12 @@ void TextRun::paintSelection(const Font *f, RenderText *text, QPainter *p, Rende
     QColor c = QPainter::selectedTextBackgroundColor();
     if (textColor == c)
         c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
+
+    RenderStyle* pseudoStyle = object()->style()->getPseudoStyle(RenderStyle::SELECTION);
+    if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
+        c = pseudoStyle->backgroundColor();
     p->setPen(c); // Don't draw text at all!
+    
 #else
     QColor c = style->color();
     p->setPen(QColor(0xff-c.red(),0xff-c.green(),0xff-c.blue()));
@@ -669,18 +674,54 @@ void RenderText::paintObject(QPainter *p, int /*x*/, int y, int /*w*/, int h,
                 p->setPen(_style->color());
 
             if (s->m_len > 0) {
-                if (paintAction == PaintActionSelection) {
+                bool paintSelectedTextOnly = (paintAction == PaintActionSelection);
+                bool paintSelectedTextSeparately = false; // Whether or not we have to do multiple paints.  Only
+                                               // necessary when a custom ::selection foreground color is applied.
+                QColor selectionColor = p->pen().color();
+                if (haveSelection) {
+                    RenderStyle* pseudoStyle = style()->getPseudoStyle(RenderStyle::SELECTION);
+                    if (pseudoStyle && pseudoStyle->color() != selectionColor) {
+                        if (!paintSelectedTextOnly)
+                            paintSelectedTextSeparately = true;
+                        selectionColor = pseudoStyle->color();
+                    }
+                }
+                
+                if (!paintSelectedTextOnly && !paintSelectedTextSeparately) {
+                    font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline,
+                                   str->s, str->l, s->m_start, s->m_len,
+                                   s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
+                }
+                else {
                     int offset = s->m_start;
                     int sPos = QMAX( startPos - offset, 0 );
                     int ePos = QMIN( endPos - offset, s->m_len );
-                    if ( sPos < ePos ){
-                        font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s, str->l, s->m_start, s->m_len,
-                                   s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, sPos, ePos);
+                    if (paintSelectedTextSeparately) {
+                        if (sPos >= ePos)
+                            font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline,
+                                           str->s, str->l, s->m_start, s->m_len,
+                                           s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
+                        else {
+                            if (sPos-1 >= 0)
+                                font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s,
+                                            str->l, s->m_start, s->m_len,
+                                            s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, 0, sPos);
+                            if (ePos < s->m_start+s->m_len)
+                                font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s,
+                                            str->l, s->m_start, s->m_len,
+                                            s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, ePos, -1);
+                        }
                     }
-                } else {
-                    font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s, str->l, s->m_start, s->m_len,
-                                   s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR);
-                }
+                    
+                    if ( sPos < ePos ) {
+                        if (selectionColor != p->pen().color())
+                            p->setPen(selectionColor);
+                        
+                        font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s,
+                                       str->l, s->m_start, s->m_len,
+                                       s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, sPos, ePos);
+                    }
+                } 
             }
 
             if (d != TDNONE && paintAction == PaintActionForeground)

@@ -1,3 +1,33 @@
+2003-03-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3193407, crash in CSS parser on www.hixie.ch.  Improved the grammar to
+	understand the CSS3 :not selector so that it wouldn't think of that case as an
+	error.  Also patched the error handling case that crashed on :not anyway.  Then
+	I went ahead and implemented :not (since it was trivial to add once the parser
+	was reading it in).
+	
+        Also fixed the regression that the * selector didn't work.  The new KHTML trunk moved
+        away from a tag value of -1 in order to do @namespace support.  Since we aren't really ready
+        to take that code yet, I patched our parser.y to treat * like -1 instead of 0xffff.
+        
+        Implemented support for a couple of new CSS3 selectors, :root and ::selection.  Also :last-child and :only-child.
+        
+        Fixed a trivial bug (demonstrated in the CSS3 test suite) with the matching of the ~= selector.
+ 
+        Reviewed by darin
+
+        * khtml/css/Makefile.am:
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):
+        * khtml/css/css_base.h:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/render_text.cpp:
+        (TextRun::paintSelection):
+        (RenderText::paintObject):
+
 === Safari-67 ===
 
 2003-03-13  Darin Adler  <darin@apple.com>

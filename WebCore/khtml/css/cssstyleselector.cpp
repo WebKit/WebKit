@@ -777,6 +777,12 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                     return false;
                 break;
             }
+
+            // The selector's value can't contain a space, or it's totally bogus.
+            spacePos = sel->value.find(' ');
+            if (spacePos != -1)
+                return false;
+            
             QString str = value.string();
             QString selStr = sel->value.string();
             int pos = str.find(selStr, 0, strictParsing);
@@ -847,11 +853,40 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 break;
             case CSSSelector::PseudoFirstChild: {
                 // first-child matches the first child that is an element!
-                DOM::NodeImpl *n = e->parentNode()->firstChild();
-                while ( n && !n->isElementNode() )
-                    n = n->nextSibling();
-                if ( n == e )
-                    return true;
+                if (e->parentNode()) {
+                    DOM::NodeImpl* n = e->previousSibling();
+                    while ( n && !n->isElementNode() )
+                        n = n->previousSibling();
+                    if ( !n )
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoLastChild: {
+                // last-child matches the last child that is an element!
+                if (e->parentNode()) {
+                    DOM::NodeImpl* n = e->nextSibling();
+                    while ( n && !n->isElementNode() )
+                        n = n->nextSibling();
+                    if ( !n )
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoOnlyChild: {
+                // If both first-child and last-child apply, then only-child applies.
+                if (e->parentNode()) {
+                    DOM::NodeImpl* n = e->previousSibling();
+                    while ( n && !n->isElementNode() )
+                        n = n->previousSibling();
+                    if ( !n ) {
+                        n = e->nextSibling();
+                        while ( n && !n->isElementNode() )
+                            n = n->nextSibling();
+                        if ( !n )
+                            return true;
+                    }
+                }
                 break;
             }
             case CSSSelector::PseudoFirstLine:
@@ -914,16 +949,37 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                         return true;
                 }
                 break;
+            case CSSSelector::PseudoRoot:
+                if (e == e->getDocument()->documentElement())
+                    return true;
+                break;
+            case CSSSelector::PseudoNot: {
+                // check the simple selector
+                for (CSSSelector* subSel = sel->simpleSelector; subSel;
+                     subSel = subSel->tagHistory) {
+                    // :not cannot nest.  I don't really know why this is a restriction in CSS3,
+                    // but it is, so let's honor it.
+                    if (subSel->simpleSelector)
+                        break;
+                    if (!checkOneSelector(subSel, e))
+                        return true;
+                }
+                break;
+            }
+            case CSSSelector::PseudoSelection:
+                dynamicPseudo = RenderStyle::SELECTION;
+                return true;
             case CSSSelector::PseudoBefore:
                 dynamicPseudo = RenderStyle::BEFORE;
                 return true;
             case CSSSelector::PseudoAfter:
                 dynamicPseudo = RenderStyle::AFTER;
                 return true;
+                
             case CSSSelector::PseudoNotParsed:
                 assert(false);
                 break;
-            case CSSSelector::PseudoFunction:
+            case CSSSelector::PseudoLang:
                 /* not supported for now */
             case CSSSelector::PseudoOther:
                 break;
