@@ -1,3 +1,9 @@
+2002-03-04  John Sullivan (local)  <sullivan@apple.com>
+
+	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource initialize]):
+	Reverted default fonts to what they were before I accidentally
+	checked in some debugging changes.
+
 2002-03-01  Richard Williamson  <rjw@apple.com>
 
         Fixed a potentially large leak in frames.  View associated w/
