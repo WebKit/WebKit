@@ -56,6 +56,10 @@
         return nil;
     }
 
+    // _entry was already created in initWithURLString:title:group, called from super.
+    // Releasing it here and creating a new one is inelegant, and we should probably
+    // improve this someday (but timing tests show no noticeable slowdown).
+    [_entry release];
     _entry = [[WebHistoryItem alloc] initFromDictionaryRepresentation:
         [dict objectForKey:URIDictionaryKey]];
     _URLString = [[dict objectForKey:URLStringKey] copy];
