@@ -56,40 +56,54 @@ static NSMutableSet *activeImageRenderers;
 
 - (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
 {
-    NS_DURING
-        self = [super initWithData:data];
-    NS_HANDLER
-        self = nil;
-    NS_ENDHANDLER
-    if (self != nil) {
-        // Work around issue with flipped images and TIFF by never using the image cache.
-        // See bug 3344259 and related bugs.
-        [self setCacheMode:NSImageCacheNever];
+    WebImageRenderer *result = nil;
 
-        loadStatus = NSImageRepLoadStatusUnknownType;
-        MIMEType = [MIME copy];
-        isNull = [data length] == 0;
-    }
-    return self;
+    NS_DURING
+    
+        result = [super initWithData:data];
+        if (result != nil) {
+            // Work around issue with flipped images and TIFF by never using the image cache.
+            // See bug 3344259 and related bugs.
+            [result setCacheMode:NSImageCacheNever];
+    
+            result->loadStatus = NSImageRepLoadStatusUnknownType;
+            result->MIMEType = [MIME copy];
+            result->isNull = [data length] == 0;
+        }
+
+    NS_HANDLER
+
+        result = nil;
+
+    NS_ENDHANDLER
+
+    return result;
 }
 
 - (id)initWithContentsOfFile:(NSString *)filename
 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *imagePath = [bundle pathForResource:filename ofType:@"tiff"];
-    NS_DURING
-        self = [super initWithContentsOfFile:imagePath];
-    NS_HANDLER
-        self = nil;
-    NS_ENDHANDLER
-    if (self != nil) {
-        // Work around issue with flipped images and TIFF by never using the image cache.
-        // See bug 3344259 and related bugs.
-        [self setCacheMode:NSImageCacheNever];
+    WebImageRenderer *result = nil;
 
-        loadStatus = NSImageRepLoadStatusUnknownType;
-    }
-    return self;
+    NS_DURING
+
+        result = [super initWithContentsOfFile:imagePath];
+        if (result != nil) {
+            // Work around issue with flipped images and TIFF by never using the image cache.
+            // See bug 3344259 and related bugs.
+            [result setCacheMode:NSImageCacheNever];
+    
+            result->loadStatus = NSImageRepLoadStatusUnknownType;
+        }
+        
+    NS_HANDLER
+
+        result = nil;
+
+    NS_ENDHANDLER
+
+    return result;
 }
 
 - (id <WebCoreImageRenderer>)retainOrCopyIfNeeded

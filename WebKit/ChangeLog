@@ -1,3 +1,13 @@
+2003-08-18  Richard Williamson  <rjw@apple.com>
+
+	Fix build problem from last checkin.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer initWithData:MIMEType:]):
+        (-[WebImageRenderer initWithContentsOfFile:]):
+
 2003-08-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
