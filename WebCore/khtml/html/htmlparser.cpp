@@ -1353,12 +1353,9 @@ void KHTMLParser::handleResidualStyleCloseTagAcrossBlocks(HTMLStackElem* elem)
             // curr->id rather than the node that you should pop to when the element gets pulled off
             // the stack.
             popOneBlock(false);
-            curr->next = 0;
             curr->node = currNode;
-            if (!residualStyleStack)
-                residualStyleStack = curr;
-            else
-                residualStyleStack->next = curr;
+            curr->next = residualStyleStack;
+            residualStyleStack = curr;
         }
         else
             popOneBlock();

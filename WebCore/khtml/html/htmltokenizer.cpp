@@ -975,7 +975,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
             while(src.length()) {
                 curchar = *src;
                 if(curchar > ' ') {
-                    if(curchar == '>')
+                    if (curchar == '<' || curchar == '>')
                         tag = SearchEnd;
                     else if(atespace && (curchar == '\'' || curchar == '"'))
                     {
@@ -1215,7 +1215,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 qDebug("SearchEnd");
 #endif
             while(src.length()) {
-                if(*src == '>')
+                if (*src == '>' || *src == '<')
                     break;
 
                 if (*src == '/')
@@ -1223,12 +1223,14 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
 
                 ++src;
             }
-            if(!src.length() && *src != '>') break;
+            if (!src.length() && *src != '>' && *src != '<') break;
 
             searchCount = 0; // Stop looking for '<!--' sequence
             tag = NoTag;
             tquote = NoQuote;
-            ++src;
+
+            if (*src != '<')
+                ++src;
 
             if ( !currToken.id ) //stop if tag is unknown
                 return;

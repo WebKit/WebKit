@@ -1,3 +1,14 @@
+2003-09-24  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3429646, <img src="blah"<img src="foo"> should show up as two images.
+	
+        Reviewed by darin
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::handleResidualStyleCloseTagAcrossBlocks):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+
 2003-09-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
