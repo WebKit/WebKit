@@ -148,7 +148,7 @@
         if([dataSourceURL isFileURL]){
             iconURL = dataSourceURL;
         } else {
-            iconURL = [NSURL _web_URLWithString:@"favicon.ico" relativeToURL:[dataSourceURL absoluteURL]];
+            iconURL = [NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL];
         }
         [self _loadIcon:iconURL];
     }

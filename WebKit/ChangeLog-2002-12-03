@@ -1,5 +1,10 @@
 2002-07-19  Chris Blumenberg  <cblu@apple.com>
 
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadPageIconIfNecessary]): use the correct relative string to request favicon.ico
+
+2002-07-19  Chris Blumenberg  <cblu@apple.com>
+
         * History.subproj/WebHistoryItem.m:
         (-[WebHistoryItem image]): call [WebIconLoader defaultIcon]
         * Misc.subproj/WebIconLoader.m:

@@ -40,6 +40,10 @@
 #include <kurl.h>
 #include <kdebug.h>
 
+#ifdef APPLE_CHANGES
+#include "KWQKHTMLPartImpl.h"
+#endif
+
 using namespace khtml;
 
 HTMLBaseElementImpl::HTMLBaseElementImpl(DocumentPtr *doc)
@@ -165,7 +169,7 @@ void HTMLLinkElementImpl::process()
     // IE extension: location of small icon for locationbar / bookmarks
 #ifdef APPLE_CHANGES
     if ( part && rel.contains("icon") && !m_url.isEmpty() && !part->parentPart())
-        part->loadIcon( KURL(m_url.string()) );
+        part->impl->loadIcon( KURL(m_url.string()) );
 #else
     if ( part && rel.contains("shortcut icon") && !m_url.isEmpty() && !part->parentPart())
     	part->browserExtension()->setIconURL( KURL(m_url.string()) );

@@ -1,5 +1,14 @@
 2002-07-19  Chris Blumenberg  <cblu@apple.com>
 
+	Per darin, only define loadIcon in KWQKHTMLPartImpl
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process):
+        * khtml/khtml_part.cpp:
+        * khtml/khtml_part.h:
+
+2002-07-19  Chris Blumenberg  <cblu@apple.com>
+
         * khtml/html/html_headimpl.cpp:
         (HTMLLinkElementImpl::process): added an APPLE_CHANGES
         * khtml/khtml_part.cpp: 
