@@ -1,3 +1,10 @@
+2002-11-21  Richard Williamson   <rjw@apple.com>
+
+        Fixed performance regression!  Argh.
+        
+        * khtml/rendering/font.cpp:
+        (Font::width):
+
 2002-11-21  Darin Adler  <darin@apple.com>
 
         * force-js-clean-timestamp: Trigger a rebuild because of the
