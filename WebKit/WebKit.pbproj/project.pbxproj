@@ -372,6 +372,7 @@
 				F5883BDF025E5C6A01000102,
 				F5B67131023EDF8901C1A525,
 				5128F1FA04719A4200CA2D3A,
+				8476113406EF82DB00AB2914,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -508,6 +509,7 @@
 				F5B67130023EDF8901C1A525,
 				F5F732D202FF4D4F01A80180,
 				9345D4E70365C58D008635CE,
+				8476113206EF82DB00AB2914,
 				5128F1F904719A4200CA2D3A,
 			);
 			isa = PBXGroup;
@@ -2482,6 +2484,30 @@
 		};
 		84723BE6056D719E0044BFEA = {
 			fileRef = 84723BE4056D719E0044BFEA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8476113206EF82DB00AB2914 = {
+			children = (
+				8476113306EF82DB00AB2914,
+			);
+			isa = PBXVariantGroup;
+			name = WebViewEditingContextMenu.nib;
+			path = "";
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8476113306EF82DB00AB2914 = {
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
+			name = English;
+			path = English.lproj/WebViewEditingContextMenu.nib;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		8476113406EF82DB00AB2914 = {
+			fileRef = 8476113206EF82DB00AB2914;
 			isa = PBXBuildFile;
 			settings = {
 			};

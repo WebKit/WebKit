@@ -1,3 +1,14 @@
+2004-09-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3791240> WebKit uses the NSTextViewContextMenu nib from inside AppKit
+
+        Reviewed by john.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate editingContextMenuItemsForElement:]): use our copy of the nib
+
 2004-09-07  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.

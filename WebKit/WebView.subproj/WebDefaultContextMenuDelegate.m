@@ -210,11 +210,11 @@
         [menuItems addObject:[NSMenuItem separatorItem]];
     }
     
-    // Load the standard NSTextView context menu nib.
+    // Load our NSTextView-like context menu nib.
     if (defaultMenu == nil) {
         static NSNib *textViewMenuNib = nil;
         if (textViewMenuNib == nil) {
-            textViewMenuNib = [[NSNib alloc] initWithNibNamed:@"NSTextViewContextMenu" bundle:[NSBundle bundleForClass:[NSTextView class]]];
+            textViewMenuNib = [[NSNib alloc] initWithNibNamed:@"WebViewEditingContextMenu" bundle:[NSBundle bundleForClass:[self class]]];
         }
         [textViewMenuNib instantiateNibWithOwner:self topLevelObjects:nil];
     }
