@@ -12,11 +12,10 @@
 #import <WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebNSFileManagerExtras.h>
 
 @interface WebPluginStream (WebResourceClient) <WebResourceClient>
 @end
-
-static NSString *getCarbonPath(NSString *posixPath);
 
 @implementation WebPluginStream
 
@@ -185,7 +184,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 {
     NPError npErr;
     NSFileManager *fileManager;
-    NSString *filename;
+    NSString *filename, *carbonPath;
     
     filename = [[URL path] lastPathComponent];
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
@@ -196,8 +195,9 @@ static NSString *getCarbonPath(NSString *posixPath);
         [fileManager createFileAtPath:path contents:data attributes:nil];
         
         // FIXME: Will cString use the correct character set?
-        NPP_StreamAsFile(instance, &npStream, [getCarbonPath(path) cString]);
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", [getCarbonPath(path) cString]);
+        carbonPath = [[NSFileManager defaultManager] _web_carbonPathForPath:path];
+        NPP_StreamAsFile(instance, &npStream, [carbonPath cString]);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_StreamAsFile: %s\n", [carbonPath cString]);
     }
     npErr = NPP_DestroyStream(instance, &npStream, NPRES_DONE);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_DestroyStream: %d\n", npErr);
@@ -314,51 +314,3 @@ static NSString *getCarbonPath(NSString *posixPath);
 }
 
 @end
-
-static NSString *getCarbonPath(NSString *posixPath)
-{
-    OSStatus error;
-    FSRef ref, rootRef, parentRef;
-    FSCatalogInfo info;
-    NSMutableArray *carbonPathPieces;
-    HFSUniStr255 nameString;
-    
-    // Make an FSRef.
-    error = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:posixPath], &ref, NULL);
-    if (error != noErr) {
-        return nil;
-    }
-    
-    // Get volume refNum.
-    error = FSGetCatalogInfo(&ref, kFSCatInfoVolume, &info, NULL, NULL, NULL);
-    if (error != noErr) {
-        return nil;
-    }
-    
-    // Get root directory FSRef.
-    error = FSGetVolumeInfo(info.volume, 0, NULL, kFSVolInfoNone, NULL, NULL, &rootRef);
-    if (error != noErr) {
-        return nil;
-    }
-    
-    // Get the pieces of the path.
-    carbonPathPieces = [NSMutableArray array];
-    for (;;) {
-        error = FSGetCatalogInfo(&ref, kFSCatInfoNone, NULL, &nameString, NULL, &parentRef);
-        if (error != noErr) {
-            return nil;
-        }
-        [carbonPathPieces insertObject:[NSString stringWithCharacters:nameString.unicode length:nameString.length] atIndex:0];
-        if (FSCompareFSRefs(&ref, &rootRef) == noErr) {
-            break;
-        }
-        ref = parentRef;
-    }
-    
-    // Volume names need trailing : character.
-    if ([carbonPathPieces count] == 1) {
-        [carbonPathPieces addObject:@""];
-    }
-    
-    return [carbonPathPieces componentsJoinedByString:@":"];
-}
