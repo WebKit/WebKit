@@ -464,7 +464,6 @@
 				BE1B2F5604755C7700CA289C,
 				93D623DE051E791F002F47DD,
 				830E81E105853AC000AD0891,
-				830E821605853B0B00AD0891,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1967,12 +1966,6 @@
 			path = /System/Library/PrivateFrameworks/SecurityNssAsn1.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
-		};
-		830E821605853B0B00AD0891 = {
-			fileRef = 830E821505853B0B00AD0891;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		833987810543012D00EE146E = {
 			fileEncoding = 4;

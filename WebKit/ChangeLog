@@ -1,3 +1,10 @@
+2004-01-22  Darin Adler  <darin@apple.com>
+
+        - fixed 3536624: Webkit 1.2 links against SecurityNssAsn1.framework
+
+        * WebKit.pbproj/project.pbxproj: Remove SecurityNssAsn1.framework from the list we link against.
+        It's still included in the list for places to find headers.
+
 === Safari-125 ===
 
 === Safari-124 ===
