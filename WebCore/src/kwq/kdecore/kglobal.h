@@ -26,6 +26,10 @@
 #ifndef KGLOBAL_H_
 #define KGLOBAL_H_
 
+// FIXME: should we use the CF MIN/MAX macros here or typesafe C++ functions?
+#define kMin(a, b) ((a) < (b) ? (a) : (b))
+#define kMax(a, b) ((a) > (b) ? (a) : (b))
+
 class KCharsets;
 class KInstance;
 

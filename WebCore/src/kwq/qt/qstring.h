@@ -46,6 +46,8 @@ public:
     bool isDigit() const;
     bool isSpace() const;
     bool isLetterOrNumber() const;
+    uchar cell() const;
+    uchar row() const;
     friend inline int operator==(QChar, char);
     friend inline int operator==(QChar, QChar);
     friend inline int operator!=(QChar, QChar);
@@ -65,42 +67,41 @@ public:
 
 class QString {
 public:
-
-    static QString fromLatin1(const char*, int len=-1);
-
+    static QString fromLatin1(const char*, int len = -1);
     QString();
     QString(const QChar *, uint);
-    QString(const char *s);
+    QString(const char *);
     int toInt() const;
     int toInt(bool *) const;
-    uint toUInt(bool *ok=0, int base=10) const;
+    uint toUInt(bool *ok = 0, int base = 10) const;
+    QString &setNum(int, int base = 10 );
     bool isNull() const;
     const QChar *unicode() const;
-    bool contains(const char *s, bool b) const;
+    bool contains(const char *, bool) const;
     uint length() const;
-    QString &sprintf(const char *format, ...);
+    QString &sprintf(const char *, ...);
     QString lower() const;
     QString stripWhiteSpace() const;
     QString simplifyWhiteSpace() const;
     bool isEmpty() const;
     int contains(const char *) const;
-    int find(char c, int index=0) const;
-    int find(const char *s, int index=0, bool b=0) const;
-    int find(const QRegExp &regexp, int index=0, bool b=0) const;
-    int findRev(char c, int index=0) const;
-    int findRev(const char *s, int index=0) const;
-    QString left(uint len) const;
-    QString &remove(uint index, uint len);
+    int find(char, int index=0) const;
+    int find(const char *, int index = 0, bool b = 0) const;
+    int find(const QRegExp &, int index = 0, bool b = 0) const;
+    int findRev(char, int index = 0) const;
+    int findRev(const char *, int index = 0) const;
+    QString left(uint) const;
+    QString &remove(uint, uint);
     QString &replace(const QRegExp &, const QString &);
     QString &insert(uint, char);
     void truncate(uint pos);
 
-    QString arg(const QString& a, int fieldwidth=0) const;
+    QString arg(const QString&, int fieldwidth = 0) const;
 
-    QString mid(int index, int len=0xffffffff) const;
-    void fill(QChar c, int len = -1);
+    QString mid(int, int len = 0xffffffff) const;
+    void fill(QChar, int len = -1);
 
-    float toFloat(bool *b=0) const;
+    float toFloat(bool *b = 0) const;
 
     const char* latin1() const;
     const char *ascii() const;
@@ -118,22 +119,24 @@ public:
 
     QCString utf8() const;
     QCString local8Bit() const;
+    QString &setUnicode(const QChar *, uint);
+    void compose();
 
     static const QString null;
 
-    static QString number(long n, int base=10);
+    static QString number(long, int base = 10);
 
     // FIXME: bogus constructor hack for "conversion from int to non-scalar
     // type" error in "Node::toHTML()" function in "dom/dom_node.cpp"
     QString(int);
 };
 
-QString &operator+(const char *s1, const QString &s2);
-QString &operator+(QChar c1, const QString &s2);
-bool operator!=(const QString &s1, QChar c2);
-bool operator!=(const QString &s1, const QString &s2);
-bool operator!=(const QString &s1, const char *s2);
-bool operator!=(const char *s1, const QString &s2);
+QString &operator+(const char *, const QString &);
+QString &operator+(QChar, const QString &);
+bool operator!=(const QString &, QChar);
+bool operator!=(const QString &, const QString &);
+bool operator!=(const QString &, const char *);
+bool operator!=(const char *, const QString &);
 
 class QConstString {
 public:

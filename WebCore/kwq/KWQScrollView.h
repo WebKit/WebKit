@@ -30,11 +30,12 @@
 
 class QScrollView : public QWidget {
 public:
-    typedef int ScrollBarMode;
     int visibleWidth() const;
     int visibleHeight() const;
     int contentsX() const;
     int contentsY() const;
+    // NOTE: alphabetical order
+    enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
 };
 
 #endif

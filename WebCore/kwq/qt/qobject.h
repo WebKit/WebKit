@@ -37,13 +37,17 @@
 #define SIGNAL(x) x
 #define emit
 #define Q_OBJECT
-#define connect(arg1,arg2,arg3,arg4)
+//#define connect(arg1, arg2, arg3, arg4)
 
 class QObject {
 public:
     QObject(QObject *parent=0, const char *name=0);
     const char *name() const;
     virtual void setName(const char *);
+    bool inherits(const char *) const;
+    static bool connect(const QObject *, const char *, const QObject *, const
+            char *);
+    bool connect(const QObject *, const char *, const char *) const;
 };
 
 #endif

@@ -33,6 +33,7 @@
 
 class QWidget : public QObject, public QPaintDevice {
 public:
+    // FIXME: do any of these methods need to be virtual?
     int winId() const;
     int x() const;
     int y() const;
@@ -41,10 +42,12 @@ public:
     QSize size() const;
     void resize(const QSize &);
     QPoint pos() const;
-    virtual void move(const QPoint&);
+    virtual void move(const QPoint &);
     void move(int, int);
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
+    void setFocus();
+    void clearFocus();
 };
 
 #endif

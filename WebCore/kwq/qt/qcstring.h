@@ -26,6 +26,9 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
+// FIXME: does our implementation of QCString really need to inherit from
+// QByteArray and QArray?
+
 // added to help in compilation of khtml/khtml_part.h:811
 #include "qarray.h"
 
@@ -36,9 +39,10 @@ class QCString : public QByteArray {
 public:
     QCString();
     QCString(uint);
+    QCString(const char *, uint);
 };
 
-bool operator!=(const char *s1, const QCString &s2);
-bool operator!=(const QCString &s1, const char *s2);
+bool operator!=(const char *, const QCString &);
+bool operator!=(const QCString &, const char *);
 
 #endif
