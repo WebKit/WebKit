@@ -44,6 +44,12 @@
 - (BOOL)pluginsEnabled;
 - (void)setPluginsEnabled:(BOOL)flag;
 
+- (BOOL)allowAnimatedImages;
+- (void)setAllowAnimatedImages:(BOOL)flag;
+
+- (BOOL)allowAnimatedImageLooping;
+- (void)setAllowAnimatedImageLooping: (BOOL)flag;
+
 @end
 
 #ifdef READY_FOR_PRIMETIME

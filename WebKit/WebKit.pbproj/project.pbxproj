@@ -241,6 +241,8 @@
 				F8CA15BB029A39D901000122,
 				F8CA15C2029A3E0D01000122,
 				F83DCC73029D09F301000131,
+				9CE1F8A402A5C6F30ECA2ACD,
+				9CE1F8A602A5C6F30ECA2ACD,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -304,6 +306,8 @@
 				F8CA15BA029A39D901000122,
 				F8CA15BC029A39D901000122,
 				F83DCC74029D09F301000131,
+				9CE1F8A502A5C6F30ECA2ACD,
+				9CE1F8A702A5C6F30ECA2ACD,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1017,6 +1021,54 @@
 				);
 			};
 		};
+		9CE1F8A002A5C6F30ECA2ACD = {
+			isa = PBXFileReference;
+			name = IFImageRenderer.h;
+			path = WebCoreSupport.subproj/IFImageRenderer.h;
+			refType = 2;
+		};
+		9CE1F8A102A5C6F30ECA2ACD = {
+			isa = PBXFileReference;
+			name = IFImageRenderer.m;
+			path = WebCoreSupport.subproj/IFImageRenderer.m;
+			refType = 2;
+		};
+		9CE1F8A202A5C6F30ECA2ACD = {
+			isa = PBXFileReference;
+			name = IFImageRendererFactory.h;
+			path = WebCoreSupport.subproj/IFImageRendererFactory.h;
+			refType = 2;
+		};
+		9CE1F8A302A5C6F30ECA2ACD = {
+			isa = PBXFileReference;
+			name = IFImageRendererFactory.m;
+			path = WebCoreSupport.subproj/IFImageRendererFactory.m;
+			refType = 2;
+		};
+		9CE1F8A402A5C6F30ECA2ACD = {
+			fileRef = 9CE1F8A002A5C6F30ECA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9CE1F8A502A5C6F30ECA2ACD = {
+			fileRef = 9CE1F8A102A5C6F30ECA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9CE1F8A602A5C6F30ECA2ACD = {
+			fileRef = 9CE1F8A202A5C6F30ECA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9CE1F8A702A5C6F30ECA2ACD = {
+			fileRef = 9CE1F8A302A5C6F30ECA2ACD;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		9CF0E249021361B00ECA16EA = {
 			isa = PBXFileReference;
 			name = IFWebFramePrivate.h;
@@ -1484,6 +1536,10 @@
 				F5B36B420281DF55018635CB,
 				F5F7174C02885C5B018635CA,
 				F5F7174D02885C5B018635CA,
+				9CE1F8A002A5C6F30ECA2ACD,
+				9CE1F8A102A5C6F30ECA2ACD,
+				9CE1F8A202A5C6F30ECA2ACD,
+				9CE1F8A302A5C6F30ECA2ACD,
 			);
 			isa = PBXGroup;
 			name = "WebCore Support";

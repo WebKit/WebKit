@@ -1,3 +1,54 @@
+2002-05-29  Richard Williamson  <rjw@apple.com>
+
+    Changes to support animated image rendering.
+    Moved image rendering into webkit.
+    Still need to implement preferences stubs and
+    start/stop stubs.
+    
+	* WebCoreSupport.subproj/IFImageRenderer.h: Added.
+	* WebCoreSupport.subproj/IFImageRenderer.m: Added.
+	* WebCoreSupport.subproj/IFImageRendererFactory.h: Added.
+	* WebCoreSupport.subproj/IFImageRendererFactory.m: Added.
+	(+[IFImageRendererFactory createSharedFactory]):
+	(+[IFImageRendererFactory sharedFactory]):
+	(-[IFImageRendererFactory imageRendererWithBytes:length:]):
+	(-[IFImageRendererFactory imageRendererWithSize:]):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController stopAnimatedImages]):
+	(-[IFBaseWebController startAnimatedImages]):
+	(-[IFBaseWebController stopAnimatedImageLooping]):
+	(-[IFBaseWebController startAnimatedImageLooping]):
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFPreferences.mm:
+	(+[IFPreferences load]):
+	(-[IFPreferences _resourceTimedLayoutEnabled]):
+	(-[IFPreferences allowAnimatedImages]):
+	(-[IFPreferences allowAnimatedImageLooping]):
+	(-[IFPreferences setAllowAnimatedImageLooping:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView initWithFrame:]):
+
+2002-05-29  Richard Williamson  <rjw@apple.com>
+
+    API stubs for image animation.
+
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController stopAnimatedImages]):
+	(-[IFBaseWebController startAnimatedImages]):
+	(-[IFBaseWebController stopAnimatedImageLooping]):
+	(-[IFBaseWebController startAnimatedImageLooping]):
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFPreferences.mm:
+	(+[IFPreferences load]):
+	(-[IFPreferences _resourceTimedLayoutEnabled]):
+	(-[IFPreferences allowAnimatedImages]):
+	(-[IFPreferences allowAnimatedImageLooping]):
+	(-[IFPreferences setAllowAnimatedImageLooping:]):
+	* WebView.subproj/IFWebController.h:
+
 2002-05-29  John Sullivan  <sullivan@apple.com>
 
 	Removed acceptsFirstMouse override, this fixes at least:

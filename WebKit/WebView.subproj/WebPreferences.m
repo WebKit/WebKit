@@ -24,6 +24,8 @@
 #define	WebKitInitialTimedLayoutEnabledPreferenceKey	@"WebKitInitialTimedLayoutEnabled"
 #define	WebKitResourceTimedLayoutEnabledPreferenceKey	@"WebKitResourceTimedLayoutEnabled"
 #define	WebKitResourceTimedLayoutDelayPreferenceKey	@"WebKitResourceTimedLayoutDelay"
+#define	WebKitAllowAnimatedImagesPreferenceKey	@"WebKitAllowAnimatedImagesPreferenceKey"
+#define	WebKitAllowAnimatedImageLoopingPreferenceKey	@"WebKitAllowAnimatedImageLoopingPreferenceKey"
 
 @implementation IFPreferences
 
@@ -48,6 +50,8 @@ static IFPreferences *_standardPreferences = nil;
     NSNumber *jScriptEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
+    NSNumber *allowAnimatedImages = [NSNumber numberWithBool:TRUE];
+    NSNumber *allowAnimatedImageLooping = [NSNumber numberWithBool:TRUE];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0", 			WebKitLogLevelPreferenceKey,
@@ -67,6 +71,8 @@ static IFPreferences *_standardPreferences = nil;
         javaEnabled,			WebKitJavaEnabledPreferenceKey,
         jScriptEnabled,			WebKitJScriptEnabledPreferenceKey,
         pluginsEnabled,			WebKitPluginsEnabledPreferenceKey,
+        allowAnimatedImages,    WebKitAllowAnimatedImagesPreferenceKey,
+        allowAnimatedImageLooping,    WebKitAllowAnimatedImageLoopingPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -211,6 +217,27 @@ static IFPreferences *_standardPreferences = nil;
 - (BOOL)_resourceTimedLayoutEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
+}
+
+
+- (BOOL)allowAnimatedImages
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitAllowAnimatedImagesPreferenceKey];
+}
+
+- (void)setAllowAnimatedImages:(BOOL)flag;
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitAllowAnimatedImagesPreferenceKey];
+}
+
+- (BOOL)allowAnimatedImageLooping
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitAllowAnimatedImageLoopingPreferenceKey];
+}
+
+- (void)setAllowAnimatedImageLooping: (BOOL)flag
+{
+    [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitAllowAnimatedImageLoopingPreferenceKey];
 }
 
 

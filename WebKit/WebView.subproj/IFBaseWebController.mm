@@ -287,4 +287,20 @@
     }
 }
 
+- (void)stopAnimatedImages
+{
+}
+
+- (void)startAnimatedImages
+{
+}
+
+- (void)stopAnimatedImageLooping
+{
+}
+
+- (void)startAnimatedImageLooping
+{
+}
+
 @end

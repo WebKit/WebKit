@@ -12,6 +12,7 @@
 #import <WebKit/IFException.h>
 #import <WebKit/IFWebCoreViewFactory.h>
 #import <WebKit/IFTextRendererFactory.h>
+#import <WebKit/IFImageRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFNSStringExtensions.h>
@@ -35,6 +36,7 @@
 
     [IFWebCoreViewFactory createSharedFactory];
     [IFTextRendererFactory createSharedFactory];
+    [IFImageRendererFactory createSharedFactory];
     
     _private = [[IFWebViewPrivate alloc] init];
 
