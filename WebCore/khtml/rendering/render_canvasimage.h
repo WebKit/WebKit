@@ -36,6 +36,14 @@
 
 #include <ApplicationServices/ApplicationServices.h>
 
+extern "C" {
+
+extern void CGContextReplacePathWithStrokedPath(CGContextRef c);
+extern CGImageRef CGBitmapContextCreateImage(CGContextRef c);
+
+}
+
+
 namespace khtml {
 
 class DocLoader;

@@ -3374,12 +3374,6 @@ static bool isImagePattern(const Value &value)
     return false;
 }
 
-extern "C" {
-
-extern void CGContextReplacePathWithStrokedPath(CGContextRef c);
-
-}
-
 #define BITS_PER_COMPONENT 8
 #define BYTES_PER_ROW(width,bitsPerComponent,numComponents) ((width * bitsPerComponent * numComponents + 7)/8)
 
