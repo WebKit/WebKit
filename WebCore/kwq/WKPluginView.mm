@@ -44,8 +44,6 @@
 
 - (void)drawRect:(NSRect)rect {
     NPError npErr;
-    NPWindow window;
-    NP_Port nPort;
     char cMime[200], cURL[800];
     uint16 stype;
     id <WCURICache> cache;
@@ -66,10 +64,6 @@
     window.clipRect.bottom = (uint16)rect.size.height;
     window.clipRect.right = (uint16)rect.size.width;
     window.type = NPWindowTypeDrawable;
-    
-    SetPort(nPort.port);
-    LineTo((int)rect.size.width, (int)rect.size.height);
-    MoveTo(0,0);
     
     npErr = NPP_SetWindow(instance, &window);
     KWQDebug("NPP_SetWindow: %d rect.size.height=%d rect.size.width=%d port=%d rect.origin.x=%f rect.origin.y=%f\n", npErr, (int)rect.size.height, (int)rect.size.width, (int)nPort.port, rect.origin.x, rect.origin.y);

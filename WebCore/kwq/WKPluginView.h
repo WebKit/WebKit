@@ -37,6 +37,8 @@ typedef struct EventRecord EventRecord;
     NSString *url, *mime;
     WKPlugin *plugin;
     bool transferred;
+    NPWindow window;
+    NP_Port nPort;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
