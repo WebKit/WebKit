@@ -188,7 +188,7 @@
     [delegate resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
     [delegate resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
-    [[frame controller] _receivedProgressForResourceHandle:nil fromDataSource:[self dataSource] complete:YES];
+    [[frame controller] _finsishedLoadingResourceFromDataSource:[self dataSource]];
     [request release];
 }
 

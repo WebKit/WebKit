@@ -1,3 +1,21 @@
+2002-10-21  Richard Williamson   <rjw@apple.com>
+
+        More incremental tweaks.  Will be factoring common
+        handle delegate behavior into base class.
+        
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        (-[WebNetscapePluginStream handleDidFinishLoading:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:response:size:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient handle:didReceiveData:]):
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _finsishedLoadingResourceFromDataSource:]):
+
 2002-10-21  Trey Matteson  trey@apple.com
 
 	Fixed typos and other doc comment errors found during API review.

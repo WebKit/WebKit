@@ -64,10 +64,6 @@
     currentURL = nil;
 }
 
-- (void)receivedProgressWithComplete:(BOOL)isComplete
-{
-    [[dataSource controller] _receivedProgressForResourceHandle:handle fromDataSource:dataSource complete:isComplete];
-}
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
     withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
@@ -97,7 +93,6 @@
     client->handle = h;
     [source _addSubresourceClient:client];
     [client didStartLoadingWithURL:[newRequest URL]];
-    [client receivedProgressWithComplete:NO];
     [h loadWithDelegate:client];
     [newRequest release];
         
@@ -171,7 +166,6 @@
     [resourceProgressDelegate resource: identifier didReceiveContentLength: [data length] 
         fromDataSource: dataSource];
 
-    [self receivedProgressWithComplete:NO];
     [loader addData:data];
 }
 
@@ -193,7 +187,7 @@
     
     [resourceProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
 
-    [self receivedProgressWithComplete:YES];
+    [[dataSource controller] _finsishedLoadingResourceFromDataSource:dataSource];
     
     [self didStopLoading];
 

@@ -127,8 +127,6 @@
     }
     
     [self receivedData:data];
-
-    [[view controller] _receivedProgressForResourceHandle: handle fromDataSource: [view dataSource] complete: NO];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
@@ -137,7 +135,7 @@
 
     WebController *controller = [view controller];
 
-    [controller _receivedProgressForResourceHandle: handle fromDataSource: [view dataSource] complete: YES];
+    [controller _finsishedLoadingResourceFromDataSource: [view dataSource]];
 
     [self finishedLoadingWithData:resourceData];
 

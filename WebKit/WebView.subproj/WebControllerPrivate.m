@@ -102,18 +102,16 @@
     return _private->defaultContextMenuDelegate;
 }
 
-- (void)_receivedProgressForResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
+- (void)_finsishedLoadingResourceFromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
     
     ASSERT(dataSource != nil);
     
     // This resource has completed, so check if the load is complete for all frames.
-    if (isComplete) {
-        if (frame != nil) {
-            [frame _transitionToLayoutAcceptable];
-            [frame _checkLoadComplete];
-        }
+    if (frame != nil) {
+        [frame _transitionToLayoutAcceptable];
+        [frame _checkLoadComplete];
     }
 }
 
