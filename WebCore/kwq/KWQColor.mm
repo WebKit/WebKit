@@ -29,7 +29,11 @@
 #import "KWQString.h"
 #import "KWQAssertions.h"
 
+// Turn off inlining to avoid warning with newer gcc.
+#undef __inline
+#define __inline
 #import "KWQColorData.c"
+#undef __inline
 
 const QColor Qt::black    (0x00, 0x00, 0x00);
 const QColor Qt::white    (0xFF, 0xFF, 0xFF);

@@ -32,7 +32,11 @@
 
 const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
 
+// Turn off inlining to avoid warning with newer gcc.
+#undef __inline
+#define __inline
 #include "WebUserAgentSpoofTable.c"
+#undef __inline
 
 NSString *WebElementFrameKey = 			@"WebElementFrame";
 NSString *WebElementImageKey = 			@"WebElementImage";

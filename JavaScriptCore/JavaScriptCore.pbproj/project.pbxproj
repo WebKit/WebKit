@@ -166,8 +166,6 @@
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
 	<string>0.8</string>
-	<key>CFBundleSignature</key>
-	<string>????</string>
 	<key>CFBundleVersion</key>
 	<string>39</string>
 	<key>CFHumanReadableCopyright</key>

@@ -1,3 +1,11 @@
+2002-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        * WebKit.pbproj/project.pbxproj: Remove signature.
+        * WebView.subproj/WebController.m: Turn off inlining so we can build even on the
+	compiler that warns about static data in inline functions.
+
 2002-12-17  John Sullivan  <sullivan@apple.com>
 
 	- fixed 2895826 -- ICON: Need a "no plug-in" icon

@@ -1,3 +1,11 @@
+2002-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        * WebCore.pbproj/project.pbxproj: Remove signature.
+        * kwq/KWQColor.mm: Turn off inlining so we can build even on the
+	compiler that warns about static data in inline functions.
+
 2002-12-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -1,3 +1,9 @@
+2002-12-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Removed signature.
+
 === Alexander-39 ===
 
 === Alexander-38 ===
