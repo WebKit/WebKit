@@ -26,33 +26,27 @@
 #define INITIAL_GLYPH_CACHE_MAX 512
 #define INCREMENTAL_GLYPH_CACHE_BLOCK 1024
 
-#define UNINITIALIZED_GLYPH_WIDTH 65535
+// Covers most of latin1.
+#define INITIAL_BLOCK_SIZE 0x200
 
-static CFCharacterSetRef nonBaseChars = NULL;
+// Get additional blocks of glyphs and widths in bigger chunks.
+// This will typically be for other character sets.
+#define INCREMENTAL_BLOCK_SIZE 0x400
+
+#define UNINITIALIZED_GLYPH_WIDTH 65535
 
 // combining char, hangul jamo, or Apple corporate variant tag
 #define JunseongStart 0x1160
 #define JonseongEnd 0x11F9
 #define IsHangulConjoiningJamo(X) (X >= JunseongStart && X <= JonseongEnd)
-#define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (X & 0x1FFFF0) == 0xF870))
+#define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
 
-
-// These definitions are used to bound the character-to-glyph mapping cache.  The
-// range is limited to LATIN1.  When accessing the cache a check must be made to
-// determine that a character range does not include a composable charcter.
-
-// The first displayable character in latin1. (SPACE)
-#define FIRST_CACHE_CHARACTER (0x20)
-
-// The last character in latin1 extended A. (LATIN SMALL LETTER LONG S)
-#define LAST_CACHE_CHARACTER (0x17F)
 
 @interface NSLanguage : NSObject 
 {
 }
 + (NSLanguage *)defaultLanguage;
 @end
-
 
 @interface NSFont (IFPrivate)
 - (ATSUFontID)_atsFontID;
@@ -62,37 +56,85 @@ static CFCharacterSetRef nonBaseChars = NULL;
 + (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
 @end
 
-static void InitATSGlyphVector(ATSGlyphVector *glyphVector, UInt32 numGlyphs)
-{
-    if (glyphVector->numAllocatedGlyphs == 0) {
-        ATSInitializeGlyphVector(numGlyphs, 0, glyphVector);
-
-//#warning Aki: 6/28/00 Need to reconsider these when we do bidi
-        ATSFree(glyphVector->levelIndexes);
-        glyphVector->levelIndexes = NULL;
-    } else if (glyphVector->numAllocatedGlyphs < numGlyphs) {
-        ATSGrowGlyphVector(numGlyphs - glyphVector->numAllocatedGlyphs, glyphVector);
-    }
-}
-
-static void ResetATSGlyphVector(ATSGlyphVector *glyphVector)
-{
-    ATSGlyphVector tmpVector = *glyphVector;
-
-    // Prevents glyph array & style settings from deallocated
-    glyphVector->firstRecord = NULL;
-    glyphVector->styleSettings = NULL;
-    glyphVector->levelIndexes = NULL;
-    ATSClearGlyphVector(glyphVector);
-
-    glyphVector->numAllocatedGlyphs = tmpVector.numAllocatedGlyphs;
-    glyphVector->recordSize = tmpVector.recordSize;
-    glyphVector->firstRecord = tmpVector.firstRecord;
-    glyphVector->styleSettings = tmpVector.styleSettings;
-    glyphVector->levelIndexes = tmpVector.levelIndexes;
-}
-
 @class NSCGSFont;
+
+
+static CFCharacterSetRef nonBaseChars = NULL;
+
+
+static void freeWidthMap (WidthMap *map)
+{
+    if (map->next)
+        freeWidthMap (map->next);
+    free (map->widths);
+    free (map);
+}
+
+
+static void freeGlyphMap (GlyphMap *map)
+{
+    if (map->next)
+        freeGlyphMap (map->next);
+    free (map->glyphs);
+    free (map);
+}
+
+
+static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c)
+{
+    if (map == 0)
+        return nonGlyphID;
+        
+    if (c >= map->startRange && c <= map->endRange)
+        return ((ATSGlyphRef *)map->glyphs)[c-map->startRange];
+        
+    return glyphForCharacter (map->next, c);
+}
+ 
+ 
+#ifdef _TIMING        
+static double totalCGGetAdvancesTime = 0;
+#endif
+
+static inline IFGlyphWidth widthForGlyph (IFTextRenderer *renderer, WidthMap *map, ATSGlyphRef glyph)
+{
+    IFGlyphWidth width;
+    bool errorResult;
+    
+    if (map == 0){
+        map = [renderer extendGlyphToWidthMapToInclude: glyph];
+        return widthForGlyph (renderer, map, glyph);
+    }
+        
+    if (glyph >= map->startRange && glyph <= map->endRange){
+        width = ((IFGlyphWidth *)map->widths)[glyph-map->startRange];
+        if (width == UNINITIALIZED_GLYPH_WIDTH){
+
+#ifdef _TIMING        
+            double startTime = CFAbsoluteTimeGetCurrent();
+#endif
+            errorResult = CGFontGetGlyphScaledAdvances ([renderer->font _backingCGSFont], &glyph, 1, &map->widths[glyph-map->startRange], [renderer->font pointSize]);
+            if (errorResult == 0)
+                [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f",  [renderer->font displayName], [renderer->font pointSize]];
+    
+#ifdef _TIMING        
+            double thisTime = CFAbsoluteTimeGetCurrent() - startTime;
+            totalCGGetAdvancesTime += thisTime;
+#endif
+            return ((IFGlyphWidth *)map->widths)[glyph-map->startRange];
+        }
+        return width;
+    }
+
+    return widthForGlyph (renderer, map->next, glyph);
+}
+
+
+static inline  IFGlyphWidth widthForCharacter (IFTextRenderer *renderer, UniChar c)
+{
+    return widthForGlyph (renderer, renderer->glyphToWidthMap, glyphForCharacter(renderer->characterToGlyphMap, c));
+}
+
 
 static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
@@ -141,13 +183,29 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
 }
 
+
+- (NSFont *)substituteFontForCharacters: (const unichar *)characters length: (int)numCharacters
+{
+    NSFont *substituteFont;
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
+
+    substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,numCharacters) inLanguage:[NSLanguage defaultLanguage]];
+    [string release];
+    
+    if ([substituteFont isEqual: font])
+        return nil;
+        
+    return substituteFont;
+}
+
+
 /* Convert non-breaking spaces into spaces. */
-- (NSFont *)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs
+- (void)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs
 {
     int i;
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     UniChar *buffer = localBuffer;
-    NSFont *fontToBeUsed = nil;
+    OSStatus status;
     
     for (i = 0; i < numCharacters; i++) {
         if (characters[i] == NON_BREAKING_SPACE) {
@@ -175,84 +233,9 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         free(buffer);
     }
     
-    (void)ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
-    
-    if (hasMissingGlyphs(glyphs) == YES){
-        NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
-
-        fontToBeUsed = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,numCharacters) inLanguage:[NSLanguage defaultLanguage]];
-        [string release];
-    }
-    
-    return fontToBeUsed;
+    status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
 }
 
-- (void)initializeCaches
-{
-    unsigned int i, glyphsToCache;
-    int errorResult;
-    size_t numGlyphsInFont = CGFontGetNumberOfGlyphs([font _backingCGSFont]);
-    short unsigned int sequentialGlyphs[INITIAL_GLYPH_CACHE_MAX];
-    ATSLayoutRecord *glyphRecords;
-    NSFont *fontToUse;
-
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "Caching %s %.0f (%ld glyphs) ascent = %f, descent = %f, defaultLineHeightForFont = %f\n", [[font displayName] cString], [font pointSize], numGlyphsInFont, [font ascender], [font descender], [font defaultLineHeightForFont]); 
-
-    // Initially just cache the max of number of glyphs in font or
-    // INITIAL_GLYPH_CACHE_MAX.  Holes in the cache will be filled on demand
-    // in INCREMENTAL_GLYPH_CACHE_BLOCK chunks. 
-    if (numGlyphsInFont > INITIAL_GLYPH_CACHE_MAX)
-        glyphsToCache = INITIAL_GLYPH_CACHE_MAX;
-    else
-        glyphsToCache = numGlyphsInFont;
-    widthCacheSize = (int)numGlyphsInFont;
-    for (i = 0; i < glyphsToCache; i++)
-        sequentialGlyphs[i] = i;
-        
-    widthCache = (IFGlyphWidth *)calloc (1, widthCacheSize * sizeof(IFGlyphWidth));
-    
-    // Some glyphs can have zero width, so we have to use a non-zero value
-    // in empty slots to indicate they are uninitialized.
-    for (i = glyphsToCache; i < widthCacheSize; i++){
-        widthCache[i] = UNINITIALIZED_GLYPH_WIDTH;
-    }
-    
-    CGContextRef cgContext;
-
-    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], glyphsToCache, widthCache, [font pointSize]);
-    if (errorResult == 0)
-        [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph advances - for %@ %f", self, [font displayName], [font pointSize]];
-
-    unsigned int latinCount = LAST_CACHE_CHARACTER - FIRST_CACHE_CHARACTER + 1;
-    short unsigned int latinBuffer[LAST_CACHE_CHARACTER+1];
-    
-    for (i = FIRST_CACHE_CHARACTER; i <= LAST_CACHE_CHARACTER; i++){
-        latinBuffer[i] = i;
-    }
-
-    ATSGlyphVector latinGlyphVector;
-    ATSInitializeGlyphVector(latinCount, 0, &latinGlyphVector);
-    fontToUse = [self convertCharacters: &latinBuffer[FIRST_CACHE_CHARACTER] length: latinCount glyphs: &latinGlyphVector];
-    if (latinGlyphVector.numGlyphs != latinCount)
-        [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  ascii and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
-        
-    unsigned int numGlyphs = latinGlyphVector.numGlyphs;
-    characterToGlyph = (ATSGlyphRef *)calloc (1, latinGlyphVector.numGlyphs * sizeof(ATSGlyphRef));
-    glyphRecords = (ATSLayoutRecord *)latinGlyphVector.firstRecord;
-    for (i = 0; i < numGlyphs; i++){
-        characterToGlyph[i] = glyphRecords[i].glyphID;
-    }
-    ATSClearGlyphVector(&latinGlyphVector);
-
-#define DEBUG_CACHE_SIZE
-#ifdef DEBUG_CACHE_SIZE
-    static int totalCacheSize = 0;
-    
-    totalCacheSize += widthCacheSize * sizeof(IFGlyphWidth) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(*self);
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_MEMUSAGE, "memory usage in bytes:  widths = %ld, latin1 ext. character-to-glyph = %ld, total this cache = %ld, total all caches %d\n", widthCacheSize * sizeof(IFGlyphWidth), numGlyphs * sizeof(ATSGlyphRef), widthCacheSize * sizeof(IFGlyphWidth) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(*self), totalCacheSize); 
-#endif
-}
 
 - initWithFont:(NSFont *)f
 {
@@ -280,19 +263,21 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     return self;
 }
 
+
 - (void)dealloc
 {
     [font release];
 
     if (styleGroup)
         ATSUDisposeStyleGroup(styleGroup);
-    if (glyphVector.numAllocatedGlyphs > 0)
-        ATSClearGlyphVector(&glyphVector);
+
     free(widthCache);
-    free(characterToGlyph);
+    freeWidthMap (glyphToWidthMap);
+    freeGlyphMap (characterToGlyphMap);
     
     [super dealloc];
 }
+
 
 - (int)widthForString:(NSString *)string
 {
@@ -311,6 +296,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     return [self widthForCharacters:internalBuffer length:[string length]];
 }
 
+
 - (int)ascent
 {
     if (ascent < 0)  {
@@ -318,6 +304,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     }
     return ascent;
 }
+
 
 - (int)descent
 {
@@ -327,6 +314,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     return descent;
 }
 
+
 - (int)lineSpacing
 {
     if (lineSpacing < 0) {
@@ -335,12 +323,15 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     return lineSpacing;
 }
 
+
 - (void)drawString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
     NSFont *substituteFont;
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
     const UniChar *internalBuffer;
+    ATSGlyphVector _glyphVector;
+    CGContextRef cgContext;
 
     if (!_internalBuffer){
         // FIXME: Handle case where length > LOCAL_GLYPH_BUFFER_SIZE
@@ -350,15 +341,15 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     else
         internalBuffer = _internalBuffer;
 
-    CGContextRef cgContext;
-
-    InitATSGlyphVector(&glyphVector, [string length]);
-
-    substituteFont = [self convertCharacters: internalBuffer length: [string length] glyphs: &glyphVector];
-    if (substituteFont){
-        ResetATSGlyphVector(&glyphVector);
-        [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawString: string atPoint: point withColor: color];
-        return;
+    ATSInitializeGlyphVector([string length], 0, &_glyphVector);
+    [self convertCharacters: internalBuffer length: [string length] glyphs: &_glyphVector];
+    if (hasMissingGlyphs (&_glyphVector)){
+        substituteFont = [self substituteFontForCharacters: internalBuffer length: [string length]];
+        ATSClearGlyphVector(&_glyphVector);
+        if (substituteFont){
+            [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawString: string atPoint: point withColor: color];
+            return;
+        }
     }
     
     // This will draw the text from the top of the bounding box down.
@@ -374,10 +365,10 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to deal with font %@", self, [font displayName]];
         
     {
-        int i, numGlyphs = glyphVector.numGlyphs;
+        int i, numGlyphs = _glyphVector.numGlyphs;
         char localGlyphBuf[LOCAL_GLYPH_BUFFER_SIZE];
         char *usedGlyphBuf, *glyphBufPtr, *glyphBuf = 0;
-        ATSLayoutRecord *glyphRecords = (ATSLayoutRecord *)glyphVector.firstRecord;
+        ATSLayoutRecord *glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
         
         if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE/2)
             usedGlyphBuf = glyphBufPtr = glyphBuf = (char *)malloc (numGlyphs * 2);
@@ -398,12 +389,14 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
             free (glyphBuf);
     }
 
-    ResetATSGlyphVector(&glyphVector);
+    ATSClearGlyphVector(&_glyphVector);
 }
+
 
 - (void)drawUnderlineForString:(NSString *)string atPoint:(NSPoint)point withColor:(NSColor *)color
 {
     NSFont *substituteFont;
+    ATSGlyphVector _glyphVector;
     UniChar localBuffer[LOCAL_GLYPH_BUFFER_SIZE];
     const UniChar *_internalBuffer = CFStringGetCharactersPtr ((CFStringRef)string);
     const UniChar *internalBuffer;
@@ -416,13 +409,17 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     else
         internalBuffer = _internalBuffer;
 
-    InitATSGlyphVector(&glyphVector, [string length]);
-    substituteFont = [self convertCharacters: internalBuffer length: [string length] glyphs: &glyphVector];
-    ResetATSGlyphVector(&glyphVector);
-    if (substituteFont){
-        [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawUnderlineForString: string atPoint: point withColor: color];
-        return;
+    ATSInitializeGlyphVector([string length], 0, &_glyphVector);
+    [self convertCharacters: internalBuffer length: [string length] glyphs: &_glyphVector];
+    if (hasMissingGlyphs (&_glyphVector)){
+        substituteFont = [self substituteFontForCharacters: internalBuffer length: [string length]];
+        ATSClearGlyphVector(&_glyphVector);
+        if (substituteFont){
+            [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawUnderlineForString: string atPoint: point withColor: color];
+            return;
+        }
     }
+    ATSClearGlyphVector(&_glyphVector);
     
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
@@ -456,128 +453,77 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     [graphicsContext setShouldAntialias: flag];
 }
 
+
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
 {
     float totalWidth = 0;
-    unsigned int i, index;
-    int glyphID;
+    unsigned int i;
     ATSLayoutRecord *glyphRecords;
     unsigned int numGlyphs;
     NSFont *substituteFont;
-    
-    ATSGlyphRef localCharacterToGlyph[LOCAL_GLYPH_BUFFER_SIZE];
-    ATSGlyphRef *usedCharacterToGlyph, *allocateCharacterToGlyph = 0;
-    
     BOOL needCharToGlyphLookup = NO;
 
 
-    // Best case, and common case for latin1, performance will require two iterations over
-    // the internalBuffer.
-    // Pass 1 (on characters):  
-    //      Determine if we can use character-to-glyph map by comparing characters to cache
-    //      range.
-    // Pass 2 (on characters):  
-    //      Sum the widths using the character-to-glyph map and width cache.
-    
-    // FIXME:  For non-latin1 character sets we don't optimize.
-    // Worst case performance we must lookup the character-to-glyph map and lookup the glyph
-    // widths.
-    
     if ([font glyphPacking] != NSNativeShortGlyphPacking &&
         [font glyphPacking] != NSTwoByteGlyphPacking)
-	[NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [font displayName], [font pointSize]];
-    
-    if (widthCache == 0)
-        [self initializeCaches];
-    
-    // Pass 1:
-    // Check if we can use the cached character-to-glyph map.  We only use the character-to-glyph map
-    // if ALL the characters in the string fall in the safe cache range.  This must be done
-    // to ensure that we don't match composable characters incorrectly.  This check could
-    // be smarter.  Also the character-to-glyph could be extended to support other ranges
-    // of unicode.  For now, we only optimize for latin1.
+        [NSException raise:NSInternalInconsistencyException format:@"%@: Don't know how to pack glyphs for font %@ %f", self, [font displayName], [font pointSize]];
+        
     for (i = 0; i < length; i++){
-        if (characters[i] < FIRST_CACHE_CHARACTER || characters[i] > LAST_CACHE_CHARACTER){
+        UniChar c = characters[i];
+        
+        if (c == NON_BREAKING_SPACE)
+        	c = SPACE;
+        	
+        if (IsNonBaseChar(c)){
+
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) non base character, slower measurment required\n", DEBUG_OBJECT([font displayName]), c);
+
             needCharToGlyphLookup = YES;
             break;
         }
-    }
-
-    // 1.  Check if the string contains only base characters.
-    //     If it does check to see that our cache contains that character.
-    
-    // If we can't use the cached map, then calculate a map for this string.   Expensive.
-    if (needCharToGlyphLookup){
-        
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", characters[i], [[font displayName] lossyCString], [font pointSize]);
-        InitATSGlyphVector(&glyphVector, length);
-        
-        // Do the character to glyph conversion.
-        substituteFont = [self convertCharacters: characters length: length glyphs: &glyphVector];
-        if (substituteFont){
-            ResetATSGlyphVector(&glyphVector);
-            return [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
+        if (glyphForCharacter(characterToGlyphMap, c) == nonGlyphID){
+            [self extendCharacterToGlyphMapToInclude: c];
         }
         
-        glyphRecords = (ATSLayoutRecord *)glyphVector.firstRecord;
-        numGlyphs = glyphVector.numGlyphs;
-
-        if (numGlyphs > LOCAL_GLYPH_BUFFER_SIZE)
-            usedCharacterToGlyph = allocateCharacterToGlyph = (ATSGlyphRef *)calloc (1, numGlyphs * sizeof(ATSGlyphRef));
-        else
-            usedCharacterToGlyph = &localCharacterToGlyph[0];
-            
-        for (i = 0; i < numGlyphs; i++){
-            glyphID = glyphRecords[i].glyphID;
-            usedCharacterToGlyph[i] = glyphID;
-            
-            // Fill the block of glyphs for the glyph needed. If we're going to incur the overhead
-            // of calling into CG, we may as well get a block of scaled glyph advances.
-            if (widthCache[glyphID] == UNINITIALIZED_GLYPH_WIDTH) {
-                short unsigned int sequentialGlyphs[INCREMENTAL_GLYPH_CACHE_BLOCK];
-                unsigned int blockStart, blockEnd, blockID;
-                int errorResult;
-                
-                blockStart = (glyphID / INCREMENTAL_GLYPH_CACHE_BLOCK) * INCREMENTAL_GLYPH_CACHE_BLOCK;
-                blockEnd = blockStart + INCREMENTAL_GLYPH_CACHE_BLOCK;
-                if (blockEnd > widthCacheSize)
-                    blockEnd = widthCacheSize;
-                WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "width cache miss for glyph 0x%04x in %s, %.0f, filling block 0x%04x to 0x%04x\n", glyphID, [[font displayName] cString], [font pointSize], blockStart, blockEnd);
-                for (blockID = blockStart; blockID < blockEnd; blockID++)
-                    sequentialGlyphs[blockID-blockStart] = blockID;
-
-                errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], blockEnd-blockStart, &widthCache[blockStart], [font pointSize]);
-                if (errorResult == 0)
-                    [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f", self, [font displayName], [font pointSize]];
+        // Try to find a substitute font if this font didn't have a glyph for a character in the
+        // string.  If one isn't find we end up drawing and measuring a box.
+        if (glyphForCharacter(characterToGlyphMap, c) == 0){
+            substituteFont = [self substituteFontForCharacters: characters length: length];
+            if (substituteFont){
+                WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT([substituteFont displayName]), DEBUG_OBJECT([font displayName]), c);
+                return [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
             }
         }
+    }
 
-        ResetATSGlyphVector(&glyphVector);
-    }
-    else {
-        numGlyphs = length;
-        usedCharacterToGlyph = characterToGlyph;
-    }
-    
-    // Pass 2:
-    // Sum the widths for all the glyphs.
     if (needCharToGlyphLookup){
-        for (i = 0; i < numGlyphs; i++){
-            totalWidth += widthCache[usedCharacterToGlyph[i]];
-        }
+        ATSGlyphVector _glyphVector;
+        IFGlyphWidth glyphWidth;
         
-        if (allocateCharacterToGlyph)
-            free (allocateCharacterToGlyph);
+        ATSInitializeGlyphVector(length, 0, &_glyphVector);
+        [self convertCharacters: (const unichar *)characters length: (int)length glyphs: (ATSGlyphVector *)&_glyphVector];
+        numGlyphs = _glyphVector.numGlyphs;
+        glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
+        for (i = 0; i < numGlyphs; i++){
+            ATSGlyphRef glyphID = glyphRecords[i].glyphID;
+            glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
+            totalWidth += glyphWidth;
+        }
+        ATSClearGlyphVector(&_glyphVector);
     }
     else {
-        for (i = 0; i < numGlyphs; i++){
-            index = characters[i]-FIRST_CACHE_CHARACTER;
-            totalWidth += widthCache[usedCharacterToGlyph[index]];
+        for (i = 0; i < length; i++){
+			UniChar c = characters[i];
+			
+			if (c == NON_BREAKING_SPACE)
+				c = SPACE;
+            totalWidth += widthForCharacter(self, c);
         }
     }
     
     return ROUND_TO_INT(totalWidth);
 }
+
 
 - (void)drawString:(NSString *)string inRect:(NSRect)rect withColor:(NSColor *)color paragraphStyle:(NSParagraphStyle *)style
 {
@@ -588,4 +534,112 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         nil]];
 }
 
+
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c
+{
+    GlyphMap *map = (GlyphMap *)calloc (1, sizeof(GlyphMap));
+    ATSLayoutRecord *glyphRecords;
+    ATSGlyphVector _glyphVector;
+    UniChar end, start;
+    unsigned int _end;
+    unsigned int blockSize;
+    
+    if (characterToGlyphMap == 0)
+        blockSize = INITIAL_BLOCK_SIZE;
+    else
+        blockSize = INCREMENTAL_BLOCK_SIZE;
+    start = (c / blockSize) * blockSize;
+    _end = ((unsigned int)start) + blockSize; 
+    if (_end > 0xffff)
+        end = 0xffff;
+    else
+        end = _end;
+        
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) adding glyphs for 0x%04x to 0x%04x\n", DEBUG_OBJECT(font), c, start, end);
+
+    map->startRange = start;
+    map->endRange = end;
+    
+    unsigned int i, count = end - start + 1;
+    short unsigned int buffer[INCREMENTAL_BLOCK_SIZE+2];
+    
+    for (i = 0; i < count; i++){
+        if (IsNonBaseChar(i+start))
+            buffer[i] = 0;
+        else
+            buffer[i] = i+start;
+    }
+
+    ATSInitializeGlyphVector(count, 0, &_glyphVector);
+    [self convertCharacters: &buffer[0] length: count glyphs: &_glyphVector];
+    if (_glyphVector.numGlyphs != count)
+        [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  count and glyphID count not equal - for %@ %f", self, [font displayName], [font pointSize]];
+            
+    map->glyphs = (ATSGlyphRef *)malloc (count * sizeof(ATSGlyphRef));
+    glyphRecords = (ATSLayoutRecord *)_glyphVector.firstRecord;
+    for (i = 0; i < count; i++){
+        ATSGlyphRef glyphID = glyphRecords[i].glyphID;
+        map->glyphs[i] = glyphID;
+    }
+    ATSClearGlyphVector(&_glyphVector);
+    
+    if (characterToGlyphMap == 0)
+        characterToGlyphMap = map;
+    else {
+        GlyphMap *lastMap = characterToGlyphMap;
+        while (lastMap->next != 0)
+            lastMap = lastMap->next;
+        lastMap->next = map;
+    }
+
+    return map->glyphs[c - start];
+}
+
+
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID
+{
+    WidthMap *map = (WidthMap *)calloc (1, sizeof(WidthMap));
+    unsigned int end;
+    ATSGlyphRef start;
+    unsigned int blockSize;
+    
+    if (glyphToWidthMap == 0)
+        blockSize = INITIAL_BLOCK_SIZE;
+    else
+        blockSize = INCREMENTAL_BLOCK_SIZE;
+    start = (glyphID / blockSize) * blockSize;
+    end = ((unsigned int)start) + blockSize; 
+    if (end > 0xffff)
+        end = 0xffff;
+
+    unsigned int i, count = end - start + 1;
+
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s (0x%04x) adding widths for range 0x%04x to 0x%04x\n", DEBUG_OBJECT(font), glyphID, start, end);
+
+    map->startRange = start;
+    map->endRange = end;
+
+    map->widths = (IFGlyphWidth *)malloc (count * sizeof(IFGlyphWidth));
+
+    for (i = 0; i < count; i++){
+        map->widths[i] = UNINITIALIZED_GLYPH_WIDTH;
+    }
+
+    if (glyphToWidthMap == 0)
+        glyphToWidthMap = map;
+    else {
+        WidthMap *lastMap = glyphToWidthMap;
+        while (lastMap->next != 0)
+            lastMap = lastMap->next;
+        lastMap->next = map;
+    }
+
+#ifdef _TIMING
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "%s total time to advances lookup %f seconds\n", DEBUG_OBJECT(font), totalCGGetAdvancesTime);
+#endif
+    return map;
+}
+
+
 @end
+

@@ -11,24 +11,42 @@
 
 typedef float IFGlyphWidth;
 
+
+typedef struct _WidthMap {
+    ATSGlyphRef startRange;
+    ATSGlyphRef endRange;
+    struct _WidthMap *next;
+    IFGlyphWidth *widths;
+} WidthMap;
+
+typedef struct _GlyphMap {
+    UniChar startRange;
+    UniChar endRange;
+    struct _GlyphMap *next;
+    ATSGlyphRef *glyphs;
+} GlyphMap;
+
 @interface IFTextRenderer : NSObject <WebCoreTextRenderer>
 {
+@public
     NSFont *font;
     int ascent;
     int descent;
     int lineSpacing;
     
     ATSStyleGroupPtr styleGroup;
-    ATSGlyphVector glyphVector;
     unsigned int widthCacheSize;
     IFGlyphWidth *widthCache;
-    ATSGlyphRef *characterToGlyph;
+    GlyphMap *characterToGlyphMap;
+    WidthMap *glyphToWidthMap;
     
     NSArray *substituteFontRenderers;
 }
 
 - initWithFont:(NSFont *)font;
-- (NSFont *)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs;
+- (void)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs;
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
 
 
 @end
