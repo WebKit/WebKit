@@ -1,3 +1,25 @@
+2002-11-13  Trey Matteson  <trey@apple.com>
+
+	Fixed client redirects, some more.  The upshot is that they do not
+	generate two items in the back-forward list.  iBench still works.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportClientRedirectTo:delay:fireDate:]):  Call straight to the frame for all impl.
+        (-[WebBridge reportClientRedirectCancelled]):  Call straight to the frame for all impl.
+        (-[WebBridge loadURL:reload:triggeringEvent:isFormSubmission:]):
+	clientRedirect param removed when sending _loadURL: to frame.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+	clientRedirect param  removed. Check our own ivar to know if we are in client redirect case.
+        (-[WebFrame _loadURL:intoChild:]):
+	clientRedirect param removed when sending _loadURL: .
+        (-[WebFrame _clientRedirectedTo:delay:fireDate:]):
+	Note that we are doing a redirect if time=0 and we're not completed.  Also includes
+	previous impl moved from Bridge.
+        (-[WebFrame _clientRedirectCancelled]):  Previous impl moved from Bridge.
+
+
 2002-11-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Pass mime type instead of full response to content policy delegate

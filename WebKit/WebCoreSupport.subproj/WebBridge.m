@@ -227,18 +227,12 @@
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
-    LOG(Redirect, "Client redirect to: %@", URL);
-    [[[frame controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:frame];
-    if (seconds == 0.0) {
-        // used to set loadType to internal, to prevent a redirect from going in the backforward list
-        _doingClientRedirect = YES;
-    }
+    [frame _clientRedirectedTo:URL delay:seconds fireDate:date];
 }
 
 - (void)reportClientRedirectCancelled
 {
-    [[[frame controller] locationChangeDelegate] clientRedirectCancelledForFrame:frame];
-    _doingClientRedirect = NO;
+    [frame _clientRedirectCancelled];
 }
 
 - (void)setFrame:(WebFrame *)webFrame
@@ -273,8 +267,7 @@
 
 - (void)loadURL:(NSURL *)URL reload:(BOOL)reload triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
-    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) clientRedirect:_doingClientRedirect triggeringEvent:event isFormSubmission:isFormSubmission];
-    _doingClientRedirect = NO;
+    [frame _loadURL:URL loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event isFormSubmission:isFormSubmission];
 }
 
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event

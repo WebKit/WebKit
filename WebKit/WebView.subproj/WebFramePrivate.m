@@ -1041,7 +1041,7 @@ static const char * const stateNames[] = {
 }
 
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:[_private->bridge referrer]];
@@ -1092,13 +1092,13 @@ static const char * const stateNames[] = {
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
-        WebFrameState stateBeforeStartingLoad = [self _state];
 
         [self _loadRequest:request triggeringAction:action];
         // NB: must be done after loadRequest:, which sets the provDataSource, which
         //     inits the load type to Standard
         [self _setLoadType:loadType];
-        if (clientRedirect && stateBeforeStartingLoad != WebFrameStateComplete) {
+        if (_private->instantRedirectComing) {
+            _private->instantRedirectComing = NO;
             // Inherit the loadType from the operation that spawned the redirect
             [self _setLoadType:previousLoadType];
 
@@ -1136,7 +1136,7 @@ static const char * const stateNames[] = {
         }
     }
             
-    [childFrame _loadURL:URL loadType:childLoadType clientRedirect:NO triggeringEvent:nil isFormSubmission:NO];
+    [childFrame _loadURL:URL loadType:childLoadType triggeringEvent:nil isFormSubmission:NO];
     // want this here???
     if (childItem) {
         if (loadType != WebFrameLoadTypeReload) {
@@ -1166,6 +1166,23 @@ static const char * const stateNames[] = {
     [self _loadRequest:request triggeringAction:action];
 
     [request release];
+}
+
+- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
+{
+    LOG(Redirect, "Client redirect to: %@", URL);
+    [[[self controller] locationChangeDelegate] clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
+    // If a zero-time redirect comes in and we're still finishing the previous page, we set
+    // a special mode so we treat the next load as part of the same navigation.
+    if (seconds == 0.0 && [self _state] != WebFrameStateComplete) {
+        _private->instantRedirectComing = YES;
+    }
+}
+
+- (void)_clientRedirectCancelled
+{
+    [[[self controller] locationChangeDelegate] clientRedirectCancelledForFrame:self];
+    _private->instantRedirectComing = NO;
 }
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item

@@ -63,6 +63,7 @@ typedef enum {
     WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
                                         // (only known when navigating to a pre-existing BF item)
     WebHistoryItem *previousItem;	// BF item for previous content, see _itemForSavingDocState
+    BOOL instantRedirectComing;
 }
 
 - (void)setName:(NSString *)name;
@@ -110,9 +111,12 @@ typedef enum {
 - (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event;
 - (BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource;
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
-- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType clientRedirect:(BOOL)clientRedirect triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission;
+- (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission;
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
 - (void)_postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event;
+
+- (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date;
+- (void)_clientRedirectCancelled;
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item;
 - (void)_restoreScrollPosition;
