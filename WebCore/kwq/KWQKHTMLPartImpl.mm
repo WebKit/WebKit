@@ -690,7 +690,7 @@ DOM::HTMLDocumentImpl *KHTMLPart::docImpl() const
 
 DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
 {
-    _logPartiallyImplemented();
+//    _logPartiallyImplemented();
     return d->m_doc;
 }
 

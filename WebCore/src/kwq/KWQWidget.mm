@@ -137,7 +137,7 @@ void QWidget::setAutoMask(bool)
 
 void QWidget::setMouseTracking(bool) 
 {
-    _logNeverImplemented();
+//    _logNeverImplemented();
 }
 
 
@@ -365,7 +365,7 @@ bool QWidget::focusNextPrevChild(bool)
 
 bool QWidget::hasMouseTracking() const
 {
-    _logNeverImplemented();
+//    _logNeverImplemented();
     return true;
 }
 

@@ -65,6 +65,7 @@ class KHTMLPart;
     QWidget *widget;
     KHTMLPart *part;  // FIXME.  This is a temporary reference.
     bool isFlipped;
+    bool needsLayout;
 }
 - initWithFrame: (NSRect)r widget: (QWidget *)w; 
 - (void)setIsFlipped: (bool)flag;

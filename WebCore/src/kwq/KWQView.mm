@@ -87,6 +87,7 @@
     [super initWithFrame: r];
     widget = w;
     isFlipped = YES;
+    needsLayout = YES;
 }
 
 
@@ -100,13 +101,16 @@
  
         if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
             ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
-            ((KHTMLView *)widget)->layout(TRUE);
+            if (needsLayout){
+                ((KHTMLView *)widget)->layout(TRUE);
+                needsLayout = NO;
+            }
         }
-       
-        ((KHTMLView *)widget)->drawContents( &p, (int)frame.origin.x, 
-                    (int)frame.origin.y, 
-                    (int)frame.size.width, 
-                    (int)frame.size.height );
+    
+        ((KHTMLView *)widget)->drawContents( &p, (int)rect.origin.x, 
+                    (int)rect.origin.y, 
+                    (int)rect.size.width, 
+                    (int)rect.size.height );
     }
 }
 

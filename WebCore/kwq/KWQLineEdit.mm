@@ -88,7 +88,7 @@ void QLineEdit::setReadOnly(bool flag)
 {
     KWQNSTextField *field = (KWQNSTextField *)getView();
     
-    return [field setEditable: flag];
+    return [field setEditable: flag?NO:YES];
 }
 
 
