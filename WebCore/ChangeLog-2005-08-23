@@ -1,3 +1,22 @@
+2003-11-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+	Fixes for these bugs:
+
+	<rdar://problem/3476006>: Form file input widgets do not scroll 
+	to view when focused
+
+	<rdar://problem/3476007>: Form file input widgets should only 
+	focus when full keyboard access is on
+
+        * kwq/KWQFileButton.h: Added focusPolicy declaration.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::focusPolicy): Added. Now works like other buttons.
+	Fixes 3476007.
+        (KWQFileButton::focusChanged): Added. Code similar to text area
+	widgets. Fixes 3476006.
+
 2003-11-06  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3308609>: 6L60 Safari URL links with line-endings converted to hex by contextual menu

@@ -46,6 +46,8 @@ public:
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
     int baselinePosition(int height) const;
+
+    virtual FocusPolicy focusPolicy() const;
     
     void filenameChanged(const QString &);
     void focusChanged(bool);

@@ -28,6 +28,7 @@
 #import "KWQAssertions.h"
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
 #import "WebCoreBridge.h"
 
 @interface KWQFileButtonAdapter : NSObject <WebCoreFileButtonDelegate>
@@ -118,6 +119,21 @@ int KWQFileButton::baselinePosition(int height) const
     return 0;
 }
 
+QWidget::FocusPolicy KWQFileButton::focusPolicy() const
+{
+    KWQ_BLOCK_EXCEPTIONS;
+
+    // Add an additional check here.
+    // For now, buttons are only focused when full
+    // keyboard access is turned on.
+    if (![KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] == WebCoreFullKeyboardAccess)
+        return NoFocus;
+
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return QWidget::focusPolicy();
+}
+
 void KWQFileButton::filenameChanged(const QString &filename)
 {
     _textChanged.call(filename);
@@ -126,6 +142,9 @@ void KWQFileButton::filenameChanged(const QString &filename)
 void KWQFileButton::focusChanged(bool nowHasFocus)
 {
     if (nowHasFocus) {
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(this)) {
+            [getView() _KWQ_scrollFrameToVisible];
+        }        
         QFocusEvent event(QEvent::FocusIn);
         const_cast<QObject *>(eventFilterObject())->eventFilter(this, &event);
     }
