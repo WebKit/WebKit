@@ -5935,7 +5935,7 @@ starts. We now start plug-ins when they are added to the window.
 
 2002-09-27  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed: 3056559 - QT plugin doesn't load (claudius)
+	Fixed: 3056559 - QT plugin doesn't load
 	Fixed: 3042850 - Enable Java by default
 
 	Cleaned up WebPlugin and WebPluginDatabase.

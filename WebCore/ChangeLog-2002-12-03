@@ -5198,7 +5198,7 @@ b2002-11-08  Darin Adler  <darin@apple.com>
         
         * kwq/KWQColor.mm:
         (QColor::hsv):
-        Fixed marklar divide by 0 problem.
+        Fixed divide by 0 problem.
         
 2002-09-17  Darin Adler  <darin@apple.com>
 
@@ -5543,7 +5543,7 @@ b2002-11-08  Darin Adler  <darin@apple.com>
 
 2002-09-12  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed livepage crash on Marklar. It is naughty to divide by 0 on marklar so we now check before doing that.
+	Fixed livepage crash. It is naughty to divide by 0 so we now check before doing that.
 
         * khtml/rendering/render_box.cpp:
         (RenderBox::printBackground):
