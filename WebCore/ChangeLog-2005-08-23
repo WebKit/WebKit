@@ -1,3 +1,20 @@
+2002-07-23  David Hyatt  <hyatt@apple.com>
+
+	The STYLE element was ignoring both the media and type
+	attributes (unlike its cousin, the LINK element).  This
+	patch implements support for media and type and further
+	stops us from loading stylesheets that we should have no
+	business parsing.
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process):
+        (HTMLStyleElementImpl::parseAttribute):
+        (HTMLStyleElementImpl::insertedIntoDocument):
+        (HTMLStyleElementImpl::removedFromDocument):
+        (HTMLStyleElementImpl::childrenChanged):
+        (HTMLStyleElementImpl::sheetLoaded):
+        * khtml/html/html_headimpl.h:
+
 === Alexander-14 ===
 
 2002-07-23  David Hyatt  <hyatt@apple.com>

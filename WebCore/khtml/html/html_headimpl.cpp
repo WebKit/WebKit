@@ -180,7 +180,7 @@ void HTMLLinkElementImpl::process()
 #endif
 
     // Stylesheet
-    // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning.
+    // This was buggy and would incorrectly match <link rel="alternate">, which has a different specified meaning. -dwh
     if(type.contains("text/css") || rel == "stylesheet" || (rel.contains("alternate") && rel.contains("stylesheet"))) {
         // no need to load style sheets which aren't for the screen output
         // ### there may be in some situations e.g. for an editor or script to manipulate
@@ -347,8 +347,11 @@ void HTMLStyleElementImpl::parseAttribute(AttributeImpl *attr)
     switch (attr->id())
     {
     case ATTR_TYPE:
+        m_type = attr->value();
+        break;
     case ATTR_MEDIA:
-	break;
+        m_media = attr->value().string().lower();
+        break;
     default:
         HTMLElementImpl::parseAttribute(attr);
     }
@@ -357,13 +360,15 @@ void HTMLStyleElementImpl::parseAttribute(AttributeImpl *attr)
 void HTMLStyleElementImpl::insertedIntoDocument()
 {
     HTMLElementImpl::insertedIntoDocument();
-    getDocument()->updateStyleSelector();
+    if (m_sheet)
+        getDocument()->updateStyleSelector();
 }
 
 void HTMLStyleElementImpl::removedFromDocument()
 {
     HTMLElementImpl::removedFromDocument();
-    getDocument()->updateStyleSelector();
+    if (m_sheet)
+        getDocument()->updateStyleSelector();
 }
 
 void HTMLStyleElementImpl::childrenChanged()
@@ -377,11 +382,18 @@ void HTMLStyleElementImpl::childrenChanged()
 	    text += c->nodeValue();
     }
 
-    if(m_sheet)
-	m_sheet->deref();
-    m_sheet = new CSSStyleSheetImpl(this);
-    m_sheet->ref();
-    m_sheet->parseString( text, (getDocument()->parseMode() == DocumentImpl::Strict) );
+    if (m_sheet) {
+        m_sheet->deref();
+        m_sheet = 0;
+    }
+    
+    if ((m_type.isEmpty() || m_type == "text/css") // Type must be empty or CSS
+         && (m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print"))) {
+        m_sheet = new CSSStyleSheetImpl(this);
+        m_sheet->ref();
+        m_sheet->parseString( text, (getDocument()->parseMode() == DocumentImpl::Strict) );
+    }
+    
     getDocument()->updateStyleSelector();
 }
 
@@ -393,7 +405,8 @@ bool HTMLStyleElementImpl::isLoading() const
 
 void HTMLStyleElementImpl::sheetLoaded()
 {
-  getDocument()->updateStyleSelector();
+    if (m_sheet)
+        getDocument()->updateStyleSelector();
 }
 
 // -------------------------------------------------------------------------

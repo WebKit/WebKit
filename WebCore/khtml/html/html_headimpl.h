@@ -156,6 +156,8 @@ public:
 
 protected:
     StyleSheetImpl *m_sheet;
+    DOMString m_type;
+    QString m_media;
 };
 
 // -------------------------------------------------------------------------
