@@ -1,3 +1,18 @@
+2004-05-28  Richard Williamson   <rjw@apple.com>
+
+	setStrokeColor and setFillColor now support
+	old school web color string, oswcs+alpha, gray, gray+alpha,
+	rgba, and cmyka.
+
+        Reviewed by jay-lo.
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseColor):
+        (CSSParser::parseColorFromValue):
+        * khtml/css/cssparser.h: Made parseColor static public class method
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+
 2004-05-28  David Hyatt  <hyatt@apple.com>
 
 	Implement -khtml-user-select and add support for the property -khtml-user-drag (although someone will still

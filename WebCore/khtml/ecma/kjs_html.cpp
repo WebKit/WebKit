@@ -52,6 +52,8 @@
 
 #include <kdebug.h>
 
+#include "cssparser.h"
+
 #include "qcolor.h"
 #include "qpixmap.h"
 
@@ -3384,37 +3386,123 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             break;
         }
         case Context2D::SetStrokeColor: {
-            if (args.size() < 1 || args.size() > 2) {
-                Object err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
+            // string arg = named color
+            // string arg, number arg = named color, alpha
+            // number arg = gray color
+            // number arg, number arg = gray color, alpha
+            // 4 args (string or number) = r, g, b, a
+            // 5 args (string or number) = c, m, y, k, a
+            int numArgs = args.size();
+            switch (numArgs) {
+                case 1: {
+                    if (args[0].type() == StringType) {
+                        QRgb rgb = 0;
+                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
+                        QColor color(rgb);
+                        CGContextSetRGBStrokeColor(drawingContext, color.red(), color.green(), color.blue(), 1.);
+                    }
+                    else {
+                        float g = (float)args[0].toNumber(exec);
+                        CGContextSetGrayStrokeColor(drawingContext, g, 1.);
+                    }
+                }
+                break;
+                case 2: {
+                    float a = args[1].toNumber(exec);
+                    if (args[0].type() == StringType) {
+                        QRgb rgb = 0;
+                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
+                        QColor color(rgb);
+                        CGContextSetRGBStrokeColor(drawingContext, color.red(), color.green(), color.blue(), a);
+                    }
+                    else {
+                        float g = (float)args[0].toNumber(exec);
+                        CGContextSetGrayStrokeColor(drawingContext, g, a);
+                    }
+                }
+                break;
+                case 4: {
+                    float r = (float)args[0].toNumber(exec);
+                    float g = (float)args[1].toNumber(exec);
+                    float b = (float)args[2].toNumber(exec);
+                    float a = (float)args[3].toNumber(exec);
+                    CGContextSetRGBStrokeColor(drawingContext, r, g, b, a);
+                }
+                break;
+                case 5: {
+                    float c = (float)args[0].toNumber(exec);
+                    float m = (float)args[1].toNumber(exec);
+                    float y = (float)args[2].toNumber(exec);
+                    float k = (float)args[3].toNumber(exec);
+                    float a = (float)args[4].toNumber(exec);
+                    CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
+                }
+                default: {
+                    Object err = Error::create(exec,SyntaxError);
+                    exec->setException(err);
+                    return err;
+                }
             }
-            QColor color;
-            if (args.size() > 0)
-                color = QColor(args[0].toString(exec).ascii());
-            float alpha;
-            if (args.size() > 1)
-                alpha = (float)args[1].toNumber(exec);
-            else
-                alpha = 1.;
-            CGContextSetRGBStrokeColor(drawingContext, color.red(), color.green(), color.blue(), alpha);
             break;
         }
         case Context2D::SetFillColor: {
-            if (args.size() < 1 || args.size() > 2) {
-                Object err = Error::create(exec,SyntaxError);
-                exec->setException(err);
-                return err;
+            // string arg = named color
+            // string arg, number arg = named color, alpha
+            // number arg = gray color
+            // number arg, number arg = gray color, alpha
+            // 4 args (string or number) = r, g, b, a
+            // 5 args (string or number) = c, m, y, k, a
+            int numArgs = args.size();
+            switch (numArgs) {
+                case 1: {
+                    if (args[0].type() == StringType) {
+                        QRgb rgb = 0;
+                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
+                        QColor color(rgb);
+                        CGContextSetRGBFillColor(drawingContext, color.red(), color.green(), color.blue(), 1.);
+                    }
+                    else {
+                        float g = (float)args[0].toNumber(exec);
+                        CGContextSetGrayFillColor(drawingContext, g, 1.);
+                    }
+                }
+                break;
+                case 2: {
+                    float a = args[1].toNumber(exec);
+                    if (args[0].type() == StringType) {
+                        QRgb rgb = 0;
+                        DOM::CSSParser::parseColor(args[0].toString(exec).qstring(), rgb);
+                        QColor color(rgb);
+                        CGContextSetRGBFillColor(drawingContext, color.red(), color.green(), color.blue(), a);
+                    }
+                    else {
+                        float g = (float)args[0].toNumber(exec);
+                        CGContextSetGrayFillColor(drawingContext, g, a);
+                    }
+                }
+                break;
+                case 4: {
+                    float r = (float)args[0].toNumber(exec);
+                    float g = (float)args[1].toNumber(exec);
+                    float b = (float)args[2].toNumber(exec);
+                    float a = (float)args[3].toNumber(exec);
+                    CGContextSetRGBFillColor(drawingContext, r, g, b, a);
+                }
+                break;
+                case 5: {
+                    float c = (float)args[0].toNumber(exec);
+                    float m = (float)args[1].toNumber(exec);
+                    float y = (float)args[2].toNumber(exec);
+                    float k = (float)args[3].toNumber(exec);
+                    float a = (float)args[4].toNumber(exec);
+                    CGContextSetCMYKStrokeColor(drawingContext, c, m, y, k, a);
+                }
+                default: {
+                    Object err = Error::create(exec,SyntaxError);
+                    exec->setException(err);
+                    return err;
+                }
             }
-            QColor color;
-            if (args.size() > 0)
-                color = QColor(args[0].toString(exec).ascii());
-            float alpha;
-            if (args.size() > 1)
-                alpha = (float)args[1].toNumber(exec);
-            else
-                alpha = 1.;
-            CGContextSetRGBFillColor(drawingContext, color.red(), color.green(), color.blue(), alpha);
             break;
         }
         case Context2D::SetLineWidth: {
