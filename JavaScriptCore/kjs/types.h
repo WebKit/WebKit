@@ -200,6 +200,8 @@ namespace KJS {
     ListHookNode *hook;
     bool m_needsMarking;
   };
+  
+  typedef List ArgumentList;
 
 }; // namespace
 

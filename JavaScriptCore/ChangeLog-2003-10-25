@@ -1,3 +1,29 @@
+2002-11-20  Darin Adler  <darin@apple.com>
+
+	- created argument list objects only on demand for a 7.5% speedup
+
+        * kjs/function.h: Change ActivationImp around.
+        * kjs/function.cpp:
+        (FunctionImp::call): Pass a pointer to the arguments list to avoid ref/unref.
+        (FunctionImp::get): Get the function pointer from the context directly,
+	not the activation object.
+        (ArgumentsImp::ArgumentsImp): Add an overload that takes no arguments.
+        (ActivationImp::ActivationImp): Store a context pointer and an arguments object pointer.
+        (ActivationImp::get): Special case for arguments, create it and return it.
+        (ActivationImp::put): Special case for arguments, can't be set.
+        (ActivationImp::hasProperty): Special case for arguments, return true.
+        (ActivationImp::deleteProperty): Special case for arguments, refuse to delete.
+        (ActivationImp::mark): Mark the arguments object.
+        (ActivationImp::createArgumentsObject): Do the work of actually creating it.
+        (GlobalFuncImp::call): Use stack-based objects for the ContextImp and ExecState.
+
+        * kjs/internal.h: Keep function and arguments pointer in the context.
+        * kjs/internal.cpp:
+        (ContextImp::ContextImp): Don't pass in the func and args when making an ActivationImp.
+        (InterpreterImp::evaluate): Use stack-based objects here.
+
+        * kjs/types.h: Add ArgumentList as a synonym for List, soon to be separate.
+
 2002-11-20  Maciej Stachowiak  <mjs@apple.com>
 
 	Reduced the size of ValueImp by 8 bytes for a .5% speedup.

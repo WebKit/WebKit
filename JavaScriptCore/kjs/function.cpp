@@ -65,11 +65,6 @@ FunctionImp::~FunctionImp()
   delete param;
 }
 
-void FunctionImp::mark()
-{
-  InternalFunctionImp::mark();
-}
-
 bool FunctionImp::implementsCall() const
 {
   return true;
@@ -98,7 +93,7 @@ Value FunctionImp::call(ExecState *exec, Object &thisObj, const List &args)
 
   // enter a new execution context
   ContextImp ctx(globalObj, exec, thisObj, codeType(),
-                 exec->context().imp(), this, args);
+                 exec->context().imp(), this, &args);
   ExecState newExec(exec->interpreter(), &ctx);
   newExec.setException(exec->exception()); // could be null
 
@@ -210,9 +205,9 @@ Value FunctionImp::get(ExecState *exec, const Identifier &propertyName) const
     if (propertyName == argumentsPropertyName) {
         ContextImp *context = exec->_context;
         while (context) {
-            ActivationImp *activation = static_cast<ActivationImp *>(context->activationObject());
-            if (activation->function() == this)
-                return activation->get(exec, propertyName);
+            if (context->function() == this)
+                return static_cast<ActivationImp *>
+                    (context->activationObject())->get(exec, propertyName);
             context = context->callingContext();
         }
         return Undefined();
@@ -317,6 +312,13 @@ void DeclaredFunctionImp::processVarDecls(ExecState *exec)
 const ClassInfo ArgumentsImp::info = {"Arguments", 0, 0, 0};
 
 // ECMA 10.1.8
+ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func)
+  : ArrayInstanceImp(exec->interpreter()->builtinObjectPrototype().imp(), 0)
+{
+  Value protect(this);
+  putDirect(calleePropertyName, func, DontEnum);
+}
+
 ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
   : ArrayInstanceImp(exec->interpreter()->builtinObjectPrototype().imp(), args)
 {
@@ -329,13 +331,60 @@ ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
 // ECMA 10.1.6
-ActivationImp::ActivationImp(ExecState *exec, FunctionImp *f, const List &args)
-  : _function(f), _arguments(true)
+ActivationImp::ActivationImp(ExecState *exec)
+    : _context(exec->context().imp()), _argumentsObject(0)
 {
-  Value protect(this);
-  _arguments = args;
-  _argumentsObject = new ArgumentsImp(exec, f, args);
-  putDirect(argumentsPropertyName, _argumentsObject, Internal|DontDelete);
+  // FIXME: Do we need to support enumerating the arguments property?
+}
+
+Value ActivationImp::get(ExecState *exec, const Identifier &propertyName) const
+{
+    if (propertyName == argumentsPropertyName) {
+        if (!_argumentsObject)
+            createArgumentsObject(exec);
+        return Value(_argumentsObject);
+    }
+    return ObjectImp::get(exec, propertyName);
+}
+
+void ActivationImp::put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr)
+{
+    if (propertyName == argumentsPropertyName) {
+        // FIXME: Do we need to allow overwriting this?
+        return;
+    }
+    ObjectImp::put(exec, propertyName, value, attr);
+}
+
+bool ActivationImp::hasProperty(ExecState *exec, const Identifier &propertyName) const
+{
+    if (propertyName == argumentsPropertyName)
+        return true;
+    return ObjectImp::hasProperty(exec, propertyName);
+}
+
+bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyName)
+{
+    if (propertyName == argumentsPropertyName)
+        return false;
+    return ObjectImp::deleteProperty(exec, propertyName);
+}
+
+void ActivationImp::mark()
+{
+    if (_argumentsObject && !_argumentsObject->marked())
+        _argumentsObject->mark();
+    ObjectImp::mark();
+}
+
+void ActivationImp::createArgumentsObject(ExecState *exec) const
+{
+    FunctionImp *function = _context->function();
+    const ArgumentList *arguments = _context->arguments();
+    if (arguments)
+        _argumentsObject = new ArgumentsImp(exec, function, *arguments);
+    else
+        _argumentsObject = new ArgumentsImp(exec, function);
 }
 
 // ------------------------------ GlobalFunc -----------------------------------
@@ -391,23 +440,21 @@ Value GlobalFuncImp::call(ExecState *exec, Object &/*thisObj*/, const List &args
 
       // enter a new execution context
       Object thisVal(Object::dynamicCast(exec->context().thisValue()));
-      ContextImp *ctx = new ContextImp(exec->interpreter()->globalObject(),
-                                       exec,
-                                       thisVal,
-                                       EvalCode,
-                                       exec->context().imp());
+      ContextImp ctx(exec->interpreter()->globalObject(),
+                     exec,
+                     thisVal,
+                     EvalCode,
+                     exec->context().imp());
 
-      ExecState *newExec = new ExecState(exec->interpreter(),ctx);
-      newExec->setException(exec->exception()); // could be null
+      ExecState newExec(exec->interpreter(), &ctx);
+      newExec.setException(exec->exception()); // could be null
 
       // execute the code
-      Completion c = progNode->execute(newExec);
+      Completion c = progNode->execute(&newExec);
 
       // if an exception occured, propogate it back to the previous execution object
-      if (newExec->hadException())
-        exec->setException(newExec->exception());
-      delete newExec;
-      delete ctx;
+      if (newExec.hadException())
+        exec->setException(newExec.exception());
 
       if ( progNode->deref() )
           delete progNode;

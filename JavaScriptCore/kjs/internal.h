@@ -199,8 +199,8 @@ namespace KJS {
   class ContextImp {
   public:
     ContextImp(Object &glob, ExecState *exec, Object &thisV, CodeType type = GlobalCode,
-               ContextImp *_callingContext = 0L, FunctionImp *func = 0L, const List &args = List());
-    virtual ~ContextImp();
+               ContextImp *_callingContext = 0L, FunctionImp *func = 0L, const ArgumentList *args = 0);
+    ~ContextImp();
 
     const List scopeChain() const { return scope; }
     Object variableObject() const { return variable; }
@@ -208,6 +208,8 @@ namespace KJS {
     Object thisValue() const { return thisVal; }
     ContextImp *callingContext() { return callingCon; }
     ObjectImp *activationObject() { return activation.imp(); }
+    FunctionImp *function() const { return _function; }
+    const ArgumentList *arguments() const { return _arguments; }
 
     void pushScope(const Object &s);
     void popScope();
@@ -220,7 +222,8 @@ namespace KJS {
     Object thisVal;
     ContextImp *callingCon;
     Object activation;
-
+    FunctionImp *_function;
+    const ArgumentList *_arguments;
 
     LabelStack ls;
     CodeType codeType;

@@ -45,8 +45,6 @@ namespace KJS {
     virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
-    virtual void mark();
-
     virtual bool implementsCall() const;
     virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
@@ -93,6 +91,7 @@ namespace KJS {
 
   class ArgumentsImp : public ArrayInstanceImp {
   public:
+    ArgumentsImp(ExecState *exec, FunctionImp *func);
     ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args);
 
     virtual const ClassInfo *classInfo() const { return &info; }
@@ -101,17 +100,23 @@ namespace KJS {
 
   class ActivationImp : public ObjectImp {
   public:
-    ActivationImp(ExecState *exec, FunctionImp *f, const List &args);
+    ActivationImp(ExecState *exec);
+
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
+    virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
+    virtual bool hasProperty(ExecState *exec, const Identifier &propertyName) const;
+    virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     
-    FunctionImp *function() const { return _function; }
-    
+    virtual void mark();
+
   private:
-    FunctionImp *_function;
-    List _arguments;
-    ObjectImp *_argumentsObject;
+    void createArgumentsObject(ExecState *exec) const;
+    
+    const ContextImp *_context;
+    mutable ArgumentsImp *_argumentsObject;
   };
 
   class GlobalFuncImp : public InternalFunctionImp {

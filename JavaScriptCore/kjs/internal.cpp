@@ -355,17 +355,17 @@ void LabelStack::clear()
 
 // ------------------------------ ContextImp -----------------------------------
 
-
 // ECMA 10.2
 ContextImp::ContextImp(Object &glob, ExecState *exec, Object &thisV, CodeType type,
-                       ContextImp *_callingContext, FunctionImp *func, const List &args)
+                       ContextImp *_callingContext, FunctionImp *func, const ArgumentList *args)
+    : _function(func), _arguments(args)
 {
   codeType = type;
   callingCon = _callingContext;
 
   // create and initialize activation object (ECMA 10.1.6)
   if (type == FunctionCode || type == AnonymousCode ) {
-    activation = Object(new ActivationImp(exec,func,args));
+    activation = Object(new ActivationImp(exec));
     variable = activation;
   } else {
     activation = Object();
@@ -781,14 +781,9 @@ Completion InterpreterImp::evaluate(const UString &code, const Value &thisV)
   }
   else {
     // execute the code
-    ExecState *exec1 = 0;
-    ContextImp *ctx = new ContextImp(globalObj, exec1, thisObj);
-    ExecState *newExec = new ExecState(m_interpreter,ctx);
-
-    res = progNode->execute(newExec);
-
-    delete newExec;
-    delete ctx;
+    ContextImp ctx(globalObj, 0, thisObj);
+    ExecState newExec(m_interpreter,&ctx);
+    res = progNode->execute(&newExec);
   }
 
   if (progNode->deref())
