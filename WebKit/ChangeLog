@@ -1,9 +1,15 @@
 2003-02-05  Chris Blumenberg  <cblu@apple.com>
 
+        Comment should have been "Made WebPluginError constructors private."
+
+        * ChangeLog:
+
+2003-02-05  Chris Blumenberg  <cblu@apple.com>
+
 	WebKit API clean-up:
 	- Added enum to WebContextMenuDelegate that is the menu item tag of the menu items passed in the default menu item array.
 	- WebPluginError should return URL strings.
-	- Made WebContextMenuDelegate constructors private.
+	- Made WebPluginError constructors private.
 
         Reviewed by rjw.
 
@@ -337,6 +343,8 @@
 	Fixed: 3160464 - Slideback sometimes happens twice
 
 	Because we start drags in mouseDragged (which AppKit says we shouldn't), we get mouseDragged events after a drag (image, link, text etc) has ended. We also get mouseDragged events after we've sent the fake mouseUp to WebCore. That is probably bad for unk
+
+
 nown reasons.
 
         Reviewed by darin.
@@ -830,6 +838,8 @@ nown reasons.
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed problem where we weren't stopping the Java plug-in. This problem was introduced on Jan. 1 when the ownership of the WebPluginController was moved from WebFrame to WebDataSource. This change moves the WebPluginController to the WebHTMLView. Why this
+
+
  change?
 
 	- The state of the plug-ins (currently only the Java plug-in) completely relies on the state of the WebHTMLView, not on the state of the WebDataSource.
@@ -2145,6 +2155,8 @@ nown reasons.
 	Fixed: 3131714 - System becomes unresponsive while downloading
 
 	While downloading a file, Safari and the Finder take up 30%-40% of the CPU each. This is happening because for every chunk of data we write to disk, we call -[NSWorkspace noteFileSystemChanged:]. noteFileSystemChanged is inefficient. It calls 2 AppleEven
+
+
 ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
 
 	We should:
@@ -2161,6 +2173,8 @@ ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
         * Misc.subproj/WebNSWorkspaceExtras.h: Added.
         * Misc.subproj/WebNSWorkspaceExtras.m: Added.
         (-[NSWorkspace _web_noteFileChangedAtPath:]): Notifies the Finder (or any other app that cares) that we added, removed or changed the attributes of a file. This method is better than calling noteFileSystemChanged: because noteFileSystemChanged: se
+
+
 nds 2 apple events both with a 60 second timeout. This method returns immediately.
         * WebKit.pbproj/project.pbxproj:
 
@@ -2788,6 +2802,8 @@ nds 2 apple events both with a 60 second timeout. This method returns immediatel
         Reviewed by john.
 
 	We were reusing the drag types from the previous drag pasteboard. For example, we would declare image types when dragging URLs. This would confuse the Finder, so location files weren't being created. This would occasional cause us to crash because we wer
+
+
 en't providing the declared data. 
 
         * Misc.subproj/WebNSPasteboardExtras.h:
