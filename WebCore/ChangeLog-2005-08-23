@@ -1,3 +1,14 @@
+2003-07-28  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3343250, XML didn't know how to make implicit tbodies when starting new elements,
+	nor did it know to skip implicit elements when popping its element stack.
+	
+        Reviewed by darin
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (XMLHandler::startElement):
+        (XMLHandler::endElement):
+
 2003-07-25  Dave Hyatt  <hyatt@apple.com>
 
 	Rename box and inline-box to -khtml-box and -khtml-inline-box.
