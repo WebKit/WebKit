@@ -24,28 +24,29 @@
  */
 
 #import "KWQRegion.h"
+#import "KWQFoundationExtras.h"
 
 // None of the NSBezierPath calls here can possibly throw an NSException.
 // Some path calls do this when the path is empty, but we always make
 // those when the path is guaranteed non-empty.
 
 QRegion::QRegion(const QRect &rect)
-    : path([[NSBezierPath bezierPathWithRect:rect] retain])
+    : path(KWQRetain([NSBezierPath bezierPathWithRect:rect]))
 {
 }
 
 QRegion::QRegion(int x, int y, int w, int h, RegionType t)
 {
     if (t == Rectangle) {
-        path = [[NSBezierPath bezierPathWithRect:NSMakeRect(x, y, w, h)] retain];
+        path = KWQRetain([NSBezierPath bezierPathWithRect:NSMakeRect(x, y, w, h)]);
     } else { // Ellipse
-        path = [[NSBezierPath bezierPathWithOvalInRect:NSMakeRect(x, y, w, h)] retain];
+        path = KWQRetain([NSBezierPath bezierPathWithOvalInRect:NSMakeRect(x, y, w, h)]);
     }
 }
 
 QRegion::QRegion(const QPointArray &arr)
 {
-    path = [[NSBezierPath alloc] init];
+    path = KWQRetainNSRelease([[NSBezierPath alloc] init]);
     [path moveToPoint:arr[0]];
     // the moveToPoint: guarantees the path is not empty, which means lineToPoint:
     // can't throw.
@@ -56,11 +57,11 @@ QRegion::QRegion(const QPointArray &arr)
 
 QRegion::~QRegion()
 {
-    [path release];
+    KWQRelease(path);
 }
 
 QRegion::QRegion(const QRegion &other)
-    : path([other.path copy])
+    : path(KWQRetainNSRelease([other.path copy]))
 {
 }
 
@@ -69,8 +70,8 @@ QRegion &QRegion::operator=(const QRegion &other)
     if (path == other.path) {
         return *this;
     }
-    [path release];
-    path = [other.path copy];
+    KWQRelease(path);
+    path = KWQRetainNSRelease([other.path copy]);
     return *this;
 }
 

@@ -29,6 +29,7 @@
 
 #import "KWQFont.h"
 #import "KWQLogging.h"
+#import "KWQFoundationExtras.h"
 
 #import "WebCoreTextRenderer.h"
 #import "WebCoreTextRendererFactory.h"
@@ -45,14 +46,14 @@ struct QFontMetricsPrivate
     }
     ~QFontMetricsPrivate()
     {
-        [_renderer release];
+        KWQRelease(_renderer);
     }
     id <WebCoreTextRenderer> getRenderer()
     {
         if (!_renderer) {
-            _renderer = [[[WebCoreTextRendererFactory sharedFactory]
+            _renderer = KWQRetain([[WebCoreTextRendererFactory sharedFactory]
                 rendererWithFont:_font.getNSFont()
-                usingPrinterFont:_font.isPrinterFont()] retain];
+                usingPrinterFont:_font.isPrinterFont()]);
         }
         return _renderer;
     }
@@ -64,7 +65,7 @@ struct QFontMetricsPrivate
             return;
         }
         _font = font;
-        [_renderer release];
+        KWQRelease(_renderer);
         _renderer = nil;
     }
     

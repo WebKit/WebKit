@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,6 +25,7 @@
 
 #import "WebCoreSettings.h"
 
+#import "KWQFoundationExtras.h"
 #import "KWQKHTMLPart.h"
 #import "KWQKHTMLSettings.h"
 #import "WebCoreBridge.h"
@@ -44,6 +45,12 @@
     delete settings;
     
     [super dealloc];
+}
+
+- (void)finalize
+{
+    delete settings;
+    [super finalize];
 }
 
 - init

@@ -24,6 +24,7 @@
  */
 
 #import "KWQPixmap.h"
+#import "KWQFoundationExtras.h"
 
 #import "WebCoreImageRenderer.h"
 #import "WebCoreImageRendererFactory.h"
@@ -48,7 +49,7 @@ QPixmap::QPixmap()
 
 QPixmap::QPixmap(WebCoreImageRendererPtr r)
 {
-    imageRenderer = [r retain];
+    imageRenderer = KWQRetain(r);
     MIMEType = 0;
     needCopyOnWrite = false;
 }
@@ -63,14 +64,14 @@ QPixmap::QPixmap(void *MIME)
 
 QPixmap::QPixmap(const QSize &sz)
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(sz.width(), sz.height())] retain];
+    imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(sz.width(), sz.height())]);
     MIMEType = 0;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QByteArray &bytes)
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()] retain];
+    imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()]);
     MIMEType = 0;
     needCopyOnWrite = false;
 }
@@ -78,35 +79,35 @@ QPixmap::QPixmap(const QByteArray &bytes)
 QPixmap::QPixmap(const QByteArray &bytes, void *MIME)
 {
     MIMEType = (NSString *)[((NSString *)MIME) copy];
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:(NSString *)MIMEType] retain];
+    imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:(NSString *)MIMEType]);
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(int w, int h)
 {
-    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)] retain];
+    imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)]);
     MIMEType = 0;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QPixmap &copyFrom) : QPaintDevice(copyFrom)
 {
-    imageRenderer = [copyFrom.imageRenderer retain];
-    MIMEType = [copyFrom.MIMEType copy];
+    imageRenderer = KWQRetain(copyFrom.imageRenderer);
+    MIMEType = KWQRetainNSRelease([copyFrom.MIMEType copy]);
     copyFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
 }
 
 QPixmap::~QPixmap()
 {
-    [MIMEType release];
-    [imageRenderer release];
+    KWQRelease(MIMEType);
+    KWQRelease(imageRenderer);
 }
 
 bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
 {
     if (imageRenderer == nil) {
-        imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:MIMEType] retain];
+        imageRenderer = KWQRetain([[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:MIMEType]);
     }
     return [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete];
 }
@@ -163,8 +164,8 @@ void QPixmap::resize(const QSize &sz)
 void QPixmap::resize(int w, int h)
 {
     if (needCopyOnWrite) {
-        id <WebCoreImageRenderer> newImageRenderer = [imageRenderer copyWithZone:NULL];
-        [imageRenderer release];
+        id <WebCoreImageRenderer> newImageRenderer = KWQRetainNSRelease([imageRenderer copyWithZone:NULL]);
+        KWQRelease(imageRenderer);
         imageRenderer = newImageRenderer;
         needCopyOnWrite = false;
     }
@@ -185,10 +186,10 @@ QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
 {
     id <WebCoreImageRenderer> oldImageRenderer = imageRenderer;
-    imageRenderer = [assignFrom.imageRenderer retainOrCopyIfNeeded];
-    [oldImageRenderer release];
-    NSString *newMIMEType = [assignFrom.MIMEType copy];
-    [MIMEType release];
+    imageRenderer = KWQRetainNSRelease([assignFrom.imageRenderer retainOrCopyIfNeeded]);
+    KWQRelease(oldImageRenderer);
+    NSString *newMIMEType = KWQRetainNSRelease([assignFrom.MIMEType copy]);
+    KWQRelease(MIMEType);
     MIMEType = newMIMEType;
     assignFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;

@@ -37,6 +37,7 @@
 #import "KWQPrinter.h"
 #import "KWQScrollBar.h"
 #import "KWQWindowWidget.h"
+#import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
 #import "csshelper.h"
@@ -211,10 +212,10 @@ KWQKHTMLPart::~KWQKHTMLPart()
     // these are all basic Foundation classes and our own classes - we
     // know they will not raise in dealloc, so no need to block
     // exceptions.
-    [_formValuesAboutToBeSubmitted release];
-    [_formAboutToBeSubmitted release];
+    KWQRelease(_formValuesAboutToBeSubmitted);
+    KWQRelease(_formAboutToBeSubmitted);
     
-    [_windowScriptObject release];
+    KWQRelease(_windowScriptObject);
     
     delete _windowWidget;
 }
@@ -601,9 +602,9 @@ void KWQKHTMLPart::clearRecordedFormValues()
     // It's safe to assume that our own classes and Foundation data
     // structures won't raise exceptions in dealloc
 
-    [_formValuesAboutToBeSubmitted release];
+    KWQRelease(_formValuesAboutToBeSubmitted);
     _formValuesAboutToBeSubmitted = nil;
-    [_formAboutToBeSubmitted release];
+    KWQRelease(_formAboutToBeSubmitted);
     _formAboutToBeSubmitted = nil;
 }
 
@@ -613,9 +614,9 @@ void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HT
     // data structures won't raise exceptions
 
     if (!_formValuesAboutToBeSubmitted) {
-        _formValuesAboutToBeSubmitted = [[NSMutableDictionary alloc] init];
+        _formValuesAboutToBeSubmitted = KWQRetainNSRelease([[NSMutableDictionary alloc] init]);
         ASSERT(!_formAboutToBeSubmitted);
-        _formAboutToBeSubmitted = [[DOMElement _elementWithImpl:element] retain];
+        _formAboutToBeSubmitted = KWQRetain([DOMElement _elementWithImpl:element]);
     } else {
         ASSERT([_formAboutToBeSubmitted _elementImpl] == element);
     }
@@ -1169,7 +1170,7 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
 {
     if (!_windowScriptObject) {
         KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
-        _windowScriptObject = [[WebScriptObject alloc] _initWithObjectImp:win root:bindingRootObject()];
+        _windowScriptObject = KWQRetainNSRelease([[WebScriptObject alloc] _initWithObjectImp:win root:bindingRootObject()]);
     }
 
     return _windowScriptObject;

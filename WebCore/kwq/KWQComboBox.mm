@@ -30,6 +30,7 @@
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
+#import "KWQFoundationExtras.h"
 #import "KWQView.h"
 #import "WebCoreBridge.h"
 #import "WebCoreTextRenderer.h"
@@ -105,7 +106,7 @@ QComboBox::~QComboBox()
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
-    [_labelFont release];
+    KWQRelease(_labelFont);
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -283,7 +284,7 @@ void QComboBox::setFont(const QFont &f)
     if (size != [[button cell] controlSize]) {
         [[button cell] setControlSize:size];
         [button setFont:[NSFont systemFontOfSize:[NSFont systemFontSizeForControlSize:size]]];
-        [_labelFont release];
+        KWQRelease(_labelFont);
         _labelFont = nil;
         _widthGood = false;
     }
@@ -295,7 +296,7 @@ NSFont *QComboBox::labelFont() const
 {
     if (_labelFont == nil) {
         NSControl * const button = static_cast<NSControl *>(getView());
-        _labelFont = [[NSFont boldSystemFontOfSize:[[button font] pointSize]] retain];
+        _labelFont = KWQRetain([NSFont boldSystemFontOfSize:[[button font] pointSize]]);
     }
     return _labelFont;
 }

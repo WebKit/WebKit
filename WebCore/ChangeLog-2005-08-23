@@ -1,3 +1,81 @@
+2004-06-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, code changes by Patrick Beard.
+
+        - fixed <rdar://problem/3671507>: (WebKit should adopt GC changes and compile with GC enabled)
+
+        * WebCore.pbproj/project.pbxproj: Added KWQFoundationExtras.h.
+        * kwq/KWQFoundationExtras.h: Added.
+        (KWQRetain): Cover for CFRetain that is tolerant of nil.
+        (KWQRelease): Cover for CFRelease that is tolerant of nil.
+        (KWQRetainNSRelease): Combination of a CFRetain and an -[NSObject release] that is tolerant of nil.
+        Also includes a declaration of finalize so we can call [super finalize] without warnings on Panther.
+
+        * kwq/DOM.mm:
+        (ObjCNodeFilterCondition::ObjCNodeFilterCondition): Use CFRetain instead of retain.
+        (ObjCNodeFilterCondition::~ObjCNodeFilterCondition): Use CFRelease instead of release.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::~QComboBox): Use KWQRelease instead of release.
+        (QComboBox::setFont): Use KWQRelease instead of release.
+        (QComboBox::labelFont): Use KWQRetain instead of retain.
+        * kwq/KWQCursor.mm:
+        (QCursor::QCursor): Use KWQRetain instead of retain.
+        (QCursor::~QCursor): Use KWQRelease instead of release.
+        (QCursor::operator=): More of the same.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Use KWQRetainNSRelease to retain a newly-allocated object.
+        (KWQFileButton::~KWQFileButton): Use CFRelease instead of release.
+        * kwq/KWQFont.mm:
+        (QFont::QFont): Use KWQRetain instead of retain.
+        (QFont::operator=): More of the same.
+        (QFont::setFamily): Use KWQRelease instead of release.
+        (QFont::setFirstFamily): Use KWQRelease instead of release.
+        (QFont::setPixelSize): Use KWQRelease instead of release.
+        (QFont::setWeight): Use KWQRelease instead of release.
+        (QFont::setItalic): Use KWQRelease instead of release.
+        (QFont::getNSFont): Use KWQRetain instead of retain.
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetricsPrivate::~QFontMetricsPrivate): Use KWQRelease instead of release.
+        (QFontMetricsPrivate::getRenderer): Use KWQRetain instead of retain.
+        (QFontMetricsPrivate::setFont): Use KWQRelease instead of release.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::~KWQKHTMLPart): Use KWQRelease instead of release.
+        (KWQKHTMLPart::clearRecordedFormValues): Use KWQRelease instead of release.
+        (KWQKHTMLPart::recordFormValue): Use KWQRetainNSRelease and use KWQRetain instead of retain.
+        (KWQKHTMLPart::windowScriptObject): Use KWQRetainNSRelease.
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJobPrivate::TransferJobPrivate): Use KWQRetainNSRelease.
+        (KIO::TransferJobPrivate::~TransferJobPrivate): Use KWQRelease instead of release.
+        (KIO::TransferJob::setLoader): More of the same.
+        * kwq/KWQLoader.mm:
+        (KWQRetainResponse): Use KWQRetain instead of retain.
+        (KWQReleaseResponse): Use KWQRelease instead of release.
+        * kwq/KWQPainter.mm:
+        (QPainterPrivate::~QPainterPrivate): Use KWQRelease instead of release.
+        (QPainter::_updateRenderer): More of the same.
+        (QPainter::initFocusRing): Use KWQRetainNSRelease.
+        (QPainter::clearFocusRing): Use KWQRelease instead of release.
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap): Use KWQRetain instead of retain.
+        (QPixmap::~QPixmap): Use KWQRelease instead of release.
+        (QPixmap::receivedData): Use KWQRetain instead of retain.
+        (QPixmap::resize): Use KWQRetainNSRelease and use KWQRelease instead of release.
+        (QPixmap::operator=): More of the same.
+        * kwq/KWQRegion.mm:
+        (QRegion::QRegion): Use KWQRetain instead of retain.
+        (QRegion::~QRegion): Use KWQRelease instead of release.
+        (QRegion::operator=): More of the same.
+        * kwq/KWQTimer.mm:
+        (QTimer::start): Use KWQRetain instead of retain.
+        (QTimer::stop): Use KWQRelease instead of release.
+        (QTimer::fire): Use KWQRelease instead of release.
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget): Use KWQRetain instead of retain.
+        (QWidget::~QWidget): Use KWQRelease instead of release.
+        (QWidget::setView): More of the same.
+        * kwq/WebCoreSettings.mm: (-[WebCoreSettings finalize]):
+        Delete the storage here, as well as in dealloc.
+
 2004-06-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

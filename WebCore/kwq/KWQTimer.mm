@@ -26,6 +26,7 @@
 #import "KWQTimer.h"
 
 #import "KWQAssertions.h"
+#import "KWQFoundationExtras.h"
 
 // We know the Cocoa calls in this file are safe because they are all
 // to the simple ObjC class defined here, or simple NSTimer calls that
@@ -98,11 +99,11 @@ bool QTimer::isActive() const
 void QTimer::start(int msec, bool singleShot)
 {
     stop();
-    m_timer = [[NSTimer scheduledTimerWithTimeInterval:(msec / 1000.0)
+    m_timer = KWQRetain([NSTimer scheduledTimerWithTimeInterval:(msec / 1000.0)
                                                 target:[KWQTimerTarget targetWithQTimer:this]
                                               selector:@selector(timerFired:)
                                               userInfo:nil
-                                               repeats:!singleShot] retain];
+                                               repeats:!singleShot]);
 
     if (m_monitorFunction) {
         m_monitorFunction(m_monitorFunctionContext);
@@ -116,7 +117,7 @@ void QTimer::stop()
     }
     
     [m_timer invalidate];
-    [m_timer release];
+    KWQRelease(m_timer);
     m_timer = nil;
 
     if (m_monitorFunction) {
@@ -136,7 +137,7 @@ void QTimer::fire()
     m_timeoutSignal.call();
 
     if (![m_timer isValid]) {
-        [m_timer release];
+        KWQRelease(m_timer);
         m_timer = nil;
     }
 }

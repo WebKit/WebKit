@@ -25,6 +25,7 @@
 
 #import "KWQCursor.h"
 #import "KWQLogging.h"
+#import "KWQFoundationExtras.h"
 
 // The NSCursor cocoa calls here can't fail, so no need to block Cocoa exceptions
 
@@ -34,7 +35,7 @@ QCursor::QCursor()
 }
 
 QCursor::QCursor(NSCursor *cur)
-    : cursor([cur retain])
+    : cursor(KWQRetain(cur))
 {
 }
 
@@ -46,19 +47,19 @@ QCursor::QCursor(const QPixmap &pixmap)
 }
 
 QCursor::QCursor(const QCursor &other)
-    : cursor([other.cursor retain])
+    : cursor(KWQRetain(other.cursor))
 {
 }
 
 QCursor::~QCursor()
 {
-    [cursor release];
+    KWQRelease(cursor);
 }
       
 QCursor &QCursor::operator=(const QCursor &other)
 {
-    [other.cursor retain];
-    [cursor release];
+    KWQRetain(other.cursor);
+    KWQRelease(cursor);
     cursor = other.cursor;
     return *this;
 }

@@ -2142,7 +2142,11 @@ public:
     ObjCNodeFilterCondition(id <DOMNodeFilter>);
     virtual ~ObjCNodeFilterCondition();
     virtual short acceptNode(const Node &) const;
+
 private:
+    ObjCNodeFilterCondition(const ObjCNodeFilterCondition &);
+    ObjCNodeFilterCondition &operator=(const ObjCNodeFilterCondition &);
+
     id <DOMNodeFilter> m_filter;
 };
 
@@ -2150,12 +2154,12 @@ ObjCNodeFilterCondition::ObjCNodeFilterCondition(id <DOMNodeFilter> filter)
     : m_filter(filter)
 {
     ASSERT(m_filter);
-    [m_filter retain];
+    CFRetain(m_filter);
 }
 
 ObjCNodeFilterCondition::~ObjCNodeFilterCondition()
 {
-    [m_filter release];
+    CFRelease(m_filter);
 }
 
 short ObjCNodeFilterCondition::acceptNode(const Node &n) const

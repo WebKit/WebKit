@@ -29,6 +29,7 @@
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
+#import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 #import "khtml_part.h"
 #import "loader.h"
@@ -260,14 +261,14 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
 void KWQRetainResponse(void *response)
 {
     // There's no way a retain can raise
-    [(id)response retain];
+    KWQRetain((id)response);
 }
 
 void KWQReleaseResponse(void *response)
 {
-    // A release could raise if it deallocs, though...
+    // A release could raise if it deallocs.
     KWQ_BLOCK_EXCEPTIONS;
-    [(id)response release];
+    KWQRelease((id)response);
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

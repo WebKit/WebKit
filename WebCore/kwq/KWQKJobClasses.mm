@@ -30,6 +30,7 @@
 #import "KWQLoader.h"
 #import "KWQResourceLoader.h"
 #import "KWQString.h"
+#import "KWQFoundationExtras.h"
 
 namespace KIO {
 
@@ -43,7 +44,7 @@ class TransferJobPrivate
 public:
     TransferJobPrivate(const KURL& kurl)
         : status(0)
-        , metaData([[NSMutableDictionary alloc] initWithCapacity:17])
+        , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
 	, URL(kurl)
 	, loader(nil)
 	, method("GET")
@@ -54,7 +55,7 @@ public:
 
     TransferJobPrivate(const KURL& kurl, const QByteArray &_postData)
         : status(0)
-        , metaData([[NSMutableDictionary alloc] initWithCapacity:17])
+        , metaData(KWQRetainNSRelease([[NSMutableDictionary alloc] initWithCapacity:17]))
 	, URL(kurl)
 	, loader(nil)
 	, method("POST")
@@ -67,8 +68,8 @@ public:
     ~TransferJobPrivate()
     {
 	KWQReleaseResponse(response);
-        [metaData release];
-        [loader release];
+        KWQRelease(metaData);
+        KWQRelease(loader);
     }
 
     int status;
@@ -173,8 +174,8 @@ void TransferJob::kill()
 
 void TransferJob::setLoader(KWQResourceLoader *loader)
 {
-    [loader retain];
-    [d->loader release];
+    KWQRetain(loader);
+    KWQRelease(d->loader);
     d->loader = loader;
 }
 

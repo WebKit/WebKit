@@ -29,6 +29,7 @@
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQNSViewExtras.h"
+#import "KWQFoundationExtras.h"
 #import "WebCoreBridge.h"
 
 @interface KWQFileButtonAdapter : NSObject <WebCoreFileButtonDelegate>
@@ -51,7 +52,7 @@ KWQFileButton::KWQFileButton(KHTMLPart *part)
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    _adapter = [[KWQFileButtonAdapter alloc] initWithKWQFileButton:this];
+    _adapter = KWQRetainNSRelease([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this]);
     setView([KWQ(part)->bridge() fileButtonWithDelegate:_adapter]);
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -61,7 +62,7 @@ KWQFileButton::~KWQFileButton()
 {
     _adapter->button = 0;
     KWQ_BLOCK_EXCEPTIONS;
-    [_adapter release];
+    CFRelease(_adapter);
     KWQ_UNBLOCK_EXCEPTIONS;
 }
     
