@@ -1,21 +1,21 @@
 2004-01-27  Chris Blumenberg  <cblu@apple.com>
 
-		Fixed: <rdar://problem/3536624>: Webkit 1.2 links against SecurityNssAsn1.framework
-	
+        Fixed: <rdar://problem/3536624>: Webkit 1.2 links against SecurityNssAsn1.framework
+
         Reviewed by Darin.
 
         * WebCoreSupport.subproj/WebKeyGeneration.h: Set DISABLE_WEB_KEY_GENERATION on Merlot for now.
-		Then don't include anything if that's set.
+        Then don't include anything if that's set.
         * WebCoreSupport.subproj/WebKeyGeneration.cpp: Don't compile anything if DISABLE_WEB_KEY_GENERATION
-		is set.
+        is set.
         * WebCoreSupport.subproj/WebKeyGenerator.m:
         (-[WebKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:pageURL:]):
-		Always return nil if DISABLE_WEB_KEY_GENERATION is set.
+        Always return nil if DISABLE_WEB_KEY_GENERATION is set.
         (-[WebKeyGenerator addCertificatesToKeychainFromData:]): Always return failure if
-		DISABLE_WEB_KEY_GENERATION is set.
+        DISABLE_WEB_KEY_GENERATION is set.
 
         * WebKit.pbproj/project.pbxproj: Added shell build step to make library with security
-		libraries in it. On Merlot, makes empty library. Also added library to link options.
+        libraries in it. On Merlot, makes empty library. Also added library to link options.
         * WebKitSecurityDummy.c: Added. Used to make empty version of library for build on Merlot.
 
 2004-01-26  Darin Adler  <darin@apple.com>
@@ -40,12 +40,12 @@
         (-[WebHTMLView updateShowsFirstResponder]): Renamed from updateFocusRing:
         since it is now used to kill caret blink timer.
         (-[WebHTMLView windowDidBecomeKey:]): Now calls new updateShowsFirstResponder
-	method.
+        method.
         (-[WebHTMLView windowDidResignKey:]): Ditto.
 
 2004-01-22  Chris Blumenberg  <cblu@apple.com>
 
-	Fixed: <rdar://problem/3537542>: support for copying HTML
+        Fixed: <rdar://problem/3537542>: support for copying HTML
 
         Reviewed by dave.
 
@@ -121,14 +121,14 @@
 
         Reviewed by Chris.
 
-	<rdar://problem/3514446>: cert downloaded from BofA or MIT is rejected (ACL issue on private key?)
+        <rdar://problem/3514446>: cert downloaded from BofA or MIT is rejected (ACL issue on private key?)
         
-	* WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
         (createPair): Cut & paste hunk of code from Security framework.
         (Safari_SecKeyCreatePair): Ditto.
         (signedPublicKeyAndChallengeString): Instead of creating a normal ACL,
-	use our hacked version of the SecKeyCreatePair call that doesn't put in
-	any kind of ACL. This works around a SecureTransport bug.
+        use our hacked version of the SecKeyCreatePair call that doesn't put in
+        any kind of ACL. This works around a SecureTransport bug.
 
 2004-01-09  David Hyatt  <hyatt@apple.com>
 
