@@ -1,5 +1,16 @@
 2002-04-04  Darin Adler  <darin@apple.com>
 
+	Redo clobbered fixes for problems that show up only when xNDEBUG is set
+
+	* src/kwq/KWQApplication.mm: (QApplication::sendEvent):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidBeginLoading:]):
+	Remove or ifdef otherwise-unused variables.
+
+	* src/kwq/KWQFontMetrics.mm: (_rectForString):
+	Add missing semicolons.
+
+2002-04-04  Darin Adler  <darin@apple.com>
+
 	* src/kwq/KWQString.mm: (QString::unicode), (QString::latin1),
 	(QString::convertToQCString): Remove some excessive logging that
 	was getting in the way of important log messages.

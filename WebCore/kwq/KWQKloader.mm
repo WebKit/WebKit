@@ -1021,12 +1021,9 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
-    void *userData;
-    
-    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
-    
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
-                    static_cast<KIO::TransferJob *>(userData)->url().url().latin1());
+    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
+                  static_cast<KIO::TransferJob *>(
+                  [[sender attributeForKey:IFURLHandleUserData] pointerValue])->url().url().latin1());
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
