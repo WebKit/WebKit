@@ -1,3 +1,17 @@
+2003-07-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3317693 -- REGRESSION: many web pages are rendering with wrong layout (columns in HelpViewer, etc.)
+
+        This is a workaround for the code generation bug in gcc that causes this problem with
+        gcc 3.3 in optimized builds. We can remove it once both we and B&I are using a newer
+        gcc with the fix. The bug number for the gcc problem is 3321716.
+
+        * khtml/rendering/render_box.cpp:
+        (workAroundBug3321716): Added. A function that does nothing and takes an integer parameter.
+        (RenderBox::setStyle): Add a couple of calls to workAroundBug3321716 in the right places.
+
 2003-07-09  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3141257.  Animate multiple copies of the same
