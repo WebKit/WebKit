@@ -47,6 +47,7 @@
 #include "misc/htmltags.h"
 
 #include "rendering/render_object.h"
+#include "rendering/render_layer.h"
 
 #include <kdebug.h>
 
@@ -487,6 +488,7 @@ const ClassInfo KJS::HTMLElement::tablecell_info = { "HTMLTableCellElement", &KJ
 const ClassInfo KJS::HTMLElement::frameSet_info = { "HTMLFrameSetElement", &KJS::HTMLElement::info, &HTMLFrameSetElementTable, 0 };
 const ClassInfo KJS::HTMLElement::frame_info = { "HTMLFrameElement", &KJS::HTMLElement::info, &HTMLFrameElementTable, 0 };
 const ClassInfo KJS::HTMLElement::iFrame_info = { "HTMLIFrameElement", &KJS::HTMLElement::info, &HTMLIFrameElementTable, 0 };
+const ClassInfo KJS::HTMLElement::marquee_info = { "HTMLMarqueeElement", &KJS::HTMLElement::info, &HTMLMarqueeElementTable, 0 };
 
 const ClassInfo* KJS::HTMLElement::classInfo() const
 {
@@ -610,6 +612,8 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
     return &frame_info;
   case ID_IFRAME:
     return &iFrame_info;
+  case ID_MARQUEE:
+    return &marquee_info;
   default:
     return &info;
   }
@@ -1066,6 +1070,11 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   scrolling	  KJS::HTMLElement::IFrameScrolling		DontDelete
   src		  KJS::HTMLElement::IFrameSrc			DontDelete
   width		  KJS::HTMLElement::IFrameWidth			DontDelete
+@end
+
+@begin HTMLMarqueeElementTable 2
+  start           KJS::HTMLElement::MarqueeStart		DontDelete|Function 0
+  stop            KJS::HTMLElement::MarqueeStop                 DontDelete|Function 0
 @end
 */
 
@@ -2098,6 +2107,22 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
         return Undefined();
       }
     }
+    case ID_MARQUEE: {
+        if (id == KJS::HTMLElement::MarqueeStart && element.handle()->renderer() && 
+            element.handle()->renderer()->layer() &&
+            element.handle()->renderer()->layer()->marquee()) {
+            element.handle()->renderer()->layer()->marquee()->start();
+            return Undefined();
+        }
+        else if (id == KJS::HTMLElement::MarqueeStop && element.handle()->renderer() && 
+                 element.handle()->renderer()->layer() &&
+                 element.handle()->renderer()->layer()->marquee()) {
+            element.handle()->renderer()->layer()->marquee()->suspend();
+            return Undefined();
+        }
+        break;
+    }
+        
     break;
   }
 
