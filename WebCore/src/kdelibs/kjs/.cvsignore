@@ -1,7 +1,12 @@
 Makefile
+Makefile.am
 Makefile.in
+configure.in.in
 testkjs
 libkjs_la.all_cpp.cpp
 SunWS_cache
 grammar.cpp
+grammar.cpp.h
 grammar.h
+*.kde
+*.dep
