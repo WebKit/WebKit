@@ -2,6 +2,23 @@
 
         Reviewed by Hyatt
 
+        Fix a comical little bug where the style-applying code did not take into
+        account deleting content from the start of a block. After the deletion, 
+        the caret is placed in the node before the deleted content and so 
+        inserting a styled fragment after the deletion position works great.
+        The problem is that if the selectionis at the start of a block, there
+        is no "position before the deletion" and the caret is placed in the new
+        first child of the block. Inserting the styled content after this 
+        node is just plain wrong. Now, this case is handled correctly, and the
+        styled content is inserted in the proper position.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::insertFragment):
+
+2004-06-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         * khtml/rendering/bidi.cpp:
         (khtml::RenderBlock::layoutInlineChildren): Only add additional line height
         in for root editable elements. This helps to keep layout from deviating too

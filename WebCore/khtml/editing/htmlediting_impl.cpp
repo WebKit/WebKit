@@ -1009,16 +1009,31 @@ void ApplyStyleCommandImpl::insertFragment(DocumentFragmentImpl *fragment, const
     ASSERT(fragment);
     ASSERT(pos.notEmpty());
 
-    NodeImpl *node = fragment->lastChild();
-    while (node) {
-        int exceptionCode = 0;
-        NodeImpl *prev = node->previousSibling();
-        node->ref();
-        fragment->removeChild(node, exceptionCode);
-        ASSERT(exceptionCode == 0);
-        insertNodeAfter(node, pos.node());
-        node->deref();
-        node = prev;
+    if (pos.node()->previousSibling()) {
+        NodeImpl *node = fragment->lastChild();
+        while (node) {
+            int exceptionCode = 0;
+            NodeImpl *prev = node->previousSibling();
+            node->ref();
+            fragment->removeChild(node, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            insertNodeAfter(node, pos.node());
+            node->deref();
+            node = prev;
+        }
+    }
+    else {
+        NodeImpl *node = fragment->firstChild();
+        while (node) {
+            int exceptionCode = 0;
+            NodeImpl *next = node->nextSibling();
+            node->ref();
+            fragment->removeChild(node, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            insertNodeBefore(node, pos.node());
+            node->deref();
+            node = next;
+        }
     }
 }
 
