@@ -212,7 +212,7 @@ void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject
 
     RenderStyle* pseudo = child->style()->getPseudoStyle(type);
 
-    if (pseudo)
+    if (pseudo && pseudo->display() != NONE)
     {
         if (pseudo->contentType()==CONTENT_TEXT)
         {

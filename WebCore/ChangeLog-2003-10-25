@@ -1,3 +1,15 @@
+2003-01-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3142124.  
+
+	When pseudo-elements have display:none, they should not generate
+	rendering objects.
+	
+        Reviewed by darin.
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertPseudoChild):
+
 2003-01-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
