@@ -1,3 +1,11 @@
+2002-02-22  John Sullivan  <sullivan@apple.com>
+
+	Updated for modified NSCalendarDate extensions API.
+
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(-[IFWebHistoryPrivate findIndex:forDay:]): use compareDate: instead of 
+	daysSinceDate:, which no longer exists.
+
 2002-02-22  Richard Williamson  <rjw@apple.com>
 
         Added data: to IFURLHandleResourceDidFinishLoading:

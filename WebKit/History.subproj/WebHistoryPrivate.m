@@ -48,11 +48,11 @@
     //FIXME: just does linear search through days; inefficient if many days
     count = [_datesWithEntries count];
     for (*index = 0; *index < count; ++*index) {
-        int deltaDays = [date daysSinceDate: [_datesWithEntries objectAtIndex: *index]];
-        if (deltaDays == 0) {
+        NSComparisonResult result = [date compareDay: [_datesWithEntries objectAtIndex: *index]];
+        if (result == NSOrderedSame) {
             return YES;
         }
-        if (deltaDays > 0) {
+        if (result == NSOrderedDescending) {
             return NO;
         }
     }
