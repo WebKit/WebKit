@@ -530,6 +530,20 @@ static WebHTMLView *lastHitView = nil;
     [pasteboard setString:[self selectedString] forType:NSStringPboardType];
 }
 
+- (BOOL)_haveSelection
+{
+	return [[self _bridge] haveSelection];
+}
+
+- (BOOL)_canDelete
+{
+	return [self _haveSelection] && [[self _bridge] isEditable];
+}
+
+- (BOOL)_canPaste
+{
+	return [[self _bridge] isEditable];
+}
 
 -(NSImage *)_dragImageForLinkElement:(NSDictionary *)element
 {
@@ -896,14 +910,9 @@ static WebHTMLView *lastHitView = nil;
     [super dealloc];
 }
 
-- (BOOL)hasSelection
-{
-    return [[self selectedString] length] != 0;
-}
-
 - (IBAction)takeFindStringFromSelection:(id)sender
 {
-    if (![self hasSelection]) {
+    if (![self _haveSelection]) {
         NSBeep();
         return;
     }
@@ -914,6 +923,34 @@ static WebHTMLView *lastHitView = nil;
 - (void)copy:(id)sender
 {
     [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+}
+
+- (void)cut:(id)sender
+{   
+	[self copy:sender];
+	[[self _bridge] deleteSelection];
+}
+
+- (void)delete:(id)sender
+{
+	[[self _bridge] deleteSelection];
+}
+
+- (void)paste:(id)sender
+{
+	NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+	NSArray *types = [pasteboard types];
+	NSString *HTMLString = nil;
+	
+	if ([types containsObject:NSHTMLPboardType]) {
+		HTMLString = [pasteboard stringForType:NSHTMLPboardType];
+	} else if ([types containsObject:NSStringPboardType]) {
+		HTMLString = [pasteboard stringForType:NSStringPboardType];
+	}
+	
+	if (HTMLString) {
+		[[self _bridge] pasteHTMLString:HTMLString];
+	}
 }
 
 - (BOOL)writeSelectionToPasteboard:(NSPasteboard *)pasteboard types:(NSArray *)types
@@ -932,24 +969,30 @@ static WebHTMLView *lastHitView = nil;
     [[self _bridge] jumpToSelection];
 }
 
-
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
     SEL action = [item action];
     
-    if (action == @selector(copy:))
-        return [self hasSelection];
-    else if (action == @selector(takeFindStringFromSelection:))
-        return [self hasSelection];
-    else if (action == @selector(jumpToSelection:))
-        return [self hasSelection];
+	if (action == @selector(cut:)) {
+        return [self _canDelete];
+    } else if (action == @selector(copy:)) {
+        return [self _haveSelection];
+    } else if (action == @selector(delete:)) {
+        return [self _canDelete];
+    } else if (action == @selector(paste:)) {
+        return [self _canPaste];
+    }else if (action == @selector(takeFindStringFromSelection:)) {
+        return [self _haveSelection];
+    }else if (action == @selector(jumpToSelection:)) {
+        return [self _haveSelection];
+	}
     
     return YES;
 }
 
 - (id)validRequestorForSendType:(NSString *)sendType returnType:(NSString *)returnType
 {
-    if (sendType && ([[[self class] _pasteboardTypes] containsObject:sendType]) && [self hasSelection]){
+    if (sendType && ([[[self class] _pasteboardTypes] containsObject:sendType]) && [self _haveSelection]){
         return self;
     }
 

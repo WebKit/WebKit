@@ -1,3 +1,23 @@
+2004-01-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3541812>: Implement Paste menu item
+	<rdar://problem/3541814>: Implement Delete menu item
+	<rdar://problem/3541811>: Implement Cut menu item
+
+        Reviewed by dave.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::deleteSelection): new
+        (DocumentImpl::pasteHTMLString): new
+        * khtml/xml/dom_docimpl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge isEditable]): new
+        (-[WebCoreBridge pasteHTMLString:]): new
+        (-[WebCoreBridge deleteSelection]): new
+        (-[WebCoreBridge haveSelection]): new
+
 2004-01-27  David Hyatt  <hyatt@apple.com>
 
 	Add a new AtomicString type (that is really just a KJS::Identifier).  Define a Name class that will eventually

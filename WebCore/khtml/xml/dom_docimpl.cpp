@@ -1199,6 +1199,85 @@ void DocumentImpl::clearSelection()
         static_cast<RenderCanvas*>(m_render)->clearSelection();
 }
 
+void DocumentImpl::deleteSelection()
+{
+    KHTMLSelection &selection = part()->getKHTMLSelection();
+	clearSelection();
+    Range range(selection.startNode(), selection.startOffset(), selection.endNode(), selection.endOffset());
+    range.deleteContents();
+}
+
+void DocumentImpl::pasteHTMLString(const QString &HTMLString)
+{	
+	deleteSelection();
+	
+	KHTMLSelection &selection = part()->getKHTMLSelection();
+	DOM::NodeImpl *startNode = selection.startNode();
+    long startOffset = selection.startOffset();
+    DOM::NodeImpl *endNode = selection.endNode();
+		
+	if (startNode == NULL || endNode == NULL) {
+		return;
+	}
+	
+	DOMString string = DOMString(HTMLString);
+	DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(startNode)->createContextualFragment(string);
+    if (root == NULL) {
+		return;
+    }
+
+	TextImpl *textNode = startNode->isTextNode() ? static_cast<TextImpl *>(startNode) : NULL;
+	DOM::NodeImpl *firstChild = root->firstChild();
+	DOM::NodeImpl *lastChild = root->lastChild();
+	if (firstChild == NULL || lastChild == NULL) {
+		return;
+	}
+	
+	int exceptionCode = 0;
+	long finalOffset;
+	
+	if (textNode && firstChild == lastChild && firstChild->isTextNode()) {
+		// Simple text paste. Add the text to the text node with the caret.
+		textNode->insertData(startOffset, static_cast<TextImpl *>(firstChild)->data(), exceptionCode);
+		finalOffset = startOffset + static_cast<TextImpl *>(firstChild)->length();
+		selection.setSelection(textNode, finalOffset);
+	} else {
+		// HTML tree paste.
+		DOM::NodeImpl *parent = startNode->parentNode();
+		DOM::NodeImpl *afterNode = NULL;
+		if (textNode) {
+			// Split the text node.
+			TextImpl *textBeforeNode = createTextNode(textNode->substringData(0, startOffset, exceptionCode));
+			textNode->deleteData(0, selection.startOffset(), exceptionCode);
+			parent->insertBefore(textBeforeNode, textNode, exceptionCode);
+			afterNode = textNode;
+		}
+		
+		// Add the children of the pasted root to the document.
+		DOM::NodeImpl *child = lastChild;
+		while (child) {
+			DOM::NodeImpl *previousSibling = child->previousSibling();
+			parent->insertBefore(child, afterNode, exceptionCode);
+			afterNode = child;
+			child = previousSibling;
+		}
+		
+		// Find the last leaf and place the caret after it.
+		child = lastChild;
+		while (1) {
+			DOM::NodeImpl *nextChild = child->lastChild();
+			if (!nextChild) {
+				break;
+			}
+			child = nextChild;
+		}
+		finalOffset = child->isTextNode() ? static_cast<TextImpl *>(child)->length() : 0;
+		selection.setSelection(child, finalOffset);
+	}
+	
+	setSelection(selection);
+}
+
 Tokenizer *DocumentImpl::createTokenizer()
 {
     return new XMLTokenizer(docPtr(),m_view);

@@ -267,6 +267,9 @@ public:
     void setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep);
     void setSelection(KHTMLSelection &);
     void clearSelection();
+	void deleteSelection();
+	
+	void pasteHTMLString(const QString &HTMLString);
 
     void open();
     void close();

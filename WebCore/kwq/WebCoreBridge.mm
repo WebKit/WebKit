@@ -356,6 +356,33 @@ static bool initializedKJS = FALSE;
     _part->gotoAnchor(QString::fromNSString(a));
 }
 
+- (BOOL)isEditable
+{
+	NodeImpl *startNode = _part->getKHTMLSelection().startNode();
+	return startNode ? startNode->isContentEditable() : NO;
+}
+
+- (void)pasteHTMLString:(NSString *)HTMLString
+{
+	DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+		doc->pasteHTMLString(QString::fromNSString(HTMLString));
+	}
+}
+
+- (void)deleteSelection
+{
+	DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+		doc->deleteSelection();
+	}
+}
+
+- (BOOL)haveSelection
+{
+	return _part->getKHTMLSelection().state() == KHTMLSelection::RANGE;
+}
+
 - (NSString *)selectedHTML
 {
 	return _part->selection().toHTML().string().getNSString();

@@ -70,6 +70,10 @@
 + (NSArray *)_pasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 
+- (BOOL)_canDelete;
+- (BOOL)_canPaste;
+- (BOOL)_haveSelection;
+
 - (void)_frameOrBoundsChanged;
 
 - (NSImage *)_dragImageForLinkElement:(NSDictionary *)element;

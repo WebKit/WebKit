@@ -1,5 +1,26 @@
 2004-01-27  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed:
+	<rdar://problem/3541812>: Implement Paste menu item
+	<rdar://problem/3541814>: Implement Delete menu item
+	<rdar://problem/3541811>: Implement Cut menu item
+
+        Reviewed by dave.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _haveSelection]): new, renamed from hasSelection, calls haveSelection on the bridge, quicker than generating string rep of selection
+        (-[WebHTMLView _canDelete]): new
+        (-[WebHTMLView _canPaste]): new
+        (-[WebHTMLView takeFindStringFromSelection:]): call renamed _haveSelection
+        (-[WebHTMLView cut:]): new
+        (-[WebHTMLView delete:]): new
+        (-[WebHTMLView paste:]): new
+        (-[WebHTMLView validateUserInterfaceItem:]): updated for new methods
+        (-[WebHTMLView validRequestorForSendType:returnType:]): call renamed _haveSelection
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
+2004-01-27  Chris Blumenberg  <cblu@apple.com>
+
         Fixed build breakage.
 
         Reviewed by darin.
