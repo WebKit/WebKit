@@ -21,7 +21,7 @@
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader
-    withURL:(NSURL *)URL dataSource:(WebDataSource *)dataSource;
+    withURL:(NSURL *)URL attributes:(NSDictionary *)attributes forDataSource:(WebDataSource *)dataSource;
 
 - (WebResourceHandle *)handle;
 

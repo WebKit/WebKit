@@ -33,6 +33,9 @@ class KMessageBox {
 public:
     enum { Ok = 1, Cancel = 2, Yes = 3, No = 4, Continue = 5 };
 
+    static void information(QWidget *, const QString &information, 
+        const QString &, const char *);
+   
     static void error(QWidget *, const QString &, 
         const QString &caption=QString::null, bool notify=true);
    

@@ -2291,9 +2291,6 @@ void KHTMLPart::overURL( const QString &url, const QString &target, bool shiftPr
 void KHTMLPart::urlSelected( const QString &url, int button, int state, const QString &_target,
                              KParts::URLArgs args )
 {
-#ifdef APPLE_CHANGES
-  impl->urlSelected(url, button, state, _target, args);
-#else
   bool hasTarget = false;
 
   QString target = _target;
@@ -2309,9 +2306,11 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
   }
 
   KURL cURL = completeURL(url);
+#ifndef APPLE_CHANGES
   // special case for <a href="">
   if ( url.isEmpty() )
     cURL.setFileName( url );
+#endif
 
   if ( !cURL.isValid() )
     // ### ERROR HANDLING
@@ -2319,6 +2318,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
   //kdDebug( 6000 ) << "urlSelected: complete URL:" << cURL.url() << " target = " << target << endl;
 
+#ifndef APPLE_CHANGES
   if ( button == LeftButton && ( state & ShiftButton ) )
   {
     KIO::MetaData metaData;
@@ -2331,6 +2331,7 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 			 i18n( "<qt>The link <B>%1</B><BR>leads from this untrusted page to your local filesystem.<BR>Do you want to follow the link?" ),
 			 i18n( "Follow" )))
     return;
+#endif
 
   args.frameName = target;
 
@@ -2345,6 +2346,10 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
   args.metaData().insert("ssl_was_in_use", d->m_ssl_in_use ? "TRUE":"FALSE");
   args.metaData().insert("ssl_activate_warnings", "TRUE");
 
+#ifdef APPLE_CHANGES
+  args.metaData()["referrer"] = d->m_referrer;
+  impl->urlSelected(cURL, button, state, args);
+#else
   if ( hasTarget )
   {
     // unknown frame names should open in a new window.
@@ -2942,9 +2947,6 @@ void KHTMLPart::submitFormAgain()
 
 void KHTMLPart::submitForm( const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary )
 {
-#ifdef APPLE_CHANGES
-  impl->submitForm(action, url, formData, _target, contentType, boundary);
-#else
   kdDebug(6000) << this << ": KHTMLPart::submitForm target=" << _target << " url=" << url << endl;
   KURL u = completeURL( url );
 
@@ -2954,6 +2956,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     return;
   }
 
+#ifndef APPLE_CHANGES
   // Form security checks
   //
 
@@ -3011,6 +3014,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
 
   // End form security checks
   //
+#endif // APPLE_CHANGES
 
   QString urlstring = u.url();
 
@@ -3020,10 +3024,12 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     return;
   }
 
+#ifndef APPLE_CHANGES
   if (!checkLinkSecurity(u,
 			 i18n( "<qt>The form will be submitted to <BR><B>%1</B><BR>on your local filesystem.<BR>Do you want to submit the form?" ),
 			 i18n( "Submit" )))
     return;
+#endif
 
   KParts::URLArgs args;
 
@@ -3096,6 +3102,9 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
       args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
   }
 
+#ifdef APPLE_CHANGES
+  impl->submitForm(u, args);
+#else
   if ( d->m_doc->parsing() || d->m_runningScripts > 0 ) {
     if( d->m_submitForm ) {
       kdDebug(6000) << "KHTMLPart::submitForm ABORTING!" << endl;

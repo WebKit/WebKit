@@ -25,6 +25,8 @@
 
 #import <kurl.h>
 
+#import <KWQAssertions.h>
+
 typedef enum {
     // alpha 
     SchemeFirstChar = 1 << 0,
@@ -52,6 +54,8 @@ typedef enum {
     // not allowed in path and not ? or #
     BadChar = 1 << 7
 } URLCharacterClasses;
+
+static const char hexDigits[17] = "0123456789ABCDEF";
 
 static const unsigned char characterClassTable[256] = {
     /* 0 nul */ PathSegmentEndChar,    /* 1 soh */ BadChar,
@@ -292,16 +296,13 @@ KURL::KURL(const KURL &base, const QString &relative)
 
 		char static_buffer[2048];
 		char *buffer;
-		bool usingStaticBuffer;
 		
-		size_t bufferLength = base.portEndPos + relative.length() + 1;
+		size_t bufferLength = base.pathEndPos + relative.length() + 1;
 
-		if (bufferLength > 2048) {
-		    buffer = (char *)malloc(bufferLength * sizeof(char));
-		    usingStaticBuffer = false;
+		if (bufferLength > sizeof(static_buffer)) {
+		    buffer = (char *)malloc(bufferLength);
 		} else {
 		    buffer = static_buffer;
-		    usingStaticBuffer = true;
 		}
 		
 		char *bufferPos = buffer;
@@ -398,8 +399,10 @@ KURL::KURL(const KURL &base, const QString &relative)
 		strcpy(bufferPos, relStringPos);
 
 		parse(buffer, NULL);
+                
+                ASSERT(strlen(buffer) + 1 <= bufferLength);
 		
-		if (!usingStaticBuffer) {
+		if (buffer != static_buffer) {
 		    free(buffer);
 		}
 		
@@ -632,8 +635,6 @@ QString KURL::decode_string(const QString& urlString)
     return qUnescaped;
 }
 
-const char * const hexDigits="0123456789ABCDEF";
-
 static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
 {
     char *p = buffer;
@@ -657,7 +658,6 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
     
     buffer = p;
 }
-
 
 void KURL::parse(const char *url, const QString *originalString)
 {
@@ -827,15 +827,12 @@ void KURL::parse(const char *url, const QString *originalString)
     // assemble it all, remembering the real ranges
 
     char static_buffer[4096];
-    bool usingStaticBuffer;
     char *buffer;
-    int bufferLength = fragmentEnd * 3 + 1;
-    if (bufferLength <= 4096) {
+    uint bufferLength = fragmentEnd * 3 + 1;
+    if (bufferLength <= sizeof(static_buffer)) {
 	buffer = static_buffer;
-	usingStaticBuffer = true;
     } else {
-	buffer = (char *)malloc(bufferLength * sizeof(char));
-	usingStaticBuffer = false;
+	buffer = (char *)malloc(bufferLength);
     }
 
     char *p = buffer;
@@ -928,7 +925,9 @@ void KURL::parse(const char *url, const QString *originalString)
 	urlString = QString(buffer, fragmentEndPos);
     }
 
-    if (!usingStaticBuffer) {
+    ASSERT(p - buffer <= (int)bufferLength);
+		
+    if (buffer != static_buffer) {
 	free(buffer);
     }
 }
@@ -964,4 +963,31 @@ bool operator==(const KURL &a, const KURL &b)
 bool urlcmp(const QString &a, const QString &b, bool, bool)
 {
     return a == b;
+}
+
+QString KURL::encode_string(const QString& notEncodedString)
+{
+    QCString asUTF8 = notEncodedString.utf8();
+    
+    char static_buffer[4096];
+    char *buffer;
+    uint bufferLength = asUTF8.length() * 3 + 1;
+    if (bufferLength <= sizeof(static_buffer)) {
+	buffer = static_buffer;
+    } else {
+	buffer = (char *)malloc(bufferLength);
+    }
+    
+    char *p = buffer;
+    appendEscapingBadChars(p, asUTF8, asUTF8.length());
+    
+    QString result(buffer, p - buffer);
+    
+    ASSERT(p - buffer <= (int)bufferLength);
+		
+    if (buffer != static_buffer) {
+	free(buffer);
+    }
+
+    return result;
 }

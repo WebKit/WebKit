@@ -87,15 +87,13 @@
     return [newFrame _bridge];
 }
 
-- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL frameName:(NSString *)name
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name
 {
     ASSERT(frame != nil);
 
-    WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:URL];
+    WebController *newController = [[[frame controller] windowContext] openNewWindowWithURL:URL referrer:referrer];
     [newController _setTopLevelFrameName:name];
-
     WebFrame *newFrame = [newController mainFrame];
-
     return [newFrame _bridge];
 }
 
@@ -181,9 +179,29 @@
     }
 }
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
+- (void)addAttributeForReferrer:(NSString *)referrer toDictionary:(NSMutableDictionary *)attributes
 {
-    return [WebSubresourceClient startLoadingResource:resourceLoader withURL:URL dataSource:[self dataSource]];
+    if ([referrer length] == 0) {
+        return;
+    }
+    NSDictionary *headers = [NSDictionary dictionaryWithObject:[[referrer copy] autorelease] forKey:@"Referer"]; // note the misspelling
+    [attributes setObject:headers forKey:WebHTTPResourceHandleRequestHeaders];
+}
+
+- (NSDictionary *)attributesForReferrer:(NSString *)referrer
+{
+    if ([referrer length] == 0) {
+        return nil;
+    }
+    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
+    [self addAttributeForReferrer:referrer toDictionary:attributes];
+    return attributes;
+}
+
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL referrer:(NSString *)referrer
+{
+    return [WebSubresourceClient startLoadingResource:resourceLoader withURL:URL
+        attributes:[self attributesForReferrer:referrer] forDataSource:[self dataSource]];
 }
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
@@ -276,21 +294,22 @@
     [newDataSource release];
 }
 
-- (void)loadURL:(NSURL *)URL
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer
 {
-    [self loadURL:URL attributes:nil flags:0 withParent:[[frame dataSource] parent]];
+    [self loadURL:URL attributes:[self attributesForReferrer:referrer] flags:0 withParent:[[frame dataSource] parent]];
 }
 
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag. 
     // This prevents a potential bug which may cause a page
     // with a form that uses itself as an action to be returned 
     // from the cache without submitting.
-    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:
+    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
         data, WebHTTPResourceHandleRequestData,
         @"POST", WebHTTPResourceHandleRequestMethod,
         nil];
+    [self addAttributeForReferrer:referrer toDictionary:attributes];
     [self loadURL:URL attributes:attributes flags:WebResourceHandleFlagLoadFromOrigin withParent:[[frame dataSource] parent]];
     [attributes release];
 }

@@ -83,3 +83,8 @@ void KMessageBox::sorry(QWidget *, const QString &message,
     else
         NSRunAlertPanel(caption.getNSString(), message.getNSString(), nil, nil, nil);
 }
+
+void KMessageBox::information(QWidget *, const QString &message, const QString &, const char *)
+{
+    NSRunAlertPanel(nil, message.getNSString(), nil, nil, nil);
+}

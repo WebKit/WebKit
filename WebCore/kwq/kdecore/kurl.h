@@ -43,12 +43,12 @@ public:
     KURL(const KURL &, const QString &);
     KURL(const QString &, int encoding_hint=0);
     
-    inline bool isEmpty() const { return urlString.isEmpty(); } 
-    inline bool isMalformed() const { return !m_isValid; }
-    inline bool isValid() const { return m_isValid; }
+    bool isEmpty() const { return urlString.isEmpty(); } 
+    bool isMalformed() const { return !m_isValid; }
+    bool isValid() const { return m_isValid; }
     bool hasPath() const;
 
-    inline QString url() const { return urlString; }
+    QString url() const { return urlString; }
     QString protocol() const;
     QString host() const;
     unsigned short int port() const;
@@ -72,7 +72,8 @@ public:
     
     NSURL *getNSURL() const;
 
-    static QString decode_string(const QString &urlString);
+    static QString decode_string(const QString &);
+    static QString encode_string(const QString &);
     
     friend bool operator==(const KURL &, const KURL &);
 

@@ -114,7 +114,7 @@ BOOL _modifierTrackingEnabled = FALSE;
     return elementInfo;
 }
 
-- (BOOL)_continueAfterClickPolicyForEvent: (NSEvent *)event
+- (BOOL)_continueAfterClickPolicyForEvent:(NSEvent *)event
 {
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
     WebController *controller = [self _controller];
@@ -131,7 +131,7 @@ BOOL _modifierTrackingEnabled = FALSE;
         case WebClickPolicyShow:
             return YES;
         case WebClickPolicyOpenNewWindow:
-            [[controller windowContext] openNewWindowWithURL:URL];
+            [[controller windowContext] openNewWindowWithURL:URL referrer:nil];
             break;
         case WebClickPolicySave:
         case WebClickPolicySaveAndOpenExternally:

@@ -142,9 +142,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (WebCoreBridge *)mainFrame;
 - (WebCoreBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
 
-- (void)loadURL:(NSURL *)URL;
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data;
-- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL frameName:(NSString *)name;
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer;
+- (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data;
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer frameName:(NSString *)name;
 
 - (NSString *)userAgentForURL:(NSURL *)URL;
 
@@ -167,7 +167,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSWindow *)window;
 - (void)setWindowFrame:(NSRect)frame;
 
-- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
+- (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL referrer:(NSString *)referrer;
 - (void)reportBadURL:(NSString *)badURL;
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 - (BOOL)isReloading;

@@ -90,11 +90,11 @@
     return menuItems;
 }
 
-- (void)openNewWindowWithURL:(NSURL *)URL
+- (void)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer
 {
     WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
     WebController *controller = [webFrame controller];
-    [[controller windowContext] openNewWindowWithURL:URL];
+    [[controller windowContext] openNewWindowWithURL:URL referrer:referrer];
 }
 
 - (void)downloadURL:(NSURL *)URL
@@ -107,7 +107,7 @@
 
 - (void)openLinkInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebContextMenuElementLinkURLKey]];
+    [self openNewWindowWithURL:[element objectForKey:WebContextMenuElementLinkURLKey] referrer:nil];
 }
 
 - (void)downloadLinkToDisk:(id)sender
@@ -127,7 +127,7 @@
 
 - (void)openImageInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebContextMenuElementImageURLKey]];
+    [self openNewWindowWithURL:[element objectForKey:WebContextMenuElementImageURLKey] referrer:nil];
 }
 
 - (void)downloadImageToDisk:(id)sender
@@ -149,7 +149,7 @@
     WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
     WebDataSource *dataSource = [webFrame dataSource];
     NSURL *URL = [dataSource URL];
-    [self openNewWindowWithURL:URL];
+    [self openNewWindowWithURL:URL referrer:nil];
 }
 
 

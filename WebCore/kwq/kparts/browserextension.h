@@ -48,16 +48,23 @@ struct URLArgs {
     int xOffset;
     int yOffset;
 
-    URLArgs() : xOffset(0), yOffset(0) { }
+    URLArgs() : xOffset(0), yOffset(0), m_doPost(false) { }
     
-    QString contentType() const { return QString::null; }
-    bool doPost() const { return false; }
+    QString contentType() const { return m_contentType; }
+    void setContentType(const QString &t) { m_contentType = t; }
+
+    bool doPost() const { return m_doPost; }
+    void setDoPost(bool post) { m_doPost = post; }
     
-    QMap<QString, QString> &metaData() { return m_metadata; }
     void setLockHistory(bool) { }
+
+    QMap<QString, QString> &metaData() { return m_metadata; }
+    const QMap<QString, QString> &metaData() const { return m_metadata; }
 
 private:
     QMap<QString, QString> m_metadata;
+    bool m_doPost;
+    QString m_contentType;
 
 };
 

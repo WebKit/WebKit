@@ -837,7 +837,7 @@
 
 @implementation WebNetscapePluginView (WebNPPCallbacks)
 
-- (NPError) loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
+- (NPError)loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
 {
     WebNetscapePluginStream *stream;
     WebDataSource *dataSource;
@@ -864,7 +864,8 @@
     }else{
         frame = [webFrame frameNamed:target];
         if(!frame){
-            [[webController windowContext] openNewWindowWithURL:URL];
+            // FIXME: Why is it OK to just discard all the attributes in this case?
+            [[webController windowContext] openNewWindowWithURL:URL referrer:nil];
             // FIXME: Need to send NPP_URLNotify at the right time.
             // FIXME: Need to name new frame
             if(notifyData)

@@ -1,3 +1,48 @@
+2002-09-10  Darin Adler  <darin@apple.com>
+
+	WebKit part of support for the "Referer" header.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge openNewWindowWithURL:referrer:frameName:]): Add referrer parameter,
+	and pass it on to the window context method.
+        (-[WebBridge addAttributeForReferrer:toDictionary:]): Added.
+        (-[WebBridge attributesForReferrer:]): Added.
+        (-[WebBridge startLoadingResource:withURL:referrer:]): Put the referrer into an
+	attributes dictionary and pass it to the WebSubresourceClient method.
+        (-[WebBridge loadURL:referrer:]): Put the referrer into an attributes dictionary
+	and pass it along.
+        (-[WebBridge postWithURL:referrer:data:]): Put the referrer into an attributes
+	dictionary and pass it along.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Add an attributes parameter to
+	the method that starts loading.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:attributes:forDataSource:]):
+	Put the attributes into the WebResourceRequest.
+
+        * WebView.subproj/WebController.h: Add a referrer parameter to the WebWindowContext
+	openNewWindowWithURL method.
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler openNewWindowWithURL:referrer:]): Pass the referrer
+	on to the window context.
+        (-[WebDefaultContextMenuHandler openLinkInNewWindow:]): Pass nil for the referrer
+	for now. Not sure if this is best.
+        (-[WebDefaultContextMenuHandler openImageInNewWindow:]): Ditto.
+        (-[WebDefaultContextMenuHandler openFrameInNewWindow:]): Ditto.
+
+        * WebView.subproj/WebFrame.m: (-[WebFrame frameNamed:]): Pass nil for the referrer
+	here where we are creating a new empty window.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _continueAfterClickPolicyForEvent:]): Pass nil for the referrer here
+	in the WebClickPolicyOpenNewWindow. The policy API doesn't provide a way for the
+	policy handler to specify the referrer; we might want to change that later.
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+	Pass nil for the referrer here. But it seems wrong that this function discards
+	the handle attributes that are passed in for the case where it opens a new window.
+
 2002-09-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3048158 - Crash at google in _destroyInitializingClassList

@@ -128,11 +128,16 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
 	    frame = [_bridge frameNamed:frameName.getNSString()];
 	}
         if (frame == nil) {
-	    frame = [bridge() openNewWindowWithURL:nil frameName:frameName.getNSString()];
+	    frame = [bridge() openNewWindowWithURL:nil referrer:nil frameName:frameName.getNSString()];
         }
     }
     
     return frame;
+}
+
+NSString *KWQKHTMLPartImpl::referrer(const URLArgs &args)
+{
+    return args.metaData()["referrer"].getNSString();
 }
 
 void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
@@ -143,7 +148,7 @@ void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
         return;
     }
 
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL referrer:referrer(args)];
 }
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
@@ -165,20 +170,9 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const ch
     part->write(bytes, length);
 }
 
-void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, const QString &_target, const URLArgs &args)
+void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    QString target = _target;
-    if (target.isEmpty() && d->m_doc) {
-        target = d->m_doc->baseTarget();
-    }
-
-    if (url.find("javascript:", 0, false) == 0) {
-        part->executeScript( url.right( url.length() - 11) );
-        return;
-    }
-
-    KURL clickedURL(part->completeURL(url));
-    NSURL *cocoaURL = clickedURL.getNSURL();
+    NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
         // FIXME: Do we need to report an error to someone?
         return;
@@ -186,29 +180,29 @@ void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, co
     
     // Open new window on command-click
     if (state & MetaButton) {
-        [_bridge openNewWindowWithURL:cocoaURL frameName:nil];
+        [_bridge openNewWindowWithURL:cocoaURL referrer:referrer(args) frameName:nil];
         return;
     }
     
-    WebCoreBridge *targetBridge = bridgeForFrameName(target);
+    WebCoreBridge *targetBridge = bridgeForFrameName(args.frameName);
 
     // FIXME: KHTML does this in openURL -- we should do this at that level so we don't
     // have the complexity of dealing with the target here.
     KHTMLPart *targetPart = [targetBridge part];
     if (targetPart) {
-        KURL refLess(clickedURL);
+        KURL refLess(url);
         targetPart->m_url.setRef("");
         refLess.setRef("");
         if (refLess.url() == targetPart->m_url.url()) {
-            targetPart->m_url = clickedURL;
-            targetPart->gotoAnchor(clickedURL.ref());
+            targetPart->m_url = url;
+            targetPart->gotoAnchor(url.ref());
             // This URL needs to be added to the back/forward list.
-            [targetBridge addBackForwardItemWithURL:cocoaURL anchor:clickedURL.ref().getNSString()];
+            [targetBridge addBackForwardItemWithURL:cocoaURL anchor:url.ref().getNSString()];
             return;
         }
     }
     
-    [targetBridge loadURL:cocoaURL];
+    [targetBridge loadURL:cocoaURL referrer:referrer(args)];
 }
 
 bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
@@ -291,74 +285,14 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
     return true;
 }
 
-void KWQKHTMLPartImpl::submitForm(const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary)
+void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
 {
-    QString target = _target;
-    if (target.isEmpty() && d->m_doc) {
-        target = d->m_doc->baseTarget();
-    }
-
-    KURL u = part->completeURL( url );
-    if (u.isMalformed()) {
-        // ### ERROR HANDLING!
-        return;
-    }
-
-    QString urlstring = u.url();
-    if (urlstring.find("javascript:", 0, false) == 0) {
-        urlstring = KURL::decode_string(urlstring);
-        part->executeScript(urlstring.right(urlstring.length() - 11));
-        return;
-    }
-
-#ifdef NEED_THIS
-  if (!checkLinkSecurity(u,
-			 i18n( "<qt>The form will be submitted to <BR><B>%1</B><BR>on your local filesystem.<BR>Do you want to submit the form?" ),
-			 i18n( "Submit" )))
-    return;
-#endif
-
-#ifdef NEED_THIS
-  if (!d->m_referrer.isEmpty())
-     args.metaData()["referrer"] = d->m_referrer;
-  args.metaData().insert("main_frame_request",
-                         parentPart() == 0 ? "TRUE":"FALSE");
-  args.metaData().insert("ssl_was_in_use", d->m_ssl_in_use ? "TRUE":"FALSE");
-  args.metaData().insert("ssl_activate_warnings", "TRUE");
-#endif
-
-    if (strcmp(action, "get") == 0) {
-	u.setQuery(QString(formData.data(), formData.size()));
-	[bridgeForFrameName(target) loadURL:u.getNSURL()];
+    if (!args.doPost()) {
+	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() referrer:referrer(args)];
     } else {
-#ifdef NEED_THIS
-    // construct some user headers if necessary
-    if (contentType.isNull() || contentType == "application/x-www-form-urlencoded")
-      args.setContentType( "Content-Type: application/x-www-form-urlencoded" );
-    else // contentType must be "multipart/form-data"
-      args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
-#endif
-	NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
-	[bridgeForFrameName(target) postWithURL:u.getNSURL() data:postData];
+	NSData *postData = [NSData dataWithBytes:args.postData.data() length:args.postData.size()];
+	[bridgeForFrameName(args.frameName) postWithURL:u.getNSURL() referrer:referrer(args) data:postData];
     }
-
-#ifdef NEED_THIS
-  if ( d->m_bParsing || d->m_runningScripts > 0 ) {
-    if( d->m_submitForm ) {
-        return;
-    }
-    d->m_submitForm = new KHTMLPartPrivate::SubmitForm;
-    d->m_submitForm->submitAction = action;
-    d->m_submitForm->submitUrl = url;
-    d->m_submitForm->submitFormData = formData;
-    d->m_submitForm->target = _target;
-    d->m_submitForm->submitContentType = contentType;
-    d->m_submitForm->submitBoundary = boundary;
-    connect(this, SIGNAL(completed()), this, SLOT(submitFormAgain()));
-  }
-  else
-    emit d->m_extension->openURLRequest( u, args );
-#endif
 }
 
 bool KWQKHTMLPartImpl::frameExists(const QString &frameName)

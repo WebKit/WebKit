@@ -1,3 +1,54 @@
+2002-09-10  Darin Adler  <darin@apple.com>
+
+	WebCore part of support for the "Referer" header.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::urlSelected): Use much more of this function.
+        (KHTMLPart::submitForm): Use much more of this function.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Parse the
+	referrer out of the URLArgs and pass it along.
+
+        * kwq/KWQKHTMLPartImpl.h: Change parameters to urlSelected
+	and submitForm to allow KHTML to do more of the work. Add
+	referrer helper function.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::bridgeForFrameName): Pass referrer of nil
+	when opening a blank window.
+        (KWQKHTMLPartImpl::referrer): Extract referrer from metadata.
+        (KWQKHTMLPartImpl::openURLRequest): Pass referrer from args
+	through the bridge.
+        (KWQKHTMLPartImpl::urlSelected): Remove code that duplicates
+	what's in KHTMLPart. Also pass referrer from args through the
+	bridge as above.
+        (KWQKHTMLPartImpl::submitForm): Ditto.
+
+        * kwq/kdeui/kmessagebox.h: Add information member function.
+        * kwq/KWQKMessageBox.mm: (KMessageBox::information): Implement.
+
+        * kwq/kdecore/kurl.h: Add encode_string member function.
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Fix buffer overflow bug, and add an assert so we
+	will notice these overflows even when using the static buffer.
+        (KURL::parse): Added a similar assert, even though I didn't fix
+	any overflow bug here.
+        (KURL::encode_string): Implemented this, but didn't test it.
+
+        * kwq/KWQLoaderImpl.mm: (KWQServeRequest): Pass referrer through
+	the bridge.
+
+        * kwq/WebCoreBridge.h: Add referrer parameters to loadURL, postWithURL,
+	openNewWindowWithURL, and startLoadingResource.
+
+        * kwq/kparts/browserextension.h: Implement setDoPost, setContentType,
+	const version of metaData().
+
+        * kwq/qt/qstring.h: Implement fromLatin1(const char *, int).
+
+        * WebCore-tests.exp: Not sure why, but I needed to remove isMalformed,
+	and the tests seem to still work with it removed.
+
 2002-09-11  David Hyatt  <hyatt@apple.com>
 
 	This patch fixes a slew of bugs.  It is an implementation
@@ -60,7 +111,7 @@
         (RenderStyle::diff):
         * khtml/rendering/render_style.h:
 
-2002-09-10  Richard Williamson (Local)  <rjw@apple.com>
+2002-09-10  Richard Williamson  <rjw@apple.com>
 
         Fixed broken DOM handling of click count.  DOM click 
         events can be tested with Labyrinth/Test/html/mousetest.html.
@@ -204,9 +255,9 @@
 	to do nothing.
         (QApplication::restoreOverrideCursor): Ditto.
 
-2002-09-09  Richard Williamson (Home)  <rjw@apple.com>
+2002-09-09  Richard Williamson  <rjw@apple.com>
 
-        Implemented  disable images automatically (2896319).
+        Implemented disable images automatically (2896319).
 
         * kwq/KWQKHTMLSettings.mm:
         (KHTMLSettings::autoLoadImages):
@@ -474,7 +525,7 @@
 
 === Alexander-22 ===
 
-2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+2002-09-05  Richard Williamson  <rjw@apple.com>
 
         Add the first child text node of the element to the
         element dictionary.  This will be used as a link 'label'.
@@ -483,14 +534,14 @@
         * kwq/WebCoreBridge.mm:
         (-[WebCoreBridge elementAtPoint:]):
 
-2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+2002-09-05  Richard Williamson  <rjw@apple.com>
     
         Removed debugging.
         
         * khtml/khtml_part.cpp:
         (KHTMLPart::closeURL):
 
-2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+2002-09-05  Richard Williamson  <rjw@apple.com>
 
         Always call KHTMLPart::closeURL when a new document is loaded.
         
@@ -676,7 +727,7 @@
         (RenderLayer::RenderZTreeNode::constructLayerList):
         * khtml/rendering/render_layer.h:
 
-2002-08-28  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-28  Richard Williamson  <rjw@apple.com>
 
         More tweaks to ccs.
         Added underline to visited links.
@@ -684,7 +735,7 @@
         
         * khtml/css/html4.css:
 
-2002-08-28  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-28  Richard Williamson  <rjw@apple.com>
 
         Fixed outline of for active link style.
         

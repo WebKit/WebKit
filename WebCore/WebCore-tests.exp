@@ -201,7 +201,6 @@ __ZNK22KWQPtrDictIteratorImpl10currentKeyEv
 __ZNK22KWQPtrDictIteratorImpl5countEv
 __ZNK22KWQPtrDictIteratorImpl7currentEv
 __ZNK24KWQValueListIteratorImpl4nodeEv
-__ZNK4KURL11isMalformedEv
 __ZNK4KURL3refEv
 __ZNK4KURL3urlEv
 __ZNK4KURL4hostEv
