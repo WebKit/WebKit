@@ -1,5 +1,12 @@
 2004-09-09  Maciej Stachowiak  <mjs@apple.com>
 
+        - rolled out last two changes, they seem to cause a performance regression
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView firstRectForCharacterRange:]):
+
+2004-09-09  Maciej Stachowiak  <mjs@apple.com>
+
         - fixed build
 
         * WebView.subproj/WebHTMLView.m:
