@@ -2891,6 +2891,8 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
 			return;
 		}
 	    }
+
+            style->setTextDecoration(t);
         }
         break;
     }

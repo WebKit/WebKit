@@ -1,3 +1,10 @@
+2003-03-08  David Hyatt  <hyatt@apple.com>
+
+	Check in the patch I actually meant to land.  Somehow what I landed
+	had removed a line that was supposed to be there.
+	
+        * khtml/css/cssstyleselector.cpp:
+
 2003-03-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
