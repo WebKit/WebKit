@@ -20,6 +20,8 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitErrorsPrivate.h>
+#import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -453,6 +455,13 @@
 
 - (NSCachedURLResponse *)willCacheResponse:(NSCachedURLResponse *)cachedResponse
 {
+    // When in private browsing mode, prevent caching to disk
+    if ([cachedResponse storagePolicy] == NSURLCacheStorageAllowed && [[WebPreferences standardPreferences] privateBrowsingEnabled]) {
+        cachedResponse = [[[NSCachedURLResponse alloc] initWithResponse:[cachedResponse response]
+                                                                   data:[cachedResponse data]
+                                                               userInfo:[cachedResponse userInfo]
+                                                          storagePolicy:NSURLCacheStorageAllowedInMemoryOnly] autorelease];
+    }
     [self saveResourceWithCachedResponse:cachedResponse];
     return cachedResponse;
 }

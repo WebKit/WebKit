@@ -1,3 +1,15 @@
+2004-04-20  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3622393>: When in stealth mode, visited webpage 
+        contents should not be cached to disk
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate willCacheResponse:]):
+        if will cache to disk and in stealth mode, replace cache response with
+        an identical one that won't cache to disk.
+
 2004-04-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
