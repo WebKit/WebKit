@@ -534,7 +534,7 @@ NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
         for (n = parent->previousSibling(); n && !n->isElementNode(); n = n->previousSibling());
         int subcount = 0;
         while (n) {
-            if (elementsCanShareStyle(static_cast<ElementImpl*>(n), parent))
+            if (n->renderer() && n->renderer()->style() == parent->renderer()->style())
                 return n->lastChild();
             if (subcount++ == siblingThreshold)
                 return 0;
@@ -543,7 +543,7 @@ NodeImpl* CSSStyleSelector::locateCousinList(ElementImpl* parent)
         if (!n && parent->parentNode() && parent->parentNode()->isElementNode())
             n = locateCousinList(static_cast<ElementImpl*>(parent->parentNode()));
         while (n) {
-            if (elementsCanShareStyle(static_cast<ElementImpl*>(n), parent))
+            if (n->renderer() && n->renderer()->style() == parent->renderer()->style())
                 return n->lastChild();
             if (subcount++ == siblingThreshold)
                 return 0;

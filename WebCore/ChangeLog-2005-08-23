@@ -1,5 +1,20 @@
 2004-10-05  David Hyatt  <hyatt@apple.com>
 
+	Fix style sharing optimization to be fast again.  Go back to using pointer comparisons when looking for
+	cousins to share.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::locateCousinList):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyleInternal):
+        * khtml/rendering/render_object.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::recalcStyle):
+
+2004-10-05  David Hyatt  <hyatt@apple.com>
+
 	Fix lists so that they properly participate in line layout as though they are text (when text bullets are
 	used) and as images (when image bullets are used).
 	
