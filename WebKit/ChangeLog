@@ -1,3 +1,15 @@
+2004-06-17  Richard Williamson   <rjw@apple.com>
+
+		Changed private headers to be pubic for npapi.h and npfunctions.h.  That
+		API was approved but never marked as public in the project file.  This change does
+		not make npruntime.h public, which contains the not yet approved changes
+		for script-ability of netscape plugins.  Unfortunately, that API will not
+		be public for WWDC.
+				
+        Reviewed by Chris.
+
+        * WebKit.pbproj/project.pbxproj:
+
 2004-06-17  Trey Matteson  <trey@apple.com>
 
 	3698514 - coordinates in ondragstart and ondrag events are wrong
@@ -49,16 +61,25 @@
         to get CGImageRef; can't include an individual header.
 
 2004-06-15  Richard Williamson   <rjw@apple.com>
+<<<<<<< ChangeLog
+=======
 
         Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
 
         Flip the policy for exposing Objective-C methods and properties.
 
         Reviewed by Trey.
+>>>>>>> 1.2589
 
-        * Plugins.subproj/WebPluginPackage.m:
-        (+[NSObject isSelectorExcludedFromWebScript:]):  Just return YES.
-        (+[NSObject isKeyExcludedFromWebScript:]):  Just return YES.
+	Fixed <rdar://problem/3695875>: Objective-C instances that are exported to JavaScript are too promiscuous
+	
+	Flip the policy for exposing Objective-C methods and properties.
+	
+	Reviewed by Trey.
+	
+	* Plugins.subproj/WebPluginPackage.m:
+	(+[NSObject isSelectorExcludedFromWebScript:]):  Just return YES.
+	(+[NSObject isKeyExcludedFromWebScript:]):  Just return YES.
 
 2004-06-15  Trey Matteson  <trey@apple.com>
 
