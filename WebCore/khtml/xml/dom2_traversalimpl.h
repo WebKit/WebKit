@@ -4,7 +4,7 @@
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2004 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -39,22 +39,21 @@ class DocumentImpl;
 class NodeFilterImpl : public khtml::Shared<NodeFilterImpl>
 {
 public:
-    NodeFilterImpl() {}
     NodeFilterImpl(NodeFilterCondition *);
     ~NodeFilterImpl();
     
     short acceptNode(const Node &) const;
     
 private:
-    NodeFilterImpl(const NodeFilterImpl &) : khtml::Shared<NodeFilterImpl>() {}
-    NodeFilterImpl &operator=(const NodeFilterImpl &) { return *this; }
+    NodeFilterImpl(const NodeFilterImpl &);
+    NodeFilterImpl &operator=(const NodeFilterImpl &);
+
     NodeFilterCondition *m_condition;
 };
 
 class TraversalImpl : public khtml::Shared<TraversalImpl>
 {
 public:
-    TraversalImpl();
     TraversalImpl(NodeImpl *, long whatToShow, NodeFilterImpl *, bool expandEntityReferences);
     ~TraversalImpl();
 
@@ -74,6 +73,9 @@ public:
     short acceptNode(NodeImpl *) const;
 
 private:
+    TraversalImpl(const TraversalImpl &);
+    TraversalImpl &operator=(const TraversalImpl &);
+    
     NodeImpl *m_root;
     long m_whatToShow;
     NodeFilterImpl *m_filter;
@@ -101,9 +103,8 @@ public:
     void notifyBeforeNodeRemoval(NodeImpl *removed);
 
 private:
-    NodeIteratorImpl() {};
-    NodeIteratorImpl(const NodeIteratorImpl &) : TraversalImpl() {}
-    NodeIteratorImpl &operator=(const NodeIteratorImpl &) { return *this; }
+    NodeIteratorImpl(const NodeIteratorImpl &);
+    NodeIteratorImpl &operator=(const NodeIteratorImpl &);
     
     void setReferenceNode(NodeImpl *);
     void setPointerBeforeReferenceNode(bool flag=true) { m_beforeReferenceNode = flag; }
@@ -135,9 +136,8 @@ public:
     NodeImpl *nextNode();
 
 private:
-    TreeWalkerImpl() {};
-    TreeWalkerImpl(const TreeWalkerImpl &) : TraversalImpl() {}
-    TreeWalkerImpl &operator=(const TreeWalkerImpl &) { return *this; }
+    TreeWalkerImpl(const TreeWalkerImpl &);
+    TreeWalkerImpl &operator=(const TreeWalkerImpl &);
 
     // convenience for when it is known there will be no exception
     void setCurrentNode(NodeImpl *);

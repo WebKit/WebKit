@@ -5,7 +5,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -23,17 +23,18 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "dom/dom_exception.h"
-#include "dom_docimpl.h"
 #include "dom2_rangeimpl.h"
+
+#include "dom/dom_exception.h"
 #include "dom_textimpl.h"
 #include "dom_xmlimpl.h"
 #include "html/html_elementimpl.h"
 
 #include "render_block.h"
 
-using namespace DOM;
-using namespace khtml;
+using khtml::RenderBlock;
+
+namespace DOM {
 
 RangeImpl::RangeImpl(DocumentPtr *_ownerDocument)
 {
@@ -813,32 +814,16 @@ DOMString RangeImpl::toString( int &exceptioncode )
     }
 
     DOMString text = "";
-    NodeImpl *n = m_startContainer;
-    while(n) {
-        if(n->nodeType() == DOM::Node::TEXT_NODE ||
-           n->nodeType() == DOM::Node::CDATA_SECTION_NODE) {
-
+    NodeImpl *pastEnd = pastEndNode();
+    for (NodeImpl *n = startNode(); n != pastEnd; n = n->traverseNextNode()) {
+        if (n->nodeType() == DOM::Node::TEXT_NODE || n->nodeType() == DOM::Node::CDATA_SECTION_NODE) {
             DOMString str = static_cast<TextImpl *>(n)->data().copy();
             if (n == m_endContainer)
                 str.truncate(m_endOffset);
             if (n == m_startContainer)
-                str.remove(0,m_startOffset);
+                str.remove(0, m_startOffset);
             text += str;
-            if (n == m_endContainer)
-                break;
         }
-        else if (n->parentNode() == m_endContainer && !n->nextSibling()) {
-            break;
-        }
-        //if (n == m_endContainer) break;
-        NodeImpl *next = n->firstChild();
-        if (!next) next = n->nextSibling();
-
-        while( !next && n->parentNode() ) {
-            n = n->parentNode();
-            next = n->nextSibling();
-        }
-        n = next;
     }
     return text;
 }
@@ -1293,44 +1278,10 @@ void RangeImpl::setEndContainer(NodeImpl *_endContainer)
         m_endContainer->ref();
 }
 
-void RangeImpl::checkDeleteExtract(int &exceptioncode) {
-
-    NodeImpl *start;
-    if (m_startContainer->nodeType() != Node::TEXT_NODE &&
-	m_startContainer->nodeType() != Node::CDATA_SECTION_NODE &&
-	m_startContainer->nodeType() != Node::COMMENT_NODE &&
-	m_startContainer->nodeType() != Node::PROCESSING_INSTRUCTION_NODE) {
-
-	start = m_startContainer->childNode(m_startOffset);
-	if (!start) {
-	    if (m_startContainer->lastChild())
-		start = m_startContainer->lastChild()->traverseNextNode();
-	    else
-		start = m_startContainer->traverseNextNode();
-	}
-    }
-    else
-	start = m_startContainer;
-
-    NodeImpl *end;
-    if (m_endContainer->nodeType() != Node::TEXT_NODE &&
-	m_endContainer->nodeType() != Node::CDATA_SECTION_NODE &&
-	m_endContainer->nodeType() != Node::COMMENT_NODE &&
-	m_endContainer->nodeType() != Node::PROCESSING_INSTRUCTION_NODE) {
-
-	end = m_endContainer->childNode(m_endOffset);
-	if (!end) {
-	    if (m_endContainer->lastChild())
-		end = m_endContainer->lastChild()->traverseNextNode();
-	    else
-		end = m_endContainer->traverseNextNode();
-	}
-    }
-    else
-	end = m_endContainer;
-
-    NodeImpl *n;
-    for (n = start; n != end; n = n->traverseNextNode()) {
+void RangeImpl::checkDeleteExtract(int &exceptioncode)
+{
+    NodeImpl *pastEnd = pastEndNode();
+    for (NodeImpl *n = startNode(); n != pastEnd; n = n->traverseNextNode()) {
 	if (n->isReadOnly()) {
 	    exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
 	    return;
@@ -1347,8 +1298,8 @@ void RangeImpl::checkDeleteExtract(int &exceptioncode) {
     }
 }
 
-
-bool RangeImpl::containedByReadOnly() {
+bool RangeImpl::containedByReadOnly() const
+{
     NodeImpl *n;
     for (n = m_startContainer; n; n = n->parentNode()) {
 	if (n->isReadOnly())
@@ -1361,10 +1312,34 @@ bool RangeImpl::containedByReadOnly() {
     return false;
 }
 
+NodeImpl *RangeImpl::startNode() const
+{
+    switch (m_startContainer->nodeType()) {
+        case Node::CDATA_SECTION_NODE:
+        case Node::COMMENT_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
+        case Node::TEXT_NODE:
+            return m_startContainer;
+    }
+    NodeImpl *child = m_startContainer->childNode(m_startOffset);
+    if (child)
+        return child;
+    return m_startContainer->traverseNextSibling();
+}
 
+NodeImpl *RangeImpl::pastEndNode() const
+{
+    switch (m_endContainer->nodeType()) {
+        case Node::CDATA_SECTION_NODE:
+        case Node::COMMENT_NODE:
+        case Node::PROCESSING_INSTRUCTION_NODE:
+        case Node::TEXT_NODE:
+            return m_endContainer->traverseNextSibling();
+    }
+    NodeImpl *child = m_endContainer->childNode(m_endOffset);
+    if (child)
+        return child->traverseNextSibling();
+    return m_endContainer->traverseNextSibling();
+}
 
-
-
-
-
-
+}

@@ -5,6 +5,7 @@
  * (C) 2000 Gunnstein Lye (gunnstein@netcom.no)
  * (C) 2000 Frederik Holljen (frederik.holljen@hig.no)
  * (C) 2001 Peter Kelly (pmk@post.com)
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -26,10 +27,14 @@
 #ifndef _DOM2_RangeImpl_h_
 #define _DOM2_RangeImpl_h_
 
+#include <qptrlist.h>
 #include "dom/dom2_range.h"
 #include "misc/shared.h"
 
 namespace DOM {
+
+class DocumentPtr;
+class NodeImpl;
 
 class RangeImpl : public khtml::Shared<RangeImpl>
 {
@@ -106,10 +111,13 @@ private:
     void setStartContainer(NodeImpl *_startContainer);
     void setEndContainer(NodeImpl *_endContainer);
     void checkDeleteExtract(int &exceptioncode);
-    bool containedByReadOnly();
+    bool containedByReadOnly() const;
+
+    NodeImpl *startNode() const;
+    NodeImpl *pastEndNode() const;
 };
 
-}; // namespace
+} // namespace
 
 #endif
 

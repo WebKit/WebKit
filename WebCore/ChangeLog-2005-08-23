@@ -1,3 +1,31 @@
+2004-05-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3663659>: (result of toString mistakenly includes all subsequent sibling content)
+
+        * khtml/xml/dom2_rangeimpl.h: Added private startNode() and pastEndNode() functions.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::toString): Rewrote to use startNode(), pastEndNode(), and traverseNextNode().
+        The old code here was wrong, and it was easier to rewrite than fix.
+        (DOM::RangeImpl::checkDeleteExtract): Extracted the logic to compute the start node and the past-end
+        node into separate functions.
+        (DOM::RangeImpl::startNode): Added. Started with code extracted from checkDeleteExtract, but then
+        also fixed bugs by using the new traverseNextSibling. The old code handled cases where the offset was
+        past the last child in a container incorrectly.
+        (DOM::RangeImpl::pastEndNode): Added. Started with code extracted from checkDeleteExtract, but then
+        also fixed bugs by using the new traverseNextSibling. The old code hanlded cases where the offset was
+        past the last child in a container incorrectly, and also iterated one node too few in cases where the
+        end contaier was a text node.
+
+        * khtml/xml/dom2_traversalimpl.h: Removed a bunch of unused and unneeded member functions.
+
+        * khtml/xml/dom_nodeimpl.h: Added traverseNextSibling.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::traverseNextNode): Reformatted the code a little bit.
+        (NodeImpl::traverseNextSibling): Added. Like traverseNextNode except it starts after the node's children
+        instead of starting at the beginning of the first child.
+
 2004-05-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
