@@ -28,7 +28,6 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
-
 // Java does NOT always call finalize (and thus KJS_JSObject_JSFinalize) when
 // it collects an objects.  This presents some difficulties.  We must ensure
 // the a JSObject's corresponding JavaScript object doesn't get collected.  We
@@ -115,7 +114,7 @@ const Bindings::RootObject *KJS::Bindings::rootForImp (ObjectImp *imp)
         for(i = 0; i < count; i++) {
             CFMutableDictionaryRef referencesDictionary = (CFMutableDictionaryRef)allValues[i];
             if (CFDictionaryGetValue(referencesDictionary, imp) != 0) {
-                rootObject = (const Bindings::RootObject *)allKeys[0];
+                rootObject = (const Bindings::RootObject *)allKeys[i];
                 break;
             }
         }
