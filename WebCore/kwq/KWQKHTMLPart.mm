@@ -473,15 +473,12 @@ bool KWQKHTMLPart::canCachePage()
 {
     // Only save page state if:
     // 1.  We're not a frame or frameset.
-    // 2.  The page has no javascript timers.
-    // 3.  The page has no unload handler.
-    // 4.  The page has no password fields.
-    // 5.  The page has no plugins.
-    // 6.  The page has no JavaScript window timeouts.
+    // 2.  The page has no unload handler.
+    // 3.  The page has no password fields.
+    // 4.  The page has no javascript timers.
     if (d->m_doc &&
         (d->m_frames.count() ||
         parentPart() ||
-        d->m_objects.count() ||
         d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT) ||
         d->m_doc->hasPasswordField())) {
         return false;

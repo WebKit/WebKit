@@ -1,3 +1,15 @@
+2003-01-17  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3126141. Allow pages with plugins to be cached.  This is safe
+        because plugins are cleanly started/stopped when their containing views are
+        added/removed from the view hierarchy.
+        
+        Reviewed by trey.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canCachePage):
+
+=======
 2003-01-17  David Hyatt  <hyatt@apple.com>
 
 	The new table code from Lars.  Also includes bug fixes for
