@@ -1,5 +1,25 @@
 2005-01-31  David Harrison  <harrison@apple.com>
 
+        Reviewed by Darin
+
+        <rdar://problem/3850876> AX: button exposed as only an AXImage at http://appleseed.apple.com/ site (<input type=image>)
+
+        * khtml/rendering/render_form.h:
+        (khtml::RenderImageButton::isImageButton):
+        New.
+        * khtml/rendering/render_image.h:
+        (khtml::RenderImage::isImageButton):
+        New.
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject isImageButton]):
+        (-[KWQAccObject actionElement]):
+        (-[KWQAccObject role]):
+        (-[KWQAccObject accessibilityActionNames]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+        Represent RenderImageButton elements as buttons instead of images.
+
+2005-01-31  David Harrison  <harrison@apple.com>
+
         Prevent nil dereference in debug code.
 
         * khtml/xml/dom_nodeimpl.cpp:

@@ -46,6 +46,7 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
+#import "html_formimpl.h"
 #import "html_inlineimpl.h"
 #import "html_imageimpl.h"
 #import "dom_string.h"
@@ -55,8 +56,8 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #import "khtmlview.h"
 #import "khtml_part.h"
 #import "render_canvas.h"
-#import "render_object.h"
 #import "render_image.h"
+#import "render_object.h"
 #import "render_list.h"
 #import "render_style.h"
 #import "render_text.h"
@@ -71,28 +72,29 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 #import "DOMInternal.h"
 
 using DOM::DocumentImpl;
+using DOM::DOMString;
 using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
-using DOM::HTMLMapElementImpl;
 using DOM::HTMLAreaElementImpl;
 using DOM::HTMLCollection;
 using DOM::HTMLCollectionImpl;
+using DOM::HTMLInputElementImpl;
+using DOM::HTMLMapElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
-using DOM::DOMString;
 
-using khtml::plainText;
 using khtml::EVerticalAlign;
-using khtml::RenderObject;
-using khtml::RenderWidget;
-using khtml::RenderCanvas;
-using khtml::RenderText;
+using khtml::plainText;
 using khtml::RenderBlock;
-using khtml::RenderListMarker;
+using khtml::RenderCanvas;
 using khtml::RenderImage;
+using khtml::RenderListMarker;
+using khtml::RenderObject;
 using khtml::RenderStyle;
+using khtml::RenderText;
+using khtml::RenderWidget;
 using khtml::Selection;
 using khtml::TextIterator;
 using khtml::VisiblePosition;
@@ -178,6 +180,19 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     }
   
     return 0;
+}
+
+-(BOOL)isImageButton
+{
+    return m_renderer->isImage() && static_cast<RenderImage*>(m_renderer)->isImageButton();
+}
+
+-(ElementImpl *)actionElement
+{
+    if ([self isImageButton])
+        return static_cast<ElementImpl*>(m_renderer->element());
+
+    return [self anchorElement];
 }
 
 -(KWQAccObject*)firstChild
@@ -338,8 +353,11 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         return NSAccessibilityButtonRole;
     if (m_renderer->isText())
         return NSAccessibilityStaticTextRole;
-    if (m_renderer->isImage())
+    if (m_renderer->isImage()) {
+        if ([self isImageButton])
+            return NSAccessibilityButtonRole;
         return NSAccessibilityImageRole;
+    }
     if (m_renderer->isCanvas())
         return @"AXWebArea";
     if (m_renderer->isBlockFlow())
@@ -688,7 +706,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (NSArray*)accessibilityActionNames
 {
     static NSArray* actions = nil;
-    if ([self anchorElement]) {
+    
+    if ([self actionElement]) {
         if (actions == nil)
             actions = [[NSArray alloc] initWithObjects: NSAccessibilityPressAction, nil];
         return actions;
@@ -712,12 +731,11 @@ static QRect boundingBoxRect(RenderObject* obj)
 - (void)accessibilityPerformAction:(NSString *)action
 {
     if ([action isEqualToString:NSAccessibilityPressAction]) {
-        // Locate the anchor element. If it doesn't exist, just bail.
-        HTMLAnchorElementImpl* anchorElt = [self anchorElement];
-        if (!anchorElt)
+        ElementImpl *actionElement = [self actionElement];
+        if (!actionElement)
             return;
 
-        DocumentImpl* d = anchorElt->getDocument();
+        DocumentImpl* d = actionElement->getDocument();
         if (d) {
             KHTMLPart* p = d->part();
             if (p) {
@@ -725,7 +743,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             }
         }
 
-        anchorElt->accessKeyAction();
+        actionElement->accessKeyAction();
     }
 }
 

@@ -205,6 +205,7 @@ public:
     RenderImageButton(DOM::HTMLInputElementImpl *element);
 
     virtual const char *renderName() const { return "RenderImageButton"; }
+    virtual bool isImageButton() const { return true; }
 };
 
 
