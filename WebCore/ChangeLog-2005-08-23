@@ -1,3 +1,20 @@
+2004-07-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+        
+        Fixed this bug:
+        
+        <rdar://problem/3690704> marking partly bold text italic across blocks wrongly extends the bold section
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ApplyStyleCommandImpl::doApply): Fixed loop that gathers up groups of nodes to
+        pass off to the function that applies styles. While this is meant to be conservative in
+        order to leave the DOM well-formed in all cases, it contained an error where the set
+        of nodes to be styled together erroneously could include a node that was meant for 
+        the next set. Fixed.
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded): Unrelated change to remove DOM:: scope
+        resolution qualifier. Unneeded here.
+
 2004-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

@@ -655,13 +655,18 @@ void ApplyStyleCommandImpl::doApply()
             if (node->childNodeCount() == 0 && node->renderer() && node->renderer()->isInline()) {
                 NodeImpl *runStart = node;
                 while (1) {
-                    if (runStart->parentNode() != node->parentNode() || node->isHTMLElement() || node == end.node() || 
-                        (node->renderer() && !node->renderer()->isInline())) {
-                        applyStyleIfNeeded(runStart, node);
+                    NodeImpl *next = node->traverseNextNode();
+                    // Break if node is the end node, or if the next node does not fit in with
+                    // the current group.
+                    if (node == end.node() || 
+                        runStart->parentNode() != next->parentNode() || 
+                        next->isHTMLElement() || 
+                        (next->renderer() && !next->renderer()->isInline()))
                         break;
-                    }
-                    node = node->traverseNextNode();
+                    node = next;
                 }
+                // Now apply style to the run we found.
+                applyStyleIfNeeded(runStart, node);
             }
             if (node == end.node())
                 break;
@@ -811,7 +816,7 @@ void ApplyStyleCommandImpl::surroundNodeRangeWithElement(NodeImpl *startNode, No
     }
 }
 
-void ApplyStyleCommandImpl::applyStyleIfNeeded(DOM::NodeImpl *startNode, DOM::NodeImpl *endNode)
+void ApplyStyleCommandImpl::applyStyleIfNeeded(NodeImpl *startNode, NodeImpl *endNode)
 {
     StyleChange styleChange = computeStyleChange(Position(startNode, 0), style());
     int exceptionCode = 0;
