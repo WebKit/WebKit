@@ -83,6 +83,8 @@ NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
 NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
 NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
+#define timedLayoutDelay 1.00
+
 @interface NSObject (WebExtraPerformMethod)
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3;
@@ -642,24 +644,20 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             // Start a timer to guarantee that we get an initial layout after
             // X interval, even if the document and resources are not completely
             // loaded.
-            BOOL timedDelayEnabled = [[WebPreferences standardPreferences] _initialTimedLayoutEnabled];
-            if (timedDelayEnabled) {
-                NSTimeInterval defaultTimedDelay = [[WebPreferences standardPreferences] _initialTimedLayoutDelay];
-                double timeSinceStart;
+            double timeSinceStart;
 
-                // If the delay getting to the commited state exceeds the initial layout delay, go
-                // ahead and schedule a layout.
-                timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
-                if (timeSinceStart > (double)defaultTimedDelay) {
-                    LOG(Timing, "performing early layout because commit time, %f, exceeded initial layout interval %f", timeSinceStart, defaultTimedDelay);
-                    [self _timedLayout: nil];
-                }
-                else {
-                    NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
-                    
-                    LOG(Timing, "registering delayed layout after %f seconds, time since start %f", timedDelay, timeSinceStart);
-                    [self _scheduleLayout: timedDelay];
-                }
+            // If the delay getting to the commited state exceeds the initial layout delay, go
+            // ahead and schedule a layout.
+            timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+            if (timeSinceStart > timedLayoutDelay) {
+                LOG(Timing, "performing early layout because commit time, %f, exceeded initial layout interval %f", timeSinceStart, defaultTimedDelay);
+                [self _timedLayout: nil];
+            }
+            else {
+                NSTimeInterval timedDelay = timedLayoutDelay - timeSinceStart;
+                
+                LOG(Timing, "registering delayed layout after %f seconds, time since start %f", timedDelay, timeSinceStart);
+                [self _scheduleLayout: timedDelay];
             }
             return;
         }
@@ -1144,13 +1142,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             // A resource was loaded, but the entire frame isn't complete.  Schedule a
             // layout.
             else {
-                if ([self _state] == WebFrameStateLayoutAcceptable) {
-                    BOOL resourceTimedDelayEnabled = [[WebPreferences standardPreferences] _resourceTimedLayoutEnabled];
-                    if (resourceTimedDelayEnabled) {
-                        NSTimeInterval timedDelay = [[WebPreferences standardPreferences] _resourceTimedLayoutDelay];
-                        [self _scheduleLayout:timedDelay];
-                    }
-                }
+                if ([self _state] == WebFrameStateLayoutAcceptable)
+                    [self _scheduleLayout:timedLayoutDelay];
             }
             return;
         }

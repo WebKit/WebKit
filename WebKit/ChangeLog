@@ -1,3 +1,20 @@
+2004-04-27  David Hyatt  <hyatt@apple.com>
+
+	Eliminate the preferences for timed/resource layouts.  Accessing them is now taking 0.5% on the cvs-base
+	test, so we're just going to hardcode the values instead.
+	
+        Reviewed by mjs
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToLayoutAcceptable]):
+        (-[WebFrame _isLoadComplete]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _objectCacheSize]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _mainReceivedBytesSoFar:fromDataSource:complete:]):
+
 2004-04-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

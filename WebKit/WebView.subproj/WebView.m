@@ -82,6 +82,7 @@ NSString *WebViewProgressFinishedNotification =         @"WebProgressFinishedNot
 
 enum { WebViewVersion = 2 };
 
+#define timedLayoutSize 4096
 
 static NSMutableSet *schemesWithRepresentationsSet;
 
@@ -301,7 +302,6 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
         // If the frame isn't complete it might be ready for a layout.  Perform that check here.
         // Note that transitioning a frame to this state doesn't guarantee a layout, rather it
         // just indicates that an early layout can be performed.
-        int timedLayoutSize = [[WebPreferences standardPreferences] _initialTimedLayoutSize];
         if ((int)bytesSoFar > timedLayoutSize)
             [frame _transitionToLayoutAcceptable];
     }

@@ -34,11 +34,6 @@
 #define WebKitJavaScriptEnabledPreferenceKey @"WebKitJavaScriptEnabled"
 #define WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey @"WebKitJavaScriptCanOpenWindowsAutomatically"
 #define WebKitPluginsEnabledPreferenceKey @"WebKitPluginsEnabled"
-#define WebKitInitialTimedLayoutDelayPreferenceKey @"WebKitInitialTimedLayoutDelay"
-#define WebKitInitialTimedLayoutSizePreferenceKey @"WebKitInitialTimedLayoutSize"
-#define WebKitInitialTimedLayoutEnabledPreferenceKey @"WebKitInitialTimedLayoutEnabled"
-#define WebKitResourceTimedLayoutEnabledPreferenceKey @"WebKitResourceTimedLayoutEnabled"
-#define WebKitResourceTimedLayoutDelayPreferenceKey @"WebKitResourceTimedLayoutDelay"
 #define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"
 #define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
@@ -216,13 +211,8 @@ NS_ENDHANDLER
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
-        @"1.00",                        WebKitInitialTimedLayoutDelayPreferenceKey,
-        @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
-        @"1.00",                        WebKitResourceTimedLayoutDelayPreferenceKey,
         @"4",                           WebKitPageCacheSizePreferenceKey,
         @"4194304",                     WebKitObjectCacheSizePreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitInitialTimedLayoutEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                            WebKitUserStyleSheetLocationPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitShouldPrintBackgroundsPreferenceKey,
@@ -560,16 +550,6 @@ NS_ENDHANDLER
 
 @implementation WebPreferences (WebPrivate)
 
-- (NSTimeInterval)_initialTimedLayoutDelay
-{
-    return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
-}
-
-- (int)_initialTimedLayoutSize
-{
-    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
-}
-
 - (int)_pageCacheSize
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitPageCacheSizePreferenceKey];
@@ -578,21 +558,6 @@ NS_ENDHANDLER
 - (int)_objectCacheSize
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitObjectCacheSizePreferenceKey];
-}
-
-- (BOOL)_initialTimedLayoutEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitInitialTimedLayoutEnabledPreferenceKey];
-}
-
-- (NSTimeInterval)_resourceTimedLayoutDelay
-{
-    return [[NSUserDefaults standardUserDefaults] floatForKey:WebKitResourceTimedLayoutDelayPreferenceKey];
-}
-
-- (BOOL)_resourceTimedLayoutEnabled
-{
-    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
 }
 
 - (NSTimeInterval)_backForwardCacheExpirationInterval
