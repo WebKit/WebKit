@@ -107,7 +107,7 @@ void QApplication::_initialize(){
 	if (principalClass) {
             application = [principalClass sharedApplication];
 	    if (![NSBundle loadNibNamed: mainNibFile owner: application]) {
-                KWQDEBUGLEVEL2(KWQ_LOG_ERROR, "ERROR:  QApplication::_initialize() unable to load %s\n", DEBUG_OBJECT(mainNibFile));
+                KWQDEBUGLEVEL1(KWQ_LOG_ERROR, "ERROR:  QApplication::_initialize() unable to load %s\n", DEBUG_OBJECT(mainNibFile));
             }
         }
     }	
