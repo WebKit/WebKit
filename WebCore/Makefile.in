@@ -27,6 +27,7 @@ SUBDIRS = \
 	src/kdelibs/khtml/java \
 	src/kdelibs/khtml/html \
 	src/kdelibs/khtml/rendering \
+	src/kwq/ \
 	src/kwq/qt \
 	src/kwq/tests/qt \
 	$(NULL)
