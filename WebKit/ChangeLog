@@ -1,7 +1,12 @@
+2002-03-07  John Sullivan  <sullivan@apple.com>
+
+	* Misc.subproj/IFError.m: (-[IFError errorDescription]):
+	Removed a line of debugging spam. Oops!
+
 2002-03-07  Richard Williamson  <rjw@apple.com>
 
         Fixed occasional scroll bar problem in iframes.
-        Fixed occasional problem removing scroll bar onb main page.
+        Fixed occasional problem removing scroll bar on main page.
         
 	* WebView.subproj/IFDynamicScrollBarsView.m: (-[IFDynamicScrollBarsView
 	reflectScrolledClipView:]):
