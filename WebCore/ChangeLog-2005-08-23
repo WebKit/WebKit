@@ -1,3 +1,12 @@
+2003-03-14  David Hyatt  <hyatt@apple.com>
+
+	Make :target match the root element if no #fragment is specified in
+	the URL.
+	
+        Reviewed by john
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by NOBODY (OOPS!).
