@@ -274,31 +274,31 @@
 
 2004-06-01  Richard Williamson   <rjw@apple.com>
 
-		Added support for composite attribute to <CANVAS>
-		Added support for drawImage and drawImageFromRect to <CANVAS>, i.e.:
+        Added support for composite attribute to <CANVAS>
+        Added support for drawImage and drawImageFromRect to <CANVAS>, i.e.:
 
-			<html>
-			<head>
-			<script>
-			
-			var img = new Image(600,600);
-			
-			function drawImage()
-			{
-				var aCanvas = document.getElementById ("canvas1");
-				var context = aCanvas.getContext("context-2d");
-				context.drawImage (img, 0, 0, 600, 600, "copy");
-			}
-			
-			img.onload = drawImage;
-			img.src = "http://www.google.com/images/logo.gif";
-			
-			</script>
-			</head>
-			<body>
-			<canvas id="canvas1" width=600 height=600>
-			</body>
-			<html>
+            <html>
+            <head>
+            <script>
+            
+            var img = new Image(600,600);
+            
+            function drawImage()
+            {
+                    var aCanvas = document.getElementById ("canvas1");
+                    var context = aCanvas.getContext("context-2d");
+                    context.drawImage (img, 0, 0, 600, 600, "copy");
+            }
+            
+            img.onload = drawImage;
+            img.src = "http://www.google.com/images/logo.gif";
+            
+            </script>
+            </head>
+            <body>
+            <canvas id="canvas1" width=600 height=600>
+            </body>
+            <html>
 
         Reviewed by Trey.
 
