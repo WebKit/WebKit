@@ -448,6 +448,11 @@
     return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
 }
 
+- (BOOL)_isCommitted
+{
+    return _private->committed;
+}
+
 -(void)_commitIfReady
 {
     if (_private->contentPolicy == WebContentPolicyShow && _private->gotFirstByte && !_private->committed) {

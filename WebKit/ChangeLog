@@ -1,3 +1,46 @@
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+        More refactoring. Change bridge to get the data source via a
+	method instead of straight from the ivar, and in the method,
+	assert that the data source is not nil and is not
+	provisional. Turns out no one was using it while provisional,
+	which is great. This means we can eliminate the provisional
+	concept from the bridge interface as the next step.
+
+	* WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dataSource]): New method to get data source - assert
+	it is not nil, and committed.
+        (-[WebBridge frame]): Get data source from method.
+        (-[WebBridge childFrames]): Likewise.
+        (-[WebBridge descendantFrameNamed:]): Likewise. 
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]): Likewise.
+        (-[WebBridge openNewWindowWithURL:]): Likewise.
+        (-[WebBridge areToolbarsVisible]): Likewise.
+        (-[WebBridge setToolbarsVisible:]): Likewise.
+        (-[WebBridge areScrollbarsVisible]): Likewise.
+        (-[WebBridge setScrollbarsVisible:]): Likewise.
+        (-[WebBridge isStatusBarVisible]): Likewise.
+        (-[WebBridge setStatusBarVisible:]): Likewise.
+        (-[WebBridge setWindowFrame:]): Likewise.
+        (-[WebBridge window]): Likewise.
+        (-[WebBridge setTitle:]): Likewise.
+        (-[WebBridge setStatusText:]): Likewise.
+        (-[WebBridge mainFrame]): Likewise.
+        (-[WebBridge frameNamed:]): Likewise.
+        (-[WebBridge receivedData:withDataSource:]): Likewise.
+        (-[WebBridge startLoadingResource:withURL:]): Likewise.
+        (-[WebBridge objectLoadedFromCache:size:]): Likewise.
+        (-[WebBridge setDataSource:]): Likewise.
+        (-[WebBridge openedByScript]): Likewise.
+        (-[WebBridge setOpenedByScript:]): Likewise.
+        (-[WebBridge setIconURL:]): Likewise.
+        (-[WebBridge setIconURL:withType:]): Likewise.
+        * WebView.subproj/WebDataSourcePrivate.h,
+	WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _isCommitted]): New private method to check if a
+	data source is committed, for the benefit of WebBridge assertions.
+
 2002-07-20  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Turn stricter warnings back on now that we

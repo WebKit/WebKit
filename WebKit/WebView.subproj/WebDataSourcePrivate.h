@@ -116,6 +116,7 @@
 // This returns nil if the representation is not an WebHTMLRepresentation.
 - (WebBridge *)_bridge;
 
+- (BOOL)_isCommitted;
 - (void)_commitIfReady;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
