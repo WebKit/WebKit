@@ -26,6 +26,10 @@
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
+#import <QD/QuickdrawPriv.h>
+
+// This is not yet in QuickdrawPriv.h, although it's supposed to be.
+void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int drawingType);
 
 // FIXME: Why 0.1? Why not 0? Why not an even larger number?
 #define NullEventIntervalActive 	0.1
@@ -835,11 +839,27 @@ typedef struct {
     return YES;
 }
 
+-(void)tellQuickTimeToChill
+{
+    // Make a call to the secret QuickDraw API that makes QuickTime calm down.
+    WindowRef windowRef = [[self window] windowRef];
+    if (!windowRef) {
+        return;
+    }
+    CGrafPtr port = GetWindowPort(windowRef);
+    Rect bounds;
+    GetPortBounds(port, &bounds);
+    CallDrawingNotifications(port, &bounds, kBitsProc);
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)newWindow
 {
+    [self tellQuickTimeToChill];
+
     // We must remove the tracking rect before we move to the new window.
     // Once we move to the new window, it will be too late.
     [self removeTrackingRect];
+
     [super viewWillMoveToWindow:newWindow];
 }
 
@@ -858,6 +878,7 @@ typedef struct {
 
 -(void)viewHasMoved:(NSNotification *)notification
 {
+    [self tellQuickTimeToChill];
     [self setWindow];
     [self resetTrackingRect];
 }

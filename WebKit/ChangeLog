@@ -2,6 +2,18 @@
 
         Reviewed by Don.
 
+	- fixed 3136801 -- scrolling a page that contains a QuickTime movie leaves garbage behind
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView tellQuickTimeToChill]): Added. Calls a QuickDraw SPI
+	CallDrawingNotifications to let QuickTime know it should take a nature break.
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]): Call tellQuickTimeToChill.
+        (-[WebBaseNetscapePluginView viewHasMoved:]): Call tellQuickTimeToChill.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
 	- follow-on to my fix for 3125877 that fixes a crash I observed when a plug-in fails to NPP_New
         
         I filed bug 3136870 about the fact that we don't do a good job reporting the error.
