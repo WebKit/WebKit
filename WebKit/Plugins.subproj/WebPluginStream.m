@@ -50,7 +50,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     NPP_URLNotify = 	[view NPP_URLNotify];
     
     URLString = [theURL absoluteString];
-    cURL = (char *)malloc([URLString length]+1);
+    cURL = (char *)malloc([URLString cStringLength]+1);
     [URLString getCString:cURL];
     
     npStream.ndata = self;
@@ -214,6 +214,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
     [(IFWebController *)[view webController] _didStopLoading:URL];
+    // FIXME: This next line is not going to work. We don't remember the new URL.
     [(IFWebController *)[view webController] _didStartLoading:url];
 }
 

@@ -47,11 +47,12 @@
 
 - (void)dealloc
 {
+    WEBKIT_ASSERT(url == nil);
+    
     part->deref();
     [dataSource release];
     [resourceData release];
     [encoding release];
-    [url release];
     [MIMEType release];
     [super dealloc];
 }
@@ -60,6 +61,9 @@
 // Also, this method should never be passed a IFContentPolicyNone.
 - (void)setContentPolicy:(IFContentPolicy)theContentPolicy
 {
+    WEBKIT_ASSERT(contentPolicy == IFContentPolicyNone);
+    WEBKIT_ASSERT(theContentPolicy != IFContentPolicyNone);
+    
     contentPolicy = theContentPolicy;
     
     if(loadFinished)
@@ -68,7 +72,10 @@
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
+    
+    WEBKIT_ASSERT(url == nil);
+    
     url = [[sender url] retain];
     [(IFWebController *)[dataSource controller] _didStartLoading:url];
 }
@@ -76,7 +83,9 @@
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
+    
+    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
     [downloadHandler release];
     
@@ -87,12 +96,16 @@
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [url release];
+    url = nil;
 }
 
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
+    
+    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
     loadFinished = YES;
     
@@ -111,20 +124,24 @@
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [url release];
+    url = nil;
 }
 
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
-	int contentLength = [sender contentLength];
-	int contentLengthReceived = [sender contentLengthReceived];
-	
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
+    int contentLength = [sender contentLength];
+    int contentLengthReceived = [sender contentLengthReceived];
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", DEBUG_OBJECT([sender url]), data, [data length]);
+    
+    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
     
     // Check the mime type and ask the client for the content policy.
     if(!examinedInitialData){
         MIMEType = [[sender contentType] retain];
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", [MIMEType cString]);
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(MIMEType));
         [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:MIMEType];
         
         // FIXME: Remove/replace IFMIMEHandler stuff
@@ -170,31 +187,39 @@
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, result = %s\n", [[[sender url] absoluteString] cString], [[result errorDescription] lossyCString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s, result = %s\n", DEBUG_OBJECT([sender url]), DEBUG_OBJECT([result errorDescription]));
 
+    WEBKIT_ASSERT([url isEqual:[sender redirectedURL] ? [sender redirectedURL] : [sender url]]);
+    
     [downloadHandler release];
 
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
     loadProgress->totalToLoad = [sender contentLength];
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
-    [(IFWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 	partialProgress: loadProgress fromDataSource: dataSource];
+    [(IFWebController *)[dataSource controller] _mainReceivedError:result forResource:[[sender url] absoluteString] partialProgress:loadProgress fromDataSource:dataSource];
     [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [url release];
+    url = nil;
 }
 
 
-- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)URL
+- (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)newURL
 {
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_REDIRECT, "url = %s\n", [[URL absoluteString] cString]);
-    part->impl->setBaseURL([[URL absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_REDIRECT, "url = %s\n", DEBUG_OBJECT(newURL));
     
-    [dataSource _setFinalURL: URL];
+    WEBKIT_ASSERT(url != nil);
     
-    [[dataSource _locationChangeHandler] serverRedirectTo: URL forDataSource: dataSource];
-    [(IFWebController *)[dataSource controller] _didStopLoading: url];
-    [(IFWebController *)[dataSource controller] _didStartLoading: URL];
+    [(IFWebController *)[dataSource controller] _didStopLoading:url];
+    [newURL retain];
     [url release];
-    url = [URL retain];
+    url = newURL;
+    [(IFWebController *)[dataSource controller] _didStartLoading:url];
+
+    part->impl->setBaseURL([[url absoluteString] cString]);
+    [dataSource _setFinalURL:url];
+    
+    [[dataSource _locationChangeHandler] serverRedirectTo:url forDataSource:dataSource];
 }
 
 
@@ -205,6 +230,8 @@
     IFContentHandler *contentHandler;
     IFWebFrame *frame;
         
+    WEBKIT_ASSERT(url != nil);
+    
     if(contentPolicy == IFContentPolicyShow){
         
         if(handlerType == IFMIMEHANDLERTYPE_NIL || handlerType == IFMIMEHANDLERTYPE_HTML) {
@@ -257,6 +284,8 @@
     NSString *fakeHTMLDocument;
     const char *fakeHTMLDocumentBytes;
     IFContentHandler *contentHandler;
+    
+    WEBKIT_ASSERT(url != nil);
     
     if(contentPolicy == IFContentPolicyShow){
         if(handlerType == IFMIMEHANDLERTYPE_TEXT) {

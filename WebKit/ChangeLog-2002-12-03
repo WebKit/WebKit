@@ -1,3 +1,14 @@
+2002-06-11  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	Add lots of assertions that allowed me to find the "leak the world" bug that Ken
+	fixed in WebFoundation. These are a good idea anyway.
+
+	* Plugins.subproj/IFPluginStream.mm:
+	(-[IFPluginStream initWithURL:pluginPointer:notifyData:attributes:]): Use cStringLength
+	to get the length for the cString rather than assuming that length will be right.
+	(-[IFPluginStream IFURLHandle:didRedirectToURL:]): Add a FIXME.
+
 2002-06-11  John Sullivan  <sullivan@apple.com>
 
 	Made methods that convert bookmarks to and from
