@@ -1,3 +1,19 @@
+2002-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed Radar 2891272 (JavaScript crashes loading quicktime.com and
+	apple.com)
+
+	* kjs/object.cpp: (ObjectImp::~ObjectImp): Don't call setGCAlloc
+	on object internals pointed to, because they may have already been
+	collected by the time this object is collected, and in that case
+	we would corrupt the malloc arena.
+
+	* Makefile.am: Make the stamp file depend on all the sources and
+	headers so the framework gets rebuilt properly.
+
+	* JavaScriptCore.pbproj/project.pbxproj: Some random numbers moved
+	around. No idea what I really changed.
+
 2002-03-30  Darin Adler  <darin@apple.com>
 
 	* kjs/grammar.y: Took out Id tag so we won't constantly need to

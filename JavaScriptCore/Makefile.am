@@ -12,7 +12,7 @@ kjs_testkjs_LDFLAGS = -F$(SYMROOTS) -framework JavaScriptCore
 BUILT_SOURCES = JavaScriptCore-stamp
 CLEANFILES = $(BUILT_SOURCES)
 
-JavaScriptCore-stamp:
+JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
 	pbxbuild -buildstyle $(BUILDSTYLE)
 	touch JavaScriptCore-stamp
 
