@@ -435,6 +435,12 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
         return;
     }
 
+    // Open new window on command-click
+    if (state & MetaButton) {
+        [[getDataSource() controller] openNewWindowWithURL:clickedURL.getNSURL()];
+        return;
+    }
+
 	m_url.setRef ("");
 	refLess.setRef ("");
 	if (refLess.url() == m_url.url()){
@@ -928,6 +934,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
             ->setSelection(d->m_selectionEnd.handle(),d->m_endOffset,
                            d->m_selectionStart.handle(),d->m_startOffset);
       }
+    }
 #else
       if ( d->m_doc && d->m_view ) {
         QPoint diff( _mouse->globalPos() - d->m_dragLastPos );
@@ -936,8 +943,8 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
           d->m_view->scrollBy( -diff.x(), -diff.y() );
           d->m_dragLastPos = _mouse->globalPos();
         }
-#endif
     }
+#endif
   }
 #endif
 }
@@ -953,11 +960,6 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     // Used to prevent mouseMoveEvent from initiating a drag before
     // the mouse is pressed again.
     d->m_bMousePressed = false;
-    
-    // HACK!  FIXME!
-    if (d->m_strSelectedURL != QString::null) {
-        urlSelected(d->m_strSelectedURL, 0,0, event->target().string());
-    }
     
     #ifndef _KWQ_
     #define QT_NO_CLIPBOARD 1

@@ -92,6 +92,11 @@
 }
 
 
+- (void)openNewWindowWithURL:(NSURL *)url
+{
+    // Default implementation does nothing
+}
+
 
 // ---------------------------------------------------------------------
 // IFLoadHandler

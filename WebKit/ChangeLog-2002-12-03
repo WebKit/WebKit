@@ -1,3 +1,24 @@
+2002-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of the fix for:
+
+	Radar 2896391 - command-click should open link in new window
+	
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController openNewWindowWithURL:]): Default
+	implementation silently does nothing.
+	* WebView.subproj/IFWebController.h: Add openNewWindowWithURL:
+	method.
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView _addModifiers:toState:]): Split out modifier key
+	handling to here. Treat Command as Meta.
+	(-[IFWebView mouseUp:]): Use new method to set key modifiers for
+	mouse events.
+	(-[IFWebView mouseDown:]): Use new method to set key modifiers for
+	mouse events.
+	(-[IFWebView keyDown:]): Use new shared code for key modifiers.
+	(-[IFWebView keyUp:]): Use new shared code for key modifiers.
+
 2002-05-23  Kenneth Kocienda  <kocienda@apple.com>
 
         Fixes for these bugs:

@@ -468,6 +468,18 @@
         [self setNeedsLayout: YES];
 }
 
+- (void)_addModifiers:(unsigned)modifiers toState:(int *)state
+{
+    if (modifiers & NSControlKeyMask)
+        *state |= Qt::ControlButton;
+    if (modifiers & NSShiftKeyMask)
+        *state |= Qt::ShiftButton;
+    if (modifiers & NSAlternateKeyMask)
+        *state |= Qt::AltButton;
+    // Mapping command to meta is slightly questionable
+    if (modifiers & NSCommandKeyMask)
+        *state |= Qt::MetaButton;
+}
 
 - (void)mouseUp: (NSEvent *)event
 {
@@ -491,6 +503,8 @@
     }
     NSPoint p = [event locationInWindow];
     
+    [self _addModifiers:[event modifierFlags] toState:&state];
+
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
@@ -520,6 +534,8 @@
     }
     NSPoint p = [event locationInWindow];
     
+    [self _addModifiers:[event modifierFlags] toState:&state];
+
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
@@ -550,12 +566,7 @@
     NSLog (@"keyDown: %@\n", event);
     int state = 0;
     
-    if ([event modifierFlags] & NSControlKeyMask)
-        state |= Qt::ControlButton;
-    if ([event modifierFlags] & NSShiftKeyMask)
-        state |= Qt::ShiftButton;
-    if ([event modifierFlags] & NSAlternateKeyMask)
-        state |= Qt::AltButton;
+    [self _addModifiers:[event modifierFlags] toState:&state];
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
 
     
@@ -570,12 +581,7 @@
     NSLog (@"keyUp: %@\n", event);
     int state = 0;
     
-    if ([event modifierFlags] & NSControlKeyMask)
-        state |= Qt::ControlButton;
-    if ([event modifierFlags] & NSShiftKeyMask)
-        state |= Qt::ShiftButton;
-    if ([event modifierFlags] & NSAlternateKeyMask)
-        state |= Qt::AltButton;
+    [self _addModifiers:[event modifierFlags] toState:&state];
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
 
     

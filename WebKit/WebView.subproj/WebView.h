@@ -78,6 +78,8 @@
 // screen goemetry.  Essentially all the 'view' items that are
 // accessible from Javascript.
 
+// FIXME: not strictly a scripting issue
+- (void)openNewWindowWithURL:(NSURL *)url;
 @end
 
 /*

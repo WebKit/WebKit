@@ -39,6 +39,7 @@
 @protocol IFWebController
 - (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource inScrollView: (BOOL)inScrollView;
 - (IFWebFrame *)frameNamed: (NSString *)name;
+- (void)openNewWindowWithURL: (NSURL *)url;
 @end
 
 @interface IFBaseWebController

@@ -1,3 +1,25 @@
+2002-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixes for the following (the first bug also requires WebKit and
+	WebBrowser changes):
+	
+	Radar 2896391 - command-click should open link in new window
+	Radar 2935858 - two mails for each mailto:
+
+	* khtml/html/html_inlineimpl.cpp:
+	(HTMLAnchorElementImpl::defaultEventHandler): Set flag for Meta
+	key in addition to Control, Shift and Alt, since the Command key
+	is treated as Meta.
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::urlSelected): Open a new window if the user
+	command-clicked.
+	(KHTMLPart::khtmlMouseMoveEvent): Clean up use of braces and ifdefs to
+	make prepare-ChangeLog happy.
+	(KHTMLPart::khtmlMouseReleaseEvent): Remove code that tried to
+	process link click events here. This made link clicks get
+	processed twice, now that mouse events are hooked up for real.
+	* kwq/external.h: prototype openNewWindowWithURL: method.
+
 2002-05-23  Kenneth Kocienda  <kocienda@apple.com>
 
         More work to fix this bug:

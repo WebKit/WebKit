@@ -125,6 +125,10 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                     state |= Qt::ShiftButton;
                 if ( e->altKey() )
                     state |= Qt::AltButton;
+#ifdef APPLE_CHANGES
+                if ( e->metaKey() )
+                    state |= Qt::MetaButton;
+#endif
 
                 if ( e->button() == 0 )
                     button = Qt::LeftButton;
