@@ -45,10 +45,10 @@ static IFPreferences *_standardPreferences = nil;
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0", 		WebKitLogLevelPreferenceKey,
-        @"Lucida Grande",       WebKitStandardFontPreferenceKey,
+        @"Georgia", 		WebKitStandardFontPreferenceKey,
         @"Monaco",	  	WebKitFixedFontPreferenceKey,
         @"Georgia", 		WebKitSerifFontPreferenceKey,
-        @"Lucida Grande", 	WebKitSansSerifFontPreferenceKey,
+        @"Arial", 		WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery", 	WebKitCursiveFontPreferenceKey,
         @"Papyrus", 		WebKitFantasyFontPreferenceKey,
         @"6", 			WebKitMinimumFontSizePreferenceKey,

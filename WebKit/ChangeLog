@@ -1,3 +1,8 @@
+2002-03-27  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]): Switch back
+        to serif font, since using Luicida Grande was exposing some font bugs.
+
 2002-03-26  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Fixed to build with standalone
