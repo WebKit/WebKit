@@ -1,0 +1,20 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {cancel = id; logIn = id; }; 
+            CLASS = IFAuthenticationPanel; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                imageView = id; 
+                mainLabel = id; 
+                panel = id; 
+                password = id; 
+                smallLabel = id; 
+                username = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

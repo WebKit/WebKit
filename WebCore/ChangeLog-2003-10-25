@@ -1,3 +1,16 @@
+2002-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+	Notify when loads of sub-URLs start and stop, so panels for these
+	can be attached to the right windows.
+
+	* kwq/KWQKloader.mm:
+	(-[URLLoadClient IFURLHandleResourceDidBeginLoading:]):
+	(-[URLLoadClient IFURLHandleResourceDidCancelLoading:]):
+	(-[URLLoadClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[URLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[URLLoadClient IFURLHandle:didRedirectToURL:]):
+	* kwq/external.h:
+
 2002-05-22  Richard J. Williamson  <rjw@apple.com>
     
 

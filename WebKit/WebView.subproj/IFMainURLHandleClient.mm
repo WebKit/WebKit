@@ -69,6 +69,8 @@
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", [[[sender url] absoluteString] cString]);
+    url = [[sender url] retain];
+    [(IFBaseWebController *)[dataSource controller] _didStartLoading:url];
 }
 
 
@@ -84,6 +86,7 @@
     [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
+    [(IFBaseWebController *)[dataSource controller] _didStopLoading:url];
 }
 
 
@@ -107,6 +110,7 @@
     [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];
+    [(IFBaseWebController *)[dataSource controller] _didStopLoading:url];
 }
 
 
@@ -127,7 +131,6 @@
         handlerType = [IFMIMEHandler MIMEHandlerTypeForMIMEType:MIMEType];
         
         encoding = [[sender characterSet] retain];
-        url = [[sender url] retain];
         examinedInitialData = YES;
     }
     
@@ -176,6 +179,7 @@
     loadProgress->bytesSoFar = [sender contentLengthReceived];
 
     [(IFBaseWebController *)[dataSource controller] _mainReceivedError: result forResource: [[sender url] absoluteString] 	partialProgress: loadProgress fromDataSource: dataSource];
+    [(IFBaseWebController *)[dataSource controller] _didStopLoading:url];
 }
 
 
@@ -187,6 +191,10 @@
     [dataSource _setFinalURL: URL];
     
     [[dataSource _locationChangeHandler] serverRedirectTo: URL forDataSource: dataSource];
+    [(IFBaseWebController *)[dataSource controller] _didStopLoading: url];
+    [(IFBaseWebController *)[dataSource controller] _didStartLoading: URL];
+    [url release];
+    url = [URL retain];
 }
 
 

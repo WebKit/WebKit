@@ -8,6 +8,7 @@
 #import <WebKitDebug.h>
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFBaseWebController.h>
+#import <WebKit/IFBaseWebControllerPrivate.h>
 #import <WebKit/IFWebController.h>
 
 static NSString *getCarbonPath(NSString *posixPath);
@@ -90,7 +91,7 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
-
+    [(IFBaseWebController *)[view webController] _didStartLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
@@ -179,6 +180,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     [loadProgress release];
     
     [self stop];
+    [(IFBaseWebController *)[view webController] _didStopLoading:URL];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
@@ -192,6 +194,7 @@ static NSString *getCarbonPath(NSString *posixPath);
     [loadProgress release];
     
     [self stop];
+    [(IFBaseWebController *)[view webController] _didStopLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
@@ -206,11 +209,13 @@ static NSString *getCarbonPath(NSString *posixPath);
     [loadProgress release];
     
     [self stop];
+    [(IFBaseWebController *)[view webController] _didStopLoading:URL];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
-    
+    [(IFBaseWebController *)[view webController] _didStopLoading:URL];
+    [(IFBaseWebController *)[view webController] _didStartLoading:url];
 }
 
 

@@ -1041,6 +1041,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+    [controller _didStartLoading:job->url().getNSURL()];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
@@ -1067,6 +1068,8 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 
+    [controller _didStopLoading:job->url().getNSURL()];
+
     delete job;
 }
 
@@ -1092,6 +1095,8 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+
+    [controller _didStopLoading:job->url().getNSURL()];
 
     delete job;
 }
@@ -1130,10 +1135,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
-    void *userData;
-    
-    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
-    
+    void *userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p, result = %s, URL = %s\n", m_dataSource, [[result errorDescription] lossyCString], job->url().url().latin1());
 
@@ -1150,17 +1152,25 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     [(IFBaseWebController *)controller _receivedError: result forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
 
+    [(IFBaseWebController *)controller _didStopLoading:job->url().getNSURL()];
+
     delete job;
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
+    void *userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    NSURL *oldURL = job->url().getNSURL();
+
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "url = %s\n", [[url absoluteString] cString]);
     [m_dataSource _part]->setBaseURL([[url absoluteString] cString]);
     
     [m_dataSource _setFinalURL: url];
     
     [(id <IFLocationChangeHandler>)[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
+    [(IFBaseWebController *)[m_dataSource controller] _didStopLoading:oldURL];
+    [(IFBaseWebController *)[m_dataSource controller] _didStartLoading:url];
 }
 
 @end

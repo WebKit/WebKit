@@ -9,6 +9,7 @@
 #import <WebKit/IFPreferencesPrivate.h>
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFWebController.h>
+#import <WebKit/IFStandardPanelsPrivate.h>
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFURLCacheLoaderConstants.h>
@@ -179,6 +180,14 @@
     [frame _checkLoadComplete];
 }
 
+- (void)_didStartLoading: (NSURL *)url
+{
+    [[IFStandardPanels sharedStandardPanels] _didStartLoadingURL:url inController:self];
+}
 
+- (void)_didStopLoading: (NSURL *)url
+{
+    [[IFStandardPanels sharedStandardPanels] _didStopLoadingURL:url inController:self];
+}
 
 @end

@@ -1,3 +1,46 @@
+2002-05-23  Maciej Stachowiak  <mjs@apple.com>
+
+	Move authentication panel to WebKit and make it a sheet, fixing:
+
+	Radar 2876445 - Authentication panel should be a sheet
+	Radar 2876449 - The Alexander authentication panel should be moved
+	to WebKit for use as a standard one
+	
+	* Panels.subproj/English.lproj/IFAuthenticationPanel.nib: Added.
+	* Panels.subproj/IFAuthenticationPanel.h: Added.
+	* Panels.subproj/IFAuthenticationPanel.m: Added.
+	* Panels.subproj/IFPanelAuthenticationHandler.h: Added.
+	* Panels.subproj/IFPanelAuthenticationHandler.m: Added.
+	* Panels.subproj/IFStandardPanels.h: Added.
+	* Panels.subproj/IFStandardPanels.m: Added.
+	* Panels.subproj/IFStandardPanelsPrivate.h: Added.
+	* WebKit.pbproj/project.pbxproj: Add new files to build.
+	* Plugins.subproj/IFPluginStream.mm:
+	(-[IFPluginStream IFURLHandleResourceDidBeginLoading:]): Notify of
+	load start.
+	(-[IFPluginStream IFURLHandleResourceDidFinishLoading:data:]): Notify
+	of load end.
+	(-[IFPluginStream IFURLHandleResourceDidCancelLoading:]): Likewise.
+	(-[IFPluginStream IFURLHandle:resourceDidFailLoadingWithResult:]): Likewise.
+	(-[IFPluginStream IFURLHandle:didRedirectToURL:]): Notify that old
+	URL is no longer loading, but new one is.
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	(-[IFBaseWebController _didStartLoading:]): New private method
+	used to track what URLs are loading on behalf of this controller.
+	(-[IFBaseWebController _didStopLoading:]): Likewise.
+	
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandleResourceDidBeginLoading:]): Notify
+	of load start.
+	(-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]): Notify
+	of load end.
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]): Likewise.
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]): Likewise.
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]): Likewise.
+	(-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]): Notify of 
+	load end and start.
+
 2002-05-22  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed download data source leaks when downloads are cancelled.

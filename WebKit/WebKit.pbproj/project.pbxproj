@@ -89,6 +89,7 @@
 		};
 		0867D691FE84028FC02AAC07 = {
 			children = (
+				F8CA15B4029A399401000122,
 				9C7CABBB0190A37C0ECA16EA,
 				25A8176801B5474B0ECA149E,
 				F5065217027F555001C1A526,
@@ -233,6 +234,10 @@
 				F5F71748028855C5018635CA,
 				F5F7174E02885C5B018635CA,
 				F5C81E4302994EA401C1A525,
+				F8CA15B9029A39D901000122,
+				F8CA15BB029A39D901000122,
+				F8CA15C2029A3E0D01000122,
+				F83DCC73029D09F301000131,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -248,6 +253,7 @@
 				F5E638640265FC0D01000102,
 				F5E638650265FC0D01000102,
 				F599A818028C6D0D0124FDD6,
+				F8CA15C0029A39FC01000122,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -292,6 +298,9 @@
 				F5F717290288493C018635CA,
 				F5F7174F02885C5B018635CA,
 				F5C81E4402994EA401C1A525,
+				F8CA15BA029A39D901000122,
+				F8CA15BC029A39D901000122,
+				F83DCC74029D09F301000131,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1859,6 +1868,147 @@
 		};
 		F5F7174F02885C5B018635CA = {
 			fileRef = F5F7174D02885C5B018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//F50
+//F51
+//F52
+//F53
+//F54
+//F80
+//F81
+//F82
+//F83
+//F84
+		F83DCC71029D09F301000131 = {
+			isa = PBXFileReference;
+			name = IFPanelAuthenticationHandler.h;
+			path = Panels.subproj/IFPanelAuthenticationHandler.h;
+			refType = 4;
+		};
+		F83DCC72029D09F301000131 = {
+			isa = PBXFileReference;
+			name = IFPanelAuthenticationHandler.m;
+			path = Panels.subproj/IFPanelAuthenticationHandler.m;
+			refType = 4;
+		};
+		F83DCC73029D09F301000131 = {
+			fileRef = F83DCC71029D09F301000131;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F83DCC74029D09F301000131 = {
+			fileRef = F83DCC72029D09F301000131;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F8CA15B4029A399401000122 = {
+			children = (
+				F8CA15B5029A39D901000122,
+				F8CA15B6029A39D901000122,
+				F8CA15B7029A39D901000122,
+				F8CA15B8029A39D901000122,
+				F8CA15BD029A39DF01000122,
+				F8CA15C1029A3E0D01000122,
+				F83DCC71029D09F301000131,
+				F83DCC72029D09F301000131,
+			);
+			isa = PBXGroup;
+			name = Panels;
+			refType = 4;
+		};
+		F8CA15B5029A39D901000122 = {
+			isa = PBXFileReference;
+			name = IFAuthenticationPanel.h;
+			path = Panels.subproj/IFAuthenticationPanel.h;
+			refType = 4;
+		};
+		F8CA15B6029A39D901000122 = {
+			isa = PBXFileReference;
+			name = IFAuthenticationPanel.m;
+			path = Panels.subproj/IFAuthenticationPanel.m;
+			refType = 4;
+		};
+		F8CA15B7029A39D901000122 = {
+			isa = PBXFileReference;
+			name = IFStandardPanels.h;
+			path = Panels.subproj/IFStandardPanels.h;
+			refType = 4;
+		};
+		F8CA15B8029A39D901000122 = {
+			isa = PBXFileReference;
+			name = IFStandardPanels.m;
+			path = Panels.subproj/IFStandardPanels.m;
+			refType = 4;
+		};
+		F8CA15B9029A39D901000122 = {
+			fileRef = F8CA15B5029A39D901000122;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F8CA15BA029A39D901000122 = {
+			fileRef = F8CA15B6029A39D901000122;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F8CA15BB029A39D901000122 = {
+			fileRef = F8CA15B7029A39D901000122;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F8CA15BC029A39D901000122 = {
+			fileRef = F8CA15B8029A39D901000122;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F8CA15BD029A39DF01000122 = {
+			children = (
+				F8CA15BE029A39FC01000122,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+		};
+		F8CA15BE029A39FC01000122 = {
+			children = (
+				F8CA15BF029A39FC01000122,
+			);
+			isa = PBXVariantGroup;
+			name = IFAuthenticationPanel.nib;
+			path = "";
+			refType = 4;
+		};
+		F8CA15BF029A39FC01000122 = {
+			isa = PBXFileReference;
+			name = English;
+			path = Panels.subproj/English.lproj/IFAuthenticationPanel.nib;
+			refType = 4;
+		};
+		F8CA15C0029A39FC01000122 = {
+			fileRef = F8CA15BE029A39FC01000122;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F8CA15C1029A3E0D01000122 = {
+			isa = PBXFileReference;
+			name = IFStandardPanelsPrivate.h;
+			path = Panels.subproj/IFStandardPanelsPrivate.h;
+			refType = 4;
+		};
+		F8CA15C2029A3E0D01000122 = {
+			fileRef = F8CA15C1029A3E0D01000122;
 			isa = PBXBuildFile;
 			settings = {
 			};
