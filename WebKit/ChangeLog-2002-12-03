@@ -1,3 +1,23 @@
+2002-09-24  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3056158 -- REGRESSION: Page up/down should scroll one 
+	whole contentView minus at least one readable line of text
+
+	This was broken a while back when the keyboard scrolling code
+	migrated into WebKit.
+
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _verticalKeyboardScrollAmount]),
+        (-[WebView _horizontalKeyboardScrollAmount]):
+	New private methods, return one arrow key's worth of scrolling.
+        (-[WebView _scrollLineVertically:]),
+        (-[WebView _scrollLineHorizontally:]):
+	Now use the broken-out methods.
+        (-[WebView _pageVertically:]),
+        (-[WebView _pageHorizontally:]):
+	overlap by one arrow key's worth of scrolling instead of the
+	teensy-weensy one click's worth.
+
 2002-09-24  Chris Blumenberg  <cblu@apple.com>
 
 	Documentation for WebHTMLView

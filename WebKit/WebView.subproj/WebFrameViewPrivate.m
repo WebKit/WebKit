@@ -105,9 +105,25 @@
     [[self _contentView] scrollPoint: point];
 }
 
+- (float)_verticalKeyboardScrollAmount
+{
+    // verticalLineScroll is quite small, to make scrolling from the scroll bar
+    // arrows relatively smooth. But this seemed too small for scrolling with
+    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
+    return [[self frameScrollView] verticalLineScroll] * 4;
+}
+
+- (float)_horizontalKeyboardScrollAmount
+{
+    // verticalLineScroll is quite small, to make scrolling from the scroll bar
+    // arrows relatively smooth. But this seemed too small for scrolling with
+    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
+    return [[self frameScrollView] horizontalLineScroll] * 4;
+}
+
 - (void)_pageVertically: (BOOL)up
 {
-    float pageOverlap = [[self frameScrollView] verticalPageScroll];
+    float pageOverlap = [self _verticalKeyboardScrollAmount];
     float delta = [[self _contentView] bounds].size.height;
     
     delta = (delta < pageOverlap) ? delta / 2.0 : delta - pageOverlap;
@@ -121,7 +137,7 @@
 
 - (void)_pageHorizontally: (BOOL)left
 {
-    float pageOverlap = [[self frameScrollView] horizontalPageScroll];
+    float pageOverlap = [self _horizontalKeyboardScrollAmount];
     float delta = [[self _contentView] bounds].size.width;
     
     delta = (delta < pageOverlap) ? delta / 2.0 : delta - pageOverlap;
@@ -135,10 +151,7 @@
 
 - (void)_scrollLineVertically: (BOOL)up
 {
-    // verticalLineScroll is quite small, to make scrolling from the scroll bar
-    // arrows relatively smooth. But this seemed too small for scrolling with
-    // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    float delta = [[self frameScrollView] verticalLineScroll] * 4;
+    float delta = [self _verticalKeyboardScrollAmount];
 
     if (up) {
         delta = -delta;
@@ -149,7 +162,7 @@
 
 - (void)_scrollLineHorizontally: (BOOL)left
 {
-    float delta = [[self frameScrollView] horizontalLineScroll] * 4;
+    float delta = [self _horizontalKeyboardScrollAmount];
 
     if (left) {
         delta = -delta;
