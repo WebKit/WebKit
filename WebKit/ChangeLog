@@ -1,5 +1,9 @@
 2002-05-03  Darin Adler  <darin@apple.com>
 
+	* Resources/url_icon.tiff: Improved icon. Could be better.
+
+2002-05-03  Darin Adler  <darin@apple.com>
+
 	* Misc.subproj/WebKitDebug.h: Add WEBKIT_LOG_MEMUSAGE, WEBKIT_LOG_FONTCACHE, and
 	WEBKIT_LOG_FONTCACHECHARMISS for font code moved here from WebCore.
 
