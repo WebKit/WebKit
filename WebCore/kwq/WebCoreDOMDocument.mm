@@ -21,12 +21,16 @@ DOM::Document DOM::DocumentImpl::createInstance (DOM::DocumentImpl *impl)
 
 NSString *domStringToNSString(DOM::DOMString &aString)
 {
-    return @"";
+    return [NSString stringWithCharacters: (unichar *)aString.unicode() length: aString.length()];
 }
 
 DOM::DOMString NSStringToDOMString(NSString *aString)
 {
-    return DOM::DOMString();
+    QChar *chars = (QChar *)malloc([aString length] * sizeof(QChar));
+    [aString getCharacters:(unichar *)chars];
+    DOM::DOMString ret(chars, [aString length]);
+    free (chars);
+    return ret;
 }
 
 
