@@ -28,8 +28,8 @@
 #import "KWQTextArea.h"
 
 QTextEdit::QTextEdit(QWidget *parent)
-    : m_clicked(this, SIGNAL(clicked()))
-    , m_textChanged(this, SIGNAL(textChanged()))
+    : _clicked(this, SIGNAL(clicked()))
+    , _textChanged(this, SIGNAL(textChanged()))
 {
     KWQTextArea *textView = [[KWQTextArea alloc] initWithQTextEdit:this];
     setView(textView);
@@ -42,40 +42,16 @@ void QTextEdit::setText(const QString &string)
     [textView setText:string.getNSString()];
 }
 
-QString QTextEdit::text()
+QString QTextEdit::text() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    NSMutableString *text = [[[textView text] mutableCopy] autorelease];
-    [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
-    [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
-    return QString::fromNSString(text);
+    return QString::fromNSString([textView text]);
 }
 
-int QTextEdit::paragraphs() const
+QString QTextEdit::textWithHardLineBreaks() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return [textView paragraphs];
-}
-
-int QTextEdit::paragraphLength(int paragraph) const
-{
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    return [textView paragraphLength:paragraph];
-}
-
-QString QTextEdit::text(int paragraph)
-{
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    NSMutableString *text = [[[textView textForParagraph:paragraph] mutableCopy] autorelease];
-    [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
-    [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
-    return QString::fromNSString(text);
-}
-
-int QTextEdit::lineOfChar(int paragraph, int index)
-{
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    return [textView lineOfCharAtIndex:index inParagraph:paragraph];
+    return QString::fromNSString([textView textWithHardLineBreaks]);
 }
 
 void QTextEdit::getCursorPosition(int *paragraph, int *index) const
@@ -154,5 +130,5 @@ QWidget::FocusPolicy QTextEdit::focusPolicy() const
 
 void QTextEdit::clicked()
 {
-    m_clicked.call();
+    _clicked.call();
 }

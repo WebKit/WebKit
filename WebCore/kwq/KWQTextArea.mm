@@ -40,13 +40,7 @@
                     the user enters a return the line IS broken.  This emulates
                     Mac IE 5.1.
      SOFT|VIRTUAL - Text is wrapped, but not actually broken.  
-    HARD|PHYSICAL - Text is wrapped, and text is broken into seperate lines.
-                         
-    KDE expects a line based widget.  It uses a line API to convert text into multiple lines
-    when wrapping is set to HARD.  To support KDE we implement [textLine] and [numLines].
-    
-    If the wrap mode HARD KDE will repeatedly call textForLine: (via emulated API in KWQTextEdit)
-    to construct the text with inserted \n.
+    HARD|PHYSICAL - Text is wrapped, and text is broken into separate lines.
 */
 
 @interface NSView (KWQTextArea)
@@ -74,7 +68,8 @@ const float LargeNumberForText = 1.0e7;
     
     textFrame.origin.x = textFrame.origin.y = 0;
     if (frame.size.width > 0 && frame.size.height > 0)
-        textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size hasHorizontalScroller:NO hasVerticalScroller:YES borderType:[self borderType]];
+        textFrame.size = [NSScrollView contentSizeForFrameSize:frame.size
+            hasHorizontalScroller:NO hasVerticalScroller:YES borderType:[self borderType]];
     else {
         textFrame.size.width = LargeNumberForText;
         textFrame.size.height = LargeNumberForText;
@@ -112,7 +107,7 @@ const float LargeNumberForText = 1.0e7;
 
 - initWithQTextEdit:(QTextEdit *)w 
 {
-    [super init];
+    [self init];
 
     widget = w;
     [textView setWidget:widget];
@@ -121,7 +116,7 @@ const float LargeNumberForText = 1.0e7;
 }
 
 - (void)dealloc
-{    
+{
     [textView release];
     
     [super dealloc];
@@ -186,39 +181,49 @@ const float LargeNumberForText = 1.0e7;
 
 - (NSString *)text
 {
-    return [textView string];
+    NSString *text = [textView string];
+    
+    if ([text rangeOfString:@"\r" options:NSLiteralSearch].location != NSNotFound) {
+        NSMutableString *mutableText = [[text mutableCopy] autorelease];
+    
+        [mutableText replaceOccurrencesOfString:@"\r\n" withString:@"\n"
+            options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+        [mutableText replaceOccurrencesOfString:@"\r" withString:@"\n"
+            options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+        
+        text = mutableText;
+    }
+
+    return text;
 }
 
-- (NSString *)textForLine:(int)line
+- (NSString *)textWithHardLineBreaks
 {
-    NSRange glyphRange = NSMakeRange(0,0), characterRange;
-    int lineCount = 0;
-    NSLayoutManager *layoutManager = [textView layoutManager];
-    unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+    NSMutableString *textWithHardLineBreaks = [NSMutableString string];
     
-    while (NSMaxRange(glyphRange) < numberOfGlyphs) {
-        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
-        characterRange = [layoutManager characterRangeForGlyphRange:glyphRange actualGlyphRange:NULL];
-        if (line == lineCount) {
-            return [[[textView textStorage] attributedSubstringFromRange:characterRange] string];
+    NSString *text = [textView string];
+    NSLayoutManager *layoutManager = [textView layoutManager];
+    
+    unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+    NSRange lineGlyphRange = NSMakeRange(0, 0);
+    while (NSMaxRange(lineGlyphRange) < numberOfGlyphs) {
+        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(lineGlyphRange) effectiveRange:&lineGlyphRange];
+        NSRange lineRange = [layoutManager characterRangeForGlyphRange:lineGlyphRange actualGlyphRange:NULL];
+        if ([textWithHardLineBreaks length]) {
+            unichar lastCharacter = [textWithHardLineBreaks characterAtIndex:[textWithHardLineBreaks length] - 1];
+            if (lastCharacter != '\n' && lastCharacter != '\r') {
+                [textWithHardLineBreaks appendString:@"\n"];
+            }
         }
-        lineCount++;
+        [textWithHardLineBreaks appendString:[text substringWithRange:lineRange]];
     }
-    return @"";
-}
 
-- (int)numLines
-{
-    NSRange glyphRange = NSMakeRange(0,0);
-    NSLayoutManager *layoutManager = [textView layoutManager];
-    unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
-    int lineCount = 0;
-    
-    while (NSMaxRange(glyphRange) < numberOfGlyphs) {
-        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
-        lineCount++;
-    }
-    return lineCount;
+    [textWithHardLineBreaks replaceOccurrencesOfString:@"\r\n" withString:@"\n"
+        options:NSLiteralSearch range:NSMakeRange(0, [textWithHardLineBreaks length])];
+    [textWithHardLineBreaks replaceOccurrencesOfString:@"\r" withString:@"\n"
+        options:NSLiteralSearch range:NSMakeRange(0, [textWithHardLineBreaks length])];
+
+    return textWithHardLineBreaks;
 }
 
 - (void)selectAll
@@ -241,7 +246,10 @@ const float LargeNumberForText = 1.0e7;
     [super setFrame:frameRect];
 
     if ([self wordWrap]) {
-        NSSize contentSize = [NSScrollView contentSizeForFrameSize:frameRect.size hasHorizontalScroller:[self hasHorizontalScroller] hasVerticalScroller:[self hasVerticalScroller] borderType:[self borderType]];
+        NSSize contentSize = [NSScrollView contentSizeForFrameSize:frameRect.size
+            hasHorizontalScroller:[self hasHorizontalScroller]
+            hasVerticalScroller:[self hasVerticalScroller]
+            borderType:[self borderType]];
         NSRect textFrame = [textView frame];
         textFrame.size.width = contentSize.width;
         contentSize.height = LargeNumberForText;
@@ -250,27 +258,37 @@ const float LargeNumberForText = 1.0e7;
     }
 }
 
-- (int)paragraphs
+- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
 {
     NSString *text = [textView string];
+    NSRange selectedRange = [textView selectedRange];
+    
+    if (selectedRange.location == NSNotFound) {
+        *paragraph = 0;
+        *index = 0;
+        return;
+    }
+    
     int paragraphSoFar = 0;
     NSRange searchRange = NSMakeRange(0, [text length]);
 
     while (true) {
+        // FIXME: Doesn't work for CR-separated or CRLF-separated text.
 	NSRange newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
-	if (newlineRange.location == NSNotFound) {
+	if (newlineRange.location == NSNotFound || selectedRange.location <= newlineRange.location) {
 	    break;
 	}
-
+        
 	paragraphSoFar++;
 
         unsigned advance = newlineRange.location + 1 - searchRange.location;
-        
+
 	searchRange.length -= advance;
 	searchRange.location += advance;
     }
-    
-    return paragraphSoFar + (searchRange.length == 0 ? 0 : 1);
+
+    *paragraph = paragraphSoFar;
+    *index = selectedRange.location - searchRange.location;
 }
 
 static NSRange RangeOfParagraph(NSString *text, int paragraph)
@@ -280,6 +298,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
     NSRange newlineRange;
     while (true) {
+        // FIXME: Doesn't work for CR-separated or CRLF-separated text.
 	newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
 	if (newlineRange.location == NSNotFound) {
 	    break;
@@ -309,86 +328,6 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     } else {
 	return NSMakeRange(searchRange.location, newlineRange.location - searchRange.location);
     }
-}
-
-- (int)paragraphLength:(int)paragraph
-{
-    NSString *text = [textView string];
-    NSRange range = RangeOfParagraph(text, paragraph);
-    if (range.location == NSNotFound) {
-	return 0;
-    } else {
-	return range.length;
-    }
-}
-
-- (NSString *)textForParagraph:(int)paragraph
-{
-    NSString *text = [textView string];
-    NSRange range = RangeOfParagraph(text, paragraph);
-    if (range.location == NSNotFound) {
-	return [NSString string];
-    } else {
-	return [text substringWithRange:range];
-    }
-}
-
-- (int)lineOfCharAtIndex:(int)index inParagraph:(int)paragraph
-{
-    NSString *text = [textView string];
-    NSRange range = RangeOfParagraph(text, paragraph);
-    NSLayoutManager *layoutManager = [textView layoutManager];
-
-    if (range.location == NSNotFound) {
-	return -1;
-    }
-
-    NSRange characterMaxRange = NSMakeRange(0, range.location);
-    NSRange glyphMaxRange = [layoutManager glyphRangeForCharacterRange:characterMaxRange actualCharacterRange:NULL];
-
-    // FIXME: factor line counting code out into something shared
-    unsigned numberOfGlyphs = glyphMaxRange.location + glyphMaxRange.length;
-    NSRange glyphRange = NSMakeRange(0,0);
-    int lineCount = 0;
-
-    while (NSMaxRange(glyphRange) < numberOfGlyphs) {
-        [layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
-        lineCount++;
-    }
-
-    return lineCount;
-}
-
-- (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
-{
-    NSString *text = [textView string];
-    NSRange selectedRange = [textView selectedRange];
-    
-    if (selectedRange.location == NSNotFound) {
-        *paragraph = 0;
-        *index = 0;
-        return;
-    }
-    
-    int paragraphSoFar = 0;
-    NSRange searchRange = NSMakeRange(0, [text length]);
-
-    while (true) {
-	NSRange newlineRange = [text rangeOfString:@"\n" options:NSLiteralSearch range:searchRange];
-	if (newlineRange.location == NSNotFound || selectedRange.location <= newlineRange.location) {
-	    break;
-	}
-        
-	paragraphSoFar++;
-
-        unsigned advance = newlineRange.location + 1 - searchRange.location;
-
-	searchRange.length -= advance;
-	searchRange.location += advance;
-    }
-
-    *paragraph = paragraphSoFar;
-    *index = selectedRange.location - searchRange.location;
 }
 
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph

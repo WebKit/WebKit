@@ -44,18 +44,13 @@ class QTextEdit;
 - (BOOL)wordWrap;
 - (void)setText:(NSString *)text;
 - (NSString *)text;
-- (int)numLines;
-- (NSString *)textForLine:(int)line;
+- (NSString *)textWithHardLineBreaks;
 - (void)selectAll;
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
 - (void)setFont:(NSFont *)font;
 
 // paragraph-oriented functions for the benefit of QTextEdit
-- (int)paragraphs;
-- (int)paragraphLength:(int)paragraph;
-- (NSString *)textForParagraph:(int)paragraph;
-- (int)lineOfCharAtIndex:(int)index inParagraph:(int)paragraph;
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph;
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph;
 

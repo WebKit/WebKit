@@ -1,3 +1,33 @@
+2003-03-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3197684 -- <textarea wrap="hard"> behaves incorrectly (bugzilla)
+
+        By doing the line breaking inside the KWQ class for textarea we can both remove
+        the broken lineOfCharAtIndex: method and avoid the n-squared algorithm KHTML uses to
+        insert hard line breaks.
+
+        * khtml/rendering/render_form.cpp: (RenderTextArea::text):
+        Call textWithHardLineBreaks on widget instead of trying to break lines here.
+        
+        * kwq/KWQTextEdit.h: Added textWithHardLineBreaks member function. Made text member function
+        const. Got rid of text(int), paragraphs, paragraphLength, and lineOfChar member functions.
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::text): Made this const, and move code that transforms CRLF and CR into LF
+        inside KWQTextArea.
+        (QTextEdit::textWithHardLineBreaks): Added. Calls new textWithHardLineBreaks method.
+
+        * kwq/KWQTextArea.h: Added textWithHardLineBreaks method. Removed numLines, textForLine:,
+        paragrahs, paragraphLength:, textForParagraph:, and lineOfCharAtIndex: methods.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea initWithQTextEdit:]): Call [self init] for clarity instead of [super init].
+        In both cases, we end up calling [self initWithFrame:].
+        (-[KWQTextArea text]): Added logic for transforming CRLF and CR into LF here instead of at
+        the KWQTextEdit level.
+        (-[KWQTextArea textWithHardLineBreaks]): Added. This method uses the layout manager to extract
+        the characters for one line at a time, and put line breaks in between.
+
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
@@ -29,6 +59,7 @@
 
 2003-03-18  Maciej Stachowiak  <mjs@apple.com>
 
+>>>>>>> 1.1521
         Reviewed by John.
 
 	- fixed 3119663 - document.lastModified returns the wrong date format

@@ -1210,6 +1210,9 @@ QString RenderTextArea::text()
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
 
     if(element()->wrap() == DOM::HTMLTextAreaElementImpl::ta_Physical) {
+#if APPLE_CHANGES
+        txt = w->textWithHardLineBreaks();
+#else
         // yeah, QTextEdit has no accessor for getting the visually wrapped text
         for (int p=0; p < w->paragraphs(); ++p) {
             int pl = w->paragraphLength(p);
@@ -1226,6 +1229,7 @@ QString RenderTextArea::text()
             if (p < w->paragraphs() - 1)
                 txt += QString::fromLatin1("\n");
         }
+#endif
     }
     else
         txt = w->text();
