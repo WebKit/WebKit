@@ -956,7 +956,8 @@ static WebHTMLView *lastHitView = nil;
     // Do accept first responder at any other time, for example from keyboard events,
     // or from calls back from WebCore once we begin mouse-down event handling.
     NSEvent *event = [NSApp currentEvent];
-    if ([event type] == NSLeftMouseDown && event != _private->mouseDownEvent) {
+    if ([event type] == NSLeftMouseDown && event != _private->mouseDownEvent && 
+        NSPointInRect([event locationInWindow], [self convertRect:[self visibleRect] toView:nil])) {
         return NO;
     }
     return YES;
