@@ -2018,14 +2018,15 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
 
         KHTMLAssert(beforeChild->parent());
         KHTMLAssert(beforeChild->parent()->isAnonymousBox());
-        KHTMLAssert(beforeChild->parent()->parent() == this);
-
+        
         if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
             newChild->setLayouted( false );
             newChild->setMinMaxKnown( false );
             return;
         }
+        else if (beforeChild->parent()->firstChild() != beforeChild)
+            return beforeChild->parent()->addChild(newChild, beforeChild);
         else
             return addChildToFlow(newChild, beforeChild->parent());
     }
@@ -2141,6 +2142,7 @@ void RenderFlow::addChildToFlow(RenderObject* newChild, RenderObject* beforeChil
 
 void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
 {
+    KHTMLAssert(!isInline());
     KHTMLAssert(!box2Start || box2Start->parent() == this);
 
     m_childrenInline = false;
@@ -2161,7 +2163,7 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
         if (boxFirst &&
             (!child->isInline() || !next || child == box2Start)) {
             // Create a new anonymous box containing all children starting from boxFirst
-            // and up to (but not including) boxLast, and put it in place of the children
+            // and up to boxLast, and put it in place of the children
             RenderStyle *newStyle = new RenderStyle();
             newStyle->inheritFrom(style());
             newStyle->setDisplay(BLOCK);
@@ -2181,13 +2183,14 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
                 o = no->nextSibling();
                 box->appendChildNode(removeChildNode(no));
             }
-            if (child && child == box2Start && boxLast == child) {
-                boxFirst = boxLast = child;
+            if (child && box2Start == child) {
+                boxFirst = boxLast = (child->isInline() ? box2Start : 0);
                 box2Start = 0;
+                continue;
             }
             else {
                 box->appendChildNode(removeChildNode(boxLast));
-                boxFirst = boxLast = next;
+                boxFirst = boxLast = 0;
             }
             box->close();
             box->setPos(box->xPos(), -500000);
@@ -2197,14 +2200,6 @@ void RenderFlow::makeChildrenNonInline(RenderObject *box2Start)
         child = next;
     }
 
-    if (isInline()) {
-        setInline(false);
-        if (parent()->isFlow()) {
-            KHTMLAssert(parent()->childrenInline());
-	    static_cast<RenderFlow *>(parent())->makeChildrenNonInline();
-        }
-    } 
-    
     setLayouted(false);
 }
 
