@@ -85,8 +85,8 @@
         if([WebView _canHandleRequest:[NSURLRequest requestWithURL:linkURL]]) {
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenLinkInNewWindow]];
             [menuItems addObject:[self menuItemWithTag:WebMenuItemTagDownloadLinkToDisk]];
-            [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];
         }
+        [menuItems addObject:[self menuItemWithTag:WebMenuItemTagCopyLinkToClipboard]];
     }
 
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
