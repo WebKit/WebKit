@@ -1,3 +1,22 @@
+2003-07-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3132021 -- certain Japanese characters are misrendered because of incorrect partial-character handling
+
+        We didn't have code to handle kTECPartialCharErr.
+
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::createTECConverter): Added. Broken out from convertUsingTEC.
+        (KWQTextDecoder::appendOmittingBOMs): Added. Broken out from convertUsingTEC.
+        (KWQTextDecoder::convertOneChunkUsingTEC): Added. Broken out from convertUsingTEC.
+        This also has much of the partially-decoded character handling.
+        (KWQTextDecoder::convertUsingTEC): Simplified by breaking into functions, and added
+        handling to use the same buffer we use for the other decoders to hold partially-decoded
+        characters.
+        (KWQTextDecoder::convert): Add a partial-character handling test mode where the decoder
+        is passed only a single byte at a time; controlled by an #if.
+
 2003-07-11  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3187101, before/after content not dynamic.  This patch

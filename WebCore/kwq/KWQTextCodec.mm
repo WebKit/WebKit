@@ -38,9 +38,16 @@ public:
     QString toUnicode(const char *chs, int len, bool flush);
 
 private:
-    QString convert(const char *chs, int len, bool flush);
+    QString convert(const char *chs, int len, bool flush)
+        { return convert(reinterpret_cast<const unsigned char *>(chs), len, flush); }
+    QString convert(const unsigned char *chs, int len, bool flush);
     QString convertUTF16(const unsigned char *chs, int len);
-    QString convertUsingTEC(const UInt8 *chs, int len, bool flush);
+    QString convertUsingTEC(const unsigned char *chs, int len, bool flush);
+    
+    OSStatus createTECConverter();
+    OSStatus convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
+        void *outputBuffer, int outputBufferLength, int &outputLength);
+    static void appendOmittingBOMs(QString &s, const UniChar *characters, int byteCount);
     
     KWQTextDecoder(const KWQTextDecoder &);
     KWQTextDecoder &operator=(const KWQTextDecoder &);
@@ -48,9 +55,11 @@ private:
     CFStringEncoding _encoding;
     bool _littleEndian;
     bool _atStart;
-    int _numBufferedBytes;
-    char _bufferedBytes[2];
-    
+    bool _error;
+
+    unsigned _numBufferedBytes;
+    unsigned char _bufferedBytes[16]; // bigger than any single multi-byte character
+
     // State for TEC decoding.
     TECObjectRef _converter;
     static TECObjectRef _cachedConverter;
@@ -144,7 +153,7 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
     CFIndex bufferLength;
     CFStringGetBytes(cfs, range, encoding, '?', FALSE, NULL, 0x7FFFFFFF, &bufferLength);
     QCString result(bufferLength + 1);
-    CFStringGetBytes(cfs, range, encoding, '?', FALSE, reinterpret_cast<UInt8 *>(result.data()), bufferLength, &bufferLength);
+    CFStringGetBytes(cfs, range, encoding, '?', FALSE, reinterpret_cast<unsigned char *>(result.data()), bufferLength, &bufferLength);
     result[bufferLength] = 0;
     return result;
 }
@@ -211,7 +220,8 @@ QTextDecoder::~QTextDecoder()
 // ================
 
 KWQTextDecoder::KWQTextDecoder(CFStringEncoding e, KWQEncodingFlags f)
-    : _encoding(e), _littleEndian(f & ::LittleEndian), _atStart(true), _numBufferedBytes(0), _converter(0)
+    : _encoding(e), _littleEndian(f & ::LittleEndian), _atStart(true), _error(false)
+    , _numBufferedBytes(0), _converter(0)
 {
 }
 
@@ -284,122 +294,195 @@ QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
     return result;
 }
 
-QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len, bool flush)
+OSStatus KWQTextDecoder::createTECConverter()
+{
+    const CFStringEncoding encoding = effectiveEncoding(_encoding);
+
+    if (_cachedConverterEncoding == encoding) {
+        _converter = _cachedConverter;
+        _cachedConverter = 0;
+        _cachedConverterEncoding = kCFStringEncodingInvalidId;
+        TECClearConverterContextInfo(_converter);
+    } else {
+        OSStatus status = TECCreateConverter(&_converter, encoding,
+            CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
+        if (status) {
+            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
+            return status;
+        }
+
+        TECSetBasicOptions(_converter, kUnicodeForceASCIIRangeMask);
+    }
+    
+    return noErr;
+}
+
+void KWQTextDecoder::appendOmittingBOMs(QString &s, const UniChar *characters, int byteCount)
+{
+    ASSERT(byteCount % sizeof(UniChar) == 0);
+    int start = 0;
+    int characterCount = byteCount / sizeof(UniChar);
+    for (int i = 0; i != characterCount; ++i) {
+        if (characters[i] == BOM) {
+            if (start != i) {
+                s.append(reinterpret_cast<const QChar *>(&characters[start]), i - start);
+            }
+            start = i + 1;
+        }
+    }
+    if (start != characterCount) {
+        s.append(reinterpret_cast<const QChar *>(&characters[start]), characterCount - start);
+    }
+}
+
+OSStatus KWQTextDecoder::convertOneChunkUsingTEC(const unsigned char *inputBuffer, int inputBufferLength, int &inputLength,
+    void *outputBuffer, int outputBufferLength, int &outputLength)
 {
     OSStatus status;
-    
-    CFStringEncoding encoding = effectiveEncoding(_encoding);
+    unsigned long bytesRead = 0;
+    unsigned long bytesWritten = 0;
 
-    // Get a converter for the passed-in encoding.
-    if (!_converter) {
-        if (_cachedConverterEncoding == encoding) {
-            _converter = _cachedConverter;
-            _cachedConverter = 0;
-            _cachedConverterEncoding = kCFStringEncodingInvalidId;
-            TECClearConverterContextInfo(_converter);
-        } else {
-            status = TECCreateConverter(&_converter, encoding,
-                CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
-            if (status) {
-                ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
-                return QString();
+    if (_numBufferedBytes != 0) {
+        // Finish converting a partial character that's in our buffer.
+        
+        // First, fill the partial character buffer with as many bytes as are available.
+        ASSERT(_numBufferedBytes < sizeof(_bufferedBytes));
+        const int spaceInBuffer = sizeof(_bufferedBytes) - _numBufferedBytes;
+        const int bytesToPutInBuffer = MIN(spaceInBuffer, inputBufferLength);
+        ASSERT(bytesToPutInBuffer != 0);
+        memcpy(_bufferedBytes + _numBufferedBytes, inputBuffer, bytesToPutInBuffer);
+
+        // Now, do a conversion on the buffer.
+        status = TECConvertText(_converter, _bufferedBytes, _numBufferedBytes + bytesToPutInBuffer, &bytesRead,
+            reinterpret_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
+
+        if (status == kTECPartialCharErr && bytesRead == 0) {
+            // Handle the case where the partial character was not converted.
+            if (bytesToPutInBuffer >= spaceInBuffer) {
+                ERROR("TECConvertText gave a kTECPartialCharErr but read none of the %u bytes in the buffer", sizeof(_bufferedBytes));
+                _numBufferedBytes = 0;
+                status = kTECUnmappableElementErr; // should never happen, but use this error code
+            } else {
+                // Tell the caller we read all the source bytes and keep them in the buffer.
+                _numBufferedBytes += bytesToPutInBuffer;
+                bytesRead = bytesToPutInBuffer;
+                status = noErr;
             }
-
-            TECSetBasicOptions(_converter, kUnicodeForceASCIIRangeMask);
+        } else {
+            // We are done with the partial character buffer.
+            // Also, we have read some of the bytes from the main buffer.
+            if (bytesRead > _numBufferedBytes) {
+                bytesRead -= _numBufferedBytes;
+            } else {
+                ERROR("TECConvertText accepted some bytes it previously rejected with kTECPartialCharErr");
+                bytesRead = 0;
+            }
+            _numBufferedBytes = 0;
         }
+    } else {
+        status = TECConvertText(_converter, inputBuffer, inputBufferLength, &bytesRead,
+            static_cast<unsigned char *>(outputBuffer), outputBufferLength, &bytesWritten);
+    }
+
+    inputLength = bytesRead;
+    outputLength = bytesWritten;
+    return status;
+}
+
+QString KWQTextDecoder::convertUsingTEC(const unsigned char *chs, int len, bool flush)
+{
+    // Get a converter for the passed-in encoding.
+    if (!_converter && createTECConverter() != noErr) {
+        return QString();
     }
     
     QString result;
 
-    const UInt8 *sourcePointer = chs;
-    unsigned long sourceLength = len;
-    
-    for (;;) {
-        UniChar buffer[4096];
-        unsigned long bytesWritten = 0;
-        bool doingFlush = false;
+    const unsigned char *sourcePointer = chs;
+    int sourceLength = len;
+    UniChar buffer[4096];
+
+    while (sourceLength) {
+        int bytesRead;
+        int bytesWritten;
+        OSStatus status = convertOneChunkUsingTEC(sourcePointer, sourceLength, bytesRead, buffer, sizeof(buffer), bytesWritten);
+        ASSERT(bytesRead <= sourceLength);
+        sourcePointer += bytesRead;
+        sourceLength -= bytesRead;
         
-        if (sourceLength == 0) {
-            if (!flush) {
-                // Done.
+        switch (status) {
+            case noErr:
+            case kTECOutputBufferFullStatus:
+                break;
+            case kTextMalformedInputErr:
+            case kTextUndefinedElementErr:
+                // FIXME: Put in FFFD character into the output string?
+                TECClearConverterContextInfo(_converter);
+                if (sourceLength) {
+                    sourcePointer += 1;
+                    sourceLength -= 1;
+                }
+                break;
+            case kTECPartialCharErr: {
+                // Put the partial character into the buffer.
+                ASSERT(_numBufferedBytes == 0);
+                const int bufferSize = sizeof(_numBufferedBytes);
+                if (sourceLength < bufferSize) {
+                    memcpy(_bufferedBytes, sourcePointer, sourceLength);
+                    _numBufferedBytes = sourceLength;
+                } else {
+                    ERROR("TECConvertText gave a kTECPartialCharErr, but left %u bytes in the buffer", sourceLength);
+                }
+                sourceLength = 0;
                 break;
             }
-            doingFlush = true;
+            default:
+                ERROR("text decoding failed with error %d", status);
+                _error = true;
+                return QString();
         }
-         
-        if (doingFlush) {
-            status = TECFlushText(_converter,
-                reinterpret_cast<UInt8 *>(buffer), sizeof(buffer), &bytesWritten);
-        } else {
-            unsigned long bytesRead = 0;
-            status = TECConvertText(_converter, sourcePointer, sourceLength, &bytesRead,
-                reinterpret_cast<UInt8 *>(buffer), sizeof(buffer), &bytesWritten);
-            sourcePointer += bytesRead;
-            sourceLength -= bytesRead;
-        }
-        if (bytesWritten) {
-            ASSERT(bytesWritten % sizeof(UniChar) == 0);
-            int start = 0;
-            int characterCount = bytesWritten / sizeof(UniChar);
-            for (int i = 0; i != characterCount; ++i) {
-                if (buffer[i] == BOM) {
-                    if (start != i) {
-                        result.append(reinterpret_cast<QChar *>(&buffer[start]), i - start);
-                    }
-                    start = i + 1;
-                }
-            }
-            if (start != characterCount) {
-                result.append(reinterpret_cast<QChar *>(&buffer[start]), characterCount - start);
-            }
-        }
-        if (status == kTextMalformedInputErr || status == kTextUndefinedElementErr) {
-            // FIXME: Put in FFFD character here?
-            TECClearConverterContextInfo(_converter);
-            if (sourceLength) {
-                sourcePointer += 1;
-                sourceLength -= 1;
-            }
-            status = noErr;
-        }
-        if (status == kTECOutputBufferFullStatus) {
-            continue;
-        }
-        if (status != noErr) {
-            ERROR("text decoding failed with error %d", status);
-            break;
-        }
-        
-        if (doingFlush) {
-            // Done.
-            break;
-        }
+
+        appendOmittingBOMs(result, buffer, bytesWritten);
     }
     
+    if (flush) {
+        unsigned long bytesWritten = 0;
+        TECFlushText(_converter, reinterpret_cast<unsigned char *>(buffer), sizeof(buffer), &bytesWritten);
+        appendOmittingBOMs(result, buffer, bytesWritten);
+    }
+
     // Workaround for a bug in the Text Encoding Converter (see bug 3225472).
     // Simplified Chinese pages use the code U+A3A0 to mean "full-width space".
     // But GB18030 decodes it to U+E5E5, which is correct in theory but not in practice.
     // To work around, just change all occurences of U+E5E5 to U+3000 (ideographic space).
-    if (encoding == kCFStringEncodingGB_18030_2000) {
+    if (_encoding == kCFStringEncodingGB_18030_2000) {
         result.replace(0xE5E5, 0x3000);
     }
     
     return result;
 }
 
-QString KWQTextDecoder::convert(const char *chs, int len, bool flush)
+QString KWQTextDecoder::convert(const unsigned char *chs, int len, bool flush)
 {
     if (_encoding == kCFStringEncodingUnicode) {
-        return convertUTF16(reinterpret_cast<const unsigned char *>(chs), len);
+        return convertUTF16(chs, len);
     }
-    return convertUsingTEC(reinterpret_cast<const UInt8 *>(chs), len, flush);
+
+#if TEST_PARTIAL_CHARACTER_HANDLING
+    QString result;
+    for (int i = 0; i != len; ++i)
+        result += convertUsingTEC(chs + i, 1, flush && i == len - 1);
+    return result;
+#else
+    return convertUsingTEC(chs, len, flush);
+#endif
 }
 
 QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
 {
     ASSERT_ARG(len, len >= 0);
     
-    if (!chs || len <= 0) {
+    if (_error || !chs || len <= 0) {
         return QString();
     }
 
@@ -412,8 +495,8 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
     int numBufferedBytes = _numBufferedBytes;
     int buf1Len = numBufferedBytes;
     int buf2Len = len;
-    const char *buf1 = _bufferedBytes;
-    const char *buf2 = chs;
+    const unsigned char *buf1 = _bufferedBytes;
+    const unsigned char *buf2 = reinterpret_cast<const unsigned char *>(chs);
     unsigned char c1 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c2 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
     unsigned char c3 = buf1Len ? (--buf1Len, *buf1++) : buf2Len ? (--buf2Len, *buf2++) : 0;
@@ -447,7 +530,7 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len, bool flush)
         if (numBufferedBytes == 0) {
             return convert(chs, len, flush);
         }
-        char bufferedBytes[sizeof(_bufferedBytes)];
+        unsigned char bufferedBytes[sizeof(_bufferedBytes)];
         memcpy(bufferedBytes, _bufferedBytes, numBufferedBytes);
         _numBufferedBytes = 0;
         return convert(bufferedBytes, numBufferedBytes, false) + convert(chs, len, flush);
