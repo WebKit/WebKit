@@ -116,7 +116,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             if (!firstLetterContainer)
                 firstLetterContainer = this;
             
-            RenderText* newTextChild = static_cast<RenderText*>(textChild);
+            RenderText* textObj = static_cast<RenderText*>(textChild);
         //kdDebug( 6040 ) << "first letter" << endl;
 
             // Force inline display (except for floating first-letters)
@@ -126,24 +126,41 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             RenderObject* firstLetter = RenderFlow::createAnonymousFlow(document(), pseudoStyle); // anonymous box
             firstLetterContainer->addChild(firstLetter, firstLetterContainer->firstChild());
 
-            DOMStringImpl* oldText = newTextChild->string();
+            // The original string is going to be either a generated content string or a DOM node's
+            // string.  We want the original string before it got transformed in case first-letter has
+            // no text-transform or a different text-transform applied to it.
+            DOMStringImpl* oldText = textObj->originalString();
 
-            if(oldText->l >= 1) {
+            if (oldText->l >= 1) {
                 unsigned int length = 0;
                 while ( length < oldText->l &&
                         ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
                     length++;
                 length++;
                 //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
-                newTextChild->setText(oldText->substring(length,oldText->l-length));
-
-                RenderText* letter = new (renderArena()) RenderText(newTextChild->node(), oldText->substring(0,length));
+                
+                RenderTextFragment* remainingText = 
+                    new (renderArena()) RenderTextFragment(textObj->node(), oldText, length, oldText->l-length);
+                remainingText->setStyle(textObj->style());
+                if (remainingText->element())
+                    remainingText->element()->setRenderer(remainingText);
+                if (textObj->parent()) {
+                    RenderObject* nextObj = textObj->nextSibling();
+                    firstLetterContainer->removeChild(textObj);
+                    firstLetterContainer->addChild(remainingText, nextObj);
+                }
+                else {
+		    newChild->detach();
+                    newChild = remainingText;
+		}
+                
+                RenderTextFragment* letter = 
+                    new (renderArena()) RenderTextFragment(remainingText->node(), oldText, 0, length);
                 RenderStyle* newStyle = new RenderStyle();
                 newStyle->inheritFrom(pseudoStyle);
                 letter->setStyle(newStyle);
                 firstLetter->addChild(letter);
             }
-            firstLetter->close();
         }
     }
 

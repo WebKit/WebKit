@@ -308,10 +308,9 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
         
         if (contentData->contentType() == CONTENT_TEXT)
         {
-            RenderText* t = new (renderArena()) RenderText(document() /*anonymous object */, contentData->contentText());
+            RenderText* t = new (renderArena()) RenderTextFragment(document() /*anonymous object */, contentData->contentText());
             t->setStyle(pseudo);
             pseudoContainer->addChild(t);
-            t->close();
         }
         else if (contentData->contentType() == CONTENT_OBJECT)
         {
@@ -321,7 +320,6 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
             img->setStyle(style);
             img->setContentObject(contentData->contentObject());
             pseudoContainer->addChild(img);
-            img->close();
         }
     }
 

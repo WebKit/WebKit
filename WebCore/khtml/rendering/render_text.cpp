@@ -306,18 +306,19 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
 void RenderText::setStyle(RenderStyle *_style)
 {
     if ( style() != _style ) {
-        // ### fontvariant being implemented as text-transform: upper. sucks!
-        bool changedText = (!style() && (_style->fontVariant() != FVNORMAL || _style->textTransform() != TTNONE)) ||
-            ((style() && style()->textTransform() != _style->textTransform()) ||
-             (style() && style()->fontVariant() != _style->fontVariant()));
+        bool needToTransformText = (!style() && _style->textTransform() != TTNONE) ||
+                                   (style() && style()->textTransform() != _style->textTransform());
 
         RenderObject::setStyle( _style );
         m_lineHeight = RenderObject::lineHeight(false);
 
-        if (changedText && element() && element()->string())
-            setText(element()->string(), changedText);
+        if (needToTransformText) {
+            DOM::DOMStringImpl* textToTransform = originalString();
+            if (textToTransform)
+                setText(textToTransform, true);
+        }
 #if APPLE_CHANGES
-        // set also call cacheWidths(), so no need to recache if that has already been done.
+        // setText also calls cacheWidths(), so there is no need to call it again in that case.
         else
             cacheWidths();
 #endif
@@ -353,6 +354,16 @@ void RenderText::deleteRuns()
     }
     
     KHTMLAssert(m_lines.count() == 0);
+}
+
+bool RenderText::isTextFragment() const
+{
+    return false;
+}
+
+DOM::DOMStringImpl* RenderText::originalString() const
+{
+    return element() ? element()->string() : 0;
 }
 
 InlineTextBox * RenderText::findNextInlineTextBox( int offset, int &pos )
@@ -1167,16 +1178,13 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     if (str) {
         str = str->replace('\\', backslashAsCurrencySymbol());
         if ( style() ) {
-            if ( style()->fontVariant() == SMALL_CAPS )
-                str = str->upper();
-            else
-                switch(style()->textTransform()) {
+            switch(style()->textTransform()) {
                 case CAPITALIZE:   str = str->capitalize();  break;
                 case UPPERCASE:   str = str->upper();       break;
                 case LOWERCASE:  str = str->lower();       break;
                 case NONE:
                 default:;
-                }
+            }
         }
         str->ref();
     }
@@ -1420,5 +1428,45 @@ void RenderText::paintTextOutline(QPainter *p, int tx, int ty, const QRect &last
 		 true);
 }
 
+RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str,
+                                       int startOffset, int endOffset)
+:RenderText(_node, _str->substring(startOffset, endOffset)), 
+m_start(startOffset), m_end(endOffset), m_generatedContentStr(0)
+{}
+
+RenderTextFragment::RenderTextFragment(DOM::NodeImpl* _node, DOM::DOMStringImpl* _str)
+:RenderText(_node, _str), m_start(0)
+{
+    m_generatedContentStr = _str;
+    if (_str) {
+        _str->ref();
+        m_end = _str->l;
+    }
+    else
+        m_end = 0;
+}
+    
+RenderTextFragment::~RenderTextFragment()
+{
+    if (m_generatedContentStr)
+        m_generatedContentStr->deref();
+}
+
+bool RenderTextFragment::isTextFragment() const
+{
+    return true;
+}
+
+DOM::DOMStringImpl* RenderTextFragment::originalString() const
+{
+    DOM::DOMStringImpl* result = 0;
+    if (element())
+        result = element()->string();
+    else
+        result = contentString();
+    if (result && (start() > 0 || start() < result->l))
+        result = result->substring(start(), end());
+    return result;
+}
 #undef BIDI_DEBUG
 #undef DEBUG_LAYOUT

@@ -1,3 +1,30 @@
+2003-10-20  David Hyatt  <hyatt@apple.com>
+
+	Make first-letter and before/after work with text transforms.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::addChildToFlow):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setStyle):
+        (RenderText::isTextFragment):
+        (RenderText::originalString):
+        (RenderText::setText):
+        (m_generatedContentStr):
+        (m_start):
+        (RenderTextFragment::~RenderTextFragment):
+        (RenderTextFragment::isTextFragment):
+        (RenderTextFragment::originalString):
+        * khtml/rendering/render_text.h:
+        (khtml::RenderTextFragment::start):
+        (khtml::RenderTextFragment::end):
+        (khtml::RenderTextFragment::contentString):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::setRenderer):
+
 2003-10-19  David Hyatt  <hyatt@apple.com>
 
 	Remove the "flow-around-floats" hack for lists.  Other browsers don't do this.
