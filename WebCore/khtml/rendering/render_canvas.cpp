@@ -566,10 +566,12 @@ void RenderCanvas::clearSelection()
     if (m_selectionEnd)
     {
         m_selectionEnd->setSelectionState(SelectionNone);
+        // check if selection is collapsed
+        if (m_selectionStart != m_selectionEnd || m_selectionStartPos != m_selectionEndPos)
 #if APPLE_CHANGES
-        if (doRepaint)
+            if (doRepaint)
 #endif
-            m_selectionEnd->repaint();
+                m_selectionEnd->repaint();
     }
 
     // set selection start & end to 0

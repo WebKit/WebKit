@@ -571,12 +571,7 @@ public:
   /**
    * Sets the current selection.
    */
-  void setSelection(const DOM::Selection &);
-
-  /**
-   * Sets the current selection, using the given edit command.
-   */
-  void takeSelectionFrom(const khtml::EditCommand &, bool useEndingSelection=true);
+  void setSelection(const DOM::Selection &, bool closeTyping=true);
 
   /**
    * Clears the current selection.
@@ -1100,7 +1095,7 @@ private:
   /**
    * @internal
    */
-  void notifySelectionChanged(bool endTyping=true);
+  void notifySelectionChanged(bool closeTyping=true);
 
   /**
    * @internal

@@ -1,5 +1,48 @@
 2004-05-19  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3655601>: "deleting characters is much slower than inserting them"
+
+        Cleaned up the way selections are set in edit commands, and how KHTMLPart is
+        notified of these changes. This clears up a number of inefficiencies, including unnecessary repaints
+        which were causing the performace problem.
+
+        * khtml/editing/htmlediting.cpp: Removed moveToStartingSelection and moveToEndingSelection functions.
+        This work is going to be done using another pre-existing communication facility shared by edit commands
+        and the part.
+        * khtml/editing/htmlediting.h: Ditto.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::EditCommandImpl::setStartingSelection): Fix coding mistake which caused double recursion while setting
+        ancestor values.
+        (khtml::EditCommandImpl::setEndingSelection): Ditto.
+        (khtml::CompositeEditCommandImpl::doUnapply): No longer calls moveToStartingSelection. Work done in the part now.
+        (khtml::CompositeEditCommandImpl::doReapply): No longer calls moveToEndingSelection. Work done in the part now.
+        (khtml::TypingCommandImpl::typingAddedToOpenCommand): New function. Provides a hook for
+        typing commands to tell the part about additional typing that has been done.
+        (khtml::TypingCommandImpl::insertText): Now calls typingAddedToOpenCommand.
+        (khtml::TypingCommandImpl::insertNewline): Ditto.
+        (khtml::TypingCommandImpl::issueCommandForDeleteKey): Ditto.
+        (khtml::TypingCommandImpl::deleteKeyPressed): Ditto.
+        * khtml/editing/htmlediting_impl.h: Removed moveToStartingSelection and moveToEndingSelection functions.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Modified to take an argument which tells whether the set closes an active
+        typing command.
+        (KHTMLPart::notifySelectionChanged): Changed endTyping variable to be consistent with "close typing"
+        terminology used elsewhere.
+        (KHTMLPart::appliedEditing): Now sets the selection using the value of the passed-in command. Added
+        an assert for typing cases. Fixed problem where didChangeNotification was not being posted for typing
+        changes after the first one.
+        (KHTMLPart::unappliedEditing): Now sets the selection using the value of the passed-in command.
+        (KHTMLPart::reappliedEditing): Now sets the selection using the value of the passed-in command.
+        * khtml/khtml_part.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::clearSelection): Do not call repaint when the selection is a caret.
+
+2004-05-19  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         * khtml/html/html_elementimpl.cpp:

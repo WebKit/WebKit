@@ -119,9 +119,6 @@ public:
     virtual void setStartingSelection(const DOM::Selection &s) = 0;
     virtual void setEndingSelection(const DOM::Selection &s) = 0;
 
-    virtual void moveToStartingSelection() = 0;
-    virtual void moveToEndingSelection() = 0;
-
     virtual EditCommand parent() const = 0;
     virtual void setParent(const EditCommand &) = 0;
 };
@@ -153,9 +150,6 @@ public:
 
     void setStartingSelection(const DOM::Selection &s);
     void setEndingSelection(const DOM::Selection &s);
-
-    void moveToStartingSelection();
-    void moveToEndingSelection();
 
     EditCommand parent() const;
     void setParent(const EditCommand &);

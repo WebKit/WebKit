@@ -157,18 +157,6 @@ void EditCommand::setEndingSelection(const Selection &s)
     get()->setEndingSelection(s);
 }
 
-void EditCommand::moveToStartingSelection()
-{
-    IF_IMPL_NULL_RETURN;
-    get()->moveToStartingSelection();
-}
-
-void EditCommand::moveToEndingSelection()
-{
-    IF_IMPL_NULL_RETURN;
-    get()->moveToEndingSelection();
-}
-
 EditCommand EditCommand::parent() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
