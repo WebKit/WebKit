@@ -32,6 +32,11 @@
 #import "KWQView.h"
 #import "WebCoreBridge.h"
 
+@interface NSString (KWQTextField)
+- (int)_KWQ_numComposedCharacterSequences;
+- (NSString *)_KWQ_truncateToNumComposedCharacterSequences:(int)num;
+@end
+
 @interface KWQTextField (KWQInternal)
 - (void)setHasFocus:(BOOL)hasFocus;
 @end
@@ -208,8 +213,8 @@
 - (void)setMaximumLength:(int)len
 {
     NSString *oldValue = [self stringValue];
-    if ((int)[oldValue length] > len) {
-        [self setStringValue:[oldValue substringToIndex:len]];
+    if ([oldValue _KWQ_numComposedCharacterSequences] > len) {
+        [self setStringValue:[oldValue _KWQ_truncateToNumComposedCharacterSequences:len]];
     }
     [formatter setMaximumLength:len];
 }
@@ -339,9 +344,7 @@
     }
 
     int maxLength = [formatter maximumLength];
-    if ((int)[string length] > maxLength) {
-        string = [string substringToIndex:maxLength];
-    }
+    string = [string _KWQ_truncateToNumComposedCharacterSequences:maxLength];
     [secureField setStringValue:string];
     [super setStringValue:string];
     widget->textChanged();
@@ -616,7 +619,7 @@
 
 - (BOOL)isPartialStringValid:(NSString *)partialString newEditingString:(NSString **)newString errorDescription:(NSString **)error
 {
-    if ((int)[partialString length] > maxLength) {
+    if ([partialString _KWQ_numComposedCharacterSequences] > maxLength) {
         *newString = nil;
         return NO;
     }
@@ -763,6 +766,38 @@
     [super selectWithFrame:frame inView:view editor:editor delegate:delegate start:start length:length];
     ASSERT([[delegate delegate] isKindOfClass:[KWQTextField class]]);
     [(KWQTextField *)[delegate delegate] setHasFocus:YES];
+}
+
+@end
+
+@implementation NSString (KWQTextField)
+
+- (int)_KWQ_numComposedCharacterSequences
+{
+    unsigned i = 0;
+    unsigned l = [self length];
+    int num = 0;
+    while (i < l) {
+        i = NSMaxRange([self rangeOfComposedCharacterSequenceAtIndex:i]);
+        ++num;
+    }
+    return num;
+}
+
+- (NSString *)_KWQ_truncateToNumComposedCharacterSequences:(int)num
+{
+    unsigned i = 0;
+    unsigned l = [self length];
+    if (l == 0) {
+        return self;
+    }
+    for (int j = 0; j < num; j++) {
+        i = NSMaxRange([self rangeOfComposedCharacterSequenceAtIndex:i]);
+        if (i >= l) {
+            return self;
+        }
+    }
+    return [self substringToIndex:i];
 }
 
 @end

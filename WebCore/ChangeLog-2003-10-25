@@ -1,5 +1,22 @@
 2003-08-18  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed 3380411 -- Unicode supplementary characters cut in half in text control with maxlength set
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setMaximumLength:]): Enforce maximum length based on number of composed character
+        sequences rather than on number of UTF-16 values. This helps with both surrogate pairs (the supplementary
+        characters mentioned in the bug report) and composed character sequences.
+        (-[KWQTextField setStringValue:]): Ditto.
+        (-[KWQTextFieldFormatter isPartialStringValid:newEditingString:errorDescription:]): Ditto.
+        (-[NSString _KWQ_numComposedCharacterSequences]): Added. Computes the length of a string in terms of
+        number of composed character sequences.
+        (-[NSString _KWQ_truncateToNumComposedCharacterSequences:]): Added. Truncates a string in terms of
+        number of composed character sequences.
+
+2003-08-18  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed 3299893 -- oncontextmenu support
