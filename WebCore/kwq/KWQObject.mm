@@ -84,7 +84,7 @@ KWQObjectSenderScope::~KWQObjectSenderScope()
 }
 
 QObject::QObject(QObject *parent, const char *name)
-    : m_signalListHead(0), m_signalsBlocked(false)
+    : m_signalListHead(0), m_signalsBlocked(false), m_eventFilterObject(0)
 {
     guardedPtrDummyList.append(this);
 }
