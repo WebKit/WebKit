@@ -45,10 +45,12 @@ extern "C" AXUIElementRef NSAccessibilityCreateAXUIElementRef(id element);
 
 #import "dom_docimpl.h"
 #import "dom_elementimpl.h"
+#import "html_elementimpl.h"
 #import "html_formimpl.h"
 #import "html_inlineimpl.h"
 #import "html_imageimpl.h"
 #import "dom_string.h"
+#import "dom2_eventsimpl.h"
 #import "dom2_range.h"
 #import "htmlattrs.h"
 #import "htmltags.h"
@@ -77,6 +79,7 @@ using DOM::HTMLAnchorElementImpl;
 using DOM::HTMLAreaElementImpl;
 using DOM::HTMLCollection;
 using DOM::HTMLCollectionImpl;
+using DOM::HTMLElementImpl;
 using DOM::HTMLInputElementImpl;
 using DOM::HTMLMapElementImpl;
 using DOM::Node;
@@ -187,12 +190,34 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     return m_renderer->isImage() && static_cast<RenderImage*>(m_renderer)->isImageButton();
 }
 
+-(ElementImpl *)mouseButtonListener
+{
+    // FIXME: Do the continuation search like anchorElement does
+    NodeImpl* elt = m_renderer->element();
+    for ( ; elt; elt = elt->parentNode()) {
+        if (elt->getHTMLEventListener(DOM::EventImpl::KHTML_CLICK_EVENT))
+            return static_cast<HTMLAnchorElementImpl*>(elt);
+            
+        if (elt->getHTMLEventListener(DOM::EventImpl::MOUSEDOWN_EVENT))
+            return static_cast<HTMLAnchorElementImpl*>(elt);
+            
+        if (elt->getHTMLEventListener(DOM::EventImpl::MOUSEUP_EVENT))
+            return static_cast<HTMLAnchorElementImpl*>(elt);
+    }
+    
+    return NULL;
+}
+
 -(ElementImpl *)actionElement
 {
     if ([self isImageButton])
         return static_cast<ElementImpl*>(m_renderer->element());
 
-    return [self anchorElement];
+    ElementImpl * elt = [self anchorElement];
+    if (!elt)
+        elt = [self mouseButtonListener];
+
+    return elt;
 }
 
 -(KWQAccObject*)firstChild
@@ -502,6 +527,9 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         // FIXME: should use startOfDocument and endOfDocument (or rangeForDocument?) here
         VisiblePosition startVisiblePosition = m_renderer->positionForCoordinates (0, 0);
         VisiblePosition endVisiblePosition   = m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX);
+        if (startVisiblePosition.isNull() || endVisiblePosition.isNull())
+            return nil;
+            
         QString qString   = plainText(makeRange(startVisiblePosition, endVisiblePosition));
         
         // transform it to a CFString and return that
@@ -608,7 +636,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         return NO;
 
     if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
-        return !static_cast<RenderBlock*>(m_renderer)->firstLineBox();
+        return !static_cast<RenderBlock*>(m_renderer)->firstLineBox() && ![self mouseButtonListener];
 
     return (!m_renderer->isListMarker() && !m_renderer->isCanvas() && 
             !m_renderer->isImage() &&
@@ -744,7 +772,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             }
         }
 
-        actionElement->accessKeyAction();
+        actionElement->accessKeyAction(true);
     }
 }
 

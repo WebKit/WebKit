@@ -310,7 +310,7 @@ void QButton::clicked()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QButton::click()
+void QButton::click(bool sendMouseEvents)
 {
     KWQ_BLOCK_EXCEPTIONS;
 

@@ -75,7 +75,7 @@ void KWQFileButton::setFilename(const QString &f)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void KWQFileButton::click()
+void KWQFileButton::click(bool sendMouseEvents)
 {
     NSView <WebCoreFileButton> *button = getView();
 

@@ -2647,7 +2647,7 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
             QString key = kevt->qKeyEvent()->unmodifiedText().lower();
             ElementImpl *elem = getElementByAccessKey(key);
             if (elem) {
-                elem->accessKeyAction();
+                elem->accessKeyAction(false);
                 evt->setDefaultHandled();
             }
         }

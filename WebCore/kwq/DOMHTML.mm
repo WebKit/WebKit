@@ -1466,7 +1466,7 @@ using DOM::NodeImpl;
 
 - (void)click
 {
-    [self _inputElementImpl]->click();
+    [self _inputElementImpl]->click(false);
 }
 
 @end

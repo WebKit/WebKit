@@ -1073,15 +1073,38 @@ void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
         setAttribute(ATTR_CONTENTEDITABLE, enabled.isEmpty() ? "true" : enabled);
 }
 
-void HTMLElementImpl::click()
+void HTMLElementImpl::click(bool sendMouseEvents)
 {
     int x = 0;
     int y = 0;
-    if (renderer())
-        renderer()->absolutePosition(x,y);
+    RenderObject *r = renderer();
+    if (r)
+        r->absolutePosition(x,y);
+
+    // send mousedown and mouseup before the click, if requested
+    if (sendMouseEvents) {
+        QMouseEvent pressEvt(QEvent::MouseButtonPress, QPoint(x,y), Qt::LeftButton, 0);
+        dispatchMouseEvent(&pressEvt, EventImpl::MOUSEDOWN_EVENT);
+        QMouseEvent upEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+        dispatchMouseEvent(&upEvent, EventImpl::MOUSEUP_EVENT);
+    }
+    
     // always send click
-    QMouseEvent evt(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-    dispatchMouseEvent(&evt, EventImpl::KHTML_CLICK_EVENT);
+    QMouseEvent clickEvent(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+    dispatchMouseEvent(&clickEvent, EventImpl::KHTML_CLICK_EVENT);
+}
+
+// accessKeyAction is used by the accessibility support code
+// to send events to elements that our JavaScript caller does
+// does not.  The elements JS is interested in have subclasses
+// that override this method to direct the click appropriately.
+// Here in the base class, then, we only send the click if
+// the caller wants it to go to any HTMLElementImpl, and we say
+// to send the mouse events in addition to the click.
+void HTMLElementImpl::accessKeyAction(bool sendToAnyElement)
+{
+    if (sendToAnyElement)
+        click(true);
 }
 
 DOMString HTMLElementImpl::toString() const

@@ -165,7 +165,8 @@ public:
     virtual void setContentEditable(HTMLAttributeImpl* attr);
     virtual void setContentEditable(const DOMString &enabled);
 
-    virtual void click();
+    virtual void click(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendToAnyElement);
     
     CSSMutableStyleDeclarationImpl* inlineStyleDecl() const { return m_inlineStyleDecl; }
     virtual CSSMutableStyleDeclarationImpl* additionalAttributeStyleDecl();

@@ -208,7 +208,7 @@ public:
     void dispatchAttrRemovalEvent(AttributeImpl *attr);
     void dispatchAttrAdditionEvent(AttributeImpl *attr);
 
-    virtual void accessKeyAction() {};
+    virtual void accessKeyAction(bool sendToAnyEvent) { };
 
     virtual DOMString toString() const;
 

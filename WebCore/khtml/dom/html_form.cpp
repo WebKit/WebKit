@@ -543,7 +543,7 @@ void HTMLInputElement::select(  )
 void HTMLInputElement::click(  )
 {
     if(impl)
-	((HTMLInputElementImpl *)impl)->click(  );
+	((HTMLInputElementImpl *)impl)->click( false );
 }
 
 // --------------------------------------------------------------------------

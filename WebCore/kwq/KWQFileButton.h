@@ -41,7 +41,7 @@ public:
     ~KWQFileButton();
     
     void setFilename(const QString &);
-    void click();
+    void click(bool sendMouseEvents);
     
     QSize sizeForCharacterWidth(int characters) const;
     QRect frameGeometry() const;

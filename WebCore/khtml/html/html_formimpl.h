@@ -234,8 +234,8 @@ public:
     virtual bool isActivatedSubmit() const;
     virtual void setActivatedSubmit(bool flag);
 
-    virtual void click();
-    virtual void accessKeyAction();
+    virtual void click(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendToAnyElement);
     
 protected:
     DOMString m_value;
@@ -330,8 +330,8 @@ public:
 
     void select();
     
-    virtual void click();
-    virtual void accessKeyAction();
+    virtual void click(bool sendMouseEvents);
+    virtual void accessKeyAction(bool sendToAnyElement);
 
     virtual bool mapToEntry(NodeImpl::Id attr, MappedAttributeEntry& result) const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
@@ -403,7 +403,7 @@ public:
 
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
 
-    virtual void accessKeyAction();
+    virtual void accessKeyAction(bool sendToAnyElement);
 
     /**
      * the form element this label is associated to.
@@ -504,7 +504,7 @@ public:
     virtual void defaultEventHandler(EventImpl *evt);
 #endif
 
-    virtual void accessKeyAction();
+    virtual void accessKeyAction(bool sendToAnyElement);
 
 private:
     void recalcListItems();
@@ -654,7 +654,7 @@ public:
 
     virtual bool isEditable();
     
-    virtual void accessKeyAction();
+    virtual void accessKeyAction(bool sendToAnyElement);
     
 protected:
     int m_rows;

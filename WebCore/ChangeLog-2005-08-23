@@ -1,3 +1,59 @@
+2005-03-18  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin, Ken.
+
+        <rdar://problem/3735625> AX: add AXPress action if an element has an onclick handler
+
+        * khtml/dom/html_form.cpp:
+        (HTMLInputElement::click):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::click):
+        (HTMLElementImpl::accessKeyAction):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::submitClick):
+        (DOM::HTMLButtonElementImpl::click):
+        (DOM::HTMLButtonElementImpl::accessKeyAction):
+        (DOM::HTMLInputElementImpl::click):
+        (DOM::HTMLInputElementImpl::accessKeyAction):
+        (DOM::HTMLInputElementImpl::defaultEventHandler):
+        (DOM::HTMLLabelElementImpl::accessKeyAction):
+        (DOM::HTMLSelectElementImpl::accessKeyAction):
+        (DOM::HTMLTextAreaElementImpl::accessKeyAction):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::defaultEventHandler):
+        (HTMLAnchorElementImpl::accessKeyAction):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderFileButton::click):
+        * khtml/rendering/render_form.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::defaultEventHandler):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::ElementImpl::accessKeyAction):
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLInputElement click]):
+        * kwq/KWQButton.h:
+        * kwq/KWQButton.mm:
+        (QButton::click):
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::click):
+        
+        Add accessKeyAction parameter about whether to limit to HTMLElementImpl subclasses that JavaScript wants, or to apply to others as well.
+        
+        Add click() parameter about whether to send the mousedown and mouseup events in addition to the click event.
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject mouseButtonListener]):
+        Locate a mousedown, mouseup, or click handler in the current element and its ancestors.
+        
+        (-[KWQAccObject actionElement]):
+        (-[KWQAccObject accessibilityIsIgnored]):
+        (-[KWQAccObject accessibilityPerformAction:]):
+        Consider mouseButtonListener.
+
 2005-03-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

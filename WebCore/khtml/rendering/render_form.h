@@ -323,7 +323,7 @@ public:
 #endif
 
 #if APPLE_CHANGES
-    void click();
+    void click(bool sendMouseEvents);
 #endif
 
 public slots:
