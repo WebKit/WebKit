@@ -1,5 +1,14 @@
 2003-09-25  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3433488.  Written by Ed.  WebKit doesn't sync window visibility when new webview added to visible window.
+
+        Reviewed by Richard.
+
+        * Carbon.subproj/CarbonWindowAdapter.m:
+        (-[CarbonWindowAdapter initWithCarbonWindowRef:takingOwnership:disableOrdering:carbon:]):
+
+2003-09-25  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3434854.  Written by Ed.  Correctly handle window modality in carbon.
 
         Reviewed by Richard.

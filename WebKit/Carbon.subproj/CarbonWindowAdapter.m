@@ -263,6 +263,9 @@ extern const OSType NSCarbonWindowPropertyTag;
     // Ignore the Carbon window activation/deactivation events that Carbon sends to its windows at app activation/deactivation.  We'll send such events when we think it's appropriate.
     _passingCarbonWindowActivationEvents = NO;
 
+    // Be sure to sync up visibility
+    [self _setVisible:(BOOL)IsWindowVisible( _windowRef )];
+
     // Done.
     return self;
 
