@@ -15,14 +15,6 @@
 
 #define HEADER_SIZE 128
 
-enum {
-    readingHeader,
-    readingDataFork,
-    skippingToResourceFork,
-    readingResourceFork,
-    finished
-};
-
 @implementation WebMacBinaryDecoder
 
 // Returns YES if the decoder can decode headerData, NO otherwise.
@@ -77,22 +69,20 @@ enum {
         const u_int8_t *header = [data bytes];
         
         ASSERT(header[1] < sizeof(_name));
-        memcpy(_name, header + 1, header[1] + 1);	// Copy the name
+        memcpy(_name, header + 1, header[1] + 1);
+        
         _fileType = (((((header[65] << 8) | header[66]) << 8) | header[67]) << 8) | header[68];
         _fileCreator = (((((header[69] << 8) | header[70]) << 8) | header[71]) << 8) | header[72];
         _dataForkLength = (((((header[83] << 8) | header[84]) << 8) | header[85]) << 8) | header[86];
         _resourceForkLength = (((((header[87] << 8) | header[88]) << 8) | header[89]) << 8) | header[90];
         _creationDate = (((((header[91] << 8) | header[92]) << 8) | header[93]) << 8) | header[94];
         _modificationDate = (((((header[95] << 8) | header[96]) << 8) | header[97]) << 8) | header[98];
-        _commentLength = (header[99] << 8) | header[100];
     }
     
     int dataForkStart = HEADER_SIZE;
     int dataForkEnd = dataForkStart + _dataForkLength;
     int resourceForkStart = (dataForkEnd + 0x7F) & ~0x7F;
     int resourceForkEnd = resourceForkStart + _resourceForkLength;
-    int commentStart = (resourceForkEnd + 0x7F) & ~0x7F;
-    _commentEnd = commentStart + _commentLength;
 
     // Check for a piece of available data fork.
     if (_dataForkLength && _offset < dataForkEnd && _offset + dataLength > dataForkStart) {
@@ -118,7 +108,11 @@ enum {
 // Returns YES if decoding successfully finished, NO otherwise.
 - (BOOL)finishDecoding
 {
-    return _offset >= _commentEnd;
+    int dataForkStart = HEADER_SIZE;
+    int dataForkEnd = dataForkStart + _dataForkLength;
+    int resourceForkStart = (dataForkEnd + 0x7F) & ~0x7F;
+    int resourceForkEnd = resourceForkStart + _resourceForkLength;
+    return _offset >= resourceForkEnd;
 }
 
 // Returns a dictionary of 4 file attributes. The attributes (as defined in NSFileManager.h) are:

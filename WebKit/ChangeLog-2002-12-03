@@ -1,3 +1,17 @@
+2002-11-05  Darin Adler  <darin@apple.com>
+
+	- changed our MacBinary decoding to not pay any attention to the comment
+
+	Before we would "fail to decode" if the comment was truncated, now we just
+	don't worry about it.
+
+        * Downloads.subproj/WebMacBinaryDecoder.h: Remove _commentLength and _commentEnd.
+        * Downloads.subproj/WebMacBinaryDecoder.m:
+        (-[WebMacBinaryDecoder decodeData:dataForkData:resourceForkData:]): Remove code
+	to get _commentLength and code to compute _commentEnd.
+        (-[WebMacBinaryDecoder finishDecoding]): Check offset against the resource fork
+	end rather than the comment end to see if we got enough data.
+
 2002-11-05  John Sullivan  <sullivan@apple.com>
 
         * Resources/url_icon.tiff:
