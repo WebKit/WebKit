@@ -262,10 +262,8 @@ static char *newCString(NSString *string)
     return cString;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL baseURL:(NSURL *)theBaseURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments
 {
-    NSString *baseURLString;
-
     [super initWithFrame: r];
     
     instance = &instanceStruct;
@@ -273,7 +271,8 @@ static char *newCString(NSString *string)
 
     mime = [mimeType retain];
     srcURL = [theURL retain];
-    
+    baseURL = [theBaseURL retain];
+        
     // load the plug-in if it is not already loaded
     if(![plugin load])
         return nil;
@@ -291,24 +290,26 @@ static char *newCString(NSString *string)
     NPP_URLNotify = 	[plugin NPP_URLNotify];
     NPP_GetValue = 	[plugin NPP_GetValue];
     NPP_SetValue = 	[plugin NPP_SetValue];
-    NPP_Print = 	[plugin NPP_Print]; 
-
-    // get base URL which was added in the args in the part
-    baseURLString = [arguments objectForKey:@"WebKitBaseURL"];
-    if (baseURLString)
-        baseURL = [[NSURL _IF_URLWithString:baseURLString] retain];
-            
-    isHidden = [arguments objectForKey:@"hidden"] != nil;
-    
-    argsCount = 0;
+    NPP_Print = 	[plugin NPP_Print];
 
     // Convert arguments dictionary to 2 string arrays.
     // These arrays are passed to NPP_New, but the strings need to be
     // modifiable and live the entire life of the plugin.
     
-    cAttributes = new char * [[arguments count]];
-    cValues = new char * [[arguments count]];
+    argsCount = 0;
     
+    // The Java plug-in requires the first argument to be the base URL
+    if([mime isEqualToString:@"application/x-java-applet"]){
+        cAttributes = new char * [[arguments count]+1];
+        cValues = new char * [[arguments count]+1]; 
+        cAttributes[0] = newCString(@"CODEBASE");
+        cValues[0] = newCString([baseURL absoluteString]);
+        argsCount++;
+    }else{
+        cAttributes = new char * [[arguments count]];
+        cValues = new char * [[arguments count]];
+    }
+        
     NSEnumerator *e = [arguments keyEnumerator];
     NSString *key;
     while ((key = [e nextObject])) {
@@ -316,8 +317,9 @@ static char *newCString(NSString *string)
         cValues[argsCount] = newCString([arguments objectForKey:key]);
         argsCount++;
     }
+    
     streams = [[NSMutableArray alloc] init];
-    notificationData = [[NSMutableDictionary dictionaryWithCapacity:1] retain];
+    notificationData = [[NSMutableDictionary alloc] init];
     
     // Initialize globals
     canRestart = YES;
@@ -341,6 +343,7 @@ static char *newCString(NSString *string)
     [streams release];
     [mime release];
     [srcURL release];
+    [baseURL release];
     [notificationData release];
     delete [] cAttributes;
     delete [] cValues;

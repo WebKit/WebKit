@@ -111,17 +111,20 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
             }
             
             [self _getPluginInfoForResourceFile:resRef];
+            CloseResFile(resRef);
             isBundle = NO;
         }else return nil;
         
-    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){ //bundle plug-in
+    //bundle plug-in
+    }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
         pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
         bundle = CFBundleCreate(NULL, pluginURL);
         CFBundleGetPackageInfo(bundle, &type, NULL);
         
-        if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){  // 1112690764 = 'BRPL'
+        if(type == FOUR_CHAR_CODE('BRPL') || type == FOUR_CHAR_CODE('IEPL') ){
             resRef = CFBundleOpenBundleResourceMap(bundle);
             [self _getPluginInfoForResourceFile:resRef];
+            CFBundleCloseBundleResourceMap(bundle, resRef);
             isBundle = YES;
         }else{
             return nil;
@@ -161,11 +164,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         if(!memcmp([data bytes], "Joy!peff", 8)){
             isCFM = TRUE;
         }else{
-            if([name isEqualToString:@"Java Plug-in"]){ //FIXME 2885120
-                isCFM = TRUE;
-            }else{
-                isCFM = FALSE;
-            }
+            isCFM = FALSE;
         }
         [executableFile closeFile];
         didLoad = CFBundleLoadExecutable(bundle);
@@ -206,7 +205,7 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         isCFM = TRUE;
     }
     
-    // swap function table stage
+    // swap function tables
     if(isCFM){
         browserFuncs.version = 11;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
@@ -314,13 +313,11 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
     isLoaded = FALSE;
 }
 
-- (NSString *)mimeTypeForURL:(NSString *)URL
+- (NSString *)mimeTypeForExtension:(NSString *)extension;
 {
     uint n;
     NSRange hasExtension;
-    NSString *extension;
-    
-    extension = [URL pathExtension];
+
     for(n=0; n<[mimeTypes count]; n++){
         hasExtension = [[[mimeTypes objectAtIndex:n] objectAtIndex:1] rangeOfString:extension];
         if(hasExtension.length){

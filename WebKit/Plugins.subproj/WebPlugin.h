@@ -58,7 +58,7 @@
 - initWithPath:(NSString *)pluginPath;
 - (BOOL)load;
 - (void)unload;
-- (NSString *)mimeTypeForURL:(NSString *)URL;
+- (NSString *)mimeTypeForExtension:(NSString *)extension;
 - (NSString *)path;
 - (BOOL)isLoaded;
 - (NSString *)description;

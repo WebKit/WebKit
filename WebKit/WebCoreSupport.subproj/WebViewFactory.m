@@ -26,10 +26,10 @@
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
 
-- (NSView *)viewForPluginWithURL:(NSString *)pluginURL serviceType:(NSString *)serviceType arguments:(NSArray *)args baseURL:(NSString *)baseURL
+- (NSView *)viewForPluginWithURL:(NSURL *)pluginURL serviceType:(NSString *)serviceType arguments:(NSArray *)args baseURL:(NSURL *)baseURL
 {
     NSMutableDictionary *arguments;
-    NSString *mimeType;
+    NSString *mimeType, *extension;
     NSRange r1, r2, r3;
     IFPlugin *plugin;
     uint i;
@@ -45,23 +45,20 @@
             [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
         }
     }
-    
-    if ([baseURL length]) {
-        [arguments setObject:baseURL forKey:@"WebKitBaseURL"];
-    }
         
     if ([serviceType length]) {
         mimeType = serviceType;
         plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:mimeType];
     } else {
-        plugin = [[IFPluginDatabase installedPlugins] pluginForExtension:[pluginURL pathExtension]];
-        mimeType = [plugin mimeTypeForURL:pluginURL];
+        extension = [[pluginURL path] pathExtension];
+        plugin = [[IFPluginDatabase installedPlugins] pluginForExtension:extension];
+        mimeType = [plugin mimeTypeForExtension:extension];
     }
     
     if (plugin == nil) {
         return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:mimeType arguments:arguments] autorelease];
     }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:[NSURL _IF_URLWithString:pluginURL] mime:mimeType arguments:arguments] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:pluginURL baseURL:baseURL mime:mimeType arguments:arguments] autorelease];
 }
 
 - (NSArray *)pluginsInfo
@@ -72,21 +69,19 @@
 - (NSView *)viewForJavaAppletWithArguments:(NSDictionary *)arguments
 {
     IFPlugin *plugin;
-    NSMutableDictionary *argsCopy;
+    NSURL *baseURL;
     
-    plugin = [[IFPluginDatabase installedPlugins] pluginWithFilename:@"Java.plugin"];
+    plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
     if (plugin == nil) {
         return nil;
     }
     
-    argsCopy = [NSMutableDictionary dictionaryWithDictionary:arguments];
-    [argsCopy setObject:[argsCopy objectForKey:@"baseURL"] forKey:@"DOCBASE"];
-    [argsCopy removeObjectForKey:@"baseURL"];
+    baseURL = [NSURL _IF_URLWithString:[arguments objectForKey:@"baseURL"]];
 
     if (plugin == nil) {
-        return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:@"application/x-java-applet" arguments:argsCopy] autorelease];
+        return [[[IFNullPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) mimeType:@"application/x-java-applet" arguments:arguments] autorelease];
     }
-    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:nil mime:@"application/x-java-applet" arguments:argsCopy] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:NSMakeRect(0,0,0,0) plugin:plugin url:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:arguments] autorelease];
 }
 
 @end
