@@ -1,3 +1,15 @@
+2003-04-24  Maciej Stachowiak  <mjs@apple.com> (checked in by Darin)
+
+        Reviewed by Ken and Darin.
+
+	Fixed an authentication crashing bug that crept into the last few
+	changes, plus a typo.
+	
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]): Remove extra space.
+        (-[WebAuthenticationPanel runAsSheetOnWindow:withChallenge:]): Store
+	the challenge properly.
+
 2003-04-22  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

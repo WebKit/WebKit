@@ -92,7 +92,7 @@
 {
     [self loadNib];
 
-    NSURLProtectionSpace *space = [chall  protectionSpace];
+    NSURLProtectionSpace *space = [chall protectionSpace];
 
     NSString *host;
     if ([space port] == 0) {
@@ -169,7 +169,7 @@
     [self setUpForChallenge:chall];
 
     usingSheet = TRUE;
-    chall = [chall retain];
+    challenge = [chall retain];
     
     [[NSApplication sharedApplication] beginSheet:panel modalForWindow:window modalDelegate:self didEndSelector:@selector(sheetDidEnd:returnCode:contextInfo:) contextInfo:NULL];
 }
