@@ -26,11 +26,12 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
-#include "qwidget.h"
+#include "qframe.h"
 #include "qscrollbar.h"
 
-class QScrollView : public QWidget {
+class QScrollView : public QFrame {
 public:
+    QScrollView();
     QWidget* viewport() const;
     int visibleWidth() const;
     int visibleHeight() const;
@@ -42,6 +43,8 @@ public:
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
     QScrollBar *horizontalScrollBar() const;
     QScrollBar *verticalScrollBar() const;
+    virtual void setVScrollBarMode(ScrollBarMode);
+    virtual void setHScrollBarMode(ScrollBarMode);
 };
 
 #endif
