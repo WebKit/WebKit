@@ -1,5 +1,13 @@
 2002-11-15  David Hyatt  <hyatt@apple.com>
 
+	Fix for whitespace regressions that caused text overlapping
+	and text spilling.
+	
+        * khtml/rendering/bidi.cpp:
+        (appendRunsForObject):
+
+2002-11-15  David Hyatt  <hyatt@apple.com>
+
 	Fix newlines getting stripped out of textareas by not making
 	rendertext objects for children of textareas.
 	
