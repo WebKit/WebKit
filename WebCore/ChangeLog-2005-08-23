@@ -12,7 +12,7 @@
 
         Reviewed by Maciej.
 
-        - fixed uses of NULL in non-pointer contexts
+        - fixed 3463586 -- WebCore does not compile with new definition of NULL in Merlot
 
         * khtml/khtml_part.cpp: (findWordBoundary): Changed NULL to 0 and did a little code
         cleanup of the surrounding code.
