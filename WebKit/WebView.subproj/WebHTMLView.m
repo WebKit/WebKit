@@ -21,6 +21,7 @@
 #import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
@@ -46,6 +47,7 @@
 
 #import <Foundation/NSFileManager_NSURLExtras.h>
 #import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLFileTypeMappings.h>
 
 #import <CoreGraphics/CGContextGState.h>
 
@@ -80,6 +82,7 @@
 static BOOL forceRealHitTest = NO;
 
 @interface WebHTMLView (WebFileInternal)
+- (BOOL)_imageExistsAtPaths:(NSArray *)paths;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
@@ -143,6 +146,50 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 
 @implementation WebHTMLView (WebFileInternal)
 
+- (BOOL)_imageExistsAtPaths:(NSArray *)paths
+{
+    NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
+    NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
+    NSEnumerator *enumerator = [paths objectEnumerator];
+    NSString *path;
+    
+    while ((path = [enumerator nextObject]) != nil) {
+        NSString *MIMEType = [mappings MIMETypeForExtension:[path pathExtension]];
+        if ([imageMIMETypes containsObject:MIMEType]) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+- (DOMDocumentFragment *)_documentFragmentWithPaths:(NSArray *)paths
+{
+    DOMDocumentFragment *fragment = [[[self _bridge] DOMDocument] createDocumentFragment];
+    NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
+    NSArray *imageMIMETypes = [[WebImageRendererFactory sharedFactory] supportedMIMETypes];
+    NSEnumerator *enumerator = [paths objectEnumerator];
+    WebDataSource *dataSource = [self _dataSource];
+    NSString *path;
+    
+    while ((path = [enumerator nextObject]) != nil) {
+        NSString *MIMEType = [mappings MIMETypeForExtension:[path pathExtension]];
+        if ([imageMIMETypes containsObject:MIMEType]) {
+            WebResource *resource = [[WebResource alloc] initWithData:[NSData dataWithContentsOfFile:path]
+                                                                  URL:[NSURL fileURLWithPath:path]
+                                                             MIMEType:MIMEType 
+                                                     textEncodingName:nil
+                                                            frameName:nil];
+            if (resource) {
+                [fragment appendChild:[dataSource _imageElementWithImageResource:resource]];
+                [resource release];
+            }
+        }
+    }
+    
+    return [fragment firstChild] != nil ? fragment : nil;
+}
+
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
     NSArray *types = [pasteboard types];
@@ -155,6 +202,13 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
             if (fragment) {
                 return fragment;
             }
+        }
+    }
+    
+    if ([types containsObject:NSFilenamesPboardType]) {
+        DOMDocumentFragment *fragment = [self _documentFragmentWithPaths:[pasteboard propertyListForType:NSFilenamesPboardType]];
+        if (fragment != nil) {
+            return fragment;
         }
     }
     
@@ -593,7 +647,7 @@ static WebHTMLView *lastHitView = nil;
     static NSArray *types = nil;
     if (!types) {
         types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
-            NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
+            NSFilenamesPboardType, NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
             NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
     }
     return types;
@@ -1736,17 +1790,27 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)_canProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    if ([[draggingInfo draggingPasteboard] availableTypeFromArray:[WebHTMLView _insertablePasteboardTypes]] != nil) {
-        NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
-        NSDictionary *element = [self elementAtPoint:point];
-        if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
-            if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue]) {
-                // Can't drag onto the selection being dragged.
-                return NO;
-            }
-            return YES;
-        }
+    NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+    NSMutableSet *types = [NSMutableSet setWithArray:[pasteboard types]];
+    [types intersectSet:[NSSet setWithArray:[WebHTMLView _insertablePasteboardTypes]]];
+    if ([types count] == 0) {
+        return NO;
+    } else if ([types count] == 1 && 
+               [types containsObject:NSFilenamesPboardType] && 
+               ![self _imageExistsAtPaths:[pasteboard propertyListForType:NSFilenamesPboardType]]) {
+        return NO;
     }
+    
+    NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
+    NSDictionary *element = [self elementAtPoint:point];
+    if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
+        if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+            // Can't drag onto the selection being dragged.
+            return NO;
+        }
+        return YES;
+    }
+    
     return NO;
 }
 

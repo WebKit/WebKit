@@ -39,7 +39,6 @@
 #import <Foundation/NSDictionary_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
-#import <Foundation/NSURLFileTypeMappings.h>
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLResponsePrivate.h>
 
@@ -200,17 +199,24 @@
     return archive;
 }
 
-- (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource
+- (DOMElement *)_imageElementWithImageResource:(WebResource *)resource
 {
     ASSERT(resource);
     [self addSubresource:resource];
+    
+    DOMElement *imageElement = [[[self _bridge] DOMDocument] createElement:@"img"];
+    
+    // FIXME: calling _web_originalDataAsString on a file URL returns an absolute path. Workaround this.
+    NSURL *URL = [resource URL];
+    [imageElement setAttribute:@"src" :[URL isFileURL] ? [URL absoluteString] : [URL _web_originalDataAsString]];
+    
+    return imageElement;
+}
 
-    DOMDocument *document = [[self _bridge] DOMDocument];
-    DOMDocumentFragment *fragment = [document createDocumentFragment];
-    DOMElement *imageElement = [document createElement:@"img"];
-    [imageElement setAttribute:@"src" :[[resource URL] _web_originalDataAsString]];
-    [fragment appendChild:imageElement];
-
+- (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource
+{
+    DOMDocumentFragment *fragment = [[[self _bridge] DOMDocument] createDocumentFragment];
+    [fragment appendChild:[self _imageElementWithImageResource:resource]];
     return fragment;
 }
 

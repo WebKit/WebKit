@@ -1,3 +1,20 @@
+2004-06-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3674921>: (can't drag an image from Desktop to Blot document)
+
+        Reviewed by mjs.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _imageElementWithImageResource:]): factored out from _documentFragmentWithImageResource:
+        (-[WebDataSource _documentFragmentWithImageResource:]): call _imageElementWithImageResource:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _imageExistsAtPaths:]): new
+        (-[WebHTMLView _documentFragmentWithPaths:]): new
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]): handle NSFilenamesPboardType
+        (+[WebHTMLView _insertablePasteboardTypes]): include NSFilenamesPboardType
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]): check for NSFilenamesPboardType and check that the files are images
+
 2004-06-04  Richard Williamson   <rjw@apple.com>
 
         Fixed crasher from last checkin.
