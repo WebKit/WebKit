@@ -1,3 +1,13 @@
+2003-08-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John
+
+	- fixed rdar://problem/3397316 - sherlock crash: KJS::Collector::allocate(unsigned long)
+	
+	* kjs/internal.cpp:
+        (InterpreterImp::InterpreterImp): Hold the lock a bit longer, so
+	the call to initGlobalObject is covered.
+
 === Safari-95 ===
 
 2003-08-24  Darin Adler  <darin@apple.com>
