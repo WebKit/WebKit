@@ -143,7 +143,7 @@
     
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         if (!path) {
-            path = strdup("/tmp/SafariPlugInStream.XXXXXX");
+            path = strdup("/tmp/WebKitPlugInStreamXXXXXX");
             int fd = mkstemp(path);
             if (fd == -1) {
                 // This should almost never happen.

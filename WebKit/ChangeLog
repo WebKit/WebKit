@@ -1,3 +1,18 @@
+2003-04-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - make change to avoid misunderstanding that led to bug report 3179394
+          "Safari: Request that temp files use actual file extensions"
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        Don't put a dot between "SafariPlugInStream" and the the 6-digit unique number, so the number
+        does not look like an extension. Also make it "WebKitPlugInStream" since this is used for
+        other WebKit clients, and not just Safari.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2003-04-29  Richard Williamson   <rjw@apple.com>
 
         API changes from final review meeting.
