@@ -1,5 +1,38 @@
 2003-02-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3142813 -- Safari displays a blank page when trying to open html file encoded in little-endian UTF-16
+
+        * kwq/KWQString.h: Remove fromStringWithEncoding and convertToQCString,
+        add append that takes a QChar * and length.
+        * kwq/KWQString.mm:
+        (QString::fromUtf8): Use QTextCodec instead of fromStringWithEncoding.
+        (QString::append): Implement by calling insert.
+
+        * kwq/KWQTextCodec.h: Added an encoding() member function to QTextCodec
+        and made QTextDecoder an abstract base class to pave the way for putting
+        more state in it to handle multibyte encodings.
+        * kwq/KWQTextCodec.mm: Add KWQTextDecoder, a concrete subclass of QTextDecoder.
+        (codecForCFStringEncoding): Moved the static inside this function for clarity.
+        (QTextCodec::makeDecoder): Make a KWQTextDecoder.
+        (QTextCodec::toUnicode): Make a KWQTextDecoder and use it do the decoding instead
+        of calling fromStringWithEncoding.
+        (KWQTextDecoder::convertUTF16): Added. Decodes Unicode, using the BOM to decide
+        whether it's little-endian or big-endian.
+        (KWQTextDecoder::convertUsingTEC): Added. Here's where the code from
+        QString::fromStringWithEncoding was moved. This needs to be changed to handle
+        state between multiple buffers passed in eventually, but not to fix this bug.
+        (KWQTextDecoder::toUnicode): Added. Calls convertUTF16 or convertUsingTEC.
+
+        * kwq/WebCoreBridge.mm: (+[WebCoreBridge stringWithData:textEncoding:]):
+        Use QTextCodec instead of fromStringWithEncoding.
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Rearranged the #if to make
+        things easier to read.
+
+2003-02-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey.
 
         - fixed 3150252 -- files with question marks in their names fail to upload as attachments

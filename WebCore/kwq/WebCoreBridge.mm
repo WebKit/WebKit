@@ -690,8 +690,7 @@ static bool initializedObjectCacheSize = FALSE;
     if (textEncoding == kCFStringEncodingInvalidId || textEncoding == kCFStringEncodingISOLatin1) {
         textEncoding = kCFStringEncodingWindowsLatin1;
     }
-    QString string = QString::fromStringWithEncoding((const char*)[data bytes], [data length], textEncoding);
-    return string.getNSString();
+    return QTextCodec(textEncoding).toUnicode((const char*)[data bytes], [data length]).getNSString();
 }
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName

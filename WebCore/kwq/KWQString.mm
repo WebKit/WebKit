@@ -32,6 +32,7 @@
 #import "KWQLogging.h"
 #import "KWQString.h"
 #import "KWQRegExp.h"
+#import "KWQTextCodec.h"
 
 #define CHECK_FOR_HANDLE_LEAKS 0
 
@@ -653,93 +654,12 @@ void QString::setBufferFromCFString(CFStringRef cfs)
 
 QString QString::fromUtf8(const char *chs)
 {
-    return fromStringWithEncoding(chs, strlen(chs), kCFStringEncodingUTF8);
+    return QTextCodec(kCFStringEncodingUTF8).toUnicode(chs, strlen(chs));
 }
 
 QString QString::fromUtf8(const char *chs, int len)
 {
-    return fromStringWithEncoding(chs, len, kCFStringEncodingUTF8);
-}
-
-// This function is used by the decoder.
-QString QString::fromStringWithEncoding(const char *chs, int len, CFStringEncoding encoding)
-{
-    ASSERT_ARG(len, len >= 0);
-    ASSERT_ARG(encoding, encoding != kCFStringEncodingInvalidId);
-    
-    if (len <= 0) {
-        return QString::null;
-    }
-
-    // Get a converter for the passed-in encoding.
-    static TECObjectRef converter;
-    static CFStringEncoding converterEncoding = kCFStringEncodingInvalidId;
-    OSStatus status;
-    if (encoding != converterEncoding) {
-        TECObjectRef newConverter;
-        status = TECCreateConverter(&newConverter, encoding,
-            CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
-        if (status) {
-            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", encoding, status);
-            return QString::null;
-        }
-        if (converter) {
-            TECDisposeConverter(converter);
-        }
-        converter = newConverter;
-    } else {
-        TECClearConverterContextInfo(converter);
-    }
-    
-    const UInt8 *sourcePointer = (UInt8 *)chs;
-    unsigned long sourceLength = len;
-    
-    QString result;
-    int resultLength = 0;
-
-    for (;;) {
-        UniChar buffer[4096];
-        unsigned long bytesWritten = 0;
-        bool doingFlush = sourceLength == 0;
-        if (doingFlush) {
-            status = TECFlushText(converter,
-                (UInt8 *)buffer, sizeof(buffer), &bytesWritten);
-        } else {
-            unsigned long bytesRead = 0;
-            status = TECConvertText(converter, sourcePointer, sourceLength, &bytesRead,
-                (UInt8 *)buffer, sizeof(buffer), &bytesWritten);
-            sourcePointer += bytesRead;
-            sourceLength -= bytesRead;
-        }
-        if (bytesWritten) {
-            ASSERT(bytesWritten % sizeof(UniChar) == 0);
-            result.setLength(resultLength + bytesWritten / sizeof(UniChar));
-            memcpy(result.forceUnicode() + resultLength, buffer, bytesWritten);
-            resultLength += bytesWritten / sizeof(UniChar);
-        }
-        if (status == kTextMalformedInputErr || status == kTextUndefinedElementErr) {
-            // FIXME: Put in FFFD character here?
-            TECClearConverterContextInfo(converter);
-            if (sourceLength) {
-                sourcePointer += 1;
-                sourceLength -= 1;
-            }
-            status = noErr;
-        }
-        if (status == kTECOutputBufferFullStatus) {
-            continue;
-        }
-        if (status != noErr) {
-            ERROR("text decoding failed with error %d", status);
-            break;
-        }
-        if (doingFlush) {
-            // Done.
-            break;
-        }
-    }
-    
-    return result;
+    return QTextCodec(kCFStringEncodingUTF8).toUnicode(chs, len);
 }
 
 QString QString::fromCFString(CFStringRef cfs)
@@ -2072,6 +1992,10 @@ QString &QString::append(const QString &qs)
     return insert(dataHandle[0]->_length, qs);
 }
 
+QString &QString::append(const QChar *characters, uint length)
+{
+    return insert(dataHandle[0]->_length, characters, length);
+}
 
 QString &QString::insert(uint index, const char *insertChars, uint insertLength)
 {
