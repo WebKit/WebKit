@@ -56,6 +56,9 @@ public:
     virtual bool isRendered() const { return true; }
     virtual void setBlockBidi() { m_blockBidi = true; }
 
+    RenderFlow* continuation() { return m_continuation; }
+    void setContinuation(RenderFlow* c) { m_continuation = c; }
+    
     void makeChildrenNonInline(RenderObject *box2Start = 0);
 
     // overrides RenderObject
@@ -218,6 +221,12 @@ private:
     // How much content overflows out of our block vertically (all we support
     // for now is spillage out of the bottom, which is the common case).
     int m_overflowHeight;
+    
+    // An inline can be split with blocks occurring in between the inline content.
+    // When this occurs we need a pointer to our next object.  We can basically be
+    // split into a sequence of inlines and blocks.  The continuation will either be
+    // an anonymous block (that houses other blocks) or it will be an inline flow.
+    RenderFlow* m_continuation;
 };
 
     

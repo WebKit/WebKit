@@ -58,6 +58,8 @@ RenderFlow::RenderFlow(DOM::NodeImpl* node)
     m_maxTopPosMargin = m_maxTopNegMargin = m_maxBottomPosMargin = m_maxBottomNegMargin = 0;
     m_topMarginQuirk = m_bottomMarginQuirk = false;
     m_overflowHeight = 0;
+    
+    m_continuation = 0;
 }
 
 void RenderFlow::setStyle(RenderStyle *_style)

@@ -555,6 +555,21 @@ NodeImpl::Id HTMLTableSectionElementImpl::id() const
     return _id;
 }
 
+NodeImpl *HTMLTableSectionElementImpl::addChild(NodeImpl *child)
+{
+#ifdef DEBUG_LAYOUT
+    kdDebug( 6030 ) << nodeName().string() << "(Tbody)::addChild( " << child->nodeName().string() << " )" << endl;
+#endif
+
+    if (child->id() == ID_FORM) {
+        // First add the child.
+        HTMLElementImpl::addChild(child);
+        // Now simply return ourselves as the newnode.  This has the effect of
+        // demoting the form to a leaf and moving it safely out of the way.
+        return this;
+    }
+    return HTMLTablePartElementImpl::addChild(child);
+}
 
 // these functions are rather slow, since we need to get the row at
 // the index... but they aren't used during usual HTML parsing anyway
