@@ -1,4 +1,4 @@
-2004-10-11  Ken Kocienda  <kocienda@apple.com>
+2004-10-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
 
@@ -58,7 +58,6 @@
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView scrollWheel:]): call the bridge to scroll, if that fails, pass to next responder
 
->>>>>>> 1.2810
 === Safari-166 ===
 
 2004-10-05  Chris Blumenberg  <cblu@apple.com>
