@@ -1,3 +1,14 @@
+2003-05-27  Richard Williamson   <rjw@apple.com>
+
+	Fix for IB.
+
+        Reviewed by Eric Seymour.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences initWithIdentifier:]):
+	Added retain to uniqued instance.  (As we did recently
+	for initWithCoder:). 
+
 2003-05-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3270013 - Exception raised when visiting http://www.shutterfly.com/favicon.ico

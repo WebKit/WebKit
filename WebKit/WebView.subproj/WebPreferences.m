@@ -81,7 +81,7 @@ enum { WebPreferencesVersion = 1 };
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:anIdentifier];
     if (instance){
         [self release];
-        return instance;
+        return [instance retain];
     }
 
     _private->values = [[NSMutableDictionary alloc] init];
