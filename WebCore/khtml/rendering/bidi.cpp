@@ -1650,12 +1650,15 @@ RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, BidiI
                                                  int& yPos)
 {
     RootInlineBox* last = 0;
-    if (m_linesAppended)
+    if (m_linesAppended || !startLine)
         last = 0;
     else {
-        for (RootInlineBox* curr = startLine; curr; curr = curr->nextRootBox())
-            if (curr->isDirty() && curr->nextRootBox() && !curr->nextRootBox()->isDirty())
-                last = curr->nextRootBox();
+        for (RootInlineBox* curr = startLine->nextRootBox(); curr; curr = curr->nextRootBox()) {
+            if (curr->isDirty())
+                last = 0;
+            else if (!last)
+                last = curr;
+        }
     }
     
     if (!last)

@@ -1,3 +1,13 @@
+2004-07-15  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3625611, images offset on first visit to page.  The method for determining the last clean line was
+	flawed and would incorrectly miss dirty lines that occurred after the first clean line.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::determineEndPosition):
+
 2004-07-15  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
