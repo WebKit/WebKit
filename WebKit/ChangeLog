@@ -1,3 +1,13 @@
+2003-07-14  Dave Hyatt  <hyatt@apple.com>
+
+	Roll this change out.  It was a bad change that I only made
+	because I was using the opacity APIs wrong.
+	
+        Reviewed by (nobody, just a straight backout of a previous checkin)
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+
 2003-07-13  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Add command to prevent build from failing if symlink
