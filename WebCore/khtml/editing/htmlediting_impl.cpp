@@ -2252,7 +2252,7 @@ void TypingCommandImpl::markMisspellingsAfterTyping()
     Position p1 = start.previousCharacterPosition().previousWordBoundary();
     Position p2 = start.previousWordBoundary();
     if (p1 != p2)
-        markMisspellingsInSelection(Selection(start.previousCharacterPosition()));
+        markMisspellingsInSelection(Selection(p1, start));
 }
 
 void TypingCommandImpl::typingAddedToOpenCommand()

@@ -1,5 +1,18 @@
 2004-08-26  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3777899> REGRESSION (Mail): only first of several misspelled words separated by 
+        carriage returns is marked
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::TypingCommandImpl::markMisspellingsAfterTyping): Give the spellchecker a slightly larger 
+        selection to work with while typing. This should preclude bugs of this type.
+
+2004-08-26  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Chris
         
         Fix for this bug:
