@@ -1,3 +1,19 @@
+2002-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        WebCore part of fix for:
+
+	Radar 2953250 - JavaScript window.focus() and window.blur()
+	methods don't work
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Call the appropriate things on focus and blur.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::unfocusWindow): Implemented by calling bridge.
+        * kwq/KWQKHTMLPartImpl.h, kwq/KWQWidget.mm:
+	(QWidget::setActiveWindow): Implemented by ordering the window
+	front and making it key.
+        * kwq/WebCoreBridge.h: Prototype new bridge method.
+
 2002-07-10  Darin Adler  <darin@apple.com>
 
 	- fixed 2979153 -- charset sjis page is gibberish

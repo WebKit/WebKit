@@ -1,3 +1,14 @@
+2002-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        WebKit part of fix for:
+
+	Radar 2953250 - JavaScript window.focus() and window.blur()
+	methods don't work
+	
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        (-[IFWebCoreBridge unfocusWindow]): Use private AppKit interface
+	to cycle windows if the window is the key window.
+
 2002-07-10  Darin Adler  <darin@apple.com>
 
 	- fixed 2983025 -- crash in sendEvent on pages with flash playing

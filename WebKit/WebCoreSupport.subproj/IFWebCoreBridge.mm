@@ -28,6 +28,10 @@
 
 @end
 
+@interface NSApplication (DeclarationStolenFromAppKit)
+- (void)_cycleWindowsReversed:(BOOL)reversed;
+@end
+
 @implementation IFWebCoreBridge
 
 - (id <WebCoreFrame>)frame
@@ -208,6 +212,13 @@
 - (void)setOpenedByScript:(BOOL)openedByScript
 {
     [[dataSource controller] _setOpenedByScript:openedByScript];
+}
+
+- (void)unfocusWindow
+{
+    if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {
+	[NSApp _cycleWindowsReversed:FALSE];
+    }
 }
 
 @end

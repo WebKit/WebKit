@@ -78,6 +78,8 @@ public:
     void setOpenedByJS(bool _openedByJS);
 
     void close();
+
+    void unfocusWindow();
 private:
     KHTMLPart *part;
     KHTMLPartPrivate *d;

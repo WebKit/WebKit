@@ -1289,7 +1289,11 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       widget->setActiveWindow();
     return Undefined();
   case Window::Blur:
+#ifdef APPLE_CHANGES
+    part->impl->unfocusWindow();
+#else
     // TODO
+#endif
     return Undefined();
   case Window::Close:
     /* From http://developer.netscape.com/docs/manuals/js/client/jsref/window.htm :

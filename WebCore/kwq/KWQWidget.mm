@@ -75,7 +75,7 @@ void QWidget::resize(int w, int h)
 
 void QWidget::setActiveWindow() 
 {
-    _logNeverImplemented();
+    [[data->view window] makeKeyAndOrderFront:nil];
 }
 
 void QWidget::setEnabled(bool) 

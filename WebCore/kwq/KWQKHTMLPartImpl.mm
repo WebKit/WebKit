@@ -662,3 +662,7 @@ void KWQKHTMLPartImpl::close()
     [[bridge window] close];
 }
 
+void KWQKHTMLPartImpl::unfocusWindow()
+{
+    [bridge unfocusWindow];
+}
