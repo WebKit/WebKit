@@ -53,7 +53,9 @@
 
 - (void)didStart
 {
-    if (URL != nil) {
+    // If the OBJECT/EMBED tag has no SRC, the URL is passed to us as "".
+    // Check for this and don't start a load in this case.
+    if (URL != nil && ![URL _web_isEmpty]) {
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:URL];
         [request setHTTPReferrer:[[[[self dataSource] request] URL] _web_originalDataAsString]];
         [self loadRequest:request inTarget:nil withNotifyData:nil sendNotification:NO];
