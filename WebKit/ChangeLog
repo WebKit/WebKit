@@ -1,3 +1,18 @@
+2002-09-18  Darin Adler  <darin@apple.com>
+
+	Fix two problems that led to an assertion now that a bogus
+	load progress doesn't pass the "bytesReceived == total" test.
+
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream handleDidFinishLoading:]): Nil out the
+	resource at the start of the function so that a cancel doesn't
+	do anything if called in the middle when we stop.
+        (-[WebNetscapePluginStream cancel]): Send a cancel error instead
+	of a _receivedProgress. And make a partial progress rather than
+	sending an empty progress.
+        (-[WebNetscapePluginStream handleDidFailLoading:withError:]):
+	Same as handleDidFinishLoading.
+
 2002-09-18  Richard Williamson   <rjw@apple.com>
 
         More documentation stuff.

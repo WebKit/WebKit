@@ -295,7 +295,10 @@
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {
     ASSERT(resource == handle);
-    
+
+    [resource release];    
+    resource = nil;
+
     WebController *webController = [view webController];
     
     [webController _receivedProgress:[WebLoadProgress progressWithResourceHandle:handle]
@@ -304,9 +307,6 @@
     [self finishedLoadingWithData:resourceData];
           
     [webController _didStopLoading:URL];
-    
-    [resource release];
-    resource = nil;
 }
 
 - (void)cancel
@@ -319,8 +319,15 @@
     
     WebController *webController = [view webController];
     
-    [webController _receivedProgress:[WebLoadProgress progress]
-        forResourceHandle:resource fromDataSource:[view webDataSource] complete: YES];
+    WebError *cancelError = [[WebError alloc] initWithErrorCode:WebResultCancelled
+                                                       inDomain:WebErrorDomainWebFoundation
+                                                     failingURL:nil];
+    WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:resource];
+    [webController _receivedError: cancelError forResourceHandle: resource 
+        partialProgress: loadProgress fromDataSource: [view webDataSource]];
+    [loadProgress release];
+    
+    [cancelError release];
 
     [self receivedError:NPRES_USER_BREAK];
     
@@ -334,6 +341,9 @@
 {
     ASSERT(resource == handle);
     
+    [resource release];
+    resource = nil;
+    
     WebController *webController = [view webController];
     
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithResourceHandle:handle];
@@ -345,9 +355,6 @@
     [self receivedError:NPRES_NETWORK_ERR];
     
     [webController _didStopLoading:URL];
-    
-    [resource release];
-    resource = nil;
 }
 
 - (void)handleDidRedirect:(WebResourceHandle *)handle toURL:(NSURL *)toURL
