@@ -1,5 +1,14 @@
 2004-05-27  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - moved to new symlink technique for embedding frameworks
+
+        * WebKit.pbproj/project.pbxproj: Get rid of embed-frameworks build step
+        because we don't need it any more.
+
+2004-05-27  Darin Adler  <darin@apple.com>
+
         - fixed Deployment build
 
         * WebView.subproj/WebView.m: (-[WebView concludeDragOperation:]):

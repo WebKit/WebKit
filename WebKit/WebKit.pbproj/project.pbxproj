@@ -143,7 +143,6 @@
 				0867D69EFE84028FC02AAC07,
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
-				255AF6590250FC030ECA149E,
 				65CBE7AA04B53388006ACFE6,
 				6566F34204C12D14008B3232,
 			);
@@ -578,15 +577,6 @@
 			path = Misc.subproj;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		255AF6590250FC030ECA149E = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXShellScriptBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 		2568C72C0174912D0ECA149E = {
 			fileEncoding = 4;
