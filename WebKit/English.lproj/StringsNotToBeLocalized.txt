@@ -70,6 +70,8 @@
 "Library/Internet Plug-Ins"
 "Library/Preferences/Explorer/Favorites.html"
 "Lucida Grande"
+"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@ %@"
+"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@"
 "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko) %@"
 "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko)"
 "NETSCAPE2"

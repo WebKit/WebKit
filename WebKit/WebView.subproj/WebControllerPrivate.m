@@ -65,6 +65,7 @@
     [applicationNameForUserAgent release];
     [userAgentOverride release];
     [userAgent release];
+    [userAgentWhenPretendingToBeMacIE release];
     
     [controllerSetName release];
     [topLevelFrameName release];
@@ -335,6 +336,8 @@
 {
     [_private->userAgent release];
     _private->userAgent = nil;
+    [_private->userAgentWhenPretendingToBeMacIE release];
+    _private->userAgentWhenPretendingToBeMacIE = nil;
 }
 
 @end

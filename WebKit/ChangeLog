@@ -1,5 +1,33 @@
 2002-12-15  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+	- implemented user-agent spoofing as described in bug 3044569
+
+        * WebView.subproj/WebController.m: (-[WebController userAgentForURL:]):
+	Find the suffix of the host name that contains exactly one dot, lower-case it,
+	and look it up in the user-agent spoof table. For now, anything in the table
+	pretends to be MacIE. Don't fret that this table is simple. We will complicate it
+	as needed. The technique is flexible, even though it may not look it now.
+
+        * WebView.subproj/WebControllerPrivate.h: Add userAgentWhenPretendingToBeMacIE field.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Release userAgentWhenPretendingToBeMacIE.
+        (-[WebController _defaultsDidChange]): Release and nil userAgentWhenPretendingToBeMacIE.
+
+        * Makefile.am: Added rules to build WebUserAgentSpoofTable.c using gperf.
+        * WebView.subproj/WebUserAgentSpoofTable.c: Added. Generated file.
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Added. Table 
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for above changes.
+
+	- fixed a crash I saw in a simplistic way
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView _elementAtPoint:]):
+	Don't assert if the webFrame is nil, just return a partial dictionary.
+
+2002-12-15  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey.
 
 	- fixed 3128260 -- REGRESSION: context menus in frames are always the generic page menu

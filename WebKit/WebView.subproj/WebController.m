@@ -30,6 +30,10 @@
 #import <WebFoundation/WebNSUserDefaultsExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 
+const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
+
+#include "WebUserAgentSpoofTable.c"
+
 NSString *WebElementFrameKey = 			@"WebElementFrame";
 NSString *WebElementImageKey = 			@"WebElementImage";
 NSString *WebElementImageAltStringKey = 	@"WebElementImageAltString";
@@ -40,7 +44,6 @@ NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 NSString *WebElementStringKey = 		@"WebElementString";
-
 
 @implementation WebController
 
@@ -358,13 +361,41 @@ NSString *WebElementStringKey = 		@"WebElementString";
     if (_private->userAgentOverride) {
         return [[_private->userAgentOverride retain] autorelease];
     }
-    if (_private->userAgent) {
-        return [[_private->userAgent retain] autorelease];
-    }
 
-    // Note that we currently don't look at the URL.
-    // Soon we will spoof different user agent strings for different web pages
-    // for best results, and that logic will go here.
+    // Look to see if we need to spoof.
+    // First step is to get the host as a C-format string.
+    BOOL pretendToBeMacIE = NO;
+    NSString *host = [URL host];
+    char hostBuffer[256];
+    if (host && CFStringGetCString((CFStringRef)host, hostBuffer, sizeof(hostBuffer), kCFStringEncodingASCII)) {
+        // Next step is to find the last part of the name. The part with only one dot.
+        const char *nextToLastPeriod = NULL;
+        const char *lastPeriod = NULL;
+        char c;
+        char *p = hostBuffer;
+        while ((c = *p)) {
+            if (c == '.') {
+                nextToLastPeriod = lastPeriod;
+                lastPeriod = p;
+            } else {
+                *p = tolower(c);
+            }
+            ++p;
+        }
+        // Now look up that last part in the gperf spoof table.
+        if (lastPeriod) {
+            const char *domain = nextToLastPeriod ? nextToLastPeriod + 1 : hostBuffer;
+            pretendToBeMacIE = _web_findSpoofTableEntry(domain, p - domain) != NULL;
+        }
+    }
+    
+    NSString **userAgentStorage = pretendToBeMacIE
+        ? &_private->userAgentWhenPretendingToBeMacIE : &_private->userAgent;
+
+    NSString *userAgent = *userAgentStorage;
+    if (userAgent) {
+        return [[userAgent retain] autorelease];
+    }
 
     // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
     
@@ -373,16 +404,25 @@ NSString *WebElementStringKey = 		@"WebElementString";
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;
 
-    NSString *userAgent;
-    if ([applicationName length]) {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko) %@",
-            language, sourceVersion, applicationName];
+    if (pretendToBeMacIE) {
+        if ([applicationName length]) {
+            userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@ %@",
+                language, sourceVersion, applicationName];
+        } else {
+            userAgent = [NSString stringWithFormat:@"Mozilla/4.0 (compatible; MSIE 5.2; Mac_PowerPC) AppleWebKit/%@",
+                language, sourceVersion];
+        }
     } else {
-        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko)",
-            language, sourceVersion];
+        if ([applicationName length]) {
+            userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko) %@",
+                language, sourceVersion, applicationName];
+        } else {
+            userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; %@) AppleWebKit/%@ (like Gecko)",
+                language, sourceVersion];
+        }
     }
     
-    _private->userAgent = [userAgent retain];
+    *userAgentStorage = [userAgent retain];
     return userAgent;
 }
 

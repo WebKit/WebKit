@@ -1,0 +1,10 @@
+struct UserAgentSpoofTableEntry { const char *name; };
+%%
+firstusa.com
+jaguar.com
+watch.com
+hondaredriders.com
+hondacars.com
+microsoft.com
+battle.net
+freebsd.org

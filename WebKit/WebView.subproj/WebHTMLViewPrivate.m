@@ -172,20 +172,21 @@ static BOOL forceRealHitTest = NO;
     WebView *webView = [self _web_parentWebView];
     ASSERT(webView);
     WebFrame *webFrame = [[webView controller] frameForView:webView];
-    ASSERT(webFrame);
-
-    NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];
-    if ([frameName length] == 0) {
-        [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
-    } else {
-        WebFrame *wf = [webFrame findFrameNamed:frameName];
-        if (wf != nil)
-            [elementInfo setObject:wf forKey:WebElementLinkTargetFrameKey];
-        else
-            [elementInfo removeObjectForKey:WebElementLinkTargetFrameKey];
+    
+    if (webFrame) {
+        NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];
+        if ([frameName length] == 0) {
+            [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
+        } else {
+            WebFrame *wf = [webFrame findFrameNamed:frameName];
+            if (wf != nil)
+                [elementInfo setObject:wf forKey:WebElementLinkTargetFrameKey];
+            else
+                [elementInfo removeObjectForKey:WebElementLinkTargetFrameKey];
+        }
+    
+        [elementInfo setObject:webFrame forKey:WebElementFrameKey];
     }
-
-    [elementInfo setObject:webFrame forKey:WebElementFrameKey];
     
     return [elementInfo autorelease];
 }
