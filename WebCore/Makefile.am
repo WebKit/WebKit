@@ -22,7 +22,7 @@ config-timestamp: ../config.h previous-clean-timestamp
 noinst_DATA = WebCore-combined.exp
 noinst_HEADERS = config.h
 BUILT_SOURCES = $(noinst_DATA) $(noinst_HEADERS)
-CLEANFILES = $(BUILT_SOURCES)
+CLEANFILES = $(BUILT_SOURCES) config-timestamp
 
 previous-clean-timestamp: force-clean-timestamp
 	make clean && touch $@ && touch previous-js-clean-timestamp

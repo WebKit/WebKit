@@ -1,3 +1,29 @@
+2003-07-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3299715 -- unrepro nil-deref in KHTMLPart::xmlDocImpl handling timer
+
+        * khtml/khtmlview.cpp: (KHTMLView::timerEvent): Add check for nil.
+
+        - fixed clean builds
+
+        * Makefile.am: Delete the config-timestamp.
+
+        - added some other nil checks (perhaps inspired by some other bug reports, I can't remember)
+
+        * khtml/html/html_inlineimpl.cpp: (HTMLAnchorElementImpl::defaultEventHandler):
+        Added a check for nil document or nil view.
+        
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchEvent):
+        * kwq/KWQCharsetData.c:
+        * kwq/KWQCharsets.mm:
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]):
+        * kwq/mac-encodings.txt:
+        * kwq/make-charset-table.pl:
+
 2003-07-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David

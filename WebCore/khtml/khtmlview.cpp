@@ -1535,7 +1535,7 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
         d->updateRect = QRect(contentsX(),contentsY(),visibleWidth(),visibleHeight());
     }
 
-    if( m_part->xmlDocImpl() ) {
+    if( m_part && m_part->xmlDocImpl() ) {
         DOM::DocumentImpl *document = m_part->xmlDocImpl();
         khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas *>(document->renderer());
         if (root){

@@ -472,6 +472,8 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
 
     // Since event handling code could cause this object to be deleted, grab a reference to the view now
     KHTMLView *view = document->document()->view();
+    if (view)
+        view->ref();
 
     bool ret = dispatchGenericEvent( evt, exceptioncode );
 
@@ -485,6 +487,9 @@ bool NodeImpl::dispatchEvent(EventImpl *evt, int &exceptioncode, bool tempEvent)
     if (tempEvent && view && view->part()->jScript())
         view->part()->jScript()->finishedWithEvent(evt);
 #endif
+
+    if (view)
+        view->deref();
 
     return ret;
 }
