@@ -11,7 +11,7 @@
 @class WebNetscapePluginPackage;
 @class NSURLResponse;
 
-@interface WebBaseNetscapePluginStream : WebBaseResourceHandleDelegate
+@interface WebBaseNetscapePluginStream : NSObject
 {
     NSURL *URL;
     NPP instance;
@@ -35,5 +35,6 @@
 - (void)receivedData:(NSData *)data;
 - (void)receivedError:(NPReason)reason;
 - (void)finishedLoadingWithData:(NSData *)data;
+- (uint16)transferMode;
 
 @end

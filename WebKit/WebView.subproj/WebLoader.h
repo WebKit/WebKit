@@ -54,4 +54,7 @@
 
 - (void)setIdentifier:(id)ident;
 
+- (void)releaseResources;
+- (NSURLResponse *)response;
+
 @end

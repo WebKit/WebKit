@@ -21,15 +21,12 @@
 
 - (void)dealloc
 {
-    [_dataSource release];
     [_error release];
     [super dealloc];
 }
 
 - (void)setDataSource:(WebDataSource *)ds
 {
-    [ds retain];
-    [_dataSource release];
     _dataSource = ds;
 }
 

@@ -1,3 +1,32 @@
+2003-05-21  Chris Blumenberg  <cblu@apple.com>
+
+		Fixed data source leak when viewing standalone plug-in content.
+
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h: don't inherit from WebBaseResourceHandleDelegate
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream transferMode]): new
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation dealloc]): don't release the data source
+        (-[WebNetscapePluginRepresentation setDataSource:]): don't retain the data source
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]): create a WebNetscapePluginConnectionDelegate
+        (-[WebNetscapePluginStream dealloc]): release the WebNetscapePluginConnectionDelegate
+        (-[WebNetscapePluginStream start]): start the load on the WebNetscapePluginConnectionDelegate
+        (-[WebNetscapePluginStream stop]): start the load on the WebNetscapePluginConnectionDelegate
+        (-[WebNetscapePluginConnectionDelegate initWithStream:view:]): new class, inherits from WebBaseResourceHandleDelegate
+        (-[WebNetscapePluginConnectionDelegate _releaseResources]):
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]):
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveData:]):
+        (-[WebNetscapePluginConnectionDelegate connectionDidFinishLoading:]):
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]):
+        (-[WebNetscapePluginConnectionDelegate cancel]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate response]): new
+
 2003-05-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -13,6 +13,15 @@
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLConnection.h>
 
+@interface WebNetscapePluginConnectionDelegate : WebBaseResourceHandleDelegate
+{
+    WebNetscapePluginStream *stream;
+    WebBaseNetscapePluginView *view;
+    NSMutableData *resourceData;
+}
+- initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView;
+@end
+
 @implementation WebNetscapePluginStream
 
 - initWithRequest:(NSURLRequest *)theRequest
@@ -21,7 +30,8 @@
 {
     [super init];
 
-    if(!theRequest || !thePluginPointer || ![WebView _canHandleRequest:theRequest]){
+    if (!theRequest || !thePluginPointer || ![WebView _canHandleRequest:theRequest]) {
+        [self release];
         return nil;
     }
 
@@ -29,19 +39,18 @@
 
     [self setPluginPointer:thePluginPointer];
 
-    view = [(WebNetscapePluginEmbeddedView *)instance->ndata retain];
-
-    [self setDataSource: [view dataSource]];
+    WebBaseNetscapePluginView *view = (WebBaseNetscapePluginView *)instance->ndata;
+    _loader = [[WebNetscapePluginConnectionDelegate alloc] initWithStream:self view:view]; 
+    [_loader setDataSource:[view dataSource]];
 
     notifyData = theNotifyData;
-    resourceData = [[NSMutableData alloc] init];
 
     return self;
 }
 
 - (void)dealloc
 {
-    [resourceData release];
+    [_loader release];
     [_startingRequest release];
     [super dealloc];
 }
@@ -49,69 +58,79 @@
 - (void)start
 {
     ASSERT(_startingRequest);
-    [self loadWithRequest:_startingRequest];
+    [_loader loadWithRequest:_startingRequest];
     [_startingRequest release];
     _startingRequest = nil;
 }
 
 - (void)stop
 {
-    if (view) {
-        [self cancel];
-    }
+    [_loader cancel];
 }
 
-- (void)cancel
+@end
+
+@implementation WebNetscapePluginConnectionDelegate
+
+- initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView
 {
+    [super init];
+    stream = [theStream retain];
+    view = [theView retain];
+    resourceData = [[NSMutableData alloc] init];
+    return self;
+}
+
+- (void)releaseResources
+{
+    [stream release];
+    stream = nil;
     [view release];
     view = nil;
-
-    [super cancel];
-
-    // Send error only if the response has been set (the URL is set with the response).
-    if (URL) {
-        [self receivedError:NPRES_USER_BREAK];
-    }
+    [resourceData release];
+    resourceData = nil;
+    [super releaseResources];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)theResponse
 {
-    [self setResponse:theResponse];
-    [super connection:con didReceiveResponse:theResponse];    
+    [stream setResponse:theResponse];
+    [super connection:con didReceiveResponse:theResponse];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
-    if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
+    if ([stream transferMode] == NP_ASFILE || [stream transferMode] == NP_ASFILEONLY) {
         [resourceData appendData:data];
     }
-    
-    [self receivedData:data];
 
+    [stream receivedData:data];
     [super connection:con didReceiveData:data];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
     [[view webView] _finishedLoadingResourceFromDataSource:[view dataSource]];
-    [self finishedLoadingWithData:resourceData];
-
-    [view release];
-    view = nil;
-    
+    [stream finishedLoadingWithData:resourceData];
     [super connectionDidFinishLoading:con];
 }
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
 {
     [[view webView] _receivedError:result fromDataSource:[view dataSource]];
-
-    [self receivedError:NPRES_NETWORK_ERR];
-
-    [view release];
-    view = nil;
-    
+    [stream receivedError:NPRES_NETWORK_ERR];
     [super connection:con didFailWithError:result];
+}
+
+- (void)cancel
+{
+    // Since the plug-in is notified of the stream when the response is received,
+    // only report an error if the response has been received.
+    if ([self response]) {
+        [stream receivedError:NPRES_USER_BREAK];
+    }
+
+    [super cancel];
 }
 
 @end

@@ -70,7 +70,7 @@
 
 @implementation WebBaseResourceHandleDelegate
 
-- (void)_releaseResources
+- (void)releaseResources
 {
     ASSERT(!reachedTerminalState);
     
@@ -309,7 +309,7 @@
     else
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didFinishLoadingFromDataSource:dataSource];
 
-    [self _releaseResources];
+    [self releaseResources];
 }
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
@@ -319,7 +319,7 @@
     
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
-    [self _releaseResources];
+    [self releaseResources];
 }
 
 - (void)cancelWithError:(NSError *)error
@@ -338,7 +338,7 @@
         [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }
 
-    [self _releaseResources];
+    [self releaseResources];
 }
 
 - (void)cancel
@@ -361,6 +361,11 @@
         [identifier release];
         identifier = [ident retain];
     }
+}
+
+- (NSURLResponse *)response
+{
+    return response;
 }
 
 @end

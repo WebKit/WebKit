@@ -33,6 +33,11 @@
     [super dealloc];
 }
 
+- (uint16)transferMode
+{
+    return transferMode;
+}
+
 - (void)setPluginPointer:(NPP)pluginPointer
 {
     instance = pluginPointer;
