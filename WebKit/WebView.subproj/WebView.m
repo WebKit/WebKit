@@ -446,6 +446,21 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return userAgent;
 }
 
+- (void)setHostWindow:(NSWindow *)hostWindow
+{
+    if (hostWindow != _private->hostWindow) {
+        [[self mainFrame] _viewWillMoveToHostWindow:hostWindow];
+        [_private->hostWindow release];
+        _private->hostWindow = [hostWindow retain];
+        [[self mainFrame] _viewDidMoveToHostWindow];
+    }
+}
+
+- (NSWindow *)hostWindow
+{
+    return _private->hostWindow;
+}
+
 -(BOOL)acceptsFirstResponder
 {
     return YES;

@@ -7,19 +7,15 @@
 
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
-#import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDOMDocument.h>
-#import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebIconDatabase.h>
-#import <WebKit/WebIconLoader.h>
+#import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebKitLogging.h>
-#import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
@@ -30,6 +26,10 @@
 
 #import <AppKit/NSResponder_Private.h>
 #import <CoreGraphics/CGContextGState.h>
+
+@interface NSArray (WebHTMLView)
+- (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object;
+@end
 
 @implementation WebHTMLView
 
@@ -248,6 +248,17 @@
         }
     }
 }
+
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+    [[self subviews] _web_makePluginViewsPerformSelector:@selector(viewWillMoveToHostWindow:) withObject:hostWindow];
+}
+
+- (void)viewDidMoveToHostWindow
+{
+    [[self subviews] _web_makePluginViewsPerformSelector:@selector(viewDidMoveToHostWindow) withObject:nil];
+}
+
 
 - (void)addSubview:(NSView *)view
 {
@@ -789,6 +800,21 @@
 {
     [super endDocument];
     [self _setUsingPrinterFonts:NO];
+}
+
+@end
+
+@implementation NSArray (WebHTMLView)
+
+- (void)_web_makePluginViewsPerformSelector:(SEL)selector withObject:(id)object
+{
+    NSEnumerator *enumerator = [self objectEnumerator];
+    WebNetscapePluginEmbeddedView *view;
+    while ((view = [enumerator nextObject]) != nil) {
+        if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]]) {
+            [view performSelector:selector withObject:object];
+        }
+    }
 }
 
 @end

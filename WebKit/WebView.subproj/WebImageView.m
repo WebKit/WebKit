@@ -104,6 +104,16 @@
     }
 }
 
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+
+}
+
+- (void)viewDidMoveToHostWindow
+{
+
+}
+
 - (void)viewDidMoveToWindow
 {
     if (![self window]){

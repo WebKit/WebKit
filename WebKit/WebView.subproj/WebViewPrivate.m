@@ -85,6 +85,7 @@
 
     [preferences release];
     [settings release];
+    [hostWindow release];
     
     [super dealloc];
 }

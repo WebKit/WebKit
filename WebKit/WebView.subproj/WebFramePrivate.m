@@ -1742,6 +1742,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [[self dataSource] _defersCallbacksChanged];
 }
 
+- (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+    [[[self frameView] documentView] viewWillMoveToHostWindow:hostWindow];
+    [[self children] makeObjectsPerformSelector:@selector(_viewWillMoveToHostWindow:) withObject:hostWindow];
+}
+
+- (void)_viewDidMoveToHostWindow
+{
+    [[[self frameView] documentView] viewDidMoveToHostWindow];
+    [[self children] makeObjectsPerformSelector:@selector(_viewDidMoveToHostWindow)];
+}
+
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
 {
     WebDataSource *dataSource = [self dataSource];

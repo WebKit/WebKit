@@ -29,7 +29,6 @@
     NP_Port nPort;
     NPP_t instanceStruct;
 
-    BOOL canRestart;
     BOOL isStarted;
     BOOL inSetWindow;
             
@@ -58,16 +57,14 @@
 + (WebBaseNetscapePluginView *)currentPluginView;
 
 - (BOOL)start;
-- (void)stop;
 - (BOOL)isStarted;
 
 - (WebFrame *)webFrame;
 - (WebDataSource *)dataSource;
 - (WebView *)controller;
+- (NSWindow *)currentWindow;
 
 - (NPP)pluginPointer;
-
-- (void)setWindow;
 
 - (WebNetscapePluginPackage *)plugin;
 - (void)setPlugin:(WebNetscapePluginPackage *)thePlugin;
@@ -75,5 +72,8 @@
 - (void)setBaseURL:(NSURL *)theBaseURL;
 - (void)setAttributes:(NSDictionary *)attributes;
 - (void)setMode:(int)theMode;
+
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
+- (void)viewDidMoveToHostWindow;
 
 @end

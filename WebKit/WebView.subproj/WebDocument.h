@@ -42,6 +42,20 @@
     setting the frame is a sufficient implementation of this method.
 */
 - (void)layout;
+
+/*!
+    @method viewWillMoveToHostWindow:
+    @param hostWindow The host window for the document view.
+    @abstract Called before the host window is set on the parent web view.
+*/
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
+
+/*!
+    @method viewDidMoveToHostWindow
+    @abstract Called after the host window is set on the parent web view.
+*/
+- (void)viewDidMoveToHostWindow;
+
 @end
 
 

@@ -27,6 +27,7 @@
     [super initWithFrame:frame];
     [self setFrame:NSZeroRect];
     [self setMode:NP_FULL];
+    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
     needsLayout = YES;
     return self;
 }
@@ -46,15 +47,15 @@
     [super drawRect:rect];
 }
 
-- (void)viewDidMoveToWindow
+- (BOOL)canStart
 {
-    [super viewDidMoveToWindow];
+    return (dataSource != nil);
+}
 
-    // If viewDidMoveToWindow is called before setDataSource don't deliver the stream here because the loading process
-    // of WebKit handles that for us. If viewDidMoveToWindow is called after setDataSource,
-    // (this happens if plug-in content is loaded without a window), start the plug-in and redeliver the
-    // stream because the view is now in a window.
-    if ([self window] && dataSource && [self start]) {
+- (void)didStart
+{
+    if ([[dataSource data] length] > 0) {
+        // Plug-in started after data was received. Redeliver what was already received.
         WebNetscapePluginRepresentation *representation = (WebNetscapePluginRepresentation *)[dataSource representation];
         ASSERT([representation isKindOfClass:[WebNetscapePluginRepresentation class]]);
         [representation redeliverStream];
@@ -81,22 +82,21 @@
 
     if (![thePlugin load]){
         // FIXME: It would be nice to stop the load here.
-
         WebPlugInError *error = [WebPlugInError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
                                                          contentURL:[[[theDataSource request] URL] absoluteString]
                                                       pluginPageURL:nil
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];
-        
-        WebView *c = [[theDataSource webFrame] webView];
-        [[c _resourceLoadDelegateForwarder] webView:c plugInFailedWithError:error dataSource:theDataSource];
-        
+        WebView *webView = [[theDataSource webFrame] webView];
+        [[webView _resourceLoadDelegateForwarder] webView:webView
+                                    plugInFailedWithError:error
+                                               dataSource:theDataSource];
         return;
     }
 
     [self setPlugin:thePlugin];
 
-    if ([self window]) {
+    if ([self currentWindow]) {
         [self start];
     }
 }
@@ -113,12 +113,18 @@
 - (void)layout
 {
     NSRect superFrame = [[self _web_superviewOfClass:[WebFrameView class]] frame];
-
-    [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
-    [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [self setWindow];
-
+    [self setFrame:NSMakeRect(0, 0, NSWidth(superFrame), NSHeight(superFrame))];
     needsLayout = NO;
+}
+
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+    [super viewWillMoveToHostWindow:hostWindow];
+}
+
+- (void)viewDidMoveToHostWindow
+{
+    [super viewDidMoveToHostWindow];
 }
 
 @end

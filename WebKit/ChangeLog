@@ -1,3 +1,74 @@
+2003-03-29  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3178058 - Plug-ins are stopped/reloaded when switching tabs
+	Made the "Enable plug-ins" preference toggle in real-time again.
+
+	No events including null events are sent when a plug-in is in a non-frontmost tab. This causes Flash movies to pause (which is nice) and QT movies to continue to play.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]): use the current window, clip out the plug-in when not in an actual window
+        (-[WebBaseNetscapePluginView restorePortState:]): use the current window
+        (-[WebBaseNetscapePluginView sendEvent:]): added asserts
+        (-[WebBaseNetscapePluginView sendActivateEvent:]): tweak
+        (-[WebBaseNetscapePluginView sendNullEvent]): tweak
+        (-[WebBaseNetscapePluginView restartNullEvents]): tweak
+        (-[WebBaseNetscapePluginView isInResponderChain]): tweak
+        (-[WebBaseNetscapePluginView performKeyEquivalent:]): tweak
+        (-[WebBaseNetscapePluginView canStart]): new, implemented by subclasses
+        (-[WebBaseNetscapePluginView didStart]): new, implemented by subclasses
+        (-[WebBaseNetscapePluginView addWindowObservers]): new
+        (-[WebBaseNetscapePluginView removeWindowObservers]): new
+        (-[WebBaseNetscapePluginView start]): check pref, call canStart, addWindowObservers and didStart
+        (-[WebBaseNetscapePluginView stop]): call removeWindowObservers
+        (-[WebBaseNetscapePluginView currentWindow]): new, returns the actual window else the host window
+        (-[WebBaseNetscapePluginView initWithFrame:]): observer pref change notifications
+        (-[WebBaseNetscapePluginView dealloc]): call removeObserver
+        (-[WebBaseNetscapePluginView viewWillMoveToWindow:]): stop if there is no host window
+        (-[WebBaseNetscapePluginView viewDidMoveToWindow]): start if we moved to a window
+        (-[WebBaseNetscapePluginView viewWillMoveToHostWindow:]): stop if there will be no windows
+        (-[WebBaseNetscapePluginView viewDidMoveToHostWindow]): start if there is a window
+        (-[WebBaseNetscapePluginView preferencesHaveChanged:]): renamed, start or stop
+        (-[WebBaseNetscapePluginView destroyStream:reason:]): tweak
+        (-[NSData _web_locationAfterFirstBlankLine]): tweak
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView initWithFrame:]): call setAutoresizingMask here
+        (-[WebNetscapePluginDocumentView canStart]): new, return YES if there is a data source
+        (-[WebNetscapePluginDocumentView didStart]): redeliver the stream if there is any data
+        (-[WebNetscapePluginDocumentView setDataSource:]): start if there is a current window
+        (-[WebNetscapePluginDocumentView layout]): no need to call setWindow, this is done in the superclass
+        (-[WebNetscapePluginDocumentView viewWillMoveToHostWindow:]): forward to super to make compiler happy
+        (-[WebNetscapePluginDocumentView viewDidMoveToHostWindow]): forward to super to make compiler happy
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView didStart]): start the load
+        (-[WebNetscapePluginEmbeddedView dataSource]): tweak
+        * WebView.subproj/WebDocument.h: added viewWillMoveToHostWindow: and viewDidMoveToHostWindow
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _viewWillMoveToHostWindow:]): forward to document view and subframes
+        (-[WebFrame _viewDidMoveToHostWindow]): forward to document view and subframes
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewWillMoveToHostWindow:]): forward to plug-in views
+        (-[WebHTMLView viewDidMoveToHostWindow]): forward to plug-in views
+        (-[NSArray _web_makePluginViewsPerformSelector:withObject:]): new
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _reset]): don't stop plug-ins here. WebBaseNetscapePluginView can handle that
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView viewWillMoveToHostWindow:]): implement new WebDocumentView methods
+        (-[WebImageView viewDidMoveToHostWindow]): implement new WebDocumentView methods
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView viewWillMoveToHostWindow:]): implement new WebDocumentView methods
+        (-[WebTextView viewDidMoveToHostWindow]): implement new WebDocumentView methods
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView setHostWindow:]): new
+        (-[WebView hostWindow]): new
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate dealloc]): release the host window
+
 2003-03-31  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

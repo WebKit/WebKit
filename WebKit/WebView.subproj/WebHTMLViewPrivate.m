@@ -59,7 +59,6 @@ static BOOL forceRealHitTest = NO;
 @end
 
 @interface NSView (WebNSViewDisplayExtras)
-- (void)_web_stopIfPluginView;
 - (void)_web_propagateDirtyRectToAncestor;
 - (void)_web_dumpDirtyRects;
 @end
@@ -126,10 +125,6 @@ static BOOL forceRealHitTest = NO;
 
 - (void)_reset
 {
-    NSArray *subviews = [[self subviews] copy];
-    [subviews makeObjectsPerformSelector:@selector(_web_stopIfPluginView)];
-    [subviews release];
-
     [WebImageRenderer stopAnimationsInView:self];
 }
 
@@ -596,14 +591,6 @@ static WebHTMLView *lastHitView = nil;
 @end
 
 @implementation NSView (WebHTMLViewPrivate)
-
-- (void)_web_stopIfPluginView
-{
-    if ([self isKindOfClass:[WebNetscapePluginEmbeddedView class]]) {
-	WebNetscapePluginEmbeddedView *pluginView = (WebNetscapePluginEmbeddedView *)self;
-        [pluginView stop];
-    }
-}
 
 - (void)_web_propagateDirtyRectToAncestor
 {

@@ -93,6 +93,16 @@
 {
 }
 
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+
+}
+
+- (void)viewDidMoveToHostWindow
+{
+
+}
+
 - (void)defaultsChanged:(NSNotification *)notification
 {
     if (![self isRichText]) {

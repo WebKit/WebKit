@@ -9,13 +9,14 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebFramePrivate.h> 
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginStream.h>
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
@@ -32,7 +33,7 @@
 // This is not yet in QuickdrawPriv.h, although it's supposed to be.
 void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int drawingType);
 
-// Send null events 50 times a second when active so plug-ins like Flash get high frame rates.
+// Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
 #define NullEventIntervalActive 	0.02
 #define NullEventIntervalNotActive	0.25
 
@@ -147,7 +148,9 @@ typedef struct {
 
 - (PortState)saveAndSetPortStateForUpdate:(BOOL)forUpdate
 {
-    WindowRef windowRef = [[self window] windowRef];
+    ASSERT([self currentWindow]);
+    
+    WindowRef windowRef = [[self currentWindow] windowRef];
     CGrafPtr port = GetWindowPort(windowRef);
 
     Rect portBounds;
@@ -160,7 +163,7 @@ typedef struct {
     
     // Flip Y to convert NSWindow coordinates to top-left-based window coordinates.
 
-    float borderViewHeight = [[self window] frame].size.height;
+    float borderViewHeight = [[self currentWindow] frame].size.height;
     boundsInWindow.origin.y = borderViewHeight - NSMaxY(boundsInWindow);
     visibleRectInWindow.origin.y = borderViewHeight - NSMaxY(visibleRectInWindow);
     
@@ -189,8 +192,15 @@ typedef struct {
 
     window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
     window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
-    window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
-    window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
+
+    // Clip out the plug-in when it's not really in a window.
+    if ([self window]) {
+        window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
+        window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
+    } else {
+        window.clipRect.bottom = window.clipRect.top;
+        window.clipRect.left = window.clipRect.right;
+    }
     
     window.type = NPWindowTypeWindow;
     
@@ -251,7 +261,9 @@ typedef struct {
 
 - (void)restorePortState:(PortState)portState
 {
-    WindowRef windowRef = [[self window] windowRef];
+    ASSERT([self currentWindow]);
+    
+    WindowRef windowRef = [[self currentWindow] windowRef];
     CGrafPtr port = GetWindowPort(windowRef);
 
     if (portState.forUpdate) {
@@ -274,9 +286,13 @@ typedef struct {
 
 - (BOOL)sendEvent:(EventRecord *)event
 {
-    if (!isStarted || !NPP_HandleEvent) {
+    ASSERT([self window]);
+
+    if (!isStarted) {
         return NO;
     }
+
+    ASSERT(NPP_HandleEvent);
     
     // Make sure we don't call NPP_HandleEvent while we're inside NPP_SetWindow.
     // We probably don't want more general reentrancy protection; we are really
@@ -323,8 +339,9 @@ typedef struct {
     event.what = activateEvt;
     WindowRef windowRef = [[self window] windowRef];
     event.message = (UInt32)windowRef;
-    if (activate)
+    if (activate) {
         event.modifiers |= activeFlag;
+    }
     
     BOOL acceptedEvent;
     acceptedEvent = [self sendEvent:&event]; 
@@ -357,8 +374,9 @@ typedef struct {
     // Plug-in should not react to cursor position when not active or when a menu is down.
     MenuTrackingData trackingData;
     OSStatus error = GetMenuTrackingData(NULL, &trackingData);
-    
-    if (![_window isKeyWindow] || (error == noErr && trackingData.menu)) {
+
+    // Plug-in should not react to cursor position when the actual window is not key.
+    if (![[self window] isKeyWindow] || (error == noErr && trackingData.menu)) {
         // FIXME: Does passing a v and h of -1 really prevent it from reacting to the cursor position?
         event.where.v = -1;
         event.where.h = -1;
@@ -376,15 +394,16 @@ typedef struct {
 
 - (void)restartNullEvents
 {
-    if(nullEventTimer){
+    if (nullEventTimer) {
         [self stopNullEvents];
     }
 
     NSTimeInterval interval;
-    
-    if ([_window isKeyWindow]){
+
+    // Send null events less frequently when the actual window is not key.
+    if ([[self window] isKeyWindow]) {
         interval = NullEventIntervalActive;
-    }else{
+    } else {
         interval = NullEventIntervalNotActive;
     }
     
@@ -558,8 +577,8 @@ typedef struct {
 {
     NSResponder *responder = [[self window] firstResponder];
 
-    while(responder != nil){
-        if(responder == self){
+    while (responder != nil) {
+        if (responder == self) {
             return YES;
         }
         responder = [responder nextResponder];
@@ -575,7 +594,7 @@ typedef struct {
 {
     EventRecord event;
 
-    if(![self isInResponderChain]){
+    if (![self isInResponderChain]) {
         return NO;
     }
     
@@ -652,63 +671,95 @@ typedef struct {
     return currentPluginView;
 }
 
-- (BOOL)start
+- (BOOL)canStart
+{
+    return YES;
+}
+
+- (void)didStart
+{
+    // Do nothing. Overridden by subclasses.
+}
+
+- (void)addWindowObservers
 {
     ASSERT([self window]);
+
+    NSWindow *theWindow = [self window];
+    
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    NSView *view;
+    for (view = self; view; view = [view superview]) {
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:)
+                                   name:NSViewFrameDidChangeNotification object:view];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:)
+                                   name:NSViewBoundsDidChangeNotification object:view];
+    }
+    [notificationCenter addObserver:self selector:@selector(windowWillClose:)
+                               name:NSWindowWillCloseNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowBecameKey:)
+                               name:NSWindowDidBecomeKeyNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowResignedKey:)
+                               name:NSWindowDidResignKeyNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowDidMiniaturize:)
+                               name:NSWindowDidMiniaturizeNotification object:theWindow];
+    [notificationCenter addObserver:self selector:@selector(windowDidDeminiaturize:)
+                               name:NSWindowDidDeminiaturizeNotification object:theWindow];
+}
+
+- (void)removeWindowObservers
+{
+    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
+    [notificationCenter removeObserver:self name:NSViewFrameDidChangeNotification     object:nil];
+    [notificationCenter removeObserver:self name:NSViewBoundsDidChangeNotification    object:nil];
+    [notificationCenter removeObserver:self name:NSWindowWillCloseNotification        object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidBecomeKeyNotification     object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification     object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidMiniaturizeNotification   object:nil];
+    [notificationCenter removeObserver:self name:NSWindowDidDeminiaturizeNotification object:nil];
+}
+
+- (BOOL)start
+{
+    ASSERT([self currentWindow]);
     
     if (isStarted) {
         return YES;
     }
 
-    if (!canRestart || NPP_New == 0) {
+    if (![[WebPreferences standardPreferences] arePlugInsEnabled] || ![self canStart]) {
         return NO;
     }
 
+    ASSERT(NPP_New);
+
     [[self class] setCurrentPluginView:self];
-    
     NPError npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
+    [[self class] setCurrentPluginView:nil];
+    
     LOG(Plugins, "NPP_New: %d", npErr);
     if (npErr != NPERR_NO_ERROR) {
         ERROR("NPP_New failed with error: %d", npErr);
         return NO;
     }
 
-    [[self class] setCurrentPluginView:nil];
-
     isStarted = YES;
         
     [self setWindow];
-    
-    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-    NSView *view;
-    for (view = self; view; view = [view superview]) {
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
-            name:NSViewFrameDidChangeNotification object:view];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
-            name:NSViewBoundsDidChangeNotification object:view];
-    }
-    [notificationCenter addObserver:self selector:@selector(windowWillClose:)
-        name:NSWindowWillCloseNotification object:_window];
-    [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 
-        name:NSWindowDidBecomeKeyNotification object:_window];
-    [notificationCenter addObserver:self selector:@selector(windowResignedKey:) 
-        name:NSWindowDidResignKeyNotification object:_window];
-    [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) 
-        name:NSUserDefaultsDidChangeNotification object:nil];
-    [notificationCenter addObserver:self selector:@selector(windowDidMiniaturize:)
-        name:NSWindowDidMiniaturizeNotification object:_window];
-    [notificationCenter addObserver:self selector:@selector(windowDidDeminiaturize:)
-        name:NSWindowDidDeminiaturizeNotification object:_window];
 
-    if ([_window isKeyWindow]) {
-        [self sendActivateEvent:YES];
+    if ([self window]) {
+        [self addWindowObservers];
+        if ([[self window] isKeyWindow]) {
+            [self sendActivateEvent:YES];
+        }
+        if (![[self window] isMiniaturized]) {
+            [self restartNullEvents];
+        }
     }
-    
-    if (![_window isMiniaturized]) {
-        [self restartNullEvents];
-    }
-    
+
     [self resetTrackingRect];
+    
+    [self didStart];
 
     return YES;
 }
@@ -717,7 +768,7 @@ typedef struct {
 {
     [self removeTrackingRect];
 
-    if (!isStarted){
+    if (!isStarted) {
         return;
     }
     
@@ -733,7 +784,7 @@ typedef struct {
     [[NSCursor arrowCursor] set];
     
     // Stop notifications and callbacks.
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self removeWindowObservers];
     [NSObject cancelPreviousPerformRequestsWithTarget:self];
     
     NPError npErr;
@@ -762,6 +813,11 @@ typedef struct {
 - (WebView *)controller
 {
     return [[self webFrame] webView];
+}
+
+- (NSWindow *)currentWindow
+{
+    return [self window] ? [self window] : [[self controller] hostWindow];
 }
 
 - (NPP)pluginPointer
@@ -849,10 +905,13 @@ typedef struct {
     instance = &instanceStruct;
     instance->ndata = self;
 
-    canRestart = YES;
-
     streams = [[NSMutableArray alloc] init];
     streamNotifications = [[NSMutableDictionary alloc] init];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(preferencesHaveChanged:)
+                                                 name:WebPreferencesChangedNotification
+                                               object:nil];
 
     return self;
 }
@@ -861,6 +920,8 @@ typedef struct {
 {
     unsigned i;
 
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     [self stop];
 
     for (i = 0; i < argsCount; i++) {
@@ -916,19 +977,45 @@ typedef struct {
     // We must remove the tracking rect before we move to the new window.
     // Once we move to the new window, it will be too late.
     [self removeTrackingRect];
+    [self removeWindowObservers];
 
-    [super viewWillMoveToWindow:newWindow];
+    if (!newWindow) {
+        if ([[self controller] hostWindow]) {
+            // View will be moved out of the actual window but it still has a host window.
+            [self stopNullEvents];
+        } else {
+            // View will have no associated windows.
+            [self stop];
+        }
+    }
 }
 
 - (void)viewDidMoveToWindow
 {
-    if (![self window]) {
-        [self stop];
-    }
-    
     [self resetTrackingRect];
     
-    [super viewDidMoveToWindow];
+    if ([self window]) {
+        // View moved to an actual window. Start it if not already started.
+        [self start];
+        [self restartNullEvents];
+        [self addWindowObservers];
+    }
+}
+
+- (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow
+{
+    if (!hostWindow && ![self window]) {
+        // View will have no associated windows.
+        [self stop];
+    }
+}
+
+- (void)viewDidMoveToHostWindow
+{
+    if ([self currentWindow]) {
+        // View now has an associated window. Start it if not already started.
+        [self start];
+    }
 }
 
 #pragma mark NOTIFICATIONS
@@ -969,16 +1056,20 @@ typedef struct {
     [self restartNullEvents];
 }
 
-- (void)defaultsHaveChanged:(NSNotification *)notification
+- (void)preferencesHaveChanged:(NSNotification *)notification
 {
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    if ([defaults boolForKey:@"WebKitPluginsEnabled"]) {
-        canRestart = YES;
-        [self start];
-    } else {
-        canRestart = NO;
-        [self stop];
-        [self setNeedsDisplay:YES];
+    WebPreferences *preferences = [[self controller] preferences];
+    BOOL arePlugInsEnabled = [preferences arePlugInsEnabled];
+    
+    if ([notification object] == preferences && isStarted != arePlugInsEnabled) {
+        if (arePlugInsEnabled) {
+            if ([self currentWindow]) {
+                [self start];
+            }
+        } else {
+            [self stop];
+            [self setNeedsDisplay:YES];
+        }
     }
 }
 
@@ -1227,9 +1318,9 @@ typedef struct {
 -(NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason
 {
     LOG(Plugins, "NPN_DestroyStream");
-    if(!stream->ndata)
+    if (!stream->ndata) {
         return NPERR_INVALID_INSTANCE_ERROR;
-        
+    }
     [(WebNetscapePluginStream *)stream->ndata stop];
     return NPERR_NO_ERROR;
 }
@@ -1326,7 +1417,7 @@ typedef struct {
 
     unsigned i;
     for (i = 0; i < length - 2; i++) {
-        if (bytes[i] == '\n' && (i == 0 || bytes[i+1] == '\n')){
+        if (bytes[i] == '\n' && (i == 0 || bytes[i+1] == '\n')) {
             i++;
             while (i < length - 2 && bytes[i] == '\n') {
                 i++;

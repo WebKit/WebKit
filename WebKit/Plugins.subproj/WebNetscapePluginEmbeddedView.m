@@ -48,11 +48,9 @@
     [super dealloc];
 }
 
-- (void)viewDidMoveToWindow
+- (void)didStart
 {
-    [super viewDidMoveToWindow];
-    
-    if ([self window] && [self start] && URL) {
+    if (URL) {
         NSURLRequest *request = [NSURLRequest requestWithURL:URL];
         [self loadRequest:request inTarget:nil withNotifyData:nil];
     }
@@ -62,7 +60,6 @@
 {
     WebFrameView *webFrameView = (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
     WebFrame *webFrame = [webFrameView webFrame];
-
     return [webFrame dataSource];
 }
 

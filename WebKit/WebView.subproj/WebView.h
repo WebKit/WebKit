@@ -328,6 +328,21 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 */
 - (WebPreferences *)preferences;
 
+/*!
+    @method setHostWindow:
+    @param hostWindow The host window for the web view.
+    @discussion Parts of WebKit (such as plug-ins and JavaScript) depend on a window to function
+    properly. Set a host window so these parts continue to function even when the web view is
+    not in an actual window.
+*/
+- (void)setHostWindow:(NSWindow *)hostWindow;
+
+/*!
+    @method hostWindow
+    @result The host window for the web view.
+*/
+- (NSWindow *)hostWindow;
+
 @end
 
 
