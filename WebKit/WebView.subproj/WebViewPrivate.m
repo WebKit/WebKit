@@ -56,7 +56,7 @@ static NSMutableSet *schemesWithRepresentationsSet;
 {
     backForwardList = [[WebBackForwardList alloc] init];
     textSizeMultiplier = 1;
-
+    progressNotificationInterval = 0.02;
     settings = [[WebCoreSettings alloc] init];
 
     return self;
@@ -643,6 +643,7 @@ static NSMutableSet *schemesWithRepresentationsSet;
         _private->totalPageAndResourceBytesToLoad = 0;
         _private->totalBytesReceived = 0;
         _private->progressValue = 0;
+        _private->lastNotifiedProgressValue = 0;
         [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressStartedNotification object:self];
     }
     _private->numProgressTrackedFrames++;
@@ -650,8 +651,9 @@ static NSMutableSet *schemesWithRepresentationsSet;
 
 - (void)_progressCompleted
 {
-    _private->numProgressTrackedFrames--;
-    ASSERT (_private->numProgressTrackedFrames >= 0);
+    if (![[[self mainFrame] dataSource] isLoading])
+        _private->numProgressTrackedFrames = 0;
+        
     if (_private->numProgressTrackedFrames == 0){
         [_private->progressItems release];
         _private->progressItems = nil;
@@ -720,7 +722,11 @@ static NSMutableSet *schemesWithRepresentationsSet;
     if (_private->progressValue > 1.0)
         _private->progressValue = 1.0;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
+    double notificationProgressDelta = _private->progressValue - _private->lastNotifiedProgressValue;
+    if (notificationProgressDelta >= _private->progressNotificationInterval){
+        [[NSNotificationCenter defaultCenter] postNotificationName:WebViewProgressEstimateChangedNotification object:self];
+        _private->lastNotifiedProgressValue = _private->progressValue;
+    }
 }
 
 - (void)_completeProgressForConnection:(NSURLConnection *)con

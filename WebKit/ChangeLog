@@ -1,3 +1,16 @@
+2003-06-04  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3277775.  Send less notifications.  Notifcations suck!
+
+        Reviewed by David.
+
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate init]):
+        (-[WebView _progressStarted]):
+        (-[WebView _progressCompleted]):
+        (-[WebView _incrementProgressForConnection:data:]):
+
 2003-06-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

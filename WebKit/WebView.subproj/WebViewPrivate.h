@@ -71,6 +71,8 @@ typedef struct _WebResourceDelegateImplementationCache {
     long long totalPageAndResourceBytesToLoad;
     long long totalBytesReceived;
     double progressValue;
+    double lastNotifiedProgressValue;
+    double progressNotificationInterval;
     
     int numProgressTrackedFrames;
     NSMutableDictionary *progressItems;
