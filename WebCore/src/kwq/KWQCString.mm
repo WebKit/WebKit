@@ -322,6 +322,25 @@ QCString &QCString::operator+=(char c)
     return *this;
 }
 
+bool operator==(const char *s1, const QCString &s2)
+{
+    return (strcmp(s1, s2) == 0);
+}
+
+bool operator==(const QCString &s1, const char *s2)
+{
+    return (strcmp(s1, s2) == 0);
+}
+
+bool operator!=(const char *s1, const QCString &s2)
+{
+    return (strcmp(s1, s2) != 0);
+}
+
+bool operator!=(const QCString &s1, const char *s2)
+{
+    return (strcmp(s1, s2) != 0);
+}
 
 #ifdef _KWQ_IOSTREAM_
 ostream &operator<<(ostream &o, const QCString &s)

@@ -25,16 +25,20 @@
 
 #include <job.h>
 
-
 namespace KIO {
 
 SimpleJob *http_update_cache(const KURL &, bool, time_t)
 {
 }
 
-TransferJob *get(const KURL &url, bool reload=false, 
-    bool showProgressInfo=true)
+TransferJob *get(const KURL &url, bool reload=false, bool showProgressInfo=true)
 {
+    TransferJob *result;
+    
+    result = new TransferJob(url, reload, showProgressInfo);
+    result->begin();
+
+    return result;
 }
 
 } // namespace KIO

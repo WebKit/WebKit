@@ -25,7 +25,7 @@
 #include <kwqdebug.h>
 
 #include <qstring.h>
-
+#include <qtextcodec.h>
 #include <kcharsets.h>
 
 KCharsets::KCharsets()
@@ -40,15 +40,19 @@ KCharsets::~KCharsets()
 }
 
 
-QTextCodec *KCharsets::codecForName(const QString &) const
+QTextCodec *KCharsets::codecForName(const QString &s) const
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
+    // FIXME: implement correctly
+    QTextCodec::codecForName(s.latin1());
 }
 
 
-QTextCodec *KCharsets::codecForName(const QString &, bool &) const
+QTextCodec *KCharsets::codecForName(const QString &s, bool &b) const
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
+    // FIXME: implement correctly
+    QTextCodec::codecForName(s.latin1());
 }
 
 

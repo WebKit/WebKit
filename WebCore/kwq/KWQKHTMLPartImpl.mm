@@ -28,14 +28,49 @@
 #include <qfont.h>
 #include <qtextcodec.h>
 
+#include <Foundation/Foundation.h>
+
+#include <job.h>
+#include <jobclasses.h>
 #include <khtml_settings.h>
 #include <khtml_factory.h>
 #include <kcharsets.h>
 #include <kglobal.h>
 #include <html/htmltokenizer.h>
 #include <xml/dom_docimpl.h>
+#include <html/html_documentimpl.h>
+#include <loader.h>
 
 #include <KWQKHTMLPart.h>
+#import <WCURICacheData.h>
+
+static bool cache_init = false;
+
+// Class KHTMLPartNotificationReceiver ==============================================================
+
+@interface KHTMLPartNotificationReceiver : NSObject
+{
+    @public
+    KHTMLPart *m_part;
+}
+@end
+
+@implementation KHTMLPartNotificationReceiver
+
+-(void)cacheDataAvailable:(NSNotification *)notification
+{
+    id <WCURICacheData> data;
+    
+    data = [notification object];
+    m_part->write((const char *)[data cacheData], [data cacheDataSize]);    
+}
+
+-(void)cacheFinished:(NSNotification *)notification
+{
+    // FIXME: need an implementation for this
+}
+
+@end
 
 // Class KHTMLPartPrivate ================================================================================
 
@@ -48,21 +83,37 @@ public:
     QString m_encoding;
     QFont::CharSet m_charset;
     KHTMLSettings *m_settings;
-
+    
     KURL m_workingURL;
+    
+    KHTMLPart *m_part;
+    KHTMLPartNotificationReceiver *m_recv;
 
     bool m_bFirstData:1;
     bool m_haveEncoding:1;
     bool m_haveCharset:1;
-    
-    KHTMLPartPrivate()
+
+    KHTMLPartPrivate(KHTMLPart *part)
     {
-        m_doc = 0L;
+        if (!cache_init) {
+            khtml::Cache::init();
+            cache_init = true;
+        }
+        m_part = part;
+        m_doc = new HTMLDocumentImpl(NULL);
         m_decoder = 0L;
         m_bFirstData = true;
         m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
         m_haveEncoding = false;
+        m_recv = [[KHTMLPartNotificationReceiver alloc] init];
+        m_recv->m_part = part;
     }
+
+    ~KHTMLPartPrivate()
+    {
+        [m_recv autorelease];   
+    }
+
 };
 
 
@@ -81,12 +132,13 @@ KHTMLPart::KHTMLPart(const KURL &url )
 
 void KHTMLPart::init()
 {
-    d = new KHTMLPartPrivate();
+    d = new KHTMLPartPrivate(this);
 }
 
 
 KHTMLPart::~KHTMLPart()
 {
+    delete d;
     _logNotYetImplemented();
 }
 
@@ -112,12 +164,12 @@ bool KHTMLPart::openURL( const KURL &url )
     //        SLOT( slotRedirection(KIO::Job*,const KURL&) ) );
     
     // Initiate request for URL data.
-    
-    // Setup callbacks for incoming data.
+    //d->m_job = KIO::get( url, false, false );
+    //d->m_job = KIO::get( url, false, false );
     
     // Keep a reference to the current working URL.
     d->m_workingURL = url;
-        
+
     return true;
 }
 
@@ -254,8 +306,9 @@ void KHTMLPart::write( const char *str, int len)
         d->m_decoder = new khtml::Decoder();
         if(d->m_encoding != QString::null)
             d->m_decoder->setEncoding(d->m_encoding.latin1(), d->m_haveEncoding);
-        else
-            d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+        else {
+            //FIXME: d->m_decoder->setEncoding(settings()->encoding().latin1(), d->m_haveEncoding);
+        }
     }
     if ( len == 0 )
         return;
@@ -681,6 +734,4 @@ void KHTMLPart::overURL( const QString &url, const QString &target )
 {
     _logNeverImplemented();
 }
-
-
 

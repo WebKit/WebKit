@@ -25,6 +25,37 @@
 
 #include <qtextcodec.h>
 
+class QTextCodec;
+
+class KWQSimpleTextCodec : public QTextCodec {
+public:
+
+    virtual ~KWQSimpleTextCodec() {}
+
+    int KWQSimpleTextCodec::mibEnum() const {
+        // FIXME: do real work here
+        return 0;
+    }
+
+    const char *KWQSimpleTextCodec::name() const
+    {
+        // FIXME: do real work here
+        return "KWQSimpleTextCodec";
+    }
+
+};
+
+
+class KWQSimpleTextDecoder : public QTextDecoder {
+public:
+
+    virtual ~KWQSimpleTextDecoder() {}
+
+    QString KWQSimpleTextDecoder::toUnicode(const char *s, int i) {
+        return QString(s);
+    }
+};
+
 // class QTextDecoder ==========================================================
 
 
@@ -37,16 +68,22 @@ QTextDecoder::~QTextDecoder()
 
 QTextCodec *QTextCodec::codecForMib(int)
 {
+    // FIXME: do real work here
+    return new KWQSimpleTextCodec();
 }
 
 
 QTextCodec *QTextCodec::codecForName(const char *, int accuracy=0)
 {
+    // FIXME: do real work here
+    return new KWQSimpleTextCodec();
 }
 
 
 QTextCodec *QTextCodec::codecForLocale()
 {
+    // FIXME: do real work here
+    return new KWQSimpleTextCodec();
 }
 
 
@@ -54,29 +91,34 @@ QTextCodec::~QTextCodec()
 {
 }
 
-
 // member functions --------------------------------------------------------
 
 QTextDecoder *QTextCodec::makeDecoder() const
 {
+    // FIXME: do real work here
+    return new KWQSimpleTextDecoder();
 }
 
 
-QCString QTextCodec::fromUnicode(const QString &) const
+QCString QTextCodec::fromUnicode(const QString &s) const
 {
+    return QCString(s.latin1());
 }
 
 
-QString QTextCodec::toUnicode(const char *, int) const
+QString QTextCodec::toUnicode(const char *s, int) const
 {
+    return QString(s);
 }
 
-QString QTextCodec::toUnicode(const QByteArray &, int) const
+QString QTextCodec::toUnicode(const QByteArray &array, int) const
 {
+    return QString(array);
 }
 
 
-QString QTextCodec::toUnicode(const char *) const
+QString QTextCodec::toUnicode(const char *s) const
 {
+    return QString(s);
 }
 

@@ -23,7 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <qstring.h>
 #include <jobclasses.h>
+
+#include <Foundation/Foundation.h>
+#include <WCURICache.h>
 
 namespace KIO {
 
@@ -61,32 +65,97 @@ SimpleJob::~SimpleJob()
 }
 
 
+// class TransferJobPrivate ====================================================
+
+class TransferJobPrivate
+{
+friend class TransferJob;
+public:
+
+    TransferJobPrivate(TransferJob *parent, KURL &kurl) {
+        metaData = [[NSMutableDictionary alloc] initWithCapacity:37];
+
+        // FIXME: create NSURL for now, later KURL and NSURL should play better together
+        NSString *string = [NSString stringWithCString:kurl.url().latin1()];
+        url = [[NSURL URLWithString:string] retain];
+    }
+
+    ~TransferJobPrivate() {
+        [metaData autorelease];
+        [url autorelease];
+        [jobID autorelease];
+    }
+
+private:
+    TransferJob *parent;
+    NSMutableDictionary *metaData;
+    NSURL *url;
+    id <WCURICacheJobID> jobID;
+};
+
 // class TransferJob ===========================================================
 
-TransferJob::TransferJob(const KURL &, bool reload=false, bool showProgressInfo=true)
+TransferJob::TransferJob(const KURL &url, bool reload=false, bool showProgressInfo=true)
 {
+    NSString *string;
+
+    _url = url;
+    _reload = reload;
+    _showProgressInfo = showProgressInfo;
+    _status = 0;
+
+    d = new TransferJobPrivate(this, _url);
 }
 
+
+TransferJob::~TransferJob()
+{
+    delete d;
+}
 
 bool TransferJob::isErrorPage() const
 {
+    return (_status != 0);
 }
 
-
+QString TransferJob::queryMetaData(const QString &key)
+{
+    NSString *_key;
+    NSString *_value;
+    
+    _key = QSTRING_TO_NSSTRING(key);
+    _value = [d->metaData objectForKey:_key]; 
+    if (!_value) {
+        return QString::null;
+    }
+    else {
+        return NSSTRING_TO_QSTRING(_value);
+    }
+}
+ 
 void TransferJob::addMetaData(const QString &key, const QString &value)
 {
+    NSString *_key = QSTRING_TO_NSSTRING(key);
+    NSString *_value = QSTRING_TO_NSSTRING(value);
+    [d->metaData setObject:_value forKey:_key];
 }
-
 
 void TransferJob::kill(bool quietly=TRUE)
 {
+    id <WCURICache> uriCache;
+
+    uriCache = WCGetDefaultURICache();
+    [uriCache cancelRequest:d->jobID];
 }
 
-
-void TransferJob::doLoad()
+void TransferJob::begin()
 {
-}
+    id <WCURICache> uriCache;
 
+    uriCache = WCGetDefaultURICache();
+    //FIXME: load uri
+    //[uriCache requestWithURL:d->url requestor:];
+}
 
 } // namespace KIO
 
