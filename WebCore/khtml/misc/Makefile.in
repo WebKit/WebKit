@@ -84,10 +84,10 @@ khtmldata.h:
 	touch $@
 
 $(TAGFILES):
-	./maketags
+	perl ./maketags
 
 $(ATTRSFILES):
-	./makeattrs
+	perl ./makeattrs
 
 #----------------------------------------------------------------------
 # include make rules boilerplate
