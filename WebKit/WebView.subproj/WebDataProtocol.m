@@ -11,6 +11,7 @@
 #import <WebFoundation/WebAssertions.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
+static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
 @interface WebDataRequestParameters : NSObject <NSCopying>
 {
@@ -63,14 +64,17 @@ NSString *WebDataProtocolScheme = @"applewebdata";
 
 - (WebDataRequestParameters *)_webDataRequestParametersForReading
 {
-    Class theClass = [WebDataRequestParameters class];
-    return [NSURLProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:NO];
+    return [NSURLProtocol propertyForKey:WebDataRequestPropertyKey inRequest:self];
 }
 
 - (WebDataRequestParameters *)_webDataRequestParametersForWriting
 {
-    Class theClass = [WebDataRequestParameters class];
-    return [NSURLProtocol partOfRequest:self withClass:theClass createIfDoesNotExist:YES];
+    WebDataRequestParameters *result = [NSURLProtocol propertyForKey:WebDataRequestPropertyKey inRequest:self];
+    if (!result) {
+        result = [[WebDataRequestParameters alloc] init];
+        [NSURLProtocol setProperty:result forKey:WebDataRequestPropertyKey inRequest:self];
+    }
+    return result;
 }
 
 - (NSData *)_webDataRequestData
