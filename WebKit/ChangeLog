@@ -1,5 +1,11 @@
 2004-11-05  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3854218> Safari is sometimes really slow because of increased null events to plug-ins
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m: reverted null event interval to 0.02
+
+2004-11-05  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3838413> REGRESSION (Mail): "Smart" word paste adds spaces before/after special characters
 
         Reviewed by rjw.
