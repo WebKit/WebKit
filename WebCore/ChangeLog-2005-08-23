@@ -1,3 +1,20 @@
+2003-05-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3270373 - MALLORY: repro crash in +[KWQObjectTimerTarget stopDeferringTimers] while changing folder
+
+        * kwq/KWQObject.mm:
+        (QObject::killTimer): Remove the timer from the deferred list too - clients expect that a timer
+	will never be delivered after the object was killed.
+        (QObject::killTimers): Use killTimer on each timer for this object instead of trying
+	to be tricky. 
+        (-[KWQObjectTimerTarget timerFired]): Don't add a timer to the deferred list more than once,
+	because there's no benefit in ganging up multiple firings while deferred, and it makes other
+	things simpler.
+        (+[KWQObjectTimerTarget stopDeferringTimers]): Make sure to remove the timer before firing it, 
+	since it may also cancel itself, and we don't want to remove an extra timer in that case.
+
 2003-05-29  Richard Williamson   <rjw@apple.com>
 
 	Support for the 'estimatedProgress' method on

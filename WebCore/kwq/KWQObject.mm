@@ -264,6 +264,7 @@ void QObject::killTimer(int _timerId)
     NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
     NSNumber *timerId = [NSNumber numberWithInt:_timerId];
     NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
+    [deferredTimers removeObject:(KWQObjectTimerTarget *)[timer userInfo]];
     [timer invalidate];
     [timers removeObjectForKey:timerId];
 }
@@ -277,7 +278,12 @@ void QObject::killTimers()
     if (timers == nil) {
         return;
     }
-    [[timers allValues] makeObjectsPerformSelector:@selector(invalidate)];
+    NSEnumerator *e = [timers keyEnumerator];
+    NSNumber *timerId;
+    while ((timerId = [e nextObject]) != nil) {
+	killTimer([timerId intValue]);
+    }
+
     CFDictionaryRemoveValue(timerDictionaries, this);
 }
 
@@ -320,7 +326,9 @@ void QObject::setDefersTimers(bool defers)
         if (deferredTimers == nil) {
             deferredTimers = [[NSMutableArray alloc] init];
         }
-        [deferredTimers addObject:self];
+	if (![deferredTimers containsObject:self]) {
+	    [deferredTimers addObject:self];
+	}
     } else {
         [self sendTimerEvent];
     }
@@ -330,9 +338,16 @@ void QObject::setDefersTimers(bool defers)
 {
     ASSERT(deferringTimers);
     while ([deferredTimers count] != 0) {
-        [[deferredTimers objectAtIndex:0] sendTimerEvent];
-        [deferredTimers removeObjectAtIndex:0];
+	// remove before sending the timer event, in case the timer
+	// callback cancels the timer - we don't want to remove too
+	// much in that case.
+	KWQObjectTimerTarget *timerTarget = [deferredTimers objectAtIndex:0];
+	[timerTarget retain];
+	[deferredTimers removeObjectAtIndex:0];
+        [timerTarget sendTimerEvent];
+	[timerTarget release];
     }
+
     deferringTimers = false;
 }
 
