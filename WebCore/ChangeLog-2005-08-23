@@ -1,5 +1,15 @@
 2003-07-21  Dave Hyatt  <hyatt@apple.com>
 
+	Fix for 3333557, crash on www.dremedia.com.  markDescendants in RenderBlock
+	was not passing in its argument in the recursive step, so the float wasn't
+	getting properly cleared out of everyone's lists.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+
+2003-07-21  Dave Hyatt  <hyatt@apple.com>
+
 	Fix for 3182596, percentage height tables with cells that specify
 	tiny percentage heights used that height even if it was smaller
 	than the cell's minimum required height.

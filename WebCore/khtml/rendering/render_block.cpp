@@ -1726,7 +1726,7 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderObject* floatToRem
         for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
             if (isBlockFlow() && !child->isFloatingOrPositioned() &&
                 (floatToRemove ? child->containsFloat(floatToRemove) : child->containsFloats()))
-                child->markAllDescendantsWithFloatsForLayout();
+                child->markAllDescendantsWithFloatsForLayout(floatToRemove);
         }
     }
 }
