@@ -301,6 +301,12 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
+    // If load has been cancelled after finishing (which could happen with a 
+    // javascript that changes the window location), do nothing.
+    if (cancelledFlag) {
+        return;
+    }
+    
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
@@ -326,6 +332,13 @@
 {
     ASSERT(!reachedTerminalState);
 
+    // This flag prevents bad behvior when loads that finish cause the
+    // load itself to be cancelled (which could happen with a javascript that 
+    // changes the window location). This is used to prevent both the body
+    // of this method and the body of connectionDidFinishLoading: running
+    // for a single delegate. Cancelling wins.
+    cancelledFlag = YES;
+    
     [currentConnectionChallenge release];
     currentConnectionChallenge = nil;
     

@@ -1,3 +1,24 @@
+2003-05-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+	Fix for this bug:
+
+	Radar 3260323 (Some links at nike.com cause assertion failure 
+	(connectionDidFinishLoading sent after cancel))
+
+	Added a flag which is set when a load is cancelled. This flag prevents
+	bad behvior when loads that finish cause the load itself to be
+	cancelled (which could happen with a javascript that changes the
+	window location). This is used to prevent both the body of
+	cancelWithError: and the body of connectionDidFinishLoading: running
+	for a single delegate. Cancelling wins.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+
 2003-05-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3270576 - RealPlayer plug-in fails to load

@@ -31,6 +31,7 @@
     id downloadDelegate;
     NSURLAuthenticationChallenge *currentConnectionChallenge;
     NSURLAuthenticationChallenge *currentWebChallenge;
+    BOOL cancelledFlag;
     BOOL reachedTerminalState;
     BOOL defersCallbacks;
     WebResourceDelegateImplementationCache implementations;
