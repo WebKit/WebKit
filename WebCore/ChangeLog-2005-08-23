@@ -1,3 +1,14 @@
+2004-06-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin
+        
+        - fixed <rdar://problem/3534851> Pop up windows not showing up within SAP's 
+        BW Module (changing location.href on new window created by window.open)
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::scheduleRedirection):
+        allow new redirect to win if delay <= current delay, not just <
+
 === Safari-146 ===
 
 2004-06-17  Richard Williamson   <rjw@apple.com>

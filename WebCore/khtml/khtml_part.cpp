@@ -1926,7 +1926,7 @@ void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLo
     kdDebug(6050) << "KHTMLPart::scheduleRedirection delay=" << delay << " url=" << url << endl;
     if (delay < 0 || delay > INT_MAX / 1000)
       return;
-    if ( d->m_scheduledRedirection == noRedirectionScheduled || delay < d->m_delayRedirect )
+    if ( d->m_scheduledRedirection == noRedirectionScheduled || delay <= d->m_delayRedirect )
     {
        if (d->m_doc == 0){
         // Handle a location change of a page with no document as a special case.
