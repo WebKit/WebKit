@@ -1,3 +1,13 @@
+2004-03-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: INPUT images are not part of web archives.
+
+        Reviewed by rjw.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::isSubresourceURLAttribute):
+        * khtml/html/html_formimpl.h:
+
 2004-03-09  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented WebCore side of: <rdar://problem/3577508>: API: web archive related API's

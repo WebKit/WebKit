@@ -1870,6 +1870,11 @@ bool HTMLInputElementImpl::isEditable()
     return ((m_type == TEXT) || (m_type == PASSWORD) || (m_type == ISINDEX) || (m_type == FILE));
 }
 
+bool HTMLInputElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    return (attr->id() == ATTR_SRC);
+}
+
 // -------------------------------------------------------------------------
 
 HTMLLabelElementImpl::HTMLLabelElementImpl(DocumentPtr *doc)

@@ -333,6 +333,8 @@ public:
     virtual bool isEditable();
 
     DOMString altText() const;
+    
+    virtual bool isSubresourceURLAttribute(AttributeImpl *attr) const;
 
 protected:
 
