@@ -1,3 +1,14 @@
+2003-06-12  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3221078.  Maintain a seperate width map
+	for substitute fonts to avoid collision of glyph
+	codes.
+
+        Reviewed by Chris & Gramps.
+
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
 === Safari-84 ===
 
 2003-06-12  Darin Adler  <darin@apple.com>
