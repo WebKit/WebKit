@@ -27,10 +27,11 @@
 #define QVECTOR_H_
 
 #include <kwqdef.h>
+#include <qcollection.h>
 
 typedef void *Item;
 
-template<class T> class QVector {
+template<class T> class QVector : public QCollection {
 public:
     QVector();
     QVector(uint);
