@@ -7,8 +7,8 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLProtocol.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLProtocol.h>
 
 
 @interface WebDataProtocol : NSURLProtocol

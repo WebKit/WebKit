@@ -21,11 +21,11 @@
 #import <WebKit/WebUIDelegate.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/NSURLRequestPrivate.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
-#import <WebFoundation/NSData_NSURLExtras.h>
-#import <WebFoundation/NSString_NSURLExtras.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSData_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>

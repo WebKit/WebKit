@@ -11,10 +11,10 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 
-#import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLRequestPrivate.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 
 #define WebIconLoaderWeeksWorthOfSeconds (60 * 60 * 24 * 7)

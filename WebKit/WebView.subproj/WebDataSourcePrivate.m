@@ -29,14 +29,14 @@
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/NSDictionary_NSURLExtras.h>
-#import <WebFoundation/NSError_NSURLExtras.h>
-#import <WebFoundation/NSString_NSURLExtras.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSURLResponsePrivate.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSError_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSURLResponsePrivate.h>
 
 
 @implementation WebDataSourcePrivate 

@@ -11,8 +11,8 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/NSError.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSError.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 static NSImage *image = nil;
 

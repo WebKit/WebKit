@@ -5,7 +5,7 @@
     Public header file.
 */
 
-#import <WebFoundation/NSURLDownload.h>
+#import <Foundation/NSURLDownload.h>
 
 @class WebDownloadInternal;
 

@@ -106,12 +106,12 @@
 		};
 		0867D69AFE84028FC02AAC07 = {
 			children = (
+				BE1B2F5504755C7700CA289C,
 				F5C2869302846DCD018635CA,
 				F5C2869402846DCD018635CA,
 				F5C2869502846DCD018635CA,
 				F738C9E903FAD3DF0321FBE0,
 				F738C9EA03FAD3DF0321FBE0,
-				F738C9EB03FAD3DF0321FBE0,
 			);
 			isa = PBXGroup;
 			name = "Frameworks and Libraries";
@@ -427,7 +427,7 @@
 				F5C287BD02846DCD018635CA,
 				F738CA5703FAD3DF0321FBE0,
 				F738CA5803FAD3DF0321FBE0,
-				F738CA5903FAD3DF0321FBE0,
+				BE1B2F5604755C7700CA289C,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2461,6 +2461,17 @@
 			settings = {
 			};
 		};
+		BE1B2F5504755C7700CA289C = {
+			isa = PBXFrameworkReference;
+			path = Foundation.framework;
+			refType = 3;
+		};
+		BE1B2F5604755C7700CA289C = {
+			fileRef = BE1B2F5504755C7700CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BEE18F920472A0CF00CA289C = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3623,12 +3634,6 @@
 			path = build/WebCore.framework;
 			refType = 4;
 		};
-		F738C9EB03FAD3DF0321FBE0 = {
-			isa = PBXFrameworkReference;
-			name = WebFoundation.framework;
-			path = build/WebFoundation.framework;
-			refType = 4;
-		};
 		F738CA5703FAD3DF0321FBE0 = {
 			fileRef = F738C9E903FAD3DF0321FBE0;
 			isa = PBXBuildFile;
@@ -3637,12 +3642,6 @@
 		};
 		F738CA5803FAD3DF0321FBE0 = {
 			fileRef = F738C9EA03FAD3DF0321FBE0;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F738CA5903FAD3DF0321FBE0 = {
-			fileRef = F738C9EB03FAD3DF0321FBE0;
 			isa = PBXBuildFile;
 			settings = {
 			};

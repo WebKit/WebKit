@@ -7,7 +7,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLRUFileList.h>
 
-#import <WebFoundation/NSFileManager_NSURLExtras.h>
+#import <Foundation/NSFileManager_NSURLExtras.h>
 
 #import <fcntl.h>
 #import <fts.h>

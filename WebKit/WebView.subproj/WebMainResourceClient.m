@@ -5,18 +5,18 @@
 
 #import <WebKit/WebMainResourceClient.h>
 
-#import <WebFoundation/NSHTTPCookie.h>
-#import <WebFoundation/NSError_NSURLExtras.h>
+#import <Foundation/NSHTTPCookie.h>
+#import <Foundation/NSError_NSURLExtras.h>
 
-#import <WebFoundation/NSURLFileTypeMappings.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLConnectionPrivate.h>
-#import <WebFoundation/NSURLDownloadPrivate.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSURLResponsePrivate.h>
+#import <Foundation/NSURLFileTypeMappings.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLConnectionPrivate.h>
+#import <Foundation/NSURLDownloadPrivate.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSURLResponsePrivate.h>
 
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>

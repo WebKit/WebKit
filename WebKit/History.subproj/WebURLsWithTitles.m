@@ -8,7 +8,7 @@
 
 #import "WebURLsWithTitles.h"
 
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 @implementation WebURLsWithTitles
 

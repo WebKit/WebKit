@@ -12,8 +12,8 @@
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/NSDictionary_NSURLExtras.h>
-#import <WebFoundation/NSURLResponse.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSURLResponse.h>
 #import <WebKit/WebAssertions.h>
 
 @implementation WebFrameViewPrivate

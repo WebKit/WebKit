@@ -11,8 +11,8 @@
 #import <WebKit/WebKitLogging.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/NSDictionary_NSURLExtras.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 

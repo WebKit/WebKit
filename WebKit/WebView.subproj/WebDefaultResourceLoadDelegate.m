@@ -5,11 +5,11 @@
 
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 
-#import <WebFoundation/NSURLAuthenticationChallenge.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSError_NSURLExtras.h>
+#import <Foundation/NSURLAuthenticationChallenge.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSError_NSURLExtras.h>
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>

@@ -40,14 +40,14 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/NSString_NSURLExtras.h>
-#import <WebFoundation/NSDictionary_NSURLExtras.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSURLFileTypeMappings.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSURLFileTypeMappings.h>
 #import <WebKit/WebLocalizableStrings.h>
 
 

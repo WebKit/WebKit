@@ -19,7 +19,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebFoundation/NSURLRequest.h>
+#import <Foundation/NSURLRequest.h>
 
 @implementation WebPluginController
 

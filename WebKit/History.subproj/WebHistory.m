@@ -10,10 +10,10 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 
-#import <WebFoundation/NSError.h>
+#import <Foundation/NSError.h>
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <WebCore/WebCoreHistory.h>
 

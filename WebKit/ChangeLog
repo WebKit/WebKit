@@ -1,3 +1,68 @@
+2003-05-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Changed imports to include headers from Foundation                   
+        instead of WebFoundation. 
+
+        Removed WebFoundation.framework as a dependency in
+        the project file.
+
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryItem.m:
+        * History.subproj/WebHistoryPrivate.m:
+        * History.subproj/WebURLsWithTitles.m:
+        * Misc.subproj/WebDownload.h:
+        * Misc.subproj/WebDownload.m:
+        * Misc.subproj/WebFileDatabase.m:
+        * Misc.subproj/WebIconDatabase.m:
+        * Misc.subproj/WebIconLoader.m:
+        * Misc.subproj/WebKitErrors.m:
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        * Misc.subproj/WebNSViewExtras.m:
+        * Panels.subproj/WebAuthenticationPanel.h:
+        * Panels.subproj/WebAuthenticationPanel.m:
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        * Plugins.subproj/WebNullPluginView.m:
+        * Plugins.subproj/WebPluginController.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebDefaultFrameLoadDelegate.m:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebImageRepresentation.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebPreferences.m:
+        * WebView.subproj/WebTextRepresentation.m:
+        * WebView.subproj/WebTextView.m:
+        * WebView.subproj/WebUIDelegate.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.m:
+
 2003-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -9,9 +9,9 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLResponse.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLResponse.h>
 #import <WebKit/WebAssertions.h>
 
 

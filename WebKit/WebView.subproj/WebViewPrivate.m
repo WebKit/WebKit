@@ -25,12 +25,12 @@
 
 #import <WebKit/WebAssertions.h>
 
-#import <WebFoundation/NSURLFileTypeMappings.h>
-#import <WebFoundation/NSData_NSURLExtras.h>
-#import <WebFoundation/NSString_NSURLExtras.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLDownloadPrivate.h>
-#import <WebFoundation/NSURLRequest.h>
+#import <Foundation/NSURLFileTypeMappings.h>
+#import <Foundation/NSData_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLDownloadPrivate.h>
+#import <Foundation/NSURLRequest.h>
 
 #import <WebCore/WebCoreEncodings.h>
 #import <WebCore/WebCoreSettings.h>

@@ -7,7 +7,7 @@
 #import <WebKit/WebFrame.h>
 
 #if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)
-#import <WebFoundation/NSError.h>
+#import <Foundation/NSError.h>
 #endif
 
 @implementation WebDefaultFrameLoadDelegate

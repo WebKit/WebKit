@@ -10,8 +10,8 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLConnection.h>
 
 @implementation WebNetscapePluginStream
 

@@ -4,7 +4,7 @@
 */
 #import <Cocoa/Cocoa.h>
 
-#import <WebFoundation/NSURLRequest.h>
+#import <Foundation/NSURLRequest.h>
 
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>

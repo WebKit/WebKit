@@ -15,9 +15,9 @@
 
 
 #import <WebKit/WebLocalizableStrings.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLRequestPrivate.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
 

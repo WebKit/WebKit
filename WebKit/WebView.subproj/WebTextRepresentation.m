@@ -10,7 +10,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebTextView.h>
 
-#import <WebFoundation/NSURLResponse.h>
+#import <Foundation/NSURLResponse.h>
 #import <WebKit/WebAssertions.h>
 
 @implementation WebTextRepresentation

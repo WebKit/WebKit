@@ -15,11 +15,11 @@
 #import <WebKit/WebView.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/NSURLFileTypeMappings.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSURLFileTypeMappings.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSDictionary_NSURLExtras.h>
 
 @implementation WebDataSource
 

@@ -8,9 +8,9 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSURLResponsePrivate.h>
-#import <WebFoundation/NSFileManager_NSURLExtras.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSURLResponsePrivate.h>
+#import <Foundation/NSFileManager_NSURLExtras.h>
 
 @implementation WebBaseNetscapePluginStream
 

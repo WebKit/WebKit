@@ -21,10 +21,10 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
-#import <WebFoundation/NSString_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
 
 @implementation WebFrame
 

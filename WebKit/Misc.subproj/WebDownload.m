@@ -4,9 +4,9 @@
 
 #import <WebKit/WebDownload.h>
 
-#import <WebFoundation/NSURLDownload.h>
-#import <WebFoundation/NSURLAuthenticationChallenge.h>
-#import <WebFoundation/NSURLDownloadPrivate.h>
+#import <Foundation/NSURLDownload.h>
+#import <Foundation/NSURLAuthenticationChallenge.h>
+#import <Foundation/NSURLDownloadPrivate.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
 @interface WebDownloadInternal : NSObject

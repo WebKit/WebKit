@@ -7,11 +7,11 @@
 
 #import <WebKit/WebAuthenticationPanel.h>
 
-#import <WebFoundation/NSURLAuthenticationChallenge.h>
-#import <WebFoundation/NSURLProtectionSpace.h>
+#import <Foundation/NSURLAuthenticationChallenge.h>
+#import <Foundation/NSURLProtectionSpace.h>
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebLocalizableStrings.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 #import <WebKit/WebNSControlExtras.h>
 

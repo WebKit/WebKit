@@ -4,10 +4,10 @@
 */
 #import <WebKit/WebDataProtocol.h>
 
-#import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/NSURLResponsePrivate.h>
-#import <WebFoundation/NSError_NSURLExtras.h>
-#import <WebFoundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLResponse.h>
+#import <Foundation/NSURLResponsePrivate.h>
+#import <Foundation/NSError_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
 #import <WebKit/WebAssertions.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";

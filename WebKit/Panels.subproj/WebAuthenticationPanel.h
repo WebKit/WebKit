@@ -5,7 +5,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <WebFoundation/NSURLCredentialStorage.h>
+#import <Foundation/NSURLCredentialStorage.h>
 
 @class NSURLAuthenticationChallenge;
 

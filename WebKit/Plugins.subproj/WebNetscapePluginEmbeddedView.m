@@ -12,7 +12,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 
-#import <WebFoundation/NSURLRequest.h>
+#import <Foundation/NSURLRequest.h>
 
 @implementation WebNetscapePluginEmbeddedView
 

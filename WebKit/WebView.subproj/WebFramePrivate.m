@@ -30,13 +30,13 @@
 #import <WebKit/WebUIDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/NSError_NSURLExtras.h>
-#import <WebFoundation/NSURL_NSURLExtras.h>
-#import <WebFoundation/NSString_NSURLExtras.h>
-#import <WebFoundation/NSURLConnection.h>
-#import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/NSURLResponse.h>
+#import <Foundation/NSError_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
+#import <Foundation/NSString_NSURLExtras.h>
+#import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSURLRequestPrivate.h>
+#import <Foundation/NSURLResponse.h>
 
 #import <objc/objc-runtime.h>
 
