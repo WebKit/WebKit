@@ -755,7 +755,6 @@ static QRect boundingBoxRect(RenderObject* obj)
         CFRelease(textMarker);
     return visiblePos;
 }
-#endif
 
 - (AXTextMarkerRangeRef) textMarkerRangeFromVisiblePositions: (VisiblePosition) startPosition andEndPos: (VisiblePosition) endPosition
 {
@@ -763,6 +762,7 @@ static QRect boundingBoxRect(RenderObject* obj)
     AXTextMarkerRef endTextMarker   = [self textMarkerForVisiblePosition: endPosition];
     return [self textMarkerRangeFromMarkers: startTextMarker andEndMarker:endTextMarker];
 }
+#endif
 
 - (DocumentImpl *)topDocument
 {
@@ -923,14 +923,14 @@ static QRect boundingBoxRect(RenderObject* obj)
             kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,
-            kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
+//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,              // NOTE: BUG FO 2
             kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
             kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
-            kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
-            kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
+//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,            // NOTE: BUG FO 2
+//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,      // NOTE: BUG FO 2
             kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
             kAXLengthForTextMarkerRangeParameterizedAttribute,
@@ -1524,12 +1524,19 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (BOOL)accessibilityIsAttributeSettable:(NSString*)attributeName
 {
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
     if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute])
         return YES;
-        
+#endif
+
     return NO;
 }
 
+#if OMIT_TIGER_FEATURES
+// no parameterized attributes in Panther... they were introduced in Tiger
+#else
 - (void)doSetAXSelectedTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
 {
     VisiblePosition startVisiblePosition, endVisiblePosition;
@@ -1560,6 +1567,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         [self doSetAXSelectedTextMarkerRange:textMarkerRange];
     }
 }
+#endif
 
 - (void)childrenChanged
 {

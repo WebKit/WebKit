@@ -1,4 +1,13 @@
 2005-01-06  David Harrison  <harrison@apple.com>
+        
+        Fixed Panther build.  Also, do not advertize sentence support since it is incomplete.
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject visiblePositionForEndOfTextMarkerRange:]):
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
+
+2005-01-06  David Harrison  <harrison@apple.com>
 
         Reviewed by Dave Hyatt.
 
