@@ -64,7 +64,7 @@
     [finalURL release];
     [frames release];
     [mainHandle release];
-    [mainURLHandleClient release];
+    [mainResourceHandleClient release];
     [urlHandles release];
     [pageTitle release];
     [downloadPath release];
@@ -160,8 +160,8 @@
     
     if (flag) {
         [self _loadPageIconIfNecessary];
-        [_private->mainURLHandleClient release];
-        _private->mainURLHandleClient = 0; 
+        [_private->mainResourceHandleClient release];
+        _private->mainResourceHandleClient = 0; 
         [_private->mainHandle release];
         _private->mainHandle = 0;
         [self _updateLoading];
@@ -179,8 +179,8 @@
     
     [self _clearErrors];
     
-    _private->mainURLHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-    [_private->mainHandle addClient: _private->mainURLHandleClient];
+    _private->mainResourceHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
+    [_private->mainHandle addClient: _private->mainResourceHandleClient];
     
     // Mark the start loading time.
     _private->loadingStartedTime = CFAbsoluteTimeGetCurrent();
@@ -193,7 +193,7 @@
     [_private->mainHandle loadInBackground];
 }
 
-- (void)_addURLHandle: (WebResourceHandle *)handle
+- (void)_addResourceHandle: (WebResourceHandle *)handle
 {
     if (_private->urlHandles == nil)
         _private->urlHandles = [[NSMutableArray alloc] init];
@@ -201,7 +201,7 @@
     [self _setLoading:YES];
 }
 
-- (void)_removeURLHandle: (WebResourceHandle *)handle
+- (void)_removeResourceHandle: (WebResourceHandle *)handle
 {
     [_private->urlHandles removeObject: handle];
     [self _updateLoading];

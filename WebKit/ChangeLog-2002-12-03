@@ -1,3 +1,42 @@
+2002-07-20  Darin Adler  <darin@apple.com>
+
+	- fixed 2999616 -- Possible leak in +[IFPluginDatabase installedPlugins]
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (+[WebPluginDatabase installedPlugins]): Move the code into an init function.
+        (pluginLocations): Simplified.
+        (-[WebPluginDatabase init]): Added. Cleaned up a bit, and made it release the
+	WebPlugin objects -- this was the leak.
+        (-[WebPluginDatabase dealloc]): Added.
+
+        * Plugins.subproj/WebPluginDatabase.h: Tweaked formatting.
+
+        * Plugins.subproj/WebPluginStream.h:
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebPluginStream startLoad]):
+        (-[WebPluginStream stop]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:]):
+        (-[WebSubresourceClient WebResourceHandleDidCancelLoading:]):
+        (-[WebSubresourceClient WebResourceHandleDidFinishLoading:data:]):
+        (-[WebSubresourceClient WebResourceHandle:didFailLoadingWithResult:]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource stopLoading]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setPrimaryLoadComplete:]):
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _addResourceHandle:]):
+        (-[WebDataSource _removeResourceHandle:]):
+	Changed code that called it a URLHandle to say resourceHandle.
+
+        * WebView.subproj/WebFrame.m: (-[WebFrame dealloc]): Add an autorelease pool here since
+	this is called from a timer and AppKit does not use an explicit autorelease pool
+	in that case. This makes the "world leak check" work better, and is mildly helpful
+	in other cases too. Radar 3003650 is a request for the AppKit team to fix this, but
+	this workaround will do for now.
+
 2002-07-19  Darin Adler  <darin@apple.com>
 
 	- fixed 3001951 -- Massive memory leak after running base or static PLT

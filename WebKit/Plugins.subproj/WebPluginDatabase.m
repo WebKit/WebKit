@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,41 +23,28 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <WebKit/WebPluginDatabase.h>
+
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginStream.h>
 #import <WebKit/WebPluginView.h>
-#import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebKitDebug.h>
 
-NSArray *_pluginLocations(void);
-NSArray *_findPlugins(void);
-
 @implementation WebPluginDatabase
-static WebPluginDatabase *__IFPluginDatabase = nil;
 
+static WebPluginDatabase *database = nil;
 
 + (WebPluginDatabase *)installedPlugins 
 {
-    if(!__IFPluginDatabase){
-        __IFPluginDatabase  = [WebPluginDatabase alloc];
-        __IFPluginDatabase->plugins = _findPlugins();
-        
-        // register plug-in WebDocumentViews and WebDocumentRepresentations
-        NSArray *mimes = [__IFPluginDatabase MIMETypes];
-        NSString *mime;
-        unsigned i;
-        
-        for(i=0; i<[mimes count]; i++){
-            mime = [mimes objectAtIndex:i];
-            [WebView registerViewClass:[WebPluginView class] forMIMEType:mime];
-            [WebDataSource registerRepresentationClass:[WebPluginStream class] forMIMEType:mime];
-        }
+    if (!database) {
+        database = [[WebPluginDatabase alloc] init];
     }
-    return __IFPluginDatabase;
+    return database;
 }
 
+// FIXME: Use a dictionary for this?
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
 - (WebPlugin *)pluginForMimeType:(NSString *)mimeType
 {
@@ -77,6 +64,7 @@ static WebPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
+// FIXME: Use a dictionary for this?
 - (WebPlugin *)pluginForExtension:(NSString *)extension
 {
     uint i, n;
@@ -97,6 +85,7 @@ static WebPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
+// FIXME: Use a dictionary for this?
 - (WebPlugin *)pluginWithFilename:(NSString *)filename
 {
     uint i;
@@ -111,12 +100,13 @@ static WebPluginDatabase *__IFPluginDatabase = nil;
     return nil;
 }
 
-- (NSArray *) plugins
+- (NSArray *)plugins
 {
     return plugins;
 }
 
-- (NSArray *) MIMETypes
+// FIXME: Maybe a set rather than an array?
+- (NSArray *)MIMETypes
 {
     NSMutableArray *allHandledMIMETypes;
     WebPlugin *plugin;
@@ -134,48 +124,48 @@ static WebPluginDatabase *__IFPluginDatabase = nil;
     return allHandledMIMETypes;
 }
 
-@end
-
-NSArray *_pluginLocations(void)
+static NSArray *pluginLocations(void)
 {
-    NSMutableArray *locations;
-    NSBundle *applicationBundle;
-    
     // Plug-ins are found in order of precedence.
     // If there are duplicates, the first found plug-in is used.
     // For example, if there is a QuickTime.plugin in the users's home directory
     // that is used instead of the /Library/Internet Plug-ins version.
-    // The purpose is to allow non-admin user's to update their plug-ins.
+    // The purpose is to allow non-admin users to update their plug-ins.
     
-    locations = [NSMutableArray arrayWithCapacity:3];
-    [locations addObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]];
-    [locations addObject:@"/Library/Internet Plug-Ins"];
-
-    applicationBundle = [NSBundle mainBundle];
-    [locations addObject:[applicationBundle builtInPlugInsPath]];
-    
-    return locations;
+    return [NSArray arrayWithObjects:
+        [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"],
+    	@"/Library/Internet Plug-Ins",
+    	[[NSBundle mainBundle] builtInPlugInsPath],
+        nil];
 }
 
-NSArray *_findPlugins(void)
+- init
 {
     NSFileManager *fileManager;
     NSArray *pluginDirectories, *files;
     NSString *file;
-    NSMutableArray *pluginPaths, *pluginArray, *filenames;
+    NSMutableArray *pluginPaths, *pluginArray;
+    NSMutableSet *filenames;
     WebPlugin *plugin;
     uint i, n;
     
-    pluginDirectories = _pluginLocations();    
-    fileManager = [NSFileManager defaultManager];
-    pluginPaths = [NSMutableArray arrayWithCapacity:10];
-    filenames = [NSMutableArray arrayWithCapacity:10];
+    self = [super init];
+    if (self == nil) {
+        return nil;
+    }
     
-    for(i=0; i<[pluginDirectories count]; i++){
+    pluginDirectories = pluginLocations();
+    
+    fileManager = [NSFileManager defaultManager];
+
+    pluginPaths = [NSMutableArray arrayWithCapacity:10];
+    filenames = [NSMutableSet setWithCapacity:10];
+
+    for (i = 0; i < [pluginDirectories count]; i++) {
         files = [fileManager directoryContentsAtPath:[pluginDirectories objectAtIndex:i]];
-        for(n=0; n<[files count]; n++){
+        for (n = 0; n < [files count]; n++) {
             file = [files objectAtIndex:n];
-            if(![filenames containsObject:file]){ // avoid duplicates
+            if (![filenames containsObject:file]) { // avoid duplicates
                 [filenames addObject:file];
                 [pluginPaths addObject:[[pluginDirectories objectAtIndex:i] stringByAppendingPathComponent:file]];
             }
@@ -184,16 +174,32 @@ NSArray *_findPlugins(void)
     
     pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
     
-    for(i=0; i<[pluginPaths count]; i++){
-        plugin = [WebPlugin alloc];
-        if([plugin initWithPath:[pluginPaths objectAtIndex:i]]){
-            [plugin retain];
+    for (i = 0; i < [pluginPaths count]; i++) {
+        plugin = [[WebPlugin alloc] initWithPath:[pluginPaths objectAtIndex:i]];
+        if (plugin) {
             [pluginArray addObject:plugin];
             WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "Found plugin: %s\n", [[plugin name] lossyCString]);
             WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "%s", [[plugin description] lossyCString]);
+            [plugin release];
         }
     }
-    return [pluginArray retain];
+        
+    // register plug-in WebDocumentViews and WebDocumentRepresentations
+    NSArray *mimes = [database MIMETypes];
+    for (i = 0; i < [mimes count]; i++) {
+        [WebView registerViewClass:[WebPluginView class] forMIMEType:[mimes objectAtIndex:i]];
+        [WebDataSource registerRepresentationClass:[WebPluginStream class] forMIMEType:[mimes objectAtIndex:i]];
+    }
+    
+    plugins = [pluginArray copy];
+
+    return self;
 }
 
+- (void)dealloc
+{
+    [plugins release];
+    [super dealloc];
+}
 
+@end

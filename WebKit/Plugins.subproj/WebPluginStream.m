@@ -85,10 +85,10 @@ static NSString *getCarbonPath(NSString *posixPath);
 
 - (void)startLoad
 {
-    URLHandle = [[WebResourceHandle alloc] initWithURL:URL attributes:attributes flags:0];
-    if(URLHandle){
-        [URLHandle addClient:self];
-        [URLHandle loadInBackground];
+    resource = [[WebResourceHandle alloc] initWithURL:URL attributes:attributes flags:0];
+    if(resource){
+        [resource addClient:self];
+        [resource loadInBackground];
     }
 }
 
@@ -96,10 +96,10 @@ static NSString *getCarbonPath(NSString *posixPath);
 {
     if(!stopped){
         stopped = YES;
-        if([URLHandle statusCode] == WebResourceHandleStatusLoading)
-            [URLHandle cancelLoadInBackground];
-        [URLHandle removeClient:self];
-        [URLHandle release];
+        if([resource statusCode] == WebResourceHandleStatusLoading)
+            [resource cancelLoadInBackground];
+        [resource removeClient:self];
+        [resource release];
     }
     [view release];
     view = nil;

@@ -80,8 +80,17 @@
 {
     --WebFrameCount;
     
+    // Because WebFrame objects are typically deallocated by timer cleanup, and the AppKit
+    // does not use an explicit autorelease pool in that case, we make our own.
+    // Among other things, this makes world leak checking in the Page Load Test work better.
+    // It would be nice to find a more general workaround for this (bug 3003650).
+    
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    
     [_private release];
     [super dealloc];
+    
+    [pool release];
 }
 
 - (NSString *)name

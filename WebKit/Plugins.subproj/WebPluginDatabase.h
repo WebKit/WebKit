@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,7 +27,8 @@
 
 @class WebPlugin;
 
-@interface WebPluginDatabase : NSObject {
+@interface WebPluginDatabase : NSObject
+{
     NSArray *plugins;
 }
 
@@ -35,7 +36,7 @@
 - (WebPlugin *)pluginForMimeType:(NSString *)mimeType;
 - (WebPlugin *)pluginForExtension:(NSString *)extension;
 - (WebPlugin *)pluginWithFilename:(NSString *)filename;
-- (NSArray *) MIMETypes;
-- (NSArray *) plugins;
+- (NSArray *)MIMETypes;
+- (NSArray *)plugins;
 
 @end

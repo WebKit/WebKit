@@ -41,7 +41,7 @@
 
     // The handle client for the main document associated with the
     // datasource.
-    WebMainResourceClient *mainURLHandleClient;
+    WebMainResourceClient *mainResourceHandleClient;
     
     // Active WebResourceHandles for resources associated with the
     // datasource.
@@ -87,8 +87,8 @@
 - (void)_stopLoading;
 - (BOOL)_isStopping;
 - (void)_recursiveStopLoading;
-- (void)_addURLHandle: (WebResourceHandle *)handle;
-- (void)_removeURLHandle: (WebResourceHandle *)handle;
+- (void)_addResourceHandle: (WebResourceHandle *)handle;
+- (void)_removeResourceHandle: (WebResourceHandle *)handle;
 - (void)_setPrimaryLoadComplete: (BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle: (NSString *)title;

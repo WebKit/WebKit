@@ -73,7 +73,7 @@
         [[source controller] _receivedError:badURLError forResourceHandle:nil
             partialProgress:nil fromDataSource:source];
     } else {
-        [source _addURLHandle:handle];
+        [source _addResourceHandle:handle];
         
         client = [[self alloc] initWithLoader:rLoader dataSource:source];
         [handle addClient:client];
@@ -117,7 +117,7 @@
     
     [loader cancel];
     
-    [dataSource _removeURLHandle:handle];
+    [dataSource _removeResourceHandle:handle];
         
     error = [[WebError alloc] initWithErrorCode:WebResultCancelled 
         inDomain:WebErrorDomainWebFoundation failingURL:[dataSource inputURL]];
@@ -135,7 +135,7 @@
 
     [loader finish];
     
-    [dataSource _removeURLHandle:handle];
+    [dataSource _removeResourceHandle:handle];
     
     WebError *nonTerminalError = [handle error];
     if (nonTerminalError) {
@@ -153,7 +153,7 @@
 
     [loader cancel];
     
-    [dataSource _removeURLHandle:handle];
+    [dataSource _removeResourceHandle:handle];
     
     [self receivedError:error forHandle:handle];
 

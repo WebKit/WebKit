@@ -205,7 +205,7 @@
 {
     // stop download here because we can't rely on WebResourceHandleDidCancelLoading
     // as it isn't sent when the app quits
-    [[_private->mainURLHandleClient downloadHandler] cancel];
+    [[_private->mainResourceHandleClient downloadHandler] cancel];
     [self _recursiveStopLoading];
 }
 

@@ -29,7 +29,7 @@
     BOOL isFirstChunk;
     BOOL stopped;
     
-    WebResourceHandle *URLHandle;
+    WebResourceHandle *resource;
     
     NPP_NewStreamProcPtr NPP_NewStream;
     NPP_DestroyStreamProcPtr NPP_DestroyStream;
