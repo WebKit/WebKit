@@ -10,7 +10,7 @@
 #include <qwidget.h>
 #import <WKPlugin.h>
 #include "npapi.h"
-
+#include <WCURLHandle.h>
 
 typedef NPStream* NPS;
 
