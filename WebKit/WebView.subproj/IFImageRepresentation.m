@@ -19,24 +19,32 @@
     return self;
 }
 
+
+- (void)dealloc
+{
+    [image release];
+}
+
 - (IFImageRenderer *)image
 {
     return image;
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource isComplete:(BOOL)isComplete
+- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
 {
-    if(isComplete){
-        NSData *resourceData = [dataSource data];
-        image = [[IFImageRendererFactory alloc] imageRendererWithBytes:[resourceData bytes] 
-                    length:[resourceData length]];
-    }
     //[image incrementalLoadWithBytes:[data bytes] length:[data length] complete:isComplete];
 }
 
 - (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource
 {
 
+}
+
+- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource
+{
+    NSData *resourceData = [dataSource data];
+    image = [[[IFImageRendererFactory sharedFactory] imageRendererWithBytes:[resourceData bytes] 
+                length:[resourceData length]] retain];
 }
 
 @end

@@ -3,7 +3,7 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
 @class IFError;
 @class IFWebDataSource;
@@ -16,7 +16,7 @@
 }
 
 - (IFImageRenderer *)image;
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource isComplete:(BOOL)isComplete;
+- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource;
 - (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource;
-
+- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource;
 @end

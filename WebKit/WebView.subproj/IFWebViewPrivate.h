@@ -22,6 +22,8 @@ class QWidget;
     // document view type.
     int marginWidth;
     int marginHeight;
+    
+    NSArray *draggingTypes;
 }
 
 @end

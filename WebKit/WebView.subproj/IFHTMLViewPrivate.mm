@@ -21,7 +21,6 @@
 - (void)dealloc
 {
     [controller release];
-    [draggingTypes release];
     [cursor release];
 
     [super dealloc];

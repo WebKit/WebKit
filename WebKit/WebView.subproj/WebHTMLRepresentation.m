@@ -27,7 +27,7 @@
     return part;
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource isComplete:(BOOL)isComplete
+- (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
 {
     if(isFirstChunk){
         // FIXME [rjw]:  Do any work need in the kde engine.  This should be removed.
@@ -36,12 +36,17 @@
         part->impl->setDataSource(dataSource);
     }
     
-    part->impl->slotData([dataSource encoding], (const char *)[data bytes], [data length], isComplete);
+    part->impl->slotData([dataSource encoding], (const char *)[data bytes], [data length], NO);
     
     isFirstChunk = NO;
 }
 
 - (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource
+{
+
+}
+
+- (void)finishedLoadingWithDataSource:(IFWebDataSource *)dataSource
 {
 
 }

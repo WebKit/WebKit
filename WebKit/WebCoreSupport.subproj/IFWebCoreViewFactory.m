@@ -29,7 +29,7 @@
     NSRange r1, r2, r3;
     IFPlugin *plugin;
     uint i;
-    
+        
     arguments = [NSMutableDictionary dictionary];
     for (i = 0; i < [args count]; i++){
         NSString *arg = [args objectAtIndex:i];

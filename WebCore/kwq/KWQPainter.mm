@@ -420,11 +420,6 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
         NSRect ir = NSMakeRect(x, y, sw, sh);
         NSRect fr = NSMakeRect(sx, sy, sw, sh);
         
-		[imageRenderer drawInRect: ir 
-				fromRect: fr
-				operation: NSCompositeSourceOver	// Renders transparency correctly
-				fraction: 1.0];
-				
 		[imageRenderer beginAnimationInView: [NSView focusView]
 		                    inRect: ir
 		                    fromRect: fr];

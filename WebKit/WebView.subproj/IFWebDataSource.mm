@@ -66,7 +66,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 
 - (NSData *)data
 {
-    if(_private->mainHandle){
+    if(!_private->resourceData){
         return [_private->mainHandle resourceData];
     }else{
         return _private->resourceData;
@@ -253,6 +253,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 // Get the actual source of the docment.
 - (NSString *)documentText
 {
+    // FIMXE: other encodings
     return [[[NSString alloc] initWithData:[self data] encoding:NSASCIIStringEncoding] autorelease];
 }
 

@@ -1,3 +1,7 @@
+2002-06-14  Chris Blumenberg  <cblu@apple.com>
+
+	Committing Richard's changes to KWQPainter
+
 2002-06-13  Richard Williamson  <rjw@apple.com>
 
     More cleanup to deal with special case of provisional view

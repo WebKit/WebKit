@@ -146,6 +146,11 @@
                                                      userInfo:nil
                                                       repeats:NO] retain];
     }
+
+    [self drawInRect: ir 
+                    fromRect: fr
+                    operation: NSCompositeSourceOver	// Renders transparency correctly
+                    fraction: 1.0];
 }
 
 - (void)stopAnimation

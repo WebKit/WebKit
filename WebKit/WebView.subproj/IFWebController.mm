@@ -17,6 +17,7 @@
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/IFFileTypeMappings.h>
 
 @implementation IFWebController
 
@@ -307,12 +308,21 @@
     if([IFWebView _canShowMIMEType:MIMEType] && [IFWebDataSource _canShowMIMEType:MIMEType]){
         return YES;
     }else{
-        // Have the plug-ins register views
+        // Have the plug-ins register views and representations
         [IFPluginDatabase installedPlugins];
         if([IFWebView _canShowMIMEType:MIMEType] && [IFWebDataSource _canShowMIMEType:MIMEType])
             return YES;
     }
     return NO;
+}
+
++ (BOOL)canShowFile:(NSString *)path
+{
+    NSString *MIMEType, *extension = [path pathExtension];
+    
+    MIMEType = [[IFFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    
+    return [[self class] canShowMIMEType:MIMEType];
 }
 
 @end

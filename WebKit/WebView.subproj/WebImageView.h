@@ -3,7 +3,7 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <AppKit/AppKit.h>
+#import <Cocoa/Cocoa.h>
 
 @class IFWebDataSource;
 @class IFImageRepresentation;

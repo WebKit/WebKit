@@ -118,15 +118,16 @@
 - (BOOL)isLoading;
 
 
-/*
+
 #ifdef TENTATIVE_API
 // Get DOM access to the document.
 - (IFDOMDocument *)document;
 #endif
 
+
 // Get the source of the document by reconstructing it from the DOM.
 - (NSString *)documentTextFromDOM;
-*/
+
 
 // Get the actual source of the document.
 - (NSString *)documentText;

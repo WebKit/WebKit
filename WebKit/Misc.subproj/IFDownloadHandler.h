@@ -15,6 +15,7 @@
 }
 
 - initWithDataSource:(IFWebDataSource *)dSource;
-- (void)receivedData:(NSData *)data isComplete:(BOOL)isComplete;
+- (void)receivedData:(NSData *)data;
+- (void)finishedLoading;
 - (void)cancel;
 @end

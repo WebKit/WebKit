@@ -88,8 +88,12 @@
     
     // Don't retain download data
     if([dataSource contentPolicy] != IFContentPolicySave &&
-       [dataSource contentPolicy] != IFContentPolicyOpenExternally)
+       [dataSource contentPolicy] != IFContentPolicyOpenExternally){
        [dataSource _setResourceData:data];
+    }
+    
+    if(IFContentPolicyShow)
+        [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     
     // update progress
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
@@ -102,6 +106,7 @@
     [url release];
     url = nil;
     
+    [downloadHandler finishedLoading];
     [downloadHandler release];
     downloadHandler = nil;
 }
@@ -111,7 +116,6 @@
 {
     int contentLength = [sender contentLength];
     int contentLengthReceived = [sender contentLengthReceived];
-    BOOL isComplete = (contentLength == contentLengthReceived);
     NSString *contentType = [sender contentType];
     IFWebFrame *frame = [dataSource webFrame];
     IFWebView *view = [frame view];
@@ -148,7 +152,7 @@
     }
     
     if(contentPolicy == IFContentPolicyShow){
-        [[dataSource representation] receivedData:data withDataSource:dataSource isComplete:isComplete];
+        [[dataSource representation] receivedData:data withDataSource:dataSource];
         [[view documentView] dataSourceUpdated:dataSource];
         
     }else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicyOpenExternally){
@@ -157,7 +161,7 @@
             [[dataSource _locationChangeHandler] locationChangeDone:nil];
             downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
         }
-        [downloadHandler receivedData:data isComplete:isComplete];
+        [downloadHandler receivedData:data];
         
     }else if(contentPolicy == IFContentPolicyIgnore){
         [sender cancelLoadInBackground];

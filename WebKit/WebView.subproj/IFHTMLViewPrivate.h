@@ -22,7 +22,6 @@ class KHTMLView;
     BOOL needsToApplyStyles;
     BOOL canDragTo;
     BOOL canDragFrom;
-    NSArray *draggingTypes;
     NSCursor *cursor;
     BOOL liveAllowsScrolling;
 }

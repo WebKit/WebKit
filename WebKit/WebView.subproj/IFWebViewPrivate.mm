@@ -30,6 +30,7 @@ static NSMutableDictionary *_viewTypes=nil;
 - (void)dealloc
 {
     [frameScrollView release];
+    [draggingTypes release];
     [super dealloc];
 }
 

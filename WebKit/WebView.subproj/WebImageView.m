@@ -4,9 +4,11 @@
 */
 
 #import "IFImageView.h"
-#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFImageRepresentation.h>
+#import <WebKit/IFNSViewExtras.h>
+#import <WebKit/IFWebDataSource.h>
 
 @implementation IFImageView
 
@@ -16,7 +18,6 @@
     if (self) {
         canDragFrom = YES;
         canDragTo = YES;
-        didSetFrame = NO;
     }
     return self;
 }
@@ -27,17 +28,25 @@
     [representation release];
 }
 
+- (BOOL)isFlipped 
+{
+    return YES;
+}
 
 - (void)drawRect:(NSRect)rect {
     IFImageRenderer *image;
-    NSSize imageSize;
     
     image = [representation image];
-    if([representation image]){
-        
-        imageSize = [image size];
-        [image beginAnimationInView:self inRect:rect fromRect:NSMakeRect(0, 0, imageSize.width, imageSize.height)];
+    if(image){
+        [image beginAnimationInView:self inRect:[self frame] fromRect:[self frame]];
     }
+}
+
+- (void)removeFromSuperview
+{
+    NSView *scrollView = [self _IF_superviewWithName:@"IFDynamicScrollBarsView"];
+    [(NSScrollView *)scrollView setDrawsBackground:NO];
+    [super removeFromSuperview];
 }
 
 - (void)provisionalDataSourceChanged:(IFWebDataSource *)dataSource
@@ -55,16 +64,25 @@
 
 }
 
+- (void)setFrame:(NSRect)frameRect
+{
+    [super setFrame:frameRect];
+}
+
 - (void)layout
 {
-    if([representation image] && !didSetFrame){
-        IFImageRenderer *image = [representation image];
+    IFImageRenderer *image = [representation image];
+    
+    if(image){
+        NSView *scrollView = [self _IF_superviewWithName:@"IFDynamicScrollBarsView"];
         NSSize imageSize = [image size];
-        NSRect frame = [self frame];
-        
-        [self setFrame:NSMakeRect(frame.origin.x, frame.origin.x, imageSize.width, imageSize.height)];
-        didSetFrame = YES;
+
+        [self setFrameSize:imageSize];
+        [image setFlipped:YES];
+        [(NSScrollView *)scrollView setDrawsBackground:YES];
+        [(NSScrollView *)scrollView setBackgroundColor:[NSColor whiteColor]];
     }
+
 }
 
 - (void)setCanDragFrom: (BOOL)flag

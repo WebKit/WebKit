@@ -51,6 +51,7 @@
     [imageRenderer addRepresentation: rep];
     [imageRenderer setFlipped: YES];
 #endif
+    [imageRenderer setScalesWhenResized: NO];
     return [imageRenderer autorelease];
 }
 
@@ -61,6 +62,7 @@
     //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
     NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
     IFImageRenderer *imageRenderer = [[IFImageRenderer alloc] initWithData: data];
+    [imageRenderer setScalesWhenResized: NO];
     NSArray *reps = [imageRenderer representations];
     NSImageRep *rep = [reps objectAtIndex: 0];
     // Force the image to use the pixel size and ignore the dpi.
@@ -72,7 +74,9 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithSize: (NSSize)s
 {
-    return [[[IFImageRenderer alloc] initWithSize: s] autorelease];
+    IFImageRenderer *imageRenderer = [[[IFImageRenderer alloc] initWithSize: s] autorelease];
+    [imageRenderer setScalesWhenResized: NO];
+    return imageRenderer;
 }
 
 

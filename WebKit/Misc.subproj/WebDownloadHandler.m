@@ -25,7 +25,7 @@
     [dataSource release];
 }
 
-- (void)receivedData:(NSData *)data isComplete:(BOOL)isComplete
+- (void)receivedData:(NSData *)data
 {
     NSString *path = [dataSource downloadPath];
     NSFileManager *fileManager;
@@ -43,18 +43,21 @@
     }
     
     [fileHandle writeData:data];
+}
+
+- (void)finishedLoading
+{
+    NSString *path = [dataSource downloadPath];
+    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     
-    if(isComplete){
+    [fileHandle closeFile];
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
     
-        [fileHandle closeFile];
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
-        
-        workspace = [NSWorkspace sharedWorkspace];
-        [workspace noteFileSystemChanged:path];
-        
-        if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
-            [workspace openFile:path];
-        }
+    workspace = [NSWorkspace sharedWorkspace];
+    [workspace noteFileSystemChanged:path];
+    
+    if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
+        [workspace openFile:path];
     }
 }
 
