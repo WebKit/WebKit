@@ -42,7 +42,7 @@ class FontDef
 {
 public:
     FontDef()
-        : size( 0 ), italic( false ), smallCaps( false ), weight( 50 ), 
+        : size( 0 ), italic( false ), smallCaps( false ), sizeSpecified(false), weight( 50 ), 
           genericFamily(0), hasNbsp( true ) {}
     
     bool operator == ( const FontDef &other ) const {
@@ -50,7 +50,8 @@ public:
                  size == other.size &&
                  italic == other.italic &&
                  smallCaps == other.smallCaps &&
-                 weight == other.weight );
+                 weight == other.weight &&
+                 sizeSpecified == other.sizeSpecified);
     }
 
     enum GenericFamilyType { eNone, eStandard, eSerif, eSansSerif, eMonospace, eCursive, eFantasy };
@@ -63,6 +64,8 @@ public:
     short int size;
     bool italic 		: 1;
     bool smallCaps 		: 1;
+    bool sizeSpecified          : 1;  // Whether or not CSS specified the size or if we're using the
+                                      // default font size that the user specified via preferences.
     unsigned int weight 		: 8;
     unsigned int genericFamily  : 3;
     mutable bool hasNbsp : 1;

@@ -226,8 +226,7 @@ public:
 	QValueList<int>     m_fixedFontSizes;
 
 	bool fontDirty;
-	bool m_fontSizeSpecified;
-
+	
 	void applyRule(DOM::CSSProperty *prop);
     };
 

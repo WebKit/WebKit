@@ -1,3 +1,28 @@
+2003-01-27  David Hyatt  <hyatt@apple.com>
+
+	Fix text dragging so that text inside floats paints when you
+	drag the selection.
+	
+        Reviewed by cblu
+
+        * ChangeLog:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintObject):
+        (RenderFlow::paintFloats):
+        * khtml/rendering/render_flow.h:
+
+2003-01-26  David Hyatt  <hyatt@apple.com>
+
+	Fix the default font size settings for monospace fonts to
+	really work.  It was overaggressive and kicking in when it
+	shouldn't have, resulting in failures on the CSS1 test suite.
+	
+        Reviewed by darin, john
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/font.h:
+
 2003-01-26  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: 3156725 - Partially selected links show extra underlining when dragged

@@ -383,11 +383,6 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     bubbleSort( propsToApply, propsToApply+numPropsToApply-1 );
     bubbleSort( pseudoProps, pseudoProps+numPseudoProps-1 );
 
-    // This member will be set to true if a rule specifies a font size
-    // explicitly.  If they do this, then we don't need to check for a shift
-    // in default size caused by a change in generic family. -dwh
-    m_fontSizeSpecified = false;
-
     //qDebug("applying properties, count=%d", propsToApply->count() );
 
     // we can't apply style rules without a view() and a part. This
@@ -2335,10 +2330,6 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         float size = 0;
         int minFontSize = settings->minFontSize();
 
-	// Set this boolean flag to indicate that the font size was specified
-	// during the course of rule application for this element. -dwh
-	m_fontSizeSpecified = true;
-
         if(parentNode) {
             oldSize = parentStyle->font().pixelSize();
         } else
@@ -2393,6 +2384,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
         //kdDebug( 6080 ) << "computed raw font size: " << size << endl;
 
+        fontDef.sizeSpecified = true;
 	fontDef.size = int(size);
         if (style->setFontDef( fontDef ))
 	    fontDirty = true;
@@ -2816,12 +2808,11 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
 void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
 {
-  if (m_fontSizeSpecified || !aParentStyle) {
-    m_fontSizeSpecified = false;
-    return;
-  }
-
   const FontDef& childFont = aStyle->htmlFont().fontDef;
+  
+  if (childFont.sizeSpecified || !aParentStyle)
+    return;
+
   const FontDef& parentFont = aParentStyle->htmlFont().fontDef;
 
   if (childFont.genericFamily == parentFont.genericFamily)
