@@ -1,3 +1,9 @@
+2002-04-02  Darin Adler  <darin@apple.com>
+
+	* kjs/internal.cpp: (InterpreterImp::globalClear): Add code to
+        deallocate and null out emptyList, because once the last interpreter
+        is destroyed there's nothing to keep it from being garbage collected.
+
 2002-04-01  Darin Adler  <darin@apple.com>
 
         Got rid of KWQDef.h because it's dangerous to have two files with

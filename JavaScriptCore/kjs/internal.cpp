@@ -21,6 +21,8 @@
  *
  */
 
+#include <config.h>
+
 #include <stdio.h>
 #include <math.h>
 #include <assert.h>
@@ -755,6 +757,11 @@ void InterpreterImp::globalClear()
   BooleanImp::staticFalse->deref();
   BooleanImp::staticFalse->setGcAllowed();
   BooleanImp::staticFalse = 0L;
+#ifdef APPLE_CHANGES
+  ListImp::emptyList->setGcAllowed();
+  ListImp::emptyList->deref();
+  ListImp::emptyList = 0;
+#endif
 }
 
 InterpreterImp::InterpreterImp(Interpreter *interp, const Object &glob)
