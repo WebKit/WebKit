@@ -5,5 +5,4 @@
 
 @implementation NSWebPageView
 
-
 @end

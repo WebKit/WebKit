@@ -51,37 +51,43 @@ KHTMLSettings::KHTMLSettings()
 
 QString KHTMLSettings::stdFontName() const
 {
-    return QString ("Arial");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return NSSTRING_TO_QSTRING([defaults objectForKey:@"stdFontName"]);
 }
 
 
 QString KHTMLSettings::fixedFontName() const
 {
-    return QString ("Courier");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return NSSTRING_TO_QSTRING([defaults objectForKey:@"fixedFontName"]);
 }
 
 
 QString KHTMLSettings::serifFontName() const
 {
-    return QString ("Times-Roman");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return NSSTRING_TO_QSTRING([defaults objectForKey:@"serifFontName"]);
 }
 
 
 QString KHTMLSettings::sansSerifFontName() const
 {
-    return QString ("Arial");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return NSSTRING_TO_QSTRING([defaults objectForKey:@"sansSerifFontName"]);
 }
 
 
 QString KHTMLSettings::cursiveFontName() const
 {
-    return QString ("Times-Roman");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return NSSTRING_TO_QSTRING([defaults objectForKey:@"cursiveFontName"]);
 }
 
 
 QString KHTMLSettings::fantasyFontName() const
 {
-    return QString ("Times-Roman");
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    return NSSTRING_TO_QSTRING([defaults objectForKey:@"fantasyFontName"]);
 }
 
 
