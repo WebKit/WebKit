@@ -1,3 +1,15 @@
+2003-05-29  John Sullivan  <sullivan@apple.com>
+
+	- fixed MIME type leaks that were most of 3272566 
+	(several leaks after visiting amazon.com and emptying cache)
+
+        Reviewed by Darin
+
+        * kwq/KWQPixmap.mm:
+        (QPixmap::QPixmap):
+        (QPixmap::operator=):
+	fixed two leaks of MIME string
+
 2003-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

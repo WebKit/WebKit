@@ -79,7 +79,6 @@ QPixmap::QPixmap(const QByteArray &bytes, void *MIME)
 {
     MIMEType = (NSString *)[((NSString *)MIME) copy];
     imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:(NSString *)MIMEType] retain];
-    MIMEType = 0;
     needCopyOnWrite = false;
 }
 
@@ -188,7 +187,9 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
     [assignFrom.imageRenderer retain];
     [imageRenderer release];
     imageRenderer = assignFrom.imageRenderer;
-    MIMEType = [assignFrom.MIMEType copy];
+    NSString *newMIMEType = [assignFrom.MIMEType copy];
+    [MIMEType release];
+    MIMEType = newMIMEType;
     assignFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
     return *this;
