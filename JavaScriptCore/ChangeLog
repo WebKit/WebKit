@@ -1,3 +1,17 @@
+2003-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Merged 64-bit compilation fixes, and fixes for handling negative 0
+	from upstream kjs.
+	
+        * kjs/internal.cpp:
+        * kjs/simple_number.h:
+        (KJS::SimpleNumber): fixed constants; added negZero constant. 
+        (KJS::SimpleNumber::is): adjusted to use long and not int.
+        (KJS::SimpleNumber::value): ditto.
+	(KJS::SimpleNumber::fits): ditto; also don't allow -0 to fit, so
+	we don't lose the distinction between -0 and +0.
+        (KJS::SimpleNumber::make): adjusted to use long.
+
 2003-10-18  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

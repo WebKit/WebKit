@@ -283,6 +283,8 @@ bool NumberImp::toUInt32(unsigned& uint32) const
   return (double)uint32 == val;
 }
 
+double SimpleNumber::negZero = -0.0;
+
 // ------------------------------ LabelStack -----------------------------------
 
 LabelStack::LabelStack(const LabelStack &other)
