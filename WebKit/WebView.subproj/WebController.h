@@ -83,48 +83,6 @@
 @class IFWebView;
 @class IFWebFrame;
 
-#ifdef TENTATIVE_API
-/*
-   ============================================================================= 
-
-    IFWebViewDelegates implement protocols that modify the behavior of
-    IFWebViews.  A IFWebView does not require a delegate.
-*/
-@protocol IFWebViewDelegate <?>
-@end
-
-
-/*
-   ============================================================================= 
-
-    IFWebDataSourceDelegate implement protocols that modify the behavior of
-    IFWebDataSources.  A IFWebDataSources does not require a delegate.
-*/
-@protocol IFWebDataSourceDelegate <?>
-@end
-
-
-/*
-   ============================================================================= 
-
-    See the comments in IFWebPageView above for more description about this protocol.
-*/
-@protocol IFLocationChangeHandler
-
-- (BOOL)locationWillChangeTo: (NSURL *)url;
-
-- (void)locationChangeStarted;
-- (void)locationChangeInProgress;
-- (void)locationChangeDone: (IFError *)error;
-
-- (void)receivedPageTitle: (NSString *)title;
-
-- (void)serverRedirectTo: (NSURL *)url;
-
-@end
-#endif
-
-
 /*
    ============================================================================= 
 
@@ -133,6 +91,10 @@
     See the comments in IFWebPageView above for more description about this protocol.
 */
 @protocol IFLocationChangeHandler
+
+// This API will need to be extended to support some notion of the context in which
+// a location is changing, i.e. was it initiated by a user click, by a programmatic
+// manipulation of the DOM, is the frame an iframe, or a frame.
 
 // locationWillChangeTo: is required, but will it be sent by the dataSource?  More
 // likely the controller will receive a change request from the view.  That argues for
