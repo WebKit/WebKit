@@ -360,7 +360,7 @@ void QPainter::_updateRenderer(NSString **families)
         [data->lastTextRenderer release];
         data->lastTextRenderer = 
             [[[WebCoreTextRendererFactory sharedFactory]
-                rendererWithFamilies:families traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()] retain];
+                rendererWithFont: data->state.font.getNSFont()] retain];
     }
 }
     

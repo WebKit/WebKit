@@ -186,9 +186,26 @@
     return renderer;
 }
 
+- (NSFont *)fallbackFontWithTraits:(NSFontTraitMask)traits size:(float)size 
+{
+    return [self cachedFontFromFamily:@"Helvetica" traits:traits size:size];
+}
+
 - (NSFont *)fontWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
 {
-    return [self cachedFontFromFamilies: families traits: traits size: size];
+    NSFont *font = nil;
+    NSString *family;
+    int i = 0;
+    
+    while (families && families[i] != 0 && font == nil){
+        family = families[i++];
+        if ([family length] != 0)
+            font = [self cachedFontFromFamily: family traits:traits size:size];
+    }
+    if (font == nil)
+        font = [self fallbackFontWithTraits:traits size:size];
+
+    return font;
 }
 
 - (NSFont *)fontWithFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
@@ -247,11 +264,6 @@
     return nil;
 }
 
-+ (NSFont *)fallbackFontWithTraits:(NSFontTraitMask)traits size:(float)size 
-{
-    return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:traits weight:5 size:size];
-}
-
 - (NSFont *)cachedFontFromFamily:(NSString *)family traits:(NSFontTraitMask)traits size:(float)size
 {
     static NSMutableDictionary *fontCache = nil;
@@ -280,38 +292,16 @@
             }
         }
     }
+#ifdef DEBUG_MISSING_FONT
+    static int unableToFindFontCount = 0;
+    if (font == nil){
+        unableToFindFontCount++;
+        NSLog (@"unableToFindFontCount %@, traits 0x%08x, size %f, %d\n", family, traits, size, unableToFindFontCount);
+    }
+#endif
     [fontKey release];
     
     return font;
-}
-
-- (NSFont *)cachedFontFromFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
-{
-    NSFont *font = nil;
-    
-#ifdef DEBUG_GETFONT
-    static int getFontCount = 0;
-    getFontCount++;
-    printf("getFountCount = %d, family = %s, traits = 0x%08x, size = %f\n", getFontCount, [_family lossyCString], _trait, _size);
-#endif
-
-    NSString *family;
-    int i = 0;
-    
-    while (families && families[i] != 0 && font == nil){
-        family = families[i++];
-        if ([family length] != 0)
-            font = [self cachedFontFromFamily: family traits:traits size:size];
-    }
-    if (font == nil)
-        font = [WebTextRendererFactory fallbackFontWithTraits:traits size:size];
-
-    return font;
-}
-
-- (id <WebCoreTextRenderer>)rendererWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
-{
-    return [self rendererWithFont:[self cachedFontFromFamilies:families traits:traits size:size]];
 }
 
 @end

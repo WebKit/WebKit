@@ -46,7 +46,7 @@ static WebCoreTextRendererFactory *sharedFactory;
     return self;
 }
 
-- (id <WebCoreTextRenderer>)rendererWithFamilies:(NSString **)families traits:(NSFontTraitMask)traits size:(float)size
+- (id <WebCoreTextRenderer>)rendererWithFont: (NSFont *)font
 {
     return nil;
 }

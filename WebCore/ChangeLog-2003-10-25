@@ -1,5 +1,29 @@
 2002-12-04  Richard Williamson   <rjw@apple.com>
 
+        Cache the NSFont in QFont after doing family based lookup.
+        Use that cached font to find a text renderer.
+
+        Reviewed by: Darin
+
+        * kwq/KWQFont.h:
+        * kwq/KWQFont.mm:
+        (QFont::QFont):
+        (QFont::~QFont):
+        (QFont::setFamily):
+        (QFont::setFirstFamily):
+        (QFont::setPixelSize):
+        (QFont::setWeight):
+        (QFont::setItalic):
+        (QFont::getNSFont):
+        * kwq/KWQFontMetrics.mm:
+        * kwq/KWQPainter.mm:
+        (QPainter::_updateRenderer):
+        * kwq/WebCoreTextRendererFactory.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (-[WebCoreTextRendererFactory rendererWithFont:]):
+
+2002-12-04  Richard Williamson   <rjw@apple.com>
+
         Cache the last used text renderer to avoid expensive lookup
         when font hasn't changed.
 

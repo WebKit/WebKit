@@ -90,7 +90,13 @@ bool QFontFamily::operator==(const QFontFamily &compareFontFamily) const
 QFont::QFont()
     : _trait(0)
     , _size(12.0)
+    , _nsfont(0)
 {
+}
+
+QFont::~QFont()
+{ 
+    [_nsfont release];
 }
 
 QString QFont::family() const
@@ -101,13 +107,39 @@ QString QFont::family() const
 void QFont::setFamily(const QString &qfamilyName)
 {
     _family.setFamily(qfamilyName);
+    [_nsfont release];
+    _nsfont = 0;
+}
+
+void QFont::setFirstFamily(const QFontFamily& family) 
+{
+    _family = family;
+    [_nsfont release];
+    _nsfont = 0;
+}
+
+void QFont::setPixelSize(float s)
+{
+    if (_size != s) {
+        [_nsfont release]; 
+        _nsfont = 0;
+    }
+    _size = s;
 }
 
 void QFont::setWeight(int weight)
 {
     if (weight == Bold) {
+        if (!(_trait & NSBoldFontMask)){
+            [_nsfont release];
+            _nsfont = 0;
+        }
         _trait |= NSBoldFontMask;
     } else if (weight == Normal) {
+        if ((_trait & NSBoldFontMask)){
+            [_nsfont release];
+            _nsfont = 0;
+        }
         _trait &= ~NSBoldFontMask;
     }
 }
@@ -120,8 +152,16 @@ int QFont::weight() const
 void QFont::setItalic(bool flag)
 {
     if (flag) {
+        if (!(_trait & NSItalicFontMask)){
+            [_nsfont release];
+            _nsfont = 0;
+        }
         _trait |= NSItalicFontMask;
     } else {
+        if ((_trait & NSItalicFontMask)){
+            [_nsfont release];
+            _nsfont = 0;
+        }
         _trait &= ~NSItalicFontMask;
     }
 }
@@ -145,10 +185,13 @@ bool QFont::operator==(const QFont &compareFont) const
 
 NSFont *QFont::getNSFont() const
 {
-    CREATE_FAMILY_ARRAY(*this, families);
-
-    return [[WebCoreTextRendererFactory sharedFactory] 
-    	fontWithFamilies:families
-                traits:getNSTraits() 
-                  size:getNSSize()];
+    if (!_nsfont){
+        CREATE_FAMILY_ARRAY(*this, families);
+    
+        _nsfont = [[[WebCoreTextRendererFactory sharedFactory] 
+            fontWithFamilies:families
+                    traits:getNSTraits() 
+                    size:getNSSize()] retain];
+    }
+    return _nsfont;
 }

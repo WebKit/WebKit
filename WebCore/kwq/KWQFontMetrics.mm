@@ -40,9 +40,7 @@ struct QFontMetricsPrivate
     {
         refCount = 0;
 
-        CREATE_FAMILY_ARRAY(font, families);
-
-        renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFamilies:families traits:font.getNSTraits() size:font.getNSSize()] retain];
+        renderer = [[[WebCoreTextRendererFactory sharedFactory] rendererWithFont: font.getNSFont()] retain];
         _font = font;
     }
     ~QFontMetricsPrivate()

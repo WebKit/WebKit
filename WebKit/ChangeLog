@@ -1,5 +1,18 @@
 2002-12-04  Richard Williamson   <rjw@apple.com>
 
+        Cache the fallback font in the same way we cache other
+        fonts.
+        
+        Reviewed by: Darin
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fallbackFontWithTraits:size:]):
+        (-[WebTextRendererFactory fontWithFamilies:traits:size:]):
+        (-[WebTextRendererFactory cachedFontFromFamily:traits:size:]):
+
+2002-12-04  Richard Williamson   <rjw@apple.com>
+
         Fixed massive performance regression.
         We were leaking WebFontCacheKey.
         Added a cache of missing fonts to avoid

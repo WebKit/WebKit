@@ -76,12 +76,13 @@ public:
     enum Weight { Normal = 50, Bold = 63 };
 
     QFont();
-
+    ~QFont();
+    
     void setFamily(const QString &);
     QString family() const;
 
     QFontFamily* firstFamily() { return &_family; }
-    void setFirstFamily(const QFontFamily& family) { _family = family; }
+    void setFirstFamily(const QFontFamily& family) ;
     
     void setWeight(int);
     int weight() const;
@@ -90,7 +91,7 @@ public:
     void setItalic(bool);
     bool italic() const;
 
-    void setPixelSize(float s) { _size = s; }
+    void setPixelSize(float s);
     int pixelSize() const { return (int)_size; }
 
     bool operator==(const QFont &x) const;
@@ -101,11 +102,12 @@ public:
     float getNSSize() const { return _size; }
     
     NSFont *getNSFont() const;
-    
+        
 private:
     QFontFamily _family;
     int _trait;
     float _size;
+    mutable NSFont *_nsfont;
 };
 
 // Macro to create a stack array containing non-retained NSString names
