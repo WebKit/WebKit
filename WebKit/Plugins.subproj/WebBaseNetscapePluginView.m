@@ -1326,13 +1326,9 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         if (notifyData) {
             NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
         }
-    } else {
-        NSData *JSData = nil;
-        
-        if ([result length] > 0) {
-            JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
-        }
-        
+    } else if ([result length] > 0) {
+        // Don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
+        NSData *JSData = [result dataUsingEncoding:NSUTF8StringEncoding];
         WebBaseNetscapePluginStream *stream = [[WebBaseNetscapePluginStream alloc] init];
         [stream setPluginPointer:instance];
         [stream setNotifyData:notifyData];
@@ -1411,10 +1407,15 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     }
     
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];
-    if (JSString != nil && cTarget == NULL && mode == NP_FULL) {
-        // Don't allow a JavaScript request from a standalone plug-in that is self-targetted
-        // because this can cause the user to be redirected to a blank page (3424039).
-        return NPERR_INVALID_PARAM;
+    if (JSString != nil) {
+        if (![[[self webView] preferences] isJavaScriptEnabled]) {
+            // Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
+            return NPERR_GENERIC_ERROR;
+        } else if (cTarget == NULL && mode == NP_FULL) {
+            // Don't allow a JavaScript request from a standalone plug-in that is self-targetted
+            // because this can cause the user to be redirected to a blank page (3424039).
+            return NPERR_INVALID_PARAM;
+        }
     }
         
     if (cTarget || JSString) {

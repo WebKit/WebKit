@@ -1,3 +1,13 @@
+2004-07-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3650140> reproducible assertion failure going to plugin page with JavaScript disabled
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView evaluateJavaScriptPluginRequest:]): don't call NPP_NewStream and other stream methods if there is no JS result to deliver. This is what Mozilla does.
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): Return NPERR_GENERIC_ERROR if JS is disabled. This is what Mozilla does.
+
 === Safari-151 ===
 
 2004-07-07  Trey Matteson  <trey@apple.com>
