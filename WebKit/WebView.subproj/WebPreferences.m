@@ -178,7 +178,7 @@ NS_ENDHANDLER
         @"Helvetica",                   WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
-        @"1",                           WebKitMinimumFontSizePreferenceKey,
+        @"9",                           WebKitMinimumFontSizePreferenceKey,
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"latin1",                      WebKitDefaultTextEncodingNamePreferenceKey,

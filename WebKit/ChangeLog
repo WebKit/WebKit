@@ -1,3 +1,15 @@
+2003-07-08  Dave Hyatt  <hyatt@apple.com>
+
+	Change minimum font size pref value back to 9. This change
+	has been made in conjunction with associated WebCore changes
+	that allow us to institute a minimum font size safely without
+	the need for a visible GUI pref.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
 2003-07-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
