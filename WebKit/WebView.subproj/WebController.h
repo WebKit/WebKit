@@ -108,6 +108,7 @@
 // These strings are keys into the element dictionary provided in 
 // contextMenuItemsForElement.
 extern NSString *WebContextMenuElementLinkURLKey;
+extern NSString *WebContextMenuElementLinkLabelKey;
 extern NSString *WebContextMenuElementImageURLKey;
 extern NSString *WebContextMenuElementStringKey;
 extern NSString *WebContextMenuElementImageKey;

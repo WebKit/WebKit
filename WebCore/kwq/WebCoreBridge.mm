@@ -435,6 +435,21 @@ using khtml::RenderPart;
         ElementImpl* e =  static_cast<ElementImpl*>(URLNode);
         NSURL *URL = [self completeURLForDOMString:parseURL(e->getAttribute(ATTR_HREF))];
         if (URL) {
+            // Look for the first #text node to use as a label.
+            NodeImpl *labelParent = e;
+            while (labelParent->hasChildNodes()){
+                NodeImpl *childNode = labelParent->firstChild();
+                unsigned short type = childNode->nodeType();
+                if (type == Node::TEXT_NODE){
+                    DOMStringImpl *dv = childNode->nodeValue().implementation();
+                    if (dv){
+                        NSString *value = [NSString stringWithCharacters: (const unichar *)dv->s length: dv->l];
+                        [elementInfo setObject:value forKey:WebCoreContextLinkLabel];
+                        break;
+                    }
+                }
+                labelParent = childNode;
+            }
             [elementInfo setObject:URL forKey:WebCoreContextLinkURL];
         }
     }

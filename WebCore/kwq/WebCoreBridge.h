@@ -54,6 +54,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreResourceLoader;
 
 #define WebCoreContextLinkURL  @"WebContextLinkURL"
+#define WebCoreContextLinkLabel  @"WebContextLinkLabel"
 #define WebCoreContextImageURL @"WebContextImageURL"
 #define WebCoreContextString   @"WebContextString"
 #define WebCoreContextImage    @"WebContextImage"

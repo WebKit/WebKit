@@ -26,6 +26,7 @@
 #import <WebFoundation/WebFoundation.h>
 
 NSString * WebContextMenuElementLinkURLKey = @"WebContextLinkURL";
+NSString * WebContextMenuElementLinkLabelKey = @"WebContextLinkLabel";
 NSString * WebContextMenuElementImageURLKey = @"WebContextImageURL";
 NSString * WebContextMenuElementStringKey = @"WebContextString";
 NSString * WebContextMenuElementImageKey = @"WebContextImage";

@@ -106,15 +106,7 @@ BOOL _modifierTrackingEnabled = FALSE;
     NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 
-    NSURL *linkURL =   [elementInfoWC objectForKey:WebContextMenuElementLinkURLKey];
-    NSURL *imageURL =  [elementInfoWC objectForKey:WebContextMenuElementImageURLKey];
-    NSString *string = [elementInfoWC objectForKey:WebContextMenuElementStringKey];
-    NSImage *image =   [elementInfoWC objectForKey:WebContextMenuElementImageKey];
-
-    if(linkURL)  [elementInfo setObject:linkURL  forKey:WebContextMenuElementLinkURLKey];
-    if(imageURL) [elementInfo setObject:imageURL forKey:WebContextMenuElementImageURLKey];
-    if(string)   [elementInfo setObject:string   forKey:WebContextMenuElementStringKey];
-    if(image)    [elementInfo setObject:image    forKey:WebContextMenuElementImageKey];
+    [elementInfo addEntriesFromDictionary: elementInfoWC];
 
     WebView *webView = [self _web_parentWebView];
     WebFrame *webFrame = [[webView _controller] frameForView:webView];

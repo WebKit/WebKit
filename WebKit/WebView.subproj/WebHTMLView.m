@@ -20,6 +20,7 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebViewPrivate.h>
+#import <WebKit/WebURLsWithTitles.h>
 
 #import <WebFoundation/WebAssertions.h>
 
@@ -442,10 +443,18 @@
             }
             else if (linkURL) {
                 _private->draggedURL = linkURL;
-                NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+                                
+                NSString *label = [element objectForKey: WebContextMenuElementLinkLabelKey];
                 
-                [pasteboard declareTypes:[NSArray arrayWithObject:NSURLPboardType] owner:nil];
-                [_private->draggedURL writeToPasteboard: pasteboard];
+                if (!label)
+                    label = [linkURL absoluteString];
+                    
+                // FIXME:  Create an image w/ the label.
+
+                NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+                [pasteboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, WebURLsWithTitlesPboardType, nil] owner:nil];
+                [WebURLsWithTitles writeURLs:[NSArray arrayWithObjects: linkURL, nil] andTitles:[NSArray arrayWithObjects: label, nil] toPasteboard:pasteboard];
+                //[_private->draggedURL writeToPasteboard: pasteboard];
                 NSSize offset = WebIconSmallSize;
                 offset.width /= 2;
                 offset.height /= 2;

@@ -1,4 +1,13 @@
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+
+        Add the first child text node of the element to the
+        element dictionary.  This will be used as a link 'label'.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
     
         Removed debugging.
         
