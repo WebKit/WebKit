@@ -688,6 +688,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
         return Undefined();
     }
   }
+
   KHTMLPart *kp = m_part->findFrame( p.qstring() );
   if (kp)
     return Value(retrieve(kp));
@@ -953,17 +954,32 @@ bool Window::isSafeScript(ExecState *exec) const
   }
 
   DOM::HTMLDocument thisDocument = m_part->htmlDocument();
+#if !APPLE_CHANGES
   if ( thisDocument.isNull() ) {
     kdDebug(6070) << "Window::isSafeScript: trying to access an XML document !?" << endl;
     return false;
   }
+#else
+  // JS may be attempting to access the "window" object, which should be valid,
+  // even if the document hasn't been constructed yet.  If the document doesn't
+  // exist yet allow JS to access the window object.
+  if (thisDocument.isNull())
+    return true;
+#endif
 
   DOM::HTMLDocument actDocument = activePart->htmlDocument();
+
   if ( actDocument.isNull() ) {
     kdDebug(6070) << "Window::isSafeScript: active part has no document!" << endl;
     return false;
   }
+
   DOM::DOMString actDomain = actDocument.domain();
+  
+  // Always allow local pages to execute any JS.
+  if (actDomain.isNull())
+    return true;
+  
   DOM::DOMString thisDomain = thisDocument.domain();
   //kdDebug(6070) << "current domain:" << actDomain.string() << ", frame domain:" << thisDomain.string() << endl;
   if ( actDomain == thisDomain )
@@ -1728,8 +1744,9 @@ Value FrameArray::get(ExecState *exec, const Identifier &p) const
   KParts::ReadOnlyPart *frame = part->findFrame(p.qstring());
   if (!frame) {
     int i = (int)p.toDouble();
-    if (i >= 0 && i < len)
+    if (i >= 0 && i < len){
       frame = frames.at(i);
+    }
   }
 
   // we are potentially fetching a reference to a another Window object here.

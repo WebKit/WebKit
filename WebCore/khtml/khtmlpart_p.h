@@ -93,7 +93,7 @@ typedef FrameList::Iterator FrameIt;
 
 static int khtml_part_dcop_counter = 0;
 
-enum RedirectionScheduled { noRedirectionScheduled, redirectionScheduled, historyNavigationScheduled };
+enum RedirectionScheduled { noRedirectionScheduled, redirectionScheduled, historyNavigationScheduled, redirectionDuringLoad };
 
 class KHTMLPartPrivate
 {

@@ -197,10 +197,14 @@ static bool initializedObjectCacheSize = FALSE;
 {
     DocumentImpl *doc = _part->xmlDocImpl();
     
-    ASSERT (doc);
-    doc->setShouldCreateRenderers([self shouldCreateRenderers]);
-
-    _part->addData((const char *)[data bytes], [data length]);
+    // Document may be nil if the part is about to redirect
+    // as a result of JS executing during load, i.e. one frame
+    // changing another's location before the frame's document
+    // has been created. 
+    if (doc){
+        doc->setShouldCreateRenderers([self shouldCreateRenderers]);
+        _part->addData((const char *)[data bytes], [data length]);
+    }
 }
 
 - (void)closeURL

@@ -1,3 +1,35 @@
+2003-06-09  Richard Williamson  <rjw@apple.com>
+
+	Fixed 3281761.
+	This was a real doozie.  It boiled down to a frame
+	attempting to access a siblings window object when that
+	frame wasn't loaded and didn't have a document.
+
+        Reviewed by Dave.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (Window::isSafeScript):
+        (FrameArray::get):
+	Made the isSafeScript more tolerant.  Always allow JS to execute
+	if the active domain is nil (local).  Also allow JS to execute
+	if the target part has no document yet.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::openURL):
+        (KHTMLPart::jScript):
+        (KHTMLPart::scheduleRedirection):
+        (KHTMLPart::findFrame):
+	Flag redirects during load so we can later avoid
+	cancelling the redirect when the document would otherwise
+	normally load.
+
+        * khtml/khtmlpart_p.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge addData:]):
+	Document may now be nil.  Replace assert with conditional check.
+
 2003-06-09  John Sullivan  <sullivan@apple.com>
 
 	- finished fixing crash in 3275675 -- REGRESSION: crash when replacing <div> which contains iframe (at www.kbs.co.kr)
