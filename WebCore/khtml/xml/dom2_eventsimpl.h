@@ -114,6 +114,9 @@ public:
     static EventId typeToId(DOMString type);
     static DOMString idToType(EventId id);
 
+    void setDefaultHandled();
+    bool defaultHandled() const { return m_defaultHandled; }
+
 protected:
     DOMStringImpl *m_type;
     bool m_canBubble;
@@ -121,6 +124,7 @@ protected:
 
     bool m_propagationStopped;
     bool m_defaultPrevented;
+    bool m_defaultHandled;
     EventId m_id;
     NodeImpl *m_currentTarget; // ref > 0 maintained externally
     unsigned short m_eventPhase;
@@ -271,3 +275,4 @@ public:
 
 }; //namespace
 #endif
+// vim:ts=4:sw=4

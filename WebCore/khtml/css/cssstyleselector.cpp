@@ -62,9 +62,7 @@ using namespace DOM;
 #include <qintcache.h>
 
 CSSStyleSelectorList *CSSStyleSelector::defaultStyle = 0;
-CSSStyleSelectorList *CSSStyleSelector::userStyle = 0;
 CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
-CSSStyleSheetImpl *CSSStyleSelector::userSheet = 0;
 
 enum PseudoState { PseudoUnknown, PseudoNone, PseudoLink, PseudoVisited};
 static PseudoState pseudoState;
@@ -84,6 +82,17 @@ CSSStyleSelector::CSSStyleSelector(DocumentImpl * doc)
     selectors = 0;
     selectorCache = 0;
     properties = 0;
+    userStyle = 0;
+    userSheet = 0;
+
+
+    if ( !doc->userStyleSheet().isEmpty() ) {
+        userSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl *)0);
+        userSheet->parseString( DOMString( doc->userStyleSheet() ) );
+
+        userStyle = new CSSStyleSelectorList();
+        userStyle->append(userSheet);
+    }
 
     // add stylesheets from document
     authorStyle = new CSSStyleSelectorList();
@@ -124,23 +133,13 @@ CSSStyleSelector::~CSSStyleSelector()
 {
     clearLists();
     delete authorStyle;
+    delete userStyle;
+    delete userSheet;
 }
 
 void CSSStyleSelector::addSheet(StyleSheetImpl *sheet)
 {
     authorStyle->append(sheet);
-}
-
-void CSSStyleSelector::setUserStyle(const DOM::DOMString &str)
-{
-    if(userStyle) delete userStyle;
-    if(userSheet) delete userSheet;
-
-    userSheet = new DOM::CSSStyleSheetImpl((DOM::CSSStyleSheetImpl *)0);
-    userSheet->parseString( str );
-
-    userStyle = new CSSStyleSelectorList();
-    userStyle->append(userSheet);
 }
 
 void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
@@ -172,17 +171,12 @@ void CSSStyleSelector::loadDefaultStyle(const KHTMLSettings *s)
 void CSSStyleSelector::clear()
 {
     delete defaultStyle;
-    delete userStyle;
     delete defaultSheet;
-    delete userSheet;
     defaultStyle = 0;
-    userStyle = 0;
     defaultSheet = 0;
-    userSheet = 0;
 }
 
 static bool strictParsing;
-//static QList<RenderStyle>* styleElementCache = 0;
 
 RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
 {
@@ -266,6 +260,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
             while( ordprop ) {
                 RenderStyle *pseudoStyle;
                 pseudoStyle = style->addPseudoStyle(ordprop->pseudoId);
+
                 if ( pseudoStyle )
                     applyRule(pseudoStyle, ordprop->prop, e);
                 ordprop = pseudoProps->next();

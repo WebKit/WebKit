@@ -1190,6 +1190,7 @@ void KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 						button,0);
 	me->ref();
 	targetNode->dispatchEvent(me,exceptioncode);
+	bool defaultHandled = me->defaultHandled();
 	me->deref();
 
 	// special case for HTML click & ondblclick handler
@@ -1200,8 +1201,9 @@ void KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
 				    ctrlKey,altKey,shiftKey,metaKey,
 				    button,0);
 
-
 	    me->ref();
+	    if (defaultHandled)
+		me->setDefaultHandled();
 	    targetNode->dispatchEvent(me,exceptioncode);
 	    me->deref();
 	}
@@ -1228,3 +1230,5 @@ void KHTMLView::focusOutEvent( QFocusEvent *e )
     m_part->stopAutoScroll();
     QScrollView::focusOutEvent( e );
 }
+
+// vim:ts=4:sw=4

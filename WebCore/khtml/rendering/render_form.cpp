@@ -940,12 +940,6 @@ void RenderSelect::layout( )
     }
     else {
         QSize s(m_widget->sizeHint());
-        KComboBox* w = static_cast<KComboBox*>(m_widget);
-        // and now disable the widget in case there is no <option> given
-        // ### do the same if there is only optgroups
-        if(!w->count())
-            w->setEnabled(false);
-
         setIntrinsicWidth( s.width() );
         setIntrinsicHeight( s.height() );
     }
@@ -953,6 +947,15 @@ void RenderSelect::layout( )
     /// uuh, ignore the following line..
     setLayouted( false );
     RenderFormElement::layout();
+
+    // and now disable the widget in case there is no <option> given
+    QArray<HTMLGenericFormElementImpl*> listItems = select->listItems();
+    bool foundOption = false;
+    for (uint i = 0; i < listItems.size() && !foundOption; i++)
+	foundOption = (listItems[i]->id() == ID_OPTION);
+
+    if (!foundOption)
+	m_widget->setEnabled(false);
 
     m_ignoreSelectEvents = false;
 }

@@ -123,13 +123,13 @@ void KHTMLSettings::init( KConfig * config, bool reset )
 	defaultFonts.append( QString( "0" ) ); // font size adjustment
     }
 
+    if ( reset || config->hasKey( "MinimumFontSize" ) )
+        m_minFontSize = config->readNumEntry( "MinimumFontSize", HTML_DEFAULT_MIN_FONT_SIZE );
+
     if ( reset || config->hasKey( "MediumFontSize" ) ) {
         m_fontSize = config->readNumEntry( "MediumFontSize", 10 );
         resetFontSizes();
     }
-
-    if ( reset || config->hasKey( "MinimumFontSize" ) )
-        m_minFontSize = config->readNumEntry( "MinimumFontSize", HTML_DEFAULT_MIN_FONT_SIZE );
 
     QStringList chSets = KGlobal::charsets()->availableCharsetNames();
     for ( QStringList::Iterator it = chSets.begin(); it != chSets.end(); ++it ) {

@@ -355,6 +355,8 @@ KJSO KJS::HTMLElement::tryGet(const UString &p) const
       else if (p == "link")            return getString(body.link());
       else if (p == "text")            return getString(body.text());
       else if (p == "vLink")           return getString(body.vLink());
+      else if (p == "scrollHeight" )   return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsHeight() : 0);
+      else if (p == "scrollWidth" )    return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsWidth() : 0);
     }
     break;
     case ID_FORM: {

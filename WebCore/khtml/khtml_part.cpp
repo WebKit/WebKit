@@ -151,7 +151,6 @@ public:
     m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
     m_bClearing = false;
     m_bCleared = false;
-    m_userSheet = QString::null;
     m_fontBase = 0;
     m_bDnd = true;
     m_startOffset = m_endOffset = 0;
@@ -305,9 +304,6 @@ public:
 
   KParts::PartManager *m_manager;
 
-  DOM::DOMString m_userSheet;
-  DOM::DOMString m_userSheetUrl;
-
   QString m_popupMenuXML;
 
   int m_fontBase;
@@ -323,6 +319,7 @@ public:
     const char *submitAction;
     QString submitUrl;
     QByteArray submitFormData;
+    QString target;
     QString submitContentType;
     QString submitBoundary;
   };
@@ -380,12 +377,10 @@ namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
     {
     public:
-        PartStyleSheetLoader(KHTMLPart *part, KHTMLPartPrivate *priv, DOM::DOMString url, DocLoader */*docLoader*/)
+        PartStyleSheetLoader(KHTMLPart *part, DOM::DOMString url, DocLoader* dl)
         {
             m_part = part;
-            m_priv = priv;
-            // the "foo" is needed, so that the docloader for the empty document doesn't cancel this request.
-            m_cachedSheet = Cache::requestStyleSheet(0, url, DOMString("foo") );
+            m_cachedSheet = dl->requestStyleSheet( url, part->baseURL().url(), QString::null );
             if (m_cachedSheet)
 		m_cachedSheet->ref( this );
         }
@@ -393,20 +388,14 @@ namespace khtml {
         {
             if ( m_cachedSheet ) m_cachedSheet->deref(this);
         }
-        virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet)
+        virtual void setStyleSheet(const DOM::DOMString&, const DOM::DOMString &sheet)
         {
-            if ( m_part )
-            {
-                m_priv->m_userSheet = sheet;
-                m_priv->m_userSheetUrl = url;
-            }
-            khtml::CSSStyleSelector::setUserStyle( sheet );
-            if ( m_part && m_priv->m_doc )
-                m_priv->m_doc->applyChanges();
+          if ( m_part )
+            m_part->setUserStyleSheet( sheet.string() );
+
             delete this;
         }
         QGuardedPtr<KHTMLPart> m_part;
-        KHTMLPartPrivate *m_priv;
         khtml::CachedCSSStyleSheet *m_cachedSheet;
     };
 };
@@ -510,10 +499,6 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   d->m_bJScriptEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaScriptEnabled();
   d->m_bJavaEnabled = KHTMLFactory::defaultHTMLSettings()->isJavaEnabled();
   d->m_bPluginsEnabled = KHTMLFactory::defaultHTMLSettings()->isPluginsEnabled();
-
-  QString userStyleSheet = KHTMLFactory::defaultHTMLSettings()->userStyleSheet();
-  if ( !userStyleSheet.isEmpty() )
-      setUserStyleSheet( KURL( userStyleSheet ) );
 
   connect( this, SIGNAL( completed() ),
            this, SLOT( updateActions() ) );
@@ -627,7 +612,7 @@ bool KHTMLPart::openURL( const KURL &url )
   // operation and d) the caller did not request to reload the page we try to
   // be smart and instead of reloading the whole document we just jump to the
   // request html anchor
-  if ( d->m_frames.count() == 0 &&
+  if ( d->m_frames.count() == 0 && d->m_doc && d->m_bComplete &&
        urlcmp( url.url(), m_url.url(), true, true ) && !args.doPost() && !args.reload )
   {
     kdDebug( 6050 ) << "KHTMLPart::openURL now m_url = " << url.url() << endl;
@@ -645,7 +630,12 @@ bool KHTMLPart::openURL( const KURL &url )
     emitLoadEvent();
 
     kdDebug( 6050 ) << "completed..." << endl;
-    emit completed();
+    if ( !d->m_redirectURL.isEmpty() )
+    {
+       emit completed(true);
+    }
+    else emit completed();
+
     return true;
   }
 
@@ -1377,6 +1367,9 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   d->m_doc->setURL( m_url.url() );
 
   setAutoloadImages( KHTMLFactory::defaultHTMLSettings()->autoLoadImages() );
+  QString userStyleSheet = KHTMLFactory::defaultHTMLSettings()->userStyleSheet();
+  if ( !userStyleSheet.isEmpty() )
+    setUserStyleSheet( KURL( userStyleSheet ) );
 
   d->m_doc->setRestoreState(args.docState);
   d->m_doc->open();
@@ -1641,7 +1634,6 @@ void KHTMLPart::checkEmitLoadEvent()
 {
   if ( d->m_bLoadEventEmitted || d->m_bParsing )
     return;
-  kdDebug(6050) << "KHTMLPart::checkEmitLoadEvent " << this << endl;
   ConstFrameIt it = d->m_frames.begin();
   ConstFrameIt end = d->m_frames.end();
   for (; it != end; ++it )
@@ -1653,6 +1645,7 @@ void KHTMLPart::checkEmitLoadEvent()
 void KHTMLPart::emitLoadEvent()
 {
   d->m_bLoadEventEmitted = true;
+  kdDebug(6050) << "KHTMLPart::emitLoadEvent " << this << endl;
 
   if ( d->m_doc && d->m_doc->isHTMLDocument() ) {
     HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>( d->m_doc );
@@ -1731,6 +1724,7 @@ void KHTMLPart::slotRedirect()
   QString target;
   u = splitUrlTarget( u, &target );
   KParts::URLArgs args;
+  args.reload = true;
   args.setLockHistory( true );
   urlSelected( u, 0, 0, target, args );
 }
@@ -1791,21 +1785,20 @@ QString KHTMLPart::encoding()
 
 void KHTMLPart::setUserStyleSheet(const KURL &url)
 {
-    d->m_userSheetUrl = DOMString();
-    d->m_userSheet = DOMString();
-    (void) new khtml::PartStyleSheetLoader(this, d, url.url(), d->m_doc ? d->m_doc->docLoader() : 0);
+  if ( d->m_doc && d->m_doc->docLoader() )
+    (void) new khtml::PartStyleSheetLoader(this, url.url(), d->m_doc->docLoader());
 }
 
 void KHTMLPart::setUserStyleSheet(const QString &styleSheet)
 {
-    d->m_userSheet = styleSheet;
-    d->m_userSheetUrl = DOMString();
-    khtml::CSSStyleSelector::setUserStyle( styleSheet );
+  if ( d->m_doc )
+    d->m_doc->setUserStyleSheet( styleSheet );
 }
-
 
 bool KHTMLPart::gotoAnchor( const QString &name )
 {
+  if (!d->m_doc)
+      return false;
   HTMLCollectionImpl *anchors =
       new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
   anchors->ref();
@@ -2783,6 +2776,7 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
       KHTMLPart* p = static_cast<KHTMLPart*>(static_cast<KParts::ReadOnlyPart *>(child->m_part));
 
       p->begin();
+      p->m_url = url;
       p->write(url.path());
       p->end();
       return true;
@@ -2855,7 +2849,7 @@ KParts::PartManager *KHTMLPart::partManager()
 void KHTMLPart::submitFormAgain()
 {
   if( !d->m_bParsing && d->m_submitForm)
-    KHTMLPart::submitForm( d->m_submitForm->submitAction, d->m_submitForm->submitUrl, d->m_submitForm->submitFormData, d->m_submitForm->submitContentType, d->m_submitForm->submitBoundary );
+    KHTMLPart::submitForm( d->m_submitForm->submitAction, d->m_submitForm->submitUrl, d->m_submitForm->submitFormData, d->m_submitForm->target, d->m_submitForm->submitContentType, d->m_submitForm->submitBoundary );
 
   delete d->m_submitForm;
   d->m_submitForm = 0;
@@ -2927,6 +2921,7 @@ void KHTMLPart::submitForm( const char *action, const QString &url, const QByteA
     d->m_submitForm->submitAction = action;
     d->m_submitForm->submitUrl = url;
     d->m_submitForm->submitFormData = formData;
+    d->m_submitForm->target = _target;
     d->m_submitForm->submitContentType = contentType;
     d->m_submitForm->submitBoundary = boundary;
     connect(this, SIGNAL(completed()), this, SLOT(submitFormAgain()));
@@ -3265,7 +3260,7 @@ void KHTMLPart::restoreState( QDataStream &stream )
   Q_INT32 charset;
   long old_cacheId = d->m_cacheId;
   QString encoding;
-  
+
   stream >> u >> xOffset >> yOffset;
 
   // restore link cursor position
@@ -3281,8 +3276,8 @@ void KHTMLPart::restoreState( QDataStream &stream )
   d->m_encoding = encoding;
   if ( d->m_settings ) d->m_settings->setCharset( d->m_charset );
   kdDebug(6050)<<"restoring charset to:"<< charset << endl;
-  
-  
+
+
   stream >> fSizes >> d->m_fontBase;
   // ### odd: this doesn't appear to have any influence on the used font
   // sizes :(

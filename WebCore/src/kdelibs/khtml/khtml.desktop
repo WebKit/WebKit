@@ -1,7 +1,6 @@
 [Desktop Entry]
 Type=Service
 Comment=Embeddable HTML viewing component
-Comment[af]=INLEGBARE HTML AANSIG KOMPONENT
 Comment[az]=Hopdurula Bilən HTML nümayiş vasitəsi
 Comment[bg]=Елемент за преглед на вградени HTML
 Comment[br]=Parzh HTML gweler enframmus
@@ -45,8 +44,8 @@ Comment[ta]=¯ð¦À¡¾¢ì¸ÅøÄ HTML ¸¡ðº¢ì ÜÚ
 Comment[tr]=Gömülebilir HTML görüntüleme aracı
 Comment[uk]=Вбудований копмонент-переглядач HTML
 Comment[vi]=Component đềExem HTML có thềEembedd được 
+Comment[xh]=Inxenye yemboniselo elungisiweyo ye HTML
 Comment[zh_CN.GB2312]=嵌入的 HTML 查看部件
-Comment[zh_TW.Big5]=內建式 HTML 檢視元件
 MimeType=text/html;text/xml;
 Icon=konqueror
 Name=KHTML

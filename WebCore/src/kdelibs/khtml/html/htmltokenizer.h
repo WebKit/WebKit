@@ -163,17 +163,17 @@ protected:
     void reset();
     void addPending();
     void processToken();
-
-    void addListing(khtml::DOMStringIt list);
+    void processListing(khtml::DOMStringIt list);
 
     void parseComment(khtml::DOMStringIt &str);
     void parseText(khtml::DOMStringIt &str);
-    void parseStyle(khtml::DOMStringIt &str);
-    void parseScript(khtml::DOMStringIt &str);
     void parseListing(khtml::DOMStringIt &str);
+    void parseSpecial(khtml::DOMStringIt &str, bool begin);
     void parseTag(khtml::DOMStringIt &str);
     void parseEntity(khtml::DOMStringIt &str, QChar *&dest, bool start = false);
     void parseProcessingInstruction(khtml::DOMStringIt &str);
+    void scriptHandler();
+    void scriptExecution(const QString& script);
     void addPendingSource();
 
     // check if we have enough space in the buffer.
@@ -264,19 +264,16 @@ protected:
         SearchSemicolon
     } Entity;
 
-    QChar EntityChar;
+    // are we in a <script> ... </script block
+    bool script;
 
-    // Flag to say that we are just parsing an attribute
-    bool parseAttr;
+    QChar EntityChar;
 
     // Are we in a <pre> ... </pre> block
     bool pre;
 
     // if 'pre == true' we track in which column we are
     int prePos;
-
-    // Are we in a <script> ... </script> block
-    bool script;
 
     // Are we in a <style> ... </style> block
     bool style;
@@ -311,13 +308,19 @@ protected:
     int scriptCodeSize;
     // Maximal size that can be stored in @ref #scriptCode
     int scriptCodeMaxSize;
-
+    // resync point of script code size
+    int scriptCodeResync;
+    
     // Stores characters if we are scanning for a string like "</script>"
     QChar searchBuffer[ 10 ];
     // Counts where we are in the string we are scanning for
     int searchCount;
     // The string we are searching for
     const QChar *searchFor;
+    // the stopper string
+    const char* searchStopper;
+    // the stopper len
+    int searchStopperLen;
     // true if we are waiting for an external script (<SCRIPT SRC=...) to load, i.e.
     // we don't do any parsing while this is true
     bool loadingExtScript;

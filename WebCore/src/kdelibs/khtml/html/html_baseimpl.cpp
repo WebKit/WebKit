@@ -263,14 +263,19 @@ void HTMLFrameElementImpl::parseAttribute(AttrImpl *attr)
 
 void HTMLFrameElementImpl::attach()
 {
+    setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
+
     KHTMLView* w = ownerDocument()->view();
     // limit to how deep we can nest frames
     KHTMLPart *part = w->part();
     int depth = 0;
     while ((part = part->parentPart()))
         depth++;
-    if (depth > 10)
+
+    if (depth > 6 || url.isNull()) {
+        style()->setDisplay( NONE );
         return;
+    }
 
     // inherit default settings from parent frameset
     HTMLElementImpl* node = static_cast<HTMLElementImpl*>(parentNode());
@@ -286,7 +291,6 @@ void HTMLFrameElementImpl::attach()
         node = static_cast<HTMLElementImpl*>(node->parentNode());
     }
 
-    setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
     khtml::RenderObject *r = _parent->renderer();
 
     // ignore display: none for this element!
@@ -654,16 +658,18 @@ void HTMLIFrameElementImpl::parseAttribute(AttrImpl *attr )
 
 void HTMLIFrameElementImpl::attach()
 {
+  setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
+
   KHTMLView* w = ownerDocument()->view();
   // limit to how deep we can nest frames
   KHTMLPart *part = w->part();
   int depth = 0;
   while ((part = part->parentPart()))
     depth++;
-  if (depth > 10)
-    return;
-
-  setStyle(ownerDocument()->styleSelector()->styleForElement( this ));
+  if (depth > 6) {
+      style()->setDisplay( NONE );
+      return;
+  }
 
   khtml::RenderObject *r = _parent->renderer();
 

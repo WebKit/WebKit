@@ -268,7 +268,7 @@ namespace khtml
         void do_notify(const QPixmap& p, const QRect& r);
 
         DOM::DOMString m_baseURL;
-        QColor bgColor;
+        QRgb bgColor;
 	QMovie* m;
         QPixmap* p;
 	QPixmap* bg;
@@ -279,6 +279,7 @@ namespace khtml
 
 	int width;
 	int height;
+        bool monochrome;
 
 	// Is set if movie format type ( incremental/animation) was checked
 	bool typeChecked;

@@ -387,9 +387,11 @@ CachedImage::CachedImage(const DOMString &url, const DOMString &baseURL, bool re
     p = 0;
     pixPart = 0;
     bg = 0;
+    bgColor = qRgba( 0, 0, 0, 0xFF );
     typeChecked = false;
     isFullyTransparent = false;
     errorOccured = false;
+    monochrome = false;
     formatType = 0;
     m_status = Unknown;
     m_size = 0;
@@ -442,27 +444,35 @@ void CachedImage::deref( CachedObjectClient *c )
 
 const QPixmap &CachedImage::tiled_pixmap(const QColor& newc)
 {
-    if (bg)
+
+    if ( newc.rgb() != bgColor ) {
+        delete bg; bg = 0;
+    }
+
+    if (bg) 
         return *bg;
 
     const QPixmap &r = pixmap();
 
-    if (r.isNull()) return r;
+    if (r.isNull()) 
+        return r;
 
     // no error indication for background images
-    if(errorOccured) return *Cache::nullPixmap;
+    if(errorOccured)  
+      return *Cache::nullPixmap;
 
-    if (newc != bgColor)
-    {
-        bool isvalid = newc.isValid();
-        QSize s(pixmap_size());
-        int w = r.width();
-        int h = r.height();
+    bool isvalid = newc.isValid();
+    QSize s(pixmap_size());
+    int w = r.width();
+    int h = r.height();
+    if ( w*h < 8192 ) {
         if ( r.width() < BGMINWIDTH )
             w = ((BGMINWIDTH  / s.width())+1) * s.width();
         if ( r.height() < BGMINHEIGHT )
             h = ((BGMINHEIGHT / s.height())+1) * s.height();
+    }
 
+    if ( w != r.width() || h != r.height() ) {
         bg = new QPixmap(w, h);
         QPixmap pix = pixmap();
         QPainter p(bg);
@@ -470,13 +480,16 @@ const QPixmap &CachedImage::tiled_pixmap(const QColor& newc)
         p.drawTiledPixmap(0, 0, w, h, pix);
         if(!isvalid && pix.mask())
         {
-            // unfortunately our avoid transparency trick doesn't work here
+            // unfortunately our anti-transparency trick doesn't work here
             // we need to create a mask.
             QBitmap newmask(w, h);
             QPainter pm(&newmask);
             pm.drawTiledPixmap(0, 0, w, h, *pix.mask());
             bg->setMask(newmask);
+            bgColor = qRgba( 0, 0, 0, 0xFF );
         }
+        else
+            bgColor= newc.rgb();
 
         return *bg;
     }
@@ -644,6 +657,7 @@ void CachedImage::clear()
     delete m;   m = 0;
     delete p;   p = 0;
     delete bg;  bg = 0;
+    bgColor = qRgba( 0, 0, 0, 0xff );
     delete pixPart; pixPart = 0;
 
     formatType = 0;

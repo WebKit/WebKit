@@ -306,7 +306,7 @@ void HTMLMetaElementImpl::attach()
                 ownerDocument()->docLoader()->setExpireDate(expire_date);
         }
     }
-    else if(strcasecmp(_equiv, "pragma") == 0 && !_content.isNull())
+    else if( (strcasecmp(_equiv, "pragma") == 0 ||  strcasecmp(_equiv, "cache-control") == 0 ) && !_content.isNull() )
     {
         QString str = _content.string().lower().stripWhiteSpace();
         KURL url = v->part()->url();

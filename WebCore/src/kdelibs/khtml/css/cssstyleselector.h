@@ -116,9 +116,8 @@ namespace khtml
 	virtual ~CSSStyleSelector();
 	
 	void addSheet(DOM::StyleSheetImpl *sheet);
-	
+        
 	static void loadDefaultStyle(const KHTMLSettings *s = 0);
-	static void setUserStyle(const DOM::DOMString &sheet);
 	static void clear();
 	
 	virtual RenderStyle *styleForElement(DOM::ElementImpl *e, int state = None );
@@ -146,9 +145,9 @@ namespace khtml
 	
 	static DOM::CSSStyleSheetImpl *defaultSheet;
 	static CSSStyleSelectorList *defaultStyle;
-	static DOM::CSSStyleSheetImpl *userSheet;
-	static CSSStyleSelectorList *userStyle;
 	CSSStyleSelectorList *authorStyle;
+        CSSStyleSelectorList *userStyle;
+        DOM::CSSStyleSheetImpl *userSheet;
 	
     public: // we need to make the enum public for SelectorCache
 	enum SelectorState {
@@ -168,7 +167,6 @@ namespace khtml
 	unsigned int selectors_size;
 	DOM::CSSSelector **selectors;
 	SelectorCache *selectorCache;
-	
 	unsigned int properties_size;
 	CSSOrderedProperty **properties;
 	QArray<CSSOrderedProperty> inlineProps;
@@ -193,7 +191,7 @@ namespace khtml
 	{
 	    priority = (!first << 30) | (source << 24) | specificity;
 	}
-	
+
 	DOM::CSSProperty *prop;
 	RenderStyle::PseudoId pseudoId;
 	unsigned int selector;

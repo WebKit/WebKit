@@ -1,118 +1,738 @@
-#======================================================================
-#
-# Makefile
-#
-# $RCSfile$
-# $Revision$
-# $Author$
-# $Date$
-#
-# Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions
-# are met:
-# 1. Redistributions of source code must retain the above copyright
-#    notice, this list of conditions and the following disclaimer.
-# 2. Redistributions in binary form must reproduce the above copyright
-#    notice, this list of conditions and the following disclaimer in the
-#    documentation and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY APPLE COMPUTER, INC. ``AS IS'' AND ANY
-# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-# PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL APPLE COMPUTER, INC. OR
-# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
-# OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
-#
-#======================================================================
-# set top source dir relative to this directory
-# include make vars boilerplate
-#
+# KDE tags expanded automatically by am_edit - $Revision$ 
+# Makefile.in generated automatically by automake 1.4 from Makefile.am
 
-TOPSRCDIR = ../../..
-include $(TOPSRCDIR)/Makefile.vars
+# Copyright (C) 1994, 1995-8, 1999 Free Software Foundation, Inc.
+# This Makefile.in is free software; the Free Software Foundation
+# gives unlimited permission to copy and/or distribute it,
+# with or without modifications, as long as this notice is preserved.
 
-#----------------------------------------------------------------------
-# Set variables for this directory
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY, to the extent permitted by law; without
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
 
-CXXYACCOBJECTS = grammar.cpp grammar.h
+#    This file is part of the KDE libraries
+#    Copyright (C) 1999 Harri Porten (porten@kde.org)
 
-CXXOBJECTS = \
-	array_object.o \
-	bool_object.o \
-	collector.o \
-	date_object.o \
-	debugger.o \
-	error_object.o \
-	function.o \
-	function_object.o \
-	global_object.o \
-	grammar.o \
-	internal.o \
-	kjs.o \
-	lexer.o \
-	lookup.o \
-	math_object.o \
-	nodes.o \
-	number_object.o \
-	object.o \
-	object_object.o \
-	operations.o \
-	regexp.o \
-	regexp_object.o \
-	string_object.o \
-	types.o \
-	ustring.o \
-	$(NULL)
+#    This library is free software; you can redistribute it and/or
+#    modify it under the terms of the GNU Library General Public
+#    License as published by the Free Software Foundation; either
+#    version 2 of the License, or (at your option) any later version.
 
-PROGRAM = testkjs
+#    This library is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#    Library General Public License for more details.
 
-OBJECTS = $(CXXYACCOBJECTS) $(CXXOBJECTS) 
+#    You should have received a copy of the GNU Library General Public License
+#    along with this library; see the file COPYING.LIB.  If not, write to
+#    the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+#    Boston, MA 02111-1307, USA.
 
-LIBRARY = libkjs.a
 
-CLEAN_FILES = $(OBJECTS) \
-	grammar.h \
-	grammar.cpp \
-	grammar.cpp.h \
-	testkjs.o \
-	$(LIBRARY) \
-	$(PROGRAM) \
-	$(NULL)
+SHELL = @SHELL@
 
-#----------------------------------------------------------------------
-# Set flags for this directory
+srcdir = @srcdir@
+top_srcdir = @top_srcdir@
+VPATH = @srcdir@
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+#>- 
+bindir = @bindir@
+#>+ 3
+DEPDIR = .deps
 
-YACCFLAGS = -d --output-file=grammar.cpp --name-prefix=kjsyy
+bindir = @bindir@
+sbindir = @sbindir@
+libexecdir = @libexecdir@
+datadir = @datadir@
+sysconfdir = @sysconfdir@
+sharedstatedir = @sharedstatedir@
+localstatedir = @localstatedir@
+libdir = @libdir@
+infodir = @infodir@
+mandir = @mandir@
+includedir = @includedir@
+oldincludedir = /usr/include
 
-#----------------------------------------------------------------------
-# Set targets for this directory
+DESTDIR =
 
-all: $(OBJECTS) $(LIBRARY) $(PROGRAM)
+pkgdatadir = $(datadir)/@PACKAGE@
+pkglibdir = $(libdir)/@PACKAGE@
+pkgincludedir = $(includedir)/@PACKAGE@
 
-$(LIBRARY): $(CXXOBJECTS)
-	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
-	$(RANLIB) $(LIBRARY)
+top_builddir = ..
 
-$(PROGRAM): testkjs.o
-	$(CC) $< -o $@ -L. -lkjs
+ACLOCAL = @ACLOCAL@
+AUTOCONF = @AUTOCONF@
+AUTOMAKE = @AUTOMAKE@
+AUTOHEADER = @AUTOHEADER@
 
-depend:
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@ $(AM_INSTALL_PROGRAM_FLAGS)
+INSTALL_DATA = @INSTALL_DATA@
+INSTALL_SCRIPT = @INSTALL_SCRIPT@
+transform = @program_transform_name@
 
-grammar.h: grammar.cpp.h
-	ln -s grammar.cpp.h grammar.h
+NORMAL_INSTALL = :
+PRE_INSTALL = :
+POST_INSTALL = :
+NORMAL_UNINSTALL = :
+PRE_UNINSTALL = :
+POST_UNINSTALL = :
+build_alias = @build_alias@
+build_triplet = @build@
+host_alias = @host_alias@
+host_triplet = @host@
+target_alias = @target_alias@
+target_triplet = @target@
+ARTSCCONFIG = @ARTSCCONFIG@
+ARTS_BUILD_GMCOP = @ARTS_BUILD_GMCOP@
+ARTS_BUILD_KDE = @ARTS_BUILD_KDE@
+ARTS_MAJOR_VERSION = @ARTS_MAJOR_VERSION@
+ARTS_MICRO_VERSION = @ARTS_MICRO_VERSION@
+ARTS_MINOR_VERSION = @ARTS_MINOR_VERSION@
+ARTS_VERSION = @ARTS_VERSION@
+AS = @AS@
+AUTODIRS = @AUTODIRS@
+BZIP2DIR = @BZIP2DIR@
+BZIP2_FILTER = @BZIP2_FILTER@
+CC = @CC@
+CONF_FILES = @CONF_FILES@
+CPP = @CPP@
+CUPSSUBDIR = @CUPSSUBDIR@
+CXX = @CXX@
+CXXCPP = @CXXCPP@
+DCOPIDL = @DCOPIDL@
+DCOPIDL2CPP = @DCOPIDL2CPP@
+DCOP_DEPENDENCIES = @DCOP_DEPENDENCIES@
+DLLTOOL = @DLLTOOL@
+DPMSINC = @DPMSINC@
+DPMSLIB = @DPMSLIB@
+EXEEXT = @EXEEXT@
+EXTRA_SUBDIRS = @EXTRA_SUBDIRS@
+GCJ = @GCJ@
+GCJFLAGS = @GCJFLAGS@
+GLIB_CFLAGS = @GLIB_CFLAGS@
+GLIB_DEPLIBS = @GLIB_DEPLIBS@
+GLIB_LIBS = @GLIB_LIBS@
+GLINC = @GLINC@
+GLLIB = @GLLIB@
+GMSGFMT = @GMSGFMT@
+HAVE_MITSHM = @HAVE_MITSHM@
+HELP_SUBDIR = @HELP_SUBDIR@
+ICE_RLIB = @ICE_RLIB@
+ICE_SUBDIR = @ICE_SUBDIR@
+IDL = @IDL@
+IDL_DEPENDENCIES = @IDL_DEPENDENCIES@
+JAR = @JAR@
+JAVAC = @JAVAC@
+JAVAH = @JAVAH@
+JVMLIBS = @JVMLIBS@
+KDECONFIG = @KDECONFIG@
+KDE_CXXFLAGS = @KDE_CXXFLAGS@
+KDE_EXTRA_RPATH = @KDE_EXTRA_RPATH@
+KDE_INCLUDES = @KDE_INCLUDES@
+KDE_LDFLAGS = @KDE_LDFLAGS@
+KDE_PLUGIN = @KDE_PLUGIN@
+KDE_RPATH = @KDE_RPATH@
+KDE_USE_CLOSURE_FALSE = @KDE_USE_CLOSURE_FALSE@
+KDE_USE_CLOSURE_TRUE = @KDE_USE_CLOSURE_TRUE@
+KDE_USE_FINAL_FALSE = @KDE_USE_FINAL_FALSE@
+KDE_USE_FINAL_TRUE = @KDE_USE_FINAL_TRUE@
+KDE_XSL_STYLESHEET = @KDE_XSL_STYLESHEET@
+LIBASOUND = @LIBASOUND@
+LIBAUDIOFILE = @LIBAUDIOFILE@
+LIBAUDIOIO = @LIBAUDIOIO@
+LIBAUDIONAS = @LIBAUDIONAS@
+LIBBZ2 = @LIBBZ2@
+LIBCOMPAT = @LIBCOMPAT@
+LIBCRYPT = @LIBCRYPT@
+LIBDL = @LIBDL@
+LIBFAM = @LIBFAM@
+LIBGEN = @LIBGEN@
+LIBICE = @LIBICE@
+LIBJPEG = @LIBJPEG@
+LIBMICO = @LIBMICO@
+LIBOBJS = @LIBOBJS@
+LIBOSSAUDIO = @LIBOSSAUDIO@
+LIBPCRE = @LIBPCRE@
+LIBPNG = @LIBPNG@
+LIBPOSIX1E = @LIBPOSIX1E@
+LIBPTHREAD = @LIBPTHREAD@
+LIBPYTHON = @LIBPYTHON@
+LIBQIMGIO = @LIBQIMGIO@
+LIBRESOLV = @LIBRESOLV@
+LIBSHADOW = @LIBSHADOW@
+LIBSM = @LIBSM@
+LIBSOCKET = @LIBSOCKET@
+LIBSSL = @LIBSSL@
+LIBTIFF = @LIBTIFF@
+LIBTOOL = @LIBTOOL@
+LIBUCB = @LIBUCB@
+LIBUTIL = @LIBUTIL@
+LIBVOLMGT = @LIBVOLMGT@
+LIBXINERAMA = @LIBXINERAMA@
+LIBXML_CFLAGS = @LIBXML_CFLAGS@
+LIBXML_LIBS = @LIBXML_LIBS@
+LIBXML_RPATH = @LIBXML_RPATH@
+LIBXSLT_MAJOR_VERSION = @LIBXSLT_MAJOR_VERSION@
+LIBXSLT_MICRO_VERSION = @LIBXSLT_MICRO_VERSION@
+LIBXSLT_MINOR_VERSION = @LIBXSLT_MINOR_VERSION@
+LIBXSLT_VERSION = @LIBXSLT_VERSION@
+LIBXSLT_VERSION_INFO = @LIBXSLT_VERSION_INFO@
+LIBXSLT_VERSION_NUMBER = @LIBXSLT_VERSION_NUMBER@
+LIBZ = @LIBZ@
+LIB_CUPS = @LIB_CUPS@
+LIB_DCOP = @LIB_DCOP@
+LIB_DMALLOC = @LIB_DMALLOC@
+LIB_KAB = @LIB_KAB@
+LIB_KDECORE = @LIB_KDECORE@
+LIB_KDEUI = @LIB_KDEUI@
+LIB_KFILE = @LIB_KFILE@
+LIB_KFM = @LIB_KFM@
+LIB_KFORMULA = @LIB_KFORMULA@
+LIB_KHTML = @LIB_KHTML@
+LIB_KIMGIO = @LIB_KIMGIO@
+LIB_KIO = @LIB_KIO@
+LIB_KPARTS = @LIB_KPARTS@
+LIB_KSPELL = @LIB_KSPELL@
+LIB_KSSL = @LIB_KSSL@
+LIB_KSYCOCA = @LIB_KSYCOCA@
+LIB_KWRITE = @LIB_KWRITE@
+LIB_QT = @LIB_QT@
+LIB_SMB = @LIB_SMB@
+LIB_X11 = @LIB_X11@
+LN_S = @LN_S@
+MAKEINFO = @MAKEINFO@
+MCOPIDL = @MCOPIDL@
+MEINPROC = @MEINPROC@
+MICO_INCLUDES = @MICO_INCLUDES@
+MICO_LDFLAGS = @MICO_LDFLAGS@
+MOC = @MOC@
+MSGFMT = @MSGFMT@
+M_LIBS = @M_LIBS@
+NOOPT_CXXFLAGS = @NOOPT_CXXFLAGS@
+NOREPO = @NOREPO@
+OBJDUMP = @OBJDUMP@
+OBJEXT = @OBJEXT@
+PACKAGE = @PACKAGE@
+PAMLIBS = @PAMLIBS@
+PASSWDLIBS = @PASSWDLIBS@
+PKG_CONFIG = @PKG_CONFIG@
+PYTHONINC = @PYTHONINC@
+PYTHONLIB = @PYTHONLIB@
+PYTHONMODDIR = @PYTHONMODDIR@
+QNAMESPACE_H = @QNAMESPACE_H@
+QTDOCDIR = @QTDOCDIR@
+QT_INCLUDES = @QT_INCLUDES@
+QT_LDFLAGS = @QT_LDFLAGS@
+RANLIB = @RANLIB@
+REPO = @REPO@
+SETUIDFLAGS = @SETUIDFLAGS@
+SSL_INCLUDES = @SSL_INCLUDES@
+SSL_LDFLAGS = @SSL_LDFLAGS@
+STRIP = @STRIP@
+TOPSUBDIRS = @TOPSUBDIRS@
+UIC = @UIC@
+USER_INCLUDES = @USER_INCLUDES@
+USER_LDFLAGS = @USER_LDFLAGS@
+USE_EXCEPTIONS = @USE_EXCEPTIONS@
+USE_RTTI = @USE_RTTI@
+USE_THREADS = @USE_THREADS@
+VERSION = @VERSION@
+WITH_MEM_DEBUG = @WITH_MEM_DEBUG@
+WITH_XSLT_DEBUG = @WITH_XSLT_DEBUG@
+XGETTEXT = @XGETTEXT@
+XPMINC = @XPMINC@
+XPMLIB = @XPMLIB@
+X_EXTRA_LIBS = @X_EXTRA_LIBS@
+X_INCLUDES = @X_INCLUDES@
+X_LDFLAGS = @X_LDFLAGS@
+X_PRE_LIBS = @X_PRE_LIBS@
+all_includes = @all_includes@
+all_libraries = @all_libraries@
+idldir = @idldir@
+jni_includes = @jni_includes@
+kde_appsdir = @kde_appsdir@
+kde_bindir = @kde_bindir@
+kde_confdir = @kde_confdir@
+kde_datadir = @kde_datadir@
+kde_htmldir = @kde_htmldir@
+kde_icondir = @kde_icondir@
+kde_includes = @kde_includes@
+kde_libraries = @kde_libraries@
+kde_libs_htmldir = @kde_libs_htmldir@
+kde_libs_prefix = @kde_libs_prefix@
+kde_locale = @kde_locale@
+kde_mimedir = @kde_mimedir@
+kde_moduledir = @kde_moduledir@
+kde_servicesdir = @kde_servicesdir@
+kde_servicetypesdir = @kde_servicetypesdir@
+kde_sounddir = @kde_sounddir@
+kde_templatesdir = @kde_templatesdir@
+kde_wallpaperdir = @kde_wallpaperdir@
+micodir = @micodir@
+path_su = @path_su@
+qt_includes = @qt_includes@
+qt_libraries = @qt_libraries@
+x_includes = @x_includes@
+x_libraries = @x_libraries@
 
-#----------------------------------------------------------------------
-# include make rules boilerplate
+YACC = bison
+INCLUDES = $(all_includes)
 
-include $(TOPSRCDIR)/Makefile.rules
+lib_LTLIBRARIES = libkjs.la
 
-#======================================================================
-# end
-#======================================================================
+libkjs_la_SOURCES = kjs.cpp grammar.cpp lexer.cpp nodes.cpp object.cpp 	operations.cpp ustring.cpp function.cpp types.cpp lookup.cpp 	internal.cpp regexp.cpp global_object.cpp math_object.cpp 	bool_object.cpp object_object.cpp error_object.cpp 	array_object.cpp string_object.cpp number_object.cpp 	date_object.cpp regexp_object.cpp collector.cpp function_object.cpp 	debugger.cpp
+
+
+kjsincludedir = $(includedir)/kjs
+kjsinclude_HEADERS = kjs.h object.h operations.h ustring.h 	function.h lookup.h types.h
+
+
+noinst_HEADERS = nodes.h lexer.h regexp.h internal.h collector.h 	grammar.h object_object.h function_object.h function_object.h 	bool_object.h math_object.h array_object.h string_object.h 	number_object.h date_object.h regexp_object.h error_object.h 	debugger.h
+
+
+libkjs_la_LDFLAGS = -version-info 1:0 -no-undefined $(USER_LDFLAGS) $(all_libraries)
+libkjs_la_LIBADD = -lm $(LIBPCRE)
+
+EXTRA_PROGRAMS = testkjs_static
+testkjs_static_SOURCES = testkjs.cpp  $(libkjs_la_SOURCES)
+testkjs_static_LDADD = $(LIBPCRE)
+
+check_PROGRAMS = testkjs
+testkjs_SOURCES = testkjs.cpp
+testkjs_LDADD = libkjs.la
+mkinstalldirs = $(SHELL) $(top_srcdir)/admin/mkinstalldirs
+CONFIG_HEADER = ../config.h
+CONFIG_CLEAN_FILES = 
+LTLIBRARIES =  $(lib_LTLIBRARIES)
+
+
+DEFS = @DEFS@ -I. -I$(srcdir) -I..
+CPPFLAGS = @CPPFLAGS@
+LDFLAGS = @LDFLAGS@
+LIBS = @LIBS@
+libkjs_la_DEPENDENCIES = 
+#>- libkjs_la_OBJECTS =  kjs.lo grammar.lo lexer.lo nodes.lo object.lo \
+#>- operations.lo ustring.lo function.lo types.lo lookup.lo internal.lo \
+#>- regexp.lo global_object.lo math_object.lo bool_object.lo \
+#>- object_object.lo error_object.lo array_object.lo string_object.lo \
+#>- number_object.lo date_object.lo regexp_object.lo collector.lo \
+#>- function_object.lo debugger.lo
+#>+ 9
+libkjs_la_final_OBJECTS = libkjs_la.all_cpp.lo 
+libkjs_la_nofinal_OBJECTS = kjs.lo grammar.lo lexer.lo nodes.lo object.lo \
+operations.lo ustring.lo function.lo types.lo lookup.lo internal.lo \
+regexp.lo global_object.lo math_object.lo bool_object.lo \
+object_object.lo error_object.lo array_object.lo string_object.lo \
+number_object.lo date_object.lo regexp_object.lo collector.lo \
+function_object.lo debugger.lo
+@KDE_USE_FINAL_FALSE@libkjs_la_OBJECTS = $(libkjs_la_nofinal_OBJECTS)
+@KDE_USE_FINAL_TRUE@libkjs_la_OBJECTS = $(libkjs_la_final_OBJECTS)
+check_PROGRAMS =  testkjs$(EXEEXT)
+#>- testkjs_static_OBJECTS =  testkjs.$(OBJEXT) kjs.$(OBJEXT) \
+#>- grammar.$(OBJEXT) lexer.$(OBJEXT) nodes.$(OBJEXT) object.$(OBJEXT) \
+#>- operations.$(OBJEXT) ustring.$(OBJEXT) function.$(OBJEXT) \
+#>- types.$(OBJEXT) lookup.$(OBJEXT) internal.$(OBJEXT) regexp.$(OBJEXT) \
+#>- global_object.$(OBJEXT) math_object.$(OBJEXT) bool_object.$(OBJEXT) \
+#>- object_object.$(OBJEXT) error_object.$(OBJEXT) array_object.$(OBJEXT) \
+#>- string_object.$(OBJEXT) number_object.$(OBJEXT) date_object.$(OBJEXT) \
+#>- regexp_object.$(OBJEXT) collector.$(OBJEXT) function_object.$(OBJEXT) \
+#>- debugger.$(OBJEXT)
+#>+ 9
+testkjs_static_OBJECTS = testkjs.$(OBJEXT) kjs.$(OBJEXT) \
+grammar.$(OBJEXT) lexer.$(OBJEXT) nodes.$(OBJEXT) object.$(OBJEXT) \
+operations.$(OBJEXT) ustring.$(OBJEXT) function.$(OBJEXT) \
+types.$(OBJEXT) lookup.$(OBJEXT) internal.$(OBJEXT) regexp.$(OBJEXT) \
+global_object.$(OBJEXT) math_object.$(OBJEXT) bool_object.$(OBJEXT) \
+object_object.$(OBJEXT) error_object.$(OBJEXT) array_object.$(OBJEXT) \
+string_object.$(OBJEXT) number_object.$(OBJEXT) date_object.$(OBJEXT) \
+regexp_object.$(OBJEXT) collector.$(OBJEXT) function_object.$(OBJEXT) \
+debugger.$(OBJEXT)
+testkjs_static_DEPENDENCIES = 
+testkjs_static_LDFLAGS = 
+#>- testkjs_OBJECTS =  testkjs.$(OBJEXT)
+#>+ 1
+testkjs_OBJECTS = testkjs.$(OBJEXT)
+testkjs_DEPENDENCIES =  libkjs.la
+testkjs_LDFLAGS = 
+CXXFLAGS = @CXXFLAGS@
+#>- CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+#>+ 1
+CXXCOMPILE = $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(KDE_CXXFLAGS)
+#>- LTCXXCOMPILE = $(LIBTOOL) --mode=compile $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS)
+#>+ 1
+LTCXXCOMPILE = $(LIBTOOL) --mode=compile --tag=CXX $(CXX) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) $(KDE_CXXFLAGS)
+CXXLD = $(CXX)
+#>- CXXLINK = $(LIBTOOL) --mode=link $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(LDFLAGS) -o $@
+#>+ 1
+CXXLINK = $(LIBTOOL) --mode=link --tag=CXX $(CXXLD) $(AM_CXXFLAGS) $(CXXFLAGS) $(KDE_CXXFLAGS) $(LDFLAGS) -o $@
+HEADERS =  $(kjsinclude_HEADERS) $(noinst_HEADERS)
+
+DIST_COMMON =  README ChangeLog Makefile.am Makefile.in THANKS
+
+
+#>- DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
+#>+ 4
+KDE_DIST=configure.in.in grammar.y keywords.table math_object.lut.h test.js create_hash_table lexer.lut.h 
+
+DISTFILES= $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST) $(KDE_DIST)
+
+
+TAR = tar
+GZIP_ENV = --best
+SOURCES = $(libkjs_la_SOURCES) $(testkjs_static_SOURCES) $(testkjs_SOURCES)
+OBJECTS = $(libkjs_la_OBJECTS) $(testkjs_static_OBJECTS) $(testkjs_OBJECTS)
+
+#>- all: all-redirect
+#>+ 1
+all: docs-am  all-redirect
+.SUFFIXES:
+.SUFFIXES: .S .c .cpp .lo .o .obj .s
+$(srcdir)/Makefile.in: Makefile.am $(top_srcdir)/configure.in $(ACLOCAL_M4) 
+#>- 	cd $(top_srcdir) && $(AUTOMAKE) --foreign --include-deps kjs/Makefile
+#>+ 2
+	cd $(top_srcdir) && $(AUTOMAKE) --foreign --include-deps kjs/Makefile
+	cd $(top_srcdir) && perl admin/am_edit kjs/Makefile.in
+
+Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status
+	cd $(top_builddir) \
+	  && CONFIG_FILES=$(subdir)/$@ CONFIG_HEADERS= $(SHELL) ./config.status
+
+
+mostlyclean-libLTLIBRARIES:
+
+clean-libLTLIBRARIES:
+	-test -z "$(lib_LTLIBRARIES)" || rm -f $(lib_LTLIBRARIES)
+
+distclean-libLTLIBRARIES:
+
+maintainer-clean-libLTLIBRARIES:
+
+install-libLTLIBRARIES: $(lib_LTLIBRARIES)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(libdir)
+	@list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  if test -f $$p; then \
+	    echo "$(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p"; \
+	    $(LIBTOOL)  --mode=install $(INSTALL) $$p $(DESTDIR)$(libdir)/$$p; \
+	  else :; fi; \
+	done
+
+uninstall-libLTLIBRARIES:
+	@$(NORMAL_UNINSTALL)
+	list='$(lib_LTLIBRARIES)'; for p in $$list; do \
+	  $(LIBTOOL)  --mode=uninstall rm -f $(DESTDIR)$(libdir)/$$p; \
+	done
+
+.c.o:
+	$(COMPILE) -c $<
+
+# FIXME: We should only use cygpath when building on Windows,
+# and only if it is available.
+.c.obj:
+	$(COMPILE) -c `cygpath -w $<`
+
+.s.o:
+	$(COMPILE) -c $<
+
+.S.o:
+	$(COMPILE) -c $<
+
+mostlyclean-compile:
+	-rm -f *.o core *.core
+	-rm -f *.$(OBJEXT)
+
+clean-compile:
+
+distclean-compile:
+	-rm -f *.tab.c
+
+maintainer-clean-compile:
+
+.c.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.s.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+.S.lo:
+	$(LIBTOOL) --mode=compile $(COMPILE) -c $<
+
+mostlyclean-libtool:
+	-rm -f *.lo
+
+clean-libtool:
+	-rm -rf .libs _libs
+
+distclean-libtool:
+
+maintainer-clean-libtool:
+
+#>- libkjs.la: $(libkjs_la_OBJECTS) $(libkjs_la_DEPENDENCIES)
+#>+ 2
+@KDE_USE_CLOSURE_TRUE@libkjs.la: libkjs.la.closure $(libkjs_la_OBJECTS) $(libkjs_la_DEPENDENCIES)
+@KDE_USE_CLOSURE_FALSE@libkjs.la: $(libkjs_la_OBJECTS) $(libkjs_la_DEPENDENCIES)
+	$(CXXLINK) -rpath $(libdir) $(libkjs_la_LDFLAGS) $(libkjs_la_OBJECTS) $(libkjs_la_LIBADD) $(LIBS)
+
+mostlyclean-checkPROGRAMS:
+
+clean-checkPROGRAMS:
+	-test -z "$(check_PROGRAMS)" || rm -f $(check_PROGRAMS)
+
+distclean-checkPROGRAMS:
+
+maintainer-clean-checkPROGRAMS:
+
+testkjs_static$(EXEEXT): $(testkjs_static_OBJECTS) $(testkjs_static_DEPENDENCIES)
+	@rm -f testkjs_static$(EXEEXT)
+	$(CXXLINK) $(testkjs_static_LDFLAGS) $(testkjs_static_OBJECTS) $(testkjs_static_LDADD) $(LIBS)
+
+testkjs$(EXEEXT): $(testkjs_OBJECTS) $(testkjs_DEPENDENCIES)
+	@rm -f testkjs$(EXEEXT)
+	$(CXXLINK) $(testkjs_LDFLAGS) $(testkjs_OBJECTS) $(testkjs_LDADD) $(LIBS)
+.cpp.o:
+	$(CXXCOMPILE) -c $<
+.cpp.obj:
+	$(CXXCOMPILE) -c `cygpath -w $<`
+.cpp.lo:
+	$(LTCXXCOMPILE) -c $<
+
+install-kjsincludeHEADERS: $(kjsinclude_HEADERS)
+	@$(NORMAL_INSTALL)
+	$(mkinstalldirs) $(DESTDIR)$(kjsincludedir)
+	@list='$(kjsinclude_HEADERS)'; for p in $$list; do \
+	  if test -f "$$p"; then d= ; else d="$(srcdir)/"; fi; \
+	  echo " $(INSTALL_DATA) $$d$$p $(DESTDIR)$(kjsincludedir)/$$p"; \
+	  $(INSTALL_DATA) $$d$$p $(DESTDIR)$(kjsincludedir)/$$p; \
+	done
+
+uninstall-kjsincludeHEADERS:
+	@$(NORMAL_UNINSTALL)
+	list='$(kjsinclude_HEADERS)'; for p in $$list; do \
+	  rm -f $(DESTDIR)$(kjsincludedir)/$$p; \
+	done
+
+tags: TAGS
+
+ID: $(HEADERS) $(SOURCES) $(LISP)
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	here=`pwd` && cd $(srcdir) \
+	  && mkid -f$$here/ID $$unique $(LISP)
+
+TAGS:  $(HEADERS) $(SOURCES)  $(TAGS_DEPENDENCIES) $(LISP)
+	tags=; \
+	here=`pwd`; \
+	list='$(SOURCES) $(HEADERS)'; \
+	unique=`for i in $$list; do echo $$i; done | \
+	  awk '    { files[$$0] = 1; } \
+	       END { for (i in files) print i; }'`; \
+	test -z "$(ETAGS_ARGS)$$unique$(LISP)$$tags" \
+	  || (cd $(srcdir) && etags $(ETAGS_ARGS) $$tags  $$unique $(LISP) -o $$here/TAGS)
+
+mostlyclean-tags:
+
+clean-tags:
+
+distclean-tags:
+	-rm -f TAGS ID
+
+maintainer-clean-tags:
+
+distdir = $(top_builddir)/$(PACKAGE)-$(VERSION)/$(subdir)
+
+subdir = kjs
+
+distdir: $(DISTFILES)
+#>- 	@for file in $(DISTFILES); do \
+#>- 	  d=$(srcdir); \
+#>- 	  if test -d $$d/$$file; then \
+#>- 	    cp -pr $$/$$file $(distdir)/$$file; \
+#>- 	  else \
+#>- 	    test -f $(distdir)/$$file \
+#>- 	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+#>- 	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+#>- 	  fi; \
+#>- 	done
+#>+ 10
+	@for file in $(DISTFILES); do \
+	  d=$(srcdir); \
+	  if test -d $$d/$$file; then \
+	    cp -pr $$d/$$file $(distdir)/$$file; \
+	  else \
+	    test -f $(distdir)/$$file \
+	    || ln $$d/$$file $(distdir)/$$file 2> /dev/null \
+	    || cp -p $$d/$$file $(distdir)/$$file || :; \
+	  fi; \
+	done
+info-am:
+info: info-am
+dvi-am:
+dvi: dvi-am
+check-am: all-am
+	$(MAKE) $(AM_MAKEFLAGS) $(check_PROGRAMS)
+check: check-am
+installcheck-am:
+installcheck: installcheck-am
+install-exec-am: install-libLTLIBRARIES
+install-exec: install-exec-am
+
+install-data-am: install-kjsincludeHEADERS
+install-data: install-data-am
+
+install-am: all-am
+	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
+install: install-am
+uninstall-am: uninstall-libLTLIBRARIES uninstall-kjsincludeHEADERS
+uninstall: uninstall-am
+all-am: Makefile $(LTLIBRARIES) $(HEADERS)
+all-redirect: all-am
+install-strip:
+	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
+installdirs:
+	$(mkinstalldirs)  $(DESTDIR)$(libdir) $(DESTDIR)$(kjsincludedir)
+
+
+mostlyclean-generic:
+
+clean-generic:
+
+distclean-generic:
+	-rm -f Makefile $(CONFIG_CLEAN_FILES)
+	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
+
+maintainer-clean-generic:
+mostlyclean-am:  mostlyclean-libLTLIBRARIES mostlyclean-compile \
+		mostlyclean-libtool mostlyclean-checkPROGRAMS \
+		mostlyclean-tags mostlyclean-generic
+
+mostlyclean: mostlyclean-am
+
+#>- clean-am:  clean-libLTLIBRARIES clean-compile clean-libtool \
+#>- 		clean-checkPROGRAMS clean-tags clean-generic \
+#>- 		mostlyclean-am
+#>+ 3
+clean-am: clean-closures clean-final   clean-libLTLIBRARIES clean-compile clean-libtool \
+		clean-checkPROGRAMS clean-tags clean-generic \
+		mostlyclean-am
+
+#>- clean: clean-am
+#>+ 1
+clean: kde-rpo-clean  clean-am
+
+distclean-am:  distclean-libLTLIBRARIES distclean-compile \
+		distclean-libtool distclean-checkPROGRAMS \
+		distclean-tags distclean-generic clean-am
+	-rm -f libtool
+
+distclean: distclean-am
+
+maintainer-clean-am:  maintainer-clean-libLTLIBRARIES \
+		maintainer-clean-compile maintainer-clean-libtool \
+		maintainer-clean-checkPROGRAMS maintainer-clean-tags \
+		maintainer-clean-generic distclean-am
+	@echo "This command is intended for maintainers to use;"
+	@echo "it deletes files that may require special tools to rebuild."
+
+maintainer-clean: maintainer-clean-am
+
+.PHONY: mostlyclean-libLTLIBRARIES distclean-libLTLIBRARIES \
+clean-libLTLIBRARIES maintainer-clean-libLTLIBRARIES \
+uninstall-libLTLIBRARIES install-libLTLIBRARIES mostlyclean-compile \
+distclean-compile clean-compile maintainer-clean-compile \
+mostlyclean-libtool distclean-libtool clean-libtool \
+maintainer-clean-libtool mostlyclean-checkPROGRAMS \
+distclean-checkPROGRAMS clean-checkPROGRAMS \
+maintainer-clean-checkPROGRAMS uninstall-kjsincludeHEADERS \
+install-kjsincludeHEADERS tags mostlyclean-tags distclean-tags \
+clean-tags maintainer-clean-tags distdir info-am info dvi-am dvi check \
+check-am installcheck-am installcheck install-exec-am install-exec \
+install-data-am install-data install-am install uninstall-am uninstall \
+all-redirect all-am all installdirs mostlyclean-generic \
+distclean-generic clean-generic maintainer-clean-generic clean \
+mostlyclean distclean maintainer-clean
+
+
+parser: $(srcdir)/grammar.y
+	cd $(srcdir); \
+	$(YACC) -d -p kjsyy grammar.y && mv grammar.tab.c grammar.cpp; \
+	if test -f grammar.tab.h; then \
+	if cmp -s grammar.tab.h grammar.h; then rm -f grammar.tab.h; \
+	else mv grammar.tab.h grammar.h; fi \
+	else :; fi
+
+debugger: $(libkjs_la_SOURCES) $(kjsinclude_HEADERS) $(noinst_HEADERS)
+	$(MAKE) DEFS="-DKJS_DEBUGGER $(DEFS)" libkjs.la
+
+# Tell versions [3.59,3.63) of GNU make to not export all variables.
+# Otherwise a system limit (for SysV at least) may be exceeded.
+.NOEXPORT:
+
+#>+ 8
+libkjs.la.closure: $(libkjs_la_OBJECTS) $(libkjs_la_DEPENDENCIES)
+	@echo "int main() {return 0;}" > libkjs_la_closure.cpp
+	@$(LTCXXCOMPILE) -c libkjs_la_closure.cpp
+	@$(CXXLINK) libkjs_la_closure.lo $(libkjs_la_LDFLAGS) $(libkjs_la_OBJECTS) $(libkjs_la_LIBADD) $(LIBS)
+	@rm -f libkjs_la_closure.* libkjs.la.closure
+	@echo "timestamp" > libkjs.la.closure
+
+
+#>+ 3
+clean-closures:
+	-rm -f  libkjs.la.closure
+
+#>+ 2
+docs-am:
+
+#>+ 5
+force-reedit:
+		cd $(top_srcdir) && $(AUTOMAKE) --foreign --include-deps kjs/Makefile
+	cd $(top_srcdir) && perl admin/am_edit kjs/Makefile.in
+
+
+#>+ 11
+libkjs_la.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/kjs.cpp $(srcdir)/grammar.cpp $(srcdir)/lexer.cpp $(srcdir)/nodes.cpp $(srcdir)/object.cpp $(srcdir)/operations.cpp $(srcdir)/ustring.cpp $(srcdir)/function.cpp $(srcdir)/types.cpp $(srcdir)/lookup.cpp $(srcdir)/internal.cpp $(srcdir)/regexp.cpp $(srcdir)/global_object.cpp $(srcdir)/math_object.cpp $(srcdir)/bool_object.cpp $(srcdir)/object_object.cpp $(srcdir)/error_object.cpp $(srcdir)/array_object.cpp $(srcdir)/string_object.cpp $(srcdir)/number_object.cpp $(srcdir)/date_object.cpp $(srcdir)/regexp_object.cpp $(srcdir)/collector.cpp $(srcdir)/function_object.cpp $(srcdir)/debugger.cpp  
+	@echo 'creating libkjs_la.all_cpp.cpp ...'; \
+	rm -f libkjs_la.all_cpp.files libkjs_la.all_cpp.final; \
+	echo "#define KDE_USE_FINAL 1" >> libkjs_la.all_cpp.final; \
+	for file in kjs.cpp grammar.cpp lexer.cpp nodes.cpp object.cpp operations.cpp ustring.cpp function.cpp types.cpp lookup.cpp internal.cpp regexp.cpp global_object.cpp math_object.cpp bool_object.cpp object_object.cpp error_object.cpp array_object.cpp string_object.cpp number_object.cpp date_object.cpp regexp_object.cpp collector.cpp function_object.cpp debugger.cpp ; do \
+	  echo "#include \"$$file\"" >> libkjs_la.all_cpp.files; \
+	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> libkjs_la.all_cpp.final; \
+	done; \
+	cat libkjs_la.all_cpp.final libkjs_la.all_cpp.files  > libkjs_la.all_cpp.cpp; \
+	rm -f libkjs_la.all_cpp.final libkjs_la.all_cpp.files
+
+#>+ 11
+testkjs.all_cpp.cpp: $(srcdir)/Makefile.in $(srcdir)/testkjs.cpp  
+	@echo 'creating testkjs.all_cpp.cpp ...'; \
+	rm -f testkjs.all_cpp.files testkjs.all_cpp.final; \
+	echo "#define KDE_USE_FINAL 1" >> testkjs.all_cpp.final; \
+	for file in testkjs.cpp ; do \
+	  echo "#include \"$$file\"" >> testkjs.all_cpp.files; \
+	  test ! -f $(srcdir)/$$file || egrep '^#pragma +implementation' $(srcdir)/$$file >> testkjs.all_cpp.final; \
+	done; \
+	cat testkjs.all_cpp.final testkjs.all_cpp.files  > testkjs.all_cpp.cpp; \
+	rm -f testkjs.all_cpp.final testkjs.all_cpp.files
+
+#>+ 3
+clean-final:
+	-rm -f libkjs_la.all_cpp.cpp testkjs.all_cpp.cpp
+
+#>+ 2
+final:
+	$(MAKE) libkjs_la_OBJECTS="$(libkjs_la_final_OBJECTS)" all-am
+#>+ 2
+no-final:
+	$(MAKE) libkjs_la_OBJECTS="$(libkjs_la_nofinal_OBJECTS)" all-am
+#>+ 3
+cvs-clean:
+	$(MAKE) -f $(top_srcdir)/admin/Makefile.common cvs-clean
+
+#>+ 3
+kde-rpo-clean:
+	-rm -f *.rpo
