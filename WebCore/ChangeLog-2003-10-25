@@ -1,3 +1,29 @@
+2003-08-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3349142, blocks inside inlines with generated content cause the generated
+	content to get all screwed up, especially if you try to print.  This patch fixes
+	generated content to be continuation-aware (and vice versa), so that the content
+	behaves correctly when inlines get split.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addChild):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::isInlineContinuation):
+        (RenderInline::addChildToFlow):
+        (RenderInline::cloneInline):
+        (RenderInline::splitInlines):
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::continuation):
+        (RenderObject::isInlineContinuation):
+        * khtml/rendering/render_object.h:
+
 2003-08-11  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKHTMLPart.h: Fixed some small typo-ish strangenesses.

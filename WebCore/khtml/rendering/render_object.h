@@ -195,7 +195,9 @@ public:
     virtual bool isInlineBlockOrInlineTable() const { return false; }
     virtual bool childrenInline() const { return false; }
     virtual void setChildrenInline(bool b) { };
-    virtual RenderFlow* continuation() const { return 0; }
+
+    virtual RenderFlow* continuation() const;
+    virtual bool isInlineContinuation() const;
     
     virtual bool isListItem() const { return false; }
     virtual bool isListMarker() const { return false; }

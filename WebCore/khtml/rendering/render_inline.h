@@ -40,6 +40,8 @@ public:
     virtual bool isRenderInline() const { return true; }
     virtual bool isInlineFlow() const { return true; }
     virtual bool childrenInline() const { return true; }
+
+    virtual bool isInlineContinuation() const;
     
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild);
     void splitInlines(RenderBlock* fromBlock, RenderBlock* toBlock, RenderBlock* middleBlock,
@@ -70,6 +72,12 @@ public:
     // the remaining width on a given line (and the height of a single line).
     virtual int offsetLeft() const;
     virtual int offsetTop() const;
+
+protected:
+    static RenderInline* cloneInline(RenderFlow* src);
+    
+private:
+    bool m_isContinuation : 1; // Whether or not we're a continuation of an inline.
 };
 
 }; // namespace

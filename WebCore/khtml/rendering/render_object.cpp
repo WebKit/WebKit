@@ -180,6 +180,16 @@ bool RenderObject::canHaveChildren() const
     return false;
 }
 
+RenderFlow* RenderObject::continuation() const
+{
+    return 0;
+}
+
+bool RenderObject::isInlineContinuation() const
+{
+    return false;
+}
+
 void RenderObject::addChild(RenderObject* , RenderObject *)
 {
     KHTMLAssert(0);

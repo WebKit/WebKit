@@ -96,6 +96,10 @@ void RenderBlock::setStyle(RenderStyle* _style)
 
 void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)
 {
+    // Make sure we don't append things after :after-generated content if we have it.
+    if (!beforeChild && lastChild() && lastChild()->style()->styleType() == RenderStyle::AFTER)
+        beforeChild = lastChild();
+    
     setNeedsLayout(true);
 
     bool madeBoxesNonInline = FALSE;
