@@ -115,7 +115,10 @@ namespace DOM {
     class StyleSheetListImpl;
     class TextImpl;
     class TreeWalkerImpl;
-    
+#ifdef KHTML_XSLT
+    class XSLStyleSheetImpl;
+#endif
+
     // A range of a node within a document that is "marked", such as being misspelled
     struct DocumentMarker
     {
@@ -554,6 +557,14 @@ public:
     void shiftMarkers(NodeImpl *node, ulong startOffset, long delta);
     QValueList<DocumentMarker> markersForNode(NodeImpl *node);
 
+#ifdef KHTML_XSLT
+    void applyXSLTransform(ProcessingInstructionImpl* pi);
+    void setTransformSource(const QString& xmlSource) { m_transformSource = xmlSource; }
+    const QString& transformSource() { return m_transformSource; }
+    DocumentImpl* transformSourceDocument() { return m_transformSourceDocument; }
+    void setTransformSourceDocument(DocumentImpl* doc);
+#endif
+
 #ifndef KHTML_NO_XBL
     // XBL methods
     XBL::XBLBindingManager* bindingManager() const { return m_bindingManager; }
@@ -662,6 +673,11 @@ protected:
     QTime m_startTime;
     bool m_overMinimumLayoutThreshold;
     
+#ifdef KHTML_XSLT
+    QString m_transformSource;
+    DocumentImpl* m_transformSourceDocument;
+#endif
+
 #ifndef KHTML_NO_XBL
     XBL::XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
 #endif

@@ -40,7 +40,7 @@ XSLStyleSheetImpl::XSLStyleSheetImpl(XSLStyleSheetImpl *parentSheet, DOMString h
     : StyleSheetImpl(parentSheet, href)
 {
     m_lstChildren = new QPtrList<StyleBaseImpl>;
-    m_doc = parentSheet ? parentSheet->doc() : 0;
+    m_ownerDocument = parentSheet ? parentSheet->ownerDocument() : 0;
     parentSheet->append(this);
 }
 
@@ -48,11 +48,12 @@ XSLStyleSheetImpl::XSLStyleSheetImpl(NodeImpl *parentNode, DOMString href)
     : StyleSheetImpl(parentNode, href)
 {
     m_lstChildren = new QPtrList<StyleBaseImpl>;
-    m_doc = parentNode->getDocument();
+    m_ownerDocument = parentNode->getDocument();
 }
 
 XSLStyleSheetImpl::~XSLStyleSheetImpl()
 {
+    xmlFreeDoc(m_stylesheetDoc);
 }
 
 bool XSLStyleSheetImpl::isLoading()
@@ -80,14 +81,22 @@ void XSLStyleSheetImpl::checkLoaded()
 
 khtml::DocLoader* XSLStyleSheetImpl::docLoader()
 {
-    if (!m_doc)
+    if (!m_ownerDocument)
         return 0;
-    return m_doc->docLoader();
+    return m_ownerDocument->docLoader();
 }
 
 bool XSLStyleSheetImpl::parseString(const DOMString &string, bool strict)
 {
-    return false;
+    // Parse in a single chunk into an xmlDocPtr
+    const QChar BOM(0xFEFF);
+    const unsigned char BOMHighByte = *reinterpret_cast<const unsigned char *>(&BOM);
+    m_stylesheetDoc = xmlReadMemory(reinterpret_cast<const char *>(string.unicode()),
+                                    string.length() * sizeof(QChar),
+                                    m_ownerDocument->URL().ascii(),
+                                    BOMHighByte == 0xFF ? "UTF-16LE" : "UTF-16BE", 
+                                    XML_PARSE_NOCDATA|XML_PARSE_DTDATTR|XML_PARSE_NOENT);
+    return m_stylesheetDoc;
 }
 
 }

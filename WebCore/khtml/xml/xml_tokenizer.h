@@ -36,6 +36,7 @@ class KHTMLView;
 
 namespace DOM {
     class DocumentPtr;
+    class DocumentImpl;
     class NodeImpl;
 };
 
@@ -57,6 +58,10 @@ public:
     virtual void setOnHold(bool onHold) = 0;
     virtual bool isWaitingForScripts() = 0;
 
+#ifdef KHTML_XSLT
+    virtual void setTransformSource(DOM::DocumentImpl* doc) {};
+#endif
+    
 signals:
     void finishedParsing();
 

@@ -19,35 +19,45 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _xsl_stylesheetimpl_h_
-#define _xsl_stylesheetimpl_h_
+
+#ifndef _xslt_processorimpl_h_
+#define _xslt_processorimpl_h_
 
 #ifdef KHTML_XSLT
 
-#include "css/css_stylesheetimpl.h"
+#include <libxml/parser.h>
+#include <libxml/parserInternals.h>
+
+#include <libxslt/transform.h>
+
+#include <qstring.h>
 
 namespace DOM {
 
-class XSLStyleSheetImpl : public StyleSheetImpl
+class XSLStyleSheetImpl;
+class DocumentImpl;
+    
+class XSLTProcessorImpl
 {
 public:
-    XSLStyleSheetImpl(DOM::NodeImpl *parentNode, DOM::DOMString href = DOMString());
-    XSLStyleSheetImpl(XSLStyleSheetImpl *parentSheet, DOM::DOMString href = DOMString());
-    ~XSLStyleSheetImpl();
+    // Constructors
+    XSLTProcessorImpl(XSLStyleSheetImpl* stylesheet, DocumentImpl* source, bool embedded = false);
+    ~XSLTProcessorImpl();
     
-    virtual bool isXSLStyleSheet() const { return true; }
-    virtual DOM::DOMString type() const { return "text/xml"; }
+    // Method for transforming a source document into a result document.
+    DocumentImpl* transformDocument(DocumentImpl* sourceDoc);
 
-    virtual bool parseString(const DOMString &string, bool strict = true);
+    // Convert a libxml doc ptr to a KHTML DOM Document
+    DocumentImpl* documentFromXMLDocPtr(xmlDocPtr resultDoc, xsltStylesheetPtr sheet);
     
-    virtual bool isLoading();
-    virtual void checkLoaded();
+    // Helpers
+    void addToResult(const char* buffer, int len);
     
-    khtml::DocLoader *docLoader();
-    DocumentImpl *doc() { return m_doc; }
-
 protected:
-    DocumentImpl *m_doc;
+    XSLStyleSheetImpl* m_stylesheet;
+    QString m_resultOutput;
+    DocumentImpl* m_sourceDocument;
+    bool m_embedded;
 };
 
 }

@@ -166,12 +166,12 @@ public:
     void resetScrollBars();
 #endif
 
+     void clear();
+
 signals:
         void cleared();
     
 protected:
-        void clear();
-    
 #if APPLE_CHANGES
 public:
         void clearPart();

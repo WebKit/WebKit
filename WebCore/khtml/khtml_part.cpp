@@ -1098,6 +1098,19 @@ DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
     return 0;
 }
 
+void KHTMLPart::replaceDocImpl(DocumentImpl* newDoc)
+{
+    if (d) {
+        if (d->m_doc) {
+            d->m_doc->detach();
+            d->m_doc->deref();
+        }
+        d->m_doc = newDoc;
+        if (newDoc)
+            newDoc->ref();
+    }
+}
+
 /*bool KHTMLPart::isSSLInUse() const
 {
   return d->m_ssl_in_use;

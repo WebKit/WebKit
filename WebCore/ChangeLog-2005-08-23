@@ -1,3 +1,59 @@
+2004-08-16  David Hyatt  <hyatt@apple.com>
+
+	Land initial support for XSLT using xml-stylesheet PIs.
+	
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::replaceDocImpl):
+        * khtml/khtml_part.h:
+        * khtml/khtmlview.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::recalcStyleSelector):
+        (DocumentImpl::applyXSLTransform):
+        (DocumentImpl::setTransformSourceDocument):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::setTransformSource):
+        (DOM::DocumentImpl::transformSource):
+        (DOM::DocumentImpl::transformSourceDocument):
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::checkStyleSheet):
+        * khtml/xml/dom_xmlimpl.h:
+        (DOM::ProcessingInstructionImpl::isXSL):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::matchFunc):
+        (khtml::openFunc):
+        (khtml::createQStringParser):
+        (khtml::XMLTokenizer::processingInstruction):
+        (khtml::XMLTokenizer::finish):
+        (khtml::XMLTokenizer::setTransformSource):
+        * khtml/xml/xml_tokenizer.h:
+        (khtml::Tokenizer::setTransformSource):
+        * khtml/xml/xsl_stylesheetimpl.cpp: Removed.
+        * khtml/xml/xsl_stylesheetimpl.h: Removed.
+        * khtml/xsl/xsl_stylesheetimpl.cpp: Added.
+        (DOM::XSLStyleSheetImpl::XSLStyleSheetImpl):
+        (DOM::XSLStyleSheetImpl::~XSLStyleSheetImpl):
+        (DOM::XSLStyleSheetImpl::isLoading):
+        (DOM::XSLStyleSheetImpl::checkLoaded):
+        (DOM::XSLStyleSheetImpl::docLoader):
+        (DOM::XSLStyleSheetImpl::parseString):
+        * khtml/xsl/xsl_stylesheetimpl.h: Added.
+        (DOM::XSLStyleSheetImpl::isXSLStyleSheet):
+        (DOM::XSLStyleSheetImpl::type):
+        (DOM::XSLStyleSheetImpl::ownerDocument):
+        (DOM::XSLStyleSheetImpl::document):
+        (DOM::XSLStyleSheetImpl::clearDocument):
+        * khtml/xsl/xslt_processorimpl.cpp: Added.
+        (DOM::m_sourceDocument):
+        (DOM::XSLTProcessorImpl::~XSLTProcessorImpl):
+        (DOM::XSLTProcessorImpl::transformDocument):
+        (DOM::bufferWrite):
+        (DOM::XSLTProcessorImpl::addToResult):
+        (DOM::XSLTProcessorImpl::documentFromXMLDocPtr):
+        * khtml/xsl/xslt_processorimpl.h: Added.
+
 2004-08-16  Maciej Stachowiak  <mjs@apple.com>
 
         Fix build.

@@ -15,7 +15,7 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR) $(COMMON_LDFLAGS)";
 				SECTORDER_FLAGS = "";
 				ZERO_LINK = YES;
 			};
@@ -26,7 +26,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR) $(COMMON_LDFLAGS)";
 				SECTORDER_FLAGS = "";
 			};
 			isa = PBXBuildStyle;
@@ -133,6 +133,7 @@
 				0867D6A0FE84028FC02AAC07,
 			);
 			buildSettings = {
+				COMMON_LDFLAGS = "\"`if [ -f /usr/lib/libxslt.1.dylib ]; then echo \\\"-lxslt.1\\\"; else echo \\\"-lxml2\\\"; fi`\"";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -141,7 +142,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\"";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = "ForwardingHeaders /usr/include/libxml2";
+				HEADER_SEARCH_PATHS = "ForwardingHeaders /usr/include/libxslt /usr/include/libxml2";
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x9000000;
@@ -528,7 +529,8 @@
 				BE02D4E8066F908A0076809F,
 				93D1FEF7067EBF89009CE68A,
 				9348900606C00363007E7ACE,
-				BC9D580706C185A4001E893C,
+				BC06F24E06D18A7E004A6FA3,
+				BC06F25006D18A7E004A6FA3,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -810,8 +812,9 @@
 				2D90660E0665D937006B6F1A,
 				BE02F485066E1C550013A9F6,
 				BE02D4E9066F908A0076809F,
-				BC9D580606C185A4001E893C,
 				BE1A407206CA8A33005B28CF,
+				BC06F24D06D18A7E004A6FA3,
+				BC06F24F06D18A7E004A6FA3,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2087,6 +2090,79 @@
 //BC2
 //BC3
 //BC4
+		BC06F24406D18A35004A6FA3 = {
+			children = (
+				BC06F24906D18A7E004A6FA3,
+				BC06F24A06D18A7E004A6FA3,
+				BC06F24B06D18A7E004A6FA3,
+				BC06F24C06D18A7E004A6FA3,
+			);
+			isa = PBXGroup;
+			name = xsl;
+			path = khtml;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
+		};
+		BC06F24906D18A7E004A6FA3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xsl_stylesheetimpl.cpp;
+			path = xsl/xsl_stylesheetimpl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC06F24A06D18A7E004A6FA3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xsl_stylesheetimpl.h;
+			path = xsl/xsl_stylesheetimpl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC06F24B06D18A7E004A6FA3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			name = xslt_processorimpl.cpp;
+			path = xsl/xslt_processorimpl.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC06F24C06D18A7E004A6FA3 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = xslt_processorimpl.h;
+			path = xsl/xslt_processorimpl.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC06F24D06D18A7E004A6FA3 = {
+			fileRef = BC06F24906D18A7E004A6FA3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC06F24E06D18A7E004A6FA3 = {
+			fileRef = BC06F24A06D18A7E004A6FA3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC06F24F06D18A7E004A6FA3 = {
+			fileRef = BC06F24B06D18A7E004A6FA3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC06F25006D18A7E004A6FA3 = {
+			fileRef = BC06F24C06D18A7E004A6FA3;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BC32C2EC048BF95C00A8000B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2597,34 +2673,6 @@
 		};
 		BC8F629A0405F45600A80004 = {
 			fileRef = BC8F62990405F45600A80004;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BC9D580406C185A4001E893C = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = xsl_stylesheetimpl.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BC9D580506C185A4001E893C = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.c.h;
-			path = xsl_stylesheetimpl.h;
-			refType = 4;
-			sourceTree = "<group>";
-		};
-		BC9D580606C185A4001E893C = {
-			fileRef = BC9D580406C185A4001E893C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		BC9D580706C185A4001E893C = {
-			fileRef = BC9D580506C185A4001E893C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -3477,6 +3525,7 @@
 				F523D2F302DE443B018635CA,
 				BC41978B059293BE0016347F,
 				F523D32402DE4478018635CA,
+				BC06F24406D18A35004A6FA3,
 				F523D15202DE42AD018635CA,
 				F523D15102DE42AD018635CA,
 				F523D15402DE42AD018635CA,
@@ -6607,8 +6656,6 @@
 				BC7FDE3205C1D9AB0070A902,
 				F523D30902DE4476018635CA,
 				F523D30A02DE4476018635CA,
-				BC9D580406C185A4001E893C,
-				BC9D580506C185A4001E893C,
 			);
 			isa = PBXGroup;
 			path = xml;
@@ -10296,7 +10343,7 @@
 			buildSettings = {
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR) $(COMMON_LDFLAGS)";
 				SECTORDER_FLAGS = "";
 			};
 			isa = PBXBuildStyle;

@@ -151,11 +151,15 @@ public:
     virtual DOMString localHref() const;
     virtual bool childTypeAllowed( unsigned short type );
     StyleSheetImpl *sheet() const;
-    void checkStyleSheet();
+    bool checkStyleSheet();
     virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet);
     virtual void setStyleSheet(CSSStyleSheetImpl* sheet);
     bool isLoading() const;
     void sheetLoaded();
+
+#ifdef KHTML_XSLT
+    bool isXSL() const { return m_isXSL; }
+#endif
 
     virtual DOMString toString() const;
     
