@@ -1,5 +1,22 @@
 2004-07-21  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Trey
+
+        Remove handling of HTML editing key events from WebCore.
+        This now happens in WebKit if an event passes all the
+        way through WebCore without being handled by the DOM.
+
+        In each case below, function were removed, as their
+        only purpose was to handle editing key events.
+
+        * khtml/xml/dom_elementimpl.cpp
+        * khtml/xml/dom_elementimpl.h
+        * kwq/KWQKHTMLPart.h
+        * kwq/KWQKHTMLPart.mm
+        * kwq/WebCoreBridge.h
+
+2004-07-21  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         * khtml/xml/dom_selection.cpp:

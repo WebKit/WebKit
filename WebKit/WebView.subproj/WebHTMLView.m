@@ -40,6 +40,7 @@
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUIDelegatePrivate.h>
 #import <WebKit/WebUnicode.h>
+#import <WebKit/WebViewInternal.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <AppKit/NSAccessibility.h>
@@ -2273,8 +2274,7 @@ static WebHTMLView *lastHitView = nil;
 {
     // Pass command-key combos through WebCore if there is a key binding available for
     // this event. This lets web pages have a crack at intercepting command-modified keypresses.
-    if ([self firstResponderIsSelfOrDescendantView] && [event _web_keyBindingManagerHasBinding]) {
-        [[self _bridge] interceptKeyEvent:event toView:self];
+    if ([self firstResponderIsSelfOrDescendantView] && [[self _bridge] interceptKeyEvent:event toView:self]) {
         return YES;
     }
     return [super performKeyEquivalent:event];
@@ -2282,10 +2282,15 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)keyDown:(NSEvent *)event
 {
-    BOOL intercepted = [[self _bridge] interceptKeyEvent:event toView:self];
-    if (!intercepted || [event _web_isTabKeyEvent]) {
-        [super keyDown:event];
-    }
+    WebBridge *bridge = [self _bridge];
+    if ([bridge interceptKeyEvent:event toView:self])
+        return;
+        
+    WebView *webView = [self _webView];
+    if (([webView isEditable] || [bridge isSelectionEditable]) && [webView _interceptEditingKeyEvent:event]) 
+        return;
+    
+    [super keyDown:event];
 }
 
 - (void)keyUp:(NSEvent *)event

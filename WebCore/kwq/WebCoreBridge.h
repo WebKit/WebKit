@@ -482,7 +482,6 @@ typedef enum {
 - (void)issuePasteCommand;
 - (void)respondToChangedSelection;
 - (void)respondToChangedContents;
-- (BOOL)interceptEditingKeyEvent:(NSEvent *)event;
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view;
 - (BOOL)isEditable;
 - (BOOL)shouldBeginEditing:(DOMRange *)range;

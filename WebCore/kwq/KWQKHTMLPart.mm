@@ -3429,11 +3429,6 @@ void KWQKHTMLPart::clearUndoRedoOperations()
     }
 }
 
-bool KWQKHTMLPart::interceptEditingKeyEvent()
-{
-    return [_bridge interceptEditingKeyEvent:_currentEvent];
-}
-
 void KWQKHTMLPart::issueUndoCommand()
 {
     if (canUndo())

@@ -215,8 +215,6 @@ public:
 
     virtual DOMString toString() const;
 
-    virtual void defaultEventHandler(EventImpl *evt);
-    
     virtual bool isURLAttribute(AttributeImpl *attr) const;
     
 #ifndef NDEBUG

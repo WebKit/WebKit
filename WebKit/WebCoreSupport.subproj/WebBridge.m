@@ -1286,11 +1286,6 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[_frame webView] undoManager];
 }
 
-- (BOOL)interceptEditingKeyEvent:(NSEvent *)event
-{
-    return [[_frame webView] _interceptEditingKeyEvent:event];
-}
-
 - (void)issueCutCommand
 {
     [[_frame webView] cut:nil];

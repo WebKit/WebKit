@@ -1,5 +1,20 @@
 2004-07-21  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Trey
+
+        * WebCoreSupport.subproj/WebBridge.m: Remove interceptEditingKeyEvent
+        bridge call over. This method of handling editing key events is now
+        obsolete.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView performKeyEquivalent:]): Send key event over to the 
+        DOM if this view is or contains the first responder. This now
+        happens unconditionally.
+        (-[WebHTMLView keyDown:]): Send key event to the DOM, then see if
+        the web view wants to interpret it an an editing key event. This
+        is the new place to intercept key events for editing.
+
+2004-07-21  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Add implementations for these methods. Formerly, they logged an error.
