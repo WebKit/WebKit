@@ -2,6 +2,25 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3965666> IDN spoofing vulnerability caused by Unicode characters that look like ASCII characters
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (readIDNScriptWhiteListFile): Added. Reads file and parses script names.
+        (readIDNScriptWhiteList): Added. Calls readIDNScriptWhiteList on each of the white list locations in succession.
+        (allCharactersInIDNScriptWhiteList): Renamed from containsPossibleLatinLookalikes and changed sense.
+        Now calls readIDNScriptWhiteList first time, and then uses the read-in list to check the scripts.
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]): Call allCharactersInIDNScriptWhiteList instead of
+        containsPossibleLatinLookalikes.
+        * Resources/IDNScriptWhiteList.txt: Added.
+        * WebKit.pbproj/project.pbxproj: Added IDNScriptWhiteList.txt file.
+
+        * Misc.subproj/WebKitLocalizableStrings.m: Removed. This is simply unused.
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
+2005-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3937667> REGRESSION (Mail): Zooming a window from titlebar button doesn't paint newly-exposed portions of window
 
         * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
