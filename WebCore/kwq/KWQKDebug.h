@@ -41,6 +41,7 @@ public:
 
 inline kdbgstream &endl( kdbgstream &s) { s << "\n"; return s; }
 
+kdbgstream kdDebug(int area = 0);
 kdbgstream kdWarning(int area = 0);
 kdbgstream kdWarning(bool cond, int area = 0);
 kdbgstream kdError(int area = 0);

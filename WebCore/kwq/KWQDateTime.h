@@ -27,9 +27,29 @@
 #define QDATETIME_H_
 
 class QTime {
+public:
+	QTime();
+	QTime(int h, int m);
+	QTime(const QTime &other);
+
+	void start();
+	int msec() const;
+};
+
+class QDate {
+public:
+	QDate(int y, int m, int d);
 };
 
 class QDateTime {
+public:
+	QDateTime();
+	QDateTime(QDate date, QTime time);
+
+	static QDateTime currentDateTime();
+
+	int secsTo(const QDateTime &) const;
+	QTime time() const;
 };
 
 #endif

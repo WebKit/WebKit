@@ -26,4 +26,7 @@
 #ifndef QSORTEDLIST_H_
 #define QSORTEDLIST_H_
 
+template<class T> class QSortedList : public QList<T> {
+};
+
 #endif

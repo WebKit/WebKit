@@ -26,7 +26,12 @@
 #ifndef KURL_H_
 #define KURL_H_
 
+class QString;
+
 class KURL {
+public:
+	QString url() const;
+	bool isEmpty() const;
 };
 
 #endif

@@ -26,4 +26,11 @@
 #ifndef KGLOBALSETTINGS_H_
 #define KGLOBALSETTINGS_H_
 
+class QFont;
+
+class KGlobalSettings {
+public:
+	static QFont generalFont();
+};
+
 #endif

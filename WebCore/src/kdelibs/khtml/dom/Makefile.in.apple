@@ -12,76 +12,48 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../..
+TOPSRCDIR = ../../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
 # Set variables for this directory
 
-CXXYACCOBJECTS = grammar.cpp grammar.h
+ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+CXXOBJECTS = $(filter-out css_extensions.o,$(ALLOBJECTS))
 
-CXXOBJECTS = \
-	array_object.o \
-	bool_object.o \
-	collector.o \
-	date_object.o \
-	debugger.o \
-	error_object.o \
-	function.o \
-	function_object.o \
-	global_object.o \
-	grammar.o \
-	internal.o \
-	kjs.o \
-	lexer.o \
-	lookup.o \
-	math_object.o \
-	nodes.o \
-	number_object.o \
-	object.o \
-	object_object.o \
-	operations.o \
-	regexp.o \
-	regexp_object.o \
-	string_object.o \
-	types.o \
-	ustring.o \
-	$(NULL)
+OBJECTS = $(CXXOBJECTS) 
 
-PROGRAM = testkjs
-
-OBJECTS = $(CXXYACCOBJECTS) $(CXXOBJECTS) 
-
-LIBRARY = libkjs.a
+LIBRARY = libkhtmldom.a
 
 CLEAN_FILES = $(OBJECTS) \
-	grammar.h \
-	grammar.cpp \
-	grammar.cpp.h \
-	testkjs.o \
 	$(LIBRARY) \
-	$(PROGRAM) \
 	$(NULL)
 
 #----------------------------------------------------------------------
 # Set flags for this directory
 
-YACCFLAGS = -d --output-file=grammar.cpp --name-prefix=kjsyy
+CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
+	-I$(TOPSRCDIR)/src/kwq/qt \
+	-I$(TOPSRCDIR)/src/kwq/dcop \
+	-I$(TOPSRCDIR)/src/kwq/kdecore \
+	-I$(TOPSRCDIR)/src/kwq/kio \
+	-I$(TOPSRCDIR)/src/kwq/kparts \
+	-I../css \
+	-I../html \
+	-I../misc \
+	-I../xml \
+	-I.. \
+	-I. \
+	$(NULL)
 
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY) $(PROGRAM)
+all: $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
-
-$(PROGRAM): testkjs.o
-	$(CC) $< -o $@ -L. -lkjs
-
-grammar.h: grammar.cpp.h
-	ln -s grammar.cpp.h grammar.h
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

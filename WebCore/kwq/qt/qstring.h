@@ -31,16 +31,26 @@
 
 #include "qcstring.h"
 
+class QRegExp;
+
 class QChar {
 public:
+    QChar();
     QChar(char);
     QChar(const QChar &);
     QChar lower() const;
     char latin1() const;
+    bool isNull() const;
     bool isDigit() const;
     bool isSpace() const;
     friend inline int operator==(QChar, QChar);
     friend inline int operator!=(QChar, QChar);
+
+    enum Direction {
+	DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
+	DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
+    };
+
 };
 
 class QString {
@@ -58,6 +68,12 @@ public:
     QString stripWhiteSpace() const;
     bool isEmpty() const;
     int contains(const char *) const;
+    int find(char c, int index) const;
+    int find(const char *s, int index, bool b=0) const;
+    int find(const QRegExp &regexp, int index, bool b=0) const;
+    QString mid(int index, int len=0xffffffff) const;
+
+    const char* latin1() const;
     const char *ascii() const;
     // FIXME: is there a standard parameter type for overloaded operators?
     QChar operator[](int) const;

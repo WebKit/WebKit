@@ -26,7 +26,9 @@
 #ifndef QWIDGET_H_
 #define QWIDGET_H_
 
-class QWidget {
+#include "qpaintdevice.h"
+
+class QWidget : public QPaintDevice {
 public:
 	int winId() const;
 };

@@ -3,3 +3,4 @@ Makefile.am
 Makefile.in
 *.kde
 *.dep
+*.moc

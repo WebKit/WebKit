@@ -26,4 +26,9 @@
 #ifndef QVECTOR_H_
 #define QVECTOR_H_
 
+typedef void *Item;
+
+template<class type> class QVector {
+};
+
 #endif

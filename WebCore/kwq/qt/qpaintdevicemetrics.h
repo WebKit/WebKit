@@ -26,4 +26,12 @@
 #ifndef QPAINTDEVICEMETRICS_H_
 #define QPAINTDEVICEMETRICS_H_
 
+class QPaintDevice;
+
+class QPaintDeviceMetrics {
+public:
+	QPaintDeviceMetrics(const QPaintDevice *);
+	int logicalDpiY() const;
+};
+
 #endif

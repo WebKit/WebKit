@@ -26,10 +26,14 @@
 #ifndef QFONT_H_
 #define QFONT_H_
 
+class QString;
+
 class QFont {
 public:
+	void setFamily( const QString &);
 	bool operator==(const QFont &x) const;
 	bool operator!=(const QFont &x) const;
+	enum CharSet {};
 };
 
 #endif

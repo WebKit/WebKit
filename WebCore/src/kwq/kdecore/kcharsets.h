@@ -26,4 +26,12 @@
 #ifndef KCHARSETS_H_
 #define KCHARSETS_H_
 
+class QFont;
+class QString;
+
+class KCharsets {
+public:
+	void setQFont(QFont &f, QString charset) const;
+};
+
 #endif

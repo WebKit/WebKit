@@ -18,12 +18,23 @@ include $(TOPSRCDIR)/Makefile.vars
 #----------------------------------------------------------------------
 # Set variables for this directory
 
-ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
-CXXOBJECTS = $(filter-out css_extensions.o,$(ALLOBJECTS))
+CXXOBJECTS = \
+	dom2_eventsimpl.o \
+	dom2_rangeimpl.o \
+	dom2_traversalimpl.o \
+	dom2_viewsimpl.o \
+	dom_docimpl.o \
+	dom_elementimpl.o \
+	dom_nodeimpl.o \
+	dom_stringimpl.o \
+	dom_textimpl.o \
+	dom_xmlimpl.o \
+	xml_tokenizer.o \
+	$(NULL)
 
 OBJECTS = $(CXXOBJECTS) 
 
-LIBRARY = libkhtmldom.a
+LIBRARY = libkhtmlxml.a
 
 CLEAN_FILES = $(OBJECTS) \
 	$(LIBRARY) \
@@ -33,18 +44,11 @@ CLEAN_FILES = $(OBJECTS) \
 # Set flags for this directory
 
 CXXFLAGS = -I$(TOPSRCDIR)/src/kwq \
-	-I$(TOPSRCDIR)/src/kwq/qt \
-	-I$(TOPSRCDIR)/src/kwq/dcop \
-	-I$(TOPSRCDIR)/src/kwq/kdecore \
-	-I$(TOPSRCDIR)/src/kwq/kio \
-	-I$(TOPSRCDIR)/src/kwq/kparts \
-	-I../css \
-	-I../html \
-	-I../misc \
-	-I../xml \
-	-I.. \
-	-I. \
-	$(NULL)
+        -I$(TOPSRCDIR)/src/kwq/qt \
+        -I.. \
+        -I. \
+        $(NULL)
+
 
 #----------------------------------------------------------------------
 # Set targets for this directory

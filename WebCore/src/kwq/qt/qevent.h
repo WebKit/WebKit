@@ -26,6 +26,8 @@
 #ifndef QEVENT_H_
 #define QEVENT_H_
 
+#include "qregion.h"
+
 // all the following events added to support khtmlview.h 
 class QEvent {};
 class QFocusEvent : public QEvent {};

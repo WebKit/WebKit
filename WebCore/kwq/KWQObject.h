@@ -37,6 +37,7 @@
 #define SIGNAL(x) x
 #define emit
 #define Q_OBJECT
+#define connect(arg1,arg2,arg3,arg4)
 
 class QObject {
 };

@@ -26,4 +26,11 @@
 #ifndef QSTACK_H_
 #define QSTACK_H_
 
+template<class T> class QStack {
+public:
+	bool isEmpty() const;
+	void push(const T *d);
+	T *pop();
+};
+
 #endif

@@ -29,8 +29,10 @@
 #include <qsize.h>
 #include <qcolor.h>
 
+typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned uint;
+typedef unsigned int Q_UINT32;  
 
 // FIXME: bogus forward declaration hack for parse error at line 47 of
 // "dom/css_extensions.h"

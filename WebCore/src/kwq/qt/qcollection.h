@@ -23,15 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KURL_H_
-#define KURL_H_
+#ifndef QCOLLECTION_H_
+#define QCOLLECTION_H_
 
-class QString;
-
-class KURL {
+class QCollection {
 public:
-	QString url() const;
-	bool isEmpty() const;
+	typedef void *Item;
+protected:
+	virtual Item newItem(Item);
 };
 
 #endif
