@@ -2706,6 +2706,11 @@ StyleBaseImpl::parseUnit(const QChar * curP, const QChar *endP, int allowedUnits
         break;
     }
 
+    // Error handling. e.g., don't treat 10pts as a valid unit.
+    split++;
+    if (split <= endP && split->latin1() != ';' && split->isLetterOrNumber())
+        return 0;
+        
     if(unit & allowedUnits)
     {
 #ifdef CSS_DEBUG

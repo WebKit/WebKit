@@ -1,3 +1,17 @@
+2002-12-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for javadoc page.  It specified an invalid unit, and our
+	unit match was on a substring, so it allowed "pts" when it
+	shouldn't.  This patch adds some code to help handle this
+	error case.
+
+	Bug # is 3119830.
+	
+        Reviewed by: rjw
+
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseUnit):
+
 2002-12-05  Chris Blumenberg  <cblu@apple.com>
 
         Reviewed by: rjw
