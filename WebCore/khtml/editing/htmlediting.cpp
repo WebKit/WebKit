@@ -2241,6 +2241,10 @@ void InsertParagraphSeparatorCommand::setFullTypingStyleBeforeInsertion(const Po
     m_fullTypingStyle = computedStyle->copyInheritableProperties();
     m_fullTypingStyle->ref();
     computedStyle->deref();
+    
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    if (typingStyle)
+        m_fullTypingStyle->merge(typingStyle);
 }
 
 void InsertParagraphSeparatorCommand::calculateAndSetTypingStyleAfterInsertion()

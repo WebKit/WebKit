@@ -1,3 +1,21 @@
+2005-01-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Kevin
+
+        Fix for these bugs:
+        
+        <rdar://problem/3939523> in some cases, text does not retain style info after pressing return twice
+        <rdar://problem/3944492> after pressing return twice, text is bold when it shouldn't be
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::setFullTypingStyleBeforeInsertion):
+        Merge the typing style with the computed style for the current position. Fixes both bugs.
+        * khtml/editing/htmlediting.h:
+        * layout-tests/editing/inserting/insert-div-023-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-023.html: Added.
+        * layout-tests/editing/inserting/insert-div-024-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-024.html: Added.
+
 2005-01-07  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3941364, make sure tables reset overflowWidth/Height when they lay out again.  Fixes the odd scrolling
