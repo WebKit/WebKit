@@ -1,3 +1,7 @@
+2003-06-10  Richard Williamson   <rjw@apple.com>
+
+	Back out incorrect fix to 3287862.
+
 2003-06-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3156169>: cmd-click opens new win but stops loading in prev win
@@ -22,7 +26,7 @@
         (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): if there is no request to continue with, don't reset things like the provisional data source since it was never unset in this case
         (-[WebFrame _loadDataSource:withLoadType:formState:]): don't call stopLoading, _setLoadType and _setProvisionalDataSource, since that stops the frame even for command-click and option-click. Do this work in _prepareForProvisionalLoadWithDataSource:loadType: instead.
 
-2003-06-10  Richard Williams   <rjw@apple.com>
+2003-06-10  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3287862.  Don't override resize flags
 	when decoding WebView.
