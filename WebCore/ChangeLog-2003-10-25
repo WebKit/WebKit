@@ -1,3 +1,32 @@
+2002-03-25  Maciej Stachowiak  <mjs@apple.com>
+
+	Improved KURL performance:
+
+	* src/kwq/kdecore/kurl.h, src/kwq/KWQKURL.mm: 
+	(KURL::normalizeURLString): New function to cache rewritten URL
+	strings.
+	(RelativeURLKeyRetainCallBack, RelativeURLKeyReleaseCallBack,
+	RelativeURLKeyCopyDescriptionCallBack,
+	RelativeURLKeyEqualCallBack, RelativeURLKeyHashCallBack,
+	KURL::normalizeRelativeURLString): Cache results of relative URL
+	resolution.
+	(KURL::clearCaches): function to clear the caches so they don't
+	grow forever.
+	(KURL::KURL): Set nothing but the string at construction time.
+	(KURL::isEmpty, KURL::isMalformed, KURL::hasPath, KURL::url,
+	KURL::protocol, KURL::host, KURL::port, KURL::pass, KURL::user,
+	KURL::ref, KURL::query, KURL::path, KURL::setProtocol,
+	KURL::setHost, KURL::setPort, KURL::setRef, KURL::setQuery,
+	KURL::setPath, KURL::prettyURL, KURL::copyOnWrite, KURL::parse,
+	KURL::assemble): Parse into parts on demand instead.
+	(KURL::swap, KURL::operator=): Handle KURL's new urlString field.
+	
+	* src/kwq/KWQKloader.mm: (Cache::requestImage, Cache::requestStyleSheet,
+	Cache::requestScript): Don't redundantly check if KURL isMalformed.
+
+	* src/kwq/KWQKHTMLPart.mm (KHTMLPart::end): Clear KURL caches at
+	the end of each page load.
+
 2002-03-24  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQListImpl.mm: (KWQListImpl::getFirst), (KWQListImpl::getLast):

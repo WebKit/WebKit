@@ -1451,14 +1451,6 @@ CachedImage *Cache::requestImage( DocLoader* dl, const DOMString & url, bool rel
     else
         kurl = url.string();
 
-    if( kurl.isMalformed() )
-    {
-#ifdef CACHE_DEBUG
-      kdDebug( 6060 ) << "Cache: Malformed url: " << kurl.url() << endl;
-#endif
-      return 0;
-    }
-
     CachedObject *o = 0;
     if (!reload)
         o = cache->find(kurl.url());
@@ -1509,12 +1501,6 @@ CachedCSSStyleSheet *Cache::requestStyleSheet( DocLoader* dl, const DOMString & 
     else
         kurl = url.string();
 
-    if( kurl.isMalformed() )
-    {
-      kdDebug( 6060 ) << "Cache: Malformed url: " << kurl.url() << endl;
-      return 0;
-    }
-
     CachedObject *o = cache->find(kurl.url());
     if(!o)
     {
@@ -1561,12 +1547,6 @@ CachedScript *Cache::requestScript( DocLoader* dl, const DOM::DOMString &url, bo
         kurl = dl->m_doc->completeURL( url.string() );
     else
         kurl = url.string();
-
-    if( kurl.isMalformed() )
-    {
-      kdDebug( 6060 ) << "Cache: Malformed url: " << kurl.url() << endl;
-      return 0;
-    }
 
     CachedObject *o = cache->find(kurl.url());
     if(!o)

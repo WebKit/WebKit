@@ -653,6 +653,7 @@ void KHTMLPart::end()
     //QString str = d->m_doc->recursive_toHTML(1);
     
     d->m_doc->close();
+    KURL::clearCaches();
 }
 
 KHTMLSettings *KHTMLPart::settings()

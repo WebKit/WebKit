@@ -62,6 +62,7 @@ public:
     // static member functions -------------------------------------------------
 
     static QString decode_string(const QString &urlString);
+    static void clearCaches();
 
     // constructors, copy constructors, and destructors ------------------------
 
@@ -106,11 +107,17 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
+    void swap(KURL &other);
     void copyOnWrite();
+    void parse() const;
+    void assemble();
+    QString normalizeURLString(const QString &s);
+    QString normalizeRelativeURLString(const KURL &base, const QString &relative);
 
     class KWQKURLPrivate;
 
-    KWQRefPtr<KWQKURLPrivate> d;
+    mutable KWQRefPtr<KWQKURLPrivate> d;
+    QString urlString;
 }; // class KURL ===============================================================
 
 #endif

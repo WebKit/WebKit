@@ -29,6 +29,7 @@
 #ifndef USING_BORROWED_KURL
 
 #import <Foundation/NSURLPathUtilities.h>
+#include <CoreFoundation/CoreFoundation.h>
 
 class KURL::KWQKURLPrivate
 {
@@ -277,44 +278,179 @@ void KURL::KWQKURLPrivate::compose()
     }
 }
 
+struct RelativeURLKey {
+    CFStringRef base;
+    CFStringRef relative;
+};
+
+static const void *RelativeURLKeyRetainCallBack(CFAllocatorRef allocator, const void *value)
+{
+    RelativeURLKey *key = value;
+    CFRetain(key->base);
+    CFRetain(key->relative);
+    return key;
+}
+
+static void RelativeURLKeyReleaseCallBack(CFAllocatorRef allocator, const void *value)
+{
+    RelativeURLKey *key = value;
+    CFRelease(key->base);
+    CFRelease(key->relative);
+    delete key;
+}
+
+static CFStringRef RelativeURLKeyCopyDescriptionCallBack(const void *value)
+{
+    return CFSTR("");
+}
+
+static unsigned char RelativeURLKeyEqualCallBack(const void *value1, const void *value2)
+{
+    RelativeURLKey *key1 = value1;
+    RelativeURLKey *key2 = value2;
+    
+    return CFEqual(key1->base, key2->base) && CFEqual(key1->relative, key2->relative);
+}
+
+static CFHashCode RelativeURLKeyHashCallBack(const void *value)
+{
+    RelativeURLKey *key = value;
+    return CFHash(key->base) ^ CFHash(key->relative);
+}
+
+static const  CFDictionaryKeyCallBacks RelativeURLKeyCallBacks = {
+    0,
+    RelativeURLKeyRetainCallBack,
+    RelativeURLKeyReleaseCallBack,
+    RelativeURLKeyCopyDescriptionCallBack,
+    RelativeURLKeyEqualCallBack,
+    RelativeURLKeyHashCallBack,
+};
+
+
+static CFMutableDictionaryRef NormalizedURLCache = NULL;
+static CFMutableDictionaryRef NormalizedRelativeURLCache = NULL;
+
+void KURL::clearCaches()
+{
+    if (NormalizedURLCache != NULL) {
+	CFDictionaryRemoveAllValues(NormalizedURLCache);
+    }
+    if (NormalizedRelativeURLCache != NULL) {
+	CFDictionaryRemoveAllValues(NormalizedRelativeURLCache);
+    }
+}
+
+QString KURL::normalizeURLString(const QString &s)
+{
+    CFMutableStringRef result = NULL;
+
+    if (NormalizedURLCache == NULL) {
+	NormalizedURLCache = CFDictionaryCreateMutable(NULL, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
+    }
+
+    result = CFDictionaryGetValue(NormalizedURLCache, s.getCFMutableString());
+
+    if (result != NULL) {
+	return QString::fromCFMutableString(result);
+    } else {
+	// normalize the URL string as KURL would:
+
+	QString qurl = QString(s);
+
+	// Special handling for paths
+	if (!qurl.isEmpty() && qurl[0] == '/') {
+	    qurl = QString("file:") + qurl;
+	}
+
+	if (d.isNull()) {
+	    d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(qurl));
+	}
+
+	qurl = d->sURL;
+
+	if (qurl.startsWith("file:///")) {
+	    qurl = QString("file:/") + qurl.mid(8);
+	} else if (qurl == "file://localhost") {
+	    qurl = QString("file:");
+	} else if (qurl.startsWith("file://localhost/")) {
+	    qurl = QString("file:/") + qurl.mid(17);
+	}
+
+	CFDictionarySetValue(NormalizedURLCache, s.getCFMutableString(), qurl.getCFMutableString());
+
+	return qurl;
+    }
+}
+
+
+QString KURL::normalizeRelativeURLString(const KURL &base, const QString &relative)
+{
+    CFMutableStringRef result = NULL;
+    RelativeURLKey key = { base.urlString.getCFMutableString(), relative.getCFMutableString() };
+
+    if (NormalizedRelativeURLCache == NULL) {
+	NormalizedRelativeURLCache = CFDictionaryCreateMutable(NULL, 0, &RelativeURLKeyCallBacks, &kCFTypeDictionaryValueCallBacks); 
+    }
+
+    result = CFDictionaryGetValue(NormalizedRelativeURLCache, &key);
+
+    if (result != NULL) {
+	return QString::fromCFMutableString(result);
+    } else {
+	QString result;
+	if (relative.isEmpty()) {
+	    result = base.urlString;
+	} else {
+	    base.parse();
+
+	    CFURLRef relativeURL = CFURLCreateWithString(NULL, relative.getCFMutableString(), base.d->urlRef);
+	    if (relativeURL == NULL) {
+		result = normalizeURLString(relative);
+	    } else {
+		CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
+		result = normalizeURLString(QString::fromCFString(CFURLGetString(absoluteURL)));
+		CFRelease(relativeURL);
+		CFRelease(absoluteURL);
+	    }
+	}
+		
+	CFDictionarySetValue(NormalizedRelativeURLCache, 
+			     new RelativeURLKey(key), 
+			     result.getCFMutableString());
+	return result;
+    }
+}
+
 // KURL
 
 KURL::KURL() : 
-    d(new KURL::KWQKURLPrivate(QString()))
+    d(NULL),
+    urlString(normalizeURLString(QString()))
 {
 }
 
 KURL::KURL(const char *url, int encoding_hint=0) :
-    d(new KURL::KWQKURLPrivate(url))
+    d(NULL),
+    urlString(normalizeURLString(url))
 {
 }
 
 KURL::KURL(const QString &url, int encoding_hint=0) :
-    d(new KURL::KWQKURLPrivate(url))
+    d(NULL),
+    urlString(normalizeURLString(url))
 {
 }
 
-KURL::KURL(const KURL &base, const QString &relative)
+KURL::KURL(const KURL &base, const QString &relative) :
+    d(NULL),
+    urlString(normalizeRelativeURLString(base, relative))
 {
-    if (relative.isEmpty()) {
-	d = base.d;
-    } else {
-	CFURLRef relativeURL = CFURLCreateWithString(NULL, relative.getCFMutableString(), base.d->urlRef);
-	if (relativeURL == NULL) {
-	    d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(relative));
-	} else {
-	    CFURLRef absoluteURL = CFURLCopyAbsoluteURL(relativeURL);
-	
-	    d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(QString::fromCFString(CFURLGetString(absoluteURL))));
-	    
-	    CFRelease (relativeURL);
-	    CFRelease (absoluteURL);
-	}
-    }
 }
 
 KURL::KURL(const KURL &other) : 
-    d(other.d)
+    d(other.d),
+    urlString(other.urlString)
 {
 }
 
@@ -324,80 +460,72 @@ KURL::~KURL()
 
 bool KURL::isEmpty() const
 {
+    parse();
     return d->sURL.isEmpty();
 }
 
 bool KURL::isMalformed() const
 {
+    parse();
     return (d->urlRef == NULL);
 }
 
 bool KURL::hasPath() const
 {
+    parse();
     return !d->sPath.isEmpty();
 }
 
 QString KURL::url() const
 {
-    if (d->urlRef == NULL) {
-        return d->sURL;
-    } 
-
-    QString qurl = QString::fromCFString(CFURLGetString(d->urlRef));
-
-    // Special handling for file: URLs
-    if (qurl.startsWith("file:///")) {
-        qurl = QString("file:/") + qurl.mid(8);
-    } else if (d->sURL == "file://localhost") {
-        qurl = QString("file:/");
-    } else if (qurl.startsWith("file://localhost/")) {
-        qurl = QString("file:/") + qurl.mid(17);
-    }
-
-    if (d->addedSlash) {
-	qurl = qurl.left(qurl.length()-1);
-    }
-
-    return qurl;
+    return urlString;
 }
 
 QString KURL::protocol() const
 {
+    parse();
     return d->sProtocol;
 }
 
 QString KURL::host() const
 {
+    parse();
     return d->sHost;
 }
 
 unsigned short int KURL::port() const
 {
+    parse();
     return d->iPort;
 }
 
 QString KURL::pass() const
 {
+    parse();
     return d->sPass;
 }
 
 QString KURL::user() const
 {
+    parse();
     return d->sUser;
 }
 
 QString KURL::ref() const
 {
+    parse();
     return d->sRef;
 }
 
 QString KURL::query() const
 {
+    parse();
     return d->sQuery;
 }
 
 QString KURL::path() const
 {
+    parse();
     return d->sPath;
 }
 
@@ -405,28 +533,28 @@ void KURL::setProtocol(const QString &s)
 {
     copyOnWrite();
     d->sProtocol = s;
-    d->compose();
+    assemble();
 }
 
 void KURL::setHost(const QString &s)
 {
     copyOnWrite();
     d->sHost = s;
-    d->compose();
+    assemble();
 }
 
 void KURL::setPort(unsigned short i)
 {
     copyOnWrite();
     d->iPort = i;
-    d->compose();
+    assemble();
 }
 
 void KURL::setRef(const QString &s)
 {
     copyOnWrite();
     d->sRef = s;
-    d->compose();
+    assemble();
 }
 
 void KURL::setQuery(const QString &query, int encoding_hint=0)
@@ -437,7 +565,7 @@ void KURL::setQuery(const QString &query, int encoding_hint=0)
     } else {
 	d->sQuery = "?" + query;
     }
-    d->compose();
+    assemble();
 }
 
 void KURL::setPath(const QString &s)
@@ -445,11 +573,12 @@ void KURL::setPath(const QString &s)
     copyOnWrite();
     d->sPath = s;
     d->escapedPath = escapeQString(s);
-    d->compose();
+    assemble();
 }
 
 QString KURL::prettyURL(int trailing=0) const
 {
+    parse();
     if (d->urlRef == NULL) {
         return d->sURL;
     }
@@ -492,18 +621,23 @@ QString KURL::prettyURL(int trailing=0) const
 }
 
 
+void KURL::swap(KURL &other)
+{
+    KWQRefPtr<KURL::KWQKURLPrivate> tmpD = other.d;
+    QString tmpString = other.urlString;
+    
+    other.d = d;
+    d = tmpD;
+    other.urlString = urlString;
+    urlString = tmpString;
+}   
+
+
 KURL &KURL::operator=(const KURL &other)
 {
-    KURL tmp(other);
-    KWQRefPtr<KURL::KWQKURLPrivate> tmpD = tmp.d;
-    
-    tmp.d = d;
-    d = tmpD;
-    
+    KURL(other).swap(*this);
     return *this;
 }
-
-
 
 QString KURL::decode_string(const QString &urlString)
 {
@@ -514,14 +648,28 @@ QString KURL::decode_string(const QString &urlString)
     return qUnescaped;
 }
 
-
 void KURL::copyOnWrite()
 {
+    parse();
     if (d->refCount > 1) {
 	d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(*d));
     }
 }
 
+void KURL::parse() const
+{
+    if (d.isNull()) {
+	d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(urlString));
+    }
+}
+
+void KURL::assemble()
+{
+    if (!d.isNull()) {
+	d->compose();
+	urlString = d->sURL;
+    }
+}
 
 #endif
 
