@@ -57,6 +57,11 @@
             return nil;
     }
     
+    // FIXME: This is a very temporary workaround for <rdar://problem/3396936>: can't obtain a digital ID from Verisign, form submission fails
+    if ([challenge length] == 0) {
+        challenge = @"foo";
+    }
+    
     char *key = signedPublicKeyAndChallengeString(keySize, [challenge cString]);
     NSString *result = key ? [NSString stringWithCString:key] : nil;
     free(key);
@@ -64,9 +69,9 @@
     return result;
 }
 
-- (BOOL)addCertificateToKeyChainFromFileAtPath:(NSString *)path
+- (BOOL)addCertificatesToKeychainFromData:(NSData *)data;
 {
-    return addCertificateToKeyChainFromFile([path fileSystemRepresentation]);
+    return addCertificatesToKeychainFromData([data bytes], [data length]);
 }
 
 @end

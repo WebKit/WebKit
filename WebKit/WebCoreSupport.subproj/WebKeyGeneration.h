@@ -68,7 +68,7 @@ extern "C" {
     extern const SEC_ASN1Template SignedPublicKeyAndChallengeTemplate[];
 
     char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge);
-    bool addCertificateToKeyChainFromFile(const char *path);
+    bool addCertificatesToKeychainFromData(const void *bytes, unsigned length);
     
 #ifdef __cplusplus
 }

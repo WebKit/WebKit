@@ -275,7 +275,7 @@ char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
                             CSSM_KEYATTR_RETURN_REF,	// pub attrs
                             CSSM_KEYUSE_ANY,				// might want to restrict this
                             CSSM_KEYATTR_SENSITIVE | CSSM_KEYATTR_RETURN_REF |
-                            CSSM_KEYATTR_PERMANENT |CSSM_KEYATTR_EXTRACTABLE,
+                            CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE,
                             /*
                              * FIXME: should have a non-NULL initialAccess here, but
                              * I do not know any easy way of doing that. Ask Perry
@@ -318,11 +318,10 @@ char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
         ERROR("***Error decoding subject public key info\n");
         goto errOut;
     }
+    
     pkc->challenge.Data = (uint8 *)challenge;
     pkc->challenge.Length = strlen(challenge);
-    perr = coder.encodeItem(pkc, 
-                            PublicKeyAndChallengeTemplate,
-                            encodedPkc);
+    perr = coder.encodeItem(pkc, PublicKeyAndChallengeTemplate, encodedPkc);
     if (perr) {
         /* should never happen */
         ERROR("***Error enccoding PublicKeyAndChallenge\n");
@@ -332,8 +331,7 @@ char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
     /*
      * Sign the encoded PublicKeyAndChallenge.
      */
-    crtn = gnrSign(cspHand, &encodedPkc, privKey,
-                   GNR_SIG_ALG, &signature);
+    crtn = gnrSign(cspHand, &encodedPkc, privKey, GNR_SIG_ALG, &signature);
     if (crtn) {
         goto errOut;
     }
@@ -390,7 +388,7 @@ errOut:
 * Per-cert processing, called for each cert we extract from the 
  * incoming blob.
  */
-bool addCertificateToKeyChainFromData(const unsigned char *certData,
+bool addCertificateToKeychainFromData(const unsigned char *certData,
                                       unsigned certDataLen,
                                       unsigned certNum)
 {
@@ -431,27 +429,21 @@ bool addCertificateToKeyChainFromData(const unsigned char *certData,
     return true;
 }
 
-bool addCertificateToKeyChainFromFile(const char *path)
+bool addCertificatesToKeychainFromData(const void *bytes, unsigned length)
 {   
     bool result = false;
-    
-    /* read inFile */
-    unsigned char *inFile = NULL;
-    unsigned inFileLen = 0;
-    if (readFile(path, &inFile, &inFileLen)) {
-        return false;
-    }
-    
+
     /* DER-decode, first as NetscapeCertSequence */
     SecNssCoder coder;
     NetscapeCertSequence certSeq;
     
     memset(&certSeq, 0, sizeof(certSeq));
-    PRErrorCode perr = coder.decode(inFile, inFileLen, NetscapeCertSequenceTemplate, &certSeq);
+    PRErrorCode perr = coder.decode(bytes, length, NetscapeCertSequenceTemplate, &certSeq);
     if (perr == 0) {
-        /*
-         * Probably should verify (contentType == netscape-cert-sequence)
-         */
+        if (memcmp(certSeq.contentType.Data, CSSMOID_PKCS7_SignedData.Data, certSeq.contentType.Length) == 0) {
+            // FIXME: <rdar://problem/3506645>: decode PKCS7 encoded certificates downloaded from Verisign
+            return false;
+        }
         /*
          * Last cert is a root, which we do NOT want to add
          * to the user's keychain.
@@ -459,7 +451,7 @@ bool addCertificateToKeyChainFromFile(const char *path)
         unsigned numCerts = nssArraySize((const void **)certSeq.certs) - 1;
         for (unsigned i=0; i<numCerts; i++) {
             CSSM_DATA *cert = certSeq.certs[i];
-            result = addCertificateToKeyChainFromData(cert->Data, cert->Length, i);
+            result = addCertificateToKeychainFromData(cert->Data, cert->Length, i);
             if (!result) {
                 break;
             }
@@ -470,10 +462,8 @@ bool addCertificateToKeyChainFromFile(const char *path)
          * a cert. FIXME: Netscape spec says the blob might also be PKCS7
          * format, which we're not handling here.
          */
-        result = addCertificateToKeyChainFromData(inFile, inFileLen, 0); 
+        result = addCertificateToKeychainFromData(bytes, length, 0); 
     }
-    
-    /* this was mallocd by readFile() */
-    free(inFile);
+
     return result;
 }

@@ -1,3 +1,18 @@
+2003-12-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3505537>: certificates downloaded from Verisign are multipart/mixed, must be parsed out
+
+        Reviewed by kocienda.
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (signedPublicKeyAndChallengeString): tweak
+        (addCertificateToKeychainFromData): renamed to use lowercase "c" in "keychain"
+        (addCertificatesToKeychainFromData): take data instead of a path to a file
+        * WebCoreSupport.subproj/WebKeyGeneration.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.m:
+        (-[WebKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:]): added temporary workaround for 3396936
+
 2003-12-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3504237>: add downloaded certificates to keychain
