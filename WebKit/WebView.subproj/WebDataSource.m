@@ -249,50 +249,9 @@
     return [[self representation] isKindOfClass: [WebHTMLRepresentation class]];
 }
 
-// URL reference point, these should probably not be public for 1.0.
-- (NSURL *)base
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::base is not implemented"];
-    return nil;
-}
-
-
-- (NSString *)baseTarget
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::baseTarget is not implemented"];
-    return nil;
-}
-
 - (NSString *)encoding
 {
     return _private->encoding;
-}
-
-// Style sheet
-- (void)setUserStyleSheetFromURL:(NSURL *)URL
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::setUserStyleSheetFromURL: is not implemented"];
-}
-
-- (void)setUserStyleSheetFromString:(NSString *)sheet
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::setUserStyleSheetFromString: is not implemented"];
-}
-
-// a.k.a shortcut icons, http://msdn.microsoft.com/workshop/Author/dhtml/howto/ShortcutIcon.asp.
-// This method may be moved to a category to prevent unnecessary linkage to the AppKit.  Note, however
-// that WebCore also has dependencies on the appkit.
-- (NSImage *)icon
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::icon is not implemented"];
-    return nil;
-}
-
-// Is page secure, e.g. https, ftps
-- (BOOL)isPageSecure
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::isPageSecure is not implemented"];
-    return NO;
 }
 
 // Returns nil or the page title.

@@ -186,8 +186,6 @@
 }
 
 
-// This method should not be public until we have more completely
-// understood how WebView will be subclassed.
 - (void)layout
 {
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
@@ -296,10 +294,16 @@
 
 
 // Get an attributed string that represents the current selection.
-- (NSAttributedString *)selectedText
+- (NSAttributedString *)selectedAttributedText
 {
     [NSException raise:WebMethodNotYetImplemented format:@"WebView::selectedText is not implemented"];
     return nil;
+}
+
+
+- (NSString *)selectedText
+{
+    return [[self _bridge] selectedText];
 }
 
 
@@ -330,7 +334,6 @@
 }
 
 
-// This should eventually be removed.
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "%@ drawing", self);

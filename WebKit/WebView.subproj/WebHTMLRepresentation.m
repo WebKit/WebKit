@@ -1,5 +1,5 @@
 /*	
-    WebHTMLRepresentation.mm
+        WebHTMLRepresentation.m
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
@@ -77,6 +77,12 @@
 {
     // FIXME implement
     return @"";
+}
+
+- (NSAttributedString *)attributedText
+{
+    // FIXME:  Implement
+    return nil;
 }
 
 

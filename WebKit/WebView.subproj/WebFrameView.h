@@ -7,10 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-/*
-    ============================================================================= 
-*/
-
 @class WebDataSource;
 @class WebController;
 @class WebViewPrivate;

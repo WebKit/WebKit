@@ -173,46 +173,9 @@
 - (BOOL)isDocumentHTML;
 
 /*!
-    @method base	
-    @abstract URL reference point, these should probably not be public for 1.0.
-*/
-- (NSURL *)base;
-
-/*!
-    @method baseTarget
-*/
-- (NSString *)baseTarget;
-
-/*!
     @method encoding
 */
 - (NSString *)encoding;
-
-/*!
-    @method setUserStyleSheetFromURL:
-    @param URL
-*/
-- (void)setUserStyleSheetFromURL: (NSURL *)URL;
-
-/*!
-    @method setUserStyleSheetFromString:
-    @param sheet
-*/
-- (void)setUserStyleSheetFromString: (NSString *)sheet;
-
-/*!
-    @method icon
-    @discussion a.k.a shortcut icons, http://msdn.microsoft.com/workshop/Author/dhtml/howto/ShortcutIcon.asp.
-    This method may be moved to a category to prevent unnecessary linkage to the AppKit.  Note, however
-    that WebCore also has dependencies on the appkit.
-*/
-- (NSImage *)icon;
-
-/*!
-    @method isPageSecure
-    @discussion Is page secure, e.g. https, ftps
-*/
-- (BOOL)isPageSecure;
 
 /*!
     @method pageTitle

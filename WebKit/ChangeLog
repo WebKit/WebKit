@@ -1,7 +1,27 @@
 2002-09-18  Richard Williamson   <rjw@apple.com>
 
+        More documentation stuff.
+        Added attributed text API as requested (yuck!).
+        Add reconstructedDocumentSource API as requested.
+        Removed cruft (stale API, bogus comments).
+         
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation reconstructedDocumentSource]):
+        (-[WebHTMLRepresentation attributedText]):
+        * WebView.subproj/WebHTMLRepresentationPrivate.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView selectedAttributedText]):
+        (-[WebHTMLView selectedText]):
+        * WebView.subproj/WebView.h:
+
+2002-09-18  Richard Williamson   <rjw@apple.com>
+
         Added document keywords to headers.
-        Made bookmark related APIs private.
+        Made bookmark related APIs private (for now).
         * Misc.subproj/WebIconDatabase.h:
         * Misc.subproj/WebIconLoader.h:
         * Misc.subproj/WebKitErrors.h:

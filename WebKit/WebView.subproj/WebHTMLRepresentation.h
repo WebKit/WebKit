@@ -30,5 +30,10 @@
 */
 - (NSString *)reconstructedDocumentSource;
 
+/*!
+    @method attributedText
+    @discussion Return the document source as an attributed string.
+*/
+- (NSAttributedString *)attributedText;
 
 @end
