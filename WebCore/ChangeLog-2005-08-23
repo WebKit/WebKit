@@ -1,3 +1,18 @@
+2004-07-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        <rdar://problem/3587601> reproducible assertion failure in Blot deleting text, then image at Yahoo.com
+        
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace): Relax assertion
+        that nodes are text nodes during the walk of eligible nodes that could possibly be
+        deleted. Change the assertion to an conditional check for text nodes. We may have 
+        unrendered nodes in the mix here (as is the case in the bug where the assertion
+        failed on an AREA element), and the conditional check is sufficient to
+        skip them while leaving the delete logic we want unperturbed. 
+
 2004-07-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

@@ -1010,39 +1010,40 @@ Position DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const Position
     Position endingPosition = upstream;
     
     while (it.current() != downstream) {
-
         Position next = it.peekNext();
         if (next.node() != deleteStart.node()) {
-            ASSERT(deleteStart.node()->isTextNode());
-            TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
-            unsigned long count = it.current().offset() - deleteStart.offset();
-            if (count == textNode->length()) {
-                LOG(Editing, "   removeNodeAndPrune 1: [%p]\n", textNode);
-                if (textNode == endingPosition.node())
-                    endingPosition = Position(next.node(), next.node()->caretMinOffset());
-                removeNodeAndPrune(textNode);
-            }
-            else {
-                LOG(Editing, "   deleteText 1: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), it.current().offset() - deleteStart.offset());
-                deleteText(textNode, deleteStart.offset(), count);
+            if (deleteStart.node()->isTextNode()) {
+                TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
+                unsigned long count = it.current().offset() - deleteStart.offset();
+                if (count == textNode->length()) {
+                    LOG(Editing, "   removeNodeAndPrune 1: [%p]\n", textNode);
+                    if (textNode == endingPosition.node())
+                        endingPosition = Position(next.node(), next.node()->caretMinOffset());
+                    removeNodeAndPrune(textNode);
+                }
+                else {
+                    LOG(Editing, "   deleteText 1: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), it.current().offset() - deleteStart.offset());
+                    deleteText(textNode, deleteStart.offset(), count);
+                }
             }
             deleteStart = next;
         }
         else if (next == downstream) {
-            ASSERT(deleteStart.node() == downstream.node());
-            ASSERT(downstream.node()->isTextNode());
-            TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
-            unsigned long count = downstream.offset() - deleteStart.offset();
-            ASSERT(count <= textNode->length());
-            if (count == textNode->length()) {
-                LOG(Editing, "   removeNodeAndPrune 2: [%p]\n", textNode);
-                removeNodeAndPrune(textNode);
-            }
-            else {
-                LOG(Editing, "   deleteText 2: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), count);
-                deleteText(textNode, deleteStart.offset(), count);
-                m_charactersDeleted = count;
-                endingPosition = Position(downstream.node(), downstream.offset() - m_charactersDeleted);
+            if (downstream.node()->isTextNode()) {
+                ASSERT(deleteStart.node() == downstream.node());
+                TextImpl *textNode = static_cast<TextImpl *>(deleteStart.node());
+                unsigned long count = downstream.offset() - deleteStart.offset();
+                ASSERT(count <= textNode->length());
+                if (count == textNode->length()) {
+                    LOG(Editing, "   removeNodeAndPrune 2: [%p]\n", textNode);
+                    removeNodeAndPrune(textNode);
+                }
+                else {
+                    LOG(Editing, "   deleteText 2: [%p:%d:%d:%d]\n", textNode, textNode->length(), deleteStart.offset(), count);
+                    deleteText(textNode, deleteStart.offset(), count);
+                    m_charactersDeleted = count;
+                    endingPosition = Position(downstream.node(), downstream.offset() - m_charactersDeleted);
+                }
             }
         }
         
