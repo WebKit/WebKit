@@ -200,6 +200,10 @@ VisiblePosition startOfWord(const VisiblePosition &c, EWordSide side)
 {
     VisiblePosition p = c;
     if (side == RightWordIfOnBoundary) {
+        // at paragraph end, the startofWord is the current position
+        if (isEndOfParagraph(c))
+            return c;
+        
         p = c.next();
         if (p.isNull())
             return c;
@@ -221,7 +225,14 @@ VisiblePosition endOfWord(const VisiblePosition &c, EWordSide side)
         p = c.previous();
         if (p.isNull())
             return c;
+    } else {
+        // at paragraph end, the endOfWord is the start of next paragraph
+        if (isEndOfParagraph(c)) {
+            p = c.next();
+            return p.isNotNull() ? p : c;
+        }
     }
+    
     return nextBoundary(p, endWordBoundary);
 }
 
@@ -380,7 +391,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, EAffinity affinit
                     break;
                 }
 
-                return VisiblePosition(pos, UPSTREAM);
+                return VisiblePosition(pos, DOWNSTREAM);
             }
             n = n->previousEditable();
         }
@@ -398,7 +409,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, EAffinity affinit
     // Could not find a previous line. This means we must already be on the first line.
     // Move to the start of the content in this block, which effectively moves us
     // to the start of the line we're on.
-    return VisiblePosition(node->rootEditableElement(), 0, UPSTREAM);
+    return VisiblePosition(node->rootEditableElement(), 0, DOWNSTREAM);
 }
 
 VisiblePosition nextLinePosition(const VisiblePosition &c, EAffinity affinity, int x)
@@ -443,7 +454,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &c, EAffinity affinity, i
                     break;
                 }
 
-                return VisiblePosition(pos, UPSTREAM);
+                return VisiblePosition(pos, DOWNSTREAM);
             }
             n = n->nextEditable();
         }
@@ -579,17 +590,17 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
             continue;
         if (r->isBR()) {
             if (includeLineBreak)
-                return VisiblePosition(n, 1, UPSTREAM);
+                return VisiblePosition(n, 1, DOWNSTREAM);
             break;
         }
         if (r->isBlockFlow()) {
             if (includeLineBreak)
-                return VisiblePosition(n, 0, UPSTREAM);
+                return VisiblePosition(n, 0, DOWNSTREAM);
             break;
         }
         if (r->isText()) {
             if (includeLineBreak && !n->isAncestor(startBlock))
-                return VisiblePosition(n, 0, UPSTREAM);
+                return VisiblePosition(n, 0, DOWNSTREAM);
             long length = static_cast<RenderText *>(r)->length();
             if (style->whiteSpace() == PRE) {
                 QChar *text = static_cast<RenderText *>(r)->text();
@@ -598,7 +609,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
                     o = offset;
                 for (long i = o; i < length; ++i)
                     if (text[i] == '\n')
-                        return VisiblePosition(n, i + includeLineBreak, UPSTREAM);
+                        return VisiblePosition(n, i + includeLineBreak, DOWNSTREAM);
             }
             node = n;
             offset = length;
@@ -610,7 +621,7 @@ VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak inclu
         }
     }
 
-    return VisiblePosition(node, offset, UPSTREAM);
+    return VisiblePosition(node, offset, DOWNSTREAM);
 }
 
 bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
