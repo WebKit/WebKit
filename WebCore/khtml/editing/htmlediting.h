@@ -186,6 +186,7 @@ protected:
     void insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text);
     void joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2);
     void removeCSSProperty(DOM::CSSStyleDeclarationImpl *, int property);
+    void removeFullySelectedNode(DOM::NodeImpl *);
     void removeNodeAttribute(DOM::ElementImpl *, int attribute);
     void removeNode(DOM::NodeImpl *removeChild);
     void removeNodePreservingChildren(DOM::NodeImpl *node);

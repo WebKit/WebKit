@@ -1,3 +1,23 @@
+2004-10-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3836986> Delete code removes elements of table structure; can result in very broken-looking web pages
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isTableStructureNode): New helper. Determines whether a node is a table cell,
+        row, section, or column.
+        (khtml::CompositeEditCommand::removeFullySelectedNode): New helper that recurses into elements
+        of table structure when doing deletes, rather than deleting the structure elements themselves.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Do not move content between elements
+        of table structure. We may want to revisit this some day, but this seems like the best behavior
+        to me now.
+        (khtml::DeleteSelectionCommand::doApply): Call removeFullySelectedNode instead of removeNode
+        where needed.
+        * khtml/editing/htmlediting.h: Add declarations for new functions.
+
 2004-10-12  Richard Williamson   <rjw@apple.com>
 
         Fixed access to DOM object via WebScriptObject API.

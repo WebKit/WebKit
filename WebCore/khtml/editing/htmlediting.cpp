@@ -150,6 +150,12 @@ static inline bool isTab(const DOMString &text)
     return text[0] == tabCharacter;
 }
 
+static inline bool isTableStructureNode(const NodeImpl *node)
+{
+    RenderObject *r = node->renderer();
+    return (r && (r->isTableCell() || r->isTableRow() || r->isTableSection() || r->isTableCol()));
+}
+
 static DOMString &nonBreakingSpaceString()
 {
     static DOMString nonBreakingSpaceString = QString(QChar(0xa0));
@@ -594,6 +600,23 @@ void CompositeEditCommand::appendNode(NodeImpl *appendChild, NodeImpl *parent)
 {
     EditCommandPtr cmd(new AppendNodeCommand(document(), appendChild, parent));
     applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommand::removeFullySelectedNode(NodeImpl *node)
+{
+    if (isTableStructureNode(node)) {
+        // Do not remove an element of table structure; remove its contents.
+        NodeImpl *child = node->firstChild();
+        while (child) {
+            NodeImpl *remove = child;
+            child = child->nextSibling();
+            removeFullySelectedNode(remove);
+        }
+    }
+    else {
+        EditCommandPtr cmd(new RemoveNodeCommand(document(), node));
+        applyCommandToComposite(cmd);
+    }
 }
 
 void CompositeEditCommand::removeNode(NodeImpl *removeChild)
@@ -1142,6 +1165,10 @@ void DeleteSelectionCommand::moveNodesAfterNode(NodeImpl *startNode, NodeImpl *d
         return;
 
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+    if (isTableStructureNode(startBlock))
+        // Do not move content between parts of a table
+        return;
+
     NodeImpl *node = startNode == startBlock ? startBlock->firstChild() : startNode;
 
     // Only do the move if node is a text node.
@@ -1267,7 +1294,7 @@ void DeleteSelectionCommand::doApply()
         if (!startNode->renderer() || 
             (startOffset <= startNode->caretMinOffset() && downstreamEnd.offset() >= startNode->caretMaxOffset())) {
             // just delete
-            removeNode(startNode);
+            removeFullySelectedNode(startNode);
         }
         else if (downstreamEnd.offset() - startOffset > 0) {
             // in a text node that needs to be trimmed
@@ -1290,7 +1317,7 @@ void DeleteSelectionCommand::doApply()
         while (node && node != downstreamEnd.node()) {
             if (!downstreamEnd.node()->isAncestor(node)) {
                 NodeImpl *nextNode = node->traverseNextSibling();
-                removeNode(node);
+                removeFullySelectedNode(node);
                 node = nextNode;
             }
             else {
@@ -1299,7 +1326,7 @@ void DeleteSelectionCommand::doApply()
                     n = n->lastChild();
                 if (n == downstreamEnd.node() && downstreamEnd.offset() >= downstreamEnd.node()->caretMaxOffset()) {
                     NodeImpl *nextNode = node->traverseNextSibling();
-                    removeNode(node);
+                    removeFullySelectedNode(node);
                     node = nextNode;
                 } 
                 else {
@@ -1312,7 +1339,7 @@ void DeleteSelectionCommand::doApply()
             if (downstreamEnd.offset() >= downstreamEnd.node()->caretMaxOffset()) {
                 // need to delete whole node
                 // we can get here if this is the last node in the block
-                removeNode(downstreamEnd.node());
+                removeFullySelectedNode(downstreamEnd.node());
                 trailingValid = false;
             }
             else {
