@@ -1048,6 +1048,18 @@ void removeWrapperForRGB(QRgb value)
 
 @end
 
+@implementation DOMRGBColor (DOMRGBColorExtensions)
+
+- (DOMCSSPrimitiveValue *)alpha
+{
+    QRgb rgb = reinterpret_cast<QRgb>(_internal);
+    float value = (float)qAlpha(rgb) / 0xFF;
+    return [DOMCSSPrimitiveValue _valueWithImpl:new CSSPrimitiveValueImpl(value, DOM::CSSPrimitiveValue::CSS_NUMBER)];
+    
+}
+
+@end
+
 //------------------------------------------------------------------------------------------
 // DOMRect
 
