@@ -84,8 +84,12 @@ bool isBreakable(const QChar *s, int pos, int len, bool breakNBSP)
     const QChar *c = s+pos;
     unsigned short ch = c->unicode();
 
-    // Newlines are always breakable, as are non-breaking spaces when breakNBSP is true.
-    if (ch == '\n' || (breakNBSP && ch == 0xa0))
+    // Newlines and spaces are always breakable, as are non-breaking spaces when breakNBSP is true.
+    // FIXME: Tiger is not allowing breaks on spaces after bullet characters like &#183;.  We don't know
+    // at the moment whether this behavior is correct or not.  Since Tiger is also not allowing breaks on spaces
+    // after hyphen-like characters, this does not seem ideal for the Web.  Therefore for now we override space
+    // characters up front and bypass the Unicode line breaking routines.
+    if (ch == '\n' || ch == ' ' || (breakNBSP && ch == 0xa0))
         return true;
 
     // If current character, or the previous character aren't simple latin1 then
