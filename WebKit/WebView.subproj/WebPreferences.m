@@ -1,32 +1,32 @@
-/*	
+/*        
         WebPreferences.mm
-	Copyright 2001, Apple, Inc. All rights reserved.
+        Copyright 2001, Apple, Inc. All rights reserved.
 */
 #import "WebPreferences.h"
 
 #import <WebKit/WebKitDebug.h>
 
 // These are private because callers should be using the cover methods
-#define	WebKitLogLevelPreferenceKey		@"WebKitLogLevel"
-#define	WebKitStandardFontPreferenceKey		@"WebKitStandardFont"
-#define	WebKitFixedFontPreferenceKey		@"WebKitFixedFont"
-#define	WebKitSerifFontPreferenceKey		@"WebKitSerifFont"
-#define	WebKitSansSerifFontPreferenceKey	@"WebKitSansSerifFont"
-#define	WebKitCursiveFontPreferenceKey		@"WebKitCursiveFont"
-#define	WebKitFantasyFontPreferenceKey		@"WebKitFantasyFont"
-#define	WebKitMinimumFontSizePreferenceKey	@"WebKitMinimumFontSize"
-#define	WebKitDefaultFontSizePreferenceKey	@"WebKitDefaultFontSize"
-#define	WebKitJavaEnabledPreferenceKey		@"WebKitJavaEnabled"
-#define	WebKitJavaScriptEnabledPreferenceKey	@"WebKitJavaScriptEnabled"
-#define	WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey	@"WebKitJavaScriptCanOpenWindowsAutomatically"
-#define	WebKitPluginsEnabledPreferenceKey	@"WebKitPluginsEnabled"
-#define	WebKitInitialTimedLayoutDelayPreferenceKey	@"WebKitInitialTimedLayoutDelay"
-#define	WebKitInitialTimedLayoutSizePreferenceKey	@"WebKitInitialTimedLayoutSize"
-#define	WebKitInitialTimedLayoutEnabledPreferenceKey	@"WebKitInitialTimedLayoutEnabled"
-#define	WebKitResourceTimedLayoutEnabledPreferenceKey	@"WebKitResourceTimedLayoutEnabled"
-#define	WebKitResourceTimedLayoutDelayPreferenceKey	@"WebKitResourceTimedLayoutDelay"
-#define	WebKitAllowAnimatedImagesPreferenceKey	@"WebKitAllowAnimatedImagesPreferenceKey"
-#define	WebKitAllowAnimatedImageLoopingPreferenceKey	@"WebKitAllowAnimatedImageLoopingPreferenceKey"
+#define        WebKitLogLevelPreferenceKey                @"WebKitLogLevel"
+#define        WebKitStandardFontPreferenceKey                @"WebKitStandardFont"
+#define        WebKitFixedFontPreferenceKey                @"WebKitFixedFont"
+#define        WebKitSerifFontPreferenceKey                @"WebKitSerifFont"
+#define        WebKitSansSerifFontPreferenceKey        @"WebKitSansSerifFont"
+#define        WebKitCursiveFontPreferenceKey                @"WebKitCursiveFont"
+#define        WebKitFantasyFontPreferenceKey                @"WebKitFantasyFont"
+#define        WebKitMinimumFontSizePreferenceKey        @"WebKitMinimumFontSize"
+#define        WebKitDefaultFontSizePreferenceKey        @"WebKitDefaultFontSize"
+#define        WebKitJavaEnabledPreferenceKey                @"WebKitJavaEnabled"
+#define        WebKitJavaScriptEnabledPreferenceKey        @"WebKitJavaScriptEnabled"
+#define        WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey        @"WebKitJavaScriptCanOpenWindowsAutomatically"
+#define        WebKitPluginsEnabledPreferenceKey        @"WebKitPluginsEnabled"
+#define        WebKitInitialTimedLayoutDelayPreferenceKey        @"WebKitInitialTimedLayoutDelay"
+#define        WebKitInitialTimedLayoutSizePreferenceKey        @"WebKitInitialTimedLayoutSize"
+#define        WebKitInitialTimedLayoutEnabledPreferenceKey        @"WebKitInitialTimedLayoutEnabled"
+#define        WebKitResourceTimedLayoutEnabledPreferenceKey        @"WebKitResourceTimedLayoutEnabled"
+#define        WebKitResourceTimedLayoutDelayPreferenceKey        @"WebKitResourceTimedLayoutDelay"
+#define        WebKitAllowAnimatedImagesPreferenceKey        @"WebKitAllowAnimatedImagesPreferenceKey"
+#define        WebKitAllowAnimatedImageLoopingPreferenceKey        @"WebKitAllowAnimatedImageLoopingPreferenceKey"
 
 @implementation WebPreferences
 
@@ -56,26 +56,26 @@ static WebPreferences *_standardPreferences = nil;
     NSNumber *allowAnimatedImageLooping = [NSNumber numberWithBool:TRUE];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"0x0", 			WebKitLogLevelPreferenceKey,
-        @"Times New Roman", 		WebKitStandardFontPreferenceKey,
-        @"Courier",	  		WebKitFixedFontPreferenceKey,
-        @"Times New Roman", 		WebKitSerifFontPreferenceKey,
-        @"Arial", 			WebKitSansSerifFontPreferenceKey,
-        @"Apple Chancery", 		WebKitCursiveFontPreferenceKey,
-        @"Papyrus", 			WebKitFantasyFontPreferenceKey,
-        @"6", 				WebKitMinimumFontSizePreferenceKey,
-        @"16", 				WebKitDefaultFontSizePreferenceKey,
-        @"1.85",		 	WebKitInitialTimedLayoutDelayPreferenceKey,
-        @"4096", 			WebKitInitialTimedLayoutSizePreferenceKey,
-        @"1.85", 			WebKitResourceTimedLayoutDelayPreferenceKey,
-        timedLayoutEnabled,		WebKitInitialTimedLayoutEnabledPreferenceKey,
-        resourceTimedLayoutEnabled,	WebKitResourceTimedLayoutEnabledPreferenceKey,
-        javaEnabled,			WebKitJavaEnabledPreferenceKey,
-        javaScriptEnabled,		WebKitJavaScriptEnabledPreferenceKey,
-        javaScriptCanOpenWindows,	WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
-        pluginsEnabled,			WebKitPluginsEnabledPreferenceKey,
-        allowAnimatedImages,    WebKitAllowAnimatedImagesPreferenceKey,
-        allowAnimatedImageLooping,    WebKitAllowAnimatedImageLoopingPreferenceKey,
+        @"0x0",                         WebKitLogLevelPreferenceKey,
+        @"Lucida Grande",               WebKitStandardFontPreferenceKey,
+        @"Courier",                     WebKitFixedFontPreferenceKey,
+        @"Times New Roman",             WebKitSerifFontPreferenceKey,
+        @"Lucida Grande",               WebKitSansSerifFontPreferenceKey,
+        @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
+        @"Papyrus",                     WebKitFantasyFontPreferenceKey,
+        @"6",                           WebKitMinimumFontSizePreferenceKey,
+        @"14",                          WebKitDefaultFontSizePreferenceKey,
+        @"1.85",                        WebKitInitialTimedLayoutDelayPreferenceKey,
+        @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
+        @"1.85",                        WebKitResourceTimedLayoutDelayPreferenceKey,
+        timedLayoutEnabled,             WebKitInitialTimedLayoutEnabledPreferenceKey,
+        resourceTimedLayoutEnabled,     WebKitResourceTimedLayoutEnabledPreferenceKey,
+        javaEnabled,                    WebKitJavaEnabledPreferenceKey,
+        javaScriptEnabled,              WebKitJavaScriptEnabledPreferenceKey,
+        javaScriptCanOpenWindows,       WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
+        pluginsEnabled,                 WebKitPluginsEnabledPreferenceKey,
+        allowAnimatedImages,            WebKitAllowAnimatedImagesPreferenceKey,
+        allowAnimatedImageLooping,      WebKitAllowAnimatedImageLoopingPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];

@@ -1,3 +1,11 @@
+2002-08-06  Darin Adler  <darin@apple.com>
+
+	- fixed 3017536 -- Change default font to Lucida Grande 14 pt.
+
+        * WebView.subproj/WebPreferences.m: (+[WebPreferences load]):
+	Changed default font and sans serif font family names to Lucida Grande.
+	Changed default font size to 14 point.
+
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
 	fixed 2974993 - window.open does not return the right window object
