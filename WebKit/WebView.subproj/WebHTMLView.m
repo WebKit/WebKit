@@ -441,11 +441,9 @@ static WebHTMLView *lastHitView = nil;
     }
     _private->toolTip = [toolTip copy];
     if (toolTip) {
-        if (_private->toolTipTag) {
-            [self removeToolTip:_private->toolTipTag];
-        }
+        [self removeAllToolTips];
         NSRect wideOpenRect = NSMakeRect(-100000, -100000, 200000, 200000);
-        _private->toolTipTag = [self addToolTipRect:wideOpenRect owner:self userData:NULL];
+        [self addToolTipRect:wideOpenRect owner:self userData:NULL];
         [self _sendToolTipMouseEntered];
     }
 }

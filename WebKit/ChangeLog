@@ -1,3 +1,16 @@
+2003-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3498426: assertion failure in tooltip code at macosx.apple.com
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _setToolTip:]): Work around
+        the apparent bug in AppKit (3500217) that causes it to return 0 for the tool tip
+        tag by using removeAllToolTips and not storing the tag at all. Besides the assertion
+        failure there may also be a symptom of a "stuck" tool tip and a small memory
+        leak until the window is closed.
+        * WebView.subproj/WebHTMLViewPrivate.h: Remove unused toolTipTag.
+
 2003-12-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
