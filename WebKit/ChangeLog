@@ -1,3 +1,23 @@
+2003-05-03  David Hyatt  <hyatt@apple.com>
+
+	Add smallCaps boolean to the string measuring and drawing
+	methods.  Not actually supported yet.
+	
+        Reviewed by darin
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_widthWithFont:]):
+        * Misc.subproj/WebStringTruncator.m:
+        (stringWidth):
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer widthForCharacters:length:]):
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:rightToLeft:letterSpacing:wordSpacing:smallCaps:fontFamilies:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:characterPosition:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:letterSpacing:wordSpacing:smallCaps:fontFamilies:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:smallCaps:fontFamilies:]):
+
 2003-05-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -543,7 +543,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
 {
-    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 fontFamilies: 0]);
+    return ROUND_TO_INT([self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:0 numberOfCharacters:stringLength withPadding: 0 applyRounding:YES attemptFontSubstitution: YES widths: 0 letterSpacing: 0 wordSpacing: 0 smallCaps: false fontFamilies: 0]);
 }
 
 - (int)widthForString:(NSString *)string
@@ -618,7 +618,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     }
 }
 
-- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families
+- (void)drawCharacters:(const UniChar *)characters stringLength: (unsigned int)length fromCharacterPosition: (int)from toCharacterPosition: (int)to atPoint:(NSPoint)point withPadding: (int)padding withTextColor:(NSColor *)textColor backgroundColor: (NSColor *)backgroundColor rightToLeft: (BOOL)rtl letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing smallCaps: (BOOL)smallCaps fontFamilies: (NSString **)families
 {
     float *widthBuffer, localWidthBuffer[LOCAL_BUFFER_SIZE];
     CGGlyph *glyphBuffer, localGlyphBuffer[LOCAL_BUFFER_SIZE];
@@ -658,6 +658,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         numGlyphs: &numGlyphs
         letterSpacing: letterSpacing
         wordSpacing: wordSpacing
+        smallCaps: smallCaps
         fontFamilies: families];
 
     if (from == -1)
@@ -782,19 +783,19 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     // Return the width of the first complete character at the specified position.  Even though
     // the first 'character' may contain more than one unicode characters this method will
     // work correctly.
-    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:1 withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: nil letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
+    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:1 withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: nil letterSpacing: 0 wordSpacing: 0 smallCaps: false fontFamilies: 0];
 }
 
 
 - (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len
 {
-    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: nil letterSpacing: 0 wordSpacing: 0 fontFamilies: 0];
+    return [self floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: nil letterSpacing: 0 wordSpacing: 0 smallCaps: false fontFamilies: 0];
 }
 
 
-- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families
+- (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing smallCaps: (BOOL)smallCaps fontFamilies: (NSString **)families
 {
-    return [self _floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: padding applyRounding: YES attemptFontSubstitution: YES widths: widthBuffer fonts: nil  glyphs: nil numGlyphs: nil letterSpacing: letterSpacing wordSpacing: wordSpacing fontFamilies: families];
+    return [self _floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: padding applyRounding: YES attemptFontSubstitution: YES widths: widthBuffer fonts: nil  glyphs: nil numGlyphs: nil letterSpacing: letterSpacing wordSpacing: wordSpacing smallCaps: smallCaps fontFamilies: families];
 }
 
 #ifdef DEBUG_COMBINING
@@ -833,7 +834,7 @@ static const char *joiningNames[] = {
 };
 #endif
 
-- (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing fontFamilies: (NSString **)families
+- (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs letterSpacing: (int)letterSpacing wordSpacing: (int)wordSpacing smallCaps: (BOOL)smallCaps fontFamilies: (NSString **)families
 {
     float totalWidth = 0;
     unsigned int i, clusterLength;
@@ -987,6 +988,7 @@ static const char *joiningNames[] = {
                                 numGlyphs: &cNumGlyphs
                                 letterSpacing: letterSpacing
                                 wordSpacing: wordSpacing
+                                smallCaps: smallCaps
                                 fontFamilies: families];
                 
                 int j;

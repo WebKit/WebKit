@@ -69,6 +69,7 @@ static float stringWidth(WebTextRenderer *renderer, const unichar *characters, u
                                       widths:0
                                letterSpacing:0
                                  wordSpacing:0
+                                   smallCaps:false
                                 fontFamilies:0];
 }
 

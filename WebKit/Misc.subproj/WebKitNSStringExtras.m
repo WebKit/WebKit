@@ -28,6 +28,7 @@
                  rightToLeft:NO
                letterSpacing:0
                  wordSpacing:0
+                   smallCaps:false
                  fontFamilies:0];
     free(buffer);
 }
@@ -53,6 +54,7 @@
                 numGlyphs: 0
                 letterSpacing: 0
                 wordSpacing: 0
+                smallCaps: false
                 fontFamilies: 0];
     free(buffer);
     
