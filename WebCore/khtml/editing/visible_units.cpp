@@ -117,7 +117,7 @@ static VisiblePosition previousBoundary(const VisiblePosition &c, unsigned (*sea
         }
     }
 
-    return VisiblePosition(pos, DOWNSTREAM, VisiblePosition::INIT_UP);
+    return VisiblePosition(pos, DOWNSTREAM, VisiblePosition::INIT_DOWN);
 }
 
 static VisiblePosition nextBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const QChar *, unsigned))

@@ -1,3 +1,21 @@
+2005-03-20  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/4055127> Dictionary pop-up panel misplaced at beginning of text blocks (breaks double-clicking in Dictionary.app)
+
+        SimplifiedBackwardsTextIterator::advance() needed to not limit to textnodes
+        when checking whether moving back across block boundaries
+
+        VisibleUnits previousBoundary() needed to INIT_DOWN when creating result VisiblePosition
+
+        All editing tests pass.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::SimplifiedBackwardsTextIterator::advance):
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+
 2005-03-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.
