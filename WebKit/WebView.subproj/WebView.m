@@ -3365,7 +3365,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     if ([self _currentSelectionIsEditable]) {
         if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
             WebBridge *bridge = [self _bridgeForCurrentSelection];
-            [bridge replaceSelectionWithText:text selectReplacement:NO];
+            [bridge insertText:text];
             [bridge ensureCaretVisible];
         }
         return;

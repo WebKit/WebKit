@@ -1453,6 +1453,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     TypingCommand::insertNewline(_part->xmlDocImpl());
 }
 
+- (void)insertText:(NSString *)text
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    TypingCommand::insertText(_part->xmlDocImpl(), text);
+}
+
 - (void)setSelectionToDragCaret
 {
     _part->setSelection(_part->dragCaret());

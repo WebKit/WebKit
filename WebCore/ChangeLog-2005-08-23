@@ -1,3 +1,13 @@
+2004-05-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed regression where undoing typing would undo character-by-character.
+
+        Reviewed by kocienda.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge insertText:]): new, this method used to be replaceSelectionWithText, but replaceSelectionWithText now is one operation whereas calls to insertText: are coalesced
+
 2004-05-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

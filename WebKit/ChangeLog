@@ -1,3 +1,12 @@
+2004-05-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed regression where undoing typing would undo character-by-character.
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView insertText:]): call insertText: rather than replaceSelectionWithText:: since text insertion via insertText: is coalesced and this is the behavior we want here
+
 2004-05-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
