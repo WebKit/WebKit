@@ -415,8 +415,8 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
     
     if (u.protocol() == QString("mailto")) {
         // FIXME: addressbook integration? probably not worth it...
-        
-        setStatusBarText(QString::fromNSString([NSString stringWithFormat:@"Send email to %@", KURL::decode_string(u.path()).getNSString()]));
+        const QString address = KURL::decode_string(u.path());
+        setStatusBarText(QString::fromNSString([NSString stringWithFormat:@"Send email to %@", address.getNSString()]));
         return;
     }
     
