@@ -25,6 +25,15 @@
 .objc_class_name_WebTextView
 .objc_class_name_WebURLsWithTitles
 .objc_class_name_WebView
+_WebActionButtonKey
+_WebActionElementKey
+_WebActionModifierFlagsKey
+_WebActionNavigationTypeKey
+_WebBookmarkChildrenKey
+_WebBookmarkDidChangeNotification
+_WebBookmarkWillChangeNotification
+_WebBookmarksWereAddedNotification
+_WebBookmarksWereRemovedNotification
 _WebElementFrameKey
 _WebElementImageKey
 _WebElementImageURLKey
@@ -42,6 +51,7 @@ _WebIconLargeSize
 _WebIconMediumSize
 _WebIconNotificationUserInfoSiteURLKey
 _WebIconSmallSize
+_WebModifiedBookmarkKey
 _WebURLNamePboardType
 _WebURLPboardType
 _WebActionNavigationTypeKey

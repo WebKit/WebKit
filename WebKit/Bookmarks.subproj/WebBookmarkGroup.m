@@ -14,6 +14,13 @@
 #import <WebKit/WebBookmarkProxy.h>
 #import <WebKit/WebKitLogging.h>
 
+NSString *WebBookmarksWereAddedNotification = @"WebBookmarksWereAddedNotification";
+NSString *WebBookmarksWereRemovedNotification = @"WebBookmarksWereRemovedNotification";
+NSString *WebBookmarkDidChangeNotification = @"WebBookmarkDidChangeNotification";
+NSString *WebBookmarkWillChangeNotification = @"WebBookmarkWillChangeNotification";
+NSString *WebModifiedBookmarkKey = @"WebModifiedBookmarkKey";
+NSString *WebBookmarkChildrenKey = @"WebBookmarkChildrenKey";
+
 @interface WebBookmarkGroup (WebForwardDeclarations)
 - (void)_setTopBookmark:(WebBookmark *)newTopBookmark;
 @end
@@ -52,8 +59,7 @@
     return _topBookmark;
 }
 
-- (void)_sendChangeNotificationForBookmark:(WebBookmark *)bookmark
-                           childrenChanged:(BOOL)flag
+- (void)_sendNotification:(NSString *)name forBookmark:(WebBookmark *)bookmark children:(NSArray *)kids
 {
     NSDictionary *userInfo;
 
@@ -65,13 +71,10 @@
 
     userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
         bookmark, WebModifiedBookmarkKey,
-        [NSNumber numberWithBool:flag], WebBookmarkChildrenChangedKey,
+        kids, WebBookmarkChildrenKey,   // kids==nil will conveniently terminate the arg list
         nil];
     
-    [[NSNotificationCenter defaultCenter]
-        postNotificationName:WebBookmarkGroupChangedNotification
-                      object:self
-                    userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:name object:self userInfo:userInfo];
 }
 
 - (void)_setTopBookmark:(WebBookmark *)newTopBookmark
@@ -89,20 +92,28 @@
     } else {
         _topBookmark = [[WebBookmarkList alloc] initWithTitle:nil group:self];
     }
+}
 
-    [self _sendChangeNotificationForBookmark:_topBookmark childrenChanged:YES];
+- (void)_bookmarkWillChange:(WebBookmark *)bookmark
+{
+    [self _sendNotification:WebBookmarkWillChangeNotification forBookmark:bookmark children:nil];
 }
 
 - (void)_bookmarkDidChange:(WebBookmark *)bookmark
 {
-    [self _sendChangeNotificationForBookmark:bookmark childrenChanged:NO];
+    [self _sendNotification:WebBookmarkDidChangeNotification forBookmark:bookmark children:nil];
 }
 
-- (void)_bookmarkChildrenDidChange:(WebBookmark *)bookmark
+- (void)_bookmarkChildren:(NSArray *)kids wereAddedToParent:(WebBookmark *)bookmark
 {
     ASSERT_ARG(bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
-    
-    [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
+    [self _sendNotification:WebBookmarksWereAddedNotification forBookmark:bookmark children:kids];
+}
+
+- (void)_bookmarkChildren:(NSArray *)kids wereRemovedToParent:(WebBookmark *)bookmark
+{
+    ASSERT_ARG(bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
+    [self _sendNotification:WebBookmarksWereRemovedNotification forBookmark:bookmark children:kids];
 }
 
 - (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent

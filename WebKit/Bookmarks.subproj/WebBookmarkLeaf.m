@@ -36,8 +36,9 @@
     // Since our URLString may not be valid for creating an NSURL object,
     // just hang onto the string separately and don't bother creating
     // an NSURL object for the WebHistoryItem.
-    [self setTitle:title];
-    [self setURLString:URLString];
+    [_entry setTitle:title];	// to avoid sending notifications, don't call setTitle or setURL
+    _URLString = [URLString copy];
+    [_entry setURL:[NSURL _web_URLWithString:_URLString]];
     [self _setGroup:group];
 
     return self;
@@ -111,6 +112,9 @@
     }
 
     ASSERT(_entry != nil);
+
+    [[self group] _bookmarkWillChange:self];    
+
     [_entry setTitle:title];
 
     [[self group] _bookmarkDidChange:self];    
@@ -141,12 +145,19 @@
         return;
     }
 
+    [[self group] _bookmarkWillChange:self];    
+
     [_URLString release];
     _URLString = [URLString copy];
 
     [_entry setURL:[NSURL _web_URLWithString:_URLString]];
-    
+
     [[self group] _bookmarkDidChange:self];    
+}
+
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@: %@", [super description], _URLString];
 }
 
 @end

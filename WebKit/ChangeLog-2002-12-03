@@ -1,3 +1,31 @@
+2002-12-02  Trey Matteson  <trey@apple.com>
+
+	Refined bookmark notifications to be more detailed.  We now have added, removed,
+	willChange and didChange.
+
+        * Bookmarks.subproj/WebBookmarkGroup.h:   New API.
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup _sendNotification:forBookmark:children:]):
+        (-[WebBookmarkGroup _setTopBookmark:]):
+        (-[WebBookmarkGroup _bookmarkWillChange:]):
+        (-[WebBookmarkGroup _bookmarkDidChange:]):
+        (-[WebBookmarkGroup _bookmarkChildren:wereAddedToParent:]):
+        (-[WebBookmarkGroup _bookmarkChildren:wereRemovedToParent:]):
+	All just small pieces of flow control for posting the notes.
+        * Bookmarks.subproj/WebBookmarkGroupPrivate.h:  Internal methods for posting the notes.
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf setTitle:]):  Post da note
+        (-[WebBookmarkLeaf setURLString:]):  Post da note
+        (-[WebBookmarkLeaf description]):  Added for debugging.
+        * Bookmarks.subproj/WebBookmarkList.m:
+        (-[WebBookmarkList setTitle:]):  Post da note
+        (-[WebBookmarkList removeChild:]):  Post da note
+        (-[WebBookmarkList insertChild:atIndex:]):  Post da note
+        * Bookmarks.subproj/WebBookmarkProxy.m:
+        (-[WebBookmarkProxy setTitle:]):  Post da note
+        * English.lproj/StringsNotToBeLocalized.txt:  New strings.
+        * WebKit.exp:   New strings.
+
 2002-12-02  Maciej Stachowiak  <mjs@apple.com>
 
 	- added original URL field to action dictionary so that policy delegates

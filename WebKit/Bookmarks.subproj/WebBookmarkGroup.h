@@ -9,17 +9,19 @@
 #import <Cocoa/Cocoa.h>
 #import <WebKit/WebBookmark.h>
 
-// notification sent when bookmarks are added/removed from group, or when bookmarks in group are modified
-#define WebBookmarkGroupChangedNotification	@"WebBookmarkGroupChangedNotification"
+// Notifications sent when bookmarks are added/removed from group, or when bookmarks in group are modified
+extern NSString *WebBookmarksWereAddedNotification;
+extern NSString *WebBookmarksWereRemovedNotification;
+extern NSString *WebBookmarkWillChangeNotification;
+extern NSString *WebBookmarkDidChangeNotification;
 
-// keys for userInfo for WebBookmarkGroupChangedNotification. These are always present.
+// keys for userInfo for the above notifications.
 
-// The lowest common ancestor of all the WebBookmark objects that changed.
-#define WebModifiedBookmarkKey			@"WebModifiedBookmarkKey"
-
-// An NSNumber object representing a boolean that distinguishes changes
-// to the bookmark itself from changes to its children.
-#define	WebBookmarkChildrenChangedKey		@"WebBookmarkChildrenChangedKey"
+// The lowest common ancestor of all the WebBookmark objects that changed.  This is the
+// parent for adds and removes.
+extern NSString *WebModifiedBookmarkKey;
+// For adds and removes, the children that were added.  Value is always an array.
+extern NSString *WebBookmarkChildrenKey;
 
 @interface WebBookmarkGroup : NSObject
 {

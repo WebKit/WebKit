@@ -11,8 +11,10 @@
 
 @interface WebBookmarkGroup(WebPrivate)
 
+- (void)_bookmarkWillChange:(WebBookmark *)bookmark;
 - (void)_bookmarkDidChange:(WebBookmark *)bookmark;
-- (void)_bookmarkChildrenDidChange:(WebBookmark *)bookmark;
+- (void)_bookmarkChildren:(NSArray *)kids wereAddedToParent:(WebBookmark *)bookmark;
+- (void)_bookmarkChildren:(NSArray *)kids wereRemovedToParent:(WebBookmark *)bookmark;
 
 @end
 

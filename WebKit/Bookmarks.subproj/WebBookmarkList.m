@@ -149,6 +149,8 @@
         return;
     }
 
+    [[self group] _bookmarkWillChange:self];    
+
     [_title release];
     _title = [title copy];
 
@@ -202,7 +204,7 @@
     [bookmark _setParent:nil];
     [bookmark release];
 
-    [[self group] _bookmarkChildrenDidChange:self]; 
+    [[self group] _bookmarkChildren:[NSArray arrayWithObject:bookmark] wereRemovedToParent:self]; 
 }
 
 
@@ -214,8 +216,8 @@
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];
     [bookmark _setGroup:[self group]];
-    
-    [[self group] _bookmarkChildrenDidChange:self];
+
+    [[self group] _bookmarkChildren:[NSArray arrayWithObject:bookmark] wereAddedToParent:self]; 
 }
 
 - (void)_setGroup:(WebBookmarkGroup *)group

@@ -20,7 +20,7 @@
 {
     [super init];
     [self _setGroup:group];
-    [self setTitle:title];
+    _title = [title copy];	// to avoid sending notifications, don't call setTitle
 
     return self;    
 }
@@ -84,8 +84,11 @@
         return;
     }
 
+    [[self group] _bookmarkWillChange:self];    
+
     [_title release];
     _title = [newTitle copy];
+
     [[self group] _bookmarkDidChange:self]; 
 }
 
