@@ -2559,392 +2559,392 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)centerSelectionInVisibleArea:(id)sender
 {
-    [self _performResponderOperation:@selector(centerSelectionInVisibleArea:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveBackward:(id)sender
 {
-    [self _performResponderOperation:@selector(moveBackward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveBackwardAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveBackwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveDown:(id)sender
 {
-    [self _performResponderOperation:@selector(moveDown:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveDownAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveForward:(id)sender
 {
-    [self _performResponderOperation:@selector(moveForward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveForwardAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveForwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveLeft:(id)sender
 {
-    [self _performResponderOperation:@selector(moveLeft:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveLeftAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveLeftAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveRight:(id)sender
 {
-    [self _performResponderOperation:@selector(moveRight:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveRightAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveRightAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self _performResponderOperation:@selector(moveToBeginningOfDocument:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    [self _performResponderOperation:@selector(moveToBeginningOfLine:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    [self _performResponderOperation:@selector(moveToBeginningOfParagraph:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    [self _performResponderOperation:@selector(moveToEndOfDocument:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
-    [self _performResponderOperation:@selector(moveToEndOfLine:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    [self _performResponderOperation:@selector(moveToEndOfParagraph:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveUp:(id)sender
 {
-    [self _performResponderOperation:@selector(moveUp:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveUpAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordBackward:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordBackward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordBackwardAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordBackwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordForward:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordForward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordForwardAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordForwardAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordLeft:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordLeft:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordLeftAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordRight:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordRight:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)moveWordRightAndModifySelection:(id)sender
 {
-    [self _performResponderOperation:@selector(moveWordRightAndModifySelection:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)pageDown:(id)sender
 {
-    [self _performResponderOperation:@selector(pageDown:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)pageUp:(id)sender
 {
-    [self _performResponderOperation:@selector(pageUp:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)scrollLineDown:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollLineDown:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)scrollLineUp:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollLineUp:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)scrollPageDown:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollPageDown:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)scrollPageUp:(id)sender
 {
-    [self _performResponderOperation:@selector(scrollPageUp:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)selectAll:(id)sender
 {
-    [self _performResponderOperation:@selector(selectAll:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)selectParagraph:(id)sender
 {
-    [self _performResponderOperation:@selector(selectParagraph:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)selectLine:(id)sender
 {
-    [self _performResponderOperation:@selector(selectLine:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)selectWord:(id)sender
 {
-    [self _performResponderOperation:@selector(selectWord:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)copy:(id)sender
 {
-    [self _performResponderOperation:@selector(copy:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)cut:(id)sender
 {
-    [self _performResponderOperation:@selector(cut:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)paste:(id)sender
 {
-    [self _performResponderOperation:@selector(paste:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)copyFont:(id)sender
 {
-    [self _performResponderOperation:@selector(copyFont:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)pasteFont:(id)sender
 {
-    [self _performResponderOperation:@selector(pasteFont:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)delete:(id)sender
 {
-    [self _performResponderOperation:@selector(delete:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)pasteAsPlainText:(id)sender
 {
-    [self _performResponderOperation:@selector(pasteAsPlainText:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)pasteAsRichText:(id)sender
 {
-    [self _performResponderOperation:@selector(pasteAsRichText:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)changeFont:(id)sender
 {
-    [self _performResponderOperation:@selector(changeFont:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)changeAttributes:(id)sender
 {
-    [self _performResponderOperation:@selector(changeAttributes:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
 {
-    [self _performResponderOperation:@selector(changeDocumentBackgroundColor:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)changeColor:(id)sender
 {
-    [self _performResponderOperation:@selector(changeColor:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)alignCenter:(id)sender
 {
-    [self _performResponderOperation:@selector(alignCenter:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)alignJustified:(id)sender
 {
-    [self _performResponderOperation:@selector(alignJustified:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)alignLeft:(id)sender
 {
-    [self _performResponderOperation:@selector(alignLeft:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)alignRight:(id)sender
 {
-    [self _performResponderOperation:@selector(alignRight:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)indent:(id)sender
 {
-    [self _performResponderOperation:@selector(indent:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)insertTab:(id)sender
 {
-    [self _performResponderOperation:@selector(insertTab:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)insertBacktab:(id)sender
 {
-    [self _performResponderOperation:@selector(insertBacktab:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)insertNewline:(id)sender
 {
-    [self _performResponderOperation:@selector(insertNewline:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)insertParagraphSeparator:(id)sender
 {
-    [self _performResponderOperation:@selector(insertParagraphSeparator:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)changeCaseOfLetter:(id)sender
 {
-    [self _performResponderOperation:@selector(changeCaseOfLetter:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)uppercaseWord:(id)sender
 {
-    [self _performResponderOperation:@selector(uppercaseWord:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)lowercaseWord:(id)sender
 {
-    [self _performResponderOperation:@selector(lowercaseWord:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)capitalizeWord:(id)sender
 {
-    [self _performResponderOperation:@selector(capitalizeWord:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteForward:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteForward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteBackward:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteBackward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteBackwardByDecomposingPreviousCharacter:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteWordForward:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteWordForward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteWordBackward:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteWordBackward:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteToBeginningOfLine:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteToEndOfLine:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteToEndOfLine:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteToBeginningOfParagraph:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
-    [self _performResponderOperation:@selector(deleteToEndOfParagraph:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)complete:(id)sender
 {
-    [self _performResponderOperation:@selector(complete:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)checkSpelling:(id)sender
 {
-    [self _performResponderOperation:@selector(checkSpelling:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)showGuessPanel:(id)sender
 {
-    [self _performResponderOperation:@selector(showGuessPanel:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)performFindPanelAction:(id)sender
 {
-    [self _performResponderOperation:@selector(performFindPanelAction:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)startSpeaking:(id)sender
 {
-    [self _performResponderOperation:@selector(startSpeaking:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)stopSpeaking:(id)sender
 {
-    [self _performResponderOperation:@selector(stopSpeaking:) with:sender];
+    [self _performResponderOperation:_cmd with:sender];
 }
 
 - (void)insertText:(NSString *)text
 {
-    [self _performResponderOperation:@selector(insertText:) with:text];
+    [self _performResponderOperation:_cmd with:text];
 }
 
 @end

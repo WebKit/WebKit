@@ -1,5 +1,10 @@
 2004-05-28  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebView.m: At Ken's suggestion, for better efficiency and safety,
+        use _cmd rather than explicit selector names in the forwarding methods.
+
+2004-05-28  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - implemented a few more editing operations, moved code from WebView to WebHTMLView
