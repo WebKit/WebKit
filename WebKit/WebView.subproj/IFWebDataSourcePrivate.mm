@@ -212,7 +212,7 @@
 {
     IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     
-    NSMutableString *trimmed = [title mutableCopy];
+    NSMutableString *trimmed = [NSMutableString stringWithString:title];
     CFStringTrimWhitespace((CFMutableStringRef) trimmed);
     if ([trimmed length] == 0) {
         trimmed = nil;
@@ -227,7 +227,7 @@
     data->pageTitle = [[NSString stringWithString:trimmed] retain];
     
     // The title doesn't get communicated to the controller until
-    // we reach the committed state for this datasource's frame.
+    // we reach the committed state for this data source's frame.
 }
 
 @end

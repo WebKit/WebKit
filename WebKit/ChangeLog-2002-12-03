@@ -1,3 +1,8 @@
+2002-04-02  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setTitle:]):
+        Fix a leak I introduced here by copying the string in a better way.
+
 2002-04-01  Richard Williamson  <rjw@apple.com>
 
         Cleaned up lots of potentially stale references to controller.
