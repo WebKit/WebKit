@@ -65,7 +65,7 @@ const struct HashEntry DOMNodeTableEntries[] = {
    { "offsetParent", DOMNode::OffsetParent, DontDelete|ReadOnly, 0, 0 },
    { "offsetLeft", DOMNode::OffsetLeft, DontDelete|ReadOnly, 0, 0 },
    { "nodeValue", DOMNode::NodeValue, DontDelete, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "onscroll", DOMNode::OnScroll, DontDelete, 0, 0 },
    { "previousSibling", DOMNode::PreviousSibling, DontDelete|ReadOnly, 0, &DOMNodeTableEntries[58] },
    { "prefix", DOMNode::Prefix, DontDelete, 0, &DOMNodeTableEntries[60] },
    { "nextSibling", DOMNode::NextSibling, DontDelete|ReadOnly, 0, &DOMNodeTableEntries[66] },

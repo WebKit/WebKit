@@ -79,7 +79,7 @@ const struct HashEntry WindowTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "offscreenBuffering", Window::OffscreenBuffering, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "onscroll", Window::Onscroll, DontDelete, 0, 0 },
    { "history", Window::_History, DontDelete|ReadOnly, 0, 0 },
    { "Event", Window::EventCtor, DontDelete, 0, 0 },
    { "onresize", Window::Onresize, DontDelete, 0, 0 },

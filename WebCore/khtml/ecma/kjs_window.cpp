@@ -269,6 +269,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   onmove	Window::Onmove		DontDelete
   onreset	Window::Onreset		DontDelete
   onresize	Window::Onresize	DontDelete
+  onscroll      Window::Onscroll        DontDelete
   onsearch      Window::Onsearch        DontDelete
   onselect	Window::Onselect	DontDelete
   onsubmit	Window::Onsubmit	DontDelete
@@ -681,6 +682,11 @@ Value Window::get(ExecState *exec, const Identifier &p) const
         return getListener(exec,DOM::EventImpl::RESIZE_EVENT);
       else
         return Undefined();
+    case Onscroll:
+        if (isSafeScript(exec))
+            return getListener(exec,DOM::EventImpl::SCROLL_EVENT);
+        else
+            return Undefined();
 #if APPLE_CHANGES
     case Onsearch:
         if (isSafeScript(exec))
@@ -886,6 +892,10 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
     case Onresize:
       if (isSafeScript(exec))
         setListener(exec,DOM::EventImpl::RESIZE_EVENT,value);
+      return;
+    case Onscroll:
+      if (isSafeScript(exec))
+        setListener(exec,DOM::EventImpl::SCROLL_EVENT,value);
       return;
 #if APPLE_CHANGES
     case Onsearch:

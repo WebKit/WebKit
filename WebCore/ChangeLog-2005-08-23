@@ -1,5 +1,42 @@
 2004-03-23  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3487207, implement onscroll DOM event for elements with overflow:auto/scroll/hidden.  This does
+	not handle firing onscroll on the window when the document scrolls, nor does it handle firing onscroll
+	on textareas.  These are two separate bugs.
+
+	This patch finishes stubbing out the onscroll event and adds support for it to the DOM.  It also supports
+	the firing of the event when overflow blocks scroll.
+	
+        Reviewed by darin
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):
+        (DOMNode::putValue):
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (Window::put):
+        * khtml/ecma/kjs_window.h:
+        (KJS::Window::):
+        * khtml/ecma/kjs_window.lut.h:
+        (KJS::):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseHTMLAttribute):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseHTMLAttribute):
+        * khtml/misc/htmlattrs.c:
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmlattrs.h:
+        * khtml/misc/htmlattrs.in:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::scrollToOffset):
+
+2004-03-23  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3513627, HTML mail prints upside down occasionally.  Change printing so that it never resizes the
         WebHTMLView when formatting for printing.  When computing page rects, instead of using the view's bounds,
         use the root layer's width instead.

@@ -103,6 +103,7 @@ onmouseover
 onmouseup
 onreset
 onresize
+onscroll
 onsearch
 onselect
 onsubmit

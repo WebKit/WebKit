@@ -181,6 +181,10 @@ void HTMLBodyElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         getDocument()->setHTMLWindowEventListener(EventImpl::RESIZE_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
+    case ATTR_ONSCROLL:
+        getDocument()->setHTMLWindowEventListener(EventImpl::SCROLL_EVENT,
+                                                  getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
     case ATTR_NOSAVE:
 	break;
     default:
