@@ -329,141 +329,188 @@ void RenderFrameSet::positionFrames()
 bool RenderFrameSet::userResize( MouseEventImpl *evt )
 {
     if (!layouted()) return false;
-
-  bool res = false;
-  int _x = evt->clientX();
-  int _y = evt->clientY();
-
-  if ( !m_resizing && evt->id() == EventImpl::MOUSEMOVE_EVENT || evt->id() == EventImpl::MOUSEDOWN_EVENT )
-  {
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6031 ) << "mouseEvent:check" << endl;
-#endif
-
-    m_hSplit = -1;
-    m_vSplit = -1;
-    //bool resizePossible = true;
-
-    // check if we're over a horizontal or vertical boundary
-    int pos = m_gridLayout[1][0] + xPos();
-    for(int c = 1; c < element()->totalCols(); c++)
-    {
-      if(_x >= pos && _x <= pos+element()->border())
-      {
-        if(m_vSplitVar && m_vSplitVar[c-1] == true) m_vSplit = c-1;
-#ifdef DEBUG_LAYOUT
-        kdDebug( 6031 ) << "vsplit!" << endl;
-#endif
-        res = true;
-        break;
-      }
-      pos += m_gridLayout[1][c] + element()->border();
-    }
-
-    pos = m_gridLayout[0][0] + yPos();
-    for(int r = 1; r < element()->totalRows(); r++)
-    {
-      if( _y >= pos && _y <= pos+element()->border())
-      {
-        if(m_hSplitVar && m_hSplitVar[r-1] == true) m_hSplit = r-1;
-#ifdef DEBUG_LAYOUT
-        kdDebug( 6031 ) << "hsplitvar = " << m_hSplitVar << endl;
-        kdDebug( 6031 ) << "hsplit!" << endl;
-#endif
-        res = true;
-        break;
-      }
-      pos += m_gridLayout[0][r] + element()->border();
-    }
-#ifdef DEBUG_LAYOUT
-    kdDebug( 6031 ) << m_hSplit << "/" << m_vSplit << endl;
-#endif
-
-    QCursor cursor;
-    if(m_hSplit != -1 && m_vSplit != -1)
-    {
-      cursor = Qt::sizeAllCursor;
-    }
-    else if( m_vSplit != -1 )
-    {
-      cursor = Qt::sizeHorCursor;
-    }
-    else if( m_hSplit != -1 )
-    {
-      cursor = Qt::sizeVerCursor;
-    }
-
-    if(evt->id() == EventImpl::MOUSEDOWN_EVENT)
-    {
-        setResizing(true);
-      KApplication::setOverrideCursor(cursor);
-      m_vSplitPos = _x;
-      m_hSplitPos = _y;
-      m_oldpos = -1;
-    }
-    else
-        root()->view()->viewport()->setCursor(cursor);
-
-  }
-
-  // ### check the resize is not going out of bounds.
-  if(m_resizing && evt->id() == EventImpl::MOUSEUP_EVENT)
-  {
-    setResizing(false);
-    KApplication::restoreOverrideCursor();
-
-    if(m_vSplit != -1 )
+    
+    bool res = false;
+    int _x = evt->clientX();
+    int _y = evt->clientY();
+    
+    if ( !m_resizing && evt->id() == EventImpl::MOUSEMOVE_EVENT || evt->id() == EventImpl::MOUSEDOWN_EVENT )
     {
 #ifdef DEBUG_LAYOUT
-      kdDebug( 6031 ) << "split xpos=" << _x << endl;
+        kdDebug( 6031 ) << "mouseEvent:check" << endl;
 #endif
-      int delta = m_vSplitPos - _x;
-      m_gridDelta[1][m_vSplit] -= delta;
-      m_gridDelta[1][m_vSplit+1] += delta;
-    }
-    if(m_hSplit != -1 )
-    {
+        
+        m_hSplit = -1;
+        m_vSplit = -1;
+        //bool resizePossible = true;
+        
+        // check if we're over a horizontal or vertical boundary
+        int pos = m_gridLayout[1][0] + xPos();
+        for(int c = 1; c < element()->totalCols(); c++)
+        {
+            if(_x >= pos && _x <= pos+element()->border())
+            {
+            if(m_vSplitVar && m_vSplitVar[c-1] == true) m_vSplit = c-1;
 #ifdef DEBUG_LAYOUT
-      kdDebug( 6031 ) << "split ypos=" << _y << endl;
+            kdDebug( 6031 ) << "vsplit!" << endl;
 #endif
-      int delta = m_hSplitPos - _y;
-      m_gridDelta[0][m_hSplit] -= delta;
-      m_gridDelta[0][m_hSplit+1] += delta;
+            res = true;
+            break;
+            }
+            pos += m_gridLayout[1][c] + element()->border();
+        }
+        
+        pos = m_gridLayout[0][0] + yPos();
+        for(int r = 1; r < element()->totalRows(); r++)
+        {
+            if( _y >= pos && _y <= pos+element()->border())
+            {
+            if(m_hSplitVar && m_hSplitVar[r-1] == true) m_hSplit = r-1;
+#ifdef DEBUG_LAYOUT
+            kdDebug( 6031 ) << "hsplitvar = " << m_hSplitVar << endl;
+            kdDebug( 6031 ) << "hsplit!" << endl;
+#endif
+            res = true;
+            break;
+            }
+            pos += m_gridLayout[0][r] + element()->border();
+        }
+#ifdef DEBUG_LAYOUT
+        kdDebug( 6031 ) << m_hSplit << "/" << m_vSplit << endl;
+#endif
+        
+        QCursor cursor;
+        if(m_hSplit != -1 && m_vSplit != -1)
+        {
+            cursor = Qt::sizeAllCursor;
+        }
+        else if( m_vSplit != -1 )
+        {
+            cursor = Qt::sizeHorCursor;
+        }
+        else if( m_hSplit != -1 )
+        {
+            cursor = Qt::sizeVerCursor;
+        }
+        
+        if(evt->id() == EventImpl::MOUSEDOWN_EVENT)
+        {
+            setResizing(true);
+            KApplication::setOverrideCursor(cursor);
+            m_vSplitPos = _x;
+            m_hSplitPos = _y;
+            m_oldpos = -1;
+        }
+        else
+            root()->view()->viewport()->setCursor(cursor);
+        
     }
-
-    // this just schedules the relayout
-    // important, otherwise the moving indicator is not correctly erased
-    setLayouted(false);
-  }
-
+    
+    // ### check the resize is not going out of bounds.
+    if(m_resizing && evt->id() == EventImpl::MOUSEUP_EVENT)
+    {
+        setResizing(false);
+        KApplication::restoreOverrideCursor();
+        
+        if(m_vSplit != -1 )
+        {
+        #ifdef DEBUG_LAYOUT
+            kdDebug( 6031 ) << "split xpos=" << _x << endl;
+#endif
+            int delta = m_vSplitPos - _x;
+            m_gridDelta[1][m_vSplit] -= delta;
+            m_gridDelta[1][m_vSplit+1] += delta;
+        }
+        if(m_hSplit != -1 )
+        {
+#ifdef DEBUG_LAYOUT
+            kdDebug( 6031 ) << "split ypos=" << _y << endl;
+#endif
+            int delta = m_hSplitPos - _y;
+            m_gridDelta[0][m_hSplit] -= delta;
+            m_gridDelta[0][m_hSplit+1] += delta;
+        }
+        
+        // this just schedules the relayout
+        // important, otherwise the moving indicator is not correctly erased
+        setLayouted(false);
+    }
+    
+    if (m_resizing || evt->id() == EventImpl::MOUSEUP_EVENT) {
+#ifdef APPLE_CHANGES
+        KHTMLView *v = root()->view();
+        QPainter paint;
+        
+        v->disableFlushDrawing();
+        v->lockDrawingFocus();
+#else
+        QPainter paint( root()->view() );
+#endif
+        paint.setPen( Qt::gray );
+        paint.setBrush( Qt::gray );
+        
 #ifndef APPLE_CHANGES
-  if (m_resizing || evt->id() == EventImpl::MOUSEUP_EVENT) {
-      QPainter paint( root()->view() );
-      paint.setPen( Qt::gray );
-      paint.setBrush( Qt::gray );
-      paint.setRasterOp( Qt::XorROP );
-      QRect r(xPos(), yPos(), width(), height());
-      const int rBord = 3;
-      int sw = element()->border();
-      int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
-      if (m_vSplit > -1) {
-          if ( m_oldpos >= 0 )
-              paint.drawRect( m_oldpos + sw/2 - rBord , r.y(),
-                              2*rBord, r.height() );
-          if ( p >= 0 )
-              paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
-      } else {
-          if ( m_oldpos >= 0 )
-              paint.drawRect( r.x(), m_oldpos + sw/2 - rBord,
-                              r.width(), 2*rBord );
-          if ( p >= 0 )
-              paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
-      }
-      m_oldpos = p;
-  }
+        paint.setRasterOp( Qt::XorROP );
 #endif
+        QRect r(xPos(), yPos(), width(), height());
+        const int rBord = 3;
+        int sw = element()->border();
+        int p = m_resizing ? (m_vSplit > -1 ? _x : _y) : -1;
+        if (m_vSplit > -1) {
+            if ( m_oldpos >= 0 )
+#ifdef APPLE_CHANGES
+                // FIXME: Should only have to redraw the damage rect, but
+                // the damage rect alone isn't sufficient. areas outside
+                // the specified rect are getting partially drawn.
+                v->updateContents(v->contentsX(), v->contentsY(),
+                                v->visibleWidth(), v->visibleHeight());
+                //root()->view()->displayRect( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height() );
+#else
+                paint.drawRect( m_oldpos + sw/2 - rBord , r.y(),
+                                2*rBord, r.height() );
+#endif
+            if ( p >= 0 ){
+#ifdef APPLE_CHANGES
+                v->setDrawingAlpha((float)0.25);
+                paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
+                v->setDrawingAlpha((float)1.0);
+#else
+                paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
+#endif
+            }
+        } else {
+            if ( m_oldpos >= 0 )
+#ifdef APPLE_CHANGES
+                // FIXME: Should only have to redraw the damage rect, but
+                // the damage rect alone isn't sufficient. areas outside
+                // the specified rect are getting partially drawn.
+                v->updateContents(v->contentsX(), v->contentsY(),
+                                v->visibleWidth(), v->visibleHeight());
+                //root()->view()->displayRect( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord );
+#else
+                paint.drawRect( r.x(), m_oldpos + sw/2 - rBord,
+                                r.width(), 2*rBord );
+#endif
+            if ( p >= 0 ){
+#ifdef APPLE_CHANGES
+                v->setDrawingAlpha((float)0.25);
+                paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
+                v->setDrawingAlpha((float)1.0);
+#else
+                paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
+#endif
+            }
+        }
+        m_oldpos = p;
 
-  return res;
+#ifdef APPLE_CHANGES
+        v->unlockDrawingFocus();
+        v->enableFlushDrawing();
+        v->flushDrawing();
+#endif
+    }
+    
+    return res;
 }
 
 void RenderFrameSet::setResizing(bool e)
@@ -575,8 +622,14 @@ void RenderFrame::slotViewCleared()
         QScrollView *view = static_cast<QScrollView *>(m_widget);
         if(!element()->frameBorder || !((static_cast<HTMLFrameSetElementImpl *>(element()->parentNode()))->frameBorder()))
             view->setFrameStyle(QFrame::NoFrame);
-	    view->setVScrollBarMode(element()->scrolling );
-	    view->setHScrollBarMode(element()->scrolling );
+#ifdef APPLE_CHANGES
+        // Qt creates QScrollView w/ a default style of QFrame::StyledPanel | QFrame::Sunken.
+        else
+            view->setFrameStyle( QFrame::StyledPanel | QFrame::Sunken );
+#endif
+            
+        view->setVScrollBarMode(element()->scrolling );
+        view->setHScrollBarMode(element()->scrolling );
         if(view->inherits("KHTMLView")) {
 #ifdef DEBUG_LAYOUT
             kdDebug(6031) << "frame is a KHTMLview!" << endl;

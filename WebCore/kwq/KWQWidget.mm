@@ -341,3 +341,48 @@ void QWidget::endEditing()
         [window makeFirstResponder:nil];
     }
 }
+
+
+void QWidget::lockDrawingFocus()
+{
+    [getView() lockFocus];
+}
+
+
+void QWidget::unlockDrawingFocus()
+{
+    [getView() unlockFocus];
+}
+
+
+void QWidget::flushDrawing()
+{
+    [[getView() window] flushWindow];
+}
+
+
+void QWidget::enableFlushDrawing()
+{
+    [[getView() window] enableFlushWindow];
+}
+
+
+void QWidget::disableFlushDrawing()
+{
+    [[getView() window] disableFlushWindow];
+}
+
+
+void QWidget::setDrawingAlpha(float alpha)
+{
+    CGContextRef cgContext;
+    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSetAlpha(cgContext, alpha);
+}
+
+void QWidget::displayRect(int x, int y, int w, int h)
+{
+    [getView() displayRect: NSMakeRect (x,y,w,h)];
+}
+
+

@@ -32,11 +32,20 @@ QFrame::QFrame(QWidget *parent)
 {
 }
 
-void QFrame::setFrameStyle(int)
+void QFrame::setFrameStyle(int s)
 {
+    _frameStyle = s;
+    NSLog (@"framesStyle = %d\n", s);
+}
+
+int QFrame::frameStyle()
+{
+    return _frameStyle;
 }
 
 int QFrame::frameWidth() const
 {
+    if (_frameStyle == (QFrame::StyledPanel | QFrame::Sunken))
+        return 3;
     return 0;
 }

@@ -1,3 +1,28 @@
+2002-08-06  Richard Williamson (Local)  <rjw@apple.com>
+
+        Frame resizing related changes.  Frames are now resizable
+        w/ a resize bar.  Still need to draw frame borders.
+        
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+        (RenderFrame::slotViewCleared):
+        * kwq/KWQFrame.mm:
+        (QFrame::setFrameStyle):
+        (QFrame::frameStyle):
+        (QFrame::frameWidth):
+        * kwq/KWQWidget.mm:
+        (QWidget::lockDrawingFocus):
+        (QWidget::unlockDrawingFocus):
+        (QWidget::flushDrawing):
+        (QWidget::enableFlushDrawing):
+        (QWidget::disableFlushDrawing):
+        (QWidget::setDrawingAlpha):
+        (QWidget::displayRect):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:withPainter:]):
+        * kwq/qt/qframe.h:
+        * kwq/qt/qwidget.h:
+
 2002-08-06  Maciej Stachowiak  <mjs@apple.com>
 
 	Removed some APPLE_CHANGES no longer needed after the part change.
