@@ -24,6 +24,8 @@
 
         Reviewed by Chris.
 
+        - fixed 31323455 -- REGRESSION: Crash in plugin code closing popup window on lordoftherings.net
+
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView sendEvent:]): Added an assert.
         (-[WebBaseNetscapePluginView setWindow]): Added an assert.
