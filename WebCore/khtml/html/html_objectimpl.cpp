@@ -207,7 +207,11 @@ void HTMLEmbedElementImpl::parseAttribute(AttrImpl *attr)
         break;
      case ATTR_CODE:
      case ATTR_SRC:
+#ifdef _KWQ_
+         url = khtml::parseURL(attr->val()).string().copy();
+#else
          url = khtml::parseURL(attr->val()).string();
+#endif
          break;
      case ATTR_WIDTH:
         addCSSLength( CSS_PROP_WIDTH, attr->value() );
