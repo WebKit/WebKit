@@ -456,7 +456,7 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
     case LNONE:
         return;
     default:
-        if (m_item != QString::null) {
+        if (!m_item.isEmpty()) {
 #if APPLE_CHANGES
             // Text should be drawn on the baseline, so we add in the ascent of the font. 
             // For some inexplicable reason, this works in Konqueror.  I'm not sure why.

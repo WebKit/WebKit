@@ -585,7 +585,7 @@ namespace khtml
     
         static void moveToHeadOfLRUList(CachedObject *);
     
-        static LRUList m_LRULists[];
+        static LRUList *m_LRULists;
         static int m_totalSizeOfLRULists;
             
         static CachedObject *m_headOfUncacheableList;

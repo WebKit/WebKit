@@ -39,8 +39,6 @@ static CFMutableStringRef GetScratchUniCharString()
     return s;
 }
 
-const QChar QChar::null;
-
 bool QChar::isDigit() const
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetDecimalDigit);

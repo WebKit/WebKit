@@ -4039,7 +4039,7 @@ void KHTMLPart::reparseConfiguration()
   if ( !userStyleSheet.isEmpty() )
     setUserStyleSheet( KURL( userStyleSheet ) );
   else
-    setUserStyleSheet( QString::null );
+    setUserStyleSheet( QString() );
 
 #if !APPLE_CHANGES
   QApplication::setOverrideCursor( waitCursor );

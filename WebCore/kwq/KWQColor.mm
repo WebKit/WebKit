@@ -35,18 +35,6 @@
 #import "KWQColorData.c"
 #undef __inline
 
-const QColor Qt::black    (0x00, 0x00, 0x00);
-const QColor Qt::white    (0xFF, 0xFF, 0xFF);
-const QColor Qt::darkGray (0x80, 0x80, 0x80);
-const QColor Qt::gray     (0xA0, 0xA0, 0xA0);
-const QColor Qt::lightGray(0xC0, 0xC0, 0xC0);
-const QColor Qt::red      (0xFF, 0x00, 0x00);
-const QColor Qt::green    (0x00, 0xFF, 0x00);
-const QColor Qt::blue     (0x00, 0x00, 0xFF);
-const QColor Qt::cyan     (0x00, 0xFF, 0xFF);
-const QColor Qt::magenta  (0xFF, 0x00, 0xFF);
-const QColor Qt::yellow   (0xFF, 0xFF, 0x00);
-
 QRgb qRgb(int r, int g, int b)
 {
     if (r < 0) r = 0; else if (r > 255) r = 255;

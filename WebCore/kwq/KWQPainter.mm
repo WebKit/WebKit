@@ -109,6 +109,13 @@ void QPainter::setPen(PenStyle style)
     data->state.pen.setWidth(0);
 }
 
+void QPainter::setPen(QRgb rgb)
+{
+    data->state.pen.setStyle(SolidLine);
+    data->state.pen.setColor(rgb);
+    data->state.pen.setWidth(0);
+}
+
 void QPainter::setBrush(const QBrush &brush)
 {
     data->state.brush = brush;
@@ -118,6 +125,12 @@ void QPainter::setBrush(BrushStyle style)
 {
     data->state.brush.setStyle(style);
     data->state.brush.setColor(Qt::black);
+}
+
+void QPainter::setBrush(QRgb rgb)
+{
+    data->state.brush.setStyle(SolidPattern);
+    data->state.brush.setColor(rgb);
 }
 
 const QBrush &QPainter::brush() const

@@ -851,10 +851,10 @@ bool HTMLGenericFormElementImpl::isEditable()
 
 // Special chars used to encode form state strings.
 // We pick chars that are unlikely to be used in an HTML attr, so we rarely have to really encode.
-const QChar stateSeparator = '&';
-const QChar stateEscape = '<';
-const QString stateSeparatorMarker = "<A";
-const QString stateEscapeMarker = "<<";
+const char stateSeparator = '&';
+const char stateEscape = '<';
+static const char stateSeparatorMarker[] = "<A";
+static const char stateEscapeMarker[] = "<<";
 
 // Encode an element name so we can put it in a state string without colliding
 // with our separator char.

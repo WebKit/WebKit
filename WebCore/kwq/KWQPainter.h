@@ -59,10 +59,12 @@ public:
     const QPen &pen() const;
     void setPen(const QPen &);
     void setPen(PenStyle);
+    void setPen(QRgb);
     
     const QBrush &QPainter::brush() const;
     void setBrush(const QBrush &);
     void setBrush(BrushStyle);
+    void setBrush(QRgb);
 
     QRect xForm(const QRect &) const;
 

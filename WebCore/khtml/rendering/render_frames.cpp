@@ -46,8 +46,6 @@
 #include <qtimer.h>
 #include <qpainter.h>
 
-#include <assert.h>
-#include <iostream.h>
 using namespace khtml;
 using namespace DOM;
 

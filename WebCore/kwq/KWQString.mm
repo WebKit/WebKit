@@ -690,8 +690,6 @@ NSString *QString::getNSString() const
     return nil;
 }
 
-const QString QString::null;
-
 inline void QString::detachIfInternal()
 {
     KWQStringData *oldData = *dataHandle;
@@ -1698,7 +1696,7 @@ QString QString::mid(uint start, uint len) const
     }
     
     // degenerate case
-    return null;
+    return QString();
 }
 
 

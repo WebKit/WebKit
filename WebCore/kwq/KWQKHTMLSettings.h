@@ -49,7 +49,7 @@ public:
     const QString &cursiveFontName() const { return _cursiveFontName; }
     const QString &fantasyFontName() const { return _fantasyFontName; }
     
-    static const QString &settingsToCSS() { return QString::null; }
+    static QString settingsToCSS() { return QString(); }
 
     int minFontSize() const { return _minimumFontSize; }
     int mediumFontSize() const { return _defaultFontSize; }

@@ -226,17 +226,11 @@ public:
         XorROP,
     };
 
-    static const QColor black;
-    static const QColor white;
-    static const QColor darkGray;
-    static const QColor gray;
-    static const QColor lightGray;
-    static const QColor red;
-    static const QColor green;
-    static const QColor blue;
-    static const QColor cyan;
-    static const QColor magenta;
-    static const QColor yellow;
+    static const unsigned black = 0x000000;
+    static const unsigned white = 0xFFFFFF;
+    static const unsigned darkGray = 0x808080;
+    static const unsigned gray = 0xA0A0A0;
+    static const unsigned lightGray = 0xC0C0C0;
 
 };
 

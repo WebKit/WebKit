@@ -1408,7 +1408,7 @@ QPixmap *Cache::brokenPixmap = 0;
 CachedObject *Cache::m_headOfUncacheableList = 0;
 int Cache::m_totalSizeOfLRULists = 0;
 int Cache::m_countOfLRUAndUncacheableLists;
-LRUList Cache::m_LRULists[MAX_LRU_LISTS];
+LRUList *Cache::m_LRULists = 0;
 
 void Cache::init()
 {
@@ -1871,6 +1871,9 @@ LRUList* Cache::getLRUListFor(CachedObject* o)
             queueIndex = 0;
         if (queueIndex >= MAX_LRU_LISTS)
             queueIndex = MAX_LRU_LISTS-1;
+    }
+    if (m_LRULists == 0) {
+        m_LRULists = new LRUList [MAX_LRU_LISTS];
     }
     return &m_LRULists[queueIndex];
 }

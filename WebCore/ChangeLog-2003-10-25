@@ -1,5 +1,77 @@
 2003-04-29  Darin Adler  <darin@apple.com>
 
+        Mostly reviewed by Ken, some bits reviewed by John.
+
+	- fixed 3188781 -- eliminate globally initialized objects from WebCore
+
+        * kwq/KWQString.h: Change QChar::null to be a char constant, and QString::null to be a const char *.
+        In the cases where the code still compiles after these changes, everything works fine. A few cases
+        that didn't compile are fixed below.
+        * kwq/KWQString.mm: Remove QString::null.
+        (QString::mid): Return QString() instead of null.
+        * kwq/KWQChar.mm: Remove the definition of QChar::null.
+
+        * khtml/css/css_base.cpp: (CSSSelector::extractPseudoType): Use DOMString explicitly in one place
+        where the code said QString::null. The trick where QString::null is really a const char * does not
+        work in this case.
+        * khtml/khtml_part.cpp: (KHTMLPart::reparseConfiguration): Use QString() instead of QString::null
+        in one place. The trick where QString::null is really a const char * does not work in this case.
+        * kwq/KWQKHTMLSettings.h: Use QString() for settingsToCSS, the trick where QString::null is really
+        a const char * does not work in this case.
+        * khtml/rendering/render_list.cpp: (RenderListMarker::paintObject): Use an isEmpty check here instead
+        of comparing with QString::null. Not sure this change was strictly required, but it is simpler and
+        may also make the code slightly faster.
+
+        * kwq/KWQKFileDialog.h: Removed. This used QString::null in a way that is incompatible with the new
+        "0" hack, but was not used any more.
+        * kwq/KWQKFileDialog.mm: Removed.
+        * ForwardingHeaders/kfiledialog.h: Empty this out, since there is no KWQKFileDialog.h any more.
+        * WebCore.pbproj/project.pbxproj: Removed KWQKFileDialog.h and .mm.
+       
+        * khtml/html/htmltokenizer.cpp: Change the commentStart global array to be an array of char instead
+        of QChar to avoid the static constructor; the code works fine with char anyway.
+        * khtml/html/html_formimpl.cpp: Change the global constants in this file to be char instead of QChar.
+        It works this way (and faster for KWQ), and avoids the static constructor.
+
+        * khtml/rendering/bidi.h: Change BidiIterator from a class with constructors into a plain struct.
+        The copy construct and assignment operator weren't needed anyway since they simply duplicated default
+        assignment, and if we have a constructor then we can't use it as a global object, since we want to
+        avoid static constructors. Do the same with BidiStatus, and also stop using bit fields. It's silly to
+        use bit fields for something when we have only one global instance of it; just makes extra code size
+        and saves a few bytes.
+        * khtml/rendering/bidi.cpp:
+        (BidiIterator::current): Move the non-breaking space global inside this function.
+        (appendRunsForObject): Initialize BidiIterator object using brace notation.
+        (buildCompactRuns): Initialize BidiIterator objects using brace notation and assignment.
+        (RenderBlock::layoutInlineChildren): Initialize BidiStatus fields separately. Initialize BidiIterator
+        objects using brace notation and assignment.
+        (RenderBlock::findNextLineBreak): Initialize BidiIterator objects using brace notation and assignment.
+
+        * khtml/rendering/render_frames.cpp: Removed an include of <iostream.h>. This pulled the entire
+        C++ I/O library in, with lots of static constructors. Elsewhere, we are careful not to use the C++
+        I/O library in WebCore except in Development versions. And this file didn't actually use the library,
+        just included the header.
+
+        * kwq/KWQNamespace.h: Remove all the color globals except for the ones used in KHTML: black, white,
+        darkGray, gray, and lightGray. And for those, make the globals RGB constants instead of QColor objects.
+        This gets rid of the global objects with constructors and works without any KHTML code changes.
+        * kwq/KWQColor.mm: Remove the definition of the QColor constants from the Qt class.
+
+        * kwq/KWQPainter.h: Add overloads for setPen and setBrush so they work with the "color" constants
+        from Qt that are now RGB constants rather than QColor objects.
+        * kwq/KWQPainter.mm:
+        (QPainter::setPen): Set style to solid line and width to 0 when the parameter is an RGB constant.
+        This is just like what you'd get if you constructed a QPen.
+        (QPainter::setBrush): Set style to solid pattern when the parameter is an RGB constant.
+        This is just like what you'd get if you constructed a QBrush.
+        
+        * khtml/misc/loader.h: Change m_LRULists to be a global pointer instead of a global array, so
+        we don't have to statically construct LRUList objects.
+        * khtml/misc/loader.cpp: (Cache::getLRUListFor): Allocate the global array the first time we
+        pass through here.
+
+2003-04-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
 	- fixed 3242460 -- crash in NSPopUpButtonCell at acheter-moins-cher.com

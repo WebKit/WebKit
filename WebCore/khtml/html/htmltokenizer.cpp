@@ -65,8 +65,7 @@
 
 using namespace khtml;
 
-static const QChar commentStart [] = { '<','!','-','-', QChar::null };
-
+static const char commentStart [] = "<!--";
 static const char scriptEnd [] = "</script";
 static const char xmpEnd [] = "</xmp";
 static const char styleEnd [] =  "</style";
