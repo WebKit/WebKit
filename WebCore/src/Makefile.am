@@ -23,6 +23,7 @@ libwebcore_la_LIBADD = \
 	$(NULL)
 
 libwebcore_la_LDFLAGS = \
+        -install_name $symrootsdir/libwebcore.dylib
 	-version-info $(WEBCORE_VERSION_INFO) \
 	$(NULL)
 
