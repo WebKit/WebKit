@@ -35,13 +35,14 @@
 
 -(void)addEntry:(WebHistoryItem *)entry
 {
-    // If the last entry matches this new entry, don't add a new one, since we are
-    // presumably just doing a reload.
+    // If the last entry matches this new entry, then replace it rather than adding
+    // a new one, since we are doing a reload.
     if ([uriList count] > index) {
         WebHistoryItem *lastEntry = [uriList entryAtIndex:index];
         if ([[lastEntry URL] isEqual:[entry URL]]
             && ([lastEntry target] == [entry target] || [[lastEntry target] isEqual:[entry target]])
             && ([lastEntry parent] == [entry parent] || [[lastEntry parent] isEqual:[entry parent]])) {
+            [uriList replaceEntryAtIndex:index withEntry:entry];
             return;
         }
     }

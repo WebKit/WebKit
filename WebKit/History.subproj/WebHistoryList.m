@@ -32,10 +32,10 @@ static WebHistoryListNode *newURIListNode(WebHistoryItem *entry)
 
 static void freeNode(WebHistoryListNode *node)
 {
-    // it is important to autorelase here rather than using 
+    // It is important to autorelase here rather than using 
     // a straight release since we often return an entry
     // as a result of an operation that causes a node
-    // to be freed
+    // to be freed.
     [node->entry autorelease];
     free(node);    
 }
@@ -100,55 +100,16 @@ static void freeNode(WebHistoryListNode *node)
     _maximumSize = size;
 }
 
-
-
--(WebHistoryItem *)addURL:(NSURL *)URL withTitle:(NSString *)title;
-{
-    WebHistoryItem *result;
-    
-    result = [[WebHistoryItem alloc] initWithURL:URL title:title];
-    [self addEntry:result];
-    
-    return result;
-}
-
 -(void)addEntry:(WebHistoryItem *)entry
 {
-    WebHistoryListNode *node;
-    unsigned hash;
-
     if (!_allowsDuplicates) {
         // search the list first and remove any entry with the same URL
         // having the same title does not count
-        // use the hash codes of the URLs to speed up the linear search
-        hash = [entry hash];
-        for (node = _head; node != nil; node = node->next) {
-            if (hash == node->hash && [entry isEqual:node->entry]) {
-                _count--;
-                if (node == _head) {
-                    _head = node->next;
-                    if (_head) {
-                        _head->prev = nil;
-                    }
-                }
-                else if (node == _tail) {
-                    _tail = node->prev;
-                    if (_tail) {
-                        _tail->next = nil;
-                    }
-                }
-                else {
-                    node->prev->next = node->next;
-                    node->next->prev = node->prev;
-                }
-                freeNode(node);
-                break;
-            }
-        }
+        [self removeEntry:entry];
     }
 
     // make new entry and put it at the head of the list
-    node = newURIListNode(entry);
+    WebHistoryListNode *node = newURIListNode(entry);
     node->next = _head;
     _head = node;
     _count++;
@@ -166,15 +127,13 @@ static void freeNode(WebHistoryListNode *node)
     }
 }
 
--(WebHistoryItem *)removeURL:(NSURL *)URL
+-(void)removeEntry:(WebHistoryItem *)entry
 {
-    WebHistoryItem *removedEntry;
-    WebHistoryListNode *node;
-    unsigned hash;
-    
-    removedEntry = nil;
-    hash = [URL hash];
+    WebHistoryItem *removedEntry = nil;
+    NSURL *URL = [entry URL];
+    unsigned hash = [URL hash];
 
+    WebHistoryListNode *node;
     for (node = _head; node != nil; node = node->next) {
         if (hash == node->hash && [URL isEqual:[node->entry URL]]) {
             _count--;
@@ -199,56 +158,14 @@ static void freeNode(WebHistoryListNode *node)
             break;
         }
     }
-    
-    return removedEntry;
-}
-
--(BOOL)removeEntry:(WebHistoryItem *)entry
-{
-    BOOL removed;
-    WebHistoryListNode *node;
-    unsigned hash;
-    
-    removed = NO;
-    hash = [entry hash];
-
-    for (node = _head; node != nil; node = node->next) {
-        if (hash == node->hash && [entry isEqual:node->entry]) {
-            _count--;
-            removed = YES;
-            if (node == _head) {
-                _head = node->next;
-                if (_head) {
-                    _head->prev = nil;
-                }
-            }
-            else if (node == _tail) {
-                _tail = node->prev;
-                if (_tail) {
-                    _tail->next = nil;
-                }
-            }
-            else {
-                node->prev->next = node->next;
-                node->next->prev = node->prev;
-            }
-            freeNode(node);
-            break;
-        }
-    }
-    
-    return removed;
 }
 
 -(WebHistoryItem *)entryForURL:(NSURL *)URL
 {
-    WebHistoryItem *foundEntry;
-    WebHistoryListNode *node;
-    unsigned hash;
-    
-    foundEntry = nil;
-    hash = [URL hash];
+    WebHistoryItem *foundEntry = nil;
+    unsigned hash = [URL hash];
 
+    WebHistoryListNode *node;
     for (node = _head; node != nil; node = node->next) {
         if (hash == node->hash && [URL isEqual:[node->entry URL]]) {
             foundEntry = node->entry;
@@ -261,13 +178,10 @@ static void freeNode(WebHistoryListNode *node)
 
 -(WebHistoryItem *)entryAtIndex:(int)index
 {
-    int i;
-    WebHistoryListNode *node;
-
     WEBKIT_ASSERT(index >= 0 && index < _count);
 
-    node = _head;
-
+    WebHistoryListNode *node = _head;
+    int i;
     for (i = 0; i < index; i++) {
         node = node->next;
     }
@@ -275,22 +189,32 @@ static void freeNode(WebHistoryListNode *node)
     return node->entry;    
 }
 
+-(void)replaceEntryAtIndex:(int)index withEntry:(WebHistoryItem *)entry
+{
+    WEBKIT_ASSERT(index >= 0 && index < _count);
+
+    WebHistoryListNode *node = _head;
+    int i;
+    for (i = 0; i < index; i++) {
+        node = node->next;
+    }
+
+    [node->entry autorelease];
+    node->entry = [entry retain];
+}
+
 -(WebHistoryItem *)removeEntryAtIndex:(int)index
 {
-    WebHistoryItem *removedEntry;
-    WebHistoryListNode *node;
-    int i;
-
     WEBKIT_ASSERT(index > 0 && index < _count);
 
-    node = _head;
-
+    WebHistoryListNode *node = _head;
+    int i;
     for (i = 0; i < index; i++) {
         node = node->next;
     }
 
     _count--;
-    removedEntry = node->entry;
+    WebHistoryItem *removedEntry = node->entry;
     if (node == _head) {
         _head = node->next;
         if (_head) {
@@ -314,19 +238,15 @@ static void freeNode(WebHistoryListNode *node)
 
 -(void)removeEntriesToIndex:(int)index
 {
-    WebHistoryListNode *node;
-    WebHistoryListNode *delNode;
-    int i;
-
     WEBKIT_ASSERT(index > 0 && index < _count);
 
-    node = _head;
-
+    WebHistoryListNode *node = _head;
+    int i;
     for (i = 0; i < index; i++) {
-        delNode = node;
-        node = node->next;
-        freeNode(delNode);
+        WebHistoryListNode *next = node->next;
+        freeNode(node);
         _count--;
+        node = next;
     }
     
     _head = node;

@@ -1,5 +1,20 @@
 2002-09-04  Darin Adler  <darin@apple.com>
 
+	One more pass of refinement on that last change.
+
+        * History.subproj/WebBackForwardList.m: (-[WebBackForwardList addEntry:]):
+	Replace the last entry instead of just ignoring if this one matches.
+
+        * History.subproj/WebHistoryList.h: Add replaceEntryAtIndex. Remove addURL: and removeURL:.
+
+        * History.subproj/WebHistoryList.m:
+        (-[WebHistoryList addEntry:]): Call removeEntry: rather than using an entire pasted copy here.
+        (-[WebHistoryList removeEntry:]): Use a hash of the URL and the URL rather than relying on the
+	fact that WebHistoryItem hashes and does isEqual based on the URL only.
+        (-[WebHistoryList replaceEntryAtIndex:withEntry:]): Added. Used by the code above.
+
+2002-09-04  Darin Adler  <darin@apple.com>
+
 	Fix bug where doing a reload adds an entry to the back/forward list.
 
         * History.subproj/WebBackForwardList.m: (-[WebBackForwardList addEntry:]):

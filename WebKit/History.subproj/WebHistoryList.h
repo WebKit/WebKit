@@ -27,14 +27,15 @@ typedef struct WebHistoryListNode WebHistoryListNode;
 -(int)maximumSize;
 -(void)setMaximumSize:(int)size;
 
--(WebHistoryItem *)addURL:(NSURL *)URL withTitle:(NSString *)title;
--(void)addEntry:(WebHistoryItem *)entry;
--(WebHistoryItem *)removeURL:(NSURL *)URL;
--(BOOL)removeEntry:(WebHistoryItem *)entry;
-
--(WebHistoryItem *)entryForURL:(NSURL *)URL;
 -(WebHistoryItem *)entryAtIndex:(int)index;
+-(WebHistoryItem *)entryForURL:(NSURL *)URL;
+
+-(void)addEntry:(WebHistoryItem *)entry;
+
+-(void)removeEntry:(WebHistoryItem *)entry;
 -(WebHistoryItem *)removeEntryAtIndex:(int)index;
 -(void)removeEntriesToIndex:(int)index;
+
+-(void)replaceEntryAtIndex:(int)index withEntry:(WebHistoryItem *)entry;
 
 @end
