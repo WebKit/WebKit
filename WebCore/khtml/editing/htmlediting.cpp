@@ -3358,11 +3358,17 @@ void ReplaceSelectionCommand::doApply()
     if (node) {
         NodeImpl *refNode = node;
         NodeImpl *node = refNode ? refNode->nextSibling() : 0;
-        if (isProbablyBlock(refNode) && (insertBlocksBefore || startAtStartOfBlock)) {
-            insertNodeBefore(refNode, refBlock);
+        if (isProbablyBlock(refNode) && (insertBlocksBefore || startAtStartOfBlock) && !mergeStart) {
+            if (refBlock->id() == ID_BODY)
+                insertNodeAt(refNode, refBlock, 0);
+            else
+                insertNodeBefore(refNode, refBlock);
         }
-        else if (isProbablyBlock(refNode) && startAtEndOfBlock) {
-            insertNodeAfter(refNode, refBlock);
+        else if (isProbablyBlock(refNode) && startAtEndOfBlock && !mergeEnd) {
+            if (refBlock->id() == ID_BODY)
+                appendNode(refNode, refBlock);
+            else
+                insertNodeAfter(refNode, refBlock);
         }
         else {
             insertNodeAt(refNode, insertionPos.node(), insertionPos.offset());

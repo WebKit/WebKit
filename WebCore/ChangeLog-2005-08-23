@@ -1,3 +1,18 @@
+2004-12-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3907422> REGRESSION (Mail): Pasting quoted content can place content after body element
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Detect when the body element is the "reference block" used
+        for determining the location for inserting content. Do not allow an insert before or after if the
+        reference block is the body. Perform insertNodeAt(0) and appendNode, respectively, in the block-is-body case.
+        * layout-tests/editing/inserting/insert-3907422-fix-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-3907422-fix.html: Added.
+
 2004-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

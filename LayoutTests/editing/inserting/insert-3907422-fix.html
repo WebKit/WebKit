@@ -1,0 +1,36 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    word-wrap: break-word; 
+    -khtml-nbsp-mode: space; 
+    -khtml-line-break: after-white-space;
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    selectAllCommand();
+    cutCommand();
+    pasteCommand();
+    pasteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body contenteditable id="root" class="editing">
+<div>foo<blockquote>bar</blockquote>baz</div>
+
+<!-- Buggy code before fix would insert blockquote after body element in second paste -->
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>
