@@ -50,7 +50,7 @@ public:
     virtual void paint(QPainter *p, int _x, int _y, int _w, int _h,
                        int _tx, int _ty, PaintAction paintAction);
 
-    virtual void detach(RenderArena* renderArena);
+    virtual void detach();
     
     virtual short minWidth() const { return m_minWidth; }
     virtual short maxWidth() const { return m_maxWidth; }

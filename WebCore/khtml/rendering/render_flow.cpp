@@ -45,13 +45,13 @@
 using namespace DOM;
 using namespace khtml;
 
-RenderFlow* RenderFlow::createFlow(DOM::NodeImpl* node, RenderStyle* style, RenderArena* arena)
+RenderFlow* RenderFlow::createAnonymousFlow(DOM::DocumentImpl* doc, RenderStyle* style)
 {
     RenderFlow* result;
     if (style->display() == INLINE)
-        result = new (arena) RenderInline(node);
+        result = new (doc->renderArena()) RenderInline(doc);
     else
-        result = new (arena) RenderBlock(node);
+        result = new (doc->renderArena()) RenderBlock(doc);
     result->setStyle(style);
     return result;
 }
@@ -125,11 +125,10 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     return addChildToFlow(newChild, beforeChild);
 }
 
-void RenderFlow::deleteLineBoxes(RenderArena* arena)
+void RenderFlow::deleteLineBoxes()
 {
     if (m_firstLineBox) {
-        if (!arena)
-            arena = renderArena();
+        RenderArena* arena = renderArena();
         InlineRunBox *curr=m_firstLineBox, *next=0;
         while (curr) {
             next = curr->nextLineBox();
@@ -141,10 +140,10 @@ void RenderFlow::deleteLineBoxes(RenderArena* arena)
     }
 }
 
-void RenderFlow::detach(RenderArena* renderArena)
+void RenderFlow::detach()
 {
-    deleteLineBoxes(renderArena);
-    RenderBox::detach(renderArena);
+    deleteLineBoxes();
+    RenderBox::detach();
 }
 
 InlineBox* RenderFlow::createInlineBox(bool makePlaceHolderBox, bool isRootLineBox)

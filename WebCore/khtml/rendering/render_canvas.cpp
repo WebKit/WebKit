@@ -38,6 +38,9 @@ using namespace khtml;
 RenderCanvas::RenderCanvas(DOM::NodeImpl* node, KHTMLView *view)
     : RenderBlock(node)
 {
+    // Clear our anonymous bit.
+    setIsAnonymous(false);
+        
     // init RenderObject attributes
     setInline(false);
 

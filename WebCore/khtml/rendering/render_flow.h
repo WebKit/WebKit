@@ -54,10 +54,10 @@ public:
     virtual void addChildToFlow(RenderObject* newChild, RenderObject* beforeChild) = 0;
     virtual void addChild(RenderObject *newChild, RenderObject *beforeChild = 0);
 
-    static RenderFlow* createFlow(DOM::NodeImpl* node, RenderStyle* style, RenderArena* arena);
+    static RenderFlow* createAnonymousFlow(DOM::DocumentImpl* doc, RenderStyle* style);
 
-    void deleteLineBoxes(RenderArena* arena=0);
-    virtual void detach(RenderArena* arena);
+    void deleteLineBoxes();
+    virtual void detach();
 
     InlineFlowBox* firstLineBox() const { return m_firstLineBox; }
     InlineFlowBox* lastLineBox() const { return m_lastLineBox; }

@@ -74,7 +74,7 @@ public:
 
     virtual bool isWidget() const { return true; };
 
-    virtual void detach(RenderArena* renderArena);
+    virtual void detach();
     virtual void layout( );
 
     QWidget *widget() const { return m_widget; }

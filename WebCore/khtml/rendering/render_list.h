@@ -39,7 +39,7 @@ class RenderListItem;
 class RenderListMarker : public RenderBox
 {
 public:
-    RenderListMarker();
+    RenderListMarker(DOM::DocumentImpl* document);
     ~RenderListMarker();
 
     virtual void setStyle(RenderStyle *style);
@@ -84,7 +84,7 @@ public:
     RenderListItem(DOM::NodeImpl*);
     virtual ~RenderListItem();
     
-    virtual void detach(RenderArena *);
+    virtual void detach();
 
     virtual const char *renderName() const { return "RenderListItem"; }
 

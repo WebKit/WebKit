@@ -1,5 +1,121 @@
 2003-10-01  David Hyatt  <hyatt@apple.com>
 
+	Clean up our detach model so that you can always get to a document, even for
+	anonymous content.  Also stubbing out and adding the accessibility objects.
+	
+        Reviewed by darin, mjs, john
+
+        * ChangeLog:
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::detach):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::RenderCanvas):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::detach):
+        (RenderContainer::addChild):
+        (RenderContainer::updatePseudoChild):
+        (RenderContainer::insertChildNode):
+        (RenderContainer::removeLeftoverAnonymousBoxes):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::createAnonymousFlow):
+        (RenderFlow::deleteLineBoxes):
+        (RenderFlow::detach):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderTextArea::detach):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::RenderImage):
+        (RenderImage::detach):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::addChildToFlow):
+        (RenderInline::splitFlow):
+        (RenderInline::renderName):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+        (RenderListItem::detach):
+        (RenderListItem::updateMarkerLocation):
+        (RenderListMarker::RenderListMarker):
+        * khtml/rendering/render_list.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):
+        (RenderObject::information):
+        (RenderObject::dump):
+        (RenderObject::createAnonymousBlock):
+        (RenderObject::remove):
+        (RenderObject::detach):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::detach):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::addChild):
+        (RenderTableSection::detach):
+        (RenderTableSection::addChild):
+        (RenderTableRow::detach):
+        (RenderTableRow::addChild):
+        (RenderTableCell::detach):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::detach):
+        (RenderText::deleteRuns):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::~DocumentImpl):
+        (DocumentImpl::detach):
+        (DocumentImpl::getOrCreateAccObjectCache):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::detach):
+        * kwq/KWQAccObject.h: Added.
+        * kwq/KWQAccObject.mm: Added.
+        (-[KWQAccObject x]):
+        (-[KWQAccObject y]):
+        (-[KWQAccObject width]):
+        (-[KWQAccObject height]):
+        (-[KWQAccObject detached]):
+        (-[KWQAccObject detach]):
+        (-[KWQAccObject data]):
+        (-[KWQAccObject setData:]):
+        (-[KWQAccObject firstChild]):
+        (-[KWQAccObject lastChild]):
+        (-[KWQAccObject previousSibling]):
+        (-[KWQAccObject nextSibling]):
+        (-[KWQAccObject parentObject]):
+        * kwq/KWQAccObjectCache.h: Added.
+        * kwq/KWQAccObjectCache.mm: Added.
+        (KWQAccObjectCache::KWQAccObjectCache):
+        (KWQAccObjectCache::~KWQAccObjectCache):
+        (KWQAccObjectCache::accObject):
+        (KWQAccObjectCache::setAccObject):
+        (KWQAccObjectCache::removeAccObject):
+        (KWQAccObjectCache::detach):
+        * layout-tests/css1/pseudo/firstletter-expected.txt:
+        * layout-tests/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * layout-tests/fast/css-generated-content/002-expected.txt:
+        * layout-tests/fast/css-generated-content/004-expected.txt:
+        * layout-tests/fast/css-generated-content/005-expected.txt:
+        * layout-tests/fast/css-generated-content/006-expected.txt:
+        * layout-tests/fast/selectors/039-expected.txt:
+        * layout-tests/fast/selectors/039b-expected.txt:
+        * layout-tests/fast/selectors/041-expected.txt:
+        * layout-tests/fast/selectors/042-expected.txt:
+        * layout-tests/fast/selectors/166a-expected.txt:
+        * layout-tests/fast/selectors/168-expected.txt:
+        * layout-tests/fast/selectors/168a-expected.txt:
+        * layout-tests/fast/selectors/169-expected.txt:
+        * layout-tests/fast/selectors/169a-expected.txt:
+        * layout-tests/fast/text/firstline/002-expected.txt:
+        * layout-tests/fast/text/firstline/003-expected.txt:
+
+2003-10-01  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3163840, the images are mispositioned on the DHTML menus at the top of
 	www.aa.com (and in many other places).  We needed to support returning the right
 	value from hasProperty and tryGet for 'cssFloat'.  

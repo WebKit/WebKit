@@ -1325,13 +1325,13 @@ RenderTextArea::RenderTextArea(HTMLTextAreaElementImpl *element)
     connect(edit,SIGNAL(clicked()),this,SLOT(slotClicked()));
 }
 
-void RenderTextArea::detach(RenderArena *arena)
+void RenderTextArea::detach()
 {
     if ( element()->m_dirtyvalue ) {
         element()->m_value = text();
         element()->m_dirtyvalue = false;
     }
-    RenderFormElement::detach(arena);
+    RenderFormElement::detach();
 }
 
 void RenderTextArea::handleFocusOut()

@@ -7,7 +7,7 @@ layer at (0,0) size 800x76
         RenderText {TEXT} at (0,0) size 91x17
           text run at (0,0) width 91: "This test has "
         RenderInline {SPAN} at (0,0) size 51x17
-          RenderInline at (0,0) size 51x17 [bgcolor=#00FF00]
+          RenderInline (anonymous) at (0,0) size 51x17 [bgcolor=#00FF00]
             RenderText at (91,0) size 51x17
               text run at (91,0) width 51: "PASSED"
         RenderText {TEXT} at (142,0) size 5x17

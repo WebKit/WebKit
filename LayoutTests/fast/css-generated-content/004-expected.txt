@@ -4,6 +4,7 @@ layer at (0,0) size 800x45
   RenderBlock {HTML} at (0,0) size 800x45
     RenderBody {BODY} at (8,14) size 784x17 [color=#FF0000]
       RenderBlock {P} at (0,0) size 784x17 [color=#008000]
-        RenderInline at (0,0) size 179x17
+        RenderInline (anonymous) at (0,0) size 179x17
           RenderText at (0,0) size 179x17
             text run at (0,0) width 179: "This text should be green."
+        RenderInline (anonymous) at (0,0) size 0x17

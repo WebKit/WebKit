@@ -191,7 +191,7 @@ class RenderTableSection : public RenderBox
 public:
     RenderTableSection(DOM::NodeImpl* node);
     ~RenderTableSection();
-    virtual void detach(RenderArena* arena);
+    virtual void detach();
 
     virtual void setStyle(RenderStyle *style);
 
@@ -265,7 +265,7 @@ class RenderTableRow : public RenderContainer
 public:
     RenderTableRow(DOM::NodeImpl* node);
 
-    virtual void detach(RenderArena* arena);
+    virtual void detach();
 
     virtual void setStyle( RenderStyle* );
     virtual const char *renderName() const { return "RenderTableRow"; }
@@ -297,7 +297,7 @@ class RenderTableCell : public RenderBlock
 public:
     RenderTableCell(DOM::NodeImpl* node);
 
-    virtual void detach(RenderArena* arena);
+    virtual void detach();
 
     virtual const char *renderName() const { return "RenderTableCell"; }
     virtual bool isTableCell() const { return true; }

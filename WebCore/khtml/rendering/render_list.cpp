@@ -140,7 +140,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
         newStyle->ref();
         newStyle->inheritFrom(style());
         if (!m_marker) {
-            m_marker = new (renderArena()) RenderListMarker();
+            m_marker = new (renderArena()) RenderListMarker(document());
             m_marker->setStyle(newStyle);
             m_marker->setListItem(this);
             _markerInstalledInParent = false;
@@ -149,7 +149,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
             m_marker->setStyle(newStyle);
         newStyle->deref();
     } else if (m_marker) {
-        m_marker->detach(renderArena());
+        m_marker->detach();
         m_marker = 0;
     }
 }
@@ -158,13 +158,13 @@ RenderListItem::~RenderListItem()
 {
 }
 
-void RenderListItem::detach(RenderArena* renderArena)
+void RenderListItem::detach()
 {    
     if (m_marker && !_markerInstalledInParent) {
-        m_marker->detach(renderArena);
+        m_marker->detach();
         m_marker = 0;
     }
-    RenderBlock::detach(renderArena);
+    RenderBlock::detach();
 }
 
 void RenderListItem::calcListValue()
@@ -232,7 +232,7 @@ void RenderListItem::updateMarkerLocation()
             // then we are the only item in that anonymous box (since no line box
             // parent was found).  It's ok to just leave the marker where it is
             // in this case.
-            if (markerPar && markerPar->isAnonymousBox())
+            if (markerPar && markerPar->isAnonymous())
                 lineBoxParent = markerPar;
             else
                 lineBoxParent = this;
@@ -291,8 +291,8 @@ void RenderListItem::paintObject(QPainter *p, int _x, int _y,
 
 // -----------------------------------------------------------
 
-RenderListMarker::RenderListMarker()
-    : RenderBox(0), m_listImage(0), m_value(-1)
+RenderListMarker::RenderListMarker(DocumentImpl* document)
+    : RenderBox(document), m_listImage(0), m_value(-1)
 {
     // init RenderObject attributes
     setInline(true);   // our object is Inline

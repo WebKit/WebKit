@@ -53,7 +53,7 @@ public:
         m_toAdd = 0;
     }
     
-    void detach(RenderArena* renderArena);
+    void detach(RenderArena* arena);
     
     // Overloaded new operator.  Derived classes must override operator new
     // in order to allocate out of the RenderArena.
@@ -131,8 +131,8 @@ public:
     virtual void paintObject(QPainter *, int x, int y, int w, int h,
                              int tx, int ty, PaintAction paintAction);
 
-    void deleteRuns(RenderArena *renderArena = 0);
-    virtual void detach(RenderArena* renderArena);
+    void deleteRuns();
+    virtual void detach();
     
     DOM::DOMString data() const { return str; }
     DOM::DOMStringImpl *string() const { return str; }

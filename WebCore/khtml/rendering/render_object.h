@@ -34,6 +34,7 @@
 #include "misc/helper.h"
 #include "rendering/render_style.h"
 #include "khtml_events.h"
+#include "xml/dom_nodeimpl.h"
 
 // Uncomment to turn on incremental repainting.
 // #define INCREMENTAL_REPAINTING 1
@@ -82,7 +83,6 @@ typedef enum {
 namespace DOM {
     class HTMLAreaElementImpl;
     class DOMString;
-    class NodeImpl;
     class DocumentImpl;
     class ElementImpl;
     class EventImpl;
@@ -107,7 +107,8 @@ namespace khtml {
 class RenderObject : public CachedObjectClient
 {
 public:
-
+    // Anonymous objects should pass the document as their node, and they will then automatically be
+    // marked as anonymous in the constructor.
     RenderObject(DOM::NodeImpl* node);
     virtual ~RenderObject();
 
@@ -227,9 +228,9 @@ public:
     virtual bool isFrameSet() const { return false; }
     virtual bool isApplet() const { return false; }
 
-    bool isAnonymousBox() const { return m_isAnonymous; }
-    void setIsAnonymousBox(bool b) { m_isAnonymous = b; }
-
+    bool isAnonymous() const { return m_isAnonymous; }
+    void setIsAnonymous(bool b) { m_isAnonymous = b; }
+    
     bool isFloating() const { return m_floating; }
     bool isPositioned() const { return m_positioned; } // absolute or fixed positioning
     bool isRelPositioned() const { return m_relPositioned; } // relative positioning
@@ -253,8 +254,10 @@ public:
     RenderCanvas* canvas() const;
 
     // don't even think about making this method virtual!
-    DOM::NodeImpl* element() const { return m_node; }
-    DOM::DocumentImpl* document() const;
+    DOM::NodeImpl* element() const { return m_isAnonymous ? 0 : m_node; }
+    DOM::DocumentImpl* document() const { return m_node->getDocument(); }
+    void setNode(DOM::NodeImpl* node) { m_node = node; }
+    DOM::NodeImpl* node() const { return m_node; }
     
    /**
      * returns the object containing this one. can be different from parent for
@@ -633,7 +636,7 @@ public:
     virtual void calcVerticalMargins() {}
     void removeFromObjectLists();
 
-    virtual void detach(RenderArena* renderArena);
+    virtual void detach();
 
     const QFont &font(bool firstLine) const {
 	return style( firstLine )->font();
@@ -658,13 +661,8 @@ protected:
                                      int /*_w*/, int /*_h*/, int /*_tx*/, int /*_ty*/) {}
 
     virtual QRect viewRect() const;
-    void remove() {
-        removeFromObjectLists();
 
-        if ( parent() )
-            //have parent, take care of the tree integrity
-            parent()->removeChild(this);
-    }
+    void remove();
 
     void invalidateVerticalPositions();
     short getVerticalPosition( bool firstLine ) const;
@@ -675,9 +673,9 @@ protected:
 
 private:
     RenderStyle* m_style;
-protected:
+
     DOM::NodeImpl* m_node;
-private:
+
     RenderObject *m_parent;
     RenderObject *m_previous;
     RenderObject *m_next;

@@ -48,6 +48,10 @@ class KHTMLView;
 class Tokenizer;
 class RenderArena;
 
+#if APPLE_CHANGES
+class KWQAccObjectCache;
+#endif
+
 namespace khtml {
     class CSSStyleSelector;
     class DocLoader;
@@ -236,6 +240,11 @@ public:
     virtual void detach();
 
     RenderArena* renderArena() { return m_renderArena; }
+
+#if APPLE_CHANGES
+    KWQAccObjectCache* getExistingAccObjectCache() { return m_accCache; }
+    KWQAccObjectCache* getOrCreateAccObjectCache();
+#endif
     
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
@@ -527,6 +536,10 @@ protected:
     DOMString m_title;
     
     RenderArena* m_renderArena;
+
+#if APPLE_CHANGES
+    KWQAccObjectCache* m_accCache;
+#endif
     
     QPtrList<khtml::RenderImage> m_imageLoadEventDispatchSoonList;
     QPtrList<khtml::RenderImage> m_imageLoadEventDispatchingList;

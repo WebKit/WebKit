@@ -4,7 +4,7 @@ layer at (0,0) size 800x56
   RenderBlock {HTML} at (0,0) size 800x56
     RenderBody {BODY} at (8,14) size 784x28
       RenderBlock {P} at (0,0) size 784x28
-        RenderInline at (0,0) size 16x28 [bgcolor=#00FF00]
+        RenderInline (anonymous) at (0,0) size 16x28 [bgcolor=#00FF00]
           RenderText {TEXT} at (0,0) size 16x28 [bgcolor=#000000]
             text run at (0,0) width 16: "T"
         RenderText {TEXT} at (16,9) size 525x17

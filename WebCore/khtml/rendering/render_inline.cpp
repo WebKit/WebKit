@@ -26,7 +26,7 @@
 #include "render_arena.h"
 #include "render_inline.h"
 #include "render_block.h"
-#include "xml/dom_nodeimpl.h"
+#include "xml/dom_docimpl.h"
 
 using namespace khtml;
 
@@ -88,9 +88,8 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
         newStyle->inheritFrom(style());
         newStyle->setDisplay(BLOCK);
 
-        RenderBlock *newBox = new (renderArena()) RenderBlock(0 /* anonymous box */);
+        RenderBlock *newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);
         newBox->setStyle(newStyle);
-        newBox->setIsAnonymousBox(true);
         RenderFlow* oldContinuation = continuation();
         setContinuation(newBox);
 
@@ -198,7 +197,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     RenderBlock* pre = 0;
     RenderBlock* block = containingBlock();
     bool madeNewBeforeBlock = false;
-    if (block->isAnonymousBox()) {
+    if (block->isAnonymous()) {
         // We can reuse this block and make it the preBlock of the next continuation.
         pre = block;
         block = block->containingBlock();
@@ -359,7 +358,7 @@ const char *RenderInline::renderName() const
 {
     if (isRelPositioned())
         return "RenderInline (relative positioned)";
-    if (isAnonymousBox())
+    if (isAnonymous())
         return "RenderInline (anonymous)";
     return "RenderInline";
 }

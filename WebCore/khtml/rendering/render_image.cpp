@@ -49,8 +49,8 @@ using namespace khtml;
 
 // -------------------------------------------------------------------------
 
-RenderImage::RenderImage(HTMLElementImpl *_element)
-    : RenderReplaced(_element)
+RenderImage::RenderImage(NodeImpl *_node)
+    : RenderReplaced(_node)
 {
     image = 0;
     berrorPic = false;
@@ -432,7 +432,7 @@ void RenderImage::reload()
 }
 #endif
 
-void RenderImage::detach(RenderArena *arena)
+void RenderImage::detach()
 {
     NodeImpl *node = element();
     if (node) {
@@ -441,7 +441,7 @@ void RenderImage::detach(RenderArena *arena)
             document->removeImage(this);
         }
     }
-    RenderReplaced::detach(arena);
+    RenderReplaced::detach();
 }
 
 bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,

@@ -38,7 +38,7 @@ class DocLoader;
 class RenderImage : public RenderReplaced
 {
 public:
-    RenderImage(DOM::HTMLElementImpl *_element);
+    RenderImage(DOM::NodeImpl*);
     virtual ~RenderImage();
 
     virtual const char *renderName() const { return "RenderImage"; }
@@ -70,7 +70,7 @@ public:
     virtual short calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;
 
-    virtual void detach(RenderArena *);
+    virtual void detach();
 
     // Called to set generated content images (e.g., :before/:after generated images).
     void setContentObject(CachedObject* co);
