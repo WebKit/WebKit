@@ -1,5 +1,17 @@
 2004-07-22  Darin Adler  <darin@apple.com>
 
+        - remove a bunch of now-unused code
+
+        * ForwardingHeaders/qxml.h: Removed.
+        * kwq/KWQXmlAttributes.h: Removed.
+        * kwq/KWQXmlAttributes.mm: Removed.
+        * kwq/KWQXmlDefaultHandler.h: Removed.
+        * kwq/KWQXmlDefaultHandler.mm: Removed.
+        * kwq/KWQXmlSimpleReader.h: Removed.
+        * kwq/KWQXmlSimpleReader.mm: Removed.
+
+2004-07-22  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - got rid of QXml classes and changed XML parsing to use libxml directly
@@ -579,7 +591,6 @@
 
         * layout-tests/editing/deleting/delete-image-004-expected.txt:
         * layout-tests/editing/selection/extend-by-character-006-expected.txt:
-
 
 2004-07-09  Chris Blumenberg  <cblu@apple.com>
 
