@@ -1,7 +1,17 @@
 2002-09-28  Darin Adler  <darin@apple.com>
 
+	Turn -Werror back on. There must have been some miscommunication
+	about the fat build; this was supposed to have been on.
+
+        * WebCore.pbproj/project.pbxproj: Add -Werror back.
+
+        * kwq/WebCoreHistory.h: Add missing method to fix warning.
+        * kwq/KWQKHistoryProvider.mm: Tweak.
+
+2002-09-28  Darin Adler  <darin@apple.com>
+
 	Give the next fat build a better chance of working with the
-	new gcc without turning warnings off.
+	new gcc without turning -Werror off.
 
         * khtml/css/cssparser.cpp: Use a macro to disable inlining.
         * khtml/html/htmltokenizer.cpp: Ditto.
