@@ -12,7 +12,7 @@ extern void WebKitInitializeUnicode(void);
 extern const unsigned char * const combining_info[];
 extern const char * const decimal_info[];
 extern const unsigned char * const unicode_info[];
-extern const unsigned char * const direction_info[];
+extern const unsigned char * const _WebDirectionInfo[];
 extern const unsigned short * const decomposition_info[];
 extern const unsigned short decomposition_map[];
 extern const unsigned short symmetricPairs[];

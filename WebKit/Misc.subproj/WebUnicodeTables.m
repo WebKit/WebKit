@@ -275,7 +275,7 @@ print "// $size bytes\n\n";
 # Build direction/joining/mirrored pages...
 #
 $rowtable_txt =
-    "static const Q_UINT8 * const direction_info[256] = {";
+    "static const Q_UINT8 * const _WebDirectionInfo[256] = {";
 for $dir_row ( 0..255 ) {
     $nonzero=0;
     $txt = "";
@@ -9559,7 +9559,7 @@ static const Q_UINT8 dir_FF[] = {
     0, 18, 18, 18, 10, 10, 0, 0,
 };
 
-const Q_UINT8 * const direction_info[256] = {
+const Q_UINT8 * const _WebDirectionInfo[256] = {
     dir_00, dir_01, dir_02, dir_03, dir_04, dir_05, dir_06, dir_07,
     dir_01, dir_09, dir_0A, dir_0B, dir_0C, dir_0D, dir_0E, dir_0F,
     dir_10, dir_01, dir_01, dir_01, dir_01, dir_01, dir_16, dir_17,

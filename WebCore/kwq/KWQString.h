@@ -46,7 +46,7 @@ class QChar {
 public:
 
     enum Direction {
-        DirL, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
+        DirL = 0, DirR, DirEN, DirES, DirET, DirAN, DirCS, DirB, DirS, DirWS, DirON,
         DirLRE, DirLRO, DirAL, DirRLE, DirRLO, DirPDF, DirNSM, DirBN
     };
 
@@ -84,9 +84,13 @@ public:
     QChar upper() const;
     Direction direction() const
     {
-        return (QChar::Direction)WebCoreUnicodeDirectionFunction(c);
+        const unsigned char *rowp = WebCoreDirectionInfo[((unsigned char)(c>>8))];
+        
+        if(!rowp) 
+            return DirL;
+        return (QChar::Direction)( *(rowp+((unsigned char)(c))) &0x1f );
     }
-    
+
     bool mirrored() const;
     QChar mirroredChar() const;
 

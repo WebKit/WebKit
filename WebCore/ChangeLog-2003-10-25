@@ -1,3 +1,16 @@
+2003-08-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3348630.  Pick up about 1% by moving implementation of _unicodeDirection to WebCore and inlining.
+
+        Reviewed by Ken.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQString.h:
+        * kwq/WebCoreUnicode.cpp:
+        * kwq/WebCoreUnicode.h:
+
 2003-08-06  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3366587 -- Mail quits instantly (no crashlog) trying

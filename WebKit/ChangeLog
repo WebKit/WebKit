@@ -1,3 +1,17 @@
+2003-08-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3348630.  Pick up about 1% by moving implementation of _unicodeDirection to WebCore and inlining.
+
+        Reviewed by Ken.
+
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeDirection):
+        (_unicodeJoining):
+        (_unicodeMirrored):
+        (WebKitInitializeUnicode):
+        * Misc.subproj/WebUnicodeTables.m:
+
 2003-08-06  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3161102>: Avoid retain cycles by destroying plug-ins in the page cache before dealloc

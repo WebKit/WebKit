@@ -34,3 +34,4 @@ UniChar (*WebCoreUnicodeMirroredCharFunction)(UniChar c);
 WebCoreUnicodeCombiningClass (*WebCoreUnicodeCombiningClassFunction)(UniChar c);
 UniChar (*WebCoreUnicodeLowerFunction)(UniChar c);
 UniChar (*WebCoreUnicodeUpperFunction)(UniChar c);
+const unsigned char * const *WebCoreDirectionInfo;

@@ -72,7 +72,7 @@ extern "C" {
 
     typedef enum
     {
-        DirectionL, 	// Left Letter 
+        DirectionL = 0, 	// Left Letter 
         DirectionR,	// Right Letter
         DirectionEN,	// European Number
         DirectionES,	// European Separator
@@ -163,6 +163,7 @@ extern "C" {
     extern WebCoreUnicodeCombiningClass (*WebCoreUnicodeCombiningClassFunction)(UniChar c);
     extern UniChar (*WebCoreUnicodeLowerFunction)(UniChar c);
     extern UniChar (*WebCoreUnicodeUpperFunction)(UniChar c);
+    extern const unsigned char * const *WebCoreDirectionInfo;
 
 #ifdef __cplusplus
 }

@@ -21,7 +21,7 @@ static WebCoreUnicodeCategory _unicodeCategory(UniChar c)
 
 static WebCoreUnicodeDirection _unicodeDirection(UniChar c)
 {
-    const unsigned char *rowp = direction_info[WK_ROW(c)];
+    const unsigned char *rowp = _WebDirectionInfo[WK_ROW(c)];
     
     if(!rowp) 
         return DirectionL;
@@ -30,7 +30,7 @@ static WebCoreUnicodeDirection _unicodeDirection(UniChar c)
 
 static WebCoreUnicodeJoining _unicodeJoining(UniChar c)
 {
-    const unsigned char *rowp = direction_info[WK_ROW(c)];
+    const unsigned char *rowp = _WebDirectionInfo[WK_ROW(c)];
     if ( !rowp )
 	return JoiningOther;
     return (WebCoreUnicodeJoining) ((*(rowp+WK_CELL(c)) >> 5) &0x3);
@@ -51,7 +51,7 @@ static WebCoreUnicodeDecomposition _unicodeDecompositionTag(UniChar c)
 
 static bool _unicodeMirrored(UniChar c)
 {
-    const unsigned char *rowp = direction_info[WK_ROW(c)];
+    const unsigned char *rowp = _WebDirectionInfo[WK_ROW(c)];
     if ( !rowp )
 	return FALSE;
     return *(rowp+WK_CELL(c))>128;
@@ -116,6 +116,7 @@ void WebKitInitializeUnicode(void)
     WebCoreUnicodeCombiningClassFunction = _unicodeCombiningClass;
     WebCoreUnicodeLowerFunction = _unicodeLower;
     WebCoreUnicodeUpperFunction = _unicodeUpper;
+    WebCoreDirectionInfo = _WebDirectionInfo;
 }
 
 // The unicode to unicode shaping codec.
