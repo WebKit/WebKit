@@ -46,17 +46,17 @@
 - (NSString *)title;
 
 /*!
-    @method setDisplayTitle:
-    @param displayTitle The new display title for this item.
+    @method setAlternateTitle:
+    @param alternateTitle The new display title for this item.
     @abstract A title that may be used by the client to display this item.
 */
-- (void)setDisplayTitle:(NSString *)displayTitle;
+- (void)setAlternateTitle:(NSString *)alternateTitle;
 
 /*
     @method title
     @abstract A title that may be used by the client to display this item.
 */
-- (NSString *)displayTitle;
+- (NSString *)alternateTitle;
 
 /*!
     @method icon

@@ -125,20 +125,20 @@
     return _private->title;
 }
 
-- (void)setDisplayTitle:(NSString *)displayTitle
+- (void)setAlternateTitle:(NSString *)alternateTitle
 {
     NSString *newDisplayTitle;
-    if (displayTitle && [displayTitle isEqualToString:_private->title]) {
+    if (alternateTitle && [alternateTitle isEqualToString:_private->title]) {
         newDisplayTitle = [_private->title retain];
     } else {
-        newDisplayTitle = [displayTitle copy];
+        newDisplayTitle = [alternateTitle copy];
     }
     [_private->displayTitle release];
     _private->displayTitle = newDisplayTitle;
 }
 
 
-- (NSString *)displayTitle;
+- (NSString *)alternateTitle;
 {
     return _private->displayTitle;
 }
@@ -502,7 +502,7 @@
 
     self = [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
 
-    [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];
+    [self setAlternateTitle:[dict _web_stringForKey:@"displayTitle"]];
 
     NSString *date = [dict _web_stringForKey:@"lastVisitedDate"];
     if (date) {

@@ -1,6 +1,15 @@
 2003-04-24  Richard Williamson   <rjw@apple.com>
 
         Final API review changes.
+
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setAlternateTitle:]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+
+2003-04-24  Richard Williamson   <rjw@apple.com>
+
+        Final API review changes.
         
         Reviewed by Chris.
 
