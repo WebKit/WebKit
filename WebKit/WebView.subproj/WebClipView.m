@@ -16,6 +16,7 @@
 {
     ASSERT(_haveAdditionalClip);
     _haveAdditionalClip = NO;
+    [self renewGState];
 }
 
 - (void)setAdditionalClip:(NSRect)additionalClip
@@ -23,6 +24,7 @@
     ASSERT(!_haveAdditionalClip);
     _haveAdditionalClip = YES;
     _additionalClip = additionalClip;
+    [self renewGState];
 }
 
 - (BOOL)hasAdditionalClip

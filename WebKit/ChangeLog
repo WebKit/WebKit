@@ -1,3 +1,16 @@
+2003-08-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3386051 -- REGRESSION: text "too dark" after the page is deactivated and reactivated (bugweb)
+
+        Cached clips were causing us to draw nothing for the top frames of framesets, resulting in darkened
+        text because we draw anti-aliased text twice without drawing a background.
+
+        * WebView.subproj/WebClipView.m:
+        (-[WebClipView resetAdditionalClip]): Invalidate cached graphics state when changing the visible rect.
+        (-[WebClipView setAdditionalClip:]): Ditto.
+
 2003-08-21  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _setPrinting:pageWidth:adjustViewSize:]):
