@@ -1,3 +1,13 @@
+2003-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey and Maciej.
+
+	- fixed 3199154 -- REGRESSION: world leaks on any page load test
+
+        * WebView.subproj/WebController.m: (-[WebController initWithView:frameName:groupName:]):
+        Call through to initWithFrame, the designated initializer, not init. Calling [super init] results
+        in calling our initWithFrame method, resulting in two calls to the _commonInitialization method.
+
 2003-03-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

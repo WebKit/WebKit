@@ -129,7 +129,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - initWithView: (WebFrameView *)view frameName: (NSString *)frameName groupName: (NSString *)groupName;
 {
-    [super init];
+    [super initWithFrame: NSZeroRect];
     [self _commonInitialization: view frameName:frameName groupName:groupName];
     return self;
 }
