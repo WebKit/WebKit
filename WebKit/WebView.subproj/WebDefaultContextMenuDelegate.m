@@ -48,7 +48,7 @@
             action = @selector(openImageInNewWindow:);
             break;
         case WebMenuItemTagDownloadImageToDisk:
-            title = UI_STRING("Download Image To Disk", "Download Image To Disk context menu item");
+            title = UI_STRING("Download Image to Disk", "Download Image To Disk context menu item");
             action = @selector(downloadImageToDisk:);
             break;
         case WebMenuItemTagCopyImageToClipboard:

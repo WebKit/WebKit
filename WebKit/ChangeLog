@@ -1,6 +1,17 @@
+2003-06-24  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed the context menu item Download Image To Disk" to "Download Image to Disk".
+
+        Reviewed by john.
+
+        * English.lproj/Localizable.strings:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+
 2003-06-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3294803>: HTTP error sent as content instead of error to plug-ins
+
 
         Reviewed by john.
 
