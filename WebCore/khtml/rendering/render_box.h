@@ -95,8 +95,6 @@ public:
     virtual void repaintDuringLayoutIfMoved(int oldX, int oldY);
 #endif
     
-    virtual void setPixmap(const QPixmap &, const QRect&, CachedImage *);
-
     virtual short containingBlockWidth() const;
 
     virtual void calcWidth();

@@ -1,3 +1,18 @@
+2003-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3502347: REGRESSION (100-116): bottom of login window sometimes missing (TR background image)
+
+        * khtml/rendering/render_object.h: Added setPixmap.
+        * khtml/rendering/render_object.cpp: (RenderObject::setPixmap): Moved this
+        function here from RenderBox. This code is needed for the table row class and
+        similar classes that supply a background image that is drawn by the table cell,
+        and those are not RenderBox subclasses.
+
+        * khtml/rendering/render_box.cpp: Removed setPixmap.
+        * khtml/rendering/render_box.h: Removed setPixmap.
+
 2003-12-06  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3502655>: REGRESSION: Repro crash at espn.com

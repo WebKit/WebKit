@@ -185,16 +185,6 @@ void RenderBox::paint(QPainter *p, int _x, int _y, int _w, int _h,
     }
 }
 
-void RenderBox::setPixmap(const QPixmap &, const QRect&, CachedImage *image)
-{
-    if (image && image->pixmap_size() == image->valid_rect().size() && parent()) {
-        if (element() && (element()->id() == ID_HTML || element()->id() == ID_BODY))
-            canvas()->repaint(); // repaint the entire canvas, since the background gets propagated up.
-        else
-            repaint();      //repaint bg when it finished loading
-    }
-}
-
 void RenderBox::paintRootBoxDecorations(QPainter *p,int, int _y,
                                         int, int _h, int _tx, int _ty)
 {
