@@ -90,18 +90,14 @@
 
 - (void)_scrollVerticallyBy: (float)delta
 {
-    NSPoint point;
-
-    point = [[self _contentView] bounds].origin;
+    NSPoint point = [[self _contentView] bounds].origin;
     point.y += delta;
     [[self _contentView] scrollPoint: point];
 }
 
 - (void)_scrollHorizontallyBy: (float)delta
 {
-    NSPoint point;
-
-    point = [[self _contentView] bounds].origin;
+    NSPoint point = [[self _contentView] bounds].origin;
     point.x += delta;
     [[self _contentView] scrollPoint: point];
 }
@@ -122,7 +118,7 @@
     return [[self frameScrollView] horizontalLineScroll] * 4;
 }
 
-- (void)_pageVertically: (BOOL)up
+- (void)_pageVertically:(BOOL)up
 {
     float pageOverlap = [self _verticalKeyboardScrollAmount];
     float delta = [[self _contentView] bounds].size.height;
@@ -172,24 +168,34 @@
     [self _scrollHorizontallyBy: delta];
 }
 
-- (void)_pageDown
+- (void)scrollPageUp:(id)sender
 {
-    [self _pageVertically: NO];
+    // After hitting the top, tell our parent to scroll
+    float oldY = [[self _contentView] bounds].origin.y;
+    [self _pageVertically:YES];
+    if (oldY == [[self _contentView] bounds].origin.y) {
+        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:nil];
+    }
 }
 
-- (void)_pageUp
+- (void)scrollPageDown:(id)sender
 {
-    [self _pageVertically: YES];
+    // After hitting the bottom, tell our parent to scroll
+    float oldY = [[self _contentView] bounds].origin.y;
+    [self _pageVertically:NO];
+    if (oldY == [[self _contentView] bounds].origin.y) {
+        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:nil];
+    }
 }
 
 - (void)_pageLeft
 {
-    [self _pageHorizontally: YES];
+    [self _pageHorizontally:YES];
 }
 
 - (void)_pageRight
 {
-    [self _pageHorizontally: NO];
+    [self _pageHorizontally:NO];
 }
 
 - (void)_scrollToTopLeft
@@ -202,14 +208,14 @@
     [[self _contentView] scrollPoint: NSMakePoint(0, [[[self frameScrollView] documentView] bounds].size.height)];
 }
 
-- (void)_lineDown
-{
-    [self _scrollLineVertically: NO];
-}
-
-- (void)_lineUp
+- (void)scrollLineUp:(id)sender
 {
     [self _scrollLineVertically: YES];
+}
+
+- (void)scrollLineDown:(id)sender
+{
+    [self _scrollLineVertically: NO];
 }
 
 - (void)_lineLeft

@@ -260,18 +260,18 @@ enum {
                 break;
             case SpaceKey:
                 if ([event modifierFlags] & NSShiftKeyMask) {
-                    [self _pageUp];
+                    [self scrollPageUp:nil];
                 } else {
-                    [self _pageDown];
+                    [self scrollPageDown:nil];
                 }
                 callSuper = NO;
                 break;
             case NSPageUpFunctionKey:
-                [self _pageUp];
+                [self scrollPageUp:nil];
                 callSuper = NO;
                 break;
             case NSPageDownFunctionKey:
-                [self _pageDown];
+                [self scrollPageDown:nil];
                 callSuper = NO;
                 break;
             case NSHomeFunctionKey:
@@ -286,9 +286,9 @@ enum {
                 if ([event modifierFlags] & NSCommandKeyMask) {
                     [self _scrollToTopLeft];
                 } else if ([event modifierFlags] & NSAlternateKeyMask) {
-                    [self _pageUp];
+                    [self scrollPageUp:nil];
                 } else {
-                    [self _lineUp];
+                    [self scrollLineUp:nil];
                 }
                 callSuper = NO;
                 break;
@@ -296,9 +296,9 @@ enum {
                 if ([event modifierFlags] & NSCommandKeyMask) {
                     [self _scrollToBottomLeft];
                 } else if ([event modifierFlags] & NSAlternateKeyMask) {
-                    [self _pageDown];
+                    [self scrollPageDown:nil];
                 } else {
-                    [self _lineDown];
+                    [self scrollLineDown:nil];
                 }
                 callSuper = NO;
                 break;

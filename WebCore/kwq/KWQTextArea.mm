@@ -434,6 +434,12 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     return view;
 }
 
+- (BOOL)needsPanelToBecomeKey
+{
+    // If we don't return YES here, tabbing backwards into this view doesn't work.
+    return YES;
+}
+
 @end
 
 @implementation KWQTextAreaTextView
@@ -469,6 +475,26 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (NSDictionary *)selectedTextAttributes
 {
     return self == [[self window] firstResponder] ? [super selectedTextAttributes] : nil;
+}
+
+- (void)scrollPageUp:(id)sender
+{
+    // After hitting the top, tell our parent to scroll
+    float oldY = [[[self enclosingScrollView] contentView] bounds].origin.y;
+    [super scrollPageUp:sender];
+    if (oldY == [[[self enclosingScrollView] contentView] bounds].origin.y) {
+        [[self nextResponder] tryToPerform:@selector(scrollPageUp:) with:nil];
+    }
+}
+
+- (void)scrollPageDown:(id)sender
+{
+    // After hitting the bottom, tell our parent to scroll
+    float oldY = [[[self enclosingScrollView] contentView] bounds].origin.y;
+    [super scrollPageDown:sender];
+    if (oldY == [[[self enclosingScrollView] contentView] bounds].origin.y) {
+        [[self nextResponder] tryToPerform:@selector(scrollPageDown:) with:nil];
+    }
 }
 
 @end

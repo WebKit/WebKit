@@ -248,32 +248,11 @@
     return [super becomeFirstResponder];
 }
 
-- (void)textDidEndEditing:(NSNotification *)notification
-{
-    // If we are tabbing nowhere, we don't want to flash as we deselect and reselect.
-    // So we handle those cases here and don't call super.
-    switch ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue]) {
-        case NSTabTextMovement:
-            if (![self nextValidKeyView]) {
-                [self selectText:self];
-                [self _KWQ_scrollFrameToVisible];
-                return;
-            }
-            break;
-        case NSBacktabTextMovement:
-            if (![self previousValidKeyView]) {
-                [self selectText:self];
-                [self _KWQ_scrollFrameToVisible];
-                return;
-            }
-            break;
-    }
-    
-    [super textDidEndEditing:notification];
-}
-
 - (void)display
 {
+    // This is a workaround for Radar 2753974.
+    // Also, in the web page context, it's never OK to just display.
+    [self setNeedsDisplay:YES];
 }
 
 @end
@@ -389,32 +368,11 @@
     return [super becomeFirstResponder];
 }
 
-- (void)textDidEndEditing:(NSNotification *)notification
-{
-    // If we are tabbing nowhere, we don't want to flash as we deselect and reselect.
-    // So we handle those cases here and don't call super.
-    switch ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue]) {
-        case NSTabTextMovement:
-            if (![self nextValidKeyView]) {
-                [self selectText:self];
-                [self _KWQ_scrollFrameToVisible];
-                return;
-            }
-            break;
-        case NSBacktabTextMovement:
-            if (![self previousValidKeyView]) {
-                [self selectText:self];
-                [self _KWQ_scrollFrameToVisible];
-                return;
-            }
-            break;
-    }
-    
-    [super textDidEndEditing:notification];
-}
-
 - (void)display
 {
+    // This is a workaround for Radar 2753974.
+    // Also, in the web page context, it's never OK to just display.
+    [self setNeedsDisplay:YES];
 }
 
 @end

@@ -1,3 +1,27 @@
+2002-10-07  Darin Adler  <darin@apple.com>
+
+	WebKit part of the page up/down fix.
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView scrollPoint:]):
+	If we are called from the handling of a page up or page down keyboard
+	event, then ignore the specific scrolling requested, and do our idea of
+	page up and page down. This guarantees that we will get the smarter
+	idea of how to page from WebView instead of the one that's hardcoded
+	into NSTextView.
+
+        * WebView.subproj/WebView.m: (-[WebView keyDown:]): Use scrollPageUp:,
+	scrollPageDown:, scrollLineUp:, and scrollLineDown: instead of _pageUp,
+	_pageDown, _lineUp, and _lineDown. This lets other classes see and use
+	these selectors, which is useful when passing calls up the responder chain.
+        * WebView.subproj/WebViewPrivate.h: Remove the private methods that are
+	being changed to match the NSResponder keyboard methods.
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView scrollPageUp:]): Rename from _pageUp, and also pass a scrollPageUp:
+	selector along the responder chain if we are already scrolled to the top.
+        (-[WebView scrollPageDown:]): Ditto.
+        (-[WebView scrollLineUp:]): Rename from _lineUp.
+        (-[WebView scrollLineDown:]): Rename from _lineDown.
+
 2002-10-07  Richard Williamson   <rjw@apple.com>
 
         'Re'play the delegate messages when an item is loaded from

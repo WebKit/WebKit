@@ -1,3 +1,19 @@
+2002-10-07  Darin Adler  <darin@apple.com>
+
+	- fixed 3011025 -- Page up/down is not working when text area has focus
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea needsPanelToBecomeKey]): Return YES so we are considered a
+	valid key view even when in normal tabbing mode. This fixes a problem with
+	tabbing backwards into a text area.
+        (-[KWQTextAreaTextView scrollPageUp:]): Added. Passes a scrollPageUp:
+	selector along the responder chain if we are already scrolled to the top.
+        (-[KWQTextAreaTextView scrollPageDown:]): Ditto.
+
+        * kwq/KWQNSTextField.mm: Remove unnecessary overrides of textDidEndEditing.
+	Turns out the real fix was to override display to do nothing as a workaround
+	for bug 2753974.
+
 2002-10-07  Richard Williamson   <rjw@apple.com>
 
         Added response to WebCore's CachedObject.  This allows us to correctly

@@ -255,6 +255,29 @@ BOOL _modifierTrackingEnabled = FALSE;
     return NO;
 }
 
+- (void)scrollPoint:(NSPoint)point
+{
+    // Since we can't subclass NSTextView to do what we want, we have to second guess it here.
+    // If we get called during the handling of a key down event, we assume the call came from
+    // NSTextView, and ignore it and use our own code to decide how to page up and page down
+    // We are smarter about how far to scroll, and we have "superview scrolling" logic.
+    NSEvent *event = [[self window] currentEvent];
+    if ([event type] == NSKeyDown) {
+        const unichar pageUp = NSPageUpFunctionKey;
+        if ([[event characters] rangeOfString:[NSString stringWithCharacters:&pageUp length:1]].length == 1) {
+            [self tryToPerform:@selector(scrollPageUp:) with:nil];
+            return;
+        }
+        const unichar pageDown = NSPageDownFunctionKey;
+        if ([[event characters] rangeOfString:[NSString stringWithCharacters:&pageDown length:1]].length == 1) {
+            [self tryToPerform:@selector(scrollPageDown:) with:nil];
+            return;
+        }
+    }
+    
+    [super scrollPoint:point];
+}
+
 @end
 
 @implementation NSView (WebHTMLViewPrivate)
