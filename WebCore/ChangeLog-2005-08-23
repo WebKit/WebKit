@@ -1,5 +1,15 @@
 2004-10-13  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Update expected results for improved behavior as a result of fix to 3816768.
+    
+        * layout-tests/editing/deleting/delete-3775172-fix-expected.txt
+        * layout-tests/editing/deleting/delete-3800834-fix-expected.txt
+        * layout-tests/editing/deleting/delete-block-merge-contents-002-expected.txt
+
+2004-10-13  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Richard
 
         * khtml/css/css_computedstyle.cpp:
