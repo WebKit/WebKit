@@ -2350,8 +2350,12 @@ int RenderBlock::getClearDelta(RenderObject *child)
     }
 
     // We also clear floats if we are too big to sit on the same line as a float (and wish to avoid floats by default).
+    // FIXME: Note that the remaining space checks aren't quite accurate, since you should be able to clear only some floats (the minimum # needed
+    // to fit) and not all (we should be using nearestFloatBottom and looping).
     int result = clearSet ? kMax(0, bottom - child->yPos()) : 0;
-    if (!result && child->avoidsFloats() && child->style()->width().isFixed() && child->minWidth() > lineWidth(child->yPos()))
+    if (!result && child->avoidsFloats() && child->style()->width().isFixed() && 
+        child->minWidth() > lineWidth(child->yPos()) && child->minWidth() <= contentWidth() &&
+        (!style()->htmlHacks() || !child->isTable())) // Do not allow tables to wrap in quirks mode (ebay on the PLT, finance.yahoo.com in the real world)
         result = kMax(0, floatBottom() - child->yPos());
     return result;
 }

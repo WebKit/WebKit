@@ -1,3 +1,20 @@
+2004-12-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3867545, finance.yahoo.com lays out incorrectly.  Add a quirk that will prevent tables from moving
+	down below floats when there is insufficient space.  Instead we will match Gecko and just spill out of the
+	containing block to the right.  This appears to be the more common desired behavior, despite being wrong.
+	WinIE sometimes wraps and sometimes doesn't, but it's really hard for us to match its inconsistency.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::getClearDelta):
+        * layout-tests/apple-only/base/www.cnn.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.ebay.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.excite.com/index-expected.txt:
+        * layout-tests/fast/block/margin-collapse/102-expected.txt:
+        * layout-tests/fast/block/margin-collapse/102.html:
+
 2004-12-09  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3914078> worldclock crashing gc related
@@ -39,6 +56,7 @@
 
 === Safari-175 ===
 
+>>>>>>> 1.3603
 2004-12-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
