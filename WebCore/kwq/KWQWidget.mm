@@ -428,6 +428,25 @@ void QWidget::setAcceptDrops(bool)
 }
 
 
+void QWidget::erase()
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+QWidget *QWidget::focusWidget() const
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+QPoint QWidget::mapFromGlobal(const QPoint &) const
+{
+     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+}
+
+
+
 #ifdef _KWQ_
 
 void QWidget::paint (void *)

@@ -119,8 +119,14 @@ int QPixmap::height() const
 
 void QPixmap::resize(const QSize &sz)
 {
-    [nsimage setSize: NSMakeSize ((float)(sz.width()), (float)(sz.height()))];
+    resize (sz.width(), sz.height());
 }
+
+
+void QPixmap::resize(int w, int h) {
+    [nsimage setSize: NSMakeSize ((float)(w), (float)(h))];
+}
+
 
 
 QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const

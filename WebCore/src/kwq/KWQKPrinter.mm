@@ -23,28 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qcursor.h>
+#include <kprinter.h>
 
-QCursor::QCursor()
+bool KPrinter::setup(QWidget *parent=0)
 {
 }
 
 
-QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
+bool KPrinter::newPage()
 {
 }
 
 
-QCursor::QCursor(const QCursor &)
+void KPrinter::setDocName(const QString &)
 {
 }
 
 
-QCursor::~QCursor()
+void KPrinter::setCreator(const QString &)
 {
 }
-      
 
-QCursor &QCursor::operator=(const QCursor &)
+
+void KPrinter::setFullPage(bool)
 {
 }
+
+
+QSize KPrinter::margins() const
+{
+}
+
+

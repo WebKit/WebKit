@@ -30,6 +30,11 @@ QCursor::QCursor()
 }
 
 
+QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
+{
+}
+
+
 QCursor::QCursor(const QCursor &)
 {
 }

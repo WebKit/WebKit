@@ -36,6 +36,7 @@ MMOBJECTS = \
 	KWQFont.o \
 	KWQFontMetrics.o \
 	KWQFrame.o \
+	KWQImage.o \
         KWQKApplication.o \
         KWQKCharsets.o \
         KWQKComboBox.o \
@@ -46,11 +47,13 @@ MMOBJECTS = \
         KWQKGlobal.o \
 	KWQKGlobalSettings.o \
         KWQKHTMLPart.o \
+        KWQKHTMLSettings.o \
         KWQKIconLoader.o \
         KWQKInstance.o \
         KWQKLineEdit.o \
         KWQKListBox.o \
         KWQKMessageBox.o \
+        KWQKPrinter.o \
         KWQKProcess.o \
         KWQKSimpleConfig.o \
         KWQKStringHandler.o \
@@ -58,6 +61,7 @@ MMOBJECTS = \
         KWQKWinModule.o \
         KWQListBox.o \
         KWQLineEdit.o \
+        KWQMovie.o \
         KWQObject.o \
 	KWQPainter.o \
         KWQPaintDevice.o \
@@ -71,6 +75,7 @@ MMOBJECTS = \
 	KWQRadioButton.o \
 	KWQScrollView.o \
 	KWQTextEdit.o \
+	KWQToolTip.o \
 	KWQView.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
@@ -104,6 +109,8 @@ CMMFLAGS = $(BASECMMFLAGS) \
     -I$(TOPSRCDIR)/src/kwq/kde \
     -I$(TOPSRCDIR)/src/kwq/kdecore \
     -I$(TOPSRCDIR)/src/kwq/kdeui \
+    -I$(TOPSRCDIR)/src/kwq/khtml \
+    -I$(TOPSRCDIR)/src/kwq/kio \
     -I$(TOPSRCDIR)/src/kwq/kparts \
     -I. \
     $(NULL)
