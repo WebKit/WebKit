@@ -44,7 +44,7 @@
 - (WebFrame *)_createFrameNamed:(NSString *)name inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling;
 
 - (id <WebContextMenuDelegate>)_defaultContextMenuDelegate;
-- (void)_finsishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
+- (void)_finishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
 - (void)_receivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 - (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
 - (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;

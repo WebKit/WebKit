@@ -5,10 +5,13 @@
 */
 
 #import <WebKit/WebStandardPanels.h>
+
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebView.h>
+
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebAuthenticationManager.h>
 
 #import <Carbon/Carbon.h>
@@ -103,6 +106,9 @@ static void initSharedStandardPanels(void)
 
 -(void)didStartLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window
 {
+    ASSERT_ARG(URL, URL);
+    ASSERT_ARG(window, window);
+    
     NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
@@ -115,7 +121,12 @@ static void initSharedStandardPanels(void)
 
 -(void)didStopLoadingURL:(NSURL *)URL inWindow:(NSWindow *)window
 {
+    ASSERT_ARG(URL, URL);
+    ASSERT_ARG(window, window);
+    
     NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+
+    ASSERT([set containsObject:window]);
 
     if (set == nil) {
 	return;
@@ -130,6 +141,9 @@ static void initSharedStandardPanels(void)
 
 -(void)_didStartLoadingURL:(NSURL *)URL inController:(WebController *)controller
 {
+    ASSERT_ARG(URL, URL);
+    ASSERT_ARG(controller, controller);
+    
     NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
 
     if (set == nil) {
@@ -142,7 +156,12 @@ static void initSharedStandardPanels(void)
 
 -(void)_didStopLoadingURL:(NSURL *)URL inController:(WebController *)controller
 {
+    ASSERT_ARG(URL, URL);
+    ASSERT_ARG(controller, controller);
+    
     NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+
+    ASSERT([set containsObject:controller]);
 
     if (set == nil) {
 	return;
@@ -198,6 +217,3 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
 }
 
 @end
-
-
-

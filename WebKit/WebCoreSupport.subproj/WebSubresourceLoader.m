@@ -122,7 +122,7 @@
         [self receivedError:nonTerminalError];
     }
     
-    [[dataSource controller] _finsishedLoadingResourceFromDataSource:dataSource];
+    [[dataSource controller] _finishedLoadingResourceFromDataSource:dataSource];
     
     [self release];
     

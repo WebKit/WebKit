@@ -116,6 +116,8 @@
 
     if (![[dataSource webFrame] _shouldShowRequest:request]) {
         [handle cancel];
+        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
+
         [[dataSource webFrame] _setProvisionalDataSource:nil];
 	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
         result = nil;
@@ -190,6 +192,7 @@
             if (downloadError) {
                 [self receivedError:downloadError];
                 [handle cancel];
+                [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
             }
         }
         break;

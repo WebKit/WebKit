@@ -44,74 +44,51 @@
 
 - (void)start
 {
-    handle = [[WebResourceHandle alloc] initWithRequest:request];
-    [handle loadWithDelegate:self];
+    [self loadWithRequest:request];
 }
 
 - (void)stop
 {
+    if (view) {
+        [self cancel];
+    }
+}
+
+- (void)cancel
+{
     [view release];
     view = nil;
-    
-    if (!handle) {
-        return;
-    }
 
-    // Stopped while loading.
-    [handle cancel];
+    [super cancel];
 
-    WebController *controller = [view controller];
-
-    WebError *cancelError = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
-                                                       inDomain:WebErrorDomainWebFoundation
-                                                     failingURL:nil];
-    [controller _receivedError:cancelError fromDataSource:[view dataSource]];
-
-    [cancelError release];
-
-    [handle release];
-    handle = nil;
-
-    if(URL){
-        // Send error only if the response has been set (the URL is set with the response).
+    // Send error only if the response has been set (the URL is set with the response).
+    if (URL) {
         [self receivedError:NPRES_USER_BREAK];
     }
 }
 
-- (WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)theRequest
-{
-    return [super handle: h willSendRequest: theRequest];
-}
-
 - (void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)theResponse
 {
-    ASSERT(handle == h);
-    
     [self setResponse:theResponse];
-    [super handle: h didReceiveResponse: theResponse];    
+    [super handle:h didReceiveResponse:theResponse];    
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
-    ASSERT(handle == h);
-
-    if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
+    if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         [resourceData appendData:data];
     }
     
     [self receivedData:data];
 
-    [super handle: handle didReceiveData: data];
+    [super handle:handle didReceiveData:data];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
-    ASSERT(handle == h);
-
     WebController *controller = [view controller];
 
-    [controller _finsishedLoadingResourceFromDataSource: [view dataSource]];
-
+    [controller _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
 
     [view release];
@@ -126,14 +103,14 @@
 
     WebController *controller = [view controller];
 
-    [controller _receivedError: result fromDataSource: [view dataSource]];
+    [controller _receivedError:result fromDataSource:[view dataSource]];
 
     [self receivedError:NPRES_NETWORK_ERR];
 
     [view release];
     view = nil;
     
-    [super handle: h didFailLoadingWithError: result];
+    [super handle:h didFailLoadingWithError:result];
 }
 
 @end

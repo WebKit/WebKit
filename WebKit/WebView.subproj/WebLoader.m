@@ -121,35 +121,34 @@
 {
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
+    
+    NSURL *newURL = [newRequest URL];
 
-    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
+    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:newURL]];
 
-    // No need to retain here, will be copied after delegate callback.
     [request autorelease];
-    request = newRequest;
+    request = [newRequest copy];
 
-    if (identifier == nil){
+    if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
-        identifier = [[resourceLoadDelegate identifierForInitialRequest: request fromDataSource: dataSource] retain];
+        identifier = [[resourceLoadDelegate identifierForInitialRequest:request fromDataSource:dataSource] retain];
     }
 
     if (resourceLoadDelegate)
-        request = [resourceLoadDelegate resource: identifier willSendRequest: request fromDataSource: dataSource];
+        request = [resourceLoadDelegate resource:identifier willSendRequest:request fromDataSource:dataSource];
 
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController: [dataSource controller]];
-    
-    if ([request URL] != currentURL){
-        [currentURL release];
-        currentURL = [[request URL] retain];
+    if (currentURL) {
+        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
     }
+    
+    [newURL retain];
+    [currentURL release];
+    currentURL = newURL;
     
     [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:[dataSource controller]];
 
-    // It'd be nice if we could depend on WebResourceRequest being immutable, but we can't so always
-    // copy.
-    request = [request copy];
-    return request;
+    return newRequest;
 }
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
@@ -210,23 +209,19 @@
 
 - (void)cancel
 {
-    ASSERT (!reachedTerminalState);
+    ASSERT(!reachedTerminalState);
 
     [handle cancel];
     
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:[dataSource controller]];
 
-    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
-        inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
-    if (![self isDownload])
-        [resourceLoadDelegate resource: identifier didFailLoadingWithError: error fromDataSource: dataSource];
+    if (![self isDownload]) {
+        WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled 
+            inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
+        [resourceLoadDelegate resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+    }
 
     [self _releaseResources];
-}
-
-- (WebResourceHandle *)handle
-{
-    return handle;
 }
 
 @end

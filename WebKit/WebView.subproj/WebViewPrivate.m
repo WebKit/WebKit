@@ -102,7 +102,7 @@
     return _private->defaultContextMenuDelegate;
 }
 
-- (void)_finsishedLoadingResourceFromDataSource: (WebDataSource *)dataSource
+- (void)_finishedLoadingResourceFromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
     

@@ -1,5 +1,37 @@
 2002-11-04  Darin Adler  <darin@apple.com>
 
+	- fixed 3090257 -- "leak the world" using the Wallace and Gromit "console"
+
+        * Plugins.subproj/WebNetscapePluginStream.m: Update for changes to the base delegate.
+        (-[WebNetscapePluginStream start]): Use loadWithRequest:.
+        (-[WebNetscapePluginStream stop]): Call cancel instead of just canceling the handle
+	directly. This fixes the world leak.
+        (-[WebNetscapePluginStream cancel]): Do some of the work that was formerly in "stop".
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]): Call the "stop loading URL" whenever
+	we cancel I/O, so we don't leak the world.
+        (-[WebMainResourceClient handle:didReceiveResponse:]): Ditto.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge objectLoadedFromCache:response:size:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m: (-[WebSubresourceClient handleDidFinishLoading:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _finishedLoadingResourceFromDataSource:]):
+	Fix a typo in the word "finished".
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]): Tweak.
+        (-[WebBaseResourceHandleDelegate cancel]): Tweak.
+
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels didStartLoadingURL:inWindow:]): Add assertions.
+        (-[WebStandardPanels didStopLoadingURL:inWindow:]): Ditto.
+        (-[WebStandardPanels _didStartLoadingURL:inController:]): Ditto.
+        (-[WebStandardPanels _didStopLoadingURL:inController:]): Ditto.
+
+2002-11-04  Darin Adler  <darin@apple.com>
+
         * Downloads.subproj/WebMacBinaryDecoder.h: Removed many unneeded fields.
         * Downloads.subproj/WebMacBinaryDecoder.m:
         (+[WebMacBinaryDecoder canDecodeHeaderData:]): Added comments. Changed maximum filename
