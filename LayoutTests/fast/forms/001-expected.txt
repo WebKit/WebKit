@@ -23,9 +23,9 @@ layer at (0,0) size 800x296
         RenderTable {TABLE} at (0,0) size 784x25
           RenderTableSection {TBODY} at (2,2) size 0x21
             RenderTableRow {TR} at (0,0) size 0x0
-              RenderTableCell {TD} at (0,0) size 22x21 [r=0 c=0 rs=1 cs=1]
-                RenderRadioButton {INPUT} at (4,4) size 14x13
-              RenderTableCell {TD} at (22,9) size 758x2 [r=0 c=1 rs=1 cs=1]
+              RenderTableCell {TD} at (0,0) size 20x21 [r=0 c=0 rs=1 cs=1]
+                RenderRadioButton {INPUT} at (4,4) size 12x13
+              RenderTableCell {TD} at (20,9) size 760x2 [r=0 c=1 rs=1 cs=1]
       RenderBlock {P} at (0,166) size 784x28
         RenderTable {TABLE} at (0,0) size 784x28
           RenderTableSection {TBODY} at (2,2) size 0x24

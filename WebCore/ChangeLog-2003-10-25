@@ -2,6 +2,12 @@
 
         Reviewed by Dave.
 
+        * layout-tests: Updated for my mini-controls change.
+
+2003-09-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
         - do the prep work for the mini controls feature; Dave will finish this
 
         * khtml/rendering/render_form.cpp: (RenderFormElement::updateFromElement):
