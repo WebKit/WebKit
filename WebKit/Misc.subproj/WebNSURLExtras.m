@@ -727,6 +727,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     if (range.length > HOST_NAME_BUFFER_LENGTH) {
         return nil;
     }
+
+    if ([self length] == 0)
+        return nil;
     
     UChar sourceBuffer[HOST_NAME_BUFFER_LENGTH];
     UChar destinationBuffer[HOST_NAME_BUFFER_LENGTH];
@@ -744,6 +747,13 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     
     int length = range.length;
     [string getCharacters:sourceBuffer range:range];
+
+    // Avoid expensive calls to uidna_IDNToASCII or uidna_IDNToUnicode for localhost
+    UChar firstChar = sourceBuffer[0];
+    if (firstChar == 'l' || firstChar == 'L') {
+        if ([self rangeOfString:@"localhost" options:NSCaseInsensitiveSearch range:range].location != NSNotFound)
+            return nil;
+    }
     
     UErrorCode error = U_ZERO_ERROR;
     int32_t numCharactersConverted = (encode ? uidna_IDNToASCII : uidna_IDNToUnicode)

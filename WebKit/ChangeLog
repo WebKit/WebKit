@@ -1,3 +1,16 @@
+2004-10-13  Richard Williamson   <rjw@apple.com>
+
+	Addressed concerns in <rdar://problem/3803117> RESP: High complexity in icu uidna_IDNToASCII called by [NSString(WebNSURLExtras) _web_mapHostNameWithRange:encode:makeString:]
+
+	In practice I saw NO improvement in performance.  Although,
+	special-case tests could possibly show improvement.  Anyway,
+	the changes don't hurt performance.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSString _web_mapHostNameWithRange:encode:makeString:]):
+
 2004-10-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
