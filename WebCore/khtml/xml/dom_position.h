@@ -59,9 +59,6 @@ public:
     ElementImpl *element() const;
     CSSComputedStyleDeclarationImpl *computedStyle() const;
 
-    Position previousLinePosition(int x, khtml::EAffinity) const;
-    Position nextLinePosition(int x, khtml::EAffinity) const;
-
     Position leadingWhitespacePosition() const;
     Position trailingWhitespacePosition() const;
 

@@ -53,8 +53,8 @@ bool isEndOfLine(const VisiblePosition &, EAffinity);
 // sentences
 VisiblePosition startOfSentence(const VisiblePosition &);
 VisiblePosition endOfSentence(const VisiblePosition &);
-VisiblePosition previousSentencePosition(const VisiblePosition &, EAffinity, int x);
-VisiblePosition nextSentencePosition(const VisiblePosition &, EAffinity, int x);
+VisiblePosition previousSentencePosition(const VisiblePosition &);
+VisiblePosition nextSentencePosition(const VisiblePosition &);
 
 // paragraphs (perhaps a misnomer, can be divided by line break elements)
 VisiblePosition startOfParagraph(const VisiblePosition &);

@@ -324,9 +324,35 @@ void EditCommandPtr::setStartingSelection(const Selection &s) const
     get()->setStartingSelection(s);
 }
 
+void EditCommandPtr::setStartingSelection(const VisiblePosition &p) const
+{
+    IF_IMPL_NULL_RETURN;
+    get()->setStartingSelection(p);
+}
+
+void EditCommandPtr::setStartingSelection(const Position &p, EAffinity affinity) const
+{
+    IF_IMPL_NULL_RETURN;
+    Selection s = Selection(p, affinity);
+    get()->setStartingSelection(s);
+}
+
 void EditCommandPtr::setEndingSelection(const Selection &s) const
 {
     IF_IMPL_NULL_RETURN;
+    get()->setEndingSelection(s);
+}
+
+void EditCommandPtr::setEndingSelection(const VisiblePosition &p) const
+{
+    IF_IMPL_NULL_RETURN;
+    get()->setStartingSelection(p);
+}
+
+void EditCommandPtr::setEndingSelection(const Position &p, EAffinity affinity) const
+{
+    IF_IMPL_NULL_RETURN;
+    Selection s = Selection(p, affinity);
     get()->setEndingSelection(s);
 }
 
@@ -567,8 +593,36 @@ void EditCommand::setStartingSelection(const Selection &s)
         cmd->m_startingSelection = s;
 }
 
+void EditCommand::setStartingSelection(const VisiblePosition &p)
+{
+    Selection s = Selection(p);
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
+        cmd->m_startingSelection = s;
+}
+
+void EditCommand::setStartingSelection(const Position &p, EAffinity affinity)
+{
+    Selection s = Selection(p, affinity);
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
+        cmd->m_startingSelection = s;
+}
+
 void EditCommand::setEndingSelection(const Selection &s)
 {
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
+        cmd->m_endingSelection = s;
+}
+
+void EditCommand::setEndingSelection(const VisiblePosition &p)
+{
+    Selection s = Selection(p);
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
+        cmd->m_endingSelection = s;
+}
+
+void EditCommand::setEndingSelection(const Position &p, EAffinity affinity)
+{
+    Selection s = Selection(p, affinity);
     for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
         cmd->m_endingSelection = s;
 }
@@ -950,7 +1004,7 @@ void CompositeEditCommand::deleteInsignificantText(const Position &start, const 
 
 void CompositeEditCommand::deleteInsignificantTextDownstream(const DOM::Position &pos)
 {
-    Position end = VisiblePosition(pos).next().deepEquivalent().downstream(StayInBlock);
+    Position end = VisiblePosition(pos, VP_DEFAULT_AFFINITY).next().deepEquivalent().downstream(StayInBlock);
     deleteInsignificantText(pos, end);
 }
 
@@ -1012,7 +1066,7 @@ void CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary(const Posi
     if (pos.isNull())
         return;
         
-    VisiblePosition visiblePos(pos);
+    VisiblePosition visiblePos(pos, VP_DEFAULT_AFFINITY);
     VisiblePosition visibleParagraphStart(startOfParagraph(visiblePos));
     VisiblePosition visibleParagraphEnd(endOfParagraph(visiblePos, IncludeLineBreak));
     Position paragraphStart = visibleParagraphStart.deepEquivalent().upstream(StayInBlock);
@@ -1759,7 +1813,7 @@ bool ApplyStyleCommand::splitTextAtStartIfNeeded(const Position &start, const Po
         long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
         TextImpl *text = static_cast<TextImpl *>(start.node());
         splitTextNode(text, start.offset());
-        setEndingSelection(Selection(Position(start.node(), 0), Position(end.node(), end.offset() - endOffsetAdjustment)));
+        setEndingSelection(Selection(Position(start.node(), 0), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -1775,7 +1829,7 @@ bool ApplyStyleCommand::splitTextAtEndIfNeeded(const Position &start, const Posi
         ASSERT(prevNode);
         NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        setEndingSelection(Selection(Position(startNode, start.offset()), Position(prevNode, prevNode->caretMaxOffset())));
+        setEndingSelection(Selection(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, Position(prevNode, prevNode->caretMaxOffset()), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -1788,7 +1842,7 @@ bool ApplyStyleCommand::splitTextElementAtStartIfNeeded(const Position &start, c
         TextImpl *text = static_cast<TextImpl *>(start.node());
         splitTextNodeContainingElement(text, start.offset());
 
-        setEndingSelection(Selection(Position(start.node()->parentNode(), start.node()->nodeIndex()), Position(end.node(), end.offset() - endOffsetAdjustment)));
+        setEndingSelection(Selection(Position(start.node()->parentNode(), start.node()->nodeIndex()), SEL_DEFAULT_AFFINITY, Position(end.node(), end.offset() - endOffsetAdjustment), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -1804,7 +1858,7 @@ bool ApplyStyleCommand::splitTextElementAtEndIfNeeded(const Position &start, con
         ASSERT(prevNode);
         NodeImpl *startNode = start.node() == end.node() ? prevNode : start.node();
         ASSERT(startNode);
-        setEndingSelection(Selection(Position(startNode, start.offset()), Position(prevNode->parent(), prevNode->nodeIndex() + 1)));
+        setEndingSelection(Selection(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, Position(prevNode->parent(), prevNode->nodeIndex() + 1), SEL_DEFAULT_AFFINITY));
         return true;
     }
     return false;
@@ -1879,8 +1933,8 @@ bool ApplyStyleCommand::mergeStartWithPreviousIfIdentical(const Position &start,
         long startOffsetAdjustment = startChild->nodeIndex();
         long endOffsetAdjustment = startNode == end.node() ? startOffsetAdjustment : 0;
 
-        setEndingSelection(Selection(Position(startNode, startOffsetAdjustment),
-                                     Position(end.node(), end.offset() + endOffsetAdjustment))); 
+        setEndingSelection(Selection(Position(startNode, startOffsetAdjustment), SEL_DEFAULT_AFFINITY,
+                                     Position(end.node(), end.offset() + endOffsetAdjustment), SEL_DEFAULT_AFFINITY)); 
 
         return true;
     }
@@ -1922,8 +1976,8 @@ bool ApplyStyleCommand::mergeEndWithNextIfIdentical(const Position &start, const
 
         int endOffset = nextChild ? nextChild->nodeIndex() : nextElement->childNodes()->length();
 
-        setEndingSelection(Selection(Position(startNode, start.offset()), 
-                                     Position(nextElement, endOffset)));
+        setEndingSelection(Selection(Position(startNode, start.offset()), SEL_DEFAULT_AFFINITY, 
+                                     Position(nextElement, endOffset), SEL_DEFAULT_AFFINITY));
         return true;
     }
 
@@ -2099,7 +2153,7 @@ void ApplyStyleCommand::joinChildTextNodes(NodeImpl *node, const Position &start
         }
     }
 
-    setEndingSelection(Selection(newStart, newEnd));
+    setEndingSelection(Selection(newStart, SEL_DEFAULT_AFFINITY, newEnd, SEL_DEFAULT_AFFINITY));
 }
 
 //------------------------------------------------------------------------------------------
@@ -2191,7 +2245,7 @@ void DeleteSelectionCommand::initializePositionData()
     m_leadingWhitespace = m_upstreamStart.leadingWhitespacePosition();
     bool hasLeadingWhitespaceBeforeAdjustment = m_leadingWhitespace.isNotNull();
     if (m_smartDelete && hasLeadingWhitespaceBeforeAdjustment) {
-        Position pos = VisiblePosition(start).previous().deepEquivalent();
+        Position pos = VisiblePosition(start, m_selectionToDelete.startAffinity()).previous().deepEquivalent();
         // Expand out one character upstream for smart delete and recalculate
         // positions based on this change.
         m_upstreamStart = pos.upstream(StayInBlock);
@@ -2204,7 +2258,7 @@ void DeleteSelectionCommand::initializePositionData()
     if (m_smartDelete && !hasLeadingWhitespaceBeforeAdjustment && m_trailingWhitespace.isNotNull()) {
         // Expand out one character downstream for smart delete and recalculate
         // positions based on this change.
-        Position pos = VisiblePosition(end).next().deepEquivalent();
+        Position pos = VisiblePosition(end, m_selectionToDelete.endAffinity()).next().deepEquivalent();
         m_upstreamEnd = pos.upstream(StayInBlock);
         m_downstreamEnd = pos.downstream(StayInBlock);
         m_trailingWhitespace = m_downstreamEnd.trailingWhitespacePosition();
@@ -2225,7 +2279,7 @@ void DeleteSelectionCommand::initializePositionData()
     // Handle detecting if the line containing the selection end is itself fully selected.
     // This is one of the tests that determines if block merging of content needs to be done.
     //
-    VisiblePosition visibleEnd(end);
+    VisiblePosition visibleEnd(end, m_selectionToDelete.endAffinity());
     if (isFirstVisiblePositionInParagraph(visibleEnd) || isLastVisiblePositionInParagraph(visibleEnd)) {
         Position previousLineStart = previousLinePosition(visibleEnd, DOWNSTREAM, 0).deepEquivalent();
         if (previousLineStart.isNull() || RangeImpl::compareBoundaryPoints(previousLineStart, m_downstreamStart) >= 0)
@@ -2330,7 +2384,7 @@ void DeleteSelectionCommand::setStartNode(NodeImpl *node)
 void DeleteSelectionCommand::handleGeneralDelete()
 {
     int startOffset = m_upstreamStart.offset();
-    VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd);
+    VisiblePosition visibleEnd = VisiblePosition(m_downstreamEnd, m_selectionToDelete.endAffinity());
     bool endAtEndOfBlock = isEndOfBlock(visibleEnd);
 
     // Handle some special cases where the selection begins and ends on specific visible units.
@@ -2356,7 +2410,7 @@ void DeleteSelectionCommand::handleGeneralDelete()
         // Don't delete the BR element
         setStartNode(m_startNode->traverseNextNode());
     }
-    else if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart))) {
+    else if (m_startBlock != m_endBlock && isStartOfBlock(VisiblePosition(m_upstreamStart, m_selectionToDelete.startAffinity()))) {
         if (!isStartOfBlock(visibleEnd) && endAtEndOfBlock) {
             // Delete all the children of the block, but not the block itself.
             setStartNode(m_startBlock->firstChild());
@@ -2604,8 +2658,8 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(bool insertedPlaceh
         // of the preceding line and retains it even if you click away, click back, and
         // then start typing. In this case, the typing style is applied right now, and
         // is not retained until the next typing action.
-        Position pastPlaceholder = endOfParagraph(VisiblePosition(m_endingPosition)).deepEquivalent();
-        setEndingSelection(Selection(m_endingPosition, pastPlaceholder));
+        Position pastPlaceholder = endOfParagraph(VisiblePosition(m_endingPosition, m_selectionToDelete.endAffinity())).deepEquivalent();
+        setEndingSelection(Selection(m_endingPosition, m_selectionToDelete.endAffinity(), pastPlaceholder, DOWNSTREAM));
         applyStyle(m_typingStyle, EditActionUnspecified);
         m_typingStyle->deref();
         m_typingStyle = 0;
@@ -2655,6 +2709,10 @@ void DeleteSelectionCommand::doApply()
     if (!m_selectionToDelete.isRange())
         return;
 
+    // save this to later make the selection with
+    EAffinity affinity = m_selectionToDelete.startAffinity();
+    
+    // set up our state
     initializePositionData();
 
     if (!m_startBlock || !m_endBlock) {
@@ -2687,7 +2745,7 @@ void DeleteSelectionCommand::doApply()
     bool insertedPlaceholder = insertBlockPlaceholderIfNeeded(m_endingPosition.node());
     calculateTypingStyleAfterDelete(insertedPlaceholder);
     debugPosition("endingPosition   ", m_endingPosition);
-    setEndingSelection(m_endingPosition);
+    setEndingSelection(Selection(m_endingPosition, affinity));
     clearTransientState();
     rebalanceWhitespace();
 }
@@ -2797,7 +2855,7 @@ void InsertLineBreakCommand::doApply()
     Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
-    bool atEndOfBlock = isLastVisiblePositionInBlock(VisiblePosition(pos));
+    bool atEndOfBlock = isLastVisiblePositionInBlock(VisiblePosition(pos, selection.startAffinity()));
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
@@ -2814,13 +2872,13 @@ void InsertLineBreakCommand::doApply()
             bool hasTrailingBR = next && next->id() == ID_BR && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
             insertNodeAfterPosition(nodeToInsert, pos);
             if (hasTrailingBR) {
-                setEndingSelection(Position(next, 0));
+                setEndingSelection(Selection(Position(next, 0), DOWNSTREAM));
             }
             else if (!document()->inStrictMode()) {
                 // Insert an "extra" BR at the end of the block. 
                 ElementImpl *extraBreakNode = createBreakElement(document());
                 insertNodeAfter(extraBreakNode, nodeToInsert);
-                setEndingSelection(Position(extraBreakNode, 0));
+                setEndingSelection(Position(extraBreakNode, 0), DOWNSTREAM);
             }
         }
     }
@@ -2829,7 +2887,7 @@ void InsertLineBreakCommand::doApply()
         // Insert node before downstream position, and place caret there as well. 
         Position endingPosition = pos.downstream(StayInBlock);
         insertNodeBeforePosition(nodeToInsert, endingPosition);
-        setEndingSelection(endingPosition);
+        setEndingSelection(endingPosition, DOWNSTREAM);
     }
     else if (atEnd) {
         LOG(Editing, "input newline case 3");
@@ -2837,7 +2895,7 @@ void InsertLineBreakCommand::doApply()
         // of the current position, reckoned before inserting the BR in between.
         Position endingPosition = pos.downstream(StayInBlock);
         insertNodeAfterPosition(nodeToInsert, pos);
-        setEndingSelection(endingPosition);
+        setEndingSelection(endingPosition, DOWNSTREAM);
     }
     else {
         // Split a text node
@@ -2861,7 +2919,7 @@ void InsertLineBreakCommand::doApply()
             insertTextIntoNode(textNode, 0, nonBreakingSpaceString());
         }
         
-        setEndingSelection(endingPosition);
+        setEndingSelection(endingPosition, DOWNSTREAM);
     }
 
     // Handle the case where there is a typing style.
@@ -2877,7 +2935,7 @@ void InsertLineBreakCommand::doApply()
         int exception;
         rangeAroundNode->selectNode(nodeToInsert, exception);
 
-        setEndingSelection(Selection(rangeAroundNode));
+        setEndingSelection(Selection(rangeAroundNode, DOWNSTREAM, UPSTREAM));
         applyStyle(typingStyle);
 
         setEndingSelection(selectionBeforeStyle);
@@ -3002,6 +3060,7 @@ void InsertParagraphSeparatorCommand::doApply()
     // moving the selection downstream so it is in the ending block (if that block is
     // still around, that is).
     Position pos = selection.start();
+    EAffinity affinity = selection.startAffinity();
         
     if (selection.isRange()) {
         NodeImpl *startBlockBeforeDelete = selection.start().node()->enclosingBlockFlowElement();
@@ -3011,12 +3070,13 @@ void InsertParagraphSeparatorCommand::doApply()
         deleteSelection(false, false);
         if (doneAfterDelete) {
             document()->updateLayout();
-            setEndingSelection(endingSelection().start().downstream());
+            setEndingSelection(endingSelection().start().downstream(), DOWNSTREAM);
             rebalanceWhitespace();
             applyStyleAfterInsertion();
             return;
         }
         pos = endingSelection().start();
+        affinity = endingSelection().startAffinity();
     }
 
     calculateStyleBeforeInsertion(pos);
@@ -3027,7 +3087,7 @@ void InsertParagraphSeparatorCommand::doApply()
     if (!startBlock || !startBlock->parentNode())
         return;
 
-    VisiblePosition visiblePos(pos);
+    VisiblePosition visiblePos(pos, affinity);
     bool isFirstInBlock = isFirstVisiblePositionInBlock(visiblePos);
     bool isLastInBlock = isLastVisiblePositionInBlock(visiblePos);
     bool startBlockIsRoot = startBlock == startBlock->rootEditableElement();
@@ -3049,7 +3109,7 @@ void InsertParagraphSeparatorCommand::doApply()
             insertNodeAfter(blockToInsert, startBlock);
         }
         insertBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0));
+        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
         applyStyleAfterInsertion();
         return;
     }
@@ -3064,9 +3124,9 @@ void InsertParagraphSeparatorCommand::doApply()
         NodeImpl *refNode = isFirstInBlock && !startBlockIsRoot ? startBlock : pos.node();
         insertNodeBefore(blockToInsert, refNode);
         insertBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0));
+        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
         applyStyleAfterInsertion();
-        setEndingSelection(pos);
+        setEndingSelection(pos, DOWNSTREAM);
         return;
     }
 
@@ -3079,7 +3139,7 @@ void InsertParagraphSeparatorCommand::doApply()
         NodeImpl *refNode = isLastInBlock && !startBlockIsRoot ? startBlock : pos.node();
         insertNodeAfter(blockToInsert, refNode);
         insertBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0));
+        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
         applyStyleAfterInsertion();
         return;
     }
@@ -3184,7 +3244,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
     }
 
-    setEndingSelection(Position(blockToInsert, 0));
+    setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
     rebalanceWhitespace();
     applyStyleAfterInsertion();
 }
@@ -3212,9 +3272,11 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
     
     // Delete the current selection.
     Position pos = selection.start();
+    EAffinity affinity = selection.startAffinity();
     if (selection.isRange()) {
         deleteSelection(false, false);
         pos = endingSelection().start().upstream();
+        affinity = endingSelection().startAffinity();
     }
     
     // Find the top-most blockquote from the start.
@@ -3238,7 +3300,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
     m_breakNode->ref();
     insertNodeAfter(m_breakNode, topBlockquote);
 
-    if (!isLastVisiblePositionInNode(VisiblePosition(pos), topBlockquote)) {
+    if (!isLastVisiblePositionInNode(VisiblePosition(pos, affinity), topBlockquote)) {
         // Split at pos if in the middle of a text node.
         if (startNode->isTextNode()) {
             TextImpl *textNode = static_cast<TextImpl *>(startNode);
@@ -3318,7 +3380,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
     }
     
     // Put the selection right before the break.
-    setEndingSelection(Position(m_breakNode, 0));
+    setEndingSelection(Position(m_breakNode, 0), DOWNSTREAM);
     rebalanceWhitespace();
 }
 
@@ -3378,7 +3440,7 @@ Position InsertTextCommand::prepareForTextInsertion(bool adjustDownstream)
 void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
 {
     Selection selection = endingSelection();
-    bool adjustDownstream = isFirstVisiblePositionOnLine(VisiblePosition(selection.start().downstream(StayInBlock)));
+    bool adjustDownstream = isFirstVisiblePositionOnLine(VisiblePosition(selection.start().downstream(StayInBlock), DOWNSTREAM));
 
     // Delete the current selection, or collapse whitespace, as needed
     if (selection.isRange())
@@ -3442,7 +3504,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         m_charactersAdded += text.length();
     }
 
-    setEndingSelection(Selection(startPosition, endPosition));
+    setEndingSelection(Selection(startPosition, DOWNSTREAM, endPosition, SEL_DEFAULT_AFFINITY));
 
     // Handle the case where there is a typing style.
     // FIXME: Improve typing style.
@@ -3452,7 +3514,7 @@ void InsertTextCommand::input(const DOMString &text, bool selectInsertedText)
         applyStyle(typingStyle);
 
     if (!selectInsertedText)
-        setEndingSelection(endingSelection().end());
+        setEndingSelection(endingSelection().end(), endingSelection().endAffinity());
 }
 
 void InsertTextCommand::insertSpace(TextImpl *textNode, unsigned long offset)
@@ -3608,7 +3670,7 @@ void MoveSelectionCommand::doApply()
     if (!pos.node()->inDocument())
         pos = endingSelection().start();
 
-    setEndingSelection(pos);
+    setEndingSelection(pos, endingSelection().startAffinity());
     EditCommandPtr cmd(new ReplaceSelectionCommand(document(), m_fragment, true, m_smartMove));
     applyCommandToComposite(cmd);
 }
@@ -4092,6 +4154,7 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, Documen
       m_fragment(fragment),
       m_firstNodeInserted(0),
       m_lastNodeInserted(0),
+      m_lastTopNodeInserted(0),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace)
 {
@@ -4103,39 +4166,44 @@ ReplaceSelectionCommand::~ReplaceSelectionCommand()
         m_firstNodeInserted->deref();
     if (m_lastNodeInserted)
         m_lastNodeInserted->deref();
+    if (m_lastTopNodeInserted)
+        m_lastTopNodeInserted->deref();
 }
 
 void ReplaceSelectionCommand::doApply()
 {
+    // collect information about the current selection, prior to deleting the selection
     Selection selection = endingSelection();
     ASSERT(selection.isCaretOrRange());
-    VisiblePosition visibleStart(selection.start());
-    VisiblePosition visibleEnd(selection.end());
+    VisiblePosition visibleStart(selection.start(), selection.startAffinity());
+    VisiblePosition visibleEnd(selection.end(), selection.endAffinity());
     bool startAtStartOfBlock = isFirstVisiblePositionInBlock(visibleStart);
     bool startAtEndOfBlock = isLastVisiblePositionInBlock(visibleStart);
     bool startAtBlockBoundary = startAtStartOfBlock || startAtEndOfBlock;
     NodeImpl *startBlock = selection.start().node()->enclosingBlockFlowElement();
     NodeImpl *endBlock = selection.end().node()->enclosingBlockFlowElement();
+
+    // decide whether to later merge content into the startBlock
     bool mergeStart = false;
     if (startBlock == startBlock->rootEditableElement() && startAtStartOfBlock && startAtEndOfBlock) {
-        // Empty document. Merge neither start nor end.
+        // empty document, so no merge
         mergeStart = false;
-    }
-    else {
+    } else {
+        // merge if current selection starts inside a paragraph, or there is only one block and no interchange newline to add
         mergeStart = !isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewline() && !m_fragment.hasMoreThanOneBlock());
     }
     
+    // decide whether to later append nodes to the end
     bool moveNodesAfterEnd = !m_fragment.hasInterchangeNewline() && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
     
     Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
     Position endPos; 
     EStayInBlock upstreamStayInBlock = StayInBlock;
 
-    // Delete the current selection, or collapse whitespace, as needed
+    // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
         deleteSelection(false, !(m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()));
-    }
-    else if (selection.isCaret() && !startAtBlockBoundary &&
+    } else if (selection.isCaret() && !startAtBlockBoundary &&
              !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleEnd)) {
         // The start and the end need to wind up in separate blocks.
         // Insert a paragraph separator to make that happen.
@@ -4143,64 +4211,72 @@ void ReplaceSelectionCommand::doApply()
         upstreamStayInBlock = DoNotStayInBlock;
     }
     
+    // calculate the start and end of the resulting selection
     selection = endingSelection();
-    if (startAtStartOfBlock && startBlock->inDocument())
+    if (startAtStartOfBlock && startBlock->inDocument()) {
         startPos = Position(startBlock, 0);
-    else if (startAtEndOfBlock)
+    } else if (startAtEndOfBlock) {
         startPos = selection.start().downstream(StayInBlock);
-    else
+    } else {
         startPos = selection.start().upstream(upstreamStayInBlock);
+    }
     endPos = selection.end().downstream(); 
     
-    // This command does not use any typing style that is set as a residual effect of
-    // a delete.
+    // replacement command does not use any typing style that is set as a residual effect of the pre-delete
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     KHTMLPart *part = document()->part();
     part->clearTypingStyle();
     setTypingStyle(0);
 
+    // done if there is nothing to add
     if (!m_fragment.firstChild())
         return;
     
-    // Now that we are about to add content, check to see if a placeholder element
-    // can be removed.
+    // now that we are about to add content, check whether a placeholder element can be removed
+    // if so, do it and update startPos and endPos
     NodeImpl *block = startPos.node()->enclosingBlockFlowElement();
     NodeImpl *placeholderBlock = 0;
     if (removeBlockPlaceholderIfNeeded(block)) {
         placeholderBlock = block;
         Position pos = Position(block, 0);
-        if (!endPos.node()->inDocument()) // endPos might have been in the placeholder just removed.
+        // endPos might have been in the placeholder just removed
+        if (!endPos.node()->inDocument())
             endPos = pos;
         startPos = pos;
     }
     
+    // check whether to "smart replace" needs to add leading and/or trailing space
     bool addLeadingSpace = false;
     bool addTrailingSpace = false;
     if (m_smartReplace) {
         addLeadingSpace = startPos.leadingWhitespacePosition().isNotNull();
         if (addLeadingSpace) {
-            QChar previousChar = VisiblePosition(startPos).previous().character();
+            QChar previousChar = VisiblePosition(startPos, VP_DEFAULT_AFFINITY).previous().character();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
         addTrailingSpace = endPos.trailingWhitespacePosition().isNotNull();
         if (addTrailingSpace) {
-            QChar thisChar = VisiblePosition(endPos).character();
+            QChar thisChar = VisiblePosition(endPos, VP_DEFAULT_AFFINITY).character();
             if (!thisChar.isNull()) {
                 addTrailingSpace = !part->isCharacterSmartReplaceExempt(thisChar, false);
             }
         }
     }
-
-    // Merge content into the start block, if necessary.
+    
+    // There are five steps to adding the content: merge blocks at start, add remaining blocks,
+    // add "smart replace" space, handle trailing newline, clean up.
+    
+    // initially, we say the insertion point is the start of selection
     document()->updateLayout();
     Position insertionPos = startPos;
+
+    // step 1: merge content into the start block, if that is needed
     if (mergeStart) {
-        NodeImpl *node = m_fragment.mergeStartNode();
-        if (node) {
-            NodeImpl *refNode = node;
+        NodeImpl *refNode = m_fragment.mergeStartNode();
+        if (refNode) {
             NodeImpl *node = refNode ? refNode->nextSibling() : 0;
             insertNodeAtAndUpdateNodesInserted(refNode, startPos.node(), startPos.offset());
             while (node && !isProbablyBlock(node)) {
@@ -4210,6 +4286,8 @@ void ReplaceSelectionCommand::doApply()
                 node = next;
             }
         }
+        
+        // update insertion point to be at the end of the last block inserted
         if (m_lastNodeInserted) {
             document()->updateLayout();
             insertionPos = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
@@ -4217,28 +4295,27 @@ void ReplaceSelectionCommand::doApply()
     }
 
     // prune empty nodes from fragment
+    // NOTE: why was this not done earlier, before the mergeStart?
     m_fragment.pruneEmptyNodes();
     
-    // Merge everything remaining.
-    NodeImpl *node = m_fragment.firstChild();
-    if (node) {
-        NodeImpl *refNode = node;
+    // step 2 : merge everything remaining in the fragment
+    if (m_fragment.firstChild()) {
+        NodeImpl *refNode = m_fragment.firstChild();
         NodeImpl *node = refNode ? refNode->nextSibling() : 0;
         NodeImpl *insertionBlock = insertionPos.node()->enclosingBlockFlowElement();
         bool insertionBlockIsBody = insertionBlock->id() == ID_BODY;
-        VisiblePosition visiblePos(insertionPos);
+        VisiblePosition visiblePos(insertionPos, DOWNSTREAM);
         if (!insertionBlockIsBody && isProbablyBlock(refNode) && isFirstVisiblePositionInBlock(visiblePos))
             insertNodeBeforeAndUpdateNodesInserted(refNode, insertionBlock);
         else if (!insertionBlockIsBody && isProbablyBlock(refNode) && isLastVisiblePositionInBlock(visiblePos)) {
             insertNodeAfterAndUpdateNodesInserted(refNode, insertionBlock);
-        }
-        else if (mergeStart && !isProbablyBlock(refNode)){
+        } else if (mergeStart && !isProbablyBlock(refNode)) {
             Position pos = insertionPos.downstream();
             insertNodeAtAndUpdateNodesInserted(refNode, pos.node(), pos.offset());
-        }
-        else {
+        } else {
             insertNodeAtAndUpdateNodesInserted(refNode, insertionPos.node(), insertionPos.offset());
         }
+        
         while (node) {
             NodeImpl *next = node->nextSibling();
             insertNodeAfterAndUpdateNodesInserted(node, refNode);
@@ -4249,7 +4326,7 @@ void ReplaceSelectionCommand::doApply()
         insertionPos = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
     }
 
-    // Handle "smart replace" whitespace
+    // step 3 : handle "smart replace" whitespace
     if (addTrailingSpace && m_lastNodeInserted) {
         if (m_lastNodeInserted->isTextNode()) {
             TextImpl *text = static_cast<TextImpl *>(m_lastNodeInserted);
@@ -4262,6 +4339,7 @@ void ReplaceSelectionCommand::doApply()
             if (!m_firstNodeInserted)
                 m_firstNodeInserted = node;
             m_lastNodeInserted = node;
+            m_lastTopNodeInserted = node;
             insertionPos = Position(node, 1);
         }
     }
@@ -4270,26 +4348,24 @@ void ReplaceSelectionCommand::doApply()
         if (m_firstNodeInserted->isTextNode()) {
             TextImpl *text = static_cast<TextImpl *>(m_firstNodeInserted);
             insertTextIntoNode(text, 0, nonBreakingSpaceString());
-        }
-        else {
+        } else {
             NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
             insertNodeBefore(node, m_firstNodeInserted);
         }
     }
 
-    // Handle trailing newline
+    // step 4 : handle trailing newline
     if (m_fragment.hasInterchangeNewline()) {
-        if (startBlock == endBlock && isEndOfDocument(VisiblePosition(insertionPos))) {
-            setEndingSelection(insertionPos);
+        if (startBlock == endBlock && !isProbablyBlock(m_lastTopNodeInserted) && !isProbablyBlock(m_lastTopNodeInserted)) {
+            setEndingSelection(insertionPos, DOWNSTREAM);
             insertParagraphSeparator();
             endPos = endingSelection().end().downstream();
         }
         completeHTMLReplacement(startPos, endPos);
-    }
-    else {
+    } else {
         if (m_lastNodeInserted && m_lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
             document()->updateLayout();
-            VisiblePosition pos(Position(m_lastNodeInserted, 0));
+            VisiblePosition pos(Position(m_lastNodeInserted, 0), DOWNSTREAM);
             if (isLastVisiblePositionInBlock(pos)) {
                 NodeImpl *next = m_lastNodeInserted->traverseNextNode();
                 bool hasTrailingBR = next && next->id() == ID_BR && m_lastNodeInserted->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
@@ -4333,6 +4409,7 @@ void ReplaceSelectionCommand::doApply()
         completeHTMLReplacement();
     }
     
+    // step 5 : mop up
     if (placeholderBlock) {
         document()->updateLayout();
         if (!placeholderBlock->renderer() || placeholderBlock->renderer()->height() == 0)
@@ -4344,7 +4421,10 @@ void ReplaceSelectionCommand::completeHTMLReplacement(const Position &start, con
  {
     if (start.isNull() || !start.node()->inDocument() || end.isNull() || !end.node()->inDocument())
         return;
-    m_selectReplacement ? setEndingSelection(Selection(start, end)) : setEndingSelection(end);
+    if (m_selectReplacement)
+        setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
+    else
+        setEndingSelection(end, SEL_DEFAULT_AFFINITY);
     rebalanceWhitespace();
 }
 
@@ -4374,14 +4454,14 @@ void ReplaceSelectionCommand::completeHTMLReplacement()
     
     Position start(firstLeaf, firstLeaf->caretMinOffset());
     Position end(lastLeaf, lastLeaf->caretMaxOffset());
-    Selection replacementSelection(start, end);
+    Selection replacementSelection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY);
     if (m_selectReplacement) {
         // Select what was inserted.
         setEndingSelection(replacementSelection);
     } 
     else {
         // Place the cursor after what was inserted, and mark misspellings in the inserted content.
-        setEndingSelection(end);
+        setEndingSelection(end, SEL_DEFAULT_AFFINITY);
     }
     rebalanceWhitespace();
 }
@@ -4414,6 +4494,13 @@ void ReplaceSelectionCommand::updateNodesInserted(NodeImpl *node)
     if (!node)
         return;
 
+    // update m_lastTopNodeInserted
+    node->ref();
+    if (m_lastTopNodeInserted)
+        m_lastTopNodeInserted->deref();
+    m_lastTopNodeInserted = node;
+    
+    // update m_firstNodeInserted
     if (!m_firstNodeInserted) {
         m_firstNodeInserted = node;
         m_firstNodeInserted->ref();
@@ -4421,7 +4508,8 @@ void ReplaceSelectionCommand::updateNodesInserted(NodeImpl *node)
     
     if (node == m_lastNodeInserted)
         return;
-        
+    
+    // update m_lastNodeInserted
     NodeImpl *old = m_lastNodeInserted;
     m_lastNodeInserted = node->lastDescendent();
     m_lastNodeInserted->ref();
@@ -4789,7 +4877,7 @@ void TypingCommand::deleteKeyPressed(DocumentImpl *document, bool smartDelete)
     }
     else {
         Selection selection = part->selection();
-        if (selection.isCaret() && VisiblePosition(selection.start()).previous().isNull()) {
+        if (selection.isCaret() && VisiblePosition(selection.start(), selection.startAffinity()).previous().isNull()) {
             // do nothing for a delete key at the start of an editable element.
         }
         else {
@@ -4814,7 +4902,7 @@ void TypingCommand::forwardDeleteKeyPressed(DocumentImpl *document, bool smartDe
     }
     else {
         Selection selection = part->selection();
-        if (selection.isCaret() && isEndOfDocument(VisiblePosition(selection.start()))) {
+        if (selection.isCaret() && isEndOfDocument(VisiblePosition(selection.start(), selection.startAffinity()))) {
             // do nothing for a delete key at the start of an editable element.
         }
         else {
@@ -4946,7 +5034,7 @@ void TypingCommand::markMisspellingsAfterTyping()
     // Since the word containing the current selection is never marked, this does a check to
     // see if typing made a new word that is not in the current selection. Basically, you
     // get this by being at the end of a word and typing a space.    
-    VisiblePosition start(endingSelection().start());
+    VisiblePosition start(endingSelection().start(), endingSelection().startAffinity());
     VisiblePosition previous = start.previous();
     if (previous.isNotNull()) {
         VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
@@ -5030,10 +5118,10 @@ void TypingCommand::deleteKeyPressed()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             Position pos(endingSelection().start());
-            Position start = VisiblePosition(pos).previous().deepEquivalent();
-            Position end = VisiblePosition(pos).deepEquivalent();
+            Position start = VisiblePosition(pos, endingSelection().startAffinity()).previous().deepEquivalent();
+            Position end = VisiblePosition(pos, endingSelection().startAffinity()).deepEquivalent();
             if (start.isNotNull() && end.isNotNull() && start.node()->rootEditableElement() == end.node()->rootEditableElement())
-                selectionToDelete = Selection(start, end);
+                selectionToDelete = Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY);
             break;
         }
         case Selection::NONE:
@@ -5061,10 +5149,10 @@ void TypingCommand::forwardDeleteKeyPressed()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             Position pos(endingSelection().start());
-            Position start = VisiblePosition(pos).next().deepEquivalent();
-            Position end = VisiblePosition(pos).deepEquivalent();
+            Position start = VisiblePosition(pos, endingSelection().startAffinity()).next().deepEquivalent();
+            Position end = VisiblePosition(pos, endingSelection().startAffinity()).deepEquivalent();
             if (start.isNotNull() && end.isNotNull() && start.node()->rootEditableElement() == end.node()->rootEditableElement())
-                selectionToDelete = Selection(start, end);
+                selectionToDelete = Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY);
             break;
         }
         case Selection::NONE:

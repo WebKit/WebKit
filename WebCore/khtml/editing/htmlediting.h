@@ -75,7 +75,11 @@ public:
     Selection endingSelection() const;
 
     void setStartingSelection(const Selection &s) const;
+    void setStartingSelection(const VisiblePosition &p) const;
+    void setStartingSelection(const DOM::Position &p, EAffinity affinity) const;
     void setEndingSelection(const Selection &s) const;
+    void setEndingSelection(const VisiblePosition &p) const;
+    void setEndingSelection(const DOM::Position &p, EAffinity affinity) const;
 
     DOM::CSSMutableStyleDeclarationImpl *typingStyle() const;
     void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *) const;
@@ -152,7 +156,11 @@ public:
     void setState(ECommandState state) { m_state = state; }
 
     void setStartingSelection(const Selection &s);
+    void setStartingSelection(const VisiblePosition &p);
+    void setStartingSelection(const DOM::Position &p, EAffinity affinity);
     void setEndingSelection(const Selection &s);
+    void setEndingSelection(const VisiblePosition &p);
+    void setEndingSelection(const DOM::Position &p, EAffinity affinity);
 
     DOM::CSSMutableStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
     void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
@@ -717,6 +725,7 @@ private:
     ReplacementFragment m_fragment;
     DOM::NodeImpl *m_firstNodeInserted;
     DOM::NodeImpl *m_lastNodeInserted;
+    DOM::NodeImpl *m_lastTopNodeInserted;
     bool m_selectReplacement;
     bool m_smartReplace;
 };

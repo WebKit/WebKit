@@ -2431,15 +2431,15 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         switch (id) {
             case Selection::Collapse:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(Position(KJS::toNode(args[0]).handle(), args[1].toInt32(exec))));
+                part->setSelection(khtml::Selection(Position(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
                 break;
             case Selection::CollapseToEnd:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(part->selection().end()));
+                part->setSelection(khtml::Selection(part->selection().end(), part->selection().endAffinity()));
                 break;
             case Selection::CollapseToStart:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(part->selection().start()));
+                part->setSelection(khtml::Selection(part->selection().start(), part->selection().startAffinity()));
                 break;
             case Selection::Empty:
                 TypingCommand::closeTyping(part->lastEditCommand());
@@ -2449,12 +2449,12 @@ Value SelectionFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
                 TypingCommand::closeTyping(part->lastEditCommand());
                 Position base(KJS::toNode(args[0]).handle(), args[1].toInt32(exec));
                 Position extent(KJS::toNode(args[2]).handle(), args[3].toInt32(exec));
-                part->setSelection(khtml::Selection(base, extent));
+                part->setSelection(khtml::Selection(base, khtml::SEL_DEFAULT_AFFINITY, extent, khtml::SEL_DEFAULT_AFFINITY));
                 break;
             }
             case Selection::SetPosition:
                 TypingCommand::closeTyping(part->lastEditCommand());
-                part->setSelection(khtml::Selection(Position(KJS::toNode(args[0]).handle(), args[1].toInt32(exec))));
+                part->setSelection(khtml::Selection(Position(KJS::toNode(args[0]).handle(), args[1].toInt32(exec)), khtml::SEL_DEFAULT_AFFINITY));
                 break;
             case Selection::Modify: {
                 TypingCommand::closeTyping(part->lastEditCommand());

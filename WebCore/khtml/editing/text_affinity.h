@@ -32,7 +32,7 @@ namespace khtml {
 // From NSTextView.h:
 // NSSelectionAffinityUpstream = 0
 // NSSelectionAffinityDownstream = 1
-enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
+typedef enum { UPSTREAM = 0, DOWNSTREAM = 1 } EAffinity;
 
 }
 

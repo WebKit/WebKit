@@ -39,15 +39,22 @@ namespace DOM {
 
 namespace khtml {
 
+#define VP_DEFAULT_AFFINITY DOWNSTREAM
+
 class VisiblePosition
 {
 public:
     typedef DOM::NodeImpl NodeImpl;
     typedef DOM::Position Position;
 
-    VisiblePosition() { }
-    VisiblePosition(NodeImpl *, long offset, EAffinity affinity=DOWNSTREAM);
-    explicit VisiblePosition(const Position &, EAffinity affinity=DOWNSTREAM);
+    enum EInitHint { 
+        INIT_UP, 
+        INIT_DOWN
+    };
+
+    VisiblePosition() { m_affinity = VP_DEFAULT_AFFINITY; };
+    VisiblePosition(NodeImpl *, long offset, EAffinity, EInitHint initHint=INIT_DOWN);
+    explicit VisiblePosition(const Position &, EAffinity, EInitHint initHint=INIT_DOWN);
 
     void clear() { m_deepPosition.clear(); }
 
@@ -56,6 +63,8 @@ public:
 
     Position position() const { return rangeCompliantEquivalent(m_deepPosition); }
     Position deepEquivalent() const { return m_deepPosition; }
+    EAffinity affinity() const { assert(m_affinity == UPSTREAM || m_affinity == DOWNSTREAM); return m_affinity; }
+    void setAffinity(EAffinity affinity) { m_affinity = affinity; }
     
     Position downstreamDeepEquivalent() const;
 
@@ -76,6 +85,7 @@ public:
 #endif
     
 private:
+    void init(const Position &, EInitHint, EAffinity);
     void initUpstream(const Position &);
     void initDownstream(const Position &);
 
@@ -97,11 +107,12 @@ private:
     static bool isCandidate(const Position &);
     
     Position m_deepPosition;
+    EAffinity m_affinity;
 };
 
 inline bool operator==(const VisiblePosition &a, const VisiblePosition &b)
 {
-    return a.m_deepPosition == b.m_deepPosition;
+    return a.m_deepPosition == b.m_deepPosition && a.m_affinity == b.m_affinity;
 }
 
 inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
@@ -114,10 +125,10 @@ bool setStart(DOM::Range &, const VisiblePosition &start);
 bool setStart(DOM::RangeImpl *, const VisiblePosition &start);
 bool setEnd(DOM::Range &, const VisiblePosition &start);
 bool setEnd(DOM::RangeImpl *, const VisiblePosition &start);
-VisiblePosition startVisiblePosition(const DOM::Range &);
-VisiblePosition startVisiblePosition(const DOM::RangeImpl *);
-VisiblePosition endVisiblePosition(const DOM::Range &);
-VisiblePosition endVisiblePosition(const DOM::RangeImpl *);
+VisiblePosition startVisiblePosition(const DOM::Range &, EAffinity);
+VisiblePosition startVisiblePosition(const DOM::RangeImpl *, EAffinity);
+VisiblePosition endVisiblePosition(const DOM::Range &, EAffinity);
+VisiblePosition endVisiblePosition(const DOM::RangeImpl *, EAffinity);
 
 bool visiblePositionsOnDifferentLines(const VisiblePosition &, const VisiblePosition &);
 bool visiblePositionsInDifferentBlocks(const VisiblePosition &, const VisiblePosition &);

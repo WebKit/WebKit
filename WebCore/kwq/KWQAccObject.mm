@@ -85,6 +85,7 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
 
+using khtml::EAffinity;
 using khtml::EVerticalAlign;
 using khtml::plainText;
 using khtml::RenderBlock;
@@ -499,8 +500,14 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         if (!docPart)
             return nil;
         
-        VisiblePosition startVisiblePosition = VisiblePosition(m_renderer->positionForCoordinates (0, 0, nil));
-        VisiblePosition endVisiblePosition   = VisiblePosition(m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, nil));
+        // FIXME: should use startOfDocument and endOfDocument here
+        EAffinity startAffinity;
+        Position startPos = m_renderer->positionForCoordinates (0, 0, &startAffinity);
+        EAffinity endAffinity;
+        Position endPos = m_renderer->positionForCoordinates (LONG_MAX, LONG_MAX, &endAffinity);
+
+        VisiblePosition startVisiblePosition = VisiblePosition(startPos, startAffinity);
+        VisiblePosition endVisiblePosition   = VisiblePosition(endPos, endAffinity);
         QString qString   = plainText(makeRange(startVisiblePosition, endVisiblePosition));
         
         // transform it to a CFString and return that
@@ -811,11 +818,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (VisiblePosition) visiblePositionForStartOfTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
 {
-    AXTextMarkerRef textMarker;
-    VisiblePosition visiblePos;
-
-    textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
-    visiblePos = [self visiblePositionForTextMarker:textMarker];
+    AXTextMarkerRef textMarker = [self AXTextMarkerRangeCopyStartMarkerWrapper:textMarkerRange];
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (textMarker)
         CFRelease(textMarker);
     return visiblePos;
@@ -823,11 +827,8 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (VisiblePosition) visiblePositionForEndOfTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
 {
-    AXTextMarkerRef textMarker;
-    VisiblePosition visiblePos;
-    
-    textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
-    visiblePos = [self visiblePositionForTextMarker:textMarker];
+    AXTextMarkerRef textMarker = [self AXTextMarkerRangeCopyEndMarkerWrapper:textMarkerRange];
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (textMarker)
         CFRelease(textMarker);
     return visiblePos;
@@ -967,17 +968,23 @@ static QRect boundingBoxRect(RenderObject* obj)
         }
             
         // return a marker range for the selection start to end
-        VisiblePosition startPosition = VisiblePosition(sel.start());
-        VisiblePosition endPosition = VisiblePosition(sel.end());
+        VisiblePosition startPosition = VisiblePosition(sel.start(), sel.startAffinity());
+        VisiblePosition endPosition = VisiblePosition(sel.end(), sel.endAffinity());
         return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
     }
     
     if ([attributeName isEqualToString: (NSString *) kAXStartTextMarkerAttribute]) {
-        return (id) [self textMarkerForVisiblePosition: VisiblePosition([self topRenderer]->positionForCoordinates (0, 0, nil))];
+        // FIXME: should use startOfDocument here
+        EAffinity startAffinity;
+        Position startPos = [self topRenderer]->positionForCoordinates (0, 0, &startAffinity);
+        return (id) [self textMarkerForVisiblePosition: VisiblePosition(startPos, startAffinity)];
     }
 
     if ([attributeName isEqualToString: (NSString *) kAXEndTextMarkerAttribute]) {
-        return (id) [self textMarkerForVisiblePosition: VisiblePosition([self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX, nil))];
+        // FIXME: should use endOfDocument here
+        EAffinity endAffinity;
+        Position endPos = [self topRenderer]->positionForCoordinates (LONG_MAX, LONG_MAX, &endAffinity);
+        return (id) [self textMarkerForVisiblePosition: VisiblePosition(endPos, endAffinity)];
     }
 #endif
 
@@ -1052,7 +1059,6 @@ static QRect boundingBoxRect(RenderObject* obj)
     // previousLinePosition returns nil, so the count is accurate.
     // NOTE: BUG This only takes us to the top of the rootEditableElement, not the top of the
     // top document.
-    // NOTE: Can we use Selection::modify(EAlter alter, int verticalDistance)?
     while (visiblePos.isNotNull() && visiblePos != savedVisiblePos) {
         lineCount += 1;
         savedVisiblePos = visiblePos;
@@ -1070,11 +1076,13 @@ static QRect boundingBoxRect(RenderObject* obj)
     // iterate over the lines
     // NOTE: BUG this is wrong when lineNumber is lineCount+1,  because nextLinePosition takes you to the
     // last offset of the last line
-    VisiblePosition visiblePos = VisiblePosition([self topRenderer]->positionForCoordinates (0, 0, nil));
+    EAffinity affinity;
+    Position pos = [self topRenderer]->positionForCoordinates (0, 0, &affinity);
+    VisiblePosition visiblePos = VisiblePosition(pos, affinity);
     VisiblePosition savedVisiblePos;
     while (--lineCount != 0) {
         savedVisiblePos = visiblePos;
-        visiblePos = nextLinePosition(visiblePos, khtml::DOWNSTREAM, 0);
+        visiblePos = nextLinePosition(visiblePos, visiblePos.affinity(), 0);
         if (visiblePos.isNull() || visiblePos == savedVisiblePos)
             return nil;
     }
@@ -1087,8 +1095,8 @@ static QRect boundingBoxRect(RenderObject* obj)
     (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
 
     // return a marker range for the selection start to end
-    VisiblePosition startPosition = VisiblePosition(sel.start());
-    VisiblePosition endPosition = VisiblePosition(sel.end());
+    VisiblePosition startPosition = VisiblePosition(sel.start(), sel.startAffinity());
+    VisiblePosition endPosition = VisiblePosition(sel.end(), sel.endAffinity());
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1117,8 +1125,9 @@ static QRect boundingBoxRect(RenderObject* obj)
     NSPoint windowpoint = [[view window] convertScreenToBase: screenpoint];
     NSPoint ourpoint = [view convertPoint:windowpoint fromView:nil];
 
-    VisiblePosition visiblePos = VisiblePosition([self topRenderer]->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y, nil));
-    return (id) [self textMarkerForVisiblePosition:visiblePos];
+    EAffinity affinity;
+    Position pos = [self topRenderer]->positionForCoordinates ((int)ourpoint.x, (int)ourpoint.y, &affinity);
+    return (id) [self textMarkerForVisiblePosition:VisiblePosition(pos, affinity)];
 }
 
 - (id)doAXBoundsForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
@@ -1469,8 +1478,6 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 
 - (id)doAXLeftLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
 {
-    // use Selection class instead of visible_units because startOfLine and endOfLine
-    // are declared but not defined
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
@@ -1481,24 +1488,13 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (prevVisiblePos.isNull())
         return nil;
     
-    // extend selection to the line
-    // NOTE: ignores results of sel.modify because it returns false when
-    // starting at an empty line.  The resulting selection in that case
-    // will be a caret at prevVisiblePos. 
-    Selection sel = Selection(prevVisiblePos, prevVisiblePos);
-    (void)sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
-    (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
-
-    // return a marker range for the selection start to end
-    VisiblePosition startPosition = VisiblePosition(sel.start());
-    VisiblePosition endPosition = VisiblePosition(sel.end());
+    VisiblePosition startPosition = startOfLine(prevVisiblePos, prevVisiblePos.affinity());
+    VisiblePosition endPosition = endOfLine(prevVisiblePos, prevVisiblePos.affinity());
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
 - (id)doAXRightLineTextMarkerRangeForTextMarker: (AXTextMarkerRef) textMarker
 {
-    // use Selection class instead of visible_units because startOfLine and endOfLine
-    // are declared but not defined
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
@@ -1508,17 +1504,8 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (nextVisiblePos.isNull())
         return nil;
         
-    // make a caret selection and extend it to the line
-    // NOTE: ignores results of sel.modify because it returns false when
-    // starting at an empty line.  The resulting selection in that case
-    // will be a caret at nextVisiblePos. 
-    Selection sel = Selection(nextVisiblePos, nextVisiblePos);
-    (void)sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
-    (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
-
-    // return a marker range for the selection start to end
-    VisiblePosition startPosition = VisiblePosition(sel.start());
-    VisiblePosition endPosition = VisiblePosition(sel.end());
+    VisiblePosition startPosition = startOfLine(nextVisiblePos, nextVisiblePos.affinity());
+    VisiblePosition endPosition = endOfLine(nextVisiblePos, nextVisiblePos.affinity());
     return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
 }
 
@@ -1554,7 +1541,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         return nil;
 
     VisiblePosition endPosition = endOfWord(visiblePos, khtml::RightWordIfOnBoundary);
-    return (id) [self textMarkerForVisiblePosition: endPosition];
+    return (id) [self textMarkerForVisiblePosition:endPosition];
 }
 
 - (id)doAXPreviousWordStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
@@ -1569,13 +1556,11 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
         return nil;
     
     VisiblePosition startPosition = startOfWord(visiblePos, khtml::LeftWordIfOnBoundary);
-    return (id) [self textMarkerForVisiblePosition: startPosition];
+    return (id) [self textMarkerForVisiblePosition:startPosition];
 }
 
 - (id)doAXNextLineEndTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
 {
-    // use Selection class instead of visible_units because startOfLine and endOfLine
-    // are declared but not defined
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
@@ -1585,22 +1570,12 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (nextVisiblePos.isNull())
         return nil;
         
-    // make caret selection and extend it to the line
-    // NOTE: ignores results of sel.modify because it returns false when
-    // starting at an empty line.  The resulting selection in that case
-    // will be a caret at nextVisiblePos. 
-    Selection sel = Selection(nextVisiblePos, nextVisiblePos);
-    (void)sel.modify(Selection::MOVE, Selection::RIGHT, khtml::LINE_BOUNDARY);
-
-    // return a marker for the selection end
-    VisiblePosition endPosition = VisiblePosition(sel.end());
+    VisiblePosition endPosition = endOfLine(nextVisiblePos, nextVisiblePos.affinity());
     return (id) [self textMarkerForVisiblePosition: endPosition];
 }
 
 - (id)doAXPreviousLineStartTextMarkerForTextMarker: (AXTextMarkerRef) textMarker
 {
-    // use Selection class instead of visible_units because startOfLine and endOfLine
-    // are declared but not defined
     VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
     if (visiblePos.isNull())
         return nil;
@@ -1610,15 +1585,7 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
     if (prevVisiblePos.isNull())
         return nil;
         
-    // make a caret selection and extend it to the line
-    // NOTE: ignores results of sel.modify because it returns false when
-    // starting at an empty line.  The resulting selection in that case
-    // will be a caret at prevVisiblePos. 
-    Selection sel = Selection(prevVisiblePos, prevVisiblePos);
-    (void)sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
-
-    // return a marker for the selection start
-    VisiblePosition startPosition = VisiblePosition(sel.start());
+    VisiblePosition startPosition = startOfLine(prevVisiblePos, prevVisiblePos.affinity());
     return (id) [self textMarkerForVisiblePosition: startPosition];
 }
 
@@ -1911,14 +1878,12 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 #else
 - (void)doSetAXSelectedTextMarkerRange: (AXTextMarkerRangeRef)textMarkerRange
 {
-    VisiblePosition startVisiblePosition, endVisiblePosition;
-    
     // extract the start and end VisiblePosition
-    startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
+    VisiblePosition startVisiblePosition = [self visiblePositionForStartOfTextMarkerRange: textMarkerRange];
     if (startVisiblePosition.isNull())
         return;
     
-    endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
+    VisiblePosition endVisiblePosition = [self visiblePositionForEndOfTextMarkerRange: textMarkerRange];
     if (endVisiblePosition.isNull())
         return;
     

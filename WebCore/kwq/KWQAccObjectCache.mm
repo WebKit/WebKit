@@ -31,6 +31,7 @@
 #include <qstring.h>
 #include <render_object.h>
 
+using khtml::EAffinity;
 using khtml::RenderObject;
 using khtml::VisiblePosition;
 
@@ -42,6 +43,7 @@ typedef struct KWQTextMarkerData  {
     KWQAccObjectID  accObjectID;
     DOM::NodeImpl*  nodeImpl;
     int             offset;
+    EAffinity       affinity;
 };
 
 KWQAccObjectCache::KWQAccObjectCache()
@@ -160,7 +162,6 @@ AXTextMarkerRef   KWQAccObjectCache::textMarkerForVisiblePosition (const Visible
     KWQTextMarkerData   textMarkerData;
     AXTextMarkerRef     textMarker = NULL;    
 
-    // NOTE: always appropriate to use deepEquivalent?
     DOM::Position deepPos = visiblePos.deepEquivalent();
     DOM::NodeImpl* domNode = deepPos.node();
     if (domNode == NULL) {
@@ -179,6 +180,7 @@ AXTextMarkerRef   KWQAccObjectCache::textMarkerForVisiblePosition (const Visible
     textMarkerData.accObjectID = getAccObjectID(accObject);
     textMarkerData.nodeImpl = domNode;
     textMarkerData.offset = deepPos.offset();
+    textMarkerData.affinity = visiblePos.affinity();
     textMarker = AXTextMarkerCreate(NULL, (const UInt8*)&textMarkerData, sizeof(textMarkerData));
 
     // autorelease it because we will never see it again
@@ -210,7 +212,7 @@ VisiblePosition   KWQAccObjectCache::visiblePositionForTextMarker (AXTextMarkerR
         return VisiblePosition();
 
     // return the position from the data we stored earlier
-    return VisiblePosition(textMarkerData->nodeImpl, textMarkerData->offset);
+    return VisiblePosition(textMarkerData->nodeImpl, textMarkerData->offset, textMarkerData->affinity);
 }
 #endif
 

@@ -104,7 +104,7 @@ unsigned long RenderBR::caretMaxRenderedOffset() const
 Position RenderBR::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
     if (affinity)
-        *affinity = UPSTREAM;
+        *affinity = DOWNSTREAM;
     return Position(element(), 0);
 }
 

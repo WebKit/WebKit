@@ -52,40 +52,30 @@ using DOM::TextImpl;
 
 namespace khtml {
 
-VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity)
+VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity, EInitHint initHint)
 {
-    Position pos = Position(node, offset);
-
-    // A first step toward eliminating the affinity parameter.
-    // For <br> 0, it's important not to move past the <br>.
-    if (node && node->id() == ID_BR && offset == 0)
-        affinity = UPSTREAM;
-
-    switch (affinity) {
-        case UPSTREAM:
-            initUpstream(pos);
-            break;
-        case DOWNSTREAM:
-            initDownstream(pos);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-    }
+    init(pos, initHint, affinity);
 }
 
-VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
+VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity, EInitHint initHint)
 {
-    // A first step toward eliminating the affinity parameter.
+    init(Position(node, offset), initHint, affinity);
+}
+
+void VisiblePosition::init(const Position &pos, EInitHint initHint, EAffinity affinity)
+{
+    m_affinity = affinity;
+
+    // A first step toward eliminating the initHint parameter.
     // For <br> 0, it's important not to move past the <br>.
     if (pos.node() && pos.node()->id() == ID_BR && pos.offset() == 0)
-        affinity = UPSTREAM;
+        initHint = INIT_UP;
 
-    switch (affinity) {
-        case UPSTREAM:
+    switch (initHint) {
+        case INIT_UP:
             initUpstream(pos);
             break;
-        case DOWNSTREAM:
+        case INIT_DOWN:
             initDownstream(pos);
             break;
         default:
@@ -111,8 +101,7 @@ void VisiblePosition::initUpstream(const Position &pos)
         Position previous = previousVisiblePosition(deepPos);
         if (previous.isNotNull()) {
             m_deepPosition = previous;
-        }
-        else {
+        } else {
             Position next = nextVisiblePosition(deepPos);
             if (next.isNotNull())
                 m_deepPosition = next;
@@ -137,8 +126,7 @@ void VisiblePosition::initDownstream(const Position &pos)
         Position next = nextVisiblePosition(deepPos);
         if (next.isNotNull()) {
             m_deepPosition = next;
-        }
-        else {
+        } else {
             Position previous = previousVisiblePosition(deepPos);
             if (previous.isNotNull())
                 m_deepPosition = previous;
@@ -148,15 +136,34 @@ void VisiblePosition::initDownstream(const Position &pos)
 
 VisiblePosition VisiblePosition::next() const
 {
-    VisiblePosition result;
-    result.m_deepPosition = nextVisiblePosition(m_deepPosition);
+    VisiblePosition result = VisiblePosition(nextVisiblePosition(m_deepPosition), m_affinity);
+
+    // When moving across line wrap, make sure to end up with DOWNSTREAM affinity (i.e. at first
+    // character on next line).  Correct behavior regardless of whether the current position is
+    // at or after the last character on the current line.
+    if (result.isNotNull() && result.affinity() == UPSTREAM) {
+        VisiblePosition temp = result;
+        temp.setAffinity(DOWNSTREAM);
+        if (!visiblePositionsOnDifferentLines(temp, result))
+            result.setAffinity(DOWNSTREAM);
+    }
+
     return result;
 }
 
 VisiblePosition VisiblePosition::previous() const
 {
-    VisiblePosition result;
-    result.m_deepPosition = previousVisiblePosition(m_deepPosition);
+    VisiblePosition result =  VisiblePosition(previousVisiblePosition(m_deepPosition), DOWNSTREAM);
+
+#ifndef NDEBUG
+    // we should always be able to make the affinity DOWNSTREAM, because going previous from an
+    // UPSTREAM position can never yield another UPSTREAM position (unless line wrap length is 0!).
+    if (result.isNotNull() && m_affinity == UPSTREAM) {
+        VisiblePosition temp = result;
+        temp.setAffinity(UPSTREAM);
+        ASSERT(!visiblePositionsOnDifferentLines(temp, result));
+    }
+#endif
     return result;
 }
 
@@ -425,14 +432,14 @@ Range makeRange(const VisiblePosition &start, const VisiblePosition &end)
     return Range(s.node(), s.offset(), e.node(), e.offset());
 }
 
-VisiblePosition startVisiblePosition(const Range &r)
+VisiblePosition startVisiblePosition(const Range &r, EAffinity affinity)
 {
-    return VisiblePosition(r.startContainer().handle(), r.startOffset());
+    return VisiblePosition(r.startContainer().handle(), r.startOffset(), affinity);
 }
 
-VisiblePosition endVisiblePosition(const Range &r)
+VisiblePosition endVisiblePosition(const Range &r, EAffinity affinity)
 {
-    return VisiblePosition(r.endContainer().handle(), r.endOffset());
+    return VisiblePosition(r.endContainer().handle(), r.endOffset(), affinity);
 }
 
 bool setStart(Range &r, const VisiblePosition &c)

@@ -144,6 +144,7 @@ using khtml::startOfWord;
 using khtml::startVisiblePosition;
 using khtml::StyleDashboardRegion;
 using khtml::TextIterator;
+using khtml::DOWNSTREAM;
 using khtml::UPSTREAM;
 using khtml::VISIBLE;
 using khtml::VisiblePosition;
@@ -603,9 +604,9 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
     searchRange.selectNodeContents(xmlDocImpl());
     if (selectionStart()) {
         if (forward) {
-            setStart(searchRange, VisiblePosition(selection().end()));
+            setStart(searchRange, VisiblePosition(selection().end(), selection().endAffinity()));
         } else {
-            setEnd(searchRange, VisiblePosition(selection().start()));
+            setEnd(searchRange, VisiblePosition(selection().start(), selection().startAffinity()));
         }
     }
 
@@ -625,7 +626,7 @@ bool KWQKHTMLPart::findString(NSString *string, bool forward, bool caseFlag, boo
         return false;
     }
 
-    setSelection(resultRange);
+    setSelection(Selection(resultRange, DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
     jumpToSelection();
     return true;
 }
@@ -928,12 +929,12 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     if (selectionStart()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
-            VisiblePosition start(selection().start());
+            VisiblePosition start(selection().start(), selection().startAffinity());
             // We match AppKit's rule: Start 1 character before the selection.
             VisiblePosition oneBeforeStart = start.previous();
             setStart(searchRange, oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else {
-            setStart(searchRange, VisiblePosition(selection().end()));
+            setStart(searchRange, VisiblePosition(selection().end(), selection().endAffinity()));
         }
     }
 
@@ -955,7 +956,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
     // forward by a word happens to do the trick.
     if (startedWithSelection) {
-        VisiblePosition oneBeforeStart = startVisiblePosition(searchRange).previous();
+        VisiblePosition oneBeforeStart = startVisiblePosition(searchRange, DOWNSTREAM).previous();
         if (oneBeforeStart.isNotNull()) {
             setStart(searchRange, endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node
@@ -993,7 +994,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
                     QString result = chars.string(misspelling.length);
                     misspellingRange.setEnd(chars.range().startContainer(), chars.range().startOffset());
 
-                    setSelection(misspellingRange);
+                    setSelection(Selection(misspellingRange, DOWNSTREAM, khtml::SEL_PREFER_UPSTREAM_AFFINITY));
                     jumpToSelection();
                     // Mark misspelling in document.
                     xmlDocImpl()->addMarker(misspellingRange, DocumentMarker::Spelling);
@@ -3444,7 +3445,7 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     if (d->m_selection.isNone())
         return 0;
     
-    Position pos = VisiblePosition(d->m_selection.start(), UPSTREAM).deepEquivalent();
+    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity(), khtml::VisiblePosition::INIT_UP).deepEquivalent();
     if (!pos.inRenderedContent())
         return 0;
     NodeImpl *node = pos.node();
@@ -3586,7 +3587,7 @@ NSWritingDirection KWQKHTMLPart::baseWritingDirectionForSelectionStart() const
 {
     NSWritingDirection result = NSWritingDirectionLeftToRight;
 
-    Position pos = VisiblePosition(d->m_selection.start()).deepEquivalent();
+    Position pos = VisiblePosition(d->m_selection.start(), d->m_selection.startAffinity()).deepEquivalent();
     NodeImpl *node = pos.node();
     if (!node || !node->renderer() || !node->renderer()->containingBlock())
         return result;
@@ -3679,7 +3680,7 @@ void KWQKHTMLPart::setSelectionFromNone()
             node = node->traverseNextNode();
         }
         if (node)
-            setSelection(Position(node, 0));
+            setSelection(Selection(Position(node, 0), DOWNSTREAM));
     }
 }
 
@@ -4013,10 +4014,10 @@ void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool
 {
     if (xmlDocImpl()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
-            VisiblePosition oldStart(oldSelection.start());
+            VisiblePosition oldStart(oldSelection.start(), oldSelection.startAffinity());
             Selection oldAdjacentWords(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
 
-            VisiblePosition newStart(selection().start());
+            VisiblePosition newStart(selection().start(), selection().startAffinity());
             Selection newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
 
             if (oldAdjacentWords != newAdjacentWords) {

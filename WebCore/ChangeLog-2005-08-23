@@ -1,3 +1,159 @@
+2005-02-09  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+        
+        <rdar://problem/3937447> Mail-689: Arrow key navigation in new message body stops working when a line ends with a bold word
+        
+        Added affinity to VisiblePosition.  Changed Selection code to use affinity more.
+        
+        (Partial) <rdar://problem/3982096> editing/pasteboard/paste-text-007 is failing
+        
+        Changed ReplaceSelectionCommand to also pay attention to the top children of the incoming fragment, not just the very last node inserted, when deciding whether to insert a paragraph for the Apple interchange newline.
+
+        * khtml/ecma/kjs_window.cpp:
+        (SelectionFunc::tryCall):
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::setStartingSelection):
+        (khtml::EditCommandPtr::setEndingSelection):
+        (khtml::EditCommand::setStartingSelection):
+        (khtml::EditCommand::setEndingSelection):
+        (khtml::CompositeEditCommand::deleteInsignificantTextDownstream):
+        (khtml::CompositeEditCommand::moveParagraphContentsToNewBlockIfNecessary):
+        (khtml::ApplyStyleCommand::splitTextAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextAtEndIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtStartIfNeeded):
+        (khtml::ApplyStyleCommand::splitTextElementAtEndIfNeeded):
+        (khtml::ApplyStyleCommand::mergeStartWithPreviousIfIdentical):
+        (khtml::ApplyStyleCommand::mergeEndWithNextIfIdentical):
+        (khtml::ApplyStyleCommand::joinChildTextNodes):
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (khtml::DeleteSelectionCommand::doApply):
+        (khtml::InsertLineBreakCommand::doApply):
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply):
+        (khtml::InsertTextCommand::input):
+        (khtml::MoveSelectionCommand::doApply):
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::~ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::doApply):
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement):
+        (khtml::ReplaceSelectionCommand::updateNodesInserted):
+        (khtml::TypingCommand::deleteKeyPressed):
+        (khtml::TypingCommand::forwardDeleteKeyPressed):
+        (khtml::TypingCommand::markMisspellingsAfterTyping):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::Selection):
+        (khtml::Selection::init):
+        (khtml::Selection::moveTo):
+        (khtml::Selection::modifyExtendingRightForward):
+        (khtml::Selection::modifyMovingRightForward):
+        (khtml::Selection::modifyExtendingLeftBackward):
+        (khtml::Selection::modifyMovingLeftBackward):
+        (khtml::Selection::modify):
+        (khtml::Selection::xPosForVerticalArrowNavigation):
+        (khtml::Selection::clear):
+        (khtml::Selection::setBase):
+        (khtml::Selection::setExtent):
+        (khtml::Selection::setBaseAndExtent):
+        (khtml::Selection::layout):
+        (khtml::Selection::validate):
+        * khtml/editing/selection.h:
+        (khtml::Selection::startAffinity):
+        (khtml::Selection::endAffinity):
+        (khtml::Selection::baseAffinity):
+        (khtml::Selection::extentAffinity):
+        (khtml::operator==):
+        * khtml/editing/text_affinity.h:
+        (khtml::):
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::VisiblePosition):
+        (khtml::VisiblePosition::init):
+        (khtml::VisiblePosition::initUpstream):
+        (khtml::VisiblePosition::initDownstream):
+        (khtml::VisiblePosition::next):
+        (khtml::VisiblePosition::previous):
+        (khtml::startVisiblePosition):
+        (khtml::endVisiblePosition):
+        * khtml/editing/visible_position.h:
+        (khtml::VisiblePosition::):
+        (khtml::VisiblePosition::VisiblePosition):
+        (khtml::VisiblePosition::affinity):
+        (khtml::VisiblePosition::setAffinity):
+        (khtml::operator==):
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+        (khtml::nextBoundary):
+        (khtml::startOfLine):
+        (khtml::endOfLine):
+        (khtml::previousLinePosition):
+        (khtml::nextLinePosition):
+        (khtml::startOfParagraph):
+        (khtml::endOfParagraph):
+        (khtml::previousParagraphPosition):
+        (khtml::nextParagraphPosition):
+        (khtml::startOfBlock):
+        (khtml::endOfBlock):
+        (khtml::startOfDocument):
+        (khtml::endOfDocument):
+        * khtml/editing/visible_units.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findTextNext):
+        (KHTMLPart::selectClosestWordFromMouseEvent):
+        (KHTMLPart::handleMousePressEventTripleClick):
+        (KHTMLPart::handleMousePressEventSingleClick):
+        (KHTMLPart::handleMouseMoveEventSelection):
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        (KHTMLPart::selectAll):
+        (KHTMLPart::computeAndSetTypingStyle):
+        (KHTMLPart::selectionComputedStyle):
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::positionForCoordinates):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::setFocus):
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousCharacterPosition):
+        (DOM::Position::nextCharacterPosition):
+        * khtml/xml/dom_position.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject value]):
+        (-[KWQAccObject visiblePositionForStartOfTextMarkerRange:]):
+        (-[KWQAccObject visiblePositionForEndOfTextMarkerRange:]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject doAXLineForTextMarker:]):
+        (-[KWQAccObject doAXTextMarkerRangeForLine:]):
+        (-[KWQAccObject doAXTextMarkerForPosition:]):
+        (-[KWQAccObject doAXLeftLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXRightLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXNextWordEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousWordStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXNextLineEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousLineStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject doSetAXSelectedTextMarkerRange:]):
+        * kwq/KWQAccObjectCache.mm:
+        (KWQAccObjectCache::textMarkerForVisiblePosition):
+        (KWQAccObjectCache::visiblePositionForTextMarker):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::findString):
+        (KWQKHTMLPart::advanceToNextMisspelling):
+        (KWQKHTMLPart::styleForSelectionStart):
+        (KWQKHTMLPart::baseWritingDirectionForSelectionStart):
+        (KWQKHTMLPart::setSelectionFromNone):
+        (KWQKHTMLPart::respondToChangedSelection):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]):
+        (-[WebCoreBridge selectionAffinity]):
+        (-[WebCoreBridge setMarkDOMRange:]):
+        (-[WebCoreBridge _visiblePositionForPoint:]):
+        (-[WebCoreBridge moveDragCaretToPoint:]):
+        (-[WebCoreBridge editableDOMRangeForPoint:]):
+        (-[WebCoreBridge ensureSelectionVisible]):
+        (-[WebCoreBridge rangeOfCharactersAroundCaret]):
+
 2005-02-09  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3985211> Seed: Mail: Drag-and-drop destination indicator / insertion point disappears

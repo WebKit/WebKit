@@ -1548,14 +1548,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     _part->xmlDocImpl()->updateLayout();
 
+    EAffinity affinity = static_cast<EAffinity>(selectionAffinity);
+
     // Work around bug where isRenderedContent returns false for <br> elements at the ends of lines.
     // If that bug wasn't an issue, we could just make the position from the range directly.
     Position start(startContainer, [range startOffset]);
     Position end(endContainer, [range endOffset]);
-    start = VisiblePosition(start, UPSTREAM).deepEquivalent();
+    start = VisiblePosition(start, affinity, khtml::VisiblePosition::INIT_UP).deepEquivalent();
 
-    Selection selection(start, end);
-    selection.setAffinity(static_cast<EAffinity>(selectionAffinity));
+    // FIXME: Can we provide extentAffinity?
+    Selection selection(start, affinity, end, khtml::SEL_DEFAULT_AFFINITY);
     _part->setSelection(selection);
 }
 
@@ -1566,12 +1568,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSSelectionAffinity)selectionAffinity
 {
-    return static_cast<NSSelectionAffinity>(_part->selection().affinity());
+    return static_cast<NSSelectionAffinity>(_part->selection().startAffinity());
 }
 
 - (void)setMarkDOMRange:(DOMRange *)range
 {
-    _part->setMark(Selection([range _rangeImpl]));
+    _part->setMark(Selection([range _rangeImpl], khtml::SEL_DEFAULT_AFFINITY, khtml::SEL_DEFAULT_AFFINITY));
 }
 
 - (DOMRange *)markDOMRange
@@ -1680,24 +1682,27 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     EditCommandPtr(new MoveSelectionCommand(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove)).apply();
 }
 
-- (Position)_positionForPoint:(NSPoint)point
+- (VisiblePosition)_visiblePositionForPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->renderer();
     if (!renderer) {
-        return Position();
+        return VisiblePosition();
     }
     
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     NodeImpl *node = nodeInfo.innerNode();
     if (!node->renderer())
-        return Position();
-    return node->renderer()->positionForCoordinates((int)point.x, (int)point.y);
+        return VisiblePosition();
+    
+    EAffinity affinity;
+    Position pos = node->renderer()->positionForCoordinates((int)point.x, (int)point.y, &affinity);
+    return VisiblePosition(pos, affinity);
 }
 
 - (void)moveDragCaretToPoint:(NSPoint)point
-{    
-    Selection dragCaret([self _positionForPoint:point]);
+{   
+    Selection dragCaret([self _visiblePositionForPoint:point]);
     _part->setDragCaret(dragCaret);
 }
 
@@ -1713,7 +1718,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
-    Position position = [self _positionForPoint:point];
+    VisiblePosition position = [self _visiblePositionForPoint:point];
     return position.isNull() ? nil : [DOMRange _rangeWithImpl:Selection(position).toRange().handle()];
 }
 
@@ -1848,7 +1853,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!documentView)
         return;
     
-    QRect extentRect = renderer->caretRect(extent.offset(), _part->selection().affinity());
+    QRect extentRect = renderer->caretRect(extent.offset(), _part->selection().extentAffinity());
     if (!NSContainsRect([documentView visibleRect], NSRect(extentRect))) {
         v->ensureRectVisibleCentered(extentRect, true);
     }
@@ -2005,7 +2010,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!selection.isCaret())
         return nil;
 
-    VisiblePosition caret(selection.start());
+    VisiblePosition caret(selection.start(), selection.startAffinity());
     VisiblePosition next = caret.next();
     VisiblePosition previous = caret.previous();
     if (caret == next || caret == previous)

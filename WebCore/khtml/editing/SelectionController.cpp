@@ -67,34 +67,41 @@ namespace khtml {
 
 Selection::Selection()
 {
-    init();
+    init(DOWNSTREAM);
 }
 
-Selection::Selection(const Position &pos)
+Selection::Selection(const Position &pos, EAffinity affinity)
     : m_base(pos), m_extent(pos)
 {
-    init();
+    init(affinity);
     validate();
 }
 
-Selection::Selection(const Range &r)
+Selection::Selection(const Range &r, EAffinity baseAffinity, EAffinity extentAffinity)
     : m_base(startPosition(r)), m_extent(endPosition(r))
 {
-    init();
+    init(baseAffinity);
     validate();
 }
 
-Selection::Selection(const Position &base, const Position &extent)
+Selection::Selection(const Position &base, EAffinity baseAffinity, const Position &extent, EAffinity extentAffinity)
     : m_base(base), m_extent(extent)
 {
-    init();
+    init(baseAffinity);
+    validate();
+}
+
+Selection::Selection(const VisiblePosition &visiblePos)
+    : m_base(visiblePos.position()), m_extent(visiblePos.position())
+{
+    init(visiblePos.affinity());
     validate();
 }
 
 Selection::Selection(const VisiblePosition &base, const VisiblePosition &extent)
     : m_base(base.position()), m_extent(extent.position())
 {
-    init();
+    init(base.affinity());
     validate();
 }
 
@@ -117,11 +124,12 @@ Selection::Selection(const Selection &o)
     }
 }
 
-void Selection::init()
+void Selection::init(EAffinity affinity)
 {
+    // FIXME: set extentAffinity
     m_state = NONE; 
-    m_affinity = UPSTREAM;
     m_baseIsStart = true;
+    m_affinity = affinity;
     m_needsLayout = true;
     m_modifyBiasSet = false;
 }
@@ -153,75 +161,55 @@ Selection &Selection::operator=(const Selection &o)
     return *this;
 }
 
-void Selection::setAffinity(EAffinity affinity)
+void Selection::moveTo(const VisiblePosition &pos)
 {
-    if (affinity == m_affinity)
-        return;
-        
-    m_affinity = affinity;
-    setNeedsLayout();
+    // FIXME: use extentAffinity
+    m_affinity = pos.affinity();
+    m_base = pos.deepEquivalent();
+    m_extent = pos.deepEquivalent();
+    validate();
 }
 
-void Selection::modifyAffinity(EAlter alter, EDirection dir, ETextGranularity granularity)
+void Selection::moveTo(const VisiblePosition &base, const VisiblePosition &extent)
 {
-    switch (granularity) {
-        case CHARACTER:
-        case WORD:
-            m_affinity = DOWNSTREAM;
-            break;
-        case PARAGRAPH:
-        case LINE:
-        case PARAGRAPH_BOUNDARY:
-        case DOCUMENT_BOUNDARY:
-            // These granularities should not change affinity.
-            break;
-        case LINE_BOUNDARY: {
-            // When extending, leave affinity unchanged.
-            if (alter == MOVE) {
-                switch (dir) {
-                    case FORWARD:
-                    case RIGHT:
-                        m_affinity = UPSTREAM;
-                        break;
-                    case BACKWARD:
-                    case LEFT:
-                        m_affinity = DOWNSTREAM;
-                        break;
-                }
-            }
-            break;
-        }
-    }
-    setNeedsLayout();
-}
-
-void Selection::moveTo(const Range &r)
-{
-    m_affinity = UPSTREAM;
-    m_base = startPosition(r);
-    m_extent = endPosition(r);
+    // FIXME: use extentAffinity
+    m_affinity = base.affinity();
+    m_base = base.deepEquivalent();
+    m_extent = extent.deepEquivalent();
     validate();
 }
 
 void Selection::moveTo(const Selection &o)
 {
-    m_affinity = UPSTREAM;
+    // FIXME: copy extentAffinity
+    m_affinity = o.m_affinity;
     m_base = o.m_start;
     m_extent = o.m_end;
     validate();
 }
 
-void Selection::moveTo(const Position &pos)
+void Selection::moveTo(const Position &pos, EAffinity affinity)
 {
-    m_affinity = UPSTREAM;
+    // FIXME: use extentAffinity
+    m_affinity = affinity;
     m_base = pos;
     m_extent = pos;
     validate();
 }
 
-void Selection::moveTo(const Position &base, const Position &extent)
+void Selection::moveTo(const Range &r, EAffinity baseAffinity, EAffinity extentAffinity)
 {
-    m_affinity = UPSTREAM;
+    // FIXME: use extentAffinity
+    m_affinity = baseAffinity;
+    m_base = startPosition(r);
+    m_extent = endPosition(r);
+    validate();
+}
+
+void Selection::moveTo(const Position &base, EAffinity baseAffinity, const Position &extent, EAffinity extentAffinity)
+{
+    // FIXME: use extentAffinity
+    m_affinity = baseAffinity;
     m_base = base;
     m_extent = extent;
     validate();
@@ -256,7 +244,7 @@ void Selection::setModifyBias(EAlter alter, EDirection direction)
 
 VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granularity)
 {
-    VisiblePosition pos(m_extent);
+    VisiblePosition pos(m_extent, m_affinity);
     switch (granularity) {
         case CHARACTER:
             pos = pos.next();
@@ -271,15 +259,16 @@ VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granular
             pos = nextLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = endOfLine(VisiblePosition(m_end), m_affinity);
+            pos = endOfLine(VisiblePosition(m_end, m_affinity), UPSTREAM);
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = endOfParagraph(VisiblePosition(m_end));
+            pos = endOfParagraph(VisiblePosition(m_end, m_affinity));
             break;
         case DOCUMENT_BOUNDARY:
             pos = endOfDocument(pos);
             break;
     }
+    
     return pos;
 }
 
@@ -289,15 +278,15 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
-                pos = VisiblePosition(m_end);
+                pos = VisiblePosition(m_end, m_affinity);
             else
-                pos = VisiblePosition(m_extent).next();
+                pos = VisiblePosition(m_extent, m_affinity).next();
             break;
         case WORD:
-            pos = nextWordPosition(VisiblePosition(m_extent));
+            pos = nextWordPosition(VisiblePosition(m_extent, m_affinity));
             break;
         case PARAGRAPH:
-            pos = nextParagraphPosition(VisiblePosition(m_end), m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextParagraphPosition(VisiblePosition(m_end, m_affinity), m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE: {
             // This somewhat complicated code is needed to handle the case where there is a
@@ -309,26 +298,25 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
             // <rdar://problem/3875618> REGRESSION (Mail): Hitting down arrow with full line selected skips line (br case)
             // <rdar://problem/3875641> REGRESSION (Mail): Hitting down arrow with full line selected skips line (div case)
             if (isCaret()) {
-                pos = VisiblePosition(m_end);
-            }
-            else if (isRange()) {
+                pos = VisiblePosition(m_end, m_affinity);
+            } else if (isRange()) {
                 Position p(m_end.upstream());
                 if (p.node()->id() == ID_BR)
-                    pos = VisiblePosition(Position(p.node(), 0));
+                    pos = VisiblePosition(Position(p.node(), 0), UPSTREAM);
                 else
-                    pos = VisiblePosition(p);
+                    pos = VisiblePosition(p, UPSTREAM);
             }
             pos = nextLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         }
         case LINE_BOUNDARY:
-            pos = endOfLine(VisiblePosition(m_end), m_affinity);
+            pos = endOfLine(VisiblePosition(m_end, m_affinity), UPSTREAM);
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = endOfParagraph(VisiblePosition(m_end));
+            pos = endOfParagraph(VisiblePosition(m_end, m_affinity));
             break;
         case DOCUMENT_BOUNDARY:
-            pos = endOfDocument(VisiblePosition(m_end));
+            pos = endOfDocument(VisiblePosition(m_end, m_affinity));
             break;
     }
     return pos;
@@ -336,7 +324,7 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
 
 VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
 {
-    VisiblePosition pos(m_extent);
+    VisiblePosition pos(m_extent, m_affinity);
     switch (granularity) {
         case CHARACTER:
             pos = pos.previous();
@@ -351,10 +339,10 @@ VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granular
             pos = previousLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = startOfLine(VisiblePosition(m_start), m_affinity);
+            pos = startOfLine(VisiblePosition(m_start, m_affinity), DOWNSTREAM);
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = startOfParagraph(VisiblePosition(m_start));
+            pos = startOfParagraph(VisiblePosition(m_start, m_affinity));
             break;
         case DOCUMENT_BOUNDARY:
             pos = startOfDocument(pos);
@@ -369,27 +357,27 @@ VisiblePosition Selection::modifyMovingLeftBackward(ETextGranularity granularity
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
-                pos = VisiblePosition(m_start);
+                pos = VisiblePosition(m_start, m_affinity);
             else
-                pos = VisiblePosition(m_extent).previous();
+                pos = VisiblePosition(m_extent, m_affinity).previous();
             break;
         case WORD:
-            pos = previousWordPosition(VisiblePosition(m_extent));
+            pos = previousWordPosition(VisiblePosition(m_extent, m_affinity));
             break;
         case PARAGRAPH:
-            pos = previousParagraphPosition(VisiblePosition(m_start), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousParagraphPosition(VisiblePosition(m_start, m_affinity), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE:
-            pos = previousLinePosition(VisiblePosition(m_start), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousLinePosition(VisiblePosition(m_start, m_affinity), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = startOfLine(VisiblePosition(m_start), m_affinity);
+            pos = startOfLine(VisiblePosition(m_start, m_affinity), DOWNSTREAM);
             break;
         case PARAGRAPH_BOUNDARY:
-            pos = startOfParagraph(VisiblePosition(m_start));
+            pos = startOfParagraph(VisiblePosition(m_start, m_affinity));
             break;
         case DOCUMENT_BOUNDARY:
-            pos = startOfDocument(VisiblePosition(m_start));
+            pos = startOfDocument(VisiblePosition(m_start, m_affinity));
             break;
     }
     return pos;
@@ -400,7 +388,6 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
     setModifyBias(alter, dir);
 
     VisiblePosition pos;
-
     switch (dir) {
         // EDIT FIXME: These need to handle bidi
         case RIGHT:
@@ -422,20 +409,16 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
     if (pos.isNull())
         return false;
 
-    // Save and restore affinity here before calling setAffinity. 
-    // The moveTo() and setExtent() calls reset affinity and this 
-    // is undesirable here.
-    EAffinity savedAffinity = m_affinity;
     switch (alter) {
         case MOVE:
-            moveTo(pos.deepEquivalent());
+            moveTo(pos);
             break;
         case EXTEND:
-            setExtent(pos.deepEquivalent());
+            setExtent(pos);
             break;
     }
-    m_affinity = savedAffinity;
-    modifyAffinity(alter, dir, granularity);
+
+    setNeedsLayout();
 
     return true;
 }
@@ -470,15 +453,14 @@ bool Selection::modify(EAlter alter, int verticalDistance)
     setModifyBias(alter, up ? BACKWARD : FORWARD);
 
     VisiblePosition pos;
-    int xPos = 0; /* initialized only to make compiler happy */
-
+    int xPos = 0;
     switch (alter) {
         case MOVE:
-            pos = VisiblePosition(up ? m_start : m_end);
+            pos = VisiblePosition(up ? m_start : m_end, m_affinity);
             xPos = xPosForVerticalArrowNavigation(up ? START : END, isRange());
             break;
         case EXTEND:
-            pos = VisiblePosition(m_extent);
+            pos = VisiblePosition(m_extent, m_affinity);
             xPos = xPosForVerticalArrowNavigation(EXTENT);
             break;
     }
@@ -491,7 +473,6 @@ bool Selection::modify(EAlter alter, int verticalDistance)
     int lastY = startY;
 
     VisiblePosition result;
-
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
         next = (up ? previousLinePosition : nextLinePosition)(p, m_affinity, xPos);
@@ -515,10 +496,10 @@ bool Selection::modify(EAlter alter, int verticalDistance)
 
     switch (alter) {
         case MOVE:
-            moveTo(result.deepEquivalent());
+            moveTo(result);
             break;
         case EXTEND:
-            setExtent(result.deepEquivalent());
+            setExtent(result);
             break;
     }
 
@@ -563,10 +544,10 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
     if (recalc || part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
         switch (m_affinity) {
             case DOWNSTREAM:
-                pos = VisiblePosition(pos).downstreamDeepEquivalent();
+                pos = VisiblePosition(pos, m_affinity).downstreamDeepEquivalent();
                 break;
             case UPSTREAM:
-                pos = VisiblePosition(pos).deepEquivalent();
+                pos = VisiblePosition(pos, m_affinity).deepEquivalent();
                 break;
         }
         x = pos.node()->renderer()->caretRect(pos.offset(), m_affinity).x();
@@ -580,29 +561,55 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
 
 void Selection::clear()
 {
-    m_affinity = UPSTREAM;
+    m_affinity = SEL_DEFAULT_AFFINITY;
     m_base.clear();
     m_extent.clear();
     validate();
 }
 
-void Selection::setBase(const Position &pos)
+void Selection::setBase(const VisiblePosition &pos)
 {
-    m_affinity = UPSTREAM;
+    m_affinity = pos.affinity();
+    m_base = pos.deepEquivalent();
+    validate();
+}
+
+void Selection::setExtent(const VisiblePosition &pos)
+{
+    // FIXME: Support extentAffinity
+    m_extent = pos.deepEquivalent();
+    validate();
+}
+
+void Selection::setBaseAndExtent(const VisiblePosition &base, const VisiblePosition &extent)
+{
+    // FIXME: Support extentAffinity
+    m_affinity = base.affinity();
+    m_base = base.deepEquivalent();
+    m_extent = extent.deepEquivalent();
+    validate();
+}
+
+
+void Selection::setBase(const Position &pos, EAffinity baseAffinity)
+{
+    m_affinity = baseAffinity;
     m_base = pos;
     validate();
 }
 
-void Selection::setExtent(const Position &pos)
+void Selection::setExtent(const Position &pos, EAffinity extentAffinity)
 {
-    m_affinity = UPSTREAM;
+    // FIXME: Support extentAffinity for real
+    m_affinity = extentAffinity;
     m_extent = pos;
     validate();
 }
 
-void Selection::setBaseAndExtent(const Position &base, const Position &extent)
+void Selection::setBaseAndExtent(const Position &base, EAffinity baseAffinity, const Position &extent, EAffinity extentAffinity)
 {
-    m_affinity = UPSTREAM;
+    // FIXME: extentAffinity
+    m_affinity = baseAffinity;
     m_base = base;
     m_extent = extent;
     validate();
@@ -691,10 +698,10 @@ void Selection::layout()
         Position pos = m_start;
         switch (m_affinity) {
             case DOWNSTREAM:
-                pos = VisiblePosition(m_start).downstreamDeepEquivalent();
+                pos = VisiblePosition(m_start, m_affinity).downstreamDeepEquivalent();
                 break;
             case UPSTREAM:
-                pos = VisiblePosition(m_start).deepEquivalent();
+                pos = VisiblePosition(m_start, m_affinity).deepEquivalent();
                 break;
         }
         if (pos.isNotNull()) {
@@ -808,14 +815,14 @@ void Selection::validate(ETextGranularity granularity)
     if (m_base.isNotNull()) {
         m_base.node()->getDocument()->updateLayout();
         updatedLayout = true;
-        m_base = VisiblePosition(m_base).deepEquivalent();
+        m_base = VisiblePosition(m_base, m_affinity).deepEquivalent();
         if (baseAndExtentEqual)
             m_extent = m_base;
     }
     if (m_extent.isNotNull() && !baseAndExtentEqual) {
         if (!updatedLayout)
             m_extent.node()->getDocument()->updateLayout();
-        m_extent = VisiblePosition(m_extent).deepEquivalent();
+        m_extent = VisiblePosition(m_extent, m_affinity).deepEquivalent();
     }
 
     // Make sure we do not have a dangling start or end
@@ -870,50 +877,50 @@ void Selection::validate(ETextGranularity granularity)
                 // Another exception is when double-clicking at the start of a line.
                 // However, the end of the document is an exception and always selects the previous word even though it could be
                 // both the start of a line and after a hard line break.
-                VisiblePosition pos(m_base);
+                VisiblePosition pos(m_base, m_affinity);
                 EWordSide side = LeftWordIfOnBoundary;
                 if ((isEndOfParagraph(pos) || isStartOfLine(pos, m_affinity)) && !isEndOfDocument(pos))
                     side = RightWordIfOnBoundary;
                 m_start = startOfWord(pos, side).deepEquivalent();
                 m_end = endOfWord(pos, side).deepEquivalent();
             } else if (m_baseIsStart) {
-                m_start = startOfWord(VisiblePosition(m_base)).deepEquivalent();
-                m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
+                m_start = startOfWord(VisiblePosition(m_base, m_affinity)).deepEquivalent();
+                m_end = endOfWord(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
             } else {
-                m_start = startOfWord(VisiblePosition(m_extent)).deepEquivalent();
-                m_end = endOfWord(VisiblePosition(m_base)).deepEquivalent();
+                m_start = startOfWord(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
+                m_end = endOfWord(VisiblePosition(m_base, m_affinity)).deepEquivalent();
             }
             break;
         case LINE:
         case LINE_BOUNDARY:
             if (m_baseIsStart) {
-                m_start = startOfLine(VisiblePosition(m_base), m_affinity).deepEquivalent();
-                m_end = endOfLine(VisiblePosition(m_extent), m_affinity, IncludeLineBreak).deepEquivalent();
+                m_start = startOfLine(VisiblePosition(m_base, m_affinity), m_affinity).deepEquivalent();
+                m_end = endOfLine(VisiblePosition(m_extent, m_affinity), m_affinity, IncludeLineBreak).deepEquivalent();
             } else {
-                m_start = startOfLine(VisiblePosition(m_extent), m_affinity).deepEquivalent();
-                m_end = endOfLine(VisiblePosition(m_base), m_affinity, IncludeLineBreak).deepEquivalent();
+                m_start = startOfLine(VisiblePosition(m_extent, m_affinity), m_affinity).deepEquivalent();
+                m_end = endOfLine(VisiblePosition(m_base, m_affinity), m_affinity, IncludeLineBreak).deepEquivalent();
             }
             break;
         case PARAGRAPH:
             if (m_baseIsStart) {
-                m_start = startOfParagraph(VisiblePosition(m_base)).deepEquivalent();
-                m_end = endOfParagraph(VisiblePosition(m_extent), IncludeLineBreak).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_base, m_affinity)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_extent, m_affinity), IncludeLineBreak).deepEquivalent();
             } else {
-                m_start = startOfParagraph(VisiblePosition(m_extent)).deepEquivalent();
-                m_end = endOfParagraph(VisiblePosition(m_base), IncludeLineBreak).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_base, m_affinity), IncludeLineBreak).deepEquivalent();
             }
             break;
         case DOCUMENT_BOUNDARY:
-            m_start = startOfDocument(VisiblePosition(m_base)).deepEquivalent();
-            m_end = endOfDocument(VisiblePosition(m_base)).deepEquivalent();
+            m_start = startOfDocument(VisiblePosition(m_base, m_affinity)).deepEquivalent();
+            m_end = endOfDocument(VisiblePosition(m_base, m_affinity)).deepEquivalent();
             break;
         case PARAGRAPH_BOUNDARY:
             if (m_baseIsStart) {
-                m_start = startOfParagraph(VisiblePosition(m_base)).deepEquivalent();
-                m_end = endOfParagraph(VisiblePosition(m_extent)).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_base, m_affinity)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
             } else {
-                m_start = startOfParagraph(VisiblePosition(m_extent)).deepEquivalent();
-                m_end = endOfParagraph(VisiblePosition(m_base)).deepEquivalent();
+                m_start = startOfParagraph(VisiblePosition(m_extent, m_affinity)).deepEquivalent();
+                m_end = endOfParagraph(VisiblePosition(m_base, m_affinity)).deepEquivalent();
             }
             break;
     }

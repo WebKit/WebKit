@@ -190,7 +190,7 @@ Position Position::previousCharacterPosition() const
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
-    bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this));
+    bool atStartOfLine = isFirstVisiblePositionOnLine(VisiblePosition(*this, khtml::DOWNSTREAM));
     bool rendered = inRenderedContent();
     
     while (!it.atStart()) {
@@ -218,7 +218,7 @@ Position Position::nextCharacterPosition() const
     NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
-    bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this));
+    bool atEndOfLine = isLastVisiblePositionOnLine(VisiblePosition(*this, khtml::UPSTREAM));
     bool rendered = inRenderedContent();
     
     while (!it.atEnd()) {
@@ -236,125 +236,6 @@ Position Position::nextCharacterPosition() const
     }
     
     return *this;
-}
-
-Position Position::previousLinePosition(int x, EAffinity affinity) const
-{
-    if (!node())
-        return Position();
-
-    if (!node()->renderer())
-        return *this;
-
-    RenderBlock *containingBlock = 0;
-    RootInlineBox *root = 0;
-    InlineBox *box = node()->renderer()->inlineBox(offset(), affinity);
-    if (box) {
-        root = box->root()->prevRootBox();
-        if (root)
-            containingBlock = node()->renderer()->containingBlock();
-    }
-
-    if (!root) {
-        // This containing editable block does not have a previous line.
-        // Need to move back to previous containing editable block in this root editable
-        // block and find the last root line box in that block.
-        NodeImpl *startBlock = node()->enclosingBlockFlowElement();
-        NodeImpl *n = node()->previousEditable();
-        while (n && startBlock == n->enclosingBlockFlowElement())
-            n = n->previousEditable();
-        while (n) {
-            if (!n->inSameRootEditableElement(node()))
-                break;
-            Position pos(n, n->caretMinOffset());
-            if (pos.inRenderedContent()) {
-                ASSERT(n->renderer());
-                box = n->renderer()->inlineBox(n->caretMaxOffset());
-                if (box) {
-                    // previous root line box found
-                    root = box->root();
-                    containingBlock = n->renderer()->containingBlock();
-                    break;
-                }
-                else {
-                    return pos;
-                }
-            }
-            n = n->previousEditable();
-        }
-    }
-    
-    if (root) {
-        int absx, absy;
-        containingBlock->absolutePosition(absx, absy);
-        RenderObject *renderer = root->closestLeafChildForXPos(x, absx)->object();
-        return renderer->positionForCoordinates(x, absy + root->topOverflow());
-    }
-    
-    // Could not find a previous line. This means we must already be on the first line.
-    // Move to the start of the content in this block, which effectively moves us
-    // to the start of the line we're on.
-    return Position(node()->rootEditableElement(), 0);
-}
-
-Position Position::nextLinePosition(int x, EAffinity affinity) const
-{
-    if (!node())
-        return Position();
-
-    if (!node()->renderer())
-        return *this;
-
-    RenderBlock *containingBlock = 0;
-    RootInlineBox *root = 0;
-    InlineBox *box = node()->renderer()->inlineBox(offset(), affinity);
-    if (box) {
-        root = box->root()->nextRootBox();
-        if (root)
-            containingBlock = node()->renderer()->containingBlock();
-    }
-
-    if (!root) {
-        // This containing editable block does not have a next line.
-        // Need to move forward to next containing editable block in this root editable
-        // block and find the first root line box in that block.
-        NodeImpl *startBlock = node()->enclosingBlockFlowElement();
-        NodeImpl *n = node()->nextEditable();
-        while (n && startBlock == n->enclosingBlockFlowElement())
-            n = n->nextEditable();
-        while (n) {
-            if (!n->inSameRootEditableElement(node()))
-                break;
-            Position pos(n, n->caretMinOffset());
-            if (pos.inRenderedContent()) {
-                ASSERT(n->renderer());
-                box = n->renderer()->inlineBox(n->caretMinOffset());
-                if (box) {
-                    // next root line box found
-                    root = box->root();
-                    containingBlock = n->renderer()->containingBlock();
-                    break;
-                }
-                else {
-                    return pos;
-                }
-            }
-            n = n->nextEditable();
-        }
-    }
-    
-    if (root) {
-        int absx, absy;
-        containingBlock->absolutePosition(absx, absy);
-        RenderObject *renderer = root->closestLeafChildForXPos(x, absx)->object();
-        return renderer->positionForCoordinates(x, absy + root->topOverflow());
-    }    
-
-    // Could not find a next line. This means we must already be on the last line.
-    // Move to the end of the content in this block, which effectively moves us
-    // to the end of the line we're on.
-    ElementImpl *rootElement = node()->rootEditableElement();
-    return Position(rootElement, rootElement ? rootElement->childNodeCount() : 0);
 }
 
 Position Position::upstream(EStayInBlock stayInBlock) const

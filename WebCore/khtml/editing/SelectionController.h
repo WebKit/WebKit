@@ -44,33 +44,40 @@ public:
     enum EState { NONE, CARET, RANGE };
     enum EAlter { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
+#define SEL_DEFAULT_AFFINITY DOWNSTREAM
+
+// FIXME: Implement as "caller does not know whether it is OK to be upstream,
+// but that would be the desired affinity"
+#define SEL_PREFER_UPSTREAM_AFFINITY DOWNSTREAM
 
     typedef DOM::Range Range;
     typedef DOM::Position Position;
 
     Selection();
-    Selection(const Range &);
+    Selection(const Range &, EAffinity baseAffinity, EAffinity extentAffinity);
     Selection(const VisiblePosition &);
     Selection(const VisiblePosition &, const VisiblePosition &);
-    Selection(const Position &);
-    Selection(const Position &, const Position &);
+    Selection(const Position &, EAffinity affinity);
+    Selection(const Position &, EAffinity, const Position &, EAffinity);
     Selection(const Selection &);
 
     Selection &operator=(const Selection &o);
-    Selection &operator=(const Range &r) { moveTo(r); return *this; }
     Selection &operator=(const VisiblePosition &r) { moveTo(r); return *this; }
-    Selection &operator=(const Position &r) { moveTo(r); return *this; }
-    
-    void moveTo(const Range &);
+
+    void moveTo(const Range &, EAffinity baseAffinity, EAffinity extentAffinity);
     void moveTo(const VisiblePosition &);
     void moveTo(const VisiblePosition &, const VisiblePosition &);
-    void moveTo(const Position &);
-    void moveTo(const Position &, const Position &);
+    void moveTo(const Position &, EAffinity);
+    void moveTo(const Position &, EAffinity, const Position &, EAffinity);
     void moveTo(const Selection &);
 
     EState state() const { return m_state; }
-    EAffinity affinity() const { return m_affinity; }
-    void setAffinity(EAffinity);
+    
+    // FIXME: These should support separate baseAffinity and extentAffinity
+    EAffinity startAffinity() const { return m_affinity; }
+    EAffinity endAffinity() const { return m_affinity; }
+    EAffinity baseAffinity() const { return m_affinity; }
+    EAffinity extentAffinity() const { return m_affinity; }
 
     bool modify(EAlter, EDirection, ETextGranularity);
     bool modify(EAlter, int verticalDistance);
@@ -81,9 +88,9 @@ public:
     void setExtent(const VisiblePosition &);
     void setBaseAndExtent(const VisiblePosition &base, const VisiblePosition &extent);
 
-    void setBase(const Position &pos);
-    void setExtent(const Position &pos);
-    void setBaseAndExtent(const Position &base, const Position &extent);
+    void setBase(const Position &pos, EAffinity affinity);
+    void setExtent(const Position &pos, EAffinity affinity);
+    void setBaseAndExtent(const Position &base, EAffinity baseAffinity, const Position &extent, EAffinity extentAffinity);
 
     Position base() const { return m_base; }
     Position extent() const { return m_extent; }
@@ -116,15 +123,13 @@ public:
 private:
     enum EPositionType { START, END, BASE, EXTENT };
 
-    void init();
+    void init(EAffinity affinity);
     void validate(ETextGranularity granularity = CHARACTER);
 
     VisiblePosition modifyExtendingRightForward(ETextGranularity);
     VisiblePosition modifyMovingRightForward(ETextGranularity);
     VisiblePosition modifyExtendingLeftBackward(ETextGranularity);
     VisiblePosition modifyMovingLeftBackward(ETextGranularity);
-
-    void modifyAffinity(EAlter, EDirection, ETextGranularity);
 
     void layout();
     void needsCaretRepaint();
@@ -152,7 +157,7 @@ private:
 
 inline bool operator==(const Selection &a, const Selection &b)
 {
-    return a.start() == b.start() && a.end() == b.end() && a.affinity() == b.affinity();
+    return a.start() == b.start() && a.end() == b.end() && a.startAffinity() == b.startAffinity();
 }
 
 inline bool operator!=(const Selection &a, const Selection &b)

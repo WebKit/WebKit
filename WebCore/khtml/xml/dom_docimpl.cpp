@@ -1267,8 +1267,8 @@ void DocumentImpl::updateSelection()
 #endif
     }
     else {
-        Position startPos = VisiblePosition(s.start(), UPSTREAM).deepEquivalent();
-        Position endPos = VisiblePosition(s.end(), DOWNSTREAM).deepEquivalent();
+        Position startPos = VisiblePosition(s.start(), s.startAffinity(), khtml::VisiblePosition::INIT_UP).deepEquivalent();
+        Position endPos = VisiblePosition(s.end(), s.endAffinity(), khtml::VisiblePosition::INIT_DOWN).deepEquivalent();
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();
