@@ -25,12 +25,13 @@
 
 #import "KWQLoader.h"
 
-#import "khtml_part.h"
+#import "KWQExceptions.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQResourceLoader.h"
-#import "loader.h"
 #import "WebCoreBridge.h"
+#import "khtml_part.h"
+#import "loader.h"
 
 using khtml::Cache;
 using khtml::CachedObject;
@@ -48,10 +49,15 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     
     WebCoreBridge *bridge = static_cast<KWQKHTMLPart *>(request->m_docLoader->part())->bridge();
 
+    volatile id <WebCoreResourceHandle> handle = nil;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
     KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithLoader:loader job:job];
-    id <WebCoreResourceHandle> handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL()];
+    handle = [bridge startLoadingResource:resourceLoader withURL:job->url().getNSURL()];
     [resourceLoader setHandle:handle];
     [resourceLoader release];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
 
     return handle != nil;
 }
@@ -63,7 +69,13 @@ int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl)
 
 bool KWQCheckIfReloading(DocLoader *loader)
 {
-    return [static_cast<KWQKHTMLPart *>(loader->part())->bridge() isReloading];
+    volatile bool reloading = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    reloading = [static_cast<KWQKHTMLPart *>(loader->part())->bridge() isReloading];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return reloading;
 }
 
 void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
@@ -88,19 +100,25 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     // Notify the caller that we "loaded".
     WebCoreBridge *bridge = static_cast<KWQKHTMLPart *>(loader->part())->bridge();
     CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().string()).getNSURL()
                                 response:(id)cachedObject->response()
                                     size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 void KWQRetainResponse(void *response)
 {
+    // There's no way a retain can raise
     [(id)response retain];
 }
 
 void KWQReleaseResponse(void *response)
 {
+    // A release could raise if it deallocs, though...
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [(id)response release];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
 @interface NSObject (WebPrivateResponse)
@@ -109,7 +127,13 @@ void KWQReleaseResponse(void *response)
 
 void *KWQResponseMIMEType(void *response)
 {
-    return [(id)response MIMEType];
+    volatile void * volatile result = NULL;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    result = [(id)response MIMEType];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return (void *)result;
 }
 
 
