@@ -150,6 +150,8 @@
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
 				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/${SYSTEM_LIBRARY_DIR}/Frameworks\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" /usr/local/SecurityPieces/Frameworks";
 				FRAMEWORK_VERSION = A;
+				GCC_ENABLE_OBJC_GC = YES;
+				GCC_FAST_OBJC_DISPATCH = YES;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /System/Library/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";

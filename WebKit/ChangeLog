@@ -1,3 +1,9 @@
+2004-10-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+
+        * WebKit.pbproj/project.pbxproj: Add GCC_ENABLE_OBJC_GC and GCC_FAST_OBJC_DISPATCH flags.
+
 2004-10-21  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
