@@ -1,3 +1,5 @@
+=== Safari-119 ===
+
 2003-12-17  Richard Williamson   <rjw@apple.com>
 
 	Ensure that all the symbols we export are in the KJS
