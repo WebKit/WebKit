@@ -98,7 +98,7 @@ void KWQReleaseResponse(void *response)
 }
 
 @interface NSObject (WebPrivateResponse)
-- (void *)MIMEType;
+- (NSString *)MIMEType;
 @end
 
 void *KWQResponseMIMEType(void *response)

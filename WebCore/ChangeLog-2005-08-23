@@ -1,3 +1,12 @@
+2003-05-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+	
+	Fixed build problem with declaring MIMEType as a category
+	on NSObject. This method needs to be typed to return NSString.
+
+        * kwq/KWQLoader.mm
+
 2003-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
