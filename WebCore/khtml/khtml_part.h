@@ -46,21 +46,22 @@ class KJavaAppletContext;
 
 namespace DOM
 {
+  class DocumentImpl;
+  class EventListener;
+  class HTMLAnchorElementImpl;
   class HTMLDocument;
   class HTMLDocumentImpl;
-  class DocumentImpl;
-  class HTMLTitleElementImpl;
   class HTMLElementImpl;
+  class HTMLEventListener;
+  class HTMLFormElementImpl;
   class HTMLFrameElementImpl;
   class HTMLIFrameElementImpl;
-  class HTMLObjectElementImpl;
-  class HTMLFormElementImpl;
-  class HTMLAnchorElementImpl;
   class HTMLMetaElementImpl;
-  class NodeImpl;
+  class HTMLObjectElementImpl;
+  class HTMLTitleElementImpl;
   class Node;
-  class HTMLEventListener;
-  class EventListener;
+  class NodeImpl;
+  class Range;
   class Selection;
 }
 
@@ -624,6 +625,16 @@ public:
   void selectAll();
 
   /**
+   * Returns whether editing should end in the given range
+   */
+  bool shouldBeginEditing(const DOM::Range &) const;
+
+  /**
+   * Returns whether editing should end in the given range
+   */
+  bool shouldEndEditing(const DOM::Range &) const;
+
+  /**
    * Returns the contentEditable "override" value for the part
    */
   bool isContentEditable() const;
@@ -1091,6 +1102,11 @@ private:
    * @internal
    */
   void setFocusNodeIfNeeded(const DOM::Selection &);
+
+  /**
+   * @internal
+   */
+  void selectionLayoutChanged();
 
   /**
    * @internal

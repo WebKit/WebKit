@@ -2987,3 +2987,15 @@ bool KWQKHTMLPart::isContentEditable() const
 {
     return [_bridge isEditable];
 }
+
+bool KWQKHTMLPart::shouldBeginEditing(const Range &range) const
+{
+    ASSERT(!range.isNull());
+    return [_bridge shouldBeginEditing:[DOMRange _rangeWithImpl:range.handle()]];
+}
+
+bool KWQKHTMLPart::shouldEndEditing(const Range &range) const
+{
+    ASSERT(!range.isNull());
+    return [_bridge shouldEndEditing:[DOMRange _rangeWithImpl:range.handle()]];
+}

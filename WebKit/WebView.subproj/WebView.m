@@ -2398,6 +2398,16 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     return YES;
 }
 
+- (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range
+{
+    return [[self _editingDelegateForwarder] webViewShouldBeginEditing:self inDOMRange:range];
+}
+
+- (BOOL)_shouldEndEditingInDOMRange:(DOMRange *)range
+{
+    return [[self _editingDelegateForwarder] webViewShouldEndEditing:self inDOMRange:range];
+}
+
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     [[self _bridgeForCurrentSelection] setSelectedDOMRange:range affinity:selectionAffinity];

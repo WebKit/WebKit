@@ -1,3 +1,44 @@
+2004-05-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Provide the methods to glue the WebView's editing delegate so that these methods work:
+        
+        <rdar://problem/3655316>: "Editing: -webViewShouldBeginEditing:inDOMRange: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655317>: "Editing: -webViewShouldEndEditing:inDOMRange: method unimplemented (WebKit editing API)"
+
+        While I was in the neighborhood and working on understanding focus shifts, I fixed this bug as well:
+        
+        <rdar://problem/3645154>: "contentEditable div receives focus and blur twice when focus changes to new element"
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::invalidateSelection): Do not move focus in this function. That is just a mistake. This function
+        is all about redraw.
+        (KHTMLPart::selectionLayoutChanged): New function. Factor out the redraw parts of notifySelectionChanged so
+        that invalidateSelection can call it.
+        (KHTMLPart::notifySelectionChanged): Call selectionLayoutChanged now that the redraw parts have been
+        factored out.
+        (KHTMLPart::shouldBeginEditing): New function that calls through to the KWQKHTMLPart in an APPLE_CHANGES
+        block. This is part of the code path that will eventually The WebView's delegate to ask the
+        shouldBeginEditing question. 
+        (KHTMLPart::shouldEndEditing): Ditto, except the question is about shouldEndEditing.
+        * khtml/khtml_part.h:
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchMouseEvent): Now looks at the boolean value returned from DocumentImpl::setFocusNode 
+        (described below). If the focus shift was blocked, swallow the mouse event.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::relinquishesEditingFocus): Part of the WebView's delegation call chain described above.
+        (DocumentImpl::acceptsEditingFocus): Ditto.
+        (DocumentImpl::setFocusNode): Many improvements. Now handles WebView delegation and switching focus
+        in the handlers called as a result of the DOM events that this function calls. Also now returns a 
+        boolean to say whether the attempt to set focus was blocked by a handler or by the WebView's delegate.
+        * khtml/xml/dom_docimpl.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::shouldBeginEditing): More WebView's delegation glue.
+        (KWQKHTMLPart::shouldEndEditing): Ditto.
+        * kwq/WebCoreBridge.h:
+
 2004-05-20  Richard Williamson   <rjw@apple.com>
 
         Reviewed by NOBODY (OOPS!).

@@ -400,7 +400,7 @@ public:
     QStringList availableStyleSheets() const;
 
     NodeImpl *focusNode() const { return m_focusNode; }
-    void setFocusNode(NodeImpl *newFocusNode);
+    bool setFocusNode(NodeImpl *newFocusNode);
 
     NodeImpl *hoverNode() const { return m_hoverNode; }
     void setHoverNode(NodeImpl *newHoverNode);
@@ -655,6 +655,9 @@ public:
     khtml::Decoder *decoder() const { return m_decoder; }
 
 private:
+    bool relinquishesEditingFocus(NodeImpl *node);
+    bool acceptsEditingFocus(NodeImpl *node);
+
     mutable DOMString m_domain;
     bool m_inPageCache;
     khtml::RenderObject *m_savedRenderer;

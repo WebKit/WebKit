@@ -1284,6 +1284,16 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [[_frame webView] isEditable];
 }
 
+- (BOOL)shouldBeginEditing:(DOMRange *)range
+{
+    return [[_frame webView] _shouldBeginEditingInDOMRange:range];
+}
+
+- (BOOL)shouldEndEditing:(DOMRange *)range
+{
+    return [[_frame webView] _shouldEndEditingInDOMRange:range];
+}
+
 - (void)windowObjectCleared
 {
     WebView *wv = [_frame webView];

@@ -1,3 +1,20 @@
+2004-05-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Provide the methods to glue the WebView's editing delegate so that these methods work:
+        
+        <rdar://problem/3655316>: "Editing: -webViewShouldBeginEditing:inDOMRange: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655317>: "Editing: -webViewShouldEndEditing:inDOMRange: method unimplemented (WebKit editing API)"
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge shouldBeginEditing:]): New method used to glue delegate to focus shifts.
+        (-[WebBridge shouldEndEditing:]): Ditto.
+        * WebView.subproj/WebView.m:
+        (-[WebView _shouldBeginEditingInDOMRange:]): Ditto.
+        (-[WebView _shouldEndEditingInDOMRange:]): Ditto.
+        * WebView.subproj/WebViewPrivate.h: Ditto.
+
 2004-05-20  Richard Williamson   <rjw@apple.com>
 
 		Fixed typo in header comment.

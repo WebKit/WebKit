@@ -284,6 +284,8 @@ public:
     void postDidChangeSelectionNotification();
     void postDidChangeNotification();
     bool isContentEditable() const;
+    bool shouldBeginEditing(const DOM::Range &) const;
+    bool shouldEndEditing(const DOM::Range &) const;
 
     KJS::Bindings::RootObject *bindingRootObject();
     

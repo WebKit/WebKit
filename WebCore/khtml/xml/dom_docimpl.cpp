@@ -2275,57 +2275,125 @@ void DocumentImpl::setHoverNode(NodeImpl* newHoverNode)
     }    
 }
 
-void DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
+#if APPLE_CHANGES
+
+bool DocumentImpl::relinquishesEditingFocus(NodeImpl *node)
+{
+    assert(node);
+    assert(node->isContentEditable());
+
+    if (!part())
+        return true;
+    
+    NodeImpl *rootImpl = node->rootEditableBlock();
+    Node root(rootImpl);
+    Range range(root, 0, root, rootImpl->childNodeCount());
+    return part()->shouldEndEditing(range);
+}
+
+bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
+{
+    assert(node);
+    assert(node->isContentEditable());
+
+    if (!part())
+        return true;
+
+    NodeImpl *rootImpl = node->rootEditableBlock();
+    Node root(rootImpl);
+    Range range(root, 0, root, rootImpl->childNodeCount());
+    return part()->shouldBeginEditing(range);
+}
+
+#endif
+
+bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
 {    
     // Make sure newFocusNode is actually in this document
     if (newFocusNode && (newFocusNode->getDocument() != this))
-        return;
+        return true;
 
-    if (m_focusNode != newFocusNode) {
-        NodeImpl *oldFocusNode = m_focusNode;
+    if (m_focusNode == newFocusNode)
+        return true;
+
+#if APPLE_CHANGES
+    if (m_focusNode && m_focusNode->isContentEditable() && !relinquishesEditingFocus(m_focusNode))
+        return false;
+#endif     
+       
+    bool focusChangeBlocked = false;
+    NodeImpl *oldFocusNode = m_focusNode;
+    m_focusNode = 0;
+
+    // Remove focus from the existing focus node (if any)
+    if (oldFocusNode) {
+        // This goes hand in hand with the Qt focus setting below.
+        if (!newFocusNode && getDocument()->view()) {
+            getDocument()->view()->setFocus();
+        }
+
+        if (oldFocusNode->active())
+            oldFocusNode->setActive(false);
+
+        oldFocusNode->setFocus(false);
+        oldFocusNode->dispatchHTMLEvent(EventImpl::BLUR_EVENT, false, false);
+        if (m_focusNode != 0) {
+            // handler shifted focus
+            focusChangeBlocked = true;
+            newFocusNode = 0;
+        }
+        oldFocusNode->dispatchUIEvent(EventImpl::DOMFOCUSOUT_EVENT);
+        if (m_focusNode != 0) {
+            // handler shifted focus
+            focusChangeBlocked = true;
+            newFocusNode = 0;
+        }
+        if ((oldFocusNode == this) && oldFocusNode->hasOneRef()) {
+            oldFocusNode->deref(); // deletes this
+            return true;
+        }
+        else {
+            oldFocusNode->deref();
+        }
+    }
+
+    if (newFocusNode) {
+#if APPLE_CHANGES            
+        if (newFocusNode->isContentEditable() && !acceptsEditingFocus(newFocusNode)) {
+            // delegate blocks focus change
+            focusChangeBlocked = true;
+            goto SetFocusNodeDone;
+        }
+#endif
         // Set focus on the new node
         m_focusNode = newFocusNode;
-        // Remove focus from the existing focus node (if any)
-        if (oldFocusNode) {
-            // This goes hand in hand with the Qt focus setting below.
-            if (!m_focusNode && getDocument()->view()) {
+        m_focusNode->ref();
+        m_focusNode->dispatchHTMLEvent(EventImpl::FOCUS_EVENT, false, false);
+        if (m_focusNode != newFocusNode) {
+            // handler shifted focus
+            focusChangeBlocked = true;
+            goto SetFocusNodeDone;
+        }
+        m_focusNode->dispatchUIEvent(EventImpl::DOMFOCUSIN_EVENT);
+        if (m_focusNode != newFocusNode) { 
+            // handler shifted focus
+            focusChangeBlocked = true;
+            goto SetFocusNodeDone;
+        }
+        m_focusNode->setFocus();
+        // eww, I suck. set the qt focus correctly
+        // ### find a better place in the code for this
+        if (getDocument()->view()) {
+            if (!m_focusNode->renderer() || !m_focusNode->renderer()->isWidget())
                 getDocument()->view()->setFocus();
-            }
-
-            if (oldFocusNode->active())
-                oldFocusNode->setActive(false);
-
-            oldFocusNode->setFocus(false);
-	    oldFocusNode->dispatchHTMLEvent(EventImpl::BLUR_EVENT,false,false);
-	    oldFocusNode->dispatchUIEvent(EventImpl::DOMFOCUSOUT_EVENT);
-            if ((oldFocusNode == this) && oldFocusNode->hasOneRef()) {
-                oldFocusNode->deref(); // deletes this
-                return;
-            }
-	    else {
-                oldFocusNode->deref();
-            }
+            else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget())
+                static_cast<RenderWidget*>(m_focusNode->renderer())->widget()->setFocus();
         }
-
-        if (m_focusNode) {
-            m_focusNode->ref();
-            m_focusNode->dispatchHTMLEvent(EventImpl::FOCUS_EVENT,false,false);
-            if (m_focusNode != newFocusNode) return;
-            m_focusNode->dispatchUIEvent(EventImpl::DOMFOCUSIN_EVENT);
-            if (m_focusNode != newFocusNode) return;
-            m_focusNode->setFocus();
-            // eww, I suck. set the qt focus correctly
-            // ### find a better place in the code for this
-            if (getDocument()->view()) {
-                if (!m_focusNode->renderer() || !m_focusNode->renderer()->isWidget())
-                    getDocument()->view()->setFocus();
-                else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget())
-                    static_cast<RenderWidget*>(m_focusNode->renderer())->widget()->setFocus();
-            }
-        }
-
-        updateRendering();
     }
+
+SetFocusNodeDone:
+    updateRendering();
+    return !focusChangeBlocked;
 }
 
 void DocumentImpl::setCSSTarget(NodeImpl* n)

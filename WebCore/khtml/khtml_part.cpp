@@ -2293,9 +2293,8 @@ void KHTMLPart::clearSelection()
 void KHTMLPart::invalidateSelection()
 {
     clearCaretRectIfNeeded();
-    setFocusNodeIfNeeded(d->m_selection);
     d->m_selection.setNeedsLayout();
-    notifySelectionChanged(false);
+    selectionLayoutChanged();
 }
 
 void KHTMLPart::setSelectionVisible(bool flag)
@@ -2353,7 +2352,7 @@ void KHTMLPart::setFocusNodeIfNeeded(const Selection &s)
     }
 }
 
-void KHTMLPart::notifySelectionChanged(bool closeTyping)
+void KHTMLPart::selectionLayoutChanged()
 {
     // kill any caret blink timer now running
     if (d->m_caretBlinkTimer >= 0) {
@@ -2371,13 +2370,18 @@ void KHTMLPart::notifySelectionChanged(bool closeTyping)
 
     if (d->m_doc)
         d->m_doc->updateSelection();
-    
-    if (closeTyping)
-        TypingCommand::closeTyping(lastEditCommand());
-    
+
     // Always clear the x position used for vertical arrow navigation.
     // It will be restored by the vertical arrow navigation code if necessary.
     d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
+}
+
+void KHTMLPart::notifySelectionChanged(bool closeTyping)
+{
+    selectionLayoutChanged();
+    
+    if (closeTyping)
+        TypingCommand::closeTyping(lastEditCommand());
     
     emitSelectionChanged();
     
@@ -4871,6 +4875,24 @@ void KHTMLPart::selectAll()
   Q_ASSERT(last->renderer());
   Selection selection(Position(first, 0), Position(last, last->nodeValue().length()));
   setSelection(selection);
+}
+
+bool KHTMLPart::shouldBeginEditing(const Range &range) const
+{
+#if APPLE_CHANGES
+    return KWQ(this)->shouldBeginEditing(range);
+#else
+    return true;
+#endif
+}
+
+bool KHTMLPart::shouldEndEditing(const Range &range) const
+{
+#if APPLE_CHANGES
+    return KWQ(this)->shouldEndEditing(range);
+#else
+    return true;
+#endif
 }
 
 bool KHTMLPart::isContentEditable() const 
