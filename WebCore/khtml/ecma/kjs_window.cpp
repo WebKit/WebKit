@@ -1678,10 +1678,6 @@ void ScheduledAction::execute(Window *window)
 #endif
 	  exec->clearException();
 	}
-
-	// Update our document's rendering following the execution of the timeout callback.
-	DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->m_part->document().handle());
-	doc->updateRendering();
       }
     }
   }
@@ -1689,6 +1685,10 @@ void ScheduledAction::execute(Window *window)
     window->m_part->executeScript(code);
   }
 
+  // Update our document's rendering following the execution of the timeout callback.
+  DOM::DocumentImpl *doc = static_cast<DOM::DocumentImpl*>(window->m_part->document().handle());
+  doc->updateRendering();
+  
   interpreter->setProcessingTimerCallback(false);
 }
 

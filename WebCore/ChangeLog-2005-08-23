@@ -1,3 +1,14 @@
+2004-03-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3600642, letter magnet demo doesn't update until mouse move.  This patch also fixes problems
+	with the animated text Gecko DOM demos on developer.netscape.com.  Make sure that timer callbacks via
+	setTimeout always updateRendering after executing the JS code.
+	
+        Reviewed by darin
+
+        * khtml/ecma/kjs_window.cpp:
+        (ScheduledAction::execute):
+
 === Safari-134 ===
 
 2004-03-25  David Hyatt  <hyatt@apple.com>
