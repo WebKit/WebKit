@@ -1252,6 +1252,14 @@ void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_ACCESSKEY:
         // ### ignore for the moment
         break;
+    case ATTR_VSPACE:
+        addCSSLength(CSS_PROP_MARGIN_TOP, attr->value());
+        addCSSLength(CSS_PROP_MARGIN_BOTTOM, attr->value());
+        break;
+    case ATTR_HSPACE:
+        addCSSLength(CSS_PROP_MARGIN_LEFT, attr->value());
+        addCSSLength(CSS_PROP_MARGIN_RIGHT, attr->value());
+        break;        
     case ATTR_ALIGN:
         addHTMLAlignment( attr->value() );
         break;
