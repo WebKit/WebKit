@@ -1,3 +1,10 @@
+2002-08-06  John Sullivan  <sullivan@apple.com>
+
+        * force-clean-timestamp:
+	Edited this file to force a make clean in WebCore after
+	discovering that it was necessary the hard way. I'm not
+	sure which earlier checkin made this be required.
+
 2002-08-06  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::overURL):
