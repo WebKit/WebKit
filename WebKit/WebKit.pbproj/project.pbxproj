@@ -139,7 +139,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string></string>
+	<string>com.apple.webkit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -179,6 +179,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				089C1668FE841158C02AAC07,
+				35F3576E01985F660ACA1520,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -222,6 +223,7 @@
 		089C1665FE841158C02AAC07 = {
 			children = (
 				089C1666FE841158C02AAC07,
+				35F3576D01985F660ACA1520,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -513,6 +515,28 @@
 //252
 //253
 //254
+//350
+//351
+//352
+//353
+//354
+		35F3576D01985F660ACA1520 = {
+			isa = PBXFileReference;
+			name = html4.css;
+			path = /L/Labyrinth/WebCore/src/kdelibs/khtml/css/html4.css;
+			refType = 0;
+		};
+		35F3576E01985F660ACA1520 = {
+			fileRef = 35F3576D01985F660ACA1520;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//350
+//351
+//352
+//353
+//354
 //9C0
 //9C1
 //9C2
