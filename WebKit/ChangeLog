@@ -1,3 +1,15 @@
+2002-11-06  Ken Kocienda  <kocienda@apple.com>
+
+	Call new WebHTTPResourceRequest method to set the amount of time
+	to cache a 404 response when trying to fetch a favicon.
+
+	This change helps to fix this bug:
+
+	Radar 3004422 (Loader should cache misses)
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading])
+
 2002-11-05  Maciej Stachowiak  <mjs@apple.com>
 
 	Reworked clickPolicy arguments to be closer to proposed version.

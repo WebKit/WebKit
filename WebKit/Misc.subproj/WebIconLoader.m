@@ -14,6 +14,9 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebHTTPResourceRequest.h>
+
+#define WebIconLoaderWeeksWorthOfSeconds (60 * 60 * 24 * 7)
 
 @interface WebIconLoaderPrivate : NSObject
 {
@@ -82,6 +85,7 @@
     }
     
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->URL];
+    [request setPageNotFoundCacheLifetime:WebIconLoaderWeeksWorthOfSeconds];
     _private->handle = [[WebResourceHandle alloc] initWithRequest:request];
     [_private->handle loadWithDelegate:self];
     [request release];
