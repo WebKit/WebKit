@@ -1,3 +1,23 @@
+2004-02-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3546028>: Safari should not give plug-ins any time, thus use 0% CPU, when not in the currently active session
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (+[WebBaseNetscapePluginView initialize]): observe CG changes
+        (-[WebBaseNetscapePluginView addWindowObservers]): observe user switch notifications
+        (-[WebBaseNetscapePluginView removeWindowObservers]): stop observing user switch notifications
+        (-[WebBaseNetscapePluginView viewHasMoved:]): tweak
+        (-[WebBaseNetscapePluginView windowWillClose:]): tweak 
+        (-[WebBaseNetscapePluginView windowBecameKey:]): tweak
+        (-[WebBaseNetscapePluginView windowResignedKey:]): tweak
+        (-[WebBaseNetscapePluginView windowDidMiniaturize:]): tweak
+        (-[WebBaseNetscapePluginView windowDidDeminiaturize:]): tweak
+        (-[WebBaseNetscapePluginView loginWindowDidSwitchFromUser:]): new, stop null events
+        (-[WebBaseNetscapePluginView loginWindowDidSwitchToUser:]): new, restart null events
+        (ConsoleConnectionChangeNotifyProc): new, post user switch notifications
+
 2004-02-02  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

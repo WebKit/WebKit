@@ -30,6 +30,7 @@
 
 #import <AppKit/NSEvent_Private.h>
 #import <Carbon/Carbon.h>
+#import <CoreGraphics/CoreGraphicsPrivate.h>
 #import <HIToolbox/TextServicesPriv.h>
 #import <QD/QuickdrawPriv.h>
 
@@ -39,6 +40,10 @@ void CallDrawingNotifications(CGrafPtr port, Rect *mayDrawIntoThisRect, int draw
 // Send null events 50 times a second when active, so plug-ins like Flash get high frame rates.
 #define NullEventIntervalActive 	0.02
 #define NullEventIntervalNotActive	0.25
+
+#define LoginWindowDidSwitchFromUserNotification    @"LoginWindowDidSwitchFromUserNotification"
+#define LoginWindowDidSwitchToUserNotification      @"LoginWindowDidSwitchToUserNotification"
+
 
 static WebBaseNetscapePluginView *currentPluginView = nil;
 
@@ -72,8 +77,15 @@ typedef struct {
 @end
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView);
+void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotificationData data, CGSByteCount dataLength, CGSNotificationArg arg);
 
 @implementation WebBaseNetscapePluginView
+
++ (void)initialize
+{
+    CGSRegisterNotifyProc(ConsoleConnectionChangeNotifyProc, kCGSessionConsoleConnect, NULL);
+    CGSRegisterNotifyProc(ConsoleConnectionChangeNotifyProc, kCGSessionConsoleDisconnect, NULL);
+}
 
 #pragma mark EVENTS
 
@@ -805,6 +817,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
                                name:NSWindowDidMiniaturizeNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowDidDeminiaturize:)
                                name:NSWindowDidDeminiaturizeNotification object:theWindow];
+    
+    [notificationCenter addObserver:self selector:@selector(loginWindowDidSwitchFromUser:)
+                               name:LoginWindowDidSwitchFromUserNotification object:NSApp];
+    [notificationCenter addObserver:self selector:@selector(loginWindowDidSwitchToUser:)
+                               name:LoginWindowDidSwitchToUserNotification object:NSApp];
 }
 
 - (void)removeWindowObservers
@@ -817,6 +834,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [notificationCenter removeObserver:self name:NSWindowDidResignKeyNotification     object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidMiniaturizeNotification   object:nil];
     [notificationCenter removeObserver:self name:NSWindowDidDeminiaturizeNotification object:nil];
+    [notificationCenter removeObserver:self name:LoginWindowDidSwitchFromUserNotification   object:NSApp];
+    [notificationCenter removeObserver:self name:LoginWindowDidSwitchToUserNotification     object:NSApp];
 }
 
 - (BOOL)start
@@ -1140,19 +1159,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 #pragma mark NOTIFICATIONS
 
--(void)viewHasMoved:(NSNotification *)notification
+- (void)viewHasMoved:(NSNotification *)notification
 {
     [self tellQuickTimeToChill];
     [self setWindow];
     [self resetTrackingRect];
 }
 
--(void)windowWillClose:(NSNotification *)notification
+- (void)windowWillClose:(NSNotification *)notification
 {
     [self stop];
 }
 
--(void)windowBecameKey:(NSNotification *)notification
+- (void)windowBecameKey:(NSNotification *)notification
 {
     [self sendActivateEvent:YES];
     [self setNeedsDisplay:YES];
@@ -1160,19 +1179,29 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     SetUserFocusWindow([[self window] windowRef]);
 }
 
--(void)windowResignedKey:(NSNotification *)notification
+- (void)windowResignedKey:(NSNotification *)notification
 {
     [self sendActivateEvent:NO];
     [self setNeedsDisplay:YES];
     [self restartNullEvents];
 }
 
--(void)windowDidMiniaturize:(NSNotification *)notification
+- (void)windowDidMiniaturize:(NSNotification *)notification
 {
     [self stopNullEvents];
 }
 
--(void)windowDidDeminiaturize:(NSNotification *)notification
+- (void)windowDidDeminiaturize:(NSNotification *)notification
+{
+    [self restartNullEvents];
+}
+
+- (void)loginWindowDidSwitchFromUser:(NSNotification *)notification
+{
+    [self stopNullEvents];
+}
+
+-(void)loginWindowDidSwitchToUser:(NSNotification *)notification
 {
     [self restartNullEvents];
 }
@@ -1643,3 +1672,15 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 
 @end
 
+void ConsoleConnectionChangeNotifyProc(CGSNotificationType type, CGSNotificationData data, CGSByteCount dataLength, CGSNotificationArg arg)
+{
+    NSString *notificationName;
+    if (type == kCGSessionConsoleConnect) {
+        notificationName = LoginWindowDidSwitchToUserNotification;
+    } else if (type == kCGSessionConsoleDisconnect) {
+        notificationName = LoginWindowDidSwitchFromUserNotification;
+    } else {
+        ASSERT_NOT_REACHED();
+    }
+    [[NSNotificationCenter defaultCenter] postNotificationName:notificationName object:NSApp];
+}
