@@ -1,5 +1,12 @@
 2004-08-19  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed typo in comment.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _updateFileDatabase]):
+
+2004-08-19  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3566336> CrashTracer: .2403 crashes at com.apple.WebKit: -[WebFileDatabase performSetObject:forKey:] + 0x94
 
         Reviewed by trey.

@@ -368,7 +368,7 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->iconsToSaveWithURLs removeAllObjects];
 
     // Save the icon dictionaries to disk. Save them as mutable copies otherwise WebFileDatabase may access the 
-    // same dictionaries on a separate thread as it's being modified. We think this fixed 3566336.
+    // same dictionaries on a separate thread as it's being modified. We think this fixes 3566336.
     NSMutableDictionary *iconsOnDiskWithURLsCopy = [_private->iconsOnDiskWithURLs mutableCopy];
     NSMutableDictionary *URLToIconURLCopy = [_private->URLToIconURL mutableCopy];
     NSMutableDictionary *iconURLToURLsCopy = [_private->iconURLToURLs mutableCopy];
