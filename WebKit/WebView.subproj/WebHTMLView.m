@@ -743,8 +743,6 @@ static WebHTMLView *lastHitView = nil;
         _private->draggingImageURL = [imageURL retain];
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
         ASSERT([image isKindOfClass:[WebImageRenderer class]]);
-        NSFileWrapper *fileWrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
-        ASSERT(fileWrapper);
         [self _web_dragImage:image
                      archive:[[element objectForKey:WebCoreElementDOMNodeKey] webArchive]
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
