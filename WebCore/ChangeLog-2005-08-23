@@ -1,3 +1,18 @@
+2003-04-01  Trey Matteson  <trey@apple.com>
+
+	3119711 - redirects to anchors leave window half-loaded (was SCClib.org is half loaded, half rendered)
+
+	The problem happened when an anchor nav was the last half of a client redirect.
+	We would never stop the redirect timer, and thus never post a clientRedirectCanceled
+	message up through the stack.  This left the app thinking that it was in redirect
+	mode even when the whole navigation had finished, which makes it not clear the
+	progress bar.
+
+        Reviewed by Darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::scrollToAnchor):  Stop the redirect timer.
+
 2003-04-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
