@@ -125,7 +125,7 @@
         userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
 }
 
-- (void)_frameOrBoundsChanged:(NSNotification *)notification
+- (void)_frameOrBoundsChanged
 {
     if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
         [self setNeedsLayout:YES];
@@ -277,7 +277,7 @@
 + (NSArray *)_pasteboardTypes
 {
     return [NSArray arrayWithObjects:NSStringPboardType,
-#ifdef SUPPORT_HTML_PBOARD
+#if SUPPORT_HTML_PBOARD
         NSHTMLPboardType,
 #endif
         NSRTFPboardType, nil];
@@ -300,7 +300,7 @@
     attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
     [pasteboard setData:attributedData forType:NSRTFPboardType];
 
-#ifdef SUPPORT_HTML_PBOARD
+#if SUPPORT_HTML_PBOARD
     // Put HTML on the pasteboard.
 #endif
 }

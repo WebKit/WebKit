@@ -56,4 +56,6 @@
 + (NSArray *)_pasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
 
+- (void)_frameOrBoundsChanged;
+
 @end

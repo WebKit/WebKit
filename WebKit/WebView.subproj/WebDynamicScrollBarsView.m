@@ -75,26 +75,6 @@
     [super reflectScrolledClipView:clipView];
 }
 
-- (void)setCursor:(NSCursor *)cur
-{
-    if (!cur) {
-        if (!cursor) {
-            return;
-        }
-    } else {
-        if ([cur isEqual:[NSCursor arrowCursor]]) {
-            cur = nil;
-        } else if (cursor && [cursor isEqual:cur]) {
-            return;
-        }
-    }
-    
-    [cursor release];
-    cursor = [cur retain];
-
-    [self setDocumentCursor:cursor];
-}
-
 - (void)setAllowsScrolling:(BOOL)flag
 {
     disallowsScrolling = !flag;

@@ -154,6 +154,7 @@
     ASSERT(![self _insideAnotherHTMLView]);
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(mouseMovedNotification:)
         name:NSMouseMovedNotification object:nil];
+    [self _frameOrBoundsChanged];
 }
 
 - (void)removeMouseMovedObserver
@@ -182,9 +183,9 @@
     }
 
     if (newSuperview) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
             name:NSViewFrameDidChangeNotification object:newSuperview];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged) 
             name:NSViewBoundsDidChangeNotification object:newSuperview];
     }
 }
@@ -222,7 +223,6 @@
             _private->inWindow = NO;
         }
     }
-    [super viewDidMoveToWindow];
 }
 
 - (void)addSubview:(NSView *)view

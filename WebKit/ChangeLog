@@ -1,3 +1,18 @@
+2002-11-11  Darin Adler  <darin@apple.com>
+
+	- tighten up cursor handling a bit more
+
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addMouseMovedObserver]): Call _frameOrBoundsChanged
+	so we emit a mouse moved event right away.
+        (-[WebHTMLView viewWillMoveToSuperview:]): Remove the colon since I
+	removed the parameter from _frameOrBoundsChanged.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Declare _frameOrBoundsChanged.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _frameOrBoundsChanged]): Remove parameter.
+
 2002-11-11  Trey Matteson  <trey@apple.com>
 
         Fixed 3015884 - Reloading a page should remember the scroll position

@@ -23,12 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-@class NSCursor;
-
-// Among other things, this protocol is a way for an NSScrollView to detect
+// This protocol is a way for an NSScrollView to detect
 // that the view it's embedded in is one that should be resized when the
 // scroll view is resized.
 
 @protocol WebCoreFrameView
-- (void)setCursor:(NSCursor *)cursor;
 @end

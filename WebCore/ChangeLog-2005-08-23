@@ -1,5 +1,15 @@
 2002-11-11  Darin Adler  <darin@apple.com>
 
+	- tighten up cursor handling a bit more
+
+        * kwq/KWQWidget.mm:
+        (QWidget::setCursor): Use setDocumentCursor: instead of our own protocol.
+        (QWidget::cursor): Use documentCursor instead of storing our own cursor.
+
+        * kwq/WebCoreFrameView.h: Remove setCursor: method.
+
+2002-11-11  Darin Adler  <darin@apple.com>
+
 	- fixed 3084704 -- crash in HTMLTokenizer on page with JavaScript
 	HTMLDocument::Close inside a <script>
 

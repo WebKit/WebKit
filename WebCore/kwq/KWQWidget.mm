@@ -48,7 +48,6 @@ class QWidgetPrivate
 public:
     QStyle *style;
     QFont font;
-    QCursor cursor;
     QPalette pal;
     NSView *view;
 };
@@ -287,12 +286,12 @@ bool QWidget::isVisible() const
 
 void QWidget::setCursor(const QCursor &cur)
 {
-    data->cursor = cur;
-    
     id view = data->view;
     while (view) {
-        if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) { 
-            [view setCursor:data->cursor.handle()];
+        if ([view respondsToSelector:@selector(setDocumentCursor:)]) {
+            printf("setting cursor to %p\n", cur.handle());
+            [view setDocumentCursor:cur.handle()];
+            break;
         }
         view = [view superview];
     }
@@ -300,7 +299,14 @@ void QWidget::setCursor(const QCursor &cur)
 
 QCursor QWidget::cursor()
 {
-    return data->cursor;
+    id view = data->view;
+    while (view) {
+        if ([view respondsToSelector:@selector(documentCursor)]) { 
+            return [view documentCursor];
+        }
+        view = [view superview];
+    }
+    return QCursor();
 }
 
 void QWidget::unsetCursor()
