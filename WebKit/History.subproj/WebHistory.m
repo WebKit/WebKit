@@ -575,13 +575,15 @@ static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
 	matchUnicodeLetter(unicode[3], 'p') &&
 	(unicode[4] == ':' 
 	 || (matchLetter(unicode[4], 's') && unicode[5] == ':'))) {
+
 	unsigned pos = unicode[4] == ':' ? 5 : 6;
+
 	// skip possible initial two slashes
-	if (unicode[pos] == '/' && unicode[pos + 1] == '/') {
+	if (pos + 1 < length && unicode[pos] == '/' && unicode[pos + 1] == '/') {
 	    pos += 2;
 	}
 
-	while (unicode[pos] != '/' && pos < length) {
+	while (pos < length && unicode[pos] != '/') {
 	    pos++;
 	}
 

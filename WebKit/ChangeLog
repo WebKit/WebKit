@@ -1,3 +1,13 @@
+2004-04-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3627362>: "bad access with libgmalloc in -[_WebCoreHistoryProvider containsItemForURLUnicode:length:]"
+
+        * History.subproj/WebHistory.m:
+        (-[_WebCoreHistoryProvider containsItemForURLUnicode:length:]): Add range checks so we
+        don't overrun the buffer while looking for slashes.
+
 2004-04-23  Chris Blumenberg  <cblu@apple.com>
 
 	Reviewed by John
