@@ -391,7 +391,6 @@ HTMLAreaElementImpl::HTMLAreaElementImpl(DocumentPtr *doc)
 {
     m_coords=0;
     m_coordsLen = 0;
-    nohref = false;
     shape = Unknown;
     lasth = lastw = -1;
 }
@@ -423,9 +422,6 @@ void HTMLAreaElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
     case ATTR_COORDS:
         if (m_coords) delete [] m_coords;
         m_coords = attr->value().toLengthArray(m_coordsLen);
-        break;
-    case ATTR_NOHREF:
-        nohref = !attr->isNull();
         break;
     case ATTR_TARGET:
         m_hasTarget = !attr->isNull();
@@ -509,9 +505,3 @@ QRegion HTMLAreaElementImpl::getRegion(int width_, int height_) const
 
     return region;
 }
-
-bool HTMLAreaElementImpl::isURLAttribute(AttributeImpl *attr) const
-{
-    return attr->id() == ATTR_HREF;
-}
-
