@@ -1,3 +1,18 @@
+2004-09-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this hitlist bug:
+        
+        <rdar://problem/3805486> REGRESSION (Mail): Empty block elements can cause the caret to get "stuck" in one spot
+
+        * khtml/xml/dom_caretposition.cpp:
+        (DOM::CaretPosition::isCandidate): You can no longer caret into empty blocks with no height.
+        Also did a little clean up in this function.
+        * layout-tests/editing/deleting/delete-3800834-fix-expected.txt: Regenerated expected results. 
+        This test was actually failing and had bogus results checked in!
+        * layout-tests/editing/selection/select-all-003-expected.txt: Regenerated expected results.
+
 2004-09-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3812091> REGRESSION (Mail): double-clicked word is not smart inserted on drag

@@ -219,13 +219,19 @@ bool CaretPosition::isCandidate(const Position &pos)
     if (renderer->style()->visibility() != VISIBLE)
         return false;
 
-    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox()) {
+    if (renderer->isReplaced())
+        // return true for replaced elements
+        return pos.offset() == 0 || pos.offset() == 1;
+
+    if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox())
+        // return true for offset 0 into BR element on a line by itself
         return pos.offset() == 0;
-    }
-    else if (renderer->isText()) {
+    
+    if (renderer->isText()) {
         RenderText *textRenderer = static_cast<RenderText *>(renderer);
         for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
             if (pos.offset() >= box->m_start && pos.offset() <= box->m_start + box->m_len) {
+                // return true if in a text node
                 return true;
             }
             else if (pos.offset() < box->m_start) {
@@ -236,11 +242,10 @@ bool CaretPosition::isCandidate(const Position &pos)
             }
         }
     }
-    else if (renderer->isReplaced() || (pos.node()->isBlockFlow() && !pos.node()->firstChild() && pos.offset() == 0)) {
-        // return true for replaced elements, for inline flows if they have a line box
-        // and for blocks if they are empty
-        return true;
-    }
+    
+    if (renderer->isBlockFlow() && !renderer->firstChild() && renderer->height())
+        // return true for offset 0 into rendered blocks that are empty of rendered kids, but have a height
+        return pos.offset() == 0;
     
     return false;
 }
