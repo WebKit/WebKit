@@ -24,7 +24,11 @@
 #include "nodes.h"
 
 #include <assert.h>
+#ifdef APPLE_CHANGES
+#include <iostream>
+#else
 #include <iostream.h>
+#endif
 #include <math.h>
 #include <stdio.h>
 #ifdef KJS_DEBUG_MEM

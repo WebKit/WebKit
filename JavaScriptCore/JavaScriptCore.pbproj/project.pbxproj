@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 36;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -118,7 +118,7 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /System/Library/PrivateFrameworks;
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DAPPLE_CHANGES -DHAVE_CONFIG_H";
+				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -Wno-format-y2k -DAPPLE_CHANGES -DHAVE_CONFIG_H";
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";

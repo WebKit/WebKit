@@ -1,3 +1,11 @@
+2002-04-02  Maciej Stachowiak  <mjs@apple.com>
+
+	* JavaScriptCore.pbproj/project.pbxproj: Pass -Wno-format-y2k so
+	the project builds with gcc3.
+	
+	* kjs/nodes.cpp: Avoid including an obsolete header to avoid
+	warning with gcc3.
+
 2002-04-02  Darin Adler  <darin@apple.com>
 
 	* kjs/property_map.cpp: (PropertyMap::~PropertyMap): Deallocate the
