@@ -537,8 +537,8 @@ NodeImpl *DocumentImpl::importNode(NodeImpl *importedNode, bool deep, int &excep
 
 			for(unsigned int i = 0; i < attr->length(); i++)
 			{
-				DOM::DOMString qualifiedName = attr->item(i)->nodeName();
-				DOM::DOMString value = attr->item(i)->nodeValue();
+				DOMString qualifiedName = attr->item(i)->nodeName();
+				DOMString value = attr->item(i)->nodeValue();
 
 				int colonpos = qualifiedName.find(':');
 				DOMString localName = qualifiedName;
@@ -1529,7 +1529,7 @@ void DocumentImpl::setURL(const QString& url)
         m_styleSelector->setEncodedURL(m_url);
 }
 
-void DocumentImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet)
+void DocumentImpl::setStyleSheet(const DOMString &url, const DOMString &sheet)
 {
 //    kdDebug( 6030 ) << "HTMLDocument::setStyleSheet()" << endl;
     m_sheet = new CSSStyleSheetImpl(this, url);

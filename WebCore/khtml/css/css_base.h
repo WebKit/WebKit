@@ -41,7 +41,6 @@ namespace DOM {
     class CSSProperty;
     class CSSValueImpl;
     class CSSPrimitiveValueImpl;
-    class CSSStyleDeclarationImpl;
     class CSSRuleImpl;
     class CSSStyleRuleImpl;
 

@@ -89,7 +89,7 @@ public:
      * the current state of the rule and not its initial value.
      *
      */
-    DOM::DOMString cssText() const;
+    DOMString cssText() const;
 
     /**
      * see @ref cssText
@@ -108,7 +108,7 @@ public:
      * INVALID_MODIFICATION_ERR: Raised if the specified CSS string value
      * represents a different type of rule than the current one.
      */
-    void setCssText( const DOM::DOMString & );
+    void setCssText( const DOMString & );
 
     /**
      * The style sheet that contains this rule.
@@ -165,7 +165,7 @@ public:
      * rule.
      *
      */
-    DOM::DOMString encoding() const;
+    DOMString encoding() const;
 
     /**
      * see @ref encoding
@@ -178,7 +178,7 @@ public:
      * readonly.
      *
      */
-    void setEncoding( const DOM::DOMString & );
+    void setEncoding( const DOMString & );
 };
 
 
@@ -240,7 +240,7 @@ public:
      * the URI.
      *
      */
-    DOM::DOMString href() const;
+    DOMString href() const;
 
     /**
      * A list of media types for which this style sheet may be used.
@@ -328,7 +328,7 @@ public:
      * and is unparsable.
      *
      */
-    unsigned long insertRule ( const DOM::DOMString &rule, unsigned long index );
+    unsigned long insertRule ( const DOMString &rule, unsigned long index );
 
     /**
      * Used to delete a rule from the media block.
@@ -378,7 +378,7 @@ public:
      * the rule.
      *
      */
-    DOM::DOMString selectorText() const;
+    DOMString selectorText() const;
 
     /**
      * see @ref selectorText
@@ -391,7 +391,7 @@ public:
      * readonly.
      *
      */
-    void setSelectorText( const DOM::DOMString & );
+    void setSelectorText( const DOMString & );
 
     /**
      * The <a href="http://www.w3.org/TR/REC-CSS2/syndata.html#q8">
@@ -429,7 +429,7 @@ public:
      * insignificant whitespace while parsing the selector.
      *
      */
-    DOM::DOMString selectorText() const;
+    DOMString selectorText() const;
 
     /**
      * see @ref selectorText
@@ -442,7 +442,7 @@ public:
      * readonly.
      *
      */
-    void setSelectorText( const DOM::DOMString & );
+    void setSelectorText( const DOMString & );
 
     /**
      * The <a href="http://www.w3.org/TR/REC-CSS2/syndata.html#q8">

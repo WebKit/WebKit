@@ -83,7 +83,7 @@ public:
      * processing instruction </a> .
      *
      */
-    DOM::DOMString type() const;
+    DOMString type() const;
 
     /**
      * <code> false </code> if the style sheet is applied to the
@@ -106,7 +106,7 @@ public:
      * other style sheets, this attribute has a value of null.
      *
      */
-    DOM::Node ownerNode() const;
+    Node ownerNode() const;
 
     /**
      * For style sheet languages that support the concept of style
@@ -129,7 +129,7 @@ public:
      * processing instruction </a> .
      *
      */
-    DOM::DOMString href() const;
+    DOMString href() const;
 
     /**
      * The advisory title. The title is often specified in the <code>
@@ -141,7 +141,7 @@ public:
      * processing instruction </a> .
      *
      */
-    DOM::DOMString title() const;
+    DOMString title() const;
 
     /**
      * The intended destination media for style information. The media
@@ -277,7 +277,7 @@ public:
      * and is unparsable.
      *
      */
-    unsigned long insertRule ( const DOM::DOMString &rule, unsigned long index );
+    unsigned long insertRule ( const DOMString &rule, unsigned long index );
 
     /**
      * Used to delete a rule from the style sheet.
@@ -386,12 +386,12 @@ public:
      *
      * NO_MODIFICATION_ALLOWED_ERR: Raised if this media list is readonly.
      */
-    DOM::DOMString mediaText() const;
+    DOMString mediaText() const;
 
     /**
      * see @ref mediaText
      */
-    void setMediaText(const DOM::DOMString &value);
+    void setMediaText(const DOMString &value);
 
     /**
      * The number of media in the list. The range of valid media is 0 to length-1 inclusive.
@@ -408,7 +408,7 @@ public:
      * @return The medium at the indexth position in the MediaList, or null if
      * that is not a valid index.
      */
-    DOM::DOMString item(unsigned long index) const;
+    DOMString item(unsigned long index) const;
 
     /**
      * Deletes the medium indicated by oldMedium from the list.
@@ -420,7 +420,7 @@ public:
      *
      * NOT_FOUND_ERR: Raised if oldMedium is not in the list.
      */
-    void deleteMedium(const DOM::DOMString &oldMedium);
+    void deleteMedium(const DOMString &oldMedium);
 
     /**
      * Adds the medium newMedium to the end of the list. If the newMedium is
@@ -434,7 +434,7 @@ public:
      *
      * NO_MODIFICATION_ALLOWED_ERR: Raised if this list is readonly.
      */
-    void appendMedium(const DOM::DOMString &newMedium);
+    void appendMedium(const DOMString &newMedium);
 
     /**
      * @internal
@@ -464,7 +464,7 @@ public:
     bool isNull() const;
 
 protected:
-    DOM::NodeImpl *node;
+    NodeImpl *node;
     LinkStyleImpl *impl;
 };
 
@@ -490,7 +490,7 @@ public:
     bool isNull() const;
 
 protected:
-    DOM::DocumentImpl *doc;
+    DocumentImpl *doc;
     DocumentStyleImpl *impl;
 };
 

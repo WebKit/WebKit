@@ -337,7 +337,7 @@ bool CSSStyleRuleImpl::parseString( const DOMString &/*string*/, bool )
     return false;
 }
 
-void CSSStyleRuleImpl::setDeclaration( CSSStyleDeclarationImpl *style)
+void CSSStyleRuleImpl::setDeclaration( CSSMutableStyleDeclarationImpl *style)
 {
     if ( m_style != style ) {
         if(m_style) m_style->deref();

@@ -332,7 +332,7 @@ public:
 #endif
 
     // from cachedObjectClient
-    virtual void setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheetStr);
+    virtual void setStyleSheet(const DOMString &url, const DOMString &sheetStr);
     void setUserStyleSheet(const QString& sheet);
     QString userStyleSheet() const { return m_usersheet; }
     void setPrintStyleSheet(const QString& sheet) { m_printSheet = sheet; }

@@ -511,7 +511,7 @@ void ProcessingInstructionImpl::sheetLoaded()
         getDocument()->stylesheetLoaded();
 }
 
-void ProcessingInstructionImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet)
+void ProcessingInstructionImpl::setStyleSheet(const DOMString &url, const DOMString &sheet)
 {
     if (m_sheet)
 	m_sheet->deref();

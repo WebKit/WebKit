@@ -2,6 +2,70 @@
 
         Reviewed by Ken.
 
+        Use separate mutable style and computed style types as appropriate.
+        For now this should have no effect, but it prepares us for refactoring later.
+        Also remove some unnecessary "DOM::" prefixes and in one case factor out
+        some shared code.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::typingStyle):
+        (KHTMLPart::setTypingStyle):
+        (updateState):
+        (KHTMLPart::selectionHasStyle):
+        (KHTMLPart::selectionStartHasStyle):
+        (KHTMLPart::selectionComputedStyle):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+
+        * khtml/css/css_base.h:
+        * khtml/css/css_ruleimpl.cpp:
+        (CSSStyleRuleImpl::setDeclaration):
+        * khtml/css/css_ruleimpl.h:
+        (DOM::CSSFontFaceRuleImpl::style):
+        (DOM::CSSPageRuleImpl::style):
+        (DOM::CSSStyleRuleImpl::style):
+        (DOM::CSSStyleRuleImpl::declaration):
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSPrimitiveValueImpl::):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        (CSSParser::parseColor):
+        (CSSParser::parseDeclaration):
+        (CSSParser::createStyleDeclaration):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::addMatchedDeclaration):
+        (khtml::CSSStyleSelector::matchRulesForList):
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::applyDeclarations):
+        * khtml/css/cssstyleselector.h:
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+        * khtml/dom/css_rule.h:
+        * khtml/dom/css_stylesheet.h:
+        * khtml/dom/css_value.h:
+        * khtml/dom/dom2_views.cpp:
+        * khtml/xml/dom2_viewsimpl.cpp:
+        (DOM::AbstractViewImpl::getComputedStyle):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::importNode):
+        (DocumentImpl::setStyleSheet):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_xmlimpl.cpp:
+        (DOM::ProcessingInstructionImpl::setStyleSheet):
+        * khtml/xml/dom_xmlimpl.h:
+
+        * khtml/dom/css_value.cpp:
+        (DOM::throwException): Added.
+        (DOM::CSSStyleDeclaration::setCssText): Call throwException, but always on 0 for now.
+        The real thing is coming with the next change to refactor.
+        (DOM::CSSPrimitiveValue::setFloatValue): Call throwException.
+        (DOM::CSSPrimitiveValue::setStringValue): Ditto.
+
+2004-11-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3878489> REGRESSION: modifying attribute of <textarea> blows away edited text (breaks simplemachines.org forum)
 
         * khtml/xml/dom_nodeimpl.h: Added boolean "children changed" parameter to

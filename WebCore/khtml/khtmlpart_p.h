@@ -383,7 +383,7 @@ public:
 
   khtml::EditCommandPtr m_lastEditCommand;
   int m_xPosForVerticalArrowNavigation;
-  DOM::CSSStyleDeclarationImpl *m_typingStyle;
+  DOM::CSSMutableStyleDeclarationImpl *m_typingStyle;
 
   int m_focusNodeNumber;
 

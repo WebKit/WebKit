@@ -2,7 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999-2003 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2002 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -48,7 +48,7 @@ class CounterImpl;
 class CSSStyleDeclarationImpl : public StyleBaseImpl
 {
 public:
-    CSSStyleDeclarationImpl(CSSRuleImpl *parentRule);
+    CSSStyleDeclarationImpl(CSSRuleImpl *parentRule = 0);
     CSSStyleDeclarationImpl(CSSRuleImpl *parentRule, QPtrList<CSSProperty> *lstValues);
     virtual ~CSSStyleDeclarationImpl();
 
@@ -115,7 +115,7 @@ public:
 
     virtual unsigned short cssValueType() const = 0;
 
-    virtual DOM::DOMString cssText() const = 0;
+    virtual DOMString cssText() const = 0;
 
     virtual bool isValue() { return true; }
     virtual bool isFontValue() { return false; }
@@ -128,14 +128,14 @@ public:
     virtual ~CSSInheritedValueImpl() {}
 
     virtual unsigned short cssValueType() const;
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
 };
 
 class CSSInitialValueImpl : public CSSValueImpl
 {
 public:
     virtual unsigned short cssValueType() const;
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
 };
 
 class CSSValueListImpl : public CSSValueImpl
@@ -153,7 +153,7 @@ public:
     virtual unsigned short cssValueType() const;
 
     void append(CSSValueImpl *val);
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
 
 protected:
     QPtrList<CSSValueImpl> m_values;
@@ -234,7 +234,7 @@ public:
     int getIdent();
 
     virtual bool parseString( const DOMString &string, bool = false);
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
 
     virtual bool isQuirkValue() { return false; }
 
@@ -243,7 +243,7 @@ protected:
     union {
 	int ident;
 	double num;
-	DOM::DOMStringImpl *string;
+	DOMStringImpl *string;
 	CounterImpl *counter;
 	RectImpl *rect;
         QRgb rgbcolor;
@@ -344,7 +344,7 @@ public:
     const QString &fontName() const { return parsedFontName; }
     int genericFamilyType() const { return _genericFamilyType; }
 
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
 
     QString parsedFontName;
 private:
@@ -359,7 +359,7 @@ public:
 
     virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
     
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
     
     virtual bool isFontValue() { return true; }
 
@@ -381,7 +381,7 @@ public:
 
     virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
 
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
 
     CSSPrimitiveValueImpl* x;
     CSSPrimitiveValueImpl* y;
@@ -401,7 +401,7 @@ public:
     
     virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
     
-    virtual DOM::DOMString cssText() const;
+    virtual DOMString cssText() const;
     
     bool isAuto() const { return autoValue; }
 
@@ -447,7 +447,7 @@ public:
     
     CSSValueImpl *value() const { return m_value; }
     
-    DOM::DOMString cssText() const;
+    DOMString cssText() const;
 
     // make sure the following fits in 4 bytes.
     int  m_id;
@@ -459,6 +459,7 @@ private:
     CSSProperty &operator=(const CSSProperty&);
 };
 
+typedef CSSStyleDeclarationImpl CSSMutableStyleDeclarationImpl;
 
 } // namespace
 

@@ -23,17 +23,10 @@
 
 #include "dom2_viewsimpl.h"
 
-#include "css/css_base.h"
 #include "css/css_computedstyle.h"
-#include "css/css_stylesheetimpl.h"
-#include "rendering/render_object.h"
+#include "dom_elementimpl.h"
 
-using DOM::AbstractViewImpl;
-using DOM::CSSComputedStyleDeclarationImpl;
-using DOM::CSSStyleDeclarationImpl;
-using DOM::DocumentImpl;
-using DOM::DOMStringImpl;
-using DOM::ElementImpl;
+namespace DOM {
 
 AbstractViewImpl::AbstractViewImpl(DocumentImpl *_document)
 {
@@ -52,4 +45,6 @@ CSSStyleDeclarationImpl *AbstractViewImpl::getComputedStyle(ElementImpl *elt, DO
         return 0;
 
     return new CSSComputedStyleDeclarationImpl(elt);
+}
+
 }
