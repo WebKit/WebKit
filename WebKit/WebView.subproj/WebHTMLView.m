@@ -4702,6 +4702,27 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WebSelectByWord;
 }
 
+- (DOMRange *)_smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
+{
+    if (proposedRange == nil || [self _canSmartCopyOrDelete] == NO)
+        return nil;
+    
+    return [[self _bridge] smartDeleteRangeForProposedRange:proposedRange];
+}
+
+- (void)_smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
+{
+    if (pasteString == nil || rangeToReplace == nil || [[self _webView] smartInsertDeleteEnabled] == NO) {
+        if (beforeString)
+            *beforeString = nil;
+        if (afterString)
+            *afterString = nil;
+        return;
+    }
+    
+    [[self _bridge] smartInsertForString:pasteString replacingRange:rangeToReplace beforeString:beforeString afterString:afterString];
+}
+
 - (BOOL)_wasFirstResponderAtMouseDownTime:(NSResponder *)responder
 {
     return responder == _private->firstResponderAtMouseDownTime;
