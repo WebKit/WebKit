@@ -1,3 +1,14 @@
+2004-12-17  Richard Williamson   <rjw@apple.com>
+
+	Set the floor of max cacheable object size to 40K.  This restores
+	the long standing floor.  Lower floor deleteriously impacts the PLT.
+        Reviewed by Hyatt.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::checkCompleted):
+        * khtml/misc/loader.cpp:
+        (Cache::setSize):
+
 2004-12-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

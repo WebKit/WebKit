@@ -2336,7 +2336,7 @@ void Cache::checkLRUAndUncacheableListIntegrity()
 void Cache::setSize( int bytes )
 {
     maxSize = bytes;
-    maxCacheable = maxSize / 128;
+    maxCacheable = MAX(maxSize / 128, 40*1024*1024);
 
     // may be we need to clear parts of the cache
     flushCount = 0;
