@@ -697,7 +697,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
                 forKey:WebCoreElementIsSelectedKey];
 
     // Find the title in the nearest enclosing DOM node.
-    for (NodeImpl *titleNode = nodeInfo.innerNonSharedNode(); titleNode; titleNode = titleNode->parentNode()) {
+    // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
+    for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
         if (titleNode->isElementNode()) {
             const DOMString title = static_cast<ElementImpl *>(titleNode)->getAttribute(ATTR_TITLE);
             if (!title.isNull()) {

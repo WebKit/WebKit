@@ -1,3 +1,12 @@
+2003-11-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3474330 -- tooltips do not work for <area> elements
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): When looking for a title, start
+        with innerNode (which can be an <area> inside a <map>). This matches what Mozilla does.
+
 2003-11-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
