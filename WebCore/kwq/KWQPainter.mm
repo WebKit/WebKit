@@ -592,12 +592,6 @@ QColor QPainter::selectedTextBackgroundColor() const
     return QColor((int)(255 * [color redComponent]), (int)(255 * [color greenComponent]), (int)(255 * [color blueComponent]));
 }
 
-QColor QPainter::selectedImageTintColor() const
-{
-    QColor color = selectedTextBackgroundColor();
-    return QColor(qRgba(color.red(), color.green(), color.blue(), 160));
-}
-
 void QPainter::_fillRect(float x, float y, float w, float h, const QColor& col)
 {
     [col.getNSColor() set];

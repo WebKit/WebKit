@@ -105,8 +105,6 @@ public:
     QColor selectedTextBackgroundColor() const;
     void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
     
-    QColor selectedImageTintColor() const;
-
     bool paintingDisabled() const;
     void setPaintingDisabled(bool);
         

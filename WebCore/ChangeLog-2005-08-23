@@ -1,3 +1,16 @@
+2003-11-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3479266>: selected images don't obey CSS3 selection background-color attribute
+	
+        Reviewed by dave.
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::selectionTintColor): new, takes style into account
+        (RenderImage::paintObject): use selectionTintColor
+        * khtml/rendering/render_image.h:
+        * kwq/KWQPainter.h: removed selectedImageTintColor
+        * kwq/KWQPainter.mm:
+
 2003-11-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3479287, macro-ize the handling of the CSS 'inherit' value.  This patch is preparation for
