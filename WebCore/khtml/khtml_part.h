@@ -888,6 +888,7 @@ public:
   void undo();
   bool canRedo() const;
   bool canUndo() const;
+  void computeAndSetTypingStyle(DOM::CSSStyleDeclarationImpl *);
   void applyStyle(DOM::CSSStyleDeclarationImpl *);
   TriState selectionHasStyle(DOM::CSSStyleDeclarationImpl *) const;
   bool selectionStartHasStyle(DOM::CSSStyleDeclarationImpl *) const;

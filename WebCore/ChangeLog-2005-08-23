@@ -1,3 +1,24 @@
+2004-11-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Fix for this bug:
+        
+        <rdar://problem/3655241> setTypingStyle: does not set the real typing style, and typingStyle does not return it
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::computeAndSetTypingStyle): New helper that does the work of reducing a passed-in style
+        declaration given the current selection, and then sets the minimum necessary style as the typing
+        style on the part.
+        (KHTMLPart::applyStyle): Call new computeAndSetTypingStyle. The guts of computeAndSetTypingStyle used
+        to be here in the selection-as-caret case. But now [WebCoreBridge setTypingStyle:] needs this code
+        as well.
+        * khtml/khtml_part.h: Declare new computeAndSetTypingStyle() function.
+        * kwq/WebCoreBridge.h: Declare new typingStyle and setTypingStyle: methods.
+        * kwq/WebCoreBridge.mm: 
+        (-[WebCoreBridge typingStyle]): Calls through to the part to retrieve the typing style.
+        (-[WebCoreBridge setTypingStyle:]): Calls through to the part to set the typing style.
+
 2004-11-18  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

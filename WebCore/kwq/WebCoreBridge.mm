@@ -1702,6 +1702,20 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureSelectionVisible];
 }
 
+- (DOMCSSStyleDeclaration *)typingStyle
+{
+    if (!_part || !_part->typingStyle())
+        return nil;
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:_part->typingStyle()];
+}
+
+- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style
+{
+    if (!_part)
+        return;
+    _part->computeAndSetTypingStyle([style _styleDeclarationImpl]);
+}
+
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style
 {
     if (!_part)

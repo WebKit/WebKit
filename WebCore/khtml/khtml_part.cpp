@@ -5322,6 +5322,40 @@ bool KHTMLPart::canUndo() const
 
 #endif
 
+void KHTMLPart::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style)
+{
+    if (!style || style->length() == 0) {
+        clearTypingStyle();
+        return;
+    }
+
+    // Calculate the current typing style.
+    CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
+    mutableStyle->ref();
+    if (typingStyle()) {
+        typingStyle()->merge(mutableStyle);
+        mutableStyle->deref();
+        mutableStyle = typingStyle();
+        mutableStyle->ref();
+    }
+    CSSComputedStyleDeclarationImpl computedStyle(selection().start().upstream(StayInBlock).node());
+    computedStyle.diff(mutableStyle);
+    
+    // Handle block styles, substracting these from the typing style.
+    CSSMutableStyleDeclarationImpl *blockStyle = mutableStyle->copyBlockProperties();
+    blockStyle->ref();
+    blockStyle->diff(mutableStyle);
+    if (xmlDocImpl() && blockStyle->length() > 0) {
+        EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), blockStyle));
+        cmd.apply();
+    }
+    blockStyle->deref();
+    
+    // Set the remaining style as the typing style.
+    setTypingStyle(mutableStyle);
+    mutableStyle->deref();
+}
+
 void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
 {
     switch (selection().state()) {
@@ -5329,31 +5363,7 @@ void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
             // do nothing
             break;
         case Selection::CARET: {
-            // Calculate the current typing style.
-            CSSMutableStyleDeclarationImpl *mutableStyle = style->makeMutable();
-            mutableStyle->ref();
-            if (typingStyle()) {
-                typingStyle()->merge(mutableStyle);
-                mutableStyle->deref();
-                mutableStyle = typingStyle();
-                mutableStyle->ref();
-            }
-            CSSComputedStyleDeclarationImpl computedStyle(selection().start().upstream(StayInBlock).node());
-            computedStyle.diff(mutableStyle);
-            
-            // Handle block styles, substracting these from the typing style.
-            CSSMutableStyleDeclarationImpl *blockStyle = mutableStyle->copyBlockProperties();
-            blockStyle->ref();
-            blockStyle->diff(mutableStyle);
-            if (xmlDocImpl() && blockStyle->length() > 0) {
-                EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), blockStyle));
-                cmd.apply();
-            }
-            blockStyle->deref();
-            
-            // Set the remaining style as the typing style.
-            setTypingStyle(mutableStyle);
-            mutableStyle->deref();
+            computeAndSetTypingStyle(style);
             break;
         }
         case Selection::RANGE:

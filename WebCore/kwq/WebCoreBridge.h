@@ -350,6 +350,8 @@ typedef enum {
 - (void)deleteSelectionWithSmartDelete:(BOOL)smartDelete;
 - (void)deleteKeyPressed;
 
+- (DOMCSSStyleDeclaration *)typingStyle;
+- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style;
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style;
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style;
 - (void)applyEditingStyleToBodyElement;

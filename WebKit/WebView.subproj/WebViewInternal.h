@@ -74,8 +74,6 @@
     unsigned int dragDestinationActionMask;
     WebBridge *dragCaretBridge;
     
-    DOMCSSStyleDeclaration *typingStyle;
-
     BOOL hasSpellCheckerDocumentTag;
     int spellCheckerDocumentTag;
 

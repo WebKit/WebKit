@@ -1318,7 +1318,6 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view _updateFontPanel];
     }
-    [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[_frame webView]];
 }
 
@@ -1328,7 +1327,6 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view _selectionChanged];
     }
-    [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
 }
 

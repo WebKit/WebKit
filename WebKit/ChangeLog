@@ -1,3 +1,22 @@
+2004-11-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Fix for this bug:
+
+        <rdar://problem/3655241> setTypingStyle: does not set the real typing style, and typingStyle does not return it
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge respondToChangedContents]): No longer call through to WebKit to set the typing style. The call
+        was part of the misguided use of the setTypingStyle: and typingStyle as a cache of what was stored on
+        the WebCore side.
+        (-[WebBridge respondToChangedSelection]): Ditto.
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]): Object no longer has typingStyle ivar.
+        (-[WebView setTypingStyle:]): Call over the bridge to set typing style.
+        (-[WebView typingStyle]): Call over the bridge to retrieve typing style.
+        * WebView.subproj/WebViewInternal.h: Object no longer has typingStyle ivar.
+
 2004-11-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
