@@ -4544,7 +4544,7 @@ void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
         DOMPosition pos(innerNode.handle()->positionForCoordinates(event->x(), event->y()));
         if (pos.node() && (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE)) {
             selection.moveTo(pos);
-            selection.expandToElement(KHTMLSelection::WORD);
+            selection.expandUsingGranularity(KHTMLSelection::WORD);
         }
     }
     
@@ -4567,7 +4567,7 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
         DOMPosition pos(innerNode.handle()->positionForCoordinates(event->x(), event->y()));
         if (pos.node() && (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE)) {
             selection.moveTo(pos);
-            selection.expandToElement(KHTMLSelection::LINE);
+            selection.expandUsingGranularity(KHTMLSelection::LINE);
         }
     }
     
@@ -4818,7 +4818,7 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
 
 #if APPLE_CHANGES
     if (d->m_textElement != KHTMLSelection::CHARACTER) {
-        sel.expandToElement(d->m_textElement);
+        sel.expandUsingGranularity(d->m_textElement);
     }
 #endif    
 

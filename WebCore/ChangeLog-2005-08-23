@@ -1,3 +1,49 @@
+2004-04-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventDoubleClick): Improved name of expandToElement. Now is expandUsingGranularity.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMouseMoveEventSelection): Ditto.
+        * khtml/khtml_selection.cpp:
+        (KHTMLSelection::modify): Added support for modifying and extending selection right and left by word.
+        Also added support for extending selection up and down.
+        (KHTMLSelection::expandUsingGranularity): New name for expandToElement.
+        (KHTMLSelection::xPosForVerticalArrowNavigation): Made this function handle cases where we know we
+        want to use a particular position for calculating the right x position. We need this to handle
+        extending selection up and down, and for setting the caret to the right place when moving up
+        and down when a range is already selected.
+        (KHTMLSelection::validate): Name tweak. expandTo variable now granularity.
+        * khtml/khtml_selection.h: Make declaration changes for changes to cpp file.
+        * khtml/misc/helper.cpp:
+        (khtml::findWordBoundary): Added this hook for KDE to do their version of KWQFindWordBoundary
+        * khtml/misc/helper.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): Factor out closest box finder code to its own function
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::closestChildForXPos): New function. This is the factored code that was taken out of 
+        render_block.cpp.
+        (InlineBox::closestLeafChildForXPos): Ditto.
+        * khtml/rendering/render_line.h: Ditto.
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::positionForCoordinates): I think I am starting to get how the coordinate transforms work.
+        Made some fixups based on this greater sense of enlightenment.
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates): Ditto. Fix lastTextBox/firstTextBox code mistake.
+        * khtml/xml/dom_position.cpp:
+        (DOMPosition::previousWordPosition): Added.
+        (DOMPosition::nextWordPosition): Added.
+        (DOMPosition::previousLinePosition): No longer use nodeAtPoint. Use new closestLeafChildForXPos instead.
+        (DOMPosition::nextLinePosition): Ditto.
+        (DOMPosition::inLastEditableInContainingEditableBlock):
+        * khtml/xml/dom_position.h:
+        * kwq/KWQTextUtilities.cpp: Added.
+        (KWQFindWordBoundary): Factored out code that was in a static function in khtml_selection.cpp so 
+        that DOMPosition can use it too.
+        * kwq/KWQTextUtilities.h: Added.
+
 2004-04-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

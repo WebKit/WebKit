@@ -532,6 +532,7 @@
 				BE91FC9206133697005E3790,
 				832556E5061DF155007B8054,
 				BC86FB8F061F5C23006BB822,
+				BE8BD8F506359F6000D3F20B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -813,6 +814,7 @@
 				BE91FC9106133697005E3790,
 				832556E7061DF161007B8054,
 				BC86FB90061F5C23006BB822,
+				BE8BD8F406359F6000D3F20B,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -860,7 +862,7 @@
 			isa = PBXShellScriptBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
+			shellScript = "#if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 //250
 //251
@@ -2716,6 +2718,34 @@
 			settings = {
 			};
 		};
+		BE8BD8F206359F6000D3F20B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = KWQTextUtilities.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE8BD8F306359F6000D3F20B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = KWQTextUtilities.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BE8BD8F406359F6000D3F20B = {
+			fileRef = BE8BD8F206359F6000D3F20B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BE8BD8F506359F6000D3F20B = {
+			fileRef = BE8BD8F306359F6000D3F20B;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BE9185DD05EE59B80081354D = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3129,6 +3159,8 @@
 				93386B90037045B3008635CE,
 				93386B91037045B3008635CE,
 				F587852F02DE375901EA4122,
+				BE8BD8F206359F6000D3F20B,
+				BE8BD8F306359F6000D3F20B,
 				F587853502DE375901EA4122,
 				F587853602DE375901EA4122,
 				F587851B02DE375901EA4122,

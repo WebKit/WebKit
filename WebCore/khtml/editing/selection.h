@@ -64,7 +64,7 @@ public:
     void moveTo(const KHTMLSelection &);
     void moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeImpl *extentNode, long extentOffset);
     bool modify(EAlter, EDirection, ETextGranularity);
-    void expandToElement(ETextGranularity);
+    bool expandUsingGranularity(ETextGranularity);
     void clear();
 
     bool moveToRenderedContent();
@@ -108,8 +108,10 @@ public:
     friend class KHTMLPart;
 
 private:
+	enum EPositionType { START, END, BASE, EXTENT };
+
     void init();
-    void validate(ETextGranularity expandTo=CHARACTER);
+    void validate(ETextGranularity granularity=CHARACTER);
 
     void layoutCaret();
     void needsCaretRepaint();
@@ -129,7 +131,7 @@ private:
     bool nodeIsBeforeNode(DOM::NodeImpl *n1, DOM::NodeImpl *n2);
 
     void calculateStartAndEnd(ETextGranularity select=CHARACTER);
-    int xPosForVerticalArrowNavigation() const;
+    int xPosForVerticalArrowNavigation(EPositionType, bool recalc=false) const;
     
     DOM::NodeImpl *m_baseNode;    // base node for the selection
     long m_baseOffset;            // offset into base node where selection is

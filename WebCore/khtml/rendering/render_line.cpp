@@ -759,6 +759,41 @@ InlineBox* InlineFlowBox::lastLeafChild()
     return box;
 }
 
+InlineBox* InlineFlowBox::closestChildForXPos(int _x, int _tx)
+{
+    if (_x < _tx + firstChild()->m_x)
+        // if the x coordinate is to the left of the first child
+        return firstChild(); 
+    else if (_x >= _tx + lastChild()->m_x + lastChild()->m_width)
+        // if the x coordinate is to the right of the last child
+        return lastChild(); 
+    else
+        // look for the closest child;
+        // check only the right edges, since the left edge of the first
+        // box has already been checked
+        for (InlineBox *box = firstChild(); box; box = box->nextOnLine())
+            if (_x < _tx + box->m_x + box->m_width)
+                return box;
+
+    return 0;
+}
+
+InlineBox* InlineBox::closestLeafChildForXPos(int _x, int _tx)
+{
+    if (!isInlineFlowBox())
+        return this;
+    
+    InlineFlowBox *flowBox = static_cast<InlineFlowBox*>(this);
+    if (!flowBox->firstChild())
+        return this;
+
+    InlineBox *box = flowBox->closestChildForXPos(_x, _tx);
+    if (!box)
+        return this;
+    
+    return box->closestLeafChildForXPos(_x, _tx);
+}
+
 void RootInlineBox::adjustVerticalPosition(int delta)
 {
     InlineFlowBox::adjustVerticalPosition(delta);
@@ -778,4 +813,3 @@ void RootInlineBox::childRemoved(InlineBox* box)
         prev->markDirty();
     }
 }
-

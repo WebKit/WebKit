@@ -445,12 +445,12 @@ DOMPosition RenderText::positionForCoordinates(int _x, int _y)
         return DOMPosition(element(), 0);
 
     int absx, absy;
-    absolutePosition(absx, absy);
+    containingBlock()->absolutePosition(absx, absy);
 
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left than the first text box left edge
-        return DOMPosition(element(), lastTextBox()->m_start);
+        return DOMPosition(element(), firstTextBox()->m_start);
     }
 
     if (lastTextBox() && _y >= absy + lastTextBox()->root()->topOverflow() && _x >= absx + lastTextBox()->m_x + lastTextBox()->m_width) {

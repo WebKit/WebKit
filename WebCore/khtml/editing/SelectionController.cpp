@@ -46,6 +46,7 @@
 
 #if APPLE_CHANGES
 #include <KWQAssertions.h>
+#include <KWQTextUtilities.h>
 #include <CoreServices/CoreServices.h>
 
 #define EDIT_DEBUG 0
@@ -65,7 +66,6 @@ using khtml::RenderObject;
 using khtml::RenderText;
 
 #if APPLE_CHANGES
-static void findWordBoundary(QChar *chars, int len, int position, int *start, int *end);
 static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset);
 static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset);
 static bool startAndEndLineNodesIncludingNode(DOM::NodeImpl *node, int offset, KHTMLSelection &selection);
@@ -250,7 +250,7 @@ void KHTMLSelection::moveTo(DOM::NodeImpl *baseNode, long baseOffset, DOM::NodeI
 	validate();
 }
 
-bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity elem)
+bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity granularity)
 {
     DOMPosition pos;
     
@@ -258,76 +258,98 @@ bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity elem)
         // EDIT FIXME: This needs to handle bidi
         case RIGHT:
         case FORWARD:
-            switch (elem) {
-                case CHARACTER:
-                    if (alter == EXTEND) {
-                        if (!m_modifyBiasSet) {
-                            m_modifyBiasSet = true;
-                            setBaseNode(startNode());
-                            setBaseOffset(startOffset());
-                            setExtentNode(endNode());
-                            setExtentOffset(endOffset());
-                        }
+            if (alter == EXTEND) {
+                if (!m_modifyBiasSet) {
+                    m_modifyBiasSet = true;
+                    setBaseNode(startNode());
+                    setBaseOffset(startOffset());
+                    setExtentNode(endNode());
+                    setExtentOffset(endOffset());
+                }
+                if (granularity == CHARACTER)
+                    pos = extentPosition().nextCharacterPosition();
+                else if (granularity == WORD)
+                    pos = extentPosition().nextWordPosition();
+            }
+            else {
+                m_modifyBiasSet = false;
+                if (state() == RANGE) {
+                    if (granularity == CHARACTER)
+                        pos = endPosition();
+                    else if (granularity == WORD)
+                        pos = extentPosition().nextWordPosition();
+                }
+                else {
+                    if (granularity == CHARACTER)
                         pos = extentPosition().nextCharacterPosition();
-                    }
-                    else {
-                        m_modifyBiasSet = false;
-                        if (state() == RANGE)
-                            pos = endPosition();
-                        else
-                            pos = endPosition().nextCharacterPosition();
-                    }
-                    break;
-                case WORD:
-                    // EDIT FIXME: implement
-                    break;
-                case LINE:
-                    // EDIT FIXME: implement
-                    break;
+                    else if (granularity == WORD)
+                        pos = extentPosition().nextWordPosition();
+                }
             }
             break;
         // EDIT FIXME: This needs to handle bidi
         case LEFT:
         case BACKWARD:
-            switch (elem) {
-                case CHARACTER:
-                    if (alter == EXTEND) {
-                        if (!m_modifyBiasSet) {
-                            m_modifyBiasSet = true;
-                            setBaseNode(endNode());
-                            setBaseOffset(endOffset());
-                            setExtentNode(startNode());
-                            setExtentOffset(startOffset());
-                        }
+            if (alter == EXTEND) {
+                if (!m_modifyBiasSet) {
+                    m_modifyBiasSet = true;
+                    setBaseNode(endNode());
+                    setBaseOffset(endOffset());
+                    setExtentNode(startNode());
+                    setExtentOffset(startOffset());
+                }
+                if (granularity == CHARACTER)
+                    pos = extentPosition().previousCharacterPosition();
+                else if (granularity == WORD)
+                    pos = extentPosition().previousWordPosition();
+            }
+            else {
+                m_modifyBiasSet = false;
+                if (state() == RANGE) {
+                    if (granularity == CHARACTER)
+                        pos = startPosition();
+                    else if (granularity == WORD)
+                        pos = extentPosition().previousWordPosition();
+                }
+                else {
+                    if (granularity == CHARACTER)
                         pos = extentPosition().previousCharacterPosition();
-                    }
-                    else {
-                        m_modifyBiasSet = false;
-                        if (state() == RANGE)
-                            pos = startPosition();
-                        else
-                            pos = startPosition().previousCharacterPosition();
-                    }
-                    break;
-                case WORD:
-                    // EDIT FIXME: implement
-                    break;
-                case LINE:
-                    // EDIT FIXME: implement
-                    break;
+                    else if (granularity == WORD)
+                        pos = extentPosition().previousWordPosition();
+                }
             }
             break;
         case UP:
-            if (alter == EXTEND)
-                ERROR("unimplemented");
-            else
-                pos = startPosition().previousLinePosition(xPosForVerticalArrowNavigation());
+            if (alter == EXTEND) {
+                if (!m_modifyBiasSet) {
+                    m_modifyBiasSet = true;
+                    setBaseNode(endNode());
+                    setBaseOffset(endOffset());
+                    setExtentNode(startNode());
+                    setExtentOffset(startOffset());
+                }
+                pos = extentPosition().previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
+            }
+            else {
+                m_modifyBiasSet = false;
+                pos = startPosition().previousLinePosition(xPosForVerticalArrowNavigation(START, state()==RANGE));
+            }
             break;
         case DOWN:
-            if (alter == EXTEND)
-                ERROR("unimplemented");
-            else
-                pos = startPosition().nextLinePosition(xPosForVerticalArrowNavigation());
+            if (alter == EXTEND) {
+                if (!m_modifyBiasSet) {
+                    m_modifyBiasSet = true;
+                    setBaseNode(startNode());
+                    setBaseOffset(startOffset());
+                    setExtentNode(endNode());
+                    setExtentOffset(endOffset());
+                }
+                pos = extentPosition().nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
+            }
+            else {
+                m_modifyBiasSet = false;
+                pos = endPosition().nextLinePosition(xPosForVerticalArrowNavigation(END, state()==RANGE));
+            }
             break;
     }
     
@@ -342,25 +364,45 @@ bool KHTMLSelection::modify(EAlter alter, EDirection dir, ETextGranularity elem)
     return true;
 }
 
-void KHTMLSelection::expandToElement(ETextGranularity select)
+bool KHTMLSelection::expandUsingGranularity(ETextGranularity granularity)
 {
-    validate(select);
+    if (state() == NONE)
+        return false;
+        
+    validate(granularity);
+    return true;
 }
 
-int KHTMLSelection::xPosForVerticalArrowNavigation() const
+int KHTMLSelection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) const
 {
     int x = 0;
 
     if (state() == NONE)
         return x;
 
-    KHTMLPart *part = startPosition().node()->getDocument()->part();
+    DOMPosition pos;
+    switch (type) {
+        case START:
+            pos = startPosition();
+            break;
+        case END:
+            pos = endPosition();
+            break;
+        case BASE:
+            pos = basePosition();
+            break;
+        case EXTENT:
+            pos = extentPosition();
+            break;
+    }
+
+    KHTMLPart *part = pos.node()->getDocument()->part();
     if (!part)
         return x;
         
-    if (part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
+    if (recalc || part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
         int y, w, h;
-        startPosition().node()->renderer()->caretPos(startPosition().offset(), true, x, y, w, h);
+        pos.node()->renderer()->caretPos(pos.offset(), true, x, y, w, h);
         part->setXPosForVerticalArrowNavigation(x);
     }
     else {
@@ -561,7 +603,7 @@ void KHTMLSelection::setEndOffset(long offset)
 	m_endOffset = offset;
 }
 
-void KHTMLSelection::validate(ETextGranularity expandTo)
+void KHTMLSelection::validate(ETextGranularity granularity)
 {
     // move the base and extent nodes to their equivalent leaf positions
     bool baseAndExtentEqual = m_baseNode == m_extentNode && m_baseOffset == m_extentOffset;
@@ -625,7 +667,7 @@ void KHTMLSelection::validate(ETextGranularity expandTo)
         setEndOffset(m_baseOffset);
     }
 #else
-    if (expandTo == CHARACTER) {
+    if (granularity == CHARACTER) {
         if (m_baseIsStart) {
             setStartNode(m_baseNode);
             setStartOffset(m_baseOffset);
@@ -639,7 +681,7 @@ void KHTMLSelection::validate(ETextGranularity expandTo)
             setEndOffset(m_baseOffset);
         }
     }
-    else if (expandTo == WORD) {
+    else if (granularity == WORD) {
         int baseStartOffset = m_baseOffset;
         int baseEndOffset = m_baseOffset;
         int extentStartOffset = m_extentOffset;
@@ -648,13 +690,13 @@ void KHTMLSelection::validate(ETextGranularity expandTo)
             DOMString t = m_baseNode->nodeValue();
             QChar *chars = t.unicode();
             uint len = t.length();
-            findWordBoundary(chars, len, m_baseOffset, &baseStartOffset, &baseEndOffset);
+            KWQFindWordBoundary(chars, len, m_baseOffset, &baseStartOffset, &baseEndOffset);
         }
         if (m_extentNode && (m_extentNode->nodeType() == Node::TEXT_NODE || m_extentNode->nodeType() == Node::CDATA_SECTION_NODE)) {
             DOMString t = m_extentNode->nodeValue();
             QChar *chars = t.unicode();
             uint len = t.length();
-            findWordBoundary(chars, len, m_extentOffset, &extentStartOffset, &extentEndOffset);
+            KWQFindWordBoundary(chars, len, m_extentOffset, &extentStartOffset, &extentEndOffset);
         }
         if (m_baseIsStart) {
             setStartNode(m_baseNode);
@@ -669,7 +711,7 @@ void KHTMLSelection::validate(ETextGranularity expandTo)
             setEndOffset(baseEndOffset);
         }
     }
-    else {  // expandTo == LINE
+    else {  // granularity == LINE
         KHTMLSelection baseSelection = *this;
         KHTMLSelection extentSelection = *this;
         if (m_baseNode && (m_baseNode->nodeType() == Node::TEXT_NODE || m_baseNode->nodeType() == Node::CDATA_SECTION_NODE)) {
@@ -821,55 +863,6 @@ bool KHTMLSelection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2)
 }
 
 #if APPLE_CHANGES
-
-static void findWordBoundary(QChar *chars, int len, int position, int *start, int *end)
-{
-    TextBreakLocatorRef breakLocator;
-    OSStatus status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakWordMask, &breakLocator);
-    if (status == noErr) {
-        UniCharArrayOffset startOffset, endOffset;
-        status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, 0, (const UniChar *)chars, len, position, &endOffset);
-        if (status == noErr) {
-            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, &startOffset);
-        }
-        UCDisposeTextBreakLocator(&breakLocator);
-        if (status == noErr) {
-            *start = startOffset;
-            *end = endOffset;
-            return;
-        }
-    }
-    
-    // If Carbon fails (why would it?), do a simple space/punctuation boundary check.
-    if (chars[position].isSpace()) {
-        int pos = position;
-        while (chars[pos].isSpace() && pos >= 0)
-            pos--;
-        *start = pos+1;
-        pos = position;
-        while (chars[pos].isSpace() && pos < (int)len)
-            pos++;
-        *end = pos;
-    } else if (chars[position].isPunct()) {
-        int pos = position;
-        while (chars[pos].isPunct() && pos >= 0)
-            pos--;
-        *start = pos+1;
-        pos = position;
-        while (chars[pos].isPunct() && pos < (int)len)
-            pos++;
-        *end = pos;
-    } else {
-        int pos = position;
-        while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos >= 0)
-            pos--;
-        *start = pos+1;
-        pos = position;
-        while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos < (int)len)
-            pos++;
-        *end = pos;
-    }
-}
 
 static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset)
 {

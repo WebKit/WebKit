@@ -137,10 +137,10 @@ DOMPosition RenderReplaced::positionForCoordinates(int _x, int _y)
     RootInlineBox *root = box->root();
 
     int absx, absy;
-    absolutePosition(absx, absy);
+    containingBlock()->absolutePosition(absx, absy);
 
     int top = absy + root->topOverflow();
-    int bottom = absy + root->bottomOverflow();
+    int bottom = root->nextRootBox() ? absy + root->nextRootBox()->topOverflow() : absy + root->bottomOverflow();
 
     if (_y < top)
         return DOMPosition(element(), caretMinOffset()); // coordinates are above
@@ -149,7 +149,7 @@ DOMPosition RenderReplaced::positionForCoordinates(int _x, int _y)
         return DOMPosition(element(), caretMaxOffset()); // coordinates are below
     
     if (element()) {
-        if (_x <= absx + (width() / 2))
+        if (_x <= absx + xPos() + (width() / 2))
             return DOMPosition(element(), 0);
         return DOMPosition(element(), 1);
     }

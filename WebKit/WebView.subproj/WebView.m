@@ -2399,7 +2399,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveUpAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectUp granularity:WebSelectByCharacter];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveUpAndModifySelection:) with:sender];
@@ -2444,7 +2444,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveWordLeft:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordLeft:) with:sender];
@@ -2453,7 +2453,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveWordLeftAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordLeftAndModifySelection:) with:sender];
@@ -2462,7 +2462,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveWordRight:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordRight:) with:sender];
@@ -2471,7 +2471,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)moveWordRightAndModifySelection:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByWord];
         return;
     }
     [[self nextResponder] tryToPerform:@selector(moveWordRightAndModifySelection:) with:sender];

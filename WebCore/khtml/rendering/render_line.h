@@ -92,6 +92,7 @@ public:
 
     virtual InlineBox* firstLeafChild();
     virtual InlineBox* lastLeafChild();
+    InlineBox* closestLeafChildForXPos(int _x, int _tx);
         
     RenderObject* object() const { return m_object; }
 
@@ -195,6 +196,7 @@ public:
 
     virtual InlineBox* firstLeafChild();
     virtual InlineBox* lastLeafChild();
+    InlineBox* closestChildForXPos(int _x, int _tx);
         
     virtual void setConstructed() {
         InlineBox::setConstructed();

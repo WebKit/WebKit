@@ -2085,36 +2085,9 @@ DOMPosition RenderBlock::positionForCoordinates(int _x, int _y)
                 bottom = absy + root->bottomOverflow();
             // check if this root line box is located at this y coordinate
             if (_y >= top && _y < bottom && root->firstChild()) {
-                InlineBox *closestBox = 0;
-                bool useClosestBoxLeftEdge = true;
-
-                if (_x <= absx + root->firstChild()->m_x) {
-                    // if the x coordinate is to the left of the root box's first child, 
-                    // make the first child closest
-                    closestBox = root->firstChild(); 
-                }
-                else if (_x >= absx + root->lastChild()->m_x + root->lastChild()->m_width) {
-                    // if the x coordinate is to the right of the root box's last child, 
-                    // make the last child closest
-                    closestBox = root->lastChild(); 
-                    useClosestBoxLeftEdge = false;
-                }
-                else {
-                    // look for the closest child for this root;
-                    // check only the right edges, since the left edge of the first
-                    // box has already been checked
-                    for (InlineBox *box = root->firstChild(); box; box = box->nextOnLine()) {
-                        if (_x < absx + box->m_x + box->m_width) { 
-                            closestBox = box; 
-                            useClosestBoxLeftEdge = false;
-                            break;
-                        }
-                    }
-                }
-                if (closestBox) {
-                    RenderObject *renderer = useClosestBoxLeftEdge ? closestBox->firstLeafChild()->object() : closestBox->lastLeafChild()->object();
-                    return renderer->positionForCoordinates(_x, _y);
-                }
+                InlineBox *closestBox = root->closestLeafChildForXPos(_x, absx);
+                if (closestBox)
+                    return closestBox->object()->positionForCoordinates(_x, _y);
             }
         }
         return DOMPosition(element(), 0);

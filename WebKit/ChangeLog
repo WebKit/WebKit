@@ -1,3 +1,16 @@
+2004-04-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+         Added implementations for these methods.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView moveUpAndModifySelection:]):
+        (-[WebView moveWordLeft:]):
+        (-[WebView moveWordLeftAndModifySelection:]):
+        (-[WebView moveWordRight:]):
+        (-[WebView moveWordRightAndModifySelection:]):
+
 2004-04-20  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3622393>: When in stealth mode, visited webpage 
