@@ -40,7 +40,7 @@
     FNNotifyByPath((UInt8 *)[[path stringByDeletingLastPathComponent] UTF8String], kFNDirectoryModifiedMessage, kNilOptions);
     
     if([dataSource contentPolicy] == IFContentPolicyOpenExternally){
-        [IFDownloadHandler launchURL:[NSURL fileURLWithPath:path]];
+        [[self class] launchURL:[NSURL fileURLWithPath:path]];
     }
 }
 

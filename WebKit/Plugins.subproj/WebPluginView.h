@@ -16,7 +16,6 @@
 
 @interface IFPluginView : NSView
 {
-    IFPlugin *plugin;
     IFPluginNullEventSender *eventSender;
     unsigned argsCount;
     char **cAttributes, **cValues;
@@ -36,6 +35,7 @@
     NSURL *srcURL, *baseURL;
     NSTrackingRectTag trackingTag;
     NSMutableArray *streams;
+    NSMutableDictionary *notificationData;
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -52,7 +52,7 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode;
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode;
 -(void)stop;
 - (IFWebDataSource *)webDataSource;
 - (id <IFWebController>) webController;

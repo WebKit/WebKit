@@ -267,7 +267,13 @@ static const char * const stateNames[6] = {
     if (newState == IFWEBFRAMESTATE_COMPLETE && self == [[self controller] mainFrame]){
         WEBKITDEBUGLEVEL (WEBKIT_LOG_DOCUMENTLOAD, "completed %s (%f seconds)", [[[[self dataSource] inputURL] absoluteString] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
-
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSNumber numberWithInt:_private->state], IFPreviousFrameState,
+                    [NSNumber numberWithInt:newState], IFCurrentFrameState, nil];
+                    
+    [[NSNotificationCenter defaultCenter] postNotificationName:IFFrameStateChangedNotification object:self userInfo:userInfo];
+    
     _private->state = newState;
 }
 

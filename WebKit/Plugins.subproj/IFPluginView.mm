@@ -5,10 +5,13 @@
 
 #define USE_CARBON 1
 
+// FIXME: clean up these includes
+
 #import "IFPluginView.h"
 
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebFramePrivate.h>
 
 #import <AppKit/NSWindow_Private.h>
 #import <Carbon/Carbon.h>
@@ -254,7 +257,7 @@ static char *newCString(NSString *string)
     return cString;
 }
 
-- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plug url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
+- (id)initWithFrame:(NSRect)r plugin:(IFPlugin *)plugin url:(NSURL *)theURL mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
     NSString *baseURLString;
 
@@ -267,7 +270,6 @@ static char *newCString(NSString *string)
 
     mime = [mimeType retain];
     srcURL = [theURL retain];
-    plugin = [plug retain];
     
     // load the plug-in if it is not already loaded
     [plugin load];
@@ -319,6 +321,7 @@ static char *newCString(NSString *string)
     }
     
     streams = [[NSMutableArray alloc] init];
+    notificationData = [NSMutableDictionary dictionaryWithCapacity:1];
     
     // Initialize globals
     canRestart = YES;
@@ -341,7 +344,7 @@ static char *newCString(NSString *string)
     [streams release];
     [mime release];
     [srcURL release];
-    [plugin release];
+    [notificationData release];
     delete [] cAttributes;
     delete [] cValues;
     [super dealloc];
@@ -547,79 +550,129 @@ static char *newCString(NSString *string)
     }
 }
 
+- (void) frameStateChanged:(NSNotification *)notification
+{
+    IFWebFrame *frame;
+    IFWebFrameState frameState;
+    NSValue *notifyDataValue;
+    void *notifyData;
+    NSURL *url;
+    
+    frame = [notification object];
+    url = [[frame dataSource] inputURL];
+    notifyDataValue = [notificationData objectForKey:url];
+    
+    if(!notifyDataValue)
+        return;
+    
+    notifyData = [notifyDataValue pointerValue];
+    frameState = (IFWebFrameState)[[[notification userInfo] objectForKey:IFCurrentFrameState] intValue];
+    if(frameState == IFWEBFRAMESTATE_COMPLETE){
+        NPP_URLNotify(instance, [[url absoluteString] cString], NPRES_DONE, notifyData);
+    }
+    //FIXME: Need to send other NPReasons
+}
 
 #pragma mark PLUGIN-TO-BROWSER
 
-- (NSURL *)URLForString:(NSString *)URLString
+- (NPError) loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
 {
-    if([URLString _IF_looksLikeAbsoluteURL])
-        return [NSURL URLWithString:URLString];
-    else
-        return [NSURL URLWithString:URLString relativeToURL:baseURL];
-}
-
-
--(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
-{
-    NSURL *requestedURL;
     IFPluginStream *stream;
     IFWebDataSource *dataSource;
     IFWebFrame *frame;
+    NSURL *url;
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", url, target);
- 
-    requestedURL = [self URLForString:[NSString stringWithCString:url]];
+    if([URLString _IF_looksLikeAbsoluteURL])
+        url = [NSURL URLWithString:URLString];
+    else
+        url = [NSURL URLWithString:URLString relativeToURL:baseURL];
     
-    if(!requestedURL)
+    if(!url)
         return NPERR_INVALID_URL;
     
-    if(target == NULL){ 
-        // Send data to plug-in if target is null
-        stream = [[IFPluginStream alloc] initWithURL:requestedURL pluginPointer:instance notifyData:notifyData];
+    if(!target){
+        stream = [[IFPluginStream alloc] initWithURL:url pluginPointer:instance notifyData:notifyData attributes:attributes];
         if(stream){
             [streams addObject:stream];
             [stream release];
-        }
-    
-    }else{
-        dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL] autorelease];
-        frame = [webFrame frameNamed:[NSString stringWithCString:target]];
-        if(frame){
-            [frame setProvisionalDataSource:dataSource];
-            [frame startLoading];
         }else{
-            //FIXME: Create new window here (2931449)
+            return NPERR_INVALID_URL;
         }
-        // FIXME: Need to send NPP_URLNotify
+    }else{
+        frame = [webFrame frameNamed:target];
+        if(!frame){
+            //FIXME: Create new window here (2931449)
+            return NPERR_GENERIC_ERROR;
+        }
+        if(notifyData){
+            if([target isEqualToString:@"_self"] || [target isEqualToString:@"_current"] || 
+               [target isEqualToString:@"_parent"] || [target isEqualToString:@"_top"]){
+                // return error since notification can't be sent to a plug-in that will no longer exist
+                return NPERR_INVALID_PARAM;
+            }
+            [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:url];
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(frameStateChanged:) name:IFFrameStateChangedNotification object:frame];
+        }
+        dataSource = [[[IFWebDataSource alloc] initWithURL:url attributes:attributes] autorelease];
+        [frame setProvisionalDataSource:dataSource];
+        [frame startLoading];
     }
     return NPERR_NO_ERROR;
 }
 
+-(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
+{
+    NSString *theTarget = nil;
+        
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURLNotify: %s target: %s\n", url, target);
+        
+    if(!url)
+        return NPERR_INVALID_URL;
+        
+    if(target)
+        theTarget = [NSString stringWithCString:url];
+    
+    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:notifyData andHandleAttributes:nil];
+}
+
 -(NPError)getURL:(const char *)url target:(const char *)target
 {
+    NSString *theTarget = nil;
+    
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_GetURL: %s target: %s\n", url, target);
-    return [self getURLNotify:url target:target notifyData:NULL];
+    
+    if(!url)
+        return NPERR_INVALID_URL;
+        
+    if(target)
+        theTarget = [NSString stringWithCString:url];
+    
+    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget withNotifyData:nil andHandleAttributes:nil];
 }
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
-    NSURL *requestedURL;
     NSDictionary *attributes=nil;
     NSData *postData;
-    IFWebDataSource *dataSource;
-    IFPluginStream *stream;
-    IFWebFrame *frame;
-            
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "postURLNotify: %s\n", url);
+    NSURL *tempURL;
+    NSString *path, *theTarget = nil;
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURLNotify: %s\n", url);
  
-    requestedURL = [self URLForString:[NSString stringWithCString:url]];
-    
-    if(!requestedURL)
+    if(!url)
         return NPERR_INVALID_URL;
-    
+        
+    if(target)
+        theTarget = [NSString stringWithCString:url];
+ 
     if(file){
-        // FIXME: Need function to convert from carbon path to posix
-        postData = [NSData dataWithContentsOfFile:nil];
+        if([[NSString stringWithCString:buf] _IF_looksLikeAbsoluteURL]){
+            tempURL = [NSURL fileURLWithPath:[NSString stringWithCString:url]];
+            path = [tempURL path];
+        }else{
+            path = [NSString stringWithCString:buf];
+        }
+        postData = [NSData dataWithContentsOfFile:path];
     }else{
         postData = [NSData dataWithBytes:buf length:len];
     }
@@ -628,30 +681,22 @@ static char *newCString(NSString *string)
         postData,	IFHTTPURLHandleRequestData,
         @"POST", 	IFHTTPURLHandleRequestMethod, nil];
                 
-    if(target == NULL){ 
-        // Send data to plug-in if target is null
-        stream = [[IFPluginStream alloc] initWithURL:requestedURL pluginPointer:instance notifyData:notifyData attributes:attributes];
-        if(stream){
-            [streams addObject:stream];
-            [stream release];
-        }  
-    }else{
-        dataSource = [[[IFWebDataSource alloc] initWithURL:requestedURL attributes:attributes] autorelease];
-        frame = [webFrame frameNamed:[NSString stringWithCString:target]];
-        if(frame){
-            [frame setProvisionalDataSource:dataSource];
-            [frame startLoading];
-        }else{
-            //FIXME: Create new window here (2931449)
-        }
-        // FIXME: Need to send NPP_URLNotify
-    }
-    return NPERR_NO_ERROR;
+    return [self loadURL:[NSString stringWithCString:url] inTarget:theTarget 
+                withNotifyData:notifyData andHandleAttributes:attributes];
 }
 
 -(NPError)postURL:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL\n");
+    NSString *theTarget = nil;
+        
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_PostURL: %s\n", url);
+    
+    if(!url)
+        return NPERR_INVALID_URL;
+        
+    if(target)
+        theTarget = [NSString stringWithCString:url];
+        
     return [self postURLNotify:url target:target len:len buf:buf file:file notifyData:NULL];
 }
 
@@ -687,20 +732,20 @@ static char *newCString(NSString *string)
 
 -(void)invalidateRect:(NPRect *)invalidRect
 {
-    [self sendUpdateEvent];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRect\n");
+    [self sendUpdateEvent];
 }
 
 -(void)invalidateRegion:(NPRegion)invalidateRegion
 {
-    [self sendUpdateEvent];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_InvalidateRegion\n");
+    [self sendUpdateEvent];
 }
 
 -(void)forceRedraw
 {
-    [self sendUpdateEvent];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "forceRedraw\n");
+    [self sendUpdateEvent];
 }
 
 
@@ -738,8 +783,4 @@ static char *newCString(NSString *string)
     return NPP_URLNotify;
 }
 
-
-
 @end
-
-

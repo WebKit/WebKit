@@ -10,7 +10,7 @@
     NSString *MIMEType, *URLString;
 }
 
-- initWithMIMEHandler:(IFMIMEHandler *)mimeHandler URL:(NSURL *)URL;
+- initWithURL:(NSURL *)URL MIMEType:(NSString *)theMIMEType MIMEHandlerType:(IFMIMEHandlerType)theMIMEHandlerType;
 - (NSString *) HTMLDocument;
 - (NSString *) textHTMLDocumentBottom;
 

@@ -15,10 +15,10 @@ static BOOL textDocumentLoaded = NO;
 
 @implementation IFContentHandler
 
-- initWithMIMEHandler:(IFMIMEHandler *)mimeHandler URL:(NSURL *)URL
+- initWithURL:(NSURL *)URL MIMEType:(NSString *)theMIMEType MIMEHandlerType:(IFMIMEHandlerType)theMIMEHandlerType;
 {
-    handlerType = [mimeHandler handlerType];
-    MIMEType = [[mimeHandler MIMEType] retain];
+    handlerType = theMIMEHandlerType;
+    MIMEType = [theMIMEType retain];
     URLString = [[URL absoluteString] retain];
     
     return self;

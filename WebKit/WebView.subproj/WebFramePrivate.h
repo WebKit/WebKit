@@ -30,6 +30,11 @@ typedef enum {
     IFWEBFRAMESTATE_COMPLETE = 5
 } IFWebFrameState;
 
+#define IFFrameStateChangedNotification @"IFFrameStateChangedNotification"
+
+#define IFPreviousFrameState @"IFPreviousFrameState"
+#define IFCurrentFrameState  @"IFCurrentFrameState"
+
 @interface IFWebFramePrivate : NSObject
 {
     NSString *name;

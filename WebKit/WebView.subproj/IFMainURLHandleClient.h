@@ -21,12 +21,11 @@ class KHTMLPart;
     id dataSource;
     KHTMLPart *part;
     BOOL sentFakeDocForNonHTMLContentType, processedBufferedData, downloadStarted, loadFinished, examinedInitialData;
-    IFMIMEHandler *mimeHandler;
     IFMIMEHandlerType handlerType;
     IFDownloadHandler *downloadHandler;
     IFContentPolicy contentPolicy;
     NSData *resourceData;
-    NSString *encoding;
+    NSString *encoding, *MIMEType;
     NSURL *url;
 }
 - initWithDataSource: (IFWebDataSource *)ds part: (KHTMLPart *)p;

@@ -10,7 +10,6 @@
 
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFBaseWebControllerPrivate.h>
-#import <WebKit/IFMIMEDatabase.h>
 #import <WebKit/WebKitDebug.h>
 #import <WebKit/IFContentHandler.h>
 #import <WebKit/IFDownloadHandler.h>
@@ -50,10 +49,10 @@
 {
     part->deref();
     [dataSource release];
-    [mimeHandler release];
     [resourceData release];
     [encoding release];
     [url release];
+    [MIMEType release];
     [super dealloc];
 }
 
@@ -66,7 +65,6 @@
     if(loadFinished)
         [self processData:resourceData isComplete:YES];
 }
-
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
@@ -119,19 +117,24 @@
     
     // Check the mime type and ask the client for the content policy.
     if(!examinedInitialData){
-        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", [[sender contentType] cString]);
-        [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:[sender contentType]];
+        MIMEType = [[sender contentType] retain];
+        WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", [MIMEType cString]);
+        [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:MIMEType];
         
         // FIXME: Remove/replace IFMIMEHandler stuff
-        mimeHandler = [[[IFMIMEDatabase sharedMIMEDatabase] MIMEHandlerForMIMEType:[sender contentType]] retain];
-        handlerType = [mimeHandler handlerType];
+        handlerType = [IFMIMEHandler MIMEHandlerTypeForMIMEType:MIMEType];
         
         encoding = [[sender characterSet] retain];
         url = [[sender url] retain];
         examinedInitialData = YES;
     }
     
-    if(contentPolicy != IFContentPolicyNone && contentPolicy != IFContentPolicyIgnore){
+    if(contentPolicy == IFContentPolicyIgnore){
+        [sender cancelLoadInBackground];
+        return;
+    }
+    
+    if(contentPolicy != IFContentPolicyNone){
         if(!processedBufferedData){
             // process all data that has been received now that we have a content policy
             [self processData:[sender resourceData] isComplete:NO];
@@ -139,10 +142,6 @@
         }else{
             [self processData:data isComplete:NO];
         }
-    }
-    
-    if(contentPolicy == IFContentPolicyIgnore){
-        [sender cancelLoadInBackground];
     }
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", contentLengthReceived, contentLength);
@@ -207,7 +206,7 @@
                 
             // For a non-html document, create html doc that embeds it.
             if (!sentFakeDocForNonHTMLContentType) {
-                contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:url];
+                contentHandler = [[IFContentHandler alloc] initWithURL:url MIMEType:MIMEType MIMEHandlerType:handlerType];
                 fakeHTMLDocument = [contentHandler HTMLDocument];
                 fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
                 part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));
@@ -223,18 +222,18 @@
     }
     
     else if(contentPolicy == IFContentPolicySave || contentPolicy == IFContentPolicyOpenExternally){
-            if(!downloadStarted){
+        if(!downloadStarted){
+        
+            // If this is a download, detach the provisionalDataSource from the frame
+            // and have downloadHandler retain it.
+            downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
+            frame = [dataSource webFrame];
+            [frame->_private setProvisionalDataSource:nil];
             
-                // If this is a download, detach the provisionalDataSource from the frame
-                // and have downloadHandler retain it.
-                downloadHandler = [[IFDownloadHandler alloc] initWithDataSource:dataSource];
-                frame = [dataSource webFrame];
-                [frame->_private setProvisionalDataSource:nil];
-                
-                // go right to locationChangeDone as the data source never gets committed.
-                [[dataSource _locationChangeHandler] locationChangeDone:nil];
-                downloadStarted = YES;
-            }
+            // go right to locationChangeDone as the data source never gets committed.
+            [[dataSource _locationChangeHandler] locationChangeDone:nil];
+            downloadStarted = YES;
+        }
     }
     
     if(complete)
@@ -249,7 +248,7 @@
     
     if(contentPolicy == IFContentPolicyShow){
         if(handlerType == IFMIMEHANDLERTYPE_TEXT) {
-            contentHandler = [[IFContentHandler alloc] initWithMIMEHandler:mimeHandler URL:url];
+            contentHandler = [[IFContentHandler alloc] initWithURL:url MIMEType:MIMEType MIMEHandlerType:IFMIMEHANDLERTYPE_TEXT];
             fakeHTMLDocument = [contentHandler textHTMLDocumentBottom];
             fakeHTMLDocumentBytes = [fakeHTMLDocument cString];
             part->slotData(encoding, (const char *)fakeHTMLDocumentBytes, strlen(fakeHTMLDocumentBytes));

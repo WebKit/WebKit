@@ -10,103 +10,55 @@
 #import <WebKit/WebKitDebug.h>
 #import <IFPluginDatabase.h>
 
-static NSArray *MIMETypes = nil;
+
+// FIXME: This code should be replaced by the MIME type DB 2927855
 
 @implementation IFMIMEHandler
 
-+ (NSArray *)showableMIMETypes
++ (IFMIMEHandlerType) MIMEHandlerTypeForMIMEType:(NSString *)MIMEType
 {
-    if(!MIMETypes){
-        MIMETypes = [[NSArray arrayWithObjects:
-        @"text/plain",
-        @"text/html",
+    NSArray *pluginTypes;
     
-        //@"image/pict",
-        //@"application/postscript",
-        //@"image/x-quicktime",
-        //@"image/x-targa",
-        //@"image/x-sgi",
-        //@"image/x-rgb",
-        //@"image/x-macpaint",
-        //@"image/x-bmp",
-        //@"image/tiff",
-        //@"image/x-tiff",
-        @"image/png",
-        @"image/gif",
-        @"image/jpg",
-        @"image/jpeg", nil] arrayByAddingObjectsFromArray:[[IFPluginDatabase installedPlugins] allHandledMIMETypes]];
-        [MIMETypes retain];
+    if(!MIMEType){
+        return IFMIMEHANDLERTYPE_NIL;
+    }else if([MIMEType isEqualToString:@"text/html"]){
+        return IFMIMEHANDLERTYPE_HTML;
+    }else if([MIMEType hasPrefix:@"text/"] && ![MIMEType isEqualToString:@"text/rtf"]){
+        return IFMIMEHANDLERTYPE_TEXT;
+    }else if([MIMEType isEqualToString:@"image/jpg"] || [MIMEType isEqualToString:@"image/jpeg"] || 
+             [MIMEType isEqualToString:@"image/gif"] || [MIMEType isEqualToString:@"image/png"]){
+        return IFMIMEHANDLERTYPE_IMAGE;
+    }else{
+        pluginTypes = [[IFPluginDatabase installedPlugins] allHandledMIMETypes];
+        if([pluginTypes containsObject:MIMEType]){
+            return IFMIMEHANDLERTYPE_PLUGIN;
+        }else{
+            return IFMIMEHANDLERTYPE_APPLICATION;
+        }
     }
-    return MIMETypes;
 }
 
-- initWithMIMEType:(NSString *)MIME handlerType:(IFMIMEHandlerType)hType handlerName:(NSString *)handler
++ (BOOL) canShowMIMEType:(NSString *)MIMEType
 {
-    MIMEType = [MIME retain];
-    handlerName = [handler retain];
-    handlerType = hType; 
+    NSArray *pluginTypes;
     
-    return self;
-}
-
-
-+ (void) saveFileWithPath:(NSString *)path andData:(NSData *)data
-{
-    NSFileManager *fileManager;
+    if(!MIMEType)
+        return YES;
     
-    // FIXME: Should probably not replace existing file
-    // FIXME: Should report error if there is one
-    fileManager = [NSFileManager defaultManager];
-    [fileManager createFileAtPath:path contents:data attributes:nil];
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download complete. Saved to: %s", [path cString]);
-    
-    // Send Finder notification
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Notifying Finder");
-    FNNotifyByPath([[path stringByDeletingLastPathComponent] cString], kFNDirectoryModifiedMessage, kNilOptions);
-}
-
-+ (void) saveAndOpenFileWithPath:(NSString *)path andData:(NSData *)data
-{
-    CFURLRef pathURL;
-    
-    [IFMIMEHandler saveFileWithPath:path andData:data];
-    pathURL = CFURLCreateWithFileSystemPath(kCFAllocatorDefault, (CFStringRef)path, kCFURLPOSIXPathStyle, FALSE);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD,"Opening: %s", [path cString]);
-    LSOpenCFURLRef(pathURL, NULL);
-    CFRelease(pathURL);
-}
-
-// Accessor methods
-- (NSString *)MIMEType
-{
-    return MIMEType;
-}
-
-- (NSString *)handlerName
-{
-    return handlerName;
-}
-
-- (IFMIMEHandlerType)handlerType
-{
-    return handlerType;
-}
-
-- (NSString *) description
-{
-    NSString *handlerTypeString = nil;
-    if(handlerType == IFMIMEHANDLERTYPE_HTML)
-        handlerTypeString = @"IFMIMEHANDLERTYPE_HTML";
-    else if(handlerType == IFMIMEHANDLERTYPE_IMAGE)
-        handlerTypeString = @"IFMIMEHANDLERTYPE_IMAGE";
-    else if(handlerType == IFMIMEHANDLERTYPE_TEXT)
-        handlerTypeString = @"IFMIMEHANDLERTYPE_TEXT";
-    else if(handlerType == IFMIMEHANDLERTYPE_PLUGIN)
-        handlerTypeString = @"IFMIMEHANDLERTYPE_PLUGIN";
-    else if(handlerType == IFMIMEHANDLERTYPE_APPLICATION)
-        handlerTypeString = @"IFMIMEHANDLERTYPE_APPLICATION";
-    return [NSString stringWithFormat:@"MIME TYPE: %@, HANDLER TYPE: %@, HANDLER NAME: %@", 
-                MIMEType, handlerTypeString, handlerName];
+    if(([MIMEType hasPrefix:@"text/"] && ![MIMEType isEqualToString:@"text/rtf"]) ||
+       [MIMEType isEqualToString:@"image/jpg"]  ||
+       [MIMEType isEqualToString:@"image/jpeg"] ||
+       [MIMEType isEqualToString:@"image/gif"]  || 
+       [MIMEType isEqualToString:@"image/png"]){
+        return YES;
+    }else{
+        pluginTypes = [[IFPluginDatabase installedPlugins] allHandledMIMETypes];
+        if([pluginTypes containsObject:MIMEType]){
+            return YES;
+        }else{
+            return NO;
+        }
+    }
 }
 
 @end

@@ -1,3 +1,43 @@
+2002-05-22  Chris Blumenberg  <cblu@apple.com>
+
+	- Removed obsolete MIME/download related code.
+	- Minor clean-ups.
+	- Made WebKit support all text/* MIME types.
+	- Now send NPP_URLNotify when pages requested by plug-ins are loaded.
+	- Simplified NPP_Get/NPP_Post code.
+	
+	* MIME.subproj/IFContentHandler.h:
+	* MIME.subproj/IFContentHandler.m:
+	* MIME.subproj/IFDownloadHandler.mm:
+	* MIME.subproj/IFMIMEDatabase.h: Removed.
+	* MIME.subproj/IFMIMEDatabase.m: Removed.
+	* MIME.subproj/IFMIMEHandler.h:
+	* MIME.subproj/IFMIMEHandler.m:
+	(+[IFMIMEHandler MIMEHandlerTypeForMIMEType:]):
+	(+[IFMIMEHandler canShowMIMEType:]):
+	* Plugins.subproj/IFPluginView.h:
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView initWithFrame:plugin:url:mime:arguments:mode:]):
+	(-[IFPluginView dealloc]):
+	(-[IFPluginView frameStateChanged:]):
+	(-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):
+	(-[IFPluginView getURLNotify:target:notifyData:]):
+	(-[IFPluginView getURL:target:]):
+	(-[IFPluginView postURLNotify:target:len:buf:file:notifyData:]):
+	(-[IFPluginView postURL:target:len:buf:file:]):
+	(-[IFPluginView invalidateRect:]):
+	(-[IFPluginView invalidateRegion:]):
+	(-[IFPluginView forceRedraw]):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient dealloc]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFMainURLHandleClient processData:isComplete:]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _setState:]):
+
 2002-05-21  Richard J. Williamson  <rjw@apple.com>
 
     Fixed baseline regression.  Obvious of sites that have tables w/ backgrounds,
