@@ -1,3 +1,13 @@
+2002-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+	Keep the triggering event around on the data source, so it can be
+	used with redirects.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadRequest:triggeringEvent:]):
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:]):
+        (-[WebFrame _postWithURL:data:contentType:]):
+
 2002-11-12  Darin Adler  <darin@apple.com>
 
 	- improved the code that manages observing the window and superview

@@ -957,9 +957,11 @@ static const char * const stateNames[] = {
     [self _recursiveGoToItem:item fromItem:currItem withLoadType:type];
 }
 
-- (void)_loadRequest:(WebResourceRequest *)request
+- (void)_loadRequest:(WebResourceRequest *)request triggeringEvent:(NSEvent *)event
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    [newDataSource _setTriggeringEvent:event];
+
     if ([self setProvisionalDataSource:newDataSource]) {
         [self startLoading];
     }
@@ -1061,6 +1063,7 @@ static const char * const stateNames[] = {
         // that has subframes that are different than what we're displaying (in other words, a link
         // from within a frame is trying to reload the frameset into _top).
         WebDataSource *dataSrc = [self dataSource];
+	[dataSrc _setTriggeringEvent:event];
 
         // save scroll position before we open URL, which will jump to anchor
         [self _saveScrollPositionToItem:[_private currentItem]];
@@ -1082,7 +1085,7 @@ static const char * const stateNames[] = {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
 
-        [self _loadRequest:request];
+        [self _loadRequest:request triggeringEvent:event];
         // NB: must be done after loadRequest:, which sets the provDataSource, which
         //     inits the load type to Standard
         [self _setLoadType:loadType];
@@ -1148,7 +1151,7 @@ static const char * const stateNames[] = {
     [request setData:data];
     [request setContentType:contentType];
     [request setReferrer:[_private->bridge referrer]];
-    [self _loadRequest:request];
+    [self _loadRequest:request triggeringEvent:nil];
     [request release];
 }
 
