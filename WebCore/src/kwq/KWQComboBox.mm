@@ -95,6 +95,17 @@ void QComboBox::insertItem(const QString &text, int index)
 }
 
 
+QSize QComboBox::sizeHint() const 
+{
+    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
+    
+    [comboBox sizeToFit];
+    
+    NSRect vFrame = [comboBox frame];
+    return QSize((int)vFrame.size.width,(int)vFrame.size.height);
+}
+
+
 void QComboBox::clear()
 {
     KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();

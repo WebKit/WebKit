@@ -109,7 +109,8 @@ QWidget::~QWidget()
 
 QSize QWidget::sizeHint() const 
 {
-    _logNeverImplemented();
+    // May be overriden by subclasses.
+    return QSize(0,0);
 }
 
 void QWidget::resize(int w, int h) 
@@ -475,12 +476,14 @@ void QWidget::erase()
 QWidget *QWidget::focusWidget() const
 {
     _logNeverImplemented();
+    return 0;
 }
 
 
 QPoint QWidget::mapFromGlobal(const QPoint &) const
 {
     _logNeverImplemented();
+    return QPoint(0,0);
 }
 
 
