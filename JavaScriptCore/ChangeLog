@@ -1,3 +1,14 @@
+2004-01-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3528324. 
+
+	The run loop that is used to execute JavaScript (in practice, always the main run loop) is held in a class variable.  It is set and retained once and should not be released.  Unfortunately is it being released when the 'root' object on a LiveConnect applet is released.  This has the symptom of eventually causing an deallocation of the main run loop!  Usually after about 5 instantiations/destructions of a LiveConnect applet.  The CFRelease of the run loop was removed.
+
+        Reviewed by Hyatt.
+
+        * bindings/jni_jsobject.h:
+        (KJS::Bindings::RootObject::~RootObject):
+
 === Safari-121 ===
 
 === Safari-120 ===
