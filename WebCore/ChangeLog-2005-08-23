@@ -1,3 +1,18 @@
+2002-12-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3116149 -- REGRESSION: assert on invalid encoding trying to show accuweather.com source
+
+	The regression was caused when we updated the View Source window to try to get the encoding right.
+
+        * kwq/WebCoreBridge.mm: (+[WebCoreBridge stringWithData:textEncoding:]):
+	Make this function decode the string as Windows Latin-1 if the passed-in encoding is
+	invalid or ISO Latin-1, since that's what we always want.
+
+        * kwq/mac-encodings.txt: Add "8859_1" since we have now seen it "in the wild".
+        * kwq/KWQCharsetData.c: Check in new version of generated file.
+
 2002-12-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for javadoc page.  It specified an invalid unit, and our

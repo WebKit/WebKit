@@ -5,7 +5,7 @@
 
 MacRoman: macintosh, x-mac-roman
 WindowsLatin1: windows-1252, winlatin1, x-ansi
-ISOLatin1: iso-8859-1, iso8859-1
+ISOLatin1: 8859_1, iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep
 ASCII: iso-ir-6us, us-ascii
 Unicode: iso-10646-ucs-2 # utf-16be, unicodeFFFE, unicode? (would adding these help us?)

@@ -6,6 +6,7 @@ static const CharsetEntry table[] = {
     { "windows-1252", 2252, kCFStringEncodingWindowsLatin1 },
     { "winlatin1", 2252, kCFStringEncodingWindowsLatin1 },
     { "x-ansi", 2252, kCFStringEncodingWindowsLatin1 },
+    { "8859_1", 4, kCFStringEncodingISOLatin1 },
     { "cp819", 4, kCFStringEncodingISOLatin1 },
     { "csisolatin1", 4, kCFStringEncodingISOLatin1 },
     { "ibm819", 4, kCFStringEncodingISOLatin1 },

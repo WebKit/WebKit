@@ -879,6 +879,9 @@ DOM::Node next = n.firstChild();
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding
 {
+    if (textEncoding == kCFStringEncodingInvalidId || textEncoding == kCFStringEncodingISOLatin1) {
+        textEncoding = kCFStringEncodingWindowsLatin1;
+    }
     QString string = QString::fromStringWithEncoding((const char*)[data bytes], [data length], textEncoding);
     return string.getNSString();
 }
