@@ -47,6 +47,7 @@ using DOM::ElementImpl;
 using DOM::HTMLAnchorElementImpl;
 using khtml::RenderObject;
 using khtml::RenderWidget;
+using khtml::RenderCanvas;
 
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
@@ -57,38 +58,6 @@ using khtml::RenderWidget;
     [super init];
     m_renderer = renderer;
     return self;
-}
-
--(long)x
-{
-    if (!m_renderer)
-        return 0;
-    int x, y;
-    m_renderer->absolutePosition(x,y);
-    return x;
-}
-
--(long)y
-{
-    if (!m_renderer)
-        return 0;
-    int x, y;
-    m_renderer->absolutePosition(x,y);
-    return y;
-}
-
--(long)width
-{
-    if (!m_renderer)
-        return 0;
-    return m_renderer->width();
-}
-
--(long)height
-{
-    if (!m_renderer)
-        return 0;
-    return m_renderer->height();
 }
 
 -(BOOL)detached
@@ -306,12 +275,28 @@ using khtml::RenderWidget;
 
 -(NSValue*)position
 {
-    return [NSValue valueWithPoint: NSMakePoint([self x],[self y])];
+    int x = 0;
+    int y = 0;
+    if (m_renderer) {
+        m_renderer->absolutePosition(x, y);
+        y += m_renderer->height(); // The API wants the lower-left corner, not the upper-left.
+    }
+    NSPoint point = NSMakePoint(x, y);
+    if (m_renderer && m_renderer->canvas() && m_renderer->canvas()->view()) {
+        NSView* view = m_renderer->canvas()->view()->getDocumentView();
+        point = [[view window] convertBaseToScreen: [view convertPoint: point toView:nil]];
+    }
+    return [NSValue valueWithPoint: point];
 }
 
 -(NSValue*)size
 {
-    return [NSValue valueWithSize: NSMakeSize([self width],[self height])];
+    long width = 0, height = 0;
+    if (m_renderer) {
+        width = m_renderer->width();
+        height = m_renderer->height();
+    }
+    return [NSValue valueWithSize: NSMakeSize(width, height)];
 }
 
 -(BOOL)accessibilityIsIgnored

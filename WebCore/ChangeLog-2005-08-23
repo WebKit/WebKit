@@ -1,3 +1,15 @@
+2003-12-05  David Hyatt  <hyatt@apple.com>
+
+	Fix the position method to return screen coords like it should and to use the lower left corner instead of
+	the upper left.
+	
+        Reviewed by john
+
+        * kwq/KWQAccObject.h:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject position]):
+        (-[KWQAccObject size]):
+
 2003-12-07  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -37,11 +37,6 @@ namespace khtml {
 
 -(id)initWithRenderer:(khtml::RenderObject*)renderer;
 
--(long)x;
--(long)y;
--(long)width;
--(long)height;
-
 -(BOOL)detached;
 -(void)detach;
 
