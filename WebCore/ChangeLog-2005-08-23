@@ -1,3 +1,35 @@
+2004-11-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3879569> Many leaks in EditCommand mechanism, seen in Mail
+
+        Fixed a couple of object lifetime issues. The EditCommand class used to hold an
+        EditCommandPtr to its parent, but this caused a a reference cycle in composite 
+        commands as the children held a ref to their parent. Now, the parent variable
+        is a non-retained reference to an EditCommand *. It would be nice to have a 
+        weak reference to the parent or even override deref in composite commands (but I
+        can't since deref() is not virtual). However, this should be OK since any
+        dangling parent pointer is a sign of a bigger object lifetime problem that
+        would need to be addressed anyway.
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::CSSStyleDeclarationImpl): Fix bug in constructor that takes a 
+        QPtrList<CSSProperty> *. List values must be copied into newly-allocated list, rather than
+        just assigning the list variable passed in to the local list variable, or the list will be 
+        double-deleted.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommand::setStartingSelection): No longer call get(). m_parent is no longer a smart pointer.
+        (khtml::EditCommand::setEndingSelection): Ditto.
+        (khtml::EditCommand::assignTypingStyle): Short-circuit if passed in style is identical to current style.
+        Unrelated to the change, but saves some ref's and deref's.
+        (khtml::EditCommand::setTypingStyle): No longer call get(). m_parent is no longer a smart pointer.
+        * khtml/editing/htmlediting.h: Change m_parent to a EditCommand *. Was an EditCommandPtr. Using an
+        EditCommandPtr caused a reference cycle in composite commands as the children held a ref to their parent.
+        (khtml::EditCommand::parent): No longer call get(). m_parent is no longer a smart pointer.
+
 2004-11-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.

@@ -492,18 +492,21 @@ void EditCommand::doReapply()
 
 void EditCommand::setStartingSelection(const Selection &s)
 {
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent.get())
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
         cmd->m_startingSelection = s;
 }
 
 void EditCommand::setEndingSelection(const Selection &s)
 {
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent.get())
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
         cmd->m_endingSelection = s;
 }
 
 void EditCommand::assignTypingStyle(CSSStyleDeclarationImpl *style)
 {
+    if (m_typingStyle == style)
+        return;
+        
     CSSStyleDeclarationImpl *old = m_typingStyle;
     m_typingStyle = style;
     if (m_typingStyle)
@@ -516,7 +519,7 @@ void EditCommand::setTypingStyle(CSSStyleDeclarationImpl *style)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent.get())
+    for (EditCommand *cmd = this; cmd; cmd = cmd->m_parent)
         cmd->assignTypingStyle(style);
 }
 

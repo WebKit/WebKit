@@ -63,7 +63,17 @@ CSSStyleDeclarationImpl::CSSStyleDeclarationImpl(CSSRuleImpl *parent)
 CSSStyleDeclarationImpl::CSSStyleDeclarationImpl(CSSRuleImpl *parent, QPtrList<CSSProperty> *lstValues)
     : StyleBaseImpl(parent)
 {
-    m_lstValues = lstValues;
+    if (!lstValues) {
+        m_lstValues = 0;
+    }
+    else {
+        m_lstValues = new QPtrList<CSSProperty>;
+        m_lstValues->setAutoDelete(true);
+
+        QPtrListIterator<CSSProperty> lstValuesIt(*lstValues);
+        for (lstValuesIt.toFirst(); lstValuesIt.current(); ++lstValuesIt)
+            m_lstValues->append(new CSSProperty(*lstValuesIt.current()));
+    }
     m_node = 0;
 }
 

@@ -120,8 +120,8 @@ public:
     EditCommand(DOM::DocumentImpl *);
     virtual ~EditCommand();
 
-    bool isCompositeStep() const { return m_parent.notNull(); }
-    EditCommand *parent() const { return m_parent.get(); }
+    bool isCompositeStep() const { return m_parent != 0; }
+    EditCommand *parent() const { return m_parent; }
     void setParent(EditCommand *parent) { m_parent = parent; }
 
     enum ECommandState { NotApplied, Applied };
@@ -163,7 +163,7 @@ private:
     khtml::Selection m_startingSelection;
     khtml::Selection m_endingSelection;
     DOM::CSSStyleDeclarationImpl *m_typingStyle;
-    EditCommandPtr m_parent;
+    EditCommand *m_parent;
 };
 
 //------------------------------------------------------------------------------------------
