@@ -1,3 +1,13 @@
+2003-03-27  Chris Blumenberg  <cblu@apple.com>
+
+	- Allow Netscape plug-ins that don't have resource files to load in Safari.
+	- Added more error handling when loading plug-ins.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+
 2003-03-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

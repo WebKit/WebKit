@@ -224,6 +224,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 - initWithPath:(NSString *)pluginPath
 {
     [super initWithPath:pluginPath];
+
+    resourceRef = -1;
     
     OSType type = 0;
 
@@ -291,6 +293,26 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     return isLoaded;
 }
 
+- (void)unloadWithoutShutdown
+{
+    if (!isLoaded) {
+        return;
+    }
+
+    if (resourceRef != -1) {
+        [self closeResourceFile:resourceRef];
+    }
+
+    if (isBundle) {
+        CFBundleUnloadExecutable([bundle _cfBundle]);
+    } else {
+        CloseConnection(&connID);
+    }
+
+    LOG(Plugins, "Plugin Unloaded");
+    isLoaded = NO;
+}
+
 - (BOOL)load
 {    
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
@@ -299,7 +321,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     NPError npErr;
     OSErr err;
 
-
     if (isLoaded) {
         return YES;
     }
@@ -307,18 +328,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if (isBundle) {
         CFBundleRef cfBundle = [bundle _cfBundle];
         if (!CFBundleLoadExecutable(cfBundle)) {
-            return NO;
+            goto abort;
         }
+        
+        isLoaded = YES;
+        
         if (isCFM) {
             pluginMainFunc = (MainFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("main") );
-            if(!pluginMainFunc)
-                return NO;
+            if(!pluginMainFunc) {
+                goto abort;
+            }
         } else {
             NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
             NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
             NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
-            if (!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown) {
-                return NO;
+            if (NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown) {
+                goto abort;
             }
         }
         BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
@@ -330,21 +355,24 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if (err != noErr) {
             ERROR("FSPathMakeRef failed. Error=%d", err);
-            return NO;
+            goto abort;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if (err != noErr) {
             ERROR("FSGetCatalogInfo failed. Error=%d", err);
-            return NO;
+            goto abort;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if (err != noErr) {
             ERROR("GetDiskFragment failed. Error=%d", err);
-            return NO;
+            goto abort;
         }
+        
+        isLoaded = YES;
+        
         pluginMainFunc = (MainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
         if (!pluginMainFunc) {
-            return NO;
+            goto abort;
         }
             
         isCFM = TRUE;
@@ -352,11 +380,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     // Plugins (at least QT) require that you call UseResFile on the resource file before loading it.
     resourceRef = [self openResourceFile];
-    if (resourceRef == -1) {
-        return NO;
+    if (resourceRef != -1) {
+        UseResFile(resourceRef);
     }
-    
-    UseResFile(resourceRef);
     
     // swap function tables
     if (isCFM) {
@@ -383,8 +409,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.forceredraw = (NPN_ForceRedrawProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ForceRedraw);
         browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
         browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
-        
+
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
+        if (npErr != NPERR_NO_ERROR) {
+            [self unload];
+            return NO;
+        }
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
@@ -428,9 +458,17 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.forceredraw = NPN_ForceRedraw;
         browserFuncs.getJavaEnv = NPN_GetJavaEnv;
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
-        
-        NP_Initialize(&browserFuncs);
-        NP_GetEntryPoints(&pluginFuncs);
+
+        npErr = NP_Initialize(&browserFuncs);
+        if (npErr != NPERR_NO_ERROR) {
+            [self unload];
+            return NO;
+        }
+        npErr = NP_GetEntryPoints(&pluginFuncs);
+        if (npErr != NPERR_NO_ERROR) {
+            [self unload];
+            return NO;
+        }
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
@@ -449,24 +487,24 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         NPP_GetValue = pluginFuncs.getvalue;
         NPP_SetValue = pluginFuncs.setvalue;
     }
+    
     LOG(Plugins, "Plugin Loaded");
-    isLoaded = TRUE;
     return YES;
-}
 
+abort:
+    [self unloadWithoutShutdown];
+    return NO;
+}
+    
 - (void)unload
 {
-    NPP_Shutdown();
-    
-    [self closeResourceFile:resourceRef];
-    
-    if (isBundle) {
-        CFBundleUnloadExecutable([bundle _cfBundle]);
-    } else {
-        CloseConnection(&connID);
+    if (!isLoaded) {
+        return;
     }
-    LOG(Plugins, "Plugin Unloaded");
-    isLoaded = FALSE;
+
+    NPP_Shutdown();
+
+    [self unloadWithoutShutdown];
 }
 
 - (NPP_SetWindowProcPtr)NPP_SetWindow
