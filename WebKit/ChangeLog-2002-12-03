@@ -1,3 +1,11 @@
+2001-12-10  John Sullivan  <sullivan@apple.com>
+
+	* WebView.subproj/WKWebController.h:
+	* WebView.subproj/WKWebDataSource.h:
+	* WebView.subproj/WKWebView.h:
+
+	Fixed some typos and misspellings.
+
 2001-12-07  Richard Williamson  <richwill@richwill.com>
 
 	* WebView.subproj/NSWebPageDataSource.h:

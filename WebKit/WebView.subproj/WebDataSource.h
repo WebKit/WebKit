@@ -20,8 +20,8 @@
     
     [dataSource setFrameSetHandler: (WKFrameSetHandler *)myManager];
     [dataSource setScriptContextHandler: (WKScriptContextHandler *)myContext];
-    [dataSource setLoadHandler: (WKLoadHandler *)loadHandler];
-    [dataSource setCredentialsHandler: (WKCredentialsHandler *)credentialsHandler];
+    [dataSource setLoadHandler: (WKLoadHandler *)myLoadHandler];
+    [dataSource setCredentialsHandler: (WKCredentialsHandler *)myCredentialsHandler];
     ...
     or
     ...
@@ -41,8 +41,8 @@
 }
 
 
-// Can these init methods return nil? i.e. if URL is invalid, or should they
-// throw expections?
+// Can these init methods return nil? e.g. if URL is invalid, or should they
+// throw exceptions?
 - initWithURL: (NSURL *)url;
 - initWithData: (NSData *)data;
 - initWithString: (NSString *)string;
@@ -60,7 +60,7 @@
 // Start actually getting (if initialized with a URL) and parsing data.
 - (void)startLoading;
 
-// Cancel and pending loads.
+// Cancel any pending loads.
 - (BOOL)stopLoading;
 
 // Get DOM access to the document.
@@ -76,7 +76,7 @@
 // should this be handled by the view?
 - (WKDOMNode *)activeNode;
 
-// URL reference point, these should problably not be public for 1.0.
+// URL reference point, these should probably not be public for 1.0.
 - setBase: (NSURL *)url;
 - (NSURL *)base;
 - setBaseTarget: (NSURL *)url;
@@ -109,7 +109,7 @@
 #endif
 
 - executeScript: (NSString *)string;
-// Same as above expect uses the node as 'this' value
+// Same as above except uses the node as 'this' value
 - executeScript: (NSString *)string withNode: (WKDOMNode *)node;
 
 // This API reflects the KDE API, but is it sufficient?
@@ -122,13 +122,13 @@
 // that this means WebCore, specifically KWQ, also doesn't have dependencies on the AppKit.
 - (NSImage *)icon;
 
-// Is page secure, i.e. https, ftps
-// Should this perhap be on the URL?
+// Is page secure, e.g. https, ftps
+// Should this perhaps be on the URL?
 // This would the be implemented like this
 // return [[self url] isSecure];
 - (BOOL)isPageSecure;
 
-// ---------------------- Convience methods ----------------------
+// ---------------------- Convenience methods ----------------------
 - (NSString *)pageTitle;
 // ---------------------------------------------------------------
 
@@ -162,7 +162,7 @@
 
 
 /*
-    The class provide a cover for URL based preference items. 
+    This class provides a cover for URL-based preference items. 
 */
 @interface WKPreferences
 + getPreferencesForURL: (NSURL *)url;

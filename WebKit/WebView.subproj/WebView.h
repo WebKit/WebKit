@@ -32,18 +32,18 @@
 /*
 */
 @protocol WKCredentialsHandler
-// Ken will come up with a proposal for this.  We decided not have a generic API,
+// Ken will come up with a proposal for this.  We decided not to have a generic API,
 // rather we'll have an API that explicitly knows about the authentication
 // attributes needed.
 // Client should use this API to collect information necessary to authenticate,
 // usually by putting up a dialog.
-// Do we provide a default dialog.
+// Do we provide a default dialog?
 @end
 
 
 /*
     Implementors of this protocol will receive messages indicating
-    data as it arrive.
+    data as it arrives.
     
     This method will be called even if the data source
     is initialized with something other than a URL.
@@ -51,10 +51,10 @@
 @protocol  WKLoadHandler
 
 /*
-    A new chunk of data has been received.  This could be partial load
+    A new chunk of data has been received.  This could be a partial load
     of a url.  It may be useful to do incremental layout, although
     typically for non-base URLs this should be done after a URL (i.e. image)
-    has been completed downloaded.
+    has been completely downloaded.
 */
 - (void)receivedDataForLocation: (WKLoadProgress *)progress;
 

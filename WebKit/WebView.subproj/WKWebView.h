@@ -11,7 +11,7 @@
 
 #ifdef READY_FOR_PRIMETIME
 /*
-    Typical usage of an WKWebView.
+    Typical usage of a WKWebView.
     
     NSURL *url = [NSURL URLWithString: @"http://www.apple.com"];
     ...
@@ -33,12 +33,12 @@
     
     What is the behaviour of the view after it has been initialized and -startLoading is called?
     
-        1.  When the data source is set during (i.e. -setDataSource:) -locationWillChange will be sent
-            to the view's controller.  It may veto by returning NO.  Note that if the convience initializers
+        1.  When the data source is set (i.e. -setDataSource:) -locationWillChange will be sent
+            to the view's controller.  It may veto by returning NO.  Note that if the convenience initializers
             are used no controller will have been set, and thus no chance to veto will be provided.
             
-        2.  The view will do nothing until receipt of it's first -receivedDataForURL: message
-            from it's data source.  Thus the view will not change it's content before users have
+        2.  The view will do nothing until receipt of its first -receivedDataForURL: message
+            from its data source.  Thus the view will not change its content before users have
             a chance to cancel slow URLs.  
                         
             During this time, if -stopLoading is called on the data source, loading will 
@@ -49,8 +49,8 @@
             
             Controllers should initiate progress indicators at this point (how?).
         
-        3.  After receipt of it first -receivedDataForURL: it will clear it's contents
-            and perform it's first layout.  At this point a loadingStarted message will
+        3.  After receipt of it first -receivedDataForURL: it will clear its contents
+            and perform its first layout.  At this point a loadingStarted message will
             be sent to the client.
             
         4.  Upon every subsequent receipts of -finishedReceivingDataForURL: messages it
