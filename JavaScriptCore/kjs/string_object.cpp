@@ -654,20 +654,16 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     result = String("<sup>" + s + "</sup>");
     break;
   case Fontcolor:
-    result = String("<font color=" + a0.toString(exec) + ">"
-		    + s + "</font>");
+    result = String("<font color=\"" + a0.toString(exec) + "\">" + s + "</font>");
     break;
   case Fontsize:
-    result = String("<font size=" + a0.toString(exec) + ">"
-		    + s + "</font>");
+    result = String("<font size=\"" + a0.toString(exec) + "\">" + s + "</font>");
     break;
   case Anchor:
-    result = String("<a name=" + a0.toString(exec) + ">"
-		    + s + "</a>");
+    result = String("<a name=\"" + a0.toString(exec) + "\">" + s + "</a>");
     break;
   case Link:
-    result = String("<a href=" + a0.toString(exec) + ">"
-		    + s + "</a>");
+    result = String("<a href=\"" + a0.toString(exec) + "\">" + s + "</a>");
     break;
 #endif
   }

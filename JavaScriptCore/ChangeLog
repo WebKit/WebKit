@@ -1,4 +1,17 @@
-2004-09-30  Richard Williamson   <rjw@apple.com>
+2004-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - rolled in a fix the KDE folks did for the operations that generate HTML fragments
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Added quote marks to generated HTML.
+
+        - rolled out an old workaround we don't need any more
+
+        * JavaScriptCore.pbproj/project.pbxproj: Remove -Wno-long-double because the <math.h> issue that
+        required it is no longer there.
+
+2004-09-30  Richard Williamson  <rjw@apple.com>
 
 	Fixed <rdar://problem/3821215> NPN hasMethod and hasProperty functions should take NPObjects, not NPClass
 
