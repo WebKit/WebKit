@@ -489,24 +489,33 @@ Position Position::downstream(EStayInBlock stayInBlock) const
 Position Position::equivalentRangeCompliantPosition() const
 {
     if (isNull())
-        return *this;
+        return Position();
+
+    // Make sure that 0 <= constrainedOffset <= num kids, otherwise using this Position
+    // in DOM calls can result in exceptions.
+    long maxOffset = node()->isTextNode() ? static_cast<TextImpl *>(node())->length(): node()->childNodeCount();
+    long constrainedOffset = offset() <= 0 ? 0 : kMin(maxOffset, offset());
 
     if (!node()->parentNode())
-        return *this;
+        return Position(node(), constrainedOffset);
 
     RenderObject *renderer = node()->renderer();
     if (!renderer)
-        return *this;
+        return Position(node(), constrainedOffset);
         
     if (!renderer->isReplaced() && !renderer->isBR())
-        return *this;
+        return Position(node(), constrainedOffset);
     
-    int o = 0;
+    long o = offset();
     const NodeImpl *n = node();
     while ((n = n->previousSibling()))
         o++;
     
-    return Position(node()->parentNode(), o + offset());
+    // Make sure that 0 <= constrainedOffset <= num kids, as above.
+    NodeImpl *parent = node()->parentNode();
+    maxOffset = parent->isTextNode() ? static_cast<TextImpl *>(parent)->length(): parent->childNodeCount();
+    constrainedOffset = o <= 0 ? 0 : kMin(maxOffset, o);
+    return Position(parent, constrainedOffset);
 }
 
 Position Position::equivalentDeepPosition() const

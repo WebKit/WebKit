@@ -1,3 +1,18 @@
+2004-12-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3900996> Crash dragging past end of contentEditable DIV, at DOM::RangeImpl::pastEndNode() const + 24
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentRangeCompliantPosition): Fixed this function so that it constrains the offset
+        of the position to be >= 0 and <= number of kids of its node. Not doing this constraining led to a DOM
+        exception trying to use a Position returned from this function to set the boundary point of a Range (which
+        eventually led to the crash). Since this crash happened, it seems like this function was failing in its
+        contract to return a range-compliant position, hence the need for this fix.
+
 2004-12-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
