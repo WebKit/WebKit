@@ -1,3 +1,12 @@
+2004-03-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3591667.  Plugin view is added to view hierarchy before calling init.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]):
+
 2004-03-16  Darin Adler  <darin@apple.com>
 
         * DOM.subproj/DOMHTML.h: Updated from WebCore.
