@@ -186,8 +186,7 @@
 {
     WEBKIT_ASSERT(frame != nil);
 
-    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithURL:URL];
-
+    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithClient:nil URL:URL];
     WebLoadProgress *loadProgress = [[WebLoadProgress alloc] initWithBytesSoFar:bytes totalToLoad:bytes];
     [[frame controller] _receivedProgress:loadProgress forResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
     [loadProgress release];

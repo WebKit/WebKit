@@ -1,5 +1,11 @@
 2002-08-16  Darin Adler  <darin@apple.com>
 
+	Missed one call to [WebResourceHandle initWithURL:].
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge objectLoadedFromCache:size:]):
+        Change to call [WebResourceHandle initWithClient:URL:] with nil for the client.
+
+2002-08-16  Darin Adler  <darin@apple.com>
+
 	Oops. Forgot to save in Project Builder before committing.
 
         * Plugins.subproj/WebPluginStream.m:
