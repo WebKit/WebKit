@@ -253,6 +253,10 @@ void KHTMLParser::parseToken(Token *t)
         // take care of optional close tags
         if(endTag[e->id()] == DOM::OPTIONAL)
             popBlock(t->id);
+            
+        if (isHeaderTag(t->id))
+            // Do not allow two header tags to be nested if the intervening tags are inlines.
+            popNestedHeaderTag();
     }
 
     // if this tag is forbidden inside the current context, pop
@@ -1197,6 +1201,36 @@ void KHTMLParser::processCloseTag(Token *t)
 #ifdef PARSER_DEBUG
     kdDebug( 6035 ) << "closeTag --> current = " << current->nodeName().string() << endl;
 #endif
+}
+
+bool KHTMLParser::isHeaderTag(int _id)
+{
+    switch (_id) {
+        case ID_H1:
+        case ID_H2:
+        case ID_H3:
+        case ID_H4:
+        case ID_H5:
+        case ID_H6:
+            return true;
+        default:
+            return false;
+    }
+}
+
+void KHTMLParser::popNestedHeaderTag()
+{
+    // This function only cares about checking for nested headers that have only inlines in between them.
+    NodeImpl* currNode = current;
+    for (HTMLStackElem* curr = blockStack; curr; curr = curr->next) {
+        if (isHeaderTag(curr->id)) {
+            popBlock(curr->id);
+            return;
+        }
+        if (currNode && !currNode->isInline())
+            return;
+        currNode = curr->node;
+    }
 }
 
 bool KHTMLParser::isResidualStyleTag(int _id)
