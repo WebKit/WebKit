@@ -1252,6 +1252,13 @@ void Loader::servePendingRequests()
     kdDebug( 6060 ) << "starting Loader url=" << req->object->url().string() << endl;
     #endif
     
+    // Don't attempt to load resources if we're cancelling this document.
+    if ([((URLLoadClient *)req->client)->m_dataSource _isStopping])
+    {
+        //NSLog (@"Attempt to start loading %@ during cancelation\n", QSTRING_TO_NSSTRING(req->object->url().string()));
+        return;
+    }
+
     KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
     
 #ifdef APPLE_CHANGES
@@ -1259,11 +1266,6 @@ void Loader::servePendingRequests()
           req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
     //job->begin(d->m_recv, job);
     
-    if ([((URLLoadClient *)req->client)->m_dataSource _isStopping])
-    {
-        //NSLog (@"Attempt to start loading %@ during cancelation\n", QSTRING_TO_NSSTRING(req->object->url().string()));
-        return;
-    }
     job->begin((URLLoadClient *)req->client, job);
     if (job->handle() == nil){
         // Must be a malformed URL.

@@ -1,5 +1,13 @@
 2002-05-28  Richard Williamson  <rjw@apple.com>
 
+    Moved cancellation check before creation on job instance,
+    preventing leak.
+    
+	* kwq/KWQKloader.mm:
+	(Loader::servePendingRequests):
+
+2002-05-28  Richard Williamson  <rjw@apple.com>
+
     Fixed edge case cancellation problem (actually happens a lot).
     No new loads are allowed after a data source has been
     set as "stopping".
