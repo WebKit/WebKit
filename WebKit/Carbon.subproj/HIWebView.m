@@ -552,6 +552,14 @@ MouseMoved( HIWebView* inView, EventRef inEvent )
 	
 	GetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
+
+#define WORK_AROUND_3585644
+#ifdef WORK_AROUND_3585644
+    int windowNumber = [inView->fKitWindow windowNumber];
+    CGSWindowID *winID = (void *)windowNumber;
+    eventRec.window = winID;
+#endif
+    
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];
 
 //	targ = [[inView->fKitWindow _borderView] hitTest:[kitEvent locationInWindow]];
@@ -574,7 +582,7 @@ MouseDragged( HIWebView* inView, EventRef inEvent )
 	CGSEventRecord			eventRec;
 	NSEvent*				kitEvent;
 //	NSView*					targ;
-	
+    
 	GetEventPlatformEventRecord( inEvent, &eventRec );
 	RetainEvent( inEvent );
 	kitEvent = [[NSEvent alloc] _initWithCGSEvent:(CGSEventRecord)eventRec eventRef:(void *)inEvent];

@@ -1,3 +1,15 @@
+2004-03-11  Richard Williamson   <rjw@apple.com>
+
+	Workaround for 3585644.  Force the window number of the
+	mouse moved event to be correct.
+
+        Reviewed by Chris.
+
+        * Carbon.subproj/CarbonWindowFrame.m:
+        * Carbon.subproj/HIWebView.m:
+        (MouseMoved):
+        (MouseDragged):
+
 2004-03-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Dave
