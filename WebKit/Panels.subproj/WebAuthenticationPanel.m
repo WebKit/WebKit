@@ -18,6 +18,9 @@
 
 #define WebAuthenticationPanelNibName @"WebAuthenticationPanel"
 
+@interface NonBlockingPanel : NSPanel
+@end
+
 @implementation WebAuthenticationPanel
 
 -(id)initWithCallback:(id)cb selector:(SEL)sel
@@ -74,12 +77,42 @@
     }
 }
 
+-(void)replacePanelWithSubclassHack
+{
+    // This is a hack to fix 3744583 without requiring a localization change. We
+    // need to use a subclass of NSPanel so we can override _blocksActionWhenModal,
+    // but using a subclass in the nib would require re-localization. So instead
+    // we make a new panel and move all the subviews into it. This will keep the
+    // IBOutlets wired appropriately, except that we have to manually reset the
+    // IBOutlet for the panel itself.
+    NSPanel *newPanel = [[NonBlockingPanel alloc] initWithContentRect:[panel contentRectForFrameRect:[panel frame]] 
+                                                            styleMask:[panel styleMask] 
+                                                              backing:[panel backingType] 
+                                                                defer:NO];
+    [newPanel setTitle:[panel title]];
+    
+    NSView *newContentView = [newPanel contentView];
+    NSArray *subviews = [[panel contentView] subviews];
+    int subviewCount = [subviews count];
+    int index;
+    for (index = 0; index < subviewCount; ++index) {
+        NSView *subview = [subviews objectAtIndex:0];
+        [subview removeFromSuperviewWithoutNeedingDisplay];
+        [newContentView addSubview:subview];
+    }
+    
+    [panel release];
+    panel = newPanel;
+}
+
 - (BOOL)loadNib
 {
     if (!nibLoaded) {
         if ([NSBundle loadNibNamed:WebAuthenticationPanelNibName owner:self]) {
             nibLoaded = YES;
             [imageView setImage:[NSImage imageNamed:@"NSApplicationIcon"]];
+            // FIXME 3918675: remove the following hack when we're out of localization freeze
+            [self replacePanelWithSubclassHack];
         } else {
             ERROR("couldn't load nib named '%@'", WebAuthenticationPanelNibName);
             return FALSE;
@@ -194,6 +227,25 @@
     challenge = nil;
     [callback performSelector:selector withObject:chall withObject:credential];
     [chall release];
+}
+
+@end
+
+@implementation NonBlockingPanel
+
+- (BOOL)_blocksActionWhenModal:(SEL)theAction
+{
+    // This override of a private AppKit method allows the user to quit when a login dialog
+    // is onscreen, which is nice in general but in particular prevents pathological cases
+    // like 3744583 from requiring a Force Quit.
+    //
+    // It would be nice to allow closing the individual window as well as quitting the app when
+    // a login sheet is up, but this _blocksActionWhenModal: mechanism doesn't support that.
+    // This override matches those in NSOpenPanel and NSToolbarConfigPanel.
+    if (theAction == @selector(terminate:)) {
+        return NO;
+    }
+    return YES;
 }
 
 @end

@@ -1,3 +1,24 @@
+2004-12-13  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Maciej.
+        
+        - fixed <rdar://problem/3744583> Safari can not quit when a webpage has a login sheet 
+        that can't be cancelled.
+        
+        The proper fix for this would be to change the class of the NSPanel in the nib file.
+        But since this would require a localization change, I did a run-time hack instead.
+        I'll file a bug about fixing this when we're out of localization freeze.
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel replacePanelWithSubclassHack]):
+        new method, creates a new panel that is identical to the original one except that
+        it's our subclass, and moves all the subviews of the original panel into the new one.
+        (-[WebAuthenticationPanel loadNib]):
+        call replacePanelWithSubclassHack
+        (-[NonBlockingPanel _blocksActionWhenModal:]):
+        only method of new NSPanel subclass; overrides this SPI to allow the user to quit
+        when one of these panels/sheets is on-screen
+
 2004-12-10  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3898708> REGRESSION (8A314-8A317): World Clock's short hand not displayed (ImageIO problem with PDF?)
