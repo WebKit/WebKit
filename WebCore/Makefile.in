@@ -29,6 +29,7 @@ SUBDIRS = \
 	src/kdelibs/khtml/rendering \
 	src/kwq/ \
 	src/kwq/qt \
+	src/kwq/tests \
 	src/kwq/tests/qt \
 	$(NULL)
 
@@ -53,6 +54,11 @@ all depend setup install clean distclean maintainer-clean:
 
 #----------------------------------------------------------------------
 # Custom targets
+
+test:
+	cd src/kwq/tests && \
+	make && \
+	./harness
 
 local-all:
 local-dep:

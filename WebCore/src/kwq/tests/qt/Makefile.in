@@ -19,16 +19,20 @@ CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
 OBJECTS = $(CXXOBJECTS)
 
-PROGRAM = test
+PROGRAMS = \
+    qpoint-test \
+    qsize-test \
+    $(NULL)
 
 CLEAN_FILES = *.o \
-    $(PROGRAM) \
+    $(PROGRAMS) \
     $(NULL)
 
 #----------------------------------------------------------------------
 # Set flags for this directory
 
 CXXFLAGS = $(BASECXXFLAGS) \
+    -Wall \
     -DQ_DELETING_VOID_UNDEFINED \
     -DQT_NO_TEXTCODEC \
     -DQT_NO_DATASTREAM \
@@ -49,9 +53,12 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(PROGRAM)
+all: $(OBJECTS) $(PROGRAMS)
 
-$(PROGRAM): $(OBJECTS)
+qpoint-test: qpoint-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qsize-test: qsize-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 depend: 

@@ -9,7 +9,7 @@
 # include make vars boilerplate
 #
 
-TOPSRCDIR = ../../../..
+TOPSRCDIR = ../../..
 include $(TOPSRCDIR)/Makefile.vars
 
 #----------------------------------------------------------------------
@@ -17,49 +17,29 @@ include $(TOPSRCDIR)/Makefile.vars
 
 CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
 
-OBJECTS = $(CXXOBJECTS)
-
-PROGRAMS = \
-    qpoint-test \
-    qsize-test \
-    $(NULL)
+PROGRAM = harness
 
 CLEAN_FILES = *.o \
-    $(PROGRAMS) \
+    $(PROGRAM) \
     $(NULL)
 
 #----------------------------------------------------------------------
 # Set flags for this directory
 
-CXXFLAGS = $(BASECXXFLAGS) \
+CFLAGS = $(BASECFLAGS) \
     -Wall \
-    -DQ_DELETING_VOID_UNDEFINED \
-    -DQT_NO_TEXTCODEC \
-    -DQT_NO_DATASTREAM \
-    -D_KWQ_COMPLETE_ \
-    -D_KWQ_IOSTREAM_ \
-    -I../../qt \
-    -I../.. \
-    -I. \
+    -O2 \
     $(NULL)
 
-LDFLAGS = $(BASELDFLAGS) \
-    -L../../qt \
-    -l_qt \
-    $(NULL)
-
-DEPFLAGS = $(CXXFLAGS)
+DEPFLAGS = $(CFLAGS)
 
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(PROGRAMS)
+all: $(OBJECTS) $(PROGRAM)
 
-qpoint-test: qpoint-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
-
-qsize-test: qsize-test.o
-	$(CXX) -o $@ $< $(LDFLAGS)
+$(PROGRAM): harness.o
+	$(CC) -o $@ $< $(LDFLAGS)
 
 depend: 
 

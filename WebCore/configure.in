@@ -257,6 +257,7 @@ AC_OUTPUT(
 	src/kdelibs/khtml/rendering/Makefile
 	src/kwq/Makefile
 	src/kwq/qt/Makefile
+	src/kwq/tests/Makefile
 	src/kwq/tests/qt/Makefile
 )
 
