@@ -62,6 +62,7 @@ enum FunctionNumber {
     slotSelected,
     slotSelectionChanged,
     slotStateChanged,
+    slotSubmitFormAgain,
     slotTextChanged,
     slotTextChangedWithString,
     slotWidgetDestructed
@@ -117,6 +118,9 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     } else if (KWQNamesMatch(member, SLOT(slotStateChanged(int)))) {
         ASSERT(dynamic_cast<RenderCheckBox *>(object));
         m_function = slotStateChanged;
+    } else if (KWQNamesMatch(member, SLOT(submitFormAgain()))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotSubmitFormAgain;
     } else if (KWQNamesMatch(member, SLOT(slotTextChanged()))) {
         ASSERT(dynamic_cast<RenderTextArea *>(object));
         m_function = slotTextChanged;
@@ -155,6 +159,7 @@ void KWQSlot::call() const
         CASE(slotRedirect, KHTMLPart, slotRedirect)
         CASE(slotReturnPressed, RenderLineEdit, slotReturnPressed)
         CASE(slotSelectionChanged, RenderSelect, slotSelectionChanged)
+        CASE(slotSubmitFormAgain, KHTMLPart, submitFormAgain)
         CASE(slotTextChanged, RenderTextArea, slotTextChanged)
         CASE(slotWidgetDestructed, RenderWidget, slotWidgetDestructed)
     }

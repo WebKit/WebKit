@@ -1,5 +1,23 @@
 2002-11-11  Darin Adler  <darin@apple.com>
 
+	- fixed 3084704 -- crash in HTMLTokenizer on page with JavaScript
+	HTMLDocument::Close inside a <script>
+
+	I think it's going to work this time. The key was to hook up the
+	KHTML submitFormAgain machinery.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::submitForm): Take out the APPLE_CHANGES
+	ifdef that was disabling the submitFormAgain logic.
+        * kwq/KWQKHTMLPart.h: Remove submitForm(), because openURLRequest() handles it fine.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::openURLRequest): Move the logic for handling
+	POST here from submitForm() and remove submitForm().
+
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Add support for the submitFormAgain slot.
+        (KWQSlot::call): Ditto.
+
+2002-11-11  Darin Adler  <darin@apple.com>
+
 	- fixed 3092421 -- javascript: URL that opens window crashes Alex if typed into empty window
 
         * kwq/KWQKHTMLPart.h:

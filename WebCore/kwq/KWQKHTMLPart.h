@@ -90,8 +90,6 @@ public:
     bool requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args);
     KParts::ReadOnlyPart *createPart(const khtml::ChildFrame &child, const KURL &url, const QString &mimeType);
 
-    void submitForm(const KURL &url, const KParts::URLArgs &);
-
     void scheduleClose();
 
     void unfocusWindow();

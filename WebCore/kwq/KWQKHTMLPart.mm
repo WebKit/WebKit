@@ -151,8 +151,17 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
         // FIXME: We need to report this error to someone.
-    } else {
+        return;
+    }
+    
+    if (!args.doPost()) {
         [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload triggeringEvent:nil];
+    } else {
+        QString contentType = args.contentType();
+        ASSERT(contentType.startsWith("Content-Type: "));
+        [bridgeForFrameName(args.frameName) postWithURL:cocoaURL
+            data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
+            contentType:contentType.mid(14).getNSString()];
     }
 }
 
@@ -223,19 +232,6 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
     }
 }
     
-void KWQKHTMLPart::submitForm(const KURL &u, const URLArgs &args)
-{
-    if (!args.doPost()) {
-	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() reload:args.reload triggeringEvent:nil];
-    } else {
-        QString contentType = args.contentType();
-        ASSERT(contentType.startsWith("Content-Type: "));
-	[bridgeForFrameName(args.frameName) postWithURL:u.getNSURL()
-                   data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
-            contentType:contentType.mid(14).getNSString()];
-    }
-}
-
 void KWQKHTMLPart::setView(KHTMLView *view, bool weOwnIt)
 {
     if (_ownsView) {
