@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+	- fixed 3141566 -- non-reproducible nil-dereference in HTMLGenericFormElementImpl at firstdirect.com
+
+        * khtml/html/html_formimpl.cpp: (HTMLGenericFormElementImpl::defaultEventHandler):
+	Check for the case where the view is 0.
+
+2003-01-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
 	- fixed two-day-old regression where we get nil-dereferences with text areas
 
         * kwq/KWQTextArea.mm:
