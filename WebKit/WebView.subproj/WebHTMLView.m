@@ -4046,7 +4046,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 - (void)doCommandBySelector:(SEL)aSelector
 {
     WebView *webView = [self _webView];
-    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
+    // FIXME 3810158: need to enable this code when Mail returns NO for this delegate method
+    if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector] || YES) {
+//  if (![[webView _editingDelegateForwarder] webView:webView doCommandBySelector:aSelector]) {
         [super doCommandBySelector:aSelector];
     }
 }

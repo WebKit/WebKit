@@ -1,5 +1,12 @@
 2004-09-21  John Sullivan  <sullivan@apple.com>
 
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView doCommandBySelector:]):
+        Commented out part of previous change; it breaks Mail editing until Mail
+        fixes bug 3810158.
+
+2004-09-21  John Sullivan  <sullivan@apple.com>
+
         Reviewed by Ken.
 
         * WebView.subproj/WebHTMLView.m:
