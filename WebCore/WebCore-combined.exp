@@ -415,3 +415,6 @@ __ZNK3DOM8TextImpl17formatForDebuggerEPcj
 __ZNK3DOM9RangeImpl17formatForDebuggerEPcj
 __ZNK3DOM9Selection17formatForDebuggerEPcj
 __ZNK7QString2atEj
+__ZN3DOM13DOMStringImplD1Ev
+__ZNK3DOM23CSSStyleDeclarationImpl6lengthEv
+
