@@ -250,10 +250,13 @@
                 if([[self class] canShowMIMEType:MIMEType]){
                     id documentView;
                     IFWebView *webView;
-                    id <IFDocumentRepresentation> dataRepresentation;
+                    id <IFDocumentRepresentation> dataRepresentation, oldRepresentation;
                     
+                    // Check if the data source was already bound?
+                    oldRepresentation = [dataSource representation];
                     dataRepresentation = [IFWebDataSource createRepresentationForMIMEType:MIMEType];
-                    [dataSource _setRepresentation:dataRepresentation];
+                    if (!oldRepresentation || ![oldRepresentation isKindOfClass: [dataRepresentation class]])
+                        [dataSource _setRepresentation:dataRepresentation];
                     webView = [[dataSource webFrame] webView];
                     documentView = [IFWebView createViewForMIMEType:MIMEType];
                     [webView _setDocumentView: documentView];

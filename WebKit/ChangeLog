@@ -1,3 +1,33 @@
+2002-06-17  Richard Williamson  <rjw@apple.com>
+
+    Fixed window.open regression.
+    Partial fix to targeting frame of new name.
+    
+	* WebCoreSupport.subproj/IFWebCoreBridge.h:
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebCoreBridge openNewWindowWithURL:]):
+	    Return the newly created bridge.
+	(-[IFWebCoreBridge receivedData:withDataSource:]):
+	    Use setDataSource: method
+	(-[IFWebCoreBridge startLoadingResource:withURL:]):
+	    No change.
+	(-[IFWebCoreBridge setDataSource:]):
+	    New method.
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView mouseMovedNotification:]):
+	    Selection support.
+	(-[IFHTMLView mouseDragged:]):
+	    Selection support.
+
+	* WebView.subproj/IFWebController.mm:
+	(-[IFWebController haveContentPolicy:andPath:forLocationChangeHandler:]):
+        Only change representation if it hasn't been pre-bound, or if it's
+        class changed.
+        
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame initWithName:webView:provisionalDataSource:controller:]):
+	    More hackery to support window.open.
+
 2002-06-17  Darin Adler  <darin@apple.com>
 
 	Fixed many of the reasons that we were leaking the world. But we still leak

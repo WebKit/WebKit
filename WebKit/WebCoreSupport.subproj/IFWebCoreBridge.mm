@@ -5,6 +5,7 @@
 
 #import <WebKit/IFWebCoreBridge.h>
 
+#import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFResourceURLHandleClient.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebCoreFrame.h>
@@ -83,9 +84,16 @@
     return YES;
 }
 
-- (void)openNewWindowWithURL:(NSURL *)url
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)url
 {
-    [[dataSource controller] openNewWindowWithURL:url];
+    IFWebController *newController = [[dataSource controller] openNewWindowWithURL:url];
+    IFWebDataSource *newDataSource;
+    
+    newDataSource = [[newController mainFrame] provisionalDataSource];
+    if ([newDataSource isDocumentHTML])
+        return [(IFHTMLRepresentation *)[newDataSource representation] _bridge];
+        
+    return nil;
 }
 
 - (void)setTitle:(NSString *)title
@@ -107,7 +115,7 @@
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)withDataSource
 {
     if (dataSource == nil) {
-        dataSource = withDataSource; // FIXME: non-retained because data source owns representation owns bridge
+        [self setDataSource: withDataSource];
         [self openURL:[dataSource inputURL]];
     } else {
         WEBKIT_ASSERT(dataSource == withDataSource);
@@ -119,6 +127,12 @@
 - (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL
 {
     return [IFResourceURLHandleClient startLoadingResource:resourceLoader withURL:URL dataSource:dataSource];
+}
+
+- (void)setDataSource: (IFWebDataSource *)ds
+{
+    // FIXME: non-retained because data source owns representation owns bridge
+    dataSource = ds;
 }
 
 @end

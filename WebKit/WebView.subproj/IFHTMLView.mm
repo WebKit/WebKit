@@ -535,7 +535,7 @@
     if ([thisWindow isMainWindow] &&
         [[[notification userInfo] objectForKey: @"NSEvent"] window] == thisWindow &&
         [[thisWindow contentView] hitTest:p] == self) {
-        QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
+        QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, 0);
         KHTMLView *widget = _private->widget;
         if (widget != 0l) {
             widget->viewportMouseMoveEvent(&kEvent);
@@ -546,7 +546,12 @@
 - (void)mouseDragged: (NSEvent *)event
 {
     NSPoint p = [event locationInWindow];
-    //WebKitDebugAtLevel (WEBKIT_LOG_EVENTS, "mouseDragged %f, %f\n", p.x, p.y);
+    
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
+    KHTMLView *widget = _private->widget;
+    if (widget != 0l) {
+        widget->viewportMouseMoveEvent(&kEvent);
+    }
 }
 
 - (void)keyDown: (NSEvent *)event

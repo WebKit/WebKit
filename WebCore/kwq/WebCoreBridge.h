@@ -105,7 +105,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
     withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
 
-- (void)openNewWindowWithURL:(NSURL *)URL;
+- (WebCoreBridge *)openNewWindowWithURL:(NSURL *)URL;
 
 - (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
 

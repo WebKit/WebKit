@@ -1,22 +1,21 @@
 /*	
         IFWebFrame.m
-	    
-	    Copyright 2001, Apple, Inc. All rights reserved.
+	    Copyright (c) 2001, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/IFWebFrame.h>
 
 #import <Cocoa/Cocoa.h>
 
+#import <WebKit/IFHTMLRepresentationPrivate.h>
+#import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFWebControllerPrivate.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebCoreFrame.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebControllerPrivate.h>
-#import <WebKit/IFWebController.h>
 #import <WebKit/IFLocationChangeHandler.h>
-#import <WebKit/IFHTMLView.h>
-#import <WebKit/IFHTMLViewPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
 
@@ -43,20 +42,29 @@
     [self setController: c];
 
     if (d == nil) {
-	// Set a dummy data source so that the main frame for a
-	// newly-created empty window has a KHTMLPart. JavaScript
-	// always creates new windows initially empty, and then wants
-	// to use the main frame's part to make the new window load
-	// it's URL, so we need to make sure empty frames have a part.
-	// However, we don't want to do the spinner, so we do this
-	// weird thing:
+        // set a dummy data source so that the main from for a
+        // newly-created empty window has a KHTMLPart. JavaScript
+        // always creates new windows initially empty, and then wants
+        // to use the main frame's part to make the new window load
+        // it's URL, so we need to make sure empty frames have a part.
+        // However, we don't want to do the spinner, so we do this
+        // weird thing:
 
-	IFWebDataSource *dummyDataSource = [[IFWebDataSource alloc] initWithURL:nil];
+        // FIXME: HACK ALERT!!!
+        // We need to keep a shadow part for all frames, even in the case
+        // of a non HTML representation.  This is required khtml
+        // can reference the frame (window.frames, targeting, etc.).
+    
+        IFWebDataSource *dummyDataSource = [[IFWebDataSource alloc] initWithURL:nil];
+        IFHTMLRepresentation *dummyRep = [[IFHTMLRepresentation alloc] init];
+        [[dummyRep _bridge] setDataSource: dummyDataSource];
+        [dummyDataSource _setRepresentation: dummyRep];
+        [dummyRep release];
+
         [dummyDataSource _setController: [self controller]];
         [_private setProvisionalDataSource: dummyDataSource];
         [dummyDataSource release];
-
-    // Allow controller to override?
+        
     } else if ([self setProvisionalDataSource: d] == NO){
         [self autorelease];
         return nil;

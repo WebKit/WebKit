@@ -58,12 +58,13 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 						const KParts::WindowArgs &winArgs, 
 						KParts::ReadOnlyPart **partResult)
 { 
-    [m_part->impl->getBridge() openNewWindowWithURL:url.getNSURL()];
+    WebCoreBridge *bridge = [m_part->impl->getBridge() openNewWindowWithURL:url.getNSURL()];
     
     // We can't return a KHTMLPart in all cases, because the new window might not even
     // have HTML in it. And we don't create the KHTMLPart until we become "committed".
     // So it's better not to try to return the KHTMLPart, and no callers currently need it.
-    if (partResult) {
-	*partResult = 0;
-    }
+    //if (partResult) {
+	//    *partResult = 0;
+    //}
+    *partResult = [bridge part];
 }

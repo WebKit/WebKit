@@ -413,9 +413,8 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     else {
         frame = [bridge descendantFrameNamed:_target.getNSString()];
         if (frame == nil) {
-            // FIXME: What is the correct behavior here? Other browsers seem to open new windows.
-            NSLog (@"ERROR: unable to find frame named %@\n", _target.getNSString());
-            return;
+            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name.  New window will not be named until 2959902 is fixed.\n", _target.getNSString());
+                frame = [bridge descendantFrameNamed:@"_blank"];
         }
     }
     
