@@ -179,6 +179,8 @@ public:
     DOM::CSSMutableStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
     void setTypingStyle(DOM::CSSMutableStyleDeclarationImpl *);
     
+    DOM::CSSMutableStyleDeclarationImpl *styleAtPosition(const DOM::Position &pos);
+    
     virtual bool isInsertTextCommand() const;
     virtual bool isTypingCommand() const;
     
@@ -736,8 +738,7 @@ public:
     virtual EditAction editingAction() const;
 
 private:
-    void completeHTMLReplacement(const DOM::Position &, const DOM::Position &);
-    void completeHTMLReplacement();
+    void completeHTMLReplacement(const DOM::Position &lastPositionToSelect);
 
     void insertNodeAfterAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     void insertNodeAtAndUpdateNodesInserted(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild, long offset);
@@ -750,6 +751,7 @@ private:
     DOM::NodeImpl *m_firstNodeInserted;
     DOM::NodeImpl *m_lastNodeInserted;
     DOM::NodeImpl *m_lastTopNodeInserted;
+    DOM::CSSMutableStyleDeclarationImpl *m_insertionStyle;
     bool m_selectReplacement;
     bool m_smartReplace;
     bool m_matchStyle;

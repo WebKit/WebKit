@@ -714,6 +714,23 @@ bool EditCommand::isTypingCommand() const
     return false;
 }
 
+CSSMutableStyleDeclarationImpl *EditCommand::styleAtPosition(const Position &pos)
+{
+    CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();
+    computedStyle->ref();
+    CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+    computedStyle->deref();
+ 
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
+    if (typingStyle)
+        style->merge(typingStyle);
+    
+    return style;
+}
+
+
 //------------------------------------------------------------------------------------------
 // CompositeEditCommand
 
@@ -3131,20 +3148,11 @@ void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Positi
     VisiblePosition visiblePos(pos, UPSTREAM);
     if (!isFirstVisiblePositionInParagraph(visiblePos) && !isLastVisiblePositionInParagraph(visiblePos))
         return;
-
-    // FIXME: Improve typing style.
-    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();
-    computedStyle->ref();
+    
     if (m_style)
         m_style->deref();
-    m_style = computedStyle->copyInheritableProperties();
+    m_style = styleAtPosition(pos);
     m_style->ref();
-    computedStyle->deref();
-    
-    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-    if (typingStyle)
-        m_style->merge(typingStyle);
 }
 
 void InsertParagraphSeparatorCommand::applyStyleAfterInsertion()
@@ -4383,6 +4391,7 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, Documen
       m_firstNodeInserted(0),
       m_lastNodeInserted(0),
       m_lastTopNodeInserted(0),
+      m_insertionStyle(0),
       m_selectReplacement(selectReplacement), 
       m_smartReplace(smartReplace),
       m_matchStyle(matchStyle)
@@ -4397,6 +4406,8 @@ ReplaceSelectionCommand::~ReplaceSelectionCommand()
         m_lastNodeInserted->deref();
     if (m_lastTopNodeInserted)
         m_lastTopNodeInserted->deref();
+    if (m_insertionStyle)
+        m_insertionStyle->deref();
 }
 
 void ReplaceSelectionCommand::doApply()
@@ -4467,14 +4478,16 @@ void ReplaceSelectionCommand::doApply()
     }
     endPos = selection.end().downstream(); 
     
-    // If not matching style, clear typing style.
+    KHTMLPart *part = document()->part();
+    if (m_matchStyle) {
+        m_insertionStyle = styleAtPosition(startPos);
+        m_insertionStyle->ref();
+    }
+    
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    KHTMLPart *part = document()->part();
-    if (!m_matchStyle) {
-        part->clearTypingStyle();
-        setTypingStyle(0);    
-    }
+    part->clearTypingStyle();
+    setTypingStyle(0);    
     
     // done if there is nothing to add
     if (!m_fragment.firstChild())
@@ -4598,6 +4611,8 @@ void ReplaceSelectionCommand::doApply()
             insertNodeBeforeAndUpdateNodesInserted(node, m_firstNodeInserted);
         }
     }
+    
+    Position lastPositionToSelect;
 
     // step 4 : handle trailing newline
     if (m_fragment.hasInterchangeNewline()) {
@@ -4615,12 +4630,13 @@ void ReplaceSelectionCommand::doApply()
         if (insertParagraph) {
             setEndingSelection(insertionPos, DOWNSTREAM);
             insertParagraphSeparator();
-            endPos = endingSelection().end().downstream();
+            updateNodesInserted(endingSelection().end().downstream().node());
+            // Select up to the paragraph separator that was added.
+            lastPositionToSelect = endingSelection().end().downstream();
+        } else {
+            // Select up to the preexising paragraph separator.
+            lastPositionToSelect = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()).downstream();
         }
-        if (!m_matchStyle) {
-            fixupNodeStyles(m_fragment.desiredStyles());
-        }
-        completeHTMLReplacement(startPos, endPos);
     } else {
         if (m_lastNodeInserted && m_lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
             document()->updateLayout();
@@ -4667,13 +4683,11 @@ void ReplaceSelectionCommand::doApply()
             fixupNodeStyles(styles);
             derefNodesAndStylesInMap(styles);
         }
-    
-        if (!m_matchStyle) {
-            fixupNodeStyles(m_fragment.desiredStyles());
-        }
-        
-        completeHTMLReplacement();
     }
+    
+    if (!m_matchStyle)
+        fixupNodeStyles(m_fragment.desiredStyles());
+    completeHTMLReplacement(lastPositionToSelect);
     
     // step 5 : mop up
     if (linePlaceholder) {
@@ -4693,26 +4707,7 @@ void ReplaceSelectionCommand::doApply()
     }
 }
 
-void ReplaceSelectionCommand::completeHTMLReplacement(const Position &start, const Position &end)
- {
-    if (start.isNull() || !start.node()->inDocument() || end.isNull() || !end.node()->inDocument())
-        return;
-    
-    Selection replacementSelection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY);
-    setEndingSelection(replacementSelection);
-    
-    CSSMutableStyleDeclarationImpl *typingStyle = document()->part()->typingStyle();
-    if (m_matchStyle && typingStyle) {
-        applyStyle(typingStyle);
-    }    
-    
-    if (!m_selectReplacement)
-        setEndingSelection(end, SEL_DEFAULT_AFFINITY);
-    
-    rebalanceWhitespace();
-}
-
-void ReplaceSelectionCommand::completeHTMLReplacement()
+void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)
 {
     if (!m_firstNodeInserted || !m_firstNodeInserted->inDocument() ||
         !m_lastNodeInserted || !m_lastNodeInserted->inDocument())
@@ -4740,7 +4735,23 @@ void ReplaceSelectionCommand::completeHTMLReplacement()
     document()->updateLayout();
     Position start(firstLeaf, firstLeaf->caretMinOffset());
     Position end(lastLeaf, lastLeaf->caretMaxOffset());
-    completeHTMLReplacement(start, end);
+    
+    if (m_matchStyle) {
+        assert(m_insertionStyle);
+        setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
+        applyStyle(m_insertionStyle);
+    }    
+    
+    if (lastPositionToSelect.isNotNull())
+        end = lastPositionToSelect;
+    
+    if (m_selectReplacement) {
+        setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
+    } else {
+        setEndingSelection(end, SEL_DEFAULT_AFFINITY);
+    }
+    
+    rebalanceWhitespace();
 }
 
 EditAction ReplaceSelectionCommand::editingAction() const

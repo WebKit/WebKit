@@ -1,3 +1,18 @@
+2005-03-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3976872> REGRESSION (Mail): Pasted plain text doesn't get the proper style if pasted into newlines
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommand::styleAtPosition): new, factored out from calculateStyleBeforeInsertion
+        (khtml::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion): call styleAtPosition
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand): clear new m_insertionStyle ivar
+        (khtml::ReplaceSelectionCommand::~ReplaceSelectionCommand): deref new m_insertionStyle  ivar
+        (khtml::ReplaceSelectionCommand::doApply): store the style so it later be applied when matching style
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement): apply style from m_insertionStyle when matching style
+        * khtml/editing/htmlediting.h:
+
 2005-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
