@@ -521,6 +521,40 @@ Position Position::equivalentDownstreamPosition() const
     return it.current();
 }
 
+Position Position::equivalentRangeCompliantPosition() const
+{
+    if (isEmpty())
+        return *this;
+
+    if (!node()->parentNode())
+        return *this;
+
+    RenderObject *renderer = node()->renderer();
+    if (!renderer)
+        return *this;
+        
+    if (!renderer->isReplaced() && !renderer->isBR())
+        return *this;
+    
+    int o = 0;
+    const NodeImpl *n = node();
+    while ((n = n->previousSibling()))
+        o++;
+    
+    return Position(node()->parentNode(), o + offset());
+}
+
+Position Position::equivalentShallowPosition() const
+{
+    if (isEmpty())
+        return *this;
+
+    Position pos(*this);
+    while (pos.offset() == pos.node()->caretMinOffset() && pos.node()->parentNode() && pos.node() == pos.node()->parentNode()->firstChild())
+        pos = Position(pos.node()->parentNode(), 0);
+    return pos;
+}
+
 bool Position::atStartOfContainingEditableBlock() const
 {
     return renderedOffset() == 0 && inFirstEditableInContainingEditableBlock();
@@ -842,6 +876,14 @@ bool Position::inLastEditableInContainingEditableBlock() const
     }
 
     return true;
+}
+
+void Position::debugPosition(const char *msg) const
+{
+    if (isEmpty())
+        fprintf(stderr, "Position [%s]: empty\n");
+    else
+        fprintf(stderr, "Position [%s]: %s [%p] at %d\n", msg, getTagName(node()->id()).string().latin1(), node(), offset());
 }
 
 } // namespace DOM

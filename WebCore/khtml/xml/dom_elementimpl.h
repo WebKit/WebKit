@@ -166,6 +166,7 @@ public:
                                        const DOMString &localName) const;
     void setAttribute( NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode );
     void removeAttribute( NodeImpl::Id id, int &exceptioncode );
+    bool hasAttributes() const;
     
     DOMString prefix() const { return m_prefix; }
     void setPrefix(const DOMString &_prefix, int &exceptioncode );

@@ -25,6 +25,9 @@
 
 #include "htmlediting_impl.h"
 
+#include "cssproperties.h"
+#include "css/css_valueimpl.h"
+#include "dom/css_value.h"
 #include "dom/dom_position.h"
 #include "html/html_elementimpl.h"
 #include "html/html_imageimpl.h"
@@ -43,12 +46,18 @@
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_rangeimpl.h"
+#include "xml/dom2_viewsimpl.h"
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
 #include "KWQLogging.h"
 #endif
 
+using DOM::AttrImpl;
+using DOM::CSSPrimitiveValue;
+using DOM::CSSPrimitiveValueImpl;
+using DOM::CSSProperty;
+using DOM::CSSStyleDeclarationImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
@@ -66,43 +75,7 @@ using DOM::Range;
 using DOM::RangeImpl;
 using DOM::Selection;
 using DOM::TextImpl;
-
-using khtml::AppendNodeCommand;
-using khtml::AppendNodeCommandImpl;
-using khtml::CompositeEditCommand;
-using khtml::CompositeEditCommandImpl;
-using khtml::DeleteCollapsibleWhitespaceCommand;
-using khtml::DeleteCollapsibleWhitespaceCommandImpl;
-using khtml::DeleteSelectionCommand;
-using khtml::DeleteSelectionCommandImpl;
-using khtml::DeleteTextCommand;
-using khtml::DeleteTextCommandImpl;
-using khtml::EditCommand;
-using khtml::EditCommandImpl;
-using khtml::InlineTextBox;
-using khtml::InputNewlineCommand;
-using khtml::InputNewlineCommandImpl;
-using khtml::InputTextCommand;
-using khtml::InputTextCommandImpl;
-using khtml::InsertNodeBeforeCommand;
-using khtml::InsertNodeBeforeCommandImpl;
-using khtml::InsertTextCommand;
-using khtml::InsertTextCommandImpl;
-using khtml::JoinTextNodesCommand;
-using khtml::JoinTextNodesCommandImpl;
-using khtml::RemoveNodeCommand;
-using khtml::RemoveNodeCommandImpl;
-using khtml::RemoveNodeAndPruneCommand;
-using khtml::RemoveNodeAndPruneCommandImpl;
-using khtml::RenderObject;
-using khtml::RenderStyle;
-using khtml::RenderText;
-using khtml::PasteMarkupCommand;
-using khtml::PasteMarkupCommandImpl;
-using khtml::SplitTextNodeCommand;
-using khtml::SplitTextNodeCommandImpl;
-using khtml::TypingCommand;
-using khtml::TypingCommandImpl;
+using DOM::TreeWalkerImpl;
 
 #if !APPLE_CHANGES
 #define ASSERT(assertion) ((void)0)
@@ -114,6 +87,9 @@ using khtml::TypingCommandImpl;
 #define debugPosition(a,b) ((void)0)
 #endif
 #endif
+
+namespace khtml {
+
 
 static inline bool isNBSP(const QChar &c)
 {
@@ -415,13 +391,13 @@ void CompositeEditCommandImpl::applyCommandToComposite(EditCommand &cmd)
     m_cmds.append(cmd);
 }
 
-void CompositeEditCommandImpl::insertNodeBefore(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild)
+void CompositeEditCommandImpl::insertNodeBefore(NodeImpl *insertChild, NodeImpl *refChild)
 {
     InsertNodeBeforeCommand cmd(document(), insertChild, refChild);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild)
+void CompositeEditCommandImpl::insertNodeAfter(NodeImpl *insertChild, NodeImpl *refChild)
 {
     if (refChild->parentNode()->lastChild() == refChild) {
         appendNode(refChild->parentNode(), insertChild);
@@ -455,31 +431,37 @@ void CompositeEditCommandImpl::insertNodeAt(NodeImpl *insertChild, NodeImpl *ref
     }
 }
 
-void CompositeEditCommandImpl::appendNode(DOM::NodeImpl *parent, DOM::NodeImpl *appendChild)
+void CompositeEditCommandImpl::appendNode(NodeImpl *parent, NodeImpl *appendChild)
 {
     AppendNodeCommand cmd(document(), parent, appendChild);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::removeNode(DOM::NodeImpl *removeChild)
+void CompositeEditCommandImpl::removeNode(NodeImpl *removeChild)
 {
     RemoveNodeCommand cmd(document(), removeChild);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::removeNodeAndPrune(DOM::NodeImpl *removeChild)
+void CompositeEditCommandImpl::removeNodeAndPrune(NodeImpl *removeChild)
 {
     RemoveNodeAndPruneCommand cmd(document(), removeChild);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::splitTextNode(DOM::TextImpl *text, long offset)
+void CompositeEditCommandImpl::removeNodePreservingChildren(NodeImpl *removeChild)
+{
+    RemoveNodePreservingChildrenCommand cmd(document(), removeChild);
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommandImpl::splitTextNode(TextImpl *text, long offset)
 {
     SplitTextNodeCommand cmd(document(), text, offset);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::joinTextNodes(DOM::TextImpl *text1, DOM::TextImpl *text2)
+void CompositeEditCommandImpl::joinTextNodes(TextImpl *text1, TextImpl *text2)
 {
     JoinTextNodesCommand cmd(document(), text1, text2);
     applyCommandToComposite(cmd);
@@ -492,19 +474,19 @@ void CompositeEditCommandImpl::inputText(const DOMString &text)
     cmd.input(text);
 }
 
-void CompositeEditCommandImpl::insertText(DOM::TextImpl *node, long offset, const DOM::DOMString &text)
+void CompositeEditCommandImpl::insertText(TextImpl *node, long offset, const DOMString &text)
 {
     InsertTextCommand cmd(document(), node, offset, text);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::deleteText(DOM::TextImpl *node, long offset, long count)
+void CompositeEditCommandImpl::deleteText(TextImpl *node, long offset, long count)
 {
     DeleteTextCommand cmd(document(), node, offset, count);
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommandImpl::replaceText(DOM::TextImpl *node, long offset, long count, const DOM::DOMString &replacementText)
+void CompositeEditCommandImpl::replaceText(TextImpl *node, long offset, long count, const DOMString &replacementText)
 {
     DeleteTextCommand deleteCommand(document(), node, offset, count);
     applyCommandToComposite(deleteCommand);
@@ -537,6 +519,24 @@ void CompositeEditCommandImpl::deleteCollapsibleWhitespace()
 void CompositeEditCommandImpl::deleteCollapsibleWhitespace(const Selection &selection)
 {
     DeleteCollapsibleWhitespaceCommand cmd(document(), selection);
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommandImpl::removeCSSProperty(CSSStyleDeclarationImpl *decl, int property)
+{
+    RemoveCSSPropertyCommand cmd(document(), decl, property);
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommandImpl::removeNodeAttribute(ElementImpl *element, int attribute)
+{
+    RemoveNodeAttributeCommand cmd(document(), element, attribute);
+    applyCommandToComposite(cmd);
+}
+
+void CompositeEditCommandImpl::setNodeAttribute(ElementImpl *element, int attribute, const DOMString &value)
+{
+    SetNodeAttributeCommand cmd(document(), element, attribute, value);
     applyCommandToComposite(cmd);
 }
 
@@ -587,6 +587,480 @@ void AppendNodeCommandImpl::doUnapply()
     int exceptionCode = 0;
     m_parentNode->removeChild(m_appendChild, exceptionCode);
     ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommandImpl
+
+ApplyStyleCommandImpl::ApplyStyleCommandImpl(DocumentImpl *document, ApplyStyleCommand::EStyle style)
+    : CompositeEditCommandImpl(document), m_styleConstant(style)
+{   
+}
+
+ApplyStyleCommandImpl::~ApplyStyleCommandImpl()
+{
+}
+
+int ApplyStyleCommandImpl::commandID() const
+{
+    return ApplyStyleCommandID;
+}
+
+void ApplyStyleCommandImpl::doApply()
+{
+    if (endingSelection().state() != Selection::RANGE)
+        return;
+
+    m_removingStyle = currentlyHasStyle();
+    
+    // Right now, we only apply in place if the start and end are in the same
+    // node. This could be improved in the future to handle more cases that
+    // are only a bit more complex than this case.
+    Position start(endingSelection().start().equivalentDownstreamPosition());
+    Position end(endingSelection().end().equivalentUpstreamPosition());
+    if (start.node() == end.node())
+        applyInPlace(start, end);
+    else
+        applyUsingFragment();
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommandImpl: style-removal helpers
+
+bool ApplyStyleCommandImpl::isHTMLStyleNode(HTMLElementImpl *elem)
+{
+    switch (m_styleConstant) {
+        case ApplyStyleCommand::BOLD:
+            return elem->id() == ID_B;
+        default:
+        case ApplyStyleCommand::NONE:
+            return false;
+    }
+}
+
+void ApplyStyleCommandImpl::removeHTMLStyleNode(HTMLElementImpl *elem, EUndoable undoable)
+{
+    // This node can be removed.
+    // EDIT FIXME: This does not handle the case where the node
+    // has attributes. But how often do people add attributes to <B> tags? 
+    // Not so often I think.
+    ASSERT(elem);
+    removeNodePreservingChildren(elem, undoable);
+}
+
+void ApplyStyleCommandImpl::removeCSSStyle(HTMLElementImpl *elem, EUndoable undoable)
+{
+    ASSERT(elem);
+
+    CSSStyleDeclarationImpl *decl = elem->inlineStyleDecl();
+    int property = cssProperty(); 
+    if (!decl || !decl->getPropertyCSSValue(property))
+        return;
+        
+    removeCSSProperty(decl, property, undoable);
+
+    // EDIT FIXME: These four lines of code should not be necessary.
+    // The DOM should update without having to do this extra work.
+    if (decl->values()->count() > 0)
+        setNodeAttribute(elem, ATTR_STYLE, decl->cssText(), undoable);
+    else
+        removeNodeAttribute(elem, ATTR_STYLE, undoable);
+}
+
+void ApplyStyleCommandImpl::removeCSSProperty(CSSStyleDeclarationImpl *decl, int property, EUndoable undoable)
+{
+    if (undoable == UNDOABLE)
+        CompositeEditCommandImpl::removeCSSProperty(decl, property);
+    else
+        decl->removeProperty(property);
+}
+
+void ApplyStyleCommandImpl::setNodeAttribute(ElementImpl *elem, int attribute, const DOMString &value, EUndoable undoable)
+{
+    if (undoable == UNDOABLE) {
+        CompositeEditCommandImpl::setNodeAttribute(elem, attribute, value);
+    }
+    else {
+        int exceptionCode = 0;
+        elem->setAttribute(attribute, value.implementation(), exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+void ApplyStyleCommandImpl::removeNodeAttribute(ElementImpl *elem, int attribute, EUndoable undoable)
+{
+    if (undoable == UNDOABLE) {
+        CompositeEditCommandImpl::removeNodeAttribute(elem, attribute);
+    }
+    else {
+        int exceptionCode = 0;
+        elem->removeAttribute(attribute, exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+void ApplyStyleCommandImpl::removeNodePreservingChildren(NodeImpl *parent, EUndoable undoable)
+{
+    if (undoable == UNDOABLE) {
+        CompositeEditCommandImpl::removeNodePreservingChildren(parent);
+    }
+    else {
+        NodeImpl *grandparent = parent->parentNode();
+        ASSERT(grandparent);
+        int exceptionCode = 0;
+        while (parent->firstChild()) {
+            NodeImpl *child = parent->firstChild();
+            child->ref();
+            parent->removeChild(child, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            grandparent->insertBefore(child, parent, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            child->deref();
+        }
+        parent->parentNode()->removeChild(parent, exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommandImpl: shared helpers
+
+bool ApplyStyleCommandImpl::mustExlicitlyApplyStyle(const Position &pos) const
+{
+    bool hasStyle = currentlyHasStyle(pos);
+    return (removingStyle() && hasStyle) || (!removingStyle() && !hasStyle);
+} 
+
+NodeImpl *ApplyStyleCommandImpl::createExplicitApplyStyleNode() const
+{
+    int exceptionCode = 0;
+    
+    switch (m_styleConstant) {
+        case ApplyStyleCommand::BOLD:
+            if (removingStyle()) {
+                ElementImpl *elem = document()->createHTMLElement("SPAN", exceptionCode);
+                ASSERT(exceptionCode == 0);
+                elem->setAttribute(ATTR_STYLE, "font-weight: normal");
+                return elem;
+            }
+            else {
+                ElementImpl *elem = document()->createHTMLElement("B", exceptionCode);
+                ASSERT(exceptionCode == 0);
+                return elem;
+            }
+        default:
+        case ApplyStyleCommand::NONE:
+            ASSERT_NOT_REACHED();
+    }
+    
+    return 0;
+}
+
+bool ApplyStyleCommandImpl::currentlyHasStyle() const
+{
+    return currentlyHasStyle(endingSelection().start().equivalentDownstreamPosition());
+}
+
+bool ApplyStyleCommandImpl::currentlyHasStyle(const Position &pos) const
+{
+    ASSERT(pos.notEmpty());
+    
+    NodeImpl *node = pos.node();
+    while (node && !node->isElementNode())
+         node = node->parentNode();
+    ASSERT(node);
+
+    CSSStyleDeclarationImpl *decl = document()->defaultView()->getComputedStyle(static_cast<ElementImpl *>(node), 0);
+    ASSERT(decl);
+    
+    switch (m_styleConstant) {
+        case ApplyStyleCommand::BOLD: {
+            CSSPrimitiveValueImpl *value = static_cast<CSSPrimitiveValueImpl *>(decl->getPropertyCSSValue(CSS_PROP_FONT_WEIGHT));
+            return !strcasecmp(value->getStringValue(), "bold");
+        }
+        case ApplyStyleCommand::NONE:
+            ASSERT(0);
+            break;
+    }
+    
+    return false;
+}
+
+int ApplyStyleCommandImpl::cssProperty() const
+{
+    switch (m_styleConstant) {
+        case ApplyStyleCommand::BOLD:
+            return CSS_PROP_FONT_WEIGHT;
+        default:
+        case ApplyStyleCommand::NONE:
+            ASSERT_NOT_REACHED();
+    }
+    
+    return 0;
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommandImpl: apply-in-place helpers
+
+bool ApplyStyleCommandImpl::matchesTargetStyle(bool hasStyle) const
+{
+    return (removingStyle() && !hasStyle) || (!removingStyle() && hasStyle);
+}
+
+Position ApplyStyleCommandImpl::positionInsertionPoint(Position pos)
+{
+    if (pos.node()->isTextNode() && (pos.offset() > 0 && pos.offset() < pos.node()->maxOffset())) {
+        SplitTextNodeCommand split(document(), static_cast<TextImpl *>(pos.node()), pos.offset());
+        split.apply();
+        pos = Position(split.node(), 0);
+    }
+
+    if (matchesTargetStyle(currentlyHasStyle(pos)))
+        return pos;
+        
+    // try next node
+    if (pos.offset() >= pos.node()->caretMaxOffset()) {
+        NodeImpl *nextNode = pos.node()->traverseNextNode();
+        if (nextNode) {
+            Position next = Position(nextNode, 0);
+            if (matchesTargetStyle(currentlyHasStyle(next)))
+                return next;
+        }
+    }
+
+    // try previous node
+    if (pos.offset() <= pos.node()->caretMinOffset()) {
+        NodeImpl *prevNode = pos.node()->traversePreviousNode();
+        if (prevNode) {
+            Position prev = Position(prevNode, prevNode->maxOffset());
+            if (matchesTargetStyle(currentlyHasStyle(prev)))
+                return prev;
+        }
+    }
+    
+    return pos;
+}
+
+bool ApplyStyleCommandImpl::splitTextAtStartIfNeeded(const Position &start, const Position &end)
+{
+    if (start.node()->isTextNode() && start.offset() > start.node()->caretMinOffset() && start.offset() < start.node()->caretMaxOffset()) {
+        long endOffsetAdjustment = start.node() == end.node() ? start.offset() : 0;
+        TextImpl *text = static_cast<TextImpl *>(start.node());
+        SplitTextNodeCommand cmd(document(), text, start.offset());
+        applyCommandToComposite(cmd);
+        setEndingSelection(Selection(Position(start.node(), 0), Position(end.node(), end.offset() - endOffsetAdjustment)));
+        return true;
+    }
+    return false;
+}
+
+bool ApplyStyleCommandImpl::splitTextAtEndIfNeeded(const Position &start, const Position &end)
+{
+    if (end.node()->isTextNode() && end.offset() > end.node()->caretMinOffset() && end.offset() < end.node()->caretMaxOffset()) {
+        TextImpl *text = static_cast<TextImpl *>(end.node());
+        SplitTextNodeCommand cmd(document(), text, end.offset());
+        applyCommandToComposite(cmd);
+        NodeImpl *startNode = start.node() == end.node() ? cmd.node()->previousSibling() : start.node();
+        ASSERT(startNode);
+        ASSERT(startNode->isTextNode());
+        setEndingSelection(Selection(Position(startNode, start.offset()), Position(cmd.node()->previousSibling(), cmd.node()->previousSibling()->caretMaxOffset())));
+        return true;
+    }
+    return false;
+}
+
+void ApplyStyleCommandImpl::applyStyleIfNeeded(const Position &insertionPoint)
+{
+    ASSERT(insertionPoint.notEmpty());
+    if (mustExlicitlyApplyStyle(insertionPoint)) {
+        NodeImpl *styleNode = createExplicitApplyStyleNode();
+        ASSERT(styleNode);
+        int exceptionCode = 0;
+        NodeImpl *contentNode = insertionPoint.node();
+        insertNodeBefore(styleNode, contentNode);
+        removeNode(contentNode);
+        appendNode(styleNode, contentNode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+void ApplyStyleCommandImpl::removeStyle(const Position &s, const Position &e)
+{
+    Position start(s.equivalentDownstreamPosition().equivalentShallowPosition().equivalentRangeCompliantPosition());
+    Position end(e.equivalentUpstreamPosition());
+    NodeImpl *node = start.node();
+    while (node != end.node()) {
+        NodeImpl *next = node->traverseNextNode();
+        if (node->isHTMLElement()) {
+            HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
+            if (isHTMLStyleNode(elem))
+                removeHTMLStyleNode(elem, UNDOABLE);
+            else
+                removeCSSStyle(elem, UNDOABLE);
+        }
+        node = next;
+    }
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommandImpl: apply using fragment helpers
+
+DocumentFragmentImpl *ApplyStyleCommandImpl::cloneSelection() const
+{
+    RangeImpl *range = document()->createRange();
+    range->ref();
+    
+    int exceptionCode = 0;
+    Position pos = endingSelection().start();
+    
+    pos = endingSelection().start().equivalentShallowPosition().equivalentRangeCompliantPosition();
+    range->setStart(pos.node(), pos.offset(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    pos = endingSelection().end().equivalentUpstreamPosition().equivalentRangeCompliantPosition();
+    range->setEnd(pos.node(), pos.offset(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    DocumentFragmentImpl *fragment = range->cloneContents(exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    range->detach(exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    range->deref();
+
+    return fragment;
+}
+
+void ApplyStyleCommandImpl::removeStyle(DocumentFragmentImpl *fragment)
+{
+    ASSERT(fragment);
+    
+    NodeImpl *node = fragment->firstChild();
+    while (node) {
+        NodeImpl *next = node->traverseNextNode();
+        if (node->isHTMLElement()) {
+            HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
+            if (isHTMLStyleNode(elem))
+                removeHTMLStyleNode(elem, NOTUNDOABLE);
+            else
+                removeCSSStyle(elem, NOTUNDOABLE);
+        }
+        node = next;
+    }
+}
+
+void ApplyStyleCommandImpl::applyStyleIfNeeded(DocumentFragmentImpl *fragment, const Position &insertionPoint)
+{
+    ASSERT(fragment);
+    ASSERT(insertionPoint.notEmpty());
+
+    if (mustExlicitlyApplyStyle(insertionPoint)) {
+        NodeImpl *styleNode = createExplicitApplyStyleNode();
+        ASSERT(styleNode);
+        int exceptionCode = 0;
+        NodeImpl *node = fragment->firstChild();
+        while (node) {
+            NodeImpl *next = node->nextSibling();
+            node->ref();
+            fragment->removeChild(node, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            styleNode->appendChild(node, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            node->deref();
+            node = next;
+        }
+        fragment->appendChild(styleNode, exceptionCode);
+        ASSERT(exceptionCode == 0);
+    }
+}
+
+void ApplyStyleCommandImpl::insertFragment(DocumentFragmentImpl *fragment, const Position &pos)
+{
+    ASSERT(fragment);
+    ASSERT(pos.notEmpty());
+
+    NodeImpl *node = fragment->lastChild();
+    while (node) {
+        int exceptionCode = 0;
+        NodeImpl *prev = node->previousSibling();
+        node->ref();
+        fragment->removeChild(node, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        insertNodeAfter(node, pos.node());
+        node->deref();
+        node = prev;
+    }
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommandImpl: different cases we recognize and treat differently
+
+void ApplyStyleCommandImpl::applyInPlace(const Position &s, const Position &e)
+{
+    // Style-change request is being done on a sufficiently simple portion of the tree
+    // such that the style change can be done in place.
+
+    // If the start position of the selection is in the middle of a text node, split it.
+    Position start(s);
+    Position end(e);
+    bool splitStart = splitTextAtStartIfNeeded(start, end);
+
+    // If the end position of the selection is in the middle of a text node, split it.
+    if (splitStart) {
+        start = endingSelection().start();
+        end = endingSelection().end();
+    }
+    bool splitEnd = splitTextAtEndIfNeeded(start, end);
+    
+    // If neither start nor end is in the middle of a text node, have a look
+    // to see if any style can be removed from the current selection.
+    if (!splitStart && !splitEnd)
+        removeStyle(start, end);
+    
+    // Apply style if needed (it might not be needed in cases 
+    // where removing style, as done above, makes this content take on the needed style).
+    applyStyleIfNeeded(positionInsertionPoint(endingSelection().start()));
+}
+
+void ApplyStyleCommandImpl::applyUsingFragment()
+{
+    // Style-change request is being done on a sufficiently complex portion of the tree
+    // such that we use a cloned copy of the content in the selection to perform
+    // the style change. 
+    // FIXME: This is more heavy-weight than we might like for some cases,
+    // but it is a start.
+
+    // Start off by creating a cloned document fragment for the selected content
+    // and then delete the selection using the undoable delete. This is an
+    // important part of what makes this operation undoable.
+    DocumentFragmentImpl *fragment = cloneSelection();
+    ASSERT(fragment);
+    fragment->ref();
+    deleteSelection();
+
+    // Move the selection to the edges of the current insertion point left
+    // by the delete selection step. This makes it easy to shift the selection
+    // to the edges of the fragment content once it is reinserted.
+    Position start(endingSelection().start().equivalentUpstreamPosition());
+    Position end(endingSelection().end().equivalentDownstreamPosition());
+
+    // Now process the fragment:
+    // 1. Remove all traces of style we are applying or removing
+    // 2. Apply style if needed (it might not be needed in cases 
+    //    where removing style, as done above, makes this content take on 
+    //    the needed style).
+    // 3. Reinsert fragment into document.
+    // 4. Deref the fragment
+    removeStyle(fragment);
+    applyStyleIfNeeded(fragment, start);
+    insertFragment(fragment, start);
+    fragment->deref();
+
+    // Shift the selection to the edges of the re-inserted fragment content.
+    start = start.equivalentDownstreamPosition();
+    end = end.equivalentUpstreamPosition();
+    setEndingSelection(Selection(start, end));
 }
 
 //------------------------------------------------------------------------------------------
@@ -747,13 +1221,13 @@ void DeleteCollapsibleWhitespaceCommandImpl::doApply()
 //------------------------------------------------------------------------------------------
 // DeleteSelectionCommandImpl
 
-DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document)
+DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DocumentImpl *document)
     : CompositeEditCommandImpl(document)
 {
     m_selectionToDelete = endingSelection();
 }
 
-DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const Selection &selection)
+DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DocumentImpl *document, const Selection &selection)
     : CompositeEditCommandImpl(document)
 {
     m_selectionToDelete = selection;
@@ -1338,10 +1812,10 @@ void InsertNodeBeforeCommandImpl::doApply()
 {
     ASSERT(m_insertChild);
     ASSERT(m_refChild);
-    ASSERT(m_refChild->parent());
+    ASSERT(m_refChild->parentNode());
 
     int exceptionCode = 0;
-    m_refChild->parent()->insertBefore(m_insertChild, m_refChild, exceptionCode);
+    m_refChild->parentNode()->insertBefore(m_insertChild, m_refChild, exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -1349,10 +1823,10 @@ void InsertNodeBeforeCommandImpl::doUnapply()
 {
     ASSERT(m_insertChild);
     ASSERT(m_refChild);
-    ASSERT(m_refChild->parent());
+    ASSERT(m_refChild->parentNode());
 
     int exceptionCode = 0;
-    m_refChild->parent()->removeChild(m_insertChild, exceptionCode);
+    m_refChild->parentNode()->removeChild(m_insertChild, exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -1440,7 +1914,7 @@ void JoinTextNodesCommandImpl::doApply()
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    m_text2->parent()->removeChild(m_text1, exceptionCode);
+    m_text2->parentNode()->removeChild(m_text1, exceptionCode);
     ASSERT(exceptionCode == 0);
 
     m_offset = m_text1->length();
@@ -1466,7 +1940,7 @@ void JoinTextNodesCommandImpl::doUnapply()
 //------------------------------------------------------------------------------------------
 // PasteMarkupCommandImpl
 
-PasteMarkupCommandImpl::PasteMarkupCommandImpl(DocumentImpl *document, const DOMString &markupString, const DOM::DOMString &baseURL) 
+PasteMarkupCommandImpl::PasteMarkupCommandImpl(DocumentImpl *document, const DOMString &markupString, const DOMString &baseURL) 
     : CompositeEditCommandImpl(document), m_markupString(markupString), m_baseURL(baseURL)
 {
     ASSERT(!m_markupString.isEmpty());
@@ -1537,6 +2011,85 @@ void PasteMarkupCommandImpl::doApply()
         
         setEndingSelection(Position(leaf, leaf->caretMaxOffset()));
     }
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveCSSPropertyCommandImpl
+
+RemoveCSSPropertyCommandImpl::RemoveCSSPropertyCommandImpl(DocumentImpl *document, CSSStyleDeclarationImpl *decl, int property)
+    : EditCommandImpl(document), m_decl(decl), m_property(property), m_important(false)
+{
+    ASSERT(m_decl);
+    m_decl->ref();
+}
+
+RemoveCSSPropertyCommandImpl::~RemoveCSSPropertyCommandImpl()
+{
+    if (m_decl)
+        m_decl->deref();
+}
+
+int RemoveCSSPropertyCommandImpl::commandID() const
+{
+    return RemoveCSSPropertyCommandID;
+}
+
+void RemoveCSSPropertyCommandImpl::doApply()
+{
+    ASSERT(m_decl);
+
+    m_oldValue = m_decl->getPropertyValue(m_property);
+    m_important = m_decl->getPropertyPriority(m_property);
+    m_decl->removeProperty(m_property);
+}
+
+void RemoveCSSPropertyCommandImpl::doUnapply()
+{
+    ASSERT(m_decl);
+    ASSERT(!m_oldValue.isNull());
+
+    m_decl->setProperty(m_property, m_oldValue, m_important);
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveNodeAttributeCommandImpl
+
+RemoveNodeAttributeCommandImpl::RemoveNodeAttributeCommandImpl(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute)
+    : EditCommandImpl(document), m_element(element), m_attribute(attribute)
+{
+    ASSERT(m_element);
+    m_element->ref();
+}
+
+RemoveNodeAttributeCommandImpl::~RemoveNodeAttributeCommandImpl()
+{
+    if (m_element)
+        m_element->deref();
+}
+
+int RemoveNodeAttributeCommandImpl::commandID() const
+{
+    return RemoveNodeAttributeCommandID;
+}
+
+void RemoveNodeAttributeCommandImpl::doApply()
+{
+    ASSERT(m_element);
+
+    int exceptionCode = 0;
+    m_oldValue = m_element->getAttribute(m_attribute);
+    m_element->removeAttribute(m_attribute, exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void RemoveNodeAttributeCommandImpl::doUnapply()
+{
+    ASSERT(m_element);
+    ASSERT(!m_oldValue.isNull());
+
+    int exceptionCode = 0;
+    m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
+    ASSERT(exceptionCode == 0);
 }
 
 //------------------------------------------------------------------------------------------
@@ -1639,6 +2192,82 @@ void RemoveNodeAndPruneCommandImpl::doApply()
 }
 
 //------------------------------------------------------------------------------------------
+// RemoveNodePreservingChildrenCommandImpl
+
+RemoveNodePreservingChildrenCommandImpl::RemoveNodePreservingChildrenCommandImpl(DocumentImpl *document, NodeImpl *node)
+    : CompositeEditCommandImpl(document), m_node(node)
+{
+    ASSERT(m_node);
+    m_node->ref();
+}
+
+RemoveNodePreservingChildrenCommandImpl::~RemoveNodePreservingChildrenCommandImpl()
+{
+    if (m_node)
+        m_node->deref();
+}
+
+int RemoveNodePreservingChildrenCommandImpl::commandID() const
+{
+    return RemoveNodePreservingChildrenCommandID;
+}
+
+void RemoveNodePreservingChildrenCommandImpl::doApply()
+{
+    NodeListImpl *children = node()->childNodes();
+    int length = children->length();
+    for (int i = 0; i < length; i++) {
+        NodeImpl *child = children->item(0);
+        removeNode(child);
+        insertNodeBefore(child, node());
+    }
+    removeNode(node());
+}
+
+//------------------------------------------------------------------------------------------
+// SetNodeAttributeCommandImpl
+
+SetNodeAttributeCommandImpl::SetNodeAttributeCommandImpl(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute, const DOMString &value)
+    : EditCommandImpl(document), m_element(element), m_attribute(attribute), m_value(value)
+{
+    ASSERT(m_element);
+    m_element->ref();
+    ASSERT(!m_value.isNull());
+}
+
+SetNodeAttributeCommandImpl::~SetNodeAttributeCommandImpl()
+{
+    if (m_element)
+        m_element->deref();
+}
+
+int SetNodeAttributeCommandImpl::commandID() const
+{
+    return SetNodeAttributeCommandID;
+}
+
+void SetNodeAttributeCommandImpl::doApply()
+{
+    ASSERT(m_element);
+    ASSERT(!m_value.isNull());
+
+    int exceptionCode = 0;
+    m_oldValue = m_element->getAttribute(m_attribute);
+    m_element->setAttribute(m_attribute, m_value.implementation(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+void SetNodeAttributeCommandImpl::doUnapply()
+{
+    ASSERT(m_element);
+    ASSERT(!m_oldValue.isNull());
+
+    int exceptionCode = 0;
+    m_element->setAttribute(m_attribute, m_oldValue.implementation(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+}
+
+//------------------------------------------------------------------------------------------
 // SplitTextNodeCommandImpl
 
 SplitTextNodeCommandImpl::SplitTextNodeCommandImpl(DocumentImpl *document, TextImpl *text, long offset)
@@ -1704,7 +2333,7 @@ void SplitTextNodeCommandImpl::doUnapply()
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    m_text2->parent()->removeChild(m_text1, exceptionCode);
+    m_text2->parentNode()->removeChild(m_text1, exceptionCode);
     ASSERT(exceptionCode == 0);
 
     m_offset = m_text1->length();
@@ -1731,7 +2360,7 @@ void TypingCommandImpl::doApply()
 {
 }
 
-void TypingCommandImpl::insertText(const DOM::DOMString &text)
+void TypingCommandImpl::insertText(const DOMString &text)
 {
     if (m_cmds.count() == 0) {
         InputTextCommand cmd(document());
@@ -1824,3 +2453,4 @@ void TypingCommandImpl::removeCommand(const EditCommand &cmd)
 
 //------------------------------------------------------------------------------------------
 
+} // namespace khtml

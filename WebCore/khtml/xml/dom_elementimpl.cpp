@@ -312,6 +312,11 @@ void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
     }
 }
 
+bool ElementImpl::hasAttributes() const
+{
+    return namedAttrMap && namedAttrMap->length() > 0;
+}
+
 NodeImpl *ElementImpl::cloneNode(bool deep)
 {
     // ### we loose the namespace here ... FIXME

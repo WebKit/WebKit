@@ -57,6 +57,8 @@ public:
     Position nextLinePosition(int x) const;
     Position equivalentUpstreamPosition() const;
     Position equivalentDownstreamPosition() const;
+    Position equivalentRangeCompliantPosition() const;
+    Position equivalentShallowPosition() const;
     bool atStartOfContainingEditableBlock() const;
     bool atStartOfRootEditableBlock() const;
     bool inRenderedContent() const;
@@ -75,6 +77,8 @@ public:
     
     friend bool operator==(const Position &a, const Position &b);
     friend bool operator!=(const Position &a, const Position &b);
+    
+    void debugPosition(const char *msg="") const;
     
 private:
     NodeImpl *m_node;

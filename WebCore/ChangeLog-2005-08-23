@@ -1,3 +1,166 @@
+2004-05-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Implemented first cut at text style change code.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::ApplyStyleCommand):
+        (khtml::ApplyStyleCommand::~ApplyStyleCommand):
+        (khtml::ApplyStyleCommand::impl):
+        (khtml::RemoveCSSPropertyCommand::RemoveCSSPropertyCommand):
+        (khtml::RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand):
+        (khtml::RemoveCSSPropertyCommand::impl):
+        (khtml::RemoveCSSPropertyCommand::styleDeclaration):
+        (khtml::RemoveCSSPropertyCommand::property):
+        (khtml::RemoveNodeAttributeCommand::RemoveNodeAttributeCommand):
+        (khtml::RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand):
+        (khtml::RemoveNodeAttributeCommand::impl):
+        (khtml::RemoveNodeAttributeCommand::element):
+        (khtml::RemoveNodeAttributeCommand::attribute):
+        (khtml::RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand):
+        (khtml::RemoveNodePreservingChildrenCommand::~RemoveNodePreservingChildrenCommand):
+        (khtml::RemoveNodePreservingChildrenCommand::impl):
+        (khtml::RemoveNodePreservingChildrenCommand::node):
+        (khtml::SetNodeAttributeCommand::SetNodeAttributeCommand):
+        (khtml::SetNodeAttributeCommand::~SetNodeAttributeCommand):
+        (khtml::SetNodeAttributeCommand::impl):
+        (khtml::SetNodeAttributeCommand::element):
+        (khtml::SetNodeAttributeCommand::attribute):
+        (khtml::SetNodeAttributeCommand::value):
+        * khtml/editing/htmlediting.h:
+        (khtml::):
+        (khtml::ApplyStyleCommand::):
+        
+        Removed a bunch of unnecessary DOM namespace qualifiers.
+        Fixed calls to parent(), which relied on the TreeShared interface to get a parent,
+        and changed to the parentNode() DOM Node call, which is more suitable given the
+        intention.
+        
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::insertNodeBefore):
+        (khtml::CompositeEditCommandImpl::insertNodeAfter):
+        (khtml::CompositeEditCommandImpl::appendNode):
+        (khtml::CompositeEditCommandImpl::removeNode):
+        (khtml::CompositeEditCommandImpl::removeNodeAndPrune):
+        (khtml::CompositeEditCommandImpl::removeNodePreservingChildren):
+        (khtml::CompositeEditCommandImpl::splitTextNode):
+        (khtml::CompositeEditCommandImpl::joinTextNodes):
+        (khtml::CompositeEditCommandImpl::insertText):
+        (khtml::CompositeEditCommandImpl::deleteText):
+        (khtml::CompositeEditCommandImpl::replaceText):
+        (khtml::CompositeEditCommandImpl::removeCSSProperty):
+        (khtml::CompositeEditCommandImpl::removeNodeAttribute):
+        (khtml::CompositeEditCommandImpl::setNodeAttribute):
+        
+        
+        Text style change command implementations.
+        There are a couple more parent() -> parentNode() changes in here as well.
+        
+        (khtml::ApplyStyleCommandImpl::ApplyStyleCommandImpl):
+        (khtml::ApplyStyleCommandImpl::~ApplyStyleCommandImpl):
+        (khtml::ApplyStyleCommandImpl::commandID):
+        (khtml::ApplyStyleCommandImpl::doApply):
+        (khtml::ApplyStyleCommandImpl::isHTMLStyleNode):
+        (khtml::ApplyStyleCommandImpl::removeHTMLStyleNode):
+        (khtml::ApplyStyleCommandImpl::removeCSSStyle):
+        (khtml::ApplyStyleCommandImpl::removeCSSProperty):
+        (khtml::ApplyStyleCommandImpl::setNodeAttribute):
+        (khtml::ApplyStyleCommandImpl::removeNodeAttribute):
+        (khtml::ApplyStyleCommandImpl::removeNodePreservingChildren):
+        (khtml::ApplyStyleCommandImpl::mustExlicitlyApplyStyle):
+        (khtml::ApplyStyleCommandImpl::createExplicitApplyStyleNode):
+        (khtml::ApplyStyleCommandImpl::currentlyHasStyle):
+        (khtml::ApplyStyleCommandImpl::cssProperty):
+        (khtml::ApplyStyleCommandImpl::matchesTargetStyle):
+        (khtml::ApplyStyleCommandImpl::positionInsertionPoint):
+        (khtml::ApplyStyleCommandImpl::splitTextAtStartIfNeeded):
+        (khtml::ApplyStyleCommandImpl::splitTextAtEndIfNeeded):
+        (khtml::ApplyStyleCommandImpl::applyStyleIfNeeded):
+        (khtml::ApplyStyleCommandImpl::removeStyle):
+        (khtml::ApplyStyleCommandImpl::cloneSelection):
+        (khtml::ApplyStyleCommandImpl::insertFragment):
+        (khtml::ApplyStyleCommandImpl::applyInPlace):
+        (khtml::ApplyStyleCommandImpl::applyUsingFragment):
+        (khtml::DeleteSelectionCommandImpl::DeleteSelectionCommandImpl):
+        (khtml::InsertNodeBeforeCommandImpl::doApply):
+        (khtml::InsertNodeBeforeCommandImpl::doUnapply):
+        (khtml::JoinTextNodesCommandImpl::doApply):
+        (khtml::PasteMarkupCommandImpl::PasteMarkupCommandImpl):
+        (khtml::RemoveCSSPropertyCommandImpl::RemoveCSSPropertyCommandImpl):
+        (khtml::RemoveCSSPropertyCommandImpl::~RemoveCSSPropertyCommandImpl):
+        (khtml::RemoveCSSPropertyCommandImpl::commandID):
+        (khtml::RemoveCSSPropertyCommandImpl::doApply):
+        (khtml::RemoveCSSPropertyCommandImpl::doUnapply):
+        (khtml::RemoveNodeAttributeCommandImpl::RemoveNodeAttributeCommandImpl):
+        (khtml::RemoveNodeAttributeCommandImpl::~RemoveNodeAttributeCommandImpl):
+        (khtml::RemoveNodeAttributeCommandImpl::commandID):
+        (khtml::RemoveNodeAttributeCommandImpl::doApply):
+        (khtml::RemoveNodeAttributeCommandImpl::doUnapply):
+        (khtml::RemoveNodePreservingChildrenCommandImpl::RemoveNodePreservingChildrenCommandImpl):
+        (khtml::RemoveNodePreservingChildrenCommandImpl::~RemoveNodePreservingChildrenCommandImpl):
+        (khtml::RemoveNodePreservingChildrenCommandImpl::commandID):
+        (khtml::RemoveNodePreservingChildrenCommandImpl::doApply):
+        (khtml::SetNodeAttributeCommandImpl::SetNodeAttributeCommandImpl):
+        (khtml::SetNodeAttributeCommandImpl::~SetNodeAttributeCommandImpl):
+        (khtml::SetNodeAttributeCommandImpl::commandID):
+        (khtml::SetNodeAttributeCommandImpl::doApply):
+        (khtml::SetNodeAttributeCommandImpl::doUnapply):
+        (khtml::SplitTextNodeCommandImpl::doUnapply):
+        (khtml::TypingCommandImpl::insertText):
+
+
+        Text style change command implementations.
+
+        * khtml/editing/htmlediting_impl.h:
+        (khtml::ApplyStyleCommandImpl::):
+        (khtml::ApplyStyleCommandImpl::removingStyle):
+        (khtml::RemoveCSSPropertyCommandImpl::styleDeclaration):
+        (khtml::RemoveCSSPropertyCommandImpl::property):
+        (khtml::RemoveNodeAttributeCommandImpl::element):
+        (khtml::RemoveNodeAttributeCommandImpl::attribute):
+        (khtml::RemoveNodePreservingChildrenCommandImpl::node):
+        (khtml::SetNodeAttributeCommandImpl::element):
+        (khtml::SetNodeAttributeCommandImpl::attribute):
+        (khtml::SetNodeAttributeCommandImpl::value):
+        
+        
+        Fixed a bug where the TreeWalker returned the current node instead
+        of null when an attempt was made to use the iterator to go to a
+        non-existent location.
+        
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::TreeWalkerImpl::parentNode):
+        (DOM::TreeWalkerImpl::firstChild):
+        (DOM::TreeWalkerImpl::lastChild):
+        (DOM::TreeWalkerImpl::previousSibling):
+        (DOM::TreeWalkerImpl::nextSibling):
+        (DOM::TreeWalkerImpl::previousNode):
+        (DOM::TreeWalkerImpl::nextNode):
+        
+        
+        A convenience.
+        
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::hasAttributes):
+        * khtml/xml/dom_elementimpl.h:
+        
+        
+        New helpers to begin moving us to using DOM Range-compliant positions in our code.
+        
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentRangeCompliantPosition):
+        (DOM::Position::equivalentShallowPosition):
+        (DOM::Position::inLastEditableInContainingEditableBlock):
+        
+        
+        (DOM::Position::debugPosition): Debugging aid.
+        * khtml/xml/dom_position.h:
+       
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge applyStyle:]): First bit of wiring up. Some hard-coded temporary code 
+        in here will need to be improved soon.
+
 2004-05-12  David Hyatt  <hyatt@apple.com>
 
 	Improve layout scheduling.  Make sure no layouts can be scheduled until over a minimum delay threshold.

@@ -100,6 +100,7 @@ using khtml::EditCommand;
 using khtml::EditCommandImpl;
 using khtml::PasteMarkupCommand;
 using khtml::parseURL;
+using khtml::ApplyStyleCommand;
 using khtml::RenderCanvas;
 using khtml::RenderImage;
 using khtml::RenderObject;
@@ -1450,7 +1451,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style
 {
-    ERROR("unimplemented");
+    if (!_part || !_part->xmlDocImpl() || !style)
+        return;
+    
+    // FIXME: Temporarily hard-coded to BOLD until more styles are implemented.
+    //                 ...or...
+    // Any style you want, as long as it's BOLD. :)
+    ApplyStyleCommand cmd(_part->xmlDocImpl(), ApplyStyleCommand::BOLD);
+    cmd.apply();
 }
 
 - (void)ensureCaretVisible

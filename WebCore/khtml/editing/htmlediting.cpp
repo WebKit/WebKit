@@ -27,6 +27,7 @@
 #include "htmlediting_impl.h"
 
 #include "khtml_part.h"
+#include "dom/dom_doc.h"
 #include "dom/dom_position.h"
 #include "xml/dom_docimpl.h"
 #include "xml/dom_nodeimpl.h"
@@ -38,45 +39,15 @@
 #include "KWQLogging.h"
 #endif
 
+using DOM::CSSStyleDeclarationImpl;
 using DOM::DocumentImpl;
+using DOM::ElementImpl;
 using DOM::Position;
 using DOM::DOMString;
 using DOM::NodeImpl;
+using DOM::NodeListImpl;
 using DOM::Selection;
 using DOM::TextImpl;
-
-using khtml::AppendNodeCommand;
-using khtml::AppendNodeCommandImpl;
-using khtml::CompositeEditCommand;
-using khtml::CompositeEditCommandImpl;
-using khtml::DeleteCollapsibleWhitespaceCommand;
-using khtml::DeleteCollapsibleWhitespaceCommandImpl;
-using khtml::DeleteSelectionCommand;
-using khtml::DeleteSelectionCommandImpl;
-using khtml::DeleteTextCommand;
-using khtml::DeleteTextCommandImpl;
-using khtml::EditCommand;
-using khtml::EditCommandImpl;
-using khtml::InputNewlineCommand;
-using khtml::InputNewlineCommandImpl;
-using khtml::InputTextCommand;
-using khtml::InputTextCommandImpl;
-using khtml::InsertNodeBeforeCommand;
-using khtml::InsertNodeBeforeCommandImpl;
-using khtml::InsertTextCommand;
-using khtml::InsertTextCommandImpl;
-using khtml::JoinTextNodesCommand;
-using khtml::JoinTextNodesCommandImpl;
-using khtml::RemoveNodeCommand;
-using khtml::RemoveNodeCommandImpl;
-using khtml::RemoveNodeAndPruneCommand;
-using khtml::RemoveNodeAndPruneCommandImpl;
-using khtml::PasteMarkupCommand;
-using khtml::PasteMarkupCommandImpl;
-using khtml::SplitTextNodeCommand;
-using khtml::SplitTextNodeCommandImpl;
-using khtml::TypingCommand;
-using khtml::TypingCommandImpl;
 
 #if !APPLE_CHANGES
 #define ASSERT(assertion) ((void)0)
@@ -93,7 +64,10 @@ using khtml::TypingCommandImpl;
 #define IF_IMPL_NULL_RETURN do { \
         if (isNull()) { return; } \
     } while (0)
-        
+
+
+namespace khtml {
+
 //------------------------------------------------------------------------------------------
 // EditCommand
 
@@ -272,6 +246,23 @@ NodeImpl *AppendNodeCommand::appendChild() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
     return impl()->appendChild();
+}
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommand
+
+ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, EStyle style)
+    : CompositeEditCommand(new ApplyStyleCommandImpl(document, style))
+{
+}
+
+ApplyStyleCommand::~ApplyStyleCommand()
+{
+}
+
+ApplyStyleCommandImpl *ApplyStyleCommand::impl() const
+{
+    return static_cast<ApplyStyleCommandImpl *>(get());
 }
 
 //------------------------------------------------------------------------------------------
@@ -536,6 +527,64 @@ DOMString PasteMarkupCommand::markupString() const
 }
 
 //------------------------------------------------------------------------------------------
+// RemoveCSSPropertyCommand
+
+RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(DocumentImpl *document, CSSStyleDeclarationImpl *decl, int property)
+    : EditCommand(new RemoveCSSPropertyCommandImpl(document, decl, property))
+{
+}
+
+RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
+{
+}
+
+RemoveCSSPropertyCommandImpl *RemoveCSSPropertyCommand::impl() const
+{
+    return static_cast<RemoveCSSPropertyCommandImpl *>(get());
+}
+
+CSSStyleDeclarationImpl *RemoveCSSPropertyCommand::styleDeclaration() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->styleDeclaration();
+}
+
+int RemoveCSSPropertyCommand::property() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->property();
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveNodeAttributeCommand
+
+RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute)
+    : EditCommand(new RemoveNodeAttributeCommandImpl(document, element, attribute))
+{
+}
+
+RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand()
+{
+}
+
+RemoveNodeAttributeCommandImpl *RemoveNodeAttributeCommand::impl() const
+{
+    return static_cast<RemoveNodeAttributeCommandImpl *>(get());
+}
+
+ElementImpl *RemoveNodeAttributeCommand::element() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->element();
+}
+
+NodeImpl::Id RemoveNodeAttributeCommand::attribute() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->attribute();
+}
+
+//------------------------------------------------------------------------------------------
 // RemoveNodeCommand
 
 RemoveNodeCommand::RemoveNodeCommand(DocumentImpl *document, NodeImpl *node)
@@ -579,6 +628,64 @@ NodeImpl *RemoveNodeAndPruneCommand::node() const
 {
     IF_IMPL_NULL_RETURN_ARG(0);
     return impl()->node();
+}
+
+//------------------------------------------------------------------------------------------
+// RemoveNodePreservingChildrenCommand
+
+RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(DocumentImpl *document, NodeImpl *node)
+    : CompositeEditCommand(new RemoveNodePreservingChildrenCommandImpl(document, node))
+{
+}
+
+RemoveNodePreservingChildrenCommand::~RemoveNodePreservingChildrenCommand()
+{
+}
+
+RemoveNodePreservingChildrenCommandImpl *RemoveNodePreservingChildrenCommand::impl() const
+{
+    return static_cast<RemoveNodePreservingChildrenCommandImpl *>(get());
+}
+
+NodeImpl *RemoveNodePreservingChildrenCommand::node() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->node();
+}
+
+//------------------------------------------------------------------------------------------
+// SetNodeAttributeCommand
+
+SetNodeAttributeCommand::SetNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute, const DOM::DOMString &value)
+    : EditCommand(new SetNodeAttributeCommandImpl(document, element, attribute, value))
+{
+}
+
+SetNodeAttributeCommand::~SetNodeAttributeCommand()
+{
+}
+
+SetNodeAttributeCommandImpl *SetNodeAttributeCommand::impl() const
+{
+    return static_cast<SetNodeAttributeCommandImpl *>(get());
+}
+
+ElementImpl *SetNodeAttributeCommand::element() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->element();
+}
+
+NodeImpl::Id SetNodeAttributeCommand::attribute() const
+{
+    IF_IMPL_NULL_RETURN_ARG(0);
+    return impl()->attribute();
+}
+
+DOMString SetNodeAttributeCommand::value() const
+{
+    IF_IMPL_NULL_RETURN_ARG("");
+    return impl()->value();
 }
 
 //------------------------------------------------------------------------------------------
@@ -723,3 +830,4 @@ void TypingCommand::deleteKeyPressed()
     return impl()->deleteKeyPressed();
 }
 
+} // namespace khtml

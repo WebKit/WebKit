@@ -30,10 +30,13 @@
 #include "dom_selection.h"
 #include "dom_string.h"
 #include "shared.h"
+#include "xml/dom_nodeimpl.h"
 
 namespace DOM {
+    class CSSStyleDeclarationImpl;
     class DocumentImpl;
     class DOMString;
+    class ElementImpl;
     class NodeImpl;
     class Position;
     class Selection;
@@ -43,6 +46,7 @@ namespace DOM {
 namespace khtml {
 
 class AppendNodeCommandImpl;
+class ApplyStyleCommandImpl;
 class CompositeEditCommandImpl;
 class DeleteCollapsibleWhitespaceCommandImpl;
 class DeleteSelectionCommandImpl;
@@ -55,8 +59,12 @@ class InsertNodeBeforeCommandImpl;
 class InsertTextCommandImpl;
 class JoinTextNodesCommandImpl;
 class PasteMarkupCommandImpl;
+class RemoveCSSPropertyCommandImpl;
+class RemoveNodeAttributeCommandImpl;
 class RemoveNodeCommandImpl;
 class RemoveNodeAndPruneCommandImpl;
+class RemoveNodePreservingChildrenCommandImpl;
+class SetNodeAttributeCommandImpl;
 class SplitTextNodeCommandImpl;
 class TypingCommandImpl;
 
@@ -66,6 +74,7 @@ class TypingCommandImpl;
 enum ECommandID { 
     EditCommandID, // leave the base class first, others in alpha order
     AppendNodeCommandID,
+    ApplyStyleCommandID,
     CompositeEditCommandID,
     DeleteCollapsibleWhitespaceCommandID,
     DeleteSelectionCommandID,
@@ -76,8 +85,12 @@ enum ECommandID {
     InsertTextCommandID,
     JoinTextNodesCommandID,
     PasteMarkupCommandID,
+    RemoveCSSPropertyCommandID,
+    RemoveNodeAttributeCommandID,
     RemoveNodeCommandID,
     RemoveNodeAndPruneCommandID,
+    RemoveNodePreservingChildrenCommandID,
+    SetNodeAttributeCommandID,
     SplitTextNodeCommandID,
     TypingCommandID,
 };
@@ -183,6 +196,22 @@ public:
     
 private:
     inline AppendNodeCommandImpl *impl() const;
+};
+
+//------------------------------------------------------------------------------------------
+// ApplyStyleCommand
+
+class ApplyStyleCommand : public CompositeEditCommand
+{
+public:
+    
+    enum EStyle { NONE, BOLD };
+
+	ApplyStyleCommand(DOM::DocumentImpl *, EStyle);
+	virtual ~ApplyStyleCommand();
+
+private:
+    inline ApplyStyleCommandImpl *impl() const;
 };
 
 //------------------------------------------------------------------------------------------
@@ -330,6 +359,38 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
+// RemoveCSSPropertyCommand
+
+class RemoveCSSPropertyCommand : public EditCommand
+{
+public:
+	RemoveCSSPropertyCommand(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *, int property);
+	virtual ~RemoveCSSPropertyCommand();
+
+    DOM::CSSStyleDeclarationImpl *styleDeclaration() const;
+    int property() const;
+    
+private:
+    inline RemoveCSSPropertyCommandImpl *impl() const;
+};
+
+//------------------------------------------------------------------------------------------
+// RemoveNodeAttributeCommand
+
+class RemoveNodeAttributeCommand : public EditCommand
+{
+public:
+	RemoveNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute);
+	virtual ~RemoveNodeAttributeCommand();
+
+    DOM::ElementImpl *element() const;
+    DOM::NodeImpl::Id attribute() const;
+    
+private:
+    inline RemoveNodeAttributeCommandImpl *impl() const;
+};
+
+//------------------------------------------------------------------------------------------
 // RemoveNodeCommand
 
 class RemoveNodeCommand : public EditCommand
@@ -357,6 +418,38 @@ public:
     
 private:
     inline RemoveNodeAndPruneCommandImpl *impl() const;
+};
+
+//------------------------------------------------------------------------------------------
+// RemoveNodePreservingChildrenCommand
+
+class RemoveNodePreservingChildrenCommand : public CompositeEditCommand
+{
+public:
+    RemoveNodePreservingChildrenCommand(DOM::DocumentImpl *document, DOM::NodeImpl *node);
+    virtual ~RemoveNodePreservingChildrenCommand();
+
+    DOM::NodeImpl *node() const;
+
+private:
+    inline RemoveNodePreservingChildrenCommandImpl *impl() const;
+};
+
+//------------------------------------------------------------------------------------------
+// SetNodeAttributeCommand
+
+class SetNodeAttributeCommand : public EditCommand
+{
+public:
+	SetNodeAttributeCommand(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute, const DOM::DOMString &value);
+	virtual ~SetNodeAttributeCommand();
+
+    DOM::ElementImpl *element() const;
+    DOM::NodeImpl::Id attribute() const;
+    DOM::DOMString value() const;
+    
+private:
+    inline SetNodeAttributeCommandImpl *impl() const;
 };
 
 //------------------------------------------------------------------------------------------

@@ -397,7 +397,9 @@ Range Selection::toRange() const
     if (isEmpty())
         return Range();
 
-    return Range(Node(start().node()), start().offset(), Node(end().node()), end().offset());
+    Position s(start().equivalentRangeCompliantPosition());
+    Position e(end().equivalentRangeCompliantPosition());
+    return Range(Node(s.node()), s.offset(), Node(e.node()), e.offset());
 }
 
 void Selection::layoutCaret()
