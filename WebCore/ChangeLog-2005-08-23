@@ -1,3 +1,37 @@
+2004-10-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3816768> REGRESSION (Mail): Deleting last character in block incorrectly 
+        moves caret out of block.
+
+        The issue here is that an empty block with no explicit height set by style collapses
+        to zero height, and does so immediately after the last bit of content is removed from
+        it (as a result of deleting text with the delete key for instance). Since zero-height
+        blocks are not eligible caret positions, the caret jumped to the closest eligible spot.
+        
+        The fix is to detect when a block has not been removed itself, but has had all its 
+        contents removed. In this case, a BR element is placed in the block, one that is
+        specially marked as a placeholder. Later, if the block ever receives content, this
+        placeholder is removed.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::blockPlaceholerClassString): String which acts as a placeholder marker class.
+        (khtml::CompositeEditCommand::insertBlockPlaceholderIfNeeded): Adds a placeholder BR if needed.
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Removes a placeholder BR if needed.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Call removeBlockPlaceholderIfNeeded.
+        Also, do some cleanup on some old, crufty code in the move logic that is just so clearly wrong 
+        (it's very clear that we needs to be able to move more than just text nodes). This may expose
+        bugs, but these bugs needs to be filed and fixed, not ducked. Besides, undoing this silliness
+        made the test case in the bug work.
+        (khtml::DeleteSelectionCommand::doApply): Call insertBlockPlaceholderIfNeeded and
+        removeBlockPlaceholderIfNeeded.
+        (khtml::InputTextCommand::input): Call removeBlockPlaceholderIfNeeded.
+        (khtml::ReplaceSelectionCommand::doApply): Call removeBlockPlaceholderIfNeeded.
+        * khtml/editing/htmlediting.h: Declare new functions.
+
 2004-10-13  Richard Williamson   <rjw@apple.com>
 
         Added support for -apple-dashboard-region:none.  And fixed

@@ -198,6 +198,9 @@ protected:
     void deleteUnrenderedText(DOM::NodeImpl *);
     void deleteUnrenderedText(const DOM::Position &pos);
 
+    void insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
+    void removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
+
     QValueList<EditCommandPtr> m_cmds;
 };
 
