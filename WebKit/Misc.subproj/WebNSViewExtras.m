@@ -30,18 +30,23 @@
 
 @implementation NSView (WebExtras)
 
-- (NSView *)_web_superviewOfClass:(Class)class
+- (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass
 {
-    NSView *view;
-
-    view = self;
+    NSView *view = self;
     while ((view = [view superview]) != nil) {
         if ([view isKindOfClass:class]) {
             return view;
+        } else if (limitClass && [view isKindOfClass:limitClass]) {
+            break;
         }
     }
 
     return nil;
+}
+
+- (NSView *)_web_superviewOfClass:(Class)class
+{
+    return [self _web_superviewOfClass:class stoppingAtClass:nil];
 }
 
 - (WebView *)_web_parentWebView

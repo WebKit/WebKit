@@ -14,6 +14,10 @@
 // Returns the nearest enclosing view of the given class, or nil if none.
 - (NSView *)_web_superviewOfClass:(Class)class;
 
+// Returns the nearest enclosing view of the given class, or nil if none.
+// Stops searching and returns nil when limitClass is encountered
+- (NSView *)_web_superviewOfClass:(Class)class stoppingAtClass:(Class)limitClass;
+
 // Returns the first WebView superview. Only works if self is the WebView's document view.
 - (WebView *)_web_parentWebView;
 

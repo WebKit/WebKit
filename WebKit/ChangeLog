@@ -1,3 +1,14 @@
+2003-02-20  Chris Blumenberg  <cblu@apple.com>
+
+	Added _web_superviewOfClass:stoppingAtClass:. Climbs up hierarchy and returns nil when stoppingAtClass is hit.
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_superviewOfClass:stoppingAtClass:]):
+        (-[NSView _web_superviewOfClass:]):
+
 2003-02-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David
