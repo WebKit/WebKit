@@ -83,7 +83,9 @@ void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
     if (isWindowEvent) {
         thisObj = win;
     } else {
+        KJS::Interpreter::lock();
         thisObj = Object::dynamicCast(getDOMNode(exec,evt.currentTarget()));
+        KJS::Interpreter::unlock();
         if ( !thisObj.isNull() ) {
             ScopeChain scope = oldScope;
             static_cast<DOMNode*>(thisObj.imp())->pushEventHandlerScope(exec, scope);
@@ -97,7 +99,9 @@ void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
     // ... and in the interpreter
     interpreter->setCurrentEvent( &evt );
 
+    KJS::Interpreter::lock();
     Value retval = listener.call(exec, thisObj, args);
+    KJS::Interpreter::unlock();
 
     listener.setScope( oldScope );
 
@@ -175,6 +179,9 @@ void JSLazyEventListener::parseCode() const
       KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(proxy->interpreter());
       ExecState *exec = interpreter->globalExec();
 
+
+      KJS::Interpreter::lock();
+
       //KJS::Constructor constr(KJS::Global::current().get("Function").imp());
       KJS::Object constr = interpreter->builtinFunction();
       KJS::List args;
@@ -184,6 +191,8 @@ void JSLazyEventListener::parseCode() const
       args.append(eventString);
       args.append(KJS::String(code));
       listener = constr.construct(exec, args); // ### is globalExec ok ?
+
+      KJS::Interpreter::unlock();
       
       if ( exec->hadException() ) {
 	exec->clearException();
@@ -379,6 +388,9 @@ Value KJS::getDOMEvent(ExecState *exec, DOM::Event e)
   if (!ei)
     return Null();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
+
+  KJS::Interpreter::lock();
+
   DOMObject *ret = interp->getDOMObject(ei);
   if (!ret) {
     if (ei->isKeyboardEvent())
@@ -394,6 +406,9 @@ Value KJS::getDOMEvent(ExecState *exec, DOM::Event e)
 
     interp->putDOMObject(ei, ret);
   }
+
+  KJS::Interpreter::unlock();
+
   return Value(ret);
 }
 
