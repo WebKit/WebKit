@@ -1,5 +1,11 @@
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
+	- commit updated .lut.h file that I forgot to commit before
+
+        * khtml/ecma/kjs_window.lut.h:
+
+2003-11-17  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
 	- fixed 3382829 - Safari won't load script src javascript if done by a document.write followed by document.close
