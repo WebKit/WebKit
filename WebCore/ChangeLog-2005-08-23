@@ -1,3 +1,13 @@
+2003-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3504155>: Safari fails XMLHttpRequest abort test
+        
+	* khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestProtoFunc::tryCall): Avoid throwing an
+	exception after send().
+
 2003-12-09  David Hyatt  <hyatt@apple.com>
 
 	Rename -apple-aqua to auto for outline styles.
