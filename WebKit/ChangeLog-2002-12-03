@@ -1,5 +1,11 @@
 2002-04-16  Darin Adler  <darin@apple.com>
 
+	* WebView.subproj/IFWebDataSource.mm:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	Touch these files to try to make Jersey build again.
+
+2002-04-16  Darin Adler  <darin@apple.com>
+
 	* WebView.subproj/IFBaseWebControllerPrivate.mm: Include khtml_part.h instead
 	of KWQKHTMLPart.h.
 

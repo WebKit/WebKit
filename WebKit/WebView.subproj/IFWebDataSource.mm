@@ -1,7 +1,8 @@
 /*	
         IFWebDataSource.mm
-	Copyright 2001, Apple, Inc. All rights reserved.
+	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
+
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFException.h>

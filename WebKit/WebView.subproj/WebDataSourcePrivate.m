@@ -1,10 +1,11 @@
 /*	IFWebDataSourcePrivate.h
-	Copyright 2001, Apple, Inc. All rights reserved.
+	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 
         Private header file.  This file may reference classes (both ObjectiveC and C++)
         in WebCore.  Instances of this class are referenced by _private in
         NSWebPageDataSource.
 */
+
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFMainURLHandleClient.h>
 #import <WebKit/IFWebFramePrivate.h>
@@ -13,7 +14,6 @@
 #import <WebFoundation/IFURLHandle.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <khtml_part.h>
-
 
 @implementation IFWebDataSourcePrivate 
 
