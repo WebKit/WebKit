@@ -1,3 +1,31 @@
+2004-09-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3805137> REGRESSION: Cannot search on pricetool.com
+
+        The problem here is that residual style handling can cause an
+	element associated with a misnested form to lose the association,
+	because it can become detached and then reattached in this
+	case. So we need to maintain the association.
+	
+        * khtml/html/html_formimpl.h: Added list of dormant elements to form,
+	and dormant bit to generic form element.
+	* khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::~HTMLFormElementImpl): Clear m_form field for
+	dormant elements too.
+        (DOM::HTMLFormElementImpl::registerFormElement): Remove from dormant list
+	in addition to adding to main list.
+        (DOM::HTMLFormElementImpl::removeFormElement): Remove from both lists.
+        (DOM::HTMLFormElementImpl::makeFormElementDormant): New method, remove from
+	main list, add to dormant list.
+        (DOM::HTMLGenericFormElementImpl::HTMLGenericFormElementImpl): Initialize
+	dormant bit to false.
+        (DOM::HTMLGenericFormElementImpl::insertedIntoDocument): If the element is
+	dormant and has a form, re-register it and clear the dormant bit.
+        (DOM::HTMLGenericFormElementImpl::removedFromDocument): If the document has
+	a form, tell the form it is dormant and set the dormant bit.
+
 2004-09-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3811187> REGRESSION (Mail): Control-click past end of document does not spell check last word

@@ -112,6 +112,9 @@ HTMLFormElementImpl::~HTMLFormElementImpl()
     QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
     for (; it.current(); ++it)
         it.current()->m_form = 0;
+    QPtrListIterator<HTMLGenericFormElementImpl> it2(dormantFormElements);
+    for (; it2.current(); ++it2)
+        it2.current()->m_form = 0;
 }
 
 NodeImpl::Id HTMLFormElementImpl::id() const
@@ -697,10 +700,18 @@ void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 {
     formElements.append(e);
+    dormantFormElements.remove(e);
 }
 
 void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl *e)
 {
+    formElements.remove(e);
+    dormantFormElements.remove(e);
+}
+
+void HTMLFormElementImpl::makeFormElementDormant(HTMLGenericFormElementImpl *e)
+{
+    dormantFormElements.append(e);
     formElements.remove(e);
 }
 
@@ -716,6 +727,7 @@ HTMLGenericFormElementImpl::HTMLGenericFormElementImpl(DocumentPtr *doc, HTMLFor
 {
     m_disabled = m_readOnly = false;
     m_name = 0;
+    m_dormant = false;
 
     if (f)
 	m_form = f;
@@ -788,11 +800,22 @@ void HTMLGenericFormElementImpl::attach()
     }
 }
 
+void HTMLGenericFormElementImpl::insertedIntoDocument()
+{
+    if (m_form && m_dormant)
+        m_form->registerFormElement(this);
+
+    m_dormant = false;
+   
+    HTMLElementImpl::insertedIntoDocument();
+}
+
 void HTMLGenericFormElementImpl::removedFromDocument()
 {
     if (m_form)
-        m_form->removeFormElement(this);
-    m_form = 0;
+        m_form->makeFormElementDormant(this);
+
+    m_dormant = true;
    
     HTMLElementImpl::removedFromDocument();
 }
