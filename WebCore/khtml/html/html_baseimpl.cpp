@@ -55,8 +55,10 @@ HTMLBodyElementImpl::HTMLBodyElementImpl(DocumentPtr *doc)
 
 HTMLBodyElementImpl::~HTMLBodyElementImpl()
 {
-    if (m_linkDecl)
+    if (m_linkDecl) {
+        m_linkDecl->setParent(0);
         m_linkDecl->deref();
+    }
 }
 
 NodeImpl::Id HTMLBodyElementImpl::id() const
