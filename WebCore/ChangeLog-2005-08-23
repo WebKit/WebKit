@@ -1,5 +1,17 @@
 2003-05-09  David Hyatt  <hyatt@apple.com>
 
+	Finally get tables cutting the right properties off and letting
+	the right ones through in quirks mode.  Font-family *is* inherited
+	through into tables in all other browsers.  We have been doing this
+	wrong the whole time.  Also ensure that font-style and font-variant
+	are reset.
+	
+        Reviewed by darin
+
+        * khtml/css/quirks.css:
+
+2003-05-09  David Hyatt  <hyatt@apple.com>
+
 	Always allow KONQ_TEXT as a valid value, and don't restrict its
 	use to lax CSS parsing.  (We want our UA sheets to be parsed
 	strictly.)

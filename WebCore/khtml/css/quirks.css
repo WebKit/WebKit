@@ -22,13 +22,14 @@ UL, OL, MENU, DIR {
 }
     
 /* Tables reset both line-height and white-space in quirks mode.
-   Compatible with WinIE. */
+   Compatible with WinIE.   Note that font-family is *not reset*.  */
 TABLE {
     white-space: normal;
     line-height: normal;
     font-weight: normal;
     font-size: medium;
-    font-family: \2d konq-body;
+    font-variant: normal;
+    font-style: normal;
     color: \2d konq-text;
 }
 
