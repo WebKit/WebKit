@@ -1,3 +1,16 @@
+2004-09-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3786986> REGRESSION: TEXTAREAs have extra wide right margins where the scrollbars used to be
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _updateTextViewWidth]): Renamed from _frameSizeChanged. Now uses the width of
+        the size from the contentSize method rather than trying to compute a size.
+        (-[KWQTextArea initWithFrame:]): Call method by new name.
+        (-[KWQTextArea tile]): Override this instead of setFrame: to adjust the size as the size of
+        the text area changes.
+
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
 
 	Backed out my changes to these files. They were not meant to be checked. (I'm having a bad CVS day)

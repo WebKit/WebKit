@@ -107,15 +107,9 @@ const float LargeNumberForText = 1.0e7;
     [self _configureTextViewForWordWrapMode];
 }
 
-- (void)_frameSizeChanged
+- (void)_updateTextViewWidth
 {
-    NSSize contentSize = [[self class] contentSizeForFrameSize:[self frame].size
-        hasHorizontalScroller:[self hasHorizontalScroller]
-        hasVerticalScroller:[self hasVerticalScroller]
-        borderType:[self borderType]];
-    NSRect textFrame = [textView frame];
-    textFrame.size.width = contentSize.width;
-    [textView setFrame:textFrame];
+    [textView setFrameSize:NSMakeSize([self contentSize].width, [textView frame].size.height)];
 }
 
 - initWithFrame:(NSRect)frame
@@ -128,7 +122,7 @@ const float LargeNumberForText = 1.0e7;
     [self setBorderType:NSBezelBorder];
 
     [self _createTextView];
-    [self _frameSizeChanged];
+    [self _updateTextViewWidth];
 
     // Do this last, because it works better if done after the scrollers are created.
     [self setAutohidesScrollers:YES];
@@ -267,10 +261,10 @@ const float LargeNumberForText = 1.0e7;
     return [textView isEnabled];
 }
 
-- (void)setFrame:(NSRect)frameRect
+- (void)tile
 {
-    [super setFrame:frameRect];
-    [self _frameSizeChanged];
+    [super tile];
+    [self _updateTextViewWidth];
 }
 
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph
