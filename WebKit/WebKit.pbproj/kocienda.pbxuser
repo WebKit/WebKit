@@ -15,13 +15,14 @@
 						Split0 = {
 							Split0 = {
 								NavContent0 = {
-									bookmark = 25C50A3C022D54260ECA149E;
+									bookmark = 25D8E5DB025145AD0ECA149E;
 									history = (
 										25F29B12022C4F6E0ECA149E,
 										25F29B13022C4F6E0ECA149E,
 										25F29B18022C50AE0ECA149E,
 										25C50A27022D4CB10ECA149E,
-										25C50A2B022D4CB10ECA149E,
+										25D8E5D8025145AD0ECA149E,
+										25D8E5D9025145AD0ECA149E,
 									);
 									prevStack = (
 										25F29B15022C4F6E0ECA149E,
@@ -30,11 +31,12 @@
 										25F29B1B022C50AE0ECA149E,
 										25C50A29022D4CB10ECA149E,
 										25C50A2A022D4CB10ECA149E,
+										25D8E5DA025145AD0ECA149E,
 									);
 								};
 								NavCount = 1;
 								NavGeometry0 = {
-									Frame = "{{0, 0}, {979, 1002}}";
+									Frame = "{{0, 0}, {1048, 1002}}";
 									NavBarVisible = YES;
 								};
 							};
@@ -71,14 +73,14 @@
 				{
 					ContentSize = "{1263, 1049}";
 					LeftSlideOut = {
-						ActiveTab = 0;
+						ActiveTab = 3;
 						Collapsed = NO;
 						Frame = "{{0, 23}, {1263, 1026}}";
 						Split0 = {
 							Collapsed = NO;
-							Frame = "{{284, 0}, {979, 1026}}";
+							Frame = "{{215, 0}, {1048, 1026}}";
 							Split0 = {
-								Frame = "{{0, 24}, {979, 1002}}";
+								Frame = "{{0, 24}, {1048, 1002}}";
 							};
 							SplitCount = 1;
 							Tab0 = {
@@ -208,16 +210,19 @@
 					StatusViewVisible = YES;
 					Template = F5F68CF101725D4C0D7A8F4C;
 					ToolbarVisible = YES;
-					WindowLocation = "{365, 192}";
+					WindowLocation = "{227, 178}";
 				},
 			);
+			PBXWorkspaceStateSaveDate = 38880671;
 		};
 		perUserProjectItems = {
 			25C50A27022D4CB10ECA149E = 25C50A27022D4CB10ECA149E;
 			25C50A29022D4CB10ECA149E = 25C50A29022D4CB10ECA149E;
 			25C50A2A022D4CB10ECA149E = 25C50A2A022D4CB10ECA149E;
-			25C50A2B022D4CB10ECA149E = 25C50A2B022D4CB10ECA149E;
-			25C50A3C022D54260ECA149E = 25C50A3C022D54260ECA149E;
+			25D8E5D8025145AD0ECA149E = 25D8E5D8025145AD0ECA149E;
+			25D8E5D9025145AD0ECA149E = 25D8E5D9025145AD0ECA149E;
+			25D8E5DA025145AD0ECA149E = 25D8E5DA025145AD0ECA149E;
+			25D8E5DB025145AD0ECA149E = 25D8E5DB025145AD0ECA149E;
 			25F29B12022C4F6E0ECA149E = 25F29B12022C4F6E0ECA149E;
 			25F29B13022C4F6E0ECA149E = 25F29B13022C4F6E0ECA149E;
 			25F29B15022C4F6E0ECA149E = 25F29B15022C4F6E0ECA149E;
@@ -225,6 +230,8 @@
 			25F29B18022C50AE0ECA149E = 25F29B18022C50AE0ECA149E;
 			25F29B1A022C50AE0ECA149E = 25F29B1A022C50AE0ECA149E;
 			25F29B1B022C50AE0ECA149E = 25F29B1B022C50AE0ECA149E;
+		};
+		projectwideBuildSettings = {
 		};
 		wantsIndex = 1;
 		wantsSCM = -1;
@@ -277,25 +284,66 @@
 		vrLen = 1920;
 		vrLoc = 0;
 	};
-	25C50A2B022D4CB10ECA149E = {
+	25D8E5D8025145AD0ECA149E = {
 		fRef = F5EBC45602134BC301CA1520;
 		isa = PBXTextBookmark;
-		name = "IFPluginView.mm: 652";
-		rLen = 0;
-		rLoc = 21975;
-		rType = 0;
-		vrLen = 2573;
-		vrLoc = 10968;
-	};
-	25C50A3C022D54260ECA149E = {
-		fRef = F5EBC45602134BC301CA1520;
-		isa = PBXTextBookmark;
-		name = "IFPluginView.mm: drawRect:";
+		name = "IFPluginView.mm: 160";
 		rLen = 9;
 		rLoc = 4899;
 		rType = 0;
-		vrLen = 2607;
-		vrLoc = 7571;
+		vrLen = 2695;
+		vrLoc = 7473;
+	};
+	25D8E5D9025145AD0ECA149E = {
+		isa = PBXTargetBookmark;
+		trg = 0867D69CFE84028FC02AAC07;
+	};
+	25D8E5DA025145AD0ECA149E = {
+		fRef = F5EBC45602134BC301CA1520;
+		isa = PBXTextBookmark;
+		name = "IFPluginView.mm: 160";
+		rLen = 9;
+		rLoc = 4899;
+		rType = 0;
+		vrLen = 2695;
+		vrLoc = 7473;
+	};
+	25D8E5DB025145AD0ECA149E = {
+		isa = PBXTargetBookmark;
+		trg = 0867D69CFE84028FC02AAC07;
+		uiCtxt = {
+			buildPhasesExpandedSubviews = (
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+			);
+			buildPhasesVisRect = "{{0, 0}, {1033, 951}}";
+			buildSettingsExpandedSubviews = (
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6,
+			);
+			buildSettingsVisRect = "{{0, 0}, {393, 256}}";
+			expertProductSettingsVisRect = "{{0, 0}, {464, 403}}";
+			guiProductSettingsExpandedSubviews = (
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+			);
+			guiProductSettingsVisRect = "{{0, 0}, {2000, 1249}}";
+			productSettingsIsSimple = YES;
+			selectedTab = buildPhases;
+		};
 	};
 	25F29B12022C4F6E0ECA149E = {
 		fRef = F520FB1A0221DEFD01C1A525;

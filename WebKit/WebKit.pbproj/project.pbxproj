@@ -3,13 +3,16 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 38;
+	objectVersion = 36;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
+				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -19,6 +22,9 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				FRAMEWORK_SEARCH_PATHS = "";
+				INSTALL_PATH = "";
+				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -60,7 +66,6 @@
 			buildStyles = (
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
-				257486E20221853F0ECA149E,
 			);
 			isa = PBXProject;
 			knownRegions = (
@@ -116,6 +121,7 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				0867D6A2FE84028FC02AAC07,
+				255AF6590250FC030ECA149E,
 			);
 			buildSettings = {
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -365,6 +371,18 @@
 			name = Misc;
 			refType = 4;
 		};
+		255AF6590250FC030ECA149E = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			shellPath = /bin/sh;
+			shellScript = "make embed";
+		};
 		2568C72C0174912D0ECA149E = {
 			isa = PBXFileReference;
 			name = WebKit.h;
@@ -379,19 +397,6 @@
 					Public,
 				);
 			};
-		};
-		257486E20221853F0ECA149E = {
-			buildRules = (
-			);
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "-O2";
-				SKIP_INSTALL = YES;
-			};
-			isa = PBXBuildStyle;
-			name = AlexanderTest;
 		};
 		25A5593101A5996D0ECA149E = {
 			isa = PBXFileReference;

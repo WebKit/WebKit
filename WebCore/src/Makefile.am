@@ -22,11 +22,31 @@ libwebcore_dylib_LIBADD = \
 	$(NULL)
 
 
-if AlexanderTest
-LIBWEBCORE_INSTALL_PATH=@executable_path/../Frameworks
-else
-LIBWEBCORE_INSTALL_PATH=$(symrootsdir)
-endif
+LIBWEBCORE_INSTALL_PATH = @executable_path/../Frameworks
+
+DYLIB_NAME = libwebcore.dylib
+EMBED_HOST = $(SYMROOTS)/Alexander.app
+EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
+
+embed:
+	@if test -f "$(DYLIB_NAME)"; then \
+		INSTALL_PATH=`otool -D "$(DYLIB_NAME)"`; \
+		WILL_EMBED=`echo $$INSTALL_PATH | sed -n -e "s/@executable_path//p"`; \
+		if test -n "$$WILL_EMBED"; then \
+			if [ -d "$(EMBED_HOST)" ]; then \
+				if [ ! -d "$(EMBED_DIR)" ]; then \
+					mkdir -p "$(EMBED_DIR)"; \
+				fi; \
+				echo "embedding $(DYLIB_NAME) into $(EMBED_HOST)..."; \
+				cp -f $(DYLIB_NAME) $(EMBED_DIR); \
+			else \
+				echo "$(EMBED_HOST) not found. Not embedding framework"; \
+			fi; \
+		fi; \
+        else \
+		echo "can't find: $(DYLIB_NAME)"; \
+		exit 1; \
+        fi
 
 LDFLAGS = \
 	-framework Cocoa \

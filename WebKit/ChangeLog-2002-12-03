@@ -1,3 +1,13 @@
+2002-03-26  Kenneth Kocienda  <kocienda@apple.com>
+
+        Changes to help the transition to the new build system which unifies
+        our development build setting with the settings we use to ship
+        releases.
+
+	* Makefile.am:
+	* WebKit.pbproj/kocienda.pbxuser:
+	* WebKit.pbproj/project.pbxproj:
+
 2002-03-26  Richard Williamson  <rjw@apple.com>
 
         Try to ensure that display needed bits are correctly set.
