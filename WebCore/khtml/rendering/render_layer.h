@@ -204,7 +204,7 @@ public:
 
     void updateLayerPosition();
 #ifdef INCREMENTAL_REPAINTING
-    void updateLayerPositions(RenderLayer* rootLayer, bool doFullRepaint, bool checkForRepaint=true);
+    void updateLayerPositions(bool doFullRepaint = false, bool checkForRepaint=true);
     void computeRepaintRects();
     void relativePositionOffset(int& relX, int& relY) {
         relX += m_relX; relY += m_relY;
