@@ -523,7 +523,7 @@ void RenderCanvas::setSelection(RenderObject *s, int sp, RenderObject *e, int ep
     
     // Does the selection span objects and is the new end object different, or did the position
     // in the end element change?  If so we have to draw it.
-    if (oldStart != oldEnd && 
+    if (m_selectionStart != m_selectionEnd && 
         (oldEnd != m_selectionEnd ||
         (oldEnd == m_selectionEnd && oldEndPos != m_selectionEndPos))){
         m_view->updateContents( enclosingPositionedRect(m_selectionEnd) );

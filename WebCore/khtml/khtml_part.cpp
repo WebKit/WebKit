@@ -4426,12 +4426,12 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
         Position pos(innerNode.handle()->positionForCoordinates(event->x(), event->y()));
         if (pos.node() && (pos.node()->nodeType() == Node::TEXT_NODE || pos.node()->nodeType() == Node::CDATA_SECTION_NODE)) {
             selection.moveTo(pos);
-            selection.expandUsingGranularity(Selection::LINE);
+            selection.expandUsingGranularity(Selection::PARAGRAPH);
         }
     }
     
     if (selection.state() != Selection::CARET) {
-        d->m_selectionGranularity = Selection::LINE;
+        d->m_selectionGranularity = Selection::PARAGRAPH;
         d->m_beganSelectingText = true;
     }
     
@@ -4913,54 +4913,11 @@ void KHTMLPart::slotAutoScroll()
 
 void KHTMLPart::selectAll()
 {
-  if(!d->m_doc) return;
-
-  NodeImpl *first;
-  if (d->m_doc->isHTMLDocument())
-    first = static_cast<HTMLDocumentImpl*>(d->m_doc)->body();
-  else
-    first = d->m_doc;
-  NodeImpl *next;
-
-  // Look for first rendered text node
-  while (first && !(first->renderer() && first->renderer()->isText()))
-  {
-    next = first->firstChild();
-    if ( !next ) next = first->nextSibling();
-    while( first && !next )
-    {
-      first = first->parentNode();
-      if ( first )
-        next = first->nextSibling();
-    }
-    first = next;
-  }
-
-  NodeImpl *last;
-  if (d->m_doc->isHTMLDocument())
-    last = static_cast<HTMLDocumentImpl*>(d->m_doc)->body();
-  else
-    last = d->m_doc;
-  // Look for last rendered text node
-  while (last && !(last->renderer() && last->renderer()->isText()))
-  {
-    next = last->lastChild();
-    if ( !next ) next = last->previousSibling();
-    while ( last && !next )
-    {
-      last = last->parentNode();
-      if ( last )
-        next = last->previousSibling();
-    }
-    last = next;
-  }
-
-  if ( !first || !last )
-    return;
-  Q_ASSERT(first->renderer());
-  Q_ASSERT(last->renderer());
-  Selection selection(Position(first, 0), Position(last, last->nodeValue().length()));
-  setSelection(selection);
+    if (!d->m_doc)
+        return;
+    Selection selection(Position(d->m_doc->documentElement(), 0));
+    selection.validate(Selection::DOCUMENT);
+    setSelection(selection);
 }
 
 bool KHTMLPart::shouldBeginEditing(const Range &range) const
@@ -5012,7 +4969,7 @@ void KHTMLPart::appliedEditing(EditCommand &cmd)
 
     // Command will be equal to last edit command only in the case of typing
     if (d->m_lastEditCommand == cmd) {
-        assert(cmd.commandID() == khtml::TypingCommandID);
+        assert(cmd.isTypingCommand());
     }
     else {
 #if APPLE_CHANGES
@@ -5394,14 +5351,14 @@ KHTMLPart::TriState KHTMLPart::selectionHasStyle(CSSStyleDeclarationImpl *style)
         }
     } else {
         for (NodeImpl *node = d->m_selection.start().node(); node; node = node->traverseNextNode()) {
-            if (node->isHTMLElement()) {
-                CSSStyleDeclarationImpl *computedStyle = new CSSComputedStyleDeclarationImpl(node);
+            CSSStyleDeclarationImpl *computedStyle = new CSSComputedStyleDeclarationImpl(node);
+            if (computedStyle) {
                 computedStyle->ref();
                 updateState(style, computedStyle, atStart, state);
                 computedStyle->deref();
-                if (state == mixedTriState)
-                    break;
             }
+            if (state == mixedTriState)
+                break;
             if (node == d->m_selection.end().node())
                 break;
         }

@@ -2144,9 +2144,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return YES;
 }
 
-
 @end
-
 
 @implementation WebView (WebPendingPublic)
 
@@ -2621,420 +2619,100 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     reentered = NO;
 }
 
-- (void)centerSelectionInVisibleArea:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveBackward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveBackwardAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveDown:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveDownAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveForward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveForwardAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveLeft:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveLeftAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveRight:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveRightAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToBeginningOfDocument:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToBeginningOfLine:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToBeginningOfParagraph:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToEndOfDocument:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToEndOfLine:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToEndOfParagraph:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveUp:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveUpAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordBackward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordBackwardAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordForward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordForwardAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordLeft:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordLeftAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordRight:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveWordRightAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToEndOfParagraphAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToBeginningOfLineAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToEndOfLineAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)moveToEndOfDocumentAndModifySelection:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)pageDown:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)pageUp:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)scrollLineDown:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)scrollLineUp:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)scrollPageDown:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)scrollPageUp:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)selectAll:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)selectParagraph:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)selectLine:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)selectWord:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)copy:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)cut:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)paste:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)copyFont:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)pasteFont:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)delete:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)pasteAsPlainText:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)pasteAsRichText:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)changeFont:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)changeAttributes:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)changeDocumentBackgroundColor:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)changeColor:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)alignCenter:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)alignJustified:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)alignLeft:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)alignRight:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)indent:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)insertTab:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)insertBacktab:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)insertNewline:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)insertParagraphSeparator:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)changeCaseOfLetter:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)uppercaseWord:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)lowercaseWord:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)capitalizeWord:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteForward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteBackward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteWordForward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteWordBackward:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteToBeginningOfLine:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteToEndOfLine:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteToBeginningOfParagraph:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)deleteToEndOfParagraph:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)complete:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)checkSpelling:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)showGuessPanel:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)performFindPanelAction:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)startSpeaking:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
-
-- (void)stopSpeaking:(id)sender
-{
-    [self _performResponderOperation:_cmd with:sender];
-}
+#define FORWARD(name) \
+    - (void)name:(id)sender { [self _performResponderOperation:_cmd with:sender]; }
+
+FORWARD(alignCenter)
+FORWARD(alignJustified)
+FORWARD(alignLeft)
+FORWARD(alignRight)
+FORWARD(capitalizeWord)
+FORWARD(centerSelectionInVisibleArea)
+FORWARD(changeAttributes)
+FORWARD(changeColor)
+FORWARD(changeDocumentBackgroundColor)
+FORWARD(changeFont)
+FORWARD(checkSpelling)
+FORWARD(complete)
+FORWARD(copy)
+FORWARD(copyFont)
+FORWARD(cut)
+FORWARD(delete)
+FORWARD(deleteBackward)
+FORWARD(deleteBackwardByDecomposingPreviousCharacter)
+FORWARD(deleteForward)
+FORWARD(deleteToBeginningOfLine)
+FORWARD(deleteToBeginningOfParagraph)
+FORWARD(deleteToEndOfLine)
+FORWARD(deleteToEndOfParagraph)
+FORWARD(deleteWordBackward)
+FORWARD(deleteWordForward)
+FORWARD(ignoreSpelling)
+FORWARD(indent)
+FORWARD(insertBacktab)
+FORWARD(insertNewline)
+FORWARD(insertNewlineIgnoringFieldEditor)
+FORWARD(insertParagraphSeparator)
+FORWARD(insertTab)
+FORWARD(insertTabIgnoringFieldEditor)
+FORWARD(lowercaseWord)
+FORWARD(moveBackward)
+FORWARD(moveBackwardAndModifySelection)
+FORWARD(moveDown)
+FORWARD(moveDownAndModifySelection)
+FORWARD(moveForward)
+FORWARD(moveForwardAndModifySelection)
+FORWARD(moveLeft)
+FORWARD(moveLeftAndModifySelection)
+FORWARD(moveRight)
+FORWARD(moveRightAndModifySelection)
+FORWARD(moveToBeginningOfDocument)
+FORWARD(moveToBeginningOfDocumentAndModifySelection)
+FORWARD(moveToBeginningOfLine)
+FORWARD(moveToBeginningOfLineAndModifySelection)
+FORWARD(moveToBeginningOfParagraph)
+FORWARD(moveToBeginningOfParagraphAndModifySelection)
+FORWARD(moveToEndOfDocument)
+FORWARD(moveToEndOfDocumentAndModifySelection)
+FORWARD(moveToEndOfLine)
+FORWARD(moveToEndOfLineAndModifySelection)
+FORWARD(moveToEndOfParagraph)
+FORWARD(moveToEndOfParagraphAndModifySelection)
+FORWARD(moveUp)
+FORWARD(moveUpAndModifySelection)
+FORWARD(moveWordBackward)
+FORWARD(moveWordBackwardAndModifySelection)
+FORWARD(moveWordForward)
+FORWARD(moveWordForwardAndModifySelection)
+FORWARD(moveWordLeft)
+FORWARD(moveWordLeftAndModifySelection)
+FORWARD(moveWordRight)
+FORWARD(moveWordRightAndModifySelection)
+FORWARD(pageDown)
+FORWARD(pageUp)
+FORWARD(paste)
+FORWARD(pasteAsPlainText)
+FORWARD(pasteAsRichText)
+FORWARD(pasteFont)
+FORWARD(performFindPanelAction)
+FORWARD(scrollLineDown)
+FORWARD(scrollLineUp)
+FORWARD(scrollPageDown)
+FORWARD(scrollPageUp)
+FORWARD(selectAll)
+FORWARD(selectLine)
+FORWARD(selectParagraph)
+FORWARD(selectWord)
+FORWARD(showGuessPanel)
+FORWARD(startSpeaking)
+FORWARD(stopSpeaking)
+FORWARD(subscript)
+FORWARD(superscript)
+FORWARD(underline)
+FORWARD(unscript)
+FORWARD(uppercaseWord)
+FORWARD(yank)
+FORWARD(yankAndSelect)
 
 - (void)insertText:(NSString *)text
 {
@@ -3052,7 +2730,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)_preflightSpellChecker
 {
-    // As AppKit does, we wish to delay tickling the shared spellc hecker into existence on application launch.
+    // As AppKit does, we wish to delay tickling the shared spellchecker into existence on application launch.
     if ([NSSpellChecker sharedSpellCheckerExists]) {
         [self _preflightSpellCheckerNow:self];
     } else {

@@ -58,9 +58,7 @@ using khtml::RenderText;
 
 namespace DOM {
 
-static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset);
-static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset);
-static bool startAndEndLineNodesIncludingNode(NodeImpl *node, int offset, Selection &selection);
+static Selection selectionForLine(const Position &position);
 
 static inline Position &emptyPosition()
 {
@@ -208,23 +206,22 @@ Position Selection::modifyExtendingRightForward(ETextGranularity granularity)
         case WORD:
             pos = pos.nextWordPosition();
             break;
+        case PARAGRAPH:
+            // "Next paragraph" not implemented yet. Fall through to LINE.
         case LINE:
             pos = pos.nextLinePosition(xPosForVerticalArrowNavigation(EXTENT));
-            break;
-        case PARAGRAPH:
-            // not implemented
             break;
         case DOCUMENT: {
             ElementImpl *elem = start().node()->getDocument()->documentElement();
             pos = Position(elem, elem->childNodeCount());
             break;
         }
-        case LINE_BOUNDARY: {
-            Selection selection;
-            startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
-            pos = selection.end();
+        case LINE_BOUNDARY:
+            pos = selectionForLine(end()).end();
             break;
-        }
+        case PARAGRAPH_BOUNDARY:
+            pos = end().endParagraphBoundary();
+            break;
     }
     return pos;
 }
@@ -243,23 +240,22 @@ Position Selection::modifyMovingRightForward(ETextGranularity granularity)
         case WORD:
             pos = extent().nextWordPosition();
             break;
+        case PARAGRAPH:
+            // "Next paragraph" not implemented yet. Fall through to LINE.
         case LINE:
             pos = end().nextLinePosition(xPosForVerticalArrowNavigation(END, state() == RANGE));
-            break;
-        case PARAGRAPH:
-            // not implemented
             break;
         case DOCUMENT: {
             ElementImpl *elem = start().node()->getDocument()->documentElement();
             pos = Position(elem, elem->childNodeCount());
             break;
         }
-        case LINE_BOUNDARY: {
-            Selection selection;
-            startAndEndLineNodesIncludingNode(end().node(), end().offset(), selection);
-            pos = selection.end();
+        case LINE_BOUNDARY:
+            pos = selectionForLine(end()).end();
             break;
-        }
+        case PARAGRAPH_BOUNDARY:
+            pos = end().endParagraphBoundary();
+            break;
     }
     return pos;
 }
@@ -278,21 +274,20 @@ Position Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
         case WORD:
             pos = pos.previousWordPosition();
             break;
+        case PARAGRAPH:
+            // "Previous paragraph" not implemented yet. Fall through to LINE.
         case LINE:
             pos = pos.previousLinePosition(xPosForVerticalArrowNavigation(EXTENT));
-            break;
-        case PARAGRAPH:
-            // not implemented
             break;
         case DOCUMENT:
             pos = Position(start().node()->getDocument()->documentElement(), 0);
             break;
-        case LINE_BOUNDARY: {
-            Selection selection;
-            startAndEndLineNodesIncludingNode(start().node(), start().offset(), selection);
-            pos = selection.start();
+        case LINE_BOUNDARY:
+            pos = selectionForLine(start()).start();
             break;
-        }
+        case PARAGRAPH_BOUNDARY:
+            pos = start().startParagraphBoundary();
+            break;
     }
     return pos;
 }
@@ -311,21 +306,20 @@ Position Selection::modifyMovingLeftBackward(ETextGranularity granularity)
         case WORD:
             pos = extent().previousWordPosition();
             break;
+        case PARAGRAPH:
+            // "Previous paragraph" not implemented yet. Fall through to LINE.
         case LINE:
             pos = start().previousLinePosition(xPosForVerticalArrowNavigation(START, state() == RANGE));
-            break;
-        case PARAGRAPH:
-            // not implemented
             break;
         case DOCUMENT:
             pos = Position(start().node()->getDocument()->documentElement(), 0);
             break;
-        case LINE_BOUNDARY: {
-            Selection selection;
-            startAndEndLineNodesIncludingNode(start().node(), start().offset(), selection);
-            pos = selection.start();
+        case LINE_BOUNDARY:
+            pos = selectionForLine(start()).start();
             break;
-        }
+        case PARAGRAPH_BOUNDARY:
+            pos = start().startParagraphBoundary();
+            break;
     }
     return pos;
 }
@@ -653,6 +647,7 @@ void Selection::validate(ETextGranularity granularity)
                 assignStartAndEnd(extent(), base());
             break;
         case WORD: {
+            // FIXME: This doesn't handle words that cross node boundaries.
             int baseStartOffset = base().offset();
             int baseEndOffset = base().offset();
             int extentStartOffset = extent().offset();
@@ -683,36 +678,47 @@ void Selection::validate(ETextGranularity granularity)
         case LINE_BOUNDARY: {
             Selection baseSelection = *this;
             Selection extentSelection = *this;
-            if (base().notEmpty() && (base().node()->nodeType() == Node::TEXT_NODE || base().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
-                if (startAndEndLineNodesIncludingNode(base().node(), base().offset(), baseSelection)) {
-                    assignStart(Position(baseSelection.base().node(), baseSelection.base().offset()));
-                    assignEnd(Position(baseSelection.extent().node(), baseSelection.extent().offset()));
-                }
+            Selection baseLine = selectionForLine(base());
+            if (baseLine.notEmpty()) {
+                baseSelection = baseLine;
             }
-            if (extent().notEmpty() && (extent().node()->nodeType() == Node::TEXT_NODE || extent().node()->nodeType() == Node::CDATA_SECTION_NODE)) {
-                if (startAndEndLineNodesIncludingNode(extent().node(), extent().offset(), extentSelection)) {
-                    assignStart(Position(extentSelection.base().node(), extentSelection.base().offset()));
-                    assignEnd(Position(extentSelection.extent().node(), extentSelection.extent().offset()));
-                }
+            Selection extentLine = selectionForLine(extent());
+            if (extentLine.notEmpty()) {
+                extentSelection = extentLine;
             }
             if (m_baseIsStart) {
                 assignStart(baseSelection.start());
                 assignEnd(extentSelection.end());
-            }
-            else {
+            } else {
                 assignStart(extentSelection.start());
                 assignEnd(baseSelection.end());
             }
+            break;
         }
         case PARAGRAPH:
-            // not implemented
+            if (m_baseIsStart) {
+                assignStart(base().startParagraphBoundary());
+                assignEnd(extent().endParagraphBoundary(IncludeLineBreak));
+            } else {
+                assignStart(extent().startParagraphBoundary());
+                assignEnd(base().endParagraphBoundary(IncludeLineBreak));
+            }
             break;
         case DOCUMENT: {
-            NodeImpl *topNode = start().node()->getDocument()->documentElement();
-            assignStart(Position(topNode, 0));
-            assignEnd(Position(topNode, 1));
+            NodeImpl *de = start().node()->getDocument()->documentElement();
+            assignStart(Position(de, 0).equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
+            assignEnd(Position(de, de->childNodeCount()).equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
             break;
         }
+        case PARAGRAPH_BOUNDARY:
+            if (m_baseIsStart) {
+                assignStart(base().startParagraphBoundary());
+                assignEnd(extent().endParagraphBoundary());
+            } else {
+                assignStart(extent().startParagraphBoundary());
+                assignEnd(base().endParagraphBoundary());
+            }
+            break;
     }
 
     // adjust the state
@@ -823,104 +829,94 @@ bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) const
     return result;
 }
 
-static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset)
+static Position startOfFirstRunAt(RenderObject *renderNode, int y)
 {
     for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
         if (n->isText()) {
-            RenderText *textRenderer = static_cast<khtml::RenderText *>(n);
-            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
-                if (box->m_y == y) {
-                    startNode = textRenderer->element();
-                    startOffset = box->m_start;
-                    return true;
-                }
-            }
+            RenderText *textRenderer = static_cast<RenderText *>(n);
+            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox())
+                if (box->m_y == y)
+                    return Position(textRenderer->element(), box->m_start);
         }
         
-        if (firstRunAt(n->firstChild(), y, startNode, startOffset)) {
-            return true;
-        }
+        Position position = startOfFirstRunAt(n->firstChild(), y);
+        if (position.notEmpty())
+            return position;
     }
     
-    return false;
+    return Position();
 }
 
-static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset)
+static Position endOfLastRunAt(RenderObject *renderNode, int y)
 {
     RenderObject *n = renderNode;
-    if (!n) {
-        return false;
-    }
-    RenderObject *next;
-    while ((next = n->nextSibling())) {
-        n = next;
-    }
+    if (!n)
+        return Position();
+    if (RenderObject *parent = n->parent())
+        n = parent->lastChild();
     
     while (1) {
-        if (lastRunAt(n->firstChild(), y, endNode, endOffset)) {
-            return true;
-        }
-    
+        Position position = endOfLastRunAt(n->firstChild(), y);
+        if (position.notEmpty())
+            return position;
+        
         if (n->isText()) {
-            RenderText *textRenderer =  static_cast<khtml::RenderText *>(n);
-            for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox()) {
-                if (box->m_y == y) {
-                    endNode = textRenderer->element();
-                    endOffset = box->m_start + box->m_len;
-                    return true;
-                }
-            }
+            RenderText *textRenderer = static_cast<RenderText *>(n);
+            for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox())
+                if (box->m_y == y)
+                    return Position(textRenderer->element(), box->m_start + box->m_len);
         }
         
-        if (n == renderNode) {
-            return false;
-        }
+        if (n == renderNode)
+            return Position();
         
         n = n->previousSibling();
     }
 }
 
-static bool startAndEndLineNodesIncludingNode(NodeImpl *node, int offset, Selection &selection)
+static Selection selectionForLine(const Position &position)
 {
-    if (node && (node->nodeType() == Node::TEXT_NODE || node->nodeType() == Node::CDATA_SECTION_NODE)) {
-        int pos;
-        int selectionPointY;
-        RenderText *renderer = static_cast<RenderText *>(node->renderer());
-        InlineTextBox * run = renderer->findNextInlineTextBox( offset, pos );
-        DOMString t = node->nodeValue();
-        
-        if (!run)
-            return false;
-            
-        selectionPointY = run->m_y;
-        
-        // Go up to first non-inline element.
-        khtml::RenderObject *renderNode = renderer;
-        while (renderNode && renderNode->isInline())
-            renderNode = renderNode->parent();
-        
-        renderNode = renderNode->firstChild();
-        
-        NodeImpl *startNode = 0;
-        NodeImpl *endNode = 0;
-        long startOffset;
-        long endOffset;
-        
-        // Look for all the first child in the block that is on the same line
-        // as the selection point.
-        if (!firstRunAt (renderNode, selectionPointY, startNode, startOffset))
-            return false;
-    
-        // Look for all the last child in the block that is on the same line
-        // as the selection point.
-        if (!lastRunAt (renderNode, selectionPointY, endNode, endOffset))
-            return false;
-        
-        selection.moveTo(Position(startNode, startOffset), Position(endNode, endOffset));
-        
-        return true;
+    NodeImpl *node = position.node();
+
+    if (!node)
+        return Selection();
+
+    switch (node->nodeType()) {
+        case Node::TEXT_NODE:
+        case Node::CDATA_SECTION_NODE:
+            break;
+        default:
+            return Selection();
     }
-    return false;
+
+    RenderText *renderer = static_cast<RenderText *>(node->renderer());
+
+    int pos;
+    InlineTextBox *run = renderer->findNextInlineTextBox(position.offset(), pos);
+    if (!run)
+        return Selection();
+        
+    int selectionPointY = run->m_y;
+    
+    // Go up to first non-inline element.
+    RenderObject *renderNode = renderer;
+    while (renderNode && renderNode->isInline())
+        renderNode = renderNode->parent();
+    renderNode = renderNode->firstChild();
+    
+    // Look for all the first child in the block that is on the same line
+    // as the selection point.
+    Position start = startOfFirstRunAt(renderNode, selectionPointY);
+    if (start.isEmpty())
+        return Selection();
+
+    // Look for all the last child in the block that is on the same line
+    // as the selection point.
+    Position end = endOfLastRunAt(renderNode, selectionPointY);
+    if (end.isEmpty())
+        return Selection();
+    
+    return Selection(start, end);
 }
 
 void Selection::debugRenderer(RenderObject *r, bool selected) const

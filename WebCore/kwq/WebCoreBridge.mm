@@ -99,21 +99,22 @@ using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
 using DOM::Selection;
+using DOM::UPSTREAM;
 
+using khtml::ApplyStyleCommand;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
 using khtml::EditCommandImpl;
 using khtml::MoveSelectionCommand;
-using khtml::ReplaceSelectionCommand;
 using khtml::parseURL;
-using khtml::ApplyStyleCommand;
 using khtml::RenderCanvas;
 using khtml::RenderImage;
 using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderStyle;
 using khtml::RenderWidget;
+using khtml::ReplaceSelectionCommand;
 using khtml::TypingCommand;
 
 using KJS::SavedProperties;
@@ -446,8 +447,8 @@ static bool initializedKJS = FALSE;
 - (BOOL)isSelectionEditable
 {
     // EDIT FIXME: This needs to consider the entire selected range
-	NodeImpl *startNode = _part->selection().start().node();
-	return startNode ? startNode->isContentEditable() : NO;
+    NodeImpl *startNode = _part->selection().start().node();
+    return startNode ? startNode->isContentEditable() : NO;
 }
 
 - (WebSelectionState)selectionState
@@ -1169,15 +1170,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->attributedString([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
 }
 
-- (NSFont *)renderedFontForNode:(DOMNode *)node
-{
-    RenderObject *renderer = [node _nodeImpl]->renderer();
-    if (renderer) {
-        return renderer->style()->font().getNSFont();
-    }
-    return nil;
-}
-
 - (DOMNode *)selectionStart
 {
     return [DOMNode _nodeWithImpl:_part->selectionStart()];
@@ -1424,9 +1416,15 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     ASSERT(startContainer->getDocument());
     ASSERT(startContainer->getDocument() == endContainer->getDocument());
     
-    DocumentImpl *doc = startContainer->getDocument();
-    doc->updateLayout();
-    Selection selection(Position(startContainer, [range startOffset]), Position(endContainer, [range endOffset]));
+    _part->xmlDocImpl()->updateLayout();
+
+    // Work around bug where isRenderedContent returns false for <br> elements at the ends of lines.
+    // If that bug wasn't an issue, we could just make the position from the range directly.
+    Position start(startContainer, [range startOffset]);
+    Position end(endContainer, [range endOffset]);
+    start = start.equivalentDeepPosition().closestRenderedPosition(UPSTREAM);
+
+    Selection selection(start, end);
     selection.setAffinity(static_cast<DOM::EAffinity>(selectionAffinity));
     _part->setSelection(selection);
 }
@@ -1517,12 +1515,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureCaretVisible];
 }
 
-- (void)insertText:(NSString *)text
+- (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
 {
     if (!_part || !_part->xmlDocImpl())
         return;
     
-    TypingCommand::insertText(_part->xmlDocImpl(), text);
+    TypingCommand::insertText(_part->xmlDocImpl(), text, selectInsertedText);
     [self ensureCaretVisible];
 }
 
@@ -1602,9 +1600,22 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->applyStyle([style _styleDeclarationImpl]);
 }
 
-- (NSFont *)fontForCurrentPosition
+- (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style
 {
-    return _part ? _part->fontForCurrentPosition() : nil;
+    if (!_part)
+        return NO;
+    return _part->selectionStartHasStyle([style _styleDeclarationImpl]);
+}
+
+- (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts
+{
+    bool multipleFonts = false;
+    NSFont *font = nil;
+    if (_part)
+        font = _part->fontForSelection(hasMultipleFonts ? &multipleFonts : 0);
+    if (hasMultipleFonts)
+        *hasMultipleFonts = multipleFonts;
+    return font;
 }
 
 - (void)ensureCaretVisible

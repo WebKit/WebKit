@@ -311,6 +311,12 @@ bool execSuperscript(KHTMLPart *part, bool userInterface, const DOMString &value
     return execStyleChange(part, CSS_PROP_VERTICAL_ALIGN, "super");
 }
 
+bool execUnderline(KHTMLPart *part, bool userInterface, const DOMString &value)
+{
+    bool isUnderlined = selectionStartHasStyle(part, CSS_PROP_TEXT_DECORATION, "underline");
+    return execStyleChange(part, CSS_PROP_TEXT_DECORATION, isUnderlined ? "none" : "underline");
+}
+
 bool execUndo(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     part->undo();
@@ -409,6 +415,11 @@ KHTMLPart::TriState stateSuperscript(KHTMLPart *part)
     return stateStyle(part, CSS_PROP_VERTICAL_ALIGN, "super");
 }
 
+KHTMLPart::TriState stateUnderline(KHTMLPart *part)
+{
+    return stateStyle(part, CSS_PROP_TEXT_DECORATION, "underline");
+}
+
 // =============================================================================================
 //
 // queryCommandValue implementations
@@ -474,6 +485,7 @@ QDict<CommandImp> createCommandDictionary()
         { "SelectAll", { execSelectAll, enabled, stateNone, valueNull } },
         { "Subscript", { execSubscript, enabledAnySelection, stateSubscript, valueNull } },
         { "Superscript", { execSuperscript, enabledAnySelection, stateSuperscript, valueNull } },
+        { "Underline", { execUnderline, enabledAnySelection, stateUnderline, valueNull } },
         { "Undo", { execUndo, enabledUndo, stateNone, valueNull } },
         { "Unselect", { execUnselect, enabledAnySelection, stateNone, valueNull } }
 
@@ -482,7 +494,7 @@ QDict<CommandImp> createCommandDictionary()
         // documentation used as the basis for the list.
         //
 
-        // 2d-position (not supported)
+        // 2D-Position (not supported)
         // AbsolutePosition (not supported)
         // BlockDirLTR (not supported)
         // BlockDirRTL (not supported)
@@ -530,10 +542,9 @@ QDict<CommandImp> createCommandDictionary()
         // SizeToControlHeight (not supported)
         // SizeToControlWidth (not supported)
         // Stop (not supported)
-        // Stopimage (not supported)
+        // StopImage (not supported)
         // Strikethrough (not supported)
         // Unbookmark (not supported)
-        // Underline (not supported)
         // Unlink (not supported)
     };
 

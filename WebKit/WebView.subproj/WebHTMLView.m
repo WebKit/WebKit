@@ -57,6 +57,40 @@
 // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
 #import <AppKit/NSKeyBindingManager.h>
 
+// Kill ring calls. Would be better to use NSKillRing.h, but that's not available in SPI.
+void _NSInitializeKillRing(void);
+void _NSAppendToKillRing(NSString *);
+void _NSPrependToKillRing(NSString *);
+NSString *_NSYankFromKillRing(void);
+NSString *_NSYankPreviousFromKillRing(void);
+void _NSNewKillRingSequence(void);
+void _NSSetKillRingToYankedState(void);
+void _NSResetKillRingOperationFlag(void);
+
+@interface NSView (AppKitSecretsIKnowAbout)
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
+- (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
+- (NSRect)_dirtyRect;
+- (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
+@end
+
+@interface NSApplication (AppKitSecretsIKnowAbout)
+- (void)speakString:(NSString *)string;
+@end
+
+@interface NSWindow (AppKitSecretsIKnowAbout)
+- (id)_newFirstResponderAfterResigning;
+@end
+
+@interface NSAttributedString (AppKitSecretsIKnowAbout)
+- (id)_initWithDOMRange:(DOMRange *)domRange;
+- (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
+@end
+
+@interface NSSpellChecker (CurrentlyPrivateForTextView)
+- (void)learnWord:(NSString *)word;
+@end
+
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
 // print in IE and Camino. This lets them use fewer sheets than they
@@ -84,75 +118,46 @@
 #define DRAG_LINK_URL_FONT_SIZE   10.0
 
 #if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
-#define BUILT_ON_TIGER_OR_LATER
+#define USE_APPKIT_FOR_ATTRIBUTED_STRINGS
 #endif
+
+// Any non-zero value will do, but using something recognizable might help us debug some day.
+#define TRACKING_RECT_TAG 0xBADFACE
 
 static BOOL forceRealHitTest = NO;
 
 @interface WebHTMLView (WebTextSizing) <_web_WebDocumentTextSizing>
 @end
 
-@interface WebHTMLView (WebFileInternal)
+@interface WebHTMLView (WebHTMLViewFileInternal)
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
+- (float)_calculatePrintHeight;
+- (void)_updateTextSizeMultiplier;
+- (DOMRange *)_selectedRange;
 @end
 
-@interface WebHTMLView (WebHTMLViewPrivate)
+@interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize;
-- (void)_updateTextSizeMultiplier;
-- (float)_calculatePrintHeight;
-- (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation;
 @end
 
 @interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 - (void)_updateSelectionForInputManager;
+- (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText;
 @end
 
-// Any non-zero value will do, but using somethign recognizable might help us debug some day.
-#define TRACKING_RECT_TAG 0xBADFACE
-
-@interface NSView (AppKitSecretsIKnowAbout)
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
-- (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
-- (NSRect)_dirtyRect;
-- (void)_setDrawsOwnDescendants:(BOOL)drawsOwnDescendants;
-@end
-
-@interface NSApplication (AppKitSecretsIKnowAbout)
-- (void)speakString:(NSString *)string;
-@end
-
-@interface NSWindow (AppKitSecretsIKnowAbout)
-- (id)_newFirstResponderAfterResigning;
-@end
-
-@interface NSView (WebHTMLViewPrivate)
+@interface NSView (WebHTMLViewFileInternal)
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_clearPrintingModeRecursive;
 - (void)_web_layoutIfNeededRecursive:(NSRect)rect testDirtyRect:(bool)testDirtyRect;
 @end
 
-@interface NSMutableDictionary (WebHTMLViewPrivate)
+@interface NSMutableDictionary (WebHTMLViewFileInternal)
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key;
 @end
-
-@interface WebElementOrTextFilter : NSObject <DOMNodeFilter>
-+ (WebElementOrTextFilter *)filter;
-@end
-
-@interface NSAttributedString(AppKitSecretsIKnowAbout)
-- (id)_initWithDOMRange:(DOMRange *)domRange;
-- (DOMDocumentFragment *)_documentFromRange:(NSRange)range document:(DOMDocument *)document documentAttributes:(NSDictionary *)dict subresources:(NSArray **)subresources;
-@end
-
-@interface NSSpellChecker(CurrentlyPrivateForTextView)
-- (void)learnWord:(NSString *)word;
-@end
-
-static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 
 // Handles the complete: text command
 @interface WebTextCompleteController : NSObject
@@ -190,7 +195,7 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 
 @end
 
-@implementation WebHTMLView (WebFileInternal)
+@implementation WebHTMLView (WebHTMLViewFileInternal)
 
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths
 {
@@ -286,7 +291,7 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         return fragment;
     }
     
-#ifdef BUILT_ON_TIGER_OR_LATER
+#ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
     NSAttributedString *string = nil;
     if ([types containsObject:NSRTFDPboardType]) {
         string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
@@ -332,7 +337,7 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 {
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText];
     WebBridge *bridge = [self _bridge];
-    if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
+    if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[self _selectedRange] givenAction:WebViewInsertActionPasted]) {
         [bridge replaceSelectionWithFragment:fragment selectReplacement:NO];
     }
 }
@@ -351,9 +356,29 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action
 {
     WebView *webView = [self _webView];
-    DOMRange *selectedRange = [[self _bridge] selectedDOMRange];
-
+    DOMRange *selectedRange = [self _selectedRange];
     return [[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:selectedRange givenAction:action];
+}
+
+// Calculate the vertical size of the view that fits on a single page
+- (float)_calculatePrintHeight
+{
+    // Obtain the print info object for the current operation
+    NSPrintInfo *pi = [[NSPrintOperation currentOperation] printInfo];
+    
+    // Calculate the page height in points
+    NSSize paperSize = [pi paperSize];
+    return paperSize.height - [pi topMargin] - [pi bottomMargin];
+}
+
+- (void)_updateTextSizeMultiplier
+{
+    [[self _bridge] setTextSizeMultiplier:[[self _webView] textSizeMultiplier]];    
+}
+
+- (DOMRange *)_selectedRange
+{
+    return [[self _bridge] selectedDOMRange];
 }
 
 @end
@@ -739,7 +764,7 @@ static WebHTMLView *lastHitView = nil;
 - (WebArchive *)_selectedArchive
 {
     NSArray *nodes;
-    NSString *markupString = [[self _bridge] markupStringFromRange:[[self _bridge] selectedDOMRange] nodes:&nodes];
+    NSString *markupString = [[self _bridge] markupStringFromRange:[self _selectedRange] nodes:&nodes];
     return [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
 }
 
@@ -1171,9 +1196,29 @@ static WebHTMLView *lastHitView = nil;
     [[NSSpellChecker sharedSpellChecker] learnWord:[self selectedString]];
 }
 
+#if APPKIT_CODE_FOR_REFERENCE
+
+- (void)_openLinkFromMenu:(id)sender
+{
+    NSTextStorage *text = _getTextStorage(self);
+    NSRange charRange = [self selectedRange];
+    if (charRange.location != NSNotFound && charRange.length > 0) {
+        id link = [text attribute:NSLinkAttributeName atIndex:charRange.location effectiveRange:NULL];
+        if (link) {
+            [self clickedOnLink:link atIndex:charRange.location];
+        } else {
+            NSString *string = [[text string] substringWithRange:charRange];
+            link = [NSURL URLWithString:string];
+            if (link) [[NSWorkspace sharedWorkspace] openURL:link];
+        }
+    }
+}
+
+#endif
+
 @end
 
-@implementation NSView (WebHTMLViewPrivate)
+@implementation NSView (WebHTMLViewFileInternal)
 
 - (void)_web_setPrintingModeRecursive
 {
@@ -1197,7 +1242,7 @@ static WebHTMLView *lastHitView = nil;
 
 @end
 
-@implementation NSMutableDictionary (WebHTMLViewPrivate)
+@implementation NSMutableDictionary (WebHTMLViewFileInternal)
 
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key
 {
@@ -1219,10 +1264,10 @@ static WebHTMLView *lastHitView = nil;
 @interface NSToolTipPanel : NSPanel
 @end
 
-@interface NSToolTipPanel (WebHTMLViewPrivate)
+@interface NSToolTipPanel (WebHTMLViewFileInternal)
 @end
 
-@implementation NSToolTipPanel (WebHTMLViewPrivate)
+@implementation NSToolTipPanel (WebHTMLViewFileInternal)
 
 - (void)setAcceptsMouseMovedEvents:(BOOL)flag
 {
@@ -1245,6 +1290,7 @@ static WebHTMLView *lastHitView = nil;
 {
     WebKitInitializeUnicode();
     [NSApp registerServicesMenuSendTypes:[[self class] _selectionPasteboardTypes] returnTypes:nil];
+    _NSInitializeKillRing();
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -1252,7 +1298,6 @@ static WebHTMLView *lastHitView = nil;
     [super initWithFrame:frame];
     
     // Make all drawing go through us instead of subviews.
-    // The bulk of the code to handle this is in WebHTMLViewPrivate.m.
     if (NSAppKitVersionNumber >= 711) {
         [self _setDrawsOwnDescendants:YES];
     }
@@ -1695,16 +1740,20 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] searchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag];
 }
 
+- (DOMRange *)_documentRange
+{
+    return [[[self _bridge] DOMDocument] _documentRange];
+}
+
 - (NSString *)string
 {
-    // FIXME: We should be using WebCore logic for converting the document into a string and not creating an attributed string to do this.
-    return [[self attributedString] string];
+    return [[self _bridge] stringForRange:[self _documentRange]];
 }
 
 - (NSAttributedString *)_attributeStringFromDOMRange:(DOMRange *)range
 {
     NSAttributedString *attributedString = nil;
-#ifdef BUILT_ON_TIGER_OR_LATER
+#ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
     attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
 #endif
     return attributedString;
@@ -1729,7 +1778,7 @@ static WebHTMLView *lastHitView = nil;
 - (NSAttributedString *)selectedAttributedString
 {
     WebBridge *bridge = [self _bridge];
-    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[bridge selectedDOMRange]];
+    NSAttributedString *attributedString = [self _attributeStringFromDOMRange:[self _selectedRange]];
     if (attributedString == nil) {
         attributedString = [bridge selectedAttributedString];
     }
@@ -2245,6 +2294,7 @@ static WebHTMLView *lastHitView = nil;
         [[self window] makeFirstResponder:view];
     }
     [self updateFocusDisplay];
+    _private->startNewKillRingSequence = YES;
     return YES;
 }
 
@@ -2414,16 +2464,6 @@ static WebHTMLView *lastHitView = nil;
     return [[_private->pageRects objectAtIndex: (page-1)] rectValue];
 }
 
-// Calculate the vertical size of the view that fits on a single page
-- (float)_calculatePrintHeight {
-    // Obtain the print info object for the current operation
-    NSPrintInfo *pi = [[NSPrintOperation currentOperation] printInfo];
-    
-    // Calculate the page height in points
-    NSSize paperSize = [pi paperSize];
-    return paperSize.height - [pi topMargin] - [pi bottomMargin];
-}
-
 - (void)drawPageBorderWithSize:(NSSize)borderSize
 {
     ASSERT(NSEqualSizes(borderSize, [[[NSPrintOperation currentOperation] printInfo] paperSize]));    
@@ -2436,11 +2476,6 @@ static WebHTMLView *lastHitView = nil;
     // Note sadly at this point [NSGraphicsContext currentContextDrawingToScreen] is still NO 
     [self _setPrinting:NO minimumPageWidth:0.0 maximumPageWidth:0.0 adjustViewSize:YES];
     [[self window] setAutodisplay:YES];
-}
-
-- (void)_updateTextSizeMultiplier
-{
-    [[self _bridge] setTextSizeMultiplier:[[self _webView] textSizeMultiplier]];    
 }
 
 - (BOOL)performKeyEquivalent:(NSEvent *)event
@@ -2475,23 +2510,25 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)keyDown:(NSEvent *)event
 {
+    _private->keyDownEvent = event;
+
     WebBridge *bridge = [self _bridge];
     if ([bridge interceptKeyEvent:event toView:self]) {
         // WebCore processed a key event, bail on any outstanding complete: UI
         [_private->compController endRevertingChange:YES moveLeft:NO];
-        return;
+    } else if (_private->compController && [_private->compController filterKeyDown:event]) {
+        // Consumed by complete: popup window
+    } else {
+        // We're going to process a key event, bail on any outstanding complete: UI
+        [_private->compController endRevertingChange:YES moveLeft:NO];
+        if ([self _canType] && [self _interceptEditingKeyEvent:event]) {
+            // Consumed by key bindings manager.
+        } else {
+            [super keyDown:event];
+        }
     }
 
-    if (_private->compController && [_private->compController filterKeyDown:event])
-        return;     // consumed by complete: popup window
-
-    // We're going to process a key event, bail on any outstanding complete: UI
-    [_private->compController endRevertingChange:YES moveLeft:NO];
-    
-    if ([self _canType] && [self _interceptEditingKeyEvent:event]) 
-        return;
-    
-    [super keyDown:event];
+    _private->keyDownEvent = nil;
 }
 
 - (void)keyUp:(NSEvent *)event
@@ -2534,7 +2571,7 @@ static WebHTMLView *lastHitView = nil;
     WebBridge *bridge = [self _bridge];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
     WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[bridge selectedDOMRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
+    if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
         [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
     }
 }
@@ -2591,62 +2628,62 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectByDocument];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectByDocument];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByParagraph];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectBackward granularity:WebSelectToParagraphBoundary];
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByParagraph];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectBackward granularity:WebSelectToParagraphBoundary];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectByDocument];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByDocument];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectByDocument];
 }
 
 - (void)moveToEndOfLine:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToEndOfLineAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectToLineBoundary];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToLineBoundary];
 }
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByParagraph];
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectForward granularity:WebSelectToParagraphBoundary];
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
-    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByParagraph];
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectForward granularity:WebSelectToParagraphBoundary];
 }
 
 - (void)moveUp:(id)sender
@@ -2701,13 +2738,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)pageDown:(id)sender
 {
-    // FIXME: This should to scroll page down, then move the caret to the top left.
+    // FIXME: This should move the caret down one page and then scroll to reveal it.
     ERROR("unimplemented");
 }
 
 - (void)pageUp:(id)sender
 {
-    // FIXME: This should to scroll page up, then move the caret to the top left.
+    // FIXME: This should move the caret up one page and then scroll to reveal it.
     ERROR("unimplemented");
 }
 
@@ -2717,7 +2754,7 @@ static WebHTMLView *lastHitView = nil;
     DOMRange *range = [bridge rangeByExpandingSelectionWithGranularity:granularity];
     if (range && ![range collapsed]) {
         WebView *webView = [self _webView];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[bridge selectedDOMRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO]) {
+        if ([[webView _editingDelegateForwarder] webView:webView shouldChangeSelectedDOMRange:[self _selectedRange] toDOMRange:range affinity:[bridge selectionAffinity] stillSelecting:NO]) {
             [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
         }
     }
@@ -2743,7 +2780,6 @@ static WebHTMLView *lastHitView = nil;
     if ([[self _bridge] tryDHTMLCopy]) {
         return;     // DHTML did the whole operation
     }
-
     if (![self _canCopy]) {
         NSBeep();
         return;
@@ -2751,18 +2787,33 @@ static WebHTMLView *lastHitView = nil;
     [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
-- (void)cut:(id)sender
+- (BOOL)_shouldDeleteRange:(DOMRange *)range
 {
-    if ([[self _bridge] tryDHTMLCut]) {
-        return;     // DHTML did the whole operation
-    }
+    if (range == nil || [range collapsed])
+        return NO;
+    WebView *webView = [self _webView];
+    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
+}
 
-    if (![self _canCut]) {
-        NSBeep();
+- (void)_deleteRange:(DOMRange *)range preflight:(BOOL)preflight killRing:(BOOL)killRing prepend:(BOOL)prepend
+{
+    if (![self _shouldDeleteRange:range]) {
         return;
     }
-    [self copy:sender];
-    [[self _bridge] deleteSelection];
+    WebBridge *bridge = [self _bridge];
+    if (killRing && _private->startNewKillRingSequence) {
+        _NSNewKillRingSequence();
+    }
+    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
+    if (killRing) {
+        if (prepend) {
+            _NSPrependToKillRing([bridge selectedString]);
+        } else {
+            _NSAppendToKillRing([bridge selectedString]);
+        }
+        _private->startNewKillRingSequence = NO;
+    }
+    [bridge deleteSelection];
 }
 
 - (void)delete:(id)sender
@@ -2771,7 +2822,23 @@ static WebHTMLView *lastHitView = nil;
         NSBeep();
         return;
     }
-    [[self _bridge] deleteSelection];
+    [self _deleteRange:[self _selectedRange] preflight:YES killRing:YES prepend:NO];
+}
+
+- (void)cut:(id)sender
+{
+    if ([[self _bridge] tryDHTMLCut]) {
+        return;     // DHTML did the whole operation
+    }
+    if (![self _canCut]) {
+        NSBeep();
+        return;
+    }
+    DOMRange *range = [self _selectedRange];
+    if ([self _shouldDeleteRange:range]) {
+        [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+        [self _deleteRange:[self _selectedRange] preflight:NO killRing:YES prepend:NO];
+    }
 }
 
 - (void)paste:(id)sender
@@ -2779,28 +2846,98 @@ static WebHTMLView *lastHitView = nil;
     if ([[self _bridge] tryDHTMLPaste]) {
         return;     // DHTML did the whole operation
     }
-
     if (![self _canPaste]) {
         NSBeep();
         return;
     }
-
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:YES];
+}
+
+- (NSDictionary *)_selectionFontAttributes
+{
+    NSFont *font = [[self _bridge] fontForSelection:NULL];
+    if (font == nil)
+        return nil;
+    return [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+}
+
+- (NSData *)_selectionFontAttributesAsRTF
+{
+    NSAttributedString *string = [[NSAttributedString alloc] initWithString:@"x" attributes:[self _selectionFontAttributes]];
+    NSData *data = [string RTFFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
+    [string release];
+    return data;
+}
+
+- (NSDictionary *)_fontAttributesFromFontPasteboard
+{
+    NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
+    if (fontPasteboard == nil)
+        return nil;
+    NSData *data = [fontPasteboard dataForType:NSFontPboardType];
+    if (data == nil || [data length] == 0)
+        return nil;
+    // NSTextView does something more efficient by parsing the attributes only, but that's not available in API.
+    NSAttributedString *string = [[[NSAttributedString alloc] initWithRTF:data documentAttributes:NULL] autorelease];
+    if (string == nil || [string length] == 0)
+        return nil;
+    return [string fontAttributesInRange:NSMakeRange(0, 1)];
+}
+
+- (DOMCSSStyleDeclaration *)_emptyStyle
+{
+    return [[[self _bridge] DOMDocument] createCSSStyleDeclaration];
+}
+
+- (DOMCSSStyleDeclaration *)_styleFromFontAttributes:(NSDictionary *)dictionary
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+
+    NSFont *font = [dictionary objectForKey:NSFontAttributeName];
+    if (font != nil) {
+        NSFontManager *fm = [NSFontManager sharedFontManager];
+        [style setFontFamily:[font familyName]];
+        [style setFontSize:[NSString stringWithFormat:@"%0.fpx", [font pointSize]]];
+        if ([fm weightOfFont:font] >= 9) {
+            [style setFontWeight:@"bold"];
+        } else {
+            [style setFontWeight:@"normal"];
+        }
+        if (([fm traitsOfFont:font] & NSItalicFontMask) != 0) {
+            [style setFontStyle:@"italic"];
+        } else {
+            [style setFontStyle:@"normal"];
+        }
+    }
+
+    return style;
+}
+
+- (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style
+{
+    if (style == nil || [style length] == 0)
+        return;
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
+        [bridge applyStyle:style];
+    }
 }
 
 - (void)copyFont:(id)sender
 {
-    // Font is RTF with a single character in it.
-    // NSTextView uses the first character in the selection, or a space if there are no characters.
-    ERROR("unimplemented");
+    // Put RTF with font attributes on the pasteboard.
+    // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
+    NSPasteboard *fontPasteboard = [NSPasteboard pasteboardWithName:NSFontPboard];
+    [fontPasteboard declareTypes:[NSArray arrayWithObject:NSFontPboardType] owner:nil];
+    [fontPasteboard setData:[self _selectionFontAttributesAsRTF] forType:NSFontPboardType];
 }
 
 - (void)pasteFont:(id)sender
 {
-    // FIXME: Support RTF to HTML (or DOM) conversion.
-    // Font is RTF. Call fontAttributesInRange to extract the attributes to apply.
-    // Then convert the RTF into CSS.
-    ERROR("unimplemented");
+    // Read RTF with font attributes from the pasteboard.
+    // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
+    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]]];
 }
 
 - (void)pasteAsPlainText:(id)sender
@@ -2814,19 +2951,30 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)pasteAsRichText:(id)sender
 {
+    // Since rich text always beats plain text when both are on the pasteboard, it's not
+    // clear how this is different from plain old paste.
     [self _pasteWithPasteboard:[NSPasteboard generalPasteboard] allowPlainText:NO];
 }
 
-- (DOMCSSStyleDeclaration *)_fontManagerOperationAsStyle
+- (NSFont *)_originalFontA
 {
-    WebBridge *bridge = [self _bridge];
-    DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Helvetica" traits:0 weight:5 size:10];
+}
+
+- (NSFont *)_originalFontB
+{
+    return [[NSFontManager sharedFontManager] fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:10 size:12];
+}
+
+- (void)_addToStyle:(DOMCSSStyleDeclaration *)style fontA:(NSFont *)a fontB:(NSFont *)b
+{
+    if (a == nil || b == nil)
+        return;
 
     NSFontManager *fm = [NSFontManager sharedFontManager];
 
-    NSFont *a = [fm convertFont:[fm fontWithFamily:@"Helvetica" traits:0 weight:5 size:10]];
-    NSFont *b = [fm convertFont:[fm fontWithFamily:@"Times" traits:(NSBoldFontMask | NSItalicFontMask) weight:10 size:12]];
-    
+    NSFont *oa = [self _originalFontA];
+
     NSString *fa = [a familyName];
     NSString *fb = [b familyName];
     if ([fa isEqualToString:fb]) {
@@ -2835,8 +2983,13 @@ static WebHTMLView *lastHitView = nil;
 
     int sa = [a pointSize];
     int sb = [b pointSize];
+    int soa = [oa pointSize];
     if (sa == sb) {
         [style setFontSize:[NSString stringWithFormat:@"%dpx", sa]];
+    } else if (sa < soa) {
+        // FIXME: set up a style to tell WebCore to make the font in the selection 1 pixel smaller
+    } else if (sa > soa) {
+        // FIXME: set up a style to tell WebCore to make the font in the selection 1 pixel larger
     }
 
     int wa = [fm weightOfFont:a];
@@ -2858,54 +3011,180 @@ static WebHTMLView *lastHitView = nil;
             [style setFontStyle:@"normal"];
         }
     }
+}
+
+- (DOMCSSStyleDeclaration *)_styleFromFontManagerOperation
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+
+    NSFontManager *fm = [NSFontManager sharedFontManager];
+
+    NSFont *oa = [self _originalFontA];
+    NSFont *ob = [self _originalFontB];    
+    [self _addToStyle:style fontA:[fm convertFont:oa] fontB:[fm convertFont:ob]];
 
     return style;
 }
 
 - (void)changeFont:(id)sender
 {
-    DOMCSSStyleDeclaration *style = [self _fontManagerOperationAsStyle];
-    WebView *webView = [self _webView];
-    WebBridge *bridge = [self _bridge];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
-        [bridge applyStyle:style];
+    [self _applyStyleToSelection:[self _styleFromFontManagerOperation]];
+}
+
+- (NSString *)_colorAsString:(NSColor *)color
+{
+    if (color == nil)
+        return @"transparent";
+    float r = [color redComponent];
+    float g = [color greenComponent];
+    float b = [color blueComponent];
+    if (r == 0 && g == 0 && b == 0)
+        return @"black";
+    if (r == 1 && g == 1 && b == 1)
+        return @"white";
+    return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", r * 255, g * 255, b * 255];
+}
+
+- (NSString *)_shadowAsString:(NSShadow *)shadow
+{
+    if (shadow == nil)
+        return @"none";
+    NSSize offset = [shadow shadowOffset];
+    float blurRadius = [shadow shadowBlurRadius];
+    if (offset.width == 0 && offset.height == 0 && blurRadius == 0)
+        return @"none";
+    NSColor *color = [shadow shadowColor];
+    if (color == nil)
+        return @"none";
+    // FIXME: Handle non-integral values here?
+    if (blurRadius == 0)
+        return [NSString stringWithFormat:@"%@ %.0fpx %.0fpx", [self _colorAsString:color], offset.width, offset.height];
+    return [NSString stringWithFormat:@"%@ %.0fpx %.0fpx %.0fpx", [self _colorAsString:color], offset.width, offset.height, blurRadius];
+}
+
+- (DOMCSSStyleDeclaration *)_styleForAttributeChange:(id)sender
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+
+    NSShadow *shadow = [[NSShadow alloc] init];
+    [shadow setShadowOffset:NSMakeSize(1, 1)];
+
+    NSDictionary *oa = [NSDictionary dictionaryWithObjectsAndKeys:
+        [self _originalFontA], NSFontAttributeName,
+        nil];
+    NSDictionary *ob = [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSColor blackColor], NSBackgroundColorAttributeName,
+        [self _originalFontB], NSFontAttributeName,
+        [NSColor whiteColor], NSForegroundColorAttributeName,
+        shadow, NSShadowAttributeName,
+        [NSNumber numberWithInt:NSUnderlineStyleSingle], NSStrikethroughStyleAttributeName,
+        [NSNumber numberWithInt:1], NSSuperscriptAttributeName,
+        [NSNumber numberWithInt:NSUnderlineStyleSingle], NSUnderlineStyleAttributeName,
+        nil];
+
+    [shadow release];
+
+#if 0
+
+NSObliquenessAttributeName        /* float; skew to be applied to glyphs, default 0: no skew */
+    // font-style, but that is just an on-off switch
+
+NSExpansionAttributeName          /* float; log of expansion factor to be applied to glyphs, default 0: no expansion */
+    // font-stretch?
+
+NSKernAttributeName               /* float, amount to modify default kerning, if 0, kerning off */
+    // letter-spacing? probably not good enough
+
+NSUnderlineColorAttributeName     /* NSColor, default nil: same as foreground color */
+NSStrikethroughColorAttributeName /* NSColor, default nil: same as foreground color */
+    // text-decoration-color?
+
+NSLigatureAttributeName           /* int, default 1: default ligatures, 0: no ligatures, 2: all ligatures */
+NSBaselineOffsetAttributeName     /* float, in points; offset from baseline, default 0 */
+NSStrokeWidthAttributeName        /* float, in percent of font point size, default 0: no stroke; positive for stroke alone, negative for stroke and fill (a typical value for outlined text would be 3.0) */
+NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground color */
+    // need extensions?
+
+#endif
+    
+    NSDictionary *a = [sender convertAttributes:oa];
+    NSDictionary *b = [sender convertAttributes:ob];
+
+    NSColor *ca = [a objectForKey:NSBackgroundColorAttributeName];
+    NSColor *cb = [b objectForKey:NSBackgroundColorAttributeName];
+    if (ca == cb) {
+        [style setBackgroundColor:[self _colorAsString:ca]];
     }
+
+    [self _addToStyle:style fontA:[a objectForKey:NSFontAttributeName] fontB:[b objectForKey:NSFontAttributeName]];
+
+    ca = [a objectForKey:NSForegroundColorAttributeName];
+    cb = [b objectForKey:NSForegroundColorAttributeName];
+    if (ca == cb) {
+        [style setColor:[self _colorAsString:ca]];
+    }
+
+    NSShadow *sha = [a objectForKey:NSShadowAttributeName];
+    if (sha) {
+        [style setTextShadow:[self _shadowAsString:sha]];
+    } else if ([b objectForKey:NSShadowAttributeName] == nil) {
+        [style setTextShadow:@"none"];
+    }
+
+    int sa = [[a objectForKey:NSStrikethroughStyleAttributeName] intValue];
+    int sb = [[b objectForKey:NSStrikethroughStyleAttributeName] intValue];
+    if (sa == sb) {
+        if (sa == NSUnderlineStyleNone)
+            [style setTextDecoration:@"none"]; // we really mean "no line-through" rather than "none"
+        else
+            [style setTextDecoration:@"line-through"]; // we really mean "add line-through" rather than "line-through"
+    }
+
+    sa = [[a objectForKey:NSSuperscriptAttributeName] intValue];
+    sb = [[b objectForKey:NSSuperscriptAttributeName] intValue];
+    if (sa == sb) {
+        if (sa > 0)
+            [style setVerticalAlign:@"super"];
+        else if (sa < 0)
+            [style setVerticalAlign:@"sub"];
+        else
+            [style setVerticalAlign:@"baseline"];
+    }
+
+    int ua = [[a objectForKey:NSUnderlineStyleAttributeName] intValue];
+    int ub = [[b objectForKey:NSUnderlineStyleAttributeName] intValue];
+    if (ua == ub) {
+        if (ua == NSUnderlineStyleNone)
+            [style setTextDecoration:@"none"]; // we really mean "no underline" rather than "none"
+        else
+            [style setTextDecoration:@"underline"]; // we really mean "add underline" rather than "underline"
+    }
+
+    return style;
 }
 
 - (void)changeAttributes:(id)sender
 {
-    // Used for various fancy stuff from the font panel.
-    // Turn the attributes into CSS and then call applyStyle.
-    ERROR("unimplemented");
+    [self _applyStyleToSelection:[self _styleForAttributeChange:sender]];
 }
 
-- (DOMCSSStyleDeclaration *)_colorPanelColorAsStyleUsingSelector:(SEL)selector
+- (DOMCSSStyleDeclaration *)_styleFromColorPanelWithSelector:(SEL)selector
 {
-    WebBridge *bridge = [self _bridge];
-    DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
-    NSColor *color = [[NSColorPanel sharedColorPanel] color];
-    NSString *colorAsString = [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", [color redComponent]*255, [color greenComponent]*255, [color blueComponent]*255];
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+
     ASSERT([style respondsToSelector:selector]);
-    [style performSelector:selector withObject:colorAsString];
+    [style performSelector:selector withObject:[self _colorAsString:[[NSColorPanel sharedColorPanel] color]]];
     
     return style;
 }
 
 - (void)_changeCSSColorUsingSelector:(SEL)selector inRange:(DOMRange *)range
 {
-    DOMCSSStyleDeclaration *style = [self _colorPanelColorAsStyleUsingSelector:selector];
+    DOMCSSStyleDeclaration *style = [self _styleFromColorPanelWithSelector:selector];
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range]) {
         [[self _bridge] applyStyle:style];
     }
-}
-
-- (DOMRange *)_entireDOMRange
-{
-    DOMDocument *document = [[self _bridge] DOMDocument];
-    DOMRange *range = [document createRange];
-    [range selectNode:[document documentElement]];
-    return range;
 }
 
 - (void)changeDocumentBackgroundColor:(id)sender
@@ -2914,14 +3193,14 @@ static WebHTMLView *lastHitView = nil;
     // entire document. There is no NSTextView API for setting the background
     // color on the selected range only. Note that this method is currently
     // never called from the UI (see comment in changeColor:).
-    // FIXME: this actually has no effect when called, probably due to 3654850. _entireDOMRange seems
+    // FIXME: this actually has no effect when called, probably due to 3654850. _documentRange seems
     // to do the right thing because it works in startSpeaking:, and I know setBackgroundColor: does the
-    // right thing because I tested it with [[self _bridge] selectedDOMRange].
+    // right thing because I tested it with [self _selectedRange].
     // FIXME: This won't actually apply the style to the entire range here, because it ends up calling
     // [bridge applyStyle:], which operates on the current selection. To make this work right, we'll
     // need to save off the selection, temporarily set it to the entire range, make the change, then
     // restore the old selection.
-    [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:) inRange:[self _entireDOMRange]];
+    [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:) inRange:[self _documentRange]];
 }
 
 - (void)changeColor:(id)sender
@@ -2931,20 +3210,16 @@ static WebHTMLView *lastHitView = nil;
     // AppKit will have to be revised to allow this to work with anything that isn't an 
     // NSTextView. However, this might not be required for Tiger, since the background-color 
     // changing box in the font panel doesn't work in Mail (3674481), though it does in TextEdit.
-    [self _changeCSSColorUsingSelector:@selector(setColor:) inRange:[[self _bridge] selectedDOMRange]];
+    [self _applyStyleToSelection:[self _styleFromColorPanelWithSelector:@selector(setColor:)]];
 }
 
 - (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue
 {
     // FIXME 3675191: This doesn't work yet. Maybe it's blocked by 3654850, or maybe something other than
     // just applyStyle: needs to be called for block-level attributes like this.
-    WebBridge *bridge = [self _bridge];
-    DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setTextAlign:CSSAlignmentValue];
-    WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
-        [[self _bridge] applyStyle:style];
-    }
+    [self _applyStyleToSelection:style];
 }
 
 - (void)alignCenter:(id)sender
@@ -2967,19 +3242,9 @@ static WebHTMLView *lastHitView = nil;
     [self _alignSelectionUsingCSSValue:@"right"];
 }
 
-- (void)indent:(id)sender
-{
-    // Figure out current indent level.
-    // Turn new indent level into CSS, then call applyStyle:.
-    ERROR("unimplemented");
-}
-
 - (void)insertTab:(id)sender
 {
-    WebBridge *bridge = [self _bridge];
-    if ([self _shouldReplaceSelectionWithText:@"\t" givenAction:WebViewInsertActionPasted]) {
-        [bridge insertText:@"\t"];
-    }
+    [self insertText:@"\t"];
 }
 
 - (void)insertBacktab:(id)sender
@@ -2999,13 +3264,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)insertParagraphSeparator:(id)sender
 {
-    // FIXME: Should this do something different?
+    // FIXME: Should this do something different? Do we have the equivalent of a paragraph separator?
     [self insertNewline:sender];
-}
-
-- (void)changeCaseOfLetter:(id)sender
-{
-    ERROR("unimplemented");
 }
 
 - (void)_changeWordCaseWithSelector:(SEL)selector
@@ -3034,61 +3294,92 @@ static WebHTMLView *lastHitView = nil;
     [self _changeWordCaseWithSelector:@selector(capitalizedString)];
 }
 
+- (BOOL)_deleteWithDirection:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity killRing:(BOOL)killRing
+{
+    // Delete the selection, if there is one.
+    // If not, make a selection using the passed-in direction and granularity.
+    if (![self _isEditable])
+        return NO;
+    DOMRange *range;
+    BOOL prepend;
+    if ([self _hasSelection]) {
+        range = [self _selectedRange];
+        prepend = NO;
+    } else {
+        WebBridge *bridge = [self _bridge];
+        range = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
+        if (range == nil || [range collapsed])
+            return NO;
+        switch (direction) {
+            case WebSelectForward:
+            case WebSelectRight:
+                prepend = NO;
+                break;
+            case WebSelectBackward:
+            case WebSelectLeft:
+                prepend = YES;
+                break;
+        }
+    }
+    [self _deleteRange:range preflight:YES killRing:killRing prepend:prepend];
+    return YES;
+}
+
 - (void)deleteForward:(id)sender
 {
-    ERROR("unimplemented");
+    [self _deleteWithDirection:WebSelectForward granularity:WebSelectByCharacter killRing:NO];
 }
 
 - (void)deleteBackward:(id)sender
 {
+    if (![self _isEditable])
+        return;
     WebBridge *bridge = [self _bridge];
-    if ([bridge isSelectionEditable]) {
-        WebView *webView = [self _webView];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:[bridge selectedDOMRange]]) {
-            [bridge deleteKeyPressed];
-        }
+    WebView *webView = [self _webView];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:[self _selectedRange]]) {
+        [bridge deleteKeyPressed];
     }
 }
 
 - (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender
 {
-    ERROR("unimplemented");
+    ERROR("unimplemented, doing deleteBackward instead");
+    [self deleteBackward:sender];
 }
 
 - (void)deleteWordForward:(id)sender
 {
-    [self moveWordForwardAndModifySelection:sender];
-    [self delete:sender];
+    [self _deleteWithDirection:WebSelectForward granularity:WebSelectByWord killRing:YES];
 }
 
 - (void)deleteWordBackward:(id)sender
 {
-    [self moveWordBackwardAndModifySelection:sender];
-    [self delete:sender];
+    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectByWord killRing:YES];
 }
 
 - (void)deleteToBeginningOfLine:(id)sender
 {
-    [self moveToBeginningOfLine:sender];
-    [self delete:sender];
+    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectToLineBoundary killRing:YES];
 }
 
 - (void)deleteToEndOfLine:(id)sender
 {
-    [self moveToEndOfLine:sender];
-    [self delete:sender];
+    // FIXME: To match NSTextView, this command should delete the newline at the end of
+    // a paragraph if you are at the end of a paragraph (like deleteToEndOfParagraph does below).
+    [self _deleteWithDirection:WebSelectForward granularity:WebSelectToLineBoundary killRing:YES];
 }
 
 - (void)deleteToBeginningOfParagraph:(id)sender
 {
-    [self moveToBeginningOfParagraph:sender];
-    [self delete:sender];
+    [self _deleteWithDirection:WebSelectBackward granularity:WebSelectToParagraphBoundary killRing:YES];
 }
 
 - (void)deleteToEndOfParagraph:(id)sender
 {
-    [self moveToEndOfParagraph:sender];
-    [self delete:sender];
+    // Despite the name of the method, this should delete the newline if the caret is at the end of a paragraph.
+    // If deletion to the end of the paragraph fails, we delete one character forward, which will delete the newline.
+    if (![self _deleteWithDirection:WebSelectForward granularity:WebSelectToParagraphBoundary killRing:YES])
+        [self _deleteWithDirection:WebSelectForward granularity:WebSelectByCharacter killRing:YES];
 }
 
 - (void)complete:(id)sender
@@ -3112,51 +3403,6 @@ static WebHTMLView *lastHitView = nil;
         [checker updateSpellingPanelWithMisspelledWord:badWord];
     }
 }
-#if APPKIT_CODE_FOR_REFERENCE
-    NSTextStorage *text = _getTextStorage(self);
-    NSTextViewSharedData *sharedData = _getSharedData(self);
-    if (text && ([text length] > 0) && [self isSelectable]) {
-        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-        NSRange selCharRange = [self selectedRange];
-        NSRange misspellCharRange = {0, 0}, grammarCharRange = {0, 0};
-        unsigned i, count;
-        NSArray *grammarRanges = nil, *grammarDescriptions = nil;
-
-        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
-
-        misspellCharRange = [checker checkSpellingOfString:[text string] startingAt:NSMaxRange(selCharRange) language:nil wrap:YES inSpellDocumentWithTag:[self spellCheckerDocumentTag] wordCount:NULL];
-#if GRAMMAR_CHECKING
-        grammarCharRange = [checker checkGrammarOfString:[text string] startingAt:NSMaxRange(selCharRange) language:nil wrap:YES inSpellDocumentWithTag:[self spellCheckerDocumentTag] ranges:&grammarRanges descriptions:&grammarDescriptions reconnectOnError:YES];
-#endif
-
-        if (misspellCharRange.length > 0 && (grammarCharRange.length == 0 || misspellCharRange.location <= grammarCharRange.location)) {
-            // select the text and drive the panel
-            [self setSelectedRange:misspellCharRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
-            if ([self isEditable]) {
-                [self _addSpellingAttributeForRange:misspellCharRange];
-                sharedData->_excludedSpellingCharRange = misspellCharRange;
-            }
-            [self scrollRangeToVisible:misspellCharRange];
-            [checker updateSpellingPanelWithMisspelledWord:[[text string] substringWithRange:misspellCharRange]];
-        } else if (grammarCharRange.length > 0) {
-            [self setSelectedRange:grammarCharRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
-            count = [grammarRanges count];
-            if ([self isEditable]) {
-                for (i = 0; i < count; i++) {
-                    NSRange range = [grammarRanges rangeAtIndex:i];
-                    range.location += grammarCharRange.location;
-                    [self _addSpellingAttributeForRange:range];
-                    [_getLayoutManager(self) addTemporaryAttributes:[NSDictionary dictionaryWithObjectsAndKeys:[grammarDescriptions objectAtIndex:i], NSToolTipAttributeName, nil] forCharacterRange:range];
-                }
-            }
-            [self scrollRangeToVisible:grammarCharRange];
-        } else {
-            // Cause the beep to indicate there are no more misspellings.
-            [checker updateSpellingPanelWithMisspelledWord:@""];
-        }
-    }
-#endif
-
 
 - (void)showGuessPanel:(id)sender
 {
@@ -3173,31 +3419,6 @@ static WebHTMLView *lastHitView = nil;
     }
     [[checker spellingPanel] orderFront:sender];
 }
-#if APPKIT_CODE_FOR_REFERENCE
-    NSTextStorage *text = _getTextStorage(self);
-    NSTextViewSharedData *sharedData = _getSharedData(self);
-    NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-    if (text && ([text length] > 0) && [self isSelectable]) {
-        NSRange selCharRange = [self selectedRange];
-        NSRange misspellCharRange = {0, 0};
-        if (checker && ![checker windowIsSpellingPanel:[self window]]) {
-            misspellCharRange = [checker checkSpellingOfString:[text string] startingAt:((selCharRange.location > 0) ? (selCharRange.location - 1) : 0) language:nil wrap:YES inSpellDocumentWithTag:[self spellCheckerDocumentTag] wordCount:NULL];
-            if (misspellCharRange.length) {
-                // select the text and drive the panel
-                [self setSelectedRange:misspellCharRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
-                if ([self isEditable]) {
-                    [self _addSpellingAttributeForRange:misspellCharRange];
-                    sharedData->_excludedSpellingCharRange = misspellCharRange;
-                }
-                [self scrollRangeToVisible:misspellCharRange];
-                [checker updateSpellingPanelWithMisspelledWord:[[text string] substringWithRange:misspellCharRange]];
-            }
-        }
-    }
-    if (checker) {
-        [[checker spellingPanel] orderFront:sender];
-    }
-#endif
 
 - (void)_changeSpellingToWord:(NSString *)newWord
 {
@@ -3220,29 +3441,14 @@ static WebHTMLView *lastHitView = nil;
         [bridge replaceSelectionWithText:newWord selectReplacement:YES];
     }
 }
-#if APPKIT_CODE_FOR_REFERENCE
-    NSRange charRange = [self rangeForUserTextChange];
-    if ([self isEditable] && charRange.location != NSNotFound) {
-        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
-        
-        // Don't correct to empty string.
-        if ([newWord isEqualToString:@""]) return;
-        
-        if ([self shouldChangeTextInRange:charRange replacementString:newWord]) {
-            [self replaceCharactersInRange:charRange withString:newWord];
-            charRange.length = [newWord length];
-            [self setSelectedRange:charRange affinity:NSSelectionAffinityUpstream stillSelecting:NO];
-            [self didChangeText];
-        }
-    }
-#endif
 
-- (void)changeSpelling:(id)sender {
+- (void)changeSpelling:(id)sender
+{
     [self _changeSpellingToWord:[[sender selectedCell] stringValue]];
 }
 
-- (void)ignoreSpelling:(id)sender {
+- (void)ignoreSpelling:(id)sender
+{
     WebBridge *bridge = [self _bridge];
     if (![bridge isSelectionEditable]) {
         return;
@@ -3258,93 +3464,23 @@ static WebHTMLView *lastHitView = nil;
     unsigned int length = [stringToIgnore length];
     if (stringToIgnore && length > 0) {
         [checker ignoreWord:stringToIgnore inSpellDocumentWithTag:[[self _webView] spellCheckerDocumentTag]];
-        //??? need to clear any special markup for misspelled words
+        // FIXME: Need to clear misspelling marker if the currently selected word is the one we are to ignore?
     }
 }
-#if APPKIT_CODE_FOR_REFERENCE
-    NSRange charRange = [self rangeForUserTextChange];
-    if ([self isEditable]) {
-        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-        NSString *stringToIgnore;
-        unsigned int length;
-        
-        if (!checker) return;
-        
-        stringToIgnore = [sender stringValue];
-        length = [stringToIgnore length];
-        if (stringToIgnore && length > 0) {
-            [checker ignoreWord:stringToIgnore inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
-            if (length == charRange.length && [stringToIgnore isEqualToString:[[_getTextStorage(self) string] substringWithRange:charRange]]) {
-                [self _removeSpellingAttributeForRange:charRange];
-            }
-        }
-    }
-#endif
-
-
-#if APPKIT_CODE_FOR_REFERENCE
-
-- (void)_changeSpellingFromMenu:(id)sender {
-    [self _changeSpellingToWord:[sender title]];
-}
-
-- (void)_ignoreSpellingFromMenu:(id)sender {
-    NSRange charRange = [self rangeForUserTextChange];
-    if ([self isEditable] && charRange.location != NSNotFound && charRange.length > 0) {
-        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
-        [self _removeSpellingAttributeForRange:charRange];
-        [checker ignoreWord:[[_getTextStorage(self) string] substringWithRange:charRange] inSpellDocumentWithTag:[self spellCheckerDocumentTag]];
-    }
-}
-
-- (void)_learnSpellingFromMenu:(id)sender {
-    NSRange charRange = [self rangeForUserTextChange];
-    if ([self isEditable] && charRange.location != NSNotFound && charRange.length > 0) {
-        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
-        [self _removeSpellingAttributeForRange:charRange];
-        [checker learnWord:[[_getTextStorage(self) string] substringWithRange:charRange]];
-    }
-}
-
-- (void)_forgetSpellingFromMenu:(id)sender {
-    NSRange charRange = [self rangeForUserTextChange];
-    if ([self isEditable] && charRange.location != NSNotFound && charRange.length > 0) {
-        NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
-        if (!checker || [checker windowIsSpellingPanel:[self window]]) return;
-        [checker forgetWord:[[_getTextStorage(self) string] substringWithRange:charRange]];
-    }
-}
-
-- (void)_openLinkFromMenu:(id)sender {
-    NSTextStorage *text = _getTextStorage(self);
-    NSRange charRange = [self selectedRange];
-    if (charRange.location != NSNotFound && charRange.length > 0) {
-        id link = [text attribute:NSLinkAttributeName atIndex:charRange.location effectiveRange:NULL];
-        if (link) {
-            [self clickedOnLink:link atIndex:charRange.location];
-        } else {
-            NSString *string = [[text string] substringWithRange:charRange];
-            link = [NSURL URLWithString:string];
-            if (link) [[NSWorkspace sharedWorkspace] openURL:link];
-        }
-    }
-}
-
-#endif
 
 - (void)performFindPanelAction:(id)sender
 {
+    // Implementing this will probably require copying all of NSFindPanel.h and .m.
+    // We need *almost* the same thing as AppKit, but not quite.
     ERROR("unimplemented");
 }
 
 - (void)startSpeaking:(id)sender
 {
     WebBridge *bridge = [self _bridge];
-    DOMRange *range = [bridge selectedDOMRange];
+    DOMRange *range = [self _selectedRange];
     if (!range || [range collapsed]) {
-        range = [self _entireDOMRange];
+        range = [self _documentRange];
     }
     [NSApp speakString:[bridge stringForRange:range]];
 }
@@ -3354,25 +3490,174 @@ static WebHTMLView *lastHitView = nil;
     [NSApp stopSpeaking:sender];
 }
 
+- (void)insertNewlineIgnoringFieldEditor:(id)sender
+{
+    [self insertNewline:sender];
+}
+
+- (void)insertTabIgnoringFieldEditor:(id)sender
+{
+    [self insertTab:sender];
+}
+
+- (void)subscript:(id)sender
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setVerticalAlign:@"sub"];
+    [self _applyStyleToSelection:style];
+}
+
+- (void)superscript:(id)sender
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setVerticalAlign:@"super"];
+    [self _applyStyleToSelection:style];
+}
+
+- (void)unscript:(id)sender
+{
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setVerticalAlign:@"baseline"];
+    [self _applyStyleToSelection:style];
+}
+
+- (void)underline:(id)sender
+{
+    // Despite the name, this method is actually supposed to toggle underline.
+    // FIXME: This currently clears overline, line-through, and blink as an unwanted side effect.
+    DOMCSSStyleDeclaration *style = [self _emptyStyle];
+    [style setTextDecoration:@"underline"];
+    if ([[self _bridge] selectionStartHasStyle:style])
+        [style setTextDecoration:@"none"];
+    [self _applyStyleToSelection:style];
+}
+
+- (void)yank:(id)sender
+{
+    [self insertText:_NSYankFromKillRing()];
+    _NSSetKillRingToYankedState();
+}
+
+- (void)yankAndSelect:(id)sender
+{
+    [self _insertText:_NSYankPreviousFromKillRing() selectInsertedText:YES];
+    _NSSetKillRingToYankedState();
+}
+
 #if 0
 
 - (void)transpose:(id)sender;
-- (void)transposeWords:(id)sender;
-- (void)insertNewlineIgnoringFieldEditor:(id)sender;
-- (void)insertTabIgnoringFieldEditor:(id)sender;
-- (void)yank:(id)sender;
-- (void)yankAndSelect:(id)sender;
+
+// Implementing these requires motion by paragraph.
+// Currently move right by paragraph is actually "move to end of paragraph".
+// We'd have to fix that up if we want to implement these.
+- (void)moveParagraphBackwardAndModifySelection:(id)sender;
+- (void)moveParagraphForwardAndModifySelection:(id)sender;
+
+// Implementing these may be easy once we implement pageUp and pageDown.
+- (void)pageUpAndModifySelection:(id)sender;
+- (void)pageDownAndModifySelection:(id)sender;
+
+// Implementing these four requires implementing a mark.
+// We can't just keep a DOM range on the WebKit side because the mark needs
+// to stay in the document as the document is edited.
 - (void)setMark:(id)sender;
 - (void)deleteToMark:(id)sender;
 - (void)selectToMark:(id)sender;
 - (void)swapWithMark:(id)sender;
-- (void)moveParagraphBackwardAndModifySelection:(id)sender;
-- (void)moveParagraphForwardAndModifySelection:(id)sender;
-- (void)pageUpAndModifySelection:(id)sender;
-- (void)pageDownAndModifySelection:(id)sender;
+
+// This is part of table support, which may be in NSTextView for Tiger.
+// It's probably simple to do the equivalent thing for WebKit.
 - (void)insertTable:(id)sender;
 
+// These methods are not implemented in NSTextView yet, so perhaps there's no rush.
+- (void)changeCaseOfLetter:(id)sender;
+- (void)indent:(id)sender;
+- (void)transposeWords:(id)sender;
+
+// CSS does not have a way to specify an outline font, which may make this difficult to implement.
+// Maybe a special case of text-shadow?
+- (void)outline:(id)sender;
+
+// These could be important.
+- (void)toggleBaseWritingDirection:(id)sender;
+- (void)toggleTraditionalCharacterShape:(id)sender;
+- (void)changeBaseWritingDirection:(id)sender;
+
+// I'm not sure what the equivalents of these in the web world are; we use <br> as a paragraph break.
+- (void)insertLineBreak:(id)sender;
+- (void)insertLineSeparator:(id)sender;
+- (void)insertPageBreak:(id)sender;
+
 #endif
+
+// Super-hack alert.
+// Workaround for bug 3789278.
+
+// Returns a selector only if called while:
+//   1) first responder is self
+//   2) handling a key down event
+//   3) not yet inside keyDown: method
+//   4) key is an arrow key
+// The selector is the one that gets sent by -[NSWindow _processKeyboardUIKey] for this key.
+- (SEL)_arrowKeyDownEventSelectorIfPreprocessing
+{
+    NSWindow *w = [self window];
+    if ([w firstResponder] != self)
+        return NULL;
+    NSEvent *e = [w currentEvent];
+    if ([e type] != NSKeyDown)
+        return NULL;
+    if (e == _private->keyDownEvent)
+        return NULL;
+    NSString *s = [e charactersIgnoringModifiers];
+    if ([s length] == 0)
+        return NULL;
+    switch ([s characterAtIndex:0]) {
+        case NSDownArrowFunctionKey:
+            return @selector(moveDown:);
+        case NSLeftArrowFunctionKey:
+            return @selector(moveLeft:);
+        case NSRightArrowFunctionKey:
+            return @selector(moveRight:);
+        case NSUpArrowFunctionKey:
+            return @selector(moveUp:);
+        default:
+            return NULL;
+    }
+}
+
+// Returns NO instead of YES if called on the selector that the
+// _arrowKeyDownEventSelectorIfPreprocessing method returns.
+// This should only happen inside -[NSWindow _processKeyboardUIKey],
+// and together with the change below should cause that method
+// to return NO rather than handling the key.
+// Also set a 1-shot flag for the nextResponder check below.
+- (BOOL)respondsToSelector:(SEL)selector
+{
+    if (![super respondsToSelector:selector])
+        return NO;
+    SEL arrowKeySelector = [self _arrowKeyDownEventSelectorIfPreprocessing];
+    if (selector != arrowKeySelector)
+        return YES;
+    _private->nextResponderDisabledOnce = YES;
+    return NO;
+}
+
+// Returns nil instead of the next responder if called when the
+// one-shot flag is set, and _arrowKeyDownEventSelectorIfPreprocessing
+// returns something other than NULL. This should only happen inside
+// -[NSWindow _processKeyboardUIKey] and together with the change above
+// should cause that method to return NO rather than handling the key.
+- (NSResponder *)nextResponder
+{
+    BOOL disabled = _private->nextResponderDisabledOnce;
+    _private->nextResponderDisabledOnce = NO;
+    if (disabled && [self _arrowKeyDownEventSelectorIfPreprocessing] != NULL) {
+        return nil;
+    }
+    return [super nextResponder];
+}
 
 @end
 
@@ -3400,28 +3685,13 @@ static WebHTMLView *lastHitView = nil;
 
 @end
 
-@implementation WebElementOrTextFilter
-
-+ (WebElementOrTextFilter *)filter 
-{
-    if (!elementOrTextFilterInstance)
-        elementOrTextFilterInstance = [[WebElementOrTextFilter alloc] init];
-    return elementOrTextFilterInstance;
-}
-
-- (short)acceptNode:(DOMNode *)n
-{
-    return ([n isKindOfClass:[DOMElement class]] || [n isKindOfClass:[DOMText class]]) ? DOM_FILTER_ACCEPT : DOM_FILTER_SKIP;
-}
-
-@end
-
 @implementation WebHTMLView (WebInternal)
 
 - (void)_selectionChanged
 {
     [self _updateSelectionForInputManager];
     [self _updateFontPanel];
+    _private->startNewKillRingSequence = YES;
 }
 
 - (void)_updateFontPanel
@@ -3441,42 +3711,9 @@ static WebHTMLView *lastHitView = nil;
         return;
     }
     
-    BOOL onlyOneFontInSelection = YES;
-    NSFont *font = nil;
-    
-    if (![self _hasSelection]) {
-        font = [bridge fontForCurrentPosition];
-    } 
-    else {
-        DOMRange *selection = [bridge selectedDOMRange];
-        DOMNode *startContainer = [selection startContainer];
-        DOMNode *endContainer = [selection endContainer];
-        
-        ASSERT(startContainer);
-        ASSERT(endContainer);
-        ASSERT([[WebElementOrTextFilter filter] acceptNode:startContainer] == DOM_FILTER_ACCEPT);
-        ASSERT([[WebElementOrTextFilter filter] acceptNode:endContainer] == DOM_FILTER_ACCEPT);
-        
-        font = [bridge renderedFontForNode:startContainer];
-        
-        if (startContainer != endContainer) {
-            DOMDocument *document = [bridge DOMDocument];
-            DOMTreeWalker *treeWalker = [document createTreeWalker:document :DOM_SHOW_ALL :[WebElementOrTextFilter filter] :NO];
-            DOMNode *node = startContainer;
-            [treeWalker setCurrentNode:node];
-            while (node) {
-                NSFont *otherFont = [bridge renderedFontForNode:node];
-                if (![font isEqual:otherFont]) {
-                    onlyOneFontInSelection = NO;
-                    break;
-                }
-                if (node == endContainer)
-                    break;
-                node = [treeWalker nextNode];
-            }
-        }
-    }
-    
+    BOOL multiple = NO;
+    NSFont *font = [bridge fontForSelection:&multiple];
+
     // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
     // selection. We should be able to remove this once the rest of this code works properly.
     if (font == nil) {
@@ -3487,9 +3724,10 @@ static WebHTMLView *lastHitView = nil;
         }
     }
     ASSERT(font != nil);
-        
+
     NSFontManager *fm = [NSFontManager sharedFontManager];
-    [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
+    [fm setSelectedFont:font isMultiple:multiple];
+
     // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
     // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
     // not reflected in the font panel. Maybe someday this will change.
@@ -3504,7 +3742,6 @@ static WebHTMLView *lastHitView = nil;
 }
 
 @end
-
 
 @implementation WebHTMLView (WebNSTextInputSupport)
 
@@ -3617,7 +3854,7 @@ static WebHTMLView *lastHitView = nil;
     }
 
     [bridge replaceSelectionWithText:text selectReplacement:YES];
-    [bridge setMarkedDOMRange:[bridge selectedDOMRange]];
+    [bridge setMarkedDOMRange:[self _selectedRange]];
     [self _selectRangeInMarkedText:newSelRange];
 
     _private->ignoreMarkedTextSelectionChange = NO;
@@ -3642,21 +3879,17 @@ static WebHTMLView *lastHitView = nil;
 
     _private->ignoreMarkedTextSelectionChange = NO;
 }
-	
-- (void)insertText:(id)string
+
+- (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText
 {
+    if (text == nil || [text length] == 0) {
+        return;
+    }
+
     WebBridge *bridge = [self _bridge];
 
     if (![bridge isSelectionEditable] && ![self hasMarkedText]) {
 	return;
-    }
-
-    NSString *text;
-    if ([string isKindOfClass:[NSAttributedString class]]) {
-	ERROR("TEXTINPUT: requested insert of attributed string");
-	text = [string string];
-    } else {
-	text = string;
     }
 
     if (![self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionTyped]) {
@@ -3666,22 +3899,33 @@ static WebHTMLView *lastHitView = nil;
 
     _private->ignoreMarkedTextSelectionChange = YES;
 
-    // if we had marked text, we need to make sure to replace
-    // that, instead of the selection/caret
+    // If we had marked text, we replace that, instead of the selection/caret.
     [self _selectMarkedText];
 
-    [bridge insertText:text];
+    [bridge insertText:text selectInsertedText:selectText];
 
     _private->ignoreMarkedTextSelectionChange = NO;
 
-    // inserting unmarks any marked text
+    // Inserting unmarks any marked text.
     [self unmarkText];
+}
+
+- (void)insertText:(id)string
+{
+    NSString *text;
+    if ([string isKindOfClass:[NSAttributedString class]]) {
+	ERROR("TEXTINPUT: requested insert of attributed string");
+	text = [string string];
+    } else {
+	text = string;
+    }
+    [self _insertText:text selectInsertedText:NO];
 }
 
 - (BOOL)_selectionIsInsideMarkedText
 {
     WebBridge *bridge = [self _bridge];
-    DOMRange *selection = [bridge selectedDOMRange];
+    DOMRange *selection = [self _selectedRange];
     DOMRange *markedRange = [bridge markedDOMRange];
 
     ASSERT([markedRange startContainer] == [markedRange endContainer]);
@@ -3707,7 +3951,7 @@ static WebHTMLView *lastHitView = nil;
 	return;
 
     if ([self _selectionIsInsideMarkedText]) {
-	DOMRange *selection = [[self _bridge] selectedDOMRange];
+	DOMRange *selection = [self _selectedRange];
 	DOMRange *markedDOMRange = [[self _bridge] markedDOMRange];
 
 	unsigned markedSelectionStart = [selection startOffset] - [markedDOMRange startOffset];
@@ -3750,7 +3994,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_insertMatch:(NSString *)match
 {
-    //FIXME: 3769654 - We should preserve case of string being inserted, even in prefix (but then also be
+    // FIXME: 3769654 - We should preserve case of string being inserted, even in prefix (but then also be
     // able to revert that).  Mimic NSText.
     WebBridge *bridge = [_view _bridge];
     NSString *newText = [match substringFromIndex:prefixLength];
@@ -3921,7 +4165,8 @@ static WebHTMLView *lastHitView = nil;
 
 // WebHTMLView gives us a crack at key events it sees.  Return whether we consumed the event.
 // The features for the various keys mimic NSTextView.
-- (BOOL)filterKeyDown:(NSEvent *)event {
+- (BOOL)filterKeyDown:(NSEvent *)event
+{
     if (_popupWindow) {
         NSString *string = [event charactersIgnoringModifiers];
         unichar c = [string characterAtIndex:0];
@@ -3963,7 +4208,8 @@ static WebHTMLView *lastHitView = nil;
     [self _insertMatch:[_completions objectAtIndex:selectedRow]];
 }
 
-- (void)tableAction:(id)sender {
+- (void)tableAction:(id)sender
+{
     [self _reflectSelection];
     [self endRevertingChange:NO moveLeft:NO];
 }

@@ -22,7 +22,8 @@
     id savedSubviews;
     BOOL subviewsSetAside;
 
-    NSEvent *mouseDownEvent;
+    NSEvent *mouseDownEvent; // Kept after handling the event.
+    NSEvent *keyDownEvent; // Kept only during handling of the event.
 
     NSURL *draggingImageURL;
     unsigned int dragSourceActionMask;
@@ -45,8 +46,9 @@
     NSArray* pageRects;
 
     BOOL resigningFirstResponder;
-
     BOOL ignoreMarkedTextSelectionChange;
+    BOOL startNewKillRingSequence;
+    BOOL nextResponderDisabledOnce;
     
     WebTextCompleteController *compController;
 }

@@ -933,6 +933,20 @@ NodeImpl *NodeImpl::traversePreviousNode() const
     }
 }
 
+NodeImpl *NodeImpl::traversePreviousNodePostOrder(NodeImpl *stayWithin) const
+{
+    if (lastChild())
+	return lastChild();
+    if (previousSibling())
+	return previousSibling();
+    const NodeImpl *n = this;
+    while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
+        n = n->parentNode();
+    if (n && (!stayWithin || n->parentNode() != stayWithin))
+        return n->previousSibling();
+    return 0;
+}
+
 void NodeImpl::checkSetPrefix(const DOMString &_prefix, int &exceptioncode)
 {
     // Perform error checking as required by spec for setting Node.prefix. Used by

@@ -112,7 +112,8 @@ typedef enum {
     WebSelectByLine,
     WebSelectByParagraph,
     WebSelectByDocument,
-    WebSelectToLineBoundary
+    WebSelectToLineBoundary,
+    WebSelectToParagraphBoundary
 } WebSelectionGranularity;
 
 
@@ -272,7 +273,8 @@ typedef enum {
 - (void)clearMarkedDOMRange;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
-- (NSFont *)renderedFontForNode:(DOMNode *)node;
+
+- (NSFont *)fontForSelection:(BOOL *)hasMultipleFonts;
 
 + (NSString *)stringWithData:(NSData *)data textEncoding:(CFStringEncoding)textEncoding;
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
@@ -308,7 +310,7 @@ typedef enum {
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement;
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement;
 
-- (void)insertText:(NSString *)text;
+- (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText;
 - (void)insertNewline;
 
 - (void)setSelectionToDragCaret;
@@ -320,8 +322,10 @@ typedef enum {
 
 - (void)deleteSelection;
 - (void)deleteKeyPressed;
+
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style;
-- (NSFont *)fontForCurrentPosition;
+- (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style;
+
 - (void)ensureCaretVisible;
 
 - (WebScriptObject *)windowScriptObject;

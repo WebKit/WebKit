@@ -254,17 +254,6 @@ enum {
     [self _pageHorizontally:NO];
 }
 
-- (void)_scrollToTopLeft
-{
-    [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
-}
-
-- (void)_scrollToBottomLeft
-{
-    NSRect frame = [[[self _scrollView] documentView] frame];
-    [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
-}
-
 - (void)scrollLineUp:(id)sender
 {
     [self _scrollLineVertically: YES];
@@ -573,6 +562,17 @@ static NSMutableDictionary *viewTypes;
     [self _tile];
 }
 
+- (void)scrollToBeginningOfDocument:(id)sender
+{
+    [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
+}
+
+- (void)scrollToEndOfDocument:(id)sender
+{
+    NSRect frame = [[[self _scrollView] documentView] frame];
+    [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     NSString *characters = [event characters];
@@ -633,7 +633,7 @@ static NSMutableDictionary *viewTypes;
                     callSuper = YES;
                     break;
                 }
-                [self _scrollToTopLeft];
+                [self scrollToBeginningOfDocument:nil];
                 callSuper = NO;
                 break;
             case NSEndFunctionKey:
@@ -641,12 +641,12 @@ static NSMutableDictionary *viewTypes;
                     callSuper = YES;
                     break;
                 }
-                [self _scrollToBottomLeft];
+                [self scrollToEndOfDocument:nil];
                 callSuper = NO;
                 break;
             case NSUpArrowFunctionKey:
-                // We don't handle shifted arrow keys here, so let super have a chance.
-                if ([event modifierFlags] & NSShiftKeyMask) {
+                // We don't handle shifted or control-arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & (NSShiftKeyMask | NSControlKeyMask)) {
                     callSuper = YES;
                     break;
                 }
@@ -659,7 +659,7 @@ static NSMutableDictionary *viewTypes;
                     break;
                 }
                 if ([event modifierFlags] & NSCommandKeyMask) {
-                    [self _scrollToTopLeft];
+                    [self scrollToBeginningOfDocument:nil];
                 } else if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self scrollPageUp:nil];
                 } else {
@@ -668,8 +668,8 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSDownArrowFunctionKey:
-                // We don't handle shifted arrow keys here, so let super have a chance.
-                if ([event modifierFlags] & NSShiftKeyMask) {
+                // We don't handle shifted or control-arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & (NSShiftKeyMask | NSControlKeyMask)) {
                     callSuper = YES;
                     break;
                 }
@@ -682,7 +682,7 @@ static NSMutableDictionary *viewTypes;
                     break;
                 }
                 if ([event modifierFlags] & NSCommandKeyMask) {
-                    [self _scrollToBottomLeft];
+                    [self scrollToEndOfDocument:nil];
                 } else if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self scrollPageDown:nil];
                 } else {
@@ -691,8 +691,8 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSLeftArrowFunctionKey:
-                // We don't handle shifted arrow keys here, so let super have a chance.
-                if ([event modifierFlags] & NSShiftKeyMask) {
+                // We don't handle shifted or control-arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & (NSShiftKeyMask | NSControlKeyMask)) {
                     callSuper = YES;
                     break;
                 }
@@ -719,8 +719,8 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSRightArrowFunctionKey:
-                // We don't handle shifted arrow keys here, so let super have a chance.
-                if ([event modifierFlags] & NSShiftKeyMask) {
+                // We don't handle shifted or control-arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & (NSShiftKeyMask | NSControlKeyMask)) {
                     callSuper = YES;
                     break;
                 }

@@ -1,3 +1,131 @@
+2004-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3696542> REGRESSION (Mail): Editable WebKit doesn't support underline yet (in the iChat profile window, at least)
+        - fixed <rdar://problem/3780249> REGRESSION (Mail): copy style/paste style doesn't work in HTML editing in Mail
+        - fixed <rdar://problem/3788857> REGRESSION (Mail): Home and End keys don't work in message composer
+        - fixed <rdar://problem/3788884> REGRESSION (Mail): ctrl-d emacs key binding does not work (delete forward)
+        - fixed <rdar://problem/3788890> REGRESSION (Mail): ctrl-k emacs key binding does not work (delete to end of paragraph)
+        - fixed <rdar://problem/3788899> REGRESSION (Mail): ctrl-y emacs key binding does not work (yank)
+        - fixed <rdar://problem/3788901> REGRESSION (Mail): ctrl-o emacs key binding does not work (insert newline in front of insertion point)
+        - fixed <rdar://problem/3788908> REGRESSION (Mail): ctrl-left-arrow emacs key binding does not work (move to beginning of line)
+        - fixed <rdar://problem/3788913> REGRESSION (Mail): ctrl-right-arrow emacs key binding does not work (move to end of line)
+        - implemented a first cut at other attribute changes from Text Panel besides underline (bugs?)
+        - dealt with a couple of FIXMEs in WebHTMLView.m
+        - updated list of not-yet-implemented methods in WebHTMLView.m
+        - fixed many deletion operations to call the correct editing delegate methods
+
+        * WebView.subproj/WebFrameViewPrivate.h: Remove _scrollToTopLeft and _scrollToBottomLeft.
+        No one was calling them anyway, so they should really have been marked internal and not private.
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView scrollToBeginningOfDocument:]): Renamed _scrollToTopLeft to this, so the home key
+        would start working with the key bindings machinery.
+        (-[WebFrameView scrollToEndOfDocument:]): Same thing, for end key.
+        (-[WebFrameView keyDown:]): Update for name changes, and also make sure we don't try to grab
+        control-arrow keys here (probably not necessary, but good anyway).
+
+        * WebView.subproj/WebHTMLViewInternal.h: Added keyDownEvent field, and startNewKillRingSequence
+        and nextResponderDisabledOnce flags.
+        * WebView.subproj/WebHTMLView.m:
+        Rearrange declarations at the top of the file so that external things are up with
+        the #import directives and things inside this file are declared below.
+        (-[WebHTMLView _shouldReplaceSelectionWithText:givenAction:]): Ditto.
+        (-[WebHTMLView _calculatePrintHeight]): Moved up into the "internal to file" category.
+        (-[WebHTMLView _updateTextSizeMultiplier]): Ditto.
+        (-[WebHTMLView _selectedRange]): Added.
+        (-[WebHTMLView _openLinkFromMenu:]): Left this method lying around even though I deleted the
+        other APPKIT_CODE_FOR_REFERENCE in case this shows up in the context menu we are now sharing
+        with the AppKit. Chris will look at this later, and he can delete it then.
+        (+[WebHTMLView initialize]): Call _NSInitializeKillRing.
+        (-[WebHTMLView _documentRange]): Added.
+        (-[WebHTMLView string]): Call the bridge to get the plain text rather than making an attributed
+        string and then getting the text from there.
+        (-[WebHTMLView becomeFirstResponder]): Set startNewKillRingSequence flag, so that new deletions
+        will create a new kill ring entry.
+        (-[WebHTMLView moveToBeginningOfDocument:]): Use backward direction instead of left direction.
+        (-[WebHTMLView moveToBeginningOfDocumentAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfLine:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfLineAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfParagraph:]): Ditto, also use WebSelectToParagraphBoundary.
+        (-[WebHTMLView moveToBeginningOfParagraphAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToEndOfDocument:]): Use forward direction instead of right direction.
+        (-[WebHTMLView moveToEndOfDocumentAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToEndOfLine:]): Ditto.
+        (-[WebHTMLView moveToEndOfLineAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToEndOfParagraph:]): Ditto, also use WebSelectToParagraphBoundary.
+        (-[WebHTMLView moveToEndOfParagraphAndModifySelection:]): Ditto.
+        (-[WebHTMLView _shouldDeleteRange:]): Added.
+        (-[WebHTMLView _deleteRange:preflight:killRing:prepend:]): Added.
+        (-[WebHTMLView delete:]): Changed to call new _deleteRange method.
+        (-[WebHTMLView cut:]): Changed to preflight property and call new _deleteRange method.
+        (-[WebHTMLView _selectionFontAttributes]): Added.
+        (-[WebHTMLView _selectionFontAttributesAsRTF]): Added.
+        (-[WebHTMLView _fontAttributesFromFontPasteboard]): Added.
+        (-[WebHTMLView _emptyStyle]): Added.
+        (-[WebHTMLView _styleFromFontAttributes:]): Added.
+        (-[WebHTMLView _applyStyleToSelection:]): Added.
+        (-[WebHTMLView copyFont:]): Implemented.
+        (-[WebHTMLView pasteFont:]): Implemented.
+        (-[WebHTMLView _originalFontA]): Added.
+        (-[WebHTMLView _originalFontB]): Added.
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): Added. Has code from the method that figures out
+        what the font manager is doing for changeFont:, now needed for changeAttribute: too.
+        (-[WebHTMLView _styleFromFontManagerOperation]): Renamed and now calls shared methods.
+        (-[WebHTMLView changeFont:]): Call shared method, still does the same thing.
+        (-[WebHTMLView _colorAsString:]): Added. Has code from the method we were using with the
+        color panel before.
+        (-[WebHTMLView _shadowAsString:]): Added.
+        (-[WebHTMLView _styleForAttributeChange:]): Added.
+        (-[WebHTMLView changeAttributes:]): Implemented.
+        (-[WebHTMLView _styleFromColorPanelWithSelector:]): Renamed and now calls shared methods.
+        (-[WebHTMLView _changeCSSColorUsingSelector:inRange:]): Call method by new name.
+        (-[WebHTMLView changeDocumentBackgroundColor:]): Call method by new name.
+        (-[WebHTMLView changeColor:]): Changed around a bit; still doesn't work yet.
+        (-[WebHTMLView _alignSelectionUsingCSSValue:]): Call shared methods.
+        (-[WebHTMLView indent:]): Removed, since NSTextView doesn't implement this method. Added to list
+        of methods to possibly implement later in the file.
+        (-[WebHTMLView insertTab:]): Call insertText: to save code and so we get WebViewInsertActionTyped
+        instead of WebViewInsertActionPasted.
+        (-[WebHTMLView changeCaseOfLetter:]): Removed, since NSTextView doesn't implement this method.
+        Added to list of methods to possibly implement later in the file.
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:]): Added.
+        (-[WebHTMLView deleteForward:]): Implemented. This makes Control-D work.
+        (-[WebHTMLView deleteBackwardByDecomposingPreviousCharacter:]): Implemented by just calling
+        deleteBackward for now; probably better than doing nothing.
+        (-[WebHTMLView deleteWordForward:]): Changed to call new _delete method above. Fixes things
+        so that we delete the selection if there is one, get the appropriate delegate calls, handle
+        the kill ring properly, and don't do any selection if we can't delete.
+        (-[WebHTMLView deleteWordBackward:]): Ditto.
+        (-[WebHTMLView deleteToBeginningOfLine:]): Ditto.
+        (-[WebHTMLView deleteToEndOfLine:]): Ditto.
+        (-[WebHTMLView deleteToBeginningOfParagraph:]): Ditto.
+        (-[WebHTMLView deleteToEndOfParagraph:]): Ditto. Added additional behavior needed since this
+        is bound to Control-K, so it's not really just delete to end of paragraph.
+        (-[WebHTMLView insertNewlineIgnoringFieldEditor:]): Added. Calls insertNewline:.
+        (-[WebHTMLView insertTabIgnoringFieldEditor:]): Added. Calls insertTab:.
+        (-[WebHTMLView subscript:]): Added.
+        (-[WebHTMLView superscript:]): Added.
+        (-[WebHTMLView unscript:]): Added.
+        (-[WebHTMLView underline:]): Added.
+        (-[WebHTMLView yank:]): Added.
+        (-[WebHTMLView yankAndSelect:]): Added. Calls _insertText.
+        (-[WebHTMLView _arrowKeyDownEventSelectorIfPreprocessing:]): Added. Part of workaround for
+        control-arrow key trouble.
+        (-[WebHTMLView respondsToSelector:]): Added. More of workaround.
+        (-[WebHTMLView nextResponder:]): Added. More of workaround.
+        (-[WebHTMLView _selectionChanged]): Set startNewKillRingSequence flag, so that new deletions
+        will create a new kill ring entry.
+        (-[WebHTMLView _updateFontPanel]): Remove a bunch of code here that wasn't working very well
+        because it walked a DOM range incorrectly, and instead use the new method that does all the
+        right stuff on the other side of the bridge.
+        (-[WebHTMLView _insertText:selectInsertedText:]): Added new helper method for use by both
+        insertText and yankAndSelect, with most of the guts of insertText and one additional parameter.
+        (-[WebHTMLView insertText:]): Call the new _insertText.
+
+        * WebView.subproj/WebView.m: Use macros to make the forwarding from WebView more terse.
+        Updated the list to include a few methods it didn't before.
+
 2004-09-06  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.
@@ -2869,6 +2997,7 @@
         (-[WebHTMLView _replaceSelectionWithPasteboard:selectReplacement:allowPlainText:]): Added allowPlainText
         boolean, moved method into new location in file so it can be in the right category.
         (-[WebHTMLView concludeDragForDraggingInfo:]): Pass YES for allowPlainText.
+        (-[WebHTMLView keyDown:]): Set keyDownEvent field for use by workaround below.
         (-[WebHTMLView centerSelectionInVisibleArea:]): Moved here from WebView.
         (-[WebHTMLView _alterCurrentSelection:direction:granularity:]): Ditto.
         (-[WebHTMLView moveBackward:]): Ditto.

@@ -93,6 +93,7 @@ using DOM::Range;
 using DOM::RangeImpl;
 using DOM::Selection;
 using DOM::TextImpl;
+using DOM::UPSTREAM;
 
 using khtml::Cache;
 using khtml::CharacterIterator;
@@ -3327,58 +3328,73 @@ NSImage *KWQKHTMLPart::snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRe
     return result;
 }
 
-NSFont *KWQKHTMLPart::fontForCurrentPosition() const
+NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
 {
+    if (hasMultipleFonts)
+        *hasMultipleFonts = false;
+
+    if (!xmlDocImpl())
+        return nil;
     if (d->m_selection.state() == Selection::NONE)
         return nil;
     
-    Range range(d->m_selection.toRange());
-    Position pos(range.startContainer().handle(), range.startOffset());
-    ASSERT(pos.notEmpty());
-    ElementImpl *elem = pos.element();
-    if (!elem)
-        return nil;
-    
-    pos = Position(elem, elem->caretMinOffset());
-    if (!pos.inRenderedContent())
-        return nil;
-    
-    if (d->m_typingStyle) {
-        if (!xmlDocImpl())
+    if (d->m_selection.state() == Selection::CARET) {
+        Position pos(d->m_selection.start().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+        ASSERT(pos.notEmpty());
+        if (!pos.inRenderedContent())
+            return nil;
+        NodeImpl *node = pos.node();
+        if (!node)
             return nil;
 
         int exceptionCode = 0;
-        ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("SPAN", exceptionCode);
+        ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
         ASSERT(exceptionCode == 0);
         
-        styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
-        ASSERT(exceptionCode == 0);
+        if (d->m_typingStyle) {
+            styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+            ASSERT(exceptionCode == 0);
+        }
         
         TextImpl *text = xmlDocImpl()->createEditingTextNode("");
         styleElement->appendChild(text, exceptionCode);
         ASSERT(exceptionCode == 0);
 
-        elem->appendChild(styleElement, exceptionCode);
+        node->parentNode()->insertBefore(styleElement, node, exceptionCode);
         ASSERT(exceptionCode == 0);
         
         RenderObject *renderer = styleElement->renderer();
         ASSERT(renderer);
         NSFont *result = renderer->style()->font().getNSFont();
         
-        styleElement->removeChild(text, exceptionCode);
-        ASSERT(exceptionCode == 0);
-
-        elem->removeChild(styleElement, exceptionCode);
+        styleElement->remove(exceptionCode);
         ASSERT(exceptionCode == 0);
         
         return result;
     }
-    else {
-        RenderObject *renderer = elem->renderer();
-        if (renderer)
-            return renderer->style()->font().getNSFont();
+
+    NSFont *font = nil;
+
+    Range r = d->m_selection.toRange();
+    RangeImpl *range = r.handle();
+    NodeImpl *pastEnd = range->pastEndNode();
+    for (NodeImpl *n = range->startNode(); n != pastEnd; n = n->traverseNextNode()) {
+        RenderObject *renderer = n->renderer();
+        if (!renderer)
+            continue;
+        // FIXME: Are there any node types that have renderers, but that we should be skipping?
+        NSFont *f = renderer->style()->font().getNSFont();
+        if (font == nil) {
+            font = f;
+            if (!hasMultipleFonts)
+                break;
+        } else if (font != f) {
+            *hasMultipleFonts = false;
+            break;
+        }
     }
-    return nil;
+
+    return font;
 }
 
 KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
@@ -3524,12 +3540,11 @@ void KWQKHTMLPart::setName(const QString &name)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-
 void KWQKHTMLPart::didTellBridgeAboutLoad(const QString &urlString)
 {
-    urlsBridgeKnowsAbout.insert(urlString, (char *)1);
+    static char dummy;
+    urlsBridgeKnowsAbout.insert(urlString, &dummy);
 }
-
 
 bool KWQKHTMLPart::haveToldBridgeAboutLoad(const QString &urlString)
 {
@@ -3670,7 +3685,7 @@ DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
     for (i = 0; i < count; i++) {
         int exceptionCode = 0;
         if (i != 0) {
-            ElementImpl *breakNode = xmlDocImpl()->createHTMLElement("BR", exceptionCode);
+            ElementImpl *breakNode = xmlDocImpl()->createHTMLElement("br", exceptionCode);
             ASSERT(exceptionCode == 0);
             fragment->appendChild(breakNode, exceptionCode);
             ASSERT(exceptionCode == 0);
@@ -3688,16 +3703,16 @@ DocumentFragmentImpl *KWQKHTMLPart::documentFragmentWithText(NSString *text)
 
 void KWQKHTMLPart::registerCommandForUndo(const khtml::EditCommand &cmd)
 {
-    ASSERT(cmd.handle());
-    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.handle()];
+    ASSERT(cmd.get());
+    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.get()];
     [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(undoEditing:) object:kwq];
     _haveUndoRedoOperations = YES;
 }
 
 void KWQKHTMLPart::registerCommandForRedo(const khtml::EditCommand &cmd)
 {
-    ASSERT(cmd.handle());
-    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.handle()];
+    ASSERT(cmd.get());
+    KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommandImpl:cmd.get()];
     [[_bridge undoManager] registerUndoWithTarget:_bridge selector:@selector(redoEditing:) object:kwq];
     _haveUndoRedoOperations = YES;
 }

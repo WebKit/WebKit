@@ -38,7 +38,8 @@ using khtml::Fixed;
 
 DOMStringImpl* DOMStringImpl::empty()
 {
-    static DOMStringImpl e = WithOneRef();
+    static WithOneRef w;
+    static DOMStringImpl e(w);
     return &e;
 }
 
@@ -487,7 +488,7 @@ unsigned DOMStringImpl::computeHash(const char *s)
 
 const char *DOMStringImpl::ascii() const
 {
-    char *buffer = new char[l];
+    char *buffer = new char[l + 1];
     char *p = buffer;
     for (unsigned i = 0; i != l; ++i) {
         unsigned short c = s[i].unicode();
@@ -496,6 +497,7 @@ const char *DOMStringImpl::ascii() const
         else
             *p++ = '?';
     }
+    *p++ = '\0';
     return buffer;
 }
 

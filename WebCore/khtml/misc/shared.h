@@ -22,6 +22,10 @@ public:
 //    static int counter;
 protected:
     unsigned int _ref;
+
+private:
+    Shared(const Shared &);
+    Shared &operator=(const Shared &);
 };
 
 template<class type> class TreeShared
@@ -50,14 +54,18 @@ private:
     unsigned int _ref;
 protected:
     type *m_parent;
+
+private:
+    TreeShared(const TreeShared &);
+    TreeShared &operator=(const TreeShared &);
 };
 
 template <class T> class SharedPtr
 {
 public:
     SharedPtr() : m_ptr(0) {}
-	explicit SharedPtr(T *ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->ref(); }
-	SharedPtr(const SharedPtr &o) : m_ptr(o.m_ptr) { if (m_ptr) m_ptr->ref(); }
+    explicit SharedPtr(T *ptr) : m_ptr(ptr) { if (m_ptr) m_ptr->ref(); }
+    SharedPtr(const SharedPtr &o) : m_ptr(o.m_ptr) { if (m_ptr) m_ptr->ref(); }
     ~SharedPtr() { if (m_ptr) m_ptr->deref(); }
 	
     bool isNull() const { return m_ptr == 0; }
@@ -66,32 +74,31 @@ public:
     void reset() { if (m_ptr) m_ptr->deref(); m_ptr = 0; }
     
     T * get() const { return m_ptr; }
-	T &operator*() const { return *m_ptr; }
-	T *operator->() const { return m_ptr; }
+    T &operator*() const { return *m_ptr; }
+    T *operator->() const { return m_ptr; }
 
-	bool operator!() const { return m_ptr == 0; }
+    bool operator!() const { return m_ptr == 0; }
 
-	inline friend bool operator==(const SharedPtr &a, const SharedPtr &b) { return a.m_ptr == b.m_ptr; }
-	inline friend bool operator==(const SharedPtr &a, const T *b) { return a.m_ptr == b; }
-	inline friend bool operator==(const T *a, const SharedPtr &b) { return a == b.m_ptr; }
+    inline friend bool operator==(const SharedPtr &a, const SharedPtr &b) { return a.m_ptr == b.m_ptr; }
+    inline friend bool operator==(const SharedPtr &a, const T *b) { return a.m_ptr == b; }
+    inline friend bool operator==(const T *a, const SharedPtr &b) { return a == b.m_ptr; }
 
-	SharedPtr &operator=(const SharedPtr &);
+    SharedPtr &operator=(const SharedPtr &);
 
 private:
-	T* m_ptr;
+    T* m_ptr;
 };
 
 template <class T> SharedPtr<T> &SharedPtr<T>::operator=(const SharedPtr<T> &o) 
 {
-	if (m_ptr != o.m_ptr) {
-		if (m_ptr)
+    if (m_ptr != o.m_ptr) {
+        if (m_ptr)
             m_ptr->deref();
-		m_ptr = o.m_ptr;
-		if (m_ptr) 
+        m_ptr = o.m_ptr;
+        if (m_ptr) 
             m_ptr->ref();
-	}
-	
-	return *this;
+    }
+    return *this;
 }
 
 template <class T> inline bool operator!=(const SharedPtr<T> &a, const SharedPtr<T> &b) { return !(a==b); }

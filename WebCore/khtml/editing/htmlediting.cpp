@@ -36,7 +36,6 @@
 
 #if APPLE_CHANGES
 #include "KWQAssertions.h"
-#include "KWQLogging.h"
 #endif
 
 using DOM::CSSStyleDeclarationImpl;
@@ -50,11 +49,7 @@ using DOM::Selection;
 using DOM::TextImpl;
 
 #if !APPLE_CHANGES
-#define ASSERT(assertion) ((void)0)
-#define ASSERT_WITH_MESSAGE(assertion, formatAndArgs...) ((void)0)
-#define ASSERT_NOT_REACHED() ((void)0)
-#define LOG(channel, formatAndArgs...) ((void)0)
-#define ERROR(formatAndArgs...) ((void)0)
+#define ASSERT(assertion) assert(assertion)
 #endif
 
 #define IF_IMPL_NULL_RETURN_ARG(arg) do { \
@@ -71,15 +66,15 @@ namespace khtml {
 //------------------------------------------------------------------------------------------
 // EditCommand
 
-EditCommand::EditCommand() : SharedPtr<SharedCommandImpl>()
+EditCommand::EditCommand()
 {
 }
 
-EditCommand::EditCommand(EditCommandImpl *impl) : SharedPtr<SharedCommandImpl>(impl)
+EditCommand::EditCommand(EditCommandImpl *impl) : SharedPtr<EditCommandImpl>(impl)
 {
 }
 
-EditCommand::EditCommand(const EditCommand &o) : SharedPtr<SharedCommandImpl>(o.get())
+EditCommand::EditCommand(const EditCommand &o) : SharedPtr<EditCommandImpl>(o)
 {
 }
 
@@ -87,10 +82,10 @@ EditCommand::~EditCommand()
 {
 }
 
-int EditCommand::commandID() const
+EditCommand &EditCommand::operator=(const EditCommand &c)
 {
-    IF_IMPL_NULL_RETURN_ARG(0);        
-    return get()->commandID();
+    static_cast<SharedPtr<EditCommandImpl> &>(*this) = c;
+    return *this;
 }
 
 bool EditCommand::isCompositeStep() const
@@ -99,29 +94,31 @@ bool EditCommand::isCompositeStep() const
     return get()->isCompositeStep();
 }
 
-bool EditCommand::isNull() const
+bool EditCommand::isInputTextCommand() const
 {
-    return get() == 0;
+    IF_IMPL_NULL_RETURN_ARG(false);        
+    return get()->isInputTextCommand();
 }
 
-bool EditCommand::notNull() const
+bool EditCommand::isTypingCommand() const
 {
-    return !isNull();
+    IF_IMPL_NULL_RETURN_ARG(false);        
+    return get()->isTypingCommand();
 }
 
-void EditCommand::apply()
+void EditCommand::apply() const
 {
     IF_IMPL_NULL_RETURN;
     get()->apply();
 }
 
-void EditCommand::unapply()
+void EditCommand::unapply() const
 {
     IF_IMPL_NULL_RETURN;
     get()->unapply();
 }
 
-void EditCommand::reapply()
+void EditCommand::reapply() const
 {
     IF_IMPL_NULL_RETURN;
     get()->reapply();
@@ -145,13 +142,13 @@ Selection EditCommand::endingSelection() const
     return get()->endingSelection();
 }
 
-void EditCommand::setStartingSelection(const Selection &s)
+void EditCommand::setStartingSelection(const Selection &s) const
 {
     IF_IMPL_NULL_RETURN;
     get()->setStartingSelection(s);
 }
 
-void EditCommand::setEndingSelection(const Selection &s)
+void EditCommand::setEndingSelection(const Selection &s) const
 {
     IF_IMPL_NULL_RETURN;
     get()->setEndingSelection(s);
@@ -163,7 +160,7 @@ CSSStyleDeclarationImpl *EditCommand::typingStyle() const
     return get()->typingStyle();
 }
 
-void EditCommand::setTypingStyle(CSSStyleDeclarationImpl *style)
+void EditCommand::setTypingStyle(CSSStyleDeclarationImpl *style) const
 {
     IF_IMPL_NULL_RETURN;
     get()->setTypingStyle(style);
@@ -175,15 +172,10 @@ EditCommand EditCommand::parent() const
     return get()->parent();
 }
 
-void EditCommand::setParent(const EditCommand &cmd)
+void EditCommand::setParent(const EditCommand &cmd) const
 {
     IF_IMPL_NULL_RETURN;
-    get()->setParent(cmd);
-}
-
-EditCommandImpl *EditCommand::handle() const
-{
-    return static_cast<EditCommandImpl *>(get());
+    get()->setParent(cmd.get());
 }
 
 EditCommand &EditCommand::emptyCommand()
@@ -195,20 +187,7 @@ EditCommand &EditCommand::emptyCommand()
 //------------------------------------------------------------------------------------------
 // CompositeEditCommand
 
-CompositeEditCommand::CompositeEditCommand() : EditCommand() 
-{
-}
-
 CompositeEditCommand::CompositeEditCommand(CompositeEditCommandImpl *impl) : EditCommand(impl) 
-{
-}
-
-CompositeEditCommand::CompositeEditCommand(const CompositeEditCommand &o) 
-    : EditCommand(o.impl()) 
-{
-}
-
-CompositeEditCommand::~CompositeEditCommand()
 {
 }
 
@@ -224,10 +203,6 @@ CompositeEditCommandImpl *CompositeEditCommand::impl() const
 
 AppendNodeCommand::AppendNodeCommand(DocumentImpl *document, NodeImpl *appendChild, NodeImpl *parentNode)
     : EditCommand(new AppendNodeCommandImpl(document, appendChild, parentNode))
-{
-}
-
-AppendNodeCommand::~AppendNodeCommand()
 {
 }
 
@@ -256,10 +231,6 @@ ApplyStyleCommand::ApplyStyleCommand(DocumentImpl *document, CSSStyleDeclaration
 {
 }
 
-ApplyStyleCommand::~ApplyStyleCommand()
-{
-}
-
 ApplyStyleCommandImpl *ApplyStyleCommand::impl() const
 {
     return static_cast<ApplyStyleCommandImpl *>(get());
@@ -284,10 +255,6 @@ DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Sel
 {
 }
 
-DeleteSelectionCommand::~DeleteSelectionCommand()
-{
-}
-	
 DeleteSelectionCommandImpl *DeleteSelectionCommand::impl() const
 {
     return static_cast<DeleteSelectionCommandImpl *>(get());
@@ -298,15 +265,6 @@ DeleteSelectionCommandImpl *DeleteSelectionCommand::impl() const
 
 DeleteTextCommand::DeleteTextCommand(DocumentImpl *document, TextImpl *node, long offset, long count)
     : EditCommand(new DeleteTextCommandImpl(document, node, offset, count))
-{
-}
-
-DeleteTextCommand::DeleteTextCommand(const DeleteTextCommand &o)
-    : EditCommand(o.impl())
-{
-}
-
-DeleteTextCommand::~DeleteTextCommand()
 {
 }
 
@@ -341,10 +299,6 @@ InputNewlineCommand::InputNewlineCommand(DocumentImpl *document)
 {
 }
 
-InputNewlineCommand::~InputNewlineCommand() 
-{
-}
-
 InputNewlineCommandImpl *InputNewlineCommand::impl() const
 {
     return static_cast<InputNewlineCommandImpl *>(get());
@@ -355,10 +309,6 @@ InputNewlineCommandImpl *InputNewlineCommand::impl() const
 
 InputTextCommand::InputTextCommand(DocumentImpl *document) 
     : CompositeEditCommand(new InputTextCommandImpl(document))
-{
-}
-
-InputTextCommand::~InputTextCommand() 
 {
 }
 
@@ -373,10 +323,10 @@ void InputTextCommand::deleteCharacter()
     impl()->deleteCharacter();
 }
 
-void InputTextCommand::input(const DOM::DOMString &text)
+void InputTextCommand::input(const DOM::DOMString &text, bool selectInsertedText)
 {
     IF_IMPL_NULL_RETURN;
-    impl()->input(text);
+    impl()->input(text, selectInsertedText);
 }
 
 unsigned long InputTextCommand::charactersAdded() const
@@ -388,21 +338,8 @@ unsigned long InputTextCommand::charactersAdded() const
 //------------------------------------------------------------------------------------------
 // InsertNodeBeforeCommand
 
-InsertNodeBeforeCommand::InsertNodeBeforeCommand() : EditCommand()
-{
-}
-
 InsertNodeBeforeCommand::InsertNodeBeforeCommand(DocumentImpl *document, NodeImpl *insertChild, NodeImpl *refChild)
     : EditCommand(new InsertNodeBeforeCommandImpl(document, insertChild, refChild))
-{
-}
-
-InsertNodeBeforeCommand::InsertNodeBeforeCommand(const InsertNodeBeforeCommand &o)
-    : EditCommand(new InsertNodeBeforeCommandImpl(o.document(), o.insertChild(), o.refChild()))
-{
-}
-
-InsertNodeBeforeCommand::~InsertNodeBeforeCommand()
 {
 }
 
@@ -428,10 +365,6 @@ NodeImpl *InsertNodeBeforeCommand::refChild() const
 
 InsertTextCommand::InsertTextCommand(DocumentImpl *document, TextImpl *node, long offset, const DOMString &text)
     : EditCommand(new InsertTextCommandImpl(document, node, offset, text))
-{
-}
-
-InsertTextCommand::~InsertTextCommand()
 {
 }
 
@@ -466,10 +399,6 @@ JoinTextNodesCommand::JoinTextNodesCommand(DocumentImpl *document, TextImpl *tex
 {
 }
 
-JoinTextNodesCommand::~JoinTextNodesCommand()
-{
-}
-
 JoinTextNodesCommandImpl *JoinTextNodesCommand::impl() const
 {
     return static_cast<JoinTextNodesCommandImpl *>(get());
@@ -495,10 +424,6 @@ ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DOM::Do
 {
 }
 
-ReplaceSelectionCommand::~ReplaceSelectionCommand() 
-{
-}
-
 ReplaceSelectionCommandImpl *ReplaceSelectionCommand::impl() const
 {
     return static_cast<ReplaceSelectionCommandImpl *>(get());
@@ -508,11 +433,7 @@ ReplaceSelectionCommandImpl *ReplaceSelectionCommand::impl() const
 // MoveSelectionCommand
 
 MoveSelectionCommand::MoveSelectionCommand(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position) 
-: CompositeEditCommand(new MoveSelectionCommandImpl(document, fragment, position))
-{
-}
-
-MoveSelectionCommand::~MoveSelectionCommand() 
+    : CompositeEditCommand(new MoveSelectionCommandImpl(document, fragment, position))
 {
 }
 
@@ -526,10 +447,6 @@ MoveSelectionCommandImpl *MoveSelectionCommand::impl() const
 
 RemoveCSSPropertyCommand::RemoveCSSPropertyCommand(DocumentImpl *document, CSSStyleDeclarationImpl *decl, int property)
     : EditCommand(new RemoveCSSPropertyCommandImpl(document, decl, property))
-{
-}
-
-RemoveCSSPropertyCommand::~RemoveCSSPropertyCommand()
 {
 }
 
@@ -558,10 +475,6 @@ RemoveNodeAttributeCommand::RemoveNodeAttributeCommand(DocumentImpl *document, E
 {
 }
 
-RemoveNodeAttributeCommand::~RemoveNodeAttributeCommand()
-{
-}
-
 RemoveNodeAttributeCommandImpl *RemoveNodeAttributeCommand::impl() const
 {
     return static_cast<RemoveNodeAttributeCommandImpl *>(get());
@@ -587,10 +500,6 @@ RemoveNodeCommand::RemoveNodeCommand(DocumentImpl *document, NodeImpl *node)
 {
 }
 
-RemoveNodeCommand::~RemoveNodeCommand()
-{
-}
-
 RemoveNodeCommandImpl *RemoveNodeCommand::impl() const
 {
     return static_cast<RemoveNodeCommandImpl *>(get());
@@ -610,10 +519,6 @@ RemoveNodePreservingChildrenCommand::RemoveNodePreservingChildrenCommand(Documen
 {
 }
 
-RemoveNodePreservingChildrenCommand::~RemoveNodePreservingChildrenCommand()
-{
-}
-
 RemoveNodePreservingChildrenCommandImpl *RemoveNodePreservingChildrenCommand::impl() const
 {
     return static_cast<RemoveNodePreservingChildrenCommandImpl *>(get());
@@ -630,10 +535,6 @@ NodeImpl *RemoveNodePreservingChildrenCommand::node() const
 
 SetNodeAttributeCommand::SetNodeAttributeCommand(DocumentImpl *document, ElementImpl *element, NodeImpl::Id attribute, const DOM::DOMString &value)
     : EditCommand(new SetNodeAttributeCommandImpl(document, element, attribute, value))
-{
-}
-
-SetNodeAttributeCommand::~SetNodeAttributeCommand()
 {
 }
 
@@ -668,10 +569,6 @@ SplitTextNodeCommand::SplitTextNodeCommand(DocumentImpl *document, TextImpl *tex
 {
 }
 
-SplitTextNodeCommand::~SplitTextNodeCommand()
-{
-}
-
 SplitTextNodeCommandImpl *SplitTextNodeCommand::impl() const
 {
     return static_cast<SplitTextNodeCommandImpl *>(get());
@@ -692,12 +589,8 @@ long SplitTextNodeCommand::offset() const
 //------------------------------------------------------------------------------------------
 // TypingCommand
 
-TypingCommand::TypingCommand(DocumentImpl *document, ETypingCommand commandType, const DOM::DOMString &textToInsert) 
-    : CompositeEditCommand(new TypingCommandImpl(document, commandType, textToInsert))
-{
-}
-
-TypingCommand::~TypingCommand() 
+TypingCommand::TypingCommand(DocumentImpl *d, ETypingCommand t, const DOM::DOMString &text, bool s) 
+    : CompositeEditCommand(new TypingCommandImpl(d, t, text, s))
 {
 }
 
@@ -706,7 +599,7 @@ TypingCommandImpl *TypingCommand::impl() const
     return static_cast<TypingCommandImpl *>(get());
 }
 
-void TypingCommand::insertText(DocumentImpl *document, const DOMString &text)
+void TypingCommand::insertText(DocumentImpl *document, const DOMString &text, bool selectInsertedText)
 {
     ASSERT(document);
     
@@ -715,10 +608,10 @@ void TypingCommand::insertText(DocumentImpl *document, const DOMString &text)
     
     EditCommand lastEditCommand = part->lastEditCommand();
     if (isOpenForMoreTypingCommand(lastEditCommand)) {
-        static_cast<TypingCommand &>(lastEditCommand).insertText(text);
+        static_cast<TypingCommand &>(lastEditCommand).insertText(text, selectInsertedText);
     }
     else {
-        TypingCommand typingCommand(document, InsertText, text);
+        TypingCommand typingCommand(document, InsertText, text, selectInsertedText);
         typingCommand.apply();
     }
 }
@@ -759,17 +652,17 @@ void TypingCommand::deleteKeyPressed(DocumentImpl *document)
 
 bool TypingCommand::isOpenForMoreTypingCommand(const EditCommand &cmd)
 {
-    return cmd.commandID() == TypingCommandID && 
+    return cmd.isTypingCommand() &&
         static_cast<const TypingCommand &>(cmd).openForMoreTyping();
 }
 
-void TypingCommand::closeTyping(EditCommand cmd)
+void TypingCommand::closeTyping(const EditCommand &cmd)
 {
     if (isOpenForMoreTypingCommand(cmd))
-        static_cast<TypingCommand &>(cmd).closeTyping();
+        static_cast<const TypingCommand &>(cmd).closeTyping();
 }
 
-void TypingCommand::closeTyping()
+void TypingCommand::closeTyping() const
 {
     IF_IMPL_NULL_RETURN;
     return impl()->closeTyping();
@@ -781,19 +674,19 @@ bool TypingCommand::openForMoreTyping() const
     return impl()->openForMoreTyping();
 }
 
-void TypingCommand::insertText(const DOMString &text)
+void TypingCommand::insertText(const DOMString &text, bool selectInsertedText) const
 {
     IF_IMPL_NULL_RETURN;
-    impl()->insertText(text);
+    impl()->insertText(text, selectInsertedText);
 }
 
-void TypingCommand::insertNewline()
+void TypingCommand::insertNewline() const
 {
     IF_IMPL_NULL_RETURN;
     impl()->insertNewline();
 }
 
-void TypingCommand::deleteKeyPressed()
+void TypingCommand::deleteKeyPressed() const
 {
     IF_IMPL_NULL_RETURN;
     impl()->deleteKeyPressed();

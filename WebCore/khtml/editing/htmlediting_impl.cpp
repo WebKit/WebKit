@@ -164,19 +164,22 @@ static void debugPosition(const char *prefix, const Position &pos)
 // StyleChange
 
 StyleChange::StyleChange(CSSStyleDeclarationImpl *style) 
-    : m_applyBold(false), m_applyItalic(false)
 {
     init(style, Position());
 }
 
 StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &position)
-     : m_applyBold(false), m_applyItalic(false)
 {
     init(style, position);
 }
 
 void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
 {
+    m_applyBold = false;
+    m_applyItalic = false;
+
+    QString styleText;
+
     for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
 
@@ -186,26 +189,26 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
             continue;
 
         // Figure out the manner of change that is needed.
+        DOMString valueText(property->value()->cssText());
         switch (property->id()) {
             case CSS_PROP_FONT_WEIGHT:
-                if (strcasecmp(property->value()->cssText(), "bold") == 0)
+                if (strcasecmp(valueText, "bold") == 0) {
                     m_applyBold = true;
-                else
-                    m_cssStyle += property->cssText();
-                break;
-            case CSS_PROP_FONT_STYLE: {
-                    DOMString cssText(property->value()->cssText());
-                    if (strcasecmp(cssText, "italic") == 0 || strcasecmp(cssText, "oblique") == 0)
-                        m_applyItalic = true;
-                    else
-                        m_cssStyle += property->cssText();
+                    continue;
                 }
                 break;
-            default:
-                m_cssStyle += property->cssText();
+            case CSS_PROP_FONT_STYLE:
+                if (strcasecmp(valueText, "italic") == 0 || strcasecmp(valueText, "oblique") == 0) {
+                    m_applyItalic = true;
+                    continue;
+                }
                 break;
         }
+
+        styleText += property->cssText().string();
     }
+
+    m_cssStyle = styleText.stripWhiteSpace();
 }
 
 bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *property)
@@ -216,14 +219,14 @@ bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *prop
     style->ref();
     CSSValueImpl *value = style->getPropertyCSSValue(property->id());
     style->deref();
-    return strcasecmp(value->cssText(), property->value()->cssText()) == 0;
+    return value && strcasecmp(value->cssText(), property->value()->cssText()) == 0;
 }
 
 //------------------------------------------------------------------------------------------
 // EditCommandImpl
 
 EditCommandImpl::EditCommandImpl(DocumentImpl *document) 
-    : SharedCommandImpl(), m_document(document), m_state(NotApplied), m_typingStyle(0), m_parent(0)
+    : m_document(document), m_state(NotApplied), m_typingStyle(0), m_parent(0)
 {
     ASSERT(m_document);
     ASSERT(m_document->part());
@@ -240,11 +243,6 @@ EditCommandImpl::~EditCommandImpl()
         m_typingStyle->deref();
 }
 
-int EditCommandImpl::commandID() const
-{
-    return EditCommandID;
-}
-
 void EditCommandImpl::apply()
 {
     ASSERT(m_document);
@@ -255,12 +253,9 @@ void EditCommandImpl::apply()
     
     m_state = Applied;
 
-    // The delete selection command is a special case where we want the  
-    // typing style retained. For all other commands, clear it after
-    // applying.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (commandID() != DeleteSelectionCommandID)
+    if (!preservesTypingStyle())
         setTypingStyle(0);
 
     if (!isCompositeStep()) {
@@ -308,22 +303,14 @@ void EditCommandImpl::doReapply()
 
 void EditCommandImpl::setStartingSelection(const Selection &s)
 {
-    m_startingSelection = s;
-    EditCommand cmd = parent();
-    while (cmd.notNull()) {
-        cmd.handle()->m_startingSelection = s;
-        cmd = cmd.parent();
-    }
+    for (EditCommandImpl *cmd = this; cmd; cmd = cmd->m_parent.get())
+        cmd->m_startingSelection = s;
 }
 
 void EditCommandImpl::setEndingSelection(const Selection &s)
 {
-    m_endingSelection = s;
-    EditCommand cmd = parent();
-    while (cmd.notNull()) {
-        cmd.handle()->m_endingSelection = s;
-        cmd = cmd.parent();
-    }
+    for (EditCommandImpl *cmd = this; cmd; cmd = cmd->m_parent.get())
+        cmd->m_endingSelection = s;
 }
 
 void EditCommandImpl::assignTypingStyle(DOM::CSSStyleDeclarationImpl *style)
@@ -340,12 +327,8 @@ void EditCommandImpl::setTypingStyle(CSSStyleDeclarationImpl *style)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    assignTypingStyle(style);
-    EditCommand cmd = parent();
-    while (cmd.notNull()) {
-        cmd.handle()->assignTypingStyle(style);
-        cmd = cmd.parent();
-    }
+    for (EditCommandImpl *cmd = this; cmd; cmd = cmd->m_parent.get())
+        cmd->assignTypingStyle(style);
 }
 
 void EditCommandImpl::markMisspellingsInSelection(const Selection &s)
@@ -353,14 +336,19 @@ void EditCommandImpl::markMisspellingsInSelection(const Selection &s)
     KWQ(document()->part())->markMisspellingsInSelection(s);
 }
 
-EditCommand EditCommandImpl::parent() const
+bool EditCommandImpl::preservesTypingStyle() const
 {
-    return m_parent;
+    return false;
 }
 
-void EditCommandImpl::setParent(const EditCommand &cmd)
+bool EditCommandImpl::isInputTextCommand() const
 {
-    m_parent = cmd;
+    return false;
+}
+
+bool EditCommandImpl::isTypingCommand() const
+{
+    return false;
 }
 
 //------------------------------------------------------------------------------------------
@@ -369,15 +357,6 @@ void EditCommandImpl::setParent(const EditCommand &cmd)
 CompositeEditCommandImpl::CompositeEditCommandImpl(DocumentImpl *document) 
     : EditCommandImpl(document)
 {
-}
-
-CompositeEditCommandImpl::~CompositeEditCommandImpl()
-{
-}
-
-int CompositeEditCommandImpl::commandID() const
-{
-    return CompositeEditCommandID;
 }
 
 void CompositeEditCommandImpl::doUnapply()
@@ -547,7 +526,7 @@ void CompositeEditCommandImpl::setNodeAttribute(ElementImpl *element, int attrib
     applyCommandToComposite(cmd);
 }
 
-ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
+NodeImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
 {
     // FIXME: This function should share code with ApplyStyleCommandImpl::applyStyleIfNeeded
     // and ApplyStyleCommandImpl::computeStyleChange.
@@ -558,7 +537,6 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
     StyleChange styleChange(document()->part()->typingStyle());
 
     NodeImpl *childToAppend = child;
-    ElementImpl *element = 0;
     int exceptionCode = 0;
 
     if (styleChange.applyItalic()) {
@@ -566,7 +544,6 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
         ASSERT(exceptionCode == 0);
         italicElement->appendChild(childToAppend, exceptionCode);
         ASSERT(exceptionCode == 0);
-        element = italicElement;
         childToAppend = italicElement;
     }
 
@@ -575,7 +552,6 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
         ASSERT(exceptionCode == 0);
         boldElement->appendChild(childToAppend, exceptionCode);
         ASSERT(exceptionCode == 0);
-        element = boldElement;
         childToAppend = boldElement;
     }
 
@@ -586,11 +562,10 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
         styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
         styleElement->appendChild(childToAppend, exceptionCode);
         ASSERT(exceptionCode == 0);
-        element = styleElement;
         childToAppend = styleElement;
     }
 
-    return element;
+    return childToAppend;
 }
 
 void CompositeEditCommandImpl::deleteUnrenderedText(NodeImpl *node)
@@ -638,7 +613,6 @@ void CompositeEditCommandImpl::deleteUnrenderedText(const Position &pos)
         setEndingSelection(block);
 }
 
-
 //==========================================================================================
 // Concrete commands
 //------------------------------------------------------------------------------------------
@@ -656,15 +630,11 @@ AppendNodeCommandImpl::AppendNodeCommandImpl(DocumentImpl *document, NodeImpl *a
 
 AppendNodeCommandImpl::~AppendNodeCommandImpl()
 {
-    if (m_appendChild)
-        m_appendChild->deref();
-    if (m_parentNode)
-        m_parentNode->deref();
-}
+    ASSERT(m_appendChild);
+    m_appendChild->deref();
 
-int AppendNodeCommandImpl::commandID() const
-{
-    return AppendNodeCommandID;
+    ASSERT(m_parentNode);
+    m_parentNode->deref();
 }
 
 void AppendNodeCommandImpl::doApply()
@@ -702,11 +672,6 @@ ApplyStyleCommandImpl::~ApplyStyleCommandImpl()
 {
     ASSERT(m_style);
     m_style->deref();
-}
-
-int ApplyStyleCommandImpl::commandID() const
-{
-    return ApplyStyleCommandID;
 }
 
 void ApplyStyleCommandImpl::doApply()
@@ -910,7 +875,7 @@ void ApplyStyleCommandImpl::surroundNodeRangeWithElement(NodeImpl *startNode, No
 void ApplyStyleCommandImpl::applyStyleIfNeeded(NodeImpl *startNode, NodeImpl *endNode)
 {
     // FIXME: This function should share code with CompositeEditCommandImpl::applyTypingStyle.
-    // Both function do similar work, and the common parts could be factored out.
+    // Both functions do similar work, and the common parts could be factored out.
 
     StyleChange styleChange(style(), Position(startNode, 0));
     int exceptionCode = 0;
@@ -991,15 +956,6 @@ DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DocumentImpl *document)
 DeleteSelectionCommandImpl::DeleteSelectionCommandImpl(DocumentImpl *document, const Selection &selection)
     : CompositeEditCommandImpl(document), m_selectionToDelete(selection), m_hasSelectionToDelete(true)
 {
-}
-
-DeleteSelectionCommandImpl::~DeleteSelectionCommandImpl()
-{
-}
-	
-int DeleteSelectionCommandImpl::commandID() const
-{
-    return DeleteSelectionCommandID;
 }
 
 CSSStyleDeclarationImpl *DeleteSelectionCommandImpl::computeTypingStyle(const Position &pos) const
@@ -1321,6 +1277,11 @@ void DeleteSelectionCommandImpl::doApply()
     setEndingSelection(endingPosition);
 }
 
+bool DeleteSelectionCommandImpl::preservesTypingStyle() const
+{
+    return true;
+}
+
 //------------------------------------------------------------------------------------------
 // DeleteTextCommandImpl
 
@@ -1337,13 +1298,8 @@ DeleteTextCommandImpl::DeleteTextCommandImpl(DocumentImpl *document, TextImpl *n
 
 DeleteTextCommandImpl::~DeleteTextCommandImpl()
 {
-    if (m_node)
-        m_node->deref();
-}
-
-int DeleteTextCommandImpl::commandID() const
-{
-    return DeleteTextCommandID;
+    ASSERT(m_node);
+    m_node->deref();
 }
 
 void DeleteTextCommandImpl::doApply()
@@ -1374,15 +1330,6 @@ void DeleteTextCommandImpl::doUnapply()
 InputNewlineCommandImpl::InputNewlineCommandImpl(DocumentImpl *document) 
     : CompositeEditCommandImpl(document)
 {
-}
-
-InputNewlineCommandImpl::~InputNewlineCommandImpl() 
-{
-}
-
-int InputNewlineCommandImpl::commandID() const
-{
-    return InputNewlineCommandID;
 }
 
 void InputNewlineCommandImpl::insertNodeAfterPosition(NodeImpl *node, const Position &pos)
@@ -1508,22 +1455,8 @@ InputTextCommandImpl::InputTextCommandImpl(DocumentImpl *document)
 {
 }
 
-InputTextCommandImpl::~InputTextCommandImpl() 
-{
-}
-
-int InputTextCommandImpl::commandID() const
-{
-    return InputTextCommandID;
-}
-
 void InputTextCommandImpl::doApply()
 {
-}
-
-void InputTextCommandImpl::input(const DOMString &text)
-{
-    execute(text);
 }
 
 void InputTextCommandImpl::deleteCharacter()
@@ -1616,7 +1549,7 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
     return pos;
 }
 
-void InputTextCommandImpl::execute(const DOMString &text)
+void InputTextCommandImpl::input(const DOMString &text, bool selectInsertedText)
 {
     Selection selection = endingSelection();
     bool adjustDownstream = selection.start().downstream(StayInBlock).isFirstRenderedPositionOnLine();
@@ -1645,12 +1578,18 @@ void InputTextCommandImpl::execute(const DOMString &text)
             insertSpace(textNode, offset);
             document()->updateLayout();
         }
-        setEndingSelection(Position(textNode, offset + spacesPerTab));
+        if (selectInsertedText)
+            setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + spacesPerTab)));
+        else
+            setEndingSelection(Position(textNode, offset + spacesPerTab));
         m_charactersAdded += spacesPerTab;
     }
     else if (isWS(text)) {
         insertSpace(textNode, offset);
-        setEndingSelection(Position(textNode, offset + 1));
+        if (selectInsertedText)
+            setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + 1)));
+        else
+            setEndingSelection(Position(textNode, offset + 1));
         m_charactersAdded++;
     }
     else {
@@ -1665,7 +1604,10 @@ void InputTextCommandImpl::execute(const DOMString &text)
             replaceText(textNode, offset - 1, 1, " ");
         }
         insertText(textNode, offset, text);
-        setEndingSelection(Position(textNode, offset + text.length()));
+        if (selectInsertedText)
+            setEndingSelection(Selection(Position(textNode, offset), Position(textNode, offset + text.length())));
+        else
+            setEndingSelection(Position(textNode, offset + text.length()));
         m_charactersAdded += text.length();
     }
 }
@@ -1715,6 +1657,11 @@ void InputTextCommandImpl::insertSpace(TextImpl *textNode, unsigned long offset)
     insertText(textNode, offset, nonBreakingSpaceString());
 }
 
+bool InputTextCommandImpl::isInputTextCommand() const
+{
+    return true;
+}
+
 //------------------------------------------------------------------------------------------
 // InsertNodeBeforeCommandImpl
 
@@ -1730,15 +1677,11 @@ InsertNodeBeforeCommandImpl::InsertNodeBeforeCommandImpl(DocumentImpl *document,
 
 InsertNodeBeforeCommandImpl::~InsertNodeBeforeCommandImpl()
 {
-    if (m_insertChild)
-        m_insertChild->deref();
-    if (m_refChild)
-        m_refChild->deref();
-}
+    ASSERT(m_insertChild);
+    m_insertChild->deref();
 
-int InsertNodeBeforeCommandImpl::commandID() const
-{
-    return InsertNodeBeforeCommandID;
+    ASSERT(m_refChild);
+    m_refChild->deref();
 }
 
 void InsertNodeBeforeCommandImpl::doApply()
@@ -1782,18 +1725,12 @@ InsertTextCommandImpl::~InsertTextCommandImpl()
         m_node->deref();
 }
 
-int InsertTextCommandImpl::commandID() const
-{
-    return InsertTextCommandID;
-}
-
 void InsertTextCommandImpl::doApply()
 {
     ASSERT(m_node);
 
     if (m_text.isEmpty())
 	return;
-
 
     int exceptionCode = 0;
     m_node->insertData(m_offset, m_text, exceptionCode);
@@ -1831,15 +1768,10 @@ JoinTextNodesCommandImpl::JoinTextNodesCommandImpl(DocumentImpl *document, TextI
 
 JoinTextNodesCommandImpl::~JoinTextNodesCommandImpl()
 {
-    if (m_text1)
-        m_text1->deref();
-    if (m_text2)
-        m_text2->deref();
-}
-
-int JoinTextNodesCommandImpl::commandID() const
-{
-    return JoinTextNodesCommandID;
+    ASSERT(m_text1);
+    m_text1->deref();
+    ASSERT(m_text2);
+    m_text2->deref();
 }
 
 void JoinTextNodesCommandImpl::doApply()
@@ -1881,15 +1813,14 @@ void JoinTextNodesCommandImpl::doUnapply()
 ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement) 
     : CompositeEditCommandImpl(document), m_fragment(fragment), m_selectReplacement(selectReplacement)
 {
+    ASSERT(m_fragment);
+    m_fragment->ref();
 }
 
 ReplaceSelectionCommandImpl::~ReplaceSelectionCommandImpl()
 {
-}
-
-int ReplaceSelectionCommandImpl::commandID() const
-{
-    return ReplaceSelectionCommandID;
+    ASSERT(m_fragment);
+    m_fragment->deref();
 }
 
 void ReplaceSelectionCommandImpl::doApply()
@@ -1981,17 +1912,16 @@ void ReplaceSelectionCommandImpl::doApply()
 // MoveSelectionCommandImpl
 
 MoveSelectionCommandImpl::MoveSelectionCommandImpl(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position) 
-: CompositeEditCommandImpl(document), m_fragment(fragment), m_position(position)
+    : CompositeEditCommandImpl(document), m_fragment(fragment), m_position(position)
 {
+    ASSERT(m_fragment);
+    m_fragment->ref();
 }
 
 MoveSelectionCommandImpl::~MoveSelectionCommandImpl()
 {
-}
-
-int MoveSelectionCommandImpl::commandID() const
-{
-    return MoveSelectionCommandID;
+    ASSERT(m_fragment);
+    m_fragment->deref();
 }
 
 void MoveSelectionCommandImpl::doApply()
@@ -2035,11 +1965,6 @@ RemoveCSSPropertyCommandImpl::~RemoveCSSPropertyCommandImpl()
     m_decl->deref();
 }
 
-int RemoveCSSPropertyCommandImpl::commandID() const
-{
-    return RemoveCSSPropertyCommandID;
-}
-
 void RemoveCSSPropertyCommandImpl::doApply()
 {
     ASSERT(m_decl);
@@ -2073,11 +1998,6 @@ RemoveNodeAttributeCommandImpl::~RemoveNodeAttributeCommandImpl()
 {
     ASSERT(m_element);
     m_element->deref();
-}
-
-int RemoveNodeAttributeCommandImpl::commandID() const
-{
-    return RemoveNodeAttributeCommandID;
 }
 
 void RemoveNodeAttributeCommandImpl::doApply()
@@ -2122,17 +2042,14 @@ RemoveNodeCommandImpl::RemoveNodeCommandImpl(DocumentImpl *document, NodeImpl *r
 
 RemoveNodeCommandImpl::~RemoveNodeCommandImpl()
 {
-    if (m_parent)
-        m_parent->deref();
-    if (m_removeChild)
-        m_removeChild->deref();
+    ASSERT(m_parent);
+    m_parent->deref();
+
+    ASSERT(m_removeChild);
+    m_removeChild->deref();
+
     if (m_refChild)
         m_refChild->deref();
-}
-
-int RemoveNodeCommandImpl::commandID() const
-{
-    return RemoveNodeCommandID;
 }
 
 void RemoveNodeCommandImpl::doApply()
@@ -2151,10 +2068,7 @@ void RemoveNodeCommandImpl::doUnapply()
     ASSERT(m_removeChild);
 
     int exceptionCode = 0;
-    if (m_refChild)
-        m_parent->insertBefore(m_removeChild, m_refChild, exceptionCode);
-    else
-        m_parent->appendChild(m_removeChild, exceptionCode);
+    m_parent->insertBefore(m_removeChild, m_refChild, exceptionCode);
     ASSERT(exceptionCode == 0);
 }
 
@@ -2170,13 +2084,8 @@ RemoveNodePreservingChildrenCommandImpl::RemoveNodePreservingChildrenCommandImpl
 
 RemoveNodePreservingChildrenCommandImpl::~RemoveNodePreservingChildrenCommandImpl()
 {
-    if (m_node)
-        m_node->deref();
-}
-
-int RemoveNodePreservingChildrenCommandImpl::commandID() const
-{
-    return RemoveNodePreservingChildrenCommandID;
+    ASSERT(m_node);
+    m_node->deref();
 }
 
 void RemoveNodePreservingChildrenCommandImpl::doApply()
@@ -2201,13 +2110,8 @@ SetNodeAttributeCommandImpl::SetNodeAttributeCommandImpl(DocumentImpl *document,
 
 SetNodeAttributeCommandImpl::~SetNodeAttributeCommandImpl()
 {
-    if (m_element)
-        m_element->deref();
-}
-
-int SetNodeAttributeCommandImpl::commandID() const
-{
-    return SetNodeAttributeCommandID;
+    ASSERT(m_element);
+    m_element->deref();
 }
 
 void SetNodeAttributeCommandImpl::doApply()
@@ -2247,13 +2151,9 @@ SplitTextNodeCommandImpl::~SplitTextNodeCommandImpl()
 {
     if (m_text1)
         m_text1->deref();
-    if (m_text2)
-        m_text2->deref();
-}
 
-int SplitTextNodeCommandImpl::commandID() const
-{
-    return SplitTextNodeCommandID;
+    ASSERT(m_text2);
+    m_text2->deref();
 }
 
 void SplitTextNodeCommandImpl::doApply()
@@ -2306,18 +2206,9 @@ void SplitTextNodeCommandImpl::doUnapply()
 //------------------------------------------------------------------------------------------
 // TypingCommandImpl
 
-TypingCommandImpl::TypingCommandImpl(DocumentImpl *document, TypingCommand::ETypingCommand commandType, const DOM::DOMString &textToInsert)
-    : CompositeEditCommandImpl(document), m_commandType(commandType), m_textToInsert(textToInsert), m_openForMoreTyping(true), m_applyEditing(false)
+TypingCommandImpl::TypingCommandImpl(DocumentImpl *document, TypingCommand::ETypingCommand commandType, const DOM::DOMString &textToInsert, bool selectInsertedText)
+    : CompositeEditCommandImpl(document), m_commandType(commandType), m_textToInsert(textToInsert), m_openForMoreTyping(true), m_applyEditing(false), m_selectInsertedText(selectInsertedText)
 {
-}
-
-TypingCommandImpl::~TypingCommandImpl()
-{
-}
-
-int TypingCommandImpl::commandID() const
-{
-    return TypingCommandID;
 }
 
 void TypingCommandImpl::doApply()
@@ -2328,14 +2219,16 @@ void TypingCommandImpl::doApply()
     switch (m_commandType) {
         case TypingCommand::DeleteKey:
             deleteKeyPressed();
-            break;
+            return;
         case TypingCommand::InsertText:
-            insertText(m_textToInsert);
-            break;
+            insertText(m_textToInsert, m_selectInsertedText);
+            return;
         case TypingCommand::InsertNewline:
             insertNewline();
-            break;
+            return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 void TypingCommandImpl::markMisspellingsAfterTyping()
@@ -2365,24 +2258,24 @@ void TypingCommandImpl::typingAddedToOpenCommand()
     m_applyEditing = true;
 }
 
-void TypingCommandImpl::insertText(const DOMString &text)
+void TypingCommandImpl::insertText(const DOMString &text, bool selectInsertedText)
 {
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     if (document()->part()->typingStyle() || m_cmds.count() == 0) {
         InputTextCommand cmd(document());
         applyCommandToComposite(cmd);
-        cmd.input(text);
+        cmd.input(text, selectInsertedText);
     }
     else {
         EditCommand lastCommand = m_cmds.last();
-        if (lastCommand.commandID() == InputTextCommandID) {
-            static_cast<InputTextCommand &>(lastCommand).input(text);
+        if (lastCommand.isInputTextCommand()) {
+            static_cast<InputTextCommand &>(lastCommand).input(text, selectInsertedText);
         }
         else {
             InputTextCommand cmd(document());
             applyCommandToComposite(cmd);
-            cmd.input(text);
+            cmd.input(text, selectInsertedText);
         }
     }
     typingAddedToOpenCommand();
@@ -2432,14 +2325,14 @@ void TypingCommandImpl::deleteKeyPressed()
     }
     else {
         EditCommand lastCommand = m_cmds.last();
-        if (lastCommand.commandID() == InputTextCommandID) {
-            InputTextCommand cmd = static_cast<InputTextCommand &>(lastCommand);
+        if (lastCommand.isInputTextCommand()) {
+            InputTextCommand &cmd = static_cast<InputTextCommand &>(lastCommand);
             cmd.deleteCharacter();
             if (cmd.charactersAdded() == 0) {
-                removeCommand(cmd);
+                removeCommand(lastCommand);
             }
         }
-        else if (lastCommand.commandID() == InputNewlineCommandID) {
+        else if (lastCommand.isInputNewlineCommand()) {
             lastCommand.unapply();
             removeCommand(lastCommand);
         }
@@ -2462,6 +2355,24 @@ void TypingCommandImpl::removeCommand(const EditCommand &cmd)
         setEndingSelection(startingSelection());
     else
         setEndingSelection(m_cmds.last().endingSelection());
+}
+
+bool TypingCommandImpl::preservesTypingStyle() const
+{
+    switch (m_commandType) {
+        case TypingCommand::DeleteKey:
+            return true;
+        case TypingCommand::InsertText:
+        case TypingCommand::InsertNewline:
+            return false;
+    }
+    ASSERT_NOT_REACHED();
+    return false;
+}
+
+bool TypingCommandImpl::isTypingCommand() const
+{
+    return true;
 }
 
 //------------------------------------------------------------------------------------------

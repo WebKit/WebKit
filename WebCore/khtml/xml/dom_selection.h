@@ -48,7 +48,7 @@ public:
     enum EState { NONE, CARET, RANGE };
     enum EAlter { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
-    enum ETextGranularity { CHARACTER, WORD, LINE, PARAGRAPH, DOCUMENT, LINE_BOUNDARY };
+    enum ETextGranularity { CHARACTER, WORD, LINE, PARAGRAPH, DOCUMENT, LINE_BOUNDARY, PARAGRAPH_BOUNDARY };
 
     Selection();
     Selection(const Range &);
@@ -99,9 +99,6 @@ public:
     Selection &operator=(const Selection &o);
     Selection &operator=(const Range &r) { moveTo(r); return *this; }
     Selection &operator=(const Position &r) { moveTo(r); return *this; }
-    
-    friend bool operator==(const Selection &a, const Selection &b);
-    friend bool operator!=(const Selection &a, const Selection &b);
     
     friend class KHTMLPart;
 

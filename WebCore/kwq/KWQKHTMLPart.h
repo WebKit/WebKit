@@ -225,7 +225,7 @@ public:
     NSImage *selectionImage() const;
     NSImage *snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRect *elementRect) const;
 
-    NSFont *fontForCurrentPosition() const;
+    NSFont *fontForSelection(bool *hasMultipleFonts) const;
     void markMisspellingsInSelection(const DOM::Selection &selection);
     void updateSpellChecking();
 

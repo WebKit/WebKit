@@ -59,13 +59,13 @@ namespace khtml {
 
 class StyleChange {
 public:
-    StyleChange() : m_applyBold(false), m_applyItalic(false) {}
+    StyleChange() : m_applyBold(false), m_applyItalic(false) { }
     explicit StyleChange(DOM::CSSStyleDeclarationImpl *);
     StyleChange(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
 
-    DOM::DOMString cssStyle() { return m_cssStyle; }
-    bool applyBold() { return m_applyBold; }
-    bool applyItalic() { return m_applyItalic; }
+    DOM::DOMString cssStyle() const { return m_cssStyle; }
+    bool applyBold() const { return m_applyBold; }
+    bool applyItalic() const { return m_applyItalic; }
 
 private:
     void init(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
@@ -79,16 +79,15 @@ private:
 //------------------------------------------------------------------------------------------
 // EditCommandImpl
 
-class EditCommandImpl : public SharedCommandImpl
+class EditCommandImpl : public Shared<EditCommandImpl>
 {
 public:
     EditCommandImpl(DOM::DocumentImpl *);
     virtual ~EditCommandImpl();
 
-    virtual int commandID() const;
-    bool isCompositeStep() const { return parent().notNull(); }
-    EditCommand parent() const;
-    void setParent(const EditCommand &);
+    bool isCompositeStep() const { return m_parent.notNull(); }
+    EditCommandImpl *parent() const { return m_parent.get(); }
+    void setParent(EditCommandImpl *parent) { m_parent = parent; }
 
     enum ECommandState { NotApplied, Applied };
     
@@ -116,8 +115,13 @@ public:
     
     void markMisspellingsInSelection(const DOM::Selection &s);
 
+    virtual bool isInputTextCommand() const;
+    virtual bool isTypingCommand() const;
+
 private:
     void assignTypingStyle(DOM::CSSStyleDeclarationImpl *);
+
+    virtual bool preservesTypingStyle() const;
 
     DOM::DocumentImpl *m_document;
     ECommandState m_state;
@@ -134,11 +138,7 @@ class CompositeEditCommandImpl : public EditCommandImpl
 {
 public:
     CompositeEditCommandImpl(DOM::DocumentImpl *);
-    virtual ~CompositeEditCommandImpl();
 	
-    virtual int commandID() const;
-
-    virtual void doApply() = 0;	
     virtual void doUnapply();
     virtual void doReapply();
 
@@ -166,7 +166,7 @@ protected:
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, long offset);
 
-    DOM::ElementImpl *applyTypingStyle(DOM::NodeImpl *) const;
+    DOM::NodeImpl *applyTypingStyle(DOM::NodeImpl *) const;
     void deleteUnrenderedText(DOM::NodeImpl *);
     void deleteUnrenderedText(const DOM::Position &pos);
 
@@ -183,8 +183,6 @@ class AppendNodeCommandImpl : public EditCommandImpl
 public:
     AppendNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
     virtual ~AppendNodeCommandImpl();
-
-    virtual int commandID() const;
 
     virtual void doApply();
     virtual void doUnapply();
@@ -206,8 +204,6 @@ public:
     ApplyStyleCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style);
     virtual ~ApplyStyleCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
 
     DOM::CSSStyleDeclarationImpl *style() const { return m_style; }
@@ -238,14 +234,12 @@ class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
 public:
     DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
     DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
-
-    virtual ~DeleteSelectionCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
     
 private:
+    virtual bool preservesTypingStyle() const;
+
     void deleteDownstreamWS(const DOM::Position &start);
     bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     DOM::CSSStyleDeclarationImpl *computeTypingStyle(const DOM::Position &pos) const;
@@ -264,8 +258,6 @@ public:
     DeleteTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
     virtual ~DeleteTextCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
     virtual void doUnapply();
 
@@ -287,9 +279,6 @@ class InputNewlineCommandImpl : public CompositeEditCommandImpl
 {
 public:
     InputNewlineCommandImpl(DOM::DocumentImpl *document);
-    virtual ~InputNewlineCommandImpl();
-
-    virtual int commandID() const;
 
     virtual void doApply();
 
@@ -305,20 +294,18 @@ class InputTextCommandImpl : public CompositeEditCommandImpl
 {
 public:
     InputTextCommandImpl(DOM::DocumentImpl *document);
-    virtual ~InputTextCommandImpl();
-
-    virtual int commandID() const;
 
     virtual void doApply();
 
     void deleteCharacter();
-    void input(const DOM::DOMString &text);
+    void input(const DOM::DOMString &text, bool selectInsertedText = false);
     
     unsigned long charactersAdded() const { return m_charactersAdded; }
     
 private:
+    virtual bool isInputTextCommand() const;
+
     DOM::Position prepareForTextInsertion(bool adjustDownstream);
-    void execute(const DOM::DOMString &text);
     void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
 
     unsigned long m_charactersAdded;
@@ -332,8 +319,6 @@ class InsertNodeBeforeCommandImpl : public EditCommandImpl
 public:
     InsertNodeBeforeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
     virtual ~InsertNodeBeforeCommandImpl();
-
-    virtual int commandID() const;
 
     virtual void doApply();
     virtual void doUnapply();
@@ -355,8 +340,6 @@ public:
     InsertTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
     virtual ~InsertTextCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
     virtual void doUnapply();
 
@@ -379,8 +362,6 @@ public:
     JoinTextNodesCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
     virtual ~JoinTextNodesCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
     virtual void doUnapply();
 
@@ -402,8 +383,6 @@ public:
     ReplaceSelectionCommandImpl(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true);
     virtual ~ReplaceSelectionCommandImpl();
     
-    virtual int commandID() const;
-
     virtual void doApply();
 
 private:
@@ -420,8 +399,6 @@ public:
     MoveSelectionCommandImpl(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position);
     virtual ~MoveSelectionCommandImpl();
     
-    virtual int commandID() const;
-    
     virtual void doApply();
     
 private:
@@ -437,8 +414,6 @@ class RemoveCSSPropertyCommandImpl : public EditCommandImpl
 public:
     RemoveCSSPropertyCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *, int property);
     virtual ~RemoveCSSPropertyCommandImpl();
-
-    virtual int commandID() const;
 
     virtual void doApply();
     virtual void doUnapply();
@@ -462,8 +437,6 @@ public:
     RemoveNodeAttributeCommandImpl(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute);
     virtual ~RemoveNodeAttributeCommandImpl();
 
-    virtual int commandID() const;
-
     virtual void doApply();
     virtual void doUnapply();
 
@@ -485,8 +458,6 @@ public:
     RemoveNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
     virtual ~RemoveNodeCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
     virtual void doUnapply();
 
@@ -507,8 +478,6 @@ public:
     RemoveNodePreservingChildrenCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
     virtual ~RemoveNodePreservingChildrenCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
 
     DOM::NodeImpl *node() const { return m_node; }
@@ -525,8 +494,6 @@ class SetNodeAttributeCommandImpl : public EditCommandImpl
 public:
     SetNodeAttributeCommandImpl(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute, const DOM::DOMString &value);
     virtual ~SetNodeAttributeCommandImpl();
-
-    virtual int commandID() const;
 
     virtual void doApply();
     virtual void doUnapply();
@@ -551,8 +518,6 @@ public:
     SplitTextNodeCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, long);
     virtual ~SplitTextNodeCommandImpl();
 	
-    virtual int commandID() const;
-
     virtual void doApply();
     virtual void doUnapply();
 
@@ -571,21 +536,21 @@ private:
 class TypingCommandImpl : public CompositeEditCommandImpl
 {
 public:
-    TypingCommandImpl(DOM::DocumentImpl *document, TypingCommand::ETypingCommand, const DOM::DOMString &);
-    virtual ~TypingCommandImpl();
+    TypingCommandImpl(DOM::DocumentImpl *document, TypingCommand::ETypingCommand, const DOM::DOMString &, bool selectInsertedText);
     
-    virtual int commandID() const;
-
     virtual void doApply();
 
     bool openForMoreTyping() const { return m_openForMoreTyping; }
     void closeTyping() { m_openForMoreTyping = false; }
 
-    void insertText(const DOM::DOMString &text);
+    void insertText(const DOM::DOMString &text, bool selectInsertedText);
     void insertNewline();
     void deleteKeyPressed();
 
 private:
+    virtual bool isTypingCommand() const;
+    virtual bool preservesTypingStyle() const;
+
     void issueCommandForDeleteKey();
     void removeCommand(const EditCommand &);
     void markMisspellingsAfterTyping();
@@ -595,6 +560,7 @@ private:
     DOM::DOMString m_textToInsert;
     bool m_openForMoreTyping;
     bool m_applyEditing;
+    bool m_selectInsertedText;
 };
 
 //------------------------------------------------------------------------------------------

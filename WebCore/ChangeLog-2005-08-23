@@ -2,6 +2,175 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3512066> REGRESSION (Mail): Select All highlights only part of the content, though all is copied
+        - fixed <rdar://problem/3157025> REGRESSION (Mail): Should select paragraph instead of line on triple-click
+        - fixed <rdar://problem/3735048> REGRESSION (Mail): HTML editing must select newline on triple click
+        - fixed <rdar://problem/3788872> REGRESSION (Mail): ctrl-a emacs key binding does not work (move to start of paragraph)
+        - fixed <rdar://problem/3788881> REGRESSION (Mail): ctrl-e emacs key binding does not work (move to end of paragraph)
+        - fixed <rdar://problem/3789931> REGRESSION (Mail): typing style lost when you backspace
+        - added code to select inserted text to help WebKit implement yankAndSelect:
+        - did some clean-up on editing commands code
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventTripleClick): Expand to a paragraph, not a line.
+        (KHTMLPart::selectAll): Remove a lot of unneeded code and just expand to document using Selection.
+        (KHTMLPart::selectionHasStyle): Remove check that limited us to only HTML elements, and add
+        a check for nil. Together, these two changes fix a few cases I ran into during testing.
+
+        * khtml/rendering/render_canvas.cpp: (RenderCanvas::setSelection): Fix test that was checking if
+        the old selection spanned multiple objects when it really should have checked whether the new
+        new selection spans multiple objects. This caused the select all redraw bug.
+
+        * khtml/editing/htmlediting.h: Fixed indenting. Remove command IDs, replacing them with a couple
+        of specific type checking methods, and SharedCommandImpl, using EditCommandImpl directly instead.
+        Got rid of virtual functions, since the command objects have no data members other than the ones
+        inherited from SharedPtr. Removed explicit copy constructors and destructors. Removed unneeded
+        empty constructors. Removed inline directives that were having no effect. Added some boolean
+        selectInsertedText parameter to some commands. Made almost all member functions const, because
+        the const here applies to the command object which is a smart pointer, not the pointed-to
+        command implementation object.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommand::EditCommand): Changed since SharedPtr is now a pointer to EditCommandImpl.
+        (khtml::EditCommand::operator=): Added. By defining this explicitly, we don't need the class
+        that we are pointing to defined in the header, which lets us get rid of SharedCommandImpl.
+        (khtml::EditCommand::isInputTextCommand): Added.
+        (khtml::EditCommand::isTypingCommand): Added.
+        (khtml::EditCommand::setParent): Updated since EditCommandImpl.setParent takes an impl pointer now.
+        (khtml::EditCommand::handle): Removed, since it's identical to get().
+        (khtml::InputTextCommand::input): Added selectInsertedText parameter.
+        (khtml::TypingCommand::TypingCommand): Ditto.
+        (khtml::TypingCommand::insertText): Ditto.
+        (khtml::TypingCommand::isOpenForMoreTypingCommand): Use isTypingCommand instead of commandID.
+        (khtml::TypingCommand::closeTyping): Change parameter type to const reference.
+
+        * khtml/editing/htmlediting_impl.h: Made StyleChange functions be const member functions.
+        Changed parent() and setParent() to take and return EditCommandImpl pointers and be inlined.
+        Added virtual isInputTextCommand, isTypingCommand, and preservesTypingStyle functions.
+        Removed commandID functions and unneeded explicit destructors. Removed unneeded doApply
+        function declaration in CompositeEditCommandImpl. Changed type of applyTypingStyle to return
+        a node, not necessarily an element. Removed private execute function from InputTextCommandImpl.
+        Added selectInsertedText to InputTextCommandImpl's input function and TypingCommandImpl's constructor
+        and insertText function.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::StyleChange::StyleChange): Don't bother initializing the booleans since init handles that.
+        (khtml::StyleChange::init): Added code to strip whitespace, and tweaked how the function does its job.
+        (khtml::StyleChange::currentlyHasStyle): Added a check for null value, which can happen for properties
+        where we don't have computed style implemented yet.
+        (khtml::EditCommandImpl::EditCommandImpl): Updated since there is no SharedCommandImpl any more.
+        (khtml::EditCommandImpl::apply): Call new preservesTypingStyle function rather than checking
+        the command ID. This preserves typing style when deleting with the keyboard.
+        (khtml::EditCommandImpl::setStartingSelection): Changed since parent is now a EditCommandImpl.
+        Also rewrote to use for loop so it's simpler-looking.
+        (khtml::EditCommandImpl::setEndingSelection): Ditto.
+        (khtml::EditCommandImpl::setTypingStyle): Ditto.
+        (khtml::EditCommandImpl::preservesTypingStyle): Added. Returns false.
+        (khtml::EditCommandImpl::isInputTextCommand): Added. Returns false.
+        (khtml::EditCommandImpl::isTypingCommand): Added. Returns false.
+        (khtml::CompositeEditCommandImpl::applyTypingStyle): Changed this function to return a node rather
+        than an element. Also change it so it returns the child as-is if the style change has nothing in it.
+        (khtml::AppendNodeCommandImpl::~AppendNodeCommandImpl): Removed unneeded null checks.
+        (khtml::DeleteSelectionCommandImpl::preservesTypingStyle): Added. Returns true.
+        (khtml::DeleteTextCommandImpl::~DeleteTextCommandImpl): Removed unneeded null checks.
+        (khtml::InputTextCommandImpl::input): Renamed execute function to input and got rid of the additional
+        level of indirection, since it was the only caller. Added selectInsertedText parameter and changed
+        the code so it will respect it.
+        (khtml::InputTextCommandImpl::isInputTextCommand): Added. Returns true.
+        (khtml::InsertNodeBeforeCommandImpl::~InsertNodeBeforeCommandImpl): Removed unneeded null checks.
+        (khtml::JoinTextNodesCommandImpl::~JoinTextNodesCommandImpl): Ditto.
+        (khtml::MoveSelectionCommandImpl::MoveSelectionCommandImpl): Hold a reference to the fragment
+        while the command exists.
+        (khtml::MoveSelectionCommandImpl::~MoveSelectionCommandImpl): Release the fragment.
+        (khtml::RemoveNodeCommandImpl::~RemoveNodeCommandImpl): Remove unneeded null checks.
+        (khtml::RemoveNodeCommandImpl::doUnapply): Take advantage of defined behavior of insertBefore when
+        the node to insert before is 0 (means the same thing as appendChild).
+        (khtml::RemoveNodePreservingChildrenCommandImpl::~RemoveNodePreservingChildrenCommandImpl):
+        Remove unneeded null check.
+        (khtml::ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl): Hold a reference to the fragment
+        while the command exists.
+        (khtml::ReplaceSelectionCommandImpl::~ReplaceSelectionCommandImpl): Release the fragment.
+        (khtml::SetNodeAttributeCommandImpl::~SetNodeAttributeCommandImpl): Remove unneeded null check.
+        (khtml::SplitTextNodeCommandImpl::~SplitTextNodeCommandImpl): Remove unneeded null check.
+        (khtml::TypingCommandImpl::TypingCommandImpl): Added selectInsertedText parameter.
+        (khtml::TypingCommandImpl::doApply): Pass along selectInsertedText parameter.
+        (khtml::TypingCommandImpl::insertText): Ditto.
+        (khtml::TypingCommandImpl::preservesTypingStyle): Added. Returns true for DeleteKey.
+        (khtml::TypingCommandImpl::isTypingCommand): Added. Returns true.
+
+        * khtml/editing/jsediting.cpp: Add a cut at implementing the underline command. May not work
+        perfectly yet because text-decoration is not inherited the way, say, font-weight is.
+
+        * khtml/xml/dom_selection.h: Removed some unneeded friend declarations for comparison operators
+        that use only public members. Added PARAGRAPH_BOUNDARY.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::modifyExtendingRightForward): Implemented paragraph boundary case, simplified line
+        boundary case (by changing parameter types and function names, not the algorithm), and made
+        paragraph case fall into line case for now.
+        (DOM::Selection::modifyMovingRightForward): Ditto.
+        (DOM::Selection::modifyExtendingLeftBackward): Ditto.
+        (DOM::Selection::modifyMovingLeftBackward): Ditto.
+        (DOM::Selection::validate): Implemented paragraph case and paragraph boundary case, simplified the
+        line case as above and also fixed the document case.
+        (DOM::startOfFirstRunAt): Changed to use DOM::Position instead of node
+        offset pairs. Also renamed and got rid of separate bool to indicate "not found".
+        (DOM::endOfLastRunAt): Ditto.
+        (DOM::selectionForLine): Ditto.
+
+        * khtml/xml/dom_position.h: Added startParagraphBoundary and endParagraphBoundary.
+        Also used enums instead of bools in a couple of places. Removed some unneeded friend
+        declarations for comparison operators that use only public members.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::Position): Coding style tweak.
+        (DOM::Position::startParagraphBoundary): Added.
+        (DOM::Position::endParagraphBoundary): Added.
+        (DOM::Position::upstream): Use enum parameter instead of bool.
+        (DOM::Position::downstream): Ditto.
+        (DOM::Position::rendersOnSameLine): Removed unused function. Noticed some backwards logic
+        here, and removed it rather than fixing it.
+
+        * khtml/xml/dom_nodeimpl.h: Added traversePreviousNodePostOrder.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::traversePreviousNodePostOrder): Added. For some uses, this function is more analogous
+        to traverseNextNode in reverse than traversePreviousNode, which does a backwards pre-order traversal.
+
+        * kwq/WebCoreBridge.h: Replaced fontForCurrentPosition method with fontForSelection:, added
+        selectInsertedText parameter to insertText method, and added selectionStartHasStyle: method.
+        Add WebSelectToParagraphBoundary.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]): Added workaround for bug where isRenderedContent
+        returns false for <br> elements at the ends of lines.
+        (-[WebCoreBridge insertText:selectInsertedText:]): Added selectInsertedText parameter, passing it
+        along to TypingCommand::insertText.
+        (-[WebCoreBridge selectionStartHasStyle:]): Added. Calls code in the part that does the real work.
+        (-[WebCoreBridge fontForSelection:]): Ditto.
+
+        * kwq/KWQKHTMLPart.h: Renamed fontForCurrentPosition to fontForSelection, and added a feature
+        where it tells us whether there are multiple fonts in the selection or not.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForSelection): Rewrote this to be a bit simpler, and added code to detect
+        whether there are multiple fonts in the selection.
+        (KWQKHTMLPart::didTellBridgeAboutLoad): Use a global character rather than a bad pointer here.
+        Better not to rely on undefined behavior.
+        (KWQKHTMLPart::documentFragmentWithText): Use lowercase HTML. I believe this works better when
+        the document is XML, and we should probably visit all callers and change them.
+        (KWQKHTMLPart::registerCommandForUndo): Call get() instead of handle().
+        (KWQKHTMLPart::registerCommandForRedo): Call get() instead of handle().
+
+        * khtml/misc/shared.h: Added a private, non-implemented copy constructor and assignment
+        operator to Shared<> and TreeShared<> to prevent copying reference counts by accident.
+        * khtml/rendering/render_style.h: Get rid of Shared<BorderData>, since it's not used that way.
+        This makes BorderData smaller, and allows it to compile with the change to Shared<>.
+        * khtml/xml/dom_docimpl.h: Remove unneeded copy constructor on DocumentFragmentImpl,
+        which ran afoul of the change to Shared<> and was unused.
+        * khtml/xml/dom_docimpl.cpp: Ditto.
+        * khtml/xml/dom_stringimpl.cpp:
+        (DOM::DOMStringImpl::empty): Changed code around so it doesn't run afoul of the change to
+        Shared<>. The old code was copying a DOMStringImpl.
+        (DOM::DOMStringImpl::ascii): Added code to null-terminate the string buffer.
+
+2004-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - improved computed style code and implemented text-decoration and text-shadow (needed for, e.g., underline)
 
         * khtml/css/css_computedstyle.cpp:

@@ -41,8 +41,6 @@
 - (void)_scrollLineHorizontally: (BOOL)left;
 - (void)_pageLeft;
 - (void)_pageRight;
-- (void)_scrollToTopLeft;
-- (void)_scrollToBottomLeft;
 - (void)_lineLeft;
 - (void)_lineRight;
 - (void)_goBack;

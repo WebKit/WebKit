@@ -264,7 +264,7 @@ struct CollapsedBorderValue
     EBorderPrecedence precedence;    
 };
 
-class BorderData : public Shared<BorderData>
+class BorderData
 {
 public:
     BorderValue left;

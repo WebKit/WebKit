@@ -51,16 +51,21 @@
 #endif
 
 using khtml::CharacterIterator;
+using khtml::findWordBoundary;
 using khtml::InlineBox;
 using khtml::InlineFlowBox;
 using khtml::InlineTextBox;
+using khtml::nextWordFromIndex;
+using khtml::PRE;
 using khtml::RenderBlock;
 using khtml::RenderFlow;
 using khtml::RenderObject;
+using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RootInlineBox;
 using khtml::SimplifiedBackwardsTextIterator;
 using khtml::TextIterator;
+using khtml::VISIBLE;
 
 namespace DOM {
 
@@ -101,24 +106,23 @@ static NodeImpl *previousRenderedEditable(NodeImpl *node)
 
 
 Position::Position(NodeImpl *node, long offset) 
-    : m_node(0), m_offset(offset) 
+    : m_node(node), m_offset(offset) 
 { 
     if (node) {
-        m_node = node;
-        m_node->ref();
+        node->ref();
     }
 };
 
 Position::Position(const Position &o)
-    : m_node(0), m_offset(o.offset()) 
+    : m_node(o.m_node), m_offset(o.m_offset) 
 {
-    if (o.node()) {
-        m_node = o.node();
+    if (m_node) {
         m_node->ref();
     }
 }
 
-Position::~Position() {
+Position::~Position()
+{
     if (m_node) {
         m_node->deref();
     }
@@ -222,7 +226,7 @@ Position Position::previousRenderedEditablePosition() const
         n = n->previousEditable();
         if (!n)
             return Position();
-        if (n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
+        if (n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
             break;
     }
     
@@ -242,7 +246,7 @@ Position Position::nextRenderedEditablePosition() const
         n = n->nextEditable();
         if (!n)
             return Position();
-        if (n->renderer() && n->renderer()->style()->visibility() == khtml::VISIBLE)
+        if (n->renderer() && n->renderer()->style()->visibility() == VISIBLE)
             break;
     }
     
@@ -320,7 +324,7 @@ Position Position::previousWordBoundary() const
             QChar *chars = t.unicode();
             uint len = t.length();
             int start, end;
-            khtml::findWordBoundary(chars, len, pos.offset(), &start, &end);
+            findWordBoundary(chars, len, pos.offset(), &start, &end);
             pos = Position(pos.node(), start);
             if (pos != *this)
                 return pos;
@@ -358,7 +362,7 @@ Position Position::nextWordBoundary() const
             QChar *chars = t.unicode();
             uint len = t.length();
             int start, end;
-            khtml::findWordBoundary(chars, len, pos.offset(), &start, &end);
+            findWordBoundary(chars, len, pos.offset(), &start, &end);
             pos = Position(pos.node(), end);
             if (pos != *this)
                 return pos;
@@ -397,7 +401,7 @@ Position Position::previousWordPosition() const
         // Keep asking the iterator for chunks until the nextWordFromIndex() function
         // returns a non-zero value.
         string.prepend(it.characters(), it.length());
-        next = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
+        next = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
         if (next != 0)
             break;
         it.advance();
@@ -418,7 +422,7 @@ Position Position::previousWordPosition() const
         chars[0] = 'X';
         chars[1] = ' ';
         string.prepend(chars, 2);
-        unsigned pastImage = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
+        unsigned pastImage = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), string.length(), false);
         Range range(it.range());
         if (pastImage == 0)
             pos = Position(range.startContainer().handle(), range.startOffset());
@@ -460,7 +464,7 @@ Position Position::nextWordPosition() const
         // Keep asking the iterator for chunks until the nextWordFromIndex() function
         // returns a value not equal to the length of the string passed to it.
         string.append(it.characters(), it.length());
-        next = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
+        next = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
         if (next != string.length())
             break;
         it.advance();
@@ -481,7 +485,7 @@ Position Position::nextWordPosition() const
         chars[0] = ' ';
         chars[1] = 'X';
         string.append(chars, 2);
-        unsigned pastImage = khtml::nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
+        unsigned pastImage = nextWordFromIndex(const_cast<QChar *>(string.unicode()), string.length(), 0, true);
         Range range(it.range());
         if (next != pastImage)
             pos = Position(range.endContainer().handle(), range.endOffset());
@@ -617,7 +621,95 @@ Position Position::nextLinePosition(int x) const
     return Position(rootElement, rootElement->childNodeCount());
 }
 
-Position Position::upstream(bool stayInBlock) const
+Position Position::startParagraphBoundary() const
+{
+    NodeImpl *startNode = m_node;
+    if (!startNode)
+        return *this;
+
+    Position p = *this;
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+
+    for (NodeImpl *n = startNode; n; n = n->traversePreviousNodePostOrder(startBlock)) {
+        RenderObject *r = n->renderer();
+        if (!r)
+            continue;
+        RenderStyle *style = r->style();
+        if (style->visibility() != VISIBLE)
+            continue;
+        if (r->isBR() || r->isBlockFlow())
+            break;
+        if (r->isText()) {
+            if (style->whiteSpace() == PRE) {
+                QChar *text = static_cast<RenderText *>(r)->text();
+                long i = static_cast<RenderText *>(r)->length();
+                long o = m_offset;
+                if (n == startNode && o < i)
+                    i = kMax(0L, o);
+                while (--i >= 0)
+                    if (text[i] == '\n')
+                        return Position(n, i + 1);
+            }
+            p.m_node = n;
+            p.m_offset = 0;
+        } else if (r->isReplaced()) {
+            p.m_node = n;
+            p.m_offset = 0;
+        }
+    }
+
+    return p;
+}
+
+Position Position::endParagraphBoundary(EIncludeLineBreak includeLineBreak) const
+{
+    NodeImpl *startNode = m_node;
+    if (!startNode)
+        return *this;
+
+    Position p = *this;
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+
+    for (NodeImpl *n = startNode; n; n = n->traverseNextNode(startBlock)) {
+        RenderObject *r = n->renderer();
+        if (!r)
+            continue;
+        RenderStyle *style = r->style();
+        if (style->visibility() != VISIBLE)
+            continue;
+        if (r->isBR()) {
+            if (includeLineBreak)
+                return Position(n, 1).downstream();
+            break;
+        }
+        if (r->isBlockFlow()) {
+            if (includeLineBreak)
+                return Position(n, n->childNodeCount()).downstream();
+            break;
+        }
+        if (r->isText()) {
+            long length = static_cast<RenderText *>(r)->length();
+            if (style->whiteSpace() == PRE) {
+                QChar *text = static_cast<RenderText *>(r)->text();
+                long o = m_offset;
+                if (n == startNode && o < length)
+                    length = kMax(0L, o);
+                for (long i = 0; i < length; ++i)
+                    if (text[i] == '\n')
+                        return Position(n, i);
+            }
+            p.m_node = n;
+            p.m_offset = length;
+        } else if (r->isReplaced()) {
+            p.m_node = n;
+            p.m_offset = 1;
+        }
+    }
+
+    return p;
+}
+
+Position Position::upstream(EStayInBlock stayInBlock) const
 {
     if (!node())
         return Position();
@@ -636,7 +728,7 @@ Position Position::upstream(bool stayInBlock) const
         if (!renderer)
             continue;
 
-        if (renderer->style()->visibility() != khtml::VISIBLE)
+        if (renderer->style()->visibility() != VISIBLE)
             continue;
 
         if ((it.current().node() != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
@@ -669,7 +761,7 @@ Position Position::upstream(bool stayInBlock) const
     return it.current();
 }
 
-Position Position::downstream(bool stayInBlock) const
+Position Position::downstream(EStayInBlock stayInBlock) const
 {
     if (!node())
         return Position();
@@ -688,7 +780,7 @@ Position Position::downstream(bool stayInBlock) const
         if (!renderer)
             continue;
 
-        if (renderer->style()->visibility() != khtml::VISIBLE)
+        if (renderer->style()->visibility() != VISIBLE)
             continue;
 
         if ((it.current().node() != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
@@ -850,9 +942,10 @@ bool Position::inRenderedContent() const
     if (!renderer)
         return false;
     
-    if (renderer->style()->visibility() != khtml::VISIBLE)
+    if (renderer->style()->visibility() != VISIBLE)
         return false;
 
+    // FIXME: This check returns false for a <br> at the end of a line!
     if (renderer->isBR() && static_cast<RenderText *>(renderer)->firstTextBox()) {
         return offset() == 0;
     }
@@ -930,32 +1023,6 @@ bool Position::isRenderedCharacter() const
     return false;
 }
 
-bool Position::rendersOnSameLine(const Position &pos) const
-{
-    if (isEmpty() || pos.isEmpty())
-        return false;
-
-    if (node() == pos.node() && offset() == pos.offset())
-        return true;
-
-    if (node()->enclosingBlockFlowElement() != pos.node()->enclosingBlockFlowElement())
-        return false;
-
-    RenderObject *renderer = node()->renderer();
-    if (!renderer)
-        return false;
-    
-    RenderObject *posRenderer = pos.node()->renderer();
-    if (!posRenderer)
-        return false;
-
-    if (renderer->style()->visibility() != khtml::VISIBLE ||
-        posRenderer->style()->visibility() != khtml::VISIBLE)
-        return false;
-
-    return renderersOnDifferentLine(renderer, offset(), posRenderer, pos.offset());
-}
-
 bool Position::rendersInDifferentPosition(const Position &pos) const
 {
     if (isEmpty() || pos.isEmpty())
@@ -969,8 +1036,8 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (!posRenderer)
         return false;
 
-    if (renderer->style()->visibility() != khtml::VISIBLE ||
-        posRenderer->style()->visibility() != khtml::VISIBLE)
+    if (renderer->style()->visibility() != VISIBLE ||
+        posRenderer->style()->visibility() != VISIBLE)
         return false;
     
     if (node() == pos.node()) {
@@ -1049,7 +1116,7 @@ bool Position::isFirstRenderedPositionOnLine() const
     if (!renderer)
         return false;
 
-    if (renderer->style()->visibility() != khtml::VISIBLE)
+    if (renderer->style()->visibility() != VISIBLE)
         return false;
     
     if (!inRenderedContent())
@@ -1078,7 +1145,7 @@ bool Position::isLastRenderedPositionOnLine() const
     if (!renderer)
         return false;
 
-    if (renderer->style()->visibility() != khtml::VISIBLE)
+    if (renderer->style()->visibility() != VISIBLE)
         return false;
     
     if (!inRenderedContent())
@@ -1110,7 +1177,7 @@ bool Position::isLastRenderedPositionInEditableBlock() const
     if (!renderer)
         return false;
 
-    if (renderer->style()->visibility() != khtml::VISIBLE)
+    if (renderer->style()->visibility() != VISIBLE)
         return false;
 
     if (renderedOffset() != (long)node()->caretMaxRenderedOffset())
@@ -1215,7 +1282,8 @@ bool Position::inLastEditableInContainingEditableBlock() const
 
 static inline bool isWS(const QChar &c)
 {
-    return c.isSpace() && c != QChar(0xa0);
+    const char nonBreakingSpace = 0xA0;
+    return c.isSpace() && c != nonBreakingSpace;
 }
 
 Position Position::leadingWhitespacePosition() const

@@ -334,6 +334,9 @@ public:
      */
     NodeImpl *traversePreviousNode() const;
 
+    /* Like traversePreviousNode, but visits nodes before their children. */
+    NodeImpl *traversePreviousNodePostOrder(NodeImpl *stayWithin = 0) const;
+
     DocumentPtr *docPtr() const { return document; }
 
     NodeImpl *previousEditable() const;
