@@ -1,3 +1,21 @@
+2003-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3140945 -- crash viewing www.nextthing.org
+
+        * khtml/rendering/render_container.cpp: (RenderContainer::removeLeftoverAnonymousBoxes):
+	Change this function so it will never remove a table cell. Although a table cell that is
+	created automatically is anonymous, it is not an anonymous box in the sense that this
+	function is trying to deal with. Maybe there will be a better way to fix this some day,
+	but this is the best Dave and I could come up with.
+
+	- fixed 3155700 -- nil-dereference in khtml::RenderTableRow::detach shortly after visiting www.alltheweb.com
+
+        * khtml/rendering/render_table.cpp: (RenderTableRow::detach):
+	Check for nil before calling setNeedCellRecalc in case we are being detached after our
+	parent is already nil.
+
 2003-01-23  Richard Williamson   <rjw@apple.com>
 
         Fix for 3152494.  Set the default iframe width to 300 and

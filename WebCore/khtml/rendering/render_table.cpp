@@ -1262,8 +1262,10 @@ RenderTableRow::RenderTableRow(DOM::NodeImpl* node)
 
 void RenderTableRow::detach(RenderArena* arena)
 {
-    section()->setNeedCellRecalc();
-
+    RenderTableSection *s = section();
+    if (s) {
+        s->setNeedCellRecalc();
+    }
     RenderContainer::detach(arena);
 }
 
