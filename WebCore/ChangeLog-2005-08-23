@@ -1,3 +1,14 @@
+2003-05-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3242493 -- loop in khtml::RenderLayer::RenderZTreeNode at google cached copy of epower2go.biz page
+
+        * khtml/rendering/render_layer.cpp: (RenderLayer::RenderZTreeNode::detach):
+        Use an iterative algorithm rather than a recursive one to destroy the child
+        nodes at each level of the tree, so our recursion is O(depth of tree) rather
+        than O(size of tree).
+
 2003-05-10  David Hyatt  <hyatt@apple.com>
 
 	Fix the misrendering at the top of cnn.com (the extra tearing

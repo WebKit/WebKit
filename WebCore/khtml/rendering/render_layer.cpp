@@ -1091,10 +1091,14 @@ void RenderLayer::RenderZTreeNode::operator delete(void* ptr, size_t sz)
 
 void RenderLayer::RenderZTreeNode::detach(RenderArena* renderArena)
 {
-    if (next)
-        next->detach(renderArena); 
-    if (child)
-        child->detach(renderArena);
+    assert(!next);
+    
+    RenderZTreeNode *n;
+    for (RenderZTreeNode *c = child; c; c = n) {
+        n = c->next;
+        c->next = 0;
+        c->detach(renderArena);
+    }
     if (layerElement)
         layerElement->detach(renderArena);
 
