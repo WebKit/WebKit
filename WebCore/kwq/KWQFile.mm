@@ -25,7 +25,7 @@
 
 #import "KWQFile.h"
 
-QFile::QFile(const QString &n) : name(strdup([n.getNSString() fileSystemRepresentation])), fd(-1)
+QFile::QFile(const QString &n) : name(strdup(n.isEmpty() ? "" : [n.getNSString() fileSystemRepresentation])), fd(-1)
 {
 }
 

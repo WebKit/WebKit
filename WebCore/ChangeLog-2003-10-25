@@ -1,6 +1,13 @@
-=== WebCore-101 ===
+2003-09-12  Darin Adler  <darin@apple.com>
 
-=== WebCore-102 ===
+        Reviewed by Ken.
+
+        - fixed 3403223 -- <input type=file> with initial value causes exception, bad results afterwards, when submitted
+
+        * kwq/KWQFile.mm: (QFile::QFile): Don't pass an empty string to fileSystemRepresentation,
+        because that will cause an exception.
+
+=== WebCore-101 ===
 
 2003-09-11  Richard Williamson   <rjw@apple.com>
 
