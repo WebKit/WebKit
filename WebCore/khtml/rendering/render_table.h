@@ -28,7 +28,6 @@
 
 #include <qcolor.h>
 
-#include "render_box.h"
 #include "render_block.h"
 #include "render_style.h"
 #include "misc/khtmllayout.h"
@@ -203,7 +202,7 @@ protected:
 
 // -------------------------------------------------------------------------
 
-class RenderTableSection : public RenderBox
+class RenderTableSection : public RenderContainer
 {
 public:
     RenderTableSection(DOM::NodeImpl* node);

@@ -22,7 +22,7 @@
 #ifndef render_replaced_h
 #define render_replaced_h
 
-#include "render_box.h"
+#include "render_container.h"
 #include <qobject.h>
 class KHTMLView;
 class QWidget;
@@ -53,8 +53,6 @@ public:
 
     void setIntrinsicWidth(int w) {  m_intrinsicWidth = w; }
     void setIntrinsicHeight(int h) { m_intrinsicHeight = h; }
-
-    virtual bool canHaveChildren() const;
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;

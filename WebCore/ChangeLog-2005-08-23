@@ -1,3 +1,46 @@
+2004-09-02  David Hyatt  <hyatt@apple.com>
+
+	Swap RenderBox and RenderContainer.  Make leaf RenderObjects actually derive off of RenderBox instead.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::addChildToFlow):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::RenderBox):
+        (RenderBox::detach):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::RenderContainer):
+        (RenderContainer::detach):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::detach):
+        (RenderFlow::dirtyLineBoxes):
+        (RenderFlow::createInlineBox):
+        (RenderFlow::getAbsoluteRepaintRect):
+        (RenderFlow::lowestPosition):
+        (RenderFlow::rightmostPosition):
+        (RenderFlow::leftmostPosition):
+        (RenderFlow::caretPos):
+        * khtml/rendering/render_flow.h:
+        (khtml::RenderFlow::RenderFlow):
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::RenderFrameSet):
+        (RenderFrameSet::nodeAtPoint):
+        (RenderFrameSet::dump):
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::addChildToFlow):
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_replaced.h:
+        (khtml::RenderReplaced::setIntrinsicHeight):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::RenderTableSection):
+        (RenderTableSection::detach):
+        (RenderTableSection::setStyle):
+        * khtml/rendering/render_table.h:
+
 2004-09-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

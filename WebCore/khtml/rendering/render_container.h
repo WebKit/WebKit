@@ -22,7 +22,7 @@
 #ifndef render_container_h
 #define render_container_h
 
-#include "render_object.h"
+#include "render_box.h"
 
 namespace DOM {
     class Position;
@@ -35,7 +35,7 @@ namespace khtml
 /**
  * Base class for rendering objects that can have children
  */
-class RenderContainer : public RenderObject
+class RenderContainer : public RenderBox
 {
 public:
     RenderContainer(DOM::NodeImpl* node);

@@ -108,12 +108,6 @@ short RenderReplaced::baselinePosition( bool, bool ) const
     return height()+marginTop()+marginBottom();
 }
 
-bool RenderReplaced::canHaveChildren() const
-{
-    // We should not really be a RenderContainer subclass.
-    return false;
-}
-
 long RenderReplaced::caretMinOffset() const 
 { 
     return 0; 

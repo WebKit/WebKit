@@ -107,7 +107,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
         return;
     }
 
-    RenderBox::addChild(newChild,beforeChild);
+    RenderContainer::addChild(newChild,beforeChild);
 
     newChild->setNeedsLayoutAndMinMaxRecalc();
 }

@@ -53,7 +53,7 @@ using namespace khtml;
 using namespace DOM;
 
 RenderFrameSet::RenderFrameSet( HTMLFrameSetElementImpl *frameSet)
-    : RenderBox(frameSet)
+    : RenderContainer(frameSet)
 {
   // init RenderObject attributes
     setInline(false);
@@ -88,7 +88,7 @@ RenderFrameSet::~RenderFrameSet()
 bool RenderFrameSet::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
                                  HitTestAction hitTestAction, bool inside)
 {
-    RenderBox::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inside);
+    RenderContainer::nodeAtPoint(info, _x, _y, _tx, _ty, hitTestAction, inside);
 
     inside = m_resizing || canResize(_x, _y);
 
@@ -550,7 +550,7 @@ void RenderFrameSet::dump(QTextStream *stream, QString ind) const
   for (i = 0; i < (uint)element()->totalCols(); i++)
     *stream << " vSplitvar(" << i << ")=" << m_vSplitVar[i];
 
-  RenderBox::dump(stream,ind);
+  RenderContainer::dump(stream,ind);
 }
 #endif
 

@@ -24,7 +24,7 @@
 #ifndef RENDER_FLOW_H
 #define RENDER_FLOW_H
 
-#include "render_box.h"
+#include "render_container.h"
 #include "bidi.h"
 #include "render_line.h"
 
@@ -39,11 +39,11 @@ namespace khtml {
  * behaviour of text, so putting the layouting routines in the inline
  * elements is impossible.
  */
-class RenderFlow : public RenderBox
+class RenderFlow : public RenderContainer
 {
 public:
     RenderFlow(DOM::NodeImpl* node)
-      : RenderBox(node), m_lineHeight(-1)
+      : RenderContainer(node), m_lineHeight(-1)
     { m_continuation = 0; m_firstLineBox = 0; m_lastLineBox = 0;}
 
     virtual RenderFlow* continuation() const { return m_continuation; }

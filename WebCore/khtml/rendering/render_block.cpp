@@ -163,13 +163,13 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
 
             // no suitable existing anonymous box - create a new one
             RenderBlock* newBox = createAnonymousBlock();
-            RenderBox::addChild(newBox,beforeChild);
+            RenderContainer::addChild(newBox,beforeChild);
             newBox->addChild(newChild);
             return;
         }
     }
 
-    RenderBox::addChild(newChild,beforeChild);
+    RenderContainer::addChild(newChild,beforeChild);
     // ### care about aligned stuff
 
     if ( madeBoxesNonInline )
