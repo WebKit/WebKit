@@ -13,6 +13,7 @@
 #import <WebKit/WebKitDebug.h>
 #import <WebFoundation/IFURLHandle.h>
 #import <WebFoundation/IFError.h>
+#import <WebFoundation/IFNSStringExtensions.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <khtml_part.h>
 #import "IFWebController.h"
