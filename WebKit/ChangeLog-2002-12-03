@@ -1,3 +1,10 @@
+2002-05-30  Richard Williamson  <rjw@apple.com>
+
+    Added 'canDraw' check to ensure that we can render
+    an image frame.
+    
+	* WebCoreSupport.subproj/IFImageRenderer.m:
+
 2002-05-29  Richard Williamson  <rjw@apple.com>
 
     Changes to support animated image rendering.

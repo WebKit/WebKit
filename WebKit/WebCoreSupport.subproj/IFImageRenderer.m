@@ -60,13 +60,15 @@
         
     [self setCurrentFrame: currentFrame];
     
-    [frameView lockFocus];
-    [self drawInRect: targetRect
-            fromRect: imageRect
-            operation: NSCompositeSourceOver	// Renders transparency correctly
-            fraction: 1.0];
-    [frameView unlockFocus];
-    [[frameView window] flushWindow];
+    if ([frameView canDraw]){
+        [frameView lockFocus];
+        [self drawInRect: targetRect
+                fromRect: imageRect
+                operation: NSCompositeSourceOver	// Renders transparency correctly
+                fraction: 1.0];
+        [frameView unlockFocus];
+        [[frameView window] flushWindow];
+    }
 
     float frameDuration = [self frameDuration];
     frameTimer = [[NSTimer scheduledTimerWithTimeInterval: frameDuration
