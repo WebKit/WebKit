@@ -1,3 +1,16 @@
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Don.
+
+	- fixed 3136120 -- much content missing at www.olympic.org
+
+	This site gives modern CSS to "Internet Explorer" or "Netscape 6". Since we are neither of
+	those, we need to pretend to be one or the other. So we add olympic.org to our MacIE spoofing list.
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Add olympic.org to the list of pages that give us better
+	CSS if we claim to be Internet Explorer.
+        * WebView.subproj/WebUserAgentSpoofTable.c: Regenerated.
+
 === Alexander-46 ===
 
 2002-12-28  Ken Kocienda  <kocienda@apple.com>

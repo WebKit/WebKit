@@ -27,7 +27,7 @@ hash (register const char *str, register unsigned int len)
       27, 27, 27, 27, 27, 27, 27,  0,  0,  0,
        0,  0, 10,  0,  0,  0,  5, 27,  0,  0,
        0,  0,  0, 27,  0,  0,  0,  0,  0,  0,
-      27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
+      27,  5, 27, 27, 27, 27, 27, 27, 27, 27,
       27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
       27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
       27, 27, 27, 27, 27, 27, 27, 27, 27, 27,
@@ -96,7 +96,7 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
 {
   enum
     {
-      TOTAL_KEYWORDS = 11,
+      TOTAL_KEYWORDS = 12,
       MIN_WORD_LENGTH = 9,
       MAX_WORD_LENGTH = 18,
       MIN_HASH_VALUE = 9,
@@ -113,7 +113,8 @@ _web_findSpoofTableEntry (register const char *str, register unsigned int len)
       {"hondacars.com"},
       {"oregonlive.com"},
       {"jaguar.com"},
-      {""}, {""},
+      {"olympic.org"},
+      {""},
       {"hondaredriders.com"},
       {""}, {""},
       {"freebsd.org"},
