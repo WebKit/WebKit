@@ -1,5 +1,16 @@
 2003-03-22  David Hyatt  <hyatt@apple.com>
 
+	Fix the top of the gamespot.com page on the PLT.  The
+	clear status for <br> should be ignored if/when we decide
+	to ignore the <br> because the previous line didn't break 
+	cleanly.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/bidi.cpp:
+
+2003-03-22  David Hyatt  <hyatt@apple.com>
+
 	Loosen up the DTD for <dl>, <dt>, and <dd> so that they can
 	occur anywhere in a document and be independent of one 
 	another.

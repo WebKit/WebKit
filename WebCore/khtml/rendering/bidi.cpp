@@ -1341,7 +1341,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 m_firstLine = false;
                 newLine();
             }
-
+             
             sNumMidpoints = 0;
             sCurrMidpoint = 0;
             sCompactFirstBidiRun = sCompactLastBidiRun = 0;
@@ -1460,11 +1460,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
                     isLineEmpty = false;
                 trailingSpaceObject = 0;
                 previousLineBrokeAtBR = true;
-                
-                //check the clear status
-                EClear clear = o->style()->clear();
-                if(clear != CNONE) {
-                    m_clearStatus = (EClear) (m_clearStatus | clear);
+
+                if (!isLineEmpty) {
+                    // only check the clear status for non-empty lines.
+                    EClear clear = o->style()->clear();
+                    if(clear != CNONE)
+                        m_clearStatus = (EClear) (m_clearStatus | clear);
                 }
             }
             goto end;
@@ -1686,7 +1687,12 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
         RenderObject* next = Bidinext(start.par, o);
         bool isNormal = o->style()->whiteSpace() == NORMAL;
         bool checkForBreak = isNormal;
-        if (next && o->isText() && next->isText() && !next->isBR()) {
+        if (o->style()->whiteSpace() == NOWRAP && last &&
+            last->style()->whiteSpace() == NORMAL &&
+            w + tmpW > width+1 &&
+            lBreak.obj == last)
+            checkForBreak = true;
+        else if (next && o->isText() && next->isText() && !next->isBR()) {
             if (isNormal || (next->style()->whiteSpace() == NORMAL)) {
                 if (currentCharacterIsSpace)
                     checkForBreak = true;
