@@ -1,3 +1,24 @@
+2002-12-04  Trey Matteson  <trey@apple.com>
+
+	3097585 - Crash in -[WebFrame(WebPrivate) _isLoadComplete] at result of google image search
+
+	The root of this problem was that we would detach child frames by calling detach
+	on them all, then clearing the whole array.  This would fail because detaching a
+	frame might have to stop a load, which calls checkLoadComplete, which visits the
+	entire frame tree.  But if a previously detached child is still sitting in that
+	tree, we end up with an assertion failure.  The solution is to remove the kids as
+	they are detached.
+
+        Reviewed by: Darin Adler
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem]):   Method rename (a nit I missed from an earlier change)
+        (-[WebFrame _createItemTreeWithTargetFrame:clippedAtTarget:]):  Method rename
+        (-[WebFrame _detachChildren]):   new method to do detaching right
+        (-[WebFrame _detachFromParent]):  call new method
+        (-[WebFrame _setDataSource:]):  call new method
+        (-[WebFrame _transitionToCommitted:]):    Method rename
+
 2002-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey and Maciej.

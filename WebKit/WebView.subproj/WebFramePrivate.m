@@ -121,7 +121,7 @@ static const char * const loadTypeNames[] = {
 
 - (WebController *)controller { return controller; }
 - (void)setController: (WebController *)c
-{ 
+{
     controller = c; // not retained (yet)
 }
 
@@ -176,7 +176,7 @@ static const char * const loadTypeNames[] = {
     return bfItem;
 }
 
-- (WebHistoryItem *)_createOrUpdateItem
+- (WebHistoryItem *)_createItem
 {
     WebDataSource *dataSrc = [self dataSource];
     NSURL *url = [[dataSrc request] URL];
@@ -198,7 +198,7 @@ static const char * const loadTypeNames[] = {
 */
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip
 {
-    WebHistoryItem *bfItem = [self _createOrUpdateItem];
+    WebHistoryItem *bfItem = [self _createItem];
 
     [self _saveScrollPositionToItem:[_private previousItem]];
     if (!(doClip && self == targetFrame)) {
@@ -258,6 +258,22 @@ static const char * const loadTypeNames[] = {
     [self _detachFromParent];
 }
 
+- (void)_detachChildren
+{
+    // Note we have to be careful to remove the kids as we detach each one,
+    // since detaching stops loading, which checks loadComplete, which runs the whole
+    // frame tree, at which point we don't want to trip on already detached kids.
+    if (_private->children) {
+        int i;
+        for (i = [_private->children count]-1; i >=0; i--) {
+            [[_private->children objectAtIndex:i] _detachFromParent];
+            [_private->children removeObjectAtIndex:i];
+        }
+        [_private->children release];
+        _private->children = nil;
+    }
+}
+
 - (void)_detachFromParent
 {
     WebBridge *bridge = _private->bridge;
@@ -268,8 +284,8 @@ static const char * const loadTypeNames[] = {
 
     [bridge closeURL];
 
-    [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
-    
+    [self _detachChildren];
+
     [_private setController:nil];
     [_private->webView _setController:nil];
     [_private->dataSource _setController:nil];
@@ -298,9 +314,7 @@ static const char * const loadTypeNames[] = {
         [_private->bridge removeFromFrame];
     }
 
-    [[self children] makeObjectsPerformSelector:@selector(_detachFromParent)];
-    [_private->children release];
-    _private->children = nil;
+    [self _detachChildren];
     
     [_private setDataSource:ds];
     [ds _setController:[self controller]];
@@ -498,7 +512,7 @@ static const char * const loadTypeNames[] = {
             case WebFrameLoadTypeInternal:
                 {  // braces because the silly compiler lets you declare vars everywhere but here?!
                 // Add an item to the item tree for this frame
-                WebHistoryItem *item = [self _createOrUpdateItem];
+                WebHistoryItem *item = [self _createItem];
                 ASSERT([[self parent]->_private currentItem]);
                 [[[self parent]->_private currentItem] addChildItem:item];
                 [[self webView] _makeDocumentViewForDataSource:ds];
