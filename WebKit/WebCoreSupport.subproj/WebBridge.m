@@ -772,6 +772,11 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     }
 }
 
+- (void)tokenizerProcessedData
+{
+    [_frame _checkLoadComplete];
+}
+
 // OK to be an NSString rather than an NSURL.
 // This URL is only used for coloring visited links.
 - (NSString *)requestedURLString

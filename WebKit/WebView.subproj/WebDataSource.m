@@ -811,7 +811,7 @@
 {
     if (isComplete) {
         // Can't call [self _bridge] because we might not have commited yet
-        [[[self webFrame] _bridge] end];
+        [[[self webFrame] _bridge] stop];
     }        
     [[self webFrame] _receivedMainResourceError:error];
     [[self _webView] _mainReceivedError:error
@@ -1133,8 +1133,10 @@
         if ([_private->subresourceClients count]) {
             return YES;
         }
+        if (![[[self webFrame] _bridge] doneProcessingData])
+            return YES;
     }
-    
+
     // Put in the auto-release pool because it's common to call this from a run loop source,
     // and then the entire list of frames lasts until the next autorelease.
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
