@@ -323,8 +323,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_usesDescendantRules = false;
     m_usesSiblingRules = false;
 
-    m_styleSelector = new CSSStyleSelector( this, m_usersheet, m_styleSheets, m_url,
-                                            !inCompatMode() );
+    m_styleSelector = new CSSStyleSelector(this, m_usersheet, m_styleSheets, !inCompatMode());
     m_windowEventListeners.setAutoDelete(true);
     m_pendingStylesheets = 0;
     m_ignorePendingStylesheets = false;
@@ -1490,6 +1489,13 @@ void DocumentImpl::clear()
         m_windowEventListeners.removeRef(it.current());
 }
 
+void DocumentImpl::setURL(const QString& url)
+{
+    m_url = url;
+    if (m_styleSelector)
+        m_styleSelector->setEncodedURL(m_url);
+}
+
 void DocumentImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DOMString &sheet)
 {
 //    kdDebug( 6030 ) << "HTMLDocument::setStyleSheet()" << endl;
@@ -2286,9 +2292,8 @@ void DocumentImpl::recalcStyleSelector()
     QString usersheet = m_usersheet;
     if ( m_view && m_view->mediaType() == "print" )
 	usersheet += m_printSheet;
-    m_styleSelector = new CSSStyleSelector( this, usersheet, m_styleSheets, m_url,
-                                            !inCompatMode() );
-
+    m_styleSelector = new CSSStyleSelector(this, usersheet, m_styleSheets, !inCompatMode());
+    m_styleSelector->setEncodedURL(m_url);
     m_styleSelectorDirty = false;
 }
 

@@ -317,7 +317,7 @@ public:
     void clear();
 
     QString URL() const { return m_url; }
-    void setURL(QString url) { m_url = url; }
+    void setURL(const QString& url);
 
     QString baseURL() const { return m_baseURL.isEmpty() ? m_url : m_baseURL; }
     void setBaseURL(const QString& baseURL) { m_baseURL = baseURL; }

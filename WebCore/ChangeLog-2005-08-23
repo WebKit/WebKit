@@ -1,3 +1,26 @@
+2004-08-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3558334. 
+
+	Init the encodedURL explicitly for CSSStyleSelectors.  Construction time was too early to be passing in the
+	document m_url, since it doesn't get set during construction.
+
+	Fix for 3769643, crash on vancouverblast.org.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::init):
+        (khtml::CSSStyleSelector::setEncodedURL):
+        * khtml/css/cssstyleselector.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::setURL):
+        (DocumentImpl::recalcStyleSelector):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::URL):
+
 2004-08-23  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Maciej.

@@ -126,7 +126,7 @@ static CSSStyleSelector::Encodedurl *encodedurl = 0;
 static PseudoState pseudoState;
 
 CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, StyleSheetListImpl *styleSheets,
-                                    const KURL &url, bool _strictParsing )
+                                    bool _strictParsing )
 {
     init();
 
@@ -159,22 +159,6 @@ CSSStyleSelector::CSSStyleSelector( DocumentImpl* doc, QString userStyleSheet, S
 
     //kdDebug( 6080 ) << "number of style sheets in document " << authorStyleSheets.count() << endl;
     //kdDebug( 6080 ) << "CSSStyleSelector: author style has " << authorStyle->count() << " elements"<< endl;
-
-    KURL u = url;
-
-    u.setQuery( QString::null );
-    u.setRef( QString::null );
-    encodedurl.file = u.url();
-    int pos = encodedurl.file.findRev('/');
-    encodedurl.path = encodedurl.file;
-    if ( pos > 0 ) {
-	encodedurl.path.truncate( pos );
-	encodedurl.path += '/';
-    }
-    u.setPath( QString::null );
-    encodedurl.host = u.url();
-
-    //kdDebug() << "CSSStyleSelector::CSSStyleSelector encoded url " << encodedurl.path << endl;
 }
 
 CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
@@ -195,6 +179,25 @@ void CSSStyleSelector::init()
     settings = 0;
     paintDeviceMetrics = 0;
     m_matchedRuleCount = m_matchedDeclCount = m_tmpRuleCount = 0;
+}
+
+void CSSStyleSelector::setEncodedURL(const KURL& url)
+{
+    KURL u = url;
+
+    u.setQuery( QString::null );
+    u.setRef( QString::null );
+    encodedurl.file = u.url();
+    int pos = encodedurl.file.findRev('/');
+    encodedurl.path = encodedurl.file;
+    if ( pos > 0 ) {
+	encodedurl.path.truncate( pos );
+	encodedurl.path += '/';
+    }
+    u.setPath( QString::null );
+    encodedurl.host = u.url();
+
+    //kdDebug() << "CSSStyleSelector::CSSStyleSelector encoded url " << encodedurl.path << endl;
 }
 
 CSSStyleSelector::~CSSStyleSelector()

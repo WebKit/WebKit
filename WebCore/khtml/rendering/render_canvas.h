@@ -94,12 +94,12 @@ public:
     
     void setMaximalOutlineSize(int o) { m_maximalOutlineSize = o; }
     int maximalOutlineSize() const { return m_maximalOutlineSize; }
+
+    virtual QRect viewRect() const;
     
 protected:
 
     virtual void selectionStartEnd(int& spos, int& epos);
-
-    virtual QRect viewRect() const;
 
     KHTMLView *m_view;
 

@@ -94,7 +94,7 @@ namespace khtml
 	 * creates a list of rules it needs to apply to objects
 	 */
 	CSSStyleSelector(DOM::DocumentImpl* doc, QString userStyleSheet, 
-                         DOM::StyleSheetListImpl *styleSheets, const KURL &url,
+                         DOM::StyleSheetListImpl *styleSheets,
                          bool _strictParsing);
 	/**
 	 * same as above but for a single stylesheet.
@@ -115,12 +115,14 @@ namespace khtml
         bool canShareStyleWithElement(DOM::NodeImpl* e);
         
 	bool strictParsing;
-	struct Encodedurl {
+	
+        struct Encodedurl {
 	    QString host; //also contains protocol
 	    QString path;
 	    QString file;
 	} encodedurl;
-
+        void setEncodedURL(const KURL& url);
+        
         // Given a CSS keyword in the range (xx-small to -khtml-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).
         float fontSizeForKeyword(int keyword, bool quirksMode) const;
