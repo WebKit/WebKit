@@ -114,7 +114,7 @@ public:
 
     virtual void setCellWidths( );
 
-    int getBaseline(int row) {return rowBaselines[row];}
+    int getBaseline(int row) {return rowInfo[row].baseline;}
 
     virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int);
 
@@ -177,6 +177,13 @@ public:
         bool    needRecalc;
     };
 
+    struct RowInfo
+    {
+        int height;
+        int percentage;
+        int baseline;
+    };
+    
 protected:
 
     void recalcColInfo( ColInfo *col );
@@ -221,13 +228,13 @@ protected:
 
     int maxColSpan;
 
+    QMemArray<RowInfo> rowInfo;
+   
     QMemArray<int> columnPos;
     QMemArray<int> colMaxWidth;
     QMemArray<int> colMinWidth;
     QMemArray<khtml::LengthType> colType;
     QMemArray<int> colValue;
-    QMemArray<int> rowHeights;
-    QMemArray<int> rowBaselines;
     QMemArray<int> actColWidth;
     unsigned int col;
     unsigned int totalCols;
@@ -372,7 +379,10 @@ public:
     virtual void updateFromElement();
 
     void setRowHeight(int h) { rowHeight = h; }
-
+    
+    int getCellPercentageHeight() { return cellPercentageHeight; }
+    void setCellPercentageHeight(int h) { cellPercentageHeight = h; }
+    
     void setRowImpl(RenderTableRow *r) { rowimpl = r; }
 
     void setCellTopExtra(int p) { _topExtra = p; }
@@ -416,6 +426,7 @@ protected:
     short cSpan;
     int _id;
     int rowHeight;
+    int cellPercentageHeight;
     int _topExtra;
     int _bottomExtra;
     bool nWrap : 1;

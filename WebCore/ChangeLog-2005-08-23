@@ -1,3 +1,37 @@
+2002-08-13  David Hyatt  <hyatt@apple.com>
+
+	An initial implementation of percentage height table cells.
+	This implementation will properly distribute space among
+	rows with percentage table cells, although there could be
+	issues with percentage height cells that span rows.  
+
+	I have also fixed replaced elements so that they understand when they
+	are a percentage height and contained within a percentage height
+	cell that they can grow.  This fixes the textarea on bloggers'
+	comment posting page so that it sizes properly.
+
+	There are many issues remaining with this implementation;
+	blocks need to be taught how to flex when they specify a percent
+	height.  There is also some sort of rounding error with tables
+	that specify a height of 100% that I haven't yet figured out.
+	(This error was present before my changes, and it's still present
+	after my changes.)
+
+	Also, percentage height tables seem to "lock" to the largest size
+	they've ever been and don't properly relayout when they become
+	smaller.  Again, this bug existed before my changes.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcReplacedHeight):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTable::calcRowHeight):
+        (RenderTable::layout):
+        (RenderTable::layoutRows):
+        (RenderTable::print):
+        (RenderTableCell::RenderTableCell):
+        * khtml/rendering/render_table.h:
+
 2002-08-13  Darin Adler  <darin@apple.com>
 
 	Character set handling improvements. In total, this adds 92 new character encoding

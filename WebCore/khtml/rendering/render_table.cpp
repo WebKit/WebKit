@@ -107,8 +107,8 @@ RenderTable::RenderTable(DOM::NodeImpl* node)
                      // by the first row parsed
     totalRows = 1;
     allocRows = 5;   // allocate five rows initially
-    rowHeights.resize( totalRows+1 );
-    rowHeights[0] = rowHeights[1] = 0;
+    rowInfo.resize( totalRows+1 );
+    memset( rowInfo.data(), 0, (totalRows+1)*sizeof(RowInfo)); // Init to 0.
 
     cells = new RenderTableCell ** [allocRows];
 
@@ -1279,12 +1279,12 @@ void RenderTable::calcRowHeight(int r)
     int indx;//, borderExtra = border ? 1 : 0;
     RenderTableCell *cell;
 
-    rowHeights.resize( totalRows+1 );
-    rowBaselines.resize( totalRows );
-    rowHeights[0] =  spacing + borderTop();
-
+    rowInfo.resize( totalRows+1 );
+    rowInfo[0].height =  spacing + borderTop();
+    rowInfo[0].percentage = 0;
+    
   //int oldheight = rowHeights[r+1] - rowHeights[r];
-    rowHeights[r+1] = 0;
+    rowInfo[r+1].height = rowInfo[r+1].percentage = 0;
 
     int baseline=0;
     int bdesc=0;
@@ -1302,15 +1302,19 @@ void RenderTable::calcRowHeight(int r)
         if ( ( indx = r - cell->rowSpan() + 1 ) < 0 )
             indx = 0;
 
-        ch = cell->style()->height().width(0);
+        Length height = cell->style()->height();
+        ch = height.width(0);
         if ( cell->height() > ch)
             ch = cell->height();
 
-        int rowPos = rowHeights[ indx ] + ch +
+        if (height.isPercent() && height.value > rowInfo[r+1].percentage)
+            rowInfo[r+1].percentage = height.value;
+            
+        int rowPos = rowInfo[ indx ].height + ch +
              spacing ; // + padding
 
-        if ( rowPos > rowHeights[r+1] )
-            rowHeights[r+1] = rowPos;
+        if ( rowPos > rowInfo[r+1].height )
+            rowInfo[r+1].height = rowPos;
 
         // find out the baseline
         EVerticalAlign va = cell->style()->verticalAlign();
@@ -1322,7 +1326,7 @@ void RenderTable::calcRowHeight(int r)
             if (b>baseline)
                 baseline=b;
 
-            int td = rowHeights[ indx ] + ch - b;
+            int td = rowInfo[ indx ].height + ch - b;
             if (td>bdesc)
                 bdesc = td;
         }
@@ -1333,14 +1337,14 @@ void RenderTable::calcRowHeight(int r)
     {
         // increase rowheight if baseline requires
         int bRowPos = baseline + bdesc  + spacing ; // + 2*padding
-        if (rowHeights[r+1]<bRowPos)
-            rowHeights[r+1]=bRowPos;
+        if (rowInfo[r+1].height<bRowPos)
+            rowInfo[r+1].height=bRowPos;
 
-        rowBaselines[r]=baseline;
+        rowInfo[r].baseline=baseline;
     }
 
-    if ( rowHeights[r+1] < rowHeights[r] )
-        rowHeights[r+1] = rowHeights[r];
+    if ( rowInfo[r+1].height < rowInfo[r].height )
+        rowInfo[r+1].height = rowInfo[r].height;
 }
 
 void RenderTable::layout()
@@ -1386,7 +1390,7 @@ void RenderTable::layout()
     // layout rows
     layoutRows(m_height);
 
-    m_height += rowHeights[totalRows];
+    m_height += rowInfo[totalRows].height;
     m_height += borderBottom();
 
     if(tCaption && tCaption->style()->captionSide()==CAPBOTTOM)
@@ -1448,23 +1452,41 @@ void RenderTable::layoutRows(int yoff)
             }
         }
     }
-    if (th && totalRows && rowHeights[totalRows])
+    
+    bool tableGrew = false;
+    if (th && totalRows && rowInfo[totalRows].height)
     {
         th-=(totalRows+1)*spacing;
-        int dh = th-rowHeights[totalRows];
+        int dh = th-rowInfo[totalRows].height;
         if (dh>0)
         {
-            int tot=rowHeights[totalRows];
+            // There is room to grow.  Distribute the space among the rows
+	    // by weighting according to their calculated heights,
+	    // unless there are rows that have percentage
+            // heights.  In that case, only the rows with percentage heights
+            // get the space, and the weight is distributed after computing
+	    // a normalized flex. -dwh
+            tableGrew = true;
+            int totalPercentage = 0;
+            for ( unsigned int r = 0; r < totalRows; r++ )
+                totalPercentage += rowInfo[r+1].percentage;
+                       
+            int tot=rowInfo[totalRows].height;
             int add=0;
-            int prev=rowHeights[0];
+            int prev=rowInfo[0].height;
             for ( unsigned int r = 0; r < totalRows; r++ )
             {
                 //weight with the original height
-                add+=dh*(rowHeights[r+1]-prev)/tot;
-                prev=rowHeights[r+1];
-                rowHeights[r+1]+=add;
+                if (totalPercentage) {
+                    if (rowInfo[r+1].percentage)
+                        add += (rowInfo[r+1].percentage/totalPercentage)*dh;
+                }
+                else
+                    add+=dh*(rowInfo[r+1].height-prev)/tot;
+                prev=rowInfo[r+1].height;
+                rowInfo[r+1].height+=add;
             }
-            rowHeights[totalRows]=th;
+            rowInfo[totalRows].height=th;
         }
     }
 
@@ -1488,48 +1510,76 @@ void RenderTable::layoutRows(int yoff)
                 rindx = 0;
 
             //kdDebug( 6040 ) << "setting position " << r << "/" << indx << "-" << c << ": " << //columnPos[indx] + padding << "/" << rowHeights[rindx] << " " << endl;
-            rHeight = rowHeights[r+1] - rowHeights[rindx] -
+            rHeight = rowInfo[r+1].height - rowInfo[rindx].height -
                 spacing;
 
-            EVerticalAlign va = cell->style()->verticalAlign();
-            int te=0;
-            switch (va)
-            {
-            case SUB:
-            case SUPER:
-            case TEXT_TOP:
-            case TEXT_BOTTOM:
-            case BASELINE:
-                te = getBaseline(r) - cell->baselinePosition() ;
-                break;
-            case TOP:
-                te = 0;
-                break;
-            case MIDDLE:
-                te = (rHeight - cell->height())/2;
-                break;
-            case BOTTOM:
-                te = rHeight - cell->height();
-                break;
-            default:
-                break;
+            cell->setRowHeight(rHeight);
+            bool cellChildrenFlex = false;
+            if (rowInfo[r+1].percentage) {
+	        // Force the child to lay itself out again.
+	        // This will cause, e.g., textareas to grow to
+	        // fill the area.  XXX <div>s and blocks still don't
+	        // work right. -dwh
+                cell->setCellPercentageHeight(rHeight);
+                RenderObject* o = cell->firstChild();
+                while (o) {
+                    if (o->style()->height().isPercent())
+                        o->setLayouted(false);
+                    o = o->nextSibling();
+                }
+                if (!cell->layouted()) {
+                    cellChildrenFlex = true;
+                    cell->layout();
+                }
             }
-#ifdef DEBUG_LAYOUT
-            kdDebug( 6040 ) << "CELL te=" << te << ", be=" << rHeight - cell->height() - te << ", rHeight=" << rHeight << ", valign=" << va << endl;
-#endif
-            cell->setCellTopExtra( te );
-            cell->setCellBottomExtra( rHeight - cell->height() - te);
 
+            if (cellChildrenFlex) {
+	        // Alignment within a cell is based off the calculated
+	        // height, which becomes irrelevant once the cell has
+	        // been resized based off its percentage. -dwh
+                cell->setCellTopExtra(0);
+                cell->setCellBottomExtra(0);
+            }
+            else {
+                EVerticalAlign va = cell->style()->verticalAlign();
+                int te=0;
+                switch (va)
+                {
+                case SUB:
+                case SUPER:
+                case TEXT_TOP:
+                case TEXT_BOTTOM:
+                case BASELINE:
+                    te = getBaseline(r) - cell->baselinePosition() ;
+                    break;
+                case TOP:
+                    te = 0;
+                    break;
+                case MIDDLE:
+                    te = (rHeight - cell->height())/2;
+                    break;
+                case BOTTOM:
+                    te = rHeight - cell->height();
+                    break;
+                default:
+                    break;
+                }
+    #ifdef DEBUG_LAYOUT
+                kdDebug( 6040 ) << "CELL te=" << te << ", be=" << rHeight - cell->height() - te << ", rHeight=" << rHeight << ", valign=" << va << endl;
+    #endif
+                cell->setCellTopExtra( te );
+                cell->setCellBottomExtra( rHeight - cell->height() - te);
+            }
+            
             if (style()->direction()==RTL)
             {
                 cell->setPos( columnPos[(int)totalCols]
                     - columnPos[(int)(indx+cell->colSpan())] + borderLeft(),
-                    rowHeights[rindx]+yoff );
+                    rowInfo[rindx].height+yoff );
             }
             else
-                cell->setPos( columnPos[indx] + borderLeft(), rowHeights[rindx]+yoff );
+                cell->setPos( columnPos[indx] + borderLeft(), rowInfo[rindx].height+yoff );
 
-            cell->setRowHeight(rHeight);
             // ###
             // cell->setHeight(cellHeight);
         }
@@ -1586,7 +1636,7 @@ void RenderTable::print( QPainter *p, int _x, int _y,
 #endif
     // the case below happens during parsing
     // when we have a new table that never got layouted. Don't print it.
-    if ( totalRows == 1 && rowHeights[1] == 0 )
+    if ( totalRows == 1 && rowInfo[1].height == 0 )
 	return;
 
     if(style()->visibility() == VISIBLE)
@@ -1605,11 +1655,11 @@ void RenderTable::print( QPainter *p, int _x, int _y,
     unsigned int startrow = 0;
     unsigned int endrow = totalRows;
     for ( ; startrow < totalRows; startrow++ ) {
-	if ( _ty + topextra + rowHeights[startrow+1] > _y )
+	if ( _ty + topextra + rowInfo[startrow+1].height > _y )
 	    break;
     }
     for ( ; endrow > 0; endrow-- ) {
-	if ( _ty + topextra + rowHeights[endrow-1] < _y + _h )
+	if ( _ty + topextra + rowInfo[endrow-1].height < _y + _h )
 	    break;
     }
     unsigned int startcol = 0;
@@ -2009,6 +2059,7 @@ RenderTableCell::RenderTableCell(DOM::NodeImpl* _node)
   updateFromElement();
   _id = 0;
   rowHeight = 0;
+  cellPercentageHeight = 0;
   m_table = 0;
   rowimpl = 0;
   setSpecialObjects(true);

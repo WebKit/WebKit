@@ -29,6 +29,8 @@
 #include "rendering/render_box.h"
 #include "rendering/render_replaced.h"
 #include "rendering/render_root.h"
+#include "rendering/render_table.h"
+
 #include "misc/htmlhashes.h"
 #include "xml/dom_nodeimpl.h"
 
@@ -638,9 +640,17 @@ int RenderBox::calcReplacedHeight() const
         if ( !cb->isTableCell() && doIEHack)
             height = h.minWidth( cb->root()->view()->visibleHeight() );
         else {
+	    if (cb->isTableCell()) {
+	        RenderTableCell* tableCell = static_cast<RenderTableCell*>(cb);
+	        if (tableCell->style()->height().isPercent() && tableCell->getCellPercentageHeight()) {
+                    height = h.minWidth(tableCell->getCellPercentageHeight());
+                    break;
+                }
+            }
+            
             if (!doIEHack)
                 cb = cb->containingBlock();
-
+            
             if ( cb->style()->height().isFixed() )
                 height = h.minWidth( cb->style()->height().value );
             else
