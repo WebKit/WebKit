@@ -1,3 +1,12 @@
+2004-03-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3560132>: REGRESSION: Safari crashed in -[NSPasteboard setData:forType:] dragging a map out of Mapquest.com
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:URL:title:fileWrapper:HTMLString:]): declare the pboard types by calling _web_writeURL:::: before calling setData::
+
 2004-03-05  John Sullivan  <sullivan@apple.com>
 
         First cut at WebKit support for showing error pages for unreachable URLs.

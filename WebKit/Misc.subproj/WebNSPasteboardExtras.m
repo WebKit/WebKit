@@ -171,8 +171,8 @@ NSString *WebURLNamePboardType = nil;
         [types addObject:NSFilesPromisePboardType];
     }
 
-    [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
     [self _web_writeURL:URL andTitle:title withOwner:self types:types];
+    [self setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
     
     if (fileWrapper) {
         [self _web_writeFileWrapperAsRTFDAttachment:fileWrapper];
