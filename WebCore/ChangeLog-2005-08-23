@@ -1,3 +1,19 @@
+2003-11-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3472998, stop a crash on an insanely malformed page.  I had to change the concept of 
+	"inStrayTableContent" to be a counter, since you could be nested and need to push/pop, and
+	then I also had to stop from mistakenly popping when I didn't need to.
+	
+        Reviewed by rjw
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::reset):
+        (KHTMLParser::insertNode):
+        (KHTMLParser::reopenResidualStyleTags):
+        (KHTMLParser::popBlock):
+        (KHTMLParser::popOneBlock):
+        * khtml/html/htmlparser.h:
+
 2003-11-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

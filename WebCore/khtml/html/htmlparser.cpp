@@ -174,7 +174,7 @@ void KHTMLParser::reset()
     haveFrameSet = false;
     haveContent = false;
     inSelect = false;
-    inStrayTableContent = false;
+    inStrayTableContent = 0;
     
     form = 0;
     map = 0;
@@ -356,11 +356,10 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         case ID_TR:
         case ID_TH:
         case ID_TD:
-            if (inStrayTableContent) {
+            if (inStrayTableContent && !isTableRelatedTag(current->id())) {
                 // pop out to the nearest enclosing table-related tag.
                 while (!isTableRelatedTag(current->id()))
                     popOneBlock();
-                inStrayTableContent = false;
                 return insertNode(n);
             }
             break;
@@ -631,7 +630,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                     {
                         pushBlock(id, tagPriority[id]);
                         setCurrent(n);
-                        inStrayTableContent = true;
+                        inStrayTableContent++;
                         blockStack->strayTableContent = true;
                     }
                     return true;
@@ -1399,9 +1398,9 @@ void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, DOM::NodeImpl* ma
 
         // Set our strayTableContent boolean if needed, so that the reopened tag also knows
         // that it is inside a malformed table.
-        blockStack->strayTableContent = !inStrayTableContent && malformedTableParent;
+        blockStack->strayTableContent = malformedTableParent != 0;
         if (blockStack->strayTableContent)
-            inStrayTableContent = true;
+            inStrayTableContent++;
 
         // Clear our malformed table parent variable.
         malformedTableParent = 0;
@@ -1468,7 +1467,7 @@ void KHTMLParser::popBlock( int _id )
     {
         if (Elem->id == _id)
         {
-            bool strayTable = inStrayTableContent;
+            int strayTable = inStrayTableContent;
             popOneBlock();
             Elem = 0;
 
@@ -1476,7 +1475,7 @@ void KHTMLParser::popBlock( int _id )
             // explicit <tbody> or <tr>.
             // If we end up needing to reopen residual style tags, the root of the reopened chain
             // must also know that it is the root of malformed content inside a <tbody>/<tr>.
-            if (strayTable && !inStrayTableContent && residualStyleStack) {
+            if (strayTable && (inStrayTableContent < strayTable) && residualStyleStack) {
                 NodeImpl* curr = current;
                 while (curr && curr->id() != ID_TABLE)
                     curr = curr->parentNode();
@@ -1546,7 +1545,7 @@ void KHTMLParser::popOneBlock(bool delBlock)
     setCurrent(Elem->node);
 
     if (Elem->strayTableContent)
-        inStrayTableContent = false;
+        inStrayTableContent--;
 
     if (delBlock)
         delete Elem;
