@@ -26,6 +26,8 @@
 #ifndef QSORTEDLIST_H_
 #define QSORTEDLIST_H_
 
+#include "qlist.h"
+
 template<class T> class QSortedList : public QList<T> {
 };
 

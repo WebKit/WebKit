@@ -26,24 +26,38 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
+#include "qnamespace.h"
 #include "qpaintdevice.h"
 #include "qcolor.h"
 #include "qbrush.h"
+#include "qpen.h"
+#include "qregion.h"
 
 class QFont;
 class QFontMetrics;
 class QPixmap;
 
-class QPainter {
+class QPainter : public Qt {
 public:
     QPainter();
     QPainter(const QPaintDevice *);
     
     void setFont(const QFont &);
     QFontMetrics fontMetrics() const;
+    const QPen &pen() const;
+    void setPen(const QPen &);
+    void setBrush(BrushStyle);
 
+    QRect xForm(const QRect &) const;
+
+    void drawRect( int x, int y, int w, int h );
     void fillRect(int x, int y, int w, int h, const QBrush &);
-    void drawTiledPixmap(int x, int y, int w, int h, const QPixmap &);
+    void drawTiledPixmap(int x, int y, int w, int h, const QPixmap &, int sx=0, int sy=0);
+    void setClipping(bool);
+    void setClipRegion(const QRegion &);
+    const QRegion &clipRegion() const;
+    bool hasClipping() const;
+
 };
 
 #endif

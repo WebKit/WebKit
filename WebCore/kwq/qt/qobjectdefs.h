@@ -26,7 +26,7 @@
 #ifndef QOBJECTDEFS_H_
 #define QOBJECTDEFS_H_
 
-// FIXME: should these macros be in "kwq.h" or other header file?
+#include <kglobalsettings.h>
 
 #define Q_PROPERTY(text)
 

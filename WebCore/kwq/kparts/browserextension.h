@@ -29,6 +29,9 @@
 // Added for compilation of khtml/dom/html_document.cpp:184
 #include <qdatastream.h>
 
+// This is a bad hack to get some rendering code to work
+#include <kxmlguiclient.h>
+
 // classes and includes added for ecma directory
 #include "part.h"
 #include "browserinterface.h"
@@ -65,6 +68,9 @@ public:
      BrowserInterface *browserInterface() const;
      void openURLRequest(const KURL &url, const KParts::URLArgs &args = KParts::URLArgs());
      void createNewWindow(const KURL &url, const KParts::URLArgs &args, const KParts::WindowArgs &windowArgs, KParts::ReadOnlyPart *&part);
+};
+
+class BrowserHostExtension {
 };
 
 }; // namespace KParts

@@ -23,25 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QFONTMETRICS_H_
-#define QFONTMETRICS_H_
+#ifndef QSCROLLBAR_H_
+#define QSCROLLBAR_H_
 
-class QRect;
-class QChar;
-class QFont;
-class QSize;
-class QString;
+#include "qwidget.h"
 
-class QFontMetrics {
+class QScrollBar : public QWidget {
 public:
-    QFontMetrics();
-    QFontMetrics(const QFont&);
-
-    int width() const;
-    int width(char) const;
-    int descent() const;
-    QRect boundingRect(QChar) const;
-    QSize size(int flags, const QString& str, int len=-1, int tabstops=0, int *tabarray=0, char **intern=0 ) const;
+    virtual void setPalette(const QPalette &);
 };
 
 #endif

@@ -26,7 +26,13 @@
 #ifndef KLINEEDIT_H_
 #define KLINEEDIT_H_
 
-class KLineEdit {
+#include <qlineedit.h>
+
+class KLineEdit : public QLineEdit {
+public:
+    KLineEdit(QWidget *parent=0, const char *name=0);
+
+    void setMouseTracking(bool);
 };
 
 #endif

@@ -38,9 +38,13 @@ public:
     void append(const T *);
     void setAutoDelete(bool);
     bool insert(uint i, const T *);
+    bool remove();
     bool remove(const T *);
     bool removeFirst();
     bool removeLast();
+    T *getLast() const;
+    T *current() const;
+    T *prev() const;
     void prepend(const T *);
     T *take(uint i);
     T *first();

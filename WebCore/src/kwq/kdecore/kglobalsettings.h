@@ -30,9 +30,11 @@ class QFont;
 
 class KGlobalSettings {
 public:
-	static QFont generalFont();
-	static QFont windowTitleFont();
-	static QFont menuFont();
+    static QFont generalFont();
+    static QFont windowTitleFont();
+    static QFont menuFont();
+
+    static int contrast();
 };
 
 #endif

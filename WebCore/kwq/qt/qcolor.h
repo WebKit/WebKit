@@ -42,7 +42,10 @@ public:
     void setRgb(int,int,int);
     void setRgb(int);
 
+    void hsv(int *, int *, int *) const;
+
     QColor light(int f = 150) const;
+    QColor dark(int f = 200) const;
 
     QColor &operator=(const QColor &);
     bool operator==(const QColor &x) const;

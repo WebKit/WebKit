@@ -31,7 +31,6 @@
 // FIXME: workaround for error on line 58 of khtml/html/html_imageimpl.h
 #include "qimage.h"
 
-// FIXME: workaround for error on line 62 of khtml/java/kjavaappletcontext.cpp
 #include "qrect.h"
 
 class QRegion {
@@ -40,9 +39,13 @@ public:
     enum RegionType { Ellipse, Rectangle };
 
     QRegion();
+    QRegion(const QRect &);
     QRegion(int, int, int, int, RegionType = Rectangle);
     QRegion(const QPointArray &);
+
+    QRegion intersect(const QRegion &) const;
     bool contains(const QPoint &) const;
+    bool isNull() const;
 };
 
 #endif

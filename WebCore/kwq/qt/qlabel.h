@@ -31,6 +31,7 @@
 class QLabel : public QFrame {
 public:
      QLabel(QWidget *parent);
+     QLabel(const QString &, QWidget *);
 
      virtual void setText(const QString &);
      virtual void setAlignment(int);

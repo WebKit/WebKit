@@ -28,8 +28,8 @@
 
 #include <kwqdef.h>
 
-// includes added to help in compilation of khtml/khtmlview.h
 #include "qobjectdefs.h"
+#include "qnamespace.h"
 #include "qstring.h"
 #include "qevent.h"
 #include "qstringlist.h"
@@ -44,7 +44,7 @@
 
 class QVariant;
 
-class QObject {
+class QObject : public Qt {
 public:
     QObject(QObject *parent=0, const char *name=0);
     const char *name() const;
@@ -57,6 +57,7 @@ public:
     int startTimer(int);
     void killTimer(int);
     void killTimers();
+    void installEventFilter(const QObject *);
 };
 
 #endif

@@ -42,9 +42,36 @@ public:
     enum AlignmentFlags {
         AlignCenter,
         WordBreak,
+        ShowPrefix,
+    };
+
+    enum PenStyle {
+        NoPen,
+        SolidLine,
+        DotLine,
+    };
+
+    enum BrushStyle {
+        NoBrush,
+        SolidPattern,
+    };
+
+    enum GUIStyle {
+        MacStyle,
+        WindowsStyle,
+    };
+
+    enum Key {
+        Key_Home = 0x1010,              // cursor movement
+        Key_End = 0x1011,
+        Key_Left = 0x1012,
+        Key_Up = 0x1013,
+        Key_Right = 0x1014,
+        Key_Down = 0x1015,
     };
 
     static const QColor &black;
+    static const QColor &darkGray;
 };
 
 #endif

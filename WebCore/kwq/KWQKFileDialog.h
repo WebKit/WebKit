@@ -26,4 +26,7 @@
 #ifndef KFILEDIALOG_H_
 #define KFILEDIALOG_H_
 
+class KFileDialog {
+};
+
 #endif

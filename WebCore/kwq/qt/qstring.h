@@ -33,6 +33,12 @@ class QRegExp;
 
 class QChar {
 public:
+    enum Direction {
+        // NOTE: alphabetical order
+        DirAL, DirAN, DirB, DirBN, DirCS, DirEN, DirES, DirET, DirL, DirLRE,
+        DirLRO, DirNSM, DirON, DirPDF, DirR, DirRLE, DirRLO, DirS, DirWS
+    };
+
     QChar();
     QChar(char);
     QChar(uchar);
@@ -50,8 +56,11 @@ public:
     bool isSpace() const;
     bool isLetter() const;
     bool isLetterOrNumber() const;
+    bool isPunct() const;
     uchar cell() const;
     uchar row() const;
+    Direction direction() const;
+
     friend inline int operator==(char, QChar);
     friend inline int operator==(QChar, char);
     friend inline int operator==(QChar, QChar);
@@ -63,11 +72,6 @@ public:
 
     static const QChar null;
 
-    enum Direction {
-        // NOTE: alphabetical order
-        DirAL, DirAN, DirB, DirBN, DirCS, DirEN, DirES, DirET, DirL, DirLRE,
-        DirLRO, DirNSM, DirON, DirPDF, DirR, DirRLE, DirRLO, DirS, DirWS
-    };
 };
 
 class QString {

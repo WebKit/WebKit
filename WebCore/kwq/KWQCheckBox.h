@@ -26,4 +26,14 @@
 #ifndef QCHECKBOX_H_
 #define QCHECKBOX_H_
 
+#include "qbutton.h"
+
+class QCheckBox : public QButton {
+public:
+    QCheckBox();
+    QCheckBox(QWidget *parent);
+
+    void setChecked(bool);
+};
+
 #endif

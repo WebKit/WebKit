@@ -27,8 +27,9 @@
 #define QBRUSH_H_
 
 #include "qcolor.h"
+#include "qnamespace.h"
 
-class QBrush {
+class QBrush : public Qt {
 friend class QPainter;
 public: 
     QBrush();

@@ -26,4 +26,15 @@
 #ifndef QRADIOBUTTON_H_
 #define QRADIOBUTTON_H_
 
+#include "qwidget.h"
+#include "qbutton.h"
+
+class QRadioButton : public QButton {
+public:
+    QRadioButton();
+    QRadioButton(QWidget *);
+
+    void setChecked(bool);
+};
+
 #endif

@@ -37,7 +37,10 @@ public:
     int x() const;
     int y() const;
 
+    int manhattanLength() const;
+
     friend inline QPoint operator+(const QPoint &, const QPoint &);
+    friend inline QPoint operator-(const QPoint &, const QPoint &);
 };
 
 // FIXME: QPointArray here to workaround bug in khtml/html/html_imageimpl.cpp

@@ -27,9 +27,11 @@
 #define QSCROLLVIEW_H_
 
 #include "qwidget.h"
+#include "qscrollbar.h"
 
 class QScrollView : public QWidget {
 public:
+    QWidget* viewport() const;
     int visibleWidth() const;
     int visibleHeight() const;
     int contentsX() const;
@@ -38,6 +40,8 @@ public:
     virtual void setContentsPos(int x, int y);
     // NOTE: alphabetical order
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
+    QScrollBar *horizontalScrollBar() const;
+    QScrollBar *verticalScrollBar() const;
 };
 
 #endif

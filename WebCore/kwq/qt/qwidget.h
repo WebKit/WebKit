@@ -26,10 +26,13 @@
 #ifndef QWIDGET_H_
 #define QWIDGET_H_
 
+#include "qobject.h"
 #include "qpaintdevice.h"
 #include "qpoint.h"
 #include "qsize.h"
-#include "qobject.h"
+#include "qpalette.h"
+#include "qstyle.h"
+#include "qfont.h"
 
 class QWidget : public QObject, public QPaintDevice {
 public:
@@ -40,6 +43,7 @@ public:
     int width() const;
     int height() const;
     QSize size() const;
+    virtual QSize sizeHint() const;
     virtual void resize(int,int);
     void resize(const QSize &);
     QPoint pos() const;
@@ -51,6 +55,18 @@ public:
     void setFocus();
     void clearFocus();
     virtual void setActiveWindow();
+    virtual void setEnabled(bool);
+    const QPalette& palette() const;
+    virtual void setPalette(const QPalette &);
+    void unsetPalette();
+    virtual void setAutoMask(bool);
+    virtual void setMouseTracking(bool);
+    QStyle &style() const;
+    void setStyle(QStyle *);
+    QFont font() const;
+    virtual void setFont(const QFont &);
+    void constPolish() const;
+    virtual QSize minimumSizeHint() const;
 };
 
 #endif

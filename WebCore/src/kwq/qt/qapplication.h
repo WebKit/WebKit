@@ -26,13 +26,16 @@
 #ifndef QAPPLICATION_H_
 #define QAPPLICATION_H_
 
-class QPalette;
-class QWidget;
+#include "qpalette.h"
+#include "qwidget.h"
+#include "qsize.h"
 
 class QApplication {
 public:
     static QPalette palette(const QWidget* = 0);
     static QWidget *desktop();
+    static int startDragDistance();
+    static QSize globalStrut();
 };
 
 #endif

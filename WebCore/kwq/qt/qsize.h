@@ -34,8 +34,10 @@ public:
     bool isValid() const;
     int width() const;
     int height() const;
+    QSize expandedTo(const QSize &) const;
 
     friend inline QSize operator+(const QSize &, const QSize &);
+    friend inline bool operator==(const QSize &, const QSize &);
     friend inline bool operator!=(const QSize &, const QSize &);
 };
 
