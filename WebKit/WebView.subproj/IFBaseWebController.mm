@@ -188,18 +188,17 @@ static id IFLoadProgressMake()
         [frame _transitionProvisionalToCommitted];
     }
     
-    // Check if the load is complete for this data source.
+    // This resouce has completed, so check if the load is complete for all frames.
     if (progress->bytesSoFar == progress->totalToLoad)
-        [self _checkLoadCompleteForDataSource: dataSource];
+        [[self mainFrame] _checkLoadComplete: nil];
 }
 
 
 - (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
-    WEBKIT_ASSERT (dataSource != nil);
+    WEBKIT_ASSERT ([self mainFrame] != nil);
 
-    // FIXME What should we do if the error is for a provisional data source?
-    [self _checkLoadCompleteForDataSource: dataSource];
+    [[self mainFrame] _checkLoadComplete: error];
 }
 
 

@@ -28,8 +28,10 @@
     IFWebFramePrivate *data;
 
     [super init];
-    
+
     _framePrivate = [[IFWebFramePrivate alloc] init];   
+
+    [self _setState: IFWEBFRAMESTATE_UNINITIALIZED];    
 
     [self setController: c];
 
@@ -143,6 +145,7 @@
     if (renderPartFrame && [view isKindOfClass: NSClassFromString(@"IFWebView")])
         renderPartFrame->setWidget ([view _provisionalWidget]);
 
+    [self _setState: IFWEBFRAMESTATE_PROVISIONAL];
     
     return YES;
 }

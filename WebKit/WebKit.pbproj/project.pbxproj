@@ -193,6 +193,7 @@
 				F5EBC45802134BC301CA1520,
 				9CF0E24B021361B10ECA16EA,
 				F5B92B840223191D01C1A525,
+				F5DE3CB4023575AA01A80181,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -225,6 +226,7 @@
 				F5143A380221DCCE01A80181,
 				F520FB1C0221DEFD01C1A525,
 				F5B92B850223191D01C1A525,
+				F5DE3CB5023575AA01A80181,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -343,6 +345,8 @@
 				25C29825016E29620ECA149E,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
+				F5DE3CB2023575AA01A80181,
+				F5DE3CB3023575AA01A80181,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -1039,6 +1043,33 @@
 		};
 		F5B92B850223191D01C1A525 = {
 			fileRef = F5B92B830223191D01C1A525;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5DE3CB2023575AA01A80181 = {
+			isa = PBXFileReference;
+			name = IFError.h;
+			path = Misc.subproj/IFError.h;
+			refType = 4;
+		};
+		F5DE3CB3023575AA01A80181 = {
+			isa = PBXFileReference;
+			name = IFError.m;
+			path = Misc.subproj/IFError.m;
+			refType = 4;
+		};
+		F5DE3CB4023575AA01A80181 = {
+			fileRef = F5DE3CB2023575AA01A80181;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F5DE3CB5023575AA01A80181 = {
+			fileRef = F5DE3CB3023575AA01A80181;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -5,6 +5,7 @@
 */
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 
 #import <WebKit/WebKitDebug.h>
@@ -98,6 +99,8 @@
 
     WEBKIT_ASSERT ([self controller] != nil);
 
+    WEBKIT_ASSERT ([self _state] == IFWEBFRAMESTATE_PROVISIONAL);
+
     // Set the committed data source on the frame.
     [self _setDataSource: data->provisionalDataSource];
     
@@ -109,7 +112,61 @@
     // Now that the provisional data source is committed, release it.
     [data setProvisionalDataSource: nil];
 
+    [self _setState: IFWEBFRAMESTATE_COMMITTED];
+
     [[self controller] locationChangeCommittedForFrame: self];
+}
+
+- (IFWebFrameState)_state
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    
+    return data->state;
+}
+
+- (void)_setState: (IFWebFrameState)newState
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    data->state = newState;
+}
+
+- (BOOL)_checkLoadComplete: (IFError *)error
+{
+    int i, count;
+    
+    WEBKIT_ASSERT ([self controller] != nil);
+
+    if ([self _state] == IFWEBFRAMESTATE_COMPLETE)
+        return YES;
+
+    if (error){
+        [self _setState: IFWEBFRAMESTATE_ERROR];
+        [[self controller] locationChangeDone: error forFrame: self];
+        return YES;
+    }
+        
+    if ([self _state] == IFWEBFRAMESTATE_PROVISIONAL)
+        return NO;
+
+    // Check all children first.
+    count = [[[self dataSource] children] count];
+    for (i = 0; i < count; i++){
+        IFWebFrame *childFrame;
+        
+        childFrame = [[[self dataSource] children] objectAtIndex: i];
+        if ([childFrame _checkLoadComplete: nil] == NO)
+            return NO;
+    }
+
+    if (![[self dataSource] isLoading]){
+        [self _setState: IFWEBFRAMESTATE_COMPLETE];
+        [[self view] setNeedsLayout: YES];
+        [[self view] setNeedsDisplay: YES];
+        [[self controller] locationChangeDone: nil forFrame: self];
+        return YES;
+    }
+    return NO;
 }
 
 

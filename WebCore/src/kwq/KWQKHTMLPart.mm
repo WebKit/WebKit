@@ -59,6 +59,9 @@
 
 #include <WCLoadProgress.h>
 #include <WCWebDataSource.h>
+#include <WCError.h>
+
+#include <loader.h>
 
 #include <external.h>
 
@@ -70,6 +73,16 @@ void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
     WCIFWebDataSourceMake = func;
 }
 
+extern "C" {
+
+WCIFErrorMakeFunc WCIFErrorMake;
+
+void WCSetIFErrorMakeFunc(WCIFErrorMakeFunc func)
+{
+    WCIFErrorMake = func;
+}
+
+}
 
 static bool cache_init = false;
 
@@ -112,29 +125,17 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
-    void *userData;
-    
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-    
     KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
-    void *userData;
-    
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-
     KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
     [sender autorelease];
 }
 
 - (void)IFURLHandleResourceDidFinishLoading:(IFURLHandle *)sender data: (NSData *)data
 {
-    void *userData;
-    
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-
     KWQDEBUGLEVEL1 (0x2000, "url = %s\n", [[[sender url] absoluteString] cString]);
     m_part->closeURL();
 
@@ -148,10 +149,6 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
-    void *userData;
-    
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-
     KWQDEBUGLEVEL3 (0x2000, "url = %s, data = 0x%08x, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     if (!m_data) {
         m_data = [data retain];
@@ -166,11 +163,15 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
-    void *userData;
-    
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
-
     KWQDEBUGLEVEL2 (0x2000, "url = %s, result = %d\n", [[[sender url] absoluteString] cString], result);
+
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
+    loadProgress->totalToLoad = [sender contentLength];
+    loadProgress->bytesSoFar = [[sender availableResourceData] length];
+
+    IFError *error = WCIFErrorMake(result);
+    [[dataSource controller] receivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: dataSource];
+
     [sender autorelease];
 }
 
@@ -181,10 +182,12 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 }
 
 
+/*
 -(void)checkCompleted:(NSNotification *)notification
 {
     m_part->checkCompleted();
 }
+*/
 
 -(void)dealloc
 {
@@ -425,12 +428,14 @@ bool KHTMLPart::openURL( const KURL &url )
     d->m_handle = [[IFURLHandle alloc] initWithURL:theURL];
     [d->m_handle addClient:d->m_recv];
     [d->m_handle loadInBackground];
-    
+
+/*    
     [[NSNotificationCenter defaultCenter] addObserver:d->m_recv
         selector:@selector(checkCompleted:) name:urlString object:nil];
     
     // tell anyone who's interested that we've started to load a uri
     [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-start" object:urlString];
+*/
     
     return true;
 }
@@ -452,8 +457,10 @@ bool KHTMLPart::closeURL()
     if ([urlString hasSuffix:@"/"]) {
         urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
+
+/*
     [[NSNotificationCenter defaultCenter] postNotificationName:urlString object:nil];
-    
+*/    
     // Reset the the current working URL to the default URL.
     d->m_workingURL = KURL();
 
@@ -1796,6 +1803,7 @@ void KHTMLPart::overURL( const QString &url, const QString &target )
     _logNeverImplemented();
 }
 
+/*
 void KHTMLPart::checkCompleted()
 {
     int requests;
@@ -1835,3 +1843,4 @@ void KHTMLPart::checkCompleted()
         end();
     }
 }
+*/

@@ -23,13 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef _EXTERNAL_H
-#define _EXTERNAL_H_
+#ifndef __EXTERNAL_H
+#define __EXTERNAL_H_
+
+#import <WebFoundation/WebFoundation.h>
+
 
 @class IFWebDataSource;
 @class IFWebView;
 @class IFWebFrame;
 @class IFError;
+@class IFURLHandle;
+
 
 @protocol IFWebController
 - (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource;
@@ -50,6 +55,9 @@
 - frameNamed: (NSString *)f;
 - (void)_setParent: (IFWebDataSource *)p;
 - (IFWebDataSource *)parent;
+- (void)_addURLHandle: (IFURLHandle *)handle;
+- (void)_removeURLHandle: (IFURLHandle *)handle;
+- controller;
 @end
 
 // This should not be allowed here.  data source should not reference view
@@ -92,6 +100,22 @@ typedef enum {
 
 - (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
 
+@end
+
+
+@interface URLLoadClient : NSObject <IFURLHandleClient>
+{
+    @public
+    khtml::Loader *m_loader;
+    id m_dataSource;
+}
+
+-(id)initWithLoader:(khtml::Loader *)loader dataSource: dataSource;
+
+@end
+
+@interface WCURLHandle
+-(int)contentLength;
 @end
 
 #endif

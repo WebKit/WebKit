@@ -67,6 +67,8 @@
 - (void)_startLoading: (BOOL)forceRefresh initiatedByUserEvent: (BOOL)byUserEvent
 {
     KURL url = [[[self inputURL] absoluteString] cString];
+
+    WEBKIT_ASSERT ([self frame] != nil);
     
     [self _part]->openURL (url);
     

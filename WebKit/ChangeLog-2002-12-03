@@ -1,3 +1,31 @@
+2002-03-05  Richard Williamson  <rjw@apple.com>
+
+        Pass errors correctly to browser.
+        Removed old notification code.
+        Added support for IFError.
+        Lots of little cleanups.
+        Improved IFWebFrame state handling.
+
+	* Misc.subproj/IFError.h:
+	* Misc.subproj/IFError.m: (IFErrorMake), (+[IFError load]), (-[IFError
+	initWithErrorCode:]), (-[IFError errorCode]), (-[IFError errorDescription]):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	receivedProgress:forResource:fromDataSource:]), (-[IFBaseWebController
+	receivedError:forResource:partialProgress:fromDataSource:]):
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource isLoading]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource
+	_startLoading:initiatedByUserEvent:]):
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame
+	initWithName:view:provisionalDataSource:controller:]), (-[IFWebFrame
+	setProvisionalDataSource:]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _state]), (-[IFWebFrame
+	_setState:]), (-[IFWebFrame _checkLoadComplete:]):
+
 2002-03-05  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/IFWebDataSource.mm: (+[IFWebDataSource initialize]):

@@ -1,5 +1,26 @@
 2002-03-05  Richard Williamson  <rjw@apple.com>
 
+        Pass errors correctly to browser.
+        Removed old notification code.
+        Added support for IFError.
+        Lots of little cleanups.
+        
+	* src/kwq/KWQComboBox.mm: (QComboBox::setCurrentItem):
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidBeginLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidCancelLoading:]), (-[KHTMLPartLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[KHTMLPartLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (KHTMLPart::openURL),
+	(KHTMLPart::closeURL):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+	* src/kwq/WCError.h:
+	* src/kwq/WCWebDataSource.h:
+	* src/kwq/external.h:
+
+2002-03-05  Richard Williamson  <rjw@apple.com>
+
         With fonts now being correctly specified we're exercising some new code paths.  This introduced a new
         class of weird string bugs.  Turns out that CFString is doing some mojo that I suspect is a performance
         optimization.  Constants strings appears to be uniqued and hard-wired to have a -1 retain count.  It

@@ -234,9 +234,21 @@ static id IFWebDataSourceMake(void *url)
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    // FIXME!  Also need to account for main document.
+    int i, count;
+    
     IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
-    return [data->urlHandles count] ? YES : NO;
+    if ([data->urlHandles count])
+        return YES;
+    
+    count = [[self children] count];
+    for (i = 0; i < count; i++){
+        IFWebFrame *childFrame;
+        
+        childFrame = [[self children] objectAtIndex: i];
+        if ([[childFrame dataSource] isLoading])
+            return YES;
+    }
+    return NO;
 }
 
 

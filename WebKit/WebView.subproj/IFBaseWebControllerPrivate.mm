@@ -31,11 +31,4 @@
 
 @implementation IFBaseWebController (IFPrivate)
 
-- (void)_checkLoadCompleteForDataSource: (IFWebDataSource *)dataSource
-{
-    // Check that all handle clients have been removed,
-    // and that all descendent data sources are done
-    // loading.  Then call locationChangeDone:forFrame:
-}
-
 @end

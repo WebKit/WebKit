@@ -30,6 +30,8 @@
 #include <loader.h>
 
 #include <WCLoadProgress.h>
+#include <WCError.h>
+#include <external.h>
 
 // up to which size is a picture for sure cacheable
 #define MAXCACHEABLE 40*1024
@@ -54,6 +56,7 @@
 #include "khtml_part.h"
 
 #include "css/css_stylesheetimpl.h"
+
 
 using namespace khtml;
 using namespace DOM;
@@ -912,56 +915,6 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 // Class URLLoadClient ======================================================================
 
-@interface URLLoadClient : NSObject <IFURLHandleClient>
-{
-    @public
-    Loader *m_loader;
-    id m_dataSource;
-}
-
--(id)initWithLoader:(Loader *)loader dataSource: dataSource;
-
-@end
-
-typedef enum {
-    IF_LOAD_TYPE_CSS    = 1,
-    IF_LOAD_TYPE_IMAGE  = 2,
-    IF_LOAD_TYPE_SCRIPT = 3,
-    IF_LOAD_TYPE_HTML   = 4
-} IF_LOAD_TYPE;
-
-
-@interface IFLoadProgress : NSObject
-{
-    int bytesSoFar;	// 0 if this is the start of load
-    int totalToLoad;	// -1 if this is not known.
-                        // bytesSoFar == totalLoaded when complete
-    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
-}
-- init;
-@end
-
-@class IFError;
-@class IFURLHandle;
-
-@protocol  IFLoadHandler
-- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
-
-- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
-
-@end
-
-@interface IFWebDataSource
-- (void)_addURLHandle: (IFURLHandle *)handle;
-- (void)_removeURLHandle: (IFURLHandle *)handle;
-- controller;
-@end
-
-@interface WCURLHandle
--(int)contentLength;
-@end
-
-
 @implementation URLLoadClient
 
 -(id)initWithLoader:(Loader *)loader dataSource: dataSource
@@ -1058,6 +1011,17 @@ typedef enum {
     KWQDEBUGLEVEL2 (0x2000, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
+
+    IFError *error = WCIFErrorMake(result);
+    id <IFLoadHandler> controller = [m_dataSource controller];
+    
+
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
+    loadProgress->totalToLoad = [sender contentLength];
+    loadProgress->bytesSoFar = [[sender availableResourceData] length];
+
+    [controller receivedError: error forResource: [[sender url] absoluteString] partialProgress: loadProgress fromDataSource: m_dataSource];
+
     [sender autorelease];
 }
 
