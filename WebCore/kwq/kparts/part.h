@@ -27,6 +27,7 @@
 #define PART_H_
 
 #include <kurl.h>
+#include <qobject.h>
 #include <qvariant.h>
 #include <qlist.h>
 #include <qstringlist.h>

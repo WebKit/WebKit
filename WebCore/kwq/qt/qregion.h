@@ -26,6 +26,9 @@
 #ifndef QREGION_H_
 #define QREGION_H_
 
+#include "qobjectdefs.h"
+#include "qrect.h"
+
 class QRegion {
 };
 

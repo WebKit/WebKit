@@ -26,13 +26,28 @@
 #ifndef QTEXTSTREAM_H_
 #define QTEXTSTREAM_H_
 
+#include "qstring.h"
+
 class QTextStream {
+public:
+     QTextStream();
+     QTextStream(QByteArray, int);
+
+     QTextStream &operator<<(char);
+     QTextStream &operator<<(const char *);
+     QTextStream &operator<<(const QCString&);
+     QTextStream &operator<<(const QString&);
 };
 
 class QTextIStream : public QTextStream {
 public:
     QTextIStream(QString *);
     QString readLine();
+};
+
+class QTextOStream : public QTextStream {
+public:
+    QTextOStream(QByteArray ba);
 };
 
 #endif

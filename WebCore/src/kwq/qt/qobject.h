@@ -26,10 +26,13 @@
 #ifndef QOBJECT_H_
 #define QOBJECT_H_
 
+#include <kwqdef.h>
+
 // includes added to help in compilation of khtml/khtmlview.h
 #include "qobjectdefs.h"
+#include "qstring.h"
 #include "qevent.h"
-#include "qvariant.h"
+#include "qstringlist.h"
 
 // FIXME: should these macros be in "kwq.h" or other header file?
 #define slots
@@ -39,6 +42,8 @@
 #define emit
 #define Q_OBJECT
 
+class QVariant;
+
 class QObject {
 public:
     QObject(QObject *parent=0, const char *name=0);
@@ -46,9 +51,9 @@ public:
     virtual void setName(const char *);
     QVariant property(const char *name) const;
     bool inherits(const char *) const;
-    static bool connect(const QObject *, const char *, const QObject *, const
-            char *);
+    static bool connect(const QObject *, const char *, const QObject *, const char *);
     bool connect(const QObject *, const char *, const char *) const;
+    static bool disconnect( const QObject *, const char *, const QObject *, const char *);
     int startTimer(int);
     void killTimer(int);
     void killTimers();

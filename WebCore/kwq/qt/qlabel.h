@@ -26,4 +26,14 @@
 #ifndef QLABEL_H_
 #define QLABEL_H_
 
+#include "qframe.h"
+
+class QLabel : public QFrame {
+public:
+     QLabel(QWidget *parent);
+
+     virtual void setText(const QString &);
+     virtual void setAlignment(int);
+};
+
 #endif

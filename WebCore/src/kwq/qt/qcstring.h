@@ -32,6 +32,8 @@
 // added to help in compilation of khtml/khtml_part.h:811
 #include "qarray.h"
 
+#include <string.h>
+
 typedef QArray<char> QByteArray;
 
 // added to help in compilation of khtml/dom/html_documnent.cpp:182

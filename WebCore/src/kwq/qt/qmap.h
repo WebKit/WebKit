@@ -26,24 +26,48 @@
 #ifndef QMAP_H_
 #define QMAP_H_
 
+#include <kwqdef.h>
+
 template<class K, class T> class QMapIterator {
+public:
+    QMapIterator();
+    QMapIterator(const QMapIterator<K,T>& it);
+
+    const K& key() const;
+    const T& data() const;
+
+    bool operator!=(const QMapIterator<K,T>&) const;
+    T& operator*();
+    const T& operator*() const;
+    QMapIterator<K,T>& operator++();
 };
 
 template<class K, class T> class QMapConstIterator {
 public:
-    bool operator!=(const QMapConstIterator <K, T> &) const;
+    QMapConstIterator();
+    QMapConstIterator(const QMapIterator<K,T>&);
+    const K& key() const;
+    const T& data() const;
+
+    bool operator!=(const QMapConstIterator<K,T>&) const;
     const T &operator*() const;
+    QMapConstIterator<K,T>& operator++();
 };
 
 template <class K, class T> class QMap {
 public:
     typedef QMapIterator<K, T> Iterator;
     typedef QMapConstIterator< K, T> ConstIterator;
+    Iterator begin();
+    Iterator end();
+    ConstIterator begin() const;
     ConstIterator end() const;
     Iterator insert(const K&, const T&);
     ConstIterator find (const K &) const;
     void remove(const K&);
     void clear();
+    uint count() const;
+    
     T& operator[](const K& k);
 };
 

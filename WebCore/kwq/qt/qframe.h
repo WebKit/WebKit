@@ -23,13 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QREGION_H_
-#define QREGION_H_
+#ifndef QFRAME_H_
+#define QFRAME_H_
 
-#include "qobjectdefs.h"
-#include "qrect.h"
+#include "qwidget.h"
 
-class QRegion {
+class QFrame : public QWidget {
+public:
+    enum Shape {
+        StyledPanel,
+    };
+    enum Shadow {
+        Sunken,
+    };
+
+    QFrame(QWidget *parent);
+
+    virtual void setFrameStyle(int);
 };
 
 #endif

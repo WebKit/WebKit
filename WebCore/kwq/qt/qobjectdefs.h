@@ -30,4 +30,26 @@
 
 #define Q_PROPERTY(text)
 
+class QObject;
+class QEvent;
+
+class QPaintDevice;
+class QPaintDeviceMetrics;
+class QWidget;
+class QColor;
+class QColorGroup;
+class QPalette;
+class QPainter;
+class QRegion;
+class QSize;
+class QSizePolicy;
+class QRect;
+class QFont;
+class QFontMetrics;
+class QBrush;
+class QBitmap;
+class QMovie;
+class QTimer;
+class QImage;
+
 #endif

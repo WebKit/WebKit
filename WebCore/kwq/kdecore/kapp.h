@@ -30,6 +30,7 @@
 #include <dcopclient.h>
 #include <qapplication.h>
 #include <qpalette.h>
+#include <qregexp.h>
 
 #define kapp KApplication::kApplication()
 

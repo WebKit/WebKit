@@ -26,11 +26,16 @@
 #ifndef KWINMODULE_H_
 #define KWINMODULE_H_
 
+#include <qobject.h>
+
 class QRect;
 
-class KWinModule {
+class KWinModule : public QObject {
 public:
+    KWinModule(QObject* parent = 0);
+
     QRect workArea(int desktop = - 1) const;
+    void doNotManage(const QString&);
 };
 
 #endif

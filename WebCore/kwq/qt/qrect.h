@@ -26,7 +26,7 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
-class QSize;
+#include "qsize.h"
 
 class QRect {
 public:

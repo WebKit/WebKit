@@ -32,7 +32,7 @@ class QString;
 
 class KConfig : public KConfigBase {
 public:
-    KConfig(const QString &);
+    KConfig(const QString &, bool bReadOnly=false);
 };
 
 #endif

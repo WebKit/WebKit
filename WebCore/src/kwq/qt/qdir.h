@@ -26,4 +26,20 @@
 #ifndef QDIR_H_
 #define QDIR_H_
 
+#include "qstring.h"
+#include "qstringlist.h"
+#include "qfile.h"
+
+class QDir {
+public:
+    QDir();
+    QDir(const QString&);
+
+    virtual QString absPath() const;
+    virtual QString absFilePath( const QString &fileName) const;
+    virtual bool cdUp();
+    virtual bool exists(const QString&) const;
+    virtual QStringList entryList(const QString &nameFilter);
+};
+
 #endif

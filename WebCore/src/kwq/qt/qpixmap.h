@@ -27,7 +27,9 @@
 #define QPIXMAP_H_
 
 #include "qpaintdevice.h"
+#include "qcolor.h"
 #include "qstring.h"
+#include "qnamespace.h"
 
 class QBitmap;
 

@@ -39,6 +39,11 @@ public:
         ShiftButton,
     };
 
+    enum AlignmentFlags {
+        AlignCenter,
+        WordBreak,
+    };
+
     static const QColor &black;
 };
 

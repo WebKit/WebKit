@@ -31,6 +31,8 @@ class QString;
 class KProtocolManager {
 public:
     static QString userAgentForHost(const QString&);
+    static bool useProxy();
+    static QString httpProxy();
 };
 
 #endif

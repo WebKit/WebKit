@@ -1,0 +1,85 @@
+# Generated automatically from Makefile.in by configure.
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../../..
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+ALLOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+CXXOBJECTS = $(filter-out javaembed.o,$(ALLOBJECTS))
+
+OBJECTS = $(CXXOBJECTS) 
+
+LIBRARY = libkhtmljava.a
+
+CLEAN_FILES = $(OBJECTS) \
+	$(LIBRARY) \
+	*.moc \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CXXFLAGS = -DNEED_BOGUS_X_DEFINES -I$(TOPSRCDIR)/src/kwq \
+        -I$(TOPSRCDIR)/src/kwq/qt \
+        -I$(TOPSRCDIR)/src/kwq/kdecore \
+        -I.. \
+        -I. \
+        $(NULL)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(OBJECTS) $(LIBRARY)
+
+$(LIBRARY): $(CXXOBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
+	$(RANLIB) $(LIBRARY)
+
+
+kjavaapplet.cpp: kjavaapplet.moc
+kjavaapplet.moc:
+	touch $@
+
+kjavaappletcontext.cpp: kjavaappletcontext.moc
+kjavaappletcontext.moc:
+	touch $@
+
+kjavaappletserver.cpp: kjavaappletserver.moc
+kjavaappletserver.moc:
+	touch $@
+
+kjavaappletwidget.cpp: kjavaappletwidget.moc
+kjavaappletwidget.moc:
+	touch $@
+
+kjavadownloader.cpp: kjavadownloader.moc
+kjavadownloader.moc:
+	touch $@
+
+kjavaprocess.cpp: kjavaprocess.moc
+kjavaprocess.moc:
+	touch $@
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================

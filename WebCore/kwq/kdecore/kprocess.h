@@ -26,4 +26,25 @@
 #ifndef KPROCESS_H_
 #define KPROCESS_H_
 
+#include <signal.h>
+
+#include <qobject.h>
+#include <qstring.h>
+#include <qstrlist.h>
+
+class KProcess : public QObject {
+public:
+    enum Communication { NoCommunication = 0, Stdin = 1, Stdout = 2, NoRead };
+    enum RunMode { DontCare, NotifyOnExit, Block };
+
+    QStrList *args();
+    bool isRunning() const;
+    bool writeStdin(const char *buffer, int buflen);
+    virtual bool start(RunMode runmode = NotifyOnExit, Communication comm = NoCommunication);
+    virtual bool kill(int signo = SIGTERM);
+    void resume();
+
+    KProcess &operator<<(const QString& arg);
+};
+
 #endif

@@ -32,6 +32,9 @@ class QFile {
 public:
     QFile();
     QFile(const QString &);
+
+    bool exists() const;
+    static bool exists(const QString &);
     bool open(int);
     void close();
     uint size() const;

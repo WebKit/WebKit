@@ -26,6 +26,8 @@
 #ifndef QREGEXP_H_
 #define QREGEXP_H_
 
+#include "qstring.h"
+
 class QRegExp {
 public:
     QRegExp(const QString &);

@@ -26,6 +26,15 @@
 #ifndef KCONFIGBASE_H_
 #define KCONFIGBASE_H_
 
+#include <qobject.h>
+#include <qcolor.h>
+#include <qfont.h>
+#include <qdatetime.h>
+#include <qstrlist.h>
+#include <qstringlist.h>
+#include <qvariant.h>
+#include <qmap.h>
+
 class QString;
 class QColor;
 
@@ -35,6 +44,7 @@ public:
     QString readEntry(const char *pKey, const QString& aDefault = QString::null) const;
     int readNumEntry(const char *pKey, int nDefault = 0) const;
     unsigned int readUnsignedNumEntry(const char *pKey, unsigned int nDefault = 0) const;
+    bool readBoolEntry(const char *pKey, bool nDefault = 0) const;
     QColor readColorEntry(const char *pKey, const QColor* pDefault = 0L) const;
 };
 

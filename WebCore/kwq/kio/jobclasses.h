@@ -34,6 +34,7 @@ class Job : public QObject {
 public:
     int error();
     const QString & errorText();
+    QString errorString();
     virtual void kill(bool quietly = true);
 };
 

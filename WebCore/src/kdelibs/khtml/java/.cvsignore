@@ -1,8 +1,6 @@
 Makefile
+Makefile.am
 Makefile.in
-libkjava_la.all_cpp.cpp
-*.kdoc
-SunWS_cache
-ir.out
-kjava.policy
-*.kdevprj
+*.kde
+*.dep
+*.moc

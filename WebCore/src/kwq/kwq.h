@@ -23,28 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KWQDEF_H_
-#define KWQDEF_H_
+#ifndef KWQ_H_
+#define KWQ_H_
 
 #include <qsize.h>
 #include <qcolor.h>
 #include <qobject.h>
 #include <qvariant.h>
 
-typedef unsigned char uchar;
-typedef unsigned short ushort;
-typedef unsigned uint;
-typedef unsigned int Q_UINT32;  
-
-// FIXME: bogus forward declaration hack for parse error at line 47 of
-// "dom/css_extensions.h"
-class CSS2AzimuthImpl;
-
-#define QMAX(a,b) ((a) > (b) ? (a) : (b))
-#define TRUE (1)
-#define FALSE (0)
-
-void qDebug(const char *msg, ...);
-
+#include "kwqdef.h"
 
 #endif

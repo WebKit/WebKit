@@ -40,8 +40,10 @@ public:
     int width() const;
     int height() const;
     QSize size() const;
+    virtual void resize(int,int);
     void resize(const QSize &);
     QPoint pos() const;
+    virtual void show();
     virtual void move(const QPoint &);
     void move(int, int);
     QWidget *topLevelWidget() const;
