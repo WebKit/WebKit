@@ -12,7 +12,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,7 +23,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				DEBUGGING_SYMBOLS = NO;
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -144,7 +144,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit";
-				OTHER_LDFLAGS = "-no-c++filt";
+				OTHER_LDFLAGS = "-no-c++filt -seg_addr_table_filename \"`if [ \"x${RC_RELEASE}\" = \"xPanther\" ];  then echo \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; else echo \"/Applications/Safari.app/Contents/Frameworks/${PRODUCT_NAME}.framework/Versions/${FRAMEWORK_VERSION}/${PRODUCT_NAME}\"; fi`\"";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
@@ -3047,7 +3047,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				OPTIMIZATION_CFLAGS = "-O";
-				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
+				OTHER_LDFLAGS = "\U0001-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;

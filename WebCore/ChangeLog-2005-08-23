@@ -1,3 +1,28 @@
+2003-03-24  Trey Matteson  <trey@apple.com>
+
+	Pass -seg_addr_table_filename <FILENAME> to ld.  This makes our frameworks in
+	SYMROOT actually work for symbol resolution because they will have the correct
+	prebinding address.  It also fixes obscure B&I problems with prebinding
+	reported by Matt Reda.
+
+	Note the reason all this is tricky for our projects is that we have a different
+	install location for Jaguar and Panther.  The purpose of this arg is to declare
+	at link time our eventual location, which allows the prebinding address to be
+	found in /AppleInternal/Developer/seg_addr_table.  We use a funky back-tick
+	expression within OTHER_LDFLAGS to get a conditional value depending on the
+	build train we are in.
+
+	This can all go away once we only build on Panther and don't embed the
+	frameworks inside the Safari.app wrapper.
+
+	In addition I fixed the OTHER_LDFLAGS settings in our build styles to be
+	additive instead of overriding, so we have the args we used for B&I in force
+	when building outside of B&I.
+
+	Reviewed by Maciej.
+
+        * WebCore.pbproj/project.pbxproj:
+
 2003-03-24  David Hyatt  <hyatt@apple.com>
 
 	Clean up isInlineFlow.  Add a couple of new methods that I'll
