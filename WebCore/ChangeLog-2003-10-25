@@ -1,3 +1,13 @@
+2002-12-12  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3125583.  Don't redraw view under resize bar
+        on mouseup.
+        
+        Reviewed by gramps.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+
 2002-12-11  David Hyatt  <hyatt@apple.com>
 
 	Fix hang on monkeyvoodoo.net and on skramkoob.com.  The bugs

@@ -438,7 +438,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         setLayouted(false);
     }
     
-    if (m_resizing || evt->id() == EventImpl::MOUSEUP_EVENT) {
+    else if (m_resizing || evt->id() == EventImpl::MOUSEUP_EVENT) {
 #if APPLE_CHANGES
         KHTMLView *v = root()->view();
         QPainter paint;
