@@ -1,3 +1,10 @@
+2002-11-04  Richard Williamson  <rjw@apple.com>
+
+        Changes to support cursive letter forms.
+        
+        * kwq/KWQChar.mm:
+        * kwq/WebCoreUnicode.h:
+
 2002-11-04  Darin Adler  <darin@apple.com>
 
 	- fixed 3091714 -- reproducible assert cachedObject->response

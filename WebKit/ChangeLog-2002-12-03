@@ -1,3 +1,25 @@
+2002-11-04  Richard Williamson  <rjw@apple.com>
+
+        Changes to support cursive letter forms.  It works, but I've
+        disabled it for now.  It's buggy and needs cleanup.
+        Arabic now renders correctly except for ligature substitution.
+        
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeIsMark):
+        (getShape):
+        (prevChar):
+        (nextChar):
+        (prevLogicalCharJoins):
+        (nextLogicalCharJoins):
+        (glyphVariantLogical):
+        (shapedString):
+        * Misc.subproj/WebUnicodeTables.m:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawCharacters:stringLength:fromCharacterPosition:toCharacterPosition:atPoint:withPadding:withTextColor:backgroundColor:rightToLeft:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+        * WebKitPrefix.h:
+
 2002-11-04  Maciej Stachowiak  <mjs@apple.com>
 
 	Changes to send NSEvents all the way through WebCore and then pass

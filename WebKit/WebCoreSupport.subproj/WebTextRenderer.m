@@ -458,6 +458,18 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         fontBuffer = localFontBuffer;
     }
 
+#ifdef CURSIVE_SHAPES
+    if (rtl){
+        UniChar *shaped;
+        int lengthOut;
+        characters = shapedString ((UniChar *)&characters[from], length, from, to, 1, &lengthOut);
+        printf ("%d input, %d output\n", length, lengthOut);
+        for (i = 0; i < (int)length; i++){
+            printf ("0x%04x shaped to 0x%04x\n", characters[i], shaped[i]);
+        }
+    }
+#endif
+
     [self _floatWidthForCharacters:characters 
         stringLength:length 
         fromCharacterPosition: 0 
@@ -497,6 +509,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         int lastFrom = from;
         int pos = from;
 
+#ifndef CURSIVE_SHAPES
         if (rtl && numGlyphs > 1){
             int i;
             int end = numGlyphs;
@@ -523,7 +536,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
                 fontBuffer[end] = fswap1;
             }
         }
-        
+#endif        
         currentFont = fontBuffer[pos];
         nextX = startX;
         while (pos < to){
@@ -581,66 +594,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 }
 
 
-- (float)slowFloatWidthForCharacters: (const UniChar *)characters stringLength: (unsigned)length fromCharacterPostion: (int)pos numberOfCharacters: (int)len applyRounding: (BOOL)applyRounding
-{
-    float totalWidth = 0;
-    unsigned int charPos = 0, clusterLength, i, numGlyphs;
-    ATSGlyphVector glyphVector;
-    WebGlyphWidth glyphWidth;
-    ATSLayoutRecord *glyphRecord;
-    ATSGlyphRef glyphID;
-    float lastWidth = 0;
-    
-    ATSInitializeGlyphVector(length, 0, &glyphVector);
-    [self convertCharacters: characters length: length toGlyphs: &glyphVector skipControlCharacters: YES];
-    numGlyphs = glyphVector.numGlyphs;
-    glyphRecord = (ATSLayoutRecord *)glyphVector.firstRecord;
-    for (i = 0; i < numGlyphs; i++){
-        glyphID = glyphRecord->glyphID;
-
-        // Drop out early if we've measured to the end of the requested
-        // fragment.
-        if ((int)charPos - pos >= len){
-            if (glyphID == spaceGlyph){
-                //totalWidth -= lastWidth;
-                //totalWidth += ROUND_TO_INT(lastWidth);
-                totalWidth += CEIL_TO_INT(totalWidth) - totalWidth;
-            }
-            break;
-        }
-
-        // No need to measure until we reach start of string.
-        if ((int)charPos < pos)
-            continue;
-        
-        clusterLength = findLengthOfCharacterCluster (&characters[charPos], length - charPos);
-
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
-        glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
-        if (glyphID == spaceGlyph && applyRounding){
-            if (totalWidth > 0 && lastWidth > 0){
-                //totalWidth -= lastWidth;
-                //totalWidth += ROUND_TO_INT(lastWidth);
-                totalWidth += CEIL_TO_INT(totalWidth) - totalWidth;
-            }
-            glyphWidth = ROUND_TO_INT(glyphWidth);
-        }
-        lastWidth = glyphWidth;
-        
-        if ((int)charPos >= pos)
-            totalWidth += lastWidth;
-
-        charPos += clusterLength;
-    }
-    ATSClearGlyphVector(&glyphVector);
-    
-    if (applyRounding)
-        totalWidth += CEIL_TO_INT(totalWidth) - totalWidth;
-        
-    return totalWidth;
-}
-
-
 - (float)floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength characterPosition: (int)pos
 {
     // Return the width of the first complete character at the specified position.  Even though
@@ -660,6 +613,42 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 {
     return [self _floatWidthForCharacters:characters stringLength:stringLength fromCharacterPosition:pos numberOfCharacters:len withPadding: 0 applyRounding: YES attemptFontSubstitution: YES widths: widthBuffer fonts: nil  glyphs: nil numGlyphs: nil];
 }
+
+#ifdef DEBUG_COMBINING
+static const char *directionNames[] = {
+        "DirectionL", 	// Left Letter 
+        "DirectionR",	// Right Letter
+        "DirectionEN",	// European Number
+        "DirectionES",	// European Separator
+        "DirectionET",	// European Terminator (post/prefix e.g. $ and %)
+        "DirectionAN",	// Arabic Number
+        "DirectionCS",	// Common Separator 
+        "DirectionB", 	// Paragraph Separator (aka as PS)
+        "DirectionS", 	// Segment Separator (TAB)
+        "DirectionWS", 	// White space
+        "DirectionON",	// Other Neutral
+
+	// types for explicit controls
+        "DirectionLRE", 
+        "DirectionLRO", 
+
+        "DirectionAL", 	// Arabic Letter (Right-to-left)
+
+        "DirectionRLE", 
+        "DirectionRLO", 
+        "DirectionPDF", 
+
+        "DirectionNSM", 	// Non-spacing Mark
+        "DirectionBN"	// Boundary neutral (type of RLE etc after explicit levels)
+};
+
+static const char *joiningNames[] = {
+        "JoiningOther",
+        "JoiningDual",
+        "JoiningRight",
+        "JoiningCausing"
+};
+#endif
 
 - (float)_floatWidthForCharacters:(const UniChar *)characters stringLength:(unsigned)stringLength fromCharacterPosition: (int)pos numberOfCharacters: (int)len withPadding: (int)padding applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution widths: (float *)widthBuffer fonts: (NSFont **)fontBuffer glyphs: (CGGlyph *)glyphBuffer numGlyphs: (int *)_numGlyphs
 {
@@ -721,7 +710,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
 
 #ifdef DEBUG_DIACRITICAL
         if (IsNonBaseChar(c)){
-            printf ("NonBaseCharacter 0x%04x, joining attribute %d, combining class %d, direction %d, glyph %d, width %f\n", c, WebCoreUnicodeJoiningFunction(c), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), glyphID, widthForGlyph(self, glyphToWidthMap, glyphID));
+            printf ("NonBaseCharacter 0x%04x, joining attribute %d(%s), combining class %d, direction %d, glyph %d, width %f\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames(WebCoreUnicodeJoiningFunction(c)), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), glyphID, widthForGlyph(self, glyphToWidthMap, glyphID));
         }
 #endif
         
@@ -785,10 +774,8 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
                 widthBuffer[numGlyphs] = lastWidth;
             numGlyphs++;
         }
-
 #ifdef DEBUG_COMBINING        
-        if (WebCoreUnicodeJoiningFunction(c) != 0 || WebCoreUnicodeCombiningClassFunction(c) != 0)
-            printf ("Character 0x%04x, joining attribute %d, combining class %d, direction %d\n", c, WebCoreUnicodeJoiningFunction(c), WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c));
+        printf ("Character 0x%04x, joining attribute %d(%s), combining class %d, direction %d(%s)\n", c, WebCoreUnicodeJoiningFunction(c), joiningNames[WebCoreUnicodeJoiningFunction(c)], WebCoreUnicodeCombiningClassFunction(c), WebCoreUnicodeDirectionFunction(c), directionNames[WebCoreUnicodeDirectionFunction(c)]);
 #endif
         
         totalWidth += lastWidth;       

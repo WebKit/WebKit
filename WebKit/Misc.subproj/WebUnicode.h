@@ -20,6 +20,7 @@ extern int symmetricPairsSize;
 extern const unsigned short * const case_info[];
 extern const unsigned short * const ligature_info[];
 extern const unsigned short ligature_map[];
+extern UniChar *shapedString(UniChar *uc, int stringLength, int from, int len, int dir, int *lengthOut);
 #ifdef __cplusplus
 }
 #endif

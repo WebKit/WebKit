@@ -58,7 +58,6 @@ extern "C" {
 
         Punctuation_Connector,    //   Pc
         Punctuation_Dash,         //   Pd
-        Punctuation_Dask = Punctuation_Dash, // oops
         Punctuation_Open,         //   Ps
         Punctuation_Close,        //   Pe
         Punctuation_InitialQuote, //   Pi

@@ -29,9 +29,6 @@
 
 #import <Foundation/Foundation.h>
 
-#import <CoreFoundation/CFBidi.h>
-
-
 static UniChar scratchUniChar;
 
 static CFMutableStringRef GetScratchUniCharString()

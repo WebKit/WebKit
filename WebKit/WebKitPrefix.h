@@ -14,8 +14,16 @@
 #import <QD/ATSUnicodePriv.h>
 #import <CoreGraphics/CoreGraphics.h>
 
+#ifdef __OBJC__
 #import <Cocoa/Cocoa.h>
 #import <Foundation/NSPrivateDecls.h>
+#endif
 
 #import <Carbon/Carbon.h>
 
+#ifdef __cplusplus
+
+#include <cstddef>
+#include <new>
+
+#endif

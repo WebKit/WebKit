@@ -7038,7 +7038,7 @@ const Q_UINT16 * const decomposition_info[256] = {
 };
 // 67056 bytes
 
-static const Q_UINT16 ligature_map[] = {
+const Q_UINT16 ligature_map[] = {
     0,
     5503, 0,
     5488, 0,
@@ -8193,7 +8193,7 @@ static const Q_UINT16 li_FB[] = {
     0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-static const Q_UINT16 * const ligature_info[256] = {
+const Q_UINT16 * const ligature_info[256] = {
     li_00, li_01, li_02, li_03, li_04, li_05, li_06, li_07,
     li_07, li_09, li_0A, li_0B, li_0C, li_0D, li_07, li_0F,
     li_10, li_07, li_07, li_07, li_07, li_07, li_07, li_07,
