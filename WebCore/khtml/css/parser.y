@@ -927,9 +927,12 @@ function:
       $$.function = f;
   } |
   FUNCTION maybe_space error {
+      Function *f = new Function;
+      f->name = $1;
+      f->args = 0;
       $$.id = 0;
       $$.unit = Value::Function;
-      $$.function = 0;
+      $$.function = f;
   }
   ;
 /*

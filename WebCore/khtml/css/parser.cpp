@@ -308,7 +308,7 @@ static const short yyrline[] = { 0,
    875,   877,   878,   879,   886,   887,   888,   889,   890,   891,
    893,   898,   900,   901,   902,   903,   904,   905,   906,   907,
    908,   909,   910,   911,   912,   913,   914,   915,   916,   920,
-   928,   940,   947,   954,   962,   988,   990,   993,   995
+   928,   943,   950,   957,   965,   991,   993,   996,   998
 };
 #endif
 
@@ -1987,17 +1987,20 @@ case 140:
 case 141:
 #line 929 "parser.y"
 {
+      Function *f = new Function;
+      f->name = yyvsp[-2].string;
+      f->args = 0;
       yyval.value.id = 0;
       yyval.value.unit = Value::Function;
-      yyval.value.function = 0;
+      yyval.value.function = f;
   ;
     break;}
 case 142:
-#line 941 "parser.y"
+#line 944 "parser.y"
 { yyval.string = yyvsp[-1].string; ;
     break;}
 case 143:
-#line 948 "parser.y"
+#line 951 "parser.y"
 {
 	yyval.rule = 0;
 #ifdef CSS_DEBUG
@@ -2006,7 +2009,7 @@ case 143:
     ;
     break;}
 case 144:
-#line 954 "parser.y"
+#line 957 "parser.y"
 {
 	yyval.rule = 0;
 #ifdef CSS_DEBUG
@@ -2015,7 +2018,7 @@ case 144:
     ;
     break;}
 case 145:
-#line 963 "parser.y"
+#line 966 "parser.y"
 {
 	yyval.rule = 0;
 #ifdef CSS_DEBUG
@@ -2245,6 +2248,6 @@ yyerrhandle:
     }
   return 1;
 }
-#line 998 "parser.y"
+#line 1001 "parser.y"
 
 

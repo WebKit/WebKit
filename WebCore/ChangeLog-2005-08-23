@@ -1,3 +1,13 @@
+2003-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed 3366234 -- repro crash in CSS parser: function that can't be parsed (www.bi-flugplatz-magdeburg.de)
+
+        * khtml/css/parser.y: Allocate a Function object for the "can't parse function" case, since
+        the other code involved cannot handle 0 for the function.
+        * khtml/css/parser.cpp: Regenerated.
+
 === Safari-92 ===
 
 2003-08-07  Ken Kocienda  <kocienda@apple.com>
