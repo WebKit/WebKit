@@ -2,6 +2,42 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3710123> Loading iframe that replaces content in the parent document crashes Safari (Oracle Portal)
+
+        This is a more complete fix, but it requires the previous attempt at a fix for this same
+        bug below, because this is only the "don't destroy the KHTMLPart" portion; other fixes are
+        still needed to survive shutdown of the part.
+
+        * khtml/ecma/kjs_proxy.cpp: (KJSProxyImpl::interpreter): Call the new keepAlive method.
+        This is called whenever we're about to use an interpreter to run some JavaScript, and
+        it's JavaScript that might destroy the part, hence the interpreter.
+
+        * khtml/khtml_part.h: Added keepAlive() and slotEndLifeSupport() member functions.
+        * khtml/khtmlpart_p.h: Added m_lifeSupportTimer.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init): Connects m_lifeSupportTimer to slotEndLifeSupport.
+        (KHTMLPart::write): Removed old attempt to work around this issue.
+        (KHTMLPart::end): Ditto.
+        (KHTMLPart::keepAlive): Added. References the part, then sets up a one-shot timer.
+        (KHTMLPart::slotEndLifeSupport): Added. Stops the timer and then removes the reference
+        from the part, possibly destroying it.
+
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Added the new slot to the list of slots.
+        (KWQSlot::call): Ditto.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendResizeEvent): Removed an old attempt to work around this same issue.
+        (KWQKHTMLPart::mouseDown): Ditto.
+        (KWQKHTMLPart::mouseDragged): Ditto.
+        (KWQKHTMLPart::mouseUp): Ditto.
+        (KWQKHTMLPart::mouseMoved): Ditto.
+        (KWQKHTMLPart::sendContextMenuEvent): Ditto.
+
+2004-09-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed regression caused by change earlier today
 
         * khtml/xml/dom_selection.cpp: (DOM::Selection::modifyExtendingRightForward):

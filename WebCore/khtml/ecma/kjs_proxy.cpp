@@ -188,6 +188,7 @@ KJS::ScriptInterpreter *KJSProxyImpl::interpreter()
 {
   if (!m_script)
     initScript();
+  m_part->keepAlive();
   return m_script;
 }
 

@@ -1651,12 +1651,8 @@ void KWQKHTMLPart::sendResizeEvent()
 {
     KHTMLView *v = d->m_view;
     if (v) {
-        // Sending an event can result in the destruction of the view and part.
-        // We ref so that happens after we return from the KHTMLView function.
-        v->ref();
 	QResizeEvent e;
 	v->resizeEvent(&e);
-        v->deref();
     }
 }
 
@@ -2489,12 +2485,8 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     _mouseDownMayStartDrag = false;
     _mouseDownMayStartSelect = false;
 
-    // Sending an event can result in the destruction of the view and part.
-    // We ref so that happens after we return from the KHTMLView function.
-    v->ref();
     QMouseEvent kEvent(QEvent::MouseButtonPress, event);
     v->viewportMousePressEvent(&kEvent);
-    v->deref();
     
     KWQRelease(_firstResponderAtMouseDownTime);
     _firstResponderAtMouseDownTime = oldFirstResponderAtMouseDownTime;
@@ -2518,12 +2510,8 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
 
-    // Sending an event can result in the destruction of the view and part.
-    // We ref so that happens after we return from the KHTMLView function.
-    v->ref();
     QMouseEvent kEvent(QEvent::MouseMove, event);
     v->viewportMouseMoveEvent(&kEvent);
-    v->deref();
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2544,9 +2532,6 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
 
-    // Sending an event can result in the destruction of the view and part.
-    // We ref so that happens after we return from the KHTMLView function.
-    v->ref();
     // Our behavior here is a little different that Qt. Qt always sends
     // a mouse release event, even for a double click. To correct problems
     // in khtml's DOM click event handling we do not send a release here
@@ -2562,7 +2547,6 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
         QMouseEvent releaseEvent(QEvent::MouseButtonRelease, event);
         v->viewportMouseReleaseEvent(&releaseEvent);
     }
-    v->deref();
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2647,12 +2631,8 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = KWQRetain(event);
     
-    // Sending an event can result in the destruction of the view and part.
-    // We ref so that happens after we return from the KHTMLView function.
-    v->ref();
     QMouseEvent kEvent(QEvent::MouseMove, event);
     v->viewportMouseMoveEvent(&kEvent);
-    v->deref();
     
     ASSERT(_currentEvent == event);
     KWQRelease(event);
@@ -2699,12 +2679,8 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     NodeImpl::MouseEvent mev(qev.stateAfter(), NodeImpl::MousePress);
     doc->prepareMouseEvent(false, xm, ym, &mev);
 
-    // Sending an event can result in the destruction of the view and part.
-    // We ref so that happens after we return from the KHTMLView function.
-    v->ref();
     bool swallowEvent = v->dispatchMouseEvent(EventImpl::CONTEXTMENU_EVENT,
         mev.innerNode.handle(), true, 0, &qev, true, NodeImpl::MousePress);
-    v->deref();
 
     ASSERT(_currentEvent == event);
     KWQRelease(event);

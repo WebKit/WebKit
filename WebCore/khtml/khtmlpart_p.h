@@ -416,6 +416,8 @@ public:
   bool m_executingJavaScriptFormAction;
   
   bool m_cancelWithLoadInProgress;
+
+  QTimer m_lifeSupportTimer;
 };
 
 #endif
