@@ -91,6 +91,10 @@ typedef int16_t *NP_UTF16;
 */
 NP_Identifier NP_IdentifierFromUTF8 (NP_UTF8 name);
 void NP_GetIdentifiers (NP_UTF8 *names, int nameCount, NP_Identifier *identifiers);
+
+/*
+    The returned NP_UTF8 should be freed.
+*/
 NP_UTF8 NP_UTF8FromIdentifier (NP_Identifier identifier);
 
 /*
@@ -173,7 +177,7 @@ extern NP_Class *NP_UndefinedClass;
 extern NP_Class *NP_ArrayClass;
 extern NP_Class *NP_NumberClass;
 extern NP_Class *NP_StringClass;
-NP_Class *NP_JavaScriptObjectClass;
+extern NP_Class *NP_JavaScriptObjectClass;
 
 typedef NP_Object NP_Boolean;
 typedef NP_Object NP_Null;
@@ -188,11 +192,11 @@ typedef NP_Object NP_String;
 NP_Object *NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount);
 NP_Object *NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script);
 NP_Object *NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName);
-void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object value);
+void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object *value);
 void NP_RemoveProperty (NP_JavaScriptObject *obj, NP_Identifier propertyName);
-NP_UTF8 NP_ToString (NP_JavaScriptObject *obj);
+NP_String *NP_ToString (NP_JavaScriptObject *obj);
 NP_Object *NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index);
-void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object value);
+void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object *value);
 
 /*
     Functions for dealing with data types.
@@ -240,10 +244,8 @@ NP_Array *NP_CreateArray (NP_Object **, int32_t count);
 NP_Array *NP_CreateArrayV (int32_t count, ...);
 
 /*
-
-    Objects returned by NP_ObjectAtIndex do not have an implicit
-    reference count.  Callers must retain if they wish to keep
-    a reference.
+    Objects returned by NP_ObjectAtIndex pass a reference count
+    to the caller.  The caller must release the object.
 */
 NP_Object *NP_ObjectAtIndex (NP_Array *array, int32_t index);
 

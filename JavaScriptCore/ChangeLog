@@ -1,5 +1,34 @@
 2004-03-04  Richard Williamson   <rjw@apple.com>
 
+	Implementation of NP_JavaScriptObject.  This is the 'C' class
+	that wraps a JavaScript object.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp: Added.
+        (coerceValueToNPValueType):
+        (convertValueToNPValueType):
+        (convertNPValueTypeToValue):
+        (listFromNPArray):
+        (jsAllocate):
+        (jsDeallocate):
+        (identiferFromNPIdentifier):
+        (NP_Call):
+        (NP_Evaluate):
+        (NP_GetProperty):
+        (NP_SetProperty):
+        (NP_RemoveProperty):
+        (NP_ToString):
+        (NP_GetPropertyAtIndex):
+        (NP_SetPropertyAtIndex):
+        * bindings/NP_runtime.cpp:
+        (NP_ObjectAtIndex):
+        * bindings/NP_runtime.h:
+        * bindings/runtime_object.h:
+
+2004-03-04  Richard Williamson   <rjw@apple.com>
+
 	Added NP_Array implementation.  
 
 	Changed NP_Boolean to just depend on two static instances, no

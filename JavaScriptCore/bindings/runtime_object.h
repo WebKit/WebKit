@@ -25,8 +25,6 @@
 #ifndef _RUNTIME_OBJECT_H_
 #define _RUNTIME_OBJECT_H_
 
-#include <JavaVM/jni.h>
-
 #include <JavaScriptCore/runtime.h>
 #include <JavaScriptCore/object.h>
 

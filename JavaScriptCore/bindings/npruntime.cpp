@@ -167,46 +167,6 @@ void NP_SetException (NP_Object *obj,  NP_String *message)
 {
 }
 
-// ---------------------------------- NP_JavaScriptObject ----------------------------------
-NP_Object *NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount)
-{
-    return NULL;
-}
-
-NP_Object *NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script)
-{
-    return NULL;
-}
-
-NP_Object *NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName)
-{
-    return NULL;
-}
-
-void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object value)
-{
-}
-
-
-void NP_RemoveProperty (NP_JavaScriptObject *obj, NP_Identifier propertyName)
-{
-}
-
-NP_UTF8 NP_ToString (NP_JavaScriptObject *obj)
-{
-    return NULL;
-}
-
-NP_Object *NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned int index)
-{
-    return NULL;
-}
-
-void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object value)
-{
-}
-
-
 // ---------------------------------- Types ----------------------------------
 
 // ---------------------------------- NP_Number ----------------------------------
@@ -634,6 +594,6 @@ NP_Object *NP_ObjectAtIndex (NP_Array *obj, int32_t index)
 
     assert (index < array->count && array > 0);
 
-    return array->objects[index];
+    return NP_RetainObject (array->objects[index]);
 }
 
