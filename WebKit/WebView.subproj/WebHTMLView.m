@@ -4361,7 +4361,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
     [bridge replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
     [bridge setMarkedTextDOMRange:[self _selectedRange]];
-    [self _selectRangeInMarkedText:newSelRange];
+    if ([self hasMarkedText]) {
+        [self _selectRangeInMarkedText:newSelRange];
+    }
 
     _private->ignoreMarkedTextSelectionChange = NO;
 }

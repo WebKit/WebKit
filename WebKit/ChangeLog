@@ -1,3 +1,13 @@
+2004-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3912488> Mail throws an exception after backspacing "away" inline input
+        
+	* WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setMarkedText:selectedRange:]): Don't try to set a selection if
+	we end up with no marked text, since that case fails and is unnecessary.
+
 2004-12-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
