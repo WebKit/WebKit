@@ -59,7 +59,7 @@ NSString *WebViewProgressStartedNotification = @"WebProgressStartedNotification"
 NSString *WebViewProgressEstimateChangedNotification = @"WebProgressEstimateChangedNotification";
 NSString *WebViewProgressFinishedNotification = @"WebProgressFinishedNotification";
 
-enum { WebViewVersion = 1 };
+enum { WebViewVersion = 2 };
 
 
 @implementation WebView
@@ -150,17 +150,18 @@ NS_DURING
         NSString *groupName = [decoder decodeObjectForKey:@"GroupName"];
         [result _commonInitializationFrameName:frameName groupName:groupName];
         [result setPreferences: [decoder decodeObjectForKey:@"Preferences"]];
+	_private->useBackForwardList = [decoder decodeBoolForKey:@"UseBackForwardList"];
     }
     else {
         int version;
     
         [decoder decodeValueOfObjCType:@encode(int) at:&version];
-        if (version == 1){
-            NSString *frameName = [decoder decodeObject];
-            NSString *groupName = [decoder decodeObject];
-            [result _commonInitializationFrameName:frameName groupName:groupName];
-            [result setPreferences: [decoder decodeObject]];
-        }
+        NSString *frameName = [decoder decodeObject];
+        NSString *groupName = [decoder decodeObject];
+        [result _commonInitializationFrameName:frameName groupName:groupName];
+        [result setPreferences: [decoder decodeObject]];
+        if (version > 1)
+            [decoder decodeValuesOfObjCTypes:"c",&_private->useBackForwardList];
     }
     
 NS_HANDLER
@@ -181,6 +182,7 @@ NS_ENDHANDLER
         [encoder encodeObject:[[self mainFrame] name] forKey:@"FrameName"];
         [encoder encodeObject:[self groupName] forKey:@"GroupName"];
         [encoder encodeObject:[self preferences] forKey:@"Preferences"];
+	[encoder encodeBool:_private->useBackForwardList forKey:@"UseBackForwardList"];
     }
     else {
         int version = WebViewVersion;
@@ -188,6 +190,7 @@ NS_ENDHANDLER
         [encoder encodeObject:[[self mainFrame] name]];
         [encoder encodeObject:[self groupName]];
         [encoder encodeObject:[self preferences]];
+        [encoder encodeValuesOfObjCTypes:"c",&_private->useBackForwardList];
     }
 }
 

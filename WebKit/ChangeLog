@@ -1,3 +1,13 @@
+2003-08-27  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3397235.  WebView wasn't archiving useBackForwardList.
+
+        Reviewed by Eric Seymour.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithCoder:]):
+        (-[WebView encodeWithCoder:]):
+
 2003-08-26  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3385478.  Look for an exact match for font names (using PS names)	before matching on family names.
