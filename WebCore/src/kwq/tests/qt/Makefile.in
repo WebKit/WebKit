@@ -23,6 +23,7 @@ PROGRAMS = \
     qpoint-test \
     qsize-test \
     qrect-test \
+    qcstring-test \
     qarray-test \
     qmap-test \
     qvaluelist-test \
@@ -66,10 +67,13 @@ all: $(OBJECTS) $(PROGRAMS)
 qpoint-test: qpoint-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
+qsize-test: qsize-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
 qrect-test: qrect-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
-qsize-test: qsize-test.o
+qcstring-test: qcstring-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qarray-test: qarray-test.o

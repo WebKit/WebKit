@@ -1,6 +1,12 @@
 # Qt suite
 qt/qpoint-test
 qt/qsize-test
+qt/qcstring-test
 qt/qrect-test
+qt/qarray-test
 qt/qmap-test
+qt/qvaluelist-test
+qt/qstringlist-test
+qt/qlist-test
+qt/qregexp-test
 qt/qchar-test

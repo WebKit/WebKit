@@ -41,6 +41,9 @@ all: $(OBJECTS) $(PROGRAM)
 $(PROGRAM): harness.o
 	$(CC) -o $@ $< $(LDFLAGS)
 
+test:
+	$(MAKE) && ./harness
+
 depend: 
 
 #----------------------------------------------------------------------
