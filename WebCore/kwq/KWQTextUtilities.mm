@@ -54,24 +54,87 @@ int KWQFindNextWordFromIndex(const QChar *chars, int len, int position, bool for
     return result;
 }
 
+// This code was swiped from the CarbonCore UnicodeUtilities.  One change from that is to use the empty
+// string instead of the "old locale model" as the ultimate fallback.  This change is per the UnicodeUtilities
+// engineer.
+// NOTE: this abviously could be fairly expensive to do.  If it turns out to be a bottleneck, it might
+// help to instead put a call in the iteratory initializer to set the current text break locale.  Unfortunately,
+// we can not cache it across calls to our API since the result can change without our knowing (AFAIK
+// there are no notifiers for AppleTextBreakLocale and/or AppleLanguages changes).
+static char * currentTextBreakLocaleID(void)
+{
+#define localeStringLength 32
+    static char     localeStringBuffer[localeStringLength];
+    char *          localeString = &localeStringBuffer[0];
+    
+    // We get the parts string from AppleTextBreakLocale pref.
+    // If that fails then look for the first language in the AppleLanguages pref.
+    CFStringRef prefLocaleStr = (CFStringRef) CFPreferencesCopyValue( CFSTR("AppleTextBreakLocale"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+    if ( !prefLocaleStr ) {
+        CFArrayRef appleLangArr = (CFArrayRef) CFPreferencesCopyValue( CFSTR("AppleLanguages"), kCFPreferencesAnyApplication, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+        if ( appleLangArr )  {
+            // Take the topmost language. Retain so that we can blindly release later.                                                                                                   
+            prefLocaleStr = (CFStringRef) CFArrayGetValueAtIndex( appleLangArr, 0 );
+            if (prefLocaleStr)
+                CFRetain( prefLocaleStr ); 
+            CFRelease( appleLangArr );
+        }
+    }
+    
+    if (prefLocaleStr) {
+        // Canonicalize pref string in case it is not in the canonical format.
+        CFStringRef canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString( kCFAllocatorDefault, prefLocaleStr );
+        if ( canonLocaleCFStr != NULL ) {
+            CFStringGetCString( prefLocaleStr, localeString, localeStringLength, kCFStringEncodingASCII );
+            CFRelease( canonLocaleCFStr );
+        }
+
+        CFRelease( prefLocaleStr );
+    } else {
+        // If the prefs don't return anything, use the empty string (root locale)
+        *localeString = 0;
+#if 0
+        // If the prefs don't return anything do fall back to getting the default locale
+        // from the old locale model: convert the NULL locale to a locale-variant string,
+        // canonicalize that and store that in our buffer. We double up on using our global
+        // buffer so we don't have to use another intermediate buffer. The end result is what counts.
+        if ( LocaleRefGetPartString( NULL, kLocaleAllPartsMask, localeStringLength, localeString ) == noErr ) {
+            CFStringRef localeCFStr = CFStringCreateWithCString( kCFAllocatorDefault, localeString, kCFStringEncodingASCII );
+            if ( localeCFStr ) {
+                CFStringRef canonLocaleCFStr canonLocaleCFStr = CFLocaleCreateCanonicalLanguageIdentifierFromString( kCFAllocatorDefault, localeCFStr );
+                if ( canonLocaleCFStr ) {
+                    CFStringGetCString( canonLocaleCFStr, localeString, localeStringLength, kCFStringEncodingASCII );
+                    CFRelease( canonLocaleCFStr );
+                }
+
+                CFRelease( localeCFStr );
+            }
+        }
+#endif
+    }
+    
+    return localeString;
+}
+
 void KWQFindSentenceBoundary(const QChar *chars, int len, int position, int *start, int *end)
 {
     int  startPos = 0;
     int  endPos = 0;
 
-    const char *localeName = [[NSString localizedNameOfStringEncoding:NSASCIIStringEncoding] UTF8String];
     UErrorCode status = U_ZERO_ERROR;
-    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, localeName, const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)) + position, len, &status);
+    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(), const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)), len, &status);
     if ( boundary && U_SUCCESS(status) ) {
-        startPos = ubrk_first(boundary);
-        if (startPos == UBRK_DONE)
+        startPos = ubrk_preceding(boundary, position);
+        if (startPos == UBRK_DONE) {
             startPos = 0;
-        endPos = ubrk_next(boundary);
+        } 
+        endPos = ubrk_following(boundary, startPos);
         if (endPos == UBRK_DONE)
-            endPos = 0;
+            endPos = len;
+
         ubrk_close(boundary);
     }
-
+    
     *start = startPos;
     *end = endPos;
 }
@@ -80,25 +143,20 @@ int KWQFindNextSentenceFromIndex(const QChar *chars, int len, int position, bool
 {
     int pos = 0;
     
-    const char *localeName = [[NSString localizedNameOfStringEncoding:NSASCIIStringEncoding] UTF8String];
     UErrorCode status = U_ZERO_ERROR;
-    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, localeName, const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)) + position, len, &status);
+    UBreakIterator *boundary = ubrk_open(UBRK_SENTENCE, currentTextBreakLocaleID(), const_cast<unichar *>(reinterpret_cast<const unichar *>(chars)), len, &status);
     if ( boundary && U_SUCCESS(status) ) {
-        int firstpos = ubrk_first(boundary);
         if (forward) {
-            pos = ubrk_next(boundary);
-            if (pos == firstpos)
-                pos = ubrk_next(boundary);
+            pos = ubrk_following(boundary, position);
+            if (pos == UBRK_DONE)
+                pos = len;
         } else {
-            pos = ubrk_previous(boundary);
-            if (pos == firstpos)
-                pos = ubrk_previous(boundary);
+            pos = ubrk_preceding(boundary, position);
+            if (pos == UBRK_DONE)
+                pos = 0;
         }
         ubrk_close(boundary);
     }
-
-    if (pos == UBRK_DONE)
-        pos = 0;
         
     return pos;
 }

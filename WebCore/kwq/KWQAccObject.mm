@@ -561,7 +561,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
             (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,    // NOTE: BUG FO 4
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,    // NOTE: <rdar://problem/3942582>
             (NSString *) kAXStartTextMarkerAttribute,
             (NSString *) kAXEndTextMarkerAttribute,
 #endif
@@ -585,7 +585,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
             (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: BUG FO 4
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: <rdar://problem/3942582>
             (NSString *) kAXStartTextMarkerAttribute,
             (NSString *) kAXEndTextMarkerAttribute,
 #endif
@@ -611,7 +611,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
             (NSString *) kAXSelectedTextMarkerRangeAttribute,
-//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: BUG FO 4
+//          (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute,     // NOTE: NOTE: <rdar://problem/3942582>
             (NSString *) kAXStartTextMarkerAttribute,
             (NSString *) kAXEndTextMarkerAttribute,
 #endif
@@ -885,10 +885,6 @@ static QRect boundingBoxRect(RenderObject* obj)
         return (id) [self textMarkerRangeFromVisiblePositions:startPosition andEndPos:endPosition];
     }
     
-    if ([attributeName isEqualToString: (NSString *) kAXVisibleCharacterTextMarkerRangeAttribute]) {
-        return nil;     // NOTE: BUG FO 4
-    }
-    
     if ([attributeName isEqualToString: (NSString *) kAXStartTextMarkerAttribute]) {
         return (id) [self textMarkerForVisiblePosition: VisiblePosition([self topRenderer]->positionForCoordinates (0, 0, nil))];
     }
@@ -915,8 +911,8 @@ static QRect boundingBoxRect(RenderObject* obj)
             kAXStringForTextMarkerRangeParameterizedAttribute,
             kAXTextMarkerForPositionParameterizedAttribute,
             kAXBoundsForTextMarkerRangeParameterizedAttribute,
-//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,                 // NOTE: BUG FO 3
-//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,                // NOTE: BUG FO 2
+//          kAXStyleTextMarkerRangeForTextMarkerParameterizedAttribute,           // NOTE: <rdar://problem/3942606>
+//          kAXAttributedStringForTextMarkerRangeParameterizedAttribute,          // NOTE: <rdar://problem/3942647>
             kAXTextMarkerRangeForUnorderedTextMarkersParameterizedAttribute,
             kAXNextTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousTextMarkerForTextMarkerParameterizedAttribute,
@@ -924,14 +920,14 @@ static QRect boundingBoxRect(RenderObject* obj)
             kAXRightWordTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXLeftLineTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXRightLineTextMarkerRangeForTextMarkerParameterizedAttribute,
-//          kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,              // NOTE: BUG FO 2
+            kAXSentenceTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXParagraphTextMarkerRangeForTextMarkerParameterizedAttribute,
             kAXNextWordEndTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousWordStartTextMarkerForTextMarkerParameterizedAttribute,
             kAXNextLineEndTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousLineStartTextMarkerForTextMarkerParameterizedAttribute,
-//          kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,            // NOTE: BUG FO 2
-//          kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,      // NOTE: BUG FO 2
+            kAXNextSentenceEndTextMarkerForTextMarkerParameterizedAttribute,
+            kAXPreviousSentenceStartTextMarkerForTextMarkerParameterizedAttribute,
             kAXNextParagraphEndTextMarkerForTextMarkerParameterizedAttribute,
             kAXPreviousParagraphStartTextMarkerForTextMarkerParameterizedAttribute,
             kAXLengthForTextMarkerRangeParameterizedAttribute,
@@ -1082,7 +1078,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (id)doAXAttributedStringForTextMarkerRange: (AXTextMarkerRangeRef) textMarkerRange
 {
-    // NOTE: BUG FO 2 Needs to make AX attributed string 
+    // NOTE: <rdar://problem/3942606>. Needs to make AX attributed string instead
     // Patti: Get the basic done first.  Add various text attribute support incrementally,
     // starting with attachment and hyperlink.  The rest of the attributes can be FO2/3.
 

@@ -1,3 +1,32 @@
+2005-01-07  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3942619> AX: Support sentence ax attributes
+
+        Needed to use the unicode utilities properly.  Twas lame before.
+
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousBoundary):
+        (khtml::nextBoundary):
+        (khtml::startOfWord):
+        (khtml::endOfWord):
+        (khtml::previousWordPosition):
+        (khtml::nextWordPosition):
+        (khtml::startOfSentence):
+        (khtml::endOfSentence):
+        (khtml::previousSentencePosition):
+        (khtml::nextSentencePosition):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityAttributeNames]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        (-[KWQAccObject doAXAttributedStringForTextMarkerRange:]):
+        * kwq/KWQTextUtilities.mm:
+        (currentTextBreakLocaleID):
+        (KWQFindSentenceBoundary):
+        (KWQFindNextSentenceFromIndex):
+
 2005-01-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Kevin
