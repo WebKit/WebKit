@@ -136,11 +136,8 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
     newChild->setMinMaxKnown( false );
 
     // Keep our layer hierarchy updated.
-    if (newChild->layer()) {
+    if (newChild->layer())
         enclosingLayer()->addChild(newChild->layer());
-        if (!newChild->isPositioned())
-            setHasChildLayers(true);
-    }
 }
 
 RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)

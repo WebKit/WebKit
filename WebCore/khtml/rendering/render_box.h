@@ -102,18 +102,7 @@ public:
     void relativePositionOffset(int &tx, int &ty);
 
     virtual RenderLayer* layer() const { return m_layer; }
-    virtual bool hasChildLayers() const { return m_hasChildLayers; }
-    virtual void setHasChildLayers(bool hasLayers) {
-        if (m_hasChildLayers == hasLayers)
-            return;
-        
-        m_hasChildLayers = hasLayers;
-
-        if (parent() && hasLayers)
-            parent()->setHasChildLayers(hasLayers);
-    }
-    virtual void positionChildLayers();
-
+    
 protected:
     virtual void printBoxDecorations(QPainter *p,int _x, int _y,
                                        int _w, int _h, int _tx, int _ty);

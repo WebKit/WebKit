@@ -256,6 +256,11 @@ RenderLayer::constructZTree(QRect damageRect,
     // damage rect and avoid repainting the layer if it falls outside that rect.
     // An exception to this rule is the root layer, which always paints (hence the
     // m_parent null check below).
+    if (!m_object->isPositioned())
+        updateLayerPosition(); // For relpositioned layers or non-positioned layers,
+                               // we need to keep in sync, since we may have shifted relative
+                               // to our parent layer.
+                               
     int x = 0;
     int y = 0;
     convertToLayerCoords(rootLayer, x, y);
