@@ -917,36 +917,7 @@ CSSProperty CSSComputedStyleDeclarationImpl::property(int id) const
 
 CSSStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copyInheritableProperties() const
 {
-    QPtrList<CSSProperty> *list = new QPtrList<CSSProperty>;
-    list->setAutoDelete(true);
-    for (unsigned i = 0; i < sizeof(InheritableProperties) / sizeof(InheritableProperties[0]); i++) {
-        CSSValueImpl *value = getPropertyCSSValue(InheritableProperties[i]);
-        if (value) {
-            CSSProperty *property = new CSSProperty;
-            property->m_id = InheritableProperties[i];
-            property->setValue(value);
-            list->append(property);
-        }
-    }
-    return new CSSStyleDeclarationImpl(0, list);
-}
-
-void CSSComputedStyleDeclarationImpl::diff(CSSStyleDeclarationImpl *style) const
-{
-    if (!style)
-        return;
-
-    QValueList<int> properties;
-    for (QPtrListIterator<CSSProperty> it(*style->values()); it.current(); ++it) {
-        CSSProperty *property = it.current();
-        CSSValueImpl *value = getPropertyCSSValue(property->id());
-        if (value && value->cssText() == property->value()->cssText()) {
-            properties.append(property->id());
-        }
-    }
-    
-    for (QValueListIterator<int> it(properties.begin()); it != properties.end(); ++it)
-        style->removeProperty(*it);
+    return copyPropertiesInSet(InheritableProperties, sizeof(InheritableProperties) / sizeof(InheritableProperties[0]));
 }
 
 } // namespace DOM

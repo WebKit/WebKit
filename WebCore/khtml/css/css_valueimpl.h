@@ -86,12 +86,17 @@ public:
     NodeImpl* node() const { return m_node; }
     
     void merge(CSSStyleDeclarationImpl *, bool argOverridesOnConflict=true);
+    void diff(CSSStyleDeclarationImpl *) const;
+
+    CSSStyleDeclarationImpl *copyBlockProperties() const;
 
     void setChanged();
 
 protected:
     DOMString getShortHandValue( const int* properties, int number ) const;
     DOMString get4Values( const int* properties ) const;
+
+    CSSStyleDeclarationImpl *copyPropertiesInSet(const int *set, unsigned length) const;
 
     QPtrList<CSSProperty> *m_lstValues;
     NodeImpl *m_node;

@@ -62,7 +62,6 @@ public:
     virtual DOMString item(unsigned long index) const;
 
     CSSStyleDeclarationImpl *copyInheritableProperties() const;
-    void diff(CSSStyleDeclarationImpl *) const;
 
     CSSValueImpl* getPositionOffsetValue(int propertyID) const;
 

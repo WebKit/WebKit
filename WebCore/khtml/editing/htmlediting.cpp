@@ -308,21 +308,20 @@ EditCommandPtr &EditCommandPtr::emptyCommand()
 //------------------------------------------------------------------------------------------
 // StyleChange
 
-StyleChange::StyleChange(CSSStyleDeclarationImpl *style) 
+StyleChange::StyleChange(CSSStyleDeclarationImpl *style, ELegacyHTMLStyles usesLegacyStyles)
+    : m_applyBold(false), m_applyItalic(false), m_usesLegacyStyles(usesLegacyStyles)
 {
     init(style, Position());
 }
 
-StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &position)
+StyleChange::StyleChange(CSSStyleDeclarationImpl *style, const Position &position, ELegacyHTMLStyles usesLegacyStyles)
+    : m_applyBold(false), m_applyItalic(false), m_usesLegacyStyles(usesLegacyStyles)
 {
     init(style, position);
 }
 
 void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
 {
-    m_applyBold = false;
-    m_applyItalic = false;
-
     QString styleText;
 
     for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
@@ -332,28 +331,35 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
         // style, just move on.
         if (position.isNotNull() && currentlyHasStyle(position, property))
             continue;
-
-        // Figure out the manner of change that is needed.
-        DOMString valueText(property->value()->cssText());
-        switch (property->id()) {
-            case CSS_PROP_FONT_WEIGHT:
-                if (strcasecmp(valueText, "bold") == 0) {
-                    m_applyBold = true;
-                    continue;
-                }
-                break;
-            case CSS_PROP_FONT_STYLE:
-                if (strcasecmp(valueText, "italic") == 0 || strcasecmp(valueText, "oblique") == 0) {
-                    m_applyItalic = true;
-                    continue;
-                }
-                break;
-        }
+        
+        // If needed, figure out if this change is a legacy HTML style change.
+        if (m_usesLegacyStyles && checkForLegacyHTMLStyleChange(property))
+            continue;
 
         styleText += property->cssText().string();
     }
 
     m_cssStyle = styleText.stripWhiteSpace();
+}
+
+bool StyleChange::checkForLegacyHTMLStyleChange(const DOM::CSSProperty *property)
+{
+    DOMString valueText(property->value()->cssText());
+    switch (property->id()) {
+        case CSS_PROP_FONT_WEIGHT:
+            if (strcasecmp(valueText, "bold") == 0) {
+                m_applyBold = true;
+                return true;
+            }
+            break;
+        case CSS_PROP_FONT_STYLE:
+            if (strcasecmp(valueText, "italic") == 0 || strcasecmp(valueText, "oblique") == 0) {
+                m_applyItalic = true;
+                return true;
+            }
+            break;
+    }
+    return false;
 }
 
 bool StyleChange::currentlyHasStyle(const Position &pos, const CSSProperty *property)
@@ -961,9 +967,58 @@ ApplyStyleCommand::~ApplyStyleCommand()
 
 void ApplyStyleCommand::doApply()
 {
-    if (!endingSelection().isRange())
-        return;
+    CSSStyleDeclarationImpl *blockStyle = m_style->copyBlockProperties();
+    blockStyle->ref();
+    applyBlockStyle(blockStyle);
 
+    if (blockStyle->length() < m_style->length()) {
+        CSSStyleDeclarationImpl *inlineStyle = new CSSStyleDeclarationImpl(0, m_style->values());
+        inlineStyle->ref();
+        blockStyle->diff(inlineStyle);
+        applyInlineStyle(inlineStyle);
+        inlineStyle->deref();
+    }
+
+    blockStyle->deref();
+    
+    setEndingSelectionNeedsLayout();
+}
+
+void ApplyStyleCommand::applyBlockStyle(CSSStyleDeclarationImpl *style)
+{
+    // update document layout once before removing styles
+    // so that we avoid the expense of updating before each and every call
+    // to check a computed style
+    document()->updateLayout();
+
+    // get positions we want to use for applying style
+    Position start(endingSelection().start());
+    Position end(endingSelection().end());
+    
+    // Remove block styles
+    NodeImpl *beyondEnd = end.node()->traverseNextNode();
+    NodeImpl *prevBlock = 0;
+    for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
+        NodeImpl *block = node->enclosingBlockFlowElement();
+        if (block != prevBlock && block->isHTMLElement()) {
+            removeCSSStyle(style, static_cast<HTMLElementImpl *>(block));
+            prevBlock = block;
+        }
+    }
+    
+    // Apply new styles
+    prevBlock = 0;
+    for (NodeImpl *node = start.node(); node != beyondEnd; node = node->traverseNextNode()) {
+        NodeImpl *block = node->enclosingBlockFlowElement();
+        if (block != prevBlock && block->isHTMLElement()) {
+            addBlockStyleIfNeeded(style, static_cast<HTMLElementImpl *>(block));
+            prevBlock = block;
+        }
+    }
+}
+
+void ApplyStyleCommand::applyInlineStyle(CSSStyleDeclarationImpl *style)
+{
     // adjust to the positions we want to use for applying style
     Position start(endingSelection().start().downstream(StayInBlock).equivalentRangeCompliantPosition());
     Position end(endingSelection().end().upstream(StayInBlock));
@@ -978,7 +1033,7 @@ void ApplyStyleCommand::doApply()
     // This will ensure we remove all traces of the relevant styles from the selection
     // and prevent us from adding redundant ones, as described in:
     // <rdar://problem/3724344> Bolding and unbolding creates extraneous tags
-    removeStyle(start.upstream(), end);
+    removeInlineStyle(style, start.upstream(), end);
     
     bool splitStart = splitTextAtStartIfNeeded(start, end); 
     if (splitStart) {
@@ -996,7 +1051,7 @@ void ApplyStyleCommand::doApply()
     
     if (start.node() == end.node()) {
         // simple case...start and end are the same node
-        applyStyleIfNeeded(start.node(), end.node());
+        addInlineStyleIfNeeded(style, start.node(), end.node());
     }
     else {
         NodeImpl *node = start.node();
@@ -1015,7 +1070,7 @@ void ApplyStyleCommand::doApply()
                     node = next;
                 }
                 // Now apply style to the run we found.
-                applyStyleIfNeeded(runStart, node);
+                addInlineStyleIfNeeded(style, runStart, node);
             }
             if (node == end.node())
                 break;
@@ -1027,9 +1082,9 @@ void ApplyStyleCommand::doApply()
 //------------------------------------------------------------------------------------------
 // ApplyStyleCommand: style-removal helpers
 
-bool ApplyStyleCommand::isHTMLStyleNode(HTMLElementImpl *elem)
+bool ApplyStyleCommand::isHTMLStyleNode(CSSStyleDeclarationImpl *style, HTMLElementImpl *elem)
 {
-    for (QPtrListIterator<CSSProperty> it(*(style()->values())); it.current(); ++it) {
+    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
         switch (property->id()) {
             case CSS_PROP_FONT_WEIGHT:
@@ -1056,21 +1111,22 @@ void ApplyStyleCommand::removeHTMLStyleNode(HTMLElementImpl *elem)
     removeNodePreservingChildren(elem);
 }
 
-void ApplyStyleCommand::removeCSSStyle(HTMLElementImpl *elem)
+void ApplyStyleCommand::removeCSSStyle(CSSStyleDeclarationImpl *style, HTMLElementImpl *elem)
 {
+    ASSERT(style);
     ASSERT(elem);
 
     CSSStyleDeclarationImpl *decl = elem->inlineStyleDecl();
     if (!decl)
         return;
 
-    for (QPtrListIterator<CSSProperty> it(*(style()->values())); it.current(); ++it) {
+    for (QPtrListIterator<CSSProperty> it(*(style->values())); it.current(); ++it) {
         CSSProperty *property = it.current();
         if (decl->getPropertyCSSValue(property->id()))
             removeCSSProperty(decl, property->id());
     }
 
-    if (elem->id() == ID_SPAN) {
+    if (elem->id() == ID_SPAN && elem->renderer() && elem->renderer()->isInline()) {
         // Check to see if the span is one we added to apply style.
         // If it is, and there are no more attributes on the span other than our
         // class marker, remove the span.
@@ -1083,22 +1139,33 @@ void ApplyStyleCommand::removeCSSStyle(HTMLElementImpl *elem)
     }
 }
 
-void ApplyStyleCommand::removeStyle(const Position &start, const Position &end)
+void ApplyStyleCommand::removeBlockStyle(CSSStyleDeclarationImpl *style, const Position &start, const Position &end)
 {
     ASSERT(start.isNotNull());
     ASSERT(end.isNotNull());
     ASSERT(start.node()->inDocument());
     ASSERT(end.node()->inDocument());
+    ASSERT(RangeImpl::compareBoundaryPoints(start.node(), start.offset(), end.node(), end.offset()) <= 0);
+    
+}
+
+void ApplyStyleCommand::removeInlineStyle(CSSStyleDeclarationImpl *style, const Position &start, const Position &end)
+{
+    ASSERT(start.isNotNull());
+    ASSERT(end.isNotNull());
+    ASSERT(start.node()->inDocument());
+    ASSERT(end.node()->inDocument());
+    ASSERT(RangeImpl::compareBoundaryPoints(start.node(), start.offset(), end.node(), end.offset()) <= 0);
     
     NodeImpl *node = start.node();
     while (node) {
         NodeImpl *next = node->traverseNextNode();
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
-            if (isHTMLStyleNode(elem))
+            if (isHTMLStyleNode(style, elem))
                 removeHTMLStyleNode(elem);
             else
-                removeCSSStyle(elem);
+                removeCSSStyle(style, elem);
         }
         if (node == end.node())
             break;
@@ -1166,12 +1233,26 @@ void ApplyStyleCommand::surroundNodeRangeWithElement(NodeImpl *startNode, NodeIm
     }
 }
 
-void ApplyStyleCommand::applyStyleIfNeeded(NodeImpl *startNode, NodeImpl *endNode)
+void ApplyStyleCommand::addBlockStyleIfNeeded(CSSStyleDeclarationImpl *style, HTMLElementImpl *block)
+{
+    // Do not check for legacy styles here. Those styles, like <B> and <I>, only apply for
+    // inline content.
+    StyleChange styleChange(style, Position(block, 0), StyleChange::DoNotUseLegacyHTMLStyles);
+    if (styleChange.cssStyle().length() > 0) {
+        DOMString cssText = styleChange.cssStyle();
+        CSSStyleDeclarationImpl *decl = block->inlineStyleDecl();
+        if (decl)
+            cssText += decl->cssText();
+        block->setAttribute(ATTR_STYLE, cssText);
+    }
+}
+
+void ApplyStyleCommand::addInlineStyleIfNeeded(CSSStyleDeclarationImpl *style, NodeImpl *startNode, NodeImpl *endNode)
 {
     // FIXME: This function should share code with CompositeEditCommand::applyTypingStyle.
     // Both functions do similar work, and the common parts could be factored out.
 
-    StyleChange styleChange(style(), Position(startNode, 0));
+    StyleChange styleChange(style, Position(startNode, 0));
     int exceptionCode = 0;
     
     if (styleChange.cssStyle().length() > 0) {

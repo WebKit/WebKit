@@ -424,6 +424,58 @@ void CSSStyleDeclarationImpl::merge(CSSStyleDeclarationImpl *other, bool argOver
     }
 }
 
+void CSSStyleDeclarationImpl::diff(CSSStyleDeclarationImpl *style) const
+{
+    if (!style)
+        return;
+
+    QValueList<int> properties;
+    for (QPtrListIterator<CSSProperty> it(*style->values()); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        CSSValueImpl *value = getPropertyCSSValue(property->id());
+        if (value && value->cssText() == property->value()->cssText()) {
+            properties.append(property->id());
+        }
+    }
+    
+    for (QValueListIterator<int> it(properties.begin()); it != properties.end(); ++it)
+        style->removeProperty(*it);
+}
+
+// This is the list of properties we want to copy in the copyBlockProperties() function.
+// It is the list of CSS properties that apply to specially to block-level elements.
+static const int BlockProperties[] = {
+    CSS_PROP_ORPHANS,
+    CSS_PROP_OVERFLOW, // This can be also be applied to replaced elements
+    CSS_PROP_PAGE_BREAK_AFTER,
+    CSS_PROP_PAGE_BREAK_BEFORE,
+    CSS_PROP_PAGE_BREAK_INSIDE,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP_WIDOWS
+};
+
+CSSStyleDeclarationImpl *CSSStyleDeclarationImpl::copyBlockProperties() const
+{
+    return copyPropertiesInSet(BlockProperties, sizeof(BlockProperties) / sizeof(BlockProperties[0]));
+}
+
+CSSStyleDeclarationImpl *CSSStyleDeclarationImpl::copyPropertiesInSet(const int *set, unsigned length) const
+{
+    QPtrList<CSSProperty> *list = new QPtrList<CSSProperty>;
+    list->setAutoDelete(true);
+    for (unsigned i = 0; i < length; i++) {
+        CSSValueImpl *value = getPropertyCSSValue(set[i]);
+        if (value) {
+            CSSProperty *property = new CSSProperty;
+            property->m_id = set[i];
+            property->setValue(value);
+            list->append(property);
+        }
+    }
+    return new CSSStyleDeclarationImpl(0, list);
+}
+
 // --------------------------------------------------------------------------------------
 
 CSSValueImpl::CSSValueImpl()

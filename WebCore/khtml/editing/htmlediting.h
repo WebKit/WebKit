@@ -90,21 +90,25 @@ public:
 
 class StyleChange {
 public:
-    StyleChange() : m_applyBold(false), m_applyItalic(false) { }
-    explicit StyleChange(DOM::CSSStyleDeclarationImpl *);
-    StyleChange(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
+    enum ELegacyHTMLStyles { DoNotUseLegacyHTMLStyles, UseLegacyHTMLStyles };
+
+    explicit StyleChange(DOM::CSSStyleDeclarationImpl *, ELegacyHTMLStyles usesLegacyStyles=UseLegacyHTMLStyles);
+    StyleChange(DOM::CSSStyleDeclarationImpl *, const DOM::Position &, ELegacyHTMLStyles usesLegacyStyles=UseLegacyHTMLStyles);
 
     DOM::DOMString cssStyle() const { return m_cssStyle; }
     bool applyBold() const { return m_applyBold; }
     bool applyItalic() const { return m_applyItalic; }
+    bool usesLegacyStyles() const { return m_usesLegacyStyles; }
 
 private:
     void init(DOM::CSSStyleDeclarationImpl *, const DOM::Position &);
+    bool checkForLegacyHTMLStyleChange(const DOM::CSSProperty *);
     static bool currentlyHasStyle(const DOM::Position &, const DOM::CSSProperty *);
     
     DOM::DOMString m_cssStyle;
     bool m_applyBold;
     bool m_applyItalic;
+    bool m_usesLegacyStyles;
 };
 
 //------------------------------------------------------------------------------------------
@@ -134,6 +138,8 @@ public:
 
     khtml::Selection startingSelection() const { return m_startingSelection; }
     khtml::Selection endingSelection() const { return m_endingSelection; }
+
+    void setEndingSelectionNeedsLayout(bool flag=true) { m_endingSelection.setNeedsLayout(flag); }
         
     ECommandState state() const { return m_state; }
     void setState(ECommandState state) { m_state = state; }
@@ -245,18 +251,22 @@ public:
 
 private:
     // style-removal helpers
-    bool isHTMLStyleNode(DOM::HTMLElementImpl *);
+    bool isHTMLStyleNode(DOM::CSSStyleDeclarationImpl *, DOM::HTMLElementImpl *);
     void removeHTMLStyleNode(DOM::HTMLElementImpl *);
-    void removeCSSStyle(DOM::HTMLElementImpl *);
-    void removeStyle(const DOM::Position &start, const DOM::Position &end);
+    void removeCSSStyle(DOM::CSSStyleDeclarationImpl *, DOM::HTMLElementImpl *);
+    void removeBlockStyle(DOM::CSSStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
+    void removeInlineStyle(DOM::CSSStyleDeclarationImpl *, const DOM::Position &start, const DOM::Position &end);
     bool nodeFullySelected(DOM::NodeImpl *, const DOM::Position &start, const DOM::Position &end) const;
 
     // style-application helpers
+    void applyBlockStyle(DOM::CSSStyleDeclarationImpl *);
+    void applyInlineStyle(DOM::CSSStyleDeclarationImpl *);
+    void addBlockStyleIfNeeded(DOM::CSSStyleDeclarationImpl *, DOM::HTMLElementImpl *);
+    void addInlineStyleIfNeeded(DOM::CSSStyleDeclarationImpl *, DOM::NodeImpl *start, DOM::NodeImpl *end);
     bool splitTextAtStartIfNeeded(const DOM::Position &start, const DOM::Position &end);
     DOM::NodeImpl *splitTextAtEndIfNeeded(const DOM::Position &start, const DOM::Position &end);
     void surroundNodeRangeWithElement(DOM::NodeImpl *start, DOM::NodeImpl *end, DOM::ElementImpl *element);
     DOM::Position positionInsertionPoint(DOM::Position);
-    void applyStyleIfNeeded(DOM::NodeImpl *start, DOM::NodeImpl *end);
     
     DOM::CSSStyleDeclarationImpl *m_style;
 };

@@ -1,3 +1,69 @@
+2004-11-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3775920> REGRESSION (Mail): Centering doesn't work in HTML mail
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::copyInheritableProperties): Factor out the 
+        implementation here into new copyPropertiesInSet helper. This now calls the
+        generalized copyPropertiesInSet function with the arguments needed to make copying
+        inheritable work.
+        * khtml/css/css_computedstyle.h:
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::diff): Move this function here from css_computedstyle.cpp.
+        In order to do apply block properties, "regular" style declarations need to do style
+        diffs as well.
+        (CSSStyleDeclarationImpl::copyBlockProperties): New helper. Just like copyInheritableProperties
+        except that it uses a different set of properties that apply only to blocks.
+        (CSSStyleDeclarationImpl::copyPropertiesInSet): New helper that looks at a style declaration
+        and copies out those properties listed in a pre-defined set.
+        * khtml/css/css_valueimpl.h:
+        * khtml/editing/htmlediting.cpp:
+        (khtml::StyleChange::StyleChange): Modified to work with style changes that apply to a whole
+        block, factoring out some of the special case code that should now only run in the inline case.
+        (khtml::StyleChange::init): Factored out the code that now is in checkForLegacyHTMLStyleChange.
+        (khtml::StyleChange::checkForLegacyHTMLStyleChange): New helper for case where we want
+        special handling for "legacy" HTML styles like <B> and <I>.
+        (khtml::ApplyStyleCommand::doApply): Much refactoring in this class to divide up the work of
+        style changes into different kinds. CSS specifies certain properties only apply to certain
+        element types. This set of changes now recognizes two such separate cases: styles that apply
+        to blocks, and styles that apply to inlines.
+        (khtml::ApplyStyleCommand::applyBlockStyle): New function to handle apply styles to whole blocks.
+        (khtml::ApplyStyleCommand::applyInlineStyle): New function to handle apply styles to inlines.
+        (khtml::ApplyStyleCommand::isHTMLStyleNode): Is now passed a CSSStyleDeclarationImpl to work
+        with rather than working on the CSSStyleDeclarationImpl member variable of the class. This is
+        done so that the function can be passed a portion of the styles being applied so that block styles
+        and inline styles can be handled separately.
+        (khtml::ApplyStyleCommand::removeCSSStyle): Ditto.
+        (khtml::ApplyStyleCommand::removeBlockStyle): New function to handle removing styles from whole blocks.
+        (khtml::ApplyStyleCommand::removeInlineStyle): New function to removing styles from inlines.
+        (khtml::ApplyStyleCommand::addBlockStyleIfNeeded): New function to handle applying style to whole blocks.
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): New function to handle applying style to inlines.
+        * khtml/editing/htmlediting.h:
+        (khtml::StyleChange::): Changed as described above.
+        (khtml::StyleChange::usesLegacyStyles):
+        (khtml::EditCommand::setEndingSelectionNeedsLayout): New function to that tells the ending selection
+        it needs to layout, even though it has not changed position in the DOM. For instance, this is needed 
+        when text align changes.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setTypingStyle): Put in an early bail-out in the case where the current style matches
+        the passed-in argument.
+        (KHTMLPart::applyStyle): Modify this function so that block styles are applied when the selection
+        is a caret. Formerly, this just set typing style and made no visible changes to the document.
+
+        New tests.
+
+        * layout-tests/editing/editing.js: Added some glue to change text align.
+        * layout-tests/editing/style/block-style-001-expected.txt: Added.
+        * layout-tests/editing/style/block-style-001.html: Added.
+        * layout-tests/editing/style/block-style-002-expected.txt: Added.
+        * layout-tests/editing/style/block-style-002.html: Added.
+        * layout-tests/editing/style/block-style-003-expected.txt: Added.
+        * layout-tests/editing/style/block-style-003.html: Added.
+
 === Safari-169 ===
 
 2004-10-29  Darin Adler  <darin@apple.com>

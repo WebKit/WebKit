@@ -221,6 +221,54 @@ function italicCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execJustifyCenterCommand() {
+    document.execCommand("JustifyCenter");
+}
+function justifyCenterCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execJustifyCenterCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execJustifyCenterCommand();
+    }
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+
+function execJustifyLeftCommand() {
+    document.execCommand("JustifyLeft");
+}
+function justifyLeftCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execJustifyLeftCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execJustifyLeftCommand();
+    }
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+
+function execJustifyRightCommand() {
+    document.execCommand("JustifyRight");
+}
+function justifyRightCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execJustifyRightCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execJustifyRightCommand();
+    }
+}
+
+
+//-------------------------------------------------------------------------------------------------------
+
 function execInsertNewlineCommand() {
     document.execCommand("InsertNewline");
 }
