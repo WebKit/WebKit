@@ -72,6 +72,7 @@
 				F58C8A07025BD3BC018635CA,
 				F531DDEC02F0C34D018635CA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			knownRegions = (
 				English,
@@ -4110,6 +4111,7 @@
 			refType = 4;
 		};
 		F565A2730352509B01A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebCoreDOM.h;
 			refType = 4;
@@ -4124,6 +4126,7 @@
 			};
 		};
 		F565A2770352643A01A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebCoreDOMDocument.mm;
 			path = kwq/WebCoreDOMDocument.mm;
@@ -4136,6 +4139,7 @@
 			};
 		};
 		F565A27A0352675C01A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebCoreDOMNode.mm;
 			refType = 4;
@@ -4147,6 +4151,7 @@
 			};
 		};
 		F565A27C035284E301A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			path = WebCoreDOMPrivate.h;
 			refType = 4;
@@ -8209,24 +8214,28 @@
 			};
 		};
 		F5EDAAF3035345D901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMDocument.h;
 			path = kwq/WebDOMDocument.h;
 			refType = 2;
 		};
 		F5EDAAF4035345D901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMElement.h;
 			path = kwq/WebDOMElement.h;
 			refType = 2;
 		};
 		F5EDAAF5035345D901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMNamedNodeMap.h;
 			path = kwq/WebDOMNamedNodeMap.h;
 			refType = 2;
 		};
 		F5EDAAF6035345D901A80180 = {
+			fileEncoding = 4;
 			isa = PBXFileReference;
 			name = WebDOMNode.h;
 			path = kwq/WebDOMNode.h;

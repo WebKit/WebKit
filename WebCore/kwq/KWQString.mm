@@ -2761,7 +2761,7 @@ HandleNode *_allocateNode(HandlePageNode *pageNode)
         block[0].type.freeNodes->type.internalNode.next = 0;
     }
     else {
-        // Used last noded on this page.
+        // Used last node on this page.
         block[0].type.freeNodes = 0;
         
         freeNodeAllocationPages = freeNodeAllocationPages->previous;

@@ -118,7 +118,7 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
 	    frame = [_bridge frameNamed:frameName.getNSString()];
 	}
         if (frame == nil) {
-	    frame = [bridge() openNewWindowWithURL:nil referrer:nil frameName:frameName.getNSString()];
+	    frame = [_bridge openNewWindowWithURL:nil referrer:nil frameName:frameName.getNSString()];
         }
     }
     

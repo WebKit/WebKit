@@ -1,3 +1,13 @@
+2002-10-09  Darin Adler  <darin@apple.com>
+
+        * WebCore.pbproj/project.pbxproj: Project Builder wanted to set encodings
+	for new files. Maybe Richard is not using the new Project Builder on all
+	his machines?
+
+        * kwq/KWQString.mm: (_allocateNode): Fix typo in comment.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::bridgeForFrameName): Tweak.
+
 2002-10-09  David Hyatt  <hyatt@apple.com>
 
 	This was an unintentional checkin. backing out.
