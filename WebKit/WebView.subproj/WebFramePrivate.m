@@ -551,6 +551,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             {
                 WebHistoryItem *currItem = [_private currentItem];
                 LOG(PageCache, "Clearing back/forward cache, %s\n", [[[currItem URL] absoluteString] cString]);
+                // FIXME: rjw sez this cache clearing is no longer needed
                 [currItem setHasPageCache:NO];
                 if (loadType == WebFrameLoadTypeReload) {
                     [self _saveScrollPositionToItem:currItem];
@@ -588,7 +589,9 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                 }
                 break;
 
+            // FIXME - just get rid of this case, and merge WebFrameLoadTypeReloadAllowingStaleData with one of the other reload types
             case WebFrameLoadTypeReloadAllowingStaleData:
+                [[self webView] _makeDocumentViewForDataSource:ds];
                 break;
                 
             // FIXME Remove this check when dummy ds is removed.  An exception should be thrown

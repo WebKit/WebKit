@@ -1,3 +1,13 @@
+2002-12-20  Trey Matteson  <trey@apple.com>
+
+	3131841 - crash when switching encodings on a page with frames
+
+        Reviewed by rjw
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):  Create a docView in the LoadStale case, like
+	every other kind of load does.
+
 2002-12-20  Richard Williamson   <rjw@apple.com>
 
         Fixed 3133261.  This fix really has two parts.  This first part
