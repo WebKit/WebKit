@@ -97,6 +97,7 @@ public:
     DOM::DocumentPtr *docPtr() const { return document; }
 
 protected:
+    void setCurrent(DOM::NodeImpl *newCurrent);
 
     KHTMLView *HTMLWidget;
     DOM::DocumentPtr *document;

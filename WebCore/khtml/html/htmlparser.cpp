@@ -111,7 +111,8 @@ public:
  *    element or ignore the tag.
  *
  */
-KHTMLParser::KHTMLParser( KHTMLView *_parent, DocumentPtr *doc)
+KHTMLParser::KHTMLParser( KHTMLView *_parent, DocumentPtr *doc) 
+    : current(0)
 {
     //kdDebug( 6035 ) << "parser constructor" << endl;
 #if SPEED_DEBUG > 0
@@ -141,7 +142,7 @@ KHTMLParser::KHTMLParser( DOM::DocumentFragmentImpl *i, DocumentPtr *doc )
     blockStack = 0;
 
     reset();
-    current = i;
+    setCurrent(i);
     inBody = true;
 }
 
@@ -161,7 +162,7 @@ KHTMLParser::~KHTMLParser()
 
 void KHTMLParser::reset()
 {
-    current = document->document();
+    setCurrent(document->document());
 
     freeBlock();
 
@@ -181,6 +182,15 @@ void KHTMLParser::reset()
     isindex = 0;
     
     discard_until = 0;
+}
+
+void KHTMLParser::setCurrent(DOM::NodeImpl *newCurrent) 
+{
+    if (newCurrent) 
+	newCurrent->ref(); 
+    if (current) 
+	current->deref(); 
+    current = newCurrent; 
 }
 
 void KHTMLParser::parseToken(Token *t)
@@ -310,7 +320,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             if (newNode == current)
                 popBlock(id);
             else
-                current = newNode;
+                setCurrent(newNode);
 #if SPEED_DEBUG < 2
             if(!n->attached() && HTMLWidget)
                 n->attach();
@@ -405,7 +415,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 DOM::NodeImpl *newNode = head->addChild(n);
                 if ( newNode ) {
                     pushBlock(id, tagPriority[id]);
-                    current = newNode;
+                    setCurrent(newNode);
 #if SPEED_DEBUG < 2
 		    if(!n->attached() && HTMLWidget)
                         n->attach();
@@ -619,7 +629,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                         !flat && endTag[id] != DOM::FORBIDDEN)
                     {
                         pushBlock(id, tagPriority[id]);
-                        current = n;
+                        setCurrent(n);
                         inStrayTableContent = true;
                         blockStack->strayTableContent = true;
                     }
@@ -1396,7 +1406,7 @@ void KHTMLParser::reopenResidualStyleTags(HTMLStackElem* elem, DOM::NodeImpl* ma
         malformedTableParent = 0;
 
         // Update |current| manually to point to the new node.
-        current = newNode;
+        setCurrent(newNode);
         
         // Advance to the next tag that needs to be reopened.
         HTMLStackElem* next = elem->next;
@@ -1529,7 +1539,7 @@ void KHTMLParser::popOneBlock(bool delBlock)
     removeForbidden(Elem->id, forbiddenTag);
 
     blockStack = Elem->next;
-    current = Elem->node;
+    setCurrent(Elem->node);
 
     if (Elem->strayTableContent)
         inStrayTableContent = false;
@@ -1614,5 +1624,5 @@ void KHTMLParser::finished()
 {
     // This ensures that "current" is not left pointing to a node when the document is destroyed.
     freeBlock();
-    current = 0;
+    setCurrent(0);
 }

@@ -66,7 +66,7 @@ public:
 #endif
 
     HTMLElementImpl *body();
-    void setBody(HTMLElementImpl *_body);
+    void setBody(HTMLElementImpl *_body, int& exceptioncode);
 
     virtual Tokenizer *createTokenizer();
 

@@ -1,3 +1,26 @@
+2003-10-03  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+	
+	- fixed 3398420 - crash when creating a new document.body object in <body>
+
+	Also included David Faure's improvement to throw an exception.
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::setBody): Don't remove the body when null is passed in,
+	as this means type error at the higher level, so throw an exception.
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::KHTMLParser): Initialize current to 0.
+        (KHTMLParser::setCurrent): Ref new current and deref old; we need to
+	keep it ref'd because script execution could drop the current node on the
+	floor.
+	(KHTMLParser::reset): Use setCurrent.
+        (KHTMLParser::insertNode): Likewise.
+        (KHTMLParser::reopenResidualStyleTags): Likewise.
+        (KHTMLParser::popOneBlock): Likewise.
+        (KHTMLParser::finished): Likewise.
+        * khtml/html/htmlparser.h: Prototype setCurrent.
+
 2003-10-03  Chris Blumenberg  <cblu@apple.com>
 
 	Ran compress-tiffs on new cursor images.
