@@ -1,3 +1,10 @@
+2002-10-27  Don Melton  <gramps@apple.com>
+
+        * khtml/ecma/kjs_navigator.cpp:
+        (Navigator::getValueProperty):
+
+	Tweaked AppName, Product, and Vendor logic.
+
 2002-10-27  Darin Adler  <darin@apple.com>
 
         * kwq/KWQLoader.mm: (KWQServeRequest): Add a missing "delete job" for one

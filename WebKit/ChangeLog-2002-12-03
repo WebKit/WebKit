@@ -1,3 +1,10 @@
+2002-10-27  Don Melton  <gramps@apple.com>
+
+        * WebView.subproj/WebController.m:
+        (-[WebController userAgentForURL:]):
+
+	Changed default user agent to Mozilla 1.1.
+
 2002-10-27  Darin Adler  <darin@apple.com>
 
         * Bookmarks.subproj/WebBookmarkProxy.m: (-[WebBookmarkProxy dealloc]):

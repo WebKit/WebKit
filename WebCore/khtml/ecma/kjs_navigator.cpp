@@ -200,25 +200,32 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
       //kdDebug() << "appName -> IE" << endl;
       return String("Microsoft Internet Explorer");
     }
+#if APPLE_CHANGES
+    // FIXME: Define a fallback result here besides "Konqueror".
+    return String("Konqueror");
+#else
     //kdDebug() << "appName -> Konqueror" << endl;
     return String("Konqueror");
+#endif
   case AppVersion:
     // We assume the string is something like Mozilla/version (properties)
     return String(userAgent.mid(userAgent.find('/') + 1));
   case Product:
-    if (userAgent.find(QString::fromLatin1("Mozilla")) >= 0 &&
+#if APPLE_CHANGES
+    // If we find "Mozilla/5.0" but not "(compatible, ...)" we are a modern Netscape
+    if (userAgent.find(QString::fromLatin1("Mozilla/5.0")) >= 0 &&
         userAgent.find(QString::fromLatin1("compatible")) == -1)
     {
-	//kdDebug() << "appName -> Mozilla" << endl;
-	return String("Gecko");
+        return String("Gecko");
     }
-#if APPLE_CHANGES
+    // FIXME: Should we define a fallback result here besides "Konqueror/khtml"?
     return Undefined();
 #else
     return String("Konqueror/khtml");
 #endif
   case Vendor:
 #if APPLE_CHANGES
+      // FIXME: Should we define a fallback result here besides "KDE"?  Perhaps "Apple"?
       return Undefined();
 #else
       return String("KDE");

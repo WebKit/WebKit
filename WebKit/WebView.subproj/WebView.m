@@ -382,7 +382,7 @@ NSString *WebElementFrameKey = @"WebElementFrame";
     // can tell that they are talking to Alexander and not another WebKit client.
     // Maybe also incorporate something that identifies WebKit's involvement.
     
-    return @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715";
+    return @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.1) Gecko/20020826";
 }
 
 - (BOOL)supportsTextEncoding
