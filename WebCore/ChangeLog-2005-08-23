@@ -1,5 +1,37 @@
 2004-04-24  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3488892>: "anchor names with non-ASCII characters in them do not work"
+
+        * khtml/khtml_part.h: Add new gotoAnchor helper function, private.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openURL): Call new gotoAnchor helper, since the code is now complex enough
+        that I don't want to copy and paste.
+        (KHTMLPart::gotoAnchor): Use the pages own encoding when decoding the string for an
+        anchor reference when going to an anchor. This matches the behavior of other browsers.
+        (KHTMLPart::slotFinishedParsing): Call new gotoAnchor helper.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::scrollToAnchor): Call new gotoAnchor helper.
+
+        * kwq/KWQKURL.h: Removed htmlRef function, and made encodedHtmlRef an inline.
+        Removed unused encoding hint parameter from setQuery (it's not a "hint" at all, but we
+        don't use it). Added a codec parameter to decode_string.
+        * kwq/KWQKURL.mm:
+        (hexDigitValue): Added. Helper function.
+        (KURL::setQuery): Removed unused parameter.
+        (KURL::decode_string): Implemented this function. It needs to use an encoding specified
+        by the web page. Also, we wanted to make a version that did not use the
+        CFURLCreateStringByReplacingPercentEscapes function anyway.
+
+        * kwq/KWQString.h: Added parameters to copyLatin1. Now you can copy an arbitrary substring.
+        * kwq/KWQString.mm: (QString::copyLatin1): Updated implementation to handle the two
+        new parameters.
+
+        * WebCore-tests.exp: Updated for change in signature of setQuery and decode_string.
+        * WebCore-combined.exp: Regenerated.
+
+2004-04-24  Darin Adler  <darin@apple.com>
+
         - fixed <rdar://problem/3570953>: "Update "Acknowledgements" to remove expat and possibly include libxml"
 
         * WebCore.pbproj/project.pbxproj: Removed the part of the copyright notice that was for expat contributors.

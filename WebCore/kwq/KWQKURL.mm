@@ -29,6 +29,9 @@
 #import "KWQRegExp.h"
 #import "KWQTextCodec.h"
 
+// FIXME: Should get this from a header.
+extern "C" int malloc_good_size(int size);
+
 // You may have to turn this to 0 to compile without the headers for ICU installed.
 #define HAVE_ICU_LIBRARY 1
 
@@ -211,6 +214,13 @@ static inline bool isPathSegmentEndChar(unsigned char c) { return characterClass
 static inline bool isBadChar(unsigned char c) { return characterClassTable[c] & BadChar; }
 static inline bool isHexDigit(unsigned char c) { return characterClassTable[c] & HexDigitChar; }
 
+static inline int hexDigitValue(unsigned char c)
+{
+    ASSERT(isHexDigit(c));
+    if (c < 'A')
+        return c - '0';
+    return (c - 'A' + 10) & 0xF; // handle both upper and lower case without a branch
+}
 
 // KURL
 
@@ -771,7 +781,7 @@ void KURL::setRef(const QString &s)
     }
 }
 
-void KURL::setQuery(const QString &query, int encoding_hint)
+void KURL::setQuery(const QString &query)
 {
     if (m_isValid) {
         QString q;
@@ -881,17 +891,68 @@ QString KURL::prettyURL() const
     return result;
 }
 
-QString KURL::decode_string(const QString &urlString)
+QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
 {
-    CFStringRef unescaped = CFURLCreateStringByReplacingPercentEscapes(NULL, urlString.getCFString(), CFSTR(""));
-    if (!unescaped) {
-        // FIXME: To avoid this error, we need to write our own unescaping function.
-        ERROR("CFURL found ill-formed escape sequences in %s", urlString.ascii());
-        return urlString;
+    QString result("");
+
+    char staticBuffer[2048];
+    char *buffer = staticBuffer;
+    int bufferLength = sizeof(staticBuffer);
+
+    int length = urlString.length();
+    int decodedPosition = 0;
+    int searchPosition = 0;
+    int encodedRunPosition;
+    while ((encodedRunPosition = urlString.find('%', searchPosition)) > 0) {
+        // Find the sequence of %-escape codes.
+        int encodedRunEnd = encodedRunPosition;
+        while (length - encodedRunEnd >= 3
+                && urlString[encodedRunEnd] == '%'
+                && isHexDigit(urlString[encodedRunEnd + 1].latin1())
+                && isHexDigit(urlString[encodedRunEnd + 2].latin1()))
+            encodedRunEnd += 3;
+        if (encodedRunEnd == encodedRunPosition) {
+            ++searchPosition;
+            continue;
+        }
+        searchPosition = encodedRunEnd;
+
+        // Copy the entire %-escape sequence into an 8-bit buffer.
+        int encodedRunLength = encodedRunEnd - encodedRunPosition;
+        if (encodedRunLength + 1 > bufferLength) {
+            if (buffer != staticBuffer)
+                free(buffer);
+            bufferLength = malloc_good_size(encodedRunLength + 1);
+            buffer = static_cast<char *>(malloc(bufferLength));
+        }
+        urlString.copyLatin1(buffer, encodedRunPosition, encodedRunLength);
+
+        // Decode the %-escapes into bytes.
+        char *p = buffer;
+        const char *q = buffer;
+        while (*q) {
+            *p++ = (hexDigitValue(q[1]) << 4) | hexDigitValue(q[2]);
+            q += 3;
+        }
+
+        // Decode the bytes into Unicode characters.
+        QString decoded = codec->toUnicode(buffer, p - buffer);
+        if (decoded.isEmpty()) {
+            continue;
+        }
+
+        // Build up the string with what we just skipped and what we just decoded.
+        result.append(urlString.mid(decodedPosition, encodedRunPosition - decodedPosition));
+        result.append(decoded);
+        decodedPosition = encodedRunEnd;
     }
-    QString qUnescaped = QString::fromCFString(unescaped);
-    CFRelease(unescaped);
-    return qUnescaped;
+
+    result.append(urlString.mid(decodedPosition, length - decodedPosition));
+
+    if (buffer != staticBuffer)
+        free(buffer);
+
+    return result;
 }
 
 static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
@@ -1343,16 +1404,6 @@ void KURL::parse(const char *url, const QString *originalString)
     if (buffer != staticBuffer) {
 	free(buffer);
     }
-}
-
-QString KURL::encodedHtmlRef() const
-{
-    return ref();
-}
-
-QString KURL::htmlRef() const
-{
-    return decode_string(ref());
 }
 
 bool operator==(const KURL &a, const KURL &b)

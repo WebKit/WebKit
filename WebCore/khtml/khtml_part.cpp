@@ -449,8 +449,7 @@ bool KHTMLPart::openURL( const KURL &url )
         m_url = url;
         emit started( 0L );
 
-        if ( !gotoAnchor( url.encodedHtmlRef()) )
-           gotoAnchor( url.htmlRef() );
+        gotoAnchor();
 
         d->m_bComplete = true;
         d->m_doc->setParsing(false);
@@ -1640,6 +1639,23 @@ void KHTMLPart::stopAnimations()
     }
 }
 
+void KHTMLPart::gotoAnchor()
+{
+    QString ref = m_url.encodedHtmlRef();
+    if (!ref.isEmpty())
+        if (!gotoAnchor(ref)) {
+            // Can't use htmlRef() here because it doesn't know which encoding to use to decode.
+            // Decoding here has to match encoding in completeURL, which means it has to use the
+            // page's encoding rather than UTF-8.
+            if (d->m_decoder)
+#if !APPLE_CHANGES
+                gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()->mibEnum()));
+#else
+                gotoAnchor(KURL::decode_string(ref, d->m_decoder->codec()));
+#endif
+    }
+}
+
 void KHTMLPart::slotFinishedParsing()
 {
   d->m_doc->setParsing(false);
@@ -1652,10 +1668,7 @@ void KHTMLPart::slotFinishedParsing()
   // if not, remove them, relayout, and repaint
 
   d->m_view->restoreScrollBar();
-
-  if ( !m_url.encodedHtmlRef().isEmpty() )
-    if ( !gotoAnchor( m_url.encodedHtmlRef()) )
-       gotoAnchor( m_url.htmlRef() );
+  gotoAnchor();
 
   checkCompleted();
 }

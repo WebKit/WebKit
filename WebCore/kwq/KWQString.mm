@@ -38,9 +38,7 @@
 
 // Why can't I find this in a header anywhere?  It's too bad we have
 // to wire knowledge of allocation sizes, but it makes a huge diffence.
-extern "C" {
-int malloc_good_size(int size);
-}
+extern "C" int malloc_good_size(int size);
 
 #define ALLOC_QCHAR_GOOD_SIZE(X) (malloc_good_size(X*sizeof(QChar))/sizeof(QChar))
 #define ALLOC_CHAR_GOOD_SIZE(X) (malloc_good_size(X))
@@ -1571,22 +1569,29 @@ bool QString::hasFastLatin1() const
     return data->_isAsciiValid;
 }
 
-void QString::copyLatin1(char *buffer) const
+void QString::copyLatin1(char *buffer, uint position, uint maxLength) const
 {
     KWQStringData *data = *dataHandle;
 
     int length = data->_length;
+    if (position > static_cast<uint>(length))
+        length = 0;
+    else
+        length -= position;
+    if (static_cast<uint>(length) > maxLength)
+        length = static_cast<int>(maxLength);
+
+    buffer[length] = 0;
 
     if (data->_isAsciiValid) {
-        memcpy(buffer, data->_ascii, length + 1);
+        memcpy(buffer, data->_ascii + position, length);
         return;
     }
 
     ASSERT(data->_isUnicodeValid);
-    const QChar *uc = data->_unicode;
+    const QChar *uc = data->_unicode + position;
     while (length--)
         *buffer++ = *uc++;
-    *buffer = 0;
 }
 
 
