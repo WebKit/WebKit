@@ -36,6 +36,7 @@
 #include "operations.h"
 #include "error_object.h"
 #include "nodes.h"
+#include "simple_number.h"
 
 using namespace KJS;
 
@@ -63,16 +64,18 @@ void ValueImp::mark()
 
 bool ValueImp::marked() const
 {
-  // FIXNUM: need special case for fixnum, they should act as if
-  // always marked.
-  return (_flags & VI_MARKED);
+  // simple numbers are always considered marked
+  return SimpleNumber::isSimpleNumber(this) || (_flags & VI_MARKED);
 }
 
 void ValueImp::setGcAllowed()
 {
-  // FIXNUM: need special case for fixnum, should be a no-op
-  //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
-  _flags |= VI_GCALLOWED;
+  // simple numbers are never seen by the collector so setting this
+  // flag is irrelevant
+  if (!SimpleNumber::isSimpleNumber(this)) {
+    //fprintf(stderr,"ValueImp::setGcAllowed %p\n",(void*)this);
+    _flags |= VI_GCALLOWED;
+  }
 }
 
 void* ValueImp::operator new(size_t s)
@@ -94,7 +97,7 @@ bool ValueImp::toUInt32(unsigned&) const
 int ValueImp::toInteger(ExecState *exec) const
 {
   unsigned i;
-  if (toUInt32(i))
+  if (dispatchToUInt32(i))
     return (int)i;
   return int(roundValue(exec, Value(const_cast<ValueImp*>(this))));
 }
@@ -102,7 +105,7 @@ int ValueImp::toInteger(ExecState *exec) const
 int ValueImp::toInt32(ExecState *exec) const
 {
   unsigned i;
-  if (toUInt32(i))
+  if (dispatchToUInt32(i))
     return (int)i;
 
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
@@ -117,7 +120,7 @@ int ValueImp::toInt32(ExecState *exec) const
 unsigned int ValueImp::toUInt32(ExecState *exec) const
 {
   unsigned i;
-  if (toUInt32(i))
+  if (dispatchToUInt32(i))
     return i;
 
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
@@ -129,7 +132,7 @@ unsigned int ValueImp::toUInt32(ExecState *exec) const
 unsigned short ValueImp::toUInt16(ExecState *exec) const
 {
   unsigned i;
-  if (toUInt32(i))
+  if (dispatchToUInt32(i))
     return (unsigned short)i;
 
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
@@ -180,76 +183,109 @@ bool ValueImp::deleteValue(ExecState *exec)
 
 Type ValueImp::dispatchType() const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->type();
+  if (SimpleNumber::isSimpleNumber(this)) {
+    return NumberType;
+  } else {
+    return this->type();
+  }
 }
 
 Value ValueImp::dispatchToPrimitive(ExecState *exec, Type preferredType) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->toPrimitive(exec, preferredType);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    return Number((NumberImp*)this);
+  } else {
+    return this->toPrimitive(exec, preferredType);
+  }
 }
 
 bool ValueImp::dispatchToBoolean(ExecState *exec) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->toBoolean(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    return SimpleNumber::longValue(this);
+  } else {
+    return this->toBoolean(exec);
+  }
 }
 
 double ValueImp::dispatchToNumber(ExecState *exec) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->toNumber(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    return SimpleNumber::longValue(this);
+  } else {
+    return this->toNumber(exec);
+  }
 }
 
 UString ValueImp::dispatchToString(ExecState *exec) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->toString(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    return UString::from(SimpleNumber::longValue(this));
+  } else {
+    return this->toString(exec);
+  }
 }
 
 Object ValueImp::dispatchToObject(ExecState *exec) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->toObject(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+      List args;
+      args.append(Number(static_cast<NumberImp*>(const_cast<ValueImp *>(this))));
+      return Object::dynamicCast(exec->interpreter()->builtinNumber().construct(exec,args));
+  } else {
+    return this->toObject(exec);
+  }
 }
 
 bool ValueImp::dispatchToUInt32(unsigned& result) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->toUInt32(result);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    result = SimpleNumber::longValue(this);
+    return true;
+  } else {
+    return this->toUInt32(result);
+  }
 }
 
 Value ValueImp::dispatchGetBase(ExecState *exec) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->getBase(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    Object err = Error::create(exec, ReferenceError, I18N_NOOP("Invalid reference base"));
+    exec->setException(err);
+    return err;
+  } else {
+    return this->getBase(exec);
+  }
 }
 
 UString ValueImp::dispatchGetPropertyName(ExecState *exec) const
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->getPropertyName(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    return UString();
+  } else {
+    return this->getPropertyName(exec);
+  }
 }
-
-#if 0
-Value ValueImp::dispatchGetValue(ExecState *exec) const
-{
-  // FIXNUM: need special case for fixnums here 
-  return this->getValue(exec);
-}
-#endif
 
 void ValueImp::dispatchPutValue(ExecState *exec, const Value& w)
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->putValue(exec, w);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    Object err = Error::create(exec,ReferenceError);
+    exec->setException(err);
+  } else {
+    return this->putValue(exec, w);
+  }
 }
 
 bool ValueImp::dispatchDeleteValue(ExecState *exec)
 {
-  // FIXNUM: need special case for fixnums here 
-  return this->deleteValue(exec);
+  if (SimpleNumber::isSimpleNumber(this)) {
+    Object err = Error::create(exec,ReferenceError);
+    exec->setException(err);
+    return false;
+  } else {
+    return this->deleteValue(exec);
+  }
 }
 
 
@@ -371,25 +407,20 @@ String String::dynamicCast(const Value &v)
 
 // ------------------------------ Number ---------------------------------------
 
-// FIXNUM: need fixnum special case in below constructor
 Number::Number(int i)
-  : Value(new NumberImp(static_cast<double>(i))) { }
+  : Value(SimpleNumber::fitsInSimpleNumber(i) ? SimpleNumber::makeSimpleNumber(i) : new NumberImp(static_cast<double>(i))) { }
 
-// FIXNUM: need fixnum special case in below constructor
 Number::Number(unsigned int u)
-  : Value(new NumberImp(static_cast<double>(u))) { }
+  : Value(SimpleNumber::fitsInSimpleNumber(u) ? SimpleNumber::makeSimpleNumber(u) : new NumberImp(static_cast<double>(u))) { }
 
-// FIXNUM: need fixnum special case in below constructor
 Number::Number(double d)
-  : Value(new NumberImp(d)) { }
+  : Value(SimpleNumber::fitsInSimpleNumber((long)d) ? SimpleNumber::makeSimpleNumber((long)d) : new NumberImp(d)) { }
 
-// FIXNUM: need fixnum special case in below constructor
 Number::Number(long int l)
-  : Value(new NumberImp(static_cast<double>(l))) { }
+  : Value(SimpleNumber::fitsInSimpleNumber(l) ? SimpleNumber::makeSimpleNumber(l) : new NumberImp(static_cast<double>(l))) { }
 
-// FIXNUM: need fixnum special case in below constructor
 Number::Number(long unsigned int l)
-  : Value(new NumberImp(static_cast<double>(l))) { }
+  : Value(SimpleNumber::fitsInSimpleNumber(l) ? SimpleNumber::makeSimpleNumber(l) : new NumberImp(static_cast<double>(l))) { }
 
 Number Number::dynamicCast(const Value &v)
 {
@@ -401,8 +432,12 @@ Number Number::dynamicCast(const Value &v)
 
 double Number::value() const
 {
-  assert(rep);
-  return ((NumberImp*)rep)->value();
+  if (SimpleNumber::isSimpleNumber(rep)) {
+    return (double)SimpleNumber::longValue(rep);
+  } else {
+    assert(rep);
+    return ((NumberImp*)rep)->value();
+  }
 }
 
 int Number::intValue() const

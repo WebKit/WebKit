@@ -217,6 +217,7 @@
 				F692A8CD02555BA201FF60F7,
 				F68EBB8E0255D4C601FF60F7,
 				F5C290E70284F98E018635CA,
+				F50888B7030BB74C012A967E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -368,6 +369,7 @@
 				F692A8860255597D01FF60F7,
 				F692A8870255597D01FF60F7,
 				F692A8880255597D01FF60F7,
+				F50888B6030BB74C012A967E,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -422,6 +424,21 @@
 //F52
 //F53
 //F54
+		F50888B6030BB74C012A967E = {
+			isa = PBXFileReference;
+			name = simple_number.h;
+			path = kjs/simple_number.h;
+			refType = 4;
+		};
+		F50888B7030BB74C012A967E = {
+			fileRef = F50888B6030BB74C012A967E;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		F531DDEB02F0C2DD018635CA = {
 			buildRules = (
 			);

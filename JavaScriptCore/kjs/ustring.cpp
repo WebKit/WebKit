@@ -263,6 +263,14 @@ UString UString::from(unsigned int u)
   return UString(buf);
 }
 
+UString UString::from(long l)
+{
+  char buf[40];
+  sprintf(buf, "%ld", l);
+
+  return UString(buf);
+}
+
 UString UString::from(double d)
 {
   char buf[40];

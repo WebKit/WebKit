@@ -1,5 +1,52 @@
 2002-08-15  Maciej Stachowiak  <mjs@apple.com>
 
+	Phase 2 of fixnum optimization. Store any integral number that
+	will fit in two bits less than a long inside the ValueImp *
+	itself, thus avoiding the need to deal with the garbage collector
+	at all for these types. Such numbers comprised .5 million of the
+	1.7 million ValueImps created during the cvs-js-performance test,
+	so traffic through the garbage collector should be
+
+	20% improvement on cvs-js-performance. This may also show up on
+	cvs-base, but I did not compare and I am too lazy to make clean in
+	WebCore yet again. 
+
+	This also significantly reduces memory footprint on
+	JavaScript-heavy pages. Size after going through
+	cvs-js-performance suite is now 22MB to 17.5MB.
+	
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * kjs/simple_number.h: Added. Some inline static methods for handling
+	simple numbers that are stored in the pointer.
+        * kjs/ustring.h:
+        * kjs/ustring.cpp:
+        (UString::from): Added new overload for long.
+        * kjs/value.cpp:
+        (ValueImp::marked): Add special case for simple numbers.
+        (ValueImp::setGcAllowed): Likewise.
+	(ValueImp::toInteger): Call dispatch version of
+	toUInt32(unsigned&), not the real method.
+        (ValueImp::toInt32): Likewise.
+        (ValueImp::toUInt32): Likewise.
+        (ValueImp::toUInt16): Likewise.
+        (ValueImp::dispatchType): Add special case for simple numbers.
+        (ValueImp::dispatchToPrimitive): Likewise.
+        (ValueImp::dispatchToBoolean): Likewise.
+        (ValueImp::dispatchToNumber): Likewise.
+        (ValueImp::dispatchToString): Likewise.
+        (ValueImp::dispatchToObject): Likewise.
+        (ValueImp::dispatchToUInt32): Likewise.
+        (ValueImp::dispatchGetBase): Likewise.
+        (ValueImp::dispatchGetPropertyName): Likewise.
+        (ValueImp::dispatchPutValue): Likewise.
+        (ValueImp::dispatchDeleteValue): Likewise.
+        (Number::Number): Create a simple number instead of a full-blown
+	ValueImp when possible.
+        (Number::value): Likewise.
+        * kjs/value.h:
+
+2002-08-15  Maciej Stachowiak  <mjs@apple.com>
+
 	Phase one of the "fixnum" optimization (storing small enough
 	integers in the pointer). This just paves the way for the change
 	by making all the virtual functions of ValueImp private and adding
