@@ -934,10 +934,13 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const DOM::Position
 
 void CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
 {
+    if (!node)
+        return;
+
     document()->updateLayout();
 
     RenderObject *renderer = node->renderer();
-    if (!renderer->isBlockFlow())
+    if (!renderer || !renderer->isBlockFlow())
         return;
     
     if (renderer->height() > 0)
@@ -948,10 +951,13 @@ void CompositeEditCommand::insertBlockPlaceholderIfNeeded(NodeImpl *node)
 
 bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
 {
+    if (!node)
+        return;
+
     document()->updateLayout();
 
     RenderObject *renderer = node->renderer();
-    if (!renderer->isBlockFlow())
+    if (!renderer || !renderer->isBlockFlow())
         return false;
 
     // This code will remove a block placeholder if it still is at the end

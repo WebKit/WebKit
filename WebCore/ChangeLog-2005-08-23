@@ -1,5 +1,17 @@
 2004-12-21  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+        
+        Fix for this bug:
+        
+        <rdar://problem/3927752> Crash in khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded(DOM::NodeImpl*)
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::insertBlockPlaceholderIfNeeded): Added some null checks.
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Ditto.
+
+2004-12-21  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         * khtml/editing/htmlediting.cpp:
