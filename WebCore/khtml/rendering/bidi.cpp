@@ -1393,7 +1393,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     adjustEmbeddding = true;
                     end.increment(bidi);
                     adjustEmbeddding = false;
-                } else if(m_pre && end.current() == QChar('\n') ) {
+                } else if (end.obj && end.obj->style()->whiteSpace() == PRE && end.current() == QChar('\n')) {
                     adjustEmbeddding = true;
                     end.increment(bidi);
                     adjustEmbeddding = false;
