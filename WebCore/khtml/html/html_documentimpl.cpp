@@ -310,8 +310,10 @@ void HTMLDocumentImpl::close()
     
     bool wasNotRedirecting = !view() || view()->part()->d->m_redirectURL.isEmpty();
     
-    if (body() && doload)
+    if (body() && doload) {
+        dispatchImageLoadEventsNow();
         body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
+    }
         
     // Make sure both the initial layout and reflow happen after the onload
     // fires. This will improve onload scores, and other browsers do it.

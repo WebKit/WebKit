@@ -1,3 +1,38 @@
+2003-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3126431 -- failed assertion `!attached()' at silkair.net
+
+        * khtml/rendering/render_image.h: Fix isImage which for some strange reason was
+        returning false. Not important because no one calls it. Added dispatchLoadEvent
+        and detach member functions.
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::notifyFinished): Instead of dispatching the load or error event
+        immediately, call dispatchImageLoadEventSoon on the document.
+        (RenderImage::dispatchLoadEvent): Added. Moved the code to do the actual
+	event dispatch in here.
+        (RenderImage::detach): Remove the image from the document in case it has a
+        pending event that was not delivered yet before calling the base class detach.
+
+        * khtml/xml/dom_docimpl.h: Add dispatchImageLoadEventSoon, dispatchImageLoadEventsNow,
+        removeImage, and an override of timerEvent. Moved APPLE_CHANGES code to a better place.
+        * khtml/xml/dom_docimpl.cpp: Moved APPLE_CHANGES code to a better place and made these changes:
+        (DocumentImpl::DocumentImpl): Initialize m_imageLoadEventTimer to 0.
+        (DocumentImpl::detach): Redo the APPLE_CHANGES to make them easier to read.
+        Empty out the m_imageLoadEventDispatchSoonList and the m_imageLoadEventDispatchingList
+        to avoid an O(n^2) operation as we detach each image and remove it from the list.
+        (DocumentImpl::dispatchImageLoadEventSoon): Added. Adds image to list and sets up timer.
+        (DocumentImpl::removeImage): Added. Removes image from lists, and cancels timer if needed.
+        (DocumentImpl::dispatchImageLoadEventsNow): Added. Copies list, and call images to dispatch load events.
+        (DocumentImpl::timerEvent): Added. Calls dispatchImageLoadEventsNow.
+
+        * khtml/html/html_documentimpl.cpp: (HTMLDocumentImpl::close):
+        Dispatch all pending image load events before dispatching the document load.
+
+        * force-clean-timestamp: Force rebuild because Project Builder doesn't do
+	header dependencies well enough to deal with changes to the document class.
+
 2003-01-26  David Hyatt  <hyatt@apple.com>
 
 	Fix :active to behave just like :hover.  It was being

@@ -45,6 +45,7 @@
 
 #include "rendering/render_root.h"
 #include "rendering/render_replaced.h"
+#include "rendering/render_image.h"
 #include "render_arena.h"
 
 #include "khtmlview.h"
@@ -227,9 +228,9 @@ QPtrList<DocumentImpl> * DocumentImpl::changedDocuments = 0;
 // KHTMLView might be 0
 DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     : NodeBaseImpl( new DocumentPtr() )
+    , m_imageLoadEventTimer(0)
 #if APPLE_CHANGES
-    , m_finishedParsing(this, SIGNAL(finishedParsing())), m_inPageCache(0),
-    m_passwordFields(0), m_secureForms(0)
+    , m_finishedParsing(this, SIGNAL(finishedParsing())), m_inPageCache(0), m_passwordFields(0), m_secureForms(0)
 #endif
 {
     document->doc = this;
@@ -1022,14 +1023,22 @@ void DocumentImpl::restoreRenderer(RenderObject* render)
 
 void DocumentImpl::detach()
 {
-#if APPLE_CHANGES
-    if (!m_inPageCache){
-        //printf ("detaching document\n");
-#endif
     RenderObject* render = m_render;
 
     // indicate destruction mode,  i.e. attached() but m_render == 0
     m_render = 0;
+    
+#if APPLE_CHANGES
+    if (m_inPageCache) {
+        return;
+    }
+#endif
+
+    // Empty out these lists as a performance optimization, since detaching
+    // all the individual render objects will cause all the RenderImage
+    // objects to remove themselves from the lists.
+    m_imageLoadEventDispatchSoonList.clear();
+    m_imageLoadEventDispatchingList.clear();
 
     NodeBaseImpl::detach();
 
@@ -1042,12 +1051,6 @@ void DocumentImpl::detach()
         delete m_renderArena;
         m_renderArena = 0;
     }
-#if APPLE_CHANGES
-    }
-    else {
-        m_render = 0;
-    }
-#endif
 }
 
 void DocumentImpl::setVisuallyOrdered()
@@ -2130,6 +2133,96 @@ EventListener *DocumentImpl::createHTMLEventListener(QString code)
     return view()->part()->createHTMLEventListener(code);
 }
 
+void DocumentImpl::dispatchImageLoadEventSoon(RenderImage *image)
+{
+    m_imageLoadEventDispatchSoonList.append(image);
+    if (!m_imageLoadEventTimer) {
+        m_imageLoadEventTimer = startTimer(0);
+    }
+}
+
+void DocumentImpl::removeImage(RenderImage *image)
+{
+    m_imageLoadEventDispatchSoonList.remove(image);
+    m_imageLoadEventDispatchingList.remove(image);
+    if (m_imageLoadEventDispatchSoonList.isEmpty() && m_imageLoadEventTimer) {
+        killTimer(m_imageLoadEventTimer);
+        m_imageLoadEventTimer = 0;
+    }
+}
+
+void DocumentImpl::dispatchImageLoadEventsNow()
+{
+    if (m_imageLoadEventTimer) {
+        killTimer(m_imageLoadEventTimer);
+        m_imageLoadEventTimer = 0;
+    }
+    
+    m_imageLoadEventDispatchingList = m_imageLoadEventDispatchSoonList;
+    m_imageLoadEventDispatchSoonList.clear();
+    for (QPtrListIterator<RenderImage> it(m_imageLoadEventDispatchingList); it.current(); ) {
+        RenderImage *image = it.current();
+        // Must advance iterator *before* dispatching call.
+        // Otherwise, it might be advanced automatically if dispatching the call had a side effect
+        // of destroying the current RenderImage, and then we would advance past the *next* item,
+        // missing one altogether.
+        ++it;
+        image->dispatchLoadEvent();
+    }
+    m_imageLoadEventDispatchingList.clear();
+}
+
+void DocumentImpl::timerEvent(QTimerEvent *)
+{
+    dispatchImageLoadEventsNow();
+}
+
+#if APPLE_CHANGES
+
+bool DocumentImpl::inPageCache()
+{
+    return m_inPageCache;
+}
+
+void DocumentImpl::setInPageCache(bool flag)
+{
+    m_inPageCache = flag;
+}
+
+void DocumentImpl::passwordFieldAdded()
+{
+    m_passwordFields++;
+}
+
+void DocumentImpl::passwordFieldRemoved()
+{
+    assert(m_passwordFields > 0);
+    m_passwordFields--;
+}
+
+bool DocumentImpl::hasPasswordField() const
+{
+    return m_passwordFields > 0;
+}
+
+void DocumentImpl::secureFormAdded()
+{
+    m_secureForms++;
+}
+
+void DocumentImpl::secureFormRemoved()
+{
+    assert(m_secureForms > 0);
+    m_secureForms--;
+}
+
+bool DocumentImpl::hasSecureForm() const
+{
+    return m_secureForms > 0;
+}
+
+#endif // APPLE_CHANGES
+
 // ----------------------------------------------------------------------------
 
 DocumentFragmentImpl::DocumentFragmentImpl(DocumentPtr *doc) : NodeBaseImpl(doc)
@@ -2233,50 +2326,5 @@ NodeImpl *DocumentTypeImpl::cloneNode ( bool /*deep*/ )
     // so we do not support it...
     return 0;
 }
-
-#if APPLE_CHANGES
-bool DocumentImpl::inPageCache()
-{
-    return m_inPageCache;
-}
-
-void DocumentImpl::setInPageCache(bool flag)
-{
-    m_inPageCache = flag;
-}
-
-void DocumentImpl::passwordFieldAdded()
-{
-    m_passwordFields++;
-}
-
-void DocumentImpl::passwordFieldRemoved()
-{
-    assert(m_passwordFields > 0);
-    m_passwordFields--;
-}
-
-bool DocumentImpl::hasPasswordField() const
-{
-    return m_passwordFields > 0;
-}
-
-void DocumentImpl::secureFormAdded()
-{
-    m_secureForms++;
-}
-
-void DocumentImpl::secureFormRemoved()
-{
-    assert(m_secureForms > 0);
-    m_secureForms--;
-}
-
-bool DocumentImpl::hasSecureForm() const
-{
-    return m_secureForms > 0;
-}
-
-#endif
 
 #include "dom_docimpl.moc"

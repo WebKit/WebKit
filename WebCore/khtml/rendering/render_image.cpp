@@ -336,14 +336,42 @@ void RenderImage::layout()
 
 void RenderImage::notifyFinished(CachedObject *finishedObj)
 {
-    if (image == finishedObj && !loadEventSent && element()) {
-        loadEventSent = true;
-	if (image->isErrorImage()) {
-	    element()->dispatchHTMLEvent(EventImpl::ERROR_EVENT,false,false);
-	} else {
-	    element()->dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
-	}
+    if (image == finishedObj) {
+        NodeImpl *node = element();
+        if (node) {
+            DocumentImpl *document = node->getDocument();
+            if (document) {
+                document->dispatchImageLoadEventSoon(this);
+            }
+        }
     }
+}
+
+void RenderImage::dispatchLoadEvent()
+{
+    if (!loadEventSent) {
+        NodeImpl *node = element();
+        if (node) {
+            loadEventSent = true;
+            if (image->isErrorImage()) {
+                node->dispatchHTMLEvent(EventImpl::ERROR_EVENT, false, false);
+            } else {
+                node->dispatchHTMLEvent(EventImpl::LOAD_EVENT, false, false);
+            }
+        }
+    }
+}
+
+void RenderImage::detach(RenderArena *arena)
+{
+    NodeImpl *node = element();
+    if (node) {
+        DocumentImpl *document = node->getDocument();
+        if (document) {
+            document->removeImage(this);
+        }
+    }
+    RenderReplaced::detach(arena);
 }
 
 bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty, bool inside)

@@ -51,6 +51,7 @@ namespace khtml {
     class CSSStyleSelector;
     class DocLoader;
     class CSSStyleSelectorList;
+    class RenderImage;
 }
 
 namespace DOM {
@@ -408,33 +409,14 @@ public:
      * @param content The header value (value of the meta tag's "content" attribute)
      */
     void processHttpEquiv(const DOMString &equiv, const DOMString &content);
+    
+    void dispatchImageLoadEventSoon(khtml::RenderImage *);
+    void dispatchImageLoadEventsNow();
+    void removeImage(khtml::RenderImage *);
+    virtual void timerEvent(QTimerEvent *);
 
 signals:
     void finishedParsing();
-
-#if APPLE_CHANGES
-public:
-    KWQSignal m_finishedParsing;
-
-    static Document createInstance (DocumentImpl *impl);
-
-    bool inPageCache();
-    void setInPageCache (bool flag);
-    void restoreRenderer(khtml::RenderObject* render);
-
-    void passwordFieldAdded();
-    void passwordFieldRemoved();
-    bool hasPasswordField() const ;
-
-    void secureFormAdded();
-    void secureFormRemoved();
-    bool hasSecureForm() const ;
-
-private:
-    bool m_inPageCache;
-    int m_passwordFields;
-    int m_secureForms;
-#endif
 
 protected:
     khtml::CSSStyleSelector *m_styleSelector;
@@ -507,6 +489,34 @@ protected:
     DOMString m_title;
     
     RenderArena* m_renderArena;
+    
+    QPtrList<khtml::RenderImage> m_imageLoadEventDispatchSoonList;
+    QPtrList<khtml::RenderImage> m_imageLoadEventDispatchingList;
+    int m_imageLoadEventTimer;
+
+#if APPLE_CHANGES
+public:
+    KWQSignal m_finishedParsing;
+
+    static Document createInstance (DocumentImpl *impl);
+
+    bool inPageCache();
+    void setInPageCache(bool flag);
+    void restoreRenderer(khtml::RenderObject* render);
+
+    void passwordFieldAdded();
+    void passwordFieldRemoved();
+    bool hasPasswordField() const;
+
+    void secureFormAdded();
+    void secureFormRemoved();
+    bool hasSecureForm() const;
+
+private:
+    bool m_inPageCache;
+    int m_passwordFields;
+    int m_secureForms;
+#endif
 };
 
 class DocumentFragmentImpl : public NodeBaseImpl

@@ -44,7 +44,7 @@ public:
     virtual const char *renderName() const { return "RenderImage"; }
 
     virtual bool isRendered() const { return true; }
-    virtual bool isImage() const { return false; }
+    virtual bool isImage() const { return true; }
     
     virtual void paintObject( QPainter *p, int /*x*/, int /*y*/, int /*w*/, int /*h*/, int tx, int ty, PaintAction paintAction);
 
@@ -63,11 +63,14 @@ public:
     virtual void updateFromElement();
 
     virtual void notifyFinished(CachedObject *finishedObj);
+    void dispatchLoadEvent();
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside=false);
     
     virtual short calcReplacedWidth() const;
     virtual int calcReplacedHeight() const;
+
+    virtual void detach(RenderArena *);
 
 private:
     bool isWidthSpecified() const;
