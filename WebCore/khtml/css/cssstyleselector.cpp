@@ -379,13 +379,13 @@ void CSSStyleSelector::matchRulesForList(CSSRuleDataList* rules,
         if ((cssTagId == tag || tag == anyLocalName) && checkSelector(d->selector(), element)) {
             // If the rule has no properties to apply, then ignore it.
             CSSMutableStyleDeclarationImpl* decl = rule->declaration();
-            if (!decl) continue;
+            if (!decl || !decl->length()) continue;
             
             // If we're matching normal rules, set a pseudo bit if 
             // we really just matched a pseudo-element.
             if (dynamicPseudo != RenderStyle::NOPSEUDO && pseudoStyle == RenderStyle::NOPSEUDO)
                 style->setHasPseudoStyle(dynamicPseudo);
-            else  {
+            else {
                 // Update our first/last rule indices in the matched rules array.
                 lastRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
                 if (firstRuleIndex == -1) firstRuleIndex = m_matchedDeclCount + m_matchedRuleCount;
@@ -828,16 +828,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
 {
     if (!e)
         return 0;
-    
-    if (!e->getDocument()->haveStylesheetsLoaded()) {
-        if (!styleNotYetAvailable) {
-            styleNotYetAvailable = ::new RenderStyle();
-            styleNotYetAvailable->setDisplay(NONE);
-            styleNotYetAvailable->ref();
-        }
-        return styleNotYetAvailable;
-    }
-    
+
     initElementAndPseudoState(e);
     initForStyleResolve(e, parentStyle);
     pseudoStyle = pseudo;

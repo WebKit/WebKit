@@ -1,3 +1,16 @@
+2005-01-04  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3830936, hang on changeforamerica.com.  Make sure to ignore the style not yet available option when
+	returning pseudo-styles.
+	
+        Reviewed by john
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::matchRulesForList):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::addPseudoStyle):
+
 2005-01-04  Darin Adler  <darin@apple.com>
 
         - rolled out my custom tag name change again -- it caused a 1 ms PLT regression

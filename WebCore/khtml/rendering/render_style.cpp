@@ -623,7 +623,6 @@ RenderStyle* RenderStyle::getPseudoStyle(PseudoId pid)
 void RenderStyle::addPseudoStyle(RenderStyle* pseudo)
 {
     if (!pseudo) return;
-    
     pseudo->ref();
     pseudo->pseudoStyle = pseudoStyle;
     pseudoStyle = pseudo;
