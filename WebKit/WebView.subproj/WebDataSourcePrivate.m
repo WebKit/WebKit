@@ -35,7 +35,6 @@
     // controller is not retained!  IFWebControllers maintain
     // a reference to the main frame, which in turn refers to it's
     // view and data source.
-    [parent release];
     [frames release];
     [inputURL release];
     [urlHandles release];
@@ -67,7 +66,8 @@
 
 - (void)_setParent: (IFWebDataSource *)p
 {
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent = [p retain];
+    // Non-retained.
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent = p;
 }
 
 - (void)_setPrimaryLoadComplete: (BOOL)flag

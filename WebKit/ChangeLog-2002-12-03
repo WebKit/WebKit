@@ -1,4 +1,12 @@
 2002-03-28  Richard Williamson  <rjw@apple.com>
+
+        Fixed big leak of any document that had a frame or iframe.
+        
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource retain]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _setParent:]):
+
+2002-03-28  Richard Williamson  <rjw@apple.com>
     
         Modified the initial layout policy.
 

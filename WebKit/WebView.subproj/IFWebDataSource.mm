@@ -37,6 +37,11 @@ static id IFWebDataSourceMake(void *url)
     return self;
 }
 
+- retain
+{
+    return [super retain];
+}
+
 - (void)dealloc
 {
     [_dataSourcePrivate release];
