@@ -1,3 +1,12 @@
+2003-10-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3083264 - frame names changed by JavaScript are not reflected in WebFrame at the WebKit level
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge didSetName:]): Tell the WebFrame about its new name.
+
 2003-10-28  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3465613 -- REGRESSION (111): Crash creating nib that 

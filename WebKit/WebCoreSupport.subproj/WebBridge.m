@@ -1008,4 +1008,9 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return _keyboardUIMode;
 }
 
+- (void)didSetName:(NSString *)name
+{
+    [_frame _setName:name];
+}
+
 @end
