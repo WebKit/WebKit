@@ -1,3 +1,16 @@
+2004-11-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me
+        
+        More layout tests.
+
+        * layout-tests/editing/deleting/delete-br-008-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-008.html: Added.
+        * layout-tests/editing/deleting/delete-br-009-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-009.html: Added.
+        * layout-tests/editing/deleting/delete-br-010-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-010.html: Added.
+
 2004-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Fix by Yasuo Kida, reviewed by me.
