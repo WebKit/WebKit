@@ -710,8 +710,15 @@ static BOOL nowPrinting(WebCoreBridge *self)
 {
     [self _setupRootForPrinting:YES];
     NSMutableArray* pages = [NSMutableArray arrayWithCapacity:5];
-    if (printWidthScaleFactor == 0 || printHeight == 0)
+    if (printWidthScaleFactor <= 0) {
+        ERROR("printWidthScaleFactor has bad value %.2f", printWidthScaleFactor);
         return pages;
+    }
+    
+    if (printHeight <= 0) {
+        ERROR("printHeight has bad value %.2f", printHeight);
+        return pages;
+    }
 	
     if (!_part || !_part->xmlDocImpl() || !_part->view()) return pages;
     RenderCanvas* root = static_cast<khtml::RenderCanvas *>(_part->xmlDocImpl()->renderer());

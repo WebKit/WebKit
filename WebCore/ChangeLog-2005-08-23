@@ -1,3 +1,23 @@
+2005-02-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+
+        - WebCore part of fix for <rdar://problem/3980651> REGRESSION (125-180): Huge number of pages printed from certain page, 
+        iFrame involved
+        
+        This also fixes the problems with printing from GMail, yay!
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+        If the current line is taller than the entire page height (e.g. tall iFrame), don't try
+        to avoid splitting it across pages.
+        
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge computePageRectsWithPrintWidthScaleFactor:printHeight:]):
+        Handle error cases in a more obvious manner; this will cause future problems like this
+        to print a blank page and complain to the console on debug builds, rather than print a 
+        zillionty mostly-blank pages.
+
 2005-02-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3960304> can't load a particular applet (at www.escape.de) unless it's the first applet to be loaded

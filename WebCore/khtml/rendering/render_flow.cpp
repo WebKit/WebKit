@@ -376,11 +376,15 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             // It is utterly inadequate, and this should not be done at paint time at all.
             // The whole way objects break across pages needs to be redone.
             RenderCanvas* c = canvas();
-            if (_ty + curr->root()->bottomOverflow() > c->printRect().y() + c->printRect().height()) {
-                if (_ty + curr->root()->topOverflow() < c->truncatedAt())
-                    c->setBestTruncatedAt(_ty + curr->root()->topOverflow(), this);
-                // Let's stop here.
-                break;
+            // Try to avoid splitting a line vertically, but only if it's less than the height
+            // of the entire page.
+            if (curr->root()->bottomOverflow() - curr->root()->topOverflow() <= c->printRect().height()) {
+                if (_ty + curr->root()->bottomOverflow() > c->printRect().y() + c->printRect().height()) {
+                    if (_ty + curr->root()->topOverflow() < c->truncatedAt())
+                        c->setBestTruncatedAt(_ty + curr->root()->topOverflow(), this);
+                    // Let's stop here.
+                    break;
+                }
             }
         }
 
