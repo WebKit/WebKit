@@ -381,7 +381,7 @@ errOut:
     if (privKey) {
         CFRelease(privKey);
     }
-    return spkcB64;
+    return reinterpret_cast<char *>(spkcB64);
 }
 
 /* 
@@ -462,7 +462,7 @@ bool addCertificatesToKeychainFromData(const void *bytes, unsigned length)
          * a cert. FIXME: Netscape spec says the blob might also be PKCS7
          * format, which we're not handling here.
          */
-        result = addCertificateToKeychainFromData(bytes, length, 0); 
+        result = addCertificateToKeychainFromData(static_cast<const unsigned char *>(bytes), length, 0); 
     }
 
     return result;

@@ -1,3 +1,15 @@
+2003-12-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed and C++ heavy-lifting by Darin
+
+	Fix warnings in C++ files.
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (signedPublicKeyAndChallengeString): Add cast to remove warning.
+        (addCertificatesToKeychainFromData): Add cast to remove warning.
+        * WebKit.pbproj/project.pbxproj: Add back warnings to C++ files.
+        * WebKitPrefix.h: Add define for NULL that works for C++.
+
 2003-12-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

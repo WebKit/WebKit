@@ -1,4 +1,8 @@
+#ifdef __cplusplus
+#define NULL __null
+#else
 #define NULL ((void *)0)
+#endif
 
 #import <stddef.h>
 #import <stdio.h>
