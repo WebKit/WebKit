@@ -1,3 +1,12 @@
+2002-06-04  Darin Adler  <darin@apple.com>
+
+	Moved the string truncator class here from WebBrowser so we don't have to
+	export our text machinery.
+
+	* WebKit.pbproj/project.pbxproj:
+	* Misc.subproj/IFStringTruncator.h: Added.
+	* Misc.subproj/IFStringTruncator.m: Added.
+
 2002-06-03  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFImageRenderer.m:

@@ -243,6 +243,7 @@
 				F83DCC73029D09F301000131,
 				9CE1F8A402A5C6F30ECA2ACD,
 				9CE1F8A602A5C6F30ECA2ACD,
+				F59668CA02AD2923018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -308,6 +309,7 @@
 				F83DCC74029D09F301000131,
 				9CE1F8A502A5C6F30ECA2ACD,
 				9CE1F8A702A5C6F30ECA2ACD,
+				F59668CB02AD2923018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -393,6 +395,8 @@
 				25A5593201A5996D0ECA149E,
 				F59EAE3E0253C7EE018635CA,
 				F59EAE410253C8DE018635CA,
+				F59668C802AD2923018635CA,
+				F59668C902AD2923018635CA,
 			);
 			isa = PBXGroup;
 			name = "Other Sources";
@@ -1404,6 +1408,30 @@
 			};
 			isa = PBXBuildStyle;
 			name = Unoptimized;
+		};
+		F59668C802AD2923018635CA = {
+			isa = PBXFileReference;
+			name = IFStringTruncator.h;
+			path = Misc.subproj/IFStringTruncator.h;
+			refType = 4;
+		};
+		F59668C902AD2923018635CA = {
+			isa = PBXFileReference;
+			name = IFStringTruncator.m;
+			path = Misc.subproj/IFStringTruncator.m;
+			refType = 4;
+		};
+		F59668CA02AD2923018635CA = {
+			fileRef = F59668C802AD2923018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F59668CB02AD2923018635CA = {
+			fileRef = F59668C902AD2923018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F599A817028C6D0D0124FDD6 = {
 			isa = PBXFileReference;
