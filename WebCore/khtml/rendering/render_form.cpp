@@ -1372,6 +1372,9 @@ void RenderTextArea::updateFromElement()
 {
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     w->setReadOnly(element()->readOnly());
+#ifdef APPLE_CHANGES
+    w->setDisabled(element()->disabled());
+#endif
     w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
     
     // Call w->text() before calling element()->value(), because in the case of inline

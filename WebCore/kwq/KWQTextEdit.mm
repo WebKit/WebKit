@@ -143,6 +143,27 @@ void QTextEdit::setReadOnly(bool flag)
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 }
 
+bool QTextEdit::isDisabled() const
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    volatile bool result = false;
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    result = ![textView isEnabled];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+
+    return result;
+}
+
+void QTextEdit::setDisabled(bool flag)
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+
+    KWQ_BLOCK_NS_EXCEPTIONS;
+    [textView setEnabled:!flag];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
+}
+
 void QTextEdit::selectAll()
 {
     KWQTextArea *textView = (KWQTextArea *)getView();

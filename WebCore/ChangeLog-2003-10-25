@@ -1,3 +1,32 @@
+2003-10-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3440703>: Textarea form controls do not respect disabled attribute
+
+        * khtml/rendering/render_form.cpp:
+        (RenderTextArea::updateFromElement): Check for disabled attribute.
+        * kwq/KWQTextArea.h:
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea setEnabled:]): Added. 
+        (-[KWQTextArea isEnabled]): Added.
+        (-[KWQTextArea drawRect:]): Draws a disabled-looking  bezel when disabled.
+        (-[KWQTextAreaTextView becomeFirstResponder]): Return NO if disabled.
+        (-[KWQTextAreaTextView mouseDown:]): Block events if disabled.
+        (-[KWQTextAreaTextView keyDown:]): Ditto.
+        (-[KWQTextAreaTextView keyUp:]): Ditto.
+        (-[KWQTextAreaTextView setEnabled:]): Added. Pass value through to editable
+	attribute on text view.
+        (-[KWQTextAreaTextView isEnabled]): Added.
+        (-[KWQTextAreaTextView drawRect:]): Set the text color to a disabled color
+	when disabled.
+        * kwq/KWQTextEdit.h:
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::isDisabled): Added.
+        (QTextEdit::setDisabled): Added.
+
 2003-10-10  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3449405 - REGRESSION: reproducible crash changing focus w/ button on page, e.g. on www.aa.com

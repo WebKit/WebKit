@@ -45,6 +45,9 @@ class QTextEdit;
 - (void)setEditable:(BOOL)flag;
 - (BOOL)isEditable;
 
+- (void)setEnabled:(BOOL)flag;
+- (BOOL)isEnabled;
+
 - (void)setFont:(NSFont *)font;
 
 - (void)setText:(NSString *)text;

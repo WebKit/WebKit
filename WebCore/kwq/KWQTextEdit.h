@@ -54,6 +54,9 @@ class QTextEdit : public QScrollView
     void setReadOnly(bool);
     bool isReadOnly() const;
 
+    void setDisabled(bool);
+    bool isDisabled() const;
+
     void setText(const QString &);
     QString text() const;
     QString textWithHardLineBreaks() const;
