@@ -1,3 +1,15 @@
+2004-08-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3245706> URLs with backslashes instead of slashes work on WinIE; should work on Safari (SAP)
+	<rdar://problem/3506429> <BASE> tag containing backslash is breaking images with absolute URLs
+	
+        * kwq/KWQKURL.mm:
+        (substituteBackslashes): Helper method
+        (KURL::KURL): If the URL contains any backslashes, substitute all
+	that appear before the query or fragment.
+
 2004-08-12  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
