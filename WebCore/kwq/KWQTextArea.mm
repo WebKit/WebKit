@@ -32,7 +32,7 @@
     It has a small set of features required by the definition of the <TEXTAREA>
     element.  
     
-    It support the three wierd WRAP modes:
+    It supports the three wierd <TEXTAREA> WRAP attributes:
     
               OFF - Text is not wrapped.  It is kept to single line, although if
                     the user enters a return the line IS broken.  This emulates
@@ -42,6 +42,9 @@
                          
     kde expects a line based widget.  It uses a line API to convert text into multiple lines
     when wrapping is set to HARD.  To support kde with implement [textLine] and [numLines].
+    
+    If the wrap mode HARD kde will repeatedly call textForLine: (via emulated API in KWQTextEdit)
+    to construct the text with inserted \n.
 */
 
 
@@ -84,6 +87,7 @@ const float LargeNumberForText = 1.0e7;
     if (f == wrap)
         return;
         
+    // This widget may have issues toggling back and forth between WRAP=YES and WRAP=NO.
     NSDictionary *attr;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
