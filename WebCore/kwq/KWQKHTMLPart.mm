@@ -251,9 +251,6 @@ KHTMLPart::~KHTMLPart()
     if ( d->m_doc != NULL ) {
         d->m_doc->detach();
 
-	if (d->m_doc->refCount() != 1) {
-	    fprintf (stdout, "Warning:  document reference count not 1 as expected,  ref = %d\n", d->m_doc->refCount());
-	}
 	d->m_doc->deref();
     }
 
@@ -442,6 +439,14 @@ void KHTMLPart::slotData(IFURLHandle *handle, const char *bytes, int length)
       enc = QString::fromCFString((CFStringRef) encoding);
       setEncoding(enc, true);
     }
+    
+    // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
+    // purposes only.
+    if (d->m_doc == 0){
+        fprintf (stderr, "ERROR:  KHTMLPart::slotData m_doc == 0 IGNORING DATA, url = %s\n", d->m_url.url().latin1());
+        return;
+    }
+
 
     write(bytes, length);
 }
@@ -612,7 +617,7 @@ void KHTMLPart::write( const QString &str )
     // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
     // purposes only.
     if (d->m_doc == 0){
-        fprintf (stderr, "WARNING:  m_doc == 0\n");
+        fprintf (stderr, "WARNING:  KHTMLPart::write  m_doc == 0\n");
     }
 
   if ( str.isNull() )
@@ -632,6 +637,13 @@ void KHTMLPart::write( const QString &str )
 
 void KHTMLPart::end()
 {
+    // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
+    // purposes only.
+    if (d->m_doc == 0){
+        fprintf (stderr, "ERROR:  KHTMLPart::end  m_doc == 0\n");
+        return;
+    }
+
 #ifndef APPLE_CHANGES
     KWQDEBUG2 ("0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
     // make sure nothing's left in there...

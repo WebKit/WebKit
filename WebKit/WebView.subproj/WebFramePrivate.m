@@ -163,6 +163,7 @@ char *stateNames[6] = {
             break;
         }
 
+        case IFWEBFRAMESTATE_PROVISIONAL:
         case IFWEBFRAMESTATE_COMPLETE:
         case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
         {
@@ -170,7 +171,6 @@ char *stateNames[6] = {
         }
         
         case IFWEBFRAMESTATE_UNINITIALIZED:
-        case IFWEBFRAMESTATE_PROVISIONAL:
         default:
         {
             [[NSException exceptionWithName:NSGenericException reason: [NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE from %s", stateNames[data->state]] userInfo: nil] raise];

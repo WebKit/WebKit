@@ -1,3 +1,10 @@
+2002-04-02  Richard Williamson  <rjw@apple.com>
+
+        More noisy bulletproofing.  Still need to find source of problem.
+        
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::~KHTMLPart), (KHTMLPart::slotData),
+	(KHTMLPart::write), (KHTMLPart::end):
+
 2002-04-02  Darin Adler  <darin@apple.com>
 
         Fix some small storage leaks.
