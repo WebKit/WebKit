@@ -1,3 +1,27 @@
+2004-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed <rdar://problem/3903797> scripts can cause other frames/windows to execute arbitrary script using javascript: URLs
+        
+	I changed all unprotected places that can navigate a different
+	window or frame from script to check for a javascript: URL, and if
+	found, to check for safety using cross-site-script rules. 
+
+	I considered a few other possible exploits and made no change:
+
+	- document.location is already protected because the document
+	object itself is protected
+
+	- frame.src, frame.location, iframe.src and targetted links are
+	all safe because setting the URL of a frame to a javascript: URL
+	executes the script in the context of the parent
+
+	* khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall):
+        (Location::put):
+        (LocationFunc::tryCall):
+
 2004-12-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

@@ -893,7 +893,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
       KHTMLPart* p = Window::retrieveActive(exec)->m_part;
       if (p) {
         QString dstUrl = p->htmlDocument().completeURL(value.toString(exec).string()).string();
-        if (dstUrl.find("javascript:", 0, false) || isSafeScript(exec))
+        if (!dstUrl.startsWith("javascript:", false) || isSafeScript(exec))
         {
           bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
@@ -1453,8 +1453,12 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	  // FIXME: referrer?
           while ( part->parentPart() )
               part = part->parentPart();
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-          part->scheduleLocationChange(url.url(), false/*don't lock history*/, userGesture);
+
+          const Window* window = Window::retrieveWindow(part);
+          if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+            part->scheduleLocationChange(url.url(), false/*don't lock history*/, userGesture);
+          }
           return Window::retrieve(part);
       }
       if ( uargs.frameName == "_parent" )
@@ -1462,8 +1466,12 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 	  // FIXME: referrer?
           if ( part->parentPart() )
               part = part->parentPart();
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-          part->scheduleLocationChange(url.url(), false/*don't lock history*/, userGesture);
+
+          const Window* window = Window::retrieveWindow(part);
+          if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+            part->scheduleLocationChange(url.url(), false/*don't lock history*/, userGesture);
+          }
           return Window::retrieve(part);
       }
       uargs.serviceType = "text/html";
@@ -1495,9 +1503,12 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         }
 #if APPLE_CHANGES
         if (!url.isEmpty()) {
-          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-          // FIXME: Need to pass referrer here.
-          khtmlpart->scheduleLocationChange(url.url(), false, userGesture);
+          const Window* window = Window::retrieveWindow(part);
+          if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+            bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+            // FIXME: Need to pass referrer here.
+            khtmlpart->scheduleLocationChange(url.url(), false, userGesture);
+          } 
 	}
 #else
         uargs.serviceType = QString::null;
@@ -2121,13 +2132,17 @@ void Location::put(ExecState *exec, const Identifier &p, const Value &v, int att
     ObjectImp::put(exec, p, v, attr);
     return;
   }
-  bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+
+  const Window* window = Window::retrieveWindow(m_part);
+  if (!url.url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+    bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
 #if APPLE_CHANGES
-  // We want a new history item if this JS was called via a user gesture
-  m_part->scheduleLocationChange(url.url(), !userGesture, userGesture);
+    // We want a new history item if this JS was called via a user gesture
+    m_part->scheduleLocationChange(url.url(), !userGesture, userGesture);
 #else
-  m_part->scheduleLocationChange(url.url(), false /*don't lock history*/, userGesture);
+    m_part->scheduleLocationChange(url.url(), false /*don't lock history*/, userGesture);
 #endif
+  }
 }
 
 Value Location::toPrimitive(ExecState *exec, Type) const
@@ -2164,15 +2179,21 @@ Value LocationFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       QString str = args[0].toString(exec).qstring();
       KHTMLPart* p = Window::retrieveActive(exec)->part();
       if ( p ) {
-	bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-        part->scheduleLocationChange(p->htmlDocument().completeURL(str).string(), true /*lock history*/, userGesture);
+        const Window* window = Window::retrieveWindow(part);
+        if (!str.startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+          bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+          part->scheduleLocationChange(p->htmlDocument().completeURL(str).string(), true /*lock history*/, userGesture);
+        }
       }
       break;
     }
     case Location::Reload:
     {
-      bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
-      part->scheduleLocationChange(part->url().url(), true/*lock history*/, userGesture);
+      const Window* window = Window::retrieveWindow(part);
+     if (!part->url().url().startsWith("javascript:", false) || (window && window->isSafeScript(exec))) {
+        bool userGesture = static_cast<ScriptInterpreter *>(exec->dynamicInterpreter())->wasRunByUserGesture();
+        part->scheduleLocationChange(part->url().url(), true/*lock history*/, userGesture);
+      }
       break;
     }
     case Location::ToString:
