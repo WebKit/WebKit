@@ -1,3 +1,28 @@
+2004-11-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Change around the way we block the Javascript "Paste" command identifier from
+        being available. Formerly, this was done with an ifdef we never compiled in.
+        Now, this is done with a couple of cheap runtime checks. The advantage is that
+        we can now compile this command into development builds, and still yet switch
+        on the command in deployment builds through the use of WebCore SPI so we can
+        write and run layout tests with all of our builds.
+
+        * khtml/editing/jsediting.cpp:
+        (DOM::JSEditor::queryCommandSupported): Checks state of paste command in case
+        command being queried is the paste command. 
+        (DOM::JSEditor::setSupportsPasteCommand): New SPI to turn on paste command.
+        * khtml/editing/jsediting.h: Ditto.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::pasteFromPasteboard): Added.
+        (KHTMLPart::canPaste): Added.
+        * kwq/KWQKHTMLPart.mm:
+        (KHTMLPart::canPaste): Added.
+        * kwq/KWQRenderTreeDebug.cpp:
+        (externalRepresentation): Turn on paste command.
+        * kwq/WebCoreBridge.h: Add canPaste call so WebKit can fill in the answer.
+
 2004-11-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

@@ -1,3 +1,14 @@
+2004-11-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canPaste]): Call WebView _canPaste.
+        * WebView.subproj/WebView.m:
+        (-[WebView _canPaste]): Try to forward to document view's implementation. Only WebHTMLView
+        answers right now. Returns NO otherwise.
+        * WebView.subproj/WebViewInternal.h: Add _canPaste method to WebView.
+
 2004-11-22  Maciej Stachowiak  <mjs@apple.com>
 
 	Back  out the window closing fix, it seems to be causing crashes.

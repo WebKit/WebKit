@@ -43,6 +43,8 @@ class DocumentImpl;
 
 namespace {
 
+bool supportsPasteCommand = false;
+
 struct CommandImp {
     bool (*execFn)(KHTMLPart *part, bool userInterface, const DOMString &value);
     bool (*enabledFn)(KHTMLPart *part);
@@ -110,6 +112,8 @@ bool JSEditor::queryCommandState(const DOMString &command)
 
 bool JSEditor::queryCommandSupported(const DOMString &command)
 {
+    if (!supportsPasteCommand && command.string().lower() == "paste")
+        return false;
     return commandImp(command) != 0;
 }
 
@@ -123,6 +127,11 @@ DOMString JSEditor::queryCommandValue(const DOMString &command)
         return DOMString();
     m_doc->updateLayout();
     return cmd->valueFn(part);
+}
+
+void JSEditor::setSupportsPasteCommand(bool flag)
+{
+    supportsPasteCommand = flag;
 }
 
 // =============================================================================================
@@ -276,15 +285,11 @@ bool execOutdent(KHTMLPart *part, bool userInterface, const DOMString &value)
     return false;
 }
 
-#if SUPPORT_PASTE
-
 bool execPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
     part->pasteFromPasteboard();
     return true;
 }
-
-#endif
 
 bool execPrint(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
@@ -352,14 +357,10 @@ bool enabledAnySelection(KHTMLPart *part)
     return part->selection().isCaretOrRange();
 }
 
-#if SUPPORT_PASTE
-
 bool enabledPaste(KHTMLPart *part)
 {
-    return part->canPaste();
+    return supportsPasteCommand && part->canPaste();
 }
-
-#endif
 
 bool enabledRangeSelection(KHTMLPart *part)
 {
@@ -480,9 +481,7 @@ QDict<CommandImp> createCommandDictionary()
         { "JustifyNone", { execJustifyLeft, enabledAnySelection, stateNone, valueNull } },
         { "JustifyRight", { execJustifyRight, enabledAnySelection, stateNone, valueNull } },
         { "Outdent", { execOutdent, enabledAnySelection, stateNone, valueNull } },
-#if SUPPORT_PASTE
         { "Paste", { execPaste, enabledPaste, stateNone, valueNull } },
-#endif
         { "Print", { execPrint, enabled, stateNone, valueNull } },
         { "Redo", { execRedo, enabledRedo, stateNone, valueNull } },
         { "SelectAll", { execSelectAll, enabled, stateNone, valueNull } },
@@ -556,6 +555,9 @@ QDict<CommandImp> createCommandDictionary()
     for (int i = 0; i < numCommands; ++i) {
         commandDictionary.insert(commands[i].name, &commands[i].imp);
     }
+#ifndef NDEBUG
+    supportsPasteCommand = true;
+#endif
     return commandDictionary;
 }
 

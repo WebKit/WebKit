@@ -28,6 +28,7 @@
 #include "dom_docimpl.h"
 #include "dom_position.h"
 #include "htmltags.h"
+#include "jsediting.h"
 #include "khtmlview.h"
 #include "render_canvas.h"
 #include "render_replaced.h"
@@ -40,6 +41,7 @@
 #include "KWQTextStream.h"
 
 using DOM::DocumentImpl;
+using DOM::JSEditor;
 using DOM::NodeImpl;
 using DOM::Position;
 
@@ -424,6 +426,8 @@ static void writeSelection(QTextStream &ts, const RenderObject *o)
 
 QString externalRepresentation(RenderObject *o)
 {
+    JSEditor::setSupportsPasteCommand(true);
+
     QString s;
     {
         QTextStream ts(&s);

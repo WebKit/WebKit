@@ -5292,6 +5292,13 @@ void KHTMLPart::cutToPasteboard()
 #endif
 }
 
+void KHTMLPart::pasteFromPasteboard()
+{
+#if APPLE_CHANGES
+    KWQ(this)->issuePasteCommand();
+#endif
+}
+
 void KHTMLPart::redo()
 {
 #if APPLE_CHANGES
@@ -5307,6 +5314,12 @@ void KHTMLPart::undo()
 }
 
 #if !APPLE_CHANGES
+
+bool KHTMLPart::canPaste() const
+{
+    // FIXME: Implement.
+    return true;
+}
 
 bool KHTMLPart::canRedo() const
 {

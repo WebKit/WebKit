@@ -3958,6 +3958,11 @@ bool KHTMLPart::canRedo() const
     return [[KWQ(this)->_bridge undoManager] canRedo];
 }
 
+bool KHTMLPart::canPaste() const
+{
+    return [KWQ(this)->_bridge canPaste];
+}
+
 void KWQKHTMLPart::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
     if (![_bridge isContinuousSpellCheckingEnabled])

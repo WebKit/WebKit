@@ -2513,6 +2513,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return [[self _editingDelegateForwarder] webView:self shouldEndEditingInDOMRange:range];
 }
 
+- (BOOL)_canPaste
+{
+    id documentView = [[[self mainFrame] frameView] documentView];
+    return [documentView respondsToSelector:@selector(_canPaste)] && [documentView _canPaste];
+}
+
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     // Derive the bridge to use from the range passed in.

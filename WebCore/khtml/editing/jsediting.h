@@ -49,6 +49,8 @@ public:
     bool queryCommandSupported(const DOMString &command);
     DOMString queryCommandValue(const DOMString &command);
 
+    static void setSupportsPasteCommand(bool flag=true);
+
 private:
     JSEditor(const JSEditor &);
     JSEditor &operator=(const JSEditor &);

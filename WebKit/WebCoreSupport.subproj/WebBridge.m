@@ -1350,6 +1350,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[_frame webView] paste:nil];
 }
 
+- (BOOL)canPaste
+{
+    return [[_frame webView] _canPaste];
+}
+
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
     if ([view respondsToSelector:@selector(webPlugInSetIsSelected:)]) {

@@ -541,6 +541,7 @@ typedef enum {
 - (BOOL)isEditable;
 - (BOOL)shouldBeginEditing:(DOMRange *)range;
 - (BOOL)shouldEndEditing:(DOMRange *)range;
+- (BOOL)canPaste;
 
 - (NSString *)overrideMediaType;
 
