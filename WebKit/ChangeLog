@@ -11,20 +11,6 @@
 	This was breaking the build. Live font changes are
 	temporarily broken again.
 
-2002-03-20  Maciej Stachowiak  <mjs@apple.com>
-
-	Merged the following changes from LABYRINTH_KDE_3_MERGE branch:
-	
-	2002-03-20  Maciej Stachowiak  <mjs@apple.com>
-
-		Merged accumlated changes from HEAD, up to
-		MERGED_TO_KDE_3_MERGE_BRANCH tag.
-
-	2002-03-19  Maciej Stachowiak  <mjs@apple.com>
-	
-	        * WebView.subproj/IFWebView.mm: (-[IFWebView layout]):
-		layout() no longer takes an argument.
-	
 2002-03-21  Richard Williamson  <rjw@apple.com>
 
         Added setNeedsToApplyStyles: and reapplyStyles.  This is for dynamic preferences
@@ -58,6 +44,20 @@
 	(+[IFWebDataSource initialize]): removed defaults-registration
 	from here.
 
+2002-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+	Merged the following changes from LABYRINTH_KDE_3_MERGE branch:
+	
+	2002-03-20  Maciej Stachowiak  <mjs@apple.com>
+
+		Merged accumlated changes from HEAD, up to
+		MERGED_TO_KDE_3_MERGE_BRANCH tag.
+
+	2002-03-19  Maciej Stachowiak  <mjs@apple.com>
+	
+	        * WebView.subproj/IFWebView.mm: (-[IFWebView layout]):
+		layout() no longer takes an argument.
+	
 2002-03-20  John Sullivan  <sullivan@apple.com>
 
 	Added displayTitle field to IFURIEntry. This is intended to hold the string

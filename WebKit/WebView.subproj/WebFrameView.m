@@ -138,7 +138,7 @@
 // FIXME: This is commented out because it fails to  compile with KDE3 merge.
 // We need to replace it with whatever the new equivalent is.
 
-//            widget->part()->xmlDocImpl()->applyChanges(TRUE, TRUE);
+            widget->part()->xmlDocImpl()->recalcStyle(DOM::NodeImpl::Force);
 
 
 
