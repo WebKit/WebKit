@@ -68,10 +68,12 @@ void* RenderArena::allocate(size_t size)
 
 void RenderArena::free(size_t size, void* ptr)
 {
-#ifdef DEBUG
+#if APPLE_CHANGES
+#ifndef NDEBUG
     // Mark the memory with 0xdd in DEBUG builds so that there will be
     // problems if someone tries to access memory that they've freed.
     memset(ptr, 0xdd, size);
+#endif
 #endif
 
     // Ensure we have correct alignment for pointers.  Important for Tru64

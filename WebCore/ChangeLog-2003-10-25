@@ -1,3 +1,25 @@
+2002-11-26  David Hyatt  <hyatt@apple.com>
+
+	Fix the font family stuff to be refcounted, so copying
+	fonts stays cheap.  Re-enabling it.
+
+	Patch the render_arena code with some debugging info
+	to help detect when memory gets trashed.
+
+	Fix the background painting code to deal with negative
+	x and y bakcground positions.  Fixes the brain on
+	brainjar.com.
+	
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/render_arena.cpp:
+        (RenderArena::free):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBackground):
+        * kwq/KWQFont.h:
+        * kwq/KWQFont.mm:
+        (QFontFamily::QFontFamily):
+        (QFontFamily::operator=):
+
 === Alexander-34 ===
 
 2002-11-26  David Hyatt  <hyatt@apple.com>

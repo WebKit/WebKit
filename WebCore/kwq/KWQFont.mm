@@ -32,25 +32,25 @@
 QFontFamily::QFontFamily()
     : _family(@"")
     , _next(0)
+    , _refCnt(0)
 {
 }
 
 QFontFamily::QFontFamily(const QFontFamily& other) 
 {
-    if (other._next)
-        _next = new QFontFamily(*(other._next));
-    else
-        _next = 0;
+    _next = other._next;
+    if (_next)
+        _next->ref();
     _family = other._family;
 }
 
 QFontFamily& QFontFamily::operator=(const QFontFamily& other) {
     if (this != &other) {
-        delete _next;
-        if (other._next)
-            _next = new QFontFamily(*(other._next));
-        else 
-            _next = 0;
+        if (_next)
+            _next->deref();
+        _next = other._next;
+        if (_next)
+            _next->ref();
         _family = other._family;
     }
     return *this;
