@@ -3457,7 +3457,9 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     int exceptionCode = 0;
     ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
     ASSERT(exceptionCode == 0);
-    
+
+    styleElement->ref();
+
     styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
     ASSERT(exceptionCode == 0);
     
@@ -3467,6 +3469,8 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
 
     node->parentNode()->appendChild(styleElement, exceptionCode);
     ASSERT(exceptionCode == 0);
+
+    styleElement->deref();
 
     nodeToRemove = styleElement;    
     return styleElement->renderer()->style();

@@ -5614,8 +5614,10 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
     int exceptionCode = 0;
 
     if (d->m_typingStyle) {
-        styleElement = xmlDocImpl()->createHTMLElement("SPAN", exceptionCode);
+        styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
         assert(exceptionCode == 0);
+
+        styleElement->ref();
         
         styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
         assert(exceptionCode == 0);
@@ -5625,19 +5627,20 @@ CSSComputedStyleDeclarationImpl *KHTMLPart::selectionComputedStyle(NodeImpl *&no
         assert(exceptionCode == 0);
 
         if (elem->renderer() && elem->renderer()->canHaveChildren()) {
-          elem->appendChild(styleElement, exceptionCode);
+            elem->appendChild(styleElement, exceptionCode);
         } else {
-          NodeImpl *parent = elem->parent();
-          NodeImpl *next = elem->nextSibling();
+            NodeImpl *parent = elem->parent();
+            NodeImpl *next = elem->nextSibling();
 
-          if (next) {
-            parent->insertBefore(styleElement, next, exceptionCode);
-          } else {
-            parent->appendChild(styleElement, exceptionCode);
-          }
+            if (next) {
+                parent->insertBefore(styleElement, next, exceptionCode);
+            } else {
+                parent->appendChild(styleElement, exceptionCode);
+            }
         }
-
         assert(exceptionCode == 0);
+
+        styleElement->deref();
 
         nodeToRemove = styleElement;
     }

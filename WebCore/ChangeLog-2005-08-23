@@ -1,3 +1,13 @@
+2005-02-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3998627> WebKit crashes when deleting text in a modified div
+
+        * khtml/khtml_part.cpp: (KHTMLPart::selectionComputedStyle): Add a ref and deref to keep
+        the element alive until it's added to the DOM tree.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::styleForSelectionStart): Ditto.
+
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3999467> when Osaka-Mono is specified as fixed width font, Osaka used instead
