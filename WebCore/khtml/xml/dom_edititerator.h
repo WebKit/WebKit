@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef _EditIterator_h_
-#define _EditIterator_h_
+#ifndef _PositionIterator_h_
+#define _PositionIterator_h_
 
 #include "dom_position.h"
 
@@ -33,12 +33,12 @@ namespace DOM {
 class NodeImpl;
 class Position;
 
-class EditIterator
+class PositionIterator
 {
 public:
-    EditIterator() : m_current() {}
-    EditIterator(NodeImpl *node, long offset) : m_current(node, offset) {}
-    EditIterator(const Position &o) : m_current(o) {}
+    PositionIterator() : m_current() {}
+    PositionIterator(NodeImpl *node, long offset) : m_current(node, offset) {}
+    PositionIterator(const Position &o) : m_current(o) {}
 
     Position current() const { return m_current; }
     Position previous() { return m_current = peekPrevious(); }
@@ -58,4 +58,4 @@ private:
 
 } // namespace DOM
 
-#endif // _EditIterator_h_
+#endif // _PositionIterator_h_

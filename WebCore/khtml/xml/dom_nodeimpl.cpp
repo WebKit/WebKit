@@ -1178,26 +1178,22 @@ bool NodeImpl::isReadOnly()
 
 NodeImpl *NodeImpl::previousEditable() const
 {
-    NodeImpl *node = traversePreviousNode();
+    NodeImpl *node = previousLeafNode();
     while (node) {
-        if (!node->isContentEditable())
-            return 0;
-        if (node->hasChildNodes() == false)
+        if (node->isContentEditable())
             return node;
-        node = node->traversePreviousNode();
+        node = node->previousLeafNode();
     }
     return 0;
 }
 
 NodeImpl *NodeImpl::nextEditable() const
 {
-    NodeImpl *node = traverseNextNode();
+    NodeImpl *node = nextLeafNode();
     while (node) {
-        if (!node->isContentEditable())
-            return 0;
-        if (node->hasChildNodes() == false)
+        if (node->isContentEditable())
             return node;
-        node = node->traverseNextNode();
+        node = node->nextLeafNode();
     }
     return 0;
 }
@@ -1222,82 +1218,29 @@ RenderObject * NodeImpl::nextRenderer()
 
 NodeImpl *NodeImpl::previousLeafNode() const
 {
-    const NodeImpl *r = this;
-    const NodeImpl *n = lastChild();
-    if (n) {
-        while (n) { 
-            r = n; 
-            n = n->lastChild(); 
-        }
-        return const_cast<NodeImpl *>(r);
-    }
-    n = r->previousSibling();
-    if (n) {
-        r = n;
-        while (n) { 
-            r = n; 
-            n = n->lastChild(); 
-        }
-        return const_cast<NodeImpl *>(r);
-    }    
-    n = r->parentNode();
-    while (n) {
-        r = n;
-        n = r->previousSibling();
-        if (n) {
-            r = n;
-            n = r->lastChild();
-            while (n) { 
-                r = n; 
-                n = n->lastChild(); 
-            }
-            return const_cast<NodeImpl *>(r);
-        }
-        n = r->parentNode();
+    NodeImpl *node = traversePreviousNode();
+    while (node) {
+        if (!node->hasChildNodes())
+            return node;
+        node = node->traversePreviousNode();
     }
     return 0;
 }
 
 NodeImpl *NodeImpl::nextLeafNode() const
 {
-    const NodeImpl *r = this;
-    const NodeImpl *n = firstChild();
-    if (n) {
-        while (n) { 
-            r = n; 
-            n = n->firstChild(); 
-        }
-        return const_cast<NodeImpl *>(r);
-    }
-    n = r->nextSibling();
-    if (n) {
-        r = n;
-        while (n) { 
-            r = n; 
-            n = n->firstChild(); 
-        }
-        return const_cast<NodeImpl *>(r);
-    }
-    n = r->parentNode();
-    while (n) {
-        r = n;
-        n = r->nextSibling();
-        if (n) {
-            r = n;
-            n = r->firstChild();
-            while (n) { 
-                r = n; 
-                n = n->firstChild(); 
-            }
-            return const_cast<NodeImpl *>(r);
-        }
-        n = r->parentNode();
+    NodeImpl *node = traverseNextNode();
+    while (node) {
+        if (!node->hasChildNodes())
+            return node;
+        node = node->traverseNextNode();
     }
     return 0;
 }
 
 void NodeImpl::createRendererIfNeeded()
 {
+
 #if APPLE_CHANGES
     if (!getDocument()->shouldCreateRenderers())
         return;
@@ -1378,18 +1321,15 @@ bool NodeImpl::isEditableBlock() const
     return isContentEditable() && isBlockFlow();
 }
 
-NodeImpl *NodeImpl::containingEditableBlock() const
+NodeImpl *NodeImpl::containingBlock() const
 {
-    if (!isContentEditable())
-        return 0;
-
     NodeImpl *n = const_cast<NodeImpl *>(this);
-    if (isEditableBlock())
+    if (isBlockFlow())
         return n;
 
     while (1) {
         n = n->parentNode();
-        if (!n || !n->isContentEditable())
+        if (!n)
             break;
         if (n->isBlockFlow() || n->id() == ID_BODY)
             return n;
@@ -1425,7 +1365,7 @@ bool NodeImpl::inSameRootEditableBlock(NodeImpl *n)
 
 bool NodeImpl::inSameContainingEditableBlock(NodeImpl *n)
 {
-    return n ? containingEditableBlock() == n->containingEditableBlock() : false;
+    return n ? containingBlock() == n->containingBlock() : false;
 }
 
 #if APPLE_CHANGES

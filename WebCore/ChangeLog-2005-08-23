@@ -1,3 +1,79 @@
+2004-06-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Probable fix for this bug:
+        
+        <rdar://problem/3668619>: "REGRESSION: text placed on pasteboard by WebKit is offset by one character"
+        
+        I could not reproduce the bug myself, which is why I call the fix
+        as probable.
+        
+        Darin and I did some code inspection and found some problems
+        with the equivalentUpstreamPosition and
+        equivalentDownstreamPosition functions on DOM::Position and how
+        these functions dealt with changing from editable to
+        non-editable content. As a result of these discoveries, I went
+        over this code and the helpers and functions which support them,
+        and made some corrections and simplifications. The big changes
+        are as follows:
+        
+        1. Rename EditIterator class to PositionIterator. This class needs
+        to run code for selections in non-editable content, so the name
+        change is appropriate.
+        
+        2. Change containingEditableBlock to containingBlock. It turns out
+        that none of the editing code relies on the distinction between
+        editable blocks and non-editable blocks. The important distinction
+        is the block boundary. The notion of rootEditableBlock remains.
+         
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace): PositionIterator name change.
+        (khtml::DeleteSelectionCommandImpl::joinTextNodesWithSameStyle): Ditto.
+        (khtml::DeleteSelectionCommandImpl::containsOnlyWhitespace): Ditto.
+        (khtml::DeleteSelectionCommandImpl::doApply): Ditto.
+        (khtml::InputNewlineCommandImpl::doApply): Ditto.
+        (khtml::RemoveNodeAndPruneCommandImpl::doApply): Ditto.
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren): Ditto.
+        * khtml/xml/dom_edititerator.cpp:
+        (DOM::PositionIterator::peekPrevious): Call for previousLeafNode instead of previousEditable.
+        Editable check is not appropriate as this class is used for non-editable content.
+        (DOM::PositionIterator::peekNext): Call nextLeafNode instead of nextEditable, as above.
+        (DOM::PositionIterator::atStart): Call for previousLeafNode instead of previousEditable, as above.
+        (DOM::PositionIterator::atEnd): Call nextLeafNode instead of nextEditable, as above.
+        * khtml/xml/dom_edititerator.h:
+        (DOM::PositionIterator::PositionIterator): PositionIterator name change. Remove unused and unneeded constructors.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::previousEditable): Simplify. Rely on previousLeafNode as a helper.
+        (NodeImpl::nextEditable): Ditto, but rely on nextLeafNode.
+        (NodeImpl::previousLeafNode): Remove tree-walking code. Rely on traversePreviousNode as a helper.
+        (NodeImpl::nextLeafNode): Ditto, but rely on traverseNextNode.
+        (NodeImpl::containingBlock): Renamed replacement for containingEditableBlock.
+        (NodeImpl::inSameContainingEditableBlock): Call renamed containingBlock.
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousCharacterPosition): Various name changes, as described above.
+        (DOM::Position::nextCharacterPosition): Ditto.
+        (DOM::Position::previousWordPosition): Ditto.
+        (DOM::Position::nextWordPosition): Ditto.
+        (DOM::Position::previousLinePosition): Ditto.
+        (DOM::Position::nextLinePosition): Ditto.
+        (DOM::Position::equivalentUpstreamPosition): Remove bogus check for editable node in loop. Perform
+        improved block-crossing check at start of loop which works for editable and non-editable content.
+        This is the crux of the fix for the bug.
+        (DOM::Position::equivalentDownstreamPosition): Ditto.
+        (DOM::Position::inRenderedContent): Various name changes, as described above.
+        (DOM::Position::rendersOnSameLine): Ditto.
+        (DOM::Position::rendersInDifferentPosition): Ditto.
+        (DOM::Position::isFirstRenderedPositionOnLine): Ditto.
+        (DOM::Position::isLastRenderedPositionOnLine): Ditto.
+        (DOM::Position::isLastRenderedPositionInEditableBlock): Ditto.
+        (DOM::Position::inFirstEditableInRootEditableBlock): Ditto.
+        (DOM::Position::inLastEditableInRootEditableBlock): Ditto.
+        (DOM::Position::inFirstEditableInContainingEditableBlock): Ditto.
+        (DOM::Position::inLastEditableInContainingEditableBlock): Ditto.
+
 2004-06-01  Richard Williamson   <rjw@apple.com>
 
         Fixed deployment build warning.

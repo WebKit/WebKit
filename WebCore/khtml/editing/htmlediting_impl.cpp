@@ -65,7 +65,7 @@ using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::DOMStringImpl;
 using DOM::EditingTextImpl;
-using DOM::EditIterator;
+using DOM::PositionIterator;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
@@ -1159,7 +1159,7 @@ Position DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const Position
     }
     else {
         LOG(Editing, "upstream:   %s %s [%p:%d]\n", del ? "DELETE" : "SKIP", getTagName(upstream.node()->id()).string().latin1(), upstream.node(), upstream.offset());
-        EditIterator it(upstream);
+        PositionIterator it(upstream);
         for (it.next(); it.current() != downstream; it.next()) {
             if (it.current().node()->isTextNode() && (long)static_cast<TextImpl *>(it.current().node())->length() == it.current().offset())
                 LOG(Editing, "   node:    AT END %s [%p:%d]\n", getTagName(it.current().node()->id()).string().latin1(), it.current().node(), it.current().offset());
@@ -1172,7 +1172,7 @@ Position DeleteCollapsibleWhitespaceCommandImpl::deleteWhitespace(const Position
     if (upstream == downstream)
         return upstream;
         
-    EditIterator it(upstream);
+    PositionIterator it(upstream);
     Position deleteStart = upstream;
     if (!del) {
         deleteStart = it.peekNext();
@@ -1288,7 +1288,7 @@ void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
     TextImpl *textNode = static_cast<TextImpl *>(pos.node());
     
     if (pos.offset() == 0) {
-        EditIterator it(pos);
+        PositionIterator it(pos);
         Position prev = it.previous();
         if (prev == pos)
             return;
@@ -1302,7 +1302,7 @@ void DeleteSelectionCommandImpl::joinTextNodesWithSameStyle()
         }
     }
     else if (pos.offset() == (long)textNode->length()) {
-        EditIterator it(pos);
+        PositionIterator it(pos);
         Position next = it.next();
         if (next == pos)
             return;
@@ -1321,7 +1321,7 @@ bool DeleteSelectionCommandImpl::containsOnlyWhitespace(const Position &start, c
 {
     // Returns whether the range contains only whitespace characters.
     // This is inclusive of the start, but not of the end.
-    EditIterator it(start);
+    PositionIterator it(start);
     while (!it.atEnd()) {
         if (!it.current().node()->isTextNode())
             return false;
@@ -1395,7 +1395,7 @@ void DeleteSelectionCommandImpl::doApply()
     // Start is not completely selected
     if (startAtStartOfBlock) {
         LOG(Editing,  "ending position case 1");
-        endingPosition = Position(downstreamStart.node()->containingEditableBlock(), 1);
+        endingPosition = Position(downstreamStart.node()->containingBlock(), 1);
         adjustEndingPositionDownstream = true;
     }
     else if (!startCompletelySelected) {
@@ -1602,7 +1602,7 @@ void InputNewlineCommandImpl::doApply()
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
-        NodeImpl *cb = pos.node()->containingEditableBlock();
+        NodeImpl *cb = pos.node()->containingBlock();
         appendNode(cb, breakNode);
         
         // Insert an "extra" BR at the end of the block. This makes the "real" BR we want
@@ -2271,12 +2271,12 @@ int RemoveNodeAndPruneCommandImpl::commandID() const
 
 void RemoveNodeAndPruneCommandImpl::doApply()
 {
-    NodeImpl *editableBlock = m_removeChild->containingEditableBlock();
+    NodeImpl *editableBlock = m_removeChild->containingBlock();
     NodeImpl *pruneNode = m_removeChild;
     NodeImpl *node = pruneNode->traversePreviousNode();
     removeNode(pruneNode);
     while (1) {
-        if (editableBlock != node->containingEditableBlock() || !shouldPruneNode(node))
+        if (editableBlock != node->containingBlock() || !shouldPruneNode(node))
             break;
         pruneNode = node;
         node = node->traversePreviousNode();
