@@ -1967,7 +1967,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             bool appliedEndWidth = false;
 
             int wrapW = tmpW;
-            
+
             while(len) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
                 const QChar c = str[pos];
@@ -2059,12 +2059,21 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     }
         
                     if (o->style()->whiteSpace() == NORMAL) {
+                        // In AFTER_WHITE_SPACE mode, consider the current character
+                        // as candidate width for this line.
                         int charWidth = o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE ? t->width(pos, 1, f) : 0;
                         if (w + tmpW + charWidth > width) {
                             if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE) {
-                                lBreak.obj = o;
-                                lBreak.pos = pos;
-                                skipWhitespace(lBreak, bidi);
+                                // Check if line is too big even without the extra space
+                                // at the end of the line. If it is not, do nothing. 
+                                // If the line needs the extra whitespace to be too long, 
+                                // then move the line break to the space and skip all 
+                                // additional whitespace.
+                                if (w + tmpW < width) {
+                                    lBreak.obj = o;
+                                    lBreak.pos = pos;
+                                    skipWhitespace(lBreak, bidi);
+                                }
                             }
                             goto end; // Didn't fit. Jump to the end.
                         }

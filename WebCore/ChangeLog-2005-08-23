@@ -1,3 +1,15 @@
+2004-10-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::findNextLineBreak): I did not get my fix for 3848343 and 3848224
+	    yesterday quite right: words that should have been placed on the next line were instead
+        appearing on the line before, beyond the right margin. This was a one-word only error
+        based on moving the line break object when it should have stayed put. Here is the rule:
+        The line break object only moves to after the whitespace on the end of a line if that 
+        whitespace caused line overflow when its width is added in.
+
 2004-10-25  Adele Amchan  <adele@apple.com>
 
         Reviewed by Darin.
