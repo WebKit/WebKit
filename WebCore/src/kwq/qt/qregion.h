@@ -30,6 +30,12 @@
 #include <config.h>
 #endif
 
+// _KWQ_COMPLETE_ ==============================================================
+
+#ifdef _KWQ_COMPLETE_
+#include <_qregion.h>
+#else
+
 #include "qpoint.h"
 #include "qimage.h"
 #include "qrect.h"
@@ -71,5 +77,7 @@ public:
 // private ---------------------------------------------------------------------
 
 }; // class QRegion ============================================================
+
+#endif // _KWQ_COMPLETE_
 
 #endif
