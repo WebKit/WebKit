@@ -1,3 +1,8 @@
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        * English.lproj/InfoPlist.strings: Changed "1.0 Beta" to "1.0 Beta 2".
+        * WebCore.pbproj/project.pbxproj: Changed "1.0 Beta" to "1.0 Beta 2".
+
 2003-03-31  David Hyatt  <hyatt@apple.com>
 
 	Fixes for 3211862 and 3212750, add error-handling cases for
