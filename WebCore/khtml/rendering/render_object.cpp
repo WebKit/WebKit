@@ -1302,14 +1302,12 @@ void RenderObject::setStyle(RenderStyle *style)
     if (affectsParentBlock)
         handleDynamicFloatPositionChange();
     
-    if (!isText()) {
-        // No need to ever schedule relayouts/repaints from a style change of a text run, since
-        // we already did this for the parent of the text run.
-        if (d >= RenderStyle::Position && m_parent)
-            setNeedsLayoutAndMinMaxRecalc();
-        else if (m_parent && d == RenderStyle::Visible)
-            repaint();
-    }
+    // No need to ever schedule repaints from a style change of a text run, since
+    // we already did this for the parent of the text run.
+    if (d >= RenderStyle::Position && m_parent)
+        setNeedsLayoutAndMinMaxRecalc();
+    else if (!isText() && m_parent && d == RenderStyle::Visible)
+        repaint();
 }
 
 void RenderObject::setOverhangingContents(bool p)
