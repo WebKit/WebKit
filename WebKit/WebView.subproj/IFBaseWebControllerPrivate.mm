@@ -26,6 +26,7 @@
 - (void)dealloc
 {
     [mainFrame reset];
+    [mainFrame _setController: nil];
     [mainFrame autorelease];
     [super dealloc];
 }

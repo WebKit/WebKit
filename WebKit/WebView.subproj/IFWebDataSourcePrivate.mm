@@ -35,6 +35,15 @@
     // controller is not retained!  IFWebControllers maintain
     // a reference to the main frame, which in turn refers to it's
     // view and data source.
+    int i, count;
+    NSArray *childFrames = [frames allValues];
+    
+    controller = nil;
+    
+    count = [childFrames count];
+    for (i = 0; i < count; i++){
+        [(IFWebFrame *)[childFrames objectAtIndex: i] _setController: nil];
+    }
     [frames release];
     [inputURL release];
     [urlHandles release];
@@ -42,7 +51,8 @@
     [mainURLHandleClient release];
     [pageTitle autorelease];
     
-    delete part;
+    part->deref();
+    part = 0;
 
     [super dealloc];
 }
@@ -77,6 +87,12 @@
     IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     
     data->primaryLoadComplete = flag;
+    if (flag == YES){
+        [data->mainURLHandleClient release];
+        data->mainURLHandleClient = 0; 
+        [data->mainHandle autorelease];
+        data->mainHandle = 0; 
+    }
 }
 
 - (void)_startLoading: (BOOL)forceRefresh
@@ -209,7 +225,9 @@
     
     [data->pageTitle autorelease];
     data->pageTitle = [[NSString stringWithString:trimmed] retain];
-    [data->controller receivedPageTitle:data->pageTitle forDataSource:self];
+    
+    // The title doesn't get communicated to the controller until
+    // we reach the committed state for this datasource's frame.
 }
 
 @end

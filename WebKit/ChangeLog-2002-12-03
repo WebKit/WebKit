@@ -1,5 +1,24 @@
 2002-04-01  Richard Williamson  <rjw@apple.com>
 
+        Cleaned up lots of potentially stale references to controller.
+        
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebControllerPrivate
+	dealloc]):
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	initWithDataSource:part:]), (-[IFMainURLHandleClient dealloc]):
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _setPrimaryLoadComplete:]), (-[IFWebDataSource _setTitle:]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFramePrivate dealloc]),
+	(-[IFWebFramePrivate setDataSource:]), (-[IFWebFramePrivate
+	setProvisionalDataSource:]), (-[IFWebFrame _setController:]), (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _timedLayout:]), (-[IFWebFrame
+	_setState:]):
+
+2002-04-01  Richard Williamson  <rjw@apple.com>
+
         Logging changes.
         Changes to support correct i/frame behavior.
     

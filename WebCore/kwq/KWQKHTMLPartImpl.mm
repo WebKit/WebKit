@@ -238,6 +238,7 @@ KHTMLPart::KHTMLPart(const KURL &url)
 void KHTMLPart::init()
 {
     d = new KHTMLPartPrivate(this);
+    _ref = 1;
 }
 
 KHTMLPart::~KHTMLPart()

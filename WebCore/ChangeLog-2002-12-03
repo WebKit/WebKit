@@ -1,5 +1,15 @@
 2002-04-01  Richard Williamson  <rjw@apple.com>
 
+        Cleaned up lots of potentially stale references to controller.
+        Added ref count to part.
+        
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::init):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
+2002-04-01  Richard Williamson  <rjw@apple.com>
+
         Changes to support correct behavior is i/frame margins and
         scroll views.
         

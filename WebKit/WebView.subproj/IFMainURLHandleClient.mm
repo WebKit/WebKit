@@ -16,12 +16,20 @@
 - initWithDataSource: (IFWebDataSource *)ds part:(KHTMLPart *)p
 {
     if ((self = [super init])) {
-        dataSource = ds;	// Non-retained.
+        dataSource = [ds retain];
         part = p;
+        part->ref();
         return self;
     }
 
     return nil;
+}
+
+- (void)dealloc
+{
+    part->deref();
+    [dataSource release];
+    [super dealloc];
 }
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender

@@ -87,9 +87,8 @@ static id IFWebDataSourceMake(void *url)
 }
 
 
-// Returns an array of IFWebDataSource.  The data sources in the array are
-// the data source assoicated with a frame set or iframe.  If the main document
-// is not a frameset, or has not iframes children will return nil.
+// Returns an array of IFWebFrame.  The frames in the array are
+// associated with a frame set or iframe.
 - (NSArray *)children
 {
     return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frames allValues];
