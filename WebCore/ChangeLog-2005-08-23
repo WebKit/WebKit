@@ -1,3 +1,41 @@
+ 2005-03-01  Ken Kocienda  <kocienda@apple.com>
+ 
+        Reviewed by Maciej
+
+        Improved fix for this bug:
+        
+        <rdar://problem/3996605> Insert paragraph command puts new block in wrong place, creating difficult-to-handle HTML
+
+        Maciej and I discussed this situation at length, and we came up with a better fix than I did earlier.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Simplify one special case so that it only handles the 
+        "last in block" situation. Remove special case for "downstream node is in different block" and handle
+        this case with a little bit of special code in the general insertion case.
+
+        Results studied to make sure there were no problems.
+
+        * layout-tests/editing/deleting/delete-3959464-fix-expected.txt
+        * layout-tests/editing/inserting/insert-div-001-expected.txt
+        * layout-tests/editing/inserting/insert-div-002-expected.txt
+        * layout-tests/editing/inserting/insert-div-004-expected.txt
+        * layout-tests/editing/inserting/insert-div-005-expected.txt
+        * layout-tests/editing/inserting/insert-div-009-expected.txt
+        * layout-tests/editing/inserting/insert-div-014-expected.txt
+        * layout-tests/editing/inserting/insert-div-018-expected.txt
+        * layout-tests/editing/inserting/insert-div-024-expected.txt
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt
+        * layout-tests/editing/pasteboard/paste-text-013-expected.txt
+        * layout-tests/editing/pasteboard/paste-text-015-expected.txt
+        * layout-tests/editing/style/block-style-004-expected.txt
+        * layout-tests/editing/style/block-style-005-expected.txt
+        * layout-tests/editing/style/block-style-006-expected.txt
+
+        New test:
+        
+        * layout-tests/editing/inserting/insert-div-027.html
+        * layout-tests/editing/inserting/insert-div-027-expected.txt
+
 2005-03-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4030890, regression with <sup> on Google.  Fix some bogus != comparison checks in verticalPositionHint.

@@ -3245,24 +3245,13 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     //---------------------------------------------------------------------
-    // Handle case when position is in the last visible position in its block, 
-    // and similar case where downstream position is in another block.
-    bool downstreamInDifferentBlock = startBlock != pos.downstream(DoNotStayInBlock).node()->enclosingBlockFlowElement();
-    if (downstreamInDifferentBlock || isLastInBlock) {
+    // Handle case when position is in the last visible position in its block. 
+    if (isLastInBlock) {
         LOG(Editing, "insert paragraph separator: last in block case");
-        NodeImpl *refNode = isLastInBlock && !startBlockIsRoot ? startBlock : pos.node();
-        NodeImpl *parent = refNode->parentNode();
-        NodeImpl *rootEditable = refNode->rootEditableElement();
-        ASSERT(parent);
-        ASSERT(rootEditable);
-        while (parent && rootEditable && refNode != rootEditable && isLastVisiblePositionInNode(visiblePos, parent)) {
-            refNode = parent;
-            parent = parent->parentNode();
-        }
-        if (refNode == rootEditable)
-            appendNode(blockToInsert, refNode);
+        if (startBlockIsRoot)
+            appendNode(blockToInsert, startBlock);
         else
-            insertNodeAfter(blockToInsert, refNode);
+            insertNodeAfter(blockToInsert, startBlock);
         insertBlockPlaceholder(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
         applyStyleAfterInsertion();
@@ -3329,9 +3318,18 @@ void InsertParagraphSeparatorCommand::doApply()
         parent = child;
     }
 
+    // Insert a block placeholder in this case because we know that ther will be no content
+    // on the first line of the new block before the first block child of the new block.
+    // So, we need the placeholder to "hold the first line open".
+    if (startBlock != pos.downstream(DoNotStayInBlock).node()->enclosingBlockFlowElement())
+        insertBlockPlaceholder(blockToInsert);
+
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
         NodeImpl *n = startNode;
+        if (pos.offset() >= startNode->caretMaxOffset()) {
+            n = startNode->nextSibling();
+        }
         while (n && n != blockToInsert) {
             NodeImpl *next = n->nextSibling();
             removeNode(n);
