@@ -80,10 +80,6 @@ public:
     void setTitle(const DOM::DOMString &);
     void setStatusBarText(const QString &status);
 
-    bool frameExists(const QString &frameName);
-    KHTMLPart *findFrame(const QString &frameName);
-    QPtrList<KParts::ReadOnlyPart> frames() const;
-
     void urlSelected(const KURL &url, int button, int state, const KParts::URLArgs &args);
     bool requestFrame(khtml::RenderPart *frame, const QString &url, const QString &frameName, const QStringList &params, bool isIFrame);
     bool requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args);
@@ -123,6 +119,8 @@ public:
     void redirectionTimerStartedOrStopped();
     
     static NSString *referrer(const KParts::URLArgs &);
+    
+    static const QPtrList<KWQKHTMLPartImpl> &instances() { return mutableInstances(); }
 
 private:
     WebCoreBridge *bridgeForFrameName(const QString &frameName);
@@ -135,6 +133,8 @@ private:
     KHTMLPartPrivate *d;
     
     WebCoreBridge *_bridge;
+
+    static QPtrList<KWQKHTMLPartImpl> &mutableInstances();
 
     friend class KHTMLPart;
 };

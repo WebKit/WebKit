@@ -105,11 +105,13 @@ void KHTMLPart::completed(bool arg)
 KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     : part(p), d(part->d)
 {
+    mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);
 }
 
 KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 {
+    mutableInstances().remove();
 }
 
 WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
@@ -208,7 +210,7 @@ void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const
 bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, const QString &frameName,
                                      const QStringList &params, bool isIFrame )
 {
-    ASSERT(!frameExists(frameName));
+    ASSERT([_bridge frameNamed:frameName.getNSString()] == nil);
 
     NSURL *childURL = part->completeURL(url).getNSURL();
     if (childURL == nil) {
@@ -295,29 +297,6 @@ void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
     }
 }
 
-bool KWQKHTMLPartImpl::frameExists(const QString &frameName)
-{
-    return [_bridge frameNamed:frameName.getNSString()] != nil;
-}
-
-KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
-{
-    return [[_bridge frameNamed:frameName.getNSString()] part];
-}
-
-QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
-{
-    QPtrList<KParts::ReadOnlyPart> parts;
-    NSEnumerator *e = [[_bridge childFrames] objectEnumerator];
-    WebCoreBridge *childFrame;
-    while ((childFrame = [e nextObject])) {
-        KHTMLPart *childPart = [childFrame part];
-        if (childPart)
-            parts.append(childPart);
-    }
-    return parts;
-}
-
 void KWQKHTMLPartImpl::setView(KHTMLView *view)
 {
     d->m_view = view;
@@ -351,6 +330,9 @@ void KWQKHTMLPartImpl::unfocusWindow()
 
 void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int modifierState)
 {
+    // FIXME: The rules about what string does what should not be separate from the code that
+    // actually implements these rules. It's particularly bad with strings.
+
     if (url.isEmpty()) {
         [_bridge setStatusText:@""];
         return;
@@ -366,7 +348,7 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
     
     KURL u = part->completeURL(url);
     
-    if (u.protocol() == QString("mailto")) {
+    if (u.protocol() == "mailto") {
         // FIXME: Add address book integration so we show the real name instead?
         const QString address = KURL::decode_string(u.path());
         [_bridge setStatusText:[NSString stringWithFormat:@"Send email to %@", address.getNSString()]];
@@ -379,18 +361,25 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
     if (target.isEmpty() && d->m_doc) {
         target = d->m_doc->baseTarget();
     }
-
+    
     if (target == "_blank") {
         format = @"Open \"%@\" in a new window";
-    } else if (!target.isEmpty() && target != "_self" && target == "_top" && target != "_parent") {
-        if (frameExists(target)) {
-            // FIXME: Distinguish existing frame in same window from existing frame in other window.
+    } else {
+        WebCoreBridge *targetFrame;
+        if (target.isEmpty() || target != "_self" || target == "_top" || target != "_parent") {
+            targetFrame = _bridge;
+        } else {
+            targetFrame = [_bridge frameNamed:target.getNSString()];
+        }
+        if (targetFrame == _bridge) {
+            format = @"Go to \"%@\"";
+        } else if (targetFrame == nil) {
+            format = @"Open \"%@\" in a new window";
+        } else if ([targetFrame mainFrame] == [_bridge mainFrame]) {
             format = @"Go to \"%@\" in another frame";
         } else {
-            format = @"Open \"%@\" in a new window";
+            format = @"Go to \"%@\" in another window";
         }
-    } else {
-        format = @"Go to \"%@\"";
     }
     
     if ([_bridge modifierTrackingEnabled]) {
@@ -570,7 +559,6 @@ NodeImpl *KWQKHTMLPartImpl::nodeForWidget(QWidget *widget)
     return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
 }
 
-
 void KWQKHTMLPartImpl::saveDocumentState()
 {
     [_bridge saveDocumentState];
@@ -579,4 +567,10 @@ void KWQKHTMLPartImpl::saveDocumentState()
 void KWQKHTMLPartImpl::restoreDocumentState()
 {
     [_bridge restoreDocumentState];
+}
+
+QPtrList<KWQKHTMLPartImpl> &KWQKHTMLPartImpl::mutableInstances()
+{
+    static QPtrList<KWQKHTMLPartImpl> instancesList;
+    return instancesList;
 }

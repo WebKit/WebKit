@@ -25,6 +25,9 @@
 
 #import "WebCoreSettings.h"
 
+#import "KWQKHTMLPartImpl.h"
+#import "WebCoreBridge.h"
+
 @implementation WebCoreSettings
 
 + (WebCoreSettings *)sharedSettings
@@ -50,6 +53,9 @@
 
 - (void)_updateAllViews
 {
+    for (QPtrListIterator<KWQKHTMLPartImpl> it(KWQKHTMLPartImpl::instances()); it.current(); ++it) {
+        [it.current()->bridge() setNeedsReapplyStyles];
+    }
 }
 
 - (void)setStandardFontFamily:(NSString *)s

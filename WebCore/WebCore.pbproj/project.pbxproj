@@ -4060,7 +4060,7 @@
 		F565AE8602ECA583018635CA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = WebCoreSettings.m;
+			path = WebCoreSettings.mm;
 			refType = 4;
 		};
 		F565AE8702ECA583018635CA = {

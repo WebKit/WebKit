@@ -1,3 +1,33 @@
+2002-09-11  Darin Adler  <darin@apple.com>
+
+	- fixed 3021137 -- changing font prefs doesn't redraw frames
+	other than the main frame
+
+        * kwq/WebCoreSettings.m: Renamed to WebCoreSettings.mm.
+        * kwq/WebCoreSettings.mm: Renamed from WebCoreSettings.m so I could
+	use C++.
+        (-[WebCoreSettings _updateAllViews]): Iterate over all KWQKHTMLPartImpl
+	instances, calling setNeedsReapplyStyles on each one.
+        * WebCore.pbproj/project.pbxproj: Updated for name change.
+
+        * kwq/KWQKHTMLPartImpl.h: Add instances() and mutableInstances().
+	Get rid of frameExists(), findFrame(), and frames().
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::KWQKHTMLPartImpl): Add to instance list.
+        (KWQKHTMLPartImpl::~KWQKHTMLPartImpl): Remove from instance list.
+        (KWQKHTMLPartImpl::requestFrame): Update to not use frameExists().
+        (KWQKHTMLPartImpl::overURL): Update to not use frameExists, and improve
+	handling of various cases.
+        (KWQKHTMLPartImpl::mutableInstances): Create and return instance list.
+
+        * kwq/WebCoreBridge.h: Add setNeedsReapplyStyles; already implemented
+	in WebKit.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::findFrame): Remove APPLE_CHANGES.
+        (KHTMLPart::frameExists): Remove APPLE_CHANGES.
+        (KHTMLPart::frames): Remove APPLE_CHANGES.
+
 2002-09-10  Darin Adler  <darin@apple.com>
 
 	WebCore part of support for the "Referer" header.

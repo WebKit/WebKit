@@ -189,6 +189,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (void)saveDocumentState: (NSArray *)documentState;
 - (NSArray *)documentState;
 
+- (void)setNeedsReapplyStyles;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods
