@@ -1024,12 +1024,25 @@ QString &QString::remove(uint index, uint width)
     return *this;
 }
 
-QString &QString::replace(const QRegExp &, const QString &)
+QString &QString::replace(const QRegExp &qre, const QString &qs)
 {
     flushCache();
-    // FIXME: not yet implemented
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    if (s) {
+        int len = qs.length();
+        for (int i = 0; i < CFStringGetLength(s); i += len) {
+            int width;
+            i = qre.match(*this, i, &width, FALSE);
+            if (i < 0) {
+                break;
+            }
+            CFRange r = CFRangeMake(i, width);
+            if (len) {
+                CFStringReplace(s, r, qs.s);
+            } else {
+                CFStringDelete(s, r);
+            }
+        }
+    }
     return *this;
 }
 
