@@ -37,11 +37,13 @@
 #define RIGHT_MARGIN 3
 
 QComboBox::QComboBox(QWidget *parent, const char *name)
+    : m_activated(this, SIGNAL(activated(int)))
 {
     init(false);
 }
 
 QComboBox::QComboBox(bool rw, QWidget *parent, const char *name)
+    : m_activated(this, SIGNAL(activated(int)))
 {
     init(rw);
 }

@@ -24,7 +24,9 @@
  */
 
 #import "KWQView.h"
+
 #import <qcheckbox.h>
+#import <qcombobox.h>
 
 @implementation KWQView
 
@@ -126,7 +128,10 @@
 
 - (void)action:(id)sender
 {
-    widget->emitAction(QObject::ACTION_COMBOBOX_CLICKED);
+    QComboBox *box = dynamic_cast<QComboBox *>(widget);
+    if (box) {
+        box->activated();
+    }
 }
 
 @end

@@ -1,5 +1,55 @@
 2002-08-15  Darin Adler  <darin@apple.com>
 
+	Give the same good loving to the check boxes and radio buttons.
+	I'm not saying our rules for where to position them are great, but
+	the rules are implemented cleanly and thus easier to tweak.
+
+	Got rid of the old Action system altogether, using signals now.
+
+        * khtml/rendering/render_form.h: Remove now-unneeded APPLE_CHANGES.
+        * khtml/rendering/render_form.cpp:
+        (RenderButton::baselinePosition): All the buttons now share a single
+	version of this call, since none need any special baseline hacking at
+	the moment.
+        (RenderSubmitButton::baselinePosition): Just call the RenderButton version.
+
+        * kwq/KWQCheckBox.mm:
+        (QCheckBox::sizeHint): Use 12x12, not 22x22.
+        (QCheckBox::frameGeometry): Adjust for margins.
+        (QCheckBox::setFrameGeometry): Adjust for margins.
+        * kwq/KWQRadioButton.mm:
+        (QRadioButton::sizeHint): Use 12x12, not 22x22.
+        (QRadioButton::frameGeometry): Adjust for margins.
+        (QRadioButton::setFrameGeometry): Adjust for margins.
+
+        * kwq/qt/qcombobox.h:
+        * kwq/KWQComboBox.mm: (QComboBox::QComboBox): Set up the activated signal.
+        * kwq/KWQView.mm: (-[KWQNSComboBox action:]): Emit the activated signal.
+
+        * kwq/KWQListBox.h:
+        * kwq/KWQListBox.mm:
+        (-[KWQBrowserDelegate browserSingleClick:]): Send a selectionChanged signal
+	and a clicked signal instead of a ACTION_LISTBOX_CLICKED.
+        (QListBox::QListBox): Set up the clicked and selectionChanged signals.
+
+        * kwq/qt/qobject.h: Remove Actions, ACTION_TEXT_AREA_END_EDITING,
+	ACTION_LISTBOX_CLICKED, ACTION_COMBOBOX_CLICKED, emitAction, performAction,
+	and target.
+        * kwq/KWQObject.mm:
+        (QObject::connect): Remove the target hack, no longer needed.
+        (QObject::QObject): Remove target initialization.
+
+        * kwq/KWQSlot.mm: (KWQSlot::KWQSlot), (KWQSlot::call):
+	Added selected and selectionChanged slots.
+
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea textDidEndEditing:]): Removed code to emit the
+	ACTION_TEXT_AREA_END_EDITING action, which was no longer used.
+
+        * force-clean-timestamp: Yes, again.
+
+2002-08-15  Darin Adler  <darin@apple.com>
+
 	- fixed 3017376 -- button height is too tall
 
 	Reworked how widget sizing and positioning is done for a few of the most important

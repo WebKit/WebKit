@@ -50,9 +50,6 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
         return;
     }
     
-    // FIXME: Do away with this after we change clients to use the KWQSignal scheme.
-    sender->target = const_cast<QObject *>(receiver);
-
     KWQSignal *signal = sender->findSignal(signalName);
     if (!signal) {
         // FIXME: ERROR
@@ -86,18 +83,8 @@ KWQObjectSenderScope::~KWQObjectSenderScope()
     QObject::m_sender = m_savedSender;
 }
 
-void QObject::emitAction(QObject::Actions action)
-{
-    if (target)
-        target->performAction (action);
-}
-
-void QObject::performAction(QObject::Actions action)
-{
-}
-
 QObject::QObject(QObject *parent, const char *name)
-    : target(0), m_signalListHead(0), m_signalsBlocked(false)
+    : m_signalListHead(0), m_signalsBlocked(false)
 {
     guardedPtrDummyList.append(this);
 }

@@ -80,7 +80,8 @@
 
 - (IBAction)browserSingleClick:(id)browser
 {
-    box->emitAction(QObject::ACTION_LISTBOX_CLICKED);
+    box->selectionChanged();
+    box->clicked();
 }
 
 - (IBAction)browserDoubleClick:(id)browser
@@ -92,6 +93,8 @@
 
 QListBox::QListBox(QWidget *parent)
     : QScrollView(parent), m_insertingItems(false)
+    , m_clicked(this, SIGNAL(clicked(QListBoxItem *)))
+    , m_selectionChanged(this, SIGNAL(selectionChanged()))
 {
     NSBrowser *browser =  [[NSBrowser alloc] initWithFrame: NSMakeRect (0,0,1,1)];
     KWQBrowserDelegate *delegate = [[KWQBrowserDelegate alloc] initWithListBox: this];

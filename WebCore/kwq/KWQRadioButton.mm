@@ -27,6 +27,13 @@
 
 #import <KWQView.h>
 
+// We empirically determined that check boxes have these extra pixels on all
+// sides. It would be better to get this info from AppKit somehow.
+#define TOP_MARGIN 1
+#define BOTTOM_MARGIN 6
+#define LEFT_MARGIN 3
+#define RIGHT_MARGIN 3
+
 QRadioButton::QRadioButton(QWidget *w) : QButton(w)
 {
     KWQNSButton *button = (KWQNSButton *)getView();
@@ -35,17 +42,22 @@ QRadioButton::QRadioButton(QWidget *w) : QButton(w)
 
 QSize QRadioButton::sizeHint() const 
 {
-    return QSize(22, 22);
+    return QSize(12, 12);
 }
 
 QRect QRadioButton::frameGeometry() const
 {
-    return QWidget::frameGeometry();
+    QRect r = QWidget::frameGeometry();
+    return QRect(r.x() + LEFT_MARGIN, r.y() + TOP_MARGIN,
+        r.width() - (LEFT_MARGIN + RIGHT_MARGIN),
+        r.height() - (TOP_MARGIN + BOTTOM_MARGIN));
 }
 
 void QRadioButton::setFrameGeometry(const QRect &r)
 {
-    QWidget::setFrameGeometry(r);
+    QWidget::setFrameGeometry(QRect(r.x() - LEFT_MARGIN, r.y() - TOP_MARGIN,
+        r.width() + LEFT_MARGIN + RIGHT_MARGIN,
+        r.height() + TOP_MARGIN + BOTTOM_MARGIN));
 }
 
 void QRadioButton::setChecked(bool isChecked)

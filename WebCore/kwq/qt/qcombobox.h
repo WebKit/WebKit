@@ -58,8 +58,12 @@ public:
 
     NSMutableArray *items;
 
+    void activated() { m_activated.call(indexOfCurrentItem()); }
+
 private:
     void init(bool isEditable);
+    
+    KWQSignal m_activated;
 };
 
 #endif

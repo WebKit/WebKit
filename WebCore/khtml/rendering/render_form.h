@@ -137,9 +137,6 @@ public:
     virtual void calcMinMaxWidth();
 
     QCheckBox *widget() const { return static_cast<QCheckBox*>(m_widget); }
-#ifdef APPLE_CHANGES
-    short baselinePosition( bool f ) const;
-#endif
 
 public slots:
     virtual void slotStateChanged(int state);
@@ -157,10 +154,6 @@ public:
 
     virtual void calcMinMaxWidth();
     virtual void updateFromElement();
-
-#ifdef APPLE_CHANGES
-    short baselinePosition( bool f ) const;
-#endif
 
     QRadioButton *widget() const { return static_cast<QRadioButton*>(m_widget); }
 
@@ -374,9 +367,6 @@ public:
     virtual void updateFromElement();
 
     void updateSelection();
-#ifdef APPLE_CHANGES
-    void performAction(QObject::Actions action);
-#endif
 
     DOM::HTMLSelectElementImpl *element() const
     { return static_cast<DOM::HTMLSelectElementImpl*>(RenderObject::element()); }

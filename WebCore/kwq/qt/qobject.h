@@ -68,13 +68,6 @@ class KWQSignal;
 
 class QObject : public Qt {
 public:
-
-    enum Actions {
-        ACTION_TEXT_AREA_END_EDITING = 5,        
-        ACTION_LISTBOX_CLICKED = 6,
-        ACTION_COMBOBOX_CLICKED = 7
-    };
-
     QObject(QObject *parent = 0, const char *name = 0);
     virtual ~QObject();
 
@@ -98,9 +91,6 @@ public:
 
     virtual bool event(QEvent *);
 
-    void emitAction(Actions action);
-    virtual void performAction(Actions action);
-    
     static const QObject *sender() { return m_sender; }
 
 private:
@@ -110,7 +100,6 @@ private:
     
     KWQSignal *findSignal(const char *signalName) const;
     
-    mutable QObject *target;
     QPtrList<QObject> guardedPtrDummyList;
     mutable KWQSignal *m_signalListHead;
     bool m_signalsBlocked;

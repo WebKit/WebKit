@@ -36,6 +36,7 @@ using khtml::RenderCheckBox;
 using khtml::RenderFileButton;
 using khtml::RenderFormElement;
 using khtml::RenderLineEdit;
+using khtml::RenderSelect;
 using khtml::RenderTextArea;
 
 enum FunctionNumber {
@@ -45,6 +46,8 @@ enum FunctionNumber {
     slotFinishedParsing,
     slotRedirect,
     slotReturnPressed,
+    slotSelected,
+    slotSelectionChanged,
     slotStateChanged,
     slotTextChanged,
     slotTextChangedWithString
@@ -70,6 +73,12 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     } else if (KWQNamesMatch(member, SLOT(slotReturnPressed()))) {
         KWQ_ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
         m_function = slotReturnPressed;
+    } else if (KWQNamesMatch(member, SLOT(slotSelected(int)))) {
+        KWQ_ASSERT(dynamic_cast<RenderSelect *>(object));
+        m_function = slotSelected;
+    } else if (KWQNamesMatch(member, SLOT(slotSelectionChanged()))) {
+        KWQ_ASSERT(dynamic_cast<RenderSelect *>(object));
+        m_function = slotSelectionChanged;
     } else if (KWQNamesMatch(member, SLOT(slotStateChanged(int)))) {
         KWQ_ASSERT(dynamic_cast<RenderCheckBox *>(object));
         m_function = slotStateChanged;
@@ -139,6 +148,13 @@ void KWQSlot::call() const
             }
             return;
         }
+        case slotSelectionChanged: {
+            RenderSelect *select = dynamic_cast<RenderSelect *>(m_object.pointer());
+            if (select) {
+                select->slotSelectionChanged();
+            }
+            return;
+        }
         case slotTextChanged: {
             RenderTextArea *area = dynamic_cast<RenderTextArea *>(m_object.pointer());
             if (area) {
@@ -160,6 +176,13 @@ void KWQSlot::call(int i) const
             RenderCheckBox *checkBox = dynamic_cast<RenderCheckBox *>(m_object.pointer());
             if (checkBox) {
                 checkBox->slotStateChanged(i);
+            }
+            return;
+        }
+        case slotSelected: {
+            RenderSelect *select = dynamic_cast<RenderSelect *>(m_object.pointer());
+            if (select) {
+                select->slotSelected(i);
             }
             return;
         }
