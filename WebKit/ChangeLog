@@ -1,3 +1,10 @@
+(2003-03-12  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+	updated for recent changes
+
 2003-03-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed deployment build failure.
