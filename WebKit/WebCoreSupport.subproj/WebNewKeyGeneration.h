@@ -1,8 +1,8 @@
 /*
- *  WebKeyGeneration.h
+ *  WebNewKeyGeneration.h
  *  WebKit
  *
- *  Created by Chris Blumenberg on Mon Dec 08 2003.
+ *  Created by Chris Blumenberg on Mon Aug 23 2004.
  *  Copyright (c) 2003 Apple Computer. All rights reserved.
  *
  */
@@ -12,14 +12,14 @@
 
 #import <WebKit/WebKeyGenerator.h>
 
-#ifndef USE_NEW_KEY_GENERATION
+#ifdef USE_NEW_KEY_GENERATION
 
 #import <CoreFoundation/CoreFoundation.h>
 
-#include <SecurityNssAsn1/secasn1t.h>
-#include <Security/cssmtype.h>
-#include <SecurityNssAsn1/X509Templates.h>
-#include <SecurityNssAsn1/keyTemplates.h>
+#import <Security/asn1Templates.h>
+#import <Security/SecAsn1Coder.h>
+#import <Security/secasn1t.h>
+#import <Security/Security.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -42,7 +42,7 @@ extern "C" {
         CSSM_DATA		**certs;
     } NetscapeCertSequence;
     
-    extern const SEC_ASN1Template NetscapeCertSequenceTemplate[];
+    extern const SecAsn1Template NetscapeCertSequenceTemplate[];
     
     /*
      * Public key/challenge, to send to CA.
@@ -70,8 +70,8 @@ extern "C" {
         CSSM_DATA							signature; // length in BITS
     } SignedPublicKeyAndChallenge;
     
-    extern const SEC_ASN1Template PublicKeyAndChallengeTemplate[];
-    extern const SEC_ASN1Template SignedPublicKeyAndChallengeTemplate[];
+    extern const SecAsn1Template PublicKeyAndChallengeTemplate[];
+    extern const SecAsn1Template SignedPublicKeyAndChallengeTemplate[];
 
     CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
     WebCertificateParseResult addCertificatesToKeychainFromData(const void *bytes, unsigned length);

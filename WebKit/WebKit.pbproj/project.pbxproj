@@ -142,13 +142,13 @@
 				6566F34204C12D14008B3232,
 			);
 			buildSettings = {
-				COMMON_LDFLAGS = "-no-c++filt \"$OBJECT_FILE_DIR/WebKitSecurity.a\" -framework \"`if [ -f /System/Library/Frameworks/Quartz.framework/Quartz ]; then echo \\\"Quartz\\\"; else echo \\\"System\\\"; fi`\"";
+				COMMON_LDFLAGS = "-no-c++filt \"$OBJECT_FILE_DIR/WebKitSecurity.a\" ${TIGER_FRAMEWORKS_LDFLAGS}";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebKit.exp;
-				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/${SYSTEM_LIBRARY_DIR}/Frameworks\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" ";
+				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/${SYSTEM_LIBRARY_DIR}/Frameworks\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/ApplicationServices.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\" /usr/local/SecurityPieces/Frameworks";
 				FRAMEWORK_VERSION = A;
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = /System/Library/Frameworks;
@@ -162,6 +162,7 @@
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "-sectorder __TEXT __text /AppleInternal/OrderFiles/WebKit.order";
+				TIGER_FRAMEWORKS_LDFLAGS = "-framework \"`if [ -f /System/Library/Frameworks/Quartz.framework/Quartz ]; then echo \\\"Quartz\\\"; else echo \\\"System\\\"; fi`\" -framework \"`if [ -f /usr/local/SecurityPieces/Frameworks/security_cdsa_utils.framework ]; then echo \\\"security_cdsa_utils\\\"; else echo \\\"System\\\"; fi`\"";
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter -Wbad-function-cast -Wmissing-declarations -Wnested-externs";
 				WARNING_CPLUSPLUSFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
@@ -355,6 +356,7 @@
 				9348903806C0040B007E7ACE,
 				51E94C3606C0321200A9B09E,
 				51E94C6A06C0347500A9B09E,
+				83634A7406DA5ECD0026E290,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -475,6 +477,7 @@
 				8373435D0624EE0D00F3B289,
 				51E94C3706C0321200A9B09E,
 				51E94C6B06C0347500A9B09E,
+				83634A7306DA5ECD0026E290,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2190,6 +2193,34 @@
 		};
 		83402EFD035A58D100BE770A = {
 			fileRef = 83402EFB035A58D100BE770A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83634A7106DA5ECD0026E290 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
+			path = WebNewKeyGeneration.c;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		83634A7206DA5ECD0026E290 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = WebNewKeyGeneration.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		83634A7306DA5ECD0026E290 = {
+			fileRef = 83634A7106DA5ECD0026E290;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83634A7406DA5ECD0026E290 = {
+			fileRef = 83634A7206DA5ECD0026E290;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4406,6 +4437,8 @@
 				9345D4EB0365C5B2008635CE,
 				830E81830585375700AD0891,
 				830E81840585375700AD0891,
+				83634A7206DA5ECD0026E290,
+				83634A7106DA5ECD0026E290,
 				84723BE3056D719E0044BFEA,
 				84723BE4056D719E0044BFEA,
 				F5E0E10802BC45F8018635CA,
