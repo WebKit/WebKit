@@ -2,11 +2,13 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <string.h>
 #import <fcntl.h>
 #import <sys/stat.h>
 #import <sys/types.h>
 #import <sys/mman.h>
 #import <pthread.h>
+#import <fts.h>
 
 #import "IFURLFileDatabase.h"
 #import "IFNSFileManagerExtensions.h"
@@ -14,6 +16,7 @@
 #import "WebFoundationDebug.h"
 
 #define SIZE_FILE_NAME @".size"
+#define SIZE_FILE_NAME_CSTRING ".size"
 
 // The next line is a workaround for Radar 2905545. Once that's fixed, it can use PTHREAD_ONCE_INIT.
 static void databaseInit(void);
@@ -33,6 +36,72 @@ enum
     SYNC_INTERVAL = 5,
     SYNC_IDLE_THRESHOLD = 5,
 };
+
+// support for expiring cache files using file system access times --------------------------------------------
+
+typedef struct IFFileAccessTime IFFileAccessTime;
+
+struct IFFileAccessTime
+{   
+    NSString *path;
+    time_t time;
+};
+
+static CFComparisonResult compare_atimes(const void *val1, const void *val2, void *context)
+{
+    int t1 = ((IFFileAccessTime *)val1)->time;
+    int t2 = ((IFFileAccessTime *)val2)->time;
+    
+    if (t1 > t2) return kCFCompareGreaterThan;
+    if (t1 < t2) return kCFCompareLessThan;
+    return kCFCompareEqualTo;
+}
+
+static Boolean IFPtrEqual(const void *p1, const void *p2) {
+    return p1 == p2;  
+}
+
+static void IFFileAccessTimeRelease(CFAllocatorRef allocator, const void *value) {
+    IFFileAccessTime *spec;
+    
+    spec = (IFFileAccessTime *)value;
+    [spec->path release];
+    free(spec);  
+}
+
+static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path) {
+    FTS *fts;
+    FTSENT *ent;
+    CFMutableArrayRef atimeArray;
+    char *paths[2];
+    NSFileManager *defaultManager;
+    
+    CFArrayCallBacks callBacks = {0, NULL, IFFileAccessTimeRelease, NULL, IFPtrEqual};
+    
+    defaultManager = [NSFileManager defaultManager];
+    paths[0] = (char *)path;
+    paths[1] = NULL;
+    
+    atimeArray = CFArrayCreateMutable(NULL, 0, &callBacks);
+    fts = fts_open(paths, FTS_COMFOLLOW | FTS_LOGICAL, NULL);
+    
+    ent = fts_read(fts);
+    while (ent) {
+        if (ent->fts_statp->st_mode & S_IFREG && strcmp(ent->fts_name, SIZE_FILE_NAME_CSTRING) != 0) {
+            IFFileAccessTime *spec = malloc(sizeof(IFFileAccessTime));
+            spec->path = [[defaultManager stringWithFileSystemRepresentation:ent->fts_accpath length:strlen(ent->fts_accpath)] retain];
+            spec->time = ent->fts_statp->st_atimespec.tv_sec;
+            CFArrayAppendValue(atimeArray, spec);
+        }
+        ent = fts_read(fts);
+    }
+
+    CFArraySortValues(atimeArray, CFRangeMake(0, CFArrayGetCount(atimeArray)), compare_atimes, NULL);
+
+    fts_close(fts);
+    
+    return atimeArray;
+}
 
 // interface IFURLFileReader -------------------------------------------------------------
 
@@ -341,11 +410,12 @@ static void URLFileReaderInit(void)
 -(void)truncateToSizeLimit:(unsigned)size
 {
     NSFileManager *defaultManager;
-    NSDirectoryEnumerator *enumerator;
-    NSString *filePath;
-    NSString *fullFilePath;
     NSDictionary *attributes;
     NSNumber *fileSize;
+    CFArrayRef atimeArray;
+    unsigned aTimeArrayCount;
+    unsigned i;
+    IFFileAccessTime *spec;
     
     if (size > usage) {
         return;
@@ -357,30 +427,21 @@ static void URLFileReaderInit(void)
     else {
         defaultManager = [NSFileManager defaultManager];
         [mutex lock];
-        enumerator = [defaultManager enumeratorAtPath:path];
-        while (usage > size) {
-            filePath = [enumerator nextObject];
-            if (filePath == nil) {
-                break;
-            }
-            if ([filePath isEqualToString:SIZE_FILE_NAME]) {
-                continue;
-            }
-            
-            fullFilePath = [[NSString alloc] initWithFormat:@"%@/%@", path, filePath];
-            attributes = [defaultManager fileAttributesAtPath:fullFilePath traverseLink:YES];
+        atimeArray = CreateArrayListingFilesSortedByAccessTime([defaultManager fileSystemRepresentationWithPath:path]);
+        aTimeArrayCount = CFArrayGetCount(atimeArray);
+        for (i = 0; i < aTimeArrayCount && usage > size; i++) {
+            spec = (IFFileAccessTime *)CFArrayGetValueAtIndex(atimeArray, i);
+            attributes = [defaultManager fileAttributesAtPath:spec->path traverseLink:YES];
             if (attributes) {
-                if ([[attributes objectForKey:NSFileType] isEqualToString:NSFileTypeRegular]) {
-                    fileSize = [attributes objectForKey:NSFileSize];
-                    if (fileSize) {
-                        usage -= [fileSize unsignedIntValue];
-                        WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "truncateToSizeLimit - %u - %u - %u, %s", size, usage, [fileSize unsignedIntValue], DEBUG_OBJECT(fullFilePath));
-                        [defaultManager removeFileAtPath:fullFilePath handler:nil];
-                    }
+                fileSize = [attributes objectForKey:NSFileSize];
+                if (fileSize) {
+                    usage -= [fileSize unsignedIntValue];
+                    WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "truncateToSizeLimit - %u - %u - %u, %s", size, usage, [fileSize unsignedIntValue], DEBUG_OBJECT(spec->path));
+                    [defaultManager removeFileAtPath:spec->path handler:nil];
                 }
             }
-            [fullFilePath release];
         }
+        CFRelease(atimeArray);
         [self writeSizeFile:usage];
         [mutex unlock];
     }
