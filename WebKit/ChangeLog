@@ -1,3 +1,22 @@
+2004-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed a potential storage leak when we turn on CGImageRef image rendering
+
+        * WebCoreSupport.subproj/WebImageRenderer.m: (-[WebImageRenderer dealloc]): Fix potential storage leak
+        by adding [super dealloc], but leak was not real yet because the code is commented out.
+
+        - make paste style work with color as part of fix to <rdar://problem/3814237> REGRESSION (Mail):
+          Copy/paste style does not set color in Mail compose window
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectionFontAttributes]): Change structure so it's easy to add more attributes.
+        For now I haven't added any yet.
+        (-[WebHTMLView _colorAsString:]): Moved this earlier in the file.
+        (-[WebHTMLView _shadowAsString:]): Ditto.
+        (-[WebHTMLView _styleFromFontAttributes:]): Add background color, foreground color, and text shadow.
+
 2004-09-30  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3821215> NPN hasMethod and hasProperty functions should take NPObjects, not NPClass

@@ -65,6 +65,7 @@
 {
     [MIMEType release];
     [imageData release];
+    [super dealloc];
 }
 
 - copyWithZone:(NSZone *)zone

@@ -2982,10 +2982,11 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSDictionary *)_selectionFontAttributes
 {
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     NSFont *font = [[self _bridge] fontForSelection:NULL];
-    if (font == nil)
-        return nil;
-    return [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+    if (font != nil)
+        [dictionary setObject:font forKey:NSFontAttributeName];
+    return dictionary;
 }
 
 - (NSData *)_selectionFontAttributesAsRTF
@@ -3016,9 +3017,55 @@ static WebHTMLView *lastHitView = nil;
     return [[[self _bridge] DOMDocument] createCSSStyleDeclaration];
 }
 
+- (NSString *)_colorAsString:(NSColor *)color
+{
+    NSColor *rgbColor = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
+    // of fancy color that can't be converted to RGB. Changing that to "transparent"
+    // might not be great, but it's probably OK.
+    if (rgbColor == nil)
+        return @"transparent";
+    float r = [rgbColor redComponent];
+    float g = [rgbColor greenComponent];
+    float b = [rgbColor blueComponent];
+    float a = [rgbColor alphaComponent];
+    if (a == 0)
+        return @"transparent";
+    if (r == 0 && g == 0 && b == 0 && a == 1)
+        return @"black";
+    if (r == 1 && g == 1 && b == 1 && a == 1)
+        return @"white";
+    // FIXME: Lots more named colors. Maybe we could use the table in WebCore?
+    if (a == 1)
+        return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", r * 255, g * 255, b * 255];
+    return [NSString stringWithFormat:@"rgba(%.0f,%.0f,%.0f,%f)", r * 255, g * 255, b * 255, a];
+}
+
+- (NSString *)_shadowAsString:(NSShadow *)shadow
+{
+    if (shadow == nil)
+        return @"none";
+    NSSize offset = [shadow shadowOffset];
+    float blurRadius = [shadow shadowBlurRadius];
+    if (offset.width == 0 && offset.height == 0 && blurRadius == 0)
+        return @"none";
+    NSColor *color = [shadow shadowColor];
+    if (color == nil)
+        return @"none";
+    // FIXME: Handle non-integral values here?
+    if (blurRadius == 0)
+        return [NSString stringWithFormat:@"%@ %.0fpx %.0fpx", [self _colorAsString:color], offset.width, offset.height];
+    return [NSString stringWithFormat:@"%@ %.0fpx %.0fpx %.0fpx", [self _colorAsString:color], offset.width, offset.height, blurRadius];
+}
+
 - (DOMCSSStyleDeclaration *)_styleFromFontAttributes:(NSDictionary *)dictionary
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
+
+    NSColor *color = [dictionary objectForKey:NSBackgroundColorAttributeName];
+    if (color != nil) {
+        [style setBackgroundColor:[self _colorAsString:color]];
+    }
 
     NSFont *font = [dictionary objectForKey:NSFontAttributeName];
     if (font != nil) {
@@ -3036,6 +3083,20 @@ static WebHTMLView *lastHitView = nil;
             [style setFontStyle:@"normal"];
         }
     }
+
+    color = [dictionary objectForKey:NSForegroundColorAttributeName];
+    if (color != nil) {
+        [style setColor:[self _colorAsString:color]];
+    }
+
+    NSShadow *shadow = [dictionary objectForKey:NSShadowAttributeName];
+    if (shadow) {
+        [style setTextShadow:[self _shadowAsString:shadow]];
+    }
+
+    // FIXME: NSStrikethroughStyleAttributeName
+    // FIXME: NSSuperscriptAttributeName
+    // FIXME: NSUnderlineStyleAttributeName
 
     return style;
 }
@@ -3214,47 +3275,6 @@ static WebHTMLView *lastHitView = nil;
 - (void)changeFont:(id)sender
 {
     [self _applyStyleToSelection:[self _styleFromFontManagerOperation]];
-}
-
-- (NSString *)_colorAsString:(NSColor *)color
-{
-    NSColor *rgbColor = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-    // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
-    // of fancy color that can't be converted to RGB. Changing that to "transparent"
-    // might not be great, but it's probably OK.
-    if (rgbColor == nil)
-        return @"transparent";
-    float r = [rgbColor redComponent];
-    float g = [rgbColor greenComponent];
-    float b = [rgbColor blueComponent];
-    float a = [rgbColor alphaComponent];
-    if (a == 0)
-        return @"transparent";
-    if (r == 0 && g == 0 && b == 0 && a == 1)
-        return @"black";
-    if (r == 1 && g == 1 && b == 1 && a == 1)
-        return @"white";
-    // FIXME: Lots more named colors. Maybe we could use the table in WebCore?
-    if (a == 1)
-        return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", r * 255, g * 255, b * 255];
-    return [NSString stringWithFormat:@"rgba(%.0f,%.0f,%.0f,%f)", r * 255, g * 255, b * 255, a];
-}
-
-- (NSString *)_shadowAsString:(NSShadow *)shadow
-{
-    if (shadow == nil)
-        return @"none";
-    NSSize offset = [shadow shadowOffset];
-    float blurRadius = [shadow shadowBlurRadius];
-    if (offset.width == 0 && offset.height == 0 && blurRadius == 0)
-        return @"none";
-    NSColor *color = [shadow shadowColor];
-    if (color == nil)
-        return @"none";
-    // FIXME: Handle non-integral values here?
-    if (blurRadius == 0)
-        return [NSString stringWithFormat:@"%@ %.0fpx %.0fpx", [self _colorAsString:color], offset.width, offset.height];
-    return [NSString stringWithFormat:@"%@ %.0fpx %.0fpx %.0fpx", [self _colorAsString:color], offset.width, offset.height, blurRadius];
 }
 
 - (DOMCSSStyleDeclaration *)_styleForAttributeChange:(id)sender
