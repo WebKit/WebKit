@@ -72,6 +72,7 @@ QWidget::QWidget(NSView *view)
 
 QWidget::~QWidget() 
 {
+    KWQKHTMLPart::widgetWillReleaseView(getOuterView());
     [data->view release];
     delete data;
 }
@@ -344,17 +345,20 @@ NSView *QWidget::getView() const
 
 void QWidget::setView(NSView *view)
 {
-    [view retain];
+    if (view == data->view) {
+        return;
+    }
+    
+    KWQKHTMLPart::widgetWillReleaseView(getOuterView());
     [data->view release];
-    data->view = view;
+    data->view = [view retain];
 }
 
 NSView *QWidget::getOuterView() const
 {
-    // A QScrollView is a widget only used to represent a frame.  If
-    // this widget's view is a WebCoreFrameView the we resize it's containing
-    // view,  an WebView.  The scrollview contained by the WebView
-    // will be autosized.
+    // A QScrollView is a widget normally used to represent a frame.
+    // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebView.
+    // The scroll view contained by the WebView will be autosized.
     NSView *view = data->view;
     ASSERT(view);
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {

@@ -1,3 +1,14 @@
+2002-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3108912 -- onclick handlers not supported on form elements
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView hitTest:]):
+	Take over hit testing so that all clicks on subviews are handled by the WebHTMLView.
+	WebCore now handles getting the mouse events to the subviews after passing
+	the events through the DOM.
+
 2002-12-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

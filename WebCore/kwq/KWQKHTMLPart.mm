@@ -47,15 +47,26 @@
 
 #undef _KWQ_TIMING
 
+using DOM::DocumentImpl;
+using DOM::DOMString;
+using DOM::EventImpl;
+using DOM::Node;
+
 using khtml::Cache;
 using khtml::ChildFrame;
 using khtml::Decoder;
+using khtml::MouseDoubleClickEvent;
+using khtml::MousePressEvent;
+using khtml::MouseReleaseEvent;
 using khtml::RenderObject;
 using khtml::RenderPart;
 using khtml::RenderText;
 using khtml::RenderWidget;
 
 using KIO::Job;
+
+using KJS::SavedProperties;
+using KJS::Window;
 
 using KParts::ReadOnlyPart;
 using KParts::URLArgs;
@@ -72,7 +83,7 @@ void KHTMLPart::completed(bool arg)
     KWQ(this)->_completed.call(arg);
 }
 
-void KHTMLPart::nodeActivated(const DOM::Node &aNode)
+void KHTMLPart::nodeActivated(const Node &)
 {
 }
 
@@ -107,6 +118,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _completed(this, SIGNAL(completed()))
     , _completedWithBool(this, SIGNAL(completed(bool)))
     , _ownsView(false)
+    , _mouseDownView(nil)
 {
     Cache::init();
     mutableInstances().prepend(this);
@@ -412,34 +424,34 @@ bool KWQKHTMLPart::canCachePage()
         (d->m_frames.count() ||
         parentPart() ||
         d->m_objects.count() ||
-        d->m_doc->getWindowEventListener (DOM::EventImpl::UNLOAD_EVENT) ||
-        (d->m_jscript && KJS::Window::retrieveWindow(this)->hasTimeouts()))){
+        d->m_doc->getWindowEventListener (EventImpl::UNLOAD_EVENT) ||
+        (d->m_jscript && Window::retrieveWindow(this)->hasTimeouts()))){
         return false;
     }
     return true;
 }
 
-void KWQKHTMLPart::saveWindowProperties(KJS::SavedProperties *windowProperties)
+void KWQKHTMLPart::saveWindowProperties(SavedProperties *windowProperties)
 {
-    KJS::Window::retrieveWindow(this)->saveProperties(*windowProperties);
+    Window::retrieveWindow(this)->saveProperties(*windowProperties);
 }
 
-void KWQKHTMLPart::saveLocationProperties(KJS::SavedProperties *locationProperties)
+void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
-    KJS::Window::retrieveWindow(this)->location()->saveProperties(*locationProperties);
+    Window::retrieveWindow(this)->location()->saveProperties(*locationProperties);
 }
 
-void KWQKHTMLPart::restoreWindowProperties(KJS::SavedProperties *windowProperties)
+void KWQKHTMLPart::restoreWindowProperties(SavedProperties *windowProperties)
 {
-    KJS::Window::retrieveWindow(this)->restoreProperties(*windowProperties);
+    Window::retrieveWindow(this)->restoreProperties(*windowProperties);
 }
 
-void KWQKHTMLPart::restoreLocationProperties(KJS::SavedProperties *locationProperties)
+void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties)
 {
-    KJS::Window::retrieveWindow(this)->location()->restoreProperties(*locationProperties);
+    Window::retrieveWindow(this)->location()->restoreProperties(*locationProperties);
 }
 
-void KWQKHTMLPart::openURLFromPageCache(DOM::DocumentImpl *doc, KURL *url, KJS::SavedProperties *windowProperties, KJS::SavedProperties *locationProperties)
+void KWQKHTMLPart::openURLFromPageCache(DocumentImpl *doc, KURL *url, SavedProperties *windowProperties, SavedProperties *locationProperties)
 {
     d->m_redirectionTimer.stop();
 
@@ -561,7 +573,7 @@ void KWQKHTMLPart::updatePolicyBaseURL()
     }
 }
 
-void KWQKHTMLPart::setPolicyBaseURL(const DOM::DOMString &s)
+void KWQKHTMLPart::setPolicyBaseURL(const DOMString &s)
 {
     // XML documents will cause this to return null.  docImpl() is
     // an HTMLdocument only. -dwh
@@ -702,6 +714,74 @@ void KWQKHTMLPart::scrollToAnchor(const KURL &URL)
 
 bool KWQKHTMLPart::closeURL()
 {
-  saveDocumentState();
-  return KHTMLPart::closeURL();
+    saveDocumentState();
+    return KHTMLPart::closeURL();
+}
+
+void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
+{
+    if (!handleMouseDownEventForWidget(event)) {
+        KHTMLPart::khtmlMousePressEvent(event);
+    }
+}
+
+void KWQKHTMLPart::khtmlMouseDoubleClickEvent(MouseDoubleClickEvent *event)
+{
+    if (!handleMouseDownEventForWidget(event)) {
+        KHTMLPart::khtmlMouseDoubleClickEvent(event);
+    }
+}
+
+bool KWQKHTMLPart::handleMouseDownEventForWidget(khtml::MouseEvent *event)
+{
+    _mouseDownView = nil;
+    
+    // Figure out which view to send the event to.
+    RenderObject *target = event->innerNode().handle()->renderer();
+    if (!target->isWidget()) {
+        return false;
+    }
+    NSView *outerView = static_cast<RenderWidget *>(target)->widget()->getOuterView();
+    ASSERT(outerView);
+    ASSERT([outerView superview]);
+    NSView *topView = outerView;
+    NSView *superview;
+    while ((superview = [topView superview])) {
+        topView = superview;
+    }
+    NSView *view = [outerView hitTest:[[outerView superview] convertPoint:[[NSApp currentEvent] locationInWindow] fromView:topView]];
+    if (view == nil) {
+        ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
+        return false;
+    }
+    
+    [view mouseDown:[NSApp currentEvent]];
+    
+    // Remember which view we sent the event to, so we can direct the release event properly.
+    _mouseDownView = view;
+    
+    return true;
+}
+
+void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
+{
+    if (!_mouseDownView) {
+        KHTMLPart::khtmlMouseReleaseEvent(event);
+        return;
+    }
+    
+    [_mouseDownView mouseUp:[NSApp currentEvent]];
+    _mouseDownView = nil;
+}
+
+void KWQKHTMLPart::widgetWillReleaseView(NSView *view)
+{
+    if (view == nil) {
+        return;
+    }
+    for (QPtrListIterator<KWQKHTMLPart> it(instances()); it.current(); ++it) {
+        if ([it.current()->_mouseDownView isDescendantOf:view]) {
+            it.current()->_mouseDownView = nil;
+        }
+    }
 }

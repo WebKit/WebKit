@@ -1,3 +1,32 @@
+2002-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3108912 -- onclick handlers not supported on form elements
+
+	We now pass the events back to the NSView here in WebCore; they pass through all the
+	machinery in the DOM before getting sent on.
+
+        * kwq/KWQKHTMLPart.h: Add widgetWillReleaseView and handleMouseDownEventForWidget functions,
+	overrides for khtmlMousePressEvent, khtmlMouseDoubleClickEvent, khtmlMouseReleaseEvent, and
+	a new _mouseDownView field.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart): Initialize _mouseDownView to nil.
+        (KWQKHTMLPart::khtmlMousePressEvent): Call handleMouseDownEventForWidget, but if it returns
+	false call through to the base class function.
+        (KWQKHTMLPart::khtmlMouseDoubleClickEvent): Ditto.
+        (KWQKHTMLPart::handleMouseDownEventForWidget): Do a hit test to find out which view to send
+	the mouse down event to, and then send it.
+        (KWQKHTMLPart::khtmlMouseReleaseEvent): Send the mouse up event to the view we sent a mouse
+	down event to, or call through to the base class otherwise.
+        (KWQKHTMLPart::widgetWillReleaseView): Clear out the _mouseDownView field if the view is
+	being released by the QWidget that owns it.
+
+        * kwq/KWQWidget.mm:
+        (QWidget::~QWidget): Call KWQKHTMLPart::widgetWillReleaseView.
+        (QWidget::setView): Call KWQKHTMLPart::widgetWillReleaseView on the old view.
+
 2002-12-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

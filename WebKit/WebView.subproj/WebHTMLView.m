@@ -924,14 +924,10 @@
 {
 }
 
-#if 0
-
 - (NSView *)hitTest:(NSPoint)point
 {
-    // We handle all clicks. We don't allow subviews to handle them.
+    // We handle all clicks. They are passed along to subviews by WebCore.
     return [super hitTest:point] ? self : nil;
 }
-
-#endif
 
 @end
