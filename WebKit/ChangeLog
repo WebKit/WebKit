@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+        - fixed mistake in that last check-in that made Safari assert on startup with Chris's bookmarks bar
+
+        * Misc.subproj/WebStringTruncator.m: (centerTruncateToBuffer):
+        Fix logic here to not use an uninitialized variable.
+
+2003-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3193213 -- assert truncatedLength+1 < STRING_BUFFER_SIZE creating tab label for firstyearibs.com
         - fixed 3194935 -- WebStringTruncator rightTruncateString: will break between composed characters
         - fixed right truncator to use interpolation algorithm rather than linear search

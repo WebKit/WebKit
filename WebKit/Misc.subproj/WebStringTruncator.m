@@ -28,11 +28,11 @@ static unsigned centerTruncateToBuffer(NSString *string, unsigned length, unsign
     ASSERT(keepCount < STRING_BUFFER_SIZE);
     
     unsigned omitStart = (keepCount + 1) / 2;
+    unsigned omitEnd = NSMaxRange([string rangeOfComposedCharacterSequenceAtIndex:omitStart + (length - keepCount) - 1]);
+    omitStart = [string rangeOfComposedCharacterSequenceAtIndex:omitStart].location;
     
-    NSRange beforeRange = NSMakeRange(0, [string rangeOfComposedCharacterSequenceAtIndex:omitStart].location);
-
-    NSRange omitEndRange = [string rangeOfComposedCharacterSequenceAtIndex:omitStart + (length - keepCount) - 1];
-    NSRange afterRange = NSMakeRange(NSMaxRange(omitEndRange), length - afterRange.location);
+    NSRange beforeRange = NSMakeRange(0, omitStart);
+    NSRange afterRange = NSMakeRange(omitEnd, length - omitEnd);
     
     unsigned truncatedLength = beforeRange.length + 1 + afterRange.length;
     ASSERT(truncatedLength <= length);
