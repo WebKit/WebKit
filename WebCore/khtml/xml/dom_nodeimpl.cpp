@@ -1234,6 +1234,11 @@ RenderObject * NodeImpl::previousRenderer()
 
 RenderObject * NodeImpl::nextRenderer()
 {
+    // Avoid an O(n^2) problem with this function by not checking for nextRenderer() when the parent element hasn't even 
+    // been attached yet.
+    if (parent() && !parent()->attached())
+        return 0;
+
     for (NodeImpl *n = nextSibling(); n; n = n->nextSibling()) {
         if (n->renderer())
             return n->renderer();

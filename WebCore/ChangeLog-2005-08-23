@@ -1,3 +1,13 @@
+2005-02-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4010774, make sure to avoid an O(N^2) algorithm in nextRenderer() that is triggered when large
+	DOM subtrees are inserted into documents via one insert/append call.
+	
+        Reviewed by kocienda
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::nextRenderer):
+
 2005-02-25  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3382926> Bidi neutrals at RTL/LTR boundaries not handled correctly.
