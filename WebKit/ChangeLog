@@ -1,3 +1,12 @@
+2003-12-15  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3505546>: always get keychain prompt when sending mail using cert downloaded with Safari
+
+        Reviewed by john.
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (signedPublicKeyAndChallengeString): set up the SecAccessRef with "everything goes" restrictions
+
 2003-12-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
