@@ -614,11 +614,7 @@ ulong QString::toULong(bool *ok, int base) const
 double QString::toDouble(bool *ok) const
 {
     double n;
-    if (s) {
-        n = CFStringGetDoubleValue(s);
-    } else {
-        n = 0.0;
-    }
+    n = CFStringGetDoubleValue(s);
     if (ok) {
         // NOTE: since CFStringGetDoubleValue returns 0.0 on error there is no
         // way to know if "n" is valid in that case
@@ -626,10 +622,12 @@ double QString::toDouble(bool *ok) const
         // EXTRA NOTE: We can't assume 0.0 is bad, since it totally breaks
         // html like border="0". So, only trigger breakage if the char 
         // at index 0 is neither a '0' nor a '.' nor a '-'.
-        UniChar uc = CFStringGetCharacterAtIndex(s,0);
         *ok = true;
-        if (n == 0.0 && uc != '0' && uc != '.' && uc != '-') {
-            *ok = false;
+        if (n == 0.0) {
+            UniChar uc = CFStringGetLength(s) == 0 ? 0 : CFStringGetCharacterAtIndex(s, 0);
+            if (uc != '0' && uc != '.' && uc != '-') {
+                *ok = false;
+            }
         }
     }
     return n;

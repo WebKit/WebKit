@@ -1,3 +1,8 @@
+2002-03-31  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQString.mm: (QString::toDouble): Fix to properly handle
+        an empty string.
+
 2002-03-30  Darin Adler  <darin@apple.com>
 
 	* src/kdelibs/khtml/xml/dom_docimpl.cpp: (DocumentImpl::setTitle):
