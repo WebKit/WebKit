@@ -51,19 +51,16 @@ CXXFLAGS = $(BASECXXFLAGS) \
 	-I$(TOPSRCDIR) \
 	$(NULL)
 
+DEPFLAGS = $(CXXFLAGS)
+
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: Makefile.dep $(OBJECTS) $(LIBRARY)
+all: $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
-
-depend: Makefile.dep
-
-Makefile.dep: $(SOURCES) $(HEADERS)
-	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
 
 htmltokenizer.cpp: htmltokenizer.moc
 htmltokenizer.moc:
@@ -72,11 +69,6 @@ htmltokenizer.moc:
 html_documentimpl.cpp: html_documentimpl.moc
 html_documentimpl.moc:
 	touch $@
-
-#----------------------------------------------------------------------
-# include make dependency rules
-
--include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

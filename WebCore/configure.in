@@ -196,6 +196,23 @@ dnl AC_CHECK_RANDOM
 
 dnl
 dnl -------------------------------------------------------------------
+dnl Special tweaks for our environment
+dnl -------------------------------------------------------------------
+dnl
+
+dnl Define _KWQ_ to get hacks we've made to KDE/QT
+AC_DEFINE_UNQUOTED(_KWQ_, 1)
+
+AC_ARG_ENABLE(kwq-pedantic,--enable-kwq-pedantic enables pedantic declarations in KWQ code,
+    if ( test "$enableval" = "yes" ); then
+        AC_DEFINE_UNQUOTED(_KWQ_PEDANTIC_, 1)
+    fi
+    ,
+    AC_DEFINE_UNQUOTED(_KWQ_PEDANTIC_, 1)
+)
+
+dnl
+dnl -------------------------------------------------------------------
 dnl Output files
 dnl -------------------------------------------------------------------
 dnl

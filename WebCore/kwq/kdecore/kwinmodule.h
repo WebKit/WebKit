@@ -44,6 +44,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     KWinModule(QObject* parent=0);
+    ~KWinModule();
 
     // member functions --------------------------------------------------------
 
@@ -56,9 +57,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor 
+// this private declaration prevents copying
+#ifdef KWQ_PEDANTIC
     KWinModule(const KWinModule &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef KWQ_PEDANTIC
     KWinModule &operator=(const KWinModule &);
+#endif
 
 }; // class KWinModule =========================================================
 

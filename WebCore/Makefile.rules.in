@@ -42,6 +42,9 @@ setup:
 		./MakeSystemChanges.sh; \
 	fi
 
+depend: 
+	$(CC) -MM $(DEPFLAGS) $(SOURCES) > Makefile.dep
+
 clean:
 	rm -f ${CLEAN_FILES} core
 
@@ -58,6 +61,11 @@ maintainer-clean:
 	rm -f configure
 	${MAKE} distclean;
 	
+#----------------------------------------------------------------------
+# include make dependency rules
+
+-include Makefile.dep
+
 #======================================================================
 # end $RCSfile$
 #======================================================================

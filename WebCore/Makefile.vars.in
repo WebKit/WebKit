@@ -54,6 +54,8 @@ LDFLAGS = $(BASELDFLAGS)
 YACCFLAGS = $(BASEYACCFLAGS)
 LEXFLAGS = $(BASELEXFLAGS)
 
+DEPFLAGS = $(BASECXXFLAGS)
+
 #======================================================================
 # end $RCSfile$
 #======================================================================

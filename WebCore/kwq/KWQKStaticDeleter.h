@@ -39,9 +39,12 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    KStaticDeleter();
+    KStaticDeleter() {}
     
-    ~KStaticDeleter();
+// add no-op destructor
+#ifdef KWQ_PEDANTIC
+    ~KStaticDeleter() {}
+#endif
 
     // member functions --------------------------------------------------------
 

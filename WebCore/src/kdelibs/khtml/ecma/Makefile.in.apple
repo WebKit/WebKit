@@ -50,6 +50,8 @@ CXXFLAGS = $(BASECXXFLAGS) \
 	-I. \
 	$(NULL)
 
+DEPFLAGS = $(CXXFLAGS)
+
 #----------------------------------------------------------------------
 # Set targets for this directory
 
@@ -62,19 +64,9 @@ $(LIBRARY): $(CXXOBJECTS)
 $(PROGRAM): testecma.o
 	$(CC) -o $@ $< -L. -lkhtmlecma
 
-depend: Makefile.dep
-
-Makefile.dep: $(SOURCES) $(HEADERS)
-	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
-
 kjs_window.cpp: kjs_window.moc
 kjs_window.moc:
 	touch $@
-
-#----------------------------------------------------------------------
-# include make dependency rules
-
--include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

@@ -1,4 +1,9 @@
-/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+/* Define for compiling in KWQ land */
+#undef _KWQ_
+
+/* Define for compiling in pedantic KWQ land */
+/* This adds pendantic C++ declarations to KDE/QT C++ code */
+#undef _KWQ_PEDANTIC_
 
 /* Define if using alloca.c.  */
 #undef C_ALLOCA

@@ -65,6 +65,8 @@ CXXFLAGS = $(BASECXXFLAGS) \
 	-I. \
 	$(NULL)
 
+DEPFLAGS = $(CXXFLAGS)
+
 #----------------------------------------------------------------------
 # Set targets for this directory
 
@@ -79,16 +81,6 @@ $(VALUEFILES):
 
 $(PROPFILES):
 	sh ./makeprop
-
-depend: Makefile.dep
-
-Makefile.dep: $(SOURCES) $(HEADERS)
-	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
-
-#----------------------------------------------------------------------
-# include make dependency rules
-
--include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

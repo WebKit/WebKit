@@ -30,7 +30,8 @@
 #include "kglobal.h"
 
 
-QString locate(const char *type, const QString& filename, const KInstance* instance = KGlobal::instance());
+QString locate(const char *type, const QString& filename, 
+    const KInstance* instance=KGlobal::instance());
 
 
 // class KStandardDirs =========================================================
@@ -46,8 +47,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     KStandardDirs();
-    
-    ~KStandardDirs();
+    virtual ~KStandardDirs();
 
     // member functions --------------------------------------------------------
 
@@ -61,6 +61,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     KStandardDirs(const KStandardDirs &);
     KStandardDirs &operator=(const KStandardDirs &);
 

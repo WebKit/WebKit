@@ -43,6 +43,8 @@ CXXFLAGS = $(BASECXXFLAGS) \
         -I. \
         $(NULL)
 
+DEPFLAGS = $(CXXFLAGS)
+
 #----------------------------------------------------------------------
 # Set targets for this directory
 
@@ -51,11 +53,6 @@ all: $(OBJECTS) $(LIBRARY)
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
-
-depend: Makefile.dep
-
-Makefile.dep: $(SOURCES) $(HEADERS)
-	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
 
 kjavaapplet.cpp: kjavaapplet.moc
 kjavaapplet.moc:
@@ -80,11 +77,6 @@ kjavadownloader.moc:
 kjavaprocess.cpp: kjavaprocess.moc
 kjavaprocess.moc:
 	touch $@
-
-#----------------------------------------------------------------------
-# include make dependency rules
-
--include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

@@ -44,9 +44,15 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    KStringHandler();
-    
-    ~KStringHandler();
+// add no-op constructor
+#ifdef KWQ_PEDANTIC
+    KStringHandler() {}
+#endif
+
+// add no-op destructor
+#ifdef KWQ_PEDANTIC
+    ~KStringHandler() {}
+#endif
 
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -55,9 +61,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef KWQ_PEDANTIC
     KStringHandler(const KStringHandler &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef KWQ_PEDANTIC
     KStringHandler &operator=(const KStringHandler &);
+#endif
 
 }; // class KStringHandler =====================================================
 

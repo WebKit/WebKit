@@ -63,6 +63,8 @@ CXXFLAGS = $(BASECXXFLAGS) \
 	-I. \
 	$(NULL)
 
+DEPFLAGS = $(CXXFLAGS)
+
 #----------------------------------------------------------------------
 # Set targets for this directory
 
@@ -72,11 +74,6 @@ $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
 	$(RANLIB) $(LIBRARY)
 
-depend: Makefile.dep
-
-Makefile.dep: $(SOURCES) $(HEADERS)
-	$(CC) -MM $(CXXFLAGS) $(SOURCES) > Makefile.dep
-        
 loader.cpp: loader.moc
 loader.moc:
 	touch loader.moc
@@ -89,11 +86,6 @@ $(TAGFILES):
 
 $(ATTRSFILES):
 	./makeattrs
-
-#----------------------------------------------------------------------
-# include make dependency rules
-
--include Makefile.dep
 
 #----------------------------------------------------------------------
 # include make rules boilerplate
