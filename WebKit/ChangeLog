@@ -1,3 +1,15 @@
+2004-11-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - worked around bug in Panther where NSScroller calls _destinationFloatValueForScroller: on superview
+          without first checking if it's implemented
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _destinationFloatValueForScroller:]):
+        Implemented. Calls floatValue on the scroller.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 2004-11-23  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3890944> disable icon database for Dashboard
@@ -97,7 +109,6 @@
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[NSData _web_locationAfterFirstBlankLine]): support both formats ("\r\n\n" and "\r\n\r\n") for separating header data from body data because Shockwave still sends the prior format
-
 
 2004-11-19  Ken Kocienda  <kocienda@apple.com>
 

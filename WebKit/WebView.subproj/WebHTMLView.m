@@ -4091,6 +4091,16 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return [super nextResponder];
 }
 
+#if BUILDING_ON_PANTHER
+
+// Work around a bug in Panther where this is called without first calling respondsToSelector.
+- (float)_destinationFloatValueForScroller:(NSScroller *)scroller
+{
+    return [scroller floatValue];
+}
+
+#endif
+
 @end
 
 @implementation WebHTMLView (WebTextSizing)

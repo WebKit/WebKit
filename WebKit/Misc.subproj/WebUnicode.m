@@ -14,7 +14,7 @@ static int _unicodeDigitValue(UChar32 c)
 
 static WebCoreUnicodeDirection _unicodeDirection(UChar32 c)
 {
-#ifdef BUILDING_ON_PANTHER
+#if BUILDING_ON_PANTHER
     // Panther gets the direction of the hyphen wrong.  It returns "ET" (European Terminator) when
     // it should return "ES" (European Separator).
     if (c == '-')
