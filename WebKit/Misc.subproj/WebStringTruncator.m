@@ -185,4 +185,14 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
     return truncateString(string, maxWidth, font, rightTruncateToBuffer);
 }
 
++ (float)widthOfString:(NSString *)string font:(NSFont *)font
+{
+    unsigned length = [string length];
+    unichar *s = malloc(sizeof(unichar) * length);
+    [string getCharacters:s];
+    float width = stringWidth([[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO], s, length);
+    free(s);
+    return width;
+}
+
 @end

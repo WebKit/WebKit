@@ -1,3 +1,13 @@
+2004-09-12  Chris Blumenberg  <cblu@apple.com>
+
+	Support for: <rdar://problem/3794790> drop rate or time remaining from download status when window is too small to fit it
+
+        Reviewed by john.
+
+        * Misc.subproj/WebStringTruncator.h:
+        * Misc.subproj/WebStringTruncator.m:
+        (+[WebStringTruncator widthOfString:font:]): new
+
 2004-09-10  Richard Williamson   <rjw@apple.com>
 
         Fixed <rdar://problem/3782533> CrashTracer: .1459 crashes at com.apple.WebKit: -[WebTextRenderer initWithFont:usingPrinterFont:] + 0x138

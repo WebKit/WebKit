@@ -21,4 +21,6 @@
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font;
 
++ (float)widthOfString:(NSString *)string font:(NSFont *)font;
+
 @end
