@@ -1,5 +1,14 @@
 2003-11-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3471314, make sure to check the outline phase before painting backgrounds of iframes.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::paint):
+
+2003-11-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3470855, links with script action stay focused when clicking.
 
 	Fix for 3470858, clicking and dragging a link and then releasing doesn't clear the glow ring.
