@@ -1,3 +1,15 @@
+2005-03-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/3987482> Format>Style>Italic is not enabled when a 
+        compose window is empty (works in Blot)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView becomeFirstResponder]):
+        call _updateFontPanel here so NSFontManager knows the right font for the menu
+        items and the font panel
+
 2005-03-01  David Harrison  <harrison@apple.com>
 
         Reviewed by Chris.

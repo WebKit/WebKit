@@ -2919,6 +2919,7 @@ static WebHTMLView *lastHitView = nil;
         [[self window] makeFirstResponder:view];
     }
     [self updateFocusState];
+    [self _updateFontPanel];
     _private->startNewKillRingSequence = YES;
     return YES;
 }
