@@ -1010,11 +1010,13 @@ void RenderBox::calcAbsoluteVertical()
     {
         h = style()->height().width(ch);
         
-        // This is actually totally wrong, since it grows the positioned element to
-        // wrap its content, when the content should instead overflow out just like
-        // non-positioned blocks do.  For now at least handle overflow: hidden.
-        if (style()->overflow() != OHIDDEN && m_height-pab>h)
-            h=m_height-pab;
+        if (m_height-pab > h) {
+            if (style()->overflow() == OHIDDEN)
+                setOverflowHeight(h+pab);
+            else
+                setOverflowHeight(m_height + pab - (paddingBottom() + borderBottom()));
+            m_height = h+pab;
+        }
     }
     else if (isReplaced())
         h = intrinsicHeight();

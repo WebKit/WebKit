@@ -393,6 +393,8 @@ public:
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
     virtual int overflowHeight() const { return height(); }
     virtual int overflowWidth() const { return width(); }
+    virtual void setOverflowHeight(int) {}
+    virtual void setOverflowWidth(int) {}
     
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
     // to return the remaining width on a given line (and the height of a single line). -dwh

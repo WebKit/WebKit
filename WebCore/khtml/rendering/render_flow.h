@@ -174,6 +174,8 @@ public:
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
     virtual int overflowHeight() const { return m_overflowHeight; }
     virtual int overflowWidth() const { return m_overflowWidth; }
+    virtual void setOverflowHeight(int h) { m_overflowHeight = h; }
+    virtual void setOverflowWidth(int w) { m_overflowWidth = w; }
     
     virtual bool isSelfCollapsingBlock() const { return m_height == 0; }
     virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }

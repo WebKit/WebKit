@@ -1,5 +1,17 @@
 2003-01-22  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3126927, don't let absolute positioned blocks grow
+	to accommodate content.  They overflow instead.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_object.h:
+
+2003-01-22  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3153316, selection busted on google.com.  For now keep
 	mouse events grabbing the absolutePosition of elements, and don't
 	ever let them grab the absolutePosition of text nodes.
