@@ -36,6 +36,7 @@ public:
     bool isChecked();
 
     QSize sizeHint() const;
+    int baselinePosition() const;
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
 

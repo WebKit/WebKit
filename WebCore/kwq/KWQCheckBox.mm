@@ -25,12 +25,18 @@
 
 #import <qcheckbox.h>
 
-// We empirically determined that check boxes have these extra pixels on all
-// sides. It would be better to get this info from AppKit somehow.
-#define TOP_MARGIN 1
-#define BOTTOM_MARGIN 6
+// We empirically determined that check boxes have these dimensions.
+// It would be better to get this info from AppKit somehow.
+
+#define TOP_MARGIN 4
+#define BOTTOM_MARGIN 3
 #define LEFT_MARGIN 3
 #define RIGHT_MARGIN 3
+
+#define WIDTH 12
+#define HEIGHT 12
+
+#define BASELINE_MARGIN 2
 
 QCheckBox::QCheckBox(QWidget *w)
     : m_stateChanged(this, SIGNAL(stateChanged(int)))
@@ -41,7 +47,7 @@ QCheckBox::QCheckBox(QWidget *w)
 
 QSize QCheckBox::sizeHint() const 
 {
-    return QSize(12, 12);
+    return QSize(WIDTH, HEIGHT);
 }
 
 QRect QCheckBox::frameGeometry() const
@@ -80,4 +86,9 @@ void QCheckBox::clicked()
     
     m_stateChanged.call(isChecked() ? 2 : 0);
     QButton::clicked();
+}
+
+int QCheckBox::baselinePosition() const
+{
+    return height() - BASELINE_MARGIN;
 }

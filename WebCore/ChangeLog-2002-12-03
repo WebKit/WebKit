@@ -1,3 +1,17 @@
+2002-09-27  Darin Adler  <darin@apple.com>
+
+	- fixed 2937198 -- Checkboxes and radiobuttons don't align with title control in forms
+
+        * kwq/qt/qcheckbox.h: Add baselinePosition override.
+        * kwq/KWQCheckBox.mm: Tweak the size constants.
+        (QCheckBox::baselinePosition): Implement this. Line up baseline two pixels
+	above the bottom, not at the bottom.
+
+        * kwq/qt/qradiobutton.h: Add baselinePosition override.
+        * kwq/KWQRadioButton.mm: Tweak the size constants.
+        (QRadioButton::baselinePosition): Implement this. Line up baseline two pixels
+	above the bottom, not at the bottom.
+
 2002-09-27  Chris Blumenberg  <cblu@apple.com>
 
 	WebPlugin clean up.
