@@ -3102,6 +3102,17 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         break;
 
     // CSS3 Properties
+    case CSS_PROP_OPACITY:
+        if (value->cssValueType() == CSSValue::CSS_INHERIT) {
+            if (!parentNode) return;
+            style->setOpacity(parentStyle->opacity());
+        }
+        if (!primitiveValue || primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
+            return; // Error case.
+        
+        // Clamp opacity to the range 0-1
+        style->setOpacity(QMIN(1.0f, QMAX(0, primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER))));
+        return;
     case CSS_PROP_BOX_ALIGN:
         if (value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!parentNode) return;

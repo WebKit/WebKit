@@ -1,3 +1,45 @@
+2003-07-11  Dave Hyatt  <hyatt@apple.com>
+
+	An initial implementation of the CSS opacity property.  Seems
+	to work perfectly except for native widgetry (NSViews).  Images,
+	text, borders, and underlines are all properly blended.
+	
+        Reviewed by rjw
+
+        * config.h:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::adjustZIndex):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::transparentAncestor):
+        (RenderLayer::isTransparent):
+        (commonTransparentAncestor):
+        (RenderLayer::updateTransparentState):
+        (RenderLayer::beginTransparencyLayers):
+        (RenderLayer::endTransparencyLayers):
+        (RenderLayer::paint):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.cpp:
+        (StyleVisualData::StyleVisualData):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::beginTransparencyLayer):
+        (QPainter::endTransparencyLayer):
+
 2003-07-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

@@ -166,8 +166,12 @@ public:
     virtual InlineFlowBox* getFirstLineBox();
     
     // overrides RenderObject
-    virtual bool requiresLayer() { return isRoot() || (!isTableCell() &&
-        (isPositioned() || isRelPositioned() || style()->hidesOverflow())); }
+    // FIXME: The bogus table cell check is only here until we figure out how to position
+    // table cells properly when they have layers.
+    // Note that we also restrict overflow to blocks for now.  
+    virtual bool requiresLayer() { 
+        return !isTableCell() && (RenderObject::requiresLayer() || style()->hidesOverflow());
+    }
     
 #ifndef NDEBUG
     virtual void printTree(int indent=0) const;

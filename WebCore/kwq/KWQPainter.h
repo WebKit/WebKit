@@ -105,6 +105,9 @@ public:
     bool paintingDisabled() const;
     void setPaintingDisabled(bool);
         
+    void beginTransparencyLayer(float opacity);
+    void endTransparencyLayer();
+    
 private:
     // no copying or assignment
     QPainter(const QPainter &);

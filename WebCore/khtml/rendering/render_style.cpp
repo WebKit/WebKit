@@ -88,7 +88,7 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 
 StyleVisualData::StyleVisualData()
     : hasClip(false), textDecoration(TDNONE), colspan( 1 ), counter_increment( 0 ), counter_reset( 0 ),
-      palette( QApplication::palette() )
+      opacity(1.0f), palette( QApplication::palette() )
 {
 }
 
@@ -99,7 +99,7 @@ StyleVisualData::StyleVisualData(const StyleVisualData& o )
     : Shared<StyleVisualData>(),
       clip( o.clip ), hasClip( o.hasClip ), textDecoration(o.textDecoration), colspan( o.colspan ),
       counter_increment( o.counter_increment ), counter_reset( o.counter_reset ),
-      palette( o.palette )
+      opacity( o.opacity ), palette( o.palette )
 {
 }
 
@@ -463,6 +463,7 @@ RenderStyle::Diff RenderStyle::diff( const RenderStyle *other ) const
         !(visual->clip == other->visual->clip) ||
         visual->hasClip != other->visual->hasClip ||
         visual->textDecoration != other->visual->textDecoration ||
+        visual->opacity != other->visual->opacity ||
         !(visual->palette == other->visual->palette)
 	)
         return Visible;

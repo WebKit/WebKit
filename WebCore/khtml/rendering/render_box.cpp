@@ -117,16 +117,27 @@ void RenderBox::setStyle(RenderStyle *_style)
         m_layer = 0;
     }
 
+    adjustZIndex();
+}
+
+void RenderBox::adjustZIndex()
+{
     if (m_layer) {
         // Make sure our z-index values are only applied if we're positioned or
-        // relpositioned.
-        if (!isPositioned() && !isRelPositioned()) {
+        // relpositioned or transparent.
+        if (!isPositioned() && !isRelPositioned() && style()->opacity() == 1.0f) {
             // Set the auto z-index flag.
             if (isRoot())
                 style()->setZIndex(0);
             else
                 style()->setHasAutoZIndex();
         }
+        
+        // Auto z-index becomes 0 for transparent objects.  This prevents cases where
+        // objects that should be blended as a single unit end up with a non-transparent object
+        // wedged in between them.
+        if (style()->opacity() < 1.0f && style()->hasAutoZIndex())
+            style()->setZIndex(0);
     }
 }
 

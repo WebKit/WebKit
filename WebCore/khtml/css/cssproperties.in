@@ -83,6 +83,7 @@ max-height
 max-width
 min-height
 min-width
+opacity
 orphans
 outline-color
 outline-style

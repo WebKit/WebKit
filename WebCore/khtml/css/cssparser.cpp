@@ -972,6 +972,9 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     /* CSS3 properties */
+    case CSS_PROP_OPACITY:
+        valid_primitive = validUnit(value, FNumber, strict);
+        break;
     case CSS_PROP_BOX_ALIGN:
         if (id == CSS_VAL_STRETCH || id == CSS_VAL_START || id == CSS_VAL_END ||
             id == CSS_VAL_CENTER || id == CSS_VAL_BASELINE)

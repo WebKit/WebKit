@@ -149,6 +149,81 @@ RenderLayer::enclosingPositionedAncestor()
     return curr;
 }
 
+RenderLayer*
+RenderLayer::transparentAncestor()
+{
+    RenderLayer* curr = parent();
+    for ( ; curr && curr->m_object->style()->opacity() == 1.0f; curr = curr->parent());
+    return curr;
+}
+
+bool
+RenderLayer::isTransparent()
+{
+    return m_object->style()->opacity() < 1.0f;
+}
+
+static RenderLayer* commonTransparentAncestor(RenderLayer* layer1, RenderLayer* layer2)
+{
+    if (!layer1 || !layer2)
+        return 0;
+    
+    for (RenderLayer* currLayer1 = layer1; currLayer1; currLayer1 = currLayer1->transparentAncestor())
+        for (RenderLayer* currLayer2 = layer2; currLayer2; currLayer2 = currLayer2->transparentAncestor())
+            if (currLayer1 == currLayer2)
+                return currLayer1;
+    
+    return 0;
+}
+
+void RenderLayer::updateTransparentState(QPainter* painter, RenderLayer* newLayer, RenderLayer*& currLayer)
+{
+    RenderLayer* transparentLayer = (!newLayer || newLayer->isTransparent()) ? newLayer :
+                                    newLayer->transparentAncestor();
+    if (transparentLayer == currLayer)
+        return;
+    
+    RenderLayer* commonAncestor = commonTransparentAncestor(currLayer, transparentLayer);
+    endTransparencyLayers(painter, currLayer, commonAncestor);
+    beginTransparencyLayers(painter, transparentLayer, commonAncestor);
+    
+    // Update our current layer.
+    currLayer = transparentLayer;
+}
+
+void RenderLayer::beginTransparencyLayers(QPainter* painter, RenderLayer* newLayer, RenderLayer* ancestorLayer)
+{
+    if (!newLayer || newLayer == ancestorLayer)
+        return;
+    
+    // We need to open from the outside in, so begin ancestor layers first.
+    beginTransparencyLayers(painter, newLayer->transparentAncestor(), ancestorLayer);
+    
+    // Konqueror should add its own code for setting up the opacity layer here.
+    // Safari uses a custom extension to QPainter to communicate with CoreGraphics.
+#ifdef APPLE_CHANGES
+    // Begin the layer
+    painter->beginTransparencyLayer(newLayer->renderer()->style()->opacity());
+#endif
+}
+
+void RenderLayer::endTransparencyLayers(QPainter* painter, RenderLayer* newLayer, RenderLayer* ancestorLayer)
+{
+    if (!newLayer || newLayer == ancestorLayer)
+        return;
+    
+    // We need to close from the inside out.
+    
+    // Konqueror should add its own code for popping opacity layers here.
+    // Safari uses a custom extension to QPainter to communicate with CoreGraphics.
+#ifdef APPLE_CHANGES
+    // End the layer
+    painter->endTransparencyLayer();
+#endif
+    
+    endTransparencyLayers(painter, newLayer->transparentAncestor(), ancestorLayer);
+}
+
 void* RenderLayer::operator new(size_t sz, RenderArena* renderArena) throw()
 {
     return renderArena->allocate(sz);
@@ -535,6 +610,7 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
     // Walk the list and paint each layer, adding in the appropriate offset.
     QRect paintRect(x, y, w, h);
     QRect currRect(paintRect);
+    RenderLayer* currentTransparentLayer = 0;
     
     uint count = layerList.count();
     for (uint i = 0; i < count; i++) {
@@ -546,6 +622,9 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
         // position after you call into it). -dwh
         //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
     
+        // This is called to update our transparency state.
+        updateTransparentState(p, elt->layer, currentTransparentLayer);
+        
         if (elt->clipOriginator) {
             // We originated a clip (we're either positioned or an element with
             // overflow: hidden).  We need to paint our background and border, subject
@@ -652,6 +731,8 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
     if (currRect != paintRect)
         p->restore(); // Pop the clip.
         
+    updateTransparentState(p, 0, currentTransparentLayer); // End any open transparency layers.
+    
     node->detach(renderer()->renderArena());
 }
 

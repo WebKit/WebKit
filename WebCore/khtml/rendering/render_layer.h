@@ -90,6 +90,12 @@ public:
     void addChild(RenderLayer *newChild, RenderLayer* beforeChild = 0);
     RenderLayer* removeChild(RenderLayer *oldChild);
 
+    RenderLayer* transparentAncestor();
+    bool isTransparent();
+    void updateTransparentState(QPainter* painter, RenderLayer* newLayer, RenderLayer*& currLayer);
+    void beginTransparencyLayers(QPainter* painter, RenderLayer* newLayer, RenderLayer* ancestorLayer);
+    void endTransparencyLayers(QPainter* painter, RenderLayer* newLayer, RenderLayer* ancestorLayer);
+    
     void removeOnlyThisLayer();
     void insertOnlyThisLayer();
     
