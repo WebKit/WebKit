@@ -202,8 +202,17 @@
     }
 
     _private->stopping = YES;
-    
-    [_private->mainClient cancel];
+
+    if(_private->mainClient){
+        // Stop the main handle and let it set the cancelled error.
+        [_private->mainClient cancel];
+    }else{
+        // Main handle is already done. Set the cancelled error.
+        WebError *cancelledError = [WebError errorWithCode:WebErrorCodeCancelled
+                                                  inDomain:WebErrorDomainWebFoundation
+                                                failingURL:[[self URL] absoluteString]];
+        [self _setMainDocumentError:cancelledError];
+    }
     
     NSArray *clients = [_private->subresourceClients copy];
     [clients makeObjectsPerformSelector:@selector(cancel)];

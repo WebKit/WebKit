@@ -164,11 +164,14 @@
 
     [self getCarbonEvent:&event];
 
-    // plug-in should not react to cursor position when not active.
-    // FIXME: How does passing a v and h of 0 prevent it from reacting to the cursor position?
-    if (![_window isKeyWindow]) {
-        event.where.v = 0;
-        event.where.h = 0;
+    // Plug-in should not react to cursor position when not active or when a menu is down.
+    MenuTrackingData trackingData;
+    OSStatus error = GetMenuTrackingData(NULL, &trackingData);
+    
+    if (![_window isKeyWindow] || (error == noErr && trackingData.menu)){
+        // FIXME: How does passing a v and h of 0 prevent it from reacting to the cursor position?
+        event.where.v = -1;
+        event.where.h = -1;
     }
 
     [self sendEvent:&event];
@@ -189,7 +192,7 @@
 
     NSTimeInterval interval;
     
-    if ([_window isKeyWindow]) {
+    if ([_window isKeyWindow]){
         interval = NullEventIntervalActive;
     }else{
         interval = NullEventIntervalNotActive;

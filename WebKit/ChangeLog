@@ -1,3 +1,14 @@
+2002-11-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3009881 - plugins get mouse-overs even when mouse is in menus
+	Fixed: 3108240 - Loading datasource sometimes doesn't have cancelled error when cancelled
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendNullEvent]): check if menus are showing
+        (-[WebBaseNetscapePluginView restartNullEvents]): tweak
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoading]): set cancelled error if main handle is gone
+
 === Alexander-33 ===
 
 2002-11-20  Darin Adler  <darin@apple.com>
