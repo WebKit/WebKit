@@ -55,8 +55,11 @@ NSString *WebURLNamePboardType = nil;
         NSArray *files = [self propertyListForType:NSFilenamesPboardType];
         if ([files count] == 1) {
             NSString *file = [files objectAtIndex:0];
-            if ([WebController canShowFile:file]) {
-                return [[NSURL fileURLWithPath:file] _web_canonicalize];
+            BOOL isDirectory;
+            if([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && !isDirectory){
+                if ([WebController canShowFile:file]) {
+                    return [[NSURL fileURLWithPath:file] _web_canonicalize];
+                }
             }
         }
     }

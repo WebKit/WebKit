@@ -1,5 +1,12 @@
 2002-11-19  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3020720 - dropping a folder in the page address makes the folder open in Finder, empties the field
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]): Don't accept directories.
+
+2002-11-19  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3068112 - extra line breaks when copying from source window
 
         * Misc.subproj/WebSearchableTextView.m:
