@@ -1,3 +1,19 @@
+2002-11-06  Maciej Stachowiak  <mjs@apple.com>
+
+	Took URL field out of click policy - open in new window policy
+	will always open the request URL.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPolicyDelegate.m:
+        (-[WebPolicyPrivate dealloc]):
+        (+[WebURLPolicy webPolicyWithURLAction:]):
+        (+[WebFileURLPolicy webPolicyWithFileAction:]):
+        (+[WebContentPolicy webPolicyWithContentAction:andPath:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate clickPolicyForAction:andRequest:inFrame:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterClickPolicyForEvent:request:]):
+
 2002-11-06  Chris Blumenberg  <cblu@apple.com>
 
 	Support MacBinary I by checking that bytes 99-127 are 0. Also check byte 82 for all formats.

@@ -76,7 +76,7 @@
 			      andRequest:(WebResourceRequest *)request
 				 inFrame:(WebFrame *)frame
 {
-    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow URL:nil andPath:nil];
+    return [WebClickPolicy webPolicyWithClickAction:WebClickPolicyShow andPath:nil];
 }
 
 @end

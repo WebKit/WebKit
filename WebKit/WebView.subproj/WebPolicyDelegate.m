@@ -16,7 +16,6 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 @public
     WebPolicyAction policyAction;
     NSString *path;
-    NSURL *URL;
 }
 @end
 
@@ -25,7 +24,6 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 - (void)dealloc
 {
     [path release];
-    [URL release];
     [super dealloc];
 }
 
@@ -33,13 +31,12 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 
 @implementation WebPolicy
 
-- initWithPolicyAction: (WebPolicyAction)action URL:(NSURL *)URL andPath:(NSString *)path;
+- initWithPolicyAction: (WebPolicyAction)action andPath:(NSString *)path;
 {
     [super init];
     _private = [[WebPolicyPrivate alloc] init];
     _private->policyAction = action;
     _private->path = [path copy];
-    _private->URL = [URL retain];
     return self;
 }
 
@@ -56,11 +53,6 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 - (NSString *)path
 {
     return _private->path;
-}
-
-- (NSURL *)URL
-{
-    return _private->URL;
 }
 
 - (void)_setPath:(NSString *)path
@@ -83,7 +75,7 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 
 + webPolicyWithURLAction: (WebURLAction)action
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action URL:nil andPath:nil] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:nil] autorelease];
 }
 
 @end
@@ -92,7 +84,7 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 
 + webPolicyWithFileAction: (WebFileAction)action
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action URL:nil andPath:nil] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:nil] autorelease];
 }
 
 @end
@@ -101,7 +93,7 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 
 + webPolicyWithContentAction: (WebContentAction)action andPath: (NSString *)thePath
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action URL:nil andPath:thePath] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:thePath] autorelease];
 }
 
 
@@ -109,9 +101,9 @@ NSString *WebActionModifierFlagsKey = @"WebActionModifierFlagsKey";
 
 @implementation WebClickPolicy
 
-+ webPolicyWithClickAction: (WebClickAction)action URL:(NSURL *)URL andPath: (NSString *)thePath;
++ webPolicyWithClickAction: (WebClickAction)action andPath: (NSString *)thePath;
 {
-    return [[[WebPolicy alloc] initWithPolicyAction:action URL:URL andPath:thePath] autorelease];
+    return [[[WebPolicy alloc] initWithPolicyAction:action andPath:thePath] autorelease];
 }
 
 @end

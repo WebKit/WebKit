@@ -821,7 +821,6 @@ static const char * const stateNames[] = {
 					       inFrame:self];
 
     WebPolicyAction clickAction = [clickPolicy policyAction];
-    NSURL *URL = [clickPolicy URL];
 
     switch (clickAction) {
     case WebClickPolicyShow:
@@ -832,14 +831,14 @@ static const char * const stateNames[] = {
 	}
 	break;
     case WebClickPolicyOpenNewWindow:
-	[controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:NO];
+	[controller _openNewWindowWithURL:[request URL] referrer:[[self _bridge] referrer] behind:NO];
 	break;
     case WebClickPolicyOpenNewWindowBehind:
-	[controller _openNewWindowWithURL:URL referrer:[[self _bridge] referrer] behind:YES];
+	[controller _openNewWindowWithURL:[request URL] referrer:[[self _bridge] referrer] behind:YES];
 	break;
     case WebClickPolicySave:
     case WebClickPolicySaveAndOpenExternally:
-	[controller _downloadURL:URL
+	[controller _downloadURL:[request URL]
 		    withContentPolicy:[WebContentPolicy webPolicyWithContentAction:clickAction andPath:nil]];
 	break;
     case WebClickPolicyIgnore:
