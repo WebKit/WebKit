@@ -1,5 +1,28 @@
 2004-06-24  Trey Matteson  <trey@apple.com>
 
+	3679986 - screenX and screenY are flipped and relative to the bottom left of the WebView, rather than the screen
+	3699510 - synthesized click events have bogus screen coords
+
+        Reviewed by Darin.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchDragEvent):  Generate screen coords for drag events using new func.
+        (KHTMLView::dispatchMouseEvent):   Ditto.
+        * khtml/khtmlview.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchMouseEvent):  Comment tricky semantics.
+	Calc screen coords in apple-specific way.
+        * kwq/KWQKHTMLView.mm:
+        (KHTMLView::viewportToGlobal):  Passthrough to window widget.
+        * kwq/KWQScrollView.mm:
+        * kwq/KWQWindowWidget.h:
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::mapToGlobal):  Call former code factored to new method below.
+        (KWQWindowWidget::viewportToGlobal):  New method to convert "viewport" (which for us
+	really means NSWindow coords) to screen coords.
+
+2004-06-24  Trey Matteson  <trey@apple.com>
+
 	3693420 - onbeforecut and onbeforepaste need real implementaion
 
         Reviewed by Chris.

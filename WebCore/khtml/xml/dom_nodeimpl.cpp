@@ -762,13 +762,37 @@ bool NodeImpl::dispatchMouseEvent(QMouseEvent *_mouse, int overrideId, int overr
 
     int exceptioncode = 0;
 
+#if APPLE_CHANGES
+// Careful here - our viewportToContents() converts points from NSEvents, in NSWindow coord system to
+// our khtmlview's coord system.  This works for QMouseEvents coming from Cocoa because those events
+// hold the location from the NSEvent.  The QMouseEvent param here was made by other khtml code, so it
+// will be a "proper" QT event with coords in terms of this widget.  So in WebCore it would never be
+// right to pass coords from _mouse to viewportToContents().
+#endif
 //    int clientX, clientY;
 //    viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
     int clientX = _mouse->x(); // ### adjust to be relative to view
     int clientY = _mouse->y(); // ### adjust to be relative to view
 
+#if APPLE_CHANGES
+    int screenX;
+    int screenY;
+    KHTMLView *view = document->document()->view();
+    if (view) {
+        // This gets us as far as NSWindow coords
+        QPoint windowLoc = view->contentsToViewport(_mouse->pos());
+        // Then from NSWindow coords to screen coords
+        QPoint screenLoc = view->viewportToGlobal(windowLoc);
+        screenX = screenLoc.x();
+        screenY = screenLoc.y();
+    } else {
+        screenX = _mouse->x();
+        screenY = _mouse->y();
+    }
+#else
     int screenX = _mouse->globalX();
     int screenY = _mouse->globalY();
+#endif
 
     int button = -1;
     switch (_mouse->button()) {

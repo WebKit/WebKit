@@ -387,6 +387,8 @@ QPoint QScrollView::contentsToViewport(const QPoint &p)
     return QPoint(vx, vy);
 }
 
+// NB, for us "viewport" means the NSWindow's coord system, which is origin lower left
+
 void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
     KWQ_BLOCK_EXCEPTIONS;

@@ -1161,10 +1161,15 @@ bool KHTMLView::dispatchDragEvent(int eventId, DOM::NodeImpl *dragTarget, const 
 {
     int clientX, clientY;
     viewportToContents(loc.x(), loc.y(), clientX, clientY);
-    // Typically we'd use the mouse event's globalX/Y, but we have no mouse event to query, and in practice
-    // the globalX/Y fields are the window level coords anyway.
+#if APPLE_CHANGES
+    QPoint screenLoc = viewportToGlobal(loc);
+    int screenX = screenLoc.x();
+    int screenY = screenLoc.y();
+#else
+#warning Need implementation of converting event location to screen location
     int screenX = loc.x();
     int screenY = loc.y();
+#endif
     bool ctrlKey = 0;   // FIXME - set up modifiers, grab from AK or CG
     bool altKey = 0;
     bool shiftKey = 0;
@@ -1728,8 +1733,14 @@ bool KHTMLView::dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool 
     int exceptioncode = 0;
     int clientX, clientY;
     viewportToContents(_mouse->x(), _mouse->y(), clientX, clientY);
+#if APPLE_CHANGES
+    QPoint screenLoc = viewportToGlobal(_mouse->pos());
+    int screenX = screenLoc.x();
+    int screenY = screenLoc.y();
+#else
     int screenX = _mouse->globalX();
     int screenY = _mouse->globalY();
+#endif
     int button = -1;
     switch (_mouse->button()) {
 	case LeftButton:

@@ -218,6 +218,8 @@ public:
 #if APPLE_CHANGES
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
+    // maps "viewport" (actually Cocoa window coords) to screen coords
+    QPoint viewportToGlobal(const QPoint &) const;
     void adjustViewSize();
     void initScrollBars();
 #endif
