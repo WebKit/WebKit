@@ -334,26 +334,28 @@ void KHTMLView::layout(bool)
 
         khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
 
-        if (document->isHTMLDocument()) {
-            NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
-            if(body && body->renderer() && body->id() == ID_FRAMESET) {
-                QScrollView::setVScrollBarMode(AlwaysOff);
-                QScrollView::setHScrollBarMode(AlwaysOff);
-                _width = visibleWidth();
-                body->renderer()->setLayouted(false);
-                body->renderer()->layout();
-                root->layout();
-                return;
+        if (root != 0){
+            if (document->isHTMLDocument()) {
+                NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
+                if(body && body->renderer() && body->id() == ID_FRAMESET) {
+                    QScrollView::setVScrollBarMode(AlwaysOff);
+                    QScrollView::setHScrollBarMode(AlwaysOff);
+                    _width = visibleWidth();
+                    body->renderer()->setLayouted(false);
+                    body->renderer()->layout();
+                    root->layout();
+                    return;
+                }
             }
-        }
-
-        _height = visibleHeight();
-        _width = visibleWidth();
-
-        //QTime qt;
-        //qt.start();
+        
+            _height = visibleHeight();
+            _width = visibleWidth();
+        
+            //QTime qt;
+            //qt.start();
             root->layout();
             //kdDebug( 6000 ) << "TIME: layout() dt=" << qt.elapsed() << endl;
+        }
     } else {
         _width = visibleWidth();
     }

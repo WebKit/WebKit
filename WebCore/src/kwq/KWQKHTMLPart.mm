@@ -219,16 +219,6 @@ public:
 
     ~KHTMLPartPrivate()
     {
-        if ( m_doc )
-             m_doc->detach();
-
-        if (m_doc->refCount() != 1)
-            fprintf (stdout, "Warning:  document reference count not 1 as expect,  ref = %d\n", m_doc->refCount());
-        if ( m_doc )
-           m_doc->deref();
-        
-        m_doc = 0;
-
         delete m_settings;
 
         [m_recv autorelease];   
@@ -258,6 +248,16 @@ void KHTMLPart::init()
 
 KHTMLPart::~KHTMLPart()
 {
+    if ( d->m_doc )
+            d->m_doc->detach();
+
+    if (d->m_doc->refCount() != 1)
+        fprintf (stdout, "Warning:  document reference count not 1 as expect,  ref = %d\n", d->m_doc->refCount());
+    if ( d->m_doc )
+        d->m_doc->deref();
+    
+    d->m_doc = 0;
+
     delete d;
     NSLog(@"destructing KHTMLPart");
 }
@@ -308,6 +308,8 @@ void KHTMLPart::slotData(id handle, const char *bytes, int length)
 
 bool KHTMLPart::openURL( const KURL &url )
 {
+    fprintf (stdout, "0x%08x openURL(): for url %s\n", (unsigned int)this, url.url().latin1());
+
     // Close the previous URL.
     closeURL();
     
@@ -1459,10 +1461,10 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 
 @class WKWebDataSource;
 @class WKWebView;
+@class WKWebFrame;
 
 @protocol WKWebController
-- (void)addFrame: child toParent: parent;
-- (void)viewForFrameNamed: (NSString *)name inDataSource: (WKWebDataSource *)dataSource;
+- (WKWebFrame *)createFrameNamed: (NSString *)name for: (WKWebDataSource *)dataSource inParent: (WKWebDataSource *)dataSource;
 @end
 
 @interface WKWebDataSource : NSObject
@@ -1470,12 +1472,12 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 - (void)_setFrameName: (NSString *)fName;
 - (id <WKWebController>)controller;
 - (void)startLoading: (BOOL)forceRefresh;
-- (void)addFrame: frame;
 - frameNamed: (NSString *)f;
 @end
 
+// This should not be allowed here.  data source should not reference view
+// API.
 @interface WKWebView (Foo)
-- initWithFrame: (NSRect)frame;
 - (QWidget *)_widget;
 @end
 
@@ -1490,34 +1492,35 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
 {
     NSString *nsframeName = QSTRING_TO_NSSTRING(frameName);
     WKWebFrame *aFrame;
-    WKWebDataSource *childDataSource;
-    NSURL *childURL;
-    WKWebView *childView;
-    WKWebFrame *newFrame;
-    
+    WKWebDataSource *dataSource;
     
     fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
-    aFrame =[getDataSource() frameNamed: nsframeName];
+    dataSource = getDataSource();
+
+    aFrame =[dataSource frameNamed: nsframeName];
     if (aFrame){
         fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x frame found\n", (unsigned int)this, (unsigned int)frame);    
         // ?
         frame->setWidget ([[aFrame view] _widget]);
     }
     else {        
+        WKWebDataSource *childDataSource, *dataSource;
+        NSURL *childURL;
+        WKWebFrame *newFrame;
+        id <WKWebController> controller;
+
         fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
         childDataSource = [[WKWebDataSource alloc] initWithURL: childURL];
         [childDataSource _setFrameName: nsframeName];
-        childView = [[WKWebView alloc] initWithFrame: 
-                NSMakeRect (0,0,frame->intrinsicWidth(),frame->intrinsicHeight())];
-    
-        newFrame = [[[WKWebFrame alloc] initWithName: nsframeName view: childView dataSource: childDataSource] autorelease];
         
-        [getDataSource() addFrame: newFrame];
-        
-        [[getDataSource() controller] addFrame: newFrame toParent: getDataSource()];
+        dataSource = getDataSource();
+        controller = [dataSource controller];
+        newFrame = [controller createFrameNamed: nsframeName for: childDataSource inParent: dataSource];
     
-        frame->setWidget ([childView _widget]);
+        // This should not be called here.  This introduces a nasty dependency on
+        // the view.
+        frame->setWidget ([[newFrame view] _widget]);
         
         [childDataSource startLoading: YES];
     }

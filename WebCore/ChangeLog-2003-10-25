@@ -1,3 +1,12 @@
+2002-01-30  Richard Williamson  <rjw@apple.com>
+    
+    Cleaned up frame code a bit.  Fixed duplicate content problem.
+
+	* src/kdelibs/khtml/html/html_headimpl.cpp: (HTMLLinkElementImpl::detach):
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::layout):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::~KHTMLPart), (KHTMLPart::openURL),
+	(KHTMLPart::requestFrame):
+
 2002-01-30  Kenneth Kocienda  <kocienda@apple.com>
 
         Added *.lo, *.la, and .libs to .cvsignore files
