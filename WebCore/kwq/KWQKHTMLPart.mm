@@ -3543,10 +3543,16 @@ KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
     else
         applet = [_bridge pollForAppletInView:aView];
     
-    if (applet)
+    if (applet) {
         // Wrap the Java instance in a language neutral binding and hand
         // off ownership to the APPLET element.
-        return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::JavaLanguage, applet);
+        KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::JavaLanguage, applet);
+
+        KJS::Bindings::RootObject *root = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
+        instance->setExecutionContext (root);
+        
+        return instance;
+    }
     
     return 0;
 }

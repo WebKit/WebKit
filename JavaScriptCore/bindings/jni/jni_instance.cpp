@@ -27,6 +27,7 @@
 #include <jni_runtime.h>
 #include <jni_utility.h>
 #include <runtime_object.h>
+#include <runtime_root.h>
 
 #ifdef NDEBUG
 #define JS_LOG(formatAndArgs...) ((void)0)
@@ -40,10 +41,11 @@
 using namespace KJS::Bindings;
 using namespace KJS;
 
-JavaInstance::JavaInstance (jobject instance) 
+JavaInstance::JavaInstance (jobject instance, const RootObject *r) 
 {
     _instance = new JObjectWrapper (instance);
     _class = 0;
+    _root = r;
 };
 
 JavaInstance::~JavaInstance () 
@@ -58,6 +60,7 @@ JavaInstance::JavaInstance (const JavaInstance &other) : Instance()
     _instance->ref();
     // Classes are kept around forever.
     _class = other._class;
+    _root = other._root;
 };
 
 #define NUM_LOCAL_REFS 64
@@ -144,25 +147,96 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
         JavaParameter *aParameter = static_cast<JavaParameter *>(jMethod->parameterAt(i));
         jArgs[i] = convertValueToJValue (exec, args.at(i), aParameter->getJNIType(), aParameter->type());
     }
-    
+        
+
     jvalue result;
-    jobject obj = _instance->_instance;
+
+    // Try to use the JNI abstraction first, otherwise fall back to
+    // nornmal JNI.  The JNI dispatch abstraction allows the Java plugin
+    // to dispatch the call on the appropriate internal VM thread.
+    const RootObject *execContext = executionContext();
+    bool handled = false;
+    if (execContext && execContext->nativeHandle()) {
+        jobject obj = _instance->_instance;
+        handled = dispatchJNICall (execContext->nativeHandle(), obj, jMethod->methodID(obj), jMethod->JNIReturnType(), jArgs, result);
+    }
+    
+    // The following code can be conditionally removed once we have a Tiger update that
+    // contains the new Java plugin.  It is needed for builds prior to Tiger.
+    if (!handled) {    
+        jobject obj = _instance->_instance;
+        switch (jMethod->JNIReturnType()){
+            case void_type: {
+                callJNIVoidMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case object_type: {
+                result.l = callJNIObjectMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case boolean_type: {
+                result.z = callJNIBooleanMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case byte_type: {
+                result.b = callJNIByteMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case char_type: {
+                result.c = callJNICharMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case short_type: {
+                result.s = callJNIShortMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case int_type: {
+                result.i = callJNIIntMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case long_type: {
+                result.j = callJNILongMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case float_type: {
+                result.f = callJNIFloatMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+            
+            case double_type: {
+                result.d = callJNIDoubleMethodIDA (obj, jMethod->methodID(obj), jArgs);
+            }
+            break;
+
+            case invalid_type:
+            default: {
+            }
+            break;
+        }
+    }
+        
     switch (jMethod->JNIReturnType()){
         case void_type: {
-            callJNIVoidMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Undefined();
         }
         break;
         
         case object_type: {
-            result.l = callJNIObjectMethodIDA (obj, jMethod->methodID(obj), jArgs);
             if (result.l != 0) {
                 const char *arrayType = jMethod->returnType();
                 if (arrayType[0] == '[') {
-                    resultValue = JavaArray::convertJObjectToArray (exec, result.l, arrayType);
+                    resultValue = JavaArray::convertJObjectToArray (exec, result.l, arrayType, executionContext());
                 }
                 else {
-                    resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l)));
+                    resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l, executionContext())));
                 }
             }
             else {
@@ -172,49 +246,41 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
         break;
         
         case boolean_type: {
-            result.z = callJNIBooleanMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = KJS::Boolean(result.z);
         }
         break;
         
         case byte_type: {
-            result.b = callJNIByteMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.b);
         }
         break;
         
         case char_type: {
-            result.c = callJNICharMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.c);
         }
         break;
         
         case short_type: {
-            result.s = callJNIShortMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.s);
         }
         break;
         
         case int_type: {
-            result.i = callJNIIntMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.i);
         }
         break;
         
         case long_type: {
-            result.j = callJNILongMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number((long int)result.j);
         }
         break;
         
         case float_type: {
-            result.f = callJNIFloatMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.f);
         }
         break;
         
         case double_type: {
-            result.d = callJNIDoubleMethodIDA (obj, jMethod->methodID(obj), jArgs);
             resultValue = Number(result.d);
         }
         break;
@@ -225,7 +291,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
         }
         break;
     }
-        
+
     free (jArgs);
 
     return resultValue;
@@ -263,6 +329,9 @@ KJS::Value JavaInstance::valueOf() const
 {
     return stringValue();
 };
+
+void JavaInstance::setExecutionContext (RootObject *r) { _root = r; }
+const RootObject *JavaInstance::executionContext() const { return _root; }
 
 JObjectWrapper::JObjectWrapper(jobject instance)
 {

@@ -1248,7 +1248,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
     jobject applet = 0;
 
-    if ([view respondsToSelector: @selector(webPlugInGetApplet:)])
+    if ([view respondsToSelector: @selector(webPlugInGetApplet)])
         applet = [view webPlugInGetApplet];
     else
         applet = [self pollForAppletInView:view];

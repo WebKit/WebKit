@@ -105,6 +105,8 @@ jdouble callJNIDoubleMethodIDA (jobject obj, jmethodID methodID, jvalue *args);
 JavaVM *getJavaVM();
 JNIEnv *getJNIEnv();
 
+bool dispatchJNICall (const void *targetAppletView, jobject obj, jmethodID methodID, JNIType returnType, jvalue *args, jvalue &result);
+
 } // namespace Bindings
 
 } // namespace KJS

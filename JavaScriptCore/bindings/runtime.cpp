@@ -100,7 +100,7 @@ void Instance::setValueOfField (KJS::ExecState *exec, const Field *aField, const
 Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)
 {
     if (language == Instance::JavaLanguage)
-        return new Bindings::JavaInstance ((jobject)instance);
+        return new Bindings::JavaInstance ((jobject)instance, 0);
     else if (language == Instance::ObjectiveCLanguage)
         return new Bindings::ObjcInstance ((struct objc_object *)instance);
 

@@ -1,3 +1,16 @@
+2004-08-20  Richard Williamson   <rjw@apple.com>
+
+	    Implemented new JNI abstraction.  We no longer invoke Java methods
+	    directly with JNI, rather we call into the plugin.  This allows the
+	    plugin to dispatch the call to the appropriate VM thread.  This
+	    change should (will?) fix a whole class of threading related problems with
+	    the Java VM.
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge getAppletInView:]):
+
 2004-08-20  Trey Matteson  <trey@apple.com>
 
 	3655407 - Editing: -complete: method unimplemented (WebKit editing API)

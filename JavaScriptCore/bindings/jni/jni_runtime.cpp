@@ -54,15 +54,15 @@ JavaField::JavaField (JNIEnv *env, jobject aField)
     jstring fieldName = (jstring)callJNIObjectMethod (aField, "getName", "()Ljava/lang/String;");
     _name = JavaString(env, fieldName);
 
-    _field = new JavaInstance(aField);
+    _field = new JavaInstance(aField, 0);
 }
 
-KJS::Value JavaArray::convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type)
+KJS::Value JavaArray::convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type, const RootObject *r)
 {
     if (type[0] != '[')
         return Undefined();
 
-    return KJS::Object(new RuntimeArrayImp(exec, new JavaArray ((jobject)anObject, type)));
+    return KJS::Object(new RuntimeArrayImp(exec, new JavaArray ((jobject)anObject, type, r)));
 }
 
 KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i) const 
@@ -77,10 +77,10 @@ KJS::Value JavaField::valueFromInstance(KJS::ExecState *exec, const Instance *i)
 
             const char *arrayType = type();
             if (arrayType[0] == '[') {
-                return JavaArray::convertJObjectToArray (0, anObject, arrayType);
+                return JavaArray::convertJObjectToArray (exec, anObject, arrayType, instance->executionContext());
             }
             else {
-                return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
+                return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject, instance->executionContext())));
             }
         }
         break;
@@ -288,14 +288,14 @@ jmethodID JavaMethod::methodID (jobject obj) const
 }
 
 
-JavaArray::JavaArray (jobject a, const char *t) 
+JavaArray::JavaArray (jobject a, const char *t, const RootObject *r) 
 {
     _array = new JObjectWrapper (a);
     // Java array are fixed length, so we can cache length.
     JNIEnv *env = getJNIEnv();
     _length = env->GetArrayLength((jarray)_array->_instance);
-
     _type = strdup(t);
+    _root = r;
 };
 
 JavaArray::~JavaArray () 
@@ -392,10 +392,10 @@ KJS::Value JavaArray::valueAt(KJS::ExecState *exec, unsigned int index) const
 
             // Nested array?
             if (_type[1] == '[') {
-                return JavaArray::convertJObjectToArray (0, anObject, _type+1);
+                return JavaArray::convertJObjectToArray (exec, anObject, _type+1, executionContext());
             }
             // or array of other object type?
-            return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject)));
+            return KJS::Object(new RuntimeObjectImp(new JavaInstance ((jobject)anObject, executionContext())));
         }
             
         case boolean_type: {

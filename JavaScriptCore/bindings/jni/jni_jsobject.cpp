@@ -440,7 +440,7 @@ KJS::Value JSObject::convertJObjectToValue (jobject theObject) const
     }
 
     Interpreter::lock();
-    KJS::RuntimeObjectImp *newImp = new KJS::RuntimeObjectImp(new Bindings::JavaInstance (theObject));
+    KJS::RuntimeObjectImp *newImp = new KJS::RuntimeObjectImp(new Bindings::JavaInstance (theObject, _root));
     Interpreter::unlock();
 
     return KJS::Object(newImp);

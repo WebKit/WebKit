@@ -338,6 +338,7 @@
 				65AB004A06261CBA0076DE63,
 				650B68DA0639033F009D42DE,
 				51863FC506542D3100E9E8DD,
+				517EF37406D695930007C1BA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -791,6 +792,21 @@
 				);
 			};
 		};
+		517EF37306D695930007C1BA = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			name = jni_objc.mm;
+			path = bindings/jni/jni_objc.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		517EF37406D695930007C1BA = {
+			fileRef = 517EF37306D695930007C1BA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		5182A45605FFCF4B00CBD2F2 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -967,6 +983,7 @@
 				517D5348056BFB5D003851BD,
 				513DF74005C0861F00F89391,
 				513DF74105C0861F00F89391,
+				517EF37306D695930007C1BA,
 				511B0877056468BB0080E486,
 				511B0876056468BB0080E486,
 				51856D8F0562EE95008B9D83,

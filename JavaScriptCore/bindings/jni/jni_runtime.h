@@ -264,7 +264,7 @@ private:
 class JavaArray : public Array
 {
 public:
-    JavaArray (jobject a, const char *type);
+    JavaArray (jobject a, const char *type, const RootObject *r);
 
     JavaArray (const JavaArray &other);
 
@@ -274,6 +274,7 @@ public:
         
         free ((void *)_type);
         _type = strdup(other._type);
+        _root = other._root;
 
         JObjectWrapper *_oldArray = _array;
         _array = other._array;
@@ -291,12 +292,15 @@ public:
 
     jobject javaArray() const { return _array->_instance; }
 
-    static KJS::Value convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type);
+    static KJS::Value convertJObjectToArray (KJS::ExecState *exec, jobject anObject, const char *type, const RootObject *r);
 
+    const RootObject *executionContext() const { return _root; }
+    
 private:
     JObjectWrapper *_array;
     unsigned int _length;
     const char *_type;
+    const RootObject *_root;
 };
 
 } // namespace Bindings

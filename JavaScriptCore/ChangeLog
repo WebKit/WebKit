@@ -1,3 +1,44 @@
+2004-08-20  Richard Williamson   <rjw@apple.com>
+
+        Implemented new JNI abstraction.  We no longer invoke Java methods
+        directly with JNI, rather we call into the plugin.  This allows the
+        plugin to dispatch the call to the appropriate VM thread.  This
+        change should (will?) fix a whole class of threading related problems with
+        the Java VM.
+
+        Reviewed by Hyatt.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/c/c_instance.h:
+        (KJS::Bindings::CInstance::setExecutionContext):
+        (KJS::Bindings::CInstance::executionContext):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::JavaInstance):
+        (JavaInstance::invokeMethod):
+        (JavaInstance::setExecutionContext):
+        (JavaInstance::executionContext):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::convertJObjectToValue):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::JavaField):
+        (JavaArray::convertJObjectToArray):
+        (JavaField::valueFromInstance):
+        (JavaArray::JavaArray):
+        (JavaArray::valueAt):
+        * bindings/jni/jni_runtime.h:
+        (KJS::Bindings::JavaArray::operator=):
+        (KJS::Bindings::JavaArray::executionContext):
+        * bindings/jni/jni_utility.h:
+        * bindings/objc/objc_instance.h:
+        (KJS::Bindings::ObjcInstance::setExecutionContext):
+        (KJS::Bindings::ObjcInstance::executionContext):
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+        * bindings/runtime.h:
+        * bindings/runtime_root.h:
+        (KJS::Bindings::RootObject::nativeHandle):
+
 === Safari-158 ===
 
 2004-08-19  Vicki Murley  <vicki@apple.com>

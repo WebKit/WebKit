@@ -159,7 +159,12 @@ public:
     
     virtual KJS::Value valueOf() const { return KJS::String(getClass()->name()); };
     
+    virtual void setExecutionContext (RootObject *r) = 0;
+    virtual const RootObject *executionContext () const = 0;
+    
     virtual ~Instance() {};
+    
+private:
 };
 
 class Array

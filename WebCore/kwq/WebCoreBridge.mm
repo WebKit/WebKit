@@ -139,20 +139,18 @@ NSString *WebCoreElementTitleKey =              @"WebCoreElementTitle"; // not i
 
 NSString *WebCorePageCacheStateKey =            @"WebCorePageCacheState";
 
+@interface WebCoreBridge (WebCoreBridgePrivate)
+- (RootObject *)executionContextForView:(NSView *)aView;
+@end
+
 static RootObject *rootForView(void *v)
 {
     NSView *aView = (NSView *)v;
     WebCoreBridge *aBridge = [[WebCoreViewFactory sharedFactory] bridgeForView:aView];
-    if (aBridge) {
-        KWQKHTMLPart *part = [aBridge part];
-        RootObject *root = new RootObject(v);    // The root gets deleted by JavaScriptCore.
-        
-        root->setRootObjectImp (static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(part)));
-        root->setInterpreter (KJSProxy::proxy(part)->interpreter());
-        part->addPluginRootObject (root);
-            
-        return root;
-    }
+
+    if (aBridge)
+        return [aBridge executionContextForView:aView];
+
     return 0;
 }
 
@@ -1773,4 +1771,21 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return _part->tryPaste();
 }
 
+@end
+
+
+@implementation WebCoreBridge (WebCoreBridgePrivate)
+
+- (RootObject *)executionContextForView:(NSView *)aView
+{
+    RootObject *root;
+    
+    KWQKHTMLPart *part = [self part];
+    root = new RootObject(aView);    // The root gets deleted by JavaScriptCore.
+    root->setRootObjectImp (static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(part)));
+    root->setInterpreter (KJSProxy::proxy(part)->interpreter());
+    part->addPluginRootObject (root);
+        
+    return root;
+}
 @end
