@@ -228,6 +228,8 @@
     
     // The title doesn't get communicated to the controller until
     // we reach the committed state for this data source's frame.
+    if ([[self frame] _state] >= IFWEBFRAMESTATE_COMMITTED_PAGE)
+        [[self controller] receivedPageTitle:data->pageTitle forDataSource:self];
 }
 
 @end

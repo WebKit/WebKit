@@ -1,5 +1,10 @@
 2002-04-02  Darin Adler  <darin@apple.com>
 
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setTitle:]):
+        Update title if the page is already in the committed state.
+
+2002-04-02  Darin Adler  <darin@apple.com>
+
 	* WebKit.pbproj/project.pbxproj: Fix flags as I did in WebFoundation.
 
 	* Misc.subproj/WebKitDebug.h: Turn off logging when xNDEBUG is defined.
