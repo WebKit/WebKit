@@ -168,7 +168,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>37</string>
+	<string>38u</string>
 	<key>CFHumanReadableCopyright</key>
 	<string>Copyright (c) 2001-2002 Apple Computer</string>
 	<key>NSPrincipalClass</key>
