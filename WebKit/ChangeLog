@@ -1,3 +1,18 @@
+2003-04-25  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3240676 -- REGRESSION: Using old Safari then new one 
+	erases history
+
+        Reviewed by Darin.
+
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate _loadHistoryGuts:URL:error:]):
+	The new code to use a synchronous NSURLConnection to read the
+	property list file did not take into account the two possible
+	formats of the file (NSArray or NSDictionary), so reading
+	old-style history files was completely broken. While in here,
+	I distributed the variable declarations to first use.
+
 2003-04-24  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed build.

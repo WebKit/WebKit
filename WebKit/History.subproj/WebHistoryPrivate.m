@@ -347,35 +347,33 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded URL:(NSURL *)URL error:(NSError **)error
 {
-    NSEnumerator *enumerator;
-    int index;
-    int limit;
-    NSCalendarDate *ageLimitDate;
-    NSDictionary *fileAsDictionary = nil;
-    BOOL ageLimitPassed;
-
     *numberOfItemsLoaded = 0;
 
     NSData *data = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:URL] returningResponse:nil error:error];
-    if (data && [data length] > 0)
-        fileAsDictionary = [NSPropertyListSerialization propertyListFromData:data mutabilityOption:NSPropertyListImmutable format:nil errorDescription:nil];
-    if (fileAsDictionary == nil) {
-        // Couldn't read a dictionary; let's see if we can read an old-style array instead
-        NSArray *fileAsArray = [NSArray arrayWithContentsOfURL:URL];
-        if (fileAsArray == nil) {
-#if !ERROR_DISABLED
-            if ([URL isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [URL path]]) {
-                ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
-            }
-#endif
-            return NO;
-        } else {
-            // Convert old-style array into new-style dictionary
-            fileAsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
-                fileAsArray, DatesArrayKey,
-                [NSNumber numberWithInt:1], FileVersionKey,
-                nil];
+    id propertyList = nil;
+    if (data && [data length] > 0) {
+        propertyList = [NSPropertyListSerialization propertyListFromData:data
+                                                        mutabilityOption:NSPropertyListImmutable
+                                                                  format:nil
+                                                        errorDescription:nil];
+    }
+
+    // propertyList might be an old-style NSArray or a more modern NSDictionary.
+    // If it's an NSArray, convert it to new format before further processing.
+    NSDictionary *fileAsDictionary = nil;
+    if ([propertyList isKindOfClass:[NSDictionary class]]) {
+        fileAsDictionary = propertyList;
+    } else if ([propertyList isKindOfClass:[NSArray class]]) {
+        // Convert old-style array into new-style dictionary
+        fileAsDictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+            propertyList, DatesArrayKey,
+            [NSNumber numberWithInt:1], FileVersionKey,
+            nil];
+    } else {
+        if ([URL isFileURL] && [[NSFileManager defaultManager] fileExistsAtPath: [URL path]]) {
+            ERROR("unable to read history from file %@; perhaps contents are corrupted", [URL path]);
         }
+        return NO;
     }
 
     NSNumber *fileVersionObject = [fileAsDictionary objectForKey:FileVersionKey];
@@ -394,12 +392,12 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
     NSArray *array = [fileAsDictionary objectForKey:DatesArrayKey];
         
-    limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
-    ageLimitDate = [self _ageLimitDate];
-    index = 0;
+    int limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+    NSCalendarDate *ageLimitDate = [self _ageLimitDate];
+    int index = 0;
     // reverse dates so you're loading the oldest first, to minimize the number of comparisons
-    enumerator = [array reverseObjectEnumerator];
-    ageLimitPassed = NO;
+    NSEnumerator *enumerator = [array reverseObjectEnumerator];
+    BOOL ageLimitPassed = NO;
 
     NSDictionary *itemAsDictionary;
     while ((itemAsDictionary = [enumerator nextObject]) != nil) {
