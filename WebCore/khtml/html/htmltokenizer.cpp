@@ -315,6 +315,7 @@ void HTMLTokenizer::begin()
     loadingExtScript = false;
     scriptSrc = QString::null;
     pendingSrc.clear();
+    currentPrependingSrc = 0;
     noMoreData = false;
     brokenComments = false;
     brokenServer = false;
@@ -500,13 +501,19 @@ void HTMLTokenizer::scriptHandler()
     currToken.id = ID_SCRIPT + ID_CLOSE_TAG;
     processToken();
 
+    TokenizerString *savedPrependingSrc = currentPrependingSrc;
     TokenizerString prependingSrc;
+    currentPrependingSrc = &prependingSrc;
     if ( !parser->skipMode() ) {
         if (cs) {
              //kdDebug( 6036 ) << "cachedscript extern!" << endl;
              //kdDebug( 6036 ) << "src: *" << QString( src.current(), src.length() ).latin1() << "*" << endl;
              //kdDebug( 6036 ) << "pending: *" << pendingSrc.latin1() << "*" << endl;
-            pendingSrc.prepend(src);
+	    if (savedPrependingSrc) {
+		savedPrependingSrc->append(src);
+	    } else {
+		pendingSrc.prepend(src);
+	    }
             setSrc(TokenizerString());
             scriptCodeSize = scriptCodeResync = 0;
             cs->ref(this);
@@ -535,8 +542,26 @@ void HTMLTokenizer::scriptHandler()
 	// kdDebug( 6036 ) << "adding pending Output to parsed string" << endl;
 	src.append(pendingSrc);
 	pendingSrc.clear();
-    } else if (!prependingSrc.isEmpty())
-        write(prependingSrc, false);
+    } else if (!prependingSrc.isEmpty()) {
+	// restore first so that the write appends in the right place
+	// (does not hurt to do it again below)
+	currentPrependingSrc = savedPrependingSrc;
+
+	// we need to do this slightly modified bit of one of the write() cases
+	// because we want to prepend to pendingSrc rather than appending
+	// if there's no previous prependingSrc
+	if (loadingExtScript) {
+	    if (currentPrependingSrc) {
+		currentPrependingSrc->append(prependingSrc);
+	    } else {
+		pendingSrc.prepend(prependingSrc);
+	    }
+	} else {
+	    write(prependingSrc, false);
+	}
+    }
+
+    currentPrependingSrc = savedPrependingSrc;
 }
 
 void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
@@ -1403,10 +1428,14 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
     if ( !buffer )
         return;
 
-    if ( ( m_executingScript && appendData ) ||
-         ( !m_executingScript && loadingExtScript ) ) {
+    if ( ( m_executingScript && appendData ) || 
+	 loadingExtScript) {
         // don't parse; we will do this later
-        pendingSrc.append(str);
+	if (currentPrependingSrc) {
+	    currentPrependingSrc->append(str);
+	} else {
+	    pendingSrc.append(str);
+	}
         return;
     }
 
