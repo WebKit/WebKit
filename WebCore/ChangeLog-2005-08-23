@@ -1,3 +1,19 @@
+2005-03-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4031718> REGRESSION (401-401+): Safari reproducible crash setting up scope in JSLazyEventListener::parseCode authenticating to bugweb
+        
+	* khtml/ecma/kjs_events.cpp:
+	(JSLazyEventListener::parseCode): If originalNode is NULL, don't
+	mess with the scope chain.
+	
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseHTMLAttribute): For handlers that are
+	delcared on body but set on the document, pass NULL to avoid
+	swizzling the scope chain. It turns out that this is what browsers
+	do, and it finesses the crash.
+
 2005-03-02  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken.

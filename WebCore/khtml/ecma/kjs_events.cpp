@@ -204,7 +204,7 @@ void JSLazyEventListener::parseCode() const
 
 	// failed to parse, so let's just make this listener a no-op
 	listener = Object();
-      } else {
+      } else if (originalNode) {
         // Add the event's home element to the scope
         // (and the document, and the form - see KJS::HTMLElement::eventHandlerScope)
         ScopeChain scope = listener.scope();
