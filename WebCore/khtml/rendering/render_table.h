@@ -247,7 +247,7 @@ public:
 
     virtual void paint(PaintInfo& i, int tx, int ty);
 
-    int numRows() const { return grid.size(); }
+    int numRows() const { return gridRows; }
     int getBaseline(int row) {return grid[row].baseLine;}
 
     void setNeedCellRecalc() {
@@ -260,11 +260,12 @@ public:
     // this gets a cell grid data structure. changing the number of
     // columns is done by the table
     QMemArray<RowStruct> grid;
+    int gridRows;
     QMemArray<int> rowPos;
 
-    ushort cCol : 15;
-    short cRow : 16;
-    bool needCellRecalc : 1;
+    int cCol;
+    int cRow;
+    bool needCellRecalc;
 
     void recalcCells();
 protected:
@@ -385,8 +386,8 @@ public:
 protected:
     virtual void paintBoxDecorations(PaintInfo& i, int _tx, int _ty);
     
-    short _row;
-    short _col;
+    int _row;
+    int _col;
     ushort rSpan;
     ushort cSpan;
     int _topExtra : 31;

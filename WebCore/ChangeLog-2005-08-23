@@ -1,5 +1,26 @@
 2004-08-25  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3365086, large tables crash Safari.  Make sure to use ints rather than shorts for row and column
+	counts.  Also fix a pathological array resize scenario for tables as rows are added.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::splitColumn):
+        (RenderTable::appendColumn):
+        (RenderTableSection::RenderTableSection):
+        (RenderTableSection::ensureRows):
+        (RenderTableSection::setCellWidths):
+        (RenderTableSection::calcRowHeight):
+        (RenderTableSection::layoutRows):
+        (RenderTableSection::paint):
+        (RenderTableSection::recalcCells):
+        (RenderTableSection::clearGrid):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTableSection::numRows):
+
+2004-08-25  David Hyatt  <hyatt@apple.com>
+
 	To save memory in the common case, move the margin***Collapse variables into the CSS3 struct instead of
 	bloating the surround struct.
 	
