@@ -1,3 +1,13 @@
+2003-08-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3330742>: 1.0 Safari fails to send NPP_URLNotify with the error of NPRES_NETWORK_ERR to Flash
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream destroyStreamWithReason:]): call NPP_URLNotify so we cover both the failure and successful cases
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): have destroyStreamWithReason call NPP_URLNotify
+
 2003-08-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

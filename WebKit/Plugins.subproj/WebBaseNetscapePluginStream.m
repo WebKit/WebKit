@@ -149,7 +149,13 @@
     NPError npErr;
     npErr = NPP_DestroyStream(instance, &stream, reason);
     LOG(Plugins, "NPP_DestroyStream: %d", npErr);
+    
     stream.ndata = nil;
+        
+    if (notifyData) {
+        NPP_URLNotify(instance, [URL _web_URLCString], reason, notifyData);
+        LOG(Plugins, "NPP_URLNotify");
+    }
 }
 
 - (void)receivedError:(NPError)reason
@@ -197,11 +203,6 @@
     }
 
     [self destroyStreamWithReason:NPRES_DONE];
-    
-    if (notifyData) {
-        NPP_URLNotify(instance, [URL _web_URLCString], NPRES_DONE, notifyData);
-        LOG(Plugins, "NPP_URLNotify");
-    }
 }
 
 @end
