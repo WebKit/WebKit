@@ -155,7 +155,8 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     WebCoreBridge *frame;
     if (_target.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
-        frame = part->parentPart()->impl->bridge;
+        KHTMLPart *parentPart = part->parentPart();
+        frame = parentPart ? parentPart->impl->bridge : nil;
         if ([[frame childFrames] count] != 1) {
             frame = bridge;
         }
