@@ -80,6 +80,7 @@ CSSMutableStyleDeclarationImpl::CSSMutableStyleDeclarationImpl(CSSRuleImpl *pare
 }
 
 CSSMutableStyleDeclarationImpl::CSSMutableStyleDeclarationImpl(CSSRuleImpl *parent, const CSSProperty * const *properties, int numProperties)
+    : CSSStyleDeclarationImpl(parent), m_node(0)
 {
     for (int i = 0; i < numProperties; ++i)
         m_values.append(*properties[i]);

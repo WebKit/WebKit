@@ -1,3 +1,18 @@
+2004-12-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Vicki.
+
+        - fixed <rdar://problem/3901109> REGRESSION (171-172): repro crash in DOM::NodeImpl::setChanged at chick-fil-a.com
+
+        * khtml/css/css_valueimpl.cpp: (DOM::CSSMutableStyleDeclarationImpl::CSSMutableStyleDeclarationImpl):
+        Added missing initialization for base class and node pointer.
+
+        - fixed a few places that could leave dangling node pointers
+
+        * khtml/html/html_baseimpl.cpp: (HTMLBodyElementImpl::~HTMLBodyElementImpl):
+        Clear out the node pointer when the node is destroyed.
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::~HTMLElementImpl): Ditto.
+
 2004-12-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fix for performance regression. My original patch added a signal for passing the data of a resource to its WebCore cache object. This patch passes the data with the preexisting "finished" symbol so we make less calls. 

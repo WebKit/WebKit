@@ -213,6 +213,7 @@ HTMLElementImpl::HTMLElementImpl(DocumentPtr *doc)
 HTMLElementImpl::~HTMLElementImpl()
 {
     if (m_inlineStyleDecl) {
+        m_inlineStyleDecl->setNode(0);
         m_inlineStyleDecl->setParent(0);
         m_inlineStyleDecl->deref();
     }
