@@ -1,3 +1,13 @@
+2004-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        * kwq/KWQString.mm: (QString::endsWith): Fixed broken end of string test, to get rid
+        of false positives.
+
+        * WebCore-tests.exp: Added endsWith so it can be tested.
+        * WebCore-combined.exp: Regenerated.
+
 2004-02-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3549772, hangs on border collapsing.

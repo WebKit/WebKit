@@ -1063,18 +1063,21 @@ bool QString::startsWith(const char *prefix, bool caseSensitive) const
     }
 }
 
-bool QString::endsWith( const QString& s ) const
+bool QString::endsWith(const QString& s) const
 {
     const QChar *uni = unicode();
 
-    if (dataHandle[0]->_length < s.dataHandle[0]->_length)
-        return FALSE;
-        
-    for ( int i = dataHandle[0]->_length - s.dataHandle[0]->_length, j = 0; i < (int) s.dataHandle[0]->_length; i++, j++ ) {
-	if ( uni[i] != s[j] )
-	    return FALSE;
+    int length = dataHandle[0]->_length;
+    int slength = s.dataHandle[0]->_length;
+    if (length < slength)
+        return false;
+
+    for (int i = length - slength, j = 0; i < length; i++, j++) {
+	if (uni[i] != s[j])
+	    return false;
     }
-    return TRUE;
+
+    return true;
 }
 
 QCString QString::utf8(int &length) const
