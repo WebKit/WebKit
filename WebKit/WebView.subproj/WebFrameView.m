@@ -613,18 +613,18 @@ static NSMutableDictionary *viewTypes;
                         break;
                     }
                     [self _goBack];
-                } 
-                
-                // Now check scrolling related keys.
-                if (![self allowsScrolling]) {
-                    callSuper = YES;
-                    break;
-                }
-
-                if ([event modifierFlags] & NSAlternateKeyMask) {
-                    [self _pageLeft];
                 } else {
-                    [self _lineLeft];
+                    // Now check scrolling related keys.
+                    if (![self allowsScrolling]) {
+                        callSuper = YES;
+                        break;
+                    }
+
+                    if ([event modifierFlags] & NSAlternateKeyMask) {
+                        [self _pageLeft];
+                    } else {
+                        [self _lineLeft];
+                    }
                 }
                 callSuper = NO;
                 break;
@@ -636,18 +636,18 @@ static NSMutableDictionary *viewTypes;
                         break;
                     }
                     [self _goForward];
-                } 
-                
-                // Now check scrolling related keys.
-                if (![self allowsScrolling]) {
-                    callSuper = YES;
-                    break;
-                }
-
-                if ([event modifierFlags] & NSAlternateKeyMask) {
-                    [self _pageRight];
                 } else {
-                    [self _lineRight];
+                    // Now check scrolling related keys.
+                    if (![self allowsScrolling]) {
+                        callSuper = YES;
+                        break;
+                    }
+
+                    if ([event modifierFlags] & NSAlternateKeyMask) {
+                        [self _pageRight];
+                    } else {
+                        [self _lineRight];
+                    }
                 }
                 callSuper = NO;
                 break;

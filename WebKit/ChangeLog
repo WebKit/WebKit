@@ -1,3 +1,12 @@
+2003-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave and Ken.
+
+        - fixed 3457066 -- REGRESSION (91-92): command-left-arrow causes a scroll to the left before going back
+
+        * WebView.subproj/WebFrameView.m: (-[WebFrameView keyDown:]): Add an else so that we don't fall into the
+        scrolling code when the command key is down for right and left arrow.
+
 2003-10-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3229530>: Dragging standalone image to desktop should save it, not re-download it
