@@ -812,7 +812,7 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
         if ( d->mousePressed && m_part->hasSelection() )
 	    // during selection, use an IBeam no matter what we're over
 	    c = KCursor::ibeamCursor();
-        else if ( (mev.url.length() || isSubmitImage(mev.innerNode.handle()))
+        else if ( (!mev.url.isNull() || isSubmitImage(mev.innerNode.handle()))
                   && m_part->settings()->changeCursor() )
             c = m_part->urlCursor();
         else if ( !mev.innerNode.isNull()

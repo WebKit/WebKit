@@ -1,3 +1,12 @@
+2003-11-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3020196>: links with href="" don't show hand cursor when you mouse over them
+
+        Reviewed by darin.
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent): check if the URL on the event is non-NULL, not if it is non-empty
+
 2003-11-07  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3477067.  Use our case unicode conversion routines.
