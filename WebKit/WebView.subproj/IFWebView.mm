@@ -88,6 +88,12 @@
 - (void)layout
 {
     KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
+
+#define _KWQ_TIMING        
+#ifdef _KWQ_TIMING        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif
+
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
         if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
@@ -97,6 +103,11 @@
             ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
         }
     }
+
+#ifdef _KWQ_TIMING        
+    double thisTime = CFAbsoluteTimeGetCurrent() - start;
+    WEBKITDEBUGLEVEL2 (0x200, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+#endif
 }
 
 
@@ -263,6 +274,9 @@
     if (widget != 0l){        
         [self layout];
 
+#ifdef _KWQ_TIMING        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif
         QPainter p(widget);    
         
         [self lockFocus];
@@ -293,6 +307,11 @@
 #endif
         
         [self unlockFocus];
+
+#ifdef _KWQ_TIMING        
+    double thisTime = CFAbsoluteTimeGetCurrent() - start;
+    WEBKITDEBUGLEVEL2 (0x200, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+#endif
     }
 }
 

@@ -1,3 +1,9 @@
+2002-02-18  Richard Williamson  <rjw@apple.com>
+
+        Performance measurement.
+        
+	* WebView.subproj/IFWebView.mm: (-[IFWebView layout]), (-[IFWebView drawRect:]):
+
 2002-02-16  Richard Williamson  <rjw@apple.com>
 
 	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource controller]):
