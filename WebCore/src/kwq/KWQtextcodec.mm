@@ -28,7 +28,7 @@
 #include <qtextcodec.h>
 #include <kwqdebug.h>
 
-// FIXME: do we need this one we have a REAL implementation?
+// FIXME: do we need this once we have a real implementation?
 static QTextCodec latin1TextCodec(kCFStringEncodingISOLatin1);
 
 // class QTextDecoder ==========================================================
@@ -59,21 +59,21 @@ QString QTextDecoder::toUnicode(const char *chs, int len)
 
 QTextCodec *QTextCodec::codecForMib(int)
 {
-    // FIXME: need REAL implementation here
+    // FIXME: need real implementation here
     _logPartiallyImplemented();
     return &latin1TextCodec;
 }
 
-QTextCodec *QTextCodec::codecForName(const char *)
+QTextCodec *QTextCodec::codecForName(const char *, int)
 {
-    // FIXME: need REAL implementation here
+    // FIXME: need real implementation here
     _logPartiallyImplemented();
     return &latin1TextCodec;
 }
 
 QTextCodec *QTextCodec::codecForLocale()
 {
-    // FIXME: need REAL implementation here
+    // FIXME: need real implementation here
     _logPartiallyImplemented();
     return &latin1TextCodec;
 }
