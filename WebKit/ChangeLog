@@ -1,3 +1,15 @@
+2005-01-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3786659> REGRESSION (Mail): editable WebViews don't work with "size up" and "size down" NSFontManager changes
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _addToStyle:fontA:fontB:]): This is the WebKit side of the fix. Replaced unimplemented code blocks
+        with FIXME's in them for make bigger and make smaller with real working code.
+
 === Safari-180 ===
 
 2005-01-19  David Hyatt  <hyatt@apple.com>

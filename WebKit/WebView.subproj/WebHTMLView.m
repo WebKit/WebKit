@@ -7,6 +7,7 @@
 
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>
+#import <WebKit/DOMPrivate.h>
 #import <WebKit/WebArchive.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
@@ -3469,9 +3470,9 @@ static WebHTMLView *lastHitView = nil;
     if (sa == sb) {
         [style setFontSize:[NSString stringWithFormat:@"%dpx", sa]];
     } else if (sa < soa) {
-        // FIXME: set up a style to tell WebCore to make the font in the selection 1 pixel smaller
+        [style _setFontSizeDelta:@"-1px"];
     } else if (sa > soa) {
-        // FIXME: set up a style to tell WebCore to make the font in the selection 1 pixel larger
+        [style _setFontSizeDelta:@"1px"];
     }
 
     int wa = [fm weightOfFont:a];
