@@ -35,7 +35,6 @@
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
 #import "WebCoreDOMPrivate.h"
-#import "WebCoreEditing.h"
 #import "WebCoreViewFactory.h"
 #import "csshelper.h"
 #import "html_documentimpl.h"

@@ -65,7 +65,6 @@
 #import "KWQAccObjectCache.h"
 
 #import "WebCoreDOMPrivate.h"
-#import "WebCoreEditing.h"
 #import "WebCoreImageRenderer.h"
 #import "WebCoreTextRendererFactory.h"
 #import "WebCoreViewFactory.h"
