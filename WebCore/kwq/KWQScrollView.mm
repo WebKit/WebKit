@@ -34,10 +34,10 @@
     It does provide an implementation that khtml will use to interact with
     WebKit's WebView documentView and our NSScrollView subclass.
 
-    QScrollView's view is a NSScrollView (or subclass of NSScrollView) in most
-    cases (except for provisional widgets).  That scrollview is a subview of an
-    WebCoreFrameView.  The WebCoreFrameView's documentView will also be the scroll view's 
-    documentView.
+    QScrollView's view is a NSScrollView (or subclass of NSScrollView)
+    in most cases. That scrollview is a subview of an
+    WebCoreFrameView. The WebCoreFrameView's documentView will also be
+    the scroll view's documentView.
     
     The WebCoreFrameView's size is the frame size.  The WebCoreFrameView's documentView
     corresponds to the frame content size.  The scrollview itself is autosized to the

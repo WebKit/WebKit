@@ -1,3 +1,18 @@
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Removed provisional/committed distinction from WebCore and the
+	WebCore SPI. WebCore will never see a provisional data source or
+	provisional anything, any more.
+
+        * kwq/KWQScrollView.mm: Remove mention of provisional widget from comment.
+        * kwq/WebCoreFrameBridge.h: Remove commitedBridge method, and remove comment
+	about provisionality from bridge method.
+	* kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::write): Remove bogus comment about provisional/committed
+	transition.
+        (KWQKHTMLPartImpl::findFrame): Call bridge, not committedBridge.
+        (KWQKHTMLPartImpl::frames): Likewise.
+
 2002-07-21  Darin Adler  <darin@apple.com>
 
 	* khtml/*: Roll KDE 3.0.2 changes in. Also switch to not using APPLE_CHANGES

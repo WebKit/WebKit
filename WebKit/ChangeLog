@@ -1,5 +1,19 @@
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
+        Removed provisional/committed distinction from WebCore and the
+	WebCore SPI. WebCore will never see a provisional data source or
+	provisional anything, any more. 
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge descendantFrameNamed:]): Don't bother with the provisional
+	bridge - no such thing.
+        (-[WebBridge setDataSource:]): Assert the data source is committed.
+        * WebCoreSupport.subproj/WebFrameBridge.m:
+        (-[WebFrameBridge bridge]): Return committed bridge always, and remove
+	committed bridge method.
+
+2002-07-21  Maciej Stachowiak  <mjs@apple.com>
+
         Fix a regression in my recent refactoring that broke JavaScript
 	window opening, by doing some trickery to make a frame's initial
 	dummy data source committed.

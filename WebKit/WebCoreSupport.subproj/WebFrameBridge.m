@@ -42,15 +42,6 @@
 
 - (WebCoreBridge *)bridge
 {
-    WebCoreBridge *bridge = [[frame provisionalDataSource] _bridge];
-    if (bridge) {
-        return bridge;
-    }
-    return [[frame dataSource] _bridge];
-}
-
-- (WebCoreBridge *)committedBridge
-{
     return [[frame dataSource] _bridge];
 }
 

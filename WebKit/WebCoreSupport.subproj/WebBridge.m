@@ -66,10 +66,6 @@
 
 - (WebCoreFrameBridge *)descendantFrameNamed:(NSString *)name
 {
-    WebCoreFrameBridge *provisionalBridge = [[[[[self dataSource] webFrame] provisionalDataSource] frameNamed:name] _frameBridge];
-    if (provisionalBridge) {
-        return provisionalBridge;
-    }
     return [[[[self dataSource] webFrame] frameNamed:name] _frameBridge];
 }
 
@@ -191,7 +187,7 @@
 - (void)setDataSource: (WebDataSource *)ds
 {
     WEBKIT_ASSERT(ds != nil);
-    // WEBKIT_ASSERT([ds _isCommitted]);
+    WEBKIT_ASSERT([ds _isCommitted]);
 
     if (dataSource == nil) {
 	// FIXME: non-retained because data source owns representation owns bridge

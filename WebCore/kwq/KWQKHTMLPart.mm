@@ -284,8 +284,6 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
 
     m_decodingStarted = true;
         
-    // Transition from provisional to committed data source at this point.
-    
 #if FIGURE_OUT_WHAT_APPLY_CHANGES_DOES
     d->m_doc->applyChanges();
 #endif    
@@ -585,7 +583,7 @@ bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 
 KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
 {
-    return [[[bridge frameNamed:frameName.getNSString()] committedBridge] part];
+    return [[[bridge frameNamed:frameName.getNSString()] bridge] part];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
@@ -594,7 +592,7 @@ QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
     NSEnumerator *e = [[bridge childFrames] objectEnumerator];
     WebCoreFrameBridge *childFrame;
     while ((childFrame = [e nextObject])) {
-        KHTMLPart *childPart = [[childFrame committedBridge] part];
+        KHTMLPart *childPart = [[childFrame bridge] part];
         if (childPart)
             parts.append(childPart);
     }

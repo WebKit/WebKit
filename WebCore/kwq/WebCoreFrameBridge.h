@@ -48,8 +48,7 @@
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 
-- (WebCoreBridge *)bridge; // returns provisional bridge if present (avoid calling this for that reason)
-- (WebCoreBridge *)committedBridge; // always returns committed bridge, not provisional (avoid calling this for that reason)
+- (WebCoreBridge *)bridge;
 
 @end
 
