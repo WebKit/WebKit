@@ -22,7 +22,8 @@
     [controller release];
     [frameScrollView release];
     [draggingTypes release];
-    
+    [cursor release];
+
     //if (widget)
     //    delete widget;
 

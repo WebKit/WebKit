@@ -25,13 +25,36 @@
 
 #include <kcursor.h>
 
+
+@interface NSCursor (_WebCoreCursorAdditions)
++ (NSCursor *)_WebCore_linkCursor;
+@end
+
+@implementation NSCursor (_WebCoreCursorAdditions)
++ (NSCursor *)_WebCore_linkCursor
+{
+    static NSCursor *linkCursor = nil;
+    
+    if (linkCursor == nil)
+    {
+	NSImage *linkCursorImage = [[NSImage alloc] initWithContentsOfFile:
+			       [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linkCursor" ofType:@"tiff"]];
+	[linkCursorImage autorelease];
+	
+        linkCursor = [[NSCursor alloc] initWithImage:linkCursorImage hotSpot:NSMakePoint(6.0,1.0)];
+    }
+    
+    return linkCursor;
+}
+@end
+
 const QCursor &waitCursor = KCursor::waitCursor();
 
 void KCursor::setAutoHideCursor(QWidget *w, bool enable) {}
 
 QCursor KCursor::arrowCursor() { return QCursor(); }
 QCursor KCursor::crossCursor() { return QCursor(); }
-QCursor KCursor::handCursor() { return QCursor(); }
+QCursor KCursor::handCursor() { return QCursor([NSCursor _WebCore_linkCursor]); }
 QCursor KCursor::sizeAllCursor() { return QCursor(); }
 QCursor KCursor::sizeHorCursor() { return QCursor(); }
 QCursor KCursor::sizeVerCursor() { return QCursor(); }

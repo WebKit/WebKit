@@ -338,20 +338,22 @@ bool QWidget::isVisible() const
 
 void QWidget::setCursor(const QCursor &cur)
 {
-    _logNotYetImplemented();
     data->cursor = cur;
+    
+    id view = data->view;
+    if ([view respondsToSelector:@selector(setCursor:)]) { 
+	[view setCursor:(NSCursor *)data->cursor.handle()];
+    }
 }
 
 QCursor QWidget::cursor()
 {
-    _logNotYetImplemented();
     return data->cursor;
 }
 
 void QWidget::unsetCursor()
 {
-    _logNotYetImplemented();
-    data->cursor = QCursor();
+    setCursor(QCursor());
 }
 
 bool QWidget::event(QEvent *)

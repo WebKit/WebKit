@@ -66,11 +66,14 @@ class KHTMLPart;
     KHTMLPart *part;  // FIXME.  This is a temporary reference.
     bool isFlipped;
     bool needsLayout;
+    NSCursor *cursor;
 }
 - initWithFrame: (NSRect)r widget: (QWidget *)w; 
 - (void)setIsFlipped: (bool)flag;
 - (void)setNeedsLayout: (bool)flag;
 - (void)resetView; 
+- (void)setCursor:(NSCursor *)cursor;
+
 @end
 
 

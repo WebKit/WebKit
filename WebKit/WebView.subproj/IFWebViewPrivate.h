@@ -24,6 +24,7 @@ class KHTMLView;
     bool canDragTo;
     bool canDragFrom;
     NSArray *draggingTypes;
+    NSCursor *cursor;
 }
 
 @end

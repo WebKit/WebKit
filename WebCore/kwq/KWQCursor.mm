@@ -33,23 +33,30 @@ const QCursor Qt::sizeHorCursor;
 const QCursor Qt::sizeVerCursor;
 
 QCursor::QCursor()
+    : cursor([[NSCursor arrowCursor] retain])
 {
-    //_logNotYetImplemented();
+}
+
+QCursor::QCursor(NSCursor *cur)
+    : cursor([cur retain])
+{
 }
 
 QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
+    : cursor(nil)
 {
     _logNotYetImplemented();
 }
 
-QCursor::QCursor(const QCursor &)
+QCursor::QCursor(const QCursor &other)
+    : cursor([other.cursor retain])
 {
-    _logNotYetImplemented();
+    
 }
 
 QCursor::~QCursor()
 {
-    //_logNotYetImplemented();
+    [cursor release];
 }
       
 QPoint QCursor::pos()
@@ -58,14 +65,16 @@ QPoint QCursor::pos()
     return QPoint();
 }
 
-QCursor &QCursor::operator=(const QCursor &)
+QCursor &QCursor::operator=(const QCursor &other)
 {
-    _logNotYetImplemented();
+    [other.cursor retain];
+    [cursor release];
+    cursor = other.cursor;
     return *this;
 }
 
 int QCursor::handle()
 {
-    _logNotYetImplemented();
+    return (int)cursor;
     return 0;
 }

@@ -547,11 +547,14 @@
 {
     NSEvent *event = [(NSDictionary *)[notification userInfo] objectForKey: @"NSEvent"];
     NSPoint p = [event locationInWindow];
-    
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
-    KHTMLView *widget = _private->widget;
-    if (widget != 0l) {
-        widget->viewportMouseMoveEvent(&kEvent);
+    NSRect frame = [self frame];
+
+    if (p.x >= frame.origin.x && frame.origin.y >= 0 && p.x <= frame.size.width && p.y <= frame.size.height ) {
+	QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
+	KHTMLView *widget = _private->widget;
+	if (widget != 0l) {
+	    widget->viewportMouseMoveEvent(&kEvent);
+	}
     }
 }
 
@@ -590,5 +593,18 @@
         widget->keyReleaseEvent(&kEvent);
 }
 
+- (void)setCursor:(NSCursor *)cursor
+{
+    [_private->cursor release];
+    _private->cursor = [cursor retain];
+    [[self window] invalidateCursorRectsForView:self];
+}
+
+- (void)resetCursorRects
+{
+    if (_private->cursor != nil && _private->cursor != [NSCursor arrowCursor]) {
+        [self addCursorRect:[self visibleRect] cursor:_private->cursor];
+    }
+}
 
 @end

@@ -105,8 +105,7 @@ void KHTMLSettings::setScript(QFont::CharSet c)
 
 bool KHTMLSettings::changeCursor() const
 {
-    _logNotYetImplemented();
-    return FALSE;
+    return true;
 }
 
 bool KHTMLSettings::isFormCompletionEnabled() const

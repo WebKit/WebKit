@@ -1,3 +1,34 @@
+2002-05-26  Maciej Stachowiak  <mjs@apple.com>
+
+	Webcore part of fix for:
+
+	Radar 2884085 - add support for changing cursor over links
+
+	* Makefile.am: Install tiff of link cursor.
+	* kwq/qt/qcursor.h, kwq/KWQCursor.mm:
+	(QCursor::QCursor): Change QCursor to contain an NSCursor.
+	(QCursor::~QCursor): Likewise.
+	(QCursor::operator=): Likewise.
+	(QCursor::handle): Likewise.
+	* kwq/KWQKCursor.mm:
+	(+[NSCursor _WebCore_linkCursor]): NSCursor extension method that
+	provides the link cursor.	
+	(KCursor::handCursor): Use the link cursor instead of the default
+	arrow cursor.
+	* kwq/KWQKHTMLSettings.mm:
+	(KHTMLSettings::changeCursor): Return TRUE; we always want cursor
+	tracking.
+	* kwq/KWQView.h, kwq/KWQView.mm:
+	(-[KWQHTMLView setCursor:]): Remember the new cursor and
+	invalidate cursor rects.
+	(-[KWQHTMLView resetCursorRects]): Establish cursor rect for
+	currently set cursor, if not default.
+	* kwq/KWQWidget.mm:
+	(QWidget::setCursor): Call setCursor: on the underlying
+	NSView, if implemented.
+	(QWidget::cursor): Implemented.
+	(QWidget::unsetCursor): Implemented.
+
 2002-05-25  Maciej Stachowiak  <mjs@apple.com>
 
 	Changed WebCore to build as a framework, not a dylib, so resources

@@ -1,3 +1,21 @@
+2002-05-26  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of fix for:
+
+	Radar 2884085 - add support for changing cursor over links
+
+	Also, fix handling of mouseMoved events.
+	
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView mouseMovedNotification:]): Clip mouseMoved events to
+	the view rect, otherwise mouseover effects might happen for
+	elements past the edge of the window.	
+	(-[IFWebView setCursor:]): Implement.
+	(-[IFWebView resetCursorRects]): Implement.
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm:
+	(-[IFWebViewPrivate dealloc]): Added NSCursor *cursor field.
+
 2002-05-25  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Link against WebCore.framework,

@@ -42,7 +42,7 @@ noinst_DATA = framework-stamp framework-resource-stamp framework-dylib-stamp fra
 
 FRAMEWORK_NAME = WebCore
 FRAMEWORK_VERSION = A
-FRAMEWORK_RESOURCES = Resources/Info.plist
+FRAMEWORK_RESOURCES = Resources/Info.plist Resources/linkCursor.tiff
 FRAMEWORK_LOCALIZED_RESOURCES = English.lproj/InfoPlist.strings
 
 
@@ -59,6 +59,7 @@ framework-stamp: framework-dylib-stamp framework-resource-stamp framework-header
 framework-resource-stamp: $(FRAMEWORK_RESOURCES) $(FRAMEWORK_LOCALIZED_RESOURCES)
 	rm -rf $(FRAMEWORK_RESOURCE_DIR)
 	mkdir -p $(FRAMEWORK_RESOURCE_DIR)
+	rm -rf $(FRAMEWORK_DIR)/Resources
 	ln -sf Versions/Current/Resources $(FRAMEWORK_DIR)/Resources
 	@list='$(FRAMEWORK_RESOURCES)'; for p in $$list; do \
 		echo " $(INSTALL_DATA) $$p $(FRAMEWORK_RESOURCE_DIR)/$$p"; \

@@ -305,6 +305,19 @@
     KWQDEBUG ("mouseDragged %f, %f\n", p.x, p.y);
 }
 
+- (void)setCursor:(NSCursor *)cur
+{
+    [cursor release];
+    cursor = [cur retain];
+    [[self window] invalidateCursorRectsForView:self];
+}
+
+- (void)resetCursorRects
+{
+    if (cursor != nil && cursor != [NSCursor arrowCursor]) {
+        [self addCursorRect:[self visibleRect] cursor:cursor];
+    }
+}
 
 @end
 
