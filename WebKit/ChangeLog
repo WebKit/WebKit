@@ -1,3 +1,12 @@
+2003-01-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard _web_setFindPasteboardString:withOwner:]):
+	New method to put text on the Find pasteboard.
+
 2003-01-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

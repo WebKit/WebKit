@@ -25,4 +25,7 @@ extern NSString *WebURLNamePboardType;
 - (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner;
 - (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner types:(NSArray *)types;
 
+// Sets the text on the NSFindPboard. Returns the new changeCount for the NSFindPboard.
++ (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner;
+
 @end

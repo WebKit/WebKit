@@ -102,4 +102,13 @@ NSString *WebURLNamePboardType = nil;
     [self _web_writeURL:URL andTitle:title withOwner:owner types:[NSPasteboard _web_dragTypesForURL]];
 }
 
++ (int)_web_setFindPasteboardString:(NSString *)string withOwner:(id)owner
+{
+    NSPasteboard *findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
+    [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:owner];
+    [findPasteboard setString:string forType:NSStringPboardType];
+    return [findPasteboard changeCount];
+}
+
+
 @end
