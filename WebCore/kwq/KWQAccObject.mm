@@ -496,10 +496,10 @@ static QRect boundingBoxRect(RenderObject* obj)
     }
 
     if ([attributeName isEqualToString: @"AXLinkUIElements"] && m_renderer->isCanvas()) {
+        NSMutableArray* links = [NSMutableArray arrayWithCapacity: 32];
         HTMLCollection coll(m_renderer->document(), HTMLCollectionImpl::DOC_LINKS);
         if (coll.isNull())
-            return nil;
-        NSMutableArray* links = [NSMutableArray arrayWithCapacity: 32];
+            return links;
         Node curr = coll.firstItem();
         while (!curr.isNull()) {
             RenderObject* obj = curr.handle()->renderer();
