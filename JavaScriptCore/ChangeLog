@@ -1,3 +1,16 @@
+2005-02-03  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3972905> CrashTracer: ...36 crashes at com.apple.WebCore: khtml::CSSStyleSelector::applyDeclarations + 120
+
+	Revert to old (and correct) behavior of returning runtime object
+	when passed as a parameter, rather than it's corresponding DOM
+	object.
+
+        Reviewed by Chris.
+
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+
 === Safari-183 ===
 
 === Safari-182 ===

@@ -412,8 +412,15 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     // First see if we have a ObjC instance.
     if (value.type() == KJS::ObjectType){
         ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());
+
+	if (objectImp->classInfo() != &KJS::RuntimeObjectImp::info) {
+	    Value runtimeObject = objectImp->get(root->interpreter()->globalExec(), "__apple_runtime_object");
+	    if (!runtimeObject.isNull() && runtimeObject.type() == KJS::ObjectType)
+		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
+	}
+
         if (objectImp->classInfo() == &KJS::RuntimeObjectImp::info) {
-            RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value.imp());
+            RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(objectImp);
             ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
             if (instance)
                 result = instance->getObject();
