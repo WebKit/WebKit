@@ -1,3 +1,12 @@
+2003-04-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3188070 - 6I32 EMBED tag with no SRC attribute doesn't load the plugin
+
+        Reviewed by dave.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::requestObject): allow URL-less parts
+
 2003-04-11  Trey Matteson  <trey@apple.com>
 
 	3148002 - printing shouldn't depend on the size of the window
