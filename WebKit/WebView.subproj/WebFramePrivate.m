@@ -677,7 +677,11 @@ static const char * const stateNames[] = {
         [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
     }
     else {
-        dataSource = [[WebDataSource alloc] initWithURL:itemURL];
+        unsigned flags = 0;
+        if (type == WebFrameLoadTypeBack || type == WebFrameLoadTypeForward) {
+            flags = WebResourceHandleUseCachedObjectIfPresent;
+        }
+        dataSource = [[WebDataSource alloc] initWithURL:itemURL attributes:nil flags:flags];
         [self setProvisionalDataSource: dataSource];
         [self _setLoadType: type];
         [self startLoading];

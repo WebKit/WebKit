@@ -194,6 +194,11 @@
     [handle release];
 }
 
+- (BOOL)dataSourceIsReloading
+{
+    return ([[self dataSource] flags] & WebResourceHandleFlagLoadFromOrigin);
+}
+
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
 {
     [[[frame controller] locationChangeHandler] clientRedirectTo:URL delay:seconds fireDate:date forFrame:frame];

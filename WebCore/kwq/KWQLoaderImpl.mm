@@ -123,6 +123,12 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     return true;
 }
 
+bool KWQCheckIfReloading(DocLoader *loader)
+{
+    WebCoreBridge *bridge = ((KHTMLPart *)loader->part())->impl->getBridge();
+    return [bridge dataSourceIsReloading];
+}
+
 void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
 {
     // Return from the function for objects that we didn't load from the cache.

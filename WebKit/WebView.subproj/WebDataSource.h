@@ -40,6 +40,9 @@
 - initWithLoader: (WebLoader *)loader;
 #endif
 
+-(NSDictionary *)attributes;
+-(unsigned)flags;
+
 - (NSData *)data;
 
 - (id <WebDocumentRepresentation>)representation;

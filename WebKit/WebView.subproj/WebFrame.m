@@ -20,6 +20,7 @@
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 @implementation WebFrame
@@ -194,12 +195,15 @@
 - (void)reload: (BOOL)forceRefresh
 {
     WebDataSource *dataSource = [self dataSource];
-
+    unsigned flags;
+    
     if (dataSource == nil) {
 	return;
     }
 
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] attributes:[dataSource _attributes] flags:[dataSource _flags]];
+    flags = [dataSource _flags] | WebResourceHandleFlagLoadFromOrigin;
+
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] attributes:[dataSource _attributes] flags:flags];
     [newDataSource _setParent:[dataSource parent]];
     if ([self setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeRefresh];

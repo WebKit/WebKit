@@ -59,6 +59,16 @@
     [super dealloc];
 }
 
+-(NSDictionary *)attributes
+{
+    return _private->attributes;
+}
+
+-(unsigned)flags;
+{
+    return _private->flags;
+}
+
 - (NSData *)data
 {
     if(!_private->resourceData){

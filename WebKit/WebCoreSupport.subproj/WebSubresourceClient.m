@@ -62,7 +62,7 @@
     WebResourceHandle *handle;
     WebSubresourceClient *client;
     
-    handle = [[[WebResourceHandle alloc] initWithURL:URL attributes:nil flags:0] autorelease];
+    handle = [[[WebResourceHandle alloc] initWithURL:URL attributes:[source attributes] flags:[source flags]] autorelease];
     if (handle == nil) {
         [rLoader cancel];
 

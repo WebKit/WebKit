@@ -1,3 +1,24 @@
+2002-08-10  Ken Kocienda  <kocienda@apple.com>
+
+	Added support for "stale mode" (loads triggered by use of back/forward), and
+	added support for reload.
+
+	Also added a bridge function so the WebCore cache can tell if a load is a reload.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dataSourceIsReloading]): New method.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:dataSource:]): Use same flags that were used for main resource load.
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource attributes]): New accessor.
+        (-[WebDataSource flags]): New accessor.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload:]): Reload adds WebResourceHandleFlagLoadFromOrigin flag to load.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _goToItem:withFrameLoadType:]): Adds flags so that WebFoundation can tell when back/forward
+	has been used.
+
 === milestone 0.5 ===
 
 === Alexander-16 ===
