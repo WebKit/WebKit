@@ -139,6 +139,11 @@ enum {
 
 - (BOOL)_scrollVerticallyBy: (float)delta
 {
+    // This method uses the secret method _scrollTo on NSClipView.
+    // It does that because it needs to know definitively whether scrolling was
+    // done or not to help implement the "scroll parent if we are at the limit" feature.
+    // In the presence of smooth scrolling, there's no easy way to tell if the method
+    // did any scrolling or not with the public API.
     NSPoint point = [[self _contentView] bounds].origin;
     point.y += delta;
     return [[self _contentView] _scrollTo:&point];
