@@ -1,3 +1,19 @@
+2002-05-21  Chris Blumenberg  <cblu@apple.com>
+
+	Move the tracking rect after the view has moved.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(-[IFPluginView viewHasMoved:]):
+
+	Fixed logging.
+
+	* Plugins.subproj/npapi.m:
+	(NPN_UserAgent):
+	(NPN_MemAlloc):
+	(NPN_MemFree):
+	(NPN_MemFlush):
+	(NPN_ReloadPlugins):
+
 2002-05-21  Kenneth Kocienda  <kocienda@apple.com>
 
         Merged these four include files into the precompiled header.

@@ -513,6 +513,10 @@ static char *newCString(NSString *string)
 {
     [self sendUpdateEvent];
     [self setWindow];
+    
+    // reset the tracking rect
+    [self removeTrackingRect:trackingTag];
+    trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
 }
 
 -(void) windowBecameKey:(NSNotification *)notification

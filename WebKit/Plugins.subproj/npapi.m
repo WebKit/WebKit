@@ -47,33 +47,33 @@
 
 const char* NPN_UserAgent(NPP instance)
 {
-    WEBKITDEBUG("NPN_UserAgent\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_UserAgent\n");
     return "IE";
 }
 
 void* NPN_MemAlloc(UInt32 size)
 {
-    //WEBKITDEBUG("NPN_MemAlloc\n");
+    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemAlloc\n");
     return malloc(size);
 
 }
 
 void NPN_MemFree(void* ptr)
 {
-    //WEBKITDEBUG("NPN_MemFree\n");
+    //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemFree\n");
     free(ptr);
 
 }
 
 UInt32 NPN_MemFlush(UInt32 size)
 {
-    WEBKITDEBUG("NPN_MemFlush\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_MemFlush\n");
     return 0;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages)
 {
-    WEBKITDEBUG("NPN_ReloadPlugins\n");
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPN_ReloadPlugins\n");
 
 }
 
