@@ -232,12 +232,12 @@ char *stateNames[6] = {
     WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
     
     if (data->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
-        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
         [[self view] setNeedsLayout: YES];
         [[self view] setNeedsDisplay: YES];
     }
     else {
-        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     }
 }
 
@@ -253,6 +253,7 @@ char *stateNames[6] = {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
     WEBKITDEBUGLEVEL3 (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[data->state], stateNames[newState]);
+    WEBKITDEBUGLEVEL4 (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[data->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     data->state = newState;
 }
