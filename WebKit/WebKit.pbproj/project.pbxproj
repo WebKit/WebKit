@@ -3816,9 +3816,10 @@
 			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			path = WebTextRenderer.m;
-			refType = 4;
-			sourceTree = "<group>";
+			name = WebTextRenderer.m;
+			path = WebCoreSupport.subproj/WebTextRenderer.m;
+			refType = 2;
+			sourceTree = SOURCE_ROOT;
 		};
 		F5B36B430281DF55018635CB = {
 			fileRef = F5B36B410281DF55018635CB;

@@ -25,6 +25,7 @@
 
 #import "KWQKSSLKeyGen.h"
 
+#import "KWQKURL.h"
 #import "KWQString.h"
 #import "WebCoreKeyGenerator.h"
 
@@ -39,7 +40,9 @@ QStringList KSSLKeyGen::supportedKeySizes()
     return supportedKeySizes;
 }
 
-QString KSSLKeyGen::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const QString &challengeString)
+QString KSSLKeyGen::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const QString &challengeString, const KURL &url)
 {   
-    return QString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex challenge:challengeString.getNSString()]);
+    return QString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex 
+                                                                                                                 challenge:challengeString.getNSString()
+                                                                                                                   pageURL:url.getNSURL()]);
 }

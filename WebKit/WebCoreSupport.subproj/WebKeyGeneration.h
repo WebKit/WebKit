@@ -10,6 +10,10 @@
 #ifndef	_WEB_KEY_GENERATION_
 #define _WEB_KEY_GENERATION_
 
+#import <WebKit/WebKeyGenerator.h>
+
+#import <CoreFoundation/CoreFoundation.h>
+
 #include <SecurityNssAsn1/secasn1t.h>
 #include <Security/cssmtype.h>
 #include <SecurityNssAsn1/X509Templates.h>
@@ -67,8 +71,8 @@ extern "C" {
     extern const SEC_ASN1Template PublicKeyAndChallengeTemplate[];
     extern const SEC_ASN1Template SignedPublicKeyAndChallengeTemplate[];
 
-    char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge);
-    bool addCertificatesToKeychainFromData(const void *bytes, unsigned length);
+    CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);
+    WebCertificateParseResult addCertificatesToKeychainFromData(const void *bytes, unsigned length);
     
 #ifdef __cplusplus
 }

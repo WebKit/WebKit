@@ -1,3 +1,21 @@
+2003-12-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3396936>: can't obtain a digital ID from Verisign, form submission fails
+	<rdar://problem/3505208>: keys added to keychain from KEYGEN need better UI names
+
+        Reviewed by rjw.
+
+        * English.lproj/Localizable.strings:
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (signedPublicKeyAndChallengeString): take a key description arg and use it, take and return CFStrings, handle the empty string case
+        (addCertificatesToKeychainFromData): return a WebCertificateParseResult so WB knows how to handle the cert
+        * WebCoreSupport.subproj/WebKeyGeneration.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.m:
+        (-[WebKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:pageURL:]): take a page URL so we can use its host name in the key description
+        * WebKit.pbproj/project.pbxproj:
+
 2003-12-12  Vicki Murley  <vicki@apple.com>
 
         Reviewed by NOBODY (OOPS!).

@@ -49,7 +49,7 @@ static WebCoreKeyGenerator *sharedGenerator;
     return nil;
 }
 
-- (NSString *)signedPublicKeyAndChallengeStringWithStrengthIndex:(unsigned)index challenge:(NSString *)challenge
+- (NSString *)signedPublicKeyAndChallengeStringWithStrengthIndex:(unsigned)index challenge:(NSString *)challenge pageURL:(NSURL *)pageURL
 {
     return nil;
 }

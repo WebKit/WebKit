@@ -2421,7 +2421,7 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     if (!m_keyType.isNull() && m_keyType.lower() != "rsa") {
         return false;
     }
-    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString((unsigned)selectedIndex(), m_challenge.string());
+    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString((unsigned)selectedIndex(), m_challenge.string(), getDocument()->part()->baseURL());
     if (!value.isNull()) {
         encoded_values += enc_name;
         encoded_values += value.utf8();

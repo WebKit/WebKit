@@ -1,3 +1,18 @@
+2003-12-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3505208>: keys added to keychain from KEYGEN need better UI names
+
+        Reviewed by rjw.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLKeygenElementImpl::encoding): pass the page URL to signedPublicKeyAndChallengeString
+        * kwq/KWQKSSLKeyGen.h:
+        * kwq/KWQKSSLKeyGen.mm:
+        (KSSLKeyGen::signedPublicKeyAndChallengeString): take a URL
+        * kwq/WebCoreKeyGenerator.h:
+        * kwq/WebCoreKeyGenerator.m:
+        (-[WebCoreKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:pageURL:]): take a URL
+
 2003-12-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3254534, CSS background-image style should be loaded lazily only when used.

@@ -245,14 +245,14 @@ static void gnrFreeCssmData(
     return;
 }
 
-char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
+CFStringRef signedPublicKeyAndChallengeString(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription)
 {
     OSStatus 		ortn;
     CSSM_RETURN		crtn;
     SecKeyRef 		pubKey = NULL;
     SecKeyRef 		privKey = NULL;
     CSSM_KEY		subjectPubKey;
-    bool			freeSubjPubKey = false;
+    bool                freeSubjPubKey = false;
     CSSM_CSP_HANDLE	cspHand;
     SecNssCoder		coder;
     SignedPublicKeyAndChallenge	spkc;
@@ -264,7 +264,14 @@ char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
     PRErrorCode		perr;
     unsigned char	*spkcB64 = NULL;		// base64 encoded encodedSpkc
     unsigned		spkcB64Len;
+    SecAccessRef        accessRef;
+    CFStringRef         result = NULL;
     
+    ortn = SecAccessCreate(keyDescription, NULL, &accessRef);
+    if (ortn) {
+        ERROR("***SecAccessCreate %d", ortn);
+        goto errOut;
+    }
     /* Cook up a key pair, just use any old params for now */
     ortn = SecKeyCreatePair(nil,		// in default KC
                             GNR_KEY_ALG,					// normally spec'd by user
@@ -276,16 +283,11 @@ char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
                             CSSM_KEYUSE_ANY,				// might want to restrict this
                             CSSM_KEYATTR_SENSITIVE | CSSM_KEYATTR_RETURN_REF |
                             CSSM_KEYATTR_PERMANENT | CSSM_KEYATTR_EXTRACTABLE,
-                            /*
-                             * FIXME: should have a non-NULL initialAccess here, but
-                             * I do not know any easy way of doing that. Ask Perry
-                             * (perry@apple.com) or MIchael (mb@apple.com).
-                             */
-                            NULL,
+                            accessRef,
                             &pubKey,
                             &privKey);
     if (ortn) {
-        ERROR("***SecKeyCreatePair", ortn);
+        ERROR("***SecKeyCreatePair %d", ortn);
         goto errOut;
     }
     
@@ -310,21 +312,25 @@ char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge)
      * First, DER-decode the key's SubjectPublicKeyInfo.
      */
     memset(&spkc, 0, sizeof(spkc));
-    perr = coder.decodeItem(subjectPubKey.KeyData, 
-                            NSS_SubjectPublicKeyInfoTemplate,
-                            &pkc->spki);
+    perr = coder.decodeItem(subjectPubKey.KeyData, SS_SubjectPublicKeyInfoTemplate, &pkc->spki);
     if (perr) {
         /* should never happen */
         ERROR("***Error decoding subject public key info\n");
         goto errOut;
     }
     
-    pkc->challenge.Data = (uint8 *)challenge;
-    pkc->challenge.Length = strlen(challenge);
+    pkc->challenge.Length = CFStringGetLength(challenge);
+    if (pkc->challenge.Length == 0) {
+        pkc->challenge.Length = 1;
+        pkc->challenge.Data = (uint8 *)strdup("\0");
+    } else {
+        pkc->challenge.Data = (uint8 *)malloc(pkc->challenge.Length + 1);
+        CFStringGetCString(challenge,  (char *)pkc->challenge.Data, pkc->challenge.Length + 1, kCFStringEncodingASCII);
+    }
     perr = coder.encodeItem(pkc, PublicKeyAndChallengeTemplate, encodedPkc);
     if (perr) {
         /* should never happen */
-        ERROR("***Error enccoding PublicKeyAndChallenge\n");
+        ERROR("***Error encoding PublicKeyAndChallenge\n");
         goto errOut;
     }
     
@@ -381,7 +387,17 @@ errOut:
     if (privKey) {
         CFRelease(privKey);
     }
-    return reinterpret_cast<char *>(spkcB64);
+    if (accessRef) {
+        CFRelease(accessRef);
+    }
+    if (pkc->challenge.Data) {
+        free(pkc->challenge.Data);
+    }
+    if (spkcB64) {
+        result = CFStringCreateWithCString(NULL, (const char *)spkcB64, kCFStringEncodingASCII);
+        free(spkcB64);
+    }
+    return result;
 }
 
 /* 
@@ -429,9 +445,9 @@ bool addCertificateToKeychainFromData(const unsigned char *certData,
     return true;
 }
 
-bool addCertificatesToKeychainFromData(const void *bytes, unsigned length)
+WebCertificateParseResult addCertificatesToKeychainFromData(const void *bytes, unsigned length)
 {   
-    bool result = false;
+    WebCertificateParseResult result = WebCertificateParseResultFailed;
 
     /* DER-decode, first as NetscapeCertSequence */
     SecNssCoder coder;
@@ -440,9 +456,9 @@ bool addCertificatesToKeychainFromData(const void *bytes, unsigned length)
     memset(&certSeq, 0, sizeof(certSeq));
     PRErrorCode perr = coder.decode(bytes, length, NetscapeCertSequenceTemplate, &certSeq);
     if (perr == 0) {
-        if (memcmp(certSeq.contentType.Data, CSSMOID_PKCS7_SignedData.Data, certSeq.contentType.Length) == 0) {
-            // FIXME: <rdar://problem/3506645>: decode PKCS7 encoded certificates downloaded from Verisign
-            return false;
+        if (certSeq.contentType.Length == CSSMOID_PKCS7_SignedData.Length &&
+            memcmp(certSeq.contentType.Data, CSSMOID_PKCS7_SignedData.Data, certSeq.contentType.Length) == 0) {
+            return WebCertificateParseResultPKCS7;
         }
         /*
          * Last cert is a root, which we do NOT want to add
@@ -451,10 +467,7 @@ bool addCertificatesToKeychainFromData(const void *bytes, unsigned length)
         unsigned numCerts = nssArraySize((const void **)certSeq.certs) - 1;
         for (unsigned i=0; i<numCerts; i++) {
             CSSM_DATA *cert = certSeq.certs[i];
-            result = addCertificateToKeychainFromData(cert->Data, cert->Length, i);
-            if (!result) {
-                break;
-            }
+            result = addCertificateToKeychainFromData(cert->Data, cert->Length, i) ? WebCertificateParseResultSucceeded : WebCertificateParseResultFailed;
         } 
     } else {
         /*
@@ -462,7 +475,7 @@ bool addCertificatesToKeychainFromData(const void *bytes, unsigned length)
          * a cert. FIXME: Netscape spec says the blob might also be PKCS7
          * format, which we're not handling here.
          */
-        result = addCertificateToKeychainFromData(static_cast<const unsigned char *>(bytes), length, 0); 
+        result = addCertificateToKeychainFromData(static_cast<const unsigned char *>(bytes), length, 0) ? WebCertificateParseResultSucceeded : WebCertificateParseResultFailed;
     }
 
     return result;
