@@ -1,3 +1,7 @@
+2005-03-10  Darin Adler  <darin@apple.com>
+
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::write): Fixed assertion for nested calls to write.
+
 2005-03-10  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
