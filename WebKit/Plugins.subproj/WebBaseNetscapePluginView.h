@@ -5,7 +5,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-#import <npapi.h>
+#import <WebKit/npfunctions.h>
 
 @class WebDataSource;
 @class WebFrame;

@@ -7,7 +7,7 @@
 
 #import <WebCore/WebCoreViewFactory.h>
 
-#import <WebKit/npapi.h>
+#import <WebKit/npfunctions.h>
 #import <WebKit/WebBasePluginPackage.h>
 
 typedef enum {

@@ -1,3 +1,35 @@
+2004-03-25  Richard Williamson   <rjw@apple.com>
+
+	Netscape plugin API header cleanup.
+
+	Replaced our hacked up version of npapi.h with the
+	"official SDK"  npapi.h.  Moved our changes to the new
+	npfunctions.h.  npfunctions.h really replaces what was defined in
+	the Netscape npupp.h header.  However, rather than use the "official SDK"
+	npupp.h I think the cleaner npfunctions.h is better. npupp.h actually
+	has a bunch of Mac classic specific stuff that is no longer needed.
+
+	Copied npruntime.h to WebKit using Ken's copy-o-matic mechanism.
+
+	Made npapi.h, npruntime.h, and npfunctions.h SPI.  With a bit
+	more consideration they will become API.  They will also eventually be made
+	available for other platforms/vendors are mozilla.org.
+
+        Reviewed by Ken.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream dealloc]):
+        (-[WebBaseNetscapePluginStream startStreamWithURL:expectedContentLength:lastModifiedDate:MIMEType:]):
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins.subproj/npapi.h:
+        * Plugins.subproj/npruntime.h: Added.
+        * WebKit.pbproj/project.pbxproj:
+        * copy-webcore-files-to-webkit:
+
 2004-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -1,35 +1,76 @@
+/* -*- Mode: C; tab-width: 4; -*- */
 /*
-        npapi.h
-	Copyright (c) 2002, Apple, Inc. All rights reserved.
-*/
- 
+ *  npapi.h $Revision$
+ *  Netscape client plug-in API spec
+ */
+
 #ifndef _NPAPI_H_
 #define _NPAPI_H_
 
-#import <CoreServices/CoreServices.h>
-#import <Foundation/Foundation.h>
-/*
- * Values for mode passed to NPP_New:
- */
-#define NP_EMBED		1
-#define NP_FULL 		2
+#ifdef INCLUDE_JAVA
+#include "jri.h"                /* Java Runtime Interface */
+#else
+#define jref    void *
+#define JRIEnv  void
+#endif
 
-/*
- * Values for stream type passed to NPP_NewStream:
- */
-#define NP_NORMAL		1
-#define NP_SEEK 		2
-#define NP_ASFILE		3
-#define NP_ASFILEONLY		4
+#ifdef _WINDOWS
+#	ifndef XP_WIN
+#		define XP_WIN 1
+#	endif /* XP_WIN */
+#endif /* _WINDOWS */
+
+#ifdef __MWERKS__
+#	define _declspec __declspec
+#	ifdef macintosh
+#		ifndef XP_MAC
+#			define XP_MAC 1
+#		endif /* XP_MAC */
+#	endif /* macintosh */
+#	ifdef __INTEL__
+#		undef NULL
+#		ifndef XP_WIN
+#			define XP_WIN 1
+#		endif /* __INTEL__ */
+#	endif /* XP_PC */
+#endif /* __MWERKS__ */
+
+#ifdef __APPLE_CC__
+#   define XP_MACOSX
+#endif
+
+#ifdef XP_MAC
+	#include <Quickdraw.h>
+	#include <Events.h>
+#endif
+
+#ifdef XP_MACOSX
+    #include <ApplicationServices/ApplicationServices.h>
+#endif
+
+#ifdef XP_UNIX
+	#include <X11/Xlib.h>
+	#include <X11/Xutil.h>
+#endif
+
+
+/*----------------------------------------------------------------------*/
+/*		     Plugin Version Constants				*/
+/*----------------------------------------------------------------------*/
+
+#define NP_VERSION_MAJOR 0
+#define NP_VERSION_MINOR 11
+
+
 
 /*----------------------------------------------------------------------*/
 /*		     Definition of Basic Types				*/
 /*----------------------------------------------------------------------*/
 
-#ifndef _uint16
+#ifndef _UINT16
 typedef unsigned short uint16;
 #endif
-#ifndef _uint32
+#ifndef _UINT32
 #if defined(__alpha)
 typedef unsigned int uint32;
 #else /* __alpha */
@@ -47,11 +88,30 @@ typedef long int32;
 #endif /* __alpha */
 #endif
 
-typedef int16 NPError;
-typedef unsigned char NPBool;
-typedef int16 NPReason;
-typedef char* NPMIMEType;
+#ifndef FALSE
+#define FALSE (0)
+#endif
+#ifndef TRUE
+#define TRUE (1)
+#endif
+#ifndef NULL
+#define NULL (0L)
+#endif
 
+typedef unsigned char	NPBool;
+typedef int16			NPError;
+typedef int16			NPReason;
+typedef char*			NPMIMEType;
+
+
+
+/*----------------------------------------------------------------------*/
+/*		     Structures and definitions 			*/
+/*----------------------------------------------------------------------*/
+
+#ifdef XP_MAC
+#pragma options align=mac68k
+#endif
 
 /*
  *  NPP is a plug-in's opaque instance handle
@@ -64,11 +124,12 @@ typedef struct _NPP
 
 typedef NPP_t*	NPP;
 
+
 typedef struct _NPStream
 {
     void*		pdata;		/* plug-in private data */
     void*		ndata;		/* netscape private data */
-    const char* 	URL;
+    const char* 	url;
     uint32		end;
     uint32		lastmodified;
     void*		notifyData;
@@ -98,23 +159,43 @@ typedef struct _NPRect
     uint16	right;
 } NPRect;
 
-typedef RgnHandle NPRegion;
 
-typedef struct NP_Port
-{
-    CGrafPtr	port;		/* Grafport */
-    int32		portx;		/* position inside the topmost window */
-    int32		porty;
-} NP_Port;
-
+#ifdef XP_UNIX
+/*
+ * Unix specific structures and definitions
+ */
 
 /*
- *  Non-standard event types that can be passed to HandleEvent
+ * Callback Structures.
+ *
+ * These are used to pass additional platform specific information.
  */
-#define getFocusEvent	    (osEvt + 16)
-#define loseFocusEvent	    (osEvt + 17)
-#define adjustCursorEvent   (osEvt + 18)
+enum {
+	NP_SETWINDOW = 1,
+	NP_PRINT
+};
 
+typedef struct
+{
+    int32		type;
+} NPAnyCallbackStruct;
+
+typedef struct
+{
+    int32			type;
+    Display*		display;
+    Visual*			visual;
+    Colormap		colormap;
+    unsigned int	depth;
+} NPSetWindowCallbackStruct;
+
+typedef struct
+{
+    int32			type;
+    FILE*			fp;
+} NPPrintCallbackStruct;
+
+#endif /* XP_UNIX */
 
 /*
  * List of variable names for which NPP_GetValue shall be implemented
@@ -138,6 +219,10 @@ typedef enum {
 	NPNVisOfflineBool
 } NPNVariable;
 
+/*
+ * The type of a NPWindow - it specifies the type of the data structure
+ * returned in the window field.
+ */
 typedef enum {
     NPWindowTypeWindow = 1,
     NPWindowTypeDrawable
@@ -152,8 +237,12 @@ typedef struct _NPWindow
     uint32	height;
     NPRect	clipRect;	/* Clipping rectangle in port coordinates */
 						/* Used by MAC only.			  */
+#ifdef XP_UNIX
+    void *	ws_info;	/* Platform-dependent additonal data */
+#endif /* XP_UNIX */
     NPWindowType type;	/* Is this a window or a drawable? */
 } NPWindow;
+
 
 typedef struct _NPFullPrint
 {
@@ -180,91 +269,73 @@ typedef struct _NPPrint
     } print;
 } NPPrint;
 
+#if defined(XP_MAC) || defined(XP_MACOSX)
+typedef EventRecord	NPEvent;
+#elif defined(XP_WIN)
+typedef struct _NPEvent
+{
+    uint16   event;
+    uint32   wParam;
+    uint32   lParam;
+} NPEvent;
+#elif defined (XP_UNIX)
+typedef XEvent NPEvent;
+#else
+typedef void*			NPEvent;
+#endif /* XP_MAC */
 
-typedef NPError	(*NPN_GetURLNotifyProcPtr)(NPP instance, const char* URL, const char* window, void* notifyData);
-typedef NPError (*NPN_PostURLNotifyProcPtr)(NPP instance, const char* URL, const char* window, uint32 len, const char* buf, NPBool file, void* notifyData);
-typedef NPError	(*NPN_RequestReadProcPtr)(NPStream* stream, NPByteRange* rangeList);
-typedef NPError	(*NPN_NewStreamProcPtr)(NPP instance, NPMIMEType type, const char* window, NPStream** stream);
-typedef int32 (*NPN_WriteProcPtr)(NPP instance, NPStream* stream, int32 len, void* buffer);
-typedef NPError (*NPN_DestroyStreamProcPtr)(NPP instance, NPStream* stream, NPReason reason);
-typedef void (*NPN_StatusProcPtr)(NPP instance, const char* message);
-typedef const char*(*NPN_UserAgentProcPtr)(NPP instance);
-typedef void* (*NPN_MemAllocProcPtr)(uint32 size);
-typedef void (*NPN_MemFreeProcPtr)(void* ptr);
-typedef uint32 (*NPN_MemFlushProcPtr)(uint32 size);
-typedef void (*NPN_ReloadPluginsProcPtr)(NPBool reloadPages);
-typedef NPError	(*NPN_GetValueProcPtr)(NPP instance, NPNVariable variable, void *ret_value);
-typedef NPError	(*NPN_SetValueProcPtr)(NPP instance, NPPVariable variable, void *value);
-typedef void (*NPN_InvalidateRectProcPtr)(NPP instance, NPRect *rect);
-typedef void (*NPN_InvalidateRegionProcPtr)(NPP instance, NPRegion region);
-typedef void (*NPN_ForceRedrawProcPtr)(NPP instance);
-typedef NPError	(*NPN_GetURLProcPtr)(NPP instance, const char* URL, const char* window);
-typedef NPError (*NPN_PostURLProcPtr)(NPP instance, const char* URL, const char* window, uint32 len, const char* buf, NPBool file);
-typedef void* (*NPN_GetJavaEnvProcPtr)(void);
-typedef void* (*NPN_GetJavaPeerProcPtr)(NPP instance);
+#if defined(XP_MAC) || defined(XP_MACOSX)
+typedef RgnHandle NPRegion;
+#elif defined(XP_WIN)
+typedef HRGN NPRegion;
+#elif defined(XP_UNIX)
+typedef Region NPRegion;
+#else
+typedef void *NPRegion;
+#endif /* XP_MAC */
 
-typedef NPError	(*NPP_NewProcPtr)(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
-typedef NPError	(*NPP_DestroyProcPtr)(NPP instance, NPSavedData** save);
-typedef NPError	(*NPP_SetWindowProcPtr)(NPP instance, NPWindow* window);
-typedef NPError	(*NPP_NewStreamProcPtr)(NPP instance, NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype);
-typedef NPError	(*NPP_DestroyStreamProcPtr)(NPP instance, NPStream* stream, NPReason reason);
-typedef void 	(*NPP_StreamAsFileProcPtr)(NPP instance, NPStream* stream, const char* fname);
-typedef int32 (*NPP_WriteReadyProcPtr)(NPP instance, NPStream* stream);
-typedef int32 (*NPP_WriteProcPtr)(NPP instance, NPStream* stream, int32 offset, int32 len, void* buffer);
-typedef void (*NPP_PrintProcPtr)(NPP instance, NPPrint* platformPrint);
-typedef int16 (*NPP_HandleEventProcPtr)(NPP instance, void* event);
-typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* URL, NPReason reason, void* notifyData);
-typedef NPError	(*NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_value);
-typedef NPError	(*NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *value);
-typedef void (*NPP_ShutdownProcPtr)(void);
+#if defined(XP_MAC) || defined(XP_MACOSX)
+/*
+ *  Mac-specific structures and definitions.
+ */
 
-typedef void *(*NPP_GetJavaClassProcPtr)(void);
-typedef void*	JRIGlobalRef; //not using this right now
+typedef struct NP_Port
+{
+    CGrafPtr	port;		/* Grafport */
+    int32		portx;		/* position inside the topmost window */
+    int32		porty;
+} NP_Port;
 
-typedef struct _NPNetscapeFuncs {
-    uint16 size;
-    uint16 version;
-    NPN_GetURLProcPtr geturl;
-    NPN_PostURLProcPtr posturl;
-    NPN_RequestReadProcPtr requestread;
-    NPN_NewStreamProcPtr newstream;
-    NPN_WriteProcPtr write;
-    NPN_DestroyStreamProcPtr destroystream;
-    NPN_StatusProcPtr status;
-    NPN_UserAgentProcPtr uagent;
-    NPN_MemAllocProcPtr memalloc;
-    NPN_MemFreeProcPtr memfree;
-    NPN_MemFlushProcPtr memflush;
-    NPN_ReloadPluginsProcPtr reloadplugins;
-    NPN_GetJavaEnvProcPtr getJavaEnv;
-    NPN_GetJavaPeerProcPtr getJavaPeer;
-    NPN_GetURLNotifyProcPtr geturlnotify;
-    NPN_PostURLNotifyProcPtr posturlnotify;
-    NPN_GetValueProcPtr getvalue;
-    NPN_SetValueProcPtr setvalue;
-    NPN_InvalidateRectProcPtr invalidaterect;
-    NPN_InvalidateRegionProcPtr invalidateregion;
-    NPN_ForceRedrawProcPtr forceredraw;
-} NPNetscapeFuncs;
+/*
+ *  Non-standard event types that can be passed to HandleEvent
+ */
+#define getFocusEvent	    (osEvt + 16)
+#define loseFocusEvent	    (osEvt + 17)
+#define adjustCursorEvent   (osEvt + 18)
 
-typedef struct _NPPluginFuncs {
-    uint16 size;
-    uint16 version;
-    NPP_NewProcPtr newp;
-    NPP_DestroyProcPtr destroy;
-    NPP_SetWindowProcPtr setwindow;
-    NPP_NewStreamProcPtr newstream;
-    NPP_DestroyStreamProcPtr destroystream;
-    NPP_StreamAsFileProcPtr asfile;
-    NPP_WriteReadyProcPtr writeready;
-    NPP_WriteProcPtr write;
-    NPP_PrintProcPtr print;
-    NPP_HandleEventProcPtr event;
-    NPP_URLNotifyProcPtr urlnotify;
-    JRIGlobalRef javaClass;
-    NPP_GetValueProcPtr getvalue;
-    NPP_SetValueProcPtr setvalue;
-} NPPluginFuncs;
+#endif /* XP_MAC */
+
+
+/*
+ * Values for mode passed to NPP_New:
+ */
+#define NP_EMBED		1
+#define NP_FULL 		2
+
+/*
+ * Values for stream type passed to NPP_NewStream:
+ */
+#define NP_NORMAL		1
+#define NP_SEEK 		2
+#define NP_ASFILE		3
+#define NP_ASFILEONLY		4
+
+#define NP_MAXREADY	(((unsigned)(~0)<<1)>>1)
+
+#ifdef XP_MAC
+#pragma options align=reset
+#endif
+
 
 /*----------------------------------------------------------------------*/
 /*		     Error and Reason Code definitions			*/
@@ -314,68 +385,98 @@ typedef struct _NPPluginFuncs {
 #define NPVERS_68K_HAS_LIVECONNECT	11
 #define NPVERS_HAS_WINDOWLESS       11
 
-#if defined(__cplusplus)
-extern "C" {
+
+/*----------------------------------------------------------------------*/
+/*		     Function Prototypes				*/
+/*----------------------------------------------------------------------*/
+
+#if defined(_WINDOWS) && !defined(WIN32)
+#define NP_LOADDS  _loadds
+#else
+#define NP_LOADDS
 #endif
 
-typedef NPError (* MainFuncPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownProcPtr*);
-
-typedef NPError (* NP_InitializeFuncPtr)(NPNetscapeFuncs*);
-typedef NPError (* NP_GetEntryPointsFuncPtr)(NPPluginFuncs*);
-typedef void 	(* BP_CreatePluginMIMETypesPreferencesFuncPtr)(void);
-
-typedef void*	(* NP_GetJavaClassFuncPtr)(void);
-
-/*
- * NPN_* functions are provided by the navigator and called by the plugin.
- */
-
-void		NPN_Version(int* plugin_major, int* plugin_minor, int* netscape_major, int* netscape_minor);
-NPError 	NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData);
-NPError 	NPN_GetURL(NPP instance, const char* URL, const char* target);
-NPError 	NPN_PostURLNotify(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData);
-NPError 	NPN_PostURL(NPP instance, const char* URL, const char* target, uint32 len, const char* buf, NPBool file);
-NPError 	NPN_RequestRead(NPStream* stream, NPByteRange* rangeList);
-NPError 	NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream);
-int32		NPN_Write(NPP instance, NPStream* stream, int32 len, void* buffer);
-NPError 	NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason);
-void		NPN_Status(NPP instance, const char* message);
-const char*	NPN_UserAgent(NPP instance);
-void*		NPN_MemAlloc(uint32 size);
-void		NPN_MemFree(void* ptr);
-uint32		NPN_MemFlush(uint32 size);
-void		NPN_ReloadPlugins(NPBool reloadPages);
-void* 		NPN_GetJavaEnv(void);
-void* 		NPN_GetJavaPeer(NPP instance);
-NPError 	NPN_GetValue(NPP instance, NPNVariable variable, void *value);
-NPError 	NPN_SetValue(NPP instance, NPPVariable variable, void *value);
-void		NPN_InvalidateRect(NPP instance, NPRect *invalidRect);
-void		NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion);
-void		NPN_ForceRedraw(NPP instance);
-
-#if defined(__cplusplus)
-} // extern "C"
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 /*
  * NPP_* functions are provided by the plugin and called by the navigator.
  */
-/*
-void		NPP_Shutdown(void);
-NPError		NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
-NPError		NPP_Destroy(NPP instance, NPSavedData** save);
-NPError		NPP_SetWindow(NPP instance, NPWindow* window);
-NPError		NPP_NewStream(NPP instance, NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype);
-NPError		NPP_DestroyStream(NPP instance, NPStream* stream, NPReason reason);
-int32		NPP_WriteReady(NPP instance, NPStream* stream);
-int32		NPP_Write(NPP instance, NPStream* stream, int32 offset, int32 len, void* buffer);
-void		NPP_StreamAsFile(NPP instance, NPStream* stream, const char* fname);
-void		NPP_Print(NPP instance, NPPrint* platformPrint);
-int16		NPP_HandleEvent(NPP instance, void* event);
-void		NPP_URLNotify(NPP instance, const char* URL, NPReason reason, void* notifyData);
-NPError		NPP_GetValue(void *instance, NPPVariable variable, void *value);
-NPError		NPP_SetValue(void *instance, NPNVariable variable, void *value);
 
-void*           NPP_GetJavaClass();
-*/
+#ifdef XP_UNIX
+char*					NPP_GetMIMEDescription(void);
+#endif /* XP_UNIX */
+
+NPError 	NPP_Initialize(void);
+void		NPP_Shutdown(void);
+NPError     NP_LOADDS	NPP_New(NPMIMEType pluginType, NPP instance,
+								uint16 mode, int16 argc, char* argn[],
+								char* argv[], NPSavedData* saved);
+NPError     NP_LOADDS	NPP_Destroy(NPP instance, NPSavedData** save);
+NPError     NP_LOADDS	NPP_SetWindow(NPP instance, NPWindow* window);
+NPError     NP_LOADDS	NPP_NewStream(NPP instance, NPMIMEType type,
+									  NPStream* stream, NPBool seekable,
+									  uint16* stype);
+NPError     NP_LOADDS	NPP_DestroyStream(NPP instance, NPStream* stream,
+										  NPReason reason);
+int32	    NP_LOADDS	NPP_WriteReady(NPP instance, NPStream* stream);
+int32	    NP_LOADDS	NPP_Write(NPP instance, NPStream* stream, int32 offset,
+								  int32 len, void* buffer);
+void	    NP_LOADDS	NPP_StreamAsFile(NPP instance, NPStream* stream,
+										 const char* fname);
+void	    NP_LOADDS	NPP_Print(NPP instance, NPPrint* platformPrint);
+int16			NPP_HandleEvent(NPP instance, void* event);
+void	    NP_LOADDS	NPP_URLNotify(NPP instance, const char* url,
+									  NPReason reason, void* notifyData);
+jref	    NP_LOADDS			NPP_GetJavaClass(void);
+NPError 	NPP_GetValue(void *instance, NPPVariable variable,
+									 void *value);
+NPError 	NPP_SetValue(void *instance, NPNVariable variable,
+									 void *value);
+
+/*
+ * NPN_* functions are provided by the navigator and called by the plugin.
+ */
+
+void		NPN_Version(int* plugin_major, int* plugin_minor,
+							int* netscape_major, int* netscape_minor);
+NPError 	NPN_GetURLNotify(NPP instance, const char* url,
+								 const char* target, void* notifyData);
+NPError 	NPN_GetURL(NPP instance, const char* url,
+						   const char* target);
+NPError 	NPN_PostURLNotify(NPP instance, const char* url,
+								  const char* target, uint32 len,
+								  const char* buf, NPBool file,
+								  void* notifyData);
+NPError 	NPN_PostURL(NPP instance, const char* url,
+							const char* target, uint32 len,
+							const char* buf, NPBool file);
+NPError 	NPN_RequestRead(NPStream* stream, NPByteRange* rangeList);
+NPError 	NPN_NewStream(NPP instance, NPMIMEType type,
+							  const char* target, NPStream** stream);
+int32		NPN_Write(NPP instance, NPStream* stream, int32 len,
+						  void* buffer);
+NPError     NPN_DestroyStream(NPP instance, NPStream* stream,
+								  NPReason reason);
+void		NPN_Status(NPP instance, const char* message);
+const char*	NPN_UserAgent(NPP instance);
+void*		NPN_MemAlloc(uint32 size);
+void		NPN_MemFree(void* ptr);
+uint32		NPN_MemFlush(uint32 size);
+void        NPN_ReloadPlugins(NPBool reloadPages);
+JRIEnv*     NPN_GetJavaEnv(void);
+jref        NPN_GetJavaPeer(NPP instance);
+NPError     NPN_GetValue(NPP instance, NPNVariable variable,
+							 void *value);
+NPError     NPN_SetValue(NPP instance, NPPVariable variable,
+							 void *value);
+void		NPN_InvalidateRect(NPP instance, NPRect *invalidRect);
+void		NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion);
+void		NPN_ForceRedraw(NPP instance);
+
+#ifdef __cplusplus
+}  /* end extern "C" */
+#endif
+
 #endif /* _NPAPI_H_ */

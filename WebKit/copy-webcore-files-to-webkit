@@ -6,7 +6,7 @@ use File::Basename;
 
 my $ProgramName = 'copy-webcore-files-to-webkit';
 
-my %Files = (
+my %WebCoreFiles = (
     'kwq/DOM.h' => 'DOM.subproj/DOM.h',
     'kwq/DOMCore.h' => 'DOM.subproj/DOMCore.h',
     'kwq/DOMViews.h' => 'DOM.subproj/DOMViews.h',
@@ -19,11 +19,17 @@ my %Files = (
     'kwq/DOM-compat.h' => 'DOM.subproj/DOM-compat.h',
 );
 
+my %JavaScriptCoreFiles = (
+    'bindings/NP_runtime.h' => 'Plugins.subproj/npruntime.h',
+);
+
+my $JavaScriptCorePath = '';
 my $WebCorePath = '';
 my $WebKitPath = '';
 
 CheckInWebKit();
 CheckWebCoreFound();
+CheckJavaScriptCoreFound();
 CopyFilesIfNeeded();
 
 #=======================================================================================
@@ -64,14 +70,43 @@ sub CheckWebCoreFound {
 	}
 }
 
+sub CheckJavaScriptCoreFound {
+	my $path = cwd();
+	$path = dirname($path) . '/JavaScriptCore';
+	if (-d $path) {
+		# ok...WebCore is where we expect it
+		$JavaScriptCorePath = $path;
+	}
+	else {
+		Say("*** $ProgramName: JavaScriptCore is not a sibling directory to WebKit. Cannot copy, exiting...");
+        exit(0);
+	}
+}
+
 sub CopyFilesIfNeeded {
 	# Only copy files if the dest file does not exist
 	# or the source file is different than the dest file
 	my $blab = 0;
 	
-	for my $file (keys(%Files)) {
+	for my $file (keys(%WebCoreFiles)) {
 		my $source = "$WebCorePath/$file";
-		my $dest = "$WebKitPath/$Files{$file}";
+		my $dest = "$WebKitPath/$WebCoreFiles{$file}";
+		if (! -f $source) {
+			Fail("$source is not a plain file");	
+		}
+		if (-e $dest && ! -f $dest) {
+			Fail("$dest is not a plain file");	
+		}
+		if (! -e $dest || system("cmp $source $dest > /dev/null 2>&1")) {
+			Say("$ProgramName: copying files...") if $blab == 0;
+			$blab = 1;
+			ExecuteCommand("cp -f $source $dest");
+		}
+	}
+
+	for my $file (keys(%JavaScriptCoreFiles)) {
+		my $source = "$JavaScriptCorePath/$file";
+		my $dest = "$WebKitPath/$JavaScriptCoreFiles{$file}";
 		if (! -f $source) {
 			Fail("$source is not a plain file");	
 		}

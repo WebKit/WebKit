@@ -30,7 +30,7 @@
     }
 
     [URL release];
-    free((void *)stream.URL);
+    free((void *)stream.url);
     free(path);
     [plugin release];
     [deliveryData release];
@@ -75,8 +75,8 @@
     [URL release];
     URL = theURL;
 
-    free((void *)stream.URL);
-    stream.URL = strdup([URL _web_URLCString]);
+    free((void *)stream.url);
+    stream.url = strdup([URL _web_URLCString]);
 
     stream.ndata = self;
     stream.end = expectedContentLength > 0 ? expectedContentLength : 0;

@@ -345,6 +345,8 @@
 				9321290B06068E3100B62302,
 				9321290C06068E3100B62302,
 				9321290D06068E3100B62302,
+				51C16E090613868100A1657B,
+				51C16E4106138EB400A1657B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1501,6 +1503,40 @@
 				);
 			};
 		};
+		51C16E080613868100A1657B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = npruntime.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51C16E090613868100A1657B = {
+			fileRef = 51C16E080613868100A1657B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		51C16E4006138EB400A1657B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = npfunctions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51C16E4106138EB400A1657B = {
+			fileRef = 51C16E4006138EB400A1657B;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		51F6866C0366057300CA2D3A = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2231,8 +2267,10 @@
 		848DFF410365F6FB00CA2ACA = {
 			children = (
 				515B878E05F5348600EABBF9,
+				51C16E4006138EB400A1657B,
 				F5F717220288493C018635CA,
 				F5F717230288493C018635CA,
+				51C16E080613868100A1657B,
 				F5A672B90263866E01000102,
 				F5A672BA0263866E01000102,
 				F5EBC45502134BC301CA1520,
@@ -4462,6 +4500,9 @@
 			fileRef = F5F717220288493C018635CA;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F5F717290288493C018635CA = {

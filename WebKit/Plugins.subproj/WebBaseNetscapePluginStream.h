@@ -5,7 +5,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/npapi.h>
+#import <WebKit/npfunctions.h>
 
 @class WebNetscapePluginPackage;
 @class NSURLResponse;

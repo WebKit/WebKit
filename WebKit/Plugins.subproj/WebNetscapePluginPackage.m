@@ -424,7 +424,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     
     // swap function tables
     if (isCFM) {
-        browserFuncs.version = 11;
+        browserFuncs.version = NP_VERSION_MINOR;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
         browserFuncs.geturl = (NPN_GetURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetURL);
         browserFuncs.posturl = (NPN_PostURLProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_PostURL);
@@ -502,7 +502,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
     } else {
         // no function pointer conversion necessary for mach-o
-        browserFuncs.version = 11;
+        browserFuncs.version = NP_VERSION_MINOR;
         browserFuncs.size = sizeof(NPNetscapeFuncs);
         browserFuncs.geturl = NPN_GetURL;
         browserFuncs.posturl = NPN_PostURL;
