@@ -1,6 +1,26 @@
+2002-02-22  Richard Williamson  <rjw@apple.com>
+
+        Normalized code paths for setMainDataSource on controller and setDataSource on frame.
+        
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	setMainView:andMainDataSource:]), (-[IFBaseWebController
+	createFrameNamed:for:inParent:]), (-[IFBaseWebController
+	_changeFrame:dataSource:]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource
+	_setController:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame init]), (-[IFWebFrame
+	initWithName:view:dataSource:controller:]), (-[IFWebFrame setView:]),
+	(-[IFWebFrame controller]), (-[IFWebFrame setController:]), (-[IFWebFrame
+	setDataSource:]), (-[IFWebFrame reset]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFramePrivate setController:]),
+	(-[IFWebFrame _setRenderFramePart:]), (-[IFWebFrame _renderFramePart]),
+	(-[IFWebFrame _setDataSource:]):
+
 2002-02-21  Richard Williamson  <rjw@apple.com>
 
-    Sop mostly working.
+        Stop mostly working.
     
 	* WebView.subproj/IFBaseWebController.h:
 	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController

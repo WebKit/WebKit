@@ -11,7 +11,6 @@
 
 
 
-
 @implementation IFWebDataSourcePrivate 
 
 - init
@@ -45,10 +44,12 @@
 @implementation IFWebDataSource (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller
 {
-    //if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
-        //[NSException raise:IFRuntimeError format:@"IFWebDataSource::_setController: called not called on main data source."];
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->controller = controller;
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part->setDataSource (self);
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+
+    WEBKIT_ASSERT (data->part != nil);
+
+    data->controller = controller;
+    data->part->setDataSource (self);
 }
 
 

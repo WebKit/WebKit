@@ -7,6 +7,7 @@
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFException.h>
 
 #include <KWQKHTMLPart.h>
@@ -127,20 +128,12 @@
             return NO;
     }
     
-    // Required to break retain cycle between frame and datasource.
+    // Do we need to delete and recreate the main frame?  Or can we reuse it?
     [data->mainFrame reset];
     [data->mainFrame autorelease];
     
-    data->mainFrame = [[IFWebFrame alloc] init];
-    [data->mainFrame setView: view];
-    [view _setController: self];
+    data->mainFrame = [[IFWebFrame alloc] initWithName: @"top" view: view dataSource: dataSource controller: self];
     
-    [data->mainFrame setDataSource: dataSource];
-    [dataSource _setController: self];
-    
-    if (dataSource != nil){
-        [self _changeFrame: data->mainFrame dataSource: dataSource];
-    }
     return YES;
 }
 
@@ -154,7 +147,7 @@
 
     childView = [[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
 
-    newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource] autorelease];
+    newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource controller: self] autorelease];
 
     [parentDataSource addFrame: newFrame];
 
@@ -278,8 +271,9 @@
         [newDataSource _setParent: nil];
     else if (oldDataSource && oldDataSource != newDataSource)
         [newDataSource _setParent: [oldDataSource parent]];
+            
     [newDataSource _setController: self];
-    [frame setDataSource: newDataSource];
+    [frame _setDataSource: newDataSource];
     
     // dataSourceChanged: will reset the view and begin trying to
     // display the new new datasource.

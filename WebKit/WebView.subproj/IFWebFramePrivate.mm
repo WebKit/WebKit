@@ -4,6 +4,7 @@
 	    Copyright 2001, Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 
 @implementation IFWebFramePrivate
@@ -39,6 +40,14 @@
 }
 
 
+- (id <IFWebController>)controller { return controller; }
+- (void)setController: (id <IFWebController>)c
+{ 
+    // Warning:  non-retained reference
+    controller = c;
+}
+
+
 - (IFWebDataSource *)provisionalDataSource { return provisionalDataSource; }
 - (void)setProvisionalDataSource: (IFWebDataSource *)d
 { 
@@ -55,3 +64,31 @@
 
 
 @end
+
+
+@implementation IFWebFrame (IFPrivate)
+
+
+// renderFramePart is a pointer to a RenderPart
+- (void)_setRenderFramePart: (void *)p
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    [data setRenderFramePart: p];
+}
+
+- (void *)_renderFramePart
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data renderFramePart];
+}
+
+- (void)_setDataSource: (IFWebDataSource *)ds
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    [data setDataSource: ds];
+    [ds _setController: [self controller]];
+}
+
+
+@end
+

@@ -7,6 +7,8 @@
 */
 #import <Cocoa/Cocoa.h>
 
+#import <WebKit/IFWebController.h>
+
 @class IFWebDataSource;
 
 @interface IFWebFrame : NSObject
@@ -15,8 +17,13 @@
     id _framePrivate;
 }
 
-- initWithName: (NSString *)name view: view dataSource: (IFWebDataSource *)dataSource;
+- initWithName: (NSString *)name view: view dataSource: (IFWebDataSource *)dataSource controller: (id <IFWebController>)controller;
 - (NSString *)name;
+
+
+- (void)setController: (id <IFWebController>)controller;
+- (id <IFWebController>)controller;
+
 - (void)setView: view;
 - view;
 
@@ -30,12 +37,6 @@
 
 - (IFWebDataSource *)provisionalDataSource;
 
-
-
 - (void)reset;
-
-// private
-- (void)_setRenderFramePart: (void *)p;
-- (void *)_renderFramePart;
 
 @end

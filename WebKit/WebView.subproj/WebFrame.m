@@ -9,15 +9,18 @@
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFBaseWebControllerPrivate.h>
+
+#import <WebKit/WebKitDebug.h>
 
 @implementation IFWebFrame
 
 - init
 {
-    return [self initWithName: nil view: nil dataSource: nil];
+    return [self initWithName: nil view: nil dataSource: nil controller: nil];
 }
 
-- initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d
+- initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d controller: (id<IFWebController>)c
 {
     IFWebFramePrivate *data;
 
@@ -28,8 +31,10 @@
     data = (IFWebFramePrivate *)_framePrivate;
     
     [data setName: n];
-    [data setView: v];
-    [data setDataSource:  d];
+    
+    [self setController: c];
+    [self setView: v];
+    [self setDataSource:  d];
     
     return self; 
 }
@@ -51,6 +56,7 @@
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     [data setView: v];
+    [v _setController: [self controller]];
 }
 
 - view
@@ -58,6 +64,20 @@
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     return [data view];
 }
+
+
+- (id <IFWebController>)controller
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    return [data controller];
+}
+
+- (void)setController: (id <IFWebController>)controller
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+    [data setController: controller];
+}
+
 
 
 - (IFWebDataSource *)dataSource
@@ -71,32 +91,22 @@
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     if ([data dataSource] == ds)
         return;
+
+    WEBKIT_ASSERT ([self controller] != nil);
         
-    [data setDataSource: ds];
-    //[[data dataSource] setFrame: self];
+    // FIXME!  _changeFrame:dataSource: is implemented in IFBaseWebController, not a IFWebController
+    // method!
+    if (ds != nil){
+        [[self controller] _changeFrame: self dataSource: ds];
+    }
 }
 
-// Required to break retain cycle between frame and data source,
-// and also release the widget's view reference.
 - (void)reset
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
     [data setDataSource: nil];
     [[data view] _resetWidget];
     [data setView: nil];
-}
-
-// renderFramePart is a pointer to a RenderPart
-- (void)_setRenderFramePart: (void *)p
-{
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    [data setRenderFramePart: p];
-}
-
-- (void *)_renderFramePart
-{
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-    return [data renderFramePart];
 }
 
 @end
