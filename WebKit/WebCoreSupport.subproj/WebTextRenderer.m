@@ -99,10 +99,34 @@ struct UnicodeGlyphMap {
 + (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
 + (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
 - (NSGlyph)_defaultGlyphForChar:(unichar)uu;
+- (BOOL)_forceAscenderDelta;
+- (BOOL)_canDrawOutsideLineHeight;
+- (BOOL)_isSystemFont;
 @end
 
 @class NSCGSFont;
 
+// FIXME.  This is a horrible workaround to the problem described in 3129490
+@interface NSCGSFont : NSFont {
+    NSFaceInfo *_faceInfo;
+    id _otherFont;	// Try to get rid of this???
+    float *_matrix;
+    struct _NS_cgsResv *_reservedCGS;
+    float _constWidth;		// if isFixedPitch, the actual scaled width
+}
+@end
+
+@interface NSCGSFont (WebPrivate)
+-  (void)_resetLineHeightAdjustmentCache;
+@end
+
+@implementation NSCGSFont (WebPrivate)
+-  (void)_resetLineHeightAdjustmentCache
+{
+    _faceInfo->fontFlags._checkedForceAscDelta = NO;
+    _faceInfo->fontFlags._forceAscDelta = NO;
+}
+@end
 
 static CFCharacterSetRef nonBaseChars = NULL;
 
@@ -446,6 +470,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     spaceWidth = _spaceWidth;
 }
 
+
 - initWithFont:(NSFont *)f
 {
     if ([f glyphPacking] != NSNativeShortGlyphPacking &&
@@ -481,12 +506,22 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
     float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
     float lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
+    float akiAdjustment;
 
     ascent = ROUND_TO_INT(asc);
     descent = ROUND_TO_INT(dsc);
-    lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0);
+
+    // FIXME.  Aki has determined that some fonts should have a size adjustment (20% of
+    // ascender and descender).  The check is performed by _forceAscenderDelta, but that
+    // method caches the result for the entire font family.  Here we reset the cache bit
+    // before calling the check method.
+    [((NSCGSFont *)f) _resetLineHeightAdjustmentCache];
+    akiAdjustment = ([font _forceAscenderDelta] ? floor(((asc + dsc) * 0.20) + 0.5) : 0.0);
+
+    lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0) + akiAdjustment;
 
 #ifdef COMPARE_APPKIT_CG_METRICS
+    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, akiAdjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[f displayName] cString], [f pointSize], lineGap, akiAdjustment, (int)[f _canDrawOutsideLineHeight], (int)[f _isSystemFont]);
     if ((int)ROUND_TO_INT([f ascender]) != ascent ||
         (int)ROUND_TO_INT(-[f descender]) != descent ||
         (int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
@@ -504,9 +539,6 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
         printf ("NSFont:  ascent %f, ", [f ascender]);
         printf ("descent %f, ", [f descender]);
         printf ("lineSpacing %f\n", [font defaultLineHeightForFont]);
-    }
-    else {
-        printf ("\nCG/Appkit matched metrics for font %s, %f\n", [[f displayName] cString], [f pointSize]);
     }
 #endif
     

@@ -1,3 +1,13 @@
+2002-12-17  Richard Williamson   <rjw@apple.com>
+
+        Added support for Aki's 20% boost to line height.  This is
+        done with a horrible hack and should be removed when 3129490
+        is fixed.
+        
+        Reviewed by hyatt.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
 === Alexander-39 ===
 
 === Alexander-38 ===
