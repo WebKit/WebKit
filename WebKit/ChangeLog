@@ -1,3 +1,11 @@
+2002-09-06  Richard Williamson (Home)  <rjw@apple.com>
+
+        Fixed symbol lookup problem.  NSLookupAndBindSymbol() dies horribly
+        if symbol is missing.  Use NSIsSymbolNameDefined() first to check if
+        symbol is present.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+
 2002-09-06  Darin Adler  <darin@apple.com>
 
 	Fix some minor anomalies and leaks.
