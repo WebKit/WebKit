@@ -26,7 +26,8 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
-class QString;
+#include <qobject.h>
+#include <qstring.h>
 
 namespace KIO {
 

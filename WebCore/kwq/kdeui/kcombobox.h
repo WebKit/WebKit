@@ -30,7 +30,7 @@
 
 #include <KWQCompletion.h>
 
-class KComboBox : public QComboBox, public KWQCompletionBase {
+class KComboBox : public QComboBox, public QCompletionBase {
 public:
     KComboBox(QWidget *parent=0, const char *name=0);
     KComboBox(bool rw, QWidget *parent=0, const char *name=0);

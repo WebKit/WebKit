@@ -30,7 +30,7 @@
 
 #include "qwidget.h"
 
-class QRadioButton : public KWQButton {
+class QRadioButton : public QButton {
 public:
     QRadioButton();
     QRadioButton(QWidget *);

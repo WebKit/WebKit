@@ -23,15 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCOLLECTION_H_
-#define QCOLLECTION_H_
+#ifndef KWQDATASTREAM_H_
+#define KWQDATASTREAM_H_
 
-class QCollection {
+#include "qarray.h"
+#include "qstring.h"
+#include "qcstring.h"
+
+#define IO_ReadOnly             0x0001          // readable device
+#define IO_WriteOnly            0x0002          // writable device
+#define IO_ReadWrite            0x0003          // read+write device
+#define IO_Append               0x0004          // append
+#define IO_Truncate             0x0008          // truncate device
+#define IO_Translate            0x0010          // translate CR+LF
+#define IO_ModeMask             0x00ff
+
+class QDataStream {
 public:
-    typedef void *Item;
-    void setAutoDelete(bool);
-protected:
-    virtual Item newItem(Item);
+    QDataStream( QByteArray, int mode );
+    virtual ~QDataStream();
+
+    QDataStream &operator<<(long int);
+    QDataStream &operator<<(const char *);
+    QDataStream &operator<<(const QString &);
+    QDataStream &operator<<(const QCString &);
+    QDataStream &operator>>(const QString &);
 };
 
 #endif

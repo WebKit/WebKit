@@ -29,7 +29,7 @@
 #include <qwidget.h>
 #include <qpalette.h>
 
-class KWQScrollBar : public QWidget {
+class QScrollBar : public QWidget {
 public:
     virtual void setPalette(const QPalette &);
 };

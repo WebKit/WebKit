@@ -27,7 +27,7 @@
 #define QHBOX_H_
 
 #include "qwidget.h"
-#include "qframe.h"
+#include <KWQFrame.h>
 
 class QHBox : public QFrame {
 public:

@@ -31,11 +31,11 @@
 #include <qfont.h>
 #include <qdatetime.h>
 #include <qstring.h>
-#include <qstrlist.h>
 #include <qstringlist.h>
 #include <qvariant.h>
 #include <qmap.h>
 #include <qcolor.h>
+#include <KWQStrList.h>
 
 class KConfigBase {
 public:

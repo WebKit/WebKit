@@ -26,6 +26,8 @@
 #ifndef KIMAGEIO_H_
 #define KIMAGEIO_H_
 
+#include <qstringlist.h>
+
 class KImageIO {
 public:
     enum Mode { Reading, Writing };

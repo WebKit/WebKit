@@ -27,8 +27,7 @@
 #define QLIST_H_
 
 #include <KWQDef.h>
-
-#include "qcollection.h"
+#include <KWQCollection.h>
 
 template <class T> class QList : public QCollection {
 public:

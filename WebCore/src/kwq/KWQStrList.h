@@ -23,28 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QFRAME_H_
-#define QFRAME_H_
+#ifndef KWQSTRLIST_H_
+#define KWQSTRLIST_H_
 
-#include "qwidget.h"
+#include <qstring.h>
+#include <qlist.h>
 
-class QFrame : public QWidget {
+class QStrList : public QList<char> {
 public:
-
-    enum Shape {
-        NoFrame,
-        Box,
-        StyledPanel,
-    };
-    enum Shadow {
-        Sunken,
-    };
-
-    QFrame();
-    QFrame(QWidget *parent);
-
-    virtual void setFrameStyle(int);
-    int frameWidth() const;
 };
 
 #endif

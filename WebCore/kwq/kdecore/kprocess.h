@@ -30,7 +30,7 @@
 
 #include <qobject.h>
 #include <qstring.h>
-#include <qstrlist.h>
+#include <KWQStrList.h>
 
 class KProcess : public QObject {
 public:

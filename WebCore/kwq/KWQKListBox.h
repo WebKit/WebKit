@@ -26,7 +26,7 @@
 #ifndef KLISTBOX_H_
 #define KLISTBOX_H_
 
-#include <qlistbox.h>
+#include <KWQListBox.h>
 #include <qwidget.h>
 
 class KListBox : public QListBox {

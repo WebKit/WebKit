@@ -27,8 +27,7 @@
 #define QPTRDICT_H_
 
 #include <KWQDef.h>
-
-#include "qcollection.h"
+#include <KWQCollection.h>
 
 template <class T> class QPtrDict : public QCollection {
 public:

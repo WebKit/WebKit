@@ -29,10 +29,10 @@
 #include <qwidget.h>
 #include <qstring.h>
 
-class KWQButton : public QWidget {
+class QButton : public QWidget {
 public:
-    KWQButton();
-    KWQButton(QWidget *);
+    QButton();
+    QButton(QWidget *);
     
     virtual void setText(const QString &);
     QString text() const;

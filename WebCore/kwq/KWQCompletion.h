@@ -29,16 +29,16 @@
 #include <qobject.h>
 #include <qstringlist.h>
 
-class KWQCompletion : public QObject {
+class QCompletion : public QObject {
 public:
-    KWQCompletion();
+    QCompletion();
     void setItems(const QStringList &);
 };
 
-class KWQCompletionBase {
+class QCompletionBase {
 public:
-     KWQCompletionBase();
-     KWQCompletion *completionObject(bool hsig = true);
+     QCompletionBase();
+     QCompletion *completionObject(bool hsig = true);
 };
 
 #endif

@@ -27,7 +27,7 @@
 #define KEDITCL_H_
 
 #include <qwidget.h>
-#include <qframe.h>
+#include <KWQFrame.h>
 #include <KWQScrollbar.h>
 #include <qstring.h>
 

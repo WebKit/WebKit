@@ -28,7 +28,7 @@
 
 #include <qpoint.h>
 #include <qevent.h>
-#include <qdatastream.h>
+#include <KWQDataStream.h>
 
 #include <kurl.h>
 

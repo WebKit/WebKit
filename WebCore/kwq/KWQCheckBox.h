@@ -28,7 +28,7 @@
 
 #include <KWQButton.h>
 
-class QCheckBox : public KWQButton {
+class QCheckBox : public QButton {
 public:
     QCheckBox();
     QCheckBox(QWidget *parent);

@@ -27,8 +27,7 @@
 #define QVECTOR_H_
 
 #include <KWQDef.h>
-
-#include "qcollection.h"
+#include <KWQCollection.h>
 
 typedef void *Item;
 

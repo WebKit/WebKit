@@ -35,7 +35,7 @@
 #include "qfont.h"
 #include "qcursor.h"
 #include "qevent.h"
-#include "qstyle.h"
+#include <KWQStyle.h>
 
 class QWidget : public QObject, public QPaintDevice {
 public:

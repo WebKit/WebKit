@@ -32,7 +32,7 @@
 
 #include "kcompletionbox.h"
 
-class KLineEdit : public QLineEdit, public KWQCompletionBase {
+class KLineEdit : public QLineEdit, public QCompletionBase {
 public:
     KLineEdit(QWidget *parent=0, const char *name=0);
 

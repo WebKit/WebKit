@@ -26,13 +26,9 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
+#include <KWQScrollBar.h>
+#include <KWQFrame.h>
 #include "qwidget.h"
-#include "qframe.h"
-
-class QScrollBar : public QWidget {
-public:
-    virtual void setPalette(const QPalette &);
-};
 
 class QScrollView : public QFrame {
 public:

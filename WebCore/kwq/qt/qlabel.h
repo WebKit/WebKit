@@ -26,7 +26,7 @@
 #ifndef QLABEL_H_
 #define QLABEL_H_
 
-#include "qframe.h"
+#include <KWQFrame.h>
 #include "qwidget.h"
 #include "qstring.h"
 

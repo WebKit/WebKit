@@ -31,7 +31,7 @@
 #include "qwidget.h"
 #include "qstring.h"
 
-class QPushButton : public KWQButton {
+class QPushButton : public QButton {
 public:
     QPushButton();
     QPushButton(QWidget *);

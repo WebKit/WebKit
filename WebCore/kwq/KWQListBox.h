@@ -23,17 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QSTYLE_H_
-#define QSTYLE_H_
+#ifndef KWQLISTBOX_H_
+#define KWQLISTBOX_H_
 
-#include <qobject.h>
-#include <qsize.h>
+#include <qscrollview.h>
+#include <qstring.h>
 
-class QStyle : public QObject {
+class QListBoxItem;
+class QListBoxText;
+
+class QListBox : public QScrollView {
 public:
-    GUIStyle guiStyle() const;
-    virtual QSize indicatorSize() const = 0;
-    virtual QSize exclusiveIndicatorSize() const = 0;
+    enum SelectionMode { Single, Multi, Extended, NoSelection };
+
+    uint count() const;
+    void clear();
+    virtual void setSelectionMode(SelectionMode);
+    QListBoxItem *firstItem() const;
+    int currentItem() const;
+    void insertItem(const QString &, int index=-1);
+    void insertItem(const QListBoxItem *, int index=-1);
+    void setSelected(int, bool);
+    bool isSelected(int);
+};
+
+class QListBoxItem {
+public:
+    void setSelectable(bool);
+    QListBox *listBox() const;
+    virtual int width(const QListBox *) const;
+    virtual int height(const QListBox *) const;
+    QListBoxItem *next() const;
+    QListBoxItem *prev() const;
+};
+
+class QListBoxText : public QListBoxItem {
+public:
+     QListBoxText(const QString & text=QString::null);
 };
 
 #endif
