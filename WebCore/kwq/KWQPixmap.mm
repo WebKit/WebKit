@@ -84,23 +84,35 @@ bool QPixmap::isNull() const
 
 QSize QPixmap::size() const
 {
+    if (imageRenderer == nil) {
+        return QSize(0, 0);
+    }
     NSSize sz = [imageRenderer size];
     return QSize((int)sz.width, (int)sz.height);
 }
 
 QRect QPixmap::rect() const
 {
+    if (imageRenderer == nil) {
+        return QRect(0, 0, 0, 0);
+    }
     NSSize sz = [imageRenderer size];
     return QRect(0, 0, (int)sz.width, (int)sz.height);
 }
 
 int QPixmap::width() const
 {
+    if (imageRenderer == nil) {
+        return 0;
+    }
     return (int)[imageRenderer size].width;
 }
 
 int QPixmap::height() const
 {
+    if (imageRenderer == nil) {
+        return 0;
+    }
     return (int)[imageRenderer size].height;
 }
 

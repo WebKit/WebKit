@@ -1,5 +1,18 @@
 2003-02-21  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed a problem that was causing layout tests to give inconsistent results
+
+        * kwq/KWQPixmap.mm:
+        (QPixmap::size): Handle case of nil image so we don't use the uninitialized
+        result of dispatching a method to a structure-returning function.
+        (QPixmap::rect): Ditto.
+        (QPixmap::width): Ditto.
+        (QPixmap::height): Ditto.
+
+2003-02-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - Made it possible to run the layout tests in a Deployment version
