@@ -1,3 +1,14 @@
+2003-04-02  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3213556 - VIP: parent.mainFrameWidth=undefined on page refresh results in missing content
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadItem:withLoadType:]): When reload or going back/forward,
+	make sure to load the original URL of the item, not it's most recent URL.
+        (-[WebFrame _loadURL:intoChild:]): Likewise.
+
 2003-04-02  Richard Williamson  <rjw@apple.com>
 
         Raise exceptions when these methods are called inappropriately.

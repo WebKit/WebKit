@@ -1055,6 +1055,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_loadItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)loadType
 {
     NSURL *itemURL = [item URL];
+    NSURL *itemOriginalURL = [NSURL URLWithString:[item originalURLString]];
     NSURL *currentURL = [[[self dataSource] request] URL];
     NSData *formData = [item formData];
 
@@ -1094,7 +1095,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];            
         }
         else {
-            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
+	    // Use the original URL to ensure we get all the side-effects, such as
+	    // onLoad handlers, of any redirects that happened. An example of where
+	    // this is needed is Radar 3213556.
+            NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemOriginalURL];
             [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
 
             // If this was a repost that failed the page cache, we might try to repost the form.
@@ -1144,7 +1148,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                         ASSERT_NOT_REACHED();
                 }
 
-                action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemURL];
+                action = [self _actionInformationForLoadType:loadType isFormSubmission:NO event:nil originalURL:itemOriginalURL];
             }
 
             [self _loadRequest:request triggeringAction:action loadType:loadType formState:nil];
@@ -1635,7 +1639,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     {
         childItem = [parentItem childItemWithName:[childFrame name]];
         if (childItem) {
-            URL = [childItem URL];
+	    // Use the original URL to ensure we get all the side-effects, such as
+	    // onLoad handlers, of any redirects that happened. An example of where
+	    // this is needed is Radar 3213556.
+            URL = [NSURL URLWithString:[childItem originalURLString]];
             // These behaviors implied by these loadTypes should apply to the child frames
             childLoadType = loadType;
 
