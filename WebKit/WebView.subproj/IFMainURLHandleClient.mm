@@ -93,17 +93,19 @@
     if([dataSource contentPolicy] == IFContentPolicyShow)
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     
-    // update progress
-    [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
-        forResourceHandle:sender fromDataSource:dataSource complete:YES];
-    [[dataSource controller] _didStopLoading:url];
-    [url release];
-    url = nil;
-    
     IFError *nonTerminalError = [sender error];
     if (nonTerminalError){
         [[dataSource controller] _mainReceivedError:nonTerminalError forResourceHandle:sender partialProgress:[IFLoadProgress progressWithURLHandle:sender] fromDataSource:dataSource];
     }
+    else {
+        // update progress
+        [[dataSource controller] _mainReceivedProgress:[IFLoadProgress progressWithURLHandle:sender]
+                forResourceHandle:sender fromDataSource:dataSource complete:YES];
+        [[dataSource controller] _didStopLoading:url];
+    }
+
+    [url release];
+    url = nil;    
     
     [downloadHandler finishedLoading];
     [downloadHandler release];

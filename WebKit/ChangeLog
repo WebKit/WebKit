@@ -1,3 +1,11 @@
+2002-07-01  Richard Williamson  <rjw@apple.com>
+
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+        A completion message was being sent, as well as an error message.
+        This, no doubt confused Alexander.  No only send either the final
+        error message or the completion message.
+
 2002-07-01  Darin Adler  <darin@apple.com>
 
 	Ken fixed the load message sequencing problem in WebFoundation, so now we can
