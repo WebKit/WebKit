@@ -1,8 +1,14 @@
 2003-06-13  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed previous " Reviewed by" string.
+
+        * ChangeLog:
+
+2003-06-13  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3291502>: REGRESSION (80-81): freebsd.org is giving us gzipped content (because we stopped spoofing)
 
-        Reviewed by darin.
+        Reviewed by john.
 
         * WebView.subproj/WebUserAgentSpoofTable.c:
         (hash):
@@ -138,7 +144,9 @@
         (-[WebFrame _setPolicyDataSource:]): new
         (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]): don't call _prepareForProvisionalLoadWithDataSource::, don't muck with policyDataSource because it is only needed in the regular load case
         (-[WebFrame _continueAfterNavigationPolicy:]): don't call _prepareForProvisionalLoadWithDataSource::, call _setPolicyDataSource:nil after _continueLoadRequestAfterNavigationPolicy:: has used policyDataSource
-        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): this method covers the regular load case. This is where we need to stop the load, set the load type and the provisional data source. Code was in _prepareForProvisionalLoadWithDataSource::
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): this method covers the regular load case. This is where we need to stop the load, set the load type and the provisional data source. Code was in _prepareForProvisionalLoadWithData
+
+Source::
         (-[WebFrame _loadDataSource:withLoadType:formState:]): set the policyLoadType and policyDataSource (the beginning of the regular load case)
 
 2003-06-10  Richard Williamson   <rjw@apple.com>
@@ -167,7 +175,9 @@
         (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:formState:]): formatting tweak
         (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): formatting tweak
         (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): if there is no request to continue with, don't reset things like the provisional data source since it was never unset in this case
-        (-[WebFrame _loadDataSource:withLoadType:formState:]): don't call stopLoading, _setLoadType and _setProvisionalDataSource, since that stops the frame even for command-click and option-click. Do this work in _prepareForProvisionalLoadWithDataSource:loadType: instead.
+        (-[WebFrame _loadDataSource:withLoadType:formState:]): don't call stopLoading, _setLoadType and _setProvisionalDataSource, since that stops the frame even for command-click and option-click. Do this work in _prepareForProvisionalLoadWithDataSource
+
+:loadType: instead.
 
 2003-06-10  Richard Williamson   <rjw@apple.com>
 
@@ -434,7 +444,11 @@
 
 
 	Eric Carlson:
-	The problem happens when you call NPP_SetWindow with a 0 width or height more than once. The first call to NPP_SetWindow always seems to have width and height set to 0, but the next call sometimes has it set to the correct values (those in the EMBED tag). This is when it draws successfully. It seems to me that the fix is to always pass the correct width and height to NPP_SetWindow. You always position the plug-in far offscreen (1000000, -52) and set the clip region to an empty rect (48576, 52, 48576, 52) so there isn't really any danger of the plug-in drawing anyway. Additionally, you pass the correct width and height in the call to NPP_New before the first call to NPP_SetWindow.
+	The problem happens when you call NPP_SetWindow with a 0 width or height more than once. The first call to NPP_SetWindow always seems to have width and height set to 0, but the next call sometimes has it set to the correct values (those in the EMBED tag)
+
+. This is when it draws successfully. It seems to me that the fix is to always pass the correct width and height to NPP_SetWindow. You always position the plug-in far offscreen (1000000, -52) and set the clip region to an empty rect (48576, 52, 48576, 52)
+
+ so there isn't really any danger of the plug-in drawing anyway. Additionally, you pass the correct width and height in the call to NPP_New before the first call to NPP_SetWindow.
 
         Reviewed by john, darin.
 
@@ -6386,6 +6400,8 @@
 
 	Instead of creating and managing resourceData in WebMainResourceClient then passing the ownership to WebDataSource, just manage it in WebDataSource. We had the prior behavior because we didn't buffer downloads. Now, we always buffer. The fix for the bug 
 
+
+
 is to retain the incomplete data even though the load ends in error.
 
         Reviewed by darin.
@@ -6447,6 +6463,8 @@ is to retain the incomplete data even though the load ends in error.
 	Fixed: 3189675 - assertion in plug-in code fails (nil window) with .swf page displaying standalone in a tab
 
 	We start plug-ins when they are added to the window and stop them when they are removed. To restart a plug-in, the data stream must be redelivered. This works in the embedded plug-in case, but in the standalone plug-in case, the stream is delivered by th
+
+
 
 e machinery in WebKit. The stream is only delivered once. This fix addresses that.
 
@@ -6913,6 +6931,8 @@ e machinery in WebKit. The stream is only delivered once. This fix addresses tha
         (-[WebDownloadPrivate dealloc]): release the WebResourceDelegateProxy
         (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]): renamed, don't pass a datasource so WebDownload is completely disconnected from the that. Pass the proxy so it transfers ownership from WebMainResourceClient and it doesn'
 
+
+
 t leak when we cancel a download.
         (-[WebDownload _setRequest:]): added
         (-[WebDownload _setResponse:]): added
@@ -7049,6 +7069,8 @@ t leak when we cancel a download.
         Reviewed by trey.
 
         * Downloads.subproj/WebDownload.h: Changed the download delegate method from download:didStartFromDataSource: download:didStartFromRequest:. Passing the data source wasn't that helpful. It was also quirky that the data source would sometimes be ni
+
+
 
 l.
         * Downloads.subproj/WebDownload.m:
@@ -9044,6 +9066,8 @@ l.
 
 
 
+
+
 nown reasons.
 
         Reviewed by darin.
@@ -9537,6 +9561,8 @@ nown reasons.
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed problem where we weren't stopping the Java plug-in. This problem was introduced on Jan. 1 when the ownership of the WebPluginController was moved from WebFrame to WebDataSource. This change moves the WebPluginController to the WebHTMLView. Why this
+
+
 
 
 
@@ -10860,6 +10886,8 @@ nown reasons.
 
 
 
+
+
 ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
 
 	We should:
@@ -10876,6 +10904,8 @@ ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
         * Misc.subproj/WebNSWorkspaceExtras.h: Added.
         * Misc.subproj/WebNSWorkspaceExtras.m: Added.
         (-[NSWorkspace _web_noteFileChangedAtPath:]): Notifies the Finder (or any other app that cares) that we added, removed or changed the attributes of a file. This method is better than calling noteFileSystemChanged: because noteFileSystemChanged: se
+
+
 
 
 
@@ -11507,6 +11537,8 @@ nds 2 apple events both with a 60 second timeout. This method returns immediatel
         Reviewed by john.
 
 	We were reusing the drag types from the previous drag pasteboard. For example, we would declare image types when dragging URLs. This would confuse the Finder, so location files weren't being created. This would occasional cause us to crash because we wer
+
+
 
 
 
