@@ -58,9 +58,13 @@ public:
     QString stripWhiteSpace() const;
     bool isEmpty() const;
     int contains(const char *) const;
+    const char *ascii() const;
+    // FIXME: is there a standard parameter type for overloaded operators?
+    QChar operator[](int) const;
+    QString &operator+=(QChar c);
 
-    QString &append(const char *s);
-    QString &append(const QString &s);
+    QString &append(const char *);
+    QString &append(const QString &);
 
     QCString utf8() const;
 
