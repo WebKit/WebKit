@@ -24,6 +24,7 @@ extern NSString *WebErrorDomainWebKit;
     @constant WebErrorCannotShowMIMEType
     @constant WebErrorCannotShowURL
     @constant WebErrorCannotNotFindApplicationForURL
+    @constant WebErrorLocationChangeInterruptedByURLPolicyChange
 */
 enum {
     WebErrorCannotFindFile = 10000,
@@ -37,5 +38,6 @@ enum {
     WebErrorCannotShowDirectory = 10008,
     WebErrorCannotShowMIMEType = 10009,
     WebErrorCannotShowURL = 10010,
-    WebErrorCannotNotFindApplicationForURL = 10011
+    WebErrorCannotNotFindApplicationForURL = 10011,
+    WebErrorLocationChangeInterruptedByURLPolicyChange = 10012
 };

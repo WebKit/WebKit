@@ -10,6 +10,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadHandler.h>
+#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -185,6 +186,8 @@
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)newRequest
 {
+    WebResourceRequest *result;
+
     [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
 
     // Let the resourceProgressDelegate get a crack at modifying the request.
@@ -201,31 +204,39 @@
 
     NSURL *URL = [newRequest URL];
 
-    LOG(Redirect, "URL = %@", URL);
-
-    // Update cookie policy base URL as URL changes, except for subframes, which use the
-    // URL of the main frame which doesn't change when we redirect.
-    if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
-        [newRequest setCookiePolicyBaseURL:URL];
+    if (![[dataSource webFrame] _shouldShowURL:URL]) {
+        [handle cancel];
+        [[dataSource webFrame] _setProvisionalDataSource:nil];
+	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByURLPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
+        result = nil;
     }
-
-    WebResourceRequest *copy = [newRequest copy];
-
-    // Don't set this on the first request.  It is set
-    // when the main load was started.
-    if (request)
-        [dataSource _setRequest:copy];
-
-    // Not the first send, so reload.
-    if (request) {
-        [self didStopLoading];
-        [self didStartLoadingWithURL:URL];
+    else {
+        LOG(Redirect, "URL = %@", URL);
+    
+        // Update cookie policy base URL as URL changes, except for subframes, which use the
+        // URL of the main frame which doesn't change when we redirect.
+        if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
+            [newRequest setCookiePolicyBaseURL:URL];
+        }
+    
+        WebResourceRequest *copy = [newRequest copy];
+    
+        // Don't set this on the first request.  It is set
+        // when the main load was started.
+        if (request)
+            [dataSource _setRequest:copy];
+    
+        // Not the first send, so reload.
+        if (request) {
+            [self didStopLoading];
+            [self didStartLoadingWithURL:URL];
+        }
+    
+        [request release];
+        result = request = copy;
     }
-
-    [request release];
-    request = copy;
         
-    return newRequest;
+    return result;
 }
 
 -(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)r

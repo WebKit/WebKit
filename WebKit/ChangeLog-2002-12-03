@@ -1,3 +1,13 @@
+2002-10-22  Ken Kocienda  <kocienda@apple.com>
+
+        * Misc.subproj/WebKitErrors.h: Add new error code to signify that a location
+	change has been interrupted by a change in the URLPolicy governing the load.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]): Add code to check the URLPolicy
+	for the URL in the request that is submitted to us in this delegate method. Send
+	a locationChangeDone:forDataSource: message with an error using the newly-defined
+	code in cases where the location change should be cancelled.
+
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
 	Added protocol headers for new plug-in API.
