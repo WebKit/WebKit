@@ -25,9 +25,6 @@
 #include <kwqdebug.h>
 #include <khtml_settings.h>
 
-// FIXME: remove this hack
-static const QString *DEFAULT_ENCODING = NULL;
-
 KHTMLSettings::KHTMLSettings()
 {    
     m_charSet = QFont::Latin1;
@@ -75,80 +72,36 @@ QString KHTMLSettings::settingsToCSS() const
     return QString();
 }
 
-QFont::CharSet KHTMLSettings::charset() const
-{
-    return m_charSet;
-}
-
-
-void KHTMLSettings::setCharset( QFont::CharSet c )
-{
-    m_charSet = c;
-}
-
-
 const QString &KHTMLSettings::encoding() const
 {
-    _logNotYetImplemented();
     // FIXME: remove this hack
+    static const QString *DEFAULT_ENCODING = NULL;
+    _logNotYetImplemented();
     if (DEFAULT_ENCODING == NULL) {
         DEFAULT_ENCODING = new QString(NSSTRING_TO_QSTRING(@"NSISOLatin1StringEncoding"));
     }
     return *DEFAULT_ENCODING;
 }
 
-
 int KHTMLSettings::minFontSize() const
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMinimumFontSize"];
 }
-
 
 int KHTMLSettings::mediumFontSize() const
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMediumFontSize"];
 }
 
-
-static QString *_availableFamiles = 0;
-QString KHTMLSettings::availableFamilies()
-{
-    if (_availableFamiles == 0)
-        _availableFamiles = new QString(NSSTRING_TO_QSTRING([[[NSFontManager sharedFontManager]
-				availableFontFamilies] componentsJoinedByString:@","]));
-    return *_availableFamiles;
-}
-
-
 QFont::CharSet KHTMLSettings::script() const
 {
     return m_charSet;
 }
 
-
 void KHTMLSettings::setScript(QFont::CharSet c)
 {
     m_charSet = c;
 }
-
-
-const QValueList<int> &KHTMLSettings::fontSizes() const
-{
-    unsigned int i;
-    NSArray *fontSizeArray;
-
-    // fetch sizes from defaults, since they might have changed. This may turn out to
-    // be a performance problem, in which case we'll need to add API for refetching
-    // the sizes, which would be called when we reapply styles.
-    m_fontSizes.clear();
-    fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitFontSizes"];
-    for(i=0; i<[fontSizeArray count]; i++){
-        m_fontSizes << [[fontSizeArray objectAtIndex:i] intValue];
-    }
-
-    return m_fontSizes;
-}
-
 
 bool KHTMLSettings::changeCursor() const
 {
@@ -156,21 +109,14 @@ bool KHTMLSettings::changeCursor() const
     return FALSE;
 }
 
-
 bool KHTMLSettings::isFormCompletionEnabled() const
 {
     _logNotYetImplemented();
     return FALSE;
 }
 
-
 int KHTMLSettings::maxFormCompletionItems() const
 {
     _logNotYetImplemented();
     return 0;
-    
 }
-
-
-
-

@@ -1,3 +1,17 @@
+2002-04-23  Darin Adler  <darin@apple.com>
+
+	* khtml/css/css_valueimpl.cpp:
+	(CSSPrimitiveValueImpl::computeLengthFloat):
+	* khtml/css/cssstyleselector.cpp:
+	(CSSStyleSelector::computeFontSizes):
+	Remove our 72/96 dpi changes. They weren't doing much good.
+	But this doesn't fix all the 72/96 dpi issues. It's just the start.
+
+	* kwq/khtml/khtml_settings.h:
+	* kwq/KWQKHTMLSettings.mm:
+	Remove some unused stuff: charset(), setCharset(), availableFamilies(),
+	fontSizes(), SCREEN_RESOLUTION.
+
 2002-04-23  Kenneth Kocienda  <kocienda@apple.com>
 
         Reviewed by: Darin Adler

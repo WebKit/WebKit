@@ -226,11 +226,7 @@ void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics,
 {
     // ### get rid of float / double
     float toPix = paintDeviceMetrics->logicalDpiY()/72.;
-#ifdef APPLE_CHANGES
-    if (toPix  < SCREEN_RESOLUTION/72) toPix = SCREEN_RESOLUTION/72;
-#else
     if (toPix  < 96./72.) toPix = 96./72.;
-#endif
 
     m_fontSizes.clear();
     const float factor = 1.2;
