@@ -22,17 +22,17 @@
 
 @implementation WebDataSource
 
--(id)initWithURL:(NSURL *)theURL
+-(id)initWithURL:(NSURL *)URL
 {
-    return [self initWithURL:theURL attributes:nil flags:0];
+    return [self initWithURL:URL attributes:nil flags:0];
 }
 
--(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes
+-(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes
 {
-    return [self initWithURL:theURL attributes:theAttributes flags:0];
+    return [self initWithURL:URL attributes:theAttributes flags:0];
 }
 
--(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
+-(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
 {
     self = [super init];
     if (!self) {
@@ -40,7 +40,7 @@
     }
     
     _private = [[WebDataSourcePrivate alloc] init];
-    _private->inputURL = [theURL retain];
+    _private->inputURL = [URL retain];
     _private->mainHandle = [[WebResourceHandle alloc] initWithURL: _private->inputURL attributes:theAttributes flags:theFlags];
     
     ++WebDataSourceCount;
@@ -203,9 +203,6 @@
 // method will also stop loads that may be loading in child frames.
 - (void)stopLoading
 {
-    // stop download here because we can't rely on WebResourceHandleDidCancelLoading
-    // as it isn't sent when the app quits
-    [[_private->mainResourceHandleClient downloadHandler] cancel];
     [self _recursiveStopLoading];
 }
 
@@ -213,37 +210,35 @@
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    int i, count;
+    // FIXME: This comment says that the state check is just an optimization, but that's
+    // not true. There's a window where the state is complete, but primaryLoadComplete
+    // is still NO and loading is still YES, because _setPrimaryLoadComplete has not yet
+    // been called. We should fix that and simplify this code here.
     
-    // First check to see if the datasource's frame is in the complete state
-    if ([[self webFrame] _state] == WebFrameStateComplete)
+    // As an optimization, check to see if the frame is in the complete state.
+    // If it is, we aren't loading, so we don't have to check all the child frames.    
+    if ([[self webFrame] _state] == WebFrameStateComplete) {
         return NO;
-        
-    //WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self webFrame] name] cString], (int)_private->primaryLoadComplete, [_private->urlHandles count], [[[self inputURL] absoluteString] cString]);
-    if (_private->primaryLoadComplete == NO && _private->loading)
-        return YES;
-        
-    if ([_private->urlHandles count])
-        return YES;
-    
-    count = [[self children] count];
-    for (i = 0; i < count; i++){
-        WebFrame *childFrame;
-        
-        childFrame = [[self children] objectAtIndex: i];
-        if ([[childFrame dataSource] isLoading])
-            return YES;
-        if ([[childFrame provisionalDataSource] isLoading])
-            return YES;
     }
+    
+    if (!_private->primaryLoadComplete && _private->loading) {
+        return YES;
+    }
+    if ([_private->urlHandles count]) {
+	return YES;
+    }
+     
+    NSEnumerator *e = [[self children] objectEnumerator];
+    WebFrame *childFrame;
+    while ((childFrame = [e nextObject])) {
+        if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading]) {
+            return YES;
+        }
+    }
+    
     return NO;
 }
 
-
-#ifdef TENTATIVE_API
-// Get DOM access to the document.
-- (WebDOMDocument *)document;
-#endif
 
 - (BOOL)isDocumentHTML
 {
@@ -254,8 +249,8 @@
 // FIXME: Move to WebHTMLRepresentation
 - (NSString *)documentSource
 {
-    // FIMXE: other encodings
-    if([self isDocumentHTML]){
+    // FIMXE: Converting to string with ASCII encoding is not appropriate, although it works for some pages.
+    if ([self isDocumentHTML]) {
         return [[[NSString alloc] initWithData:[self data] encoding:NSASCIIStringEncoding] autorelease];
     }
     return nil;
@@ -282,12 +277,12 @@
 }
 
 // Style sheet
-- (void)setUserStyleSheetFromURL: (NSURL *)url
+- (void)setUserStyleSheetFromURL:(NSURL *)url
 {
     [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::setUserStyleSheetFromURL: is not implemented"];
 }
 
-- (void)setUserStyleSheetFromString: (NSString *)sheet
+- (void)setUserStyleSheetFromString:(NSString *)sheet
 {
     [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::setUserStyleSheetFromString: is not implemented"];
 }
@@ -297,7 +292,7 @@
 // that WebCore also has dependencies on the appkit.
 - (NSImage *)icon
 {
-    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::setUserStyleSheetFromString: is not implemented"];
+    [NSException raise:WebMethodNotYetImplemented format:@"WebDataSource::icon is not implemented"];
     return nil;
 }
 

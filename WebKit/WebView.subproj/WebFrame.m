@@ -35,8 +35,6 @@
 
     _private = [[WebFramePrivate alloc] init];
 
-    [self _setState: WebFrameStateUninitialized];    
-
     [self setController: c];
 
     [self _changeBridge];

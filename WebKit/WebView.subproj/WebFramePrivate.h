@@ -16,19 +16,16 @@
 @protocol WebDocumentLoading;
 
 typedef enum {
-    WebFrameStateUninitialized = 1,
-    WebFrameStateProvisional = 2,
+    WebFrameStateProvisional,
     
     // This state indicates we are ready to commit to a page,
-    // that means the view will transition to use the new
-    // datasource.
-    WebFrameStateCommittedPage = 3,
+    // which means the view will transition to use the new data source.
+    WebFrameStateCommittedPage,
     
-    // This state indicates that it is reasonable to perform
-    // a layout.
-    WebFrameStateLayoutAcceptable = 4,
+    // This state indicates that it is reasonable to perform a layout.
+    WebFrameStateLayoutAcceptable,
     
-    WebFrameStateComplete = 5
+    WebFrameStateComplete
 } WebFrameState;
 
 typedef enum {

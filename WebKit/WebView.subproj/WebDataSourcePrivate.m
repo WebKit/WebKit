@@ -9,6 +9,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 
 #import <WebKit/WebDocument.h>
+#import <WebKit/WebDownloadHandler.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -201,8 +202,11 @@
 
 - (void)_stopLoading
 {
-    int i, count;
-    WebResourceHandle *handle;
+    NSArray *handles;
+
+    // Stop download here because we can't rely on WebResourceHandleDidCancelLoading
+    // as it isn't sent when the app quits.
+    [[_private->mainResourceHandleClient downloadHandler] cancel];
 
     if (!_private->loading) {
 	return;
@@ -212,13 +216,9 @@
     
     [_private->mainHandle cancelLoadInBackground];
     
-    // Tell all handles to stop loading.
-    count = [_private->urlHandles count];
-    for (i = 0; i < count; i++) {
-        handle = [_private->urlHandles objectAtIndex: i];
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelling %s\n", [[[handle url] absoluteString] cString] );
-        [[_private->urlHandles objectAtIndex: i] cancelLoadInBackground];
-    }
+    handles = [_private->urlHandles copy];
+    [handles makeObjectsPerformSelector:@selector(cancelLoadInBackground)];
+    [handles release];
 
     if (_private->committed) {
 	[[self _bridge] closeURL];        
@@ -229,22 +229,8 @@
 
 - (void)_recursiveStopLoading
 {
-    NSArray *frames;
-    WebFrame *nextFrame;
-    int i, count;
-    WebDataSource *childDataSource, *childProvisionalDataSource;
-    
     [self _stopLoading];
-    
-    frames = [self children];
-    count = [frames count];
-    for (i = 0; i < count; i++){
-        nextFrame = [frames objectAtIndex: i];
-        childDataSource = [nextFrame dataSource];
-        [childDataSource _recursiveStopLoading];
-        childProvisionalDataSource = [nextFrame provisionalDataSource];
-        [childProvisionalDataSource _recursiveStopLoading];
-    }
+    [[self children] makeObjectsPerformSelector:@selector(stopLoading)];
 }
 
 - (double)_loadingStartedTime
@@ -273,24 +259,23 @@
     [_private->pageTitle release];
     _private->pageTitle = [trimmed copy];
     
-    // The title doesn't get communicated to the controller until
-    // we reach the committed state for this data source's frame.
-    if ([[self webFrame] _state] >= WebFrameStateCommittedPage)
+    // The title doesn't get communicated to the controller until we are committed.
+    if (_private->committed)
         [[_private->controller locationChangeHandler] receivedPageTitle:_private->pageTitle forDataSource:self];
 }
 
-- (void)_setFinalURL: (NSURL *)url
+- (void)_setFinalURL:(NSURL *)URL
 {
     // We should never be getting a redirect callback after the data
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
     WEBKIT_ASSERT(!_private->committed);
 
-    [url retain];
+    [URL retain];
     [_private->finalURL release];
-    _private->finalURL = url;
+    _private->finalURL = URL;
 
-    [[_private->controller locationChangeHandler] serverRedirectTo:url forDataSource:self];
+    [[_private->controller locationChangeHandler] serverRedirectTo:URL forDataSource:self];
 }
 
 - (void) _setContentPolicy:(WebContentPolicy *)policy
@@ -471,22 +456,20 @@
     }
 }
 
-- (void)_setIconURL:(NSURL *)url
+- (void)_setIconURL:(NSURL *)URL
 {
-    // Lower priority than typed icon, so ignore this if we
-    // already have an iconURL
+    // Lower priority than typed icon, so ignore this if we already have an iconURL.
     if (_private->iconURL == nil) {
 	[_private->iconURL release];
-	_private->iconURL = [url retain];
+	_private->iconURL = [URL retain];
     }
 }
 
-- (void)_setIconURL:(NSURL *)url withType:(NSString *)iconType
+- (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType
 {
-    // FIXME: should check to make sure the type is one we know how to
-    // handle
+    // FIXME: Should check to make sure the type is one we know how to handle.
     [_private->iconURL release];
-    _private->iconURL = [url retain];
+    _private->iconURL = [URL retain];
 }
 
 - (WebResourceHandle*)_mainHandle

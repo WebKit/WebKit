@@ -1,3 +1,29 @@
+2002-08-05  Darin Adler  <darin@apple.com>
+
+	- fixed 3014122 -- spinner never stops spinning when iframe has URL with bad path
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]): Initialize the
+	state in WebFramePrivate init instead.
+        * WebView.subproj/WebFramePrivate.h: Remove WebFrameStateUninitialized.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate init]): Set initial state to WebFrameStateComplete.
+        (-[WebFrame _transitionToLayoutAcceptable]): Remove WebFrameStateUninitialized case.
+        (-[WebFrame _transitionToCommitted]): Remove WebFrameStateUninitialized case.
+        (-[WebFrame _isLoadComplete]): Remove WebFrameStateUninitialized case.
+
+        * WebView.subproj/WebDataSource.h: Tweak.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource stopLoading]): Move downloadHandler logic from here into _stopLoading.
+        (-[WebDataSource isLoading]): Rewrite for simplicity.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoading]): Move downloadHandler logic here from stopLoading.
+	Also make this work even if handles are removed from the list during the stop process.
+        (-[WebDataSource _recursiveStopLoading]): Simplify a lot by using WebFrame's stopLoading.
+        (-[WebDataSource _setTitle:]): Use the committed boolean rather than the state to check
+	if the title change should be sent to the location change handler.
+
 2002-08-05  Maciej Stachowiak  <mjs@apple.com>
 
         * Misc.subproj/WebKitDebug.h: Put WEBKIT_ASSERT_NOT_REACHED()

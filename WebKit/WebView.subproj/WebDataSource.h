@@ -34,9 +34,9 @@
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
--(id)initWithURL:(NSURL *)inputURL;
--(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes;
--(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
+-(id)initWithURL:(NSURL *)URL;
+-(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes;
+-(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
 
 #ifdef TENTATIVE_API
 - initWithData: (NSData *)data;
@@ -68,7 +68,7 @@
 // associated with a frame set or iframe.
 - (NSArray *)children;
 
-- (WebFrame *)frameNamed: (NSString *)frameName;
+- (WebFrame *)frameNamed:(NSString *)frameName;
 
 // Returns an array of NSStrings or nil.  The NSStrings corresponds to
 // frame names.  If this data source is the main document and has no
@@ -77,11 +77,11 @@
 
 // findDataSourceForFrameNamed: returns the child data source associated with
 // the frame named 'name', or nil. 
-- (WebDataSource *) findDataSourceForFrameNamed: (NSString *)name;
+- (WebDataSource *)findDataSourceForFrameNamed:(NSString *)name;
 
 - (BOOL)frameExists: (NSString *)name;
 
-- (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
+- (void)openURL:(NSURL *)URL inFrameNamed:(NSString *)frameName;
 
 // Set the controller for this data source.  NOTE:  The controller is not retained by the
 // data source.  Perhaps setController: should be private?  Perhaps the back pointers

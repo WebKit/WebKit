@@ -26,9 +26,7 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFoundation.h>
 
-static const char * const stateNames[6] = {
-    "zero state",
-    "WebFrameStateUninitialized",
+static const char * const stateNames[] = {
     "WebFrameStateProvisional",
     "WebFrameStateCommittedPage",
     "WebFrameStateLayoutAcceptable",
@@ -36,6 +34,18 @@ static const char * const stateNames[6] = {
 };
 
 @implementation WebFramePrivate
+
+- init
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
+    state = WebFrameStateComplete;
+    
+    return self;
+}
 
 - (void)dealloc
 {
@@ -74,10 +84,9 @@ static const char * const stateNames[6] = {
 - (WebDataSource *)dataSource { return dataSource; }
 - (void)setDataSource: (WebDataSource *)d
 {
-    if (dataSource != d) {
-        [dataSource release];
-        dataSource = [d retain];
-    }
+    [d retain];
+    [dataSource release];
+    dataSource = d;
 }
 
 - (WebController *)controller { return controller; }
@@ -224,7 +233,6 @@ static const char * const stateNames[6] = {
             break;
         }
         
-        case WebFrameStateUninitialized:
         default:
         {
 	    WEBKIT_ASSERT_NOT_REACHED();
@@ -305,7 +313,6 @@ static const char * const stateNames[6] = {
             break;
         }
         
-        case WebFrameStateUninitialized:
         case WebFrameStateCommittedPage:
         case WebFrameStateLayoutAcceptable:
         case WebFrameStateComplete:
@@ -355,12 +362,6 @@ static const char * const stateNames[6] = {
     WEBKIT_ASSERT ([self controller] != nil);
 
     switch ([self _state]) {
-        // Shouldn't ever be in this state.
-        case WebFrameStateUninitialized:
-        {
-	    WEBKIT_ASSERT_NOT_REACHED();
-        }
-        
         case WebFrameStateProvisional:
         {
             WebDataSource *pd = [self provisionalDataSource];
