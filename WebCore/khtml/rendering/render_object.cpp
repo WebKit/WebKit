@@ -1544,11 +1544,7 @@ int RenderObject::paddingRight() const
 
 RenderCanvas* RenderObject::canvas() const
 {
-    RenderObject* o = const_cast<RenderObject*>( this );
-    while ( o->parent() ) o = o->parent();
-
-    KHTMLAssert( o->isCanvas() );
-    return static_cast<RenderCanvas*>( o );
+    return static_cast<RenderCanvas*>(document()->renderer());
 }
 
 RenderObject *RenderObject::container() const

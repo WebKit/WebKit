@@ -54,7 +54,6 @@ RenderImage::RenderImage(NodeImpl *_node)
 {
     image = 0;
     berrorPic = false;
-    loadEventSent = false;
     m_selectionState = SelectionNone;
 
     setIntrinsicWidth( 0 );
@@ -80,6 +79,15 @@ void RenderImage::setContentObject(CachedObject* co)
         image = static_cast<CachedImage*>(co);
         if (image) image->ref(this);
     }
+}
+
+void RenderImage::setImage(CachedImage* newImage)
+{
+    if (image)
+        image->deref(this);
+    image = newImage;
+    if (image)
+        image->ref(this);
 }
 
 void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
@@ -520,57 +528,6 @@ void RenderImage::layout()
     setNeedsLayout(false);
 }
 
-void RenderImage::notifyFinished(CachedObject *finishedObj)
-{
-    if (image == finishedObj) {
-        NodeImpl *node = element();
-        if (node) {
-            DocumentImpl *document = node->getDocument();
-            if (document) {
-                document->dispatchImageLoadEventSoon(this);
-            }
-        }
-    }
-}
-
-void RenderImage::dispatchLoadEvent()
-{
-    if (!loadEventSent) {
-        NodeImpl *node = element();
-        if (node) {
-            loadEventSent = true;
-            if (image->isErrorImage()) {
-                node->dispatchHTMLEvent(EventImpl::ERROR_EVENT, false, false);
-            } else {
-                node->dispatchHTMLEvent(EventImpl::LOAD_EVENT, false, false);
-            }
-        }
-    }
-}
-
-#ifdef FIX_3109150
-void RenderImage::reload()
-{
-    khtml::DocLoader *loader = element()->getDocument()->docLoader();
-    KIO::CacheControl savedCachePolicy = loader->cachePolicy();
-    loader->setCachePolicy(KIO::CC_Reload);
-    updateFromElement();
-    loader->setCachePolicy(savedCachePolicy);
-}
-#endif
-
-void RenderImage::detach()
-{
-    NodeImpl *node = element();
-    if (node) {
-        DocumentImpl *document = node->getDocument();
-        if (document) {
-            document->removeImage(this);
-        }
-    }
-    RenderReplaced::detach();
-}
-
 HTMLMapElementImpl* RenderImage::imageMap()
 {
     HTMLImageElementImpl* i = element()->id() == ID_IMG ? static_cast<HTMLImageElementImpl*>(element()) : 0;
@@ -597,33 +554,8 @@ bool RenderImage::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return inside;
 }
 
-void RenderImage::updateFromElement()
+void RenderImage::updateAltText()
 {
-    DOMString attr;
-    // Support images in OBJECT tags.
-    if (element()->id() == ID_OBJECT) {
-        attr = element()->getAttribute(ATTR_DATA);
-    } else {
-        attr = element()->getAttribute(ATTR_SRC);
-    }
-    
-    // Treat a lack of src or empty string for src as no image at all, not the page itself
-    // loaded as an image.
-    CachedImage *new_image;
-    if (attr.isEmpty())
-        new_image = NULL;
-    else
-        new_image = element()->getDocument()->docLoader()->requestImage(khtml::parseURL(attr));
-
-    if(new_image && new_image != image && (!style() || !style()->contentData())) {
-        loadEventSent = false;
-        CachedImage *old_image = image;
-        image = new_image;
-        image->ref(this);
-        berrorPic = image->isErrorImage();
-        if (old_image) old_image->deref(this);
-    }
-
     if (element()->id() == ID_INPUT)
         alt = static_cast<HTMLInputElementImpl*>(element())->altText();
     else if (element()->id() == ID_IMG)

@@ -28,11 +28,42 @@
 #include "rendering/render_object.h"
 
 #include <qregion.h>
+#include <qmap.h>
+#include <qpixmap.h>
+
+namespace khtml {
+    class CachedImage;
+    class CachedObjectClient;
+}
 
 namespace DOM {
 
 class DOMString;
 
+class HTMLImageLoader: public khtml::CachedObjectClient {
+public:
+    HTMLImageLoader(ElementImpl* elt);
+    virtual ~HTMLImageLoader();
+
+    void updateFromElement();
+    void removedFromDocument();
+    
+    void dispatchLoadEvent();
+
+    ElementImpl* element() const { return m_element; }
+    bool imageComplete() const { return m_imageComplete; }
+    khtml::CachedImage* image() const { return m_image; }
+
+    // CachedObjectClient API
+    virtual void notifyFinished(khtml::CachedObject *finishedObj);
+
+private:
+    ElementImpl* m_element;
+    khtml::CachedImage* m_image;
+    bool m_firedLoad : 1;
+    bool m_imageComplete : 1;
+};
+    
 class HTMLImageElementImpl
     : public HTMLElementImpl
 {
@@ -49,7 +80,8 @@ public:
     virtual void attach();
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
-
+    virtual void removedFromDocument();
+    
     long width() const;
     long height() const;
 
@@ -67,6 +99,7 @@ public:
 #endif
     
 protected:
+    HTMLImageLoader m_imageLoader;
     DOMString usemap;
     bool ismap;
     QString oldIdAttr;

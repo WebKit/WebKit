@@ -1,3 +1,45 @@
+2004-05-10  David Hyatt  <hyatt@apple.com>
+
+	Move image loading to content.
+	
+        Reviewed by kocienda
+
+        * khtml/html/html_imageimpl.cpp:
+        (m_imageComplete):
+        (HTMLImageLoader::~HTMLImageLoader):
+        (HTMLImageLoader::updateFromElement):
+        (HTMLImageLoader::removedFromDocument):
+        (HTMLImageLoader::dispatchLoadEvent):
+        (HTMLImageLoader::notifyFinished):
+        (HTMLImageElementImpl::HTMLImageElementImpl):
+        (HTMLImageElementImpl::parseHTMLAttribute):
+        (HTMLImageElementImpl::attach):
+        (HTMLImageElementImpl::detach):
+        (HTMLImageElementImpl::removedFromDocument):
+        (HTMLImageElementImpl::currentImage):
+        * khtml/html/html_imageimpl.h:
+        (DOM::):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (HTMLObjectElementImpl::removedFromDocument):
+        (HTMLObjectElementImpl::attach):
+        * khtml/html/html_objectimpl.h:
+        * khtml/misc/loader.cpp:
+        (CachedImage::ref):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::RenderImage):
+        (RenderImage::setImage):
+        (RenderImage::updateAltText):
+        * khtml/rendering/render_image.h:
+        (khtml::RenderImage::getImage):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::canvas):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::dispatchImageLoadEventSoon):
+        (DocumentImpl::removeImage):
+        (DocumentImpl::dispatchImageLoadEventsNow):
+        * khtml/xml/dom_docimpl.h:
+
 2004-05-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.

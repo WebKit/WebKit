@@ -92,6 +92,7 @@ namespace DOM {
     class GenericRONamedNodeMapImpl;
     class HTMLDocumentImpl;
     class HTMLElementImpl;
+    class HTMLImageLoader;
     class HTMLMapElementImpl;
     class NodeFilter;
     class NodeFilterImpl;
@@ -476,9 +477,9 @@ public:
      */
     void processHttpEquiv(const DOMString &equiv, const DOMString &content);
     
-    void dispatchImageLoadEventSoon(khtml::RenderImage *);
+    void dispatchImageLoadEventSoon(HTMLImageLoader*);
     void dispatchImageLoadEventsNow();
-    void removeImage(khtml::RenderImage *);
+    void removeImage(HTMLImageLoader*);
     virtual void timerEvent(QTimerEvent *);
     
     // Returns the owning element in the parent document.
@@ -601,8 +602,8 @@ protected:
     KWQAccObjectCache* m_accCache;
 #endif
     
-    QPtrList<khtml::RenderImage> m_imageLoadEventDispatchSoonList;
-    QPtrList<khtml::RenderImage> m_imageLoadEventDispatchingList;
+    QPtrList<HTMLImageLoader> m_imageLoadEventDispatchSoonList;
+    QPtrList<HTMLImageLoader> m_imageLoadEventDispatchingList;
     int m_imageLoadEventTimer;
 
     NodeImpl* m_cssTarget;

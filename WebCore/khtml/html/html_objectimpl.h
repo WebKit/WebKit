@@ -23,7 +23,7 @@
 #ifndef HTML_OBJECTIMPL_H
 #define HTML_OBJECTIMPL_H
 
-#include "html_elementimpl.h"
+#include "html_imageimpl.h"
 #include "xml/dom_stringimpl.h"
 #include "java/kjavaappletcontext.h"
 
@@ -117,7 +117,9 @@ public:
     virtual bool rendererIsNeeded(khtml::RenderStyle *);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void detach();
-
+    
+    virtual void removedFromDocument();
+    
     virtual void recalcStyle( StyleChange ch );
 
     DocumentImpl* contentDocument() const;
@@ -128,6 +130,7 @@ public:
     QString url;
     QString classId;
     bool needWidgetUpdate;
+    HTMLImageLoader m_imageLoader;
 };
 
 // -------------------------------------------------------------------------

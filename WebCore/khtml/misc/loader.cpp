@@ -556,7 +556,7 @@ void CachedImage::ref( CachedObjectClient *c )
     }
 
     // for mouseovers, dynamic changes
-    if ( m_status >= Persistent && !valid_rect().isNull() )
+    if (!valid_rect().isNull())
         c->setPixmap( pixmap(), valid_rect(), this);
 
     if(!m_loading) c->notifyFinished(this);
