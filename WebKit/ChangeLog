@@ -1,5 +1,16 @@
 2005-03-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        <rdar://problem/4040388> REGRESSION (172-173): nonrepro crash in -[NSString(WebNSURLExtras) _web_isUserVisibleURL]
+
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSString _web_isUserVisibleURL]): Fixed some pointer expressions that didn't include the index in the expression.
+        (readIDNScriptWhiteListFile): Removed NSLog statements in here since we decided they aren't useful and they will
+        write some messages on Tiger.
+
+2005-03-09  Darin Adler  <darin@apple.com>
+
         * DOM.subproj/DOMPrivate.h: Checked in file copied from WebCore.
 
 2005-03-08  Richard Williamson   <rjw@apple.com>

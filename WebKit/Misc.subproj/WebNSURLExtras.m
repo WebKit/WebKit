@@ -736,7 +736,7 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
             i += 2;
         } else {
             // Check for "xn--" in an efficient, non-case-sensitive, way.
-            if (c == '-' && i >= 3 && (p[-3] | 0x20) == 'x' && (p[-2] | 0x20) == 'n' && p[-1] == '-') {
+            if (c == '-' && i >= 3 && (p[i - 3] | 0x20) == 'x' && (p[i - 2] | 0x20) == 'n' && p[i - 1] == '-') {
                 valid = NO;
                 break;
             }
@@ -805,14 +805,9 @@ static BOOL readIDNScriptWhiteListFile(NSString *filename)
         if (result == 1) {
             // Got a word, map to script code and put it into the array.
             int32_t script = u_getPropertyValueEnum(UCHAR_SCRIPT, word);
-            if (script == UCHAR_INVALID_CODE) {
-                NSLog(@"%@: unknown script code: %s", filename, word);
-            } else if (script >= 0 && script < USCRIPT_CODE_LIMIT) {
+            if (script >= 0 && script < USCRIPT_CODE_LIMIT) {
                 size_t index = script / 32;
                 uint32_t mask = 1 << (script % 32);
-                if (IDNScriptWhiteList[index] & mask) {
-                    NSLog(@"%@: script code %s is listed twice\n", filename, word);
-                }
                 IDNScriptWhiteList[index] |= mask;
             }
         }
