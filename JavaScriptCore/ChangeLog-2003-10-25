@@ -1,3 +1,20 @@
+2003-02-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey and Ken.
+
+        - fixed 3142355 -- nil-deref in CFTimeZoneCopyAbbreviation
+
+        Although I can't reproduce this bug, it seems that it's caused by CFTimeZoneCopyDefault returning NULL.
+        I'm almost certain that the UTC time zone will be created successfully in this case, so I'll just use that.
+
+        * kjs/date_object.cpp:
+        (UTCTimeZone): Added. Gets the UTC time zone (once in a global).
+        (CopyLocalTimeZone): Added. Gets the local time zone, but falls back to UTC.
+        (gmtimeUsingCF): Use UTCTimeZone.
+        (localtimeUsingCF): Use CopyLocalTimeZone.
+        (mktimeUsingCF): Use CopyLocalTimeZone.
+        (timegmUsingCF): Use UTCTimeZone.
+
 2003-02-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

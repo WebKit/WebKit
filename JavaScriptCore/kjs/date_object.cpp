@@ -109,15 +109,31 @@ static struct tm *tmUsingCF(time_t clock, CFTimeZoneRef timeZone)
     return &result;
 }
 
+static CFTimeZoneRef UTCTimeZone()
+{
+    static CFTimeZoneRef zone = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
+    return zone;
+}
+
+static CFTimeZoneRef CopyLocalTimeZone()
+{
+    CFTimeZoneRef zone = CFTimeZoneCopyDefault();
+    if (zone) {
+        return zone;
+    }
+    zone = UTCTimeZone();
+    CFRetain(zone);
+    return zone;
+}
+
 static struct tm *gmtimeUsingCF(const time_t *clock)
 {
-    static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
-    return tmUsingCF(*clock, timeZoneUTC);
+    return tmUsingCF(*clock, UTCTimeZone());
 }
 
 static struct tm *localtimeUsingCF(const time_t *clock)
 {
-    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+    CFTimeZoneRef timeZone = CopyLocalTimeZone();
     struct tm *result = tmUsingCF(*clock, timeZone);
     CFRelease(timeZone);
     return result;
@@ -146,7 +162,7 @@ static time_t timetUsingCF(struct tm *tm, CFTimeZoneRef timeZone)
 
 static time_t mktimeUsingCF(struct tm *tm)
 {
-    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
+    CFTimeZoneRef timeZone = CopyLocalTimeZone();
     time_t result = timetUsingCF(tm, timeZone);
     CFRelease(timeZone);
     return result;
@@ -154,8 +170,7 @@ static time_t mktimeUsingCF(struct tm *tm)
 
 static time_t timegmUsingCF(struct tm *tm)
 {
-    static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
-    return timetUsingCF(tm, timeZoneUTC);
+    return timetUsingCF(tm, UTCTimeZone());
 }
 
 static time_t timeUsingCF(time_t *clock)
