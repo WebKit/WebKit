@@ -264,6 +264,8 @@
     
     else if ([name isEqualToString:@"_blank"]){
         IFWebController *newController = [[[self controller] windowContext] openNewWindowWithURL: nil];
+	[[[[newController windowContext] window] windowController] showWindow:nil];
+
         return [newController mainFrame];
     }
     

@@ -1,5 +1,13 @@
 2002-07-01  Maciej Stachowiak  <mjs@apple.com>
 
+        Part of fix for Radar 2976618 - links targeting _blank hit
+	assertion trying to set provisional data source
+
+	* WebView.subproj/IFWebFrame.mm:
+        (-[IFWebFrame frameNamed:]): Show the window.
+
+2002-07-01  Maciej Stachowiak  <mjs@apple.com>
+
 	Fix Radar 2953256 - Auth sheet appears detached when clicking
 	directly on auth link with Alex not running
 	
