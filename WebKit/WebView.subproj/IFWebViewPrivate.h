@@ -31,6 +31,7 @@ class QWidget;
 @interface IFWebView (IFPrivate)
 - (void)_setDocumentView:(id <IFDocumentLoading>)view;
 - (void)_setController:(IFWebController *)controller;
+- (IFWebController *)_controller;
 - (int)_marginWidth;
 - (int)_marginHeight;
 - (void)_setMarginWidth:(int)w;

@@ -1,5 +1,17 @@
 2002-06-25  Richard Williamson  <rjw@apple.com>
 
+        Support for rudimentary plain text 'copy'.
+
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView copy:]):
+        * WebView.subproj/IFWebViewPrivate.h:
+        * WebView.subproj/IFWebViewPrivate.mm:
+        (-[IFWebView _controller]):
+
+2002-06-25  Richard Williamson  <rjw@apple.com>
+
         Enabled progressive image loading code.
         
         * WebCoreSupport.subproj/IFImageRenderer.h:

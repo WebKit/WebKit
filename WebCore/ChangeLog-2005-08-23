@@ -1,5 +1,13 @@
 2002-06-25  Richard Williamson  <rjw@apple.com>
 
+        Support for rudimentary plain text 'copy'.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedText]):
+
+2002-06-25  Richard Williamson  <rjw@apple.com>
+
         Enabled progressive image loading code.
 
         * khtml/misc/loader.cpp:

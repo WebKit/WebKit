@@ -51,6 +51,16 @@
     return self;
 }
 
+- (void)copy:(id)sender
+{
+    IFWebView *webView = [self _IF_parentWebView];
+    IFWebFrame *webFrame = [[webView _controller] frameForView: webView];
+    IFWebCoreBridge *bridge = [[webFrame dataSource] _bridge];
+    NSPasteboard *pboard = [NSPasteboard generalPasteboard];
+    
+    [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
+    [pboard setString:[bridge selectedText] forType:NSStringPboardType];
+}
 
 - (void)dealloc 
 {

@@ -72,7 +72,8 @@ static NSMutableArray *activeImageRenderers;
         [imageRep setSize:NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh])];
         return YES;
     default:
-        return NO;
+        // We have some data.  Return YES so we can attempt a to draw what we've got.
+        return YES;
     }
     
     return NO;

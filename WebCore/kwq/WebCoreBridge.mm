@@ -116,4 +116,10 @@
     part->impl->gotoBaseAnchor();
 }
 
+- (NSString *)selectedText
+{
+    QString st = part->selectedText();
+    return QSTRING_TO_NSSTRING(st);
+}
+
 @end

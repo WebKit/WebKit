@@ -70,6 +70,10 @@ static NSMutableDictionary *_viewTypes=nil;
     _private->controller = controller;    
 }
 
+- (IFWebController *)_controller
+{
+    return _private->controller;
+}
 
 + (NSMutableDictionary *)_viewTypes
 {
