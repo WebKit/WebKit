@@ -1,3 +1,24 @@
+2003-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3216039 -- calls to m_redirectionTimer.stop() do not always clear m_scheduledRedirection
+
+        * khtml/khtml_part.h: Added cancelRedirection().
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::~KHTMLPart): Call cancelRedirection() instead of m_redirectionTimer.stop().
+        (KHTMLPart::restoreURL): Ditto.
+        (KHTMLPart::openURL): Ditto.
+        (KHTMLPart::closeURL): Ditto.
+        (KHTMLPart::cancelRedirection): Added. Sets m_scheduledRedirection to noRedirectionScheduled
+        and calls m_redirectionTimer.stop(), but is also safe to call after d is set to 0.
+        (KHTMLPart::restoreState): Call cancelRedirection() instead of m_redirectionTimer.stop().
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLFromPageCache): Call cancelRedirection() instead of m_redirectionTimer.stop().
+        (KWQKHTMLPart::scrollToAnchor): Call cancelRedirection() instead of m_redirectionTimer.stop()
+        (and setting m_scheduledRedirection).
+
 2003-05-21  David Hyatt  <hyatt@apple.com>
 
 	This patch deals with the main cause of regressions from

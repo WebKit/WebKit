@@ -287,7 +287,7 @@ KHTMLPart::~KHTMLPart()
 #endif
 
   stopAutoScroll();
-  d->m_redirectionTimer.stop();
+  cancelRedirection();
 
   if (!d->m_bComplete)
     closeURL();
@@ -320,7 +320,7 @@ bool KHTMLPart::restoreURL( const KURL &url )
 {
   kdDebug( 6050 ) << "KHTMLPart::restoreURL " << url.url() << endl;
 
-  d->m_redirectionTimer.stop();
+  cancelRedirection();
 
   /*
    * That's not a good idea as it will call closeURL() on all
@@ -367,7 +367,7 @@ bool KHTMLPart::openURL( const KURL &url )
 {
   kdDebug( 6050 ) << "KHTMLPart(" << this << ")::openURL " << url.url() << endl;
 
-  d->m_redirectionTimer.stop();
+  cancelRedirection();
 
 #if !APPLE_CHANGES
   // check to see if this is an "error://" URL. This is caused when an error
@@ -574,8 +574,7 @@ bool KHTMLPart::closeURL()
   d->m_bPendingChildRedirection = false;
 
   // Stop any started redirections as well!! (DA)
-  if ( d && d->m_redirectionTimer.isActive() )
-    d->m_redirectionTimer.stop();
+  cancelRedirection();
 
   // null node activated.
   emit nodeActivated(Node());
@@ -1855,6 +1854,14 @@ void KHTMLPart::scheduleHistoryNavigation( int steps )
     if ( d->m_bComplete ) {
         d->m_redirectionTimer.stop();
         d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
+    }
+}
+
+void KHTMLPart::cancelRedirection()
+{
+    if (d) {
+        d->m_scheduledRedirection = noRedirectionScheduled;
+        d->m_redirectionTimer.stop();
     }
 }
 
@@ -3742,7 +3749,7 @@ void KHTMLPart::restoreState( QDataStream &stream )
   if (d->m_cacheId == old_cacheId)
   {
     // Partial restore
-    d->m_redirectionTimer.stop();
+    cancelRedirection();
 
     FrameIt fIt = d->m_frames.begin();
     FrameIt fEnd = d->m_frames.end();
@@ -5298,7 +5305,6 @@ int KHTMLPart::topLevelFrameCount()
 
   return frameCount;
 }
-
 
 using namespace KParts;
 #include "khtml_part.moc"

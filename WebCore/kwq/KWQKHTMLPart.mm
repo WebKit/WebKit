@@ -965,7 +965,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     SavedProperties *locationProperties = [state locationProperties];
     QMap<int, ScheduledAction*> *actions = [state pausedActions];
     
-    d->m_redirectionTimer.stop();
+    cancelRedirection();
 
     // We still have to close the previous part page.
     if (!d->m_restored){
@@ -1250,8 +1250,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 // that a higher level already checked that the URLs match and the scrolling is the right thing to do.
 void KWQKHTMLPart::scrollToAnchor(const KURL &URL)
 {
-    d->m_redirectionTimer.stop();
-    d->m_scheduledRedirection = noRedirectionScheduled;
+    cancelRedirection();
 
     m_url = URL;
     started(0);
