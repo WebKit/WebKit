@@ -207,6 +207,7 @@ bool Collector::collect()
   block = root;
   while (block) {
     ValueImp **r = (ValueImp**)block->mem;
+      int del = 0;
     for (int i = 0; i < block->size; i++, r++) {
       ValueImp *imp = (*r);
       // Can delete if refcount==0, created==true, gcAllowed==true, and marked==false
@@ -217,17 +218,6 @@ bool Collector::collect()
         //fprintf( stderr, "Collector::deleting ValueImp %p (%s)\n", (void*)imp, typeid(*imp).name());
         imp->~ValueImp();
       }
-    }
-    block = block->next;
-  }
-
-  // 2nd step: free memory
-  block = root;
-  while (block) {
-    ValueImp **r = (ValueImp**)block->mem;
-    int del = 0;
-    for (int i = 0; i < block->size; i++, r++) {
-      ValueImp *imp = (*r);
       if (imp && (imp->_flags & ValueImp::VI_DESTRUCTED) != 0) {
 	free(imp);
         *r = 0L;
@@ -236,14 +226,8 @@ bool Collector::collect()
     }
     filled -= del;
     block->filled -= del;
-    block = block->next;
     if (del)
       deleted = true;
-  }
-
-  // delete the empty containers
-  block = root;
-  while (block) {
     CollectorBlock *next = block->next;
     if (block->filled == 0) {
       if (block->prev)
@@ -259,6 +243,7 @@ bool Collector::collect()
     }
     block = next;
   }
+
 #if 0
   // This is useful to track down memory leaks
   static int s_count = 0;
