@@ -131,7 +131,7 @@ public:
         
 private:
     // The normal operator new is disallowed on all render objects.
-    void* operator new(size_t sz) throw() { assert(false); return 0; };
+    void* operator new(size_t sz) throw();
     
 public:
     RenderArena* renderArena();

@@ -1,5 +1,26 @@
 2002-11-13  Darin Adler  <darin@apple.com>
 
+	- fixed 3100895 -- REGRESSION: Assertion on http://www.w3.org/Style/CSS/
+
+	A few arena-related fixes.
+
+        * khtml/rendering/bidi.h: Don't define the operator new without the arena parameter.
+	That way, we get a link failure if we use it by accident, rather than an assert at runtime.
+	It would be even better to get a compile-time error, but I don't know how to make that happen.
+        * khtml/rendering/render_layer.h: Ditto.
+        * khtml/rendering/render_object.h: Ditto.
+        * khtml/rendering/render_text.h: Ditto.
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::addChild): Create the RenderTable with the appropriate arena.
+        (RenderContainer::insertPseudoChild): Create the RenderFlow objects with the appropriate arena.
+
+        * khtml/rendering/render_text.cpp: (RenderText::deleteSlaves): Don't try to get the arena
+	when there are no slaves. This can happen after the element is nil, and in that case we will
+	do a nil-dereference.
+
+2002-11-13  Darin Adler  <darin@apple.com>
+
         * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth):
 	Use the "0" instead of the "x" as the canonical character for width.
 	This is slightly wider and is better for credit card numbers, for example.

@@ -113,7 +113,7 @@ namespace khtml {
         
 private:
     // The normal operator new is disallowed.
-    void* operator new(size_t sz) throw() { assert(false); return 0; };
+    void* operator new(size_t sz) throw();
 
 public:
 	RenderFlow *par;

@@ -350,13 +350,15 @@ void RenderText::deleteSlaves()
     // We don't delete the array itself here because its
     // likely to be used in the same size later again, saves
     // us resize() calls
-    RenderArena* arena = element()->getDocument()->renderArena();
     unsigned int len = m_lines.size();
-    for(unsigned int i=0; i < len; i++) {
-        TextSlave* s = m_lines.at(i);
-        if (s)
-            s->detach(arena);
-        m_lines.remove(i);
+    if (len) {
+        RenderArena* arena = element()->getDocument()->renderArena();
+        for(unsigned int i=0; i < len; i++) {
+            TextSlave* s = m_lines.at(i);
+            if (s)
+                s->detach(arena);
+            m_lines.remove(i);
+        }
     }
     
     KHTMLAssert(m_lines.count() == 0);
