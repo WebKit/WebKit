@@ -488,7 +488,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         child = child->nextSibling();
     }
 
-    if( isTableCell() || toAdd != 0)
+    if(!isTableCell() && toAdd != 0)
 	m_height += prevMargin;
     m_height += toAdd;
 
