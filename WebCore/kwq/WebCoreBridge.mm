@@ -442,6 +442,34 @@ static BOOL nowPrinting(WebCoreBridge *self)
 }
 
 // Vertical pagination hook from AppKit
+- (NSArray*)computePageRects: (float)printWidth withPageHeight: (float)printHeight
+{    
+    [self _setupRootForPrinting:YES];
+    NSMutableArray* pages = [[NSMutableArray alloc] initWithCapacity:5];
+    KHTMLView* view = _part->view();
+    NSView* documentView = view->getDocumentView();
+    if (!documentView)
+        return pages;
+    
+    float currPageHeight = printHeight;
+    float docHeight = NSHeight([documentView bounds]);
+    float pageX = NSMinX([documentView bounds]);
+    float pageWidth = NSWidth([documentView bounds]);
+    
+    // We need to give the part the opportunity to adjust the page height at each step.
+    for (float i = 0; i < docHeight; i += currPageHeight) {
+        float proposedBottom = kMin(docHeight, i + printHeight);
+        _part->adjustPageHeight(&proposedBottom, i, proposedBottom, i);
+        currPageHeight = proposedBottom - i;
+        NSValue* val = [NSValue valueWithRect: NSMakeRect(pageX, i, pageWidth, currPageHeight)];
+        [pages addObject: val];
+    }
+    [self _setupRootForPrinting:NO];
+    
+    return pages;
+}
+
+// This is to support the case where a webview is embedded in the view that's being printed
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
 {
     [self _setupRootForPrinting:YES];

@@ -1,3 +1,33 @@
+2003-11-20  John Sullivan  <sullivan@apple.com>
+
+        - WebCore part of <rdar://problem/3183124>: Support page-break-before/after with a value of "always"
+
+        Dave wrote this part and we reviewed it together.
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+        if printing, check for CSS page break locations
+        (khtml::RenderBlock::inRootBlockContext):
+        new method, used to check whether we're in a context for which
+        CSS page breaks are legal.
+        
+        * khtml/rendering/render_block.h:
+        prototype for inRootBlockContext; this might be useful for
+        other code later.
+        
+        * khtml/rendering/render_canvas.cpp:
+        (RenderCanvas::setBestTruncatedAt):
+        now takes a forcedBreak parameter which overrides others.
+        
+        * khtml/rendering/render_canvas.h:
+        (khtml::RenderCanvas::setTruncatedAt):
+        set default value for m_forcedPageBreak
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge computePageRects:withPageHeight:]):
+        do the real work of pagination here
+
 2003-11-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3491225>: Need UI and localized strings for <KEYGEN> support

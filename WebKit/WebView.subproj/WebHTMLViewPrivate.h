@@ -43,6 +43,8 @@
     
     NSTimer *autoscrollTimer;
     NSEvent *autoscrollTriggerEvent;
+    
+    NSArray* pageRects;
 }
 @end
 
@@ -82,5 +84,4 @@
 
 - (void)_startAutoscrollTimer:(NSEvent *)event;
 - (void)_stopAutoscrollTimer;
-
 @end

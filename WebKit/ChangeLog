@@ -1,3 +1,29 @@
+2003-11-20  John Sullivan  <sullivan@apple.com>
+
+        - WebKit part of <rdar://problem/3183124>: Support page-break-before/after with a value of "always"
+
+        Dave and I wrote and reviewed this.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _setPrinting:pageWidth:adjustViewSize:]):
+        reset page rects when printing status changes
+        (-[WebHTMLView _availablePaperWidthForPrintOperation:]):
+        new helper method to compute paper width taking margins into account
+        (-[WebHTMLView _scaleFactorForPrintOperation:]):
+        new helper method to compute how much we need to shrink to fit one page across
+        (-[WebHTMLView _provideTotalScaleFactorForPrintOperation:]):
+        we overrode this secret internal AppKit method to make shrink-to-fit work;
+        we wrote bug 3491344 about the need for this to be public.
+        (-[WebHTMLView knowsPageRange:]):
+        new method, computes rects and returns YES
+        (-[WebHTMLView rectForPage:]):
+        new method, returns rect computed above
+        (-[WebHTMLView _calculatePrintHeight]):
+        new method, used by knowsPageRange
+        
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        new pageRects ivar
+
 2003-11-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

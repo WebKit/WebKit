@@ -1173,7 +1173,8 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
 
     // If we're a repositioned run-in, don't paint background/borders.
     bool inlineFlow = isInlineFlow();
-    
+    bool isPrinting = (p->device()->devType() == QInternal::Printer);
+
     // 1. paint background, borders etc
     if (!inlineFlow &&
         (paintAction == PaintActionElementBackground || paintAction == PaintActionChildBackground) &&
@@ -1195,12 +1196,24 @@ void RenderBlock::paintObject(QPainter *p, int _x, int _y,
     int scrolledY = _ty;
     if (style()->hidesOverflow() && m_layer)
         m_layer->subtractScrollOffset(scrolledX, scrolledY);
-    RenderObject *child = firstChild();
-    while(child != 0)
-    {
-        if(!child->layer() && !child->isFloating())
+    for (RenderObject *child = firstChild(); child; child = child->nextSibling()) {        
+        // Check for page-break-before: always, and if it's set, break and bail.
+        if (isPrinting && !childrenInline() && child->style()->pageBreakBefore() == PBALWAYS &&
+            inRootBlockContext() && (_ty + child->yPos()) > _y && (_ty + child->yPos()) < _y + _h) {
+            canvas()->setBestTruncatedAt(_ty + child->yPos(), this, true);
+            return;
+        }
+        
+        if (!child->layer() && !child->isFloating())
             child->paint(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction);
-        child = child->nextSibling();
+        
+        // Check for page-break-after: always, and if it's set, break and bail.
+        if (isPrinting && !childrenInline() && child->style()->pageBreakAfter() == PBALWAYS && 
+            inRootBlockContext() && (_ty + child->yPos() + child->height()) > _y && 
+            (_ty + child->yPos() + child->height()) < _y + _h) {
+            canvas()->setBestTruncatedAt(_ty + child->yPos() + child->height() + child->collapsedMarginBottom(), this, true);
+            return;
+        }
     }
     paintLineBoxDecorations(p, _x, _y, _w, _h, scrolledX, scrolledY, paintAction);
     
@@ -2562,6 +2575,17 @@ void RenderBlock::updateFirstLetter()
             firstLetter->addChild(letter);
         }
     }
+}
+
+bool RenderBlock::inRootBlockContext() const
+{
+    if (isTableCell() || isFloatingOrPositioned() || style()->hidesOverflow())
+        return false;
+    
+    if (isRoot() || isCanvas())
+        return true;
+    
+    return containingBlock()->inRootBlockContext();
 }
 
 const char *RenderBlock::renderName() const

@@ -76,6 +76,7 @@ static BOOL forceRealHitTest = NO;
 @interface WebHTMLView (WebHTMLViewPrivate)
 - (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize;
 - (void)_updateTextSizeMultiplier;
+- (float)_calculatePrintHeight;
 @end
 
 // Any non-zero value will do, but using somethign recognizable might help us debug some day.
@@ -1648,6 +1649,8 @@ static WebHTMLView *lastHitView = nil;
     }
 
     if (printing != _private->printing) {
+        [_private->pageRects release];
+        _private->pageRects = nil;
         _private->printing = printing;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
@@ -1656,6 +1659,8 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+// This is needed for the case where the webview is embedded in the view that's being printed.
+// It shouldn't be called when the webview is being printed directly.
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit
 {
     // This helps when we print as part of a larger print process.
@@ -1666,32 +1671,71 @@ static WebHTMLView *lastHitView = nil;
     }
     
     [[self _bridge] adjustPageHeightNew:newBottom top:oldTop bottom:oldBottom limit:bottomLimit];
-
+    
     if (!wasInPrintingMode) {
         [self _setPrinting:NO pageWidth:0 adjustViewSize:NO];
     }
 }
 
-- (void)beginDocument
+- (float)_availablePaperWidthForPrintOperation:(NSPrintOperation *)printOperation
 {
+    NSPrintInfo *printInfo = [printOperation printInfo];
+    return [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
+}
+
+- (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation
+{
+    return [self _availablePaperWidthForPrintOperation:printOperation]/NSWidth([self bounds]);
+}
+
+// FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
+// to get our shrink-to-fit to work with a custom pagination scheme. We can do this better
+// if AppKit makes it SPI/API.
+- (float)_provideTotalScaleFactorForPrintOperation:(NSPrintOperation *)printOperation 
+{
+    return [self _scaleFactorForPrintOperation:printOperation];
+}
+
+// Return the number of pages available for printing
+- (BOOL)knowsPageRange:(NSRangePointer)range {
     // Must do this explicit display here, because otherwise the view might redisplay while the print
     // sheet was up, using printer fonts (and looking different).
     [self displayIfNeeded];
     [[self window] setAutodisplay:NO];
-
+    
     // If we are a frameset just print with the layout we have onscreen, otherwise relayout
     // according to the paper size
-    float pageWidth = 0.0;
+    float layoutWidth = 0.0;
     if (![[self _bridge] isFrameSet]) {
-        NSPrintInfo *printInfo = [[NSPrintOperation currentOperation] printInfo];
-        pageWidth = ([printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin])*PrintingExtraWidthFactor;
+        layoutWidth = [self _availablePaperWidthForPrintOperation:[NSPrintOperation currentOperation]]*PrintingExtraWidthFactor;
     }
-    [self _setPrinting:YES pageWidth:pageWidth adjustViewSize:YES];	// will relayout
-
-    [super beginDocument];
+    [self _setPrinting:YES pageWidth:layoutWidth adjustViewSize:YES];	// will relayout
+    
     // There is a theoretical chance that someone could do some drawing between here and endDocument,
     // if something caused setNeedsDisplay after this point. If so, it's not a big tragedy, because
     // you'd simply see the printer fonts on screen. As of this writing, this does not happen with Safari.
+
+    range->location = 1;
+    float scaleFactor = [self _scaleFactorForPrintOperation:[NSPrintOperation currentOperation]];
+    _private->pageRects = [[self _bridge] computePageRects:NSWidth([self bounds]) 
+                                            withPageHeight:[self _calculatePrintHeight]/scaleFactor];
+    range->length = [_private->pageRects count];
+    return YES;
+}
+
+// Return the drawing rectangle for a particular page number
+- (NSRect)rectForPage:(int)page {
+    return [[_private->pageRects objectAtIndex: (page-1)] rectValue];
+}
+
+// Calculate the vertical size of the view that fits on a single page
+- (float)_calculatePrintHeight {
+    // Obtain the print info object for the current operation
+    NSPrintInfo *pi = [[NSPrintOperation currentOperation] printInfo];
+    
+    // Calculate the page height in points
+    NSSize paperSize = [pi paperSize];
+    return paperSize.height - [pi topMargin] - [pi bottomMargin];
 }
 
 - (void)endDocument

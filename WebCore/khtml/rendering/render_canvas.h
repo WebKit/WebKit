@@ -74,12 +74,13 @@ public:
     void setPrintImages(bool enable) { m_printImages = enable; }
     bool printImages() const { return m_printImages; }
 #if APPLE_CHANGES
-    void setTruncatedAt(int y) { m_truncatedAt = y; m_bestTruncatedAt = m_truncatorWidth = 0; }
-    void setBestTruncatedAt(int y, RenderObject *forRenderer);
+    void setTruncatedAt(int y) { m_truncatedAt = y; m_bestTruncatedAt = m_truncatorWidth = 0; m_forcedPageBreak = false; }
+    void setBestTruncatedAt(int y, RenderObject *forRenderer, bool forcedBreak = false);
     int bestTruncatedAt() const { return m_bestTruncatedAt; }
 private:
     int m_bestTruncatedAt;
     int m_truncatorWidth;
+    bool m_forcedPageBreak;
 public:
 #else
     void setTruncatedAt(int y) { m_truncatedAt = y; }
