@@ -17,6 +17,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 {
 @public
     NSData *data;
+    NSString *MIMEType;
     NSString *encoding;
     NSURL *baseURL;
 }
@@ -36,6 +37,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 - (void)dealloc
 {
     [data release];
+    [MIMEType release];
     [encoding release];
     [baseURL release];
     [super dealloc];
@@ -103,6 +105,19 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     parameters->encoding = [encoding retain];
 }
 
+- (NSString *)_webDataRequestMIMEType
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
+    return parameters ? parameters->MIMEType: nil;
+}
+
+- (void)_webDataRequestSetMIMEType:(NSString *)type
+{
+    WebDataRequestParameters *parameters = [self _webDataRequestParametersForWriting];
+    [parameters->MIMEType release];
+    parameters->MIMEType = [type retain];
+}
+
 - (NSURL *)_webDataRequestBaseURL
 {
     WebDataRequestParameters *parameters = [self _webDataRequestParametersForReading];
@@ -168,7 +183,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
     if (data) {
         NSURLResponse *response = [[NSURLResponse alloc] init];
         [response setURL:[request URL]];
-        [response setMIMEType:@"text/html"];
+        [response setMIMEType:[request _webDataRequestMIMEType]];
         [response setTextEncodingName:[request _webDataRequestEncoding]];
         [client URLProtocol:self didReceiveResponse:response cacheStoragePolicy:NSURLCacheStorageNotAllowed];
         [client URLProtocol:self didLoadData:data];

@@ -23,6 +23,8 @@
 - (void)_webDataRequestSetData:(NSData *)data;
 - (NSString *)_webDataRequestEncoding;
 - (void)_webDataRequestSetEncoding:(NSString *)encoding;
+- (NSString *)_webDataRequestMIMEType;
+- (void)_webDataRequestSetMIMEType:(NSString *)MIMEType;
 - (NSURL *)_webDataRequestBaseURL;
 - (void)_webDataRequestSetBaseURL:(NSURL *)baseURL;
 - (NSMutableURLRequest *)_webDataRequestExternalRequest;

@@ -56,7 +56,7 @@
     [aFrame _setController: nil];
 
     // Walk the frame tree, niling the controller.
-    frames = [aFrame children];
+    frames = [aFrame childFrames];
     count = [frames count];
     for (i = 0; i < count; i++){
         nextFrame = [frames objectAtIndex: i];
@@ -515,7 +515,7 @@
     if ([frame provisionalDataSource] == dataSource)
         return frame;
 
-    frames = [frame children];
+    frames = [frame childFrames];
     count = [frames count];
     for (i = 0; i < count; i++){
         aFrame = [frames objectAtIndex: i];
@@ -545,7 +545,7 @@
     if ([frame frameView] == aView)
         return frame;
 
-    frames = [frame children];
+    frames = [frame childFrames];
     count = [frames count];
     for (i = 0; i < count; i++){
         aFrame = [frames objectAtIndex: i];

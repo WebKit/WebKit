@@ -62,19 +62,20 @@
 - (void)loadRequest:(NSURLRequest *)request;
 
 /*!
-    @method loadData:encodingName:baseURL:
+    @method loadData:MIMEType:textEncodingName:baseURL:
     @param data The data to use for the main page of the document.
+    @param MIMEType The MIME type of the data.
     @param encodingName The encoding of the data.
     @param URL The base URL to apply to relative URLs within the document.
 */
-- (void)loadData:(NSData *)data encodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
 
 /*!
-    @method loadString:baseURL:
+    @method loadHTMLString:baseURL:
     @param string The string to use for the main page of the document.
     @param URL The base URL to apply to relative URLs within the document.
 */
-- (void)loadString:(NSString *)string baseURL:(NSURL *)URL;
+- (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL;
 
 /*!
     @method dataSource
@@ -119,17 +120,17 @@
 - (WebFrame *)findFrameNamed:(NSString *)name;
 
 /*!
-    @method parent
+    @method parentFrame
     @result The frame containing this frame, or nil if this is a top level frame.
 */
-- (WebFrame *)parent;
+- (WebFrame *)parentFrame;
 
 /*!
-    @method children
+    @method childFrames
     @discussion The frames in the array are associated with a frame set or iframe.
     @result Returns an array of WebFrame.
 */
-- (NSArray *)children;
+- (NSArray *)childFrames;
 
 /*!
     @method registerViewClass:representationClass:forMIMEType:

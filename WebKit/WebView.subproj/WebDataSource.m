@@ -103,7 +103,7 @@
     // Put in the auto-release pool because it's common to call this from a run loop source,
     // and then the entire list of frames lasts until the next autorelease.
     NSAutoreleasePool *pool = [NSAutoreleasePool new];
-    NSEnumerator *e = [[[self webFrame] children] objectEnumerator];
+    NSEnumerator *e = [[[self webFrame] childFrames] objectEnumerator];
     WebFrame *childFrame;
     while ((childFrame = [e nextObject])) {
         if ([[childFrame dataSource] isLoading] || [[childFrame provisionalDataSource] isLoading]) {

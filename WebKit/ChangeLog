@@ -1,3 +1,49 @@
+2003-04-25  Richard Williamson   <rjw@apple.com>
+
+        Final API review changes.
+        
+        WebFrame:
+        parent -> parentFrame
+        children -> childFrames
+        loadString:baseURL: -> loadHTMLString:baseURL:
+        laodData:encodingName:baseURL: -> loadData:MIMEType:textEncodingName:baseURL:
+        
+        Reviewed by Chris.
+
+        * WebView.subproj/WebDataProtocol.h:
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataRequestParameters dealloc]):
+        (-[NSURLRequest _webDataRequestMIMEType]):
+        (-[NSURLRequest _webDataRequestSetMIMEType:]):
+        (-[WebDataProtocol startLoading]):
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource isLoading]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _recursiveStopLoading]):
+        (-[WebDataSource _layoutChildren]):
+        (-[WebDataSource _defersCallbacksChanged]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadHTMLString:baseURL:]):
+        (-[WebFrame findFrameNamed:]):
+        (-[WebFrame parentFrame]):
+        (-[WebFrame childFrames]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem]):
+        (-[WebFrame _descendantFrameNamed:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _isLoadComplete]):
+        (+[WebFrame _recursiveCheckCompleteFromFrame:]):
+        (-[WebFrame _textSizeMultiplierChanged]):
+        (-[WebFrame _viewWillMoveToHostWindow:]):
+        (-[WebFrame _viewDidMoveToHostWindow]):
+        (-[WebFrame _saveDocumentAndScrollState]):
+        (-[WebFrame _loadDataSource:withLoadType:formState:]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate _clearControllerReferences:]):
+        (-[WebView _frameForDataSource:fromFrame:]):
+        (-[WebView _frameForView:fromFrame:]):
+
 2003-04-25  Chris Blumenberg  <cblu@apple.com>
 
 	Don't do "@class WebDataSource" as that class isn't mentioned in this file.

@@ -273,7 +273,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     NSURL *URL = [request URL];
     WebHistoryItem *bfItem;
 
-    bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parent] name] title:[dataSrc pageTitle]] autorelease];
+    bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
     [bfItem setAnchor:[URL fragment]];
     [dataSrc _addBackForwardItem:bfItem];
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
@@ -345,7 +345,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         return self;
     }
 
-    NSArray *children = [self children];
+    NSArray *children = [self childFrames];
     WebFrame *frame;
     unsigned i;
 
@@ -690,7 +690,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
                 ASSERT(![ds _isClientRedirect]);
-                WebHistoryItem *parentItem = [[self parent]->_private currentItem];
+                WebHistoryItem *parentItem = [[self parentFrame]->_private currentItem];
                 // The only case where parentItem==nil should be when a parent frame loaded an
                 // empty URL, which doesn't set up a current item in that parent.
                 if (parentItem) {
@@ -936,9 +936,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // Unfortunately we have to get our parent to adjust the frames in this
                 // frameset so this frame's geometry is set correctly.  This should
                 // be a reasonably inexpensive operation.
-                WebDataSource *parentDS = [[self parent] dataSource];
+                WebDataSource *parentDS = [[self parentFrame] dataSource];
                 if ([[parentDS _bridge] isFrameSet]){
-                    WebFrameView *parentWebFrameView = [[self parent] frameView];
+                    WebFrameView *parentWebFrameView = [[self parentFrame] frameView];
                     if ([parentWebFrameView isDocumentHTML])
                         [(WebHTMLView *)[parentWebFrameView documentView] _adjustFrames];
                 }
@@ -1022,7 +1022,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     int i, count;
     NSArray *childFrames;
     
-    childFrames = [fromFrame children];
+    childFrames = [fromFrame childFrames];
     count = [childFrames count];
     for (i = 0; i < count; i++) {
         WebFrame *childFrame;
@@ -1805,7 +1805,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_textSizeMultiplierChanged
 {
     [_private->bridge setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
-    [[self children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
+    [[self childFrames] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
 - (void)_defersCallbacksChanged
@@ -1817,13 +1817,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_viewWillMoveToHostWindow:(NSWindow *)hostWindow
 {
     [[[self frameView] documentView] viewWillMoveToHostWindow:hostWindow];
-    [[self children] makeObjectsPerformSelector:@selector(_viewWillMoveToHostWindow:) withObject:hostWindow];
+    [[self childFrames] makeObjectsPerformSelector:@selector(_viewWillMoveToHostWindow:) withObject:hostWindow];
 }
 
 - (void)_viewDidMoveToHostWindow
 {
     [[[self frameView] documentView] viewDidMoveToHostWindow];
-    [[self children] makeObjectsPerformSelector:@selector(_viewDidMoveToHostWindow)];
+    [[self childFrames] makeObjectsPerformSelector:@selector(_viewDidMoveToHostWindow)];
 }
 
 - (void)_reloadAllowingStaleDataWithOverrideEncoding:(NSString *)encoding
@@ -1951,7 +1951,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [_private->bridge saveDocumentState];
     [self _saveScrollPositionToItem:[_private currentItem]];
 
-    NSArray *frames = [self children];
+    NSArray *frames = [self childFrames];
     int count = [frames count];
     int i;
     for (i = 0; i < count; i++) {
@@ -2023,8 +2023,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     [self _setLoadType:loadType];
 
-    if ([self parent]) {
-        [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
+    WebFrame *parentFrame = [self parentFrame];
+    if (parentFrame) {
+        [newDataSource _setOverrideEncoding:[[parentFrame dataSource] _overrideEncoding]];
     }
     [newDataSource _setController:[self webView]];
     [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];

@@ -262,7 +262,7 @@
     
     // We depend on the controller in webFrame and we release it in _stopLoading,
     // so call webFrame first so we don't send a message the released controller (3129503).
-    [[[self webFrame] children] makeObjectsPerformSelector:@selector(stopLoading)];
+    [[[self webFrame] childFrames] makeObjectsPerformSelector:@selector(stopLoading)];
     [self _stopLoadingInternal];
     
     [self release];
@@ -426,7 +426,7 @@
 
 - (void)_layoutChildren
 {
-    NSArray *subFrames = [[self webFrame] children];
+    NSArray *subFrames = [[self webFrame] childFrames];
     if ([subFrames count]) {
         WebFrame *subFrame;
         unsigned int i;
@@ -670,7 +670,7 @@
         [client setDefersCallbacks:defers];
     }
 
-    [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
+    [[[self webFrame] childFrames] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
 - (NSURLRequest *)_originalRequest

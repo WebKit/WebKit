@@ -115,17 +115,18 @@
     [newDataSource release];
 }
 
-- (void)loadData:(NSData *)data encodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
+- (void)loadData:(NSData *)data MIMEType:(NSString *)MIMEType textEncodingName: (NSString *)encodingName baseURL:(NSURL *)URL;
 {
     NSURL *fakeURL = [NSURLRequest _webDataRequestURLForData: data];
     NSURLRequest *request = [[[NSURLRequest alloc] initWithURL: fakeURL] autorelease];
     [request _webDataRequestSetData:data];
     [request _webDataRequestSetEncoding:encodingName];
     [request _webDataRequestSetBaseURL:URL];
+    [request _webDataRequestSetMIMEType:MIMEType?MIMEType:@"text/html"];
     [self loadRequest:request];
 }
 
-- (void)loadString:(NSString *)string baseURL:(NSURL *)URL
+- (void)loadHTMLString:(NSString *)string baseURL:(NSURL *)URL
 {
     CFStringEncoding cfencoding = CFStringGetFastestEncoding((CFStringRef)string);
     NSStringEncoding nsencoding = CFStringConvertEncodingToNSStringEncoding(cfencoding);
@@ -133,11 +134,11 @@
     
     if (!cfencodingName || nsencoding == kCFStringEncodingInvalidId){
         NSData *data = [string dataUsingEncoding: NSUnicodeStringEncoding];
-        [self loadData:data encodingName:@"utf-16" baseURL:URL];
+        [self loadData:data MIMEType:nil textEncodingName:@"utf-16" baseURL:URL];
     }
     else {
         NSData *data = [string dataUsingEncoding: nsencoding];
-        [self loadData:data encodingName:(NSString *)cfencodingName baseURL:URL];
+        [self loadData:data MIMEType:nil textEncodingName:(NSString *)cfencodingName baseURL:URL];
     }
 }
 
@@ -189,7 +190,7 @@
     }
     
     if ([name isEqualToString:@"_parent"]) {
-        WebFrame *parent = [self parent];
+        WebFrame *parent = [self parentFrame];
         return parent ? parent : self;
     }
     
@@ -208,12 +209,12 @@
     return frame;
 }
 
-- (WebFrame *)parent
+- (WebFrame *)parentFrame
 {
     return [[_private->parent retain] autorelease];
 }
 
-- (NSArray *)children
+- (NSArray *)childFrames
 {
     return [[_private->children copy] autorelease];
 }
