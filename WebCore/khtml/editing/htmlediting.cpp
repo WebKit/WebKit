@@ -3921,7 +3921,7 @@ void ReplaceSelectionCommand::doApply()
         mergeStart = mergeEnd = false;
     }
     else {
-        mergeStart = !isStartOfParagraph(visibleStart);
+        mergeStart = !isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewline() && !m_fragment.hasMoreThanOneBlock());
         mergeEnd = !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleEnd);
     }
     

@@ -1,3 +1,15 @@
+2005-01-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3963560> 8A354: Inserting Japanese text to the line head causes line break
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Add one more case where we merge content into the
+        existing line. This covers the situation see using the steps to reproduce this bug.
+
 2005-01-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
