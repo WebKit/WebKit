@@ -30,6 +30,12 @@
 #include <config.h>
 #endif
 
+// _KWQ_COMPLETE_ ==============================================================
+
+#ifdef _KWQ_COMPLETE_
+#include <_qsortedlist.h>
+#else
+
 #include "qlist.h"
 
 // class QSortedList ===========================================================
@@ -58,5 +64,7 @@ public:
 // private ---------------------------------------------------------------------
 
 }; // class QSortedList ========================================================
+
+#endif // _KWQ_COMPLETE_
 
 #endif

@@ -30,6 +30,12 @@
 #include <config.h>
 #endif
 
+// _KWQ_COMPLETE_ ==============================================================
+
+#ifdef _KWQ_COMPLETE_
+#include <_qtextstream.h>
+#else
+
 #include "qstring.h"
 
 // class QTextStream ===========================================================
@@ -158,5 +164,7 @@ private:
 #endif
 
 }; // class QTextOStream =======================================================
+
+#endif // _KWQ_COMPLETE_
 
 #endif
