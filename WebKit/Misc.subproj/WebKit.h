@@ -5,6 +5,7 @@
     Public header file.
 */
 
+#import <WebKit/WebAuthenticationChallenge.h>
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
@@ -15,8 +16,8 @@
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebKitErrors.h>
-#import <WebKit/WebPreferences.h>
 #import <WebKit/WebPolicyDelegate.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebView.h>
 #import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebView.h>
