@@ -47,13 +47,6 @@ enum
 
 // implementation IFURLFileReader -------------------------------------------------------------
 
-/*
- * FIXME: [kocienda] Radar 2922673 (Remove use of private NSData interface in IFURLFileDatabase.m)
- */
-@interface NSData (IFExtensions)
-- (id)initWithBytes:(void *)bytes length:(unsigned)length copy:(BOOL)copy freeWhenDone:(BOOL)freeBytes bytesAreVM:(BOOL)vm;
-@end
-
 static NSMutableSet *notMappableFileNameSet = nil;
 static NSLock *mutex;
 
@@ -115,7 +108,7 @@ static void URLFileReaderInit(void)
             else {
                 // On success, create data object using mapped bytes.
                 mappedLength = statInfo.st_size;
-                data = [[NSData alloc] initWithBytes:mappedBytes length:mappedLength copy:NO freeWhenDone:YES bytesAreVM:YES];
+                data = [[NSData alloc] initWithBytesNoCopy:mappedBytes length:mappedLength freeWhenDone:YES];
                 // ok data creation failed but we know file exists
                 // be stubborn....try to read bytes again
                 if (!data) {
