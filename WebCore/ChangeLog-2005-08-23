@@ -1,3 +1,13 @@
+2004-11-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3783904> Return key behavior is confusingly different between popup menus and autofill menus
+
+        Reviewed by john.
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController textView:shouldHandleEvent:]): let the bridge have a crack at the event so that it can swallow the newline if it wants to
+        * kwq/WebCoreBridge.h:
+
 2004-11-08  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.

@@ -1180,6 +1180,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return [formDelegate(self) control:control textView:textView doCommandBySelector:commandSelector inFrame:_frame];
 }
 
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView shouldHandleEvent:(NSEvent *)event
+{
+    FormDelegateLog(control);
+    return [formDelegate(self) control:control textView:textView shouldHandleEvent:event inFrame:_frame];
+}
+
 - (void)frameDetached
 {
     // Put _frame into a local variable because _detachFromParent

@@ -57,6 +57,11 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
+- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView shouldHandleEvent:(NSEvent *)event inFrame:(WebFrame *)frame
+{
+    return NO;
+}
+
 - (void)frame:(WebFrame *)frame sourceFrame:(WebFrame *)sourceFrame willSubmitForm:(DOMElement *)form withValues:(NSDictionary *)values submissionListener:(id <WebFormSubmissionListener>)listener
 {
     [listener continue];

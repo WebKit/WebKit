@@ -301,7 +301,10 @@
     if ((type == NSKeyDown || type == NSKeyUp) && 
 	![[NSInputManager currentInputManager] hasMarkedText]) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
-        BOOL intercepted = [bridge interceptKeyEvent:event toView:view];
+        BOOL intercepted = [bridge control:field textView:view shouldHandleEvent:event];
+        if (!intercepted) {
+            intercepted = [bridge interceptKeyEvent:event toView:view];
+        }
         // Always return NO for key up events because we don't want them
         // passed along the responder chain. This is arguably a bug in
         // NSTextView; see Radar 3507083.

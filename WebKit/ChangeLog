@@ -1,3 +1,15 @@
+2004-11-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3783904> Return key behavior is confusingly different between popup menus and autofill menus
+
+        Reviewed by john.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge control:textView:shouldHandleEvent:]): new
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate control:textView:shouldHandleEvent:inFrame:]): new
+
 2004-11-05  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3854218> Safari is sometimes really slow because of increased null events to plug-ins
