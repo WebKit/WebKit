@@ -1,3 +1,20 @@
+2003-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3192344 - nil-deref in KWin::info scrolling amazon while other shopping tabs load
+	- fixed 3098365 - Default window size changes as a result of popup windows
+	- fixed 3189291 - javascript window.close() closes window, not just originating tab
+	
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setWindowIsResizable:]): New bridge method, implemented
+	by calling window operations delegate.
+        (-[WebBridge windowIsResizable]): Likewise.
+        (-[WebBridge firstResponder]): Likewise.
+        (-[WebBridge makeFirstResponder:]): Likewise.
+        (-[WebBridge closeWindow]): Likewise.
+
 2003-03-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

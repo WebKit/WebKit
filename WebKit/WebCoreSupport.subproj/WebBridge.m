@@ -205,6 +205,42 @@
     return [[webView _windowOperationsDelegateForwarder] webViewContentRect:webView];
 }
 
+- (void)setWindowIsResizable:(BOOL)resizable
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    [[webView _windowOperationsDelegateForwarder] webView:webView setResizable:resizable];
+}
+
+- (BOOL)windowIsResizable
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    return [[webView _windowOperationsDelegateForwarder] webViewIsResizable:webView];
+}
+
+- (NSResponder *)firstResponder
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    return [[webView _windowOperationsDelegateForwarder] webViewFirstResponderInWindow:webView];
+}
+
+- (void)makeFirstResponder:(NSResponder *)view
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    [[webView _windowOperationsDelegateForwarder] webView:webView makeFirstResponderInWindow:view];
+}
+
+- (void)closeWindow
+{
+    ASSERT(frame != nil);
+    WebView *webView = [frame webView];
+    [[webView _windowOperationsDelegateForwarder] webViewCloseWindow:webView];
+}
+
+
 - (NSWindow *)window
 {
     ASSERT(frame != nil);

@@ -109,7 +109,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
     
     if (!winArgs.resizable) {
-	[[bridge window] setShowsResizeIndicator:NO];
+	[bridge setWindowIsResizable:NO];
     }
     
     if (winArgs.xSet || winArgs.ySet || winArgs.widthSet || winArgs.heightSet) {

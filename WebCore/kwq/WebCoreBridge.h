@@ -245,6 +245,14 @@ enum FrameBorderStyle {
 - (void)setWindowContentRect:(NSRect)frame;
 - (NSRect)windowContentRect;
 
+- (void)setWindowIsResizable:(BOOL)resizable;
+- (BOOL)windowIsResizable;
+
+- (NSResponder *)firstResponder;
+- (void)makeFirstResponder:(NSResponder *)view;
+
+- (void)closeWindow;
+
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;

@@ -1,3 +1,47 @@
+2003-03-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3192344 - nil-deref in KWin::info scrolling amazon while other shopping tabs load
+	- fixed 3098365 - Default window size changes as a result of popup windows
+	- fixed 3189291 - javascript window.close() closes window, not just originating tab
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::scheduleClose): Close via the bridge, not the window directly.
+        (KWQKHTMLPart::bridgeForWidget): Take const QWidget * instead of QWidget *.
+        (KWQKHTMLPart::nodeForWidget): Likewise.
+        (KWQKHTMLPart::khtmlMousePressEvent): Deal with responder issues via bridge,
+	not window directly.
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget): Likewise.
+        (KWQKHTMLPart::mouseDown): Likewise.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Set resizability via bridge,
+	not window directly.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea becomeFirstResponder]): Deal with bridge for first responder
+	issues, not window directly.
+        (-[KWQTextArea drawRect:]): Likewise.
+        (-[KWQTextAreaTextView insertTab:]): Likewise.
+        (-[KWQTextAreaTextView insertBacktab:]): Likewise.
+        (-[KWQTextAreaTextView shouldDrawInsertionPoint]): Likewise.
+        (-[KWQTextAreaTextView selectedTextAttributes]): Likewise.
+        * kwq/KWQWidget.mm:
+        (QWidget::setActiveWindow): Focus window via bridge.
+        (QWidget::hasFocus): Handle first responder issues via bridge.
+        (QWidget::setFocus): Likewise.
+        (QWidget::isVisible): Get window from bridge.
+        (QWidget::mapFromGlobal): Get window from bridge.
+        (QWidget::disableFlushDrawing): Add comment noting why it's OK
+	to get the window from the view instead of from the bridge here.
+        (QWidget::enableFlushDrawing): Likewise.
+        * kwq/KWQWindowWidget.mm:
+        (KWQWindowWidget::frameGeometry): Work through bridge, not window
+	directly.
+        (KWQWindowWidget::mapToGlobal): Likewise.
+        (KWQWindowWidget::setFrameGeometry): Likewise.
+        * kwq/WebCoreBridge.h:
+
 2003-03-27  David Hyatt  <hyatt@apple.com>
 
 	This is just a long-standing screwup where I didn't port an old

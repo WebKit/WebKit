@@ -33,6 +33,7 @@
 #import "khtmlview.h"
 #import "render_replaced.h"
 #import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
 
 using khtml::RenderWidget;
 
@@ -89,7 +90,7 @@ void QWidget::resize(int w, int h)
 
 void QWidget::setActiveWindow() 
 {
-    [[data->view window] makeKeyAndOrderFront:nil];
+    [KWQKHTMLPart::bridgeForWidget(this) focusWindow];
 }
 
 void QWidget::setEnabled(bool enabled)
@@ -163,8 +164,7 @@ int QWidget::baselinePosition() const
 bool QWidget::hasFocus() const
 {
     NSView *view = getView();
-    NSWindow *window = [view window];
-    NSView *firstResponder = [window firstResponder];
+    NSView *firstResponder = [KWQKHTMLPart::bridgeForWidget(this) firstResponder];
     if (!firstResponder) {
         return false;
     }
@@ -196,7 +196,7 @@ void QWidget::setFocus()
     
     NSView *view = getView();
     if ([view acceptsFirstResponder]) {
-        [[view window] makeFirstResponder:view];
+        [KWQKHTMLPart::bridgeForWidget(this) makeFirstResponder:view];
     }
 }
 
@@ -282,7 +282,7 @@ void QWidget::constPolish() const
 bool QWidget::isVisible() const
 {
     // FIXME - rewrite interms of top level widget?
-    return [[data->view window] isVisible];
+    return [[KWQKHTMLPart::bridgeForWidget(this) window] isVisible];
 }
 
 void QWidget::setCursor(const QCursor &cur)
@@ -338,7 +338,7 @@ void QWidget::setFrameGeometry(const QRect &rect)
 QPoint QWidget::mapFromGlobal(const QPoint &p) const
 {
     NSPoint bp;
-    bp = [[data->view window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
+    bp = [[KWQKHTMLPart::bridgeForWidget(this) window] convertScreenToBase:[data->view convertPoint:p toView:nil]];
     return QPoint(bp);
 }
 
@@ -383,11 +383,17 @@ void QWidget::unlockDrawingFocus()
 
 void QWidget::disableFlushDrawing()
 {
+    // It's OK to use the real window here, because if the view's not
+    // in the view hierarchy, then we don't actually want to affect
+    // flushing.
     [[getView() window] disableFlushWindow];
 }
 
 void QWidget::enableFlushDrawing()
 {
+    // It's OK to use the real window here, because if the view's not
+    // in the view hierarchy, then we don't actually want to affect
+    // flushing.
     NSWindow *window = [getView() window];
     [window enableFlushWindow];
     [window flushWindow];

@@ -54,7 +54,7 @@ QSize KWQWindowWidget::sizeHint() const
 
 QRect KWQWindowWidget::frameGeometry() const
 {
-    NSRect frame = [[d->bridge window] frame];
+    NSRect frame = [d->bridge windowFrame];
     return QRect((int)frame.origin.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - NSMaxY(frame)),
 		 (int)frame.size.width, (int)frame.size.height);
 }
@@ -66,7 +66,7 @@ QWidget *KWQWindowWidget::topLevelWidget() const
 
 QPoint KWQWindowWidget::mapToGlobal(const QPoint &p) const
 {
-    NSPoint windowPoint = NSMakePoint(p.x(), [[d->bridge window] frame].size.height - p.y());
+    NSPoint windowPoint = NSMakePoint(p.x(), [d->bridge windowFrame].size.height - p.y());
     NSPoint screenPoint = [[d->bridge window] convertBaseToScreen:windowPoint];
     return QPoint((int)screenPoint.x, (int)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - screenPoint.y));
 }
@@ -81,6 +81,6 @@ QPoint KWQWindowWidget::mapFromGlobal(const QPoint &p) const
 void KWQWindowWidget::setFrameGeometry(const QRect &r)
 {
     // FIXME: Could do something to make it easy for the browser to avoid saving this change.
-    [[d->bridge window] setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
-        r.width(), r.height()) display:YES];
+    [d->bridge setWindowFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
+        r.width(), r.height())];
 }

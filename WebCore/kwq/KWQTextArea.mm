@@ -27,6 +27,7 @@
 
 #import "KWQTextEdit.h"
 #import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
 
 /*
     This widget is used to implement the <TEXTAREA> element.
@@ -355,7 +356,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (BOOL)becomeFirstResponder
 {
-    [[self window] makeFirstResponder:textView];
+    [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:textView];
     return YES;
 }
 
@@ -398,7 +399,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (void)drawRect:(NSRect)rect
 {
     [super drawRect:rect];
-    if ([[self window] firstResponder] == textView) {
+    if ([KWQKHTMLPart::bridgeForWidget(widget) firstResponder] == textView) {
         NSSetFocusRingStyle(NSFocusRingOnly);
         NSRectFill([self bounds]);
     }
@@ -427,7 +428,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 {
     NSView *view = [[self delegate] nextValidKeyView];
     if (view && view != self && view != [self delegate]) {
-        [[self window] makeFirstResponder:view];
+        [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:view];
     }
 }
 
@@ -435,7 +436,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 {
     NSView *view = [[self delegate] previousValidKeyView];
     if (view && view != self && view != [self delegate]) {
-        [[self window] makeFirstResponder:view];
+        [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:view];
     }
 }
 
@@ -468,12 +469,12 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (BOOL)shouldDrawInsertionPoint
 {
-    return self == [[self window] firstResponder] && [super shouldDrawInsertionPoint];
+    return self == [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] && [super shouldDrawInsertionPoint];
 }
 
 - (NSDictionary *)selectedTextAttributes
 {
-    return self == [[self window] firstResponder] ? [super selectedTextAttributes] : nil;
+    return self == [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] ? [super selectedTextAttributes] : nil;
 }
 
 - (void)scrollPageUp:(id)sender

@@ -560,7 +560,7 @@ void KWQKHTMLPart::setStatusBarText(const QString &status)
 
 void KWQKHTMLPart::scheduleClose()
 {
-    [[_bridge window] performSelector:@selector(close) withObject:nil afterDelay:0.0];
+    [_bridge performSelector:@selector(closeWindow) withObject:nil afterDelay:0.0];
 }
 
 void KWQKHTMLPart::unfocusWindow()
@@ -870,7 +870,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     checkCompleted();
 }
 
-WebCoreBridge *KWQKHTMLPart::bridgeForWidget(QWidget *widget)
+WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
 {
     return partForNode(nodeForWidget(widget))->bridge();
 }
@@ -880,7 +880,7 @@ KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
     return KWQ(node->getDocument()->view()->part());
 }
 
-NodeImpl *KWQKHTMLPart::nodeForWidget(QWidget *widget)
+NodeImpl *KWQKHTMLPart::nodeForWidget(const QWidget *widget)
 {
     return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
 }
@@ -1078,9 +1078,8 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
         // We don't do this at the start of mouse down handling (before calling into WebCore),
         // because we don't want to do it until we know we didn't hit a widget.
         NSView *view = d->m_view->getDocumentView();
-        NSWindow *window = [view window];
-        if ([_currentEvent clickCount] <= 1 && [window firstResponder] != view) {
-            [window makeFirstResponder:view];
+        if ([_currentEvent clickCount] <= 1 && [_bridge firstResponder] != view) {
+            [_bridge makeFirstResponder:view];
         }
         
         KHTMLPart::khtmlMousePressEvent(event);
@@ -1133,8 +1132,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
         return true;
     }
     
-    NSWindow *window = [view window];
-    if ([window firstResponder] == view) {
+    if ([_bridge firstResponder] == view) {
         // In the case where we just became first responder, we should send the mouseDown:
         // to the NSTextField, not the NSTextField's editor. This code makes sure that happens.
         // If we don't do this, we see a flash of selected text when clicking in a text field.
@@ -1155,7 +1153,7 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
         // Normally [NSWindow sendEvent:] handles setting the first responder.
         // But in our case, the event was sent to the view representing the entire web page.
         if ([_currentEvent clickCount] <= 1 && [view acceptsFirstResponder] && [view needsPanelToBecomeKey]) {
-            [window makeFirstResponder:view];
+            [_bridge makeFirstResponder:view];
         }
     }
 
@@ -1382,7 +1380,11 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     _currentEvent = [event retain];
     
     NSResponder *oldFirstResponderAtMouseDownTime = _firstResponderAtMouseDownTime;
-    _firstResponderAtMouseDownTime = [[[d->m_view->getView() window] firstResponder] retain];
+    // Unlike other places in WebCore where we get the first
+    // responder, in this case we must be talking about the real first
+    // responder, so we could just ask the bridge's window, instead of
+    // the bridge. It's unclear which is better.
+    _firstResponderAtMouseDownTime = [[_bridge firstResponder] retain];
 
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
         buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
