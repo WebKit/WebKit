@@ -2095,7 +2095,7 @@ RenderStyle* RenderObject::getPseudoStyle(RenderStyle::PseudoId pseudo, RenderSt
     
     if (pseudo == RenderStyle::FIRST_LINE_INHERITED)
         result = document()->styleSelector()->styleForElement(static_cast<DOM::ElementImpl*>(node), 
-                                                              parentStyle);
+                                                              parentStyle, false);
     else
         result = document()->styleSelector()->pseudoStyleForElement(pseudo, static_cast<DOM::ElementImpl*>(node), 
                                                                     parentStyle);

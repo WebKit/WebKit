@@ -630,7 +630,7 @@ RenderStyle* CSSStyleSelector::locateSharedStyle()
     return 0;
 }
 
-RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent)
+RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defaultParent, bool allowSharing)
 {
     if (!e->getDocument()->haveStylesheetsLoaded()) {
         if (!styleNotYetAvailable) {
@@ -642,9 +642,11 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     }
     
     initElementAndPseudoState(e);
-    style = locateSharedStyle();
-    if (style)
-        return style;
+    if (allowSharing) {
+        style = locateSharedStyle();
+        if (style)
+            return style;
+    }
     initForStyleResolve(e, defaultParent);
 
     style = new (e->getDocument()->renderArena()) RenderStyle();

@@ -1,3 +1,15 @@
+2004-07-07  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3712133, crash from first-line pseudo-style use.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::styleForElement):
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getPseudoStyle):
+
 2004-07-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
