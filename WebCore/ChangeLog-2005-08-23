@@ -1,5 +1,9 @@
 2004-12-19  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQFoundationExtras.h: (KWQCFAutorelease): Added nil check.
+
+2004-12-19  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin.
 
         - a garbage collection fix
