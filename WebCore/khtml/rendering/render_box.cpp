@@ -1147,12 +1147,12 @@ void RenderBox::calcAbsoluteVertical()
 }
 
 
-int RenderBox::lowestPosition(bool checkScroll) const
+int RenderBox::lowestPosition(bool includeOverflowInterior) const
 {
     return m_height + marginBottom();
 }
 
-int RenderBox::rightmostPosition(bool checkScroll) const
+int RenderBox::rightmostPosition(bool includeOverflowInterior) const
 {
     return m_width;
 }

@@ -1,3 +1,14 @@
+2003-04-15  David Hyatt  <hyatt@apple.com>
+
+	Missed a piece of the renaming on lowestPosition/rightmostPosition.
+	This was already reviewed by darin.  Just missed landing one file.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::lowestPosition):
+        (RenderBox::rightmostPosition):
+
 2003-04-15  Trey Matteson  <trey@apple.com>
 
 	3210061 - Forms auto-fill ignores maxlength attribute
