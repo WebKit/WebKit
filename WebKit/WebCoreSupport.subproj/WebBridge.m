@@ -484,7 +484,10 @@
     return [[[self dataSource] request] cachePolicy] == NSURLRequestReloadIgnoringCacheData;
 }
 
-#define MAX_TIME_T ((time_t)-1)    
+// We would like a better value for a maximum time_t,
+// but there is no way to do that in C with any certainty.
+// INT_MAX should work well enough for our purposes.
+#define MAX_TIME_T ((time_t)INT_MAX)    
 
 - (time_t)expiresTimeForResponse:(NSURLResponse *)response
 {

@@ -1,5 +1,13 @@
 2003-12-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Darin
+
+        * WebCoreSupport.subproj/WebBridge.m: time_t is a signed type, so
+	casting -1 to a time_t does not work to make a max value.
+	We'll go with INT_MAX.
+
+2003-12-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed and C++ heavy-lifting by Darin
 
 	Fix warnings in C++ files.
