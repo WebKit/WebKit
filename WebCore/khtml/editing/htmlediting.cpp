@@ -2767,6 +2767,7 @@ NodeImpl *ReplacementFragment::mergeEndNode() const
                 if (!previousSibling || isProbablyBlock(previousSibling))
                     return node;
                 node = previousSibling;
+                previousSibling = node->previousSibling();
             }
         }
         node = prev;
