@@ -1,3 +1,18 @@
+2004-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- reduce cost of innerHTML from O(N^2) to O(N*D) where N is the
+	number of nodes and D is the maximum DOM tree depth.
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toString): New static helper method for
+	recursive_toHTML - this is recursive for children but iterative
+	for siblings.
+        (NodeImpl::recursive_toHTML): Call the helper with this as the
+	first argument.
+        * khtml/xml/dom_nodeimpl.h:
+
 2004-08-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3558334. 

@@ -283,83 +283,90 @@ static QString escapeHTML( const QString& in )
     return s;
 }
 
-QString NodeImpl::recursive_toHTML(bool onlyIncludeChildren, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes) const
-{	
-    bool include = true;
-    
-    if (onlyIncludeChildren) {
-        // Don't include the HTML of this node, but include the children in the next recursion.
-        include = false;
-    } else if (range) {
-        // If a range is passed, only include the node and its children's HTML if they are in the range or parents on nodes in the range.
-        include = false;
-        NodeImpl *pastEnd = range->pastEndNode();
-        for (NodeImpl *n = range->startNode(); n != pastEnd; n = n->traverseNextNode()) {
-            for (NodeImpl *ancestor = n; ancestor; ancestor = ancestor->parentNode()) {
-                if (this == ancestor) {
-                    include = true;
+QString NodeImpl::recursive_toString(const NodeImpl *startNode, bool onlyIncludeChildren, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes)
+
+{
+    QString me = "";
+
+    for (const NodeImpl *current = startNode; current != NULL; current = current->nextSibling()) {
+        bool include = true;
+        if (onlyIncludeChildren) {
+            // Don't include the HTML of this node, but include the children in the next recursion.
+            include = false;
+        } else if (range) {
+            // If a range is passed, only include the node and its children's HTML if they are in the range or parents on nodes in the range.
+            include = false;
+            NodeImpl *pastEnd = range->pastEndNode();
+            for (NodeImpl *n = range->startNode(); n != pastEnd; n = n->traverseNextNode()) {
+                for (NodeImpl *ancestor = n; ancestor; ancestor = ancestor->parentNode()) {
+                    if (current == ancestor) {
+                        include = true;
+                        break;
+                    }
+                }
+                if (include) {
                     break;
                 }
             }
-            if (include) {
-                break;
+        }
+        
+        if (include) {
+            if (nodes) {
+                nodes->append(current);
+            }
+            // Copy who I am into the me string
+            if (current->nodeType() == Node::TEXT_NODE) {
+                DOMString str = current->nodeValue().copy();
+                if (range) {
+                    int exceptionCode;
+                    if (current == range->endContainer(exceptionCode)) {
+                        str.truncate(range->endOffset(exceptionCode));
+                    }
+                    if (current == range->startContainer(exceptionCode)) {
+                        str.remove(0, range->startOffset(exceptionCode));
+                    }
+                }
+                Id parentID = current->parentNode()->id();
+                bool dontEscape = (parentID == ID_SCRIPT || parentID == ID_TEXTAREA || parentID == ID_STYLE);
+                me += dontEscape ? str.string() : escapeHTML(str.string());
+            } else if (current->nodeType() != Node::DOCUMENT_NODE) {
+                // If I am an element, not a text
+                me += QChar('<') + current->nodeName().string();
+                if (current->nodeType() == Node::ELEMENT_NODE) {
+                    const ElementImpl *el = static_cast<const ElementImpl *>(current);
+                    NamedAttrMapImpl *attrs = el->attributes();
+                    unsigned long length = attrs->length();
+                    for (unsigned int i=0; i<length; i++) {
+                        AttributeImpl *attr = attrs->attributeItem(i);
+                        me += " " + current->getDocument()->attrName(attr->id()).string() + "=\"" + attr->value().string() + "\"";
+                    }
+                }
+                me += current->isHTMLElement() ? ">" : "/>";
             }
         }
-    }
-    
-    QString me = "";
-    
-    if (include) {
-        if (nodes) {
-            nodes->append(this);
-        }
-        // Copy who I am into the me string
-        if (nodeType() == Node::TEXT_NODE) {
-            DOMString str = nodeValue().copy();
-            if (range) {
-                int exceptionCode;
-                if (this == range->endContainer(exceptionCode)) {
-                    str.truncate(range->endOffset(exceptionCode));
-                }
-                if (this == range->startContainer(exceptionCode)) {
-                    str.remove(0, range->startOffset(exceptionCode));
-                }
+        
+        if (!current->isHTMLElement() || endTag[current->id()] != FORBIDDEN) {
+            // print children
+            if (NodeImpl *n = current->firstChild()) {
+                me += recursive_toString(n, false, range, nodes);
             }
-            Id parentID = parentNode()->id();
-            bool dontEscape = (parentID == ID_SCRIPT || parentID == ID_TEXTAREA || parentID == ID_STYLE);
-            me += dontEscape ? str.string() : escapeHTML(str.string());
-        } else if (nodeType() != Node::DOCUMENT_NODE) {
-            // If I am an element, not a text
-            me += QChar('<') + nodeName().string();
-            if (nodeType() == Node::ELEMENT_NODE) {
-                const ElementImpl *el = static_cast<const ElementImpl *>(this);
-                NamedAttrMapImpl *attrs = el->attributes();
-                unsigned long length = attrs->length();
-                for (unsigned int i=0; i<length; i++) {
-                    AttributeImpl *attr = attrs->attributeItem(i);
-                    me += " " + getDocument()->attrName(attr->id()).string() + "=\"" + attr->value().string() + "\"";
-                }
+            // Print my ending tag
+            if (include && current->nodeType() != Node::TEXT_NODE && current->nodeType() != Node::DOCUMENT_NODE) {
+                me += "</" + current->nodeName().string() + ">";
             }
-            me += isHTMLElement() ? ">" : "/>";
         }
-    }
-    
-    if (!isHTMLElement() || endTag[id()] != FORBIDDEN) {
-        // print firstChild
-        if (NodeImpl *n = firstChild()) {
-            me += n->recursive_toHTML(false, range, nodes);
-        }
-        // Print my ending tag
-        if (include && nodeType() != Node::TEXT_NODE && nodeType() != Node::DOCUMENT_NODE) {
-            me += "</" + nodeName().string() + ">";
-        }
-    }
-    // print next sibling
-    if (NodeImpl *n = nextSibling()) {
-        me += n->recursive_toHTML(false, range, nodes);
+        
+        // always include children for our siblings
+        onlyIncludeChildren = false;
     }
     
     return me;
+
+}
+
+QString NodeImpl::recursive_toHTML(bool onlyIncludeChildren, const DOM::RangeImpl *range, QPtrList<NodeImpl> *nodes) const
+{	
+    return NodeImpl::recursive_toString(this, onlyIncludeChildren, range, nodes);
 }
 
 void NodeImpl::recursive_completeURLs(QString baseURL)
