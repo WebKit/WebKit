@@ -1002,6 +1002,7 @@ public:
     }
 
     ContentData* contentData() { return content; }
+    bool contentDataEquivalent(RenderStyle* otherStyle);
     void setContent(DOM::DOMStringImpl* s, bool add = false);
     void setContent(CachedObject* o, bool add = false);
 

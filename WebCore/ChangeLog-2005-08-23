@@ -1,5 +1,29 @@
 2003-07-11  Dave Hyatt  <hyatt@apple.com>
 
+	Fix for 3187101, before/after content not dynamic.  This patch
+	compares the ContentData of the old style and the new style and
+	if they are different, it blows away and recreates the render
+	objects for the generated content.  Otherwise it will dynamically
+	update the styles of the generated content render objects (which
+	should fix the printer/screen bug for rjw).
+
+	Note that createObject had an extra call to setStyle, which was
+	causing most objects to set the same style context on themselves
+	twice.  This was exposed as I was fixing the above problem.
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::contentDataEquivalent):
+        * khtml/rendering/render_style.h:
+
+2003-07-11  Dave Hyatt  <hyatt@apple.com>
+
 	Fix pseudostyles to inherit from the element's style that they are
 	specified for.  This is incorrect both for ::first-line and
 	::first-letter, but it is at least right for ::before and ::after.

@@ -31,6 +31,7 @@
 using namespace khtml;
 
 using DOM::DOMStringImpl;
+using DOM::DOMString;
 
 StyleSurroundData::StyleSurroundData()
     : margin( Fixed ), padding( Variable )
@@ -496,6 +497,32 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
     data->clip.right = right;
     data->clip.bottom = bottom;
     data->clip.left = left;
+}
+
+bool RenderStyle::contentDataEquivalent(RenderStyle* otherStyle)
+{
+    ContentData* c1 = content;
+    ContentData* c2 = otherStyle->content;
+
+    while (c1 && c2) {
+        if (c1->_contentType != c2->_contentType)
+            return false;
+        if (c1->_contentType == CONTENT_TEXT) {
+            DOMString c1Str(c1->_content.text);
+            DOMString c2Str(c2->_content.text);
+            if (c1Str != c2Str)
+                return false;
+        }
+        else if (c1->_contentType == CONTENT_OBJECT) {
+            if (c1->_content.object != c2->_content.object)
+                return false;
+        }
+
+        c1 = c1->_nextContent;
+        c2 = c2->_nextContent;
+    }
+
+    return !c1 && !c2;
 }
 
 void RenderStyle::setContent(CachedObject* o, bool add)

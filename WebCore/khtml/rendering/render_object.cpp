@@ -122,7 +122,6 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         o = new (arena) RenderFlexibleBox(node);
         break;
     }
-    if(o) o->setStyle(style);
     return o;
 }
 
