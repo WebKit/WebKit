@@ -17,6 +17,7 @@
 "/Library/Internet Plug-Ins"
 "/favicon.ico"
 "/tmp/SafariPlugInStream.XXXXXX"
+"/tmp/XXXXXX.tiff"
 "0x0"
 "1.00"
 "1000"

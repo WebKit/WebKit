@@ -1,3 +1,13 @@
+2003-02-16  Chris Blumenberg  <cblu@apple.com>
+
+	Added debug method that can be used inside of gdb to examine an image. Needed this many times.
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebNSImageExtras.h:
+        * Misc.subproj/WebNSImageExtras.m:
+        (-[NSImage _web_saveAndOpen]):
+
 2003-02-15  Darin Adler  <darin@apple.com>
 
         * English.lproj/Localizable.strings: Regenerated.
