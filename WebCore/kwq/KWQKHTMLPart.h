@@ -281,8 +281,8 @@ public:
     void issueCutCommand();
     void issueCopyCommand();
     void issuePasteCommand();
-    void postDidChangeSelectionNotification();
-    void postDidChangeNotification();
+    void respondToChangedSelection();
+    void respondToChangedContents();
     bool isContentEditable() const;
     bool shouldBeginEditing(const DOM::Range &) const;
     bool shouldEndEditing(const DOM::Range &) const;

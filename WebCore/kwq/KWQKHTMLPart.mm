@@ -2973,14 +2973,14 @@ void KWQKHTMLPart::issuePasteCommand()
     [_bridge issuePasteCommand];
 }
 
-void KWQKHTMLPart::postDidChangeSelectionNotification()
+void KWQKHTMLPart::respondToChangedSelection()
 {
-    [_bridge postDidChangeSelectionNotification];
+    [_bridge respondToChangedSelection];
 }
 
-void KWQKHTMLPart::postDidChangeNotification()
+void KWQKHTMLPart::respondToChangedContents()
 {
-    [_bridge postDidChangeNotification];
+    [_bridge respondToChangedContents];
 }
 
 bool KWQKHTMLPart::isContentEditable() const

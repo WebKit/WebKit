@@ -1,3 +1,23 @@
+2004-05-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Change postDidChangeSelectionNotification and postDidChangeNotification tp
+        respondToChangedSelection and respondToChangedContents, respectively, to
+        account for the fact that we do work in these calls other than post a
+        notification.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::notifySelectionChanged): Use new names.
+        (KHTMLPart::appliedEditing): Ditto.
+        (KHTMLPart::unappliedEditing): Ditto.
+        (KHTMLPart::reappliedEditing): Ditto.
+        * kwq/KWQKHTMLPart.h: Change name of functions as described.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::respondToChangedSelection): Ditto.
+        (KWQKHTMLPart::respondToChangedContents): Ditto.
+        * kwq/WebCoreBridge.h: Ditto.
+
 2004-05-25  Maciej Stachowiak  <mjs@apple.com>
 
         Fixed build.

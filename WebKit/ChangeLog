@@ -1,6 +1,28 @@
 2004-05-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
+
+        Change postDidChangeSelectionNotification and postDidChangeNotification tp
+        respondToChangedSelection and respondToChangedContents, respectively, to
+        account for the fact that we do work in these calls other than post a
+        notification. The need to clear the typing style on both kinds of changes
+        inspired the name change.
+
+        Add in support to set and access typing style. We don't do anything with it yet
+        except store and return it. Using the typing style is still to come.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge respondToChangedContents]): Change name of functions as described.
+        (-[WebBridge respondToChangedSelection]): Change name of functions as described.
+        * WebView.subproj/WebView.m:
+        (-[WebView dealloc:]): Dealloc typing style ivar.
+        (-[WebView setTypingStyle:]): Change to set typing style ivar.
+        (-[WebView typingStyle]): Return new typing style ivar.
+        * WebView.subproj/WebViewPrivate.h: Add ivar for typing style.
+
+2004-05-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
         
         Improve _bridgeForCurrentSelection so that it is frame-savvy.
         Fixup setSelectedDOMRange:affinity: so that it uses the right bridge.

@@ -1193,15 +1193,17 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     return applet;
 }
 
-- (void)postDidChangeNotification
+- (void)respondToChangedContents
 {
     [[_frame webView] _updateFontPanel];
+    [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[_frame webView]];
 }
 
-- (void)postDidChangeSelectionNotification
+- (void)respondToChangedSelection
 {
     [[_frame webView] _updateFontPanel];
+    [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
 }
 

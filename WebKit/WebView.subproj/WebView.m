@@ -157,6 +157,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [progressItems release];
         
     [mediaStyle release];
+    [typingStyle release];
     
     [super dealloc];
 }
@@ -2469,13 +2470,20 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)setTypingStyle:(DOMCSSStyleDeclaration *)style
 {
-    ERROR("unimplemented");
+    // FIXME: We do nothing with this typing style right now other than store it.
+    if (style == _private->typingStyle)
+        return;
+
+    DOMCSSStyleDeclaration *oldStyle = _private->typingStyle;
+    _private->typingStyle = [style retain];
+    if (oldStyle)
+        [oldStyle release];
 }
 
 - (DOMCSSStyleDeclaration *)typingStyle
 {
-    //ERROR("unimplemented");
-    return nil;
+    // FIXME: We do nothing with this typing style right now other than store it.
+    return _private->typingStyle;
 }
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag

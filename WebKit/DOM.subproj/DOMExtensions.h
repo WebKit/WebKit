@@ -39,6 +39,8 @@
 - (void)setInnerText:(NSString *)innerText;
 - (NSString *)outerHTML;
 - (void)setOuterHTML:(NSString *)outerHTML;
+- (NSString *)outerText;
+- (void)setOuterText:(NSString *)outerText;
 - (DOMHTMLCollection *)children;
 - (NSString *)contentEditable;
 - (void)setContentEditable:(NSString *)contentEditable;
