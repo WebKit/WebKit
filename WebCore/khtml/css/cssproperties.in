@@ -113,6 +113,7 @@ text-indent
 text-overflow
 text-shadow
 text-transform
+-apple-text-size-adjust
 top
 unicode-bidi
 -khtml-user-drag

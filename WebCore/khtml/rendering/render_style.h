@@ -583,7 +583,10 @@ public:
 
     ShadowData* textShadow;  // Our text shadow information for shadowed text drawing.
     EUserModify userModify : 2; // Flag used for editing state
-
+#if APPLE_CHANGES
+    bool textSizeAdjust : 1;    // An Apple extension.  Not really CSS3 but not worth making a new struct over.
+#endif
+    
 private:
     StyleCSS3InheritedData &operator=(const StyleCSS3InheritedData &);
 };
@@ -1098,7 +1101,8 @@ public:
 
 #if APPLE_CHANGES
     // Apple-specific property getter methods
-    int lineClamp() { return css3NonInheritedData->lineClamp; }
+    int lineClamp() const { return css3NonInheritedData->lineClamp; }
+    bool textSizeAdjust() const { return css3InheritedData->textSizeAdjust; }
 #endif
 
 // attribute setter methods
@@ -1278,6 +1282,7 @@ public:
 #if APPLE_CHANGES
     // Apple-specific property setters
     void setLineClamp(int c) { SET_VAR(css3NonInheritedData, lineClamp, c); }
+    void setTextSizeAdjust(bool b) { SET_VAR(css3InheritedData, textSizeAdjust, b); }
 #endif
 
     QPalette palette() const { return visual->palette; }
@@ -1383,6 +1388,7 @@ public:
 #if APPLE_CHANGES
     // Keep these at the end.
     static int initialLineClamp() { return -1; }
+    static bool initialTextSizeAdjust() { return true; }
 #endif
 };
 

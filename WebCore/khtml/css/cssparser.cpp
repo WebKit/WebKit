@@ -1117,6 +1117,10 @@ bool CSSParser::parseValue( int propId, bool important )
     case CSS_PROP__APPLE_LINE_CLAMP:
         valid_primitive = (!id && validUnit(value, FPercent, false));
         break;
+    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
+        if (id == CSS_VAL_AUTO || id == CSS_VAL_NONE)
+            valid_primitive = true;
+        break;
 #endif
 
 	/* shorthand properties */

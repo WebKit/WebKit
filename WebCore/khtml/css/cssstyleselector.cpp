@@ -722,6 +722,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     
     // If our font got dirtied, go ahead and update it now.
     if (fontDirty) {
+        checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
         style->htmlFont().update(paintDeviceMetrics);
         fontDirty = false;
@@ -736,6 +737,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     // If our font got dirtied by one of the non-essential font props, 
     // go ahead and update it a second time.
     if (fontDirty) {
+        checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
         style->htmlFont().update(paintDeviceMetrics);
         fontDirty = false;
@@ -798,6 +800,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     
     // If our font got dirtied, go ahead and update it now.
     if (fontDirty) {
+        checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
         style->htmlFont().update(paintDeviceMetrics);
         fontDirty = false;
@@ -812,6 +815,7 @@ RenderStyle* CSSStyleSelector::pseudoStyleForElement(RenderStyle::PseudoId pseud
     // If our font got dirtied by one of the non-essential font props, 
     // go ahead and update it a second time.
     if (fontDirty) {
+        checkForTextSizeAdjust();
         checkForGenericFamilyChange(style, parentStyle);
         style->htmlFont().update(paintDeviceMetrics);
         fontDirty = false;
@@ -1641,6 +1645,9 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                         case CSS_PROP_FONT_STYLE:
                         case CSS_PROP_FONT_FAMILY:
                         case CSS_PROP_FONT_WEIGHT:
+#if APPLE_CHANGES
+                        case CSS_PROP__APPLE_TEXT_SIZE_ADJUST:
+#endif
                             // these have to be applied first, because other properties use the computed
                             // values of these porperties.
                             first = true;
@@ -3608,12 +3615,31 @@ void CSSStyleSelector::applyProperty( int id, DOM::CSSValueImpl *value )
         style->setLineClamp((int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE));
         break;
     }
+    case CSS_PROP__APPLE_TEXT_SIZE_ADJUST: {
+        HANDLE_INHERIT_AND_INITIAL(textSizeAdjust, TextSizeAdjust)
+        if (!primitiveValue || !primitiveValue->getIdent()) return;
+        style->setTextSizeAdjust(primitiveValue->getIdent() == CSS_VAL_AUTO);
+        fontDirty = true;
+        break;
+    }        
 #endif
 
     default:
         return;
     }
 }
+
+#if APPLE_CHANGES
+void CSSStyleSelector::checkForTextSizeAdjust()
+{
+    if (style->textSizeAdjust())
+        return;
+ 
+    FontDef newFontDef(style->htmlFont().fontDef);
+    newFontDef.computedSize = newFontDef.specifiedSize;
+    style->setFontDef(newFontDef);
+}
+#endif
 
 void CSSStyleSelector::checkForGenericFamilyChange(RenderStyle* aStyle, RenderStyle* aParentStyle)
 {

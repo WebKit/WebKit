@@ -1,5 +1,38 @@
 2004-06-09  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3607091, implement a style that prevents zoom and min font size from taking effect.
+	The name of the new style is "-apple-text-size-adjust" with values of "none" and "auto."  The default
+	is "auto."
+	
+        Reviewed by mjs
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssproperties.c:
+        (hash_prop):
+        (findProp):
+        * khtml/css/cssproperties.h:
+        * khtml/css/cssproperties.in:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::styleForElement):
+        (khtml::CSSStyleSelector::pseudoStyleForElement):
+        (khtml::CSSStyleSelector::applyDeclarations):
+        (khtml::CSSStyleSelector::applyProperty):
+        (khtml::CSSStyleSelector::checkForTextSizeAdjust):
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/render_style.cpp:
+        (textSizeAdjust):
+        (StyleCSS3InheritedData):
+        (StyleCSS3InheritedData::operator==):
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::lineClamp):
+        (khtml::RenderStyle::textSizeAdjust):
+        (khtml::RenderStyle::setTextSizeAdjust):
+        (khtml::RenderStyle::initialTextSizeAdjust):
+
+2004-06-09  David Hyatt  <hyatt@apple.com>
+
 	Implement parsing and setting of the text-overflow CSS3 property.
 	
         Reviewed by kocienda
