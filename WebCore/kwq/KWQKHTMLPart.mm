@@ -31,6 +31,7 @@
 #import "render_frames.h"
 #import "render_image.h"
 #import "render_list.h"
+#import "render_style.h"
 #import "render_table.h"
 #import "render_text.h"
 #import "khtmlpart_p.h"
@@ -1919,6 +1920,8 @@ static NodeImpl *inList(NodeImpl *e)
 }
 
 #define BULLET_CHAR 0x2022
+#define SQUARE_CHAR 0x25AA
+#define CIRCLE_CHAR 0x25E6
 
 NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int startOffset, NodeImpl *endNode, int endOffset)
 {
@@ -2059,22 +2062,29 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                             listText += '\t';
                             if (itemParent){
                                 // Ick!  Avoid use of itemParent->id() which confuses ObjC++.
-                                if (Node(itemParent).elementId() == ID_UL) {
-                                    // Always use bullets.  Perhaps we could use other characters
-                                    // for square and disc type lists.
-                                    listText += ((QChar)BULLET_CHAR);
-                                    if ([font pointSize] > maxMarkerWidth)
-                                        maxMarkerWidth = [font pointSize];
+                                khtml::RenderListItem *listRenderer = static_cast<khtml::RenderListItem*>(renderer);
+
+                                maxMarkerWidth = MAX([font pointSize], maxMarkerWidth);
+                                switch(listRenderer->style()->listStyleType()) {
+                                    case khtml::DISC:
+                                        listText += ((QChar)BULLET_CHAR);
+                                        break;
+                                    case khtml::CIRCLE:
+                                        listText += ((QChar)CIRCLE_CHAR);
+                                        break;
+                                    case khtml::SQUARE:
+                                        listText += ((QChar)SQUARE_CHAR);
+                                        break;
+                                    case khtml::LNONE:
+                                        break;
+                                    default:
+                                        QString marker = listRenderer->markerStringValue();
+                                        listText += marker;
+                                        // Use AppKit metrics.  Will be rendered by AppKit.
+                                        float markerWidth = [font widthOfString: marker.getNSString()];
+                                        maxMarkerWidth = MAX(markerWidth, maxMarkerWidth);
                                 }
-                                else {
-                                    RenderListItem *listRenderer = static_cast<RenderListItem*>(renderer);
-                                    QString marker = listRenderer->markerStringValue();
-                                    listText += marker;
-                                    // Use AppKit metrics.  Will be rendered by AppKit.
-                                    float markerWidth = [font widthOfString: marker.getNSString()];
-                                    if (markerWidth > maxMarkerWidth)
-                                        maxMarkerWidth = markerWidth;
-                                }
+
                                 listText += ' ';
                                 listText += '\t';
     
@@ -2240,9 +2250,11 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
         unsigned i, count = listItems.count();
         ElementImpl *e;
         ListItemInfo info;
-        int containingBlockX, containingBlockY;
-        NodeImpl *containingBlock;
 
+#ifdef POSITION_LIST
+        NodeImpl *containingBlock;
+        int containingBlockX, containingBlockY;
+        
         // Determine the position of the outermost containing block.  All paragraph
         // styles and tabs should be relative to this position.  So, the horizontal position of 
         // each item in the list (in the resulting attributed string) will be relative to position 
@@ -2254,6 +2266,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
             }
             containingBlock->renderer()->absolutePosition(containingBlockX, containingBlockY);
         }
+#endif
         
         for (i = 0; i < count; i++){
             e = listItems.at(i);
@@ -2264,15 +2277,21 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int sta
                 
             RenderObject *r = e->renderer();
             RenderStyle *style = r->style();
-            int rx, ry;
-            r->absolutePosition(rx, ry);
-            rx -= containingBlockX;
-            
+
+            int rx;
             NSFont *font = style->font().getNSFont();
             float pointSize = [font pointSize];
 
+#ifdef POSITION_LIST
+            int ry;
+            r->absolutePosition(rx, ry);
+            rx -= containingBlockX;
+            
             // Ensure that the text is indented at least enough to allow for the markers.
             rx = MAX(rx, (int)maxMarkerWidth);
+#else
+            rx = (int)MAX(maxMarkerWidth, pointSize);
+#endif
 
             // The bullet text will be right aligned at the first tab marker, followed
             // by a space, followed by the list item text.  The space is arbitrarily
