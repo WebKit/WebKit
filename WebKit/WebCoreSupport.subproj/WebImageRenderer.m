@@ -321,7 +321,6 @@ static NSMutableSet *activeImageRenderers;
 - (void)nextFrame:(id)context
 {
     int currentFrame;
-    NSWindow *window;
     
     // Release the timer that just fired.
     [frameTimer release];
@@ -337,28 +336,7 @@ static NSMutableSet *activeImageRenderers;
         currentFrame = 0;
     }
     [self setCurrentFrame:currentFrame];
-    
-    window = [frameView window];
-    
-     // We can't use isOpaque because it returns YES for many non-opaque images (Radar 2966937).
-     // But we can at least assume that any image representation without alpha is opaque.
-     if (![[[self representations] objectAtIndex:0] hasAlpha]) {
-        if ([frameView canDraw]) {
-            [frameView lockFocus];
-            [self drawClippedToValidInRect:targetRect fromRect:imageRect];
-            [frameView unlockFocus];
-        }
-        if (!animationFinished) {
-            [self scheduleFrame];
-        }
-    } else {
-        // No need to schedule the next frame in this case.  The display
-        // will eventually cause the image to be redrawn and the next frame
-        // will be scheduled in beginAnimationInRect:fromRect:.
-        [frameView displayRect:targetRect];
-    }
-    
-    [window flushWindow];
+    [frameView setNeedsDisplayInRect:targetRect];
 }
 
 - (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr
