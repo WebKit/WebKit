@@ -122,7 +122,7 @@ libkwq_la_SOURCES = \
 	WKPluginView.mm \
 	WKPluginDatabase.mm \
 	KWQPlugin.mm \
-	npapi.c \
+	npapi.mm \
 	$(NULL)
 
 libkwq_la_LIBADD = \
