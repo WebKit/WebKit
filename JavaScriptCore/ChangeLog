@@ -1,5 +1,22 @@
 2004-08-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed a couple things making 5 Mozilla regexp tests pass
+
+        * kjs/regexp_object.cpp: (RegExpProtoFuncImp::call): Implement toString
+        for the prototype.
+        (RegExpObjectImp::construct): Fix bug where the string "undefined" would
+        be used as the flags string when no parameter was passed.
+
+        * kjs/regexp_object.h: (KJS::RegExpPrototypeImp::classInfo):
+        Added a class info object for RegExp prototype so it can return
+        a string instead of raising an exception when converting to a string.
+
+        * tests/mozilla/expected.html: Update results.
+
+2004-08-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin.
 
         - fix crashes in mozilla tests due to mishandling NaN

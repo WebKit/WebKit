@@ -38,6 +38,8 @@ using namespace KJS;
 
 // ECMA 15.9.4
 
+const ClassInfo RegExpPrototypeImp::info = {"RegExpPrototype", 0, 0, 0};
+
 RegExpPrototypeImp::RegExpPrototypeImp(ExecState *exec,
                                        ObjectPrototypeImp *objProto,
                                        FunctionPrototypeImp *funcProto)
@@ -73,6 +75,11 @@ bool RegExpProtoFuncImp::implementsCall() const
 Value RegExpProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
 {
   if (!thisObj.inherits(&RegExpImp::info)) {
+    if (thisObj.inherits(&RegExpPrototypeImp::info)) {
+      switch (id) {
+        case ToString: return String("//");
+      }
+    }
     Object err = Error::create(exec,TypeError);
     exec->setException(err);
     return err;
@@ -225,7 +232,7 @@ bool RegExpObjectImp::implementsConstruct() const
 Object RegExpObjectImp::construct(ExecState *exec, const List &args)
 {
   UString p = args.isEmpty() ? UString("") : args[0].toString(exec);
-  UString flags = args[1].toString(exec);
+  UString flags = args.size() < 2 ? UString("") : args[1].toString(exec);
 
   RegExpPrototypeImp *proto = static_cast<RegExpPrototypeImp*>(exec->lexicalInterpreter()->builtinRegExpPrototype().imp());
   RegExpImp *dat = new RegExpImp(proto);
