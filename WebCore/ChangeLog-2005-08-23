@@ -1,5 +1,16 @@
 2004-12-07  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Fix a problem with my
+        change in thei code yesterday. Call to insertBlockPlaceholderIfNeeded() must be done
+        after new block has been inserted, otherwise a crash can result. Shuffle down call 
+        to insertBlockPlaceholderIfNeeded() a couple of lines (where the node is inserted), 
+        and all is good.
+
+2004-12-07  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for this bug:
