@@ -1,3 +1,15 @@
+2003-11-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed - 3479285 - hang at www.saccourt.com
+	- fixed - 3477088 - (85-112) Safari frozen loading a page at Postal Service site of Taiwan
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLSelectCollection::tryPut): Use the range-checking
+	version of the number-conversion function to avoid negative
+	numbers and NaN.
+
 2003-11-13  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
