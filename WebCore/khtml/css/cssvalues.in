@@ -233,8 +233,8 @@ table-column-group
 table-column
 table-cell
 table-caption
-box
-inline-box
+-khtml-box
+-khtml-inline-box
 #none
 #
 # CSS_PROP_CURSOR:

@@ -1,5 +1,19 @@
 2003-07-25  Dave Hyatt  <hyatt@apple.com>
 
+	Rename box and inline-box to -khtml-box and -khtml-inline-box.
+	
+        Reviewed by john
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssvalues.c:
+        (hash_val):
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+
+2003-07-25  Dave Hyatt  <hyatt@apple.com>
+
 	Fix for 3343529, inline blocks crashing Safari.  There were lots of problems with
 	inlne-blocks.  This code gets basic inline-blocks working properly (with no crashes).
 
