@@ -1792,16 +1792,18 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (id)accessibilityHitTest:(NSPoint)point
 {
     if (!m_renderer)
-        return self;
+        return NSAccessibilityUnignoredAncestor(self);
     
     RenderObject::NodeInfo nodeInfo(true, true);
     m_renderer->layer()->hitTest(nodeInfo, (int)point.x, (int)point.y);
     if (!nodeInfo.innerNode())
-        return self;
+        return NSAccessibilityUnignoredAncestor(self);
     RenderObject* obj = nodeInfo.innerNode()->renderer();
     if (!obj)
-        return self;
-    return obj->document()->getAccObjectCache()->accObject(obj);
+        return NSAccessibilityUnignoredAncestor(self);
+    
+    KWQAccObject * accObject = obj->document()->getAccObjectCache()->accObject(obj);
+    return NSAccessibilityUnignoredAncestor(accObject);
 }
 
 // _accessibilityParentForSubview is called by AppKit when moving up the tree
