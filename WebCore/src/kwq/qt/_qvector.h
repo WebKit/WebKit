@@ -45,6 +45,7 @@
 #endif
 
 #include <KWQDef.h>
+#include <iostream>
 
 // -------------------------------------------------------------------------
 
@@ -89,6 +90,33 @@ public:
 private:
     void  deleteItem( Item d ) { if ( del_item ) delete (type *)d; }
 };
+
+#ifdef _KWQ_IOSTREAM_
+template<class T>
+inline ostream &operator<<(ostream &o, const QVector<T> &p)
+{
+    int count = p.count();
+
+    o << "QVector: [size: " <<
+    count <<
+    "; items: ";
+
+    if (count == 0) {
+        // no-op
+    }
+    else {
+        for (int i = 0; i < count; i++) {
+            o << *(p[i]);
+            if (i < count) {
+                o << ", ";
+            }
+        }
+    }
+    o << "]";
+
+    return o;
+    }
+#endif
 
 
 #endif // QVECTOR_H
