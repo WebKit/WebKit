@@ -96,10 +96,8 @@ NP_UTF8 NP_UTF8FromIdentifier (NP_Identifier identifier);
 /*
     NP_Object behavior is implemented using the following set of callback interfaces.
 */
-typedef NP_Object *(*NP_CreateInterface)();
-typedef void *(*NP_DestroyInterface)(NP_Object *obj);
-typedef NP_Object *(*NP_RetainInterface)(NP_Object *obj);
-typedef void (*NP_ReleaseInterface)(NP_Object *obj);
+typedef NP_Object *(*NP_AllocateInterface)();
+typedef void (*NP_FreeInterface)(NP_Object *obj);
 typedef void (*NP_InvalidateInterface)();
 typedef bool (*NP_HasMethodInterface)(NP_Object *obj, NP_Identifier name);
 typedef NP_Object *(*NP_InvokeInterface)(NP_Object *obj, NP_Identifier name, NP_Object **args, unsigned argCount);
@@ -125,8 +123,8 @@ typedef void (*NP_SetPropertyInterface)(NP_Object *obj, NP_Identifier name, NP_O
 struct NP_Class
 {
     int32_t structVersion;
-    NP_CreateInterface create;
-    NP_DestroyInterface destroy;
+    NP_AllocateInterface allocate;
+    NP_FreeInterface free;
     NP_InvalidateInterface invalidate;
     NP_HasMethodInterface hasMethod;
     NP_InvokeInterface invoke;
@@ -207,7 +205,7 @@ float NP_FloatFromNumber (NP_Number *obj);
 double NP_DoubleFromNumber (NP_Number *obj);
 
 NP_String *NP_CreateStringWithUTF8 (NP_UTF8 utf8String);
-NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String);
+NP_String *NP_CreateStringWithUTF16 (NP_UTF16 utf16String, unsigned int len);
 
 /*
     Memory returned from NP_UTF8FromString must be freed by the caller.
@@ -363,16 +361,12 @@ void NP_SetException (NP_Object *obj,  NP_String *message);
         return 0;
     }
 
-    NP_Object *myInterfaceCreate ()
+    NP_Object *myInterfaceAllocate ()
     {
         MyInterfaceObject *newInstance = (MyInterfaceObject *)malloc (sizeof(MyInterfaceObject));
         
         if (stopIdentifier == 0)
             initializeIdentifiers();
-        
-        newInstance->object->class = myInterface;
-        
-        return myInterfaceRetain (newInstance);
     }
 
     void myInterfaceInvalidate ()
@@ -381,34 +375,14 @@ void NP_SetException (NP_Object *obj,  NP_String *message);
         // objects.
     }
     
-    void myInterfaceDestroy (MyInterfaceObject *obj) 
+    void myInterfaceFree (MyInterfaceObject *obj) 
     {
-        assert (obj->referenceCount == 0);
-        
         free ((void *)obj);
     }
     
-    NP_Object *myInterfaceRetain (MyInterfaceObject *obj)
-    {
-        return referenceCount++;
-    }
-
-    void myInterfaceRelease (MyInterfaceObject *obj)
-    {
-        obj->referenceCount--;
-        
-        assert (obj->referenceCount >= 0)
-        
-        if (obj->referenceCount == 0) {
-            myDestroyInterface (obj);
-        }
-    }
-
     static NP_Class _myInterface = { 
-        (NP_CreateInterface) myInterfaceCreate, 
-        (NP_DestroyInterface) myInterfaceDestroy, 
-        (NP_RetainInterface) myInterfaceRetain,
-        (NP_ReleaseInterface) myInterfaceRelease,
+        (NP_AllocateInterface) myInterfaceAllocate, 
+        (NP_FreeInterface) myInterfaceFree, 
         (NP_InvalidateInterface) myInterfaceInvalidate,
         (NP_HasMethodInterface) myInterfaceHasMethod,
         (NP_InvokeInterface) myInterfaceInvoke,

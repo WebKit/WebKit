@@ -1,3 +1,27 @@
+2004-03-03  Richard Williamson   <rjw@apple.com>
+
+	More 'C' binding implementation.
+
+        Reviewed by Chris.
+
+        * bindings/NP_runtime.cpp:
+        (identifierEqual):
+        (identifierHash):
+        (getIdentifierDictionary):
+        (NP_IdentifierFromUTF8):
+        (NP_UTF8FromIdentifier):
+        (NP_CreateObject):
+        (NP_ReleaseObject):
+        (NP_IsKindOfClass):
+        (numberCreate):
+        (NP_CreateNumberWithInt):
+        (NP_CreateNumberWithFloat):
+        (NP_CreateNumberWithDouble):
+        (NP_IntFromNumber):
+        (NP_FloatFromNumber):
+        (NP_DoubleFromNumber):
+        * bindings/NP_runtime.h:
+
 2004-03-02  Richard Williamson   <rjw@apple.com>
 
 	Removed retain/release from NP_Class.  Classes will not be allowed to implement their
