@@ -1,12 +1,13 @@
-QStack: [size: 0; items: ]
-push test: 
-QStack: [size: 5; items: 4, 3, 2, 1, 0]
-pop test: 
-4
-3
-2
-1
-0
-QStack: [size: 5; items: 4, 3, 2, 1, 0]
-clear test: 
-QStack: [size: 0; items: ]
+s0: QStack: [size: 0; items: ]
+s0 push: QStack: [size: 5; items: 4, 3, 2, 1, 0]
+s1 = s0: QStack: [size: 5; items: 4, 3, 2, 1, 0]
+s1 count: 5
+s1 pop: 4
+s1 pop: 3
+s1 pop: 2
+s1 pop: 1
+s1 pop: 0
+s1: QStack: [size: 0; items: ]
+s0 isEmpty: 0
+s1 isEmpty: 1
+s0 clear: QStack: [size: 0; items: ]
