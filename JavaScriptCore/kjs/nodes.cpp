@@ -1606,7 +1606,9 @@ Value VarDeclNode::evaluate(ExecState *exec)
       val = init->evaluate(exec);
       KJS_CHECKEXCEPTIONVALUE
   } else {
-      if ( variable.hasProperty(exec, ident ) ) // already declared ?
+      // already declared? - check with getDirect so you can override
+      // built-in properties of the global object with var declarations.
+      if ( variable.imp()->getDirect(ident) ) 
           return Value();
       val = Undefined();
   }

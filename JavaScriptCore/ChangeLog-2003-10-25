@@ -1,3 +1,13 @@
+2003-05-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+	- fixed 3239961 - www.phiffer.com doesn't work; uses "var top; top = n;"
+	
+        * kjs/nodes.cpp:
+        (VarDeclNode::evaluate): Check if the property exists with
+	getDirect() instead of hasProperty().
+
 === Safari-77 ===
 
 2003-04-29  Darin Adler  <darin@apple.com>
