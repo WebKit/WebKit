@@ -410,6 +410,11 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
     [_private->userAgentLock unlock];
 }
 
+- (NSString *)applicationNameForUserAgent
+{
+    return [[_private->applicationNameForUserAgent copy] autorelease];
+}
+
 // Set the user agent explicitly. Setting the user-agent string to nil means
 // that WebKit should construct the best possible user-agent string for each URL
 // for best results rendering web pages. Setting it to any string means
@@ -422,6 +427,11 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
     [_private->userAgentOverride release];
     _private->userAgentOverride = override;
     [_private->userAgentLock unlock];
+}
+
+- (NSString *)userAgent
+{
+    return [[_private->userAgentOverride copy] autorelease];
 }
 
 // Get the appropriate user-agent string for a particular URL.

@@ -1,3 +1,10 @@
+2002-09-18  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebController.h: Add getters.
+        * WebView.subproj/WebController.m:
+        (-[WebController applicationNameForUserAgent]): Added.
+        (-[WebController userAgent]): Added.
+
 2002-09-17  Darin Adler  <darin@apple.com>
 
 	Fix bug where image documents were broken.

@@ -207,6 +207,7 @@ extern NSString *WebContextMenuElementFrameKey;
 // Set the application name. This name will be used in user-agent strings
 // that are chosen for best results in rendering web pages.
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName;
+- (NSString *)setApplicationNameForUserAgent;
 
 // Set the user agent explicitly. Setting the user-agent string to nil means
 // that WebKit should construct the best possible user-agent string for each URL
@@ -214,6 +215,7 @@ extern NSString *WebContextMenuElementFrameKey;
 // that WebKit should use that user-agent string for all purposes until it is set
 // back to nil.
 - (void)setUserAgent:(NSString *)userAgentString;
+- (NSString *)userAgent;
 
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL;
