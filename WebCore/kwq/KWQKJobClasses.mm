@@ -95,9 +95,8 @@ TransferJob::TransferJob(const KURL &url, bool reload)
     : d(new TransferJobPrivate(url)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result(this, SIGNAL(result(KIO::Job*))),
-      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *))),
-      m_allData(this, SIGNAL(allData(KIO::Job*, NSData *)))
+      m_result(this, SIGNAL(result(KIO::Job*, NSData *))),
+      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
 {
 }
 
@@ -105,9 +104,8 @@ TransferJob::TransferJob(const KURL &url, const FormData &postData)
     : d(new TransferJobPrivate(url, postData)),
       m_data(this, SIGNAL(data(KIO::Job*, const char*, int))),
       m_redirection(this, SIGNAL(redirection(KIO::Job*, const KURL&))),
-      m_result(this, SIGNAL(result(KIO::Job*))),
-      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *))),
-      m_allData(this, SIGNAL(allData(KIO::Job*, NSData *)))
+      m_result(this, SIGNAL(result(KIO::Job*, NSData *))),
+      m_receivedResponse(this, SIGNAL(receivedResponse(KIO::Job*, NSURLResponse *)))
 {
 }
 
@@ -232,9 +230,9 @@ void TransferJob::emitRedirection(const KURL &url)
     m_redirection.call(this, url);
 }
 
-void TransferJob::emitResult()
+void TransferJob::emitResult(NSData *allData)
 {
-    m_result.call(this);
+    m_result.call(this, allData);
 }
 
 void TransferJob::emitReceivedResponse(NSURLResponse *response)
@@ -245,11 +243,6 @@ void TransferJob::emitReceivedResponse(NSURLResponse *response)
     KWQRetain(d->response);
 
     m_receivedResponse.call(this, response);
-}
-
-void TransferJob::emitAllData(NSData *data)
-{
-    m_allData.call(this, data);
 }
 
 } // namespace KIO

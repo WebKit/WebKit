@@ -523,12 +523,12 @@ protected:
 	void requestFailed( khtml::DocLoader* dl, khtml::CachedObject *obj );
 
     protected slots:
-	void slotFinished( KIO::Job * );
 #if APPLE_CHANGES
+        void slotFinished( KIO::Job * , NSData *allData);
 	void slotData( KIO::Job *, const char *data, int size );
         void slotReceivedResponse ( KIO::Job *, NSURLResponse *response );
-        void slotAllData( KIO::Job *, NSData *data );
 #else
+        void slotFinished( KIO::Job * );
 	void slotData( KIO::Job *, const QByteArray & );
 #endif
 

@@ -1416,13 +1416,16 @@ void Loader::servePendingRequests()
          job->addMetaData("cross-domain", "true");
   }
 
+#if APPLE_CHANGES
+  connect( job, SIGNAL( result( KIO::Job *, NSData *) ), this, SLOT( slotFinished( KIO::Job *, NSData *) ) );
+#else
   connect( job, SIGNAL( result( KIO::Job * ) ), this, SLOT( slotFinished( KIO::Job * ) ) );
-
+#endif
+  
 #if APPLE_CHANGES
   connect( job, SIGNAL( data( KIO::Job*, const char *, int)),
            SLOT( slotData( KIO::Job*, const char *, int)));
   connect( job, SIGNAL( receivedResponse( KIO::Job *, NSURLResponse *)), SLOT( slotReceivedResponse( KIO::Job *, NSURLResponse *)) );
-  connect( job, SIGNAL( allData( KIO::Job *, NSData *)), SLOT( slotAllData( KIO::Job *, NSData *)) );
 
   if (KWQServeRequest(this, req, job))
       m_requestsLoading.insert(job, req);
@@ -1437,7 +1440,11 @@ void Loader::servePendingRequests()
 #endif // APPLE_CHANGES
 }
 
+#if APPLE_CHANGES
+void Loader::slotFinished( KIO::Job* job, NSData *allData)
+#else
 void Loader::slotFinished( KIO::Job* job )
+#endif
 {
   Request *r = m_requestsLoading.take( job );
   KIO::TransferJob* j = static_cast<KIO::TransferJob*>(job);
@@ -1454,6 +1461,9 @@ void Loader::slotFinished( KIO::Job* job )
   else
   {
       r->object->data(r->m_buffer, true);
+#if APPLE_CHANGES
+      r->object->setAllData(allData);
+#endif 
       emit requestDone( r->m_docLoader, r->object );
 #if !APPLE_CHANGES
       time_t expireDate = j->queryMetaData("expire-date").toLong();
@@ -1487,14 +1497,6 @@ void Loader::slotReceivedResponse(KIO::Job* job, NSURLResponse *response)
     ASSERT(response);
     r->object->setResponse(response);
     r->object->setExpireDate(KWQCacheObjectExpiresTime(r->m_docLoader, response), false);
-}
-
-void Loader::slotAllData(KIO::Job* job, NSData *data)
-{
-    Request *r = m_requestsLoading[job];
-    ASSERT(r);
-    ASSERT(data);
-    r->object->setAllData(data);
 }
 
 #endif

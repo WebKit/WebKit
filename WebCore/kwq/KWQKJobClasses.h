@@ -77,9 +77,8 @@ public:
 
     void emitData(const char *, int);
     void emitRedirection(const KURL &);
-    void emitResult();
+    void emitResult(NSData *);
     void emitReceivedResponse(NSURLResponse *);
-    void emitAllData(NSData *);
 
     khtml::FormData postData() const;
     QString method() const;
@@ -94,7 +93,6 @@ private:
     KWQSignal m_redirection;
     KWQSignal m_result;
     KWQSignal m_receivedResponse;
-    KWQSignal m_allData;
 };
 
 } // namespace KIO

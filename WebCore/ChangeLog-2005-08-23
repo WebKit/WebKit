@@ -1,3 +1,27 @@
+2004-12-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fix for performance regression. My original patch added a signal for passing the data of a resource to its WebCore cache object. This patch passes the data with the preexisting "finished" symbol so we make less calls. 
+	Fixed: <rdar://problem/3903173> REGRESSION (172-TOT): assertion failure and crash in slotAllData logging into hotmail account
+
+        Reviewed by rjw.
+
+        * khtml/misc/loader.cpp:
+        (Loader::servePendingRequests): pass data param to slotFinished, removed allData signal
+        (Loader::slotFinished): take data param
+        * khtml/misc/loader.h:
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJob::TransferJob): have m_result take a data param, removed m_allData
+        (KIO::TransferJob::emitResult): take data param and pass it
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader finishJobAndHandle:]): take data param and pass it
+        (-[KWQResourceLoader cancel]): pass nil for data
+        (-[KWQResourceLoader reportError]): ditto
+        (-[KWQResourceLoader finishWithData:]): pass data
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): pass data param to slotFinished
+        (KWQSlot::call): added support for slotFinished_Loader, removed slotAllData
+
 2004-12-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
