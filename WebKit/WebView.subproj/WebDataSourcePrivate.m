@@ -425,11 +425,11 @@
     if (![self isDownloading] && _private->gotFirstByte && !_private->committed) {
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
+        [self _makeRepresentation];
         [[self webFrame] _transitionToCommitted];
 	[[self _bridge] dataSourceChanged];
         // Must do this after dataSourceChanged.  makeRep installs a new view, which blows away
         // scroll state, which is saved within _transitionToCommitted
-        [self _makeRepresentation];
     }
 }
 
@@ -445,8 +445,6 @@
     }
 
     [_private->representation setDataSource:self];
-
-    [[[self webFrame] webView] _makeDocumentViewForDataSource:self];
 }
 
 -(void)_receivedData:(NSData *)data

@@ -440,11 +440,15 @@ static const char * const stateNames[] = {
                 case WebFrameLoadTypeIndexedBackForward:
                     // Must grab the current scroll position before disturbing it
                     [self _saveScrollPositionToItem:[_private previousItem]];
+                    [[self webView] _makeDocumentViewForDataSource:ds];
+                    // FIXME - I'm not sure this call does anything.  Should be dealt with as
+                    // part of 3024377
                     [self _restoreScrollPosition];
                     break;
                     
                 case WebFrameLoadTypeReload:
                     [self _saveScrollPositionToItem:[_private currentItem]];
+                    [[self webView] _makeDocumentViewForDataSource:ds];
                     break;
     
                 case WebFrameLoadTypeStandard:
@@ -459,6 +463,7 @@ static const char * const stateNames[] = {
                         // update the URL in the BF list that we made before the redirect
                         [[[[self controller] backForwardList] currentEntry] setURL:[[ds request] URL]];
                     }
+                    [[self webView] _makeDocumentViewForDataSource:ds];
                     break;
                     
                 case WebFrameLoadTypeInternal:
@@ -468,6 +473,7 @@ static const char * const stateNames[] = {
                     ASSERT([[self parent]->_private currentItem]);
                     [[[self parent]->_private currentItem] addChildItem:item];
                     [item release];
+                    [[self webView] _makeDocumentViewForDataSource:ds];
                     }
                     break;
 
@@ -481,7 +487,9 @@ static const char * const stateNames[] = {
                 }
             }
 
+            
             // Tell the client we've committed this URL.
+            ASSERT([[self webView] documentView] != nil);
 	    [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.

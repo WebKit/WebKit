@@ -1,3 +1,14 @@
+2002-11-13  Trey Matteson  <trey@apple.com>
+
+	Fixed 3100084 - REGRESSION: web page is not first responder after visiting web page
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]):  Make the rep before _transitionToCommitted.  This is the way it used to be.
+        (-[WebDataSource _makeRepresentation]):  Don't make the docView here.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):  Make the docView here, after we save the scroll state but before notifying the delegate.
+
 2002-11-13  Darin Adler  <darin@apple.com>
 
 	- fixed 3100013 -- REGRESSION: Can't get results from i-Bench anymore
