@@ -1,5 +1,15 @@
 2004-04-21  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3245627, nested tables don't expand vertically.  I actually fixed the basic problem in the
+	previous checkin, but this exposed another basic math error where |numVariable| was not being
+	decremented properly.  This meant space was mis-allocated when multiple variable height rows both needed
+	to expand.
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::layoutRows):
+
+2004-04-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3020449, ensure that the paint order of cells with rowspans matches other browsers.
 	
         Reviewed by darin

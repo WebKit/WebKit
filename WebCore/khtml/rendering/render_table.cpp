@@ -1244,6 +1244,7 @@ int RenderTableSection::layoutRows( int toAdd )
 		    int toAdd = dh/numVariable;
 		    add += toAdd;
 		    dh -= toAdd;
+                    numVariable--;
 		}
                 rowPos[r+1] += add;
 	    }
