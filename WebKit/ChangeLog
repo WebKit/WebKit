@@ -1,3 +1,10 @@
+2002-10-16  Darin Adler  <darin@apple.com>
+
+	Fixed the problem where we would leave white bits when making the window larger.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]): During live resize,
+	use the visible rectangle after doing layout, not before.
+
 2002-10-16  Richard Williamson  <rjw@apple.com>
 
         Fixed regression in visited links due to change is semantics of

@@ -381,7 +381,6 @@
     
     if ([self inLiveResize]) {
         if (!NSEqualRects(rect, [self visibleRect])) {
-            rect = [self visibleRect];
             [self setNeedsLayout:YES];
         }
     }
@@ -390,6 +389,10 @@
 
     [self layout];
 
+    if ([self inLiveResize]) {
+        rect = [self visibleRect];
+    }
+    
 #ifdef _KWQ_TIMING
     double start = CFAbsoluteTimeGetCurrent();
 #endif
