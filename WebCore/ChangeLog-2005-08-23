@@ -1,3 +1,7 @@
+2005-01-28  Darin Adler  <darin@apple.com>
+
+        * khtml/css/cssproperties.c: Regenerated with newer gperf.
+
 2005-01-28  David Harrison  <harrison@apple.com>
 
         Reviewed by John Sullivan.
@@ -671,8 +675,6 @@
         
 	* khtml/ecma/kjs_window.cpp:
         (WindowFunc::tryCall): correct mistake in earlier fix for the following bug, caught by Adele:
-
-	<rdar://problem/3790449> REGRESSION (Mail): underline behavior is flaky because of how CSS handles text-decoration
 
 2005-01-20  Maciej Stachowiak  <mjs@apple.com>
 
