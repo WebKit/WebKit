@@ -191,7 +191,8 @@
 	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
 	}
 
-        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request delegate:_private->mainClient];
+        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request];
+        [_private->mainHandle loadWithDelegate:_private->mainClient];
     }
     
     if (_private->mainHandle) {

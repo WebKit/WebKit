@@ -83,7 +83,8 @@
     }
     
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->URL];
-    _private->handle = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
+    _private->handle = [[WebResourceHandle alloc] initWithRequest:request];
+    [_private->handle loadWithDelegate:self];
     [request release];
 }
 

@@ -92,8 +92,9 @@
         return nil;
     }
     
-    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request delegate:client];
+    WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request];
     client->handle = h;
+    [h loadWithDelegate:client];
     [source _addSubresourceClient:client];
     [client didStartLoadingWithURL:[request canonicalURL]];
     [client receivedProgressWithComplete:NO];

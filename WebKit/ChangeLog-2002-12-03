@@ -1,3 +1,23 @@
+2002-10-01  Ken Kocienda  <kocienda@apple.com>
+
+        Changed WebResourceHandle so that the init method no longer starts the
+        loading of the request to begin. Added new loadWithDelegate: method which
+        is called separatetly from the init method, to start loads.
+
+	All of the changes here update code that depends on WebResourceHandle. The
+	changes move the code to the modified API.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading])
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream startLoad])
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:size:])
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:])
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading])
+
 2002-10-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed copyright comments.

@@ -101,7 +101,8 @@
 
 - (void)startLoad
 {
-    resource = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
+    resource = [[WebResourceHandle alloc] initWithRequest:request];
+    [resource loadWithDelegate:self];
     [[view controller] _didStartLoading:[[resource _request] URL]];
 }
 
