@@ -1,3 +1,19 @@
+2002-06-26  Richard Williamson  <rjw@apple.com>
+
+        Fixed recursion problems.  +[NSFont findFontLike:forString:withRange:inLanguage:]
+        will alternate between suggested fonts with bogus answers.  The work
+        around involves adding an explicit flag indicating whether or not
+        font substitution should be attempted.
+        
+        * Misc.subproj/IFStringTruncator.m:
+        (+[IFStringTruncator centerTruncateString:toWidth:withFont:]):
+        * WebCoreSupport.subproj/IFTextRenderer.h:
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer slowDrawCharacters:length:atPoint:withColor:attemptFontSubstitution:]):
+        (-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+        (-[IFTextRenderer floatWidthForCharacters:length:applyRounding:attemptFontSubstitution:]):
+        (-[IFTextRenderer widthForCharacters:length:]):
+
 2002-06-26  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/IFHTMLView.mm:

@@ -470,7 +470,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
 // Useful page for testing http://home.att.net/~jameskass
 
-- (NSPoint)slowDrawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+- (NSPoint)slowDrawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color attemptFontSubstitution: (BOOL)attemptFontSubstitution
 {
     unsigned int charPos = 0, lastDrawnGlyph = 0;
     unsigned int clusterLength, i, numGlyphs, fragmentLength;
@@ -486,7 +486,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
 
         clusterLength = findLengthOfCharacterCluster (&characters[charPos], length - charPos);
         
-        if (glyphID == 0){
+        if (glyphID == 0 && attemptFontSubstitution){
             // Draw everthing up to this point.
             fragmentLength = i - lastDrawnGlyph;
             if (fragmentLength > 0)
@@ -495,7 +495,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
             // Draw the character in the alternate font.
             substituteFont = [self substituteFontForCharacters: &characters[charPos] length: clusterLength];
             if (substituteFont)
-                point = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength atPoint: point withColor: color];
+                point = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength atPoint: point withColor: color attemptFontSubstitution: NO];
             else
                 point = [self drawGlyphs: &glyphs[i] numGlyphs: 1 atPoint: point withColor: color];
                 
@@ -602,10 +602,10 @@ cleanup:
             reason = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length atPoint: point withColor: color];
          
          if (!substituteFont || reason != _IFDrawSucceeded)
-            [self slowDrawCharacters: characters length: length atPoint: point withColor: color];
+            [self slowDrawCharacters: characters length: length atPoint: point withColor: color attemptFontSubstitution: YES];
     }
     else if (reason == _IFNonBaseCharacter) {
-        [self slowDrawCharacters: characters length: length atPoint: point withColor: color];
+        [self slowDrawCharacters: characters length: length atPoint: point withColor: color attemptFontSubstitution: YES];
     }
 }
 
@@ -677,7 +677,7 @@ cleanup:
 }
 
 
-- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding
+- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding attemptFontSubstitution: (BOOL)attemptSubstitution
 {
     float totalWidth = 0;
     unsigned int i, clusterLength;
@@ -703,13 +703,13 @@ cleanup:
         }
         
         // Try to find a substitute font if this font didn't have a glyph for a character in the
-        // string.  If one isn't found we end up drawing and measuring a box.
-        if (glyphID == 0) {
+        // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
+        if (glyphID == 0 && attemptSubstitution) {
             clusterLength = findLengthOfCharacterCluster (&characters[i], length - i);
             substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
                 //WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT(substituteFont), DEBUG_OBJECT([font displayName]), c);
-                lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] length: clusterLength applyRounding: YES];
+                lastWidth = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] length: clusterLength applyRounding: YES attemptFontSubstitution: NO];
             }
         }
         
@@ -733,7 +733,7 @@ cleanup:
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
 {
-    return ROUND_TO_INT([self floatWidthForCharacters:characters length:length applyRounding:YES]);
+    return ROUND_TO_INT([self floatWidthForCharacters:characters length:length applyRounding:YES attemptFontSubstitution: YES]);
 }
 
 
