@@ -290,7 +290,7 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         // The removal has knocked us down to containing only a single anonymous
         // box.  We can go ahead and pull the content right back up into our
         // box.
-        RenderObject* anonBlock = removeChildNode(prev);
+        RenderObject* anonBlock = removeChildNode(child);
         m_childrenInline = true;
         RenderObject* o = anonBlock->firstChild();
         while (o) {

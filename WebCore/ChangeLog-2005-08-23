@@ -1,3 +1,15 @@
+2004-09-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bug:
+        
+        <rdar://problem/3812939> REGRESSION: move-between-blocks-no-001 editing layout test fails in DeleteSelectionCommandImpl
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::removeChild): Hyatt said this regression was caused by a bad merge. 
+        Found by code inspection.
+
 2004-09-23  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.
