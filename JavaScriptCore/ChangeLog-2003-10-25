@@ -1,0 +1,8 @@
+2002-03-26  Maciej Stachowiak  <mjs@apple.com>
+
+	Set up kjs to build by itself into libJavaScriptCore.dylib.
+	
+	* .cvsignore: Added.
+	* Makefile.am: Added.
+	* dummy.cpp: Added.
+	* kjs/.cvsignore: Added.

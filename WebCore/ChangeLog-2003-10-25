@@ -1,5 +1,73 @@
 2002-03-26  Maciej Stachowiak  <mjs@apple.com>
 
+	Removed kjs from here - it's now been moved to JavaScriptCore at
+	the top level.
+
+	* src/Makefile.am: Don't link libkjs.o.
+	* src/kdelibs/Makefile.am: Remove kjs from subdirs.
+	* src/kdelibs/kjs/.cvsignore: Removed.
+	* src/kdelibs/kjs/Makefile.am: Removed.
+	* src/kdelibs/kjs/array_object.cpp: Removed.
+	* src/kdelibs/kjs/array_object.h: Removed.
+	* src/kdelibs/kjs/bool_object.cpp: Removed.
+	* src/kdelibs/kjs/bool_object.h: Removed.
+	* src/kdelibs/kjs/collector.cpp: Removed.
+	* src/kdelibs/kjs/collector.h: Removed.
+	* src/kdelibs/kjs/create_hash_table: Removed.
+	* src/kdelibs/kjs/date_object.cpp: Removed.
+	* src/kdelibs/kjs/date_object.h: Removed.
+	* src/kdelibs/kjs/debugger.cpp: Removed.
+	* src/kdelibs/kjs/debugger.h: Removed.
+	* src/kdelibs/kjs/error_object.cpp: Removed.
+	* src/kdelibs/kjs/error_object.h: Removed.
+	* src/kdelibs/kjs/function.cpp: Removed.
+	* src/kdelibs/kjs/function.h: Removed.
+	* src/kdelibs/kjs/function_object.cpp: Removed.
+	* src/kdelibs/kjs/function_object.h: Removed.
+	* src/kdelibs/kjs/grammar.y: Removed.
+	* src/kdelibs/kjs/internal.cpp: Removed.
+	* src/kdelibs/kjs/internal.h: Removed.
+	* src/kdelibs/kjs/interpreter.cpp: Removed.
+	* src/kdelibs/kjs/interpreter.h: Removed.
+	* src/kdelibs/kjs/keywords.table: Removed.
+	* src/kdelibs/kjs/kjs-test: Removed.
+	* src/kdelibs/kjs/kjs-test.chk: Removed.
+	* src/kdelibs/kjs/lexer.cpp: Removed.
+	* src/kdelibs/kjs/lexer.h: Removed.
+	* src/kdelibs/kjs/lookup.cpp: Removed.
+	* src/kdelibs/kjs/lookup.h: Removed.
+	* src/kdelibs/kjs/math_object.cpp: Removed.
+	* src/kdelibs/kjs/math_object.h: Removed.
+	* src/kdelibs/kjs/nodes.cpp: Removed.
+	* src/kdelibs/kjs/nodes.h: Removed.
+	* src/kdelibs/kjs/nodes2string.cpp: Removed.
+	* src/kdelibs/kjs/number_object.cpp: Removed.
+	* src/kdelibs/kjs/number_object.h: Removed.
+	* src/kdelibs/kjs/object.cpp: Removed.
+	* src/kdelibs/kjs/object.h: Removed.
+	* src/kdelibs/kjs/object_object.cpp: Removed.
+	* src/kdelibs/kjs/object_object.h: Removed.
+	* src/kdelibs/kjs/operations.cpp: Removed.
+	* src/kdelibs/kjs/operations.h: Removed.
+	* src/kdelibs/kjs/property_map.cpp: Removed.
+	* src/kdelibs/kjs/property_map.h: Removed.
+	* src/kdelibs/kjs/regexp.cpp: Removed.
+	* src/kdelibs/kjs/regexp.h: Removed.
+	* src/kdelibs/kjs/regexp_object.cpp: Removed.
+	* src/kdelibs/kjs/regexp_object.h: Removed.
+	* src/kdelibs/kjs/string_object.cpp: Removed.
+	* src/kdelibs/kjs/string_object.h: Removed.
+	* src/kdelibs/kjs/test.js: Removed.
+	* src/kdelibs/kjs/testkjs.cpp: Removed.
+	* src/kdelibs/kjs/types.cpp: Removed.
+	* src/kdelibs/kjs/types.h: Removed.
+	* src/kdelibs/kjs/ustring.cpp: Removed.
+	* src/kdelibs/kjs/ustring.h: Removed.
+	* src/kdelibs/kjs/value.cpp: Removed.
+	* src/kdelibs/kjs/value.h: Removed.
+
+2002-03-26  Maciej Stachowiak  <mjs@apple.com>
+
 	Removed all the borrowed Qt code.
 
 	* src/kwq/KWQGlobal.mm: Renamed from qt/_qglobal.cpp to avoid

@@ -1,29 +1,22 @@
 NULL=
 
-SUBDIRS = \
-	kdelibs \
-	kwq \
-	$(NULL)
-
+SUBDIRS = kjs
 
 symrootsdir = $(SYMROOTS)
 
-symroots_LIBRARIES = libwebcore.dylib
+symroots_LIBRARIES = libJavaScriptCore.dylib
 
-libwebcore_dylib_SOURCES = \
-	dummy.mm \
+libJavaScriptCore_dylib_SOURCES = \
+	dummy.cpp \
 	$(NULL)
 
-libwebcore_dylib_LIBADD = \
-	./kdelibs/khtml/libkhtml.o \
-	./kwq/libkwq.o \
-	-ljpeg \
-	-L$(symrootsdir) -lJavaScriptCore \
+libJavaScriptCore_dylib_LIBADD = \
+	./kjs/libkjs.o \
 	$(NULL)
 
-LIBWEBCORE_INSTALL_PATH = @executable_path/../Frameworks
+LIBJAVASCRIPTCORE_INSTALL_PATH = @executable_path/../Frameworks
 
-DYLIB_NAME = libwebcore.dylib
+DYLIB_NAME = libJavaScriptCore.dylib
 EMBED_HOST = $(SYMROOTS)/Alexander.app
 EMBED_DIR = $(EMBED_HOST)/Contents/Frameworks
 
@@ -48,23 +41,20 @@ embed:
         fi
 
 LDFLAGS = \
-	-framework Cocoa \
-	-framework CoreFoundation \
-	-F$(symrootsdir) -framework WebFoundation \
         -dynamiclib \
 	-twolevel_namespace \
 	-prebind \
         -undefined error \
         -all_load \
-	-seg1addr 0x2200000 \
-        -install_name $(LIBWEBCORE_INSTALL_PATH)/libwebcore.dylib \
+	-seg1addr 0x6000000 \
+        -install_name $(LIBJAVASCRIPTCORE_INSTALL_PATH)/libJavaScriptCore.dylib \
 	$(NULL)
 
-libwebcore_dylib_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
+libJavaScriptCore_dylib_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
 
-noinst_DATA = webcore-install-stamp
+noinst_DATA = JavaScriptCore-install-stamp
 
-webcore-install-stamp: libwebcore.dylib
+JavaScriptCore-install-stamp: libJavaScriptCore.dylib
 	$(MAKE) install-symrootsLIBRARIES
-	touch ./webcore-install-stamp
+	touch ./JavaScriptCore-install-stamp
 
