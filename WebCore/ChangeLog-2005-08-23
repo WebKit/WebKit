@@ -2,6 +2,17 @@
 
         Reviewed by John.
 
+	- fixed 3421393 - window.open does not handle non-integral height/width (small window at saabusa.com)
+	
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Parse width, height, top and left as
+	floating point and then cast to int instead of parsing as int to
+	match other browsers and avoid rejecting floating point numbers.
+
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
 	- fixed 3464528 - addEventListener does not work for buttons, text areas, or inputs
 
         * khtml/rendering/render_form.cpp:
