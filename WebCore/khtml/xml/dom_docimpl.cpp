@@ -1212,10 +1212,16 @@ KWQAccObjectCache* DocumentImpl::getAccObjectCache()
     // to any other KWQAccObject on the same page.  Using a single cache allows
     // lookups across nested webareas (i.e. multiple documents).
     
-    // return already known cache (assert that this is the top-level document)
     if (m_accCache) {
-        assert(!ownerElement());
-        return m_accCache;
+        // return already known top-level cache
+        if (!ownerElement())
+            return m_accCache;
+        
+        // In some pages with frames, the cache is created before the sub-webarea is
+        // inserted into the tree.  Here, we catch that case and just toss the old
+        // cache and start over.
+        delete m_accCache;
+        m_accCache = 0;
     }
     
     // look for top-level document

@@ -1,3 +1,17 @@
+2005-01-20  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3960196> AX Crash in DOM::Range::setStartBefore
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::getAccObjectCache):
+        Adjust when detecting cache in non-top level WebArea.
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textUnderElement]):
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        Make sure the elements document is the current one for the part.
+
 2005-01-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -399,10 +399,14 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
     NodeImpl* e = m_renderer->element();
     DocumentImpl* d = m_renderer->document();
     if (e && d) {
-	KHTMLPart* p = d->part();
-	if (p) {
-	    Range r(p->document());
-	    if (m_renderer->isText()) {
+        KHTMLPart* p = d->part();
+        if (p) {
+            // catch stale KWQAccObject (see <rdar://problem/3960196>)
+            if (p->document().handle()->docPtr()->document() != d)
+                return nil;
+                
+            Range r(p->document());
+            if (m_renderer->isText()) {
 		r.setStartBefore(e);
 		r.setEndAfter(e);
 		return p->text(r).getNSString();
@@ -791,7 +795,7 @@ static QRect boundingBoxRect(RenderObject* obj)
         return [self roleDescription];
     
     if ([attributeName isEqualToString: NSAccessibilityParentAttribute]) {
-        if (m_renderer->isCanvas())
+        if (m_renderer->isCanvas() && m_renderer->canvas() && m_renderer->canvas()->view())
             return m_renderer->canvas()->view()->getView();
         return [self parentObjectUnignored];
     }
@@ -862,9 +866,12 @@ static QRect boundingBoxRect(RenderObject* obj)
     if ([attributeName isEqualToString: NSAccessibilityPositionAttribute])
         return [self position];
 
-    if ([attributeName isEqualToString: NSAccessibilityWindowAttribute])
-        return [m_renderer->canvas()->view()->getView() window];
-
+    if ([attributeName isEqualToString: NSAccessibilityWindowAttribute]) {
+        if (m_renderer && m_renderer->canvas() && m_renderer->canvas()->view())
+            return [m_renderer->canvas()->view()->getView() window];
+        return nil;
+    }
+    
 #if OMIT_TIGER_FEATURES
 // no parameterized attributes in Panther... they were introduced in Tiger
 #else
