@@ -1,5 +1,11 @@
 2002-09-27  Darin Adler  <darin@apple.com>
 
+        * khtml/rendering/render_table.cpp: (RenderTable::addColInfo):
+	Fixed a > that should have been a < that prevented tables from
+	changing sizes when table minimum widths changed.
+
+2002-09-27  Darin Adler  <darin@apple.com>
+
 	- fixed 2937198 -- Checkboxes and radiobuttons don't align with title control in forms
 
         * kwq/qt/qcheckbox.h: Add baselinePosition override.

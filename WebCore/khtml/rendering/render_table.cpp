@@ -509,7 +509,7 @@ void RenderTable::addColInfo(int _startCol, int _colSpan,
 
 	changed = true;
     } else {
-	if (_minSize > col->min)
+	if (_minSize < col->min)
 	{
 	    if ( allowRecalc && col->minCell == _cell ) {
 		recalc = true;
