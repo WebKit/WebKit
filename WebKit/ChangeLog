@@ -1,3 +1,14 @@
+2004-06-15  Trey Matteson  <trey@apple.com>
+
+	3695240 - pasting plain text with newlines in it turns them into spaces
+
+	Easy fix, we just need to consume the incoming data as text instead of markup.
+
+        Reviewed by John and Darin.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]):
+
 2004-06-15  Darin Adler  <darin@apple.com>
 
         - fixed crash introduced by my earlier change

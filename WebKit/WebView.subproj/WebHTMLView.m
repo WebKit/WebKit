@@ -255,11 +255,11 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
     } else if ([types containsObject:NSRTFDPboardType]) {
         // FIXME: Support RTFD to HTML (or DOM) conversion.
         ERROR("RTFD to HTML conversion not yet supported.");
-        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
+        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
     } else if ([types containsObject:NSRTFPboardType]) {
         // FIXME: Support RTF to HTML (or DOM) conversion.
         ERROR("RTF to HTML conversion not yet supported.");
-        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
+        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
     } else if (allowPlainText && [types containsObject:NSStringPboardType]) {
         return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
     }
