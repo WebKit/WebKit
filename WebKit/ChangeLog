@@ -1,3 +1,64 @@
+2002-04-30  John Sullivan  <sullivan@apple.com>
+
+	Added initial set of files/API and some of the code for
+	bookmarks support. Nobody calls it yet, but it compiles.
+	I wanted to get this in before I ran into project file
+	merge conflicts.
+
+	* Bookmarks.subproj/IFBookmark.h: Added.
+	* Bookmarks.subproj/IFBookmark_Private.h: Added.
+	* Bookmarks.subproj/IFBookmark.m: Added.
+	(-[IFBookmark dealloc]):
+	(-[IFBookmark title]):
+	(-[IFBookmark _setTitle:]):
+	(-[IFBookmark image]):
+	(-[IFBookmark _setImage:]):
+	(-[IFBookmark isLeaf]):
+	(-[IFBookmark URLString]):
+	(-[IFBookmark _setURLString:]):
+	(-[IFBookmark children]):
+	(-[IFBookmark _insertChild:atIndex:]):
+	(-[IFBookmark parent]):
+	(-[IFBookmark _setParent:]):
+	(-[IFBookmark group]):
+	(-[IFBookmark _setGroup:]):
+	* Bookmarks.subproj/IFBookmarkGroup.h: Added.
+	* Bookmarks.subproj/IFBookmarkGroup.m: Added.
+	(+[IFBookmarkGroup bookmarkGroupWithFile:]):
+	(-[IFBookmarkGroup initWithFile:]):
+	(-[IFBookmarkGroup dealloc]):
+	(-[IFBookmarkGroup topBookmark]):
+	(-[IFBookmarkGroup insertBookmark:atIndex:ofBookmark:]):
+	(-[IFBookmarkGroup removeBookmark:]):
+	(-[IFBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:title:image:URL:isLeaf:]):
+	(-[IFBookmarkGroup updateBookmark:title:image:URL:]):
+	(-[IFBookmarkGroup file]):
+	(-[IFBookmarkGroup loadBookmarkGroup]):
+	(-[IFBookmarkGroup saveBookmarkGroup]):
+	* Bookmarks.subproj/IFBookmarkLeaf.h: Added.
+	* Bookmarks.subproj/IFBookmarkLeaf.m: Added.
+	(-[IFBookmarkLeaf dealloc]):
+	(-[IFBookmarkLeaf title]):
+	(-[IFBookmarkLeaf _setTitle:]):
+	(-[IFBookmarkLeaf image]):
+	(-[IFBookmarkLeaf _setImage:]):
+	(-[IFBookmarkLeaf isLeaf]):
+	(-[IFBookmarkLeaf URLString]):
+	(-[IFBookmarkLeaf _setURLString:]):
+	* Bookmarks.subproj/IFBookmarkList.h: Added.
+	* Bookmarks.subproj/IFBookmarkList.m: Added.
+	(-[IFBookmarkList initWithTitle:image:group:]):
+	(-[IFBookmarkList dealloc]):
+	(-[IFBookmarkList title]):
+	(-[IFBookmarkList _setTitle:]):
+	(-[IFBookmarkList image]):
+	(-[IFBookmarkList _setImage:]):
+	(-[IFBookmarkList isLeaf]):
+	(-[IFBookmarkList children]):
+	(-[IFBookmarkList _insertChild:atIndex:]):
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files.
+
 2002-04-29  Richard Williamson  <rjw@apple.com>
 
         Fix to 2915688.  I wasn't checking if the main document error had an error, only

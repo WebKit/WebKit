@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 36;
+	objectVersion = 38;
 	objects = {
 		014CEA440018CDF011CA2923 = {
 			buildRules = (
@@ -92,6 +92,7 @@
 				9C7CABBB0190A37C0ECA16EA,
 				254DC334016E1D3F0ECA149E,
 				25A8176801B5474B0ECA149E,
+				F5065217027F555001C1A526,
 				F5F084B8024BBFFE01CA1520,
 				F5EBC45202134BB601CA1520,
 				089C1665FE841158C02AAC07,
@@ -219,6 +220,11 @@
 				F5A357540265E57A01000102,
 				F544394F02674FD501FF6181,
 				F567433F026B5B7B01A80181,
+				F5065221027F557E01C1A526,
+				F5065222027F557E01C1A526,
+				F5065224027F557E01C1A526,
+				F5065226027F557E01C1A526,
+				F5065228027F557E01C1A526,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -267,6 +273,10 @@
 				F5A672BE0263866E01000102,
 				F5A357530265E57A01000102,
 				F544395002674FD501FF6181,
+				F5065223027F557E01C1A526,
+				F5065225027F557E01C1A526,
+				F5065227027F557E01C1A526,
+				F5065229027F557E01C1A526,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1069,6 +1079,137 @@
 //F52
 //F53
 //F54
+		F5065217027F555001C1A526 = {
+			children = (
+				F5065218027F557E01C1A526,
+				F5065219027F557E01C1A526,
+				F506521A027F557E01C1A526,
+				F506521B027F557E01C1A526,
+				F506521C027F557E01C1A526,
+				F506521D027F557E01C1A526,
+				F506521E027F557E01C1A526,
+				F506521F027F557E01C1A526,
+				F5065220027F557E01C1A526,
+			);
+			isa = PBXGroup;
+			name = Bookmarks;
+			path = History.subproj;
+			refType = 4;
+		};
+		F5065218027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmark_Private.h;
+			path = Bookmarks.subproj/IFBookmark_Private.h;
+			refType = 2;
+		};
+		F5065219027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmark.h;
+			path = Bookmarks.subproj/IFBookmark.h;
+			refType = 2;
+		};
+		F506521A027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmark.m;
+			path = Bookmarks.subproj/IFBookmark.m;
+			refType = 2;
+		};
+		F506521B027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmarkGroup.h;
+			path = Bookmarks.subproj/IFBookmarkGroup.h;
+			refType = 2;
+		};
+		F506521C027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmarkGroup.m;
+			path = Bookmarks.subproj/IFBookmarkGroup.m;
+			refType = 2;
+		};
+		F506521D027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmarkLeaf.h;
+			path = Bookmarks.subproj/IFBookmarkLeaf.h;
+			refType = 2;
+		};
+		F506521E027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmarkLeaf.m;
+			path = Bookmarks.subproj/IFBookmarkLeaf.m;
+			refType = 2;
+		};
+		F506521F027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmarkList.h;
+			path = Bookmarks.subproj/IFBookmarkList.h;
+			refType = 2;
+		};
+		F5065220027F557E01C1A526 = {
+			isa = PBXFileReference;
+			name = IFBookmarkList.m;
+			path = Bookmarks.subproj/IFBookmarkList.m;
+			refType = 2;
+		};
+		F5065221027F557E01C1A526 = {
+			fileRef = F5065218027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5065222027F557E01C1A526 = {
+			fileRef = F5065219027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F5065223027F557E01C1A526 = {
+			fileRef = F506521A027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5065224027F557E01C1A526 = {
+			fileRef = F506521B027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		F5065225027F557E01C1A526 = {
+			fileRef = F506521C027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5065226027F557E01C1A526 = {
+			fileRef = F506521D027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5065227027F557E01C1A526 = {
+			fileRef = F506521E027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5065228027F557E01C1A526 = {
+			fileRef = F506521F027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5065229027F557E01C1A526 = {
+			fileRef = F5065220027F557E01C1A526;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5143A370221DCCE01A80181 = {
 			isa = PBXFileReference;
 			name = IFWebFrame.mm;
