@@ -1,3 +1,13 @@
+2003-01-03  John Sullivan  <sullivan@apple.com>
+	
+	- fixed 3138673 -- reproducible crash in JavaScript
+
+        Reviewed by Darin, OK'ed by Don.
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setTitle):
+	Check for nil view or nil part before dereferencing.
+
 2003-01-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for percentage table heights.  A check was missing to
