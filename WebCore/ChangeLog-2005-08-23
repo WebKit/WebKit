@@ -1,3 +1,14 @@
+2003-04-15  Trey Matteson  <trey@apple.com>
+
+	3210061 - Forms auto-fill ignores maxlength attribute
+
+        Reviewed by Maciej.
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setStringValue:]):  We now trim down incoming values
+	to fit the maxlength criteria.  Matches the way we enforce this constraint
+	when maxlength is set.
+
 2003-04-15  David Hyatt  <hyatt@apple.com>
 
 	Fix 3227983 and 3229592, both the same bug involving a movable type

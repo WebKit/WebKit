@@ -281,6 +281,10 @@
 
 - (void)setStringValue:(NSString *)string
 {
+    int maxLength = [formatter maximumLength];
+    if ((int)[string length] > maxLength) {
+        string = [string substringToIndex:maxLength];
+    }
     [secureField setStringValue:string];
     [super setStringValue:string];
     widget->textChanged();
