@@ -103,6 +103,8 @@ $(LIBRARY): $(CXXOBJECTS)
 $(PROGRAM): testkjs.o
 	$(CC) $< -o $@ -L. -lkjs
 
+depend:
+
 grammar.h: grammar.cpp.h
 	ln -s grammar.cpp.h grammar.h
 

@@ -32,7 +32,7 @@ SUBDIRS = \
 #----------------------------------------------------------------------
 # Standard targets
 
-all setup install clean distclean maintainer-clean:		
+all depend setup install clean distclean maintainer-clean:		
 	@target=$@; \
 	list='$(SUBDIRS)'; \
 	for subdir in $$list; do \
@@ -55,6 +55,7 @@ local-all:
 local-dep:
 local-install:
 local-setup:
+local-depend:
 local-clean:
 	
 local-distclean:

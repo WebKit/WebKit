@@ -53,7 +53,7 @@ CXXFLAGS = $(BASECXXFLAGS) \
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: Makefile.dep $(OBJECTS) $(LIBRARY) 
+all: $(OBJECTS) $(LIBRARY) 
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
