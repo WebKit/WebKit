@@ -1,3 +1,14 @@
+2002-09-24  David Hyatt  <hyatt@apple.com>
+
+	Make sure that changes to the CLASS attribute mark the
+	element as changed (as if a CSS property were added or
+	removed).
+
+	This makes the brainjar.com rollovers work much better.
+	
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseAttribute):
+
 2002-09-24  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed element info keys to WebElement* instead of WebContextMenuElement*

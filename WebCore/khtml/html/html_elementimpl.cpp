@@ -83,6 +83,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_CLASS:
         // class
         setHasClass();
+	setChanged();
         break;
     case ATTR_STYLE:
         // ### we need to remove old style info in case there was any!
