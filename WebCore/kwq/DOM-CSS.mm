@@ -97,8 +97,19 @@ using DOM::StyleSheetListImpl;
 
 static inline int getPropertyID(NSString *string)
 {
-    const char *s = [string UTF8String];
-    return DOM::getPropertyID(s, strlen(s));
+    //use a fixed sized buffer to avoid malloc() allocations done by -[NSString UTF8String]
+    static char buffer[1024];
+    BOOL success = CFStringGetCString((CFStringRef)string, buffer, 1023, kCFStringEncodingUTF8);
+   
+    // CFStringGetCString returns false if conversion isn't possible
+    // (due to conversion error, or not enough space in the provided buffer)
+    // fall back to UTF8String instead
+    if (!success) {
+        const char *s = [string UTF8String];
+        return DOM::getPropertyID(s, strlen(s));
+    }
+
+    return DOM::getPropertyID(buffer, strlen(buffer));
 }
 
 //------------------------------------------------------------------------------------------

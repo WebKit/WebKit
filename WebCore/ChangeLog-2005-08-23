@@ -1,3 +1,12 @@
+2004-11-18  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Chris.
+
+	fixed: <rdar://problem/3841842> getPropertyID expensive
+
+        * kwq/DOM-CSS.mm:
+        (getPropertyID): avoid unnecessary memory allocations by using a fixed-sized stack based buffer.
+
 2004-11-17  David Hyatt  <hyatt@apple.com>
 
 	Improve responsiveness by being willing to break out of the tokenizer.  (This patch was landed already
