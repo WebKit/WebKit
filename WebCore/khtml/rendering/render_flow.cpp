@@ -375,7 +375,8 @@ void RenderFlow::paintLines(PaintInfo& i, int _tx, int _ty)
             // It is utterly inadequate, and this should not be done at paint time at all.
             // The whole way objects break across pages needs to be redone.
             RenderCanvas* c = canvas();
-            if (_ty + curr->root()->bottomOverflow() > c->printRect().y() + c->printRect().height()) {
+            // printRect can be null if WebCore's pagination is not used (ie Mail).
+            if (!c->printRect().isNull() && _ty + curr->root()->bottomOverflow() > c->printRect().y() + c->printRect().height()) {
                 if (_ty + curr->root()->topOverflow() < c->truncatedAt())
                     c->setBestTruncatedAt(_ty + curr->root()->topOverflow(), this);
                 // Let's stop here.
