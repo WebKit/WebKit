@@ -49,8 +49,6 @@ class QTextEdit : public QScrollView
     void setCursorPosition(int, int);
     void getCursorPosition(int *, int *) const;
 
-    FocusPolicy focusPolicy() const;
-
     void setFont(const QFont &);
 
     void setReadOnly(bool);

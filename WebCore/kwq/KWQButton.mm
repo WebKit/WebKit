@@ -26,6 +26,8 @@
 #import "KWQButton.h"
 
 #import "KWQCheckBox.h"
+#import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
 
 #import "render_form.h"
 
@@ -33,6 +35,7 @@
 {
     QButton *button;
     BOOL needToSendConsumedMouseUp;
+    BOOL inNextValidKeyView;
 }
 
 - (id)initWithQButton:(QButton *)b;
@@ -68,6 +71,36 @@
     needToSendConsumedMouseUp = YES;
     [super mouseDown:event];
     [self sendConsumedMouseUpIfNeeded];
+}
+
+-(NSView *)nextKeyView
+{
+    return button && inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingNext)
+        : [super nextKeyView];
+}
+
+-(NSView *)previousKeyView
+{
+    return button && inNextValidKeyView
+        ? KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingPrevious)
+        : [super previousKeyView];
+}
+
+-(NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+-(NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 @end
@@ -150,3 +183,15 @@ NSControlSize KWQNSControlSizeForFont(const QFont &f)
     return NSMiniControlSize;
 #endif
 }
+
+QWidget::FocusPolicy QButton::focusPolicy() const
+{
+    // Add an additional check here.
+    // For now, buttons are only focused when full
+    // keyboard access is turned on.
+    if ([KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] != WebCoreFullKeyboardAccess)
+        return NoFocus;
+
+    return QWidget::focusPolicy();
+}
+

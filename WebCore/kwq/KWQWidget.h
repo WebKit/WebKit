@@ -69,6 +69,7 @@ public:
     virtual QSize sizeHint() const;
     
     virtual void setEnabled(bool);
+    virtual bool isEnabled() const;
     
     void setActiveWindow();
 
@@ -101,9 +102,9 @@ public:
     void clearFocus();
     
     virtual FocusPolicy focusPolicy() const;
-    virtual void setFocusPolicy(FocusPolicy);
+    void setFocusPolicy(FocusPolicy) {};
     
-    virtual void setFocusProxy(QWidget *);
+    virtual void setFocusProxy(QWidget *) {};
 
     const QPalette& palette() const;
     virtual void setPalette(const QPalette &);

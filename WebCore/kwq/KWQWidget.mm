@@ -33,6 +33,7 @@
 #import "khtmlview.h"
 #import "render_canvas.h"
 #import "render_replaced.h"
+#import "render_style.h"
 #import "KWQKHTMLPart.h"
 #import "WebCoreBridge.h"
 
@@ -100,6 +101,15 @@ void QWidget::setEnabled(bool enabled)
     if ([view respondsToSelector:@selector(setEnabled:)]) {
         [view setEnabled:enabled];
     }
+}
+
+bool QWidget::isEnabled() const
+{
+    id view = data->view;
+    if ([view respondsToSelector:@selector(isEnabled)]) {
+        return [view isEnabled];
+    }
+    return true;
 }
 
 long QWidget::winId() const
@@ -220,27 +230,24 @@ void QWidget::clearFocus()
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
 {
-    // This is the AppKit rule for what can be tabbed to.
-    // An NSControl that accepts first responder, and has an editable, enabled cell.
+    // This provides support for controlling the widgets that take 
+    // part in tab navigation. Widgets must not be:
+    // 1. hidden by css
+    // 2. enabled
+    // 3. accept first responder
+
+    RenderWidget *widget = const_cast<RenderWidget *>
+	(static_cast<const RenderWidget *>(eventFilterObject()));
+    if (widget->style()->visibility() != khtml::VISIBLE)
+        return NoFocus;
+
+    if (!isEnabled())
+        return NoFocus;
+
+    if (![getView() acceptsFirstResponder])
+        return NoFocus;
     
-    NSView *view = getView();
-    if (![view acceptsFirstResponder] || ![view isKindOfClass:[NSControl class]]) {
-        return NoFocus;
-    }
-    NSControl *control = (NSControl *)view;
-    NSCell *cell = [control cell];
-    if (![cell isEditable] || ![cell isEnabled]) {
-        return NoFocus;
-    }
     return TabFocus;
-}
-
-void QWidget::setFocusPolicy(FocusPolicy fp)
-{
-}
-
-void QWidget::setFocusProxy(QWidget *w)
-{
 }
 
 const QPalette& QWidget::palette() const

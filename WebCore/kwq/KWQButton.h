@@ -43,6 +43,8 @@ public:
     // QWidget overrides
     virtual void setFont(const QFont &);
 
+    virtual QWidget::FocusPolicy QButton::focusPolicy() const;
+
 private:
     KWQSignal m_clicked;
 };

@@ -112,11 +112,6 @@ void QTextEdit::setFont(const QFont &font)
     [textView setFont:font.getNSFont()];
 }
 
-QWidget::FocusPolicy QTextEdit::focusPolicy() const
-{
-    return TabFocus;
-}
-
 void QTextEdit::clicked()
 {
     _clicked.call();

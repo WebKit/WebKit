@@ -1,3 +1,35 @@
+2003-10-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for these bugs:
+
+	<rdar://problem/3439736>: WebCore form button widgets do not accept focus
+	<rdar://problem/3440770>: WebCore form button widgets do not take part in tabbing order
+
+        * kwq/KWQButton.h: Add focusPolicy function declaration.
+        * kwq/KWQButton.mm: 
+        (-[KWQButton nextKeyView]): Add tabbing support for buttons.
+        (-[KWQButton previousKeyView]): Ditto
+        (-[KWQButton nextValidKeyView]): Ditto
+        (-[KWQButton previousValidKeyView]): Ditto
+        (QButton::focusPolicy): Add focusPolicy implementation. This calls through
+        to the recently-added accessor for full keyboard access to help in the
+        determination for focus policy. For now, full keyboard access must be
+        turned on for buttons to receive focus.
+        * kwq/KWQTextEdit.h: Remove focusPolicy specialization from this class. The
+	implementation in QWidget now serves this class well.
+        * kwq/KWQTextEdit.mm: Ditto
+        * kwq/KWQWidget.h: Added isEnabled function. Small, unrelated cleanup to 
+	move the no-implementation setFocusPolicy() and setFocusProxy() functions
+	fully into the header file.
+        * kwq/KWQWidget.mm:
+        (QWidget::isEnabled): Added. Calls through to the Cocoa view to retrieve
+	this information.
+        (QWidget::focusPolicy): Much improved focus policy function is now more
+	general in stipulating the conditions for focus policy, and will work for
+	more widgets.
+
 2003-10-01  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3440804, broken scrollbars in downloads window.  Make Auto be the default
