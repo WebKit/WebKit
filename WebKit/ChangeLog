@@ -1,3 +1,12 @@
+2003-03-31  Darin Adler  <darin@apple.com>
+
+        * English.lproj/InfoPlist.strings: Changed "1.0 Beta" to "1.0 Beta 2".
+        * WebKit.pbproj/project.pbxproj: Changed "1.0 Beta" to "1.0 Beta 2".
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
+        * English.lproj/Localizable.strings: Regenerated (new script, "1.0 Beta 2").
+
 2003-03-31  Richard Williamson  <rjw@apple.com>
 
         Reviewed by darin.

@@ -170,7 +170,7 @@
 	<key>CFBundleExecutable</key>
 	<string>WebKit</string>
 	<key>CFBundleGetInfoString</key>
-	<string>1.0 Beta, Copyright 2003 Apple Computer, Inc.</string>
+	<string>1.0 Beta 2, Copyright 2003 Apple Computer, Inc.</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.apple.WebKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
