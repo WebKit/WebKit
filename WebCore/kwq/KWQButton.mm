@@ -34,10 +34,12 @@ QButton::QButton(QWidget *parent)
 
 void QButton::setText(const QString &s)
 {
-    [(KWQNSButton *)getView() setTitle:s.getNSString()];
+    KWQNSButton *button = (KWQNSButton *)getView();
+    [button setTitle:s.getNSString()];
 }
 
 QString QButton::text() const
 {
-    return QString::fromNSString([(KWQNSButton *)getView() title]);
+    KWQNSButton *button = (KWQNSButton *)getView();
+    return QString::fromNSString([button title]);
 }

@@ -37,7 +37,8 @@ QLineEdit::QLineEdit(QWidget *parent)
 
 void QLineEdit::setEchoMode(EchoMode mode)
 {
-    [(KWQNSTextField *)getView() setPasswordMode:mode == Password];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    [textField setPasswordMode:mode == Password];
 }
 
 void QLineEdit::setCursorPosition(int)
@@ -53,27 +54,32 @@ int QLineEdit::cursorPosition() const
 
 void QLineEdit::setText(const QString &s)
 {
-    [(KWQNSTextField *)getView() setStringValue:s.getNSString()];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    [textField setStringValue:s.getNSString()];
 }
 
 QString QLineEdit::text()
 {
-    return QString::fromNSString([(KWQNSTextField *)getView() stringValue]);
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return QString::fromNSString([textField stringValue]);
 }
 
 void QLineEdit::setMaxLength(int len)
 {
-    [(KWQNSTextField *)getView() setMaximumLength:len];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    [textField setMaximumLength:len];
 }
 
 bool QLineEdit::isReadOnly() const
 {
-    return ![(KWQNSTextField *)getView() isEditable];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return ![textField isEditable];
 }
 
 void QLineEdit::setReadOnly(bool flag)
 {
-    return [(KWQNSTextField *)getView() setEditable:!flag];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return [textField setEditable:!flag];
 }
 
 bool QLineEdit::frame() const
@@ -84,20 +90,24 @@ bool QLineEdit::frame() const
 
 int QLineEdit::maxLength() const
 {
-    return [(KWQNSTextField *)getView() maximumLength];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return [textField maximumLength];
 }
 
 void QLineEdit::selectAll()
 {
-    return [(KWQNSTextField *)getView() selectText:nil];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return [textField selectText:nil];
 }
 
 bool QLineEdit::edited() const
 {
-    return [(KWQNSTextField *)getView() edited];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return [textField edited];
 }
 
 void QLineEdit::setEdited(bool flag)
 {
-    return [(KWQNSTextField *)getView() setEdited:flag];
+    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    return [textField setEdited:flag];
 }

@@ -1,3 +1,24 @@
+2002-07-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Assign getView() results to variable of appropriate type to work
+	around apparent ObjC++ compiler bug. I wonder why other people
+	aren't running into this (and why I haven't run into it before).
+
+	* kwq/KWQButton.mm:
+        (QButton::setText):
+        (QButton::text):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setEchoMode):
+        (QLineEdit::setText):
+        (QLineEdit::text):
+        (QLineEdit::setMaxLength):
+        (QLineEdit::isReadOnly):
+        (QLineEdit::setReadOnly):
+        (QLineEdit::maxLength):
+        (QLineEdit::selectAll):
+        (QLineEdit::edited):
+        (QLineEdit::setEdited):
+
 2002-07-14  Darin Adler  <darin@apple.com>
 
         * WebCore-tests.exp: Tests needed access to QPoint, QString, and KURL symbols
