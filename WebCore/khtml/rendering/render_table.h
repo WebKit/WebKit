@@ -29,7 +29,6 @@
 #define RENDER_TABLE_H
 
 #include <qcolor.h>
-#include <qptrvector.h>
 
 #include "render_box.h"
 #include "render_block.h"
@@ -350,7 +349,7 @@ public:
     CollapsedBorderValue collapsedRightBorder() const;
     CollapsedBorderValue collapsedTopBorder() const;
     CollapsedBorderValue collapsedBottomBorder() const;
-    virtual void collectBorders(QPtrList<CollapsedBorderValue>& borderStyles);
+    virtual void collectBorders(QValueList<CollapsedBorderValue>& borderStyles);
 
     virtual void updateFromElement();
 

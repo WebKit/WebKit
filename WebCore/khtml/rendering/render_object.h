@@ -614,7 +614,7 @@ public:
     virtual void setTable(RenderTable*) {};
 
     // Used by collapsed border tables.
-    virtual void collectBorders(QPtrList<CollapsedBorderValue>& borderStyles);
+    virtual void collectBorders(QValueList<CollapsedBorderValue>& borderStyles);
 
     // Repaint the entire object.  Called when, e.g., the color of a border changes, or when a border
     // style changes.
