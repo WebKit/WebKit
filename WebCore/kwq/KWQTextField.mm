@@ -276,6 +276,19 @@
     }
 
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
+
+    // In WebHTMLView, we set a clip. This is not typical to do in an
+    // NSView, and while correct for any one invocation of drawRect:,
+    // it causes some bad problems if that clip is cached between calls.
+    // The cached graphics state, which some views keep around, does
+    // cache the clip in this undesirable way. Consequently, we want to 
+    // turn off this caching for all views contained in a WebHTMLView that
+    // would otherwise do it. Here we turn it off for the editor (NSTextView)
+    // used for text fields in forms and the clip view it's embedded in.
+    // See bug 3457875 and 3310943 for more context.
+    [fieldEditor releaseGState];
+    [[fieldEditor superview] releaseGState];
+
     return [bridge control:control textShouldBeginEditing:fieldEditor];
 }
 

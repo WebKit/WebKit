@@ -1,3 +1,12 @@
+2003-10-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3457875 -- text disappears from fields in forms upon certain types of scrolling
+
+        * kwq/KWQTextField.mm: (-[KWQTextField control:textShouldBeginEditing:]):
+        Call releaseGState on the field editor and its clip view to prevent undesirable caching.
+
 2003-10-31  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
