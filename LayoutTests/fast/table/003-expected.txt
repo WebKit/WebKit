@@ -15,12 +15,12 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (2,28) size 780x20 [bgcolor=#FF0000] [r=1 c=0 rs=1 cs=2]
               RenderText {TEXT} at (1,1) size 253x18
                 text run at (1,1) width 253: "Alongwordtogiveyouanicebigminwidth."
-      RenderTable {TABLE} at (0,50) size 100x104 [bgcolor=#FF0000] [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 0x100
+      RenderTable {TABLE} at (0,50) size 100x100 [bgcolor=#FF0000] [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 0x96
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,48) size 92x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
-      RenderTable {TABLE} at (0,154) size 183x124 [border: (2px outset #808080)]
-        RenderTableSection {TBODY} at (2,2) size 0x120
+            RenderTableCell {TD} at (2,46) size 92x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
+      RenderTable {TABLE} at (0,150) size 183x120 [border: (2px outset #808080)]
+        RenderTableSection {TBODY} at (2,2) size 0x116
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 175x22 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
               RenderText {TEXT} at (2,2) size 31x18
@@ -34,9 +34,9 @@ layer at (0,0) size 800x600
               RenderText {TEXT} at (2,2) size 37x18
                 text run at (2,2) width 37: "world"
           RenderTableRow {TR} at (0,0) size 0x0
-            RenderTableCell {TD} at (2,74) size 175x44 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
-              RenderTextArea {TEXTAREA} at (4,2) size 167x40
-      RenderTable {TABLE} at (0,278) size 106x78
+            RenderTableCell {TD} at (2,74) size 175x36 [border: (1px inset #808080)] [r=3 c=0 rs=1 cs=1]
+              RenderTextArea {TEXTAREA} at (4,2) size 167x32
+      RenderTable {TABLE} at (0,270) size 106x78
         RenderTableSection {TBODY} at (0,0) size 0x78
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
@@ -46,7 +46,7 @@ layer at (0,0) size 800x600
                 text run at (1,37) width 56: "nowrap. "
                 text run at (57,37) width 44: "I really"
                 text run at (1,55) width 46: "should."
-      RenderTable {TABLE} at (0,356) size 106x78
+      RenderTable {TABLE} at (0,348) size 106x78
         RenderTableSection {TBODY} at (0,0) size 0x78
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 102x74 [r=0 c=0 rs=1 cs=1]
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
                   text run at (0,36) width 56: "nowrap. "
                   text run at (56,36) width 44: "I really"
                   text run at (0,54) width 46: "should."
-      RenderTable {TABLE} at (0,434) size 369x24
+      RenderTable {TABLE} at (0,426) size 369x24
         RenderTableSection {TBODY} at (0,0) size 0x24
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
@@ -65,7 +65,7 @@ layer at (0,0) size 800x600
                 text run at (1,1) width 145: "I should have nowrap. "
                 text run at (146,1) width 98: "I really should. "
                 text run at (244,1) width 120: "Definitely. Should."
-      RenderTable {TABLE} at (0,458) size 369x24
+      RenderTable {TABLE} at (0,450) size 369x24
         RenderTableSection {TBODY} at (0,0) size 0x24
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (2,2) size 365x20 [r=0 c=0 rs=1 cs=1]
