@@ -2,6 +2,14 @@
 
         Reviewed by Maciej.
 
+        - fixed 3458937: nil-deref in timed layout
+
+        * khtml/khtmlview.cpp: (KHTMLView::layout): Add a nil check for m_part.
+
+2003-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed 3311205: click() on a file input type form element does not work bring up the file chooser as it does in IE
 
         * khtml/html/html_formimpl.cpp:
