@@ -73,7 +73,6 @@ void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
     WCIFWebDataSourceMake = func;
 }
 
-extern "C" {
 
 WCIFErrorMakeFunc WCIFErrorMake;
 
@@ -82,7 +81,6 @@ void WCSetIFErrorMakeFunc(WCIFErrorMakeFunc func)
     WCIFErrorMake = func;
 }
 
-}
 
 static bool cache_init = false;
 
