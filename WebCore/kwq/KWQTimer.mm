@@ -140,12 +140,13 @@ void QTimer::setMonitor(void (*monitorFunction)(void *context), void *context)
 
 void QTimer::fire()
 {
-    m_timeoutSignal.call();
-
     if (![m_timer isValid]) {
         KWQRelease(m_timer);
         m_timer = nil;
     }
+
+    // Note: This call may destroy the QTimer, so be sure not to touch any fields afterward.
+    m_timeoutSignal.call();
 }
 
 void QTimer::singleShot(int msec, QObject *receiver, const char *member)
