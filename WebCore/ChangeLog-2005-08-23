@@ -1,3 +1,12 @@
+2003-11-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3480281>: drag image of selected text and images include broken images
+	
+        Reviewed by dave.
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject): when drawing the drag image, don't draw the broken image
+
 2003-11-11  Vicki Murley  <vicki@apple.com>
 
         Reviewed by sullivan.

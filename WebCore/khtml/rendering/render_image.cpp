@@ -238,6 +238,9 @@ void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
     //kdDebug( 6040 ) << "    contents (" << contentWidth << "/" << contentHeight << ") border=" << borderLeft() << " padding=" << paddingLeft() << endl;
     if ( pix.isNull() || berrorPic)
     {
+        if (paintAction == PaintActionSelection) {
+            return;
+        }
         if(cWidth > 2 && cHeight > 2)
         {
 #if APPLE_CHANGES
