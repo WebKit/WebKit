@@ -198,7 +198,7 @@
 
     flags = [[dataSource request] flags] | WebResourceHandleFlagLoadFromOrigin;
 
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] flags:flags];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource URL] flags:flags];
     [newDataSource _setParent:[dataSource parent]];
     if ([self setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeRefresh];

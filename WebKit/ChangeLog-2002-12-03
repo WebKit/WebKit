@@ -1,5 +1,11 @@
 2002-09-11  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebFrame.m: (-[WebFrame reload:]): Use the current
+	URL, not the original URL, when doing a reload. This prevents the URL from
+	changing back and forth when you reload on a page that involved a redirect.
+
+2002-09-11  Darin Adler  <darin@apple.com>
+
 	Add machinery needed for fix to 3021137, changing font prefs
 	doesn't redraw frames other than the main frame.
 
