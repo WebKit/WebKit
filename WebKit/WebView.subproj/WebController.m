@@ -372,8 +372,10 @@
 - (void)setApplicationNameForUserAgent:(NSString *)applicationName
 {
     NSString *name = [applicationName copy];
+    [_private->userAgentLock lock];
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
+    [_private->userAgentLock unlock];
 }
 
 // Set the user agent explicitly. Setting the user-agent string to nil means
