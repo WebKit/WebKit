@@ -1,3 +1,13 @@
+2003-06-30  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3310066>: All images use wrong map if page has image map of name ""
+
+        Reviewed by dave.
+
+        * config.h:
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::getMap): return 0 if getMap is called with a NULL string instead of treating it like an empty string
+
 2003-06-30  John Sullivan  <sullivan@apple.com>
 
 	- fixed gcc3.3 incompatibility

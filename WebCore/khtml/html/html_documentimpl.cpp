@@ -315,6 +315,10 @@ void HTMLDocumentImpl::slotHistoryChanged()
 
 HTMLMapElementImpl* HTMLDocumentImpl::getMap(const DOMString& _url)
 {
+    if (_url.isNull()) {
+        return 0;
+    }
+    
     QString url = _url.string();
     QString s;
     int pos = url.find('#');

@@ -720,7 +720,7 @@ int mkstemps (char* _template, int suffix_len); /* defined in fakes.c */
 #define HAVE_FORK 1
 
 /* Define if Foundation source tree exists */
-#define HAVE_FOUNDATION_SOURCES 1
+/* #undef HAVE_FOUNDATION_SOURCES */
 
 /* Define if you have finite */
 #define HAVE_FUNC_FINITE 1
