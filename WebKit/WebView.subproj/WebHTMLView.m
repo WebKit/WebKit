@@ -4904,11 +4904,23 @@ static NSArray *validAttributes = nil;
 {
     WebBridge *bridge = [self _bridge];
     
-    DOMRange *range = [bridge convertToObjCDOMRange:theRange];
+    DOMRange *range;
     
-    NSRect resultRect = [self convertRect:[bridge firstRectForDOMRange:range] toView:nil];
-    resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
+    if ([self hasMarkedText]) {
+        range = [bridge convertToObjCDOMRange:theRange];
+    }
+    else {
+        range = [self _selectedRange];
+    }
     
+    NSRect resultRect;
+    if ([range startContainer]) {
+        resultRect = [self convertRect:[bridge firstRectForDOMRange:range] toView:nil];
+        resultRect.origin = [[self window] convertBaseToScreen:resultRect.origin];
+    }
+    else {
+        resultRect = NSMakeRect(0,0,0,0);
+    }
     return resultRect;
 }
 

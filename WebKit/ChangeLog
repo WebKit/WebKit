@@ -1,5 +1,19 @@
 2005-03-23  Richard Williamson   <rjw@apple.com>
 
+	Use Patti Yeh's hack to determine the appropriate rectangle
+	to place the "associated word" window.  
+	If there is no marked text firstRectForCharacterRange: will
+	use the selected range to determine the returned rectangle,
+	ignoring the input range.  This is the fix from
+	4029491 that I previously backed out.
+
+        Reviewed by Vicki.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView firstRectForCharacterRange:]):
+
+2005-03-23  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/4062490> REGRESSION (WebKit-408): no subresources reported in Activity window after going back at hrweb.apple.com
 
 	Stop collecting subresource responses after the document
