@@ -1,5 +1,14 @@
 2003-10-30  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3469330, the Marquee data in RenderStyle needs a copy constructor hack like all the other
+	objects do.
+
+        * khtml/rendering/render_style.cpp:
+        (direction):
+        * khtml/rendering/render_style.h:
+
+2003-10-30  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3469206, images didn't paint outlines any more.  They were bailing early because I forgot to
 	add a check for my new PaintAction.
 	

@@ -139,6 +139,11 @@ StyleMarqueeData::StyleMarqueeData()
     loops = -1; // Loop forever by default. Matches WinIE.
 }
 
+StyleMarqueeData::StyleMarqueeData(const StyleMarqueeData& o)
+:Shared<StyleMarqueeData>(), increment(o.increment), speed(o.speed), loops(o.loops),
+ behavior(o.behavior), direction(o.direction) 
+{}
+
 bool StyleMarqueeData::operator==(const StyleMarqueeData& o) const
 {
     return (increment == o.increment && speed == o.speed && direction == o.direction &&
