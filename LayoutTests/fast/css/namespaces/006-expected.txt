@@ -9,7 +9,7 @@ layer at (0,0) size 800x34
           RenderText {TEXT} at (0,0) size 82x18
             text run at (0,0) width 82: "None of this "
         RenderText {TEXT} at (0,0) size 0x0
-        RenderInline {COMMENT} at (0,0) size 92x18
+        RenderInline {element} at (0,0) size 92x18
           RenderText {TEXT} at (82,0) size 92x18
             text run at (82,0) width 92: "text should be "
         RenderText {TEXT} at (0,0) size 0x0

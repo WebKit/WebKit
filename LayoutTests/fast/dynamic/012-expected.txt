@@ -4,8 +4,8 @@ layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
       RenderBlock {H2} at (0,0) size 784x28
-        RenderText {TEXT} at (0,0) size 220x28
-          text run at (0,0) width 220: "Block Collapse Demo"
+        RenderText {TEXT} at (0,0) size 219x28
+          text run at (0,0) width 219: "Block Collapse Demo"
       RenderBlock {P} at (0,47) size 784x18
         RenderText {TEXT} at (0,0) size 687x18
           text run at (0,0) width 304: "This table below has three hierarchical sections. "
