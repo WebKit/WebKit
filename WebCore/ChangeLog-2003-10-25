@@ -1,3 +1,14 @@
+2003-07-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - added a function Dave needs for various work he's doing that goes
+          from a document to the corresponding element in the parent document
+
+        * khtml/xml/dom_docimpl.h: Add ownerElement member function.
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::ownerElement):
+        Added. Gets to the parent part and finds the right element.
+
 2003-07-11  Dave Hyatt  <hyatt@apple.com>
 
 	An initial implementation of the CSS opacity property.  Seems

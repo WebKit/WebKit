@@ -44,7 +44,7 @@
 #include <kstaticdeleter.h>
 
 #include "rendering/render_canvas.h"
-#include "rendering/render_replaced.h"
+#include "rendering/render_frames.h"
 #include "rendering/render_image.h"
 #include "render_arena.h"
 
@@ -2284,6 +2284,26 @@ void DocumentImpl::removeCheckedRadioButton(HTMLInputElementImpl *b)
     QString name = b->name().string();
     assert(m_checkedRadioButtons[name] == b);
     m_checkedRadioButtons.remove(name);
+}
+
+ElementImpl *DocumentImpl::ownerElement()
+{
+    KHTMLView *childView = view();
+    if (!childView)
+        return 0;
+    KHTMLPart *childPart = childView->part();
+    if (!childPart)
+        return 0;
+    KHTMLPart *parent = childPart->parentPart();
+    if (!parent)
+        return 0;
+    ChildFrame *childFrame = parent->frame(childPart);
+    if (!childFrame)
+        return 0;
+    RenderPart *renderPart = childFrame->m_frame;
+    if (!renderPart)
+        return 0;
+    return static_cast<ElementImpl *>(renderPart->element());
 }
 
 #if APPLE_CHANGES
