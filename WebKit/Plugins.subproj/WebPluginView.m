@@ -179,7 +179,6 @@ extern "C" {
         if(transferMode == NP_ASFILE)
             WEBKITDEBUG("Stream type: NP_ASFILE\n");
         [stream setFilename:[[streamURL path] lastPathComponent]];
-        [stream setData:[NSMutableData dataWithCapacity:0]];
     }else if(transferMode == NP_SEEK){
         WEBKITDEBUG("Stream type: NP_SEEK not yet supported\n");
         return;
@@ -556,6 +555,10 @@ extern "C" {
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
 {
+    IFPluginStream *stream;
+    
+    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
+    [stream release];
     [self stop];
     
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
@@ -569,6 +572,10 @@ extern "C" {
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(int)result
 {
+    IFPluginStream *stream;
+    
+    stream = [[sender attributes] objectForKey:IFURLHandleUserData];
+    [stream release];
     [self stop];
     
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];

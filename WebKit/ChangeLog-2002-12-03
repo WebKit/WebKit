@@ -1,3 +1,16 @@
+2002-04-10  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+
+	Cleaned up stream deallocations.
+
+	* Plugins.subproj/IFPluginStream.h:
+	* Plugins.subproj/IFPluginStream.m: (-[IFPluginStream
+	initWithURL:mimeType:notifyData:]), (-[IFPluginStream incrementOffset:]),
+	(-[IFPluginStream dealloc]):
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	newStream:mimeType:notifyData:]), (-[IFPluginView
+	IFURLHandleResourceDidCancelLoading:]), (-[IFPluginView
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+
 2002-04-10  John Sullivan  <sullivan@apple.com>
 
 	Fixed 2891396 -- window fills with garbage if you resize or hide/show toolbar

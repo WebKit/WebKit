@@ -26,6 +26,8 @@
     npStream->notifyData = notifyData;
     offset = 0;
     
+    data = [[NSMutableData dataWithCapacity:0] retain];
+    
     return self;
 }
 
@@ -76,13 +78,18 @@
     transferMode = tMode;
 }
 
-- (void) setData:(NSMutableData *)newData
-{
-    data = [newData retain];
-}
-
 - (void) incrementOffset:(int32)addition
 {
     offset += addition;
 }
+
+- (void) dealloc
+{
+    free(npStream);
+    [mimeType release];
+    [data release];
+    if(filename)
+        [filename release];
+}
+
 @end

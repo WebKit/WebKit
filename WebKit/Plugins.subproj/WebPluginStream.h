@@ -23,7 +23,6 @@
 - (NSMutableData *) data;
 
 - (void) setFilename:(NSString *)file;
-- (void) setData:(NSMutableData *)newData;
 - (void) setTransferMode:(uint16)tMode;
 - (void) incrementOffset:(int32)addition;
 
