@@ -2,6 +2,13 @@
 
 	Additional nil check from fix for 4040749.
 
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+
+2005-03-07  Richard Williamson   <rjw@apple.com>
+
+	Additional nil check from fix for 4040749.
+
         * khtml/rendering/render_layer.cpp:
         (RenderLayer::updateLayerPosition):
 
