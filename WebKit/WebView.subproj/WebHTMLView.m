@@ -115,6 +115,10 @@ static BOOL forceRealHitTest = NO;
 - (void)speakString:(NSString *)string;
 @end
 
+@interface NSWindow (AppKitSecretsIKnowAbout)
+- (id)_newFirstResponderAfterResigning;
+@end
+
 @interface NSView (WebHTMLViewPrivate)
 - (void)_web_setPrintingModeRecursive;
 - (void)_web_clearPrintingModeRecursive;
@@ -1299,12 +1303,37 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
 - (void)updateTextBackgroundColor
 {
     NSWindow *window = [self window];
-    BOOL shouldUseInactiveTextBackgroundColor = !([window isKeyWindow] && [window firstResponder] == self);
+    BOOL shouldUseInactiveTextBackgroundColor = !([window isKeyWindow] && [window firstResponder] == self) ||
+        _private->resigningFirstResponder;
     WebBridge *bridge = [self _bridge];
     if ([bridge usesInactiveTextBackgroundColor] != shouldUseInactiveTextBackgroundColor) {
         [bridge setUsesInactiveTextBackgroundColor:shouldUseInactiveTextBackgroundColor];
         [self setNeedsDisplayInRect:[bridge visibleSelectionRect]];
     }
+}
+
+- (BOOL)maintainsInactiveSelection
+{
+    // This method helps to determing whether the view should maintain
+    // an inactive selection when the view is not first responder.
+    // Traditionally, these views have not maintained such selections,
+    // clearing them when the view was not first responder. However,
+    // to fix bugs like this one:
+    // <rdar://problem/3672088>: "Editable WebViews should maintain a selection even 
+    //                            when they're not firstResponder"
+    // it was decided to add a switch to act more like an NSTextView.
+    // For now, however, the view only acts in this way when the
+    // web view is set to be editable. This will maintain traditional
+    // behavior for WebKit clients dating back to before this change,
+    // and will likely be a decent switch for the long term, since
+    // clients to ste the web view to be editable probably want it
+    // to act like a "regular" Cocoa view in terms of its selection
+    // behavior.
+    if (![[self _webView] isEditable])
+        return NO;
+        
+    id nextResponder = [[self window] _newFirstResponderAfterResigning];
+    return !nextResponder || ![nextResponder isKindOfClass:[NSView class]] || ![nextResponder isDescendantOf:[self _webView]];
 }
 
 - (void)addMouseMovedObserver
@@ -2066,18 +2095,23 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
     return YES;
 }
 
-// This approach could be relaxed when dealing with 3228554
+// This approach could be relaxed when dealing with 3228554.
+// Some alteration to the selection behavior was done to deal with 3672088.
 - (BOOL)resignFirstResponder
 {
     BOOL resign = [super resignFirstResponder];
     if (resign) {
-        if ([[self _webView] _isPerformingProgrammaticFocus]) {
-            [self deselectText];
-        }
-        else {
-            [self deselectAll];
+        _private->resigningFirstResponder = YES;
+        if (![self maintainsInactiveSelection]) { 
+            if ([[self _webView] _isPerformingProgrammaticFocus]) {
+                [self deselectText];
+            }
+            else {
+                [self deselectAll];
+            }
         }
         [self updateTextBackgroundColor];
+        _private->resigningFirstResponder = NO;
     }
     return resign;
 }

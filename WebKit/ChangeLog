@@ -1,3 +1,32 @@
+2004-06-09  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3672088>: "Editable WebViews should maintain a selection even when they're not firstResponder"
+
+        Add some code to determine whether a WebHTMLView should maintain an
+        inactive selection when the view is not first responder. Traditionally,
+        these views have not maintained such selections, clearing them when the
+        view was not first responder. However, for appls embedding this view as
+        an editing widget, it is desirable to act more like an NSTextView. For
+        now, however, the view only acts in this way when the web view is set to
+        be editable with -[WebView setEditable:YES]. This will maintain
+        traditional behavior for WebKit clients dating back to before this
+        change, and will likely be a decent switch for the long term, since
+        clients to ste the web view to be editable probably want it to act like
+        a "regular" Cocoa view in terms of its selection behavior.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView updateTextBackgroundColor]): Add code to tell whether the view is resigning first responder,
+        and if it is, use the inactive text background color.
+        (-[WebHTMLView maintainsInactiveSelection]): New helper which does checks to see if the new selection
+        behavior should be used, or whether we should continue with traditional WebKit behavior.
+        (-[WebHTMLView resignFirstResponder]): Call new maintainsInactiveSelection helper. If true,
+        do not clear the selection.
+        * WebView.subproj/WebHTMLViewInternal.h: Add resigningFirstResponder flag.
+
 2004-06-09  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented drag destination portion of the new drag & drop API.
