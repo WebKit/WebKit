@@ -49,6 +49,7 @@
 #import "WebCoreTextRendererFactory.h"
 #import "KWQCharsets.h"
 #import "KWQFrame.h"
+#import "loader.h"
 
 #import "WebCoreDOMPrivate.h"
 
@@ -99,13 +100,21 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 
 @implementation WebCoreBridge
 
+static bool initializedObjectCacheSize = FALSE;
+
 - init
 {
     [super init];
     
     _part = new KWQKHTMLPart;
     _part->setBridge(self);
-    
+
+    if (!initializedObjectCacheSize){
+        khtml::Cache::setSize([self getObjectCacheSize]);
+        initializedObjectCacheSize = TRUE;
+    }
+
+
     return self;
 }
 

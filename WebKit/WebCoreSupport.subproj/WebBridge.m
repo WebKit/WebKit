@@ -27,7 +27,7 @@
 #import <WebKit/WebPluginError.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
-#import <WebKit/WebPreferences.h>
+#import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
@@ -40,6 +40,7 @@
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebSystemBits.h>
 
 
 @interface NSApplication (DeclarationStolenFromAppKit)
@@ -522,5 +523,31 @@
 
     return view;
 }
+
+#ifndef NDEBUG
+static BOOL loggedObjectCacheSize = NO;
+#endif
+
+
+-(int)getObjectCacheSize
+{
+    vm_size_t memSize = WebSystemMainMemory();
+    int cacheSize = [[WebPreferences standardPreferences] _objectCacheSize];
+    int multiplier = 1;
+    if (memSize > 1024 * 1024 * 1024)
+        multiplier = 4;
+    else if (memSize > 512 * 1024 * 1024)
+        multiplier = 2;
+
+#ifndef NDEBUG
+    if (!loggedObjectCacheSize){
+        LOG (CacheSizes, "Object cache size set to %d bytes.", cacheSize * multiplier);
+        loggedObjectCacheSize = YES;
+    }
+#endif
+
+    return cacheSize * multiplier;
+}
+
 
 @end

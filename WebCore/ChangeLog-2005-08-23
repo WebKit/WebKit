@@ -1,3 +1,13 @@
+2002-12-13  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3127225.  Set WebCore object cache size when first bridge is created.
+
+        Reviewed by gramps.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge init]):
+
 2002-12-13  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

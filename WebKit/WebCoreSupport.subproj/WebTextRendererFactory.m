@@ -3,12 +3,15 @@
     Copyright 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebSystemBits.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
+#import <CoreGraphics/CGFontLCDSupport.h>
 
 #import <mach-o/dyld.h>
 
@@ -123,6 +126,87 @@
     return glyphBuffer;
 }
 
+static bool
+getAppDefaultValue(CFStringRef key, int *v)
+{
+    CFPropertyListRef value;
+
+    value = CFPreferencesCopyValue(key, kCFPreferencesCurrentApplication,
+                                   kCFPreferencesAnyUser,
+                                   kCFPreferencesAnyHost);
+    if (value == NULL) {
+        value = CFPreferencesCopyValue(key, kCFPreferencesCurrentApplication,
+                                       kCFPreferencesCurrentUser,
+                                       kCFPreferencesAnyHost);
+        if (value == NULL)
+            return false;
+    }
+
+    if (CFGetTypeID(value) == CFNumberGetTypeID()) {
+        if (v != NULL)
+            CFNumberGetValue(value, kCFNumberIntType, v);
+    } else if (CFGetTypeID(value) == CFStringGetTypeID()) {
+        if (v != NULL)
+            *v = CFStringGetIntValue(value);
+    } else {
+        CFRelease(value);
+        return false;
+    }
+
+    CFRelease(value);
+    return true;
+}
+
+static bool
+getUserDefaultValue(CFStringRef key, int *v)
+{
+    CFPropertyListRef value;
+
+    value = CFPreferencesCopyValue(key, kCFPreferencesAnyApplication,
+                                   kCFPreferencesCurrentUser,
+                                   kCFPreferencesCurrentHost);
+    if (value == NULL)
+        return false;
+
+    if (CFGetTypeID(value) == CFNumberGetTypeID()) {
+        if (v != NULL)
+            CFNumberGetValue(value, kCFNumberIntType, v);
+    } else if (CFGetTypeID(value) == CFStringGetTypeID()) {
+        if (v != NULL)
+            *v = CFStringGetIntValue(value);
+    } else {
+        CFRelease(value);
+        return false;
+    }
+
+    CFRelease(value);
+    return true;
+}
+
+static int getLCDScaleParameters(void)
+{
+    int mode;
+    CFStringRef key;
+
+    key = CFSTR("AppleFontSmoothing");
+    if (!getAppDefaultValue(key, &mode)) {
+        if (!getUserDefaultValue(key, &mode))
+            return 1;
+    }
+
+    switch (mode) {
+        case kCGFontSmoothingLCDLight:
+        case kCGFontSmoothingLCDMedium:
+        case kCGFontSmoothingLCDStrong:
+            return 4;
+        default:
+            return 1;
+    }
+
+}
+
+#define MINIMUM_GLYPH_CACHE_SIZE 1536 * 1024
+
 + (void)createSharedFactory;
 {
     if (![self sharedFactory]) {
@@ -141,7 +225,16 @@
                 CGFontCache *fontCache;
                 fontCache = CGFontCacheCreate();
                 functionPtr1 (fontCache, false);
-                functionPtr2 (fontCache, 1024*1024);
+
+                size_t s;
+                if (WebSystemMainMemory() > 128 * 1024 * 1024)
+                    s = MINIMUM_GLYPH_CACHE_SIZE*getLCDScaleParameters();
+                else
+                    s = MINIMUM_GLYPH_CACHE_SIZE;
+#ifndef NDEBUG
+                LOG (CacheSizes, "Glyph cache size set to %d bytes.", s);
+#endif
+                functionPtr2 (fontCache, s);
                 CGFontCacheRelease(fontCache);
             }
         }

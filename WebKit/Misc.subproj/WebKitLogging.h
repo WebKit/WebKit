@@ -26,3 +26,4 @@ extern WebLogChannel WebKitLogView;
 extern WebLogChannel WebKitLogRedirect;
 
 extern WebLogChannel WebKitLogPageCache;
+extern WebLogChannel WebKitLogCacheSizes;

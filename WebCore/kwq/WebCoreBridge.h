@@ -244,6 +244,8 @@ enum FrameBorderStyle {
 
 - (BOOL)saveDocumentToPageCache:(id)documentInfo;
 
+- (int)getObjectCacheSize;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

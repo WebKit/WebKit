@@ -22,3 +22,4 @@ WebLogChannel WebKitLogView =         		{ 0x00020000, "WebKitLogLevel", WebLogCh
 WebLogChannel WebKitLogRedirect =     		{ 0x00040000, "WebKitLogLevel", WebLogChannelUninitialized };
 
 WebLogChannel WebKitLogPageCache =              { 0x00080000, "WebKitLogLevel", WebLogChannelUninitialized };
+WebLogChannel WebKitLogCacheSizes =             { 0x00100000, "WebKitLogLevel", WebLogChannelUninitialized };

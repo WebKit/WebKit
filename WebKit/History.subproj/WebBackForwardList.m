@@ -4,9 +4,11 @@
 */
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebHistoryItemPrivate.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPreferencesPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebSystemBits.h>
 
 @implementation WebBackForwardList
 
@@ -202,11 +204,32 @@ static unsigned pageCacheSize = 4;
     pageCacheSize = size;
 }
 
+#ifndef NDEBUG
+static BOOL loggedPageCacheSize = NO;
+#endif
 
 + (unsigned)pageCacheSize
 {
-    if (!pageCacheSizeModified)
-        return [[WebPreferences standardPreferences] _pageCacheSize];
+    if (!pageCacheSizeModified){
+        unsigned s;
+        vm_size_t memSize = WebSystemMainMemory();
+        unsigned multiplier = 1;
+        
+        s = [[WebPreferences standardPreferences] _pageCacheSize];
+        if (memSize > 1024 * 1024 * 1024)
+            multiplier = 4;
+        else if (memSize > 512 * 1024 * 1024)
+            multiplier = 2;
+
+#ifndef NDEBUG
+        if (!loggedPageCacheSize){
+            LOG (CacheSizes, "Page cache size set to %d pages.", s * multiplier);
+            loggedPageCacheSize = YES;
+        }
+#endif
+
+        return s * multiplier;
+    }
     return pageCacheSize;
 }
 

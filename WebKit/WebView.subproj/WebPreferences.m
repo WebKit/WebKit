@@ -34,6 +34,7 @@
 #define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
 #define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
 #define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
+#define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 
 @implementation WebPreferences
 
@@ -94,14 +95,15 @@
         @"1.00",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.00",                        WebKitResourceTimedLayoutDelayPreferenceKey,
-        @"4",                          WebKitPageCacheSizePreferenceKey,
+        @"4",                           WebKitPageCacheSizePreferenceKey,
+        @"4194304",                     WebKitObjectCacheSizePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitInitialTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                    	WebKitUserStyleSheetLocationPreferenceKey,
-        [NSNumber numberWithBool:YES],   WebKitJavaEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitJavaEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
-        [NSNumber numberWithBool:YES],   WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImagesPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
@@ -309,6 +311,11 @@
 - (int)_pageCacheSize
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitPageCacheSizePreferenceKey];
+}
+
+- (int)_objectCacheSize
+{
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitObjectCacheSizePreferenceKey];
 }
 
 - (BOOL)_initialTimedLayoutEnabled

@@ -1,3 +1,29 @@
+2002-12-13  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3127225.  Scale page cache based on available memory.
+        Also added support for setting WebCore object cache size via
+        a preference.
+        Fixed 3126267.  Increase CG glyph cache size if font smoothing
+        is turned on.
+        
+        Reviewed by gramps.
+
+        * History.subproj/WebBackForwardList.m:
+        (+[WebBackForwardList pageCacheSize]):
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge getObjectCacheSize]):
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (getAppDefaultValue):
+        (getUserDefaultValue):
+        (getLCDScaleParameters):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+        (-[WebPreferences _pageCacheSize]):
+        (-[WebPreferences _objectCacheSize]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
 2002-12-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3105486 - c|net news.com site seems to have lost its favicon again
