@@ -1,3 +1,17 @@
+2005-02-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3997185> The Web view on .Mac Prefs caused System Prefs 
+        to lockup (resolved by re-boot only)
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge nextKeyViewOutsideWebFrameViews]):
+        Don't allow recursion here; assert on debug build, return nil on deployment. I
+        couldn't get my machine into a state to repro this problem (and neither could the
+        originator), but it's obvious from the stack crawl that this method was recursing
+        when it shouldn't have.
+
 2005-02-16  John Sullivan  <sullivan@apple.com>
 
         Written by Darin, reviewed by me.

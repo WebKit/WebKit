@@ -721,6 +721,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
 - (NSView *)nextKeyViewOutsideWebFrameViews
 {
+    if (_inNextKeyViewOutsideWebFrameViews) {
+        // We should never get here, but unrepro bug 3997185 says we sometimes do.
+        // So we'll fail on debug builds to try to catch the problem, but on
+        // deployment builds we'll return nil to avoid recursing forever.
+        ASSERT_NOT_REACHED();
+        return nil;
+    }
+    
     _inNextKeyViewOutsideWebFrameViews = YES;
     WebView *webView = [_frame webView];
     // Do not ask webView for its next key view, but rather, ask it for 
