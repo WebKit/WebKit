@@ -16,7 +16,6 @@
 #import <WebKit/IFPluginNullEventSender.h>
 #import <WebKit/IFNullPluginView.h>
 #import <WebKit/IFPlugin.h>
-#import <WebKit/IFNSEventExtras.h>
 #import <WebKit/IFNSViewExtras.h>
 #import <WebKit/WebKitDebug.h>
 
@@ -238,10 +237,10 @@
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
     
-    // If the plug-in didn't accept this event and this event can be used for scrolling,
-    // pass it along so that keyboard scrolling continues to work
-    if([theEvent _IF_isScrollEvent] && !acceptedEvent)
-        [[self nextResponder] keyUp:theEvent];
+    // If the plug-in didn't accept this event,
+    // pass it along so that keyboard scrolling, for example, will work.
+    if (!acceptedEvent)
+        [super keyUp:theEvent];
 }
 
 - (void)keyDown:(NSEvent *)theEvent
@@ -257,10 +256,10 @@
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
     
-    // If the plug-in didn't accept this event and this event can be used for scrolling,
-    // pass it along so that keyboard scrolling continues to work
-    if([theEvent _IF_isScrollEvent] && !acceptedEvent)
-        [[self nextResponder] keyDown:theEvent];
+    // If the plug-in didn't accept this event,
+    // pass it along so that keyboard scrolling, for example, will work.
+    if (!acceptedEvent)
+        [super keyDown:theEvent];
 }
 
 #pragma mark IFPLUGINVIEW

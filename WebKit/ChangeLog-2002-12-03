@@ -1,3 +1,18 @@
+2002-07-10  Darin Adler  <darin@apple.com>
+
+        * Misc.subproj/WebKitDebug.m: Remove workaround for long-ago fixed
+	C compiler bug.
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView keyUp:]), (-[IFPluginView keyDown:]): Simplify keyboard
+	scrolling code by passing along all events that the plug-in doesn't handle
+	rather than special-casing certain events. Also use super rather than
+	nextResponder to pass along the scroll events (super will do nextResponder).
+
+        * WebView.subproj/IFHTMLView.mm:
+        (-[IFHTMLView keyDown:]), (-[IFHTMLView keyUp:]): Use super rather than
+	nextResponder to pass along scroll events (super will do nextResponder).
+
 2002-07-08  Chris Blumenberg  <cblu@apple.com>
 
         Fixes for:

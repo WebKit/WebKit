@@ -4,9 +4,6 @@
 
 #import "WebKitDebug.h"
 
-// FIXME: Workaround for Radar xxx.
-#undef putc
-
 #ifndef NDEBUG
 
 static unsigned WEBKIT_LOG_LEVEL = 0;

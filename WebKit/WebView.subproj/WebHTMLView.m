@@ -522,9 +522,9 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
-    // If this is a scroll event, pass it to the IFWebView to cause a scroll
-    if([event _IF_isScrollEvent]){
-        [[self nextResponder] keyDown:event];
+    // If this is a scroll event, let IFWebView handle it instead of the KHTMLView.
+    if ([event _IF_isScrollEvent]) {
+        [super keyDown:event];
         return;
     }
     
@@ -542,9 +542,9 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
-    // If this is a scroll event, pass it to the IFWebView to cause a scroll
-    if([event _IF_isScrollEvent]){
-        [[self nextResponder] keyUp:event];
+    // If this is a scroll event, let IFWebView handle it instead of the KHTMLView.
+    if ([event _IF_isScrollEvent]) {
+        [super keyUp:event];
         return;
     }
     
