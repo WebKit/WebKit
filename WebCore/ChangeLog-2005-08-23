@@ -1,3 +1,16 @@
+2004-10-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3774243> page up/down, arrow up/down, etc in Safari RSS should scroll main content
+
+        Reviewed by dave.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMElementProtoFunc::tryCall): added scrollByLines and scrollByPages to HTML element for Safari RSS
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMElement::):
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+
 2004-10-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3848214, deleting a partial word left a repaint artifact if the partial word was pulled back onto
