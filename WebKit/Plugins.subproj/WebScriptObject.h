@@ -126,7 +126,7 @@
     @method invokeDefaultMethodWithArguments:
     @param args The args to pass the method.
     @discussion If a script attempts to invoke a method on an exposed object
-    directory this method will be called.
+    directly this method will be called.
 */
 - (id)invokeDefaultMethodWithArguments:(NSArray *)args;
 
