@@ -1398,9 +1398,30 @@ bool NodeImpl::isBlockFlow() const
     return renderer() && renderer()->isBlockFlow();
 }
 
+bool NodeImpl::isBlockFlowOrTable() const
+{
+    return renderer() && (renderer()->isBlockFlow() || renderer()->isTable());
+}
+
 bool NodeImpl::isEditableBlock() const
 {
     return isContentEditable() && isBlockFlow();
+}
+
+ElementImpl *NodeImpl::enclosingBlockFlowOrTableElement() const
+{
+    NodeImpl *n = const_cast<NodeImpl *>(this);
+    if (isBlockFlowOrTable())
+        return static_cast<ElementImpl *>(n);
+
+    while (1) {
+        n = n->parentNode();
+        if (!n)
+            break;
+        if (n->isBlockFlowOrTable() || n->id() == ID_BODY)
+            return static_cast<ElementImpl *>(n);
+    }
+    return 0;
 }
 
 ElementImpl *NodeImpl::enclosingBlockFlowElement() const

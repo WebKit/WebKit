@@ -127,6 +127,7 @@ public:
     virtual bool isDocumentNode() const { return false; }
     virtual bool isXMLElementNode() const { return false; }
     bool isBlockFlow() const;
+    bool isBlockFlowOrTable() const;
     
     // Used by <form> elements to indicate a malformed state of some kind, typically
     // used to keep from applying the bottom margin of the form.
@@ -167,6 +168,7 @@ public:
 
     bool isEditableBlock() const;
     ElementImpl *enclosingBlockFlowElement() const;
+    ElementImpl *enclosingBlockFlowOrTableElement() const;
     ElementImpl *enclosingInlineElement() const;
     ElementImpl *rootEditableElement() const;
     

@@ -1,3 +1,54 @@
+2005-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4053506> Pasting Tables and Cells in Mail does not allow editing before or after
+	<rdar://problem/4005954> REGRESSION (Mail): After copy/paste of content containing list element cannot go back to entering text at left side of page
+
+	
+        * khtml/editing/htmlediting.cpp:
+        (khtml::maxDeepOffset):
+        (khtml::CompositeEditCommand::removeFullySelectedNodePreservingPosition):
+        (khtml::CompositeEditCommand::removeChildrenInRangePreservingPosition):
+        (khtml::CompositeEditCommand::removeNodePreservingPosition):
+        (khtml::CompositeEditCommand::insertBlockPlaceholder):
+        (khtml::CompositeEditCommand::appendBlockPlaceholder):
+        (khtml::CompositeEditCommand::forceBlockPlaceholder):
+        (khtml::CompositeEditCommand::addBlockPlaceholderIfNeeded):
+        (khtml::isSpecialElement):
+        (khtml::isFirstVisiblePositionInSpecialElementInFragment):
+        (khtml::positionBeforePossibleContainingSpecialElement):
+        (khtml::positionAfterPossibleContainingSpecialElement):
+        (khtml::ApplyStyleCommand::applyInlineStyle):
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        (khtml::DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent):
+        (khtml::DeleteSelectionCommand::handleGeneralDelete):
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete):
+        (khtml::DeleteSelectionCommand::doApply):
+        (khtml::InsertParagraphSeparatorCommand::doApply):
+        (khtml::ReplacementFragment::ReplacementFragment):
+        (khtml::ReplaceSelectionCommand::doApply):
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/visible_position.cpp:
+        (khtml::isRenderedBR):
+        (khtml::VisiblePosition::initDownstream):
+        (khtml::isLastVisiblePositionInBlock):
+        * khtml/rendering/render_line.cpp:
+        (khtml::RootInlineBox::closestLeafChildForXPos):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::isBlockFlowOrTable):
+        (NodeImpl::isEditableBlock):
+        (NodeImpl::enclosingBlockFlowOrTableElement):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream):
+        (DOM::Position::downstream):
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-003-expected.txt:
+        * layout-tests/editing/deleting/delete-at-paragraph-boundaries-004-expected.txt:
+        * layout-tests/editing/deleting/delete-select-all-001-expected.txt:
+        * layout-tests/editing/deleting/delete-select-all-003-expected.txt:
+        * layout-tests/editing/inserting/insert-3786362-fix-expected.txt:
+
 2005-03-19  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

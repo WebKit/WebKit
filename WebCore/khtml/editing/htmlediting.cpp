@@ -212,6 +212,17 @@ static int maxRangeOffset(NodeImpl *n)
     return 1;
 }
 
+static int maxDeepOffset(NodeImpl *n)
+{
+    if (n->isAtomicNode())
+        return n->caretMaxOffset();
+
+    if (n->isElementNode())
+        return n->childNodeCount();
+
+    return 1;
+}
+
 static void debugPosition(const char *prefix, const Position &pos)
 {
     if (!prefix)
@@ -832,22 +843,46 @@ void CompositeEditCommand::appendNode(NodeImpl *appendChild, NodeImpl *parent)
     applyCommandToComposite(cmd);
 }
 
-void CompositeEditCommand::removeFullySelectedNode(NodeImpl *node)
+void CompositeEditCommand::removeFullySelectedNodePreservingPosition(NodeImpl *node, Position &pos)
 {
-    if (isTableStructureNode(node)) {
+    if (isTableStructureNode(node) || node == node->rootEditableElement()) {
         // Do not remove an element of table structure; remove its contents.
+        // Likewise for the root editable element.
         NodeImpl *child = node->firstChild();
         while (child) {
             NodeImpl *remove = child;
             child = child->nextSibling();
-            removeFullySelectedNode(remove);
+            removeFullySelectedNodePreservingPosition(remove, pos);
         }
     }
     else {
-        EditCommandPtr cmd(new RemoveNodeCommand(document(), node));
-        applyCommandToComposite(cmd);
+        removeNodePreservingPosition(node, pos);
     }
 }
+
+void CompositeEditCommand::removeChildrenInRangePreservingPosition(NodeImpl *node, int from, int to, Position &pos)
+{
+    NodeImpl *nodeToRemove = node->childNode(from);
+    for (int i = from; i < to; i++) {
+        ASSERT(nodeToRemove);
+        NodeImpl *next = nodeToRemove->nextSibling();
+        removeNodePreservingPosition(nodeToRemove, pos);
+        nodeToRemove = next;
+    }
+}
+
+void CompositeEditCommand::removeNodePreservingPosition(NodeImpl *removeChild, Position &pos)
+{
+    if (removeChild == pos.node() || pos.node()->isAncestor(removeChild)) {
+        pos = Position(removeChild->parentNode(), removeChild->nodeIndex());
+    } else if (removeChild->parentNode() == pos.node() && removeChild->nodeIndex() < (unsigned)pos.offset()) {
+        pos = Position(pos.node(), pos.offset() - 1);
+    }
+
+    EditCommandPtr cmd(new RemoveNodeCommand(document(), removeChild));
+    applyCommandToComposite(cmd);
+}
+
 
 void CompositeEditCommand::removeNode(NodeImpl *removeChild)
 {
@@ -1073,27 +1108,31 @@ void CompositeEditCommand::deleteInsignificantTextDownstream(const DOM::Position
     deleteInsignificantText(pos, end);
 }
 
-void CompositeEditCommand::insertBlockPlaceholder(NodeImpl *node)
+NodeImpl *CompositeEditCommand::appendBlockPlaceholder(NodeImpl *node)
 {
     if (!node)
-        return;
+        return NULL;
 
     ASSERT(node->renderer() && node->renderer()->isBlockFlow());
 
-    insertNodeAt(createBlockPlaceholderElement(document()), node, 0);
+    NodeImpl *placeholder = createBlockPlaceholderElement(document());
+    appendNode(placeholder, node);
+    return placeholder;
 }
 
-void CompositeEditCommand::appendBlockPlaceholder(NodeImpl *node)
+NodeImpl *CompositeEditCommand::insertBlockPlaceholder(const Position &pos)
 {
-    if (!node)
-        return;
+    if (pos.isNull())
+        return NULL;
 
-    ASSERT(node->renderer() && node->renderer()->isBlockFlow());
+    ASSERT(pos.node()->renderer() && pos.node()->renderer()->isBlockFlow());
 
-    appendNode(createBlockPlaceholderElement(document()), node);
+    NodeImpl *placeholder = createBlockPlaceholderElement(document());
+    insertNodeAt(placeholder, pos.node(), pos.offset());
+    return placeholder;
 }
 
-bool CompositeEditCommand::addBlockPlaceholderIfNeeded(NodeImpl *node, bool forceInsertIfNonEmpty)
+NodeImpl *CompositeEditCommand::addBlockPlaceholderIfNeeded(NodeImpl *node)
 {
     if (!node)
         return false;
@@ -1107,18 +1146,10 @@ bool CompositeEditCommand::addBlockPlaceholderIfNeeded(NodeImpl *node, bool forc
     // append the placeholder to make sure it follows
     // any unrendered blocks
     if (renderer->height() == 0) {
-        appendBlockPlaceholder(node);
-        return true;
+        return appendBlockPlaceholder(node);
     }
 
-    // when forcing a blank paragraph in a non-empty block, tho,
-    // we want to insert the placeholder at the front of that block
-    if (forceInsertIfNonEmpty) {
-        insertBlockPlaceholder(node);
-        return true;
-    }
-
-    return false;
+    return NULL;
 }
 
 bool CompositeEditCommand::removeBlockPlaceholder(NodeImpl *node)
@@ -1242,6 +1273,37 @@ static bool isSpecialElement(NodeImpl *n)
     if (n->id() == ID_A && n->hasAnchor())
         return true;
 
+    if (n->id() == ID_UL || n->id() == ID_OL || n->id() == ID_DL)
+        return true;
+
+    RenderObject *renderer = n->renderer();
+
+    if (renderer && (renderer->style()->display() == TABLE || renderer->style()->display() == INLINE_TABLE))
+        return true;
+
+    if (renderer && renderer->style()->isFloating())
+        return true;
+
+    if (renderer && renderer->style()->position() != STATIC)
+        return true;
+
+    return false;
+}
+
+// This version of the function is menat to be called on positons in a document fragment,
+// so it does not check for a root editable element, it is assumed these nodes will be put
+// somewhere editable in the future
+static bool isFirstVisiblePositionInSpecialElementInFragment(const Position& pos)
+{
+    VisiblePosition vPos = VisiblePosition(pos, DOWNSTREAM);
+
+    for (NodeImpl *n = pos.node(); n; n = n->parentNode()) {
+        if (VisiblePosition(n, 0, DOWNSTREAM) != vPos)
+            return false;
+        if (isSpecialElement(n))
+            return true;
+    }
+
     return false;
 }
 
@@ -1342,6 +1404,24 @@ static Position positionOutsideContainingSpecialElement(const Position &pos)
     if (isFirstVisiblePositionInSpecialElement(pos)) {
         return positionBeforeContainingSpecialElement(pos);
     } else if (isLastVisiblePositionInSpecialElement(pos)) {
+        return positionAfterContainingSpecialElement(pos);
+    }
+
+    return pos;
+}
+
+static Position positionBeforePossibleContainingSpecialElement(const Position &pos)
+{
+    if (isFirstVisiblePositionInSpecialElement(pos)) {
+        return positionBeforeContainingSpecialElement(pos);
+    } 
+
+    return pos;
+}
+
+static Position positionAfterPossibleContainingSpecialElement(const Position &pos)
+{
+    if (isLastVisiblePositionInSpecialElement(pos)) {
         return positionAfterContainingSpecialElement(pos);
     }
 
@@ -1623,6 +1703,7 @@ void ApplyStyleCommand::applyInlineStyle(CSSMutableStyleDeclarationImpl *style)
     // adjust to the positions we want to use for applying style
     Position start(endingSelection().start().downstream(StayInBlock).equivalentRangeCompliantPosition());
     Position end(endingSelection().end().upstream(StayInBlock));
+
     if (RangeImpl::compareBoundaryPoints(end, start) < 0) {
         Position swap = start;
         start = end;
@@ -2519,12 +2600,14 @@ void DeleteSelectionCommand::initializePositionData()
     // Handle setting some basic positions
     //
     Position start = m_selectionToDelete.start();
+    start = positionOutsideContainingSpecialElement(start);
     Position end = m_selectionToDelete.end();
+    end = positionOutsideContainingSpecialElement(end);
 
-    m_upstreamStart = start.upstream(StayInBlock);
-    m_downstreamStart = start.downstream(StayInBlock);
-    m_upstreamEnd = end.upstream(StayInBlock);
-    m_downstreamEnd = end.downstream(StayInBlock);
+    m_upstreamStart = positionBeforePossibleContainingSpecialElement(start.upstream(StayInBlock));
+    m_downstreamStart = positionBeforePossibleContainingSpecialElement(start.downstream(StayInBlock));
+    m_upstreamEnd = positionAfterPossibleContainingSpecialElement(end.upstream(StayInBlock));
+    m_downstreamEnd = positionAfterPossibleContainingSpecialElement(end.downstream(StayInBlock));
 
     //
     // Handle leading and trailing whitespace, as well as smart delete adjustments to the selection
@@ -2613,7 +2696,9 @@ void DeleteSelectionCommand::insertPlaceholderForAncestorBlockContent()
     NodeImpl *upstreamBlock = m_upstreamStart.node()->enclosingBlockFlowElement();
     NodeImpl *beforeUpstreamBlock = m_upstreamStart.upstream().node()->enclosingBlockFlowElement();
     
-    if (upstreamBlock != beforeUpstreamBlock && beforeUpstreamBlock->isAncestor(upstreamBlock)) {
+    if (upstreamBlock != beforeUpstreamBlock && 
+        beforeUpstreamBlock->isAncestor(upstreamBlock) &&
+        upstreamBlock != m_upstreamStart.node()) {
         NodeImpl *downstreamBlock = m_downstreamEnd.node()->enclosingBlockFlowElement();
         NodeImpl *afterDownstreamBlock = m_downstreamEnd.downstream().node()->enclosingBlockFlowElement();
         
@@ -2706,10 +2791,13 @@ void DeleteSelectionCommand::handleGeneralDelete()
             startOffset = 0;
         }
     }
-    else if (startOffset >= m_startNode->caretMaxOffset()) {
+    else if (startOffset >= m_startNode->caretMaxOffset() &&
+             (m_startNode->isAtomicNode() || startOffset == 0)) {
         // Move the start node to the next node in the tree since the startOffset is equal to
         // or beyond the start node's caretMaxOffset This means there is nothing visible to delete. 
-        // However, before moving on, delete any insignificant text that may be present in a text node.
+        // But don't do this if the node is not atomic - we don't want to move into the first child.
+
+        // Also, before moving on, delete any insignificant text that may be present in a text node.
         if (m_startNode->isTextNode()) {
             // Delete any insignificant text from this node.
             TextImpl *text = static_cast<TextImpl *>(m_startNode);
@@ -2728,15 +2816,19 @@ void DeleteSelectionCommand::handleGeneralDelete()
     if (m_startNode == m_downstreamEnd.node()) {
         // The selection to delete is all in one node.
         if (!m_startNode->renderer() || 
-            (startOffset <= m_startNode->caretMinOffset() && m_downstreamEnd.offset() >= m_startNode->caretMaxOffset())) {
+            (startOffset == 0 && m_downstreamEnd.offset() >= maxDeepOffset(m_startNode))) {
             // just delete
-            removeFullySelectedNode(m_startNode);
-        }
-        else if (m_downstreamEnd.offset() - startOffset > 0) {
-            // in a text node that needs to be trimmed
-            TextImpl *text = static_cast<TextImpl *>(m_startNode);
-            deleteTextFromNode(text, startOffset, m_downstreamEnd.offset() - startOffset);
-            m_trailingWhitespaceValid = false;
+            removeFullySelectedNodePreservingPosition(m_startNode, m_upstreamStart);
+        } else if (m_downstreamEnd.offset() - startOffset > 0) {
+            if (m_startNode->isTextNode()) {
+                // in a text node that needs to be trimmed
+                TextImpl *text = static_cast<TextImpl *>(m_startNode);
+                deleteTextFromNode(text, startOffset, m_downstreamEnd.offset() - startOffset);
+                m_trailingWhitespaceValid = false;
+            } else {
+                removeChildrenInRangePreservingPosition(m_startNode, startOffset, m_downstreamEnd.offset(), m_upstreamStart);
+                m_endingPosition = m_upstreamStart;
+            }
         }
     }
     else {
@@ -2744,26 +2836,37 @@ void DeleteSelectionCommand::handleGeneralDelete()
         NodeImpl *node = m_startNode;
         
         if (startOffset > 0) {
-            // in a text node that needs to be trimmed
-            TextImpl *text = static_cast<TextImpl *>(node);
-            deleteTextFromNode(text, startOffset, text->length() - startOffset);
-            node = node->traverseNextNode();
+            if (m_startNode->isTextNode()) {
+                // in a text node that needs to be trimmed
+                TextImpl *text = static_cast<TextImpl *>(node);
+                deleteTextFromNode(text, startOffset, text->length() - startOffset);
+                node = node->traverseNextNode();
+            } else {
+                node = m_startNode->childNode(startOffset);
+            }
         }
         
         // handle deleting all nodes that are completely selected
         while (node && node != m_downstreamEnd.node()) {
-            if (!m_downstreamEnd.node()->isAncestor(node)) {
+            if (RangeImpl::compareBoundaryPoints(Position(node, 0), m_downstreamEnd) >= 0) {
+                // traverseNextSibling just blew past the end position, so stop deleting
+                node = 0;
+            } else if (!m_downstreamEnd.node()->isAncestor(node)) {
                 NodeImpl *nextNode = node->traverseNextSibling();
-                removeFullySelectedNode(node);
+                // if we just removed a node from the end container, update end position so the
+                // check above will work
+                if (node->parentNode() == m_downstreamEnd.node()) {
+                    ASSERT(node->nodeIndex() < (unsigned)m_downstreamEnd.offset());
+                    m_downstreamEnd = Position(m_downstreamEnd.node(), m_downstreamEnd.offset() - 1);
+                }
+                removeFullySelectedNodePreservingPosition(node, m_upstreamStart);
                 node = nextNode;
-            }
-            else {
+            } else {
                 NodeImpl *n = node->lastChild();
                 while (n && n->lastChild())
                     n = n->lastChild();
                 if (n == m_downstreamEnd.node() && m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMaxOffset()) {
-                    // remove an ancestor of m_downstreamEnd.node(), and thus m_downstreamEnd.node() itself
-                    removeFullySelectedNode(node);
+                    removeFullySelectedNodePreservingPosition(node, m_upstreamStart);
                     m_trailingWhitespaceValid = false;
                     node = 0;
                 } 
@@ -2774,19 +2877,29 @@ void DeleteSelectionCommand::handleGeneralDelete()
         }
 
         if (m_downstreamEnd.node() != m_startNode && m_downstreamEnd.node()->inDocument() && m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMinOffset()) {
-            if (m_downstreamEnd.offset() >= m_downstreamEnd.node()->caretMaxOffset()) {
+            if (m_downstreamEnd.offset() >= maxDeepOffset(m_downstreamEnd.node())) {
                 // need to delete whole node
                 // we can get here if this is the last node in the block
-                removeFullySelectedNode(m_downstreamEnd.node());
+                // remove an ancestor of m_downstreamEnd.node(), and thus m_downstreamEnd.node() itself
+                if (m_upstreamStart.node() == m_downstreamEnd.node() ||
+                    m_upstreamStart.node()->isAncestor(m_downstreamEnd.node())) {
+                    m_upstreamStart = Position(m_downstreamEnd.node()->parentNode(), m_downstreamEnd.node()->nodeIndex());
+                }
+                
+                removeFullySelectedNodePreservingPosition(m_downstreamEnd.node(), m_upstreamStart);
                 m_trailingWhitespaceValid = false;
-            }
-            else {
-                // in a text node that needs to be trimmed
-                TextImpl *text = static_cast<TextImpl *>(m_downstreamEnd.node());
-                if (m_downstreamEnd.offset() > 0) {
-                    deleteTextFromNode(text, 0, m_downstreamEnd.offset());
-                    m_downstreamEnd = Position(text, 0);
-                    m_trailingWhitespaceValid = false;
+            } else {
+                if (m_downstreamEnd.node()->isTextNode()) {
+                    // in a text node that needs to be trimmed
+                    TextImpl *text = static_cast<TextImpl *>(m_downstreamEnd.node());
+                    if (m_downstreamEnd.offset() > 0) {
+                        deleteTextFromNode(text, 0, m_downstreamEnd.offset());
+                        m_downstreamEnd = Position(text, 0);
+                        m_trailingWhitespaceValid = false;
+                    }
+                } else {
+                    removeChildrenInRangePreservingPosition(m_downstreamEnd.node(), 0, m_downstreamEnd.offset(), m_upstreamStart);
+                    m_downstreamEnd = Position(m_downstreamEnd.node(), 0);
                 }
             }
         }
@@ -2929,7 +3042,7 @@ void DeleteSelectionCommand::calculateEndingPosition()
     m_endingPosition = Position(document()->documentElement(), 0);
 }
 
-void DeleteSelectionCommand::calculateTypingStyleAfterDelete(bool insertedPlaceholder)
+void DeleteSelectionCommand::calculateTypingStyleAfterDelete(NodeImpl *insertedPlaceholder)
 {
     // Compute the difference between the style before the delete and the style now
     // after the delete has been done. Set this style on the part, so other editing
@@ -2950,9 +3063,16 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete(bool insertedPlaceh
         // of the preceding line and retains it even if you click away, click back, and
         // then start typing. In this case, the typing style is applied right now, and
         // is not retained until the next typing action.
-        Position pastPlaceholder = endOfParagraph(VisiblePosition(m_endingPosition, m_selectionToDelete.endAffinity())).deepEquivalent();
+
+        // FIXME: is this even right? I don't think post-deletion typing style is supposed 
+        // to be saved across clicking away and clicking back, it certainly isn't in TextEdit
+
+        Position pastPlaceholder(insertedPlaceholder, 1);
+
         setEndingSelection(Selection(m_endingPosition, m_selectionToDelete.endAffinity(), pastPlaceholder, DOWNSTREAM));
+
         applyStyle(m_typingStyle, EditActionUnspecified);
+
         m_typingStyle->deref();
         m_typingStyle = 0;
     }
@@ -3045,8 +3165,10 @@ void DeleteSelectionCommand::doApply()
         forceBlankParagraph = false;
     }
     
-    bool addedBlockPlaceHolder = addBlockPlaceholderIfNeeded(m_endingPosition.node(), forceBlankParagraph);
-    calculateTypingStyleAfterDelete(addedBlockPlaceHolder);
+    NodeImpl *addedPlaceholder = forceBlankParagraph ? insertBlockPlaceholder(m_endingPosition) :
+        addBlockPlaceholderIfNeeded(m_endingPosition.node());
+
+    calculateTypingStyleAfterDelete(addedPlaceholder);
     debugPosition("endingPosition   ", m_endingPosition);
     setEndingSelection(Selection(m_endingPosition, affinity));
     clearTransientState();
@@ -3409,23 +3531,6 @@ void InsertParagraphSeparatorCommand::doApply()
     }
 
     //---------------------------------------------------------------------
-    // Handle case when position is in the first visible position in its block.
-    // and similar case where upstream position is in another block.
-    bool upstreamInDifferentBlock = startBlock != pos.upstream(DoNotStayInBlock).node()->enclosingBlockFlowElement();
-    if (upstreamInDifferentBlock || isFirstInBlock) {
-        LOG(Editing, "insert paragraph separator: first in block case");
-        pos = pos.downstream(StayInBlock);
-        pos = positionOutsideContainingSpecialElement(pos);
-        NodeImpl *refNode = isFirstInBlock && !startBlockIsRoot ? startBlock : pos.node();
-        insertNodeBefore(blockToInsert, refNode);
-        appendBlockPlaceholder(blockToInsert);
-        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
-        applyStyleAfterInsertion();
-        setEndingSelection(pos, DOWNSTREAM);
-        return;
-    }
-
-    //---------------------------------------------------------------------
     // Handle case when position is in the last visible position in its block. 
     if (isLastInBlock) {
         LOG(Editing, "insert paragraph separator: last in block case");
@@ -3436,6 +3541,33 @@ void InsertParagraphSeparatorCommand::doApply()
         appendBlockPlaceholder(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
         applyStyleAfterInsertion();
+        return;
+    }
+
+    //---------------------------------------------------------------------
+    // Handle case when position is in the first visible position in its block.
+    // and similar case where upstream position is in another block.
+    bool upstreamInDifferentBlock = startBlock != pos.upstream(DoNotStayInBlock).node()->enclosingBlockFlowElement();
+    if (upstreamInDifferentBlock || isFirstInBlock) {
+        LOG(Editing, "insert paragraph separator: first in block case");
+        pos = pos.downstream(StayInBlock);
+        pos = positionOutsideContainingSpecialElement(pos);
+        Position refPos;
+        NodeImpl *refNode;
+        if (isFirstInBlock && !startBlockIsRoot) {
+            refNode = startBlock;
+        } else if (pos.node() == startBlock && startBlockIsRoot) {
+            ASSERT(startBlock->childNode(pos.offset())); // must be true or we'd be in the end of block case
+            refNode = startBlock->childNode(pos.offset());
+        } else {
+            refNode = pos.node();
+        }
+
+        insertNodeBefore(blockToInsert, refNode);
+        appendBlockPlaceholder(blockToInsert);
+        setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
+        applyStyleAfterInsertion();
+        setEndingSelection(pos, DOWNSTREAM);
         return;
     }
 
@@ -4325,7 +4457,8 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
         removeNode(newlineAtEndNode);
     
     NodeImpl *holder = insertFragmentForTestRendering();
-    holder->ref();
+    if (holder)
+        holder->ref();
     if (!m_matchStyle) {
         computeStylesUsingTestRendering(holder);
     }
@@ -4668,7 +4801,8 @@ void ReplaceSelectionCommand::doApply()
     } else {
         // merge if current selection starts inside a paragraph, or there is only one block and no interchange newline to add
         mergeStart = !m_fragment.hasInterchangeNewlineAtStart() && 
-            (!isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewlineAtEnd() && !m_fragment.hasMoreThanOneBlock()));
+            (!isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewlineAtEnd() && !m_fragment.hasMoreThanOneBlock())) &&
+            !isLastVisiblePositionInSpecialElement(selection.start());
         
         // This is a workaround for this bug:
         // <rdar://problem/4013642> REGRESSION (Mail): Copied quoted word does not paste as a quote if pasted at the start of a line
@@ -4681,7 +4815,9 @@ void ReplaceSelectionCommand::doApply()
     // decide whether to later append nodes to the end
     NodeImpl *beyondEndNode = 0;
     if (!isEndOfParagraph(visibleEnd) && !m_fragment.hasInterchangeNewlineAtEnd()) {
-        beyondEndNode = selection.end().downstream(StayInBlock).node();
+        Position beyondEndPos = selection.end().downstream(StayInBlock);
+        if (!isFirstVisiblePositionInSpecialElement(beyondEndPos))
+            beyondEndNode = beyondEndPos.node();
     }
     bool moveNodesAfterEnd = beyondEndNode && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
 
@@ -4751,6 +4887,7 @@ void ReplaceSelectionCommand::doApply()
     NodeImpl *linePlaceholder = findBlockPlaceholder(block);
     if (!linePlaceholder) {
         Position downstream = startPos.downstream(StayInBlock);
+        downstream = positionOutsideContainingSpecialElement(downstream);
         if (downstream.node()->id() == ID_BR && downstream.offset() == 0 && 
             m_fragment.hasInterchangeNewlineAtEnd() &&
             isFirstVisiblePositionOnLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
@@ -4789,7 +4926,7 @@ void ReplaceSelectionCommand::doApply()
     Position insertionPos = startPos;
 
     // step 1: merge content into the start block, if that is needed
-    if (mergeStart) {
+    if (mergeStart && !isFirstVisiblePositionInSpecialElementInFragment(Position(m_fragment.mergeStartNode(), 0))) {
         NodeImpl *refNode = m_fragment.mergeStartNode();
         if (refNode) {
             NodeImpl *node = refNode ? refNode->nextSibling() : 0;
@@ -4923,7 +5060,7 @@ void ReplaceSelectionCommand::doApply()
             }
         }
 
-        if (moveNodesAfterEnd) {
+        if (moveNodesAfterEnd && !isLastVisiblePositionInSpecialElement(Position(m_lastNodeInserted, maxRangeOffset(m_lastNodeInserted)))) {
             document()->updateLayout();
             QValueList<NodeDesiredStyle> styles;
             QPtrList<NodeImpl> blocks;
