@@ -725,6 +725,11 @@ void QPainter::drawLineForMisspelling(int x, int y, int width)
     [data->textRenderer drawLineForMisspelling:NSMakePoint(x, y) withWidth:width];
 }
 
+int QPainter::misspellingLineThickness() const
+{
+    return [data->textRenderer misspellingLineThickness];
+}
+
 static int getBlendedColorComponent(int c, int a)
 {
     // We use white.

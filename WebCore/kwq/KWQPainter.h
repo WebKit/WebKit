@@ -111,6 +111,7 @@ public:
                   int letterSpacing, int wordSpacing, bool smallCaps);
     void drawLineForText(int x, int y, int yOffset, int width);
     void drawLineForMisspelling(int x, int y, int width);
+    int misspellingLineThickness() const;
 
     QColor selectedTextBackgroundColor() const;
     void setUsesInactiveTextBackgroundColor(bool u) { _usesInactiveTextBackgroundColor = u; }
