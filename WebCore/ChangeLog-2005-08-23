@@ -1,3 +1,13 @@
+2004-08-25  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John and Maciej.
+
+	- Fixes SAP bug <rdar://problem/3751295> Personalize link at the
+ 	top gives an error in the pop-up window. 
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Passes a referrer to KHTMLPart::begin() 
+
 2004-08-25  Richard Williamson   <rjw@apple.com>
 
 	Updated to <canvas> API to match the spec.  (Still need
