@@ -1,5 +1,13 @@
 2004-03-05  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me.
+
+	Forgot to add this when I checked in last time.
+
+        * ForwardingHeaders/css/css_computedstyle.h: Added.
+
+2004-03-05  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Dave.
 
         Added initial support for retrieving the computed 
