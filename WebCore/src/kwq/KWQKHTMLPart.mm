@@ -301,15 +301,9 @@ KHTMLView *KHTMLPart::view() const
   return d->m_view;
 }
 
-void KHTMLPart::setJScriptEnabled( bool enable )
-{
-    _logNotYetImplemented();
-}
-
 bool KHTMLPart::jScriptEnabled() const
 {
-    //_logNotYetImplemented();
-    return TRUE;
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJScriptEnabled"] boolValue];
 }
 
 bool KHTMLPart::metaRefreshEnabled() const
@@ -320,6 +314,8 @@ bool KHTMLPart::metaRefreshEnabled() const
 
 KJSProxy *KHTMLPart::jScript()
 {
+  if (!jScriptEnabled()) return 0;
+
   if ( !d->m_jscript )
   {
     d->m_jscript = kjs_html_init(this);
@@ -368,11 +364,6 @@ QVariant KHTMLPart::executeScheduledScript()
 {
     _logNeverImplemented();
     return QVariant();
-}
-
-void KHTMLPart::setJavaEnabled( bool enable )
-{
-    _logNotYetImplemented();
 }
 
 bool KHTMLPart::javaEnabled() const

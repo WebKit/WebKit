@@ -1,5 +1,12 @@
 2002-04-01  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::jScriptEnabled): Hook this up to the
+        preference from WebKit.
+        (KHTMLPart::jScript): Return 0 if JavaScript is disabled. This is exactly what
+        the original KHTMLPart from KDE did.
+
+2002-04-01  Darin Adler  <darin@apple.com>
+
 	* src/kwq/KWQDef.h: Use KWQ_UNSIGNED_TYPES_DEFINED for compatibility with code
         in JavaScriptCore that has to do the same thing.
 
