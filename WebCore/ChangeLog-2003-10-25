@@ -1,3 +1,13 @@
+2003-10-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3425358.  Don't try to create page cache for pages that
+	have a nil view().
+
+        Reviewed by Hyatt.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]):
+
 2003-10-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3133375, the minwidth computation for pres is wrong.  There were a couple of bugs here.

@@ -1,3 +1,14 @@
+2003-10-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3425358.  Don't try to create page cache for pages that
+	have a nil view().
+
+        Reviewed by Hyatt.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _createPageCacheForItem:]):
+        (-[WebFrame _setState:]):
+
 2003-10-24  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: <rdar://problem/3424039>: standalone plug-in content occasionaly redirects to blank page

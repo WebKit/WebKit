@@ -271,6 +271,9 @@ static bool initializedObjectCacheSize = FALSE;
         return NO;
     }
     
+    if (!doc->view()) {
+        return NO;
+    }
     _part->clearTimers();
 
     SavedProperties *windowProperties = new SavedProperties;

@@ -799,17 +799,24 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _timeOfLastCompletedLoad;
 }
 
-- (void)_createPageCacheForItem:(WebHistoryItem *)item
+- (BOOL)_createPageCacheForItem:(WebHistoryItem *)item
 {
     NSMutableDictionary *pageCache;
 
     [item setHasPageCache: YES];
-    pageCache = [item pageCache];
-    [[self dataSource] _setStoredInPageCache: YES];
-    [pageCache setObject: [NSDate date]  forKey: WebPageCacheEntryDateKey];
-    [pageCache setObject: [self dataSource] forKey: WebPageCacheDataSourceKey];
-    [pageCache setObject: [[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
-    [_private->bridge saveDocumentToPageCache];
+
+    if (![_private->bridge saveDocumentToPageCache]){
+        [item setHasPageCache: NO];
+        return NO;
+    }
+    else {
+        pageCache = [item pageCache];
+        [[self dataSource] _setStoredInPageCache: YES];
+        [pageCache setObject: [NSDate date]  forKey: WebPageCacheEntryDateKey];
+        [pageCache setObject: [self dataSource] forKey: WebPageCacheDataSourceKey];
+        [pageCache setObject: [[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
+    }
+    return YES;
 }
 
 - (void)_setState: (WebFrameState)newState
@@ -857,14 +864,18 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
         {
             if (![item pageCache]){
-                LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 
                 // Add the items to this page's cache.
-                [self _createPageCacheForItem:item];
+                if ([self _createPageCacheForItem:item]) {
+                    LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 
-                // See if any page caches need to be purged after the addition of this
-                // new page cache.
-                [self _purgePageCache];
+                    // See if any page caches need to be purged after the addition of this
+                    // new page cache.
+                    [self _purgePageCache];
+                }
+                else {
+                    LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
+                }
             }
         }
         else {
