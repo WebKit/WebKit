@@ -106,8 +106,15 @@
     // terminal callback.
     handle = [[IFURLHandle alloc] initWithURL:theURL];
     [handle addClient: data->mainURLHandleClient];
+    
+    // Mark the start loading time.
+    data->loadingStartedTime = CFAbsoluteTimeGetCurrent();
+    
+    // Fire this guy up.
     [handle loadInBackground];
 
+    // FIXME:  Do any work need in the kde engine.  This should be removed.
+    // We should move any code needed out of KWQ.
     [self _part]->openURL (url);
     
     [[self controller] locationChangeStartedForFrame: [self frame]];
@@ -166,6 +173,12 @@
         childProvisionalDataSource = [nextFrame provisionalDataSource];
         [childProvisionalDataSource _recursiveStopLoading];
     }
+}
+
+- (double)_loadingStartedTime
+{
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
+    return data->loadingStartedTime;
 }
 
 

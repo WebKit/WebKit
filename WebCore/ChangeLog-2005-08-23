@@ -1,3 +1,10 @@
+2002-03-28  Richard Williamson  <rjw@apple.com>
+
+        Fixed crasher.  Removed unnecessary cleanup to widget that was called after the
+        widget was already disposed.
+        
+	* src/kdelibs/khtml/rendering/render_replaced.cpp: (RenderWidget::detach):
+
 2002-03-27  Richard Williamson  <rjw@apple.com>
 
         Removed problematic code.  Not sure why it was necessary.  For now

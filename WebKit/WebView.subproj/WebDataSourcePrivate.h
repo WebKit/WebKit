@@ -38,6 +38,9 @@
     // Active IFURLHandles for resources associated with the
     // datasource.
     NSMutableArray *urlHandles;
+
+    // The time when the data source was told to start loading.
+    double loadingStartedTime;
     
     bool primaryLoadComplete;
 }
@@ -58,4 +61,5 @@
 - (void)_addURLHandle: (IFURLHandle *)handle;
 - (void)_removeURLHandle: (IFURLHandle *)handle;
 - (void)_setPrimaryLoadComplete: (BOOL)flag;
+- (double)_loadingStartedTime;
 @end

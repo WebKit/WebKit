@@ -144,12 +144,26 @@
             [[self controller] locationChangeCommittedForFrame: self];
             
             // Start a timer to guarantee that we get an initial layout after
-            // X internal, even if the document and resources are not completely
+            // X interval, even if the document and resources are not completely
             // loaded.
             BOOL timedDelayEnabled = [[IFPreferences standardPreferences] _initialTimedLayoutEnabled];
             if (timedDelayEnabled){
-                NSTimeInterval timedDelay = [[IFPreferences standardPreferences] _initialTimedLayoutDelay];
-                [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_initialLayout:) userInfo: nil repeats:FALSE];
+                NSTimeInterval defaultTimedDelay = [[IFPreferences standardPreferences] _initialTimedLayoutDelay];
+                double timeSinceStart;
+
+                // If the delay getting to the commited state exceeds the initial layout delay, go
+                // ahead and schedule a layout.
+                timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
+                if (timeSinceStart > (double)defaultTimedDelay){
+                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
+                    [self _initialLayout: nil];
+                }
+                else {
+                    NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
+                    
+                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
+                    [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_initialLayout:) userInfo: nil repeats:FALSE];
+                }
             }
             break;
         }
@@ -180,9 +194,12 @@ char *stateNames[5] = {
     WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "state = %s\n", stateNames[data->state]);
     
     if (data->state == IFWEBFRAMESTATE_COMMITTED){
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "performing timed layout\n");
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "performing initial layout\n");
         [[self view] setNeedsLayout: YES];
         [[self view] setNeedsDisplay: YES];
+    }
+    else {
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "timed initial layout not required\n");
     }
 }
 

@@ -57,4 +57,5 @@ typedef enum {
 - (void)_checkLoadCompleteResource: (NSString *)resourceDescription error: (IFError *)error isMainDocument: (BOOL)flag;
 - (void)_clearErrors;
 - (void)_setMainDocumentError: (IFError *)error;
+- (void)_initialLayout: userInfo;
 @end

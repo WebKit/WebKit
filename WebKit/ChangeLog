@@ -1,3 +1,19 @@
+2002-03-28  Richard Williamson  <rjw@apple.com>
+
+        Modified the initial layout policy.  We now try to layout as close
+        as possible to WebKitInitialTimedLayoutDelay seconds after the
+        load was started, not after the provisional-to-committed transition.
+        If the time to the provisional-to-committed transition exceeds
+        WebKitInitialTimedLayoutDelay we layout immediately.
+        
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _startLoading:]),
+	(-[IFWebDataSource _recursiveStopLoading]), (-[IFWebDataSource
+	_loadingStartedTime]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToCommitted]), (-[IFWebFrame _initialLayout:]):
+
 2002-03-28  John Sullivan  <sullivan@apple.com>
 
 	* History.subproj/IFWebHistoryPrivate.m: 
