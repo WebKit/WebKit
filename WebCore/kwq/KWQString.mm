@@ -366,7 +366,7 @@ const char *QString::latin1() const
             uint len = length();
             if (len == 0) {
                 cacheType = CacheLatin1;
-                cache = isNull() ? 0 : const_cast<char *>("");
+                cache = const_cast<char *>("");
             } else {
                 cacheType = CacheAllocatedLatin1;
                 cache = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);

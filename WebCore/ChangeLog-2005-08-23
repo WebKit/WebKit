@@ -1,5 +1,10 @@
 2002-03-18  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQString.mm: (QString::latin1): Handle null case properly.
+	We must return "", not 0.
+
+2002-03-18  Darin Adler  <darin@apple.com>
+
         Redo inlining of QChar and QString and some other small speed improvements.
         Sadly, this doesn't seem to make things measurably faster, but I decided to
         commit my work rather than discarding it; it doesn't make things slower.
