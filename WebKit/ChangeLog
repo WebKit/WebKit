@@ -1,3 +1,15 @@
+2005-03-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/4053729> Copy/paste of page with frames into Blot or Mail does nothing and loses insertion point
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedArchive]): Wrap frameset documents in an iframe, so they can be pasted into 
+        existing documents which will have a body or frameset of their own.
+
 === Safari-407 ===
 
 2005-03-17  Richard Williamson   <rjw@apple.com>

@@ -1064,7 +1064,26 @@ static WebHTMLView *lastHitView = nil;
     LOG(Timing, "copying markup took %f seconds.", duration);
 #endif
     
-    return [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
+    WebArchive *archive = [[self _dataSource] _archiveWithMarkupString:markupString nodes:nodes];
+
+    if ([[self _bridge] isFrameSet]) {
+        // Wrap the frameset document in an iframe so it can be pasted into
+        // another document (which will have a body or frameset of its own). 
+        NSString *iframeMarkup = [[NSString alloc] initWithFormat:@"<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"%@\"></iframe>", [[[self _dataSource] response] URL]];
+        WebResource *iframeResource = [[WebResource alloc] initWithData:[iframeMarkup dataUsingEncoding:NSUTF8StringEncoding]
+                                                                  URL:[NSURL URLWithString:@"about:blank"]
+                                                             MIMEType:@"text/html"
+                                                     textEncodingName:@"UTF-8"
+                                                            frameName:nil];
+        
+        NSArray *subframeArchives = [NSArray arrayWithObject:archive];
+        archive = [[[WebArchive alloc] initWithMainResource:iframeResource subresources:nil subframeArchives:subframeArchives] autorelease];
+        
+        [iframeResource release];
+        [iframeMarkup release];
+    }
+
+    return archive;
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
