@@ -1,3 +1,44 @@
+2005-03-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4051145> The QuickTime Cocoa plug-in needs an SPI that it can call to check for URL policy
+
+        * Plugins.subproj/WebPluginContainerCheck.h: Added.
+        * Plugins.subproj/WebPluginContainerCheck.m: Added this new helper class to encapsulate
+	an async plugin navigation check.
+        (+[WebPluginContainerCheck checkWithRequest:target:resultObject:selector:controller:]): Convenience allocator that gives autoreleased value.
+        (-[WebPluginContainerCheck initWithRequest:target:resultObject:selector:controller:]): Initializer.
+        (-[WebPluginContainerCheck finalize]): Just assert that we're done, it would
+	be bad to deallocate this object while request is still outstanding.
+        (-[WebPluginContainerCheck dealloc]): Ditto.
+        (-[WebPluginContainerCheck _continueWithPolicy:]): Method to continue after async
+	policy check.
+        (-[WebPluginContainerCheck _isDisallowedFileLoad]): Do "file: URL from remote content"
+	check.
+        (-[WebPluginContainerCheck _actionInformationWithURL:]): Helper to make action
+	dictionary.
+        (-[WebPluginContainerCheck _askPolicyDelegate]): Call policy delegate to let
+	the app decide if this load is allowed.
+        (-[WebPluginContainerCheck start]): Start the check.
+        (-[WebPluginContainerCheck cancel]): Cancel a check in progress.
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithDocumentView:]): Initialize new _checksInProgress field.
+        (-[WebPluginController _webPluginContainerCancelCheckIfAllowedToLoadRequest:]): Implement
+	this new SPI method.
+        (-[WebPluginController _cancelOutstandingChecks]): New helper to make sure to cancel
+	all outstanding requests when destroying all plugins.
+        (-[WebPluginController destroyAllPlugins]): Call above helper.
+        (-[WebPluginController _webPluginContainerCheckIfAllowedToLoadRequest:inFrame:resultObject:selector:]): Implement this new plug-in SPI method.
+        (-[WebPluginController bridge]): New helper method.
+        (-[WebPluginController webView]): New helper method.
+        * WebView.subproj/WebPolicyDelegatePrivate.h: Add new navigation
+	type WebNavigationTypePlugInRequest.
+        * WebKit.pbproj/project.pbxproj: Add new files.
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate webView:decidePolicyForNavigationAction:request:frame:decisionListener:]): Don't open externally on a plug-in request.
+
 2005-03-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4053515> REGRESSION (Mail): Kotoeri input method reconversion does not work in WebViews

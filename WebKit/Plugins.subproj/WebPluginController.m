@@ -16,6 +16,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
+#import <WebKit/WebPluginContainerCheck.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebViewPrivate.h>
@@ -80,6 +81,8 @@ static NSMutableSet *pluginViews = nil;
     [super init];
     _documentView = view;
     _views = [[NSMutableArray alloc] init];
+    _checksInProgress = (NSMutableSet *)CFSetCreateMutable(NULL, 0, NULL);
+
     return self;
 }
 
@@ -154,6 +157,23 @@ static NSMutableSet *pluginViews = nil;
     }
 }
 
+- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
+{
+    [checkIdentifier cancel];
+    [_checksInProgress removeObject:checkIdentifier];
+}
+
+- (void)_cancelOutstandingChecks
+{
+    NSEnumerator *e = [_checksInProgress objectEnumerator];
+    id check;
+    while ((check = [e nextObject])) {
+        [check cancel];
+    }
+    [_checksInProgress release];
+    _checksInProgress = nil;
+}
+
 - (void)destroyAllPlugins
 {    
     [self stopAllPlugins];
@@ -161,6 +181,8 @@ static NSMutableSet *pluginViews = nil;
     if ([_views count] > 0) {
         LOG(Plugins, "destroying WebKit plugins: %@", [_views description]);
     }
+
+    [self _cancelOutstandingChecks];
     
     int i, count = [_views count];
     for (i = 0; i < count; i++) {
@@ -179,16 +201,13 @@ static NSMutableSet *pluginViews = nil;
     _documentView = nil;
 }
 
-- (id)_webPluginContainerCheckIfAllowedToLoadRequest:(NSURLRequest *)Request inFrame:(NSString *)target resultObject:(id)obj selector:(SEL)selector
+- (id)_webPluginContainerCheckIfAllowedToLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target resultObject:(id)obj selector:(SEL)selector
 {
-    // FIXME: really implement this
-    [obj performSelector:selector withObject:(id)YES];
-    return nil;
-}
+    WebPluginContainerCheck *check = [WebPluginContainerCheck checkWithRequest:request target:target resultObject:obj selector:selector controller:self];
+    [_checksInProgress addObject:check];
+    [check start];
 
-- (void)_webPluginContainerCancelCheckIfAllowedToLoadRequest:(id)checkIdentifier
-{
-    // FIXME: really implement this
+    return check;
 }
 
 - (void)webPlugInContainerLoadRequest:(NSURLRequest *)request inFrame:(NSString *)target
@@ -264,6 +283,16 @@ static NSMutableSet *pluginViews = nil;
 - (WebFrame *)webFrame
 {
     return [_documentView _frame];
+}
+
+- (WebBridge *)bridge
+{
+    return [[self webFrame] _bridge];
+}
+
+- (WebView *)webView
+{
+    return [[self webFrame] webView];
 }
 
 @end

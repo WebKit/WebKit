@@ -63,7 +63,11 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
                                                          frame:(WebFrame *)frame
                                               decisionListener:(WebPolicyDecisionListener *)listener
 {
+    WebNavigationType navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
+
     if ([WebView _canHandleRequest:request]) {
+	[listener use];
+    } else if (navType == WebNavigationTypePlugInRequest) {
 	[listener use];
     } else {
 	// A file URL shouldn't fall through to here, but if it did,
