@@ -557,10 +557,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
     [bridge close];
     
-    // autorelease instead of releasing, since this code path is used in the case of window
-    // close and we want to defer the possibly slow destruction of WebCore resources until
-    // after the window actually closes.
-    [bridge autorelease];
+    [bridge release];
 }
 
 - (void)_setDataSource:(WebDataSource *)ds

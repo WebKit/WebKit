@@ -1,3 +1,10 @@
+2004-11-22  Maciej Stachowiak  <mjs@apple.com>
+
+	Back  out the window closing fix, it seems to be causing crashes.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _detachFromParent]):
+
 2004-11-20  Maciej Stachowiak  <mjs@apple.com>
  
         Reviewed by John.
