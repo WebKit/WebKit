@@ -139,7 +139,7 @@
                                URLString:(NSString *)newURLString
                                     type:(WebBookmarkType)bookmarkType
 {
-    WebBookmark *bookmark;
+    WebBookmark *bookmark = nil;
 
     ASSERT_ARG(parent, [parent group] == self);
     ASSERT_ARG(parent, [parent bookmarkType] == WebBookmarkTypeList);

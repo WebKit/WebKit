@@ -1,3 +1,11 @@
+2002-10-11  Ken Kocienda  <kocienda@apple.com>
+
+	Fixed uninitialized variable build breaker I got when
+	doing a Deployment build.
+
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:URLString:type:]):
+
 2002-10-11  John Sullivan  <sullivan@apple.com>
 
 	Added the concept of bookmark proxies; items that can be
