@@ -1299,9 +1299,31 @@ short RenderFlow::offsetWidth() const
 
 int RenderFlow::offsetHeight() const
 {
-   // if (isInline() && !isText() && firstChild())
-   //     return firstChild()->height();
+    if (isInline() && !isText() && firstChild())
+        return firstChild()->offsetHeight();
     return height();
+}
+
+int RenderFlow::offsetLeft() const
+{
+    int x = RenderBox::offsetLeft();
+    RenderObject* textChild = (RenderObject*)this;
+    while (textChild && textChild->isInline() && !textChild->isText())
+        textChild = textChild->firstChild();
+    if (textChild && textChild != this)
+        x += textChild->xPos() - textChild->borderLeft() - textChild->paddingLeft();
+    return x;
+}
+
+int RenderFlow::offsetTop() const
+{
+    RenderObject* textChild = (RenderObject*)this;
+    while (textChild && textChild->isInline() && !textChild->isText())
+        textChild = textChild->firstChild();
+    int y = RenderBox::offsetTop();
+    if (textChild && textChild != this)
+        y += textChild->yPos() - textChild->borderTop() - textChild->paddingTop();
+    return y;
 }
 
 void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)

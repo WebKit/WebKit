@@ -150,6 +150,52 @@ void RenderObject::insertChildNode(RenderObject*, RenderObject*)
     KHTMLAssert(0);
 }
 
+int RenderObject::offsetLeft() const
+{
+    int x = xPos();
+    if (!isPositioned()) {
+        if (isRelPositioned()) {
+            int y = 0;
+            ((RenderBox*)this)->relativePositionOffset(x, y);
+        }
+        
+        RenderObject* offsetPar = offsetParent();
+        RenderObject* curr = parent();
+        while (curr && curr != offsetPar) {
+            x += curr->xPos();
+            curr = curr->parent();
+        }
+    }
+    return x;
+}
+
+int RenderObject::offsetTop() const
+{
+    int y = yPos();
+    if (!isPositioned()) {
+        if (isRelPositioned()) {
+            int x = 0;
+            ((RenderBox*)this)->relativePositionOffset(x, y);
+        }
+        RenderObject* offsetPar = offsetParent();
+        RenderObject* curr = parent();
+        while (curr && curr != offsetPar) {
+            y += curr->yPos();
+            curr = curr->parent();
+        }
+    }
+    return y;
+}
+    
+RenderObject* RenderObject::offsetParent() const
+{
+    RenderObject* curr = parent();
+    while (curr && !curr->isTableCell() && !curr->isTable() &&
+           !curr->isPositioned() && !curr->isRelPositioned() &&
+           !curr->isBody())
+        curr = curr->parent();
+    return curr;
+}
 
 void RenderObject::setLayouted(bool b) 
 {

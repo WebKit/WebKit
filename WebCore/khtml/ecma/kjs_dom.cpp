@@ -246,15 +246,17 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
 
     switch (token) {
     case OffsetLeft:
-      return rend ? static_cast<Value>(Number(rend->xPos())) : Value(Undefined());
+      return rend ? static_cast<Value>(Number(rend->offsetLeft())) : Value(Undefined());
     case OffsetTop:
-      return rend ? static_cast<Value>(Number(rend->yPos())) : Value(Undefined());
+      return rend ? static_cast<Value>(Number(rend->offsetTop())) : Value(Undefined());
     case OffsetWidth:
       return rend ? static_cast<Value>(Number(rend->offsetWidth()) ) : Value(Undefined());
     case OffsetHeight:
       return rend ? static_cast<Value>(Number(rend->offsetHeight() ) ) : Value(Undefined());
-    case OffsetParent:
-      return getDOMNode(exec,node.parentNode()); // not necessarily correct
+    case OffsetParent: {
+      khtml::RenderObject* par = rend ? rend->offsetParent() : 0;
+      return getDOMNode(exec, par ? par->element() : 0);
+    }
     case ClientWidth:
       if (!rend)
         return Undefined();

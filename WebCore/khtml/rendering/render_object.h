@@ -348,11 +348,17 @@ public:
     virtual short width() const { return 0; }
     virtual int height() const { return 0; }
 
-    // used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) to return
-    // the remaining width on a given line (and the height of a single line). -dwh
+    // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
+    // to return the remaining width on a given line (and the height of a single line). -dwh
     virtual short offsetWidth() const { return width(); }
     virtual int offsetHeight() const { return height(); }
     
+    // IE exxtensions.  Also supported by Gecko.  We override in render flow to get the
+    // left and top correct. -dwh
+    virtual int offsetLeft() const;
+    virtual int offsetTop() const;
+    virtual RenderObject* offsetParent() const;
+     
     virtual short marginTop() const { return 0; }
     virtual short marginBottom() const { return 0; }
     virtual short marginLeft() const { return 0; }
