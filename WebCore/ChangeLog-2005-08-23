@@ -1,3 +1,70 @@
+2003-04-25  David Hyatt  <hyatt@apple.com>
+
+	Part two of the overflow patch.  This adds the scrollbars and
+	patches the layers code, but it doesn't yet turn on the
+	overflow:auto capability.
+	
+        Reviewed by mjs/gramps
+
+        * ForwardingHeaders/qscrollbar.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):
+        (DOMNode::putValue):
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_dom.lut.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::contentWidth):
+        (RenderBox::repaintRectangle):
+        (RenderBox::calcAbsoluteHorizontal):
+        (RenderBox::calcAbsoluteVertical):
+        (RenderBox::lowestPosition):
+        * khtml/rendering/render_layer.cpp:
+        (RenderScrollMediator::slotValueChanged):
+        (RenderLayer::RenderLayer):
+        (RenderLayer::~RenderLayer):
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::scrollOffset):
+        (RenderLayer::subtractScrollOffset):
+        (RenderLayer::scrollToOffset):
+        (RenderLayer::updateScrollPositionFromScrollbars):
+        (RenderLayer::setHasHorizontalScrollbar):
+        (RenderLayer::setHasVerticalScrollbar):
+        (RenderLayer::verticalScrollbarWidth):
+        (RenderLayer::horizontalScrollbarHeight):
+        (RenderLayer::moveScrollbarsAside):
+        (RenderLayer::positionScrollbars):
+        (RenderLayer::checkScrollbarsAfterLayout):
+        (RenderLayer::paintScrollbars):
+        (RenderLayer::paint):
+        (RenderLayer::nodeAtPoint):
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::clientWidth):
+        (RenderObject::clientHeight):
+        (RenderObject::scrollWidth):
+        (RenderObject::scrollHeight):
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+        * kwq/KWQNamespace.h:
+        * kwq/KWQScrollBar.h: Added.
+        * kwq/KWQScrollBar.mm: Added.
+        (-[KWQScrollBar initWithQScrollBar:]):
+        (-[KWQScrollBar scroll:]):
+        (:m_valueChanged):
+        (QScrollBar::~QScrollBar):
+        (QScrollBar::setValue):
+        (QScrollBar::setSteps):
+        (QScrollBar::setKnobProportion):
+        (QScrollBar::scrollbarHit):
+        (QScrollBar::valueChanged):
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot):
+        (KWQSlot::call):
+
 2003-04-24  David Hyatt  <hyatt@apple.com>
 
 	Rename inQuirksMode to inCompatMode.  Drop uses of it in 

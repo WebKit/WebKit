@@ -83,7 +83,7 @@ bool DOMNode::toBoolean(ExecState *) const
 }
 
 /* Source for DOMNodeTable. Use "make hashtables" to regenerate.
-@begin DOMNodeTable 53
+@begin DOMNodeTable 55
   nodeName	DOMNode::NodeName	DontDelete|ReadOnly
   nodeValue	DOMNode::NodeValue	DontDelete
   nodeType	DOMNode::NodeType	DontDelete|ReadOnly
@@ -132,8 +132,10 @@ bool DOMNode::toBoolean(ExecState *) const
   offsetParent	DOMNode::OffsetParent		DontDelete|ReadOnly
   clientWidth	DOMNode::ClientWidth		DontDelete|ReadOnly
   clientHeight	DOMNode::ClientHeight		DontDelete|ReadOnly
-  scrollLeft	DOMNode::ScrollLeft		DontDelete|ReadOnly
-  scrollTop	DOMNode::ScrollTop		DontDelete|ReadOnly
+  scrollLeft	DOMNode::ScrollLeft		DontDelete
+  scrollTop	DOMNode::ScrollTop		DontDelete
+  scrollWidth   DOMNode::ScrollWidth            DontDelete|ReadOnly
+  scrollHeight  DOMNode::ScrollHeight           DontDelete|ReadOnly
 @end
 */
 Value DOMNode::tryGet(ExecState *exec, const Identifier &propertyName) const
@@ -254,25 +256,17 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
       return getDOMNode(exec, par ? par->element() : 0);
     }
     case ClientWidth:
-      if (!rend)
-        return Undefined();
-      else
-        // "Width of the object including padding, but not including margin, border, or scroll bar."
-        return Number(rend->width() - rend->borderLeft() - rend->borderRight() );
+      return rend ? static_cast<Value>(Number(rend->clientWidth()) ) : Value(Undefined());
     case ClientHeight:
-      if (!rend)
-        return Undefined();
-      else
-        // "Width of the object including padding, but not including margin, border, or scroll bar."
-        return Number(rend->height() - rend->borderTop() - rend->borderBottom() );
+      return rend ? static_cast<Value>(Number(rend->clientHeight()) ) : Value(Undefined());
+    case ScrollWidth:
+        return rend ? static_cast<Value>(Number(rend->scrollWidth()) ) : Value(Undefined());
+    case ScrollHeight:
+        return rend ? static_cast<Value>(Number(rend->scrollHeight()) ) : Value(Undefined());
     case ScrollLeft:
-      if (!rend || !v)
-        return Undefined();
-      return Number(-rend->xPos() + v->contentsX());
+      return Number(rend && rend->layer() ? rend->layer()->scrollXOffset() : 0);
     case ScrollTop:
-      if (!rend || !v)
-        return Undefined();
-      return Number(-rend->yPos() + v->contentsY());
+      return Number(rend && rend->layer() ? rend->layer()->scrollYOffset() : 0);
     default:
       kdWarning() << "Unhandled token in DOMNode::getValueProperty : " << token << endl;
       break;
@@ -369,6 +363,18 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
   case OnUnload:
     setListener(exec,DOM::EventImpl::UNLOAD_EVENT,value);
     break;
+  case ScrollTop: {
+    khtml::RenderObject *rend = node.handle() ? node.handle()->renderer() : 0L;
+    if (rend && rend->layer())
+        rend->layer()->scrollToYOffset(value.toInt32(exec));
+    break;
+  }
+  case ScrollLeft: {
+    khtml::RenderObject *rend = node.handle() ? node.handle()->renderer() : 0L;
+    if (rend && rend->layer())
+      rend->layer()->scrollToXOffset(value.toInt32(exec));
+    break;
+  }
   default:
     kdWarning() << "DOMNode::putValue unhandled token " << token << endl;
   }

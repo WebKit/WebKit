@@ -429,7 +429,17 @@ public:
     virtual int offsetLeft() const;
     virtual int offsetTop() const;
     virtual RenderObject* offsetParent() const;
-    
+
+    // More IE extensions.  clientWidth and clientHeight represent the interior of an object
+    // excluding border and scrollbar.
+    short clientWidth() const;
+    short clientHeight() const;
+
+    // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
+    // object has overflow:hidden/scroll/auto specified and also has overflow.
+    short scrollWidth() const;
+    short scrollHeight() const;
+
     // The following seven functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The
     // formula for computing a collapsed margin is |maxPosMargin|-|maxNegmargin|.

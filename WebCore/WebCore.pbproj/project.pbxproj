@@ -493,6 +493,7 @@
 				F58786FD02DE3B8601EA4122,
 				F587870902DE3B8601EA4122,
 				F587871502DE3B8601EA4122,
+				BC7B2AFA0450824100A8000F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -740,6 +741,7 @@
 				BC8F61880405949900A80004,
 				BC8F61890405949900A80004,
 				9325AABA041D0E9A00A9CAC5,
+				BC7B2AFB0450824100A8000F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1523,6 +1525,30 @@
 			settings = {
 			};
 		};
+		BC7B2AF80450824100A8000F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQScrollBar.h;
+			refType = 4;
+		};
+		BC7B2AF90450824100A8000F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = KWQScrollBar.mm;
+			refType = 4;
+		};
+		BC7B2AFA0450824100A8000F = {
+			fileRef = BC7B2AF80450824100A8000F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC7B2AFB0450824100A8000F = {
+			fileRef = BC7B2AF90450824100A8000F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		BC7C964E03E9EE7000A80004 = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -1797,6 +1823,8 @@
 				F587854102DE375901EA4122,
 				F587854302DE375901EA4122,
 				F587854402DE375901EA4122,
+				BC7B2AF80450824100A8000F,
+				BC7B2AF90450824100A8000F,
 			);
 			isa = PBXGroup;
 			name = other;

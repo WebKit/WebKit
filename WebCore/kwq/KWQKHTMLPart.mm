@@ -74,6 +74,7 @@ using khtml::RenderStyle;
 using khtml::RenderText;
 using khtml::RenderWidget;
 using khtml::RenderTableCell;
+using khtml::RenderLayer;
 using khtml::VISIBLE;
 
 using KIO::Job;
@@ -1291,8 +1292,14 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
 {
     // Figure out which view to send the event to.
     RenderObject *target = event->innerNode().handle()->renderer();
-    if (!target || !target->isWidget()) {
+    if (!target)
         return false;
+
+    QWidget* widget = RenderLayer::gScrollBar;
+    if (!widget) {
+        if (!target->isWidget())
+            return false;
+        widget = static_cast<RenderWidget *>(target)->widget();
     }
 
     // Doubleclick events don't exist in Cocoa.  Since passWidgetMouseDownEventToWidget will
@@ -1300,18 +1307,23 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(khtml::MouseEvent *event)
     // don't correspond to Cocoa events.  The mousedown/ups will have already been passed on as
     // part of the pressed/released handling.
     if (!MouseDoubleClickEvent::test(event))
-        return passWidgetMouseDownEventToWidget(static_cast<RenderWidget *>(target));
+        return passWidgetMouseDownEventToWidget(widget);
     else
         return true;
 }
 
 bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(RenderWidget *renderWidget)
 {
-    QWidget *widget = renderWidget->widget();
+    return passWidgetMouseDownEventToWidget(renderWidget->widget());
+}
+
+bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
+{
     if (!widget) {
         ERROR("hit a RenderWidget without a corresponding QWidget, means a frame is half-constructed");
         return true;
     }
+    
     NSView *nodeView = widget->getView();
     ASSERT(nodeView);
     ASSERT([nodeView superview]);

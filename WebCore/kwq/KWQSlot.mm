@@ -31,6 +31,7 @@
 #import "khtml_part.h"
 #import "kjs_window.h"
 #import "render_form.h"
+#import "render_layer.h"
 
 using DOM::DocumentImpl;
 using khtml::CachedObject;
@@ -42,6 +43,7 @@ using khtml::RenderLineEdit;
 using khtml::RenderSelect;
 using khtml::RenderTextArea;
 using khtml::RenderWidget;
+using khtml::RenderScrollMediator;
 using KIO::Job;
 using KJS::WindowQObject;
 
@@ -65,6 +67,7 @@ enum FunctionNumber {
     slotSubmitFormAgain,
     slotTextChanged,
     slotTextChangedWithString,
+    slotValueChanged,
     slotWidgetDestructed
 };
 
@@ -90,6 +93,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
     CASE(slotSelectionChanged, (), RenderSelect)
     CASE(slotStateChanged, (int), RenderCheckBox)
     CASE(slotTextChanged, (), RenderTextArea)
+    CASE(slotValueChanged, (int), RenderScrollMediator)
     CASE(slotWidgetDestructed, (), RenderWidget)
         
     #undef CASE
@@ -179,6 +183,9 @@ void KWQSlot::call(int i) const
             return;
         case slotSelected:
             static_cast<RenderSelect *>(m_object.pointer())->slotSelected(i);
+            return;
+        case slotValueChanged:
+            static_cast<RenderScrollMediator *>(m_object.pointer())->slotValueChanged(i);
             return;
     }
     

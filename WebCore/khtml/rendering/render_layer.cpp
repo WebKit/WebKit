@@ -45,18 +45,26 @@
 #include <kdebug.h>
 #include <assert.h>
 #include "khtmlview.h"
-#include "render_box.h"
+#include "render_block.h"
 #include "render_arena.h"
 #include "xml/dom_docimpl.h"
 
 using namespace DOM;
 using namespace khtml;
 
+QWidget* RenderLayer::gScrollBar = 0;
+
 #ifndef NDEBUG
 static bool inRenderLayerDetach;
 static bool inRenderLayerElementDetach;
 static bool inRenderZTreeNodeDetach;
 #endif
+
+void
+RenderScrollMediator::slotValueChanged(int val)
+{
+    m_layer->updateScrollPositionFromScrollbars();
+}
 
 RenderLayer::RenderLayer(RenderObject* object)
 : m_object( object ),
@@ -68,7 +76,14 @@ m_last( 0 ),
 m_height( 0 ),
 m_y( 0 ),
 m_x( 0 ),
-m_width( 0 )
+m_width( 0 ),
+m_scrollX( 0 ),
+m_scrollY( 0 ),
+m_scrollWidth( 0 ),
+m_scrollHeight( 0 ),
+m_hBar( 0 ),
+m_vBar( 0 ),
+m_scrollMediator( 0 )
 {
 }
 
@@ -77,6 +92,9 @@ RenderLayer::~RenderLayer()
     // Child layers will be deleted by their corresponding render objects, so
     // our destructor doesn't have to do anything.
     m_parent = m_previous = m_next = m_first = m_last = 0;
+    delete m_hBar;
+    delete m_vBar;
+    delete m_scrollMediator;
 }
 
 void RenderLayer::updateLayerPosition()
@@ -97,9 +115,16 @@ void RenderLayer::updateLayerPosition()
 
     if (m_object->isRelPositioned())
         static_cast<RenderBox*>(m_object)->relativePositionOffset(x, y);
+
+    // Subtract our parent's scroll offset.
+    if (parent())
+        parent()->subtractScrollOffset(x, y);
     
     setPos(x,y);
 
+    setWidth(m_object->width());
+    setHeight(m_object->height());
+    
     if (!m_object->style()->hidesOverflow()) {
         if (m_object->overflowWidth() > m_object->width())
             setWidth(m_object->overflowWidth());
@@ -257,7 +282,237 @@ RenderLayer::convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y)
 void
 RenderLayer::scrollOffset(int& x, int& y)
 {
-    // FIXME: Implement for overflow:auto/scroll
+    x += scrollXOffset();
+    y += scrollYOffset();
+}
+
+void
+RenderLayer::subtractScrollOffset(int& x, int& y)
+{
+    x -= scrollXOffset();
+    y -= scrollYOffset();
+}
+
+void
+RenderLayer::scrollToOffset(int x, int y, bool updateScrollbars)
+{
+    if (x < 0) x = 0;
+    if (y < 0) y = 0;
+    int maxX = m_scrollWidth - m_object->clientWidth();
+    int maxY = m_scrollHeight - m_object->clientHeight();
+    if (x > maxX) x = maxX;
+    if (y > maxY) y = maxY;
+
+    // FIXME: Eventually, we will want to perform a blit.  For now never
+    // blit, since the check for blitting is going to be very
+    // complicated (since it will involve testing whether our layer
+    // is either occluded by another layer or clipped by an enclosing
+    // layer or contains fixed backgrounds, etc.).
+    m_scrollX = x;
+    m_scrollY = y;
+
+    // FIXME: Fire the onscroll DOM event.
+    
+    // Just schedule a full repaint of our object.
+    m_object->repaint(true);
+    
+    if (updateScrollbars) {
+        if (m_hBar)
+            m_hBar->setValue(m_scrollX);
+        if (m_vBar)
+            m_vBar->setValue(m_scrollY);
+    }
+}
+
+void
+RenderLayer::updateScrollPositionFromScrollbars()
+{
+    bool needUpdate = false;
+    int newX = m_scrollX;
+    int newY = m_scrollY;
+    
+    if (m_hBar) {
+        newX = m_hBar->value();
+        if (newX != m_scrollX)
+           needUpdate = true;
+    }
+
+    if (m_vBar) {
+        newY = m_vBar->value();
+        if (newY != m_scrollY)
+           needUpdate = true;
+    }
+
+    if (needUpdate)
+        scrollToOffset(newX, newY, false);
+}
+
+void
+RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
+{
+    if (hasScrollbar && !m_hBar) {
+        QScrollView* scrollView = m_object->element()->getDocument()->view();
+        m_hBar = new QScrollBar(Qt::Horizontal, scrollView);
+        scrollView->addChild(m_hBar, 0, -50000);
+        if (!m_scrollMediator)
+            m_scrollMediator = new RenderScrollMediator(this);
+        m_scrollMediator->connect(m_hBar, SIGNAL(valueChanged(int)), SLOT(slotValueChanged(int)));
+    }
+    else if (!hasScrollbar && m_hBar) {
+        m_scrollMediator->disconnect(m_hBar, SIGNAL(valueChanged(int)),
+                                     m_scrollMediator, SLOT(slotValueChanged(int)));
+        delete m_hBar;
+        m_hBar = 0;
+    }
+}
+
+void
+RenderLayer::setHasVerticalScrollbar(bool hasScrollbar)
+{
+    if (hasScrollbar && !m_vBar) {
+        QScrollView* scrollView = m_object->element()->getDocument()->view();
+        m_vBar = new QScrollBar(Qt::Vertical, scrollView);
+        scrollView->addChild(m_vBar, 0, -50000);
+        if (!m_scrollMediator)
+            m_scrollMediator = new RenderScrollMediator(this);
+        m_scrollMediator->connect(m_vBar, SIGNAL(valueChanged(int)), SLOT(slotValueChanged(int)));
+    }
+    else if (!hasScrollbar && m_vBar) {
+        m_scrollMediator->disconnect(m_vBar, SIGNAL(valueChanged(int)),
+                                     m_scrollMediator, SLOT(slotValueChanged(int)));
+        delete m_vBar;
+        m_vBar = 0;
+    }
+}
+
+int
+RenderLayer::verticalScrollbarWidth()
+{
+    if (!m_vBar)
+        return 0;
+
+    return m_vBar->width();
+}
+
+int
+RenderLayer::horizontalScrollbarHeight()
+{
+    if (!m_hBar)
+        return 0;
+
+    return m_hBar->height();
+}
+
+void
+RenderLayer::moveScrollbarsAside()
+{
+    if (m_hBar)
+        m_hBar->move(0, -50000);
+    if (m_vBar)
+        m_vBar->move(0, -50000);
+}
+
+void
+RenderLayer::positionScrollbars(const QRect& absBounds)
+{
+    if (m_vBar) {
+        m_vBar->move(absBounds.x()+absBounds.width()-m_object->borderRight()-m_vBar->width(),
+                     absBounds.y()+m_object->borderTop());
+        m_vBar->resize(m_vBar->width(), absBounds.height() -
+                       (m_object->borderTop()+m_object->borderBottom()) -
+                       (m_hBar ? m_hBar->height()-1 : 0));
+    }
+
+    if (m_hBar) {
+        m_hBar->move(absBounds.x()+m_object->borderLeft(),
+                     absBounds.y()+absBounds.height()-m_object->borderBottom()-m_hBar->height());
+        m_hBar->resize(absBounds.width() - (m_object->borderLeft()+m_object->borderRight()) -
+                       (m_vBar ? m_vBar->width()-1 : 0),
+                       m_hBar->height());
+    }
+}
+
+#define LINE_STEP   10
+#define PAGE_KEEP   40
+
+void
+RenderLayer::checkScrollbarsAfterLayout()
+{
+    updateLayerPosition();
+    
+    int rightPos = m_object->rightmostPosition();
+    int bottomPos = m_object->lowestPosition();
+
+    int clientWidth = m_object->clientWidth();
+    int clientHeight = m_object->clientHeight();
+    m_scrollWidth = clientWidth;
+    m_scrollHeight = clientHeight;
+    
+    if (rightPos - m_object->borderLeft() > m_scrollWidth)
+        m_scrollWidth = rightPos - m_object->borderLeft();
+    if (bottomPos - m_object->borderTop() > m_scrollHeight)
+        m_scrollHeight = bottomPos - m_object->borderTop();
+    
+    bool needHorizontalBar = rightPos > m_width;
+    bool needVerticalBar = bottomPos > m_height;
+
+    bool haveHorizontalBar = m_hBar;
+    bool haveVerticalBar = m_vBar;
+
+    // overflow:scroll should just enable/disable.
+    if (m_object->style()->overflow() == OSCROLL) {
+        m_hBar->setEnabled(needHorizontalBar);
+        m_vBar->setEnabled(needVerticalBar);
+    }
+
+    // overflow:auto may need to lay out again if scrollbars got added/removed.
+    bool scrollbarsChanged = (m_object->style()->overflow() == OAUTO) &&
+        (haveHorizontalBar != needHorizontalBar || haveVerticalBar != needVerticalBar);    
+    if (scrollbarsChanged) {
+        setHasHorizontalScrollbar(needHorizontalBar);
+        setHasVerticalScrollbar(needVerticalBar);
+       
+        m_object->setLayouted(false);
+	/* FIXME        if (m_object->isRenderBlock())
+            static_cast<RenderBlock*>(m_object)->layoutBlock(true);
+        else
+            m_object->layout();
+	*/
+	return;
+    }
+
+    // Set up the range (and page step/line step).
+    if (m_hBar) {
+        int pageStep = (clientWidth-PAGE_KEEP);
+        if (pageStep < 0) pageStep = clientWidth;
+        m_hBar->setSteps(LINE_STEP, pageStep);
+#ifdef APPLE_CHANGES
+        m_hBar->setKnobProportion(clientWidth, m_scrollWidth);
+#else
+        m_hBar->setRange(0, m_scrollWidth-clientWidth);
+#endif
+    }
+    if (m_vBar) {
+        int pageStep = (clientHeight-PAGE_KEEP);
+        if (pageStep < 0) pageStep = clientHeight;
+        m_vBar->setSteps(LINE_STEP, pageStep);
+#ifdef APPLE_CHANGES
+        m_vBar->setKnobProportion(clientHeight, m_scrollHeight);
+#else
+        m_vBar->setRange(0, m_scrollHeight-clientHeight);
+#endif
+    }
+}
+
+void
+RenderLayer::paintScrollbars(QPainter* p, int x, int y, int w, int h)
+{
+#if APPLE_CHANGES
+    if (m_hBar)
+        m_hBar->paint(p, QRect(x, y, w, h));
+    if (m_vBar)
+        m_vBar->paint(p, QRect(x, y, w, h));
+#endif
 }
 
 void
@@ -345,6 +600,9 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
             }
         }
 
+        if (currRect.isEmpty())
+            continue;
+        
         if (selectionOnly) {
             elt->layer->renderer()->paint(p, x, y, w, h,
                                           elt->absBounds.x() - elt->layer->renderer()->xPos(),
@@ -363,6 +621,15 @@ RenderLayer::paint(QPainter *p, int x, int y, int w, int h, bool selectionOnly)
                                         elt->absBounds.x() - elt->layer->renderer()->xPos(),
                                         elt->absBounds.y() - elt->layer->renderer()->yPos(),
                                         PaintActionForeground);
+
+            // Position our scrollbars.
+            elt->layer->positionScrollbars(elt->absBounds);
+
+#if APPLE_CHANGES
+            // Our widgets paint exactly when we tell them to, so that they work properly with
+            // z-index.
+            elt->layer->paintScrollbars(p, x, y, w, h);
+#endif
         }
     }
     
@@ -408,6 +675,9 @@ RenderLayer::clearHoverAndActiveState(RenderObject* obj)
 bool
 RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
 {
+    // Clear out our global scrollbar tracking variable.
+    gScrollBar = 0;
+    
     bool inside = false;
     RenderLayer* insideLayer = 0;
     QRect damageRect(m_x, m_y, m_width, m_height);

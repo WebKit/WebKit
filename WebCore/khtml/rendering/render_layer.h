@@ -50,6 +50,7 @@
 
 #include "render_object.h"
 #include <qvector.h>
+#include <qscrollbar.h>
 
 namespace khtml {
     class RenderStyle;
@@ -59,6 +60,18 @@ namespace khtml {
     class RenderText;
     class RenderFrameSet;
     class RenderObject;
+
+class RenderScrollMediator: public QObject
+{
+public:
+    RenderScrollMediator(RenderLayer* layer)
+    :m_layer(layer) {}
+
+    void slotValueChanged(int);
+    
+private:
+    RenderLayer* m_layer;
+};
     
 class RenderLayer
 {
@@ -90,7 +103,9 @@ public:
     int yPos() const { return m_y; }
     short width() const { return m_width; }
     int height() const { return m_height; }
-
+    short scrollWidth() const { return m_scrollWidth; }
+    int scrollHeight() const { return m_scrollHeight; }
+    
     void setWidth( int width ) {
         m_width = width;
     }
@@ -102,7 +117,26 @@ public:
         m_y = yPos;
     }
 
+    // Scrolling methods for layers that can scroll their overflow.
     void scrollOffset(int& x, int& y);
+    void subtractScrollOffset(int& x, int& y);
+    short scrollXOffset() { return m_scrollX; }
+    int scrollYOffset() { return m_scrollY; }
+    void scrollToOffset(int x, int y, bool updateScrollbars = true);
+    void scrollToXOffset(int x) { scrollToOffset(x, m_scrollY); }
+    void scrollToYOffset(int y) { scrollToOffset(m_scrollX, y); }
+    void setHasHorizontalScrollbar(bool hasScrollbar);
+    void setHasVerticalScrollbar(bool hasScrollbar);
+    QWidget* horizontalScrollbar() { return m_hBar; }
+    QWidget* verticalScrollbar() { return m_vBar; }
+    int verticalScrollbarWidth();
+    int horizontalScrollbarHeight();
+    void moveScrollbarsAside();
+    void positionScrollbars(const QRect& absBounds);
+    void paintScrollbars(QPainter* p, int x, int y, int w, int h);
+    void checkScrollbarsAfterLayout();
+    void slotValueChanged(int);
+    void updateScrollPositionFromScrollbars();
     
     void updateLayerPosition();
     
@@ -238,7 +272,9 @@ public:
       // The normal operator new is disallowed.
       void* operator new(size_t sz) throw();
     };
-    
+
+    static QWidget* gScrollBar;
+
     // For debugging.
     QPtrVector<RenderLayerElement> elementList(RenderZTreeNode *&node);
       
@@ -324,6 +360,19 @@ protected:
     int m_y;
     short m_x;
     short m_width;
+
+    // Our scroll offsets if the view is scrolled.
+    short m_scrollX;
+    int m_scrollY;
+
+    // The width/height of our scrolled area.
+    short m_scrollWidth;
+    short m_scrollHeight;
+    
+    // For layers with overflow, we have a pair of scrollbars.
+    QScrollBar* m_hBar;
+    QScrollBar* m_vBar;
+    RenderScrollMediator* m_scrollMediator;
 };
 
 }; // namespace

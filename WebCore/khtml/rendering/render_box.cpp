@@ -119,6 +119,9 @@ short RenderBox::contentWidth() const
     short w = m_width - borderLeft() - borderRight();
     w -= paddingLeft() + paddingRight();
 
+    if (style()->scrollsOverflow() && m_layer)
+        w -= m_layer->verticalScrollbarWidth();
+    
     //kdDebug( 6040 ) << "RenderBox::contentWidth(2) = " << w << endl;
     return w;
 }
@@ -455,20 +458,6 @@ void RenderBox::repaint(bool immediate)
 
 void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
-    if (style()->hidesOverflow()) {
-        int ow = style() ? style()->outlineWidth() : 0;
-        QRect boxRect(-ow, -ow, width()+ow*2, height()+ow*2);
-        m_layer->scrollOffset(x,y); // For overflow:auto/scroll.
-        QRect repaintRect(x, y, w, h);
-        if (!repaintRect.intersects(boxRect))
-            return;
-        repaintRect = repaintRect.intersect(boxRect);
-        x = repaintRect.x();
-        y = repaintRect.y();
-        w = repaintRect.width();
-        h = repaintRect.height();
-    }
-        
     x += m_x;
     y += m_y;
     
@@ -480,10 +469,24 @@ void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, boo
     
     if (style()->position()==FIXED) f=true;
 
-    
-    // kdDebug( 6040 ) << "RenderBox(" << renderName() << ")::repaintRectangle (" << x << "/" << y << ") (" << w << "/" << h << ")" << endl;
-    RenderObject *o = container();
-    if( o ) o->repaintRectangle(x, y, w, h, immediate, f);
+    RenderObject* o = container();
+    if (o) {
+        if (o->style()->hidesOverflow()) {
+            int ow = o->style() ? o->style()->outlineWidth() : 0;
+            QRect boxRect(-ow, -ow, o->width()+ow*2, o->height()+ow*2);
+            if (o->layer())
+                o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
+            QRect repaintRect(x, y, w, h);
+            if (!repaintRect.intersects(boxRect))
+                return;
+            repaintRect = repaintRect.intersect(boxRect);
+            x = repaintRect.x();
+            y = repaintRect.y();
+            w = repaintRect.width();
+            h = repaintRect.height();
+        }
+        o->repaintRectangle(x, y, w, h, immediate, f);
+    }
 }
 
 void RenderBox::relativePositionOffset(int &tx, int &ty)
@@ -870,8 +873,9 @@ void RenderBox::calcAbsoluteHorizontal()
         //          3) precalc for case 2 below
 
         // all positioned elements are blocks, so that
-        // would be at the left edge
+        // would be at the left edge, but inset by our border/padding.
         RenderObject* po = parent();
+        static_distance += po->borderLeft() + po->paddingLeft();
         while (po && po!=containingBlock()) {
             static_distance+=po->xPos();
             po=po->parent();
@@ -887,7 +891,7 @@ void RenderBox::calcAbsoluteHorizontal()
             RenderObject* po = parent();
 
             static_distance = cw - po->width();
-
+            static_distance -= po->borderRight() + po->paddingRight();
             while (po && po!=containingBlock()) {
                 static_distance-=po->xPos();
                 po=po->parent();
@@ -1027,10 +1031,7 @@ void RenderBox::calcAbsoluteVertical()
         h = style()->height().width(ch);
         
         if (m_height-pab > h) {
-            if (style()->overflow() == OHIDDEN)
-                setOverflowHeight(h+pab);
-            else
-                setOverflowHeight(m_height + pab - (paddingBottom() + borderBottom()));
+            setOverflowHeight(m_height + pab - (paddingBottom() + borderBottom()));
             m_height = h+pab;
         }
     }
@@ -1051,13 +1052,16 @@ void RenderBox::calcAbsoluteVertical()
         //          3) precalc for case 2 below
 
         RenderObject* ro = previousSibling();
-        while ( ro && ro->isPositioned())
+        while ( ro && ro->isFloatingOrPositioned())
             ro = ro->previousSibling();
 
+        RenderObject* po = parent();
         if (ro)
             static_top = ro->yPos() + ro->marginBottom() + ro->height();
+        else
+            static_top += po->borderTop() + po->paddingTop();
         
-        for (RenderObject* po = parent(); po && po != cb; po = po->parent())
+        for (; po && po != cb; po = po->parent())
             static_top += po->yPos();
         
         if (h==AUTO || style()->top().isStatic())
@@ -1149,7 +1153,7 @@ void RenderBox::calcAbsoluteVertical()
 
 int RenderBox::lowestPosition(bool includeOverflowInterior) const
 {
-    return m_height + marginBottom();
+    return m_height;
 }
 
 int RenderBox::rightmostPosition(bool includeOverflowInterior) const
