@@ -21,7 +21,7 @@
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
-#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -1203,14 +1203,20 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)respondToChangedContents
 {
-    [[_frame webView] _updateFontPanel];
+    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]]) {
+        [(WebHTMLView *)view _updateFontPanel];
+    }
     [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeNotification object:[_frame webView]];
 }
 
 - (void)respondToChangedSelection
 {
-    [[_frame webView] _updateFontPanel];
+    NSView <WebDocumentView> *view = [[_frame frameView] documentView];
+    if ([view isKindOfClass:[WebHTMLView class]]) {
+        [(WebHTMLView *)view _updateFontPanel];
+    }
     [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
 }

@@ -6,17 +6,12 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
 
-@class DOMCSSStyleDeclaration;
 @class NSError;
-@class WebBackForwardList;
 @class WebFrame;
 @class WebPreferences;
 @class WebCoreSettings;
 
-@protocol WebDocumentDragging;
 @protocol WebFormDelegate;
-
-#define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
 
 typedef struct _WebResourceDelegateImplementationCache {
     uint delegateImplementsDidCancelAuthenticationChallenge:1;
@@ -36,76 +31,6 @@ extern NSString *_WebMainFrameIconKey;
 extern NSString *_WebMainFrameTitleKey;
 extern NSString *_WebMainFrameURLKey;
 
-@interface WebViewPrivate : NSObject
-{
-@public
-    WebFrame *mainFrame;
-    
-    id UIDelegate;
-    id UIDelegateForwarder;
-    id resourceProgressDelegate;
-    id resourceProgressDelegateForwarder;
-    id downloadDelegate;
-    id policyDelegate;
-    id policyDelegateForwarder;
-    id frameLoadDelegate;
-    id frameLoadDelegateForwarder;
-    id <WebFormDelegate> formDelegate;
-    id editingDelegate;
-    id editingDelegateForwarder;
-    
-    WebBackForwardList *backForwardList;
-    BOOL useBackForwardList;
-    
-    float textSizeMultiplier;
-
-    NSString *applicationNameForUserAgent;
-    NSString *userAgent;
-    BOOL userAgentOverridden;
-    
-    BOOL defersCallbacks;
-
-    NSString *setName;
-
-    WebPreferences *preferences;
-    WebCoreSettings *settings;
-        
-    BOOL lastElementWasNonNil;
-
-    NSWindow *hostWindow;
-
-    int programmaticFocusCount;
-    
-    WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
-
-    long long totalPageAndResourceBytesToLoad;
-    long long totalBytesReceived;
-    double progressValue;
-    double lastNotifiedProgressValue;
-    double lastNotifiedProgressTime;
-    double progressNotificationInterval;
-    double progressNotificationTimeInterval;
-    BOOL finalProgressChangedSent;
-    WebFrame *orginatingProgressFrame;
-    
-    int numProgressTrackedFrames;
-    NSMutableDictionary *progressItems;
-    
-    void *observationInfo;
-    
-    BOOL drawsBackground;
-    BOOL editable;
-    BOOL initiatedDrag;
-    BOOL doWebKitDragReponse;   // should we do the built-in WebKit handling of incoming drags?
-        
-    NSString *mediaStyle;
-    
-    NSView <WebDocumentDragging> *draggingDocumentView;
-    
-    DOMCSSStyleDeclaration *typingStyle;
-}
-@end
-
 @interface WebView (WebPendingPublic)
 
 - (void)setMainFrameURL:(NSString *)URLString;
@@ -116,6 +41,14 @@ extern NSString *_WebMainFrameURLKey;
 
 - (void)setDrawsBackground:(BOOL)drawsBackround;
 - (BOOL)drawsBackground;
+
+- (void)toggleContinuousSpellChecking:(id)sender;
+
+- (BOOL)isContinuousGrammarCheckingEnabled;
+- (void)setContinuousGrammarCheckingEnabled:(BOOL)flag;
+- (void)toggleContinuousGrammarChecking:(id)sender;
+
+- (void)toggleSmartInsertDelete:(id)sender;
 
 @end
 

@@ -68,6 +68,15 @@
 // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
 #import <AppKit/NSKeyBindingManager.h>
 
+@interface NSSpellChecker (AppKitSecretsIKnow)
+- (void)_preflightChosenSpellServer;
+@end
+
+@interface WebView (WebFileInternal)
+- (void)_preflightSpellChecker;
+- (BOOL)_continuousCheckingAllowed;
+@end
+
 NSString *WebElementDOMNodeKey =            @"WebElementDOMNode";
 NSString *WebElementFrameKey =              @"WebElementFrame";
 NSString *WebElementImageKey =              @"WebElementImage";
@@ -2124,6 +2133,42 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     return _private->drawsBackground;
 }
 
+- (void)toggleSmartInsertDelete:(id)sender
+{
+    if ([self isEditable]) {
+        [self setSmartInsertDeleteEnabled:![self smartInsertDeleteEnabled]];
+    }
+}
+
+- (void)toggleContinuousSpellChecking:(id)sender
+{
+    if ([self isEditable]) {
+        [self setContinuousSpellCheckingEnabled:![self isContinuousSpellCheckingEnabled]];
+    }
+}
+
+- (BOOL)isContinuousGrammarCheckingEnabled
+{
+    return _private->continuousGrammarCheckingEnabled && [self _continuousCheckingAllowed];
+}
+
+- (void)setContinuousGrammarCheckingEnabled:(BOOL)flag
+{
+    _private->continuousGrammarCheckingEnabled = flag;
+    if ([self isContinuousGrammarCheckingEnabled]) {
+        [self _preflightSpellChecker];
+    } else {
+        // FIXME: Put code here to remove underlines for bad grammar.
+    }
+}
+
+- (void)toggleContinuousGrammarChecking:(id)sender
+{
+    if ([self isEditable]) {
+        [self setContinuousGrammarCheckingEnabled:![self isContinuousGrammarCheckingEnabled]];
+    }
+}
+
 @end
 
 @implementation WebView (WebViewPrintingPrivate)
@@ -2240,28 +2285,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 //==========================================================================================
 // Editing
 
-@interface ElementOrTextFilter : NSObject <DOMNodeFilter>
-+ (ElementOrTextFilter *)filter;
-@end
-
-static ElementOrTextFilter *elementOrTextFilterInstance = nil;
-
-@implementation ElementOrTextFilter
-
-+ (ElementOrTextFilter *)filter 
-{
-    if (!elementOrTextFilterInstance)
-        elementOrTextFilterInstance = [[ElementOrTextFilter alloc] init];
-    return elementOrTextFilterInstance;
-}
-
-- (short)acceptNode:(DOMNode *)n
-{
-    return ([n isKindOfClass:[DOMElement class]] || [n isKindOfClass:[DOMText class]]) ? DOM_FILTER_ACCEPT : DOM_FILTER_SKIP;
-}
-
-@end
-
 @implementation WebView (WebViewCSS)
 
 - (DOMCSSStyleDeclaration *)computedStyleForElement:(DOMElement *)element pseudoElement:(NSString *)pseudoElement
@@ -2300,77 +2323,6 @@ static ElementOrTextFilter *elementOrTextFilterInstance = nil;
     WebFrame *mainFrame = [self mainFrame];
     return [[mainFrame dataSource] isLoading]
         || [[mainFrame provisionalDataSource] isLoading];
-}
-
-// FIXME: Move to WebHTMLView.
-- (void)_updateFontPanel
-{
-    // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
-    // sure if we need to do something similar.
-    
-    if (![[self _bridgeForCurrentSelection] isSelectionEditable]) {
-        return;
-    }
-    
-    NSWindow *window = [self window];
-    // FIXME: is this first-responder check correct? What happens if a subframe is editable and is first responder?
-    if ([NSApp keyWindow] != window || [window firstResponder] != [[[self mainFrame] frameView] documentView]) {
-        return;
-    }
-    
-    BOOL onlyOneFontInSelection = YES;
-    NSFont *font = nil;
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    
-    if (![bridge haveSelection]) {
-        font = [bridge fontForCurrentPosition];
-    } 
-    else {
-        DOMRange *selection = [self selectedDOMRange];
-        DOMNode *startContainer = [selection startContainer];
-        DOMNode *endContainer = [selection endContainer];
-        
-        ASSERT(startContainer);
-        ASSERT(endContainer);
-        ASSERT([[ElementOrTextFilter filter] acceptNode:startContainer] == DOM_FILTER_ACCEPT);
-        ASSERT([[ElementOrTextFilter filter] acceptNode:endContainer] == DOM_FILTER_ACCEPT);
-        
-        font = [bridge renderedFontForNode:startContainer];
-        
-        if (startContainer != endContainer) {
-            DOMDocument *document = [bridge DOMDocument];
-            DOMTreeWalker *treeWalker = [document createTreeWalker:document :DOM_SHOW_ALL :[ElementOrTextFilter filter] :NO];
-            DOMNode *node = startContainer;
-            [treeWalker setCurrentNode:node];
-            while (node) {
-                NSFont *otherFont = [bridge renderedFontForNode:node];
-                if (![font isEqual:otherFont]) {
-                    onlyOneFontInSelection = NO;
-                    break;
-                }
-                if (node == endContainer)
-                    break;
-                node = [treeWalker nextNode];
-            }
-        }
-    }
-    
-    // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
-    // selection. We should be able to remove this once the rest of this code works properly.
-    if (font == nil) {
-        if (![[self _bridgeForCurrentSelection] haveSelection]) {
-            font = [NSFont toolTipsFontOfSize:17];
-        } else {
-            font = [NSFont menuFontOfSize:23];
-        }
-    }
-    ASSERT(font != nil);
-        
-    NSFontManager *fm = [NSFontManager sharedFontManager];
-    [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
-    // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
-    // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
-    // not reflected in the font panel. Maybe someday this will change.
 }
 
 @end
@@ -2455,30 +2407,36 @@ static ElementOrTextFilter *elementOrTextFilterInstance = nil;
 
 - (void)setSmartInsertDeleteEnabled:(BOOL)flag
 {
-    ERROR("unimplemented");
+    _private->smartInsertDeleteEnabled = flag;
 }
 
 - (BOOL)smartInsertDeleteEnabled
 {
-    ERROR("unimplemented");
-    return NO;
+    return _private->smartInsertDeleteEnabled;
 }
 
 - (void)setContinuousSpellCheckingEnabled:(BOOL)flag
 {
-    ERROR("unimplemented");
+    _private->continuousSpellCheckingEnabled = flag;
+    if ([self isContinuousSpellCheckingEnabled]) {
+        [self _preflightSpellChecker];
+    } else {
+        // FIXME: Put code here to remove underlines for misspelled words.
+    }
 }
 
 - (BOOL)isContinuousSpellCheckingEnabled
 {
-    ERROR("unimplemented");
-    return NO;
+    return _private->continuousSpellCheckingEnabled && [self _continuousCheckingAllowed];
 }
 
 - (int)spellCheckerDocumentTag
 {
-    ERROR("unimplemented");
-    return 0;
+    if (!_private->hasSpellCheckerDocumentTag) {
+        _private->spellCheckerDocumentTag = [NSSpellChecker uniqueSpellDocumentTag];
+        _private->hasSpellCheckerDocumentTag = YES;
+    }
+    return _private->spellCheckerDocumentTag;
 }
 
 - (NSUndoManager *)undoManager
@@ -2987,6 +2945,38 @@ static ElementOrTextFilter *elementOrTextFilterInstance = nil;
 - (void)insertText:(NSString *)text
 {
     [self _performResponderOperation:@selector(insertText:) with:text];
+}
+
+@end
+
+@implementation WebView (WebFileInternal)
+
+- (void)_preflightSpellCheckerNow:(id)sender
+{
+    [[NSSpellChecker sharedSpellChecker] _preflightChosenSpellServer];
+}
+
+- (void)_preflightSpellChecker
+{
+    // As AppKit does, we wish to delay tickling the shared spellc hecker into existence on application launch.
+    if ([NSSpellChecker sharedSpellCheckerExists]) {
+        [self _preflightSpellCheckerNow:self];
+    } else {
+        [self performSelector:@selector(_preflightSpellCheckerNow:) withObject:self afterDelay:2.0];
+    }
+}
+
+- (BOOL)_continuousCheckingAllowed
+{
+    static BOOL allowContinuousSpellChecking = YES;
+    static BOOL readAllowContinuousSpellCheckingDefault = NO;
+    if (!readAllowContinuousSpellCheckingDefault) {
+        if ([[NSUserDefaults standardUserDefaults] objectForKey:@"NSAllowContinuousSpellChecking"]) {
+            allowContinuousSpellChecking = [[NSUserDefaults standardUserDefaults] boolForKey:@"NSAllowContinuousSpellChecking"];
+        }
+        readAllowContinuousSpellCheckingDefault = YES;
+    }
+    return allowContinuousSpellChecking;
 }
 
 @end

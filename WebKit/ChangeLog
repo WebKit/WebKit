@@ -1,3 +1,46 @@
+2004-05-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - implemented a few more editing operations, moved code from WebView to WebHTMLView
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge respondToChangedContents]): Call _updateFontPanel on the WebHTMLView, not the WebView.
+        (-[WebBridge respondToChangedSelection]): Ditto.
+
+        * WebView.subproj/WebHTMLView.m: Moved WebElementOrTextFilter class here from WebView and
+        gave it a prefix so it won't conflict with developers' class names.
+        (-[WebHTMLView _updateFontPanel]): Moved here from WebView.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView toggleSmartInsertDelete:]): Added.
+        (-[WebView toggleContinuousSpellChecking:]): Added.
+        (-[WebView isContinuousGrammarCheckingEnabled]): Added.
+        (-[WebView setContinuousGrammarCheckingEnabled:]): Added.
+        (-[WebView toggleContinuousGrammarChecking:]): Added.
+        (-[WebView setSmartInsertDeleteEnabled:]): Implemented. We have the flag now, although we
+        still don't actually have smart insert and delete implemented.
+        (-[WebView smartInsertDeleteEnabled]): Ditto.
+        (-[WebView setContinuousSpellCheckingEnabled:]): Implemented.
+        (-[WebView isContinuousSpellCheckingEnabled]): Implemented.
+        (-[WebView spellCheckerDocumentTag]): Implemented.
+        (-[WebView _preflightSpellCheckerNow:]): Added.
+        (-[WebView _preflightSpellChecker]): Added.
+        (-[WebView _continuousCheckingAllowed]): Added.
+
+        * WebView.subproj/WebHTMLViewInternal.h: Added. We'll things here from WebHTMLViewPrivate so
+        they are internal to the framework, rather than SPI.
+        * WebKit.pbproj/project.pbxproj: Added WebHTMLViewInternal.h.
+        * WebView.subproj/WebHTMLViewPrivate.h: Moved WebHTMLViewPrivate into the internal header.
+        Despite its name, it's internal, not SPI.
+
+        * WebView.subproj/WebViewPrivate.h: Moved WebViewPrivate into the internal header.
+        Despite its name, it's internal, not SPI. Added a number of new operations which should
+        be public API. We'll have to figure out what to do about API review and the WWDC deadline.
+        * WebView.subproj/WebViewInternal.h: Removed _updateFontPanel method.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update.
+
 2004-05-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

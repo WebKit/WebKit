@@ -18,7 +18,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
-#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebKitLogging.h>
@@ -85,7 +85,7 @@
 
 static BOOL forceRealHitTest = NO;
 
-@interface WebHTMLView (WebHTMLViewFileInternal)
+@interface WebHTMLView (WebFileInternal)
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement allowPlainText:(BOOL)allowPlainText;
 @end
@@ -121,6 +121,12 @@ static BOOL forceRealHitTest = NO;
 - (void)_web_setObjectIfNotNil:(id)object forKey:(id)key;
 @end
 
+@interface WebElementOrTextFilter : NSObject <DOMNodeFilter>
++ (WebElementOrTextFilter *)filter;
+@end
+
+static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
+
 @implementation WebHTMLViewPrivate
 
 - (void)dealloc
@@ -140,7 +146,7 @@ static BOOL forceRealHitTest = NO;
 
 @end
 
-@implementation WebHTMLView (WebHTMLViewFileInternal)
+@implementation WebHTMLView (WebFileInternal)
 
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
@@ -2526,7 +2532,7 @@ static WebHTMLView *lastHitView = nil;
 
 @end
 
-@implementation WebHTMLView (TextSizing)
+@implementation WebHTMLView (WebTextSizing)
 
 - (void)_web_textSizeMultiplierChanged
 {
@@ -2546,6 +2552,98 @@ static WebHTMLView *lastHitView = nil;
             [view performSelector:selector withObject:object];
         }
     }
+}
+
+@end
+
+@implementation WebElementOrTextFilter
+
++ (WebElementOrTextFilter *)filter 
+{
+    if (!elementOrTextFilterInstance)
+        elementOrTextFilterInstance = [[WebElementOrTextFilter alloc] init];
+    return elementOrTextFilterInstance;
+}
+
+- (short)acceptNode:(DOMNode *)n
+{
+    return ([n isKindOfClass:[DOMElement class]] || [n isKindOfClass:[DOMText class]]) ? DOM_FILTER_ACCEPT : DOM_FILTER_SKIP;
+}
+
+@end
+
+@implementation WebHTMLView (WebInternal)
+
+// FIXME: Move to WebHTMLView.
+- (void)_updateFontPanel
+{
+    // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
+    // sure if we need to do something similar.
+    
+    WebBridge *bridge = [self _bridge];
+
+    if (![bridge isSelectionEditable]) {
+        return;
+    }
+    
+    NSWindow *window = [self window];
+    // FIXME: is this first-responder check correct? What happens if a subframe is editable and is first responder?
+    if ([NSApp keyWindow] != window || [window firstResponder] != self) {
+        return;
+    }
+    
+    BOOL onlyOneFontInSelection = YES;
+    NSFont *font = nil;
+    
+    if (![bridge haveSelection]) {
+        font = [bridge fontForCurrentPosition];
+    } 
+    else {
+        DOMRange *selection = [bridge selectedDOMRange];
+        DOMNode *startContainer = [selection startContainer];
+        DOMNode *endContainer = [selection endContainer];
+        
+        ASSERT(startContainer);
+        ASSERT(endContainer);
+        ASSERT([[WebElementOrTextFilter filter] acceptNode:startContainer] == DOM_FILTER_ACCEPT);
+        ASSERT([[WebElementOrTextFilter filter] acceptNode:endContainer] == DOM_FILTER_ACCEPT);
+        
+        font = [bridge renderedFontForNode:startContainer];
+        
+        if (startContainer != endContainer) {
+            DOMDocument *document = [bridge DOMDocument];
+            DOMTreeWalker *treeWalker = [document createTreeWalker:document :DOM_SHOW_ALL :[WebElementOrTextFilter filter] :NO];
+            DOMNode *node = startContainer;
+            [treeWalker setCurrentNode:node];
+            while (node) {
+                NSFont *otherFont = [bridge renderedFontForNode:node];
+                if (![font isEqual:otherFont]) {
+                    onlyOneFontInSelection = NO;
+                    break;
+                }
+                if (node == endContainer)
+                    break;
+                node = [treeWalker nextNode];
+            }
+        }
+    }
+    
+    // FIXME: for now, return a bogus font that distinguishes the empty selection from the non-empty
+    // selection. We should be able to remove this once the rest of this code works properly.
+    if (font == nil) {
+        if (![bridge haveSelection]) {
+            font = [NSFont toolTipsFontOfSize:17];
+        } else {
+            font = [NSFont menuFontOfSize:23];
+        }
+    }
+    ASSERT(font != nil);
+        
+    NSFontManager *fm = [NSFontManager sharedFontManager];
+    [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
+    // FIXME: we don't keep track of selected attributes, or set them on the font panel. This
+    // appears to have no effect on the UI. E.g., underlined text in Mail or TextEdit is
+    // not reflected in the font panel. Maybe someday this will change.
 }
 
 @end
