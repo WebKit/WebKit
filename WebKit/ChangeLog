@@ -1,3 +1,27 @@
+2002-08-16  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3025394 -- Bookmarks & History items do not remember their icons
+	across launches
+	- fixed 3025421 -- Dragging from location field proxy icon to favorites bar 
+	loses page icon
+	- part of fix for 3026279 -- Bookmarks should lose their favIcons when the
+	URL is edited
+
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        (-[WebBookmarkLeaf initFromDictionaryRepresentation:withGroup:]):
+        (-[WebBookmarkLeaf dictionaryRepresentation]):
+	Removed the #ifdeffed-out code for storing iconURL in dictionary; this was
+	unnecessary because it is also done by the lower-level WebHistoryItem.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _setIcon:]): New method, extracted from -icon for clarity.
+        (-[WebHistoryItem icon]): Fixed problem where once an icon was set it would
+	never be changed, even if the iconURL is changed. Also, use _setIcon for
+	clarity and to fix retainCount bugs.
+        (-[WebHistoryItem dictionaryRepresentation]):
+	Removed the #ifdef around the line that stores the URL in the dictionary.
+	Gramps decided that this architecture is OK after all.
+
 2002-08-16  Darin Adler  <darin@apple.com>
 
 	Fixed broken build.

@@ -86,15 +86,26 @@
     return _displayTitle;
 }
 
+-(void)_setIcon:(NSImage *)newIcon
+{
+    [newIcon retain];
+    [_icon release];
+    _icon = newIcon;
+}
+
 -(NSImage *)icon
 {
-    if(!_icon && !_loadedIcon){
-        if(_iconURL){
-            _icon = [[WebIconLoader iconLoaderWithURL:_iconURL] iconFromCache];
-        }else if([_URL isFileURL]){
-            _icon = [WebIconLoader iconForFileAtPath:[_URL path]];
+    if (!_loadedIcon) {
+        NSImage *newIcon;
+        
+        if (_iconURL != nil) {
+            newIcon = [[WebIconLoader iconLoaderWithURL:_iconURL] iconFromCache];
+        } else if ([_URL isFileURL]) {
+            newIcon = [WebIconLoader iconForFileAtPath:[_URL path]];
+        } else {
+            newIcon = nil;
         }
-        [_icon retain];
+        [self _setIcon:newIcon];
         _loadedIcon = YES;
     }
 
@@ -229,12 +240,9 @@
         [dict setObject: [NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey: @"lastVisitedDate"];
     }
-#if 0
-// FIXME 8/15/2002 -- temporarily removing support for storing iconURL (favIcon), due to architecture issues
     if (_iconURL != nil) {
         [dict setObject: [_iconURL absoluteString] forKey: @"iconURL"];
     }
-#endif
 
     return dict;
 }
