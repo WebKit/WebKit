@@ -25,8 +25,10 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 static const char * const stateNames[] = {
     "WebFrameStateProvisional",

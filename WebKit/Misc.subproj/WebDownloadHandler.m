@@ -12,7 +12,8 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebDownloadHandler
 

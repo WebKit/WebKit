@@ -21,7 +21,6 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceRequest.h>
 

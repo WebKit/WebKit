@@ -1,3 +1,18 @@
+2002-09-29  Darin Adler  <darin@apple.com>
+
+        * Misc.subproj/WebIconDatabase.m: (-[WebIconDatabase _iconForFileURL:withSize:]):
+	Don't be case sensitive about filename extensions.
+
+        * Misc.subproj/WebDownloadHandler.m:
+        * Misc.subproj/WebIconLoader.m:
+        * Plugins.subproj/WebPluginStream.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebView.m:
+	Don't use WebFoundation.h -- faster building to just import what we really use.
+
 2002-09-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 2978258 - quake3arena.com sends me to the flash=false site

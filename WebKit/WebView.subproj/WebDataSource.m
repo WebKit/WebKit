@@ -16,8 +16,8 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 
-#import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 

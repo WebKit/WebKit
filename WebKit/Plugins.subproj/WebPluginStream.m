@@ -13,13 +13,11 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebKitLogging.h>
 
-//#import <WebFoundation/WebAssertions.h>
-//#import <WebFoundation/WebError.h>
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
-//#import <WebFoundation/WebResourceHandle.h>
-//#import <WebFoundation/WebResourceRequest.h>
-//#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
 - (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle;

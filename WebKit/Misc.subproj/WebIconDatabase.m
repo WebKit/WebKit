@@ -11,6 +11,7 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebKitLogging.h>
 
+#import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebFileDatabase.h>
 
@@ -385,7 +386,7 @@ NSSize WebIconLargeSize = {128, 128};
     NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
     NSImage *icon;
     
-    if([[[fileURL path] pathExtension] rangeOfString:@"htm"].length > 0){
+    if([[[fileURL path] pathExtension] _web_hasCaseInsensitivePrefix:@"htm"]){
         if(!_private->htmlIcons){
             icon = [workspace iconForFileType:@"html"];
             _private->htmlIcons = [[self _iconsBySplittingRepresentationsOfIcon:icon] retain];

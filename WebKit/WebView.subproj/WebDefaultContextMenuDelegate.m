@@ -14,7 +14,8 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebFoundation.h>
+#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebDefaultContextMenuDelegate
 
