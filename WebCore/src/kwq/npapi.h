@@ -207,6 +207,7 @@ typedef NPError	(*NPN_RequestReadProcPtr)(NPStream* stream, NPByteRange* rangeLi
 typedef NPError	(*NPN_NewStreamProcPtr)(NPP instance, NPMIMEType type, const char* window, NPStream** stream);
 typedef int32 (*NPN_WriteProcPtr)(NPP instance, NPStream* stream, int32 len, void* buffer);
 typedef NPError (*NPN_DestroyStreamProcPtr)(NPP instance, NPStream* stream, NPReason reason);
+typedef void (*NPN_StatusProcPtr)(NPP instance, const char* message);
 typedef const char*(*NPN_UserAgentProcPtr)(NPP instance);
 typedef void* (*NPN_MemAllocProcPtr)(uint32 size);
 typedef void (*NPN_MemFreeProcPtr)(void* ptr);
@@ -247,7 +248,7 @@ typedef struct _NPNetscapeFuncs {
     NPN_NewStreamProcPtr newstream;
     NPN_WriteProcPtr write;
     NPN_DestroyStreamProcPtr destroystream;
-    NPN_DestroyStreamProcPtr status;
+    NPN_StatusProcPtr status;
     NPN_UserAgentProcPtr uagent;
     NPN_MemAllocProcPtr memalloc;
     NPN_MemFreeProcPtr memfree;

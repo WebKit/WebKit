@@ -517,7 +517,6 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
         webController = [webView controller];
         [webController setMainDataSource:dataSource];
         [dataSource startLoading: YES];
-        NPP_URLNotify(instance, url, NPRES_DONE, notifyData);
     }else if(!strcmp(target, "_blank") || !strcmp(target, "_new")){
         printf("Error: No API to open new browser window\n");
     }
@@ -526,6 +525,7 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
 
 -(NPError)getURL:(const char *)url target:(const char *)target
 {
+    KWQDebug("NPN_GetURL: %s target: %s\n", url, target);
     return [self getURLNotify:url target:target notifyData:NULL];
 }
 

@@ -28,12 +28,14 @@
 
 @interface WCPlugin : NSObject {
     NSMutableArray *mimeTypes;
-    NSString *name, *executablePath, *filename, *pluginDescription;
-    BOOL isLoaded;
+    NSString *name, *path, *filename, *pluginDescription;
+    BOOL isLoaded, isBundle, isCFM;
     NPPluginFuncs pluginFuncs;
     NPNetscapeFuncs browserFuncs;
     uint16 pluginSize;
     uint16 pluginVersion;
+    CFBundleRef bundle;
+    CFragConnectionID connID; 
     
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
@@ -51,15 +53,15 @@
     NPP_ShutdownProcPtr NPP_Shutdown; 
 }
 
-- (BOOL)initializeWithPath:(NSString *)plugin;
-- (BOOL)getPluginInfoForResourceFile:(SInt16)resRef;
+- (BOOL)initializeWithPath:(NSString *)pluginPath;
+- (void)getPluginInfoForResourceFile:(SInt16)resRef;
 - (void)load;
 - (void)unload;
 - (NSString *)mimeTypeForURL:(NSString *)URL;
 - (NSArray *)mimeTypes;
 - (NSString *)name;
 - (NSString *)filename;
-- (NSString *)executablePath;
+- (NSString *)path;
 - (BOOL)isLoaded;
 - (NSString *)description;
 - (NSString *)pluginDescription;
