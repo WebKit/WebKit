@@ -7,17 +7,17 @@ MacRoman: macintosh, x-mac-roman
 WindowsLatin1: windows-1252, x-ansi
 ISOLatin1: iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep
-ASCII: us-ascii, iso-ir-6us
+ASCII: iso-ir-6us, us-ascii
 Unicode # utf-16be, unicodeFFFE, unicode? (would this help us?)
   # Note the bogus entry to make UTF-16 mean UTF-8.
   # We do this because Internet Explorer does, and because web pages say UTF-16 and mean UTF-8.
   # See bug 2969378 and http://zingermans.com/ for a concrete example.
   # It's not clear what to do about 16-bit encodings in general.
-UTF8: utf-8, unicode-1-1-utf-8, unicode-2-0-utf-8, x-unicode-2-0-utf-8, utf-16
+UTF8: unicode-1-1-utf-8, unicode-2-0-utf-8, utf-16, utf-8, x-unicode-2-0-utf-8
 NonLossyASCII
 
 MacJapanese: x-mac-japanese
-MacChineseTrad: x-mac-trad-chinese, x-mac-chinesetrad
+MacChineseTrad: x-mac-chinesetrad, x-mac-trad-chinese
 MacKorean: x-mac-korean
 MacArabic: x-mac-arabic
 MacHebrew: x-mac-hebrew
@@ -39,11 +39,11 @@ MacThai: x-mac-thai
 MacLaotian
 MacGeorgian
 MacArmenian
-MacChineseSimp: x-mac-simp-chinese, x-mac-chinesesimp
+MacChineseSimp: x-mac-chinesesimp, x-mac-simp-chinese
 MacTibetan: x-mac-tibetan
 MacMongolian
 MacEthiopic
-MacCentralEurRoman: x-mac-centraleurroman, x-mac-ce
+MacCentralEurRoman: x-mac-ce, x-mac-centraleurroman
 MacVietnamese
 MacExtArabic
 
@@ -71,17 +71,17 @@ ISOLatinArabic: iso-8859-6
 ISOLatinGreek: iso-8859-7
   # This includes both logical and visual variants of Hebrew.
   # That's probably not going to work in the real thing.
-ISOLatinHebrew: iso-8859-8, iso-8859-8-i, iso-8859-8-e, DOS-862, logical, visual
+ISOLatinHebrew: dos-862, iso-8859-8, iso-8859-8-e, iso-8859-8-i, logical, visual
 ISOLatin5: iso-8859-9
 ISOLatin6: iso-8859-10
 ISOLatinThai: iso-8859-11
 ISOLatin7: iso-8859-13
 ISOLatin8: iso-8859-14
-ISOLatin9: iso-8859-15, l9, latin9, csISOLatin9
+ISOLatin9: csisolatin9, iso-8859-15, l9, latin9
 
 DOSLatinUS: cp437
 DOSGreek: cp737, ibm737
-DOSBalticRim: cp775, cp500
+DOSBalticRim: cp500, cp775
 DOSLatin1: cp850
 DOSGreek1
 DOSLatin2: cp852
@@ -95,7 +95,7 @@ DOSArabic: cp864, dos-720
 DOSNordic
 DOSRussian: cp866
 DOSGreek2: ibm869
-DOSThai: tis-620, cp874, windows-874, dos-874
+DOSThai: cp874, dos-874, tis-620, windows-874
 DOSJapanese: cp932
 DOSChineseSimplif: cp936
 DOSKorean: cp949
@@ -105,21 +105,21 @@ WindowsCyrillic: windows-1251, x-cp1251
 WindowsGreek: windows-1253
 WindowsLatin5: windows-1254
 WindowsHebrew: windows-1255
-WindowsArabic: windows-1256, cp1256
+WindowsArabic: cp1256, windows-1256
 WindowsBalticRim: windows-1257
 WindowsKoreanJohab: johab
 WindowsVietnamese: windows-1258
 
-JIS_X0201_76: JIS_X0201
-JIS_X0208_83: JIS_X0208-1983
-JIS_X0208_90: JIS_X0208-1990
-JIS_X0212_90: JIS_X0212-1990
-JIS_C6226_78: JIS_C6226-1978
+JIS_X0201_76: jis_x0201
+JIS_X0208_83: jis_x0208-1983
+JIS_X0208_90: jis_x0208-1990
+JIS_X0212_90: jis_x0212-1990
+JIS_C6226_78: jis_c6226-1978
 ShiftJIS_X0213_00
-GB_2312_80: gb_2312-80, csGB231280, gb2312-80, gb231280
+GB_2312_80: csgb231280, gb2312-80, gb231280, gb_2312-80
 GBK_95: x-gbk
-GB_18030_2000: GB18030
-KSC_5601_87: KS_C_5601-1987, ks_c_5601_1987, ks_c_5601, ksc5601
+GB_18030_2000: gb18030
+KSC_5601_87: ks_c_5601, ks_c_5601-1987, ks_c_5601_1987, ksc5601
 KSC_5601_92_Johab
 CNS_11643_92_P1
 CNS_11643_92_P2
@@ -134,12 +134,12 @@ ISO_2022_CN_EXT: iso-2022-cn-ext
 ISO_2022_KR: iso-2022-kr
 
 EUC_JP: euc-jp, x-euc, x-euc-jp
-EUC_CN: euc-cn, gb2312, cn-gb, gbk, x-euc-cn
+EUC_CN: cn-gb, euc-cn, gb2312, gbk, x-euc-cn
 EUC_TW: euc-tw
 EUC_KR: euc-kr
 
-ShiftJIS: shift_jis, x-sjis, csWindows31J, shift-jis, x-ms-cp932
-KOI8_R: koi8-r, koi, koi8, koi8r
+ShiftJIS: cswindows31j, shift-jis, shift_jis, x-ms-cp932, x-sjis
+KOI8_R: koi, koi8, koi8-r, koi8r
 Big5: big5, cn-big5, x-x-big5
 MacRomanLatin1: x-mac-roman-latin1
 HZ_GB_2312: hz-gb-2312

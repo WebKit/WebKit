@@ -54,12 +54,23 @@ sub process_mac_encodings
 
             # Build the aliases list.
             # Also check that no two names are part of the same entry in the charsets file.
-	    my @IANANames = sort split ", ", lc $IANANames;
+	    my @IANANames = split ", ", $IANANames;
+            my $prevName = "";
             for my $name (@IANANames) {
                 if ($name !~ /^[-a-z0-9_]+$/) {
-                    error "$name, in mac-encodings.txt, has illegal characters in it";
+                    if ($name !~ /^[-A-Za-z0-9_]+$/) {
+                        error "$name, in mac-encodings.txt, has illegal characters in it";
+                    } else {
+                        error "$name, in mac-encodings.txt, has capital letters in it";
+                    }
+                    $prevName = $name;
                     next;
                 }
+                
+                if ($name le $prevName) {
+                    error "$name comes after $prevName in mac-encodings.txt, but everything must be in alphabetical order";
+                }
+                $prevName = $name;
                 
                 error "$name is mentioned twice in mac-encodings.txt" if $seenIANANames{$name};
                 $seenIANANames{$name} = 1;
@@ -96,11 +107,6 @@ sub process_mac_encodings
             $seenMacNames{$MacName} = 1;
         }
     }
-    
-    # Hack, treat -E and -I same as non-suffix case.
-    # Not sure if this does the right thing or not.
-    #$name_to_mac_encoding{"iso-8859-8-e"} = $name_to_mac_encoding{"iso-8859-8"};
-    #$name_to_mac_encoding{"iso-8859-8-i"} = $name_to_mac_encoding{"iso-8859-8"};
     
     close MAC_ENCODINGS;
 }

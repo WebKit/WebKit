@@ -1,5 +1,10 @@
 2002-08-28  Darin Adler  <darin@apple.com>
 
+        * kwq/mac-encodings.txt: Sort all the character set names alphabetically, and use all lower case.
+        * kwq/make-charset-table.pl: Require lower-case sorted lists of character set names.
+
+2002-08-28  Darin Adler  <darin@apple.com>
+
 	- fixed 3032148 -- Button not disabled in page
 
         * kwq/KWQWidget.mm: (QWidget::setEnabled): Call setEnabled:
