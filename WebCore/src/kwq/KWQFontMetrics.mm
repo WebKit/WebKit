@@ -368,7 +368,7 @@ int QFontMetrics::ascent() const
 int QFontMetrics::descent() const
 {
     if (data->descent < 0)
-        data->descent = -ROUND_TO_INT([data->font descender]);
+        data->descent = ROUND_TO_INT(-[data->font descender]);
     return data->descent;
 }
 
