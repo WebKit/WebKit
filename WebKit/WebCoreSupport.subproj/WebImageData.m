@@ -215,7 +215,7 @@ static CFDictionaryRef imageSourceOptions;
     return YES;
 }
 
-- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr adjustedSize:(CGSize)adjustedSize compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
 {    
     CGImageRef image = [self imageAtIndex:index];
     
@@ -224,16 +224,17 @@ static CFDictionaryRef imageSourceOptions;
 
     CGContextSaveGState (aContext);
 
-    //float w = CGImageGetWidth(image);
+    // Get the height of the portion of the image that is currently decoded.  This
+    // could be less that the actual height.
     float h = CGImageGetHeight(image);
 
     // Is the amount of available bands less than what we need to draw?  If so,
     // clip.
-    BOOL clipping = NO;
+    BOOL clipped = NO;
     if (h < fr.size.height) {
 	fr.size.height = h;
 	ir.size.height = h;
-	clipping = YES;
+	clipped = YES;
     }
     
     // Flip the coords.
@@ -248,9 +249,7 @@ static CFDictionaryRef imageSourceOptions;
     // If we're drawing a sub portion of the image then create
     // a image for the sub portion and draw that.
     // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
-    if (fr.origin.x != 0 || fr.origin.y != 0 || 
-	fr.size.width != ir.size.width || fr.size.height != fr.size.height ||
-	clipping) {
+    if (clipped == NO && (fr.size.width != adjustedSize.width || fr.size.height != adjustedSize.height)) {
         image = CGImageCreateWithImageInRect (image, fr);
         if (image) {
             CGContextDrawImage (aContext, ir, image);
@@ -263,6 +262,11 @@ static CFDictionaryRef imageSourceOptions;
     }
 
     CGContextRestoreGState (aContext);
+}
+
+- (void)drawImageAtIndex:(size_t)index inRect:(CGRect)ir fromRect:(CGRect)fr compositeOperation:(CGCompositeOperation)op context:(CGContextRef)aContext;
+{    
+    [self drawImageAtIndex:index inRect:ir fromRect:fr adjustedSize:[self size] compositeOperation:op context:aContext];
 }
 
 static void drawPattern (void * info, CGContextRef context)

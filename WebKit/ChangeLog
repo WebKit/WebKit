@@ -1,3 +1,16 @@
+2004-11-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3885073> REGRESSION: Tab images at top of news.com.com replicated and squished
+
+	Correctly account for scaled image size and clipping.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawImageInRect:fromRect:compositeOperator:context:]):
+
 2004-11-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
