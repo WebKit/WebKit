@@ -75,6 +75,18 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     return self;
 }
 
+- (BOOL)isEqual:(id)other
+{
+    WebCoreDOMNode *otherNode = (WebCoreDOMNode *)other;
+    return self == otherNode
+        || ([otherNode isMemberOfClass:[self class]] && impl == otherNode->impl);
+}
+
+- (unsigned)hash {
+    // cribbed from NSObject, FWIW
+    return ((unsigned)impl) >> 2;
+}
+
 - (DOM::NodeImpl *)impl
 {
     return impl;

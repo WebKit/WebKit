@@ -123,7 +123,7 @@
 
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
 
-    [self _loadDataSource:newDataSource withLoadType:loadType formValues:nil];
+    [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];
     [newDataSource release];
 }
 
@@ -160,7 +160,7 @@
 
     [newDataSource _setOverrideEncoding:[dataSource _overrideEncoding]];
     
-    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formValues:nil];
+    [self _loadDataSource:newDataSource withLoadType:WebFrameLoadTypeReload formState:nil];
 
     [newDataSource release];
 }

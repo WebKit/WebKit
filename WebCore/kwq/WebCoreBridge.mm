@@ -459,6 +459,18 @@ static bool initializedObjectCacheSize = FALSE;
     }
 }
 
+static NSView *viewForElement(DOM::ElementImpl *elementImpl)
+{
+    RenderObject *renderer = elementImpl->renderer();
+    if (renderer && renderer->isWidget()) {
+        QWidget *widget = static_cast<const RenderWidget *>(renderer)->widget();
+        if (widget) {
+            return widget->getView();
+        }
+    }
+    return nil;
+}
+
 static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>element)
 {
     ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
@@ -468,11 +480,21 @@ static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>elemen
     }
     return nil;
 }
-    
-- (BOOL)elementIsInLoginForm:(id <WebDOMElement>)element
+
+static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 {
-    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
-    return inputElement->form()->isLoginForm();
+    ASSERT([(NSObject *)element isKindOfClass:[WebCoreDOMElement class]]);
+    DOM::ElementImpl *domElement = [(WebCoreDOMElement *)element elementImpl];
+    if (idFromNode(domElement) == ID_FORM) {
+        return static_cast<HTMLFormElementImpl *>(domElement);
+    }
+    return nil;
+}
+
+- (BOOL)formIsLoginForm:(id <WebDOMElement>)element
+{
+    HTMLFormElementImpl *formElement = formElementFromDOMElement(element);
+    return formElement->isLoginForm();
 }
 
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element
@@ -481,6 +503,41 @@ static HTMLInputElementImpl *inputElementFromDOMElement(id <WebDOMElement>elemen
     return inputElement != nil
         && inputElement->inputType() == HTMLInputElementImpl::TEXT
         && inputElement->autoComplete();
+}
+
+- (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element;
+{
+    HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
+    return inputElement ? [WebCoreDOMElement elementWithImpl:inputElement->form()] : nil;
+}
+
+- (id <WebDOMElement>)currentForm
+{
+    HTMLFormElementImpl *formElement = _part->currentForm();
+    return formElement ? [WebCoreDOMElement elementWithImpl:formElement] : nil;
+}
+
+- (NSArray *)controlsInForm:(id <WebDOMElement>)form
+{
+    NSMutableArray *results = nil;
+    HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
+    if (formElement) {
+        QPtrList<HTMLGenericFormElementImpl> elements = formElement->formElements;
+        unsigned int i;
+        for (i = 0; i < elements.count(); i++) {
+            if (elements.at(i)->isEnumeratable()) {		// Skip option elements, other duds
+                NSView *view = viewForElement(elements.at(i));
+                if (view) {
+                    if (!results) {
+                        results = [NSMutableArray arrayWithObject:view];
+                    } else {
+                        [results addObject:view];
+                    }
+                }
+            }
+        }
+    }
+    return results;
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

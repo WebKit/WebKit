@@ -256,6 +256,7 @@
 {
     [secureField setStringValue:string];
     [super setStringValue:string];
+    widget->textChanged();
 }
 
 - (void)setFont:(NSFont *)font

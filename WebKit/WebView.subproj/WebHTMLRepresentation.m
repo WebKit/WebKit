@@ -123,9 +123,24 @@
     return [_private->bridge elementDoesAutoComplete:element];
 }
 
-- (BOOL)elementIsInLoginForm:(id <WebDOMElement>)element
+- (BOOL)formIsLoginForm:(id <WebDOMElement>)element
 {
-    return [_private->bridge elementIsInLoginForm:element];
+    return [_private->bridge formIsLoginForm:element];
+}
+
+- (id <WebDOMElement>)formForElement:(id <WebDOMElement>)element
+{
+    return [_private->bridge formForElement:element];
+}
+
+- (id <WebDOMElement>)currentForm;
+{
+    return [_private->bridge currentForm];
+}
+
+- (NSArray *)controlsInForm:(id <WebDOMElement>)form
+{
+    return [_private->bridge controlsInForm:form];
 }
 
 @end

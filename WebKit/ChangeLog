@@ -1,3 +1,49 @@
+7003-02-28  Trey Matteson  <trey@apple.com>
+
+	Various support for autofill/autocomplete.
+
+	We receive a form along with the formValues from WC on submit, which we
+	just pass along to the FormDelegate.  As part of this we store the values
+	and the form together in a new private WebFormState class.  Lots of glue
+	for passing this around instead of just the values dict.
+
+	Send willCloseLocationForDataSource when we are finally through with a page.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:reload:triggeringEvent:form:formValues:]):
+	Pass along form along with values
+        (-[WebBridge postWithURL:data:contentType:triggeringEvent:form:formValues:]):
+	Pass along form along with values
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady:]):  Call frame to send willCloseLocationForDataSource.
+        * WebView.subproj/WebFormDelegate.h:
+        * WebView.subproj/WebFormDelegate.m:
+        (-[WebFormDelegate frame:willSubmitForm:withValues:]):  Pass form along with values
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadRequest:]):  Pass FormState instead of just values.
+        (-[WebFrame reload]):  Pass FormState instead of just values.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        <<prepare-ChangeLog flailed on this file>>
+	Lots of routines were we pass FormState instead of the form values dict
+	-([WebFrame _closeOldDataSources]):  New, sends willCloseLocation for whole frame tree.
+	New, trivial, WebFormState class.
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation formIsLoginForm:]):  Changed to take form instead of form field.
+        (-[WebHTMLRepresentation formForElement:]):  New, just pass through bridge.
+        (-[WebHTMLRepresentation controlsInForm:]):    New, just pass through bridge.
+        * WebView.subproj/WebLocationChangeDelegate.h:  Add willCloseLocationForDataSource.
+        * WebView.subproj/WebLocationChangeDelegate.m:
+        (-[WebLocationChangeDelegate willCloseLocationForDataSource:]):  Default impl.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterNavigationPolicy:formState:]):
+	Pass FormState instead of just values.
+        (-[WebMainResourceClient resource:willSendRequest:]):
+	Pass FormState instead of just values.
+
 2003-02-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
@@ -26,6 +72,7 @@
 	_postWithURL:referrer:data:contentType:triggeringEvent:formValues:]):
 	Use passed-in referrer.
 
+>>>>>>> 1.1520
 2003-02-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

@@ -18,6 +18,8 @@
 
 - (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource { }
 
+- (void)willCloseLocationForDataSource:(WebDataSource *)dataSource { }
+
 - (void)locationChangedWithinPageForDataSource:(WebDataSource *)dataSource { }
 
 - (void)clientWillRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date forFrame:(WebFrame *)frame { }

@@ -460,22 +460,25 @@
     return _private->committed;
 }
 
--(void)_commitIfReady: (NSDictionary *)pageCache
+- (void)_commitIfReady: (NSDictionary *)pageCache
 {
     if (_private->loadingFromPageCache || (![self isDownloading] && _private->gotFirstByte && !_private->committed)) {
-        WebFrameLoadType loadType = [[self webFrame] _loadType];
+        WebFrame *frame = [self webFrame];
+        WebFrameLoadType loadType = [frame _loadType];
         bool reload = loadType == WebFrameLoadTypeReload
             || loadType == WebFrameLoadTypeReloadAllowingStaleData;
         
         NSDictionary *headers = [_private->response isKindOfClass:[WebHTTPResponse class]]
             ? [(WebHTTPResponse *)_private->response header] : nil;
 
+        [frame _closeOldDataSources];
+
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
         if (!pageCache)
             [self _makeRepresentation];
             
-        [[self webFrame] _transitionToCommitted: pageCache];
+        [frame _transitionToCommitted: pageCache];
 
 	NSString *urlString = [[_private->response URL] absoluteString];
 
@@ -491,7 +494,7 @@
                    lastModified:(pageCache ? nil : [_private->response lastModifiedDate])
                       pageCache:pageCache];
 
-        [[self webFrame] _opened];
+        [frame _opened];
     }
 }
 

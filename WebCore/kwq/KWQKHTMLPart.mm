@@ -36,11 +36,13 @@
 
 #import "WebCoreBridge.h"
 #import "WebCoreViewFactory.h"
+#import "WebCoreDOMPrivate.h"
 
 #import "KWQDummyView.h"
 #import "KWQKJobClasses.h"
 #import "KWQLogging.h"
 #import "KWQPageState.h"
+#import "KWQDOMNode.h"
 
 #import "xml/dom2_eventsimpl.h"
 
@@ -126,7 +128,8 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _sendingEventToSubview(false)
     , _mouseDownMayStartDrag(false)
     , _mouseDownMayStartSelect(false)
-    , _formValues(nil)
+    , _formValuesAboutToBeSubmitted(nil)
+    , _formAboutToBeSubmitted(nil)
 {
     // Must init the cache before connecting to any signals
     Cache::init();
@@ -144,7 +147,8 @@ KWQKHTMLPart::~KWQKHTMLPart()
     if (_ownsView) {
         delete d->m_view;
     }
-    [_formValues release];
+    [_formValuesAboutToBeSubmitted release];
+    [_formAboutToBeSubmitted release];
 }
 
 void KWQKHTMLPart::setSettings (KHTMLSettings *settings)
@@ -179,13 +183,13 @@ bool KWQKHTMLPart::openURL(const KURL &url)
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
-    [_bridge loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:NO triggeringEvent:nil formValues:nil];
+    [_bridge loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:NO triggeringEvent:nil form:nil formValues:nil];
     return true;
 }
 
 void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload triggeringEvent:nil formValues:nil];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload triggeringEvent:nil form:nil formValues:nil];
 }
 
 void KWQKHTMLPart::didNotOpenURL(const QString &URL)
@@ -195,18 +199,73 @@ void KWQKHTMLPart::didNotOpenURL(const QString &URL)
     }
 }
 
-void KWQKHTMLPart::clearRecordedFormValues()
+// Scans logically forward from "start", including any child frames
+static HTMLFormElementImpl *scanForForm(NodeImpl *start)
 {
-    [_formValues release];
-    _formValues = nil;
+    NodeImpl *n;
+    for (n = start; n; n = n->traverseNextNode()) {
+        NodeImpl::Id nodeID = idFromNode(n);
+        if (idFromNode(n) == ID_FORM) {
+            return static_cast<HTMLFormElementImpl *>(n);
+        } else if (n->isHTMLElement()
+                   && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
+            return static_cast<HTMLGenericFormElementImpl *>(n)->form();
+        } else if (nodeID == ID_FRAME || nodeID == ID_IFRAME) {
+            NodeImpl *childDoc = static_cast<HTMLFrameElementImpl *>(n)->contentDocument();
+            HTMLFormElementImpl *frameResult = scanForForm(childDoc);
+            if (frameResult) {
+                return frameResult;
+            }
+        }
+    }
+    return 0;
 }
 
-void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value)
+// We look for either the form containing the current focus, or for one immediately after it
+HTMLFormElementImpl *KWQKHTMLPart::currentForm() const
 {
-    if (!_formValues) {
-        _formValues = [[NSMutableDictionary alloc] init];
+    // start looking either at the active (first responder) node, or where the selection is
+    NodeImpl *start = activeNode().handle();
+    if (!start) {
+        start = selectionStart();
     }
-    [_formValues setObject:value.getNSString() forKey:name.getNSString()];
+
+    // try walking up the node tree to find a form element
+    NodeImpl *n;
+    for (n = start; n; n = n->parentNode()) {
+        if (idFromNode(n) == ID_FORM) {
+            return static_cast<HTMLFormElementImpl *>(n);
+        } else if (n->isHTMLElement()
+                   && static_cast<HTMLElementImpl *>(n)->isGenericFormElement()) {
+            return static_cast<HTMLGenericFormElementImpl *>(n)->form();
+        }
+    }
+
+    // try walking forward in the node tree to find a form element
+    if (!start) {
+        start = xmlDocImpl();
+    }
+    return scanForForm(start);
+}
+
+void KWQKHTMLPart::clearRecordedFormValues()
+{
+    [_formValuesAboutToBeSubmitted release];
+    _formValuesAboutToBeSubmitted = nil;
+    [_formAboutToBeSubmitted release];
+    _formAboutToBeSubmitted = nil;
+}
+
+void KWQKHTMLPart::recordFormValue(const QString &name, const QString &value, HTMLFormElementImpl *element)
+{
+    if (!_formValuesAboutToBeSubmitted) {
+        _formValuesAboutToBeSubmitted = [[NSMutableDictionary alloc] init];
+        ASSERT(!_formAboutToBeSubmitted);
+        _formAboutToBeSubmitted = [[WebCoreDOMElement elementWithImpl:element] retain];
+    } else {
+        ASSERT([_formAboutToBeSubmitted elementImpl] == element);
+    }
+    [_formValuesAboutToBeSubmitted setObject:value.getNSString() forKey:name.getNSString()];
 }
 
 void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
@@ -241,7 +300,8 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 	       referrer:[_bridge referrer] 
                  reload:args.reload
         triggeringEvent:_currentEvent
-            formValues:_formValues];
+                   form:_formAboutToBeSubmitted
+             formValues:_formValuesAboutToBeSubmitted];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
@@ -250,7 +310,8 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
                        data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
                 contentType:contentType.mid(14).getNSString()
             triggeringEvent:_currentEvent
-                 formValues:_formValues];
+                       form:_formAboutToBeSubmitted
+                 formValues:_formValuesAboutToBeSubmitted];
     }
     clearRecordedFormValues();
 }
@@ -275,7 +336,7 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
-    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload triggeringEvent:_currentEvent formValues:nil];
+    [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() referrer:[_bridge referrer] reload:args.reload triggeringEvent:_currentEvent form:nil formValues:nil];
 }
 
 class KWQPluginPart : public ReadOnlyPart

@@ -93,18 +93,20 @@ NodeImpl::Id HTMLFormElementImpl::id() const
 #if APPLE_CHANGES
 bool HTMLFormElementImpl::isLoginForm()
 {
-    // For now, we just look for a password field.  Perhaps we will want to also
-    // check for a small number of input fields as well?
+    int numPasswordFields = 0;
+    int numTextFields = 0;
     QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
     for (; it.current(); ++it) {
         if (it.current()->id() == ID_INPUT) {
             HTMLInputElementImpl *inputElt = static_cast<HTMLInputElementImpl*>(it.current());
             if (inputElt->inputType() == HTMLInputElementImpl::PASSWORD) {
-                return true;
+                numPasswordFields++;
+            } else if (inputElt->inputType() == HTMLInputElementImpl::TEXT) {
+                numTextFields++;
             }
         }
     }
-    return false;
+    return (numPasswordFields > 0) && (numTextFields == 1);
 }
 
 bool HTMLFormElementImpl::formWouldHaveSecureSubmission(DOMString url)
@@ -524,7 +526,7 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
         {
             HTMLInputElementImpl *input = static_cast<HTMLInputElementImpl *>(current);
 #if APPLE_CHANGES
-            KWQ(view->part())->recordFormValue(input->name().string(), input->value().string());
+            KWQ(view->part())->recordFormValue(input->name().string(), input->value().string(), this);
 #else
             view->addFormCompletionItem(input->name().string(), input->value().string());
 #endif

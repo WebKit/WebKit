@@ -61,6 +61,10 @@ public:
 
     virtual DOMString namespaceURI() const;
 
+#if APPLE_CHANGES
+    virtual bool isGenericFormElement() const { return false; }
+#endif
+
 protected:
     // for IMG, OBJECT and APPLET
     void addHTMLAlignment( DOMString alignment );

@@ -1,3 +1,53 @@
+2003-02-28  Trey Matteson  <trey@apple.com>
+
+	More support for autofill, autocomplete.
+
+	Pass the form element along with the values to WK when submitting.
+
+	isLoginForm looks for a single plain text field along with password fields, so as not to match registration forms.
+
+	Added means to find the "current" form on a page.
+
+	Added means to return the whole set of controls on a form.
+
+        Reviewed by Darin.
+
+        * khtml/html/html_elementimpl.h:
+	Added isGenericFormElement().
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::isLoginForm):  See above.
+        (HTMLFormElementImpl::submit):  Also register form when registering values,
+	so it will be sent over bridge.
+        * kwq/KWQKHTMLPart.h:  New ivar to save form along with form values to be submitted.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):  Init _formAboutToBeSubmitted ivar.
+        (KWQKHTMLPart::~KWQKHTMLPart):  Free _formAboutToBeSubmitted ivar.
+        (KWQKHTMLPart::openURL):  Pass form to bridge along with values.
+        (KWQKHTMLPart::openURLRequest):   Pass form to bridge along with values.
+        (scanForForm):  Helper function to scan forward in the DOM for a form.
+        (KWQKHTMLPart::currentForm):  Returns current form.
+        (KWQKHTMLPart::clearRecordedFormValues): Clear _formAboutToBeSubmitted.
+        (KWQKHTMLPart::recordFormValue): Record _formAboutToBeSubmitted too.
+        (KWQKHTMLPart::submitForm): Pass form to bridge along with values.
+        (KWQKHTMLPart::urlSelected):  Pass form to bridge along with values.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Pass form to bridge along with values.
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField setStringValue:]):
+	Call textChanged so the changes actually make it to khtml.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (viewForElement):  New helper.
+        (formElementFromDOMElement):    New helper.
+        (-[WebCoreBridge formIsLoginForm:]):
+	Changed API to operate on a form instead of a field.
+        (-[WebCoreBridge currentForm]):  New method, described above.
+        (-[WebCoreBridge controlsInForm:]):  New method, described above.
+        * kwq/WebCoreDOMNode.mm:
+        (-[WebCoreDOMNode isEqual:]):
+	Implement this to == compare the element we contain.
+        (-[WebCoreDOMNode hash]):  Implement to hash element ptr we contain.
+
 2003-02-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

@@ -55,6 +55,6 @@ static WebFormDelegate *sharedDelegate = nil;
     return NO;
 }
 
-- (void)frame:(WebFrame *)frame willSubmitFormWithValues:(NSDictionary *)values  { }
+- (void)frame:(WebFrame *)frame willSubmitForm:(id <WebDOMElement>)form withValues:(NSDictionary *)values  { }
 
 @end

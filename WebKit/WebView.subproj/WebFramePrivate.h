@@ -14,6 +14,8 @@
 @class WebHistoryItem;
 @class WebView;
 @class WebRequest;
+@class WebFormState;
+@protocol WebDOMElement;
 
 typedef enum {
     WebFrameStateProvisional,
@@ -68,7 +70,7 @@ typedef enum {
     WebRequest *policyRequest;
     id policyTarget;
     SEL policySelector;
-    NSDictionary *policyFormValues;
+    WebFormState *policyFormState;
 
     BOOL justOpenedForTargetedLink;
     BOOL quickRedirectComing;
@@ -100,6 +102,7 @@ typedef enum {
 - (WebFrame *)_descendantFrameNamed:(NSString *)name;
 - (void)_controllerWillBeDeallocated;
 - (void)_detachFromParent;
+- (void)_closeOldDataSources;
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
 - (void)_transitionToCommitted: (NSDictionary *)pageCache;
@@ -117,14 +120,14 @@ typedef enum {
 
 - (void)_addExtraFieldsToRequest:(WebRequest *)request alwaysFromRequest: (BOOL)f;
 
-- (void)_checkNavigationPolicyForRequest:(WebRequest *)request dataSource:(WebDataSource *)dataSource formValues:(NSDictionary *)values andCall:(id)target withSelector:(SEL)selector;
+- (void)_checkNavigationPolicyForRequest:(WebRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 
 - (void)_invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call;
 
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values;
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values;
 - (void)_loadURL:(NSURL *)URL intoChild:(WebFrame *)childFrame;
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event formValues:(NSDictionary *)values;
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values;
 
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory;
 - (void)_clientRedirectCancelled;
@@ -145,7 +148,7 @@ typedef enum {
 - (WebHistoryItem *)_itemForRestoringDocState;
 - (void)_handleUnimplementablePolicy:(WebPolicyAction)policy errorCode:(int)code forURL:(NSURL *)URL;
 
-- (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formValues:(NSDictionary *)values;
+- (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState;
 
 - (void)_downloadRequest:(WebRequest *)request toDirectory:(NSString *)directory;
 

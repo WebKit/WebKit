@@ -67,7 +67,7 @@
 - (void)receivedPageIcon:(NSImage *)image forDataSource:(WebDataSource *)dataSource;
 
 /*!
-    @method locationChangeDone:forDataSource
+    @method locationChangeDone:forDataSource:
     @abstract Notify that a location change is done (possibly with an error) for a data source
     @param error The error, if one occurred, or nil if none
     @param dataSource The data source that finished changing location
@@ -75,6 +75,15 @@
     subresources are done loading.
 */
 - (void)locationChangeDone:(WebError *)error forDataSource:(WebDataSource *)dataSource;
+
+/*!
+    @method willCloseLocationForDataSource:
+    @abstract Notify that a location will be closed.
+    @param dataSource The data source that where the location change originally happened
+    @discussion This callback happens right before WebKit is done with the data source
+    and the document representation that it contains.
+ */
+- (void)willCloseLocationForDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method locationChangedWithinPageForDataSource:

@@ -29,6 +29,7 @@
 #include "khtml_part.h"
 
 #include "dom_nodeimpl.h"
+#include "html_formimpl.h"
 
 #include <CoreFoundation/CoreFoundation.h>
 
@@ -51,6 +52,7 @@ namespace KJS {
 @class WebCoreBridge;
 @class KWQPageState;
 @class NSMutableDictionary;
+@class WebCoreDOMElement;
 #else
 class NSAttributedString;
 class NSEvent;
@@ -59,6 +61,7 @@ class NSView;
 class WebCoreBridge;
 class KWQPageState;
 class NSMutableDictionary;
+class WebCoreDOMElement;
 #endif
 
 enum KWQSelectionDirection {
@@ -176,8 +179,9 @@ public:
     static const QPtrList<KWQKHTMLPart> &instances() { return mutableInstances(); }
 
     void clearRecordedFormValues();
-    void recordFormValue(const QString &name, const QString &value);
-
+    void recordFormValue(const QString &name, const QString &value, DOM::HTMLFormElementImpl *element);
+    DOM::HTMLFormElementImpl *currentForm() const;
+    
     void setSettings (KHTMLSettings *s);
     
 private:
@@ -223,7 +227,8 @@ private:
 
     QString _submittedFormURL;
 
-    NSMutableDictionary *_formValues;
+    NSMutableDictionary *_formValuesAboutToBeSubmitted;
+    WebCoreDOMElement *_formAboutToBeSubmitted;
 
     static QPtrList<KWQKHTMLPart> &mutableInstances();
 
