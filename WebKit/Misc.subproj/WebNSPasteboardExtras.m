@@ -66,7 +66,7 @@ NSString *WebURLNamePboardType = nil;
             NSString *file = [files objectAtIndex:0];
             BOOL isDirectory;
             if([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && !isDirectory){
-                if ([WebCapabilities canShowFile:file]) {
+                if ([WebContentTypes canShowFile:file]) {
                     return [[NSURL fileURLWithPath:file] _web_canonicalize];
                 }
             }

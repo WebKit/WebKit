@@ -103,12 +103,6 @@
 - (NSString *)pageTitle;
 
 /*!
-    @method fileExtension
-    @result The extension based on the MIME type 
-*/
-- (NSString *)fileExtension;
-
-/*!
     @method mainDocumentError
     @result Returns a WebError associated with the load of the main document, or nil if no error occurred.
 */

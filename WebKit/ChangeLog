@@ -1,3 +1,29 @@
+2003-03-06  Richard Williamson   <rjw@apple.com>
+
+        API changes.  WebCapabilities -> WebContentTypes.
+        Move fileExtension from WebDataSource to WebContentTypes
+        
+        Reviewed by chris.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]):
+        * WebKit.exp:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (+[WebContentTypes suggestedFileExtensionForMIMEType:]):
+        (-[WebController supportsTextEncoding]):
+        (-[WebController setCustomTextEncodingName:]):
+        (-[WebController _mainFrameOverrideEncoding]):
+        (-[WebController customTextEncodingName]):
+        (-[WebController stringByEvaluatingJavaScriptFromString:]):
+        (-[WebController userAgentForURL:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+
 2003-03-06  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented WebDownload API.

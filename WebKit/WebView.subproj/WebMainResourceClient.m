@@ -162,7 +162,7 @@
 
     switch (contentPolicy) {
     case WebPolicyShow:
-	if (![WebCapabilities canShowMIMEType:[r contentType]]) {
+	if (![WebContentTypes canShowMIMEType:[r contentType]]) {
 	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;

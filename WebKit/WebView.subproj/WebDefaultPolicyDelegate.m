@@ -42,12 +42,12 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 	
 	if(isDirectory)
 	    return WebPolicyIgnore;
-	if([WebCapabilities canShowMIMEType:type])
+	if([WebContentTypes canShowMIMEType:type])
 	    return WebPolicyShow;
 	return WebPolicyIgnore;
     }
 
-    if ([WebCapabilities canShowMIMEType:type]) {
+    if ([WebContentTypes canShowMIMEType:type]) {
         return WebPolicyShow;
     } else {
         return WebPolicyIgnore;

@@ -132,11 +132,6 @@
     return _private->pageTitle;
 }
 
-- (NSString *)fileExtension
-{
-    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[[self response] contentType]];
-}
-
 - (WebError *)mainDocumentError
 {
     return _private->mainDocumentError;

@@ -55,13 +55,13 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 @interface WebController (WebPrivate)
 
 /*!
-@method frameForDataSource:
- @abstract Return the frame associated with the data source.
- @discussion Traverses the frame tree to find the frame associated
- with a datasource.
- @param datasource The datasource to  match against each frame.
- @result The frame that has the associated datasource.
- */
+    @method frameForDataSource:
+    @abstract Return the frame associated with the data source.
+    @discussion Traverses the frame tree to find the frame associated
+    with a datasource.
+    @param datasource The datasource to  match against each frame.
+    @result The frame that has the associated datasource.
+*/
 - (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource;
 
     /*!

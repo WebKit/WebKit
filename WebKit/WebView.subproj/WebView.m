@@ -30,6 +30,7 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSUserDefaultsExtras.h>
 #import <WebFoundation/WebResource.h>
 
@@ -54,7 +55,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 
 
-@implementation WebCapabilities
+@implementation WebContentTypes
+
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
     if([WebView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){
@@ -74,6 +76,11 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
     MIMEType = [WebController _MIMETypeForFile:path];
     return [[self class] canShowMIMEType:MIMEType];
+}
+
++ (NSString *)suggestedFileExtensionForMIMEType: (NSString *)type
+{
+    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
 }
 
 @end
@@ -304,13 +311,51 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return [[_private->userAgentOverride retain] autorelease];
 }
 
+- (BOOL)supportsTextEncoding
+{
+    id documentView = [[[self mainFrame] webView] documentView];
+    return [documentView conformsToProtocol:@protocol(WebDocumentText)]
+        && [documentView supportsTextEncoding];
+}
+
+- (void)setCustomTextEncodingName:(NSString *)encoding
+{
+    NSString *oldEncoding = [self customTextEncodingName];
+    if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding]) {
+        return;
+    }
+    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
+}
+
+- (NSString *)_mainFrameOverrideEncoding
+{
+    WebDataSource *dataSource = [[self mainFrame] provisionalDataSource];
+    if (dataSource == nil) {
+        dataSource = [[self mainFrame] dataSource];
+    }
+    if (dataSource == nil) {
+        return nil;
+    }
+    return [dataSource _overrideEncoding];
+}
+
+- (NSString *)customTextEncodingName
+{
+    return [self _mainFrameOverrideEncoding];
+}
+
+- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
+{
+    return [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
+}
+
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
     if (_private->userAgentOverride) {
         return [[_private->userAgentOverride retain] autorelease];
     }
-
+    
     // Look to see if we need to spoof.
     // First step is to get the host as a C-format string.
     UserAgentStringType type = Safari;
@@ -351,16 +396,16 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
             }
         }
     }
-    
+
     NSString **userAgentStorage = &_private->userAgent[type];
 
     NSString *userAgent = *userAgentStorage;
     if (userAgent) {
         return [[userAgent retain] autorelease];
     }
-
-    // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
     
+    // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
+
     NSString *language = [NSUserDefaults _web_preferredLanguageCode];
     id sourceVersion = [[NSBundle bundleForClass:[WebController class]]
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
@@ -395,47 +440,9 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
             }
             break;
     }
-    
+
     *userAgentStorage = [userAgent retain];
     return userAgent;
-}
-
-- (BOOL)supportsTextEncoding
-{
-    id documentView = [[[self mainFrame] webView] documentView];
-    return [documentView conformsToProtocol:@protocol(WebDocumentText)]
-        && [documentView supportsTextEncoding];
-}
-
-- (void)setCustomTextEncodingName:(NSString *)encoding
-{
-    NSString *oldEncoding = [self customTextEncodingName];
-    if (encoding == oldEncoding || [encoding isEqualToString:oldEncoding]) {
-        return;
-    }
-    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
-}
-
-- (NSString *)_mainFrameOverrideEncoding
-{
-    WebDataSource *dataSource = [[self mainFrame] provisionalDataSource];
-    if (dataSource == nil) {
-        dataSource = [[self mainFrame] dataSource];
-    }
-    if (dataSource == nil) {
-        return nil;
-    }
-    return [dataSource _overrideEncoding];
-}
-
-- (NSString *)customTextEncodingName
-{
-    return [self _mainFrameOverrideEncoding];
-}
-
-- (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script
-{
-    return [[[self mainFrame] _bridge] stringByEvaluatingJavaScriptFromString:script];
 }
 
 @end
