@@ -97,14 +97,22 @@
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [loader receivedResponse:r];
     [super connection:con didReceiveResponse:r];
+    [self release];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [loader addData:data];
     [super connection:con didReceiveData:data];
+    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con

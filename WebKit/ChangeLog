@@ -1,3 +1,57 @@
+2003-06-05  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3266216 -- repro crash in 
+	-[WebBaseResourceHandleDelegate connection:didReceiveData:] 
+	in GIA Application
+
+	The problem was that an NSURLConnection delegate object (in this 
+	case a WebMainResourceClient) was being dealloc'ed during one of
+	its connection delegate methods. To prevent this kind of problem,
+	I added [self retain]/[self release] guards around the meat of
+	all of the connection delegate methods in which arbitrary code
+	could be run. Another approach would be to do this retain/release
+	pair in NSURLConnection, but Darin deemed it wiser not to muck with
+	Foundation at this point for this issue.
+
+        Reviewed by Darin
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]):
+	guard with [self retain]/[self release]
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveData:]):
+	ditto
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]):
+	ditto
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient connection:didReceiveResponse:]):
+	ditto
+        (-[WebSubresourceClient connection:didReceiveData:]):
+	ditto
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+	ditto
+        (-[WebBaseResourceHandleDelegate connection:didReceiveAuthenticationChallenge:]):
+	ditto
+        (-[WebBaseResourceHandleDelegate connection:didCancelAuthenticationChallenge:]):
+	ditto
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+	ditto
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:]):
+	ditto. Also, commented out two assertions that fire illegitimately in the steps in
+	this bug report.
+        (-[WebBaseResourceHandleDelegate connection:didFailWithError:]):
+	ditto
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:willSendRequest:redirectResponse:]):
+	ditto
+        (-[WebMainResourceClient connection:didReceiveResponse:]):
+	ditto
+        (-[WebMainResourceClient connection:didReceiveData:]):
+	ditto
+
 2003-06-04  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3277775.  Send less notifications.  Notifcations suck!

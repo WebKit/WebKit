@@ -110,6 +110,10 @@
     // callbacks is meant to prevent.
     ASSERT(newRequest != nil);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
+
     NSURL *URL = [newRequest URL];
 
     LOG(Redirect, "URL = %@", URL);
@@ -154,6 +158,7 @@
                                                     andCall:self
                                                withSelector:@selector(continueAfterNavigationPolicy:formState:)];
 
+    [self release];
     return newRequest;
 }
 
@@ -238,10 +243,14 @@
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [dataSource _setResponse:r];
     _contentLength = [r expectedContentLength];
 
     [self checkContentPolicyForResponse:r];
+    [self release];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
@@ -254,6 +263,9 @@
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource _URL], data, [data length]);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [dataSource _receivedData:data];
     [[dataSource _webView] _mainReceivedBytesSoFar:[[dataSource data] length]
                                        fromDataSource:dataSource
@@ -263,6 +275,7 @@
     _bytesReceived += [data length];
 
     LOG(Loading, "%d of %d", _bytesReceived, _contentLength);
+    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con

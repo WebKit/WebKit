@@ -94,18 +94,26 @@
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)theResponse
 {
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain]; 
     [stream setResponse:theResponse];
     [super connection:con didReceiveResponse:theResponse];
+    [self release];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     if ([stream transferMode] == NP_ASFILE || [stream transferMode] == NP_ASFILEONLY) {
         [resourceData appendData:data];
     }
 
     [stream receivedData:data];
     [super connection:con didReceiveData:data];
+    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
@@ -117,9 +125,13 @@
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)result
 {
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [[view webView] _receivedError:result fromDataSource:[view dataSource]];
     [stream receivedError:NPRES_NETWORK_ERR];
     [super connection:con didFailWithError:result];
+    [self release];
 }
 
 - (void)cancel

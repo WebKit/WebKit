@@ -179,6 +179,10 @@
     NSURLRequest *clientRequest, *updatedRequest;
     BOOL haveDataSchemeRequest = NO;
     
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
+
     [mutableRequest setHTTPUserAgent:[webView userAgentForURL:[newRequest URL]]];
     newRequest = [mutableRequest autorelease];
 
@@ -223,7 +227,8 @@
     else {
         request = nil;
     }
-    
+
+    [self release];
     return request;
 }
 
@@ -235,6 +240,9 @@
     ASSERT(!currentConnectionChallenge);
     ASSERT(!currentWebChallenge);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     currentConnectionChallenge = [challenge retain];;
     currentWebChallenge = [[NSURLAuthenticationChallenge alloc] initWithAuthenticationChallenge:challenge sender:self];
 
@@ -243,6 +251,7 @@
     } else {
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     }
+    [self release];
 }
 
 -(void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
@@ -254,17 +263,25 @@
     ASSERT(currentWebChallenge);
     ASSERT(currentConnectionChallenge = challenge);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
         [resourceLoadDelegate webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     } else {
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
     }
+    [self release];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
+
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain]; 
 
     // If the URL is one of our whacky applewebdata URLs that
     // fake up a substitute URL to present to the delegate.
@@ -288,19 +305,27 @@
         [resourceLoadDelegate webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
     else
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+    [self release];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
 {
-    ASSERT(con == connection);
-    ASSERT(!reachedTerminalState);
+    // The following assertions are not quite valid here, since a subclass
+    // might override didReceiveData: in a way that invalidates them. This
+    // happens with the steps listed in 3266216
+    // ASSERT(con == connection);
+    // ASSERT(!reachedTerminalState);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [webView _incrementProgressForConnection:con data:data];
 
     if (implementations.delegateImplementsDidReceiveContentLength)
         [resourceLoadDelegate webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
     else
         [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:webView resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+    [self release];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
@@ -329,11 +354,15 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
+    // retain/release self in this delegate method since the additional processing can do
+    // anything including possibly releasing self; one example of this is 3266216
+    [self retain];
     [webView _completeProgressForConnection:con];
 
     [[webView _resourceLoadDelegateForwarder] webView:webView resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     [self releaseResources];
+    [self release];
 }
 
 - (void)cancelWithError:(NSError *)error
