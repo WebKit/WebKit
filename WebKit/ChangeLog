@@ -1,3 +1,17 @@
+2003-03-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3205745 -- WebKit.framework's Localizable.strings file contains high ASCII in the Key definition.
+
+        * English.lproj/Localizable.strings: Regenerated with the new version of the
+        extract-localizable-strings tool that uses \U syntax instead of "high ASCII".
+
+        - changed cursive font back to "Apple Chancery" for now
+        
+        * WebView.subproj/WebPreferences.m: (+[WebPreferences initialize]): Change to "Apple Chancery".
+        * English.lproj/StringsNotToBeLocalized.txt: Update for above change.
+
 2003-03-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
