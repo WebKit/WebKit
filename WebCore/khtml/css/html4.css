@@ -332,6 +332,10 @@ BUTTON:active {
         border-style: inset;
 }
 
+INPUT, TEXTAREA {
+        text-align: -khtml-auto;
+}
+
 /* XXX Need to implement support for CSS2 system fonts, so that I don't have to hard code this.
    -dwh */
 INPUT, TEXTAREA, SELECT, BUTTON {

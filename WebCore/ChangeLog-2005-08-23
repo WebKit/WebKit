@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        - follow-on to the text-align change I did earlier today
+
+        * khtml/css/html4.css: Set input and textarea so they do not inherit text-align
+        from their parent by doing "text-align: -khtml-auto". This fixes google.com among others.
+
+2004-01-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3539414>: pop-up windows appear very narrow because of bogus width (carad.com/ebaymotors)
 
         * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Check the "OK" result from toFloat in
