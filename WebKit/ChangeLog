@@ -1,5 +1,22 @@
 2002-09-25  Ken Kocienda  <kocienda@apple.com>
 
+        Moving to the new WebResourceHandleDelegate API.
+
+        This change moves all WebResourceHandleDelegate implementors to:
+
+        - (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result;
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader handle:didFailLoadingWithError:])
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:])
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handle:didFailLoadingWithError:])
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didFailLoadingWithError:])
+
+2002-09-25  Ken Kocienda  <kocienda@apple.com>
+
         Begin change from WebResourceClient to WebResourceHandleDelegate.
         In this step, I have just changed the name of the protocol; the
         protocol interface is the same. 

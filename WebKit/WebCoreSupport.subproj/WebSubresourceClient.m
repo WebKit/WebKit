@@ -147,7 +147,7 @@
     [self release];
 }
 
-- (void)handleDidFailLoading:(WebResourceHandle *)h withError:(WebError *)error
+- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
 {
     ASSERT(handle == h);
     ASSERT([currentURL isEqual:[handle URL]]);

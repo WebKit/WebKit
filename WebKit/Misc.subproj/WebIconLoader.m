@@ -118,7 +118,7 @@
     [_private->resourceData appendData:data];
 }
 
-- (void)handleDidFailLoading:(WebResourceHandle *)sender withError:(WebError *)result
+- (void)handle:(WebResourceHandle *)sender didFailLoadingWithError:(WebError *)result
 {
 }
 

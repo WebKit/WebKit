@@ -337,7 +337,7 @@
     resource = nil;
 }
 
-- (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)result
+- (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
 {
     ASSERT(resource == handle);
     

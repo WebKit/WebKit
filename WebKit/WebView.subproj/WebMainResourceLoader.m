@@ -271,7 +271,7 @@
     isFirstChunk = NO;
 }
 
-- (void)handleDidFailLoading:(WebResourceHandle *)handle withError:(WebError *)result
+- (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
 {
     LOG(Loading, "URL = %@, result = %@", [handle URL], [result errorDescription]);
 
