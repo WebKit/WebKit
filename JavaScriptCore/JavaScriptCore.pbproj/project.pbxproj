@@ -12,9 +12,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -23,8 +21,6 @@
 			buildRules = (
 			);
 			buildSettings = {
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -112,6 +108,7 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				F692A8D8025563E401FF60F7,
+				6573C62F03A0BDCD00FCA39F,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -123,7 +120,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
@@ -132,6 +129,7 @@
 				PREFIX_HEADER = JavaScriptCorePrefix.h;
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
 				WRAPPER_EXTENSION = framework;
@@ -140,7 +138,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = JavaScriptCore;
-			productInstallPath = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+			productInstallPath = "@executable_path/../Frameworks";
 			productName = JavaScriptCore;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -594,6 +592,19 @@
 			settings = {
 			};
 		};
+		6573C62F03A0BDCD00FCA39F = {
+			buildActionMask = 8;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "ditto ${SYMROOT}/JavaScriptCore.framework ${DSTROOT}/AppleInternal/Library/Frameworks/JavaScriptCore.framework";
+		};
 //650
 //651
 //652
@@ -747,8 +758,6 @@
 			buildRules = (
 			);
 			buildSettings = {
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				SKIP_INSTALL = YES;
 				i386 = YES;
 				ppc = YES;
 			};
@@ -822,9 +831,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O";
-				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;

@@ -1,3 +1,15 @@
+2002-12-06  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by: Darin Adler
+
+	- made framework embedding work correctly with buildit
+
+        * WebKit.pbproj/project.pbxproj: Give framework a relative
+	install path, don't install it the normal way, and copy it
+	manually to /AppleInternal/Library/Frameworks if installing. Also
+	look for other frameworks in
+	${DSTROOT}/AppleInternal/Library/Frameworks.
+
 2002-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

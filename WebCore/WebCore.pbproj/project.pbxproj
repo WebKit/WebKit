@@ -13,10 +13,7 @@
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
-				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
-				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
-				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -25,9 +22,6 @@
 			buildRules = (
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -121,6 +115,7 @@
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
 				255AF6590250FC030ECA149E,
+				6573C63B03A0BE5700FCA39F,
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -129,11 +124,11 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXPORTED_SYMBOLS_FILE = WebCore.exp;
-				FRAMEWORK_SEARCH_PATHS = "";
+				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}/AppleInternal/Library/Frameworks\"";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = ForwardingHeaders;
-				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
+				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
@@ -142,6 +137,7 @@
 				PREFIX_HEADER = WebCorePrefix.h;
 				PRODUCT_NAME = WebCore;
 				SECTORDER_FLAGS = "";
+				SKIP_INSTALL = YES;
 				USE_GCC3_PFE_SUPPORT = YES;
 				WARNING_CFLAGS = "$(WARNING_COMMONFLAGS)";
 				WARNING_COMMONFLAGS = "-Werror -Wall -W -Wcast-align -Wchar-subscripts -Wformat-security -Wmissing-format-attribute -Wmissing-prototypes -Wpointer-arith -Wwrite-strings -Wno-format-y2k -Wno-unused-parameter";
@@ -872,6 +868,19 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		6573C63B03A0BE5700FCA39F = {
+			buildActionMask = 8;
+			files = (
+			);
+			generatedFileNames = (
+			);
+			isa = PBXShellScriptBuildPhase;
+			neededFileNames = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+			shellPath = /bin/sh;
+			shellScript = "ditto ${SYMROOT}/WebCore.framework ${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework";
 		};
 //650
 //651
@@ -4104,9 +4113,6 @@
 			buildRules = (
 			);
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
-				INSTALL_PATH = "@executable_path/../Frameworks";
-				SKIP_INSTALL = YES;
 				i386 = YES;
 				ppc = YES;
 			};
@@ -7643,10 +7649,7 @@
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
-				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
-				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O";
-				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;
