@@ -1,3 +1,19 @@
+2002-09-05  Ken Kocienda  <kocienda@apple.com>
+
+        The first use of the WebResourceResponse object. This is just a baby step, though.
+        I only use one variable in the new class, the statusCode, but all the code in
+        the framework has been updated to use the statusCode from the response object.
+
+	Each of these methods was modified to call through to a WebResourceResponse to get 
+	the status code.
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidFinishLoading:])
+        * WebView.subproj/WebLoadProgress.m:
+        (-[WebLoadProgress initWithResourceHandle:])
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:])
+
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
         
         Only disable timed expiration of CG glyph cache if SPI is available.

@@ -6,6 +6,7 @@
 #import <WebKit/WebLoadProgress.h>
 
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @implementation WebLoadProgress
 
@@ -29,7 +30,7 @@
 - (id)initWithResourceHandle:(WebResourceHandle *)handle
 {
     int b = [handle contentLengthReceived];
-    int t = [handle statusCode] == WebResourceHandleStatusLoadComplete ? b : [handle contentLength];
+    int t = [[handle response] statusCode] == WebResourceHandleStatusLoadComplete ? b : [handle contentLength];
     return [self initWithBytesSoFar:b totalToLoad:t];
 }
 

@@ -21,6 +21,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 // FIXME: This is quite similar to WebSubresourceClient; they should share code.
 
@@ -143,7 +144,7 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "URL = %s\n", DEBUG_OBJECT([handle URL]));
     
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
-    WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
+    WEBKIT_ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     

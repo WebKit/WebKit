@@ -11,6 +11,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
@@ -133,7 +134,7 @@
 - (void)handleDidFinishLoading:(WebResourceHandle *)handle
 {    
     WEBKIT_ASSERT([currentURL isEqual:[handle URL]]);
-    WEBKIT_ASSERT([handle statusCode] == WebResourceHandleStatusLoadComplete);
+    WEBKIT_ASSERT([[handle response] statusCode] == WebResourceHandleStatusLoadComplete);
 
     [loader finish];
     
