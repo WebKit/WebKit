@@ -73,6 +73,8 @@
         * layout-tests/editing/pasteboard/paste-line-endings-010-expected.txt: Added.
         * layout-tests/editing/pasteboard/paste-line-endings-010.html: Added.
 
+=== Safari-405 ===
+
 2005-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.
@@ -80,8 +82,6 @@
         - fixed <rdar://problem/4037700> Every character typed causes stat call for /usr/share/icu/icudt32b_char.brk
 
         * khtml/rendering/render_text.cpp: (getCharacterBreakIterator): Set boolean "got iterator" to true.
-
-=== Safari-405 ===
 
 2005-03-10  Darin Adler  <darin@apple.com>
 
