@@ -7,6 +7,7 @@
 #import <WebKit/WebNSURLExtras.h>
 
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebNSDataExtras.h>
 
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLProtocolPrivate.h>
@@ -523,6 +524,120 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
 - (BOOL)_webkit_shouldLoadAsEmptyDocument
 {
     return [[self _web_originalDataAsString] _web_hasCaseInsensitivePrefix:@"about:"] || [self _web_isEmpty];
+}
+
+-(BOOL)_web_hasQuestionMarkOnlyQueryString
+{
+    CFRange rangeWithSeparators;
+    CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentQuery, &rangeWithSeparators);
+    if (rangeWithSeparators.location != kCFNotFound && rangeWithSeparators.length == 1) {
+        return YES;
+    }
+    return NO;
+}
+
+-(NSData *)_web_schemeSeparatorWithoutColon
+{
+    NSData *result = nil;
+    CFRange rangeWithSeparators;
+    CFRange range = CFURLGetByteRangeForComponent((CFURLRef)self, kCFURLComponentScheme, &rangeWithSeparators);
+    if (rangeWithSeparators.location != kCFNotFound) {
+        NSString *absoluteString = [self absoluteString];
+        NSRange separatorsRange = NSMakeRange(range.location + range.length + 1, rangeWithSeparators.length - range.length - 1);
+        if (separatorsRange.location + separatorsRange.length <= [absoluteString length]) {
+            NSString *slashes = [absoluteString substringWithRange:separatorsRange];
+            result = [slashes dataUsingEncoding:NSISOLatin1StringEncoding];
+        }
+    }
+    return result;
+}
+
+#define completeURL (CFURLComponentType)-1
+
+-(NSData *)_web_dataForURLComponentType:(CFURLComponentType)componentType
+{
+    static int URLComponentTypeBufferLength = 2048;
+    
+    UInt8 staticAllBytesBuffer[URLComponentTypeBufferLength];
+    UInt8 *allBytesBuffer = staticAllBytesBuffer;
+    
+    CFIndex bytesFilled = CFURLGetBytes((CFURLRef)self, allBytesBuffer, URLComponentTypeBufferLength);
+    if (bytesFilled == -1) {
+        CFIndex bytesToAllocate = CFURLGetBytes((CFURLRef)self, NULL, 0);
+        allBytesBuffer = malloc(bytesToAllocate);
+        bytesFilled = CFURLGetBytes((CFURLRef)self, allBytesBuffer, bytesToAllocate);
+    }
+    
+    CFRange range;
+    if (componentType != completeURL) {
+        range = CFURLGetByteRangeForComponent((CFURLRef)self, componentType, NULL);
+        if (range.location == kCFNotFound) {
+            return nil;
+        }
+    }
+    else {
+        range.location = 0;
+        range.length = bytesFilled;
+    }
+    
+    NSData *componentData = [NSData dataWithBytes:allBytesBuffer + range.location length:range.length]; 
+    
+    const unsigned char *bytes = [componentData bytes];
+    NSMutableData *resultData = [NSMutableData data];
+    // NOTE: add leading '?' to query strings non-zero length query strings.
+    // NOTE: retain question-mark only query strings.
+    if (componentType == kCFURLComponentQuery) {
+        if (range.length > 0 || [self _web_hasQuestionMarkOnlyQueryString]) {
+            [resultData appendBytes:"?" length:1];    
+        }
+    }
+    int i;
+    for (i = 0; i < range.length; i++) {
+        unsigned char c = bytes[i];
+        if (c <= 0x20 || c >= 0x7f) {
+            char escaped[3];
+            escaped[0] = '%';
+            escaped[1] = hexDigit(c >> 4);
+            escaped[2] = hexDigit(c & 0xf);
+            [resultData appendBytes:escaped length:3];    
+        }
+        else {
+            char b[1];
+            b[0] = c;
+            [resultData appendBytes:b length:1];    
+        }               
+    }
+    
+    if (staticAllBytesBuffer != allBytesBuffer) {
+        free(allBytesBuffer);
+    }
+    
+    return resultData;
+}
+
+-(NSData *)_web_schemeData
+{
+    return [self _web_dataForURLComponentType:kCFURLComponentScheme];
+}
+
+-(NSData *)_web_hostData
+{
+    NSData *result = [self _web_dataForURLComponentType:kCFURLComponentHost];
+    NSData *scheme = [self _web_schemeData];
+    // Take off localhost for file
+    if ([scheme _web_isCaseInsensitiveEqualToCString:"file"]) {
+        return ([result _web_isCaseInsensitiveEqualToCString:"localhost"]) ? nil : result;
+    }
+    return result;
+}
+
+- (NSString *)_web_hostString
+{
+    NSData *data = [self _web_hostData];
+    if (!data) {
+        data = [NSData data];
+    }
+    return [[[NSString alloc] initWithData:[self _web_hostData] encoding:NSUTF8StringEncoding] autorelease];
 }
 
 @end

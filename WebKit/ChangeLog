@@ -1,3 +1,39 @@
+2003-11-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+
+        <rdar://problem/3481701>: Crashes before loading page/no error msg
+        (forums.pelicanparts.com) Works in IE and Netscape
+
+        This fix is really a workaround for this bug:
+
+        <rdar://problem/3484937>: Horribly malformed URL crashes when call
+        is made to CFURLCopyHostName
+
+        The fix is to avoid all usages of [NSURL host] by replacing all
+        such calls with a private URL method added to WebNSURLExtras.
+
+	I copied a number of URL methods from the private NSURL
+	extras file in Foundation to the WebKit URL extras file.
+
+        * Misc.subproj/WebNSDataExtras.h: Added. Helper for new URL extras.
+        * Misc.subproj/WebNSDataExtras.m: Ditto.
+        (-[NSData _web_isCaseInsensitiveEqualToCString:]): New helper.
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_hasQuestionMarkOnlyQueryString]): Added.
+        (-[NSURL _web_schemeSeparatorWithoutColon]): Added.
+        (-[NSURL _web_dataForURLComponentType:]): Added.
+        (-[NSURL _web_schemeData]): Added.
+        (-[NSURL _web_hostData]): Added.
+        (-[NSURL _web_hostString]): Added.
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebView.m:
+        (-[WebView userAgentForURL:]): Replace call to [NSURL host] with new
+	extras _web_hostString method.
+
 === Safari-114 ===
 
 2003-11-14  Vicki Murley <vicki@apple.com>

@@ -20,6 +20,9 @@
 - (NSString *)_web_originalDataAsString;
 - (const char *)_web_URLCString;
 
+- (NSData *)_web_hostData;
+- (NSString *)_web_hostString;
+
 - (NSString *)_web_userVisibleString;
 
 - (BOOL)_web_isEmpty;

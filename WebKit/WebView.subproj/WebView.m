@@ -1517,7 +1517,7 @@ NS_ENDHANDLER
     // Look to see if we need to spoof.
     // First step is to get the host as a C-format string.
     UserAgentStringType type = Safari;
-    NSString *host = [URL host];
+    NSString *host = [URL _web_hostString];
     char hostBuffer[256];
     if (host && CFStringGetCString((CFStringRef)host, hostBuffer, sizeof(hostBuffer), kCFStringEncodingASCII)) {
         // Next step is to find the last part of the name.
