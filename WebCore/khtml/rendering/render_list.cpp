@@ -121,7 +121,7 @@ static QString toHebrew( int number ) {
 // -------------------------------------------------------------------------
 
 RenderListItem::RenderListItem(DOM::NodeImpl* node)
-    : RenderFlow(node)
+    : RenderFlow(node), _notInList(false)
 {
     // init RenderObject attributes
     setInline(false);   // our object is not Inline
@@ -367,7 +367,7 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
     RenderObject* listItem = 0;
     int leftLineOffset = 0;
     int rightLineOffset = 0;
-    if (style()->listStylePosition() == OUTSIDE) {
+    if (!isInside()) {
         listItem = this;
         int yOffset = 0;
         int xOffset = 0;
@@ -411,7 +411,7 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
     int xoff = 0;
     int yoff = fm.ascent() - offset;
 
-    if(style()->listStylePosition() == OUTSIDE)
+    if (!isInside())
         if (listItem->style()->direction() == LTR)
             xoff = -7 - offset;
         else 
@@ -424,7 +424,7 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
         // For LTR don't forget to add in the width of the image to the offset as
         // well (you are moving the image left, so you have to also add in the width
         // of the image's border box as well). -dwh
-        if (style()->listStylePosition() == OUTSIDE) {
+        if (!isInside()) {
             if (style()->direction() == LTR)
                 xoff -= m_listImage->pixmap().width() - fm.ascent()*1/3;
             else
@@ -468,7 +468,7 @@ void RenderListMarker::paintObject(QPainter *p, int, int _y,
 #else
        	    //_ty += fm.ascent() - fm.height()/2 + 1;
 #endif
-            if (style()->listStylePosition() == INSIDE) {
+            if (isInside()) {
             	if( style()->direction() == LTR)
                     p->drawText(_tx, _ty, 0, 0, Qt::AlignLeft|Qt::DontClip, m_item);
             	else
@@ -515,7 +515,7 @@ void RenderListMarker::calcMinMaxWidth()
     m_width = 0;
 
     if(m_listImage) {
-        if(style()->listStylePosition() == INSIDE)
+        if (isInside())
             m_width = m_listImage->pixmap().width() + 5;
         m_height = m_listImage->pixmap().height();
         m_minWidth = m_maxWidth = m_width;
@@ -534,7 +534,7 @@ void RenderListMarker::calcMinMaxWidth()
     case DISC:
     case CIRCLE:
     case SQUARE:
-        if(style()->listStylePosition() == INSIDE) {
+        if (isInside()) {
             m_width = m_height; //fm.ascent();
         }
     	goto end;
@@ -585,7 +585,7 @@ void RenderListMarker::calcMinMaxWidth()
     }
     m_item += QString::fromLatin1(". ");
 
-    if(style()->listStylePosition() == INSIDE)
+    if (isInside())
         m_width = fm.width(m_item);
 
 end:
@@ -614,6 +614,11 @@ short RenderListMarker::baselinePosition(bool b) const
         return height()+marginTop()+marginBottom();
     // FIXME: This should one day really align.
     return RenderBox::baselinePosition(b);
+}
+
+bool RenderListMarker::isInside() const
+{
+    return m_listItem->notInList() || style()->listStylePosition() == INSIDE;
 }
 
 #undef BOX_DEBUG

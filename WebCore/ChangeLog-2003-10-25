@@ -2,6 +2,35 @@
 
         Reviewed by Don.
 
+	- fixed 3130566 -- REGRESSION: list item numbers are overlapping the text of the list items
+
+	Moved the hack that handles list items that are not in lists out of the parser and into
+	the DOM and Render tree code itself. This fixes the issue where the parser doesn't know which
+	will be the parent node of the list item, and other problems with the old hack.
+
+        * khtml/html/html_listimpl.cpp: (HTMLLIElementImpl::attach): Find the parent list (OL or UL).
+	If there is no parent list, set a "not in list" flag on the render object so it knows to render
+	"inside" no matter what the style says. Also use this parent and a safer check to make the
+	start attribute work even when there is an intervening DOM element in the hierarchy.
+
+        * khtml/html/htmlparser.cpp: (KHTMLParser::getElement): Remove the code that tries to set
+	the style of an LI based on the current node at the time it's parsed, because the current node
+	is now often not the OL or the UL due to our DTD fix to allow other nodes in lists.
+
+        * khtml/rendering/render_list.h: Add isInside() to RenderListMarker, setNotInList(), notInList(),
+	and _notInList to RenderListItem.
+
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::RenderListItem): Initialize _notInList to false.
+        (RenderListMarker::paintObject): Use isInside() instead of checking listStylePosition().
+        (RenderListMarker::calcMinMaxWidth): Ditto.
+        (RenderListMarker::baselinePosition): Ditto.
+        (RenderListMarker::isInside): Return true if we are not in a list, or if "inside" style is requested.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
 	- fixed 3134346 -- country menu at www.apple.com does not work when you go back to that page
 
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::openURLFromPageCache): Add call to checkCompleted().

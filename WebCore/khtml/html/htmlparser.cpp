@@ -896,10 +896,7 @@ NodeImpl *KHTMLParser::getElement(Token* t)
     case ID_LI:
     {
         popBlock(ID_LI);
-        HTMLElementImpl *e = new HTMLLIElementImpl(document);
-        n = e;
-        if( current->id() != ID_UL && current->id() != ID_OL )
-                e->addCSSProperty(CSS_PROP_LIST_STYLE_POSITION, CSS_VAL_INSIDE);
+        n = new HTMLLIElementImpl(document);
         break;
     }
 // formatting elements (block)

@@ -69,6 +69,8 @@ public:
     
 protected:
     friend class RenderListItem;
+    
+    bool isInside() const;
 
     QString m_item;
     CachedImage *m_listImage;
@@ -99,10 +101,14 @@ public:
                        int xoff, int yoff, int paintPhase);
 
     virtual void layout( );
+    
+    void setNotInList(bool notInList) { _notInList = notInList; }
+    bool notInList() const { return _notInList; }
 
 protected:
     long int predefVal;
     RenderListMarker *m_marker;
+    bool _notInList;
 };
 
 }; //namespace

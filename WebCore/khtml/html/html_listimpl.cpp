@@ -143,19 +143,34 @@ void HTMLLIElementImpl::attach()
     HTMLElementImpl::attach();
 
     if ( m_render && m_render->style()->display() == LIST_ITEM ) {
-	// If we are first, and the OL has a start attr.
-	if (parentNode() && parentNode()->id() == ID_OL) {
-	    HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(parentNode());
+        RenderListItem *render = static_cast<RenderListItem *>(m_render);
+        
+        // Find the enclosing list node.
+        NodeImpl *listNode = 0;
+        NodeImpl *n = this;
+        while (!listNode && (n = n->parentNode())) {
+            switch (n->id()) {
+                case ID_UL:
+                case ID_OL:
+                    listNode = n;
+            }
+        }
+        
+        // If we are not in a list, tell the renderer so it can position us inside.
+        // We don't want to change our style to say "inside" since that would affect nested nodes.
+        if (!listNode)
+            render->setNotInList(true);
 
-	    if(ol->firstChild() && ol->firstChild() == this &&  m_render)
-		static_cast<RenderListItem*>(m_render)->setValue(ol->start());
+	// If we are first, and the OL has a start attr, set the value.
+	if (listNode && listNode->id() == ID_OL && !m_render->previousSibling()) {
+	    HTMLOListElementImpl *ol = static_cast<HTMLOListElementImpl *>(listNode);
+            render->setValue(ol->start());
 	}
 
 	// If we had a value attr.
-	if (isValued && m_render)
-	    static_cast<RenderListItem*>(m_render)->setValue(requestedValue);
+	if (isValued)
+	    render->setValue(requestedValue);
     }
-
 }
 
 
