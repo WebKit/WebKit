@@ -307,7 +307,6 @@ static WebHTMLView *lastHitView = nil;
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
 {
     if (_private != nil) {
-        ASSERT(_private->trackingRectOwner != nil);
         _private->trackingRectOwner = nil;
     }
 }

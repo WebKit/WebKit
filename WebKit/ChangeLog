@@ -1,5 +1,9 @@
 2003-09-21  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView removeTrackingRect:]): Remove bogus assert.
+
+2003-09-21  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed 3106411 -- show title attribute for page elements in tooltip on mouseover (important for PeopleSoft)
