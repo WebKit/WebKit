@@ -623,7 +623,6 @@ extern const OSType NSCarbonWindowPropertyTag;
 	[NSApp _setMouseActivationInProgress:NO];
 	[NSApp setIsActive:YES];
 	[super makeKeyWindow];
-	_NXOrderKeyAndMain();
 	_NXShowKeyAndMain();
 }
 
