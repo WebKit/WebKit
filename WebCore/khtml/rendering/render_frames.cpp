@@ -37,6 +37,7 @@
 #include "khtml_part.h"
 
 #include <kapplication.h>
+#include <kcursor.h>
 #include <kmessagebox.h>
 #include <kmimetype.h>
 #include <klocale.h>
@@ -44,7 +45,6 @@
 #include <kglobal.h>
 #include <qtimer.h>
 #include <qpainter.h>
-#include <qcursor.h>
 
 #include <assert.h>
 #include <iostream.h>
@@ -385,15 +385,15 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
         QCursor cursor;
         if(m_hSplit != -1 && m_vSplit != -1)
         {
-            cursor = Qt::sizeAllCursor;
+            cursor = KCursor::sizeAllCursor();
         }
         else if( m_vSplit != -1 )
         {
-            cursor = Qt::sizeHorCursor;
+            cursor = KCursor::sizeHorCursor();
         }
         else if( m_hSplit != -1 )
         {
-            cursor = Qt::sizeVerCursor;
+            cursor = KCursor::sizeVerCursor();
         }
         
         if(evt->id() == EventImpl::MOUSEDOWN_EVENT)

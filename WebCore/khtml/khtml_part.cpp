@@ -3894,11 +3894,15 @@ void KHTMLPart::setZoomFactor (int percent)
   d->m_zoomFactor = percent;
 
   if(d->m_doc) {
+#if !APPLE_CHANGES
       QApplication::setOverrideCursor( waitCursor );
+#endif
     if (d->m_doc->styleSelector())
       d->m_doc->styleSelector()->computeFontSizes(d->m_doc->paintDeviceMetrics(), d->m_zoomFactor);
     d->m_doc->recalcStyle( NodeImpl::Force );
+#if !APPLE_CHANGES
     QApplication::restoreOverrideCursor();
+#endif
   }
 
   ConstFrameIt it = d->m_frames.begin();
@@ -3997,9 +4001,13 @@ void KHTMLPart::reparseConfiguration()
   else
     setUserStyleSheet( QString::null );
 
+#if !APPLE_CHANGES
   QApplication::setOverrideCursor( waitCursor );
+#endif
   if(d->m_doc) d->m_doc->updateStyleSelector();
+#if !APPLE_CHANGES
   QApplication::restoreOverrideCursor();
+#endif
 }
 
 QStringList KHTMLPart::frameNames() const

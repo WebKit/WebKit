@@ -53,8 +53,6 @@
 
 @end
 
-const QCursor &waitCursor = KCursor::waitCursor();
-
 void KCursor::setAutoHideCursor(QWidget *w, bool enable) {}
 
 QCursor KCursor::arrowCursor() { return QCursor(); }

@@ -1,5 +1,23 @@
 2003-03-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - got rid of some framework initialization (working on bug 3188781)
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setZoomFactor): Put some waitCursor use inside #if !APPLE_CHANGES.
+        (KHTMLPart::reparseConfiguration): Put some waitCursor use inside #if !APPLE_CHANGES.
+        
+        * khtml/rendering/render_frames.cpp: (RenderFrameSet::userResize): Use KCursor cursors
+        instead of Qt cursors.
+
+        * kwq/KWQNamespace.h: Remove Qt cursors.
+        * kwq/KWQCursor.mm: Remove Qt cursors.
+        * kwq/KWQKCursor.h: Remove waitCursor.
+        * kwq/KWQKCursor.mm: Remove waitCursor.
+
+2003-03-04  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed build rules for parser.cpp so we don't rebuild it every time

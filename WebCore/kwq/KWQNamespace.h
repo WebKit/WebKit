@@ -232,12 +232,6 @@ public:
     static const QColor cyan;
     static const QColor magenta;
     static const QColor yellow;
-                  
-    static const QCursor sizeAllCursor;
-    static const QCursor splitHCursor;
-    static const QCursor splitVCursor;
-    static const QCursor sizeHorCursor;
-    static const QCursor sizeVerCursor;
 
 };
 

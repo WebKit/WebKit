@@ -26,12 +26,6 @@
 #import "KWQCursor.h"
 #import "KWQLogging.h"
 
-const QCursor Qt::sizeAllCursor;
-const QCursor Qt::splitHCursor;
-const QCursor Qt::splitVCursor;
-const QCursor Qt::sizeHorCursor;
-const QCursor Qt::sizeVerCursor;
-
 QCursor::QCursor()
     : cursor(nil)
 {

@@ -47,6 +47,4 @@ public:
 
 };
 
-extern const QCursor &waitCursor;
-
 #endif
