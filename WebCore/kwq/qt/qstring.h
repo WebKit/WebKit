@@ -199,9 +199,10 @@ public:
     bool isNull() const;
     bool isEmpty() const;
 
-#ifdef USING_BORROWED_KURL
+    // NOTE: at is useful to keep as implementation of operator[]
+//#ifdef USING_BORROWED_KURL
     QChar at(uint) const;
-#endif
+//#endif
 
     int compare(const QString &) const;
 
@@ -219,13 +220,21 @@ public:
     int contains(char) const;
     int contains(const char *, bool cs=TRUE) const;
 
-#ifdef USING_BORROWED_KURL
-    ushort toUShort() const;
-#endif
+    // NOTE: toXXXXX integer functions only support base 10 and base 16
+    // NOTE: toShort, toUShort, toULong, and toDouble are NOT used but are kept
+    // for completeness
+    short toShort(bool *ok=NULL, int base=10) const;
+//#ifdef USING_BORROWED_KURL
+    // NOTE: ok and base NOT used for toUShort
+    ushort toUShort(bool *ok=NULL, int base=10) const;
+//#endif
     int toInt(bool *ok=NULL, int base=10) const;
-    uint toUInt(bool *ok=NULL /* NOTE: base NOT used */ ) const;
+    // NOTE: base NOT used for toUInt
+    uint toUInt(bool *ok=NULL, int base=10) const;
     long toLong(bool *ok=NULL, int base=10) const;
+    ulong toULong(bool *ok=NULL, int base=10) const;
     float toFloat(bool *ok=NULL) const;
+    double toDouble(bool *ok=NULL) const;
 
     QString arg(const QString &, int width=0) const;
     QString arg(short, int width=0 /* NOTE: base NOT used */ ) const;
@@ -240,9 +249,10 @@ public:
     QString right(uint) const;
     QString mid(int, int len=0xffffffff) const;
 
-#ifdef USING_BORROWED_KURL
+    // NOTE: copy is simple enough to keep for completeness
+//#ifdef USING_BORROWED_KURL
     QString copy() const;
-#endif
+//#endif
 
     QString lower() const;
     QString stripWhiteSpace() const;
@@ -302,6 +312,7 @@ private:
 
     void flushCache() const;
     QCString convertToQCString(CFStringEncoding) const;
+    ulong convertToNumber(bool *ok, int base, ulong max, bool *neg) const;
     QString leftRight(uint width, bool left) const;
 
     // data members ------------------------------------------------------------

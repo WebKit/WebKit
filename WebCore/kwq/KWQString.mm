@@ -353,12 +353,18 @@ bool QString::isEmpty() const
     return length() == 0;
 }
 
-#ifdef USING_BORROWED_KURL
-QChar QString::at(uint i) const
+//#ifdef USING_BORROWED_KURL
+QChar QString::at(uint index) const
 {
-    return operator[](i);
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (index < len) {
+            return QChar(CFStringGetCharacterAtIndex(s, index));
+        }
+    }
+    return QChar(0);
 }
-#endif // USING_BORROWED_KURL
+//#endif // USING_BORROWED_KURL
 
 int QString::compare(const QString &qs) const
 {
@@ -554,162 +560,52 @@ int QString::contains(const char *chs, bool cs) const
     return c;
 }
 
-#ifdef USING_BORROWED_KURL
-ushort QString::toUShort() const
+short QString::toShort(bool *ok, int base) const
 {
-    return toUInt();
+    bool neg;
+    short n = convertToNumber(ok, base, SHRT_MAX, &neg);
+    return neg ? -n : n;
 }
-#endif // USING_BORROWED_KURL
+
+//#ifdef USING_BORROWED_KURL
+ushort QString::toUShort(bool *ok, int base) const
+{
+    return convertToNumber(ok, base, USHRT_MAX, NULL);
+}
+//#endif // USING_BORROWED_KURL
 
 int QString::toInt(bool *ok, int base) const
 {
-    return toLong(ok, base);
+    bool neg;
+    int n = convertToNumber(ok, base, INT_MAX, &neg);
+    return neg ? -n : n;
 }
 
-uint QString::toUInt(bool *ok) const
+uint QString::toUInt(bool *ok, int base) const
 {
-    // FIXME: this uses code similar to that in the "toLong" function and could
-    // possibly be refactored
-    uint n = 0;
-    bool valid = FALSE;
-    if (s) {
-        CFIndex len = CFStringGetLength(s);
-        if (len) {
-            CFStringInlineBuffer buf;
-            UniChar uc;
-            CFCharacterSetRef wscs =
-                CFCharacterSetGetPredefined(
-                        kCFCharacterSetWhitespaceAndNewline);
-            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
-            CFIndex i;
-            // ignore any leading whitespace
-            for (i = 0; i < len; i++) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
-                    break;
-                }
-            }
-            // is there a number?
-            while (i < len) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                if ((uc >= '0') && (uc <= '9')) {
-                    if (n > (UINT_MAX / 10)) {
-                        valid = FALSE;
-                        break;
-                    }
-                    n = (n * 10) + (uc - '0');
-                } else {
-                    break;
-                }
-                valid = TRUE;
-                i++;
-            }
-            // ignore any trailing whitespace
-            while (i < len) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
-                    valid = FALSE;
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-    if (ok) {
-        *ok = valid;
-    }
-    return valid ? n : 0;
+    return convertToNumber(ok, base, UINT_MAX, NULL);
 }
 
 long QString::toLong(bool *ok, int base) const
 {
-    // FIXME: this uses code similar to that in the "toUInt" function and could
-    // possibly be refactored
-    long n = 0;
-    bool valid = FALSE;
-    if (s) {
-        CFIndex len = CFStringGetLength(s);
-        if (len) {
-            CFStringInlineBuffer buf;
-            UniChar uc;
-            CFCharacterSetRef wscs =
-                CFCharacterSetGetPredefined(
-                        kCFCharacterSetWhitespaceAndNewline);
-            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
-            CFIndex i;
-            // ignore any leading whitespace
-            for (i = 0; i < len; i++) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
-                    break;
-                }
-            }
-            // is there a sign?
-            bool neg = FALSE;
-            if (i < len) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                if (uc == '-') {
-                    i++;
-                    neg = TRUE;
-                } else if (uc == '+') {
-                    i++;
-                }
-            }
-            // is there a number?
-            while (i < len) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                // NOTE: ignore anything other than base 10 and base 16
-                if ((uc >= '0') && (uc <= '9')) {
-                    if (n > (INT_MAX / 10)) {
-                        valid = FALSE;
-                        break;
-                    }
-                    n = (n * 10) + (uc - '0');
-                } else if (base == 16) {
-                    if ((uc >= 'A') && (uc <= 'F')) {
-                        if (n > (INT_MAX / 16)) {
-                            valid = FALSE;
-                            break;
-                        }
-                        n = (n * 16) + (10 + (uc - 'A'));
-                    } else if ((uc >= 'a') && (uc <= 'f')) {
-                        if (n > (INT_MAX / 16)) {
-                            valid = FALSE;
-                            break;
-                        }
-                        n = (n * 16) + (10 + (uc - 'a'));
-                    } else {
-                        break;
-                    }
-                } else {
-                    break;
-                }
-                valid = TRUE;
-                i++;
-            }
-            if (neg) {
-                n = -n;
-            }
-            // ignore any trailing whitespace
-            while (i < len) {
-                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
-                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
-                    valid = FALSE;
-                    break;
-                }
-                i++;
-            }
-        }
-    }
-    if (ok) {
-        *ok = valid;
-    }
-    return valid ? n : 0;
+    bool neg;
+    long n = convertToNumber(ok, base, LONG_MAX, &neg);
+    return neg ? -n : n;
+}
+
+ulong QString::toULong(bool *ok, int base) const
+{
+    return convertToNumber(ok, base, ULONG_MAX, NULL);
 }
 
 float QString::toFloat(bool *ok) const
 {
-    float n;
+    return toDouble(ok);
+}
+
+double QString::toDouble(bool *ok) const
+{
+    double n;
     if (s) {
         n = CFStringGetDoubleValue(s);
     } else {
@@ -862,12 +758,12 @@ QString QString::mid(int index, int width) const
     return qs;
 }
 
-#ifdef USING_BORROWED_KURL
+//#ifdef USING_BORROWED_KURL
 QString QString::copy() const
 {
     return QString(*this);
 }
-#endif // USING_BORROWED_KURL
+//#endif // USING_BORROWED_KURL
 
 QString QString::lower() const
 {
@@ -1244,11 +1140,8 @@ QString::operator const char *() const
 
 QChar QString::operator[](int index) const
 {
-    if (s && (index >= 0)) {
-        CFIndex len = CFStringGetLength(s);
-        if (index < len) {
-            return QChar(CFStringGetCharacterAtIndex(s, index));
-        }
+    if (index >= 0) {
+        return at(index);
     }
     return QChar(0);
 }
@@ -1298,6 +1191,92 @@ QCString QString::convertToQCString(CFStringEncoding enc) const
         }
     }
     return QCString();
+}
+
+ulong QString::convertToNumber(bool *ok, int base, ulong max, bool *neg) const
+{
+    ulong n = 0;
+    bool valid = FALSE;
+    bool negative = FALSE;
+    if (s) {
+        CFIndex len = CFStringGetLength(s);
+        if (len) {
+            CFStringInlineBuffer buf;
+            UniChar uc;
+            CFCharacterSetRef wscs =
+                CFCharacterSetGetPredefined(
+                        kCFCharacterSetWhitespaceAndNewline);
+            CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
+            CFIndex i;
+            // ignore any leading whitespace
+            for (i = 0; i < len; i++) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
+                    break;
+                }
+            }
+            if (neg) {
+                // is there a sign?
+                if (i < len) {
+                    uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                    if (uc == '-') {
+                        i++;
+                        negative = TRUE;
+                    } else if (uc == '+') {
+                        i++;
+                    }
+                }
+            }
+            // is there a number?
+            while (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                // NOTE: ignore anything other than base 10 and base 16
+                if ((uc >= '0') && (uc <= '9')) {
+                    if (n > (max / 10)) {
+                        valid = FALSE;
+                        break;
+                    }
+                    n = (n * 10) + (uc - '0');
+                } else if (base == 16) {
+                    if ((uc >= 'A') && (uc <= 'F')) {
+                        if (n > (max / 16)) {
+                            valid = FALSE;
+                            break;
+                        }
+                        n = (n * 16) + (10 + (uc - 'A'));
+                    } else if ((uc >= 'a') && (uc <= 'f')) {
+                        if (n > (max / 16)) {
+                            valid = FALSE;
+                            break;
+                        }
+                        n = (n * 16) + (10 + (uc - 'a'));
+                    } else {
+                        break;
+                    }
+                } else {
+                    break;
+                }
+                valid = TRUE;
+                i++;
+            }
+            // ignore any trailing whitespace
+            while (i < len) {
+                uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
+                if (!CFCharacterSetIsCharacterMember(wscs, uc)) {
+                    valid = FALSE;
+                    break;
+                }
+                i++;
+            }
+        }
+    }
+    if (ok) {
+        *ok = valid;
+    }
+    if (neg) {
+        *neg = negative;
+    }
+    return valid ? n : 0;
 }
 
 QString QString::leftRight(uint width, bool left) const
