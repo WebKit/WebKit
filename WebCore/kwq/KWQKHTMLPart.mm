@@ -1841,6 +1841,10 @@ static DOM::NodeImpl * inList(DOM::NodeImpl *e)
 
 NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_startNode, int startOffset, NodeImpl *endNode, int endOffset)
 {
+    if (_startNode == nil) {
+        return nil;
+    }
+    
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
 
     bool hasNewLine = true;

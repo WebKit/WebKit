@@ -1,3 +1,14 @@
+2003-08-06  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3366587 -- Mail quits instantly (no crashlog) trying
+	to reply to a particular message
+
+        Reviewed by Richard
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::attributedString):
+	Return nil immediately if startNode is nil.
+
 2003-08-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris Blumenberg.
