@@ -375,6 +375,9 @@ void RenderBlock::removeChild(RenderObject *oldChild)
         }
         setLayouted(false);
         setMinMaxKnown(false);
+
+        // Nuke the now-empty block.
+        anonBlock->detach(renderArena());
     }
 }
 
