@@ -74,6 +74,8 @@
     [controllerSetName release];
     [topLevelFrameName release];
 
+    [preferences release];
+    
     [super dealloc];
 }
 

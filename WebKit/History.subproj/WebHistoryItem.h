@@ -1,6 +1,8 @@
 /*	
     WebHistoryItem.h
     Copyright 2001, 2002, Apple, Inc. All rights reserved.
+
+    Public header file.
 */
 
 #import <Cocoa/Cocoa.h>
@@ -9,6 +11,11 @@
 
 /*!
     @class WebHistoryItem
+    @discussion  WebHistoryItems are created by WebKit to represent pages visited.
+    The WebBackForwardList and WebHistory classes both use WebHistoryItems to represent
+    pages visited.  With the exception of the displayTitle, the properties of 
+    WebHistoryItems are set by WebKit.
+    WebHistoryItems cannot be created directly.
 */
 @interface WebHistoryItem : NSObject
 {
@@ -32,52 +39,56 @@
     NSString *_formReferrer;    
 }
 
-+ (WebHistoryItem *)entryWithURL:(NSURL *)URL;
-
-- (id)initWithURL:(NSURL *)URL title:(NSString *)title;
-- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title;
-
-- (NSDictionary *)dictionaryRepresentation;
-- (id)initFromDictionaryRepresentation:(NSDictionary *)dict;
-
-- (NSURL *)URL;
+/*!
+    @method URLString
+    @abstract The string representation of the URL represented by this item.
+    @discussion The URLString may be different than the originalURLString if the page
+    redirected to a new location.
+*/
 - (NSString *)URLString;
+
+/*!
+    @method originalURLString
+    @abstract The string representation of the originial URL of this item.
+*/
 - (NSString *)originalURLString;
-- (NSString *)target;
-- (NSString *)parent;
+
+/*!
+    @method title
+    @abstract The title of the page represented by this item.
+    @discussion This title cannot be changed by the client.
+*/
 - (NSString *)title;
-- (NSString *)displayTitle;
-- (NSImage *)icon;
-- (NSCalendarDate *)lastVisitedDate;
-- (NSPoint)scrollPoint;
-- (NSArray *)documentState;
-- (BOOL)isTargetItem;
-- (NSString *)anchor;
-- (NSData *)formData;
-- (NSString *)formContentType;
-- (NSString *)formReferrer;    
 
-- (void)setURL:(NSURL *)URL;
-- (void)setOriginalURLString:(NSString *)URL;
-- (void)setTarget:(NSString *)target;
-- (void)setParent:(NSString *)parent;
-- (void)setTitle:(NSString *)title;
+/*!
+    @method setDisplayTitle:
+    @param displayTitle The new display title for this item.
+    @abstract A title that may be used by the client to display this item.
+*/
 - (void)setDisplayTitle:(NSString *)displayTitle;
-- (void)setLastVisitedDate:(NSCalendarDate *)date;
-- (void)setScrollPoint:(NSPoint)p;
-- (void)setDocumentState:(NSArray *)state;
-- (void)setIsTargetItem:(BOOL)flag;
-- (void)setAnchor:(NSString *)anchor;
-- (void)setFormData:(NSData *)data;
-- (void)setFormContentType:(NSString *)type;
-- (void)setFormReferrer:(NSString *)referrer;    
 
-- (NSArray *)children;
-- (void)addChildItem:(WebHistoryItem *)item;
-- (WebHistoryItem *)childItemWithName:(NSString *)name;
-- (WebHistoryItem *)targetItem;
+/*
+    @method title
+    @abstract A title that may be used by the client to display this item.
+*/
+- (NSString *)displayTitle;
 
-- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag;
-- (BOOL)alwaysAttemptToUsePageCache;
+/*!
+    @method icon
+    @abstract The favorite icon of the page represented by this item.
+*/
+- (NSImage *)icon;
+
+/*!
+    @method lastVisitedDate
+    @abstract The last time the page represented by this item was visited.
+*/
+- (NSCalendarDate *)lastVisitedDate;
+
+/*!
+    @method anchor
+    @abstract The name of the fragment anchor, if any, represented by the URL for this item.
+*/
+- (NSString *)anchor;
 
 @end

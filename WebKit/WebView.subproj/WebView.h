@@ -16,6 +16,7 @@
 @class WebError;
 @class WebFrame;
 @class WebResourceHandle;
+@class WebPreferences;
 @class WebView;
 
 @protocol WebContextMenuDelegate;
@@ -371,5 +372,20 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
     @result Returns the result of the script, converted to a string, or nil for failure.
 */
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)script;
+
+/*!
+    @method setPreferences:
+    @param preferences The preferences to use for the controller.
+    @abstract Override the standard setting for the controller. 
+*/
+- (void)setPreferences: (WebPreferences *)prefs;
+
+/*!
+    @method preferences
+    @result Returns the preferences used by this controller.
+    @discussion This method will return [WebPreferences standardPreferences] if no
+    other instance of WebPreferences has been set.
+*/
+- (WebPreferences *)preferences;
 
 @end

@@ -1,5 +1,45 @@
 2003-02-05  Richard Williamson   <rjw@apple.com>
 
+        WebHistory* API clenaup.
+
+        Reviewed by Chris.
+
+        * Bookmarks.subproj/WebBookmarkLeaf.m:
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem title]):
+        (-[WebHistoryItem setDisplayTitle:]):
+        (-[WebHistoryItem hash]):
+        (-[WebHistoryItem anchor]):
+        (-[WebHistoryItem isEqual:]):
+        (-[WebHistoryItem description]):
+        (-[WebHistoryItem _retainIconInDatabase:]):
+        (+[WebHistoryItem entryWithURL:]):
+        (-[WebHistoryItem initWithURL:title:]):
+        (-[WebHistoryItem initWithURL:target:parent:title:]):
+        (-[WebHistoryItem URL]):
+        (-[WebHistoryItem target]):
+        (-[WebHistoryItem parent]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        * History.subproj/WebHistoryItemPrivate.h:
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setPreferences:]):
+        (-[WebController preferences]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebFramePrivate.m:
+
+2003-02-05  Richard Williamson   <rjw@apple.com>
+
         Cleanup public WebHistory API, stage 1.
 
         Reviewed by trey.

@@ -41,5 +41,8 @@
 @end
 
 @interface WebHistory (WebPrivate)
+- (BOOL)loadHistory;
+- initWithFile: (NSString *)file;
+- (WebHistoryItem *)addEntryForURL: (NSURL *)URL;
 - (BOOL)containsEntryForURLString: (NSString *)URLString;
 @end

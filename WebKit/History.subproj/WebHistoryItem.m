@@ -18,49 +18,9 @@
 
 @implementation WebHistoryItem
 
-- (void)_retainIconInDatabase:(BOOL)retain
-{
-    if (_URLString) {
-        WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
-        if (retain) {
-            [iconDB retainIconForURL:_URLString];
-        } else {
-            [iconDB releaseIconForURL:_URLString];
-        }
-    }
-}
-
-+ (WebHistoryItem *)entryWithURL:(NSURL *)URL
-{
-    return [[[self alloc] initWithURL:URL title:nil] autorelease];
-}
-
 - (id)init
 {
     return [self initWithURL:nil title:nil];
-}
-
-- (id)initWithURL:(NSURL *)URL title:(NSString *)title
-{
-    return [self initWithURL:URL target:nil parent:nil title:title];
-}
-
-- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
-{
-    if (self != [super init])
-    {
-        return nil;
-    }
-    
-    _URLString = [[URL absoluteString] copy];
-    _target = [target copy];
-    _parent = [parent copy];
-    _title = [title copy];
-    _lastVisitedDate = [[NSCalendarDate alloc] init];
-
-    [self _retainIconInDatabase:YES];
-    
-    return self;
 }
 
 - (void)dealloc
@@ -85,11 +45,6 @@
     [super dealloc];
 }
 
-- (NSURL *)URL
-{
-    return _URLString ? [NSURL _web_URLWithString:_URLString] : nil;
-}
-
 // FIXME: need to decide it this class ever returns URLs, and the name of this method
 - (NSString *)URLString
 {
@@ -103,20 +58,23 @@
     return _originalURLString;
 }
 
-- (NSString *)target
-{
-    return _target;
-}
-
-- (NSString *)parent
-{
-    return _parent;
-}
-
 - (NSString *)title
 {
     return _title;
 }
+
+- (void)setDisplayTitle:(NSString *)displayTitle
+{
+    NSString *newDisplayTitle;
+    if (displayTitle && [displayTitle isEqualToString:_title]) {
+        newDisplayTitle = [_title retain];
+    } else {
+        newDisplayTitle = [displayTitle copy];
+    }
+    [_displayTitle release];
+    _displayTitle = newDisplayTitle;
+}
+
 
 - (NSString *)displayTitle;
 {
@@ -134,6 +92,117 @@
 - (NSCalendarDate *)lastVisitedDate
 {
     return _lastVisitedDate;
+}
+
+- (unsigned)hash
+{
+    return [_URLString hash];
+}
+
+- (NSString *)anchor
+{
+    return anchor;
+}
+
+- (BOOL)isEqual:(id)anObject
+{
+    if (![anObject isMemberOfClass:[WebHistoryItem class]]) {
+        return NO;
+    }
+    
+    NSString *otherURL = ((WebHistoryItem *)anObject)->_URLString;
+    return _URLString == otherURL || [_URLString isEqualToString:otherURL];
+}
+
+- (NSString *)description
+{
+    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], _URLString];
+    if (_target) {
+        [result appendFormat:@" in \"%@\"", _target];
+    }
+    if (_isTargetItem) {
+        [result appendString:@" *target*"];
+    }
+    if (_formData) {
+        [result appendString:@" *POST*"];
+    }
+    if (_subItems) {
+        int currPos = [result length];
+        int i;
+        for (i = 0; i < (int)[_subItems count]; i++) {
+            WebHistoryItem *child = [_subItems objectAtIndex:i];
+            [result appendString:@"\n"];
+            [result appendString:[child description]];
+        }
+        // shift all the contents over.  A bit slow, but hey, this is for debugging.
+        NSRange replRange = {currPos, [result length]-currPos};
+        [result replaceOccurrencesOfString:@"\n" withString:@"\n    " options:0 range:replRange];
+    }
+    return result;
+}
+
+@end
+
+@interface WebWindowWatcher : NSObject
+@end
+
+@implementation WebHistoryItem (WebPrivate)
+
+- (void)_retainIconInDatabase:(BOOL)retain
+{
+    if (_URLString) {
+        WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
+        if (retain) {
+            [iconDB retainIconForURL:_URLString];
+        } else {
+            [iconDB releaseIconForURL:_URLString];
+        }
+    }
+}
+
+
++ (WebHistoryItem *)entryWithURL:(NSURL *)URL
+{
+    return [[[self alloc] initWithURL:URL title:nil] autorelease];
+}
+
+
+- (id)initWithURL:(NSURL *)URL title:(NSString *)title
+{
+    return [self initWithURL:URL target:nil parent:nil title:title];
+}
+
+- (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
+{
+    if (self != [super init])
+    {
+        return nil;
+    }
+
+    _URLString = [[URL absoluteString] copy];
+    _target = [target copy];
+    _parent = [parent copy];
+    _title = [title copy];
+    _lastVisitedDate = [[NSCalendarDate alloc] init];
+
+    [self _retainIconInDatabase:YES];
+
+    return self;
+}
+
+- (NSURL *)URL
+{
+    return _URLString ? [NSURL _web_URLWithString:_URLString] : nil;
+}
+
+- (NSString *)target
+{
+    return _target;
+}
+
+- (NSString *)parent
+{
+    return _parent;
 }
 
 - (void)setURL:(NSURL *)URL
@@ -182,18 +251,6 @@
     _parent = copy;
 }
 
-- (void)setDisplayTitle:(NSString *)displayTitle
-{
-    NSString *newDisplayTitle;
-    if (displayTitle && [displayTitle isEqualToString:_title]) {
-        newDisplayTitle = [_title retain];
-    } else {
-        newDisplayTitle = [displayTitle copy];
-    }
-    [_displayTitle release];
-    _displayTitle = newDisplayTitle;
-}
-
 - (void)setLastVisitedDate:(NSCalendarDate *)date
 {
     [date retain];
@@ -221,16 +278,6 @@
 - (void)setScrollPoint:(NSPoint)scrollPoint
 {
     _scrollPoint = scrollPoint;
-}
-
-- (unsigned)hash
-{
-    return [_URLString hash];
-}
-
-- (NSString *)anchor
-{
-    return anchor;
 }
 
 - (void)setAnchor:(NSString *)a
@@ -315,16 +362,6 @@
     _formReferrer = copy;
 }
 
-- (BOOL)isEqual:(id)anObject
-{
-    if (![anObject isMemberOfClass:[WebHistoryItem class]]) {
-        return NO;
-    }
-    
-    NSString *otherURL = ((WebHistoryItem *)anObject)->_URLString;
-    return _URLString == otherURL || [_URLString isEqualToString:otherURL];
-}
-
 - (NSArray *)children
 {
     return _subItems;
@@ -349,33 +386,6 @@
         }
     }
     return nil;
-}
-
-- (NSString *)description
-{
-    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], _URLString];
-    if (_target) {
-        [result appendFormat:@" in \"%@\"", _target];
-    }
-    if (_isTargetItem) {
-        [result appendString:@" *target*"];
-    }
-    if (_formData) {
-        [result appendString:@" *POST*"];
-    }
-    if (_subItems) {
-        int currPos = [result length];
-        int i;
-        for (i = 0; i < (int)[_subItems count]; i++) {
-            WebHistoryItem *child = [_subItems objectAtIndex:i];
-            [result appendString:@"\n"];
-            [result appendString:[child description]];
-        }
-        // shift all the contents over.  A bit slow, but hey, this is for debugging.
-        NSRange replRange = {currPos, [result length]-currPos};
-        [result replaceOccurrencesOfString:@"\n" withString:@"\n    " options:0 range:replRange];
-    }
-    return result;
 }
 
 - (NSDictionary *)dictionaryRepresentation
@@ -403,7 +413,7 @@
         }
         [dict setObject: childDicts forKey: @"children"];
     }
-    
+
     return dict;
 }
 
@@ -413,7 +423,7 @@
     NSString *title = [dict _web_stringForKey:@"title"];
 
     [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
-    
+
     [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];
     NSString *date = [dict _web_stringForKey:@"lastVisitedDate"];
     if (date) {
@@ -422,7 +432,7 @@
         [self setLastVisitedDate:calendarDate];
         [calendarDate release];
     }
-    
+
     NSArray *childDicts = [dict objectForKey:@"children"];
     if (childDicts) {
         _subItems = [[NSMutableArray alloc] initWithCapacity:[childDicts count]];
@@ -447,12 +457,6 @@
 }
 
 
-@end
-
-@interface WebWindowWatcher : NSObject
-@end
-
-@implementation WebHistoryItem (WebPrivate)
 
 static WebWindowWatcher *_windowWatcher;
 static NSMutableSet *_pendingPageCacheToRelease = nil;

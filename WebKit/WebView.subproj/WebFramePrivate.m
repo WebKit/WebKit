@@ -16,7 +16,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebHistory.h>
+#import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLView.h>

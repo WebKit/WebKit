@@ -11,6 +11,7 @@
 #import <WebKit/WebBookmarkGroup.h>
 #import <WebKit/WebBookmarkGroupPrivate.h>
 #import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebFoundation/WebAssertions.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
@@ -18,6 +19,9 @@
 #define URIDictionaryKey	@"URIDictionary"
 #define URLStringKey		@"URLString"
 
+// FIXME.  This class really shouldn't be using a WebHistoryItem to hold
+// it's URL, title and icon.  WebHistoryItem has significantly evolved from
+// it original implementation and is no longer appropriate.
 @implementation WebBookmarkLeaf
 
 - (id)init

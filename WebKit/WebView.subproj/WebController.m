@@ -20,9 +20,11 @@
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
@@ -94,6 +96,18 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     [super dealloc];
 }
 
+- (void)setPreferences: (WebPreferences *)prefs
+{
+    if (_private->preferences != prefs){
+        [_private->preferences release];
+        _private->preferences = [prefs retain];
+    }
+}
+
+- (WebPreferences *)preferences
+{
+    return _private->preferences ? _private->preferences : [WebPreferences standardPreferences];
+}
 
 - (void)setWindowOperationsDelegate:(id <WebWindowOperationsDelegate>)delegate
 {

@@ -8,7 +8,8 @@
 
 #import "WebHistoryPrivate.h"
 
-#import "WebHistoryItem.h"
+#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebNSCalendarDateExtras.h>

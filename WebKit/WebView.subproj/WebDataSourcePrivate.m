@@ -14,6 +14,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>

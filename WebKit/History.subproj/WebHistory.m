@@ -8,6 +8,7 @@
 #import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryPrivate.h>
 #import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>

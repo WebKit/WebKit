@@ -3,8 +3,6 @@
 	Copyright 2001, 2002, Apple Computer, Inc.
 
         Public header file.
-        
-        FIXME  Strip down this API.
 */
 #import <Foundation/Foundation.h>
 
@@ -44,24 +42,10 @@ extern NSString *WebHistoryLoadedNotification;
 + (WebHistory *)createSharedHistoryWithFile: (NSString*)file;
 
 /*!
-    @method initWithFile:
-    @abstract The designated initializer for WebHistory.
-    @result Returns an initialized WebHistory.
-*/
-- initWithFile: (NSString *)file;
-
-/*!
     @method addEntry:
     @param entry
 */
 - (void)addEntry: (WebHistoryItem *)entry;
-
-/*!
-    @method addEntryForURLString:
-    @param URL
-    @result Newly created WebHistoryItem
-*/
-- (WebHistoryItem *)addEntryForURL: (NSURL *)URL;
 
 /*!
     @method addEntries:
@@ -124,13 +108,6 @@ extern NSString *WebHistoryLoadedNotification;
     @result Returns the file path used to store the history.
 */
 - (NSString *)file;
-
-/*!
-    @method loadHistory
-    @discussion Load history from file. This happens automatically at init time, and need not normally be called.
-    @result Returns YES if successful, not otherwise.
-*/
-- (BOOL)loadHistory;
 
 /*!
     @method saveHistory
