@@ -1,3 +1,14 @@
+2003-08-12  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3369505 -- leaks of NSCFTimer after running through the 
+	cvs-base test suite
+
+        Reviewed by Richard
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]):
+	release timer before nil'ing it out
+
 2003-08-12  Ed Voas  <voas@apple.com>
 
         Reviewed by Richard.
