@@ -285,7 +285,7 @@ VisiblePosition startOfLine(const VisiblePosition &c)
     if (!rootBox)
         return VisiblePosition();
     
-    InlineBox *startBox = rootBox->firstChild();
+    InlineBox *startBox = rootBox->firstLeafChild();
     if (!startBox)
         return VisiblePosition();
 
@@ -302,6 +302,7 @@ VisiblePosition startOfLine(const VisiblePosition &c)
         InlineTextBox *startTextBox = static_cast<InlineTextBox *>(startBox);
         startOffset = startTextBox->m_start;
     }
+    
     return VisiblePosition(startNode, startOffset, DOWNSTREAM);
 }
 
