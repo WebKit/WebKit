@@ -792,18 +792,28 @@
             return NPERR_INVALID_URL;
         }
     } else {
-	WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
-	[frame loadRequest:request];
-
-	if (notifyData) {
-	    if (![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] &&
-		![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]) {
-		
-		[streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
-		[[NSNotificationCenter defaultCenter] addObserver:self
-		selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
-	    }
-	}
+        if([[URL scheme] isEqualToString:@"javascript"]){
+            NSString *JSString = [[URL absoluteString] substringFromIndex:11];
+            [[self controller] stringByEvaluatingJavaScriptFromString:JSString];
+            if(notifyData){
+               NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+            }
+        }else{
+            WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
+            [frame loadRequest:request];
+    
+            if (notifyData) {
+                if (![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] &&
+                    ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]) {
+                    
+                    [streamNotifications setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
+                    [[NSNotificationCenter defaultCenter] addObserver:self
+                                                             selector:@selector(frameStateChanged:)
+                                                                 name:WebFrameStateChangedNotification
+                                                               object:frame];
+                }
+            }
+        }
     }
     
     return NPERR_NO_ERROR;

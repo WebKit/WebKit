@@ -1,3 +1,10 @@
+2002-11-20  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: 3061174 - javascript: URLs sent by plugins don't work
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+
 2002-11-20  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
