@@ -622,7 +622,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     // Create a document view for this document, or used the cached view.
                     if (pageCache){
                         NSView <WebDocumentView> *cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
-                        ASSERT (cachedView != nil);
+                        ASSERT(cachedView != nil);
                         [[self frameView] _setDocumentView: cachedView];
                     }
                     else

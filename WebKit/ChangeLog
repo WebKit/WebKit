@@ -1,5 +1,26 @@
 2003-05-08  John Sullivan  <sullivan@apple.com>
 
+	Closed up all gaps in WebKit between "ASSERT" and "(" to
+	make Darin's day a little brighter.
+
+        Reviewed by Darin
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]):
+        (-[WebBridge handleMouseDragged:]):
+        (-[WebBridge mayStartDragWithMouseDragged:]):
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate _releaseResources]):
+        (-[WebBaseResourceHandleDelegate dealloc]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _preferencesChangedNotification:]):
+
+2003-05-08  John Sullivan  <sullivan@apple.com>
+
 	- fixed 3252632 -- Registering a WebDocumentView too 
 	early breaks built-in image viewing
 

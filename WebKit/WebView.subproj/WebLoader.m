@@ -28,7 +28,7 @@
 
 - (void)_releaseResources
 {
-    ASSERT (!reachedTerminalState);
+    ASSERT(!reachedTerminalState);
     
     // It's possible that when we release the handle, it will be
     // deallocated and release the last reference to this object.
@@ -62,7 +62,7 @@
 
 - (void)dealloc
 {
-    ASSERT (reachedTerminalState);
+    ASSERT(reachedTerminalState);
     [request release];
     [response release];
     [super dealloc];

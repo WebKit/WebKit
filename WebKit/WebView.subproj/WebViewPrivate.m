@@ -433,7 +433,7 @@
 {
     WebPreferences *preferences = (WebPreferences *)[notification object];
     
-    ASSERT (preferences == [self preferences]);
+    ASSERT(preferences == [self preferences]);
     [self _releaseUserAgentStrings];
     [self _updateWebCoreSettingsFromPreferences: preferences];
 }

@@ -258,8 +258,8 @@ static NSMutableArray *activeImageRenderers;
             // Reduce heights of both rectangles without changing their positions.
             // In the non-flipped case, this means moving the origins up from the bottom left.
             // In the flipped case, just adjusting the height is sufficient.
-            ASSERT ([self isFlipped]);
-            ASSERT ([[NSView focusView] isFlipped]);
+            ASSERT([self isFlipped]);
+            ASSERT([[NSView focusView] isFlipped]);
             ir.size.height = clippedDestinationHeight;
             fr.origin.y += fr.size.height - clippedSourceHeight;
             fr.size.height = clippedSourceHeight;

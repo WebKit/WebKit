@@ -579,7 +579,7 @@
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
-    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
     
     WebPluginController *pluginController = [docView _pluginController];
     
@@ -810,7 +810,7 @@ static BOOL loggedObjectCacheSize = NO;
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
-    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
 
     [docView _handleMouseDragged:event];
 }
@@ -819,7 +819,7 @@ static BOOL loggedObjectCacheSize = NO;
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
-    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
 
     [docView _handleAutoscrollForMouseDragged:event];
 }
@@ -828,7 +828,7 @@ static BOOL loggedObjectCacheSize = NO;
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
 
-    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+    ASSERT([docView isKindOfClass:[WebHTMLView class]]);
 
     return [docView _mayStartDragWithMouseDragged:event];
 }
