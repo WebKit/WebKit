@@ -867,9 +867,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
         return;
     }
     _part->setZoomFactor(newZoomFactor);
-    // setZoomFactor will trigger a timed layout, but we want to do the layout before
-    // we do any drawing. This takes care of that. Without this we redraw twice.
-    [self setNeedsLayout];
 }
 
 - (CFStringEncoding)textEncoding

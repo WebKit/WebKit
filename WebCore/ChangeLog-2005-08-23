@@ -1,3 +1,15 @@
+2003-12-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3483130, repaint doesn't occur when font is decreased dynamically when at the bottom of
+	amazon.com.
+	
+        Reviewed by john
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setZoomFactor):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setTextSizeMultiplier:]):
+
 2003-12-19  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3515590.  Return Undefined to JS for applet if

@@ -4159,6 +4159,9 @@ void KHTMLPart::setZoomFactor (int percent)
   d->m_paDecZoomFactor->setEnabled( d->m_zoomFactor > minZoom );
   d->m_paIncZoomFactor->setEnabled( d->m_zoomFactor < maxZoom );
 #endif
+
+  if (d->m_doc && d->m_doc->renderer() && d->m_doc->renderer()->needsLayout())
+    view()->layout();
 }
 
 void KHTMLPart::setJSStatusBarText( const QString &text )
