@@ -35,9 +35,19 @@ void KWQFindWordBoundary(QChar *chars, int len, int position, int *start, int *e
     OSStatus status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakWordMask, &breakLocator);
     if (status == noErr) {
         UniCharArrayOffset startOffset, endOffset;
-        status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, 0, (const UniChar *)chars, len, position, &endOffset);
+        if (position < len) {
+            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakLeadingEdgeMask, (const UniChar *)chars, len, position, &endOffset);
+        } else {
+            // UCFindTextBreak treats this case as ParamErr
+            endOffset = len;
+        }
         if (status == noErr) {
-            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, &startOffset);
+            if (position > 0) {
+                status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, &startOffset);
+            } else {
+                // UCFindTextBreak treats this case as ParamErr
+                startOffset = 0;
+            }
         }
         UCDisposeTextBreakLocator(&breakLocator);
         if (status == noErr) {
@@ -50,29 +60,29 @@ void KWQFindWordBoundary(QChar *chars, int len, int position, int *start, int *e
     // If Carbon fails (why would it?), do a simple space/punctuation boundary check.
     if (chars[position].isSpace()) {
         int pos = position;
-        while (chars[pos].isSpace() && pos >= 0)
+        while (pos >= 0 && chars[pos].isSpace())
             pos--;
         *start = pos+1;
         pos = position;
-        while (chars[pos].isSpace() && pos < (int)len)
+        while (pos < (int)len && chars[pos].isSpace())
             pos++;
         *end = pos;
     } else if (chars[position].isPunct()) {
         int pos = position;
-        while (chars[pos].isPunct() && pos >= 0)
+        while (pos >= 0 && chars[pos].isPunct())
             pos--;
         *start = pos+1;
         pos = position;
-        while (chars[pos].isPunct() && pos < (int)len)
+        while (pos < (int)len && chars[pos].isPunct())
             pos++;
         *end = pos;
     } else {
         int pos = position;
-        while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos >= 0)
+        while (pos >= 0 && !chars[pos].isSpace() && !chars[pos].isPunct())
             pos--;
         *start = pos+1;
         pos = position;
-        while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos < (int)len)
+        while (pos < (int)len && !chars[pos].isSpace() && !chars[pos].isPunct())
             pos++;
         *end = pos;
     }

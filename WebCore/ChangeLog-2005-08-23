@@ -1,3 +1,14 @@
+2004-08-19  Trey Matteson  <trey@apple.com>
+
+	Unexpected errors hit while finding word boundaries, leading to crash.
+
+        Reviewed by Ken.
+
+        * kwq/KWQTextUtilities.cpp:
+        (KWQFindWordBoundary):  Don't call UCFindTextBreak with edge cases it thinks
+	are param errors, and pass correct mask for forward case.  Also fix off-by-one
+	crashers in fallback code.
+
 2004-08-19  David Hyatt  <hyatt@apple.com>
 
 	Make XSLT imports/includes work.  This code has to be turned off until the newer version of libxslt is
