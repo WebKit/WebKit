@@ -30,7 +30,6 @@
 }
 
 + (WebCoreCookieAdapter *)sharedAdapter;
-- init;
 
 - (BOOL)cookiesEnabled;
 - (NSString *)cookiesForURL:(NSURL *)url;

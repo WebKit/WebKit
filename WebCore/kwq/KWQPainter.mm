@@ -36,13 +36,12 @@
 #import <WebCoreTextRenderer.h>
 #import <WebCoreImageRenderer.h>
 
-struct QPState {				// painter state
-    QPState() : exclusiveOrMode(false), paintingDisabled(false) { }
+struct QPState {
+    QPState() : paintingDisabled(false) { }
     QFont font;
     QPen pen;
     QBrush brush;
     QRegion clip;
-    bool exclusiveOrMode;
     bool paintingDisabled;
 };
 
@@ -117,6 +116,7 @@ QRect QPainter::xForm(const QRect &aRect) const
 void QPainter::save()
 {
     data->stack.push(new QPState(data->state));
+
     [NSGraphicsContext saveGraphicsState]; 
 }
 
@@ -182,7 +182,7 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     if (y1 != y2)
         p2.y -= width;
     
-    NSBezierPath *path = [NSBezierPath bezierPath];
+    NSBezierPath *path = [[NSBezierPath alloc] init];
     [path setLineWidth:width];
 
     switch (penStyle) {
@@ -208,6 +208,8 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
 
     _setColorFromPen();
     [path stroke];
+    
+    [path release];
 }
 
 
@@ -411,12 +413,11 @@ void QPainter::addClip(const QRect &rect)
 
 Qt::RasterOp QPainter::rasterOp() const
 {
-    return data->state.exclusiveOrMode ? XorROP : CopyROP;
+    return CopyROP;
 }
 
-void QPainter::setRasterOp(RasterOp op)
+void QPainter::setRasterOp(RasterOp)
 {
-    data->state.exclusiveOrMode = op == XorROP;
 }
 
 void QPainter::setPaintingDisabled(bool f)

@@ -125,14 +125,14 @@ void QObject::timerEvent(QTimerEvent *te)
 {
 }
 
-int QObject:: startTimer(int milliseconds)
+int QObject::startTimer(int milliseconds)
 {
     static int timerCount = 1;
 
     NSNumber *timerId = [NSNumber numberWithInt: timerCount];
     
-    if (timers == nil){
-        // The timers dictionary itself leaks, but the contents are removed
+    if (timers == nil) {
+        // The global timers dictionary itself leaks, but the contents are removed
         // when a timer expires or is killed.
         timers = [[NSMutableDictionary alloc] init];
     }

@@ -30,7 +30,7 @@
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete;
 
 - (NSSize)size;
-- (void)resize: (NSSize)s;
+- (void)resize:(NSSize)s;
 - (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr;
 - (void)stopAnimation;
 - (void)tileInRect:(NSRect)r fromPoint:(NSPoint)p;

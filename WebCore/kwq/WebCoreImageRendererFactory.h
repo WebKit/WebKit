@@ -32,7 +32,6 @@
 }
 
 + (WebCoreImageRendererFactory *)sharedFactory;
-- init;
 
 - (id <WebCoreImageRenderer>)imageRenderer;
 - (id <WebCoreImageRenderer>)imageRendererWithBytes: (const void *)bytes length:(unsigned)length;

@@ -52,7 +52,7 @@
 @end
 
 QTimer::QTimer()
-    : m_timer(0), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout()))
+    : m_timer(nil), m_monitorFunction(0), m_timeoutSignal(this, SIGNAL(timeout()))
 {
 }
 
@@ -83,7 +83,7 @@ void QTimer::stop()
     
     [m_timer invalidate];
     [m_timer release];
-    m_timer = 0;
+    m_timer = nil;
 
     if (m_monitorFunction) {
         m_monitorFunction(m_monitorFunctionContext);
@@ -103,6 +103,6 @@ void QTimer::fire()
 
     if (![m_timer isValid]) {
         [m_timer release];
-        m_timer = 0;
+        m_timer = nil;
     }
 }
