@@ -185,8 +185,8 @@ layer at (0,0) size 800x2988
                     text run at (0,4) width 733: "This second part of the DIV should have a line-height of twice the font size, which should cause extra spacing between the"
                     text run at (0,28) width 32: "lines."
               RenderBlock {P} at (4,1020) size 762x30
-                RenderText {TEXT} at (0,0) size 756x30
-                  text run at (0,0) width 756: "This paragraph should have a line-height of 50 pixels in the first section, which should cause extra spacing between the lines. "
+                RenderText {TEXT} at (0,0) size 752x30
+                  text run at (0,0) width 752: "This paragraph should have a line-height of 50 pixels in the first section, which should cause extra spacing between the lines."
                   text run at (0,15) width 432: "In the second section (within the table) its line-height should be normal."
               RenderBlock {P} at (4,1062) size 762x15
                 RenderText {TEXT} at (0,0) size 648x15

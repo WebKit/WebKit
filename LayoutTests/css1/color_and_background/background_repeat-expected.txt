@@ -244,8 +244,8 @@ layer at (0,0) size 888x1797
                 RenderInline {EM} at (0,0) size 14x16 [bgcolor=#000000]
                   RenderText {TEXT} at (320,18) size 14x16
                     text run at (320,18) width 14: "all"
-                RenderText {TEXT} at (334,17) size 733x34
-                  text run at (334,17) width 399: " directions, regardless of the position of the origin image. "
+                RenderText {TEXT} at (334,17) size 729x34
+                  text run at (334,17) width 395: " directions, regardless of the position of the origin image."
                   text run at (0,34) width 394: "Note that this test is only valid if the user agent supports "
                 RenderInline {CODE} at (0,0) size 152x16 [bgcolor=#000000]
                   RenderText {TEXT} at (394,35) size 152x16

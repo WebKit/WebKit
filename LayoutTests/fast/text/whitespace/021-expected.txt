@@ -10,7 +10,7 @@ layer at (0,0) size 800x73
               RenderText {TEXT} at (1,1) size 432x34
                 text run at (1,1) width 432: "This stuff should all be within the table boundaries, and not off"
                 text run at (1,18) width 69: "the edge. "
-                text run at (70,18) width 355: "No way should it be off the edge of the damn table. "
+                text run at (70,18) width 351: "No way should it be off the edge of the damn table."
               RenderInline {SPAN} at (0,0) size 217x17 [bgcolor=#000000]
                 RenderImage {IMG} at (1,49) size 50x0
                 RenderText {TEXT} at (51,35) size 167x17

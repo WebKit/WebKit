@@ -28,8 +28,8 @@ layer at (0,0) size 800x2148
           text run at (48,65) width 35: "test. "
           text run at (83,65) width 506: "Both the content background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,332) size 784x84 [bgcolor=#00FFFF]
-        RenderText {TEXT} at (25,25) size 705x34
-          text run at (25,25) width 705: "This element should have an overall padding of 25 pixels, which will require extra text in order to test. "
+        RenderText {TEXT} at (25,25) size 701x34
+          text run at (25,25) width 701: "This element should have an overall padding of 25 pixels, which will require extra text in order to test."
           text run at (25,42) width 506: "Both the content background and the padding should be aqua (light blue)."
       RenderBlock {P} at (0,430) size 784x174 [bgcolor=#00FFFF]
         RenderText {TEXT} at (70,70) size 637x34
@@ -69,8 +69,8 @@ layer at (0,0) size 800x2148
                   text run at (48,65) width 53: "to test. "
                   text run at (101,65) width 506: "Both the content background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,179) size 762x84 [bgcolor=#00FFFF]
-                RenderText {TEXT} at (25,25) size 705x34
-                  text run at (25,25) width 705: "This element should have an overall padding of 25 pixels, which will require extra text in order to test. "
+                RenderText {TEXT} at (25,25) size 701x34
+                  text run at (25,25) width 701: "This element should have an overall padding of 25 pixels, which will require extra text in order to test."
                   text run at (25,42) width 506: "Both the content background and the padding should be aqua (light blue)."
               RenderBlock {P} at (4,277) size 762x174 [bgcolor=#00FFFF]
                 RenderText {TEXT} at (70,70) size 619x34

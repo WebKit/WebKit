@@ -155,7 +155,7 @@ layer at (0,0) size 800x3887
             text run at (0,17) width 119: "should not apply."
       RenderBlock {P} at (0,1789) size 784x34 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 735x34
-          text run at (0,0) width 730: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule. "
+          text run at (0,0) width 726: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule."
           text run at (0,17) width 735: "However, it is valid in CSS2, so if this is being viewed on a tty browser that supports CSS2, it should be red."
       RenderBlock {P} at (0,1837) size 784x17 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 726x17
@@ -323,9 +323,9 @@ layer at (0,0) size 800x3887
                   text run at (346,20) width 407: "This should cause the user agent to use the default value of"
                   text run at (3,37) width 67: "'medium'."
               RenderBlock {P} at (4,332) size 762x57
-                RenderText {TEXT} at (3,3) size 743x51
+                RenderText {TEXT} at (3,3) size 739x51
                   text run at (3,3) width 723: "This paragraph should have a medium-width border around it (the same as the next and the previous two"
-                  text run at (3,20) width 743: "paragraphs), because the border-width units are invalid, and therefore the border-width should be ignored. "
+                  text run at (3,20) width 739: "paragraphs), because the border-width units are invalid, and therefore the border-width should be ignored."
                   text run at (3,37) width 478: "This should cause the user agent to use the default value of 'medium'."
               RenderBlock {P} at (4,403) size 762x57
                 RenderText {TEXT} at (3,3) size 734x51
@@ -376,7 +376,7 @@ layer at (0,0) size 800x3887
                     text run at (0,17) width 177: "selector should not apply."
               RenderBlock {P} at (4,868) size 762x34
                 RenderText {TEXT} at (0,0) size 735x34
-                  text run at (0,0) width 730: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule. "
+                  text run at (0,0) width 726: "This paragraph should be black, because the style declaration that applies to it is within an invalid at-rule."
                   text run at (0,17) width 735: "However, it is valid in CSS2, so if this is being viewed on a tty browser that supports CSS2, it should be red."
               RenderBlock {P} at (4,916) size 762x17
                 RenderText {TEXT} at (0,0) size 726x17

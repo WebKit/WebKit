@@ -26,7 +26,7 @@ layer at (0,0) size 800x6811
       RenderBlock {HR} at (1,189) size 782x2 [bgcolor=#000000]
       RenderBlock {P} at (0,205) size 784x51 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 758x51
-          text run at (0,0) width 752: "On this test page, each test is performed once with floating paragraphs, and then again with floating images. "
+          text run at (0,0) width 748: "On this test page, each test is performed once with floating paragraphs, and then again with floating images."
           text run at (0,17) width 758: "Other than the substitution of images for pargraphs, the structure of the test is exactly the same, including the"
           text run at (0,34) width 152: "direction of the floats."
       RenderBlock {HR} at (21,277) size 590x2 [bgcolor=#000000]
@@ -366,7 +366,7 @@ layer at (0,0) size 800x6811
             text run at (15,66) width 72: "in source)."
         RenderText {TEXT} at (175,22) size 414x323
           text run at (175,22) width 73: "text within"
-          text run at (175,39) width 59: "the DIV. "
+          text run at (175,39) width 55: "the DIV."
           text run at (175,56) width 41: "Under"
           text run at (175,73) width 65: "CSS1, the"
           text run at (175,90) width 80: "left floating"
@@ -427,7 +427,7 @@ layer at (0,0) size 800x6811
             RenderTableCell {TD} at (12,25) size 770x3296 [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x51
                 RenderText {TEXT} at (0,0) size 758x51
-                  text run at (0,0) width 752: "On this test page, each test is performed once with floating paragraphs, and then again with floating images. "
+                  text run at (0,0) width 748: "On this test page, each test is performed once with floating paragraphs, and then again with floating images."
                   text run at (0,17) width 758: "Other than the substitution of images for pargraphs, the structure of the test is exactly the same, including the"
                   text run at (0,34) width 152: "direction of the floats."
               RenderBlock {HR} at (25,76) size 573x2
@@ -770,7 +770,7 @@ layer at (0,0) size 800x6811
                     text run at (15,66) width 72: "in source)."
                 RenderText {TEXT} at (175,22) size 414x323
                   text run at (175,22) width 73: "text within"
-                  text run at (175,39) width 59: "the DIV. "
+                  text run at (175,39) width 55: "the DIV."
                   text run at (175,56) width 41: "Under"
                   text run at (175,73) width 65: "CSS1, the"
                   text run at (175,90) width 80: "left floating"

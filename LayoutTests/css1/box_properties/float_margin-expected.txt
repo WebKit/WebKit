@@ -68,7 +68,7 @@ layer at (0,0) size 800x2207
           text run at (0,46) width 723: "paragraph's box, thus causing the edges of the white background to align"
           text run at (0,69) width 377: "with the thick gray lines in the image. "
           text run at (377,69) width 348: "This paragraph should have a white"
-          text run at (0,92) width 725: "background, first of all, which extends to the edges of the element's box. "
+          text run at (0,92) width 719: "background, first of all, which extends to the edges of the element's box."
           text run at (0,115) width 532: "There is no padding set on this paragraph whatsoever."
       RenderBlock {P} at (30,820) size 744x161 [bgcolor=#FFFFFF]
         RenderImage {IMG} at (0,0) size 60x60 [bgcolor=#000000]
@@ -90,7 +90,7 @@ layer at (0,0) size 800x2207
           text run at (30,23) width 699: "left, and the edges of the white background should line up with the top"
           text run at (0,46) width 282: "and left edges of the image. "
           text run at (282,46) width 442: "However, the text should overlap the image's"
-          text run at (0,69) width 705: "right and bottom sides, lining up with the thick gray lines in the image. "
+          text run at (0,69) width 699: "right and bottom sides, lining up with the thick gray lines in the image."
           text run at (0,92) width 731: "This paragraph should have a white background, first of all, which extends"
           text run at (0,115) width 342: "to the edges of the element's box. "
           text run at (342,115) width 303: "There is no padding set on this"

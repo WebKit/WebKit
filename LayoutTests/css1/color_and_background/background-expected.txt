@@ -65,9 +65,9 @@ layer at (0,0) size 800x682
                 RenderInline {CODE} at (0,0) size 64x16
                   RenderText {TEXT} at (39,18) size 64x16
                     text run at (39,18) width 64: "repeat-x"
-                RenderText {TEXT} at (103,17) size 761x34
+                RenderText {TEXT} at (103,17) size 757x34
                   text run at (103,17) width 331: " indicates tiling in both directions of the x-axis. "
-                  text run at (434,17) width 327: "Furthermore, the strip should be fixed in place. "
+                  text run at (434,17) width 323: "Furthermore, the strip should be fixed in place."
                   text run at (0,34) width 648: "I'll have to add extra text at the end of this page to make it long enough to scroll conveniently."
               RenderBlock {P} at (4,69) size 762x51 [bgcolor=#00FF00]
                 RenderText {TEXT} at (0,0) size 761x51

@@ -14,8 +14,7 @@ layer at (0,0) size 800x57
                 text run at (14,2) width 127: "Corporate Services"
             RenderText {TEXT} at (141,2) size 20x17
               text run at (141,2) width 20: " \x{A0}\x{A0}\x{A0}\x{A0}"
-          RenderText {TEXT} at (161,2) size 4x17
-            text run at (161,2) width 4: " "
+          RenderText {TEXT} at (0,0) size 0x0
           RenderInline {NOBR} at (0,0) size 202x17
             RenderText {TEXT} at (2,19) size 12x17
               text run at (2,19) width 12: "\x{2022} "

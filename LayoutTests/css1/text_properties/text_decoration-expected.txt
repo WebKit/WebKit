@@ -37,7 +37,7 @@ layer at (0,0) size 800x1114
           RenderText {TEXT} at (559,0) size 192x17
             text run at (559,0) width 192: "should also be underlined"
         RenderText {TEXT} at (751,0) size 776x51
-          text run at (751,0) width 9: ". "
+          text run at (751,0) width 5: "."
           text run at (0,17) width 776: "This is because the parent's underline will 'span' the boldfaced text, even if the inline element has no underline of"
           text run at (0,34) width 55: "its own."
       RenderBlock {P} at (0,378) size 784x17 [bgcolor=#000000]
@@ -129,8 +129,8 @@ layer at (0,0) size 800x1114
                 RenderInline {B} at (0,0) size 192x17
                   RenderText {TEXT} at (559,0) size 192x17
                     text run at (559,0) width 192: "should also be underlined"
-                RenderText {TEXT} at (751,0) size 760x51
-                  text run at (751,0) width 9: ". "
+                RenderText {TEXT} at (751,0) size 758x51
+                  text run at (751,0) width 5: "."
                   text run at (0,17) width 758: "This is because the parent's underline will 'span' the boldfaced text, even if the inline element has no underline"
                   text run at (0,34) width 73: "of its own."
               RenderBlock {P} at (4,193) size 762x17

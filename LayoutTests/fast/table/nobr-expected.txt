@@ -25,7 +25,7 @@ layer at (0,0) size 800x349
                   text run at (2,189) width 27: "text"
                   text run at (2,206) width 46: "should"
                   text run at (2,223) width 34: "wrap"
-                  text run at (2,240) width 59: "anyway. "
+                  text run at (2,240) width 55: "anyway."
                   text run at (2,257) width 64: "The table"
                   text run at (2,274) width 67: "is only 50"
                   text run at (2,291) width 41: "pixels"

@@ -53,8 +53,8 @@ layer at (0,0) size 800x467
                 RenderInline {TT} at (0,0) size 24x16
                   RenderText {TEXT} at (438,1) size 24x16
                     text run at (438,1) width 24: "id1"
-                RenderText {TEXT} at (462,0) size 737x51
-                  text run at (462,0) width 275: ", which would ordinarily make it purple. "
+                RenderText {TEXT} at (462,0) size 735x51
+                  text run at (462,0) width 271: ", which would ordinarily make it purple."
                   text run at (0,17) width 735: "This is because declarations marked important have more weight than normal declarations given in a STYLE"
                   text run at (0,34) width 64: "attribute."
               RenderBlock {P} at (4,117) size 762x34 [color=#008000]

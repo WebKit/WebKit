@@ -81,8 +81,8 @@ layer at (0,0) size 800x664
                 RenderInline at (0,0) size 61x57 [color=#800000]
                   RenderText {TEXT} at (0,0) size 61x57
                     text run at (0,0) width 61: "\"W"
-                RenderText {TEXT} at (61,33) size 732x58
+                RenderText {TEXT} at (61,33) size 728x58
                   text run at (61,33) width 349: "e should check for quotation support,\" it was said. "
                   text run at (410,33) width 311: "The first two characters in this paragraph-- a"
-                  text run at (0,57) width 732: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon. "
+                  text run at (0,57) width 728: "double-quote mark and a capital 'W'-- should be 350% bigger than the rest of the paragraph, and maroon."
                   text run at (0,74) width 449: "Note that this is not required under CSS1, but it is recommended."

@@ -85,8 +85,8 @@ layer at (0,0) size 800x1104
                 RenderText {TEXT} at (0,0) size 224x17
                   text run at (0,0) width 224: "This element has a class of zero."
               RenderBlock {P} at (4,35) size 762x51 [bgcolor=#00FFFF]
-                RenderText {TEXT} at (14,0) size 700x51
-                  text run at (14,0) width 700: "This element should have a right padding of half an inch, which will require extra text in order to test. "
+                RenderText {TEXT} at (18,0) size 696x51
+                  text run at (18,0) width 696: "This element should have a right padding of half an inch, which will require extra text in order to test."
                   text run at (81,17) width 510: "Both the content background and the padding should be aqua (light blue). "
                   text run at (591,17) width 123: "The text has been"
                   text run at (288,34) width 426: "right-aligned in order to make the right padding easier to see."
