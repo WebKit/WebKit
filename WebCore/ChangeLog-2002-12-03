@@ -1,3 +1,10 @@
+2002-10-09  David Hyatt  <hyatt@apple.com>
+
+	This was an unintentional checkin. backing out.
+	
+        * khtml/xml/dom_elementimpl.cpp:
+        (NamedAttrMapImpl::removeNamedItem):
+
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
         Added bridge method set the selection.
