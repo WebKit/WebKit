@@ -134,7 +134,25 @@
 
 - (NSImage *)image
 {
-    return _image;
+    static NSImage *defaultImage = nil;
+    static BOOL loadedDefaultImage = NO;
+
+    if (_image != nil) {
+        return _image;
+    }
+    
+    // Attempt to load default image only once, to avoid performance penalty of repeatedly
+    // trying and failing to find it.
+    if (!loadedDefaultImage) {
+        NSString *pathForDefaultImage =
+        [[NSBundle bundleForClass:[self class]] pathForResource:@"bookmark_folder" ofType:@"tiff"];
+        if (pathForDefaultImage != nil) {
+            defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
+        }
+        loadedDefaultImage = YES;
+    }
+
+    return defaultImage;
 }
 
 - (void)setImage:(NSImage *)image

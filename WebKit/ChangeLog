@@ -1,3 +1,23 @@
+2002-05-10  John Sullivan  <sullivan@apple.com>
+
+	Fixed 2922756 (@ image in History window is a little too tall)
+	Fixed 2923790 (bookmark folders need folder icons)
+
+	* Resources/bookmark_folder.tiff: New image (small folder, copied from elsewhere)
+	* Resources/url_icon.tiff: Shrunk this one a little bit.
+
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList image]): Return the default image if no custom image is set.
+
+	* History.subproj/IFURIEntry.m:
+	(-[IFURIEntry image]): If the default image's file isn't found, don't try
+	to create an NSImage, because it will come out horribly broken and evil if
+	you do (I ran into this while adding the bookmark folder image; most of Alexander's
+	menus did not appear at all because the bookmark folder image was using a bogus
+	NSImage).
+
+	* WebKit.pbproj/project.pbxproj: Updated for new files.
+
 2002-05-10  Kenneth Kocienda  <kocienda@apple.com>
 
         Reviewed by: Maciej Stachowiak

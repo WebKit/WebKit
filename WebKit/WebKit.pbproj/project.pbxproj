@@ -248,6 +248,7 @@
 				F5883BDF025E5C6A01000102,
 				F5E638640265FC0D01000102,
 				F5E638650265FC0D01000102,
+				F599A818028C6D0D0124FDD6,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -315,6 +316,7 @@
 				35F3577E0198AAB80ACA1520,
 				089C1666FE841158C02AAC07,
 				35F3577401986B740ACA1520,
+				F599A817028C6D0D0124FDD6,
 				F5B67130023EDF8901C1A525,
 				F5883BDE025E5C6A01000102,
 				25B2A7C4025D0A880ECA149E,
@@ -1349,6 +1351,18 @@
 			};
 			isa = PBXBuildStyle;
 			name = Unoptimized;
+		};
+		F599A817028C6D0D0124FDD6 = {
+			isa = PBXFileReference;
+			name = bookmark_folder.tiff;
+			path = Resources/bookmark_folder.tiff;
+			refType = 4;
+		};
+		F599A818028C6D0D0124FDD6 = {
+			fileRef = F599A817028C6D0D0124FDD6;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F59EAE3E0253C7EE018635CA = {
 			isa = PBXFileReference;

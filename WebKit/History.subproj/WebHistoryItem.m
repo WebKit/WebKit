@@ -86,7 +86,9 @@
     if (!loadedDefaultImage) {
         NSString *pathForDefaultImage =
             [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
-        defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
+        if (pathForDefaultImage != nil) {
+            defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
+        }
         loadedDefaultImage = YES;
     }
 
