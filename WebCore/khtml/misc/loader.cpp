@@ -73,11 +73,11 @@ static bool cacheDisabled;
 // Just keep calling next() on this. It's safe from deletions of the current item
 class CachedObjectClientWalker {
 public:
-    CachedObjectClientWalker(const QPtrList<CachedObjectClient> &clients) : _current(0), _iterator(clients) { }
+    CachedObjectClientWalker(const QPtrDict<CachedObjectClient> &clients) : _current(0), _iterator(clients) { }
     CachedObjectClient *next();
 private:
     CachedObjectClient *_current;
-    QPtrListIterator<CachedObjectClient> _iterator;
+    QPtrDictIterator<CachedObjectClient> _iterator;
 };
 
 CachedObject::~CachedObject()
@@ -155,8 +155,7 @@ void CachedObject::setRequest(Request *_request)
 
 void CachedObject::ref(CachedObjectClient *c)
 {
-    m_clients.remove(c);
-    m_clients.append(c);
+    m_clients.insert(c, c);
     Cache::removeFromLRUList(this);
     increaseAccessCount();
 }

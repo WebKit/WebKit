@@ -195,7 +195,7 @@ namespace khtml
     protected:
         void setSize(int size);
         
-        QPtrList<CachedObjectClient> m_clients;
+        QPtrDict<CachedObjectClient> m_clients;
 
 	DOM::DOMString m_url;
         QString m_accept;

@@ -44,6 +44,7 @@ public:
     T *take(void *key) { return (T *)impl.take(key); }
     void insert(void *key, T *value) { impl.insert(key, value); }
     bool remove(void *key) { return impl.remove(key, del_item); }
+    bool isEmpty() const { return count() == 0; }
 
     QPtrDict<T> &operator=(const QPtrDict<T> &pd) { impl.assign(pd.impl,del_item); QPtrCollection::operator=(pd); return *this; }
     T *operator[](void *key) const { return (T *)impl.find(key); } 

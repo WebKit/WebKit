@@ -1,3 +1,20 @@
+2003-11-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3472893 - Slow intel page takes 20% of its time in CachedObject::ref
+        
+	Speeds up loading of
+	http://www.intel.com/cd/ids/developer/asmo-na/eng/index.htm by
+	19%, no slowdown on PLT.
+	
+        * khtml/misc/loader.h: Use QPtrDict for m_clients instead of QPtrList.
+	* khtml/misc/loader.cpp:
+        (CachedObjectClientWalker::CachedObjectClientWalker): Ditto.
+        (CachedObject::ref): Ditto.
+        * kwq/KWQPtrDict.h:
+        (QPtrDict::isEmpty): Implemented.
+
 2003-11-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
