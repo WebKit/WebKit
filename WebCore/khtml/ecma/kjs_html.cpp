@@ -3872,7 +3872,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (!o->inherits(&Image::info)) {
+            if (o->type() != ObjectType || !o->inherits(&Image::info)) {
                 Object err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
@@ -3900,7 +3900,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             ObjectImp *o = static_cast<ObjectImp*>(args[0].imp());
-            if (!o->inherits(&Image::info)) {
+            if (o->type() != ObjectType || !o->inherits(&Image::info)) {
                 Object err = Error::create(exec,TypeError);
                 exec->setException(err);
                 return err;
