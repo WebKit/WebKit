@@ -1,3 +1,25 @@
+2003-10-31  David Hyatt  <hyatt@apple.com>
+
+	Three simple fixes:
+	
+	(1) Fix for 3463777, crash on CSS3 box model draft.  This was just a situation where a simple null-check
+	was needed for generated content.
+
+	(2) Added a != check when the old and new hover obj are the same to avoid a little bit of extra work.
+
+	(3) Removed the m_pressed member from DOM nodes and removed the calls to setPressed, since this code
+	is dead and not used by anyone.
+	
+        * khtml/khtmlview.cpp:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::addChild):
+        (RenderLayer::updateHoverActiveState):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::NodeImpl):
+        * khtml/xml/dom_nodeimpl.h:
+        (DOM::NodeImpl::hasStyle):
+        (DOM::NodeImpl::setHasStyle):
+
 2003-10-30  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3469330, the Marquee data in RenderStyle needs a copy constructor hack like all the other

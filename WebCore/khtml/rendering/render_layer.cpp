@@ -299,8 +299,12 @@ void RenderLayer::addChild(RenderLayer *child, RenderLayer* beforeChild)
    
     child->setParent(this);
 
-    // Dirty the z-order list in which we are contained.
-    child->stackingContext()->dirtyZOrderLists();
+    // Dirty the z-order list in which we are contained.  The stackingContext() can be null in the
+    // case where we're building up generated content layers.  This is ok, since the lists will start
+    // off dirty in that case anyway.
+    RenderLayer* stackingContext = child->stackingContext();
+    if (stackingContext)
+        stackingContext->dirtyZOrderLists();
 }
 
 RenderLayer* RenderLayer::removeChild(RenderLayer* oldChild)
@@ -1037,15 +1041,17 @@ void RenderLayer::updateHoverActiveState(RenderObject::NodeInfo& info)
     // Locate the common ancestor render object for the two renderers.
     RenderObject* ancestor = commonAncestor(oldHoverObj, newHoverObj);
     
-    // The old hover path only needs to be cleared up to (and not including) the common ancestor;
-    for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = hoverAncestor(curr)) {
-        curr->setMouseInside(false);
-        if (curr->element() && !curr->isText()) {
-            bool oldActive = curr->element()->active();
-            curr->element()->setActive(false);
-            if (curr->style()->affectedByHoverRules() ||
-                (curr->style()->affectedByActiveRules() && oldActive))
-                curr->element()->setChanged();
+    if (oldHoverObj != newHoverObj) {
+        // The old hover path only needs to be cleared up to (and not including) the common ancestor;
+        for (RenderObject* curr = oldHoverObj; curr && curr != ancestor; curr = hoverAncestor(curr)) {
+            curr->setMouseInside(false);
+            if (curr->element() && !curr->isText()) {
+                bool oldActive = curr->element()->active();
+                curr->element()->setActive(false);
+                if (curr->style()->affectedByHoverRules() ||
+                    (curr->style()->affectedByActiveRules() && oldActive))
+                    curr->element()->setChanged();
+            }
         }
     }
 
