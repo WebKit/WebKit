@@ -310,6 +310,11 @@
     }
 }
 
+- (NSString *)_title
+{
+    return _private->pageTitle;
+}
+
 - (void)_setURL:(NSURL *)URL
 {
     NSMutableURLRequest *newRequest = [_private->request mutableCopy];

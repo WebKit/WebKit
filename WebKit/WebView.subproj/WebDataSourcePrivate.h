@@ -179,5 +179,6 @@
 - (void)_setWebFrame:(WebFrame *)frame;
 
 - (BOOL)_isDocumentHTML;
+- (NSString *)_title;
 
 @end

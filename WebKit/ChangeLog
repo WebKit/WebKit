@@ -1,3 +1,15 @@
+2003-05-08  Richard Williamson  <rjw@apple.com>
+
+        Make representations without intrinsic titles return nil.
+        
+        Reviewed by John.
+
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebImageRepresentation.m:
+        * WebView.subproj/WebTextRepresentation.m:
+
 2003-05-08  Richard Williamson   <rjw@apple.com>
 
         Fixed 3252460.  *** Public API Change ***

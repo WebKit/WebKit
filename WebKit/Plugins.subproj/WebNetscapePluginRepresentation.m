@@ -96,7 +96,7 @@
 
 - (NSString *)title
 {
-    return [[[_dataSource response] URL] absoluteString];
+    return nil;
 }
 
 - (void)redeliverStream
