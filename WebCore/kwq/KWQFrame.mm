@@ -47,6 +47,7 @@ void QFrame::setFrameStyle(int)
 int QFrame::frameWidth() const
 {
     _logNeverImplemented();
+    return 0;
 }
 
 

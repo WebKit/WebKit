@@ -35,10 +35,12 @@ BrowserExtension::~BrowserExtension()
     _logNotYetImplemented();
 }
 
+static BrowserInterface *tempBrowserInterface = 0;
 
 BrowserInterface *BrowserExtension::browserInterface() const
 {
-    _logNotYetImplemented();
+	_logNotYetImplemented();
+    return tempBrowserInterface;
 }
 
 

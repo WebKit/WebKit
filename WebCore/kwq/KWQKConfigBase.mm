@@ -26,6 +26,11 @@
 #include <kwqdebug.h>
 #include <kconfig.h>
 
+//FIX ME:
+static QString tempQString = QString();
+static QColor tempQColor = QColor(0,0,0);
+static QStringList tempQStringList = QStringList();
+
 KConfigBase::KConfigBase()
 {
     _logNotYetImplemented();
@@ -57,7 +62,7 @@ QString KConfigBase::readEntry(const char *pKey,
     const QString& aDefault=QString::null) const
 {
     _logNotYetImplemented();
-    return QString();
+    return tempQString;
 }
 
 
@@ -88,14 +93,14 @@ bool KConfigBase::readBoolEntry(const char *pKey, bool nDefault=0) const
 QColor KConfigBase::readColorEntry(const char *pKey, const QColor *pDefault=0L) const
 {
     _logNotYetImplemented();
-    return QColor(0,0,0);
+    return tempQColor;
 }
 
 
 QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 {
     _logNotYetImplemented();
-    return QStringList();
+    return tempQStringList;
 }
 
 
