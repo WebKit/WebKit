@@ -2633,7 +2633,7 @@ IMPLEMENT_PROTOTYPE(HTMLCollectionProto,HTMLCollectionProtoFunc)
 
 const ClassInfo HTMLCollection::info = { "HTMLCollection", 0, 0, 0 };
 
-HTMLCollection::HTMLCollection(ExecState *exec, DOM::HTMLCollection c)
+HTMLCollection::HTMLCollection(ExecState *exec, const DOM::HTMLCollection &c)
   : DOMObject(HTMLCollectionProto::self(exec)), collection(c) {}
 
 HTMLCollection::~HTMLCollection()
@@ -3005,12 +3005,12 @@ Image::~Image()
   if ( img ) img->deref(this);
 }
 
-Value KJS::getHTMLCollection(ExecState *exec,DOM::HTMLCollection c)
+Value KJS::getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c)
 {
   return cacheDOMObject<DOM::HTMLCollection, KJS::HTMLCollection>(exec, c);
 }
 
-Value KJS::getSelectHTMLCollection(ExecState *exec, DOM::HTMLCollection c, DOM::HTMLSelectElement e)
+Value KJS::getSelectHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e)
 {
   DOMObject *ret;
   if (c.isNull())

@@ -1,3 +1,21 @@
+2002-10-31  Darin Adler  <darin@apple.com>
+
+	- fixed huge leak when doing page load test
+
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_binding.cpp: Remove ScriptInterpreter::mark().
+	We don't want to mark the elements of m_domObjects, because we don't want
+	to keep them around the entire lifetime of the interpreter. This is fine
+	because we already have forgetDOMObject(), which takes care of when they
+	are deallocated.
+
+        * khtml/ecma/kjs_dom.cpp:
+        * khtml/ecma/kjs_dom.h:
+        * khtml/ecma/kjs_html.cpp:
+        * khtml/ecma/kjs_html.h:
+	Changed lots of parameters to pass by const reference for a bit of a code
+	size and performance gain.
+
 2002-10-31  Richard Williamson  <rjw@apple.com>
 
         Turned on use of lookup tables.
@@ -17,7 +35,7 @@
 	select element updates if the contents of the option subelements
 	are changed.
 
-=== 30 ===
+=== Alexander-30 ===
 
 2002-10-30  Maciej Stachowiak  <mjs@apple.com>
 

@@ -38,7 +38,7 @@ namespace KJS {
 
   class HTMLDocument : public DOMDocument {
   public:
-    HTMLDocument(ExecState *exec, DOM::HTMLDocument d) : DOMDocument(exec, d) { }
+    HTMLDocument(ExecState *exec, const DOM::HTMLDocument &d) : DOMDocument(exec, d) { }
     virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
@@ -54,7 +54,7 @@ namespace KJS {
 
   class HTMLElement : public DOMElement {
   public:
-    HTMLElement(ExecState *exec, DOM::HTMLElement e) : DOMElement(exec, e) { }
+    HTMLElement(ExecState *exec, const DOM::HTMLElement &e) : DOMElement(exec, e) { }
     virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
@@ -161,7 +161,7 @@ namespace KJS {
 
   class HTMLCollection : public DOMObject {
   public:
-    HTMLCollection(ExecState *exec, DOM::HTMLCollection c);
+    HTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
     ~HTMLCollection();
     virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     virtual Value call(ExecState *exec, Object &thisObj, const List&args);
@@ -180,7 +180,7 @@ namespace KJS {
 
   class HTMLSelectCollection : public HTMLCollection {
   public:
-    HTMLSelectCollection(ExecState *exec, DOM::HTMLCollection c, DOM::HTMLSelectElement e)
+    HTMLSelectCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e)
       : HTMLCollection(exec, c), element(e) { }
     virtual Value tryGet(ExecState *exec, const UString &propertyName) const;
     virtual void tryPut(ExecState *exec, const UString &propertyName, const Value& value, int attr = None);
@@ -227,8 +227,8 @@ namespace KJS {
     khtml::CachedImage* img;
   };
 
-  Value getHTMLCollection(ExecState *exec, DOM::HTMLCollection c);
-  Value getSelectHTMLCollection(ExecState *exec, DOM::HTMLCollection c, DOM::HTMLSelectElement e);
+  Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
+  Value getSelectHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e);
 
 
 }; // namespace

@@ -163,15 +163,6 @@ void ScriptInterpreter::forgetDOMObject( void* objectHandle )
   }
 }
 
-void ScriptInterpreter::mark()
-{
-  Interpreter::mark();
-  kdDebug(6070) << "ScriptInterpreter::mark marking " << m_domObjects.count() << " DOM objects" << endl;
-  QPtrDictIterator<DOMObject> it( m_domObjects );
-  for( ; it.current(); ++it )
-    it.current()->mark();
-}
-
 bool ScriptInterpreter::isWindowOpenAllowed() const
 {
   if ( m_evt )
