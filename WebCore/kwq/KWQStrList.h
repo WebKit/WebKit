@@ -30,7 +30,7 @@
 #include <config.h>
 #endif
 
-#ifdef USING_BORROWED_QSTRINGLIST
+#ifndef USING_BORROWED_QSTRINGLIST
 
 #include <qstring.h>
 #include <qlist.h>
