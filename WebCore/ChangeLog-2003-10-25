@@ -1,3 +1,19 @@
+2003-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3269564 -- dynamically-created forms look right, but don't post values when submitted
+
+        * khtml/html/html_formimpl.h: Remove useless virtual setParent function.
+        Since the inherited setParent is not virtual, it does no good to make the subclass
+        override it with a virtual function.
+        * khtml/html/html_formimpl.cpp: Remove useless virtual setParent.
+        (HTMLGenericFormElementImpl::attach): Add code here, cribbed from setParent, to add
+        a new form element to the form it's in.
+        (HTMLButtonElementImpl::attach): A copy of the code is also needed here.
+
+        * WebCore.pbproj/project.pbxproj: Let Project Builder be Project Builder.
+
 2003-05-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

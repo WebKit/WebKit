@@ -693,6 +693,19 @@ void HTMLGenericFormElementImpl::attach()
 {
     assert(!attached());
 
+    // FIXME: This handles the case of a new form element being created by
+    // JavaScript and inserted inside a form. What it does not handle is
+    // a form element being moved from inside a form to outside, or from one
+    // inside one form to another. The reason this other case is hard to fix
+    // is that during parsing, we may have been passed a form that we are not
+    // inside, DOM-tree-wise. If so, it's hard for us to know when we should
+    // be removed from that form's element list.
+    if (!m_form) {
+	m_form = getForm();
+	if (m_form)
+	    m_form->registerFormElement(this);
+    }
+
     NodeBaseImpl::attach();
 
     // The call to updateFromElement() needs to go after the call through
@@ -755,21 +768,6 @@ void HTMLGenericFormElementImpl::setDisabled( bool _disabled )
     if ( m_disabled != _disabled ) {
         m_disabled = _disabled;
         setChanged();
-    }
-}
-
-void HTMLGenericFormElementImpl::setParent(NodeImpl *parent)
-{
-    if (parentNode()) { // false on initial insert, we use the form given by the parser
-	if (m_form)
-	    m_form->removeFormElement(this);
-	m_form = 0;
-    }
-    HTMLElementImpl::setParent(parent);
-    if (!m_form) {
-	m_form = getForm();
-	if (m_form)
-	    m_form->registerFormElement(this);
     }
 }
 
@@ -966,6 +964,17 @@ void HTMLButtonElementImpl::parseAttribute(AttributeImpl *attr)
 
 void HTMLButtonElementImpl::attach()
 {
+    // FIXME: This code is repeated here because this method does not call
+    // HTMLGenericFormElementImpl::attach(). But it's not clear why the call
+    // to updateFromElement() is a problem for the HTMLButtonElementImpl case.
+    // If we determine that it's not, then we should remove this and call
+    // HTMLGenericFormElementImpl::attach() instead of HTMLElementImpl::attach().
+    if (!m_form) {
+	m_form = getForm();
+	if (m_form)
+	    m_form->registerFormElement(this);
+    }
+
     // skip the generic handler
     HTMLElementImpl::attach();
     // doesn't work yet in the renderer ### fixme
