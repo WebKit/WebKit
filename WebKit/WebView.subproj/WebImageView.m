@@ -13,7 +13,7 @@
 @implementation WebImageView
 
 - (id)initWithFrame:(NSRect)frame
-{    
+{
     self = [super initWithFrame:frame];
     if (self) {
         canDragFrom = YES;
@@ -58,9 +58,9 @@
     WebImageRenderer *image = [representation image];
     if (image) {
         [self setFrameSize:[image size]];
-        [image setFlipped:YES];
+    } else {
+        [self setFrameSize:NSMakeSize(0, 0)];
     }
-
 }
 
 - (void)setAcceptsDrags: (BOOL)flag

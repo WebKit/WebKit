@@ -393,14 +393,7 @@ static const char * const stateNames[] = {
     
     _private->state = newState;
     
-    if (_private->state == WebFrameStateProvisional){
-        [[[self webView] frameScrollView] setDrawsBackground: NO];
-    }
-    
-    if (_private->state == WebFrameStateComplete){
-        NSScrollView *sv = [[self webView] frameScrollView];
-        [sv setDrawsBackground: YES];
-        [[sv contentView] setCopiesOnScroll: YES];
+    if (_private->state == WebFrameStateComplete) {
         [_private->scheduledLayoutTimer fire];
    	ASSERT(_private->scheduledLayoutTimer == nil);
     }

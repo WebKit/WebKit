@@ -175,6 +175,37 @@
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
 }
 
+- (void)_setNeedsLayoutToYes:(NSNotification *)notification
+{
+    [self setNeedsLayout:YES];
+}
+
+- (void)viewWillMoveToSuperview:(NSView *)newSuperview
+{
+    // We watch the bounds of our superview, so that we can do a layout when the size
+    // of the superview changes. This is different from other scrollable things that don't
+    // need this kind of thing because their layout doesn't change.
+    
+    // We need to pay attention to both height and width because, our "layout" has to change
+    // to extend the background the full height of the space.
+    
+    NSView *oldSuperview = [self superview];
+    
+    if (oldSuperview) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSViewFrameDidChangeNotification object:oldSuperview];
+        [[NSNotificationCenter defaultCenter] removeObserver:self
+            name:NSViewBoundsDidChangeNotification object:oldSuperview];
+    }
+
+    if (newSuperview) {
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutToYes:) 
+            name:NSViewFrameDidChangeNotification object:newSuperview];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutToYes:) 
+            name:NSViewBoundsDidChangeNotification object:newSuperview];
+    }
+}
+
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
     [self removeMouseMovedObserver];
@@ -224,6 +255,8 @@
 
 - (void)layout
 {
+    [self reapplyStyles];
+    
     // Ensure that we will receive mouse move events.  Is this the best place to put this?
     [[self window] setAcceptsMouseMovedEvents: YES];
     [[self window] _setShouldPostEventNotifications: YES];
@@ -239,6 +272,8 @@
     LOG(View, "%@ doing layout", self);
     [[self _bridge] forceLayout];
     _private->needsLayout = NO;
+    
+    [self setNeedsDisplay:YES];
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
@@ -369,7 +404,6 @@
     _private->needsToApplyStyles = flag;
 }
 
-
 - (void)_drawBorder: (int)type
 {
     switch (type){
@@ -442,18 +476,13 @@
         [self _restoreSubviews];
     }
     
-    if ([self inLiveResize]) {
-        if (!NSEqualRects(rect, [self visibleRect])) {
-            [self setNeedsLayout:YES];
-        }
-    }
-    
-    [self reapplyStyles];
+    BOOL didReapplyStylesOrLayout = _private->needsToApplyStyles || _private->needsLayout;
 
     [self layout];
 
-    if ([self inLiveResize]) {
+    if (didReapplyStylesOrLayout) {
         rect = [self visibleRect];
+        [self setNeedsDisplay:NO];
     }
     
 #ifdef _KWQ_TIMING

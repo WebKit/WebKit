@@ -1,3 +1,40 @@
+2002-10-20  Darin Adler  <darin@apple.com>
+
+	- fixed a problem where you would get garbage bits when resizing while loading a standalone image
+
+	Cleaned up some of the complexity of how we were handling resizing.
+
+        * WebView.subproj/WebDynamicScrollBarsView.m: (-[WebDynamicScrollBarsView updateScrollers]):
+	Do the update twice to properly handle the case where a disappearing scroller makes a second
+	scroller appear or vice versa.
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _setState:]): Remove the code that was trying
+	to set the setDrawsBackground flag on the scroll view. It was doing it wrong, causing bugs with
+	drawing non-HTML views while loading. Also, it wasn't working as an optimization, since the
+	window was still drawing the metallic background behind. We can revisit adding an optimization
+	at the WebHTMLView level if it creates a measurable speed increase, but we must be careful to
+	test loading with non-HTML views along with the HTML cases.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _setNeedsLayoutToYes:]): Added. Calls setNeedsLayout:YES.
+        (-[WebHTMLView viewWillMoveToSuperview:]): Added. Registers so we get _setNeedsLayoutToYes:
+	calls when the superview's size changes. This allows us to do a layout at all the right times.
+        (-[WebHTMLView layout]): Call setNeedsDisplay:YES, because if we do a layout without a complete
+	display the screen will look bad. Also do a reapplyStyles, because if there are pending style
+	changes we want to apply them before doing a layout since they could affect the layout.
+        (-[WebHTMLView drawRect:]): Remove the special case that says to always relayout during live
+	resize, because it works without a special case now. For the other live resize case, turn it from
+	a special case into a general one. Any time layout is done, make sure to draw the entire view,
+	not just the passed-in rectangle, and call setNeedsDisplay:NO so we don't do it all over again.
+
+        * WebView.subproj/WebImageView.m: (-[WebImageView layout]): Explicitly set frame size to
+	0,0 when there is no image.
+
+        * WebView.subproj/WebView.m: Remove now-unnecessary viewWillStartLiveResize, setFrame:,
+	viewDidEndLiveResize, isOpaque, and drawRect overrides.
+        (-[WebView initWithFrame:]): Don't call setDrawsBackground:NO for the reasons above.
+	Don't set scroll bar visibility because the dynamic scroll bars view handles that already.
+
 2002-10-19  Darin Adler  <darin@apple.com>
 
 	- fixed 3073693 -- flash drawn to screen even when window minimized

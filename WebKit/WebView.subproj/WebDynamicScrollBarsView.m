@@ -15,35 +15,44 @@
 
 - (void)updateScrollers
 {
-    BOOL scrollsVertically;
-    BOOL scrollsHorizontally;
-
-    if (disallowsScrolling) {
-        scrollsVertically = NO;
-        scrollsHorizontally = NO;
-    } else {
-        // Force a layout before checking if scrollbars are needed.
-        // This fixes 2969367, although may introduce a slowdown in live resize performance.
-        NSView *documentView = [self documentView];
-        if ([documentView conformsToProtocol:@protocol(WebDocumentView)]) {
-            [(id <WebDocumentView>)documentView layout];
+    // We need to do the work below twice in the case where a scroll bar disappears,
+    // making the second layout have a wider width than the first. Doing it more than
+    // twice would indicate some kind of infinite loop, so we do it at most twice.
+    // It's quite efficient to do this work twice in the normal case, so we don't bother
+    // trying to figure out of the second pass is needed or not.
+    
+    int pass;
+    for (pass = 0; pass < 2; pass++) {
+        BOOL scrollsVertically;
+        BOOL scrollsHorizontally;
+    
+        if (disallowsScrolling) {
+            scrollsVertically = NO;
+            scrollsHorizontally = NO;
+        } else {
+            // Do a layout if pending, before checking if scrollbars are needed.
+            // This fixes 2969367, although may introduce a slowdown in live resize performance.
+            NSView *documentView = [self documentView];
+            if ([documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+                [(id <WebDocumentView>)documentView layout];
+            }
+            
+            NSSize documentSize = [documentView frame].size;
+            NSSize frameSize = [self frame].size;
+            
+            scrollsVertically = documentSize.height > frameSize.height;
+            if (scrollsVertically)
+                scrollsHorizontally = documentSize.width + [NSScroller scrollerWidth] > frameSize.width;
+            else {
+                scrollsHorizontally = documentSize.width > frameSize.width;
+                if (scrollsHorizontally)
+                    scrollsVertically = documentSize.height + [NSScroller scrollerWidth] > frameSize.height;
+            }
         }
-        
-        NSSize documentSize = [documentView frame].size;
-        NSSize frameSize = [self frame].size;
-        
-        scrollsVertically = documentSize.height > frameSize.height;
-        if (scrollsVertically)
-            scrollsHorizontally = documentSize.width + [NSScroller scrollerWidth] > frameSize.width;
-        else {
-            scrollsHorizontally = documentSize.width > frameSize.width;
-            if (scrollsHorizontally)
-                scrollsVertically = documentSize.height + [NSScroller scrollerWidth] > frameSize.height;
-        }
+    
+        [self setHasVerticalScroller:scrollsVertically];
+        [self setHasHorizontalScroller:scrollsHorizontally];
     }
-
-    [self setHasVerticalScroller:scrollsVertically];
-    [self setHasHorizontalScroller:scrollsHorizontally];
 }
 
 // Make the horizontal and vertical scroll bars come and go as needed.
