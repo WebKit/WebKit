@@ -1,3 +1,18 @@
+2005-03-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4047028> Changing quote levels on stylized text causes it to be sent as colored (Blue). Tiger8A410
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::removePropertiesInSet): This function now calls setChanged() at the 
+        end of its loop if any properties were removed. This makes the style system update correctly in response
+        to changes made by this function. The code to paste removes style from the pasted content in a 
+        preliminary step, and the fact that the style system did not update properly left unwanted color
+        declarations in the document.
+
 2005-03-14  Vicki Murley  <vicki@apple.com>
 
 	- roll out this change for now, since it was denied by CCC
