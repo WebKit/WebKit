@@ -205,6 +205,8 @@ KHTMLView::KHTMLView( KHTMLPart *part, QWidget *parent, const char *name)
 {
     m_medium = "screen";
 
+    m_layoutObject = 0;
+    
     m_part = part;
 #if APPLE_CHANGES
     m_part->ref();
@@ -1492,7 +1494,8 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
         DOM::DocumentImpl *document = m_part->xmlDocImpl();
         khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
         if (root){
-            if ( !root->layouted() ) {
+            // Do not allow a full layout if we had a clip object set.
+            if ( !root->layouted() && !m_layoutObject) {
                 killTimer(d->repaintTimerId);
                 d->repaintTimerId = 0;
                 //qDebug("not layouted, delaying repaint");
@@ -1505,17 +1508,47 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
     setStaticBackground(d->useSlowRepaints);
 
 //        kdDebug() << "scheduled repaint "<< d->repaintTimerId  << endl;
-    killTimer(d->repaintTimerId);
+    // If we have an overflow:hidden object, we cache the current update rect and then
+    // clear the update rect, so that when we call repaint(), the union of the layout
+    // object's rect and the current update rect is just the layout object's' rect.
+    QRect oldUpdateRect = d->updateRect;
+    bool hasRepaintTimer = d->repaintTimerId;
+    if (m_layoutObject) {
+        d->updateRect = QRect();
+        m_layoutObject->repaint();
+    }
+    
+    // Now we paint.  This will be either a full paint or just the paint of a clipped
+    // object's area.
     updateContents( d->updateRect );
-
+    killTimer(d->repaintTimerId);
     d->repaintTimerId = 0;
+
+    if (m_layoutObject) {
+        // Restore the update rect, and if we had a repaint pending before the clipped
+        // object did its paint, go ahead and reschedule that paint to occur as soon
+        // as possible.
+        d->updateRect = oldUpdateRect;
+        if (hasRepaintTimer)
+            scheduleRepaint(d->updateRect.x(), d->updateRect.y(), d->updateRect.width(),
+                            d->updateRect.height());
+        m_layoutObject = 0;
+    }
 }
 
-void KHTMLView::scheduleRelayout()
+void KHTMLView::scheduleRelayout(khtml::RenderObject* clippedObj)
 {
-    if (!d->layoutSchedulingEnabled || d->timerId)
+    if (!d->layoutSchedulingEnabled)
+        return;
+        
+    if (m_layoutObject != clippedObj)
+        m_layoutObject = 0;
+    
+    if (d->timerId)
         return;
 
+    m_layoutObject = clippedObj;
+    
     bool parsing = false;
     if( m_part->xmlDocImpl() ) {
         parsing = m_part->xmlDocImpl()->parsing();

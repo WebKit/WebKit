@@ -271,13 +271,6 @@ RenderObject* RenderObject::offsetParent() const
     return curr;
 }
 
-// This function now contains a rather unsavory hack.  If an attempt is made to
-// setLayout(false) an object inside a clipped (overflow:hidden) object, we just
-// lay that object out immediately and then repaint only the clipped rectangle.
-// scheduleRelayout always causes a full repaint, so we have to avoid it.  This
-// is gross, and we want to fix scheduleRelayout not to always do a full repaint
-// in the future. -dwh
-static RenderObject* gClipObject = 0;
 void RenderObject::setLayouted(bool b) 
 {
     m_layouted = b;
@@ -292,45 +285,25 @@ void RenderObject::setLayouted(bool b)
     else {
         RenderObject *o = m_parent;
         RenderObject *root = this;
-        bool rootAlreadyNeedsLayout = false;
         
+        // If an attempt is made to
+        // setLayouted(false) an object inside a clipped (overflow:hidden) object, we 
+        // have to make sure to repaint only the clipped rectangle.
+        // We do this by passing an argument to scheduleRelayout.  This hint really
+        // shouldn't be needed, and it's unfortunate that it is necessary.  -dwh
+
         RenderObject* clippedObj = 
             (style()->overflow() == OHIDDEN && !isText()) ? this : 0;
         
-        if (clippedObj) {
-            // Update our hack for positioned objects.  It doesn't work because
-            // this can be called from setStyle.  This whole clip hack is evil and must die. -dwh
-            bool positioned = style()->position() == ABSOLUTE || 
-                            style()->position() == FIXED;
-            bool relpositioned  = style()->position() == RELATIVE;
-            if (positioned && !isPositioned()) {
-                setPositioned(true);
-                setInline(false);
-            }
-            else if (relpositioned && !isRelPositioned())
-                setRelPositioned(true);
-        }
-        
         while( o ) {
             root = o;
-            rootAlreadyNeedsLayout = !o->m_layouted;
             o->m_layouted = false;
             if (o->style()->overflow() == OHIDDEN && !clippedObj)
                 clippedObj = o;
             o = o->m_parent;
         }
         
-        if (!gClipObject) {
-            if (clippedObj && !rootAlreadyNeedsLayout) {
-                gClipObject = clippedObj;
-                root->layout();
-                clippedObj->repaint();
-                gClipObject = 0;
-                m_layouted = true;
-            }
-            else
-                root->scheduleRelayout();
-        }
+        root->scheduleRelayout(clippedObj);
     }
 }
     
@@ -983,6 +956,14 @@ RenderArena* RenderObject::renderArena() {
 
 void RenderObject::detach(RenderArena* renderArena)
 {
+    // If we're an overflow:hidden object that currently needs layout, we need
+    // to make sure the view isn't holding on to us.
+    if (!layouted() && style()->overflow() == OHIDDEN) {
+        RenderRoot* r = root();
+        if (r && r->view()->layoutObject() == this)
+            r->view()->unscheduleRelayout();
+    }
+    
     remove();
     
     m_next = m_previous = 0;
@@ -1289,12 +1270,12 @@ void RenderObject::recalcMinMaxWidths()
     m_recalcMinMax = false;
 }
 
-void RenderObject::scheduleRelayout()
+void RenderObject::scheduleRelayout(RenderObject* clippedObj)
 {
     if (!isRoot()) return;
     KHTMLView *view = static_cast<RenderRoot *>(this)->view();
     if ( view )
-        view->scheduleRelayout();
+        view->scheduleRelayout(clippedObj);
 }
 
 

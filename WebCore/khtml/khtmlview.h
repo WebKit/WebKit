@@ -193,7 +193,7 @@ private:
 
     void resetCursor();
 
-    void scheduleRelayout();
+    void scheduleRelayout(khtml::RenderObject* clippedObj=0);
     void unscheduleRelayout();
 
     void scheduleRepaint(int x, int y, int w, int h);
@@ -245,6 +245,9 @@ private:
 
     void complete();
 
+    // Returns the clipped object we will repaint when we perform our scheduled layout.
+    khtml::RenderObject* layoutObject() { return m_layoutObject; }
+    
     // ------------------------------------- member variables ------------------------------------
  private:
     int _width;
@@ -257,6 +260,10 @@ private:
     KHTMLViewPrivate *d;
 
     QString m_medium;   // media type
+    
+    // An overflow: hidden clipped object.  If this is set, a scheduled layout will only repaint
+    // the object's clipped area, and it will not do a full repaint.
+    khtml::RenderObject* m_layoutObject;
 };
 
 #endif

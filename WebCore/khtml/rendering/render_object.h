@@ -236,7 +236,7 @@ public:
     void setReplaced(bool b=true) { m_replaced = b; }
     void setIsSelectionBorder(bool b=true) { m_isSelectionBorder = b; }
 
-    void scheduleRelayout();
+    void scheduleRelayout(RenderObject* clippedObj = 0);
 
     // for discussion of lineHeight see CSS2 spec
     virtual short lineHeight( bool firstLine ) const;

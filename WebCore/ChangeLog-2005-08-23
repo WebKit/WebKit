@@ -1,3 +1,29 @@
+2002-12-19  David Hyatt  <hyatt@apple.com>
+
+	Remove the clip hack from setLayout and make it
+	asynchronous instead.  This fixes the crasher
+	on autosite.com, which had a sync layout occur
+	while in the middle of making a block box's
+	children get wrapped in anonymous boxes.  It
+	was only half done when the layout got
+	triggered, which is what caused the assert to fire.
+
+	The bug # is 3129534.
+	
+        Reviewed by rjw
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::KHTMLView):
+        (KHTMLView::timerEvent):
+        (KHTMLView::scheduleRelayout):
+        * khtml/khtmlview.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setLayouted):
+        (RenderObject::scheduleRelayout):
+        * khtml/rendering/render_object.h:
+
+=======
+=======
 2002-12-20  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
