@@ -12,7 +12,7 @@
 
 	Support for DHTML cut/copy/paste.
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Chris
 
         * WebView.subproj/WebHTMLView.m:
         (-[WebHTMLView copy:]):  Give DHTML first crack at executing the command.
