@@ -1,3 +1,14 @@
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4003251> Safari crashed at www.icelandair.com in LiveConnect code converting a Java object to a string
+
+	Added nil check.
+
+        Reviewed by John Sullivan.
+
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+
 === Safari-187 ===
 
 2005-02-11  Richard Williamson   <rjw@apple.com>
