@@ -1,3 +1,19 @@
+2002-08-05  Darin Adler  <darin@apple.com>
+
+	Do the wiring for the "text size multiplier" feature. The rest of the work will probably be done
+	at the WebCore level.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge setFrame:]): Set the text size multiplier.
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        (-[WebController setTextSizeMultiplier:]): Added. Calls _textSizeMultiplierChanged on the main frame.
+        (-[WebController textSizeMultiplier]): Added.
+        * WebView.subproj/WebControllerPrivate.h: Added textSizeMultiplier instance variable.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _textSizeMultiplierChanged]): Added. Calls setTextSizeMultiplier: on the bridge,
+	and _textSizeMultiplierChanged on all the child frames.
+
 2002-08-05  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed icon loader delegate method to include the icon loader.

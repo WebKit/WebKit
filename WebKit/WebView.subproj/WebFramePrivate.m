@@ -701,5 +701,10 @@ static const char * const stateNames[] = {
     [[[self webView] documentView] scrollPoint: origin];
 }
 
+- (void)_textSizeMultiplierChanged
+{
+    [[self _bridge] setTextSizeMultiplier:[[self controller] textSizeMultiplier]];
+    [[[self dataSource] children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
+}
 
 @end

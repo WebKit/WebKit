@@ -1,5 +1,25 @@
 2002-08-05  Darin Adler  <darin@apple.com>
 
+	- fixed 3016374 -- Change font default from small back to medium
+
+        * khtml/css/cssstyleselector.cpp:
+	(CSSStyleSelector::computeFontSizes): Change back to basing everything on
+	mediumFontSize() as opposed to a defaultFontSize that was the same as "small".
+	(CSSStyleSelector::applyRule): Default is m_fontSizes[3] again.
+        * khtml/html/html_inlineimpl.cpp: (HTMLFontElementImpl::parseAttribute):
+	Shift all the sizes up one, so 3 is now medium. It's important that 3 be the same as the default.
+        * khtml/html/html_tableimpl.cpp: (HTMLTableElementImpl::attach): Change the default back to medium.
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::recalcStyle): Change the default back to [3].
+        * kwq/KWQKHTMLSettings.mm: (KHTMLSettings::mediumFontSize): Change name back.
+        * kwq/khtml/khtml_settings.h: Change name back to medium.
+
+	Do a little bit of wiring for the "text size multiplier" feature.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge setTextSizeMultiplier:]): Added.
+
+2002-08-05  Darin Adler  <darin@apple.com>
+
 	- fixed 3009321 -- bookmark and history menus show black square for (tm)
 
         * khtml/html/htmltokenizer.cpp:

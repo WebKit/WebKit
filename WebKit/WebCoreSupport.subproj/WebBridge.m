@@ -30,7 +30,7 @@
 - init
 {
     ++WebBridgeCount;
-
+    
     return [super init];
 }
 
@@ -85,7 +85,7 @@
     
     // Set the load type so this load doesn't end up in the back
     // forward list.
-    [newFrame _setLoadType: WebFrameLoadTypeInternal];
+    [newFrame _setLoadType:WebFrameLoadTypeInternal];
 
     return YES;
 }
@@ -207,13 +207,14 @@
         clientRedirectCancelledForDataSource:[self dataSource]];
 }
 
-- (void)setFrame: (WebFrame *)webFrame
+- (void)setFrame:(WebFrame *)webFrame
 {
     WEBKIT_ASSERT(webFrame != nil);
 
     if (frame == nil) {
 	// FIXME: non-retained because data source owns representation owns bridge
 	frame = webFrame;
+        [self setTextSizeMultiplier:[[frame controller] textSizeMultiplier]];
     } else {
 	WEBKIT_ASSERT(frame == webFrame);
     }
@@ -221,9 +222,8 @@
 
 - (void)dataSourceChanged
 {
-    [self openURL:[[self dataSource] redirectedURL] == nil ?
-                    [[self dataSource] inputURL] : 
-                    [[self dataSource] redirectedURL]];
+    [self openURL:[[self dataSource] redirectedURL] == nil
+        ? [[self dataSource] inputURL] : [[self dataSource] redirectedURL]];
 }
 
 - (WebDataSource *)dataSource
@@ -308,14 +308,14 @@
                         fromDataSource:[self dataSource]];
 }
 
-- (void)addBackForwardItemWithURL: (NSURL *)url anchor: (NSString *)anchor;
+- (void)addBackForwardItemWithURL:(NSURL *)url anchor:(NSString *)anchor;
 {
     WebHistoryItem *backForwardItem;
-    WebFrame *parentFrame = [[frame controller] frameForDataSource: [[frame dataSource] parent]]; 
+    WebFrame *parentFrame = [[frame controller] frameForDataSource:[[frame dataSource] parent]]; 
 
-    backForwardItem = [[WebHistoryItem alloc] initWithURL:url target: [frame name] parent: [parentFrame name] title:[[frame dataSource] pageTitle] image: nil];
-    [backForwardItem setAnchor: anchor];
-    [[[frame controller] backForwardList] addEntry: backForwardItem];
+    backForwardItem = [[WebHistoryItem alloc] initWithURL:url target:[frame name] parent:[parentFrame name] title:[[frame dataSource] pageTitle] image:nil];
+    [backForwardItem setAnchor:anchor];
+    [[[frame controller] backForwardList] addEntry:backForwardItem];
     [backForwardItem release];
 }
 

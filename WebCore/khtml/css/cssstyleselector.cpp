@@ -231,7 +231,10 @@ void CSSStyleSelector::clear()
 
 void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics,  int zoomFactor)
 {
-#ifndef APPLE_CHANGES
+#ifdef APPLE_CHANGES
+    // We don't want to scale the settings by the dpi.
+    const float toPix = 1;
+#else
     // ### get rid of float / double
     float toPix = paintDeviceMetrics->logicalDpiY()/72.;
     if (toPix  < 96./72.) toPix = 96./72.;
@@ -239,27 +242,22 @@ void CSSStyleSelector::computeFontSizes(QPaintDeviceMetrics* paintDeviceMetrics,
 
     m_fontSizes.clear();
     const float factor = 1.2;
-    float scale = 1.0 / (factor*factor);
-    float defaultFontSize;
+    float scale = 1.0 / (factor*factor*factor);
+    float mediumFontSize;
     float minFontSize;
     if (!khtml::printpainter) {
         scale *= zoomFactor / 100.0;
-#ifdef APPLE_CHANGES
-        defaultFontSize = settings->defaultFontSize();
-        minFontSize = settings->minFontSize();
-#else
-        defaultFontSize = settings->defaultFontSize() * toPix;
+        mediumFontSize = settings->mediumFontSize() * toPix;
         minFontSize = settings->minFontSize() * toPix;
-#endif
     }
     else {
         // ## depending on something / configurable ?
-        defaultFontSize = 12;
+        mediumFontSize = 12;
         minFontSize = 6;
     }
 
     for ( int i = 0; i < MAXFONTSIZES; i++ ) {
-        m_fontSizes << int(KMAX( defaultFontSize * scale + 0.5f, minFontSize));
+        m_fontSizes << int(KMAX( mediumFontSize * scale + 0.5f, minFontSize));
         scale *= factor;
     }
 }
@@ -2241,7 +2239,7 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         if(parentNode) {
             oldSize = parentStyle->font().pixelSize();
         } else
-            oldSize = m_fontSizes[2]; // default size is same as CSS_VAL_SMALL
+            oldSize = m_fontSizes[3];
 
         if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             size = oldSize;

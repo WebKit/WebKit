@@ -75,7 +75,7 @@ int KHTMLSettings::minFontSize() const
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMinimumFontSize"];
 }
 
-int KHTMLSettings::defaultFontSize() const
+int KHTMLSettings::mediumFontSize() const
 {
     return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDefaultFontSize"];
 }

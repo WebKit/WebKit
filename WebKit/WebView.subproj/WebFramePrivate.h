@@ -95,4 +95,5 @@ typedef enum {
 - (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type;
 - (void)_restoreScrollPosition;
 - (void)_scrollToTop;
+- (void)_textSizeMultiplierChanged;
 @end

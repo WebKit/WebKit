@@ -434,4 +434,9 @@ using namespace khtml;
     part->impl->jumpToSelection();
 }
 
+- (void)setTextSizeMultiplier:(float)multiplier
+{
+    part->setZoomFactor((int)rint(multiplier * 100));
+}
+
 @end

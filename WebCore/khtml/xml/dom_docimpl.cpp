@@ -888,7 +888,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
 	    if ( !stdfont.isEmpty() )
 		fontDef.family = stdfont;
 
-            fontDef.size = m_styleSelector->fontSizes()[2]; // default to small [2], not medium [3] (confusingly, this is the same as size=3)
+            fontDef.size = m_styleSelector->fontSizes()[3];
         }
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;

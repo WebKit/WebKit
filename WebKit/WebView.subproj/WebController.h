@@ -197,5 +197,7 @@
 - (BOOL)goBack;
 - (BOOL)goForward;
 
- 
+- (void)setTextSizeMultiplier:(float)multiplier; // 1.0 is normal size
+- (float)textSizeMultiplier;
+
 @end

@@ -355,6 +355,19 @@
     return NO;
 }
 
+- (void)setTextSizeMultiplier:(float)m
+{
+    if (_private->textSizeMultiplier == m) {
+        return;
+    }
+    _private->textSizeMultiplier = m;
+    [[self mainFrame] _textSizeMultiplierChanged];
+}
+
+- (float)textSizeMultiplier
+{
+    return _private->textSizeMultiplier;
+}
 
 @end
 

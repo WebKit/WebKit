@@ -116,6 +116,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag;
 - (void)jumpToSelection;
 
+- (void)setTextSizeMultiplier:(float)multiplier;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.

@@ -292,17 +292,17 @@ void HTMLFontElementImpl::parseAttribute(AttributeImpl *attr)
             int size;
             switch (num)
             {
-            case 2: size = CSS_VAL_X_SMALL; break;
+            case 2: size = CSS_VAL_SMALL; break;
             case 0: // treat 0 the same as 3, because people expect it to be between -1 and +1
-            case 3: size = CSS_VAL_SMALL; break;
-            case 4: size = CSS_VAL_MEDIUM; break;
-            case 5: size = CSS_VAL_LARGE; break;
-            case 6: size = CSS_VAL_X_LARGE; break;
+            case 3: size = CSS_VAL_MEDIUM; break;
+            case 4: size = CSS_VAL_LARGE; break;
+            case 5: size = CSS_VAL_X_LARGE; break;
+            case 6: size = CSS_VAL_XX_LARGE; break;
             default:
                 if (num > 6)
-                    size = CSS_VAL_XX_LARGE;
+                    size = CSS_VAL__KONQ_XXX_LARGE;
                 else
-                    size = CSS_VAL_XX_SMALL;
+                    size = CSS_VAL_X_SMALL;
             }
             addCSSProperty(CSS_PROP_FONT_SIZE, size);
         }
