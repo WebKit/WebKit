@@ -30,7 +30,7 @@ layer at (0,0) size 1518x3166
         RenderBlock (floating) {DIV} at (10,10) size 1500x100 [bgcolor=#0000FF]
         RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,110) size 1500x100 [bgcolor=#008000]
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (1510,10) size 0x18
         RenderText {TEXT} at (10,210) size 308x18
           text run at (10,210) width 308: "You should see blue and green rectangles above."
       RenderBlock {DIV} at (0,820) size 720x240 [border: (10px solid #000000)]
@@ -76,7 +76,7 @@ layer at (0,0) size 1518x3166
         RenderBlock (floating) {DIV} at (10,10) size 698x100 [bgcolor=#0000FF]
         RenderText {TEXT} at (0,0) size 0x0
         RenderBlock (floating) {DIV} at (10,110) size 698x100 [bgcolor=#008000]
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (708,10) size 0x18
         RenderText {TEXT} at (10,210) size 308x18
           text run at (10,210) width 308: "You should see blue and green rectangles above."
       RenderBlock {DIV} at (0,2390) size 720x240 [border: (10px solid #000000)]

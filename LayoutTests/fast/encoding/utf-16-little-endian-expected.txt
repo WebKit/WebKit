@@ -197,7 +197,7 @@ layer at (0,0) size 800x1264
                         RenderText {TEXT} at (2,2) size 4x18
                           text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 604x18
-                  RenderBR {BR} at (0,0) size 0x0
+                  RenderBR {BR} at (0,0) size 0x17
                   RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,659) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
@@ -290,7 +290,7 @@ layer at (0,0) size 800x1264
                         RenderText {TEXT} at (2,2) size 4x18
                           text run at (2,2) width 4: " "
                 RenderBlock (anonymous) at (1,173) size 493x18
-                  RenderBR {BR} at (0,0) size 0x0
+                  RenderBR {BR} at (0,0) size 0x17
                   RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,881) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
@@ -365,7 +365,7 @@ layer at (0,0) size 800x1264
             RenderBR {BR} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-          RenderBR {BR} at (0,0) size 0x0
+          RenderBR {BR} at (0,24) size 0x15
           RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 196x15
             RenderText {TEXT} at (0,39) size 196x15

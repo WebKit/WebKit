@@ -16,7 +16,7 @@ layer at (0,0) size 800x2822
           text run at (0,36) width 784: "element is much longer than the text in the previous element, the text will wrap around the yellow box. There is no padding,"
           text run at (0,54) width 740: "border or margins on this and the previous element, so the text of the two elements should be very close to each other."
       RenderBlock (anonymous) at (0,72) size 784x18
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {HR} at (0,102) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (0,116) size 784x72 [bgcolor=#FFFF00]
         RenderText {TEXT} at (0,0) size 784x72
@@ -69,7 +69,7 @@ layer at (0,0) size 800x2822
           text run at (529,18) width 255: "The top of the big letter \"T\" should be"
           text run at (48,36) width 656: "vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
       RenderBlock (anonymous) at (0,555) size 784x18
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {HR} at (0,585) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {P} at (438,609) size 336x196 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
         RenderText {TEXT} at (8,8) size 320x180
@@ -105,7 +105,7 @@ layer at (0,0) size 800x2822
           text run at (0,162) width 428: "the right of the sidebar's red border, due to the margin styles set for"
           text run at (0,180) width 123: "the floated element."
       RenderBlock (anonymous) at (0,797) size 784x18
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {HR} at (0,827) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,841) size 784x26 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
         RenderBlock (floating) {DIV} at (440,14) size 330x226 [bgcolor=#FFFF00]
@@ -132,7 +132,7 @@ layer at (0,0) size 800x2822
           RenderText {TEXT} at (0,0) size 268x18
             text run at (0,0) width 268: "See description in the box on the right side"
       RenderBlock (anonymous) at (0,867) size 784x224
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (0,0) size 0x18
       RenderBlock {HR} at (0,1103) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,1117) size 196x72 [bgcolor=#66CCFF]
         RenderBlock {P} at (0,0) size 196x72
@@ -153,7 +153,7 @@ layer at (0,0) size 800x2822
           text run at (196,0) width 392: "This paragraph should appear between a blue box (on the left)"
           text run at (196,18) width 199: "and a yellow box (on the right)."
       RenderBlock (anonymous) at (0,1153) size 784x36
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (196,0) size 0x18
       RenderBlock {HR} at (0,1201) size 784x2 [border: (1px inset #000000)]
       RenderBlock (floating) {DIV} at (0,1215) size 588x126 [bgcolor=#66CCFF]
         RenderBlock (floating) {DIV} at (431,0) size 147x36 [bgcolor=#FFFF00]
@@ -180,7 +180,7 @@ layer at (0,0) size 800x2822
             text run at (539,90) width 49: "px blue"
             text run at (0,108) width 138: "stripe on its right side."
       RenderBlock (anonymous) at (0,1215) size 784x126
-        RenderBR {BR} at (0,0) size 0x0
+        RenderBR {BR} at (588,0) size 0x18
       RenderBlock {HR} at (0,1353) size 784x2 [border: (1px inset #000000)]
       RenderTable {TABLE} at (0,1367) size 784x1439 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x1437
@@ -208,7 +208,7 @@ layer at (0,0) size 800x2822
                   text run at (0,54) width 762: "padding, border or margins on this and the previous element, so the text of the two elements should be very close to each"
                   text run at (0,72) width 36: "other."
               RenderBlock (anonymous) at (4,94) size 762x18
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (0,0) size 0x18
               RenderBlock {HR} at (4,124) size 762x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (4,138) size 762x72 [bgcolor=#FFFF00]
                 RenderText {TEXT} at (0,0) size 762x72
@@ -261,7 +261,7 @@ layer at (0,0) size 800x2822
                   text run at (538,18) width 224: "The top of the big letter \"T\" should"
                   text run at (48,36) width 675: "be vertically aligned with the top of the first line of this paragraph. This is commonly known as \"drop-cap\"."
               RenderBlock (anonymous) at (4,577) size 762x18
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (0,0) size 0x18
               RenderBlock {HR} at (4,607) size 762x2 [border: (1px inset #000000)]
               RenderBlock (floating) {P} at (420,631) size 336x196 [bgcolor=#FFFF00] [border: (3px solid #FF0000)]
                 RenderText {TEXT} at (8,8) size 320x180
@@ -298,7 +298,7 @@ layer at (0,0) size 800x2822
                   text run at (0,180) width 406: "sidebar's red border, due to the margin styles set for the floated"
                   text run at (0,198) width 53: "element."
               RenderBlock (anonymous) at (4,837) size 762x18
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (0,0) size 0x18
               RenderBlock {HR} at (4,867) size 762x2 [border: (1px inset #000000)]
               RenderBlock {DIV} at (4,881) size 762x26 [bgcolor=#66CCFF] [border: (4px solid #FF0000)]
                 RenderBlock (floating) {DIV} at (418,14) size 330x226 [bgcolor=#FFFF00]
@@ -325,7 +325,7 @@ layer at (0,0) size 800x2822
                   RenderText {TEXT} at (0,0) size 268x18
                     text run at (0,0) width 268: "See description in the box on the right side"
               RenderBlock (anonymous) at (4,907) size 762x224
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (0,0) size 0x18
               RenderBlock {HR} at (4,1143) size 762x2 [border: (1px inset #000000)]
               RenderBlock (floating) {DIV} at (4,1157) size 190x72 [bgcolor=#66CCFF]
                 RenderBlock {P} at (0,0) size 190x72
@@ -347,7 +347,7 @@ layer at (0,0) size 800x2822
                   text run at (190,18) width 29: "left) "
                   text run at (219,18) width 199: "and a yellow box (on the right)."
               RenderBlock (anonymous) at (4,1193) size 762x36
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (190,0) size 0x18
               RenderBlock {HR} at (4,1241) size 762x2 [border: (1px inset #000000)]
               RenderBlock (floating) {DIV} at (4,1255) size 571x126 [bgcolor=#66CCFF]
                 RenderBlock (floating) {DIV} at (419,0) size 142x36 [bgcolor=#FFFF00]
@@ -374,5 +374,5 @@ layer at (0,0) size 800x2822
                     text run at (27,108) width 51: "px blue "
                     text run at (78,108) width 138: "stripe on its right side."
               RenderBlock (anonymous) at (4,1255) size 762x126
-                RenderBR {BR} at (0,0) size 0x0
+                RenderBR {BR} at (571,0) size 0x18
               RenderBlock {HR} at (4,1393) size 762x2 [border: (1px inset #000000)]
