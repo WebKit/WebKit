@@ -22,10 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#import <Cocoa/Cocoa.h>
+
+#import <WebKit/IFImageRendererFactory.h>
 
 #import <WebKit/IFImageRenderer.h>
-#import <WebKit/IFImageRendererFactory.h>
 
 #import <WebKit/WebKitDebug.h>
 
@@ -59,8 +59,7 @@
 
 - (id <WebCoreImageRenderer>)imageRendererWithSize: (NSSize)s
 {
-    IFImageRenderer *imageRenderer = [[NSImage alloc] initWithSize: s];
-    return [imageRenderer autorelease];
+    return [[[IFImageRenderer alloc] initWithSize: s] autorelease];
 }
 
 

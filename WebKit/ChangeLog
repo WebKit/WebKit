@@ -1,5 +1,19 @@
 2002-05-31  Darin Adler  <darin@apple.com>
 
+	* WebCoreSupport.subproj/IFImageRenderer.h: Fixed the line endings (they were
+	Macintosh CRs instead of Unix LFs). Also made all the methods be private for
+	now since there's no need to have them be public.
+
+	* WebCoreSupport.subproj/IFImageRenderer.m: Fixed the line endings (they were
+	Macintosh CRs instead of Unix LFs). Some minor code tweaks too sharing a bit
+	more code.
+
+	* WebCoreSupport.subproj/IFImageRendererFactory.m:
+	(-[IFImageRendererFactory imageRendererWithSize:]): Return an IFImageRenderer
+	rather than just an NSImage, since an NSImage does not satisfy WebCoreImageRenderer.
+
+2002-05-31  Darin Adler  <darin@apple.com>
+
 	* Misc.subproj/WebKitDebug.h: Use displayableString in DEBUG_OBJECT
 	for nicer logging.
 
