@@ -4930,6 +4930,10 @@ void ReplaceSelectionCommand::doApply()
             NodeImpl *node = beyondEndNode;
             NodeImpl *refNode = m_lastNodeInserted;
             while (node) {
+                RenderObject *renderer = node->renderer();
+                // Stop at the first table or block.
+                if (renderer && (renderer->isBlockFlow() || renderer->isTable()))
+                    break;
                 NodeImpl *next = node->nextSibling();
                 blocks.append(node->enclosingBlockFlowElement());
                 computeAndStoreNodeDesiredStyle(node, styles);
@@ -4937,6 +4941,9 @@ void ReplaceSelectionCommand::doApply()
                 // No need to update inserted node variables.
                 insertNodeAfter(node, refNode);
                 refNode = node;
+                // We want to move the first BR we see, so check for that here.
+                if (node->id() == ID_BR)
+                    break;
                 node = next;
             }
             document()->updateLayout();

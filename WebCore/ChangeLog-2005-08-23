@@ -1,3 +1,22 @@
+2005-03-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/4056718> Pasting quotes the entire message
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): After pasting, nodes are moved to the block containing
+        the end of the pasted content in certain cases. This move logic used to stop once it moved all the
+        siblings of the node following the last node of the pasted-in content. This means that block elements
+        could get moved, and if the pasted-in content included a mail blockquote, this could result in
+        one quote level getting added. The fix is to stop the move of nodes once a <br>, block element, or
+        <table> is seen. This only affected one of the many test cases we have for such scenarios, and 
+        the change to that result makes sense given the code change.
+        * layout-tests/editing/pasteboard/paste-text-003-expected.txt: This test result changed in a way that
+        adequately tests the behavior change, so I did not add a new test.
+
 2005-03-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison
