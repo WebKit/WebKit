@@ -353,9 +353,8 @@ static const char * const stateNames[] = {
 	    [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.
-            if (ptitle){
-                printf ("WebFramePrivate:  setting title to %s\n", [ptitle cString]);
-                [entry setTitle: ptitle];
+            if (ptitle) {
+                [entry setTitle:ptitle];
 		[[[self controller] locationChangeDelegate] receivedPageTitle:ptitle forDataSource:ds];
             }
             break;
