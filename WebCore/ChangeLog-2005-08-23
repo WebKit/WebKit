@@ -1,3 +1,13 @@
+2004-09-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3779083, deleting large amount of text is really slow.  Don't use NodeLists in editing remove commands.
+	
+        Reviewed by darin
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::RemoveNodeCommandImpl::RemoveNodeCommandImpl):
+        (khtml::RemoveNodePreservingChildrenCommandImpl::doApply):
+
 2004-09-03  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
