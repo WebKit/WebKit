@@ -1323,7 +1323,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                     kdDebug(6041) << "found space at " << pos << " in string '" << QString( str, strlen ).latin1() << "' adding " << tmpW << " new width = " << w << endl;
 #endif
                     if ( !isPre && w + tmpW > width && w == 0 ) {
-                        int fb = floatBottom();
+                        int fb = nearestFloatBottom(m_height);
                         int newLineWidth = lineWidth(fb);
                         if(!w && m_height < fb && width < newLineWidth) {
                             m_height = fb;
@@ -1411,7 +1411,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             if (sawSpace && !ignoringSpaces && o->style()->whiteSpace() != PRE)
                 trailingSpaceObject = 0;
             
-            int fb = floatBottom();
+            int fb = nearestFloatBottom(m_height);
             int newLineWidth = lineWidth(fb);
             if( !w && m_height < fb && width < newLineWidth ) {
                 m_height = fb;

@@ -1082,6 +1082,19 @@ RenderFlow::lineWidth(int y) const
 }
 
 int
+RenderFlow::nearestFloatBottom(int height) const
+{
+    if (!specialObjects) return 0;
+    int bottom=0;
+    SpecialObject* r;
+    QPtrListIterator<SpecialObject> it(*specialObjects);
+    for ( ; (r = it.current()); ++it )
+        if (r->endY>height && (r->endY<bottom || bottom==0) && (int)r->type <= (int)SpecialObject::FloatRight)
+            bottom=r->endY;
+    return bottom;
+}
+
+int
 RenderFlow::floatBottom() const
 {
     if (!specialObjects) return 0;
