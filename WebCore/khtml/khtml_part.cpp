@@ -2660,6 +2660,10 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
 #endif // APPLE_CHANGES
 }
 
+#ifdef APPLE_CHANGES
+unsigned KHTMLPartPrivate::m_frameNameId = 0;
+#endif
+
 QString KHTMLPart::requestFrameName()
 {
    return QString::fromLatin1("<!--frame %1-->").arg(d->m_frameNameId++);

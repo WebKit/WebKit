@@ -126,7 +126,9 @@ public:
     m_javaContext = 0;
 #endif
     m_cacheId = 0;
+#ifndef APPLE_CHANGES
     m_frameNameId = 1;
+#endif
 
     m_restored = false;
 
@@ -223,7 +225,13 @@ public:
   bool m_metaRefreshEnabled :1;
   bool m_bPluginsOverride :1;
   bool m_restored :1;
+#ifdef APPLE_CHANGES
+  // Made this static so frame names are globally unique and unsigned
+  // so overflow is handled more gracefully.
+  static unsigned m_frameNameId;
+#else
   int m_frameNameId;
+#endif
   int m_dcop_counter;
   DCOPObject *m_dcopobject;
 

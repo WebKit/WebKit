@@ -1,3 +1,14 @@
+2002-07-24  Maciej Stachowiak  <mjs@apple.com>
+
+	Made frame names globally unique, not just unique per parent frame
+	- this is needed to avoid triggering the assertion in 3006354
+	(Assertion failure on salon.com). Clearing my cache made the
+	assertion go away by itself, but it seems good to avoid the
+	possibility of triggering it in the future.
+	
+        * khtml/khtmlpart_p.h: Make m_partNameId static.
+        * khtml/khtml_part.cpp: Initialize it here.
+
 2002-07-24  Darin Adler  <darin@apple.com>
 
 	- 3006336 -- crash in _NSDescriptionWithLocaleFunc
