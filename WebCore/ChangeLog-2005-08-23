@@ -1,3 +1,17 @@
+2005-03-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3990258> REGRESSION (125.12-181): top of picture that spans two pages is cut off on print from Safari
+
+	The problem was due to incorrect "object truncation" in  RenderFlow::paintLines.  
+	We attempt to push objects down if they don't fit on a page at
+	paint time.  If the attempt to push object down failed we just
+	didn't paint at all.
+
+        Reviewed by Hyatt.
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::paintLines):
+
 2005-03-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
