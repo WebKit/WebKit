@@ -1,3 +1,13 @@
+2003-12-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3507856>: XMLHttpRequest xhtml test displays but doesn't load
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestProtoFunc::tryCall): complete the URL using the document,
+	not the htmlDocument.
+
 2003-12-12  Richard Williamson   <rjw@apple.com>
 
 	Replace call to global functions with static member functions.
