@@ -1,5 +1,11 @@
 2005-03-04  Adele Amchan  <adele@apple.com>
 
+        Reviewed by Darin.
+
+        * English.lproj/StringsNotToBeLocalized.txt: added new strings "text/x-vcf" and "text/x-csv" to the list
+
+2005-03-04  Adele Amchan  <adele@apple.com>
+
         Reviewed by Chris.
 
         Fix for <rdar://problem/4032982> Sun iPlanet app: not able to import AddressBook CSV format addresses properly
