@@ -1,3 +1,13 @@
+2005-01-31  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin.
+
+        <rdar://problem/3961239> AX Setting AXFocused on AXScrollArea of AXWebArea will cause keyboard selection change
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView maintainsInactiveSelection]):
+        Keep the selection when the new first respomder is our own scrollview, in both editable and non-editaqble content.
+
 2005-01-31  Jens Alfke  <set EMAIL_ADDRESS environment variable>
 
         Reviewed by John.

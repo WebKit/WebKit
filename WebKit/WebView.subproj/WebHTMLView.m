@@ -1783,11 +1783,36 @@ static WebHTMLView *lastHitView = nil;
     // clients to ste the web view to be editable probably want it
     // to act like a "regular" Cocoa view in terms of its selection
     // behavior.
+    id nextResponder = [[self window] _newFirstResponderAfterResigning];
+
+    // Predict the case where we are losing first responder status only to
+    // gain it back again.  Want to keep the selection in that case.
+    if ([nextResponder isKindOfClass:[NSScrollView class]]) {
+        id contentView = [nextResponder contentView];
+        if (contentView) {
+            nextResponder = contentView;
+        }
+    }
+    if ([nextResponder isKindOfClass:[NSClipView class]]) {
+        id documentView = [nextResponder documentView];
+        if (documentView) {
+            nextResponder = documentView;
+        }
+    }
+
+    if (nextResponder == self)
+        return YES;
+
+    // non-editable views lose selection whenever losing first responder status
     if (![[self _webView] isEditable])
         return NO;
-        
-    id nextResponder = [[self window] _newFirstResponderAfterResigning];
-    return !nextResponder || ![nextResponder isKindOfClass:[NSView class]] || ![nextResponder isDescendantOf:[self _webView]];
+    
+    // editable views lose selection when losing first responder status
+    // to a widget in the same page, but not otherwise
+    BOOL loseSelection = [nextResponder isKindOfClass:[NSView class]]
+        && [nextResponder isDescendantOf:[self _webView]];
+
+    return !loseSelection;
 }
 
 - (void)addMouseMovedObserver
