@@ -1,3 +1,28 @@
+2004-03-29  John Sullivan  <sullivan@apple.com>
+
+        - some support for "Stealth Browsing"; add a preference that
+        controls whether a history item is added when a page is visited.
+        This is called "historyIsFrozen" for now, but I wouldn't be
+        surprised to see this name change.
+
+        Reviewed by Dave.
+
+        * WebView.subproj/WebPreferencesPrivate.h:
+        new historyIsFrozen, setHistoryIsFrozen: methods
+        
+        * WebView.subproj/WebPreferences.m:
+        new WebKitHistoryIsFrozenPreferenceKey
+        (+[WebPreferences initialize]):
+        set initial value of WebKitHistoryIsFrozenPreferenceKey
+        (-[WebPreferences setHistoryIsFrozen:]):
+        set value of WebKitHistoryIsFrozenPreferenceKey
+        (-[WebPreferences historyIsFrozen]):
+        read value of WebKitHistoryIsFrozenPreferenceKey
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _transitionToCommitted:]):
+        don't add item to history if history is frozen
+
 2004-03-29  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

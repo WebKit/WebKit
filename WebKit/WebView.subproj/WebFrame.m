@@ -791,9 +791,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                     // Add item to history and BF list
                     NSURL *URL = [ds _URLForHistory];
                     if (URL && ![URL _web_isEmpty]){
-                        entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
-                        if (ptitle)
-                            [entry setTitle: ptitle];
+                        if (![[WebPreferences standardPreferences] historyIsFrozen]) {
+                            entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
+                            if (ptitle)
+                                [entry setTitle: ptitle];                            
+                        }
                         [self _addBackForwardItemClippedAtTarget:YES];
                     }
 

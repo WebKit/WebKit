@@ -46,6 +46,7 @@
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
 #define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
 #define WebKitTabToLinksPreferenceKey @"WebKitTabToLinksPreferenceKey"
+#define WebKitHistoryIsFrozenPreferenceKey @"WebKitHistoryIsFrozen"
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
@@ -234,6 +235,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
         @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
         [NSNumber numberWithBool:NO],   WebKitTabToLinksPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitHistoryIsFrozenPreferenceKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -606,6 +608,16 @@ NS_ENDHANDLER
 - (BOOL)tabsToLinks
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitTabToLinksPreferenceKey];
+}
+
+- (void)setHistoryIsFrozen:(BOOL)flag
+{
+    [self _setBoolValue:flag forKey:WebKitHistoryIsFrozenPreferenceKey];
+}
+
+- (BOOL)historyIsFrozen
+{
+    return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitHistoryIsFrozenPreferenceKey];
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;
