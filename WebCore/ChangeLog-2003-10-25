@@ -1,3 +1,19 @@
+2003-01-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3144771 - Crash in KJS::WindowFunc::tryCall leaving www.smogcheck.org
+
+	I fixed this by making sure we couldn't send the unload event twice, which was
+	happening before in certain circumstances.
+	
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::closeURL): When emitting load event, note that unload
+	event has not yet been sent.
+        (KHTMLPart::checkEmitLoadEvent): Note when unload event has been
+	sent to avoid sending it twice.
+        * khtml/khtmlpart_p.h:
+
 2003-01-16  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

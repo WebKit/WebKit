@@ -501,11 +501,11 @@ bool KHTMLPart::closeURL()
   if ( d->m_doc && d->m_doc->isHTMLDocument() ) {
     HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>( d->m_doc );
 
-    if ( hdoc->body() && d->m_bLoadEventEmitted ) {
+    if ( hdoc->body() && d->m_bLoadEventEmitted && !d->m_bUnloadEventEmitted ) {
       hdoc->body()->dispatchWindowEvent( EventImpl::UNLOAD_EVENT, false, false );
       if ( d->m_doc )
         d->m_doc->updateRendering();
-      d->m_bLoadEventEmitted = false;
+      d->m_bUnloadEventEmitted = true;
     }
   }
 
@@ -1715,6 +1715,7 @@ void KHTMLPart::checkEmitLoadEvent()
   }
 
   d->m_bLoadEventEmitted = true;
+  d->m_bUnloadEventEmitted = false;
   if (d->m_doc)
     d->m_doc->close();
 }
