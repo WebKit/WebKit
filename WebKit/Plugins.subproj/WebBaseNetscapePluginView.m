@@ -614,9 +614,11 @@ typedef struct {
 {
     if (trackingTag) {
         [self removeTrackingRect:trackingTag];
-        // Must release the window to balance the retain in resetTrackingRect.
-        [[self window] release];
         trackingTag = 0;
+
+        // Must release the window to balance the retain in resetTrackingRect.
+        // But must do it after setting trackingTag to 0 so we don't re-enter.
+        [[self window] release];
     }
 }
 

@@ -1,3 +1,13 @@
+2003-01-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3158624 -- crash reentering WebBaseNetscapePluginView removeTrackingRect closing window
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView removeTrackingRect]):
+	Set tracking tag to 0 before releasing the window to prevent reentering.
+
 2003-01-29  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin.
