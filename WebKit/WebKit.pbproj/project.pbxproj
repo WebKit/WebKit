@@ -72,6 +72,7 @@
 				F58C8A07025BD3BC018635CA,
 				F531DDFF02F0C36F018635CA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			knownRegions = (
 				English,
@@ -457,6 +458,7 @@
 			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 		2568C72C0174912D0ECA149E = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKit.h;
 			refType = 4;
@@ -471,11 +473,13 @@
 			};
 		};
 		25A5593101A5996D0ECA149E = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitDebug.h;
 			refType = 4;
 		};
 		25A5593201A5996D0ECA149E = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitDebug.m;
 			refType = 4;
@@ -516,6 +520,7 @@
 			refType = 4;
 		};
 		25C29825016E29620ECA149E = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitReallyPrivate.h;
 			refType = 4;
@@ -537,51 +542,61 @@
 //353
 //354
 		35081D9202B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLRepresentation.h;
 			refType = 4;
 		};
 		35081D9302B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLRepresentation.m;
 			refType = 4;
 		};
 		35081D9402B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLView.h;
 			refType = 4;
 		};
 		35081D9502B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLView.m;
 			refType = 4;
 		};
 		35081D9602B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLViewPrivate.h;
 			refType = 4;
 		};
 		35081D9702B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLViewPrivate.m;
 			refType = 4;
 		};
 		35081D9802B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageRepresentation.h;
 			refType = 4;
 		};
 		35081D9902B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageRepresentation.m;
 			refType = 4;
 		};
 		35081D9A02B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageView.h;
 			refType = 4;
 		};
 		35081D9B02B6D4D80ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageView.m;
 			refType = 4;
@@ -653,21 +668,25 @@
 			};
 		};
 		35081DA602B6D4E40ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextRepresentation.h;
 			refType = 4;
 		};
 		35081DA702B6D4E40ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextRepresentation.m;
 			refType = 4;
 		};
 		35081DA802B6D4E40ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextView.h;
 			refType = 4;
 		};
 		35081DA902B6D4E40ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextView.m;
 			refType = 4;
@@ -697,6 +716,7 @@
 			};
 		};
 		35081DAE02B6D4F50ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDocument.h;
 			refType = 4;
@@ -711,6 +731,7 @@
 			};
 		};
 		3519E9EE02F0DF570ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebControllerPolicyHandlerPrivate.h;
 			refType = 4;
@@ -722,11 +743,13 @@
 			};
 		};
 		354F25FE02EF441D0ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDefaultContextMenuHandler.h;
 			refType = 4;
 		};
 		354F25FF02EF441D0ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDefaultContextMenuHandler.m;
 			refType = 4;
@@ -747,6 +770,7 @@
 			};
 		};
 		35E371B402F0BAC60ACA2ACA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebControllerPolicyHandler.m;
 			refType = 4;
@@ -767,6 +791,7 @@
 			refType = 4;
 		};
 		35F3577F0198AAB80ACA1520 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/Localizable.strings;
@@ -789,121 +814,145 @@
 //393
 //394
 		39446064020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebController.m;
 			refType = 4;
 		};
 		39446065020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebControllerPrivate.h;
 			refType = 4;
 		};
 		39446066020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebControllerPrivate.m;
 			refType = 4;
 		};
 		3944606B020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDynamicScrollBarsView.h;
 			refType = 4;
 		};
 		3944606C020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDynamicScrollBarsView.m;
 			refType = 4;
 		};
 		3944606E020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPreferences.h;
 			refType = 4;
 		};
 		3944606F020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebController.h;
 			refType = 4;
 		};
 		39446070020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDataSource.h;
 			refType = 4;
 		};
 		39446071020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDataSource.m;
 			refType = 4;
 		};
 		39446072020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDataSourcePrivate.h;
 			refType = 4;
 		};
 		39446073020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDataSourcePrivate.m;
 			refType = 4;
 		};
 		39446074020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebFrame.h;
 			refType = 4;
 		};
 		39446076020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebView.h;
 			refType = 4;
 		};
 		39446077020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebView.m;
 			refType = 4;
 		};
 		39446078020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebViewPrivate.h;
 			refType = 4;
 		};
 		39446079020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebViewPrivate.m;
 			refType = 4;
 		};
 		3944607A020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebException.h;
 			refType = 4;
 		};
 		3944607B020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebException.m;
 			refType = 4;
 		};
 		3944607D020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBackForwardList.h;
 			refType = 4;
 		};
 		3944607E020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBackForwardList.m;
 			refType = 4;
 		};
 		3944607F020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistoryItem.h;
 			refType = 4;
 		};
 		39446080020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistoryItem.m;
 			refType = 4;
 		};
 		39446081020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistoryList.h;
 			refType = 4;
 		};
 		39446082020F50ED0ECA1767 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistoryList.m;
 			refType = 4;
@@ -1136,6 +1185,7 @@
 			refType = 4;
 		};
 		9CAE9D070252A4130ECA16EA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPreferencesPrivate.h;
 			refType = 4;
@@ -1150,21 +1200,25 @@
 			};
 		};
 		9CE1F8A002A5C6F30ECA2ACD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageRenderer.h;
 			refType = 4;
 		};
 		9CE1F8A102A5C6F30ECA2ACD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageRenderer.m;
 			refType = 4;
 		};
 		9CE1F8A202A5C6F30ECA2ACD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageRendererFactory.h;
 			refType = 4;
 		};
 		9CE1F8A302A5C6F30ECA2ACD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebImageRendererFactory.m;
 			refType = 4;
@@ -1194,11 +1248,13 @@
 			};
 		};
 		9CF0E249021361B00ECA16EA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebFramePrivate.h;
 			refType = 4;
 		};
 		9CF0E24A021361B00ECA16EA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebFramePrivate.m;
 			refType = 4;
@@ -1226,11 +1282,13 @@
 //F53
 //F54
 		F501251B0302EA04018635CE = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTestController.h;
 			refType = 4;
 		};
 		F501251C0302EA04018635CE = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTestController.m;
 			refType = 4;
@@ -1251,6 +1309,7 @@
 			};
 		};
 		F505C20B02FB4F18018635CE = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebLocationChangeHandler.m;
 			refType = 4;
@@ -1282,46 +1341,55 @@
 			refType = 4;
 		};
 		F5065218027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkPrivate.h;
 			refType = 4;
 		};
 		F5065219027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmark.h;
 			refType = 4;
 		};
 		F506521A027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmark.m;
 			refType = 4;
 		};
 		F506521B027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkGroup.h;
 			refType = 4;
 		};
 		F506521C027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkGroup.m;
 			refType = 4;
 		};
 		F506521D027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkLeaf.h;
 			refType = 4;
 		};
 		F506521E027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkLeaf.m;
 			refType = 4;
 		};
 		F506521F027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkList.h;
 			refType = 4;
 		};
 		F5065220027F557E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkList.m;
 			refType = 4;
@@ -1387,11 +1455,13 @@
 			};
 		};
 		F508472202DED36E01257167 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPanelCookieAcceptHandler.h;
 			refType = 4;
 		};
 		F508472302DED36E01257167 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPanelCookieAcceptHandler.m;
 			refType = 4;
@@ -1409,11 +1479,13 @@
 			};
 		};
 		F508946902B71D59018A9CD4 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebNSViewExtras.h;
 			refType = 4;
 		};
 		F508946A02B71D59018A9CD4 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebNSViewExtras.m;
 			refType = 4;
@@ -1434,6 +1506,7 @@
 			};
 		};
 		F50AD3870282028B01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkGroupPrivate.h;
 			refType = 4;
@@ -1445,6 +1518,7 @@
 			};
 		};
 		F5143A370221DCCE01A80181 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebFrame.m;
 			refType = 4;
@@ -1456,11 +1530,13 @@
 			};
 		};
 		F520FB190221DEFD01C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistory.h;
 			refType = 4;
 		};
 		F520FB1A0221DEFD01C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistory.m;
 			refType = 4;
@@ -1555,11 +1631,13 @@
 			name = DeploymentFat;
 		};
 		F53444CE02E87CBA018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitStatistics.h;
 			refType = 4;
 		};
 		F53444CF02E87CBA018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitStatistics.m;
 			refType = 4;
@@ -1580,6 +1658,7 @@
 			};
 		};
 		F53444D202E87D4B018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitStatisticsPrivate.h;
 			refType = 4;
@@ -1591,11 +1670,13 @@
 			};
 		};
 		F5488CF402CB04EE01FF6274 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebCookieAdapter.h;
 			refType = 4;
 		};
 		F5488CF502CB04EE01FF6274 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebCookieAdapter.m;
 			refType = 4;
@@ -1613,11 +1694,13 @@
 			};
 		};
 		F560BEBC030DAF4401C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebSearchableTextView.h;
 			refType = 4;
 		};
 		F560BEBD030DAF4401C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebSearchableTextView.m;
 			refType = 4;
@@ -1638,6 +1721,7 @@
 			};
 		};
 		F567433E026B5B7B01A80181 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebLocationChangeHandler.h;
 			refType = 4;
@@ -1664,11 +1748,13 @@
 			};
 		};
 		F5883BE0025E5E9D01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebNullPluginView.h;
 			refType = 4;
 		};
 		F5883BE1025E5E9D01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebNullPluginView.m;
 			refType = 4;
@@ -1686,6 +1772,7 @@
 			};
 		};
 		F58BAB380250363E01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebLoadProgress.m;
 			refType = 4;
@@ -1697,6 +1784,7 @@
 			};
 		};
 		F58BAB3A025036CA01C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebLoadProgress.h;
 			refType = 4;
@@ -1727,6 +1815,7 @@
 			name = Mixed;
 		};
 		F5927D4A02D253C401CA2DBB = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebControllerPolicyHandler.h;
 			refType = 4;
@@ -1741,6 +1830,7 @@
 			};
 		};
 		F5927D4E02D26C5E01CA2DBB = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKitErrors.h;
 			refType = 4;
@@ -1755,11 +1845,13 @@
 			};
 		};
 		F5934C8802E894F50197FBCF = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebIconLoader.h;
 			refType = 4;
 		};
 		F5934C8902E894F50197FBCF = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebIconLoader.m;
 			refType = 4;
@@ -1780,11 +1872,13 @@
 			};
 		};
 		F59668C802AD2923018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebStringTruncator.h;
 			refType = 4;
 		};
 		F59668C902AD2923018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebStringTruncator.m;
 			refType = 4;
@@ -1817,6 +1911,7 @@
 			};
 		};
 		F59EAE3E0253C7EE018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebCoreStatistics.h;
 			refType = 4;
@@ -1831,6 +1926,7 @@
 			};
 		};
 		F59EAE410253C8DE018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebCoreStatistics.m;
 			refType = 4;
@@ -1842,6 +1938,7 @@
 			};
 		};
 		F5A55DC702BAA2E8018635CC = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHTMLRepresentationPrivate.h;
 			refType = 4;
@@ -1853,21 +1950,25 @@
 			};
 		};
 		F5A672B70263866E01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginNullEventSender.h;
 			refType = 4;
 		};
 		F5A672B80263866E01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginNullEventSender.m;
 			refType = 4;
 		};
 		F5A672B90263866E01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginStream.h;
 			refType = 4;
 		};
 		F5A672BA0263866E01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginStream.m;
 			refType = 4;
@@ -1897,6 +1998,7 @@
 			};
 		};
 		F5AEBB3D024A527601C1A526 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPreferences.m;
 			refType = 4;
@@ -1908,11 +2010,13 @@
 			};
 		};
 		F5AFB45E02B94DC8018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBridge.h;
 			refType = 4;
 		};
 		F5AFB45F02B94DC8018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBridge.m;
 			refType = 4;
@@ -1956,11 +2060,13 @@
 			refType = 4;
 		};
 		F5B36B410281DF55018635CB = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextRenderer.h;
 			refType = 4;
 		};
 		F5B36B420281DF55018635CB = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextRenderer.m;
 			refType = 4;
@@ -1980,11 +2086,13 @@
 			};
 		};
 		F5B36B450281DF9C018635CB = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextRendererFactory.h;
 			refType = 4;
 		};
 		F5B36B460281DF9C018635CB = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebTextRendererFactory.m;
 			refType = 4;
@@ -2008,11 +2116,13 @@
 			};
 		};
 		F5B92B820223191D01C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistoryPrivate.h;
 			refType = 4;
 		};
 		F5B92B830223191D01C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebHistoryPrivate.m;
 			refType = 4;
@@ -2030,6 +2140,7 @@
 			};
 		};
 		F5C283730284676D018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebKitPrefix.h;
 			path = ../WebKitPrefix.h;
@@ -2078,11 +2189,13 @@
 			};
 		};
 		F5C81E4102994EA401C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkSeparator.h;
 			refType = 4;
 		};
 		F5C81E4202994EA401C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebBookmarkSeparator.m;
 			refType = 4;
@@ -2100,6 +2213,7 @@
 			};
 		};
 		F5D538E802441F2601A80181 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebMainResourceClient.h;
 			refType = 4;
@@ -2111,6 +2225,7 @@
 			};
 		};
 		F5D538EC02441FDD01A80181 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebMainResourceClient.m;
 			refType = 4;
@@ -2122,11 +2237,13 @@
 			};
 		};
 		F5E0A76E02B8FEE401C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebURLsWithTitles.h;
 			refType = 4;
 		};
 		F5E0A76F02B8FEE401C1A525 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebURLsWithTitles.m;
 			refType = 4;
@@ -2147,11 +2264,13 @@
 			};
 		};
 		F5E0E10802BC45F8018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebSubresourceClient.h;
 			refType = 4;
 		};
 		F5E0E10902BC45F8018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebSubresourceClient.m;
 			refType = 4;
@@ -2169,12 +2288,14 @@
 			};
 		};
 		F5E7B24503025CE801A80180 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebGlyphBuffer.h;
 			path = WebCoreSupport.subproj/WebGlyphBuffer.h;
 			refType = 2;
 		};
 		F5E7B24603025CE801A80180 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebGlyphBuffer.m;
 			path = WebCoreSupport.subproj/WebGlyphBuffer.m;
@@ -2215,11 +2336,13 @@
 			refType = 4;
 		};
 		F5EBC45502134BC301CA1520 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginView.h;
 			refType = 4;
 		};
 		F5EBC45602134BC301CA1520 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginView.m;
 			refType = 4;
@@ -2237,31 +2360,37 @@
 			};
 		};
 		F5F7171E0288493C018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPlugin.h;
 			refType = 4;
 		};
 		F5F7171F0288493C018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPlugin.m;
 			refType = 4;
 		};
 		F5F717200288493C018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginDatabase.h;
 			refType = 4;
 		};
 		F5F717210288493C018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPluginDatabase.m;
 			refType = 4;
 		};
 		F5F717220288493C018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = npapi.h;
 			refType = 4;
 		};
 		F5F717230288493C018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = npapi.m;
 			refType = 4;
@@ -2311,11 +2440,13 @@
 			};
 		};
 		F5F7174C02885C5B018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebViewFactory.h;
 			refType = 4;
 		};
 		F5F7174D02885C5B018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebViewFactory.m;
 			refType = 4;
@@ -2333,6 +2464,7 @@
 			};
 		};
 		F5F732D202FF4D4F01A80180 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebKit.exp;
 			refType = 2;
@@ -2344,12 +2476,14 @@
 			};
 		};
 		F5F81C3502B67C0F018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebDOMNode.h;
 			path = ../WebView.subproj/WebDOMNode.h;
 			refType = 4;
 		};
 		F5F81C3602B67C0F018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebDOMNode.m;
 			path = ../WebView.subproj/WebDOMNode.m;
@@ -2371,12 +2505,14 @@
 			};
 		};
 		F5F81C3902B67C26018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebRenderNode.h;
 			path = ../WebView.subproj/WebRenderNode.h;
 			refType = 4;
 		};
 		F5F81C3A02B67C26018635CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = WebRenderNode.m;
 			path = ../WebView.subproj/WebRenderNode.m;
@@ -2398,11 +2534,13 @@
 			};
 		};
 		F5FBAB8F02B88CBF01FF6074 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDownloadHandler.h;
 			refType = 4;
 		};
 		F5FBAB9002B88CBF01FF6074 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDownloadHandler.m;
 			refType = 4;
@@ -2430,11 +2568,13 @@
 //F63
 //F64
 		F649E40402EE0D1901CA2ACD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDefaultPolicyHandler.h;
 			refType = 4;
 		};
 		F649E40502EE0D1901CA2ACD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebDefaultPolicyHandler.m;
 			refType = 4;
@@ -2489,11 +2629,13 @@
 			};
 		};
 		F83DCC71029D09F301000131 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPanelAuthenticationHandler.h;
 			refType = 4;
 		};
 		F83DCC72029D09F301000131 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebPanelAuthenticationHandler.m;
 			refType = 4;
@@ -2532,21 +2674,25 @@
 			refType = 4;
 		};
 		F8CA15B5029A39D901000122 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebAuthenticationPanel.h;
 			refType = 4;
 		};
 		F8CA15B6029A39D901000122 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebAuthenticationPanel.m;
 			refType = 4;
 		};
 		F8CA15B7029A39D901000122 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebStandardPanels.h;
 			refType = 4;
 		};
 		F8CA15B8029A39D901000122 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebStandardPanels.m;
 			refType = 4;
@@ -2600,6 +2746,7 @@
 			};
 		};
 		F8CA15C1029A3E0D01000122 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = WebStandardPanelsPrivate.h;
 			refType = 4;

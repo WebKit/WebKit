@@ -1,3 +1,8 @@
+2002-08-30  Darin Adler  <darin@apple.com>
+
+        * JavaScriptCore.pbproj/project.pbxproj: Allowed the new Project Builder to put in
+	encodings for each file.
+
 === Alexander-21 ===
 
 === Alexander-20 ===
