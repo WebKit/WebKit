@@ -1,3 +1,11 @@
+2002-08-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3026184 -- Hang going to http://aa.com/ while executing JavaScript
+
+        * kjs/simple_number.h: (SimpleNumber::value): Fixed conversion to a negative
+	number. The technique of using division was no good. Instead, or in the sign
+	bits as needed.
+
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
         * kjs/reference_list.h: Must include headers with "", not
