@@ -537,8 +537,6 @@ static const ushort tag_list_11[] = {
     ID_STYLE,
     ID_META,
     ID_LINK,
-    ID_OBJECT,
-    ID_EMBED,
     ID_COMMENT,
     0
 };
