@@ -1651,7 +1651,7 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-QRect RenderObject::caretRect(int /*offset*/, bool /*override*/)
+QRect RenderObject::caretRect(int, EAffinity)
 {
     return QRect();
 }
@@ -1846,8 +1846,11 @@ void RenderObject::arenaDelete(RenderArena *arena)
     arenaDelete(arena, dynamic_cast<void *>(this));
 }
 
-Position RenderObject::positionForCoordinates(int x, int y)
+Position RenderObject::positionForCoordinates(int x, int y, EAffinity *affinity)
 {
+    if (affinity)
+        *affinity = UPSTREAM;
+
     return Position(element(), caretMinOffset());
 }
 
@@ -2356,7 +2359,7 @@ unsigned long RenderObject::caretMaxRenderedOffset() const
     return 0;
 }
 
-InlineBox *RenderObject::inlineBox(long offset)
+InlineBox *RenderObject::inlineBox(long offset, EAffinity affinity)
 {
     return inlineBoxWrapper();
 }

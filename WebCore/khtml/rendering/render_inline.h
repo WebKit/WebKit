@@ -77,7 +77,7 @@ public:
 
     void absoluteRects(QValueList<QRect>& rects, int _tx, int _ty);
 
-    virtual DOM::Position positionForCoordinates(int x, int y);
+    virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
 
 #ifdef APPLE_CHANGES
     virtual void addFocusRingRects(QPainter *painter, int _tx, int _ty);

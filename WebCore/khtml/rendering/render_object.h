@@ -29,6 +29,7 @@
 #include <qrect.h>
 #include <assert.h>
 
+#include "editing/text_affinity.h"
 #include "misc/khtmllayout.h"
 #include "misc/loader_client.h"
 #include "misc/helper.h"
@@ -363,7 +364,7 @@ public:
     virtual void setInlineBoxWrapper(InlineBox* b);
     void deleteLineBoxWrapper();
 
-    virtual InlineBox *inlineBox(long offset=0);
+    virtual InlineBox *inlineBox(long offset=0, EAffinity affinity = UPSTREAM);
     
     // for discussion of lineHeight see CSS2 spec
     virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;
@@ -503,7 +504,7 @@ public:
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction = HitTestAll, bool inside=false);
     
-    virtual DOM::Position positionForCoordinates(int x, int y);
+    virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
     
     virtual void dirtyLinesFromChangedChild(RenderObject* child, bool adding = true);
     
@@ -777,7 +778,7 @@ public:
      * @param override @p true if input overrides existing characters,
      * @p false if it inserts them. The width of the caret depends on this one.
      */
-    virtual QRect caretRect(int offset, bool override);
+    virtual QRect caretRect(int offset, EAffinity affinity = UPSTREAM);
 
     virtual int lowestPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }
     virtual int rightmostPosition(bool includeOverflowInterior=true, bool includeSelf=true) const { return 0; }

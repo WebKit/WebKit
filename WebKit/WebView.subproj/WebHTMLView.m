@@ -4482,7 +4482,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             ASSERT(!_originalString);       // this should only be set IFF we have a popup window
             _originalString = [[bridge stringForRange:selection] retain];
             [self _buildUI];
-            NSRect wordRect = [bridge caretRectAtNode:[wholeWord startContainer] offset:[wholeWord startOffset]];
+            NSRect wordRect = [bridge caretRectAtNode:[wholeWord startContainer] offset:[wholeWord startOffset] affinity:NSSelectionAffinityDownstream];
             // +1 to be under the word, not the caret
             // FIXME - 3769652 - Wrong positioning for right to left languages.  We should line up the upper
             // right corner with the caret instead of upper left, and the +1 would be a -1.

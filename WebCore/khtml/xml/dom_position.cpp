@@ -36,6 +36,7 @@
 #include "dom2_viewsimpl.h"
 #include "helper.h"
 #include "htmltags.h"
+#include "text_affinity.h"
 #include "rendering/render_block.h"
 #include "rendering/render_flow.h"
 #include "rendering/render_line.h"
@@ -50,6 +51,7 @@
 #define LOG(channel, formatAndArgs...) ((void)0)
 #endif
 
+using khtml::EAffinity;
 using khtml::InlineBox;
 using khtml::InlineTextBox;
 using khtml::RenderBlock;
@@ -240,7 +242,7 @@ Position Position::nextCharacterPosition() const
     return *this;
 }
 
-Position Position::previousLinePosition(int x) const
+Position Position::previousLinePosition(int x, EAffinity affinity) const
 {
     if (!node())
         return Position();
@@ -250,7 +252,7 @@ Position Position::previousLinePosition(int x) const
 
     RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
-    InlineBox *box = node()->renderer()->inlineBox(offset());
+    InlineBox *box = node()->renderer()->inlineBox(offset(), affinity);
     if (box) {
         root = box->root()->prevRootBox();
         if (root)
@@ -299,7 +301,7 @@ Position Position::previousLinePosition(int x) const
     return Position(node()->rootEditableElement(), 0);
 }
 
-Position Position::nextLinePosition(int x) const
+Position Position::nextLinePosition(int x, EAffinity affinity) const
 {
     if (!node())
         return Position();
@@ -309,7 +311,7 @@ Position Position::nextLinePosition(int x) const
 
     RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
-    InlineBox *box = node()->renderer()->inlineBox(offset());
+    InlineBox *box = node()->renderer()->inlineBox(offset(), affinity);
     if (box) {
         root = box->root()->nextRootBox();
         if (root)

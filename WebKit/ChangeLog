@@ -1,3 +1,11 @@
+2004-10-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebTextCompleteController doCompletion]): bridge call to get caret rect at a node
+        now takes an affinity: caretRectAtNode:offset:affinity:.
+
 2004-10-10  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

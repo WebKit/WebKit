@@ -2422,10 +2422,13 @@ Position RenderBlock::positionForRenderer(RenderObject *renderer, bool start) co
     return Position(node, offset);
 }
 
-Position RenderBlock::positionForCoordinates(int _x, int _y)
+Position RenderBlock::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
+    if (affinity)
+        *affinity = UPSTREAM;
+
     if (isTable())
-        return RenderFlow::positionForCoordinates(_x, _y); 
+        return RenderFlow::positionForCoordinates(_x, _y, affinity); 
 
     int absx, absy;
     absolutePosition(absx, absy);
@@ -2462,7 +2465,7 @@ Position RenderBlock::positionForCoordinates(int _x, int _y)
                 InlineBox *closestBox = root->closestLeafChildForXPos(_x, absx);
                 if (closestBox) {
                     // pass the box a y position that is inside it
-                    return closestBox->object()->positionForCoordinates(_x, absy + closestBox->m_y);
+                    return closestBox->object()->positionForCoordinates(_x, absy + closestBox->m_y, affinity);
                 }
             }
         }
@@ -2487,13 +2490,13 @@ Position RenderBlock::positionForCoordinates(int _x, int _y)
         else
             bottom = top + contentHeight();
         if (_y >= top && _y < bottom) {
-            return renderer->positionForCoordinates(_x, _y);
+            return renderer->positionForCoordinates(_x, _y, affinity);
         }
     }
 
     // pass along to the first child
     if (firstChild())
-        return firstChild()->positionForCoordinates(_x, _y);
+        return firstChild()->positionForCoordinates(_x, _y, affinity);
     
     // still no luck...return this render object's element and offset 0
     return Position(element(), 0);

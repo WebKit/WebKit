@@ -57,7 +57,7 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
-    virtual DOM::Position positionForCoordinates(int x, int y);
+    virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
     
     virtual bool canBeSelectionLeaf() const { return true; }
     virtual SelectionState selectionState() const { return m_selectionState; }

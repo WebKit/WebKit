@@ -135,8 +135,11 @@ unsigned long RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-Position RenderReplaced::positionForCoordinates(int _x, int _y)
+Position RenderReplaced::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
+    if (affinity)
+        *affinity = UPSTREAM;
+
     InlineBox *box = inlineBoxWrapper();
     if (!box)
         return Position(element(), 0);
@@ -156,12 +159,15 @@ Position RenderReplaced::positionForCoordinates(int _x, int _y)
         return Position(element(), caretMaxOffset()); // coordinates are below
     
     if (element()) {
-        if (_x <= absx + xPos() + (width() / 2))
+        if (_x <= absx + xPos() + (width() / 2)) {
+            if (affinity)
+                *affinity = DOWNSTREAM;
             return Position(element(), 0);
+        }
         return Position(element(), 1);
     }
 
-    return RenderBox::positionForCoordinates(_x, _y);
+    return RenderBox::positionForCoordinates(_x, _y, affinity);
 }
 
 QRect RenderReplaced::selectionRect()

@@ -626,8 +626,11 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return inside;
 }
 
-Position RenderText::positionForCoordinates(int _x, int _y)
+Position RenderText::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
+    if (affinity)
+        *affinity = UPSTREAM;
+
     if (!firstTextBox() || stringLength() == 0)
         return Position(element(), 0);
 
@@ -637,6 +640,8 @@ Position RenderText::positionForCoordinates(int _x, int _y)
     if (firstTextBox() && _y < absy + firstTextBox()->root()->bottomOverflow() && _x < absx + firstTextBox()->m_x) {
         // at the y coordinate of the first line or above
         // and the x coordinate is to the left than the first text box left edge
+        if (affinity)
+            *affinity = DOWNSTREAM;
         return Position(element(), firstTextBox()->m_start);
     }
 
@@ -653,16 +658,21 @@ Position RenderText::positionForCoordinates(int _x, int _y)
                 // check to see if position goes in this box
                 int offset = box->offsetForPosition(_x - absx);
                 if (offset != -1) {
+                    if (affinity)
+                        *affinity = DOWNSTREAM;
                     return Position(element(), offset + box->m_start);
                 }
             }
-            else if (!box->prevOnLine() && _x < absx + box->m_x)
+            else if (!box->prevOnLine() && _x < absx + box->m_x) {
                 // box is first on line
-                // and the x coordinate is to the left than the first text box left edge
+                // and the x coordinate is to the left of the first text box left edge
+                if (affinity)
+                    *affinity = DOWNSTREAM;
                 return Position(element(), box->m_start);
+            }
             else if (!box->nextOnLine() && _x >= absx + box->m_x + box->m_width)
                 // box is last on line
-                // and the x coordinate is to the right than the last text box right edge
+                // and the x coordinate is to the right of the last text box right edge
                 return Position(element(), box->m_start + box->m_len);
         }
     }
@@ -670,7 +680,30 @@ Position RenderText::positionForCoordinates(int _x, int _y)
     return Position(element(), 0);
 }
 
-QRect RenderText::caretRect(int offset, bool override)
+static RenderObject *firstRendererOnNextLine(InlineBox *box)
+{
+    if (!box)
+        return 0;
+
+    RootInlineBox *root = box->root();
+    if (!root)
+        return 0;
+        
+    if (root->endsWithBreak())
+        return 0;
+    
+    RootInlineBox *nextRoot = root->nextRootBox();
+    if (!nextRoot)
+        return 0;
+    
+    InlineBox *firstChild = nextRoot->firstChild();
+    if (!firstChild)
+        return 0;
+
+    return firstChild->object();
+}
+
+QRect RenderText::caretRect(int offset, EAffinity affinity)
 {
     if (!firstTextBox() || stringLength() == 0) {
         return QRect();
@@ -679,6 +712,21 @@ QRect RenderText::caretRect(int offset, bool override)
     // Find the text box for the given offset
     InlineTextBox *box = 0;
     for (box = firstTextBox(); box; box = box->nextTextBox()) {
+        if (affinity == DOWNSTREAM && offset == box->m_start + box->m_len) {
+            // We're at the end of a line and affinity is downstream.
+            // Try to jump down to the next line.
+            if (box->nextTextBox()) {
+                // Use the next text box
+                box = box->nextTextBox();
+                offset = box->m_start;
+            }
+            else {
+                // Look on the next line
+                RenderObject *object = firstRendererOnNextLine(box);
+                if (object)
+                    return object->caretRect(0, affinity);
+            }
+        }
         if (offset <= box->m_start + box->m_len)
             break;
     }
@@ -1713,10 +1761,12 @@ unsigned long RenderText::caretMaxRenderedOffset() const
     return l;
 }
 
-InlineBox *RenderText::inlineBox(long offset)
+InlineBox *RenderText::inlineBox(long offset, EAffinity affinity)
 {
     for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
         if (offset >= box->m_start && offset <= box->m_start + box->m_len) {
+            if (affinity == DOWNSTREAM && box->nextTextBox() && offset == box->m_start + box->m_len)
+                return box->nextTextBox();
             return box;
         }
         else if (offset < box->m_start) {

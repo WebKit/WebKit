@@ -174,8 +174,6 @@ public:
     bool inSameRootEditableElement(NodeImpl *);
     bool inSameContainingBlockFlowElement(NodeImpl *);
     
-    Position positionForCoordinates(int x, int y);
-
     // used by the parser. Doesn't do as many error checkings as
     // appendChild(), and returns the node into which will be parsed next.
     virtual NodeImpl *addChild(NodeImpl *newChild);

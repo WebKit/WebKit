@@ -469,8 +469,11 @@ void RenderContainer::removeLeftoverAnonymousBoxes()
 	parent()->removeLeftoverAnonymousBoxes();
 }
 
-Position RenderContainer::positionForCoordinates(int _x, int _y)
+Position RenderContainer::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
+    if (affinity)
+        *affinity = UPSTREAM;
+
     // no children...return this render object's element, if there is one, and offset 0
     if (!firstChild())
         return Position(element(), 0);
@@ -498,7 +501,7 @@ Position RenderContainer::positionForCoordinates(int _x, int _y)
     }
     
     if (closestRenderer)
-        return closestRenderer->positionForCoordinates(_x, _y);
+        return closestRenderer->positionForCoordinates(_x, _y, affinity);
     
     return Position(element(), 0);
 }

@@ -1398,14 +1398,6 @@ NodeImpl::Id NodeImpl::identifier() const
 }
 #endif
 
-Position NodeImpl::positionForCoordinates(int x, int y)
-{
-    if (renderer())
-        return renderer()->positionForCoordinates(x, y);
-    
-    return Position(this, 0);
-}
-
 #ifndef NDEBUG
 void NodeImpl::formatForDebugger(char *buffer, unsigned length) const
 {

@@ -101,12 +101,14 @@ unsigned long RenderBR::caretMaxRenderedOffset() const
     return 1;
 }
 
-Position RenderBR::positionForCoordinates(int _x, int _y)
+Position RenderBR::positionForCoordinates(int _x, int _y, EAffinity *affinity)
 {
+    if (affinity)
+        *affinity = UPSTREAM;
     return Position(element(), 0);
 }
 
-QRect RenderBR::caretRect(int offset, bool override)
+QRect RenderBR::caretRect(int offset, EAffinity affinity)
 {
     // EDIT FIXME: This does not work yet. Some other changes are need before
     // an accurate position can be determined.
@@ -119,7 +121,7 @@ QRect RenderBR::caretRect(int offset, bool override)
     return QRect(xPos() + absx, yPos() + absy, 1, lineHeight(false));
 }
 
-InlineBox *RenderBR::inlineBox(long offset)
+InlineBox *RenderBR::inlineBox(long offset, EAffinity affinity)
 {
     return firstTextBox();
 }

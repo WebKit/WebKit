@@ -1,3 +1,108 @@
+2004-10-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Finish selection affinity implementation. This includes code to set the
+        affinity correctly when clicking with the mouse, and clearing the
+        affinity when altering the selection using any of the Selection object
+        mutation functions.
+
+        Each instance of the positionForCoordinates, inlineBox and caretRect 
+        functions have been changed to include an EAffinity argument to give results
+        which take this bit into account.
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::init): Default affinity is now UPSTREAM, to match AppKit.
+        (khtml::Selection::modifyAffinity): New function to compute affinity based on
+        modification constants.
+        (khtml::Selection::moveTo): Reset affinity to UPSTREAM.
+        (khtml::Selection::modifyExtendingRightForward): Ditto.
+        (khtml::Selection::modifyMovingRightForward): Ditto.
+        (khtml::Selection::modifyExtendingLeftBackward): Ditto.
+        (khtml::Selection::modifyMovingLeftBackward): Ditto.
+        (khtml::Selection::modify): Support saving, restoring, and then calculating new
+        affinity value as needed. 
+        (khtml::Selection::xPosForVerticalArrowNavigation):
+        (khtml::Selection::clear): Reset affinity to UPSTREAM.
+        (khtml::Selection::setBase): Ditto.
+        (khtml::Selection::setExtent): Ditto.
+        (khtml::Selection::setBaseAndExtent): Ditto.
+        (khtml::Selection::layout): Pass affinity to caretRect().
+        (khtml::Selection::validate): Pass along affinity parameter to new functions that
+        require it.
+        (khtml::startOfFirstRunAt): Changed the way that the y-coordinate search is done, to
+        keep this code working with changes made in selectionForLine().
+        (khtml::endOfLastRunAt): Ditto.
+        (khtml::selectionForLine): Make this function work for all renderers, not just text
+        renderers.
+        * khtml/editing/selection.h:
+        (khtml::operator==): Consider affinity in equality check.
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousLinePosition): Pass affinity argument to function so it can take this 
+        information into account while processing.
+        (khtml::nextLinePosition): Ditto.
+        (khtml::previousParagraphPosition): Ditto.
+        (khtml::nextParagraphPosition): Ditto.
+        * khtml/editing/visible_units.h: Ditto, for each of the functions listed.
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset): Rework code to remove dependence on NodeImpl::positionForCoordinates,
+        as this function is being removed.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointInsideSelection): Ditto.
+        (KHTMLPart::selectClosestWordFromMouseEvent): Ditto.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMousePressEventSingleClick): Ditto. Plus, pass affinity argument in
+        call to positionForCoordinates, and set resulting affinity on the selection.
+        (KHTMLPart::handleMouseMoveEventSelection): Rework code to remove dependence on 
+        NodeImpl::positionForCoordinates, as this function is being removed.
+        (KHTMLPart::khtmlMouseReleaseEvent): Ditto.
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForCoordinates): Now takes an affinity argument.
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::caretRect): Ditto.
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::positionForCoordinates): Ditto.
+        (RenderBR::caretRect): Ditto.
+        (RenderBR::inlineBox): Ditto.
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates): Ditto.
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::caretRect): Ditto.
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::positionForCoordinates): Ditto.
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::caretRect): Ditto.
+        (RenderObject::positionForCoordinates): Ditto.
+        (RenderObject::inlineBox): Ditto.
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::positionForCoordinates): Ditto.
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::positionForCoordinates): Ditto.
+        (firstRendererOnNextLine): New helper used by caretRect().
+        (RenderText::caretRect): Now takes an affinity argument.
+        (RenderText::inlineBox): Ditto.
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_nodeimpl.cpp: Remove positionForCoordinates helper.
+        * khtml/xml/dom_nodeimpl.h: Ditto.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousLinePosition): Now takes an affinity argument.
+        (DOM::Position::nextLinePosition): Ditto.
+        * khtml/xml/dom_position.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge caretRectAtNode:offset:affinity:]): Ditto.
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]): Ditto.
+        (-[WebCoreBridge _positionForPoint:]): Rework code to remove dependence on 
+        NodeImpl::positionForCoordinates, as this function is being removed.
+
 2004-10-11  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

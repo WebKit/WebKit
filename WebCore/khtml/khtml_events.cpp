@@ -59,7 +59,8 @@ long khtml::MouseEvent::offset() const
         DOM::Node inner = innerNode();
         if (inner.nodeType() == Node::TEXT_NODE)
             inner = inner.parentNode();
-        pos = inner.handle()->positionForCoordinates(m_x, m_y);
+        if (inner.handle()->renderer())
+            pos = inner.handle()->renderer()->positionForCoordinates(m_x, m_y);
     }
     return pos.offset();
 }

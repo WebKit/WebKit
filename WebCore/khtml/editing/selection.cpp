@@ -65,7 +65,7 @@ using DOM::StayInBlock;
 
 namespace khtml {
 
-static Selection selectionForLine(const Position &position);
+static Selection selectionForLine(const Position &position, EAffinity affinity);
 
 Selection::Selection()
 {
@@ -122,7 +122,7 @@ Selection::Selection(const Selection &o)
 void Selection::init()
 {
     m_state = NONE; 
-    m_affinity = DOWNSTREAM;
+    m_affinity = UPSTREAM;
     m_baseIsStart = true;
     m_needsLayout = true;
     m_modifyBiasSet = false;
@@ -164,8 +164,45 @@ void Selection::setAffinity(EAffinity affinity)
     setNeedsLayout();
 }
 
+void Selection::modifyAffinity(EAlter alter, EDirection dir, ETextGranularity granularity)
+{
+    switch (granularity) {
+        case CHARACTER:
+        case WORD:
+            m_affinity = DOWNSTREAM;
+            break;
+        case PARAGRAPH:
+        case LINE:
+            if (dir == BACKWARD || dir == LEFT)
+                m_affinity = UPSTREAM;
+            break;
+        case PARAGRAPH_BOUNDARY:
+        case DOCUMENT_BOUNDARY:
+            // These granularities should not change affinity.
+            break;
+        case LINE_BOUNDARY: {
+            // When extending, leave affinity unchanged.
+            if (alter == MOVE) {
+                switch (dir) {
+                    case FORWARD:
+                    case RIGHT:
+                        m_affinity = UPSTREAM;
+                        break;
+                    case BACKWARD:
+                    case LEFT:
+                        m_affinity = DOWNSTREAM;
+                        break;
+                }
+            }
+            break;
+        }
+    }
+    setNeedsLayout();
+}
+
 void Selection::moveTo(const Range &r)
 {
+    m_affinity = UPSTREAM;
     m_base = startPosition(r);
     m_extent = endPosition(r);
     validate();
@@ -173,6 +210,7 @@ void Selection::moveTo(const Range &r)
 
 void Selection::moveTo(const Selection &o)
 {
+    m_affinity = UPSTREAM;
     m_base = o.m_start;
     m_extent = o.m_end;
     validate();
@@ -180,6 +218,7 @@ void Selection::moveTo(const Selection &o)
 
 void Selection::moveTo(const Position &pos)
 {
+    m_affinity = UPSTREAM;
     m_base = pos;
     m_extent = pos;
     validate();
@@ -187,6 +226,7 @@ void Selection::moveTo(const Position &pos)
 
 void Selection::moveTo(const Position &base, const Position &extent)
 {
+    m_affinity = UPSTREAM;
     m_base = base;
     m_extent = extent;
     validate();
@@ -230,13 +270,13 @@ VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granular
             pos = nextWordPosition(pos);
             break;
         case PARAGRAPH:
-            pos = nextParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+            pos = nextParagraphPosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE:
-            pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+            pos = nextLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_end).end());
+            pos = VisiblePosition(selectionForLine(m_end, m_affinity).end());
             break;
         case PARAGRAPH_BOUNDARY:
             pos = endOfParagraph(VisiblePosition(m_end));
@@ -264,13 +304,13 @@ VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity
             pos = nextWordPosition(VisiblePosition(m_extent));
             break;
         case PARAGRAPH:
-            pos = nextParagraphPosition(VisiblePosition(m_end), xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextParagraphPosition(VisiblePosition(m_end), m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE:
-            pos = nextLinePosition(VisiblePosition(m_end), xPosForVerticalArrowNavigation(END, isRange()));
+            pos = nextLinePosition(VisiblePosition(m_end), m_affinity, xPosForVerticalArrowNavigation(END, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_end).end());
+            pos = VisiblePosition(selectionForLine(m_end, m_affinity).end());
             break;
         case PARAGRAPH_BOUNDARY:
             pos = endOfParagraph(VisiblePosition(m_end));
@@ -295,13 +335,13 @@ VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granular
             pos = previousWordPosition(pos);
             break;
         case PARAGRAPH:
-            pos = previousParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+            pos = previousParagraphPosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE:
-            pos = previousLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+            pos = previousLinePosition(pos, m_affinity, xPosForVerticalArrowNavigation(EXTENT));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_start).start());
+            pos = VisiblePosition(selectionForLine(m_start, m_affinity).start());
             break;
         case PARAGRAPH_BOUNDARY:
             pos = startOfParagraph(VisiblePosition(m_start));
@@ -327,13 +367,13 @@ VisiblePosition Selection::modifyMovingLeftBackward(ETextGranularity granularity
             pos = previousWordPosition(VisiblePosition(m_extent));
             break;
         case PARAGRAPH:
-            pos = previousParagraphPosition(VisiblePosition(m_start), xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousParagraphPosition(VisiblePosition(m_start), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE:
-            pos = previousLinePosition(VisiblePosition(m_start), xPosForVerticalArrowNavigation(START, isRange()));
+            pos = previousLinePosition(VisiblePosition(m_start), m_affinity, xPosForVerticalArrowNavigation(START, isRange()));
             break;
         case LINE_BOUNDARY:
-            pos = VisiblePosition(selectionForLine(m_start).start());
+            pos = VisiblePosition(selectionForLine(m_start, m_affinity).start());
             break;
         case PARAGRAPH_BOUNDARY:
             pos = startOfParagraph(VisiblePosition(m_start));
@@ -372,6 +412,10 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
     if (pos.isNull())
         return false;
 
+    // Save and restore affinity here before calling setAffinity. 
+    // The moveTo() and setExtent() calls reset affinity and this 
+    // is undesirable here.
+    EAffinity savedAffinity = m_affinity;
     switch (alter) {
         case MOVE:
             moveTo(pos.deepEquivalent());
@@ -380,6 +424,8 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
             setExtent(pos.deepEquivalent());
             break;
     }
+    m_affinity = savedAffinity;
+    modifyAffinity(alter, dir, granularity);
 
     return true;
 }
@@ -394,7 +440,7 @@ static bool caretY(const VisiblePosition &c, int &y)
     RenderObject *r = p.node()->renderer();
     if (!r)
         return false;
-    QRect rect = r->caretRect(p.offset(), false);
+    QRect rect = r->caretRect(p.offset());
     if (rect.isEmpty())
         return false;
     y = rect.y() + rect.height() / 2;
@@ -410,6 +456,7 @@ bool Selection::modify(EAlter alter, int verticalDistance)
     if (up)
         verticalDistance = -verticalDistance;
 
+    m_affinity = UPSTREAM;
     setModifyBias(alter, up ? BACKWARD : FORWARD);
 
     VisiblePosition pos;
@@ -437,7 +484,7 @@ bool Selection::modify(EAlter alter, int verticalDistance)
 
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
-        next = (up ? previousLinePosition : nextLinePosition)(p, xPos);
+        next = (up ? previousLinePosition : nextLinePosition)(p, m_affinity, xPos);
         if (next.isNull() || next == p)
             break;
         int nextY;
@@ -504,18 +551,26 @@ int Selection::xPosForVerticalArrowNavigation(EPositionType type, bool recalc) c
         return x;
         
     if (recalc || part->xPosForVerticalArrowNavigation() == KHTMLPart::NoXPosForVerticalArrowNavigation) {
-        x = pos.node()->renderer()->caretRect(pos.offset(), false).x();
+        switch (m_affinity) {
+            case DOWNSTREAM:
+                pos = VisiblePosition(pos).downstreamDeepEquivalent();
+                break;
+            case UPSTREAM:
+                pos = VisiblePosition(pos).deepEquivalent();
+                break;
+        }
+        x = pos.node()->renderer()->caretRect(pos.offset(), m_affinity).x();
         part->setXPosForVerticalArrowNavigation(x);
     }
     else {
         x = part->xPosForVerticalArrowNavigation();
     }
-
     return x;
 }
 
 void Selection::clear()
 {
+    m_affinity = UPSTREAM;
     m_base.clear();
     m_extent.clear();
     validate();
@@ -523,18 +578,21 @@ void Selection::clear()
 
 void Selection::setBase(const Position &pos)
 {
+    m_affinity = UPSTREAM;
     m_base = pos;
     validate();
 }
 
 void Selection::setExtent(const Position &pos)
 {
+    m_affinity = UPSTREAM;
     m_extent = pos;
     validate();
 }
 
 void Selection::setBaseAndExtent(const Position &base, const Position &extent)
 {
+    m_affinity = UPSTREAM;
     m_base = base;
     m_extent = extent;
     validate();
@@ -628,7 +686,7 @@ void Selection::layout()
                 pos = VisiblePosition(m_start).deepEquivalent();
                 break;
         }
-        m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), false);
+        m_caretRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
         m_expectedVisibleRect = m_caretRect;
     }
     else {
@@ -637,7 +695,7 @@ void Selection::layout()
         // This makes the selection follow the extent position while scrolling as a 
         // result of arrow navigation. 
         Position pos = m_baseIsStart ? m_end : m_start;
-        m_expectedVisibleRect = pos.node()->renderer()->caretRect(pos.offset(), false);
+        m_expectedVisibleRect = pos.node()->renderer()->caretRect(pos.offset(), m_affinity);
         m_caretRect = QRect();
     }
 
@@ -795,11 +853,11 @@ void Selection::validate(ETextGranularity granularity)
         case LINE_BOUNDARY: {
             Selection baseSelection = *this;
             Selection extentSelection = *this;
-            Selection baseLine = selectionForLine(m_base);
+            Selection baseLine = selectionForLine(m_base, m_affinity);
             if (baseLine.isCaretOrRange()) {
                 baseSelection = baseLine;
             }
-            Selection extentLine = selectionForLine(m_extent);
+            Selection extentLine = selectionForLine(m_extent, m_affinity);
             if (extentLine.isCaretOrRange()) {
                 extentSelection = extentLine;
             }
@@ -870,9 +928,13 @@ static Position startOfFirstRunAt(RenderObject *renderNode, int y)
     for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
         if (n->isText()) {
             RenderText *textRenderer = static_cast<RenderText *>(n);
-            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox())
-                if (box->m_y == y)
+            for (InlineTextBox* box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
+                int absx, absy;
+                n->absolutePosition(absx, absy);
+                int top = absy + box->root()->topOverflow();
+                if (top == y)
                     return Position(textRenderer->element(), box->m_start);
+            }
         }
         
         Position position = startOfFirstRunAt(n->firstChild(), y);
@@ -898,9 +960,13 @@ static Position endOfLastRunAt(RenderObject *renderNode, int y)
         
         if (n->isText()) {
             RenderText *textRenderer = static_cast<RenderText *>(n);
-            for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox())
-                if (box->m_y == y)
+            for (InlineTextBox* box = textRenderer->lastTextBox(); box; box = box->prevTextBox()) {
+                int absx, absy;
+                n->absolutePosition(absx, absy);
+                int top = absy + box->root()->topOverflow();
+                if (top == y)
                     return Position(textRenderer->element(), box->m_start + box->m_len);
+            }
         }
         
         if (n == renderNode)
@@ -910,32 +976,17 @@ static Position endOfLastRunAt(RenderObject *renderNode, int y)
     }
 }
 
-static Selection selectionForLine(const Position &position)
+static Selection selectionForLine(const Position &position, EAffinity affinity)
 {
     NodeImpl *node = position.node();
-
-    if (!node)
+    if (!node || !node->renderer())
         return Selection();
-
-    switch (node->nodeType()) {
-        case Node::TEXT_NODE:
-        case Node::CDATA_SECTION_NODE:
-            break;
-        default:
-            return Selection();
-    }
-
-    RenderText *renderer = static_cast<RenderText *>(node->renderer());
-
-    int pos;
-    InlineTextBox *run = renderer->findNextInlineTextBox(position.offset(), pos);
-    if (!run)
-        return Selection();
-        
-    int selectionPointY = run->m_y;
+    
+    QRect rect = node->renderer()->caretRect(position.offset(), affinity);
+    int selectionPointY = rect.y();
     
     // Go up to first non-inline element.
-    RenderObject *renderNode = renderer;
+    RenderObject *renderNode = node->renderer();
     while (renderNode && renderNode->isInline())
         renderNode = renderNode->parent();
     renderNode = renderNode->firstChild();

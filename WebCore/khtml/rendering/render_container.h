@@ -61,7 +61,7 @@ public:
 
     void updatePseudoChild(RenderStyle::PseudoId type, RenderObject* child);
 
-    virtual DOM::Position positionForCoordinates(int x, int y);
+    virtual DOM::Position positionForCoordinates(int x, int y, EAffinity * = 0);
 
 private:
     void setFirstChild(RenderObject *first) { m_first = first; }

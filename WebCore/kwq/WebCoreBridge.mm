@@ -103,6 +103,7 @@ using DOM::Range;
 
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
+using khtml::EAffinity;
 using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
 using khtml::MoveSelectionCommand;
@@ -1203,9 +1204,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->centerSelectionInVisibleArea(); 
 }
 
-- (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset
+- (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset affinity:(NSSelectionAffinity)affinity
 {
-    return [node _nodeImpl]->renderer()->caretRect(offset, true);
+    return [node _nodeImpl]->renderer()->caretRect(offset, static_cast<EAffinity>(affinity));
 }
 
 - (NSImage *)selectionImage
@@ -1470,7 +1471,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     start = VisiblePosition(start, UPSTREAM).deepEquivalent();
 
     Selection selection(start, end);
-    selection.setAffinity(static_cast<khtml::EAffinity>(selectionAffinity));
+    selection.setAffinity(static_cast<EAffinity>(selectionAffinity));
     _part->setSelection(selection);
 }
 
@@ -1593,7 +1594,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     NodeImpl *node = nodeInfo.innerNode();
-    return node->positionForCoordinates((int)point.x, (int)point.y);
+    if (!node->renderer())
+        return Position();
+    return node->renderer()->positionForCoordinates((int)point.x, (int)point.y);
 }
 
 - (void)moveDragCaretToPoint:(NSPoint)point
@@ -1679,7 +1682,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
 
     Position extent = _part->selection().extent();
-    QRect extentRect = extent.node()->renderer()->caretRect(extent.offset(), true);
+    QRect extentRect = extent.node()->renderer()->caretRect(extent.offset(), _part->selection().affinity());
     if (!NSContainsRect([v->getDocumentView() visibleRect], NSRect(extentRect))) {
         v->ensureRectVisibleCentered(extentRect, true);
     }
