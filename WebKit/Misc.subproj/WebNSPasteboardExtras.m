@@ -10,6 +10,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebURLsWithTitles.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -65,16 +66,22 @@ NSString *WebURLNamePboardType = nil;
 
 - (void)_web_writeURL:(NSURL *)URL andTitle:(NSString *)title withOwner:(id)owner
 {
+    ASSERT(URL);
+    
     NSArray *types = [NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, NSStringPboardType, nil];
     [self declareTypes:types owner:owner];
 
     [URL writeToPasteboard:self];
     [self setString:[URL absoluteString] forType:NSStringPboardType];
-    [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
-    [self setString:[URL absoluteString] forType:WebURLPboardType];
+
+    NSArray *titles = nil;
     if(title && ![title isEqualToString:@""]){
+        titles = [NSArray arrayWithObject:title];
         [self setString:title forType:WebURLNamePboardType];
     }
+    
+    [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:titles toPasteboard:self];
+    [self setString:[URL absoluteString] forType:WebURLPboardType];
 }
 
 @end

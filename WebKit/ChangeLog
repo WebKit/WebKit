@@ -1,3 +1,10 @@
+2002-11-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3100597 - repro NSArray exception using contextual menu
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]): more error checking
+
 2002-11-19  Trey Matteson  <trey@apple.com>
 
 	Just a tweak to the description printout.
