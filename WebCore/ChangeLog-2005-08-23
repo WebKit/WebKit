@@ -1,3 +1,13 @@
+2003-02-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Radar 3142922 (file URLs should never be sent as referrers)
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge referrer]): Check that the referrer does not start with
+	the prefix "file:". If it does, return nil.
+
 2003-02-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3163603, livepage.apple.com repaints entire page.

@@ -667,7 +667,10 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (NSString *)referrer
 {
-    return _part->referrer().getNSString();
+    // Do not allow file URLs to be used as referrers as that is potentially a security issue
+    NSString *referrer = _part->referrer().getNSString();
+    BOOL isFileURL = [referrer rangeOfString:@"file:" options:(NSCaseInsensitiveSearch | NSAnchoredSearch)].location != NSNotFound;
+    return isFileURL ? nil : referrer;
 }
 
 - (int)frameBorderStyle
