@@ -1506,7 +1506,9 @@ static const char * const loadTypeNames[] = {
     // Unfortunately the view must be non-nil, this is ultimately due
     // to KDE parser requiring a KHTMLView.  Once we settle on a final
     // KDE drop we should fix this dependency.
-    ASSERT([self webView] != nil);
+
+    // This is commented out because for the download reload feature, we need to be able to start a load without a WebView involved.
+    //ASSERT([self webView] != nil);
 
     [self stopLoading];
 

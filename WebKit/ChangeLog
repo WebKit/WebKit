@@ -1,3 +1,13 @@
+2002-12-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3116294 - Need "Reload" feature in Downloads window
+
+        Reviewed by: rjw
+
+        * WebKit.pbproj/project.pbxproj: made WebFramePrivate.h private so that WebBrowser can call _downloadRequest:toPath:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _loadDataSource:withLoadType:]): commented out assert that complains about lack of WebView. Long-term solution is to catch this earlier and have a lone datasource download mechanism 3118355.
+
 2002-12-04  Trey Matteson  <trey@apple.com>
 
 	3097585 - Crash in -[WebFrame(WebPrivate) _isLoadComplete] at result of google image search
