@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,25 +29,33 @@
 #include "KWQColor.h"
 #include "KWQBrush.h"
 
+// We don't colorize widgets, so we don't need palettes.
+// And copying the palettes was taking a measurable amount of time.
+#define KWQ_USE_PALETTES 0
+
 class QColorGroupPrivate;
 class QPalettePrivate;
 
 class QColorGroup {
 public:
     enum ColorRole { 
-        Foreground, 
-        Shadow, 
-        Light, 
-        Midlight, 
-        Mid, 
-        Dark, 
-        Base, 
-        ButtonText, 
-        Button, 
-        Background, 
+#if KWQ_USE_PALETTES
+        Foreground,
+        Shadow,
+        Light,
+        Midlight,
+        Mid,
+        Dark,
+#endif
+        Base,
+#if KWQ_USE_PALETTES
+        ButtonText,
+        Button,
+        Background,
         Text,
         Highlight,
         HighlightedText,
+#endif
         NColorRoles
     };
 
@@ -58,18 +66,22 @@ public:
     const QColor &color(ColorRole) const;
     void setColor(ColorRole, const QColor &);
 
+#if KWQ_USE_PALETTES
     const QColor &foreground() const;
     const QColor &shadow() const;
     const QColor &light() const;
     const QColor &midlight() const;
     const QColor &dark() const;
+#endif
     const QColor &base() const;
+#if KWQ_USE_PALETTES
     const QColor &buttonText() const;
     const QColor &button() const;
     const QColor &text() const;
     const QColor &background() const;
     const QColor &highlight() const;
     const QColor &highlightedText() const;
+#endif
 
     bool operator==(const QColorGroup &) const;
 
@@ -82,8 +94,10 @@ class QPalette {
 public:
     enum ColorGroup { 
         Active, 
+#if KWQ_USE_PALETTES
         Inactive, 
         Disabled,
+#endif
         NColorGroups
     };
 
@@ -91,16 +105,20 @@ public:
     void setColor(ColorGroup, QColorGroup::ColorRole, const QColor &);
 
     const QColorGroup &active() const { return m_active; }
+#if KWQ_USE_PALETTES
     const QColorGroup &inactive() const { return m_inactive; }
     const QColorGroup &disabled() const { return m_disabled; }
     const QColorGroup &normal() const { return m_active; }
+#endif
 
     bool operator==(const QPalette &) const;
 
 private:
     QColorGroup m_active;  
+#if KWQ_USE_PALETTES
     QColorGroup m_inactive;  
     QColorGroup m_disabled;  
+#endif
 };
 
 #endif

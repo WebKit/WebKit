@@ -40,6 +40,8 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
         WebCoreInitializeTextRun (&run, buffer, length, 0, length);
         WebCoreTextStyle style;
         WebCoreInitializeEmptyTextStyle(&style);
+        style.applyRunRounding = NO;
+        style.applyWordRounding = NO;
         style.textColor = textColor;
         [renderer drawRun:&run style:&style atPoint:point];
     }
@@ -90,6 +92,8 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
         WebCoreInitializeTextRun (&run, buffer, length, 0, length);
         WebCoreTextStyle style;
         WebCoreInitializeEmptyTextStyle(&style);
+        style.applyRunRounding = NO;
+        style.applyWordRounding = NO;
         width = [renderer floatWidthForRun:&run style:&style widths: 0];
     }
     else {

@@ -2,7 +2,7 @@
  * This file is part of the CSS implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -756,11 +756,11 @@ static void checkPseudoState( DOM::ElementImpl *e, bool checkVisited = true )
     QString u = cu.string();
     if ( !u.contains("://") ) {
         if ( u[0] == '/' )
-            u = encodedurl->host + u;
+            u.prepend(encodedurl->host);
         else if ( u[0] == '#' )
-            u = encodedurl->file + u;
+            u.prepend(encodedurl->file);
         else
-            u = encodedurl->path + u;
+            u.prepend(encodedurl->path);
         cleanpath( u );
     }
     //completeURL( attr.string() );
@@ -1321,9 +1321,41 @@ static const colorMap cmap[] = {
     { CSS_VAL_YELLOW, 0xFFFFFF00 },
     { CSS_VAL_INVERT, invertedColor },
     { CSS_VAL_TRANSPARENT, transparentColor },
-    { CSS_VAL_GREY, 0xff808080 },
+    { CSS_VAL_GREY, 0xFF808080 },
+#if APPLE_CHANGES
+    { CSS_VAL_ACTIVEBORDER, 0xFFE0E0E0 },
+    { CSS_VAL_ACTIVECAPTION, 0xFF000000 },
+    { CSS_VAL_APPWORKSPACE, 0xFF000000 },
+    { CSS_VAL_BUTTONFACE, 0xFFC0C0C0 },
+    { CSS_VAL_BUTTONHIGHLIGHT, 0xFFE0E0E0 },
+    { CSS_VAL_BUTTONSHADOW, 0xFFFFFFFF },
+    { CSS_VAL_BUTTONTEXT, 0xFF000000 },
+    { CSS_VAL_CAPTIONTEXT, 0xFF000000 },
+    { CSS_VAL_GRAYTEXT, 0xFF000000 },
+    { CSS_VAL_HIGHLIGHT, 0xFFFFFFFF },
+    { CSS_VAL_HIGHLIGHTTEXT, 0xFFFFFFFF },
+    { CSS_VAL_INACTIVEBORDER, 0xFFFFFFFF },
+    { CSS_VAL_INACTIVECAPTION, 0xFFFFFFFF },
+    { CSS_VAL_INACTIVECAPTIONTEXT, 0xFF000000 },
+    { CSS_VAL_INFOBACKGROUND, 0xFF000000 },
+    { CSS_VAL_INFOTEXT, 0xFF000000 },
+    { CSS_VAL_MENU, 0xFFFFFFFF },
+    { CSS_VAL_MENUTEXT, 0xFFFFFFFF },
+    { CSS_VAL_SCROLLBAR, 0xFFFFFFFF },
+    { CSS_VAL_TEXT, 0xFF000000 },
+    { CSS_VAL_THREEDDARKSHADOW, 0xFF404040 },
+    { CSS_VAL_THREEDFACE, 0xFFC0C0C0 },
+    { CSS_VAL_THREEDHIGHLIGHT, 0xFFE0E0E0 },
+    { CSS_VAL_THREEDLIGHTSHADOW, 0xFFC0C0C0 },
+    { CSS_VAL_THREEDSHADOW, 0xFFFFFFFF },
+    { CSS_VAL_WINDOW, 0xFFFFFFFF },
+    { CSS_VAL_WINDOWFRAME, 0xFFFFFFFF },
+    { CSS_VAL_WINDOWTEXT, 0xFF000000 },
+#endif
     { 0, 0 }
 };
+
+#if !APPLE_CHANGES
 
 struct uiColors {
     int css_value;
@@ -1400,6 +1432,8 @@ static const uiColors uimap[] = {
     { 0, 0, 0, QPalette::NColorGroups, QColorGroup::NColorRoles }
 };
 
+#endif // !APPLE_CHANGES
+
 static QColor colorForCSSValue( int css_value )
 {
     // try the regular ones first
@@ -1409,10 +1443,12 @@ static QColor colorForCSSValue( int css_value )
     if ( col->css_value )
         return col->color;
 
+#if APPLE_CHANGES
+    return QColor();
+#else
     const uiColors *uicol = uimap;
     while ( uicol->css_value && uicol->css_value != css_value )
         ++uicol;
-#if !APPLE_CHANGES
     if ( !uicol->css_value ) {
         if ( css_value == CSS_VAL_INFOBACKGROUND )
             return QToolTip::palette().inactive().background();
@@ -1426,20 +1462,18 @@ static QColor colorForCSSValue( int css_value )
         }
         return khtml::invalidColor;
     }
-#endif
     
     const QPalette &pal = qApp->palette();
     QColor c = pal.color( uicol->group, uicol->role );
-#if !APPLE_CHANGES
     if ( uicol->configEntry ) {
         KConfig *globalConfig = KGlobal::config();
         globalConfig->setGroup( uicol->configGroup );
         c = globalConfig->readColorEntry( uicol->configEntry, &c );
     }
-#endif
     
     return c;
-};
+#endif
+}
 
 void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                                          int startIndex, int endIndex)

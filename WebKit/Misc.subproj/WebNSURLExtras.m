@@ -383,6 +383,8 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
     const unsigned char *before = [data bytes];
     int length = [data length];
 
+    bool needsHostNameDecoding = false;
+
     const unsigned char *p = before;
     int bufferLength = (length * 3) + 1;
     char *after = malloc(bufferLength); // large enough to %-escape every character
@@ -413,6 +415,10 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         } 
         else {
             *q++ = c;
+
+            // Check for "xn--" in an efficient, non-case-sensitive, way.
+            if (c == '-' && i >= 3 && !needsHostNameDecoding && (q[-4] | 0x20) == 'x' && (q[-3] | 0x20) == 'n' && q[-2] == '-')
+                needsHostNameDecoding = true;
         }
     }
     *q = '\0';
@@ -445,11 +451,9 @@ static NSString *mapHostNames(NSString *string, BOOL encode)
         result = [NSString stringWithUTF8String:after];
     }
 
-    // As an optimization, only do host name decoding if we have xn-- somewhere.
-    bool needsHostNameDecoding = strcasestr(after, "xn--") != NULL;
-  
     free(after);
     
+    // As an optimization, only do host name decoding if we have "xn--" somewhere.
     return needsHostNameDecoding ? mapHostNames(result, NO) : result;
 }
 

@@ -1,3 +1,37 @@
+2004-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed things seen in the profile, for a total speedup of 4% on cvs-base
+        - fixed some layout regressions from my last speedup due to text measurement inconsistencies by adding
+          a flag to control whether word rounding is done or not
+        - fixed text measurement to be used with AppKit to match AppKit again, as it did at some point in the past
+
+        * WebCoreSupport.subproj/WebTextRenderer.h: Remove some unused fields, and added a field to say whether we
+        treat this font as fixed pitch.
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (getUncachedWidth): Remove space width hack from this level. There was already a width hack up at the higher
+        level for space itself, so there's not a significant speed benefit, and the higher level can make a more
+        intelligent choice based on the current rounding setting since it's not cached.
+        (-[WebTextRenderer _computeWidthForSpace]): Don't store so many widths; just the adjusted width we will
+        actually use.
+        (widthForNextCharacter): Use two different rules for when to adjust space widths, based on whether this is
+        a fixed pitch font or not. Also, don't do any adjusting of space widths if applyWordRounding is false.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_drawAtPoint:font:textColor:]): Turn off rounding, so we get the kind of spacing AppKit would normally give.
+        (-[NSString _web_widthWithFont:]): Ditto.
+        * Misc.subproj/WebStringTruncator.m: (stringWidth): Ditto.
+
+2004-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fixed things seen in the profile, for a total speedup of 3.7% on cvs-base
+
+        * Misc.subproj/WebNSURLExtras.m: (-[NSURL _web_userVisibleString]): Check for "xn--" as we
+        walk the string instead of in a separate call to strcasestr. Faster this way.
+
 2004-02-07  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Get rid of the DEPLOYMENT_LOCATION and DEPLOYMENT_POSTPROCESSING

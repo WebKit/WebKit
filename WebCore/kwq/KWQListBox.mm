@@ -256,6 +256,8 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
             style.rtl = [tableView baseWritingDirection] == NSWritingDirectionRightToLeft;
+            style.applyRunRounding = NO;
+            style.applyWordRounding = NO;
             do {
                 const QString &s = (*i).string;
                 id <WebCoreTextRenderer> renderer = (*i).isGroupLabel ? groupLabelTextRenderer() : itemTextRenderer();
@@ -503,6 +505,8 @@ void QListBox::setWritingDirection(QPainter::TextDirection d)
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
     style.rtl = RTL;
+    style.applyRunRounding = NO;
+    style.applyWordRounding = NO;
     style.textColor = color;
 
     WebCoreTextRun run;

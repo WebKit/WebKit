@@ -68,8 +68,6 @@ public:
 private:
     const int *dimensions() const;
     
-    KWQComboBoxAdapter *_adapter;
-
     mutable int _width;
     mutable bool _widthGood;
 

@@ -7,6 +7,7 @@
 //  Complete rewrite with API similar to slow truncator by Al Dul
 
 #import <WebKit/WebStringTruncator.h>
+
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/WebAssertions.h>
@@ -63,6 +64,8 @@ static float stringWidth(WebTextRenderer *renderer, const unichar *characters, u
     WebCoreInitializeTextRun (&run, characters, length, 0, length);
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
+    style.applyRunRounding = NO;
+    style.applyWordRounding = NO;
     return [renderer floatWidthForRun:&run style:&style widths:0];
 }
 

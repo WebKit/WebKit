@@ -49,14 +49,6 @@ enum {
     minimumTextWidth
 };
 
-@interface KWQComboBoxAdapter : NSObject
-{
-    QComboBox *box;
-}
-- (id)initWithQComboBox:(QComboBox *)b;
-- (void)action:(id)sender;
-@end
-
 @interface KWQPopUpButtonCell : NSPopUpButtonCell <KWQWidgetHolder>
 {
     QComboBox *box;
@@ -74,15 +66,13 @@ enum {
 @end
 
 QComboBox::QComboBox()
-    : _adapter(0)
-    , _widthGood(false)
+    : _widthGood(false)
     , _currentItem(0)
     , _menuPopulated(true)
     , _activated(this, SIGNAL(activated(int)))
 {
     KWQ_BLOCK_EXCEPTIONS;
 
-    _adapter = [[KWQComboBoxAdapter alloc] initWithQComboBox:this];
     KWQPopUpButton *button = [[KWQPopUpButton alloc] init];
     setView(button);
     [button release];
@@ -91,7 +81,7 @@ QComboBox::QComboBox()
     [button setCell:cell];
     [cell release];
 
-    [button setTarget:_adapter];
+    [button setTarget:button];
     [button setAction:@selector(action:)];
 
     [[button cell] setControlSize:NSSmallControlSize];
@@ -106,7 +96,6 @@ QComboBox::~QComboBox()
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
-    [_adapter release];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }
@@ -147,6 +136,8 @@ QSize QComboBox::sizeHint() const
                 rendererWithFont:[button font] usingPrinterFont:![NSGraphicsContext currentContextDrawingToScreen]];
             WebCoreTextStyle style;
             WebCoreInitializeEmptyTextStyle(&style);
+            style.applyRunRounding = NO;
+            style.applyWordRounding = NO;
             do {
                 const QString &s = *i;
                 ++i;
@@ -329,21 +320,6 @@ void QComboBox::populateMenu()
     }
 }
 
-@implementation KWQComboBoxAdapter
-
-- (id)initWithQComboBox:(QComboBox *)b
-{
-    box = b;
-    return [super init];
-}
-
-- (void)action:(id)sender
-{
-    box->itemSelected();
-}
-
-@end
-
 @implementation KWQPopUpButtonCell
 
 - (id)initWithQComboBox:(QComboBox *)b
@@ -406,6 +382,11 @@ void QComboBox::populateMenu()
 @end
 
 @implementation KWQPopUpButton
+
+- (void)action:(id)sender
+{
+    static_cast<QComboBox *>([self widget])->itemSelected();
+}
 
 - (QWidget *)widget
 {

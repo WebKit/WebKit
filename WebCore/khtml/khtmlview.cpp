@@ -323,7 +323,9 @@ void KHTMLView::init()
 
     setAcceptDrops(true);
     
+#if !APPLE_CHANGES
     resizeContents(visibleWidth(), visibleHeight());
+#endif
 }
 
 void KHTMLView::clear()

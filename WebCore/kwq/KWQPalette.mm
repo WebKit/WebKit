@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,17 +25,24 @@
 
 #import "KWQPalette.h"
 
+#import "KWQAssertions.h"
+
 const QColor& QPalette::color(ColorGroup cg, QColorGroup::ColorRole role) const
 {
     switch (cg) {
-    default: // keep GCC from complaining about NColorGroups
+    case NColorGroups:
+        break;
     case Active:
         return m_active.color(role);
+#if KWQ_USE_PALETTES
     case Inactive:
         return m_inactive.color(role);
     case Disabled:
         return m_disabled.color(role);
+#endif
     }
+    ASSERT(false);
+    return m_active.color(QColorGroup::Base);
 }
 
 void QPalette::setColor(ColorGroup cg, QColorGroup::ColorRole role, const QColor &color)
@@ -44,18 +51,25 @@ void QPalette::setColor(ColorGroup cg, QColorGroup::ColorRole role, const QColor
     case Active:
         m_active.setColor(role, color);
         break;
+#if KWQ_USE_PALETTES
     case Inactive:
         m_inactive.setColor(role, color);
         break;
     case Disabled:
         m_disabled.setColor(role, color);
         break;
-    default: // keep GCC from complaining about NColorGroups
+#endif
+    case NColorGroups:
+        ASSERT(false);
         break;
     }
 }
 
 bool QPalette::operator==(QPalette const &other) const
 {
-    return m_active == other.m_active && m_inactive == other.m_inactive && m_disabled == other.m_disabled;
+    return m_active == other.m_active
+#if KWQ_USE_PALETTES
+        && m_inactive == other.m_inactive && m_disabled == other.m_disabled
+#endif
+        ;
 }

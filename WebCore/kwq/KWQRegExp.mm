@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -159,23 +159,25 @@ QString QRegExp::pattern() const
 }
 
 int QRegExp::match(const QString &str, int startFrom, int *matchLength) const
-{    
-    QCString asUTF8;
-    const char *cstring;
-    
-    if (str.isAllASCII()) {
-        cstring = str.ascii();
-    } else {
-        asUTF8 = str.utf8();
-        cstring = asUTF8;
-    }
-        
-    // first 2 offsets are start and end offsets; 3rd entry is used internally by pcre
+{
+    // First 2 offsets are start and end offsets; 3rd entry is used internally by pcre
     int offsets[3];
-    convertUTF16OffsetsToUTF8Offsets(cstring, &startFrom, 1);
-    int result = pcre_exec(d->regex, NULL, cstring, strlen(cstring), startFrom, 
+    int result;
+
+    if (str.isAllASCII()) {
+        result = pcre_exec(d->regex, NULL, str.ascii(), str.length(), startFrom, 
                            startFrom == 0 ? 0 : PCRE_NOTBOL, offsets, 3);
-    
+    } else {
+        int length;
+        QCString asUTF8 = str.utf8(length);
+        convertUTF16OffsetsToUTF8Offsets(asUTF8, &startFrom, 1);
+        result = pcre_exec(d->regex, NULL, asUTF8, length, startFrom, 
+                           startFrom == 0 ? 0 : PCRE_NOTBOL, offsets, 3);
+        if (result >= 0) {
+            convertUTF8OffsetsToUTF16Offsets(asUTF8, offsets, 2);
+        }
+    }
+
     if (result < 0) {
         if (result != PCRE_ERROR_NOMATCH) {
             ERROR("KWQRegExp: pcre_exec() failed with result %d", result);
@@ -185,9 +187,8 @@ int QRegExp::match(const QString &str, int startFrom, int *matchLength) const
         return -1;
     }
     
+    // 1 means 1 match; 0 means more than one match. First match is recorded in offsets.
     ASSERT(result < 2);
-    // 1 means 1 match; 0 means more than one match, first one is recorded in offsets
-    convertUTF8OffsetsToUTF16Offsets(cstring, offsets, 2);
     d->lastMatchPos = offsets[0];
     d->lastMatchLength = offsets[1] - offsets[0];
     if (matchLength != NULL) {

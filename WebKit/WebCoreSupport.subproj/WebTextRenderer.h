@@ -26,14 +26,14 @@ typedef struct CharacterWidthIterator CharacterWidthIterator;
     ATSStyleGroupPtr styleGroup;
     
 @public
-    ATSGlyphRef spaceGlyph;
     NSFont *font;
     GlyphMap *characterToGlyphMap;			// Used for 16bit clean unicode characters.
     UnicodeGlyphMap *unicodeCharacterToGlyphMap; 	// Used for surrogates.
     WidthMap *glyphToWidthMap;
+
+    BOOL treatAsFixedPitch;
+    ATSGlyphRef spaceGlyph;
     float spaceWidth;
-    float ceiledSpaceWidth;
-    float roundedSpaceWidth;
     float adjustedSpaceWidth;
 
     int numSubstituteFontWidthMaps;

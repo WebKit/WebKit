@@ -28,7 +28,6 @@
 #import "KWQExceptions.h"
 #import "KWQKHTMLPart.h"
 #import "KWQLogging.h"
-#import "KWQView.h"
 #import "KWQWindowWidget.h"
 #import "WebCoreBridge.h"
 #import "WebCoreFrameView.h"
@@ -45,8 +44,7 @@ using khtml::RenderWidget;
     emulate most QWidgets using NSViews.
 */
 
-
-class QWidgetPrivate
+class KWQWidgetPrivate
 {
 public:
     QStyle *style;
@@ -56,28 +54,19 @@ public:
     bool visible;
 };
 
-QWidget::QWidget() 
-    : data(new QWidgetPrivate)
+QWidget::QWidget() : data(new KWQWidgetPrivate)
 {
-    data->view = nil;
-
-    KWQ_BLOCK_EXCEPTIONS;
-    data->view = [[KWQView alloc] initWithWidget:this];
-    KWQ_UNBLOCK_EXCEPTIONS;
-
     static QStyle defaultStyle;
     data->style = &defaultStyle;
-
+    data->view = nil;
     data->visible = true;
 }
 
-QWidget::QWidget(NSView *view)
-    : data(new QWidgetPrivate)
+QWidget::QWidget(NSView *view) : data(new KWQWidgetPrivate)
 {
-    data->view = [view retain];
-
     static QStyle defaultStyle;
     data->style = &defaultStyle;
+    data->view = [view retain];
     data->visible = true;
 }
 
@@ -432,9 +421,13 @@ void QWidget::hide()
 void QWidget::setFrameGeometry(const QRect &rect)
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [getOuterView() setNeedsDisplay: YES];
-    [getOuterView() setFrame:rect];
-    [getOuterView() setNeedsDisplay: YES];
+    NSView *v = getOuterView();
+    NSRect f = rect;
+    if (!NSEqualRects(f, [v frame])) {
+        [v setNeedsDisplay:YES];
+        [v setFrame:f];
+        [v setNeedsDisplay:YES];
+    }
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

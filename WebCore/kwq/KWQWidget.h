@@ -43,7 +43,7 @@
 class NSView;
 #endif
 
-class QWidgetPrivate;
+class KWQWidgetPrivate;
 
 class QWidget : public QObject, public QPaintDevice {
 public:
@@ -156,7 +156,7 @@ public:
     void sendConsumedMouseUp();
 
 private:
-    QWidgetPrivate *data;
+    KWQWidgetPrivate *data;
 };
 
 #endif

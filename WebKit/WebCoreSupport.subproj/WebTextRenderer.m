@@ -1,6 +1,6 @@
 /*	
     WebTextRenderer.m	    
-    Copyright 2002, Apple, Inc. All rights reserved.
+    Copyright 2004, Apple, Inc. All rights reserved.
 */
 
 #import "WebTextRenderer.h"
@@ -8,10 +8,9 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <Cocoa/Cocoa.h>
 
+#import <AppKit/NSFont_Private.h>
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 #import <QD/ATSUnicodePriv.h>
-
-#import <AppKit/NSFont_Private.h>
 
 #import <WebCore/WebCoreUnicode.h>
 
@@ -27,7 +26,7 @@
 // Macros
 #define SPACE 0x0020
 
-#define ROUND_TO_INT(x) (unsigned)((x)+.5)
+#define ROUND_TO_INT(x) (int)((x)+.5)
 
 // Lose precision beyond 1000ths place. This is to work around an apparent
 // bug in CoreGraphics where there seem to be small errors to some metrics.
@@ -209,17 +208,6 @@ static WebGlyphWidth getUncachedWidth(WebTextRenderer *renderer, WidthMap *map, 
     if (errorResult == 0)
         FATAL_ALWAYS ("Unable to cache glyph widths for %@ %f",  [renderer->font displayName], [renderer->font pointSize]);
 
-    // Hack to ensure that characters that match the width of the space character
-    // have the same integer width as the space character.  This is necessary so
-    // glyphs in fixed pitch fonts all have the same integer width.  We can't depend
-    // on the fixed pitch property of NSFont because that isn't set for all
-    // monospaced fonts, in particular Courier!  This has the downside of inappropriately
-    // adjusting the widths of characters in non-monospaced fonts that are coincidentally
-    // the same width as a space in that font.  In practice this is not an issue as the
-    // adjustment is always at the sub-pixel level.
-    if (width == renderer->spaceWidth)
-        return renderer->ceiledSpaceWidth;
-
     return width;
 }
 
@@ -375,15 +363,15 @@ static BOOL alwaysUseATSU = NO;
 
 #ifdef COMPARE_APPKIT_CG_METRICS
     printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[font displayName] cString], [font pointSize], lineGap, adjustment, (int)[font _canDrawOutsideLineHeight], (int)[font _isSystemFont]);
-    if ((int)ROUND_TO_INT([font ascender]) != ascent ||
-        (int)ROUND_TO_INT(-[font descender]) != descent ||
-        (int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
+    if (ROUND_TO_INT([font ascender]) != ascent ||
+        ROUND_TO_INT(-[font descender]) != descent ||
+        ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
         printf ("\nCG/Appkit mismatched metrics for font %s, %f (%s)\n", [[font displayName] cString], [font pointSize],
                 ([font screenFont] ? [[[font screenFont] displayName] cString] : "none"));
         printf ("ascent(%s), descent(%s), lineSpacing(%s)\n",
-                ((int)ROUND_TO_INT([font ascender]) != ascent) ? "different" : "same",
-                ((int)ROUND_TO_INT(-[font descender]) != descent) ? "different" : "same",
-                ((int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing) ? "different" : "same");
+                (ROUND_TO_INT([font ascender]) != ascent) ? "different" : "same",
+                (ROUND_TO_INT(-[font descender]) != descent) ? "different" : "same",
+                (ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing) ? "different" : "same");
         printf ("CG:  ascent %f, ", asc);
         printf ("descent %f, ", dsc);
         printf ("lineGap %f, ", lineGap);
@@ -417,40 +405,6 @@ static BOOL alwaysUseATSU = NO;
         ATSUDisposeStyle(_ATSUSstyle);
     
     [super dealloc];
-}
-
-- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)stringLength
-{
-    WebCoreTextRun run;
-    WebCoreInitializeTextRun (&run, characters, stringLength, 0, stringLength);
-    WebCoreTextStyle style;
-    WebCoreInitializeEmptyTextStyle(&style);
-    return ROUND_TO_INT([self floatWidthForRun:&run style:&style widths: 0]);
-}
-
-- (int)widthForString:(NSString *)string
-{
-    UniChar localCharacterBuffer[LOCAL_BUFFER_SIZE];
-    UniChar *characterBuffer = localCharacterBuffer;
-    const UniChar *usedCharacterBuffer = CFStringGetCharactersPtr((CFStringRef)string);
-    unsigned length;
-    int width;
-
-    // Get the characters from the string into a buffer.
-    length = [string length];
-    if (!usedCharacterBuffer) {
-        if (length > LOCAL_BUFFER_SIZE)
-            characterBuffer = (UniChar *)malloc(length * sizeof(UniChar));
-        [string getCharacters:characterBuffer];
-        usedCharacterBuffer = characterBuffer;
-    }
-
-    width = [self widthForCharacters:usedCharacterBuffer length:length];
-    
-    if (characterBuffer != localCharacterBuffer)
-        free(characterBuffer);
-
-    return width;
 }
 
 - (int)ascent
@@ -751,27 +705,20 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
 }
 
 // Nasty hack to determine if we should round or ceil space widths.
-// If the font is monospace, or fake monospace we ceil to ensure that 
+// If the font is monospace or fake monospace we ceil to ensure that 
 // every character and the space are the same width.  Otherwise we round.
 - (BOOL)_computeWidthForSpace
 {
-    UniChar c = ' ';
-    float _spaceWidth;
-
-    spaceGlyph = [self _extendCharacterToGlyphMapToInclude: c];
-    if (spaceGlyph == 0){
+    spaceGlyph = [self _extendCharacterToGlyphMapToInclude:SPACE];
+    if (spaceGlyph == 0) {
         return NO;
     }
-    _spaceWidth = widthForGlyph(self, spaceGlyph, 0);
-    ceiledSpaceWidth = (float)CEIL_TO_INT(_spaceWidth);
-    roundedSpaceWidth = (float)ROUND_TO_INT(_spaceWidth);
-    if ([font isFixedPitch] || [font _isFakeFixedPitch]){
-        adjustedSpaceWidth = ceiledSpaceWidth;
-    }
-    else {
-        adjustedSpaceWidth = roundedSpaceWidth;
-    }
-    spaceWidth = _spaceWidth;
+
+    float width = widthForGlyph(self, spaceGlyph, 0);
+    spaceWidth = width;
+
+    treatAsFixedPitch = [font isFixedPitch] || [font _isFakeFixedPitch];
+    adjustedSpaceWidth = treatAsFixedPitch ? CEIL_TO_INT(width) : ROUND_TO_INT(width);
     
     return YES;
 }
@@ -1887,13 +1834,15 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
         }
     }
 
-    // Now that we have glyph and font, get its width.  We special case spaces.
-    // They are always an even integer width.
-    WebGlyphWidth width;
-    if (*glyphUsed == renderer->spaceGlyph)
+    // Now that we have glyph and font, get its width.
+    WebGlyphWidth width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
+
+    // We special case spaces in two ways when applying word rounding.
+    // First, we round spaces to an adjusted width in all fonts.
+    // Second, in fixed-pitch fonts we ensure that all characters that
+    // match the width of the space character have the same width as the space character.
+    if ((renderer->treatAsFixedPitch ? width == renderer->spaceWidth : *glyphUsed == renderer->spaceGlyph) && iterator->style->applyWordRounding)
         width = renderer->adjustedSpaceWidth;
-    else
-        width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
 
     // Try to find a substitute font if this font didn't have a glyph for a character in the
     // string.  If one isn't found we end up drawing and measuring the 0 glyph, usually a box.
@@ -1920,7 +1869,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             WebCoreInitializeTextRun(&clusterRun, characterArray, characterArrayLength, 0, characterArrayLength);
             WebCoreTextStyle clusterStyle = *iterator->style;
             clusterStyle.padding = 0;
-            clusterStyle.applyRounding = false;
+            clusterStyle.applyRunRounding = false;
             clusterStyle.attemptFontSubstitution = false;
             
             WebTextRenderer *substituteRenderer;
@@ -1948,7 +1897,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 
     // Force characters that are used to determine word boundaries for the rounding hack
     // to be integer width, so following words will start on an integer boundary.
-    if (isRoundingHackCharacter(c)) {
+    if (isRoundingHackCharacter(c) && iterator->style->applyWordRounding) {
         width = CEIL_TO_INT(width);
     }
     
@@ -1992,10 +1941,10 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     // floats we can remove this (and related) hacks.
     //
     // Check to see if the next character is a "RoundingHackCharacter", if so, adjust.
-    if (currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength])) {
+    if (currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength]) && iterator->style->applyWordRounding) {
         width += ceilCurrentWidth(iterator);
     }
-    else if (currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRounding) {
+    else if (currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRunRounding) {
         width += ceilCurrentWidth(iterator);
     }
     

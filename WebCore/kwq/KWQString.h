@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -65,15 +65,7 @@ public:
     uchar row() const;
     char latin1() const;
     bool isNull() const;
-    bool isSpace() const
-    {
-        // Use isspace() for basic latin1.  This will include newlines, which
-        // aren't included in unicode DirWS.
-        if (c <= 0x7F) {
-            return isspace(c);
-        }
-        return direction() == DirWS;
-    }
+    bool isSpace() const;
     bool isDigit() const;
     bool isLetter() const;
     bool isNumber() const;
@@ -82,10 +74,7 @@ public:
     int digitValue() const;
     QChar lower() const;
     QChar upper() const;
-    Direction direction() const
-    {
-        return (Direction)WebCoreUnicodeDirectionFunction(c);
-    }
+    Direction direction() const;
 
     bool mirrored() const;
     QChar mirroredChar() const;
@@ -122,6 +111,13 @@ private:
     friend class QString;
     friend class QConstString;
 
+    static bool isDigitNonASCII(UniChar c);
+    static bool isLetterNonASCII(UniChar c);
+    static bool isNumberNonASCII(UniChar c);
+    static bool isLetterOrNumberNonASCII(UniChar c);
+    static int digitValueNonASCII(UniChar c);
+    static UniChar lowerNonASCII(UniChar c);
+    static UniChar upperNonASCII(UniChar c);
 };
 
 inline QChar::QChar() : c(0)
@@ -165,6 +161,53 @@ inline uchar QChar::cell() const
 inline bool QChar::isNull() const
 {
     return c == 0;
+}
+
+inline bool QChar::isSpace() const
+{
+    // Use isspace() for basic latin1.  This will include newlines, which
+    // aren't included in unicode DirWS.
+    return c <= 0x7F ? isspace(c) : direction() == DirWS;
+}
+
+inline bool QChar::isDigit() const
+{
+    return c <= 0x7F ? isdigit(c) : isDigitNonASCII(c);
+}
+
+inline bool QChar::isLetter() const
+{
+    return c <= 0x7F ? isalpha(c) : isLetterNonASCII(c);
+}
+
+inline bool QChar::isNumber() const
+{
+    return c <= 0x7F ? isdigit(c) : isNumberNonASCII(c);
+}
+
+inline bool QChar::isLetterOrNumber() const
+{
+    return c <= 0x7F ? isalnum(c) : isLetterOrNumberNonASCII(c);
+}
+
+inline int QChar::digitValue() const
+{
+    return c <= '9' ? c - '0' : digitValueNonASCII(c);
+}
+
+inline QChar QChar::lower() const
+{
+    return c <= 0x7F ? tolower(c) : lowerNonASCII(c);
+}
+
+inline QChar QChar::upper() const
+{
+    return c <= 0x7F ? toupper(c) : upperNonASCII(c);
+}
+
+inline QChar::Direction QChar::direction() const
+{
+    return static_cast<Direction>(WebCoreUnicodeDirectionFunction(c));
 }
 
 inline uchar QChar::row() const
@@ -366,7 +409,10 @@ public:
     const char *latin1() const;
     const char *ascii() const;
     bool isAllASCII() const;
-    QCString utf8() const;
+    bool isAllLatin1() const;
+    void copyLatin1(char *latin1) const;
+    QCString utf8() const { int length; return utf8(length); }
+    QCString utf8(int &length) const;
     QCString local8Bit() const;
 
     bool isNull() const;
@@ -452,47 +498,49 @@ public:
 
     QString &sprintf(const char *, ...) __attribute__ ((format (printf, 2, 3)));
 
-    QString &prepend(const QString &);
     QString &append(const QString &);
+    QString &append(QChar);
+    QString &append(char);
     QString &insert(uint, const QString &);
     QString &insert(uint, QChar);
     QString &insert(uint, char);
     QString &insert(uint index, const char *insertChars, uint insertLength);
+    QString &prepend(const QString &);
     QString &remove(uint, uint);
     QString &replace(uint index, uint len, const QString &s);
     QString &replace(const QRegExp &, const QString &);
     QString &replace(QChar, QChar);
 
-    void truncate(uint);
+    QString &append(const QChar *, uint length);
+    QString &append(const char *, uint length);
+    QString &insert(uint position, const QChar *, uint length);
+    QString &prepend(const QChar *, uint length);
+    
     void fill(QChar, int len=-1);
+    void truncate(uint);
 
-    void compose();
-    QString visual();
+    void reserve(uint);
 
-    CFStringRef getCFString() const;
-    NSString *getNSString() const;
+    uint hash() const;
 
     bool operator!() const;
 
     const QChar operator[](int) const;
 
-    QString &operator+=(const QString &);
-    QString &operator+=(QChar);
-    QString &operator+=(char);
+    QString &operator+=(const QString &s) { return append(s); }
+    QString &operator+=(QChar c) { return append(c); }
+    QString &operator+=(char c) { return append(c); }
+
+    CFStringRef getCFString() const;
+    NSString *getNSString() const;
 
     void setBufferFromCFString(CFStringRef);
-    
-    QString &append(const char *, uint length);
-    QString &append(const QChar *, uint length);
-    QString &prepend(const QChar *, uint length);
-    QString &insert(uint position, const QChar *, uint length);
-    
-    uint hash() const;
     
 private:
     // Used by QConstString.
     QString(KWQStringData *constData, bool /*dummy*/);
     void detach();
+    void detachAndDiscardCharacters();
     void detachIfInternal();
     void detachInternal();
     void deref();

@@ -46,7 +46,8 @@ void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
     style->letterSpacing = 0;
     style->wordSpacing = 0;
     style->smallCaps = false;
-    style->applyRounding = true;
+    style->applyRunRounding = true;
+    style->applyWordRounding = true;
     style->attemptFontSubstitution = true;
     style->families = nil;
 }

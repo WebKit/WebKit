@@ -190,6 +190,8 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
     WebCoreTextStyle style;
     WebCoreInitializeEmptyTextStyle(&style);
+    style.applyRunRounding = NO;
+    style.applyWordRounding = NO;
 
     const UniChar zero = '0';
     WebCoreTextRun run;

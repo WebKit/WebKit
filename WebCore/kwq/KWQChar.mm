@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,24 +29,24 @@
 
 #import <Foundation/Foundation.h>
 
-bool QChar::isDigit() const
+bool QChar::isDigitNonASCII(UniChar c)
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetDecimalDigit);
     return CFCharacterSetIsCharacterMember(set, c);
 }
 
-bool QChar::isLetter() const
+bool QChar::isLetterNonASCII(UniChar c)
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetLetter);
     return CFCharacterSetIsCharacterMember(set, c);
 }
 
-bool QChar::isNumber() const
+bool QChar::isNumberNonASCII(UniChar c)
 {
-    return isLetterOrNumber() && !isLetter();
+    return isLetterOrNumberNonASCII(c) && !isLetterNonASCII(c);
 }
 
-bool QChar::isLetterOrNumber() const
+bool QChar::isLetterOrNumberNonASCII(UniChar c)
 {
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetAlphaNumeric);
     return CFCharacterSetIsCharacterMember(set, c);
@@ -58,14 +58,14 @@ bool QChar::isPunct() const
     return CFCharacterSetIsCharacterMember(set, c);
 }
 
-QChar QChar::lower() const
+UniChar QChar::lowerNonASCII(UniChar c)
 {
-    return (UniChar)WebCoreUnicodeLowerFunction(c);
+    return WebCoreUnicodeLowerFunction(c);
 }
 
-QChar QChar::upper() const
+UniChar QChar::upperNonASCII(UniChar c)
 {
-    return (UniChar)WebCoreUnicodeUpperFunction(c);
+    return WebCoreUnicodeUpperFunction(c);
 }
 
 bool QChar::mirrored() const
@@ -78,10 +78,8 @@ QChar QChar::mirroredChar() const
     return QChar((UniChar)WebCoreUnicodeMirroredCharFunction(c));
 }
 
-int QChar::digitValue() const
+int QChar::digitValueNonASCII(UniChar)
 {
-    if (c < '0' || c > '9')
-	return -1;
-    else
-	return c - '0';
+    // FIXME: This isn't right. Need Unicode-savvy version of this that matches isDigitNonASCII.
+    return -1;
 }

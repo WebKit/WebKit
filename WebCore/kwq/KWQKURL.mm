@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -225,8 +225,25 @@ KURL::KURL() : m_isValid(false)
 KURL::KURL(const char *url)
 {
     if (url != NULL && url[0] == '/') {
-	QString qurl = QString("file:") + url;
-	parse(qurl.ascii(), &qurl);
+        char staticBuffer[2048];
+        char *buffer;
+        size_t urlLength = strlen(url) + 1;
+        size_t bufferLength = urlLength + 5; // 5 for "file:"
+        if (bufferLength > sizeof(staticBuffer)) {
+            buffer = (char *)malloc(bufferLength);
+        } else {
+            buffer = staticBuffer;
+        }
+        buffer[0] = 'f';
+        buffer[1] = 'i';
+        buffer[2] = 'l';
+        buffer[3] = 'e';
+        buffer[4] = ':';
+        memcpy(&buffer[5], url, urlLength);
+	parse(buffer, NULL);
+        if (buffer != staticBuffer) {
+            free(buffer);
+        }
     } else {
 	parse(url, NULL);
     }
@@ -235,8 +252,24 @@ KURL::KURL(const char *url)
 KURL::KURL(const QString &url)
 {
     if (!url.isEmpty() && url[0] == '/') {
-	QString fileUrl = QString("file:") + url;
-	parse(fileUrl.ascii(), &fileUrl);
+        char staticBuffer[2048];
+        char *buffer;
+        size_t bufferLength = url.length() + 6; // 5 for "file:", 1 for terminator
+        if (bufferLength > sizeof(staticBuffer)) {
+            buffer = (char *)malloc(bufferLength);
+        } else {
+            buffer = staticBuffer;
+        }
+        buffer[0] = 'f';
+        buffer[1] = 'i';
+        buffer[2] = 'l';
+        buffer[3] = 'e';
+        buffer[4] = ':';
+        url.copyLatin1(&buffer[5]);
+	parse(buffer, NULL);
+        if (buffer != staticBuffer) {
+            free(buffer);
+        }
     } else {
 	parse(url.ascii(), &url);
     }
@@ -245,17 +278,31 @@ KURL::KURL(const QString &url)
 KURL::KURL(NSURL *url)
 {
     if (url) {
-        CFIndex bufferLength = CFURLGetBytes((CFURLRef)url, NULL, 0);
-        char *bytes = new char [bufferLength + 1];
-        CFURLGetBytes((CFURLRef)url, (UInt8 *)bytes, bufferLength);
-	bytes[bufferLength] = '\0';
+        CFIndex bytesLength = CFURLGetBytes((CFURLRef)url, NULL, 0);
+        size_t bufferLength = bytesLength + 6; // 5 for "file:", 1 for NUL terminator
+        char staticBuffer[2048];
+        char *buffer;
+        if (bufferLength > sizeof(staticBuffer)) {
+            buffer = (char *)malloc(bufferLength);
+        } else {
+            buffer = staticBuffer;
+        }
+        char *bytes = &buffer[5];
+        CFURLGetBytes((CFURLRef)url, (UInt8 *)bytes, bytesLength);
+	bytes[bytesLength] = '\0';
         if (bytes[0] == '/') {
-            QString fileUrl = QString("file:") + bytes;
-            parse(fileUrl.ascii(), &fileUrl);
+            buffer[0] = 'f';
+            buffer[1] = 'i';
+            buffer[2] = 'l';
+            buffer[3] = 'e';
+            buffer[4] = ':';
+            parse(buffer, NULL);
         } else {
             parse(bytes, NULL);
         }
-        delete [] bytes;
+        if (buffer != staticBuffer) {
+            free(buffer);
+        }
     }
     else {
         parse("", NULL);
@@ -391,15 +438,15 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
 	    {
 		// must be relative-path reference
 
-		char static_buffer[2048];
+		char staticBuffer[2048];
 		char *buffer;
 		
 		size_t bufferLength = base.pathEndPos + strlen(str) + 1;
 
-		if (bufferLength > sizeof(static_buffer)) {
+		if (bufferLength > sizeof(staticBuffer)) {
 		    buffer = (char *)malloc(bufferLength);
 		} else {
-		    buffer = static_buffer;
+		    buffer = staticBuffer;
 		}
 		
 		char *bufferPos = buffer;
@@ -467,7 +514,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
                 
                 ASSERT(strlen(buffer) + 1 <= bufferLength);
 		
-		if (buffer != static_buffer) {
+		if (buffer != staticBuffer) {
 		    free(buffer);
 		}
 		
@@ -930,6 +977,25 @@ static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int sr
     return dst - bufferPathStart;
 }
 
+static inline bool hasSlashDotOrDotDot(const char *str)
+{
+    const char *p = str;
+    if (!*p)
+        return false;
+    char pc = *p;
+    while (char c = *++p) {
+        if (c == '.' && (pc == '/' || pc == '.'))
+            return true;
+        pc = c;
+    }
+    return false;
+}
+
+static inline bool matchLetter(char c, char lowercaseLetter)
+{
+    return (c | 0x20) == lowercaseLetter;
+}
+
 void KURL::parse(const char *url, const QString *originalString)
 {
     m_isValid = true;
@@ -1103,11 +1169,11 @@ void KURL::parse(const char *url, const QString *originalString)
 
     // assemble it all, remembering the real ranges
 
-    char static_buffer[4096];
+    char staticBuffer[4096];
     char *buffer;
     uint bufferLength = fragmentEnd * 3 + 1;
-    if (bufferLength <= sizeof(static_buffer)) {
-	buffer = static_buffer;
+    if (bufferLength <= sizeof(staticBuffer)) {
+	buffer = staticBuffer;
     } else {
 	buffer = (char *)malloc(bufferLength);
     }
@@ -1123,28 +1189,28 @@ void KURL::parse(const char *url, const QString *originalString)
     schemeEndPos = p - buffer;
 
     // Check if we're http or https.
-    bool isHTTPorHTTPS = tolower(url[0]) == 'h'
-        && tolower(url[1]) == 't'
-        && tolower(url[2]) == 't'
-        && tolower(url[3]) == 'p'
+    bool isHTTPorHTTPS = matchLetter(url[0], 'h')
+        && matchLetter(url[1], 't')
+        && matchLetter(url[2], 't')
+        && matchLetter(url[3], 'p')
         && (url[4] == ':'
-            || (tolower(url[4]) == 's' && url[5] == ':'));
+            || (matchLetter(url[4], 's') && url[5] == ':'));
 
     bool hostIsLocalHost = portEnd - userStart == 9
-        && tolower(url[userStart]) == 'l'
-        && tolower(url[userStart+1]) == 'o'
-        && tolower(url[userStart+2]) == 'c'
-        && tolower(url[userStart+3]) == 'a'
-        && tolower(url[userStart+4]) == 'l'
-        && tolower(url[userStart+5]) == 'h'
-        && tolower(url[userStart+6]) == 'o'
-        && tolower(url[userStart+7]) == 's'
-        && tolower(url[userStart+8]) == 't';
+        && matchLetter(url[userStart], 'l')
+        && matchLetter(url[userStart+1], 'o')
+        && matchLetter(url[userStart+2], 'c')
+        && matchLetter(url[userStart+3], 'a')
+        && matchLetter(url[userStart+4], 'l')
+        && matchLetter(url[userStart+5], 'h')
+        && matchLetter(url[userStart+6], 'o')
+        && matchLetter(url[userStart+7], 's')
+        && matchLetter(url[userStart+8], 't');
 
-    bool isFile = tolower(url[0]) == 'f'
-        && tolower(url[1]) == 'i'
-        && tolower(url[2]) == 'l'
-        && tolower(url[3]) == 'e'
+    bool isFile = matchLetter(url[0], 'f')
+        && matchLetter(url[1], 'i')
+        && matchLetter(url[2], 'l')
+        && matchLetter(url[3], 'e')
         && url[4] == ':';
         
     // File URLs need a host part unless it is just file:// or file://localhost
@@ -1228,7 +1294,7 @@ void KURL::parse(const char *url, const QString *originalString)
        
     // add path, escaping bad characters
     
-    if (hierarchical && (strstr(url, "/.") || strstr(url, ".."))) {
+    if (hierarchical && hasSlashDotOrDotDot(url)) {
         char static_path_buffer[4096];
         char *path_buffer;
         uint pathBufferLength = pathEnd - pathStart + 1;
@@ -1271,7 +1337,7 @@ void KURL::parse(const char *url, const QString *originalString)
 
     ASSERT(p - buffer <= (int)bufferLength);
 		
-    if (buffer != static_buffer) {
+    if (buffer != staticBuffer) {
 	free(buffer);
     }
 }
@@ -1307,11 +1373,11 @@ QString KURL::encode_string(const QString& notEncodedString)
 {
     QCString asUTF8 = notEncodedString.utf8();
     
-    char static_buffer[4096];
+    char staticBuffer[4096];
     char *buffer;
     uint bufferLength = asUTF8.length() * 3 + 1;
-    if (bufferLength <= sizeof(static_buffer)) {
-	buffer = static_buffer;
+    if (bufferLength <= sizeof(staticBuffer)) {
+	buffer = staticBuffer;
     } else {
 	buffer = (char *)malloc(bufferLength);
     }
@@ -1335,7 +1401,7 @@ QString KURL::encode_string(const QString& notEncodedString)
     
     ASSERT(p - buffer <= (int)bufferLength);
 		
-    if (buffer != static_buffer) {
+    if (buffer != staticBuffer) {
 	free(buffer);
     }
 

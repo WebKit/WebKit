@@ -27,19 +27,23 @@
 
 QColorGroup::QColorGroup()
 {
+#if KWQ_USE_PALETTES
     brushes[Foreground] = QColor(255,255,255);
     brushes[Shadow] = QColor(255,255,255);
     brushes[Light] = QColor(224,224,224);
     brushes[Midlight] = QColor(192,192,192);
     brushes[Mid] = QColor(128,128,128);
     brushes[Dark] = QColor(64,64,64);
+#endif
     brushes[Base] = QColor(255,255,255);
+#if KWQ_USE_PALETTES
     brushes[ButtonText] = QColor(0,0,0);
     brushes[Button] = QColor(192,192,192);
     brushes[Background] = QColor(255,255,255);
     brushes[Text] = QColor(0,0,0);
     brushes[Highlight] = QColor(64,64,64);
     brushes[HighlightedText] = QColor(0,0,0);
+#endif
 }
 
 const QBrush &QColorGroup::brush(ColorRole cr) const
@@ -56,6 +60,8 @@ void QColorGroup::setColor(QColorGroup::ColorRole cr, const QColor &color)
 {
     brushes[cr].setColor(color);
 }
+
+#if KWQ_USE_PALETTES
 
 const QColor &QColorGroup::foreground() const
 {
@@ -82,10 +88,14 @@ const QColor &QColorGroup::dark() const
     return brushes[Dark].color();
 }
 
+#endif
+
 const QColor &QColorGroup::base() const
 {
     return brushes[Base].color();
 }
+
+#if KWQ_USE_PALETTES
 
 const QColor &QColorGroup::buttonText() const
 {
@@ -116,6 +126,8 @@ const QColor &QColorGroup::highlightedText() const
 {
     return brushes[HighlightedText].color();
 }
+
+#endif
 
 bool QColorGroup::operator==(const QColorGroup &other) const
 {

@@ -1,3 +1,124 @@
+2004-02-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed things seen in the profile, for a total speedup of 4% on cvs-base
+        - fixed some layout regressions from my last speedup due to text measurement inconsistencies
+
+        * WebCorePrefix.h: Add a workaround for a bug in our system headers that prevents the <ctype.h>
+        macros from working right in C++ code that uses the <cctype> header.
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::checkPseudoState): Use prepend instead of operator + here. Will probably be obviated if
+        someone fixes the checkPseudoState problem.
+        (khtml::colorForCSSValue): Get rid of all the code that uses QPalette; it wasn't doing any good
+        in Safari. Instead, hardcode the UI colors.
+
+        * kwq/KWQChar.mm:
+        (QChar::isDigitNonASCII): Non-inline part. The ASCII case is handled with an inline now.
+        (QChar::isLetterNonASCII): Ditto.
+        (QChar::isNumberNonASCII): Ditto.
+        (QChar::isLetterOrNumberNonASCII): Ditto.
+        (QChar::lowerNonASCII): Ditto.
+        (QChar::upperNonASCII): Ditto.
+        (QChar::digitValueNonASCII): Ditto.
+
+        * kwq/KWQColorGroup.mm: Put all roles base inside #if, since we don't need them, and copying
+        the color group and palette was making things slow.
+
+        * kwq/KWQComboBox.h: Remove KWQComboBoxAdapter, not needed any more.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox): Remove KWQComboBoxAdapter, not needed any more.
+        (QComboBox::~QComboBox): Ditto.
+        (QComboBox::sizeHint): Turn off rounding; we use that in web text, but not in widgets.
+        (-[KWQPopUpButton action:]): Moved the action method here.
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::sizeForCharacterWidth): Turn off rounding. We use it in web
+        page text, but not in widgets.
+        * kwq/KWQListBox.mm:
+        (QListBox::sizeForNumberOfLines): Ditto.
+        (-[KWQTableView drawRow:clipRect:]): Ditto.
+
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Added code to put the "file:" in front of a path without making a QString.
+        (hasSlashDotOrDotDot): Added. Faster than two calls to strstr.
+        (matchLetter): Added. Faster than tolower calls on each letter.
+        (KURL::parse): Changed to use matchLetter and hasSlashDotOrDotDot.
+
+        * kwq/KWQPalette.h: Remove all roles except base, and all groups except active, since we don't
+        need them, and copying the color group and palette was making things slow.
+        * kwq/KWQPalette.mm: Ditto.
+
+        * kwq/KWQRegExp.mm: (QRegExp::match): Fixed logic so we don't create and destroy a QCString
+        in the fast case. Also avoid UTF-8/UTF-16 offset mapping.
+
+        * kwq/KWQString.h:
+        (QChar::isDigit): Add inline section for ASCII.
+        (QChar::isLetter): Ditto.
+        (QChar::isNumber): Ditto.
+        (QChar::isLetterOrNumber): Ditto.
+        (QChar::digitValue): Ditto.
+        (QChar::lower): Ditto.
+        (QChar::upper): Ditto.
+        (QString::utf8): Add a new version that returns the length; used by QRegExp.
+        (QString::operator+=): Call a new append function.
+        * kwq/KWQString.mm:
+        (ucstrcmp): Made this function inline.
+        (equal): Added, replacing various strcmp functions.
+        (equalCaseInsensitive): Ditto.
+        (ok_in_base): Changed to use <ctype.h> isdigit and isalpha instead of QChar functions.
+        (QString::detachInternal): Moved up so it will be inlined.
+        (QString::~QString): Streamlined a little.
+        (QString::utf8): Changed to return the length.
+        (QString::find): Use unicode() instead of cell() in various places. Also refined a faster
+        version of the one that takes a char *.
+        (QString::contains): Changed all of the overloads to have structure that's more similar,
+        and made them slightly faster too.
+        (QString::isAllLatin1): Added.
+        (QString::copyLatin1): Added. Lets you get the string as a char * buffer without changing
+        the string itself into that format.
+        (QString::toLong): Changed to use <ctype.h> isdigit instead of QChar function.
+        (QString::toULong): Ditto.
+        (QString::setUnicode): Call the new detachAndDiscardCharacters; not implemented yet.
+        (QString::setLatin1): Call the new detachAndDiscardCharacters; not implemented yet.
+        (QString::sprintf): Call the new detachAndDiscardCharacters; not implemented yet.
+        (QString::insert): Remove one memmove call for the case that appends at the end.
+        (QString::detach): Change code to use the internal data if we can; saves at destructor time.
+        (QString::detachAndDiscardCharacters): Added. Placeholder for now that just calls detach().
+        (QString::setLength): Optimize the setLength(0) case.
+        (QString::fill): Call the new detachAndDiscardCharacters; not implemented yet.
+        (QString::append): Renamed from operator+=, which now simply calls append().
+        (QString::reserve): Added. Useful when building up a string, like in QTextCodec.
+
+        * WebCore-tests.exp: Added new function names for QChar.
+        * WebCore-combined.exp: Updated.
+
+        * kwq/KWQTextCodec.mm:
+        (KWQTextDecoder::convertLatin1): Added. Since this is the most common encoding, and very
+        easy to decode (built into QString, in fact), best to do it as a special case, not with TEC.
+        (KWQTextDecoder::convertUTF16): Added a reserve() call for better performance and made the
+        stack buffer larger.
+        (KWQTextDecoder::convertUsingTEC): Added a reserve() call for better performance and made the
+        stack buffer larger.
+        (KWQTextDecoder::convert): Added a switch statement and convertLatin1 case.
+
+        * kwq/KWQView.h: Removed the KWQView class.
+        * kwq/KWQView.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQView.mm.
+
+        * kwq/KWQWidget.h: Changed name of QWidgetPrivate to KWQWidgetPrivate.
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget): Got rid of code that makes a KWQView when no view is passed in. We were
+        creating and destroying extra views because of this.
+        (QWidget::setFrameGeometry): Only call getOuterView() once, not three times. Also, don't do
+        any work at all if the frame is already correct.
+        * khtml/khtmlview.cpp: (KHTMLView::init): Removed a call that will hit an assertion due to the
+        way a new KHTMLView does not yet have an NSView.
+
+        * kwq/WebCoreTextRenderer.h: Broke applyRounding into applyRunRounding and applyWordRounding.
+        * kwq/WebCoreTextRendererFactory.m: (WebCoreInitializeEmptyTextStyle): Initialize both rounding
+        flags on.
+
 2004-02-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
