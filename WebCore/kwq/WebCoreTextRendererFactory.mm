@@ -28,30 +28,26 @@
 
 #import "KWQAssertions.h"
 
-inline WebCoreTextRun WebCoreMakeTextRun(const UniChar *characters, unsigned int length, int from, int to)
+inline void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
 {
-    WebCoreTextRun run;
-    run.characters = characters;
-    run.length = length;
-    run.from = from;
-    run.to = to;
-    return run;
+    run->characters = characters;
+    run->length = length;
+    run->from = from;
+    run->to = to;
 }
 
-inline WebCoreTextStyle WebCoreMakeEmptyTextStyle(void)
+inline void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style)
 {
-    WebCoreTextStyle style;
-    
-    style.padding = 0;
-    style.textColor = nil;
-    style.backgroundColor = nil;
-    style.rtl = false;
-    style.letterSpacing = 0;
-    style.wordSpacing = 0;
-    style.smallCaps = false;
-    style.families = nil;
-    
-    return style;
+    style->padding = 0;
+    style->textColor = nil;
+    style->backgroundColor = nil;
+    style->rtl = false;
+    style->letterSpacing = 0;
+    style->wordSpacing = 0;
+    style->smallCaps = false;
+    style->applyRounding = true;
+    style->attemptFontSubstitution = true;
+    style->families = nil;
 }
 
 @implementation WebCoreTextRendererFactory

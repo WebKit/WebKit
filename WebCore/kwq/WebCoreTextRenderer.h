@@ -39,6 +39,8 @@ struct WebCoreTextStyle
     NSString **families;
     unsigned smallCaps:1;
     unsigned rtl:1;
+    unsigned applyRounding:1;
+    unsigned attemptFontSubstitution:1;
 };
 
 struct WebCoreTextRun
@@ -57,8 +59,8 @@ extern "C" {
 typedef struct WebCoreTextRun WebCoreTextRun;
 typedef struct WebCoreTextStyle WebCoreTextStyle;
 
-extern WebCoreTextRun WebCoreMakeTextRun(const UniChar *characters, unsigned int length, int from, int to);
-extern WebCoreTextStyle WebCoreMakeEmptyTextStyle(void);
+extern void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to);
+extern void WebCoreInitializeEmptyTextStyle(WebCoreTextStyle *style);
 
 #ifdef __cplusplus
 }
@@ -74,10 +76,12 @@ extern WebCoreTextStyle WebCoreMakeEmptyTextStyle(void);
 - (float)xHeight;
 
 // horizontal metrics
-- (float)floatWidthForRun:(WebCoreTextRun)run style:(WebCoreTextStyle)style applyRounding:(BOOL)applyRounding attemptFontSubstitution:(BOOL)attemptFontSubstitution widths:(float *)buffer;
+- (float)floatWidthForRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style widths:(float *)buffer;
 
 // drawing
-- (void)drawRun:(WebCoreTextRun)run style:(WebCoreTextStyle)style atPoint:(NSPoint)point;
+- (void)drawRun:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style atPoint:(NSPoint)point;
 - (void)drawLineForCharacters:(NSPoint)point yOffset:(float)yOffset withWidth:(int)width withColor:(NSColor *)color;
 
+// selection point check
+- (int)checkSelectionPoint:(const WebCoreTextRun *)run style:(const WebCoreTextStyle *)style position:(int)x reversed:(BOOL)reversed;
 @end

@@ -34,10 +34,12 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     if (canUseFastRenderer(buffer, length)){
         WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
 
-        WebCoreTextRun run = WebCoreMakeTextRun (buffer, length, 0, length);
-        WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+        WebCoreTextRun run;
+        WebCoreInitializeTextRun (&run, buffer, length, 0, length);
+        WebCoreTextStyle style;
+        WebCoreInitializeEmptyTextStyle(&style);
         style.textColor = textColor;
-        [renderer drawRun:run style:style atPoint:point];
+        [renderer drawRun:&run style:&style atPoint:point];
     }
     else {
         // WebTextRenderer assumes drawing from baseline.
@@ -78,12 +80,11 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     if (canUseFastRenderer(buffer, length)){
         WebTextRenderer *renderer = [[WebTextRendererFactory sharedFactory] rendererWithFont:font usingPrinterFont:NO];
 
-        WebCoreTextRun run = WebCoreMakeTextRun (buffer, length, 0, length);
-        WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
-        width = [renderer floatWidthForRun:run style:style
-                    applyRounding: NO
-                    attemptFontSubstitution: YES
-                    widths: 0];
+        WebCoreTextRun run;
+        WebCoreInitializeTextRun (&run, buffer, length, 0, length);
+        WebCoreTextStyle style;
+        WebCoreInitializeEmptyTextStyle(&style);
+        width = [renderer floatWidthForRun:&run style:&style widths: 0];
     }
     else {
         width = [self sizeWithAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil]].width;

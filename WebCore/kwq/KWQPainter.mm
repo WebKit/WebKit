@@ -471,16 +471,18 @@ void QPainter::drawText(int x, int y, int, int, int alignmentFlags, const QStrin
 
     const UniChar* str = (const UniChar*)qstring.unicode();
 
-    WebCoreTextRun run = WebCoreMakeTextRun(str, qstring.length(), 0, qstring.length());
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, str, qstring.length(), 0, qstring.length());
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = data->state.pen.color().getNSColor();
     style.families = families;
     
     if (alignmentFlags & Qt::AlignRight)
-        x -= ROUND_TO_INT([data->textRenderer floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
+        x -= ROUND_TO_INT([data->textRenderer floatWidthForRun:&run style:&style widths:0]);
      
-    [data->textRenderer drawRun:run style:style atPoint:NSMakePoint(x, y)];
+    [data->textRenderer drawRun:&run style:&style atPoint:NSMakePoint(x, y)];
 }
 
 void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int to, int toAdd, const QColor &backgroundColor, QPainter::TextDirection d, int letterSpacing, int wordSpacing, bool smallCaps)
@@ -499,8 +501,10 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     if (to < 0)
         to = len;
         
-    WebCoreTextRun run = WebCoreMakeTextRun((const UniChar *)str, len, from, to);    
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)str, len, from, to);    
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.textColor = data->state.pen.color().getNSColor();
     style.backgroundColor = backgroundColor.isValid() ? backgroundColor.getNSColor() : nil;
     style.rtl = d == RTL ? true : false;
@@ -510,7 +514,7 @@ void QPainter::drawText(int x, int y, const QChar *str, int len, int from, int t
     style.families = families;
     style.padding = toAdd;
     
-    [data->textRenderer drawRun:run style:style atPoint:NSMakePoint(x, y)];
+    [data->textRenderer drawRun:&run style:&style atPoint:NSMakePoint(x, y)];
 }
 
 void QPainter::drawLineForText(int x, int y, int yOffset, int width)

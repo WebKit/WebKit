@@ -163,12 +163,14 @@ int QFontMetrics::width(QChar qc) const
 
     CREATE_FAMILY_ARRAY(data->font(), families);
 
-    WebCoreTextRun run = WebCoreMakeTextRun(&c, 1, 0, 1);
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, &c, 1, 0, 1);
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
+    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
 int QFontMetrics::charWidth(const QString &s, int pos) const
@@ -187,12 +189,14 @@ int QFontMetrics::width(char c) const
 
     CREATE_FAMILY_ARRAY(data->font(), families);
 
-    WebCoreTextRun run = WebCoreMakeTextRun(&ch, 1, 0, 1);
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, &ch, 1, 0, 1);
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
+    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
 int QFontMetrics::width(const QString &qstring, int len) const
@@ -206,12 +210,14 @@ int QFontMetrics::width(const QString &qstring, int len) const
 
     int length = len == -1 ? qstring.length() : len;
 
-    WebCoreTextRun run = WebCoreMakeTextRun((const UniChar *)qstring.unicode(), length, 0, length);
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)qstring.unicode(), length, 0, length);
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
+    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
 int QFontMetrics::width(const QChar *uchars, int len) const
@@ -223,12 +229,14 @@ int QFontMetrics::width(const QChar *uchars, int len) const
     
     CREATE_FAMILY_ARRAY(data->font(), families);
 
-    WebCoreTextRun run = WebCoreMakeTextRun((const UniChar *)uchars, len, 0, len);
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)uchars, len, 0, len);
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.families = families;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
+    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
 float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
@@ -241,15 +249,17 @@ float QFontMetrics::floatWidth(const QChar *uchars, int slen, int pos, int len,
     
     CREATE_FAMILY_ARRAY(data->font(), families);
 
-    WebCoreTextRun run = WebCoreMakeTextRun((const UniChar *)uchars, slen, pos, pos+len);
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)uchars, slen, pos, pos+len);
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
     style.families = families;
 
-    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:0]);
+    return ROUND_TO_INT([data->getRenderer() floatWidthForRun:&run style:&style widths:0]);
 }
 
 float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos, int len, int toAdd, float *buffer, int letterSpacing, int wordSpacing, bool smallCaps) const
@@ -261,16 +271,41 @@ float QFontMetrics::floatCharacterWidths(const QChar *uchars, int slen, int pos,
     
     CREATE_FAMILY_ARRAY(data->font(), families);
 
-    WebCoreTextRun run = WebCoreMakeTextRun((const UniChar *)uchars, slen, pos, pos+len);
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)uchars, slen, pos, pos+len);
     
-    WebCoreTextStyle style = WebCoreMakeEmptyTextStyle();
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
     style.letterSpacing = letterSpacing;
     style.wordSpacing = wordSpacing;
     style.smallCaps = smallCaps;
     style.padding = toAdd;
     style.families = families;
 
-    return [data->getRenderer() floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution: YES widths:buffer];
+    return [data->getRenderer() floatWidthForRun:&run style:&style widths:buffer];
+}
+
+int QFontMetrics::checkSelectionPoint (QChar *s, int slen, int pos, int len, int toAdd, int letterSpacing, int wordSpacing, bool smallCaps, int x, bool reversed) const
+{
+    if (data.isNull()) {
+        ERROR("called floatWidth on an empty QFontMetrics");
+        return 0;
+    }
+    
+    CREATE_FAMILY_ARRAY(data->font(), families);
+
+    WebCoreTextRun run;
+    WebCoreInitializeTextRun(&run, (const UniChar *)s, slen, pos, pos+len);
+    
+    WebCoreTextStyle style;
+    WebCoreInitializeEmptyTextStyle(&style);
+    style.letterSpacing = letterSpacing;
+    style.wordSpacing = wordSpacing;
+    style.smallCaps = smallCaps;
+    style.families = families;
+    style.padding = toAdd;
+
+    return [data->getRenderer() checkSelectionPoint:&run style:&style position:x reversed:reversed];
 }
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const

@@ -1,5 +1,32 @@
 2003-07-30  Richard Williamson   <rjw@apple.com>
 
+	Preparation for 3095376.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_widthWithFont:]):
+        * Misc.subproj/WebStringTruncator.m:
+        (stringWidth):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (shouldUseATSU):
+        (-[WebTextRenderer widthForCharacters:length:]):
+        (-[WebTextRenderer drawRun:style:atPoint:]):
+        (-[WebTextRenderer _CG_drawRun:style:atPoint:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:characterPosition:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:]):
+        (-[WebTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:widths:letterSpacing:wordSpacing:smallCaps:fontFamilies:]):
+        (-[WebTextRenderer floatWidthForRun:style:widths:]):
+        (-[WebTextRenderer _floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        (-[WebTextRenderer _CG_floatWidthForRun:style:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+        (-[WebTextRenderer _createATSUTextLayoutForRun:]):
+        (-[WebTextRenderer _trapezoidForRun:style:atPoint:]):
+        (-[WebTextRenderer _ATSU_floatWidthForRun:style:]):
+        (-[WebTextRenderer _ATSU_drawRun:style:atPoint:]):
+        (-[WebTextRenderer checkSelectionPoint:style:position:reversed:]):
+
+2003-07-30  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3356518.  Added private method called by IB to ensure
 	that autoresizeSubviews flag is turned on correctly.
 

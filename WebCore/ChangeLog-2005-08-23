@@ -1,3 +1,29 @@
+2003-07-30  Richard Williamson   <rjw@apple.com>
+
+	Preparation for 3095376.
+
+        Reviewed by Maciej.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * khtml/rendering/font.cpp:
+        (Font::checkSelectionPoint):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (TextRun::checkSelectionPoint):
+        * kwq/KWQFontMetrics.h:
+        * kwq/KWQFontMetrics.mm:
+        (QFontMetrics::width):
+        (QFontMetrics::floatWidth):
+        (QFontMetrics::floatCharacterWidths):
+        (QFontMetrics::checkSelectionPoint):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawText):
+        * kwq/WebCoreTextRenderer.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (WebCoreInitializeTextRun):
+        (WebCoreInitializeEmptyTextStyle):
+
 2003-07-30  Dave Hyatt  <hyatt@apple.com>
 
 	Fix for 3274144, floats in Help Viewer overlapped when they shouldn't have.

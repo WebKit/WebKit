@@ -184,52 +184,7 @@ FindSelectionResult TextRun::checkSelectionPoint(int _x, int _y, int _tx, int _t
     }
 
 #if APPLE_CHANGES
-    // Floating point version needed for best results with Mac OS X text.
-    float delta = _x - (_tx + m_x);
-    float _widths[LOCAL_WIDTH_BUF_SIZE]; 
-    float *widths = 0;
-    float monospaceWidth = 0;
-
-    if (text->shouldUseMonospaceCache(f)){
-        monospaceWidth = text->widthFromCache (f, m_start, 1);
-    }
-    else {
-        if (text->str->l > LOCAL_WIDTH_BUF_SIZE)
-            widths = (float *)malloc(text->str->l * sizeof(float));
-        else
-            widths = &_widths[0];
-        // Do width calculations for whole run once.
-        f->floatCharacterWidths( text->str->s, text->str->l, m_start, m_len, m_toAdd, &widths[0]);
-    }
-        
-    int pos = 0;
-    if ( m_reversed ) {
-	delta -= m_width;
-	while(pos < m_len) {
-	    float w = (monospaceWidth != 0 ? monospaceWidth : widths[pos+m_start]);
-	    float w2 = w/2;
-	    w -= w2;
-	    delta += w2;
-	    if(delta >= 0)
-	        break;
-	    pos++;
-	    delta += w;
-	}
-    } else {
-	while(pos < m_len) {
-	    float w = (monospaceWidth != 0 ? monospaceWidth : widths[pos+m_start]);
-	    float w2 = w/2;
-	    w -= w2;
-	    delta -= w2;
-	    if(delta <= 0) 
-	        break;
-	    pos++;
-	    delta -= w;
-	}
-    }
-    
-    if (widths != _widths)
-        free (widths);
+    int pos = f->checkSelectionPoint (text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - (_tx + m_x), m_reversed);
 #else
     int delta = _x - (_tx + m_x);
     //kdDebug(6040) << "TextRun::checkSelectionPoint delta=" << delta << endl;
