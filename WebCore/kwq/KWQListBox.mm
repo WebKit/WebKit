@@ -47,6 +47,7 @@ QListBox::QListBox(QWidget *parent)
     , _items([[NSMutableArray alloc] init])
     , _insertingItems(false)
     , _changingSelection(false)
+    , _enabled(true)
     , _widthGood(false)
     , _clicked(this, SIGNAL(clicked(QListBoxItem *)))
     , _selectionChanged(this, SIGNAL(selectionChanged()))
@@ -187,6 +188,19 @@ bool QListBox::isSelected(int index) const
     return [tableView isRowSelected:index]; 
 }
 
+void QListBox::setEnabled(bool enabled)
+{
+    _enabled = enabled;
+    // You would think this would work, but not until AK fixes 2177792
+    //NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    //[tableView setEnabled:enabled];
+}
+
+bool QListBox::isEnabled()
+{
+    return _enabled;
+}
+
 QSize QListBox::sizeForNumberOfLines(int lines) const
 {
     ASSERT(!_insertingItems);
@@ -263,6 +277,17 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(int)row
 {
     return [[_items objectAtIndex:row] isKindOfClass:[NSString class]];
+}
+
+- (BOOL)selectionShouldChangeInTableView:(NSTableView *)aTableView
+{
+    return _box->isEnabled();
+}
+
+- (void)tableView:(NSTableView *)tableView willDisplayCell:(id)cell forTableColumn:(NSTableColumn *)tableColumn row:(int)row
+{
+    ASSERT([cell isKindOfClass:[NSCell class]]);
+    [(NSCell *)cell setEnabled:_box->isEnabled()];
 }
 
 @end

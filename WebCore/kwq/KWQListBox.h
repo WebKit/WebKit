@@ -60,6 +60,8 @@ public:
     void endBatchInsert();
     void setSelected(int, bool);
     bool isSelected(int) const;
+    void setEnabled(bool enabled);
+    bool isEnabled();
     
     bool changingSelection() { return _changingSelection; }
     void clicked() { _clicked.call(); }
@@ -71,6 +73,7 @@ private:
     NSMutableArray *_items;
     bool _insertingItems;
     bool _changingSelection;
+    bool _enabled;
     mutable float _width;
     mutable bool _widthGood;
     

@@ -1,5 +1,25 @@
 2003-01-30  Trey Matteson  <trey@apple.com>
 
+	3161088 - disabled select elements are not disabled when scrolling list used	
+
+	We use a tableview delegate method to prevent the user from changing the
+	selection when disabled.  Too bad tableviews don't know how to disable themselves.
+	We also condition the cell used for drawing to match our enabled state.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQListBox.h:  Keep track of whether we are enabled.
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox):  Init new flag.
+        (QListBox::setEnabled):  Set new flag.
+        (QListBox::isEnabled):  Getter for new flag.
+        (-[KWQListBoxTableViewDelegate selectionShouldChangeInTableView:]):
+	Disallow selection changes if disabled.
+        (-[KWQListBoxTableViewDelegate tableView:willDisplayCell:forTableColumn:row:]):
+	Enable cell based on our enabled state to get visual feedback of being disabled.
+
+2003-01-30  Trey Matteson  <trey@apple.com>
+
 	3161486 - REGRESSION: double click on a widget causes crash
 
 	Slight enhancement to the earlier fix of this bug.  When handling a doubleclick we
