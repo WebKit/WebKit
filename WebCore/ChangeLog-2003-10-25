@@ -1,5 +1,17 @@
 2002-12-20  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3134163, a regression from the reduction of
+	styleForElement calls.  Make sure image buttons
+	get the width attribute and add it to style info
+	before styleForElement gets called.
+	
+        Reviewed by rjw
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::attach):
+
+2002-12-20  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3134133. Back out the render_text code I gave to rjw
 	to check in.  It wasn't filling in a value for hasBreak, so it
 	became random whether or not you'd break or not.
