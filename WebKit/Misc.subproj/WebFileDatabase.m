@@ -600,11 +600,11 @@ static void databaseInit()
     // go to disk
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
     fileReader = [[IFURLFileReader alloc] initWithPath:filePath];
-    if (fileReader && (data = [fileReader data])) {
-        unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
-    }
     
     NS_DURING
+        if (fileReader && (data = [fileReader data])) {
+            unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
+        }
         if (unarchiver) {
             fileKey = [unarchiver decodeObject];
             object = [unarchiver decodeObject];
