@@ -240,10 +240,6 @@
     
     [dataSource _setResponse:response];
 
-    // Make assumption that if the contentType is the default and there is no extension, this is text/html.
-    if ([contentType isEqualToString:@"application/octet-stream"]
-            && [[[currentURL path] pathExtension] isEqualToString:@""])
-        contentType = @"text/html";
     LOG(Download, "main content type: %@", contentType);
 
     // Retain the downloadProgressDelegate just in case this is a download.

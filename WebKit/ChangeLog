@@ -1,5 +1,12 @@
 2002-10-08  Chris Blumenberg  <cblu@apple.com>
 
+	Moved assumption that a resource without a content type or extension is HTML to WebFoundation.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
+2002-10-08  Chris Blumenberg  <cblu@apple.com>
+
 	Minor plug-in code clean-up.
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
