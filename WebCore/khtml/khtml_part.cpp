@@ -3289,16 +3289,20 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
     child->m_extension->setURLArgs( child->m_args );
 
 #if APPLE_CHANGES
-    // In these cases, the synchronous load would have finished
-    // before we could connect the signals, so make sure to send the
-    // completed() signal for the child by hand:
-    if (url.isEmpty() || url.url() == "about:blank") {
+  // In these cases, the synchronous load would have finished
+  // before we could connect the signals, so make sure to send the 
+  // completed() signal for the child by hand
+  // FIXME: In this case the KHTMLPart will have finished loading before 
+  // it's being added to the child list.  It would be a good idea to
+  // create the child first, then invoke the loader separately  
+  if (url.isEmpty() || url.url() == "about:blank") {
       ReadOnlyPart *readOnlyPart = child->m_part;
       KHTMLPart *part = static_cast<KHTMLPart *>(readOnlyPart);
       if (part && part->inherits("KHTMLPart")) {
-        part->completed();
+          part->completed();
+          part->checkCompleted();
       }
-    }
+  }
 #else
   if(url.protocol() == "javascript" || url.url() == "about:blank") {
       if (!child->m_part->inherits("KHTMLPart"))
