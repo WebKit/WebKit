@@ -1,7 +1,19 @@
 2005-01-12  David Harrison  <harrison@apple.com>
 
+        Reviewed by Dave Hyatt.
+
+        <rdar://problem/3888973> AX: Parent AXWebArea of nested AXWebAreas is messed up
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject addChildrenToArray:]):
+        Use the widget's outer view.
+
+2005-01-12  David Harrison  <harrison@apple.com>
+
         Reviewed by Darin Adler.
 
+        <rdar://problem/3949908> Crash when asking for the kAXLengthForTextMarkerRangeParameterizedAttribute
+        
         * khtml/xml/dom_nodeimpl.cpp:
         (NodeImpl::displayNode):
         Add quotes around text node content.

@@ -232,7 +232,7 @@ extern "C" void NSAccessibilityUnregisterUniqueIdForUIElement(id element);
         RenderWidget* renderWidget = static_cast<RenderWidget*>(m_renderer);
         QWidget* widget = renderWidget->widget();
         if (widget) {
-            NSArray* childArr = [(widget->getView()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
+            NSArray* childArr = [(widget->getOuterView()) accessibilityAttributeValue: NSAccessibilityChildrenAttribute];
             [array addObjectsFromArray: childArr];
             return;
         }
