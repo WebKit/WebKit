@@ -1,5 +1,13 @@
 2002-08-13  Darin Adler  <darin@apple.com>
 
+	- fixed 3023439 -- support for windows-874 charset for thai
+
+        * kwq/character-sets.txt: Added cp874 and windows-874.
+        * kwq/make-charset-table.pl: Fix bug where it would right out a bad MIB enum for
+	the many Macintosh character sets without associated MIB numbers.
+
+2002-08-13  Darin Adler  <darin@apple.com>
+
 	Some QRegion fixes inspired by Dave's clipping work.
 
         * kwq/qt/qregion.h: Add setClip, remove getNSBezierPath.

@@ -30,7 +30,7 @@ sub emit_line
     my ($name, $mibNum, $encodingNum) = @_;
     print TABLE ",\n" if ($already_wrote_one);
     print TABLE '    {"' . $name . '",' . "\n";
-    print TABLE "     " . $mib_enum . ",\n";
+    print TABLE "     " . $mibNum . ",\n";
     print TABLE "     " . $encodingNum . "}";
     $already_wrote_one = 1;
 }
