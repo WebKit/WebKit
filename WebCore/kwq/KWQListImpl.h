@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,6 +31,7 @@
 
 #ifndef USING_BORROWED_QLIST
 
+class KWQListNode;
 class KWQListIteratorImpl;
 
 class KWQListImpl
@@ -41,8 +42,8 @@ public:
     KWQListImpl(const KWQListImpl &impl);
     ~KWQListImpl();
      
-    bool isEmpty() const;
-    uint count() const;
+    bool isEmpty() const { return nodeCount == 0; }
+    uint count() const { return nodeCount; }
     void clear(bool deleteItems);
     void sort(int (*compareFunc)(void *a, void *b, void *data), void *data); 
 
@@ -74,11 +75,19 @@ public:
     KWQListImpl &assign(const KWQListImpl &impl, bool deleteItems);
 
  private:
+    KWQListImpl &operator =(const KWQListImpl &impl);
+
+    void swap(KWQListImpl &impl);
+
     void addIterator(KWQListIteratorImpl *iter) const;
     void removeIterator(KWQListIteratorImpl *iter) const;
 
-    class KWQListPrivate;
-    KWQListPrivate *d;
+    KWQListNode *head;
+    KWQListNode *tail;
+    KWQListNode *cur;
+    uint nodeCount;
+    void (*deleteItem)(void *);
+    mutable KWQListIteratorImpl *iterators;
 
     friend class KWQListIteratorImpl;
 }; 
@@ -88,25 +97,24 @@ class KWQListIteratorImpl {
 public:
     KWQListIteratorImpl();
     KWQListIteratorImpl(const KWQListImpl &impl);
-    KWQListIteratorImpl(const KWQListIteratorImpl &impl);
     ~KWQListIteratorImpl();
+
+    KWQListIteratorImpl(const KWQListIteratorImpl &impl);
+    KWQListIteratorImpl &operator=(const KWQListIteratorImpl &impl);
 
     uint count() const;
     void *toFirst();
     void *toLast();
     void *current() const;
 
-    // operators ---------------------------------------------------------------
-
     void *operator--();
     void *operator++();
 
-    KWQListIteratorImpl &operator=(const KWQListIteratorImpl &impl);
-
 private:
-    class KWQListIteratorPrivate;
-
-    KWQListIteratorPrivate *d;
+    const KWQListImpl *list;
+    KWQListNode *node;
+    KWQListIteratorImpl *next;
+    KWQListIteratorImpl *prev;
 
     friend class KWQListImpl;
 };

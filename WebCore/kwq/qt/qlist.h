@@ -38,8 +38,10 @@ template <class T> class QPtrListIterator;
 
 template <class T> class QPtrList : public QPtrCollection {
 public:
-    QPtrList() : impl(deleteFunc) {}
-    ~QPtrList() { if (del_item) { impl.clear(del_item); } }
+    QPtrList() : impl(deleteFunc) { }
+    ~QPtrList() { impl.clear(del_item); }
+    
+    QPtrList& operator=(const QPtrList &l) { impl.assign(l.impl, del_item); return *this; }
 
     bool isEmpty() const { return impl.isEmpty(); }
     uint count() const { return impl.count(); }
@@ -49,8 +51,8 @@ public:
     T *at(uint n) { return (T *)impl.at(n); }
 
     bool insert(uint n, const T *item) { return impl.insert(n, item); }
-    bool remove() {return impl.remove(del_item); }
-    bool remove(uint n) {return impl.remove(n, del_item); }
+    bool remove() { return impl.remove(del_item); }
+    bool remove(uint n) { return impl.remove(n, del_item); }
     bool remove(const T *item) { return impl.remove(item, del_item, compareFunc, this); }
     bool removeFirst() { return impl.removeFirst(del_item); }
     bool removeLast() { return impl.removeLast(del_item); }
@@ -75,12 +77,7 @@ public:
 
  private:
     static void deleteFunc(void *item) { delete (T *)item; }
-
-    static int compareFunc(void *a, void *b, void *data)
-    {
-	QPtrList<T> *l = (QPtrList<T> *)data;
-	return l->compareItems(a, b);
-    }
+    static int compareFunc(void *a, void *b, void *data) { return ((QPtrList *)data)->compareItems(a, b);  }
 
     friend class QPtrListIterator<T>;
 
@@ -97,11 +94,9 @@ public:
     T *toLast() { return (T *)impl.toLast(); }
     T *current() const { return (T *)impl.current(); }
 
-    // operators ---------------------------------------------------------------
-
     operator T *() const { return (T *)impl.current(); }
-    T *operator--() { return (T *)(--impl); }
-    T *operator++()  { return (T *)(++impl); }
+    T *operator--() { return (T *)--impl; }
+    T *operator++()  { return (T *)++impl; }
 
 private:
     KWQListIteratorImpl impl;
@@ -125,7 +120,7 @@ inline std::ostream &operator<<(std::ostream &stream, const QPtrList<T> &l)
     }
     
     // print rest
-    while(count != 0) {
+    while (count != 0) {
 	stream << ", " << *iter.current();
 	++iter;
 	--count;

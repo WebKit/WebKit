@@ -238,6 +238,10 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     if ( docimpl )
     {
       docimpl->updateRendering();
+#ifdef APPLE_CHANGES
+      // Only do a layout if changes have occurred that make it necessary.
+      if ( docimpl->renderer() && !docimpl->renderer()->layouted() )
+#endif
       if ( docimpl->view() )
         docimpl->view()->layout();
     }

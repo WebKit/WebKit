@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,22 +26,14 @@
 #include <KWQDictImpl.h>
 #include <CoreFoundation/CoreFoundation.h>
 
-#ifndef USING_BORROWED_QDICT
-
 KWQDictImpl::KWQDictImpl(int size, bool caseSensitive, void (*deleteFunc)(void *)) :
     KWQPtrDictImpl(size, deleteFunc, &kCFCopyStringDictionaryKeyCallBacks)
-{
-}
-
-KWQDictImpl::KWQDictImpl(const KWQDictImpl &di) :
-    KWQPtrDictImpl(di)
 {
 }
 
 void KWQDictImpl::insert(const QString &key, const void *value)
 {
     KWQPtrDictImpl::insert(key.getCFMutableString(), value);
-
 }
 
 bool KWQDictImpl::remove(const QString &key, bool deleteItem)
@@ -54,11 +46,6 @@ void *KWQDictImpl::find(const QString &key) const
     return KWQPtrDictImpl::find(key.getCFMutableString());
 }
 
-KWQDictIteratorImpl::KWQDictIteratorImpl(const KWQDictImpl &di) : 
-    KWQPtrDictIteratorImpl(di)
-{
-}
-
 QString KWQDictIteratorImpl::currentStringKey() const
 {
     void *key = currentKey();
@@ -68,5 +55,3 @@ QString KWQDictIteratorImpl::currentStringKey() const
     }
     return QString::fromCFString((CFStringRef)key);
 }
-
-#endif

@@ -1,3 +1,55 @@
+2002-06-05  Darin Adler  <darin@apple.com>
+
+	Some fixes to speed up the citibank.com page, and other related changes.
+
+	* khtml/ecma/kjs_dom.cpp: (DOMNode::getValueProperty): Only do a layout
+	if it's actually needed. This speeds things up immensely, and I'm pretty
+	sure it's correct.
+
+	* kwq/KWQListImpl.h: To speed things up, get rid of the "private part"
+	level of indirection. This is particularly vital for list iterators, which
+	are created and destroyed a lot on the stack. Also made trivial functions
+	be inline.
+
+	* kwq/KWQListImpl.mm:
+	(copyList): Now a static function rather than a member of the now-defunct
+	private class.
+	(KWQListImpl::KWQListImpl): Set up all the new members that used to be in
+	the separate private object.
+	(KWQListImpl::~KWQListImpl): Update the iterator-detaching code to do it
+	the new way, with intrusive list. Also, use clear() instead of having our
+	own code to delete the list -- note this is only used after the level above
+	us does a clear() anyway.
+	(KWQListImpl::clear): Use a loop to delete all the nodes rather than making
+	a delete of one node recursively delete the next -- iteration is more efficient,
+	and also easier to understand in this case. Also update all the iterators so
+	they don't point to deleted nodes.
+	(KWQListImpl::containsRef): Update to return the count, rather than just a
+	true or false value, since that's how the class is defined.
+	(KWQListImpl::assign): Delete the items if asked to (fixes a FIXME). Also
+	use a new swap member function since there's more to swap now.
+	(KWQListImpl::addIterator): Rewrite to use an intrusive linked list.
+	(KWQListImpl::removeIterator): Rewrite to use an intrusive linked list; this
+	makes it much faster since it doesn't have to search the list.
+	(KWQListImpl::swap): Implement this private member function used by assign.
+	(KWQListIteratorImpl::KWQListIteratorImpl): Set up the new members that
+	used to be in the separate private object.
+
+	* kwq/qt/qlist.h: Re-add the operator= definition. This would cause a storage
+	leak, although I haven't actually observed the leak.
+
+	* kwq/qt/qbuffer.h: Initialize opened to false. This was causing a test failure.
+
+	* kwq/KWQDictImpl.h:
+	* kwq/KWQDictImpl.mm: Streamline implementation a bit by getting rid of
+	unneeded copy constructor definition and making trivial constructor for
+	iterator inline.
+
+	* kwq/KWQPtrDictImpl.h: Remove unneeded include.
+
+	* WebCore-tests.exp: Update for changes in the entry points
+	used by the tests.
+
 2002-06-05  Richard Williamson  <rjw@apple.com>
 
     Fixed 2938552.  This required an implementation of KHTMLPart::frames which
