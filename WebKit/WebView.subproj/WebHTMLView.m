@@ -1931,6 +1931,13 @@ static WebHTMLView *lastHitView = nil;
     return NO;
 }
 
+- (BOOL)_isMoveDrag
+{
+    return _private->initiatedDrag && 
+    [[self _bridge] isSelectionEditable] &&
+    ([[NSApp currentEvent] modifierFlags] & NSAlternateKeyMask) == 0;
+}
+
 - (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo actionMask:(unsigned int)actionMask
 {
     NSDragOperation operation = NSDragOperationNone;
@@ -1942,11 +1949,10 @@ static WebHTMLView *lastHitView = nil;
     
     if ((actionMask & WebDragDestinationActionEdit) &&
         !_private->webCoreHandlingDrag
-        && [self _canProcessDragWithDraggingInfo:draggingInfo])
-    {
+        && [self _canProcessDragWithDraggingInfo:draggingInfo]) {
         WebView *webView = [self _webView];
         [webView moveDragCaretToPoint:[webView convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-        operation = (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
+        operation = [self _isMoveDrag] ? NSDragOperationMove : NSDragOperationCopy;
     } else {
         [[self _webView] removeDragCaret];
     }
@@ -1975,7 +1981,7 @@ static WebHTMLView *lastHitView = nil;
             DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                if (_private->initiatedDrag && [bridge isSelectionEditable]) {
+                if ([self _isMoveDrag]) {
                     [bridge moveSelectionToDragCaret:fragment];
                 } else {
                     [bridge setSelectionToDragCaret];

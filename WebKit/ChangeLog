@@ -1,3 +1,14 @@
+2004-08-12  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3761097> should be able to option-drag selection so HTML can be copied within a page
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _isMoveDrag]): new, take into account the option key
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:actionMask:]): call _isMoveDrag
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): call _isMoveDrag
+
 2004-08-12  Richard Williamson   <rjw@apple.com>
 
         Quick fix for 3760903.  The real fix is described in 3760920.  Needed
