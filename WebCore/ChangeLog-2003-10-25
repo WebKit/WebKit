@@ -1,3 +1,33 @@
+2003-02-16  David Hyatt  <hyatt@apple.com>
+
+	Fix "Almost Strict" mode to not match @konq-quirks.
+	
+        Reviewed by kocienda
+
+        * ChangeLog:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::recalcStyleSelector):
+
+2003-02-16  David Hyatt  <hyatt@apple.com>
+
+	Fix to make table cells within the same table use a shared style 
+	decl object (owned by the table).  This stops every cell in a table
+	from having the exact same values copied on the cell itself.
+	
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::HTMLTableElementImpl):
+        (HTMLTableElementImpl::~HTMLTableElementImpl):
+        (HTMLTableElementImpl::createSharedCellDecls):
+        (HTMLTableCellElementImpl::getAdditionalStyleDecls):
+        (HTMLTableCellElementImpl::attach):
+        * khtml/html/html_tableimpl.h:
+        * khtml/xml/dom_elementimpl.h:
+
 2003-02-14  David Hyatt  <hyatt@apple.com>
 
 	Make the inline box model live.  Borders/backgrounds and text

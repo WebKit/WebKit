@@ -294,7 +294,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_usesDescendantRules = false;
     
     m_styleSelector = new CSSStyleSelector( this, m_usersheet, m_styleSheets, m_url,
-                                            pMode == Strict );
+                                            !inQuirksMode() );
     m_windowEventListeners.setAutoDelete(true);
     m_pendingStylesheets = 0;
 }
@@ -1984,7 +1984,7 @@ void DocumentImpl::recalcStyleSelector()
     if ( m_view && m_view->mediaType() == "print" )
 	usersheet += m_printSheet;
     m_styleSelector = new CSSStyleSelector( this, usersheet, m_styleSheets, m_url,
-                                            pMode == Strict );
+                                            !inQuirksMode() );
 
     m_styleSelectorDirty = false;
 }
