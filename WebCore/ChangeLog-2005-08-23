@@ -1,3 +1,16 @@
+2004-08-12  Trey Matteson  <trey@apple.com>
+
+	3761329 - query result links all dead in ingrammicro.com (sometimes)
+	3761328 - links in some docs dead when doc is loaded from WebArchive
+
+	Make sure to get part to completed state when end is called,
+	even if we have no doc.  See WebKit changelog for more info.
+
+        Reviewed by Richard and Darin.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::end):
+
 2004-08-13  Trey Matteson  <trey@apple.com>
 
         3761098 - red dotted underline for misspelled words shows up in drag image

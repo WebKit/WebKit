@@ -803,6 +803,9 @@
     [self _commitIfReady];
 
     [[self representation] finishedLoadingWithDataSource:self];
+    // Since we've sent openURL to the bridge, it's important to send end too, so that WebCore
+    // can realize that the load is completed.
+    [[self _bridge] end];
 }
 
 - (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete

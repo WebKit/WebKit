@@ -1,3 +1,28 @@
+2004-08-12  Trey Matteson  <trey@apple.com>
+
+        3761329 - query result links all dead in ingrammicro.com (sometimes)
+        3761328 - links in some docs dead when doc is loaded from WebArchive
+
+        Nasty problem.  It turns out that these result pages are a parent frame with two child
+        frames.  One of the child frames is a 1 or 2 byte text document.  When the text child
+        is the last doc to complete, because we use a Text rep instead of an HTMLRep, it turns
+        out we never send [bridge end] from WebKit.  That mistake results in checkCompleted not
+        being called enough in the part, and we never realize the load is done.  WebCore does
+        not allow redirects to happen until the entire load is complete,  and  the links on this
+        results page are actually little pieces of JS that set location to a generated URL.  Since
+        redirects are not allowed these links all silently fail to do anything, and the doc never
+        achieves a completed state where they will work.
+
+        Solution is to make sure we always call [bridge end] from the DataSource instead of only
+        the HTML rep doing it.
+
+        Reviewed by Richard and Darin.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _finishedLoading]):  Call [bridge end] here for all kinds of docs.
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation finishedLoadingWithDataSource:]):  Don't call is just for HTMLReps.
+
 2004-08-12  Richard Williamson   <rjw@apple.com>
 
         Bring npruntime.h and friends closer to compliance with

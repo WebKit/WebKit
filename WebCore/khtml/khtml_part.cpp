@@ -1633,6 +1633,12 @@ void KHTMLPart::end()
         write(d->m_decoder->flush());
     if (d->m_doc)
 	d->m_doc->finishParsing();
+    else
+        // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
+        // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
+        // become true.  An example is when a subframe is a pure text doc, and that subframe is the
+        // last one to complete.
+        checkCompleted();
 
     deref();
 }
