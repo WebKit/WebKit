@@ -4641,7 +4641,18 @@ void ReplaceSelectionCommand::doApply()
 
     // step 4 : handle trailing newline
     if (m_fragment.hasInterchangeNewline()) {
-        if (startBlock == endBlock && !isProbablyBlock(m_lastTopNodeInserted) && !isProbablyBlock(m_lastTopNodeInserted)) {
+        bool insertParagraph = false;
+        if (startBlock == endBlock && !isProbablyBlock(m_lastTopNodeInserted)) {
+            insertParagraph = true;
+        }
+        else {
+            // Handle end-of-document case.
+            document()->updateLayout();
+            VisiblePosition pos(Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()), DOWNSTREAM);
+            if (isEndOfDocument(pos))
+                insertParagraph = true;
+        }
+        if (insertParagraph) {
             setEndingSelection(insertionPos, DOWNSTREAM);
             insertParagraphSeparator();
             endPos = endingSelection().end().downstream();

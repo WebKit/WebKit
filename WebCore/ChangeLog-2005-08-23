@@ -1,3 +1,14 @@
+2005-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Fix for this bug:
+        
+        <rdar://problem/4030068> Trailing <return> gets eaten when pasted at the end of a document
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Add code to handle formerly-unhandled end-of-document case.
+
 2005-03-01  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Vicki.
