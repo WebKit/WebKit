@@ -132,11 +132,10 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
             setIntrinsicHeight( o->pixmap_size().height() );
         }
 
-        // In the case of generated image content using :before/:after, we aren't in the
-        // tree yet.  We don't need to worry about doing this check, since we'll get a
-        // layout when we get added in to the render tree hierarchy anyway.
-         
-        if (parent()) {
+        // In the case of generated image content using :before/:after, we might not be in the
+        // render tree yet.  In that case, we don't need to worry about check for layout, since we'll get a
+        // layout when we get added in to the render tree hierarchy later.
+        if (containingBlock()) {
             // lets see if we need to relayout at all..
             int oldwidth = m_width;
             int oldheight = m_height;
