@@ -166,7 +166,7 @@
         [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
     } else {
         if (!request) {
-            ERROR("could not load URL %@", URL);
+            ERROR("could not load URL %@", [request URL]);
             return;
         }
         [frame _loadRequest:request inFrameNamed:target];
