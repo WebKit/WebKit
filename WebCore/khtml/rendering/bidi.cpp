@@ -42,7 +42,11 @@ static BidiIterator last;
 static BidiIterator current;
 static BidiContext *context;
 static BidiStatus status;
-static QPtrList<BidiRun> *sruns = 0;
+
+// Used to track a list of chained bidi runs.
+static BidiRun* sFirstBidiRun = 0;
+static BidiRun* sLastBidiRun = 0;
+static int sBidiRunCount = 0;
 
 // Midpoint globals.  The goal is not to do any allocation when dealing with
 // these midpoints, so we just keep an array around and never clear it.  We track
@@ -131,16 +135,19 @@ void BidiRun::operator delete(void* ptr, size_t sz)
 
 static void deleteBidiRuns(RenderArena* arena)
 {
-    if (!sruns)
+    if (!sFirstBidiRun)
         return;
 
-    unsigned int len = sruns->count();
-    for(unsigned int i=0; i < len; i++) {
-        BidiRun* s = sruns->at(i);
-        if (s)
-            s->detach(arena);
+    BidiRun* curr = sFirstBidiRun;
+    while (curr) {
+        BidiRun* s = curr->nextRun;
+        curr->detach(arena);
+        curr = s;
     }
-    sruns->clear();
+    
+    sFirstBidiRun = 0;
+    sLastBidiRun = 0;
+    sBidiRunCount = 0;
 }
 
 // ---------------------------------------------------------------------
@@ -346,6 +353,60 @@ inline QChar::Direction BidiIterator::direction() const
 
 // -------------------------------------------------------------------------------------------------
 
+static void addRun(BidiRun* bidiRun)
+{
+    if (!sFirstBidiRun)
+        sFirstBidiRun = sLastBidiRun = bidiRun;
+    else {
+        sLastBidiRun->nextRun = bidiRun;
+        sLastBidiRun = bidiRun;
+    }
+    sBidiRunCount++;
+}
+
+static void reverseRuns(int start, int end)
+{
+    if (start >= end)
+        return;
+
+    assert(start >= 0 && end < sBidiRunCount);
+    
+    // Get the item before the start of the runs to reverse and put it in
+    // |beforeStart|.  |curr| should point to the first run to reverse.
+    BidiRun* curr = sFirstBidiRun;
+    BidiRun* beforeStart = 0;
+    int i = 0;
+    while (i < start) {
+        i++;
+        beforeStart = curr;
+        curr = curr->nextRun;
+    }
+
+    BidiRun* newEnd = curr;
+    BidiRun* prev = 0;
+    while (i < end) {
+        // Do the reversal.
+        BidiRun* next = curr->nextRun;
+        curr->nextRun = prev;
+        prev = curr;
+        curr = next;
+        i++;
+    }
+
+    BidiRun* newStart = curr;
+    BidiRun* afterEnd = curr->nextRun;
+
+    // Now hook up beforeStart and afterEnd to the newStart and newEnd.
+    if (beforeStart)
+        beforeStart->nextRun = newStart;
+    else
+        sFirstBidiRun = newStart;
+
+    newEnd->nextRun = afterEnd;
+    if (!afterEnd)
+        sLastBidiRun = newEnd;
+}
+
 static void addMidpoint(const BidiIterator& midpoint)
 {
     if (!smidpoints)
@@ -380,22 +441,22 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
     }
     else {
         if (!smidpoints || !haveNextMidpoint || (obj != nextMidpoint.obj)) {
-            sruns->append( new (obj->renderArena()) BidiRun(start, end, obj, context, dir) );
+            addRun(new (obj->renderArena()) BidiRun(start, end, obj, context, dir));
             return;
         }
         
         // An end midpoint has been encounted within our object.  We
         // need to go ahead and append a run with our endpoint.
         if (int(nextMidpoint.pos+1) <= end) {
-            sruns->append( new (obj->renderArena())
-                                BidiRun(start, nextMidpoint.pos+1, obj, context, dir) );
+            addRun(new (obj->renderArena())
+                   BidiRun(start, nextMidpoint.pos+1, obj, context, dir));
             betweenMidpoints = true;
             int nextPos = nextMidpoint.pos+1;
             sCurrMidpoint++;
             return appendRunsForObject(nextPos, end, obj);
         }
         else
-            sruns->append( new (obj->renderArena()) BidiRun(start, end, obj, context, dir) );
+           addRun(new (obj->renderArena()) BidiRun(start, end, obj, context, dir));
     }
 }
 
@@ -434,7 +495,7 @@ static void embed( QChar::Direction d )
     adjustEmbeddding = false;
     if ( d == QChar::DirPDF ) {
 	BidiContext *c = context->parent;
-	if(c && sruns) {
+	if (c) {
 	    if ( eor != last ) {
 		appendRun();
 		eor = last;
@@ -476,15 +537,13 @@ static void embed( QChar::Direction d )
 	}
 
 	if(level < 61) {
-	    if ( sruns ) {
-		if ( eor != last ) {
-		    appendRun();
-		    eor = last;
-		}
-		appendRun();
-		emptyRun = true;
+	    if ( eor != last ) {
+                appendRun();
+                eor = last;
+            }
+            appendRun();
+            emptyRun = true;
 
-	    }
 	    context = new BidiContext(level, runDir, context, override);
 	    context->ref();
 	    if ( override )
@@ -532,15 +591,13 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
     return box;
 }
 
-InlineFlowBox* RenderBlock::constructLine(QPtrList<BidiRun>& runs,
-                                          const BidiIterator &start, const BidiIterator &end)
+InlineFlowBox* RenderBlock::constructLine(const BidiIterator &start, const BidiIterator &end)
 {
-    BidiRun *r = runs.first();
-    if (!r)
+    if (!sFirstBidiRun)
         return 0; // We had no runs. Don't make a root inline box at all. The line is empty.
 
     InlineFlowBox* parentBox = 0;
-    while (r) {
+    for (BidiRun* r = sFirstBidiRun; r; r = r->nextRun) {
         // Create a box for our object.
         r->box = r->obj->createInlineBox();
         
@@ -553,9 +610,6 @@ InlineFlowBox* RenderBlock::constructLine(QPtrList<BidiRun>& runs,
 
         // Append the inline box to this line.
         parentBox->addToLine(r->box);
-
-        // Advance to the next run.
-        r = runs.next();
     }
 
     // We should have a root inline box.  It should be unconstructed and
@@ -579,13 +633,12 @@ InlineFlowBox* RenderBlock::constructLine(QPtrList<BidiRun>& runs,
     return lastLineBox();
 }
 
-void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs,
-                                                    BidiContext* endEmbed)
+void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, BidiContext* endEmbed)
 {
     // First determine our total width.
     int totWidth = lineBox->getFlowSpacingWidth();
-    BidiRun* r = runs.first();
-    while (r) {
+    BidiRun* r = 0;
+    for (r = sFirstBidiRun; r; r = r->nextRun) {
         if (r->obj->isText())
             r->box->setWidth(static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine));
         else if (!r->obj->isInlineFlow()) {
@@ -594,7 +647,6 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtr
             totWidth += r->obj->marginLeft() + r->obj->marginRight();
         }
         totWidth += r->box->width();
-        r = runs.next();
     }
 
     // Armed with the total width of the line (without justification),
@@ -628,8 +680,7 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtr
             break;
     }
 
-    r = runs.first();
-    while (r) {
+    for (r = sFirstBidiRun; r; r = r->nextRun) {
         int spaceAdd = 0;
         if (numSpaces > 0 && r->obj->isText()) {
             // get the number of spaces in the run
@@ -643,7 +694,6 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtr
             totWidth += spaceAdd;
             static_cast<TextRun*>(r->box)->setSpaceAdd(spaceAdd);
         }
-        r = runs.next();
     }
 
     // The widths of all runs are now known.  We can now place every inline box (and
@@ -651,7 +701,7 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtr
     lineBox->placeBoxesHorizontally(x);
 }
 
-void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs)
+void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox)
 {
     lineBox->verticallyAlignBoxes(m_height);
 
@@ -661,11 +711,8 @@ void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox, QPtrLi
         m_overflowHeight = bottomOfLine;
         
     // Now make sure we place replaced render objects correctly.
-    BidiRun* r = runs.first();
-    while (r) {
+    for (BidiRun* r = sFirstBidiRun; r; r = r->nextRun)
         r->obj->position(r->box, r->start, r->stop - r->start, r->level%2);
-        r = runs.next();
-    }    
 }
 
 // collects one line of the paragraph and transforms it to visual order
@@ -682,10 +729,10 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     kdDebug(6041) << "reordering Line from " << start.obj << "/" << start.pos << " to " << end.obj << "/" << end.pos << endl;
 #endif
 
-    QPtrList<BidiRun> runs;
-    runs.setAutoDelete(false);
-    sruns = &runs;
-
+    sFirstBidiRun = 0;
+    sLastBidiRun = 0;
+    sBidiRunCount = 0;
+    
     //    context->ref();
 
     dir = QChar::DirON;
@@ -1059,14 +1106,13 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     // first find highest and lowest levels
     uchar levelLow = 128;
     uchar levelHigh = 0;
-    BidiRun *r = runs.first();
-
+    BidiRun *r = sFirstBidiRun;
     while ( r ) {
         if ( r->level > levelHigh )
             levelHigh = r->level;
         if ( r->level < levelLow )
             levelLow = r->level;
-        r = runs.next();
+        r = r->nextRun;
     }
 
     // implements reordering of the line (L2 according to Bidi spec):
@@ -1085,30 +1131,25 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
         kdDebug(6041) << "    " << r2 << "  start=" << r2->start << "  stop=" << r2->stop << "  level=" << (uint)r2->level << endl;
 #endif
 
-    int count = runs.count() - 1;
+    int count = sBidiRunCount - 1;
 
     // do not reverse for visually ordered web sites
     if(!style()->visuallyOrdered()) {
         while(levelHigh >= levelLow) {
             int i = 0;
+            BidiRun* currRun = sFirstBidiRun;
             while ( i < count ) {
-                while(i < count && runs.at(i)->level < levelHigh)
+                while(i < count && currRun && currRun->level < levelHigh) {
                     i++;
-                int start = i;
-                while(i <= count && runs.at(i)->level >= levelHigh)
-                    i++;
-                int end = i-1;
-
-                if(start != end) {
-                    //kdDebug(6041) << "reversing from " << start << " to " << end << endl;
-                    for(int j = 0; j < (end-start+1)/2; j++)
-                        {
-                            BidiRun *first = runs.take(start+j);
-                            BidiRun *last = runs.take(end-j-1);
-                            runs.insert(start+j, last);
-                            runs.insert(end-j, first);
-                        }
+                    currRun = currRun->nextRun;
                 }
+                int start = i;
+                while(i <= count && currRun && currRun->level >= levelHigh) {
+                    i++;
+                    currRun = currRun->nextRun;
+                }
+                int end = i-1;
+                reverseRuns(start, end);
                 i++;
                 if(i >= count) break;
             }
@@ -1118,29 +1159,24 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
 
 #if BIDI_DEBUG > 0
     kdDebug(6041) << "visual order is:" << endl;
-    QPtrListIterator<BidiRun> it3(runs);
-    BidiRun *r3;
-    for ( ; (r3 = it3.current()); ++it3 )
-    {
-        kdDebug(6041) << "    " << r3 << endl;
-    }
+    for (BidiRun* curr = sFirstRun; curr; curr = curr->nextRun)
+        kdDebug(6041) << "    " << curr << endl;
 #endif
 
     // Now that the runs have been ordered, we create the line boxes.
     // At the same time we figure out where border/padding/margin should be applied for
     // inline flow boxes.
-    InlineFlowBox* lineBox = constructLine(runs, start, end);
+    InlineFlowBox* lineBox = constructLine(start, end);
     if (!lineBox)
         return;
 
     // Now we position all of our text runs horizontally.
-    computeHorizontalPositionsForLine(lineBox, runs, endEmbed);
+    computeHorizontalPositionsForLine(lineBox, endEmbed);
 
     // Now position our text runs vertically.
-    computeVerticalPositionsForLine(lineBox, runs);
+    computeVerticalPositionsForLine(lineBox);
     
     deleteBidiRuns(renderArena());
-    sruns = 0;
 }
 
 void RenderBlock::layoutInlineChildren(bool relayoutChildren)

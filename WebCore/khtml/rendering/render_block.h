@@ -93,12 +93,10 @@ public:
     // the implementation of the following functions is in bidi.cpp
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start);
-    InlineFlowBox* constructLine(QPtrList<BidiRun>& runs, const BidiIterator& start,
-                                 const BidiIterator& end);
+    InlineFlowBox* constructLine(const BidiIterator& start, const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject* obj);
-    void computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs,
-                                           BidiContext* endEmbed);
-    void computeVerticalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs);
+    void computeHorizontalPositionsForLine(InlineFlowBox* lineBox, BidiContext* endEmbed);
+    void computeVerticalPositionsForLine(InlineFlowBox* lineBox);
     // end bidi.cpp functions
     
     virtual void paint(QPainter *, int x, int y, int w, int h,
