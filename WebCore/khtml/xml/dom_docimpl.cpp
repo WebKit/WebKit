@@ -1236,9 +1236,13 @@ void DocumentImpl::updateSelection()
         canvas->clearSelection();
     }
     else {
-        RenderObject *startRenderer = s.start().node() ? s.start().node()->renderer() : 0;
-        RenderObject *endRenderer = s.end().node() ? s.end().node()->renderer() : 0;
-        static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, s.start().offset(), endRenderer, s.end().offset());
+        Position startPos(s.start().closestRenderedPosition(s.affinity()));
+        Position endPos(s.end().closestRenderedPosition(s.affinity()));
+        if (startPos.notEmpty() && endPos.notEmpty()) {
+            RenderObject *startRenderer = startPos.node()->renderer();
+            RenderObject *endRenderer = endPos.node()->renderer();
+            static_cast<RenderCanvas*>(m_render)->setSelection(startRenderer, startPos.offset(), endRenderer, endPos.offset());
+        }
     }
 }
 

@@ -1,3 +1,31 @@
+2004-07-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fixes for these bugs:
+        
+        <rdar://problem/3723359> Extending then "unextending" selection with arrow keys should draw caret but doesn't
+        <rdar://problem/3724626> White-space deletion code deletes wrong character when space follows span
+        
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::doApply): Modify special-case white-space deletion code so it runs
+        only in the special case. It was throwing its net too widely, catching the case described in 3724626.
+        By tightening up the special-case white-space deletion, and allowing the more general-purpose code to run,
+        the bug is fixed.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection): Use recently-added closestRenderedPosition helper in Position class
+        to figure out the start and end positions for selection drawing.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentUpstreamPosition): Added code to handle white-space that causes line breaks.
+        (DOM::Position::equivalentDownstreamPosition): Ditto.
+        (DOM::Position::closestRenderedPosition): Trap empty selections at function entry, return *this.
+        (DOM::Position::isFirstRenderedPositionOnLine): Can't be first rendered position on line if not rendered.
+        Add check for this.
+        (DOM::Position::isLastRenderedPositionOnLine): Ditto, but s/first/last/
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::validate): A selection is in caret state if the start and end are equal *or* equivalent.
+        The equivalence case is new, and fixes 3723359.
+
 
 2004-07-09  Kevin Decker  <kdecker@apple.com>
 
@@ -9,7 +37,6 @@
         * khtml/css/cssstyleselector.cpp:
         (khtml::CSSStyleSelector::applyProperty):
 
-=======
 2004-07-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

@@ -655,7 +655,7 @@ void Selection::validate(ETextGranularity granularity)
     // adjust the state
     if (start().isEmpty() && end().isEmpty())
         m_state = NONE;
-    else if (start() == end())
+    else if (start() == end() || start().equivalentUpstreamPosition() == end().equivalentUpstreamPosition())
         m_state = CARET;
     else
         m_state = RANGE;

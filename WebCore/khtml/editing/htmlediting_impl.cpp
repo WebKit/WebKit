@@ -1287,7 +1287,7 @@ void DeleteSelectionCommandImpl::doApply()
         LOG(Editing,  "start node delete case 1");
         removeNodeAndPrune(downstreamStart.node(), startBlock);
     }
-    else if (onlyWhitespace) {
+    else if (onlyWhitespace && isWS(upstreamStart)) {
         // Selection only contains whitespace. This is really a special-case to 
         // handle significant whitespace that is collapsed at the end of a line,
         // but also handles deleting a space in mid-line.

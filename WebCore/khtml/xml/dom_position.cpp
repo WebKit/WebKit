@@ -473,6 +473,10 @@ Position Position::equivalentUpstreamPosition() const
             for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset > box->start() && textOffset <= box->start() + box->len())
                     return it.current();
+                else if (box != textRenderer->lastTextBox() && 
+                         !box->nextOnLine() && 
+                         textOffset == box->start() + box->len() + 1)
+                    return it.current();
             }
         }
     }
@@ -519,6 +523,10 @@ Position Position::equivalentDownstreamPosition() const
             for (InlineTextBox *box = textRenderer->firstTextBox(); box; box = box->nextTextBox()) {
                 if (textOffset >= box->start() && textOffset <= box->end())
                     return it.current();
+                else if (box != textRenderer->lastTextBox() && 
+                         !box->nextOnLine() && 
+                         textOffset == box->start() + box->len())
+                    return it.current();
             }
         }
     }
@@ -562,7 +570,7 @@ Position Position::equivalentShallowPosition() const
 
 Position Position::closestRenderedPosition(EAffinity affinity) const
 {
-    if (inRenderedContent())
+    if (isEmpty() || inRenderedContent())
         return *this;
 
     Position pos;
@@ -791,6 +799,9 @@ bool Position::isFirstRenderedPositionOnLine() const
     if (renderer->style()->visibility() != khtml::VISIBLE)
         return false;
     
+    if (!inRenderedContent())
+        return false;
+    
     Position pos(node(), offset());
     PositionIterator it(pos);
     while (!it.atStart()) {
@@ -812,6 +823,9 @@ bool Position::isLastRenderedPositionOnLine() const
         return false;
 
     if (renderer->style()->visibility() != khtml::VISIBLE)
+        return false;
+    
+    if (!inRenderedContent())
         return false;
     
     if (node()->id() == ID_BR)
