@@ -4,6 +4,7 @@
 
 #import <WebKit/WebView.h>
 
+#import <WebKit/WebClipView.h>
 #import <WebKit/WebCookieAdapter.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
@@ -67,6 +68,7 @@ enum {
 
     WebDynamicScrollBarsView *scrollView  = [[WebDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
     _private->frameScrollView = scrollView;
+    [scrollView setContentView: [[[WebClipView alloc] initWithFrame:[scrollView bounds]] autorelease]];
     [scrollView setDrawsBackground: NO];
     [scrollView setHasVerticalScroller: NO];
     [scrollView setHasHorizontalScroller: NO];

@@ -17,7 +17,7 @@
     @class WebHTMLView
     @discussion A document view of WebView that displays HTML content.
 */
-@interface WebHTMLView : NSClipView <WebDocumentView, WebDocumentDragSettings, WebDocumentSearching, WebDocumentTextEncoding>
+@interface WebHTMLView : NSView <WebDocumentView, WebDocumentDragSettings, WebDocumentSearching, WebDocumentTextEncoding>
 {
 @private
     WebHTMLViewPrivate *_private;

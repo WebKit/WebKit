@@ -27,9 +27,6 @@
     
     id savedSubviews;
     BOOL subviewsSetAside;
-    
-    BOOL inDrawRect;
-    NSRect drawRect;
 }
 @end
 

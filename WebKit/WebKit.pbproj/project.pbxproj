@@ -276,6 +276,7 @@
 				5152FAE7033FC52200CA2ACD,
 				5152FAEA033FC53500CA2ACD,
 				511D5554033FD51000CA2ACD,
+				933D659B03413FF2008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -364,6 +365,7 @@
 				5152FAE2033FC50400CA2ACD,
 				5152FAE4033FC50400CA2ACD,
 				5152FAE8033FC52200CA2ACD,
+				933D659C03413FF2008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1299,6 +1301,30 @@
 			settings = {
 			};
 		};
+		933D659903413FF2008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebClipView.h;
+			refType = 4;
+		};
+		933D659A03413FF2008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebClipView.m;
+			refType = 4;
+		};
+		933D659B03413FF2008635CE = {
+			fileRef = 933D659903413FF2008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		933D659C03413FF2008635CE = {
+			fileRef = 933D659A03413FF2008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		93AEB17D032C1735008635CE = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1380,6 +1406,8 @@
 				5152FAE6033FC52200CA2ACD,
 				5152FAE9033FC53500CA2ACD,
 				511D5553033FD51000CA2ACD,
+				933D659903413FF2008635CE,
+				933D659A03413FF2008635CE,
 			);
 			isa = PBXGroup;
 			name = WebView;

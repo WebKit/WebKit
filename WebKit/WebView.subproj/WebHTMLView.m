@@ -6,6 +6,7 @@
 #import <WebKit/WebHTMLView.h>
 
 #import <WebKit/WebBridge.h>
+#import <WebKit/WebClipView.h>
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
@@ -115,11 +116,6 @@
 }
 
 - (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
-- (BOOL)needsPanelToBecomeKey
 {
     return YES;
 }
@@ -355,10 +351,6 @@
         }
     }
     
-    ASSERT(!_private->inDrawRect);
-    _private->inDrawRect = YES;
-    _private->drawRect = rect;
-
     [self reapplyStyles];
 
     [self layout];
@@ -370,6 +362,9 @@
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(rect);
 
+    ASSERT([[self superview] isKindOfClass:[WebClipView class]]);
+    [(WebClipView *)[self superview] setAdditionalClip:rect];
+    
     NSView *focusView = [NSView focusView];
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
         [[WebTextRendererFactory sharedFactory] startCoalesceTextDrawing];
@@ -381,6 +376,8 @@
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
         [[WebTextRendererFactory sharedFactory] endCoalesceTextDrawing];
 
+    [(WebClipView *)[self superview] resetAdditionalClip];
+    
     [NSGraphicsContext restoreGraphicsState];
 
 #ifdef DEBUG_LAYOUT
@@ -405,9 +402,6 @@
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
-
-    ASSERT(_private->inDrawRect);
-    _private->inDrawRect = NO;
 
     if (_private->subviewsSetAside) {
         ASSERT(_private->savedSubviews == nil);

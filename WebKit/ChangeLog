@@ -1,3 +1,27 @@
+2002-09-24  Darin Adler  <darin@apple.com>
+
+	- fixed 3059513 -- REGRESSION: Scrolling to fragment doesn't work
+
+	Turns out it was better to just put the extra smarts into the clip view
+	that we are already creating. Making WebHTMLView be a second clip view
+	was silly and broke things.
+
+        * WebView.subproj/WebView.m: (-[WebView initWithFrame:]): Create a WebClipView
+	and use it as the content view rather than the NSClipView created by default.
+
+        * WebKit.pbproj/project.pbxproj: Added WebClipView.
+        * WebView.subproj/WebClipView.h: Added.
+        * WebView.subproj/WebClipView.m: Added.
+
+        * WebView.subproj/WebHTMLView.h: Don't be a subclass of NSClipView any more.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]): Call setAdditionalClip and resetAdditionalClip on
+	the clip view.
+
+        * WebView.subproj/WebHTMLViewPrivate.h: Remove inDrawRect and drawRect.
+        * WebView.subproj/WebHTMLViewPrivate.m: Remove visibleRect override. This is
+	now in WebClipView.
+
 2002-09-24  Chris Blumenberg  <cblu@apple.com>
 
 	More documentation changes.

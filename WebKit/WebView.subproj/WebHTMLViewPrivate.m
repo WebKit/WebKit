@@ -212,15 +212,6 @@ BOOL _modifierTrackingEnabled = FALSE;
     }
 }
 
-- (NSRect)visibleRect
-{
-    NSRect rect = [super visibleRect];
-    if (_private->inDrawRect) {
-        rect = NSIntersectionRect(rect, _private->drawRect);
-    }
-    return rect;
-}
-
 @end
 
 @implementation NSView (WebHTMLViewPrivate)
