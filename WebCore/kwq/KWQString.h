@@ -76,13 +76,14 @@ public:
     QChar();
     QChar(char);
     QChar(uchar);
-    QChar(const QChar &);
-    QChar(ushort);
     QChar(short);
-    QChar(uint);
+    QChar(ushort);
     QChar(int);
+    QChar(uint);
 
-    ~QChar() {}
+    QChar(const QChar &);
+
+    ~QChar();
 
     // member functions --------------------------------------------------------
 
@@ -143,18 +144,21 @@ public:
 
     QString();
     QString(QChar);
-    QString(const QString &);
     QString(const QByteArray &);
     QString(const QChar *, uint);
     QString(const char *);
+
+    QString(const QString &);
+
+    ~QString();
+
+    // assignment operators ----------------------------------------------------
 
     QString &operator=(QChar);
     QString &operator=(const QString &);
     QString &operator=(const char *);
     QString &operator=(const QCString &);
     QString &operator=(char);
-
-    ~QString();
 
     // member functions --------------------------------------------------------
 
@@ -204,7 +208,7 @@ public:
     QCString utf8() const;
     QCString local8Bit() const;
     QString &setUnicode(const QChar *, uint);
-    
+
     QString &setNum(int, int base=10);
     QString &sprintf(const char *, ...);
     QString lower() const;
@@ -230,7 +234,7 @@ public:
 
 // NOTE: this is NOT private:
     CFMutableStringRef s;
-    
+
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
     
@@ -285,8 +289,9 @@ public:
 
 private:
 
-// add assignment operator 
-// this private declaration prevents assignment
+    // assignment operators ----------------------------------------------------
+
+    // private declaration prevents assignment
 #ifdef _KWQ_PEDANTIC_
     // NOTE: assignment operator not needed
     // QConstString &operator=(const QConstString &);

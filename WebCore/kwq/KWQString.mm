@@ -23,7 +23,164 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+// FIXME: obviously many functions here can be made inline
+
 #include <qstring.h>
+
+// FIXME: what's the minimum capacity?
+#define SCRATCH_BUFFER_CAPACITY 10
+
+static UniChar scratchBuffer[SCRATCH_BUFFER_CAPACITY];
+
+static CFMutableStringRef GetScratchBufferString()
+{
+    static CFMutableStringRef s = NULL;
+
+    if (!s) {
+        // FIXME: this string object will be leaked once
+        s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL,
+                scratchBuffer, SCRATCH_BUFFER_CAPACITY,
+                SCRATCH_BUFFER_CAPACITY, kCFAllocatorNull);
+    }
+    return s;
+}
+
+QChar::QChar()
+{
+    c = 0;
+}
+
+QChar::QChar(char ch)
+{
+    // FIXME: does this kind of conversion work?
+    c = ch;
+}
+
+QChar::QChar(uchar uch)
+{
+    // FIXME: does this kind of conversion work?
+    c = uch;
+}
+
+QChar::QChar(short n)
+{
+    c = n;
+}
+
+QChar::QChar(ushort n)
+{
+    c = n;
+}
+
+QChar::QChar(uint n)
+{
+    c = n;
+}
+
+QChar::QChar(int n)
+{
+    c = n;
+}
+
+QChar::QChar(const QChar &qc)
+{
+    c = qc.c;
+}
+
+QChar::~QChar()
+{
+    // do nothing
+}
+
+QChar QChar::lower() const
+{
+    // FIXME: unimplented
+    return *this;
+}
+
+QChar QChar::upper() const
+{
+    // FIXME: unimplented
+    return *this;
+}
+
+char QChar::latin1() const
+{
+    // FIXME: unimplented
+    return 0;
+}
+
+bool QChar::isNull() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+bool QChar::isDigit() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+bool QChar::isSpace() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+bool QChar::isLetter() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+bool QChar::isLetterOrNumber() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+bool QChar::isPunct() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+uchar QChar::cell() const
+{
+    // FIXME: unimplented
+    return 0;
+}
+
+uchar QChar::row() const
+{
+    // FIXME: unimplented
+    return 0;
+}
+
+QChar::Direction QChar::direction() const
+{
+    // FIXME: unimplented
+    return DirL;
+}
+
+bool QChar::mirrored() const
+{
+    // FIXME: unimplented
+    return FALSE;
+}
+
+QChar QChar::mirroredChar() const
+{
+    // FIXME: unimplented
+    return *this;
+}
+
+ushort QChar::unicode() const
+{
+    // FIXME: unimplented
+    return 0;
+}
 
 QString::QString()
 {
@@ -65,8 +222,10 @@ QString::~QString()
 QConstString::QConstString(QChar *qc, uint len)
 {
     if (qc || len) {
-        // FIXME: do we ever need to worry about deallocating the contents?
-        s = const_cast<CFMutableStringRef>(CFStringCreateWithCharactersNoCopy(NULL, &qc->c, len, kCFAllocatorNull));
+        // NOTE: use instead of CFStringCreateWithCharactersNoCopy function to
+        // guarantee backing store is not copied even though string is mutable
+        s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, &qc->c,
+                len, len, kCFAllocatorNull);
     } else {
         s = NULL;
     }
