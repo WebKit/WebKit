@@ -1,3 +1,10 @@
+2002-03-21  John Sullivan  <sullivan@apple.com>
+
+	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]):
+	Commented out call to applyChanges that no longer exists.
+	This was breaking the build. Live font changes are
+	temporarily broken again.
+
 2002-03-20  Maciej Stachowiak  <mjs@apple.com>
 
 	Merged the following changes from LABYRINTH_KDE_3_MERGE branch:
