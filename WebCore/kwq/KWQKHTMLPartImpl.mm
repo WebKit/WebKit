@@ -389,6 +389,11 @@ bool KHTMLPart::openURL( const KURL &url )
     NSURL *theURL;
     
     urlString = [NSString stringWithCString:d->m_workingURL.url().latin1()];
+    // FIXME: temporary hack to make file: URLs work right
+    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
+	urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+    }
+
     if ([urlString hasSuffix:@"/"]) {
         urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
@@ -416,6 +421,10 @@ bool KHTMLPart::closeURL()
     NSString *urlString;
     
     urlString = [NSString stringWithCString:d->m_url.url().latin1()];
+    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
+	urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+    }
+
     if ([urlString hasSuffix:@"/"]) {
         urlString = [urlString substringToIndex:([urlString length] - 1)];
     }
@@ -1665,22 +1674,26 @@ void KHTMLPart::checkCompleted()
 {
     int requests;
     
+    NSString *urlString;
+    urlString = [NSString stringWithCString:d->m_url.url().latin1()];
+    if ([urlString hasPrefix:@"file:/"] && [urlString characterAtIndex:6] != '/') {
+	urlString = [@"file:///" stringByAppendingString:[urlString substringFromIndex:6]];
+    }
+    
+    if ([urlString hasSuffix:@"/"]) {
+	urlString = [urlString substringToIndex:([urlString length] - 1)];
+    }
     
     // Still waiting for images/scripts from the loader ?
-    requests = khtml::Cache::loader()->numRequests(d->m_url.url().latin1());
+    requests = khtml::Cache::loader()->numRequests([urlString cString]);
     if (requests == 0) {
         // FIXME: check for same URL with slash appended
         // We should not have to do this
-        QString urlString = d->m_url.url();
-        urlString += '/';
-        requests = khtml::Cache::loader()->numRequests(urlString);
+        QString qurlString = [urlString cString];
+        qurlString += '/';
+        requests = khtml::Cache::loader()->numRequests(qurlString);
     }
     if (requests == 0) {
-        NSString *urlString;
-        urlString = [NSString stringWithCString:d->m_url.url().latin1()];
-        if ([urlString hasSuffix:@"/"]) {
-            urlString = [urlString substringToIndex:([urlString length] - 1)];
-        }
         // remove us from the notification center that checks for the end of a load
         [[NSNotificationCenter defaultCenter] removeObserver:d->m_recv name:urlString object:nil];
         // tell anyone who's interested that we're done

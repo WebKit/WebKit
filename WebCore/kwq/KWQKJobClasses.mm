@@ -94,6 +94,14 @@ public:
 
         // FIXME: create NSURL for now, later KURL and NSURL should play better together
         NSString *string = [NSString stringWithCString:kurl.url().latin1()];
+	// FIXME: temporary hack to make file: URLs work right
+	if ([string hasPrefix:@"file:/"] && [string characterAtIndex:6] != '/') {
+	    string = [@"file:///" stringByAppendingString:[string substringFromIndex:6]];
+	}
+	if ([string hasSuffix:@"/"]) {
+	    string = [string substringToIndex:([string length] - 1)];
+	}
+
         url = [[NSURL URLWithString:string] retain];
     }
 
@@ -174,3 +182,5 @@ void TransferJob::begin(id <WCURLHandleClient> client, void *userData)
 }
 
 } // namespace KIO
+
+

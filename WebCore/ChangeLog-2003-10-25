@@ -1,5 +1,16 @@
 2002-02-12  Maciej Stachowiak  <mjs@apple.com>
 
+	Make some tweaks to glue together KDE's and CF's concepts of URLs
+	a bit better. In particular, CF thinks "file:/some/path" is an
+	invalid URL, while KDE thinks this is the canonical form for a
+	file URL.
+
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::openURL), (KHTMLPart::closeURL),
+	(KHTMLPart::checkCompleted):
+	* src/kwq/KWQKjobclasses.mm:
+
+2002-02-12  Maciej Stachowiak  <mjs@apple.com>
+
 	Reimplemented QList, QVector and QCollection from
 	scratch. Implemented copy-on-write optimization for QMap.
 
