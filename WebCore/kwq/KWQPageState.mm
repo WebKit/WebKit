@@ -39,10 +39,11 @@ using DOM::DocumentImpl;
 using khtml::RenderObject;
 
 using KJS::SavedProperties;
+using KJS::SavedBuiltins;
 
 @implementation KWQPageState
 
-- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp
+- initWithDocument:(DocumentImpl *)doc URL:(const KURL &)u windowProperties:(SavedProperties *)wp locationProperties:(SavedProperties *)lp interpreterBuiltins:(SavedBuiltins *)ib
 {
     [super init];
     doc->ref();
@@ -53,6 +54,7 @@ using KJS::SavedProperties;
     URL = new KURL(u);
     windowProperties = wp;
     locationProperties = lp;
+    interpreterBuiltins = ib;
     return self;
 }
 
@@ -108,6 +110,8 @@ using KJS::SavedProperties;
     windowProperties = 0;
     delete locationProperties;
     locationProperties = 0;
+    delete interpreterBuiltins;
+    interpreterBuiltins = 0;
 }
 
 - (void)dealloc
@@ -131,6 +135,7 @@ using KJS::SavedProperties;
     delete URL;
     delete windowProperties;
     delete locationProperties;
+    delete interpreterBuiltins;
     
     [self _cleanupPausedActions];
 
@@ -155,6 +160,11 @@ using KJS::SavedProperties;
 - (SavedProperties *)locationProperties
 {
     return locationProperties;
+}
+
+- (SavedBuiltins *)interpreterBuiltins
+{
+    return interpreterBuiltins;
 }
 
 - (RenderObject *)renderer

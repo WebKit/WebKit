@@ -43,6 +43,7 @@ namespace khtml {
 
 namespace KJS {
     class SavedProperties;
+    class SavedBuiltins;
     class ScheduledAction;
 }
 
@@ -118,6 +119,9 @@ public:
     void saveLocationProperties(KJS::SavedProperties *locationProperties);
     void restoreWindowProperties(KJS::SavedProperties *windowProperties);
     void restoreLocationProperties(KJS::SavedProperties *locationProperties);
+    void saveInterpreterBuiltins(KJS::SavedBuiltins &interpreterBuiltins);
+    void restoreInterpreterBuiltins(const KJS::SavedBuiltins &interpreterBuiltins);
+
     void openURLFromPageCache(KWQPageState *state);
 
     void saveDocumentState();

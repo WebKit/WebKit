@@ -77,6 +77,7 @@ using khtml::RenderStyle;
 using khtml::RenderCanvas;
 
 using KJS::SavedProperties;
+using KJS::SavedBuiltins;
 
 using KParts::URLArgs;
 
@@ -269,10 +270,14 @@ static bool initializedObjectCacheSize = FALSE;
     SavedProperties *locationProperties = new SavedProperties;
     _part->saveLocationProperties(locationProperties);
     
+    SavedBuiltins *interpreterBuiltins = new SavedBuiltins;
+    _part->saveInterpreterBuiltins(*interpreterBuiltins);
+
     KWQPageState *pageState = [[[KWQPageState alloc] initWithDocument:doc
                                                                   URL:_part->m_url
                                                      windowProperties:windowProperties
-                                                   locationProperties:locationProperties] autorelease];
+                                                   locationProperties:locationProperties
+				                  interpreterBuiltins:interpreterBuiltins] autorelease];
 
 
     [pageState setPausedActions: _part->pauseActions((const void *)pageState)];

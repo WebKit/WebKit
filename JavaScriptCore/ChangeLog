@@ -1,3 +1,25 @@
+2003-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3302021 - v74 and v85 hang with http://e-www.motorola.com/
+
+	The crux of this was saving and restoring the prototype objects
+	for all the standard types when saving and restoring for the page
+	cache.
+	
+        * kjs/internal.cpp:
+        (InterpreterImp::saveBuiltins):
+        (InterpreterImp::restoreBuiltins):
+        * kjs/internal.h:
+        * kjs/interpreter.cpp:
+        (Interpreter::saveBuiltins):
+        (Interpreter::restoreBuiltins):
+        (SavedBuiltins::SavedBuiltins):
+        (SavedBuiltins::~SavedBuiltins):
+        * kjs/interpreter.h:
+        * kjs/property_map.cpp:
+
 2003-07-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -555,12 +555,12 @@ void PropertyMap::save(SavedProperties &p) const
 
     if (!_table) {
 #if USE_SINGLE_ENTRY
-        if (_singleEntry.key && !(_singleEntry.attributes & (ReadOnly | DontEnum | Function)))
+        if (_singleEntry.key && !(_singleEntry.attributes & (ReadOnly | Function)))
             ++count;
 #endif
     } else {
         for (int i = 0; i != _table->size; ++i)
-            if (_table->entries[i].key && !(_table->entries[i].attributes & (ReadOnly | DontEnum | Function)))
+            if (_table->entries[i].key && !(_table->entries[i].attributes & (ReadOnly | Function)))
                 ++count;
     }
 
@@ -579,7 +579,7 @@ void PropertyMap::save(SavedProperties &p) const
     
     if (!_table) {
 #if USE_SINGLE_ENTRY
-        if (_singleEntry.key && !(_singleEntry.attributes & (ReadOnly | DontEnum | Function))) {
+        if (_singleEntry.key && !(_singleEntry.attributes & (ReadOnly | Function))) {
             prop->key = Identifier(_singleEntry.key);
             prop->value = Value(_singleEntry.value);
             prop->attributes = _singleEntry.attributes;
@@ -602,7 +602,7 @@ void PropertyMap::save(SavedProperties &p) const
         Entry **p = sortedEntries;
         for (int i = 0; i != _table->size; ++i) {
             Entry *e = &_table->entries[i];
-            if (e->key && !(e->attributes & (ReadOnly | DontEnum | Function)))
+            if (e->key && !(e->attributes & (ReadOnly | Function)))
                 *p++ = e;
         }
         assert(p - sortedEntries == count);

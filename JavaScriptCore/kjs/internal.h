@@ -211,6 +211,44 @@ namespace KJS {
     static int sid;
   };
 
+  class SavedBuiltinsInternal {
+    friend class InterpreterImp;
+  private:
+    Object b_Object;
+    Object b_Function;
+    Object b_Array;
+    Object b_Boolean;
+    Object b_String;
+    Object b_Number;
+    Object b_Date;
+    Object b_RegExp;
+    Object b_Error;
+
+    Object b_ObjectPrototype;
+    Object b_FunctionPrototype;
+    Object b_ArrayPrototype;
+    Object b_BooleanPrototype;
+    Object b_StringPrototype;
+    Object b_NumberPrototype;
+    Object b_DatePrototype;
+    Object b_RegExpPrototype;
+    Object b_ErrorPrototype;
+
+    Object b_evalError;
+    Object b_rangeError;
+    Object b_referenceError;
+    Object b_syntaxError;
+    Object b_typeError;
+    Object b_uriError;
+
+    Object b_evalErrorPrototype;
+    Object b_rangeErrorPrototype;
+    Object b_referenceErrorPrototype;
+    Object b_syntaxErrorPrototype;
+    Object b_typeErrorPrototype;
+    Object b_uriErrorPrototype;
+  };
+
   class InterpreterImp {
     friend class Collector;
   public:
@@ -279,6 +317,9 @@ namespace KJS {
     InterpreterImp *prevInterpreter() const { return prev; }
     
     void setContext(ContextImp *c) { _context = c; }
+
+    void saveBuiltins (SavedBuiltins &builtins) const;
+    void restoreBuiltins (const SavedBuiltins &builtins);
 
   private:
     void clear();

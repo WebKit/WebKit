@@ -1,3 +1,27 @@
+2003-07-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3302021 - v74 and v85 hang with http://e-www.motorola.com/
+	- fixed a bug with saving and restoring location object properties
+	
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::saveLocationProperties): Save the location object's properties, not
+	the window's (!)
+        (KWQKHTMLPart::saveInterpreterBuiltins): New function to save builtin properties of
+	the interpeter.
+        (KWQKHTMLPart::restoreInterpreterBuiltins): Similarly to restore them.
+        (KWQKHTMLPart::openURLFromPageCache): Restore interpreter builtins too.
+        * kwq/KWQPageState.h:
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:interpreterBuiltins:]): Handle interpreter builtins.
+        (-[KWQPageState invalidate]): Likewise.
+        (-[KWQPageState dealloc]): Likewise.
+        (-[KWQPageState interpreterBuiltins]): New method.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]): Handle interpeter builtins.
+
 2003-07-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

@@ -80,6 +80,7 @@ using khtml::VISIBLE;
 using KIO::Job;
 
 using KJS::SavedProperties;
+using KJS::SavedBuiltins;
 using KJS::ScheduledAction;
 using KJS::Window;
 
@@ -950,7 +951,7 @@ void KWQKHTMLPart::saveLocationProperties(SavedProperties *locationProperties)
 {
     Window *window = Window::retrieveWindow(this);
     if (window)
-        window->saveProperties(*locationProperties);
+        window->location()->saveProperties(*locationProperties);
     else
         ERROR("NULL window");
 }
@@ -973,6 +974,16 @@ void KWQKHTMLPart::restoreLocationProperties(SavedProperties *locationProperties
         ERROR("NULL window");
 }
 
+void KWQKHTMLPart::saveInterpreterBuiltins(SavedBuiltins &interpreterBuiltins)
+{
+    jScript()->interpreter()->saveBuiltins(interpreterBuiltins);
+}
+
+void KWQKHTMLPart::restoreInterpreterBuiltins(const SavedBuiltins &interpreterBuiltins)
+{
+    jScript()->interpreter()->restoreBuiltins(interpreterBuiltins);
+}
+
 void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
 {
     DocumentImpl *doc = [state document];
@@ -980,6 +991,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     KURL *url = [state URL];
     SavedProperties *windowProperties = [state windowProperties];
     SavedProperties *locationProperties = [state locationProperties];
+    SavedBuiltins *interpreterBuiltins = [state interpreterBuiltins];
     QMap<int, ScheduledAction*> *actions = [state pausedActions];
     
     cancelRedirection();
@@ -1037,6 +1049,7 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
         
     restoreWindowProperties (windowProperties);
     restoreLocationProperties (locationProperties);
+    restoreInterpreterBuiltins (*interpreterBuiltins);
 
     if (actions)
         resumeActions (actions, state);

@@ -106,6 +106,17 @@ namespace KJS {
     ContextImp *rep;
   };
 
+  class SavedBuiltinsInternal;
+
+  class SavedBuiltins {
+    friend class InterpreterImp;
+  public:
+    SavedBuiltins();
+    ~SavedBuiltins();
+  private:
+    SavedBuiltinsInternal *_internal;
+  };
+
   /**
    * Interpreter objects can be used to evaluate ECMAScript code. Each
    * interpreter has a global object which is used for the purposes of code
@@ -344,6 +355,9 @@ namespace KJS {
     static void setShouldPrintExceptions(bool);
 #endif
 
+    void saveBuiltins (SavedBuiltins &) const;
+    void restoreBuiltins (const SavedBuiltins &);
+    
   private:
     InterpreterImp *rep;
 

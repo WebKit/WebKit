@@ -49,16 +49,18 @@ namespace KJS {
     KURL *URL;
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
+    KJS::SavedBuiltins *interpreterBuiltins;
     khtml::RenderObject *docRenderer; 
     QMap<int, KJS::ScheduledAction*> *pausedActions;
 }
 
-- initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp;
+- initWithDocument:(DOM::DocumentImpl *)doc URL:(const KURL &)u windowProperties:(KJS::SavedProperties *)wp locationProperties:(KJS::SavedProperties *)lp interpreterBuiltins:(KJS::SavedBuiltins *)ib;
 
 - (DOM::DocumentImpl *)document;
 - (KURL *)URL;
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;
+- (KJS::SavedBuiltins *)interpreterBuiltins;
 - (khtml::RenderObject *)renderer;
 - (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa;
 - (QMap<int, KJS::ScheduledAction*> *)pausedActions;

@@ -331,5 +331,26 @@ void Interpreter::setShouldPrintExceptions(bool print)
 }
 #endif
 
+void Interpreter::saveBuiltins (SavedBuiltins &builtins) const
+{
+  rep->saveBuiltins(builtins);
+}
+
+void Interpreter::restoreBuiltins (const SavedBuiltins &builtins)
+{
+  rep->restoreBuiltins(builtins);
+}
+
+SavedBuiltins::SavedBuiltins() : 
+  _internal(0)
+{
+}
+
+SavedBuiltins::~SavedBuiltins()
+{
+  delete _internal;
+}
+
+
 void Interpreter::virtual_hook( int, void* )
 { /*BASE::virtual_hook( id, data );*/ }
