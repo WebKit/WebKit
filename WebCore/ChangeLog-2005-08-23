@@ -1,3 +1,18 @@
+2005-01-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3966311> REGRESSION (Mail): Hitting return makes space character disappear
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): When writing the code to insert a block
+        in response to the return key, I did not write code to cover the case described in the bug.
+        Now I have.
+        * layout-tests/editing/inserting/insert-div-025-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-025.html: Added.
+
 2005-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.
