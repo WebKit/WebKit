@@ -54,6 +54,8 @@
     
         path = [[thePath stringByStandardizingPath] copy];
         isOpen = NO;
+        sizeLimit = 0;
+        usage = 0;
     
         return self;
     }
@@ -100,6 +102,27 @@
 -(BOOL)isOpen
 {
     return isOpen;
+}
+
+-(unsigned)count
+{
+    NSRequestConcreteImplementation(self, _cmd, [IFDatabase class]);
+    return 0;
+}
+
+-(unsigned)sizeLimit
+{
+    return sizeLimit;
+}
+
+-(void)setSizeLimit:(unsigned)limit
+{
+    NSRequestConcreteImplementation(self, _cmd, [IFDatabase class]);
+}
+
+-(unsigned)usage
+{
+    return usage;
 }
 
 @end

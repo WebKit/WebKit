@@ -13,6 +13,8 @@
 #import "IFURLCacheLoaderConstantsPrivate.h"
 #import "WebFoundationDebug.h"
 
+#define SIZE_FILE_NAME @".size"
+
 static NSNumber *IFURLFileDirectoryPosixPermissions;
 static NSNumber *IFURLFilePosixPermissions;
 
@@ -24,6 +26,7 @@ typedef enum
 
 enum
 {
+    MAX_UNSIGNED_LENGTH = 20, // long enough to hold the string representation of a 64-bit unsigned number
     SYNC_INTERVAL = 5,
     SYNC_IDLE_THRESHOLD = 5,
 };
@@ -45,9 +48,7 @@ enum
 // implementation IFURLFileReader -------------------------------------------------------------
 
 /*
- * FIXME: This is a bad hack which really should go away.
- * Here we're using private API to hold us over until
- * this API is made public (which is planned).
+ * FIXME: [kocienda] Radar 2922673 (Remove use of private NSData interface in IFURLFileDatabase.m)
  */
 @interface NSData (IFExtensions)
 - (id)initWithBytes:(void *)bytes length:(unsigned)length copy:(BOOL)copy freeWhenDone:(BOOL)freeBytes bytesAreVM:(BOOL)vm;
@@ -242,50 +243,20 @@ static void URLFileReaderInit(void)
 @end
 
 
-// implementation IFURLFileDatabase -------------------------------------------------------------
+// interface IFURLFileDatabasePrivate -----------------------------------------------------------
 
-@implementation IFURLFileDatabase
+@interface IFURLFileDatabase (IFURLFileDatabasePrivate)
 
-// creation functions ---------------------------------------------------------------------------
-#pragma mark creation functions
++(NSString *)uniqueFilePathForKey:(id)key;
+-(void)writeSizeFile:(unsigned)value;
+-(unsigned)readSizeFile;
+-(void)truncateToSizeLimit:(unsigned)size;
 
-+(void)initialize
-{
-    // set file perms to owner read/write/execute only
-    IFURLFileDirectoryPosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE | IF_UEXEC)] retain];
+@end
 
-    // set file perms to owner read/write only
-    IFURLFilePosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE)] retain];
-}
+// implementation IFURLFileDatabasePrivate ------------------------------------------------------
 
--(id)initWithPath:(NSString *)thePath
-{
-    if ((self = [super initWithPath:thePath])) {
-    
-        ops = [[NSMutableArray alloc] init];
-        setCache = [[NSMutableDictionary alloc] init];
-        removeCache = [[NSMutableSet alloc] init];
-        timer = nil;
-        mutex = [[NSLock alloc] init];
-
-        return self;
-    }
-    
-    [self release];
-    return nil;
-}
-
--(void)dealloc
-{
-    [self close];
-    [self sync];
-    
-    [setCache release];
-    [removeCache release];
-    [mutex release];
-
-    [super dealloc];
-}
+@implementation IFURLFileDatabase (IFURLFileDatabasePrivate)
 
 +(NSString *)uniqueFilePathForKey:(id)key
 {
@@ -313,6 +284,147 @@ static void URLFileReaderInit(void)
 
     // create the path and return it
     return [NSString stringWithFormat:@"%.2u/%.2u/%.10u-%.10u.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2];
+}
+
+
+-(void)writeSizeFile:(unsigned)value
+{
+    void *buf;
+    int fd;
+    
+    [mutex lock];
+    
+    fd = open(sizeFilePath, O_WRONLY | O_CREAT, [IFURLFilePosixPermissions intValue]);
+    if (fd > 0) {
+        buf = calloc(1, MAX_UNSIGNED_LENGTH);
+        sprintf(buf, "%d", value);
+        write(fd, buf, MAX_UNSIGNED_LENGTH);
+        free(buf);
+        close(fd);
+    }
+    
+    [mutex unlock];
+}
+
+-(unsigned)readSizeFile
+{
+    unsigned result;
+    void *buf;
+    int fd;
+    
+    result = 0;
+
+    [mutex lock];
+    
+    fd = open(sizeFilePath, O_RDONLY, 0);
+    if (fd > 0) {
+        buf = calloc(1, MAX_UNSIGNED_LENGTH);
+        read(fd, buf, MAX_UNSIGNED_LENGTH);
+        result = strtol(buf, NULL, 10);
+        free(buf);
+        close(fd);
+    }
+    
+    [mutex unlock];
+
+    return result;
+}
+
+-(void)truncateToSizeLimit:(unsigned)size
+{
+    NSFileManager *defaultManager;
+    NSDirectoryEnumerator *enumerator;
+    NSString *filePath;
+    NSString *fullFilePath;
+    NSDictionary *attributes;
+    NSNumber *fileSize;
+    
+    if (size > usage) {
+        return;
+    }
+
+    if (size == 0) {
+        [self removeAllObjects];
+    }
+    else {
+        defaultManager = [NSFileManager defaultManager];
+        [mutex lock];
+        enumerator = [defaultManager enumeratorAtPath:path];
+        while (usage > size) {
+            filePath = [enumerator nextObject];
+            if (filePath == nil) {
+                break;
+            }
+            if ([filePath isEqualToString:SIZE_FILE_NAME]) {
+                continue;
+            }
+            
+            fullFilePath = [[NSString alloc] initWithFormat:@"%@/%@", path, filePath];
+            attributes = [defaultManager fileAttributesAtPath:fullFilePath traverseLink:YES];
+            if (attributes) {
+                if ([[attributes objectForKey:NSFileType] isEqualToString:NSFileTypeRegular]) {
+                    fileSize = [attributes objectForKey:NSFileSize];
+                    if (fileSize) {
+                        usage -= [fileSize unsignedIntValue];
+                        WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "truncateToSizeLimit - %u - %u - %u, %s", size, usage, [fileSize unsignedIntValue], DEBUG_OBJECT(fullFilePath));
+                        [defaultManager removeFileAtPath:fullFilePath handler:nil];
+                    }
+                }
+            }
+            [fullFilePath release];
+        }
+        [self writeSizeFile:usage];
+        [mutex unlock];
+    }
+}
+
+@end
+
+
+// implementation IFURLFileDatabase -------------------------------------------------------------
+
+@implementation IFURLFileDatabase
+
+// creation functions ---------------------------------------------------------------------------
+#pragma mark creation functions
+
++(void)initialize
+{
+    // set file perms to owner read/write/execute only
+    IFURLFileDirectoryPosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE | IF_UEXEC)] retain];
+
+    // set file perms to owner read/write only
+    IFURLFilePosixPermissions = [[NSNumber numberWithInt:(IF_UREAD | IF_UWRITE)] retain];
+}
+
+-(id)initWithPath:(NSString *)thePath
+{
+    if ((self = [super initWithPath:thePath])) {
+    
+        ops = [[NSMutableArray alloc] init];
+        setCache = [[NSMutableDictionary alloc] init];
+        removeCache = [[NSMutableSet alloc] init];
+        timer = nil;
+        mutex = [[NSRecursiveLock alloc] init];
+        sizeFilePath = NULL;
+        
+        return self;
+    }
+    
+    [self release];
+    return nil;
+}
+
+-(void)dealloc
+{
+    [self close];
+    [self sync];
+    
+    [setCache release];
+    [removeCache release];
+    [mutex release];
+
+    [super dealloc];
 }
 
 -(void)setTimer
@@ -367,6 +479,7 @@ static void URLFileReaderInit(void)
     [self close];
     [[NSFileManager defaultManager] _IF_backgroundRemoveFileAtPath:path];
     [self open];
+    [self writeSizeFile:0];
     [mutex unlock];
 
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "removeAllObjects");
@@ -482,15 +595,29 @@ static void URLFileReaderInit(void)
 
     [archiver release];
     [filePath release];
+    
+    usage += [data length];
+    [self writeSizeFile:usage];
+    [self truncateToSizeLimit:[self sizeLimit]];
 }
 
 -(void)performRemoveObjectForKey:(id)key
 {
     NSString *filePath;
-
+    NSDictionary *attributes;
+    NSNumber *size;
+    
     WEBFOUNDATIONDEBUGLEVEL(WebFoundationLogDiskCacheActivity, "performRemoveObjectForKey - %s", DEBUG_OBJECT(key));
 
     filePath = [[NSString alloc] initWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    attributes = [[NSFileManager defaultManager] fileAttributesAtPath:filePath traverseLink:YES];
+    if (attributes) {
+        size = [attributes objectForKey:NSFileSize];
+        if (size) {
+            usage -= [size unsignedIntValue];
+            [self writeSizeFile:usage];
+        }
+    }
     [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
     [filePath release];
 }
@@ -503,6 +630,8 @@ static void URLFileReaderInit(void)
     NSFileManager *manager;
     NSDictionary *attributes;
     BOOL isDir;
+    const char *tmp;
+    NSString *sizeFilePathString;
     
     if (!isOpen) {
         manager = [NSFileManager defaultManager];
@@ -527,6 +656,12 @@ static void URLFileReaderInit(void)
                 isOpen = [manager _IF_createDirectoryAtPathWithIntermediateDirectories:path attributes:attributes];
             }
         }
+
+        sizeFilePathString = [NSString stringWithFormat:@"%@/%@", path, SIZE_FILE_NAME];
+        tmp = [[NSFileManager defaultManager] fileSystemRepresentationWithPath:sizeFilePathString];
+        sizeFilePath = malloc(strlen(tmp) + 1);
+        strcpy(sizeFilePath, tmp);
+        usage = [self readSizeFile];
     }
     
     return isOpen;
@@ -536,6 +671,11 @@ static void URLFileReaderInit(void)
 {
     if (isOpen) {
         isOpen = NO;
+
+        if (sizeFilePath) {
+            free(sizeFilePath);
+            sizeFilePath = NULL;
+        }
     }
     
     return YES;
@@ -603,6 +743,20 @@ static void URLFileReaderInit(void)
     for (i = 0; i < opCount; i++) {
         op = [array objectAtIndex:i];
         [op perform:self];
+    }
+}
+
+-(unsigned)count
+{
+    // FIXME: [kocienda] Radar 2922874 (On-disk cache does not know how many elements it is storing)
+    return 0;
+}
+
+-(void)setSizeLimit:(unsigned)limit
+{
+    sizeLimit = limit;
+    if (limit < usage) {
+        [self truncateToSizeLimit:limit];
     }
 }
 

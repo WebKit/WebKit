@@ -13,7 +13,8 @@
     NSMutableSet *removeCache;
     NSTimer *timer;
     NSTimeInterval touch;
-    NSLock *mutex;
+    NSRecursiveLock *mutex;
+    char *sizeFilePath;
 }
 
 -(void)performSetObject:(id)object forKey:(id)key;
