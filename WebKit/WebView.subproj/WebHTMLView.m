@@ -81,6 +81,9 @@
 
 static BOOL forceRealHitTest = NO;
 
+@interface WebHTMLView (WebTextSizing) <_web_WebDocumentTextSizing>
+@end
+
 @interface WebHTMLView (WebFileInternal)
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths;
 - (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
