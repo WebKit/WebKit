@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,12 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <KWQInvisibleButton.h>
 
-#include <kwqdebug.h>
-#include <qevent.h>
-#include <khtmlview.h>
-#include <xml/dom2_eventsimpl.h>
+#import <KWQInvisibleButton.h>
+
+#import <kwqdebug.h>
+#import <qevent.h>
+#import <khtmlview.h>
+#import <rendering/render_form.h>
+#import <xml/dom2_eventsimpl.h>
 
 @interface InvisibleButtonView : NSView
 {

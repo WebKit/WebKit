@@ -1,3 +1,10 @@
+2002-06-07  Darin Adler  <darin@apple.com>
+
+	Try to make Jersey work again.
+
+	* kwq/KWQInvisibleButton.h: Simplify includes.
+	* kwq/KWQInvisibleButton.mm: Simplify includes.
+
 2002-06-05  Darin Adler  <darin@apple.com>
 
 	Some fixes to speed up the citibank.com page, and other related changes.
