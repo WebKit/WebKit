@@ -669,17 +669,17 @@ public:
   /**
    * Returns whether editing should end in the given range
    */
-  bool shouldBeginEditing(const DOM::Range &) const;
+  virtual bool shouldBeginEditing(const DOM::Range &) const;
 
   /**
    * Returns whether editing should end in the given range
    */
-  bool shouldEndEditing(const DOM::Range &) const;
+  virtual bool shouldEndEditing(const DOM::Range &) const;
 
   /**
    * Returns the contentEditable "override" value for the part
    */
-  bool isContentEditable() const;
+  virtual bool isContentEditable() const;
 
   /**
    * Returns the most recent edit command applied.

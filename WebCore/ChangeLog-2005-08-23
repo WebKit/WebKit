@@ -1,3 +1,17 @@
+2004-10-14  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Ken
+	
+	This change makes these three functions virtual so that the work is being done in KWQHTMLPart 
+        instead of khtml_part, eliminating the need for the "#if APPLE_CHANGES" statements in the khtml code.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::shouldBeginEditing):
+        (KHTMLPart::shouldEndEditing):
+        (KHTMLPart::isContentEditable):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.h:
+
 2004-10-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

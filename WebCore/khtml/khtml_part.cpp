@@ -4954,29 +4954,17 @@ void KHTMLPart::selectAll()
 
 bool KHTMLPart::shouldBeginEditing(const Range &range) const
 {
-#if APPLE_CHANGES
-    return KWQ(this)->shouldBeginEditing(range);
-#else
     return true;
-#endif
 }
 
 bool KHTMLPart::shouldEndEditing(const Range &range) const
 {
-#if APPLE_CHANGES
-    return KWQ(this)->shouldEndEditing(range);
-#else
     return true;
-#endif
 }
 
 bool KHTMLPart::isContentEditable() const 
 {
-#if APPLE_CHANGES
-    return KWQ(this)->isContentEditable();
-#else
     return false;
-#endif
 }
 
 EditCommandPtr KHTMLPart::lastEditCommand()

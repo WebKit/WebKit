@@ -334,9 +334,9 @@ public:
     void issuePasteCommand();
     void respondToChangedSelection(const khtml::Selection &oldSelection, bool closeTyping);
     void respondToChangedContents();
-    bool isContentEditable() const;
-    bool shouldBeginEditing(const DOM::Range &) const;
-    bool shouldEndEditing(const DOM::Range &) const;
+    virtual bool isContentEditable() const;
+    virtual bool shouldBeginEditing(const DOM::Range &) const;
+    virtual bool shouldEndEditing(const DOM::Range &) const;
 
     KJS::Bindings::RootObject *executionContextForDOM();
     KJS::Bindings::RootObject *bindingRootObject();
