@@ -185,7 +185,7 @@ static NSMutableDictionary *metricsCache = nil;
     int i, count;
     NSArray *stringKeys;
     NSString *string;
-    id KWQLayoutFragment>fragment;
+    id <KWQLayoutFragment>fragment;
 
     if (fragCache == nil){
         fprintf (stdout, "Fragment cache empty\n");
@@ -274,16 +274,11 @@ static NSMutableDictionary *metricsCache = nil;
 
 - (NSRect)rectForString:(NSString *)string
  {
-    id <KWQLayoutFragment> cachedFragment, fragment;
+    id <KWQLayoutFragment> cachedFragment;
 
     cachedFragment = [textStorage getFragmentForString: string];
-    if (cachedFragment != nil){
-        return [cachedFragment boundingRect];
-    }
-
-    fragment = [textStorage addFragmentForString: string];
     
-    return [fragment boundingRect];
+    return [cachedFragment boundingRect];
 }
 
 

@@ -1,5 +1,17 @@
 2002-03-14  Richard Williamson  <rjw@apple.com>
 
+        Attempted implementation of space optimizations.  Disabled for now.
+        
+	* src/kwq/KWQFontMetrics.mm: (+[KWQLayoutInfo _dumpLayoutCache:]),
+	(-[KWQLayoutInfo rectForString:]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQTextStorage.h:
+	* src/kwq/KWQTextStorage.mm: (-[KWQTextStorage _buildFragmentForString:]),
+	(-[KWQTextStorage getFragmentForString:]), (-[KWQTextStorage
+	initWithFontAttribute:]), (-[KWQTextStorage addLayoutManager:]):
+
+2002-03-14  Richard Williamson  <rjw@apple.com>
+
         Implemented a progressively cache fragment.
         
 	* src/kwq/KWQFontMetrics.mm: (-[KWQSmallLayoutFragment setGlyphRange:]),

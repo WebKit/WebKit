@@ -35,13 +35,16 @@
     int stringCapacity;
     NSMutableDictionary *fragmentCache;
     NSLayoutManager *_layoutManager;
+#ifdef SPACE_OPTIMIZATION
+    id <KWQLayoutFragment> spaceFragment;
+    id <KWQLayoutFragment> expandedFragment;
+#endif
 }
 
 - (id)initWithFontAttribute:(NSDictionary *)attrs;
 - (void)setAttributes: (NSDictionary *)at;
 
 - (id <KWQLayoutFragment>)getFragmentForString: (NSString *)string;
-- (id <KWQLayoutFragment>)addFragmentForString: (NSString *)string;
 
 - (void)setString: (NSString *)dString;
 

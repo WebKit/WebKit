@@ -63,9 +63,13 @@
 
 @interface KWQSmallLayoutFragment : NSObject <KWQLayoutFragment>
 {
+    // Assumes 0,0 boundingRect origin and < UINT16_MAX width and height,
+    // and loss of precision for float to short is irrelevant.
     unsigned short width;
     unsigned short height;
-    unsigned short glyphRangeLength;  // Is location always zero?  Only need length.
+
+    // Assumes 0 location and < UINT16_MAX length.
+    unsigned short glyphRangeLength;
 #ifdef _DEBUG_LAYOUT_FRAGMENT
     int accessCount;
 #endif
