@@ -124,7 +124,7 @@
             ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = NO;
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s apply style seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
         }
     }
@@ -153,7 +153,7 @@
             ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s layout seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
         }
     }
@@ -270,21 +270,21 @@
 
 - (void)setNeedsDisplay:(BOOL)flag
 {
-    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
     [super setNeedsDisplay: flag];
 }
 
 
 - (void)setNeedsLayout: (bool)flag
 {
-    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
     ((IFWebViewPrivate *)_viewPrivate)->needsLayout = flag;
 }
 
 
 - (void)setNeedsToApplyStyles: (bool)flag
 {
-    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "flag = %d\n", (int)flag);
     ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = flag;
 }
 
@@ -342,7 +342,7 @@
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
-    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s draw seconds = %f\n", widget->part()->baseURL().url().latin1(), thisTime);
 #endif
     }
 }

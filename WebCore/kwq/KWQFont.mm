@@ -189,7 +189,7 @@ NSFont *QFont::getFont()
                     }
                 }
                 if (font == nil) {
-                    KWQDEBUGLEVEL1(KWQ_LOG_FONTCACHE, "unable to find font for family %s\n", [_family lossyCString]);
+                    KWQDEBUGLEVEL(KWQ_LOG_FONTCACHE, "unable to find font for family %s\n", [_family lossyCString]);
                     loadDefaultFont();
                     font = [[NSFontManager sharedFontManager] fontWithFamily:defaultFontFamilyName traits:_trait weight:5 size:_size];
                 }

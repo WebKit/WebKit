@@ -1025,7 +1025,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
                     static_cast<KIO::TransferJob *>(userData)->url().url().latin1());
 }
 
@@ -1041,7 +1041,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, urlString.latin1());
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, urlString.latin1());
 
     m_loader->slotFinished(job);
     
@@ -1067,7 +1067,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL4 (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
 
     m_loader->slotFinished(job);
     
@@ -1090,7 +1090,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
     
-    KWQDEBUGLEVEL4 (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
 
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 
@@ -1111,7 +1111,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "dataSource = %p, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());
 
     [m_dataSource _removeURLHandle: job->handle()];
 
@@ -1131,7 +1131,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)IFURLHandle:(IFURLHandle *)sender didRedirectToURL:(NSURL *)url
 {
-    KWQDEBUGLEVEL1 (KWQ_LOG_LOADING, "url = %s\n", [[url absoluteString] cString]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "url = %s\n", [[url absoluteString] cString]);
     [m_dataSource _part]->setBaseURL([[url absoluteString] cString]);
     
     [[m_dataSource controller] serverRedirectTo: url forDataSource: m_dataSource];
@@ -1219,7 +1219,7 @@ void Loader::servePendingRequests()
   KIO::TransferJob* job = KIO::get( req->object->url().string(), req->object->reload(), false /*no GUI*/);
 
 #ifdef APPLE_CHANGES
-  KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "Serving request for base %s, url %s\n", 
+  KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s\n", 
 		  req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
   //job->begin(d->m_recv, job);
   job->begin((URLLoadClient *)req->client, job);

@@ -154,7 +154,7 @@
 -(void)notificationReceived:(NSNotification *)notification
 {
     if ([[notification name] rangeOfString: @"uri-fin-"].location == 0){
-        KWQDEBUG1("KWQHTMLView: Received notification, %s\n", DEBUG_OBJECT([notification name]));
+        KWQDEBUG("KWQHTMLView: Received notification, %s\n", DEBUG_OBJECT([notification name]));
         [self performSelector:@selector(delayLayout:) withObject:self afterDelay:(NSTimeInterval)0.5];
     }
 }
@@ -177,7 +177,7 @@
             double start = CFAbsoluteTimeGetCurrent();
 #endif
             ((KHTMLView *)widget)->layout();
-            KWQDEBUGLEVEL1 (KWQ_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
+            KWQDEBUGLEVEL (KWQ_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             needsLayout = NO;
         }
     }
@@ -207,7 +207,7 @@
                     (int)rect.origin.y, 
                     (int)rect.size.width, 
                     (int)rect.size.height );
-        KWQDEBUGLEVEL1 (KWQ_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
+        KWQDEBUGLEVEL (KWQ_LOG_TIMING, "draw time %e\n", CFAbsoluteTimeGetCurrent() - start);
         [self unlockFocus];
     }
 }
@@ -231,7 +231,7 @@
     
     count = [views count];
     while (count--){
-        KWQDEBUG2("Removing %p %s\n", [views objectAtIndex: 0], DEBUG_OBJECT([[[views objectAtIndex: 0] class] className]));
+        KWQDEBUG("Removing %p %s\n", [views objectAtIndex: 0], DEBUG_OBJECT([[[views objectAtIndex: 0] class] className]));
         [[views objectAtIndex: 0] removeFromSuperviewWithoutNeedingDisplay]; 
     }
     [self setFrameSize: NSMakeSize (0,0)];
@@ -305,7 +305,7 @@
 - (void)mouseDragged: (NSEvent *)event
 {
     NSPoint p = [event locationInWindow];
-    KWQDEBUG2 ("mouseDragged %f, %f\n", p.x, p.y);
+    KWQDEBUG ("mouseDragged %f, %f\n", p.x, p.y);
 }
 
 

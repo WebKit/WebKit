@@ -150,13 +150,13 @@ char *stateNames[6] = {
                 // ahead and schedule a layout.
                 timeSinceStart = (CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
                 if (timeSinceStart > (double)defaultTimedDelay){
-                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "performing early layout because commit time, %f, exceeded initial layout interval %f\n", timeSinceStart, defaultTimedDelay);
                     [self _timedLayout: nil];
                 }
                 else {
                     NSTimeInterval timedDelay = defaultTimedDelay - timeSinceStart;
                     
-                    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "registering delayed layout after %f seconds, time since start %f\n", timedDelay, timeSinceStart);
                     [NSTimer scheduledTimerWithTimeInterval:timedDelay target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
                 }
             }
@@ -246,17 +246,17 @@ char *stateNames[6] = {
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
-    WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
     
     if (data->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
         if ([self controller])
-            WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
         [[self view] setNeedsLayout: YES];
         [[self view] setNeedsDisplay: YES];
     }
     else {
         if ([self controller])
-            WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     }
 }
 
@@ -271,9 +271,9 @@ char *stateNames[6] = {
 {
     IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
 
-    WEBKITDEBUGLEVEL3 (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[data->state], stateNames[newState]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  transition from %s to %s\n", [[self name] cString], stateNames[data->state], stateNames[newState]);
     if ([self controller])
-        WEBKITDEBUGLEVEL4 (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[data->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  transition from %s to %s, %f seconds since start of document load\n", [[self name] cString], stateNames[data->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     
     data->state = newState;
 }
@@ -303,14 +303,14 @@ char *stateNames[6] = {
         
         case IFWEBFRAMESTATE_PROVISIONAL:
         {
-            WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL\n", [[self name] cString]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
             if ([[self errors] count] != 0){
                 // Check all children first.
-                WEBKITDEBUGLEVEL2 (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[self errors] count]);
+                WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[self errors] count]);
                 if (![[self provisionalDataSource] isLoading]){
-                    WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
+                    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL, load done\n", [[self name] cString]);
                     // We now the provisional data source didn't cut the mustard, release it.
                     [data setProvisionalDataSource: nil];
                     
@@ -325,7 +325,7 @@ char *stateNames[6] = {
         case IFWEBFRAMESTATE_COMMITTED_PAGE:
         case IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE:
         {
-            WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMMITTED\n", [[self name] cString]);
             if (![[self dataSource] isLoading]){
                 id mainView = [[[self controller] mainFrame] view];
                 id thisView = [self view];
@@ -367,7 +367,7 @@ char *stateNames[6] = {
         
         case IFWEBFRAMESTATE_COMPLETE:
         {
-            WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMPLETE\n", [[self name] cString]);
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_COMPLETE\n", [[self name] cString]);
             return;
         }
         

@@ -49,13 +49,26 @@ unsigned int KWQGetLogLevel(){
     return KWQ_LOG_LEVEL;
 }
 
+static const char *
+timestamp(void)
+{
+    NSString *date = [[NSDate date] descriptionWithCalendarFormat:@"%b %d %H:%M:%S.%F"
+                                                         timeZone:[NSTimeZone systemTimeZone]
+                                                           locale:nil];
+    return [date cString];
+}
 
-void KWQDebugAtLevel(unsigned int level, const char *format, ...) {    
-    if (KWQGetLogLevel() & level){
+
+void KWQLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
+{    
+    if (KWQGetLogLevel() & level) {
         va_list args;
+        fprintf(stderr, "%s - [WEBCORE] - ", timestamp());
         va_start(args, format); 
         vfprintf(stderr, format, args);
         va_end(args);
+        if (format[strlen(format) - 1] != '\n')
+            putc('\n', stderr);
     }
 }
 

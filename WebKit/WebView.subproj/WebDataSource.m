@@ -215,7 +215,7 @@ static id IFWebDataSourceMake(void *url)
     IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
     int i, count;
     
-    WEBKITDEBUGLEVEL4 (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self frame] name] cString], (int)data->primaryLoadComplete, [data->urlHandles count], [[[self inputURL] absoluteString] cString]);
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "frame %s: primaryLoadComplete %d, [data->urlHandles count] = %d, URL = %s\n", [[[self frame] name] cString], (int)data->primaryLoadComplete, [data->urlHandles count], [[[self inputURL] absoluteString] cString]);
     if (data->primaryLoadComplete == NO)
         return YES;
         

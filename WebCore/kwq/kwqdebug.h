@@ -36,14 +36,7 @@
 
 #ifdef xNDEBUG
 
-#define KWQDEBUGLEVEL(level,format) ((void)0)
-#define KWQDEBUGLEVEL1(level,format,arg1) ((void)0)
-#define KWQDEBUGLEVEL2(level,format,arg1,arg2) ((void)0)
-#define KWQDEBUGLEVEL3(level,format,arg1,arg2,arg3) ((void)0)
-#define KWQDEBUGLEVEL4(level,format,arg1,arg2,arg3,arg4) ((void)0)
-#define KWQDEBUGLEVEL5(level,format,arg1,arg2,arg3,arg4,arg5) ((void)0)
-#define KWQDEBUGLEVEL6(level,format,arg1,arg2,arg3,arg4,arg5,arg6) ((void)0)
-#define KWQDEBUGLEVEL7(level,format,arg1,arg2,arg3,arg4,arg5,arg6,arg7) ((void)0)
+#define KWQDEBUGLEVEL(level,format...) ((void)0)
 
 #define KWQ_ASSERT(expr) ((void)0)
 #define KWQ_ASSERT_VALID_ARG(arg,expr) ((void)0)
@@ -80,42 +73,14 @@ long _GetMillisecondsSinceEpoch();
 
 void KWQSetLogLevel(int mask);
 unsigned int KWQGetLogLevel();
-void KWQDebugAtLevel(unsigned int level, const char *format, ...)
-    __attribute__((__format__ (__printf__, 2, 3)));
+void KWQLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
+    __attribute__((__format__ (__printf__, 5, 6)));
 
-#define KWQDEBUGLEVEL(level,format) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format);
-
-#define KWQDEBUGLEVEL1(level,format,arg1) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1);
-
-#define KWQDEBUGLEVEL2(level,format,arg1,arg2) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1,arg2);
-
-#define KWQDEBUGLEVEL3(level,format,arg1,arg2,arg3) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1,arg2,arg3);
-
-#define KWQDEBUGLEVEL4(level,format,arg1,arg2,arg3,arg4) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4);
-
-#define KWQDEBUGLEVEL5(level,format,arg1,arg2,arg3,arg4,arg5) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5);
-
-#define KWQDEBUGLEVEL6(level,format,arg1,arg2,arg3,arg4,arg5,arg6) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5,arg6);
-
-#define KWQDEBUGLEVEL7(level,format,arg1,arg2,arg3,arg4,arg5,arg6,arg7) \
-   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
-   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5,arg6,arg7);
 
 #define DEBUG_OBJECT(object) [[object description] lossyCString]
+
+#define KWQDEBUGLEVEL(level,format...) \
+   KWQLog(level, __FILE__, __LINE__, __PRETTY_FUNCTION__, format);
 
 /*-----------------------------------------------------------------------------
  * Assertion macros
@@ -147,13 +112,7 @@ void KWQDebugAtLevel(unsigned int level, const char *format, ...)
 
 #endif
 
-#define KWQDEBUG(format) KWQDEBUGLEVEL(KWQ_LOG_DEBUG,format)
-#define KWQDEBUG1(format,arg1) KWQDEBUGLEVEL1(KWQ_LOG_DEBUG,format,arg1)
-#define KWQDEBUG2(format,arg1,arg2) KWQDEBUGLEVEL2(KWQ_LOG_DEBUG,format,arg1,arg2)
-#define KWQDEBUG3(format,arg1,arg2,arg3) KWQDEBUGLEVEL3(KWQ_LOG_DEBUG,format,arg1,arg2,arg3)
-#define KWQDEBUG4(format,arg1,arg2,arg3,arg4) KWQDEBUGLEVEL4(KWQ_LOG_DEBUG,format,arg1,arg2,arg3,arg4)
-#define KWQDEBUG5(format,arg1,arg2,arg3,arg4,arg5) KWQDEBUGLEVEL5(KWQ_LOG_DEBUG,format,arg1,arg2,arg3,arg4,arg5)
-#define KWQDEBUG6(format,arg1,arg2,arg3,arg4,arg5,arg6) KWQDEBUGLEVEL6(KWQ_LOG_DEBUG,format,arg1,arg2,arg3,arg4,arg5,arg6)
+#define KWQDEBUG(format...) KWQDEBUGLEVEL(KWQ_LOG_DEBUG,format)
 
 #define _logNeverImplemented() \
    KWQDEBUGLEVEL(KWQ_LOG_NEVER_IMPLEMENTED, "ERROR (NOT IMPLEMENTED)\n")

@@ -1,3 +1,44 @@
+2002-04-03  Kenneth Kocienda  <kocienda@apple.com>
+
+        Updated debugging log messages to use new varargs macros.
+
+	* History.subproj/IFWebHistoryPrivate.m: (-[IFWebHistoryPrivate
+	removeEntryForURLString:]), (-[IFWebHistoryPrivate _loadHistoryGuts:]),
+	(-[IFWebHistoryPrivate loadHistory]), (-[IFWebHistoryPrivate _saveHistoryGuts:]),
+	(-[IFWebHistoryPrivate saveHistory]):
+	* Misc.subproj/WebKitDebug.h:
+	* Misc.subproj/WebKitDebug.m: (timestamp), (WebKitLog):
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView
+	initWithFrame:plugin:url:mime:arguments:mode:]), (-[IFPluginView setWindow]),
+	(-[IFPluginView newStream:mimeType:notifyData:]), (-[IFPluginView
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFPluginView
+	IFURLHandleResourceDidFinishLoading:data:]), (-[IFPluginView
+	becomeFirstResponder]), (-[IFPluginView resignFirstResponder]), (-[IFPluginView
+	sendUpdateEvent]), (-[IFPluginView mouseDown:]), (-[IFPluginView mouseUp:]),
+	(-[IFPluginView mouseEntered:]), (-[IFPluginView mouseExited:]), (-[IFPluginView
+	keyUp:]), (-[IFPluginView keyDown:]), (-[IFPluginView
+	getURLNotify:target:notifyData:]), (-[IFPluginView getURL:target:]),
+	(-[IFPluginView status:]), (-[IFPluginView stop]):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebController
+	_receivedProgress:forResource:fromDataSource:]), (-[IFBaseWebController
+	_mainReceivedProgress:forResource:fromDataSource:]):
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandleResourceDidBeginLoading:]), (-[IFMainURLHandleClient
+	IFURLHandleResourceDidCancelLoading:]), (-[IFMainURLHandleClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[IFMainURLHandleClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (-[IFMainURLHandleClient
+	IFURLHandle:didRedirectToURL:]):
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource isLoading]):
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _stopLoading]):
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame
+	_transitionProvisionalToLayoutAcceptable]), (-[IFWebFrame _timedLayout:]),
+	(-[IFWebFrame _setState:]), (-[IFWebFrame _isLoadComplete]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]), (-[IFWebView
+	layout]), (-[IFWebView setNeedsDisplay:]), (-[IFWebView setNeedsLayout:]),
+	(-[IFWebView setNeedsToApplyStyles:]), (-[IFWebView drawRect:]):
+
 2002-04-02  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setTitle:]):

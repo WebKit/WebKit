@@ -124,7 +124,7 @@
             [_datesWithEntries removeObjectAtIndex: dateIndex];
         }
     } else {
-        WEBKITDEBUG2("'%s' was in url dictionary but its date %s was not in date index",
+        WEBKITDEBUG("'%s' was in url dictionary but its date %s was not in date index",
               DEBUG_OBJECT([entry url]), DEBUG_OBJECT([entry lastVisitedDate]));
     }
 
@@ -362,10 +362,10 @@
     array = [NSArray arrayWithContentsOfFile: path];
     if (array == nil) {
         if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            WEBKITDEBUG1("no history file found at %s\n",
+            WEBKITDEBUG("no history file found at %s\n",
                             DEBUG_OBJECT(path));
         } else {
-            WEBKITDEBUG1("attempt to read history from %s failed; perhaps contents are corrupted\n",
+            WEBKITDEBUG("attempt to read history from %s failed; perhaps contents are corrupted\n",
                             DEBUG_OBJECT(path));
         }
         return NO;
@@ -418,7 +418,7 @@
 
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL3 (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds\n",
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds\n",
                            numberOfItems, DEBUG_OBJECT([self file]), duration);
     }
 
@@ -439,7 +439,7 @@
 
     array = [self arrayRepresentation];
     if (![array writeToFile:path atomically:YES]) {
-        WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+        WEBKITDEBUG("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
         return NO;
     }
     
@@ -458,7 +458,7 @@
 
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL3 (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds\n",
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds\n",
                            numberOfItems, DEBUG_OBJECT([self file]), duration);
     }
 

@@ -134,7 +134,7 @@ void QComboBox::setCurrentItem(int index)
     if (num != 0 && index < num)
         [comboBox selectItemAtIndex: index];
     else
-        KWQDEBUG2 ("Error, index = %d, numberOfItems = %d", index, num);
+        KWQDEBUG ("Error, index = %d, numberOfItems = %d", index, num);
 }
 
 int QComboBox::currentItem() const

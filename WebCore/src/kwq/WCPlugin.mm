@@ -45,12 +45,12 @@
         if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == 1112690764){ // 1112690764 = 'BRPL'
             err = FSPathMakeRef((UInt8 *)[pluginPath cString], &fref, NULL);
             if(err != noErr){
-                KWQDEBUG1("WCPlugin: FSPathMakeRef failed. Error=%d\n", err);
+                KWQDEBUG("WCPlugin: FSPathMakeRef failed. Error=%d\n", err);
                 return FALSE;
             }
             resRef = FSOpenResFile(&fref, fsRdPerm);
             if(resRef <= noErr){
-                KWQDEBUG2("WCPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
+                KWQDEBUG("WCPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
                 return FALSE;
             }
             [self getPluginInfoForResourceFile:resRef];
@@ -174,17 +174,17 @@
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
-            KWQDEBUG1("WCPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
+            KWQDEBUG("WCPlugin: load: FSPathMakeRef failed. Error=%d\n", err);
             return;
         }
         err = FSGetCatalogInfo(&fref, kFSCatInfoNone, NULL, NULL, &spec, NULL);
         if(err != noErr){
-            KWQDEBUG1("WCPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
+            KWQDEBUG("WCPlugin: load: FSGetCatalogInfo failed. Error=%d\n", err);
             return;
         }
         err = GetDiskFragment(&spec, 0, kCFragGoesToEOF, nil, kPrivateCFragCopy, &connID, (Ptr *)&pluginMainFunc, nil);
         if(err != noErr){
-            KWQDEBUG1("WCPlugin: load: GetDiskFragment failed. Error=%d\n", err);
+            KWQDEBUG("WCPlugin: load: GetDiskFragment failed. Error=%d\n", err);
             return;
         }
         pluginMainFunc = functionPointerForTVector(pluginMainFunc);
@@ -217,7 +217,7 @@
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
-        KWQDEBUG3("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
+        KWQDEBUG("pluginMainFunc: %d, size=%d, version=%d\n", npErr, pluginSize, pluginVersion);
         
         NPP_New = functionPointerForTVector(pluginFuncs.newp);
         NPP_Destroy = functionPointerForTVector(pluginFuncs.destroy);

@@ -45,7 +45,7 @@
     [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
     
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
-	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         if (frame != nil) {
             IFError *error = [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]] autorelease];
             [frame _checkLoadCompleteResource: resourceDescription error: error isMainDocument: NO];
@@ -70,7 +70,7 @@
     [self receivedProgress: progress forResource: resourceDescription fromDataSource: dataSource];
 
     if (progress->bytesSoFar == -1 && progress->totalToLoad == -1){
-	WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+	WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "cancelled resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [dataSource _setPrimaryLoadComplete: YES];
         if (frame != nil) {
             IFError *error = [[[IFError alloc] initWithErrorCode: IFURLHandleResultCancelled failingURL: [dataSource inputURL]] autorelease];
@@ -86,7 +86,7 @@
     // Check to see if this is these are the first bits of a provisional data source,
     // if so we need to transition the data source from provisional to committed.
     if([frame provisionalDataSource] == dataSource){
-        WEBKITDEBUGLEVEL1 (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
         [frame _transitionProvisionalToCommitted];
     }
 

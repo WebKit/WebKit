@@ -221,7 +221,7 @@ void QColor::setNamedColor(const QString &name)
             setRgb(r, g, b);
         }
         else {
-            KWQDEBUG1 ("couldn't create color using name %s\n", name.ascii());
+            KWQDEBUG ("couldn't create color using name %s\n", name.ascii());
             setRgb(0, 0, 0);
         }
     }

@@ -1,3 +1,36 @@
+2002-04-03  Kenneth Kocienda  <kocienda@apple.com>
+
+        Updated debugging log messages to use new varargs macros.
+
+	* src/kwq/KWQApplication.mm: (QApplication::sendEvent),
+	(QApplication::_initialize):
+	* src/kwq/KWQColor.mm: (QColor::setNamedColor):
+	* src/kwq/KWQComboBox.mm: (QComboBox::setCurrentItem):
+	* src/kwq/KWQFont.mm: (QFont::getFont):
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo _initializeCaches]),
+	(_rectForString):
+	* src/kwq/KWQKHTMLPart.mm: (recursive), (KHTMLPart::write), (KHTMLPart::end),
+	(KHTMLPart::nodeActivated):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidBeginLoading:]),
+	(-[URLLoadClient IFURLHandleResourceDidCancelLoading:]), (-[URLLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]), (-[URLLoadClient
+	IFURLHandle:didRedirectToURL:]), (Loader::servePendingRequests):
+	* src/kwq/KWQObject.mm: (QObject::connect), (QObject::performAction):
+	* src/kwq/KWQScrollView.mm: (QScrollView::addChild),
+	(QScrollView::resizeContents), (QScrollView::updateContents),
+	(QScrollView::repaintContents):
+	* src/kwq/KWQString.mm: (QString::unicode), (QString::latin1):
+	* src/kwq/KWQView.mm: (-[KWQHTMLView notificationReceived:]), (-[KWQHTMLView
+	layout]), (-[KWQHTMLView drawRect:]), (-[KWQHTMLView resetView]), (-[KWQHTMLView
+	mouseDragged:]):
+	* src/kwq/KWQWidget.mm: (QWidget::resize), (QWidget::move):
+	* src/kwq/WCPlugin.mm: (-[WCPlugin initializeWithPath:]), (-[WCPlugin load]):
+	* src/kwq/WCPluginDatabase.mm: (findPlugins):
+	* src/kwq/kwqdebug.h:
+	* src/kwq/kwqdebug.mm: (timestamp), (KWQLog):
+
 2002-04-03  Darin Adler  <darin@apple.com>
 
 	Fix problems that show up only when xNDEBUG is set.

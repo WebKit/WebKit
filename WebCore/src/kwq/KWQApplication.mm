@@ -91,7 +91,9 @@ void QApplication::restoreOverrideCursor()
 
 bool QApplication::sendEvent(QObject *o, QEvent *e)
 {
-    KWQDEBUG1 ("received %d\n", e->type());
+    QEvent::Type type = e->type();
+    
+    KWQDEBUG ("received %d\n", type);
     return FALSE;
 }
 
@@ -127,7 +129,7 @@ void QApplication::_initialize()
 	if (principalClass) {
             application = [principalClass sharedApplication];
 	    if (![NSBundle loadNibNamed: mainNibFile owner: application]) {
-                KWQDEBUGLEVEL1(KWQ_LOG_ERROR, "ERROR:  QApplication::_initialize() unable to load %s\n", DEBUG_OBJECT(mainNibFile));
+                KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR:  QApplication::_initialize() unable to load %s\n", DEBUG_OBJECT(mainNibFile));
             }
         }
     }	

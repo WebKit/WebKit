@@ -114,7 +114,7 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 {
     DOM::Node cur_child = node.lastChild();
 
-    KWQDEBUG2("cur_child: %s = %s", cur_child.nodeName().string().latin1(), cur_child.nodeValue().string().latin1());
+    KWQDEBUG("cur_child: %s = %s", cur_child.nodeName().string().latin1(), cur_child.nodeValue().string().latin1());
 
     while(!cur_child.isNull())
     {
@@ -610,7 +610,7 @@ void KHTMLPart::write( const char *str, int len )
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     d->totalWriteTime += thisTime;
-    KWQDEBUGLEVEL4 (0x200, "%s bytes = %d, seconds = %f, total = %f\n", d->m_url.url().latin1(), len, thisTime, d->totalWriteTime);
+    KWQDEBUGLEVEL (0x200, "%s bytes = %d, seconds = %f, total = %f\n", d->m_url.url().latin1(), len, thisTime, d->totalWriteTime);
 #endif
 }
 
@@ -647,7 +647,7 @@ void KHTMLPart::end()
     }
 
 #ifndef APPLE_CHANGES
-    KWQDEBUG2 ("0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
+    KWQDEBUG ("0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
     // make sure nothing's left in there...
     if(d->m_decoder)
         write(d->m_decoder->flush());
@@ -1611,7 +1611,7 @@ void KHTMLPart::emitUnloadEvent()
 
 void KHTMLPart::nodeActivated(const DOM::Node &aNode)
 {
-    KWQDEBUG2 ("name %s = %s\n", (const char *)aNode.nodeName().string(), (const char *)aNode.nodeValue().string());
+    KWQDEBUG ("name %s = %s\n", (const char *)aNode.nodeName().string(), (const char *)aNode.nodeValue().string());
 }
 
 void KHTMLPart::stopAutoScroll()

@@ -466,7 +466,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     short unsigned int sequentialGlyphs[INITIAL_GLYPH_CACHE_MAX];
     ATSLayoutRecord *glyphRecords;
 
-    KWQDEBUGLEVEL6 (KWQ_LOG_FONTCACHE, "Caching %s %.0f (%ld glyphs) ascent = %f, descent = %f, defaultLineHeightForFont = %f\n", [[font displayName] cString], [font pointSize], numGlyphsInFont, [font ascender], [font descender], [font defaultLineHeightForFont]); 
+    KWQDEBUGLEVEL (KWQ_LOG_FONTCACHE, "Caching %s %.0f (%ld glyphs) ascent = %f, descent = %f, defaultLineHeightForFont = %f\n", [[font displayName] cString], [font pointSize], numGlyphsInFont, [font ascender], [font descender], [font defaultLineHeightForFont]); 
 
     // Initially just cache the max of number of glyphs in font or
     // INITIAL_GLYPH_CACHE_MAX.  Holes in the cache will be filled on demand
@@ -520,7 +520,7 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     static int totalCacheSize = 0;
     
     totalCacheSize += widthCacheSize * sizeof(_IFGlyphWidth) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(KWQLayoutInfo);
-    KWQDEBUGLEVEL4 (KWQ_LOG_MEMUSAGE, "memory usage in bytes:  widths = %ld, latin1 ext. character-to-glyph = %ld, total this cache = %ld, total all caches %d\n", widthCacheSize * sizeof(_IFGlyphWidth), numGlyphs * sizeof(ATSGlyphRef), widthCacheSize * sizeof(_IFGlyphWidth) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(KWQLayoutInfo), totalCacheSize); 
+    KWQDEBUGLEVEL (KWQ_LOG_MEMUSAGE, "memory usage in bytes:  widths = %ld, latin1 ext. character-to-glyph = %ld, total this cache = %ld, total all caches %d\n", widthCacheSize * sizeof(_IFGlyphWidth), numGlyphs * sizeof(ATSGlyphRef), widthCacheSize * sizeof(_IFGlyphWidth) + numGlyphs * sizeof(ATSGlyphRef) + sizeof(KWQLayoutInfo), totalCacheSize); 
 #endif
 }
 
@@ -577,8 +577,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
     // If we can't use the cached map, then calculate a map for this string.   Expensive.
     if (needCharToGlyphLookup){
         
-        KWQDEBUGLEVEL3(KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] lossyCString], [font pointSize]);
-        
+        KWQDEBUGLEVEL (KWQ_LOG_FONTCACHECHARMISS, "character-to-glyph cache miss for character 0x%04x in %s, %.0f\n", internalBuffer[i], [[font displayName] lossyCString], [font pointSize])
         __IFInitATSGlyphVector(&self->_glyphVector, stringLength);
         (void)ATSUConvertCharToGlyphs(self->_styleGroup, internalBuffer, 0, stringLength, 0, &self->_glyphVector);
         glyphRecords = self->_glyphVector.firstRecord;
@@ -604,7 +603,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
                 blockEnd = blockStart + INCREMENTAL_GLYPH_CACHE_BLOCK;
                 if (blockEnd > self->widthCacheSize)
                     blockEnd = self->widthCacheSize;
-                KWQDEBUGLEVEL5 (KWQ_LOG_FONTCACHE, "width cache miss for glyph 0x%04x in %s, %.0f, filling block 0x%04x to 0x%04x\n", glyphID, [[font displayName] cString], [font pointSize], blockStart, blockEnd);
+                KWQDEBUGLEVEL (KWQ_LOG_FONTCACHE, "width cache miss for glyph 0x%04x in %s, %.0f, filling block 0x%04x to 0x%04x\n", glyphID, [[font displayName] cString], [font pointSize], blockStart, blockEnd);
                 for (blockID = blockStart; blockID < blockEnd; blockID++)
                     sequentialGlyphs[blockID-blockStart] = blockID;
 

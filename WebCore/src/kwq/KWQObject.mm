@@ -33,7 +33,7 @@ bool QObject::connect(const QObject *sender, const char *signal, const QObject *
 {
     if (sender)
         ((QObject *)sender)->setTarget ((QObject *)dest);
-    KWQDEBUG4 ("src = %p, signal = %s, dest = %p, slot = %s\n", sender, signal, dest, slot);
+    KWQDEBUG ("src = %p, signal = %s, dest = %p, slot = %s\n", sender, signal, dest, slot);
     return FALSE;
 }
 
@@ -43,7 +43,7 @@ bool QObject::connect(const QObject *sender, const char *signal, const char *slo
 {
     if (sender)
         ((QObject *)sender)->setTarget ((QObject *)sender);
-    KWQDEBUG3 ("src = %p, signal = %s, slot = %s\n", sender, signal, slot);
+    KWQDEBUG ("src = %p, signal = %s, slot = %s\n", sender, signal, slot);
     return FALSE;    
 }
 
@@ -57,7 +57,7 @@ void QObject::emitAction(QObject::Actions action)
 
 void QObject::performAction(QObject::Actions action)
 {
-    KWQDEBUG1 ("action = %d\n", action);
+    KWQDEBUG ("action = %d\n", action);
 }
 
 

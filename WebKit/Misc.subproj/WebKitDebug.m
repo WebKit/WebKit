@@ -28,13 +28,25 @@ unsigned int WebKitGetLogLevel(){
     return WEBKIT_LOG_LEVEL;
 }
 
+static const char *
+timestamp(void)
+{
+    NSString *date = [[NSDate date] descriptionWithCalendarFormat:@"%b %d %H:%M:%S.%F"
+                                                         timeZone:[NSTimeZone systemTimeZone]
+                                                           locale:nil];
+    return [date cString];
+}
 
-void WebKitDebugAtLevel(unsigned int level, const char *format, ...) {    
-    if (WebKitGetLogLevel() & level){
+void WebKitLog(unsigned int level, const char *file, int line, const char *function, const char *format, ...)
+{    
+    if (WebKitGetLogLevel() & level) {
         va_list args;
+        fprintf(stderr, "%s - [WEBKIT] - ", timestamp());
         va_start(args, format); 
         vfprintf(stderr, format, args);
         va_end(args);
+        if (format[strlen(format) - 1] != '\n')
+            putc('\n', stderr);
     }
 }
 
