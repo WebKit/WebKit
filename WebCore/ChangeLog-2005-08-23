@@ -1,3 +1,13 @@
+2004-10-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3847054, assertion failure in RenderText::layout() on news.com page.  Fix getInlineRun so that
+	it no longer breaks early (thus causing some children not to get properly wrapped by anonymous blocks).
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::getInlineRun):
+
 2004-10-20  David Hyatt  <hyatt@apple.com>
 
 	Add better dumping of overflow information for scrolling regions.

@@ -229,22 +229,13 @@ static void getInlineRun(RenderObject* start, RenderObject* stop,
     // is inline or not, we will not include it.  It's as though we encountered
     // a non-inline.
     inlineRunStart = inlineRunEnd = 0;
-
-    // Start by skipping as many non-inlines as we can.
-    RenderObject * curr = start;
-    while (curr && !(curr->isInline() || curr->isFloatingOrPositioned()))
-        curr = curr->nextSibling();
-
-    if (!curr)
-        return; // No more inline children to be found.
-    
-    while (curr && (curr->isInline() || curr->isFloatingOrPositioned()) && (curr != stop)) {
-        if (curr->isInline()) {
-            if (!inlineRunStart)
-                inlineRunStart = curr;
+    for (RenderObject* curr = start;
+         curr && curr != stop && (!inlineRunStart || curr->isInline() || curr->isFloatingOrPositioned());
+         curr = curr->nextSibling()) {
+        if (inlineRunStart)
             inlineRunEnd = curr;
-        }
-        curr = curr->nextSibling();
+        else if (curr->isInline())
+            inlineRunStart = inlineRunEnd = curr;
     }
 }
 
