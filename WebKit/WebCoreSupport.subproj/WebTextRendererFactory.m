@@ -69,6 +69,11 @@
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
 
++ (IFTextRendererFactory *)sharedFactory;
+{
+    return (IFTextRendererFactory *)[super sharedFactory];
+}
+
 - init
 {
     [super init];
@@ -85,7 +90,7 @@
     [super dealloc];
 }
 
-- (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font
+- (IFTextRenderer *)rendererWithFont:(NSFont *)font
 {
     IFTextRenderer *renderer = [cache objectForKey:font];
     if (renderer == nil) {

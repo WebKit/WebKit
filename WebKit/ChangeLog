@@ -1,3 +1,23 @@
+2002-05-10  Darin Adler  <darin@apple.com>
+
+	* WebCoreSupport.subproj/IFTextRenderer.h: Moved most of the
+	stuff from here into the .m file so this header can be included
+	by clients. Also added floatWidthForCharacters:length:.
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(freeWidthMap): Check for NULL.
+	(freeGlyphMap): Check for NULL.
+	(-[IFTextRenderer slowFloatWidthForCharacters:length:]): Renamed,
+	and made it return the float.
+	(-[IFTextRenderer floatWidthForCharacters:length:]): Renamed, and
+	made it return the float.
+	(-[IFTextRenderer widthForCharacters:length:]): Do rounding here.
+
+	* WebCoreSupport.subproj/IFTextRendererFactory.h:
+	* WebCoreSupport.subproj/IFTextRendererFactory.m:
+	Make the interface slightly easier to use by using the specific types.
+
+	* WebKit.pbproj/project.pbxproj: Exported the headers.
+
 2002-05-10  Kenneth Kocienda  <kocienda@apple.com>
 
         Fixed build breakage caused by my previous checkin.

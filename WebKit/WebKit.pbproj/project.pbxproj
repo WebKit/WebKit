@@ -1504,6 +1504,9 @@
 			fileRef = F5B36B410281DF55018635CB;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F5B36B440281DF55018635CB = {
@@ -1847,6 +1850,9 @@
 			fileRef = F5B36B450281DF9C018635CB;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		F5F7174C02885C5B018635CA = {

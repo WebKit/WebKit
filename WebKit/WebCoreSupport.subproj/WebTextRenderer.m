@@ -16,6 +16,8 @@
 #import <WebKit/IFTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <QD/ATSUnicodePriv.h>
+
 #define NON_BREAKING_SPACE 0xA0
 #define SPACE 0x20
 
@@ -42,6 +44,23 @@
 #define IsNonBaseChar(X) ((CFCharacterSetIsCharacterMember(nonBaseChars, X) || IsHangulConjoiningJamo(X) || (((X) & 0x1FFFF0) == 0xF870)))
 
 
+typedef float IFGlyphWidth;
+
+struct WidthMap {
+    ATSGlyphRef startRange;
+    ATSGlyphRef endRange;
+    WidthMap *next;
+    IFGlyphWidth *widths;
+};
+
+struct GlyphMap {
+    UniChar startRange;
+    UniChar endRange;
+    GlyphMap *next;
+    ATSGlyphRef *glyphs;
+};
+
+
 @interface NSLanguage : NSObject 
 {
 }
@@ -62,8 +81,16 @@
 static CFCharacterSetRef nonBaseChars = NULL;
 
 
+@interface IFTextRenderer (IFPrivate)
+- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
+- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
+@end
+
+
 static void freeWidthMap (WidthMap *map)
 {
+    if (!map)
+	return;
     if (map->next)
         freeWidthMap (map->next);
     free (map->widths);
@@ -73,6 +100,8 @@ static void freeWidthMap (WidthMap *map)
 
 static void freeGlyphMap (GlyphMap *map)
 {
+    if (!map)
+	return;
     if (map->next)
         freeGlyphMap (map->next);
     free (map->glyphs);
@@ -438,7 +467,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
             if (!hasGlyphs){
                 substituteFont = [self substituteFontForCharacters: characters length: length];
                 if (substituteFont){
-                    [(IFTextRenderer *)[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
+                    [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
                     goto cleanup;
                 }
             }
@@ -452,7 +481,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         if (glyphID == 0){
             substituteFont = [self substituteFontForCharacters: characters length: length];
             if (substituteFont){
-                [(IFTextRenderer *)[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
+                [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
                 goto cleanup;
             }
         }
@@ -533,7 +562,7 @@ cleanup:
 }
 
 
-- (int)slowWidthForCharacters: (const UniChar *)characters length: (unsigned)length
+- (float)slowFloatWidthForCharacters: (const UniChar *)characters length: (unsigned)length
 {
     float totalWidth = 0;
     unsigned int i, numGlyphs;
@@ -558,7 +587,7 @@ cleanup:
 }
 
 
-- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
+- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length
 {
     float totalWidth = 0;
     unsigned int i;
@@ -573,7 +602,7 @@ cleanup:
         	c = SPACE;
         }
         else if (IsNonBaseChar(c)){
-            return [self slowWidthForCharacters: characters length: length];
+            return [self slowFloatWidthForCharacters: characters length: length];
         }
         
         glyphID = glyphForCharacter(characterToGlyphMap, c);
@@ -587,7 +616,7 @@ cleanup:
             substituteFont = [self substituteFontForCharacters: characters length: length];
             if (substituteFont){
                 WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT([substituteFont displayName]), DEBUG_OBJECT([font displayName]), c);
-                return [[(IFTextRendererFactory *)[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
+                return [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
             }
         }
 
@@ -595,6 +624,11 @@ cleanup:
     }
 
     return ROUND_TO_INT(totalWidth);
+}
+
+- (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
+{
+    return ROUND_TO_INT([self floatWidthForCharacters:characters length:length]);
 }
 
 

@@ -7,24 +7,9 @@
 //
 
 #import <WebCoreTextRenderer.h>
-#import <QD/ATSUnicodePriv.h>
 
-typedef float IFGlyphWidth;
-
-
-typedef struct _WidthMap {
-    ATSGlyphRef startRange;
-    ATSGlyphRef endRange;
-    struct _WidthMap *next;
-    IFGlyphWidth *widths;
-} WidthMap;
-
-typedef struct _GlyphMap {
-    UniChar startRange;
-    UniChar endRange;
-    struct _GlyphMap *next;
-    ATSGlyphRef *glyphs;
-} GlyphMap;
+typedef struct WidthMap WidthMap;
+typedef struct GlyphMap GlyphMap;
 
 @interface IFTextRenderer : NSObject <WebCoreTextRenderer>
 {
@@ -32,7 +17,7 @@ typedef struct _GlyphMap {
     int descent;
     int lineSpacing;
     
-    ATSStyleGroupPtr styleGroup;
+    struct AttributeGroup *styleGroup;
 
 @public
     NSFont *font;
@@ -41,10 +26,7 @@ typedef struct _GlyphMap {
 }
 
 - initWithFont:(NSFont *)font;
-- (void)convertCharacters: (const unichar *)characters length: (int)numCharacters glyphs: (ATSGlyphVector *)glyphs;
-- (ATSGlyphRef)extendCharacterToGlyphMapToInclude:(UniChar) c;
-- (WidthMap *)extendGlyphToWidthMapToInclude:(ATSGlyphRef)glyphID;
-- (bool) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs;
 
- 
+- (float)floatWidthForCharacters:(const unichar *)characters length:(unsigned)length;
+
 @end
