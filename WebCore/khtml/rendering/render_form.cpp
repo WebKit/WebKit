@@ -459,7 +459,7 @@ bool LineEditWidget::event( QEvent *e )
 // -----------------------------------------------------------------------------
 
 RenderLineEdit::RenderLineEdit(HTMLInputElementImpl *element)
-    : RenderFormElement(element)
+    : RenderFormElement(element), m_updating(false)
 {
     LineEditWidget *edit = new LineEditWidget(view()->viewport());
     connect(edit,SIGNAL(returnPressed()), this, SLOT(slotReturnPressed()));
@@ -513,8 +513,10 @@ void RenderLineEdit::calcMinMaxWidth()
 
 #if APPLE_CHANGES
     // Let the widget tell us how big it wants to be.
+    m_updating = true;
     int size = element()->size();
     QSize s(widget()->sizeForCharacterWidth(size > 0 ? size : 20));
+    m_updating = false;
 #else
     const QFontMetrics &fm = style()->fontMetrics();
     QSize s;
@@ -547,8 +549,11 @@ void RenderLineEdit::updateFromElement()
     if (element()->value().string() != w->text()) {
         w->blockSignals(true);
         int pos = w->cursorPosition();
-        w->setText(element()->value().string());
 
+        m_updating = true;
+        w->setText(element()->value().string());
+        m_updating = false;
+        
         w->setEdited( false );
 
         w->setCursorPosition(pos);
@@ -564,6 +569,8 @@ void RenderLineEdit::updateFromElement()
 void RenderLineEdit::slotTextChanged(const QString &string)
 {
     // don't use setValue here!
+    if (m_updating) // Don't alter m_value if we are in the middle of initing the control, since
+        return;     // we may have gotten our initial value from the attribute.
     element()->m_value = string;
 }
 

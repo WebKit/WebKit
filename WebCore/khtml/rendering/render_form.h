@@ -263,6 +263,8 @@ protected:
 
 private:
     virtual bool isEditable() const { return true; }
+
+    bool m_updating;
 };
 
 // -------------------------------------------------------------------------

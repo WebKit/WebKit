@@ -1,3 +1,36 @@
+2003-05-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3269129 and 3269220.  setAttribute('value') didn't work
+	for inputs.  Basically defaultValue and defaultChecked have never
+	worked.  This patch fixes the problem by making sure that for both
+	value and checked you have a two-tier system where you look first
+	for the value as altered by the control (or by setting the DOM
+	property) and if that isn't set then you look at the default value.
+
+	This allows setAttribute (which changes the *default*) to work in
+	the cases where the control has not overridden the default 
+	with a different value.
+	
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::HTMLInputElementImpl):
+        (HTMLInputElementImpl::state):
+        (HTMLInputElementImpl::parseAttribute):
+        (HTMLInputElementImpl::attach):
+        (HTMLInputElementImpl::reset):
+        (HTMLInputElementImpl::setChecked):
+        (HTMLInputElementImpl::value):
+        (HTMLInputElementImpl::setValue):
+        (HTMLInputElementImpl::isCheckedRadioButtonForDocument):
+        * khtml/html/html_formimpl.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit):
+        (RenderLineEdit::calcMinMaxWidth):
+        (RenderLineEdit::updateFromElement):
+        (RenderLineEdit::slotTextChanged):
+        * khtml/rendering/render_form.h:
+
 2003-05-30  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -271,7 +271,7 @@ public:
 
     bool autoComplete() const { return m_autocomplete; }
 
-    bool checked() const { return m_checked; }
+    bool checked() const { return m_useDefaultChecked ? m_defaultChecked : m_checked; }
     void setChecked(bool);
     long maxLength() const { return m_maxLen; }
     int size() const { return m_size; }
@@ -325,6 +325,8 @@ protected:
 
     typeEnum m_type : 4;
     bool m_checked : 1;
+    bool m_defaultChecked : 1;
+    bool m_useDefaultChecked : 1;
     bool m_haveType : 1;
     bool m_activeSubmit : 1;
     bool m_autocomplete : 1;

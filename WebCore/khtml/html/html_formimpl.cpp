@@ -1067,7 +1067,9 @@ HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl
     m_maxLen = -1;
     m_size = 20;
     m_checked = false;
-
+    m_defaultChecked = false;
+    m_useDefaultChecked = true;
+    
     m_haveType = false;
     m_activeSubmit = false;
     m_autocomplete = true;
@@ -1161,7 +1163,7 @@ QString HTMLInputElementImpl::state( )
     switch (m_type) {
     case CHECKBOX:
     case RADIO:
-        return state + (m_checked ? "on" : "off");
+        return state + (checked() ? "on" : "off");
     default:
         return state + value().string()+'.'; // Make sure the string is not empty!
     }
@@ -1214,8 +1216,13 @@ void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
         setType(attr->value());
         break;
     case ATTR_VALUE:
+        if (m_value.isNull()) // We only need to setChanged if the form is looking
+            setChanged();     // at the default value right now.
+        break;
     case ATTR_CHECKED:
-        // these are the defaults, don't change them
+        m_defaultChecked = attr->val();
+        if (m_useDefaultChecked) // We only need to setChanged if the form is looking
+            setChanged();        // at the default checked state right now.
         break;
     case ATTR_MAXLENGTH:
         m_maxLen = attr->val() ? attr->val()->toInt() : -1;
@@ -1324,19 +1331,22 @@ void HTMLInputElementImpl::attach()
         if (!m_haveType)
             setType(getAttribute(ATTR_TYPE));
 
-        if (m_type != FILE) m_value = getAttribute(ATTR_VALUE);
-        if ((uint) m_type <= ISINDEX && !m_value.isEmpty()) {
-            QString value = m_value.string();
+        // FIXME: This needs to be dynamic, doesn't it, since someone could set this
+        // after attachment?
+        DOMString val = getAttribute(ATTR_VALUE);
+        if ((uint) m_type <= ISINDEX && !val.isEmpty()) {
             // remove newline stuff..
             QString nvalue;
-            for (unsigned int i = 0; i < value.length(); ++i)
-                if (value[i] >= ' ')
-                    nvalue += value[i];
-            m_value = nvalue;
+            for (unsigned int i = 0; i < val.length(); ++i)
+                if (val[i] >= ' ')
+                    nvalue += val[i];
+
+            if (val.length() != nvalue.length())
+                setAttribute(ATTR_VALUE, nvalue);
         }
 
         removeCheckedRadioButtonFromDocument();
-        m_checked = (getAttribute(ATTR_CHECKED) != 0);
+        m_defaultChecked = (getAttribute(ATTR_CHECKED) != 0);
         addCheckedRadioButtonToDocument();
 
         m_inited = true;
@@ -1563,14 +1573,16 @@ bool HTMLInputElementImpl::encoding(const QTextCodec* codec, khtml::encodingList
 
 void HTMLInputElementImpl::reset()
 {
-    setValue(getAttribute(ATTR_VALUE));
-    setChecked(getAttribute(ATTR_CHECKED) != 0);
+    setValue(DOMString());
+    m_useDefaultChecked = true;
+    m_checked = m_defaultChecked;
 }
 
 void HTMLInputElementImpl::setChecked(bool _checked)
 {
-    if (m_checked == _checked) return;
+    if (checked() == _checked) return;
     removeCheckedRadioButtonFromDocument();
+    m_useDefaultChecked = false;
     m_checked = _checked;
     addCheckedRadioButtonToDocument();
     setChanged();
@@ -1580,14 +1592,14 @@ void HTMLInputElementImpl::setChecked(bool _checked)
 DOMString HTMLInputElementImpl::value() const
 {
     if ((m_type == CHECKBOX || m_type == RADIO) && m_value.isNull()) {
-        if (m_checked)
+        if (checked())
             return DOMString("on");
         else
             return DOMString("");
     }
 
-    if(m_value.isNull())
-        return DOMString(""); // some JS sites obviously need this
+    if (m_value.isNull())
+        return getAttribute(ATTR_VALUE);
     return m_value;
 }
 
@@ -1596,7 +1608,7 @@ void HTMLInputElementImpl::setValue(DOMString val)
 {
     if (m_type == FILE) return;
 
-    m_value = (val.isNull() ? DOMString("") : val);
+    m_value = val;
     setChanged();
 }
 
@@ -1666,7 +1678,7 @@ void HTMLInputElementImpl::setName(const DOMString& name)
 
 bool HTMLInputElementImpl::isCheckedRadioButtonForDocument() const
 {
-    return m_checked && m_type == RADIO && !name().isEmpty() && getDocument();
+    return checked() && m_type == RADIO && !name().isEmpty() && getDocument();
 }
 
 void HTMLInputElementImpl::addCheckedRadioButtonToDocument()
