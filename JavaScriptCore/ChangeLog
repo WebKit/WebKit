@@ -1,3 +1,12 @@
+2004-12-14  Richard Williamson   <rjw@apple.com>
+
+	Pass URL of plugin view when call into JNI.
+
+        Reviewed by Chris.
+
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+
 2004-12-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3827799> repro. crash with IBM Rational ClearCase Web under Safari (Java/LiveConnect-related)

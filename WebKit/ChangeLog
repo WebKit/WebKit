@@ -1,3 +1,12 @@
+2004-12-14  Richard Williamson   <rjw@apple.com>
+
+	Helper method to get URL of plugin view.
+
+        Reviewed by Chris.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _webViewURL]):
+
 2004-12-14  Vicki Murley <vicki@apple.com>
 
         Reviewed by rjw.

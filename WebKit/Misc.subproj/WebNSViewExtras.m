@@ -5,6 +5,7 @@
 
 #import <WebKit/WebNSViewExtras.h>
 
+#import <WebKit/WebDataSource.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebImageRenderer.h>
@@ -270,4 +271,8 @@
     return [[self _frame] dataSource];
 }
 
+- (NSURL *)_webViewURL
+{
+    return [[[[[self superview] _frame] dataSource] request] URL];
+}
 @end
