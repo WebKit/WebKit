@@ -490,7 +490,6 @@ static void __IFFillStyleWithAttributes(ATSUStyle style, NSFont *theFont) {
     CGContextRef cgContext;
 
     cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGContextSetCharacterSpacing(cgContext, 0.0);
     errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], glyphsToCache, widthCache, [font pointSize]);
     if (errorResult == 0)
         [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph advances - for %@ %f", self, [font displayName], [font pointSize]];
