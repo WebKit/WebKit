@@ -1,6 +1,6 @@
 2002-02-20  Maciej Stachowiak  <mjs@apple.com>
 
-	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebController.h: Fix my WebController screw-up.
 
 2002-02-19  John Sullivan  <sullivan@apple.com>
 
