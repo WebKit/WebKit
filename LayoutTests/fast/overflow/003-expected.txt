@@ -2,7 +2,7 @@ layer at (0,0) size 800x600
   RenderCanvas at (0,0) size 800x600
 layer at (10,10) size 780x302
   RenderBlock {COMMENT} at (10,10) size 780x302 [bgcolor=#FFFF00]
-layer at (10,10) size 282x302 clip at (11,11) size 265x300
+layer at (10,10) size 282x302 clip at (11,11) size 265x300 scrollHeight 1292
   RenderBlock {/A} at (0,0) size 282x302 [bgcolor=#EEEEEE] [border: (1px solid #000000)]
     RenderBlock {TITLE} at (11,11) size 255x19
       RenderText {TEXT} at (0,0) size 154x19

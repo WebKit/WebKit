@@ -8,6 +8,6 @@ layer at (0,0) size 800x134
           text run at (0,0) width 137: "You should see a 100"
           text run at (137,0) width 167: "x100 green square below. "
           text run at (304,0) width 233: "If you see any red, the test has failed."
-layer at (8,26) size 100x100
+layer at (8,26) size 100x100 scrollHeight 200
   RenderBlock {DIV} at (0,18) size 100x100 [bgcolor=#008000]
     RenderBlock {DIV} at (0,100) size 100x100 [bgcolor=#FF0000]
