@@ -23,9 +23,9 @@
 
 - (void)dealloc
 {
-    [name release];
-    [view release];
-    [dataSource release];
+    [name autorelease];
+    [view autorelease];
+    [dataSource autorelease];
 }
 
 - (NSString *)name
@@ -50,6 +50,16 @@
 - (IFWebDataSource *)dataSource
 {
     return dataSource;
+}
+
+- (void)setDataSource: (IFWebDataSource *)ds
+{
+    if (dataSource == ds)
+        return;
+        
+    [dataSource autorelease];
+    dataSource = [ds retain];
+    [dataSource setFrame: self];
 }
 
 

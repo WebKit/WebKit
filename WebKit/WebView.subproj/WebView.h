@@ -138,11 +138,11 @@
 // likely the controller will receive a change request from the view.  That argues for
 // placing locationWillChangeTo: in a different protocol, and making it more or a complete
 // handshake.
-- (BOOL)locationWillChangeTo: (NSURL *)url;
+- (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
 
-- (void)locationChangeStartedForDataSource: (IFWebDataSource *)dataSource;
-- (void)locationChangeInProgressForDataSource: (IFWebDataSource *)dataSource;
-- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
+- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
+- (void)locationChangeInProgressForFrame: (IFWebFrame *)frame;
+- (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame;
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource;
 

@@ -1,5 +1,13 @@
 2002-02-05  Richard Williamson  <rjw@apple.com>
 
+    Updated part to use 'official' controller APIs.
+    
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::~KHTMLPart),
+	(KHTMLPart::khtmlMouseReleaseEvent), (KHTMLPart::requestFrame),
+	(KHTMLPart::checkCompleted):
+
+2002-02-05  Richard Williamson  <rjw@apple.com>
+
     Changes to support dynamic scroll bars in frames/iframes.
 
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseReleaseEvent):

@@ -63,7 +63,10 @@
 
 @protocol IFWebController
 - (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource;
-- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
+- (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
+- (void)changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
+- (void)locationChangeStartedForFrame: (IFWebFrame *)frame;
+- (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame;
 @end
 
 @protocol IFLocationChangeHandler
@@ -72,7 +75,8 @@
 
 @interface IFWebDataSource : NSObject
 - initWithURL: (NSURL *)url;
-- (void)_setFrameName: (NSString *)fName;
+- (void)setFrame: (IFWebFrame *)fName;
+- (IFWebFrame *)frame;
 - (id <IFWebController>)controller;
 - (void)startLoading: (BOOL)forceRefresh;
 - frameNamed: (NSString *)f;
@@ -82,8 +86,6 @@
 // API.
 @interface IFWebView: NSObject
 - (QWidget *)_widget;
-- (void)_resetView;
-- documentView;
 @end
 
 @interface IFWebFrame: NSObject
@@ -296,7 +298,8 @@ KHTMLPart::~KHTMLPart()
     d->m_doc = 0;
 
     delete d;
-    NSLog(@"destructing KHTMLPart");
+
+    KWQDEBUG ("deleted KHTMLPart private data\n");
 }
 
 static NSString *
@@ -1284,21 +1287,38 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
+        IFWebDataSource *dataSource;
+        id <IFWebController>controller;
+        KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
+        NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
+        NSURL *url = [NSURL URLWithString: urlString];
+        IFWebFrame *frame;
+        
+        dataSource = getDataSource();
+        frame = [dataSource frame];
+        controller = [dataSource controller];
+        if ([controller locationWillChangeTo: url forFrame: frame]){
+            [controller changeLocationTo: url forFrame: frame];
+            [controller locationChangeStartedForFrame: frame];
+        }
+
+/*
         id nsview = ((IFWebView *)((QWidget *)view())->getView());
         
         //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
         if ([nsview isKindOfClass: NSClassFromString(@"NSScrollView")])
             nsview = [nsview documentView];
         [nsview _resetView];
-        KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
         openURL (clickedURL);
         // [kocienda]: shield your eyes!
         // this hack is to get link clicks to show up in the history list of the test app
         // this should be removed and replaced by something better
         NSString *urlString = [NSString stringWithCString:clickedURL.url().latin1()];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-click" object:urlString];
+*/
     }
     
+#ifndef _KWQ_
 #define QT_NO_CLIPBOARD 1
 #ifndef QT_NO_CLIPBOARD
   if ((_mouse->button() == MidButton) && (event->url() == 0))
@@ -1366,6 +1386,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     //kdDebug( 6000 ) << "selectedText = " << text << endl;
     //emitSelectionChanged();
   }
+#endif
 #endif
 
 }
@@ -1536,25 +1557,27 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         frame->setWidget ([[aFrame view] _widget]);
     }
     else {        
-        IFWebDataSource *childDataSource, *dataSource;
+        IFWebDataSource *dataSource;
         NSURL *childURL;
         IFWebFrame *newFrame;
         id <IFWebController> controller;
 
         fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
-        childDataSource = [[IFWebDataSource alloc] initWithURL: childURL];
-        [childDataSource _setFrameName: nsframeName];
         
         dataSource = getDataSource();
         controller = [dataSource controller];
-        newFrame = [controller createFrameNamed: nsframeName for: childDataSource inParent: dataSource];
+        newFrame = [controller createFrameNamed: nsframeName for: nil inParent: dataSource];
     
-        // This should not be called here.  This introduces a nasty dependency on
-        // the view.
-        frame->setWidget ([[newFrame view] _widget]);
-        
-        [childDataSource startLoading: YES];
+
+        if ([controller locationWillChangeTo: childURL forFrame: newFrame]){
+            [controller changeLocationTo: childURL forFrame: newFrame];
+
+            // This introduces a nasty dependency on the view.
+            frame->setWidget ([[newFrame view] _widget]);
+
+            [controller locationChangeStartedForFrame: newFrame];
+        }
     }
 
 #ifdef _SUPPORT_JAVASCRIPT_URL_    
@@ -1667,7 +1690,7 @@ void KHTMLPart::checkCompleted()
         
         dataSource = getDataSource();
         controller = [dataSource controller];
-        [controller locationChangeDone: nil forDataSource: dataSource];
+        [controller locationChangeDone: nil forFrame: [dataSource frame]];
         
         end();
     }

@@ -80,7 +80,7 @@
 {
     [super init];
     _controllerPrivate = [[IFBaseWebControllerPrivate alloc] init];
-    [self setView: view andDataSource: dataSource];
+    [self setMainView: view andMainDataSource: dataSource];
     return self;   
 }
 
@@ -103,38 +103,25 @@
 }
 
 
-- (void)setView: (IFWebView *)view andDataSource: (IFWebDataSource *)dataSource
+- (void)setMainView: (IFWebView *)view andMainDataSource: (IFWebDataSource *)dataSource
 {
-    // FIXME:  this needs to be implemented in terms of IFWebFrame.
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-
-    [data->viewMap autorelease];
-    data->viewMap = [[NSMutableDictionary alloc] init];
+        
+    [data->mainFrame autorelease];
     
-    [data->dataSourceMap autorelease];
-    data->dataSourceMap = [[NSMutableDictionary alloc] init];
-    
-    [data->mainView autorelease];
-    data->mainView = [view retain];
+    data->mainFrame = [[IFWebFrame alloc] init];
+    [data->mainFrame setView: view];
     [view _setController: self];
     
-    [data->mainDataSource autorelease];
-    data->mainDataSource = [dataSource retain];
+    [data->mainFrame setDataSource: dataSource];
     [dataSource _setController: self];
-
-    if (dataSource != nil && view != nil){
-        [data->viewMap setObject: view forKey: [IFObjectHolder holderWithObject:dataSource]];
-
-        [data->dataSourceMap setObject: dataSource forKey: [IFObjectHolder holderWithObject:view]];
-    }
     
     if (dataSource != nil)
-        [view dataSourceChanged];
+        [view dataSourceChanged: dataSource];
 }
 
 - (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource
 {
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     IFWebView *childView;
     IFWebFrame *newFrame;
     IFDynamicScrollBarsView *scrollView;
@@ -145,57 +132,46 @@
 
     [parentDataSource addFrame: newFrame];
 
-    [data->viewMap setObject: childView forKey: [IFObjectHolder holderWithObject:childDataSource]];
     [childView _setController: self];
-    [data->dataSourceMap setObject: childDataSource forKey: [IFObjectHolder holderWithObject:childView]];
     [childDataSource _setController: self];
 
     scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
     [childView _setFrameScrollView: scrollView];
         
-    [childView dataSourceChanged];
-        
     return newFrame;
 }
 
 
-- (IFWebView *)viewForDataSource: (IFWebDataSource *)dataSource
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return [data->viewMap objectForKey: [IFObjectHolder holderWithObject:dataSource]];
-}
-
-
-- (IFWebDataSource *)dataSourceForView: (IFWebView *)view
-{
-    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return [data->dataSourceMap objectForKey: [IFObjectHolder holderWithObject:view]];
-}
-
 - (void)setMainView: (IFWebView *)m;
 {
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    [self setView: m andDataSource: data->mainDataSource];
+    [self setMainView: m andMainDataSource: [data->mainFrame dataSource]];
+}
+
+- (IFWebFrame *)mainFrame
+{
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
+    return data->mainFrame;
 }
 
 
 - (IFWebView *)mainView
 {
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return data->mainView;
+    return [data->mainFrame view];
 }
 
 
 - (void)setMainDataSource: (IFWebDataSource *)dataSource;
 {
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    [self setView: data->mainView andDataSource: dataSource];
+    [self setMainView: [data->mainFrame view] andMainDataSource: dataSource];
 }
 
 - (IFWebDataSource *)mainDataSource
 {
     IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
-    return data->mainDataSource;
+    return [data->mainFrame dataSource];
 }
 
 
@@ -246,32 +222,39 @@
 // ---------------------------------------------------------------------
 // IFLocationChangeHandler
 // ---------------------------------------------------------------------
-- (BOOL)locationWillChangeTo: (NSURL *)url
+- (BOOL)locationWillChangeTo: (NSURL *)url forFrame: (IFWebFrame *)frame;
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationWillChangeTo: is not implemented"];
-    return NO;
+    return YES;
+}
+
+- (void)changeLocationTo: (NSURL *)url forFrame: (IFWebFrame *)frame
+{
+    IFWebDataSource *dataSource = [[[IFWebDataSource alloc] initWithURL: url] autorelease];
+    
+    [dataSource _setController: self];
+    [frame setDataSource: dataSource];
+    [[frame view] dataSourceChanged: dataSource];
+    
+    [dataSource startLoading: YES];
 }
 
 
-- (void)locationChangeStartedForDataSource: (IFWebDataSource *)dataSource
+- (void)locationChangeStartedForFrame: (IFWebFrame *)frame
 {
-    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationWillChangeTo: is not implemented"];
+    // Do nothing.
 }
 
 
-- (void)locationChangeInProgressForDataSource: (IFWebDataSource *)dataSource
+- (void)locationChangeInProgressForFrame: (IFWebFrame *)frame
 {
     [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationChangeInProgressForDataSource:forDataSource: is not implemented"];
 }
 
 
-- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource
-{
-    IFWebView *view;
-    
-    view = [self viewForDataSource: dataSource];
-    [view setNeedsLayout: YES];
-    [view setNeedsDisplay: YES];
+- (void)locationChangeDone: (IFError *)error forFrame: (IFWebFrame *)frame
+{    
+    [[frame view] setNeedsLayout: YES];
+    [[frame view] setNeedsDisplay: YES];
 }
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource

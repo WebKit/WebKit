@@ -23,18 +23,14 @@
 - (BOOL)directsAllLinksToSystemBrowser;
 
 // Sets the mainView and the mainDataSource.
-- (void)setView: (IFWebView *)view andDataSource: (IFWebDataSource *)dataSource;
-
-// Find the view for the specified data source.
-- (IFWebView *)viewForDataSource: (IFWebDataSource *)dataSource;
-
-// Find the data source for the specified view.
-- (IFWebDataSource *)dataSourceForView: (IFWebView *)view;
+- (void)setMainView: (IFWebView *)view andMainDataSource: (IFWebDataSource *)dataSource;
 
 - (void)setMainView: (IFWebView *)view;
 - (IFWebView *)mainView;
 
 - (void)setMainDataSource: (IFWebDataSource *)dataSource;
 - (IFWebDataSource *)mainDataSource;
+
+- (IFWebFrame *)mainFrame;
 
 @end

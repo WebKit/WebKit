@@ -31,6 +31,8 @@
     // a reference to their view and main data source.
     [parent release];
     [frames release];
+    [frame release];
+    [inputURL release];
     
     delete part;
 }
@@ -50,11 +52,6 @@
 - (KHTMLPart *)_part
 {
     return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part;
-}
-
-- (void)_setFrameName: (NSString *)fname
-{
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frameName = [fname retain];
 }
 
 @end

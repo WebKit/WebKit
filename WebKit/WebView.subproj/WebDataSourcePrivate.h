@@ -19,7 +19,8 @@
     id <IFWebController>controller;
     NSURL *inputURL;
     KHTMLPart *part;
-    NSString *frameName;
+    IFWebFrame *frame;
+    // Child frames of this frame.
     NSMutableDictionary *frames;
 }
 
@@ -31,5 +32,4 @@
 @interface IFWebDataSource (IFPrivate)
 - (void)_setController: (id <IFWebController>)controller;
 - (KHTMLPart *)_part;
-- (void)_setFrameName: (NSString *)fName;
 @end

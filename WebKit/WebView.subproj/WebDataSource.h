@@ -99,6 +99,14 @@
 - (IFWebDataSource *)parent;
 
 
+// Set the frame that represents this data source.
+- (void)setFrame: (IFWebFrame *)f;
+
+
+// Return the frame that represents this data source.
+- (IFWebFrame *)frame;
+
+
 // Add a child frame.  This should only be called by the data source's controller
 // as a result of a createFrame:inParent:.
 // [Should this be private?]

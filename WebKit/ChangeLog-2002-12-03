@@ -1,3 +1,34 @@
+2002-02-05  Richard Williamson  <rjw@apple.com>
+
+    Updated controller API to reflect frames.
+    
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	initWithView:dataSource:]), (-[IFBaseWebController
+	setMainView:andMainDataSource:]), (-[IFBaseWebController
+	createFrameNamed:for:inParent:]), (-[IFBaseWebController mainFrame]),
+	(-[IFBaseWebController mainView]), (-[IFBaseWebController mainDataSource]),
+	(-[IFBaseWebController changeLocationTo:forFrame:]), (-[IFBaseWebController
+	locationChangeStartedForFrame:]), (-[IFBaseWebController
+	locationChangeInProgressForFrame:]), (-[IFBaseWebController
+	locationChangeDone:forFrame:]):
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm: (-[IFBaseWebControllerPrivate
+	init]), (-[IFBaseWebControllerPrivate dealloc]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource initWithURL:]),
+	(-[IFWebDataSource setFrame:]), (-[IFWebDataSource frame]), (-[IFWebDataSource
+	frameName]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _part]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.m: (-[IFWebFrame dealloc]), (-[IFWebFrame
+	dataSource]), (-[IFWebFrame setDataSource:]):
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dataSourceChanged:]):
+
 2002-02-05  Maciej Stachowiak  <mjs@apple.com>
 
 	Remove old obsolete cache code from tree and build.

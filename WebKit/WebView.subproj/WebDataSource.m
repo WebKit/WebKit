@@ -45,7 +45,7 @@
 {
     [super init];
     [self _commonInitialization];
-    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL = inputURL;
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL = [inputURL retain];
     return self;
 }
 
@@ -61,11 +61,30 @@
 #endif
 
 
+- (void)setFrame: (IFWebFrame *)f
+{
+    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame == f)
+        return;
+        
+    [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame autorelease];
+    
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame = [f retain];
+    
+    [f setDataSource: self];
+}
+
+
+- (IFWebFrame *)frame
+{
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame;    
+}
+
+
 // Returns the name of the frame containing this data source, or nil
 // if the data source is not in a frame set.
 - (NSString *)frameName 
 {
-    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frameName;    
+    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frame name];    
 }
 
 

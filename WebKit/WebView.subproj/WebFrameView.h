@@ -96,7 +96,8 @@
 
 // This method is typically called by the view's controller when
 // the data source is changed.
-- (void)dataSourceChanged;
+- (void)dataSourceChanged: (IFWebDataSource *)dataSource;
+
 
 - (void)setNeedsLayout: (bool)flag;
 

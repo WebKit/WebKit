@@ -11,20 +11,13 @@
 
 - init 
 {
-    mainView = nil;
-    mainDataSource = nil;
-    viewMap = nil;
-    dataSourceMap = nil;
+    mainFrame = nil;
     return self;
 }
 
 - (void)dealloc
 {
-    [mainView release];
-    [mainDataSource release];
-    
-    [viewMap release];
-    [dataSourceMap release];
+    [mainFrame autorelease];
 }
 
 @end

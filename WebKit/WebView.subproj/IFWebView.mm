@@ -50,7 +50,7 @@
 
 // This method is typically called by the view's controller when
 // the data source is changed.
-- (void)dataSourceChanged 
+- (void)dataSourceChanged: (IFWebDataSource *)dataSource 
 {
     IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
     NSRect r = [self frame];
@@ -60,7 +60,7 @@
 
     // Nasty!  Setup the cross references between the KHTMLView and
     // the KHTMLPart.
-    KHTMLPart *part = [[[self controller] dataSourceForView: self] _part];
+    KHTMLPart *part = [dataSource _part];
 
     data->widget = new KHTMLView (part, 0);
     part->setView (data->widget);
