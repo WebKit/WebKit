@@ -248,7 +248,7 @@
 {
     DOMDocumentFragment *fragment = [self _documentFragmentWithArchive:archive];
     if (fragment) {
-        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:NO];
+        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:NO matchStyle:NO];
     }
 }
 

@@ -2069,7 +2069,6 @@ void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *s
     if (styleChange.cssStyle().length() > 0) {
         ElementImpl *styleElement = createStyleSpanElement(document());
         styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
-        styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
         insertNodeBefore(styleElement, startNode);
         surroundNodeRangeWithElement(startNode, endNode, styleElement);
     }
@@ -3926,8 +3925,8 @@ void RemoveNodePreservingChildrenCommand::doApply()
 //------------------------------------------------------------------------------------------
 // ReplaceSelectionCommand
 
-ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmentImpl *fragment)
-    : m_document(document), m_fragment(fragment), m_hasInterchangeNewline(false), m_hasMoreThanOneBlock(false)
+ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmentImpl *fragment, bool matchStyle)
+    : m_document(document), m_fragment(fragment), m_matchStyle(matchStyle), m_hasInterchangeNewline(false), m_hasMoreThanOneBlock(false)
 {
     if (!m_document)
         return;
@@ -3985,7 +3984,9 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
         removeNode(nodeToDelete);
 
     // Prepare this fragment to merge styles correctly into the destination.
-    computeStylesAndRemoveUnrendered();
+    if (!m_matchStyle) {
+        computeStylesAndRemoveUnrendered();
+    }
     removeStyleNodes();
 
     int blockCount = realBlockCount;
@@ -3996,7 +3997,7 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
     if (!isProbablyBlock(lastChild) && realBlockCount > 0)
         blockCount++;
 
-     if (blockCount > 1)
+    if (blockCount > 1)
         m_hasMoreThanOneBlock = true;
 }
 
@@ -4227,14 +4228,15 @@ void ReplacementFragment::removeBlockquoteColorsIfNeeded(NodeImpl *node, CSSMuta
     }
 }
 
-ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
+ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace, bool matchStyle) 
     : CompositeEditCommand(document), 
-      m_fragment(document, fragment),
+      m_fragment(document, fragment, matchStyle),
       m_firstNodeInserted(0),
       m_lastNodeInserted(0),
       m_lastTopNodeInserted(0),
       m_selectReplacement(selectReplacement), 
-      m_smartReplace(smartReplace)
+      m_smartReplace(smartReplace),
+      m_matchStyle(matchStyle)
 {
 }
 
@@ -4298,12 +4300,16 @@ void ReplaceSelectionCommand::doApply()
     
     // calculate the start and end of the resulting selection
     selection = endingSelection();
-    if (startAtStartOfBlock && startBlock->inDocument()) {
-        startPos = Position(startBlock, 0);
-    } else if (startAtEndOfBlock) {
-        startPos = selection.start().downstream(StayInBlock);
+    if (m_matchStyle) {
+        startPos = selection.start();
     } else {
-        startPos = selection.start().upstream(upstreamStayInBlock);
+        if (startAtStartOfBlock && startBlock->inDocument()) {
+            startPos = Position(startBlock, 0);
+        } else if (startAtEndOfBlock) {
+            startPos = selection.start().downstream(StayInBlock);
+        } else {
+            startPos = selection.start().upstream(upstreamStayInBlock);
+        }
     }
     endPos = selection.end().downstream(); 
     
@@ -4312,8 +4318,8 @@ void ReplaceSelectionCommand::doApply()
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     KHTMLPart *part = document()->part();
     part->clearTypingStyle();
-    setTypingStyle(0);
-
+    setTypingStyle(0);    
+    
     // done if there is nothing to add
     if (!m_fragment.firstChild())
         return;
@@ -4440,7 +4446,9 @@ void ReplaceSelectionCommand::doApply()
             insertParagraphSeparator();
             endPos = endingSelection().end().downstream();
         }
-        applyStyleToInsertedNodes();
+        if (!m_matchStyle) {
+            applyStyleToInsertedNodes();
+        }
         completeHTMLReplacement(startPos, endPos);
     } else {
         if (m_lastNodeInserted && m_lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
@@ -4486,8 +4494,10 @@ void ReplaceSelectionCommand::doApply()
             }
         }
     
-        applyStyleToInsertedNodes();
-    
+        if (!m_matchStyle) {
+            applyStyleToInsertedNodes();
+        }
+        
         completeHTMLReplacement();
     }
     

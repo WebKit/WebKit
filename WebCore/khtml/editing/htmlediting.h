@@ -659,7 +659,7 @@ private:
 class ReplacementFragment
 {
 public:
-    ReplacementFragment(DOM::DocumentImpl *, DOM::DocumentFragmentImpl *);
+    ReplacementFragment(DOM::DocumentImpl *, DOM::DocumentFragmentImpl *, bool matchStyle);
     ~ReplacementFragment();
 
     enum EFragmentType { EmptyFragment, SingleTextNodeFragment, TreeFragment };
@@ -686,7 +686,7 @@ private:
     // no copy construction or assignment
     ReplacementFragment(const ReplacementFragment &);
     ReplacementFragment &operator=(const ReplacementFragment &);
-
+    
     static bool isInterchangeNewlineNode(const DOM::NodeImpl *);
     static bool isInterchangeConvertedSpaceSpan(const DOM::NodeImpl *);
 
@@ -704,6 +704,7 @@ private:
     DOM::DocumentImpl *m_document;
     DOM::DocumentFragmentImpl *m_fragment;
     QMap<DOM::NodeImpl *, DOM::CSSMutableStyleDeclarationImpl *> m_styles;
+    bool m_matchStyle;
     bool m_hasInterchangeNewline;
     bool m_hasMoreThanOneBlock;
 };
@@ -711,7 +712,7 @@ private:
 class ReplaceSelectionCommand : public CompositeEditCommand
 {
 public:
-    ReplaceSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true, bool smartReplace=false);
+    ReplaceSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true, bool smartReplace=false, bool matchStyle=false);
     virtual ~ReplaceSelectionCommand();
     
     virtual void doApply();
@@ -734,6 +735,7 @@ private:
     DOM::NodeImpl *m_lastTopNodeInserted;
     bool m_selectReplacement;
     bool m_smartReplace;
+    bool m_matchStyle;
 };
 
 //------------------------------------------------------------------------------------------

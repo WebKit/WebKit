@@ -1,3 +1,22 @@
+2005-02-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3945271> REGRESSION (Mail): pasted plain text should pick up typing style instead of being unstyled
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): don't set class on element returned by createStyleSpanElement since that's already done
+        (khtml::ReplacementFragment::ReplacementFragment): take matchStyle param, don't call computeStylesAndRemoveUnrendered() if !matchStyle
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand): take matchStyle param
+        (khtml::ReplaceSelectionCommand::doApply): if m_matchStyle, use selection.start() as the insertion position and don't call applyStyleToInsertedNodes()
+        * khtml/editing/htmlediting.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:matchStyle:]): take matchStyle param and pass it
+        (-[WebCoreBridge replaceSelectionWithNode:selectReplacement:smartReplace:]): pass NO for matchStyle
+        (-[WebCoreBridge replaceSelectionWithMarkupString:baseURLString:selectReplacement:smartReplace:]): pass NO for matchStyle
+        (-[WebCoreBridge replaceSelectionWithText:selectReplacement:smartReplace:]): pass YES for matchStyle
+
 2005-02-18  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris

@@ -151,7 +151,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
 @interface WebHTMLView (WebHTMLViewFileInternal)
 - (BOOL)_imageExistsAtPaths:(NSArray *)paths;
-- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText chosePlainText:(BOOL *)chosePlainText;
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText;
 - (BOOL)_shouldInsertFragment:(DOMDocumentFragment *)fragment replacingDOMRange:(DOMRange *)range givenAction:(WebViewInsertAction)action;
 - (BOOL)_shouldReplaceSelectionWithText:(NSString *)text givenAction:(WebViewInsertAction)action;
@@ -298,9 +298,10 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     return elements;
 }
 
-- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText chosePlainText:(BOOL *)chosePlainText
 {
     NSArray *types = [pasteboard types];
+    *chosePlainText = NO;
 
     if ([types containsObject:WebArchivePboardType]) {
         WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
@@ -389,6 +390,7 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
     }
     
     if (allowPlainText && [types containsObject:NSStringPboardType]) {
+        *chosePlainText = YES;
         return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
     }
     
@@ -422,10 +424,11 @@ void *_NSSoftLinkingGetFrameworkFuncPtr(NSString *inUmbrellaFrameworkName,
 
 - (void)_pasteWithPasteboard:(NSPasteboard *)pasteboard allowPlainText:(BOOL)allowPlainText
 {
-    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText];
+    BOOL chosePlainText;
+    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText chosePlainText:&chosePlainText];
     WebBridge *bridge = [self _bridge];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[self _selectedRange] givenAction:WebViewInsertActionPasted]) {
-        [bridge replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
+        [bridge replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:chosePlainText];
     }
 }
 
@@ -2767,7 +2770,8 @@ static WebHTMLView *lastHitView = nil;
             BOOL didInsert = NO;
             if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
                 NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
-                DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES];
+                BOOL chosePlainText;
+                DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES chosePlainText:&chosePlainText];
                 if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
                     [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
                     if ([self _isMoveDrag]) {
@@ -2775,7 +2779,7 @@ static WebHTMLView *lastHitView = nil;
                         [bridge moveSelectionToDragCaret:fragment smartMove:smartMove];
                     } else {
                         [bridge setSelectionToDragCaret];
-                        [bridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
+                        [bridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard] matchStyle:chosePlainText];
                     }
                     didInsert = YES;
                 }

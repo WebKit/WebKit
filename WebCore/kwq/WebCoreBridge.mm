@@ -1611,12 +1611,12 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMDocumentFragment _documentFragmentWithImpl:createFragmentFromText(_part->xmlDocImpl(), QString::fromNSString(text))];
 }
 
-- (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
+- (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace matchStyle:(BOOL)matchStyle
 {
     if (!partHasSelection(self) || !fragment)
         return;
     
-    EditCommandPtr(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace)).apply();
+    EditCommandPtr(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace, matchStyle)).apply();
     [self ensureSelectionVisible];
 }
 
@@ -1624,18 +1624,18 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     DOMDocumentFragment *fragment = [[self DOMDocument] createDocumentFragment];
     [fragment appendChild:node];
-    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace];
+    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
 }
 
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
     DOMDocumentFragment *fragment = [self documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
-    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace];
+    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:NO];
 }
 
 - (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
 {
-    [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement smartReplace:smartReplace];
+    [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement smartReplace:smartReplace matchStyle:YES];
 }
 
 - (void)insertLineBreak

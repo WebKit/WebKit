@@ -1,3 +1,16 @@
+2005-02-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3945271> REGRESSION (Mail): pasted plain text should pick up typing style instead of being unstyled
+
+        Reviewed by kocienda.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _replaceSelectionWithArchive:selectReplacement:]): pass NO for matchStyle to replaceSelection
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:chosePlainText:]): return new chosePlainText parameter
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): pass chosePlainText for matchStyle to replaceSelection
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): ditto
+
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
 	Removed code that should not have been checked in from
