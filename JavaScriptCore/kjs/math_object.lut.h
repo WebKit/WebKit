@@ -42,4 +42,4 @@ const struct HashEntry mathTableEntries[] = {
 
 const struct HashTable mathTable = { 2, 33, mathTableEntries, 21 };
 
-}; // namespace
+} // namespace

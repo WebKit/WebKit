@@ -1,3 +1,16 @@
+2003-10-06  Darin Adler  <darin@apple.com>
+
+        * khtml/ecma/kjs_css.lut.h:
+        * khtml/ecma/kjs_dom.lut.h:
+        * khtml/ecma/kjs_events.lut.h:
+        * khtml/ecma/kjs_html.lut.h:
+        * khtml/ecma/kjs_navigator.lut.h:
+        * khtml/ecma/kjs_range.lut.h:
+        * khtml/ecma/kjs_traversal.lut.h:
+        * khtml/ecma/kjs_views.lut.h:
+        * khtml/ecma/kjs_window.lut.h:
+        Regenerated, without stray semicolon.
+
 2003-10-03  Darin Adler  <darin@apple.com>
 
         - updated layout tests for recent WebTextRenderer changes

@@ -24,4 +24,4 @@ const struct HashEntry NavigatorTableEntries[] = {
 
 const struct HashTable NavigatorTable = { 2, 17, NavigatorTableEntries, 13 };
 
-}; // namespace
+} // namespace

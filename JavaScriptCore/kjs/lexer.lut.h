@@ -76,4 +76,4 @@ const struct HashEntry mainTableEntries[] = {
 
 const struct HashTable mainTable = { 2, 67, mainTableEntries, 41 };
 
-}; // namespace
+} // namespace

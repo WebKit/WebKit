@@ -13,7 +13,7 @@ const struct HashEntry DOMNodeIteratorTableEntries[] = {
 
 const struct HashTable DOMNodeIteratorTable = { 2, 6, DOMNodeIteratorTableEntries, 5 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -26,7 +26,7 @@ const struct HashEntry DOMNodeIteratorProtoTableEntries[] = {
 
 const struct HashTable DOMNodeIteratorProtoTable = { 2, 4, DOMNodeIteratorProtoTableEntries, 3 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -58,7 +58,7 @@ const struct HashEntry NodeFilterConstructorTableEntries[] = {
 
 const struct HashTable NodeFilterConstructorTable = { 2, 23, NodeFilterConstructorTableEntries, 17 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -68,7 +68,7 @@ const struct HashEntry DOMNodeFilterProtoTableEntries[] = {
 
 const struct HashTable DOMNodeFilterProtoTable = { 2, 1, DOMNodeFilterProtoTableEntries, 1 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -84,7 +84,7 @@ const struct HashEntry DOMTreeWalkerTableEntries[] = {
 
 const struct HashTable DOMTreeWalkerTable = { 2, 7, DOMTreeWalkerTableEntries, 5 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -103,4 +103,4 @@ const struct HashEntry DOMTreeWalkerProtoTableEntries[] = {
 
 const struct HashTable DOMTreeWalkerProtoTable = { 2, 10, DOMTreeWalkerProtoTableEntries, 7 };
 
-}; // namespace
+} // namespace

@@ -79,4 +79,4 @@ const struct HashEntry dateTableEntries[] = {
 
 const struct HashTable dateTable = { 2, 70, dateTableEntries, 61 };
 
-}; // namespace
+} // namespace

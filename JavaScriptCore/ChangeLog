@@ -1,3 +1,15 @@
+2003-10-06  Darin Adler  <darin@apple.com>
+
+        * kjs/create_hash_table: Remove stray semicolon.
+
+        * kjs/array_object.lut.h:
+        * kjs/date_object.lut.h:
+        * kjs/lexer.lut.h:
+        * kjs/math_object.lut.h:
+        * kjs/number_object.lut.h:
+        * kjs/string_object.lut.h:
+        Regenerated.
+
 === Safari-108 ===
 
 2003-10-02  Darin Adler  <darin@apple.com>

@@ -17,7 +17,7 @@ const struct HashEntry ScreenTableEntries[] = {
 
 const struct HashTable ScreenTable = { 2, 10, ScreenTableEntries, 7 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -149,7 +149,7 @@ const struct HashEntry WindowTableEntries[] = {
 
 const struct HashTable WindowTable = { 2, 123, WindowTableEntries, 89 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -174,7 +174,7 @@ const struct HashEntry LocationTableEntries[] = {
 
 const struct HashTable LocationTable = { 2, 16, LocationTableEntries, 11 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -189,4 +189,4 @@ const struct HashEntry HistoryTableEntries[] = {
 
 const struct HashTable HistoryTable = { 2, 6, HistoryTableEntries, 4 };
 
-}; // namespace
+} // namespace

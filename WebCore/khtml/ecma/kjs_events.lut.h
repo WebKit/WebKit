@@ -26,7 +26,7 @@ const struct HashEntry EventConstructorTableEntries[] = {
 
 const struct HashTable EventConstructorTable = { 2, 19, EventConstructorTableEntries, 3 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -47,7 +47,7 @@ const struct HashEntry DOMEventTableEntries[] = {
 
 const struct HashTable DOMEventTable = { 2, 12, DOMEventTableEntries, 7 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -61,7 +61,7 @@ const struct HashEntry DOMEventProtoTableEntries[] = {
 
 const struct HashTable DOMEventProtoTable = { 2, 5, DOMEventProtoTableEntries, 3 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -71,7 +71,7 @@ const struct HashEntry EventExceptionConstructorTableEntries[] = {
 
 const struct HashTable EventExceptionConstructorTable = { 2, 1, EventExceptionConstructorTableEntries, 1 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -92,7 +92,7 @@ const struct HashEntry DOMUIEventTableEntries[] = {
 
 const struct HashTable DOMUIEventTable = { 2, 12, DOMUIEventTableEntries, 8 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -102,7 +102,7 @@ const struct HashEntry DOMUIEventProtoTableEntries[] = {
 
 const struct HashTable DOMUIEventProtoTable = { 2, 1, DOMUIEventProtoTableEntries, 1 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -127,7 +127,7 @@ const struct HashEntry DOMMouseEventTableEntries[] = {
 
 const struct HashTable DOMMouseEventTable = { 2, 16, DOMMouseEventTableEntries, 2 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -137,7 +137,7 @@ const struct HashEntry DOMMouseEventProtoTableEntries[] = {
 
 const struct HashTable DOMMouseEventProtoTable = { 2, 1, DOMMouseEventProtoTableEntries, 1 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -150,7 +150,7 @@ const struct HashEntry MutationEventConstructorTableEntries[] = {
 
 const struct HashTable MutationEventConstructorTable = { 2, 4, MutationEventConstructorTableEntries, 3 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -165,7 +165,7 @@ const struct HashEntry DOMMutationEventTableEntries[] = {
 
 const struct HashTable DOMMutationEventTable = { 2, 6, DOMMutationEventTableEntries, 5 };
 
-}; // namespace
+} // namespace
 
 namespace KJS {
 
@@ -175,4 +175,4 @@ const struct HashEntry DOMMutationEventProtoTableEntries[] = {
 
 const struct HashTable DOMMutationEventProtoTable = { 2, 1, DOMMutationEventProtoTableEntries, 1 };
 
-}; // namespace
+} // namespace

@@ -157,5 +157,5 @@ sub output() {
   print "};\n";
   print "\nconst struct HashTable $name = ";
   print "\{ 2, $size, ${name}Entries, $hashsize \};\n\n";
-  print "}; // namespace\n";
+  print "} // namespace\n";
 }
