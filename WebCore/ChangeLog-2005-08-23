@@ -1,3 +1,20 @@
+2004-09-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3800346> Inserting newline in BR after block not working
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply): The code to insert the "extra" BR at the end
+        of blocks (hack done to make BRs show up when they appear at the ends of blocks) did not
+        cover this one quirky case where the insertion point can be placed in a BR at the end of 
+        a block that does actually render. Now the input newline code can handle this addtional
+        case.
+        * layout-tests/editing/selection/insert-3800346-fix-expected.txt: Added.
+        * layout-tests/editing/selection/insert-3800346-fix.html: Added.
+
 2004-09-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

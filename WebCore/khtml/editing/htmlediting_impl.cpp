@@ -1391,18 +1391,24 @@ void InputNewlineCommandImpl::doApply()
         // This makes the "real" BR we want to insert appear in the rendering without any 
         // significant side effects (and no real worries either since you can't arrow past 
         // this extra one.
-        NodeImpl *next = pos.node()->traverseNextNode();
-        bool hasTrailingBR = next && next->id() == ID_BR;
-        insertNodeAfterPosition(nodeToInsert, pos);
-        if (hasTrailingBR) {
-            setEndingSelection(Position(next, 0));
+        if (pos.node()->id() == ID_BR && pos.offset() == 0) {
+            // Already placed in a trailing BR. Insert "real" BR before it and leave the selection alone.
+            insertNodeBefore(nodeToInsert, pos.node());
         }
         else {
-            // Insert an "extra" BR at the end of the block. 
-            ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
-            ASSERT(exceptionCode == 0);
-            insertNodeAfter(extraBreakNode, nodeToInsert);
-            setEndingSelection(Position(extraBreakNode, 0));
+            NodeImpl *next = pos.node()->traverseNextNode();
+            bool hasTrailingBR = next && next->id() == ID_BR && pos.node()->enclosingBlockFlowElement() == next->enclosingBlockFlowElement();
+            insertNodeAfterPosition(nodeToInsert, pos);
+            if (hasTrailingBR) {
+                setEndingSelection(Position(next, 0));
+            }
+            else {
+                // Insert an "extra" BR at the end of the block. 
+                ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
+                ASSERT(exceptionCode == 0);
+                insertNodeAfter(extraBreakNode, nodeToInsert);
+                setEndingSelection(Position(extraBreakNode, 0));
+            }
         }
     }
     else if (atStart) {
