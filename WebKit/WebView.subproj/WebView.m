@@ -675,11 +675,14 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 
 - _editingDelegateForwarder
 {
+    // This can be called during window deallocation by QTMovieView in the QuickTime Cocoa Plug-in.
+    // Not sure if that is a bug or not.
+    if (!_private)
+        return nil;
     if (!_private->editingDelegateForwarder)
         _private->editingDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self editingDelegate] defaultTarget: [WebDefaultEditingDelegate sharedEditingDelegate] templateClass: [WebDefaultEditingDelegate class]];
     return _private->editingDelegateForwarder;
 }
-
 
 - (WebFrame *)_frameForDataSource: (WebDataSource *)dataSource fromFrame: (WebFrame *)frame
 {

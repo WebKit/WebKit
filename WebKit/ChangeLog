@@ -1,3 +1,12 @@
+2004-09-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3804648> 8A262: Safari crashed in -[WebView(WebPrivate) _editingDelegateForwarder] inside QuickTime Cocoa Plug-in during WebView deallocation
+
+        * WebView.subproj/WebView.m: (-[WebView _editingDelegateForwarder]):
+        Check _private for nil before dereferencing it.
+
 2004-09-16  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3779150> REGRESSION: images not copied when copying HTML in Safari and pasting into TextEdit
