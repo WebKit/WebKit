@@ -678,6 +678,13 @@ static inline int getPropertyID(NSString *string)
 @end
 
 //------------------------------------------------------------------------------------------
+// DOMCSSUnknownRule
+
+@implementation DOMCSSUnknownRule
+
+@end
+
+//------------------------------------------------------------------------------------------
 // DOMCSSStyleDeclaration
 
 @implementation DOMCSSStyleDeclaration

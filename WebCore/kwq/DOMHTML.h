@@ -479,10 +479,6 @@
 @end
 
 @interface DOMHTMLImageElement : DOMHTMLElement
-// xxx
-- (NSString *)lowSrc;
-- (void)setLowSrc:(NSString *)lowSrc;
-
 - (NSString *)name;
 - (void)setName:(NSString *)name;
 - (NSString *)align;
@@ -800,7 +796,19 @@
 - (DOMDocument *)contentDocument;
 @end
 
-// FIXME: Should this move to another file?
+// FIXME: Should these extensions be moved to another file?
+
 @interface DOMNode (DOMHTMLExtensions)
-- (NSString *)HTMLString; // FIXME: Should this be renamed innerHTML or outerHTML?
+- (NSString *)HTMLString; // FIXME: Should this be renamed innerHTML or outerHTML? Is this the same as innerHTML?
+@end
+
+@interface DOMElement (DOMHTMLExtensions)
+- (NSString *)innerHTML;
+- (void)setInnerHTML:(NSString *)innerHTML;
+- (NSString *)innerText;
+- (void)setInnerText:(NSString *)innerText;
+- (DOMHTMLCollection *)children;
+- (NSString *)contentEditable;
+- (void)setContentEditable:(NSString *)contentEditable;
+- (BOOL)isContentEditable;
 @end

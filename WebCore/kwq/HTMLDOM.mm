@@ -948,11 +948,6 @@ using DOM::NodeImpl;
     return 0;
 }
 
-- (void)setIndex:(long)index
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
 - (BOOL)disabled
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
@@ -2015,17 +2010,6 @@ using DOM::NodeImpl;
 @end
 
 @implementation DOMHTMLImageElement
-
-- (NSString *)lowSrc
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
-}
-
-- (void)setLowSrc:(NSString *)lowSrc
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
 
 - (NSString *)name
 {
@@ -3091,31 +3075,16 @@ using DOM::NodeImpl;
     return 0;
 }
 
-- (void)setRowIndex:(long)rowIndex
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
 - (long)sectionRowIndex
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return 0;
 }
 
-- (void)setSectionRowIndex:(long)sectionRowIndex
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-}
-
 - (DOMHTMLCollection *)cells
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return nil;
-}
-
-- (void)setCells:(DOMHTMLCollection *)cells // Is cells really read/write?
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
 - (NSString *)align
@@ -3192,11 +3161,6 @@ using DOM::NodeImpl;
 {
     ASSERT_WITH_MESSAGE(0, "not implemented");
     return 0;
-}
-
-- (void)setCellIndex:(long)cellIndex
-{
-    ASSERT_WITH_MESSAGE(0, "not implemented");
 }
 
 - (NSString *)abbr

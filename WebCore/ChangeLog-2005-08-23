@@ -2,6 +2,23 @@
 
         Reviewed by Ken.
 
+        - a little more DOM cleanup
+
+        * kwq/DOM-CSS.mm: Added DOMCSSUnknownRule.
+        * kwq/DOM.mm: Split category implementations out to match category interfaces.
+        * kwq/DOMHTML.h: Removed lowSrc, not in DOM Level 2. Added a category for some
+        extensions we'll want on DOMElement.
+        * kwq/DOMInternal.h: Moved _documentImpl method here so it can be used from
+        separate categories.
+        * kwq/DOMRange.h: Changed DOMDocumentRange to a category from a protocol.
+        * kwq/HTMLDOM.mm: Removed unneeded methods.
+
+        * WebCore.pbproj/project.pbxproj: Sort DOM header files alphabetically.
+
+2004-03-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - update for new DOM namespacing and header organization
 
         * WebCore.pbproj/project.pbxproj:

@@ -85,6 +85,6 @@ enum {
 - (void)detach;
 @end
 
-@protocol DOMDocumentRange
+@interface DOMDocument (DOMDocumentRange)
 - (DOMRange *)createRange;
 @end

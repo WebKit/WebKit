@@ -86,6 +86,7 @@ using DOM::TextImpl;
 
 @interface DOMImplementation (WebCoreInternal)
 + (DOMImplementation *)_DOMImplementationWithImpl:(DOMImplementationImpl *)impl;
+- (DOMImplementationImpl *)_DOMImplementationImpl;
 @end
 
 @interface DOMNamedNodeMap (WebCoreInternal)
@@ -334,6 +335,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     // Method not reflected in DOM::NodeImpl interface
     return Node([self _nodeImpl]).hasAttributes();
 }
+
+@end
+
+@implementation DOMNode (DOMExtensions)
 
 - (NSString *)HTMLString
 {
@@ -630,11 +635,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     [super dealloc];
 }
 
-- (DOMImplementationImpl *)_DOMImplementationImpl
-{
-    return reinterpret_cast<DOMImplementationImpl *>(_internal);
-}
-
 - (BOOL)hasFeature:(NSString *)feature :(NSString *)version
 {
     ASSERT(feature);
@@ -666,6 +666,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     raiseOnDOMError(exceptionCode);
     return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
 }
+
+@end
+
+@implementation DOMImplementation (DOMImplementationCSS)
 
 - (DOMCSSStyleSheet *)createCSSStyleSheet:(NSString *)title :(NSString *)media
 {
@@ -708,6 +712,11 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return [[[self alloc] _initWithDOMImplementationImpl:impl] autorelease];
 }
 
+- (DOMImplementationImpl *)_DOMImplementationImpl
+{
+    return reinterpret_cast<DOMImplementationImpl *>(_internal);
+}
+
 @end
 
 //------------------------------------------------------------------------------------------
@@ -730,11 +739,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 // DOMDocument
 
 @implementation DOMDocument
-
-- (DocumentImpl *)_documentImpl
-{
-    return static_cast<DocumentImpl *>(reinterpret_cast<NodeImpl *>(_internal));
-}
 
 - (DOMDocumentType *)doctype
 {
@@ -879,10 +883,18 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return static_cast<DOMElement *>([DOMNode _nodeWithImpl:[self _documentImpl]->getElementById(elementId)]);
 }
 
+@end
+
+@implementation DOMDocument (DOMDocumentRange)
+
 - (DOMRange *)createRange
 {
     return [DOMRange _rangeWithImpl:[self _documentImpl]->createRange()];
 }
+
+@end
+
+@implementation DOMDocument (DOMDocumentCSS)
 
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
@@ -898,6 +910,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return [self getComputedStyle:elt :pseudoElt];
 }
 
+@end
+
+@implementation DOMDocument (DOMDocumentStyle)
+
 - (DOMStyleSheetList *)styleSheets
 {
     return [DOMStyleSheetList _styleSheetListWithImpl:[self _documentImpl]->styleSheets()];
@@ -910,6 +926,11 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 + (DOMDocument *)_documentWithImpl:(DocumentImpl *)impl
 {
     return static_cast<DOMDocument *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (DocumentImpl *)_documentImpl
+{
+    return static_cast<DocumentImpl *>(reinterpret_cast<NodeImpl *>(_internal));
 }
 
 @end
@@ -1234,6 +1255,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     Element element(ElementImpl::createInstance([self _elementImpl]));
     return element.hasAttributeNS(namespaceURI, localName);
 }
+
+@end
+
+@implementation DOMElement (DOMElementCSS)
 
 - (DOMCSSStyleDeclaration *)style
 {
