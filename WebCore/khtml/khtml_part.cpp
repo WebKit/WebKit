@@ -4819,6 +4819,7 @@ void KHTMLPart::stopAutoScroll()
 #endif
 }
 
+#if !APPLE_CHANGES
 
 void KHTMLPart::slotAutoScroll()
 {
@@ -4827,6 +4828,8 @@ void KHTMLPart::slotAutoScroll()
     else
       stopAutoScroll(); // Safety
 }
+
+#endif
 
 void KHTMLPart::selectAll()
 {

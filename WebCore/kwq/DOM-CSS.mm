@@ -27,19 +27,21 @@
 
 #include <objc/objc-class.h>
 
-#import <css/css_base.h>
-#import <css/css_ruleimpl.h>
-#import <css/css_stylesheetimpl.h>
-#import <css/css_valueimpl.h>
-#import <dom/css_value.h>
-#import <dom/dom_string.h>
-#import <qcolor.h>
-#import <shared.h>
-#import <xml/dom_stringimpl.h>
+#import "css_base.h"
+#import "css_ruleimpl.h"
+#import "css_stylesheetimpl.h"
+#import "css_valueimpl.h"
+#import "css_value.h"
+#import "dom_string.h"
+#import "KWQColor.h"
+#import "shared.h"
+#import "dom_stringimpl.h"
+#import "dom2_viewsimpl.h"
 
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
 
+using DOM::AbstractViewImpl;
 using DOM::CounterImpl;
 using DOM::CSSCharsetRuleImpl;
 using DOM::CSSFontFaceRuleImpl;
@@ -2440,8 +2442,8 @@ void removeWrapperForRGB(QRgb value)
 
 - (DOMCSSStyleDeclaration *)getComputedStyle:(DOMElement *)elt :(NSString *)pseudoElt
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:
+        AbstractViewImpl([self _documentImpl]).getComputedStyle([elt _elementImpl], DOMString(pseudoElt).implementation())];
 }
 
 @end

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,12 +61,6 @@ void KConfig::setGroup(const QString &pGroup)
     }
 }
 
-void KConfig::writeEntry(const QString &pKey, const QStringList &rValue, 
-    char sep, bool bPersistent, bool bGlobal, bool bNLS)
-{
-    ERROR("not yet implemented");
-}
-
 QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 {
     if (impl->isPluginInfo) {
@@ -111,7 +105,7 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 	return QString();
     }
     
-    ERROR("not yet implemented");
+    ERROR("config %s not implemented", pKey);
     return QString();
 }
 
@@ -124,11 +118,11 @@ int KConfig::readNumEntry(const char *pKey, int nDefault) const
 	
 	return 0;
     }
-    ERROR("not yet implemented");
+    ERROR("config %s not implemented", pKey);
     return nDefault;
 }
 
-unsigned int KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const char *pKey, unsigned int nDefault) const
+unsigned KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const char *pKey, unsigned nDefault) const
 {
     if (impl->isKonquerorRC && strcmp(pKey, "WindowOpenPolicy") == 0) {
         if (settings->JavaScriptCanOpenWindowsAutomatically()) {
@@ -137,25 +131,13 @@ unsigned int KConfig::readUnsignedNumEntry(const KHTMLSettings *settings, const 
 	    return 3;
 	}
     }
-    ERROR("not yet implemented");
-    return nDefault;
-}
-
-bool KConfig::readBoolEntry(const char *pKey, bool nDefault) const
-{
-    ERROR("not yet implemented");
+    ERROR("config %s not implemented", pKey);
     return nDefault;
 }
 
 QColor KConfig::readColorEntry(const char *pKey, const QColor *pDefault) const
 {
     return pDefault ? *pDefault : QColor(0, 0, 0);
-}
-
-QStringList KConfig::readListEntry(const QString &pKey, char sep) const
-{
-    ERROR("not yet implemented");
-    return QStringList();
 }
 
 void RefreshPlugins(bool reload)

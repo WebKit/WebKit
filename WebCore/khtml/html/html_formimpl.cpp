@@ -2046,6 +2046,10 @@ HTMLSelectElementImpl::HTMLSelectElementImpl(DocumentPtr *doc, HTMLFormElementIm
 HTMLSelectElementImpl::~HTMLSelectElementImpl()
 {
     if (getDocument()) getDocument()->deregisterMaintainsState(this);
+    if (m_options) {
+        m_options->detach();
+        m_options->deref();
+    }
 }
 
 NodeImpl::Id HTMLSelectElementImpl::id() const
@@ -2373,6 +2377,15 @@ int HTMLSelectElementImpl::listToOptionIndex(int listIndex) const
         if (items[i]->id() == ID_OPTION)
             optionIndex++;
     return optionIndex;
+}
+
+HTMLOptionsCollectionImpl *HTMLSelectElementImpl::options()
+{
+    if (!m_options) {
+        m_options = new HTMLOptionsCollectionImpl(this);
+        m_options->ref();
+    }
+    return m_options;
 }
 
 void HTMLSelectElementImpl::recalcListItems()
@@ -2972,10 +2985,6 @@ HTMLIsIndexElementImpl::HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElement
     setName("isindex");
 }
 
-HTMLIsIndexElementImpl::~HTMLIsIndexElementImpl()
-{
-}
-
 NodeImpl::Id HTMLIsIndexElementImpl::id() const
 {
     return ID_ISINDEX;
@@ -2996,3 +3005,25 @@ void HTMLIsIndexElementImpl::parseHTMLAttribute(HTMLAttributeImpl* attr)
 
 // -------------------------------------------------------------------------
 
+unsigned long HTMLOptionsCollectionImpl::length() const
+{
+    // Not yet implemented.
+    return 0;
+}
+
+void HTMLOptionsCollectionImpl::setLength(unsigned long length)
+{
+    // Not yet implemented.
+}
+
+NodeImpl *HTMLOptionsCollectionImpl::item(unsigned long index) const
+{
+    // Not yet implemented.
+    return 0;
+}
+
+NodeImpl *HTMLOptionsCollectionImpl::namedItem(const DOMString &name) const
+{
+    // Not yet implemented.
+    return 0;
+}

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -66,22 +66,4 @@ private:
     QString *_string;
 };
 
-class QTextOStream : public QTextStream {
-public:
-    QTextOStream(QString *s) : QTextStream(s) { }
-    QTextOStream(const QByteArray &ba) : QTextStream(ba) { }
-};
-
-class QTextIStream {
-public:
-    QTextIStream(QString *s) : _string(s), _position(0) { }
-    QString readLine();
-
-private:
-    QTextIStream(const QTextIStream &);
-    QTextIStream &operator=(const QTextIStream &);
-
-    QString *_string;
-    int _position;
-};
 #endif

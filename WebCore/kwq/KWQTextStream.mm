@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,8 @@
 
 #import "KWQTextStream.h"
 
+const size_t integerOrPointerAsStringBufferSize = 100; // large enough for any integer or pointer in string format, including trailing null character
+
 QTextStream::QTextStream(const QByteArray &ba)
     : _hasByteArray(true), _byteArray(ba), _string(0)
 {
@@ -53,42 +55,42 @@ QTextStream &QTextStream::operator<<(char c)
 
 QTextStream &QTextStream::operator<<(short i)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%d", i);
     return *this << buffer;
 }
 
 QTextStream &QTextStream::operator<<(unsigned short i)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%u", i);
     return *this << buffer;
 }
 
 QTextStream &QTextStream::operator<<(int i)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%d", i);
     return *this << buffer;
 }
 
 QTextStream &QTextStream::operator<<(unsigned i)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%u", i);
     return *this << buffer;
 }
 
 QTextStream &QTextStream::operator<<(long i)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%ld", i);
     return *this << buffer;
 }
 
 QTextStream &QTextStream::operator<<(unsigned long i)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%lu", i);
     return *this << buffer;
 }
@@ -129,7 +131,7 @@ QTextStream &QTextStream::operator<<(const QString &s)
 
 QTextStream &QTextStream::operator<<(void *p)
 {
-    char buffer[10];
+    char buffer[integerOrPointerAsStringBufferSize];
     sprintf(buffer, "%p", p);
     return *this << buffer;
 }
@@ -142,10 +144,4 @@ QTextStream &QTextStream::operator<<(const QTextStreamManipulator &m)
 QTextStream &endl(QTextStream& stream)
 {
     return stream << '\n';
-}
-
-QString QTextIStream::readLine()
-{
-    ERROR("not yet implemented");
-    return QString();
 }

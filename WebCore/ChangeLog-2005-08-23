@@ -1,3 +1,148 @@
+2004-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - went through things marked "unimplemented" or "not implemented" and removed
+          or implemented as many as possible
+
+        * kwq/DOM.mm: (-[DOMNode dispatchEvent:]): Implemented.
+        Also moved DOMAbstractView and DOMDocumentView into DOMViews.mm.
+        * kwq/DOM-CSS.mm: (-[DOMDocument getComputedStyle::]): Implemented.
+
+        * kwq/DOMEventsInternal.h: Added.
+        * kwq/DOMEvents.mm:
+        (-[DOMEvent type]): Implemented.
+        (-[DOMEvent target]): Implemented.
+        (-[DOMEvent currentTarget]): Implemented.
+        (-[DOMEvent eventPhase]): Implemented.
+        (-[DOMEvent bubbles]): Implemented.
+        (-[DOMEvent cancelable]): Implemented.
+        (-[DOMEvent timeStamp]): Implemented.
+        (-[DOMEvent stopPropagation]): Implemented.
+        (-[DOMEvent preventDefault]): Implemented.
+        (-[DOMEvent initEvent:::]): Implemented.
+        (-[DOMEvent _eventImpl]): Added.
+        (-[DOMEvent _initWithEventImpl:]): Added.
+        (+[DOMEvent _eventWithImpl:]): Added.
+        (-[DOMMouseEvent _mouseEventImpl]): Added.
+        (-[DOMMouseEvent screenX]): Implemented.
+        (-[DOMMouseEvent screenY]): Implemented.
+        (-[DOMMouseEvent clientX]): Implemented.
+        (-[DOMMouseEvent clientY]): Implemented.
+        (-[DOMMouseEvent ctrlKey]): Implemented.
+        (-[DOMMouseEvent shiftKey]): Implemented.
+        (-[DOMMouseEvent altKey]): Implemented.
+        (-[DOMMouseEvent metaKey]): Implemented.
+        (-[DOMMouseEvent button]): Implemented.
+        (-[DOMMouseEvent relatedTarget]): Implemented.
+        (-[DOMMouseEvent initMouseEvent:::::::::::::::]): Implemented.
+        (-[DOMMutationEvent _mutationEventImpl]): Added.
+        (-[DOMMutationEvent relatedNode]): Implemented.
+        (-[DOMMutationEvent prevValue]): Implemented.
+        (-[DOMMutationEvent newValue]): Implemented.
+        (-[DOMMutationEvent attrName]): Implemented.
+        (-[DOMMutationEvent attrChange]): Implemented.
+        (-[DOMMutationEvent initMutationEvent::::::::]):
+        (-[DOMUIEvent _UIEventImpl]): Added.
+        (-[DOMUIEvent view]): Implemented.
+        (-[DOMUIEvent detail]): Implemented.
+        (-[DOMUIEvent initUIEvent:::::]): Implemented.
+        (-[DOMDocument createEvent:]): Implemented.
+
+        * kwq/DOMHTMLInternal.h: Added.
+        * kwq/DOMHTML.mm:
+        (+[DOMHTMLOptionsCollection _optionsCollectionWithImpl:]): Added.
+        (-[DOMHTMLOptionsCollection length]): Implemented.
+        (-[DOMHTMLOptionsCollection setLength:]): Implemented.
+        (-[DOMHTMLOptionsCollection item:]): Implemented.
+        (-[DOMHTMLOptionsCollection namedItem:]): Implemented.
+        (-[DOMHTMLSelectElement options]): Implemented.
+
+        * kwq/DOMViews.h: Changed DOMDocumentView to be a category on DOMDocument
+        rather than a separate class.
+        * kwq/DOMViewsInternal.h: Added.
+        * kwq/DOMViews.mm: Added.
+        (-[DOMAbstractView document]): Implemnted.
+        (-[DOMAbstractView _abstractViewImpl]): Added.
+        (-[DOMAbstractView _initWithAbstractViewImpl:]): Added.
+        (+[DOMAbstractView _abstractViewWithImpl:]): Added.
+        (-[DOMDocument defaultView]): Implemented.
+
+        * khtml/dom/dom2_views.h: Made AbstractView constructor public to allow creation in
+        the bindings. Would not be necessary if the impl classes were used consistently.
+
+        * khtml/html/html_formimpl.h: Added options() function to HTMLSelectElementImpl.
+        Added HTMLOptionsCollectionImpl class.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLSelectElementImpl::~HTMLSelectElementImpl): Added code to detach and deref the
+        options collection.
+        (HTMLSelectElementImpl::options): Create an options collection if needed.
+        (HTMLOptionsCollectionImpl::length): Added. Not yet implemented.
+        (HTMLOptionsCollectionImpl::setLength): Ditto.
+        (HTMLOptionsCollectionImpl::item): Ditto.
+        (HTMLOptionsCollectionImpl::namedItem): Ditto.
+
+        * khtml/khtmlview.h: Move unused focusNextPrevChild virtual function inside !APPLE_CHANGES.
+        * khtml/khtmlview.cpp: Put the tp, paintBuffer, and formCompletions fields entirely
+        inside !APPLE_CHANGES. Also made QT_NO_TOOLTIP entirely disable the tooltip field.
+        Also put focusNextPrevChild and formCompletionItems functions inside !APPLE_CHANGES.
+
+        * khtml/rendering/render_text.h: Removed unused isFixedWidthFont member function.
+        * khtml/rendering/render_text.cpp: Ditto.
+
+        * kwq/KWQCursor.h: Removed unused pos member function.
+        * kwq/KWQCursor.mm: Ditto.
+
+        * kwq/KWQFontMetrics.h: Removed unused rightBearing and leftBearing member functions.
+        * kwq/KWQFontMetrics.mm: Ditto.
+
+        * kwq/KWQKComboBox.h: Removed KCompletionBase as a base class.
+
+        * kwq/KWQKConfigBase.h: Removed unused readBoolEntry, writeEntry, and readListEntry
+        member functions.
+        * kwq/KWQKConfigBase.mm: Ditto.
+        (KConfig::readEntry): Improved "not implemented" message to indicate which key is uinimplemented.
+        (KConfig::readNumEntry): Ditto.
+        (KConfig::readUnsignedNumEntry): Ditto.
+
+        * kwq/KWQKLineEdit.h: Removed everything, since all the KLineEdit stuff was unused.
+        Changed KLineEdit to just be a typedef for QLineEdit.
+
+        * kwq/KWQSlot.mm: Removed slotAutoScroll.
+        (KWQSlot::KWQSlot): And from here.
+        (KWQSlot::call): And from here.
+
+        * kwq/KWQTextStream.h: Removed unused QTextOStream and QTextIStream.
+        * kwq/KWQTextStream.mm: Removed unused QTextIStream function. Also made buffer sizes larger
+        so we don't have any problems on 64-bit systems. 10 bytes might not be long enough to sprintf an
+        integer or a long or a pointer, but 100 bytes surely will.
+
+        * kwq/KWQWidget.h: Removed unused focusNextPrevChild.
+        * kwq/KWQWidget.mm: Ditto.
+
+        * WebCore.pbproj/project.pbxproj: Removed some files, added others.
+
+        * ForwardingHeaders/kcompletionbox.h: Emptied out, no KWQKCompletionBox.h any more.
+        * ForwardingHeaders/kiconloader.h: Emptied out, no KWQKIconLoader.h any more.
+        * ForwardingHeaders/kmimetype.h: Emptied out, no KWQKMimeType.h any more.
+        * ForwardingHeaders/ksimpleconfig.h: Emptied out, no KWQKSimpleConfig.h any more.
+        * ForwardingHeaders/qfontinfo.h: Emptied out, no KWQFontInfo.h any more.
+        * ForwardingHeaders/qtooltip.h: Replaced with define of QT_NO_TOOLTIP, no
+        KWQToolTip.h any more.
+
+        * kwq/KWQCompletion.h: Removed.
+        * kwq/KWQCompletion.mm: Removed.
+        * kwq/KWQFontInfo.h: Removed.
+        * kwq/KWQFontInfo.mm: Removed.
+        * kwq/KWQKCompletionBox.h: Removed.
+        * kwq/KWQKIconLoader.h: Removed.
+        * kwq/KWQKIconLoader.mm: Removed.
+        * kwq/KWQKMimeType.h: Removed.
+        * kwq/KWQKMimeType.mm: Removed.
+        * kwq/KWQKSimpleConfig.h: Removed.
+        * kwq/KWQKSimpleConfig.mm: Removed.
+        * kwq/KWQToolTip.h: Removed.
+
 2004-05-21  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -193,8 +338,8 @@
 
         Provide the methods to glue the WebView's editing delegate so that these methods work:
         
-        <rdar://problem/3655316>: "Editing: -webViewShouldBeginEditing:inDOMRange: method unimplemented (WebKit editing API)"
-        <rdar://problem/3655317>: "Editing: -webViewShouldEndEditing:inDOMRange: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655316>: "Editing: -webViewShouldBeginEditing:inDOMRange: method unimplemented (WebKit editing API)"
+        <rdar://problem/3655317>: "Editing: -webViewShouldEndEditing:inDOMRange: method unimplemented (WebKit editing API)"
 
         While I was in the neighborhood and working on understanding focus shifts, I fixed this bug as well:
         

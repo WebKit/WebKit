@@ -3,7 +3,7 @@
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
  * (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -191,8 +191,6 @@ public:
 
     virtual const QFont &font();
     virtual short verticalPositionHint( bool firstLine ) const;
-
-    bool isFixedWidthFont() const;
 
     void setText(DOM::DOMStringImpl *text, bool force=false);
     void setTextWithOffset(DOM::DOMStringImpl *text, uint offset, uint len, bool force=false);

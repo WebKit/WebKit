@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,7 +53,6 @@ using KJS::XMLHttpRequestQObject;
 
 enum FunctionNumber {
     signalFinishedParsing,
-    slotAutoScroll,
     slotChildCompleted,
     slotChildCompletedWithBool,
     slotChildStarted,
@@ -94,7 +93,6 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
             m_function = function; \
         } else
     
-    CASE(slotAutoScroll, (), KHTMLPart)
     CASE(slotClicked, (), RenderFormElement)
     CASE(slotChildCompleted, (), KHTMLPart)
     CASE(slotChildStarted, (KIO::Job *), KHTMLPart)
@@ -181,7 +179,6 @@ void KWQSlot::call() const
     
     switch (m_function) {
         CASE(signalFinishedParsing, DocumentImpl, m_finishedParsing.call)
-        CASE(slotAutoScroll, KHTMLPart, slotAutoScroll)
         CASE(slotChildCompleted, KHTMLPart, slotChildCompleted)
         CASE(slotClicked, RenderFormElement, slotClicked)
         CASE(slotFinishedParsing, KHTMLPart, slotFinishedParsing)

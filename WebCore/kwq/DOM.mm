@@ -49,6 +49,7 @@
 
 #import <JavaScriptCore/WebScriptObjectPrivate.h>
 
+#import "DOMEventsInternal.h"
 #import "DOMHTML.h"
 #import "DOMInternal.h"
 #import "KWQAssertions.h"
@@ -358,8 +359,10 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 
 - (BOOL)dispatchEvent:(DOMEvent *)event
 {
-    ERROR("unimplemented");
-    return NO;
+    int exceptionCode = 0;
+    BOOL result = [self _nodeImpl]->dispatchEvent([event _eventImpl], exceptionCode);
+    raiseOnDOMError(exceptionCode);
+    return result;
 }
 
 @end
@@ -1867,26 +1870,6 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 @end
 
 //------------------------------------------------------------------------------------------
-
-@implementation DOMAbstractView
-
-- (DOMDocumentView *)document
-{
-    ERROR("unimplemented");
-    return nil;
-}
-
-@end
-
-@implementation DOMDocumentView
-
-- (DOMAbstractView *)defaultView
-{
-    ERROR("unimplemented");
-    return nil;
-}
-
-@end
 
 //------------------------------------------------------------------------------------------
 

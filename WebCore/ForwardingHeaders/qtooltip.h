@@ -1,1 +1,1 @@
-#include "KWQToolTip.h"
+#define QT_NO_TOOLTIP

@@ -4,7 +4,7 @@
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
+ * 1. Redistributions of source exceptionCode must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -23,47 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQCursor.h"
-#import "KWQLogging.h"
+#import "DOMViews.h"
 
-// The NSCursor cocoa calls here can't fail, so no need to block Cocoa exceptions
+#import "DOMInternal.h"
+#import "DOMViewsInternal.h"
+#import "KWQAssertions.h"
 
-QCursor::QCursor()
-    : cursor(nil)
+#import "dom_docimpl.h"
+#import "dom2_viewsimpl.h"
+
+using DOM::AbstractViewImpl;
+
+ALLOW_DOM_CAST(AbstractViewImpl)
+
+@implementation DOMAbstractView
+
+- (DOMDocument *)document
 {
+    return [DOMDocument _documentWithImpl:[self _abstractViewImpl]->document()];
 }
 
-QCursor::QCursor(NSCursor *cur)
-    : cursor([cur retain])
+@end
+
+@implementation DOMAbstractView (WebCoreInternal)
+
+- (AbstractViewImpl *)_abstractViewImpl
 {
+    return DOM_cast<AbstractViewImpl *>(_internal);
 }
 
-QCursor::QCursor(const QPixmap &pixmap)
-    : cursor(nil)
+- (id)_initWithAbstractViewImpl:(AbstractViewImpl *)impl
 {
-    // Needed for custom cursors.
-    ERROR("not yet implemented");
+    ASSERT(impl);
+
+    [super _init];
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    addDOMWrapper(self, impl);
+    return self;
 }
 
-QCursor::QCursor(const QCursor &other)
-    : cursor([other.cursor retain])
++ (DOMAbstractView *)_abstractViewWithImpl:(AbstractViewImpl *)impl
 {
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    return [[[DOMAbstractView alloc] _initWithAbstractViewImpl:impl] autorelease];
 }
 
-QCursor::~QCursor()
+@end
+
+@implementation DOMDocument (DOMDocumentView)
+
+- (DOMAbstractView *)defaultView
 {
-    [cursor release];
-}
-      
-QCursor &QCursor::operator=(const QCursor &other)
-{
-    [other.cursor retain];
-    [cursor release];
-    cursor = other.cursor;
-    return *this;
+    return [DOMAbstractView _abstractViewWithImpl:[self _documentImpl]->defaultView()];
 }
 
-NSCursor *QCursor::handle() const
-{
-    return cursor;
-}
+@end

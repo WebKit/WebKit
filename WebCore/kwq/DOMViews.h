@@ -25,12 +25,10 @@
 
 #import <WebCore/DOMCore.h>
 
-@class DOMDocumentView;
-
 @interface DOMAbstractView : DOMObject
-- (DOMDocumentView *)document;
+- (DOMDocument *)document;
 @end
 
-@interface DOMDocumentView : DOMObject
+@interface DOMDocument (DOMDocumentView)
 - (DOMAbstractView *)defaultView;
 @end

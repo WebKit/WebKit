@@ -4,7 +4,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2000 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -58,6 +58,7 @@ class DOMString;
 class HTMLGenericFormElementImpl;
 class HTMLOptionElementImpl;
 class HTMLImageLoader;
+class HTMLOptionsCollectionImpl;
 
 // -------------------------------------------------------------------------
 
@@ -445,6 +446,8 @@ public:
 
     DOMString value();
     void setValue(DOMStringImpl* value);
+    
+    HTMLOptionsCollectionImpl *options();
 
     virtual bool maintainsState() { return true; }
     virtual QString state();
@@ -489,9 +492,10 @@ private:
 
 protected:
     mutable QMemArray<HTMLGenericFormElementImpl*> m_listItems;
+    HTMLOptionsCollectionImpl *m_options;
     short m_minwidth;
-    short m_size : 15;
-    bool m_multiple : 1;
+    short m_size;
+    bool m_multiple;
     bool m_recalcListItems;
 };
 
@@ -639,7 +643,6 @@ class HTMLIsIndexElementImpl : public HTMLInputElementImpl
 {
 public:
     HTMLIsIndexElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f = 0);
-    ~HTMLIsIndexElementImpl();
 
     virtual Id id() const;
     virtual void parseHTMLAttribute(HTMLAttributeImpl *attr);
@@ -648,7 +651,24 @@ protected:
     DOMString m_prompt;
 };
 
+// -------------------------------------------------------------------------
 
-}; //namespace
+class HTMLOptionsCollectionImpl : public khtml::Shared<HTMLOptionsCollectionImpl>
+{
+public:
+    HTMLOptionsCollectionImpl(HTMLSelectElementImpl *impl) : m_select(impl) { }
+
+    unsigned long length() const;
+    void setLength(unsigned long);
+    NodeImpl *item(unsigned long index) const;
+    NodeImpl *namedItem(const DOMString &name) const;
+
+    void detach() { m_select = 0; }
+
+private:
+    HTMLSelectElementImpl *m_select;
+};
+
+} //namespace
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -327,16 +327,4 @@ QRect QFontMetrics::boundingRect(int x, int y, int width, int height, int flags,
 QSize QFontMetrics::size(int, const QString &qstring) const
 {
     return QSize(width(qstring), height());
-}
-
-int QFontMetrics::rightBearing(QChar) const
-{
-    ERROR("not yet implemented");
-    return 0;
-}
-
-int QFontMetrics::leftBearing(QChar) const
-{
-    ERROR("not yet implemented");
-    return 0;
 }

@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 1. Redistributions of source code must retain the above copyright
+ * 1. Redistributions of source exceptionCode must retain the above copyright
  *    notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import "KWQCompletion.h"
-#import "KWQLogging.h"
+#import "DOMEvents.h"
 
-void KCompletion::setItems(const QStringList &)
-{
-    ERROR("not yet implemented");
+namespace DOM {
+    class EventImpl;
 }
 
-KCompletion *KCompletionBase::completionObject()
-{
-    ERROR("not yet implemented");
-    return 0;
-}
+@interface DOMEvent (WebCoreInternal)
++ (DOMEvent *)_eventWithImpl:(DOM::EventImpl *)impl;
+- (DOM::EventImpl *)_eventImpl;
+@end

@@ -1368,7 +1368,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part)
         return;
         
-    // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
+    // NOTE: The enums *must* match the very similar ones declared in dom_selection.h
     Selection selection(_part->selection());
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 

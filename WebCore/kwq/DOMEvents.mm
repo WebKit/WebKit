@@ -25,194 +25,247 @@
 
 #import "DOMEvents.h"
 
+#import "DOMEventsInternal.h"
+#import "DOMViewsInternal.h"
+#import "DOMInternal.h"
 #import "KWQAssertions.h"
+
+#import "dom_docimpl.h"
+#import "dom2_eventsimpl.h"
+#import "dom2_views.h"
+#import "dom2_viewsimpl.h"
+
+using DOM::EventImpl;
+using DOM::MouseEventImpl;
+using DOM::MutationEventImpl;
+using DOM::UIEventImpl;
+
+ALLOW_DOM_CAST(EventImpl)
 
 @implementation DOMEvent
 
 - (NSString *)type
 {
-    ERROR("unimplemented");
-    return nil;
+    return [self _eventImpl]->type();
 }
 
 - (id <DOMEventTarget>)target
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _eventImpl]->target()];
 }
 
 - (id <DOMEventTarget>)currentTarget
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _eventImpl]->currentTarget()];
 }
 
 - (unsigned short)eventPhase
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _eventImpl]->eventPhase();
 }
 
 - (BOOL)bubbles
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _eventImpl]->bubbles();
 }
 
 - (BOOL)cancelable
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _eventImpl]->cancelable();
 }
 
 - (DOMTimeStamp)timeStamp
 {
-    ERROR("unimplemented");
-    return nil;
+    return [self _eventImpl]->timeStamp();
 }
 
 - (void)stopPropagation
 {
-    ERROR("unimplemented");
+    [self _eventImpl]->stopPropagation();
 }
 
 - (void)preventDefault
 {
-    ERROR("unimplemented");
+    [self _eventImpl]->preventDefault();
 }
 
 - (void)initEvent:(NSString *)eventTypeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg
 {
-    ERROR("unimplemented");
+    [self _eventImpl]->initEvent(eventTypeArg, canBubbleArg, cancelableArg);
+}
+
+@end
+
+@implementation DOMEvent (WebCoreInternal)
+
+- (EventImpl *)_eventImpl
+{
+    return DOM_cast<EventImpl *>(_internal);
+}
+
+- (id)_initWithEventImpl:(EventImpl *)impl
+{
+    ASSERT(impl);
+
+    [super _init];
+    _internal = DOM_cast<DOMObjectInternal *>(impl);
+    impl->ref();
+    addDOMWrapper(self, impl);
+    return self;
+}
+
++ (DOMEvent *)_eventWithImpl:(EventImpl *)impl
+{
+    if (!impl)
+        return nil;
+    
+    id cachedInstance;
+    cachedInstance = getDOMWrapper(impl);
+    if (cachedInstance)
+        return [[cachedInstance retain] autorelease];
+    
+    Class wrapperClass = nil;
+    if (impl->isMouseEvent()) {
+        wrapperClass = [DOMMouseEvent class];
+    } else if (impl->isMutationEvent()) {
+        wrapperClass = [DOMMutationEvent class];
+    } else if (impl->isUIEvent()) {
+        wrapperClass = [DOMUIEvent class];
+    } else {
+        wrapperClass = [DOMEvent class];
+    }
+    return [[[wrapperClass alloc] _initWithEventImpl:impl] autorelease];
 }
 
 @end
 
 @implementation DOMMouseEvent
 
+- (MouseEventImpl *)_mouseEventImpl
+{
+    return static_cast<MouseEventImpl *>(DOM_cast<EventImpl *>(_internal));
+}
+
 - (long)screenX
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _mouseEventImpl]->screenX();
 }
 
 - (long)screenY
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _mouseEventImpl]->screenY();
 }
 
 - (long)clientX
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _mouseEventImpl]->clientX();
 }
 
 - (long)clientY
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _mouseEventImpl]->clientY();
 }
 
 - (BOOL)ctrlKey
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _mouseEventImpl]->ctrlKey();
 }
 
 - (BOOL)shiftKey
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _mouseEventImpl]->shiftKey();
 }
 
 - (BOOL)altKey
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _mouseEventImpl]->altKey();
 }
 
 - (BOOL)metaKey
 {
-    ERROR("unimplemented");
-    return NO;
+    return [self _mouseEventImpl]->metaKey();
 }
 
 - (unsigned short)button
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _mouseEventImpl]->button();
 }
 
 - (id <DOMEventTarget>)relatedTarget
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _mouseEventImpl]->relatedTarget()];
 }
 
 - (void)initMouseEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg :(long)screenXArg :(long)screenYArg :(long)clientX :(long)clientY :(BOOL)ctrlKeyArg :(BOOL)altKeyArg :(BOOL)shiftKeyArg :(BOOL)metaKeyArg :(unsigned short)buttonArg :(id <DOMEventTarget>)relatedTargetArg
 {
-    ERROR("unimplemented");
+    [self _mouseEventImpl]->initMouseEvent(typeArg, canBubbleArg, cancelableArg,
+        [viewArg _abstractViewImpl], detailArg, screenXArg, screenYArg, clientX, clientY,
+        shiftKeyArg, ctrlKeyArg, altKeyArg, metaKeyArg, buttonArg,
+        [static_cast<DOMNode *>(relatedTargetArg) _nodeImpl]);
 }
 
 @end
 
 @implementation DOMMutationEvent
 
+- (MutationEventImpl *)_mutationEventImpl
+{
+    return static_cast<MutationEventImpl *>(DOM_cast<EventImpl *>(_internal));
+}
+
 - (DOMNode *)relatedNode
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _mutationEventImpl]->relatedNode().handle()];
 }
 
 - (NSString *)prevValue
 {
-    ERROR("unimplemented");
-    return nil;
+    return [self _mutationEventImpl]->prevValue();
 }
 
 - (NSString *)newValue
 {
-    ERROR("unimplemented");
-    return nil;
+    return [self _mutationEventImpl]->newValue();
 }
 
 - (NSString *)attrName
 {
-    ERROR("unimplemented");
-    return nil;
+    return [self _mutationEventImpl]->attrName();
 }
 
 - (unsigned short)attrChange
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _mutationEventImpl]->attrChange();
 }
 
 - (void)initMutationEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMNode *)relatedNodeArg :(NSString *)prevValueArg :(NSString *)newValueArg :(NSString *)attrNameArg :(unsigned short)attrChangeArg
 {
-    ERROR("unimplemented");
+    [self _mutationEventImpl]->initMutationEvent(typeArg, canBubbleArg, cancelableArg,
+        [relatedNodeArg _nodeImpl], prevValueArg, newValueArg, attrNameArg, attrChangeArg);
 }
 
 @end
 
 @implementation DOMUIEvent
 
+- (UIEventImpl *)_UIEventImpl
+{
+    return static_cast<UIEventImpl *>(DOM_cast<EventImpl *>(_internal));
+}
+
 - (DOMAbstractView *)view
 {
-    ERROR("unimplemented");
-    return nil;
+    return [DOMAbstractView _abstractViewWithImpl:[self _UIEventImpl]->view()];
 }
 
 - (long)detail
 {
-    ERROR("unimplemented");
-    return 0;
+    return [self _UIEventImpl]->detail();
 }
 
 - (void)initUIEvent:(NSString *)typeArg :(BOOL)canBubbleArg :(BOOL)cancelableArg :(DOMAbstractView *)viewArg :(long)detailArg
 {
-    ERROR("unimplemented");
+    [self _UIEventImpl]->initUIEvent(typeArg, canBubbleArg, cancelableArg, [viewArg _abstractViewImpl], detailArg);
 }
 
 @end
@@ -221,8 +274,10 @@
 
 - (DOMEvent *)createEvent:(NSString *)eventType
 {
-    ERROR("unimplemented");
-    return nil;
+    int exceptionCode = 0;
+    EventImpl *event = [self _documentImpl]->createEvent(eventType, exceptionCode);
+    raiseOnDOMError(exceptionCode);
+    return [DOMEvent _eventWithImpl:event];
 }
 
 @end

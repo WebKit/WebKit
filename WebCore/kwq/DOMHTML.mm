@@ -25,28 +25,29 @@
 
 #import "DOMHTML.h"
 
-#import <dom/dom_doc.h>
-#import <dom/dom_string.h>
-#import <dom/html_element.h>
-#import <dom/html_misc.h>
-#import <html/html_baseimpl.h>
-#import <html/html_blockimpl.h>
-#import <html/html_documentimpl.h>
-#import <html/html_elementimpl.h>
-#import <html/html_formimpl.h>
-#import <html/html_headimpl.h>
-#import <html/html_imageimpl.h>
-#import <html/html_inlineimpl.h>
-#import <html/html_listimpl.h>
-#import <html/html_miscimpl.h>
-#import <html/html_objectimpl.h>
-#import <html/html_tableimpl.h>
-#import <misc/htmlattrs.h>
-#import <xml/dom_elementimpl.h>
-#import <xml/dom_nodeimpl.h>
+#import "dom_doc.h"
+#import "dom_string.h"
+#import "html_element.h"
+#import "html_misc.h"
+#import "html_baseimpl.h"
+#import "html_blockimpl.h"
+#import "html_documentimpl.h"
+#import "html_elementimpl.h"
+#import "html_formimpl.h"
+#import "html_headimpl.h"
+#import "html_imageimpl.h"
+#import "html_inlineimpl.h"
+#import "html_listimpl.h"
+#import "html_miscimpl.h"
+#import "html_objectimpl.h"
+#import "html_tableimpl.h"
+#import "htmlattrs.h"
+#import "dom_elementimpl.h"
+#import "dom_nodeimpl.h"
 
 #import "DOMExtensions.h"
 #import "DOMInternal.h"
+#import "DOMHTMLInternal.h"
 #import "KWQAssertions.h"
 
 using DOM::Document;
@@ -94,6 +95,7 @@ using DOM::HTMLObjectElementImpl;
 using DOM::HTMLOListElementImpl;
 using DOM::HTMLOptGroupElementImpl;
 using DOM::HTMLOptionElementImpl;
+using DOM::HTMLOptionsCollectionImpl;
 using DOM::HTMLParagraphElementImpl;
 using DOM::HTMLParamElementImpl;
 using DOM::HTMLPreElementImpl;
@@ -209,12 +211,6 @@ using DOM::NodeImpl;
 
 @implementation DOMHTMLOptionsCollection
 
-#if 0
-
-//
-// We need to implement a KHTML element to back this object 
-//
-
 - (void)dealloc
 {
     if (_internal) {
@@ -234,7 +230,7 @@ using DOM::NodeImpl;
     return self;
 }
 
-+ (HTMLOptionsCollection *)_optionsCollectionWithImpl:(HTMLOptionsCollectionImpl *)impl
++ (DOMHTMLOptionsCollection *)_optionsCollectionWithImpl:(HTMLOptionsCollectionImpl *)impl
 {
     if (!impl)
         return nil;
@@ -252,32 +248,24 @@ using DOM::NodeImpl;
     return DOM_cast<HTMLOptionsCollectionImpl *>(_internal);
 }
 
-#endif
-
 - (unsigned long)length
 {
-    //return [self _optionsCollectionImpl]->length();
-    ERROR("unimplemented");
-    return 0;
+    return [self _optionsCollectionImpl]->length();
 }
 
 - (void)setLength:(unsigned long)length
 {
-    ERROR("unimplemented");
+    [self _optionsCollectionImpl]->setLength(length);
 }
 
 - (DOMNode *)item:(unsigned long)index
 {
-    //return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->item(index)];
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->item(index)];
 }
 
 - (DOMNode *)namedItem:(NSString *)name
 {
-    //return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->namedItem(name)];
-    ERROR("unimplemented");
-    return nil;
+    return [DOMNode _nodeWithImpl:[self _optionsCollectionImpl]->namedItem(name)];
 }
 
 @end
@@ -1048,9 +1036,7 @@ using DOM::NodeImpl;
 
 - (DOMHTMLOptionsCollection *)options
 {
-    // We need to implement a khtml element to back the HTMLOptionsCollection object 
-    ASSERT_WITH_MESSAGE(0, "not implemented");
-    return nil;
+    return [DOMHTMLOptionsCollection _optionsCollectionWithImpl:[self _selectElementImpl]->options()];
 }
 
 - (BOOL)disabled

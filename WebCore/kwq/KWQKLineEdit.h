@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,17 +27,7 @@
 #define KLINEEDIT_H_
 
 #include "KWQLineEdit.h"
-#include "KWQCompletion.h"
-#include "KWQKCompletionBox.h"
 
-class KLineEdit : public QLineEdit, public KCompletionBase {
-public:
-    KLineEdit(Type t) : QLineEdit(t) { }
-
-    void setContextMenuEnabled(bool showMenu) { }
-    KCompletionBox *completionBox(bool create) { return 0; }
-    
-    int frameWidth() const { return 2; }
-};
+typedef QLineEdit KLineEdit;
 
 #endif
