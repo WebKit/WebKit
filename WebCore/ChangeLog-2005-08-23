@@ -1,5 +1,21 @@
 2004-09-26  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3816170> image.width/height not available from Image objects (works in Firefox)
+
+        * khtml/ecma/kjs_html.h: Added width and height.
+        * khtml/ecma/kjs_html.cpp: (Image::getValueProperty): Added width and height.
+        * khtml/ecma/kjs_html.lut.h: Regenerated.
+
+        - unrelated change; changed ordering of use count manipulation just in case we decide some day to do
+          something when the use count hits 0
+
+        * khtml/rendering/render_image.cpp: (RenderImage::setPixmap): Increment use count on new object before
+        decrementing use count on old object.
+
+2004-09-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin.
 
         - fixed <rdar://problem/3812771> document.implementation.hasFeature returns false for a lot of features we implement

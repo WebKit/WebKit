@@ -3288,10 +3288,12 @@ Object ImageConstructorImp::construct(ExecState *, const List &)
 const ClassInfo KJS::Image::info = { "Image", 0, &ImageTable, 0 };
 
 /* Source for ImageTable. Use "make hashtables" to regenerate.
-@begin ImageTable 3
+@begin ImageTable 6
   src		Image::Src		DontDelete
   complete	Image::Complete		DontDelete|ReadOnly
   onload        Image::OnLoad           DontDelete
+  width         Image::Width            DontDelete|ReadOnly
+  height        Image::Height           DontDelete|ReadOnly
 @end
 */
 
@@ -3313,6 +3315,24 @@ Value Image::getValueProperty(ExecState *, int token) const
     } else {
       return Null();
     }
+  case Width: {
+    int width = 0;
+    if (img) {
+      QSize size = img->pixmap_size();
+      if (size.isValid())
+        width = size.width();
+    }
+    return Number(width);
+  }
+  case Height: {
+    int height = 0;
+    if (img) {
+      QSize size = img->pixmap_size();
+      if (size.isValid())
+        height = size.height();
+    }
+    return Number(height);
+  }
   default:
     kdWarning() << "Image::getValueProperty unhandled token " << token << endl;
     return Value();

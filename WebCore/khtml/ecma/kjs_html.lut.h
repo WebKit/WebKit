@@ -1027,12 +1027,15 @@ namespace KJS {
 
 const struct HashEntry ImageTableEntries[] = {
    { 0, 0, 0, 0, 0 },
-   { "src", Image::Src, DontDelete, 0, &ImageTableEntries[3] },
+   { "onload", Image::OnLoad, DontDelete, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "height", Image::Height, DontDelete|ReadOnly, 0, 0 },
+   { "src", Image::Src, DontDelete, 0, &ImageTableEntries[6] },
    { "complete", Image::Complete, DontDelete|ReadOnly, 0, 0 },
-   { "onload", Image::OnLoad, DontDelete, 0, 0 }
+   { "width", Image::Width, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable ImageTable = { 2, 4, ImageTableEntries, 3 };
+const struct HashTable ImageTable = { 2, 7, ImageTableEntries, 6 };
 
 } // namespace
 
