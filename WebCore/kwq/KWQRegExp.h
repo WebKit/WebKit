@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,43 +26,26 @@
 #ifndef QREGEXP_H_
 #define QREGEXP_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QREGEXP ======================================================
-
-#ifdef USING_BORROWED_QREGEXP
-#include <_qregexp.h>
-#else
-
 #include <qstring.h>
 
 #include <KWQRefPtr.h>
 
-// class QRegExp ===============================================================
-
 class QRegExp {
 public:
-
     QRegExp();
-    QRegExp(const QString &, bool caseSensitive = TRUE, bool glob = FALSE);
+    QRegExp(const QString &, bool caseSensitive = false, bool glob = false);
     QRegExp(const char *);
-    QRegExp(const QRegExp &);    
     ~QRegExp();
 
+    QRegExp(const QRegExp &);    
     QRegExp &operator=(const QRegExp &);
 
     QString pattern() const;
-    int match (const QString &, int startFrom = 0, int *matchLength = 0,
-		       bool treatStartAsStartOfInput = TRUE) const;
+    int match(const QString &, int startFrom = 0, int *matchLength = 0, bool treatStartAsStartOfInput = true) const;
 
 private:
-    class KWQRegExpPrivate;
-    
+    class KWQRegExpPrivate;    
     KWQRefPtr<KWQRegExpPrivate> d;
-}; // class QRegExp ============================================================
-
-#endif // USING_BORROWED_QREGEXP
+};
 
 #endif

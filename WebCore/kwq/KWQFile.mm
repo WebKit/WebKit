@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,59 +25,18 @@
 
 #import <qfile.h>
 
-#ifndef USING_BORROWED_QFILE
-
-#import <kwqdebug.h>
-#import <Foundation/Foundation.h>
-#import <sys/param.h>
-#import <qstring.h>
-#import <unistd.h>
-#import <sys/types.h>
-#import <sys/stat.h>
-#import <fcntl.h>
-
-#import <qiodevice.h>
-
-class QFile::KWQFilePrivate
-{
-public:
-    KWQFilePrivate(const QString &name);
-    ~KWQFilePrivate();
-
-    char *name;
-    int fd;
-};
-
-
-QFile::KWQFilePrivate::KWQFilePrivate(const QString &qname) : name(new char[MAXPATHLEN + 1]), fd(-1)
-{
-    NSString *nsname = (NSString *)qname.getCFMutableString();
-
-    [nsname getFileSystemRepresentation:name maxLength:MAXPATHLEN];
-}
-
-QFile::KWQFilePrivate::~KWQFilePrivate()
-{
-    delete [] name;
-}
-
-
-QFile::QFile() : d(new QFile::KWQFilePrivate(QString("")))
-{
-}
-
-QFile::QFile(const QString &name) : d(new QFile::KWQFilePrivate(name))
+QFile::QFile(const QString &n) : name(strdup([n.getNSString() fileSystemRepresentation])), fd(-1)
 {
 }
 
 QFile::~QFile()
 {
-    delete d;
+    free(name);
 }
 
 bool QFile::exists() const
 {
-    return access(d->name, F_OK) == 0;
+    return access(name, F_OK) == 0;
 }
 
 bool QFile::open(int mode)
@@ -85,27 +44,27 @@ bool QFile::open(int mode)
     close();
 
     if (mode == IO_ReadOnly) {
-	d->fd = ::open(d->name, O_RDONLY);
+	fd = ::open(name, O_RDONLY);
     }
 
-    return d->fd != -1;
+    return fd != -1;
 }
 
 void QFile::close()
 {
-    if (d->fd != -1) {
-	::close(d->fd);
+    if (fd != -1) {
+	::close(fd);
     }
 
-    d->fd = -1;
+    fd = -1;
 }
 
 int QFile::readBlock(char *data, uint bytesToRead)
 {
-    if (d->fd == -1) {
+    if (fd == -1) {
 	return -1;
     } else {
-	return read(d->fd, data, bytesToRead);
+	return read(fd, data, bytesToRead);
     }
 }
 
@@ -113,7 +72,7 @@ uint QFile::size() const
 {
     struct stat statbuf;
 
-    if (stat(d->name, &statbuf) == 0) {
+    if (stat(name, &statbuf) == 0) {
 	return statbuf.st_size;
     } else {
 	return 0;
@@ -124,7 +83,3 @@ bool QFile::exists(const QString &path)
 {
     return QFile(path).exists();
 }
-
-
-#endif
-

@@ -1,3 +1,29 @@
+2002-06-25  Darin Adler  <darin@apple.com>
+
+	Removed remaining uses of BORROWED defines.
+	Made some simplifications and formatting fixes. All safe.
+
+        * kwq/KWQArrayImpl.h:
+        * kwq/KWQArrayImpl.mm:
+        * kwq/KWQChar.mm:
+        * kwq/KWQCharsets.mm:
+        * kwq/KWQFile.mm:
+        * kwq/KWQKCursor.mm:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/KWQListImpl.h:
+        * kwq/KWQMapImpl.mm:
+        * kwq/KWQString.mm:
+        * kwq/KWQValueListImpl.mm:
+        * kwq/KWQVectorImpl.h:
+        * kwq/KWQtextcodec.mm:
+        * kwq/make-charset-table.pl:
+        * kwq/make-mac-encodings.c:
+        * kwq/qt/qfile.h:
+        * kwq/qt/qregexp.h:
+        * kwq/qt/qtextcodec.h:
+
+        * WebCore-tests.exp: Small change to exports for the array test.
+
 2002-06-24  Chris Blumenberg  <cblu@apple.com>
 
 	Changed the plug-in view constructor to take NSURL's rather

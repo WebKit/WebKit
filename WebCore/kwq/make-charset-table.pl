@@ -13,8 +13,7 @@ my %used_mac_encodings;
 
 my $already_wrote_one = 0;
 
-# FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
-my $invalid_encoding = "((CFStringEncoding)kCFStringEncodingInvalidId)";
+my $invalid_encoding = "kCFStringEncodingInvalidId";
 
 sub emit_prefix
 {

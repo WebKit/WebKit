@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,8 +79,7 @@ CFStringEncoding KWQCFStringEncodingFromIANACharsetName(CFStringRef charsetName)
   if (CFDictionaryGetValueIfPresent(nameToEncoding, (void *) charsetName, &value)) {
     return (CFStringEncoding) value;
   } else {
-    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
-    return (CFStringEncoding) kCFStringEncodingInvalidId;
+    return kCFStringEncodingInvalidId;
   }
 }
 
@@ -96,8 +95,7 @@ CFStringEncoding KWQCFStringEncodingFromMIB(int mib)
   if (CFDictionaryGetValueIfPresent(mibToEncoding, (void *) mib,  &value)) {
     return (CFStringEncoding) value;
   } else {
-    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
-    return (CFStringEncoding) kCFStringEncodingInvalidId;
+    return kCFStringEncodingInvalidId;
   }
 }
 

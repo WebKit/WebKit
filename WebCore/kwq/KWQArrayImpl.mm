@@ -30,7 +30,7 @@
 
 #define	MIN(a,b) (((a)<(b))?(a):(b))
 
-using namespace std;
+using std::nothrow;
 
 class KWQArrayImpl::KWQArrayPrivate
 {
@@ -39,30 +39,23 @@ public:
     ~KWQArrayPrivate();
     size_t numItems;
     size_t itemSize;
-    void *data;
+    char *data;
     int refCount;
 };
 
 KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate(size_t pItemSize, size_t pNumItems) : 
     numItems(pNumItems), 
     itemSize(pItemSize), 
-    data(pNumItems > 0 ? (void *)new char[itemSize * numItems] : NULL), 
+    data(pNumItems > 0 ? new char[itemSize * numItems] : NULL), 
     refCount(0)
 {
 }
 
 KWQArrayImpl::KWQArrayPrivate::~KWQArrayPrivate()
 {
-    if (data != NULL) {
-        delete[] (char *)data;
-    }
+    delete[] data;
 }
 
-
-KWQArrayImpl::KWQArrayImpl(size_t itemSize) : 
-    d(new KWQArrayPrivate(itemSize, 0))
-{
-}
 
 KWQArrayImpl::KWQArrayImpl(size_t itemSize, size_t numItems) : 
     d(new KWQArrayPrivate(itemSize, numItems))
@@ -86,7 +79,7 @@ KWQArrayImpl &KWQArrayImpl::operator=(const KWQArrayImpl &a)
 
 void *KWQArrayImpl::at(size_t pos) const
 {
-    return (void *)&((char *)d->data)[pos*d->itemSize];
+    return &d->data[pos * d->itemSize];
 }
 
 void *KWQArrayImpl::data() const
@@ -102,9 +95,10 @@ uint KWQArrayImpl::size() const
 bool KWQArrayImpl::resize(size_t newSize)
 {
     if (newSize != d->numItems) {
-        void *newData;
+        char *newData;
+        
 	if (newSize != 0) {
-	    newData= new(nothrow) char[newSize*d->itemSize];
+	    newData = new (nothrow) char[newSize * d->itemSize];
 	    if (newData == NULL) {
 	        return false;
 	    }
@@ -112,10 +106,9 @@ bool KWQArrayImpl::resize(size_t newSize)
 	    newData = NULL;
 	}
 
-	memcpy(newData, d->data, MIN(newSize, d->numItems)*d->itemSize);
-	if (d->data != NULL) {
-	    delete[] (char *)d->data;
-	}
+	memcpy(newData, d->data, MIN(newSize, d->numItems) * d->itemSize);
+
+        delete[] d->data;
 	d->data = newData;
 	d->numItems = newSize;
     }
@@ -130,14 +123,14 @@ void KWQArrayImpl::duplicate(const void *data, size_t newSize)
     }
 
     if (d->refCount > 1) {
-        d =  KWQRefPtr<KWQArrayImpl::KWQArrayPrivate>(new KWQArrayImpl::KWQArrayPrivate(d->itemSize, newSize));
+        d = KWQRefPtr<KWQArrayPrivate>(new KWQArrayPrivate(d->itemSize, newSize));
     }
 
     if (d->numItems != newSize) {
 	resize(newSize);
     }
 
-    memcpy(d->data, data, newSize*d->itemSize);
+    memcpy(d->data, data, newSize * d->itemSize);
 }
 
 bool KWQArrayImpl::fill(const void *item, int numItems)
@@ -152,8 +145,8 @@ bool KWQArrayImpl::fill(const void *item, int numItems)
 	}
     }
 
-    for(int i = 0; i < numItems; i++) {
-        memcpy(&((char *)d->data)[i*d->itemSize], item, d->itemSize);
+    for (int i = 0; i < numItems; i++) {
+        memcpy(&d->data[i * d->itemSize], item, d->itemSize);
     }
 
     return true;
@@ -161,5 +154,6 @@ bool KWQArrayImpl::fill(const void *item, int numItems)
 
 bool KWQArrayImpl::operator==(const KWQArrayImpl &a) const
 {
-    return d->numItems == a.d->numItems && d->itemSize == d->itemSize && (d->data == a.d->data || memcmp(d->data, a.d->data, d->itemSize*d->numItems) == 0);
+    return d->numItems == a.d->numItems && d->itemSize == d->itemSize
+        && (d->data == a.d->data || memcmp(d->data, a.d->data, d->itemSize*d->numItems) == 0);
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,13 +37,6 @@
 #import <qregexp.h>
 #import <stdio.h>
 
-
-#ifndef USING_BORROWED_QSTRING
-
-// QString class ===============================================================
-
-// constants -------------------------------------------------------------------
-
 const QString QString::null;
 
 static CFMutableStringRef
@@ -60,8 +53,6 @@ getNullQCharString()
     static QChar nullCharacter;
     return &nullCharacter;
 }
-
-// static member functions -----------------------------------------------------
 
 QString QString::number(int n)
 {
@@ -97,14 +88,6 @@ QString QString::number(double n)
     qs.setNum(n);
     return qs;
 }
-
-#ifdef USING_BORROWED_KURL
-QString QString::fromLocal8Bit(const char *chs, int len)
-{
-    // FIXME: is MacRoman the correct encoding?
-    return fromStringWithEncoding(chs, len, kCFStringEncodingMacRoman);
-}
-#endif // USING_BORROWED_KURL
 
 QString QString::fromStringWithEncoding(const char *chs, int len,
                                         CFStringEncoding encoding)
@@ -174,10 +157,6 @@ CFMutableStringRef QString::gstring_toCFString(CFMutableStringRef *ref, UniChar 
         CFStringSetExternalCharactersNoCopy(*ref, uchars, len, len);
     return *ref;
 }
-
-
-
-// constructors, copy constructors, and destructors ----------------------------
 
 QString::QString()
 {
@@ -253,8 +232,6 @@ QString::QString(const QString &qs)
     cache = NULL;
 }
 
-// assignment operators --------------------------------------------------------
-
 QString &QString::operator=(const QString &qs)
 {
     // shared copy
@@ -284,8 +261,6 @@ QString &QString::operator=(char ch)
 {
     return *this = QString(QChar(ch));
 }
-
-// member functions ------------------------------------------------------------
 
 QChar QString::at(uint index) const
 {
@@ -1070,8 +1045,6 @@ QString QString::visual()
     return QString(*this);
 }
 
-// operators -------------------------------------------------------------------
-
 QString &QString::operator+=(const QString &qs)
 {
     return insert(length(), qs);
@@ -1086,8 +1059,6 @@ QString &QString::operator+=(char ch)
 {
     return insert(length(), ch);
 }
-
-// private member functions ----------------------------------------------------
 
 void QString::flushCache() const
 {
@@ -1247,8 +1218,6 @@ int QString::compareToLatin1(const char *chs) const
     return kCFCompareGreaterThan;
 }
 
-// operators associated with QString ===========================================
-
 bool operator==(const QString &qs1, const QString &qs2)
 {
     return CFEqual(qs1.s, qs2.s);
@@ -1327,10 +1296,6 @@ QString operator+(char ch, const QString &qs)
     return tmp;
 }
 
-// class QConstString ==========================================================
-
-// constructors, copy constructors, and destructors ----------------------------
-
 QConstString::QConstString(const QChar *qcs, uint len)
 {
     if (qcs || len) {
@@ -1345,10 +1310,3 @@ QConstString::QConstString(const QChar *qcs, uint len)
     }
     cache = NULL;
 }
-
-// member functions ------------------------------------------------------------
-
-#else // USING_BORROWED_QSTRING
-// This will help to keep the linker from complaining about empty archives
-void KWQString_Dummy() {}
-#endif // USING_BORROWED_QSTRING

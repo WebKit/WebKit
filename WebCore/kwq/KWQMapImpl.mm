@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,10 +24,6 @@
  */
 
 #import <KWQMapImpl.h>
-
-#ifndef USING_BORROWED_QMAP
-
-// KWQMapNodeImpl
 
 KWQMapNodeImpl::KWQMapNodeImpl() :
     prev(NULL),
@@ -153,7 +149,7 @@ KWQMapImpl::KWQMapPrivate::~KWQMapPrivate()
 // KWQMapImpl
 
 KWQMapImpl::KWQMapImpl(KWQMapNodeImpl *guard, void (*deleteNode)(KWQMapNodeImpl *)) :
-    d(new KWQMapImpl::KWQMapPrivate(guard,0, deleteNode))
+    d(new KWQMapPrivate(guard, 0, deleteNode))
 {
 }
 
@@ -169,7 +165,7 @@ KWQMapImpl::~KWQMapImpl()
 void KWQMapImpl::copyOnWrite()
 {
     if (d->refCount > 1) {
-	d = KWQRefPtr<KWQMapImpl::KWQMapPrivate>(new KWQMapImpl::KWQMapPrivate(copyTree(d->guard, NULL, NULL), d->numNodes, d->deleteNode));
+	d = KWQRefPtr<KWQMapPrivate>(new KWQMapPrivate(copyTree(d->guard, NULL, NULL), d->numNodes, d->deleteNode));
     }
 }
 
@@ -593,7 +589,7 @@ void KWQMapImpl::removeEqualInternal(KWQMapNodeImpl *nodeToDelete, bool samePoin
 
 void KWQMapImpl::swap(KWQMapImpl &map)
 {
-    KWQRefPtr<KWQMapImpl::KWQMapPrivate> tmp = d;
+    KWQRefPtr<KWQMapPrivate> tmp = d;
     d = map.d;
     map.d = d;
 }
@@ -648,7 +644,3 @@ KWQMapNodeImpl *KWQMapImpl::endInternal()
     copyOnWrite();
     return d->guard;
 }
-
-
-
-#endif

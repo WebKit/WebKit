@@ -31,21 +31,21 @@
 @end
 
 @implementation NSCursor (_WebCoreCursorAdditions)
+
 + (NSCursor *)_WebCore_linkCursor
 {
     static NSCursor *linkCursor = nil;
     
-    if (linkCursor == nil)
-    {
+    if (linkCursor == nil) {
 	NSImage *linkCursorImage = [[NSImage alloc] initWithContentsOfFile:
-			       [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linkCursor" ofType:@"tiff"]];
-	[linkCursorImage autorelease];
-	
+            [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linkCursor" ofType:@"tiff"]];
         linkCursor = [[NSCursor alloc] initWithImage:linkCursorImage hotSpot:NSMakePoint(6.0,1.0)];
+	[linkCursorImage release];
     }
     
     return linkCursor;
 }
+
 @end
 
 const QCursor &waitCursor = KCursor::waitCursor();

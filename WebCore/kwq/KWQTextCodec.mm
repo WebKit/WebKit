@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,14 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// FIXME: obviously many functions here can be made inline
-
 #import <qtextcodec.h>
+
 #import <kwqdebug.h>
 #import <KWQCharsets.h>
-
-// USING_BORROWED_QSTRING ======================================================
-#ifndef USING_BORROWED_QSTRING
 
 static CFMutableDictionaryRef encodingToCodec = NULL;
 
@@ -40,47 +36,17 @@ static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding)
     QTextCodec *codec;
 
     if (encodingToCodec == NULL) {
-        encodingToCodec =  CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
+        encodingToCodec = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     }
     
     if (CFDictionaryGetValueIfPresent(encodingToCodec, (void *)encoding, &value)) {
         return (QTextCodec *)value;
     } else {
         codec = new QTextCodec(encoding);
-	CFDictionarySetValue(encodingToCodec, (void *)encoding, (void *)codec);
+	CFDictionarySetValue(encodingToCodec, (void *)encoding, codec);
 	return codec;
     }
 }
-
-
-
-
-
-// class QTextDecoder ==========================================================
-
-// constructors, copy constructors, and destructors ----------------------------
-
-QTextDecoder::QTextDecoder(const QTextCodec *tc)
-{
-    textCodec = tc;
-}
-
-QTextDecoder::~QTextDecoder()
-{
-    // do nothing
-}
-
-// member functions --------------------------------------------------------
-
-QString QTextDecoder::toUnicode(const char *chs, int len)
-{
-    return textCodec->toUnicode(chs, len);
-}
-
-
-// class QTextCodec ============================================================
-
-// static member functions -----------------------------------------------------
 
 QTextCodec *QTextCodec::codecForMib(int mib)
 {
@@ -88,14 +54,12 @@ QTextCodec *QTextCodec::codecForMib(int mib)
 
     encoding = KWQCFStringEncodingFromMIB(mib);
 
-    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
-    if (encoding == (CFStringEncoding) kCFStringEncodingInvalidId) {
+    if (encoding == kCFStringEncodingInvalidId) {
         return NULL;
     } else {
         return codecForCFStringEncoding(encoding);
     }
 }
-
 
 QTextCodec *QTextCodec::codecForName(const char *name, int accuracy)
 {
@@ -107,8 +71,7 @@ QTextCodec *QTextCodec::codecForName(const char *name, int accuracy)
     encoding = KWQCFStringEncodingFromIANACharsetName(cfname);
     CFRelease(cfname);
 
-    // FIXME: This cast to CFStringEncoding is a workaround for Radar 2912404.
-    if (encoding == (CFStringEncoding) kCFStringEncodingInvalidId) {
+    if (encoding == kCFStringEncodingInvalidId) {
         return NULL;
     } else {
         return codecForCFStringEncoding(encoding);
@@ -120,23 +83,9 @@ QTextCodec *QTextCodec::codecForLocale()
     return codecForCFStringEncoding(CFStringGetSystemEncoding());
 }
 
-// constructors, copy constructors, and destructors ----------------------------
-
-QTextCodec::QTextCodec(CFStringEncoding e)
+const char *QTextCodec::name() const
 {
-    encoding = e;
-}
-
-QTextCodec::~QTextCodec()
-{
-    // do nothing
-}
-
-// member functions --------------------------------------------------------
-
-const char* QTextCodec::name() const
-{
-    return QString::fromCFString(KWQCFStringEncodingToIANACharsetName(encoding)).latin1();
+    return [(NSString *)KWQCFStringEncodingToIANACharsetName(encoding) cString];
 }
 
 int QTextCodec::mibEnum() const
@@ -146,13 +95,11 @@ int QTextCodec::mibEnum() const
 
 QTextDecoder *QTextCodec::makeDecoder() const
 {
-    // FIXME: will this leak or do clients dispose of the object?
     return new QTextDecoder(this);
 }
 
 QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
-    // FIXME: is there a more efficient way to do this?
     return QCString(qcs.latin1());
 }
 
@@ -170,34 +117,3 @@ QString QTextCodec::toUnicode(const char *chs) const
 {
     return QString::fromStringWithEncoding(chs, -1, encoding);
 }
-
-#else // USING_BORROWED_QSTRING
-
-QTextCodec *QTextCodec::codecForMib(int)
-{
-    // FIXME: danger Will Robinson!!!
-    _logNotYetImplemented();
-    return NULL;
-}
-
-QTextCodec *QTextCodec::codecForName(const char *, int)
-{
-    // FIXME: danger Will Robinson!!!
-    _logNotYetImplemented();
-    return NULL;
-}
-
-QTextCodec *QTextCodec::codecForLocale()
-{
-    // FIXME: danger Will Robinson!!!
-    _logNotYetImplemented();
-    return NULL;
-}
-
-QCString QTextCodec::fromUnicode(const QString &qcs) const
-{
-    // FIXME: is there a more efficient way to do this?
-    return QCString(qcs.latin1());
-}
-
-#endif // USING_BORROWED_QSTRING

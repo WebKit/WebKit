@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,40 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import <qstring.h>
 #import <kwqdebug.h>
 #import <Foundation/Foundation.h>
-#import <qstring.h>
-
-#ifndef USING_BORROWED_QSTRING
 
 static UniChar scratchUniChar;
 
-/* FIXME: use of this function is clearly not threadsafe! */
 static CFMutableStringRef GetScratchUniCharString()
 {
     static CFMutableStringRef s = NULL;
-
-    if (!s) {
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(
-                kCFAllocatorDefault, &scratchUniChar, 1, 1, kCFAllocatorNull);
-    }
+    if (!s)
+        s = CFStringCreateMutableWithExternalCharactersNoCopy(kCFAllocatorDefault, &scratchUniChar, 1, 1, kCFAllocatorNull);
     return s;
 }
 
-// constants -------------------------------------------------------------------
-
 const QChar QChar::null;
-
-// member functions ------------------------------------------------------------
 
 bool QChar::isSpace() const
 {
-    // FIXME: should we use this optimization?
-#if 0
-    if (c <= 0xff) {
-	return isspace(c);
-    }
-#endif
     static CFCharacterSetRef set = CFCharacterSetGetPredefined(kCFCharacterSetWhitespaceAndNewline);
     return CFCharacterSetIsCharacterMember(set, c);
 }
@@ -92,33 +76,22 @@ bool QChar::isPunct() const
 
 QChar QChar::lower() const
 {
-    CFMutableStringRef scratchUniCharString = GetScratchUniCharString();
-    if (scratchUniCharString) {
-        scratchUniChar = c;
-        CFStringLowercase(scratchUniCharString, NULL);
-        if (scratchUniChar) {
-            return scratchUniChar;
-        }
-    }
-    return *this;
+    scratchUniChar = c;
+    CFStringLowercase(GetScratchUniCharString(), NULL);
+    return scratchUniChar;
 }
 
 QChar QChar::upper() const
 {
-    CFMutableStringRef scratchUniCharString = GetScratchUniCharString();
-    if (scratchUniCharString) {
-        scratchUniChar = c;
-        CFStringUppercase(scratchUniCharString, NULL);
-        if (scratchUniChar) {
-            return scratchUniChar;
-        }
-    }
-    return *this;
+    scratchUniChar = c;
+    CFStringUppercase(GetScratchUniCharString(), NULL);
+    return scratchUniChar;
 }
 
 QChar::Direction QChar::direction() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
+    _logNotYetImplemented();
     if (c == ' ')
         return DirWS;
     return DirL;
@@ -128,8 +101,7 @@ bool QChar::mirrored() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
     _logNotYetImplemented();
-    // return whether character should be reversed if text direction is
-    // reversed
+    // return whether character should be reversed if text direction is reversed
     return false;
 }
 
@@ -143,11 +115,8 @@ QChar QChar::mirroredChar() const
 
 int QChar::digitValue() const
 {
-    // ##### just latin1
     if (c < '0' || c > '9')
 	return -1;
     else
 	return c - '0';
 }
-
-#endif

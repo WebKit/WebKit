@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,64 +26,18 @@
 #ifndef QTEXTCODEC_H_
 #define QTEXTCODEC_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <qstring.h>
+#include <qcstring.h>
 
-// USING_BORROWED_QSTRING ======================================================
-#ifdef USING_BORROWED_QSTRING
-
-#include <_qtextcodec.h>
-
-#else
-
-#include "qstring.h"
-#include "qcstring.h"
-
-class QTextCodec;
-
-// class QTextDecoder ==========================================================
-
-class QTextDecoder {
-public:
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    QTextDecoder(const QTextCodec *);
-    ~QTextDecoder();
-
-    // member functions --------------------------------------------------------
-
-    QString toUnicode(const char *, int);
-
-// private ---------------------------------------------------------------------
-
-private:
-
-    // data members ------------------------------------------------------------
-
-    const QTextCodec *textCodec;
-
-}; // class QTextDecoder =======================================================
-
-
-// class QTextCodec ============================================================
+class QTextDecoder;
 
 class QTextCodec {
 public:
-
-    // static member functions -------------------------------------------------
-
     static QTextCodec *codecForMib(int);
     static QTextCodec *codecForName(const char *, int accuracy=0);
     static QTextCodec *codecForLocale();
 
-    // constructors, copy constructors, and destructors ------------------------
-
-    QTextCodec(CFStringEncoding);
-    ~QTextCodec();
-
-    // member functions --------------------------------------------------------
+    QTextCodec(CFStringEncoding e) : encoding(e) { }
 
     const char* name() const;
     int mibEnum() const;
@@ -96,16 +50,16 @@ public:
     QString toUnicode(const QByteArray &, int) const;
     QString toUnicode(const char *) const;
 
-// private ---------------------------------------------------------------------
-
 private:
-
-    // data members ------------------------------------------------------------
-
     CFStringEncoding encoding;
+};
 
-}; // class QTextCodec =========================================================
-
-#endif // USING_BORROWED_QSTRING
+class QTextDecoder {
+public:
+    QTextDecoder(const QTextCodec *c) : textCodec(*c) { }
+    QString toUnicode(const char *chs, int len) { return textCodec.toUnicode(chs, len); }
+private:
+    QTextCodec textCodec;
+};
 
 #endif

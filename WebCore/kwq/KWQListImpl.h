@@ -26,10 +26,7 @@
 #ifndef KWQ_LIST_IMPL_H
 #define KWQ_LIST_IMPL_H
 
-#include <config.h>
 #include <KWQDef.h>
-
-#ifndef USING_BORROWED_QLIST
 
 class KWQListNode;
 class KWQListIteratorImpl;
@@ -118,7 +115,5 @@ private:
 
     friend class KWQListImpl;
 };
-
-#endif
 
 #endif

@@ -37,7 +37,6 @@ __ZN12KWQArrayImpl4fillEPKvi
 __ZN12KWQArrayImpl6resizeEm
 __ZN12KWQArrayImpl9duplicateEPKvm
 __ZN12KWQArrayImplC1ERKS_
-__ZN12KWQArrayImplC1Em
 __ZN12KWQArrayImplC1Emm
 __ZN12KWQArrayImplD1Ev
 __ZN12KWQArrayImplaSERKS_

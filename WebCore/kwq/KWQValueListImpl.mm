@@ -25,8 +25,6 @@
 
 #import <KWQValueListImpl.h>
 
-#ifndef USING_BORROWED_QVALUELIST
-
 #import <stdlib.h>
 
 KWQValueListNodeImpl::KWQValueListNodeImpl() : 
@@ -113,7 +111,6 @@ public:
     uint refCount;
 };
 
-
 KWQValueListImpl::KWQValueListPrivate::KWQValueListPrivate(void (*deleteFunc)(KWQValueListNodeImpl *), 
 							   KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *)) : 
     head(NULL),
@@ -172,8 +169,6 @@ void KWQValueListImpl::KWQValueListPrivate::deleteList(KWQValueListNodeImpl *l)
 	p = next;
     }
 }
-
-
 
 KWQValueListImpl::KWQValueListImpl(void (*deleteFunc)(KWQValueListNodeImpl *), KWQValueListNodeImpl *(*copyFunc)(KWQValueListNodeImpl *)) :
     d(new KWQValueListPrivate(deleteFunc, copyFunc))
@@ -410,7 +405,7 @@ KWQValueListNodeImpl *KWQValueListImpl::nodeAt(uint index) const
 KWQValueListImpl& KWQValueListImpl::operator=(const KWQValueListImpl &other)
 {
     KWQValueListImpl tmp(other);
-    KWQRefPtr<KWQValueListImpl::KWQValueListPrivate> tmpD = tmp.d;
+    KWQRefPtr<KWQValueListPrivate> tmpD = tmp.d;
 
     tmp.d = d;
     d = tmpD;
@@ -421,8 +416,6 @@ KWQValueListImpl& KWQValueListImpl::operator=(const KWQValueListImpl &other)
 void KWQValueListImpl::copyOnWrite()
 {
     if (d->refCount > 1) {
-	d = KWQRefPtr<KWQValueListImpl::KWQValueListPrivate>(new KWQValueListPrivate(*d));
+	d = KWQRefPtr<KWQValueListPrivate>(new KWQValueListPrivate(*d));
     }
 }
-
-#endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,19 +26,7 @@
 #ifndef QFILE_H_
 #define QFILE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <KWQDef.h>
-
-// USING_BORROWED_QFILE =======================================================
-
-#ifdef USING_BORROWED_QFILE
-
-#include <_qfile.h>
-
-#else // !USING_BORROWED_QFILE
 
 #include <qstring.h>
 #include <qiodevice.h>
@@ -46,7 +34,6 @@
 class QFile 
 {
 public:
-    QFile();
     QFile(const QString &);
     ~QFile();
 
@@ -59,17 +46,11 @@ public:
     static bool exists(const QString &path);
 
 private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
     QFile(const QFile &);
     QFile &operator=(const QFile &);
 
-    class KWQFilePrivate;
-
-    KWQFilePrivate *d;
+    char *name;
+    int fd;
 };
-
-
-#endif // USING_BORROWED_QFILE
 
 #endif // QFILE_H_
