@@ -1,3 +1,15 @@
+2004-02-19  John Sullivan  <sullivan@apple.com>
+
+        - WebKit part of fix for <rdar://problem/3292380>: Cycle Tabs keyboard shortcut 
+        (cmd-shift-arrows) conflicts with text editing
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView keyDown:]):
+        If shift key is down along with an arrow key, call super rather than eating
+        event since we don't handle any shifted events here.
+
 2004-02-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John and Don.

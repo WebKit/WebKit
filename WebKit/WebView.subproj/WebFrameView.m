@@ -614,6 +614,11 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSUpArrowFunctionKey:
+                // We don't handle shifted arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & NSShiftKeyMask) {
+                    callSuper = YES;
+                    break;
+                }
                 if (![self allowsScrolling] ||
                     [[[self window] firstResponder] isKindOfClass:[NSPopUpButton class]]) {
                     // Let arrow keys go through to pop up buttons
@@ -632,6 +637,11 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSDownArrowFunctionKey:
+                // We don't handle shifted arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & NSShiftKeyMask) {
+                    callSuper = YES;
+                    break;
+                }
                 if (![self allowsScrolling] ||
                     [[[self window] firstResponder] isKindOfClass:[NSPopUpButton class]]) {
                     // Let arrow keys go through to pop up buttons
@@ -650,6 +660,11 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSLeftArrowFunctionKey:
+                // We don't handle shifted arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & NSShiftKeyMask) {
+                    callSuper = YES;
+                    break;
+                }
                 // Check back/forward related keys.
                 if ([event modifierFlags] & NSCommandKeyMask) {
                     if (!maintainsBackForwardList) {
@@ -673,6 +688,11 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case NSRightArrowFunctionKey:
+                // We don't handle shifted arrow keys here, so let super have a chance.
+                if ([event modifierFlags] & NSShiftKeyMask) {
+                    callSuper = YES;
+                    break;
+                }
                 // Check back/forward related keys.
                 if ([event modifierFlags] & NSCommandKeyMask) {
                     if (!maintainsBackForwardList) {
