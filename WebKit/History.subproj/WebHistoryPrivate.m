@@ -98,6 +98,7 @@
     entryDate = [entry lastVisitedDate];
     entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
     count = [entriesForDate count];
+    // optimized for inserting oldest to youngest
     for (index = 0; index < count; ++index) {
         if ([entryDate compare: [[entriesForDate objectAtIndex: index] lastVisitedDate]] != NSOrderedAscending) {
             break;
@@ -126,7 +127,7 @@
     ASSERT(foundDate);
     
     entriesForDate = [_entriesByDate objectAtIndex: dateIndex];
-    [entriesForDate removeObject: entry];
+    [entriesForDate removeObjectIdenticalTo: entry];
 
     // remove this date entirely if there are no other entries on it
     if ([entriesForDate count] == 0) {

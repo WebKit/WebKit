@@ -1,3 +1,17 @@
+2002-12-12  Trey Matteson  <trey@apple.com>
+
+	3117101 - PLT slows down as history fills up
+
+	I saw a 3% sloth effect from a huge (100k) history.  This change cut that cost in half.
+	I think we still have a marginally measurable cost for our worst practical case.
+
+        Reviewed by rjw
+
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate insertEntry:atDateIndex:]):  Comment.
+        (-[WebHistoryPrivate removeEntryForURLString:]):  Use removeIdentical
+	instead of remove, since we don't need to do all the equals comparisons.
+
 2002-12-12  Richard Williamson   <rjw@apple.com>
 
         Changes to fix 3116584.
@@ -247,6 +261,7 @@
 2002-12-10  Trey Matteson  <trey@apple.com>
 
 	3092966 - going back goes to different page (can't go back to a POST page)
+	3123450 - if the user refuses a navigation, the b/f menus is wrong
 
 	We will rePOST data upon back/forward/refresh if our caches fail us.  The policy delegate
 	gets a crack at confirming this operation.  Latent bugs where the policy delegate was double
