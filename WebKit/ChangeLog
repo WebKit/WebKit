@@ -1,3 +1,23 @@
+2004-01-27  Chris Blumenberg  <cblu@apple.com>
+
+		Fixed: <rdar://problem/3536624>: Webkit 1.2 links against SecurityNssAsn1.framework
+	
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebKeyGeneration.h: Set DISABLE_WEB_KEY_GENERATION on Merlot for now.
+		Then don't include anything if that's set.
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp: Don't compile anything if DISABLE_WEB_KEY_GENERATION
+		is set.
+        * WebCoreSupport.subproj/WebKeyGenerator.m:
+        (-[WebKeyGenerator signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:pageURL:]):
+		Always return nil if DISABLE_WEB_KEY_GENERATION is set.
+        (-[WebKeyGenerator addCertificatesToKeychainFromData:]): Always return failure if
+		DISABLE_WEB_KEY_GENERATION is set.
+
+        * WebKit.pbproj/project.pbxproj: Added shell build step to make library with security
+		libraries in it. On Merlot, makes empty library. Also added library to link options.
+        * WebKitSecurityDummy.c: Added. Used to make empty version of library for build on Merlot.
+
 2004-01-26  Darin Adler  <darin@apple.com>
 
         * Makefile.am: Switch from pbxbuild to xcodebuild.

@@ -9,6 +9,8 @@
 
 #import <WebKit/WebKeyGeneration.h>
 
+#ifndef DISABLE_WEB_KEY_GENERATION
+
 #import <WebKit/WebAssertions.h>
 
 #include <Security/cuCdsaUtils.h>               /* private libCdsaUtils.a */
@@ -680,3 +682,5 @@ WebCertificateParseResult addCertificatesToKeychainFromData(const void *bytes, u
 
     return result;
 }
+
+#endif /* DISABLE_WEB_KEY_GENERATION */

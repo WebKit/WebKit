@@ -7,8 +7,14 @@
  *
  */
 
-#ifndef	_WEB_KEY_GENERATION_
-#define _WEB_KEY_GENERATION_
+#ifndef	WEB_KEY_GENERATION_H
+#define WEB_KEY_GENERATION_H
+
+#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#define DISABLE_WEB_KEY_GENERATION
+#endif
+
+#ifndef DISABLE_WEB_KEY_GENERATION
 
 #import <WebKit/WebKeyGenerator.h>
 
@@ -78,4 +84,6 @@ extern "C" {
 }
 #endif
 
-#endif	/* _WEB_KEY_GENERATION_ */
+#endif /* DISABLE_WEB_KEY_GENERATION */
+
+#endif /* WEB_KEY_GENERATION_H */
