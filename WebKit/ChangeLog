@@ -1,3 +1,18 @@
+2003-05-27  Richard Williamson   <rjw@apple.com>
+
+	Fixes for IB.
+
+        Reviewed by Eric Seymour.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences initWithCoder:]):
+	Added retain to uniqued instance 
+
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithCoder:]):
+        (-[WebView setPreferences:]):
+	Added release check to global uniquing dictionary.
+
 2003-05-23  Richard Williamson   <rjw@apple.com>
 
 	Tweaks for IB.

@@ -121,8 +121,8 @@ NS_DURING
     // nibs with the same name, the first guy up wins.
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:_private->identifier];
     if (instance){
-        [self autorelease];
-        result = instance;
+        [self release];
+        result = [instance retain];
     }
     else {
         [[self class] _setInstance:self forIdentifier:_private->identifier];
@@ -132,7 +132,7 @@ NS_DURING
 NS_HANDLER
 
     result = nil;
-    [self autorelease];
+    [self release];
     
 NS_ENDHANDLER
 

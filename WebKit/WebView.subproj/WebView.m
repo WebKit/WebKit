@@ -160,7 +160,7 @@ NS_DURING
 NS_HANDLER
 
     result = nil;
-    [self autorelease];
+    [self release];
 
 NS_ENDHANDLER
 
@@ -203,6 +203,7 @@ NS_ENDHANDLER
 {
     if (_private->preferences != prefs){
         [[NSNotificationCenter defaultCenter] removeObserver: self name: WebPreferencesChangedNotification object: [self preferences]];
+        [WebPreferences _removeReferenceForIdentifier: [_private->preferences identifier]];
         [_private->preferences release];
         _private->preferences = [prefs retain];
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_preferencesChangedNotification:)
