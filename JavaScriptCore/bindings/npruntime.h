@@ -21,6 +21,14 @@
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ *
+ * Revision 1 (March 4, 2004):
+ * Initial proposal.
+ *
+ * Revision 2 (March 10, 2004):
+ * All calls into JavaScript were made asynchronous.  Results are
+ * provided via the NP_JavaScriptResultInterface callback.
+ *
  */
 #ifndef _NP_RUNTIME_H_
 #define _NP_RUNTIME_H_
@@ -188,14 +196,24 @@ typedef NP_Object NP_String;
 
 /*
     Functions to access JavaScript Objects represented by NP_JavaScriptObject.
+    
+    Calls to JavaScript objects are asynchronous.  If a function returns a value, it
+    will be supplied via the NP_JavaScriptResultInterface callback.
+    
+    Calls made from plugin code to JavaScript may be made from any thread.
+    
+    Calls made from JavaScript to the plugin will always be made on the main
+    user agent thread, this include calls to NP_JavaScriptResultInterface callbacks.
 */
-NP_Object *NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount);
-NP_Object *NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script);
-NP_Object *NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName);
+typedef void (*NP_JavaScriptResultInterface)(NP_Object *obj);
+
+void NP_Call (NP_JavaScriptObject *obj, NP_Identifier methodName, NP_Object **args, unsigned argCount, NP_JavaScriptResultInterface result);
+void NP_Evaluate (NP_JavaScriptObject *obj, NP_String *script, NP_JavaScriptResultInterface result);
+void NP_GetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_JavaScriptResultInterface);
 void NP_SetProperty (NP_JavaScriptObject *obj, NP_Identifier  propertyName, NP_Object *value);
 void NP_RemoveProperty (NP_JavaScriptObject *obj, NP_Identifier propertyName);
-NP_String *NP_ToString (NP_JavaScriptObject *obj);
-NP_Object *NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index);
+void NP_ToString (NP_JavaScriptObject *obj, NP_JavaScriptResultInterface);
+void NP_GetPropertyAtIndex (NP_JavaScriptObject *obj, int32_t index, NP_JavaScriptResultInterface);
 void NP_SetPropertyAtIndex (NP_JavaScriptObject *obj, unsigned index, NP_Object *value);
 
 /*
