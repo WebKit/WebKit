@@ -1,3 +1,12 @@
+2004-06-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/3677038>: (Need SPI to get URL of favicon for a site)
+
+        * Misc.subproj/WebIconDatabase.h: Add iconURLForURL: method.
+        * Misc.subproj/WebIconDatabase.m: (-[WebIconDatabase iconURLForURL:]): Added.
+
 2004-06-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

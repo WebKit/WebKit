@@ -139,6 +139,11 @@ NSSize WebIconLargeSize = {128, 128};
     return [self iconForURL:URL withSize:size cache:YES];
 }
 
+- (NSString *)iconURLForURL:(NSString *)URL
+{
+    return URL ? [_private->URLToIconURL objectForKey:URL] : nil;
+}
+
 - (NSImage *)defaultIconWithSize:(NSSize)size
 {
     ASSERT(size.width);

@@ -73,6 +73,13 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache;
 
 /*!
+    @method iconURLForURL:withSize:cache:
+    @discussion Returns an icon URL for a web site URL from memory or disk. nil if none is found.
+    @param URL
+*/
+- (NSString *)iconURLForURL:(NSString *)URL;
+
+/*!
     @method defaultIconWithSize:
     @param size
 */
