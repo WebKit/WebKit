@@ -913,6 +913,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         if ([[self webView] drawsBackground])
             [sv setDrawsBackground:YES];
         [_private setPreviousItem:nil];
+        _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
     }
 }
 

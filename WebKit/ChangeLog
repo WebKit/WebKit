@@ -1,3 +1,11 @@
+2004-05-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for performance "regression."  This wasn't really a regression... I just forgot to update a variable that
+	I can only assume is used by the PLT.
+	
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _setState:]):
+
 2004-05-17  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented new WebView pasteboard methods. Made a lot of factoring changes related to pasteboard management.
