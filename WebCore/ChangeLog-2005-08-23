@@ -96,16 +96,6 @@
         * khtml/rendering/render_frames.cpp:
         (RenderPartObject::updateWidget):
 
-=== Safari-401 ===
-
-2005-03-01  Chris Blumenberg  <cblu@apple.com>
-
-	Backed out my patch since the tree was closed.
-
-        * khtml/editing/htmlediting.cpp:
-        (khtml::DeleteSelectionCommand::initializePositionData):
-        * khtml/editing/jsediting.cpp:
-
 2005-03-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3990258> REGRESSION (125.12-181): top of picture that spans two pages is cut off on print from Safari
@@ -119,31 +109,6 @@
 
         * khtml/rendering/render_flow.cpp:
         (RenderFlow::paintLines):
-
-2005-03-01  Chris Blumenberg  <cblu@apple.com>
-
-	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
-
-        Reviewed by rjw.
-
-        * khtml/editing/htmlediting.cpp:
-        (khtml::DeleteSelectionCommand::initializePositionData): pass true for treatNBSPAsWhiteSpace to leadingWhitespacePosition and trailingWhitespacePosition when testing whether or not we have to delete those characters as well.
-        * khtml/editing/jsediting.cpp: pass true for smartDelete when the selection granularity is WORD. This allows us to write smart delete layout tests.
-        * layout-tests/editing/deleting/smart-delete-001-expected.txt: Added.
-        * layout-tests/editing/deleting/smart-delete-001.html: Added.
-        * layout-tests/editing/deleting/smart-delete-002-expected.txt: Added.
-        * layout-tests/editing/deleting/smart-delete-002.html: Added.
-
-2005-03-01  Ken Kocienda  <kocienda@apple.com>
-
-        Reviewed by Vicki
-
-        Fix for this bug:
-        
-        <rdar://problem/4030068> Trailing <return> gets eaten when pasted at the end of a document
-
-        * khtml/editing/htmlediting.cpp:
-        (khtml::ReplaceSelectionCommand::doApply): Add code to handle formerly-unhandled end-of-document case.
 
 2005-03-01  Maciej Stachowiak  <mjs@apple.com>
 
@@ -204,6 +169,41 @@
         * khtml/xml/dom_docimpl.cpp:
         (DocumentImpl::createHTMLEventListener):
         * khtml/xml/dom_docimpl.h:
+
+=== Safari-401 ===
+
+2005-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	Backed out my patch since the tree was closed.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData):
+        * khtml/editing/jsediting.cpp:
+
+2005-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
+
+        Reviewed by rjw.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): pass true for treatNBSPAsWhiteSpace to leadingWhitespacePosition and trailingWhitespacePosition when testing whether or not we have to delete those characters as well.
+        * khtml/editing/jsediting.cpp: pass true for smartDelete when the selection granularity is WORD. This allows us to write smart delete layout tests.
+        * layout-tests/editing/deleting/smart-delete-001-expected.txt: Added.
+        * layout-tests/editing/deleting/smart-delete-001.html: Added.
+        * layout-tests/editing/deleting/smart-delete-002-expected.txt: Added.
+        * layout-tests/editing/deleting/smart-delete-002.html: Added.
+
+2005-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Fix for this bug:
+        
+        <rdar://problem/4030068> Trailing <return> gets eaten when pasted at the end of a document
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Add code to handle formerly-unhandled end-of-document case.
 
 2005-03-01  David Harrison  <harrison@apple.com>
 
