@@ -1,3 +1,26 @@
+2005-02-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/4002864> REGRESSION(125-146) getElementById in onload fails in a test case involving external resources
+        
+	Moved management of elementById hashtable from attach/detach to
+	insertedIntoDocument/removedFromDocument, to avoid being thrown
+	off by temporary detaches due to style recalcs.
+	
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::insertedIntoDocument):
+        (ElementImpl::removedFromDocument):
+        (ElementImpl::attach):
+        (ElementImpl::updateId):
+        * khtml/xml/dom_elementimpl.h:
+
+	Make sure that insertedIntoDocument is called before firing any
+	DOM events.
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::dispatchChildInsertedEvents): 
+
 2005-02-28  David Hyatt  <hyatt@apple.com>
 
 	Fix for 4028999, safari crashes when resetting if mallocsribble is on.  Clip rects were being cleared using dead

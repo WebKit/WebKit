@@ -177,6 +177,8 @@ public:
     virtual NodeImpl *cloneNode ( bool deep );
     virtual DOMString nodeName() const;
     virtual bool isElementNode() const { return true; }
+    virtual void insertedIntoDocument();
+    virtual void removedFromDocument();
 
     // convenience methods which ignore exceptions
     void setAttribute (NodeImpl::Id id, const DOMString &value);
@@ -193,7 +195,6 @@ public:
     virtual QString state() { return QString::null; }
 
     virtual void attach();
-    virtual void detach();
     virtual khtml::RenderStyle *styleForRenderer(khtml::RenderObject *parent);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
@@ -275,6 +276,7 @@ public:
     virtual AttrImpl *getNamedItem ( NodeImpl::Id id ) const;
     virtual Node removeNamedItem ( NodeImpl::Id id, int &exceptioncode );
     virtual Node setNamedItem ( NodeImpl* arg, int &exceptioncode );
+
 
     virtual AttrImpl *item ( unsigned long index ) const;
     unsigned long length() const { return len; }

@@ -2205,6 +2205,16 @@ NodeImpl *NodeBaseImpl::childNode(unsigned long index)
 
 void NodeBaseImpl::dispatchChildInsertedEvents( NodeImpl *child, int &exceptioncode )
 {
+    NodeImpl *p = this;
+    while (p->parentNode())
+        p = p->parentNode();
+
+    if (p->nodeType() == Node::DOCUMENT_NODE) {
+        for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
+            c->insertedIntoDocument();
+        }
+    }
+
     if (getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTED_LISTENER)) {
         child->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTED_EVENT,
                                                    true,false,this,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
@@ -2212,21 +2222,15 @@ void NodeBaseImpl::dispatchChildInsertedEvents( NodeImpl *child, int &exceptionc
             return;
     }
 
-    // dispatch the DOMNOdeInsertedInfoDocument event to all descendants
+    // dispatch the DOMNodeInsertedIntoDocument event to all descendants
     bool hasInsertedListeners = getDocument()->hasListenerType(DocumentImpl::DOMNODEINSERTEDINTODOCUMENT_LISTENER);
-    NodeImpl *p = this;
-    while (p->parentNode())
-        p = p->parentNode();
-    if (p->nodeType() == Node::DOCUMENT_NODE) {
-        for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
-            c->insertedIntoDocument();
 
-            if (hasInsertedListeners) {
-                c->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTEDINTODOCUMENT_EVENT,
-                                                       false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
-                if (exceptioncode)
-                    return;
-            }
+    if (hasInsertedListeners && p->nodeType() == Node::DOCUMENT_NODE) {
+        for (NodeImpl *c = child; c; c = c->traverseNextNode(child)) {
+            c->dispatchEvent(new MutationEventImpl(EventImpl::DOMNODEINSERTEDINTODOCUMENT_EVENT,
+                                                   false,false,0,DOMString(),DOMString(),DOMString(),0),exceptioncode,true);
+            if (exceptioncode)
+                return;
         }
     }
 }
