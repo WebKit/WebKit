@@ -1,3 +1,10 @@
+2002-12-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+        * kwq/KWQAssertions.h: Fixed CRASH macro to use 0xbbadbeef instead of 0xbadbeef
+	to reduce the chance that the address will be valid once we have allocated a lot of memory.
+
 2002-12-24  Richard Williamson   <rjw@apple.com>
 
         Fix for 3134543 (and widely reported dupes).  Don't use render_text

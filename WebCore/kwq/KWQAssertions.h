@@ -80,7 +80,7 @@ void KWQLog(const char *file, int line, const char *function, KWQLogChannel *cha
 
 // CRASH -- gets us into the debugger or the crash reporter -- signals are ignored by the crash reporter so we must do better
 
-#define CRASH() *(int *)0x0badbeef = 0
+#define CRASH() *(int *)0xbbadbeef = 0
 
 // ASSERT, ASSERT_WITH_MESSAGE, ASSERT_NOT_REACHED
 
