@@ -1,3 +1,14 @@
+2004-05-13  Richard Williamson   <rjw@apple.com>
+
+	Removed vestigial isSelected method.
+
+        Reviewed by Chris.
+
+        * kwq/KWQWidget.h:
+        * kwq/KWQWidget.mm:
+        (QWidget::setIsSelected):
+        * kwq/WebCoreBridge.h:
+
 2004-05-13  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3616555>: (API: Make DOM extensions and WebKit DOM operations public)

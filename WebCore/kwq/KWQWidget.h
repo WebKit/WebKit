@@ -157,7 +157,6 @@ public:
     void sendConsumedMouseUp();
     
     void setIsSelected(bool isSelected);
-    bool isSelected();
 
 private:
     KWQWidgetPrivate *data;

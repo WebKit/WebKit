@@ -2470,10 +2470,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     } else if ([documentView isKindOfClass:[WebHTMLView class]]) {
         NSEnumerator *viewEnumerator = [[documentView subviews] objectEnumerator];
         NSView *view;
+        // FIXME:  We should ask the frame if it contains plugins, rather
+        // than doing this check.
         while ((view = [viewEnumerator nextObject]) != nil) {
             if ([view isKindOfClass:[WebNetscapePluginEmbeddedView class]] ||
                 [view isKindOfClass:[WebNullPluginView class]] ||
-                [view conformsToProtocol:@protocol(WebPlugin)]) {
+                [view respondsToSelector:@selector(webPlugInInitialize)]) {
                 [self reload];
                 break;
             }

@@ -554,8 +554,3 @@ void QWidget::setIsSelected(bool isSelected)
 {
     [KWQKHTMLPart::bridgeForWidget(this) setIsSelected:isSelected forView:getView()];
 }
-
-bool QWidget::isSelected()
-{
-    return [KWQKHTMLPart::bridgeForWidget(this) isViewSelected:getView()];
-}

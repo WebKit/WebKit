@@ -60,6 +60,11 @@
 #define AppleKeyboardUIMode CFSTR("AppleKeyboardUIMode")
 #define UniversalAccessDomain CFSTR("com.apple.universalaccess")
 
+// For compatibility only with old SPI. 
+@interface NSObject (OldWebPlugin)
+- (void)setIsSelected:(BOOL)f;
+@end
+
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
 @end
@@ -1240,14 +1245,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
-    if ([view conformsToProtocol:@protocol(WebPluginSelection)]) {
-        [(id <WebPluginSelection>)view setIsSelected:isSelected];
+    if ([view respondsToSelector:@selector(webPlugInSetIsSelected)]) {
+        [view webPlugInSetIsSelected:isSelected];
     }
-}
-
-- (BOOL)isViewSelected:(NSView *)view
-{
-    return [view conformsToProtocol:@protocol(WebPluginSelection)] ? [(id <WebPluginSelection>)view isSelected] : NO;
+    else if ([view respondsToSelector:@selector(setIsSelected)]) {
+        [view setIsSelected:isSelected];
+    }
 }
 
 - (NSString *)overrideMediaType
