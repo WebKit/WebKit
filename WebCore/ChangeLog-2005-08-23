@@ -1,3 +1,9 @@
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        - checked in a new file I forgot
+
+        * khtml/editing/text_granularity.h: Added.
+
 2004-09-22  Darin Adler  <darin@apple.com>
 
         - renamed
