@@ -269,17 +269,23 @@
     }
 }
 
-- (void)addModifiers:(unsigned)modifiers toState:(int *)state
+- (int)stateForEvent:(NSEvent *)event
 {
+    unsigned modifiers = [event modifierFlags];
+    int state = 0;
+    
     if (modifiers & NSControlKeyMask)
-        *state |= Qt::ControlButton;
+        state |= Qt::ControlButton;
     if (modifiers & NSShiftKeyMask)
-        *state |= Qt::ShiftButton;
+        state |= Qt::ShiftButton;
     if (modifiers & NSAlternateKeyMask)
-        *state |= Qt::AltButton;
-    // Mapping command to meta is slightly questionable
+        state |= Qt::AltButton;
+    
+    // Mapping command to meta is slightly questionable, but it works for now.
     if (modifiers & NSCommandKeyMask)
-        *state |= Qt::MetaButton;
+        state |= Qt::MetaButton;
+    
+    return state;
 }
 
 - (void)mouseUp:(NSEvent *)event
@@ -301,7 +307,7 @@
         state = Qt::LeftButton;
         break;
     }
-    [self addModifiers:[event modifierFlags] toState:&state];
+    state |= [self stateForEvent:event];
     
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     if (part->impl->getView()) {
@@ -328,7 +334,7 @@
         state = Qt::LeftButton;
         break;
     }
-    [self addModifiers:[event modifierFlags] toState:&state];
+    state |= [self stateForEvent:event];
     
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
     if (part->impl->getView()) {
@@ -340,10 +346,7 @@
 {
     NSPoint p = [event locationInWindow];
     
-    int state = 0;
-    [self addModifiers:[event modifierFlags] toState:&state];
-    
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, state);
+    QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, [self stateForEvent:event]);
     if (part->impl->getView()) {
         part->impl->getView()->viewportMouseMoveEvent(&kEvent);
     }

@@ -1,3 +1,13 @@
+2002-07-15  Darin Adler  <darin@apple.com>
+
+	A teeny weeny bit of refactoring.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stateForEvent:]): Replaces addModifiers:toState:.
+        (-[WebCoreBridge mouseUp:]): Use stateForEvent:.
+        (-[WebCoreBridge mouseDown:]): Use stateForEvent:.
+        (-[WebCoreBridge mouseMoved:]): Use stateForEvent:.
+
 2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
 
         Added isFrameSet method.
