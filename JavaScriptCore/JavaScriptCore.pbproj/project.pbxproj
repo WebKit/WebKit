@@ -166,7 +166,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>0.8</string>
 	<key>CFBundleVersion</key>
-	<string>47u</string>
+	<string>47</string>
 	<key>CFHumanReadableCopyright</key>
 	<string>Copyright (c) 2001-2002 Apple Computer</string>
 	<key>NSPrincipalClass</key>
