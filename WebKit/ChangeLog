@@ -1,3 +1,17 @@
+2002-06-14  Darin Adler  <darin@apple.com>
+
+	* Panels.subproj/IFStandardPanels.m: Use the read PTHREAD_ONCE_INIT,
+	remove the workaround for 2905545.
+
+	* IFWebCoreBridge.h: Moved into WebCoreSupport.subproj.
+	* IFWebCoreBridge.mm: Moved into WebCoreSupport.subproj.
+	* WebCoreSupport.subproj/IFWebCoreBridge.h: Moved from top level.
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm: Moved from top level.
+
+	* WebKit.pbproj/project.pbxproj: Update for new file locations.
+	Also pass -no-c++filt so we get mangled names (more useful for .exp files),
+	and remove PFE_FILE_C_DIALECTS.
+
 2002-06-14  Chris Blumenberg  <cblu@apple.com>
 
 	* WebView.subproj/IFMainURLHandleClient.mm:

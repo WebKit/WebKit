@@ -139,8 +139,7 @@
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
-				OTHER_LDFLAGS = "-seg1addr 0x4000000";
-				PFE_FILE_C_DIALECTS = "objective-c objective-c++";
+				OTHER_LDFLAGS = "-seg1addr 0x4000000 -no-c++filt";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
@@ -1677,12 +1676,14 @@
 		};
 		F5AFB45E02B94DC8018635CA = {
 			isa = PBXFileReference;
-			path = IFWebCoreBridge.h;
+			name = IFWebCoreBridge.h;
+			path = WebCoreSupport.subproj/IFWebCoreBridge.h;
 			refType = 4;
 		};
 		F5AFB45F02B94DC8018635CA = {
 			isa = PBXFileReference;
-			path = IFWebCoreBridge.mm;
+			name = IFWebCoreBridge.mm;
+			path = WebCoreSupport.subproj/IFWebCoreBridge.mm;
 			refType = 4;
 		};
 		F5AFB46002B94DC8018635CA = {

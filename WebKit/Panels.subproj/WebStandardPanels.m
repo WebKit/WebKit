@@ -67,9 +67,7 @@
     [super dealloc];
 }
 
-// The next line is a workaround for Radar 2905545. Once that's fixed, it can use PTHREAD_ONCE_INIT.
-pthread_once_t sharedStandardPanelsOnce = {_PTHREAD_ONCE_SIG_init, {}};
-IFStandardPanels *sharedStandardPanels = NULL;
+static IFStandardPanels *sharedStandardPanels = NULL;
 
 static void initSharedStandardPanels(void)
 {
@@ -78,6 +76,7 @@ static void initSharedStandardPanels(void)
 
 +(IFStandardPanels *)sharedStandardPanels
 {
+    static pthread_once_t sharedStandardPanelsOnce = PTHREAD_ONCE_INIT;
     pthread_once(&sharedStandardPanelsOnce, initSharedStandardPanels);
     return sharedStandardPanels;
 }
