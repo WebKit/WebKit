@@ -2874,6 +2874,9 @@
 			fileRef = BE887BFF056D3A6E009BB3E7;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		BE887C02056D3A6E009BB3E7 = {

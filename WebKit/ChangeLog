@@ -1,3 +1,23 @@
+2003-12-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
+	<rdar://problem/3496873>: Move key event helper functions to WebKit
+
+        * Misc.subproj/WebNSEventExtras.h: Add declarations for new key event
+	helpers.
+        * Misc.subproj/WebNSEventExtras.m:
+        (-[NSEvent _web_isKeyEvent:]): Added.
+        (-[NSEvent _web_isDeleteKeyEvent]): Added.
+        (-[NSEvent _web_isEscapeKeyEvent]): Added.
+        (-[NSEvent _web_isOptionTabKeyEvent]): Added.
+        (-[NSEvent _web_isReturnOrEnterKeyEvent]): Added.
+        (-[NSEvent _web_isTabKeyEvent]): Added.
+        * WebKit.pbproj/project.pbxproj: Made WebNSEventExtras.h a private header
+	so WebBrowser can use the new helpers.
+
 === Safari-115 ===
 
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
