@@ -58,6 +58,7 @@ html
 http-equiv
 id
 ismap
+keytype
 label
 lang
 language

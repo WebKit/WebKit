@@ -2399,6 +2399,10 @@ void HTMLKeygenElementImpl::parseAttribute(AttributeImpl* attr)
     switch(attr->id())
     {
     case ATTR_CHALLENGE:
+        m_challenge = attr->val();
+        break;
+    case ATTR_KEYTYPE:
+        m_keyType = attr->val();
         break;
     default:
         // skip HTMLSelectElementImpl parsing!
@@ -2411,8 +2415,20 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     bool successful = false;
     QCString enc_name = fixUpfromUnicode(codec, name().string());
 
+#if APPLE_CHANGES
+    // Only RSA is supported at this time.
+    if (!m_keyType.isNull() && m_keyType.lower() != "rsa") {
+        return false;
+    }
+    QString value = KSSLKeyGen::signedPublicKeyAndChallengeString((unsigned)selectedIndex(), m_challenge.string());
+    if (!value.isNull()) {
+        encoded_values += enc_name;
+        encoded_values += value.utf8();
+        successful = true;
+    }
+#else
     encoded_values += enc_name;
-
+    
     // pop up the fancy certificate creation dialog here
     KSSLKeyGen *kg = new KSSLKeyGen(static_cast<RenderWidget *>(m_render)->widget(), "Key Generator", true);
 
@@ -2422,7 +2438,8 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     delete kg;
 
     encoded_values += "deadbeef";
-
+#endif
+    
     return successful;
 }
 

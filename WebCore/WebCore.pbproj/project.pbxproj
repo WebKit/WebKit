@@ -128,6 +128,7 @@
 				F8216299029F4FB501000131,
 				93F1D31A0558CC5C00821BC0,
 				704FD2FE056972FA003DBED9,
+				848A320F057E688B001A2362,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -798,6 +799,7 @@
 				F82162D7029F4FB501000131,
 				93F1D31B0558CC5C00821BC0,
 				704FD2FF056972FA003DBED9,
+				848A3210057E688B001A2362,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1145,11 +1147,25 @@
 //842
 //843
 //844
+		848A320F057E688B001A2362 = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = Security.framework;
+			path = /System/Library/Frameworks/Security.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		848A3210057E688B001A2362 = {
+			fileRef = 848A320F057E688B001A2362;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		84B2B1F7056BEF3A00D2B771 = {
 			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = WebCoreLocalizedStringFactory.h;
+			path = WebCoreKeyGenerator.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
@@ -1157,7 +1173,7 @@
 			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			path = WebCoreLocalizedStringFactory.m;
+			path = WebCoreKeyGenerator.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};

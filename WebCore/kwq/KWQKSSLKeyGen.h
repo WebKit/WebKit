@@ -29,19 +29,11 @@
 #include "KWQStringList.h"
 #include "QWidget.h"
 
-class QDialog
-{
-public:
-    enum DialogCode { Accepted, Rejected };
-};
-
 class KSSLKeyGen
 {
 public:
     static QStringList supportedKeySizes();
-    KSSLKeyGen(QWidget *, const char *, bool) { }
-    void setKeySize(int) { }
-    int exec() { return QDialog::Rejected; }
+    static QString signedPublicKeyAndChallengeString(unsigned keySizeIndex, const QString &challengeString);
 };
 
 #endif

@@ -25,16 +25,24 @@
 
 #import "KWQKSSLKeyGen.h"
 
+#import "KWQAssertions.h"
 #import "KWQString.h"
-#import "WebCoreLocalizedStringFactory.h"
+#import "WebCoreKeyGenerator.h"
+
+#import <Security/Security.h>
 
 QStringList KSSLKeyGen::supportedKeySizes()
 { 
-    NSEnumerator *enumerator = [[[WebCoreLocalizedStringFactory sharedFactory] keyGenerationMenuItemTitles] objectEnumerator];
+    NSEnumerator *enumerator = [[[WebCoreKeyGenerator sharedGenerator] strengthMenuItemTitles] objectEnumerator];
     QStringList supportedKeySizes = QStringList(); 
     NSString *string;
     while ((string = [enumerator nextObject]) != nil) {
         supportedKeySizes.append(QString::fromNSString(string));
     }
     return supportedKeySizes;
+}
+
+QString KSSLKeyGen::signedPublicKeyAndChallengeString(unsigned keySizeIndex, const QString &challengeString)
+{   
+    return QString::fromNSString([[WebCoreKeyGenerator sharedGenerator] signedPublicKeyAndChallengeStringWithStrengthIndex:keySizeIndex challenge:challengeString.getNSString()]);
 }

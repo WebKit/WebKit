@@ -1,3 +1,34 @@
+2003-12-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3234676>: Support for KEYGEN tag (ie 509 email certificates from www.thawte.com)
+
+        Reviewed by mjs.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLKeygenElementImpl::parseAttribute): store the KEYTYPE attribute
+        (HTMLKeygenElementImpl::encoding): call KSSLKeyGen::signedPublicKeyAndChallengeString
+        * khtml/html/html_formimpl.h: remove 2 declared but unimplemented methods
+        * khtml/misc/htmlattrs.c: generated changes
+        (hash_attr):
+        (findAttr):
+        * khtml/misc/htmlattrs.h: generated change
+        * khtml/misc/htmlattrs.in: added KEYTYPE
+        * kwq/KWQKSSLKeyGen.h:
+        * kwq/KWQKSSLKeyGen.mm:
+        (KSSLKeyGen::supportedKeySizes): call renamed strengthMenuItemTitles
+        (KSSLKeyGen::signedPublicKeyAndChallengeString): new, calls [WebCoreKeyGenerationFactory signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:] 
+        * kwq/WebCoreKeyGenerationFactory.h: Added.
+        * kwq/WebCoreKeyGenerationFactory.m: Added.
+        (+[WebCoreKeyGenerationFactory sharedFactory]):
+        (-[WebCoreKeyGenerationFactory init]):
+        (-[WebCoreKeyGenerationFactory strengthMenuItemTitles]):
+        (-[WebCoreKeyGenerationFactory signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:]):
+        * kwq/WebCoreLocalizedStringFactory.h: Removed.
+        * kwq/WebCoreLocalizedStringFactory.m: Removed.
+
 2003-12-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

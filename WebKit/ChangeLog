@@ -1,3 +1,31 @@
+2003-12-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3234676>: Support for KEYGEN tag (ie 509 email certificates from www.thawte.com)
+
+        Reviewed by mjs.
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp: Added.
+        (gnrAddContextAttribute): new
+        (gnrGetSubjPubKey): new
+        (gnrNullAlgParams): new
+        (gnrSign): new
+        (gnrFreeCssmData): new
+        (signedPublicKeyAndChallengeString): new
+        * WebCoreSupport.subproj/WebKeyGeneration.h: Added.
+        * WebCoreSupport.subproj/WebKeyGenerationFactory.h: Added. Renamed from WebLocalizedStringFactory.
+        * WebCoreSupport.subproj/WebKeyGenerationFactory.m: Added.
+        (+[WebKeyGenerationFactory createSharedFactory]): no change
+        (-[WebKeyGenerationFactory dealloc]): no change
+        (-[WebKeyGenerationFactory strengthMenuItemTitles]): new
+        (-[WebKeyGenerationFactory signedPublicKeyAndChallengeStringWithStrengthIndex:challenge:]): new
+        * WebCoreSupport.subproj/WebLocalizedStringFactory.h: Removed.
+        * WebCoreSupport.subproj/WebLocalizedStringFactory.m: Removed.
+        * WebCoreSupport.subproj/WebNetscapeTemplates.cpp: Added.
+        * WebCoreSupport.subproj/WebNetscapeTemplates.h: Added.
+        * WebKit.pbproj/project.pbxproj:
+        * WebKitPrefix.h:
+        * WebView.subproj/WebFrameView.m:
+
 2003-12-05  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3491427>: REGRESSION (100-114): multi-page HTML 

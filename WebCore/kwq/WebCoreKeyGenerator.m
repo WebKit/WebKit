@@ -23,12 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <Foundation/Foundation.h>
+#import "WebCoreKeyGenerator.h"
 
-@interface WebCoreLocalizedStringFactory : NSObject
+#import "KWQAssertions.h"
 
-+ (WebCoreLocalizedStringFactory *)sharedFactory;
+static WebCoreKeyGenerator *sharedGenerator;
 
-- (NSArray *)keyGenerationMenuItemTitles;
+@implementation WebCoreKeyGenerator
+
++ (WebCoreKeyGenerator *)sharedGenerator
+{
+    return sharedGenerator;
+}
+
+- init
+{
+    ASSERT(!sharedGenerator);
+    [super init];
+    sharedGenerator = [self retain];
+    return self;
+}
+
+- (NSArray *)strengthMenuItemTitles
+{
+    return nil;
+}
+
+- (NSString *)signedPublicKeyAndChallengeStringWithStrengthIndex:(unsigned)index challenge:(NSString *)challenge
+{
+    return nil;
+}
 
 @end
