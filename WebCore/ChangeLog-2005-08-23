@@ -1,5 +1,17 @@
 2002-03-13  Richard Williamson  <rjw@apple.com>
 
+        Added font cache.  Attempted to reduce size of fragment cache, but
+        malloc forces a minimum of 30 bytes for our 14 byte objects.
+        
+	* src/kwq/KWQFont.mm: (-[IFFontCacheKey dealloc]), (-[IFFontCacheKey
+	copyWithZone:]), (-[IFFontCacheKey hash]), (-[IFFontCacheKey string]),
+	(-[IFFontCacheKey isEqual:]), (QFont::getFont):
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutFragment setGlyphRangeLength:]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQTextStorage.mm: (-[KWQTextStorage addFragmentForString:]):
+
+2002-03-13  Richard Williamson  <rjw@apple.com>
+
         Re-worked fragment cache to minimize memory usage.
         
 	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutFragment glyphRange]),

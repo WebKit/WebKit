@@ -49,7 +49,7 @@ const float LargeNumberForText = 1.0e7;
     return glyphRange;
 }
 
-- (void)setGlyphRangeLength: (unsigned int)l
+- (void)setGlyphRangeLength: (unsigned short)l
 {
     glyphRangeLength = l;
 }

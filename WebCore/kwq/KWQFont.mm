@@ -89,10 +89,89 @@ void QFont::_free(){
 
 // member functions --------------------------------------------------------
 
+#ifdef DEBUG_GETFONT
+static int getFontCount = 0;
+#endif
+
+static NSMutableDictionary *fontCache = 0;
+
+// IFObjectHolder holds objects as keys in dictionaries without
+// copying.
+@interface IFFontCacheKey : NSObject
+{
+    NSString *string;
+    int trait;
+    float size;
+}
+
+- initWithString: (NSString *)str trait: (int)t size: (float)s;
+
+@end
+
+@implementation IFFontCacheKey
+
+- initWithString: (NSString *)str trait: (int)t size: (float)s;
+{
+    [super init];
+    string = [str retain];
+    trait = t;
+    size = s;
+    return self;
+}
+
+- (void)dealloc
+{
+    [string release];
+    [super dealloc];
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [self retain];
+}
+
+- (unsigned)hash
+{
+    return [string hash];
+}
+
+- (NSString *)string
+{
+    return string;
+}
+
+- (int)trait { return trait; }
+- (float)size { return size; }
+
+- (BOOL)isEqual:(id)o
+{
+    IFFontCacheKey *anObject = o;
+    if ([string isEqual: [anObject string]] && trait == [anObject trait] && size == [anObject size])
+        return YES;
+    return NO;
+}
+
+@end
+
 NSFont *QFont::getFont()
 {
-    if (font == nil)
-        font = [[[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size] retain];
+    if (font == nil){
+        NSString *fontKey;
+#ifdef DEBUG_GETFONT
+        getFontCount++;
+        fprintf (stdout, "getFountCount = %d, family = %s, traits = 0x%08x, size = %f\n", getFontCount, [_family cString], _trait, _size);
+#endif
+        if (fontCache == nil){
+            fontCache = [[NSMutableDictionary alloc] init];
+        }
+        fontKey = [[IFFontCacheKey alloc] initWithString: _family trait: _trait size: _size];
+        font = [fontCache objectForKey:fontKey];
+        if (font == nil){ 
+            font = [[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size];
+            [fontCache setObject: font forKey: fontKey];
+        }
+        [fontKey release];
+    }
     return font;
 }
         

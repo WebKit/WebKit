@@ -39,6 +39,10 @@
     correct attributes (font and color only) during layout and rendering.
 */
 
+#ifndef UINT16_MAX
+#define UINT16_MAX        65535
+#endif
+
 @implementation KWQTextStorage
 
 - (KWQLayoutFragment *)getFragmentForString: (NSString *)fragString
@@ -68,6 +72,10 @@
         [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"glyphRange.location != 0"];
     }
 
+    if (glyphRange.length > UINT16_MAX){
+        [NSException raise:@"OPTIMIZATION ASSUMPTION VIOLATED" format:@"glyphRange.length > UINT16_MAX"];
+    }
+    
     [fragment setGlyphRangeLength: glyphRange.length];
     
     NSRect boundingRect = [_layoutManager boundingRectForGlyphRange: glyphRange inTextContainer: [KWQTextContainer sharedInstance]];

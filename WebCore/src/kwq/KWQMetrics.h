@@ -51,12 +51,12 @@
 
 @interface KWQLayoutFragment : NSObject
 {
-    NSSize boundingRectSize;  // Is origin always zero?  Only need size.
-    unsigned int glyphRangeLength;  // Is location always zero?  Only need length.
+    NSSize boundingRectSize;
+    unsigned short glyphRangeLength;  // Is location always zero?  Only need length.
 }
 
 
-- (void)setGlyphRangeLength: (unsigned int)l;
+- (void)setGlyphRangeLength: (unsigned short)l;
 - (NSRange)glyphRange;
 - (void)setBoundingRectSize: (NSSize)s;
 - (NSRect)boundingRect;
