@@ -1990,20 +1990,27 @@ static WebHTMLView *lastHitView = nil;
 - (void)drawRect:(NSRect)rect
 {
     LOG(View, "%@ drawing", self);
-    
+
     // Work around AppKit bug <rdar://problem/3875305> rect passed to drawRect: is too large.
     // Ignore the passed-in rect and instead union in the rectangles from getRectsBeingDrawn.
     // This does a better job of clipping out rects that are entirely outside the visible area.
     const NSRect *rects;
     int count;
     [self getRectsBeingDrawn:&rects count:&count];
-    rect = NSZeroRect;
-    int i;
-    for (i = 0; i < count; ++i) {
-        rect = NSUnionRect(rect, rects[i]);
-    }
-    if (rect.size.height == 0 || rect.size.width == 0) {
-        return;
+
+    // If count == 0 here, use the rect passed in for drawing. This is a workaround for:
+    // <rdar://problem/3908282> REGRESSION (Mail): No drag image dragging selected text in Blot and Mail
+    // The reason for the workaround is that this method is called explicitly from the code
+    // to generate a drag image, and at that time, getRectsBeingDrawn:count: will return a zero count.
+    if (count > 0) {
+        rect = NSZeroRect;
+        int i;
+        for (i = 0; i < count; ++i) {
+            rect = NSUnionRect(rect, rects[i]);
+        }
+        if (rect.size.height == 0 || rect.size.width == 0) {
+            return;
+        }
     }
 
     BOOL subviewsWereSetAside = _private->subviewsSetAside;

@@ -1,3 +1,14 @@
+2004-12-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]): Work around for this bug:
+        <rdar://problem/3908282> REGRESSION (Mail): No drag image dragging selected text in Blot and Mail
+        The reason for the workaround is that this method is called explicitly from the code
+        to generate a drag image, and at that time, getRectsBeingDrawn:count: will return a zero count.
+        This code change uses the passed-in rect when the count is zero.
+
 2004-12-07  Administrator  <cblu@apple.com>
 
 	Support for fix for:
