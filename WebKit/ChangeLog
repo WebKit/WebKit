@@ -1,3 +1,14 @@
+2003-06-30  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3310716 -- Authentication dialog could be tweaked to 
+	better match guidelines
+
+        Reviewed by Chris
+
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib:
+	left-aligned "Name:" and "Password:" labels; slightly tweaked
+	layout at right edge of sheet
+
 2003-06-26  Chris Blumenberg  <cblu@apple.com>
 
 	Changes to make WebKit compile with gcc 3.3.
