@@ -62,7 +62,7 @@ public:
     virtual void setOverflowHeight(int h) { m_overflowHeight = h; }
     virtual void setOverflowWidth(int w) { m_overflowWidth = w; }
 
-    virtual bool isSelfCollapsingBlock() const { return m_height == 0; }
+    virtual bool isSelfCollapsingBlock() const;
     virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }
     virtual bool isBottomMarginQuirk() const { return m_bottomMarginQuirk; }
 
@@ -130,7 +130,7 @@ public:
     // called from lineWidth, to position the floats added in the last line.
     void positionNewFloats();
     void clearFloats();
-    bool checkClear(RenderObject *child);
+    int getClearDelta(RenderObject *child);
     virtual void markAllDescendantsWithFloatsForLayout(RenderObject* floatToRemove = 0);
     
     virtual bool containsFloats() { return m_floatingObjects!=0; }
@@ -233,7 +233,7 @@ protected:
     // for now is spillage out of the bottom and the right, which are the common cases).
     // XXX Generalize to work with top and left as well.
     int m_overflowHeight;
-    int m_overflowWidth;    
+    int m_overflowWidth;
 };
 
 }; // namespace

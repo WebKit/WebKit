@@ -367,6 +367,40 @@ void RenderBlock::removeChild(RenderObject *oldChild)
     }
 }
 
+bool RenderBlock::isSelfCollapsingBlock() const
+{
+    // We are not self-collapsing if we
+    // (a) have a non-zero height according to layout (an optimization to avoid wasting time)
+    // (b) are a table,
+    // (c) have border/padding,
+    // (d) have a min-height
+    if (m_height > 0 ||
+        isTable() || (borderBottom() + paddingBottom() + borderTop() + paddingTop()) != 0 ||
+        style()->minHeight().value > 0)
+        return false;
+
+    // If the height is 0 or auto, then whether or not we are a self-collapsing block depends
+    // on whether we have content that is all self-collapsing or not.
+    if (style()->height().isVariable() ||
+        (style()->height().isFixed() && style()->height().value == 0)) {
+        // If the block has inline children, see if we generated any line boxes.  If we have any
+        // line boxes, then we can't be self-collapsing, since we have content.
+        if (childrenInline())
+            return !firstLineBox();
+        
+        // Whether or not we collapse is dependent on whether all our normal flow children
+        // are also self-collapsing.
+        for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
+            if (child->isFloatingOrPositioned())
+                continue;
+            if (!child->isSelfCollapsingBlock())
+                return false;
+        }
+        return true;
+    }
+    return false;
+}
+
 void RenderBlock::layout()
 {
     // Table cells call layoutBlock directly, so don't add any logic here.  Put code into
@@ -573,11 +607,12 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
     // Whether or not we encountered an element with clear set that actually had to
     // be pushed down below a float.
-    int clearOccurred = false;
+    bool clearOccurred = false;
 
-    int oldPosMargin = prevPosMargin;
-    int oldNegMargin = prevNegMargin;
-
+    // If our last normal flow child was a self-collapsing block that cleared a float,
+    // we track it in this variable.
+    bool selfCollapsingBlockClearedFloat = false;
+    
     bool topChildQuirk = false;
     bool bottomChildQuirk = false;
     bool determinedTopQuirk = false;
@@ -591,6 +626,9 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
 
     while( child != 0 )
     {
+        int oldTopPosMargin = m_maxTopPosMargin;
+        int oldTopNegMargin = m_maxTopNegMargin;
+
         if (legend == child) {
             child = child->nextSibling();
             continue; // Skip the legend, since it has already been positioned up in the fieldset's border.
@@ -838,7 +876,6 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                     // is correct, since it could have overflowing content
                     // that needs to be positioned correctly (e.g., a block that
                     // had a specified height of 0 but that actually had subcontent).
-
                     ypos = m_height + collapsedTopPos - collapsedTopNeg;
             }
             else {
@@ -860,6 +897,8 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                 if (prevPosMargin-prevNegMargin) {
                     bottomChildQuirk = child->isBottomMarginQuirk();
                 }
+
+                selfCollapsingBlockClearedFloat = false;
             }
 
             child->setPos(child->xPos(), ypos);
@@ -880,21 +919,37 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                 child->layoutIfNeeded();
             }
         }
+        else
+            selfCollapsingBlockClearedFloat = false;
 
         // Now check for clear.
-        if (checkClear(child)) {
+        int heightIncrease = getClearDelta(child);
+        if (heightIncrease) {
             // The child needs to be lowered.  Move the child so that it just clears the float.
-            child->setPos(child->xPos(), m_height);
+            child->setPos(child->xPos(), child->yPos()+heightIncrease);
             clearOccurred = true;
 
-            if (topMarginContributor) {
+            // Increase our height by the amount we had to clear.
+            if (!child->isSelfCollapsingBlock())
+                m_height += heightIncrease;
+            else {
+                // For self-collapsing blocks that clear, they may end up collapsing
+                // into the bottom of the parent block.  We simulate this behavior by
+                // setting our positive margin value to compensate for the clear.
+                prevPosMargin = QMAX(0, child->yPos() - m_height);
+                prevNegMargin = 0;
+                selfCollapsingBlockClearedFloat = true;
+            }
+            
+            if (topMarginContributor && canCollapseTopWithChildren) {
                 // We can no longer collapse with the top of the block since a clear
                 // occurred.  The empty blocks collapse into the cleared block.
                 // XXX This isn't quite correct.  Need clarification for what to do
                 // if the height the cleared block is offset by is smaller than the
                 // margins involved. -dwh
-                m_maxTopPosMargin = oldPosMargin;
-                m_maxTopNegMargin = oldNegMargin;
+                m_maxTopPosMargin = oldTopPosMargin;
+                m_maxTopNegMargin = oldTopNegMargin;
+                topMarginContributor = false;
             }
 
             // If our value of clear caused us to be repositioned vertically to be
@@ -997,6 +1052,11 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
         child = child->nextSibling();
     }
 
+    // If our last flow was a self-collapsing block that cleared a float, then we don't
+    // collapse it with the bottom of the block.
+    if (selfCollapsingBlockClearedFloat)
+        canCollapseBottomWithChildren = false;
+    
     // If we can't collapse with children then go ahead and add in the bottom margins.
     if (!canCollapseBottomWithChildren
         && (strictMode || !quirkContainer || !bottomChildQuirk))
@@ -1741,14 +1801,14 @@ void RenderBlock::markAllDescendantsWithFloatsForLayout(RenderObject* floatToRem
     }
 }
 
-bool RenderBlock::checkClear(RenderObject *child)
+int RenderBlock::getClearDelta(RenderObject *child)
 {
     //kdDebug( 6040 ) << "checkClear oldheight=" << m_height << endl;
     int bottom = 0;
     switch(child->style()->clear())
     {
         case CNONE:
-            return false;
+            return 0;
         case CLEFT:
             bottom = leftBottom();
             break;
@@ -1760,11 +1820,7 @@ bool RenderBlock::checkClear(RenderObject *child)
             break;
     }
 
-    if (m_height < bottom) {
-        m_height = bottom;
-        return true;
-    }
-    return false;
+    return QMAX(0, bottom-(child->yPos()));
 }
 
 bool RenderBlock::isPointInScrollbar(int _x, int _y, int _tx, int _ty)

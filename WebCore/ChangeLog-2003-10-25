@@ -1,5 +1,16 @@
 2003-08-26  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3395950, better support for self-collapsing blocks.  Make them obey
+	clear properly and also change the definition of self-collapsing to match
+	the CSS2.1 specification.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+
+2003-08-26  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3335175, www.calstone.com renders as blank.  The fix is to deliberately
 	introduce an error into our HTML parsing code that causes us to honor self-closing
 	XML-style <script/> tags.  This matches Mozilla and Opera behavior (both of them
