@@ -1,5 +1,15 @@
 2004-09-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3798240> computed style error log messages seen with numbers in the range 74-77
+
+        * khtml/css/css_computedstyle.cpp: (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        Added implementations for CSS_PROP__KHTML_MARQUEE_INCREMENT, CSS_PROP_MAX_HEIGHT, CSS_PROP_MAX_WIDTH,
+        CSS_PROP_MIN_HEIGHT, CSS_PROP_MIN_WIDTH, and CSS_PROP_VISIBILITY.
+
+2004-09-12  Darin Adler  <darin@apple.com>
+
         * layout-tests/css1/text_properties/text-transform-expected.txt: Removed unused test result.
 
 2004-09-11  Maciej Stachowiak  <mjs@apple.com>

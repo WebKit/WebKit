@@ -509,8 +509,7 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP__KHTML_MARQUEE_INCREMENT:
-        // FIXME: unimplemented
-        break;
+        return valueForLength(style->marqueeIncrement());
     case CSS_PROP__KHTML_MARQUEE_REPETITION:
         // FIXME: unimplemented
         break;
@@ -524,17 +523,13 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         // FIXME: unimplemented
         break;
     case CSS_PROP_MAX_HEIGHT:
-        // FIXME: unimplemented
-        break;
+        return valueForLength(style->maxHeight());
     case CSS_PROP_MAX_WIDTH:
-        // FIXME: unimplemented
-        break;
+        return valueForLength(style->maxWidth());
     case CSS_PROP_MIN_HEIGHT:
-        // FIXME: unimplemented
-        break;
+        return valueForLength(style->minHeight());
     case CSS_PROP_MIN_WIDTH:
-        // FIXME: unimplemented
-        break;
+        return valueForLength(style->minWidth());
     case CSS_PROP_OPACITY:
         // FIXME: unimplemented
         break;
@@ -680,8 +675,16 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         ASSERT_NOT_REACHED();
         return 0;
     case CSS_PROP_VISIBILITY:
-        // FIXME: unimplemented
-        break;
+        switch (style->visibility()) {
+            case khtml::VISIBLE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_VISIBLE);
+            case khtml::HIDDEN:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HIDDEN);
+            case khtml::COLLAPSE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_COLLAPSE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_WHITE_SPACE:
         switch (style->whiteSpace()) {
             case khtml::NORMAL:
