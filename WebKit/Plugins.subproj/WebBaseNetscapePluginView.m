@@ -1339,7 +1339,8 @@ typedef struct {
 
     NSString *status = (NSString *)CFStringCreateWithCString(NULL, message, kCFStringEncodingWindowsLatin1);
     LOG(Plugins, "NPN_Status: %@", status);
-    [[[self controller] _windowOperationsDelegateForwarder] setStatusText:status];
+    WebView *wv = [self controller];
+    [[wv _windowOperationsDelegateForwarder] webView:wv setStatusText:status];
     [status release];
 }
 
