@@ -8,7 +8,7 @@
 #import <WebFoundation/NSHTTPCookie.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
-#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/NSURLFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLConnectionPrivate.h>

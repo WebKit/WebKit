@@ -27,7 +27,7 @@
 #import <WebKit/WebImageRenderer.h>
 
 #import <WebKit/WebAssertions.h>
-#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/NSURLFileTypeMappings.h>
 
 @implementation WebImageRendererFactory
 
@@ -110,7 +110,7 @@
             nil];
         
         NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
-        WebFileTypeMappings *mappings = [WebFileTypeMappings sharedMappings];
+        NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
         NSMutableSet *mimes = [NSMutableSet set];
         NSString *type;
 

@@ -48,7 +48,7 @@
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebSystemBits.h>
-#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/NSURLFileTypeMappings.h>
 #import <WebKit/WebLocalizableStrings.h>
 
 
@@ -805,7 +805,7 @@ static BOOL loggedObjectCacheSize = NO;
 {
     ASSERT(path);
     NSString *extension = [path pathExtension];
-    return [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+    return [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
 - (void)handleMouseDragged:(NSEvent *)event

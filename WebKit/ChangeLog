@@ -1,5 +1,23 @@
 2003-05-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by David
+
+	File and class renaming in WebFoundation:
+
+	WebFileTypeMappings -> NSURLFileTypeMappings
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge MIMETypeForPath:]):
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory supportedMIMETypes]):
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebViewPrivate.m:
+        (+[WebView suggestedFileExtensionForMIMEType:]):
+        (+[WebView _MIMETypeForFile:]):
+
+2003-05-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
 
         Copied WebLocalizableStrings.[hm] from WebFoundation to WebKit

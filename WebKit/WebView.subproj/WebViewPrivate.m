@@ -25,7 +25,7 @@
 
 #import <WebKit/WebAssertions.h>
 
-#import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/NSURLFileTypeMappings.h>
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/NSURLConnection.h>
@@ -88,7 +88,7 @@ static NSMutableSet *schemesWithRepresentationsSet;
 
 + (NSString *)suggestedFileExtensionForMIMEType: (NSString *)type
 {
-    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
+    return [[NSURLFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
 }
 
 - (void)_close
@@ -193,7 +193,7 @@ static NSMutableSet *schemesWithRepresentationsSet;
 
     // Get the MIME type from the extension.
     if ([extension length] != 0) {
-        MIMEType = [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
+        MIMEType = [[NSURLFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
     }
 
     // If we can't get a known MIME type from the extension, sniff.
