@@ -868,7 +868,7 @@ void KURL::parse(const char *url, const QString *originalString)
 		passwordStart = passwordEnd = userEnd;
 	    }
 	    hostStart = passwordEnd + 1;
-	} else if (url[userEnd] == '\0' || url[userEnd] == '/' || url[userEnd] == '[') {
+	} else if (url[userEnd] == '\0' || url[userEnd] == '[' || IS_PATH_SEGMENT_END_CHAR(url[userEnd])) {
 	    // hit the end of the authority, must have been no user
 	    // or looks like an IPv6 hostname
 	    // either way, try to parse it as a hostname
@@ -916,7 +916,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	    portStart = portEnd = hostEnd;
 	}
 
-	if (url[portEnd] != '\0' && url[portEnd] != '/') {
+	if (url[portEnd] != '\0' && !IS_PATH_SEGMENT_END_CHAR(url[portEnd])) {
 	    // invalid character
 	    m_isValid = false;
 	    urlString = url;

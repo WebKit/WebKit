@@ -1,3 +1,12 @@
+2003-02-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3179181 -- KURL won't accept URLs with a query part and no / separating host name from path
+
+        * kwq/KWQKURL.mm: (KURL::parse): Allow any path segment end character to end the host part of a
+        URL, rather than allowing only a "/".
+
 2003-02-21  Maciej Stachowiak  <mjs@apple.com>
 
         Back out last change, mondo layout regressions.
