@@ -18,9 +18,7 @@
 #define SIZE_FILE_NAME @".size"
 #define SIZE_FILE_NAME_CSTRING ".size"
 
-// The next line is a workaround for Radar 2905545. Once that's fixed, it can use PTHREAD_ONCE_INIT.
-static void databaseInit(void);
-static pthread_once_t databaseInitControl = {_PTHREAD_ONCE_SIG_init, {}};
+static pthread_once_t databaseInitControl = PTHREAD_ONCE_INIT;
 static NSNumber *IFURLFileDirectoryPosixPermissions;
 static NSNumber *IFURLFilePosixPermissions;
 
@@ -122,9 +120,6 @@ static CFArrayRef CreateArrayListingFilesSortedByAccessTime(const char *path) {
 static NSMutableSet *notMappableFileNameSet = nil;
 static NSLock *mutex;
 
-// The next line is a workaround for Radar 2905545. Once that's fixed, it can use PTHREAD_ONCE_INIT.
-static pthread_once_t cacheFileReaderControl = {_PTHREAD_ONCE_SIG_init, {}};
-
 static void URLFileReaderInit(void)
 {
     mutex = [[NSLock alloc] init];
@@ -139,6 +134,7 @@ static void URLFileReaderInit(void)
     struct stat statInfo;
     const char *fileSystemPath;
     BOOL fileNotMappable;
+    static pthread_once_t cacheFileReaderControl = PTHREAD_ONCE_INIT;
 
     pthread_once(&cacheFileReaderControl, URLFileReaderInit);
 
