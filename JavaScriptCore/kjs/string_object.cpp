@@ -186,9 +186,9 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     return String(thisObj.internalValue().toString(exec));
   }
 
-  int n, m;
   UString u, u2, u3;
   int pos, p0, i;
+  double dpos;
   double d = 0.0;
 
   UString s = thisObj.toString(exec);
@@ -203,19 +203,19 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     // handled above
     break;
   case CharAt:
-    pos = a0.toInteger(exec);
-    if (pos < 0 || pos >= len)
+    dpos = a0.toInteger(exec);
+    if (dpos < 0 || dpos >= len)
       u = "";
     else
-      u = s.substr(pos, 1);
+      u = s.substr(static_cast<int>(dpos), 1);
     result = String(u);
     break;
   case CharCodeAt:
-    pos = a0.toInteger(exec);
-    if (pos < 0 || pos >= len)
+    dpos = a0.toInteger(exec);
+    if (dpos < 0 || dpos >= len)
       d = NaN;
     else {
-      UChar c = s[pos];
+      UChar c = s[static_cast<int>(dpos)];
       d = (c.high() << 8) + c.low();
     }
     result = Number(d);
@@ -231,22 +231,30 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
   case IndexOf:
     u2 = a0.toString(exec);
     if (a1.type() == UndefinedType)
-      pos = 0;
-    else
-      pos = a1.toInteger(exec);
-    d = s.find(u2, pos);
+      dpos = 0;
+    else {
+      dpos = a1.toInteger(exec);
+      if (dpos < 0)
+        dpos = 0;
+      else if (dpos > len)
+        dpos = len;
+    }
+    d = s.find(u2, static_cast<int>(dpos));
     result = Number(d);
     break;
   case LastIndexOf:
     u2 = a0.toString(exec);
     d = a1.toNumber(exec);
-    if (a1.type() == UndefinedType || KJS::isNaN(d) || KJS::isPosInf(d))
-      pos = len;
-    else
-      pos = a1.toInteger(exec);
-    if (pos < 0)
-      pos = 0;
-    d = s.rfind(u2, pos);
+    if (a1.type() == UndefinedType || KJS::isNaN(d))
+      dpos = len;
+    else {
+      dpos = a1.toInteger(exec);
+      if (dpos < 0)
+        dpos = 0;
+      else if (dpos > len)
+        dpos = len;
+    }
+    d = s.rfind(u2, static_cast<int>(dpos));
     result = Number(d);
     break;
   case Match:
@@ -377,21 +385,29 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
   case Slice: // http://developer.netscape.com/docs/manuals/js/client/jsref/string.htm#1194366
     {
         // The arg processing is very much like ArrayProtoFunc::Slice
-        int begin = args[0].toUInt32(exec);
-        if (begin < 0)
-          begin = maxInt(begin + len, 0);
-        else
-          begin = minInt(begin, len);
-        int end = len;
+        double begin = args[0].toInteger(exec);
+        if (begin < 0) {
+          begin += len;
+          if (begin < 0)
+            begin = 0;
+        } else {
+          if (begin > len)
+            begin = len;
+        }
+        double end = len;
         if (args[1].type() != UndefinedType) {
           end = args[1].toInteger(exec);
-          if (end < 0)
-            end = maxInt(len + end, 0);
-          else
-            end = minInt(end, len);
+          if (end < 0) {
+            end += len;
+            if (end < 0)
+              end = 0;
+          } else {
+            if (end > len)
+              end = len;
+          }
         }
         //printf( "Slicing from %d to %d \n", begin, end );
-        result = String(s.substr(begin, end-begin));
+        result = String(s.substr(static_cast<int>(begin), static_cast<int>(end-begin)));
         break;
     }
     case Split: {
@@ -451,18 +467,22 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     }
     break;
   case Substr: {
-    n = a0.toInteger(exec);
-    m = a1.toInteger(exec);
-    int d, d2;
-    if (n >= 0)
-      d = n;
-    else
-      d = maxInt(len + n, 0);
+    double d = a0.toInteger(exec);
+    double d2 = a1.toInteger(exec);
+    if (d < 0) {
+      d += len;
+      if (d < 0)
+        d = 0;
+    }
     if (a1.type() == UndefinedType)
       d2 = len - d;
-    else
-      d2 = minInt(maxInt(m, 0), len - d);
-    result = String(s.substr(d, d2));
+    else {
+      if (d2 < 0)
+        d2 = 0;
+      if (d2 > len - d)
+        d2 = len - d;
+    }
+    result = String(s.substr(static_cast<int>(d), static_cast<int>(d2)));
     break;
   }
   case Substring: {

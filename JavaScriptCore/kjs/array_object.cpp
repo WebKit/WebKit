@@ -580,24 +580,33 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
     // We return a new array
     Object resObj = Object::dynamicCast(exec->interpreter()->builtinArray().construct(exec,List::empty()));
     result = resObj;
-    int begin = args[0].toInteger(exec);
-    if ( begin < 0 )
-      begin = maxInt( begin + length, 0 );
-    else
-      begin = minInt( begin, length );
-    int end = length;
-    if (args[1].type() != UndefinedType)
-    {
+    double begin = args[0].toInteger(exec);
+    if (begin < 0) {
+      begin += length;
+      if (begin < 0)
+        begin = 0;
+    } else {
+      if (begin > length)
+        begin = length;
+    }
+    double end = length;
+    if (args[1].type() != UndefinedType) {
       end = args[1].toInteger(exec);
-      if ( end < 0 )
-        end = maxInt( end + length, 0 );
-      else
-        end = minInt( end, length );
+      if (end < 0) {
+        end += length;
+        if (end < 0)
+          end = 0;
+      } else {
+        if (end > length)
+          end = length;
+      }
     }
 
     //printf( "Slicing from %d to %d \n", begin, end );
     int n = 0;
-    for(int k = begin; k < end; k++, n++) {
+    int b = static_cast<int>(begin);
+    int e = static_cast<int>(end);
+    for(int k = b; k < e; k++, n++) {
       if (thisObj.hasProperty(exec, k)) {
         Value obj = thisObj.get(exec, k);
         resObj.put(exec, n, obj);

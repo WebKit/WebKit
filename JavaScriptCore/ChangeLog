@@ -1,3 +1,29 @@
+2004-02-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3519285>: integer operations on large negative numbers yield bad results (discovered with "HTMLCrypt")
+        - fixed other related overflow issues
+
+        * kjs/value.h: Changed return types of toInteger, toInt32, toUInt32, and toUInt16.
+        * kjs/value.cpp:
+        (ValueImp::toInteger): Change to return a double, since this operation, from the ECMA specification,
+        must not restrict values to the range of a particular integer type.
+        (ValueImp::toInt32): Used a sized integer type for the result of this function, and also added
+        proper handling for negative results from fmod.
+        (ValueImp::toUInt32): Ditto.
+        (ValueImp::toUInt16): Ditto.
+        (ValueImp::dispatchToUInt32): Changed result type from unsigned to uint32_t.
+
+        * kjs/array_object.cpp: (ArrayProtoFuncImp::call): Use a double instead of an int to handle
+        out-of-integer-range values better in the slice function.
+        * kjs/internal.cpp: (KJS::roundValue): Streamline the function, handling NAN and infinity properly.
+        * kjs/number_object.cpp: (NumberProtoFuncImp::call): Use a double instead of an int to handle
+        out-of-integer-range values better in the toString function.
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Use a double instead of an int to handle
+        out-of-integer-range values better in the charAt, charCodeAt, indexOf, lastIndexOf, slice,
+        and substr functions.
+
 === Safari-126 ===
 
 2004-01-30  Richard Williamson   <rjw@apple.com>

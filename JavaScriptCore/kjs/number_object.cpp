@@ -92,12 +92,13 @@ Value NumberProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
   Value v = thisObj.internalValue();
   switch (id) {
   case ToString: {
-    int radix = 10;
+    double dradix = 10;
     if (!args.isEmpty() && args[0].type() != UndefinedType)
-      radix = args[0].toInteger(exec);
-    if (radix < 2 || radix > 36 || radix == 10)
+      dradix = args[0].toInteger(exec);
+    if (dradix < 2 || dradix > 36 || dradix == 10)
       result = String(v.toString(exec));
     else {
+      int radix = static_cast<int>(radix);
       unsigned i = v.toUInt32(exec);
       char s[33];
       char *p = s + sizeof(s);

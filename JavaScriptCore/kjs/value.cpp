@@ -93,51 +93,65 @@ bool ValueImp::toUInt32(unsigned&) const
 }
 
 // ECMA 9.4
-int ValueImp::toInteger(ExecState *exec) const
+double ValueImp::toInteger(ExecState *exec) const
 {
-  unsigned i;
+  uint32_t i;
   if (dispatchToUInt32(i))
-    return (int)i;
-  return int(roundValue(exec, Value(const_cast<ValueImp*>(this))));
+    return i;
+  return roundValue(exec, Value(const_cast<ValueImp*>(this)));
 }
 
-int ValueImp::toInt32(ExecState *exec) const
+int32_t ValueImp::toInt32(ExecState *exec) const
 {
-  unsigned i;
-  if (dispatchToUInt32(i))
-    return (int)i;
-
-  double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
-  double d32 = fmod(d, D32);
-
-  if (d32 >= D32 / 2.0)
-    d32 -= D32;
-
-  return static_cast<int>(d32);
-}
-
-unsigned int ValueImp::toUInt32(ExecState *exec) const
-{
-  unsigned i;
+  uint32_t i;
   if (dispatchToUInt32(i))
     return i;
 
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
+  if (isNaN(d) || isInf(d))
+    return 0;
   double d32 = fmod(d, D32);
 
-  return static_cast<unsigned int>(d32);
+  if (d32 >= D32 / 2.0)
+    d32 -= D32;
+  else if (d32 < -D32 / 2.0)
+    d32 += D32;
+
+  return static_cast<int32_t>(d32);
 }
 
-unsigned short ValueImp::toUInt16(ExecState *exec) const
+uint32_t ValueImp::toUInt32(ExecState *exec) const
 {
-  unsigned i;
+  uint32_t i;
   if (dispatchToUInt32(i))
-    return (unsigned short)i;
+    return i;
 
   double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
+  if (isNaN(d) || isInf(d))
+    return 0;
+  double d32 = fmod(d, D32);
+
+  if (d32 < 0)
+    d32 += D32;
+
+  return static_cast<uint32_t>(d32);
+}
+
+uint16_t ValueImp::toUInt16(ExecState *exec) const
+{
+  uint32_t i;
+  if (dispatchToUInt32(i))
+    return i;
+
+  double d = roundValue(exec, Value(const_cast<ValueImp*>(this)));
+  if (isNaN(d) || isInf(d))
+    return 0;
   double d16 = fmod(d, D16);
 
-  return static_cast<unsigned short>(d16);
+  if (d16 < 0)
+    d16 += D16;
+
+  return static_cast<uint16_t>(d16);
 }
 
 // Dispatchers for virtual functions, to special-case simple numbers which
@@ -185,13 +199,13 @@ Object ValueImp::dispatchToObject(ExecState *exec) const
   return toObject(exec);
 }
 
-bool ValueImp::dispatchToUInt32(unsigned& result) const
+bool ValueImp::dispatchToUInt32(uint32_t& result) const
 {
   if (SimpleNumber::is(this)) {
     long i = SimpleNumber::value(this);
     if (i < 0)
       return false;
-    result = (unsigned)i;
+    result = i;
     return true;
   }
   return toUInt32(result);

@@ -113,10 +113,10 @@ namespace KJS {
     // Will crash if called on a simple number.
     void setGcAllowedFast() { _flags |= VI_GCALLOWED; }
 
-    int toInteger(ExecState *exec) const;
-    int toInt32(ExecState *exec) const;
-    unsigned int toUInt32(ExecState *exec) const;
-    unsigned short toUInt16(ExecState *exec) const;
+    double toInteger(ExecState *exec) const;
+    int32_t toInt32(ExecState *exec) const;
+    uint32_t toUInt32(ExecState *exec) const;
+    uint16_t toUInt16(ExecState *exec) const;
 
     // Dispatch wrappers that handle the special small number case
 
@@ -125,7 +125,7 @@ namespace KJS {
     bool dispatchToBoolean(ExecState *exec) const;
     double dispatchToNumber(ExecState *exec) const;
     UString dispatchToString(ExecState *exec) const;
-    bool dispatchToUInt32(unsigned&) const;
+    bool dispatchToUInt32(uint32_t&) const;
     Object dispatchToObject(ExecState *exec) const;
 
     unsigned short int refcount;
@@ -218,22 +218,22 @@ namespace KJS {
     /**
      * Performs the ToInteger type conversion operation on this value (ECMA 9.4)
      */
-    int toInteger(ExecState *exec) const { return rep->toInteger(exec); }
+    double toInteger(ExecState *exec) const { return rep->toInteger(exec); }
 
     /**
      * Performs the ToInt32 type conversion operation on this value (ECMA 9.5)
      */
-    int toInt32(ExecState *exec) const { return rep->toInt32(exec); }
+    int32_t toInt32(ExecState *exec) const { return rep->toInt32(exec); }
 
     /**
      * Performs the ToUint32 type conversion operation on this value (ECMA 9.6)
      */
-    unsigned int toUInt32(ExecState *exec) const { return rep->toUInt32(exec); }
+    uint32_t toUInt32(ExecState *exec) const { return rep->toUInt32(exec); }
 
     /**
      * Performs the ToUint16 type conversion operation on this value (ECMA 9.7)
      */
-    unsigned short toUInt16(ExecState *exec) const { return rep->toUInt16(exec); }
+    uint16_t toUInt16(ExecState *exec) const { return rep->toUInt16(exec); }
 
     /**
      * Performs the ToString type conversion operation on this value (ECMA 9.8)
@@ -248,7 +248,7 @@ namespace KJS {
     /**
      * Checks if we can do a lossless conversion to UInt32.
      */
-    bool toUInt32(unsigned& i) const { return rep->dispatchToUInt32(i); }
+    bool toUInt32(uint32_t& i) const { return rep->dispatchToUInt32(i); }
 
   protected:
     ValueImp *rep;
