@@ -1,3 +1,13 @@
+2003-02-19  David Hyatt  <hyatt@apple.com>
+
+	Make the BidiIterator midpoints use an array instead of a list.
+	
+        Reviewed by kocienda
+
+	* khtml/rendering/bidi.h
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.h:
+
 2003-02-18  Maciej Stachowiak  <mjs@apple.com
 
 	Reviewed by Chris.

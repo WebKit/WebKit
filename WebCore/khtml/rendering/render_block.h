@@ -92,7 +92,7 @@ public:
 
     // the implementation of the following functions is in bidi.cpp
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
-    BidiIterator findNextLineBreak(BidiIterator &start, QPtrList<BidiIterator>& midpoints);
+    BidiIterator findNextLineBreak(BidiIterator &start);
     InlineFlowBox* constructLine(QPtrList<BidiRun>& runs, const BidiIterator& start,
                                  const BidiIterator& end);
     InlineFlowBox* createLineBoxes(RenderObject* obj);
