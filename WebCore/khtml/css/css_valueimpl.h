@@ -389,8 +389,8 @@ public:
     DOM::DOMString cssText() const;
 
     // make sure the following fits in 4 bytes.
-    int  m_id 		: 30;
-    bool m_bImportant 	: 1;
+    int  m_id;
+    bool m_bImportant;
 protected:
     CSSValueImpl *m_value;
 

@@ -32,17 +32,6 @@
 
 using std::nothrow;
 
-class KWQArrayImpl::KWQArrayPrivate
-{
-public:	
-    KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
-    ~KWQArrayPrivate();
-    size_t numItems;
-    size_t itemSize;
-    char *data;
-    int refCount;
-};
-
 KWQArrayImpl::KWQArrayPrivate::KWQArrayPrivate(size_t pItemSize, size_t pNumItems) : 
     numItems(pNumItems), 
     itemSize(pItemSize), 
@@ -75,11 +64,6 @@ KWQArrayImpl &KWQArrayImpl::operator=(const KWQArrayImpl &a)
 {
     d = a.d;
     return *this;
-}
-
-void *KWQArrayImpl::at(size_t pos) const
-{
-    return &d->data[pos * d->itemSize];
 }
 
 void *KWQArrayImpl::data() const

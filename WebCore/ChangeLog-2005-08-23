@@ -1,3 +1,20 @@
+2004-05-08  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- some minor performance tweaks that together give .5% or so on
+	the HTML iBench
+	
+        * khtml/css/css_valueimpl.h: don't use a bitfield for id and important,
+	unpacking the bitfield is too expensive
+        * kwq/KWQArrayImpl.h:
+        * kwq/KWQArrayImpl.mm:
+        (KWQArrayImpl::at): inline this method because it's so hot
+        * kwq/KWQString.mm:
+        (allocateHandle): inline this function because it's so hot
+        (initializeHandleNodes): move this in the file so above can be inlined
+        (allocateNode): ditto
+
 2004-05-10  David Hyatt  <hyatt@apple.com>
 
 	Move image loading to content.
@@ -51,6 +68,7 @@
         building with a case sensitive file system. I could have changed this to "qcstring.h",
         but it seemed better to use the header's real name since we're inside KWQ here.
 
+>>>>>>> 1.2754
 2004-05-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

@@ -219,7 +219,36 @@ void _printQStringAllocationStatistics()
 #import <mach/vm_map.h>
 #import <mach/mach_init.h>
 
-static KWQStringData **allocateHandle();
+struct HandleNode;
+struct HandlePageNode;
+
+static HandleNode *allocateNode(HandlePageNode *pageNode);
+static HandlePageNode *allocatePageNode();
+
+static HandlePageNode *usedNodeAllocationPages = 0;
+static HandlePageNode *freeNodeAllocationPages = 0;
+
+static inline void initializeHandleNodes()
+{
+    if (freeNodeAllocationPages == 0)
+        freeNodeAllocationPages = allocatePageNode();
+}
+
+static inline KWQStringData **allocateHandle()
+{
+#if CHECK_FOR_HANDLE_LEAKS
+    return static_cast<KWQStringData **>(malloc(sizeof(KWQStringData *)));
+#endif
+
+    initializeHandleNodes();
+    
+#ifdef QSTRING_DEBUG_ALLOCATIONS
+    handleInstances++;
+#endif
+
+    return reinterpret_cast<KWQStringData **>(allocateNode(freeNodeAllocationPages));
+}
+
 static void freeHandle(KWQStringData **);
 
 #define IS_ASCII_QCHAR(c) ((c).unicode() > 0 && (c).unicode() <= 0xff)
@@ -2851,9 +2880,6 @@ struct HandleNode {
     } type;
 };
 
-static HandlePageNode *usedNodeAllocationPages = 0;
-static HandlePageNode *freeNodeAllocationPages = 0;
-
 #if 1 // change to 0 to do the page lists checks
 
 #define CHECK_PAGE_LISTS() ((void)0)
@@ -2926,12 +2952,6 @@ static HandlePageNode *allocatePageNode()
     return node;
 }
 
-static inline void initializeHandleNodes()
-{
-    if (freeNodeAllocationPages == 0)
-        freeNodeAllocationPages = allocatePageNode();
-}
-
 static HandleNode *allocateNode(HandlePageNode *pageNode)
 {
     CHECK_PAGE_LISTS();
@@ -2972,21 +2992,6 @@ static HandleNode *allocateNode(HandlePageNode *pageNode)
     }
 
     return allocated;
-}
-
-KWQStringData **allocateHandle()
-{
-#if CHECK_FOR_HANDLE_LEAKS
-    return static_cast<KWQStringData **>(malloc(sizeof(KWQStringData *)));
-#endif
-
-    initializeHandleNodes();
-    
-#ifdef QSTRING_DEBUG_ALLOCATIONS
-    handleInstances++;
-#endif
-
-    return reinterpret_cast<KWQStringData **>(allocateNode(freeNodeAllocationPages));
 }
 
 void freeHandle(KWQStringData **_free)

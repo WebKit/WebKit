@@ -39,7 +39,8 @@ class KWQArrayImpl
     KWQArrayImpl(const KWQArrayImpl &);
     KWQArrayImpl &operator=(const KWQArrayImpl &);
     
-    void *at(size_t pos) const;
+    void *at(size_t pos) const { return &d->data[pos * d->itemSize]; }
+
     void *data() const;
     uint size() const;
     bool resize(size_t size);
@@ -48,7 +49,16 @@ class KWQArrayImpl
     
     bool operator==(const KWQArrayImpl &) const;
  private:
-    class KWQArrayPrivate;
+    class KWQArrayPrivate
+    {
+    public:	
+	KWQArrayPrivate(size_t pNumItems, size_t pItemSize);
+	~KWQArrayPrivate();
+	size_t numItems;
+	size_t itemSize;
+	char *data;
+	int refCount;
+    };
 
     KWQRefPtr<KWQArrayPrivate> d;
 };
