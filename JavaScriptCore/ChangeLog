@@ -1,3 +1,14 @@
+2004-02-06  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3550242 and 3546977.  The first diff prevents an assert from firing.  The second diff prevents a JavaScript exception, caused be an invalid conversion, which has a downstream consequence of preventing a valid conversion.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_jsobject.cpp:
+        (JSObject::toString):
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::convertValueToJValue):
+
 2004-02-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

@@ -630,9 +630,7 @@ jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, 
 jvalue KJS::Bindings::convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName)
 {
     jvalue result;
-    double d = 0;
    
-    d = value.toNumber(exec);
     switch (_JNIType){
         case object_type: {
             result.l = (jobject)0;
@@ -663,42 +661,42 @@ jvalue KJS::Bindings::convertValueToJValue (KJS::ExecState *exec, KJS::Value val
         break;
         
         case boolean_type: {
-            result.z = (jboolean)d;
+            result.z = (jboolean)value.toNumber(exec);
         }
         break;
             
         case byte_type: {
-            result.b = (jbyte)d;
+            result.b = (jbyte)value.toNumber(exec);
         }
         break;
         
         case char_type: {
-            result.c = (jchar)d;
+            result.c = (jchar)value.toNumber(exec);
         }
         break;
 
         case short_type: {
-            result.s = (jshort)d;
+            result.s = (jshort)value.toNumber(exec);
         }
         break;
 
         case int_type: {
-            result.i = (jint)d;
+            result.i = (jint)value.toNumber(exec);
         }
         break;
 
         case long_type: {
-            result.j = (jlong)d;
+            result.j = (jlong)value.toNumber(exec);
         }
         break;
 
         case float_type: {
-            result.f = (jfloat)d;
+            result.f = (jfloat)value.toNumber(exec);
         }
         break;
 
         case double_type: {
-            result.d = (jdouble)d;
+            result.d = (jdouble)value.toNumber(exec);
         }
         break;
             
