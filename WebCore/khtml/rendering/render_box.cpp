@@ -879,17 +879,25 @@ void RenderBox::calcHeight()
     kdDebug( 6040 ) << "RenderBox::calcHeight()" << endl;
 #endif
 
-    //cell height is managed by table, inline elements do not have a height property.
-    if ( isTableCell() || (isInline() && !isReplaced()) )
+    // Cell height is managed by the table and inline non-replaced elements do not support a height property.
+    if (isTableCell() || (isInline() && !isReplaced()))
         return;
 
     if (isPositioned())
         calcAbsoluteVertical();
     else
     {
+        calcVerticalMargins();
+        
+        // For tables, calculate margins only
+        if (isTable())
+            return;
+        
         Length h;
         bool inHorizontalBox = parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL;
         bool stretching = parent()->style()->boxAlign() == BSTRETCH;
+        bool treatAsReplaced = isReplaced() && !isInlineBlockOrInlineTable() && (!inHorizontalBox || !stretching);
+        bool checkMinMaxHeight = false;
         
         // The parent box is flexing us, so it has increased or decreased our height.  We have to
         // grab our cached flexible height.
@@ -897,45 +905,36 @@ void RenderBox::calcHeight()
             && parent()->isFlexingChildren() && style()->boxFlexedHeight() != -1)
             h = Length(style()->boxFlexedHeight() - borderTop() - borderBottom() -
                        paddingTop() - paddingBottom(), Fixed);
-        else if ( isReplaced() && !isInlineBlockOrInlineTable() &&
-                  (!inHorizontalBox || !stretching )) {
-            h = Length( calcReplacedHeight(), Fixed );
-        }
-        else
+        else if (treatAsReplaced)
+            h = Length(calcReplacedHeight(), Fixed);
+        else {
             h = style()->height();
-
-        calcVerticalMargins();
-
-        // for tables, calculate margins only
-        if (isTable())
-            return;
-
-        // The parent box is flexing us, so it has increased or decreased our height.  We have to
-        // grab our cached flexible height.
-        if (parent()->isFlexibleBox() && parent()->style()->boxOrient() == VERTICAL
-            && parent()->isFlexingChildren() && style()->boxFlexedHeight() != -1)
-            h = Length(style()->boxFlexedHeight() - borderTop() - borderBottom() -
-                       paddingTop() - paddingBottom(), Fixed);
+            checkMinMaxHeight = true;
+        }
         
         // Block children of horizontal flexible boxes fill the height of the box.
         if (h.isVariable() && parent()->isFlexibleBox() && parent()->style()->boxOrient() == HORIZONTAL
-            && parent()->isStretchingChildren())
+            && parent()->isStretchingChildren()) {
             h = Length(parent()->contentHeight() - marginTop() - marginBottom() -
                        borderTop() - paddingTop() - borderBottom() - paddingBottom(), Fixed);
-
-        if (!h.isVariable()) {
-            int fh = -1;
-            if (h.isFixed())
-                fh = h.value;
-            else if (h.isPercent())
-                fh = calcPercentageHeight();
-            if (fh != -1) {
-                fh += borderTop() + paddingTop() + borderBottom() + paddingBottom();
-                if (fh < m_height && !overhangingContents() && style()->overflow() == OVISIBLE)
-                    setOverhangingContents();
-                m_height = fh;
-            }
+            checkMinMaxHeight = false;
         }
+
+        int height;
+        if (checkMinMaxHeight) {
+            height = calcHeightUsing(style()->height());
+            int minH = calcHeightUsing(style()->minHeight());
+            int maxH = style()->maxHeight().value == UNDEFINED ? height : calcHeightUsing(style()->maxHeight());
+            height = kMin(maxH, height);
+            height = kMax(minH, height);
+            if (height < m_height && !overhangingContents() && style()->overflow() == OVISIBLE)
+                setOverhangingContents();
+        }
+        else
+            // The only times we don't check min/max height are when a fixed length has 
+            // been given as an override.  Just use that.
+            height = h.value + borderTop() + paddingTop() + borderBottom() + paddingBottom(); 
+        m_height = height;
     }
     
     // Unfurling marquees override with the furled height.
@@ -946,7 +945,23 @@ void RenderBox::calcHeight()
     }
 }
 
-int RenderBox::calcPercentageHeight()
+int RenderBox::calcHeightUsing(const Length& h)
+{
+    if (!h.isVariable()) {
+        int height = -1;
+        if (h.isFixed())
+            height = h.value;
+        else if (h.isPercent())
+            height = calcPercentageHeight(h);
+        if (height != -1) {
+            height += borderTop() + paddingTop() + borderBottom() + paddingBottom();
+            return height;
+        }
+    }
+    return m_height;
+}
+
+int RenderBox::calcPercentageHeight(const Length& height)
 {
     int result = -1;
     RenderBlock* cb = containingBlock();
@@ -962,7 +977,7 @@ int RenderBox::calcPercentageHeight()
         result = cb->style()->height().value;
     else if (cb->style()->height().isPercent())
         // We need to recur and compute the percentage height for our containing block.
-        result = cb->calcPercentageHeight();
+        result = cb->calcPercentageHeight(cb->style()->height());
     else if (cb->isCanvas()) {
         // Don't allow this to affect the block' m_height member variable, since this
         // can get called while the block is still laying out its kids.
@@ -972,7 +987,7 @@ int RenderBox::calcPercentageHeight()
         cb->setHeight(oldHeight);
     }
     if (result != -1)
-        result = style()->height().width(result);
+        result = height.width(result);
     return result;
 }
 

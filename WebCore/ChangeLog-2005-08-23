@@ -1,3 +1,18 @@
+2004-04-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3258403, implement support for min-height and max-height on normal flow elements.  With this patch the
+	only min-height/max-height work that remains to be done is for table cells and positioned elements.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHeight):
+        (RenderBox::calcHeightUsing):
+        (RenderBox::calcPercentageHeight):
+        * khtml/rendering/render_box.h:
+        * layout-tests/fast/block/basic/minheight-expected.txt: Added.
+        * layout-tests/fast/block/basic/minheight.html: Added.
+
 2004-04-25  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
