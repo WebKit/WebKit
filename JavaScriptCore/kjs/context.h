@@ -55,7 +55,6 @@ namespace KJS  {
   private:
     InterpreterImp *_interpreter;
     ContextImp *_callingContext;
-    ActivationImp _activationImp;
     FunctionImp *_function;
     const List *_arguments;
     Object activation;

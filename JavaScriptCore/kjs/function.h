@@ -100,7 +100,7 @@ namespace KJS {
 
   class ActivationImp : public ObjectImp {
   public:
-    ActivationImp(ContextImp *);
+    ActivationImp(FunctionImp *function, const List &arguments);
 
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);
@@ -115,7 +115,8 @@ namespace KJS {
   private:
     void createArgumentsObject(ExecState *exec) const;
     
-    const ContextImp *_context;
+    FunctionImp *_function;
+    List _arguments;
     mutable ArgumentsImp *_argumentsObject;
   };
 

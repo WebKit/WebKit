@@ -1,3 +1,37 @@
+2002-11-26  Maciej Stachowiak  <mjs@apple.com>
+
+	Change ActivationImp to be allocated via the garbage collector
+	again instead of on the stack. This fixes the following four
+	regressions but sadly it causes a 6% performance hit. It's
+	probably possibly to reduce the hit a bit by being smarter about
+	inlining and the way the marking list variant is implemented, but
+	I'll look into that later.
+
+	- fixed 3111500 - REGRESSION: crash in "KJS::ScopeChain::mark()" on www.posci.com
+	- fixed 3111145 - REGRESSION: reproducible crash in KJS hashtable lookup at time.com
+	- fixed 3110897 - REGRESSION: javascript crasher on http://bmwgallery.tripod.com/
+	- fixed 3109987 - REGRESSION: Reproducible crash in KJS ObjectImp at live365.com
+	
+	Also:
+	
+	- improved DEBUG_COLLECTOR mode a bit by never giving memory back
+	to the system.
+	
+        * kjs/collector.cpp:
+        * kjs/context.h:
+        * kjs/function.cpp:
+        (ActivationImp::ActivationImp):
+        (ActivationImp::mark):
+        (ActivationImp::createArgumentsObject):
+        * kjs/function.h:
+        * kjs/internal.cpp:
+        (ContextImp::ContextImp):
+        (ContextImp::mark):
+        * kjs/list.cpp:
+        * kjs/list.h:
+        * kjs/value.cpp:
+        (Value::Value):
+
 2002-11-26  Darin Adler  <darin@apple.com>
 
         * kjs/property_map.cpp:

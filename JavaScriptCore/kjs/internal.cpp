@@ -359,14 +359,14 @@ void LabelStack::clear()
 // ECMA 10.2
 ContextImp::ContextImp(Object &glob, InterpreterImp *interpreter, Object &thisV, CodeType type,
                        ContextImp *callingCon, FunctionImp *func, const List *args)
-    : _interpreter(interpreter), _activationImp(this), _function(func), _arguments(args)
+    : _interpreter(interpreter), _function(func), _arguments(args)
 {
   codeType = type;
   _callingContext = callingCon;
 
   // create and initialize activation object (ECMA 10.1.6)
   if (type == FunctionCode || type == AnonymousCode ) {
-    activation = Object(&_activationImp);
+    activation = Object(new ActivationImp(func, *args));
     variable = activation;
   } else {
     activation = Object();
@@ -414,10 +414,6 @@ void ContextImp::mark()
 {
   for (ContextImp *context = this; context; context = context->_callingContext) {
     context->scope.mark();
-    context->_activationImp.mark();
-#if DEBUG_COLLECTOR
-    context->_activationImp._flags &= ~ValueImp::VI_MARKED;
-#endif
   }
 }
 

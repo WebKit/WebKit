@@ -162,6 +162,7 @@ void* Collector::allocate(size_t s)
 
 bool Collector::collect()
 {
+  puts("COLLECT");
   bool deleted = false;
 
   // MARK: first mark all referenced objects recursively
@@ -252,8 +253,9 @@ bool Collector::collect()
     if (heap.blocks[block]->usedCells == 0) {
       emptyBlocks++;
       if (emptyBlocks > SPARE_EMPTY_BLOCKS) {
-	delete heap.blocks[block];
-
+#if !DEBUG_COLLECTOR
+	free(heap.blocks[block]);
+#endif
 	// swap with the last block so we compact as we go
 	heap.blocks[block] = heap.blocks[heap.usedBlocks - 1];
 	heap.usedBlocks--;
@@ -279,7 +281,11 @@ bool Collector::collect()
 	imp->_flags == (ValueImp::VI_GCALLOWED | ValueImp::VI_CREATED)) {
       
       imp->~ValueImp();
+#if DEBUG_COLLECTOR
+      heap.oversizeCells[cell]->u.freeCell.zeroIfFree = 0;
+#else
       free((void *)imp);
+#endif
 
       // swap with the last oversize cell so we compact as we go
       heap.oversizeCells[cell] = heap.oversizeCells[heap.usedOversizeCells - 1];

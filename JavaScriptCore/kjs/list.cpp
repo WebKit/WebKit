@@ -28,7 +28,7 @@
 namespace KJS {
 
 // tunable parameters
-const int poolSize = 16; // must be a power of 2
+const int poolSize = 32; // must be a power of 2
 const int inlineValuesSize = 4;
 
 // derived constants
@@ -114,13 +114,35 @@ static inline void deallocateListImp(ListImp *imp)
         delete imp;
 }
 
-List::List() : _impBase(allocateListImp())
+List::List() : _impBase(allocateListImp()), _needsMarking(false)
 {
     ListImp *imp = static_cast<ListImp *>(_impBase);
     imp->size = 0;
     imp->refCount = 1;
     imp->capacity = 0;
     imp->overflow = 0;
+
+    if (!_needsMarking) {
+	imp->valueRefCount = 1;
+    }
+#if DUMP_STATISTICS
+    if (++numLists > numListsHighWaterMark)
+        numListsHighWaterMark = numLists;
+    imp->sizeHighWaterMark = 0;
+#endif
+}
+
+List::List(bool needsMarking) : _impBase(allocateListImp()), _needsMarking(needsMarking)
+{
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    imp->size = 0;
+    imp->refCount = 1;
+    imp->capacity = 0;
+    imp->overflow = 0;
+
+    if (!_needsMarking) {
+	imp->valueRefCount = 1;
+    }
 
 #if DUMP_STATISTICS
     if (++numLists > numListsHighWaterMark)
@@ -129,7 +151,7 @@ List::List() : _impBase(allocateListImp())
 #endif
 }
 
-inline void List::derefValues()
+void List::derefValues()
 {
     ListImp *imp = static_cast<ListImp *>(_impBase);
     
@@ -145,6 +167,44 @@ inline void List::derefValues()
         overflow[i]->deref();
 }
 
+void List::refValues()
+{
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    
+    int size = imp->size;
+    
+    int inlineSize = MIN(size, inlineValuesSize);
+    for (int i = 0; i != inlineSize; ++i)
+        imp->values[i]->ref();
+    
+    int overflowSize = size - inlineSize;
+    ValueImp **overflow = imp->overflow;
+    for (int i = 0; i != overflowSize; ++i)
+        overflow[i]->ref();
+}
+
+void List::markValues()
+{
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    
+    int size = imp->size;
+    
+    int inlineSize = MIN(size, inlineValuesSize);
+    for (int i = 0; i != inlineSize; ++i) {
+	if (!imp->values[i]->marked()) {
+	    imp->values[i]->mark();
+	}
+    }
+
+    int overflowSize = size - inlineSize;
+    ValueImp **overflow = imp->overflow;
+    for (int i = 0; i != overflowSize; ++i) {
+	if (!overflow[i]->marked()) {
+	    overflow[i]->mark();
+	}
+    }
+}
+
 void List::release()
 {
     ListImp *imp = static_cast<ListImp *>(_impBase);
@@ -157,7 +217,6 @@ void List::release()
             ++numListsBiggerThan[i];
 #endif
 
-    derefValues();
     delete [] imp->overflow;
     deallocateListImp(imp);
 }
@@ -174,7 +233,9 @@ ValueImp *List::impAt(int i) const
 
 void List::clear()
 {
-    derefValues();
+    if (_impBase->valueRefCount > 0) {
+	derefValues();
+    }
     _impBase->size = 0;
 }
 
@@ -189,7 +250,9 @@ void List::append(ValueImp *v)
         listSizeHighWaterMark = imp->size;
 #endif
 
-    v->ref();
+    if (imp->valueRefCount > 0) {
+	v->ref();
+    }
     
     if (i < inlineValuesSize) {
         imp->values[i] = v;
@@ -211,7 +274,7 @@ void List::append(ValueImp *v)
     imp->overflow[i - inlineValuesSize] = v;
 }
 
-List List::copyTail() const
+List List::copy() const
 {
     List copy;
 
@@ -221,6 +284,27 @@ List List::copyTail() const
 
     int inlineSize = MIN(size, inlineValuesSize);
     for (int i = 0; i != inlineSize; ++i)
+        copy.append(imp->values[i]);
+
+    ValueImp **overflow = imp->overflow;
+    int overflowSize = size - inlineSize;
+    for (int i = 0; i != overflowSize; ++i)
+        copy.append(overflow[i]);
+
+    return copy;
+}
+
+
+List List::copyTail() const
+{
+    List copy;
+
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+
+    int size = imp->size;
+
+    int inlineSize = MIN(size, inlineValuesSize);
+    for (int i = 1; i != inlineSize; ++i)
         copy.append(imp->values[i]);
 
     ValueImp **overflow = imp->overflow;

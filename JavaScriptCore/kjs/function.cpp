@@ -332,9 +332,10 @@ ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
 const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
 // ECMA 10.1.6
-ActivationImp::ActivationImp(ContextImp *context)
-    : _context(context), _argumentsObject(0)
+ActivationImp::ActivationImp(FunctionImp *function, const List &arguments)
+    : _function(function), _arguments(true), _argumentsObject(0)
 {
+  _arguments = arguments.copy();
   // FIXME: Do we need to support enumerating the arguments property?
 }
 
@@ -373,6 +374,9 @@ bool ActivationImp::deleteProperty(ExecState *exec, const Identifier &propertyNa
 
 void ActivationImp::mark()
 {
+    if (_function && !_function->marked()) 
+        _function->mark();
+    _arguments.mark();
     if (_argumentsObject && !_argumentsObject->marked())
         _argumentsObject->mark();
     ObjectImp::mark();
@@ -380,12 +384,7 @@ void ActivationImp::mark()
 
 void ActivationImp::createArgumentsObject(ExecState *exec) const
 {
-    FunctionImp *function = _context->function();
-    const List *arguments = _context->arguments();
-    if (arguments)
-        _argumentsObject = new ArgumentsImp(exec, function, *arguments);
-    else
-        _argumentsObject = new ArgumentsImp(exec, function);
+  _argumentsObject = new ArgumentsImp(exec, _function, _arguments);
 }
 
 // ------------------------------ GlobalFunc -----------------------------------

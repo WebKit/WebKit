@@ -30,6 +30,7 @@ namespace KJS {
     struct ListImpBase {
         int size;
         int refCount;
+	int valueRefCount;
     };
     
     class ListIterator;
@@ -47,9 +48,14 @@ namespace KJS {
     class List {
     public:
         List();
+	List(bool needsMarking);
         ~List() { deref(); }
 
-        List(const List &b) : _impBase(b._impBase) { ++_impBase->refCount; }
+        List(const List &b) : _impBase(b._impBase), _needsMarking(false) {
+	    ++_impBase->refCount; 
+	    if (!_impBase->valueRefCount) refValues(); 
+	    ++_impBase->valueRefCount; 
+	}
         List &operator=(const List &);
 
         /**
@@ -63,6 +69,12 @@ namespace KJS {
          * Remove all elements from the list.
          */
         void clear();
+
+        /**
+         * Make a copy of the list
+         */
+        List copy() const;
+
         /**
          * Make a copy of the list, omitting the first element.
          */
@@ -107,13 +119,17 @@ namespace KJS {
          */
         static const List &empty();
         
+	void mark() { if (_impBase->valueRefCount == 0) markValues(); }
     private:
         ListImpBase *_impBase;
+	bool _needsMarking;
         
-        void deref() { if (--_impBase->refCount == 0) release(); }
+        void deref() { if (!_needsMarking && --_impBase->valueRefCount == 0) derefValues(); if (--_impBase->refCount == 0) release(); }
 
         void release();
+        void refValues();
         void derefValues();
+        void markValues();
     };
   
     /**
@@ -176,6 +192,13 @@ namespace KJS {
         ++bImpBase->refCount;
         deref();
         _impBase = bImpBase;
+	if (!_needsMarking) {
+	    if (!_impBase->valueRefCount) {
+		refValues();
+	    }
+	    _impBase->valueRefCount++;
+	}
+
         return *this;
     }
 
