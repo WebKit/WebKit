@@ -391,13 +391,9 @@ static bool initializedKJS = FALSE;
     *hideReferrer = !hasCaseInsensitivePrefix(referrer,@"http:") && !hasCaseInsensitivePrefix(referrer, @"https:");
     BOOL referrerIsFileURL = hasCaseInsensitivePrefix(referrer, @"file:");
 
-    // FIXME: temporarily let Safari RSS load local file resources, this is a
-    // hole in the security check but can be fixed later.
-    BOOL referrerIsFeedURL = hasCaseInsensitivePrefix(referrer, @"feed:") || hasCaseInsensitivePrefix(referrer, @"feeds:");
-
     BOOL URLIsFileURL = [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
 
-    return referrerIsFileURL  || !URLIsFileURL || referrerIsFeedURL;
+    return !URLIsFileURL || referrerIsFileURL;
 }
 
 - (void)saveDocumentState

@@ -1,3 +1,14 @@
+2005-03-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Adele.
+
+	<rdar://problem/4046144> RSS pages leave a hole in local file security policy (need to revert feed: exemption)
+        
+	* kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge canLoadURL:fromReferrer:hideReferrer:]): Revert
+	emergency workaround for Safari RSS, now that a new Syndication
+	has been submitted.
+
 2005-03-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.
