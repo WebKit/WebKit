@@ -1,6 +1,12 @@
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQKloader.mm:
+	(-[KWQURLLoadClient IFURLHandle:didRedirectToURL:]):
+	Rolled out an assert I added by accident that will break Deployment builds.
+
+2002-06-15  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQKloader.mm:
 	(-[KWQURLLoadClient IFURLHandleResourceDidCancelLoading:]):
 	(-[KWQURLLoadClient IFURLHandleResourceDidFinishLoading:data:]):
 	(-[KWQURLLoadClient IFURLHandle:resourceDidFailLoadingWithResult:]):

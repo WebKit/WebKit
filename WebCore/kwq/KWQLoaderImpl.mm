@@ -153,9 +153,6 @@ using khtml::Request;
 {
     KWQDEBUGLEVEL(KWQ_LOG_LOADING, "url = %s", DEBUG_OBJECT(URL));
     
-    void *userData = [[handle attributeForKey:IFURLHandleUserData] pointerValue];
-    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQ_ASSERT(handle == job->handle());
     KWQ_ASSERT(m_currentURL != nil);
 
     [m_bridge didRedirectWithHandle:handle fromURL:m_currentURL];
