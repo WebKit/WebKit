@@ -1,5 +1,12 @@
 2002-09-20  Darin Adler  <darin@apple.com>
 
+	- fixed 3056605 -- REGRESSION: blank page at http://www.2ch.net/2ch.html
+
+        * kwq/mac-encodings.txt: When people say ShiftJIS, they really mean
+	DOSJapanese. So do what they mean, not what they say.
+
+2002-09-20  Darin Adler  <darin@apple.com>
+
 	- fixed 3055339 -- repro crash in RenderPartObject::updateWidget()
 
         * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest):

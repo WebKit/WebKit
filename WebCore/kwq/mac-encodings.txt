@@ -99,7 +99,7 @@ DOSNordic
 DOSRussian: cp866
 DOSGreek2: ibm869
 DOSThai: cp874, dos-874, tis-620, windows-874
-DOSJapanese: cp932
+DOSJapanese: cp932, cswindows31j, shift-jis, shift_jis, x-ms-cp932, x-sjis
 DOSChineseSimplif
 DOSKorean: cp949
 DOSChineseTrad: cp950
@@ -141,7 +141,7 @@ EUC_CN: cn-gb, euc-cn, gb2312, gbk, x-euc-cn
 EUC_TW: euc-tw
 EUC_KR: euc-kr
 
-ShiftJIS: cswindows31j, shift-jis, shift_jis, x-ms-cp932, x-sjis
+ShiftJIS
 KOI8_R: koi, koi8, koi8-r, koi8r
 Big5: big5, cn-big5, x-x-big5
 MacRomanLatin1: x-mac-roman-latin1
