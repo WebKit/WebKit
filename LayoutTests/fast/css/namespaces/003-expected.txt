@@ -1,0 +1,4 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x0
+  RenderBlock {COMMENT} at (0,0) size 800x0

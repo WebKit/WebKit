@@ -1,0 +1,20 @@
+layer at (0,0) size 800x600
+  RenderCanvas at (0,0) size 800x600
+layer at (0,0) size 800x106
+  RenderBlock {HTML} at (0,0) size 800x106 [color=#FF0000]
+    RenderBody {BODY} at (8,8) size 784x90
+      RenderBlock {COMMENT} at (0,0) size 784x18 [color=#008000]
+        RenderText {TEXT} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."
+      RenderBlock {COMMENT} at (0,18) size 784x18 [color=#008000]
+        RenderText {TEXT} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."
+      RenderBlock {COMMENT} at (0,36) size 784x18 [color=#008000]
+        RenderText {TEXT} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."
+      RenderBlock {/A} at (0,54) size 784x18 [color=#008000]
+        RenderText {TEXT} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."
+      RenderBlock {/ABBR} at (0,72) size 784x18 [color=#008000]
+        RenderText {TEXT} at (0,0) size 136x18
+          text run at (0,0) width 136: "This should be green."
