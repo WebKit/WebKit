@@ -1,3 +1,18 @@
+2002-09-24  Darin Adler  <darin@apple.com>
+
+	Some improvements to the file button, including displaying the file without the
+	extension if it's set that way by the user, and using the system font rather
+	than hard-coding "Lucida Grande".
+
+        * kwq/KWQFileButton.h: Add _label field.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Set up label.
+        (KWQFileButton::~KWQFileButton): Release label.
+        (KWQFileButton::setFilename): Use NSFileManager componentsToDisplayForPath to
+	figure out the appropriate label.
+        (KWQFileButton::paint): Clip to passed-in rect, get font using systemFontOfSize,
+	and use NSString drawing rather than our own.
+
 2002-09-23  David Hyatt  <hyatt@apple.com>
 
 	Found the problem with the CSS W3C page.

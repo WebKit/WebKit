@@ -25,15 +25,18 @@
 
 #import "KWQFileButton.h"
 
+// FIXME: These need to be localized.
+#define BUTTON_LABEL ("Choose File")
+#define NO_FILE_SELECTED (@"no file selected")
+
 #define AFTER_BUTTON_SPACING 4
 #define ICON_HEIGHT 16
 #define ICON_WIDTH 16
 #define ICON_FILENAME_SPACING 2
+// FIXME: Is it OK to hard-code the width of the filename part of this control?
 #define FILENAME_WIDTH 200
 
 #define ADDITIONAL_WIDTH (AFTER_BUTTON_SPACING + ICON_WIDTH + ICON_FILENAME_SPACING + FILENAME_WIDTH)
-
-#define FONT_FAMILY ("Lucida Grande")
 
 // FIXME: Clicks on the text should pull up the sheet too.
 
@@ -48,11 +51,11 @@
 @end
 
 KWQFileButton::KWQFileButton()
-    // FIXME: Needs to be localized.
-    : QPushButton("Choose File", 0)
+    : QPushButton(BUTTON_LABEL, 0)
     , _textChanged(this, SIGNAL(textChanged(const QString &)))
     , _adapter([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this])
     , _icon(nil)
+    , _label([NO_FILE_SELECTED retain])
 {
 }
 
@@ -61,6 +64,7 @@ KWQFileButton::~KWQFileButton()
     _adapter->button = 0;
     [_adapter release];
     [_icon release];
+    [_label release];
 }
     
 void KWQFileButton::setFilename(const QString &f)
@@ -70,6 +74,14 @@ void KWQFileButton::setFilename(const QString &f)
     }
     _filename = f;
     _textChanged.call(_filename);
+    
+    // Get the label.
+    [_label release];
+    if (_filename.isEmpty()) {
+        _label = [NO_FILE_SELECTED retain];
+    } else {
+        _label = [[[[NSFileManager defaultManager] componentsToDisplayForPath:_filename.getNSString()] lastObject] copy];
+    }
     
     // Get the icon.
     [_icon release];
@@ -132,16 +144,9 @@ void KWQFileButton::paint(QPainter *p, const QRect &r)
     
     QPushButton::paint(p, r);
     
-    QString text = _filename;
-    if (text.isEmpty()) {
-        text = "no file selected";
-    } else {
-        int slashPosition = text.findRev('/');
-        if (slashPosition >= 0 || text == "/") {
-            text.remove(0, slashPosition + 1);
-        }
-    }
-    
+    [NSGraphicsContext saveGraphicsState];
+    NSRectClip(NSIntersectRect(frameGeometry(), r));
+
     int left = x() + width() - ADDITIONAL_WIDTH + AFTER_BUTTON_SPACING;
 
     if (_icon) {
@@ -151,16 +156,12 @@ void KWQFileButton::paint(QPainter *p, const QRect &r)
         left += ICON_WIDTH + ICON_FILENAME_SPACING;
     }
 
-    // FIXME: Use same font as button, don't hardcode Lucida Grande.
-    // FIXME: Ellipsize the text to fit in the box.
-    QFont font;
-    font.setFamily(FONT_FAMILY);
-    font.setPixelSize([NSFont smallSystemFontSize]);
-    p->save();
-    p->addClip(frameGeometry());
-    p->setFont(font);
-    p->drawText(left, y() + baselinePosition(), 0, 0, 0, text);
-    p->restore();
+    // FIXME: Ellipsize the text to fit in the space available.
+    NSFont *font = [NSFont systemFontOfSize:[NSFont smallSystemFontSize]];
+    NSDictionary *attributes = [NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+    [_label drawAtPoint:NSMakePoint(left, y() + baselinePosition() - [font ascender]) withAttributes:attributes];
+
+    [NSGraphicsContext restoreGraphicsState];
 }
 
 @implementation KWQFileButtonAdapter
