@@ -1,3 +1,17 @@
+2004-09-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Chris.
+        
+        - added _isFrameSet as a private method, so it can be used in WebBrowser.
+        This is needed to merge the fix for 3123987 to SUPanNavy.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _isFrameSet]):
+        new method
+        
+        * WebView.subproj/WebFramePrivate.h:
+        declare new method
+
 2004-09-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed previous "Reviewed by" line.

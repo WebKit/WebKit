@@ -476,6 +476,11 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return NO;
 }
 
+- (BOOL)_isFrameSet
+{
+    return [_private->bridge isFrameSet];
+}
+
 - (WebFrame *)_descendantFrameNamed:(NSString *)name
 {
     if ([[self name] isEqualToString: name]){
