@@ -1567,10 +1567,7 @@ void KWQKHTMLPart::scrollToAnchor(const KURL &URL)
     if (!gotoAnchor(URL.encodedHtmlRef()))
         gotoAnchor(URL.htmlRef());
 
-    d->m_bComplete = true;
-    d->m_doc->setParsing(false);
-
-    completed();
+    checkCompleted();
 }
 
 bool KWQKHTMLPart::closeURL()
