@@ -1,3 +1,19 @@
+2002-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 2854536 - New cookie policy: "accept cookies only from the
+	same domain as the main page"
+	
+        * WebCoreSupport.subproj/WebCookieAdapter.h:
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        (-[WebCookieAdapter setCookies:forURL:policyBaseURL:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient handleDidRedirect:toURL:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidRedirect:toURL:]):
+
 2002-09-24  Richard Williamson   <rjw@apple.com>
 
         More documentation tweaks.

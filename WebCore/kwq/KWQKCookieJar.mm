@@ -37,9 +37,9 @@ QString KWQKCookieJar::cookie(const KURL &url)
     }
 }
 
-void KWQKCookieJar::setCookie(const KURL &url, const QString &cookie)
+void KWQKCookieJar::setCookie(const KURL &url, const KURL &policyBaseURL, const QString &cookie)
 {
-    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookie.getNSString() forURL:url.getNSURL()];
+    [[WebCoreCookieAdapter sharedAdapter] setCookies:cookie.getNSString() forURL:url.getNSURL() policyBaseURL:policyBaseURL.getNSURL()];
 }
 
 bool KWQKCookieJar::cookieEnabled()

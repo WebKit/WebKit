@@ -1,3 +1,17 @@
+2002-09-25  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 2854536 - New cookie policy: "accept cookies only from the
+	same domain as the main page"
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::setCookie):
+        * kwq/KWQKCookieJar.h:
+        * kwq/KWQKCookieJar.mm:
+        (KWQKCookieJar::setCookie):
+        * kwq/WebCoreCookieAdapter.h:
+        * kwq/WebCoreCookieAdapter.m:
+        (-[WebCoreCookieAdapter setCookies:forURL:policyBaseURL:]):
+
 2002-09-24  Darin Adler  <darin@apple.com>
 
 	- fixed 3057928 -- lstat private/etc/localtime repeatedly reported

@@ -36,9 +36,9 @@
     return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:URL] objectForKey:@"Cookie"];
 }
 
-- (void)setCookies:(NSString *)cookies forURL:(NSURL *)URL
+- (void)setCookies:(NSString *)cookies forURL:(NSURL *)URL policyBaseURL:(NSURL *)policyBaseURL
 {
-    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:URL];    
+    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"] forURL:URL policyBaseURL:policyBaseURL];    
 }
 
 @end

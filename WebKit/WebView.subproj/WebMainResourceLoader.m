@@ -300,6 +300,9 @@
 {
     LOG(Redirect, "URL = %@", URL);
 
+    // FIXME: need to update main document URL here, or cookies set
+    // via redirects might not work in main document mode
+
     ASSERT(currentURL != nil);
     ASSERT([URL isEqual:[handle URL]]);
     

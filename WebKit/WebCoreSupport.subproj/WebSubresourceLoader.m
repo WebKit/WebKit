@@ -19,6 +19,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFrame.h>
 #import <WebFoundation/WebAssertions.h>
 
 @implementation WebSubresourceClient
@@ -73,6 +74,7 @@
     [request setRequestCachePolicy:[[source request] requestCachePolicy]];
     [request setResponseCachePolicy:[[source request] responseCachePolicy]];
     [request setReferrer:referrer];
+    [request setCookiePolicyBaseURL:[[[[source controller] mainFrame] dataSource] URL]];
     WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:request client:client];
     [request release];
     
@@ -179,7 +181,11 @@
     // just disabling this. Before, we had code that tried to send the
     // redirect, but sent it to the wrong object.
     //[[dataSource _locationChangeHandler] serverRedirectTo:toURL forDataSource:dataSource];
-    
+
+    // FIXME: Need to make sure client sets cookie policy base URL
+    // properly on redirect when we have the new redirect
+    // request-adjusting API
+
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];
 }

@@ -55,7 +55,7 @@ static WebCoreCookieAdapter *sharedAdapter;
     return nil;
 }
 
-- (void)setCookies:(NSString *)cookies forURL:(NSURL *)url
+- (void)setCookies:(NSString *)cookies forURL:(NSURL *)url policyBaseURL:(NSURL *)policyBaseURL
 {
 }
 

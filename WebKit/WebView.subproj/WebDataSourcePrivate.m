@@ -187,6 +187,13 @@
     // Fire this guy up.
     if (!_private->mainHandle) {
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
+
+	if ([self isMainDocument]) {
+	    [_private->request setCookiePolicyBaseURL:[self URL]];
+	} else {
+	    [_private->request setCookiePolicyBaseURL:[[[_private->controller mainFrame] dataSource] URL]];
+	}
+
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request client:_private->mainClient];
     }
     [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
