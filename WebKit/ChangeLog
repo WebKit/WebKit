@@ -1,3 +1,16 @@
+2005-03-14  Richard Williamson   <rjw@apple.com>
+
+	Fix <rdar://problem/4051389> 8A413: gifs animating too fast
+
+        Reviewed by Maciej.
+
+	Match Mozilla's policy for minimum frame duration, which is somewhat odd:
+
+	<= 0.01 sec use .1 sec, otherwise use specified duration.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _frameDurationAt:]):
+
 2005-03-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.

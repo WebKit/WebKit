@@ -749,21 +749,18 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     return value;
 }
 
-#define MINIMUM_DURATION (1.0/30.0)
+#define MINIMUM_DURATION (.1)
 
 - (float)_frameDurationAt:(size_t)i
 {
     float duration = [self _floatProperty:kCGImagePropertyGIFDelayTime type:kCGImagePropertyGIFDictionary at:i];
-    if (duration < MINIMUM_DURATION) {
+    if (duration <= 0.01) {
         /*
             Many annoying ads specify a 0 duration to make an image flash
-            as quickly as possible.  However a zero duration is faster than
-            the refresh rate.  We need to pick a minimum duration.
+            as quickly as possible.
             
-            Browsers handle the minimum time case differently.  IE seems to use something
-            close to 1/30th of a second.  Konqueror uses 0.  The ImageMagick library
-            uses 1/100th.  The units in the GIF specification are 1/100th of second.
-            We will use 1/30th of second as the minimum time.
+            We follow mozilla's behavior and set the minimum duration to 
+            100 ms.  See 4051389 for more details.
         */
         duration = MINIMUM_DURATION;
     }
