@@ -1021,6 +1021,9 @@ time_t KJS::KRFCDate_parseDate(const UString &_date)
         localTime = true;
      } else {
         localTime = false;
+        if (strncasecmp(dateString, "GMT", 3) == 0) {
+            dateString += 3;
+        }
         if ((*dateString == '+') || (*dateString == '-')) {
            offset = strtol(dateString, &newPosStr, 10);
 
