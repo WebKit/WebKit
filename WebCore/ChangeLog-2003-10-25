@@ -1,3 +1,13 @@
+2003-04-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for excite.com.  There are many bugs being fixed that all
+	contributed to the wideness of the table.
+	
+        Reviewed by darin
+
+        * khtml/rendering/table_layout.cpp:
+        (shouldScaleColumns):
+
 2003-04-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
