@@ -1158,7 +1158,16 @@ void KHTMLParser::processCloseTag(Token *t)
         child = child->nextSibling();
     }
 #endif
+    HTMLStackElem* oldElem = blockStack;
     popBlock(t->id-ID_CLOSE_TAG);
+    if (oldElem == blockStack && t->id == ID_P+ID_CLOSE_TAG) {
+        // We encountered a stray </p>.  Amazingly Gecko, WinIE, and MacIE all treat
+        // this as a valid break, i.e., <p></p>.  So go ahead and make the empty
+        // paragraph.
+        t->id-=ID_CLOSE_TAG;
+        parseToken(t);
+        popBlock(ID_P);
+    }
 #ifdef PARSER_DEBUG
     kdDebug( 6035 ) << "closeTag --> current = " << current->nodeName().string() << endl;
 #endif
@@ -1176,6 +1185,7 @@ void KHTMLParser::pushBlock(int _id, int _level)
 void KHTMLParser::popBlock( int _id )
 {
     HTMLStackElem *Elem = blockStack;
+    
     int maxLevel = 0;
 
 #ifdef PARSER_DEBUG

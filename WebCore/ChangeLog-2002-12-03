@@ -1,3 +1,15 @@
+2002-11-16  David Hyatt  <hyatt@apple.com>
+
+	Sigh. Amazingly enough, all other browsers seem to treat
+	stray </p>s as <p></p> (Mac IE treats it as <br>, but
+	I'm going with the WinIE/Gecko behavior of <p></p>).
+
+	This fixes bug 3063699.
+	
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::processCloseTag):
+        (KHTMLParser::popBlock):
+
 2002-11-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for livepage.apple.com slowness.  Ensure that 
