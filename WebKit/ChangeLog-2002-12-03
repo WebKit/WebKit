@@ -1,5 +1,14 @@
 2002-09-08  Darin Adler  <darin@apple.com>
 
+	Forgot to save out files from the editor in my last change.
+
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+	Oops.
+
+2002-09-08  Darin Adler  <darin@apple.com>
+
 	Finished weaning us from handleDidCancelLoading. Now I will remove both
 	handleDidBeginLoading and handleDidCancelLoading.
 

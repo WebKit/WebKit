@@ -223,7 +223,7 @@
     if (!_private->primaryLoadComplete && _private->loading) {
         return YES;
     }
-    if ([_private->resourceClients count]) {
+    if ([_private->subresourceClients count]) {
 	return YES;
     }
      

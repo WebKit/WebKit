@@ -69,7 +69,7 @@
     [frames release];
     [mainClient release];
     [mainHandle release];
-    [resourceClients release];
+    [subresourceClients release];
     [pageTitle release];
     [encoding release];
     [contentType release];
@@ -123,7 +123,7 @@
 
 - (void)_updateLoading
 {
-    [self _setLoading:_private->mainClient || [_private->resourceClients count]];
+    [self _setLoading:_private->mainClient || [_private->subresourceClients count]];
 }
 
 - (void)_setController: (WebController *)controller
@@ -192,19 +192,19 @@
 
 - (void)_addSubresourceClient:(WebSubresourceClient *)client
 {
-    if (_private->resourceClients == nil) {
-        _private->resourceClients = [[NSMutableArray alloc] init];
+    if (_private->subresourceClients == nil) {
+        _private->subresourceClients = [[NSMutableArray alloc] init];
     }
     if ([_private->controller _defersCallbacks]) {
         [[client handle] setDefersCallbacks:YES];
     }
-    [_private->resourceClients addObject:client];
+    [_private->subresourceClients addObject:client];
     [self _setLoading:YES];
 }
 
 - (void)_removeSubresourceClient:(WebSubresourceClient *)client
 {
-    [_private->resourceClients removeObject:client];
+    [_private->subresourceClients removeObject:client];
     [self _updateLoading];
 }
 
@@ -224,7 +224,7 @@
     [_private->mainHandle cancelLoadInBackground];
     [_private->mainClient didCancelWithHandle:_private->mainHandle];
     
-    NSArray *clients = [_private->resourceClients copy];
+    NSArray *clients = [_private->subresourceClients copy];
     [clients makeObjectsPerformSelector:@selector(cancel)];
     [clients release];
 
@@ -505,7 +505,7 @@
 
     _private->defersCallbacks = defers;
     [_private->mainHandle setDefersCallbacks:defers];
-    NSEnumerator *e = [_private->resourceClients objectEnumerator];
+    NSEnumerator *e = [_private->subresourceClients objectEnumerator];
     WebSubresourceClient *client;
     while ((client = [e nextObject])) {
         [[client handle] setDefersCallbacks:defers];

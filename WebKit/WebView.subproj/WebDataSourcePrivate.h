@@ -42,7 +42,7 @@
     WebResourceHandle *mainHandle;
     
     // Clients for other resources.
-    NSMutableArray *resourceClients;
+    NSMutableArray *subresourceClients;
 
     // The time when the data source was told to start loading.
     double loadingStartedTime;
