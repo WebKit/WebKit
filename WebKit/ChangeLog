@@ -1,3 +1,8 @@
+2002-05-16  Darin Adler  <darin@apple.com>
+
+	* Plugins.subproj/IFPluginView.mm: (-[IFPluginView mouseUp:]):
+	Remove unused variable that breaks optimized builds.
+
 2002-05-15  Darin Adler  <darin@apple.com>
 
 	Another quick events cleanup pass.

@@ -170,6 +170,7 @@ static NSString* startupVolumeName(void);
     event.what = mouseDown;
     
     acceptedEvent = NPP_HandleEvent(instance, &event);
+    
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, event.where.v, event.where.h, event.when);
 }
 
@@ -177,7 +178,6 @@ static NSString* startupVolumeName(void);
 {
     EventRecord event;
     bool acceptedEvent;
-    Point point;
     
     [self getCarbonEvent:&event withEvent:theEvent isMouseDown:NO];
     event.what = mouseUp;
