@@ -26,3 +26,9 @@
 - (void)loadPluginIfNeededForMIMEType:(NSString *)MIMEType;
 
 @end
+
+@interface NSObject (WebPlugInDatabase)
+
++ (void)setAdditionalWebPlugInPaths:(NSArray *)path;
+
+@end

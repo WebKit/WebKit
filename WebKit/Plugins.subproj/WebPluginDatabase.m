@@ -173,6 +173,16 @@ static BOOL sIsCocoa = FALSE;
     return [plugins allObjects];
 }
 
+static NSArray *extensionPlugInPaths;
+
++ (void)setAdditionalWebPlugInPaths:(NSArray *)a
+{
+    if (a != extensionPlugInPaths)
+        [extensionPlugInPaths release];
+    extensionPlugInPaths = [a copyWithZone:nil];
+}
+
+
 static NSArray *pluginLocations(void)
 {
     // Plug-ins are found in order of precedence.
@@ -180,12 +190,17 @@ static NSArray *pluginLocations(void)
     // For example, if there is a QuickTime.plugin in the users's home directory
     // that is used instead of the /Library/Internet Plug-ins version.
     // The purpose is to allow non-admin users to update their plug-ins.
+    NSMutableArray *array = [NSMutableArray arrayWithCapacity:[extensionPlugInPaths count] + 3];
     
-    return [NSArray arrayWithObjects:
+    if (extensionPlugInPaths) {
+        [array addObjectsFromArray:extensionPlugInPaths];
+    }
+    
+    return [array addObjectsFromArray: [NSArray arrayWithObjects:
         [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"],
     	@"/Library/Internet Plug-Ins",
     	[[NSBundle mainBundle] builtInPlugInsPath],
-        nil];
+        nil]];
 }
 
 - init
