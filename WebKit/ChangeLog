@@ -1,5 +1,22 @@
 2002-09-04  Chris Blumenberg  <cblu@apple.com>
 
+	- don't set nil data on the web file db
+	- store absolute URLs in the db, not base URL/path combination URLs
+	- support for multiple hosts with the same built-in icon
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase init]): renamed some dictionaries
+        (-[WebIconDatabase iconForSiteURL:withSize:]): call _builtInIconsForHost
+        (-[WebIconDatabase _updateFileDatabase]): check for nil
+        (-[WebIconDatabase _hasIconForSiteURL:]): call _pathForBuiltInIconForHost
+        (-[WebIconDatabase _pathForBuiltInIconForHost:]): new
+        (-[WebIconDatabase _builtInIconsForHost:]): call _pathForBuiltInIconForHost
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]): use absolute URL
+
+2002-09-04  Chris Blumenberg  <cblu@apple.com>
+
 	Made the icon DB take a a path for built-in icons so that we only load them when necessary.
 
         * Misc.subproj/WebIconDatabase.m:

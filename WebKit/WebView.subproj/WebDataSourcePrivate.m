@@ -462,7 +462,7 @@
             
             if(!_private->iconURL){
                 // No icon URL from the LINK tag so try the server's root
-                _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
+                _private->iconURL = [[[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] absoluteURL] retain];
             }
 
             if(_private->iconURL != nil){

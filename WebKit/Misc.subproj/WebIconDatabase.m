@@ -34,6 +34,7 @@ NSSize WebIconMediumSize = {32, 32};
 - (void)_updateFileDatabase;
 - (NSMutableArray *)_iconsForIconURL:(NSURL *)iconURL;
 - (NSImage *)_iconForFileURL:(NSURL *)fileURL withSize:(NSSize)size;
+- (NSString *)_pathForBuiltInIconForHost:(NSString *)host;
 - (NSMutableArray *)_builtInIconsForHost:(NSString *)host;
 - (void)_retainIconForIconURL:(NSURL *)iconURL;
 - (void)_releaseIconForIconURL:(NSURL *)iconURL;
@@ -74,7 +75,7 @@ NSSize WebIconMediumSize = {32, 32};
     _private->iconURLToIcons = [[NSMutableDictionary dictionary] retain];
     _private->iconURLToRetainCount = [[NSMutableDictionary dictionary] retain];
     _private->futureSiteURLToRetainCount = [[NSMutableDictionary dictionary] retain];
-    _private->hostToBuiltInIcons = [[NSMutableDictionary dictionary] retain];
+    _private->pathToBuiltInIcons = [[NSMutableDictionary dictionary] retain];
     _private->hostToBuiltInIconPath = [[NSMutableDictionary dictionary] retain];
 
     _private->iconsToEraseWithURLs = [[NSMutableSet set] retain];
@@ -95,7 +96,6 @@ NSSize WebIconMediumSize = {32, 32};
 
 - (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size
 {
-
     if(!siteURL){
         return [self defaultIconWithSize:size];
     }
@@ -310,8 +310,10 @@ NSSize WebIconMediumSize = {32, 32};
     while ((iconURL = [enumerator nextObject]) != nil) {
         //NSLog(@"writing %@", iconURL);
         iconData = [[self _iconForIconURL:iconURL] TIFFRepresentation];
-        [fileDB setObject:iconData forKey:iconURL];
-        [_private->iconsOnDiskWithURLs addObject:iconURL];
+        if(iconData){
+            [fileDB setObject:iconData forKey:iconURL];
+            [_private->iconsOnDiskWithURLs addObject:iconURL];
+        }
     }
     
     [_private->iconsToEraseWithURLs removeAllObjects];
@@ -328,7 +330,7 @@ NSSize WebIconMediumSize = {32, 32};
 {
     if([siteURL isFileURL]){
         return YES;
-    }else if([_private->hostToBuiltInIconPath objectForKey:[siteURL host]]){
+    }else if([self _pathForBuiltInIconForHost:[siteURL host]]){
         return YES;
     }else if([_private->siteURLToIconURL objectForKey:siteURL]){
         return YES;
@@ -396,15 +398,13 @@ NSSize WebIconMediumSize = {32, 32};
     }
 }
 
-- (NSMutableArray *)_builtInIconsForHost:(NSString *)host
+- (NSString *)_pathForBuiltInIconForHost:(NSString *)host
 {
     NSArray *hostParts = [host componentsSeparatedByString:@"."];
     NSMutableString *truncatedHost = [NSMutableString string];
     NSString *hostPart, *path;
-    NSMutableArray *icons;
     BOOL firstPart = YES;
-    NSImage *icon;
-    
+
     NSEnumerator *enumerator = [hostParts reverseObjectEnumerator];
     while ((hostPart = [enumerator nextObject]) != nil) {
         if(firstPart){
@@ -414,23 +414,32 @@ NSSize WebIconMediumSize = {32, 32};
             [truncatedHost insertString:[NSString stringWithFormat:@"%@.", hostPart] atIndex:0];
             path = [_private->hostToBuiltInIconPath objectForKey:truncatedHost];
             if(path){
-                icons = [_private->hostToBuiltInIcons objectForKey:truncatedHost];
-                if(!icons){
-                    icon = [[NSImage alloc] initWithContentsOfFile:path];
-                    if(icon){
-                        icons = [NSMutableArray arrayWithObject:icon];
-                        [_private->hostToBuiltInIcons setObject:icons forKey:host];
-                        [icon release];
-                    }
-                }
-                if(icons){
-                    return icons;
-                }
+                return path;
             }
         }
     }
     
     return nil;
+}
+
+- (NSMutableArray *)_builtInIconsForHost:(NSString *)host
+{
+    NSString *path = [self _pathForBuiltInIconForHost:host];
+    NSMutableArray *icons = nil;
+    
+    if(path){
+        icons = [_private->pathToBuiltInIcons objectForKey:path];    
+        if(!icons){
+            NSImage *icon = [[NSImage alloc] initWithContentsOfFile:path];
+            if(icon){
+                icons = [NSMutableArray arrayWithObject:icon];
+                [_private->pathToBuiltInIcons setObject:icons forKey:path];
+                [icon release];
+            }
+        }
+    }
+    
+    return icons;
 }
 
 - (void)_setIcon:(NSImage *)icon forIconURL:(NSURL *)iconURL
