@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString *WebURLPboardType;
+extern NSString *WebURLNamePboardType;
 
 @interface NSPasteboard (WebExtras)
 

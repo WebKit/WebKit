@@ -1,3 +1,14 @@
+2002-09-27  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for dragging links the the dock.
+	Created new pasteboard types WebURLPboardType WebURLNamePboardType that the dock requires.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard initialize]): set WebURLPboardType and WebURLNamePboardType
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]): use WebURLPboardType and WebURLNamePboardType
+        * WebKit.exp: export WebURLPboardType and WebURLNamePboardType
+
 2002-09-27  Maciej Stachowiak  <mjs@apple.com>
 
         * Panels.subproj/WebAuthenticationPanel.m:

@@ -37,5 +37,7 @@ _WebIconSmallSize
 _WebIconMediumSize
 _WebIconLargeSize
 _WebIconNotificationUserInfoSiteURLKey
+_WebURLPboardType
+_WebURLNamePboardType
 
 

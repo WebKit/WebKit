@@ -15,7 +15,16 @@
 
 #import <ApplicationServices/ApplicationServicesPriv.h>
 
+NSString *WebURLPboardType = nil;
+NSString *WebURLNamePboardType = nil;
+
 @implementation NSPasteboard (WebExtras)
+
++ (void)initialize
+{
+    CreatePasteboardFlavorTypeName('url ', (CFStringRef*)&WebURLPboardType);
+    CreatePasteboardFlavorTypeName('urln', (CFStringRef*)&WebURLNamePboardType);
+}
 
 + (NSArray *)_web_dragTypesForURL
 {
@@ -71,15 +80,10 @@
     [URL writeToPasteboard:self];
     [self setString:[URL absoluteString] forType:NSStringPboardType];
     [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
-
-    NSString *flavor = nil;
-    CreatePasteboardFlavorTypeName('url ', (CFStringRef*)&flavor);
-    [self setString:[URL absoluteString] forType:flavor];
-    [flavor release];
-    
-    CreatePasteboardFlavorTypeName('urln', (CFStringRef*)&flavor);
-    [self setString:title forType:flavor];
-    [flavor release];
+    [self setString:[URL absoluteString] forType:WebURLPboardType];
+    if(title && ![title isEqualToString:@""]){
+        [self setString:title forType:WebURLNamePboardType];
+    }
 }
 
 @end
