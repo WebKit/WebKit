@@ -10,6 +10,8 @@
 #include <Carbon/Carbon.h> 
 #include "kwqdebug.h"
 #include <WCURLHandle.h>
+#import <IFWebDataSource.h>
+#import <IFBaseWebController.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -400,7 +402,6 @@ extern "C" {
     event.what = mouseDown;
     event.where = pt;
     event.when = (uint32)([theEvent timestamp] * 60); // seconds to ticks
-    event.message = NULL;
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     KWQDebug("NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
@@ -418,7 +419,6 @@ extern "C" {
     event.what = mouseUp;
     event.where = pt;
     event.when = (uint32)([theEvent timestamp] * 60); 
-    event.message = NULL;
     event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     KWQDebug("NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%u\n", acceptedEvent, pt.v, pt.h, event.when);
@@ -480,21 +480,34 @@ extern "C" {
 
 -(NPError)getURLNotify:(const char *)url target:(const char *)target notifyData:(void *)notifyData
 {
-    KWQDebug("NPN_GetURLNotify: %s\n", url);
+    IFBaseWebController *webController;
+    IFWebDataSource *dataSource;
+    IFWebView *webView;
+    NSURL *newURL;
+   
+    KWQDebug("NPN_GetURLNotify: %s target: %s\n", url, target);
+ 
+    if(!strcmp(url, "")){
+        return NPERR_INVALID_URL;
+    }
     if(target == NULL){ // send data to plug-in if target is null
         [self newStream:[NSString stringWithCString:url] mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:(void *)notifyData];
+    }else if(!strcmp(target, "_self") || !strcmp(target, "_current") || !strcmp(target, "_parent") || !strcmp(target, "_top")){
+        newURL = [NSURL URLWithString:[NSString stringWithCString:url]];
+        dataSource = [[[IFWebDataSource alloc] initWithURL:newURL] autorelease];
+        webView = [self findSuperview:@"IFWebView"];
+        webController = [webView controller];
+        [webController setMainDataSource:dataSource];
+        [dataSource startLoading: YES];
+    }else if(!strcmp(target, "_blank") || !strcmp(target, "_new")){
+        printf("Error: No API to open new browser window\n");
     }
     return NPERR_NO_ERROR;
 }
 
 -(NPError)getURL:(const char *)url target:(const char *)target
 {
-    KWQDebug("NPN_GetURL\n");
-    if(target == NULL){ // send data to plug-in if target is null
-        [self newStream:[NSString stringWithCString:url] mimeType:[plugin mimeTypeForURL:[NSString stringWithCString:url]] notifyData:NULL];
-    }
-    
-    return NPERR_NO_ERROR;
+    return [self getURLNotify:url target:target notifyData:NULL];
 }
 
 -(NPError)postURLNotify:(const char *)url target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
