@@ -1,3 +1,15 @@
+2002-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3128766 -- macconnection.com tries to add properties to the navigator DOM object, which fails
+
+        * khtml/ecma/kjs_window.cpp: (Window::get): Set up properties named navigator and clientInformation
+	the first time either is queried. These will hold a persistent shared object rather than making one
+	every time it's asked for.
+
+        * WebCore.pbproj/project.pbxproj: Let Electron undo Maciej's evil.
+
 === WebKit-37u2 ===
 
 2002-12-15  Maciej Stachowiak  <mjs@apple.com>

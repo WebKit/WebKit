@@ -451,8 +451,13 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case Name:
       return String(m_part->name());
     case _Navigator:
-    case ClientInformation:
-      return Value(new Navigator(exec, m_part));
+    case ClientInformation: {
+      // Store the navigator in the object so we get the same one each time.
+      Navigator *n = new Navigator(exec, m_part);
+      const_cast<Window *>(this)->putDirect("navigator", n, DontDelete|ReadOnly);
+      const_cast<Window *>(this)->putDirect("clientInformation", n, DontDelete|ReadOnly);
+      return Value(n);
+    }
 #ifdef Q_WS_QWS
     case _Konqueror:
       return Value(new Konqueror(m_part));
