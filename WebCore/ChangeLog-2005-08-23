@@ -1,3 +1,16 @@
+2005-02-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3992092> 8A374: Mail crash while pasting - RemoveNodeCommand
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Code tried to remove a node that was no longer in 
+        the document. We try to do a good job of detecting all these cases, and generally do. This
+        one was missed. Fixed.
+
 2005-02-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.

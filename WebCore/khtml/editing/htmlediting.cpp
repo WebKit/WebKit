@@ -4481,7 +4481,7 @@ void ReplaceSelectionCommand::doApply()
     // step 5 : mop up
     if (placeholderBlock) {
         document()->updateLayout();
-        if (!placeholderBlock->renderer() || placeholderBlock->renderer()->height() == 0)
+        if (placeholderBlock->inDocument() && (!placeholderBlock->renderer() || placeholderBlock->renderer()->height() == 0))
             removeNode(placeholderBlock);
     }
 }
