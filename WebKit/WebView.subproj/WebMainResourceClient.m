@@ -76,9 +76,12 @@
 
 -(void)cancelWithError:(NSError *)error
 {
+    // Calling _receivedError will likely result in a call to release, so we must retain.
+    [self retain];
     [self cancelContentPolicy];
-    [connection cancel];
-    [self receivedError:error];
+    [dataSource _receivedError:error complete:YES];
+    [super cancelWithError:error];
+    [self release];
 }
 
 - (NSError *)interruptForPolicyChangeError
