@@ -157,14 +157,14 @@ int QScrollView::contentsY() const
     return 0;
 }
 
-int QScrollView::childX(QWidget *)
+int QScrollView::childX(QWidget* w)
 {
-    return 0;
+    return w->x();
 }
 
-int QScrollView::childY(QWidget *)
+int QScrollView::childY(QWidget* w)
 {
-    return 0;
+    return w->y();
 }
 
 void QScrollView::scrollBy(int dx, int dy)

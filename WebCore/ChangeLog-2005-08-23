@@ -1,3 +1,14 @@
+2004-01-18  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3532569, bugzilla patch viewer doesn't work.  My previous fix for 3531983 caused moves to happen
+	when they should not have, due to childX and childY not being implemented at all on KWQScrollView.
+
+        Reviewed by darin
+	
+        * kwq/KWQScrollView.mm:
+        (QScrollView::childX):
+        (QScrollView::childY):
+
 === Safari-124 ===
 
 2004-01-16  David Hyatt  <hyatt@apple.com>
