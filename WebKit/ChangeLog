@@ -1,3 +1,12 @@
+2003-10-27  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3463144>: assertion failure when viewing jpeg with SoundPix installed
+
+        Reviewed by john.
+
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]): don't allow image types to override types that are already registered as we do in [WebFrameView _viewTypesAllowImageTypeOmission:]
+
 2003-10-24  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

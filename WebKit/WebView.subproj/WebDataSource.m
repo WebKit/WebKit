@@ -454,7 +454,9 @@
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             // Don't clobber previously-registered rep classes.
-            [repTypes setObject:[WebImageRepresentation class] forKey:mime];
+            if ([repTypes objectForKey:mime] == nil) {
+                [repTypes setObject:[WebImageRepresentation class] forKey:mime];
+            }
         }
         addedImageTypes = YES;
     }
