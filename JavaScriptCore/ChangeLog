@@ -1,5 +1,12 @@
 2003-07-12  Darin Adler  <darin@apple.com>
 
+        Fixed broken build.
+
+        * kjs/identifier.h: Add toULong back. It's still used in WebCore (and maybe in JavaScriptGlue,
+        for all I know).
+
+2003-07-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed 3272777 -- array object indices treated as integers by Safari, but as strings in other web browsers
