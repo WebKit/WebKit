@@ -1,3 +1,15 @@
+2005-01-27  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3875199, search field needs to be able to  show a magnifying  glass without a dropdown menu.
+	
+        Reviewed by kocienda
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::HTMLInputElementImpl):
+        (DOM::HTMLInputElementImpl::parseHTMLAttribute):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setMaxResults):
+
 2005-01-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

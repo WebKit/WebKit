@@ -1236,7 +1236,7 @@ HTMLInputElementImpl::HTMLInputElementImpl(DocumentPtr *doc, HTMLFormElementImpl
     yPos = 0;
 
 #if APPLE_CHANGES
-    m_maxResults = 0;
+    m_maxResults = -1;
 #endif
 
     if ( m_form )
@@ -1589,7 +1589,7 @@ void HTMLInputElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
                              getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_RESULTS:
-        m_maxResults = !attr->isNull() ? attr->value().toInt() : 0;
+        m_maxResults = !attr->isNull() ? attr->value().toInt() : -1;
         /* Fall through */
     case ATTR_AUTOSAVE:
     case ATTR_INCREMENTAL:
