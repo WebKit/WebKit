@@ -1635,7 +1635,7 @@ static WebHTMLView *lastHitView = nil;
 {
 }
 
-// Does setNeedsDisplay:NO as a side effect. Useful for begin/endDocument.
+// Does setNeedsDisplay:NO as a side effect when printing is ending.
 // pageWidth != 0 implies we will relayout to a new width
 - (void)_setPrinting:(BOOL)printing minimumPageWidth:(float)minPageWidth maximumPageWidth:(float)maxPageWidth adjustViewSize:(BOOL)adjustViewSize
 {
@@ -1658,7 +1658,10 @@ static WebHTMLView *lastHitView = nil;
         [self setNeedsToApplyStyles:YES];
         [self setNeedsLayout:YES];
         [self layoutToMinimumPageWidth:minPageWidth maximumPageWidth:maxPageWidth adjustingViewSize:adjustViewSize];
-        [self setNeedsDisplay:NO];
+        if (!printing) {
+            // Can't do this when starting printing or nested printing won't work, see 3491427.
+            [self setNeedsDisplay:NO];
+        }
     }
 }
 

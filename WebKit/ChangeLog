@@ -1,3 +1,18 @@
+2003-12-05  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3491427>: REGRESSION (100-114): multi-page HTML 
+        content in Mail is blank when printed
+
+        Darin and I figured this one out.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _setPrinting:minimumPageWidth:maximumPageWidth:adjustViewSize:]):
+        Don't call setNeedsDisplay:NO when we're turning printing on, as doing so prevents
+        anything from drawing in the case where this is called from 
+        adjustPageHeightsNew:top:bottom:limit
+
 2003-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
