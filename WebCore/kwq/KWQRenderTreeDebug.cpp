@@ -162,17 +162,12 @@ static void write(QTextStream &ts, const RenderLayer &l,
     writeIndent(ts, indent);
     
     ts << "layer";
-    
-    QRect r(e.absBounds);
-    
-    ts << " " << r;
+    ts << " " << layerBounds;
 
-    if (layerBounds != layerBounds.intersect(backgroundClipRect)) {
+    if (layerBounds != layerBounds.intersect(backgroundClipRect))
         ts << " backgroundClip " << backgroundClipRect;
-    }
-    if (layerBounds != layerBounds.intersect(clipRect)) {
+    if (layerBounds != layerBounds.intersect(clipRect))
         ts << " clip " << clipRect;
-    }
 
     if (layerType == -1)
         ts << " layerType: background only";
