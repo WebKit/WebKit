@@ -231,7 +231,6 @@
         (KWQKHTMLPart::doFakeMouseUpAfterWidgetTracking):  New routine to allow widgets
 	to get out event state fixed up after a modal tracking loop.
 
->>>>>>> 1.1331
 2003-01-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3152053 - Safari: Java 141: Only visible applets are instantiated on web page
