@@ -384,6 +384,7 @@ public:
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
     virtual int overflowHeight() const { return height(); }
+    virtual int overflowWidth() const { return width(); }
     
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
     // to return the remaining width on a given line (and the height of a single line). -dwh

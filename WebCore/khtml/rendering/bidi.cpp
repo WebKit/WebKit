@@ -1430,7 +1430,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
     }
 
  end:
-
+    int determinedWidth = w + tmpW;
     if( lBreak == start && !lBreak.obj->isBR() ) {
         // we just add as much as possible
         if ( m_pre ) {
@@ -1443,27 +1443,24 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             }
         } else if( lBreak.obj ) {
             if( last != o ) {
-                // better break between object boundaries than in the middle of a word
+                // better to break between object boundaries than in the middle of a word
                 lBreak.obj = o;
                 lBreak.pos = 0;
+                determinedWidth -= tmpW;
             } else {
-                int w = 0;
-                if( lBreak.obj->isText() )
-                    w += static_cast<RenderText *>(lBreak.obj)->width(lBreak.pos, 1);
-                else
-                    w += lBreak.obj->width();
-                while( lBreak.obj && w < width ) {
-                    ++lBreak;
-                    if( !lBreak.obj ) break;
-                    if( lBreak.obj->isText() )
-                    w += static_cast<RenderText *>(lBreak.obj)->width(lBreak.pos, 1);
-                    else
-                    w += lBreak.obj->width();
-                }
+                // Don't ever break in the middle of a word if we can help it.
+                // There's no room at all. We just have to be on this line,
+                // even though we'll spill out.
+                lBreak.obj = o;
+                lBreak.pos = pos;
             }
         }
     }
 
+    // FIXME: XXXdwh Support rtl.
+    if (style()->direction() == LTR && m_overflowWidth < borderLeft() + paddingLeft() + determinedWidth)
+        m_overflowWidth = borderLeft() + paddingLeft() + determinedWidth;
+    
     // make sure we consume at least one char/object.
     if( lBreak == start )
         ++lBreak;

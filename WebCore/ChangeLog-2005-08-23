@@ -1,3 +1,32 @@
+2002-12-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3121865, content missing at disney.com.  Make
+	sure blocks track width overflow as well as height
+	overflow and ensure that a layer's dimensions expand
+	to encompass both width and height overflow.
+
+	Also fixes a bug with line breaking that allowed unbreakable
+	words to actually be broken up when they were the only word
+	on a line.  This is wrong and differs from all other
+	browsers, so the patch in bidi.cpp fixes us to match
+	other browsers.  (This was required to fix the above bug.)
+	
+        Reviewed by mjs.
+
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::RenderFlow):
+        (RenderFlow::layout):
+        (RenderFlow::layoutBlockChildren):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_table.h:
+
 2002-12-12  Richard Williamson   <rjw@apple.com>
 
         Fixed 3116584.  Made letter-spacing, word-spacing, and text-decoration play

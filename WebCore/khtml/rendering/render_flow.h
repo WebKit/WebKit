@@ -165,10 +165,11 @@ public:
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start, QPtrList<BidiIterator>& midpoints);
 
-    // The height of a block when you include overflow spillage out of the bottom
+    // The height (and width) of a block when you include overflow spillage out of the bottom
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
     virtual int overflowHeight() const { return m_overflowHeight; }
+    virtual int overflowWidth() const { return m_overflowWidth; }
     
     virtual bool isSelfCollapsingBlock() const { return m_height == 0; }
     virtual bool isTopMarginQuirk() const { return m_topMarginQuirk; }
@@ -244,9 +245,11 @@ private:
     bool m_topMarginQuirk;
     bool m_bottomMarginQuirk;
     
-    // How much content overflows out of our block vertically (all we support
-    // for now is spillage out of the bottom, which is the common case).
+    // How much content overflows out of our block vertically or horizontally (all we support
+    // for now is spillage out of the bottom and the right, which are the common cases).
+    // XXX Generalize to work with top and left as well.
     int m_overflowHeight;
+    int m_overflowWidth;
     
     // An inline can be split with blocks occurring in between the inline content.
     // When this occurs we need a pointer to our next object.  We can basically be

@@ -1035,8 +1035,8 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     int tx = _tx + xPos();
     int ty = _ty + yPos();
     
-    inside |= (style()->visibility() != HIDDEN && ((_y >= ty) && (_y < ty + height()) &&
-                  (_x >= tx) && (_x < tx + width()))) || isBody() || isHtml();
+    inside |= (style()->visibility() != HIDDEN && ((_y >= ty) && (_y < ty + overflowHeight()) &&
+                  (_x >= tx) && (_x < tx + overflowWidth()))) || isBody() || isHtml();
     
     // ### table should have its own, more performant method
     if (overhangingContents() || isInline() || isRoot() || isTableRow() || isTableSection() || inside || mouseInside() ) {
