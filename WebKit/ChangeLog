@@ -1,9 +1,9 @@
 2003-11-20  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by Darin.
+        Reviewed by Ken.
 
-	- fixed 3487201 - Implement abort for XMLHttpRequest async loads
-
+	- fixed 3490086 - support http post for XMLHttpRequest
+	
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge startLoadingResource:withURL:postData:]):
         * WebCoreSupport.subproj/WebSubresourceClient.h:
