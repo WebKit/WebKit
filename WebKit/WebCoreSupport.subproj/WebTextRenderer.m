@@ -180,6 +180,11 @@ static inline BOOL isSpace(UniChar c)
     return c == SPACE || isAlternateSpace(c);
 }
 
+static inline BOOL isRoundingHackCharacter(UniChar c)
+{
+    return isSpace(c) || c == '-' || c == '?';
+}
+
 
 // Map utility functions
 static void freeWidthMap(WidthMap *map);
@@ -1965,15 +1970,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
     // floats we can remove this (and related) hacks.
     //
     // Check to see if the next character is a space, if so, adjust.
-    if (currentCharacter < run->length && isSpace(cp[clusterLength])) {
-        width += ceilCurrentWidth(iterator);
-    }
-
-    // Ceil the width of the last glyph in a run, but only if
-    // 1) The string is longer than one character
-    // 2) or the entire stringLength is one character
-    int len = run->to - run->from;
-    if (currentCharacter >= (unsigned)run->to && (len > 1 || run->length == 1) && iterator->style->applyRounding){
+    if (currentCharacter < run->length && isRoundingHackCharacter(cp[clusterLength])) {
         width += ceilCurrentWidth(iterator);
     }
     

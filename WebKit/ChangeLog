@@ -1,3 +1,13 @@
+2003-12-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3503011.  Added '-' and '?' to rounding hack.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (isRoundingHackCharacter):
+        (widthForNextCharacter):
+
 2003-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.
