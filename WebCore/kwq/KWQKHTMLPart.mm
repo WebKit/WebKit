@@ -1483,6 +1483,11 @@ void KWQKHTMLPart::createEmptyDocument()
 	KWQ_BLOCK_EXCEPTIONS;
         [_bridge loadEmptyDocumentSynchronously];
 	KWQ_UNBLOCK_EXCEPTIONS;
+
+	if (parentPart() && (parentPart()->childFrame(this)->m_type == ChildFrame::IFrame ||
+			     parentPart()->childFrame(this)->m_type == ChildFrame::Object)) {
+	    d->m_doc->setBaseURL(parentPart()->d->m_doc->baseURL());
+	}
     }
 }
 

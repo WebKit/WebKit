@@ -1,3 +1,16 @@
+2003-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3413713 - iframe forms posting fails without initial src attribute value
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget): If the new part is for "about:blank",
+	set the document base URL to parent's base URL.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createEmptyDocument): If this part is an
+	iframe, set the document base URL to the parent's base URL.
+
 2003-11-17  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
