@@ -387,4 +387,9 @@
     }
 }
 
+- (NSURL *)requestedURL
+{
+    return [[[self dataSource] request] URL];
+}
+
 @end

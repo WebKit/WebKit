@@ -15,6 +15,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
+#import <WebKit/WebHistory.h>
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
@@ -282,6 +283,10 @@ static const char * const stateNames[] = {
             [self _setState: WebFrameStateCommittedPage];
         
             // Handle adding the URL to the back/forward list.
+            WebDataSource *ds = [self dataSource];
+            WebHistoryItem *entry = nil;
+            NSString *ptitle = [ds pageTitle];
+
             if ([[self controller] useBackForwardList]){
                 switch ([self _loadType]) {
                 case WebFrameLoadTypeForward:
@@ -302,6 +307,12 @@ static const char * const stateNames[] = {
                     break;
     
                 case WebFrameLoadTypeStandard:
+                    // Add item to history.
+                    entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds request] URL] _web_canonicalize]];
+                    if (ptitle)
+                        [entry setTitle: ptitle];
+                
+                    // Add item to back/forward list.
                     parentFrame = [[self controller] frameForDataSource: [[self dataSource] parent]]; 
                     backForwardItem = [[WebHistoryItem alloc] initWithURL:[[[self dataSource] request] URL]
                                                                    target:[self name]
@@ -323,13 +334,15 @@ static const char * const stateNames[] = {
 		    ASSERT_NOT_REACHED();
                 }
             }
-            
+
             // Tell the client we've committed this URL.
-	    [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:[self dataSource]];
+	    [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.
-            if ([[self dataSource] pageTitle])
-		[[[self controller] locationChangeDelegate] receivedPageTitle:[[self dataSource] pageTitle] forDataSource:[self dataSource]];
+            if (ptitle){
+                [entry setTitle: ptitle];
+		[[[self controller] locationChangeDelegate] receivedPageTitle:ptitle forDataSource:ds];
+            }
             break;
         }
         

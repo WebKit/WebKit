@@ -233,35 +233,6 @@
     }
 }
 
-- (WebHistoryItem *)updateURL:(NSString *)newURLString
-                        title:(NSString *)newTitle
-                 displayTitle:(NSString *)newDisplayTitle
-                       forURL:(NSString *)oldURLString
-{
-    WebHistoryItem *entry;
-
-    ASSERT(oldURLString != nil);
-
-    entry = [self _entryForURLString:oldURLString];
-    if (entry == nil) {
-        return nil;
-    }
-
-    if (newURLString != nil) {
-        [entry setURL:[NSURL _web_URLWithString:newURLString]];
-    }
-
-    if (newTitle != nil) {
-        [entry setTitle:newTitle];
-    }
-
-    if (newDisplayTitle != nil) {
-        [entry setDisplayTitle:newDisplayTitle];
-    }
-    
-    return entry;
-}
-
 #pragma mark DATE-BASED RETRIEVAL
 
 - (NSArray *)orderedLastVisitedDays

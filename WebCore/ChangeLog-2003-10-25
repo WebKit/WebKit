@@ -1,3 +1,19 @@
+2002-09-27  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3059237:  Visited links do not appear in a different color on yahoo.com
+        Fixed 3051288:  visited links are not colored in local files
+        Fixed 3060158:  REGRESSION: iframes added to session history
+        Always use the canonical originally requested URL as the URL entered in history.
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin):
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::requestedURLString):
+        * kwq/KWQKHistoryProvider.mm:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreHistory.h:
+
 2002-09-28  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3058119, doctype of HTML docs should be null.

@@ -564,3 +564,9 @@ void KWQKHTMLPartImpl::setPolicyBaseURL(const DOM::DOMString &s)
         static_cast<KHTMLPart *>(subpart)->impl->setPolicyBaseURL(s);
     }
 }
+
+QString KWQKHTMLPartImpl::requestedURLString() const
+{
+    return QString::fromNSString([[_bridge requestedURL] absoluteString]);
+}
+

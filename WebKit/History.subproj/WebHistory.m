@@ -16,12 +16,16 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
 
 @implementation WebHistory
 
++ (WebHistory *)sharedHistory
+{
+    return (WebHistory *)[super sharedHistory];
+}
+
+
 + (WebHistory *)webHistoryWithFile: (NSString*)file
 {
     // Should only be called once.  Need to rationalize usage
-    // of history.
-    ASSERT([[self class] sharedHistory] == nil);
-    
+    // of history.    
     WebHistory *h = [[self alloc] initWithFile:file];
     [[self class] setSharedHistory: h];
     [h release];
@@ -53,11 +57,12 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
                       object: self];
 }
 
-- (void)addEntryForURLString: (NSString *)string
+- (WebHistoryItem *)addEntryForURL: (NSURL *)URL
 {
-    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:[NSURL _web_URLWithString: string] title:nil];
+    WebHistoryItem *entry = [[WebHistoryItem alloc] initWithURL:URL title:nil];
     [self addEntry: entry];
     [entry release];
+    return entry;
 }
 
 
@@ -93,21 +98,6 @@ NSString *WebHistoryEntriesChangedNotification = @"WebHistoryEntriesChangedNotif
     [_historyPrivate addEntries:newEntries];
     [self sendEntriesChangedNotification];
 }
-
-- (void)updateURL:(NSString *)newURLString
-            title:(NSString *)newTitle
-     displayTitle:(NSString *)newDisplayTitle
-           forURL:(NSString *)oldURLString
-{
-    if ([_historyPrivate updateURL:newURLString
-                             title:newTitle
-                      displayTitle:newDisplayTitle
-                            forURL:oldURLString] != nil) {
-        // Consider passing changed entry as parameter to notification
-        [self sendEntriesChangedNotification];
-    }
-}
-
 
 #pragma mark DATE-BASED RETRIEVAL
 

@@ -27,6 +27,8 @@ extern NSString *WebHistoryEntriesChangedNotification;
     WebHistoryPrivate *_historyPrivate;
 }
 
++ (WebHistory *)sharedHistory;
+
 /*!
     @method webHistoryWithFile:
     @param file The file to use to initialize the WebHistory.
@@ -46,6 +48,13 @@ extern NSString *WebHistoryEntriesChangedNotification;
     @param entry
 */
 - (void)addEntry: (WebHistoryItem *)entry;
+
+/*!
+    @method addEntryForURLString:
+    @param URL
+    @result Newly created WebHistoryItem
+*/
+- (WebHistoryItem *)addEntryForURL: (NSURL *)URL;
 
 /*!
     @method addEntries:
@@ -69,19 +78,6 @@ extern NSString *WebHistoryEntriesChangedNotification;
     @method removeAllEntries
 */
 - (void)removeAllEntries;
-
-/*!
-    @method updateURL:title:displayTitle:forURL:
-    @discussion Update an entry in place. Any nil "new" parameters aren't updated.
-    @param newURLString
-    @param newTitle
-    @param newDisplayTitle
-    @param oldURLString
-*/
-- (void)updateURL:(NSString *)newURLString
-            title:(NSString *)newTitle
-     displayTitle:(NSString *)newDisplayTitle
-           forURL:(NSString *)oldURLString;
 
 /*!
     @method orderedLastVisitedDays

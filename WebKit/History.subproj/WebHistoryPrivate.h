@@ -25,10 +25,6 @@
 - (BOOL)removeEntry: (WebHistoryItem *)entry;
 - (BOOL)removeEntries: (NSArray *)entries;
 - (BOOL)removeAllEntries;
-- (WebHistoryItem *)updateURL:(NSString *)newURLString
-                    title:(NSString *)newTitle
-             displayTitle:(NSString *)newDisplayTitle
-                   forURL:(NSString *)oldURLString;
 
 - (NSArray *)orderedLastVisitedDays;
 - (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;

@@ -1302,12 +1302,16 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
   d->m_bLoadEventEmitted = false;
 
   if(url.isValid()) {
+#ifdef APPLE_CHANGES
+      KHTMLFactory::vLinks()->insert( impl->requestedURLString() );
+#else
       QString urlString = url.url();
       KHTMLFactory::vLinks()->insert( urlString );
       QString urlString2 = url.prettyURL();
       if ( urlString != urlString2 ) {
           KHTMLFactory::vLinks()->insert( urlString2 );
       }
+#endif
   }
 
   // ###

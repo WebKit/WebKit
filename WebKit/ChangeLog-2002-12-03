@@ -1,3 +1,33 @@
+2002-09-27  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3060158:  REGRESSION: iframes added to session history
+        Also moved setting title in history to WebKit.
+        
+        * History.subproj/WebHistory.h:
+        * History.subproj/WebHistory.m:
+        (+[WebHistory sharedHistory]):
+        (+[WebHistory webHistoryWithFile:]):
+        (-[WebHistory addEntryForURL:]):
+        (-[WebHistory addEntries:]):
+        * History.subproj/WebHistoryPrivate.h:
+        * History.subproj/WebHistoryPrivate.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge requestedURL]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setTitle:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
+2002-09-26  Richard Williamson   <rjw@apple.com>
+
+        More twiddling.  Changed the color of the drag labels to
+        match the favorites bar.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
 2002-09-27  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for dragging links the the dock.

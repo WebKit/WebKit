@@ -130,6 +130,8 @@ public:
     
     static const QPtrList<KWQKHTMLPartImpl> &instances() { return mutableInstances(); }
 
+    QString requestedURLString() const;
+    
 private:
     void setPolicyBaseURL(const DOM::DOMString &);
 

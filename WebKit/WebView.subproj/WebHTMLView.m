@@ -547,8 +547,8 @@
                 
                 NSFont *labelFont = [NSFont systemFontOfSize: 12.0];
                 NSFont *urlFont = [NSFont systemFontOfSize: 8.0];
-                NSDictionary *labelAttributes = [NSDictionary dictionaryWithObject:labelFont forKey: NSFontAttributeName];
-                NSDictionary *urlAttributes = [NSDictionary dictionaryWithObject:urlFont forKey: NSFontAttributeName];
+                NSDictionary *labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys: labelFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
+                NSDictionary *urlAttributes = [NSDictionary dictionaryWithObjectsAndKeys: urlFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
                 NSSize labelSize = [label sizeWithAttributes: labelAttributes];
                 NSSize imageSize, urlStringSize;
                 imageSize.width += labelSize.width + DRAG_LABEL_BORDER_X * 2;
@@ -567,7 +567,7 @@
                 NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
                 [dragImage lockFocus];
 
-                [[NSColor colorWithCalibratedRed: 0.75 green: 0.75 blue: 1.0 alpha: 0.75] set];
+                [[NSColor colorWithCalibratedRed: 0.5 green: 0.5 blue: 0.5 alpha: 0.8] set];
 
                 // Drag a rectangle with rounded corners/
                 NSBezierPath *path = [NSBezierPath bezierPath];

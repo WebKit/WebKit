@@ -40,6 +40,7 @@ HistoryProvider *HistoryProvider::self()
 
 void HistoryProvider::insert(const QString &s)
 {
+    // Insertion handled by WebKit.
     return [[WebCoreHistory sharedHistory] addEntryForURLString: KURL(s).canonicalURL().getNSString()];
 }
 

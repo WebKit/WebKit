@@ -1,34 +1,32 @@
 /*	WebDataSourcePrivate.h
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
-
-        Private header file.  This file may reference classes (both ObjectiveC and C++)
-        in WebCore.  Instances of this class are referenced by _private in
-        NSWebPageDataSource.
 */
 
 #import <WebKit/WebDataSourcePrivate.h>
 
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadHandler.h>
 #import <WebKit/WebException.h>
+#import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHistory.h>
+#import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebKit/WebPreferences.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebPreferences.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebBridge.h>
-#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebKitLogging.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
@@ -279,8 +277,12 @@
     _private->pageTitle = [trimmed copy];
     
     // The title doesn't get communicated to the controller until we are committed.
-    if (_private->committed)
+    if (_private->committed) {
+        WebHistoryItem *entry;
+        entry = [[WebHistory sharedHistory] entryForURL: [[[self request] URL] _web_canonicalize]];
+        [entry setTitle: _private->pageTitle];
         [[_private->controller locationChangeDelegate] receivedPageTitle:_private->pageTitle forDataSource:self];
+    }
 }
 
 - (void)_setURL:(NSURL *)URL
