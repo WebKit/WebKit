@@ -464,10 +464,7 @@ DOMString HTMLInputElement::src() const
 {
     if(!impl) return DOMString();
     DOMString s = static_cast<ElementImpl*>(impl)->getAttribute(ATTR_SRC);
-    // ### not sure if we're supposed to do the completion
-    if ( !s.isEmpty() )
-        s = ownerDocument().completeURL( s );
-
+    s = ownerDocument().completeURL( s );
     return s;
 }
 

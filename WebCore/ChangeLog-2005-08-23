@@ -1,3 +1,30 @@
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3427046 - href and src attributes don't always give resolved URL
+
+	It turns out that all href and src attributes should be resolved
+	against the base, except for frame elements.
+	
+        * khtml/dom/html_base.cpp:
+        (HTMLIFrameElement::src): Resolve against base URL.
+        * khtml/dom/html_form.cpp:
+        (HTMLInputElement::src): Resolve URL even when empty. Remove
+	comment questioning resolution against base - it's definitely
+	right.
+        * khtml/dom/html_head.cpp:
+        (HTMLBaseElement::href): Resolve against base URL.
+        (HTMLLinkElement::href): Ditto.
+        (HTMLScriptElement::src): Ditto.
+        * khtml/dom/html_image.cpp:
+        (HTMLAreaElement::href): Ditto.
+	(HTMLImageElement::src): Resolve URL even when empty. Remove
+	comment questioning resolution against base - it's definitely
+	right.
+        * khtml/dom/html_inline.cpp:
+        (HTMLAnchorElement::href): Resolve against base URL.
+
 2003-10-27  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
