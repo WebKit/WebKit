@@ -22,6 +22,11 @@
     // trying to figure out of the second pass is needed or not.
     
     int pass;
+    BOOL hasVerticalScroller = [self hasVerticalScroller];
+    BOOL hasHorizontalScroller = [self hasHorizontalScroller];
+    BOOL oldHasVertical = hasVerticalScroller;
+    BOOL oldHasHorizontal = hasHorizontalScroller;
+    
     for (pass = 0; pass < 2; pass++) {
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
@@ -33,7 +38,9 @@
             // Do a layout if pending, before checking if scrollbars are needed.
             // This fixes 2969367, although may introduce a slowdown in live resize performance.
             NSView *documentView = [self documentView];
-            if ([documentView inLiveResize] && [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+            if ((hasVerticalScroller != oldHasVertical ||
+                hasHorizontalScroller != oldHasHorizontal || [documentView inLiveResize]) && [documentView conformsToProtocol:@protocol(WebDocumentView)]) {
+                [(id <WebDocumentView>)documentView setNeedsLayout: YES];
                 [(id <WebDocumentView>)documentView layout];
             }
             
@@ -52,6 +59,8 @@
     
         [self setHasVerticalScroller:scrollsVertically];
         [self setHasHorizontalScroller:scrollsHorizontally];
+        hasVerticalScroller = scrollsVertically;
+        hasHorizontalScroller = scrollsHorizontally;
     }
 }
 

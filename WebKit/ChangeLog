@@ -1,3 +1,13 @@
+2002-11-19  David Hyatt  <hyatt@apple.com>
+
+	Make sure that if the scrollers are shown/hidden that we
+	force an immediate layout, since if we don't, an intervening
+	display can cause us to show scrollbars when they really
+	shouldn't be there.
+	
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView updateScrollers]):
+
 2002-11-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3100597 - repro NSArray exception using contextual menu
