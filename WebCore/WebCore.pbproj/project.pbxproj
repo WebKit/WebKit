@@ -7845,7 +7845,7 @@
 			fileEncoding = 30;
 			isa = PBXFileReference;
 			lastKnownFileType = sourcecode.c.objc;
-			path = WebCoreTextRendererFactory.m;
+			path = WebCoreTextRendererFactory.mm;
 			refType = 4;
 			sourceTree = "<group>";
 		};

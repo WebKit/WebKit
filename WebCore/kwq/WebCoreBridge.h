@@ -291,8 +291,6 @@ typedef enum {
 
 - (void)adjustViewSize;
 
-+ (void)updateAllViews;
-
 - (id)accessibilityTree;
 
 - (void)undoEditing:(id)arg;

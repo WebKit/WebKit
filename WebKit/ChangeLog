@@ -1,5 +1,14 @@
 2004-08-30  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - part of fix for <rdar://problem/3637519> REGRESSION (125-128): unrepro crash in QListBox::sizeForNumberOfLines at istweb.apple.com
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m: (-[WebTextRendererFactory clearCaches]):
+        Call [super clearCaches].
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
         Reviewed by Chris.
 
         - did work to prepare for uploading files incrementally when submitting forms

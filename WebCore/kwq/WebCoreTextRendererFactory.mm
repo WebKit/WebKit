@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,6 +27,9 @@
 #import "WebCoreTextRendererFactory.h"
 
 #import "KWQAssertions.h"
+#import "KWQKHTMLPart.h"
+#import "KWQListBox.h"
+#import "WebCoreBridge.h"
 
 void WebCoreInitializeTextRun(WebCoreTextRun *run, const UniChar *characters, unsigned int length, int from, int to)
 {
@@ -94,6 +97,14 @@ static WebCoreTextRendererFactory *sharedFactory;
 - (id <WebCoreTextRenderer>)rendererWithFont:(NSFont *)font usingPrinterFont:(BOOL)usingPrinterFont
 {
     return nil;
+}
+
+- (void)clearCaches
+{
+    QListBox::clearCachedTextRenderers();
+    for (QPtrListIterator<KWQKHTMLPart> it(KWQKHTMLPart::instances()); it.current(); ++it) {
+        [it.current()->bridge() setNeedsReapplyStyles];
+    }
 }
 
 @end

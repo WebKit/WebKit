@@ -1263,14 +1263,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [WebCoreBridge stringWithData:data textEncoding:textEncoding];
 }
 
-+ (void)updateAllViews
-{
-    for (QPtrListIterator<KWQKHTMLPart> it(KWQKHTMLPart::instances()); it.current(); ++it) {
-        KWQKHTMLPart *part = it.current();
-        [part->bridge() setNeedsReapplyStyles];
-    }
-}
-
 - (BOOL)needsLayout
 {
     RenderObject *renderer = _part->renderer();

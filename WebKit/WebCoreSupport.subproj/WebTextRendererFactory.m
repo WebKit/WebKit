@@ -190,10 +190,10 @@ static CFMutableDictionaryRef fontCache = NULL;
     cacheForPrinter = [[NSMutableDictionary alloc] init];
 
     if (fontCache)
-        CFRelease (fontCache);
+        CFRelease(fontCache);
     fontCache = NULL;
     
-    [WebBridge updateAllViews];
+    [super clearCaches];
 }
 
 static void 

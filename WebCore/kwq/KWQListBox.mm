@@ -63,6 +63,11 @@ const float rightMargin = 2;
 - (NSWritingDirection)baseWritingDirection;
 @end
 
+static id <WebCoreTextRenderer> itemScreenRenderer;
+static id <WebCoreTextRenderer> itemPrinterRenderer;
+static id <WebCoreTextRenderer> groupLabelScreenRenderer;
+static id <WebCoreTextRenderer> groupLabelPrinterRenderer;
+
 static NSFont *itemFont()
 {
     static NSFont *font = [[NSFont systemFontOfSize:[NSFont smallSystemFontSize]] retain];
@@ -78,26 +83,34 @@ static NSFont *groupLabelFont()
 static id <WebCoreTextRenderer> itemTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
-        static id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:itemFont() usingPrinterFont:NO];
-        return renderer;
+        if (itemScreenRenderer == nil) {
+            itemScreenRenderer = [[[WebCoreTextRendererFactory sharedFactory]
+                rendererWithFont:itemFont() usingPrinterFont:NO] retain];
+        }
+        return itemScreenRenderer;
     } else {
-        static id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:itemFont() usingPrinterFont:YES];
-        return renderer;
+        if (itemPrinterRenderer == nil) {
+            itemPrinterRenderer = [[[WebCoreTextRendererFactory sharedFactory]
+                rendererWithFont:itemFont() usingPrinterFont:YES] retain];
+        }
+        return itemPrinterRenderer;
     }
 }
 
 static id <WebCoreTextRenderer> groupLabelTextRenderer()
 {
     if ([NSGraphicsContext currentContextDrawingToScreen]) {
-        static id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:groupLabelFont() usingPrinterFont:NO];
-        return renderer;
+        if (groupLabelScreenRenderer == nil) {
+            groupLabelScreenRenderer = [[[WebCoreTextRendererFactory sharedFactory]
+                rendererWithFont:groupLabelFont() usingPrinterFont:NO] retain];
+        }
+        return groupLabelScreenRenderer;
     } else {
-        static id <WebCoreTextRenderer> renderer = [[WebCoreTextRendererFactory sharedFactory]
-            rendererWithFont:groupLabelFont() usingPrinterFont:YES];
-        return renderer;
+        if (groupLabelPrinterRenderer == nil) {
+            groupLabelPrinterRenderer = [[[WebCoreTextRendererFactory sharedFactory]
+                rendererWithFont:groupLabelFont() usingPrinterFont:YES] retain];
+        }
+        return groupLabelPrinterRenderer;
     }
 }
 
@@ -316,6 +329,21 @@ void QListBox::setWritingDirection(QPainter::TextDirection d)
     }
 
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+void QListBox::clearCachedTextRenderers()
+{
+    [itemScreenRenderer release];
+    itemScreenRenderer = nil;
+
+    [itemPrinterRenderer release];
+    itemPrinterRenderer = nil;
+
+    [groupLabelScreenRenderer release];
+    groupLabelScreenRenderer = nil;
+
+    [groupLabelPrinterRenderer release];
+    groupLabelPrinterRenderer = nil;
 }
 
 @implementation KWQListBoxScrollView

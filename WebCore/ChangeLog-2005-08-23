@@ -2,6 +2,29 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3637519> REGRESSION (125-128): unrepro crash in QListBox::sizeForNumberOfLines at istweb.apple.com
+
+        * kwq/KWQListBox.h: Added a clearCachedTextRenderers function.
+        * kwq/KWQListBox.mm:
+        (itemTextRenderer): Change to use globals that are outside the function, and added retain calls.
+        (groupLabelTextRenderer): Ditto.
+        (QListBox::clearCachedTextRenderers): Release global text renderers and nil out the globals.
+
+        * kwq/WebCoreBridge.h: Removed updateAllViews; not needed any more.
+        * kwq/WebCoreBridge.mm: Ditto.
+
+        * kwq/WebCoreTextRendererFactory.h: Added a clearCaches method.
+        * kwq/WebCoreTextRendererFactory.mm:
+        (-[WebCoreTextRendererFactory clearCaches]): Added. Tells all the views to repaint after clearing the cached
+        text renderers from KWQListBox. To be more elegant, we could generalize the KWQListBox trick, but for now why bother?
+
+        * kwq/WebCoreTextRendererFactory.m: Removed. I needed to put some C++ code in here, so changed the extension to .mm.
+        * WebCore.pbproj/project.pbxproj: Removed WebCoreTextRendererFactory.m, and added WebCoreTextRendererFactory.mm.
+
+2004-08-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3528538> can paste a Return character into the Search field at amazon.com, other browsers won't
 
         * kwq/KWQTextField.mm: (-[KWQTextFieldController controlTextDidChange:]):

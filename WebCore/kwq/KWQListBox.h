@@ -71,6 +71,8 @@ public:
     virtual FocusPolicy focusPolicy() const;
     virtual bool checksDescendantsForFocus() const;
     
+    static void clearCachedTextRenderers();
+
 private:
     void appendItem(const QString &, bool isLabel);
 
