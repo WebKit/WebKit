@@ -1,5 +1,19 @@
 2004-11-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::deleteInsignificantText): Call new compareBoundaryPoints convenience.
+        (khtml::ApplyStyleCommand::removeBlockStyle): Ditto.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Ditto.
+        (khtml::ApplyStyleCommand::nodeFullySelected): Ditto.
+        (khtml::DeleteSelectionCommand::initializePositionData): Ditto.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::compareBoundaryPoints): New convenience variant of this function which takes two Position objects.
+        * khtml/xml/dom2_rangeimpl.h: Ditto.
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Harrison
 
         Some improvements to deleting when complete lines are selected.

@@ -35,6 +35,7 @@ namespace DOM {
 
 class DocumentPtr;
 class NodeImpl;
+class Position;
 
 class RangeImpl : public khtml::Shared<RangeImpl>
 {
@@ -61,6 +62,7 @@ public:
     void collapse ( bool toStart, int &exceptioncode );
     short compareBoundaryPoints ( Range::CompareHow how, const RangeImpl *sourceRange, int &exceptioncode ) const;
     static short compareBoundaryPoints ( NodeImpl *containerA, long offsetA, NodeImpl *containerB, long offsetB );
+    static short compareBoundaryPoints ( const Position &a, const Position &b );
     bool boundaryPointsValid (  ) const;
     void deleteContents ( int &exceptioncode );
     DocumentFragmentImpl *extractContents ( int &exceptioncode );
