@@ -118,7 +118,7 @@
 @protocol WebContextMenuHandler <NSObject>
 // Returns the array of NSMenuItems that will be displayed in the context menu 
 // for the dictionary representation of the clicked element.
-- (NSArray *)contextMenuItemsForElementInfo: (NSDictionary *)elementInfo  defaultMenuItems: (NSArray *)menuItems;
+- (NSArray *)contextMenuItemsForElement: (NSDictionary *)element  defaultMenuItems: (NSArray *)menuItems;
 @end
 
 

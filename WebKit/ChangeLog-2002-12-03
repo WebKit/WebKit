@@ -1,3 +1,23 @@
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
+	Added implmentations for a few context menu items.
+
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebDefaultContextMenuHandler.h:
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler dealloc]):
+        (-[WebDefaultContextMenuHandler contextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultContextMenuHandler validateUserInterfaceItem:]):
+        (-[WebDefaultContextMenuHandler openNewWindowWithURL:]):
+        (-[WebDefaultContextMenuHandler openLinkInNewWindow:]):
+        (-[WebDefaultContextMenuHandler copyLinkToClipboard:]):
+        (-[WebDefaultContextMenuHandler openImageInNewWindow:]):
+        (-[WebDefaultContextMenuHandler copyImageToClipboard:]):
+        (-[WebDefaultContextMenuHandler reloadImage:]):
+        (-[WebDefaultContextMenuHandler openFrameInNewWindow:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView menuForEvent:]):
+
 2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
 
         Removed vestigal locationChangeHandler ivar.

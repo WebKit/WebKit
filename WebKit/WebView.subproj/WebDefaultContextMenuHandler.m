@@ -14,7 +14,7 @@
 
 - (void)dealloc
 {
-    [currentInfo release];
+    [element release];
     [super dealloc];
 }
 
@@ -26,17 +26,18 @@
     [menuItem release];
 }
 
-- (NSArray *)contextMenuItemsForElementInfo: (NSDictionary *)elementInfo  defaultMenuItems: (NSArray *)defaultMenuItems
+- (NSArray *)contextMenuItemsForElement: (NSDictionary *)theElement  defaultMenuItems: (NSArray *)defaultMenuItems
 {
     NSMutableArray *menuItems = [NSMutableArray array];
     NSURL *linkURL, *imageURL;
     
-    currentInfo = [elementInfo retain];
+    element = [theElement retain];
 
-    linkURL = [currentInfo objectForKey:WebContextLinkURL];
+    linkURL = [element objectForKey:WebContextLinkURL];
 
     if(linkURL){
-        [self addMenuItemWithTitle:NSLocalizedString(@"Open Link in New Window", @"Open in New Window context menu item") 				            action:@selector(openInNewWindow:)
+    
+        [self addMenuItemWithTitle:NSLocalizedString(@"Open Link in New Window", @"Open in New Window context menu item") 				            action:@selector(openLinkInNewWindow:)
                            toArray:menuItems];
         
         [self addMenuItemWithTitle:NSLocalizedString(@"Download Link to Disk", @"Download Link to Disk context menu item") 				    action:@selector(downloadLinkToDisk:)
@@ -44,18 +45,18 @@
 
         [self addMenuItemWithTitle:NSLocalizedString(@"Copy Link to Clipboard", @"Copy Link to Clipboard context menu item") 				    action:@selector(copyLinkToClipboard:)
                            toArray:menuItems];
-
-        [self addMenuItemWithTitle:NSLocalizedString(@"Add Link to Bookmarks", @"Add Link to Bookmarks context menu item") 				    action:@selector(addLinkToBookmarks:)
-                           toArray:menuItems];
     }
 
-    imageURL = [currentInfo objectForKey:WebContextImageURL];
+    imageURL = [element objectForKey:WebContextImageURL];
 
     if(imageURL){
+    
         if(linkURL){
             [menuItems addObject:[NSMenuItem separatorItem]];
         }
-        [self addMenuItemWithTitle:NSLocalizedString(@"Open Image in New Window", @"Open Image in New Window context menu item") 		            action:@selector(openImageInNewWindow:)
+        
+        [self addMenuItemWithTitle:NSLocalizedString(@"Open Image in New Window", @"Open Image in New Window context menu item") 		             
+                            action:@selector(openImageInNewWindow:)
                            toArray:menuItems];
         
         [self addMenuItemWithTitle:NSLocalizedString(@"Download Image To Disk", @"Download Image To Disk context menu item") 				    action:@selector(downloadImageToDisk:)
@@ -64,33 +65,85 @@
         [self addMenuItemWithTitle:NSLocalizedString(@"Copy Image to Clipboard", @"Copy Image to Clipboard context menu item") 				    action:@selector(copyImageToClipboard:)
                            toArray:menuItems];
         
-        [self addMenuItemWithTitle:NSLocalizedString(@"Reload Image", @"Reload Image context menu item") 				                    action:@selector(reloadImage:)
+        [self addMenuItemWithTitle:NSLocalizedString(@"Reload Image", @"Reload Image context menu item") 				                    
+                            action:@selector(reloadImage:)
                            toArray:menuItems];
     }
 
     if(!imageURL && !linkURL){
-        WebFrame *webFrame = [currentInfo objectForKey:WebContextFrame];
+    
+        WebFrame *webFrame = [element objectForKey:WebContextFrame];
 
         if([[webFrame dataSource] isMainDocument]){
-            [self addMenuItemWithTitle:NSLocalizedString(@"View Source", @"View Source context menu item") 				                        action:@selector(viewSource:)
-                               toArray:menuItems];
-            
-            [self addMenuItemWithTitle:NSLocalizedString(@"Save Page", @"Save Page context menu item")
-                                action:@selector(savePage:)
+            [self addMenuItemWithTitle:NSLocalizedString(@"View Source", @"View Source context menu item") 				                        
+                                action:@selector(viewSource:)
                                toArray:menuItems];
         }else{
             [self addMenuItemWithTitle:NSLocalizedString(@"Open Frame in New Window", @"Open Frame in New Window context menu item") 				action:@selector(openFrameInNewWindow:)
                                toArray:menuItems];
             
-            [self addMenuItemWithTitle:NSLocalizedString(@"View Frame Source", @"View Frame Source context menu item") 				                action:@selector(viewSource:)
-                               toArray:menuItems];
-            
-            [self addMenuItemWithTitle:NSLocalizedString(@"Save Frame", @"Save Frame context menu item") 				                        action:@selector(savePage:)
+            [self addMenuItemWithTitle:NSLocalizedString(@"View Frame Source", @"View Frame Source context menu item") 				                
+                                action:@selector(viewSource:)
                                toArray:menuItems];
         }
     }
 
     return menuItems;
 }
+
+- (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)anItem
+{
+    return YES;
+}
+
+- (void)openNewWindowWithURL:(NSURL *)URL
+{
+    WebFrame *webFrame = [element objectForKey:WebContextFrame];
+    WebController *controller = [webFrame controller];
+    [[controller windowContext] openNewWindowWithURL:URL];
+}
+
+- (void)openLinkInNewWindow:(id)sender
+{
+    [self openNewWindowWithURL:[element objectForKey:WebContextLinkURL]];
+}
+
+- (void)copyLinkToClipboard:(id)sender
+{
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSURL *URL = [element objectForKey:WebContextLinkURL];
+    
+    [pasteboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, NSStringPboardType, nil] owner:nil];
+    [pasteboard setString:[URL absoluteString] forType:NSStringPboardType];
+    [URL writeToPasteboard:pasteboard];
+}
+
+- (void)openImageInNewWindow:(id)sender
+{
+    [self openNewWindowWithURL:[element objectForKey:WebContextImageURL]];
+}
+
+- (void)copyImageToClipboard:(id)sender
+{
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSData *tiff = [[element objectForKey:WebContextImage] TIFFRepresentation];
+    
+    [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
+    [pasteboard setData:tiff forType:NSTIFFPboardType];
+}
+
+- (void)reloadImage:(id)sender
+{
+
+}
+
+- (void)openFrameInNewWindow:(id)sender
+{
+    WebFrame *webFrame = [element objectForKey:WebContextFrame];
+    WebDataSource *dataSource = [webFrame dataSource];
+    NSURL *URL = [dataSource wasRedirected] ? [dataSource redirectedURL] : [dataSource inputURL];
+    [self openNewWindowWithURL:URL];
+}
+
 
 @end

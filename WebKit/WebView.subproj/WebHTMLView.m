@@ -221,11 +221,11 @@
     elementInfo = [self _elementInfoAtPoint:point];
 
     defaultContextMenuHandler = [[self _controller] _defaultContextMenuHandler];
-    defaultMenuItems = [defaultContextMenuHandler contextMenuItemsForElementInfo: elementInfo  defaultMenuItems: nil];
+    defaultMenuItems = [defaultContextMenuHandler contextMenuItemsForElement: elementInfo  defaultMenuItems: nil];
     contextMenuHandler = [[self _controller] contextMenuHandler];
 
     if(contextMenuHandler){
-        menuItems = [contextMenuHandler contextMenuItemsForElementInfo: elementInfo  defaultMenuItems: defaultMenuItems];
+        menuItems = [contextMenuHandler contextMenuItemsForElement: elementInfo  defaultMenuItems: defaultMenuItems];
     } else {
         menuItems = defaultMenuItems;
     }
