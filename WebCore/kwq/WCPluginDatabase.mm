@@ -30,8 +30,8 @@
 static WCPluginDatabase *__WCPluginDatabase = nil;
 
 
-+ (WCPluginDatabase *)installedPlugins {
-
++ (WCPluginDatabase *)installedPlugins 
+{
     if(!__WCPluginDatabase){
         __WCPluginDatabase  = [WCPluginDatabase alloc];
         __WCPluginDatabase->plugins = findPlugins();
@@ -40,7 +40,8 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
 }
 
 // The first plugin with the specified mime type is returned. We may want to tie this to the defaults so that this is configurable.
-- (WCPlugin *)getPluginForMimeType:(NSString *)mimeType{
+- (WCPlugin *)getPluginForMimeType:(NSString *)mimeType
+{
     uint i, n;
     WCPlugin *plugin;
     NSArray *mimeArray;
@@ -57,14 +58,13 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
     return nil;
 }
 
-- (WCPlugin *)getPluginForURL:(NSString *)URL{
+- (WCPlugin *)getPluginForExtension:(NSString *)extension
+{
     uint i, n;
     WCPlugin *plugin;
     NSArray *mimeArray;
     NSRange hasExtension;
-    NSString *extension;
-    
-    extension = [URL pathExtension];
+
     for(i=0; i<[plugins count]; i++){      
         plugin = [plugins objectAtIndex:i];
         mimeArray = [plugin mimeTypes];
@@ -78,9 +78,22 @@ static WCPluginDatabase *__WCPluginDatabase = nil;
     return nil;
 }
 
+- (WCPlugin *)getPluginForFilename:(NSString *)filename
+{
+    uint i;
+    WCPlugin *plugin;
+    
+    for(i=0; i<[plugins count]; i++){
+        plugin = [plugins objectAtIndex:i];
+        if([[plugin filename] isEqualToString:filename]){
+            return plugin;
+        }
+    }
+    return nil;
+}
 
-
-- (NSArray *) plugins{
+- (NSArray *) plugins
+{
     return plugins;
 }
 
@@ -119,6 +132,7 @@ NSArray *findPlugins(void){
             [plugin retain];
             [pluginArray addObject:plugin];
             KWQDebug("Found plugin: %s\n", [[plugin name] cString]);
+            KWQDebug("%s", [[plugin description] cString]);
         }
     }
     return [pluginArray retain];

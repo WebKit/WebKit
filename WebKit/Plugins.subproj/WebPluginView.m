@@ -62,9 +62,9 @@ extern "C" {
 
 @implementation IFPluginView
 
-static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments) 
+static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments, uint16 mode) 
 {
-    return [[[IFPluginView alloc] initWithFrame:rect widget:widget plugin:plugin url:url mime:mimeType arguments:arguments] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:rect plugin:plugin url:url mime:mimeType arguments:arguments mode:mode] autorelease];
 }
 
 +(void) load
@@ -72,7 +72,7 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     WCSetIFPluginMakeFunc(IFPluginMake);
 }
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mimeType  arguments:(NSDictionary *)arguments
+- initWithFrame:(NSRect)r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mimeType arguments:(NSDictionary *)arguments mode:(uint16)mode
 {
     NPError npErr;
     char *cMime, *s;
@@ -92,6 +92,8 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     [mime retain];
     [URL retain];
     [plugin retain];
+    
+    [plugin load];
     
     NPP_New = 		[plugin NPP_New]; // copy function pointers
     NPP_Destroy = 	[plugin NPP_Destroy];
@@ -125,7 +127,7 @@ static id IFPluginMake(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString 
     }
     cMime = malloc([mime length]+1);
     [mime getCString:cMime];
-    npErr = NPP_New(cMime, instance, NP_EMBED, [arguments count], cAttributes, cValues, &saved);
+    npErr = NPP_New(cMime, instance, mode, [arguments count], cAttributes, cValues, &saved);
     KWQDebug("NPP_New: %d\n", npErr);
     
     if([attributes containsObject:@"HIDDEN"]){

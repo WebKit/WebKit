@@ -31,7 +31,6 @@ typedef struct _StreamData{
 @end
 
 @interface IFPluginView : NSView {
-    QWidget *widget;
     WCPlugin *plugin;
     IFPluginViewNullEventSender *eventSender;
     
@@ -62,7 +61,7 @@ typedef struct _StreamData{
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments;
+- initWithFrame:(NSRect) r plugin:(WCPlugin *)plug url:(NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
 -(void)drawRect:(NSRect)rect;
 -(void)setWindow;
 -(void)viewHasMoved:(NSNotification *)note;

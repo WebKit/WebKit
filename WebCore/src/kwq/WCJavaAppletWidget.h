@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef WCPluginWidget_H_
-#define WCPluginWidget_H_
+#ifndef WCJavaAppletWidget_H_
+#define WCJavaAppletWidget_H_
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -32,14 +32,11 @@
 
 #include "qwidget.h"
 #include "qstring.h"
-#import <WCPlugin.h>
-
-typedef id (*WCIFPluginMakeFunc)(NSRect rect, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments, uint16 mode);
-void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func);
+#include <qmap.h>
     
-// class WCPluginWidget ===============================================================
+// class WCJavaAppletWidget ===============================================================
 
-class WCPluginWidget : public QWidget {
+class WCJavaAppletWidget : public QWidget {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -49,11 +46,10 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    WCPluginWidget(const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList());
-    ~WCPluginWidget();
+    WCJavaAppletWidget(QMap<QString, QString> args);
+    ~WCJavaAppletWidget();
 
     // member functions --------------------------------------------------------
-    
     
     // operators ---------------------------------------------------------------
 
@@ -61,12 +57,10 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    WCPluginWidget(const WCPluginWidget &);
-    WCPluginWidget &operator=(const WCPluginWidget &);
+    WCJavaAppletWidget(const WCJavaAppletWidget &);
+    WCJavaAppletWidget &operator=(const WCJavaAppletWidget &);
     
 
-}; // class WCPluginWidget ============================================================
-
-void * WCIFPluginMakeFunction();
+}; // class WCJavaAppletWidget ============================================================
 
 #endif

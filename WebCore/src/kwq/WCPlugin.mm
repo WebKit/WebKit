@@ -84,7 +84,7 @@
 - (void)getPluginInfoForResourceFile:(SInt16)resRef
 {
     Str255 theString;
-    char temp[300], description[600]; // I wish I didn't have to use these C strings
+    char temp[255], description[255];
     NSMutableArray *mime; // mime is an array containing the mime type, extension(s) and descriptions for that mime type.
     NSString *tempString;
     uint n, i;
@@ -97,6 +97,11 @@
         if(!strcmp(temp, "")) break;
         mime = [NSMutableArray arrayWithCapacity:3];
         [mimeTypes insertObject:mime atIndex:i];
+        //FIXME: Because our JS engine poops on semi-colons, I'm removing ";version=1.3"
+        //Scott Adler is checking if semi-colons are allowed to be in mime-types
+        if(!strcmp(temp, "application/x-java-applet;version=1.3")){
+            strcpy(temp, "application/x-java-applet");
+        }
         tempString = [NSString stringWithCString:temp];
         [mime insertObject:tempString atIndex:0]; // mime type
         

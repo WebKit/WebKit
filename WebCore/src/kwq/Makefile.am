@@ -136,6 +136,7 @@ libkwq_o_SOURCES = \
 	WCPlugin.mm \
 	WCPluginDatabase.mm \
 	WCPluginWidget.mm \
+        WCJavaAppletWidget.mm \
 	npapi.mm \
 	$(NULL)
 

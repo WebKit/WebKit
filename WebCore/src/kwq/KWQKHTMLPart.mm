@@ -627,7 +627,8 @@ void KHTMLPart::setPluginsEnabled( bool enable )
 
 bool KHTMLPart::pluginsEnabled() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
+    //return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
+    return FALSE;
 }
 
 
@@ -1808,7 +1809,7 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
     // The plugins array is an attempt to avoid multiple creations of the same plug-in.
     // FIXME: Can't have multiple plug-ins with the same URL on a page
     if(!plugins.contains(url)){
-        WCPluginWidget *pluginWidget = new WCPluginWidget(0, completeURL(url).url(), serviceType, args);
+        WCPluginWidget *pluginWidget = new WCPluginWidget(completeURL(url).url(), serviceType, args);
         frame->setWidget(pluginWidget);
         plugins.append(url);
     }

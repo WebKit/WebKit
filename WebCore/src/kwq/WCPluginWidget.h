@@ -34,8 +34,7 @@
 #include "qstring.h"
 #import <WCPlugin.h>
 
-
-typedef id (*WCIFPluginMakeFunc)(NSRect rect, QWidget *widget, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments);
+typedef id (*WCIFPluginMakeFunc)(NSRect rect, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments, uint16 mode);
 void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func);
     
 // class WCPluginWidget ===============================================================
@@ -50,10 +49,11 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    WCPluginWidget(QWidget *parent=0, const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList());
+    WCPluginWidget(const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList());
     ~WCPluginWidget();
 
     // member functions --------------------------------------------------------
+    
     
     // operators ---------------------------------------------------------------
 
@@ -66,5 +66,7 @@ private:
     
 
 }; // class WCPluginWidget ============================================================
+
+void * WCIFPluginMakeFunction();
 
 #endif

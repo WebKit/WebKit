@@ -30,7 +30,7 @@
 #include <kwqdebug.h>
 
 @interface IFPluginView : NSObject
-- initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments;
+- initWithFrame: (NSRect) r plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
 @end
 
 
@@ -42,14 +42,15 @@ void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func)
 }
 
 
-WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QString &serviceType, const QStringList &args)
+WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, const QStringList &args)
 {
     NSMutableDictionary *arguments;
-    NSString *arg, *mimeType;
+    NSString *arg, *mimeType, *URL;
     NSRange r1, r2, r3;
     WCPlugin *plugin;
     uint i;
     
+    URL = QSTRING_TO_NSSTRING(url);
     arguments = [NSMutableDictionary dictionaryWithCapacity:10];
     for(i=0; i<args.count(); i++){
     arg = QSTRING_TO_NSSTRING(args[i]);
@@ -60,9 +61,9 @@ WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QStrin
         [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
     }
     if(serviceType.isNull()){
-        plugin = [[WCPluginDatabase installedPlugins] getPluginForURL:QSTRING_TO_NSSTRING(url)];
+        plugin = [[WCPluginDatabase installedPlugins] getPluginForExtension:[URL pathExtension]];
         if(plugin != nil){
-            mimeType = [plugin mimeTypeForURL:QSTRING_TO_NSSTRING(url)];
+            mimeType = [plugin mimeTypeForURL:URL];
         }
     }else{
         plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
@@ -70,15 +71,21 @@ WCPluginWidget::WCPluginWidget(QWidget *parent, const QString &url, const QStrin
     }
     if(plugin == nil){
         //FIXME: Error dialog should be shown here
-        KWQDebug("Could not find plugin for mime: %s or URL: %s\n", serviceType.latin1(), url.latin1());
+        printf("Could not find plugin for mime: %s or URL: %s\n", serviceType.latin1(), url.latin1());
         return;
     }
-    [plugin load];
-    setView(WCIFPluginMake(NSMakeRect(0,0,0,0), this, plugin, QSTRING_TO_NSSTRING(url), mimeType, arguments));
+    setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, URL, mimeType, arguments, NP_EMBED));
 }
 
 WCPluginWidget::~WCPluginWidget()
 {
 
 }
+
+void * WCIFPluginMakeFunction()
+{
+    return WCIFPluginMake;
+}
+
+
 

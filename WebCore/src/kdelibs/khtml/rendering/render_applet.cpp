@@ -35,6 +35,10 @@
 #include <java/kjavaappletwidget.h>
 #include <misc/htmltags.h>
 
+#ifdef _KWQ_
+#include <WCJavaAppletWidget.h>
+#endif
+
 using namespace khtml;
 using namespace DOM;
 
@@ -45,7 +49,10 @@ RenderApplet::RenderApplet(QScrollView *view,
     // init RenderObject attributes
     setInline(true);
     m_applet = applet;
-
+    
+#ifdef _KWQ_
+    setQWidget( new WCJavaAppletWidget(args));
+#else
     KJavaAppletContext *context = 0;
     KHTMLView *_view = static_cast<KHTMLView*>(view);
     if ( _view ) {
@@ -58,6 +65,7 @@ RenderApplet::RenderApplet(QScrollView *view,
         setQWidget( new KJavaAppletWidget(context, view->viewport()) );
         processArguments(args);
     }
+#endif
 }
 
 RenderApplet::~RenderApplet()

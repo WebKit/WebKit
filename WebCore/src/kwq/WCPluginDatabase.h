@@ -32,7 +32,8 @@
 
 + (WCPluginDatabase *)installedPlugins;
 - (WCPlugin *)getPluginForMimeType:(NSString *)mimeType;
-- (WCPlugin *)getPluginForURL:(NSString *)URL;
+- (WCPlugin *)getPluginForExtension:(NSString *)extension;
+- (WCPlugin *)getPluginForFilename:(NSString *)filename;
 - (NSArray *) plugins;
 
 @end
