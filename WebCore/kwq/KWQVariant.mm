@@ -62,7 +62,7 @@ QVariant::QVariant() : d(new QVariantPrivate)
 
 QVariant::QVariant(bool val, int) : d(new QVariantPrivate(Bool))
 {
-    d->value.d = val;
+    d->value.b = val;
 }
 
 QVariant::QVariant(int val) : d(new QVariantPrivate(Int))

@@ -1,3 +1,12 @@
+2003-08-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3031562 -- most forms don't work in certain configurations because of a bug in KWQVariant
+
+        * kwq/KWQVariant.mm: (QVariant::QVariant): Set the b element of the union, not the d element,
+        in the constructor for bool.
+
 2003-08-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3395950, better support for self-collapsing blocks.  Make them obey
