@@ -1,3 +1,66 @@
+2004-03-09  John Sullivan  <sullivan@apple.com>
+
+        - fixed the following bugs:
+        <rdar://problem/3579715>: Going to an error page in back/forward list doesn't work 
+        correctly in some cases
+        <rdar://problem/3581031>: REGRESSION (130+): World Leak of WebFrame after trying 
+        to load page with unknown scheme
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+        renamed __setRequest -> __adoptRequest
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _URLForHistory]): 
+        updated comment
+        (-[WebDataSource __adoptRequest:]):
+        Renamed from __setRequest; now takes an NSMutableURLRequest and uses it as-is.
+        (-[WebDataSource _setRequest:]):
+        now saves a mutable copy, instead of relying on the caller to do so. The
+        (only) caller wasn't doing so in all cases, leading to trouble in River City.
+        Also, special-case unreachable URL handling to allow alternate content to 
+        replace a URL in a redirect-like way without sending a redirect callback.
+        
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadAlternateHTMLString:baseURL:forUnreachableURL:]):
+        renamed after discussion with Richard (was loadPlaceholderHTMLString:baseURL:unreachableURL:)
+        (-[WebFrame _shouldReloadToHandleUnreachableURLFromRequest:]):
+        new helper method, returns YES only if we receive a load request for alternate
+        content from a delegate for an unreachable URL while we are going back or forward.
+        That's a lot of prepositions!
+        (-[WebFrame _loadRequest:subresources:]):
+        if _shouldReloadToHandleUnreachableURLFromRequest: returns YES, change load type
+        to WebFrameLoadTypeReload so b/f list is preserved appropriately.
+        (-[WebFrame _transitionToCommitted:]):
+        Update currentItem in the unreachableURL case.
+        (-[WebFrame _isLoadComplete]):
+        Don't reset b/f list before calling provisionalLoadDidFail delegate; instead, determine 
+        where to reset b/f list beforehand, and then actually reset list afterwards only if we 
+        didn't start an alternate content load in the delegate. Also, set new boolean ivar so we
+        know when we're processing a provisionalLoadDidFail delegate callback.
+        (-[WebFrame _loadItem:withLoadType:]):
+        don't make extra copy before calling __adoptRequest; just pass it the one we made here.
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        If we're loading alternate content for an unreachableURL, don't ask the decision listener,
+        just do it. (This avoids problem with nested calls to checking the navigation policy that
+        led to a WebFrame leak, and is conceptually the right thing to do also.) Also added some
+        asserts that helped me track down the WebFrame leak. Set new boolean ivar so we know
+        when we're processing a navigation policy delegate decision.
+        (-[WebFrame _currentBackForwardListItemToResetTo]):
+        new method, replaces _resetBackForwardListToCurrent. Does the same test as the
+        latter but returns a boolean rather than actually resetting.
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        save dataSource in a local var before calling stopLoading, and use it for
+        _setProvisionalDataSource, because otherwise stopLoading was clobbering the dataSource
+        for an unreachable URL handling case.
+        
+        * WebView.subproj/WebFramePrivate.h:
+        two new boolean ivars
+        
+        * WebView.subproj/WebView.m:
+        (+[WebView _canHandleRequest:]):
+        return YES when we're loading alternate content for an unreachable URL
+
 === Safari-131 ===
 
 2004-03-08  Ken Kocienda  <kocienda@apple.com>

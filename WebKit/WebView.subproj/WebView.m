@@ -10,6 +10,7 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
+#import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultFrameLoadDelegate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
@@ -752,6 +753,11 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 + (BOOL)_canHandleRequest:(NSURLRequest *)request
 {
     if ([NSURLConnection canHandleRequest:request]) {
+        return YES;
+    }
+    
+    // We're always willing to load alternate content for unreachable URLs
+    if ([request _webDataRequestUnreachableURL]) {
         return YES;
     }
 

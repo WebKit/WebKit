@@ -383,7 +383,7 @@
 - (NSURL *)_URLForHistory
 {
     // Return the URL to be used for history and B/F list.
-    // Returns nil for WebDataProtocol URLs that aren't placeholders 
+    // Returns nil for WebDataProtocol URLs that aren't alternates 
     // for unreachable URLs, because these can't be stored in history.
     NSURL *URL = [_private->originalRequestCopy URL];
     if ([WebDataProtocol _webIsDataProtocolURL:URL]) {
@@ -454,7 +454,7 @@
     _private->request = newRequest;
 }
 
-- (void)__setRequest:(NSURLRequest *)request
+- (void)__adoptRequest:(NSMutableURLRequest *)request
 {
     if (request != _private->request){
         [_private->request release];
@@ -464,17 +464,27 @@
 
 - (void)_setRequest:(NSURLRequest *)request
 {
+    ASSERT_ARG(request, request != _private->request);
+    
+    // Replacing an unreachable URL with alternate content looks like a server-side
+    // redirect at this point, but we can replace a committed dataSource.
+    BOOL handlingUnreachableURL = [request _webDataRequestUnreachableURL] != nil;
+    if (handlingUnreachableURL) {
+        _private->committed = NO;
+    }
+    
     // We should never be getting a redirect callback after the data
-    // source is committed. It would be a WebFoundation bug if it sent
-    // a redirect callback after commit.
+    // source is committed, except in the unreachable URL case. It 
+    // would be a WebFoundation bug if it sent a redirect callback after commit.
     ASSERT(!_private->committed);
 
     NSURLRequest *oldRequest = _private->request;
 
-    _private->request = [request retain];
+    _private->request = [request mutableCopy];
 
     // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed.
-    if (![[oldRequest URL] isEqual: [request URL]]) {
+    // Also, don't send it when replacing unreachable URLs with alternate content.
+    if (!handlingUnreachableURL && ![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
         [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                       didReceiveServerRedirectForProvisionalLoadForFrame:[self webFrame]];

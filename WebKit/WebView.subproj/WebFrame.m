@@ -134,7 +134,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 - (WebHistoryItem *)_createItem: (BOOL)useOriginal;
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 
-- (void)_resetBackForwardListToCurrent;
+- (WebHistoryItem *)_currentBackForwardListItemToResetTo;
 @end
 
 @implementation WebFramePrivate
@@ -257,7 +257,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
-- (void)loadPlaceholderHTMLString:(NSString *)string baseURL:(NSURL *)URL unreachableURL:(NSURL *)unreachableURL
+- (void)loadAlternateHTMLString:(NSString *)string baseURL:(NSURL *)URL forUnreachableURL:(NSURL *)unreachableURL
 {
     [self _loadHTMLString:string baseURL:URL unreachableURL:unreachableURL];
 }
@@ -294,6 +294,35 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     return request;
 }
 
+
+- (BOOL)_shouldReloadToHandleUnreachableURLFromRequest:(NSURLRequest *)request
+{
+    NSURL *unreachableURL = [request _webDataRequestUnreachableURL];
+    if (unreachableURL == nil) {
+        return NO;
+    }
+    
+    if (_private->policyLoadType != WebFrameLoadTypeForward
+        && _private->policyLoadType != WebFrameLoadTypeBack
+        && _private->policyLoadType != WebFrameLoadTypeIndexedBackForward) {
+        return NO;
+    }
+    
+    // We only treat unreachableURLs specially during the delegate callbacks
+    // for provisional load errors and navigation policy decisions. The former
+    // case handles well-formed URLs that can't be loaded, and the latter
+    // case handles malformed URLs and unknown schemes. Loading alternate content
+    // at other times behaves like a standard load.
+    WebDataSource *compareDataSource = nil;
+    if (_private->delegateIsDecidingNavigationPolicy) {
+        compareDataSource = _private->policyDataSource;
+    } else if (_private->delegateIsHandlingProvisionalLoadError) {
+        compareDataSource = [self provisionalDataSource];
+    }
+    
+    return compareDataSource != nil && [unreachableURL isEqual:[[compareDataSource request] URL]];
+}
+
 - (void)_loadRequest:(NSURLRequest *)request subresources:(NSArray *)subresources
 {
     WebFrameLoadType loadType;
@@ -311,6 +340,14 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     
     [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
     [newDataSource addSubresources:subresources];
+    
+    // When we loading alternate content for an unreachable URL that we're
+    // visiting in the b/f list, we treat it as a reload so the b/f list 
+    // is appropriately maintained.
+    if ([self _shouldReloadToHandleUnreachableURLFromRequest:request]) {
+        ASSERT(loadType == WebFrameLoadTypeStandard);
+        loadType = WebFrameLoadTypeReload;
+    }
     
     [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];
     [newDataSource release];
@@ -685,7 +722,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             WebFrameLoadType loadType = [self _loadType];
             if (loadType == WebFrameLoadTypeForward ||
                 loadType == WebFrameLoadTypeBack ||
-                loadType == WebFrameLoadTypeIndexedBackForward)
+                loadType == WebFrameLoadTypeIndexedBackForward ||
+                (loadType == WebFrameLoadTypeReload && [_private->provisionalDataSource unreachableURL] != nil))
             {
                 // Once committed, we want to use current item for saving DocState, and
                 // the provisional item for restoring state.
@@ -1011,14 +1049,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             if ([pd _mainDocumentError]) {
                 // Check all children first.
                 LOG(Loading, "%@:  checking complete, current state WebFrameStateProvisional", [self name]);
-                [self _resetBackForwardListToCurrent];
+                WebHistoryItem *resetItem = [self _currentBackForwardListItemToResetTo];
+                BOOL shouldReset = YES;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
                     [[self webView] _didFailProvisionalLoadWithError:[pd _mainDocumentError] forFrame:self];
+                    _private->delegateIsHandlingProvisionalLoadError = YES;
                     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                           didFailProvisionalLoadWithError:[pd _mainDocumentError]
                                                                  forFrame:self];
+                    _private->delegateIsHandlingProvisionalLoadError = NO;
                     
                     [pd _stopLoading];
                     // Finish resetting the load state, but only if another load hasn't been started by the
@@ -1029,9 +1070,15 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                         [[self webView] _progressCompleted: self];
                         
                         [self _setState:WebFrameStateComplete];
+                    } else {
+                        NSURL *unreachableURL = [_private->provisionalDataSource unreachableURL];
+                        if (unreachableURL != nil && [unreachableURL isEqual:[[pd request] URL]]) {
+                            shouldReset = NO;
+                        }
                     }
-
-                    return;
+                }
+                if (shouldReset && resetItem != nil) {
+                    [[[self webView] backForwardList] goToItem:resetItem];
                 }
             }
             return;
@@ -1274,7 +1321,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // be necessary if we do the better fix described above.
         NSMutableURLRequest *hackedRequest = [[[self dataSource] request] mutableCopy];
         [hackedRequest setURL: itemURL];
-        [[self dataSource] __setRequest: [[hackedRequest copy] autorelease]];
+        [[self dataSource] __adoptRequest:hackedRequest];
         [hackedRequest release];
         
         [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
@@ -1618,23 +1665,41 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
-
+    
+    // We are always willing to show alternate content for unreachable URLs;
+    // treat it like a reload so it maintains the right state for b/f list.
+    if ([request _webDataRequestUnreachableURL] != nil) {
+        if (_private->policyLoadType == WebFrameLoadTypeForward
+            || _private->policyLoadType == WebFrameLoadTypeBack
+            || _private->policyLoadType == WebFrameLoadTypeIndexedBackForward) {
+            _private->policyLoadType = WebFrameLoadTypeReload;
+        }
+        [target performSelector:selector withObject:request withObject:nil];
+        return;
+    }
+    
     [dataSource _setLastCheckedRequest:request];
 
     WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterNavigationPolicy:)];
     
+    ASSERT(_private->policyRequest == nil);
     _private->policyRequest = [request retain];
+    ASSERT(_private->policyTarget == nil);
     _private->policyTarget = [target retain];
     _private->policySelector = selector;
+    ASSERT(_private->listener == nil);
     _private->listener = [listener retain];
+    ASSERT(_private->policyFormState == nil);
     _private->policyFormState = [formState retain];
 
     WebView *wv = [self webView];
+    _private->delegateIsDecidingNavigationPolicy = YES;
     [[wv _policyDelegateForwarder] webView:wv
            decidePolicyForNavigationAction:action
                                    request:request
                                      frame:self
                           decisionListener:listener];
+    _private->delegateIsDecidingNavigationPolicy = NO;
     
     [listener release];
 }
@@ -2078,18 +2143,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return path;
 }
 
-// If we bailed out of a b/f navigation, we need to set the b/f cursor back to the current
-// item, because we optimistically move it right away at the start of the operation
-- (void)_resetBackForwardListToCurrent {
+// If we bailed out of a b/f navigation, we might need to set the b/f cursor back to the current
+// item, because we optimistically move it right away at the start of the operation. But when
+// alternate content is loaded for an unreachableURL, we don't want to reset the b/f cursor.
+// Return the item that we would reset to, so we can decide later whether to actually reset.
+- (WebHistoryItem *)_currentBackForwardListItemToResetTo
+{
     WebFrameLoadType loadType = [self _loadType];
     if ((loadType == WebFrameLoadTypeForward
-        || loadType == WebFrameLoadTypeBack
-        || loadType == WebFrameLoadTypeIndexedBackForward)
-        && [_private currentItem]
-        && self == [[self webView] mainFrame])
-    {
-        [[[self webView] backForwardList] goToItem:[_private currentItem]];
+         || loadType == WebFrameLoadTypeBack
+         || loadType == WebFrameLoadTypeIndexedBackForward)
+        && self == [[self webView] mainFrame]) {
+        return [_private currentItem];
     }
+    return nil;
 }
 
 - (WebHistoryItem *)_itemForSavingDocState
@@ -2165,10 +2232,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     WebFrameLoadType loadType = _private->policyLoadType;
+    WebDataSource *dataSource = [_private->policyDataSource retain];
     
     [self stopLoading];
     [self _setLoadType:loadType];
-    [self _setProvisionalDataSource:_private->policyDataSource];
+    [self _setProvisionalDataSource:dataSource];
+    [dataSource release];
 
     [self _setPolicyDataSource:nil];
     
