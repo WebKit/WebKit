@@ -1,3 +1,14 @@
+2005-03-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki.
+        
+        - fixed <rdar://problem/4052246> crash in KWQKHTMLPart::createPart() trying to display local file in frame
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::createPart):
+        Check part for nil before trying to ref. This was probably a longstanding code flaw revealed by
+        the recent security fix.
+
 2005-03-15  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Ken and Maciej.

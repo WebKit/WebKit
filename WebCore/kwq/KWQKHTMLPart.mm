@@ -826,8 +826,10 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
                                                        marginHeight:marginHeight];
 	// This call needs to return an object with a ref, since the caller will expect to own it.
 	// childBridge owns the only ref so far.
-	[childBridge part]->ref();
         part = [childBridge part];
+        if (part) {
+            part->ref();
+        }
     }
 
     return part;
