@@ -1,3 +1,12 @@
+2002-06-27  Darin Adler  <darin@apple.com>
+
+        * WebCoreSupport.subproj/IFWebCoreViewFactory.m:
+        (-[IFWebCoreViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]):
+	Pass baseURL as a separate parameter.
+
+        * WebView.subproj/IFBaseLocationChangeHandler.m: Fix a typo. I think this
+	file might be unneeded, but I won't delete it until I hear from Chris.
+
 2002-06-27  Richard Williamson  <rjw@apple.com>
         
         Fix selection in 'slow' code path (non-base characters and font substitution).

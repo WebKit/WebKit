@@ -33,7 +33,7 @@
 #ifdef __OBJC__
 @class NSURL;
 #else
-typedef void NSURL;
+class NSURL;
 #endif
 
 class KURL {

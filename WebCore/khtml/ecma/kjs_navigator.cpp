@@ -234,7 +234,7 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
     return Value(new MimeTypes(exec));
   case CookieEnabled:
 #ifdef APPLE_CHANGES
-      return Boolean(KWQKCookieJar::cookieEnabled());
+    return Boolean(KWQKCookieJar::cookieEnabled());
 #else
     return Boolean(true); /// ##### FIXME
 #endif

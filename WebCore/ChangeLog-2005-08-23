@@ -1,3 +1,35 @@
+2002-06-27  Darin Adler  <darin@apple.com>
+
+        * khtml/rendering/render_applet.cpp: Remove include of <iostream.h> to avoid bloat.
+        (RenderApplet::RenderApplet): Remove APPLE_CHANGES.
+        (RenderApplet::processArguments): Remove APPLE_CHANGES.
+	This file is now back to 100% the same as the KDE original.
+
+        * kwq/khtml/java/kjavaappletwidget.h: Added a bit of stuff so we match the interface
+	of the KDE original and don't need APPLE_CHANGES.
+        * kwq/KWQKJavaAppletWidget.mm: Remove include of <iostream.h> to avoid bloat.
+        (KJavaAppletWidget::KJavaAppletWidget): Update for parameters that match the
+	KDE original.
+        (KJavaAppletWidget::~KJavaAppletWidget): Added.
+        (KJavaAppletWidget::setBaseURL): Added.
+        (KJavaAppletWidget::setParameter): Put strings into an NSMutableDictionary.
+        (KJavaAppletWidget::showApplet): Use the new baseURL and parameters dictionary.
+
+        * kwq/WebCoreViewFactory.h: Add baseURL parameter.
+        * kwq/WebCoreViewFactory.m:
+        (-[WebCoreViewFactory viewForJavaAppletWithFrame:baseURL:parameters:]): Add baseURL parameter.
+
+        * kwq/kdecore/kurl.h: Fix NSURL definition to fit idiom.
+        * kwq/qt/qmap.h: Added the const version of the [] operator.
+
+        * khtml/ecma/kjs_navigator.cpp: Tweak whitespace.
+        * khtml/html/html_documentimpl.cpp: Tweak to make it a little closer to original.
+
+        * kwq/KWQKCookieJar.h: Reduce includes.
+        * kwq/KWQKCookieJar.mm: Move includes in here.
+
+        * kwq/WebCoreCookieAdapter.h: Fix comment that emacs munged.
+
 2002-06-27  Richard Williamson  <rjw@apple.com>
 
         * kwq/WebCoreBridge.h:

@@ -25,20 +25,40 @@
 
 #import <java/kjavaappletwidget.h>
 #import <WebCoreViewFactory.h>
-#include <iostream.h>
+#import <WebFoundation/IFNSURLExtensions.h>
 
-KJavaAppletWidget::KJavaAppletWidget(const QMap<QString, QString> &args) {
-    arguments = args; 
-    m_applet = new KJavaApplet(this);
+KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *, QWidget *)
+    : m_applet(*this)
+    , m_baseURL(nil)
+    , m_parameters([[NSMutableDictionary alloc] init])
+{
+}
+
+KJavaAppletWidget::~KJavaAppletWidget()
+{
+    [m_baseURL release];
+    [m_parameters release];
+}
+
+void KJavaAppletWidget::setBaseURL(const QString &baseURL)
+{
+    [m_baseURL release];
+    m_baseURL = [[NSURL _IF_URLWithString:baseURL.getNSString()] retain];
+}
+
+void KJavaAppletWidget::setParameter(const QString &name, const QString &value)
+{
+    // When putting strings into dictionaries, we should use an immutable copy.
+    // That's not necessary for keys, because they are copied.
+    NSString *immutableString = [value.getNSString() copy];
+    [m_parameters setObject:immutableString forKey:name.getNSString()];
+    [immutableString release];
 }
 
 void KJavaAppletWidget::showApplet()
 {
-    NSMutableDictionary *argsDictionary = [NSMutableDictionary dictionaryWithCapacity:arguments.count()];
-    for (QMap<QString, QString>::ConstIterator it = arguments.begin(); it != arguments.end(); ++it) {
-        [argsDictionary setObject:it.data().getNSString() forKey:it.key().getNSString()];
-    }
     setView([[WebCoreViewFactory sharedFactory] 
-                viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
-                andArguments:argsDictionary]);
+    	viewForJavaAppletWithFrame:NSMakeRect(pos().x(), pos().y(), size().width(), size().height())
+                           baseURL:m_baseURL
+                        parameters:m_parameters]);
 }

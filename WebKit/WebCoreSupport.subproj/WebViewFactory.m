@@ -66,19 +66,16 @@
     return [[IFPluginDatabase installedPlugins] plugins];
 }
 
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame andArguments:(NSDictionary *)arguments
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)baseURL parameters:(NSDictionary *)parameters
 {
     IFPlugin *plugin;
-    NSURL *baseURL;
     
     plugin = [[IFPluginDatabase installedPlugins] pluginForMimeType:@"application/x-java-applet"];
     if (plugin == nil) {
         return nil;
     }
     
-    baseURL = [NSURL _IF_URLWithString:[arguments objectForKey:@"baseURL"]];
-
-    return [[[IFPluginView alloc] initWithFrame:frame plugin:plugin url:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:arguments] autorelease];
+    return [[[IFPluginView alloc] initWithFrame:frame plugin:plugin url:nil baseURL:baseURL mime:@"application/x-java-applet" arguments:parameters] autorelease];
 }
 
 @end

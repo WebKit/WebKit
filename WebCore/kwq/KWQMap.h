@@ -238,6 +238,13 @@ public:
 	return ((QMapNode<K,V> *)insertInternal(&tmp, false))->value;
     }
 
+    V operator[](const K& key) const
+    {
+	QMapNode<K,V> tmp(key, V());
+        QMapNode<K,V> *result = (QMapNode<K,V> *)findInternal(&tmp);
+	return result ? result->value : V();
+    }
+
 protected:
     virtual void copyNode(const KWQMapNodeImpl *isrc, KWQMapNodeImpl *idst) const
     {

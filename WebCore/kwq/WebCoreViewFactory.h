@@ -38,7 +38,7 @@
 - (NSView *)viewForPluginWithURL:(NSURL *)url serviceType:(NSString *)serviceType arguments:(NSArray *)arguments baseURL:(NSURL *)baseURL;
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
 
-- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame andArguments:(NSDictionary *)arguments;
+- (NSView *)viewForJavaAppletWithFrame:(NSRect)frame baseURL:(NSURL *)URL parameters:(NSDictionary *)parameters;
 
 @end
 

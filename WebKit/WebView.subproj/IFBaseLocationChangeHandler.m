@@ -1,4 +1,4 @@
-/*	IFBaseLocationChangeHander.m
+/*	IFBaseLocationChangeHandler.m
 
         Copyright 2001, Apple, Inc. All rights reserved.
 */
@@ -22,11 +22,11 @@
 {
 }
 
-+ (NSString *)suggestedFileanemForURL: (NSURL *) andContentType: (IFContentType *)type
++ (NSString *)suggestedFileanemForURL: (NSURL *) andContentType: (IFURLContentType *)type
 {
 }
 
-+ (NSString *)suggestedDirectoryForURL: (NSURL *) andContentType: (IFContentType *)type
++ (NSString *)suggestedDirectoryForURL: (NSURL *) andContentType: (IFURLContentType *)type
 {
 }
 

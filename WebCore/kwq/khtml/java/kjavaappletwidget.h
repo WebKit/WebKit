@@ -27,26 +27,52 @@
 #include <qmap.h>
 #include <qstring.h>
 
-class KJavaApplet;
+class KJavaAppletContext;
+class KJavaAppletWidget;
 
-class KJavaAppletWidget : public QWidget
-{
-    KJavaApplet *m_applet;
-    QMap<QString, QString> arguments;
-    QRect frame;
-    
-public:
-    KJavaAppletWidget(const QMap<QString, QString> &args);
-    void setParameter(const QString &name, const QString &value){arguments.insert(name, value);}
-    KJavaApplet* applet() { return m_applet; }
-    void showApplet();
-};
+#ifdef __OBJC__
+@class NSURL;
+@class NSMutableDictionary;
+#else
+class NSURL;
+class NSMutableDictionary;
+#endif
 
 class KJavaApplet
 {
-    KJavaAppletWidget *m_widget;
-    
 public:
-    KJavaApplet(KJavaAppletWidget *widget){m_widget = widget;}
-    void setParameter(const QString &name, const QString &value) { m_widget->setParameter(name, value); }
+    KJavaApplet(KJavaAppletWidget &widget) : m_widget(widget) { }
+
+    void setAppletClass(const QString &) { }
+    void setAppletName(const QString &) { }
+    void setArchives(const QString &) { }
+    void setBaseURL(const QString &);
+    void setCodeBase(const QString &) { }
+    
+    void setParameter(const QString &, const QString &);
+
+private:
+    KJavaAppletWidget &m_widget;
 };
+
+class KJavaAppletWidget : public QWidget
+{
+public:
+    KJavaAppletWidget(KJavaAppletContext *, QWidget *);
+    ~KJavaAppletWidget();
+    
+    KJavaApplet *applet() { return &m_applet; }
+    
+    void setBaseURL(const QString &);
+    void setParameter(const QString &, const QString &);
+
+    void showApplet();
+
+private:
+    KJavaApplet m_applet;
+    NSURL *m_baseURL;
+    NSMutableDictionary *m_parameters;
+};
+
+inline void KJavaApplet::setBaseURL(const QString &URL) { m_widget.setBaseURL(URL); }
+inline void KJavaApplet::setParameter(const QString &name, const QString &value) { m_widget.setParameter(name, value); }
