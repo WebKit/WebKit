@@ -851,7 +851,11 @@ void RenderFlow::layoutInlineChildren()
             if(!m_pre) {
                 // remove leading spaces
 #ifndef QT_NO_UNICODETABLES
+#ifdef _KWQ_
+                while(!start.atEnd() && start.current() == ' ' )
+#else
                 while(!start.atEnd() && start.direction() == QChar::DirWS )
+#endif
 #else
                 while(!start.atEnd() && start.current() == ' ' )
 #endif
