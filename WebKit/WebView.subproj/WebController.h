@@ -95,6 +95,9 @@
         Remove WKContextMenuHandler for want of a better way to describe the
         not-yet-existing WKDOMNode.  We can't think of any initial clients that want
         to override the default behavior anyway.  Put it in WKGrabBag.h for now.
+
+        Simplified WKLocationChangeHandler and updated
+	WKAuthenticationHandler to use interfaces instead of structs..
 */
 
 
@@ -172,9 +175,8 @@
 - (BOOL)locationWillChangeTo: (NSURL *)url;
 
 - (void)locationChangeStarted;
-- (void)locationChangeCancelled: (WKError *)error;
-- (void)locationChangeStopped: (WKError *)error;
-- (void)locationChangeFinished;
+- (void)locationChangeInProgress;
+- (void)locationChangeDone: (WKError *)error;
 
 - (void)receivedPageTitle: (NSString *)title;
 
@@ -198,14 +200,13 @@
 // handshake.
 - (BOOL)locationWillChangeTo: (NSURL *)url;
 
-- (void)locationChangeStartedByDataSource: (WKWebDataSource *)dataSource;
-- (void)locationChangeCancelled: (WKError *)error byDataSource: (WKWebDataSource *)dataSource;
-- (void)locationChangeStopped: (WKError *)error byDataSource: (WKWebDataSource *)dataSource;
-- (void)locationChangeFinished byDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeStartedForDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeInProgressForDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
 
-- (void)receivedPageTitle: (NSString *)title byDataSource: (WKWebDataSource *)dataSource;
+- (void)receivedPageTitle: (NSString *)title forDataSource: (WKWebDataSource *)dataSource;
 
-- (void)serverRedirectTo: (NSURL *)url byDataSource: (WKWebDataSource *)dataSource;
+- (void)serverRedirectTo: (NSURL *)url forDataSource: (WKWebDataSource *)dataSource;
 
 @end
 
@@ -256,17 +257,18 @@
 
 */
 
-/* should this be an interface instead? */
-struct WKSimpleAuthenticationResult {
+@interface WKSimpleAuthenticationResult 
+{
     NSString *username;
     NSString *password;
     // May need an extra rememberThisPassword flag if the loader mechanism is
     // going to provide a persistent credentials cache (for starters we can have
     // just a session cache)
 }
+@end
 
-/* should this be an interface instead? */
-struct WKSimpleAuthenticationRequest {
+@interface WKSimpleAuthenticationRequest 
+{
     NSURL *url;         // nil if for something non-URI based
     NSString *domain;   // http authentication domain or some representation of 
                         // auth domain for non-URI-based locations; otherwise nil.

@@ -1,5 +1,20 @@
 2001-12-14  Maciej Stachowiak  <mjs@apple.com>
 
+	Simplified WKLocationChangeHandler and updated
+	WKAuthenticationHandler.
+
+	* WebView.subproj/WKWebController.h:
+	(WKWebDataSource): Renamed methods to be forDataSource, not
+	byDataSource.
+	(-[WKWebDataSource locationChangeInProgressForDataSource:]): Added.
+	(-[WKWebDataSource locationChangeDone:forDataSource:]): Added as a
+	collapsed version of locationChangeCancelled:,
+	locationChangeStopped: and locationChangeFinished:.
+	(WKSimpleAuthenticationResult, WKSimpleAuthenticationRequest):
+	made these interfaces instead of structs.
+	
+2001-12-14  Maciej Stachowiak  <mjs@apple.com>
+
 	Minor cleanups, mostly for naming consistency.
 	
 	* WebView.subproj/WKWebController.h: 
