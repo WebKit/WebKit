@@ -1,3 +1,26 @@
+2002-12-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Gramps and Richard.
+
+	Fix for this bug:
+
+	Radar 3112233 (400 response when attaching files at mail.yahoo.com)
+
+	KHTML multipart form code called into KMimeType class to determine
+	the mime type for file attachments, however, our implementation of
+	KMimeType has only stubs which call ERROR.
+
+	I added some code into KWQKHTMLPart and WebCoreBridge so that the
+	code in html_formimpl can call through to the WebFoundation mime
+	file map we maintain.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::formData)
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::mimeTypeForFileName)
+        * kwq/WebCoreBridge.h:
+
 2002-12-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Don.

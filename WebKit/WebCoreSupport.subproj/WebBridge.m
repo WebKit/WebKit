@@ -41,6 +41,7 @@
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceResponse.h>
 #import <WebFoundation/WebSystemBits.h>
+#import <WebFoundation/WebFileTypeMappings.h>
 
 
 @interface NSApplication (DeclarationStolenFromAppKit)
@@ -561,6 +562,13 @@ static BOOL loggedObjectCacheSize = NO;
     [frame loadRequest:request];
     [request release];
     [url release];
+}
+
+- (NSString *)MIMETypeForPath:(NSString *)path
+{
+    ASSERT(path);
+    NSString *extension = [path pathExtension];
+    return [[WebFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
 @end

@@ -314,8 +314,14 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
                         if(!static_cast<HTMLInputElementImpl*>(current)->value().isEmpty())
                         {
                             hstr += "\r\nContent-Type: ";
+#if APPLE_CHANGES
+                            KWQKHTMLPart *part = KWQ(current->getDocument()->view()->part());
+                            QString mimeType = part->mimeTypeForFileName(onlyfilename);
+                            hstr += mimeType.ascii();
+#else /* APPLE_CHANGES not defined */
                             KMimeType::Ptr ptr = KMimeType::findByURL(KURL(path));
                             hstr += ptr->name().ascii();
+#endif /* APPLE_CHANGES not defined */
                         }
                     }
 

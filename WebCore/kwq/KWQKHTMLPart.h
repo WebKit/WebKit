@@ -133,6 +133,8 @@ public:
     QString requestedURLString() const;
     QString referrer() const;    
     QString userAgent() const;
+
+    QString mimeTypeForFileName(const QString &) const;
     
     DOM::NodeImpl *selectionStart() const;
     int selectionStartOffset() const;

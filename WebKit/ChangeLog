@@ -1,3 +1,17 @@
+2002-12-28  Ken Kocienda  <kocienda@apple.com>
+
+         Reviewed by Gramps and Richard
+
+         Fix for this bug:
+
+         Radar 3112233 (400 response when attaching files at mail.yahoo.com)
+
+         I added the MIMETypeForPath method which accesses the WebFoundation mime
+         file map we maintain. KHTML can now access this map by using the bridge.
+
+         * WebCoreSupport.subproj/WebBridge.m:
+         (-[WebBridge MIMETypeForPath:])
+
 2002-12-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Gramps and Ken

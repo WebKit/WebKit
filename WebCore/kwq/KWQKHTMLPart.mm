@@ -356,6 +356,13 @@ QString KWQKHTMLPart::userAgent() const
     return QString();
 }
 
+QString KWQKHTMLPart::mimeTypeForFileName(const QString &fileName) const
+{
+    NSString *ns = fileName.getNSString();
+    NSString *mimeType = [_bridge MIMETypeForPath:ns];
+    return QString::fromNSString(mimeType);
+}
+
 NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
 {
     DocumentImpl *doc = xmlDocImpl();
