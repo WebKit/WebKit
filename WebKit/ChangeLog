@@ -1,3 +1,29 @@
+2003-04-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        NSURLConnectionDelegate is no longer a formal protocol.
+
+        NSURLConnection no longer has a loadWithDelegate: method. Loads
+        start implicitly at init time. Some clients have been updated
+        to call the willSendRequest:redirectResponse: callback manually
+        since this callback is no longer sent for initial loads.
+
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload initWithRequest:]):
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]):
+        (-[WebDownload loadWithDelegate:]):
+        * Misc.subproj/WebIconLoader.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient loadWithRequest:]):
+        (-[WebResourceDelegateProxy setDelegate:]):
+
 2003-04-01  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

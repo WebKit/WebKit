@@ -168,12 +168,6 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     _private = [[WebDownloadPrivate alloc] init];
     _private->request = [request retain];
     
-    _private->connection = [[NSURLConnection alloc] initWithRequest:request];
-    if (!_private->connection) {
-        [self release];
-        return nil;
-    }
-
     return self;
 }
 
@@ -193,7 +187,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     _private->response = [response retain];
     _private->proxy = 	 [proxy retain];
     [self _setDelegate:delegate];
-    [_private->proxy setDelegate:(id <NSURLConnectionDelegate>)self];
+    [_private->proxy setDelegate:self];
 
     // Replay the delegate methods that would be called in the standalone download case.
     if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
@@ -209,12 +203,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
                 [self _setRequest:request];
                 [self _setResponse:nil];
                 [_private->connection release];
-                _private->connection = [[NSURLConnection alloc] initWithRequest:request];
-                if (!_private->connection) {
-                    [self release];
-                    return nil;
-                }
-                [_private->connection loadWithDelegate:(id <NSURLConnectionDelegate>)self];
+                _private->connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
                 [self _downloadStarted];
             }
             return self;
@@ -250,13 +239,16 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 - (void)loadWithDelegate:(id)delegate
 {
     if (!_private->isDownloading) {
+        [self _setDelegate:delegate];
+        // send this synthetic delegate callback since clients expect it, and
+        // we no longer send the callback from within NSURLConnection for
+        // initial requests.
+        NSURLRequest *request = [self connection:nil willSendRequest:_private->request redirectResponse:nil];
+        _private->connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
         [self _downloadStarted];
         
-        [self _setDelegate:delegate];
-        [_private->connection loadWithDelegate:(id <NSURLConnectionDelegate>)self];
-        
         if ([_private->delegate respondsToSelector:@selector(download:didStartFromRequest:)]) {
-            [_private->delegate download:self didStartFromRequest:_private->request];
+            [_private->delegate download:self didStartFromRequest:request];
         }
     }
 }

@@ -64,24 +64,15 @@
     [super dealloc];
 }
 
-- (void)startLoading:(NSURLRequest *)r
-{
-    [connection loadWithDelegate:self];
-}
-
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
     
-    connection = [[NSURLConnection alloc] initWithRequest:r];
-    if (!connection) {
-        return NO;
-    }
+    r = [self connection:connection willSendRequest:r redirectResponse:nil];
+    connection = [[NSURLConnection alloc] initWithRequest:r delegate:self];
     if (defersCallbacks) {
         [connection setDefersCallbacks:YES];
     }
-
-    [self startLoading:r];
 
     return YES;
 }

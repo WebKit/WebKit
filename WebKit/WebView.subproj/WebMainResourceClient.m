@@ -270,9 +270,13 @@
     [self receivedError:error];
 }
 
-- (void)startLoading:(NSURLRequest *)r
+- (BOOL)loadWithRequest:(NSURLRequest *)r
 {
+    ASSERT(connection == nil);
+    
     if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
+        connection = [[NSURLConnection alloc] initWithRequest:r delegate:nil];
+
 	[self connection:connection willSendRequest:r redirectResponse:nil];
 
 	NSURLResponse *rsp = [[NSURLResponse alloc] init];
@@ -282,8 +286,17 @@
 	[self connection:connection didReceiveResponse:rsp];
 	[rsp release];
     } else {
-	[connection loadWithDelegate:proxy];
+        // send this synthetic delegate callback since clients expect it, and
+        // we no longer send the callback from within NSURLConnection for
+        // initial requests.
+        r = [proxy connection:nil willSendRequest:r redirectResponse:nil];
+        connection = [[NSURLConnection alloc] initWithRequest:r delegate:proxy];
+        if ([self defersCallbacks]) {
+            [connection setDefersCallbacks:YES];
+        }
     }
+
+    return YES;
 }
 
 - (void)setDefersCallbacks:(BOOL)defers
@@ -298,7 +311,7 @@
 
 @implementation WebResourceDelegateProxy
 
-- (void)setDelegate:(id <NSURLConnectionDelegate>)theDelegate
+- (void)setDelegate:(id)theDelegate
 {
     delegate = theDelegate;
 }

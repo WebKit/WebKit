@@ -85,10 +85,12 @@
         return;
     }
     
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:_private->URL];
-    _private->handle = [[NSURLConnection alloc] initWithRequest:request];
-    [_private->handle loadWithDelegate:self];
-    [request release];
+    // send this synthetic delegate callback since clients expect it, and
+    // we no longer send the callback from within NSURLConnection for
+    // initial requests.
+    NSURLRequest *request = [NSURLRequest requestWithURL:_private->URL];
+    request = [self connection:nil willSendRequest:request redirectResponse:nil];
+    _private->handle = [[NSURLConnection alloc] initWithRequest:request delegate:self];
 }
 
 - (void)stopLoading
