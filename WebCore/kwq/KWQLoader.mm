@@ -281,6 +281,15 @@ void *KWQResponseMIMEType(void *response)
     return NULL;
 }
 
+void *KWQResponseTextEncodingName(void *response)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    return [(NSURLResponse *)response textEncodingName];
+    KWQ_UNBLOCK_EXCEPTIONS;
+
+    return NULL;
+}
+
 void *KWQResponseHeaderString(void *response)
 {
     KWQ_BLOCK_EXCEPTIONS;

@@ -47,6 +47,7 @@ bool KWQCheckIfReloading(khtml::DocLoader *loader);
 void KWQRetainResponse(void *response);
 void KWQReleaseResponse(void *response);
 void *KWQResponseMIMEType(void *response);
+void *KWQResponseTextEncodingName(void *response);
 void *KWQResponseHeaderString(void *response);
 int KWQNumberOfPendingOrLoadingRequests(khtml::DocLoader *dl);
 time_t KWQCacheObjectExpiresTime(khtml::DocLoader *docLoader, void *response);

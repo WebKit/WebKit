@@ -77,6 +77,7 @@ public:
     QString method() const;
 private:
     void assembleResponseHeaders() const;
+    void retrieveCharset() const;
 
     TransferJobPrivate *d;
 

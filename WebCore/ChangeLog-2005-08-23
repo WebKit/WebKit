@@ -1,3 +1,23 @@
+2004-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3770306> XMLHttpRequest does not honor character set encoding
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::slotData): Get encoding from the transfer job.
+        * kwq/KWQKJobClasses.h:
+        * kwq/KWQKJobClasses.mm:
+        (KIO::TransferJobPrivate::TransferJobPrivate): Added retrievedCharset
+	flag.
+        (KIO::TransferJob::retrieveCharset): New method, gets the charset
+	from the response.
+        (KIO::TransferJob::queryMetaData): Handle charset.
+        (KIO::TransferJob::emitReceivedResponse): Clear retreivedCharset flag.
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQResponseTextEncodingName): New function, gets the encoding from the response.
+
 2004-08-23  David Hyatt  <hyatt@apple.com>
 
 	Apply leo's fix to marquees.

@@ -49,7 +49,8 @@ public:
 	, loader(nil)
 	, method("GET")
 	, response(0)
-	, assembledResponseHeaders(true)
+        , assembledResponseHeaders(true)
+        , retrievedCharset(true)
     {
     }
 
@@ -62,6 +63,7 @@ public:
 	, postData(_postData)
 	, response(0)
 	, assembledResponseHeaders(true)
+        , retrievedCharset(true)
     {
     }
 
@@ -81,6 +83,7 @@ public:
 
     void *response;
     bool assembledResponseHeaders;
+    bool retrievedCharset;
     QString responseHeaders;
 };
 
@@ -138,7 +141,17 @@ void TransferJob::assembleResponseHeaders() const
 	d->responseHeaders = QString::fromNSString((NSString *)KWQResponseHeaderString(d->response));
 	d->assembledResponseHeaders = true;
     }
+}
 
+void TransferJob::retrieveCharset() const
+{
+    if (!d->retrievedCharset) {
+        NSString *charset = (NSString *)KWQResponseTextEncodingName(d->response);
+        if (charset) {
+            [d->metaData setObject:charset forKey:@"charset"];
+        }
+        d->retrievedCharset = true;
+    }
 }
 
 QString TransferJob::queryMetaData(const QString &key) const
@@ -146,6 +159,11 @@ QString TransferJob::queryMetaData(const QString &key) const
     if (key == "HTTP-Headers") {
 	assembleResponseHeaders();
 	return d->responseHeaders;
+    } 
+
+    if (key == "charset") {
+        // this will put it in the regular metadata dictionary
+        retrieveCharset();
     }
 
     NSString *value = [d->metaData objectForKey:key.getNSString()]; 
@@ -212,6 +230,7 @@ void TransferJob::emitResult()
 void TransferJob::emitReceivedResponse(void *response)
 {
     d->assembledResponseHeaders = false;
+    d->retrievedCharset = false;
     d->response = response;
     KWQRetainResponse(d->response);
 
