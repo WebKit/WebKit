@@ -1,6 +1,22 @@
+2002-10-10  Darin Adler  <darin@apple.com>
+
+	- fixed 3069366 -- REGRESSION: no pop-up window at inkfinder.com
+
+	The window now pops up, but it doesn't seem to work right. But I
+	think the window working right is a separate issue.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]): Make sure we
+	use the copy of the request that we're keeping around when we call
+	_setRequest on the data source, rather than the copy we're returning
+	which can be modified by WebFoundation. Also rearrange things so we're
+	more likely to get things right when the delegate changes the URL on
+	the request.
+
 2002-10-10  Chris Blumenberg  <cblu@apple.com>
 
-	No need to send update event when activating/deactivating. This was as old workaround for the plug-in drawing problems.
+	No need to send update event when activating/deactivating.
+	This was as old workaround for the plug-in drawing problems.
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
         (-[WebBaseNetscapePluginView windowBecameKey:]):

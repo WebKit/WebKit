@@ -197,7 +197,14 @@
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)newRequest
 {
-    WebController *controller = [dataSource controller];
+    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
+
+    // Let the resourceProgressDelegate get a crack at modifying the request.
+    if (resourceProgressDelegate)
+        newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
+    
+    ASSERT(newRequest != nil);
+
     NSURL *URL = [newRequest URL];
 
     LOG(Redirect, "URL = %@", URL);
@@ -205,12 +212,12 @@
     // FIXME: need to update main document URL here, or cookies set
     // via redirects might not work in main document mode
 
-    [newRequest setUserAgent:[controller userAgentForURL:URL]];
+    WebResourceRequest *copy = [newRequest copy];
 
     // Don't set this on the first request.  It is set
     // when the main load was started.
     if (request)
-        [dataSource _setRequest:newRequest];
+        [dataSource _setRequest:copy];
 
     // Not the first send, so reload.
     if (request) {
@@ -218,15 +225,8 @@
         [self didStartLoadingWithURL:URL];
     }
 
-    // Let the resourceProgressDelegate get a crack at modifying the request.
-    if (resourceProgressDelegate)
-        newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
-
-    ASSERT (newRequest != nil);
-
-    WebResourceRequest *oldRequest = request;
-    request = [newRequest copy];
-    [oldRequest release];
+    [request release];
+    request = copy;
         
     return newRequest;
 }
