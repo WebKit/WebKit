@@ -112,6 +112,9 @@
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
+	int contentLength = [sender contentLength];
+	int contentLengthReceived = [sender contentLengthReceived];
+	
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     
     // Check the mime type and ask the client for the content policy.
@@ -146,12 +149,19 @@
         [sender cancelLoadInBackground];
     }
     
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [sender contentLengthReceived], [sender contentLength]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", contentLengthReceived, contentLength);
+    
+    // Don't send the last progress message, it will be sent via
+    // IFURLHandleResourceDidFinishLoading
+    if (contentLength == contentLengthReceived &&
+    	contentLength != -1){
+    	return;
+    }
     
     // update progress
     IFLoadProgress *loadProgress = [[IFLoadProgress alloc] init];
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
+    loadProgress->totalToLoad = contentLength;
+    loadProgress->bytesSoFar = contentLengthReceived;
     [(IFBaseWebController *)[dataSource controller] _mainReceivedProgress: (IFLoadProgress *)loadProgress 
         forResource: [[sender url] absoluteString] fromDataSource: dataSource];
     [loadProgress release];

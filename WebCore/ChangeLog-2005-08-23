@@ -1,3 +1,11 @@
+2002-05-16  Richard J. Williamson  <rjw@apple.com>
+
+	Fixed 2925638.  Don't send last progress message from resourceDataDidBecomeAvailable,
+	it is sent from IFURLHandleResourceDidFinishLoading, avoiding duplication.
+	
+	* kwq/KWQKloader.mm:
+	(-[URLLoadClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+
 2002-05-15  Richard J. Williamson  <rjw@apple.com>
     
     Alerts, useful for validating that js handlers work.

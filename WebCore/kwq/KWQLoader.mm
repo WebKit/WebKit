@@ -1082,6 +1082,8 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data
 {
     void *userData;
+	int contentLength = [sender contentLength];
+	int contentLengthReceived = [sender contentLengthReceived];
     
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
@@ -1092,11 +1094,18 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 
+    // Don't send the last progress message, it will be sent via
+    // IFURLHandleResourceDidFinishLoading
+    if (contentLength == contentLengthReceived &&
+    	contentLength != -1){
+    	return;
+    }
+    
     id controller;
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
-    loadProgress->totalToLoad = [sender contentLength];
-    loadProgress->bytesSoFar = [sender contentLengthReceived];
+    loadProgress->totalToLoad = contentLength;
+    loadProgress->bytesSoFar = contentLengthReceived;
     
     controller = [m_dataSource controller];
     [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];

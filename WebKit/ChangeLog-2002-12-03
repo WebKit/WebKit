@@ -1,5 +1,13 @@
 2002-05-16  Richard J. Williamson  <rjw@apple.com>
 
+	Fixed 2925638.  Don't send last progress message from resourceDataDidBecomeAvailable,
+	it is sent from IFURLHandleResourceDidFinishLoading, avoiding duplication.
+	
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+
+2002-05-16  Richard J. Williamson  <rjw@apple.com>
+
 	Fix to fix for 0x7f to 0xa0.  I was being overly aggressive about
 	finding substitute glyphs.
 	
