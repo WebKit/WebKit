@@ -1,8 +1,13 @@
-2002-06-04  Darin Adler  <darin@apple.com>
+ut 2002-06-04  Darin Adler  <darin@apple.com>
+
+	- fixed 2932862 -- exception -[NSCFArray getObjects:range:]: index (137)
+	beyond bounds (10)
 
 	* WebView.subproj/IFWebViewPrivate.mm:
 	(-[IFWebView _stopPlugins]):
 	(-[IFWebView _removeSubviews]):
+	Make a copy of the subviews list so that changes to the list don't screw
+	up the iterating logic.
 
 2002-06-04  John Sullivan  <sullivan@apple.com>
 
