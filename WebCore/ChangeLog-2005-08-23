@@ -1,5 +1,19 @@
 2005-01-10  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3946852> Option-e goes to next line
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Tweak case used to determine when merging content
+        into the start line is done. We plan to change pretty substantially soon to better handle
+        the problem described in <rdar://problem/3937352> Quote level not maintained when copied 
+        and pasted within a Mail message. In the meantime, this change does no harm, and fixes the bug.
+
+2005-01-10  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Fix for this bug:
