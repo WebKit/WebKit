@@ -143,7 +143,7 @@ long HTMLFormElementImpl::length() const
 }
 
 #if APPLE_CHANGES
-void HTMLFormElementImpl::performSubmitClick()
+void HTMLFormElementImpl::submitClick()
 {
     bool submitFound = false;
     QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
@@ -162,7 +162,7 @@ void HTMLFormElementImpl::performSubmitClick()
                     element->dispatchMouseEvent(&e2, EventImpl::KHTML_CLICK_EVENT);
                 }
                 else {
-                    static_cast<QButton *>(static_cast<RenderWidget *>(element->renderer())->widget())->simulateClick();
+                    static_cast<QButton *>(static_cast<RenderWidget *>(element->renderer())->widget())->click();
                 }
                 break;
             }
@@ -1729,7 +1729,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
             case SUBMIT:
                 // simulate mouse click for spacebar, return, and enter
                 if (key == "U+000020" || key == "U+00000d" || key == "Enter") {
-                    m_form->performSubmitClick();
+                    m_form->submitClick();
                     evt->setDefaultHandled();
                 }
                 break;
@@ -1738,7 +1738,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                 // for return or enter, find the first successful image or submit element 
                 // send it a simulated mouse click
                 if (key == "U+00000d" || key == "Enter") {
-                    m_form->performSubmitClick();
+                    m_form->submitClick();
                     evt->setDefaultHandled();
                 }
                 break;
@@ -1751,7 +1751,7 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
                 QWidget *widget = static_cast<RenderWidget *>(m_render)->widget();
                 bool hasMarkedText = widget ? static_cast<QLineEdit *>(widget)->hasMarkedText() : false;
                 if (!hasMarkedText && (key == "U+00000d" || key == "Enter")) {
-                    m_form->performSubmitClick();
+                    m_form->submitClick();
                     evt->setDefaultHandled();
                 }
                 break;
@@ -2271,7 +2271,7 @@ void HTMLSelectElementImpl::defaultEventHandler(EventImpl *evt)
         DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();
         
         if (key == "U+00000d" || key == "Enter") {
-            m_form->performSubmitClick();
+            m_form->submitClick();
             evt->setDefaultHandled();
         }
     }

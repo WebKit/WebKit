@@ -41,7 +41,7 @@ public:
     void setWritingDirection(QPainter::TextDirection);
     
     virtual void clicked();
-    virtual void simulateClick();
+    virtual void click();
 
     // QWidget overrides
     virtual void setFont(const QFont &);

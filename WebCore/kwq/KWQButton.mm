@@ -47,7 +47,6 @@
 
 - (id)initWithQButton:(QButton *)b;
 - (void)sendConsumedMouseUpIfNeeded;
-- (void)simulateClick;
 
 @end
 
@@ -87,11 +86,6 @@
             button->sendConsumedMouseUp();
         }
     } 
-}
-
--(void)simulateClick
-{
-    [self performClick:self];
 }
 
 -(void)mouseDown:(NSEvent *)event
@@ -278,12 +272,12 @@ void QButton::clicked()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QButton::simulateClick()
+void QButton::click()
 {
     KWQ_BLOCK_EXCEPTIONS;
 
     KWQButton *button = (KWQButton *)getView();
-    [button simulateClick];
+    [button performClick:nil];
 
     KWQ_UNBLOCK_EXCEPTIONS;
 }

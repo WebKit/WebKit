@@ -96,7 +96,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
             if (k->qKeyEvent()) {
                 k->qKeyEvent()->accept();
                 evt->setDefaultHandled();
-                performClick();
+                click();
                 return;
             }
         }
@@ -189,7 +189,7 @@ void HTMLAnchorElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLAnchorElementImpl::performClick()
+void HTMLAnchorElementImpl::click()
 {
     int x = 0;
     int y = 0;

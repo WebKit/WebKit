@@ -1,3 +1,32 @@
+2003-11-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+	Fix for this bug:
+
+	<rdar://problem/3480173>: Too many names for programmatic click functions
+
+	Changed all instances of performClick() and simulateClick() to click().
+	Changed all instances of performSubmitClick() to submitClick().
+
+	Additionally, KWQButton had a simulateClick method, which was redundant
+	given that its superclass has a performClick: method.
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::submitClick):
+        (HTMLInputElementImpl::defaultEventHandler):
+        (HTMLSelectElementImpl::defaultEventHandler):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::defaultEventHandler):
+        (HTMLAnchorElementImpl::click):
+        * khtml/html/html_inlineimpl.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::slotReturnPressed):
+        * kwq/KWQButton.h:
+        * kwq/KWQButton.mm:
+        (QButton::click):
+
 2003-11-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
