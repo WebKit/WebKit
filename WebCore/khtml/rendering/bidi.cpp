@@ -1133,37 +1133,36 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
 #endif
 
     // eliminate spaces at beginning of line
-    if(!m_pre) {
         // remove leading spaces
-        while(!start.atEnd() &&
+    while(!start.atEnd() && start.obj->style()->whiteSpace() != PRE &&
 #ifndef QT_NO_UNICODETABLES
-            ( start.direction() == QChar::DirWS || start.obj->isSpecial() )
+          ( start.direction() == QChar::DirWS || start.obj->isSpecial() )
 #else
-            ( start.current() == ' ' || start.obj->isSpecial() )
+          ( start.current() == ' ' || start.obj->isSpecial() )
 #endif
-            ) {
-            if( start.obj->isSpecial() ) {
-                RenderObject *o = start.obj;
-                // add to special objects...
-                if(o->isFloating()) {
-                    insertSpecialObject(o);
-                    // check if it fits in the current line.
-                    // If it does, position it now, otherwise, position
-                    // it after moving to next line (in newLine() func)
-                    if (o->width()+o->marginLeft()+o->marginRight()+w+tmpW <= width) {
-                        positionNewFloats();
-                        width = lineWidth(m_height);
-                    }
-                } else if(o->isPositioned()) {
-                    o->containingBlock()->insertSpecialObject(o);
+          ) {
+        if( start.obj->isSpecial() ) {
+            RenderObject *o = start.obj;
+            // add to special objects...
+            if(o->isFloating()) {
+                insertSpecialObject(o);
+                // check if it fits in the current line.
+                // If it does, position it now, otherwise, position
+                // it after moving to next line (in newLine() func)
+                if (o->width()+o->marginLeft()+o->marginRight()+w+tmpW <= width) {
+                    positionNewFloats();
+                    width = lineWidth(m_height);
                 }
+            } else if(o->isPositioned()) {
+                o->containingBlock()->insertSpecialObject(o);
             }
-    
-            adjustEmbeddding = true;
-            ++start;
-            adjustEmbeddding = false;
         }
+
+        adjustEmbeddding = true;
+        ++start;
+        adjustEmbeddding = false;
     }
+    
     if ( start.atEnd() ){
         return start;
     }
@@ -1405,7 +1404,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
         } else
             KHTMLAssert( false );
 
-        if( w + tmpW > width+1 && o->style()->whiteSpace() != NOWRAP ) {
+        if( w + tmpW > width+1 && o->style()->whiteSpace() == NORMAL ) {
             //kdDebug() << " too wide w=" << w << " tmpW = " << tmpW << " width = " << width << endl;
             //kdDebug() << "start=" << start.obj << " current=" << o << endl;
             // if we have floats, try to get below them.
