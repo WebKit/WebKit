@@ -1,5 +1,14 @@
 2003-09-30  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3428262>: Plugin loads for static files, but not PHP scripts
+
+        Reviewed by rjw.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge frameRequiredForMIMEType:]): load the plug-in DB so this method returns reliable results.
+
+2003-09-30  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3006869>: show image dimensions in title bar when single image is loaded
 
         Reviewed by rjw.
