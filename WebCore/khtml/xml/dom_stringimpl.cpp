@@ -296,4 +296,32 @@ DOMStringImpl *DOMStringImpl::capitalize()
     return c;
 }
 
+int DOMStringImpl::toInt(bool *ok) const
+{
+    unsigned i = 0;
+
+    // Allow leading spaces.
+    for (; i != l; ++i) {
+        if (!s[i].isSpace()) {
+            break;
+        }
+    }
+    
+    // Allow sign.
+    if (i != l) {
+        if (s[i] == '+' || s[i] == '-') {
+            ++i;
+        }
+    }
+    
+    // Allow digits.
+    for (; i != l; ++i) {
+        if (!s[i].isDigit()) {
+            break;
+        }
+    }
+    
+    return QConstString(s, i).string().toInt(ok);
+}
+
 } // namespace DOM

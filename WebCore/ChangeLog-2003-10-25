@@ -1,3 +1,22 @@
+2003-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3194451 -- Textarea COLS='40.0' displays with width of 0
+
+        * khtml/xml/dom_stringimpl.h: Changed toInt to not be inline any more.
+        It was already really too big for inline to be a good optimization.
+        * khtml/xml/dom_stringimpl.cpp: (DOMStringImpl::toInt): Rewrote this to
+        find the valid characters at the start of the string, rather than strip
+        invalid characters from the end. The old code would strip non-digits from
+        the end, which doesn't help with a string like "40.0" or even "40 garbage3".
+
+        - fixed a bit of int/long sloppiness
+        
+        * kwq/KWQString.mm:
+        (QString::toLong): Use LONG_MAX, not INT_MAX.
+        (QString::toULong): Use ULONG_MAX, not UINT_MAX.
+
 2003-03-12  Richard Williamson   <rjw@apple.com>
 
         Fixed leak of RenderRoot.
@@ -38,7 +57,7 @@
 
 	Don't crash on an input element with no enclosing form.
 
-        * kwq/WebCoreBrid
+        * kwq/WebCoreBridge.mm:
        (-[WebCoreBridge formForElement:]):  Gracefully bail on !form.
 
 2003-03-11  David Hyatt  <hyatt@apple.com>

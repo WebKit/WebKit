@@ -1471,7 +1471,7 @@ long QString::toLong(bool *ok, int base) const
     const QChar *p = unicode();
     long val=0;
     int l = dataHandle[0]->_length;
-    const long max_mult = INT_MAX / base;
+    const long max_mult = LONG_MAX / base;
     bool is_ok = FALSE;
     int neg = 0;
     if ( !p )
@@ -1501,7 +1501,7 @@ long QString::toLong(bool *ok, int base) const
 	    else
 		dv = *p - 'A' + 10;
 	}
-	if ( val > max_mult || (val == max_mult && dv > (INT_MAX%base)+neg) )
+	if ( val > max_mult || (val == max_mult && dv > (LONG_MAX % base)+neg) )
 	    goto bye;
 	val = base*val + dv;
 	p++;
@@ -1523,7 +1523,7 @@ ulong QString::toULong(bool *ok, int base) const
     const QChar *p = unicode();
     ulong val=0;
     int l = dataHandle[0]->_length;
-    const ulong max_mult = UINT_MAX / base;
+    const ulong max_mult = ULONG_MAX / base;
     bool is_ok = FALSE;
     if ( !p )
 	goto bye;
@@ -1546,7 +1546,7 @@ ulong QString::toULong(bool *ok, int base) const
 	    else
 		dv = *p - 'A' + 10;
 	}
-	if ( val > max_mult || (val == max_mult && dv > (UINT_MAX%base)) )
+	if ( val > max_mult || (val == max_mult && dv > (ULONG_MAX % base)) )
 	    goto bye;
 	val = base*val + dv;
 	p++;
