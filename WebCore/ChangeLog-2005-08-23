@@ -1,5 +1,20 @@
 2003-08-28  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3381377, fix the calcBlockMinMaxWidth function to not use the
+	renderobject's computed margins except when it has to.  This makes
+	table cells with align=right not mess up and fixes margin problems
+	in general with floated elements and table cells.
+
+	Since XUL boxes also use a similar function and since it had a similar
+	error, vertical XUL boxes have been patched as well.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_flexbox.cpp:
+
+2003-08-28  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3398463, a regression caused by an unintended line movement.
 	<br/> was no longer being treated just like <br> in HTML.
 	

@@ -159,52 +159,40 @@ void RenderFlexibleBox::calcVerticalMinMaxWidth()
     RenderObject *child = firstChild();
     while(child != 0)
     {
-        // positioned children don't affect the minmaxwidth
-        if (child->isPositioned() || child->style()->visibility() == COLLAPSE)
-        {
+        // Positioned children and collapsed children don't affect the min/max width
+        if (child->isPositioned() || child->style()->visibility() == COLLAPSE) {
             child = child->nextSibling();
             continue;
         }
 
-        int margin=0;
-        //  auto margins don't affect minwidth
-
         Length ml = child->style()->marginLeft();
         Length mr = child->style()->marginRight();
 
-        if (style()->textAlign() == KHTML_CENTER)
-        {
-            if (ml.type==Fixed) margin+=ml.value;
-            if (mr.type==Fixed) margin+=mr.value;
-        }
-        else
-        {
-            // Call calcWidth on the child to ensure that our margins are
-            // up to date.  This method can be called before the child has actually
-            // calculated its margins (which are computed inside calcWidth).
-            child->calcWidth();
+        // Call calcWidth on the child to ensure that our margins are
+        // up to date.  This method can be called before the child has actually
+        // calculated its margins (which are computed inside calcWidth).
+        if (ml.type == Percent || mr.type == Percent)
+            calcWidth();
 
-            if (!(ml.type==Variable) && !(mr.type==Variable))
-            {
-                if (!(child->style()->width().type==Variable))
-                {
-                    if (child->style()->direction()==LTR)
-                        margin = child->marginLeft();
-                    else
-                        margin = child->marginRight();
-                }
-                else
-                    margin = child->marginLeft()+child->marginRight();
+        // A margin basically has three types: fixed, percentage, and auto (variable).
+        // Auto margins simply become 0 when computing min/max width.
+        // Fixed margins can be added in as is.
+        // Percentage margins are computed as a percentage of the width we calculated in
+        // the calcWidth call above.  In this case we use the actual cached margin values on
+        // the RenderObject itself.
+        int margin = 0;
+        if (ml.type == Fixed)
+            margin += ml.value;
+        else if (ml.type == Percent)
+            margin += child->marginLeft();
 
-            }
-            else if (!(ml.type == Variable))
-                margin = child->marginLeft();
-            else if (!(mr.type == Variable))
-                margin = child->marginRight();
-        }
+        if (mr.type == Fixed)
+            margin += mr.value;
+        else if (mr.type == Percent)
+            margin += child->marginRight();
 
-        if (margin<0) margin=0;
-
+        if (margin < 0) margin = 0;
+        
         int w = child->minWidth() + margin;
         if(m_minWidth < w) m_minWidth = w;
         
