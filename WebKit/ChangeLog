@@ -1,3 +1,14 @@
+2003-07-14  Darin Adler  <darin@apple.com>
+
+        Rolled out workaround to bug 3298153 -- get "screen font while printing"
+        error, bad stuff happens after that (Sherlock, Safari). It turns out the
+        real fix was on the WebCore side. Now that we have that fix we don't need
+        these extra calls to printerFont, which is a relatively slow call that
+        may need to look up a font by name each time it's called.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: (_drawGlyphs):
+        Remove code to look up the printer font.
+
 2003-07-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Rolled in fix from Safari-89-branch

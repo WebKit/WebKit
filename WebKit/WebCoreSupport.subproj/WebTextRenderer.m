@@ -649,14 +649,7 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         [gBuffer addGlyphs: glyphs advances: advances count: numGlyphs at: x : y];
     }
     else {
-        NSGraphicsContext *graphicsContext = [NSGraphicsContext currentContext];
-        cgContext = (CGContextRef)[graphicsContext graphicsPort];
-        
-        // Force use of printer font when printing.
-        if ([graphicsContext isDrawingToScreen] == NO){
-            font = [font printerFont];
-        }
-            
+        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
         // Setup the color and font.
         [color set];
         [font set];
