@@ -28,7 +28,6 @@ MMOBJECTS = \
     KWQButton.o \
     KWQCString.o \
     KWQChar.o \
-    KWQCharsets.o \
     KWQCheckBox.o \
     KWQColor.o \
     KWQColorGroup.o \
@@ -129,15 +128,22 @@ MMOBJECTS = \
     KWQxml.o \
     _KWQOwner.o \
     kwqdebug.o \
+    WKPlugin.o \
+    WKPluginView.o \
+    WKPluginDatabase.o \
+    KWQPlugin.o \
     $(NULL)
 
+COBJECTS = \
+    npapi.o \
+    $(NULL)
+        
 MOBJECTS = \
 	$(NULL)
 
-
 EXPORT_HEADERS = $(HEADERS)
 
-OBJECTS = $(MMOBJECTS) $(MOBJECTS)
+OBJECTS = $(MMOBJECTS) $(MOBJECTS) $(COBJECTS)
 EXPORT_OBJECTS = $(OBJECTS)
 
 EXPORT_HEADERS_DIR = $(TOPSRCDIR)/WebCore/include/private
@@ -191,6 +197,17 @@ CMFLAGS = $(BASECMFLAGS) \
     -I. \
     $(NULL)
 
+CFLAGS = $(BASECFLAGS) \
+    -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/WebCore/include \
+    -I$(TOPSRCDIR)/WebCore/src/kdelibs/khtml \
+    -I$(TOPSRCDIR)/WebCore/src/kwq \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/qt \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kde \
+    -I$(TOPSRCDIR)/WebCore/src/kwq/kdecore \
+    -I. \
+    $(NULL)
+
 DEPFLAGS = $(CMFLAGS)
 
 #----------------------------------------------------------------------
@@ -201,33 +218,6 @@ all: $(OBJECTS) export-headers export-objects
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(OBJECTS)
 	$(RANLIB) $(LIBRARY)
-
-make-mac-encodings: make-mac-encodings.o
-	$(CC) -o $@ $< $(LDFLAGS) -framework CoreFoundation
-
-mac-encodings.txt: make-mac-encodings
-	./make-mac-encodings $@
-
-KWQCharsetData.c: make-charset-table.pl character-sets.txt mac-encodings.txt
-	./make-charset-table.pl character-sets.txt mac-encodings.txt KWQCharsetData.c 
-
-KWQCharsets.o: KWQCharsetData.c
-
-CHARSET_FILES = make-mac-encodings \
-	 make-mac-encodings.o \
-	mac-encodings.txt \
-	KWQCharsetData.c \
-	$(NULL)
-
-KWQCharsets.o: KWQCharsetData.c
-
-#----------------------------------------------------------------------
-#
-
-CLEAN_FILES = $(OBJECTS) \
-	$(LIBRARY) \
-	$(CHARSET_FILES) \
-	$(NULL)
 
 #----------------------------------------------------------------------
 # include make rules boilerplate

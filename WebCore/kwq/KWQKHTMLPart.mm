@@ -52,7 +52,10 @@
 #import <WCURICache.h>
 #import <WCURICacheData.h>
 
-//#import <WKPluginDatabase.h>
+#import <WKPluginDatabase.h>
+#include <npapi.h>
+#include <KWQPlugin.h>
+#include <rendering/render_frames.h>
 
 #import <KWQView.h>
 
@@ -200,6 +203,7 @@ KHTMLPart::~KHTMLPart()
 {
     delete d;
     _logNotYetImplemented();
+    NSLog(@"destructing KHTMLPart");
 }
 
 static NSString *
@@ -1392,7 +1396,24 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
                     const QStringList &args)
 {
-    //[WKPluginDatabase installedPlugins];
+    WKPlugin *plugin;
+    //KWQPlugin pluginWidget;
+    NPP_t instance;
+    
+    if(url.isEmpty() || serviceType.isEmpty()){
+        return FALSE;
+    }
+
+    plugin = [[WKPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
+    if(plugin == nil){
+        return FALSE;
+    }
+    [plugin load];
+    [plugin newInstance:&instance withType:QSTRING_TO_NSSTRING(serviceType) withMode:NP_EMBED withArguments:nil withValues:nil];
+    [plugin destroyInstance:&instance]; // this needs to be moved 
+    
+    //frame->setWidget(&pluginWidget);
+
     return FALSE;
 }
 
