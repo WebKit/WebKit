@@ -936,13 +936,6 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         else {
             [NSBezierPath fillRect:NSMakeRect(startX, yPos, backgroundWidth, height)];
         }
-
-        // Draw the extra rectangles on either side of the selection to mimic Cocoa behavior.
-        if (geometry->selectionMinX != geometry->point.x) {
-            [NSBezierPath fillRect:NSMakeRect(geometry->selectionMinX, yPos, geometry->point.x - geometry->selectionMinX, height)];
-        }
-        if (geometry->selectionMaxX != geometry->point.x)
-            [NSBezierPath fillRect:NSMakeRect(startX + backgroundWidth, yPos, geometry->selectionMaxX - (startX + backgroundWidth), height)];
     }
 }
 
@@ -1544,13 +1537,6 @@ static WebCoreTextRun reverseCharactersInRun(const WebCoreTextRun *run)
     else {
         [NSBezierPath fillRect:NSMakeRect(selectedLeftX, yPos, backgroundWidth, height)];
     }
-
-    // Draw the extra rectangles on either side of the selection to mimic Cocoa behavior.
-    if (geometry->selectionMinX != geometry->point.x) {
-        [NSBezierPath fillRect:NSMakeRect(geometry->selectionMinX, yPos, geometry->point.x - geometry->selectionMinX, height)];
-    }
-    if (geometry->selectionMaxX != geometry->point.x)
-        [NSBezierPath fillRect:NSMakeRect(selectedLeftX + backgroundWidth, yPos, geometry->selectionMaxX - (selectedLeftX + backgroundWidth), height)];
 
     ATSUDisposeTextLayout (layout); // Ignore the error.  Nothing we can do anyway.
 

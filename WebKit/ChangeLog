@@ -1,3 +1,14 @@
+2004-10-05  David Hyatt  <hyatt@apple.com>
+
+	Fix to make selection more like NSTextView.  All gap painting is now done by WebCore, so WebKit no longer
+	needs to try to fill gaps around text.
+	
+        Reviewed by kocienda
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _CG_drawHighlightForRun:style:geometry:]):
+        (-[WebTextRenderer _ATSU_drawHighlightForRun:style:geometry:]):
+
 2004-10-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
