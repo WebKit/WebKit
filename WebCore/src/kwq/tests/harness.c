@@ -128,9 +128,9 @@ int runtest(const char *test) {
     int chklen;
     struct stat buf;
     int pad;
-    int result;
+    int status;
 
-    result = 0;
+    status = 0;
 
     strcpy(chkname, test);
     strcat(chkname, ".chk");
@@ -174,7 +174,7 @@ int runtest(const char *test) {
             close(fd);
 
             /* exec test file */
-            result = execl(test, test, NULL);
+            execl(test, test, NULL);
 
             fprintf(stderr, "exec of %s failed\n", test);
             exit(1);
@@ -186,14 +186,20 @@ int runtest(const char *test) {
     }
 
     /* Wait for child to complete before returning */
-    while (wait(NULL) != pid) {}  /* empty loop */
+    while (wait(&status) != pid) {}  /* empty loop */
+    if (WIFEXITED(status)) {
+        status = WEXITSTATUS(status);
+    }
+    else {
+        status = -1;
+    }
 
     /* collect result and check output from files */    
     outlen = getfile(outname, &out);
     chklen = getfile(chkname, &chk);
         
     /* compare output with expected result */
-    if (result != 0) {
+    if (status != 0) {
         no++;
         printf("fail [exit code]\n");
     }
@@ -204,7 +210,7 @@ int runtest(const char *test) {
     else if (memcmp(out, chk, chklen) != 0) {
         no++;
          printf("fail [!= output]\n");
-   } 
+    } 
     else {
         ok++;
         printf(".ok\n");
