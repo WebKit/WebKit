@@ -26,8 +26,9 @@
 #ifndef BROWSEREXTENSION_H_
 #define BROWSEREXTENSION_H_
 
-#include <qpoint.h>
 #include <qevent.h>
+#include <qmap.h>
+#include <qpoint.h>
 
 #include <kurl.h>
 
@@ -41,11 +42,22 @@ namespace KParts {
 struct URLArgs {
 
     QString frameName;
+    QByteArray postData;
+    bool reload;
     QString serviceType;
     int xOffset;
     int yOffset;
 
     URLArgs() : xOffset(0), yOffset(0) { }
+    
+    QString contentType() const { return QString::null; }
+    bool doPost() const { return false; }
+    
+    QMap<QString, QString> &metaData() { return m_metadata; }
+    void setLockHistory(bool) { }
+
+private:
+    QMap<QString, QString> m_metadata;
 
 };
 
@@ -72,7 +84,7 @@ struct WindowArgs {
 
 class BrowserExtension : public QObject {
 public:
-     BrowserExtension() {}
+     BrowserExtension() { }
      BrowserInterface *browserInterface() const { return 0; }
      
      virtual void openURLRequest(const KURL &, const KParts::URLArgs &args = KParts::URLArgs()) = 0;

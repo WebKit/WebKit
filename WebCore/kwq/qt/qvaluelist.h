@@ -87,6 +87,7 @@ private:
     friend class QValueList<T>;
 };
 
+template<class T> bool operator==(const QValueList<T> &a, const QValueList<T> &b);
 
 template <class T> class QValueList {
 public:
@@ -118,8 +119,10 @@ public:
 
     T& operator[] (uint index) { return ((QValueListNode<T> *)impl.nodeAt(index))->value; }
     const T& operator[] (uint index) const { return ((const QValueListNode<T> *)impl.nodeAt(index))->value; }
-    QValueList &operator+=(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
-    QValueList &operator<<(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; } 
+    QValueList &operator+=(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; }
+    QValueList &operator<<(const T &value) { impl.appendNode(new QValueListNode<T>(value)); return *this; }
+    
+    friend bool operator==<>(const QValueList<T> &, const QValueList<T> &);
     
 private:
     KWQValueListImpl impl;
@@ -130,6 +133,12 @@ private:
     static KWQValueListNodeImpl *copyNode(KWQValueListNodeImpl *node)
         { return new QValueListNode<T>(((QValueListNode<T> *)node)->value); }
 };
+
+template<class T>
+inline bool operator==(const QValueList<T> &a, const QValueList<T> &b)
+{
+    return a.impl.isEqual(b.impl, QValueList<T>::nodesEqual);
+}
 
 #ifdef _KWQ_IOSTREAM_
 

@@ -1,42 +1,45 @@
 /*        
         WebPreferences.mm
-        Copyright 2001, Apple, Inc. All rights reserved.
+        Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
+
 #import "WebPreferences.h"
 
+#import <WebCore/WebCoreSettings.h>
+
 // These are private because callers should be using the cover methods
-#define        WebKitLogLevelPreferenceKey                @"WebKitLogLevel"
-#define        WebKitStandardFontPreferenceKey                @"WebKitStandardFont"
-#define        WebKitFixedFontPreferenceKey                @"WebKitFixedFont"
-#define        WebKitSerifFontPreferenceKey                @"WebKitSerifFont"
-#define        WebKitSansSerifFontPreferenceKey        @"WebKitSansSerifFont"
-#define        WebKitCursiveFontPreferenceKey                @"WebKitCursiveFont"
-#define        WebKitFantasyFontPreferenceKey                @"WebKitFantasyFont"
-#define        WebKitMinimumFontSizePreferenceKey        @"WebKitMinimumFontSize"
-#define        WebKitDefaultFontSizePreferenceKey        @"WebKitDefaultFontSize"
-#define	       WebKitDefaultFixedFontSizePreferenceKey		 @"WebKitDefaultFixedFontSize"
-#define	       WebKitDefaultTextEncodingPreferenceKey	 @"WebKitDefaultTextEncoding"
-#define	       WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
-#define	       WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
-#define        WebKitJavaEnabledPreferenceKey                @"WebKitJavaEnabled"
-#define        WebKitJavaScriptEnabledPreferenceKey        @"WebKitJavaScriptEnabled"
-#define        WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey        @"WebKitJavaScriptCanOpenWindowsAutomatically"
-#define        WebKitPluginsEnabledPreferenceKey        @"WebKitPluginsEnabled"
-#define        WebKitInitialTimedLayoutDelayPreferenceKey        @"WebKitInitialTimedLayoutDelay"
-#define        WebKitInitialTimedLayoutSizePreferenceKey        @"WebKitInitialTimedLayoutSize"
-#define        WebKitInitialTimedLayoutEnabledPreferenceKey        @"WebKitInitialTimedLayoutEnabled"
-#define        WebKitResourceTimedLayoutEnabledPreferenceKey        @"WebKitResourceTimedLayoutEnabled"
-#define        WebKitResourceTimedLayoutDelayPreferenceKey        @"WebKitResourceTimedLayoutDelay"
-#define        WebKitAllowAnimatedImagesPreferenceKey        @"WebKitAllowAnimatedImagesPreferenceKey"
-#define        WebKitAllowAnimatedImageLoopingPreferenceKey        @"WebKitAllowAnimatedImageLoopingPreferenceKey"
-#define        WebKitDisplayImagesKey				@"WebKitDisplayImagesKey"
+#define WebKitLogLevelPreferenceKey @"WebKitLogLevel"
+#define WebKitStandardFontPreferenceKey @"WebKitStandardFont"
+#define WebKitFixedFontPreferenceKey @"WebKitFixedFont"
+#define WebKitSerifFontPreferenceKey @"WebKitSerifFont"
+#define WebKitSansSerifFontPreferenceKey @"WebKitSansSerifFont"
+#define WebKitCursiveFontPreferenceKey @"WebKitCursiveFont"
+#define WebKitFantasyFontPreferenceKey @"WebKitFantasyFont"
+#define WebKitMinimumFontSizePreferenceKey @"WebKitMinimumFontSize"
+#define WebKitDefaultFontSizePreferenceKey @"WebKitDefaultFontSize"
+#define WebKitDefaultFixedFontSizePreferenceKey @"WebKitDefaultFixedFontSize"
+#define WebKitDefaultTextEncodingPreferenceKey @"WebKitDefaultTextEncoding"
+#define WebKitUserStyleSheetEnabledPreferenceKey @"WebKitUserStyleSheetEnabledPreferenceKey"
+#define WebKitUserStyleSheetLocationPreferenceKey @"WebKitUserStyleSheetLocationPreferenceKey"
+#define WebKitJavaEnabledPreferenceKey @"WebKitJavaEnabled"
+#define WebKitJavaScriptEnabledPreferenceKey @"WebKitJavaScriptEnabled"
+#define WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey @"WebKitJavaScriptCanOpenWindowsAutomatically"
+#define WebKitPluginsEnabledPreferenceKey @"WebKitPluginsEnabled"
+#define WebKitInitialTimedLayoutDelayPreferenceKey @"WebKitInitialTimedLayoutDelay"
+#define WebKitInitialTimedLayoutSizePreferenceKey @"WebKitInitialTimedLayoutSize"
+#define WebKitInitialTimedLayoutEnabledPreferenceKey @"WebKitInitialTimedLayoutEnabled"
+#define WebKitResourceTimedLayoutEnabledPreferenceKey @"WebKitResourceTimedLayoutEnabled"
+#define WebKitResourceTimedLayoutDelayPreferenceKey @"WebKitResourceTimedLayoutDelay"
+#define WebKitAllowAnimatedImagesPreferenceKey @"WebKitAllowAnimatedImagesPreferenceKey"
+#define WebKitAllowAnimatedImageLoopingPreferenceKey @"WebKitAllowAnimatedImageLoopingPreferenceKey"
+#define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
 
 @implementation WebPreferences
 
-static WebPreferences *_standardPreferences = nil;
-
 + (WebPreferences *)standardPreferences
 {
+    static WebPreferences *_standardPreferences = nil;
+
     if (_standardPreferences == nil) {
         _standardPreferences = [[WebPreferences alloc] init];
     }
@@ -44,22 +47,38 @@ static WebPreferences *_standardPreferences = nil;
     return _standardPreferences;
 }
 
+- (void)_updateWebCoreSettings
+{
+    WebCoreSettings *settings = [WebCoreSettings sharedSettings];
+
+    [settings setCursiveFontFamily:[self cursiveFontFamily]];
+    [settings setDefaultFixedFontSize:[self defaultFixedFontSize]];
+    [settings setDefaultFontSize:[self defaultFontSize]];
+    [settings setFantasyFontFamily:[self fantasyFontFamily]];
+    [settings setFixedFontFamily:[self fixedFontFamily]];
+    [settings setJavaEnabled:[self JavaEnabled]];
+    [settings setJavaScriptEnabled:[self JavaScriptEnabled]];
+    [settings setJavaScriptCanOpenWindowsAutomatically:[self JavaScriptCanOpenWindowsAutomatically]];
+    [settings setMinimumFontSize:[self minimumFontSize]];
+    [settings setPluginsEnabled:[self pluginsEnabled]];
+    [settings setSansSerifFontFamily:[self sansSerifFontFamily]];
+    [settings setSerifFontFamily:[self serifFontFamily]];
+    [settings setStandardFontFamily:[self standardFontFamily]];
+    [settings setWillLoadImagesAutomatically:[self displayImages]];
+    
+    if ([self userStyleSheetEnabled]) {
+        [settings setUserStyleSheetLocation:[self userStyleSheetLocation]];
+    } else {
+        [settings setUserStyleSheetLocation:@""];
+    }
+}
+
 // if we ever have more than one WebPreferences object, this would move to init
 + (void)load
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
-    NSNumber *displayImages = [NSNumber numberWithBool:TRUE];
-    NSNumber *pluginsEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *userStyleSheetEnabled = [NSNumber numberWithBool:FALSE];
-    NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
-    NSNumber *javaScriptEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *javaScriptCanOpenWindows = [NSNumber numberWithBool:FALSE];
-    NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *allowAnimatedImages = [NSNumber numberWithBool:TRUE];
-    NSNumber *allowAnimatedImageLooping = [NSNumber numberWithBool:TRUE];
-    NSNumber *defaultTextEncoding = [NSNumber numberWithInt:(int)kCFStringEncodingWindowsLatin1];
+    NSNumber *latin1 = [NSNumber numberWithInt:(int)kCFStringEncodingWindowsLatin1];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0",                         WebKitLogLevelPreferenceKey,
@@ -72,24 +91,32 @@ static WebPreferences *_standardPreferences = nil;
         @"6",                           WebKitMinimumFontSizePreferenceKey,
         @"14",                          WebKitDefaultFontSizePreferenceKey,
         @"14", 				WebKitDefaultFixedFontSizePreferenceKey,
-	defaultTextEncoding, 		WebKitDefaultTextEncodingPreferenceKey,
+	latin1, 		        WebKitDefaultTextEncodingPreferenceKey,
         @"1.00",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.00",                        WebKitResourceTimedLayoutDelayPreferenceKey,
-        timedLayoutEnabled,             WebKitInitialTimedLayoutEnabledPreferenceKey,
-        resourceTimedLayoutEnabled,     WebKitResourceTimedLayoutEnabledPreferenceKey,
-        userStyleSheetEnabled,          WebKitUserStyleSheetEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitInitialTimedLayoutEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,
         @"",                    	WebKitUserStyleSheetLocationPreferenceKey,
-        javaEnabled,                    WebKitJavaEnabledPreferenceKey,
-        javaScriptEnabled,              WebKitJavaScriptEnabledPreferenceKey,
-        javaScriptCanOpenWindows,       WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
-        pluginsEnabled,                 WebKitPluginsEnabledPreferenceKey,
-        allowAnimatedImages,            WebKitAllowAnimatedImagesPreferenceKey,
-        allowAnimatedImageLooping,      WebKitAllowAnimatedImageLoopingPreferenceKey,
-        displayImages,			WebKitDisplayImagesKey,
+        [NSNumber numberWithBool:NO],   WebKitJavaEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitJavaScriptEnabledPreferenceKey,
+        [NSNumber numberWithBool:NO],   WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitPluginsEnabledPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImagesPreferenceKey,
+        [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
+        [NSNumber numberWithBool:YES],	WebKitDisplayImagesKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
+
+    [[NSNotificationCenter defaultCenter]
+        addObserver:[self standardPreferences]
+           selector:@selector(_updateWebCoreSettings)
+               name:NSUserDefaultsDidChangeNotification
+             object:[NSUserDefaults standardUserDefaults]];
+    
+    [[self standardPreferences] _updateWebCoreSettings];
 
     [pool release];
 }
@@ -102,6 +129,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setStandardFontFamily:(NSString *)family
 {
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitStandardFontPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (NSString *)fixedFontFamily
@@ -112,6 +140,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setFixedFontFamily:(NSString *)family
 {
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitFixedFontPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (NSString *)serifFontFamily
@@ -122,6 +151,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setSerifFontFamily:(NSString *)family
 {
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitSerifFontPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (NSString *)sansSerifFontFamily
@@ -132,6 +162,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setSansSerifFontFamily:(NSString *)family
 {
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitSansSerifFontPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (NSString *)cursiveFontFamily
@@ -142,6 +173,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setCursiveFontFamily:(NSString *)family
 {
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitCursiveFontPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (NSString *)fantasyFontFamily
@@ -152,6 +184,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setFantasyFontFamily:(NSString *)family
 {
     [[NSUserDefaults standardUserDefaults] setObject:family forKey:WebKitFantasyFontPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (int)defaultFontSize
@@ -162,6 +195,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setDefaultFontSize:(int)size
 {
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFontSizePreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (int)defaultFixedFontSize
@@ -172,6 +206,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setDefaultFixedFontSize:(int)size
 {
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitDefaultFixedFontSizePreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (int)minimumFontSize
@@ -182,6 +217,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setMinimumFontSize:(int)size
 {
     [[NSUserDefaults standardUserDefaults] setInteger:size forKey:WebKitMinimumFontSizePreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (CFStringEncoding)defaultTextEncoding
@@ -202,6 +238,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setUserStyleSheetEnabled:(BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitUserStyleSheetEnabledPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (NSString *)userStyleSheetLocation
@@ -212,9 +249,10 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setUserStyleSheetLocation:(NSString *)string
 {
     [[NSUserDefaults standardUserDefaults] setObject:string forKey:WebKitUserStyleSheetLocationPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
-- (BOOL)javaEnabled
+- (BOOL)JavaEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaEnabledPreferenceKey];
 }
@@ -222,9 +260,10 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setJavaEnabled:(BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaEnabledPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
-- (BOOL)javaScriptEnabled
+- (BOOL)JavaScriptEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaScriptEnabledPreferenceKey];
 }
@@ -232,9 +271,10 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setJavaScriptEnabled:(BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaScriptEnabledPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
-- (BOOL)javaScriptCanOpenWindowsAutomatically
+- (BOOL)JavaScriptCanOpenWindowsAutomatically
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
 }
@@ -242,6 +282,7 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
+    [self _updateWebCoreSettings];
 }
 
 - (BOOL)pluginsEnabled
@@ -252,8 +293,8 @@ static WebPreferences *_standardPreferences = nil;
 - (void)setPluginsEnabled:(BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitPluginsEnabledPreferenceKey];
+    [self _updateWebCoreSettings];
 }
-
 
 - (NSTimeInterval)_initialTimedLayoutDelay
 {
@@ -262,15 +303,13 @@ static WebPreferences *_standardPreferences = nil;
 
 - (int)_initialTimedLayoutSize
 {
-    int size = [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
-    return size;
+    return [[NSUserDefaults standardUserDefaults] integerForKey:WebKitInitialTimedLayoutDelayPreferenceKey];
 }
 
 - (BOOL)_initialTimedLayoutEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitInitialTimedLayoutEnabledPreferenceKey];
 }
-
 
 - (NSTimeInterval)_resourceTimedLayoutDelay
 {
@@ -281,7 +320,6 @@ static WebPreferences *_standardPreferences = nil;
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
 }
-
 
 - (BOOL)allowAnimatedImages
 {
@@ -303,10 +341,10 @@ static WebPreferences *_standardPreferences = nil;
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitAllowAnimatedImageLoopingPreferenceKey];
 }
 
-
 - (void)setDisplayImages: (BOOL)flag
 {
     [[NSUserDefaults standardUserDefaults] setBool:flag forKey:WebKitDisplayImagesKey];
+    [self _updateWebCoreSettings];
 }
 
 - (BOOL)displayImages

@@ -71,6 +71,8 @@ public:
     void setParent(QObject *parent) { m_parent = parent; }
     QObject *parent() const { return m_parent; }
     void setInstance(KInstance *, bool) { }
+    
+    virtual bool closeURL() = 0;
 
 private:
     QObject *m_parent;

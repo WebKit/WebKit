@@ -41,7 +41,6 @@
 #import <KWQDOMNode.h>
 #import <WebCoreImageRenderer.h>
 #import <WebCoreTextRendererFactory.h>
-#import <WebFoundation/WebNSURLExtras.h>
 #import <KWQCharsets.h>
 
 using DOM::DocumentImpl;
@@ -418,8 +417,7 @@ using khtml::RenderPart;
 
 - (NSURL *)completeURLForDOMString:(const DOMString &)s
 {
-    NSString *URLString = part->impl->document()->completeURL(s.string()).getNSString();
-    return [NSURL _web_URLWithString:URLString];
+    return KURL(part->impl->document()->completeURL(s.string())).getNSURL();
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

@@ -1,3 +1,36 @@
+2002-09-10  Darin Adler  <darin@apple.com>
+
+	WebKit part of weaning WebCore from getting directly at WebKit defaults.
+
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences _updateWebCoreSettings]): Added. Propagates all preferences
+	to WebCore. This way WebCore doesn't have to actively ask for the values
+	of preferences using defaults keys that are WebKit secrets.
+        (+[WebPreferences load]): Set up an observer that calls _updateWebCoreSettings
+	whenever NSUserDefaultsDidChangeNotification is posted.
+        (-[WebPreferences setStandardFontFamily:]): Call _updateWebCoreSettings right
+	away, don't wait for NSUserDefaultsDidChangeNotification.
+        (-[WebPreferences setFixedFontFamily:]): Ditto.
+        (-[WebPreferences setSerifFontFamily:]): Ditto.
+        (-[WebPreferences setSansSerifFontFamily:]): Ditto.
+        (-[WebPreferences setCursiveFontFamily:]): Ditto.
+        (-[WebPreferences setFantasyFontFamily:]): Ditto.
+        (-[WebPreferences setDefaultFontSize:]): Ditto.
+        (-[WebPreferences setDefaultFixedFontSize:]): Ditto.
+        (-[WebPreferences setMinimumFontSize:]): Ditto.
+        (-[WebPreferences setUserStyleSheetEnabled:]): Ditto.
+        (-[WebPreferences setUserStyleSheetLocation:]): Ditto.
+        (-[WebPreferences setJavaEnabled:]): Ditto.
+        (-[WebPreferences setJavaScriptEnabled:]): Ditto.
+        (-[WebPreferences setJavaScriptCanOpenWindowsAutomatically:]): Ditto.
+        (-[WebPreferences setPluginsEnabled:]): Ditto.
+        (-[WebPreferences setDisplayImages:]): Ditto.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge reportBadURL:]):
+	Add this method, which replaces reportError. Now WebCore doesn't use
+	WebFoundation directly at all! Pretty neat.
+
 2002-09-09  Richard Williamson (Home)  <rjw@apple.com>
 
         Implemented  disable images automatically (2896319).

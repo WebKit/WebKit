@@ -12,12 +12,13 @@
 #import <WebKit/WebHistoryItem.h>
 #import <WebKit/WebHTMLRepresentationPrivate.h>
 #import <WebKit/WebHTMLViewPrivate.h>
-#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebLoadProgress.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
 
+#import <WebFoundation/WebAssertions.h>
+#import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
@@ -292,12 +293,16 @@
     [attributes release];
 }
 
-- (void)reportError:(WebError *)error
+- (void)reportBadURL:(NSString *)badURL
 {
-    [[frame controller] _receivedError:error
+    WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
+                                                       inDomain:WebErrorDomainWebFoundation
+                                                     failingURL:badURL];
+    [[frame controller] _receivedError:badURLError
                      forResourceHandle:nil
                        partialProgress:nil
                         fromDataSource:[self dataSource]];
+    [badURLError release];
 }
 
 - (void)saveDocumentState: (NSArray *)documentState

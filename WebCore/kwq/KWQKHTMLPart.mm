@@ -36,8 +36,6 @@
 #import <WebCoreBridge.h>
 #import <WebCoreViewFactory.h>
 
-#import <WebFoundation/WebNSURLExtras.h>
-
 #import <KWQLogging.h>
 
 #undef _KWQ_TIMING
@@ -495,9 +493,9 @@ void KWQKHTMLPartImpl::jumpToSelection()
 void KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()
 {
     if (d->m_redirectionTimer.isActive()) {
-        [_bridge reportClientRedirectTo:[NSURL _web_URLWithString:d->m_redirectURL.getNSString()]
-                                 delay:d->m_delayRedirect
-                              fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]];
+        [_bridge reportClientRedirectTo:KURL(d->m_redirectURL).getNSURL()
+                                  delay:d->m_delayRedirect
+                               fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]];
     } else {
         [_bridge reportClientRedirectCancelled];
     }

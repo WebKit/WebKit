@@ -76,3 +76,10 @@ QString QStringList::join(const QString &separator) const
 
     return result;
 }
+
+QString QStringList::pop_front()
+{
+    QString front = first();
+    remove(begin());
+    return front;
+}

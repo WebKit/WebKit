@@ -435,6 +435,8 @@ static QString buildAcceptHeader()
     return result;
 }
 
+#endif // APPLE_CHANGES
+
 static bool crossDomain(const QString &a, const QString &b)
 {
     if (a == b) return false;
@@ -458,8 +460,6 @@ static bool crossDomain(const QString &a, const QString &b)
     }
     return true;
 }
-
-#endif // APPLE_CHANGES
 
 // -------------------------------------------------------------------------------------
 
@@ -1145,10 +1145,6 @@ void Loader::servePendingRequests()
   KURL u(req->object->url().string());
   KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/);
 
-#ifdef APPLE_CHANGES
-  if (KWQServeRequest(this, req, job))
-      m_requestsLoading.insert(job, req);
-#else
   job->addMetaData("cache", getCacheControlString(req->object->cachePolicy()));
   if (!req->object->accept().isEmpty())
       job->addMetaData("accept", req->object->accept());
@@ -1169,6 +1165,10 @@ void Loader::servePendingRequests()
   connect( job, SIGNAL( data( KIO::Job*, const QByteArray &)),
            SLOT( slotData( KIO::Job*, const QByteArray &)));
 
+#ifdef APPLE_CHANGES
+  if (KWQServeRequest(this, req, job))
+      m_requestsLoading.insert(job, req);
+#else
   if ( req->object->schedule() )
       KIO::Scheduler::scheduleJob( job );
 

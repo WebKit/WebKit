@@ -48,13 +48,13 @@
 - (NSString *)userStyleSheetLocation;
 - (void)setUserStyleSheetLocation:(NSString *)string;
 
-- (BOOL)javaEnabled;
+- (BOOL)JavaEnabled;
 - (void)setJavaEnabled:(BOOL)flag;
 
-- (BOOL)javaScriptEnabled;
+- (BOOL)JavaScriptEnabled;
 - (void)setJavaScriptEnabled:(BOOL)flag;
 
-- (BOOL)javaScriptCanOpenWindowsAutomatically;
+- (BOOL)JavaScriptCanOpenWindowsAutomatically;
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)flag;
 
 - (BOOL)pluginsEnabled;

@@ -48,11 +48,18 @@
     [super dealloc];
 }
 
+- (void)_updateAllViews
+{
+}
+
 - (void)setStandardFontFamily:(NSString *)s
 {
-    NSString *c = [s copy];
+    if ([standardFontFamily isEqualToString:s]) {
+        return;
+    }
     [standardFontFamily release];
-    standardFontFamily = c;
+    standardFontFamily = [s copy];
+    [self _updateAllViews];
 }
 
 - (NSString *)standardFontFamily
@@ -62,9 +69,12 @@
 
 - (void)setFixedFontFamily:(NSString *)s
 {
-    NSString *c = [s copy];
+    if ([fixedFontFamily isEqualToString:s]) {
+        return;
+    }
     [fixedFontFamily release];
-    fixedFontFamily = c;
+    fixedFontFamily = [s copy];
+    [self _updateAllViews];
 }
 
 - (NSString *)fixedFontFamily
@@ -74,9 +84,12 @@
 
 - (void)setSerifFontFamily:(NSString *)s
 {
-    NSString *c = [s copy];
+    if ([serifFontFamily isEqualToString:s]) {
+        return;
+    }
     [serifFontFamily release];
-    serifFontFamily = c;
+    serifFontFamily = [s copy];
+    [self _updateAllViews];
 }
 
 - (NSString *)serifFontFamily
@@ -86,9 +99,12 @@
 
 - (void)setSansSerifFontFamily:(NSString *)s
 {
-    NSString *c = [s copy];
+    if ([sansSerifFontFamily isEqualToString:s]) {
+        return;
+    }
     [sansSerifFontFamily release];
-    sansSerifFontFamily = c;
+    sansSerifFontFamily = [s copy];
+    [self _updateAllViews];
 }
 
 - (NSString *)sansSerifFontFamily
@@ -98,9 +114,12 @@
 
 - (void)setCursiveFontFamily:(NSString *)s
 {
-    NSString *c = [s copy];
+    if ([cursiveFontFamily isEqualToString:s]) {
+        return;
+    }
     [cursiveFontFamily release];
-    cursiveFontFamily = c;
+    cursiveFontFamily = [s copy];
+    [self _updateAllViews];
 }
 
 - (NSString *)cursiveFontFamily
@@ -110,9 +129,12 @@
 
 - (void)setFantasyFontFamily:(NSString *)s
 {
-    NSString *c = [s copy];
+    if ([fantasyFontFamily isEqualToString:s]) {
+        return;
+    }
     [fantasyFontFamily release];
-    fantasyFontFamily = c;
+    fantasyFontFamily = [s copy];
+    [self _updateAllViews];
 }
 
 - (NSString *)fantasyFontFamily
@@ -122,7 +144,11 @@
 
 - (void)setMinimumFontSize:(float)size
 {
+    if (minimumFontSize == size) {
+        return;
+    }
     minimumFontSize = size;
+    [self _updateAllViews];
 }
 
 - (float)minimumFontSize
@@ -132,7 +158,11 @@
 
 - (void)setDefaultFontSize:(float)size
 {
+    if (defaultFontSize == size) {
+        return;
+    }
     defaultFontSize = size;
+    [self _updateAllViews];
 }
 
 - (float)defaultFontSize
@@ -142,7 +172,11 @@
 
 - (void)setDefaultFixedFontSize:(float)size
 {
+    if (defaultFixedFontSize == size) {
+        return;
+    }
     defaultFixedFontSize = size;
+    [self _updateAllViews];
 }
 
 - (float)defaultFixedFontSize
@@ -188,6 +222,31 @@
 - (BOOL)JavaScriptCanOpenWindowsAutomatically
 {
     return JavaScriptCanOpenWindowsAutomatically;
+}
+
+- (void)setWillLoadImagesAutomatically:(BOOL)load
+{
+    willLoadImagesAutomatically = load;
+}
+
+- (BOOL)willLoadImagesAutomatically
+{
+    return willLoadImagesAutomatically;
+}
+
+- (void)setUserStyleSheetLocation:(NSString *)s
+{
+    if ([userStyleSheetLocation isEqualToString:s]) {
+        return;
+    }
+    [userStyleSheetLocation release];
+    userStyleSheetLocation = [s copy];
+    [self _updateAllViews];
+}
+
+- (NSString *)userStyleSheetLocation
+{
+    return userStyleSheetLocation;
 }
 
 @end

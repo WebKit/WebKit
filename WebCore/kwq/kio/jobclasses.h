@@ -26,9 +26,11 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
-#include <kurl.h>
+#include <qmap.h>
 #include <qobject.h>
 #include <qstring.h>
+
+#include <kurl.h>
 
 #ifdef __OBJC__
 @protocol WebCoreResourceHandle;
@@ -52,6 +54,7 @@ public:
 class TransferJob : public Job {
 public:
     TransferJob(const KURL &, bool reload = false, bool showProgressInfo = true);
+    TransferJob(const KURL &, const QByteArray &postData, bool showProgressInfo = true);
     ~TransferJob();
 
     int error() const;
@@ -60,6 +63,7 @@ public:
     bool isErrorPage() const;
     QString queryMetaData(const QString &key) const;
     void addMetaData(const QString &key, const QString &value);
+    void addMetaData(const QMap<QString, QString> &value);
     void kill();
 
     void setHandle(WebCoreResourceHandlePtr);

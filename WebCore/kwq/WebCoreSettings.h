@@ -40,6 +40,8 @@
     BOOL pluginsEnabled;
     BOOL JavaScriptEnabled;
     BOOL JavaScriptCanOpenWindowsAutomatically;
+    BOOL willLoadImagesAutomatically;
+    NSString *userStyleSheetLocation;
 }
 
 + (WebCoreSettings *)sharedSettings;
@@ -82,5 +84,11 @@
 
 - (void)setJavaScriptCanOpenWindowsAutomatically:(BOOL)enabled;
 - (BOOL)JavaScriptCanOpenWindowsAutomatically;
+
+- (void)setWillLoadImagesAutomatically:(BOOL)load;
+- (BOOL)willLoadImagesAutomatically;
+
+- (void)setUserStyleSheetLocation:(NSString *)location;
+- (NSString *)userStyleSheetLocation;
 
 @end

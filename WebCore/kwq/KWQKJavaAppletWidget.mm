@@ -24,8 +24,9 @@
  */
 
 #import <kjavaappletwidget.h>
+
+#import <kurl.h>
 #import <WebCoreViewFactory.h>
-#import <WebFoundation/WebNSURLExtras.h>
 
 KJavaAppletWidget::KJavaAppletWidget(KJavaAppletContext *, QWidget *)
     : m_applet(*this)
@@ -43,7 +44,7 @@ KJavaAppletWidget::~KJavaAppletWidget()
 void KJavaAppletWidget::setBaseURL(const QString &baseURL)
 {
     [m_baseURL release];
-    m_baseURL = [[NSURL _web_URLWithString:baseURL.getNSString()] retain];
+    m_baseURL = [KURL(baseURL).getNSURL() retain];
 }
 
 void KJavaAppletWidget::setParameter(const QString &name, const QString &value)

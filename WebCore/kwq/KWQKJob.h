@@ -39,6 +39,9 @@ void http_update_cache(const KURL &, bool, time_t);
 inline TransferJob *get(const KURL &url, bool reload = false, bool showProgressInfo = true)
     { return new TransferJob(url, reload, showProgressInfo); }
 
+inline TransferJob *http_post(const KURL& url, const QByteArray &postData, bool showProgressInfo = true)
+    { return new TransferJob(url, postData, showProgressInfo); }
+
 } // namespace KIO
 
 #endif

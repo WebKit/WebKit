@@ -1,3 +1,81 @@
+2002-09-10  Darin Adler  <darin@apple.com>
+
+	- fixed 2942809 -- remove all direct access to "WebKit" defaults from WebCore
+
+        * kwq/WebCoreSettings.h: Add willLoadImagesAutomatically and userStyleSheetLocation.
+        * kwq/WebCoreSettings.m:
+        (-[WebCoreSettings _updateAllViews]): Added. Placeholder for a function that will
+	cause all views to update styles and layout.
+        (-[WebCoreSettings setStandardFontFamily:]): Call _updateAllViews if a change happened.
+        (-[WebCoreSettings setFixedFontFamily:]): Ditto.
+        (-[WebCoreSettings setSerifFontFamily:]): Ditto.
+        (-[WebCoreSettings setSansSerifFontFamily:]): Ditto.
+        (-[WebCoreSettings setCursiveFontFamily:]): Ditto.
+        (-[WebCoreSettings setFantasyFontFamily:]): Ditto.
+        (-[WebCoreSettings setMinimumFontSize:]): Ditto.
+        (-[WebCoreSettings setDefaultFontSize:]): Ditto.
+        (-[WebCoreSettings setDefaultFixedFontSize:]): Ditto.
+        (-[WebCoreSettings setWillLoadImagesAutomatically:]): Added.
+        (-[WebCoreSettings willLoadImagesAutomatically]): Added.
+        (-[WebCoreSettings setUserStyleSheetLocation:]): Added. Call _updateAllViews if a change happened.
+        (-[WebCoreSettings userStyleSheetLocation]): Added.
+
+        * WebCore.exp: Add WebCoreSettings to the exported class list.
+
+        * kwq/KWQKHTMLSettings.mm: Get settings from WebCoreSettings rather than going
+	directly at WebKit user defaults.
+        * kwq/KWQKConfigBase.mm:
+        (KConfig::readNumEntry): Check key.
+        (KConfig::readUnsignedNumEntry): Use WebCoreSettings to get the value of the
+	"JavaScript can open windows automatically" setting, rather than going directly
+	at a WebKit user default.
+        (KConfig::readColorEntry): Remove log message. This is implemented well enough.
+
+	- fixed 3015877 -- either wean WebCore from _web_URLFromString, or make it public API in WebFoundation
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::redirectionTimerStartedOrStopped):
+	Use KURL to make an NSURL rather than using [NSURL _web_URLWithString:].
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::setBaseURL): Ditto.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge completeURLForDOMString:]): Ditto.
+
+	After fixing the above bugs, I noticed that I could remove the WebFoundation dependency.
+
+        * WebCore.pbproj/project.pbxproj: Remove WebFoundation framework.
+
+        * kwq/WebCoreBridge.h: Replace reportError with reportBadURL.
+        * kwq/KWQLoaderImpl.mm: (KWQServeRequest): Use reportBadURL instead of reportError.
+	This was the last bit of direct dependency on WebFoundation.
+
+	Do some preparation work for implementing "referrer".
+
+        * khtml/khtml_part.cpp: Remove lots of APPLE_CHANGES and compile more
+	original code. This in preparation for using the "referrer" code from KHTML.
+        * khtml/khtmlview.h: Ditto.
+        * khtml/misc/loader.cpp: Ditto.
+
+        * kwq/kdecore/kurl.h: Add things needed by code formerly inside APPLE_CHANGES.
+        * kwq/KWQKURL.mm: (KURL::hasRef): Ditto.
+        (urlcmp): Implement in a simple-minded way. Needed by some code formerly inside
+	APPLE_CHANGES. We can make a more full-featured version when and if we need it.
+        * kwq/kio/global.h: Ditto.
+        * kwq/kio/job.h: Ditto.
+        * kwq/kio/jobclasses.h: Ditto.
+        * kwq/KWQKjobclasses.mm: Ditto.
+        * kwq/kparts/browserextension.h:
+        * kwq/kparts/part.h: Ditto.
+        * kwq/qt/qstringlist.h: Ditto.
+        * kwq/KWQStringList.mm: (QStringList::pop_front): Ditto.
+        * kwq/qt/qvaluelist.h: Ditto.
+        * kwq/KWQValueListImpl.h: Ditto.
+        * kwq/KWQValueListImpl.mm: (KWQValueListImpl::isEqual): Ditto.
+
+	Other changes.
+
+        * kwq/KWQApplication.mm:
+        (QApplication::setOverrideCursor): Don't report an error for this, it's OK
+	to do nothing.
+        (QApplication::restoreOverrideCursor): Ditto.
+
 2002-09-09  Richard Williamson (Home)  <rjw@apple.com>
 
         Implemented  disable images automatically (2896319).

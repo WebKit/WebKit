@@ -24,36 +24,37 @@
  */
 
 #import <khtml_settings.h>
-#import <KWQLogging.h>
+
+#import <WebCoreSettings.h>
 
 QString KHTMLSettings::stdFontName() const
 {
-    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitStandardFont"]);
+    return QString::fromNSString([[WebCoreSettings sharedSettings] standardFontFamily]);
 }
 
 QString KHTMLSettings::fixedFontName() const
 {
-    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFixedFont"]);
+    return QString::fromNSString([[WebCoreSettings sharedSettings] fixedFontFamily]);
 }
 
 QString KHTMLSettings::serifFontName() const
 {
-    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSerifFont"]);
+    return QString::fromNSString([[WebCoreSettings sharedSettings] serifFontFamily]);
 }
 
 QString KHTMLSettings::sansSerifFontName() const
 {
-    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSansSerifFont"]);
+    return QString::fromNSString([[WebCoreSettings sharedSettings] sansSerifFontFamily]);
 }
 
 QString KHTMLSettings::cursiveFontName() const
 {
-    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCursiveFont"]);
+    return QString::fromNSString([[WebCoreSettings sharedSettings] cursiveFontFamily]);
 }
 
 QString KHTMLSettings::fantasyFontName() const
 {
-    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFantasyFont"]);
+    return QString::fromNSString([[WebCoreSettings sharedSettings] fantasyFontFamily]);
 }
 
 QString KHTMLSettings::settingsToCSS() const
@@ -69,17 +70,17 @@ const QString &KHTMLSettings::encoding() const
 
 int KHTMLSettings::minFontSize() const
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMinimumFontSize"];
+    return (int)rint([[WebCoreSettings sharedSettings] minimumFontSize]);
 }
 
 int KHTMLSettings::mediumFontSize() const
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDefaultFontSize"];
+    return (int)rint([[WebCoreSettings sharedSettings] defaultFontSize]);
 }
 
 int KHTMLSettings::mediumFixedFontSize() const
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitDefaultFixedFontSize"];
+    return (int)rint([[WebCoreSettings sharedSettings] defaultFixedFontSize]);
 }
 
 bool KHTMLSettings::changeCursor() const
@@ -109,12 +110,12 @@ bool KHTMLSettings::isJavaEnabled(QString const&) const
 
 bool KHTMLSettings::isJavaEnabled() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
+    return [[WebCoreSettings sharedSettings] JavaEnabled];
 }
 
 bool KHTMLSettings::autoLoadImages() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitDisplayImagesKey"] boolValue];
+    return [[WebCoreSettings sharedSettings] willLoadImagesAutomatically];
 }
 
 bool KHTMLSettings::isPluginsEnabled(QString const&) const
@@ -124,7 +125,7 @@ bool KHTMLSettings::isPluginsEnabled(QString const&) const
 
 bool KHTMLSettings::isPluginsEnabled() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
+    return [[WebCoreSettings sharedSettings] pluginsEnabled];
 }
 
 bool KHTMLSettings::isJavaScriptEnabled(QString const&) const
@@ -134,7 +135,7 @@ bool KHTMLSettings::isJavaScriptEnabled(QString const&) const
 
 bool KHTMLSettings::isJavaScriptEnabled() const
 {
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaScriptEnabled"] boolValue];
+    return [[WebCoreSettings sharedSettings] JavaScriptEnabled];
 }
 
 bool KHTMLSettings::isJavaScriptDebugEnabled() const
@@ -144,9 +145,5 @@ bool KHTMLSettings::isJavaScriptDebugEnabled() const
 
 QString KHTMLSettings::userStyleSheet() const
 {
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitUserStyleSheetEnabledPreferenceKey"] boolValue])
-        // The user style sheet is enabled.
-	return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitUserStyleSheetLocationPreferenceKey"]);
-
-    return QString();
+    return QString::fromNSString([[WebCoreSettings sharedSettings] userStyleSheetLocation]);
 }

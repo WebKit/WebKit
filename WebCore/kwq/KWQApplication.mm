@@ -62,12 +62,10 @@ QSize QApplication::globalStrut()
 
 void QApplication::setOverrideCursor(const QCursor &c)
 {
-    ERROR("not yet implemented");
 }
 
 void QApplication::restoreOverrideCursor()
 {
-    ERROR("not yet implemented");
 }
 
 QStyle &QApplication::style()

@@ -30,9 +30,6 @@
 
 #import <khtml_part.h>
 
-#import <WebFoundation/WebCacheLoaderConstants.h>
-#import <WebFoundation/WebError.h>
-
 #import <WebCoreBridge.h>
 #import <WebCoreResourceLoader.h>
 
@@ -102,11 +99,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 
     NSURL *URL = job->url().getNSURL();
     if (URL == nil) {
-        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
-                                                           inDomain:WebErrorDomainWebFoundation
-                                                         failingURL:job->url().url().getNSString()];
-        [bridge reportError:badURLError];
-        [badURLError release];
+        [bridge reportBadURL:job->url().url().getNSString()];
         delete job;
         return false;
     }

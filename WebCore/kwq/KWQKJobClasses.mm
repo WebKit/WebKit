@@ -62,6 +62,11 @@ TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
     d = new TransferJobPrivate(url);
 }
 
+TransferJob::TransferJob(const KURL &url, const QByteArray &postData, bool showProgressInfo)
+{
+    d = new TransferJobPrivate(url);
+}
+
 TransferJob::~TransferJob()
 {
     kill();
@@ -91,19 +96,23 @@ QString TransferJob::errorText() const
 
 QString TransferJob::queryMetaData(const QString &key) const
 {
-    NSString *value;
-    
-    value = [d->metaData objectForKey:key.getNSString()]; 
+    NSString *value = [d->metaData objectForKey:key.getNSString()]; 
     return value ? QString::fromNSString(value) : QString::null;
 }
  
 void TransferJob::addMetaData(const QString &key, const QString &value)
 {
-    // When putting strings into dictionaries, we should use an immutable copy.
-    // That's not necessary for keys, because they are copied.
-    NSString *immutableValue = [value.getNSString() copy];
-    [d->metaData setObject:immutableValue forKey:key.getNSString()];
-    [immutableValue release];
+    [d->metaData setObject:value.getNSString() forKey:key.getNSString()];
+}
+
+void TransferJob::addMetaData(const QMap<QString, QString> &keysAndValues)
+{
+    QMapConstIterator<QString, QString> it = keysAndValues.begin();
+    QMapConstIterator<QString, QString> end = keysAndValues.end();
+    while (it != end) {
+        [d->metaData setObject:it.data().getNSString() forKey:it.key().getNSString()];
+        ++it;
+    }
 }
 
 void TransferJob::kill()

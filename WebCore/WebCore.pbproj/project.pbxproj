@@ -109,7 +109,6 @@
 				F5C2869402846DCD018635CA,
 				F5C2869502846DCD018635CA,
 				F8216299029F4FB501000131,
-				F821629B029F4FB501000131,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -737,7 +736,6 @@
 				F5C287BC02846DCD018635CA,
 				F5C287BD02846DCD018635CA,
 				F82162D7029F4FB501000131,
-				F82162D9029F4FB501000131,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8202,19 +8200,8 @@
 			path = JavaScriptCore.framework;
 			refType = 3;
 		};
-		F821629B029F4FB501000131 = {
-			isa = PBXFrameworkReference;
-			path = WebFoundation.framework;
-			refType = 3;
-		};
 		F82162D7029F4FB501000131 = {
 			fileRef = F8216299029F4FB501000131;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F82162D9029F4FB501000131 = {
-			fileRef = F821629B029F4FB501000131;
 			isa = PBXBuildFile;
 			settings = {
 			};

@@ -35,6 +35,8 @@ public:
     static QStringList split(const QChar &, const QString &, bool allowEmptyEntries = false);
 
     QString join(const QString &) const;
+    
+    QString pop_front();
 };
 
 #endif

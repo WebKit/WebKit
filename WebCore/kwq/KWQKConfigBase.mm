@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,6 +28,7 @@
 #import <KWQLogging.h>
 #import <qcolor.h>
 #import <qstringlist.h>
+#import <WebCoreSettings.h>
 #import <WebCoreViewFactory.h>
 
 class KWQKConfigImpl
@@ -67,12 +68,7 @@ void KConfig::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 {
     if (impl->isPluginInfo) {
-        id <WebCorePluginInfo> plugin;
-        NSArray *mimeTypes;
-        NSMutableString *bigMimeString;
-        uint i;
-        
-        plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
+        id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
         if (strcmp(pKey, "name") == 0) {
             return QString::fromNSString([plugin name]);
         } else if (strcmp(pKey, "file") == 0) {
@@ -80,9 +76,9 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
         } else if (strcmp(pKey, "description") == 0) {
             return QString::fromNSString([plugin pluginDescription]);
         } else if (strcmp(pKey, "mime") == 0) {
-            mimeTypes = [plugin mimeTypes];
-            bigMimeString = [NSMutableString string];
-            for(i = 0; i < [mimeTypes count]; i++) {
+            NSArray *mimeTypes = [plugin mimeTypes];
+            NSMutableString *bigMimeString = [NSMutableString string];
+            for (uint i = 0; i < [mimeTypes count]; i++) {
                 [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:0]]; // mime type
                 [bigMimeString appendString:@":"];
                 [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:1]]; // mime's extension
@@ -95,12 +91,12 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
     }
     
     ERROR("not yet implemented");
-    return QString();
+    return QString::null;
 }
 
 int KConfig::readNumEntry(const char *pKey, int nDefault) const
 {
-    if (impl->isPluginInfo) {
+    if (impl->isPluginInfo && strcmp(pKey, "number") == 0) {
         return [[[WebCoreViewFactory sharedFactory] pluginsInfo] count];
     }
     ERROR("not yet implemented");
@@ -109,8 +105,8 @@ int KConfig::readNumEntry(const char *pKey, int nDefault) const
 
 unsigned int KConfig::readUnsignedNumEntry(const char *pKey, unsigned int nDefault) const
 {
-    if (impl->isKonquerorRC && QString(pKey) == "WindowOpenPolicy") {
-	if ([[NSUserDefaults standardUserDefaults] boolForKey:@"WebKitJavaScriptCanOpenWindowsAutomatically"]) {
+    if (impl->isKonquerorRC && strcmp(pKey, "WindowOpenPolicy") == 0) {
+	if ([[WebCoreSettings sharedSettings] JavaScriptCanOpenWindowsAutomatically]) {
 	    return 0;
 	} else {
 	    return 3;
@@ -120,20 +116,16 @@ unsigned int KConfig::readUnsignedNumEntry(const char *pKey, unsigned int nDefau
     return nDefault;
 }
 
-
 bool KConfig::readBoolEntry(const char *pKey, bool nDefault) const
 {
     ERROR("not yet implemented");
     return nDefault;
 }
 
-
 QColor KConfig::readColorEntry(const char *pKey, const QColor *pDefault) const
 {
-    LOG(NotYetImplemented, "not yet implemented");
-    return pDefault ? *pDefault : QColor(0,0,0);
+    return pDefault ? *pDefault : QColor(0, 0, 0);
 }
-
 
 QStringList KConfig::readListEntry(const QString &pKey, char sep) const
 {

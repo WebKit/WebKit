@@ -479,11 +479,16 @@ QString KURL::ref() const
 	return QString();
     }
     
-    if (fragmentEndPos == queryEndPos) {
+    if (fragmentEndPos <= queryEndPos + 1) {
 	return QString();
     }
 
-    return urlString.mid(queryEndPos + 1, fragmentEndPos - queryEndPos - 1); 
+    return urlString.mid(queryEndPos + 1, fragmentEndPos - (queryEndPos + 1));
+}
+
+bool KURL::hasRef() const
+{
+    return m_isValid && fragmentEndPos > queryEndPos + 1;
 }
 
 QString KURL::query() const
@@ -954,4 +959,9 @@ QString KURL::htmlRef() const
 bool operator==(const KURL &a, const KURL &b)
 {
     return a.urlString == b.urlString;
+}
+
+bool urlcmp(const QString &a, const QString &b, bool, bool)
+{
+    return a == b;
 }

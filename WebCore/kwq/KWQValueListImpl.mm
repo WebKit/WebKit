@@ -419,3 +419,14 @@ void KWQValueListImpl::copyOnWrite()
 	d = KWQRefPtr<KWQValueListPrivate>(new KWQValueListPrivate(*d));
     }
 }
+
+bool KWQValueListImpl::isEqual(const KWQValueListImpl &other, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const
+{
+    KWQValueListNodeImpl *p, *q;
+    for (p = d->head, q = other.d->head; p && q; p = p->next, q = q->next) {
+	if (!equalFunc(p, q)) {
+	    return false;
+	}
+    }
+    return !p && !q;
+}
