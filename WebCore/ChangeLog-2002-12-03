@@ -1,3 +1,8 @@
+2002-11-07  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::slotData):
+	Add an assert in the hopes of catching bug 3084704 a little earlier.
+
 2002-11-07  Richard Williamson  <rjw@apple.com>
 
         Don't stop animating unless we're the last referee. (3083281)

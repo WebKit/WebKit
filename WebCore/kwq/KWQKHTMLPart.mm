@@ -153,14 +153,15 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
         d->m_workingURL = KURL();
     }
 
+    ASSERT(d->m_doc);
+    ASSERT(d->m_doc->parsing());
+    
     if (encoding) {
         part->setEncoding(QString::fromNSString(encoding), forceEncoding);
     } else {
         part->setEncoding(QString::null, false);
     }
     
-    ASSERT(d->m_doc != NULL);
-
     part->write(bytes, length);
 }
 
