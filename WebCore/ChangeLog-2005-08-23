@@ -1,3 +1,12 @@
+2004-12-22  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Chris.
+
+        Fix for <rdar://problem/3911650> tabs at safeway.com stop working after a while
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::scrollToAnchor): removed call to cancelRedirection 
+          so that we match Firefox and WinIE behavior.
+
 2004-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
