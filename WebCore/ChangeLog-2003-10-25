@@ -1,3 +1,5 @@
+=== Safari-62 ===
+
 2003-02-18  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3176102, bad table cell regression.  I was adding in
