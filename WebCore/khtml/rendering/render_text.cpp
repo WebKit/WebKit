@@ -1775,7 +1775,7 @@ long RenderText::caretMaxOffset() const
     InlineTextBox* box = lastTextBox();
     if (!box) 
         return str->l;
-    int maxOffset = box->m_start - box->m_len;
+    int maxOffset = box->m_start + box->m_len;
     for (box = box->prevTextBox(); box; box = box->prevTextBox())
 	maxOffset = kMax(maxOffset,box->m_start + box->m_len);
     return maxOffset;

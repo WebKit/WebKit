@@ -1,3 +1,15 @@
+2005-03-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - <rdar://problem/4040868> REGRESSION (Mail, 403-403+): Drag and drop deletes text, 
+        many other bad editing problems
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::caretMaxOffset):
+        A "-" should have been a "+" in this method that was tweaked an hour ago. Editing
+        was completely horked.
+
 2005-03-07  Richard Williamson   <rjw@apple.com>
 
 	Additional nil check from fix for 4040749.
