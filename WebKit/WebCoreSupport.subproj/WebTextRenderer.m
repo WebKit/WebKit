@@ -554,11 +554,6 @@ static NSString *pathFromFont (NSFont *font)
     return filePath;
 }
 
-static UInt16 glyphCountFromFont (NSFont *font)
-{
-    return ATSFontGetGlyphCount(ATSFontRefFromNSFont(font));
-}
-
 static NSString *WebFallbackFontFamily;
 
 - initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p
@@ -609,7 +604,7 @@ static NSString *WebFallbackFontFamily;
         ERROR ("Corrupt font detected, using %@ in place of %@ (%d glyphs) located at \"%@\".", 
                     [alternateFont familyName], 
                     [initialFont familyName],
-                    glyphCountFromFont(initialFont),
+                    ATSFontGetGlyphCount(ATSFontRefFromNSFont(initialFont)),
                     filePath);
     }
 

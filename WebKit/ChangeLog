@@ -1,3 +1,20 @@
+2003-07-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by me.
+
+	Fixed build breaker.
+
+	Removed glyphCountFromFont function. It was used only in an
+	ERROR function, which does not compile in on deployment
+	builds, causing a "defined, but not used warning".
+
+	As this function is only a one-liner call into ATS, I 
+	replaced the usage in the ERROR call with a call to the 
+	ATS function directly.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer initWithFont:usingPrinterFont:])
+
 2003-07-18  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3283594.  "Times RO" appears to have a corrupt regular variant.  Added
