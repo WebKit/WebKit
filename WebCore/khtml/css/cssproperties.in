@@ -94,6 +94,7 @@ min-width
 opacity
 orphans
 outline-color
+outline-offset
 outline-style
 outline-width
 overflow

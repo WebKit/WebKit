@@ -225,6 +225,17 @@ public:
 
 };
 
+class OutlineValue : public BorderValue
+{
+public:
+    OutlineValue()
+    {
+        offset = 0;
+    }
+    
+    int offset;
+};
+
 enum EBorderPrecedence { BOFF, BTABLE, BCOLGROUP, BCOL, BROWGROUP, BROW, BCELL };
 
 struct CollapsedBorderValue
@@ -403,7 +414,7 @@ public:
 
     Length x_position;
     Length y_position;
-    BorderValue outline;
+    OutlineValue outline;
 };
 
 //------------------------------------------------
@@ -902,8 +913,8 @@ public:
     const QColor &  	    borderBottomColor() const {  return surround->border.bottom.color; }
     bool borderBottomIsTransparent() const { return surround->border.bottom.isTransparent(); }
     
-    unsigned short  outlineWidth() const
-    { if(background->outline.style == BNONE) return 0; return background->outline.width; }
+    unsigned short outlineSize() const { return outlineWidth() + outlineOffset(); }
+    unsigned short outlineWidth() const { if (background->outline.style == BNONE) return 0; return background->outline.width; }
     EBorderStyle    outlineStyle() const {  return background->outline.style; }
     const QColor &  	    outlineColor() const {  return background->outline.color; }
 
@@ -991,6 +1002,9 @@ public:
     EPageBreak pageBreakAfter() const { return noninherited_flags._page_break_after; }
     
     // CSS3 Getter Methods
+    int outlineOffset() const { 
+        if (background->outline.style == BNONE) return 0; return background->outline.offset;
+    }
     ShadowData* textShadow() const { return css3InheritedData->textShadow; }
     float opacity() { return css3NonInheritedData->opacity; }
     EBoxAlignment boxAlign() { return css3NonInheritedData->flexibleBox->align; }
@@ -1159,6 +1173,7 @@ public:
     void setPageBreakAfter(EPageBreak b) { noninherited_flags._page_break_after = b; }
     
     // CSS3 Setters
+    void setOutlineOffset(unsigned short v) {  SET_VAR(background,outline.offset,v) }
     void setTextShadow(ShadowData* val, bool add=false);
     void setOpacity(float f) { SET_VAR(css3NonInheritedData, opacity, f); }
     void setBoxAlign(EBoxAlignment a) { SET_VAR(css3NonInheritedData.access()->flexibleBox, align, a); }

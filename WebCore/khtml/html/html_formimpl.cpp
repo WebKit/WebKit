@@ -822,20 +822,26 @@ bool HTMLGenericFormElementImpl::isFocusable() const
 
 bool HTMLGenericFormElementImpl::isKeyboardFocusable() const
 {
-    if (isFocusable() && m_render->isWidget()) {
-        return static_cast<RenderWidget*>(m_render)->widget() &&
-        ((static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::TabFocus) ||
-         (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::StrongFocus));
+    if (isFocusable()) {
+        if (m_render->isWidget()) {
+            return static_cast<RenderWidget*>(m_render)->widget() &&
+            ((static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::TabFocus) ||
+             (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::StrongFocus));
+        }
+        return true;
     }
     return false;
 }
 
 bool HTMLGenericFormElementImpl::isMouseFocusable() const
 {
-    if (isFocusable() && m_render->isWidget()) {
-        return static_cast<RenderWidget*>(m_render)->widget() &&
-        ((static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::ClickFocus) ||
-         (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::StrongFocus));
+    if (isFocusable()) {
+        if (m_render->isWidget()) {
+            return static_cast<RenderWidget*>(m_render)->widget() &&
+            ((static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::ClickFocus) ||
+             (static_cast<RenderWidget*>(m_render)->widget()->focusPolicy() == QWidget::StrongFocus));
+        }
+        return true;
     }
     return false;
 }

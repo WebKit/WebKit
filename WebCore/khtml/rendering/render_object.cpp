@@ -923,13 +923,18 @@ void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, con
     if(!ow) return;
 
     EBorderStyle os = style->outlineStyle();
+    if (os <= BHIDDEN)
+        return;
+    
     QColor oc = style->outlineColor();
     if (!oc.isValid())
         oc = style->color();
     
+    int offset = style->outlineOffset();
+    
 #ifdef APPLE_CHANGES
     if (os == APPLEAQUA) {
-        p->initFocusRing(ow, oc);
+        p->initFocusRing(ow, offset, oc);
         addFocusRingRects(p, _tx, _ty);
         p->drawFocusRing();
         p->clearFocusRing();
@@ -937,6 +942,11 @@ void RenderObject::paintOutline(QPainter *p, int _tx, int _ty, int w, int h, con
     }
 #endif
 
+    _tx -= offset;
+    _ty -= offset;
+    w += 2*offset;
+    h += 2*offset;
+    
     drawBorder(p, _tx-ow, _ty-ow, _tx, _ty+h+ow, BSLeft,
 	       QColor(oc), style->color(),
                os, ow, ow, true);
@@ -1040,15 +1050,8 @@ void RenderObject::repaintObjectsBeforeLayout()
 
 QRect RenderObject::getAbsoluteRepaintRectWithOutline(int ow)
 {
-    int eow = ow;
-#if APPLE_CHANGES
-    // Fudge a little to make sure we don't leave artifacts.
-    // We need to do better at this.
-    if (style()->outlineStyle() == APPLEAQUA)
-        eow += 2;
-#endif
     QRect r(getAbsoluteRepaintRect());
-    r.setRect(r.x()-eow, r.y()-eow, r.width()+eow*2, r.height()+eow*2);
+    r.setRect(r.x()-ow, r.y()-ow, r.width()+ow*2, r.height()+ow*2);
 
     if (continuation() && !isInline())
         r.setRect(r.x(), r.y()-collapsedMarginTop(), r.width(), r.height()+collapsedMarginTop()+collapsedMarginBottom());

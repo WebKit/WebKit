@@ -54,7 +54,8 @@ struct QPState {
 };
 
 struct QPainterPrivate {
-    QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), hasFocusRingColor(false) { }
+    QPainterPrivate() : textRenderer(0), focusRingPath(0), focusRingWidth(0), focusRingOffset(0),
+                        hasFocusRingColor(false) { }
     ~QPainterPrivate() { [textRenderer release]; [focusRingPath release]; }
     QPState state;
     QPtrStack<QPState> stack;
@@ -62,6 +63,7 @@ struct QPainterPrivate {
     QFont textRendererFont;
     NSBezierPath *focusRingPath;
     int focusRingWidth;
+    int focusRingOffset;
     bool hasFocusRingColor;
     QColor focusRingColor;
 };
@@ -674,18 +676,19 @@ void QPainter::clearShadow()
     CGContextSetShadowWithColor(context, CGSizeZero, 0, NULL);
 }
 
-void QPainter::initFocusRing(int width)
+void QPainter::initFocusRing(int width, int offset)
 {
     clearFocusRing();
     data->focusRingWidth = width;
     data->hasFocusRingColor = false;
+    data->focusRingOffset = offset;
     data->focusRingPath = [[NSBezierPath alloc] init];
     [data->focusRingPath setWindingRule:NSNonZeroWindingRule];
 }
 
-void QPainter::initFocusRing(int width, const QColor &color)
+void QPainter::initFocusRing(int width, int offset, const QColor &color)
 {
-    initFocusRing(width);
+    initFocusRing(width, offset);
     data->hasFocusRingColor = true;
     data->focusRingColor = color;
 }
@@ -694,7 +697,7 @@ void QPainter::addFocusRingRect(int x, int y, int width, int height)
 {
     ASSERT(data->focusRingPath);
     NSRect rect = NSMakeRect(x, y, width, height);
-    int offset = (data->focusRingWidth >> 1);
+    int offset = (data->focusRingWidth-1)/2 + data->focusRingOffset;
     rect = NSInsetRect(rect, -offset, -offset);
     [data->focusRingPath appendBezierPathWithRect:rect];
 }
@@ -707,7 +710,7 @@ void QPainter::drawFocusRing()
 
     NSRect bounds = [data->focusRingPath bounds];
     if (!NSIsEmptyRect(bounds)) {
-        int radius = (data->focusRingWidth >> 1);
+        int radius = (data->focusRingWidth-1)/2;
         NSColor *color = data->hasFocusRingColor ? data->focusRingColor.getNSColor() : nil;
         [NSGraphicsContext saveGraphicsState];
         [[WebCoreGraphicsBridge sharedBridge] setFocusRingStyle:NSFocusRingOnly radius:radius color:color];

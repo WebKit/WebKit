@@ -580,7 +580,7 @@ void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
 
 QRect RenderBox::getAbsoluteRepaintRect()
 {
-    int ow = style() ? style()->outlineWidth() : 0;
+    int ow = style() ? style()->outlineSize() : 0;
     QRect r(-ow, -ow, overflowWidth(false)+ow*2, overflowHeight(false)+ow*2);
     computeAbsoluteRepaintRect(r);
     return r;
@@ -611,7 +611,7 @@ void RenderBox::computeAbsoluteRepaintRect(QRect& r, bool f)
         // <body> may not have a layer, since it might be applying its overflow value to the
         // scrollbars.
         if (o->style()->hidesOverflow() && o->layer()) {
-            int ow = o->style() ? o->style()->outlineWidth() : 0;
+            int ow = o->style() ? o->style()->outlineSize() : 0;
             QRect boxRect(-ow, -ow, o->width()+ow*2, o->height()+ow*2);
             o->layer()->subtractScrollOffset(x,y); // For overflow:auto/scroll/hidden.
             QRect repaintRect(x, y, r.width(), r.height());

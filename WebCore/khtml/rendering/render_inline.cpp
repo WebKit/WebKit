@@ -331,12 +331,12 @@ void RenderInline::paintFocusRing(QPainter *p, int tx, int ty)
     int ow = style()->outlineWidth();
     if (ow == 0 || m_isContinuation) // Continuations get painted by the original inline.
         return;
-    
+
     QColor oc = style()->outlineColor();
     if (!oc.isValid())
         oc = style()->color();
 
-    p->initFocusRing(ow, oc);
+    p->initFocusRing(ow,  style()->outlineOffset(), oc);
     addFocusRingRects(p, tx, ty);
     p->drawFocusRing();
     p->clearFocusRing();
@@ -345,6 +345,9 @@ void RenderInline::paintFocusRing(QPainter *p, int tx, int ty)
 
 void RenderInline::paintOutlines(QPainter *p, int _tx, int _ty)
 {
+    if (style()->outlineWidth() == 0 || style()->outlineStyle() <= BHIDDEN)
+        return;
+    
     QPtrList <QRect> rects;
     rects.setAutoDelete(true);
 
@@ -369,10 +372,12 @@ void RenderInline::paintOutline(QPainter *p, int tx, int ty, const QRect &lastli
     if (!oc.isValid())
         oc = style()->color();
     
-    int t = ty + thisline.top();
-    int l = tx + thisline.left();
-    int b = ty + thisline.bottom() + 1;
-    int r = tx + thisline.right() + 1;
+    int offset = style()->outlineOffset();
+    
+    int t = ty + thisline.top() - offset;
+    int l = tx + thisline.left() - offset;
+    int b = ty + thisline.bottom() + offset + 1;
+    int r = tx + thisline.right() + offset + 1;
     
     // left edge
     drawBorder(p,

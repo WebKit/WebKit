@@ -992,6 +992,9 @@ bool CSSParser::parseValue( int propId, bool important )
 	break;
 
     /* CSS3 properties */
+    case CSS_PROP_OUTLINE_OFFSET:
+        valid_primitive = validUnit(value, FLength, strict&(!nonCSSHint));
+        break;
     case CSS_PROP_TEXT_SHADOW: // CSS2 property, dropped in CSS2.1, back in CSS3, so treat as CSS3
         if (id == CSS_VAL_NONE)
             valid_primitive = true;

@@ -3315,6 +3315,20 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         break;
 
     // CSS3 Properties
+    case CSS_PROP_OUTLINE_OFFSET: {
+        if (value->cssValueType() == CSSValue::CSS_INHERIT) {
+            if (!parentNode) return;
+            style->setOutlineOffset(parentStyle->outlineOffset());
+            return;
+        }
+        
+        int offset = primitiveValue->computeLength(style, paintDeviceMetrics);
+        if (offset < 0) return;
+        
+        style->setOutlineOffset(offset);
+        break;
+    }
+
     case CSS_PROP_TEXT_SHADOW: {
         if (value->cssValueType() == CSSValue::CSS_INHERIT) {
             if (!parentNode) return;
