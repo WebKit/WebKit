@@ -1,3 +1,8 @@
 Makefile
 Makefile.in
 *.strip
+cssproperties.c
+cssproperties.h
+cssvalues.c
+cssvalues.h
+cssvalues.gperf
