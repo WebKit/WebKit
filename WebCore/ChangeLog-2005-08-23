@@ -1,3 +1,29 @@
+2005-02-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/4012058> Copy from quoted text and paste results in blue text
+
+        The relatively-new paste code tries hard to retain style of the content from the
+        source location. However, in the case of quoted material in mail messages, we do 
+        not want to carry the quoting color along. This fixes the problem by factoring
+        out such colors.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::computeStylesAndRemoveUnrendered): Now calls removeBlockquoteColorsIfNeeded()
+        to fix bug.
+        (khtml::ReplacementFragment::removeBlockquoteColorsIfNeeded): New function. Factors out colors that are
+        the result of text being quoted. 
+        (khtml::isNodeRendered): Function moved in file. No other change.
+        (khtml::isProbablyBlock): Function moved in file. No other change.
+        (khtml::closestMailBlockquote): New function. Helps fix bug.
+        (khtml::isMailBlockquote): Function moved to be free-floating instead of being a 
+        member of CompositeEditCommand. No other change.
+        * khtml/editing/htmlediting.h: Moved around some functions. Added removeBlockquoteColorsIfNeeded().
+        * khtml/editing/markup.cpp: Remove redundant static implementation of isMailBlockquote.
+
 === Safari-187 ===
 
 2005-02-17  Richard Williamson   <rjw@apple.com>

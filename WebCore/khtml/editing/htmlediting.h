@@ -236,8 +236,6 @@ protected:
 
     void moveParagraphContentsToNewBlockIfNecessary(const DOM::Position &);
 
-    bool isMailBlockquote(const DOM::NodeImpl *) const;
-
     QValueList<EditCommandPtr> m_cmds;
 };
 
@@ -694,6 +692,7 @@ private:
 
     void computeStylesAndRemoveUnrendered();
     void removeStyleNodes();
+    void removeBlockquoteColorsIfNeeded(DOM::NodeImpl *, DOM::CSSMutableStyleDeclarationImpl *);
 
     // A couple simple DOM helpers
     DOM::NodeImpl *enclosingBlock(DOM::NodeImpl *) const;
@@ -708,10 +707,6 @@ private:
     bool m_hasInterchangeNewline;
     bool m_hasMoreThanOneBlock;
 };
-
-// free-floating helper functions
-bool isNodeRendered(const DOM::NodeImpl *);
-bool isProbablyBlock(const DOM::NodeImpl *);
 
 class ReplaceSelectionCommand : public CompositeEditCommand
 {
@@ -918,6 +913,11 @@ DOM::ElementImpl *createDefaultParagraphElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBlockPlaceholderElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createBreakElement(DOM::DocumentImpl *document);
 DOM::ElementImpl *createStyleSpanElement(DOM::DocumentImpl *document);
+
+bool isNodeRendered(const DOM::NodeImpl *);
+bool isProbablyBlock(const DOM::NodeImpl *);
+bool isMailBlockquote(const DOM::NodeImpl *);
+DOM::NodeImpl *closestMailBlockquote(const DOM::NodeImpl *);
 
 //------------------------------------------------------------------------------------------
 

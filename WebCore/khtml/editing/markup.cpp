@@ -280,13 +280,6 @@ static void completeURLs(NodeImpl *node, const QString &baseURL)
     }
 }
 
-bool isMailBlockquote(const NodeImpl *node)
-{
-    if (!node || !node->renderer() || !node->isElementNode() && node->id() != ID_BLOCKQUOTE)
-        return false;
-    return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
-}    
-
 QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotateForInterchange annotate)
 {
     if (!range || range->isDetached())
