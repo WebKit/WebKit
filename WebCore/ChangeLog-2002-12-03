@@ -1,5 +1,12 @@
 2002-10-25  Richard Williamson   <rjw@apple.com>
 
+        Removed debug logging.
+        
+        * khtml/rendering/font.cpp:
+        (Font::drawText):
+
+2002-10-25  Richard Williamson   <rjw@apple.com>
+
         Implemented support for bidi text layout.  WebCore
         temporarily depends on SPI to get unicode character
         attribute from CF.  This will change shortly.
