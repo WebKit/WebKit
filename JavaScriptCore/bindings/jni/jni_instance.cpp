@@ -158,7 +158,18 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
     bool handled = false;
     if (execContext && execContext->nativeHandle()) {
         jobject obj = _instance->_instance;
-        handled = dispatchJNICall (execContext->nativeHandle(), obj, jMethod->methodID(obj), jMethod->JNIReturnType(), jArgs, result);
+        Value exceptionDescription;
+        bool isStatic = false;  // FIXME, need to get meta data from Java about static methods
+        const char *callingURL = 0;  // FIXME, need to propagate calling URL to Java
+        handled = dispatchJNICall (execContext->nativeHandle(), obj, isStatic, jMethod->JNIReturnType(), jMethod->methodID(obj), jArgs, result, callingURL, exceptionDescription);
+        if (!exceptionDescription.isNull()) {
+            Object error = Error::create(exec, GeneralError, exceptionDescription.toString(exec).UTF8String().c_str());
+            
+            exec->setException(error);
+            
+            free (jArgs);
+            return Undefined();
+        }
     }
     
     // The following code can be conditionally removed once we have a Tiger update that

@@ -1,3 +1,11 @@
+2004-12-13  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3887767> LiveConnect doesn't propagate Java exceptions back to JavaScript (prevents security suite from running)
+
+        Reviewed by John.
+
+        * Plugins.subproj/WebJavaPlugIn.h:
+
 2004-12-13  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Maciej.

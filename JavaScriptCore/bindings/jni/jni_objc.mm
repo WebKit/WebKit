@@ -24,18 +24,35 @@
  */
 #import <Foundation/Foundation.h>
 #import <JavaScriptCore/jni_utility.h>
+#import <JavaScriptCore/objc_utility.h>
 
 using namespace KJS::Bindings;
 
 @interface NSObject (WebScriptingPrivate)
 - (jvalue)webPlugInCallJava:(jobject)object method:(jmethodID)method returnType:(JNIType)returnType arguments:(jvalue*)args;
+- (jvalue)webPlugInCallJava:(jobject)object
+                   isStatic:(BOOL)isStatic
+                 returnType:(JNIType)returnType
+                     method:(jmethodID)method
+                  arguments:(jvalue*)args
+                 callingURL:(NSURL *)url
+       exceptionDescription:(NSString **)exceptionString;
 @end
 
-bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, jmethodID methodID, JNIType returnType, jvalue *args, jvalue &result)
+bool KJS::Bindings::dispatchJNICall (const void *targetAppletView, jobject obj, bool isStatic, JNIType returnType, jmethodID methodID, jvalue *args, jvalue &result, const char *callingURL, Value &exceptionDescription)
 {
     id view = (id)targetAppletView;
     
-    if ([view respondsToSelector:@selector(webPlugInCallJava:method:returnType:arguments:)]) {
+    if ([view respondsToSelector:@selector(webPlugInCallJava:isStatic:returnType:method:arguments:callingURL:exceptionDescription:)]) {
+        NSString *_exceptionDescription = 0;
+        NSURL *_callingURL = callingURL ? [NSURL URLWithString:[NSString stringWithUTF8String:callingURL]] : nil;
+        result = [view webPlugInCallJava:obj isStatic:isStatic returnType:returnType method:methodID arguments:args callingURL:_callingURL exceptionDescription:&_exceptionDescription];
+        if (_exceptionDescription != 0) {
+            exceptionDescription = convertNSStringToString(_exceptionDescription);
+        }
+        return true;
+    }
+    else if ([view respondsToSelector:@selector(webPlugInCallJava:method:returnType:arguments:)]) {
         result = [view webPlugInCallJava:obj method:methodID returnType:returnType arguments:args];
         return true;
     }

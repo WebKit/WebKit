@@ -32,6 +32,7 @@
 #include <runtime.h>
 #include <ustring.h>
 
+
 namespace KJS
 {
 class Value;
