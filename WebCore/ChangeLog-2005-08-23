@@ -1,3 +1,13 @@
+2003-11-19  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3486963, crash because generated content was referencing a deleted object.  Fix is to update the
+	variable to a sane value after deleting old generated content.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+
 2003-11-19  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -242,6 +242,7 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
         if (child && child->style()->styleType() == type) {
             oldContentPresent = false;
             removeChild(child);
+            child = (type == RenderStyle::BEFORE) ? firstChild() : lastChild();
         }
     }
 
