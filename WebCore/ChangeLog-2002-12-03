@@ -1,3 +1,12 @@
+2002-03-15  Richard Williamson  <rjw@apple.com>
+
+        More string usage optimizations.  Got another 10% or so.
+        
+	* src/kdelibs/khtml/css/cssstyleselector.cpp: (checkPseudoState),
+	(khtml::applyRule):
+	* src/kdelibs/khtml/rendering/render_text.cpp: (RenderText::calcMinMaxWidth),
+	(RenderText::width):
+
 2002-03-15  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::descent): Oops, removed a - sign

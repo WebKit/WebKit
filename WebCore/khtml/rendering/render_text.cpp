@@ -43,6 +43,14 @@
 #define QT_ALLOC_QCHAR_VEC( N ) (QChar*) new char[ sizeof(QChar)*( N ) ]
 #define QT_DELETE_QCHAR_VEC( P ) delete[] ((char*)( P ))
 
+#ifdef APPLE_CHANGES
+#define OPTIMIZE_STRING_USAGE
+#ifdef OPTIMIZE_STRING_USAGE
+static CFMutableStringRef reuseableString = 0;
+#endif
+#endif
+
+
 using namespace khtml;
 using namespace DOM;
 
@@ -659,13 +667,6 @@ void RenderText::print( QPainter *p, int x, int y, int w, int h,
     printObject(p, x, y, w, h, tx, ty);
 }
 
-#ifdef APPLE_CHANGES
-#define OPTIMIZE_STRING_USAGE
-#ifdef OPTIMIZE_STRING_USAGE
-static CFMutableStringRef reuseableString = 0;
-#endif
-#endif
-
 void RenderText::calcMinMaxWidth()
 {
     //kdDebug( 6040 ) << "Text::calcMinMaxWidth(): known=" << minMaxKnown() << endl;
@@ -717,11 +718,7 @@ void RenderText::calcMinMaxWidth()
                 if(currMinWidth > m_minWidth) m_minWidth = currMinWidth;
                 currMinWidth = 0;
 #if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
-                if (reuseableString == 0)
-                    reuseableString = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, (UniChar *)(str->s+i+wordlen), wordlen, wordlen, kCFAllocatorDefault);
-                else
-                    CFStringSetExternalCharactersNoCopy (reuseableString, (UniChar *)(str->s+i+wordlen), 1, 1);
-                currMaxWidth += _fm._width(reuseableString);
+                currMaxWidth += _fm._width(QString::gstring_toCFString(&reuseableString, (UniChar *)(str->s+i+wordlen), 1));
 #else
                 currMaxWidth += _fm.width( *(str->s+i+wordlen) );
 #endif
@@ -902,7 +899,11 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, QFontMetrics
     if( len == 1)
         w = _fm->width( *(str->s+from) );
     else
+#if (defined(APPLE_CHANGES) && defined(OPTIMIZE_STRING_USAGE))
+        w = _fm->_width(QString::gstring_toCFString(&reuseableString, (UniChar *)(str->s+from), len));
+#else
         w = _fm->width(QConstString(str->s+from, len).string());
+#endif
 
     // ### add margins and support for RTL
 
