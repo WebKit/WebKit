@@ -70,6 +70,9 @@ public:
                                  int _w, int _h, int _tx, int _ty, PaintAction paintAction);
 
     virtual void repaint(bool immediate = false);
+
+    virtual int lowestPosition() const;
+    virtual int rightmostPosition() const;
     
 protected:
     // An inline can be split with blocks occurring in between the inline content.

@@ -1480,20 +1480,7 @@ RenderBlock::lowestPosition() const
     
     // FIXME: Maybe we can use m_overflowHeight instead?
 
-    int bottom = RenderBox::lowestPosition();
-
-    // FIXME: Used to do nothing here in the m_childrenInline case,
-    // but that demonstrably didn't work (layout tests failed).
-    // FIXME: Is it still OK to look only at the last non-floating
-    // non-positioned child? Testing indicates it is, but is the concept
-    // 100% right?
-    for (RenderObject *c = lastChild(); c; c = c->previousSibling()) {
-        if (!c->isFloatingOrPositioned()) {
-            int lp = c->yPos() + c->lowestPosition();
-            bottom = QMAX(bottom, lp);
-            break;
-        }
-    }
+    int bottom = RenderFlow::lowestPosition();
 
     if (m_floatingObjects) {
         FloatingObject* r;
@@ -1528,14 +1515,7 @@ int RenderBlock::rightmostPosition() const
     
     // FIXME: Maybe we can use m_overflowWidth instead?
 
-    int right = RenderBox::rightmostPosition();
-
-    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isFloatingOrPositioned()) {
-            int rp = c->xPos() + c->rightmostPosition();
-            right = QMAX(right, rp);
-	}
-    }
+    int right = RenderFlow::rightmostPosition();
 
     if (m_floatingObjects) {
         FloatingObject* r;
