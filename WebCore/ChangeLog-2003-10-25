@@ -1,3 +1,19 @@
+2003-05-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3241065 - popcap.com doesn't work in Safari, window.scrollBy fails to work in onLoad
+
+	Make sure to do a layout before accessing any window properties or
+	calling any window functions that require a layout to work
+	properly.
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get):
+        (WindowFunc::tryCall):
+        (Window::updateLayout):
+        * khtml/ecma/kjs_window.h:
+
 2003-05-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3247722. Make sure the grammar accepts properties with

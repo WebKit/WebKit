@@ -33,6 +33,7 @@
 #include <kconfig.h>
 #include <assert.h>
 #include <qstyle.h>
+#include "rendering/render_root.h"
 
 #if APPLE_CHANGES
 #include "KWQLogging.h"
@@ -440,10 +441,12 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case InnerHeight:
       if (!m_part->view())
         return Undefined();
+      updateLayout();
       return Number(m_part->view()->visibleHeight());
     case InnerWidth:
       if (!m_part->view())
         return Undefined();
+      updateLayout();
       return Number(m_part->view()->visibleWidth());
     case Length:
       return Number(m_part->frames().count());
@@ -485,10 +488,12 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case PageXOffset:
       if (!m_part->view())
         return Undefined();
+      updateLayout();
       return Number(m_part->view()->contentsX());
     case PageYOffset:
       if (!m_part->view())
         return Undefined();
+      updateLayout();
       return Number(m_part->view()->contentsY());
     case Parent:
       return Value(retrieve(m_part->parentPart() ? m_part->parentPart() : (KHTMLPart*)m_part));
@@ -511,11 +516,13 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case ScrollX: {
       if (!m_part->view())
         return Undefined();
+      updateLayout();
       return Number(m_part->view()->contentsX());
     }
     case ScrollY: {
       if (!m_part->view())
         return Undefined();
+      updateLayout();
       return Number(m_part->view()->contentsY());
     }
     case Scrollbars:
@@ -1288,11 +1295,13 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     }
   }
   case Window::ScrollBy:
+    window->updateLayout();
     if(args.size() == 2 && widget)
       widget->scrollBy(args[0].toInt32(exec), args[1].toInt32(exec));
     return Undefined();
   case Window::Scroll:
   case Window::ScrollTo:
+    window->updateLayout();
     if(args.size() == 2 && widget)
       widget->setContentsPos(args[0].toInt32(exec), args[1].toInt32(exec));
     return Undefined();
@@ -1487,6 +1496,21 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   }
   return Undefined();
 }
+
+void Window::updateLayout() const
+{
+  DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(m_part->document().handle());
+  KHTMLView* v = m_part->view();
+  
+  if ( docimpl ) {
+    docimpl->updateRendering();
+    // Only do a layout if changes have occurred that make it necessary.      
+    if ( v && docimpl->renderer() && docimpl->renderer()->needsLayout() )
+      docimpl->view()->layout();
+  }
+
+}
+
 
 ////////////////////// ScheduledAction ////////////////////////
 
