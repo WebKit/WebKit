@@ -19,6 +19,12 @@
 
 #pragma mark OBJECT FRAMEWORK
 
++ (void)initialize
+{
+    [[NSUserDefaults standardUserDefaults] registerDefaults:
+        [NSDictionary dictionaryWithObject: @"1000" forKey: @"WebKitHistoryItemLimit"]];    
+}
+
 - (id)initWithFile: (NSString *)file
 {
     if (![super init]) {
@@ -244,10 +250,14 @@
 - (NSArray *)arrayRepresentation
 {
     int dateCount, dateIndex;
+    int limit, totalSoFar;
     NSMutableArray *arrayRep;
 
     arrayRep = [NSMutableArray array];
 
+    limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+    totalSoFar = 0;
+    
     dateCount = [_entriesByDate count];
     for (dateIndex = 0; dateIndex < dateCount; ++dateIndex) {
         int entryCount, entryIndex;
@@ -256,6 +266,9 @@
         entries = [_entriesByDate objectAtIndex:dateIndex];
         entryCount = [entries count];
         for (entryIndex = 0; entryIndex < entryCount; ++entryIndex) {
+            if (totalSoFar++ >= limit) {
+                break;
+            }
             [arrayRep addObject: [[entries objectAtIndex:entryIndex] dictionaryRepresentation]];
         }
     }
@@ -273,53 +286,78 @@
     NSString *path;
     NSArray *array;
     int index, count;
-    
+    int limit;
+    double start, duration;
+    BOOL result;
+
+    start = CFAbsoluteTimeGetCurrent();
+    result = YES;
+
     path = [self file];
     if (path == nil) {
         WEBKITDEBUG("couldn't load history; couldn't find or create directory to store it in\n");
-        return NO;
-    }
-
-    array = [NSArray arrayWithContentsOfFile: path];
-    if (array == nil) {
-        if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            WEBKITDEBUG1("no history file found at %s\n",
-                         DEBUG_OBJECT(path));
+        result = NO;
+    } else {
+        array = [NSArray arrayWithContentsOfFile: path];
+        if (array == nil) {
+            if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
+                WEBKITDEBUG1("no history file found at %s\n",
+                             DEBUG_OBJECT(path));
+            } else {
+                WEBKITDEBUG1("attempt to read history from %s failed; perhaps contents are corrupted\n",
+                             DEBUG_OBJECT(path));
+            }
+            result = NO;
         } else {
-            WEBKITDEBUG1("attempt to read history from %s failed; perhaps contents are corrupted\n",
-                         DEBUG_OBJECT(path));
+            count = [array count];
+            limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+            count = MIN(count, limit);
+            for (index = 0; index < count; ++index) {
+                IFURIEntry *entry = [[IFURIEntry alloc] initFromDictionaryRepresentation:
+                    [array objectAtIndex: index]];
+                [self addEntry: entry];
+            }
         }
-        return NO;
     }
 
-    count = [array count];
-    for (index = 0; index < count; ++index) {
-        IFURIEntry *entry = [[IFURIEntry alloc] initFromDictionaryRepresentation:
-            [array objectAtIndex: index]];
-        [self addEntry: entry];
+    if (result == YES) {
+        duration = CFAbsoluteTimeGetCurrent() - start;
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "loading history from %s took %f seconds\n",
+                           DEBUG_OBJECT([self file]), duration);
     }
 
-    return YES;
+    return result;
 }
 
 - (BOOL)saveHistory
 {
     NSString *path;
     NSArray *array;
+    double start, duration;
+    BOOL result;
 
+    start = CFAbsoluteTimeGetCurrent();
+    result = YES;
+    
     path = [self file];
     if (path == nil) {
         WEBKITDEBUG("couldn't save history; couldn't find or create directory to store it in\n");
-        return NO;
+        result = NO;
+    } else {
+        array = [self arrayRepresentation];
+        if (![array writeToFile:path atomically:YES]) {
+            WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+            result = NO;
+        }
     }
 
-    array = [self arrayRepresentation];
-    if ([array writeToFile:path atomically:YES]) {
-        return YES;
+    if (result == YES) {
+        duration = CFAbsoluteTimeGetCurrent() - start;
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "saving history to %s took %f seconds\n",
+                           DEBUG_OBJECT([self file]), duration);
     }
 
-    WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
-    return NO;
+    return result;
 }
 
 @end
