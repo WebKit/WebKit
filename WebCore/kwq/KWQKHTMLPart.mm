@@ -3903,7 +3903,7 @@ DOM::Range KWQKHTMLPart::markedRange() const
 void KWQKHTMLPart::setMarkedRange(const DOM::Range &range)
 {
     ASSERT(!range.handle() || range.startContainer() == range.endContainer());
-    ASSERT(!range.handle() || range.startContainer().nodeType() == Node::TEXT_NODE);
+    ASSERT(!range.handle() || range.startOffset() == range.endOffset() || range.startContainer().nodeType() == Node::TEXT_NODE);
 
     if (m_markedRange.handle() && xmlDocImpl() 
 	&& m_markedRange.startContainer().handle()->renderer()) {

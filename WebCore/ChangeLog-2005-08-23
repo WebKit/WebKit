@@ -1,3 +1,15 @@
+2004-09-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/3759209> REGRESSION (Mail): assertion failure when all of marked text deleted at start of document
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::setMarkedRange): Allow any empty range, even if
+	it's not in a text node, since in this case it won't matter and
+	weird things can happen when all marked text is removed, there
+	might not be any text nodes.
+
 2004-09-07  David Hyatt  <hyatt@apple.com>
 
 	Initial text-decoration CSS3 work for editing.  Just gets the properties and values parsed.
