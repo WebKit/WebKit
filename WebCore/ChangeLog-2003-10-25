@@ -1,3 +1,15 @@
+2003-04-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Ken.
+
+	- fixed 3223127 - REGRESSION: windows for PopCap games show scroll bars now, did not in Safari-60
+
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall): Re-add scrollbars property, but change it
+	to default to on even when other properties are specified (unlike
+	other window properties). This seems to match what Mac IE, Win IE
+	and Windows Mozilla do.
+
 2003-04-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
