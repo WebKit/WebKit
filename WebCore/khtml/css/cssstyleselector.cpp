@@ -184,7 +184,8 @@ CSSStyleSelector::CSSStyleSelector( CSSStyleSheetImpl *sheet )
     init();
 
     if(!defaultStyle) loadDefaultStyle();
-    m_medium = sheet->doc()->view()->mediaType();
+    KHTMLView *view = sheet->doc()->view();
+    m_medium =  view ? view->mediaType() : QString("all");
 
     authorStyle = new CSSStyleSelectorList();
     authorStyle->append( sheet, m_medium );
@@ -213,7 +214,8 @@ CSSStyleSelector::~CSSStyleSelector()
 
 void CSSStyleSelector::addSheet( CSSStyleSheetImpl *sheet )
 {
-    m_medium = sheet->doc()->view()->mediaType();
+    KHTMLView *view = sheet->doc()->view();
+    m_medium = view ? view->mediaType() : QString("all");
     authorStyle->append( sheet, m_medium );
 }
 
@@ -319,8 +321,8 @@ void CSSStyleSelector::initForStyleResolve(ElementImpl* e, RenderStyle* defaultP
         parentStyle = (parentNode && parentNode->renderer()) ? parentNode->renderer()->style() : 0;
     view = element->getDocument()->view();
     isXMLDoc = !element->getDocument()->isHTMLDocument();
-    part = view->part();
-    settings = part->settings();
+    part = element->getDocument()->part();
+    settings = part ? part->settings() : 0;
     paintDeviceMetrics = element->getDocument()->paintDeviceMetrics();
     
     style = 0;
@@ -1628,7 +1630,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             {
                 style->setBackgroundAttachment(false);
 		// only use slow repaints if we actually have a background pixmap
-                if( style->backgroundImage() )
+                if( style->backgroundImage() && view )
                     view->useSlowRepaints();
                 break;
             }
@@ -2016,7 +2018,8 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
             p = ABSOLUTE; break;
         case CSS_VAL_FIXED:
             {
-                view->useSlowRepaints();
+                if ( view )
+		    view->useSlowRepaints();
                 p = FIXED;
                 break;
             }

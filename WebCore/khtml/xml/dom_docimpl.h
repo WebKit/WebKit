@@ -46,6 +46,7 @@
 class QPaintDevice;
 class QPaintDeviceMetrics;
 class KHTMLView;
+class KHTMLPart;
 class Tokenizer;
 class RenderArena;
 
@@ -223,6 +224,7 @@ public:
     QStringList &restoreState( ) { return m_state; }
 
     KHTMLView *view() const { return m_view; }
+    KHTMLPart *part() const;
 
     RangeImpl *createRange();
 

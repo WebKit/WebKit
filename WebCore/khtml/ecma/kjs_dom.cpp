@@ -755,9 +755,9 @@ Value DOMDocument::getValueProperty(ExecState *exec, int token) const
   case ReadyState:
     {
     DOM::DocumentImpl* docimpl = node.handle()->getDocument();
-    if ( docimpl && docimpl->view() )
+    if ( docimpl )
     {
-      KHTMLPart* part = docimpl->view()->part();
+      KHTMLPart* part = docimpl->part();
       if ( part ) {
         if (part->d->m_bComplete) return String("complete");
         if (docimpl->parsing()) return String("loading");
@@ -1317,8 +1317,8 @@ bool KJS::checkNodeSecurity(ExecState *exec, const DOM::Node& n)
     return false;
 
   // Check to see if the currently executing interpreter is allowed to access the specified node
-  KHTMLView *view = n.handle()->getDocument()->view();
-  Window* win = view && view->part() ? Window::retrieveWindow(view->part()) : 0L;
+  KHTMLPart *part = n.handle()->getDocument()->part();
+  Window* win = part ? Window::retrieveWindow(part) : 0L;
   if ( !win || !win->isSafeScript(exec) )
     return false;
   return true;

@@ -130,21 +130,21 @@ HTMLDocumentImpl::~HTMLDocumentImpl()
 
 DOMString HTMLDocumentImpl::referrer() const
 {
-    if ( view() )
+    if ( part() )
 #if APPLE_CHANGES
-        return KWQ(view()->part())->incomingReferrer();
+        return KWQ(part())->incomingReferrer();
 #else
         // This is broken; returns the referrer used for links within this page (basically
         // the same as the URL), not the referrer used for loading this page itself.
-        return view()->part()->referrer();
+        return part()->referrer();
 #endif
     return DOMString();
 }
 
 DOMString HTMLDocumentImpl::lastModified() const
 {
-    if ( view() )
-        return view()->part()->lastModified();
+    if ( part() )
+        return part()->lastModified();
     return DOMString();
 }
 

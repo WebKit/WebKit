@@ -79,7 +79,10 @@ bool HTMLAnchorElementImpl::isKeyboardFocusable() const
     if (!isFocusable())
         return false;
     
-    return getDocument()->view()->part()->tabsToLinks();
+    if (!getDocument()->part())
+	return false;
+
+    return getDocument()->part()->tabsToLinks();
 }
 
 NodeImpl::Id HTMLAnchorElementImpl::id() const
@@ -180,9 +183,9 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
                 state |= Qt::ControlButton;
 	    }
 
-            if (getDocument() && getDocument()->view()) {
+            if (getDocument() && getDocument()->view() && getDocument()->part()) {
                 getDocument()->view()->resetCursor();
-                getDocument()->view()->part()->
+                getDocument()->part()->
                     urlSelected( url, button, state, utarget );
             }
         }

@@ -105,9 +105,9 @@ bool HTMLAppletElementImpl::rendererIsNeeded(RenderStyle *style)
 RenderObject *HTMLAppletElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
 {
 #ifndef Q_WS_QWS // FIXME(E)? I don't think this is possible with Qt Embedded...
-    KHTMLView *view = getDocument()->view();
+    KHTMLPart *part = getDocument()->part();
 
-    if( view->part()->javaEnabled() )
+    if( part && part->javaEnabled() )
     {
 	QMap<QString, QString> args;
 
@@ -180,8 +180,8 @@ Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         // Call into the part (and over the bridge) to pull the Bindings::Instance
         // from the guts of the Java VM.
         void *_view = r->widget()->getView();
-        KHTMLView* v = getDocument()->view();
-        appletInstance = KWQ(v->part())->getAppletInstanceForView((NSView *)_view);
+        KHTMLPart* part = getDocument()->part();
+        appletInstance = part ? KWQ(part)->getAppletInstanceForView((NSView *)_view) : 0;
     }
     return appletInstance;
 }
@@ -267,8 +267,10 @@ void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
 
 bool HTMLEmbedElementImpl::rendererIsNeeded(RenderStyle *style)
 {
-    KHTMLView* w = getDocument()->view();
-    return w->part()->pluginsEnabled() && parentNode()->id() != ID_OBJECT;
+    KHTMLPart *part = getDocument()->part();
+    if (!part)
+	return false;
+    return part->pluginsEnabled() && parentNode()->id() != ID_OBJECT;
 }
 
 RenderObject *HTMLEmbedElementImpl::createRenderer(RenderArena *arena, RenderStyle *style)
@@ -365,8 +367,8 @@ bool HTMLObjectElementImpl::rendererIsNeeded(RenderStyle *style)
         return HTMLElementImpl::rendererIsNeeded(style);
     }
 
-    KHTMLView* w = getDocument()->view();
-    if (!w->part()->pluginsEnabled()) {
+    KHTMLPart* part = getDocument()->part();
+    if (!part || !part->pluginsEnabled()) {
         return false;
     }
 #if APPLE_CHANGES

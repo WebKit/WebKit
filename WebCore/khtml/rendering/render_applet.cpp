@@ -49,9 +49,8 @@ RenderApplet::RenderApplet(HTMLElementImpl *applet, const QMap<QString, QString>
     setInline(true);
 
     KJavaAppletContext *context = 0;
-    KHTMLView *_view = applet->getDocument()->view();
-    if ( _view ) {
-        KHTMLPart *part = _view->part();
+    KHTMLPart *part = applet->getDocument()->part();
+    if ( part ) {
         context = part->createJavaContext();
     }
 

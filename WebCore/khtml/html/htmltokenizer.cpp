@@ -550,7 +550,7 @@ void HTMLTokenizer::scriptExecution( const QString& str, QString scriptURL,
                                      int baseLine)
 {
 #if APPLE_CHANGES
-    if (!view->part())
+    if (!view || !view->part())
         return;
 #endif
     bool oldscript = script;
@@ -1247,7 +1247,8 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                 scriptSrc = QString::null;
                 scriptSrcCharset = QString::null;
                 if ( currToken.attrs && /* potentially have a ATTR_SRC ? */
-                     parser->doc()->view()->part()->jScriptEnabled() && /* jscript allowed at all? */
+		     parser->doc()->part() &&
+                     parser->doc()->part()->jScriptEnabled() && /* jscript allowed at all? */
                      view /* are we a regular tokenizer or just for innerHTML ? */
                     ) {
                     if ( ( a = currToken.attrs->getAttributeItem( ATTR_SRC ) ) )
@@ -1255,7 +1256,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     if ( ( a = currToken.attrs->getAttributeItem( ATTR_CHARSET ) ) )
                         scriptSrcCharset = a->value().string().stripWhiteSpace();
                     if ( scriptSrcCharset.isEmpty() )
-                        scriptSrcCharset = parser->doc()->view()->part()->encoding();
+                        scriptSrcCharset = parser->doc()->part()->encoding();
                     if (!(a = currToken.attrs->getAttributeItem( ATTR_LANGUAGE )))
                         a = currToken.attrs->getAttributeItem(ATTR_TYPE);
                 }

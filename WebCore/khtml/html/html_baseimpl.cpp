@@ -159,14 +159,16 @@ void HTMLBodyElementImpl::insertedIntoDocument()
 {
     HTMLElementImpl::insertedIntoDocument();
 
+    // FIXME: perhaps all this stuff should be in attach() instead of here...
+
     KHTMLView* w = getDocument()->view();
-    if(w->marginWidth() != -1) {
+    if(w && w->marginWidth() != -1) {
         QString s;
         s.sprintf( "%d", w->marginWidth() );
         addCSSLength(CSS_PROP_MARGIN_LEFT, s);
         addCSSLength(CSS_PROP_MARGIN_RIGHT, s);
     }
-    if(w->marginHeight() != -1) {
+    if(w && w->marginHeight() != -1) {
         QString s;
         s.sprintf( "%d", w->marginHeight() );
         addCSSLength(CSS_PROP_MARGIN_TOP, s);
@@ -208,6 +210,10 @@ bool HTMLFrameElementImpl::isURLAllowed(const DOMString &URLString) const
     }
     
     KHTMLView *w = getDocument()->view();
+
+    if (!w) {
+	return false;
+    }
 
     KURL newURL(getDocument()->completeURL(URLString.string()));
     newURL.setRef(QString::null);
@@ -383,9 +389,12 @@ void HTMLFrameElementImpl::attach()
     if (!m_render)
         return;
 
-    KHTMLView* w = getDocument()->view();
+    KHTMLPart *part = getDocument()->part();
 
-    w->part()->incrementFrameCount();
+    if (!part)
+	return;
+
+    part->incrementFrameCount();
     
     DOMString relativeURL = url;
     if (relativeURL.isEmpty()) {
@@ -393,19 +402,20 @@ void HTMLFrameElementImpl::attach()
     }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
-    if(name.isEmpty() || w->part()->frameExists( name.string() ) )
-      name = DOMString(w->part()->requestFrameName());
+    if(name.isEmpty() || part->frameExists( name.string() ) )
+      name = DOMString(part->requestFrameName());
 
     // load the frame contents
-    w->part()->requestFrame( static_cast<RenderFrame*>(m_render), relativeURL.string(), name.string() );
+    part->requestFrame( static_cast<RenderFrame*>(m_render), relativeURL.string(), name.string() );
 }
 
 void HTMLFrameElementImpl::detach()
 {
-    if (m_render) {
-	KHTMLView* w = getDocument()->view();
-	w->part()->decrementFrameCount();
-        KHTMLPart *framePart = w->part()->findFrame( name.string() );
+    KHTMLPart *part = getDocument()->part();
+
+    if (m_render && part) {
+	part->decrementFrameCount();
+        KHTMLPart *framePart = part->findFrame( name.string() );
         if (framePart)
             framePart->frameDetached();
     }
@@ -438,10 +448,10 @@ void HTMLFrameElementImpl::setFocus(bool received)
 
 DocumentImpl* HTMLFrameElementImpl::contentDocument() const
 {
-    KHTMLView* w = getDocument()->view();
+    KHTMLPart* p = getDocument()->part();
 
-    if (w) {
-        KHTMLPart *part = w->part()->findFrame( name.string() );
+    if (p) {
+        KHTMLPart *part = p->findFrame( name.string() );
         if (part) {
             return part->xmlDocImpl();
         }
@@ -675,12 +685,12 @@ void HTMLIFrameElementImpl::attach()
 {
     HTMLElementImpl::attach();
 
-    if (m_render) {
+    KHTMLPart *part = getDocument()->part();
+    if (m_render && part) {
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
-        KHTMLView* w = getDocument()->view();
-	w->part()->incrementFrameCount();
-        if(name.isEmpty() || w->part()->frameExists( name.string() ))
-            name = DOMString(w->part()->requestFrameName());
+	part->incrementFrameCount();
+        if(name.isEmpty() || part->frameExists( name.string() ))
+            name = DOMString(part->requestFrameName());
 
         static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;

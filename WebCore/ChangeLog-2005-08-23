@@ -1,3 +1,77 @@
+2003-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3487222>: Add ability to create working fully standalone document object
+	
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::CSSStyleSelector):
+        (khtml::CSSStyleSelector::addSheet):
+        (khtml::CSSStyleSelector::initForStyleResolve):
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/dom/dom_doc.cpp:
+        (DOM::Document::part):
+        * khtml/dom/dom_doc.h:
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocument::getValueProperty):
+        (KJS::checkNodeSecurity):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocFunction::tryCall):
+        (KJS::HTMLDocument::tryGet):
+        (KJS::HTMLDocument::putValue):
+        (KJS::HTMLElement::tryGet):
+        (Image::notifyFinished):
+        * khtml/ecma/kjs_traversal.cpp:
+        (JSNodeFilter::acceptNode):
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::changeState):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::insertedIntoDocument):
+        (HTMLFrameElementImpl::isURLAllowed):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameElementImpl::detach):
+        (HTMLFrameElementImpl::contentDocument):
+        (HTMLIFrameElementImpl::attach):
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::referrer):
+        (HTMLDocumentImpl::lastModified):
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::formData):
+        (HTMLFormElementImpl::prepareSubmit):
+        (HTMLFormElementImpl::submit):
+        (HTMLFormElementImpl::reset):
+        (HTMLGenericFormElementImpl::isKeyboardFocusable):
+        (HTMLGenericFormElementImpl::defaultEventHandler):
+        * khtml/html/html_headimpl.cpp:
+        (HTMLBaseElementImpl::process):
+        (HTMLLinkElementImpl::process):
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isKeyboardFocusable):
+        (HTMLAnchorElementImpl::defaultEventHandler):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::createRenderer):
+        (HTMLAppletElementImpl::getAppletInstance):
+        (HTMLEmbedElementImpl::rendererIsNeeded):
+        (HTMLObjectElementImpl::rendererIsNeeded):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::scriptExecution):
+        (HTMLTokenizer::parseTag):
+        * khtml/rendering/render_applet.cpp:
+        (RenderApplet::RenderApplet):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setTitle):
+        (DocumentImpl::part):
+        (DocumentImpl::close):
+        (DocumentImpl::processHttpEquiv):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchEvent):
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject textUnderElement]):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::partForNode):
+        (KWQKHTMLPart::attributedString):
+
 2003-12-05  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3501885.  Added null test to returned node from collection.

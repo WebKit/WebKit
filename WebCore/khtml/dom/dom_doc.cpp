@@ -447,6 +447,14 @@ KHTMLView *Document::view() const
     return static_cast<DocumentImpl*>(impl)->view();
 }
 
+KHTMLPart *Document::part() const
+{
+    if (!impl) return 0;
+
+    return static_cast<DocumentImpl*>(impl)->part();
+}
+
+
 DOMString Document::completeURL(const DOMString& url)
 {
     if ( !impl ) return url;

@@ -239,22 +239,19 @@ using khtml::RenderWidget;
     NodeImpl* e = m_renderer->element();
     DocumentImpl* d = m_renderer->document();
     if (e && d) {
-        KHTMLView* v = d->view();
-        if (v) {
-            KHTMLPart* p = v->part();
-            if (p) {
-                Range r(p->document());
-                if (m_renderer->isText()) {
-                    r.setStartBefore(e);
-                    r.setEndAfter(e);
-                    return p->text(r).getNSString();
-                }
-                if (e->firstChild()) {
-                    r.setStartBefore(e->firstChild());
-                    r.setEndAfter(e->lastChild());
-                    return p->text(r).getNSString();
-                }
-            }
+	KHTMLPart* p = d->part();
+	if (p) {
+	    Range r(p->document());
+	    if (m_renderer->isText()) {
+		r.setStartBefore(e);
+		r.setEndAfter(e);
+		return p->text(r).getNSString();
+	    }
+	    if (e->firstChild()) {
+		r.setStartBefore(e->firstChild());
+		r.setEndAfter(e->lastChild());
+		return p->text(r).getNSString();
+	    }
         }
     }
 

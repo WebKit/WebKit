@@ -95,8 +95,8 @@ void HTMLBaseElementImpl::process()
     if (!inDocument())
 	return;
 
-    if(!m_href.isEmpty())
-	getDocument()->setBaseURL( KURL( getDocument()->view()->part()->url(), m_href.string() ).url() );
+    if(!m_href.isEmpty() && getDocument()->part())
+	getDocument()->setBaseURL( KURL( getDocument()->part()->url(), m_href.string() ).url() );
 
     if(!m_target.isEmpty())
 	getDocument()->setBaseTarget( m_target.string() );
@@ -201,7 +201,7 @@ void HTMLLinkElementImpl::process()
     QString type = m_type.string().lower();
     QString rel = m_rel.string().lower();
 
-    KHTMLPart* part = getDocument()->view() ? getDocument()->view()->part() : 0;
+    KHTMLPart* part = getDocument()->part();
 
     // IE extension: location of small icon for locationbar / bookmarks
 #if APPLE_CHANGES

@@ -187,8 +187,8 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
   if (state != newState) {
     state = newState;
     
-    if (onReadyStateChangeListener != 0) {
-      DOM::Event ev = doc->view()->part()->document().createEvent("HTMLEvents");
+    if (onReadyStateChangeListener != 0 && doc->part()) {
+      DOM::Event ev = doc->part()->document().createEvent("HTMLEvents");
       ev.initEvent("readystatechange", true, true);
       onReadyStateChangeListener->handleEvent(ev, true);
     }

@@ -1277,7 +1277,7 @@ WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
 KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
 {
     ASSERT_ARG(node, node);
-    return KWQ(node->getDocument()->view()->part());
+    return KWQ(node->getDocument()->part());
 }
 
 NSView *KWQKHTMLPart::documentViewForNode(DOM::NodeImpl *node)
@@ -2464,7 +2464,7 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
                     // will have corrected any illegally nested <a> elements.
                     if (linkStartNode && n.handle() == linkStartNode){
                         DOMString href = parseURL(linkStartNode->getAttribute(ATTR_HREF));
-                        KURL kURL = KWQ(linkStartNode->getDocument()->view()->part())->completeURL(href.string());
+                        KURL kURL = KWQ(linkStartNode->getDocument()->part())->completeURL(href.string());
                         
                         NSURL *URL = kURL.getNSURL();
                         [result addAttribute:NSLinkAttributeName value:URL range:NSMakeRange(linkStartLocation, [result length]-linkStartLocation)];
