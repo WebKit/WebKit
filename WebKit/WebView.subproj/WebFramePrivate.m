@@ -262,6 +262,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     if (![WebDataProtocol _webIsDataProtocolURL:[[[[[self webView] mainFrame] dataSource] response] URL]]) {
         WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
+        LOG (BackForward, "for frame %@, adding item  %@\n", [self name], bfItem);
         [[[self webView] backForwardList] addItem:bfItem];
     }
 }
@@ -701,6 +702,7 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                 [self _makeDocumentView];
                 break;
                 
+            case WebFrameLoadTypeOnLoadEvent:
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
                 ASSERT(![ds _isClientRedirect]);
@@ -1001,6 +1003,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                         [self _restoreScrollPosition];
                         break;
 
+                    case WebFrameLoadTypeOnLoadEvent:
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
                     case WebFrameLoadTypeReloadAllowingStaleData:
@@ -1265,6 +1268,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 			    [request setCachePolicy:NSURLRequestReturnCacheDataElseLoad];
 			}
                         break;
+                    case WebFrameLoadTypeOnLoadEvent:
                     case WebFrameLoadTypeStandard:
                     case WebFrameLoadTypeInternal:
                         // no-op: leave as protocol default
@@ -2039,6 +2043,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         case WebFrameLoadTypeForward:
         case WebFrameLoadTypeIndexedBackForward:
         case WebFrameLoadTypeInternal:
+        case WebFrameLoadTypeOnLoadEvent:
         case WebFrameLoadTypeStandard:
             return [_private currentItem];
     }

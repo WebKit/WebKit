@@ -439,15 +439,22 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
+- (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer reload:(BOOL)reload onLoadEvent:(BOOL)onLoad target:(NSString *)target triggeringEvent:(NSEvent *)event form:(NSObject <WebDOMElement> *)form formValues:(NSDictionary *)values
 {
     if ([target length] == 0) {
 	target = nil;
     }
 
     WebFrame *targetFrame = [_frame findFrameNamed:target];
-
-    [_frame _loadURL:URL referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
+    WebFrameLoadType loadType;
+    
+    if (reload)
+        loadType = WebFrameLoadTypeReload;
+    else if (onLoad)
+        loadType = WebFrameLoadTypeOnLoadEvent;
+    else
+        loadType = WebFrameLoadTypeStandard;
+    [_frame _loadURL:URL referrer:referrer loadType:loadType target:target triggeringEvent:event form:form formValues:values];
 
     if (targetFrame != nil && _frame != targetFrame) {
 	[[targetFrame _bridge] focusWindow];

@@ -1,3 +1,21 @@
+2003-10-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3438441.  If a load is triggered by a onload handling, don't add an entry for it into the b/f or history.  The new Google ads use this technique.
+
+        Reviewed by Ken.
+
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:referrer:reload:onLoadEvent:target:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _addBackForwardItemClippedAtTarget:]):
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _itemForRestoringDocState]):
+
 2003-10-01  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

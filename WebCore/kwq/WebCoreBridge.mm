@@ -286,8 +286,6 @@ static bool initializedObjectCacheSize = FALSE;
                                                      windowProperties:windowProperties
                                                    locationProperties:locationProperties
 				                  interpreterBuiltins:interpreterBuiltins] autorelease];
-
-
     [pageState setPausedActions: _part->pauseActions((const void *)pageState)];
 
     return [self saveDocumentToPageCache:pageState];

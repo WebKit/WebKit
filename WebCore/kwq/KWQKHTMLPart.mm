@@ -37,6 +37,7 @@
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_window.h"
+#import "kjs_binding.h"
 #import "misc/htmlattrs.h"
 #import "csshelper.h"
 
@@ -195,12 +196,29 @@ void KWQKHTMLPart::provisionalLoadStarted()
 
 bool KWQKHTMLPart::openURL(const KURL &url)
 {
+    bool onLoad = false;
+    
+    if (jScript() && jScript()->interpreter()) {
+        KHTMLPart *rootPart;
+        
+        rootPart = this;
+        while (rootPart->parentPart() != 0)
+            rootPart = parentPart();
+        KJS::ScriptInterpreter *interpreter = static_cast<KJS::ScriptInterpreter *>(KJSProxy::proxy(rootPart)->interpreter());
+        DOM::Event *evt = interpreter->getCurrentEvent();
+        
+        if (evt) {
+            onLoad = (evt->type() == "load");
+        }
+    }
+
     // FIXME: The lack of args here to get the reload flag from
     // indicates a problem in how we use KHTMLPart::processObjectRequest,
     // where we are opening the URL before the args are set up.
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:NO
+              onLoadEvent:onLoad
               target:nil
      triggeringEvent:nil
                 form:nil
@@ -213,6 +231,7 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
+              onLoadEvent:false
               target:args.frameName.getNSString()
      triggeringEvent:nil
                 form:nil
@@ -562,6 +581,7 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
         [_bridge loadURL:url.getNSURL()
 	        referrer:[_bridge referrer] 
                   reload:args.reload
+             onLoadEvent:false
   	          target:args.frameName.getNSString()
          triggeringEvent:_currentEvent
                     form:_formAboutToBeSubmitted
@@ -618,6 +638,7 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
     [_bridge loadURL:url.getNSURL()
             referrer:[_bridge referrer]
               reload:args.reload
+         onLoadEvent:false
               target:args.frameName.getNSString()
      triggeringEvent:_currentEvent
                 form:nil

@@ -1,3 +1,23 @@
+2003-10-01  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3438441.  Pass extra info up to WebKit about load type, specifically is a load is triggered by JS running in an onLoad handler.
+
+        Reviewed by Ken.
+
+        * khtml/ecma/kjs_binding.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL):
+        (KWQKHTMLPart::openURLRequest):
+        (KWQKHTMLPart::submitForm):
+        (KWQKHTMLPart::urlSelected):
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow):
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge saveDocumentToPageCache]):
+	Nothing changed.  Tweaked spacing.
+
 2003-10-01  Chris Blumenberg  <cblu@apple.com>
 
 	<rdar://problem/2942589>: CSS cursors are not implemented

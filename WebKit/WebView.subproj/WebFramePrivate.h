@@ -42,7 +42,8 @@ typedef enum {
     WebFrameLoadTypeReload,
     WebFrameLoadTypeReloadAllowingStaleData,
     WebFrameLoadTypeSame,		// user loads same URL again (but not reload button)
-    WebFrameLoadTypeInternal
+    WebFrameLoadTypeInternal,
+    WebFrameLoadTypeOnLoadEvent
 } WebFrameLoadType;
 
 #define WebFrameStateChangedNotification @"WebFrameStateChangedNotification"

@@ -27,4 +27,5 @@ WebLogChannel WebKitLogBindings =               { 0x01000000, "WebKitLogLevel", 
 WebLogChannel WebKitLogFontSelection =	        { 0x02000000, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogEncoding =               { 0x04000000, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogLiveConnect =            { 0x08000000, "WebKitLogLevel", WebLogChannelUninitialized };
+WebLogChannel WebKitLogBackForward =            { 0x10000000, "WebKitLogLevel", WebLogChannelUninitialized };
 
