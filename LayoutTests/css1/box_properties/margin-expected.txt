@@ -20,7 +20,7 @@ layer at (0,0) size 802x2608
           text run at (136,75) width 32: "px;}"
           text run at (0,90) width 136: ".six {margin: -10"
           text run at (136,90) width 224: "px; background-color: aqua;}"
-      RenderBlock {HR} at (1,152) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,152) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,170) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 738x36
           text run at (0,0) width 738: "NOTE: The following tests are separated by class-zero paragraphs, so as to prevent margin-collapsing as described in"

@@ -30,7 +30,7 @@ layer at (0,0) size 800x1592
           text run at (0,150) width 152: ".ten {font-size: 40"
           text run at (152,150) width 144: "px; border-left: 1"
           text run at (296,150) width 328: "ex solid purple; background-color: aqua;}"
-      RenderBlock {HR} at (1,212) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,212) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,230) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 761x36
           text run at (0,0) width 761: "This paragraph has no left margin. The following paragraphs have all been given a left margin and their left (outer) edges"

@@ -11,7 +11,7 @@ layer at (0,0) size 800x422
           text run at (0,0) width 392: ".one {border-color: purple; border-style: solid;}"
           text run at (0,15) width 568: ".two {border-color: purple; border-width: medium; border-style: solid;}"
           text run at (0,30) width 728: ".three {border-color: purple green blue yellow; border-width: medium; border-style: solid;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x24 [bgcolor=#000000]
         RenderText {TEXT} at (3,3) size 357x18
           text run at (3,3) width 357: "This element should have a purple border surrounding it."

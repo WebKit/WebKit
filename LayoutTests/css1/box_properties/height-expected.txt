@@ -12,7 +12,7 @@ layer at (0,0) size 800x978
           text run at (128,0) width 32: "px;}"
           text run at (0,15) width 136: ".two {height: 100"
           text run at (136,15) width 32: "px;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock (anonymous) at (0,106) size 784x50 [bgcolor=#000000]
         RenderImage {IMG} at (0,0) size 50x50
         RenderText {TEXT} at (0,0) size 0x0 [bgcolor=#CCCCCC]

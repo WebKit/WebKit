@@ -36,7 +36,7 @@ layer at (0,0) size 800x4445
           text run at (0,210) width 304: ".ttopalign {vertical-align: text-top;}"
           text run at (0,225) width 256: ".topalign {vertical-align: top;}"
           text run at (0,240) width 280: ".midalign {vertical-align: middle;}"
-      RenderBlock {HR} at (1,317) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,317) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,335) size 784x76 [bgcolor=#000000]
         RenderImage {IMG} at (0,0) size 15x50
         RenderInline {SPAN} at (0,0) size 126x18

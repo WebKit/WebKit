@@ -11,7 +11,7 @@ layer at (0,0) size 800x417
           text run at (0,0) width 288: "P {color: navy; font-family: serif;}"
           text run at (0,15) width 472: "HTML BODY TABLE P {color: purple; font-family: sans-serif;}"
           text run at (0,30) width 224: "EM, UL LI LI {color: green;}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x18 [color=#000080] [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 625x18
           text run at (0,0) width 625: "This sentence should be navy serif in the first half of the page, but purple and sans-serif in the table."

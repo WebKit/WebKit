@@ -43,7 +43,7 @@ layer at (0,0) size 800x2623
           text run at (368,165) width 32: "px;}"
           text run at (0,180) width 248: "DIV {background-color: silver;}"
           text run at (0,195) width 304: "SPAN.color {background-color: silver;}"
-      RenderBlock {HR} at (1,257) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,257) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,271) size 784x48 [bgcolor=#000000]
         RenderText {TEXT} at (0,17) size 507x48
           text run at (0,17) width 507: "This sentence should have a line-height of half an inch, which should cause extra spacing between the lines."

@@ -11,7 +11,7 @@ layer at (0,0) size 800x509
           text run at (0,0) width 648: "<LINK rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"../resources/bg.gif\">"
           text run at (0,15) width 296: "@import url(../resources/sec642.css);"
           text run at (0,30) width 352: "BODY {background: url(../resources/bg.gif);}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 386x18
           text run at (0,0) width 386: "This page should have a green grid pattern as its background."

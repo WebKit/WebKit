@@ -11,7 +11,7 @@ layer at (0,0) size 800x545
           text run at (0,0) width 264: "P:first-line {font-weight: bold;}"
           text run at (0,15) width 256: "P.two:first-line {color: green;}"
           text run at (0,30) width 256: "P:first-line.three {color: red;}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 784x36
           text run at (0,0) width 339: "The first line of this sentence should be boldfaced. "

@@ -15,7 +15,7 @@ layer at (0,0) size 800x1151
           text run at (0,60) width 248: "B.five {text-decoration: none;}"
           text run at (0,75) width 344: ".six {text-decoration: underline overline;}"
           text run at (0,90) width 464: ".seven {text-decoration: underline overline line-through;}"
-      RenderBlock {HR} at (1,167) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,167) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,185) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 226x18
           text run at (0,0) width 226: "This sentence should be underlined."

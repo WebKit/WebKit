@@ -12,7 +12,7 @@ layer at (0,0) size 800x286
           text run at (128,0) width 128: "px teal outset;}"
           text run at (0,15) width 128: ".two {border: 10"
           text run at (128,15) width 128: "px olive inset;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x54 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 677x18
           text run at (0,0) width 677: "This is an unstyled element, save for the background color, and containing inline elements with a classes of "

@@ -10,7 +10,7 @@ layer at (0,0) size 800x282
         RenderText {TEXT} at (0,0) size 256x30
           text run at (0,0) width 256: ".one {font-variant: small-caps;}"
           text run at (0,15) width 224: ".two {font-variant: normal;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 268x18
           text run at (0,0) width 268: "This Paragraph should be in Small Caps."

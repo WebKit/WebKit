@@ -18,7 +18,7 @@ layer at (0,0) size 800x1044
           text run at (0,105) width 208: ".eight {font-weight: 900;}"
           text run at (0,120) width 224: ".nine {font-weight: normal;}"
           text run at (0,135) width 200: "B {font-weight: lighter;}"
-      RenderBlock {HR} at (1,212) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,212) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,230) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 198x18
           text run at (0,0) width 198: "This sentence should be bold."

@@ -1,3 +1,137 @@
+2003-11-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3478435, <hr> tags should be centered by default.  Ditched the 1px margin as well.
+
+	Fix for 3479441, <h1>-<h6> tags should *not* be centered by default.  They should also use bold instead of
+	bolder.
+	
+        Reviewed by darin
+
+        * khtml/css/html4.css:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLHRElementImpl::parseAttribute):
+        * layout-tests/apple-only/base/bugzilla.mozilla.org/index-expected.txt:
+        * layout-tests/apple-only/base/home.netscape.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.altavista.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.cnn.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.digitalcity.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.ebay.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.excite.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.mapquest.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.microsoft.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.msnbc.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.nytimes.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.nytimes.com_Table/index-expected.txt:
+        * layout-tests/apple-only/base/www.quicken.com/index-expected.txt:
+        * layout-tests/apple-only/base/www.w3.org_DOML2Core/index-expected.txt:
+        * layout-tests/css1/basic/class_as_selector-expected.txt:
+        * layout-tests/css1/basic/comments-expected.txt:
+        * layout-tests/css1/basic/containment-expected.txt:
+        * layout-tests/css1/basic/contextual_selectors-expected.txt:
+        * layout-tests/css1/basic/grouping-expected.txt:
+        * layout-tests/css1/basic/id_as_selector-expected.txt:
+        * layout-tests/css1/basic/inheritance-expected.txt:
+        * layout-tests/css1/box_properties/border-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom_width-expected.txt:
+        * layout-tests/css1/box_properties/border_bottom_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_color-expected.txt:
+        * layout-tests/css1/box_properties/border_color_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_left-expected.txt:
+        * layout-tests/css1/box_properties/border_left_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_left_width-expected.txt:
+        * layout-tests/css1/box_properties/border_left_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_right-expected.txt:
+        * layout-tests/css1/box_properties/border_right_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_right_width-expected.txt:
+        * layout-tests/css1/box_properties/border_right_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_style-expected.txt:
+        * layout-tests/css1/box_properties/border_style_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_top-expected.txt:
+        * layout-tests/css1/box_properties/border_top_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_top_width-expected.txt:
+        * layout-tests/css1/box_properties/border_top_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/border_width-expected.txt:
+        * layout-tests/css1/box_properties/border_width_inline-expected.txt:
+        * layout-tests/css1/box_properties/clear-expected.txt:
+        * layout-tests/css1/box_properties/clear_float-expected.txt:
+        * layout-tests/css1/box_properties/float-expected.txt:
+        * layout-tests/css1/box_properties/float_elements_in_series-expected.txt:
+        * layout-tests/css1/box_properties/float_margin-expected.txt:
+        * layout-tests/css1/box_properties/float_on_text_elements-expected.txt:
+        * layout-tests/css1/box_properties/height-expected.txt:
+        * layout-tests/css1/box_properties/margin-expected.txt:
+        * layout-tests/css1/box_properties/margin_bottom-expected.txt:
+        * layout-tests/css1/box_properties/margin_bottom_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_left-expected.txt:
+        * layout-tests/css1/box_properties/margin_left_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_right-expected.txt:
+        * layout-tests/css1/box_properties/margin_right_inline-expected.txt:
+        * layout-tests/css1/box_properties/margin_top-expected.txt:
+        * layout-tests/css1/box_properties/margin_top_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding-expected.txt:
+        * layout-tests/css1/box_properties/padding_bottom-expected.txt:
+        * layout-tests/css1/box_properties/padding_bottom_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_left-expected.txt:
+        * layout-tests/css1/box_properties/padding_left_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_right-expected.txt:
+        * layout-tests/css1/box_properties/padding_right_inline-expected.txt:
+        * layout-tests/css1/box_properties/padding_top-expected.txt:
+        * layout-tests/css1/box_properties/padding_top_inline-expected.txt:
+        * layout-tests/css1/box_properties/width-expected.txt:
+        * layout-tests/css1/cascade/cascade_order-expected.txt:
+        * layout-tests/css1/cascade/important-expected.txt:
+        * layout-tests/css1/classification/display-expected.txt:
+        * layout-tests/css1/classification/list_style-expected.txt:
+        * layout-tests/css1/classification/list_style_image-expected.txt:
+        * layout-tests/css1/classification/list_style_position-expected.txt:
+        * layout-tests/css1/classification/list_style_type-expected.txt:
+        * layout-tests/css1/classification/white_space-expected.txt:
+        * layout-tests/css1/color_and_background/background-expected.txt:
+        * layout-tests/css1/color_and_background/background_attachment-expected.txt:
+        * layout-tests/css1/color_and_background/background_color-expected.txt:
+        * layout-tests/css1/color_and_background/background_image-expected.txt:
+        * layout-tests/css1/color_and_background/background_position-expected.txt:
+        * layout-tests/css1/color_and_background/background_repeat-expected.txt:
+        * layout-tests/css1/color_and_background/color-expected.txt:
+        * layout-tests/css1/conformance/forward_compatible_parsing-expected.txt:
+        * layout-tests/css1/font_properties/font-expected.txt:
+        * layout-tests/css1/font_properties/font_family-expected.txt:
+        * layout-tests/css1/font_properties/font_size-expected.txt:
+        * layout-tests/css1/font_properties/font_style-expected.txt:
+        * layout-tests/css1/font_properties/font_variant-expected.txt:
+        * layout-tests/css1/font_properties/font_weight-expected.txt:
+        * layout-tests/css1/formatting_model/canvas-expected.txt:
+        * layout-tests/css1/formatting_model/floating_elements-expected.txt:
+        * layout-tests/css1/formatting_model/height_of_lines-expected.txt:
+        * layout-tests/css1/formatting_model/inline_elements-expected.txt:
+        * layout-tests/css1/formatting_model/replaced_elements-expected.txt:
+        * layout-tests/css1/formatting_model/vertical_formatting-expected.txt:
+        * layout-tests/css1/pseudo/anchor-expected.txt:
+        * layout-tests/css1/pseudo/firstletter-expected.txt:
+        * layout-tests/css1/pseudo/firstline-expected.txt:
+        * layout-tests/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * layout-tests/css1/pseudo/pseudo_elements_in_selectors-expected.txt:
+        * layout-tests/css1/text_properties/letter_spacing-expected.txt:
+        * layout-tests/css1/text_properties/line_height-expected.txt:
+        * layout-tests/css1/text_properties/text-transform-expected.txt:
+        * layout-tests/css1/text_properties/text_align-expected.txt:
+        * layout-tests/css1/text_properties/text_decoration-expected.txt:
+        * layout-tests/css1/text_properties/text_indent-expected.txt:
+        * layout-tests/css1/text_properties/text_transform-expected.txt:
+        * layout-tests/css1/text_properties/vertical_align-expected.txt:
+        * layout-tests/css1/text_properties/word_spacing-expected.txt:
+        * layout-tests/css1/units/color_units-expected.txt:
+        * layout-tests/css1/units/length_units-expected.txt:
+        * layout-tests/css1/units/percentage_units-expected.txt:
+        * layout-tests/css1/units/urls-expected.txt:
+        * layout-tests/fast/encoding/utf-16-big-endian-expected.txt:
+        * layout-tests/fast/encoding/utf-16-little-endian-expected.txt:
+
 2003-11-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3479266>: selected images don't obey CSS3 selection background-color attribute

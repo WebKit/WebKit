@@ -11,7 +11,7 @@ layer at (0,0) size 800x365
           text run at (0,0) width 208: ".one {font-style: italic;}"
           text run at (0,15) width 216: ".two {font-style: oblique;}"
           text run at (0,30) width 248: ".three, I {font-style: normal;}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 501x18
           text run at (0,0) width 501: "This paragraph should be in italics, but the last word of the sentence should be "

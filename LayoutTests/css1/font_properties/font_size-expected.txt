@@ -36,7 +36,7 @@ layer at (0,0) size 800x2734
           text run at (0,255) width 168: ".i {font-size: 200%;}"
           text run at (0,270) width 152: ".j {font-size: -0.5"
           text run at (152,270) width 32: "in;}"
-      RenderBlock {HR} at (1,347) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,347) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,365) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 688x18
           text run at (0,0) width 688: "This paragraph element is unstyled, so the size of the font in this element is the default size for this user agent."

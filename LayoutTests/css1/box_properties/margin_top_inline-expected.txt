@@ -13,7 +13,7 @@ layer at (0,0) size 800x441
           text run at (160,15) width 224: "px; background-color: aqua;}"
           text run at (0,30) width 168: ".two {margin-top: -10"
           text run at (168,30) width 224: "px; background-color: aqua;}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x54 [bgcolor=#808080]
         RenderText {TEXT} at (0,0) size 477x18
           text run at (0,0) width 389: "This element is unstyled save for a background color of gray. "

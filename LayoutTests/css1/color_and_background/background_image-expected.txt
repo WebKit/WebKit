@@ -10,7 +10,7 @@ layer at (0,0) size 800x530
         RenderText {TEXT} at (0,0) size 376x30
           text run at (0,0) width 376: "P {background-image: url(../resources/bg.gif);}"
           text run at (0,15) width 240: ".one {background-image: none;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 746x36
           text run at (0,0) width 502: "This sentence should be backed by an image-- a green grid pattern, in this case. "

@@ -10,7 +10,7 @@ layer at (0,0) size 800x357
         RenderText {TEXT} at (0,0) size 496x30
           text run at (0,0) width 304: ".one {list-style: upper-alpha inside;}"
           text run at (0,15) width 496: ".two {list-style: url(../resources/oransqr.gif) disc outside;}"
-      RenderBlock {HR} at (1,77) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,77) size 784x2 [bgcolor=#000000]
       RenderBlock {UL} at (0,95) size 784x36 [bgcolor=#000000]
         RenderListItem {LI} at (40,0) size 744x36
           RenderListMarker at (0,0) size 20x14

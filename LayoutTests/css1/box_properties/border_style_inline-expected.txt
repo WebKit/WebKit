@@ -11,7 +11,7 @@ layer at (0,0) size 800x286
           text run at (0,0) width 560: ".one {border-style: dashed; border-color: black; border-width: thick;}"
           text run at (0,15) width 544: ".two {border-style: groove; border-color: red; border-width: thick;}"
           text run at (0,30) width 568: ".three {border-style: none; border-color: purple; border-width: thick;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x54 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 664x18
           text run at (0,0) width 664: "This is an unstyled element, save for the background color, and it contains inline elements with classes of "

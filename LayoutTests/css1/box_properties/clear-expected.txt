@@ -12,7 +12,7 @@ layer at (0,0) size 800x961
           text run at (0,15) width 160: ".two {clear: right;}"
           text run at (0,30) width 168: ".three {clear: both;}"
           text run at (0,45) width 160: ".four {clear: none;}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderImage {IMG} at (0,121) size 15x50 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (18,0) size 595x18

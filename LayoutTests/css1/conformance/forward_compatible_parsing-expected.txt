@@ -64,7 +64,7 @@ layer at (0,0) size 800x4035
           text run at (248,750) width 32: "in;}"
           text run at (0,765) width 112: " color: maroon"
           text run at (0,780) width 208: "P.twentyfour {color: red;}"
-      RenderBlock {HR} at (1,857) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,857) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,875) size 784x18 [color=#008000] [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 485x18
           text run at (0,0) width 485: "This paragraph should be green, because only the rotation should be ignored."

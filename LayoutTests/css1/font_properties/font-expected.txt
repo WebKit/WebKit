@@ -25,7 +25,7 @@ layer at (0,0) size 800x4169
           text run at (238,126) width 140: "px/200% sans-serif;}"
           text run at (0,140) width 301: ".ten {font: normal 400 80%/2.5 sans-serif;}"
           text run at (0,154) width 266: "SPAN.color {background-color: silver;}"
-      RenderBlock {HR} at (1,206) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,206) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,220) size 784x14 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 706x14
           text run at (0,0) width 285: "This element is unstyled, and should inherit a font-size of 12"

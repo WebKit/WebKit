@@ -46,7 +46,7 @@ layer at (0,0) size 800x2295
           text run at (0,240) width 168: "     border-width: 10"
           text run at (168,240) width 120: "px; margin: -10"
           text run at (288,240) width 32: "px;}"
-      RenderBlock {HR} at (1,317) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,317) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,333) size 784x442 [bgcolor=#000000]
         RenderText {TEXT} at (0,1) size 767x242
           text run at (0,1) width 252: "This paragraph should have a font size of 14"

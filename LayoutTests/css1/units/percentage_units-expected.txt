@@ -12,7 +12,7 @@ layer at (0,0) size 800x560
           text run at (0,15) width 504: ".one { margin-left: 25%; margin-right: 25%; background: white }"
           text run at (0,30) width 496: ".two { margin-left: 50%; margin-right: 0%; background: white }"
           text run at (0,45) width 208: ".three {margin-left: 25%;}"
-      RenderBlock {HR} at (1,122) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,122) size 784x2 [bgcolor=#000000]
       RenderBlock {DIV} at (0,140) size 784x124 [bgcolor=#FFFF00]
         RenderBlock {DIV} at (196,0) size 392x54 [bgcolor=#FFFFFF]
           RenderBlock {P} at (0,0) size 392x54 [bgcolor=#000000]

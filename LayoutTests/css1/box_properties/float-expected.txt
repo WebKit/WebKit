@@ -10,7 +10,7 @@ layer at (0,0) size 800x460
         RenderText {TEXT} at (0,0) size 160x30
           text run at (0,0) width 152: ".one {float: left;}"
           text run at (0,15) width 160: ".two {float: right;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderImage {IMG} at (0,106) size 15x50 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (15,0) size 764x36
@@ -19,7 +19,7 @@ layer at (0,0) size 800x460
           text run at (15,18) width 212: "which has been floated to the left."
       RenderBlock (anonymous) at (0,162) size 784x18 [bgcolor=#000000]
         RenderBR {BR} at (0,0) size 0x0
-      RenderBlock {HR} at (1,192) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,192) size 784x2 [bgcolor=#000000]
       RenderImage {IMG} at (769,206) size 15x50 [bgcolor=#000000]
       RenderBlock {P} at (0,210) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 731x36
@@ -48,7 +48,7 @@ layer at (0,0) size 800x460
                   text run at (15,18) width 254: "image which has been floated to the left."
               RenderBlock (anonymous) at (4,56) size 762x18
                 RenderBR {BR} at (0,0) size 0x0
-              RenderBlock {HR} at (5,86) size 760x2
+              RenderBlock {HR} at (4,86) size 762x2
               RenderImage {IMG} at (751,100) size 15x50
               RenderBlock {P} at (4,104) size 762x36
                 RenderText {TEXT} at (0,0) size 731x36

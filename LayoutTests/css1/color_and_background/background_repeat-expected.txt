@@ -22,7 +22,7 @@ layer at (0,0) size 888x1838
           text run at (0,165) width 248: "        background-color: red;}"
           text run at (0,180) width 704: ".nine {background-image: url(../resources/crosshair2.gif); background-position: 50% 50%;"
           text run at (0,195) width 240: "       background-color: red;}"
-      RenderBlock {HR} at (1,272) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,272) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,290) size 784x54 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 784x18
           text run at (0,0) width 784: "This sentence should have an orange stripe repeated in the \"y\" direction, starting at the upper left corner (since the default for"

@@ -13,7 +13,7 @@ layer at (0,0) size 800x378
           text run at (0,15) width 432: ".two {border-bottom-width: thin; border-style: solid;}"
           text run at (0,30) width 248: ".three {border-bottom-width: 25"
           text run at (248,30) width 32: "px;}"
-      RenderBlock {HR} at (1,92) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,92) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,110) size 784x100 [bgcolor=#000000]
         RenderText {TEXT} at (3,3) size 172x18
           text run at (3,3) width 172: "This element has a class of "

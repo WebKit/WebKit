@@ -108,16 +108,21 @@ void HTMLHRElementImpl::parseAttribute(AttributeImpl *attr)
 {
     switch( attr->id() )
     {
-    case ATTR_ALIGN:
-        if ( strcasecmp( attr->value(), "left") != 0) // _not_ equal
-            addCSSProperty(CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
-        else
-            addCSSProperty(CSS_PROP_MARGIN_LEFT, "1px");
-        if( strcasecmp( attr->value(), "right") != 0)
+    case ATTR_ALIGN: {
+        if (strcasecmp(attr->value(), "left") == 0) {
+            addCSSProperty(CSS_PROP_MARGIN_LEFT, "0");
+	    addCSSProperty(CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
+	}
+        else if (strcasecmp(attr->value(), "right") == 0) {
+	    addCSSProperty(CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
+	    addCSSProperty(CSS_PROP_MARGIN_RIGHT, "0");
+	}
+	else {
+      	    addCSSProperty(CSS_PROP_MARGIN_LEFT, CSS_VAL_AUTO);
             addCSSProperty(CSS_PROP_MARGIN_RIGHT, CSS_VAL_AUTO);
-        else
-            addCSSProperty(CSS_PROP_MARGIN_RIGHT, "1px");
+	}
         break;
+    }
     case ATTR_WIDTH:
     {
         if(!attr->val()) break;

@@ -105,11 +105,11 @@ HR  {
         margin-bottom: 12px; 
         border-style: inset;
         border-width: 1px;
-        margin-left: 1px; /* will be overwritten by ALIGN */ 
-        margin-right: 1px; /* will be overwritten by ALIGN */
+        margin-left: auto;
+        margin-right: auto;
         -khtml-flow-mode: -khtml-around-floats;
-} 
- 
+}
+
 MAP { 
 	display: inline;
 } 
@@ -122,42 +122,42 @@ MAP {
 H1 { 
 	display: block;
 	font-size: 2em; 
-	margin: .67__qem auto .67em auto;
-	font-weight: bolder;
+	margin: .67__qem 0 .67em 0;
+	font-weight: bold;
 }
       
 H2 { 
 	display: block;
 	font-size: 1.5em; 
-	margin: .83__qem auto .83em auto;
-	font-weight: bolder;
+	margin: .83__qem 0 .83em 0;
+	font-weight: bold;
 }
       
 H3 { 
 	display: block;
 	font-size: 1.17em; 
-	margin: 1__qem auto 1em auto;
-	font-weight: bolder;
+	margin: 1__qem 0 1em 0;
+	font-weight: bold;
 }
       
 H4 {
 	display: block;
-	margin: 1.33__qem auto 1.33em auto;
-	font-weight: bolder;
+	margin: 1.33__qem 0 1.33em 0;
+	font-weight: bold;
 }
 
 H5 { 
 	display: block;
 	font-size: .83em; 
-	margin: 1.67__qem auto 1.67em auto;
-	font-weight: bolder;
+	margin: 1.67__qem 0 1.67em 0;
+	font-weight: bold;
 }
 
 H6 { 
 	display: block;
 	font-size: .67em; 
-	margin: 2.33__qem auto 2.33em auto;
-	font-weight: bolder;
+	margin: 2.33__qem 0 2.33em 0;
+	font-weight: bold;
 }
 
 /* 

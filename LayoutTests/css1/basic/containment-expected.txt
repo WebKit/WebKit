@@ -18,7 +18,7 @@ layer at (0,0) size 800x943
           text run at (0,105) width 32: "<!--"
           text run at (0,120) width 168: "P.six {color: green;}"
           text run at (0,135) width 24: "-->"
-      RenderBlock {HR} at (1,197) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,197) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,215) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 404x18
           text run at (0,0) width 404: "This sentence should be underlined due to the linked style sheet "

@@ -12,7 +12,7 @@ layer at (0,0) size 800x579
           text run at (0,15) width 128: ".1 {color: red;}"
           text run at (0,30) width 152: ".a1 {color: green;}"
           text run at (0,45) width 176: "P.two {color: purple;}"
-      RenderBlock {HR} at (1,107) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,107) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,125) size 784x18 [color=#008000] [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 194x18
           text run at (0,0) width 194: "This sentence should be green."

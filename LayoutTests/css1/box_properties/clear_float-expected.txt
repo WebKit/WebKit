@@ -26,7 +26,7 @@ layer at (0,0) size 800x777
           text run at (440,90) width 152: "em; margin-right: 2"
           text run at (592,90) width 24: "em;"
           text run at (0,105) width 480: "             color: black; background: yellow; clear: none;}"
-      RenderBlock {HR} at (1,179) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,179) size 784x2 [bgcolor=#000000]
       RenderBlock (floating) {DIV} at (0,193) size 192x116 [color=#FFFFFF] [bgcolor=#008000]
         RenderBlock {H1} at (8,8) size 176x22 [bgcolor=#000000]
           RenderText {TEXT} at (0,0) size 85x22

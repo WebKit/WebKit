@@ -20,7 +20,7 @@ layer at (0,0) size 800x1301
           text run at (0,135) width 368: ".ten {border-style: double groove ridge inset;"
           text run at (0,150) width 368: "   border-color: purple; border-width: thick;}"
           text run at (0,165) width 552: ".eleven {border-style: none; border-color: red; border-width: thick;}"
-      RenderBlock {HR} at (1,227) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,227) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,245) size 784x28 [bgcolor=#000000]
         RenderText {TEXT} at (5,5) size 472x18
           text run at (5,5) width 472: "This paragraph should have a thick black dotted border all the way around."

@@ -45,7 +45,7 @@ layer at (0,0) size 800x2471
           text run at (0,255) width 328: "P.thirteen {margin-top: 0; padding-top: 1"
           text run at (328,255) width 32: "cm;}"
           text run at (0,270) width 160: "TABLE {clear: both;}"
-      RenderBlock {HR} at (1,347) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,347) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,365) size 784x36 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 754x36
           text run at (0,0) width 754: "There should be a two-centimeter margin between this paragraph and the next, because adjacent vertical margins should"

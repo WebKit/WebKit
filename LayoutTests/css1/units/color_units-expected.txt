@@ -20,7 +20,7 @@ layer at (0,0) size 800x1699
           text run at (0,135) width 240: ".nine {color: rgb(0,128,255);}"
           text run at (0,150) width 264: ".ten {color: rgb(50%,-500%,60%);}"
           text run at (0,165) width 264: ".eleven {color: rgb(50%,0%,60%);}"
-      RenderBlock {HR} at (1,227) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,227) size 784x2 [bgcolor=#000000]
       RenderBlock {P} at (0,245) size 784x18 [bgcolor=#000000]
         RenderText {TEXT} at (0,0) size 193x18
           text run at (0,0) width 193: "This sentence should be black."

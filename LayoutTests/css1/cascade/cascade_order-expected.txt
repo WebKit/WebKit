@@ -18,7 +18,7 @@ layer at (0,0) size 800x790
           text run at (0,105) width 160: ".test {color: blue;}"
           text run at (0,120) width 176: ".test {color: purple;}"
           text run at (0,135) width 296: ".one {text-decoration: line-through;}"
-      RenderBlock {HR} at (1,212) size 782x2 [bgcolor=#000000]
+      RenderBlock {HR} at (0,212) size 784x2 [bgcolor=#000000]
       RenderBlock {UL} at (0,230) size 784x144 [bgcolor=#000000]
         RenderListItem {LI} at (40,0) size 744x18 [color=#0000FF]
           RenderListMarker at (0,0) size 0x14
