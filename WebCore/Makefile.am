@@ -15,7 +15,6 @@ libwebcoreunstripped_dylib_SOURCES = \
 libwebcoreunstripped_dylib_LIBADD = \
 	./khtml/libkhtml.o \
 	./kwq/libkwq.o \
-	-ljpeg \
 	$(NULL)
 
 LIBWEBCORE_INSTALL_PATH = @executable_path/../Frameworks

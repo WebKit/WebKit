@@ -17,8 +17,6 @@ libkhtmlmisc_o_SOURCES = \
 	khtmllayout.h \
 	loader.h \
 	loader_client.h \
-	loader_jpeg.cpp \
-	loader_jpeg.h \
 	stringit.h \
 	$(NULL)
 

@@ -1,3 +1,12 @@
+2002-05-13  Maciej Stachowiak  <mjs@apple.com>
+
+	Removed libjpeg dependency. Turns out we don't need it.
+	
+	* Makefile.am: Remove -ljpeg from link line.
+	* khtml/misc/loader_jpeg.cpp: Removed.
+	* khtml/misc/loader_jpeg.h: Removed.
+	* khtml/misc/Makefile.am: Remve loader_jpeg from build.
+
 2002-05-10  Richard J. Williamson  <rjw@apple.com>
 
 	Made log output match webkit logging.
