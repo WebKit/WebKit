@@ -394,7 +394,7 @@
     [self setUpWindowAndPort];
 
     NPError npErr;
-    NPP_SetWindow(instance, &window);
+    npErr = NPP_SetWindow(instance, &window);
     LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
                      npErr, (int)nPort.port, (int)window.x, (int)window.y);
 
