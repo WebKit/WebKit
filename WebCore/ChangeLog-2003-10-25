@@ -1,5 +1,13 @@
 2003-10-19  David Hyatt  <hyatt@apple.com>
 
+	Remove the "flow-around-floats" hack for lists.  Other browsers don't do this.
+	
+        Reviewed by darin
+
+        * khtml/css/quirks.css:
+
+2003-10-19  David Hyatt  <hyatt@apple.com>
+
 	Fix for a regression/crash on tivocommunity.com caused by faulty border-collapse code in the collapsedRightBorder
 	case.  I forgot to deal with colspans.
 	

@@ -16,11 +16,6 @@ img[align="right"] {
     margin-left: 3px;
 }
 
-/* Make lists flow around floats. */
-UL, OL, MENU, DIR {
-    -khtml-flow-mode: -khtml-around-floats;
-}
-    
 /* Tables reset both line-height and white-space in quirks mode.
    Compatible with WinIE.   Note that font-family is *not reset*.  */
 TABLE {
