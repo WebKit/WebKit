@@ -46,7 +46,7 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[IFBookmarkSeparator alloc] initWithGroup:[self _group]];
+    return [[IFBookmarkSeparator alloc] initWithGroup:[self group]];
 }
 
 @end

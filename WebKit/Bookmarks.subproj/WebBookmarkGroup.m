@@ -117,13 +117,13 @@
 
 - (void)removeBookmark:(IFBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _group] == self);
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _parent] != nil || bookmark == _topBookmark);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark group] == self);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
 
     if (bookmark == _topBookmark) {
         [self _setTopBookmark:nil];
     } else {
-        [[bookmark _parent] removeChild:bookmark];
+        [[bookmark parent] removeChild:bookmark];
         [bookmark _setGroup:nil];
     }
 }
@@ -151,7 +151,7 @@
 {
     IFBookmark *bookmark;
 
-    WEBKIT_ASSERT_VALID_ARG (parent, [parent _group] == self);
+    WEBKIT_ASSERT_VALID_ARG (parent, [parent group] == self);
     WEBKIT_ASSERT_VALID_ARG (parent, [parent bookmarkType] == IFBookmarkTypeList);
     WEBKIT_ASSERT_VALID_ARG (newURLString, bookmarkType == IFBookmarkTypeLeaf || (newURLString == nil));
     

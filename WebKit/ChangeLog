@@ -1,3 +1,39 @@
+2002-05-28  John Sullivan  <sullivan@apple.com>
+
+	Made -[IFBookmark group] and -[IFBookmark parent] public
+	methods, and renamed them to not use leading underscores,
+	as part of support for revealing a particular bookmark in
+	the Bookmarks window.
+
+	* Bookmarks.subproj/IFBookmark_Private.h:
+	removed _group and _parent.
+
+	* Bookmarks.subproj/IFBookmark.h:
+	added group and parent.
+
+	* Bookmarks.subproj/IFBookmark.m:
+	(-[IFBookmark parent]):
+	(-[IFBookmark group]):
+	* Bookmarks.subproj/IFBookmarkGroup.m:
+	(-[IFBookmarkGroup removeBookmark:]):
+	(-[IFBookmarkGroup insertNewBookmarkAtIndex:ofBookmark:withTitle:image:URLString:type:]):
+	* Bookmarks.subproj/IFBookmarkLeaf.m:
+	(-[IFBookmarkLeaf copyWithZone:]):
+	(-[IFBookmarkLeaf setTitle:]):
+	(-[IFBookmarkLeaf setImage:]):
+	(-[IFBookmarkLeaf setURLString:]):
+	* Bookmarks.subproj/IFBookmarkList.m:
+	(-[IFBookmarkList copyWithZone:]):
+	(-[IFBookmarkList setTitle:]):
+	(-[IFBookmarkList setImage:]):
+	(-[IFBookmarkList removeChild:]):
+	(-[IFBookmarkList insertChild:atIndex:]):
+	(-[IFBookmarkList _setGroup:]):
+	* Bookmarks.subproj/IFBookmarkSeparator.m:
+	(-[IFBookmarkSeparator copyWithZone:]):
+	Fixed up all references to _group and _parent to now refer to
+	group and parent.
+
 2002-05-28  Richard Williamson  <rjw@apple.com>
 
     Backed out band-aid add to fixed malformed resources URLs.

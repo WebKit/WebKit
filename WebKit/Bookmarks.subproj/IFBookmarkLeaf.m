@@ -79,7 +79,7 @@
     return [[IFBookmarkLeaf alloc] initWithURLString:_URLString
                                                title:[self title]
                                                image:[self image]
-                                               group:[self _group]];
+                                               group:[self group]];
 }
 
 - (NSString *)title
@@ -95,7 +95,7 @@
     
     [_entry setTitle:title];
 
-    [[self _group] _bookmarkDidChange:self];    
+    [[self group] _bookmarkDidChange:self];    
 }
 
 - (NSImage *)image
@@ -107,7 +107,7 @@
 {
     [_entry setImage:image];
 
-    [[self _group] _bookmarkDidChange:self];    
+    [[self group] _bookmarkDidChange:self];    
 }
 
 - (IFBookmarkType)bookmarkType
@@ -129,7 +129,7 @@
     [_URLString release];
     _URLString = [URLString copy];
 
-    [[self _group] _bookmarkDidChange:self];    
+    [[self group] _bookmarkDidChange:self];    
 }
 
 

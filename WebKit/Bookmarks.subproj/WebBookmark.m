@@ -114,7 +114,7 @@
     }
 }
 
-- (IFBookmark *)_parent
+- (IFBookmark *)parent
 {
     return _parent;
 }
@@ -126,7 +126,7 @@
     _parent = parent;
 }
 
-- (IFBookmarkGroup *)_group
+- (IFBookmarkGroup *)group
 {
     return _group;
 }

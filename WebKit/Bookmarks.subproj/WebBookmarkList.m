@@ -127,7 +127,7 @@
     
     copy = [[IFBookmarkList alloc] initWithTitle:[self title]
                                            image:[self image]
-                                           group:[self _group]];
+                                           group:[self group]];
 
     count = [self numberOfChildren];
     for (index = 0; index < count; ++index) {
@@ -154,7 +154,7 @@
     [_title release];
     _title = [title copy];
 
-    [[self _group] _bookmarkDidChange:self]; 
+    [[self group] _bookmarkDidChange:self]; 
 }
 
 - (NSImage *)image
@@ -190,7 +190,7 @@
     [_image release];
     _image = image;
 
-    [[self _group] _bookmarkDidChange:self]; 
+    [[self group] _bookmarkDidChange:self]; 
 }
 
 - (IFBookmarkType)bookmarkType
@@ -227,11 +227,11 @@
 
 - (void)removeChild:(IFBookmark *)bookmark
 {
-    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark _parent] == self);
+    WEBKIT_ASSERT_VALID_ARG (bookmark, [bookmark parent] == self);
     [_list removeObject:bookmark];
     [bookmark _setParent:nil];
 
-    [[self _group] _bookmarkChildrenDidChange:self]; 
+    [[self group] _bookmarkChildrenDidChange:self]; 
 }
 
 
@@ -240,12 +240,12 @@
     [_list insertObject:bookmark atIndex:index];
     [bookmark _setParent:self];
     
-    [[self _group] _bookmarkChildrenDidChange:self]; 
+    [[self group] _bookmarkChildrenDidChange:self]; 
 }
 
 - (void)_setGroup:(IFBookmarkGroup *)group
 {
-    if (group == [self _group]) {
+    if (group == [self group]) {
         return;
     }
 
