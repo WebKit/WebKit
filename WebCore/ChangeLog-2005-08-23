@@ -1,5 +1,13 @@
 2003-10-21  David Hyatt  <hyatt@apple.com>
 
+	http://placenamehere.com/safari/fixedbgtest.html is now fixed with a patch from the KHTML trunk.
+	Fixed backgrounds repeated when they weren't supposed to.
+	
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintBackgroundExtended):
+
+2003-10-21  David Hyatt  <hyatt@apple.com>
+
 	Change pseudo-element style resolution to be lazy and to not occur until the style is actually asked
 	for by the front end render objects.  Also fix first-letter to inherit properly from first-line styles.
 	
