@@ -1,3 +1,14 @@
+2004-06-24  John Sullivan  <sullivan@apple.com>
+
+        Darin made this change on my machine; I reviewed it.
+        
+        - fixed <rdar://problem/3698333> Find on page doesn't find a particular string 
+        with a newline in the source
+
+        * khtml/misc/khtml_text_operations.cpp:
+        (khtml::TextIterator::handleTextBox):
+        Clear m_lastTextNodeEndedWithCollapsedSpace after taking it into account.
+
 2004-06-23  Richard Williamson   <rjw@apple.com>
 
 	Implemented changes for latest npruntime.h.

@@ -378,6 +378,7 @@ void TextIterator::handleTextBox()
                 m_textCharacters = str.unicode() + runStart;
                 m_textLength = subrunEnd - runStart;
 
+                m_lastTextNodeEndedWithCollapsedSpace = false;
                 m_lastCharacter = str[subrunEnd - 1];
             }
 
