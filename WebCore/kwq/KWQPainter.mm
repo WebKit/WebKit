@@ -30,6 +30,7 @@
 #include <qstack.h>
 #include <qpoint.h>
 
+#include <kwqdebug.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -51,7 +52,7 @@ QPainter::QPainter()
 
 QPainter::QPainter(const QPaintDevice *pdev)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 }
 
 
@@ -109,7 +110,7 @@ void QPainter::setPen(const QPen &pen)
 
 void QPainter::setPen(PenStyle)
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) void QPainter::setPen(PenStyle)\n");
+    _logNotYetImplemented();
 }
 
 
@@ -128,7 +129,7 @@ void QPainter::setBrush(BrushStyle style)
 
 QRect QPainter::xForm(const QRect &) const
 {
-    NSLog (@"WARNING (NOT YET IMPLEMENTED) QRect QPainter::xForm(const QRect &) const\n");
+    _logNotYetImplemented();
 }
 
 
@@ -176,8 +177,8 @@ void QPainter::drawRect(int x, int y, int w, int h)
 {
     _lockFocus();
     if (data->qbrush.qbrushstyle == SolidPattern){
-        _setColorFromBrush();
-        [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
+        //_setColorFromBrush();
+        //[NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
     _setColorFromPen();
     [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
@@ -462,8 +463,8 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
     _lockFocus();
     if (brush.qbrushstyle == SolidPattern){
-        [brush.qcolor.color set];
-        [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
+        //[brush.qcolor.color set];
+        //[NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
     _unlockFocus();
 }
@@ -471,36 +472,38 @@ void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 
 void QPainter::setClipping(bool)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 void QPainter::setClipRegion(const QRegion &)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 const QRegion &QPainter::clipRegion() const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
+    return QRegion();
 }
 
 
 bool QPainter::hasClipping() const
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
+    return  0;
 }
 
 void QPainter::setClipRect(const QRect &)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 void QPainter::setClipRect(int,int,int,int)
 {
-     NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
@@ -513,7 +516,7 @@ Qt::RasterOp QPainter::rasterOp() const
         return XorROP;
     return CopyROP;
 #else
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNeverImplemented();
 #endif
 }
 
@@ -534,19 +537,21 @@ void QPainter::setRasterOp(RasterOp op)
 
 void QPainter::translate(double dx, double dy)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+     NSLog (@"ERROR %s:%d %s (NOT IMPLEMENTED) (%d, %d)\n", __FILE__, __LINE__, __FUNCTION__, (int)dx, (int) dy);
 }
 
 
 void QPainter::scale(double dx, double dy)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+     NSLog (@"ERROR %s:%d %s (NOT IMPLEMENTED) (%d, %d)\n", __FILE__, __LINE__, __FUNCTION__, (int)dx, (int) dy);
 }
 
 
 bool QPainter::begin(const QPaintDevice *bd)
 {
     data->bufferDevice = bd;
+    const QPixmap *pixmap = (QPixmap *)(data->bufferDevice);
+    [pixmap->nsimage setFlipped: YES];
 }
 
 
@@ -558,7 +563,8 @@ bool QPainter::end()
 
 QPaintDevice *QPainter::device() const
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logPartiallyImplemented();
+    return (QPaintDevice *)data->bufferDevice;
 }
 
 void QPainter::_lockFocus(){

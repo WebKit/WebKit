@@ -71,7 +71,7 @@ QFont::~QFont()
 }
 
 void QFont::_free(){
-    [font release];
+    [font autorelease];
     font = 0;
 }
 

@@ -25,6 +25,8 @@
 
 #include <qpaintdevicemetrics.h>
 
+#include <kwqdebug.h>
+
 QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {
 }
@@ -32,20 +34,28 @@ QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 
 int QPaintDeviceMetrics::logicalDpiY() const 
 {
+    _logPartiallyImplemented();
+    return 72;
 }
 
 
 int QPaintDeviceMetrics::depth() const
 {
+    _logPartiallyImplemented();
+    return 32;
 }
 
 
 int QPaintDeviceMetrics::width() const
 {
+    _logPartiallyImplemented();
+    return 800;
 }
 
 
 int QPaintDeviceMetrics::height() const
 {
+    _logPartiallyImplemented();
+    return 800;
 }
 

@@ -137,7 +137,7 @@ void RenderFlow::print(QPainter *p, int _x, int _y, int _w, int _h,
         if((_ty > _y + _h) || (_ty + h < _y))
         {
             //kdDebug( 6040 ) << "cut!" << endl;
-            return;
+            //return;
         }
     }
         

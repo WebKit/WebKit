@@ -57,28 +57,28 @@ QWidget* QScrollView::viewport() const
 int QScrollView::visibleWidth() const
 {
     //_logNeverImplemented();
-    return 200;
+    return 800;
 }
 
 
 int QScrollView::visibleHeight() const
 {
     //_logNeverImplemented();
-    return 200;
+    return 800;
 }
 
 
 int QScrollView::contentsWidth() const
 {
     _logNeverImplemented();
-    return 200;
+    return 800;
 }
 
 
 int QScrollView::contentsHeight() const
 {
     _logNeverImplemented();
-    return 200;
+    return 800;
 }
 
 

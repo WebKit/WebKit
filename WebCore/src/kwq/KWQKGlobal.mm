@@ -24,6 +24,7 @@
  */
 #include <kwqdebug.h>
 
+#include <kconfig.h>
 #include <kglobal.h>
 
 #define Fixed MacFixed
@@ -61,6 +62,7 @@ KStandardDirs *KGlobal::dirs()
 KConfig *KGlobal::config()
 {
     _logNotYetImplemented();
+    return new KConfig("foo");
 }
 
 

@@ -96,7 +96,7 @@ QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 
 // class KConfig ===============================================================
 
-KConfig::KConfig(const QString &, bool bReadOnly=false)
+KConfig::KConfig(const QString &n, bool bReadOnly=false)
 {
 }
 

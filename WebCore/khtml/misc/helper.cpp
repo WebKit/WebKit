@@ -232,9 +232,8 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
     }
     else
     {
-        // FIXME: for some reason not yet known, this does not work
         //QColor tc = htmlColors->map[name];
-        QColor tc = QColor(0,0,0);
+        QColor tc = QColor (0,0,0);
         if ( !tc.isValid() )
             tc = htmlColors->map[name.lower()];
 

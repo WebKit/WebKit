@@ -27,6 +27,7 @@
 #include <khtmlview.h>
 #include <qwidget.h>
 #include <qpainter.h>
+#include <html/html_documentimpl.h>
 
 @implementation KWQView
 
@@ -85,7 +86,7 @@
 {
     [super initWithFrame: r];
     widget = w;
-    isFlipped = YES;
+    isFlipped = NO;
 }
 
 
@@ -96,7 +97,12 @@
         
         QPainter p(widget);
         NSRect frame = [self frame];
-        
+ 
+        if (((KHTMLView *)widget)->part()->xmlDocImpl() && 
+            ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
+            ((KHTMLView *)widget)->layout(TRUE);
+        }
+       
         ((KHTMLView *)widget)->drawContents( &p, (int)frame.origin.x, 
                     (int)frame.origin.y, 
                     (int)frame.size.width, 

@@ -26,87 +26,113 @@
 #include <qpalette.h>
 #include <qcolor.h>
 
+#include <kwqdebug.h>
+
 QColorGroup::QColorGroup()
 {
+    _logNotYetImplemented();
 }
 
 
 QColorGroup::QColorGroup(const QColorGroup &)
 {
+    _logNotYetImplemented();
 }
 
 
 QColorGroup::~QColorGroup()
 {
+    _logNotYetImplemented();
 }
 
 
 const QBrush &QColorGroup::brush(QColorGroup::ColorRole cr) const
 {
+    _logNotYetImplemented();
+    // FIXME Gross leak
+    return *(new QBrush (Qt::white));
 }
 
 const QColor &QColorGroup::color(QColorGroup::ColorRole cr) const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 void setColor(QColorGroup::ColorRole cr, const QColor &)
 {
+    _logNotYetImplemented();
 }
 
 
 const QColor &QColorGroup::foreground() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::shadow() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::light() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::midlight() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::dark() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::base() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::buttonText() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::button() const
 {
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 
 const QColor &QColorGroup::text() const
 {
+    _logNotYetImplemented();
+    return Qt::black;
 }
 
 
 const QColor &QColorGroup::background() const
 {
-}
-
-
-QColorGroup &QColorGroup::operator=(const QColorGroup &)
-{
+    _logNotYetImplemented();
+    return Qt::white;
 }
 
 

@@ -624,8 +624,8 @@ void RenderText::printObject( QPainter *p, int /*x*/, int y, int /*w*/, int h,
 void RenderText::print( QPainter *p, int x, int y, int w, int h,
                       int tx, int ty)
 {
-    if ( !isVisible() )
-        return;
+    //if ( !isVisible() )
+    //    return;
 
     int s = m_lines.count() - 1;
     if ( s < 0 ) return;

@@ -115,18 +115,18 @@
  *****************************************************************************/
 QRegion::QRegion( const QRect &r, RegionType type )
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 
 QRegion::QRegion( const QPointArray &a, bool winding )
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 QRegion::QRegion()
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 QRegion::QRegion( const QRegion & )
@@ -137,41 +137,41 @@ QRegion::QRegion( const QRegion & )
 
 QRegion::QRegion( bool is_null )
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 QRegion::~QRegion()
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 QRegion QRegion::eor( const QRegion &r ) const
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 
 QRegion QRegion::subtract( const QRegion &r ) const
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 
 QRegion QRegion::intersect( const QRegion &) const
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 
 QRegion QRegion::unite( const QRegion &r ) const
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 
 QRegion QRegion::copy() const
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 
@@ -182,7 +182,7 @@ bool QRegion::isNull() const
 
 bool QRegion::contains( const QPoint &p ) const
 {
-    fprintf (stderr,"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    fprintf (stderr,"ERROR %s:%d %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 /*!

@@ -83,8 +83,6 @@ public:
 
     // operators ---------------------------------------------------------------
 
-    QColorGroup &operator=(const QColorGroup &);
-
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 
@@ -126,6 +124,13 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+private:
+    struct QPalData : public QShared {
+	QColorGroup normal; // ##### alias for active due to inline functions above, remove 3.0
+	QColorGroup disabled;
+	QColorGroup active;
+	QColorGroup inactive;
+    } *data;
 
 }; // class QPalette ===========================================================
 

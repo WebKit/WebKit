@@ -71,6 +71,7 @@ int main( int argc, char **argv )
     // WebPageView. 
     // [[WebPageView alloc] initWithFrame: (NSRect)rect document: (WebPageDocument *)doc]
     KHTMLView   *htmlView = new KHTMLView (w, 0);
+    htmlView->resize (800,800);
     KWQHTMLView *kwqHTMLView = [[[KWQHTMLView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: htmlView] autorelease];
         
     w->setView (htmlView);
@@ -79,7 +80,7 @@ int main( int argc, char **argv )
     
     htmlView->setView (kwqHTMLView);
     
-    htmlView->resize(500, 400);
+    htmlView->resize(800, 800);
  
     app.setMainWidget( htmlView );
     htmlView->show();

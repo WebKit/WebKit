@@ -25,47 +25,67 @@
 
 #include <qpalette.h>
 
+#include <kwqdebug.h>
+
 QPalette::QPalette()
 {
+    _logNotYetImplemented();
 }
 
 
 QPalette::QPalette(const QPalette &)
 {
+    _logNotYetImplemented();
 }
 
 
 QPalette::~QPalette()
 {
+    _logNotYetImplemented();
 }
 
 
 void QPalette::setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color)
 {
+    _logNotYetImplemented();
 }
 
 
 const QColorGroup &QPalette::active() const
 {
+    _logNotYetImplemented();
+    return data->active;
 }
 
 
 const QColorGroup &QPalette::inactive() const
 {
+    _logNotYetImplemented();
+    return data->inactive;
 }
 
 
 const QColorGroup &QPalette::disabled() const
 {
+    _logNotYetImplemented();
+    return data->disabled;
 }
 
 
 const QColorGroup &QPalette::normal() const
 {
+    _logNotYetImplemented();
+    return data->normal;
 }
 
 
-QPalette &QPalette::operator=(const QPalette &)
+QPalette &QPalette::operator=(const QPalette &p)
 {
+    _logNotYetImplemented();
+    //p.data->ref();
+    //if ( data->deref() )
+    //    delete data;
+    data = p.data;
+    return *this;
 }
 
