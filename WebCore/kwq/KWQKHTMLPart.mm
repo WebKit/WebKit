@@ -1519,8 +1519,7 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
 
-    QEvent::Type type = [event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease;
-    QKeyEvent qEvent(event, type, stateForCurrentEvent(), [event isARepeat]);
+    QKeyEvent qEvent(event);
     bool result = !node->dispatchKeyEvent(&qEvent);
 
     // We want to send both a down and a press for the initial key event.
@@ -1528,8 +1527,8 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     // which causes it to send a press to the DOM.
     // That's not a great hack; it would be good to do this in a better way.
     if ([event type] == NSKeyDown && ![event isARepeat]) {
-	QKeyEvent qEvent(event, QEvent::KeyPress, stateForCurrentEvent(), true);
-        if (!node->dispatchKeyEvent(&qEvent)) {
+	QKeyEvent repeatEvent(event, true);
+        if (!node->dispatchKeyEvent(&repeatEvent)) {
 	    result = true;
 	}
     }
@@ -1898,53 +1897,6 @@ bool KWQKHTMLPart::passSubframeEventToSubframe(NodeImpl::MouseEvent &event)
     return false;
 }
 
-int KWQKHTMLPart::buttonForCurrentEvent()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-    
-    switch ([_currentEvent type]) {
-    case NSLeftMouseDown:
-    case NSLeftMouseUp:
-        return Qt::LeftButton;
-    case NSRightMouseDown:
-    case NSRightMouseUp:
-        return Qt::RightButton;
-    case NSOtherMouseDown:
-    case NSOtherMouseUp:
-        return Qt::MidButton;
-    default:
-        return 0;
-    }
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return 0;
-}
-
-int KWQKHTMLPart::stateForCurrentEvent()
-{
-    KWQ_BLOCK_EXCEPTIONS;
-
-    int state = buttonForCurrentEvent();
-    unsigned modifiers =  [_currentEvent modifierFlags];
-
-    if (modifiers & NSControlKeyMask)
-        state |= Qt::ControlButton;
-    if (modifiers & NSShiftKeyMask)
-        state |= Qt::ShiftButton;
-    if (modifiers & NSAlternateKeyMask)
-        state |= Qt::AltButton;
-    if (modifiers & NSCommandKeyMask)
-        state |= Qt::MetaButton;
-    if (modifiers & NSNumericPadKeyMask)
-        state |= Qt::Keypad;
-    
-    return state;
-
-    KWQ_UNBLOCK_EXCEPTIONS;
-
-    return buttonForCurrentEvent();
-}
-
 void KWQKHTMLPart::mouseDown(NSEvent *event)
 {
     KHTMLView *v = d->m_view;
@@ -1972,8 +1924,7 @@ void KWQKHTMLPart::mouseDown(NSEvent *event)
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
     v->ref();
-    QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
-        buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
+    QMouseEvent kEvent(QEvent::MouseButtonPress, event);
     v->viewportMousePressEvent(&kEvent);
     v->deref();
     
@@ -2002,7 +1953,7 @@ void KWQKHTMLPart::mouseDragged(NSEvent *event)
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
     v->ref();
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), Qt::LeftButton, Qt::LeftButton);
+    QMouseEvent kEvent(QEvent::MouseMove, event);
     v->viewportMouseMoveEvent(&kEvent);
     v->deref();
     
@@ -2037,12 +1988,10 @@ void KWQKHTMLPart::mouseUp(NSEvent *event)
     // treated as another double click. Hence the "% 2" below.
     int clickCount = [event clickCount];
     if (clickCount > 0 && clickCount % 2 == 0) {
-        QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint([event locationInWindow]),
-            buttonForCurrentEvent(), stateForCurrentEvent(), clickCount);
+        QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, event);
         v->viewportMouseDoubleClickEvent(&doubleClickEvent);
     } else {
-        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint([event locationInWindow]),
-            buttonForCurrentEvent(), stateForCurrentEvent(), clickCount);
+        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, event);
         v->viewportMouseReleaseEvent(&releaseEvent);
     }
     v->deref();
@@ -2133,7 +2082,7 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
     // Sending an event can result in the destruction of the view and part.
     // We ref so that happens after we return from the KHTMLView function.
     v->ref();
-    QMouseEvent kEvent(QEvent::MouseMove, QPoint([event locationInWindow]), 0, stateForCurrentEvent());
+    QMouseEvent kEvent(QEvent::MouseMove, event);
     v->viewportMouseMoveEvent(&kEvent);
     v->deref();
     
@@ -2157,8 +2106,7 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
     
-    QMouseEvent qev(QEvent::MouseButtonPress, QPoint([event locationInWindow]),
-        buttonForCurrentEvent(), stateForCurrentEvent(), [event clickCount]);
+    QMouseEvent qev(QEvent::MouseButtonPress, event);
 
     int xm, ym;
     v->viewportToContents(qev.x(), qev.y(), xm, ym);

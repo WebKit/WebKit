@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef EVENT_H_
-#define EVENT_H_
+#ifndef KWQKPARTSEVENT_H_
+#define KWQKPARTSEVENT_H_
 
 #include "KWQEvent.h"
 
@@ -32,12 +32,19 @@ class QPainter;
 
 namespace KParts {
 
-class Event : public QCustomEvent {
+class Event : public QEvent {
 public:
+    Event(const char *);
+    ~Event();
+
     static bool test(const QEvent *);
     static bool test(const QEvent *, const char *);
 
-    Event(const char *);
+private:
+    char *_name;
+
+    Event(const Event &);
+    Event &operator=(const Event &);
 };
 
 } // namespace KParts

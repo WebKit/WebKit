@@ -77,7 +77,7 @@ namespace KJS {
 
 const struct HashEntry DOMUIEventTableEntries[] = {
    { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "charCode", DOMUIEvent::CharCode, DontDelete|ReadOnly, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "view", DOMUIEvent::View, DontDelete|ReadOnly, 0, &DOMUIEventTableEntries[8] },
    { "keyCode", DOMUIEvent::KeyCode, DontDelete|ReadOnly, 0, 0 },

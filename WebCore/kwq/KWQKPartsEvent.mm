@@ -25,32 +25,25 @@
 
 #import "KWQKPartsEvent.h"
 
-class QPainter;
-
-#define KPARTS_EVENT_MAGIC 42
-
 namespace KParts {
+
+Event::Event(const char *name) : QEvent(KParts), _name(strdup(name))
+{
+}
+
+Event::~Event()
+{
+    free(_name);
+}
 
 bool Event::test(const QEvent *event)
 {
-  if ( !event )
-    return false;
-  
-  return ( event->type() == (QEvent::Type)(1000 + KPARTS_EVENT_MAGIC ) );
+    return event && event->type() == KParts;
 }
 
 bool Event::test(const QEvent *event, const char *name)
 {
-  if ( !test( event ) )
-    return false;
-  
-  return ( strcmp( name, (const char *)((QCustomEvent *)event)->data() ) == 0 );
-}
-
-
-Event::Event(const char *eventName)
- : QCustomEvent( (QEvent::Type)(1000 + KPARTS_EVENT_MAGIC), (void *)eventName )
-{
+    return event && event->type() == KParts && strcmp(name, static_cast<const Event *>(event)->_name) == 0;
 }
 
 } // namespace KParts

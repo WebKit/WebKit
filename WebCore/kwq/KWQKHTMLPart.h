@@ -254,9 +254,6 @@ private:
     virtual void khtmlMouseMoveEvent(khtml::MouseMoveEvent *);
     virtual void khtmlMouseReleaseEvent(khtml::MouseReleaseEvent *);
     
-    static int buttonForCurrentEvent();
-    static int stateForCurrentEvent();
-
     bool passWidgetMouseDownEventToWidget(khtml::MouseEvent *);
     bool passWidgetMouseDownEventToWidget(khtml::RenderWidget *);
     bool passWidgetMouseDownEventToWidget(QWidget *);

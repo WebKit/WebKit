@@ -1,3 +1,121 @@
+2003-11-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - did keyboard event cleanup to follow up on the keyCode work I did before
+        - fixed 3485558: key identifers use lowercase hex, but the W3C document shows uppercase
+        - fixed 3485564: key identifier for the Return key should be "Enter"
+        - fixed 3485579: letter keys generate different key identifiers depending on whether the shift key is down
+        - fixed 3485568: keyboard event modifier key bits are uninitialized; may have incorrect values
+        - fixed 3481514: which attribute for DOM events reports incorrect value
+        - fixed 3452569: charCode attribute for DOM events not supported
+
+        * khtml/dom/dom2_events.h: Added charCode.
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::keyCode): Call through to KeyboardEventImpl instead of doing the work here;
+        better factoring.
+        (UIEvent::charCode): Added. Calls through to KeyboardEventImpl.
+        (UIEvent::which): Call keyCode in KeyboardEventImpl to share code.
+
+        * khtml/ecma/kjs_events.h: Added charCode property for DOMUIEvent.
+        * khtml/ecma/kjs_events.cpp: (DOMUIEvent::getValueProperty): Added charCode.
+        * khtml/ecma/kjs_events.lut.h: Regenerated.
+
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::defaultEventHandler): Remove checks for "U+00000d" since we now use "Enter"
+        for that key; also, we use capitalized hex, so it would have to change to "U+00000D" anyway.
+        (HTMLSelectElementImpl::defaultEventHandler): Ditto.
+        * khtml/html/html_inlineimpl.cpp: (HTMLAnchorElementImpl::defaultEventHandler): Ditto.
+
+        * khtml/khtmlview.cpp: (KHTMLView::keyPressEvent): Put !APPLE_CHANGES around code we are not
+        using. It was doing a switch based on Qt key codes, but the key value it was using to check
+        was a Macintosh virtual key code, which could yield strange results when the codes happen to
+        match. Safer and smaller code size not to do any of it at all.
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::RenderLineEdit): Use a KLineEdit instead of LineEditWidget for APPLE_CHANGES.
+        Allows us to put !APPLE_CHANGES around more Qt key code stuff.
+        (RenderLineEdit::select): Cast to KLineEdit instead of LineEditWidget.
+        (ComboBoxWidget::event): Put !APPLE_CHANGES around more unneeded Qt key code stuff.
+        (TextAreaWidget::event): Put !APPLE_CHANGES around more unneeded Qt key code stuff.
+
+        * khtml/xml/dom2_eventsimpl.h: Made id() const and added keyCode() and charCode().
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (KeyboardEventImpl::KeyboardEventImpl): Initialize all fields in the empty constructor.
+        Initialize all the modifier bits in the main constructor; the old code assumed they started
+        off false, which is not a safe assumption. Also set m_altGraphKey false. Eliminated the
+        unneeded check of text() before calling identifier(). Also adapted for the name change from
+        identifier() to keyIdentifier().
+        (KeyboardEventImpl::keyCode): Added. Returns the Windows virtual key code for keydown and
+        keyup events, and the Unicode character for all other events.
+        (KeyboardEventImpl::charCode): Added. Returns the Unicode character.
+
+        * kwq/KWQEvent.h: Changed QCustomEvent to be a typedef for QEvent.
+        (QEvent::QEvent): Removed AccelAvailable, and added KParts, so I could remove some ugly
+        constants from the KParts code.
+        (QMouseEvent::button): Use a cast here since the field is now int.
+        (QMouseEvent::state): Use a cast here since the field is now int.
+        (QMouseEvent::stateAfter): Use a cast here since the field is now int, and use the new
+        _stateAfter field.
+        (QTimerEvent::QTimerEvent): Moved the constructor to be inline since it's so simple.
+        (QKeyEvent::QKeyEvent): Removed type and button state parameters, now unneeded.
+        Also removed now-unused _key, _ascii, and _count fields, and key(), ascii(),
+        and count() functions.
+        (QKeyEvent::state): Made inline.
+        (QKeyEvent::isAccepted): Made inline.
+        (QKeyEvent::text): Made inline.
+        (QKeyEvent::isAutoRepeat): Made inline.
+        (QKeyEvent::accept): Made inline.
+        (QKeyEvent::ignore): Made inline.
+        (QKeyEvent::unmodifiedText): Made inline.
+        (QKeyEvent::keyIdentifier): Made inline and chnaged name from identifier().
+        * kwq/KWQEvent.mm:
+        (keyIdentifierForKeyEvent): Renamed from identifierForKeyText and changed parameter
+        to be the event. Cleaned up the code a little bit, and wrote a comment or two.
+        Changed from lowercase hex to uppercase, and called toupper on the key so that
+        letter a-z would work properly. (A non-Unicode toupper is just the ticket here,
+        because I am only sure we want to do this for a-z, not other lowercase characters.)
+        (isKeypadEvent): Added. Uses virtual key codes to decide if a key event is a keypad
+        event, so we can set the state flag correctly.
+        (WindowsKeyCodeForKeyEvent): Added Clear key to the switch statement; it was missing.
+        Changed to no longe use the characterCode helper function since this was the only
+        place it was needed.
+        (mouseButtonForEvent): Added. Similar logic to what was in KWQKHTMLPart before; better
+        factoring to have it in here.
+        (nonMouseButtonsForEvent): Ditto.
+        (QMouseEvent::QMouseEvent): Rewrote constructors. One matches the one from Qt that's
+        used in some places in KHTML code. The other takes an NSEvent and uses the new functions
+        above to compute the button and state.
+        (QKeyEvent::QKeyEvent): Computer type based on the passed-in NSEvent. Compute the
+        auto-repeat flag based on the event and also the "forceAutoRepeat" parameter. Compute
+        the button state based on the event too.
+
+        * kwq/KWQKHTMLPart.h: Remove buttonForCurrentEvent and stateForCurrentEvent. Both
+        are now in KWQEvent.mm.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::keyEvent): Remove extra parameters in code that creates QKeyEvent, now
+        that QKeyEvent can handle everything itself.
+        (KWQKHTMLPart::mouseDown): Same thing as above, only for QMouseEvent.
+        (KWQKHTMLPart::mouseDragged): Ditto.
+        (KWQKHTMLPart::mouseUp): Ditto.
+        (KWQKHTMLPart::mouseMoved): Ditto.
+        (KWQKHTMLPart::sendContextMenuEvent): Ditto.
+
+        * kwq/KWQKPartsEvent.h: Tweaked the class around a little so it can work without
+        taking advantage of QCustomEvent's data pointer.
+        * kwq/KWQKPartsEvent.mm:
+        (KParts::Event::Event): Changed so it does a strdup on the event name and uses the
+        new event type pre-allocated in KWQEvent.h for us.
+        (KParts::Event::~Event): Free the event name.
+        (KParts::Event::test): Reimplemented this.
+
+        * kwq/KWQKPartsPart.h: (KParts::Part::event): Removed now-unnecessary cast to change
+        a QCustomEvent into a QEvent.
+
+        * kwq/KWQNamespace.h: Removed the Qt::Key enum. All the code that used it was already
+        broken because of the mixup between Qt and Macintosh key codes.
+
 2003-11-17  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

@@ -330,6 +330,12 @@ public:
     int keyCode() const;
 
     /**
+     * Non-standard extension to support IE-style charCode event property.
+     *
+     */
+    int charCode() const;
+
+    /**
      * Non-standard extensions to support Netscape-style pageX and pageY event properties.
      *
      */

@@ -519,6 +519,13 @@ bool MouseEventImpl::isMouseEvent() const
 KeyboardEventImpl::KeyboardEventImpl()
 {
   m_keyEvent = 0;
+  m_keyIdentifier = 0;
+  m_keyLocation = KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
+  m_ctrlKey = false;
+  m_shiftKey = false;
+  m_altKey = false;
+  m_metaKey = false;
+  m_altGraphKey = false;
 }
 
 KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
@@ -530,34 +537,23 @@ KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
 #else
     m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count());
 #endif
-    // Events are supposed to be accepted by default in Qt!
-    // This line made QLineEdit's keyevents be ignored, so they were sent to the khtmlview
-    // (and e.g. space would make it scroll down)
-    //qKeyEvent->ignore();
 
-    // m_keyIdentifier should contain the unicode value of the pressed key if available.
-    // key->text() returns the unicode sequence as a QString
-    if (!key->text().isNull()) {
-        DOMString identifier(m_keyEvent->identifier());
-        m_keyIdentifier = identifier.implementation();
-        m_keyIdentifier->ref();
-    }
-    else {
-        m_keyIdentifier = DOMString("Unidentified").implementation();
-        m_keyIdentifier->ref();
-    }
+#if APPLE_CHANGES
+    DOMString identifier(key->keyIdentifier());
+    m_keyIdentifier = identifier.implementation();
+    m_keyIdentifier->ref();
+#else
+    m_keyIdentifier = 0;
+    // need the equivalent of the above for KDE
+#endif
 
-    // key->state returns enum ButtonState, which is ShiftButton, ControlButton and AltButton or'ed together.
     int keyState = key->state();
-    if (keyState & Qt::ControlButton)
-        m_ctrlKey = true;
-    if (keyState & Qt::ShiftButton)
-        m_shiftKey = true;
-    if (keyState & Qt::AltButton)
-        m_altKey = true;
-    if (keyState & Qt::MetaButton)
-        m_metaKey = true;
-    // altGraphKey is not supported by Qt.
+
+    m_ctrlKey = keyState & Qt::ControlButton;
+    m_shiftKey = keyState & Qt::ShiftButton;
+    m_altKey = keyState & Qt::AltButton;
+    m_metaKey = keyState & Qt::MetaButton;
+    m_altGraphKey = false; // altGraphKey is not supported by Qt.
     
     // Note: we only support testing for num pad
     m_keyLocation = (keyState & Qt::Keypad) ? KeyboardEvent::DOM_KEY_LOCATION_NUMPAD : KeyboardEvent::DOM_KEY_LOCATION_STANDARD;
@@ -620,6 +616,36 @@ void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
     m_altKey = altKeyArg;
     m_metaKey = metaKeyArg;
     m_altGraphKey = altGraphKeyArg;
+}
+
+int KeyboardEventImpl::keyCode() const
+{
+    if (!m_keyEvent) {
+        return 0;
+    }
+    switch (m_id) {
+        case KEYDOWN_EVENT:
+        case KEYUP_EVENT:
+#if APPLE_CHANGES
+            return m_keyEvent->WindowsKeyCode();
+#else
+            // need the equivalent of the above for KDE
+#endif
+        default:
+            return charCode();
+    }
+}
+
+int KeyboardEventImpl::charCode() const
+{
+    if (!m_keyEvent) {
+        return 0;
+    }
+    QString text = m_keyEvent->text();
+    if (text.length() != 1) {
+        return 0;
+    }
+    return text[0].unicode();
 }
 
 bool KeyboardEventImpl::isKeyboardEvent() const

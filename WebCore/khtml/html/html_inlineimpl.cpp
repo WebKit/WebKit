@@ -109,7 +109,7 @@ void HTMLAnchorElementImpl::defaultEventHandler(EventImpl *evt)
         }
 
         if ( k ) {
-            if (k->keyIdentifier() != "U+00000d" && k->keyIdentifier() != "Enter") {
+            if (k->keyIdentifier() != "Enter") {
                 HTMLElementImpl::defaultEventHandler(evt);
                 return;
             }

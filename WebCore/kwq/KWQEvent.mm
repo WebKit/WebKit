@@ -24,68 +24,22 @@
  */
 
 #import "KWQEvent.h"
+
 #import "KWQLogging.h"
 
-QEvent::~QEvent()
+static QString keyIdentifierForKeyEvent(NSEvent *event)
 {
-}
-
-
-QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s )
-    : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s)
-{
-}
-
-QMouseEvent::QMouseEvent( Type t, const QPoint &pos, int b, int s, int cs )
-    : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s), _clickCount(cs)
-{
-}
-
-QMouseEvent::QMouseEvent(Type t, const QPoint &pos, const QPoint &, int b, int s)
-    : QEvent(t), _position(pos), _button((ButtonState)b), _state((ButtonState)s)
-{
-}
-
-Qt::ButtonState QMouseEvent::stateAfter()
-{
-    return _state;
-}
-
-
-QTimerEvent::QTimerEvent(int t)
-    : QEvent(Timer)
-{
-    _timerId = t;
-}
-
-static char hexDigit(int i) {
-    if (i < 0 || i > 16) {
-        ERROR("illegal hex digit");
-        return '0';
-    }
-    int h = i;
-    if (h >= 10) {
-        h = h - 10 + 'a'; 
-    }
-    else {
-        h += '0';
-    }
-    return h;
-}
-
-static QString identifierForKeyText(const QString &text)
-{
-    int count = text.length();
-    if (count == 0 || count > 1) {
-#ifdef APPLE_CHANGES
-        LOG(Events, "received an unexpected number of characters in key event: %d", count);
-#endif
+    NSString *s = [event charactersIgnoringModifiers];
+    if ([s length] != 1) {
+        LOG(Events, "received an unexpected number of characters in key event: %u", [s length]);
         return "Unidentified";
     }
-    ushort c = text[0].unicode();
+    unichar c = [s characterAtIndex:0];
     switch (c) {
         // Each identifier listed in the DOM spec is listed here.
-        // Many are simply commented out since they do not appear on standard Macintosh keyboards.
+        // Many are simply commented out since they do not appear on standard Macintosh keyboards
+        // or are on a key that doesn't have a corresponding character.
+
         // "Accept"
         // "AllCandidates"
         // "Alt"
@@ -97,10 +51,11 @@ static QString identifierForKeyText(const QString &text)
         // "BrowserSearch"
         // "BrowserStop"
         // "CapsLock"
+
         // "Clear"
         case NSClearLineFunctionKey:
             return "Clear";
-            break;
+
         // "CodeInput"
         // "Compose"
         // "Control"
@@ -108,146 +63,125 @@ static QString identifierForKeyText(const QString &text)
         // "Convert"
         // "Copy"
         // "Cut"
+
         // "Down"
         case NSDownArrowFunctionKey:
             return "Down";
-            break;
         // "End"
         case NSEndFunctionKey:
             return "End";
-            break;
         // "Enter"
-        case 0x3:
+        case 0x3: case 0xD: // Macintosh calls the one on the main keyboard Return, but Windows calls it Enter, so we'll do the same for the DOM
             return "Enter";
-            break;
+
         // "EraseEof"
+
         // "Execute"
         case NSExecuteFunctionKey:
             return "Execute";
-            break;
+
         // "Exsel"
+
         // "F1"
         case NSF1FunctionKey:
             return "F1";
-            break;
         // "F2"
         case NSF2FunctionKey:
             return "F2";
-            break;
         // "F3"
         case NSF3FunctionKey:
             return "F3";
-            break;
         // "F4"
         case NSF4FunctionKey:
             return "F4";
-            break;
         // "F5"
         case NSF5FunctionKey:
             return "F5";
-            break;
         // "F6"
         case NSF6FunctionKey:
             return "F6";
-            break;
         // "F7"
         case NSF7FunctionKey:
             return "F7";
-            break;
         // "F8"
         case NSF8FunctionKey:
             return "F8";
-            break;
         // "F9"
         case NSF9FunctionKey:
             return "F9";
-            break;
         // "F10"
         case NSF10FunctionKey:
             return "F10";
-            break;
         // "F11"
         case NSF11FunctionKey:
             return "F11";
-            break;
         // "F12"
         case NSF12FunctionKey:
             return "F12";
-            break;
         // "F13"
         case NSF13FunctionKey:
             return "F13";
-            break;
         // "F14"
         case NSF14FunctionKey:
             return "F14";
-            break;
         // "F15"
         case NSF15FunctionKey:
             return "F15";
-            break;
         // "F16"
         case NSF16FunctionKey:
             return "F16";
-            break;
         // "F17"
         case NSF17FunctionKey:
             return "F17";
-            break;
         // "F18"
         case NSF18FunctionKey:
             return "F18";
-            break;
         // "F19"
         case NSF19FunctionKey:
             return "F19";
-            break;
         // "F20"
         case NSF20FunctionKey:
             return "F20";
-            break;
         // "F21"
         case NSF21FunctionKey:
             return "F21";
-            break;
         // "F22"
         case NSF22FunctionKey:
             return "F22";
-            break;
         // "F23"
         case NSF23FunctionKey:
             return "F23";
-            break;
         // "F24"
         case NSF24FunctionKey:
             return "F24";
-            break;
+
         // "FinalMode"
+
         // "Find"
         case NSFindFunctionKey:
             return "Find";
-            break;
         // "ForwardDelete" (Non-standard)
         case NSDeleteFunctionKey:
             return "ForwardDelete";
-            break;
+
         // "FullWidth"
         // "HalfWidth"
         // "HangulMode"
         // "HanjaMode"
+
         // "Help"
         case NSHelpFunctionKey:
             return "Help";
-            break;
+
         // "Hiragana"
+
         // "Home"
         case NSHomeFunctionKey:
             return "Home";
-            break;
         // "Insert"
         case NSInsertFunctionKey:
             return "Left";
-            break;
+
         // "JapaneseHiragana"
         // "JapaneseKatakana"
         // "JapaneseRomaji"
@@ -258,90 +192,121 @@ static QString identifierForKeyText(const QString &text)
         // "LaunchApplication1"
         // "LaunchApplication2"
         // "LaunchMail"
+
         // "Left"
         case NSLeftArrowFunctionKey:
             return "Left";
-            break;
+
         // "Meta"
         // "MediaNextTrack"
         // "MediaPlayPause"
         // "MediaPreviousTrack"
         // "MediaStop"
+
         // "ModeChange"
         case NSModeSwitchFunctionKey:
             return "ModeChange";
-            break;
+
         // "Nonconvert"
         // "NumLock"
+
         // "PageDown"
         case NSPageDownFunctionKey:
             return "PageDown";
-            break;
         // "PageUp"
         case NSPageUpFunctionKey:
             return "PageUp";
-            break;
+
         // "Paste"
+
         // "Pause"
         case NSPauseFunctionKey:
             return "Pause";
-            break;
+
         // "Play"
         // "PreviousCandidate"
+
         // "PrintScreen"
         case NSPrintScreenFunctionKey:
             return "PrintScreen";
-            break;
+
         // "Process"
         // "Props"
+
         // "Right"
         case NSRightArrowFunctionKey:
             return "Right";
-            break;
+
         // "RomanCharacters"
         // "Scroll"
         // "Select"
         // "SelectMedia"
         // "Shift"
+
         // "Stop"
         case NSStopFunctionKey:
             return "Stop";
-            break;
         // "Up"
         case NSUpArrowFunctionKey:
             return "Up";
-            break;
         // "Undo"
         case NSUndoFunctionKey:
             return "Undo";
-            break;
+
         // "VolumeDown"
         // "VolumeMute"
         // "VolumeUp"
         // "Win"
         // "Zoom"
+
         default:
-            char escaped[5];
-            escaped[0] = hexDigit((c >> 12) & 0xf);
-            escaped[1] = hexDigit((c >> 8) & 0xf);
-            escaped[2] = hexDigit((c >> 4) & 0xf);
-            escaped[3] = hexDigit(c & 0xf);
-            escaped[4] = '\0';
-            NSString *nsstring = [[NSString alloc] initWithFormat:@"U+00%s", escaped];
-            QString qstring = QString::fromNSString(nsstring);
-            [nsstring release];
-            return qstring;
+            return QString().sprintf("U+%06X", toupper(c));
     }
 }
 
-static int characterCode(NSString *characters)
+static bool isKeypadEvent(NSEvent *event)
 {
-    return [characters length] != 1 ? 0 : [characters characterAtIndex:0];
+    // Check that this is the type of event that has a keyCode.
+    switch ([event type]) {
+	case NSKeyDown:
+	case NSKeyUp:
+	case NSFlagsChanged:
+            break;
+        default:
+            return false;
+    }
+
+    switch ([event keyCode]) {
+        case 71: // Clear
+        case 81: // =
+        case 75: // /
+        case 67: // *
+        case 78: // -
+        case 69: // +
+        case 76: // Enter
+        case 65: // .
+        case 82: // 0
+        case 83: // 1
+        case 84: // 2
+        case 85: // 3
+        case 86: // 4
+        case 87: // 5
+        case 88: // 6
+        case 89: // 7
+        case 91: // 8
+        case 92: // 9
+            return true;
+     }
+     
+     return false;
 }
 
-static int WindowsKeyCode(NSEvent *event)
+static int WindowsKeyCodeForKeyEvent(NSEvent *event)
 {
     switch ([event keyCode]) {
+        // VK_CLEAR (0C) CLEAR key
+        case 71: return 0x0C;
+
         // VK_NUMPAD0 (60) Numeric keypad 0 key
         case 82: return 0x60;
         // VK_NUMPAD1 (61) Numeric keypad 1 key
@@ -375,7 +340,12 @@ static int WindowsKeyCode(NSEvent *event)
         case 75: return 0x6F;
      }
 
-    switch (characterCode([event charactersIgnoringModifiers])) {
+    NSString *s = [event charactersIgnoringModifiers];
+    if ([s length] != 1) {
+        return 0;
+    }
+
+    switch ([s characterAtIndex:0]) {
         // VK_LBUTTON (01) Left mouse button
         // VK_RBUTTON (02) Right mouse button
         // VK_CANCEL (03) Control-break processing
@@ -668,74 +638,119 @@ static int WindowsKeyCode(NSEvent *event)
     }
 
     return 0;
- }
- 
-QKeyEvent::QKeyEvent(NSEvent *event, Type t, int buttonState, bool autoRepeat)
-    : QEvent(t),
-      _key([event keyCode]),
-      _ascii(characterCode([event characters])),
-      _state((ButtonState)buttonState),
+}
+
+static int mouseButtonForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+            return Qt::LeftButton;
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+            return Qt::RightButton;
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+            return Qt::MidButton;
+        default:
+            return Qt::NoButton;
+    }
+}
+
+static int nonMouseButtonsForEvent(NSEvent *event)
+{
+    int buttons = 0;
+
+    unsigned modifiers = [event modifierFlags];
+
+    if (modifiers & NSControlKeyMask) {
+        buttons |= Qt::ControlButton;
+    }
+    if (modifiers & NSShiftKeyMask) {
+        buttons |= Qt::ShiftButton;
+    }
+    if (modifiers & NSAlternateKeyMask) {
+        buttons |= Qt::AltButton;
+    }
+    if (modifiers & NSCommandKeyMask) {
+        buttons |= Qt::MetaButton;
+    }
+
+    // I tried using NSNumericPadKeyMask, but it does not seem to work reliably.
+    // One possible explanation is that the documentation says "Set if any key in
+    // the numeric keypad is pressed." which may mean that it gets set if there
+    // is any key down on the numeric keypad. But it could just be some kind of bug
+    // or a mistake on my part. We could revisit this some day.
+    if (isKeypadEvent(event)) {
+        buttons |= Qt::Keypad;
+    }
+
+    return buttons;
+}
+
+// ======== 
+
+QEvent::~QEvent()
+{
+}
+
+// ======== 
+
+QMouseEvent::QMouseEvent(Type type, const QPoint &position, int button, int state)
+    : QEvent(type), _position(position)
+{
+    _button = button;
+    if (type == MouseMove) {
+        _clickCount = 0;
+        _state = state | button;
+        _stateAfter = state | button;
+    } else {
+        _clickCount = 1;
+        if (type == MouseButtonRelease) {
+            _state = state | button;
+            _stateAfter = state & ~button;
+        } else {
+            _state = state & ~button;
+            _stateAfter = state | button;
+        }
+    }
+}
+
+QMouseEvent::QMouseEvent(Type type, NSEvent *event)
+    : QEvent(type), _position([event locationInWindow])
+{
+    int button = mouseButtonForEvent(event);
+    int state = nonMouseButtonsForEvent(event);
+    _button = button;
+    if (type == MouseMove) {
+        _clickCount = 0;
+        _state = state | button;
+        _stateAfter = state | button;
+    } else {
+        _clickCount = [event clickCount];
+        if (type == MouseButtonRelease) {
+            _state = state | button;
+            _stateAfter = state & ~button;
+        } else {
+            _state = state & ~button;
+            _stateAfter = state | button;
+        }
+    }
+}
+
+// ======== 
+
+QKeyEvent::QKeyEvent(NSEvent *event, bool forceAutoRepeat)
+    : QEvent([event type] == NSKeyDown ? KeyPress : KeyRelease),
+      _state(nonMouseButtonsForEvent(event)),
       _text(QString::fromNSString([event characters])),
       _unmodifiedText(QString::fromNSString([event charactersIgnoringModifiers])),
-      _identifier(identifierForKeyText(_unmodifiedText)),
-      _autoRepeat(autoRepeat),
-      _count(1),
+      _keyIdentifier(keyIdentifierForKeyEvent(event)),
+      _autoRepeat(forceAutoRepeat || [event isARepeat]),
       _isAccepted(false),
-      _WindowsKeyCode(::WindowsKeyCode(event))
+      _WindowsKeyCode(WindowsKeyCodeForKeyEvent(event))
 {
-}
-
-int QKeyEvent::key() const
-{
-    return _key;
-}
-
-Qt::ButtonState QKeyEvent::state() const
-{
-    return _state;
-}
-
-void QKeyEvent::accept()
-{
-    _isAccepted = true;
-}
-
-void QKeyEvent::ignore()
-{
-    _isAccepted = false;
-}
-
-bool QKeyEvent::isAutoRepeat() const
-{
-    return _autoRepeat;
-}
-
-QString QKeyEvent::text(void) const
-{
-    return _text;
-}
-
-QString QKeyEvent::unmodifiedText(void) const
-{
-    return _unmodifiedText;
-}
-
-int QKeyEvent::ascii(void) const
-{
-    return _ascii;
-}
-
-int QKeyEvent::count(void) const
-{
-    return _count;
-}
-
-bool QKeyEvent::isAccepted(void) const
-{
-    return _isAccepted;
-}
-
-QString QKeyEvent::identifier() const
-{
-    return _identifier;
 }
