@@ -1513,9 +1513,10 @@ bool CSSParser::parseFont( bool important )
 	value = valueList->next();
 	if ( !value )
 	    goto invalid;
-    } else {
-	font->lineHeight = new CSSPrimitiveValueImpl( CSS_VAL_NORMAL );
     }
+    
+    if (!font->lineHeight)
+	font->lineHeight = new CSSPrimitiveValueImpl( CSS_VAL_NORMAL );
 
 //     kdDebug( 6080 ) << "  got line height current=" << valueList->currentValue << endl;
     // font family must come now
