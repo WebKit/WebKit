@@ -1,3 +1,14 @@
+2004-08-03  David Hyatt  <hyatt@apple.com>
+
+	Add the text/xsl MIME type as one that can be displayed.
+	
+        Reviewed by john
+
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+
 2004-08-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

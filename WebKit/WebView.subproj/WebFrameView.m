@@ -290,6 +290,7 @@ static NSMutableDictionary *viewTypes;
         viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLView class], @"text/html",
 	    [WebHTMLView class], @"text/xml",
+	    [WebHTMLView class], @"text/xsl",
 	    [WebHTMLView class], @"application/xml",
 	    [WebHTMLView class], @"application/xhtml+xml",
             [WebHTMLView class], @"application/x-webarchive",
