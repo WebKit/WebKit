@@ -82,8 +82,8 @@ private:
 class EditCommandImpl : public SharedCommandImpl
 {
 public:
-	EditCommandImpl(DOM::DocumentImpl *);
-	virtual ~EditCommandImpl();
+    EditCommandImpl(DOM::DocumentImpl *);
+    virtual ~EditCommandImpl();
 
     virtual int commandID() const;
     bool isCompositeStep() const { return parent().notNull(); }
@@ -92,9 +92,9 @@ public:
 
     enum ECommandState { NotApplied, Applied };
     
-	void apply();	
-	void unapply();
-	void reapply();
+    void apply();	
+    void unapply();
+    void reapply();
 
     virtual void doApply() = 0;
     virtual void doUnapply() = 0;
@@ -133,14 +133,14 @@ private:
 class CompositeEditCommandImpl : public EditCommandImpl
 {
 public:
-	CompositeEditCommandImpl(DOM::DocumentImpl *);
-	virtual ~CompositeEditCommandImpl();
+    CompositeEditCommandImpl(DOM::DocumentImpl *);
+    virtual ~CompositeEditCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply() = 0;	
-	virtual void doUnapply();
-	virtual void doReapply();
+    virtual void doApply() = 0;	
+    virtual void doUnapply();
+    virtual void doReapply();
 
 protected:
     //
@@ -182,12 +182,12 @@ class AppendNodeCommandImpl : public EditCommandImpl
 {
 public:
     AppendNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
-	virtual ~AppendNodeCommandImpl();
+    virtual ~AppendNodeCommandImpl();
 
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::NodeImpl *appendChild() const { return m_appendChild; }
     DOM::NodeImpl *parentNode() const { return m_parentNode; }
@@ -203,12 +203,12 @@ private:
 class ApplyStyleCommandImpl : public CompositeEditCommandImpl
 {
 public:
-	ApplyStyleCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style);
-	virtual ~ApplyStyleCommandImpl();
+    ApplyStyleCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *style);
+    virtual ~ApplyStyleCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
+    virtual void doApply();
 
     DOM::CSSStyleDeclarationImpl *style() const { return m_style; }
 
@@ -236,14 +236,14 @@ private:
 class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
 { 
 public:
-	DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
-	DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
-    
-	virtual ~DeleteSelectionCommandImpl();
+    DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
+    DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
+
+    virtual ~DeleteSelectionCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
+    virtual void doApply();
     
 private:
     void deleteDownstreamWS(const DOM::Position &start);
@@ -261,13 +261,13 @@ private:
 class DeleteTextCommandImpl : public EditCommandImpl
 {
 public:
-	DeleteTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
-	virtual ~DeleteTextCommandImpl();
+    DeleteTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *node, long offset, long count);
+    virtual ~DeleteTextCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
@@ -331,12 +331,12 @@ class InsertNodeBeforeCommandImpl : public EditCommandImpl
 {
 public:
     InsertNodeBeforeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
-	virtual ~InsertNodeBeforeCommandImpl();
+    virtual ~InsertNodeBeforeCommandImpl();
 
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::NodeImpl *insertChild() const { return m_insertChild; }
     DOM::NodeImpl *refChild() const { return m_refChild; }
@@ -352,13 +352,13 @@ private:
 class InsertTextCommandImpl : public EditCommandImpl
 {
 public:
-	InsertTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
-	virtual ~InsertTextCommandImpl();
+    InsertTextCommandImpl(DOM::DocumentImpl *document, DOM::TextImpl *, long, const DOM::DOMString &);
+    virtual ~InsertTextCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_node; }
     long offset() const { return m_offset; }
@@ -376,13 +376,13 @@ private:
 class JoinTextNodesCommandImpl : public EditCommandImpl
 {
 public:
-	JoinTextNodesCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
-	virtual ~JoinTextNodesCommandImpl();
+    JoinTextNodesCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, DOM::TextImpl *);
+    virtual ~JoinTextNodesCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::TextImpl *firstNode() const { return m_text1; }
     DOM::TextImpl *secondNode() const { return m_text2; }
@@ -435,13 +435,13 @@ private:
 class RemoveCSSPropertyCommandImpl : public EditCommandImpl
 {
 public:
-	RemoveCSSPropertyCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *, int property);
-	virtual ~RemoveCSSPropertyCommandImpl();
+    RemoveCSSPropertyCommandImpl(DOM::DocumentImpl *, DOM::CSSStyleDeclarationImpl *, int property);
+    virtual ~RemoveCSSPropertyCommandImpl();
 
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::CSSStyleDeclarationImpl *styleDeclaration() const { return m_decl; }
     int property() const { return m_property; }
@@ -459,13 +459,13 @@ private:
 class RemoveNodeAttributeCommandImpl : public EditCommandImpl
 {
 public:
-	RemoveNodeAttributeCommandImpl(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute);
-	virtual ~RemoveNodeAttributeCommandImpl();
+    RemoveNodeAttributeCommandImpl(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute);
+    virtual ~RemoveNodeAttributeCommandImpl();
 
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::ElementImpl *element() const { return m_element; }
     DOM::NodeImpl::Id attribute() const { return m_attribute; }
@@ -482,13 +482,13 @@ private:
 class RemoveNodeCommandImpl : public EditCommandImpl
 {
 public:
-	RemoveNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
-	virtual ~RemoveNodeCommandImpl();
+    RemoveNodeCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
+    virtual ~RemoveNodeCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::NodeImpl *node() const { return m_removeChild; }
 
@@ -504,12 +504,12 @@ private:
 class RemoveNodePreservingChildrenCommandImpl : public CompositeEditCommandImpl
 {
 public:
-	RemoveNodePreservingChildrenCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
-	virtual ~RemoveNodePreservingChildrenCommandImpl();
+    RemoveNodePreservingChildrenCommandImpl(DOM::DocumentImpl *, DOM::NodeImpl *);
+    virtual ~RemoveNodePreservingChildrenCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
+    virtual void doApply();
 
     DOM::NodeImpl *node() const { return m_node; }
 
@@ -523,13 +523,13 @@ private:
 class SetNodeAttributeCommandImpl : public EditCommandImpl
 {
 public:
-	SetNodeAttributeCommandImpl(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute, const DOM::DOMString &value);
-	virtual ~SetNodeAttributeCommandImpl();
+    SetNodeAttributeCommandImpl(DOM::DocumentImpl *, DOM::ElementImpl *, DOM::NodeImpl::Id attribute, const DOM::DOMString &value);
+    virtual ~SetNodeAttributeCommandImpl();
 
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::ElementImpl *element() const { return m_element; }
     DOM::NodeImpl::Id attribute() const { return m_attribute; }
@@ -548,13 +548,13 @@ private:
 class SplitTextNodeCommandImpl : public EditCommandImpl
 {
 public:
-	SplitTextNodeCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, long);
-	virtual ~SplitTextNodeCommandImpl();
+    SplitTextNodeCommandImpl(DOM::DocumentImpl *, DOM::TextImpl *, long);
+    virtual ~SplitTextNodeCommandImpl();
 	
     virtual int commandID() const;
 
-	virtual void doApply();
-	virtual void doUnapply();
+    virtual void doApply();
+    virtual void doUnapply();
 
     DOM::TextImpl *node() const { return m_text2; }
     long offset() const { return m_offset; }

@@ -1,5 +1,11 @@
 2004-09-02  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * khtml/editing/htmlediting_impl.h: Fix some inconsistent use of whitespace. No code change.
+
+2004-09-02  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Fix for this bug:
