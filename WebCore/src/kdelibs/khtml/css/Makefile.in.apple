@@ -20,7 +20,13 @@ include $(TOPSRCDIR)/Makefile.vars
 
 SOURCES = $(wildcard *.cpp)
 HEADERS = $(wildcard *.h)
-CXXOBJECTS = $(patsubst %.cpp,%.o,$(wildcard *.cpp))
+CXXOBJECTS = css_ruleimpl.o \
+    css_stylesheetimpl.o \
+    css_valueimpl.o \
+    csshelper.o \
+    cssparser.o \
+    cssstyleselector.o \
+    $(NULL)
 
 VALUEFILES = \
 	cssvalues.c \
