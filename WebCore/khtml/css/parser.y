@@ -739,6 +739,9 @@ decl_list:
     declaration ';' maybe_space {
 	$$ = $1;
     }
+    | declaration invalid_block_list ';' maybe_space {
+        $$ = false;
+    }
     | error ';' maybe_space {
 	$$ = false;
 #ifdef CSS_DEBUG
@@ -795,6 +798,14 @@ declaration:
     }
     |
     property error {
+        $$ = false;
+    }
+    |
+    property ':' maybe_space error expr prio {
+        /* The default movable type template has letter-spacing: .none;  Handle this by looking for
+        error tokens at the start of an expr, recover the expr and then treat as an error, cleaning
+        up and deleting the shifted expr.  */
+        delete $5;
         $$ = false;
     }
     |

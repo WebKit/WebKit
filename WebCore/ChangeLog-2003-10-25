@@ -1,3 +1,14 @@
+2003-04-30  David Hyatt  <hyatt@apple.com>
+
+	Fixes for 3227983 and 3224521, both bugs involving bad letter-spacing
+	property values.  This fixes all Movable Type blogs that had this
+	error in their stylesheets.
+	
+        Reviewed by gramps
+
+        * khtml/css/parser.cpp:
+        * khtml/css/parser.y:
+
 2003-04-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
