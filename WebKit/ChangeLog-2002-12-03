@@ -1,4 +1,18 @@
 2002-11-20  Chris Blumenberg  <cblu@apple.com>
+
+	Minor clean-up, logging and more error checking in plug-in code.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        (-[WebBaseNetscapePluginStream receivedData:]):
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]):
+        * Plugins.subproj/npapi.m:
+        (NPN_UserAgent):
+        (NPN_MemFree):
+        (NPN_MemFlush):
+        (NPN_ReloadPlugins):
+
+2002-11-20  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed: 3061174 - javascript: URLs sent by plugins don't work
 
@@ -68,7 +82,8 @@
 
 	Real fix for: 3104183 - Assert loading www.louisvuitton.com
 
-	Since we don't consider plug-in content as a subresource, attaching plug-in streams to the datasource has no affect on the loading state of the datasource. Both stopLoading on WebFrame and _stopLoading datasource, would not stop plug-ins streams after the data source was done loading. Because of this, I've decided to not keep a list of plug-in streams attached to the data source and pulled my previous change. To fix this bug, WebBaseResourceHandleDelegate now retains the controller.
+	Since we don't consider plug-in content as a subresource, attaching plug-in streams to the datasource has no affect on the loading state of the datasource. Both stopLoading on WebFrame and _stopLoading datasource, would not stop plug-ins streams after th
+e data source was done loading. Because of this, I've decided to not keep a list of plug-in streams attached to the data source and pulled my previous change. To fix this bug, WebBaseResourceHandleDelegate now retains the controller.
 
         * Plugins.subproj/WebNetscapePluginStream.m:
         (-[WebNetscapePluginStream start]):
@@ -4888,7 +4903,8 @@
 
 2002-09-30  Chris Blumenberg  <cblu@apple.com>
 
-	A ton o' plugin view clean-up and arch changes. Turned WebPluginView into WebBaseNetscapePluginView. New classes WebNetscapePluginEmbeddedView and WebNetscapePluginDocumentView are subclasses of WebBaseNetscapePluginView. WebNetscapePluginDocumentView handles non-HTML plug-in content and WebNetscapePluginEmbeddedView is the WebHTMLView subview.
+	A ton o' plugin view clean-up and arch changes. Turned WebPluginView into WebBaseNetscapePluginView. New classes WebNetscapePluginEmbeddedView and WebNetscapePluginDocumentView are subclasses of WebBaseNetscapePluginView. WebNetscapePluginDocumentView ha
+ndles non-HTML plug-in content and WebNetscapePluginEmbeddedView is the WebHTMLView subview.
 
 	Found that we leak the world on complex pages with plug-ins such as macromedia.com and marvel.com when closing the window. Still need to figure this out.
 
@@ -5059,7 +5075,8 @@
 	Fixed: 2978258 - quake3arena.com sends me to the flash=false site
 	The page has a flash plugin that once loaded, requests the flash=true page. If the plugin doesn't load, the meta refresh tag to the flash=false page fires after 3 seconds. This is how this site's flash detection works.
 
-	The reason this doesn't work for us is because the flash movie is at the bottom of the page. Plugins don't start until the initial drawRect. Since the movie is at the bottom of the page and out of site, the plugin never gets the drawRect and thus, never starts. We now start plug-ins when they are added to the window.
+	The reason this doesn't work for us is because the flash movie is at the bottom of the page. Plugins don't start until the initial drawRect. Since the movie is at the bottom of the page and out of site, the plugin never gets the drawRect and thus, never 
+starts. We now start plug-ins when they are added to the window.
 
 	Fixed: 3062224 - context menu includes "Download Item to Disk" for mailto links
 

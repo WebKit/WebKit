@@ -13,7 +13,7 @@
 const char* NPN_UserAgent(NPP instance)
 {
     LOG(Plugins, "NPN_UserAgent");
-    return "IE";
+    return "Microsoft Internet Explorer";
 }
 
 void* NPN_MemAlloc(UInt32 size)
@@ -27,19 +27,17 @@ void NPN_MemFree(void* ptr)
 {
     //LOG(Plugins, "NPN_MemFree");
     free(ptr);
-
 }
 
 UInt32 NPN_MemFlush(UInt32 size)
 {
     LOG(Plugins, "NPN_MemFlush");
-    return 0;
+    return size;
 }
 
 void NPN_ReloadPlugins(NPBool reloadPages)
 {
     LOG(Plugins, "NPN_ReloadPlugins");
-
 }
 
 NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)

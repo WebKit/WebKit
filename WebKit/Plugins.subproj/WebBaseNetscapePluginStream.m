@@ -69,8 +69,8 @@
     LOG(Plugins, "NPP_NewStream: %d %@", npErr, URL);
 
     if (npErr != NPERR_NO_ERROR) {
+        ERROR("NPP_NewStream failed with error: %d", npErr);
         stream.ndata = nil;
-        // FIXME: Need to properly handle this error.
         return;
     }
 
@@ -95,7 +95,7 @@
 
 - (void)receivedData:(NSData *)data
 {
-    if(![plugin isLoaded]){
+    if(![plugin isLoaded] || !stream.ndata) {
         return;
     }
     
@@ -131,7 +131,7 @@
 
 - (void)finishedLoadingWithData:(NSData *)data
 {
-    if(![plugin isLoaded]){
+    if(![plugin isLoaded] || !stream.ndata) {
         return;
     }
     
