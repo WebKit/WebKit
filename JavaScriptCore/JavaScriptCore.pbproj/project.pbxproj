@@ -95,6 +95,7 @@
 		};
 		0867D691FE84028FC02AAC07 = {
 			children = (
+				51856D950562EE9C008B9D83,
 				65417203039E01F90058BFEB,
 				65417200039E01BA0058BFEB,
 				089C1665FE841158C02AAC07,
@@ -110,6 +111,7 @@
 			children = (
 				6560A4CF04B3B3E7008AE952,
 				6560A63D04B3B69F008AE952,
+				51856D980562F158008B9D83,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -232,6 +234,7 @@
 				65417211039E08B90058BFEB,
 				65417219039E0B390058BFEB,
 				937F4F25048E5B9900CA2AC4,
+				51856D920562EE95008B9D83,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -284,6 +287,7 @@
 				6541720C039E02E70058BFEB,
 				6541720D039E02E70058BFEB,
 				9364B274045B7D6C00A9CAC1,
+				51856D910562EE95008B9D83,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -293,6 +297,7 @@
 			files = (
 				6560A4D004B3B3E7008AE952,
 				6560A63E04B3B69F008AE952,
+				51856D990562F158008B9D83,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -412,6 +417,70 @@
 //082
 //083
 //084
+//510
+//511
+//512
+//513
+//514
+		51856D8F0562EE95008B9D83 = {
+			expectedFileType = sourcecode.cpp.cpp;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_utility.cpp;
+			path = bindings/jni/jni_utility.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51856D900562EE95008B9D83 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = jni_utility.h;
+			path = bindings/jni/jni_utility.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51856D910562EE95008B9D83 = {
+			fileRef = 51856D8F0562EE95008B9D83;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51856D920562EE95008B9D83 = {
+			fileRef = 51856D900562EE95008B9D83;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		51856D950562EE9C008B9D83 = {
+			children = (
+				51856D8F0562EE95008B9D83,
+				51856D900562EE95008B9D83,
+			);
+			isa = PBXGroup;
+			name = bindings;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51856D980562F158008B9D83 = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = JavaVM.framework;
+			path = /System/Library/Frameworks/JavaVM.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		51856D990562F158008B9D83 = {
+			fileRef = 51856D980562F158008B9D83;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//510
+//511
+//512
+//513
+//514
 //650
 //651
 //652

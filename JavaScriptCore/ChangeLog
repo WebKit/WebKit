@@ -1,3 +1,28 @@
+2003-11-12  Richard Williamson   <rjw@apple.com>
+
+	Added utility functions for calling JNI methods.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * Makefile.am:
+        * bindings/Makefile.am: Added.
+        * bindings/jni/Makefile.am: Added.
+        * bindings/jni/jni_utility.cpp: Added.
+        (attachToJavaVM):
+        (callJNIMethod):
+        (callJNIVoidMethod):
+        (callJNIObjectMethod):
+        (callJNIByteMethod):
+        (callJNICharMethod):
+        (callJNIShortMethod):
+        (callJNIIntMethod):
+        (callJNILongMethod):
+        (callJNIFloatMethod):
+        (callJNIDoubleMethod):
+        * bindings/jni/jni_utility.h: Added.
+        * bindings/objc/Makefile.am: Added.
+
 2003-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
