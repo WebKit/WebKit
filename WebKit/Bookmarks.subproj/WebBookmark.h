@@ -69,5 +69,7 @@ typedef enum {
 // The group that this bookmark belongs to.
 - (WebBookmarkGroup *)group;
 
+// Compare the content (all information other than parent/group) to another bookmark
+- (BOOL)contentMatches:(WebBookmark *)otherBookmark;
 
 @end

@@ -186,4 +186,47 @@
     return nil;
 }
 
+- (BOOL)contentMatches:(WebBookmark *)otherBookmark
+{
+    WebBookmarkType bookmarkType = [self bookmarkType];
+    if (bookmarkType != [otherBookmark bookmarkType]) {
+        return NO;
+    }
+
+    if (![[self title] isEqualToString:[otherBookmark title]]) {
+        return NO;
+    }
+
+    NSString *thisURLString = [self URLString];
+    NSString *thatURLString = [otherBookmark URLString];
+    // handle case where both are nil
+    if (thisURLString != thatURLString && ![thisURLString isEqualToString:thatURLString]) {
+        return NO;
+    }
+
+    NSString *thisIdentifier = [self identifier];
+    NSString *thatIdentifier = [otherBookmark identifier];
+    // handle case where both are nil
+    if (thisIdentifier != thatIdentifier && ![thisIdentifier isEqualToString:thatIdentifier]) {
+        return NO;
+    }
+
+    unsigned thisCount = [self numberOfChildren];
+    if (thisCount != [otherBookmark numberOfChildren]) {
+        return NO;
+    }
+
+    unsigned childIndex;
+    for (childIndex = 0; childIndex < thisCount; ++childIndex) {
+        NSArray *theseChildren = [self children];
+        NSArray *thoseChildren = [otherBookmark children];
+        if (![[theseChildren objectAtIndex:childIndex] contentMatches:[thoseChildren objectAtIndex:childIndex]]) {
+            return NO;
+        }
+    }
+
+    return YES;
+}
+
+
 @end

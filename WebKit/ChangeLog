@@ -1,3 +1,10 @@
+2002-10-28  John Sullivan  <sullivan@apple.com>
+
+        * Bookmarks.subproj/WebBookmark.h:
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark contentMatches:]): new method, returns YES if
+	two bookmarks are the same, ignoring group and parent.
+
 2002-10-28  Trey Matteson  <trey@apple.com>
 
 	Finished 2998200 - access to most-recent in submenu of back & forward buttons
