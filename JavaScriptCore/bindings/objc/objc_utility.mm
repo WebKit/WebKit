@@ -92,7 +92,7 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
     ObjcValue result;
     double d = 0;
    
-    if (value.type() == NumberType || value.type() == StringType)
+    if (value.type() == NumberType || value.type() == StringType || value.type() == BooleanType)
 	d = value.toNumber(exec);
 	
     switch (type){

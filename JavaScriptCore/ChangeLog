@@ -1,3 +1,15 @@
+2005-03-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4053276> WebScripting protocol in WebKit cannot convert Boolean in Javascript to BOOL in Objective-C
+
+	Added JavaScript boolean to type that can be converted to
+	ObjC scalar parameters.
+
+        Reviewed by Ken Kocienda.
+
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+
 === Safari-406 ===
 
 === Safari-405 ===
