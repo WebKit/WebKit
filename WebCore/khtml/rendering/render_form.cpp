@@ -550,10 +550,14 @@ void RenderLineEdit::updateFromElement()
     if ( w->maxLength() != ml )
         w->setMaxLength( ml );
 
+    // Call w->text() before calling element()->value(), because in the case of inline
+    // input such as Hiragana, w->text() has a side effect of sending the notification
+    // that we use in slotTextChanged to update element()->m_value
+    QString widgetText = w->text();
     QString newText = element()->value().string();
     newText.replace('\\', backslashAsCurrencySymbol());
 
-    if (newText != w->text()) {
+    if (newText != widgetText) {
         w->blockSignals(true);
         int pos = w->cursorPosition();
 
@@ -1355,9 +1359,14 @@ void RenderTextArea::updateFromElement()
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     w->setReadOnly(element()->readOnly());
     w->setAlignment(style()->direction() == RTL ? Qt::AlignRight : Qt::AlignLeft);
+    
+    // Call w->text() before calling element()->value(), because in the case of inline
+    // input such as Hiragana, w->text() has a side effect of sending the notification
+    // that we use in slotTextChanged to update element()->m_value
+    QString widgetText = w->text();
     QString text = element()->value().string();
     text.replace('\\', backslashAsCurrencySymbol());
-    if (w->text() != text) {
+    if (widgetText != text) {
         w->blockSignals(true);
         int line, col;
         w->getCursorPosition( &line, &col );

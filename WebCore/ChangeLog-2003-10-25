@@ -1,3 +1,17 @@
+2003-08-12  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3370614 -- REGRESSION (81-85): partial inline input from Japanese 
+	input method can disappear
+
+        Reviewed by Hyatt
+
+        * khtml/rendering/render_form.cpp:
+        (RenderLineEdit::updateFromElement):
+	call w->text() before element()->value(), because w->text() has a side
+	effect of updating element()->value() in the inline input case
+        (RenderTextArea::updateFromElement):
+	same for text areas
+
 2003-08-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3374566, list bullets don't display if list-style-type is none but a list-style-image
