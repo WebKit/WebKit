@@ -1,3 +1,22 @@
+2003-01-24  Ed Voas  <set EMAIL_ADDRESS environment variable>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * ChangeLog:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+
+2003-01-24  Ed Voas  <voas@apple.com>
+
+        Reviewed by Darin.
+
+		Netscape plugins were being improperly positioned. I noticed this when I
+		put the web view into a window with borders around it (Carbon metal window,
+		but I would imagine Cocoa metal would do it too).
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+
 2003-01-23  Trey Matteson  <trey@apple.com>
 
 	3155162 - cursor changes to I-beam after dragging image	
