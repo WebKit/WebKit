@@ -2117,8 +2117,7 @@ void DocumentImpl::defaultEventHandler(EventImpl *evt)
     Event ev(evt);
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id()) {
-            evt->setCurrentTarget(this);
-            it.current()->listener->handleEvent(ev);
+            it.current()->listener->handleEvent(ev, true);
 	    return;
 	}
     }

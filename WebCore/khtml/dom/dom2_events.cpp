@@ -35,7 +35,7 @@ EventListener::~EventListener()
 {
 }
 
-void EventListener::handleEvent(Event &/*evt*/)
+void EventListener::handleEvent(Event &/*evt*/, bool)
 {
 }
 

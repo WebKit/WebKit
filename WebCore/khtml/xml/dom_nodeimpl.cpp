@@ -726,7 +726,7 @@ void NodeImpl::handleLocalEvents(EventImpl *evt, bool useCapture)
     Event ev = evt;
     for (; it.current(); ++it) {
         if (it.current()->id == evt->id() && it.current()->useCapture == useCapture)
-            it.current()->listener->handleEvent(ev);
+            it.current()->listener->handleEvent(ev, false);
     }
 
 }

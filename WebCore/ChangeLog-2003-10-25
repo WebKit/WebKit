@@ -1,5 +1,21 @@
 2003-04-01  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- fixed 3123709 -- redirect isn't followed at Apple's Dental Benefits provider
+
+        * khtml/dom/dom2_events.h: Added boolean "isWindowEvent" parameter.
+        * khtml/dom/dom2_events.cpp: (EventListener::handleEvent): Ignore boolean "isWindowEvent" parameter.
+
+        * khtml/ecma/kjs_events.h: Added boolean "isWindowEvent" parameter.
+        * khtml/ecma/kjs_events.cpp: (JSEventListener::handleEvent): Look at new "isWindowEvent" parameter,
+        and send the event to the window if it's true, rather than the current node, document, and form.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::defaultEventHandler): Pass true for "isWindowEvent".
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::handleLocalEvents): Pass false for "isWindowEvent".
+
+2003-04-01  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
 	- fixed 3144287 -- CSS with media=print not used when printing

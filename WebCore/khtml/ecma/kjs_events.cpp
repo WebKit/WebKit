@@ -50,7 +50,7 @@ JSEventListener::~JSEventListener()
     //fprintf(stderr,"JSEventListener::~JSEventListener this=%p listener=%p\n",this,listener.imp());
 }
 
-void JSEventListener::handleEvent(DOM::Event &evt)
+void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
 {
 #ifdef KJS_DEBUGGER
   if (KJSDebugWin::instance() && KJSDebugWin::instance()->inSession())
@@ -72,13 +72,17 @@ void JSEventListener::handleEvent(DOM::Event &evt)
 
     // Add the event's target element to the scope
     // (and the document, and the form - see KJS::HTMLElement::eventHandlerScope)
-    Object thisObj = Object::dynamicCast(getDOMNode(exec,evt.currentTarget()));
     ScopeChain oldScope = listener.scope();
-    //if (thisVal.type() != NullType)
-    if ( !thisObj.isNull() ) {
-      ScopeChain scope = oldScope;
-      static_cast<DOMNode*>(thisObj.imp())->pushEventHandlerScope(exec, scope);
-      listener.setScope( scope );
+    Object thisObj;
+    if (isWindowEvent) {
+        thisObj = win;
+    } else {
+        thisObj = Object::dynamicCast(getDOMNode(exec,evt.currentTarget()));
+        if ( !thisObj.isNull() ) {
+            ScopeChain scope = oldScope;
+            static_cast<DOMNode*>(thisObj.imp())->pushEventHandlerScope(exec, scope);
+            listener.setScope( scope );
+        }
     }
 
     Window *window = static_cast<Window*>(win.imp());

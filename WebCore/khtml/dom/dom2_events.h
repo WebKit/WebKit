@@ -72,8 +72,11 @@ public:
      * also contains the stopPropagation and preventDefault methods which are
      * used in determining the event's flow and default action.
      *
+     * @param isWindowEvent If true, the "this" should be the window, not the current
+     * target (there is no DOM node for the window, so it can't be the target).
+     *
      */
-    virtual void handleEvent(Event &evt);
+    virtual void handleEvent(Event &evt, bool isWindowEvent);
 
     /**
      * @internal
