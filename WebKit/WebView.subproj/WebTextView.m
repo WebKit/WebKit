@@ -31,6 +31,8 @@
     return [NSArray arrayWithObjects:
         @"text/calendar",	// iCal
         @"text/x-calendar",
+        @"text/x-vcalendar",
+        @"text/vcalendar",
         @"text/vcard",		// vCard
         @"text/x-vcard",
         @"text/directory",
