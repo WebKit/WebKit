@@ -1,3 +1,12 @@
+2002-08-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3026006.  Ensure that TABLES inside <div>s with align="right"
+	are properly positioned.  <div align="right"> was completely
+	unimplemented.  This patch implements it for the common cases
+	(nested divs, tables within divs, and paragraphs).
+	
+        * khtml/css/html4.css:
+
 2002-08-26  Darin Adler  <darin@apple.com>
 
         * khtml/rendering/render_list.cpp:

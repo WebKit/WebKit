@@ -260,6 +260,12 @@ CAPTION {
 	text-align: -konq-center; 
 }
 
+/* rules to deal with right-aligned divs. -dwh */
+DIV[align="right"] > TABLE,
+DIV[align="right"] > P,
+DIV[align="right"] > DIV
+ { margin-left: auto; margin-right: 0px; }
+
 /* don't use "TD[align=...] > *". This sould give problems with
  * constructs as <td align=left><ul><li>...
  * Hope the next ones cover all relevant cases. Lars 
