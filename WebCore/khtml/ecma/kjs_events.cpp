@@ -18,7 +18,7 @@
  *  License along with this library; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-
+#include "khtml_part.h"
 #include "kjs_window.h"
 #include "kjs_events.h"
 #include "kjs_events.lut.h"
@@ -111,10 +111,14 @@ void JSEventListener::handleEvent(DOM::Event &evt, bool isWindowEvent)
     interpreter->setCurrentEvent( 0 );
 #if APPLE_CHANGES
     if ( exec->hadException() ) {
+        KJS::Interpreter::lock();
+        char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
+        int lineNumber =  exec->exception().toObject(exec).get(exec, "line").toInt32(exec);
+        KJS::Interpreter::unlock();
         if (Interpreter::shouldPrintExceptions()) {
-	    char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
 	    printf("(event handler):%s\n", message);
 	}
+        KWQ(part)->addMessageToConsole(message, lineNumber );
         exec->clearException();
     }
 #else

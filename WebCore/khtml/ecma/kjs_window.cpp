@@ -1047,6 +1047,10 @@ bool Window::isSafeScript(ExecState *exec) const
   if (Interpreter::shouldPrintExceptions()) {
       printf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
              thisDocument->URL().latin1(), actDocument->URL().latin1());
+      QString message;
+      message.sprintf("Unsafe JavaScript attempt to access frame with URL %s from frame with URL %s. Domains must match.\n", 
+                      thisDocument->URL().latin1(), actDocument->URL().latin1());
+      KWQ(m_part)->addMessageToConsole(message, 1);
   }
 #endif
   
@@ -1673,12 +1677,14 @@ void ScheduledAction::execute(Window *window)
 	Interpreter::unlock();
 	if ( exec->hadException() ) {
 #if APPLE_CHANGES
+          Interpreter::lock();
+          char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
+          int lineNumber =  exec->exception().toObject(exec).get(exec, "line").toInt32(exec);
+          Interpreter::unlock();
 	  if (Interpreter::shouldPrintExceptions()) {
-	    Interpreter::lock();
-	    char *message = exec->exception().toObject(exec).get(exec, messagePropertyName).toString(exec).ascii();
-	    Interpreter::unlock();
 	    printf("(timer):%s\n", message);
 	  }
+          KWQ(window->m_part)->addMessageToConsole(message, lineNumber);
 #endif
 	  exec->clearException();
 	}

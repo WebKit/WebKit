@@ -259,7 +259,6 @@ static bool initializedKJS = FALSE;
     _part->provisionalLoadStarted();
 }
 
-
 - (void)openURL:(NSURL *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
     if (pageCache) {

@@ -337,6 +337,14 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     return *result != nil;
 }
 
+- (void)addMessageToConsole:(NSDictionary *)message
+{
+    WebView *wv = [_frame webView];
+    id wd = [wv UIDelegate];
+    if ([wd respondsToSelector: @selector(webView:addMessageToConsole:)])
+        [wd webView:wv addMessageToConsole:message];
+}
+
 - (NSView <WebCoreFileButton> *)fileButtonWithDelegate:(id <WebCoreFileButtonDelegate>)delegate
 {
     return [[WebFileButton alloc] initWithBridge:self delegate:delegate];

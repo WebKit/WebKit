@@ -66,13 +66,7 @@ Value ErrorProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &/*ar
   // toString()
   UString s;
 
-  Value v = thisObj.get(exec, "line");
-  if (v.type() != UndefinedType) {
-    s += v.toString(exec) += ": ";
-  }
-
-
-  v = thisObj.get(exec, namePropertyName);
+  Value v = thisObj.get(exec, namePropertyName);
   if (v.type() != UndefinedType) {
     s += v.toString(exec);
   }

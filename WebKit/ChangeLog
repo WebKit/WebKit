@@ -1,3 +1,12 @@
+2004-05-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge addMessageToConsole:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebUIDelegatePrivate.h:
+
 === Safari-142 ===
 
 2004-05-27  Trey Matteson  <trey@apple.com>

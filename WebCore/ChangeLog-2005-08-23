@@ -1,3 +1,20 @@
+2004-05-27  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/ecma/kjs_events.cpp:
+        (JSEventListener::handleEvent):
+        * khtml/ecma/kjs_proxy.cpp:
+        (KJSProxyImpl::evaluate):
+        * khtml/ecma/kjs_window.cpp:
+        (Window::isSafeScript):
+        (ScheduledAction::execute):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::addMessageToConsole):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+
 2004-05-27  Trey Matteson  <trey@apple.com>
 
 	Two dragging tweaks:  ondragleave events are sent before ondragenter events when

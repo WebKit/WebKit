@@ -1579,6 +1579,13 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     return false;
 }
 
+void KWQKHTMLPart::addMessageToConsole(const QString &message, const unsigned int lineNumber)
+{
+    NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:
+        message.getNSString(), @"message",[NSNumber numberWithInt: lineNumber], @"lineNumber", NULL];
+    [_bridge addMessageToConsole:dictionary];
+}
+
 void KWQKHTMLPart::createEmptyDocument()
 {
     // Although it's not completely clear from the name of this function,
