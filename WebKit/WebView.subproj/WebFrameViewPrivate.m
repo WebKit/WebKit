@@ -266,9 +266,9 @@
     return viewTypes;
 }
 
-+ (BOOL)_canShowMIMEType:(NSString *)MIMEType
++ (Class)_viewClassForMIMEType:(NSString *)MIMEType
 {
-    return [[self _viewTypes] _web_objectForMIMEType:MIMEType] != nil;
+    return [[self _viewTypes] _web_objectForMIMEType:MIMEType];
 }
 
 - (void)_goBack

@@ -1,3 +1,22 @@
+2003-03-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3081681 - text/calendar should be downloaded instead of displayed
+	Fixed: 3177603 - vCards appear in browser, not downloaded
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (+[WebDataSource _representationClassForMIMEType:]): was _canShowMIMEType
+        * WebView.subproj/WebFrameViewPrivate.h:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        (+[WebFrameView _viewClassForMIMEType:]): was _canShowMIMEType
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (+[WebTextView unshowableMIMETypes]): new, returns text types that shouldn't be shown
+        * WebView.subproj/WebView.m:
+        (+[WebView canShowMIMEType:]): call unshowableMIMETypes
+
 2003-03-20  Richard Williamson   <rjw@apple.com>
 
         Use "Item" consistently in the WebHistory and WebBackForwardList.

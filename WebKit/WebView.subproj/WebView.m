@@ -22,6 +22,8 @@
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebTextView.h>
+#import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
@@ -56,14 +58,26 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
-    if([WebFrameView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType]){
-        return YES;
-    }else{
+    Class viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
+    Class repClass = [WebDataSource _representationClassForMIMEType:MIMEType];
+        
+    if (!viewClass || !repClass){
         // Have the plug-ins register views and representations
         [WebPluginDatabase installedPlugins];
-        if([WebFrameView _canShowMIMEType:MIMEType] && [WebDataSource _canShowMIMEType:MIMEType])
-            return YES;
+        viewClass = [WebFrameView _viewClassForMIMEType:MIMEType];
+        repClass = [WebDataSource _representationClassForMIMEType:MIMEType];
     }
+    
+    // Special-case WebTextView for text types that shouldn't be shown.
+    if (viewClass && repClass) {
+        if (viewClass == [WebTextView class] &&
+            repClass == [WebTextRepresentation class] &&
+            [[WebTextView unshowableMIMETypes] containsObject:MIMEType]) {
+            return NO;
+        }
+        return YES;
+    }
+    
     return NO;
 }
 

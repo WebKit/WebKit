@@ -14,6 +14,7 @@
 {
 }
 
++ (NSArray *)unshowableMIMETypes;
 - (void)setFixedWidthFont;
 
 @end

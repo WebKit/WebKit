@@ -17,6 +17,15 @@
 
 @implementation WebTextView
 
++ (NSArray *)unshowableMIMETypes
+{
+    return [NSArray arrayWithObjects:
+        @"text/calendar",
+        @"text/x-calendar",
+        @"text/vcard",
+        @"text/x-vcard", nil];
+}
+
 - (id)initWithFrame:(NSRect)frame
 {
     self = [super initWithFrame:frame];

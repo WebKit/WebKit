@@ -139,7 +139,7 @@
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(WebError *)error;
 + (NSMutableDictionary *)_repTypes;
-+ (BOOL)_canShowMIMEType:(NSString *)MIMEType;
++ (Class)_representationClassForMIMEType:(NSString *)MIMEType;
 - (void)_loadIcon;
 - (void)_setIconURL:(NSURL *)URL;
 - (void)_setIconURL:(NSURL *)URL withType:(NSString *)iconType;

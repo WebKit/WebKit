@@ -452,9 +452,9 @@
     return repTypes;
 }
 
-+ (BOOL)_canShowMIMEType:(NSString *)MIMEType
++ (Class)_representationClassForMIMEType:(NSString *)MIMEType
 {
-    return [[self _repTypes] _web_objectForMIMEType:MIMEType] != nil;
+    return [[self _repTypes] _web_objectForMIMEType:MIMEType];
 }
 
 - (WebBridge *)_bridge
