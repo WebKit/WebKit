@@ -1013,7 +1013,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     void *userData;
     
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL2 (KWQ_LOG_LOADING, "dataSource = 0x%08x for URL %s\n", m_dataSource, job->url().url().latin1());
@@ -1024,7 +1024,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     id controller;
     void *userData;
     
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
@@ -1050,7 +1050,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     id controller;
     void *userData;
     
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
@@ -1075,7 +1075,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     void *userData;
     
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     QString urlString = job->url().url();
@@ -1099,7 +1099,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 {
     void *userData;
     
-    userData = [[[sender attributes] objectForKey:IFURLHandleUserData] pointerValue];
+    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
     KWQDEBUGLEVEL3 (KWQ_LOG_LOADING, "dataSource = 0x%08x, result = %d, URL = %s\n", m_dataSource, result, job->url().url().latin1());

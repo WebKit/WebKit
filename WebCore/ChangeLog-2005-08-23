@@ -1,3 +1,13 @@
+2002-03-22  Kenneth Kocienda  <kocienda@apple.com>
+
+        Moved KWQKloader to the new thread-safe API for accessing handle attributes.
+
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient IFURLHandleResourceDidBeginLoading:]),
+	(-[URLLoadClient IFURLHandleResourceDidCancelLoading:]), (-[URLLoadClient
+	IFURLHandleResourceDidFinishLoading:data:]), (-[URLLoadClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]), (-[URLLoadClient
+	IFURLHandle:resourceDidFailLoadingWithResult:]):
+
 2002-03-22  Richard Williamson  <rjw@apple.com>
 
         Fixed subtle measurement problems.  These were most evident of pages
