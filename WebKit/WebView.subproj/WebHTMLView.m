@@ -21,6 +21,7 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSImageExtras.h>
+#import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebTextRenderer.h>
@@ -69,18 +70,12 @@
 
 - (IBAction)takeFindStringFromSelection:(id)sender
 {
-    NSPasteboard *findPasteboard;
-
     if (![self hasSelection]) {
         NSBeep();
         return;
     }
-    
-    // Note: Can't use writeSelectionToPasteboard:type: here, though it seems equivalent, because
-    // it doesn't declare the types to the pasteboard and thus doesn't bump the change count.
-    findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
-    [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
-    [findPasteboard setString:[self selectedString] forType:NSStringPboardType];
+
+    [NSPasteboard _web_setFindPasteboardString:[self selectedString] withOwner:self];
 }
 
 - (void)copy:(id)sender

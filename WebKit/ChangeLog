@@ -2,6 +2,14 @@
 
         Reviewed by Trey
 
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView takeFindStringFromSelection:]):
+	Now uses new _web_setFindPasteboardString:withOwner: to share code.
+
+2003-01-24  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Trey
+
         * Misc.subproj/WebNSPasteboardExtras.h:
         * Misc.subproj/WebNSPasteboardExtras.m:
         (+[NSPasteboard _web_setFindPasteboardString:withOwner:]):
