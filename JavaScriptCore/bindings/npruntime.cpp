@@ -74,9 +74,9 @@ static CFMutableDictionaryRef getIdentifierDictionary()
 
 static const char **identifierNames = 0;
 static unsigned int maxIdentifierNames;
-static NPIdentifier identifierCount = 1;
+static uint32_t identifierCount = 1;
 
-NPIdentifier NPN_IdentifierFromUTF8 (const NPUTF8 *name)
+NPIdentifier NPN_GetIdentifier (const NPUTF8 *name)
 {
     assert (name);
     
@@ -85,7 +85,7 @@ NPIdentifier NPN_IdentifierFromUTF8 (const NPUTF8 *name)
         
         identifier = (NPIdentifier)CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name);
         if (identifier == 0) {
-            identifier = identifierCount++;
+            identifier = (NPIdentifier)identifierCount++;
             // We never release identifier names, so this dictionary will grow, as will
             // the memory for the identifier name strings.
             const char *identifierName = strdup (name);
@@ -100,7 +100,7 @@ NPIdentifier NPN_IdentifierFromUTF8 (const NPUTF8 *name)
                 identifierNames = (const char **)realloc ((void *)identifierNames, sizeof(const char *)*maxIdentifierNames);
             }
             
-            identifierNames[identifier] = identifierName;
+            identifierNames[(uint32_t)identifier] = identifierName;
 
             CFDictionaryAddValue (getIdentifierDictionary(), identifierName, (const void *)identifier);
         }
@@ -129,18 +129,225 @@ void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *iden
         int i;
         
         for (i = 0; i < nameCount; i++) {
-            identifiers[i] = NPN_IdentifierFromUTF8 (names[i]);
+            identifiers[i] = NPN_GetIdentifier (names[i]);
         }
     }
 }
 
 const NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier)
 {
-    if (identifier == 0 || identifier >= identifierCount)
+    if (identifier == 0 || (uint32_t)identifier >= identifierCount)
         return NULL;
         
-    return (const NPUTF8 *)identifierNames[identifier];
+    return (const NPUTF8 *)identifierNames[(uint32_t)identifier];
 }
+
+NPBool NPN_VariantIsVoid (const NPVariant *variant)
+{
+    return variant->type == NPVariantVoidType;
+}
+
+NPBool NPN_VariantIsNull (const NPVariant *variant)
+{
+    return variant->type == NPVariantNullType;
+}
+
+NPBool NPN_VariantIsUndefined (const NPVariant *variant)
+{
+    return variant->type == NPVariantUndefinedType;
+}
+
+NPBool NPN_VariantIsBool (const NPVariant *variant)
+{
+    return variant->type == NPVariantBoolType;
+}
+
+NPBool NPN_VariantIsInt32 (const NPVariant *variant)
+{
+    return variant->type == NPVariantInt32Type;
+}
+
+NPBool NPN_VariantIsDouble (const NPVariant *variant)
+{
+    return variant->type == NPVariantDoubleType;
+}
+
+NPBool NPN_VariantIsString (const NPVariant *variant)
+{
+    return variant->type == NPVariantStringType;
+}
+
+NPBool NPN_VariantIsObject (const NPVariant *variant)
+{
+    return variant->type == NPVariantObjectType;
+}
+
+NPBool NPN_VariantToBool (const NPVariant *variant, NPBool *result)
+{
+    if (variant->type != NPVariantBoolType)
+        return false;
+        
+    *result = variant->value.boolValue;
+    
+    return true;
+}
+
+NPString NPN_VariantToString (const NPVariant *variant)
+{
+    if (variant->type != NPVariantStringType) {
+        NPString emptyString = { 0, 0 };
+        return emptyString;
+    }
+            
+    return variant->value.stringValue;
+}
+
+NPBool NPN_VariantToInt32 (const NPVariant *variant, int32_t *result)
+{
+    if (variant->type == NPVariantInt32Type)
+        *result = variant->value.intValue;
+    else if (variant->type != NPVariantDoubleType)
+        *result = (int32_t)variant->value.doubleValue;
+    else
+        return false;
+    
+    return true;
+}
+
+NPBool NPN_VariantToDouble (const NPVariant *variant, double *result)
+{
+    if (variant->type == NPVariantInt32Type)
+        *result = (double)variant->value.intValue;
+    else if (variant->type != NPVariantDoubleType)
+        *result = variant->value.doubleValue;
+    else
+        return false;
+    
+    return true;
+}
+
+NPBool NPN_VariantToObject (const NPVariant *variant, NPObject **result)
+{
+    if (variant->type != NPVariantObjectType)
+        return false;
+            
+    *result = variant->value.objectValue;
+    
+    return true;
+}
+
+void NPN_InitializeVariantAsVoid (NPVariant *variant)
+{
+    variant->type = NPVariantVoidType;
+}
+
+void NPN_InitializeVariantAsNull (NPVariant *variant)
+{
+    variant->type = NPVariantNullType;
+}
+
+void NPN_InitializeVariantAsUndefined (NPVariant *variant)
+{
+    variant->type = NPVariantUndefinedType;
+}
+
+void NPN_InitializeVariantWithBool (NPVariant *variant, NPBool value)
+{
+    variant->type = NPVariantBoolType;
+    variant->value.boolValue = value;
+}
+
+void NPN_InitializeVariantWithInt32 (NPVariant *variant, int32_t value)
+{
+    variant->type = NPVariantInt32Type;
+    variant->value.intValue = value;
+}
+
+void NPN_InitializeVariantWithDouble (NPVariant *variant, double value)
+{
+    variant->type = NPVariantDoubleType;
+    variant->value.doubleValue = value;
+}
+
+void NPN_InitializeVariantWithString (NPVariant *variant, const NPString *value)
+{
+    variant->type = NPVariantStringType;
+    variant->value.stringValue = *value;
+}
+
+void NPN_InitializeVariantWithStringCopy (NPVariant *variant, const NPString *value)
+{
+    variant->type = NPVariantStringType;
+    variant->value.stringValue.UTF8Length = value->UTF8Length;
+    variant->value.stringValue.UTF8Characters = (NPUTF8 *)malloc(sizeof(NPUTF8) * value->UTF8Length);
+    memcpy ((void *)variant->value.stringValue.UTF8Characters, value->UTF8Characters, sizeof(NPUTF8) * value->UTF8Length);
+}
+
+void NPN_InitializeVariantWithObject (NPVariant *variant, NPObject *value)
+{
+    variant->type = NPVariantObjectType;
+    variant->value.objectValue = NPN_RetainObject (value);
+}
+
+void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *source)
+{
+    switch (source->type){
+        case NPVariantVoidType: {
+            NPN_InitializeVariantAsVoid (destination);
+            break;
+        }
+        case NPVariantNullType: {
+            NPN_InitializeVariantAsNull (destination);
+            break;
+        }
+        case NPVariantUndefinedType: {
+            NPN_InitializeVariantAsUndefined (destination);
+            break;
+        }
+        case NPVariantBoolType: {
+            NPN_InitializeVariantWithBool (destination, source->value.boolValue);
+            break;
+        }
+        case NPVariantInt32Type: {
+            NPN_InitializeVariantWithInt32 (destination, source->value.intValue);
+            break;
+        }
+        case NPVariantDoubleType: {
+            NPN_InitializeVariantWithDouble (destination, source->value.doubleValue);
+            break;
+        }
+        case NPVariantStringType: {
+            NPN_InitializeVariantWithStringCopy (destination, &source->value.stringValue);
+            break;
+        }
+        case NPVariantObjectType: {
+            NPN_InitializeVariantWithObject (destination, source->value.objectValue);
+            break;
+        }
+        default: {
+            NPN_InitializeVariantAsUndefined (destination);
+            break;
+        }
+    }
+}
+
+void NPN_ReleaseVariantValue (NPVariant *variant)
+{
+    assert (variant);
+    
+    if (variant->type == NPVariantObjectType) {
+        NPN_ReleaseObject (variant->value.objectValue);
+        variant->value.objectValue = 0;
+    }
+    else if (variant->type == NPVariantStringType) {
+        free ((void *)variant->value.stringValue.UTF8Characters);
+        variant->value.stringValue.UTF8Characters = 0;
+        variant->value.stringValue.UTF8Length = 0;
+    }
+    
+    variant->type = NPVariantUndefinedType;
+}
+
 
 NPObject *NPN_CreateObject (NPClass *aClass)
 {
@@ -212,9 +419,10 @@ void NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t len
     assert (message);
  
     if (obj && message) {
-        NPString *m = NPN_CreateStringWithUTF8(message, length);
-        NPN_SetException (obj, m);
-        NPN_ReleaseObject (m);
+        NPString string;
+        string.UTF8Characters = message;
+        string.UTF8Length = length;
+        NPN_SetException (obj, &string);
     }
 }
 
@@ -225,399 +433,6 @@ void NPN_SetException (NPObject *obj, NPString *message)
 }
 
 // ---------------------------------- Types ----------------------------------
-
-// ---------------------------------- NPNumber ----------------------------------
-
-typedef struct
-{
-    NPObject object;
-    double number;
-} NumberObject;
-
-static NPObject *numberAllocate()
-{
-    return (NPObject *)malloc(sizeof(NumberObject));
-}
-
-static NPClass _numberClass = { 
-    1,
-    numberAllocate, 
-    (NPDeallocateFunctionPtr)free, 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
-
-static NPClass *numberClass = &_numberClass;
-NPClass *NPNumberClass = numberClass;
-
-NPNumber *NPN_CreateNumberWithInt (int i)
-{
-    NumberObject *number = (NumberObject *)NPN_CreateObject (numberClass);
-    number->number = i;
-    return (NPNumber *)number;
-}
-
-NPNumber *NPN_CreateNumberWithFloat (float f)
-{
-    NumberObject *number = (NumberObject *)NPN_CreateObject (numberClass);
-    number->number = f;
-    return (NPNumber *)number;
-}
-
-NPNumber *NPN_CreateNumberWithDouble (double d)
-{
-    NumberObject *number = (NumberObject *)NPN_CreateObject (numberClass);
-    number->number = d;
-    return (NPNumber *)number;
-}
-
-int NPN_IntFromNumber (NPNumber *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, numberClass));
-
-    if (obj && NPN_IsKindOfClass (obj, numberClass)) {
-        NumberObject *number = (NumberObject *)obj;
-        return (int)number->number;
-    }
-    
-    return 0;
-}
-
-float NPN_FloatFromNumber (NPNumber *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, numberClass));
-
-    if (obj && NPN_IsKindOfClass (obj, numberClass)) {
-        NumberObject *number = (NumberObject *)obj;
-        return (float)number->number;
-    }
-    
-    return 0.;
-}
-
-double NPN_DoubleFromNumber (NPNumber *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, numberClass));
-    
-    if (obj && NPN_IsKindOfClass (obj, numberClass)) {
-        NumberObject *number = (NumberObject *)obj;
-        return number->number;
-    }
-    
-    return 0.;
-}
-
-
-// ---------------------------------- NPString ----------------------------------
-
-typedef struct
-{
-    NPObject object;
-    NPUTF16 *string;
-    int32_t length;
-} StringObject;
-
-static NPObject *stringAllocate()
-{
-    return (NPObject *)malloc(sizeof(StringObject));
-}
-
-void stringDeallocate (StringObject *string)
-{
-    free (string->string);
-    free (string);
-}
-
-static NPClass _stringClass = { 
-    1,
-    stringAllocate, 
-    (NPDeallocateFunctionPtr)stringDeallocate, 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
-
-static NPClass *stringClass = &_stringClass;
-NPClass *NPStringClass = stringClass;
-
-#define LOCAL_CONVERSION_BUFFER_SIZE    4096
-
-NPString *NPN_CreateStringWithUTF8 (const NPUTF8 *utf8String, int32_t length)
-{
-    assert (utf8String);
-    
-    if (utf8String) {
-        if (length == -1)
-            length = strlen(utf8String);
-            
-        StringObject *string = (StringObject *)NPN_CreateObject (stringClass);
-
-        CFStringRef stringRef = CFStringCreateWithBytes (NULL, (const UInt8*)utf8String, (CFIndex)length, kCFStringEncodingUTF8, false);
-
-        string->length = CFStringGetLength (stringRef);
-        string->string = (NPUTF16 *)malloc(sizeof(NPUTF16)*string->length);
-
-        // Convert the string to UTF16.
-        CFRange range = { 0, string->length };
-        CFStringGetCharacters (stringRef, range, (UniChar *)string->string);
-        CFRelease (stringRef);
-
-        return (NPString *)string;
-    }
-    
-    return 0;
-}
-
-
-NPString *NPN_CreateStringWithUTF16 (const NPUTF16 *utf16String, int32_t len)
-{
-    assert (utf16String);
-    
-    if (utf16String) {
-        StringObject *string = (StringObject *)NPN_CreateObject (stringClass);
-
-        string->length = len;
-        string->string = (NPUTF16 *)malloc(sizeof(NPUTF16)*string->length);
-        memcpy ((void *)string->string, utf16String, sizeof(NPUTF16)*string->length);
-        
-        return (NPString *)string;
-    }
-
-    return 0;
-}
-
-void NPN_DeallocateUTF8 (NPUTF8 *UTF8Buffer)
-{
-    free (UTF8Buffer);
-}
-
-NPUTF8 *NPN_UTF8FromString (NPString *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, stringClass));
-
-    if (obj && NPN_IsKindOfClass (obj, stringClass)) {
-        StringObject *string = (StringObject *)obj;
-
-        // Allow for max conversion factor.
-        UInt8 *buffer;
-        UInt8 _localBuffer[LOCAL_CONVERSION_BUFFER_SIZE];
-        CFIndex maxBufferLength;
-        
-        if (string->length*sizeof(UInt8)*8 > LOCAL_CONVERSION_BUFFER_SIZE) {
-            maxBufferLength = string->length*sizeof(UInt8)*8;
-            buffer = (UInt8 *)malloc(maxBufferLength);
-        }
-        else {
-            maxBufferLength = LOCAL_CONVERSION_BUFFER_SIZE;
-            buffer = _localBuffer;
-        }
-        
-        // Convert the string to UTF8.
-        CFIndex usedBufferLength;
-        CFStringRef stringRef = CFStringCreateWithCharacters (NULL, (UniChar *)string->string, string->length);
-        CFRange range = { 0, string->length };
-        CFStringGetBytes (stringRef, range, kCFStringEncodingUTF8, 0, false, buffer, maxBufferLength, &usedBufferLength);
-        
-        NPUTF8 *resultString = (NPUTF8 *)malloc (usedBufferLength+1);
-        strncpy ((char *)resultString, (const char *)buffer, usedBufferLength);
-        char *cp = (char *)resultString;
-        cp[usedBufferLength] = 0;
-        
-        CFRelease (stringRef);
-        if (buffer != _localBuffer)
-            free ((void *)buffer);
-            
-        return resultString;
-    }
-    
-    return 0;
-}
-
-NPUTF16 *NPN_UTF16FromString (NPString *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, stringClass));
-
-    if (obj && NPN_IsKindOfClass (obj, stringClass)) {
-        StringObject *string = (StringObject *)obj;
-        
-        NPUTF16 *resultString = (NPUTF16*)malloc(sizeof(int16_t)*string->length);
-        memcpy ((void *)resultString, string->string, sizeof(int16_t)*string->length);
-
-        return resultString;
-    }
-    
-    return 0;
-}
-
-int32_t NPN_StringLength (NPString *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, stringClass));
-
-    if (obj && NPN_IsKindOfClass (obj, stringClass)) {
-        StringObject *string = (StringObject *)obj;
-        return string->length;
-    }
-    
-    return 0;
-}
-
-// ---------------------------------- NP_Boolean ----------------------------------
-
-typedef struct
-{
-    NPObject object;
-} BooleanObject;
-
-static NPObject *booleanAllocate()
-{
-    return (NPObject *)malloc(sizeof(BooleanObject));
-}
-
-static void booleanDeallocate (BooleanObject *string)
-{
-    // Do nothing, single true and false instances.
-}
-
-static NPClass _booleanClass = { 
-    1,
-    booleanAllocate, 
-    (NPDeallocateFunctionPtr)booleanDeallocate, 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
-
-static BooleanObject *theTrueObject = 0;
-static BooleanObject *theFalseObject = 0;
-
-static NPClass *booleanClass = &_booleanClass;
-NPClass *NPBooleanClass = booleanClass;
-
-NPBoolean *NPN_CreateBoolean (bool f)
-{
-    if (f) {
-        if (!theTrueObject) {
-            theTrueObject = (BooleanObject *)NPN_CreateObject (booleanClass);
-        }
-        return (NPBoolean *)theTrueObject;
-    }
-
-    // False
-    if (!theFalseObject) {
-        theFalseObject = (BooleanObject *)NPN_CreateObject (booleanClass);
-    }
-    return (NPBoolean *)theFalseObject;
-}
-
-bool NPN_BoolFromBoolean (NPBoolean *obj)
-{
-    assert (obj && NPN_IsKindOfClass (obj, booleanClass) 
-            && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject));
-
-    if (obj && NPN_IsKindOfClass (obj, booleanClass) 
-            && ((BooleanObject *)obj == theTrueObject || (BooleanObject *)obj == theFalseObject)) {
-        BooleanObject *booleanObj = (BooleanObject *)obj;
-        if (booleanObj == theTrueObject)
-            return true;
-    }
-    
-    return false;
-}
-
-// ---------------------------------- NP_Null ----------------------------------
-
-typedef struct
-{
-    NPObject object;
-} NullObject;
-
-static NPObject *nullAllocate()
-{
-    return (NPObject *)malloc(sizeof(NullObject));
-}
-
-static void nullDeallocate (StringObject *string)
-{
-    // Do nothing, the null object is a singleton.
-}
-
-
-static NullObject *theNullObject = 0;
-
-static NPClass _nullClass = { 
-    1,
-    nullAllocate, 
-    (NPDeallocateFunctionPtr)nullDeallocate, 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
-
-static NPClass *nullClass = &_nullClass;
-NPClass *NPNullClass = nullClass;
-
-NPNull *NPN_GetNull()
-{
-    if (!theNullObject)
-        theNullObject = (NullObject *)NPN_CreateObject(nullClass);
-    return (NPNull *)theNullObject;
-}
-
-
-// ---------------------------------- NP_Undefined ----------------------------------
-
-typedef struct
-{
-    NPObject object;
-} UndefinedObject;
-
-static NPObject *undefinedAllocate()
-{
-    return (NPObject *)malloc(sizeof(UndefinedObject));
-}
-
-static void undefinedDeallocate (StringObject *string)
-{
-    // Do nothing, the null object is a singleton.
-}
-
-
-static NullObject *theUndefinedObject = 0;
-
-static NPClass _undefinedClass = { 
-    1,
-    undefinedAllocate, 
-    (NPDeallocateFunctionPtr)undefinedDeallocate, 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
-
-static NPClass *undefinedClass = &_undefinedClass;
-NPClass *NPUndefinedClass = undefinedClass;
-
-NPUndefined *NPN_GetUndefined()
-{
-    if (!theUndefinedObject)
-        theUndefinedObject = (NullObject *)NPN_CreateObject(undefinedClass);
-    return (NPUndefined *)theUndefinedObject;
-}
 
 // ---------------------------------- NP_Array ----------------------------------
 

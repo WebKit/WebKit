@@ -46,7 +46,7 @@ typedef struct
 	NPObject object;
 	double doubleValue;
 	int intValue;
-	const char *stringValue;
+	NPVariant stringValue;
 	bool boolValue;
 } MyObject;
 
@@ -123,65 +123,93 @@ bool myHasMethod (NPClass *theClass, NPIdentifier name)
 	return false;
 }
 
-NPObject *myGetProperty (MyObject *obj, NPIdentifier name)
+
+void logMessage (const NPVariant *message)
 {
-	if (name == myPropertyIdentifiers[ID_DOUBLE_VALUE]){
-		return NPN_CreateNumberWithDouble (obj->doubleValue); 
-	}
-	else if (name == myPropertyIdentifiers[ID_INT_VALUE]){
-		return NPN_CreateNumberWithInt (obj->intValue); 
-	}
-	else if (name == myPropertyIdentifiers[ID_STRING_VALUE]){
-		return NPN_CreateStringWithUTF8 (obj->stringValue, -1);
-	}
-	else if (name == myPropertyIdentifiers[ID_BOOLEAN_VALUE]){
-		return NPN_CreateBoolean (obj->boolValue);
-	}
-	else if (name == myPropertyIdentifiers[ID_NULL_VALUE]){
-		return NPN_GetNull ();
-	}
-	else if (name == myPropertyIdentifiers[ID_UNDEFINED_VALUE]){
-		return NPN_GetUndefined (); 
-	}
-	
-	return NPN_GetUndefined();
+	printf ("%s\n", message->value.stringValue.UTF8Characters);
 }
 
-void mySetProperty (MyObject *obj, NPIdentifier name, NPObject *value)
+void setDoubleValue (MyObject *obj, const NPVariant *variant)
+{
+	if (!NPN_VariantToDouble (variant, &obj->doubleValue))
+		NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set double value with invalid type.", -1);
+}
+
+void setIntValue (MyObject *obj, const NPVariant *variant)
+{
+	if (!NPN_VariantToInt32 (variant, &obj->intValue))
+		NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set int value with invalid type.", -1);
+}
+
+void setStringValue (MyObject *obj, const NPVariant *variant)
+{
+	NPN_ReleaseVariantValue (&obj->stringValue);
+	NPN_InitializeVariantWithVariant (&obj->stringValue, variant);
+}
+
+void setBooleanValue (MyObject *obj, const NPVariant *variant)
+{
+	if (!NPN_VariantToBool (variant, (NPBool *)&obj->boolValue))
+		NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set bool value with invalid type.", -1);
+}
+
+void getDoubleValue (MyObject *obj, NPVariant *variant)
+{
+	NPN_InitializeVariantWithDouble (variant, obj->doubleValue);
+}
+
+void getIntValue (MyObject *obj, NPVariant *variant)
+{
+	NPN_InitializeVariantWithInt32 (variant, obj->intValue);
+}
+
+void getStringValue (MyObject *obj, NPVariant *variant)
+{
+	NPN_InitializeVariantWithVariant (variant, &obj->stringValue);
+}
+
+void getBooleanValue (MyObject *obj, NPVariant *variant)
+{
+	NPN_InitializeVariantWithBool (variant, obj->boolValue);
+}
+
+void myGetProperty (MyObject *obj, NPIdentifier name, NPVariant *variant)
+{
+	if (name == myPropertyIdentifiers[ID_DOUBLE_VALUE]){
+		getDoubleValue (obj, variant);
+	}
+	else if (name == myPropertyIdentifiers[ID_INT_VALUE]){
+		getIntValue (obj, variant);
+	}
+	else if (name == myPropertyIdentifiers[ID_STRING_VALUE]){
+		getStringValue (obj, variant);
+	}
+	else if (name == myPropertyIdentifiers[ID_BOOLEAN_VALUE]){
+		getBooleanValue (obj, variant);
+	}
+	else if (name == myPropertyIdentifiers[ID_NULL_VALUE]){
+		return NPN_InitializeVariantAsNull (variant);
+	}
+	else if (name == myPropertyIdentifiers[ID_UNDEFINED_VALUE]){
+		return NPN_InitializeVariantAsUndefined (variant); 
+	}
+	else
+		NPN_InitializeVariantAsUndefined(variant);
+}
+
+void mySetProperty (MyObject *obj, NPIdentifier name, const NPVariant *variant)
 {
 	if (name == myPropertyIdentifiers[ID_DOUBLE_VALUE]) {
-		if (NPN_IsKindOfClass (value, NPNumberClass)) {
-			obj->doubleValue = NPN_DoubleFromNumber (value); 
-		}
-		else {
-			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a double value with a non-number type.", -1);
-		}
+		setDoubleValue (obj, variant);
 	}
 	else if (name == myPropertyIdentifiers[ID_INT_VALUE]) {
-		if (NPN_IsKindOfClass (value, NPNumberClass)) {
-			obj->intValue = NPN_IntFromNumber (value); 
-		}
-		else {
-			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a int value with a non-number type.", -1);
-		}
+		setIntValue (obj, variant);
 	}
 	else if (name == myPropertyIdentifiers[ID_STRING_VALUE]) {
-		if (NPN_IsKindOfClass (value, NPStringClass)) {
-			if (obj->stringValue)
-				free((void *)obj->stringValue);
-			obj->stringValue = NPN_UTF8FromString (value);
-		}
-		else {
-			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a string value with a non-string type.", -1);
-		}
+		setStringValue (obj, variant);
 	}
 	else if (name == myPropertyIdentifiers[ID_BOOLEAN_VALUE]) {
-		if (NPN_IsKindOfClass (value, NPStringClass)) {
-			obj->boolValue = NPN_BoolFromBoolean (value);
-		}
-		else {
-			NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set a bool value with a non-boolean type.", -1);
-		}
+		setBooleanValue (obj, variant);
 	}
 	else if (name == myPropertyIdentifiers[ID_NULL_VALUE]) {
 		// Do nothing!
@@ -191,92 +219,47 @@ void mySetProperty (MyObject *obj, NPIdentifier name, NPObject *value)
 	}
 }
 
-void logMessage (NPString *message)
-{
-	printf ("%s\n", NPN_UTF8FromString (message));
-}
-
-void setDoubleValue (MyObject *obj, NPNumber *number)
-{
-	obj->doubleValue = NPN_DoubleFromNumber (number);
-}
-
-void setIntValue (MyObject *obj, NPNumber *number)
-{
-	obj->intValue = NPN_IntFromNumber (number);
-}
-
-void setStringValue (MyObject *obj, NPString *string)
-{
-	NPN_DeallocateUTF8 ((NPUTF8 *)obj->stringValue);
-	obj->stringValue = NPN_UTF8FromString (string);
-}
-
-void setBooleanValue (MyObject *obj, NPBoolean *boolean)
-{
-	obj->boolValue = NPN_BoolFromBoolean (boolean);
-}
-
-NPNumber *getDoubleValue (MyObject *obj)
-{
-	return NPN_CreateNumberWithDouble (obj->doubleValue);
-}
-
-NPNumber *getIntValue (MyObject *obj)
-{
-	return NPN_CreateNumberWithInt (obj->intValue);
-}
-
-NPString *getStringValue (MyObject *obj)
-{
-	return NPN_CreateStringWithUTF8 (obj->stringValue, -1);
-}
-
-NPBoolean *getBooleanValue (MyObject *obj)
-{
-	return NPN_CreateBoolean (obj->boolValue);
-}
-
-NPObject *myInvoke (MyObject *obj, NPIdentifier name, NPObject **args, unsigned argCount)
+void myInvoke (MyObject *obj, NPIdentifier name, NPVariant *args, unsigned argCount, NPVariant *result)
 {
 	if (name == myMethodIdentifiers[ID_LOG_MESSAGE]) {
-		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPStringClass))
-			logMessage ((NPString *)args[0]);
-		return 0;
+		if (argCount == 1 && NPN_VariantIsString(&args[0]))
+			logMessage (&args[0]);
+		NPN_InitializeVariantAsVoid (result);
 	}
 	else if (name == myMethodIdentifiers[ID_SET_DOUBLE_VALUE]) {
-		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPNumberClass))
-			setDoubleValue (obj, (NPNumber *)args[0]);
-		return 0;
+		if (argCount == 1 && NPN_VariantIsDouble (&args[0]))
+			setDoubleValue (obj, &args[0]);
+		NPN_InitializeVariantAsVoid (result);
 	}
 	else if (name == myMethodIdentifiers[ID_SET_INT_VALUE]) {
-		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPNumberClass))
-			setIntValue (obj, (NPNumber *)args[0]);
-		return 0;
+		if (argCount == 1 && (NPN_VariantIsDouble (&args[0]) || NPN_VariantIsInt32 (&args[0])))
+			setIntValue (obj, &args[0]);
+		NPN_InitializeVariantAsVoid (result);
 	}
 	else if (name == myMethodIdentifiers[ID_SET_STRING_VALUE]) {
-		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPStringClass))
-			setStringValue (obj, (NPString *)args[0]);
-		return 0;
+		if (argCount == 1 && NPN_VariantIsString (&args[0]))
+			setStringValue (obj, &args[0]);
+		NPN_InitializeVariantAsVoid (result);
 	}
 	else if (name == myMethodIdentifiers[ID_SET_BOOLEAN_VALUE]) {
-		if (argCount == 1 && NPN_IsKindOfClass (args[0], NPBooleanClass))
-			setBooleanValue (obj, (NPBoolean *)args[0]);
-		return 0;
+		if (argCount == 1 && NPN_VariantIsBool (&args[0]))
+			setBooleanValue (obj, &args[0]);
+		NPN_InitializeVariantAsVoid (result);
 	}
 	else if (name == myMethodIdentifiers[ID_GET_DOUBLE_VALUE]) {
-		return getDoubleValue (obj);
+		getDoubleValue (obj, result);
 	}
 	else if (name == myMethodIdentifiers[ID_GET_INT_VALUE]) {
-		return getIntValue (obj);
+		getIntValue (obj, result);
 	}
 	else if (name == myMethodIdentifiers[ID_GET_STRING_VALUE]) {
-		return getStringValue (obj);
+		getStringValue (obj, result);
 	}
 	else if (name == myMethodIdentifiers[ID_GET_BOOLEAN_VALUE]) {
-		return getBooleanValue (obj);
+		getBooleanValue (obj, result);
 	}
-	return NPN_GetUndefined();
+	else 
+		NPN_InitializeVariantAsUndefined (result);
 }
 
 NPObject *myAllocate ()
@@ -292,7 +275,8 @@ NPObject *myAllocate ()
 	newInstance->doubleValue = 666.666;
 	newInstance->intValue = 1234;
 	newInstance->boolValue = true;
-	newInstance->stringValue = strdup("Hello world");
+	newInstance->stringValue.value.stringValue.UTF8Length = strlen ("Hello world");
+	newInstance->stringValue.value.stringValue.UTF8Characters = strdup ("Hello world");
 	
 	return (NPObject *)newInstance;
 }

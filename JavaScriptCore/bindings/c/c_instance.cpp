@@ -97,31 +97,37 @@ Value CInstance::invokeMethod (KJS::ExecState *exec, const MethodList &methodLis
     CMethod *method = 0;
     method = static_cast<CMethod*>(methodList.methodAt(0));
 
-    NPIdentifier ident = NPN_IdentifierFromUTF8 (method->name());
+    NPIdentifier ident = NPN_GetIdentifier (method->name());
     if (!_object->_class->hasMethod (_object->_class, ident))
         return Undefined();
 
     unsigned i, count = args.size();
-    NPObject **cArgs;
-    NPObject *localBuffer[128];
+    NPVariant *cArgs;
+    NPVariant localBuffer[128];
     if (count > 128)
-        cArgs = (NPObject **)malloc (sizeof(NPObject *)*count);
+        cArgs = (NPVariant *)malloc (sizeof(NPVariant)*count);
     else
         cArgs = localBuffer;
     
     for (i = 0; i < count; i++) {
-        cArgs[i] = convertValueToNPValueType (exec, args.at(i));
+        convertValueToNPVariant (exec, args.at(i), &cArgs[i]);
     }
 
     // Invoke the 'C' method.
-    NPObject *result = _object->_class->invoke (_object, ident, cArgs, count);
-    if (result) {
-        resultValue = convertNPValueTypeToValue (exec, result);
+    NPVariant resultVariant;
+    _object->_class->invoke (_object, ident, cArgs, count, &resultVariant);
+
+    for (i = 0; i < count; i++) {
+        NPN_ReleaseVariantValue (&cArgs[i]);
+    }
+
+    if (resultVariant.type != NPVariantVoidType) {
+        resultValue = convertNPVariantToValue (exec, &resultVariant);
         
         if (cArgs != localBuffer)
             free ((void *)cArgs);
             
-        NPN_ReleaseObject (result);
+        NPN_ReleaseVariantValue (&resultVariant);
         
         return resultValue;
     }
@@ -140,23 +146,6 @@ KJS::Value CInstance::defaultValue (KJS::Type hint) const
     }
     else if (hint == KJS::BooleanType) {
         return booleanValue();
-    }
-    else if (hint == KJS::UnspecifiedType) {
-        if (NPN_IsKindOfClass (_object, NPStringClass)) {
-            return stringValue();
-        }
-        else if (NPN_IsKindOfClass (_object, NPNumberClass)) {
-            return numberValue();
-        }
-        else if (NPN_IsKindOfClass (_object, NPBooleanClass)) {
-            return booleanValue();
-        }
-        else if (NPN_IsKindOfClass (_object, NPNullClass)) {
-            return Null();
-        }
-        else if (NPN_IsKindOfClass (_object, NPUndefinedClass)) {
-            return Undefined();
-        }
     }
     
     return valueOf();

@@ -26,6 +26,8 @@
 
 using namespace KJS::Bindings;
 
+bool NPN_IsValidIdentifier (const NPUTF8 *name);
+
 void CClass::_commonDelete() {
     CFRelease (_fields);
     CFRelease (_methods);
@@ -92,7 +94,7 @@ MethodList CClass::methodsNamed(const char *_name) const
     }
     
     if (NPN_IsValidIdentifier (_name)) {
-        NPIdentifier ident = NPN_IdentifierFromUTF8 (_name);
+        NPIdentifier ident = NPN_GetIdentifier (_name);
         if (_isa->hasMethod && _isa->hasMethod (_isa, ident)){
             Method *aMethod = new CMethod (ident);
             CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
@@ -116,7 +118,7 @@ Field *CClass::fieldNamed(const char *name) const
     }
 
     if (NPN_IsValidIdentifier (name)) {
-        NPIdentifier ident = NPN_IdentifierFromUTF8 (name);
+        NPIdentifier ident = NPN_GetIdentifier (name);
         if (_isa->hasProperty && _isa->hasProperty (_isa, ident)){
             aField = new CField (ident);
             CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);

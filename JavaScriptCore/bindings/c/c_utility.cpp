@@ -34,92 +34,127 @@
 using namespace KJS;
 using namespace KJS::Bindings;
 
-NPObject *coerceValueToNPString (KJS::ExecState *exec, const KJS::Value &value)
+// Requires free() of returned UTF16Chars.
+void convertNPStringToUTF16 (const NPString *string, NPUTF16 **UTF16Chars, unsigned int *UTF16Length)
+{
+    convertUTF8ToUTF16 (string->UTF8Characters, string->UTF8Length, UTF16Chars, UTF16Length);
+}
+
+// Requires free() of returned UTF16Chars.
+void convertUTF8ToUTF16 (const NPUTF8 *UTF8Chars, int UTF8Length, NPUTF16 **UTF16Chars, unsigned int *UTF16Length)
+{
+    assert (UTF8Chars);
+    
+    if (UTF8Length == -1)
+        UTF8Length = strlen(UTF8Chars);
+        
+    CFStringRef stringRef = CFStringCreateWithBytes (NULL, (const UInt8*)UTF8Chars, (CFIndex)UTF8Length, kCFStringEncodingUTF8, false);
+
+    *UTF16Length = (unsigned int)CFStringGetLength (stringRef);
+    *UTF16Chars = (NPUTF16 *)malloc (sizeof(NPUTF16) * (*UTF16Length));
+
+    // Convert the string to UTF16.
+    CFRange range = { 0, *UTF16Length };
+    CFStringGetCharacters (stringRef, range, (UniChar *)*UTF16Chars);
+    CFRelease (stringRef);
+}
+
+// Variant value must be released with NPReleaseVariantValue()
+void coerceValueToNPVariantStringType (KJS::ExecState *exec, const KJS::Value &value, NPVariant *result)
 {
     UString ustring = value.toString(exec);
     CString cstring = ustring.UTF8String();
-    return NPN_CreateStringWithUTF8 (cstring.c_str(), cstring.size());
+    NPString string = { (const NPUTF8 *)cstring.c_str(), cstring.size() };
+    NPN_InitializeVariantWithStringCopy (result, &string);
 }
 
-NPObject *convertValueToNPValueType (KJS::ExecState *exec, const KJS::Value &value)
+// Variant value must be released with NPReleaseVariantValue()
+void convertValueToNPVariant (KJS::ExecState *exec, const KJS::Value &value, NPVariant *result)
 {
     Type type = value.type();
     
     if (type == StringType) {
         UString ustring = value.toString(exec);
         CString cstring = ustring.UTF8String();
-        return NPN_CreateStringWithUTF8 (cstring.c_str(), cstring.size());
+        NPString string = { (const NPUTF8 *)cstring.c_str(), cstring.size() };
+        NPN_InitializeVariantWithStringCopy (result, &string );
     }
     else if (type == NumberType) {
-        return NPN_CreateNumberWithDouble (value.toNumber(exec));
+        NPN_InitializeVariantWithDouble (result, value.toNumber(exec));
     }
     else if (type == BooleanType) {
-        return NPN_CreateBoolean (value.toBoolean(exec));
+        NPN_InitializeVariantWithBool (result, value.toBoolean(exec));
     }
     else if (type == UnspecifiedType) {
-        return NPN_GetUndefined();
+        NPN_InitializeVariantAsUndefined(result);
     }
     else if (type == NullType) {
-        return NPN_GetNull();
+        NPN_InitializeVariantAsNull(result);
     }
     else if (type == ObjectType) {
         KJS::ObjectImp *objectImp = static_cast<KJS::ObjectImp*>(value.imp());
         if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
             KJS::RuntimeObjectImp *imp = static_cast<KJS::RuntimeObjectImp *>(value.imp());
             CInstance *instance = static_cast<CInstance*>(imp->getInternalInstance());
-            return instance->getObject();
+            NPN_InitializeVariantWithObject (result, instance->getObject());
         }
     }
-    
-    return 0;
+    else
+        NPN_InitializeVariantAsUndefined(result);
 }
 
-Value convertNPValueTypeToValue (KJS::ExecState *exec, const NPObject *obj)
+Value convertNPVariantToValue (KJS::ExecState *exec, const NPVariant *variant)
 {
-    if (NPN_IsKindOfClass (obj, NPBooleanClass)) {
-        if (NPN_BoolFromBoolean ((NPBoolean *)obj))
-            return KJS::Boolean (true);
+    NPVariantType type = variant->type;
+
+    if (type == NPVariantBoolType) {
+        NPBool aBool;
+        if (NPN_VariantToBool (variant, &aBool))
+            return KJS::Boolean (aBool);
         return KJS::Boolean (false);
     }
-    else if (NPN_IsKindOfClass (obj, NPNullClass)) {
+    else if (type == NPVariantNullType) {
         return Null();
     }
-    else if (NPN_IsKindOfClass (obj, NPUndefinedClass)) {
+    else if (type == NPVariantUndefinedType) {
         return Undefined();
     }
-    else if (NPN_IsKindOfClass (obj, NPArrayClass)) {
-        // FIXME:  Need to implement
+    else if (type == NPVariantInt32Type) {
+        int32_t anInt;
+        if (NPN_VariantToInt32 (variant, &anInt))
+            return Number (anInt);
+        return Number (0);
     }
-    else if (NPN_IsKindOfClass (obj, NPNumberClass)) {
-        return Number (NPN_DoubleFromNumber((NPNumber *)obj));
+    else if (type == NPVariantDoubleType) {
+        double aDouble;
+        if (NPN_VariantToDouble (variant, &aDouble))
+            return Number (aDouble);
+        return Number (0);
     }
-    else if (NPN_IsKindOfClass (obj, NPStringClass)) {
-
-        NPUTF8 *utf8String = NPN_UTF8FromString((NPString *)obj);
-        CFStringRef stringRef = CFStringCreateWithCString (NULL, utf8String, kCFStringEncodingUTF8);
-        NPN_DeallocateUTF8 (utf8String);
-
-        int length = CFStringGetLength (stringRef);
-        NPUTF16 *buffer = (NPUTF16 *)malloc(sizeof(NPUTF16)*length);
-
-        // Convert the string to UTF16.
-        CFRange range = { 0, length };
-        CFStringGetCharacters (stringRef, range, (UniChar *)buffer);
-        CFRelease (stringRef);
-
-        String resultString(UString((const UChar *)buffer,length));
-        free (buffer);
-        
+    else if (type == NPVariantStringType) {
+        NPUTF16 *stringValue;
+        unsigned int UTF16Length;
+        convertNPStringToUTF16 (&variant->value.stringValue, &stringValue, &UTF16Length);    // requires free() of returned memory.
+        String resultString(UString((const UChar *)stringValue,UTF16Length));
+        free (stringValue);
         return resultString;
     }
-    else if (NPN_IsKindOfClass (obj, NPScriptObjectClass)) {
-        // Get ObjectImp from NP_JavaScriptObject.
-        JavaScriptObject *o = (JavaScriptObject *)obj;
-        return Object(const_cast<ObjectImp*>(o->imp));
-    }
-    else {
-        //  Wrap NPObject in a CInstance.
-        return Instance::createRuntimeObject(Instance::CLanguage, (void *)obj);
+    else if (type == NPVariantObjectType) {
+        NPObject *obj = variant->value.objectValue;
+        
+        if (NPN_IsKindOfClass (obj, NPArrayClass)) {
+            // FIXME:  Need to implement
+        }
+     
+        else if (NPN_IsKindOfClass (obj, NPScriptObjectClass)) {
+            // Get ObjectImp from NP_JavaScriptObject.
+            JavaScriptObject *o = (JavaScriptObject *)obj;
+            return Object(const_cast<ObjectImp*>(o->imp));
+        }
+        else {
+            //  Wrap NPObject in a CInstance.
+            return Instance::createRuntimeObject(Instance::CLanguage, (void *)obj);
+        }
     }
     
     return Undefined();
