@@ -280,9 +280,12 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
             return;
         }
     }
-
+    
+    if (m_decodingStarted == false)
+	d->m_doc->determineParseMode( decoded );
+   
     m_decodingStarted = true;
-        
+    
 #if FIGURE_OUT_WHAT_APPLY_CHANGES_DOES
     d->m_doc->applyChanges();
 #endif    

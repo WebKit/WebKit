@@ -1,3 +1,15 @@
+2002-07-23  David Hyatt  <hyatt@apple.com>
+
+	Fixing two bugs here.  The first is bug with @import sheets not inheriting strict parsing mode from their parent sheet.
+	This means all @import sheets are being treated as strict mode! 
+
+	The second bug is in KWQ.  We were never calling determineParseMode, so we always defaulted to strict mode, and therefore
+	were highly intolerant of unitless numbers on absolutely positioned blocks.  This fixes many problems, notably www.netscape.com
+	and ZDNet.com on the cvs-base tests.
+        * khtml/css/cssparser.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::write):
+
 2002-07-23  Darin Adler  <darin@apple.com>
 
 	- fixed 3004818 -- relative urls are assembled incorrectly at ticketmaster

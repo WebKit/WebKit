@@ -116,7 +116,7 @@ public:
     {
     public:
 	StyleBaseImpl()  { m_parent = 0; hasInlinedDecl = false; strictParsing = true; }
-	StyleBaseImpl(StyleBaseImpl *p) { m_parent = p; hasInlinedDecl = false; strictParsing = true; }
+	StyleBaseImpl(StyleBaseImpl *p) { m_parent = p; hasInlinedDecl = false; strictParsing = (m_parent ? m_parent->useStrictParsing() : true); }
 
 	virtual ~StyleBaseImpl() {}
 
