@@ -1,3 +1,12 @@
+2004-10-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed exception that Darin encountered in Mail.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebPluginController.m:
+        (+[WebPluginController plugInViewWithArguments:fromPluginPackage:]): if the plug-in returns a nil view, return nil
+
 2004-10-25  Chris Blumenberg  <cblu@apple.com>
 
 	Darin made an internal notification have the Web prefix.

@@ -56,7 +56,9 @@ static NSMutableSet *pluginViews = nil;
         view = [viewFactory plugInViewWithArguments:arguments];
     } else if ([viewFactory respondsToSelector:@selector(pluginViewWithArguments:)]) {
         view = [viewFactory pluginViewWithArguments:arguments];
-    } else {
+    }
+    
+    if (view == nil) {
         return nil;
     }
     
