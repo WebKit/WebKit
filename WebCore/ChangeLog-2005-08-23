@@ -1,3 +1,15 @@
+2004-12-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3926142> REGRESSION (Mail): Deleting text decreases quote level
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Stop merging nodes when a <br> is hit.
+        Formerly checked only for block boundary.
+
 2004-12-17  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
