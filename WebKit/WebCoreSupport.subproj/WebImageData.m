@@ -754,6 +754,7 @@ static NSMutableSet *activeAnimations;
         repetitionsComplete += 1;
         if ([self _repetitionCount] && repetitionsComplete >= [self _repetitionCount]) {
             animationFinished = YES;
+	    currentFrame--;
             return;
         }
         currentFrame = 0;

@@ -1,5 +1,17 @@
 2005-01-13  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3951911> REGRESSION: Animated GIF images with loop counts no longer update
+
+	Draw last image after animation loop terminates.  (We
+	were drawing the image at index+1, which doesn't exist!)
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _nextFrame:]):
+
+2005-01-13  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/3952084> REGRESSION: Links at projectseven.com now draw and update incorrectly during hover
 
 	Turn off use of new CGContextStrokeLineSegments API.  We should
