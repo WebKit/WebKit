@@ -562,12 +562,12 @@ static const char * const stateNames[] = {
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
-                    [[[self controller] locationChangeDelegate] locationChangeDone: [pd mainDocumentError] forDataSource:pd];
+                    [[[self controller] locationChangeDelegate] locationChangeDone:[pd mainDocumentError] forDataSource:pd];
 
                     // We know the provisional data source didn't cut the mustard, release it.
-                    [_private setProvisionalDataSource: nil];
+                    [_private setProvisionalDataSource:nil];
                     
-                    [self _setState: WebFrameStateComplete];
+                    [self _setState:WebFrameStateComplete];
                     return;
                 }
             }
@@ -581,14 +581,13 @@ static const char * const stateNames[] = {
             
             //LOG(Loading, "%@:  checking complete, current state WEBFRAMESTATE_COMMITTED", [self name]);
             if (![ds isLoading]) {
-                id thisView = [self webView];
+                WebView *thisView = [self webView];
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
                 ASSERT(thisDocumentView != nil);
 
-		// FIXME: need to avoid doing this in the non-HTML
-		// case or the bridge may assert. Should make sure
-		// there is a bridge/part in the proper state even for
-		// non-HTML content.
+		// FIXME: need to avoid doing this in the non-HTML case or the bridge may assert.
+                // Should instead make sure the bridge/part is in the proper state even for
+		// non-HTML content, or make a call to the document and let it deal with the bridge.
 
                 if ([ds isDocumentHTML]) {
 		    [_private->bridge end];
@@ -596,38 +595,45 @@ static const char * const stateNames[] = {
 
                 // Important to flip the state after we end the load, because client redirects will
                 // come out of those, and we want to treat them as part of the same op from the
-                //user's point of view.
-                [self _setState: WebFrameStateComplete];
+                //user's point of view. But it's possible we that inside the call to
+                // end we may navigate, so we have to check for that.
+                if ([self _state] != WebFrameStateProvisional) {
+                    [self _setState:WebFrameStateComplete];
+                }
+                
+                // FIXME: Is this subsequent work important if we already navigated away?
+                // Maybe there are bugs because of that, or extra work we can skip because
+                // the new page is ready.
 
                 // Unfortunately we have to get our parent to adjust the frames in this
                 // frameset so this frame's geometry is set correctly.  This should
                 // be a reasonably inexpensive operation.
-                id parentDS = [[self parent] dataSource];
+                WebDataSource *parentDS = [[self parent] dataSource];
                 if ([[parentDS _bridge] isFrameSet]){
-                    id parentWebView = [[self parent] webView];
+                    WebView *parentWebView = [[self parent] webView];
                     if ([parentWebView isDocumentHTML])
-                        [[parentWebView documentView] _adjustFrames];
+                        [(WebHTMLView *)[parentWebView documentView] _adjustFrames];
                 }
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
-                [thisDocumentView setNeedsLayout: YES];
+                [thisDocumentView setNeedsLayout:YES];
                 [thisDocumentView layout];
 
                 // Unfortunately if this frame has children we have to lay them
                 // out too.  This could be an expensive operation.
-                // FIXME:  If we can figure out how to avoid the layout of children,
+                // FIXME: If we can figure out how to avoid the layout of children,
                 // (just need for iframe placement/sizing) we could get a few percent
                 // speed improvement.
                 [ds _layoutChildren];
 
-                [thisDocumentView setNeedsDisplay: YES];
+                [thisDocumentView setNeedsDisplay:YES];
                 //[thisDocumentView display];
 
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
-                if ([[self controller] usesBackForwardList]){
+                if ([[self controller] usesBackForwardList]) {
                     switch ([self _loadType]) {
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeBack:
@@ -641,14 +647,14 @@ static const char * const stateNames[] = {
                     case WebFrameLoadTypeReloadAllowingStaleData:
                         // Do nothing.
                         break;
-                        
+
                     default:
                         ASSERT_NOT_REACHED();
                         break;
                     }
                 }
 
-                [[[self controller] locationChangeDelegate] locationChangeDone: [ds mainDocumentError] forDataSource:ds];
+                [[[self controller] locationChangeDelegate] locationChangeDone:[ds mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
@@ -662,7 +668,7 @@ static const char * const stateNames[] = {
                     BOOL resourceTimedDelayEnabled = [[WebPreferences standardPreferences] _resourceTimedLayoutEnabled];
                     if (resourceTimedDelayEnabled) {
                         NSTimeInterval timedDelay = [[WebPreferences standardPreferences] _resourceTimedLayoutDelay];
-                        [self _scheduleLayout: timedDelay];
+                        [self _scheduleLayout:timedDelay];
                     }
                 }
             }

@@ -1,4 +1,13 @@
- 2002-11-13  John Sullivan  <sullivan@apple.com>
+2002-11-13  Darin Adler  <darin@apple.com>
+
+	- fixed 3100013 -- REGRESSION: Can't get results from i-Bench anymore
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _isLoadComplete]):
+	Don't set the state to WebFrameStateComplete if it has already been set
+	to WebFrameStateProvisional. If it has, that means we already began a new
+	load; that one is not yet complete.
+
+2002-11-13  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3099922 -- REGRESSION: Back button always pops up menu
 
