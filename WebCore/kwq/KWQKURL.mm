@@ -187,6 +187,8 @@ static const unsigned char characterClassTable[256] = {
     /* 252 */ BadChar, /* 253 */ BadChar, /* 254 */ BadChar, /* 255 */ BadChar
 };
 
+static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int srcEnd);
+
 // FIXME: convert to inline functions
 
 #define IS_SCHEME_FIRST_CHAR(c) (characterClassTable[(unsigned char)c] & SchemeFirstChar)
@@ -333,39 +335,7 @@ KURL::KURL(const KURL &base, const QString &relative)
 		    baseStringEnd--;
 		}
 		
-		// now copy the base path, accounting for "." and ".." segments
-		const char *baseStringPos = baseStringStart;
-		while (baseStringPos < baseStringEnd) {
-		    if (baseStringPos[0] == '.' && bufferPos[-1] == '/') {
-			if (baseStringPos[1] == '/' || baseStringPos + 1 == baseStringEnd) {
-			    // skip over "." segment
-			    baseStringPos += 2;
-			    continue;
-			} else if (baseStringPos[1] == '.' && (baseStringPos[2] == '/' ||
-							       baseStringPos + 2 == baseStringEnd)) {
-			    // skip over ".." segment and rewind the last segment
-			    // the RFC leaves it up to the app to decide what to do with excess
-			    // ".." segments - we choose to drop them since some web content
-			    // relies on this.
-			    baseStringPos += 3;
-			    if (bufferPos > bufferPathStart + 1) {
-				bufferPos--;
-			    }
-			    while (bufferPos > bufferPathStart && bufferPos[-1] != '/') {
-				bufferPos--;
-			    }
-			    // don't strip the slash before the last path segment if it was the final one
-			    if (baseStringPos[2] != '/') {
-				bufferPos++;
-			    }
-			    continue;
-			}
-		    }
-
-		    *bufferPos = *baseStringPos;
-		    baseStringPos++;
-		    bufferPos++;
-		}
+                bufferPos += copyPathRemovingDots(bufferPos, baseStringStart, 0, baseStringEnd - baseStringStart);
 
 		const char *relStringStart = relative.ascii();
 		const char *relStringPos = relStringStart;
@@ -763,6 +733,50 @@ static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t l
     buffer = p;
 }
 
+// copy a path, accounting for "." and ".." segments
+static int copyPathRemovingDots(char *dst, const char *src, int srcStart, int srcEnd)
+{
+    const char *baseStringStart = src + srcStart;
+    const char *baseStringEnd = src + srcEnd;
+    char *bufferPathStart = dst;
+    const char *baseStringPos = baseStringStart;
+    
+    while (baseStringPos < baseStringEnd) {
+        if (baseStringPos[0] == '.' && dst[-1] == '/') {
+            if (baseStringPos[1] == '/' || baseStringPos + 1 == baseStringEnd) {
+                // skip over "." segment
+                baseStringPos += 2;
+                continue;
+            } else if (baseStringPos[1] == '.' && (baseStringPos[2] == '/' ||
+                                   baseStringPos + 2 == baseStringEnd)) {
+                // skip over ".." segment and rewind the last segment
+                // the RFC leaves it up to the app to decide what to do with excess
+                // ".." segments - we choose to drop them since some web content
+                // relies on this.
+                baseStringPos += 3;
+                if (dst > bufferPathStart + 1) {
+                    dst--;
+                }
+                // Note that these two while blocks differ subtly.
+                // The first helps to remove multiple adjoining slashes as we rewind.
+                while (dst > bufferPathStart && dst[-1] == '/') {
+                    dst--;
+                }
+                while (dst > bufferPathStart && dst[-1] != '/') {
+                    dst--;
+                }
+                continue;
+            }
+        }
+
+        *dst = *baseStringPos;
+        baseStringPos++;
+        dst++;
+    }
+    *dst = '\0';
+    return dst - bufferPathStart;
+}
+
 void KURL::parse(const char *url, const QString *originalString)
 {
     m_isValid = true;
@@ -909,7 +923,7 @@ void KURL::parse(const char *url, const QString *originalString)
 	while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
 	    pathEnd++;
 	}
-	
+        
 	queryStart = queryEnd = pathEnd;
 
 	if (url[queryStart] == '?') {
@@ -1023,11 +1037,30 @@ void KURL::parse(const char *url, const QString *originalString)
     if (isHTTPorHTTPS && pathEnd - pathStart == 0) {
         *p++ = '/';
     }
-   
+       
     // add path, escaping bad characters
-    appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
+    
+    if (strstr(url, "/.") || strstr(url, "..")) {
+        char static_path_buffer[4096];
+        char *path_buffer;
+        uint pathBufferLength = pathEnd - pathStart + 1;
+        if (pathBufferLength <= sizeof(static_path_buffer)) {
+            path_buffer = static_path_buffer;
+        } else {
+            path_buffer = (char *)malloc(pathBufferLength);
+        }
+        copyPathRemovingDots(path_buffer, url, pathStart, pathEnd);
+        appendEscapingBadChars(p, path_buffer, strlen(path_buffer));
+        if (path_buffer != static_path_buffer) {
+            free(path_buffer);
+        }
+    }
+    else {
+        appendEscapingBadChars(p, url + pathStart, pathEnd - pathStart);
+    }
     pathEndPos = p - buffer;
-
+    
+    
     // add query, escaping bad characters
     appendEscapingBadChars(p, url + queryStart, queryEnd - queryStart);
     queryEndPos = p - buffer;

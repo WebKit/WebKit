@@ -1,3 +1,18 @@
+2002-12-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by: Maciej
+
+        Fix for this bug:
+
+        Radar 3073988 (URLs with /../ are not resolved before being sent to the host)
+
+        * kwq/KWQKURL.mm:
+        (KURL::KURL):
+        (copyPathRemovingDots): New function containing code that was pulled out of 
+	the existing relative URL resolution code. 
+        (KURL::parse): Call new copyPathRemovingDots function instead of doing same work
+	inline.
+
 2002-12-06  David Hyatt  <hyatt@apple.com>
 
 	Sigh. I forgot to commit the first layer fix (that has already
