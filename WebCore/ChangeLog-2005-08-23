@@ -456,7 +456,6 @@
         (KURL::decode_string): Check for find result >= 0 instead of >0,
 	to handle case of first character in a string being encoded.
 
->>>>>>> 1.3237
 2004-09-09  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3795485> debug menu item to enable RSS animation on first layout
