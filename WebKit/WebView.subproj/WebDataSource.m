@@ -303,7 +303,6 @@
 
 - (void)_setData:(NSData *)data
 {
-    ASSERT(_private->resourceData == nil);
     [data retain];
     [_private->resourceData release];
     _private->resourceData = data;

@@ -1,3 +1,14 @@
+2005-03-10  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Vicki.
+        
+        - fixed <rdar://problem/4045843> Going back/forward to error page 
+        hits assertion in -[WebDataSource(WebPrivate) _setData:]
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _setData:]):
+        Removed bogus assertion
+
 2005-03-09  Deborah Goldsmith  <goldsmit@apple.com>
 
         Reviewed by Darin.
