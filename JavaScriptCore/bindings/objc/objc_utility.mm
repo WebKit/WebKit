@@ -204,6 +204,12 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
                     aValue = Object([jsobject _imp]);
                 }
+                else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
+                    aValue = Boolean(true);
+                }
+                else if ((CFBooleanRef)*obj == kCFBooleanFalse) {
+                    aValue = Boolean(false);
+                }
                 else if (*obj == 0) {
                     return Undefined();
                 }
