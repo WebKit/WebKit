@@ -1,3 +1,10 @@
+2002-11-06  Chris Blumenberg  <cblu@apple.com>
+
+	Support MacBinary I by checking that bytes 99-127 are 0. Also check byte 82 for all formats.
+
+        * Downloads.subproj/WebMacBinaryDecoder.m:
+        (+[WebMacBinaryDecoder canDecodeHeaderData:]):
+
 2002-11-06  Ken Kocienda  <kocienda@apple.com>
 
 	Call new WebHTTPResourceRequest method to set the amount of time

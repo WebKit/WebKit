@@ -28,7 +28,7 @@
 
     // Version must be 0, also the zero fill byte at byte 74,
     // and the last two bytes of the header.
-    if (header[0] || header[74] || header[126] || header[127]) {
+    if (header[0] || header[74] || header[82] || header[126] || header[127]) {
         return NO;
     }
 
@@ -39,7 +39,15 @@
 
     // And the CRC is the most important check.
     if (((header[124] << 8) | header[125]) != CRC16(header, 124, 0)) {
-        return NO;
+        // MacBinary I doesn't have a CRC. Make MacBinary I specific checks.
+
+        // 99-127 is 0 in MacBinary I
+        int i;
+        for(i=99; i<=127; i++){
+            if(header[i]){
+                return NO;
+            }
+        }
     }
 
     // FIXME: Specification says we should also check the minimum version at byte 123.
