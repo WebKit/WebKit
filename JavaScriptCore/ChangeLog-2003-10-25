@@ -1,3 +1,39 @@
+2002-11-20  Darin Adler  <darin@apple.com>
+
+	- decrease ref/deref -- 5% speedup in iBench
+
+        * JavaScriptCore.pbproj/project.pbxproj: Added array_instance.h
+        * kjs/array_instance.h: Added so it can be shared by function.h.
+
+        * kjs/array_object.cpp:
+        * kjs/array_object.h:
+        * kjs/bool_object.cpp:
+        * kjs/bool_object.h:
+        * kjs/collector.cpp:
+        * kjs/date_object.cpp:
+        * kjs/date_object.h:
+        * kjs/error_object.cpp:
+        * kjs/function.cpp:
+        * kjs/function.h:
+        * kjs/function_object.cpp:
+        * kjs/internal.cpp:
+        * kjs/internal.h:
+        * kjs/math_object.cpp:
+        * kjs/nodes.cpp:
+        * kjs/number_object.cpp:
+        * kjs/object.cpp:
+        * kjs/object.h:
+        * kjs/object_object.cpp:
+        * kjs/property_map.cpp:
+        * kjs/reference.cpp:
+        * kjs/reference.h:
+        * kjs/regexp_object.cpp:
+        * kjs/string_object.cpp:
+        * kjs/string_object.h:
+        * kjs/value.cpp:
+        * kjs/value.h:
+	Switched lots of interfaces so they don't require ref/deref.
+
 2002-11-20  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed the two most obvious problems with the new GC for another 6%

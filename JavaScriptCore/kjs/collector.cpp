@@ -99,6 +99,7 @@ void* Collector::allocate(size_t s)
     void *newCell = malloc(s);
     heap.oversizeCells[heap.usedOversizeCells] = (CollectorCell *)newCell;
     heap.usedOversizeCells++;
+    heap.numLiveObjects++;
     
     return (void *)newCell;
   }
@@ -140,6 +141,7 @@ void* Collector::allocate(size_t s)
 	if (cellPos < CELLS_PER_BLOCK) {
 	  targetBlock->bitmap[wordInBitmap] |= (1 << bitInWord);
 	  targetBlock->usedCells++;
+          heap.numLiveObjects++;
 	  return (void *)(targetBlock->cells + cellPos);
 	}
       }
@@ -292,6 +294,7 @@ void Collector::finalCheck()
 #endif
 
 #if APPLE_CHANGES
+
 int Collector::numInterpreters()
 {
   int count = 0;
@@ -342,7 +345,7 @@ int Collector::numReferencedObjects()
 	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
 	
 	if ((word & (1 << bitInWord)) &&
-	    imp->refcount == 0) {
+	    imp->refcount != 0) {
 	  ++count;
 	}
       }
@@ -351,7 +354,7 @@ int Collector::numReferencedObjects()
   
   for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
     ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
-      if (imp->refcount == 0) {
+      if (imp->refcount != 0) {
         ++count;
       }
   }
@@ -359,6 +362,7 @@ int Collector::numReferencedObjects()
   return count;
 }
 
+// FIXME: Rename. Root object classes are more useful than live object classes.
 CFSetRef Collector::liveObjectClasses()
 {
   CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
@@ -369,7 +373,8 @@ CFSetRef Collector::liveObjectClasses()
       for (int bitInWord = 0; bitInWord < BITS_PER_WORD; bitInWord++) {
 	ValueImp *imp = (ValueImp *)(heap.blocks[block]->cells + BITS_PER_WORD * wordInBitmap + bitInWord);
 	
-	if (word & (1 << bitInWord)) {
+	if (word & (1 << bitInWord)
+                && ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0)) {
 	  const char *mangled_name = typeid(*imp).name();
 	  int status;
 	  char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
@@ -385,18 +390,20 @@ CFSetRef Collector::liveObjectClasses()
   
   for (int cell = 0; cell < heap.usedOversizeCells; cell++) {
     ValueImp *imp = (ValueImp *)heap.oversizeCells[cell];
-
-    const char *mangled_name = typeid(*imp).name();
-    int status;
-    char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
     
-    CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
-    free(demangled_name);
-    CFSetAddValue(classes, className);
-    CFRelease(className);
+    if ((imp->_flags & ValueImp::VI_GCALLOWED) == 0 || imp->refcount != 0) {
+        const char *mangled_name = typeid(*imp).name();
+        int status;
+        char *demangled_name = __cxxabiv1::__cxa_demangle (mangled_name, NULL, NULL, &status);
+        
+        CFStringRef className = CFStringCreateWithCString(NULL, demangled_name, kCFStringEncodingASCII);
+        free(demangled_name);
+        CFSetAddValue(classes, className);
+        CFRelease(className);
+    }
   }
 
   return classes;
 }
 
-#endif
+#endif // APPLE_CHANGES

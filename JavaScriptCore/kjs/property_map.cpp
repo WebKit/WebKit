@@ -126,7 +126,7 @@ ValueImp *PropertyMap::get(const Identifier &name) const
 void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
 {
     UString::Rep *rep = name._ustring.rep;
-
+    
 #if USE_SINGLE_ENTRY
     if (!_table) {
         UString::Rep *key = _singleEntry.key;

@@ -34,6 +34,8 @@ namespace KJS {
   public:
     Reference(const Object& b, const Identifier& p);
     Reference(const Object& b, unsigned p);
+    Reference(ObjectImp *b, const Identifier& p);
+    Reference(ObjectImp *b, unsigned p);
     Reference(const Null& b, const Identifier& p);
     Reference(const Null& b, unsigned p);
     static Reference makeValueReference(const Value& v);

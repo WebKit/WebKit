@@ -209,7 +209,7 @@ using namespace KJS;
 
 const ClassInfo DateInstanceImp::info = {"Date", 0, 0, 0};
 
-DateInstanceImp::DateInstanceImp(const Object &proto)
+DateInstanceImp::DateInstanceImp(ObjectImp *proto)
   : ObjectImp(proto)
 {
 }
@@ -271,10 +271,10 @@ const ClassInfo DatePrototypeImp::info = {"Date", 0, &dateTable, 0};
 
 DatePrototypeImp::DatePrototypeImp(ExecState *,
                                    ObjectPrototypeImp *objectProto)
-  : DateInstanceImp(Object(objectProto))
+  : DateInstanceImp(objectProto)
 {
   Value protect(this);
-  setInternalValue(Number(NaN));
+  setInternalValue(NumberImp::create(NaN));
   // The constructor will be added later, after DateObjectImp has been built
 }
 
@@ -292,7 +292,7 @@ DateProtoFuncImp::DateProtoFuncImp(ExecState *exec, int i, int len)
   // We use a negative ID to denote the "UTC" variant.
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 bool DateProtoFuncImp::implementsCall() const
@@ -523,14 +523,17 @@ DateObjectImp::DateObjectImp(ExecState *exec,
   : InternalFunctionImp(funcProto)
 {
   Value protect(this);
+  
   // ECMA 15.9.4.1 Date.prototype
-  put(exec,prototypePropertyName, Object(dateProto), DontEnum|DontDelete|ReadOnly);
+  putDirect(prototypePropertyName, dateProto, DontEnum|DontDelete|ReadOnly);
 
-  put(exec,"parse", Object(new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::Parse, 1)), DontEnum);
-  put(exec,"UTC",   Object(new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::UTC,   7)),   DontEnum);
+  static const Identifier parsePropertyName("parse");
+  putDirect(parsePropertyName, new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::Parse, 1), DontEnum);
+  static const Identifier UTCPropertyName("UTC");
+  putDirect("UTC",   new DateObjectFuncImp(exec,funcProto,DateObjectFuncImp::UTC,   7),   DontEnum);
 
   // no. of arguments for constructor
-  put(exec,lengthPropertyName, Number(7), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, 7, ReadOnly|DontDelete|DontEnum);
 }
 
 bool DateObjectImp::implementsConstruct() const
@@ -601,7 +604,7 @@ Object DateObjectImp::construct(ExecState *exec, const List &args)
   }
 
   Object proto = exec->interpreter()->builtinDatePrototype();
-  Object ret(new DateInstanceImp(proto));
+  Object ret(new DateInstanceImp(proto.imp()));
   ret.setInternalValue(timeClip(value));
   return ret;
 }
@@ -636,7 +639,7 @@ DateObjectFuncImp::DateObjectFuncImp(ExecState *exec, FunctionPrototypeImp *func
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 bool DateObjectFuncImp::implementsCall() const

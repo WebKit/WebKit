@@ -29,7 +29,7 @@ namespace KJS {
 
   class BooleanInstanceImp : public ObjectImp {
   public:
-    BooleanInstanceImp(const Object &proto);
+    BooleanInstanceImp(ObjectImp *proto);
 
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;

@@ -223,6 +223,7 @@
 				F5341393030CEEB1018BE7F3,
 				F5BB2BC7030F772101FCFE1D,
 				933A349C038AE7C6008635CE,
+				938772E6038BFE19008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -318,6 +319,7 @@
 		};
 		08FB77AEFE84172EC02AAC07 = {
 			children = (
+				938772E5038BFE19008635CE,
 				F692A84D0255597D01FF60F7,
 				F692A84E0255597D01FF60F7,
 				F692A84F0255597D01FF60F7,
@@ -467,6 +469,18 @@
 		};
 		933A349E038AE80F008635CE = {
 			fileRef = 933A349D038AE80F008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		938772E5038BFE19008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = array_instance.h;
+			refType = 4;
+		};
+		938772E6038BFE19008635CE = {
+			fileRef = 938772E5038BFE19008635CE;
 			isa = PBXBuildFile;
 			settings = {
 			};

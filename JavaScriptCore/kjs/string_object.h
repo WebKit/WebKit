@@ -29,8 +29,8 @@ namespace KJS {
 
   class StringInstanceImp : public ObjectImp {
   public:
-    StringInstanceImp(const Object &proto);
-    StringInstanceImp(const Object &proto, const UString &string);
+    StringInstanceImp(ObjectImp *proto);
+    StringInstanceImp(ObjectImp *proto, const UString &string);
 
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
     virtual void put(ExecState *exec, const Identifier &propertyName, const Value &value, int attr = None);

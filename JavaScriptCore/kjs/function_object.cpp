@@ -40,9 +40,11 @@ FunctionPrototypeImp::FunctionPrototypeImp(ExecState *exec)
   : InternalFunctionImp(0)
 {
   Value protect(this);
-  put(exec, toStringPropertyName, Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::ToString, 0)), DontEnum);
-  put(exec, "apply",    Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Apply,    2)), DontEnum);
-  put(exec, "call",     Object(new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Call,     1)), DontEnum);
+  putDirect(toStringPropertyName, new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::ToString, 0), DontEnum);
+  static const Identifier applyPropertyName("apply");
+  putDirect(applyPropertyName,    new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Apply,    2), DontEnum);
+  static const Identifier callPropertyName("call");
+  putDirect(callPropertyName,     new FunctionProtoFuncImp(exec, this, FunctionProtoFuncImp::Call,     1), DontEnum);
 }
 
 FunctionPrototypeImp::~FunctionPrototypeImp()
@@ -67,7 +69,7 @@ FunctionProtoFuncImp::FunctionProtoFuncImp(ExecState *exec,
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 
@@ -174,10 +176,10 @@ FunctionObjectImp::FunctionObjectImp(ExecState *exec, FunctionPrototypeImp *func
   : InternalFunctionImp(funcProto)
 {
   Value protect(this);
-  put(exec,prototypePropertyName, Object(funcProto), DontEnum|DontDelete|ReadOnly);
+  putDirect(prototypePropertyName, funcProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, NumberImp::one(), ReadOnly|DontDelete|DontEnum);
 }
 
 FunctionObjectImp::~FunctionObjectImp()
@@ -275,14 +277,12 @@ Object FunctionObjectImp::construct(ExecState *exec, const List &args)
       return err;
   }
 
-  fimp->put(exec,lengthPropertyName, Number(params),ReadOnly|DontDelete|DontEnum);
   List consArgs;
 
   Object objCons = exec->interpreter()->builtinObject();
   Object prototype = objCons.construct(exec,List::empty());
-  prototype.put(exec, constructorPropertyName,
-		Object(fimp), DontEnum|DontDelete|ReadOnly);
-  fimp->put(exec,prototypePropertyName,prototype,DontEnum|DontDelete|ReadOnly);
+  prototype.put(exec, constructorPropertyName, Value(fimp), DontEnum|DontDelete|ReadOnly);
+  fimp->put(exec, prototypePropertyName, prototype, DontEnum|DontDelete|ReadOnly);
   return ret;
 }
 

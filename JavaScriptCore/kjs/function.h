@@ -24,6 +24,7 @@
 #define _KJS_FUNCTION_H_
 
 #include "internal.h"
+#include "array_instance.h"
 
 namespace KJS {
 
@@ -90,7 +91,7 @@ namespace KJS {
 
 
 
-  class ArgumentsImp : public ObjectImp {
+  class ArgumentsImp : public ArrayInstanceImp {
   public:
     ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args);
 
@@ -102,8 +103,6 @@ namespace KJS {
   public:
     ActivationImp(ExecState *exec, FunctionImp *f, const List &args);
 
-    Object argumentsObject() { return Object(arguments); }
-
     virtual const ClassInfo *classInfo() const { return &info; }
     static const ClassInfo info;
     
@@ -111,7 +110,8 @@ namespace KJS {
     
   private:
     FunctionImp *_function;
-    ObjectImp* arguments;
+    List _arguments;
+    ObjectImp *_argumentsObject;
   };
 
   class GlobalFuncImp : public InternalFunctionImp {

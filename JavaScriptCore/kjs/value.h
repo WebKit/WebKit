@@ -108,6 +108,9 @@ namespace KJS {
      * set by Object() so that the collector is allowed to delete us
      */
     void setGcAllowed();
+    
+    // Will crash if called on a simple number.
+    void setGcAllowedFast() { _flags |= VI_GCALLOWED; }
 
     int toInteger(ExecState *exec) const;
     int toInt32(ExecState *exec) const;

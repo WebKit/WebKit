@@ -118,8 +118,15 @@ namespace KJS {
   inline String::String(StringImp *imp) : Value(imp) { }
 
   class NumberImp : public ValueImp {
+    friend class Number;
+    friend class InterpreterImp;
   public:
-    NumberImp(double v) : val(v) { }
+    static ValueImp *create(int);
+    static ValueImp *create(double);
+    static ValueImp *zero() { return SimpleNumber::make(0); }
+    static ValueImp *one() { return SimpleNumber::make(1); }
+    static ValueImp *two() { return SimpleNumber::make(2); }
+    
     double value() const { return val; }
 
     Type type() const { return NumberType; }
@@ -130,7 +137,11 @@ namespace KJS {
     UString toString(ExecState *exec) const;
     Object toObject(ExecState *exec) const;
 
+    static NumberImp *staticNaN;
+
   private:
+    NumberImp(double v) : val(v) { }
+
     virtual bool toUInt32(unsigned&) const;
 
     double val;

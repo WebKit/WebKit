@@ -40,16 +40,18 @@ using namespace KJS;
 RegExpPrototypeImp::RegExpPrototypeImp(ExecState *exec,
                                        ObjectPrototypeImp *objProto,
                                        FunctionPrototypeImp *funcProto)
-  : ObjectImp(Object(objProto))
+  : ObjectImp(objProto)
 {
   Value protect(this);
   setInternalValue(String(""));
 
   // The constructor will be added later in RegExpObject's constructor (?)
 
-  put(exec, "exec",     Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::Exec,     0)), DontEnum);
-  put(exec, "test",     Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::Test,     0)), DontEnum);
-  put(exec, toStringPropertyName, Object(new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::ToString, 0)), DontEnum);
+  static const Identifier execPropertyName("exec");
+  putDirect(execPropertyName,     new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::Exec,     0), DontEnum);
+  static const Identifier testPropertyName("test");
+  putDirect(testPropertyName,     new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::Test,     0), DontEnum);
+  putDirect(toStringPropertyName, new RegExpProtoFuncImp(exec,funcProto,RegExpProtoFuncImp::ToString, 0), DontEnum);
 }
 
 // ------------------------------ RegExpProtoFuncImp ---------------------------
@@ -59,7 +61,7 @@ RegExpProtoFuncImp::RegExpProtoFuncImp(ExecState *exec,
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 bool RegExpProtoFuncImp::implementsCall() const
@@ -137,7 +139,7 @@ Value RegExpProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
 const ClassInfo RegExpImp::info = {"RegExp", 0, 0, 0};
 
 RegExpImp::RegExpImp(RegExpPrototypeImp *regexpProto)
-  : ObjectImp(Object(regexpProto)), reg(0L)
+  : ObjectImp(regexpProto), reg(0L)
 {
 }
 
@@ -156,10 +158,10 @@ RegExpObjectImp::RegExpObjectImp(ExecState *exec,
 {
   Value protect(this);
   // ECMA 15.10.5.1 RegExp.prototype
-  put(exec,prototypePropertyName, Object(regProto), DontEnum|DontDelete|ReadOnly);
+  putDirect(prototypePropertyName, regProto, DontEnum|DontDelete|ReadOnly);
 
   // no. of arguments for constructor
-  put(exec,lengthPropertyName, Number(2), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, NumberImp::two(), ReadOnly|DontDelete|DontEnum);
 }
 
 RegExpObjectImp::~RegExpObjectImp()
@@ -221,7 +223,7 @@ bool RegExpObjectImp::implementsConstruct() const
 // ECMA 15.10.4
 Object RegExpObjectImp::construct(ExecState *exec, const List &args)
 {
-  String p = args.isEmpty() ? UString("") : args[0].toString(exec);
+  UString p = args.isEmpty() ? UString("") : args[0].toString(exec);
   UString flags = args[1].toString(exec);
 
   RegExpPrototypeImp *proto = static_cast<RegExpPrototypeImp*>(exec->interpreter()->builtinRegExpPrototype().imp());
@@ -233,12 +235,12 @@ Object RegExpObjectImp::construct(ExecState *exec, const List &args)
   bool multiline = (flags.find("m") >= 0);
   // TODO: throw a syntax error on invalid flags
 
-  dat->put(exec, "global", Boolean(global));
-  dat->put(exec, "ignoreCase", Boolean(ignoreCase));
-  dat->put(exec, "multiline", Boolean(multiline));
+  dat->putDirect("global", global ? BooleanImp::staticTrue : BooleanImp::staticFalse);
+  dat->putDirect("ignoreCase", ignoreCase ? BooleanImp::staticTrue : BooleanImp::staticFalse);
+  dat->putDirect("multiline", multiline ? BooleanImp::staticTrue : BooleanImp::staticFalse);
 
-  dat->put(exec, "source", p);
-  dat->put(exec, "lastIndex", Number(0), DontDelete | DontEnum);
+  dat->putDirect("source", new StringImp(p));
+  dat->putDirect("lastIndex", NumberImp::zero(), DontDelete | DontEnum);
 
   int reflags = RegExp::None;
   if (global)
@@ -247,7 +249,7 @@ Object RegExpObjectImp::construct(ExecState *exec, const List &args)
       reflags |= RegExp::IgnoreCase;
   if (multiline)
       reflags |= RegExp::Multiline;
-  dat->setRegExp(new RegExp(p.value(), reflags));
+  dat->setRegExp(new RegExp(p, reflags));
 
   return obj;
 }

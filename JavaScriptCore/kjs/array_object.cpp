@@ -39,7 +39,7 @@ using namespace KJS;
 
 const ClassInfo ArrayInstanceImp::info = {"Array", 0, 0, 0};
 
-ArrayInstanceImp::ArrayInstanceImp(const Object &proto, unsigned initialLength)
+ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, unsigned initialLength)
   : ObjectImp(proto)
   , length(initialLength)
   , capacity(length)
@@ -47,7 +47,7 @@ ArrayInstanceImp::ArrayInstanceImp(const Object &proto, unsigned initialLength)
 {
 }
 
-ArrayInstanceImp::ArrayInstanceImp(const Object &proto, const List &list)
+ArrayInstanceImp::ArrayInstanceImp(ObjectImp *proto, const List &list)
   : ObjectImp(proto)
   , length(list.size())
   , capacity(length)
@@ -289,7 +289,7 @@ const ClassInfo ArrayPrototypeImp::info = {"Array", &ArrayInstanceImp::info, &ar
 // ECMA 15.4.4
 ArrayPrototypeImp::ArrayPrototypeImp(ExecState *exec,
                                      ObjectPrototypeImp *objProto)
-  : ArrayInstanceImp(Object(objProto), 0)
+  : ArrayInstanceImp(objProto, 0)
 {
   Value protect(this);
   setInternalValue(Null());
@@ -664,10 +664,10 @@ Object ArrayObjectImp::construct(ExecState *exec, const List &args)
 {
   // a single numeric argument denotes the array size (!)
   if (args.size() == 1 && args[0].type() == NumberType)
-    return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype(), args[0].toUInt32(exec)));
+    return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype().imp(), args[0].toUInt32(exec)));
 
   // otherwise the array is constructed with the arguments in it
-  return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype(), args));
+  return Object(new ArrayInstanceImp(exec->interpreter()->builtinArrayPrototype().imp(), args));
 }
 
 bool ArrayObjectImp::implementsCall() const
@@ -681,4 +681,3 @@ Value ArrayObjectImp::call(ExecState *exec, Object &/*thisObj*/, const List &arg
   // equivalent to 'new Array(....)'
   return construct(exec,args);
 }
-

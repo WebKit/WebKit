@@ -37,13 +37,13 @@ using namespace KJS;
 
 const ClassInfo StringInstanceImp::info = {"String", 0, 0, 0};
 
-StringInstanceImp::StringInstanceImp(const Object &proto)
+StringInstanceImp::StringInstanceImp(ObjectImp *proto)
   : ObjectImp(proto)
 {
   setInternalValue(String(""));
 }
 
-StringInstanceImp::StringInstanceImp(const Object &proto, const UString &string)
+StringInstanceImp::StringInstanceImp(ObjectImp *proto, const UString &string)
   : ObjectImp(proto)
 {
   setInternalValue(String(string));
@@ -119,11 +119,11 @@ const ClassInfo StringPrototypeImp::info = {"String", &StringInstanceImp::info, 
 // ECMA 15.5.4
 StringPrototypeImp::StringPrototypeImp(ExecState *exec,
                                        ObjectPrototypeImp *objProto)
-  : StringInstanceImp(Object(objProto))
+  : StringInstanceImp(objProto)
 {
   Value protect(this);
   // The constructor will be added later, after StringObjectImp has been built
-  put(exec,lengthPropertyName,Number(0),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, NumberImp::zero(), DontDelete|ReadOnly|DontEnum);
 
 }
 
@@ -140,7 +140,7 @@ StringProtoFuncImp::StringProtoFuncImp(ExecState *exec, int i, int len)
     ), id(i)
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 bool StringProtoFuncImp::implementsCall() const
@@ -531,13 +531,13 @@ StringObjectImp::StringObjectImp(ExecState *exec,
 {
   Value protect(this);
   // ECMA 15.5.3.1 String.prototype
-  put(exec,prototypePropertyName, Object(stringProto), DontEnum|DontDelete|ReadOnly);
+  putDirect(prototypePropertyName, stringProto, DontEnum|DontDelete|ReadOnly);
 
   static Identifier fromCharCode("fromCharCode");
-  put(exec,fromCharCode, Object(new StringObjectFuncImp(exec,funcProto)), DontEnum);
+  putDirect(fromCharCode, new StringObjectFuncImp(exec,funcProto), DontEnum);
 
   // no. of arguments for constructor
-  put(exec,lengthPropertyName, Number(1), ReadOnly|DontDelete|DontEnum);
+  putDirect(lengthPropertyName, NumberImp::one(), ReadOnly|DontDelete|DontEnum);
 }
 
 
@@ -549,7 +549,7 @@ bool StringObjectImp::implementsConstruct() const
 // ECMA 15.5.2
 Object StringObjectImp::construct(ExecState *exec, const List &args)
 {
-  Object proto = exec->interpreter()->builtinStringPrototype();
+  ObjectImp *proto = exec->interpreter()->builtinStringPrototype().imp();
   if (args.size() == 0)
     return Object(new StringInstanceImp(proto));
   return Object(new StringInstanceImp(proto, args.begin()->dispatchToString(exec)));
@@ -578,7 +578,7 @@ StringObjectFuncImp::StringObjectFuncImp(ExecState *exec, FunctionPrototypeImp *
   : InternalFunctionImp(funcProto)
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(1),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, NumberImp::one(), DontDelete|ReadOnly|DontEnum);
 }
 
 bool StringObjectFuncImp::implementsCall() const

@@ -228,7 +228,7 @@ Reference ResolveNode::evaluateReference(ExecState *exec)
     if (o->hasProperty(exec,ident)) {
       //cout << "Resolve: FOUND '" << ident.ascii() << "'"
       //     << " in " << (void*)o << " " << o->classInfo()->className << endl;
-      return Reference(Object(o), ident);
+      return Reference(o, ident);
     }
     scope++;
   }

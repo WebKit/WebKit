@@ -58,6 +58,12 @@ ObjectImp::ObjectImp(const Object &proto)
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
 }
 
+ObjectImp::ObjectImp(ObjectImp *proto)
+  : _proto(proto), _internalValue(0L), _scope(true)
+{
+  //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
+}
+
 ObjectImp::ObjectImp() :
   _scope(true)
 {
@@ -152,21 +158,18 @@ Value ObjectImp::get(ExecState *exec, unsigned propertyName) const
   return get(exec, Identifier::from(propertyName));
 }
 
-// This get method only looks at the property map.
-// A bit like hasProperty(recursive=false), this doesn't go to the prototype.
-// This is used e.g. by lookupOrCreateFunction (to cache a function, we don't want
-// to look up in the prototype, it might already exist there)
-ValueImp* ObjectImp::getDirect(const Identifier& propertyName) const
-{
-  return _prop.get(propertyName);
-}
-
 // ECMA 8.6.2.2
 void ObjectImp::put(ExecState *exec, const Identifier &propertyName,
                      const Value &value, int attr)
 {
   assert(!value.isNull());
   assert(value.type() != ListType);
+
+  // non-standard netscape extension
+  if (propertyName == specialPrototypePropertyName) {
+    setPrototype(value);
+    return;
+  }
 
   /* TODO: check for write permissions directly w/o this call */
   /* Doesn't look very easy with the PropertyMap API - David */
@@ -177,12 +180,6 @@ void ObjectImp::put(ExecState *exec, const Identifier &propertyName,
 #ifdef KJS_VERBOSE
     fprintf( stderr, "WARNING: canPut %s said NO\n", propertyName.ascii() );
 #endif
-    return;
-  }
-
-  // non-standard netscape extension
-  if (propertyName == specialPrototypePropertyName) {
-    setPrototype(value);
     return;
   }
 
@@ -394,7 +391,7 @@ ReferenceList ObjectImp::propList(ExecState *exec, bool recursive)
       const HashEntry *e = info->propHashTable->entries;
       for (int i = 0; i < size; ++i, ++e) {
         if ( e->s && !(e->attr & DontEnum) )
-          list.append(Reference(Object(this), e->s)); /// ######### check for duplicates with the propertymap
+          list.append(Reference(this, e->s)); /// ######### check for duplicates with the propertymap
       }
     }
     info = info->parentClass;
@@ -411,6 +408,12 @@ Value ObjectImp::internalValue() const
 void ObjectImp::setInternalValue(const Value &v)
 {
   _internalValue = v.imp();
+}
+
+void ObjectImp::setInternalValue(ValueImp *v)
+{
+  v->setGcAllowed();
+  _internalValue = v;
 }
 
 Value ObjectImp::toPrimitive(ExecState *exec, Type preferredType) const
@@ -444,6 +447,16 @@ Object ObjectImp::toObject(ExecState */*exec*/) const
   return Object(const_cast<ObjectImp*>(this));
 }
 
+void ObjectImp::putDirect(const Identifier &propertyName, ValueImp *value, int attr)
+{
+    value->setGcAllowed();
+    _prop.put(propertyName, value, attr);
+}
+
+void ObjectImp::putDirect(const Identifier &propertyName, int value, int attr)
+{
+    _prop.put(propertyName, NumberImp::create(value), attr);
+}
 
 // ------------------------------ Error ----------------------------------------
 

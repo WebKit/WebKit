@@ -318,17 +318,10 @@ const ClassInfo ArgumentsImp::info = {"Arguments", 0, 0, 0};
 
 // ECMA 10.1.8
 ArgumentsImp::ArgumentsImp(ExecState *exec, FunctionImp *func, const List &args)
-  : ObjectImp(exec->interpreter()->builtinObjectPrototype())
+  : ArrayInstanceImp(exec->interpreter()->builtinObjectPrototype().imp(), args)
 {
   Value protect(this);
-  put(exec,calleePropertyName, Object(func), DontEnum);
-  put(exec,lengthPropertyName, Number(args.size()), DontEnum);
-  if (!args.isEmpty()) {
-    ListIterator arg = args.begin();
-    for (int i = 0; arg != args.end(); arg++, i++) {
-      put(exec,i, *arg, DontEnum);
-    }
-  }
+  putDirect(calleePropertyName, func, DontEnum);
 }
 
 // ------------------------------ ActivationImp --------------------------------
@@ -337,12 +330,11 @@ const ClassInfo ActivationImp::info = {"Activation", 0, 0, 0};
 
 // ECMA 10.1.6
 ActivationImp::ActivationImp(ExecState *exec, FunctionImp *f, const List &args)
-  : _function(f)
+  : _function(f), _arguments(args)
 {
   Value protect(this);
-  arguments = new ArgumentsImp(exec,f, args);
-  arguments->setGcAllowed();
-  put(exec, argumentsPropertyName, Object(arguments), Internal|DontDelete);
+  _argumentsObject = new ArgumentsImp(exec, f, args);
+  putDirect(argumentsPropertyName, _argumentsObject, Internal|DontDelete);
 }
 
 // ------------------------------ GlobalFunc -----------------------------------
@@ -352,7 +344,7 @@ GlobalFuncImp::GlobalFuncImp(ExecState *exec, FunctionPrototypeImp *funcProto, i
   : InternalFunctionImp(funcProto), id(i)
 {
   Value protect(this);
-  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
+  putDirect(lengthPropertyName, len, DontDelete|ReadOnly|DontEnum);
 }
 
 CodeType GlobalFuncImp::codeType() const
