@@ -13,19 +13,24 @@
 <script>
 
 function editingTest() {
-    selectAllCommand();
-    insertNewlineCommand();
-    for (i = 0; i < 3; i++) {
-        typeCharacterCommand();
+    for (i = 0; i < 4; i++) {
+        moveSelectionForwardByCharacterCommand();    
     }
+    deleteCommand();
 }
 
 </script>
 
 <title>Editing Test</title> 
 </head> 
-<body contenteditable id="root" class="editing">
-<span id="test">Foo    <i>  bar</i></span>
+<body>
+<div contenteditable id="root" class="editing">
+<div id="test">
+One 
+<div>Two<div>Three<br></div></div>
+Four
+</div>
+</div>
 
 <script>
 runEditingTest();

@@ -1,3 +1,61 @@
+2004-09-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these bugs:
+        
+        <rdar://problem/3729219> REGRESSION (Mail): Caret placement and navigation not working correctly at yahoo.com
+        <rdar://problem/3758606> REGRESSION (Mail): Deletions across DIV elements is broken
+        <rdar://problem/3784810> REGRESSION (Mail): delete at beginning of line instead deletes to the end of the document (simple reduced test)
+
+        I made some very big improvements to the code which handles deletions of selections
+        which span more than one block.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::deleteUnrenderedText): An new, overloaded version of this
+        function which works on a NodeImpl. The code in this function fell out of some refactoring
+        I did in the function with the same name which takes a Position as an argument.
+        (khtml::DeleteSelectionCommandImpl::moveNodesToBlock): New function. This new logic provides
+        the smarts to fix the bugs listed above and greatly improves the code to perform deleting 
+        selections which span more than one block.
+        (khtml::DeleteSelectionCommandImpl::doApply): Several changes. Constrain downstream positions
+        so that they stay in the current block. This was a mistake before I think. Add code to detect
+        when the insertion point is a caret at the start of a block. This is a special-case of a
+        cross-block selection. Change the end-of-deletion-fixup case to operate on the downstreamEnd
+        position of the selection rather than the upstream. This is more logical. Refine the block 
+        merge logic to handle more cases, like dealing with whitespace. 
+        * khtml/editing/htmlediting_impl.h: Associated header file changes.
+        * khtml/xml/dom_nodeimpl.cpp: 
+        (NodeImpl::rootEditableElement): Add code to clamp the return value to the body element.
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::validate): Make selection canonicalizations stay in the current block.
+        * layout-tests/editing/deleting/delete-block-merge-contents-001-expected.txt:
+        * layout-tests/editing/deleting/delete-block-merge-contents-001.html:
+        * layout-tests/editing/deleting/delete-block-merge-contents-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-002.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-003.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-004-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-004.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-005-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-005.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-006-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-006.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-007-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-007.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-008-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-008.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-009-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-009.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-010-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-010.html: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-011-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-merge-contents-011.html: Added.
+        * layout-tests/editing/inserting/insert-3654864-fix-expected.txt: Updated with new results.
+        * layout-tests/editing/inserting/insert-3654864-fix.html: Updated test to deal better with
+        improved select all behavior.
+        * layout-tests/editing/selection/select-all-003-expected.txt: Updated with new results.
+
 2004-09-01  Richard Williamson   <rjw@apple.com>
 
 	Fixed panther build glitch.

@@ -30,6 +30,6 @@ selection is RANGE:
 start:      position 0 of child 1 {BR} of root {BODY}
 upstream:   position 0 of  of root {BODY}
 downstream: position 0 of child 1 {BR} of root {BODY}
-end:        position 1 of child 7 {BR} of root {BODY}
-upstream:   position 1 of child 7 {BR} of root {BODY}
-downstream: position 1 of child 8 {TEXT} of root {BODY}
+end:        position 0 of child 9 {DIV} of root {BODY}
+upstream:   position 0 of child 9 {DIV} of root {BODY}
+downstream: position 1 of child 9 {DIV} of root {BODY}

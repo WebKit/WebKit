@@ -593,35 +593,40 @@ ElementImpl *CompositeEditCommandImpl::applyTypingStyle(NodeImpl *child) const
     return element;
 }
 
+void CompositeEditCommandImpl::deleteUnrenderedText(NodeImpl *node)
+{
+    if (!node)
+        return;
+
+    if (node->isTextNode()) {
+        if (!node->renderer() || !static_cast<RenderText *>(node->renderer())->firstTextBox())
+            removeNode(node);
+        else {
+            TextImpl *text = static_cast<TextImpl *>(node);
+            if (text->caretMinOffset() > 0)
+                deleteText(text, 0, text->caretMinOffset());
+            if ((int)text->length() > text->caretMaxOffset())
+                deleteText(text, text->caretMaxOffset(), text->length() - text->caretMaxOffset());
+        }
+    }
+}
+
 void CompositeEditCommandImpl::deleteUnrenderedText(const Position &pos)
 {
+    if (pos.isEmpty())
+        return;
+
     Position upstream = pos.upstream(StayInBlock);
     Position downstream = pos.downstream(StayInBlock);
     Position block = Position(pos.node()->enclosingBlockFlowElement(), 0);
     
     NodeImpl *node = upstream.node();
-    while (node != downstream.node()) {
+    while (node && node != downstream.node()) {
         NodeImpl *next = node->traverseNextNode();
-        if (node->isTextNode()) {
-            if (!node->renderer() || !static_cast<RenderText *>(node->renderer())->firstTextBox())
-                removeNode(node);
-            else {
-                TextImpl *text = static_cast<TextImpl *>(node);
-                if ((int)text->length() > text->caretMaxOffset())
-                    deleteText(text, text->caretMaxOffset(), text->length() - text->caretMaxOffset());
-            }
-        }
+        deleteUnrenderedText(node);
         node = next;
     }
-    if (downstream.node()->isTextNode()) {
-        if (!node->renderer() || !static_cast<RenderText *>(node->renderer())->firstTextBox())
-            removeNode(downstream.node());
-        else {
-            TextImpl *text = static_cast<TextImpl *>(downstream.node());
-            if (text->caretMinOffset() > 0)
-                deleteText(text, 0, text->caretMinOffset());
-        }
-    }
+    deleteUnrenderedText(downstream.node());
     
     if (pos.node()->inDocument())
         setEndingSelection(pos);
@@ -1042,6 +1047,64 @@ CSSStyleDeclarationImpl *DeleteSelectionCommandImpl::computeTypingStyle(const Po
     return result;
 }
 
+// This function moves nodes in the block containing startNode to dstBlock, starting
+// from startNode and proceeding to the end of the block. Nodes in the block containing
+// startNode that appear in document order before startNode are not moved.
+// This function is an important helper for deleting selections that cross block
+// boundaries.
+void DeleteSelectionCommandImpl::moveNodesToBlock(NodeImpl *startNode, NodeImpl *dstBlock)
+{
+    ASSERT(!dstBlock->isAncestor(startNode));
+
+    NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
+    unsigned long index = dstBlock->childNodeCount();
+    
+    // Fix the right index to use for inserting content in dstBlock, based on the
+    // position of startNode relative to dstBlock.
+    if (startNode->isAncestor(dstBlock)) {
+        NodeImpl *n = startNode;
+        while (n->parentNode() != dstBlock)
+            n = n->parentNode();
+        index = n->nodeIndex();
+    }
+
+    // Do the move.
+    NodeImpl *node = startNode == startBlock ? startBlock->firstChild() : startNode;
+    while (node && (node == startBlock || node->isAncestor(startBlock))) {
+        NodeImpl *moveNode = node;
+        node = node->nextSibling();
+        removeNode(moveNode);
+        insertNodeAt(moveNode, dstBlock, index);
+        index++;
+    }
+
+    // If the startBlock no longer has any kids, we may need to deal with adding a BR
+    // to make the layout come out right. Consider this document:
+    //
+    // One
+    // <div>Two</div>
+    // Three
+    // 
+    // Placing the insertion before before the 'T' of 'Two' and hitting delete will
+    // move the contents of the div to the block containing 'One' and delete the div.
+    // This will have the side effect of moving 'Three' on to the same line as 'One'
+    // and 'Two'. This is undesirable. We fix this up by adding a BR before the 'Three'.
+    // This may not be ideal, but it is better than nothing.
+    if (!startBlock->firstChild()) {
+        removeNode(startBlock);
+        document()->updateLayout();
+        if (index != dstBlock->childNodeCount()) {
+            NodeImpl *node = dstBlock->childNode(index);
+            if (node->renderer() && node->renderer()->inlineBox() && node->renderer()->inlineBox()->prevOnLineExists()) {
+                int exceptionCode = 0;
+                ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
+                ASSERT(exceptionCode == 0);
+                insertNodeBefore(breakNode, node);
+            }
+        }
+    }
+}
+
 void DeleteSelectionCommandImpl::doApply()
 {
     // If selection has not been set to a custom selection when the command was created,
@@ -1053,9 +1116,9 @@ void DeleteSelectionCommandImpl::doApply()
         return;
 
     Position upstreamStart(m_selectionToDelete.start().upstream(StayInBlock));
-    Position downstreamStart(m_selectionToDelete.start().downstream());
+    Position downstreamStart(m_selectionToDelete.start().downstream(StayInBlock));
     Position upstreamEnd(m_selectionToDelete.end().upstream(StayInBlock));
-    Position downstreamEnd(m_selectionToDelete.end().downstream());
+    Position downstreamEnd(m_selectionToDelete.end().downstream(StayInBlock));
     Position endingPosition;
 
     // Save away whitespace situation before doing any deletions
@@ -1097,7 +1160,18 @@ void DeleteSelectionCommandImpl::doApply()
         startOffset = 0;
     }
 
-    if (startNode == downstreamEnd.node()) {
+    if (upstreamStart == upstreamEnd && downstreamStart == downstreamEnd && upstreamStart.node()->isBlockFlow()) {
+        // handle a delete when the selection is a caret placed at the start of a block.
+        ASSERT(startBlock == endBlock);
+        NodeImpl *block = upstreamStart.node()->traversePreviousNode()->enclosingBlockFlowElement();
+        while (block && !block->isContentEditable())
+            block = block->traversePreviousNode()->enclosingBlockFlowElement();
+        if (block && block->rootEditableElement() == upstreamStart.node()->rootEditableElement())
+            startBlock = block;
+        else
+            return; // nothing to do; at the start of a root editable block.
+    }
+    else if (startNode == downstreamEnd.node()) {
         // handle delete in one node
         if (!startNode->renderer() || 
             (startOffset <= startNode->caretMinOffset() && downstreamEnd.offset() >= startNode->caretMaxOffset())) {
@@ -1143,37 +1217,36 @@ void DeleteSelectionCommandImpl::doApply()
             }
         }
 
-        if (upstreamEnd.node() != startNode && upstreamEnd.node()->inDocument() && upstreamEnd.offset() >= upstreamEnd.node()->caretMinOffset()) {
-            if (upstreamEnd.offset() >= upstreamEnd.node()->caretMaxOffset()) {
+        if (downstreamEnd.node() != startNode && downstreamEnd.node()->inDocument() && downstreamEnd.offset() >= downstreamEnd.node()->caretMinOffset()) {
+            if (downstreamEnd.offset() >= downstreamEnd.node()->caretMaxOffset()) {
                 // need to delete whole node
                 // we can get here if this is the last node in the block
-                removeNode(upstreamEnd.node());
+                removeNode(downstreamEnd.node());
                 trailingValid = false;
             }
             else {
                 // in a text node that needs to be trimmed
-                TextImpl *text = static_cast<TextImpl *>(upstreamEnd.node());
-                if (upstreamEnd.offset() > 0) {
-                    deleteText(text, 0, upstreamEnd.offset());
+                TextImpl *text = static_cast<TextImpl *>(downstreamEnd.node());
+                if (downstreamEnd.offset() > 0) {
+                    deleteText(text, 0, downstreamEnd.offset());
                     trailingValid = false;
                 }
             }
-            if (!upstreamStart.node()->inDocument() && upstreamEnd.node()->inDocument())
-                endingPosition = Position(upstreamEnd.node(), 0);
+            if (!downstreamEnd.node()->inDocument() && downstreamEnd.node()->inDocument())
+                endingPosition = Position(downstreamEnd.node(), 0);
         }
     }
     
     // Do block merge if start and end of selection are in different blocks.
-    if (endBlock != startBlock && endBlock->inDocument()) {
+    if (endBlock != startBlock && downstreamEnd.node()->inDocument()) {
         LOG(Editing,  "merging content to start block");
-        NodeImpl *node = endBlock->firstChild();
-        while (node) {
-            NodeImpl *moveNode = node;
-            node = node->nextSibling();
-            removeNode(moveNode);
-            appendNode(moveNode, startBlock);
-        }
-        removeNode(endBlock);
+        // cross blocks and delete unrenderered text from the destination location
+        deleteUnrenderedText(upstreamStart.upstream());
+        // stay in this block and delete unrenderered text from the source location
+        deleteUnrenderedText(upstreamStart);
+        // move the downstream end position's node, and all other nodes in its
+        // block to the start block.
+        moveNodesToBlock(downstreamEnd.node(), startBlock);
     }
       
     // Figure out where the end position should be

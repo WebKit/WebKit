@@ -719,7 +719,7 @@ void Selection::validate(ETextGranularity granularity)
     if (start().isEmpty() && end().isEmpty()) {
         m_state = NONE;
     }
-    else if (start() == end() || start().upstream() == end().upstream()) {
+    else if (start() == end() || start().upstream(StayInBlock) == end().upstream(StayInBlock)) {
         m_state = CARET;
     }
     else {
@@ -730,8 +730,8 @@ void Selection::validate(ETextGranularity granularity)
         // purposes of comparing selections). This is an ideal point of the code
         // to do this operation, since all selection changes that result in a RANGE 
         // come through here before anyone uses it.
-        assignStart(start().downstream());
-        assignEnd(end().upstream());
+        assignStart(start().downstream(StayInBlock));
+        assignEnd(end().upstream(StayInBlock));
     }
 
     m_needsCaretLayout = true;

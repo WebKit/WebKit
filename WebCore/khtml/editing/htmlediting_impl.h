@@ -167,6 +167,7 @@ protected:
     void splitTextNode(DOM::TextImpl *text, long offset);
 
     DOM::ElementImpl *applyTypingStyle(DOM::NodeImpl *) const;
+    void deleteUnrenderedText(DOM::NodeImpl *);
     void deleteUnrenderedText(const DOM::Position &pos);
 
     QValueList<EditCommand> m_cmds;
@@ -248,6 +249,7 @@ private:
     void deleteDownstreamWS(const DOM::Position &start);
     bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     DOM::CSSStyleDeclarationImpl *computeTypingStyle(const DOM::Position &pos) const;
+    void moveNodesToBlock(DOM::NodeImpl *startNode, DOM::NodeImpl *dstBlock);
 
     DOM::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;

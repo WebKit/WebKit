@@ -13,19 +13,20 @@
 <script>
 
 function editingTest() {
-    selectAllCommand();
-    insertNewlineCommand();
-    for (i = 0; i < 3; i++) {
-        typeCharacterCommand();
-    }
 }
 
 </script>
 
 <title>Editing Test</title> 
 </head> 
-<body contenteditable id="root" class="editing">
-<span id="test">Foo    <i>  bar</i></span>
+<body>
+<div contenteditable id="root" class="editing">
+<div id="test">
+One 
+<div>Two<br><br></div>
+Three
+</div>
+</div>
 
 <script>
 runEditingTest();

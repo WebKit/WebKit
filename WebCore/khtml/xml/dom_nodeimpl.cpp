@@ -1351,6 +1351,9 @@ ElementImpl *NodeImpl::rootEditableElement() const
         return 0;
 
     NodeImpl *n = const_cast<NodeImpl *>(this);
+    if (n->id() == ID_BODY)
+        return static_cast<ElementImpl *>(n);
+
     NodeImpl *result = n->isEditableBlock() ? n : 0;
     while (1) {
         n = n->parentNode();
