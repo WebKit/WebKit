@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QFRAME_H_
-#define QFRAME_H_
+#ifndef KWQFRAME_H_
+#define KWQFRAME_H_
 
 #include <qwidget.h>
 

@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KICONTHEME_H_
-#define KICONTHEME_H_
+#ifndef KWQICON_H_
+#define KWQICON_H_
 
 class KIcon {
 public:

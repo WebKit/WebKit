@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QCOLLECTION_H_
-#define QCOLLECTION_H_
+#ifndef KWQCOLLECTION_H_
+#define KWQCOLLECTION_H_
 
 class QCollection {
 public:
