@@ -1,5 +1,73 @@
 2003-07-25  Dave Hyatt  <hyatt@apple.com>
 
+	Fix for 3343529, inline blocks crashing Safari.  There were lots of problems with
+	inlne-blocks.  This code gets basic inline-blocks working properly (with no crashes).
+
+	Several functions have been patched to take an isRootLineBox parameter.  This is used
+	to tell whether you're supposed to examine the root line box for a block or the block
+	itself.  In the case of baselinePosition and lineHeight, it indicates whether the caller
+	wants to measure the outside or inside of the box.  
+
+	The outside of an inline-block is like a replaced element (e.g., an image), but the 
+	inside is like a block, e.g., you want measurements for
+	the line height and baseline position of a root line box for that block.
+
+	Similarly, createInlineBox has been patched in order to know whether you're making a
+	root inline box *inside* the inline-block or an inline box that *encompasses* the
+	inline-block element (like you'd do for an image).
+
+	A number of places had isInline() calls and needed to be patched to also check
+	isInlineBlockOrInlineTable().  How to treat the inline-block again basically depends
+	on whether the caller is looking at the outside of the block (in which case you're like
+	an inline replaced element) or the inside of the block (in which case you're just like
+	a block).
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcWidth):
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::createInlineBox):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::baselinePosition):
+        (RenderButton::baselinePosition):
+        (RenderSubmitButton::baselinePosition):
+        (RenderSelect::baselinePosition):
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::verticallyAlignBoxes):
+        (InlineFlowBox::computeLogicalBoxHeights):
+        * khtml/rendering/render_list.cpp:
+        (RenderListMarker::lineHeight):
+        (RenderListMarker::baselinePosition):
+        * khtml/rendering/render_list.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::sizesToMaxWidth):
+        (RenderObject::getVerticalPosition):
+        (RenderObject::lineHeight):
+        (RenderObject::baselinePosition):
+        (RenderObject::createInlineBox):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::lineHeight):
+        (RenderReplaced::baselinePosition):
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_table.cpp:
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::lineHeight):
+        (RenderText::baselinePosition):
+        (RenderText::createInlineBox):
+        * khtml/rendering/render_text.h:
+
+2003-07-25  Dave Hyatt  <hyatt@apple.com>
+
 	Fix for 3343527, crash when attempting to access rules in the CSS OM.
 	Our KWQListImpl doesn't null check accesses, so anything out
 	of bounds would cause a crash.

@@ -283,15 +283,15 @@ public:
 
     void scheduleRelayout(RenderObject* clippedObj = 0);
 
-    virtual InlineBox* createInlineBox(bool makePlaceHolderBox);
+    virtual InlineBox* createInlineBox(bool makePlaceHolderBox, bool isRootLineBox);
     
     // for discussion of lineHeight see CSS2 spec
-    virtual short lineHeight( bool firstLine ) const;
+    virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;
     // for the vertical-align property of inline elements
     // the difference between this objects baseline position and the lines baseline position.
     virtual short verticalPositionHint( bool firstLine ) const;
     // the offset of baseline from the top of the object.
-    virtual short baselinePosition( bool firstLine ) const;
+    virtual short baselinePosition( bool firstLine, bool isRootLineBox=false ) const;
 
     /*
      * Paint the object and its children, clipped by (x|y|w|h).

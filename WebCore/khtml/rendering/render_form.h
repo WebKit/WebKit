@@ -99,7 +99,7 @@ public:
     virtual void updateFromElement();
 
     virtual void layout();
-    virtual short baselinePosition( bool ) const;
+    virtual short baselinePosition( bool, bool ) const;
 
     DOM::HTMLGenericFormElementImpl *element() const
     { return static_cast<DOM::HTMLGenericFormElementImpl*>(RenderObject::element()); }
@@ -133,7 +133,7 @@ public:
 #endif
 
     virtual const char *renderName() const { return "RenderButton"; }
-    virtual short baselinePosition( bool ) const;
+    virtual short baselinePosition( bool, bool ) const;
 
     // don't even think about making this method virtual!
     DOM::HTMLInputElementImpl* element() const
@@ -193,7 +193,7 @@ public:
 
     virtual void calcMinMaxWidth();
     virtual void updateFromElement();
-    virtual short baselinePosition( bool ) const;
+    virtual short baselinePosition( bool, bool ) const;
 private:
     QString rawText();
 };
@@ -380,7 +380,7 @@ public:
     virtual const char *renderName() const { return "RenderSelect"; }
 
 #if APPLE_CHANGES
-    short baselinePosition( bool f ) const;
+    short baselinePosition( bool f, bool b ) const;
     int calcReplacedHeight() const { if (!m_useListBox) return intrinsicHeight(); return RenderFormElement::calcReplacedHeight(); }
     virtual bool canHaveIntrinsicMargins() const { return true; }
 #endif

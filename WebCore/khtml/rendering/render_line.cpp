@@ -279,7 +279,8 @@ void InlineFlowBox::verticallyAlignBoxes(int& heightOfBlock)
     int maxAscent = 0;
     int maxDescent = 0;
 
-    // Figure out if we're in strict mode.
+    // Figure out if we're in strict mode.  Note that we can't simply use !style()->htmlHacks(),
+    // because that would match almost strict mode as well.
     RenderObject* curr = object();
     while (curr && !curr->element())
         curr = curr->container();
@@ -336,14 +337,14 @@ void InlineFlowBox::computeLogicalBoxHeights(int& maxPositionTop, int& maxPositi
 {
     if (isRootInlineBox()) {
         // Examine our root box.
-        setHeight(object()->lineHeight(m_firstLine));
+        setHeight(object()->lineHeight(m_firstLine, true));
         bool isTableCell = object()->isTableCell();
         if (isTableCell) {
             RenderTableCell* tableCell = static_cast<RenderTableCell*>(object());
-            setBaseline(tableCell->RenderBlock::baselinePosition(m_firstLine));
+            setBaseline(tableCell->RenderBlock::baselinePosition(m_firstLine, true));
         }
         else
-            setBaseline(object()->baselinePosition(m_firstLine));
+            setBaseline(object()->baselinePosition(m_firstLine, true));
         if (hasTextChildren() || strictMode) {
             int ascent = baseline();
             int descent = height() - ascent;

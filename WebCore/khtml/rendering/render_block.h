@@ -39,6 +39,10 @@ public:
 
     virtual const char *renderName() const;
 
+    // These two functions are overridden for inline-block.
+    virtual short lineHeight(bool b, bool isRootLineBox=false) const;
+    virtual short baselinePosition(bool b, bool isRootLineBox=false) const;
+    
     virtual bool isRenderBlock() const { return true; }
     virtual bool isBlockFlow() const { return !isInline() && !isTable(); }
     virtual bool isInlineFlow() const { return isInline() && !isReplaced(); }

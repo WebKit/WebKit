@@ -485,7 +485,7 @@ int RenderObject::containingBlockHeight() const
 
 bool RenderObject::sizesToMaxWidth() const
 {
-    if (isFloating() || isCompact() ||
+    if (isFloating() || isCompact() || isInlineBlockOrInlineTable() ||
         (element() && (element()->id() == ID_BUTTON || element()->id() == ID_LEGEND)))
         return true;
 
@@ -1444,7 +1444,8 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
     } else if ( va == LENGTH ) {
         vpos = -style()->verticalAlignLength().width( lineHeight( firstLine ) );
     } else  {
-        vpos = parent()->verticalPositionHint( firstLine );
+        bool checkParent = parent()->isInline() && !parent()->isInlineBlockOrInlineTable();
+        vpos = checkParent ? parent()->verticalPositionHint( firstLine ) : 0;
         // don't allow elements nested inside text-top to have a different valignment.
         if ( va == BASELINE )
             return vpos;
@@ -1465,7 +1466,8 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
 //                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", fontheight, fontsize, parent()->baselinePosition( firstLine ) );
 //                 qDebug( "this:" );
 //                 qDebug( "CSSLH: %d, CSS_FS: %d, basepos: %d", lineHeight( firstLine ), style()->font().pixelSize(), baselinePosition( firstLine ) );
-            vpos += ( baselinePosition( firstLine ) - parent()->baselinePosition( firstLine ) );
+            vpos += ( baselinePosition( firstLine ) -
+                      parent()->baselinePosition( firstLine, !checkParent ) );
         } else if ( va == MIDDLE ) {
 #if APPLE_CHANGES
             vpos += - (int)(QFontMetrics(f).xHeight()/2) - lineHeight( firstLine )/2 + baselinePosition( firstLine );
@@ -1484,7 +1486,7 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
     return vpos;
 }
 
-short RenderObject::lineHeight( bool firstLine ) const
+short RenderObject::lineHeight( bool firstLine, bool ) const
 {
     Length lh = style(firstLine)->lineHeight();
 
@@ -1499,10 +1501,10 @@ short RenderObject::lineHeight( bool firstLine ) const
     return lh.value;
 }
 
-short RenderObject::baselinePosition( bool firstLine ) const
+short RenderObject::baselinePosition( bool firstLine, bool isRootLineBox ) const
 {
     const QFontMetrics &fm = fontMetrics( firstLine );
-    return fm.ascent() + ( lineHeight( firstLine ) - fm.height() ) / 2;
+    return fm.ascent() + ( lineHeight( firstLine, isRootLineBox ) - fm.height() ) / 2;
 }
 
 void RenderObject::invalidateVerticalPositions()
@@ -1569,8 +1571,9 @@ void RenderObject::removeLeftoverAnonymousBoxes()
 {
 }
 
-InlineBox* RenderObject::createInlineBox(bool makePlaceHolderBox)
+InlineBox* RenderObject::createInlineBox(bool,bool isRootLineBox)
 {
+    KHTMLAssert(!isRootLineBox);
     return new (renderArena()) InlineBox(this);
 }
 

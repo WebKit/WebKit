@@ -67,12 +67,12 @@ RenderFormElement::~RenderFormElement()
 {
 }
 
-short RenderFormElement::baselinePosition( bool f ) const
+short RenderFormElement::baselinePosition( bool f, bool isRootLineBox ) const
 {
 #if APPLE_CHANGES
     return marginTop() + widget()->baselinePosition();
 #else
-    return RenderWidget::baselinePosition( f ) - 2 - style()->fontMetrics().descent();
+    return RenderWidget::baselinePosition( f, isRootLineBox ) - 2 - style()->fontMetrics().descent();
 #endif
 }
 
@@ -209,12 +209,12 @@ RenderButton::RenderButton(HTMLGenericFormElementImpl *element)
 {
 }
 
-short RenderButton::baselinePosition( bool f ) const
+short RenderButton::baselinePosition( bool f, bool isRootLineBox ) const
 {
 #if APPLE_CHANGES
-    return RenderFormElement::baselinePosition( f );
+    return RenderFormElement::baselinePosition( f, isRootLineBox );
 #else
-    return RenderWidget::baselinePosition( f ) - 2;
+    return RenderWidget::baselinePosition( f, isRootLineBox ) - 2;
 #endif
 }
 
@@ -389,9 +389,9 @@ QString RenderSubmitButton::defaultLabel()
 #endif
 }
 
-short RenderSubmitButton::baselinePosition( bool f ) const
+short RenderSubmitButton::baselinePosition( bool f, bool isRootLineBox ) const
 {
-    return RenderFormElement::baselinePosition( f );
+    return RenderFormElement::baselinePosition( f, isRootLineBox );
 }
 
 // -------------------------------------------------------------------------------
@@ -1031,12 +1031,12 @@ void RenderSelect::updateFromElement()
 
 #if APPLE_CHANGES
 // Override to deal with our widget.
-short RenderSelect::baselinePosition( bool f ) const
+short RenderSelect::baselinePosition( bool f, bool isRootLineBox ) const
 {
     if (!m_useListBox) {
-        return RenderFormElement::baselinePosition( f );
+        return RenderFormElement::baselinePosition( f, isRootLineBox );
     } else {
-        return RenderWidget::baselinePosition( f ) - 7;
+        return RenderWidget::baselinePosition( f, isRootLineBox ) - 7;
     }
 }
 #endif

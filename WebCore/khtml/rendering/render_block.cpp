@@ -279,7 +279,7 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
     // means that we cannot coalesce inlines before |insertionPoint| with inlines following
     // |insertionPoint|, because the new child is going to be inserted in between the inlines,
     // splitting them.
-    KHTMLAssert(!isInline());
+    KHTMLAssert(isInlineBlockOrInlineTable() || !isInline());
     KHTMLAssert(!insertionPoint || insertionPoint->parent() == this);
 
     m_childrenInline = false;
@@ -2272,6 +2272,28 @@ void RenderBlock::close()
         lastChild()->close();
 
     RenderFlow::close();
+}
+
+short RenderBlock::lineHeight(bool b, bool isRootLineBox) const
+{
+    // Inline blocks are replaced elements. Otherwise, just pass off to
+    // the base class.  If we're being queried as though we're the root line
+    // box, then the fact that we're an inline-block is irrelevant, and we behave
+    // just like a block.
+    if (isReplaced() && !isRootLineBox)
+        return height()+marginTop()+marginBottom();
+    return RenderFlow::lineHeight(b, isRootLineBox);
+}
+
+short RenderBlock::baselinePosition(bool b, bool isRootLineBox) const
+{
+    // Inline blocks are replaced elements. Otherwise, just pass off to
+    // the base class.  If we're being queried as though we're the root line
+    // box, then the fact that we're an inline-block is irrelevant, and we behave
+    // just like a block.
+    if (isReplaced() && !isRootLineBox)
+        return height()+marginTop()+marginBottom();
+    return RenderFlow::baselinePosition(b, isRootLineBox);
 }
 
 int RenderBlock::getBaselineOfFirstLineBox()

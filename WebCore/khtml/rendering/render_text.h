@@ -137,7 +137,7 @@ public:
     DOM::DOMString data() const { return str; }
     DOM::DOMStringImpl *string() const { return str; }
 
-    virtual InlineBox* createInlineBox(bool);
+    virtual InlineBox* createInlineBox(bool,bool);
     
     virtual void layout() {assert(false);}
 
@@ -158,8 +158,8 @@ public:
     virtual int height() const;
 
     // height of the contents (without paddings, margins and borders)
-    virtual short lineHeight( bool firstLine ) const;
-    virtual short baselinePosition( bool firstLine ) const;
+    virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;
+    virtual short baselinePosition( bool firstLine, bool isRootLineBox=false ) const;
 
     // overrides
     virtual void calcMinMaxWidth();

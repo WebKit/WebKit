@@ -36,8 +36,8 @@ public:
 
     virtual const char *renderName() const { return "RenderReplaced"; }
 
-    virtual short lineHeight( bool firstLine) const;
-    virtual short baselinePosition( bool firstLine ) const;
+    virtual short lineHeight( bool firstLine, bool isRootLineBox=false ) const;
+    virtual short baselinePosition( bool firstLine, bool isRootLineBox=false ) const;
 
     virtual void calcMinMaxWidth();
 

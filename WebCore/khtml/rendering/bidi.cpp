@@ -96,7 +96,7 @@ static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
 {
     int extraWidth = 0;
     RenderObject* parent = child->parent();
-    while (parent->isInline()) {
+    while (parent->isInline() && !parent->isInlineBlockOrInlineTable()) {
         if (start && parent->firstChild() == child)
             extraWidth += getBorderPaddingMargin(parent, false);
         if (end && parent->lastChild() == child)
@@ -553,7 +553,7 @@ InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
     if (!box || box->isConstructed() || box->nextOnLine()) {
         // We need to make a new box for this render object.  Once
         // made, we need to place it at the end of the current line.
-        InlineBox* newBox = obj->createInlineBox(false);
+        InlineBox* newBox = obj->createInlineBox(false, obj == this);
         KHTMLAssert(newBox->isInlineFlowBox());
         box = static_cast<InlineFlowBox*>(newBox);
         box->setFirstLineStyleBit(m_firstLine);
@@ -579,7 +579,7 @@ InlineFlowBox* RenderBlock::constructLine(const BidiIterator &start, const BidiI
     InlineFlowBox* parentBox = 0;
     for (BidiRun* r = sFirstBidiRun; r; r = r->nextRun) {
         // Create a box for our object.
-        r->box = r->obj->createInlineBox(r->obj->isPositioned());
+        r->box = r->obj->createInlineBox(r->obj->isPositioned(), false);
         
         // If we have no parent box yet, or if the run is not simply a sibling,
         // then we need to construct inline boxes as necessary to properly enclose the
@@ -726,7 +726,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
 {
     if ( start == end ) {
         if ( start.current() == '\n' ) {
-            m_height += lineHeight( m_firstLine );
+            m_height += lineHeight( m_firstLine, true );
         }
         return;
     }

@@ -1208,7 +1208,7 @@ int RenderText::height() const
     return retval;
 }
 
-short RenderText::lineHeight( bool firstLine ) const
+short RenderText::lineHeight( bool firstLine, bool ) const
 {
     if ( firstLine )
  	return RenderObject::lineHeight( firstLine );
@@ -1216,16 +1216,17 @@ short RenderText::lineHeight( bool firstLine ) const
     return m_lineHeight;
 }
 
-short RenderText::baselinePosition( bool firstLine ) const
+short RenderText::baselinePosition( bool firstLine, bool ) const
 {
     const QFontMetrics &fm = metrics( firstLine );
     return fm.ascent() +
         ( lineHeight( firstLine ) - fm.height() ) / 2;
 }
 
-InlineBox* RenderText::createInlineBox(bool)
+InlineBox* RenderText::createInlineBox(bool, bool isRootLineBox)
 {
     // FIXME: Either ditch the array or get this object into it.
+    KHTMLAssert(!isRootLineBox);
     return new (renderArena()) TextRun(this);
 }
 
