@@ -1,5 +1,19 @@
 2002-12-29  Darin Adler  <darin@apple.com>
 
+        Reviewed by Don.
+
+	- fixed 3120630 -- spacebar scrolls the page as well as pausing the QuickTime movie
+
+	Imitate Mozilla and OmniWeb by not propagating keyboard events after passing them to
+	plug-ins regardless of what the plug-in returns, rather than imitating MacIE, which
+        looks at the return value from NPP_HandleEvent.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView keyUp:]): Remove call to super, add comment.
+        (-[WebBaseNetscapePluginView keyDown:]): Ditto.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken and Don.
 
 	- fixed 3136120 -- much content missing at www.olympic.org

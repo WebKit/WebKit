@@ -469,27 +469,29 @@ typedef struct {
         event.message = [self keyMessageForEvent:theEvent];
     }
     
-    BOOL acceptedEvent = [self sendEvent:&event];
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event];
 
     LOG(Plugins, "NPP_HandleEvent(keyUp): %d charCode:%c keyCode:%lu",
         acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
-    // If the plug-in didn't accept this event,
-    // pass it along so that keyboard scrolling, for example, will work.
-    if (!acceptedEvent){
-        [super keyUp:theEvent];
-    }
+    // We originally thought that if the plug-in didn't accept this event,
+    // we should pass it along so that keyboard scrolling, for example, will work.
+    // In practice, this is not a good idea, because browsers tend to eat the event but return false.
+    // MacIE handles each key event twice because of this, but we will emulate the other browsers instead.
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
     EventRecord event;
 
+#if 0
     // Some command keys are sent with both performKeyEquivalent and keyDown.
     // We should send only 1 keyDown to the plug-in, so we'll ignore this one.
-    if([theEvent modifierFlags] & NSCommandKeyMask){
+    if ([theEvent modifierFlags] & NSCommandKeyMask) {
         return;
     }
+#endif
     
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
@@ -498,16 +500,16 @@ typedef struct {
         event.message = [self keyMessageForEvent:theEvent];
     }
     
-    BOOL acceptedEvent = [self sendEvent:&event];
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event];
 
     LOG(Plugins, "NPP_HandleEvent(keyDown): %d charCode:%c keyCode:%lu",
         acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
     
-    // If the plug-in didn't accept this event,
-    // pass it along so that keyboard scrolling, for example, will work.
-    if (!acceptedEvent){
-        [super keyDown:theEvent];
-    }
+    // We originally thought that if the plug-in didn't accept this event,
+    // we should pass it along so that keyboard scrolling, for example, will work.
+    // In practice, this is not a good idea, because browsers tend to eat the event but return false.
+    // MacIE handles each key event twice because of this, but we will emulate the other browsers instead.
 }
 
 - (BOOL)isInResponderChain
