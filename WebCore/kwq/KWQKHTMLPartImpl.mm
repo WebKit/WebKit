@@ -646,3 +646,19 @@ KHTMLPart *KWQKHTMLPartImpl::parentPart()
 {
     return [[bridge parent] part];
 }
+
+bool KWQKHTMLPartImpl::openedByJS()
+{
+    return [bridge openedByScript];
+}
+
+void KWQKHTMLPartImpl::setOpenedByJS(bool _openedByJS)
+{
+    [bridge setOpenedByScript:_openedByJS];
+}
+
+void KWQKHTMLPartImpl::close()
+{
+    [[bridge window] close];
+}
+

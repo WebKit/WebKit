@@ -123,6 +123,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes;
 
+- (BOOL) openedByScript;
+- (void) setOpenedByScript:(BOOL)openedByScript;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

@@ -48,6 +48,9 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
 #include "html/html_documentimpl.h"
+#ifdef APPLE_CHANGES
+#include "KWQKHTMLPartImpl.h"
+#endif
 
 using namespace KJS;
 
@@ -846,7 +849,11 @@ void Window::scheduleClose()
 {
   kdDebug(6070) << "Window::scheduleClose window.close() " << m_part << endl;
   Q_ASSERT(winq);
+#ifdef APPLE_CHANGES
+  m_part->impl->close();
+#else
   QTimer::singleShot( 0, winq, SLOT( timeoutClose() ) );
+#endif
 }
 
 bool Window::isSafeScript(ExecState *exec) const

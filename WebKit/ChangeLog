@@ -1,3 +1,16 @@
+2002-07-07  Maciej Stachowiak  <mjs@apple.com>
+
+        WebCore part of fix for Radar 2953431 - JavaScript window.close()
+	method is not working
+
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        (-[IFWebCoreBridge openedByScript]): Implement by calling controller.
+        (-[IFWebCoreBridge setOpenedByScript:]): Likewise.
+        * WebView.subproj/IFWebControllerPrivate.h:
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (-[IFWebController _openedByScript]): Implement.
+        (-[IFWebController _setOpenedByScript:]): Implement.
+
 2002-07-05  Darin Adler  <darin@apple.com>
 
 	Fix crashes I saw with zombies enabled caused by messing with windows that are

@@ -1,3 +1,22 @@
+2002-07-07  Maciej Stachowiak  <mjs@apple.com>
+
+        WebCore part of fix for Radar 2953431 - JavaScript window.close()
+	method is not working
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::scheduleClose): In AppleChanges
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openedByJS): Call kwq implementations, because we need
+	to remember the openedByJS state across location changes, which in
+	our case means replacing the part.
+        (KHTMLPart::setOpenedByJS): Likewise.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPartImpl::openedByJS): Implement by calling bridge.
+        (KWQKHTMLPartImpl::setOpenedByJS): Likewise.
+        (KWQKHTMLPartImpl::close): Likewise.
+        * kwq/KWQKHTMLPartImpl.h: Prototype new PartImpl methods.
+        * kwq/WebCoreBridge.h: Prototype new bridge methods.
+
 2002-07-06  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::write): Remove reference

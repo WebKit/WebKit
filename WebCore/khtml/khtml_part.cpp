@@ -4661,12 +4661,20 @@ void KHTMLPart::setOpener(KHTMLPart *_opener)
 
 bool KHTMLPart::openedByJS()
 {
+#ifdef APPLE_CHANGES
+    return impl->openedByJS();
+#else
     return d->m_openedByJS;
+#endif
 }
 
 void KHTMLPart::setOpenedByJS(bool _openedByJS)
 {
+#ifdef APPLE_CHANGES
+    impl->setOpenedByJS(_openedByJS);
+#else
     d->m_openedByJS = _openedByJS;
+#endif
 }
 
 void KHTMLPart::preloadStyleSheet(const QString &url, const QString &stylesheet)

@@ -200,4 +200,14 @@
     dataSource = ds;
 }
 
+- (BOOL)openedByScript
+{
+    return [[dataSource controller] _openedByScript];
+}
+
+- (void)setOpenedByScript:(BOOL)openedByScript
+{
+    [[dataSource controller] _setOpenedByScript:openedByScript];
+}
+
 @end

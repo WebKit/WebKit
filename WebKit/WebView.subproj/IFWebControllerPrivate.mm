@@ -215,4 +215,14 @@
     return [[IFFileTypeMappings sharedMappings] MIMETypeForExtension:extension];
 }
 
+- (BOOL)_openedByScript
+{
+    return _private->openedByScript;
+}
+
+- (void)_setOpenedByScript:(BOOL)openedByScript
+{
+    _private->openedByScript = openedByScript;
+}
+
 @end
