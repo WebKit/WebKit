@@ -564,6 +564,16 @@ void KWQKHTMLPart::addData(const char *bytes, int length)
 void KHTMLPart::frameDetached()
 {
     [KWQ(this)->bridge() frameDetached];
+
+    // FIXME: There may be a better place to do this that works for KHTML too.
+    FrameList& parentFrames = parentPart()->d->m_frames;
+    FrameIt end = parentFrames.end();
+    for (FrameIt it = parentFrames.begin(); it != end; ++it) {
+        if ((*it).m_part == this) {
+            parentFrames.remove(it);
+            break;
+        }
+    }
 }
 
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)

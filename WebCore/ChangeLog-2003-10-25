@@ -1,3 +1,13 @@
+2003-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3285820 -- REGRESSION: iframe set up with innerHTML shows up empty (discovered at www.kbs.co.kr)
+
+        * kwq/KWQKHTMLPart.mm: (KHTMLPart::frameDetached): Remove the frame from the parent's
+        m_frames list so it's not accidentally reused, since our naming scheme gives frames in
+        the same place in the scheme of things the same name.
+
 2003-06-10  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3270813, crash in the code for the CSS content property.
