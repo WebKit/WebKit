@@ -33,7 +33,7 @@ const QCursor Qt::sizeHorCursor;
 const QCursor Qt::sizeVerCursor;
 
 QCursor::QCursor()
-    : cursor([[NSCursor arrowCursor] retain])
+    : cursor(nil)
 {
 }
 
@@ -43,7 +43,7 @@ QCursor::QCursor(NSCursor *cur)
 }
 
 QCursor::QCursor(const QPixmap &pixmap)
-    : cursor([[NSCursor arrowCursor] retain])
+    : cursor(nil)
 {
     ERROR("not yet implemented");
 }

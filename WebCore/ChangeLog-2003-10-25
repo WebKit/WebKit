@@ -1,5 +1,10 @@
 2002-11-12  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQCursor.mm: (QCursor::QCursor): Use nil instead of [NSCursor arrowCursor].
+	This will probably fix the performance regression.
+
+2002-11-12  Darin Adler  <darin@apple.com>
+
 	- fixed 3080250 -- Hands-free crash at wired.com in
 	KHTMLPart::slotChildStarted
 
