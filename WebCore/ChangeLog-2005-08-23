@@ -1,3 +1,42 @@
+2005-01-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - re-landing a subset of my custom tag change that does not fix the bug, but also does
+          not introduce a performance regression
+
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::checkOneSelector): Changed
+        some code that used ID_LAST_TAG in a slightly wrong, but harmless, way.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::debugPosition): Use nodeName rather than getTagName, since the latter works for
+        per-document tags and is just better all around for things like the document.
+        (khtml::debugNode): Ditto.
+        * khtml/editing/selection.cpp: (khtml::Selection::debugPosition): Ditto.
+        * khtml/editing/visible_position.cpp: (khtml::VisiblePosition::debugPosition): Ditto.
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::displayNode): Ditto.
+        * khtml/xml/dom_position.cpp: (DOM::Position::debugPosition): Ditto.
+
+        * khtml/html/dtd.cpp: (DOM::checkChild): Use ID_LAST_TAG rather than 1000 for the check that allows
+        non-HTML elements to be nested as desired.
+
+        * khtml/misc/htmlhashes.h: Changed return types to unsigned short.
+        * khtml/misc/htmlhashes.cpp:
+        (khtml::getTagID): Changed return type to unsigned short.
+        (khtml::getAttrID): Ditto.
+
+        * khtml/xml/dom_docimpl.h: Added overload of createHTMLElement, made it non-virtual since it's not overriden.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLElement): Refactored into two separate functions, one that takes the tag ID.
+        Also updated for a few tags that the parser handled but this did not.
+
+        * kwq/KWQRenderTreeDebug.cpp:
+        (getTagName): Added. Works for custom nodes, because it calls nodeName rather than using getTagName on
+        the tag ID directly, which only works for standard nodes.
+        (operator<<): Update to call getTagName.
+        (nodePositionRelativeToRoot): Ditto.
+        (writeSelection): Ditto.
+
 2005-01-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
