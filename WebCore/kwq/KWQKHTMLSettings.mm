@@ -37,7 +37,7 @@ KHTMLSettings::KHTMLSettings()
     m_fontFamilies = NSSTRING_TO_QSTRING([array componentsJoinedByString:@","]);
     
     m_fontSizes.clear();
-    fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"fontSizes"];
+    fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitFontSizes"];
     for(i=0; i<[fontSizeArray count]; i++){
         m_fontSizes << [[fontSizeArray objectAtIndex:i] intValue];
     }
@@ -45,37 +45,37 @@ KHTMLSettings::KHTMLSettings()
 
 QString KHTMLSettings::stdFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"stdFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitStandardFont"]);
 }
 
 
 QString KHTMLSettings::fixedFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"fixedFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFixedFont"]);
 }
 
 
 QString KHTMLSettings::serifFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"serifFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSerifFont"]);
 }
 
 
 QString KHTMLSettings::sansSerifFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"sansSerifFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSansSerifFont"]);
 }
 
 
 QString KHTMLSettings::cursiveFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"cursiveFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCursiveFont"]);
 }
 
 
 QString KHTMLSettings::fantasyFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"fantasyFontName"]);
+    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFantasyFont"]);
 }
 
 
@@ -105,7 +105,7 @@ const QString &KHTMLSettings::encoding() const
 
 int KHTMLSettings::minFontSize() const
 {
-    return [[NSUserDefaults standardUserDefaults] integerForKey:@"minFontSize"];
+    return [[NSUserDefaults standardUserDefaults] integerForKey:@"WebKitMinimumFontSize"];
 }
 
 

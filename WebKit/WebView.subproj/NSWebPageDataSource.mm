@@ -12,18 +12,17 @@
     NSArray *fontSizeArray = [NSArray arrayWithObjects:@"6", @"8", @"10", @"12", @"14", @"16", @"18", @"20", nil];
     
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
-        @"Arial", 		@"stdFontName",
-        @"Courier",  		@"fixedFontName",
-        @"Times-Roman", 	@"serifFontName",
-        @"Arial", 		@"sansSerifFontName", 
-        @"Times-Roman", 	@"cursiveFontName",
-        @"Times-Roman", 	@"fantasyFontName",
-        @"6", 			@"minFontSize",
-        fontSizeArray,		@"fontSizes",
+        @"Arial", 		@"WebKitStandardFont",
+        @"Courier",  		@"WebKitFixedFont",
+        @"Times-Roman", 	@"WebKitSerifFont",
+        @"Arial", 		@"WebKitSansSerifFont", 
+        @"Times-Roman", 	@"WebKitCursiveFont",
+        @"Times-Roman", 	@"WebKitFantasyFont",
+        @"6", 			@"WebKitMinimumFontSize",
+        fontSizeArray,		@"WebKitFontSizes",
         nil];
 
     [defaults registerDefaults:dict];
-
 }
 
 @end
