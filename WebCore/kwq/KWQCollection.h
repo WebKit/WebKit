@@ -32,15 +32,17 @@ class QPtrCollection {
  public:
     typedef void *Item;
 
-    bool autoDelete();
-    void setAutoDelete(bool autoDelete);
+    bool autoDelete() { return del_item; }
+    void setAutoDelete(bool autoDelete) { del_item = autoDelete; }
+
+    QPtrCollection(const QPtrCollection &) : del_item(false) { }
+    QPtrCollection &operator=(const QPtrCollection &) { return *this; }
+
  protected:
-    QPtrCollection();
-    QPtrCollection(const QPtrCollection &);
-    QPtrCollection &operator=(const QPtrCollection &);
+    QPtrCollection() : del_item(false) { }
     virtual ~QPtrCollection();
 
-    bool del_item;				// default FALSE
+    bool del_item;
 };
 
-#endif /* QCOLLECTION_H */
+#endif

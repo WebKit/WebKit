@@ -392,11 +392,11 @@ UString DOMNode::toString(ExecState *) const
 
   DOM::Element e = node;
   if ( !e.isNull() ) {
-#if APPLE_CHANGES
-    s = KJS::UString(e.nodeName().string());
-#else /* not APPLE_CHANGES */
+#ifdef APPLE_CHANGES
+    s = UString(e.nodeName().string());
+#else
     s = e.nodeName().string();
-#endif /* not APPLE_CHANGES */
+#endif
   } else
     s = className(); // fallback
 
@@ -723,9 +723,7 @@ Value DOMDocument::getValueProperty(ExecState *exec, int token) const
     {
       KHTMLPart* part = docimpl->view()->part();
       if ( part ) {
-#ifndef APPLE_CHANGES
         if (part->d->m_bComplete) return String("complete");
-#endif
         if (docimpl->parsing()) return String("loading");
         return String("loaded");
         // What does the interactive value mean ?

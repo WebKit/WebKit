@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +26,21 @@
 #ifndef KWQLISTBOX_H_
 #define KWQLISTBOX_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qscrollview.h>
 #include <qstring.h>
-
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-#import <Cocoa/Cocoa.h>
-#endif
 
 class QListBoxItem;
 class QListBoxText;
 
-// class QListBox ==============================================================
-
 class QListBox : public QScrollView {
 friend class QListBoxItem;
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
-
     enum SelectionMode { Single, Multi, Extended, NoSelection };
 
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    QListBox();
+    QListBox(QWidget *parent);
     ~QListBox();
 
-    // member functions --------------------------------------------------------
-
-#ifdef _KWQ_
     int scrollBarWidth() const;
-#endif
     
     uint count() const;
     void clear();
@@ -77,40 +52,16 @@ public:
     void setSelected(int, bool);
     bool isSelected(int);
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QListBox(const QListBox &);
-    QListBox &operator=(const QListBox &);
-
     QListBoxItem *head;
-}; // class QListBox ===========================================================
-
-
-// class QListBoxItem ==========================================================
+};
 
 class QListBoxItem {
 friend class QListBox;
 friend class QListBoxText;
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QListBoxItem();
     virtual ~QListBoxItem();
-
-    // member functions --------------------------------------------------------
 
     void setSelectable(bool);
     QListBox *listBox() const;
@@ -119,52 +70,19 @@ public:
     QListBoxItem *next() const;
     QListBoxItem *prev() const;
 
-    // operators ---------------------------------------------------------------
-
-
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QListBoxItem(const QListBoxItem &);
-    QListBoxItem &operator=(const QListBoxItem &);
-
     QString text;
     QListBoxItem *previousItem, *nextItem;
     QListBox *box;
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QListBoxItem =======================================================
-
-
-// class QListBoxText ==========================================================
+private:
+    QListBoxItem(const QListBoxItem &);
+    QListBoxItem &operator=(const QListBoxItem &);
+};
 
 class QListBoxText : public QListBoxItem {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QListBoxText(const QString &text=QString::null);
     ~QListBoxText();
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QListBoxText(const QListBoxText &);
-    QListBoxText &operator=(const QListBoxText &);
-
-}; // class QListBoxText =======================================================
+};
 
 #endif

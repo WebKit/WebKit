@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,6 +24,8 @@
  */
 
 #include <qrect.h>
+
+#include <algorithm>
 
 using std::max;
 using std::min;
@@ -55,26 +57,6 @@ bool QRect::isEmpty() const
     return w > 1 && h > 1;
 }
 
-int QRect::x() const
-{
-    return xp;
-}
-
-int QRect::y() const
-{
-    return yp;
-}
-
-int QRect::left() const
-{
-    return xp;
-}
-
-int QRect::top() const
-{
-    return yp;
-}
-
 int QRect::right() const
 {
     return xp + w - 1;
@@ -85,16 +67,6 @@ int QRect::bottom() const
     return yp + h - 1;
 }
 
-int QRect::width() const
-{
-    return w;
-}
-
-int QRect::height() const
-{
-    return h;
-}
-
 QPoint QRect::topLeft() const
 {
     return QPoint(xp,yp);
@@ -103,21 +75,6 @@ QPoint QRect::topLeft() const
 QSize QRect::size() const
 {
     return QSize(w,h);
-}
-
-void QRect::setWidth(int width)
-{
-    w = width;
-}
-
-void QRect::setHeight(int height)
-{
-    h = height;
-}
-
-QRect QRect::intersect(const QRect &r) const
-{
-    return operator&(r);
 }
 
 QRect QRect::unite(const QRect &r) const
@@ -144,10 +101,10 @@ QRect QRect::unite(const QRect &r) const
 
 bool QRect::intersects(const QRect &r) const
 {
-    return (intersect(r)).isValid();
+    return intersect(r).isValid();
 }
 
-QRect QRect::operator&(const QRect &r) const
+QRect QRect::intersect(const QRect &r) const
 {
     int nx, ny, nw, nh;
 
@@ -171,12 +128,12 @@ QRect QRect::operator&(const QRect &r) const
 
 bool operator==(const QRect &a, const QRect &b)
 {
-	return a.xp == b.xp && a.yp == b.yp && a.w == b.w && a.h == b.h;
+    return a.xp == b.xp && a.yp == b.yp && a.w == b.w && a.h == b.h;
 }
 
 bool operator!=(const QRect &a, const QRect &b)
 {
-	return a.xp != b.xp || a.yp != b.yp || a.w != b.w || a.h != b.h;
+    return !(a == b);
 }
 
 #ifdef _KWQ_IOSTREAM_

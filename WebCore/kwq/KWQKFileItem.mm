@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,22 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <kfileitem.h>
 
+#include <kwqdebug.h>
 
-KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool foo=false, 
-    bool bar=false)
+KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool, bool)
 {
     _logNotYetImplemented();
 }
-
-
-KFileItem::~KFileItem()
-{
-    _logNotYetImplemented();
-}
-
 
 bool KFileItem::isDir() const
 {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,36 +25,6 @@
 
 #include <qcollection.h>
 
-#ifndef USING_BORROWED_QCOLLECTION
-
-QPtrCollection::QPtrCollection() :
-    del_item(FALSE)
-{
-}
-
-QPtrCollection::QPtrCollection(const QPtrCollection &other) :
-    del_item(FALSE)
-{
-}
-
-QPtrCollection &QPtrCollection::operator=(const QPtrCollection &other)
-{
-    return *this; // don't copy del_item
-}
-
 QPtrCollection::~QPtrCollection()
 {
 }
-
-bool QPtrCollection::autoDelete()
-{
-    return del_item;
-}
-
-void QPtrCollection::setAutoDelete(bool autoDelete)
-{
-    del_item = autoDelete;
-}
-
-#endif
-

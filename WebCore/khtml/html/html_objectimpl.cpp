@@ -314,12 +314,9 @@ void HTMLObjectElementImpl::attach()
 
 void HTMLObjectElementImpl::detach()
 {
-    // FIXME:MERGE do we need this unload event?
-#ifndef APPLE_CHANGES
     if (attached())
         // ### do this when we are actualy removed from document instead
         dispatchHTMLEvent(EventImpl::UNLOAD_EVENT,false,false);
-#endif
 
   HTMLElementImpl::detach();
 }

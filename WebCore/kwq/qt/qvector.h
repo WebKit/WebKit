@@ -26,16 +26,6 @@
 #ifndef QVECTOR_H_
 #define QVECTOR_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QVECTOR ======================================================
-
-#ifdef USING_BORROWED_QVECTOR
-#include <_qvector.h>
-#else
-
 #include <iostream>
 
 #include <KWQDef.h>
@@ -43,18 +33,18 @@
 
 #include <KWQVectorImpl.h>
 
-// class QPtrVector ===============================================================
-template<class T> class QPtrVector : public QPtrCollection  {
+class QGVector : public QPtrCollection
+{
 public:
+    virtual int compareItems(void *a, void *b) = 0;
+};
 
-    // constructors, copy constructors, and destructors ------------------------
-
+// class QPtrVector ===============================================================
+template<class T> class QPtrVector : public QGVector  {
+public:
     QPtrVector() : impl(deleteFunc) {}
     QPtrVector(uint size) : impl(size, deleteFunc) {}
-    QPtrVector(const QPtrVector<T> &v) : QPtrCollection(v), impl(v.impl) {}
     ~QPtrVector() { if (del_item) { impl.clear(del_item); } }
-
-    // member functions --------------------------------------------------------
 
     void clear() { impl.clear(del_item); }
     bool isEmpty() const { return impl.isEmpty(); }
@@ -68,20 +58,15 @@ public:
 
     virtual int compareItems(void *a, void *b) { return a != b; }
 
-    // operators ---------------------------------------------------------------
-
     T *operator[](int n) const {return (T *)impl.at(n); }
     QPtrVector &operator=(const QPtrVector &v) 
     { impl.assign(v.impl,del_item); QPtrCollection::operator=(v); return *this; }
+
  private:
-    static void deleteFunc(void *item) {
-	delete (T *)item;
-    }
+    static void deleteFunc(void *item) { delete (T *)item; }
 
     KWQVectorImpl impl;
-}; // class QPtrVector ============================================================
-
-
+};
 
 template<class T>
 inline std::ostream &operator<<(std::ostream &stream, const QPtrVector<T> &v)
@@ -98,7 +83,5 @@ inline std::ostream &operator<<(std::ostream &stream, const QPtrVector<T> &v)
 
     return stream << "]";
 }
-
-#endif // USING_BORROWED_QVECTOR
 
 #endif

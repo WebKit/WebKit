@@ -152,21 +152,12 @@ using namespace khtml;
 
 static HTMLColors *htmlColors = 0L;
 
-#ifdef APPLE_CHANGES
-// FIXME: do we really need static delete support here?
-#else /* APPLE_CHANGES not defined */
 static KStaticDeleter<HTMLColors> hcsd;
-#endif /* APPLE_CHANGES not defined */
 
 void khtml::setNamedColor(QColor &color, const QString &_name)
 {
     if( !htmlColors )
-#ifdef APPLE_CHANGES
-        // FIXME: do we really need static delete support here?
-        htmlColors = new HTMLColors();
-#else /* APPLE_CHANGES not defined */
         htmlColors = hcsd.setObject( new HTMLColors );
-#endif /* APPLE_CHANGES not defined */
 
     int pos;
     QString name = _name;
@@ -185,9 +176,9 @@ void khtml::setNamedColor(QColor &color, const QString &_name)
     if (len == 6)
     {
 #ifdef APPLE_CHANGES
-        // recognize #12345 (append a '0')
+        // recognize #12345 (duplicate the last character)
         if(name[0] == '#') {
-            name += '0';
+            name += name.right(1);
         }
         else if ((!name[0].isLetter() && !name[0].isDigit())) {
 	    color = QColor();

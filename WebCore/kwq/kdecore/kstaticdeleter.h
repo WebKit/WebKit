@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,53 +26,13 @@
 #ifndef KSTATICDELETER_H_
 #define KSTATICDELETER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// class KStaticDeleter ========================================================
+// We don't believe in freeing memory at exit time.
+// It just touches memory pages and slows down quitting.
+// All the users of this just free memory, so it's OK to not delete.
 
 template <class T> class KStaticDeleter {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KStaticDeleter() {}
-    
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~KStaticDeleter() {}
-#endif
-
-    // member functions --------------------------------------------------------
-
-    T *setObject(T *ptr, bool isArray=false) {return ptr;}
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KStaticDeleter(const KStaticDeleter &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KStaticDeleter &operator=(const KStaticDeleter &);
-#endif
-
-}; // class KStaticDeleter =====================================================
+    T *setObject(T *ptr, bool array = false) { return ptr; }
+};
 
 #endif

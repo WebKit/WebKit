@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -61,10 +61,8 @@ class QTextEdit : public QScrollView
 
     void selectAll();
 
-#ifdef APPLE_CHANGES
     int verticalScrollBarWidth() const;
     int horizontalScrollBarHeight() const;
-#endif
 };
 
 #endif /* QTEXTEDIT_H_ */

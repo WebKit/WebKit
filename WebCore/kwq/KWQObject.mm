@@ -29,23 +29,20 @@
 
 #include <kwqdebug.h>
 
-bool QObject::connect(const QObject *sender, const char *signal, const QObject *dest, 
-    const char *slot)
+bool QObject::connect(const QObject *sender, const char *signal, const QObject *dest, const char *slot)
 {
     if (sender)
-        ((QObject *)sender)->setTarget ((QObject *)dest);
+        ((QObject *)sender)->setTarget((QObject *)dest);
     KWQDEBUG ("src = %p, signal = %s, dest = %p, slot = %s\n", sender, signal, dest, slot);
     return FALSE;
 }
 
-
-
 bool QObject::connect(const QObject *sender, const char *signal, const char *slot) const
 {
     if (sender)
-        ((QObject *)sender)->setTarget ((QObject *)sender);
+        ((QObject *)sender)->setTarget((QObject *)sender);
     KWQDEBUG ("src = %p, signal = %s, slot = %s\n", sender, signal, slot);
-    return FALSE;    
+    return false;    
 }
 
 
@@ -61,11 +58,9 @@ void QObject::performAction(QObject::Actions action)
     KWQDEBUG ("action = %d\n", action);
 }
 
-
-bool QObject::disconnect( const QObject *, const char *, const QObject *, 
-    const char *)
+bool QObject::disconnect( const QObject *, const char *, const QObject *, const char *)
 {
-    return FALSE;
+    return false;
 }
 
 void QObject::setTarget (QObject *t)
@@ -73,43 +68,28 @@ void QObject::setTarget (QObject *t)
     target = t;
 }
 
-
-
 QObject::QObject(QObject *parent=0, const char *name=0)
 {
     guardedPtrDummyList.append(this);
 }
 
-
 QObject::~QObject()
 {
 }
 
-
-// member functions --------------------------------------------------------
-
 const char *QObject::name() const
 {
-    _logNotYetImplemented();
-    return "noname";
+    return "";
 }
 
 
 void QObject::setName(const char *)
 {
-    _logNotYetImplemented();
 }
 
 QVariant QObject::property(const char *name) const
 {
-    _logNeverImplemented();
     return QVariant();
-}
-
-bool QObject::inherits(const char *) const
-{
-    _logNeverImplemented();
-    return FALSE;
 }
 
 @interface KWQTimerCallback : NSObject
@@ -137,16 +117,16 @@ bool QObject::inherits(const char *) const
 }
 @end
 
-int timerCount = 1;
+static NSMutableDictionary *timers;
 
-NSMutableDictionary *timers;
-
-void QObject::timerEvent (QTimerEvent *te)
+void QObject::timerEvent(QTimerEvent *te)
 {
 }
 
 int QObject:: startTimer(int milliseconds)
 {
+    static int timerCount = 1;
+
     NSNumber *timerId = [NSNumber numberWithInt: timerCount];
     
     if (timers == nil){
@@ -164,7 +144,6 @@ int QObject:: startTimer(int milliseconds)
     return timerCount++;    
 }
 
-
 void QObject::killTimer(int _timerId)
 {
     NSNumber *timerId = [NSNumber numberWithInt: _timerId];
@@ -174,7 +153,6 @@ void QObject::killTimer(int _timerId)
     [timer invalidate];
     [timers removeObjectForKey: timerId];
 }
-
 
 void QObject::killTimers()
 {
@@ -193,12 +171,10 @@ void QObject::killTimers()
     }
 }
 
-
 void QObject::installEventFilter(const QObject *)
 {
     _logNeverImplemented();
 }
-
 
 void QObject::removeEventFilter(const QObject *)
 {
@@ -211,9 +187,40 @@ bool QObject::eventFilter(QObject *o, QEvent *e)
     return false;
 }
 
-
 void QObject::blockSignals(bool)
 {
     _logNeverImplemented();
 }
 
+bool QObject::event(QEvent *)
+{
+    return false;
+}
+
+// special includes only for inherits
+
+#import <khtml_part.h>
+#import <khtmlview.h>
+
+bool QObject::inherits(const char *className) const
+{
+    if (strcmp(className, "KHTMLPart") == 0) {
+        return dynamic_cast<const KHTMLPart *>(this);
+    }
+    if (strcmp(className, "KHTMLView") == 0) {
+        return dynamic_cast<const KHTMLView *>(this);
+    }
+    if (strcmp(className, "KParts::Factory") == 0) {
+        return false;
+    }
+    if (strcmp(className, "KParts::ReadOnlyPart") == 0) {
+        return dynamic_cast<const KParts::ReadOnlyPart *>(this);
+    }
+    if (strcmp(className, "QFrame") == 0) {
+        return dynamic_cast<const QFrame *>(this);
+    }
+    if (strcmp(className, "QScrollView") == 0) {
+        return dynamic_cast<const QScrollView *>(this);
+    }
+    return false;
+}

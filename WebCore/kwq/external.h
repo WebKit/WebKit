@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#ifndef __EXTERNAL_H
-#define __EXTERNAL_H_
+#ifndef EXTERNAL_H
+#define EXTERNAL_H_
 
 #import <WebFoundation/WebFoundation.h>
-#include <misc/loader.h>
+#import <misc/loader.h>
 
 class KHTMLPart;
 class QWidget;
@@ -82,11 +82,10 @@ namespace khtml {
 - (BOOL)_isStopping;
 @end
 
-// This should not be allowed here.  data source should not reference view
-// API.
 @interface IFWebView: NSObject
 - (QWidget *)_widget;
 - (QWidget *)_provisionalWidget;
+- (void)setFrameSize: (NSSize)r;
 @end
 
 @interface IFWebFrame: NSObject
@@ -139,11 +138,6 @@ typedef enum {
 
 @interface WCURLHandle
 -(int)contentLength;
-@end
-
-@interface IFAnimatedImage : NSImage
-- (void)beginAnimationInView: (NSView *)inRect: (NSPoint)ir fromRect: (NSRect)fr;
-- (void)stopAnimation;
 @end
 
 #endif

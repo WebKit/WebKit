@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,37 +26,27 @@
 #ifndef QWIDGET_H_
 #define QWIDGET_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qobject.h"
-#include "qpaintdevice.h"
-#include "qpainter.h"
-#include "qpoint.h"
-#include "qsize.h"
-#include "qpalette.h"
-#include "qfont.h"
-#include "qcursor.h"
-#include "qevent.h"
+#include <qobject.h>
+#include <qpaintdevice.h>
+#include <qpainter.h>
+#include <qpoint.h>
+#include <qsize.h>
+#include <qpalette.h>
+#include <qfont.h>
+#include <qcursor.h>
+#include <qevent.h>
 #include <KWQStyle.h>
 
 #ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
+@class NSView;
+#else
+class NSView;
 #endif
 
 class QWidgetPrivate;
 
-// class QWidget ===============================================================
-
-// FIX ME!  RJW - need to check if inheritance from QPaintDevice is really necessary.
-
 class QWidget : public QObject, public QPaintDevice {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
 
     enum WidgetFlags {
 	WResizeNoErase = 1,
@@ -72,16 +62,8 @@ public:
         WheelFocus = 0x7
     };
 
-    enum BackgroundMode { NoBackground, };
-    
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QWidget(QWidget *parent=0, const char *name=0, WFlags f=0);
+    QWidget(QWidget *parent = 0, const char *name = 0, int f = 0);
     ~QWidget();
-
-    // member functions --------------------------------------------------------
 
     virtual QSize sizeHint() const;
     virtual void resize(int,int);
@@ -144,54 +126,24 @@ public:
     virtual void keyReleaseEvent(QKeyEvent *);
     virtual void focusOutEvent(QFocusEvent *);
 
-    virtual void setBackgroundMode(BackgroundMode);
+    enum BackgroundMode { NoBackground };    
+    void setBackgroundMode(BackgroundMode) { }
 
-    virtual void setAcceptDrops(bool);
-
-    void erase();
-
-    QWidget *focusWidget() const;
-
-    // Required for KWQ
-#ifdef _KWQ_
-
-    virtual void paint (void *);
-
-	bool _lockFocus();
-	void _unlockFocus();
-	void _displayRect(QRect rect);
-	void _flushWindow();
-	
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    NSView 	*getView() const;
-    void 	setView(NSView *aView);
-    void 	endEditing();
-#else
-    void 	*getView() const;
-    void 	setView(void *aView);
-    void 	endEditing();
-#endif
-
-#endif _KWQ_
+    void setAcceptDrops(bool) { }
     
-    // operators ---------------------------------------------------------------
+    virtual void paint(void *);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+    void _displayRect(QRect rect);
+    
+    NSView *getView() const;
+    void setView(NSView *aView);
+    
+    void endEditing();
 
 private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QWidget(const QWidget &);
-    QWidget &operator=(const QWidget &);
-
-    void setCRect( const QRect &r );
     void internalSetGeometry( int x, int y, int w, int h );
 
-    void _initialize();
-    
     QWidgetPrivate *data;
-
-}; // class QWidget ============================================================
+};
 
 #endif

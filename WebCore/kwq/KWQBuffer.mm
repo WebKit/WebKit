@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,52 +22,15 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
 
 #include <qbuffer.h>
 
-#ifndef USING_BORROWED_QBUFFER
-
-#include <qiodevice.h>
-
-QBuffer::QBuffer() : opened(false), pos(0)
+void QBuffer::open(int)
 {
-}
-
-QBuffer::~QBuffer()
-{
-}
-
-
-QByteArray QBuffer::buffer() const
-{
-    return ba;
-}
-
-uint QBuffer::size() const
-{
-    return ba.size();
-}
-
-bool QBuffer::isOpen()
-{
-    return opened;
-}
-
-bool QBuffer::open(int mode)
-{
-    if (mode == IO_WriteOnly) {
+    if (!opened) {
         opened = true;
-	pos = 0;
-	return true;
-    } else {
-        return false;
+        pos = 0;
     }
-}
-
-void QBuffer::close()
-{
-    opened = false;
 }
 
 int QBuffer::writeBlock(const char *data, uint len)
@@ -85,6 +48,3 @@ int QBuffer::writeBlock(const char *data, uint len)
 
     return len;
 }
-
-
-#endif

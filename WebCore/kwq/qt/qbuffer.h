@@ -26,62 +26,27 @@
 #ifndef QBUFFER_H_
 #define QBUFFER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QBUFFER ======================================================
-
-#ifdef USING_BORROWED_QBUFFER
-#include <_qbuffer.h>
-#else
-
 #include <KWQDef.h>
 
 #include <qarray.h>
 #include <qstring.h>
 #include <qiodevice.h>
 
-// class QBuffer ===============================================================
-
 class QBuffer {
 public:
+    QBuffer() : pos(0) { }
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    QBuffer();
-    ~QBuffer();
-
-    // member functions --------------------------------------------------------
-
-    QByteArray buffer() const;
-    uint size() const;
-    bool isOpen();
-    bool open(int);
-    void close();
+    QByteArray buffer() const { return ba; }
+    uint size() const { return ba.size(); }
+    bool isOpen() const { return opened; }
+    void open(int);
+    void close() { opened = false; }
     int writeBlock(const char *, uint);
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QBuffer(const QBuffer &);
-    QBuffer &operator=(const QBuffer &);
-
     bool opened;
     QByteArray ba;
     uint pos;
-}; // class QBuffer ============================================================
-
-#endif // USING_BORROWED_QBUFFER
+};
 
 #endif

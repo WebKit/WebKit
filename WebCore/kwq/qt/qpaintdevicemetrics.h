@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,61 +26,16 @@
 #ifndef QPAINTDEVICEMETRICS_H_
 #define QPAINTDEVICEMETRICS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 class QPaintDevice;
-
-// class QPaintDeviceMetrics ===================================================
 
 class QPaintDeviceMetrics {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-#endif
-
     QPaintDeviceMetrics(const QPaintDevice *);
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QPaintDeviceMetrics() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     int logicalDpiY() const;
     int depth() const;
     int width() const;
     int height() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QPaintDeviceMetrics(const QPaintDeviceMetrics &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QPaintDeviceMetrics &operator=(const QPaintDeviceMetrics &);
-#endif
-
-}; // class QPaintDeviceMetrics ================================================
+};
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,30 +22,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <KWQFrame.h>
+
+#include <qframe.h>
 
 #include <kwqdebug.h>
 
-QFrame::QFrame()
-{
-    _logNeverImplemented();
-}
-
-
 QFrame::QFrame(QWidget *parent)
+    : QWidget(parent)
 {
-    _logNeverImplemented();
 }
-
 
 void QFrame::setFrameStyle(int)
 {
-    _logNeverImplemented();
 }
-
 
 int QFrame::frameWidth() const
 {
-    _logNeverImplemented();
     return 0;
 }

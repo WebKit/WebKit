@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,39 +22,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #include <qradiobutton.h>
 
 #include <KWQView.h>
 
-#include <kwqdebug.h>
-
-QRadioButton::QRadioButton(QWidget *w) : QButton (w)
+QRadioButton::QRadioButton(QWidget *w) : QButton(w)
 {
-    KWQNSButton *button;
-    
-    button = (KWQNSButton *)getView();
+    KWQNSButton *button = (KWQNSButton *)getView();
     [button setButtonType: NSRadioButton];
     [button sizeToFit];
-    //setView (button);
 }
-
 
 void QRadioButton::setChecked(bool isChecked)
 {
-    KWQNSButton *button;
-    
-    button = (KWQNSButton *)getView();
-    if (isChecked)
-        [button setState: NSOnState];
-    else
-        [button setState: NSOffState];
+    KWQNSButton *button = (KWQNSButton *)getView();
+    [button setState: isChecked ? NSOnState : NSOffState];
 }
 
-
-bool QRadioButton::isChecked()
+bool QRadioButton::isChecked() const
 {
-    KWQNSButton *button;
-    button = (KWQNSButton *)getView();
-
-    return ([button state] == NSOnState);
+    KWQNSButton *button = (KWQNSButton *)getView();
+    return [button state] == NSOnState;
 }

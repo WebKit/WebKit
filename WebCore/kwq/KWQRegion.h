@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,54 +26,26 @@
 #ifndef QREGION_H_
 #define QREGION_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QREGION ======================================================
-
-#ifdef USING_BORROWED_QREGION
-#include <_qregion.h>
-#include "qpoint.h"
-#include "qimage.h"
-#include "qrect.h"
-#else
-
-#include "qpoint.h"
-#include "qimage.h"
-#include "qrect.h"
+#include <qpoint.h>
+#include <qimage.h>
+#include <qrect.h>
 
 #ifdef __OBJC__
-#import <Cocoa/Cocoa.h>
+@class NSBezierPath;
+#else
+class NSBezierPath;
 #endif
-
-// class QRegion ===============================================================
 
 class QRegion {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
-    // NOTE: alphabetical order
     enum RegionType { Ellipse, Rectangle };
-
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    
-    static const QRegion null;
-    
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
 
     QRegion();
     QRegion(const QRect &);
-    QRegion(int, int, int, int, RegionType t=Rectangle);
+    QRegion(int, int, int, int, RegionType=Rectangle);
     QRegion(const QPointArray &);
     QRegion(const QRegion &);
     ~QRegion();
-
-    // member functions --------------------------------------------------------
 
     QRegion intersect(const QRegion &) const;
     bool contains(const QPoint &) const;
@@ -81,28 +53,10 @@ public:
     void translate(int deltaX, int deltaY);
     QRect boundingRect() const;
 
-    // operators ---------------------------------------------------------------
-
     QRegion &operator=(const QRegion &);
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
 private:
-    struct KWQRegionData {
-        RegionType type;
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-        NSBezierPath *path;
-#else
-        void *path;
-#endif    
-    } *data;
-
-#ifdef _KWQ_
-    void _initialize();
-#endif
-    
-}; // class QRegion ============================================================
-
-#endif // USING_BORROWED_QREGION
+    NSBezierPath *path;    
+};
 
 #endif

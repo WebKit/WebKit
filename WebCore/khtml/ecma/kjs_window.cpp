@@ -49,10 +49,6 @@
 #include "xml/dom_docimpl.h"
 #include "html/html_documentimpl.h"
 
-#if APPLE_CHANGES
-#include <qlineedit.h>
-#endif
-
 using namespace KJS;
 
 namespace KJS {
@@ -1099,13 +1095,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       KParts::ReadOnlyPart *newPart = 0L;
       emit part->browserExtension()->createNewWindow("", uargs,winargs,newPart);
 
-#ifdef APPLE_CHANGES
-      // We don't implement QObject::inherits, but we can assume this
-      // part will be an html part.
-      if (newPart) {
-#else
       if (newPart && newPart->inherits("KHTMLPart")) {
-#endif
         KHTMLPart *khtmlpart = static_cast<KHTMLPart*>(newPart);
         //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
         khtmlpart->setOpener(part);
@@ -1129,12 +1119,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         if (!url.isEmpty())
           emit khtmlpart->browserExtension()->openURLRequest(url,uargs);
         return Window::retrieve(khtmlpart); // global object
-#ifdef APPLE_CHANGES
-	// Make braces match for the benefit of prepare-ChangeLog
       } else
-#else
-      } else
-#endif
         return Undefined();
     }
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,104 +26,23 @@
 #ifndef NETACCESS_H_
 #define NETACCESS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qvaluelist.h>
 #include <kurl.h>
 
 namespace KIO {
 
-class UDSAtom;
+class UDSAtom { };
 
 typedef QValueList<UDSAtom> UDSEntry;
 
-
-// class UDSAtom ===============================================================
-
-class UDSAtom {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    UDSAtom() {}
-#endif
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~UDSAtom() {}
-#endif
-        
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class UDSAtom ============================================================
-
-
-// class NetAccess =============================================================
-
 class NetAccess {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static bool stat(const KURL &, KIO::UDSEntry &);
     static QString lastErrorString();
     static bool download(const KURL &, QString &);
     static void removeTempFile(const QString &);
+};
 
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    NetAccess() {}
-#endif
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~NetAccess() {}
-#endif
-        
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    NetAccess(const NetAccess &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    NetAccess &operator=(const NetAccess &);
-#endif
-
-}; // class NetAccess ==========================================================
-
-
-} // namespace KIO
+}
 
 #endif

@@ -26,56 +26,15 @@
 #ifndef QHBOX_H_
 #define QHBOX_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qwidget.h"
-#include <KWQFrame.h>
-
-// class QHBox =================================================================
+#include <qwidget.h>
+#include <qframe.h>
 
 class QHBox : public QFrame {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    QHBox();
     QHBox(QWidget *);
-    ~QHBox();
 
-    // member functions --------------------------------------------------------
-
-    bool setStretchFactor(QWidget*, int stretch);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-#ifdef _KWQ_
-    void setFocusProxy( QWidget *lineEdit);
-#endif
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QHBox(const QHBox &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    QHBox &operator=(const QHBox &);
-#endif
-
-
-}; // class QHBox ==============================================================
+    void setStretchFactor(QWidget*, int stretch);
+    void setFocusProxy(QWidget *lineEdit);
+};
 
 #endif

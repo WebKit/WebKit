@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,61 +26,11 @@
 #ifndef KPROTOCOLMANAGER_H_
 #define KPROTOCOLMANAGER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 class QString;
-
-// class KProtocolManager ======================================================
 
 class KProtocolManager {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
-    static bool useProxy();
-    static QString httpProxy();
     static QString userAgentForHost( const QString& );
-    static QString proxyFor(const QString &);
-
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    KProtocolManager() {}
-#endif
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~KProtocolManager() {}
-#endif
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KProtocolManager(const KProtocolManager &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KProtocolManager &operator=(const KProtocolManager &);
-#endif
-
-}; // class KProtocolManager ===================================================
+};
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,74 +26,35 @@
 #ifndef QSIZE_H_
 #define QSIZE_H_
 
-#ifdef USING_BORROWED_QSIZE
-
-#include <_qsize.h>
-
-#else
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <iostream>
-
 #include <KWQDef.h>
 
-// class QSize =================================================================
+#ifdef _KWQ_IOSTREAM_
+#include <iostream>
+#endif
 
 class QSize {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QSize();
     QSize(int,int);
-    // QSize(const QSize &);
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QSize() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     bool isValid() const;
-    int width() const;
-    int height() const;
-    void setWidth(int);
-    void setHeight(int);
+    int width() const { return w; }
+    int height() const { return h; }
+    void setWidth(int width) { w = width; }
+    void setHeight(int height) { h = height; }
     QSize expandedTo(const QSize &) const;
-
-    // operators ---------------------------------------------------------------
-
-    /* Note: Trolltech seems to want operator= to be a bitwise copy
-     * QSize &operator=(const QSize &);
-     */
 
     friend QSize operator+(const QSize &, const QSize &);
     friend bool operator==(const QSize &, const QSize &);
     friend bool operator!=(const QSize &, const QSize &);
 
-
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<(std::ostream &, const QSize &);
 #endif
 
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
-
-    QCOORD w;
-    QCOORD h;
-
-}; // class QSize ==============================================================
-
-#endif
+private:
+    int w;
+    int h;
+};
 
 #endif

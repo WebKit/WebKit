@@ -52,31 +52,24 @@
 
 class QWidgetPrivate
 {
-friend class QWidget;
 public:
-    
-    QWidgetPrivate() { }
-    
-    ~QWidgetPrivate() {}
-    
-private:
     QWidget::FocusPolicy focusPolicy;
-    QStyle	*style;
-    QFont	font;
-    QCursor	cursor;
-    QPalette    pal;
-    NSView	*view;
+    QStyle *style;
+    QFont font;
+    QCursor cursor;
+    QPalette pal;
+    NSView *view;
     int lockCount;
 };
 
-QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0) 
+QWidget::QWidget(QWidget *parent, const char *name, int f) 
 {
-    static QStyle *defaultStyle = new QStyle;
+    static QStyle defaultStyle;
     
     data = new QWidgetPrivate;
     data->lockCount = 0;
-    data->view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
-    data->style = defaultStyle;
+    data->view = [[KWQView alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
+    data->style = &defaultStyle;
 }
 
 QWidget::~QWidget() 
@@ -84,7 +77,6 @@ QWidget::~QWidget()
     [data->view release];
     delete data;
 }
-
 
 QSize QWidget::sizeHint() const 
 {
@@ -95,7 +87,7 @@ QSize QWidget::sizeHint() const
 void QWidget::resize(int w, int h) 
 {
     KWQDEBUG ("%p %s to w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
-    internalSetGeometry( pos().x(), pos().y(), w, h );
+    internalSetGeometry(pos().x(), pos().y(), w, h);
 }
 
 void QWidget::setActiveWindow() 
@@ -103,107 +95,76 @@ void QWidget::setActiveWindow()
     _logNeverImplemented();
 }
 
-
 void QWidget::setEnabled(bool) 
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::setAutoMask(bool) 
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::setMouseTracking(bool) 
 {
-//    _logNeverImplemented();
 }
-
 
 int QWidget::winId() const
 {
-/*
-    Does this winId need to be valid across sessions?  It appears to
-    be used by HTMLDocument::setCookie( const DOMString & value ).  If
-    so we have to rethink the current approach.
-    
-    Just return the hash of the NSView.
-*/
-    return (int)[data->view hash];
+    return (int)this;
 }
-
 
 int QWidget::x() const 
 {
-    NSRect vFrame = [getView() frame];
-    return (int)vFrame.origin.x;
+    return (int)[getView() frame].origin.x;
 }
-
 
 int QWidget::y() const 
 {
-    NSRect vFrame = [getView() frame];
-    return (int)vFrame.origin.y;
+    return (int)[getView() frame].origin.y;
 }
-
 
 int QWidget::width() const 
 { 
-    NSRect vFrame = [getView() frame];
-    return (int)vFrame.size.width;
+    return (int)[getView() frame].size.width;
 }
-
 
 int QWidget::height() const 
 {
-    NSRect vFrame = [getView() frame];
-    return (int)vFrame.size.height;
+    return (int)[getView() frame].size.height;
 }
-
 
 QSize QWidget::size() const 
 {
     NSRect vFrame = [getView() frame];
-    return QSize ((int)vFrame.size.width, (int)vFrame.size.height);
+    return QSize((int)vFrame.size.width, (int)vFrame.size.height);
 }
-
 
 void QWidget::resize(const QSize &s) 
 {
-    resize( s.width(), s.height());
+    resize(s.width(), s.height());
 }
-
 
 QPoint QWidget::pos() const 
 {
     NSRect vFrame = [getView() frame];
-    return QPoint ((int)vFrame.origin.x, (int)vFrame.origin.y);
+    return QPoint((int)vFrame.origin.x, (int)vFrame.origin.y);
 }
-
 
 void QWidget::move(int x, int y) 
 {
     KWQDEBUG ("%p %s to x %d y %d\n", getView(), [[[getView() class] className] cString], x, y);
-    internalSetGeometry( x,
-			 y,
-			 width(), height() );
+    internalSetGeometry(x, y, width(), height());
 }
-
 
 void QWidget::move(const QPoint &p) 
 {
-    move( p.x(), p.y() );
+    move(p.x(), p.y());
 }
-
 
 QRect QWidget::frameGeometry() const
 {
     NSRect vFrame = [getView() frame];
     return QRect((int)vFrame.origin.x, (int)vFrame.origin.y, (int)vFrame.size.width, (int)vFrame.size.height);
 }
-
 
 QWidget *QWidget::topLevelWidget() const 
 {
@@ -212,60 +173,51 @@ QWidget *QWidget::topLevelWidget() const
     // window.moveTo(), window.moveBy(), window.resizeBy(), window.resizeTo(),
     // outerWidth, outerHeight.
     
-    // This should return a subclass of QWidget that fronts for an
-    // NSWindow.
+    // This should return a subclass of QWidget that fronts for an NSWindow.
     return (QWidget *)this;
 }
-
 
 QPoint QWidget::mapToGlobal(const QPoint &p) const
 {
     // This is only used by JavaScript to implement the getting
     // the screenX and screen Y coordinates.
     NSPoint sp;
-    sp = [[data->view window] convertBaseToScreen: [data->view convertPoint: NSMakePoint((float)p.x(), (float)p.y()) toView: nil]];
+    sp = [[data->view window] convertBaseToScreen: [data->view convertPoint: NSMakePoint(p.x(), p.y()) toView: nil]];
     return QPoint((int)sp.x, (int)sp.y);
 }
-
 
 void QWidget::setFocus()
 {
     _logNeverImplemented();
 }
 
-
 void QWidget::clearFocus()
 {
     _logNeverImplemented();
 }
-
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
 {
     return data->focusPolicy;
 }
 
-
 void QWidget::setFocusPolicy(FocusPolicy fp)
 {
     data->focusPolicy = fp;
 }
 
-
-void QWidget::setFocusProxy( QWidget *w)
+void QWidget::setFocusProxy(QWidget *w)
 {
-    if (w != 0)
+    if (w)
         data->focusPolicy = w->focusPolicy();
     // else?  FIXME: [rjw] we need to understand kde's focus policy.  I don't
     // think this is even relevant for us.
 }
 
-
 const QPalette& QWidget::palette() const
 {
     return data->pal;
 }
-
 
 void QWidget::setPalette(const QPalette &palette)
 {
@@ -276,15 +228,12 @@ void QWidget::unsetPalette()
 {
     // Only called by RenderFormElement::layout, which I suspect will
     // have to be rewritten.  Do nothing.
-    _logNeverImplemented();
 }
-
 
 QStyle &QWidget::style() const
 {
     return *data->style;
 }
-
 
 void QWidget::setStyle(QStyle *style)
 {
@@ -296,24 +245,19 @@ void QWidget::setStyle(QStyle *style)
     data->style = style;
 }
 
-
 QFont QWidget::font() const
 {
     return data->font;
 }
-
 
 void QWidget::setFont(const QFont &font)
 {
     data->font = font;
 }
 
-
 void QWidget::constPolish() const
 {
-    _logNeverImplemented();
 }
-
 
 QSize QWidget::minimumSizeHint() const
 {
@@ -329,12 +273,10 @@ QSize QWidget::minimumSizeHint() const
     return QSize(0,0);
 }
 
-
 bool QWidget::isVisible() const
 {
     return [[data->view window] isVisible];
 }
-
 
 void QWidget::setCursor(const QCursor &cur)
 {
@@ -342,7 +284,7 @@ void QWidget::setCursor(const QCursor &cur)
     
     id view = data->view;
     if ([view respondsToSelector:@selector(setCursor:)]) { 
-	[view setCursor:(NSCursor *)data->cursor.handle()];
+	[view setCursor:data->cursor.handle()];
     }
 }
 
@@ -358,12 +300,8 @@ void QWidget::unsetCursor()
 
 bool QWidget::event(QEvent *)
 {
-    // This will eventually not be called, or called from our implementation
-    // of run loop, or something???
-    _logNeverImplemented();
-    return TRUE;
+    return false;
 }
-
 
 bool QWidget::focusNextPrevChild(bool)
 {
@@ -371,114 +309,57 @@ bool QWidget::focusNextPrevChild(bool)
     return TRUE;
 }
 
-
 bool QWidget::hasMouseTracking() const
 {
-//    _logNeverImplemented();
     return true;
 }
 
-
 void QWidget::show()
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::hide()
 {
-    _logNeverImplemented();
 }
 
-
-// no copying or assignment
-// note that these are "standard" (no pendantic stuff needed)
-
-
-
-void QWidget::internalSetGeometry( int x, int y, int w, int h )
+void QWidget::internalSetGeometry(int x, int y, int w, int h)
 {
-    NSView *docview;
-    
-    //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
-    //if ([data->view isKindOfClass: NSClassFromString(@"NSScrollView")])
-    //    docview = [((NSScrollView *)data->view) documentView];
-    //else
-        docview = data->view;
-    [docview setFrame: NSMakeRect (x, y, w, h)];
+    [data->view setFrame:NSMakeRect(x, y, w, h)];
 }
-
 
 void QWidget::showEvent(QShowEvent *)
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::hideEvent(QHideEvent *)
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::wheelEvent(QWheelEvent *)
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::keyPressEvent(QKeyEvent *)
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::keyReleaseEvent(QKeyEvent *)
 {
-    _logNeverImplemented();
 }
-
 
 void QWidget::focusOutEvent(QFocusEvent *)
 {
-    _logNeverImplemented();
 }
 
-
-void QWidget::setBackgroundMode(BackgroundMode)
+QPoint QWidget::mapFromGlobal(const QPoint &p) const
 {
-    _logNeverImplemented();
+    NSPoint bp;
+    bp = [[data->view window] convertScreenToBase: [data->view convertPoint: NSMakePoint(p.x(), p.y()) toView: nil]];
+    return QPoint((int)bp.x, (int)bp.y);
 }
 
-
-void QWidget::setAcceptDrops(bool)
+void QWidget::paint(void *)
 {
-    _logNeverImplemented();
-}
-
-
-void QWidget::erase()
-{
-    _logNeverImplemented();
-}
-
-
-QWidget *QWidget::focusWidget() const
-{
-    _logNeverImplemented();
-    return 0;
-}
-
-
-QPoint QWidget::mapFromGlobal(const QPoint &point) const
-{
-    _logNeverImplemented();
-    return QPoint(0,0);
-}
-
-void QWidget::paint (void *)
-{
-    _logNotYetImplemented();
 }
 
 NSView *QWidget::getView() const
@@ -486,12 +367,11 @@ NSView *QWidget::getView() const
     return data->view;
 }
 
-
 void QWidget::setView(NSView *view)
 {
-    if (data->view)
-        [data->view release];
-    data->view = [view retain];
+    [view retain];
+    [data->view release];
+    data->view = view;
 }
 
 void QWidget::endEditing()
@@ -503,40 +383,13 @@ void QWidget::endEditing()
     [window endEditingFor: nil];
     
     // The previous case is probably not necessary, given that we whack
-    // any NSText first repsonders.
+    // any NSText first responders.
     firstResponder = [window firstResponder];
-    if ([firstResponder isKindOfClass: NSClassFromString(@"NSText")])
+    if ([firstResponder isKindOfClass: [NSText class]])
         [window makeFirstResponder: nil];
 }
 
-
-bool QWidget::_lockFocus()
-{
-    if ([getView() canDraw]){
-        [getView() lockFocus];
-        data->lockCount++;
-        return 1;
-    }
-    return 0;
-}
-
-void QWidget::_unlockFocus()
-{
-    if (data->lockCount){
-        [getView() unlockFocus];
-        data->lockCount--;
-    }
-}
-
-
-void QWidget::_flushWindow()
-{
-    [[getView() window] flushWindow];
-}
-
-
-void QWidget::_displayRect (QRect rect)
+void QWidget::_displayRect(QRect rect)
 {
     [getView() displayRect: NSMakeRect (rect.x(), rect.y(), rect.width(), rect.height())];
 }
-

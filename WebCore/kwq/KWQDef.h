@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,6 @@
 #ifndef KWQDEF_H_
 #define KWQDEF_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #ifndef KWQ_UNSIGNED_TYPES_DEFINED
 #define KWQ_UNSIGNED_TYPES_DEFINED
 typedef unsigned char uchar;
@@ -38,18 +34,8 @@ typedef unsigned uint;
 typedef unsigned long ulong;
 #endif
 
-typedef char Q_INT8;
-typedef short Q_INT16;  
-typedef int Q_INT32;  
-
-typedef unsigned char Q_UINT8;
-typedef unsigned short Q_UINT16;
-typedef unsigned int Q_UINT32;  
-
-typedef Q_INT32 QCOORD;
-
-typedef uint WFlags;
-typedef int WId;
+typedef int Q_INT32;
+typedef unsigned int Q_UINT32;
 
 #define QMAX(a,b) ((a) > (b) ? (a) : (b))
 #define QMIN(a,b) ((a) < (b) ? (a) : (b))
@@ -60,33 +46,23 @@ typedef int WId;
 #define QABS(a) (((a) >= 0) ? (a) : -(a))
 
 #ifndef TRUE
-#define TRUE (1)
+#define TRUE 1
 #endif
 
 #ifndef FALSE
-#define FALSE (0)
+#define FALSE 0
 #endif
-
-#define ASSERT(a)
 
 void qDebug(const char *msg, ...);
 void qWarning(const char *msg, ...);
 
-/* FIXME: Let's not worrying about malloc/new failing for now.... */
-#define CHECK_PTR(p)
-
 /* Silly hack to avoid "unused parameter" warnings */
-#define Q_UNUSED(x) x=x;
-
-/* We don't handle this, it's needed in QT for wacky hacking Win32 DLLs */
-#define Q_EXPORT
-
-/* unnecessary for our platform */
-#define Q_PACKED
-
-/* Qt const defines */
-#define QT_STATIC_CONST static const
-#define QT_STATIC_CONST_IMPL const
+#define Q_UNUSED(x) (x)=(x)
 
 #define Q_ASSERT(arg) do {} while(0)
+
+#ifndef NDEBUG
+#define _KWQ_IOSTREAM_
+#endif
+
 #endif

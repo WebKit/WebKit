@@ -26,48 +26,12 @@
 #ifndef KCOMPLETIONBOX_H_
 #define KCOMPLETIONBOX_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "klistbox.h"
-
-// class KCompletionBox ========================================================
+#include <klistbox.h>
+#include <kglobalsettings.h>
 
 class KCompletionBox : public KListBox {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    KCompletionBox();
-    virtual ~KCompletionBox();
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KCompletionBox(const KCompletionBox &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KCompletionBox &operator=(const KCompletionBox &);
-#endif
-
-}; // class KCompletionBox =====================================================
+    KCompletionBox(QWidget *parent) : KListBox(parent) { }
+};
 
 #endif

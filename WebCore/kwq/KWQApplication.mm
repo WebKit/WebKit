@@ -84,8 +84,7 @@ void QApplication::restoreOverrideCursor()
 
 bool QApplication::sendEvent(QObject *o, QEvent *e)
 {
-    _logNotYetImplemented();
-    return false;
+    return o ? o->event(e) : false;
 }
 
 void QApplication::sendPostedEvents(QObject *receiver, int event_type)

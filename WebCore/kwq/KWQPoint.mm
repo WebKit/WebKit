@@ -25,32 +25,18 @@
 
 #include <qpoint.h>
 
-#ifndef USING_BORROWED_QPOINT
-
 QPoint::QPoint() : xCoord(0), yCoord(0)
 {
 }
 
-
 QPoint::QPoint(int xIn, int yIn) : xCoord(xIn), yCoord(yIn)
 {
-}
-
-int QPoint::x() const
-{
-    return xCoord;
-}
-
-int QPoint::y() const
-{
-    return yCoord;
 }
 
 int QPoint::manhattanLength() const
 {
     return abs(xCoord) + abs(yCoord);
 }
-
 
 QPoint operator+(const QPoint &a, const QPoint &b)
 {
@@ -67,6 +53,4 @@ std::ostream &operator<<(std::ostream &o, const QPoint &p)
 {
 	return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
 }
-#endif
-
 #endif

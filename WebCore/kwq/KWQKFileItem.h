@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,53 +26,12 @@
 #ifndef KFILEITEM_H_
 #define KFILEITEM_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <netaccess.h>
-
-// class KFileItem =============================================================
 
 class KFileItem {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KFileItem(const KIO::UDSEntry &, const KURL &, bool foo=false, 
-        bool bar=false);
-
-    virtual ~KFileItem();
-
-    // member functions --------------------------------------------------------
-
+    KFileItem(const KIO::UDSEntry &, const KURL &, bool, bool);
     bool isDir() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KFileItem(const KFileItem &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KFileItem &operator=(const KFileItem &);
-#endif
-
-}; // class KFileItem ==========================================================
+};
 
 #endif

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,47 +26,14 @@
 #ifndef KWQSCROLLVIEW_H_
 #define KWQSCROLLVIEW_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qwidget.h>
 #include <qpalette.h>
 
-// class QScrollBar ============================================================
-
 class QScrollBar : public QWidget {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
     QScrollBar(QWidget *);
-    
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QScrollBar() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     virtual void setPalette(const QPalette &);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // note that these are "standard" (no pendantic stuff needed)
-    QScrollBar(const QScrollBar &);
-    QScrollBar &operator=(const QScrollBar &);
-
-}; // class QScrollBar =========================================================
+};
 
 #endif

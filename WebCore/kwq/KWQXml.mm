@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,31 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <qxml.h>
+
 #include <kwqdebug.h>
 
 #include <qstring.h>
-
-#include <qxml.h>
-
-// class QXmlAttributes ========================================================
-    
-QXmlAttributes::QXmlAttributes()
-{
-    _logNotYetImplemented();
-}
-
-
-QXmlAttributes::QXmlAttributes(const QXmlAttributes &)
-{
-    _logNotYetImplemented();
-}
-
-
-QXmlAttributes::~QXmlAttributes()
-{
-    _logNotYetImplemented();
-}
-
 
 QString QXmlAttributes::value(const QString &) const
 {
@@ -55,13 +35,11 @@ QString QXmlAttributes::value(const QString &) const
     return QString();
 }
 
-
 int QXmlAttributes::length() const
 {
     _logNotYetImplemented();
     return 0;
 }
-
 
 QString QXmlAttributes::localName(int index) const
 {
@@ -69,13 +47,11 @@ QString QXmlAttributes::localName(int index) const
     return QString();
 }
 
-
 QString QXmlAttributes::value(int index) const
 {
     _logNotYetImplemented();
     return QString();
 }
-
 
 QString QXmlAttributes::uri(int) const
 {
@@ -85,81 +61,15 @@ QString QXmlAttributes::uri(int) const
 
 
 
-QXmlAttributes &QXmlAttributes::operator=(const QXmlAttributes &)
-{
-    _logNotYetImplemented();
-    return *this;
-}
-
-
-
-
-// class QXmlInputSource ========================================================
-
-
-QXmlInputSource::QXmlInputSource()
-{
-    _logNotYetImplemented();
-}
-
-
-QXmlInputSource::~QXmlInputSource()
-{
-    _logNotYetImplemented();
-}
-
-
 void QXmlInputSource::setData(const QString& data)
 {
     _logNotYetImplemented();
 }
 
-
-
-
-// class QXmlDTDHandler ========================================================
-
-
-// class QXmlDeclHandler ========================================================
-
-
-// class QXmlErrorHandler ========================================================
-
-
-// class QXmlLexicalHandler ========================================================
-
-
-// class QXmlContentHandler ========================================================
-
-
-// class QXmlDefaultHandler ====================================================
-
-
-QXmlDefaultHandler::~QXmlDefaultHandler()
-{
-    _logNotYetImplemented();
-}
-
-
-// class QXmlSimpleReader ======================================================
-
-QXmlSimpleReader::QXmlSimpleReader()
-{
-    _logNotYetImplemented();
-}
-
-
-QXmlSimpleReader::~QXmlSimpleReader()
-{
-    _logNotYetImplemented();
-}
-
-
 void QXmlSimpleReader::setContentHandler(QXmlContentHandler *handler)
 {
     _logNotYetImplemented();
 }
-
 
 bool QXmlSimpleReader::parse(const QXmlInputSource &input)
 {
@@ -167,34 +77,22 @@ bool QXmlSimpleReader::parse(const QXmlInputSource &input)
     return FALSE;
 }
 
-
 void QXmlSimpleReader::setLexicalHandler(QXmlLexicalHandler *handler)
 {
     _logNotYetImplemented();
 }
-
 
 void QXmlSimpleReader::setDTDHandler(QXmlDTDHandler *handler)
 {
     _logNotYetImplemented();
 }
 
-
 void QXmlSimpleReader::setDeclHandler(QXmlDeclHandler *handler)
 {
     _logNotYetImplemented();
 }
 
-
 void QXmlSimpleReader::setErrorHandler(QXmlErrorHandler *handler)
-{
-    _logNotYetImplemented();
-}
-
-
-// class QXmlParseException ====================================================
-
-QXmlParseException::QXmlParseException()
 {
     _logNotYetImplemented();
 }
@@ -206,17 +104,14 @@ QString QXmlParseException::message() const
     return QString();
 }
 
-
 int QXmlParseException::columnNumber() const
 {
     _logNotYetImplemented();
     return 0;
 }
 
-
 int QXmlParseException::lineNumber() const
 {
     _logNotYetImplemented();
     return 0;
 }
-

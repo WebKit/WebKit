@@ -1,3 +1,168 @@
+2002-06-03  Darin Adler  <darin@apple.com>
+
+	Get rid of many unneeded APPLE_CHANGES.
+	Also get rid of _KWQ_ and _KWQ_PEDANTIC_.
+
+	* WebCore.exp: Don't export DomShared::ref/deref any more.
+	* WebCore-tests.exp: Changed around as needed due to changes in
+	the classes being tested.
+
+	* khtml/html/htmlparser.cpp:
+	* khtml/html/htmltokenizer.cpp:
+	Simplified APPLE_CHANGES for better merging.
+
+	* khtml/dom/dom_misc.h:
+	* khtml/dom/dom_misc.cpp:
+	* khtml/dom/html_document.cpp:
+	* khtml/khtmlview.cpp:
+	* khtml/ecma/kjs_css.h:
+	* khtml/ecma/kjs_dom.cpp:
+	* khtml/ecma/kjs_dom.h:
+	* khtml/ecma/kjs_window.cpp:
+	* khtml/html/html_formimpl.cpp:
+	* khtml/html/html_objectimpl.cpp:
+	* khtml/misc/helper.cpp:
+	* khtml/rendering/bidi.cpp:
+	* khtml/rendering/render_flow.cpp:
+	* khtml/rendering/render_form.cpp:
+	* khtml/rendering/render_text.cpp:
+	* khtml/xml/xml_tokenizer.h:
+	* kwq/qt/qtextedit.h:
+	Remove now-unneeded APPLE_CHANGES.
+
+	* khtml/misc/loader.cpp: (CachedImage::pixmap): Turned off more of
+	the QMovie code.
+
+	* khtml/html/html_documentimpl.cpp:
+	* khtml/html/htmltokenizer.h:
+	* khtml/xml/dom_elementimpl.h:
+	* kwq/KWQKHTMLPart.mm:
+	Formatting and other minor tweaks.
+
+	* kwq/KWQApplication.mm: (QApplication::sendEvent): Implemented.
+	* kwq/KWQChar.mm: (QChar::direction): Improved implementation.
+
+	* kwq/KWQCollection.h: Removed.
+	* kwq/KWQIcon.h: Removed.
+
+	* kwq/Makefile.am: Removed following files.
+	* kwq/KWQKCompletionBox.mm: Removed.
+	* kwq/KWQKFactory.mm: Removed.
+	* kwq/KWQListBox.mm: Removed.
+	* kwq/KWQKImageIO.mm: Removed.
+
+	* kwq/KWQObject.mm: (QObject::event): Added, does nothing.
+	(QObject::inherits): Put in real implementation (good enough for us).
+
+	* kwq/WCWebDataSource.h: Removed extern declaration of global.
+
+	* kwq/KWQCursor.mm: (QCursor::handle): Made the handle be an
+	NSCursor *.
+
+	* kwq/external.h: Moved [IFWebView setFrameSize:] here.
+	Got rid of IFAnimatedImage.
+
+	* kwq/KWQDef.h: Remove unused Q_INT8, Q_INT16, Q_UINT8, Q_UINT16,
+	QCOORD, WFlags, WId, ASSERT, CHECK_PTR, Q_EXPORT, Q_PACKED,
+	QT_STATIC_CONST, QT_STATIC_CONST_IMPL. Define _KWQ_IOSTREAM_ only
+	when NDEBUG is not defined.
+
+	* kwq/KWQBuffer.mm:
+	* kwq/KWQCString.mm:
+	* kwq/KWQCollection.mm:
+	* kwq/KWQCompletion.h:
+	* kwq/KWQCompletion.mm:
+	* kwq/KWQFrame.h:
+	* kwq/KWQFrame.mm:
+	* kwq/KWQHBox.mm:
+	* kwq/KWQKFileItem.mm:
+	* kwq/KWQKIconLoader.mm:
+	* kwq/KWQKLineEdit.mm:
+	* kwq/KWQKProtocolManager.mm:
+	* kwq/KWQLabel.mm:
+	* kwq/KWQListBox.h:
+	* kwq/KWQMovie.mm:
+	* kwq/KWQWidget.mm:
+	* kwq/KWQxml.mm:
+	* kwq/qt/qbuffer.h:
+	* kwq/kdecore/kdebug.h:
+	* kwq/kdecore/kglobal.h:
+	* kwq/kdecore/kglobalsettings.h:
+	* kwq/kdecore/kiconloader.h:
+	* kwq/kdecore/kstaticdeleter.h:
+	* kwq/kdecore/kstringhandler.h:
+	* kwq/kdeui/kcombobox.h:
+	* kwq/kdeui/kcompletionbox.h:
+	* kwq/kdeui/klineedit.h:
+	* kwq/kdeui/klistbox.h:
+	* kwq/kdeui/kmessagebox.h:
+	* kwq/kio/kfileitem.h:
+	* kwq/kio/kimageio.h:
+	* kwq/kio/kmimetype.h:
+	* kwq/kio/kprotocolmanager.h:
+	* kwq/kio/netaccess.h:
+	* kwq/qt/qxml.h:
+	* kwq/kparts/browserinterface.h:
+	* kwq/kparts/factory.h:
+	* kwq/kparts/part.h:
+	* kwq/qt/qarray.h:
+	* kwq/qt/qcollection.h:
+	* kwq/qt/qcstring.h:
+	* kwq/qt/qcursor.h:
+	* kwq/qt/qdict.h:
+	* kwq/qt/qhbox.h:
+	* kwq/qt/qlabel.h:
+	* kwq/qt/qlist.h:
+	* kwq/qt/qmap.h:
+	* kwq/qt/qmovie.h:
+	* kwq/qt/qobject.h:
+	* kwq/qt/qpaintdevicemetrics.h:
+	* kwq/qt/qpainter.h:
+	* kwq/qt/qpoint.h:
+	* kwq/qt/qradiobutton.h:
+	* kwq/qt/qrect.h:
+	* kwq/qt/qregion.h:
+	* kwq/qt/qscrollview.h:
+	* kwq/qt/qsize.h:
+	* kwq/qt/qstack.h:
+	* kwq/qt/qstringlist.h:
+	* kwq/qt/qtextedit.h:
+	* kwq/qt/qvaluelist.h:
+	* kwq/qt/qvector.h:
+	* kwq/qt/qwidget.h:
+	* kwq/qt/qxml.h:
+	Removed unused stuff.
+
+	* kwq/KWQListBox.mm:
+	* kwq/KWQMapImpl.h:
+	* kwq/KWQMapImpl.mm:
+	* kwq/KWQPainter.mm:
+	* kwq/KWQPoint.mm:
+	* kwq/KWQRadioButton.mm:
+	* kwq/KWQRect.mm:
+	* kwq/KWQRegion.mm:
+	* kwq/KWQScrollBar.h:
+	* kwq/KWQScrollView.mm:
+	* kwq/KWQSize.mm:
+	* kwq/KWQStringList.mm:
+	* kwq/KWQbrowserinterface.mm:
+	Simplified.
+
+	* kwq/kdecore/kurl.h:
+	Added include to match what's expected by clients.
+
+	* kwq/qt/qobjectlist.h: Added. Empty file to make includers happy.
+
+	* kwq/khtml/khtml_printsettings.h: Added. Empty file.
+	* kwq/qt/qobjectlist.h: Added. Empty file.
+
+	* kwq/kio/kssl/ksslkeygen.h: Define just enough to make callers
+	happy.
+
+	* kwq/qt/qobject.h: Added event().
+	* kwq/kparts/part.h: Added bool return type to event().
+	* kwq/qt/qvector.h: Added QGVector base class.
+
 2002-06-01  Darin Adler  <darin@apple.com>
 
 	* kwq/KWQPtrDictImpl.mm: (KWQPtrDictPrivate::~KWQPtrDictPrivate):

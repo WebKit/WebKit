@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,103 +26,33 @@
 #ifndef KMIMETYPE_H_
 #define KMIMETYPE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <kdecore/kglobal.h>
 
 #include <kdecore/kurl.h>
 #include <sys/types.h>
 #include <qstring.h>
 
-// class KSharedPtr ============================================================
-
 template<class T> class KSharedPtr {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     KSharedPtr() { object = 0; }
-    KSharedPtr(const KSharedPtr &) {object = 0;}
-    ~KSharedPtr() {}
-
-    // member functions --------------------------------------------------------
-
-    // operators ---------------------------------------------------------------
-
-    KSharedPtr &operator=(const KSharedPtr &) {}
     T *operator->() { return object; }
 
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
 private:
     T *object;
-    
-
-}; // class KSharedPtr =========================================================
-
-
-// class KMimeType =============================================================
+};
 
 class KMimeType {
 public:
-
-    // structs -----------------------------------------------------------------
-
-    // typedefs ----------------------------------------------------------------
-
     typedef KSharedPtr<KMimeType> Ptr;
-
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
 
     static Ptr findByURL(const KURL &, mode_t=0, bool=false, bool=false);
     static Ptr mimeType(QString serviceType);
     static QString defaultMimeType();
-    
-    // constructors, copy constructors, and destructors ------------------------
 
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    KMimeType() {}
-#endif
-
-    virtual ~KMimeType();
-
-    // member functions --------------------------------------------------------
+    ~KMimeType();
 
     QString name() const;
     QString comment() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KMimeType(const KMimeType &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KMimeType &operator=(const KMimeType &);
-#endif
-
-}; // class KMimeType ==========================================================
-
+};
 
 #endif

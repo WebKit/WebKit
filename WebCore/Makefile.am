@@ -78,15 +78,15 @@ framework-header-stamp:
 	ln -sf Versions/Current/PrivateHeaders $(FRAMEWORK_DIR)/PrivateHeaders
 	touch $@
 
-framework-dylib-stamp: $(libwebcore_dylib_OBJECTS) $(libwebcore_dylib_DEPENDENCIES) WebCore-combined.exp
+framework-dylib-stamp: $(libwebcore_dylib_OBJECTS) $(libwebcore_dylib_DEPENDENCIES) $(WEBCORE_EXPORTS)
 	mkdir -p $(FRAMEWORK_DIR)/Versions/$(FRAMEWORK_VERSION)
 	rm -f $(FRAMEWORK_DIR)/Versions/Current
 	ln -sf $(FRAMEWORK_VERSION) $(FRAMEWORK_DIR)/Versions/Current
 	$(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(FRAMEWORK_LINKFLAGS) $(libwebcore_dylib_OBJECTS) -o $(FRAMEWORK_DYLIB)
-	nmedit -s WebCore-combined.exp - $(FRAMEWORK_DYLIB)
+	nmedit -s $(WEBCORE_EXPORTS) - $(FRAMEWORK_DYLIB)
+	if test -n "$(STRIP_FLAGS)"; then strip $(STRIP_FLAGS) - $(FRAMEWORK_DYLIB); fi
 	ln -sf Versions/Current/$(FRAMEWORK_NAME) $(FRAMEWORK_DIR)/$(FRAMEWORK_NAME)
 	touch $@
-
 
 CLEANFILES = $(noinst_DATA)
 # can't use CLEANFILES for this because it doesn't work for directories

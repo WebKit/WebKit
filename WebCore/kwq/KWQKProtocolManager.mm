@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,45 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
+#include <kprotocolmanager.h>
 
 #include <qstring.h>
 
-#include <kprotocolmanager.h>
-
-//FIX ME:
-static QString *tempQString = NULL;
-
-bool KProtocolManager::useProxy()
-{
-    return FALSE;
-}
-
-
-QString KProtocolManager::httpProxy()
-{
-    _logNotYetImplemented();
-    if (tempQString == NULL) {
-        tempQString = new QString();
-    }
-
-    return *tempQString;
-}
-
 QString KProtocolManager::userAgentForHost( const QString& )
 {
-    _logNotYetImplemented();
     // make us look like msie for now
     return QString("Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)");
 }
-
-QString KProtocolManager::proxyFor(const QString &)
-{
-    _logNotYetImplemented();
-    if (tempQString == NULL) {
-        tempQString = new QString();
-    }
-
-    return *tempQString;
-}
-

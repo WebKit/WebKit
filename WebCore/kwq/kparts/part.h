@@ -52,7 +52,7 @@ public:
     void ref() { m_ref++; }
     void deref() { if(m_ref) m_ref--; if (!m_ref) delete this; }
     
-    void event(QEvent *event) { customEvent((QCustomEvent *)event); }
+    bool event(QEvent *event) { customEvent((QCustomEvent *)event); return true; }
     virtual void customEvent(QCustomEvent *) { }
     
 private:

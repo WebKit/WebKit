@@ -27,6 +27,7 @@
 #define KURL_H_
 
 #include <qstring.h>
+#include <qvaluelist.h>
 #include <KWQRefPtr.h>
 
 #ifdef __OBJC__

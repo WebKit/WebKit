@@ -36,9 +36,9 @@
 
 // FIXME: should these macros be in "kwq.h" or other header file?
 #define slots
-#define SLOT(x) """## x ##"""
+#define SLOT(x) #x
 #define signals protected
-#define SIGNAL(x) """## x ##"""
+#define SIGNAL(x) #x
 #define emit
 #define Q_OBJECT
 #define Q_PROPERTY(text)
@@ -106,7 +106,7 @@ public:
     int startTimer(int);
     void killTimer(int);
     void killTimers();
-	virtual void timerEvent( QTimerEvent * );
+    virtual void timerEvent( QTimerEvent * );
     
     void installEventFilter(const QObject *);
     void removeEventFilter(const QObject *);
@@ -116,7 +116,9 @@ public:
 
     virtual void performAction(QObject::Actions action);
     void emitAction(QObject::Actions action);
-    void setTarget (QObject *obj);
+    void setTarget(QObject *obj);
+    
+    virtual bool event(QEvent *);
     
 private:
     // no copying or assignment

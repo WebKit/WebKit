@@ -26,6 +26,7 @@
 #import <KWQKHTMLPartImpl.h>
 
 #import <html/htmltokenizer.h>
+
 #import <html/html_documentimpl.h>
 
 #import <rendering/render_frames.h>
@@ -42,7 +43,8 @@
 
 #undef _KWQ_TIMING
 
-WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
+static WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
+
 void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
 {
     WCIFWebDataSourceMake = func;
@@ -60,36 +62,6 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
         cur_child = cur_child.previousSibling();
     }
 }
-
-#if 0
-static QString splitUrlTarget(const QString &url, QString *target=0)
-{
-    QString result = url;
-    if(url.left(7) == "target:")
-    {
-#ifdef APPLE_CHANGES
-        int pos, end;
-        if ((pos = url.find ('#', 7)) != -1){
-            result = url.mid(pos+1,url.length()-pos-1);
-        }
-        if (target){
-            pos = url.find ("//", 7);
-            if (pos > 0){
-                end = url.find ('/', pos+2);
-                if (end > 0)
-                    *target = url.mid (pos+2, end-pos-2);
-            }
-        }
-#else
-        KURL u(url);
-        result = u.ref();
-        if (target)
-            *target = u.host();
-#endif
-    }
-    return result;
-}
-#endif
 
 KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     : part(p)
@@ -256,7 +228,7 @@ void KWQKHTMLPartImpl::begin( const KURL &url, int xOffset, int yOffset )
 void KWQKHTMLPartImpl::write( const char *str, int len )
 {
     /* FIXME: hook this code back when we have decoders completely working */
-#ifndef APPLE_CHANGES
+#if 0
   if(d->m_bFirstData) {
       // determine the parse mode
       d->m_doc->determineParseMode( decoded );
@@ -277,9 +249,8 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
         }
         d->m_doc->applyChanges(true, true);
     }
+#endif
 
-#endif APPLE_CHANGES
-    
     // begin lines added in lieu of big fixme    
     if ( !d->m_decoder ) {
         d->m_decoder = new khtml::Decoder();
@@ -414,7 +385,7 @@ void KWQKHTMLPartImpl::redirectJS()
   }
 
   KParts::URLArgs args;
-#ifndef APPLE_CHANGES
+#if 0
   if ( urlcmp( u, m_url.url(), true, true ) )
     args.reload = true;
 

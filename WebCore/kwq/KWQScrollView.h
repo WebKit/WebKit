@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,35 +26,13 @@
 #ifndef QSCROLLVIEW_H_
 #define QSCROLLVIEW_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <KWQScrollBar.h>
-#include <KWQFrame.h>
-#include "qwidget.h"
-
-// class QScrollView ===========================================================
+#include <qframe.h>
 
 class QScrollView : public QFrame {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
-
-    // NOTE: alphabetical order
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
 
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    QScrollView(QWidget *parent=0, const char *name=0, WFlags f=0);
-    ~QScrollView();
-
-    // member functions --------------------------------------------------------
+    QScrollView(QWidget *parent=0, const char *name=0, int f=0);
 
     QWidget* viewport() const;
     int visibleWidth() const;
@@ -94,18 +72,6 @@ public:
 
     void ensureVisible(int,int);
     void ensureVisible(int,int,int,int);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QScrollView(const QScrollView &);
-    QScrollView &operator=(const QScrollView &);
-
-}; // class QScrollView ========================================================
+};
 
 #endif

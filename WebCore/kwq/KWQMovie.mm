@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,152 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <qmovie.h>
-
-class QMoviePrivate {
-friend class QMovie;
-public:
-    QMoviePrivate() {
-    }
-    
-    ~QMoviePrivate() {
-    }
-    
-private:
-    QRect rect;    
-    QPixmap pixmap;
-    QImage image;    
-};
-
-QMovie::QMovie()
-{
-    _logNotYetImplemented();
-    d = new QMoviePrivate();
-}
-
-
-QMovie::QMovie(QDataSource*, int bufsize)
-{
-    _logPartiallyImplemented();
-    d = new QMoviePrivate();
-}
-
-
-QMovie::QMovie(const QMovie &other)
-{
-    _logPartiallyImplemented();
-    d->rect = other.d->rect;
-    d->pixmap = other.d->pixmap;
-    d->image = other.d->image;
-}
-
-
-QMovie::~QMovie()
-{
-    _logPartiallyImplemented();
-    delete d;
-}
-
-
-void QMovie::unpause()
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::pause()
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::restart()
-{
-    _logNotYetImplemented();
-}
-
-
-bool QMovie::finished()
-{
-    _logNotYetImplemented();
-    return FALSE;    
-}
-
-
-bool QMovie::running()
-{
-    _logNotYetImplemented();
-    return FALSE;    
-}
-
-
-int QMovie::frameNumber() const
-{
-    _logNotYetImplemented();
-    return 0;    
-}
-
 
 const QRect &QMovie::getValidRect() const
 {
-    _logPartiallyImplemented();
-    return d->rect;
+    static QRect rect;
+    return rect;
 }
-
 
 const QPixmap &QMovie::framePixmap() const
 {
-    _logPartiallyImplemented();
-    return d->pixmap;
-}
-
-
-const QImage &QMovie::frameImage() const
-{
-    _logPartiallyImplemented();
-    return d->image;
-}
-
-
-void QMovie::connectResize(QObject* receiver, const char *member)
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::connectUpdate(QObject* receiver, const char *member)
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::connectStatus(QObject* receiver, const char *member)
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::disconnectResize(QObject* receiver, const char *member=0)
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::disconnectUpdate(QObject* receiver, const char *member=0)
-{
-    _logNotYetImplemented();
-}
-
-
-void QMovie::disconnectStatus(QObject* receiver, const char *member=0)
-{
-    _logNotYetImplemented();
-}
-
-
-QMovie &QMovie::operator=(const QMovie &)
-{
-    _logNotYetImplemented();
-    return *this;
+    static QPixmap pixmap;
+    return pixmap;
 }

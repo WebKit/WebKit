@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,61 +26,15 @@
 #ifndef KGLOBALSETTINGS_H_
 #define KGLOBALSETTINGS_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 class QFont;
-
-// class KGlobalSettings =======================================================
 
 class KGlobalSettings {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static QFont generalFont();
     static QFont windowTitleFont();
     static QFont menuFont();
 
     static int contrast();
-
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    KGlobalSettings() {}
-#endif
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~KGlobalSettings() {}
-#endif
-        
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KGlobalSettings(const KGlobalSettings &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KGlobalSettings &operator=(const KGlobalSettings &);
-#endif
-
-}; // class KGlobalSettings ====================================================
+};
 
 #endif

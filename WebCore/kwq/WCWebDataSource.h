@@ -23,16 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef __WCWEBDATASOURCE__
-#define __WCWEBDATASOURCE__
+#ifndef WCWEBDATASOURCE_H_
+#define WCWEBDATASOURCE_H_
 
 #import <Foundation/Foundation.h>
 
+typedef id (*WCIFWebDataSourceMakeFunc)(void *, void *, unsigned);
 
-typedef id (*WCIFWebDataSourceMakeFunc)(void *, void*, unsigned);
-void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func);
-
-extern WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
-
+void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc);
 
 #endif /* __WCWEBDATASOURCE__ */

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,55 +26,15 @@
 #ifndef QSTRINGLIST_H_
 #define QSTRINGLIST_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QSTRINGLIST ==================================================
-
-#ifdef USING_BORROWED_QSTRINGLIST
-#include <_qstringlist.h>
-#else
-
-#include "qstring.h"
-#include "qvaluelist.h"
-
-// class QStringList ===========================================================
+#include <qstring.h>
+#include <qvaluelist.h>
 
 class QStringList : public QValueList<QString> {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
-    static QStringList split(const QString &, const QString &, 
-        bool allowEmptyEntries = FALSE );
-    static QStringList split(const QChar &, const QString &, 
-        bool allowEmptyEntries = FALSE );
-
-    // constructors, copy constructors, and destructors ------------------------
-    
-    QStringList();
-    QStringList(const QStringList &);
-
-    ~QStringList();
-
-    // member functions --------------------------------------------------------
+    static QStringList split(const QString &, const QString &, bool allowEmptyEntries = false);
+    static QStringList split(const QChar &, const QString &, bool allowEmptyEntries = false);
 
     QString join(const QString &) const;
-
-    // operators ---------------------------------------------------------------
-
-    QStringList &operator=(const QStringList &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QStringList ========================================================
-
-#endif // USING_BORROWED_QSTRINGLIST
+};
 
 #endif

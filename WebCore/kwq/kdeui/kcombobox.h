@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,56 +26,18 @@
 #ifndef KCOMBOBOX_H_
 #define KCOMBOBOX_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qcombobox.h>
 
 #include <KWQCompletion.h>
 
-// class KComboBox =============================================================
-
 class KComboBox : public QComboBox, public KCompletionBase {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     KComboBox(QWidget *parent=0, const char *name=0);
     KComboBox(bool rw, QWidget *parent=0, const char *name=0);
     virtual ~KComboBox();
 
-    // member functions --------------------------------------------------------
-#ifdef APPLE_CHANGES
     void doneLoading();
     void setSize(int size);
-#endif
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KComboBox(const KComboBox &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KComboBox &operator=(const KComboBox &);
-#endif
-
-}; // class KComboBox ==========================================================
+};
 
 #endif

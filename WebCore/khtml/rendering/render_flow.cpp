@@ -127,9 +127,7 @@ void RenderFlow::print(QPainter *p, int _x, int _y, int _w, int _h,
         if((_ty > _y + _h) || (_ty + h < _y))
         {
             //kdDebug( 6040 ) << "cut!" << endl;
-//#ifndef APPLE_CHANGES
             return;
-//#endif /* APPLE_CHANGES not defined */
         }
     }
 
@@ -268,9 +266,7 @@ void RenderFlow::layout()
 //    kdDebug( 6040 ) << "childrenInline()=" << childrenInline() << endl;
     if(childrenInline()) {
         // ### make bidi resumeable so that we can get rid of this ugly hack
-//#ifndef APPLE_CHANGES
          if (!m_blockBidi)
-//#endif
             layoutInlineChildren();
     }
     else
@@ -537,6 +533,9 @@ void RenderFlow::insertSpecialObject(RenderObject *o)
 	// We should never get here, as insertSpecialObject() should only ever be called with positioned or floating
 	// objects.
 	KHTMLAssert(false);
+#ifdef APPLE_CHANGES
+        newObj = 0; // keep gcc's uninitialized variable warnings happy
+#endif
     }
 
     newObj->count = specialObjects->count();

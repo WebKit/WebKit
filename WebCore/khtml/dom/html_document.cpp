@@ -170,25 +170,15 @@ HTMLCollection HTMLDocument::all() const
 
 DOMString HTMLDocument::cookie() const
 {
-#ifdef APPLE_CHANGES
-// FIXME: implement cookies
-    fprintf(stderr, "ERROR %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
-    return DOMString("");
-#else /* APPLE_CHANGES not defined */
    if (!impl) return DOMString();
    return ((HTMLDocumentImpl *)impl)->cookie();
-#endif /* APPLE_CHANGES not defined */
 }
 
 void HTMLDocument::setCookie( const DOMString & value )
 {
-#ifdef APPLE_CHANGES
-    fprintf(stderr, "ERROR %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
-#else /* APPLE_CHANGES not defined */
    if (impl)
         ((HTMLDocumentImpl *)impl)->setCookie(value);
 
-#endif /* APPLE_CHANGES not defined */
 }
 
 void HTMLDocument::open(  )

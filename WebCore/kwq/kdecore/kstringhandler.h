@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,58 +26,11 @@
 #ifndef KSTRINGHANDLER_H_
 #define KSTRINGHANDLER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qstring.h>
-
-// class KStringHandler ========================================================
 
 class KStringHandler {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static QString csqueeze(const QString &, uint maxlen = 40);
-
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    KStringHandler() {}
-#endif
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~KStringHandler() {}
-#endif
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KStringHandler(const KStringHandler &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KStringHandler &operator=(const KStringHandler &);
-#endif
-
-}; // class KStringHandler =====================================================
+};
 
 #endif

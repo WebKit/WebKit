@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,6 @@
 #ifndef QPAINTER_H_
 #define QPAINTER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qnamespace.h>
 #include <qpaintdevice.h>
 #include <qcolor.h>
@@ -46,79 +42,29 @@ class QPixmap;
 class QWidget;
 class QPainterPrivate;
 
-// class QWMatrix ==============================================================
-
 class QWMatrix {
 friend class QPainter;
 friend class QPixmap;
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
     QWMatrix();
-    
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QWMatrix() {}
-#endif
-
-    // member functions --------------------------------------------------------
-
     QWMatrix &scale(double, double);
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QWMatrix(const QWMatrix &);
-#endif
-
-#ifdef _KWQ_
     bool empty;
     double sx;
     double sy;
-#endif
-
-}; // class QWMatrix ===========================================================
-
-
-// class QPainter ==============================================================
+};
 
 class QPainter : public Qt {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
     typedef enum { RTL, LTR } TextDirection;
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
 
     QPainter();
-    
     // We may be able to remove this constructor and remove QPaintDevice.
     QPainter(const QPaintDevice *);
-    
-#ifdef _KWQ_
     QPainter(QWidget *);
-#endif
-
     ~QPainter();
     
-    // member functions --------------------------------------------------------
-
     const QFont &font() const;
     void setFont(const QFont &);
     QFontMetrics fontMetrics() const;
@@ -173,15 +119,7 @@ public:
 
     QPaintDevice *device() const;
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
-
-#ifdef _KWQ_
     void drawUnderlineForText(int x, int y, const QString &, int len=-1);
-#endif
 
 private:
     // no copying or assignment
@@ -189,7 +127,6 @@ private:
     QPainter(const QPainter &);
     QPainter &operator=(const QPainter &);
 
-#ifdef _KWQ_
     void _lockFocus();
     void _unlockFocus();
 
@@ -200,10 +137,6 @@ private:
     void _drawPoints (const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
 
     QPainterPrivate *data;
-
-#endif
-}; // end class QPainter
-
-// =============================================================================
+};
 
 #endif

@@ -26,28 +26,17 @@
 #ifndef QMAP_H_
 #define QMAP_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <KWQDef.h>
 
-// USING_BORROWED_QMAP =========================================================
-
-#ifdef USING_BORROWED_QMAP
-#include <_qmap.h>
-#else
+#include <KWQMapImpl.h>
 
 #ifdef _KWQ_IOSTREAM_
 #include <iostream>
 #endif
 
-#include <KWQDef.h>
-
-#include <KWQMapImpl.h>
-
 template <class K, class V> class QMap;
 template <class K, class V> class QMapIterator;
 template <class K, class V> class QMapConstIterator;
-
 
 template <class K, class V> class QMapNode : private KWQMapNodeImpl
 {
@@ -59,12 +48,13 @@ template <class K, class V> class QMapNode : private KWQMapNodeImpl
     }
     
     // intentionally not defined
-    QMapNode(const QMapNode<K,V>&node);
+    QMapNode(const QMapNode&node);
+    QMapNode& operator=(const QMapNode&);
 
     ~QMapNode()
     {
-	delete (QMapNode<K,V> *)left();
-	delete (QMapNode<K,V> *)right();
+	delete (QMapNode *)left();
+	delete (QMapNode *)right();
     }
 
     K key;
@@ -75,22 +65,10 @@ template <class K, class V> class QMapNode : private KWQMapNodeImpl
     friend class QMapConstIterator<K,V>;
 };
 
-// class QMapIterator ==========================================================
-
 template<class K, class V> class QMapIterator : private KWQMapIteratorImpl {
 public:
-    QMapIterator()
-    {
-    }
-
-    QMapIterator(const QMapIterator<K,V> &iter) : KWQMapIteratorImpl(iter)
-    {
-    }
-
-    ~QMapIterator()
-    {
-    }
-
+    QMapIterator() { }
+    
     const K& key() const
     {
 	return ((QMapNode<K,V> *)node)->key;
@@ -101,18 +79,12 @@ public:
 	return ((QMapNode<K,V> *)node)->value;
     }
 
-    QMapIterator<K,V> &operator=(const QMapIterator<K,V> &iter)
-    {
-	node = iter.node;
-	return *this;
-    }
-
-    bool operator==(const QMapIterator<K,V>&iter) const
+    bool operator==(const QMapIterator<K,V> &iter) const
     {
 	return node == iter.node;
     }
 
-    bool operator!=(const QMapIterator<K,V>&iter) const
+    bool operator!=(const QMapIterator<K,V> &iter) const
     {
 	return node != iter.node;
     }
@@ -136,33 +108,17 @@ public:
 private:
     QMapIterator(QMapNode<K,V> *n)
     {
-	node = n;
+        node = n;
     }
 
     friend class QMap<K,V>;
     friend class QMapConstIterator<K,V>;
-}; // class QMapIterator =======================================================
-
-
-// class QMapConstIterator =====================================================
+};
 
 template<class K, class V> class QMapConstIterator : private KWQMapIteratorImpl {
 public:
-    QMapConstIterator() : KWQMapIteratorImpl()
-    {
-    }
-
-    QMapConstIterator(const QMapConstIterator<K,V> &citer) : KWQMapIteratorImpl(citer)
-    {
-    }
-
-    QMapConstIterator(const QMapIterator<K,V> &iter) : KWQMapIteratorImpl(iter)
-    {
-    }
-
-    ~QMapConstIterator()
-    {
-    }
+    QMapConstIterator() { }
+    QMapConstIterator(const QMapIterator<K,V> &iter) : KWQMapIteratorImpl(iter) { }
 
     const K& key() const
     {
@@ -172,12 +128,6 @@ public:
     const V& data() const
     {
 	return ((QMapNode<K,V> *)node)->value;
-    }
-
-    QMapConstIterator<K,V> &operator=(const QMapConstIterator<K,V> &citer)
-    {
-	node = citer.node;
-	return *this;
     }
 
     bool operator==(const QMapConstIterator<K,V> &citer) const
@@ -208,25 +158,12 @@ private:
     }
 
     friend class QMap<K,V>;
-}; // class QMapConstIterator ==================================================
-
-
-
-// class QMap ==================================================================
+};
 
 template <class K, class V> class QMap : public KWQMapImpl {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
     typedef QMapIterator<K,V> Iterator;
     typedef QMapConstIterator<K,V> ConstIterator;
-
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
 
     QMap() : 
 	KWQMapImpl(new QMapNode<K,V>(K(),V()), deleteNode)
@@ -238,46 +175,18 @@ public:
     {
     }
 
-    virtual ~QMap() 
-    { 
-    }
-    
-    // member functions --------------------------------------------------------
+    void clear() { clearInternal(); }
 
-    void clear() 
-    {
-	clearInternal();
-    }
+    uint count() const { return countInternal(); }
 
-    uint count() const
-    {
-	return countInternal();
-    }
-
-    Iterator begin()
-    {
-	return Iterator((QMapNode<K,V> *)beginInternal());
-    }
-
-    Iterator end()
-    {
-	return Iterator((QMapNode<K,V> *)endInternal());
-    }
-
-    ConstIterator begin() const
-    {
-	return ConstIterator((QMapNode<K,V> *)beginInternal());
-    }
-
-    ConstIterator end() const
-    {
-	return ConstIterator((QMapNode<K,V> *)endInternal());
-    }
+    Iterator begin() { return (QMapNode<K,V> *)beginInternal(); }
+    Iterator end() { return (QMapNode<K,V> *)endInternal(); }
+    ConstIterator begin() const { return (QMapNode<K,V> *)beginInternal(); }
+    ConstIterator end() const { return ConstIterator((QMapNode<K,V> *)endInternal()); }
 
     Iterator insert(const K& key, const V& value)
     {
 	QMapNode<K,V> tmp(key,value);
-
 	return Iterator((QMapNode<K,V> *)insertInternal(&tmp, true));
     }
 
@@ -316,8 +225,6 @@ public:
 	}
     }
 
-    // operators ---------------------------------------------------------------
-
     QMap<K,V>& operator=(const QMap<K,V>&map)
     {
 	QMap<K,V> tmp(map);
@@ -328,10 +235,8 @@ public:
     V& operator[](const K& key)
     {
 	QMapNode<K,V> tmp(key, V());
-
 	return ((QMapNode<K,V> *)insertInternal(&tmp, false))->value;
     }
-
 
 protected:
     virtual void copyNode(const KWQMapNodeImpl *isrc, KWQMapNodeImpl *idst) const
@@ -380,10 +285,10 @@ protected:
 	delete (QMapNode<K,V> *)inode;
     }
 
-}; // class QMap ===============================================================
-
+};
 
 #ifdef _KWQ_IOSTREAM_
+
 template<class K, class V>
 inline std::ostream &operator<<(std::ostream &stream, const QMap<K,V> &m) 
 {
@@ -402,8 +307,7 @@ inline std::ostream &operator<<(std::ostream &stream, const QMap<K,V> &m)
 
     return stream << "]";
 }
-#endif
 
-#endif // USING_BORROWED_QMAP
+#endif
 
 #endif

@@ -1196,14 +1196,12 @@ void KHTMLParser::popOneBlock()
         if (current->maintainsState()) {
 #ifdef APPLE_CHANGES
             if (document->document()){
-                document->document()->registerMaintainsState(current);
-                QString state(document->document()->nextState());
-                if (!state.isNull()) current->restoreState(state);
-            }
-#else
+#endif
             document->document()->registerMaintainsState(current);
             QString state(document->document()->nextState());
             if (!state.isNull()) current->restoreState(state);
+#ifdef APPLE_CHANGES
+            }
 #endif
         }
         if (current->renderer())

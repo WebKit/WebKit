@@ -30,9 +30,6 @@
 #include <dom/css_rule.h>
 #include "kjs_binding.h"
 
-#if defined(APPLE_CHANGES) && defined(__OBJC__)
-#define id id_
-#endif /* APPLE_CHANGES, __OBJC__ */
 namespace KJS {
 
   class DOMCSSStyleDeclaration : public DOMObject {
@@ -298,8 +295,5 @@ namespace KJS {
   Value getDOMCounter(ExecState *exec, DOM::Counter c);
 
 }; // namespace
-#if defined(APPLE_CHANGES) && defined(__OBJC__)
-#undef id
-#endif /* APPLE_CHANGES, __OBJC__ */
 
 #endif

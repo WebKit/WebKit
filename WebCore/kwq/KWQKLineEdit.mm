@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,40 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <klineedit.h>
 
-#include <KWQNSTextField.h>
+#include <klineedit.h>
 
 #include <kwqdebug.h>
 
-KLineEdit::KLineEdit(QWidget *parent, const char *name)
+KLineEdit::KLineEdit(QWidget *parent)
+    : QLineEdit(parent)
 {
-    // This space intentionally left blank.
 }
-
-KLineEdit::~KLineEdit()
-{
-    // This space intentionally left blank.
-}
-
-
-void KLineEdit::setMouseTracking(bool)
-{
-    KWQNSTextField *fieldView;
-    fieldView = (KWQNSTextField *)getView();
-}
-
 
 void KLineEdit::setContextMenuEnabled(bool showMenu)
 {
-    KWQNSTextField *fieldView;
-    fieldView = (KWQNSTextField *)getView();
 }
-
 
 KCompletionBox *KLineEdit::completionBox(bool create)
 {
     _logNotYetImplemented();
-    return 0L;
+    return 0;
 }
-

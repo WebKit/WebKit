@@ -592,6 +592,10 @@ const QPixmap &CachedImage::pixmap( ) const
     if(errorOccured)
         return *Cache::brokenPixmap;
 
+#ifdef APPLE_CHANGES
+    if (p)
+        return *p;
+#else
     if(m)
     {
         if(m->framePixmap().size() != m->getValidRect().size() && m->getValidRect().size().isValid())
@@ -610,6 +614,7 @@ const QPixmap &CachedImage::pixmap( ) const
     }
     else if(p)
         return *p;
+#endif // APPLE_CHANGES
 
     return *Cache::nullPixmap;
 }

@@ -26,31 +26,7 @@
 #include <kwqdebug.h>
 #include <kiconloader.h>
 
-
-// class KIcon =================================================================
-
-KIcon::KIcon()
-{
-    _logNotYetImplemented();
-}
-
-// class KIconLoader ===========================================================
-    
-KIconLoader::KIconLoader()
-{
-    _logNotYetImplemented();
-}
-
-
-KIconLoader::~KIconLoader()
-{
-    _logNotYetImplemented();
-}
-
-        
-QPixmap KIconLoader::loadIcon(const QString &name, int group, int size=0, 
-    int state=KIcon::DefaultState, QString *path_store=0L, 
-    bool canReturnNull=false) const
+QPixmap KIconLoader::loadIcon(const QString &name, int group, int size, int state) const
 {
     _logNotYetImplemented();
     return QPixmap();

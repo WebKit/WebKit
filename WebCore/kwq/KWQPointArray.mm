@@ -26,7 +26,7 @@
 #include "qpoint.h"
 #include <stdarg.h>
 
-QPointArray::QPointArray(int nPoints, const QCOORD *points)
+QPointArray::QPointArray(int nPoints, const int *points)
 {
     setPoints( nPoints, points );
 }
@@ -38,7 +38,7 @@ void QPointArray::setPoint( uint index, int x, int y )
 }
 
 
-bool QPointArray::setPoints( int nPoints, const QCOORD *points )
+bool QPointArray::setPoints( int nPoints, const int *points )
 {
     if ( !resize(nPoints) )
 	return FALSE;

@@ -26,12 +26,7 @@
 #ifndef KWQ_MAP_IMPL_H
 #define KWQ_MAP_IMPL_H
 
-#include <config.h>
-
 #include <new>
-#include <iostream>
-
-#ifndef USING_BORROWED_QMAP
 
 #include <KWQRefPtr.h>
 
@@ -71,22 +66,18 @@ protected:
     KWQMapNodeImpl *node;
 
     KWQMapIteratorImpl();
-    KWQMapIteratorImpl(const KWQMapIteratorImpl& iter);
     void incrementInternal();
 };
 
 class KWQMapImpl {
- private:
-    // disallow assignment
-    KWQMapImpl &operator=(const KWQMapImpl &);
-
  protected:
     typedef enum { Less = -1, Equal = 0, Greater = 1 } CompareResult;
 
     KWQMapImpl(KWQMapNodeImpl *guard, void (*deleteNode)(KWQMapNodeImpl *));
-    KWQMapImpl(const KWQMapImpl &impl);
-    KWQMapImpl();
     virtual ~KWQMapImpl();
+
+    KWQMapImpl(const KWQMapImpl &);
+    KWQMapImpl &operator=(const KWQMapImpl &);
 
     KWQMapNodeImpl *findInternal(KWQMapNodeImpl *target) const;
     KWQMapNodeImpl *insertInternal(KWQMapNodeImpl *nodeToInsert, bool replaceExisting);
@@ -126,7 +117,5 @@ class KWQMapImpl {
     friend bool CheckRedBlackRulesAtNode(KWQMapImpl *impl, KWQMapNodeImpl *node, int &black_height);
 #endif
 };
-
-#endif
 
 #endif

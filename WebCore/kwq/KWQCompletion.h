@@ -26,95 +26,17 @@
 #ifndef KWQCOMPLETION_H_
 #define KWQCOMPLETION_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
 #include <qstringlist.h>
 
-// class KCompletion ===========================================================
-
 class KCompletion : public QObject {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    KCompletion();
-    virtual ~KCompletion();
-
-    // member functions --------------------------------------------------------
-
     void setItems(const QStringList &);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KCompletion(const KCompletion &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KCompletion &operator=(const KCompletion &);
-#endif
-
-}; // class KCompletion ========================================================
-
-
-// class KCompletionBase =======================================================
+};
 
 class KCompletionBase {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KCompletionBase();
-    virtual ~KCompletionBase();
-
-    // member functions --------------------------------------------------------
-
-    KCompletion *completionObject(bool hsig = true);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KCompletionBase(const KCompletionBase &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KCompletionBase &operator=(const KCompletionBase &);
-#endif
-
-}; // class KCompletionBase ====================================================
-
+    virtual KCompletion *completionObject();
+};
 
 #endif

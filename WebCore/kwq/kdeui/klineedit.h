@@ -26,57 +26,18 @@
 #ifndef KLINEEDIT_H_
 #define KLINEEDIT_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qlineedit.h>
 
 #include <KWQCompletion.h>
 
 #include "kcompletionbox.h"
 
-// class __class_name__ ========================================================
-
 class KLineEdit : public QLineEdit, public KCompletionBase {
 public:
+    KLineEdit(QWidget *parent=0);
 
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KLineEdit(QWidget *parent=0, const char *name=0);
-    virtual ~KLineEdit();
-
-    // member functions --------------------------------------------------------
-
-    void setMouseTracking(bool);
-    virtual void setContextMenuEnabled(bool showMenu);
+    void setContextMenuEnabled(bool showMenu);
     KCompletionBox *completionBox(bool create);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KLineEdit(const KLineEdit &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KLineEdit &operator=(const KLineEdit &);
-#endif
-
-}; // class __class_name__ =====================================================
+};
 
 #endif

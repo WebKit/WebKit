@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,68 +27,44 @@
 
 #include <kwqdebug.h>
 
-const QRegion QRegion::null;
-
-void QRegion::_initialize()
-{
-    data = new KWQRegionData;
-    data->type = Rectangle;
-    data->path = nil;
-}
-
 QRegion::QRegion()
+    : path(nil)
 {
-    _initialize();
-    
-    // Create lazily - RJW
-    //data->path = [[NSBezierPath alloc] init];
 }
 
 QRegion::QRegion(const QRect &rect)
+    : path([[NSBezierPath bezierPathWithRect:NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height())] retain])
 {
-    NSRect nsrect;
-
-    _initialize();
-
-    nsrect = NSMakeRect(rect.x(), rect.y(), rect.width(), rect.height());
-
-    data->path = [[NSBezierPath bezierPathWithRect:nsrect] retain];
 }
 
 QRegion::QRegion(int x, int y, int w, int h, RegionType t=Rectangle)
 {
     NSRect rect;
     
-    _initialize();
     rect = NSMakeRect(x,y,w,h);
 
     if (t == Rectangle) {
-        data->path = [[NSBezierPath bezierPathWithRect:rect] retain];
-        data->type = Rectangle;
+        path = [[NSBezierPath bezierPathWithRect:rect] retain];
     }
     else { // Ellipse
-        data->path = [[NSBezierPath bezierPathWithOvalInRect:rect] retain];
-        data->type = Ellipse;
+        path = [[NSBezierPath bezierPathWithOvalInRect:rect] retain];
     }
 }
 
 QRegion::QRegion(const QPointArray &arr)
+    : path([[NSBezierPath alloc] init])
 {
-    _initialize();
     _logNotYetImplemented();
 }
 
 QRegion::QRegion(const QRegion &other)
+    : path([other.path copy])
 {
-    _initialize();
-    data->path = [[NSBezierPath alloc] init];
-    [data->path appendBezierPath:other.data->path];
 }
 
 QRegion::~QRegion()
 {
-    [data->path release];
-    delete data;
+    [path release];
 }
 
 QRegion QRegion::intersect(const QRegion &region) const
@@ -99,54 +75,42 @@ QRegion QRegion::intersect(const QRegion &region) const
 
 bool QRegion::contains(const QPoint &point) const
 {
-    NSPoint nspoint;
-
-    nspoint = NSMakePoint(point.x(), point.y());
-    
-    if (data->path)
-        return [data->path containsPoint:nspoint] ? 1 : 0;
-    return 0;
+    return path && [path containsPoint:NSMakePoint(point.x(), point.y())];
 }
 
 bool QRegion::isNull() const
 {
-    if (data->path)
-        return [data->path elementCount] == 0 ? 1 : 0;
-    return 1;
+    return path == nil || [path isEmpty];
 }
 
 QRegion &QRegion::operator=(const QRegion &other)
 {
-    if (data->path) {
-        [data->path release];
-    }
-    data->path = [[NSBezierPath alloc] init];
-    [data->path appendBezierPath:other.data->path];
+    NSBezierPath *newPath;
+    
+    newPath = [other.path copy];
+    [path release];
+    path = newPath;
     return *this;
 }
 
 void QRegion::translate(int deltaX, int deltaY)
 {
+    if (!path) {
+        return;
+    }
+    
     NSAffineTransform *translation = [[NSAffineTransform alloc] init];
     [translation translateXBy:deltaX yBy:deltaY];
-
-    if (!data->path) {
-	data->path = [[NSBezierPath alloc] init];
-    }
-
-    [data->path transformUsingAffineTransform:translation];
-
+    [path transformUsingAffineTransform:translation];
     [translation release];
 }
 
-
 QRect QRegion::boundingRect() const
 {
-    if (!data->path) {
+    if (!path) {
 	return QRect();
     }
 
-    NSRect bounds = [data->path bounds];
-
+    NSRect bounds = [path bounds];
     return QRect((int)bounds.origin.x, (int)bounds.origin.y, (int)bounds.size.width, (int)bounds.size.height);
 }

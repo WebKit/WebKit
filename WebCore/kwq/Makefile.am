@@ -40,11 +40,9 @@ libkwq_o_SOURCES = \
 	KWQKApplication.mm \
 	KWQKCharsets.mm \
 	KWQKComboBox.mm \
-	KWQKCompletionBox.mm \
 	KWQKConfigBase.mm \
 	KWQKCursor.mm \
 	KWQKDebug.mm \
-	KWQKFactory.mm \
 	KWQKFileDialog.mm \
 	KWQKFileItem.mm \
 	KWQKGlobal.mm \
@@ -56,11 +54,9 @@ libkwq_o_SOURCES = \
 	KWQKHTMLView.mm \
 	KWQKHistoryProvider.mm \
 	KWQKIconLoader.mm \
-	KWQKImageIO.mm \
 	KWQKJavaAppletWidget.mm \
 	KWQKJob.mm \
 	KWQKLineEdit.mm \
-	KWQKListBox.mm \
 	KWQKLocale.mm \
 	KWQKMessageBox.mm \
 	KWQKMimeType.mm \

@@ -111,10 +111,6 @@ KWQMapIteratorImpl::KWQMapIteratorImpl() : node(NULL)
 {
 }
 
-KWQMapIteratorImpl::KWQMapIteratorImpl(const KWQMapIteratorImpl& iter) : node(iter.node)
-{
-}
-
 void KWQMapIteratorImpl::incrementInternal()
 {
     node = node->successor();

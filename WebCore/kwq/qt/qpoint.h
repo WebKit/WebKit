@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,13 +26,11 @@
 #ifndef QPOINT_H_
 #define QPOINT_H_
 
-#include <config.h>
+#include <KWQDef.h>
 
 #ifdef _KWQ_IOSTREAM_
 #include <iostream>
 #endif
-
-#include <KWQDef.h>
 
 #include "qarray.h"
 
@@ -42,8 +40,8 @@ public:
     QPoint();
     QPoint(int, int);
 
-    int x() const;
-    int y() const;
+    int x() const { return xCoord; }
+    int y() const { return yCoord; }
 
     int manhattanLength() const;
     
@@ -52,8 +50,8 @@ public:
 
 private:
 
-    QCOORD xCoord;
-    QCOORD yCoord;
+    int xCoord;
+    int yCoord;
 
 };
 
@@ -63,7 +61,7 @@ public:
     QPointArray() {}
     QPointArray(int size) : QMemArray<QPoint>(size) {}
 
-    QPointArray(int, const QCOORD *);
+    QPointArray(int, const int *);
 
     void setPoint(uint, int, int);
 #if 0
@@ -72,7 +70,7 @@ public:
 #else
     bool setPoints(int, int, int, int, int, int, int, int, int);
 #endif
-    bool setPoints( int nPoints, const QCOORD *points );
+    bool setPoints( int nPoints, const int *points );
     
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<(std::ostream &, const QPoint &);

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,73 +26,23 @@
 #ifndef QMOVIE_H_
 #define QMOVIE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qobject.h"
-#include "qasyncio.h"
-#include "qpixmap.h"
-#include "qimage.h"
-#include "qrect.h"
-
-#ifdef _KWQ_
-class QMoviePrivate;
-#endif
-
-// class QMovie ================================================================
+#include <qobject.h>
+#include <qasyncio.h>
+#include <qpixmap.h>
+#include <qimage.h>
+#include <qrect.h>
 
 class QMovie {
 public:
-
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
-
-    enum Status { EndOfFrame, EndOfLoop, EndOfMovie };
-
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    QMovie();
-    QMovie(QDataSource*, int bufsize=1024);
-    QMovie(const QMovie &);
-    ~QMovie();
-     
-    // member functions --------------------------------------------------------
-
-    void unpause();
-    void pause();
-    void restart();
-    bool finished();
-    bool running();
+    void unpause() { }
+    void pause() { }
+    void restart() { }
+    bool finished() { return true; }
+    bool running() { return false; }
     int frameNumber() const;
 
     const QRect& getValidRect() const;
     const QPixmap& framePixmap() const;
-    const QImage& frameImage() const;
-
-    void connectResize(QObject* receiver, const char *member);
-    void connectUpdate(QObject* receiver, const char *member);
-    void connectStatus(QObject* receiver, const char *member);
-    
-    void disconnectResize(QObject* receiver, const char *member=0);
-    void disconnectUpdate(QObject* receiver, const char *member=0);
-    void disconnectStatus(QObject* receiver, const char *member=0);
-
-    // operators ---------------------------------------------------------------
-
-    QMovie &operator=(const QMovie &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-private:
-#ifdef _KWQ_
-    QMoviePrivate *d;
-#endif
-
-}; // class QMovie =============================================================
+};
 
 #endif

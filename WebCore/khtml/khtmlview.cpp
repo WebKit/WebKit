@@ -38,9 +38,7 @@
 #include "misc/htmlhashes.h"
 #include "misc/helper.h"
 #include "khtml_settings.h"
-#ifndef APPLE_CHANGES
 #include "khtml_printsettings.h"
-#endif
 
 #include <kcursor.h>
 #include <ksimpleconfig.h>
@@ -55,10 +53,8 @@
 #include <kimageio.h>
 #include <assert.h>
 #include <kdebug.h>
-#ifndef APPLE_CHANGES
 #include <kurldrag.h>
 #include <qobjectlist.h>
-#endif
 
 #define PAINT_BUFFER_HEIGHT 128
 
@@ -94,10 +90,8 @@ public:
     {
         underMouse = 0;
         reset();
-#ifndef APPLE_CHANGES
         tp=0;
         paintBuffer=0;
-#endif /* APPLE_CHANGES not defined */
         formCompletions=0;
         prevScrollbarVisible = true;
 	timerId = 0;
@@ -108,11 +102,9 @@ public:
     ~KHTMLViewPrivate()
     {
         delete formCompletions;
-#ifndef APPLE_CHANGES
         delete tp; tp = 0;
         delete paintBuffer; paintBuffer =0;
         
-#endif /* APPLE_CHANGES not defined */
         if (underMouse)
 	    underMouse->deref();
 	delete tooltip;
@@ -152,12 +144,7 @@ public:
         updateRect = QRect();
     }
 
-#ifdef APPLE_CHANGES
-    // The paintBuffer ivar is obsolete, 
-    // and should probably be removed at some point
-#else /* APPLE_CHANGES not defined */
     QPainter *tp;
-#endif /* APPLE_CHANGES not defined */
     QPixmap  *paintBuffer;
     NodeImpl *underMouse;
 
@@ -269,7 +256,7 @@ void KHTMLView::init()
 #ifndef APPLE_CHANGES
     if(!d->paintBuffer) d->paintBuffer = new QPixmap(PAINT_BUFFER_HEIGHT, PAINT_BUFFER_HEIGHT);
     if(!d->tp) d->tp = new QPainter();
-#endif /* APPLE_CHANGES not defined */
+#endif
 
     setFocusPolicy(QWidget::StrongFocus);
     viewport()->setFocusPolicy( QWidget::WheelFocus );
@@ -294,10 +281,10 @@ void KHTMLView::clear()
 
     d->reset();
 #ifdef APPLE_CHANGES
-        killTimer(d->timerId);
-        killTimer(d->repaintTimerId);
-        d->timerId = 0;
-        d->repaintTimerId = 0;
+    killTimer(d->timerId);
+    killTimer(d->repaintTimerId);
+    d->timerId = 0;
+    d->repaintTimerId = 0;
 #else
     killTimers();
 #endif
@@ -414,11 +401,7 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 #endif /* APPLE_CHANGES not defined */
 
     khtml::DrawContentsEvent event( p, ex, ey, ew, eh );
-#ifdef APPLE_CHANGES
-    m_part->event(&event);
-#else /* APPLE_CHANGES not defined */
     QApplication::sendEvent( m_part, &event );
-#endif /* APPLE_CHANGES not defined */
 
 }
 
@@ -513,11 +496,7 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
 
     if (!swallowEvent) {
 	khtml::MousePressEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
-#ifdef APPLE_CHANGES
-        m_part->event(&event);
-#else /* APPLE_CHANGES not defined */
         QApplication::sendEvent( m_part, &event );
-#endif /* APPLE_CHANGES not defined */
 
 	emit m_part->nodeActivated(mev.innerNode);
     }
@@ -556,11 +535,7 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 
     if (!swallowEvent) {
 	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
-#ifdef APPLE_CHANGES
-        m_part->event(&event);
-#else /* APPLE_CHANGES not defined */
 	QApplication::sendEvent( m_part, &event );
-#endif /* APPLE_CHANGES not defined */
 
 	// ###
 	//if ( url.length() )
@@ -658,11 +633,7 @@ void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 
     if (!swallowEvent) {
         khtml::MouseMoveEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
-#ifdef APPLE_CHANGES
-        m_part->event(&event);
-#else /* APPLE_CHANGES not defined */
         QApplication::sendEvent( m_part, &event );
-#endif /* APPLE_CHANGES not defined */
     }
 }
 
@@ -696,11 +667,7 @@ void KHTMLView::viewportMouseReleaseEvent( QMouseEvent * _mouse )
 
     if (!swallowEvent) {
 	khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
-#ifdef APPLE_CHANGES
-	m_part->event(&event);
-#else /* APPLE_CHANGES not defined */
 	QApplication::sendEvent( m_part, &event );
-#endif /* APPLE_CHANGES not defined */
     }
 }
 
@@ -1533,13 +1500,6 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
     killTimer(d->repaintTimerId);
 
 #ifdef APPLE_CHANGES
-//    if (_lockFocus()){
-//        QPainter p(this);
-//        
-//        drawContents (&p, d->updateRect.x(), d->updateRect.y(), d->updateRect.width(), d->updateRect.height());
-//        
-//        _unlockFocus();
-//    }
     _displayRect (d->updateRect);
 #else
     updateContents( d->updateRect );

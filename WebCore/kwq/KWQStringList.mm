@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,17 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <kwqdebug.h>
 
 #include <qstringlist.h>
 
-#ifndef USING_BORROWED_QSTRINGLIST
-
 #include <CoreFoundation/CoreFoundation.h>
-#include <iostream>
 
 // No need to CFRelease return value
-static CFStringRef QStringToCFString(QString s)
+static CFStringRef GetCFString(const QString &s)
 {
     CFStringRef cfs = s.getCFMutableString();
     if (cfs == NULL) {
@@ -42,12 +38,12 @@ static CFStringRef QStringToCFString(QString s)
 }
 
 QStringList QStringList::split(const QString &separator, const QString &s, 
-				      bool allowEmptyEntries = FALSE )
+                               bool allowEmptyEntries = FALSE )
 {
     CFArrayRef cfresult;
     QStringList result;
 
-    cfresult = CFStringCreateArrayBySeparatingStrings(NULL, QStringToCFString(s), QStringToCFString(separator));
+    cfresult = CFStringCreateArrayBySeparatingStrings(NULL, GetCFString(s), GetCFString(separator));
     
     CFIndex cfResultSize = CFArrayGetCount(cfresult);
 
@@ -69,20 +65,6 @@ QStringList QStringList::split(const QChar &separator, const QString &s,
     return QStringList::split(QString(separator), s, allowEmptyEntries);
 }
 
-    
-QStringList::QStringList()
-{
-}
-
-QStringList::QStringList(const QStringList &l) : QValueList<QString>(l)
-{
-    
-}
-
-QStringList::~QStringList()
-{
-}
-
 QString QStringList::join(const QString &separator) const
 {
     QString result;
@@ -96,11 +78,3 @@ QString QStringList::join(const QString &separator) const
 
     return result;
 }
-
-QStringList &QStringList::operator=(const QStringList &l)
-{
-    (*this).QValueList<QString>::operator=(l);
-    return *this;
-}
-
-#endif

@@ -119,6 +119,8 @@ QChar QChar::upper() const
 QChar::Direction QChar::direction() const
 {
     // FIXME: unimplemented because we don't do BIDI yet
+    if (c == ' ')
+        return DirWS;
     return DirL;
 }
 
@@ -128,7 +130,7 @@ bool QChar::mirrored() const
     _logNotYetImplemented();
     // return whether character should be reversed if text direction is
     // reversed
-    return FALSE;
+    return false;
 }
 
 QChar QChar::mirroredChar() const

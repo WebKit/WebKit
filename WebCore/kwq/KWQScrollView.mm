@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,32 +27,26 @@
 
 #include <kwqdebug.h>
 
+#include <external.h>
+
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
-    Instead out WebPageView, like any other NSView can be set as the document
+    Instead our WebPageView, like any other NSView can be set as the document
     to a standard NSScrollView.
 
     We do implement the placeWidget() function to essentially addSubview views
     onto this view.
 */
 
-QScrollView::QScrollView(QWidget *parent=0, const char *name=0, WFlags f=0)
+QScrollView::QScrollView(QWidget *parent, const char *name, int f)
+    : QFrame(parent)
 {
-    _logNeverImplemented();
 }
-
-
-QScrollView::~QScrollView()
-{
-    _logNeverImplemented();
-}
-
 
 QWidget* QScrollView::viewport() const
 {
-    return (QWidget *)this;
+    return const_cast<QScrollView *>(this);
 }
-
 
 int QScrollView::visibleWidth() const
 {
@@ -60,9 +54,9 @@ int QScrollView::visibleWidth() const
     int visibleWidth;
     
     if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]])
-        visibleWidth = (int)([scrollView documentVisibleRect].size.width);
+        visibleWidth = (int)[scrollView documentVisibleRect].size.width;
     else
-        visibleWidth = (int)([getView() bounds].size.width);
+        visibleWidth = (int)[getView() bounds].size.width;
     return visibleWidth;
 }
 
@@ -73,56 +67,48 @@ int QScrollView::visibleHeight() const
     int visibleHeight;
     
     if (scrollView != nil && [scrollView isKindOfClass: [NSScrollView class]])
-        visibleHeight = (int)([scrollView documentVisibleRect].size.height);
+        visibleHeight = (int)[scrollView documentVisibleRect].size.height;
     else
-        visibleHeight = (int)([getView() bounds].size.height);
+        visibleHeight = (int)[getView() bounds].size.height;
     return visibleHeight;
 }
 
 
 int QScrollView::contentsWidth() const
 {
-    NSRect bounds = [getView() bounds];
-    return (int)bounds.size.width;
+    return (int)[getView() bounds].size.width;
 }
 
 
 int QScrollView::contentsHeight() const
 {
-    NSRect bounds = [getView() bounds];
-    return (int)bounds.size.height;
+    return (int)[getView() bounds].size.height;
 }
-
 
 int QScrollView::contentsX() const
 {
     return 0;
 }
 
-
 int QScrollView::contentsY() const
 {
     return 0;
 }
-
 
 int QScrollView::childX(QWidget *)
 {
     return 0;
 }
 
-
 int QScrollView::childY(QWidget *)
 {
     return 0;
 }
 
-
 void QScrollView::scrollBy(int dx, int dy)
 {
     _logNeverImplemented();
 }
-
 
 void QScrollView::setContentsPos(int x, int y)
 {
@@ -136,67 +122,53 @@ void QScrollView::setContentsPos(int x, int y)
         x = 0;
     if (y < 0)
         y = 0;
-    [view scrollPoint: NSMakePoint (x,y)];
+    [view scrollPoint: NSMakePoint(x,y)];
 }
-
 
 void QScrollView::setVScrollBarMode(ScrollBarMode)
 {
     _logNeverImplemented();
 }
 
-
 void QScrollView::setHScrollBarMode(ScrollBarMode)
 {
     _logNeverImplemented();
 }
-
 
 void QScrollView::addChild(QWidget* child, int x, int y)
 {
     NSView *thisView, *subView;
 
     if (child->x() != x || child->y() != y)
-        child->move (x, y);
+        child->move(x, y);
         
     thisView = getView();
-    if ([thisView isKindOfClass: NSClassFromString(@"NSScrollView")]) {
+    if ([thisView isKindOfClass: [NSScrollView class]]) {
         NSScrollView *scrollView = thisView;
         thisView = [scrollView documentView];
     }
 
     subView = child->getView();
-    NSRect wFrame = [subView frame];
-
     if ([subView superview] == thisView) {
         return;
     }
     
     [subView removeFromSuperview];
     
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "Adding %p %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)wFrame.size.width, (int)wFrame.size.height);
+    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "Adding %p %s at (%d,%d) w %d h %d\n", subView, [[[subView class] className] cString], x, y, (int)[subView frame].size.width, (int)[subView frame].size.height);
     [thisView addSubview: subView];
 }
 
-
 void QScrollView::removeChild(QWidget* child)
 {
-    NSView *subView;
-
-    subView = child->getView();
-    [subView removeFromSuperview];
+    [child->getView() removeFromSuperview];
 }
-
-@interface IFWebView: NSObject
-- (QWidget *)_widget;
-- (void)setFrameSize: (NSSize)r;
-@end
 
 void QScrollView::resizeContents(int w, int h)
 {
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
     //if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
-    if ([getView() isKindOfClass: NSClassFromString(@"NSScrollView")]){
+    if ([getView() isKindOfClass: [NSScrollView class]]){
         NSScrollView *scrollView = (NSScrollView *)getView();
         IFWebView *wview = [scrollView documentView];
         
@@ -216,7 +188,6 @@ void QScrollView::resizeContents(int w, int h)
         resize (w, h);
     }
 }
-
 
 void QScrollView::updateContents(int x, int y, int w, int h)
 {
@@ -241,7 +212,6 @@ QPoint QScrollView::contentsToViewport(const QPoint &p)
     return QPoint(vx, vy);
 }
 
-
 void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
     NSView *view = getView();    
@@ -255,7 +225,6 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
     vx = (int)np.x;
     vy = (int)np.y;
 }
-
 
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
@@ -271,12 +240,10 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
     y = (int)np.y;
 }
 
-
 void QScrollView::viewportWheelEvent(QWheelEvent *)
 {
     _logNeverImplemented();
 }
-
 
 QWidget *QScrollView::clipper() const
 {
@@ -284,30 +251,25 @@ QWidget *QScrollView::clipper() const
     return (QWidget *)this;
 }
 
-
 void QScrollView::enableClipper(bool)
 {
     _logNeverImplemented();
 }
-
 
 void QScrollView::setStaticBackground(bool)
 {
     _logNeverImplemented();
 }
 
-
 void QScrollView::resizeEvent(QResizeEvent *)
 {
     _logNeverImplemented();
 }
 
-
 void QScrollView::ensureVisible(int,int)
 {
     _logNeverImplemented();
 }
-
 
 void QScrollView::ensureVisible(int,int,int,int)
 {

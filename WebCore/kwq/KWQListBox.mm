@@ -90,7 +90,8 @@
 @end
 
 
-QListBox::QListBox()
+QListBox::QListBox(QWidget *parent)
+    : QScrollView(parent)
 {
     NSBrowser *browser =  [[[NSBrowser alloc] initWithFrame: NSMakeRect (0,0,1,1)] autorelease];
     KWQBrowserDelegate *delegate = [[KWQBrowserDelegate alloc] initWithListBox: this];

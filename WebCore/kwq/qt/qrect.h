@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,102 +26,50 @@
 #ifndef QRECT_H_
 #define QRECT_H_
 
-#ifdef USING_BORROWED_QRECT
-
-#include <_qrect.h>
-
-#else
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#ifdef _KWQ_IOSTREAM_
-#include <iostream>
-#endif
-
-#include <KWQDef.h>
-
-#include "qsize.h"
-#include "qpoint.h"
-
-// class QRect =================================================================
+#include <qsize.h>
+#include <qpoint.h>
 
 class QRect {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QRect();
     QRect(QPoint p, QSize s);
     QRect(int, int, int, int);
-    // QRect(const QRect &);
-    // default copy constructor is fine
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QRect() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     bool isNull() const;
     bool isValid() const;
     bool isEmpty() const;
 
-    int x() const;
-    int y() const;
-    int left() const;
-    int top() const;
+    int x() const { return xp; }
+    int y() const { return yp; }
+    int left() const { return xp; }
+    int top() const { return yp; }
     int right() const;
     int bottom() const;
-    int width() const;
-    int height() const;
+    int width() const { return w; }
+    int height() const { return h; }
 
     QPoint topLeft() const;
     QSize size() const;
-    void setWidth(int);
-    void setHeight(int);
+    void setWidth(int width) { w = width; }
+    void setHeight(int height) { h = height; }
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
     QRect unite(const QRect &) const;
-
-    // operators ---------------------------------------------------------------
-
-    /* Note: Trolltech seems to want operator= to be a bitwise copy
-     * QRect &operator=(const QRect &);
-     */
-
-    QRect operator&(const QRect &) const;
+    
+    inline QRect operator&(const QRect &r) const { return intersect(r); }
 
 #ifdef _KWQ_IOSTREAM_
     friend std::ostream &operator<<(std::ostream &, const QRect &);
 #endif
 
-// protected -------------------------------------------------------------------
-
-// private ---------------------------------------------------------------------
-
 private:
-    QCOORD xp;
-    QCOORD yp;
-    QCOORD w;
-    QCOORD h;
+    int xp;
+    int yp;
+    int w;
+    int h;
 
     friend bool operator==(const QRect &, const QRect &);
     friend bool operator!=(const QRect &, const QRect &);
-}; // class QRect ==============================================================
-
-// operators associated with QRect =============================================
-
-bool operator==(const QRect &, const QRect &);
-bool operator!=(const QRect &, const QRect &);
-
-#endif
+};
 
 #endif

@@ -72,7 +72,7 @@ QCursor &QCursor::operator=(const QCursor &other)
     return *this;
 }
 
-int QCursor::handle() const
+NSCursor *QCursor::handle() const
 {
-    return (int)cursor;
+    return cursor;
 }

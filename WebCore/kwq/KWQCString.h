@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,55 +26,27 @@
 #ifndef QCSTRING_H_
 #define QCSTRING_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QSTRING ======================================================
-
-#ifdef USING_BORROWED_QSTRING
-#include <_qcstring.h>
-#else
-
-// FIXME: does our implementation of QCString really need to inherit from
-// QByteArray and QArray?
-
-#include "qarray.h"
+#include <qarray.h>
+#include <string.h>
+#include <KWQDef.h>
 
 #ifdef _KWQ_IOSTREAM_
 #include <iostream>
 #endif
 
-#include <string.h>
-
 typedef QMemArray<char> QByteArray;
-
-// class QCString ==============================================================
 
 class QCString : public QByteArray {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QCString();
     QCString(int);
     QCString(const char *);
     QCString(const char *, uint);
-    QCString(const QCString &);
-
-    ~QCString() {}
-
-    // member functions --------------------------------------------------------
 
     bool isEmpty() const;
-    bool isNull() const;
-    int find(const char *, int index=0, bool cs=TRUE) const;
-    int contains(char, bool cs=TRUE) const;
+    bool isNull() const { return data() == 0; }
+    int find(const char *, int index=0, bool cs=true) const;
+    int contains(char, bool cs=true) const;
     uint length() const;
     bool truncate(uint);
     QCString lower() const;
@@ -83,10 +55,7 @@ public:
     QCString right(uint) const;
     QCString mid(uint, uint len=0xffffffff) const;
 
-    // operators ---------------------------------------------------------------
-
-    operator const char *() const;
-    QCString &operator=(const QCString &);
+    operator const char *() const { return data(); }
     QCString &operator=(const char *);
     QCString &operator+=(const char *);
     QCString &operator+=(char);
@@ -95,22 +64,13 @@ public:
     friend std::ostream &operator<<(std::ostream &, const QCString &);
 #endif
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
     bool resize(uint);
+};
 
-}; // class QCString ===========================================================
-
-
-// operators associated with QCString ==========================================
-
-bool operator==(const char *s1, const QCString &s2);
 bool operator==(const QCString &s1, const char *s2);
-bool operator!=(const char *s1, const QCString &s2);
-bool operator!=(const QCString &s1, const char *s2);
-
-#endif // USING_BORROWED_QSTRING
+inline bool operator==(const char *s1, const QCString &s2) { return s2 == s1; }
+inline bool operator!=(const QCString &s1, const char *s2) { return !(s1 == s2); }
+inline bool operator!=(const char *s1, const QCString &s2) { return !(s1 == s2); }
 
 #endif

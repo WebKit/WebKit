@@ -1801,11 +1801,7 @@ void HTMLSelectElementImpl::notifyOptionSelected(HTMLOptionElementImpl *selected
 HTMLKeygenElementImpl::HTMLKeygenElementImpl(DocumentPtr* doc, HTMLFormElementImpl* f)
     : HTMLSelectElementImpl(doc, f)
 {
-#ifdef APPLE_CHANGES
-    QStringList keys;
-#else
     QStringList keys = KSSLKeyGen::supportedKeySizes();
-#endif
     for (QStringList::Iterator i = keys.begin(); i != keys.end(); ++i) {
         HTMLOptionElementImpl* o = new HTMLOptionElementImpl(doc, form());
         addChild(o);
@@ -1837,7 +1833,6 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
 
     encoded_values += enc_name;
 
-#ifndef APPLE_CHANGES
     // pop up the fancy certificate creation dialog here
     KSSLKeyGen *kg = new KSSLKeyGen(static_cast<RenderWidget *>(m_render)->widget(), "Key Generator", true);
 
@@ -1845,7 +1840,6 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     successful = (QDialog::Accepted == kg->exec());
 
     delete kg;
-#endif
 
     encoded_values += "deadbeef";
 

@@ -1022,11 +1022,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start)
 	// remove leading spaces
 	while(!start.atEnd() &&
 #ifndef QT_NO_UNICODETABLES
-#ifdef APPLE_CHANGES
-	      ( start.current() == ' ' || start.obj->isSpecial() )
-#else /* APPLE_CHANGES not defined */
 	      ( start.direction() == QChar::DirWS || start.obj->isSpecial() )
-#endif /* APPLE_CHANGES not defined */
 #else
 	      ( start.current() == ' ' || start.obj->isSpecial() )
 #endif
@@ -1171,6 +1167,11 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start)
             // IMPORTANT: pos is > length here!
             tmpW += t->width(lastSpace, pos - lastSpace, f);
             }
+#ifdef APPLE_CHANGES
+#if 0
+            }
+#endif
+#endif
         } else
             KHTMLAssert( false );
 

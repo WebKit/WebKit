@@ -41,15 +41,8 @@ public:
    */
   virtual bool deleteMe();
 
-#ifdef APPLE_CHANGES
-  static void *instanceToCheck;
-
-  void ref();
-  void deref();
-#else /* APPLE_CHANGES not defined */
   void ref() { _ref++; }
   void deref() { if(_ref) _ref--; if(!_ref && deleteMe()) delete this; }
-#endif /* APPLE_CHANGES not defined */
   bool hasOneRef() const { return _ref == 1; }
   unsigned int refCount() const { return _ref; }
 

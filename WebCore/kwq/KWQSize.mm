@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,8 +25,6 @@
 
 #include <qsize.h>
 
-#ifndef USING_BORROWED_QSIZE
-
 QSize::QSize() : w(-1), h(-1)
 {
 }
@@ -37,52 +35,32 @@ QSize::QSize(int width, int height) : w(width), h(height)
 
 bool QSize::isValid() const
 {
-	return w >= 0 && h>= 0;
+    return w >= 0 && h >= 0;
 }
 
-int QSize::width() const
-{
-	return w;
-}
-
-int QSize::height() const
-{
-	return h;
-}
-
-void QSize::setWidth(int width)
-{
-	w = width;
-}
-void QSize::setHeight(int height)
-{
-	h = height;
-}
 QSize QSize::expandedTo(const QSize &o) const
 {
-	return QSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
+    return QSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
 }
 
 QSize operator+(const QSize &a, const QSize &b)
 {
-	return QSize(a.w + b.w, a.h + b.h);
+    return QSize(a.w + b.w, a.h + b.h);
 }
 
 bool operator==(const QSize &a, const QSize &b)
 {
-	return a.w == b.w && a.h == b.h;
+    return a.w == b.w && a.h == b.h;
 }
 
 bool operator!=(const QSize &a, const QSize &b)
 {
-	return a.w != b.w || a.h != b.h;
+    return a.w != b.w || a.h != b.h;
 }
 
 #ifdef _KWQ_IOSTREAM_
 std::ostream &operator<<(std::ostream &o, const QSize &s)
 {
-	return o << "QSize: [w: " << s.width() << "; h: " << s.height() << "]";
+    return o << "QSize: [w: " << s.width() << "; h: " << s.height() << "]";
 }
-#endif
-
 #endif

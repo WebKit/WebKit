@@ -129,9 +129,9 @@ DOMString HTMLDocumentImpl::lastModified() const
 
 DOMString HTMLDocumentImpl::cookie() const
 {
-#if APPLE_CHANGES
+#ifdef APPLE_CHANGES
     return DOMString();
-#else /* not APPLE_CHANGES */
+#else
     QCString replyType;
     QByteArray params, reply;
     QDataStream stream(params, IO_WriteOnly);
@@ -157,7 +157,7 @@ DOMString HTMLDocumentImpl::cookie() const
     QString result;
     stream2 >> result;
     return DOMString(result);
-#endif /* not APPLE_CHANGES */
+#endif // APPLE_CHANGES
 }
 
 void HTMLDocumentImpl::setCookie( const DOMString & value )

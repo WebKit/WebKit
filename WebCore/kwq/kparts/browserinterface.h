@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,10 +26,6 @@
 #ifndef BROWSERINTERFACE_H_
 #define BROWSERINTERFACE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qobject.h>
 #include <qvariant.h>
 
@@ -37,44 +33,8 @@ namespace KParts {
 
 class BrowserInterface : public QObject {
 public:
-
-// class BrowserInterface ======================================================
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    BrowserInterface(QObject *parent, const char *name=0);
-    virtual ~BrowserInterface();
-
-    // member functions --------------------------------------------------------
-
     void callMethod(const char *name, const QVariant &argument);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    BrowserInterface(const BrowserInterface &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    BrowserInterface &operator=(const BrowserInterface &);
-#endif
-
-}; // class BrowserInterface ===================================================
+};
 
 } // namespace KParts
 

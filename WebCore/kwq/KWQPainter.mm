@@ -610,24 +610,22 @@ void QPainter::setClipping(bool)
     _logNotYetImplemented();
 }
 
-
 void QPainter::setClipRegion(const QRegion &)
 {
     _logNotYetImplemented();
 }
 
-
 const QRegion &QPainter::clipRegion() const
 {
     _logPartiallyImplemented();
-    return QRegion::null;
+    static QRegion null;
+    return null;
 }
-
 
 bool QPainter::hasClipping() const
 {
     _logNotYetImplemented();
-    return  0;
+    return false;
 }
 
 void QPainter::setClipRect(const QRect &)
