@@ -1,3 +1,16 @@
+2002-03-14  John Sullivan  <sullivan@apple.com>
+
+	Made history store its data in ~/Library/Application Support/<app name>/History.plist
+
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(GetRefPath), (FindFolderPath): Functions copied from NSSavePanel.m for using
+	FindFolder in a POSIX sort of way. Ken plans to put some version of this in
+	IFNSFileManagerExtensions eventually, which I'll switch to later.
+	(-[IFWebHistoryPrivate historyFilePath]): Construct the path using FindFolderPath
+	and the file name.
+	(-[IFWebHistoryPrivate loadHistory]),
+	(-[IFWebHistoryPrivate saveHistory]): failure case debug messages are now more specific.
+
 2002-03-13  Richard Williamson  <rjw@apple.com>
 
         Added support to stop plugins in removeFromSuperview.
