@@ -1,3 +1,11 @@
+2002-05-22  Richard J. Williamson  <rjw@apple.com>
+    
+
+    Additional additional callback when resource is first loaded.
+        
+	* kwq/KWQKloader.mm:
+	(-[URLLoadClient IFURLHandleResourceDidBeginLoading:]):
+
 2002-05-21  Richard J. Williamson  <rjw@apple.com>
 
     Lots of changes for DHTML.

@@ -1021,9 +1021,26 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
+    id controller;
+	int contentLength = [sender contentLength];
+	int contentLengthReceived = [sender contentLengthReceived];
+    void *userData;
+
+    userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
+    
+    KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
+    QString urlString = job->url().url();
+
     KWQDEBUGLEVEL(KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
                   static_cast<KIO::TransferJob *>(
                   [[sender attributeForKey:IFURLHandleUserData] pointerValue])->url().url().latin1());
+
+    IFLoadProgress *loadProgress = WCIFLoadProgressMake();
+    loadProgress->totalToLoad = contentLength;
+    loadProgress->bytesSoFar = contentLengthReceived;
+    
+    controller = [m_dataSource controller];
+    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
