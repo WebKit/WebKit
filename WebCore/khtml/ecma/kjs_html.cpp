@@ -657,13 +657,15 @@ const ClassInfo* KJS::HTMLElement::classInfo() const
   type		KJS::HTMLElement::StyleType	DontDelete
   sheet		KJS::HTMLElement::StyleSheet	DontDelete|ReadOnly
 @end
-@begin HTMLBodyElementTable 8
+@begin HTMLBodyElementTable 10
   aLink		KJS::HTMLElement::BodyALink	DontDelete
   background	KJS::HTMLElement::BodyBackground	DontDelete
   bgColor	KJS::HTMLElement::BodyBgColor	DontDelete
   link		KJS::HTMLElement::BodyLink	DontDelete
   text		KJS::HTMLElement::BodyText	DontDelete
   vLink		KJS::HTMLElement::BodyVLink	DontDelete
+  scrollLeft    KJS::HTMLElement::BodyScrollLeft        DontDelete
+  scrollTop     KJS::HTMLElement::BodyScrollTop         DontDelete
   scrollHeight	KJS::HTMLElement::BodyScrollHeight	DontDelete|ReadOnly
   scrollWidth	KJS::HTMLElement::BodyScrollWidth	DontDelete|ReadOnly
 @end
@@ -1201,6 +1203,10 @@ Value KJS::HTMLElement::getValueProperty(ExecState *exec, int token) const
         docimpl->updateLayout();
       }
       switch (token) {
+        case BodyScrollLeft:
+            return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsX() : 0);
+        case BodyScrollTop:
+            return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsY() : 0);
         case BodyScrollHeight:   return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsHeight() : 0);
         case BodyScrollWidth:    return Number(body.ownerDocument().view() ? body.ownerDocument().view()->contentsWidth() : 0);
       }
@@ -2214,6 +2220,21 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case BodyLink:            { body.setLink(str); return; }
       case BodyText:            { body.setText(str); return; }
       case BodyVLink:           { body.setVLink(str); return; }
+      case BodyScrollLeft:
+      case BodyScrollTop: {
+          QScrollView* sview = body.ownerDocument().view();
+          if (sview) {
+              // Update the document's layout before we compute these attributes.
+              DOM::DocumentImpl* docimpl = body.handle()->getDocument();
+              if (docimpl)
+                  docimpl->updateLayout();
+              if (token == BodyScrollLeft)
+                  sview->setContentsPos(value.toInteger(exec), sview->contentsY());
+              else
+                  sview->setContentsPos(sview->contentsX(), value.toInteger(exec));
+          }
+          return;
+        }
       }
     }
     break;

@@ -1,3 +1,17 @@
+2003-06-12  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3289113, body.scrollTop doesn't return the right
+	value.  Fix scrollLeft and scrollTop for body tags to just
+	use the view's offset.  This matches WinIE behavior.
+	
+        Reviewed by john
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty):
+        (KJS::HTMLElement::putValue):
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_html.lut.h:
+
 2003-06-12  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -176,20 +176,23 @@ const struct HashTable HTMLStyleElementTable = { 2, 5, HTMLStyleElementTableEntr
 namespace KJS {
 
 const struct HashEntry HTMLBodyElementTableEntries[] = {
-   { "background", KJS::HTMLElement::BodyBackground, DontDelete, 0, &HTMLBodyElementTableEntries[8] },
+   { "link", KJS::HTMLElement::BodyLink, DontDelete, 0, &HTMLBodyElementTableEntries[11] },
    { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
-   { 0, 0, 0, 0, 0 },
-   { "vLink", KJS::HTMLElement::BodyVLink, DontDelete, 0, 0 },
+   { "bgColor", KJS::HTMLElement::BodyBgColor, DontDelete, 0, &HTMLBodyElementTableEntries[12] },
    { "text", KJS::HTMLElement::BodyText, DontDelete, 0, 0 },
-   { "link", KJS::HTMLElement::BodyLink, DontDelete, 0, 0 },
-   { "aLink", KJS::HTMLElement::BodyALink, DontDelete, 0, &HTMLBodyElementTableEntries[10] },
-   { "bgColor", KJS::HTMLElement::BodyBgColor, DontDelete, 0, &HTMLBodyElementTableEntries[9] },
-   { "scrollHeight", KJS::HTMLElement::BodyScrollHeight, DontDelete|ReadOnly, 0, 0 },
-   { "scrollWidth", KJS::HTMLElement::BodyScrollWidth, DontDelete|ReadOnly, 0, 0 }
+   { 0, 0, 0, 0, 0 },
+   { "aLink", KJS::HTMLElement::BodyALink, DontDelete, 0, 0 },
+   { "background", KJS::HTMLElement::BodyBackground, DontDelete, 0, &HTMLBodyElementTableEntries[10] },
+   { "scrollWidth", KJS::HTMLElement::BodyScrollWidth, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "vLink", KJS::HTMLElement::BodyVLink, DontDelete, 0, &HTMLBodyElementTableEntries[13] },
+   { "scrollLeft", KJS::HTMLElement::BodyScrollLeft, DontDelete, 0, 0 },
+   { "scrollTop", KJS::HTMLElement::BodyScrollTop, DontDelete, 0, 0 },
+   { "scrollHeight", KJS::HTMLElement::BodyScrollHeight, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable HTMLBodyElementTable = { 2, 11, HTMLBodyElementTableEntries, 8 };
+const struct HashTable HTMLBodyElementTable = { 2, 14, HTMLBodyElementTableEntries, 10 };
 
 }; // namespace
 

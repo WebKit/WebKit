@@ -82,7 +82,7 @@ namespace KJS {
            LinkSheet, TitleText, MetaName, MetaHttpEquiv, MetaContent, MetaScheme,
            BaseHref, BaseTarget, IsIndexForm, IsIndexPrompt, StyleDisabled,
            StyleSheet, StyleType, StyleMedia, BodyBackground, BodyVLink, BodyText,
-           BodyLink, BodyALink, BodyBgColor, BodyScrollHeight, BodyScrollWidth,
+           BodyLink, BodyALink, BodyBgColor, BodyScrollLeft, BodyScrollTop, BodyScrollHeight, BodyScrollWidth,
            FormAction, FormEncType, FormElements, FormLength, FormAcceptCharset,
            FormReset, FormTarget, FormName, FormMethod, FormSubmit, SelectAdd,
            SelectTabIndex, SelectValue, SelectSelectedIndex, SelectLength,
