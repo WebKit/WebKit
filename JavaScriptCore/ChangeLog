@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+	- fix deployment build by avoiding deployment-only warning.
+
+        * kjs/scope_chain.cpp:
+        (KJS::ScopeChain::bottom):
+
+2004-04-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
 	Changed things so that newly created objects get a prototype based
 	on the scope chain of the current function, rather than the
 	interpreter that started execution. This fixes the following bugs:
