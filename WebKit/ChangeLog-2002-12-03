@@ -1,3 +1,7 @@
+2002-04-08  Darin Adler  <darin@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Re-added -Wno-format-y2k.
+
 2002-04-08  Richard Williamson  <rjw@apple.com>
 
         Added logs for Shelley to note start and completion of document load.

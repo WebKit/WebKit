@@ -141,7 +141,7 @@
 				OTHER_LDFLAGS = "-lwebcore -framework JavaScriptCore -framework WebFoundation -seg1addr 0x4000000";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wreorder -Wsign-compare";
+				WARNING_CFLAGS = "-Werror -Wall -Wno-format-y2k -Wcast-align -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wreorder -Wsign-compare";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (

@@ -126,7 +126,7 @@
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
 				PRODUCT_NAME = JavaScriptCore;
 				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = "-Werror -Wall -Wcast-align -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wreorder -Wsign-compare";
+				WARNING_CFLAGS = "-Werror -Wall -Wno-format-y2k -Wcast-align -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wreorder -Wsign-compare";
 				WRAPPER_EXTENSION = framework;
 			};
 			dependencies = (
@@ -426,7 +426,7 @@
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;
