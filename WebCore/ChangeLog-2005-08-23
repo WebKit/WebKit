@@ -1,3 +1,34 @@
+2002-09-13  Darin Adler  <darin@apple.com>
+
+	Fix assertion that happens on any page that has a non-HTML frame.
+
+	We were sending signals for objects in m_objects that are only supposed
+	to be sent for frames in m_frames. The fix is to use actual slot/signal
+	connections instead of our hard-coded logic.
+
+        * kwq/KWQKHTMLPartImpl.h: Add signals for started and completed.
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KHTMLPart::completed): Emit completed signal.
+        (KHTMLPart::started): Emit started signal.
+        (KWQKHTMLPartImpl::KWQKHTMLPartImpl): Create signals.
+
+        * kwq/KWQObject.mm:
+        (QObject::connect): Write out an error message if we see any signal connections
+	to signals that aren't implemented, with a hardwired exception list for ones we
+	either aren't ever going to do or just haven't gotten around to yet.
+
+        * kwq/KWQSignal.h: Add support for signals that take bool and KIO::Job *.
+        * kwq/KWQSignal.mm:
+        (KWQSignal::connect): Put in an actual ERROR call for the case where this fails.
+        (KWQSignal::disconnect): Put in an actual ERROR call for the case where it fails.
+        (KWQSignal::call): Add overloads for bool and KIO::Job *.
+
+        * kwq/KWQSlot.h: Add support for slots that take bool and KIO::Job *.
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Add four new members.
+        (KWQSlot::call): Add overloads for bool and KIO::Job * and support for the new
+	members.
+
 2002-09-12  Darin Adler  <darin@apple.com>
 
         * kwq/KWQAssertions.h: Update assertions from from the copy in WebFoundation.

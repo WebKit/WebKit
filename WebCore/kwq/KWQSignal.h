@@ -37,8 +37,10 @@ public:
     void disconnect(const KWQSlot &);
     
     void call() const; // should be "emit"; can't be due to define in qobject.h
+    void call(bool) const;
     void call(int) const;
     void call(const QString &) const;
+    void call(KIO::Job *) const;
 
 private:
     // forbid copying and assignment

@@ -28,6 +28,10 @@
 
 #import <qguardedptr.h>
 
+namespace KIO {
+    class Job;
+}
+
 // Like strcmp, but ignores spaces.
 bool KWQNamesMatch(const char *a, const char *b);
 
@@ -40,8 +44,10 @@ public:
     void clear() { m_object = 0; }
     
     void call() const;
+    void call(bool) const;
     void call(int) const;
     void call(const QString &) const;
+    void call(KIO::Job *) const;
     
     friend bool operator==(const KWQSlot &, const KWQSlot &);
 

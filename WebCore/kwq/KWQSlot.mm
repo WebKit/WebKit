@@ -38,12 +38,17 @@ using khtml::RenderFormElement;
 using khtml::RenderLineEdit;
 using khtml::RenderSelect;
 using khtml::RenderTextArea;
+using KIO::Job;
 
 enum FunctionNumber {
     signalFinishedParsing,
     slotAutoScroll,
+    slotChildCompleted,
+    slotChildCompletedWithBool,
+    slotChildStarted,
     slotClicked,
     slotFinishedParsing,
+    slotParentCompleted,
     slotRedirect,
     slotReturnPressed,
     slotSelected,
@@ -64,9 +69,21 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
     } else if (KWQNamesMatch(member, SLOT(slotClicked()))) {
         ASSERT(dynamic_cast<RenderFormElement *>(object));
         m_function = slotClicked;
+    } else if (KWQNamesMatch(member, SLOT(slotChildCompleted()))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotChildCompleted;
+    } else if (KWQNamesMatch(member, SLOT(slotChildCompleted(bool)))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotChildCompletedWithBool;
+    } else if (KWQNamesMatch(member, SLOT(slotChildStarted(KIO::Job *)))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotChildStarted;
     } else if (KWQNamesMatch(member, SLOT(slotFinishedParsing()))) {
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotFinishedParsing;
+    } else if (KWQNamesMatch(member, SLOT(slotParentCompleted()))) {
+        ASSERT(dynamic_cast<KHTMLPart *>(object));
+        m_function = slotParentCompleted;
     } else if (KWQNamesMatch(member, SLOT(slotRedirect()))) {
         ASSERT(dynamic_cast<KHTMLPart *>(object));
         m_function = slotRedirect;
@@ -89,7 +106,7 @@ KWQSlot::KWQSlot(QObject *object, const char *member) : m_object(0)
         ASSERT(dynamic_cast<RenderLineEdit *>(object) || dynamic_cast<RenderFileButton *>(object));
         m_function = slotTextChangedWithString;
     } else {
-        NSLog(@"trying to create a slot for unknown member %s", member);
+        ERROR("trying to create a slot for unknown member %s", member);
         return;
     }
     m_object = object;
@@ -101,42 +118,26 @@ void KWQSlot::call() const
         return;
     }
     
+    #define CASE(member, type, function) \
+        case member: { \
+            type *o = dynamic_cast<type *>(m_object.pointer()); \
+            if (o) { \
+                o->function(); \
+            } \
+            return; \
+        }
+    
     switch (m_function) {
-        case signalFinishedParsing: {
-            DocumentImpl *doc = dynamic_cast<DocumentImpl *>(m_object.pointer());
-            if (doc) {
-                doc->m_finishedParsing.call();
-            }
-            return;
-        }
-        case slotAutoScroll: {
-            KHTMLPart *part = dynamic_cast<KHTMLPart *>(m_object.pointer());
-            if (part) {
-                part->slotAutoScroll();
-            }
-            return;
-        }
-        case slotClicked: {
-            RenderFormElement *element = dynamic_cast<RenderFormElement *>(m_object.pointer());
-            if (element) {
-                element->slotClicked();
-            }
-            return;
-        }
-        case slotFinishedParsing: {
-            KHTMLPart *part = dynamic_cast<KHTMLPart *>(m_object.pointer());
-            if (part) {
-                part->slotFinishedParsing();
-            }
-            return;
-        }
-        case slotRedirect: {
-            KHTMLPart *part = dynamic_cast<KHTMLPart *>(m_object.pointer());
-            if (part) {
-                part->slotRedirect();
-            }
-            return;
-        }
+        CASE(signalFinishedParsing, DocumentImpl, m_finishedParsing.call)
+        CASE(slotAutoScroll, KHTMLPart, slotAutoScroll)
+        CASE(slotChildCompleted, KHTMLPart, slotChildCompleted)
+        CASE(slotClicked, RenderFormElement, slotClicked)
+        CASE(slotFinishedParsing, KHTMLPart, slotFinishedParsing)
+        CASE(slotParentCompleted, KHTMLPart, slotParentCompleted)
+        CASE(slotRedirect, KHTMLPart, slotRedirect)
+        CASE(slotSelectionChanged, RenderSelect, slotSelectionChanged)
+        CASE(slotTextChanged, RenderTextArea, slotTextChanged)
+        
         case slotReturnPressed: {
             RenderLineEdit *edit = dynamic_cast<RenderLineEdit *>(m_object.pointer());
             if (edit) {
@@ -148,21 +149,33 @@ void KWQSlot::call() const
             }
             return;
         }
-        case slotSelectionChanged: {
-            RenderSelect *select = dynamic_cast<RenderSelect *>(m_object.pointer());
-            if (select) {
-                select->slotSelectionChanged();
-            }
-            return;
-        }
-        case slotTextChanged: {
-            RenderTextArea *area = dynamic_cast<RenderTextArea *>(m_object.pointer());
-            if (area) {
-                area->slotTextChanged();
-            }
-            return;
-        }
     }
+    
+    #undef CASE
+}
+
+void KWQSlot::call(bool b) const
+{
+    if (!m_object) {
+        return;
+    }
+    
+    #define CASE(member, type, function) \
+        case member: { \
+            type *o = dynamic_cast<type *>(m_object.pointer()); \
+            if (o) { \
+                o->function(b); \
+            } \
+            return; \
+        }
+    
+    switch (m_function) {
+        CASE(slotChildCompletedWithBool, KHTMLPart, slotChildCompleted)
+    }
+    
+    #undef CASE
+    
+    call();
 }
 
 void KWQSlot::call(int i) const
@@ -206,6 +219,25 @@ void KWQSlot::call(const QString &string) const
             RenderFileButton *button = dynamic_cast<RenderFileButton *>(m_object.pointer());
             if (button) {
                 edit->slotTextChanged(string);
+            }
+            return;
+        }
+    }
+    
+    call();
+}
+
+void KWQSlot::call(Job *job) const
+{
+    if (!m_object) {
+        return;
+    }
+    
+    switch (m_function) {
+        case slotChildStarted: {
+            KHTMLPart *part = dynamic_cast<KHTMLPart *>(m_object.pointer());
+            if (part) {
+                part->slotChildStarted(job);
             }
             return;
         }

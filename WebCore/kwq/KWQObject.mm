@@ -52,7 +52,22 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
     
     KWQSignal *signal = sender->findSignal(signalName);
     if (!signal) {
-        // FIXME: ERROR
+#if !ERROR_DISABLED
+        if (1
+            && !KWQNamesMatch(member, SLOT(parentDestroyed()))
+            && !KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const QByteArray &)))
+            && !KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))
+            && !KWQNamesMatch(member, SLOT(slotHistoryChanged()))
+            && !KWQNamesMatch(member, SLOT(slotJobPercent(KIO::Job *, unsigned long)))
+            && !KWQNamesMatch(member, SLOT(slotJobSpeed(KIO::Job *, unsigned long)))
+            && !KWQNamesMatch(member, SLOT(slotLoaderRequestDone(khtml::DocLoader *, khtml::CachedObject *)))
+            && !KWQNamesMatch(member, SLOT(slotLoaderRequestStarted(khtml::DocLoader *, khtml::CachedObject *)))
+            && !KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL &)))
+            && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
+            && !KWQNamesMatch(member, SLOT(slotWidgetDestructed()))
+            )
+	ERROR("connecting member %s to signal %s, but that signal was not found", member, signalName);
+#endif
         return;
     }
     signal->connect(KWQSlot(const_cast<QObject *>(receiver), member));

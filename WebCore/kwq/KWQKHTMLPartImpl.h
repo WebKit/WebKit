@@ -28,6 +28,7 @@
 
 #include <qobject.h>
 #include <kurl.h>
+#include <KWQSignal.h>
 
 class KHTMLPart;
 class KHTMLPartPrivate;
@@ -134,6 +135,10 @@ private:
     KHTMLPartPrivate *d;
     
     WebCoreBridge *_bridge;
+    
+    KWQSignal _started;
+    KWQSignal _completed;
+    KWQSignal _completedWithBool;
 
     static QPtrList<KWQKHTMLPartImpl> &mutableInstances();
 

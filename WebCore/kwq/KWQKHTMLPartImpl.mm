@@ -52,11 +52,21 @@ using KIO::Job;
 using KParts::ReadOnlyPart;
 using KParts::URLArgs;
 
-void KHTMLPart::onURL(const QString &)
+void KHTMLPart::completed()
 {
+    impl->_completed.call();
+}
+
+void KHTMLPart::completed(bool arg)
+{
+    impl->_completed.call(arg);
 }
 
 void KHTMLPart::nodeActivated(const DOM::Node &aNode)
+{
+}
+
+void KHTMLPart::onURL(const QString &)
 {
 }
 
@@ -65,46 +75,22 @@ void KHTMLPart::setStatusBarText(const QString &status)
     impl->setStatusBarText(status);
 }
 
+void KHTMLPart::started(Job *j)
+{
+    impl->_started.call(j);
+}
+
 static void redirectionTimerMonitor(void *context)
 {
     KWQKHTMLPartImpl *impl = static_cast<KWQKHTMLPartImpl *>(context);
     impl->redirectionTimerStartedOrStopped();
 }
 
-void KHTMLPart::started(Job *j)
-{
-    KWQObjectSenderScope senderScope(this);
-    
-    if (parentPart()) {
-	parentPart()->slotChildStarted(j);
-    }
-}
-
-void KHTMLPart::completed()
-{
-    completed(false);
-}
-
-void KHTMLPart::completed(bool arg)
-{
-    KWQObjectSenderScope senderScope(this);
-    
-    if (parentPart()) {
-	parentPart()->slotChildCompleted(arg);
-    }
-    
-    ConstFrameIt it = d->m_frames.begin();
-    ConstFrameIt end = d->m_frames.end();
-    for (; it != end; ++it ) {
-        KHTMLPart *part = dynamic_cast<KHTMLPart *>((*it).m_part.pointer());
-        if (part) {
-            part->slotParentCompleted();
-        }
-    }
-}
-
 KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     : part(p), d(part->d)
+    , _started(p, SIGNAL(started(KIO::Job *)))
+    , _completed(p, SIGNAL(completed()))
+    , _completedWithBool(p, SIGNAL(completed(bool)))
 {
     mutableInstances().prepend(this);
     d->m_redirectionTimer.setMonitor(redirectionTimerMonitor, this);

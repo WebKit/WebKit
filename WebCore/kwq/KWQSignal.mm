@@ -26,6 +26,9 @@
 #import "KWQSignal.h"
 
 #import "qobject.h"
+#import "KWQAssertions.h"
+
+using KIO::Job;
 
 KWQSignal::KWQSignal(QObject *object, const char *name)
     : m_object(object), m_next(object->m_signalListHead), m_name(name)
@@ -49,7 +52,7 @@ KWQSignal::~KWQSignal()
 void KWQSignal::connect(const KWQSlot &slot)
 {
     if (!m_slot.isEmpty()) {
-        // ERROR
+        ERROR("multiple connects to the same signal are not supported");
         return;
     }
     m_slot = slot;
@@ -58,7 +61,7 @@ void KWQSignal::connect(const KWQSlot &slot)
 void KWQSignal::disconnect(const KWQSlot &slot)
 {
     if (m_slot != slot) {
-        // ERROR
+        ERROR("disconnecting a signal that wasn't connected");
         return;
     }
     m_slot.clear();
@@ -69,6 +72,14 @@ void KWQSignal::call() const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         m_slot.call();
+    }
+}
+
+void KWQSignal::call(bool b) const
+{
+    if (!m_object->m_signalsBlocked) {
+        KWQObjectSenderScope senderScope(m_object);
+        m_slot.call(b);
     }
 }
 
@@ -85,5 +96,13 @@ void KWQSignal::call(const QString &s) const
     if (!m_object->m_signalsBlocked) {
         KWQObjectSenderScope senderScope(m_object);
         m_slot.call(s);
+    }
+}
+
+void KWQSignal::call(Job *j) const
+{
+    if (!m_object->m_signalsBlocked) {
+        KWQObjectSenderScope senderScope(m_object);
+        m_slot.call(j);
     }
 }
