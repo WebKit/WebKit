@@ -1,5 +1,110 @@
 2002-03-06  Don Melton  <gramps@apple.com>
 
+	Removed unused files in kdelibs.
+
+	* src/kdelibs/AUTHORS:
+	* src/kdelibs/README:
+	* src/kdelibs/khtml/CHANGES:
+	* src/kdelibs/khtml/DESIGN.html:
+	* src/kdelibs/khtml/README.HTMLWidget:
+	* src/kdelibs/khtml/README.tags:
+	* src/kdelibs/khtml/SECURITY:
+	* src/kdelibs/khtml/TODO:
+	* src/kdelibs/khtml/design.h:
+	* src/kdelibs/khtml/domtreeview.cpp:
+	* src/kdelibs/khtml/domtreeview.h:
+	* src/kdelibs/khtml/ecma/AUTHORS:
+	* src/kdelibs/khtml/ecma/README:
+	* src/kdelibs/khtml/ecma/THANKS:
+	* src/kdelibs/khtml/ecma/TODO:
+	* src/kdelibs/khtml/ecma/jsk.html:
+	* src/kdelibs/khtml/ecma/testecma.cpp:
+	* src/kdelibs/khtml/html/dtd.dtd:
+	* src/kdelibs/khtml/java/KJAS_GRAMMAR.txt:
+	* src/kdelibs/khtml/java/README:
+	* src/kdelibs/khtml/java/TODO:
+	* src/kdelibs/khtml/java/build.xml:
+	* src/kdelibs/khtml/java/javaembed.cpp:
+	* src/kdelibs/khtml/java/kjava.jar:
+	* src/kdelibs/khtml/java/kjava.policy.in:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASAppletClassLoader.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASAppletContext.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASAppletStub.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASConsole.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASProtocolHandler.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASSecurityManager.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/KJASSoundPlayer.java:
+	* src/kdelibs/khtml/java/org/kde/kjas/server/Main.java:
+	* src/kdelibs/khtml/java/tests/badapplets/BadApplet.jar:
+	* src/kdelibs/khtml/java/tests/badapplets/BadApplet.java:
+	* src/kdelibs/khtml/java/tests/badapplets/applet.html:
+	* src/kdelibs/khtml/java/tests/good_sites:
+	* src/kdelibs/khtml/java/tests/testkjavaappletserver.cpp:
+	* src/kdelibs/khtml/khtml.desktop:
+	* src/kdelibs/khtml/khtml.rc:
+	* src/kdelibs/khtml/khtml_browser.rc:
+	* src/kdelibs/khtml/khtml_ext.cpp:
+	* src/kdelibs/khtml/khtml_factory.cpp:
+	* src/kdelibs/khtml/khtml_find.cpp:
+	* src/kdelibs/khtml/khtml_find.h:
+	* src/kdelibs/khtml/khtml_pagecache.cpp:
+	* src/kdelibs/khtml/khtml_pagecache.h:
+	* src/kdelibs/khtml/khtml_part.cpp:
+	* src/kdelibs/khtml/khtml_popupmenu.rc:
+	* src/kdelibs/khtml/khtml_run.cpp:
+	* src/kdelibs/khtml/khtml_run.h:
+	* src/kdelibs/khtml/khtmldefaults.h:
+	* src/kdelibs/khtml/khtmlimage.cpp:
+	* src/kdelibs/khtml/khtmlimage.desktop:
+	* src/kdelibs/khtml/khtmlimage.h:
+	* src/kdelibs/khtml/pics/hi16-action-images_display.png:
+	* src/kdelibs/khtml/pics/hi22-action-images_display.png:
+	* src/kdelibs/khtml/pics/hi32-action-images_display.png:
+	* src/kdelibs/khtml/test/README:
+	* src/kdelibs/khtml/test/URL1.html:
+	* src/kdelibs/khtml/test/URL2.html:
+	* src/kdelibs/khtml/test/align.html:
+	* src/kdelibs/khtml/test/align1.html:
+	* src/kdelibs/khtml/test/align2.html:
+	* src/kdelibs/khtml/test/anchor1.html:
+	* src/kdelibs/khtml/test/anchor2.html:
+	* src/kdelibs/khtml/test/badpages.html:
+	* src/kdelibs/khtml/test/buggy.html:
+	* src/kdelibs/khtml/test/button.html:
+	* src/kdelibs/khtml/test/color.html:
+	* src/kdelibs/khtml/test/fixed-background.html:
+	* src/kdelibs/khtml/test/image.gif:
+	* src/kdelibs/khtml/test/image_map.html:
+	* src/kdelibs/khtml/test/index.html:
+	* src/kdelibs/khtml/test/java.html:
+	* src/kdelibs/khtml/test/javascript.html:
+	* src/kdelibs/khtml/test/jsplugins.html:
+	* src/kdelibs/khtml/test/konqi.gif:
+	* src/kdelibs/khtml/test/lake.class:
+	* src/kdelibs/khtml/test/listing.html:
+	* src/kdelibs/khtml/test/lists.html:
+	* src/kdelibs/khtml/test/nav_bar.gif:
+	* src/kdelibs/khtml/test/nbsp.html:
+	* src/kdelibs/khtml/test/notitle.html:
+	* src/kdelibs/khtml/test/object.html:
+	* src/kdelibs/khtml/test/pseudo.html:
+	* src/kdelibs/khtml/test/renders.html:
+	* src/kdelibs/khtml/test/supsub.html:
+	* src/kdelibs/khtml/test/testpages.html:
+	* src/kdelibs/khtml/test/textarea.html:
+	* src/kdelibs/khtml/test/title.html:
+	* src/kdelibs/khtml/testcss.cpp:
+	* src/kdelibs/khtml/testkhtml.cpp:
+	* src/kdelibs/khtml/testkhtml.h:
+	* src/kdelibs/khtml/testrender.cpp:
+	* src/kdelibs/khtml/testrender.h:
+	* src/kdelibs/kjs/README:
+	* src/kdelibs/kjs/THANKS:
+	* src/kdelibs/kjs/create_hash_table:
+	* src/kdelibs/kjs/keywords.table:
+
+2002-03-06  Don Melton  <gramps@apple.com>
+
 	Cleaned up all our changes to kdelibs, removed bitrot, and replaced use
 	of _KWQ_ with new APPLE_CHANGES define.
 
