@@ -24,97 +24,12 @@
  */
 #include <kwqdebug.h>
 
-#include <keditcl.h>
 #include <qtextedit.h>
 
 #import <KWQTextArea.h>
 
 
-// RenderTextArea actually uses a TextAreaWidget->KEdit->QMultiLineEdit->QTableView
-
-QTableView::QTableView()
-{
-    // Nothing needed.
-    _logNotYetImplemented();
-}
-
-
-QTableView::~QTableView()
-{
-    // Nothing needed.
-    _logNotYetImplemented();
-}
-
-
-QScrollBar *QTableView::verticalScrollBar() const
-{
-    // Nothing needed.
-    _logNeverImplemented();
-    return 0L;
-}
-
-
-QScrollBar *QTableView::horizontalScrollBar() const
-{
-    // Nothing needed.
-    _logNeverImplemented();
-    return 0L;
-}
-
-
-void QTableView::setTableFlags(uint)
-{
-    // Nothing needed.
-    _logNeverImplemented();
-}
-
-
-void QTableView::clearTableFlags(uint f = ~0)
-{
-    // Nothing needed.
-    _logNeverImplemented();
-}
-
-
-QMultiLineEdit::QMultiLineEdit()
-{
-    // Nothing needed.
-    _logNeverImplemented();
-}
-
-QMultiLineEdit::~QMultiLineEdit()
-{
-    // Nothing needed.
-    _logNeverImplemented();
-}
-
-KEdit::KEdit()
-{
-    _logNeverImplemented();
-}
-
-
-KEdit::KEdit(QWidget *w)
-{
-    KWQTextArea *textView;
-    
-    textView = [[KWQTextArea alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
-    setView (textView);
-    [textView release];
-}
-
-
-KEdit::~KEdit()
-{
-}
-
-
 // class QTextEdit
-
-QTextEdit::QTextEdit()
-{
-    _logNeverImplemented();
-}
 
 QTextEdit::QTextEdit(QWidget *parent)
 {
@@ -219,5 +134,17 @@ void QTextEdit::selectAll()
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
     [textView selectAll];
+}
+
+int QTextEdit::verticalScrollBarWidth() const
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    return (int) [[textView verticalScroller] frame].size.width;
+}
+
+int QTextEdit::horizontalScrollBarHeight() const
+{
+    KWQTextArea *textView = (KWQTextArea *)getView();
+    return (int) [[textView horizontalScroller] frame].size.height;
 }
 

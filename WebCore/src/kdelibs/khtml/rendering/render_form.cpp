@@ -931,7 +931,7 @@ void RenderSelect::layout( )
 #ifdef APPLE_CHANGES
         width += w->scrollBarWidth();
         height = size*height;
-        // NSBrowser has problems drawing scrollbar correctly when it's size is too small.
+        // NSBrowser has problems drawing scrollbar correctly when its size is too small.
         if (height < 60)
             height = 60;
 #else /* APPLE_CHANGES not defined */
@@ -1199,12 +1199,21 @@ void RenderTextArea::calcMinMaxWidth()
 
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     const QFontMetrics &m = style()->fontMetrics();
+#ifdef APPLE_CHANGES
+    QSize size( QMAX(element()->cols(), 1)*m.width('x') + w->frameWidth() +
+                w->verticalScrollBarWidth(),
+                QMAX(element()->rows(), 1)*m.height() + w->frameWidth()*2 +
+                (w->wordWrap() == QTextEdit::NoWrap ?
+                 w->horizontalScrollBarHeight() : 0)
+        );
+#else
     QSize size( QMAX(element()->cols(), 1)*m.width('x') + w->frameWidth() +
                 w->verticalScrollBar()->sizeHint().width(),
                 QMAX(element()->rows(), 1)*m.height() + w->frameWidth()*2 +
                 (w->wordWrap() == QTextEdit::NoWrap ?
                  w->horizontalScrollBar()->sizeHint().height() : 0)
         );
+#endif
 
     setIntrinsicWidth( size.width() );
     setIntrinsicHeight( size.height() );

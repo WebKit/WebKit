@@ -1,3 +1,27 @@
+2002-04-01  Darin Adler  <darin@apple.com>
+
+	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::restoreScrollBar): Disable code
+        that checks if the scroll bar is visible, because it currently doesn't do us
+        any good. We may want to turn it back on if we ever implement setVScrollBarMode.
+	(KHTMLView::viewportWheelEvent): Disable this code for now since it requires
+        access to the vertical scroll bar object.
+	* src/kdelibs/khtml/rendering/render_form.cpp:
+        (RenderTextArea::calcMinMaxWidth): Use our own verticalScrollBarWidth and
+        horizontalScrollBarHeight rather than getting scroll bar widgets.
+        
+	* src/kwq/qt/qscrollview.h: Remove QScrollView::horizontalScrollBar() and
+        QScrollView::verticalScrollBar(), since we don't have QWidgets to return for
+        these two. We can re-add these later if we need to.
+         
+	* src/kwq/qt/qtextedit.h: Removed QMultiLineEdit, and QTextEdit() constructor.
+	* src/kwq/kdeui/keditcl.h: Removed.
+	* src/kwq/KWQTextEdit.mm: Remove unused functions.
+	(QTextEdit::verticalScrollBarWidth), (QTextEdit::horizontalScrollBarHeight):
+        Implement these two new ones.
+	* src/kwq/KWQScrollView.mm: Remove unused functions.
+
+	* src/kdelibs/khtml/rendering/render_form.cpp: Fixed spelling error.
+
 2002-03-31  Maciej Stachowiak  <mjs@apple.com>
 
 	Fix Radar 2890464 (abcnews.com renders as a blank blue page (probably a JavaScript

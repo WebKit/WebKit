@@ -122,20 +122,6 @@ void QScrollView::setContentsPos(int x, int y)
 }
 
 
-QScrollBar *QScrollView::horizontalScrollBar() const
-{
-    _logNeverImplemented();
-    return 0L;
-}
-
-
-QScrollBar *QScrollView::verticalScrollBar() const
-{
-    _logNeverImplemented();
-    return 0L;
-}
-
-
 void QScrollView::setVScrollBarMode(ScrollBarMode)
 {
     _logNeverImplemented();

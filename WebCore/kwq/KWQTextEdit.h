@@ -41,7 +41,6 @@ class QTextEdit : public QScrollView
 	PlainText,
     } TextFormat;
 
-    QTextEdit::QTextEdit();
     QTextEdit(QWidget *parent);
 
     void setText(const QString &);
@@ -61,30 +60,11 @@ class QTextEdit : public QScrollView
     void setCursorPosition(int, int);
 
     void selectAll();
-};
-
-// class QMultiLineEdit ========================================================
-
-class QMultiLineEdit : public QTextEdit {
-public:
-
-    QMultiLineEdit();
-    ~QMultiLineEdit();
-
-    // member functions --------------------------------------------------------
 
 #ifdef APPLE_CHANGES
     int verticalScrollBarWidth() const;
     int horizontalScrollBarHeight() const;
 #endif
-
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QMultiLineEdit(const QMultiLineEdit &);
-    QMultiLineEdit &operator=(const QMultiLineEdit &);
-
-}; // class QMultiLineEdit =====================================================
+};
 
 #endif /* QTEXTEDIT_H_ */
