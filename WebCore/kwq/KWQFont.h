@@ -61,6 +61,8 @@ public:
     void setPixelSize(float s);
     int pixelSize() const { return (int)_size; }
 
+    bool isFixedPitch() const;
+    
     bool operator==(const QFont &x) const;
     bool operator!=(const QFont &x) const { return !(*this == x); }
     

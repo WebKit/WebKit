@@ -248,3 +248,11 @@ void Font::update( QPaintDeviceMetrics* devMetrics ) const
     fontDef.hasNbsp = fm.inFont( 0xa0 );
 #endif
 }
+
+#ifdef APPLE_CHANGES
+bool Font::isFixedPitch() const
+{
+    return f.isFixedPitch();
+}
+#endif
+

@@ -15,6 +15,10 @@
 
 #import <mach-o/dyld.h>
 
+@interface NSFont (WebAppKitSecretAPI)
+- (BOOL)_isFakeFixedPitch;
+@end
+
 @interface WebFontCacheKey : NSObject
 {
     NSString *family;
@@ -248,6 +252,11 @@ static int getLCDScaleParameters(void)
 + (WebTextRendererFactory *)sharedFactory;
 {
     return (WebTextRendererFactory *)[super sharedFactory];
+}
+
+- (BOOL)isFontFixedPitch: (NSFont *)font
+{
+    return [font isFixedPitch] || [font _isFakeFixedPitch];
 }
 
 - init

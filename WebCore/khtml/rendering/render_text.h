@@ -217,8 +217,9 @@ public:
 #if APPLE_CHANGES
     TextSlave * findTextSlave( int offset, int &pos );
     TextSlaveArray textSlaves() { return m_lines; }
-    int widthFromBuffer(const Font *, int start, int len) const;
-    void computeWidths();
+    int widthFromCache(const Font *, int start, int len) const;
+    bool shouldUseMonospaceCache(const Font *) const;
+    void cacheWidths();
 #endif
 
 protected:
@@ -247,7 +248,7 @@ protected: // members
     
     // 19 bits left
 #if APPLE_CHANGES
-    float *m_widths;
+    int m_monospaceCharacterWidth;
 #endif
 };
 

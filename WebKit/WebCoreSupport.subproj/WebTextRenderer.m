@@ -102,6 +102,7 @@ struct UnicodeGlyphMap {
 - (BOOL)_forceAscenderDelta;
 - (BOOL)_canDrawOutsideLineHeight;
 - (BOOL)_isSystemFont;
+- (BOOL)_isFakeFixedPitch;
 @end
 
 @class NSCGSFont;
@@ -436,36 +437,22 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
 }
 
 // Nasty hack to determine if we should round or ceil space widths.
-// If the font is monospace, or all the ascii characters have the same
-// width as the space character we ceil to ensure that every character
-// and the space are the same width.  Otherwise we round.
+// If the font is monospace, or fake monospace we ceil to ensure that 
+// every character and the space are the same width.  Otherwise we round.
 - (void)_computeWidthForSpace
 {
-    float aWidth;
-    UniChar i;
     UniChar c = ' ';
     float _spaceWidth;
-    NSFont *substituteFont;
 
     spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
     _spaceWidth = widthForGlyph(self, glyphToWidthMap, spaceGlyph, 0);
     ceiledSpaceWidth = (float)CEIL_TO_INT(_spaceWidth);
     roundedSpaceWidth = (float)ROUND_TO_INT(_spaceWidth);
-    if ([font isFixedPitch]){
+    if ([font isFixedPitch] || [font _isFakeFixedPitch]){
         adjustedSpaceWidth = ceiledSpaceWidth;
     }
     else {
-        for (i = 0x21; i < 0x7f; i++){
-            aWidth = widthForCharacter(self, i, &substituteFont);
-            if (aWidth != 0 && aWidth != _spaceWidth)
-                break;
-        }
-        if (i == 0x7f){
-            adjustedSpaceWidth = ceiledSpaceWidth;
-        }
-        else {
-            adjustedSpaceWidth = roundedSpaceWidth;
-        }
+        adjustedSpaceWidth = roundedSpaceWidth;
     }
     spaceWidth = _spaceWidth;
 }

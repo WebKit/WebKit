@@ -175,6 +175,8 @@ void TextSlave::paintBoxDecorations(QPainter *pt, RenderStyle* style, RenderText
         p->paintBorder(pt, _tx, _ty, width, height, style, begin, end);
 }
 
+#define LOCAL_WIDTH_BUF_SIZE	1024
+
 FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineHeight)
 {
 //     kdDebug(6040) << "TextSlave::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
@@ -203,15 +205,27 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 #if APPLE_CHANGES
     // Floating point version needed for best results with Mac OS X text.
     float delta = _x - (_tx + m_x);
-    float widths[text->str->l]; 
-    
-    // Do width calculations for whole run once.
-    f->floatCharacterWidths( text->str->s, text->str->l, m_start, m_len, m_toAdd, &widths[0]);
+    float _widths[LOCAL_WIDTH_BUF_SIZE]; 
+    float *widths = 0;
+    float monospaceWidth = 0;
+
+    if (text->shouldUseMonospaceCache(f)){
+        monospaceWidth = text->widthFromCache (f, m_start, 1);
+    }
+    else {
+        if (text->str->l > LOCAL_WIDTH_BUF_SIZE)
+            widths = (float *)malloc(text->str->l * sizeof(float));
+        else
+            widths = &_widths[0];
+        // Do width calculations for whole run once.
+        f->floatCharacterWidths( text->str->s, text->str->l, m_start, m_len, m_toAdd, &widths[0]);
+    }
+        
     int pos = 0;
     if ( m_reversed ) {
 	delta -= m_width;
 	while(pos < m_len) {
-	    float w = widths[pos+m_start];
+	    float w = (monospaceWidth != 0 ? monospaceWidth : widths[pos+m_start]);
 	    float w2 = w/2;
 	    w -= w2;
 	    delta += w2;
@@ -222,7 +236,7 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 	}
     } else {
 	while(pos < m_len) {
-	    float w = widths[pos+m_start];
+	    float w = (monospaceWidth != 0 ? monospaceWidth : widths[pos+m_start]);
 	    float w2 = w/2;
 	    w -= w2;
 	    delta -= w2;
@@ -232,6 +246,9 @@ FindSelectionResult TextSlave::checkSelectionPoint(int _x, int _y, int _tx, int 
 	    delta -= w;
 	}
     }
+    
+    if (widths != _widths)
+        free (widths);
 #else
     int delta = _x - (_tx + m_x);
     //kdDebug(6040) << "TextSlave::checkSelectionPoint delta=" << delta << endl;
@@ -326,9 +343,11 @@ RenderText::RenderText(DOM::NodeImpl* node, DOMStringImpl *_str)
 
     m_minWidth = -1;
     m_maxWidth = -1;
-#if APPLE_CHANGES
-    m_widths = 0;
+
+#ifdef APPLE_CHANGES
+    m_monospaceCharacterWidth = 0;
 #endif
+
     str = _str;
     if(str) str->ref();
     KHTMLAssert(!str || !str->l || str->s);
@@ -355,9 +374,9 @@ void RenderText::setStyle(RenderStyle *_style)
         if (changedText && element() && element()->string())
             setText(element()->string(), changedText);
 #if APPLE_CHANGES
-        // set also call computeWidths(), so no need to recache if that has already been done.
+        // set also call cacheWidths(), so no need to recache if that has already been done.
         else
-            computeWidths();
+            cacheWidths();
 #endif
     }
 }
@@ -365,10 +384,6 @@ void RenderText::setStyle(RenderStyle *_style)
 RenderText::~RenderText()
 {
     if(str) str->deref();
-#if APPLE_CHANGES
-    if (m_widths)
-        free (m_widths);
-#endif
 }
 
 void RenderText::detach(RenderArena* renderArena)
@@ -774,48 +789,36 @@ void RenderText::paint(QPainter *p, int x, int y, int w, int h,
 
 #ifdef APPLE_CHANGES
 
-// We cache the widths array for the characters in the string only
-// if the string is very large.  This is a short term performance
-// optimization.  It has the downside of increasing the size
-// of each render text by float * str->l.  The performance
-// gained is huge though, so this is justifiable.  The long term
-// fix is to rework the word break/line break/bidi mechanisms
-// to reduce the measurement performed, and to correctly account
-// for unicode break points and surrogate pairs.
-#define MIN_STRING_LENGTH_FOR_WIDTH_CACHE 1024
+bool RenderText::shouldUseMonospaceCache(const Font *f) const
+{
+    return (f && f->isFixedPitch());
+}
 
-void RenderText::computeWidths()
+// We cache the width of the ' ' character for <pre> text.  We could go futher
+// and cache a widths array for all styles, at the expense of increasing the size of the
+// RenderText.
+void RenderText::cacheWidths()
 {
     const Font *f = htmlFont( false );
     
-    if (f){
-        if (m_widths){
-            free (m_widths);
-            m_widths = 0;
-        }
-
-        // Only cache widths array if style()->whiteSpace() == PRE.  This prevents
-        // inappropriate mismeasurement of extra whitespace embedded in the string.
-        if (str->l >= MIN_STRING_LENGTH_FOR_WIDTH_CACHE && style()->whiteSpace() == PRE){
-            m_widths = (float *)malloc(str->l * sizeof(float));
-            f->floatCharacterWidths( str->s, str->l, 0, str->l, 0, m_widths);
-        }
+    if (shouldUseMonospaceCache(f)){	
+        float fw;
+        QChar c(' ');
+        f->floatCharacterWidths( &c, 1, 0, 1, 0, &fw);
+        m_monospaceCharacterWidth = (int)fw;
     }
+    else
+        m_monospaceCharacterWidth = 0;
 }
 
 
-inline int RenderText::widthFromBuffer(const Font *f, int start, int len) const
+inline int RenderText::widthFromCache(const Font *f, int start, int len) const
 {
-    float width = 0;
-    int i;
-    
-    if (m_widths == 0)
-        return f->width(str->s, str->l, start, len);
-        
-    for (i = start; i < start+len; i++){
-        width += m_widths[i];
+    if (m_monospaceCharacterWidth != 0){
+        return len * m_monospaceCharacterWidth;
     }
-    return (int)width;
+    
+    return f->width(str->s, str->l, start, len);
 }
 #endif
 
@@ -875,7 +878,7 @@ void RenderText::trimmedMinMaxWidth(short& beginMinW, bool& beginWS,
 #if !APPLE_CHANGES
                 endMaxW = f->width(str->s, str->l, i, linelen);
 #else
-                endMaxW = widthFromBuffer(f, i, linelen);
+                endMaxW = widthFromCache(f, i, linelen);
 #endif
                 if (firstLine) {
                     firstLine = false;
@@ -955,7 +958,7 @@ void RenderText::calcMinMaxWidth()
 #if !APPLE_CHANGES
             int w = f->width(str->s, str->l, i, wordlen);
 #else
-            int w = widthFromBuffer(f, i, wordlen);
+            int w = widthFromCache(f, i, wordlen);
 #endif
             currMinWidth += w;
             currMaxWidth += w;
@@ -1059,7 +1062,7 @@ void RenderText::setText(DOMStringImpl *text, bool force)
     }
 
 #if APPLE_CHANGES
-    computeWidths();
+    cacheWidths();
 #endif
     // ### what should happen if we change the text of a
     // RenderBR object ?
@@ -1154,7 +1157,7 @@ unsigned int RenderText::width(unsigned int from, unsigned int len, const Font *
  	 w = m_maxWidth;
 #if APPLE_CHANGES
     else if (f == &style()->htmlFont())
-        w = widthFromBuffer (f, from, len);
+        w = widthFromCache (f, from, len);
 #endif
     else
 	w = f->width(str->s, str->l, from, len );

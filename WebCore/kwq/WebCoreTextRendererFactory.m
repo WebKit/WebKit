@@ -35,6 +35,10 @@ static WebCoreTextRendererFactory *sharedFactory;
     return sharedFactory;
 }
 
+- (BOOL)isFontFixedPitch: (NSFont *)font
+{
+    return NO;
+}
 
 - init
 {

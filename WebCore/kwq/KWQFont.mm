@@ -136,6 +136,12 @@ bool QFont::bold() const
     return _trait & NSBoldFontMask;
 }
 
+bool QFont::isFixedPitch() const
+{
+    return [[WebCoreTextRendererFactory sharedFactory] isFontFixedPitch: getNSFont()];
+}
+
+
 bool QFont::operator==(const QFont &compareFont) const
 {
     return _family == compareFont._family

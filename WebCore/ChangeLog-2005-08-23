@@ -1,3 +1,35 @@
+2003-01-03  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3138743, 3138678, and 3138854.  Removed the RenderText
+        widths cache, replaced it with a much simply monospace character
+        cache.  Should be much faster for covered cases too!  Also fixed
+        buffer overrun problem causing the crash in 3138854.
+        
+        Reviewed by darin.
+
+        * khtml/rendering/font.cpp:
+        (Font::isFixedPitch):
+        * khtml/rendering/font.h:
+        * khtml/rendering/render_text.cpp:
+        (TextSlave::checkSelectionPoint):
+        (RenderText::RenderText):
+        (RenderText::setStyle):
+        (RenderText::~RenderText):
+        (RenderText::shouldUseMonospaceCache):
+        (RenderText::cacheWidths):
+        (RenderText::widthFromCache):
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::setText):
+        (RenderText::width):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQFont.h:
+        * kwq/KWQFont.mm:
+        (QFont::isFixedPitch):
+        * kwq/WebCoreTextRendererFactory.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (-[WebCoreTextRendererFactory isFontFixedPitch:]):
+
 2003-01-03  John Sullivan  <sullivan@apple.com>
 	
 	- fixed 3138673 -- reproducible crash in JavaScript

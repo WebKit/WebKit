@@ -102,6 +102,7 @@ public:
                           QPainter::TextDirection d) const;
     float floatWidth( QChar *str, int slen, int pos, int len ) const;
     void floatCharacterWidths( QChar *str, int slen, int pos, int len, int toAdd, float *buffer) const;
+    bool isFixedPitch() const;
 #endif
     int width( QChar *str, int slen, int pos, int len ) const;
     int width( QChar *str, int slen, int pos ) const;
