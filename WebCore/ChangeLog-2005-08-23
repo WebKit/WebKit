@@ -1,5 +1,19 @@
 2002-07-29  Richard Williamson  <rjw@apple.com>
 
+        Fixed 3009074.  Added KHTMLPart::jumpToSelection and related scaffolding (part impl, bridge, etc.)
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::jumpToSelection):
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPartImpl.h:
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::jumpToSelection):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge jumpToSelection]):
+
+2002-07-29  Richard Williamson  <rjw@apple.com>
+
         Fixed 3009067.  We were not correctly testing the first character of the node string.  Fixed in KWQString.
         This highlighted another problem.  KWQ does not support unichar * string find w/ case sensitive argument.
         KWQString implements QString::find(const char *chs, int index, bool caseSensitive), so  QStrings passed 

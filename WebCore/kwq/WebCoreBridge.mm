@@ -448,4 +448,9 @@ using namespace khtml;
     return part->findTextNext (QString::fromCFString((CFStringRef)string), forward, caseFlag, FALSE);
 }
 
+- (void)jumpToSelection
+{
+    part->jumpToSelection();
+}
+
 @end

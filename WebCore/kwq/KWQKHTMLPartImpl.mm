@@ -29,6 +29,7 @@
 #import <html_documentimpl.h>
 #import <render_root.h>
 #import <render_frames.h>
+#import <render_text.h>
 #import <khtmlpart_p.h>
 #import <khtmlview.h>
 
@@ -721,3 +722,23 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
     
     setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
 }
+
+
+void KWQKHTMLPartImpl::jumpToSelection()
+{
+    // Assumes that selection will only ever be text nodes.  This is currently
+    // true, but will it always be so?
+    if (d->m_selectionStart != 0){
+        khtml::RenderObject *ro = static_cast<khtml::RenderObject *>(d->m_selectionStart.handle()->renderer());
+
+        if (strcmp(ro->renderName(), "RenderText") == 0){
+            int x = 0, y = 0;
+            khtml::RenderText *rt = static_cast<khtml::RenderText *>(d->m_selectionStart.handle()->renderer());
+            rt->posOfChar(d->m_startOffset, x, y);
+            // The -50 offset is copied from KHTMLPart::findTextNext, which sets the contents position
+            // after finding a matched text string.
+            d->m_view->setContentsPos(x-50, y-50);
+        }
+    }
+}
+

@@ -83,6 +83,11 @@
     [bridge selectAll];
 }
 
+- (void)jumpToSelection: sender
+{
+    [[self _bridge] jumpToSelection];
+}
+
 
 - (BOOL)validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item 
 {
@@ -91,6 +96,8 @@
     if (action == @selector(copy:))
         return [self hasSelection];
     else if (action == @selector(takeFindStringFromSelection:))
+        return [self hasSelection];
+    else if (action == @selector(jumpToSelection:))
         return [self hasSelection];
     
     return YES;

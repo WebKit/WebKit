@@ -1090,7 +1090,8 @@ private:
   friend class KHTMLPartPrivate;
 
 #ifdef APPLE_CHANGES
-public:
+public:  
+  void jumpToSelection();
   void setStatusBarText(const QString &);
   KWQKHTMLPartImpl *impl;
   friend class KWQKHTMLPartImpl;

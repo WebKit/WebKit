@@ -2110,6 +2110,12 @@ QString KHTMLPart::selectedText() const
     return text.mid(start, end-start);
 }
 
+void KHTMLPart::jumpToSelection()
+{
+    impl->jumpToSelection();
+}
+
+
 bool KHTMLPart::hasSelection() const
 {
   return ( !d->m_selectionStart.isNull() &&

@@ -1,5 +1,14 @@
 2002-07-29  Richard Williamson  <rjw@apple.com>
 
+        Fixed 3009074.  Added [WebHTMLView jumpToSelection:] and related user interface
+        item validation.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView jumpToSelection:]):
+        (-[WebHTMLView validateUserInterfaceItem:]):
+
+2002-07-29  Richard Williamson  <rjw@apple.com>
+
         Fixed 3009085.  Implemented takeFindStringFromSelection: on WebHTMLView and WebTextView.
         Also added user interface item validation for that method.
         

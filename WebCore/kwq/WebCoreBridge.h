@@ -118,6 +118,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
 
 - (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag;
+- (void)jumpToSelection;
 
 @end
 
