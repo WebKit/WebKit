@@ -1220,6 +1220,26 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             sawSpace = false;
             lastSpacePos = 0;
             trailingSpaceObject = 0;
+            
+            if (o->isListMarker() && o->style()->listStylePosition() == OUTSIDE) {
+                // The marker must not have an effect on whitespace at the start
+                // of the line.  We start ignoring spaces to make sure that any additional
+                // spaces we see will be discarded. 
+                //
+                // Optimize for a common case. If we can't find whitespace after the list
+                // item, then this is all moot. -dwh
+                RenderObject* next = Bidinext( start.par, o );
+                if (!m_pre && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0 &&
+                      (static_cast<RenderText*>(next)->text()[0].direction() == QChar::DirWS ||
+                      static_cast<RenderText*>(next)->text()[0] == '\n')) {
+                    sawSpace = true;
+                    ignoringSpaces = true;
+                    BidiIterator* endMid = new (o->renderArena()) BidiIterator();
+                    endMid->obj = o;
+                    endMid->pos = 0;
+                    midpoints.append(endMid);
+                }
+            }
         } else if ( o->isText() ) {
             RenderText *t = static_cast<RenderText *>(o);
             int strlen = t->stringLength();

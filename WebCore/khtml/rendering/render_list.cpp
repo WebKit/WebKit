@@ -138,11 +138,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
 #endif
     
     newStyle->inheritFrom(style());
-    if(newStyle->direction() == LTR)
-        newStyle->setFloating(FLEFT);
-    else
-        newStyle->setFloating(FRIGHT);
-
+   
     if(!m_marker && style()->listStyleType() != LNONE) {
 
         m_marker = new (renderArena()) RenderListMarker();
@@ -425,7 +421,8 @@ void RenderListMarker::calcMinMaxWidth()
         if(style()->listStylePosition() == INSIDE)
             m_width = m_listImage->pixmap().width() + 5;
         m_height = m_listImage->pixmap().height();
-	setMinMaxKnown();
+        m_minWidth = m_maxWidth = m_width;
+        setMinMaxKnown();
         return;
     }
 

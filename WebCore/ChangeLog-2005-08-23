@@ -1,3 +1,36 @@
+2002-12-07  David Hyatt  <hyatt@apple.com>
+
+	This change fixes three bugs in list items.  
+
+	(1) Stop implementing markers as floats.  This is simply
+	wrong.  The bullet doesn't affect the height of the line
+	box if it's a float, and it can also affect other
+	list items that follow the bullet's enclosing list item
+	(leading to odd staggered layout of lists).
+
+	(2) Relax the DTD.  It was trying to obey strict HTML, which
+	is hopeless in the case of lists.  Match the behavior of
+	both Gecko and the IEs (mac and win32)  and allow non-list 
+	content to be inserted between list items without being
+	wrapped in its own list item.  Lists were making empty
+	items for whitespace in between items, and this stops that
+	and makes our lists behave much more like Gecko and the IEs.
+
+	(3) The bullet's min and max width weren't getting set, which
+	could lead to confused line width calculations when image
+	bullets were used.
+	
+        Reviewed by: gramps
+
+	* ChangeLog:
+	* khtml/html/dtd.cpp:
+        (DOM::checkChild):
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle):
+        (RenderListMarker::calcMinMaxWidth):
+
 2002-12-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by: Maciej

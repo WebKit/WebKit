@@ -644,6 +644,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_NOSCRIPT:
     case ID_CAPTION:
     case ID_MARQUEE:
+    case ID_UL:
+    case ID_OL:
         // DIV: _1 *
         return check_array(childID, tag_list_1);
     case ID_MAP:
@@ -663,11 +665,6 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_DL:
         // DL: _6 +
         return check_array(childID, tag_list_6);
-    case ID_OL:
-    case ID_UL:
-        // OL: LI +
-        if(childID == ID_LI) return true;
-        return false;
     case ID_DIR:
     case ID_MENU:
         // (DIR|MENU): LI + - _3
