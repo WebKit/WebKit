@@ -228,19 +228,13 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
   default:
     // no DOM standard, found in IE only
 
-    // make sure our rendering is up to date before
-    // we allow a query on these attributes.
+    // Make sure our layout is up to date before we allow a query on these attributes.
     DOM::DocumentImpl* docimpl = node.handle()->getDocument();
-    KHTMLView* v = 0;
-    if ( docimpl ) {
-      v = docimpl->view();
-      docimpl->updateRendering();
-      // Only do a layout if changes have occurred that make it necessary.
-      if ( v && docimpl->renderer() && docimpl->renderer()->needsLayout() )
-        docimpl->view()->layout();
+    if (docimpl) {
+      docimpl->updateLayout();
     }
 
-    khtml::RenderObject *rend = node.handle() ? node.handle()->renderer() : 0L;
+    khtml::RenderObject *rend = node.handle()->renderer();
 
     switch (token) {
     case OffsetLeft:

@@ -229,6 +229,7 @@ public:
     virtual void recalcStyle( StyleChange = NoChange );
     static QPtrList<DocumentImpl> * changedDocuments;
     virtual void updateRendering();
+    void updateLayout();
     static void updateDocumentsRendering();
     khtml::DocLoader *docLoader() { return m_docLoader; }
 

@@ -1504,15 +1504,9 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 void Window::updateLayout() const
 {
   DOM::DocumentImpl* docimpl = static_cast<DOM::DocumentImpl *>(m_part->document().handle());
-  KHTMLView* v = m_part->view();
-  
-  if ( docimpl ) {
-    docimpl->updateRendering();
-    // Only do a layout if changes have occurred that make it necessary.      
-    if ( v && docimpl->renderer() && docimpl->renderer()->needsLayout() )
-      docimpl->view()->layout();
+  if (docimpl) {
+    docimpl->updateLayout();
   }
-
 }
 
 

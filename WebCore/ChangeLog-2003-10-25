@@ -1,3 +1,22 @@
+2003-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3280538 -- JavaScript infinite loop loading frame b/c scrollHeight is always zero (easons.ie)
+
+        * khtml/xml/dom_docimpl.h: Added updateLayout method.
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::updateLayout): Added. Code moved here
+        from KJS::Window::updateLayout so it can be shared. Named this updateLayout() to match
+        the name from KJS::Window.
+
+        * khtml/ecma/kjs_window.cpp: (Window::updateLayout): Call updateLayout()
+        instead of updateRendering(); the extra logic here was moved into updateLayout().
+        * khtml/ecma/kjs_dom.cpp: (DOMNode::getValueProperty): Ditto.
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLElement::getValueProperty): Call updateLayout()
+        on the document before computing the BodyScrollHeight or BodyScrollWidth, much as
+        we already do in kjs_dom.cpp for ScrollHeight and ScrollWidth and other properties.
+
 2003-06-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for crash on an XHTML frameset page.  It was assuming
