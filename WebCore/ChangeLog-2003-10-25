@@ -1,5 +1,19 @@
 2002-12-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- fixed 3125504 -- REGRESSION: Selection not working correctly for text area on http://glish.com/css/7.asp
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::khtmlMousePressEvent): Call makeFirstResponder here explicitly,
+	since we are disabling the makeFirstResponder that normally happens during window event dispatching
+	in WebKit.
+
+        * kwq/KWQScrollView.h: Define getDocumentView().
+        * kwq/KWQScrollView.mm: Use getDocumentView() everywhere.
+        (QScrollView::getDocumentView): Define it here.
+
+2002-12-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej and Richard.
 
 	- fixed 3125497 -- REGRESSION: Infinite recursion with mouseUp: events

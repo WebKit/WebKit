@@ -146,6 +146,14 @@
 
 - (BOOL)acceptsFirstResponder
 {
+    // Don't accept first responder when we first click on this view.
+    // We have to pass the event down through WebCore first to be sure we don't hit a subview.
+    // Do accept first responder at any other time, for example from keyboard events,
+    // or from calls back from WebCore once we begin mouse-down event handling.
+    NSEvent *event = [NSApp currentEvent];
+    if ([event type] == NSLeftMouseDown && event != _private->mouseDownEvent) {
+        return NO;
+    }
     return YES;
 }
 

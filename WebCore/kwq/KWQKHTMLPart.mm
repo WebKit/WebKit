@@ -722,6 +722,11 @@ bool KWQKHTMLPart::closeURL()
 void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
     if (!passWidgetMouseDownEventToWidget(event)) {
+        // We don't do this at the start of mouse down handling, because we don't want to do it until
+        // we know we didn't hit a widget.
+        NSView *documentView = view()->getDocumentView();
+        [[documentView window] makeFirstResponder:documentView];
+        
         KHTMLPart::khtmlMousePressEvent(event);
     }
 }

@@ -1,5 +1,19 @@
 2002-12-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- fixed 3125504 -- REGRESSION: Selection not working correctly for text area on http://glish.com/css/7.asp
+
+	The problem is that the text area lost its first responder status because WebHTMLView took the click,
+	and NSWindow wanted WebHTMLView to become first responder too.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView acceptsFirstResponder]):
+	Don't allow the NSWindow to make this the first responder during the early part of mouseDown event
+	handling. But do allow anyone else to make this the first responder, for example from keyboard events,
+	or from calls back from WebCore once we begin mouse-down event handling.
+
+2002-12-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej and Richard.
 
         - fixed reentrancy crash I ran into while debugging infinite recursion bugs

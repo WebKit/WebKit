@@ -44,7 +44,6 @@
 
 @interface NSView (KWQExtensions)
 - (BOOL)_KWQ_isScrollView;
-- (NSView *)_KWQ_getDocumentView;
 @end
 
 @implementation NSView (KWQExtensions)
@@ -52,15 +51,6 @@
 - (BOOL)_KWQ_isScrollView
 {
     return [self isKindOfClass:[NSScrollView class]];
-}
-
-- (NSView *)_KWQ_getDocumentView
-{
-    if ([self respondsToSelector: @selector(documentView)]) {
-        NSScrollView *sv = (NSScrollView *)self; // Compiler complains about in-line cast.
-        return [sv documentView];
-    }
-    return nil;
 }
 
 @end
@@ -100,7 +90,7 @@ int QScrollView::visibleHeight() const
 int QScrollView::contentsWidth() const
 {
     NSView *docView, *view = getView();
-    docView = [view _KWQ_getDocumentView];
+    docView = getDocumentView();
     if (docView)
         return (int)[docView bounds].size.width;
     return (int)[view bounds].size.width;
@@ -109,7 +99,7 @@ int QScrollView::contentsWidth() const
 int QScrollView::contentsHeight() const
 {
     NSView *docView, *view = getView();
-    docView = [view _KWQ_getDocumentView];
+    docView = getDocumentView();
     if (docView)
         return (int)[docView bounds].size.height;
     return (int)[view bounds].size.height;
@@ -159,7 +149,7 @@ void QScrollView::scrollBy(int dx, int dy)
 void QScrollView::setContentsPos(int x, int y)
 {
     NSView *docView, *view = getView();    
-    docView = [view _KWQ_getDocumentView];
+    docView = getDocumentView();
     if (docView)
         view = docView;
         
@@ -189,7 +179,7 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     child->move(x, y);
     
     thisView = getView();
-    thisDocView = [thisView _KWQ_getDocumentView];
+    thisDocView = getDocumentView();
     if (thisDocView)
         thisView = thisDocView;
 
@@ -217,7 +207,7 @@ void QScrollView::resizeContents(int w, int h)
     LOG(Frames, "%p %@ at w %d h %d\n", getView(), [[getView() class] className], w, h);
     NSView *view = getView();
     if ([view _KWQ_isScrollView]){
-        view = [view _KWQ_getDocumentView];
+        view = getDocumentView();
         
         LOG(Frames, "%p %@ at w %d h %d\n", view, [[view class] className], w, h);
         if (w < 0)
@@ -240,7 +230,7 @@ void QScrollView::updateContents(const QRect &rect, bool now)
     NSView *view = getView();
 
     if ([view _KWQ_isScrollView])
-        view = [view _KWQ_getDocumentView];
+        view = getDocumentView();
 
     if (now)
         [view displayRect: rect];
@@ -264,7 +254,7 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
     NSView *docView, *view = getView();    
      
-    docView = [view _KWQ_getDocumentView];
+    docView = getDocumentView();
     if (docView)
         view = docView;
         
@@ -278,7 +268,7 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
     NSView *docView, *view = getView();    
 
-    docView = [view _KWQ_getDocumentView];
+    docView = getDocumentView();
     if (docView)
         view = docView;
         
@@ -307,4 +297,10 @@ void QScrollView::ensureVisible(int,int)
 void QScrollView::ensureVisible(int,int,int,int)
 {
     LOG(NotYetImplemented, "not yet implemented");
+}
+
+NSView *QScrollView::getDocumentView() const
+{
+    id view = getView();
+    return [view respondsToSelector:@selector(documentView)] ? [view documentView] : nil;
 }
