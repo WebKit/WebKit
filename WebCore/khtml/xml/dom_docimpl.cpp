@@ -1391,7 +1391,7 @@ void DocumentImpl::close()
         // In the case of Radar 3758785, the window.onload was set in some javascript, but never fired because there was no body.  
         // This behavior now matches Firefox and IE.
         HTMLElementImpl *body = this->body();
-        if (!body) {
+        if (!body && isHTMLDocument()) {
             NodeImpl *de = documentElement();
             if (de) {
                 body = new HTMLBodyElementImpl(docPtr());
@@ -1405,12 +1405,12 @@ void DocumentImpl::close()
         if (body) {
             dispatchImageLoadEventsNow();
             body->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
-        }
 
 #ifdef INSTRUMENT_LAYOUT_SCHEDULING
-        if (!ownerElement())
-            printf("onload fired at %d\n", elapsedTime());
+            if (!ownerElement())
+                printf("onload fired at %d\n", elapsedTime());
 #endif
+        }
 
         m_processingLoadEvent = false;
     }

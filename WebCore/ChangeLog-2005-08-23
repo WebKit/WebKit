@@ -2,6 +2,18 @@
 
         Reviewed by Darin.
 
+        fix for <rdar://problem/4004004> no need to add body element for xml documents
+
+        In the fix for <rdar://problem/3758785> we decided to add a body element when closing a document 
+        to ensure that the onload handler would fire.  This is unnecessary for xml documents, 
+        so now we also check to see if we're dealing with an html document before adding the body element.
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::close): 
+
+2005-02-11  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+
         * layout-tests/apple-only/base/www.excite.com/index-expected.txt: updates tests because of custom tag change.
         * layout-tests/apple-only/base/www.msnbc.com/index-expected.txt:
         * layout-tests/apple-only/base/www.time.com/index-expected.txt:
