@@ -1,3 +1,15 @@
+2005-01-18  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bug:
+        
+        <rdar://problem/3960116> Focus rings paint incorrectly for contenteditable blocks in web pages
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addFocusRingRects): Fix painting of focus rings so that ring only paints around
+        outermost contenteditable elements.
+
 2005-01-18  David Harrison  <harrison@apple.com>
 
         Reviewed by Darin.
