@@ -951,7 +951,9 @@ void KHTMLPart::clear()
   d->m_redirectLockHistory = true;
   d->m_bHTTPRefresh = false;
   d->m_bClearing = false;
+#if !APPLE_CHANGES
   d->m_frameNameId = 1;
+#endif
   d->m_bFirstData = true;
 
   d->m_bMousePressed = false;
