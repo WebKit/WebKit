@@ -458,7 +458,8 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     return style;
 }
 
-unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e, DOM::CSSStyleDeclarationImpl *decl,
+unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e,
+                                                     DOM::CSSStyleDeclarationImpl *decl,
                                                      unsigned int numProps)
 {
     CSSStyleDeclarationImpl* addDecls = 0;
@@ -490,8 +491,8 @@ unsigned int CSSStyleSelector::addInlineDeclarations(DOM::ElementImpl* e, DOM::C
     {
         if (i == firstLen)
             values = addValues;
-        
-        CSSProperty *prop = values->at(i);
+
+        CSSProperty *prop = values->at(i >= firstLen ? i - firstLen : i);
 	Source source = Inline;
 
         if( prop->m_bImportant ) source = InlineImportant;

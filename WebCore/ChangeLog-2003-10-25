@@ -1,5 +1,14 @@
 2003-02-18  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3176102, bad table cell regression.  I was adding in
+	random properties for cells. Eep.
+	
+        Reviewed by gramps
+
+        * khtml/css/cssstyleselector.cpp:
+        
+2003-02-18  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3171795, dotted borders drawn incorrectly.  Picked this
 	gem up from the KHTML trunk.
 	
