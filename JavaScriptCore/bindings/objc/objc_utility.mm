@@ -194,6 +194,12 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     aValue = String (u);
                     free((void *)chars);
                 }
+                else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
+                    aValue = Boolean(true);
+                }
+                else if ((CFBooleanRef)*obj == kCFBooleanFalse) {
+                    aValue = Boolean(false);
+                }
                 else if ([*obj isKindOfClass:[NSNumber class]]) {
                     aValue = Number([*obj doubleValue]);
                 }
@@ -203,12 +209,6 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                 else if ([*obj isKindOfClass:[WebScriptObject class]]) {
                     WebScriptObject *jsobject = (WebScriptObject *)*obj;
                     aValue = Object([jsobject _imp]);
-                }
-                else if ((CFBooleanRef)*obj == kCFBooleanTrue) {
-                    aValue = Boolean(true);
-                }
-                else if ((CFBooleanRef)*obj == kCFBooleanFalse) {
-                    aValue = Boolean(false);
                 }
                 else if (*obj == 0) {
                     return Undefined();
