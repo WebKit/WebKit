@@ -618,10 +618,10 @@ void KWQKHTMLPartImpl::setBaseURL(const KURL &url)
     m_baseURL = url;
     if (m_baseURL.protocol().startsWith( "http" ) && !m_baseURL.host().isEmpty() && m_baseURL.path().isEmpty()) {
         m_baseURL.setPath( "/" );
-        // communicate the change in base URL to the document so that links and subloads work
-        if (d->m_doc) {
-            d->m_doc->setBaseURL(url.url());
-        }
+    }
+    // communicate the change in base URL to the document so that links and subloads work
+    if (d->m_doc) {
+        d->m_doc->setBaseURL(url.url());
     }
 }
 

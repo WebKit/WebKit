@@ -1,3 +1,9 @@
+2002-07-10  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::setBaseURL):
+	Call setBaseURL on the underlying document all the time, not just
+	when we add a missing "/" character.
+
 2002-07-07  Maciej Stachowiak  <mjs@apple.com>
 
         WebCore part of fix for Radar 2953431 - JavaScript window.close()
