@@ -22,20 +22,24 @@ layer at (0,0) size 800x600
           text run at (14,98) width 273: "not preserved on blank lines"
       RenderBlock {DIV} at (0,164) size 784x276
         RenderBlock {DIV} at (0,0) size 784x69
-          RenderInline {SPAN} at (0,0) size 30x69
-            RenderText {TEXT} at (0,0) size 30x69
-              text run at (0,0) width 30: "x"
+          RenderInline {FONT} at (0,0) size 30x55
+            RenderInline {SPAN} at (0,0) size 30x69
+              RenderText {TEXT} at (0,0) size 30x69
+                text run at (0,0) width 30: "x"
         RenderBlock {DIV} at (0,69) size 784x69
-          RenderInline {SPAN} at (0,0) size 0x69
-            RenderBR {BR} at (0,0) size 0x69
+          RenderInline {FONT} at (0,0) size 0x55
+            RenderInline {SPAN} at (0,0) size 0x69
+              RenderBR {BR} at (0,0) size 0x69
         RenderBlock {DIV} at (0,138) size 784x69
-          RenderInline {SPAN} at (0,0) size 0x69
-            RenderBR {BR} at (0,0) size 0x69
+          RenderInline {FONT} at (0,0) size 0x55
+            RenderInline {SPAN} at (0,0) size 0x69
+              RenderBR {BR} at (0,0) size 0x69
         RenderBlock {DIV} at (0,207) size 784x69
-          RenderInline {SPAN} at (0,0) size 30x69
-            RenderText {TEXT} at (0,0) size 30x69
-              text run at (0,0) width 30: "x"
+          RenderInline {FONT} at (0,0) size 30x55
+            RenderInline {SPAN} at (0,0) size 30x69
+              RenderText {TEXT} at (0,0) size 30x69
+                text run at (0,0) width 30: "x"
 selection is CARET:
-start:      position 0 of child 1 {TEXT} of child 1 {SPAN} of child 4 {DIV} of root {DIV}
+start:      position 0 of child 1 {TEXT} of child 1 {SPAN} of child 1 {FONT} of child 4 {DIV} of root {DIV}
 upstream:   position 0 of child 4 {DIV} of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 1 {SPAN} of child 4 {DIV} of root {DIV}
+downstream: position 0 of child 1 {TEXT} of child 1 {SPAN} of child 1 {FONT} of child 4 {DIV} of root {DIV}

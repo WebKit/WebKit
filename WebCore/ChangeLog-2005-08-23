@@ -1,3 +1,41 @@
+2005-02-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/4003463> Mail.app HTML uses inline styling markup not understood by Entourage and Eudora
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isEmptyFontTag): Helper for removing <font> tags.
+        (khtml::StyleChange::styleModeForParseMode): Helper to map a document parse mode to a use/don't use
+        legacy-html-styles value.
+        (khtml::StyleChange::checkForLegacyHTMLStyleChange): Add support for colors, font faces, and font sizes.
+        (khtml::ApplyStyleCommand::isHTMLStyleNode):
+        (khtml::ApplyStyleCommand::removeHTMLFontStyle):
+        (khtml::ApplyStyleCommand::applyTextDecorationStyle): Now call styleModeForParseMode to determine
+        whether to use legacy html styles or not.
+        (khtml::ApplyStyleCommand::removeInlineStyle): Now properly removes <font> styles.
+        (khtml::ApplyStyleCommand::addBlockStyleIfNeeded): Ditto.
+        (khtml::ApplyStyleCommand::addInlineStyleIfNeeded): Ditto.
+        (khtml::createFontElement): Helper for applying <font> elements.
+        * khtml/editing/htmlediting.h: All the following support the new bits of data we need to store.
+        (khtml::StyleChange::applyFontColor)
+        (khtml::StyleChange::applyFontFace)
+        (khtml::StyleChange::applyFontSize)
+        (khtml::StyleChange::fontColor)
+        (khtml::StyleChange::fontFace)
+        (khtml::StyleChange::fontSize)
+
+        Test results updated now that we will write out <font> tags for quirks mode documents.        
+        
+        * layout-tests/editing/execCommand/modifyForeColorByCharacter-expected.txt
+        * layout-tests/editing/style/block-style-004-expected.txt
+        * layout-tests/editing/style/block-style-005-expected.txt
+        * layout-tests/editing/style/block-style-006-expected.txt
+        * layout-tests/editing/style/smoosh-styles-001-expected.txt
+        * layout-tests/editing/style/smoosh-styles-002-expected.txt
+
 2005-02-21  Darin Adler  <darin@apple.com>
 
         - fixed Panther deployment build
