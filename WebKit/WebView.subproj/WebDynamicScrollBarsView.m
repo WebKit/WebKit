@@ -36,6 +36,7 @@
 
 - (void)updateScrollers
 {
+    BOOL scrollersChanged = NO;
     if (allowsScrolling){    
         BOOL scrollsVertically;
         BOOL scrollsHorizontally;
@@ -51,11 +52,21 @@
         if (scrollsHorizontally && !scrollsVertically)
             scrollsVertically = ([dview bounds].size.height + [NSScroller scrollerWidth]) > [self frame].size.height;
         
-        [self setHasVerticalScroller: scrollsVertically];
-        [self setHasHorizontalScroller: scrollsHorizontally];
+        if ([self hasVerticalScroller] != scrollsVertically){
+            [self setHasVerticalScroller: scrollsVertically];
+            scrollersChanged = YES;
+        }
+            
+        if ([self hasHorizontalScroller] != scrollsHorizontally){
+            [self setHasHorizontalScroller: scrollsHorizontally];
+            scrollersChanged = YES;
+        }
     }
-    [self tile];
-    [self setNeedsDisplay: YES];
+    
+    if (scrollersChanged){
+        [self tile];
+        [self setNeedsDisplay: YES];
+    }
 }
 
 

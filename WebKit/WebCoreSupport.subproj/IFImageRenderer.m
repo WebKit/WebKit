@@ -113,7 +113,21 @@ static NSMutableArray *activeImageRenderers;
 - (float)frameDuration
 {
     id property = [self firstRepProperty:NSImageCurrentFrameDuration];
-    return property != nil ? [property floatValue] : 0.0;
+    float duration = (property != nil ? [property floatValue] : 0.0);
+    if (duration < 0.0167){
+        /*
+            Many annoying ads specify a 0 duration to make an image flash
+            as quickly as possible.  However a zero duration is faster than
+            the refresh rate.  We need to pick a minimum duration.
+            
+            Browsers handle the minimum time case differently.  IE seems to use something
+            close to 1/60th of a second.  Konqueror uses 0.  The ImageMagick library
+            uses 1/100th.  The units in the GIF specification are 1/100th of second.
+            We will use 1/60th of second as the minimum time.
+        */
+        duration = .0167;
+    }
+    return duration;
 }
 
 - (void)nextFrame:(id)context

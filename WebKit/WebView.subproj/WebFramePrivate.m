@@ -297,7 +297,9 @@ static const char * const stateNames[6] = {
     }
     
     if (_private->state == IFWEBFRAMESTATE_COMPLETE){
-        [[[self webView] frameScrollView] setDrawsBackground: YES];
+        NSScrollView *sv = [[self webView] frameScrollView];
+        [sv setDrawsBackground: YES];
+        [[sv contentView] setCopiesOnScroll: YES];
     }
 }
 
