@@ -880,7 +880,7 @@ bool Window::toBoolean(ExecState *) const
   return !m_part.isNull();
 }
 
-int Window::installTimeout(const Identifier &handler, int t, bool singleShot)
+int Window::installTimeout(const UString &handler, int t, bool singleShot)
 {
   return winq->installTimeout(handler, t, singleShot);
 }
@@ -1345,7 +1345,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         return Undefined();
     if (args.size() == 2 && v.isA(StringType)) {
       int i = args[1].toInt32(exec);
-      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, true /*single shot*/);
+      int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
       return Number(r);
     }
     else if (args.size() >= 2 && v.isA(ObjectType) && Object::dynamicCast(v).implementsCall()) {
@@ -1357,7 +1357,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       funcArgs->removeFirst(); // all args after 2 go to the function
       funcArgs->removeFirst();
 #endif
-      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, true /*single shot*/);
+      int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
       return Number(r);
     }
     else
@@ -1367,7 +1367,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         return Undefined();
     if (args.size() >= 2 && v.isA(StringType)) {
       int i = args[1].toInt32(exec);
-      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, false);
+      int r = (const_cast<Window*>(window))->installTimeout(s, i, false);
       return Number(r);
     }
     else if (args.size() >= 2 && !Object::dynamicCast(v).isNull() &&
@@ -1380,7 +1380,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       funcArgs->removeFirst(); // all args after 2 go to the function
       funcArgs->removeFirst();
 #endif
-      int r = (const_cast<Window*>(window))->installTimeout(Identifier(s), i, false);
+      int r = (const_cast<Window*>(window))->installTimeout(s, i, false);
       return Number(r);
     }
     else
@@ -1477,7 +1477,7 @@ ScheduledAction::ScheduledAction(Object _func, List _args, bool _singleShot)
   singleShot = _singleShot;
 }
 
-ScheduledAction::ScheduledAction(QString _code, bool _singleShot)
+ScheduledAction::ScheduledAction(const QString &_code, bool _singleShot)
 {
   //kdDebug(6070) << "ScheduledAction::ScheduledAction(!isFunction) " << this << endl;
   //func = 0;
@@ -1550,7 +1550,7 @@ void WindowQObject::parentDestroyed()
   scheduledActions.clear();
 }
 
-int WindowQObject::installTimeout(const Identifier &handler, int t, bool singleShot)
+int WindowQObject::installTimeout(const UString &handler, int t, bool singleShot)
 {
   //kdDebug(6070) << "WindowQObject::installTimeout " << this << " " << handler.ascii() << endl;
   int id = startTimer(t);

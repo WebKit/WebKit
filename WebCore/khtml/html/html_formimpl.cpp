@@ -501,6 +501,11 @@ bool HTMLFormElementImpl::prepareSubmit()
 
 void HTMLFormElementImpl::submit( bool activateSubmitButton )
 {
+    KHTMLView *view = getDocument()->view();
+    if (!view || !view->part()) {
+        return;
+    }
+
     if ( m_insubmit ) {
         m_doingsubmit = true;
         return;
@@ -515,7 +520,6 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
     HTMLGenericFormElementImpl* firstSuccessfulSubmitButton = 0;
     bool needButtonActivation = activateSubmitButton;	// do we need to activate a submit button?
     
-    KHTMLView *view = getDocument()->view();
 #if APPLE_CHANGES
     KWQ(view->part())->clearRecordedFormValues();
 #endif

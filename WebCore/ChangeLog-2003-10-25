@@ -1,3 +1,22 @@
+2003-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3154394 -- non-repro nil-dereference in DOM::HTMLFormElementImpl::submit
+
+        * khtml/html/html_formimpl.cpp: (HTMLFormElementImpl::submit):
+        Add checks for nil like the other methods in this file have.
+
+        - fixed some types to remove a bit of unnecessary overhead
+
+        * khtml/ecma/kjs_window.h: Change types.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::installTimeout): Change parameter to UString, not Identifier.
+        (WindowFunc::tryCall): Pass the UString, not Identifier.
+        (ScheduledAction::ScheduledAction): Change parameter to use const QString & to avoid
+        a bit of overhead.
+        (WindowQObject::installTimeout): Change parameter to UString, not Identifier.
+
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
 	I messed up when i merged Lars' quirks color patch for CSS with
