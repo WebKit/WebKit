@@ -1,3 +1,24 @@
+2002-03-22  Darin Adler  <darin@apple.com>
+
+        Finally giving up on the complete QString rewrite after doing it 3 times,
+        Darin checks in some improvements for the old QString. This makes a QString
+        be 8 bytes instead of 12, and improves a few other details. No dramatic
+        speedups, but no slowdown either.
+
+	* src/kwq/qt/qstring.h:
+	* src/kwq/KWQString.mm:
+	(QString::QString), (QString::~QString), (QString::operator=),
+        (QString::unicode), (QString::latin1): Store the cache type inside the cache.
+	(QString::copy): No need to deep copy here.
+        (QString::simplifyWhiteSpace): Use CFStringInlineBuffer.
+	(QString::insert): Fix single-character insertions so they don't create and
+        destroy a mutable CFStringRef every time.
+        (QString::operator+=): Call the appropriate insert function.
+	(QString::flushCache): Store cache type inside cache.
+        (QString::compareToLatin1): Use CFStringInlineBuffer.
+	(operator==): Use CFStringInlineBuffer.
+        (QConstString::QConstString): Store the cache type inside the cache.
+
 2002-03-22  John Sullivan  <sullivan@apple.com>
 
 	Made changing font sizes work immediately (other than an

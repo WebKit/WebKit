@@ -23,8 +23,6 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-// FIXME: obviously many functions here can be made inline
-
 /*
     This implementation uses CFMutableStringRefs as a rep for the actual
     string data.  Reps may be shared between QString instances, and follow
@@ -109,7 +107,7 @@ QString QString::fromLocal8Bit(const char *chs, int len)
 #endif // USING_BORROWED_KURL
 
 QString QString::fromStringWithEncoding(const char *chs, int len,
-        CFStringEncoding encoding)
+                                        CFStringEncoding encoding)
 {
     QString qs;
     if (chs && *chs) {
@@ -121,29 +119,11 @@ QString QString::fromStringWithEncoding(const char *chs, int len,
             } else {
                 // append length-specified string
                 // FIXME: can we find some way of not using this temporary?
-#if 1
                 char *buf = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
                 strncpy(buf, chs, len);
                 *(buf + len) = '\0';
                 CFStringAppendCString(qs.s, buf, encoding);
                 CFAllocatorDeallocate(kCFAllocatorDefault, buf);
-#else
-                const int capacity = 64;
-                UniChar buf[capacity];
-                int fill = 0;
-                for (uint i = 0; (i < len) && chs[i]; i++) {
-                    buf[fill] = chs[i];
-                    fill++;
-                    if (fill == capacity) {
-                        CFStringAppendCharacters(qs.s, buf, fill);
-                        fill = 0;
-                    }
-                }
-                // append any remainder in buffer
-                if (fill) {
-                    CFStringAppendCharacters(qs.s, buf, fill);
-                }
-#endif
             }
         }
     }
@@ -168,28 +148,26 @@ QString QString::fromCFString(CFStringRef cfs)
 
     ref = CFStringCreateMutableCopy(NULL, 0, cfs);
     qs = QString::fromCFMutableString(ref);
-#ifdef KWQ_STRING_DEBUG
-#else
     CFRelease(ref);
-#endif
     
     return qs;
 }
 
-QString QString::gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len){
+QString QString::gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len)
+{
     if (*ref == 0)
-        *ref = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, uchars, len, len, kCFAllocatorDefault);
+        *ref = CFStringCreateMutableWithExternalCharactersNoCopy(kCFAllocatorDefault, uchars, len, len, kCFAllocatorDefault);
     else
-        CFStringSetExternalCharactersNoCopy (*ref, uchars, len, len);
+        CFStringSetExternalCharactersNoCopy(*ref, uchars, len, len);
     return QString::fromCFMutableString(*ref);
 }
 
 CFMutableStringRef QString::gstring_toCFString(CFMutableStringRef *ref, UniChar *uchars, int len)
 {
     if (*ref == 0)
-        *ref = CFStringCreateMutableWithExternalCharactersNoCopy (kCFAllocatorDefault, uchars, len, len, kCFAllocatorDefault);
+        *ref = CFStringCreateMutableWithExternalCharactersNoCopy(kCFAllocatorDefault, uchars, len, len, kCFAllocatorDefault);
     else
-        CFStringSetExternalCharactersNoCopy (*ref, uchars, len, len);
+        CFStringSetExternalCharactersNoCopy(*ref, uchars, len, len);
     return *ref;
 }
 
@@ -200,13 +178,13 @@ CFMutableStringRef QString::gstring_toCFString(CFMutableStringRef *ref, UniChar 
 QString::QString()
 {
     s = getNullCFString();
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 QString::~QString()
 {
     CFRelease(s);
-    if (cacheType == CacheAllocatedUnicode || cacheType == CacheAllocatedLatin1)
+    if (cache)
         CFAllocatorDeallocate(kCFAllocatorDefault, cache);
 }
 
@@ -214,30 +192,20 @@ QString::QString(QChar qc)
 {
     s = CFStringCreateMutable(kCFAllocatorDefault, 0);
     CFStringAppendCharacters(s, &qc.c, 1);
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 QString::QString(const QByteArray &qba)
 {
     if (qba.size() && *qba.data()) {
-        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-        const int capacity = 64;
-        UniChar buf[capacity];
-        int fill = 0;
-        for (uint len = 0; (len < qba.size()) && qba[len]; len++) {
-            buf[fill] = qba[len];
-            fill++;
-            if (fill == capacity) {
-                CFStringAppendCharacters(s, buf, fill);
-                fill = 0;
-            }
-        }
-        // append any remainder in buffer
-        if (fill)
-            CFStringAppendCharacters(s, buf, fill);
+        CFStringRef tmp = CFStringCreateWithBytes
+            (kCFAllocatorDefault, (const UInt8 *) qba.data(), qba.size(),
+             kCFStringEncodingISOLatin1, false);
+        s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, tmp);
+        CFRelease(tmp);
     } else
         s = getNullCFString();
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 QString::QString(const QChar *qcs, uint len)
@@ -247,7 +215,7 @@ QString::QString(const QChar *qcs, uint len)
         CFStringAppendCharacters(s, &qcs->c, len);
     } else
         s = getNullCFString();
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 QString::QString(const char *chs)
@@ -257,19 +225,20 @@ QString::QString(const char *chs)
         CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
     } else
         s = getNullCFString();
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 QString::QString(const char *chs, int len)
 {
     if (len > 0) {
-        CFStringRef tmp = CFStringCreateWithBytes (kCFAllocatorDefault, (const UInt8 *)chs, len, kCFStringEncodingISOLatin1, false);
-        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
-        CFStringAppend(s, tmp);
+        CFStringRef tmp = CFStringCreateWithBytes
+             (kCFAllocatorDefault, (const UInt8 *)chs, len,
+              kCFStringEncodingISOLatin1, false);
+        s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0, tmp);
         CFRelease(tmp);
     } else
         s = getNullCFString();
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 QString::QString(const QString &qs)
@@ -277,7 +246,7 @@ QString::QString(const QString &qs)
     // shared copy
     CFRetain(qs.s);
     s = qs.s;
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 // assignment operators --------------------------------------------------------
@@ -288,7 +257,7 @@ QString &QString::operator=(const QString &qs)
     CFRetain(qs.s);
     CFRelease(s);
     s = qs.s;
-    cacheType = CacheInvalid;
+    cache = NULL;
     return *this;
 }
 
@@ -325,62 +294,53 @@ QChar QString::at(uint index) const
 
 const QChar *QString::unicode() const
 {
-    if (cacheType != CacheUnicode && cacheType != CacheAllocatedUnicode) {
+    const UniChar *ucs = CFStringGetCharactersPtr(s);
+    if (ucs)
+        return (QChar *) ucs;
+
+    uint len = length();
+    if (len == 0)
+        return getNullQCharString();
+
+    if (cache == NULL || * (int *) cache != CacheUnicode) {
         flushCache();
-        const UniChar *ucs = CFStringGetCharactersPtr(s);
-        if (ucs) {
-            cacheType = CacheUnicode;
-            cache = const_cast<UniChar *>(ucs);
-        } else {
 #if _KWQ_DEBUG_
-            KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
+        KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
 #endif
-            uint len = length();
-            if (len == 0) {
-                cacheType = CacheUnicode;
-                cache = isNull() ? 0 : const_cast<QChar *>(getNullQCharString());
-            } else {
-                cacheType = CacheAllocatedUnicode;
-                cache = CFAllocatorAllocate(kCFAllocatorDefault, len * sizeof (UniChar), 0);
-                CFStringGetCharacters(s, CFRangeMake(0, len), cache);
-            }
-        }
+        cache = CFAllocatorAllocate(kCFAllocatorDefault, sizeof(int) + len * sizeof (UniChar), 0);
+        * (int *) cache = CacheUnicode;
+        CFStringGetCharacters(s, CFRangeMake(0, len), (UniChar *) ((int *) cache + 1));
     }
 
-    // NOTE: this works because our QChar implementation contains a single UniChar data member
-    return static_cast<QChar *>(cache); 
+    return (QChar *) ((int *) cache + 1); 
 }
 
 const char *QString::latin1() const
 {
-    if (cacheType != CacheLatin1 && cacheType != CacheAllocatedLatin1) {
+    const char *chs = CFStringGetCStringPtr(s, kCFStringEncodingISOLatin1);
+    if (chs)
+        return chs;
+
+    uint len = length();
+    if (len == 0)
+        return "";
+        
+    if (cache == NULL || * (int *) cache != CacheLatin1) {
         flushCache();
-        const char *chs = CFStringGetCStringPtr(s, kCFStringEncodingISOLatin1);
-        if (chs) {
-            cacheType = CacheLatin1;
-            cache = const_cast<char *>(chs);
-        } else {
 #if _KWQ_DEBUG_
-            KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
+        KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCharactersPtr failed)\n", __FUNCTION__, __FILE__, __LINE__);
 #endif
-            uint len = length();
-            if (len == 0) {
-                cacheType = CacheLatin1;
-                cache = const_cast<char *>("");
-            } else {
-                cacheType = CacheAllocatedLatin1;
-                cache = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
-                if (!CFStringGetCString(s, cache, len + 1, kCFStringEncodingISOLatin1)) {
+        cache = CFAllocatorAllocate(kCFAllocatorDefault, sizeof(int) + len + 1, 0);
+        * (int *) cache = CacheLatin1;
+        if (!CFStringGetCString(s, (char *) ((int *) cache + 1), len + 1, kCFStringEncodingISOLatin1)) {
 #if _KWQ_DEBUG_
-                    KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCString failed)\n", __FUNCTION__, __FILE__, __LINE__);
+            KWQDEBUG3("WARNING %s:%s:%d (CFStringGetCString failed)\n", __FUNCTION__, __FILE__, __LINE__);
 #endif
-                    *static_cast<char *>(cache) = '\0';
-                }
-            }
+            * (char *) ((int *) cache + 1) = '\0';
         }
     }
 
-    return static_cast<char *>(cache);
+    return (char *) ((int *) cache + 1);
 }
 
 QCString QString::utf8() const
@@ -810,9 +770,8 @@ QString QString::mid(uint index, uint width) const
 
 QString QString::copy() const
 {
-    // FIXME: we really need a deep copy here
-    //return QString(*this);
-    return QString(unicode(), length());
+    // does not need to be a deep copy
+    return *this;
 }
 
 QString QString::lower() const
@@ -854,45 +813,24 @@ QString QString::simplifyWhiteSpace() const
         qs.s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         static CFCharacterSetRef wscs = CFCharacterSetGetPredefined(
                 kCFCharacterSetWhitespaceAndNewline);
-        const UniChar *ucs = CFStringGetCharactersPtr(s);
-        const int capacity = 64;
-        UniChar buf[capacity];
-        int fill = 0;
+        CFStringInlineBuffer buf;
+        CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
         bool chars = false;
         bool space = false;
         for (CFIndex i = 0; i < len; i++) {
-            UniChar uc;
-            if (ucs) {
-                uc = ucs[i];
-            } else {
-                uc = CFStringGetCharacterAtIndex(s, i);
-            }
+            UniChar uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
             if (CFCharacterSetIsCharacterMember(wscs, uc)) {
-                if (!chars) {
-                    continue;
-                }
-                space = true;
+                if (chars)
+                    space = true;
             } else {
                 if (space) {
-                    buf[fill] = ' ';
-                    fill++;
-                    if (fill == capacity) {
-                        CFStringAppendCharacters(qs.s, buf, fill);
-                        fill = 0;
-                    }
+                    UniChar spc = ' ';
+                    CFStringAppendCharacters(qs.s, &spc, 1);
                     space = false;
                 }
-                buf[fill] = uc;
-                fill++;
-                if (fill == capacity) {
-                    CFStringAppendCharacters(qs.s, buf, fill);
-                    fill = 0;
-                }
+                CFStringAppendCharacters(qs.s, &uc, 1);
                 chars = true;
             }
-        }
-        if (fill) {
-            CFStringAppendCharacters(qs.s, buf, fill);
         }
     } else {
         CFRetain(s);
@@ -904,12 +842,11 @@ QString QString::simplifyWhiteSpace() const
 QString &QString::setUnicode(const QChar *qcs, uint len)
 {
     flushCache();
+    CFRelease(s);
     if (qcs && len) {
-        CFRelease(s);
         s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         CFStringAppendCharacters(s, &qcs->c, len);
     } else {
-        CFRelease(s);
         s = getNullCFString();
     }
     return *this;
@@ -918,12 +855,11 @@ QString &QString::setUnicode(const QChar *qcs, uint len)
 QString &QString::setLatin1(const char *chs)
 {
     flushCache();
+    CFRelease(s);
     if (chs && *chs) {
-        CFRelease(s);
         s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
-    } else if (s) {
-        CFRelease(s);
+    } else {
         s = getNullCFString();
     }
     return *this;
@@ -984,8 +920,8 @@ QString &QString::sprintf(const char *format, ...)
     va_list args;
     va_start(args, format);
     flushCache();
+    CFRelease(s);
     if (format && *format) {
-        CFRelease(s);
         s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         CFStringRef f = CFStringCreateWithCStringNoCopy(kCFAllocatorDefault,
                 format, kCFStringEncodingISOLatin1, kCFAllocatorNull);
@@ -999,7 +935,6 @@ QString &QString::sprintf(const char *format, ...)
             CFRelease(f);
         }
     } else {
-        CFRelease(s);
         s = getNullCFString();
     }
     va_end(args);
@@ -1038,12 +973,32 @@ QString &QString::insert(uint index, const QString &qs)
 
 QString &QString::insert(uint index, QChar qc)
 {
-    return insert(index, QString(qc));
+    flushCache();
+    _copyIfNeededInternalString();
+    UniChar uch = qc.unicode();
+    if (index < (uint) CFStringGetLength(s)) {
+        CFStringRef chs = CFStringCreateWithCharactersNoCopy(NULL, &uch, 1, kCFAllocatorNull);
+        CFStringInsert(s, index, chs);
+        CFRelease(chs);
+    } else {
+        CFStringAppendCharacters(s, &uch, 1);
+    }
+    return *this;
 }
 
 QString &QString::insert(uint index, char ch)
 {
-    return insert(index, QString(QChar(ch)));
+    flushCache();
+    _copyIfNeededInternalString();
+    UniChar uch = (uchar) ch;
+    if (index < (uint) CFStringGetLength(s)) {
+        CFStringRef chs = CFStringCreateWithCharactersNoCopy(NULL, &uch, 1, kCFAllocatorNull);
+        CFStringInsert(s, index, chs);
+        CFRelease(chs);
+    } else {
+        CFStringAppendCharacters(s, &uch, 1);
+    }
+    return *this;
 }
 
 QString &QString::remove(uint index, uint width)
@@ -1136,16 +1091,16 @@ QString &QString::operator+=(QChar qc)
 
 QString &QString::operator+=(char ch)
 {
-    return insert(length(), QChar(ch));
+    return insert(length(), ch);
 }
 
 // private member functions ----------------------------------------------------
 
 void QString::flushCache() const
 {
-    if (cacheType == CacheAllocatedUnicode || cacheType == CacheAllocatedLatin1) {
+    if (cache) {
         CFAllocatorDeallocate(kCFAllocatorDefault, cache);
-        cacheType = CacheInvalid;
+        cache = NULL;
     }
 }
 
@@ -1270,11 +1225,9 @@ QString QString::leftRight(uint width, bool left) const
                 CFStringRef tmp = CFStringCreateWithSubstring(
                         kCFAllocatorDefault, s, left ? CFRangeMake(0, width)
                         : CFRangeMake(len - width, width));
-                if (tmp) {
-                    qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
-                            tmp);
-                    CFRelease(tmp);
-                }
+                qs.s = CFStringCreateMutableCopy(kCFAllocatorDefault, 0,
+                        tmp);
+                CFRelease(tmp);
             } else {
                 CFRetain(s);
                 qs.s = s;
@@ -1284,65 +1237,28 @@ QString QString::leftRight(uint width, bool left) const
     return qs;
 }
 
-#ifdef DEBUG_COMPARE_COUNTER
-static int compareCount = 0;
-static int compareCountExpensive = 0;
-static int compareCountCheap = 0;
-#endif
-
 int QString::compareToLatin1(const char *chs) const
 {
-    if (!chs) {
+    if (!chs || !*chs) {
         if (length() == 0)
             return kCFCompareEqualTo;
         return kCFCompareGreaterThan;
     }
 
-#ifdef DEBUG_COMPARE_COUNTER
-    compareCount++;
-    if (compareCount % 500 == 0)
-        fprintf (stdout, "compareCount = %d\n", compareCount);
-#endif
-
-    const UniChar *internalBuffer = CFStringGetCharactersPtr(s);
-    if (internalBuffer == 0){
-#ifdef DEBUG_COMPARE_COUNTER
-        compareCountExpensive++;
-
-        if (compareCount % 500 == 0)
-            fprintf (stdout, "compareCount = %d, expensive = %d, cheap = %d\n", compareCount, compareCountExpensive, compareCountCheap);
-#endif
-        CFStringRef tmp = CFStringCreateWithCStringNoCopy(
-                kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
-                kCFAllocatorNull);
-        if (tmp) {
-            int result = CFStringCompare(s, tmp, 0);
-            CFRelease(tmp);
-            return result;
-        }
-        return kCFCompareGreaterThan;
+    CFIndex len = CFStringGetLength(s);
+    CFStringInlineBuffer buf;
+    CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, len));
+    for (CFIndex i = 0; i < len; i++) {
+        UniChar c1 = CFStringGetCharacterFromInlineBuffer(&buf, i);
+        UniChar c2 = (uchar) chs[i];
+        if (c1 < c2)
+            return kCFCompareLessThan;
+        if (c1 > c2)
+            return kCFCompareGreaterThan;
     }
-    else {
-        CFIndex len = CFStringGetLength(s);
-        
-#ifdef DEBUG_COMPARE_COUNTER
-        compareCountCheap++;
-        if (compareCount % 500 == 0)
-            fprintf (stdout, "compareCount = %d, expensive = %d, cheap = %d\n", compareCount, compareCountExpensive, compareCountCheap);
-#endif
-        while (len && *chs){
-            UniChar c1 = *internalBuffer++;
-            UniChar c2 = (UniChar)(*chs++);
-            if (c1 < c2)
-                return kCFCompareLessThan;
-            else if (c1 > c2)
-                return kCFCompareGreaterThan;
-            len--;
-        }
-        if (len == 0 && *chs == 0)
-            return kCFCompareEqualTo;
-        return kCFCompareGreaterThan;
-    }
+    if (chs[len] == 0)
+        return kCFCompareEqualTo;
+    return kCFCompareGreaterThan;
 }
 
 // operators associated with QString ===========================================
@@ -1354,12 +1270,26 @@ bool operator==(const QString &qs1, const QString &qs2)
 
 bool operator==(const QString &qs, const char *chs)
 {
-    if (!chs)
-        return qs.isEmpty();
-    const char *latin1 = qs.latin1();
-    if (!latin1)
+    if (!chs || !*chs) {
+        if (qs.length() == 0)
+            return kCFCompareEqualTo;
+        return kCFCompareGreaterThan;
+    }
+
+    CFIndex len = CFStringGetLength(qs.s);
+    CFIndex chsLen = strlen(chs);
+    if (len != chsLen)
         return false;
-    return strcmp(latin1, chs) == 0;
+    
+    CFStringInlineBuffer buf;
+    CFStringInitInlineBuffer(qs.s, &buf, CFRangeMake(0, len));
+    for (CFIndex i = 0; i < len; i++) {
+        UniChar c1 = CFStringGetCharacterFromInlineBuffer(&buf, i);
+        UniChar c2 = (uchar) chs[i];
+        if (c1 != c2)
+            return false;
+    }
+    return true;
 }
 
 QString operator+(const QString &qs1, const QString &qs2)
@@ -1427,7 +1357,7 @@ QConstString::QConstString(QChar *qcs, uint len)
     } else {
         s = getNullCFString();
     }
-    cacheType = CacheInvalid;
+    cache = NULL;
 }
 
 // member functions ------------------------------------------------------------
