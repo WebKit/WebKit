@@ -1,3 +1,13 @@
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3484723 - name property of window reference from window.open call is always empty
+	
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Set the part name on the khtml side when
+	making a new window.
+
 2003-11-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3485766.
