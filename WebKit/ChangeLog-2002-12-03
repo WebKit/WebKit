@@ -1,3 +1,10 @@
+2002-10-11  Chris Blumenberg  <cblu@apple.com>
+
+	Thought I has checking for nil enough, but not enough as I raised an exception on Avie's machine.
+
+        * Plugins.subproj/WebPlugin.m:
+        (-[WebNetscapePlugin getPluginInfo]): check for the nil extension case
+
 2002-10-11  Darin Adler  <darin@apple.com>
 
 	Apply a simplified technique I learned while working on the Favorites button

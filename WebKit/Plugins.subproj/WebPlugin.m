@@ -89,16 +89,27 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }
 
         extensionsList = [self stringForStringListID:128 andIndex:i+1];
-        extensions = [extensionsList componentsSeparatedByString:@","];
-        [MIMEToExtensions setObject:extensions forKey:MIME];
-
-        NSEnumerator *enumerator = [extensions objectEnumerator];
-        while ((extension = [enumerator nextObject]) != nil) {
-            [extensionToMIME setObject:MIME forKey:extension];
+        if(extensionsList){
+            extensions = [extensionsList componentsSeparatedByString:@","];
+            
+            [MIMEToExtensions setObject:extensions forKey:MIME];
+            
+            // Reverse the mapping
+            NSEnumerator *enumerator = [extensions objectEnumerator];
+            while ((extension = [enumerator nextObject]) != nil) {
+                [extensionToMIME setObject:MIME forKey:extension];
+            }
+        }else{
+            // DRM and WMP claim MIMEs without extensions. Use a @"" extension in this case.
+            [MIMEToExtensions setObject:[NSArray arrayWithObject:@""] forKey:MIME];
         }
         
         description = [self stringForStringListID:127 andIndex:[MIMEToExtensions count]];
-        [MIMEToDescription setObject:description forKey:MIME];
+        if(description){
+            [MIMEToDescription setObject:description forKey:MIME];
+        }else{
+            [MIMEToDescription setObject:@"" forKey:MIME];
+        }
     }
     
     pluginDescription = [self stringForStringListID:126 andIndex:1];
