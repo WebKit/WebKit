@@ -1,3 +1,14 @@
+2003-09-16  Richard Williamson   <rjw@apple.com>
+
+	Backed out fix to 3412062 to resolve 3424197.
+
+	Many sites use a technique of posting forms the same URL to generate content server side.  The fix to 3412062 broke those sites.
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+
 === WebKit-105 ===
 
 === WebKit-104 ===
