@@ -1,3 +1,16 @@
+2003-08-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3368236 -- NSURL exception going back at http://derstandard.at/
+
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _createItem:]): Put "about:blank" in
+        the back/forward item if there is no URL (which happens because there is no data source
+        because the frame has never successfully loaded anything). Perhaps we can do better
+        some day, but this avoids all the major bad effects in a safe way.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 === Safari-92 ===
 
 2003-08-07  Richard Williamson   <rjw@apple.com>

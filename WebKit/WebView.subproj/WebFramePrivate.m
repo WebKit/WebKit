@@ -283,6 +283,15 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
     LOG (History, "creating item for %@", request);
     
+    // Frames that have never successfully loaded any content
+    // may have no URL at all. Currently our history code can't
+    // deal with such things, so we nip that in the bud here.
+    // Later we may want to learn to live with nil for URL.
+    // See bug 3368236 and related bugs for more information.
+    if (URL == nil) {
+        URL = [NSURL URLWithString:@"about:blank"];
+    }
+
     bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
     [dataSrc _addBackForwardItem:bfItem];
     [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
