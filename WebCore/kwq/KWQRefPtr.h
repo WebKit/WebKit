@@ -23,18 +23,72 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qguardedptr.h>
+#ifndef KWQREFPTR_H_
+#define KWQREFPTR_H_
 
-QGuardedPtrPrivate::QGuardedPtrPrivate(QObject* o)
-    : p(o)
-{
-    // FIXME: must connect
-}
-
-
-QGuardedPtrPrivate::~QGuardedPtrPrivate()
-{
-}
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 
+template <class T> class KWQRefPtr {
+public:
+    explicit KWQRefPtr(T* ptr = 0) : pointer(ptr)
+    {
+        ref();
+    }
+
+    KWQRefPtr(const KWQRefPtr& r) : pointer(r.pointer)
+    {
+        ref();
+    }
+
+    KWQRefPtr& operator=(const KWQRefPtr& r) {
+        if (&r != this) {
+	    r.ref();
+	    unref();
+	    pointer = r.pointer;
+	}
+	return *this;
+    }
+
+    ~KWQRefPtr() 
+    {
+        unref();
+    }
+
+    bool isNull() const {
+        return pointer == 0;
+    }
+
+    T& operator*() const {
+        return *pointer;
+    }
+
+    T* operator->() const {
+        return pointer;
+    }
+
+private:
+    void unref() 
+    {
+        if (!isNull()) {
+	    if (--pointer->refCount == 0) {
+	        delete pointer;
+	    }
+	}
+    }
+
+    void ref() const 
+    {
+        if (!isNull()) {
+  	    ++pointer->refCount;
+	}
+    }
+
+    T* pointer;
+};
+
+
+#endif
 

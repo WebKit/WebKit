@@ -42,9 +42,8 @@
 #define qstricmp(s1,s2) strcasecmp((s1),(s2))
 #define qstrnicmp(s1,s2,len) strncasecmp((s1),(s2),(len))
 
-QCString::QCString() : QByteArray(1)
+QCString::QCString() : QByteArray(0)
 {
-    *data() = '\0';
 }
 
 QCString::QCString(int size) : QByteArray(size)
@@ -82,12 +81,12 @@ QCString::QCString(const QCString &s) : QByteArray(s)
 
 bool QCString::isEmpty() const
 {
-    return data() == 0;
+    return length() == 0;
 }
 
 bool QCString::isNull() const
 {
-    return data() == 0 || *data() == '\0';
+    return data() == NULL;
 }
 
 int QCString::find(const char *s, int index=0, bool cs=TRUE) const
@@ -162,7 +161,7 @@ int QCString::contains(char c, bool cs=TRUE) const
 
 uint QCString::length() const
 {
-    return strlen(data());
+    return data() == NULL ? 0 : strlen(data());
 }
 
 bool QCString::resize(uint len)

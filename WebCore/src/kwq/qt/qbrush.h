@@ -48,12 +48,12 @@ public:
     
     // constructors, copy constructors, and destructors ------------------------
 
-    QBrush();
-    QBrush(const QColor &);
-    QBrush::QBrush(const QColor &c, BrushStyle style);
-    QBrush(const QBrush &);
-    QBrush &operator=(const QBrush &);
-    ~QBrush();
+    QBrush::QBrush(const QColor &c = Qt::black, BrushStyle style = SolidPattern);
+
+    // Defaults are fine
+    // QBrush(const QBrush &);
+    // QBrush &operator=(const QBrush &);
+    // ~QBrush();
  
     // member functions --------------------------------------------------------
     
@@ -70,14 +70,8 @@ public:
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 private:
-    void init(const QColor &, BrushStyle);
-    QBrush copy() const;
-    void detach();
-    struct QBrushData : public QShared { 
-        BrushStyle brushStyle;
-        QColor color;
-    } *data;
-
+    QColor brushColor;
+    BrushStyle brushStyle;
 }; // class QBrush =============================================================
 
 #endif

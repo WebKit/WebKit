@@ -30,24 +30,17 @@
 #include <config.h>
 #endif
 
+#include "KWQRefPtr.h"
+
 #include "qobject.h"
 
 // class QGuardedPtrPrivate ====================================================
 
-class QGuardedPtrPrivate : public QObject, public QShared {
-public:
-    QGuardedPtrPrivate(QObject *o);
-    ~QGuardedPtrPrivate();
-    
-    QObject *object() const;
-    
-private:
-    QObject *p;
-};
-
 // class QGuardedPtr ===========================================================
 
-template <class T> class QGuardedPtr : public QObject {
+class QGuardedPtrPrivate;
+
+template <class T> class QGuardedPtr {
 public:
 
     // typedefs ----------------------------------------------------------------
@@ -57,39 +50,37 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QGuardedPtr() {
-        d = new QGuardedPtrPrivate(0L);
+    QGuardedPtr() : d(new QGuardedPtrPrivate(0))
+    {
     }
-    QGuardedPtr(T *o) {
-        d = new QGuardedPtrPrivate(o);
+    QGuardedPtr(T *o) : d(new QGuardedPtrPrivate(o))
+    {
     }
     
     QGuardedPtr(const QGuardedPtr<T> &p) {
         d = p.d;
-        ref();
     }
 
     ~QGuardedPtr() {
-        deref();
     }
 
     // member functions --------------------------------------------------------
 
     bool isNull() const {
-        return !d->object();
+        return d->object() == 0;
     }
 
     // operators ---------------------------------------------------------------
 
     QGuardedPtr &operator=(const QGuardedPtr &p) {
-        if (d != p.d) {
-            deref();
-            d = p.d;
-            ref();
-        } 
+        d = p.d;
         return *this;
     }
     
+    T &operator*() const {
+        return *(T*)d->object();
+    }
+
     operator T *() const {
         return (T*)d->object();
     }
@@ -101,26 +92,26 @@ public:
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 private:
-    QGuardedPtrPrivate *d;
 
-    void ref()
-    {
-        d->ref();
-    }
-    
-    void deref()
-    {
-        if (d->deref())
-            delete d;
-    }
-
-
+    KWQRefPtr<QGuardedPtrPrivate> d;
 }; // class QGuardedPtr ========================================================
 
+class QGuardedPtrPrivate {
+  public:
+    QGuardedPtrPrivate(QObject *o);
+    ~QGuardedPtrPrivate();
 
-inline QObject *QGuardedPtrPrivate::object() const
-{
-    return p;
-}
+    QObject *object()
+    {
+      return p;
+    }
+    
+  private:
+    QObject *p;
+    int refCount;
+
+    friend class KWQRefPtr<QGuardedPtrPrivate>;
+};
 
 #endif
+

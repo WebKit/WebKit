@@ -34,7 +34,6 @@
 #include <qcolor.h>
 
 class QPainter;
-class QPenPrivate;
 
 // class QPen ==================================================================
 
@@ -49,10 +48,12 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QPen();
-    QPen(const QColor &c, uint w=0, PenStyle ps=SolidLine);
-    QPen(const QPen &pen);
-    ~QPen();
+    QPen(const QColor &c = Qt::black, uint w = 0, PenStyle ps = SolidLine);
+
+    // defaults are fine
+    // QPen(const QPen &pen);
+    // ~QPen();
+    // QPen &operator=(const QPen &);
 
     // member functions --------------------------------------------------------
 
@@ -69,21 +70,14 @@ public:
     bool operator==(const QPen &) const;
     bool operator!=(const QPen &) const;
     
-    QPen &operator=(const QPen &);
-
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 private:
-    QPen copy()  const;
-    void detach();
-    void init(const QColor &, uint, uint);
-    
-    struct QPenData : public QShared {
-        PenStyle  style;
-        uint      width;
-        QColor    color;
-        Q_UINT16  linest;
-    } *data;
+
+    PenStyle  penStyle;
+    uint      penWidth;
+    QColor    penColor;
+    Q_UINT16  linest;
  
 }; // class QPen ===============================================================
 

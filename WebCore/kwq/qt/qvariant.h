@@ -30,10 +30,11 @@
 #include <config.h>
 #endif
 
+#include <KWQRefPtr.h>
+
 typedef unsigned int uint;
 
 class QString;
-class QVariantPrivate;
 
 // class QVariant ==============================================================
 
@@ -76,8 +77,9 @@ public:
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
 private:
+    class QVariantPrivate;
     
-    QVariantPrivate *d;
+    KWQRefPtr<QVariantPrivate> d;
 
 }; // class QVariant ===========================================================
 

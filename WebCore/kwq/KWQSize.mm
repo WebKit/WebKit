@@ -23,18 +23,63 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qguardedptr.h>
+#include <qsize.h>
 
-QGuardedPtrPrivate::QGuardedPtrPrivate(QObject* o)
-    : p(o)
-{
-    // FIXME: must connect
-}
-
-
-QGuardedPtrPrivate::~QGuardedPtrPrivate()
+QSize::QSize() : w(-1), h(-1)
 {
 }
 
+QSize::QSize(int width, int height) : w(width), h(height)
+{
+}
 
+bool QSize::isValid() const
+{
+	return w >= 0 && h>= 0;
+}
+
+int QSize::width() const
+{
+	return w;
+}
+
+int QSize::height() const
+{
+	return h;
+}
+
+void QSize::setWidth(int width)
+{
+	w = width;
+}
+void QSize::setHeight(int height)
+{
+	h = height;
+}
+QSize QSize::expandedTo(const QSize &o) const
+{
+	return QSize(w > o.w ? w : o.w, h > o.h ? h : o.h);
+}
+
+QSize operator+(const QSize &a, const QSize &b)
+{
+	return QSize(a.w + b.w, a.h + b.h);
+}
+
+bool operator==(const QSize &a, const QSize &b)
+{
+	return a.w == b.w && a.h == b.h;
+}
+
+bool operator!=(const QSize &a, const QSize &b)
+{
+	return a.w != b.w || a.h != b.h;
+}
+
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QSize &s)
+{
+	return o << "QSize: [w: " << s.width() << "; h: " << s.height() << "]";
+}
+#endif
 

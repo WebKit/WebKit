@@ -14,6 +14,10 @@
 
 #include "qpoint.h"
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifdef USING_BORROWED_QPOINT
+
 // for abs()
 #include <stdlib.h>
 
@@ -71,10 +75,6 @@ ostream &operator<<(ostream &o, const QPoint &p)
         ']';
 }
 #endif
-
-// KWQ hacks ---------------------------------------------------------------
-
-#ifdef USING_BORROWED_QPOINT
 
 // -------------------------------------------------------------------------
 

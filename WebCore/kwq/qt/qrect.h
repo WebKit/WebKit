@@ -50,14 +50,11 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QRect();
+    QRect(QPoint p, QSize s);
     QRect(int, int, int, int);
-    QRect(const QRect &);
+    // QRect(const QRect &);
+    // default copy constructor is fine
 
-#ifdef USING_BORROWED_QRECT
-    QRect(const QPoint &, const QPoint &);
-    QRect(const QPoint &, const QSize &);
-#endif
-    
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
     ~QRect() {}
@@ -77,48 +74,13 @@ public:
     int width() const;
     int height() const;
 
+    QPoint topLeft() const;
     QSize size() const;
     void setWidth(int);
     void setHeight(int);
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
 
-#ifdef USING_BORROWED_QRECT
-    bool isEmpty() const;
-    QRect normalize() const;
-
-    void setLeft(int);
-    void setTop(int);
-    void setRight(int);
-    void setBottom(int);
-    void setX(int);
-    void setY(int);
-
-    QPoint topLeft() const;
-    QPoint bottomRight() const;
-    QPoint topRight() const;
-    QPoint bottomLeft() const;
-    QPoint center() const;
-
-    void rect(int *, int *, int *, int *) const;
-    void coords(int *, int *, int *, int *) const;
-
-    void setSize(const QSize &);
-    void setRect(int, int, int, int);
-    void setCoords(int, int, int, int);
-
-    void moveTopLeft(const QPoint &);
-    void moveBottomRight(const QPoint &);
-    void moveTopRight(const QPoint &);
-    void moveBottomLeft(const QPoint &);
-    void moveCenter(const QPoint &);
-    void moveBy(int, int);
-
-    bool contains(const QPoint &, bool proper=FALSE) const;
-    bool contains(int, int, bool proper=FALSE) const;
-    bool contains(const QRect &, bool proper=FALSE) const;
-    QRect unite(const QRect &) const;
-#endif // USING_BORROWED_QRECT
 
     // operators ---------------------------------------------------------------
 
@@ -128,15 +90,6 @@ public:
 
     QRect operator&(const QRect &) const;
 
-#ifdef USING_BORROWED_QRECT
-    friend bool operator==(const QRect &, const QRect &);
-    friend bool operator!=(const QRect &, const QRect &);
-
-    QRect operator|(const QRect &) const;
-    QRect& operator|=(const QRect &);
-    QRect& operator&=(const QRect &);
-#endif
-
 #ifdef _KWQ_IOSTREAM_
     friend ostream &operator<<(ostream &, const QRect &);
 #endif
@@ -145,11 +98,14 @@ public:
 
 // private ---------------------------------------------------------------------
 
-    QCOORD x1;
-    QCOORD x2;
-    QCOORD y1;
-    QCOORD y2;
+private:
+    QCOORD xp;
+    QCOORD yp;
+    QCOORD w;
+    QCOORD h;
 
+    friend bool operator==(const QRect &, const QRect &);
+    friend bool operator!=(const QRect &, const QRect &);
 }; // class QRect ==============================================================
 
 // operators associated with QRect =============================================

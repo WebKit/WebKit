@@ -23,18 +23,46 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qguardedptr.h>
+#include <qpoint.h>
 
-QGuardedPtrPrivate::QGuardedPtrPrivate(QObject* o)
-    : p(o)
-{
-    // FIXME: must connect
-}
-
-
-QGuardedPtrPrivate::~QGuardedPtrPrivate()
+QPoint::QPoint() : xCoord(0), yCoord(0)
 {
 }
 
 
+QPoint::QPoint(int xIn, int yIn) : xCoord(xIn), yCoord(yIn)
+{
+}
 
+int QPoint::x() const
+{
+    return xCoord;
+}
+
+int QPoint::y() const
+{
+    return yCoord;
+}
+
+int QPoint::manhattanLength() const
+{
+    return abs(xCoord) + abs(yCoord);
+}
+
+
+QPoint operator+(const QPoint &a, const QPoint &b)
+{
+    return QPoint(a.xCoord + b.xCoord, a.yCoord + b.yCoord);
+}
+
+QPoint operator-(const QPoint &a, const QPoint &b)
+{
+    return QPoint(a.xCoord - b.xCoord, a.yCoord - b.yCoord);
+}
+
+#ifdef _KWQ_IOSTREAM_
+ostream &operator<<(ostream &o, const QPoint &p)
+{
+	return o << "QPoint: [x: " << p.x() << "; h: " << p.y() << "]";
+}
+#endif

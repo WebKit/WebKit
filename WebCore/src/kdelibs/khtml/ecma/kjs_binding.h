@@ -26,6 +26,7 @@
 #include <dom/dom_doc.h>
 #include <kurl.h>
 #include <qguardedptr.h>
+#include <qvariant.h>
 
 namespace KJS {
 

@@ -1,3 +1,60 @@
+2001-12-18  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/KWQCString.mm: (QCString::QCString),
+	(QCString::isEmpty), (QCString::isNull), (QCString::length): Fix
+	some bugs found by the test suite in the emptiness/null semantics.
+
+	Reimplement QPoint, QSize and QRect:
+
+	* src/kwq/qt/qpoint.h, src/kwq/qt/qrect.h, src/kwq/qt/qsize.h:
+	Update.
+	* src/kwq/KWQPoint.mm: (QPoint::QPoint), (QPoint::x), (QPoint::y),
+	(QPoint::manhattanLength), (operator+), (operator-), (operator<<):
+	Fresh implementations.
+	* src/kwq/KWQRect.mm: (QRect::QRect), (QRect::isNull), (QRect::isValid),
+	(QRect::x), (QRect::y), (QRect::left), (QRect::top), (QRect::right),
+	(QRect::bottom), (QRect::width), (QRect::height), (QRect::topLeft),
+	(QRect::size), (QRect::setWidth), (QRect::setHeight), (QRect::intersect),
+	(QRect::intersects), (QRect::operator&), (operator==), (operator!=),
+	(operator<<): Likewise.
+	* src/kwq/KWQSize.mm: (QSize::QSize), (QSize::isValid), (QSize::width),
+	(QSize::height), (QSize::setWidth), (QSize::setHeight), (QSize::expandedTo),
+	(operator+), (operator==), (operator!=), (operator<<): Likewise.
+	* src/kwq/qt/_qpoint.cpp, src/kwq/qt/_qrect.cpp,
+	src/kwq/qt/_qsize.cpp: Disable the whole file contents when
+	building.
+	* src/kwq/Makefile.in: Add new files to build.
+	
+	Start moving away from QShared so we can remove it:
+
+	* src/kwq/qt/qbrush.h, src/kwq/KWQBrush.mm: (QBrush::QBrush),
+	(QBrush::color),
+	(QBrush::setColor), (QBrush::style), (QBrush::setStyle),
+	(QBrush::operator==), (QBrush::operator!=): Don't use shared data
+	for this simple value object, the optimization value is
+	quastionable anyway.
+	* src/kwq/qt/qpen.h, src/kwq/KWQPen.mm: (QPen::QPen),
+	(QPen::color), (QPen::width), (QPen::style),
+	(QPen::setColor), (QPen::setWidth), (QPen::setStyle),
+	(QPen::operator==): Likewise.
+	* src/kwq/KWQPainter.mm: (QPainter::setPen), (QPainter::setBrush):
+	Update for changes to pen.
+	* src/kwq/KWQRefPtr.h: New reference-counted pointer template.
+	* src/kwq/qt/qguardedptr.h, src/kwq/KWQGuardedPtr.mm:
+	(QGuardedPtrPrivate::QGuardedPtrPrivate): Use KWQRefPtr instead of
+	QShared.
+	* src/kwq/qt/qvariant.h, src/kwq/KWQVariant.mm:
+	(QVariant::QVariant), (QVariant::~QVariant),
+	(QVariant::operator=): Use KWQRefPtr instead of
+	QShared.
+	* src/kwq/qt/qnamespace.h: Remove private constructor and
+	destructor since people want to subclass this.
+
+	* src/kwq/_KWQOwner.h: Add include guards and standard license.
+
+	* src/kdelibs/khtml/ecma/kjs_binding.h: Add include of qvariant.h,
+	how could stuff ever compile without this?
+
 2001-12-18  Richard Williamson  <rjw@apple.com>
 
         Finally fixed underlining.

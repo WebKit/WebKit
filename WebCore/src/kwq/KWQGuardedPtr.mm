@@ -26,8 +26,9 @@
 #include <qguardedptr.h>
 
 QGuardedPtrPrivate::QGuardedPtrPrivate(QObject* o)
-    : QObject(0, "_ptrpriv" ), p(o)
+    : p(o)
 {
+    // FIXME: must connect
 }
 
 

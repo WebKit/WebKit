@@ -26,32 +26,11 @@
 
 #include <qvariant.h>
 #include <qstring.h>
-#include <_qshared.h>
 
-class QVariantPrivate : public QShared {
-friend class QVariant;
+class QVariant::QVariantPrivate {
 public:
-    QVariantPrivate() {
-        t = QVariant::Invalid;
-    }
-    
-    QVariantPrivate(QVariantPrivate *other) {
-        switch (other->t) {
-            case QVariant::Invalid:
-                break;
-            case QVariant::String:
-                value.p = new QString(*((QString*)other->value.p));
-                break;
-            case QVariant::UInt:
-                value.u = other->value.u;
-                break;
-            case QVariant::Double:
-                value.d = other->value.d;
-                break;
-            case QVariant::Bool:
-                value.b = other->value.b;
-                break;
-        }
+    QVariantPrivate() : t(QVariant::Invalid), refCount(0)
+    {
     }
     
     ~QVariantPrivate() {
@@ -81,50 +60,46 @@ public:
         double d;
         void *p;
     } value;
+
+    int refCount;
+
+    friend KWQRefPtr<QVariantPrivate>;
 };
 
-QVariant::QVariant()
+QVariant::QVariant() : d(new QVariantPrivate())
 {
-    d = new QVariantPrivate();
 }
 
 
-QVariant::QVariant(bool val, int i)
+QVariant::QVariant(bool val, int i) : d(new QVariantPrivate())
 {
-    d = new QVariantPrivate();
     d->t = Bool;
     d->value.d = val;
 }
 
 
-QVariant::QVariant(double val)
+QVariant::QVariant(double val) : d(new QVariantPrivate())
 {
-    d = new QVariantPrivate();
     d->t = Double;
     d->value.d = val;
 }
 
 
-QVariant::QVariant(const QString &s)
+QVariant::QVariant(const QString &s) : d(new QVariantPrivate())
 {
-    d = new QVariantPrivate();
     d->t = String;
     d->value.p = new QString(s);
 }
 
 
-QVariant::QVariant(const QVariant &other)
+QVariant::QVariant(const QVariant &other) : d(0)
 {
-    d = new QVariantPrivate();
-    *this = other;
+    d = other.d;
 }
 
 
 QVariant::~QVariant()
 {
-    if (d->deref()) {
-        delete d;
-    }
 }
 
 
@@ -168,14 +143,7 @@ uint QVariant::toUInt() const
 
 QVariant &QVariant::operator=(const QVariant &other)
 {
-    QVariant &variant = (QVariant &)other;
-    
-    variant.d->ref();
-    if (d->deref()) {
-        delete d;
-    }
-    d = variant.d;
-    
+    d = other.d;
     return *this;
 }
 

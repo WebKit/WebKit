@@ -25,109 +25,47 @@
 
 #include <qpen.h>
 
-void QPen::init(const QColor &color, uint width, uint linestyle)
+QPen::QPen(const QColor &color, uint width, PenStyle style) : penStyle((PenStyle)(style & MPenStyle)), penWidth(width), penColor(color), linest (style)
 {
-    data = new QPenData();
-    data->style = (PenStyle)(linestyle & MPenStyle);
-    data->width = width;
-    data->color = color;
-    data->linest = linestyle;
 }
 
-QPen::QPen()
-{
-    init(Qt::black, 1, SolidLine);
-}
-
-
-QPen::QPen(const QColor &color, uint width, PenStyle style)
-{
-    init(color, width, style);
-}
-
-
-QPen::QPen(const QPen &copyFrom)
-{
-    data = copyFrom.data;
-    data->ref();
-}
-
-
-QPen::~QPen()
-{
-    if (data->deref()) {
-        delete data;
-    }
-}
-
-QPen QPen::copy() const
-{
-    QPen p(data->color, data->width, data->style);
-    return p;
-}
-
-void QPen::detach()
-{
-    if (data->count != 1) {
-        *this = copy();
-    }
-}
 
 const QColor &QPen::color() const
 {
-    return data->color;
+    return penColor;
 }
 
 uint QPen::width() const
 {
-    return data->width;
+    return penWidth;
 }
 
 QPen::PenStyle QPen::style() const
 {
-    return data->style;
+    return penStyle;
 }
 
 void QPen::setColor(const QColor &color)
 {
-    detach();
-    data->color = color;
+    penColor = color;
 }
 
 void QPen::setWidth(uint width)
 {
-    if (data->width == width) {
-        return;
-    }
-    detach();
-    data->width = width;
+    penWidth = width;
 }
 
 void QPen::setStyle(PenStyle style)
 {
-    if (data->style == style) {
-        return;
-    }
-    detach();
-    data->style = style;
-    data->linest = (data->linest & ~MPenStyle) | style;
-}
-
-QPen &QPen::operator=(const QPen &assignFrom)
-{
-    assignFrom.data->ref();
-    if (data->deref()) {
-        delete data;
-    }
-    data = assignFrom.data;
-    return *this;
+    penStyle = style;
+    linest = (linest & ~MPenStyle) | style;
 }
 
 bool QPen::operator==(const QPen &compareTo) const
 {
-    return (data->width == compareTo.data->width) &&
-        (data->style == compareTo.data->style) &&
-        (data->color == compareTo.data->color);
+    return (penWidth == compareTo.penWidth) &&
+        (penStyle == compareTo.penStyle) &&
+        (penColor == compareTo.penColor);
 }
 
 

@@ -50,7 +50,9 @@ public:
 
     QPoint();
     QPoint(int, int);
-    QPoint(const QPoint &);
+
+    // QPoint(const QPoint &);
+    // default copy constructor is fine
 
 // add no-op destructor
 #ifdef _KWQ_PEDANTIC_
@@ -64,12 +66,6 @@ public:
 
     int manhattanLength() const;
 
-#ifdef USING_BORROWED_QPOINT
-    bool isNull() const;
-    void setX(int);
-    void setY(int);
-#endif
-
     // operators ---------------------------------------------------------------
 
     /* Note: Trolltech seems to want operator= to be a bitwise copy
@@ -79,31 +75,13 @@ public:
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
 
-#ifdef USING_BORROWED_QPOINT
-    QPoint &operator+=(const QPoint &);
-    QPoint &operator-=(const QPoint &);
-    QPoint &operator*=(int);
-    QPoint &operator*=(double);
-    QPoint &operator/=(int);
-    QPoint &operator/=(double);
-
-    friend bool operator==(const QPoint &, const QPoint &);
-    friend bool operator!=(const QPoint &, const QPoint &);
-    friend QPoint operator*(const QPoint &, int);
-    friend QPoint operator*(int, const QPoint &);
-    friend QPoint operator*(const QPoint &, double);
-    friend QPoint operator*(double, const QPoint &);
-    friend QPoint operator-(const QPoint &);
-    friend QPoint operator/(const QPoint &, int);
-    friend QPoint operator/(const QPoint &, double);
-#endif
-
 // protected -------------------------------------------------------------------
 
 // private ---------------------------------------------------------------------
+private:
 
-    QCOORD xx;
-    QCOORD yy;
+    QCOORD xCoord;
+    QCOORD yCoord;
 
 }; // class QPoint =============================================================
 

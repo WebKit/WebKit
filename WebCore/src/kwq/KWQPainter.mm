@@ -137,12 +137,6 @@ void QPainter::setPen(const QPen &pen)
 
 void QPainter::setPen(PenStyle style)
 {
-    QPen::QPenData *d = data->qpen.data;
-    if (d->count != 1) {
-        data->qpen.detach();
-        d = data->qpen.data;  
-    }
-
     data->qpen.setStyle(style);
     data->qpen.setColor(Qt::black);
     data->qpen.setWidth(0);
@@ -156,12 +150,6 @@ void QPainter::setBrush(const QBrush &brush)
 
 void QPainter::setBrush(BrushStyle style)
 {
-    QBrush::QBrushData *d = data->qbrush.data;
-    if (d->count != 1) {
-        data->qbrush.detach();
-        d = data->qbrush.data;  
-    }
-
     data->qbrush.setStyle(style);
     data->qbrush.setColor(Qt::black);
 }

@@ -40,6 +40,9 @@ MMOBJECTS = \
     KWQFontMetrics.o \
     KWQFrame.o \
     KWQGuardedPtr.o \
+    KWQPoint.o \
+    KWQRect.o \
+    KWQSize.o \
     KWQHBox.o \
     KWQImage.o \
     KWQInputDialog.o \

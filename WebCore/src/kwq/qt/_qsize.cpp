@@ -20,6 +20,10 @@
 
 #include <qsize.h>
 
+// KWQ hacks ---------------------------------------------------------------
+
+#ifdef USING_BORROWED_QSIZE
+
 QSize::QSize() 
 {
     w = h = -1;
@@ -99,10 +103,6 @@ ostream &operator<<(ostream &o, const QSize &s)
         ']';
 }
 #endif
-
-// KWQ hacks ---------------------------------------------------------------
-
-#ifdef USING_BORROWED_QSIZE
 
 // -------------------------------------------------------------------------
 
