@@ -1,3 +1,23 @@
+2004-08-18  Ken Kocienda  <kocienda@apple.com>
+
+        Coded by Darin and Ken
+
+        * khtml/css/css_computedstyle.cpp: Added CopyProperties static array. This contains
+        the properties we implement that we also want to copy in the new
+        CSSComputedStyleDeclarationImpl::copy described below.
+        (DOM::CSSComputedStyleDeclarationImpl::copy): New function. In this class, copies the
+        computed values of all the properties listed in CopyProperties. In essence, this makes
+        a freeze-dired version of a computed style.
+        (DOM::CSSComputedStyleDeclarationImpl::diff): Removes every property from the passed-in 
+        CSSStyleDeclarationImpl that is also in the computed style.
+        * khtml/css/css_computedstyle.h:
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::copy): New function. In this class, the copy operation is
+        straightforward. Returns a copy that will be unchanged when the original changes.
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSStyleDeclarationImpl::values): Added a accessor suitable for use when the 
+        CSSStyleDeclarationImpl is const.
+
 2004-08-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

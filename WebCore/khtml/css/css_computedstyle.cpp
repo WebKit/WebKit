@@ -43,6 +43,59 @@ using khtml::Length;
 
 namespace DOM {
 
+static const int CopyProperties[] = {
+    CSS_PROP__KHTML_BORDER_HORIZONTAL_SPACING,
+    CSS_PROP__KHTML_BORDER_VERTICAL_SPACING,
+    CSS_PROP_BACKGROUND_ATTACHMENT,
+    CSS_PROP_BACKGROUND_COLOR,
+    CSS_PROP_BACKGROUND_IMAGE,
+    CSS_PROP_BACKGROUND_POSITION_X,
+    CSS_PROP_BACKGROUND_POSITION_Y,
+    CSS_PROP_BACKGROUND_POSITION,
+    CSS_PROP_BACKGROUND_REPEAT,
+    CSS_PROP_BORDER_BOTTOM_COLOR,
+    CSS_PROP_BORDER_BOTTOM_STYLE,
+    CSS_PROP_BORDER_BOTTOM_WIDTH,
+    CSS_PROP_BORDER_COLLAPSE,
+    CSS_PROP_BORDER_LEFT_COLOR,
+    CSS_PROP_BORDER_LEFT_STYLE,
+    CSS_PROP_BORDER_LEFT_WIDTH,
+    CSS_PROP_BORDER_RIGHT_COLOR,
+    CSS_PROP_BORDER_RIGHT_STYLE,
+    CSS_PROP_BORDER_RIGHT_WIDTH,
+    CSS_PROP_BORDER_SPACING,
+    CSS_PROP_BORDER_TOP_COLOR,
+    CSS_PROP_BORDER_TOP_STYLE,
+    CSS_PROP_BORDER_TOP_WIDTH,
+    CSS_PROP_COLOR,
+    CSS_PROP_DISPLAY,
+    CSS_PROP_FLOAT,
+    CSS_PROP_FONT_FAMILY,
+    CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STYLE,
+    CSS_PROP_FONT_VARIANT,
+    CSS_PROP_FONT_WEIGHT,
+    CSS_PROP_HEIGHT,
+    CSS_PROP_LETTER_SPACING,
+    CSS_PROP_LINE_HEIGHT,
+    CSS_PROP_MARGIN_BOTTOM,
+    CSS_PROP_MARGIN_LEFT,
+    CSS_PROP_MARGIN_RIGHT,
+    CSS_PROP_MARGIN_TOP,
+    CSS_PROP_OVERFLOW,
+    CSS_PROP_PADDING_BOTTOM,
+    CSS_PROP_PADDING_LEFT,
+    CSS_PROP_PADDING_RIGHT,
+    CSS_PROP_PADDING_TOP,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP_TEXT_DECORATION,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP_VERTICAL_ALIGN,
+    CSS_PROP_WHITE_SPACE,
+    CSS_PROP_WIDTH,
+    CSS_PROP_WORD_SPACING,
+};
+
 static CSSValueImpl *valueForLength(const Length &length, int max)
 {
     if (length.isPercent()) {
@@ -746,6 +799,33 @@ CSSProperty CSSComputedStyleDeclarationImpl::property(int id) const
     prop.m_bImportant = false;
     prop.setValue(getPropertyCSSValue(id));
     return prop;
+}
+
+CSSStyleDeclarationImpl *CSSComputedStyleDeclarationImpl::copy() const
+{
+    QPtrList<CSSProperty> *list = new QPtrList<CSSProperty>;
+    for (unsigned i = 0; i < sizeof(CopyProperties) / sizeof(CopyProperties[0]); i++) {
+        CSSProperty *property = new CSSProperty;
+        property->m_id = CopyProperties[i];
+        property->setValue(getPropertyCSSValue(CopyProperties[i]));
+        list->append(property);
+    }
+    return new CSSStyleDeclarationImpl(0, list);
+}
+
+void CSSComputedStyleDeclarationImpl::diff(CSSStyleDeclarationImpl *style) const
+{
+    QValueList<int> properties;
+    for (QPtrListIterator<CSSProperty> it(*style->values()); it.current(); ++it) {
+        CSSProperty *property = it.current();
+        CSSValueImpl *value = getPropertyCSSValue(property->id());
+        if (value->cssText() == property->value()->cssText()) {
+            properties.append(property->id());
+        }
+    }
+    
+    for (QValueListIterator<int> it(properties.begin()); it != properties.end(); ++it)
+        style->removeProperty(*it);
 }
 
 } // namespace DOM

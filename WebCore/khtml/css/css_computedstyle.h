@@ -58,6 +58,9 @@ public:
     virtual void setProperty(const DOMString &propertyString);
     virtual DOMString item(unsigned long index) const;
 
+    virtual CSSStyleDeclarationImpl *copy() const;
+    void diff(CSSStyleDeclarationImpl *) const;
+
 private:
     CSSProperty property(int id) const;
 
