@@ -2,6 +2,15 @@
 
         Reviewed by Harrison.
 
+        - fixed <rdar://problem/4002084> Setting ResourceLoadDelegate to nil can cause a crash
+
+        * WebView.subproj/WebView.m: (-[WebView _cacheResourceLoadDelegateImplementations]):
+        Set booleans to either YES or NO, rather than setting them only in the YES case.
+
+2005-02-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
         - fixed <rdar://problem/3991225> Format->Style->Underline menu item does not get checked when selected text is underlined
 
         * WebView.subproj/WebHTMLView.m:

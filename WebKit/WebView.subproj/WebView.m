@@ -757,22 +757,16 @@ static bool debugWidget = false;
 
 - (void)_cacheResourceLoadDelegateImplementations
 {
-    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsDidCancelAuthenticationChallenge = YES;
+    WebResourceDelegateImplementationCache *cache = &_private->resourceLoadDelegateImplementations;
+    id delegate = [self resourceLoadDelegate];
 
-    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsDidReceiveAuthenticationChallenge = YES;
-
-    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsDidFinishLoadingFromDataSource = YES;
-    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsDidReceiveContentLength = YES;
-    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsDidReceiveResponse = YES;
-    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsWillSendRequest = YES;
-    if ([[self resourceLoadDelegate] respondsToSelector: @selector(webView:identifierForInitialRequest:fromDataSource:)])
-        _private->resourceLoadDelegateImplementations.delegateImplementsIdentifierForRequest = YES;
+    cache->delegateImplementsDidCancelAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didCancelAuthenticationChallenge:fromDataSource:)];
+    cache->delegateImplementsDidReceiveAuthenticationChallenge = [delegate respondsToSelector:@selector(webView:resource:didReceiveAuthenticationChallenge:fromDataSource:)];
+    cache->delegateImplementsDidFinishLoadingFromDataSource = [delegate respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)];
+    cache->delegateImplementsDidReceiveContentLength = [delegate respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)];
+    cache->delegateImplementsDidReceiveResponse = [delegate respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)];
+    cache->delegateImplementsWillSendRequest = [delegate respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)];
+    cache->delegateImplementsIdentifierForRequest = [delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)];
 }
 
 - (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations
