@@ -1537,6 +1537,7 @@
 				83413E8D0375BCD3004719BE,
 			);
 			isa = PBXGroup;
+			name = Downloads;
 			path = Downloads.subproj;
 			refType = 4;
 		};

@@ -1,5 +1,12 @@
 2002-11-06  Darin Adler  <darin@apple.com>
 
+        * Downloads.subproj/WebBinHexDecoder.m: (-[WebBinHexDecoder decodeIntoBuffer:size:]):
+	Fix an off-by-one error handling repeat counts.
+
+        * WebKit.pbproj/project.pbxproj: Fix group name I accidentally mangled.
+
+2002-11-06  Darin Adler  <darin@apple.com>
+
 	- added a BinHex decoder and did a little work on the MacBinary decoder
         
         I'm not supposed to be working on this, but I didn't feel like doing "real" work.

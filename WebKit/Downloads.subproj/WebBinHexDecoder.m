@@ -87,8 +87,6 @@ typedef struct {
                     c &= 0xFF;
                 }
                 
-                //printf("added the character %X to the CRC, CRC is now %X\n", repeatCharacter, CRC);
-                
                 repeatCount -= 1;
                 if (bufferP == bufferEnd) {
                     goto done;
@@ -105,7 +103,7 @@ typedef struct {
                     repeatCount = 1;
                     repeatCharacter = RUN_LENGTH_CODE;
                 } else {
-                    repeatCount = byte;
+                    repeatCount = byte - 1;
                 }
                 sawRepeatCharacter = NO;
             } else {
