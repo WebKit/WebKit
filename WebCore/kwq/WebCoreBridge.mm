@@ -805,4 +805,10 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     return [WebCoreBridge stringWithData:data textEncoding:textEncoding];
 }
 
+- (BOOL)needsLayout
+{
+    RenderObject *renderer = _part->kwq->renderer();
+    return renderer ? !renderer->layouted() : false;
+}
+
 @end

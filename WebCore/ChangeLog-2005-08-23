@@ -1,3 +1,14 @@
+2002-11-14  Darin Adler  <darin@apple.com>
+
+	- fixed 3100235 -- nil-deference in khtml::RenderTable at money.cnn.com
+
+        * kwq/WebCoreBridge.h: Add needsLayout.
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge needsLayout]): Return true if the render
+	tree root says "layouted" is false. It would be more elegant to use more of this
+	WebCore layout logic and have less of our own on the WebKit side.
+
+        * WebCore.pbproj/project.pbxproj: Oh, that Project Builder.
+
 2002-11-13  Darin Adler  <darin@apple.com>
 
 	- fixed 3100895 -- REGRESSION: Crash (was assertion) on http://www.w3.org/Style/CSS/

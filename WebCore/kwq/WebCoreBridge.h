@@ -116,6 +116,7 @@ enum FrameBorderStyle {
 
 - (void)reapplyStyles;
 - (void)forceLayout;
+- (BOOL)needsLayout;
 - (void)adjustFrames:(NSRect)rect;
 - (void)drawRect:(NSRect)rect;
 

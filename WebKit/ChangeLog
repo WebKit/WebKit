@@ -1,3 +1,10 @@
+2002-11-14  Darin Adler  <darin@apple.com>
+
+	- fixed 3100235 -- nil-deference in khtml::RenderTable at money.cnn.com
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]):
+	If the WebCore side needs layout, then do layout before trying to draw.
+
 2002-11-13  Trey Matteson  <trey@apple.com>
 
 	Fixed client redirects, some more.  The upshot is that they do not

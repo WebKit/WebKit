@@ -483,6 +483,9 @@
         [self _restoreSubviews];
     }
     
+    if ([[self _bridge] needsLayout]) {
+        _private->needsLayout = YES;
+    }
     BOOL didReapplyStylesOrLayout = _private->needsToApplyStyles || _private->needsLayout;
 
     [self layout];
