@@ -32,9 +32,7 @@
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSURLExtras.h>
-// Assume we'll only ever compile this on Panther or greater, so 
-// MAC_OS_X_VERSION_10_3 is guranateed to be defined.
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#ifndef OMIT_TIGER_FEATURES
 #import <WebKit/WebPDFRepresentation.h>
 #endif
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -669,9 +667,7 @@
             [WebHTMLRepresentation class], @"application/x-webarchive",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
-// Assume we'll only ever compile this on Panther or greater, so 
-// MAC_OS_X_VERSION_10_3 is guranateed to be defined.
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#ifndef OMIT_TIGER_FEATURES
             [WebPDFRepresentation class], @"application/pdf",
 #endif
             nil];
@@ -1153,7 +1149,7 @@
         }
     }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
     [pool release];
 #else
     [pool drain];

@@ -7,14 +7,14 @@
 
 static inline id WebNSRetainCFRelease(CFTypeRef obj)
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
     return (id)obj;
 #else
     return (id)CFMakeCollectable(obj);
 #endif
 }
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
 
 @interface NSObject (WebExtras)
 - (void)finalize;

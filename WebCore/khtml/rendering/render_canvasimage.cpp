@@ -48,7 +48,7 @@
 
 
 // To be public in Tiger.  Test on tiger and add conditional.
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
 CG_EXTERN_C_BEGIN
 CG_EXTERN CGImageRef CGBitmapContextCreateImage(CGContextRef c);
 CG_EXTERN_C_END

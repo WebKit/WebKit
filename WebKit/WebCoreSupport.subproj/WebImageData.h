@@ -1,7 +1,7 @@
 /*	WebImageData.h
 	Copyright 2004, Apple, Inc. All rights reserved.
 */
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#ifndef OMIT_TIGER_FEATURES
 
 #import <Cocoa/Cocoa.h>
 

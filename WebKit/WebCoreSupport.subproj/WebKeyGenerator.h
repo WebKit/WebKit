@@ -6,7 +6,7 @@
 //  Copyright (c) 2003 Apple Computer, Inc. All rights reserved.
 //
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#ifndef BUILDING_ON_PANTHER
 #define USE_NEW_KEY_GENERATION
 #endif
 

@@ -63,7 +63,7 @@ static inline id KWQRetainNSRelease(id obj)
 // Definitions for GC-specific methods for Panther.
 // The finalize method simply won't be called.
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
 
 @interface NSObject (KWQFoundationExtras)
 - (void)finalize;

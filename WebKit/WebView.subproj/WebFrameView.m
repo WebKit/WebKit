@@ -23,9 +23,7 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
-// Assume we'll only ever compile this on Panther or greater, so 
-// MAC_OS_X_VERSION_10_3 is guaranteed to be defined.
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#ifndef OMIT_TIGER_FEATURES
 #import <WebKit/WebPDFView.h>
 #endif
 #import <WebKit/WebTextRendererFactory.h>
@@ -232,9 +230,7 @@ static NSMutableDictionary *viewTypes;
             [WebHTMLView class], @"application/x-webarchive",
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
-// Assume we'll only ever compile this on Panther or greater, so 
-// MAC_OS_X_VERSION_10_3 is guranateed to be defined.
-#if MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3
+#ifndef OMIT_TIGER_FEATURES
             [WebPDFView class], @"application/pdf",
 #endif
             nil];

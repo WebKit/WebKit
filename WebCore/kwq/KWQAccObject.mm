@@ -260,7 +260,7 @@ using khtml::RenderImage;
 
 -(NSString*)roleDescription
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if OMIT_TIGER_FEATURES
     // We don't need role descriptions on Panther and we don't have the call
     // to get at localized ones anyway. At some point we may want to conditionally
     // compile this entire file instead, but this is OK too.
@@ -532,7 +532,7 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (NSString *)accessibilityActionDescription:(NSString *)action
 {
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if OMIT_TIGER_FEATURES
     // We don't need action descriptions on Panther and we don't have the call
     // to get at localized ones anyway. At some point we may want to conditionally
     // compile this entire file instead, but this is OK too.

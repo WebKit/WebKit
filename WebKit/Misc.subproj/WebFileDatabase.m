@@ -208,7 +208,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     LOG(FileDatabaseActivity, "lru list created");
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
     [pool release];
 #else
     [pool drain];
@@ -276,7 +276,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     END_EXCEPTION_HANDLER
 
-#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3
+#if BUILDING_ON_PANTHER
     [pool release];
 #else
     [pool drain];

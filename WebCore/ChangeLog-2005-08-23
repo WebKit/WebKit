@@ -1,3 +1,18 @@
+2004-09-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- consolidated OS version checks into prefix header
+
+        * WebCorePrefix.h:
+        * khtml/rendering/render_canvasimage.cpp:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject roleDescription]):
+        (-[KWQAccObject accessibilityActionDescription:]):
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox):
+        * kwq/KWQFoundationExtras.h:
+
 2004-09-29  David Hyatt  <hyatt@apple.com>
 
 	Make sure <br>s always get line boxes.  Also prevent the creation of RenderTexts for whitespace normal/nowrap nodes

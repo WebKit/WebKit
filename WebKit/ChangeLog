@@ -1,3 +1,36 @@
+2004-09-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- consolidated OS version checks into prefix header
+
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabase _createLRUList:]):
+        (+[WebFileDatabase _syncLoop:]):
+        * Misc.subproj/WebKitErrors.m:
+        (registerErrors):
+        * Misc.subproj/WebNSObjectExtras.h:
+        (WebNSRetainCFRelease):
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_declareAndWriteDragImage:URL:title:archive:source:]):
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeDirection):
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.h:
+        * WebCoreSupport.subproj/WebNewKeyGeneration.c:
+        * WebKitPrefix.h:
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        (-[WebDataSource isLoading]):
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebPDFRepresentation.h:
+        * WebView.subproj/WebPDFRepresentation.m:
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+
 2004-09-29  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -1,5 +1,5 @@
 /*
- *  WebNewKeyGeneration.cpp
+ *  WebNewKeyGeneration.c
  *  WebKit
  *
  *  Created by Chris Blumenberg on Mon Aug 23 2004.
