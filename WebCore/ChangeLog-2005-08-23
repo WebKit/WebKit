@@ -1,3 +1,14 @@
+2004-01-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John, Ken, Dave.
+
+	<rdar://problem/3533319>: Safari allows upload of arbitrary local files w/o user's knowledge or permission
+        
+	* khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::value): Don't fall back to the value
+	attribute for file inputs, since that way malicious HTML could
+	force the user to upload files unexpectedly.
+
 2004-01-18  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3532569, bugzilla patch viewer doesn't work.  My previous fix for 3531983 caused moves to happen
