@@ -1,3 +1,14 @@
+2002-07-29  Richard Williamson  <rjw@apple.com>
+
+        Fixed 3009067.  We were not correctly testing the first character of the node string.  Fixed in KWQString.
+        This highlighted another problem.  KWQ does not support unichar * string find w/ case sensitive argument.
+        KWQString implements QString::find(const char *chs, int index, bool caseSensitive), so  QStrings passed 
+        will be auto-cast to char *.  Filed 3010875 to track that issue.
+
+        * kwq/KWQString.mm:
+        (compareToLatinCharacter):
+        (QString::find):
+
 2002-07-26  David Hyatt  <hyatt@apple.com>
 
 	Changing the default user agent to be Gecko.  This fixes

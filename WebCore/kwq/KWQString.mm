@@ -370,6 +370,25 @@ static int findCheapCount = 0;
 
 const int caseDelta = ('a' - 'A');
 
+static bool compareToLatinCharacter (UniChar c1, UniChar c2, bool caseSensitive)
+{
+    if (!caseSensitive){
+        if (c2 >= 'a' && c2 <= 'z'){
+            if (c1 == c2 || c1 == c2 - caseDelta)
+                return true;
+        }
+        else if (c2 >= 'A' && c2 <= 'Z'){
+            if (c1 == c2 || c1 == c2 + caseDelta)
+                return true;
+        }
+        else if (c1 == c2)
+            return true;
+    }
+    else if (c1 == c2)
+        return true;
+    return false;
+}
+
 int QString::find(const char *chs, int index, bool caseSensitive) const
 {
     int pos = -1;
@@ -417,25 +436,13 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
                 _chs = chs + 1;
                 firstC = (UniChar)(*chs);
                 while (remaining >= compareToLength){
-                    if (*internalBuffer++ == firstC){
+                    if (compareToLatinCharacter(*internalBuffer++,firstC,caseSensitive)){
                         const UniChar *compareTo = internalBuffer;
                         
                         found = len - remaining;
                         while ( (c2 = (UniChar)(*_chs++)) ){
                             c1 = (UniChar)(*compareTo++);
-                            if (!caseSensitive){
-                                if (c2 >= 'a' && c2 <= 'z'){
-                                    if (c1 == c2 || c1 == c2 - caseDelta)
-                                        continue;
-                                }
-                                else if (c2 >= 'A' && c2 <= 'Z'){
-                                    if (c1 == c2 || c1 == c2 + caseDelta)
-                                        continue;
-                                }
-                                else if (c1 == c2)
-                                    continue;
-                            }
-                            else if (c1 == c2)
+                            if (compareToLatinCharacter(c1, c2,caseSensitive))
                                 continue;
                             break;
                         }
