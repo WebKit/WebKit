@@ -1,3 +1,13 @@
+2004-09-22  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3802766, entire view redrawn in Blot while typing.  Don't needlessly create text nodes just to find
+	out the font for the caret position.
+	
+        Reviewed by darin
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForSelection):
+
 2004-09-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:

@@ -3336,15 +3336,16 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
         NodeImpl *node = pos.node();
         if (!node)
             return nil;
+        
+        if (!d->m_typingStyle)
+            return node->renderer()->style()->font().getNSFont();
 
         int exceptionCode = 0;
         ElementImpl *styleElement = xmlDocImpl()->createHTMLElement("span", exceptionCode);
         ASSERT(exceptionCode == 0);
         
-        if (d->m_typingStyle) {
-            styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
-            ASSERT(exceptionCode == 0);
-        }
+        styleElement->setAttribute(ATTR_STYLE, d->m_typingStyle->cssText().implementation(), exceptionCode);
+        ASSERT(exceptionCode == 0);
         
         TextImpl *text = xmlDocImpl()->createEditingTextNode("");
         styleElement->appendChild(text, exceptionCode);
