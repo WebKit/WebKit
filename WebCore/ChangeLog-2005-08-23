@@ -1,3 +1,26 @@
+2004-02-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3552545>: Cut, Paste and Delete must support Undo and Redo
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (ModifyTextNodeStep::splitTextNode): ken's fix that fixes a problem with unapply
+        (ModifyTextNodeStep::joinTextNodes): my fix that fixes a problem with unapply
+        (PasteHTMLCommand::PasteHTMLCommand): new
+        (PasteHTMLCommand::apply): moved from dom_docimpl.cpp and improved
+        * khtml/editing/htmlediting.h:
+        (khtml::PasteHTMLCommand::~PasteHTMLCommand):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::deleteSelection): new, create and applies a DeleteTextCommand
+        (KHTMLPart::pasteHTMLString): new, create and applies a PasteHTMLCommand
+        * khtml/khtml_part.h:
+        * khtml/xml/dom_docimpl.cpp: moved paste code to htmlediting.cpp
+        * khtml/xml/dom_docimpl.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge pasteHTMLString:]): call pasteHTMLString on the part instead of the bridge
+        (-[WebCoreBridge deleteSelection]): call deleteSelection on the part instead of the bridge
+
 2004-02-10  David Hyatt  <hyatt@apple.com>
 
 	Fix crash on abcnews.com by adding isEmpty checks before dereferencing.

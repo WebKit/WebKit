@@ -264,11 +264,8 @@ public:
     // to get visually ordered hebrew and arabic pages right
     void setVisuallyOrdered();
 
-	void deleteSelection();
     void updateSelection();
     
-	void pasteHTMLString(const QString &HTMLString);
-
     void open();
     void close();
     void closeInternal ( bool checkTokenizer );

@@ -34,16 +34,20 @@
 #include "khtml_part.h"
 #include "khtml_selection.h"
 #include "dom/dom_position.h"
+#include "html/html_elementimpl.h"
 #include "rendering/render_object.h"
+#include "xml/dom_docimpl.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom2_rangeimpl.h"
 #include "xml/dom_textimpl.h"
 
+using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMPosition;
 using DOM::DOMString;
 using DOM::ElementImpl;
+using DOM::HTMLElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
@@ -60,13 +64,14 @@ using khtml::InsertNodeBeforeStep;
 using khtml::InsertTextStep;
 using khtml::JoinTextNodesStep;
 using khtml::ModifyTextNodeStep;
-using khtml::RemoveNodeStep;
 using khtml::MoveSelectionToStep;
+using khtml::RemoveNodeStep;
 using khtml::SplitTextNodeStep;
 
 using khtml::DeleteTextCommand;
 using khtml::EditCommand;
 using khtml::InputTextCommand;
+using khtml::PasteHTMLCommand;
 
 #if !APPLE_CHANGES
 #define ASSERT(assertion) ((void)0)
@@ -467,7 +472,7 @@ void ModifyTextNodeStep::splitTextNode()
     ASSERT(m_offset >= m_text2->caretMinOffset() && m_offset <= m_text2->caretMaxOffset());
 
     int exceptionCode;
-    TextImpl *m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, exceptionCode));
+    m_text1 = document()->createTextNode(m_text2->substringData(0, m_offset, exceptionCode));
     ASSERT(exceptionCode == 0);
     ASSERT(m_text1);
     m_text1->ref();
@@ -494,7 +499,7 @@ void ModifyTextNodeStep::joinTextNodes()
     m_text2->insertData(0, m_text1->data(), exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    m_text2->parent()->removeChild(m_text2, exceptionCode);
+    m_text2->parent()->removeChild(m_text1, exceptionCode);
     ASSERT(exceptionCode == 0);
 
     m_offset = m_text1->length();
@@ -980,5 +985,80 @@ void DeleteTextCommand::apply()
             moveSelectionTo(textNode, offset);
             return;
         }
+    }
+}
+
+PasteHTMLCommand::PasteHTMLCommand(DocumentImpl *document, const DOM::DOMString &HTMLString) 
+: EditCommand(document)
+{
+    ASSERT(!HTMLString.isEmpty());
+    m_HTMLString = HTMLString; 
+}
+
+void PasteHTMLCommand::apply()
+{    
+    DOM::DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_HTMLString);
+    ASSERT(root);
+    
+    DOM::NodeImpl *firstChild = root->firstChild();
+    DOM::NodeImpl *lastChild = root->lastChild();
+    ASSERT(firstChild);
+    ASSERT(lastChild);
+    
+    deleteSelection();
+    
+    KHTMLPart *part = document()->part();
+    ASSERT(part);
+    
+    KHTMLSelection selection = part->selection();
+    ASSERT(!selection.isEmpty());
+    
+    DOM::NodeImpl *startNode = selection.startNode();
+    long startOffset = selection.startOffset();
+    TextImpl *textNode = startNode->isTextNode() ? static_cast<TextImpl *>(startNode) : NULL;
+
+    if (textNode && firstChild == lastChild && firstChild->isTextNode()) {
+        // Simple text paste. Add the text to the text node with the caret.
+        insertText(textNode, startOffset, static_cast<TextImpl *>(firstChild)->data());
+        moveSelectionTo(textNode, startOffset + static_cast<TextImpl *>(firstChild)->length());
+    } else {
+        // HTML tree paste.
+        DOM::NodeImpl *child = firstChild;
+        DOM::NodeImpl *beforeNode = NULL;
+        if (startNode->caretMinOffset() == startOffset) {
+            // Caret is at the beginning of the node. Insert before it.
+            DOM::NodeImpl *nextSibling = child->nextSibling();
+            insertNodeBefore(child, startNode);
+            beforeNode = child;
+            child = nextSibling;
+        } else if (textNode && textNode->caretMaxOffset() != startOffset) {
+            // Caret is in middle of a text node. Split the text node and insert in between.
+            splitTextNode(textNode, startOffset);
+            beforeNode = textNode->previousSibling();
+        } else {
+            // Caret is at the end of the node. Insert after it.
+            beforeNode = startNode;
+        }
+        
+        ASSERT(beforeNode);
+		
+        // Insert the nodes from the clipping.
+        while (child) {
+            DOM::NodeImpl *nextSibling = child->nextSibling();
+            insertNodeAfter(child, beforeNode);
+            beforeNode = child;
+            child = nextSibling;
+        }
+		
+		// Find the last leaf and place the caret after it.
+        child = lastChild;
+        while (1) {
+            DOM::NodeImpl *nextChild = child->lastChild();
+            if (!nextChild) {
+                break;
+            }
+            child = nextChild;
+        }
+        moveSelectionTo(child, child->caretMaxOffset());
     }
 }

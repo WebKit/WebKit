@@ -35,6 +35,7 @@
 class KHTMLSelection;
 
 namespace DOM {
+    class DocumentFragmentImpl;
     class DocumentImpl;
     class DOMPosition;
     class DOMString;
@@ -309,6 +310,17 @@ public:
     virtual ~DeleteTextCommand() {};
     
     virtual void apply();
+};
+
+class PasteHTMLCommand : public EditCommand
+{
+public:
+    PasteHTMLCommand(DOM::DocumentImpl *document, const DOM::DOMString &HTMLString);
+    virtual ~PasteHTMLCommand() {};
+    
+    virtual void apply();
+private:
+    DOM::DOMString m_HTMLString;
 };
 
 }; // end namespace khtml

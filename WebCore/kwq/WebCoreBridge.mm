@@ -396,18 +396,12 @@ static bool initializedKJS = FALSE;
 
 - (void)pasteHTMLString:(NSString *)HTMLString
 {
-	DocumentImpl *doc = _part->xmlDocImpl();
-    if (doc) {
-		doc->pasteHTMLString(QString::fromNSString(HTMLString));
-	}
+    _part->pasteHTMLString(QString::fromNSString(HTMLString));
 }
 
 - (void)deleteSelection
 {
-	DocumentImpl *doc = _part->xmlDocImpl();
-    if (doc) {
-		doc->deleteSelection();
-	}
+    _part->deleteSelection();
 }
 
 - (BOOL)haveSelection
