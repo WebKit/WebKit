@@ -9,10 +9,10 @@
 
 // Sent whenever a site icon has changed. The object of the notification is the icon database.
 // The userInfo contains the site URL who's icon has changed.
-// It can be accessed with the key WebIconNotificationUserInfoSiteURLKey.
+// It can be accessed with the key WebIconNotificationUserInfoURLKey.
 extern NSString *WebIconDatabaseDidAddIconNotification;
 
-extern NSString *WebIconNotificationUserInfoSiteURLKey;
+extern NSString *WebIconNotificationUserInfoURLKey;
 
 extern NSSize WebIconSmallSize;  // 16 x 16
 extern NSSize WebIconMediumSize; // 32 x 32
@@ -52,23 +52,23 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 + (WebIconDatabase *)sharedIconDatabase;
 
 /*!
-    @method iconForSiteURL:withSize:
-    @discussion Calls iconForSiteURL:withSize:cache: with YES for cache.
-    @param siteURL
+    @method iconForURL:withSize:
+    @discussion Calls iconForURL:withSize:cache: with YES for cache.
+    @param URL
     @param size
 */
-- (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size;
+- (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size;
 
 /*!
-    @method iconForSiteURL:withSize:cache:
+    @method iconForURL:withSize:cache:
     @discussion Returns an icon for a web site URL from memory or disk. nil if none is found.
     Usually called by a UI element to determine if a site URL has an associated icon.
     Often called by the observer of WebIconChangedNotification after the notification is sent.
-    @param siteURL
+    @param URL
     @param size
     @param cache If yes, caches the returned image in memory if not already cached
 */
-- (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size cache:(BOOL)cache;
+- (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache;
 
 /*!
     @method defaultIconWithSize:
@@ -77,18 +77,18 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 - (NSImage *)defaultIconWithSize:(NSSize)size;
 
 /*!
-    @method retainIconForSiteURL:
+    @method retainIconForURL:
     @abstract Increments the retain count of the icon.
-    @param siteURL
+    @param URL
 */
-- (void)retainIconForSiteURL:(NSURL *)siteURL;
+- (void)retainIconForURL:(NSString *)URL;
 
 /*!
-    @method releaseIconForSiteURL:
+    @method releaseIconForURL:
     @abstract Decrements the retain count of the icon.
-    @param siteURL
+    @param URL
 */
-- (void)releaseIconForSiteURL:(NSURL *)siteURL;
+- (void)releaseIconForURL:(NSString *)URL;
 
 /*!
     @method delayDatabaseCleanup:

@@ -49,7 +49,7 @@ _WebHistoryLoadedNotification
 _WebIconDatabaseDidAddIconNotification
 _WebIconLargeSize
 _WebIconMediumSize
-_WebIconNotificationUserInfoSiteURLKey
+_WebIconNotificationUserInfoURLKey
 _WebIconSmallSize
 _WebModifiedBookmarkKey
 _WebURLNamePboardType

@@ -18,9 +18,9 @@
 
     NSMutableDictionary *iconURLToIcons;
     NSMutableDictionary *iconURLToRetainCount;
-    NSMutableDictionary *iconURLToSiteURLs;
-    NSMutableDictionary *siteURLToIconURL;    
-    NSMutableDictionary *futureSiteURLToRetainCount;
+    NSMutableDictionary *iconURLToURLs;
+    NSMutableDictionary *URLToIconURL;    
+    NSMutableDictionary *futureURLToRetainCount;
     
     NSMutableSet *iconsOnDiskWithURLs;
     NSMutableSet *iconsToEraseWithURLs;
@@ -40,11 +40,11 @@
 @interface WebIconDatabase (WebPrivate)
 
 // Called by WebIconLoader after loading an icon.
-- (void)_setIcon:(NSImage *)icon forIconURL:(NSURL *)iconURL;
+- (void)_setIcon:(NSImage *)icon forIconURL:(NSString *)iconURL;
 
 // Called by WebDataSource to bind a web site URL to a icon URL and icon image.
-- (void)_setIconURL:(NSURL *)iconURL forSiteURL:(NSURL *)siteURL;
+- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL;
 
-- (BOOL)_hasIconForIconURL:(NSURL *)iconURL;
+- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
 
 @end

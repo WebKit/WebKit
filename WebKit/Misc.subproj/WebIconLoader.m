@@ -102,7 +102,7 @@
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon) {
-        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:_private->URL];
+        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[_private->URL absoluteString]];
         [_private->delegate iconLoader:self receivedPageIcon:icon];
         [icon release];
     }

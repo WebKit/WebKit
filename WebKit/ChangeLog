@@ -1,3 +1,42 @@
+2002-12-17  Trey Matteson  <trey@apple.com>
+
+	Reworking the code to update the page icon led me to roll the WebIconDB API
+	for URL to NSString.  In addition, the vestigial "Site" was removed.
+
+	Everything below is renaming, except where noted.
+
+        Reviewed by Darin
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem _retainIconInDatabase:]):
+        (-[WebHistoryItem icon]):
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase init]):
+        (-[WebIconDatabase iconForURL:withSize:cache:]):  Use _web_isFileURL.
+        (-[WebIconDatabase iconForURL:withSize:]):
+        (-[WebIconDatabase retainIconForURL:]):
+        (-[WebIconDatabase releaseIconForURL:]):
+        (-[WebIconDatabase _iconDictionariesAreGood]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _iconForFileURL:withSize:]):  Cons up a NSURL to get the path.
+	Test explicitly for .htm and .html suffixes.
+        (-[WebIconDatabase _setIcon:forIconURL:]):
+        (-[WebIconDatabase _setIconURL:forURL:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        (-[WebIconDatabase _retainFutureIconForURL:]):
+        (-[WebIconDatabase _releaseFutureIconForURL:]):
+        (-[WebIconDatabase _sendNotificationForURL:]):
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader handleDidFinishLoading:]):
+        * WebKit.exp:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _updateIconDatabaseWithURL:]):
+        (-[WebDataSource _loadIcon]):
+
 2002-12-17  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3113073 - link on http://studio.adobe.com/explore/ redirects to not found page in Alex

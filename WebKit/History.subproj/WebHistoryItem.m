@@ -20,13 +20,12 @@
 
 - (void)_retainIconInDatabase:(BOOL)retain
 {
-    NSURL *URL = [self URL];
-    if (URL) {
+    if (_URLString) {
         WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
         if (retain) {
-            [iconDB retainIconForSiteURL:URL];
+            [iconDB retainIconForURL:_URLString];
         } else {
-            [iconDB releaseIconForSiteURL:URL];
+            [iconDB releaseIconForURL:_URLString];
         }
     }
 }
@@ -128,7 +127,7 @@
 {
     // Always get fresh icon from database. It's a client's responsibility to watch
     // for updates to the database if desired.
-    return [[WebIconDatabase sharedIconDatabase] iconForSiteURL:[self URL] withSize:WebIconSmallSize];
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:_URLString withSize:WebIconSmallSize];
 }
 
 

@@ -136,7 +136,7 @@
 "WebHostToSiteURLs"
 "WebIconDatabaseDidAddIconNotification"
 "WebIconDatabaseDirectory"
-"WebIconNotificationUserInfoSiteURLKey"
+"WebIconNotificationUserInfoURLKey"
 "WebIconURLToSiteURLs"
 "WebIconsOnDisk"
 "WebJavaScriptTextInputPanel"

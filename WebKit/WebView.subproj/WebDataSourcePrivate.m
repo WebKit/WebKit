@@ -520,8 +520,8 @@
     WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
 
     // Bind the URL of the original request and the final URL to the icon URL.
-    [iconDB _setIconURL:iconURL forSiteURL:[self URL]];
-    [iconDB _setIconURL:iconURL forSiteURL:[[self _originalRequest] URL]];
+    [iconDB _setIconURL:[iconURL absoluteString] forURL:[[self URL] absoluteString]];
+    [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
     [[_private->controller locationChangeDelegate] receivedPageIcon:nil forDataSource:self];
 }
 
@@ -547,7 +547,7 @@
     }
 
     if(_private->iconURL != nil){
-        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:_private->iconURL]){
+        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL absoluteString]]){
             [self _updateIconDatabaseWithURL:_private->iconURL];
         }else{
             _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
