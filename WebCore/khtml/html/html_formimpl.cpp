@@ -1352,10 +1352,10 @@ void HTMLInputElementImpl::setChecked(bool _checked)
 
 DOMString HTMLInputElementImpl::value() const
 {
-    if (m_type == CHECKBOX || m_type == RADIO) {
-        if (m_value.isNull() && m_checked)
+    if ((m_type == CHECKBOX || m_type == RADIO) && m_value.isNull()) {
+        if (m_checked)
             return DOMString("on");
-        if (!m_checked)
+        else
             return DOMString("");
     }
 

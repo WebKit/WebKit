@@ -2,6 +2,17 @@
 
         Reviewed by Darin.
 
+	- fixed 3103954 - preferences not displayed properly at excite.com
+	
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::value): If a radio or checkbox input has a
+	value, return that rather than something based on the checked
+	state. Only fall back on the checked state if there is no value.
+
+2002-12-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
 	- fixed 3103036 - REGRESSION: scripts dropped from DOM tree;
 	javascript text rendered to screen
 
