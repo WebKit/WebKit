@@ -1,5 +1,7 @@
 2002-09-10  Richard Williamson (Local)  <rjw@apple.com>
 
+        Renamed method.
+        
         * WebView.subproj/WebPreferences.h:
         * WebView.subproj/WebPreferences.m:
         (-[WebPreferences _updateWebCoreSettings]):
