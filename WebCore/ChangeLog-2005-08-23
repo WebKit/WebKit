@@ -2,6 +2,22 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3974246> REGRESSION (125-180): popup menus are missing item text on Harmony Remote web site
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLOptionElementImpl::text): Change this function to traverse the entire tree
+        and gather all the text rather than just looking at immediate children.
+
+        * khtml/xml/dom_nodeimpl.h: Added const.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::traverseNextNode): Added const.
+        (NodeImpl::traverseNextSibling): Ditto.
+        (NodeImpl::traversePreviousNodePostOrder): Ditto.
+        (NodeImpl::detach): Add a missing nil check.
+
+2005-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3864536> crash copying text from other apps and pasting in a sticky in dashboard
 
         * khtml/editing/markup.cpp: (khtml::createFragmentFromText): Added missing ref/deref of newly created element.

@@ -502,7 +502,7 @@ bool NodeImpl::dispatchGenericEvent( EventImpl *evt, int &/*exceptioncode */)
 
 	// Bubbling second. -dwh
 	if (!evt->propagationStopped())
-	  it.current()->handleLocalEvents(evt,false);
+            it.current()->handleLocalEvents(evt,false);
     }
     --it;
 
@@ -822,7 +822,7 @@ NodeImpl *NodeImpl::childNode(unsigned long /*index*/)
     return 0;
 }
 
-NodeImpl *NodeImpl::traverseNextNode(NodeImpl *stayWithin) const
+NodeImpl *NodeImpl::traverseNextNode(const NodeImpl *stayWithin) const
 {
     if (firstChild()) {
         assert(!stayWithin || firstChild()->isAncestor(stayWithin));
@@ -844,7 +844,7 @@ NodeImpl *NodeImpl::traverseNextNode(NodeImpl *stayWithin) const
     return 0;
 }
 
-NodeImpl *NodeImpl::traverseNextSibling(NodeImpl *stayWithin) const
+NodeImpl *NodeImpl::traverseNextSibling(const NodeImpl *stayWithin) const
 {
     if (this == stayWithin)
         return 0;
@@ -878,7 +878,7 @@ NodeImpl *NodeImpl::traversePreviousNode() const
     }
 }
 
-NodeImpl *NodeImpl::traversePreviousNodePostOrder(NodeImpl *stayWithin) const
+NodeImpl *NodeImpl::traversePreviousNodePostOrder(const NodeImpl *stayWithin) const
 {
     if (lastChild()) {
         assert(!stayWithin || lastChild()->isAncestor(stayWithin));
@@ -1064,7 +1064,9 @@ void NodeImpl::detach()
         m_render->detach();
 
     m_render = 0;
-    getDocument()->incDOMTreeVersion();
+    DocumentImpl *doc = getDocument();
+    if (doc)
+        doc->incDOMTreeVersion();
     m_attached = false;
 }
 

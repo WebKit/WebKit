@@ -2782,26 +2782,22 @@ DOMString HTMLOptionElementImpl::type() const
 
 DOMString HTMLOptionElementImpl::text() const
 {
-    DOMString label;
+    DOMString text;
+
     // WinIE does not use the label attribute, so as a quirk, we ignore it.
-    if (getDocument() && !getDocument()->inCompatMode())
-        label = getAttribute(ATTR_LABEL);
-    if (label.isEmpty() && firstChild() && firstChild()->nodeType() == Node::TEXT_NODE) {
-	if (firstChild()->nextSibling()) {
-	    DOMString ret = "";
-	    NodeImpl *n = firstChild();
-	    for (; n; n = n->nextSibling()) {
-		if (n->nodeType() == Node::TEXT_NODE ||
-		    n->nodeType() == Node::CDATA_SECTION_NODE)
-		    ret += n->nodeValue();
-	    }
-	    return ret;
-	}
-	else
-	    return firstChild()->nodeValue();
+    if (getDocument() && !getDocument()->inCompatMode()) {
+        DOMString text = getAttribute(ATTR_LABEL);
+        if (!text.isEmpty())
+            return text;
     }
-    else
-        return label;
+
+    const NodeImpl *n = this;
+    while ((n = n->traverseNextNode(this))) {
+        if (n->nodeType() == Node::TEXT_NODE || n->nodeType() == Node::CDATA_SECTION_NODE)
+            text += n->nodeValue();
+    }
+
+    return text;
 }
 
 long HTMLOptionElementImpl::index() const

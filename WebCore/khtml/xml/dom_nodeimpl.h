@@ -314,10 +314,10 @@ public:
      *
      * see @ref traversePreviousNode()
      */
-    NodeImpl *traverseNextNode(NodeImpl *stayWithin = 0) const;
+    NodeImpl *traverseNextNode(const NodeImpl *stayWithin = 0) const;
     
     /* Like traverseNextNode, but skips children and starts with the next sibling. */
-    NodeImpl *traverseNextSibling(NodeImpl *stayWithin = 0) const;
+    NodeImpl *traverseNextSibling(const NodeImpl *stayWithin = 0) const;
 
     /**
      * Does a reverse pre-order traversal to find the node that comes before the current one in document order
@@ -327,7 +327,7 @@ public:
     NodeImpl *traversePreviousNode() const;
 
     /* Like traversePreviousNode, but visits nodes before their children. */
-    NodeImpl *traversePreviousNodePostOrder(NodeImpl *stayWithin = 0) const;
+    NodeImpl *traversePreviousNodePostOrder(const NodeImpl *stayWithin = 0) const;
 
     DocumentPtr *docPtr() const { return document; }
 
