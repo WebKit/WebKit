@@ -29,16 +29,21 @@
 #include "xml/dom_position.h"
 
 namespace DOM {
+    class Range;
+    class RangeImpl;
+}
 
-class Range;
-class RangeImpl;
+namespace khtml {
 
-class CaretPosition
+class VisiblePosition
 {
 public:
-    CaretPosition() { }
-    CaretPosition(NodeImpl *, long offset);
-    CaretPosition(const Position &);
+    typedef DOM::NodeImpl NodeImpl;
+    typedef DOM::Position Position;
+
+    VisiblePosition() { }
+    VisiblePosition(NodeImpl *, long offset);
+    VisiblePosition(const Position &);
 
     void clear() { m_deepPosition.clear(); }
 
@@ -48,10 +53,10 @@ public:
     Position position() const { return rangeCompliantEquivalent(m_deepPosition); }
     Position deepEquivalent() const { return m_deepPosition; }
 
-    friend inline bool operator==(const CaretPosition &a, const CaretPosition &b);
+    friend inline bool operator==(const VisiblePosition &a, const VisiblePosition &b);
 
-    CaretPosition next() const;
-    CaretPosition previous() const;
+    VisiblePosition next() const;
+    VisiblePosition previous() const;
 
     bool isLastInBlock() const;
 
@@ -70,8 +75,8 @@ private:
     static long maxOffset(const NodeImpl *);
     static bool isAtomicNode(const NodeImpl *);
     
-    static Position previousCaretPosition(const Position &);
-    static Position nextCaretPosition(const Position &);
+    static Position previousVisiblePosition(const Position &);
+    static Position nextVisiblePosition(const Position &);
 
     static Position previousPosition(const Position &);
     static Position nextPosition(const Position &);
@@ -84,25 +89,25 @@ private:
     Position m_deepPosition;
 };
 
-inline bool operator==(const CaretPosition &a, const CaretPosition &b)
+inline bool operator==(const VisiblePosition &a, const VisiblePosition &b)
 {
     return a.m_deepPosition == b.m_deepPosition;
 }
 
-inline bool operator!=(const CaretPosition &a, const CaretPosition &b)
+inline bool operator!=(const VisiblePosition &a, const VisiblePosition &b)
 {
     return !(a == b);
 }
 
-Range makeRange(const CaretPosition &start, const CaretPosition &end);
-bool setStart(Range &, const CaretPosition &start);
-bool setStart(RangeImpl *, const CaretPosition &start);
-bool setEnd(Range &, const CaretPosition &start);
-bool setEnd(RangeImpl *, const CaretPosition &start);
-CaretPosition start(const Range &);
-CaretPosition start(const RangeImpl *);
-CaretPosition end(const Range &);
-CaretPosition end(const RangeImpl *);
+DOM::Range makeRange(const VisiblePosition &start, const VisiblePosition &end);
+bool setStart(DOM::Range &, const VisiblePosition &start);
+bool setStart(DOM::RangeImpl *, const VisiblePosition &start);
+bool setEnd(DOM::Range &, const VisiblePosition &start);
+bool setEnd(DOM::RangeImpl *, const VisiblePosition &start);
+VisiblePosition startVisiblePosition(const DOM::Range &);
+VisiblePosition startVisiblePosition(const DOM::RangeImpl *);
+VisiblePosition endVisiblePosition(const DOM::Range &);
+VisiblePosition endVisiblePosition(const DOM::RangeImpl *);
 
 } // namespace DOM
 

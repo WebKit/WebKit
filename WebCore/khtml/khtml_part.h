@@ -27,7 +27,7 @@
 #ifndef __khtml_part_h__
 #define __khtml_part_h__
 
-#include "editing/selection.h" // only for text granularity -- should fix this to reduce dependencies
+#include "editing/text_granularity.h"
 
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
@@ -61,7 +61,6 @@ namespace DOM
   class Node;
   class NodeImpl;
   class Range;
-  class Selection;
 }
 
 namespace khtml
@@ -82,6 +81,7 @@ namespace khtml
   class RenderPart;
   class RenderPartObject;
   class RenderWidget;
+  class Selection;
   class XMLTokenizer;
 }
 
@@ -574,34 +574,37 @@ public:
   /**
    * Returns the selected part of the HTML.
    */
-  const DOM::Selection &selection() const;
+  const khtml::Selection &selection() const;
 
-  DOM::Selection::ETextGranularity selectionGranularity() const;
+  /**
+   * Returns the granularity of the selection (character, word, line, paragraph).
+   */
+  khtml::ETextGranularity selectionGranularity() const;
   
   /**
    * Returns the drag caret of the HTML.
    */
-  const DOM::Selection &dragCaret() const;
+  const khtml::Selection &dragCaret() const;
 
   /**
    * Sets the current selection.
    */
-  void setSelection(const DOM::Selection &, bool closeTyping = true, bool unmarkOldSelection = true);
+  void setSelection(const khtml::Selection &, bool closeTyping = true, bool unmarkOldSelection = true);
 
   /**
    * Returns a mark, to be used as emacs uses it.
    */
-  const DOM::Selection &mark() const;
+  const khtml::Selection &mark() const;
 
   /**
    * Returns the mark.
    */
-  void setMark(const DOM::Selection &);
+  void setMark(const khtml::Selection &);
 
   /**
    * Sets the current drag cart.
    */
-  void setDragCaret(const DOM::Selection &);
+  void setDragCaret(const khtml::Selection &);
   
   /**
    * Clears the current selection.
@@ -1313,7 +1316,7 @@ private:
 
   KHTMLPartPrivate *d;
   friend class KHTMLPartPrivate;
-  friend class DOM::Selection;
+  friend class khtml::Selection;
 
 #if APPLE_CHANGES
 public:  

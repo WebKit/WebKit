@@ -84,7 +84,6 @@
 @class NSView;
 
 using DOM::AtomicString;
-using DOM::CaretPosition;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentTypeImpl;
@@ -100,7 +99,6 @@ using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
-using DOM::Selection;
 using DOM::UPSTREAM;
 
 using khtml::ApplyStyleCommand;
@@ -108,6 +106,7 @@ using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
 using khtml::EditCommandImpl;
+using khtml::ETextGranularity;
 using khtml::MoveSelectionCommand;
 using khtml::parseURL;
 using khtml::RenderCanvas;
@@ -117,7 +116,9 @@ using khtml::RenderPart;
 using khtml::RenderStyle;
 using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
+using khtml::Selection;
 using khtml::TypingCommand;
+using khtml::VisiblePosition;
 
 using KJS::ExecState;
 using KJS::ObjectImp;
@@ -1350,7 +1351,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         
     // NOTE: The enums *must* match the very similar ones declared in ktml_selection.h
     Selection selection(_part->selection());
-    selection.expandUsingGranularity(static_cast<Selection::ETextGranularity>(granularity));
+    selection.expandUsingGranularity(static_cast<ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().handle()];
 }
 
@@ -1363,7 +1364,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     Selection selection(_part->selection());
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
-                     static_cast<Selection::ETextGranularity>(granularity));
+                     static_cast<ETextGranularity>(granularity));
     return [DOMRange _rangeWithImpl:selection.toRange().handle()];
 }
 
@@ -1376,7 +1377,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     Selection selection(_part->selection());
     selection.modify(static_cast<Selection::EAlter>(alteration), 
                      static_cast<Selection::EDirection>(direction), 
-                     static_cast<Selection::ETextGranularity>(granularity));
+                     static_cast<ETextGranularity>(granularity));
 
     // save vertical navigation x position if necessary
     int xPos = KHTMLPart::NoXPosForVerticalArrowNavigation;
@@ -1805,9 +1806,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!selection.isCaret())
         return nil;
 
-    CaretPosition caret(selection.start());
-    CaretPosition next = caret.next();
-    CaretPosition previous = caret.previous();
+    VisiblePosition caret(selection.start());
+    VisiblePosition next = caret.next();
+    VisiblePosition previous = caret.previous();
     if (caret == next || caret == previous)
         return nil;
 

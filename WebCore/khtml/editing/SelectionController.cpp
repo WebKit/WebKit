@@ -54,12 +54,17 @@
 
 #define EDIT_DEBUG 0
 
-using khtml::findWordBoundary;
-using khtml::InlineTextBox;
-using khtml::RenderObject;
-using khtml::RenderText;
+using DOM::DOMString;
+using DOM::DOWNSTREAM;
+using DOM::ElementImpl;
+using DOM::Node;
+using DOM::NodeImpl;
+using DOM::Position;
+using DOM::Range;
+using DOM::RangeImpl;
+using DOM::StayInBlock;
 
-namespace DOM {
+namespace khtml {
 
 static Selection selectionForLine(const Position &position);
 
@@ -89,7 +94,7 @@ Selection::Selection(const Position &base, const Position &extent)
     validate();
 }
 
-Selection::Selection(const CaretPosition &base, const CaretPosition &extent)
+Selection::Selection(const VisiblePosition &base, const VisiblePosition &extent)
     : m_base(base.position()), m_extent(extent.position())
 {
     init();
@@ -213,9 +218,9 @@ void Selection::setModifyBias(EAlter alter, EDirection direction)
     }
 }
 
-CaretPosition Selection::modifyExtendingRightForward(ETextGranularity granularity)
+VisiblePosition Selection::modifyExtendingRightForward(ETextGranularity granularity)
 {
-    CaretPosition pos = m_extent;
+    VisiblePosition pos = m_extent;
     switch (granularity) {
         case CHARACTER:
             pos = pos.next();
@@ -244,15 +249,15 @@ CaretPosition Selection::modifyExtendingRightForward(ETextGranularity granularit
     return pos;
 }
 
-CaretPosition Selection::modifyMovingRightForward(ETextGranularity granularity)
+VisiblePosition Selection::modifyMovingRightForward(ETextGranularity granularity)
 {
-    CaretPosition pos;
+    VisiblePosition pos;
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
                 pos = m_end;
             else
-                pos = CaretPosition(m_extent).next();
+                pos = VisiblePosition(m_extent).next();
             break;
         case WORD:
             pos = nextWordPosition(m_extent);
@@ -278,9 +283,9 @@ CaretPosition Selection::modifyMovingRightForward(ETextGranularity granularity)
     return pos;
 }
 
-CaretPosition Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
+VisiblePosition Selection::modifyExtendingLeftBackward(ETextGranularity granularity)
 {
-    CaretPosition pos = m_extent;
+    VisiblePosition pos = m_extent;
     switch (granularity) {
         case CHARACTER:
             pos = pos.previous();
@@ -301,21 +306,21 @@ CaretPosition Selection::modifyExtendingLeftBackward(ETextGranularity granularit
             pos = startOfParagraph(m_start);
             break;
         case DOCUMENT_BOUNDARY:
-            pos = CaretPosition(m_start.node()->getDocument()->documentElement(), 0);
+            pos = VisiblePosition(m_start.node()->getDocument()->documentElement(), 0);
             break;
     }
     return pos;
 }
 
-CaretPosition Selection::modifyMovingLeftBackward(ETextGranularity granularity)
+VisiblePosition Selection::modifyMovingLeftBackward(ETextGranularity granularity)
 {
-    CaretPosition pos;
+    VisiblePosition pos;
     switch (granularity) {
         case CHARACTER:
             if (isRange()) 
                 pos = m_start;
             else
-                pos = CaretPosition(m_extent).previous();
+                pos = VisiblePosition(m_extent).previous();
             break;
         case WORD:
             pos = previousWordPosition(m_extent);
@@ -333,7 +338,7 @@ CaretPosition Selection::modifyMovingLeftBackward(ETextGranularity granularity)
             pos = startOfParagraph(m_start).deepEquivalent();
             break;
         case DOCUMENT_BOUNDARY:
-            pos = CaretPosition(m_start.node()->getDocument()->documentElement(), 0);
+            pos = VisiblePosition(m_start.node()->getDocument()->documentElement(), 0);
             break;
     }
     return pos;
@@ -343,7 +348,7 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
 {
     setModifyBias(alter, dir);
 
-    CaretPosition pos;
+    VisiblePosition pos;
 
     switch (dir) {
         // EDIT FIXME: These need to handle bidi
@@ -379,7 +384,7 @@ bool Selection::modify(EAlter alter, EDirection dir, ETextGranularity granularit
 }
 
 // FIXME: Maybe baseline would be better?
-static bool caretY(const CaretPosition &c, int &y)
+static bool caretY(const VisiblePosition &c, int &y)
 {
     Position p = c.deepEquivalent();
     NodeImpl *n = p.node();
@@ -403,7 +408,7 @@ bool Selection::modify(EAlter alter, int verticalDistance)
 
     setModifyBias(alter, verticalDistance > 0 ? FORWARD : BACKWARD);
 
-    CaretPosition pos;
+    VisiblePosition pos;
 
     int xPos = 0; /* initialized only to make compiler happy */
     switch (alter) {
@@ -424,10 +429,10 @@ bool Selection::modify(EAlter alter, int verticalDistance)
         startY = -startY;
     int lastY = startY;
 
-    CaretPosition result;
+    VisiblePosition result;
 
-    CaretPosition next;
-    for (CaretPosition p = pos; ; p = next) {
+    VisiblePosition next;
+    for (VisiblePosition p = pos; ; p = next) {
         next = verticalDistance > 0
             ? nextLinePosition(p, xPos)
             : previousLinePosition(p, xPos);
@@ -770,8 +775,8 @@ void Selection::validate(ETextGranularity granularity)
             break;
         case DOCUMENT_BOUNDARY: {
             NodeImpl *de = m_start.node()->getDocument()->documentElement();
-            m_start = CaretPosition(de, 0).deepEquivalent();
-            m_end = CaretPosition(de, de ? de->childNodeCount() : 0).deepEquivalent();
+            m_start = VisiblePosition(de, 0).deepEquivalent();
+            m_end = VisiblePosition(de, de ? de->childNodeCount() : 0).deepEquivalent();
             break;
         }
         case PARAGRAPH_BOUNDARY:

@@ -28,6 +28,7 @@
 #include <qstring.h>
 
 #include "htmlediting.h"
+#include "selection.h"
 
 #include "khtml_part.h"
 #include "css/cssproperties.h"

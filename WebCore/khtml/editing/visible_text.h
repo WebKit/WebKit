@@ -168,7 +168,6 @@ private:
     TextIterator m_textIterator;
 };
     
-
 // Very similar to the TextIterator, except that the chunks of text returned are "well behaved",
 // meaning they never end split up a word.  This is useful for spellcheck or (perhaps one day) searching.
 class WordAwareIterator {

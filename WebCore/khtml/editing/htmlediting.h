@@ -30,7 +30,6 @@
 
 namespace DOM {
     class DocumentFragmentImpl;
-    class Selection;
     class TextImpl;
 }
 
@@ -41,7 +40,6 @@ class ApplyStyleCommandImpl;
 class CompositeEditCommandImpl;
 class DeleteSelectionCommandImpl;
 class DeleteTextCommandImpl;
-class EditCommand;
 class EditCommandImpl;
 class InputNewlineCommandImpl;
 class InputTextCommandImpl;
@@ -54,6 +52,7 @@ class RemoveCSSPropertyCommandImpl;
 class RemoveNodeAttributeCommandImpl;
 class RemoveNodeCommandImpl;
 class RemoveNodePreservingChildrenCommandImpl;
+class Selection;
 class SetNodeAttributeCommandImpl;
 class SplitTextNodeCommandImpl;
 class TypingCommandImpl;
@@ -79,11 +78,11 @@ public:
 
     DOM::DocumentImpl * const document() const;
 
-    DOM::Selection startingSelection() const;
-    DOM::Selection endingSelection() const;
+    khtml::Selection startingSelection() const;
+    khtml::Selection endingSelection() const;
 
-    void setStartingSelection(const DOM::Selection &s) const;
-    void setEndingSelection(const DOM::Selection &s) const;
+    void setStartingSelection(const khtml::Selection &s) const;
+    void setEndingSelection(const khtml::Selection &s) const;
 
     DOM::CSSStyleDeclarationImpl *typingStyle() const;
     void setTypingStyle(DOM::CSSStyleDeclarationImpl *) const;
@@ -148,7 +147,7 @@ class DeleteSelectionCommand : public CompositeEditCommand
 {
 public:
     DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false);
-    DeleteSelectionCommand(DOM::DocumentImpl *document, const DOM::Selection &selection, bool smartDelete=false);
+    DeleteSelectionCommand(DOM::DocumentImpl *document, const khtml::Selection &selection, bool smartDelete=false);
 
 private:
     DeleteSelectionCommandImpl *impl() const;

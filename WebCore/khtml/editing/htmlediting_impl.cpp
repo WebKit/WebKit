@@ -59,7 +59,6 @@
 #endif
 
 using DOM::AttrImpl;
-using DOM::CaretPosition;
 using DOM::CSSComputedStyleDeclarationImpl;
 using DOM::CSSPrimitiveValue;
 using DOM::CSSPrimitiveValueImpl;
@@ -75,7 +74,6 @@ using DOM::EditingTextImpl;
 using DOM::ElementImpl;
 using DOM::HTMLElementImpl;
 using DOM::HTMLImageElementImpl;
-using DOM::LeftWordIfOnBoundary;
 using DOM::NamedAttrMapImpl;
 using DOM::Node;
 using DOM::NodeImpl;
@@ -84,7 +82,6 @@ using DOM::Position;
 using DOM::PositionIterator;
 using DOM::Range;
 using DOM::RangeImpl;
-using DOM::Selection;
 using DOM::StayInBlock;
 using DOM::TextImpl;
 using DOM::TreeWalkerImpl;
@@ -101,7 +98,6 @@ using DOM::TreeWalkerImpl;
 #endif
 
 namespace khtml {
-
 
 static inline bool isNBSP(const QChar &c)
 {
@@ -352,7 +348,7 @@ void EditCommandImpl::setEndingSelection(const Selection &s)
         cmd->m_endingSelection = s;
 }
 
-void EditCommandImpl::assignTypingStyle(DOM::CSSStyleDeclarationImpl *style)
+void EditCommandImpl::assignTypingStyle(CSSStyleDeclarationImpl *style)
 {
     CSSStyleDeclarationImpl *old = m_typingStyle;
     m_typingStyle = style;
@@ -1078,9 +1074,9 @@ void DeleteSelectionCommandImpl::doApply()
 
     if (m_smartDelete) {
         if (!m_selectionToDelete.start().leadingWhitespacePosition().isNull()) {
-            m_selectionToDelete.modify(DOM::Selection::EXTEND, DOM::Selection::LEFT, DOM::Selection::CHARACTER);
+            m_selectionToDelete.modify(Selection::EXTEND, Selection::LEFT, CHARACTER);
         } else if (!m_selectionToDelete.end().trailingWhitespacePosition().isNull()) {
-            m_selectionToDelete.modify(DOM::Selection::EXTEND, DOM::Selection::RIGHT, DOM::Selection::CHARACTER);
+            m_selectionToDelete.modify(Selection::EXTEND, Selection::RIGHT, CHARACTER);
         }
     }
     
@@ -1391,7 +1387,7 @@ void InputNewlineCommandImpl::doApply()
     Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
-    bool atEndOfBlock = CaretPosition(pos).isLastInBlock();
+    bool atEndOfBlock = VisiblePosition(pos).isLastInBlock();
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
@@ -1825,7 +1821,7 @@ void JoinTextNodesCommandImpl::doUnapply()
 //------------------------------------------------------------------------------------------
 // ReplaceSelectionCommandImpl
 
-ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
+ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
     : CompositeEditCommandImpl(document), m_fragment(fragment), m_selectReplacement(selectReplacement), m_smartReplace(smartReplace)
 {
     ASSERT(m_fragment);
@@ -1943,7 +1939,7 @@ void ReplaceSelectionCommandImpl::doApply()
 //------------------------------------------------------------------------------------------
 // MoveSelectionCommandImpl
 
-MoveSelectionCommandImpl::MoveSelectionCommandImpl(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position, bool smartMove) 
+MoveSelectionCommandImpl::MoveSelectionCommandImpl(DocumentImpl *document, DocumentFragmentImpl *fragment, Position &position, bool smartMove) 
     : CompositeEditCommandImpl(document), m_fragment(fragment), m_position(position), m_smartMove(smartMove)
 {
     ASSERT(m_fragment);
@@ -2238,7 +2234,7 @@ void SplitTextNodeCommandImpl::doUnapply()
 //------------------------------------------------------------------------------------------
 // TypingCommandImpl
 
-TypingCommandImpl::TypingCommandImpl(DocumentImpl *document, TypingCommand::ETypingCommand commandType, const DOM::DOMString &textToInsert, bool selectInsertedText)
+TypingCommandImpl::TypingCommandImpl(DocumentImpl *document, TypingCommand::ETypingCommand commandType, const DOMString &textToInsert, bool selectInsertedText)
     : CompositeEditCommandImpl(document), m_commandType(commandType), m_textToInsert(textToInsert), m_openForMoreTyping(true), m_applyEditing(false), m_selectInsertedText(selectInsertedText)
 {
 }
@@ -2269,11 +2265,11 @@ void TypingCommandImpl::markMisspellingsAfterTyping()
     // Since the word containing the current selection is never marked, this does a check to
     // see if typing made a new word that is not in the current selection. Basically, you
     // get this by being at the end of a word and typing a space.    
-    CaretPosition start(endingSelection().start());
-    CaretPosition previous = start.previous();
+    VisiblePosition start(endingSelection().start());
+    VisiblePosition previous = start.previous();
     if (previous.isNotNull()) {
-        CaretPosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
-        CaretPosition p2 = startOfWord(start, LeftWordIfOnBoundary);
+        VisiblePosition p1 = startOfWord(previous, LeftWordIfOnBoundary);
+        VisiblePosition p2 = startOfWord(start, LeftWordIfOnBoundary);
         if (p1 != p2)
             markMisspellingsInSelection(Selection(p1, start));
     }
@@ -2336,8 +2332,8 @@ void TypingCommandImpl::issueCommandForDeleteKey()
             // Do nothing in the case that the caret is at the start of a
             // root editable element or at the start of a document.
             Position pos(endingSelection().start());
-            Position start = CaretPosition(pos).previous().deepEquivalent();
-            Position end = CaretPosition(pos).deepEquivalent();
+            Position start = VisiblePosition(pos).previous().deepEquivalent();
+            Position end = VisiblePosition(pos).deepEquivalent();
             if (start.isNotNull() && end.isNotNull() && start.node()->rootEditableElement() == end.node()->rootEditableElement())
                 selectionToDelete = Selection(start, end);
             break;

@@ -1,5 +1,45 @@
 2004-09-22  Darin Adler  <darin@apple.com>
 
+        - renamed
+
+            DOM::CaretPosition -> khtml::VisibleRange
+            DOM::Selection     -> khtml::Selection
+
+        - moved all the functions in visible_units.h from DOM to khtml namespace
+        - moved the one thing from Selection that KHTMLPart uses into its own header
+
+        * WebCore.pbproj/project.pbxproj: Added text_granularity.h.
+
+        * ForwardingHeaders/editing/selection.h: Added.
+        * WebCore-combined.exp: Regenerated.
+        * WebCore-tests.exp: Updated symbol for DOM::Selection debugging.
+
+        * khtml/ecma/kjs_window.cpp: Update names and namespaces.
+        * khtml/editing/htmlediting.cpp: Ditto.
+        * khtml/editing/htmlediting.h: Ditto.
+        * khtml/editing/htmlediting_impl.cpp: Ditto.
+        * khtml/editing/htmlediting_impl.h: Ditto.
+        * khtml/editing/jsediting.cpp: Ditto.
+        * khtml/editing/selection.cpp: Ditto.
+        * khtml/editing/selection.h: Ditto.
+        * khtml/editing/visible_position.cpp: Ditto.
+        * khtml/editing/visible_position.h: Ditto.
+        * khtml/editing/visible_text.h: Ditto.
+        * khtml/editing/visible_units.cpp: Ditto.
+        * khtml/editing/visible_units.h: Ditto.
+        * khtml/khtml_part.cpp: Ditto.
+        * khtml/khtml_part.h: Ditto.
+        * khtml/khtmlpart_p.h: Ditto.
+        * khtml/rendering/render_block.cpp: Ditto.
+        * khtml/xml/dom_docimpl.h: Ditto.
+        * khtml/xml/dom_nodeimpl.cpp: Ditto.
+        * kwq/KWQKHTMLPart.h: Ditto.
+        * kwq/KWQKHTMLPart.mm: Ditto.
+        * kwq/KWQRenderTreeDebug.cpp: Ditto.
+        * kwq/WebCoreBridge.mm: Ditto.
+
+2004-09-22  Darin Adler  <darin@apple.com>
+
         * ForwardingHeaders/*: Use import instead of include.
 
 2004-09-22  Darin Adler  <darin@apple.com>

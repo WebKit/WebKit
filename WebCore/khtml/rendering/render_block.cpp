@@ -36,6 +36,7 @@
 #include "xml/dom_position.h"
 #include "html/html_formimpl.h"
 #include "render_block.h"
+#include "editing/selection.h"
 
 #include "khtmlview.h"
 #include "khtml_part.h"

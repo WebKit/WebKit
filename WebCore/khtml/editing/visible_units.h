@@ -26,31 +26,31 @@
 #ifndef KHTML_EDITING_VISIBLE_UNITS_H
 #define KHTML_EDITING_VISIBLE_UNITS_H
 
-namespace DOM {
+namespace khtml {
 
-class CaretPosition;
+class VisiblePosition;
 
 enum EWordSide { RightWordIfOnBoundary = false, LeftWordIfOnBoundary = true };
 enum EIncludeLineBreak { DoNotIncludeLineBreak = false, IncludeLineBreak = true };
 
 // words
-CaretPosition startOfWord(const CaretPosition &, EWordSide = RightWordIfOnBoundary);
-CaretPosition endOfWord(const CaretPosition &, EWordSide = RightWordIfOnBoundary);
-CaretPosition previousWordPosition(const CaretPosition &);
-CaretPosition nextWordPosition(const CaretPosition &);
+VisiblePosition startOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
+VisiblePosition endOfWord(const VisiblePosition &, EWordSide = RightWordIfOnBoundary);
+VisiblePosition previousWordPosition(const VisiblePosition &);
+VisiblePosition nextWordPosition(const VisiblePosition &);
 
 // lines
-CaretPosition startOfLine(const CaretPosition &);
-CaretPosition endOfLine(const CaretPosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
-CaretPosition previousLinePosition(const CaretPosition &, int x);
-CaretPosition nextLinePosition(const CaretPosition &, int x);
+VisiblePosition startOfLine(const VisiblePosition &);
+VisiblePosition endOfLine(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+VisiblePosition previousLinePosition(const VisiblePosition &, int x);
+VisiblePosition nextLinePosition(const VisiblePosition &, int x);
 
 // paragraphs
-CaretPosition startOfParagraph(const CaretPosition &);
-CaretPosition endOfParagraph(const CaretPosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
-CaretPosition previousParagraphPosition(const CaretPosition &, int x);
-CaretPosition nextParagraphPosition(const CaretPosition &, int x);
-bool inSameParagraph(const CaretPosition &, const CaretPosition &);
+VisiblePosition startOfParagraph(const VisiblePosition &);
+VisiblePosition endOfParagraph(const VisiblePosition &, EIncludeLineBreak = DoNotIncludeLineBreak);
+VisiblePosition previousParagraphPosition(const VisiblePosition &, int x);
+VisiblePosition nextParagraphPosition(const VisiblePosition &, int x);
+bool inSameParagraph(const VisiblePosition &, const VisiblePosition &);
 
 } // namespace DOM
 

@@ -85,19 +85,19 @@ public:
 
     virtual DOM::DocumentImpl * const document() const { return m_document; }
 
-    DOM::Selection startingSelection() const { return m_startingSelection; }
-    DOM::Selection endingSelection() const { return m_endingSelection; }
+    khtml::Selection startingSelection() const { return m_startingSelection; }
+    khtml::Selection endingSelection() const { return m_endingSelection; }
         
     ECommandState state() const { return m_state; }
     void setState(ECommandState state) { m_state = state; }
 
-    void setStartingSelection(const DOM::Selection &s);
-    void setEndingSelection(const DOM::Selection &s);
+    void setStartingSelection(const khtml::Selection &s);
+    void setEndingSelection(const khtml::Selection &s);
 
     DOM::CSSStyleDeclarationImpl *typingStyle() const { return m_typingStyle; };
     void setTypingStyle(DOM::CSSStyleDeclarationImpl *);
     
-    void markMisspellingsInSelection(const DOM::Selection &s);
+    void markMisspellingsInSelection(const khtml::Selection &s);
 
     virtual bool isInputTextCommand() const;
     virtual bool isTypingCommand() const;
@@ -109,8 +109,8 @@ private:
 
     DOM::DocumentImpl *m_document;
     ECommandState m_state;
-    DOM::Selection m_startingSelection;
-    DOM::Selection m_endingSelection;
+    khtml::Selection m_startingSelection;
+    khtml::Selection m_endingSelection;
     DOM::CSSStyleDeclarationImpl *m_typingStyle;
     EditCommand m_parent;
 };
@@ -134,7 +134,7 @@ protected:
     void applyCommandToComposite(EditCommand &);
     void deleteKeyPressed();
     void deleteSelection(bool smartDelete=false);
-    void deleteSelection(const DOM::Selection &selection, bool smartDelete=false);
+    void deleteSelection(const khtml::Selection &selection, bool smartDelete=false);
     void deleteText(DOM::TextImpl *node, long offset, long count);
     void inputText(const DOM::DOMString &text, bool selectInsertedText = false);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
@@ -217,7 +217,7 @@ class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
 { 
 public:
     DeleteSelectionCommandImpl(DOM::DocumentImpl *document, bool smartDelete=false);
-    DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection, bool smartDelete=false);
+    DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const khtml::Selection &selection, bool smartDelete=false);
 	
     virtual void doApply();
     
@@ -228,7 +228,7 @@ private:
     bool containsOnlyWhitespace(const DOM::Position &start, const DOM::Position &end);
     void moveNodesAfterNode(DOM::NodeImpl *startNode, DOM::NodeImpl *dstNode);
 
-    DOM::Selection m_selectionToDelete;
+    khtml::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
 };

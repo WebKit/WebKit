@@ -44,7 +44,6 @@ using DOM::Position;
 using DOM::DOMString;
 using DOM::NodeImpl;
 using DOM::NodeListImpl;
-using DOM::Selection;
 using DOM::TextImpl;
 
 #if !APPLE_CHANGES

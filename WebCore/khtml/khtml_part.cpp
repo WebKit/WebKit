@@ -40,6 +40,9 @@
 #include "dom/dom_element.h"
 #include "dom/html_document.h"
 #include "editing/htmlediting.h"
+#include "editing/selection.h"
+#include "editing/visible_position.h"
+#include "editing/visible_text.h"
 #include "html/html_documentimpl.h"
 #include "html/html_baseimpl.h"
 #include "html/html_miscimpl.h"
@@ -49,13 +52,11 @@
 #include "rendering/render_frames.h"
 #include "misc/htmlhashes.h"
 #include "misc/loader.h"
-#include "editing/visible_position.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/xml_tokenizer.h"
 #include "css/css_computedstyle.h"
 #include "css/cssstyleselector.h"
 #include "css/csshelper.h"
-#include "editing/visible_text.h"
 #include "css/css_computedstyle.h"
 
 using namespace DOM;
@@ -92,7 +93,6 @@ using namespace DOM;
 #include <ksslcertchain.h>
 #include <ksslinfodlg.h>
 
-
 #include <qclipboard.h>
 #include <qfile.h>
 #include <qmetaobject.h>
@@ -105,21 +105,27 @@ using namespace DOM;
 #endif
 
 using khtml::ApplyStyleCommand;
+using khtml::CHARACTER;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
+using khtml::ETextGranularity;
 using khtml::FormData;
 using khtml::InlineTextBox;
+using khtml::PARAGRAPH;
 using khtml::plainText;
 using khtml::RenderObject;
 using khtml::RenderText;
+using khtml::Selection;
 using khtml::Tokenizer;
 using khtml::TypingCommand;
+using khtml::VisiblePosition;
+using khtml::WORD;
 
 using KParts::BrowserInterface;
 
-enum { CARET_BLINK_FREQUENCY = 500 };
+const int CARET_BLINK_FREQUENCY = 500;
 
 namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
@@ -146,8 +152,7 @@ namespace khtml {
         QGuardedPtr<KHTMLPart> m_part;
         khtml::CachedCSSStyleSheet *m_cachedSheet;
     };
-};
-
+}
 
 FrameList::Iterator FrameList::find( const QString &name )
 {
@@ -2317,7 +2322,7 @@ const Selection &KHTMLPart::selection() const
     return d->m_selection;
 }
 
-DOM::Selection::ETextGranularity KHTMLPart::selectionGranularity() const
+ETextGranularity KHTMLPart::selectionGranularity() const
 {
     return d->m_selectionGranularity;
 }
@@ -2354,7 +2359,7 @@ void KHTMLPart::setSelection(const Selection &s, bool closeTyping, bool unmarkOl
     }
 }
 
-void KHTMLPart::setDragCaret(const DOM::Selection &dragCaret)
+void KHTMLPart::setDragCaret(const Selection &dragCaret)
 {
     if (d->m_dragCaret != dragCaret) {
         d->m_dragCaret.needsCaretRepaint();
@@ -4405,12 +4410,12 @@ void KHTMLPart::selectClosestWordFromMouseEvent(QMouseEvent *mouse, DOM::Node &i
         Position pos(innerNode.handle()->positionForCoordinates(x, y));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
-            selection.expandUsingGranularity(Selection::WORD);
+            selection.expandUsingGranularity(WORD);
         }
     }
     
     if (selection.isRange()) {
-        d->m_selectionGranularity = Selection::WORD;
+        d->m_selectionGranularity = WORD;
         d->m_beganSelectingText = true;
     }
     
@@ -4438,12 +4443,12 @@ void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
         Position pos(innerNode.handle()->positionForCoordinates(event->x(), event->y()));
         if (pos.isNotNull()) {
             selection.moveTo(pos);
-            selection.expandUsingGranularity(Selection::PARAGRAPH);
+            selection.expandUsingGranularity(PARAGRAPH);
         }
     }
     
     if (selection.isRange()) {
-        d->m_selectionGranularity = Selection::PARAGRAPH;
+        d->m_selectionGranularity = PARAGRAPH;
         d->m_beganSelectingText = true;
     }
     
@@ -4477,13 +4482,13 @@ void KHTMLPart::handleMousePressEventSingleClick(khtml::MousePressEvent *event)
             if (extendSelection && sel.isCaretOrRange()) {
                 sel.clearModifyBias();
                 sel.setExtent(pos);
-                if (d->m_selectionGranularity != Selection::CHARACTER) {
+                if (d->m_selectionGranularity != CHARACTER) {
                     sel.expandUsingGranularity(d->m_selectionGranularity);
                 }
                 d->m_beganSelectingText = true;
             } else {
                 sel = pos;
-                d->m_selectionGranularity = Selection::CHARACTER;
+                d->m_selectionGranularity = CHARACTER;
             }
         }
 
@@ -4694,7 +4699,7 @@ void KHTMLPart::handleMouseMoveEventSelection(khtml::MouseMoveEvent *event)
     }
 
     sel.setExtent(pos);
-    if (d->m_selectionGranularity != Selection::CHARACTER) {
+    if (d->m_selectionGranularity != CHARACTER) {
         sel.expandUsingGranularity(d->m_selectionGranularity);
     }
     setSelection(sel);
@@ -4928,10 +4933,8 @@ void KHTMLPart::selectAll()
     if (!d->m_doc)
         return;
     NodeImpl *de = d->m_doc->documentElement();
-    CaretPosition start(de, 0);
-    CaretPosition end(de, de ? de->childNodeCount() : 0);
-    Selection selection(start.deepEquivalent(), end.deepEquivalent());
-    setSelection(selection);
+    int n = de ? de->childNodeCount() : 0;
+    setSelection(Selection(VisiblePosition(de, 0), VisiblePosition(de, n)));
 }
 
 bool KHTMLPart::shouldBeginEditing(const Range &range) const

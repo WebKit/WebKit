@@ -82,7 +82,6 @@
 #undef _KWQ_TIMING
 
 using DOM::AtomicString;
-using DOM::CaretPosition;
 using DOM::ClipboardEventImpl;
 using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
@@ -96,14 +95,11 @@ using DOM::HTMLFormElementImpl;
 using DOM::HTMLFrameElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLTableCellElementImpl;
-using DOM::LeftWordIfOnBoundary;
 using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
-using DOM::RightWordIfOnBoundary;
-using DOM::Selection;
 using DOM::TextImpl;
 using DOM::UPSTREAM;
 
@@ -112,8 +108,10 @@ using khtml::CharacterIterator;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::DashboardRegionValue;
+using khtml::endOfWord;
 using khtml::findPlainText;
 using khtml::InlineTextBox;
+using khtml::LeftWordIfOnBoundary;
 using khtml::MouseDoubleClickEvent;
 using khtml::MouseMoveEvent;
 using khtml::MousePressEvent;
@@ -130,8 +128,15 @@ using khtml::RenderStyle;
 using khtml::RenderTableCell;
 using khtml::RenderText;
 using khtml::RenderWidget;
+using khtml::RightWordIfOnBoundary;
+using khtml::Selection;
+using khtml::setEnd;
+using khtml::setStart;
+using khtml::startOfWord;
+using khtml::startVisiblePosition;
 using khtml::TextIterator;
 using khtml::VISIBLE;
+using khtml::VisiblePosition;
 using khtml::WordAwareIterator;
 
 using KIO::Job;
@@ -912,12 +917,12 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     if (selectionStart()) {
         startedWithSelection = true;
         if (startBeforeSelection) {
-            CaretPosition start = selection().start();
+            VisiblePosition start = selection().start();
             // We match AppKit's rule: Start 1 character before the selection.
-            CaretPosition oneBeforeStart = start.previous();
+            VisiblePosition oneBeforeStart = start.previous();
             setStart(searchRange, oneBeforeStart.isNotNull() ? oneBeforeStart : start);
         } else {
-            setStart(searchRange, CaretPosition(selection().end()));
+            setStart(searchRange, VisiblePosition(selection().end()));
         }
     }
 
@@ -939,7 +944,7 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     // Make sure start of searchRange is not in the middle of a word.  Jumping back a char and then
     // forward by a word happens to do the trick.
     if (startedWithSelection) {
-        CaretPosition oneBeforeStart = start(searchRange).previous();
+        VisiblePosition oneBeforeStart = startVisiblePosition(searchRange).previous();
         if (oneBeforeStart.isNotNull()) {
             setStart(searchRange, endOfWord(oneBeforeStart));
         } // else we were already at the start of the editable node
@@ -3791,7 +3796,7 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
     // of the selection passed in.
     // This is not ideal by any means, but this is the convention.
-    CaretPosition end = endOfWord(selection.start());
+    VisiblePosition end = endOfWord(selection.start());
     if (end == selection.start())
         end = endOfWord(end.next());
     Selection s(startOfWord(selection.start()), end);
@@ -3855,8 +3860,8 @@ void KWQKHTMLPart::updateSpellChecking()
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
             // matches AppKit.
-            CaretPosition start(startOfWord(selection().start(), LeftWordIfOnBoundary));
-            CaretPosition end(endOfWord(selection().start(), LeftWordIfOnBoundary));
+            VisiblePosition start(startOfWord(selection().start(), LeftWordIfOnBoundary));
+            VisiblePosition end(endOfWord(selection().start(), LeftWordIfOnBoundary));
             if (end == selection().start())
                 end = endOfWord(end, RightWordIfOnBoundary);
             Selection selection(start, end);

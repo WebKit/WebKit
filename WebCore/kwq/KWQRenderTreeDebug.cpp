@@ -25,15 +25,15 @@
 
 #include "KWQRenderTreeDebug.h"
 
+#include "dom_docimpl.h"
+#include "dom_position.h"
 #include "htmltags.h"
 #include "khtmlview.h"
+#include "render_canvas.h"
 #include "render_replaced.h"
 #include "render_table.h"
 #include "render_text.h"
-#include "render_canvas.h"
-#include "xml/dom_docimpl.h"
-#include "xml/dom_nodeimpl.h"
-#include "xml/dom_position.h"
+#include "selection.h"
 
 #include "KWQKHTMLPart.h"
 #include "KWQTextStream.h"
@@ -41,16 +41,17 @@
 using DOM::DocumentImpl;
 using DOM::NodeImpl;
 using DOM::Position;
-using DOM::Selection;
+
+using khtml::BorderValue;
+using khtml::EBorderStyle;
+using khtml::InlineTextBox;
 using khtml::RenderLayer;
 using khtml::RenderObject;
 using khtml::RenderTableCell;
 using khtml::RenderWidget;
 using khtml::RenderText;
 using khtml::RenderCanvas;
-using khtml::InlineTextBox;
-using khtml::BorderValue;
-using khtml::EBorderStyle;
+using khtml::Selection;
 using khtml::transparentColor;
 
 static void writeLayers(QTextStream &ts, const RenderLayer* rootLayer, RenderLayer* l,

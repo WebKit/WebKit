@@ -23,6 +23,7 @@
  */
 
 #include "xml/dom_nodeimpl.h"
+
 #include "dom/dom_exception.h"
 #include "misc/htmlattrs.h"
 #include "misc/htmltags.h"
@@ -34,6 +35,7 @@
 #include "xml/dom2_rangeimpl.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
+#include "editing/selection.h"
 
 #include <kglobal.h>
 #include <kdebug.h>
@@ -2064,8 +2066,7 @@ void NodeBaseImpl::setFocus(bool received)
     NodeImpl::setFocus(received);
 
     if (received && isEditableBlock() && !hasChildNodes()) {
-        KHTMLPart *part = getDocument()->part();
-        part->setSelection(Selection(Position(this, 0)));
+        getDocument()->part()->setSelection(Position(this, 0));
     }
 
     // note that we need to recalc the style

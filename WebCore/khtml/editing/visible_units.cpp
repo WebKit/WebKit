@@ -33,31 +33,27 @@
 #include "visible_text.h"
 #include "xml/dom_docimpl.h"
 
-using khtml::CharacterIterator;
-using khtml::findWordBoundary;
-using khtml::nextWordFromIndex;
-using khtml::PRE;
-using khtml::RenderObject;
-using khtml::RenderStyle;
-using khtml::RenderText;
-using khtml::SimplifiedBackwardsTextIterator;
-using khtml::TextIterator;
-using khtml::VISIBLE;
+using DOM::DocumentImpl;
+using DOM::DOWNSTREAM;
+using DOM::NodeImpl;
+using DOM::Position;
+using DOM::Range;
+using DOM::UPSTREAM;
 
-namespace DOM {
+namespace khtml {
 
-static CaretPosition previousWordBoundary(const CaretPosition &c, unsigned (*searchFunction)(const QChar *, unsigned))
+static VisiblePosition previousWordBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const QChar *, unsigned))
 {
     Position pos = c.deepEquivalent();
     NodeImpl *n = pos.node();
     if (!n)
-        return CaretPosition();
+        return VisiblePosition();
     DocumentImpl *d = n->getDocument();
     if (!d)
-        return CaretPosition();
+        return VisiblePosition();
     NodeImpl *de = d->documentElement();
     if (!de)
-        return CaretPosition();
+        return VisiblePosition();
 
     Range searchRange(d);
     searchRange.setStartBefore(de);
@@ -117,18 +113,18 @@ static CaretPosition previousWordBoundary(const CaretPosition &c, unsigned (*sea
     return pos.equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM);
 }
 
-static CaretPosition nextWordBoundary(const CaretPosition &c, unsigned (*searchFunction)(const QChar *, unsigned))
+static VisiblePosition nextWordBoundary(const VisiblePosition &c, unsigned (*searchFunction)(const QChar *, unsigned))
 {
     Position pos = c.deepEquivalent();
     NodeImpl *n = pos.node();
     if (!n)
-        return CaretPosition();
+        return VisiblePosition();
     DocumentImpl *d = n->getDocument();
     if (!d)
-        return CaretPosition();
+        return VisiblePosition();
     NodeImpl *de = d->documentElement();
     if (!de)
-        return CaretPosition();
+        return VisiblePosition();
 
     Range searchRange(d);
     Position start(pos.equivalentRangeCompliantPosition());
@@ -184,9 +180,9 @@ static unsigned startWordBoundary(const QChar *characters, unsigned length)
     return start;
 }
 
-CaretPosition startOfWord(const CaretPosition &c, EWordSide side)
+VisiblePosition startOfWord(const VisiblePosition &c, EWordSide side)
 {
-    CaretPosition p = c;
+    VisiblePosition p = c;
     if (side == RightWordIfOnBoundary) {
         p = c.next();
         if (p.isNull())
@@ -202,9 +198,9 @@ static unsigned endWordBoundary(const QChar *characters, unsigned length)
     return end;
 }
 
-CaretPosition endOfWord(const CaretPosition &c, EWordSide side)
+VisiblePosition endOfWord(const VisiblePosition &c, EWordSide side)
 {
-    CaretPosition p = c;
+    VisiblePosition p = c;
     if (side == LeftWordIfOnBoundary) {
         p = c.previous();
         if (p.isNull())
@@ -218,7 +214,7 @@ static unsigned previousWordPositionBoundary(const QChar *characters, unsigned l
     return nextWordFromIndex(characters, length, length, false);
 }
 
-CaretPosition previousWordPosition(const CaretPosition &c)
+VisiblePosition previousWordPosition(const VisiblePosition &c)
 {
     return previousWordBoundary(c, previousWordPositionBoundary);
 }
@@ -228,27 +224,27 @@ static unsigned nextWordPositionBoundary(const QChar *characters, unsigned lengt
     return nextWordFromIndex(characters, length, 0, true);
 }
 
-CaretPosition nextWordPosition(const CaretPosition &c)
+VisiblePosition nextWordPosition(const VisiblePosition &c)
 {
     return nextWordBoundary(c, nextWordPositionBoundary);
 }
 
-CaretPosition previousLinePosition(const CaretPosition &c, int x)
+VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
 {
     return c.deepEquivalent().previousLinePosition(x);
 }
 
-CaretPosition nextLinePosition(const CaretPosition &c, int x)
+VisiblePosition nextLinePosition(const VisiblePosition &c, int x)
 {
     return c.deepEquivalent().nextLinePosition(x);
 }
 
-CaretPosition startOfParagraph(const CaretPosition &c)
+VisiblePosition startOfParagraph(const VisiblePosition &c)
 {
     Position p = c.deepEquivalent();
     NodeImpl *startNode = p.node();
     if (!startNode)
-        return CaretPosition();
+        return VisiblePosition();
 
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
 
@@ -273,7 +269,7 @@ CaretPosition startOfParagraph(const CaretPosition &c)
                     i = kMax(0L, o);
                 while (--i >= 0)
                     if (text[i] == '\n')
-                        return CaretPosition(n, i + 1);
+                        return VisiblePosition(n, i + 1);
             }
             node = n;
             offset = 0;
@@ -283,16 +279,16 @@ CaretPosition startOfParagraph(const CaretPosition &c)
         }
     }
 
-    return CaretPosition(node, offset);
+    return VisiblePosition(node, offset);
 }
 
-CaretPosition endOfParagraph(const CaretPosition &c, EIncludeLineBreak includeLineBreak)
+VisiblePosition endOfParagraph(const VisiblePosition &c, EIncludeLineBreak includeLineBreak)
 {
     Position p = c.deepEquivalent();
 
     NodeImpl *startNode = p.node();
     if (!startNode)
-        return CaretPosition();
+        return VisiblePosition();
 
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
 
@@ -308,12 +304,12 @@ CaretPosition endOfParagraph(const CaretPosition &c, EIncludeLineBreak includeLi
             continue;
         if (r->isBR()) {
             if (includeLineBreak)
-                return CaretPosition(n, 1);
+                return VisiblePosition(n, 1);
             break;
         }
         if (r->isBlockFlow()) {
             if (includeLineBreak)
-                return CaretPosition(n, 0);
+                return VisiblePosition(n, 0);
             break;
         }
         if (r->isText()) {
@@ -325,7 +321,7 @@ CaretPosition endOfParagraph(const CaretPosition &c, EIncludeLineBreak includeLi
                     o = offset;
                 for (long i = o; i < length; ++i)
                     if (text[i] == '\n')
-                        return CaretPosition(n, i + includeLineBreak);
+                        return VisiblePosition(n, i + includeLineBreak);
             }
             node = n;
             offset = length;
@@ -335,19 +331,19 @@ CaretPosition endOfParagraph(const CaretPosition &c, EIncludeLineBreak includeLi
         }
     }
 
-    return CaretPosition(node, offset);
+    return VisiblePosition(node, offset);
 }
 
-bool inSameParagraph(const CaretPosition &a, const CaretPosition &b)
+bool inSameParagraph(const VisiblePosition &a, const VisiblePosition &b)
 {
     return a == b || startOfParagraph(a) == startOfParagraph(b);
 }
 
-CaretPosition previousParagraphPosition(const CaretPosition &p, int x)
+VisiblePosition previousParagraphPosition(const VisiblePosition &p, int x)
 {
-    CaretPosition pos = p;
+    VisiblePosition pos = p;
     do {
-        CaretPosition n = previousLinePosition(pos, x);
+        VisiblePosition n = previousLinePosition(pos, x);
         if (n.isNull() || n == pos)
             return p;
         pos = n;
@@ -355,11 +351,11 @@ CaretPosition previousParagraphPosition(const CaretPosition &p, int x)
     return pos;
 }
 
-CaretPosition nextParagraphPosition(const CaretPosition &p, int x)
+VisiblePosition nextParagraphPosition(const VisiblePosition &p, int x)
 {
-    CaretPosition pos = p;
+    VisiblePosition pos = p;
     do {
-        CaretPosition n = nextLinePosition(pos, x);
+        VisiblePosition n = nextLinePosition(pos, x);
         if (n.isNull() || n == pos)
             return p;
         pos = n;

@@ -352,16 +352,16 @@ public:
   bool m_bMousePressed;
   DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
-  DOM::Selection::ETextGranularity m_selectionGranularity;
+  khtml::ETextGranularity m_selectionGranularity;
   bool m_beganSelectingText;
 #if !APPLE_CHANGES
   QString m_overURL;
   QString m_overURLTarget;
 #endif
 
-  DOM::Selection m_selection;
-  DOM::Selection m_dragCaret;
-  DOM::Selection m_mark;
+  khtml::Selection m_selection;
+  khtml::Selection m_dragCaret;
+  khtml::Selection m_mark;
   int m_caretBlinkTimer;
 
   bool m_caretVisible:1;
