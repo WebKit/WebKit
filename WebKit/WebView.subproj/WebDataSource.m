@@ -177,7 +177,7 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 // i.e. inputURL != redirectedURL.
 - (BOOL)wasRedirected
 {
-    return [_private->inputURL isEqual: [self redirectedURL]];
+    return [self redirectedURL] != nil && ![_private->inputURL isEqual: [self redirectedURL]];
 }
 
 

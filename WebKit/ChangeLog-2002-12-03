@@ -1,9 +1,19 @@
+2002-05-27  John Sullivan  <sullivan@apple.com>
+
+	Part of fix for 2922772 -- page title & location field don't
+	show redirected URLs.
+
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource wasRedirected]): Fixed this method, now that
+	we have a client that relies on it. Its logic was backwards, and
+	it didn't handle the null _finalURL case.
+
 2002-05-26  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed Radar 936147 - debug output in console "keyUp: NSEvent: type=KeyUp"
 
 	* WebView.subproj/IFWebView.mm:
-	(-[IFWebView keyDown:]): Turned NSLog into WEBKITDEBUGLEBEL.
+	(-[IFWebView keyDown:]): Turned NSLog into WEBKITDEBUGLEVEL.
 	(-[IFWebView keyUp:]): Likewise.
 
 2002-05-26  Maciej Stachowiak  <mjs@apple.com>
