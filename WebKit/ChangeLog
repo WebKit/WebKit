@@ -1,3 +1,11 @@
+2003-01-01  Richard Williamson   <rjw@apple.com>
+
+        Obey the font smoothing size preference (3137618).
+        
+        Reviewed by Don and Darin.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
 2002-12-31  Maciej Stachowiak  <mjs@apple.com>
 
 	Reviewed by Darin.
