@@ -1,3 +1,19 @@
+2003-12-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3393758>: REGRESSION (85-100): Flash onKeyUp event non-functional
+	<rdar://problem/3479020>: REGRESSION (85-100): Safari sends plug-in key events to wrong instance of plug-in
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): set suspendKeyUpEvents to NO
+        (-[WebBaseNetscapePluginView keyMessageForEvent:]): copied from CVS
+        (-[WebBaseNetscapePluginView keyUp:]): if !suspendKeyUpEvents, send the keyUp event
+        (-[WebBaseNetscapePluginView keyDown:]): set suspendKeyUpEvents to YES
+        (-[WebBaseNetscapePluginView windowBecameKey:]): call SetUserFocusWindow
+
 2003-12-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

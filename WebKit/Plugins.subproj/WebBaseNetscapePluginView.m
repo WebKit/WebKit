@@ -296,6 +296,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
 {
     ASSERT([self window]);
 
+    suspendKeyUpEvents = NO;
+    
     if (!isStarted) {
         return NO;
     }
@@ -571,18 +573,46 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     // Do nothing so that other responders don't respond to the drag that initiated in this view.
 }
 
+- (UInt32)keyMessageForEvent:(NSEvent *)event
+{
+    NSData *data = [[event characters] dataUsingEncoding:CFStringConvertEncodingToNSStringEncoding(CFStringGetSystemEncoding())];
+    if (!data) {
+        return 0;
+    }
+    UInt8 characterCode;
+    [data getBytes:&characterCode length:1];
+    UInt16 keyCode = [event keyCode];
+    return keyCode << 8 | characterCode;
+}
+
 - (void)keyUp:(NSEvent *)theEvent
 {
     TSMProcessRawKeyEvent([theEvent _eventRef]);
+    
+    // TSM won't send keyUp events so we have to send them ourselves.
+    // Only send keyUp events after we receive the TSM callback because this is what plug-in expect from OS 9.
+    if (!suspendKeyUpEvents) {
+        EventRecord event;
+        
+        [self getCarbonEvent:&event withEvent:theEvent];
+        event.what = keyUp;
+        
+        if (event.message == 0) {
+            event.message = [self keyMessageForEvent:theEvent];
+        }
+        
+        [self sendEvent:&event];
+    }
 }
 
 - (void)keyDown:(NSEvent *)theEvent
 {
+    suspendKeyUpEvents = YES;
     TSMProcessRawKeyEvent([theEvent _eventRef]);
 }
 
 static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEvent, void *pluginView)
-{
+{    
     EventRef rawKeyEventRef;
     OSStatus status = GetEventParameter(inEvent, kEventParamTextInputSendKeyboardEvent, typeEventRef, NULL, sizeof(EventRef), NULL, &rawKeyEventRef);
     if (status != noErr) {
@@ -1127,6 +1157,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     [self sendActivateEvent:YES];
     [self setNeedsDisplay:YES];
     [self restartNullEvents];
+    SetUserFocusWindow([[self window] windowRef]);
 }
 
 -(void)windowResignedKey:(NSNotification *)notification
