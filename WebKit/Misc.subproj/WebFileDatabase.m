@@ -4,9 +4,105 @@
 
 #import "IFURLFileDatabase.h"
 #import "IFNSFileManagerExtensions.h"
+#import "IFURLCacheLoaderConstantsPrivate.h"
+#import "WebFoundationDebug.h"
 
 static NSNumber *IFURLFileDirectoryPosixPermissions;
 static NSNumber *IFURLFilePosixPermissions;
+
+typedef enum
+{
+    IFURLFileDatabaseSetObjectOp,
+    IFURLFileDatabaseRemoveObjectOp,
+} IFURLFileDatabaseOpCode;
+
+enum
+{
+    SYNC_INTERVAL = 5,
+    SYNC_IDLE_THRESHOLD = 5,
+};
+
+// interface IFURLFileDatabaseOp -------------------------------------------------------------
+
+@interface IFURLFileDatabaseOp : NSObject
+{
+    IFURLFileDatabaseOpCode opcode;
+    id key;
+    id object; 
+}
+
++(id)opWithCode:(IFURLFileDatabaseOpCode)opcode key:(id)key object:(id)object;
+-(id)initWithCode:(IFURLFileDatabaseOpCode)opcode key:(id)key object:(id)object;
+
+-(IFURLFileDatabaseOpCode)opcode;
+-(id)key;
+-(id)object;
+-(void)perform:(IFURLFileDatabase *)target;
+
+@end
+
+
+// implementation IFURLFileDatabaseOp -------------------------------------------------------------
+
+@implementation IFURLFileDatabaseOp
+
++(id)opWithCode:(IFURLFileDatabaseOpCode)theOpcode key:(id)theKey object:(id)theObject
+{
+    return [[[IFURLFileDatabaseOp alloc] initWithCode:theOpcode key:theKey object:theObject] autorelease];
+}
+
+-(id)initWithCode:(IFURLFileDatabaseOpCode)theOpcode key:(id)theKey object:(id)theObject
+{
+    if ((self = [super init])) {
+        
+        opcode = theOpcode;
+        key = [theKey retain];
+        object = [theObject retain];
+        
+        return self;
+    }
+  
+    [self release];
+    return nil;
+}
+
+-(IFURLFileDatabaseOpCode)opcode
+{
+    return opcode;
+}
+
+-(id)key
+{
+    return key;
+}
+
+-(id)object
+{
+    return object;
+}
+
+-(void)perform:(IFURLFileDatabase *)target
+{
+    switch (opcode) {
+        case IFURLFileDatabaseSetObjectOp:
+            [target performSetObject:object forKey:key];
+            break;
+        case IFURLFileDatabaseRemoveObjectOp:
+            [target performRemoveObjectForKey:key];
+            break;
+    }
+}
+
+-(void)dealloc
+{
+    [key release];
+    [object release];
+    
+    [super dealloc];
+}
+
+@end
+
 
 // implementation IFURLFileDatabase -------------------------------------------------------------
 
@@ -28,6 +124,12 @@ static NSNumber *IFURLFilePosixPermissions;
 {
     if ((self = [super initWithPath:thePath])) {
     
+        ops = [[NSMutableArray alloc] init];
+        setCache = [[NSMutableDictionary alloc] init];
+        removeCache = [[NSMutableSet alloc] init];
+        timer = nil;
+        mutex = [[NSLock alloc] init];
+
         return self;
     }
     
@@ -38,6 +140,11 @@ static NSNumber *IFURLFilePosixPermissions;
 -(void)dealloc
 {
     [self close];
+    [self sync];
+    
+    [setCache release];
+    [removeCache release];
+    [mutex release];
 
     [super dealloc];
 }
@@ -70,11 +177,120 @@ static NSNumber *IFURLFilePosixPermissions;
     return [NSString stringWithFormat:@"%.2u/%.2u/%.10u-%.10u.cache", ((hash1 & 0xff) >> 4), ((hash2 & 0xff) >> 4), hash1, hash2];
 }
 
+-(void)setTimer
+{
+    if (timer == nil) {
+        timer = [[NSTimer scheduledTimerWithTimeInterval:SYNC_INTERVAL target:self selector:@selector(lazySync:) userInfo:nil repeats:YES] retain];
+    }
+}
+
 // database functions ---------------------------------------------------------------------------
 #pragma mark database functions
 
-
 -(void)setObject:(id)object forKey:(id)key
+{
+    IFURLFileDatabaseOp *op;
+
+    touch = CFAbsoluteTimeGetCurrent();
+    
+    [mutex lock];
+    
+    [setCache setObject:object forKey:key];
+    op = [[IFURLFileDatabaseOp alloc] initWithCode:IFURLFileDatabaseSetObjectOp key:key object:nil];
+    [ops addObject:op];
+    [self setTimer];
+    
+    [mutex unlock];
+}
+
+-(void)removeObjectForKey:(id)key
+{
+    IFURLFileDatabaseOp *op;
+
+    touch = CFAbsoluteTimeGetCurrent();
+    
+    [mutex lock];
+    
+    [removeCache addObject:key];
+    op = [[IFURLFileDatabaseOp alloc] initWithCode:IFURLFileDatabaseRemoveObjectOp key:key object:nil];
+    [ops addObject:op];
+    [self setTimer];
+    
+    [mutex unlock];
+}
+
+-(void)removeAllObjects
+{
+    touch = CFAbsoluteTimeGetCurrent();
+
+    [mutex lock];
+    [setCache removeAllObjects];
+    [removeCache removeAllObjects];
+    [self close];
+    [[NSFileManager defaultManager] backgroundRemoveFileAtPath:path];
+    [self open];
+    [mutex unlock];
+
+#ifdef WEBFOUNDATION_DEBUG
+    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - removeAllObjects");
+#endif
+}
+
+-(id)objectForKey:(id)key
+{
+    id result;
+    id fileKey;
+    id object;
+    NSString *filePath;
+    NSData *data;
+    NSUnarchiver *unarchiver;
+        
+    result = nil;
+    fileKey = nil;
+
+    touch = CFAbsoluteTimeGetCurrent();
+
+    // check caches
+    [mutex lock];
+    if ([removeCache containsObject:key]) {
+        [mutex unlock];
+        return nil;
+    }
+    if ((result = [setCache objectForKey:key])) {
+        [mutex unlock];
+        return result;
+    }
+    [mutex unlock];
+
+    // go to disk
+    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
+    
+    data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
+
+    if (data) {
+        unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
+        fileKey = [unarchiver decodeObject];
+        object = [unarchiver decodeObject];
+        if ([fileKey isEqual:key]) {
+            // make sure this object stays around until client has had a chance at it
+            result = [object retain];
+            [result autorelease];
+        }
+        [unarchiver release];
+        [data release];
+    }
+
+    return result;
+}
+
+-(NSEnumerator *)keys
+{
+    // FIXME: [kocienda] Radar 2859370 (IFURLFileDatabase needs to implement keys method)
+    return nil;
+}
+
+
+-(void)performSetObject:(id)object forKey:(id)key
 {
     BOOL result;
     NSString *filePath;
@@ -83,6 +299,10 @@ static NSNumber *IFURLFilePosixPermissions;
     NSDictionary *directoryAttributes;
     NSArchiver *archiver;
     NSFileManager *defaultManager;
+
+#ifdef WEBFOUNDATION_DEBUG
+    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performSetObject - %@", key);
+#endif
 
     result = NO;
 
@@ -117,62 +337,19 @@ static NSNumber *IFURLFilePosixPermissions;
     [archiver release];
 }
 
--(void)removeObjectForKey:(id)key
+-(void)performRemoveObjectForKey:(id)key
 {
     NSString *filePath;
+
+
+#ifdef WEBFOUNDATION_DEBUG
+    WebFoundationLogAtLevel(WebFoundationLogDiskCacheActivity, @"- [WEBFOUNDATION_DEBUG] - performRemoveObjectForKey - %@", key);
+#endif
 
     filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
 
     [[NSFileManager defaultManager] removeFileAtPath:filePath handler:nil];
 }
-
--(void)removeAllObjects
-{
-    [mutex lock];
-    [self close];
-    [[NSFileManager defaultManager] backgroundRemoveFileAtPath:path];
-    [self open];
-    [mutex unlock];
-}
-
--(id)objectForKey:(id)key
-{
-    id result;
-    id fileKey;
-    id object;
-    NSString *filePath;
-    NSData *data;
-    NSUnarchiver *unarchiver;
-        
-    result = nil;
-    fileKey = nil;
-
-    filePath = [NSString stringWithFormat:@"%@/%@", path, [IFURLFileDatabase uniqueFilePathForKey:key]];
-    
-    data = [[NSData alloc] initWithContentsOfMappedFile:filePath];
-
-    if (data) {
-        unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
-        fileKey = [unarchiver decodeObject];
-        object = [unarchiver decodeObject];
-        if ([fileKey isEqual:key]) {
-            // make sure this object stays around until client has had a chance at it
-            result = [object retain];
-            [result autorelease];
-        }
-        [unarchiver release];
-        [data release];
-    }
-
-    return result;
-}
-
--(NSEnumerator *)keys
-{
-    // FIXME: [kocienda] Radar 2859370 (IFURLFileDatabase needs to implement keys method)
-    return nil;
-}
-
 
 // database management functions ---------------------------------------------------------------------------
 #pragma mark database management functions
@@ -220,9 +397,69 @@ static NSNumber *IFURLFilePosixPermissions;
     return YES;
 }
 
+-(void)lazySync:(NSTimer *)theTimer
+{
+    IFURLFileDatabaseOp *op;
+
+    while (touch + SYNC_IDLE_THRESHOLD < CFAbsoluteTimeGetCurrent() && [ops count] > 0) {
+        [mutex lock];
+
+        if (timer) {
+            [timer invalidate];
+            [timer autorelease];
+            timer = nil;
+        }
+        
+        op = [ops lastObject];
+        if (op) {
+            [ops removeLastObject];
+            [op perform:self];
+            [setCache removeObjectForKey:[op key]];
+            [removeCache removeObject:[op key]];
+            [op release];
+        }
+
+        [mutex unlock];
+    }
+
+    // come back later to finish the work...
+    if ([ops count] > 0) {
+        [mutex lock];
+        [self setTimer];
+        [mutex unlock];
+    }
+}
+
 -(void)sync
 {
-    // no-op for this kind of database
+    NSArray *array;
+    int opCount;
+    int i;
+    IFURLFileDatabaseOp *op;
+
+    touch = CFAbsoluteTimeGetCurrent();
+    
+    array = nil;
+
+    [mutex lock];
+    if ([ops count] > 0) {
+        array = [NSArray arrayWithArray:ops];
+        [ops removeAllObjects];
+    }
+    if (timer) {
+        [timer invalidate];
+        [timer autorelease];
+        timer = nil;
+    }
+    [setCache removeAllObjects];
+    [removeCache removeAllObjects];
+    [mutex unlock];
+
+    opCount = [array count];
+    for (i = 0; i < opCount; i++) {
+        op = [array objectAtIndex:i];
+        [op perform:self];
+    }
 }
 
 @end
