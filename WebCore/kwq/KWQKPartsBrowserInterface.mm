@@ -35,7 +35,7 @@ namespace KParts {
 QVariant BrowserInterface::property(const char *name) const
 {
     if (strcmp(name, "historyLength") == 0) {
-        return QVariant((uint)[_part->bridge() historyLength]);
+        return QVariant([_part->bridge() historyLength]);
     }
     ERROR("property %s not implemented", name);
     return QVariant();

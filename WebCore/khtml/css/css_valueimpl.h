@@ -66,7 +66,7 @@ public:
     void setProperty ( const DOMString &propertyString);
     DOM::DOMString item ( unsigned long index );
 
-    virtual DOM::DOMString cssText() const;
+    DOM::DOMString cssText() const;
     void setCssText(DOM::DOMString str);
 
     virtual bool isStyleDeclaration() { return true; }
@@ -103,7 +103,8 @@ public:
 
     virtual unsigned short cssValueType() const = 0;
 
-    virtual DOM::DOMString cssText() const = 0;
+    virtual DOM::DOMString cssText() const;
+    void setCssText(DOM::DOMString str);
 
     virtual bool isValue() { return true; }
     virtual bool isFontValue() { return false; }
@@ -313,9 +314,7 @@ public:
     virtual ~FontValueImpl();
 
     virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
-    
-    virtual DOM::DOMString cssText() const;
-    
+
     virtual bool isFontValue() { return true; }
 
     CSSPrimitiveValueImpl *style;
@@ -335,8 +334,6 @@ public:
     virtual ~ShadowValueImpl();
 
     virtual unsigned short cssValueType() const { return CSSValue::CSS_CUSTOM; }
-
-    virtual DOM::DOMString cssText() const;
 
     CSSPrimitiveValueImpl* x;
     CSSPrimitiveValueImpl* y;
@@ -378,8 +375,6 @@ public:
     }
 
     CSSValueImpl *value() { return m_value; }
-
-    virtual DOM::DOMString cssText() const;
 
     // make sure the following fits in 4 bytes.
     int  m_id 		: 29;

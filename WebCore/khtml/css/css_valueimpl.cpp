@@ -351,31 +351,13 @@ CSSRuleImpl *CSSStyleDeclarationImpl::parentRule() const
 
 DOM::DOMString CSSStyleDeclarationImpl::cssText() const
 {
-    DOMString result;
-    
-    if ( m_lstValues) {
-	QPtrListIterator<CSSProperty> lstValuesIt(*m_lstValues);
-	CSSProperty *current;
-	for ( lstValuesIt.toFirst(); (current = lstValuesIt.current()); ++lstValuesIt ) {
-	    result += current->cssText();
-	}
-    }
-
-    return result;
+    return DOM::DOMString();
+    // ###
 }
 
-void CSSStyleDeclarationImpl::setCssText(DOM::DOMString text)
+void CSSStyleDeclarationImpl::setCssText(DOM::DOMString /*str*/)
 {
-    if (m_lstValues) {
-	m_lstValues->clear();
-    } else {
-	m_lstValues = new QPtrList<CSSProperty>;
-	m_lstValues->setAutoDelete( true );
-    }
-
-    CSSParser parser( strictParsing );
-    parser.parseDeclaration( this, text, false );
-    setChanged();
+    // ###
 }
 
 bool CSSStyleDeclarationImpl::parseString( const DOMString &/*string*/, bool )
@@ -394,6 +376,16 @@ CSSValueImpl::CSSValueImpl()
 
 CSSValueImpl::~CSSValueImpl()
 {
+}
+
+DOM::DOMString CSSValueImpl::cssText() const
+{
+    return DOM::DOMString();
+}
+
+void CSSValueImpl::setCssText(DOM::DOMString /*str*/)
+{
+    // ###
 }
 
 unsigned short CSSInheritedValueImpl::cssValueType() const
@@ -445,13 +437,8 @@ void CSSValueListImpl::append(CSSValueImpl *val)
 
 DOM::DOMString CSSValueListImpl::cssText() const
 {
-    DOMString result = "";
-
-    for (QPtrListIterator<CSSValueImpl> iterator(m_values); iterator.current(); ++iterator) {
-	result += iterator.current()->cssText();
-    }
-    
-    return result;
+    // ###
+    return DOM::DOMString();
 }
 
 // -------------------------------------------------------------------------------------
@@ -901,51 +888,6 @@ FontValueImpl::~FontValueImpl()
     delete family;
 }
 
-DOMString FontValueImpl::cssText() const
-{
-    // font variant weight size / line-height family 
-
-    DOMString result("");
-
-    if (style) {
-	result += style->cssText();
-    }
-    if (variant) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += variant->cssText();
-    }
-    if (weight) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += weight->cssText();
-    }
-    if (size) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += size->cssText();
-    }
-    if (lineHeight) {
-	if (!size) {
-	    result += " ";
-	}
-	result += "/";
-	result += lineHeight->cssText();
-    }
-    if (family) {
-	if (result.length() > 0) {
-	    result += " ";
-	}
-	result += family->cssText();
-    }
-
-    return result;
-}
-    
-
 // Used for text-shadow and box-shadow
 ShadowValueImpl::ShadowValueImpl(CSSPrimitiveValueImpl* _x, CSSPrimitiveValueImpl* _y,
                                  CSSPrimitiveValueImpl* _blur, CSSPrimitiveValueImpl* _color)
@@ -960,35 +902,3 @@ ShadowValueImpl::~ShadowValueImpl()
     delete color;
 }
 
-DOMString ShadowValueImpl::cssText() const
-{
-    DOMString text("");
-    if (color) {
-	text += color->cssText();
-    }
-    if (x) {
-	if (text.length() > 0) {
-	    text += " ";
-	}
-	text += x->cssText();
-    }
-    if (y) {
-	if (text.length() > 0) {
-	    text += " ";
-	}
-	text += y->cssText();
-    }
-    if (blur) {
-	if (text.length() > 0) {
-	    text += " ";
-	}
-	text += blur->cssText();
-    }
-
-    return text;
-}
-
-DOMString CSSProperty::cssText() const
-{
-    return getPropertyName(m_id) + DOMString(": ") + m_value->cssText() + (m_bImportant ? DOMString(" !important") : DOMString()) + DOMString("; ");
-}
