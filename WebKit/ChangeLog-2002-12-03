@@ -1,3 +1,8 @@
+2002-07-22  Ken Kocienda  <kocienda@apple.com>
+
+        * WebView.subproj/WebHTMLView.m: import of removed WebFrame bridge header was
+	left in, causing a build break.
+
 2002-07-22  Maciej Stachowiak  <mjs@apple.com>
 
         Merged WebBridge and WebFrameBridge.

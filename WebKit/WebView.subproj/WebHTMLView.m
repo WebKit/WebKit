@@ -11,7 +11,6 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebFrameBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebViewPrivate.h>
