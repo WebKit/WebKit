@@ -3587,6 +3587,39 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
+        case Context2D::FillRect: {
+            if (args.size() != 4) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x = (float)args[0].toNumber(exec);
+            float y = (float)args[1].toNumber(exec);
+            float w = (float)args[2].toNumber(exec);
+            float h = (float)args[3].toNumber(exec);
+            CGContextFillRect (drawingContext, CGRectMake(x,y,w,h));
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::StrokeRect: {
+            int size = args.size();
+            if (size < 4) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x = (float)args[0].toNumber(exec);
+            float y = (float)args[1].toNumber(exec);
+            float w = (float)args[2].toNumber(exec);
+            float h = (float)args[3].toNumber(exec);
+            
+            if (size > 4)
+                CGContextStrokeRectWithWidth (drawingContext, CGRectMake(x,y,w,h), (float)args[4].toNumber(exec));
+            else
+                CGContextStrokeRect (drawingContext, CGRectMake(x,y,w,h));
+            renderer->setNeedsImageUpdate();
+            break;
+        }
         case Context2D::SetShadow: {
             if (args.size() != 3) {
                 Object err = Error::create(exec,SyntaxError);
@@ -3601,7 +3634,6 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             CGContextSetShadow (drawingContext, offset, blur);
             break;
         }
-        
         case Context2D::SetShadowWithColor: {
             if (args.size() < 4) {
                 Object err = Error::create(exec,SyntaxError);
@@ -3672,6 +3704,16 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             renderer->setNeedsImageUpdate();
             break;
         }
+        case Context2D::SetAlpha: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float a =  (float)args[0].toNumber(exec);
+            CGContextSetAlpha (drawingContext, a);
+            break;
+        }
     }
 
     return Undefined();
@@ -3680,7 +3722,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
 const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
 
 /* Source for Context2DTable. Use "make hashtables" to regenerate.
-@begin Context2DTable 23
+@begin Context2DTable 28
   save                     Context2D::Save                        DontDelete|Function 0
   restore                  Context2D::Restore                     DontDelete|Function 0
   scale                    Context2D::Scale                       DontDelete|Function 2
@@ -3701,11 +3743,14 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   addQuadraticCurveToPoint Context2D::AddQuadraticCurveToPoint    DontDelete|Function 4
   addBezierCurveToPoint    Context2D::AddBezierCurveToPoint       DontDelete|Function 6
   clearRect                Context2D::ClearRect                   DontDelete|Function 4
+  fillRect                 Context2D::FillRect                    DontDelete|Function 4
+  strokeRect               Context2D::StrokeRect                  DontDelete|Function 4
   drawImage                Context2D::DrawImage                   DontDelete|Function 6
   drawImageFromRect        Context2D::DrawImageFromRect           DontDelete|Function 10
   setShadow                Context2D::SetShadow                   DontDelete|Function 3
   setShadowWithColor       Context2D::SetShadowWithColor          DontDelete|Function 4
   clearShadow              Context2D::ClearShadow                 DontDelete|Function 0
+  setAlpha                 Context2D::SetAlpha                    DontDelete|Function 1
 @end
 */
 

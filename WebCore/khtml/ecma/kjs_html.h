@@ -258,9 +258,10 @@ namespace KJS {
         SetStrokeColor, SetFillColor, SetLineWidth, SetLineCap, SetLineJoin, SetMiterLimit, 
         FillPath, StrokePath, 
         MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint,
-        ClearRect,
+        ClearRect, FillRect, StrokeRect,
         DrawImage, DrawImageFromRect,
-        SetShadow, SetShadowWithColor, ClearShadow };
+        SetShadow, SetShadowWithColor, ClearShadow,
+        SetAlpha};
 
     DOM::HTMLElementImpl *_element;
   };
