@@ -729,10 +729,8 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         canCollapseWithChildren = false;
     
     // If we can't collapse with children then go ahead and add in the bottom margins.
-    if (!topMarginContributor && 
-        (!canCollapseWithChildren 
-            && (strictMode || !quirkContainer || !bottomChildQuirk)
-        ))
+    if (!canCollapseWithChildren 
+            && (strictMode || !quirkContainer || !bottomChildQuirk))
         m_height += prevPosMargin - prevNegMargin;
     
     m_height += toAdd;
@@ -1615,6 +1613,11 @@ void RenderFlow::calcBlockMinMaxWidth()
         }
         else
         {
+            // Call calcWidth on the child to ensure that our margins are
+            // up to date.  This method can be called before the child has actually
+            // calculated its margins (which are computed inside calcWidth).
+            child->calcWidth();
+            
             if (!(ml.type==Variable) && !(mr.type==Variable))
             {
                 if (!(child->style()->width().type==Variable))

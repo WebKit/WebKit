@@ -1,5 +1,25 @@
-=== Alexander-35 ===
+2002-12-05  David Hyatt  <hyatt@apple.com>
 
+	Make sure that blocks with block children compute their
+	minwidth and maxwidth correctly.  This fixes 4-5 bugs on my
+	list, including the becblog.blogspot.com misrender and
+	the wrapping list item on webstandards.org.
+
+	The fix ensures that the margins of a child have been
+	computed before they are asked for by the parent in
+	calcBlockMinMaxWidth.
+
+	Also fix a bug in collapsing margins that caused the height
+	of positioned elements that contained only zero-height children
+	to not compute their heights correctly.  We now pass tests 2
+	and 3 on the collapsing margin tests with this fix.  
+	
+        Reviewed by: trey
+
+	* khtml/rendering/render_flow.cpp:
+	(RenderFlow::layoutBlockChildren):
+	(RenderFlow::calcBlockMinMaxWidth):
+	
 2002-12-05  David Hyatt  <hyatt@apple.com>
 
 	Fix for wsj.com orange underline regression.  In quirks mode
