@@ -1,3 +1,9 @@
+2004-12-09  Richard Williamson   <rjw@apple.com>
+
+	Make WebPluginDatabase.h private (Dashboard needs SPI).
+
+        * WebKit.pbproj/project.pbxproj:
+
 === Safari-175 ===
 
 2004-12-09  Chris Blumenberg  <cblu@apple.com>
