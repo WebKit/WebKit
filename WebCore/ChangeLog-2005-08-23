@@ -1,3 +1,45 @@
+2003-11-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3473906 - getElementById takes about 44% of time on particular slow intel page
+
+	I fixed this by adding a per-document id --> element hash
+	table. This speeds up my local copy of the intel page by 60% (50
+	sec to 20 sec!) and does not cause any PLT slowdown.
+	
+        * khtml/xml/dom_docimpl.h: New QDict field for id to element hash table.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::getElementById): Just look it up in the newly
+	added hash table.
+        (DocumentImpl::addElementById): New method. Add to hash table if
+	no other element is set for that key (this lets the first element
+	of several with matching ids win).
+        (DocumentImpl::removeElementById): New method. Remove from hash
+	table only if the key and value both match.
+
+	These Element changes to keep the id --> element hashtable working
+	seem needlessly tricky, due to lack of bottlenecks in attribute
+	changing.
+	
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::updateId): New method that removes element from
+	hash table for old it
+        (ElementImpl::setAttribute): If setting id, call updateId.
+        (ElementImpl::setAttributeMap): If either the old or the new map
+	includes id, call updateId.
+        (ElementImpl::attach): If we have an id, call updateId to set it
+	after attaching.
+        (ElementImpl::detach): Newly added. If we have an id, call
+	updateId to clear it before detaching.
+	(NamedAttrMapImpl::setNamedItem): If the name is id, call updateId on
+	our element.
+        (NamedAttrMapImpl::removeNamedItem): If the name is id, call updateId on
+	our element.
+        (NamedAttrMapImpl::operator=): If old or new contents include id attribute,
+	call updateId on our element.
+	* khtml/xml/dom_elementimpl.h: Prototype new methods.
+
 2003-11-05  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej

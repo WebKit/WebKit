@@ -227,6 +227,10 @@ void ElementImpl::setAttribute(NodeImpl::Id id, DOMStringImpl* value, int &excep
         exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
+
+    if (id == ATTR_ID) {
+	updateId(old ? old->val() : 0, value);
+    }
     
     if (old && !value)
         namedAttrMap->removeAttribute(id);
@@ -240,6 +244,16 @@ void ElementImpl::setAttribute(NodeImpl::Id id, DOMStringImpl* value, int &excep
 
 void ElementImpl::setAttributeMap( NamedAttrMapImpl* list )
 {
+    // If setting the whole map changes the id attribute, we need to
+    // call updateId.
+
+    AttributeImpl *oldId = namedAttrMap ? namedAttrMap->getAttributeItem(ATTR_ID) : 0;
+    AttributeImpl *newId = list ? list->getAttributeItem(ATTR_ID) : 0;
+
+    if (oldId || newId) {
+	updateId(oldId ? oldId->val() : 0, newId ? newId->val() : 0);
+    }
+
     if(namedAttrMap)
         namedAttrMap->deref();
 
@@ -334,6 +348,28 @@ void ElementImpl::attach()
     createRendererIfNeeded();
 #endif
     NodeBaseImpl::attach();
+
+    NamedAttrMapImpl *attrs = attributes(true);
+    
+    if (attrs) {
+	AttributeImpl *idAttr = attrs->getAttributeItem(ATTR_ID);
+	if (idAttr && idAttr->val()) {
+	    updateId(0, idAttr->val());
+	}
+    }
+}
+
+void ElementImpl::detach()
+{
+    NamedAttrMapImpl *attrs = attributes(true);
+    if (attrs) {
+	AttributeImpl *idAttr = attrs->getAttributeItem(ATTR_ID);
+	if (idAttr && idAttr->val()) {
+	    updateId(idAttr->val(), 0);
+	}
+    }
+
+    NodeBaseImpl::detach();
 }
 
 void ElementImpl::recalcStyle( StyleChange change )
@@ -456,6 +492,30 @@ void ElementImpl::dispatchAttrAdditionEvent(AttributeImpl *attr)
    // int exceptioncode = 0;
 //     dispatchEvent(new MutationEventImpl(EventImpl::DOMATTRMODIFIED_EVENT,true,false,attr,attr->value(),
 //                                         attr->value(),getDocument()->attrName(attr->id()),MutationEvent::ADDITION),exceptioncode);
+}
+
+
+void ElementImpl::updateId(DOMStringImpl* oldId, DOMStringImpl* newId)
+{
+    if (!attached())
+	return;
+
+    if (oldId == newId)
+	return;
+
+    DOMString oldIdStr(oldId);
+    DOMString newIdStr(newId);
+
+    DocumentImpl* doc = getDocument();
+
+    if (oldIdStr == newIdStr)
+	return;
+
+    if (!oldIdStr.isEmpty())
+	doc->removeElementById(oldIdStr, this);
+
+    if (!newIdStr.isEmpty())
+	doc->addElementById(newIdStr, this);
 }
 
 #ifndef NDEBUG
@@ -603,6 +663,10 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
         return 0;
     }
 
+    if (a->id() == ATTR_ID) {
+	element->updateId(old ? old->val() : 0, a->val());
+    }
+
     // ### slightly inefficient - resizes attribute array twice.
     Node r;
     if (old) {
@@ -611,6 +675,7 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
         r = old->_impl;
         removeAttribute(a->id());
     }
+
     addAttribute(a);
     return r;
 }
@@ -635,6 +700,11 @@ Node NamedAttrMapImpl::removeNamedItem ( NodeImpl::Id id, int &exceptioncode )
 
     if (!a->attrImpl())  a->allocateImpl(element);
     Node r(a->attrImpl());
+
+    if (id == ATTR_ID) {
+	element->updateId(a->val(), 0);
+    }
+
     removeAttribute(id);
     return r;
 }
@@ -700,6 +770,16 @@ NamedAttrMapImpl& NamedAttrMapImpl::operator=(const NamedAttrMapImpl& other)
 {
     // clone all attributes in the other map, but attach to our element
     if (!element) return *this;
+
+    // If assigning the map changes the id attribute, we need to call
+    // updateId.
+
+    AttributeImpl *oldId = getAttributeItem(ATTR_ID);
+    AttributeImpl *newId = other.getAttributeItem(ATTR_ID);
+
+    if (oldId || newId) {
+	element->updateId(oldId ? oldId->val() : 0, newId ? newId->val() : 0);
+    }
 
     clearAttributes();
     len = other.len;

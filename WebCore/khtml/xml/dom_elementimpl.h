@@ -192,6 +192,7 @@ public:
     virtual QString state() { return QString::null; }
 
     virtual void attach();
+    virtual void detach();
     virtual khtml::RenderStyle *styleForRenderer(khtml::RenderObject *parent);
     virtual khtml::RenderObject *createRenderer(RenderArena *, khtml::RenderStyle *);
     virtual void recalcStyle( StyleChange = NoChange );
@@ -226,6 +227,8 @@ private:
     // for setting this according to the corresponding element description
     // in the DTD
     virtual NamedAttrMapImpl* defaultMap() const;
+
+    void updateId(DOMStringImpl* oldId, DOMStringImpl* newId);
 
 protected: // member variables
     mutable NamedAttrMapImpl *namedAttrMap;

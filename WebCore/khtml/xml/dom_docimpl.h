@@ -460,6 +460,9 @@ public:
     // and make it sensitive to the type of document.
     static bool isValidName(const DOMString &);
     
+    void addElementById(const DOMString &elementId, ElementImpl *element);
+    void removeElementById(const DOMString &elementId, ElementImpl *element);
+
 signals:
     void finishedParsing();
 
@@ -582,7 +585,9 @@ private:
     int m_secureForms;
     
     khtml::Decoder *m_decoder;
-    
+
+    QDict<ElementImpl> m_elementsById;
+ 
     bool m_createRenderers;
 #endif
 };
