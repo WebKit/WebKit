@@ -1,3 +1,13 @@
+2002-10-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3058829, assertion caused by table cell with
+	incorrect display type.  Implemented a quirk that forces
+	<td>s of display: block to construct table cells as
+	rendering objects. 
+	
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+
 === Alexander-27 ===
 
 2002-10-10  Darin Adler  <darin@apple.com>

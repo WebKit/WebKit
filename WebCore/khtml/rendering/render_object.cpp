@@ -27,6 +27,7 @@
 #include "rendering/render_list.h"
 #include "rendering/render_root.h"
 #include "xml/dom_elementimpl.h"
+#include "xml/dom_docimpl.h"
 #include "misc/htmlhashes.h"
 #include <kdebug.h>
 #include <qpainter.h>
@@ -45,7 +46,15 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         break;
     case INLINE:
     case BLOCK:
-        o = new RenderFlow(node);
+        // In quirks mode, if <td> has a display of block, build a table cell instead.
+        // This corrects erroneous HTML.  A better fix would be to implement full-blown
+        // CSS2 anonymous table render object construction, but until then, this will have
+        // to suffice. -dwh
+        if (style->display() == BLOCK && node->id() == ID_TD &&
+            node->getDocument()->parseMode() != DocumentImpl::Strict)
+            o = new RenderTableCell(node);
+        else
+            o = new RenderFlow(node);
         break;
     case LIST_ITEM:
         o = new RenderListItem(node);
