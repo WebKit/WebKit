@@ -1,3 +1,14 @@
+2004-07-20  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	<rdar://problem/3721690> REGRESSION (125.7-148u) clicking on links at macosx.apple.com/Builds does not load new page in frame
+	
+        * Plugins.subproj/npruntime.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge canTargetLoadInFrame:]): Don't apply the restrictions to frames
+	that are in the same window (Mozilla does this too).
+
 2004-07-20  Richard Williamson   <rjw@apple.com>
 
 		Fix for 3728558.  Fixed the key event handling in the carbon/cocoa
