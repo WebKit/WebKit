@@ -1,8 +1,8 @@
-layer at (0,0) size 800x1138
+layer at (0,0) size 800x1094
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x1138
-  RenderBlock {HTML} at (0,0) size 800x1138
-    RenderBody {BODY} at (8,8) size 784x1117 [bgcolor=#EEEEEE]
+layer at (0,0) size 800x1094
+  RenderBlock {HTML} at (0,0) size 800x1094
+    RenderBody {BODY} at (8,8) size 784x1073 [bgcolor=#EEEEEE]
       RenderBlock (anonymous) at (0,0) size 784x20
         RenderInline {SPAN} at (0,0) size 191x12
           RenderText {TEXT} at (0,0) size 0x0
@@ -21,83 +21,83 @@ layer at (0,0) size 800x1138
           RenderText {TEXT} at (0,0) size 0x0
       RenderBlock (anonymous) at (0,26) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,34) size 784x51
-        RenderInline {SPAN} at (0,0) size 108x46
-          RenderInline {SPAN} at (0,0) size 108x46
-            RenderInline {SPAN} at (0,0) size 81x17
+      RenderBlock (anonymous) at (0,34) size 784x43
+        RenderInline {SPAN} at (0,0) size 110x40
+          RenderInline {SPAN} at (0,0) size 110x40
+            RenderInline {SPAN} at (0,0) size 110x17
               RenderText {TEXT} at (0,0) size 0x0
-              RenderImage {IMG} at (0,0) size 24x24
-              RenderText {TEXT} at (24,3) size 57x18
-                text run at (24,3) width 4: " "
-                text run at (28,3) width 53: "Names"
+              RenderImage {IMG} at (0,0) size 53x20
+              RenderText {TEXT} at (53,1) size 57x18
+                text run at (53,1) width 4: " "
+                text run at (57,1) width 53: "Names"
               RenderBR {BR} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
-            RenderInline {SPAN} at (0,0) size 108x15
+            RenderInline {SPAN} at (0,0) size 104x15
               RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,91) size 784x2
+      RenderBlock (anonymous) at (0,83) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,99) size 784x78
-        RenderInline {SPAN} at (0,0) size 596x74
-          RenderInline {SPAN} at (0,0) size 596x74
-            RenderImage {IMG} at (0,0) size 24x24
-            RenderText {TEXT} at (24,4) size 4x15
-              text run at (24,4) width 4: " "
+      RenderBlock (anonymous) at (0,91) size 784x66
+        RenderInline {SPAN} at (0,0) size 592x64
+          RenderInline {SPAN} at (0,0) size 592x64
+            RenderImage {IMG} at (0,0) size 62x20
+            RenderText {TEXT} at (62,2) size 4x15
+              text run at (62,2) width 4: " "
             RenderInline {SPAN} at (0,0) size 83x17
-              RenderText {TEXT} at (28,2) size 83x18
-                text run at (28,2) width 83: "Addresses"
+              RenderText {TEXT} at (66,0) size 83x18
+                text run at (66,0) width 83: "Addresses"
               RenderBR {BR} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,183) size 784x2
+      RenderBlock (anonymous) at (0,163) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,191) size 784x48
-        RenderInline {SPAN} at (0,0) size 91x43
-          RenderInline {SPAN} at (0,0) size 91x43
-            RenderInline {SPAN} at (0,0) size 91x17
+      RenderBlock (anonymous) at (0,171) size 784x40
+        RenderInline {SPAN} at (0,0) size 126x37
+          RenderInline {SPAN} at (0,0) size 126x37
+            RenderInline {SPAN} at (0,0) size 126x17
               RenderText {TEXT} at (0,0) size 0x0
-              RenderImage {IMG} at (0,0) size 24x24
-              RenderText {TEXT} at (24,3) size 67x18
-                text run at (24,3) width 4: " "
-                text run at (28,3) width 63: "Phones "
+              RenderImage {IMG} at (0,0) size 59x20
+              RenderText {TEXT} at (59,1) size 67x18
+                text run at (59,1) width 4: " "
+                text run at (63,1) width 63: "Phones "
               RenderBR {BR} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,239) size 784x52
-      RenderBlock (anonymous) at (0,291) size 784x0
+      RenderBlock (anonymous) at (0,211) size 784x52
+      RenderBlock (anonymous) at (0,263) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,297) size 784x2
+      RenderBlock (anonymous) at (0,269) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,305) size 784x24
-        RenderInline {SPAN} at (0,0) size 90x15
-          RenderInline {SPAN} at (0,0) size 90x15
-            RenderInline {SPAN} at (0,0) size 90x17
+      RenderBlock (anonymous) at (0,277) size 784x20
+        RenderInline {SPAN} at (0,0) size 128x15
+          RenderInline {SPAN} at (0,0) size 128x15
+            RenderInline {SPAN} at (0,0) size 128x17
               RenderText {TEXT} at (0,0) size 0x0
-              RenderImage {IMG} at (0,0) size 24x24
-              RenderText {TEXT} at (24,3) size 66x18
-                text run at (24,3) width 4: " "
-                text run at (28,3) width 62: "Itinerary"
+              RenderImage {IMG} at (0,0) size 62x20
+              RenderText {TEXT} at (62,1) size 66x18
+                text run at (62,1) width 4: " "
+                text run at (66,1) width 62: "Itinerary"
             RenderText {TEXT} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
                 RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,329) size 784x60
-        RenderTable {TABLE} at (0,0) size 458x60
+      RenderBlock (anonymous) at (0,297) size 784x60
+        RenderTable {TABLE} at (0,0) size 581x60
           RenderTableSection {TBODY} at (0,0) size 0x60
             RenderTableRow {TR} at (0,0) size 0x0
               RenderTableCell {TD} at (2,29) size 2x2 [r=0 c=0 rs=1 cs=1]
               RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,17) size 26x26 [r=0 c=2 rs=1 cs=1]
-                RenderImage {IMG} at (1,1) size 24x24
+              RenderTableCell {TD} at (10,19) size 149x22 [r=0 c=2 rs=1 cs=1]
+                RenderImage {IMG} at (1,1) size 147x20
                 RenderText {TEXT} at (0,0) size 0x0
-              RenderTableCell {TD} at (38,2) size 418x56 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (161,2) size 418x56 [r=0 c=3 rs=1 cs=1]
                 RenderText {TEXT} at (1,1) size 147x18
                   text run at (1,1) width 147: "TUR - Tour Package"
                 RenderBR {BR} at (0,0) size 0x0
@@ -106,29 +106,29 @@ layer at (0,0) size 800x1138
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {TEXT} at (1,37) size 416x18
                   text run at (1,37) width 416: "Comments: -** TICKETLESS CONF CODE IS WHGNSO**"
-      RenderBlock (anonymous) at (0,389) size 784x0
+      RenderBlock (anonymous) at (0,357) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,395) size 784x2
+      RenderBlock (anonymous) at (0,363) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,403) size 784x0
+      RenderBlock (anonymous) at (0,371) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,403) size 784x196
-        RenderTable {TABLE} at (0,0) size 646x196
+      RenderBlock (anonymous) at (0,371) size 784x196
+        RenderTable {TABLE} at (0,0) size 710x196
           RenderTableSection {TBODY} at (0,0) size 0x196
             RenderTableRow {TR} at (0,0) size 0x0
               RenderTableCell {TD} at (2,97) size 2x2 [r=0 c=0 rs=1 cs=1]
               RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,85) size 26x26 [r=0 c=2 rs=1 cs=1]
-                RenderImage {IMG} at (1,1) size 24x24
+              RenderTableCell {TD} at (10,87) size 90x22 [r=0 c=2 rs=1 cs=1]
+                RenderImage {IMG} at (1,1) size 88x20
                 RenderText {TEXT} at (0,0) size 0x0
-              RenderTableCell {TD} at (38,2) size 606x192 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (102,2) size 606x192 [r=0 c=3 rs=1 cs=1]
                 RenderBlock (anonymous) at (1,1) size 604x126
                   RenderText {TEXT} at (0,0) size 24x18
                     text run at (0,0) width 24: "Air "
@@ -199,29 +199,29 @@ layer at (0,0) size 800x1138
                 RenderBlock (anonymous) at (1,173) size 604x18
                   RenderBR {BR} at (0,0) size 0x17
                   RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,599) size 784x0
+      RenderBlock (anonymous) at (0,567) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,605) size 784x2
+      RenderBlock (anonymous) at (0,573) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,613) size 784x0
+      RenderBlock (anonymous) at (0,581) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,613) size 784x196
-        RenderTable {TABLE} at (0,0) size 535x196
+      RenderBlock (anonymous) at (0,581) size 784x196
+        RenderTable {TABLE} at (0,0) size 599x196
           RenderTableSection {TBODY} at (0,0) size 0x196
             RenderTableRow {TR} at (0,0) size 0x0
               RenderTableCell {TD} at (2,97) size 2x2 [r=0 c=0 rs=1 cs=1]
               RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,85) size 26x26 [r=0 c=2 rs=1 cs=1]
-                RenderImage {IMG} at (1,1) size 24x24
+              RenderTableCell {TD} at (10,87) size 90x22 [r=0 c=2 rs=1 cs=1]
+                RenderImage {IMG} at (1,1) size 88x20
                 RenderText {TEXT} at (0,0) size 0x0
-              RenderTableCell {TD} at (38,2) size 495x192 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (102,2) size 495x192 [r=0 c=3 rs=1 cs=1]
                 RenderBlock (anonymous) at (1,1) size 493x126
                   RenderText {TEXT} at (0,0) size 24x18
                     text run at (0,0) width 24: "Air "
@@ -292,29 +292,29 @@ layer at (0,0) size 800x1138
                 RenderBlock (anonymous) at (1,173) size 493x18
                   RenderBR {BR} at (0,0) size 0x17
                   RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,809) size 784x0
+      RenderBlock (anonymous) at (0,777) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,815) size 784x2
+      RenderBlock (anonymous) at (0,783) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,823) size 784x0
+      RenderBlock (anonymous) at (0,791) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,823) size 784x114
-        RenderTable {TABLE} at (0,0) size 550x114
+      RenderBlock (anonymous) at (0,791) size 784x114
+        RenderTable {TABLE} at (0,0) size 614x114
           RenderTableSection {TBODY} at (0,0) size 0x114
             RenderTableRow {TR} at (0,0) size 0x0
               RenderTableCell {TD} at (2,56) size 2x2 [r=0 c=0 rs=1 cs=1]
               RenderTableCell {TD} at (6,2) size 2x2 [r=0 c=1 rs=1 cs=1]
-              RenderTableCell {TD} at (10,44) size 26x26 [r=0 c=2 rs=1 cs=1]
-                RenderImage {IMG} at (1,1) size 24x24
+              RenderTableCell {TD} at (10,46) size 90x22 [r=0 c=2 rs=1 cs=1]
+                RenderImage {IMG} at (1,1) size 88x20
                 RenderText {TEXT} at (0,0) size 0x0
-              RenderTableCell {TD} at (38,2) size 510x110 [r=0 c=3 rs=1 cs=1]
+              RenderTableCell {TD} at (102,2) size 510x110 [r=0 c=3 rs=1 cs=1]
                 RenderText {TEXT} at (1,1) size 24x18
                   text run at (1,1) width 24: "Air "
                 RenderBR {BR} at (0,0) size 0x0
@@ -343,71 +343,71 @@ layer at (0,0) size 800x1138
                   text run at (241,91) width 4: " "
                 RenderBR {BR} at (0,0) size 0x0
                 RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,937) size 784x0
+      RenderBlock (anonymous) at (0,905) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,943) size 784x2
+      RenderBlock (anonymous) at (0,911) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,951) size 784x54
-        RenderInline {SPAN} at (0,0) size 196x49
+      RenderBlock (anonymous) at (0,919) size 784x50
+        RenderInline {SPAN} at (0,0) size 196x47
           RenderInline {SPAN} at (0,0) size 0x0
             RenderInline {SPAN} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-          RenderInline {SPAN} at (0,0) size 101x17
-            RenderImage {IMG} at (0,0) size 24x24
-            RenderText {TEXT} at (24,3) size 77x18
-              text run at (24,3) width 4: " "
-              text run at (28,3) width 73: "Remarks:"
+          RenderInline {SPAN} at (0,0) size 97x17
+            RenderImage {IMG} at (0,0) size 20x20
+            RenderText {TEXT} at (20,1) size 77x18
+              text run at (20,1) width 4: " "
+              text run at (24,1) width 73: "Remarks:"
             RenderBR {BR} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-          RenderBR {BR} at (0,24) size 0x15
+          RenderBR {BR} at (0,20) size 0x15
           RenderText {TEXT} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 196x15
-            RenderText {TEXT} at (0,39) size 196x15
-              text run at (0,39) width 126: "SERVICE FEE MCO "
-              text run at (126,39) width 70: "8103220490"
+            RenderText {TEXT} at (0,35) size 196x15
+              text run at (0,35) width 126: "SERVICE FEE MCO "
+              text run at (126,35) width 70: "8103220490"
             RenderBR {BR} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1011) size 784x2
+      RenderBlock (anonymous) at (0,975) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1019) size 784x24
-        RenderInline {SPAN} at (0,0) size 144x15
-          RenderInline {SPAN} at (0,0) size 144x17
-            RenderImage {IMG} at (0,0) size 24x24
-            RenderText {TEXT} at (24,3) size 4x18
-              text run at (24,3) width 4: " "
+      RenderBlock (anonymous) at (0,983) size 784x20
+        RenderInline {SPAN} at (0,0) size 182x15
+          RenderInline {SPAN} at (0,0) size 182x17
+            RenderImage {IMG} at (0,0) size 62x20
+            RenderText {TEXT} at (62,1) size 4x18
+              text run at (62,1) width 4: " "
             RenderInline {B} at (0,0) size 112x17
-              RenderText {TEXT} at (28,3) size 112x18
-                text run at (28,3) width 112: "Web Bookings"
-            RenderText {TEXT} at (140,3) size 4x18
-              text run at (140,3) width 4: " "
+              RenderText {TEXT} at (66,1) size 112x18
+                text run at (66,1) width 112: "Web Bookings"
+            RenderText {TEXT} at (178,1) size 4x18
+              text run at (178,1) width 4: " "
             RenderInline {SPAN} at (0,0) size 0x0
               RenderBR {BR} at (0,0) size 0x0
               RenderInline {SPAN} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1049) size 784x2
+      RenderBlock (anonymous) at (0,1009) size 784x2
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
-      RenderBlock (anonymous) at (0,1057) size 784x24
-        RenderInline {SPAN} at (0,0) size 281x15
-          RenderInline {SPAN} at (0,0) size 281x15
-            RenderInline {SPAN} at (0,0) size 281x17
+      RenderBlock (anonymous) at (0,1017) size 784x20
+        RenderInline {SPAN} at (0,0) size 277x15
+          RenderInline {SPAN} at (0,0) size 277x15
+            RenderInline {SPAN} at (0,0) size 277x17
               RenderText {TEXT} at (0,0) size 0x0
-              RenderImage {IMG} at (0,0) size 24x24
-              RenderText {TEXT} at (24,3) size 257x18
-                text run at (24,3) width 4: " "
-                text run at (28,3) width 253: "Remarks and Service Information"
+              RenderImage {IMG} at (0,0) size 20x20
+              RenderText {TEXT} at (20,1) size 257x18
+                text run at (20,1) width 4: " "
+                text run at (24,1) width 253: "Remarks and Service Information"
               RenderBR {BR} at (0,0) size 0x0
               RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
             RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1087) size 784x30
+      RenderBlock (anonymous) at (0,1043) size 784x30
         RenderBlock {HR} at (0,0) size 784x2 [border: (1px inset #000000)]
         RenderBlock {P} at (0,15) size 784x15
           RenderText {TEXT} at (0,0) size 204x15
@@ -416,22 +416,22 @@ layer at (0,0) size 800x1138
             RenderText {TEXT} at (204,0) size 163x15
               text run at (204,0) width 163: "Click here for latest updates"
           RenderText {TEXT} at (0,0) size 0x0
-      RenderBlock (anonymous) at (0,1130) size 784x0
+      RenderBlock (anonymous) at (0,1086) size 784x0
         RenderInline {SPAN} at (0,0) size 0x0
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
-layer at (23,42) size 108x15
-  RenderInline (relative positioned) {SPAN} at (0,0) size 108x15
+layer at (23,42) size 104x15
+  RenderInline (relative positioned) {SPAN} at (0,0) size 104x15
     RenderText {TEXT} at (0,0) size 0x0
-    RenderInline {SPAN} at (0,0) size 108x15
-      RenderImage {IMG} at (0,24) size 24x24
-      RenderText {TEXT} at (24,36) size 4x15
-        text run at (24,36) width 4: " "
+    RenderInline {SPAN} at (0,0) size 104x15
+      RenderImage {IMG} at (0,20) size 20x20
+      RenderText {TEXT} at (20,28) size 4x15
+        text run at (20,28) width 4: " "
       RenderInline {SPAN} at (0,0) size 80x15
-        RenderText {TEXT} at (28,36) size 80x15
-          text run at (28,36) width 80: "HAO, SCOTT"
+        RenderText {TEXT} at (24,28) size 80x15
+          text run at (24,28) width 80: "HAO, SCOTT"
         RenderBR {BR} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
         RenderText {TEXT} at (0,0) size 0x0
@@ -439,27 +439,27 @@ layer at (23,42) size 108x15
     RenderText {TEXT} at (0,0) size 0x0
 layer at (48,42) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
-layer at (23,107) size 596x42
-  RenderInline (relative positioned) {SPAN} at (0,0) size 596x42
-    RenderImage {IMG} at (0,24) size 24x24
-    RenderText {TEXT} at (24,36) size 572x15
-      text run at (24,36) width 4: " "
-      text run at (28,36) width 56: "Address: "
-      text run at (84,36) width 512: "ST. JUDE MEDICAL, 21700 OXNARD ST SUITE 800, WOODLAND HILLS CA Z/91367 "
+layer at (23,99) size 592x38
+  RenderInline (relative positioned) {SPAN} at (0,0) size 592x38
+    RenderImage {IMG} at (0,20) size 20x20
+    RenderText {TEXT} at (20,28) size 572x15
+      text run at (20,28) width 4: " "
+      text run at (24,28) width 56: "Address: "
+      text run at (80,28) width 512: "ST. JUDE MEDICAL, 21700 OXNARD ST SUITE 800, WOODLAND HILLS CA Z/91367 "
     RenderBR {BR} at (0,0) size 0x0
     RenderText {TEXT} at (0,0) size 0x0
-    RenderImage {IMG} at (0,51) size 24x24
-    RenderText {TEXT} at (24,63) size 409x15
-      text run at (24,63) width 4: " "
-      text run at (28,63) width 48: "Deliver: "
-      text run at (76,63) width 104: "DEBI STANGEL, "
-      text run at (180,63) width 117: "119 GLEN COURT, "
-      text run at (297,63) width 136: "DANVILLE CA Z/94526"
-layer at (23,199) size 24x12
-  RenderInline (relative positioned) {SPAN} at (0,0) size 24x12
-    RenderImage {IMG} at (0,24) size 24x24
+    RenderImage {IMG} at (0,43) size 20x20
+    RenderText {TEXT} at (20,51) size 409x15
+      text run at (20,51) width 4: " "
+      text run at (24,51) width 48: "Deliver: "
+      text run at (72,51) width 104: "DEBI STANGEL, "
+      text run at (176,51) width 117: "119 GLEN COURT, "
+      text run at (293,51) width 136: "DANVILLE CA Z/94526"
+layer at (23,179) size 20x12
+  RenderInline (relative positioned) {SPAN} at (0,0) size 20x12
+    RenderImage {IMG} at (0,20) size 20x20
     RenderText {TEXT} at (0,0) size 0x0
-layer at (28,232) size 529x52
+layer at (28,204) size 529x52
   RenderTable {TABLE} at (0,0) size 529x52 [border: (1px outset #808080)]
     RenderTableSection {TBODY} at (1,1) size 0x50
       RenderTableRow {TR} at (0,0) size 0x0 [bgcolor=#E0E0E0]
@@ -488,9 +488,9 @@ layer at (28,232) size 529x52
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0
-layer at (23,299) size 0x0
+layer at (23,271) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
-layer at (33,1065) size 0x0
+layer at (33,1025) size 0x0
   RenderInline (relative positioned) {SPAN} at (0,0) size 0x0
     RenderInline {SPAN} at (0,0) size 0x0
       RenderText {TEXT} at (0,0) size 0x0

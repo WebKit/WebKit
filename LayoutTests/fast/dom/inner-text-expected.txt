@@ -3,6 +3,6 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderImage {IMG} at (0,0) size 24x24
-      RenderText {TEXT} at (24,10) size 221x18
-        text run at (24,10) width 221: " This text should only appear once."
+      RenderImage {IMG} at (0,0) size 20x20
+      RenderText {TEXT} at (20,6) size 221x18
+        text run at (20,6) width 221: " This text should only appear once."
