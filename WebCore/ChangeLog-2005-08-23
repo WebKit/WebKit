@@ -1,3 +1,15 @@
+2003-06-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3259647, crash when printing a table page.  This is fixed
+	on the KDE KHTML trunk.  The loop shouldn't be broken out of
+	when you have column elements so that all sections can recalc
+	their cell grids as needed.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::recalcSections):
+
 === Safari-82 ===
 
 2003-06-03  Richard Williamson   <rjw@apple.com>
