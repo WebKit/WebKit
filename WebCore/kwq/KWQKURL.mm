@@ -40,6 +40,9 @@ typedef enum {
     UserInfoChar = 1 << 2,
 
     // alnum | "." | "-" | "%"
+    // The above is what the specification says, but we are lenient to
+    // match existing practice and also allow:
+    // "_"
     HostnameChar = 1 << 3,
 
     // hexdigit | ":" | "%"
@@ -119,7 +122,8 @@ static const unsigned char characterClassTable[256] = {
     /* 90  Z */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar,
     /* 91  [ */ BadChar,
     /* 92  \ */ BadChar,    /* 93  ] */ BadChar,
-    /* 94  ^ */ BadChar,    /* 95  _ */ UserInfoChar,
+    /* 94  ^ */ BadChar,
+    /* 95  _ */ UserInfoChar | HostnameChar,
     /* 96  ` */ BadChar,
     /* 97  a */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char,
     /* 98  b */ SchemeFirstChar | SchemeChar | UserInfoChar | HostnameChar | HexDigitChar | IPv6Char, 
@@ -227,6 +231,11 @@ KURL::KURL(const QString &url, int encoding_hint) :
 
 KURL::KURL(const KURL &base, const QString &relative)
 {
+    if (!base.m_isValid) {
+        m_isValid = false;
+        return;
+    }
+    
     bool absolute = false;
     const char *str = relative.ascii();
     

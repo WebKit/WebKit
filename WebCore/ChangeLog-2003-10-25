@@ -1,3 +1,10 @@
+2002-09-17  Darin Adler  <darin@apple.com>
+
+	- fixed 3050818 -- Crash in relative-KURL constructor at site with _ in host name
+
+        * kwq/KWQKURL.mm: Change _ so that it's allowed in host names.
+        (KURL::KURL): If base URL is invalid, make result invalid too.
+
 2002-09-17  Richard Williamson   <rjw@apple.com>
 
         * khtml/khtmlview.cpp:
@@ -18,8 +25,7 @@
         
         * kwq/KWQColor.mm:
         (QColor::hsv):
-        Fixed marklar divide by 0 problemn.
-        
+        Fixed marklar divide by 0 problem.
         
 2002-09-17  Darin Adler  <darin@apple.com>
 
