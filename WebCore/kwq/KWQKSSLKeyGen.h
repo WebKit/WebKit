@@ -27,7 +27,8 @@
 #define KSSLKEYGEN_H_
 
 #include "KWQStringList.h"
-#include "QWidget.h"
+
+class KURL;
 
 class KSSLKeyGen
 {
