@@ -1,3 +1,29 @@
+2002-09-20  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed wasteful memory usage in the WebIconDatabase:
+	- Rather than have multiple NSImages with multiple representations at multiple sizes, have 1 NSImage per size
+	- Added API to allow client to control memory caching
+
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase iconForSiteURL:withSize:]): call iconForSiteURL:withSize:cache:YES
+        (-[WebIconDatabase iconForSiteURL:withSize:cache:]): new, was iconForSiteURL:withSize:
+        (-[WebIconDatabase defaultIconWithSize:]): call _iconFromDictionary:forSize:cache:
+        (-[WebIconDatabase _updateFileDatabase]): write the largest icon to disk
+        (-[WebIconDatabase _hasIconForSiteURL:]): cleaned-up 
+        (-[WebIconDatabase _iconsForIconURL:]): call _iconFromDictionary:forSize:cache:
+        (-[WebIconDatabase _iconForFileURL:withSize:]): call _iconFromDictionary:forSize:cache:
+        (-[WebIconDatabase _builtInIconsForHost:]): call _iconFromDictionary:forSize:cache:
+        (-[WebIconDatabase _setIcon:forIconURL:]): _iconsBySplittingRepresentationsOfIcon:
+        (-[WebIconDatabase _releaseIconForIconURL:]): icons at different sizes are now stored in dictionaries
+        (-[WebIconDatabase _largestIconFromDictionary:]): new, scans the icon dictionary
+        (-[WebIconDatabase _iconsBySplittingRepresentationsOfIcon:]): creates the icon dictionary
+        (-[WebIconDatabase _iconFromDictionary:forSize:cache:]): returns icon from dict, resizes if necessary
+        (-[WebIconDatabase _iconByScalingIcon:toSize:]): tweak
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]): don't call _iconsForIconURL: because it doesn't exist.
+
 2002-09-19  Maciej Stachowiak  <mjs@apple.com>
 
         * Makefile.am: Make `doc' target depend on `all'.

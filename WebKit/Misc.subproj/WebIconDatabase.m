@@ -34,10 +34,10 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_createFileDatabase;
 - (void)_loadIconDictionaries;
 - (void)_updateFileDatabase;
-- (NSMutableArray *)_iconsForIconURL:(NSURL *)iconURL;
+- (NSMutableDictionary *)_iconsForIconURL:(NSURL *)iconURL;
 - (NSImage *)_iconForFileURL:(NSURL *)fileURL withSize:(NSSize)size;
 - (NSString *)_pathForBuiltInIconForHost:(NSString *)host;
-- (NSMutableArray *)_builtInIconsForHost:(NSString *)host;
+- (NSMutableDictionary *)_builtInIconsForHost:(NSString *)host;
 - (void)_retainIconForIconURL:(NSURL *)iconURL;
 - (void)_releaseIconForIconURL:(NSURL *)iconURL;
 - (void)_retainFutureIconForSiteURL:(NSURL *)siteURL;
@@ -47,7 +47,9 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_sendNotificationForSiteURL:(NSURL *)siteURL;
 - (void)_addObject:(id)object toSetForKey:(id)key inDictionary:(NSMutableDictionary *)dictionary;
 - (NSURL *)_uniqueIconURL;
-- (NSImage *)_cachedIconFromArray:(NSMutableArray *)icons withSize:(NSSize)size;
+- (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons;
+- (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon;
+- (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache;
 - (NSImage *)_iconByScalingIcon:(NSImage *)icon toSize:(NSSize)size;
 
 @end
@@ -98,6 +100,11 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size
 {
+    return [self iconForSiteURL:siteURL withSize:size cache:YES];
+}
+
+- (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size cache:(BOOL)cache
+{
     ASSERT(size.width);
     ASSERT(size.height);
     
@@ -109,25 +116,23 @@ NSSize WebIconLargeSize = {128, 128};
         return [self _iconForFileURL:siteURL withSize:size];
     }
 
-    NSMutableArray *icons = [self _builtInIconsForHost:[siteURL host]];
+    NSMutableDictionary *icons = [self _builtInIconsForHost:[siteURL host]];
     
     if(!icons){
         NSURL *iconURL = [_private->siteURLToIconURL objectForKey:siteURL];
         if(!iconURL){
             // Don't have it
-            //NSLog(@"iconForSiteURL no iconURL for siteURL: %@", siteURL);
             return [self defaultIconWithSize:size];
         }
 
         icons = [self _iconsForIconURL:iconURL];
         if(!icons){
             // This should not happen
-            //NSLog(@"iconForSiteURL no icon for iconURL: %@", iconURL);
             return [self defaultIconWithSize:size];
         }        
     }
 
-    return [self _cachedIconFromArray:icons withSize:size];
+    return [self _iconFromDictionary:icons forSize:size cache:cache];
 }
 
 - (NSImage *)defaultIconWithSize:(NSSize)size
@@ -136,15 +141,15 @@ NSSize WebIconLargeSize = {128, 128};
     ASSERT(size.height);
     
     if (!_private->defaultIcons) {
-        NSString *pathForDefaultImage = [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
-        if (pathForDefaultImage != nil) {
-            NSImage *icon = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
-            _private->defaultIcons = [[NSMutableArray arrayWithObject:icon] retain];
+        NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
+        if (path) {
+            NSImage *icon = [[NSImage alloc] initByReferencingFile:path];
+            _private->defaultIcons = [[NSMutableDictionary dictionaryWithObject:icon forKey:[NSValue valueWithSize:[icon size]]] retain];
             [icon release];
         }
     }
 
-    return [self _cachedIconFromArray:_private->defaultIcons withSize:size];
+    return [self _iconFromDictionary:_private->defaultIcons forSize:size cache:YES];
 }
 
 - (void)setIcon:(NSImage *)icon forSiteURL:(NSURL *)siteURL
@@ -311,7 +316,7 @@ NSSize WebIconLargeSize = {128, 128};
 
     while ((iconURL = [enumerator nextObject]) != nil) {
         //NSLog(@"writing %@", iconURL);
-        iconData = [[self _iconForIconURL:iconURL] TIFFRepresentation];
+        iconData = [[self _largestIconFromDictionary:[_private->iconURLToIcons objectForKey:iconURL]] TIFFRepresentation];
         if(iconData){
             [fileDB setObject:iconData forKey:iconURL];
             [_private->iconsOnDiskWithURLs addObject:iconURL];
@@ -330,30 +335,22 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (BOOL)_hasIconForSiteURL:(NSURL *)siteURL
 {
-    if([siteURL isFileURL]){
+    if([siteURL isFileURL] ||
+       [self _pathForBuiltInIconForHost:[siteURL host]] ||
+       [_private->siteURLToIconURL objectForKey:siteURL]){
         return YES;
-    }else if([self _pathForBuiltInIconForHost:[siteURL host]]){
-        return YES;
-    }else if([_private->siteURLToIconURL objectForKey:siteURL]){
-        return YES;
-    }else{
-        return NO;
     }
+    
+    return NO;
 }
 
-- (NSImage *)_iconForIconURL:(NSURL *)iconURL
-{
-    // The first item in the icon array is the original non-resized icon
-    return [[self _iconsForIconURL:iconURL] objectAtIndex:0];
-}
-
-- (NSMutableArray *)_iconsForIconURL:(NSURL *)iconURL
+- (NSMutableDictionary *)_iconsForIconURL:(NSURL *)iconURL
 {
     if(!iconURL){
         return nil;
     }
 
-    NSMutableArray *icons = [_private->iconURLToIcons objectForKey:iconURL];
+    NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURL];
     double start, duration;
     
     if(!icons){
@@ -365,13 +362,11 @@ NSSize WebIconLargeSize = {128, 128};
             
             if(iconData){
                 NSImage *icon = [[NSImage alloc] initWithData:iconData];
-                if(icon){
+                icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
+
+                if(icons){
                     duration = CFAbsoluteTimeGetCurrent() - start;
                     LOG(Timing, "loading and creating icon %@ took %f seconds", iconURL, duration);
-                    
-                    // Cache it
-                    icons = [NSMutableArray arrayWithObject:icon];
-                    [icon release];
                     [_private->iconURLToIcons setObject:icons forKey:iconURL];
                 }
             }
@@ -393,9 +388,9 @@ NSSize WebIconLargeSize = {128, 128};
     if([[[fileURL path] pathExtension] rangeOfString:@"htm"].length > 0){
         if(!_private->htmlIcons){
             icon = [workspace iconForFileType:@"html"];
-            _private->htmlIcons = [[NSMutableArray arrayWithObject:icon] retain];
+            _private->htmlIcons = [[self _iconsBySplittingRepresentationsOfIcon:icon] retain];
         }
-        return [self _cachedIconFromArray:_private->htmlIcons withSize:size];
+        return [self _iconFromDictionary:_private->htmlIcons forSize:size cache:YES];
     }else{
         icon = [workspace iconForFile:[fileURL path]];
         return [self _iconByScalingIcon:icon toSize:size];
@@ -426,17 +421,17 @@ NSSize WebIconLargeSize = {128, 128};
     return nil;
 }
 
-- (NSMutableArray *)_builtInIconsForHost:(NSString *)host
+- (NSMutableDictionary *)_builtInIconsForHost:(NSString *)host
 {
     NSString *path = [self _pathForBuiltInIconForHost:host];
-    NSMutableArray *icons = nil;
+    NSMutableDictionary *icons = nil;
     
     if(path){
         icons = [_private->pathToBuiltInIcons objectForKey:path];    
         if(!icons){
             NSImage *icon = [[NSImage alloc] initWithContentsOfFile:path];
             if(icon){
-                icons = [NSMutableArray arrayWithObject:icon];
+                icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
                 [_private->pathToBuiltInIcons setObject:icons forKey:path];
                 [icon release];
             }
@@ -452,10 +447,16 @@ NSSize WebIconLargeSize = {128, 128};
         return;
     }
 
-    NSMutableArray *icons = [_private->iconURLToIcons objectForKey:iconURL];
+    NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURL];
     [icons removeAllObjects];
+
+    icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
+
+    if(!icons){
+        return;
+    }
     
-    [_private->iconURLToIcons setObject:[NSMutableArray arrayWithObject:icon] forKey:iconURL];
+    [_private->iconURLToIcons setObject:icons forKey:iconURL];
 
     [self _retainIconForIconURL:iconURL];
     
@@ -556,7 +557,7 @@ NSSize WebIconLargeSize = {128, 128};
         }
 
         // Remove the icon's images
-        NSMutableArray *icons = [_private->iconURLToIcons objectForKey:iconURL];
+        NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURL];
         [icons removeAllObjects];
         [_private->iconURLToIcons removeObjectForKey:iconURL];
 
@@ -685,28 +686,67 @@ NSSize WebIconLargeSize = {128, 128};
     return uniqueURL;
 }
 
-- (NSImage *)_cachedIconFromArray:(NSMutableArray *)icons withSize:(NSSize)size
+- (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons
 {
-    ASSERT(size.width);
-    ASSERT(size.height);
-    
-    NSEnumerator *enumerator = [icons objectEnumerator];
-    NSImage *icon;
-    
-    while ((icon = [enumerator nextObject]) != nil) {
-        if(NSEqualSizes([icon size], size)){
-            return icon;
+    NSEnumerator *enumerator = [icons keyEnumerator];
+    NSValue *currentSize, *largestSize=nil;
+    float currentSizeArea, largestSizeArea=0;
+    NSSize currentSizeSize;
+
+    while ((currentSize = [enumerator nextObject]) != nil) {
+        currentSizeSize = [currentSize sizeValue];
+        currentSizeArea = currentSizeSize.width * currentSizeSize.height;
+        if(!largestSizeArea || (currentSizeArea > largestSizeArea)){
+            largestSize = currentSize;
+            largestSizeArea = currentSizeArea;
         }
     }
 
-    // The first item in the icon array is the original non-resized icon
-    // Assume that it's best to resize the original
-    NSImage *originalIcon = [icons objectAtIndex:0];
-    icon = [[originalIcon copy] autorelease];
-    icon = [self _iconByScalingIcon:icon toSize:size];
+    return [icons objectForKey:largestSize];
+}
 
-    // Cache it
-    [icons addObject:icon];
+- (NSMutableDictionary *)_iconsBySplittingRepresentationsOfIcon:(NSImage *)icon
+{
+    if(!icon){
+        return nil;
+    }
+
+    NSMutableDictionary *icons = [NSMutableDictionary dictionary];
+    NSEnumerator *enumerator = [[icon representations] objectEnumerator];
+    NSImageRep *rep;
+    NSImage *subIcon;
+    NSSize size;
+
+    while ((rep = [enumerator nextObject]) != nil) {
+        size = [rep size];
+        subIcon = [[NSImage alloc] initWithSize:size];
+        [subIcon addRepresentation:rep];
+        [icons setObject:subIcon forKey:[NSValue valueWithSize:size]];
+        [subIcon release];
+    }
+
+    if([icons count] > 0){
+        return icons;
+    }
+
+    return nil;
+}
+
+- (NSImage *)_iconFromDictionary:(NSMutableDictionary *)icons forSize:(NSSize)size cache:(BOOL)cache
+{
+    ASSERT(size.width);
+    ASSERT(size.height);
+
+    NSImage *icon = [icons objectForKey:[NSValue valueWithSize:size]];
+
+    if(!icon){
+        icon = [[[self _largestIconFromDictionary:icons] copy] autorelease];
+        icon = [self _iconByScalingIcon:icon toSize:size];
+
+        if(cache){
+            [icons setObject:icon forKey:[NSValue valueWithSize:size]];
+        }
+    }
 
     return icon;
 }
@@ -732,7 +772,7 @@ NSSize WebIconLargeSize = {128, 128};
         [currentContent setImageInterpolation:NSImageInterpolationHigh];
         [icon drawInRect:NSMakeRect(0, 0, size.width, size.height)
                 fromRect:NSMakeRect(0, 0, originalSize.width, originalSize.height)
-            operation:NSCompositeSourceOver	// Renders transparency correctly
+               operation:NSCompositeSourceOver	// Renders transparency correctly
                 fraction:1.0];
         [scaledIcon unlockFocus];
         

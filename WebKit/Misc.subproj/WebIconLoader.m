@@ -82,12 +82,6 @@
     if (_private->handle != nil) {
         return;
     }
-
-    NSImage *icon = [[WebIconDatabase sharedIconDatabase] _iconForIconURL:_private->URL];
-    if (icon) {
-        [_private->delegate iconLoader:self receivedPageIcon:icon];
-        return;
-    }
     
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->URL];
     _private->handle = [[WebResourceHandle alloc] initWithRequest:request client:self];

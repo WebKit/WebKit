@@ -54,13 +54,22 @@ extern NSSize WebIconLargeSize;  // 128 x 128
 
 /*!
     @method iconForSiteURL:withSize:
-    @discussion Returns an icon for a web site URL from memory or disk. nil if none is found.
-    Usually called by a UI element to determine if a site URL has an associated icon.
-    Also usually called by the observer of WebIconChangedNotification after the notification is sent.
+    @discussion Calls iconForSiteURL:withSize:cache: with YES for cache.
     @param siteURL
     @param size
 */
 - (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size;
+
+/*!
+    @method iconForSiteURL:withSize:cache:
+    @discussion Returns an icon for a web site URL from memory or disk. nil if none is found.
+    Usually called by a UI element to determine if a site URL has an associated icon.
+    Often called by the observer of WebIconChangedNotification after the notification is sent.
+    @param siteURL
+    @param size
+    @param cache If yes, caches the returned image in memory if not already cached
+*/
+- (NSImage *)iconForSiteURL:(NSURL *)siteURL withSize:(NSSize)size cache:(BOOL)cache;
 
 /*!
     @method defaultIconWithSize:

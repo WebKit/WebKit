@@ -34,16 +34,13 @@
     BOOL didCleanup;
     BOOL waitingToCleanup;
 
-    NSMutableArray *htmlIcons;
-    NSMutableArray *defaultIcons;
+    NSMutableDictionary *htmlIcons;
+    NSMutableDictionary *defaultIcons;
 }
 
 @end
 
 @interface WebIconDatabase (WebPrivate)
-
-// Called by WebIconLoader to determine if a load is necessary.
-- (NSImage *)_iconForIconURL:(NSURL *)iconURL;
 
 // Called by WebIconLoader after loading an icon.
 - (void)_setIcon:(NSImage *)icon forIconURL:(NSURL *)iconURL;
