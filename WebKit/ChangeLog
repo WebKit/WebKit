@@ -1,6 +1,26 @@
 2003-06-06  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3156169>: cmd-click opens new win but stops loading in prev win
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebFramePrivate.h: added policyDataSource and policyLoadType as ivars
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): added ASSERT
+        (-[WebFramePrivate setProvisionalDataSource:]): added ASSERT
+        (-[WebFrame _isLoadComplete]): formatting tweak
+        (-[WebFrame _invalidatePendingPolicyDecisionCallingDefaultAction:]): clear policyDataSource
+        (-[WebFrame _checkNewWindowPolicyForRequest:action:frameName:formState:andCall:withSelector:]): formatting tweak
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]): retain policyDataSource
+        (-[WebFrame _continueAfterNavigationPolicy:]): stop the load, set the load type, set the provisional data source in the "use" case
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): formatting tweak
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): don't reset things if something other than "use" has been chosen
+        (-[WebFrame _loadDataSource:withLoadType:formState:]): DON'T stop the load, set the load type, set the provisional data source
+
+2003-06-06  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3282881>: Java plugin fails in carbon WebKit apps
+
 
         Fixed by Mike Hay, reviewed by me.
 

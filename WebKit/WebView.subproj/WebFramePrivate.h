@@ -82,6 +82,8 @@ extern NSString *WebCorePageCacheStateKey;
     id policyTarget;
     SEL policySelector;
     WebFormState *policyFormState;
+    WebDataSource *policyDataSource;
+    WebFrameLoadType policyLoadType;
 
     BOOL justOpenedForTargetedLink;
     BOOL quickRedirectComing;
