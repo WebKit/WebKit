@@ -1,3 +1,23 @@
+2004-12-02  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda.
+
+		<rdar://problem/3834917> REGRESSION (Mail): double-clicking blank line selects end of previous line
+		Fixed originally reported bug plus the case of double-clicking whitespace at the beginning of a line, which has a similar result.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator):
+        (khtml::SimplifiedBackwardsTextIterator::handleTextNode):
+        (khtml::SimplifiedBackwardsTextIterator::handleReplacedElement):
+        (khtml::SimplifiedBackwardsTextIterator::handleNonTextNode):
+        (khtml::SimplifiedBackwardsTextIterator::emitCharacter):
+        Distinguish BR from whitespace.
+        * khtml/editing/visible_text.h:
+        Distinguish BR from whitespace.
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousWordBoundary):
+        Use UPSTREAM visible position now that SimplifiedBackwardsTextIterator distinguishes BR from whitespace.  Otherwise, double-clicking at end of line would result in caret selection at start of next line. 
+
 2004-12-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

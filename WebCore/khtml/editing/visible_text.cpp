@@ -470,6 +470,9 @@ SimplifiedBackwardsTextIterator::SimplifiedBackwardsTextIterator(const Range &r)
     m_positionNode = endNode;
 #endif
 
+    m_lastTextNode = 0;
+    m_lastCharacter = '\n';
+
     advance();
 }
 
@@ -538,6 +541,8 @@ void SimplifiedBackwardsTextIterator::advance()
 
 bool SimplifiedBackwardsTextIterator::handleTextNode()
 {
+    m_lastTextNode = m_node;
+
     RenderText *renderer = static_cast<RenderText *>(m_node->renderer());
     DOMString str = m_node->nodeValue();
 
@@ -553,6 +558,8 @@ bool SimplifiedBackwardsTextIterator::handleTextNode()
     m_textLength = m_positionEndOffset - m_positionStartOffset;
     m_textCharacters = str.unicode() + m_positionStartOffset;
 
+    m_lastCharacter = str[m_positionEndOffset - 1];
+
     return true;
 }
 
@@ -567,6 +574,8 @@ bool SimplifiedBackwardsTextIterator::handleReplacedElement()
     m_textCharacters = 0;
     m_textLength = 0;
 
+    m_lastCharacter = 0;
+
     return true;
 }
 
@@ -574,6 +583,19 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
 {
     switch (m_node->id()) {
         case ID_BR:
+        {
+            long offset;
+    
+            if (m_lastTextNode) {
+                offset = m_lastTextNode->nodeIndex();
+                emitCharacter('\n', m_lastTextNode->parentNode(), offset, offset + 1);
+            } else {
+                offset = m_node->nodeIndex();
+                emitCharacter('\n', m_node->parentNode(), offset, offset + 1);
+            }
+            break;
+        }
+
         case ID_TD:
         case ID_TH:
         case ID_BLOCKQUOTE:
@@ -588,12 +610,12 @@ bool SimplifiedBackwardsTextIterator::handleNonTextNode()
         case ID_H5:
         case ID_H6:
         case ID_HR:
-        case ID_LI:
-        case ID_OL:
         case ID_P:
         case ID_PRE:
         case ID_TR:
+        case ID_OL:
         case ID_UL:
+        case ID_LI:
             // Emit a space to "break up" content. Any word break
             // character will do.
             emitCharacter(' ', m_node, 0, 0);
@@ -621,6 +643,7 @@ void SimplifiedBackwardsTextIterator::emitCharacter(QChar c, NodeImpl *node, lon
     m_positionEndOffset = endOffset;
     m_textCharacters = &m_singleCharacterBuffer;
     m_textLength = 1;
+    m_lastCharacter = c;
 }
 
 Range SimplifiedBackwardsTextIterator::range() const
