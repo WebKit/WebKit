@@ -349,8 +349,17 @@ void RenderTable::layout()
 
     //kdDebug(0) << "table height: " << m_height << endl;
 
+    // FIXME: calcHeight should not affect height for tables.  In the positioned case,
+    // e.g., <table style="position:absolute">, it potentially does.  We're going to have to come up with a better
+    // solution eventually, but for now a good stopgap solution is to simply prevent this function
+    // from altering the height.
+    // 
+    // When the height is implicitly determined via, e.g., explicit top and bottom values in CSS, we're still
+    // going to be completely wrong.
+    int oldHeight = m_height;
     calcHeight();
-
+    m_height = oldHeight;
+        
     //kdDebug(0) << "table height: " << m_height << endl;
 
     // table can be containing block of positioned elements.

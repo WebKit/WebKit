@@ -1,5 +1,19 @@
 2003-09-29  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3425053, text past the bottom of a positioned table doesn't repaint.
+	3426847 is the same bug.  Both are fixed by ensuring that calcHeight doesn't actually
+	do anything other than margin computation and position determination for positioned
+	elements.  In reality, for weird edge cases like implying the height via explicit top and
+	bottom properties, we'll still be wrong.
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+
+2003-09-29  David Hyatt  <hyatt@apple.com>
+
 	Make sure that timeouts updateRendering after they execute the scheduled timer
 	action.  
 
