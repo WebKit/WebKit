@@ -1,3 +1,13 @@
+2003-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        * WebView.subproj/WebViewPrivate.m: (-[WebView _updateWebCoreSettingsFromPreferences:]):
+        Added a call to the new setDefaultTextEncoding: method in WebCore. A preparation
+        step for some encoding bug fixes.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView addSuperviewObservers]): Improved a comment.
+        
 === Safari-75 ===
 
 === Safari-74 ===

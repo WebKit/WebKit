@@ -96,6 +96,7 @@ using namespace DOM;
 #include <CoreServices/CoreServices.h>
 #endif
 
+using khtml::RenderObject;
 using khtml::RenderText;
 using khtml::TextRunArray;
 

@@ -39,6 +39,7 @@
     [sansSerifFontFamily release];
     [cursiveFontFamily release];
     [fantasyFontFamily release];
+    [defaultTextEncoding release];
 
     delete settings;
     
@@ -268,6 +269,21 @@
 - (NSString *)userStyleSheetLocation
 {
     return userStyleSheetLocation;
+}
+
+- (void)setDefaultTextEncoding:(NSString *)s
+{
+    if ([defaultTextEncoding isEqualToString:s]) {
+        return;
+    }
+    [defaultTextEncoding release];
+    defaultTextEncoding = [s copy];
+    settings->setEncoding(QString::fromNSString(s));
+}
+
+- (NSString *)defaultTextEncoding
+{
+    return defaultTextEncoding;
 }
 
 - (KHTMLSettings *)settings

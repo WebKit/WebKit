@@ -2014,6 +2014,11 @@ QString &QString::append(const QString &qs)
     return insert(dataHandle[0]->_length, qs);
 }
 
+QString &QString::append(const char *characters, uint length)
+{
+    return insert(dataHandle[0]->_length, characters, length);
+}
+
 QString &QString::append(const QChar *characters, uint length)
 {
     return insert(dataHandle[0]->_length, characters, length);

@@ -37,7 +37,7 @@ QTextCodec *KCharsets::codecForName(const char *s, bool &ok) const
     QTextCodec *codec = QTextCodec::codecForName(s);
     if (codec == NULL) {
         ok = false;
-        codec = QTextCodec::codecForName("latin1");
+        codec = QTextCodec::codecForName("ISO-8859-1");
     } else {
         ok = true;
     }

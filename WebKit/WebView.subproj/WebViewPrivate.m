@@ -422,6 +422,7 @@
     [_private->settings setCursiveFontFamily:[preferences cursiveFontFamily]];
     [_private->settings setDefaultFixedFontSize:[preferences defaultFixedFontSize]];
     [_private->settings setDefaultFontSize:[preferences defaultFontSize]];
+    [_private->settings setDefaultTextEncoding:[preferences defaultTextEncodingName]];
     [_private->settings setFantasyFontFamily:[preferences fantasyFontFamily]];
     [_private->settings setFixedFontFamily:[preferences fixedFontFamily]];
     [_private->settings setJavaEnabled:[preferences isJavaEnabled]];

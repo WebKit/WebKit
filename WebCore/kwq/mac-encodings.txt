@@ -3,19 +3,19 @@
 # repeated here; mentioning any one character set from a group in there pulls in all the aliases in
 # that group.
 
-MacRoman: macintosh, x-mac-roman
-WindowsLatin1: windows-1252, winlatin1, x-ansi
-ISOLatin1: 8859_1, iso-8859-1, iso8859-1
+MacRoman: macintosh, xmacroman
+WindowsLatin1: windows-1252, winlatin1, xansi
+ISOLatin1: ISO-8859-1, 88591
 NextStepLatin: x-nextstep
-ASCII: iso-ir-6us, us-ascii
-Unicode: iso-10646-ucs-2, unicode, utf-16
-Unicode, BigEndian: unicodefeff, utf-16be
-Unicode, LittleEndian: unicodefffe, utf-16le
-UTF8: unicode-1-1-utf-8, unicode-2-0-utf-8, utf-8, x-unicode-2-0-utf-8
+ASCII: US-ASCII, isoir6us
+Unicode: ISO-10646-UCS-2, ucs2, unicode, utf16
+Unicode, BigEndian: UTF-16BE, unicodefeff
+Unicode, LittleEndian: UTF-16LE, unicodefffe
+UTF8: UTF-8, unicode11utf8, unicode20utf8, xunicode20utf8
 NonLossyASCII
 
 MacJapanese, IsJapanese: x-mac-japanese
-MacChineseTrad: x-mac-chinesetrad, x-mac-trad-chinese
+MacChineseTrad: x-mac-chinesetrad, xmactradchinese
 MacKorean: x-mac-korean
 MacArabic: x-mac-arabic
 MacHebrew: x-mac-hebrew
@@ -37,11 +37,11 @@ MacThai: x-mac-thai
 MacLaotian
 MacGeorgian
 MacArmenian
-MacChineseSimp: x-mac-chinesesimp, x-mac-simp-chinese
+MacChineseSimp: x-mac-chinesesimp, xmacsimpchinese
 MacTibetan: x-mac-tibetan
 MacMongolian
 MacEthiopic
-MacCentralEurRoman: x-mac-ce, x-mac-centraleurroman
+MacCentralEurRoman: x-mac-centraleurroman, xmacce
 MacVietnamese
 MacExtArabic
 
@@ -61,20 +61,20 @@ MacUkrainian: x-mac-ukrainian
 MacInuit
 MacVT100: x-mac-vt100
 
-ISOLatin2: iso-8859-2, iso8859-2
-ISOLatin3: iso-8859-3
-ISOLatin4: iso-8859-4
-ISOLatinCyrillic: iso-8859-5
-ISOLatinArabic: iso-8859-6
-ISOLatinGreek: iso-8859-7
-ISOLatinHebrew: iso-8859-8-i, logical
-ISOLatinHebrew, VisualOrdering: dos-862, iso-8859-8, iso-8859-8-e, visual
-ISOLatin5: iso-8859-9
-ISOLatin6: iso-8859-10
-ISOLatinThai: iso-8859-11
-ISOLatin7: iso-8859-13
-ISOLatin8: iso-8859-14
-ISOLatin9: csisolatin9, iso-8859-15, l9, latin9
+ISOLatin2: ISO-8859-2
+ISOLatin3: ISO-8859-3
+ISOLatin4: ISO-8859-4
+ISOLatinCyrillic: ISO-8859-5
+ISOLatinArabic: ISO-8859-6
+ISOLatinGreek: ISO-8859-7
+ISOLatinHebrew: ISO-8859-8-I, logical
+ISOLatinHebrew, VisualOrdering: ISO-8859-8-E, dos862, iso88598, visual
+ISOLatin5: ISO-8859-9
+ISOLatin6: ISO-8859-10
+ISOLatinThai: ISO-8859-11
+ISOLatin7: ISO-8859-13
+ISOLatin8: ISO-8859-14
+ISOLatin9: ISO-8859-15, csisolatin9, l9
 
 DOSLatinUS: cp437
 DOSGreek: cp737, ibm737
@@ -88,66 +88,62 @@ DOSPortuguese
 DOSIcelandic: cp861
 DOSHebrew
 DOSCanadianFrench
-DOSArabic: cp864, dos-720
+DOSArabic: cp864, dos720
 DOSNordic
 DOSRussian: cp866
-DOSGreek2: ibm869
-DOSThai: cp874, dos-874, tis-620, windows-874
-DOSJapanese, IsJapanese: cp932, cswindows31j, x-ms-cp932
+DOSGreek2: cp869
+DOSThai: cp874, dos874, tis620, windows874
+DOSJapanese, IsJapanese: cp932, cswindows31j, xmscp932
 DOSChineseSimplif
 DOSKorean
 DOSChineseTrad: cp950
-WindowsLatin2: windows-1250, winlatin2, x-cp1250
-WindowsCyrillic: wincyrillic, windows-1251, x-cp1251
+WindowsLatin2: windows-1250, winlatin2, xcp1250
+WindowsCyrillic: windows-1251, wincyrillic, xcp1251
 WindowsGreek: windows-1253, wingreek
 WindowsLatin5: windows-1254, winturkish
 WindowsHebrew: windows-1255, winhebrew
-WindowsArabic: cp1256, winarabic, windows-1256
-WindowsBalticRim: winbaltic, windows-1257
+WindowsArabic: windows-1256, cp1256, winarabic
+WindowsBalticRim: windows-1257, winbaltic
 WindowsKoreanJohab: johab
 WindowsVietnamese: windows-1258, winvietnamese
 
-JIS_X0201_76, IsJapanese: jis_x0201
-JIS_X0208_83, IsJapanese: jis_x0208-1983
-JIS_X0208_90, IsJapanese: jis_x0208-1990
-JIS_X0212_90, IsJapanese: jis_x0212-1990
-JIS_C6226_78, IsJapanese: jis_c6226-1978
-ShiftJIS_X0213_00, IsJapanese: shift-jis, shift_jis, x-sjis
+JIS_X0201_76, IsJapanese: JIS_X0201
+JIS_X0208_83, IsJapanese: JIS_X0208-1983
+JIS_X0208_90, IsJapanese: JIS_X0208-1990
+JIS_X0212_90, IsJapanese: JIS_X0212-1990
+JIS_C6226_78, IsJapanese: JIS_C6226-1978
+ShiftJIS_X0213_00, IsJapanese: Shift_JIS, xsjis
 GB_2312_80
 GBK_95
-GB_18030_2000: cn-gb, csgb231280, euc-cn, gb18030, gb2312, gb_2312-80, gbk, x-euc-cn, x-gbk
+GB_18030_2000: GB18030, cngb, csgb231280, euccn, gb2312, gb231280, gbk, xeuccn, xgbk
 KSC_5601_87
 KSC_5601_92_Johab
 CNS_11643_92_P1
 CNS_11643_92_P2
 CNS_11643_92_P3
 
-ISO_2022_JP, IsJapanese: iso-2022-jp, jis7
-ISO_2022_JP_2, IsJapanese: iso-2022-jp-2
-ISO_2022_JP_1, IsJapanese: iso-2022-jp-1
-ISO_2022_JP_3, IsJapanese: iso-2022-jp-3
-ISO_2022_CN: iso-2022-cn
-ISO_2022_CN_EXT: iso-2022-cn-ext
-ISO_2022_KR: iso-2022-kr
+ISO_2022_JP, IsJapanese: ISO-2022-JP, jis7
+ISO_2022_JP_2, IsJapanese: ISO-2022-JP-2
+ISO_2022_JP_1, IsJapanese: ISO-2022-JP-1
+ISO_2022_JP_3, IsJapanese: ISO-2022-JP-3
+ISO_2022_CN: ISO-2022-CN
+ISO_2022_CN_EXT: ISO-2022-CN-EXT
+ISO_2022_KR: ISO-2022-KR
 
-EUC_JP, IsJapanese: euc-jp, x-euc, x-euc-jp
+EUC_JP, IsJapanese: EUC-JP, xeuc, xeucjp
 EUC_CN
-EUC_TW: euc-tw
-EUC_KR: cp949, euc-kr, ks_c_5601, ks_c_5601-1987, ks_c_5601_1987, ksc5601
+EUC_TW: EUC-TW
+EUC_KR: EUC-KR, cp949, ksc5601
 
 ShiftJIS, IsJapanese
-KOI8_R: koi, koi8, koi8-r, koi8r
+KOI8_R: KOI8-R, koi, koi8
 Big5
 MacRomanLatin1: x-mac-roman-latin1
-HZ_GB_2312: hz-gb-2312
-Big5_HKSCS_1999: big5, big5-hkscs, cn-big5, x-x-big5
+HZ_GB_2312: HZ-GB-2312
+Big5_HKSCS_1999: Big5, big5hkscs, cnbig5, xxbig5
 
 EBCDIC_US
 EBCDIC_CP037: cp037
-
-# We need to decide what to do about this.
-# I'm not sure that the string japanese-autodetect actually shows up out there on the web.
-# 0xAFE: japanese-autodetect
 
 # I got these additional items from the Perl module I18N-Charset-1.17,
 # but could not figure out what to do with them.
@@ -161,5 +157,4 @@ EBCDIC_CP037: cp037
 # EBCDIC-US === ebcdic-cp-us
 # EBCDIC-FI-SE === ebcdic-cp-fi
 # UTF-7 === Unicode-2-0-utf-7
-# ISO-10646-UCS-2 === ucs2
 # ISO-10646-UCS-4 === ucs4

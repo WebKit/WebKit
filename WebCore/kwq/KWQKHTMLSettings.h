@@ -40,9 +40,8 @@ public:
         KAnimationEnabled
     };
     
-    KHTMLSettings() {};
+    KHTMLSettings() { }
     
-    // Font settings
     const QString &stdFontName() const { return _stdFontName; }
     const QString &fixedFontName() const { return _fixedFontName; }
     const QString &serifFontName() const { return _serifFontName; }
@@ -51,8 +50,6 @@ public:
     const QString &fantasyFontName() const { return _fantasyFontName; }
     
     static const QString &settingsToCSS() { return QString::null; }
-
-    static const QString &encoding();
 
     int minFontSize() const { return _minimumFontSize; }
     int mediumFontSize() const { return _defaultFontSize; }
@@ -69,13 +66,15 @@ public:
     bool isJavaScriptEnabled() const { return _JavaScriptEnabled; }
     bool JavaScriptCanOpenWindowsAutomatically() const { return _JavaScriptCanOpenWindowsAutomatically; }
     bool isJavaScriptEnabled(const QString &host) const { return _JavaScriptEnabled; }
-    bool isJavaScriptDebugEnabled() const { return false; }
+    static bool isJavaScriptDebugEnabled() { return false; }
     bool isJavaEnabled() const { return _JavaEnabled; }
     bool isJavaEnabled(const QString &host) const { return _JavaEnabled; }
     bool isPluginsEnabled() const { return _pluginsEnabled; }
     bool isPluginsEnabled(const QString &host) const { return _pluginsEnabled; }
     
-    const QString &userStyleSheet() { return _userStyleSheetLocation; }
+    const QString &encoding() const { return _encoding; }
+
+    const QString &userStyleSheet() const { return _userStyleSheetLocation; }
 
     void setStdFontName(const QString &s) { _stdFontName = s; }
     void setFixedFontName(const QString &s) { _fixedFontName = s; }
@@ -94,8 +93,10 @@ public:
     void setArePluginsEnabled(bool f) { _pluginsEnabled = f; }
     void setJavaScriptCanOpenWindowsAutomatically(bool f) { _JavaScriptCanOpenWindowsAutomatically = f; }
 
-    void setUserStyleSheet(const QString &s) { _userStyleSheetLocation = s; }
+    void setEncoding(const QString &s) { _encoding = s; }
 
+    void setUserStyleSheet(const QString &s) { _userStyleSheetLocation = s; }
+    
 private:
     QString _stdFontName;
     QString _fixedFontName;

@@ -1,3 +1,49 @@
+2003-04-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - improved the text encoding database
+
+        * kwq/mac-encodings.txt: Changed to a new format. Now the first encoding name in every list
+        is the "canonical" one and is in canonical case and punctuation (no longer requiring lowercase).
+        Since the first is the one that will be used outgoing to send to servers, it's good to have
+        that one in canonical form. All subsequent aliases in the list are now required to be all
+        lowercase and not use any punctuation. Since the comparison is done ignoring non-alphanumeric
+        characters, and ignoring case, this will have no effect on which encodings are recognized.
+        
+        * kwq/make-charset-table.pl: Updated to enforce the new format rules.
+
+        * kwq/KWQCharsetData.c: Regenerated.
+
+        * khtml/html/html_formimpl.cpp: (HTMLFormElementImpl::formData): Simplify the "change commas
+        to spaces" code in a way that lets us get rid of APPLE_CHANGES. Use the official "ISO-8859-1"
+        here instead of something almost, but not quite, like it.
+        * kwq/KWQKCharsets.mm: (KCharsets::codecForName): Use the official "ISO-8859-1" here instead
+        of the unofficial "latin1". Unimportant, but cleaner this way.
+
+        - preparation for some text encoding changes to fix some bugs
+
+        * kwq/KWQKHTMLSettings.h: Added an encoding value rather than always returning a hardcoded
+        value. Other minor cleanup.
+        * kwq/KWQKHTMLSettings.mm: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQKHTMLSettings.mm.
+
+        - other changes
+
+        * kwq/KWQKHTMLPart.h: Removed "using" statement. Headers must not pollute the namespace
+        by doing "using".
+        * khtml/khtml_part.cpp: Added a "using" here.
+        * kwq/KWQPageState.mm: Added a "using" here.
+        
+        * kwq/KWQString.h: Added an append that takes a const char * and length for use by the decoder.
+        * kwq/KWQString.mm: (QString::append): Implemented it.
+
+        * kwq/WebCoreSettings.h: Added default text encoding field and methods.
+        * kwq/WebCoreSettings.mm:
+        (-[WebCoreSettings dealloc]): Release defaultTextEncoding.
+        (-[WebCoreSettings setDefaultTextEncoding:]): Added.
+        (-[WebCoreSettings defaultTextEncoding]): Added.
+
 === Safari-75 ===
 
 === Safari-74 ===

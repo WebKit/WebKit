@@ -278,22 +278,8 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
     QCString enc_string = ""; // used for non-multipart data
 
     // find out the QTextcodec to use
-#if APPLE_CHANGES
-    QString origStr = m_acceptcharset.string();
-    QChar space(' ');
-    QChar strChars[origStr.length()];
-
-    for(unsigned int i=0; i < origStr.length(); i++)
-        if(origStr[i].latin1() == ',')
-            strChars[i] = space;
-        else
-            strChars[i] = origStr[i];
-    QString str(strChars, origStr.length());
-#else /* APPLE_CHANGES not defined */
     QString str = m_acceptcharset.string();
-    QChar space(' ');
-    for(unsigned int i=0; i < str.length(); i++) if(str[i].latin1() == ',') str[i] = space;
-#endif /* APPLE_CHANGES not defined */
+    str.replace(',', ' ');
     QStringList charsets = QStringList::split(' ', str);
     QTextCodec* codec = 0;
     KHTMLView *view = getDocument()->view();
@@ -303,7 +289,7 @@ QByteArray HTMLFormElementImpl::formData(bool& ok)
         if(enc.contains("UNKNOWN"))
         {
             // use standard document encoding
-            enc = "ISO 8859-1";
+            enc = "ISO-8859-1";
             if(view && view->part())
                 enc = view->part()->encoding();
         }

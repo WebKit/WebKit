@@ -75,8 +75,6 @@ enum KWQSelectionDirection {
     KWQSelectingPrevious
 };
 
-using khtml::RenderObject;
-
 class KWQKHTMLPart : public KHTMLPart
 {
 public:

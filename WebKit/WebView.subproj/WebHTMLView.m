@@ -157,8 +157,9 @@
     // of the superview changes. This is different from other scrollable things that don't
     // need this kind of thing because their layout doesn't change.
     
-    // We need to pay attention to both height and width because, our "layout" has to change
-    // to extend the background the full height of the space.
+    // We need to pay attention to both height and width because our "layout" has to change
+    // to extend the background the full height of the space and because some elements have
+    // sizes that are based on the total size of the view.
     
     NSView *superview = [self superview];
     if (superview && [self window]) {

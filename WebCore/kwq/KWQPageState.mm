@@ -36,6 +36,8 @@
 
 using DOM::DocumentImpl;
 
+using khtml::RenderObject;
+
 using KJS::SavedProperties;
 
 @implementation KWQPageState

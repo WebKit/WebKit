@@ -48,6 +48,7 @@ class KHTMLSettings;
     BOOL JavaScriptCanOpenWindowsAutomatically;
     BOOL willLoadImagesAutomatically;
     NSString *userStyleSheetLocation;
+    NSString *defaultTextEncoding;
     
     KHTMLSettings *settings;
 }
@@ -96,6 +97,9 @@ class KHTMLSettings;
 
 - (void)setUserStyleSheetLocation:(NSString *)location;
 - (NSString *)userStyleSheetLocation;
+
+- (void)setDefaultTextEncoding:(NSString *)encoding;
+- (NSString *)defaultTextEncoding;
 
 - (KHTMLSettings *)settings;
 
