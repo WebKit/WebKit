@@ -1476,18 +1476,25 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         //qDebug("opener set to %p (this Window's part) in new Window %p  (this Window=%p)",part,win,window);
         khtmlpart->setOpener(part);
         khtmlpart->setOpenedByJS(true);
+        
         if (khtmlpart->document().isNull()) {
-          part->docImpl()->baseURL() == 0 ? khtmlpart->begin() : khtmlpart->begin(part->docImpl()->baseURL());
-          khtmlpart->write("<HTML><BODY>");
-          khtmlpart->end();
+            if (part->docImpl() && part->docImpl()->baseURL() != 0) {
+                khtmlpart->begin(part->docImpl()->baseURL());
+            }
+            else {
+                khtmlpart->begin();
+            }
+            
+            khtmlpart->write("<HTML><BODY>");
+            khtmlpart->end();
 
           if (part->xmlDocImpl()) {
-            kdDebug(6070) << "Setting domain to " << part->xmlDocImpl()->domain().string() << endl;
-            khtmlpart->xmlDocImpl()->setDomain( part->xmlDocImpl()->domain(), true );
+              kdDebug(6070) << "Setting domain to " << part->xmlDocImpl()->domain().string() << endl;
+              khtmlpart->xmlDocImpl()->setDomain( part->xmlDocImpl()->domain(), true );
           }
           
           if ( part->docImpl() )
-            khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
+              khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
         }
 #if APPLE_CHANGES
         if (!url.isEmpty()) {
