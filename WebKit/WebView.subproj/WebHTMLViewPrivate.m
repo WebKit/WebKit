@@ -106,19 +106,19 @@ BOOL _modifierTrackingEnabled = FALSE;
     NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 
-    NSURL *linkURL =   [elementInfoWC objectForKey:WebCoreContextLinkURL];
-    NSURL *imageURL =  [elementInfoWC objectForKey:WebCoreContextImageURL];
-    NSString *string = [elementInfoWC objectForKey:WebCoreContextString];
-    NSImage *image =   [elementInfoWC objectForKey:WebCoreContextImage];
+    NSURL *linkURL =   [elementInfoWC objectForKey:WebContextMenuElementLinkURLKey];
+    NSURL *imageURL =  [elementInfoWC objectForKey:WebContextMenuElementImageURLKey];
+    NSString *string = [elementInfoWC objectForKey:WebContextMenuElementStringKey];
+    NSImage *image =   [elementInfoWC objectForKey:WebContextMenuElementImageKey];
 
-    if(linkURL)  [elementInfo setObject:linkURL  forKey:WebContextLinkURL];
-    if(imageURL) [elementInfo setObject:imageURL forKey:WebContextImageURL];
-    if(string)   [elementInfo setObject:string   forKey:WebContextString];
-    if(image)    [elementInfo setObject:image    forKey:WebContextImage];
+    if(linkURL)  [elementInfo setObject:linkURL  forKey:WebContextMenuElementLinkURLKey];
+    if(imageURL) [elementInfo setObject:imageURL forKey:WebContextMenuElementImageURLKey];
+    if(string)   [elementInfo setObject:string   forKey:WebContextMenuElementStringKey];
+    if(image)    [elementInfo setObject:image    forKey:WebContextMenuElementImageKey];
 
     WebView *webView = [self _web_parentWebView];
     WebFrame *webFrame = [[webView _controller] frameForView:webView];
-    [elementInfo setObject:webFrame forKey:WebContextFrame];
+    [elementInfo setObject:webFrame forKey:WebContextMenuElementFrameKey];
        
     return elementInfo;
 }
@@ -161,8 +161,8 @@ BOOL _modifierTrackingEnabled = FALSE;
 
         NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
         NSDictionary *element = [self _elementAtPoint:point];
-        NSURL *imageURL = [element objectForKey:WebContextImageURL];
-        NSURL *linkURL = [element objectForKey:WebContextLinkURL];
+        NSURL *imageURL = [element objectForKey:WebContextMenuElementImageURLKey];
+        NSURL *linkURL = [element objectForKey:WebContextMenuElementLinkURLKey];
 
         if(linkURL || imageURL){
             [_private->draggedURL release];

@@ -23,3 +23,8 @@
 .objc_class_name_WebTestController
 .objc_class_name_WebURLsWithTitles
 .objc_class_name_WebView
+_WebContextMenuElementLinkURLKey
+_WebContextMenuElementImageURLKey
+_WebContextMenuElementStringKey
+_WebContextMenuElementImageKey
+_WebContextMenuElementFrameKey

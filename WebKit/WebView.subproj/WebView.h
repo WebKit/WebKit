@@ -98,16 +98,21 @@
 @end
 
 
-#define WebContextLinkURL  @"WebContextLinkURL"
-#define WebContextImageURL @"WebContextImageURL"
-#define WebContextString   @"WebContextString"
-#define WebContextImage    @"WebContextImage"
-#define WebContextFrame    @"WebContextFrame"
-
-
 /*
    ============================================================================= 
+   WebContextMenuHandler determine what context menu items are visible over
+   a clicked element.
+   ============================================================================= 
 */
+
+// These strings are keys into the element dictionary provided in 
+// contextMenuItemsForElement.
+extern NSString *WebContextMenuElementLinkURLKey;
+extern NSString *WebContextMenuElementImageURLKey;
+extern NSString *WebContextMenuElementStringKey;
+extern NSString *WebContextMenuElementImageKey;
+extern NSString *WebContextMenuElementFrameKey;
+
 @protocol WebContextMenuHandler <NSObject>
 // Returns the array of NSMenuItems that will be displayed in the context menu 
 // for the dictionary representation of the clicked element.

@@ -1,3 +1,25 @@
+2002-08-22  Richard Williamson (Local)  <rjw@apple.com>
+
+        Changed public string from #define to extern NSString.
+        
+        * WebKit.exp:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler contextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultContextMenuHandler openNewWindowWithURL:]):
+        (-[WebDefaultContextMenuHandler downloadURL:]):
+        (-[WebDefaultContextMenuHandler openLinkInNewWindow:]):
+        (-[WebDefaultContextMenuHandler downloadLinkToDisk:]):
+        (-[WebDefaultContextMenuHandler copyLinkToClipboard:]):
+        (-[WebDefaultContextMenuHandler openImageInNewWindow:]):
+        (-[WebDefaultContextMenuHandler downloadImageToDisk:]):
+        (-[WebDefaultContextMenuHandler copyImageToClipboard:]):
+        (-[WebDefaultContextMenuHandler openFrameInNewWindow:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]):
+        (-[WebHTMLView _continueAfterCheckingDragForEvent:]):
+
 2002-08-22  Ken Kocienda  <kocienda@apple.com>
 
 	Passing the main load's attributes to the subresource loads causes 
