@@ -25,6 +25,7 @@
 #import <float.h>
 
 #import <unicode/uchar.h>
+#import <unicode/unorm.h>
 
 // FIXME: FATAL_ALWAYS seems like a bad idea; lets stop using it.
 
@@ -1952,6 +1953,9 @@ static inline float ceilCurrentWidth (CharacterWidthIterator *iterator)
     return delta;
 }
 
+// According to http://www.unicode.org/Public/UNIDATA/UCD.html#Canonical_Combining_Class_Values
+#define HIRAGANA_KATAKANA_VOICING_MARKS 8
+
 // Return INVALID_WIDTH if an error is encountered or we're at the end of the range in the run.
 static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef *glyphUsed, NSFont **fontUsed)
 {
@@ -2007,10 +2011,34 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
             }
         }
     }
+    
+    // Deal with Hiragana and Katakana voiced and semi-voiced syllables.  Normalize into
+    // composed form, and then look for glyph with base + combined mark.
+    if (c >= 0x3041 && c <= 0x30FE) { // Early out to minimize performance impact.  Do we have a Hiragana/Katakana character?
+        if (currentCharacter < (unsigned)run->to) {
+            UnicodeChar nextCharacter = run->characters[currentCharacter+1];
+            if (u_getCombiningClass(nextCharacter) == HIRAGANA_KATAKANA_VOICING_MARKS) {
+                UChar normalizedCharacters[2] = { 0, 0 };
+                UErrorCode uStatus = 0;
+                int32_t resultLength;
+                
+                // Normalize into composed form using 3.2 rules.
+                resultLength = unorm_normalize(&run->characters[currentCharacter], 2,
+                                UNORM_NFC, UNORM_UNICODE_3_2,
+                                &normalizedCharacters[0], 2,
+                                &uStatus);
+                if (resultLength == 1 && uStatus == 0){
+                    c = normalizedCharacters[0];
+                    clusterLength = 2;
+                }
+            }
+        }
+    }
 
     if (style->rtl) {
         c = u_charMirror(c);
     }
+    
     if (c <= 0xFFFF) {
         *glyphUsed = glyphForCharacter(renderer->characterToGlyphMap, c, fontUsed);
         if (*glyphUsed == nonGlyphID) {
@@ -2038,7 +2066,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 
     // Now that we have glyph and font, get its width.
     WebGlyphWidth width = widthForGlyph(renderer, *glyphUsed, *fontUsed);
-
+    
     // We special case spaces in two ways when applying word rounding.
     // First, we round spaces to an adjusted width in all fonts.
     // Second, in fixed-pitch fonts we ensure that all characters that

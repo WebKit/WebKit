@@ -1,3 +1,14 @@
+2005-02-25  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4000962> 8A375: Help Viewer displays voiced sound and semi-voiced characters strangely (characters don't seem to be composed)
+
+	Added special case for voiced marks.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForNextCharacter):
+
 2005-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
