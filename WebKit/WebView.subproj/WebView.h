@@ -98,9 +98,10 @@
 - (NSWindow *)window;
 
 // FIXME: This is temporary. It's used to tell the client to "go back"
-// when the delete key is pressed. But we are going to move back/forward
-// handling into WebKit, and then this can be removed.
+// when the delete key or command-arrows are pressed. But we are going to move back/forward
+// handling into WebKit, and then these can be removed.
 - (void)goBack;
+- (void)goForward;
 
 @end
 

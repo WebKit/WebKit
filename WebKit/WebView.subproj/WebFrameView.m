@@ -253,7 +253,9 @@ enum {
                 callSuper = NO;
                 break;
             case NSLeftArrowFunctionKey:
-                if ([event modifierFlags] & NSAlternateKeyMask) {
+                if ([event modifierFlags] & NSCommandKeyMask) {
+                    [self _goBack];
+                } else if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self _pageLeft];
                 } else {
                     [self _lineLeft];
@@ -261,7 +263,9 @@ enum {
                 callSuper = NO;
                 break;
             case NSRightArrowFunctionKey:
-                if ([event modifierFlags] & NSAlternateKeyMask) {
+                if ([event modifierFlags] & NSCommandKeyMask) {
+                    [self _goForward];
+                } else if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self _pageRight];
                 } else {
                     [self _lineRight];

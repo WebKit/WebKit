@@ -241,4 +241,9 @@
     [[[self _controller] windowContext] goBack];
 }
 
+- (void)_goForward
+{
+    [[[self _controller] windowContext] goForward];
+}
+
 @end

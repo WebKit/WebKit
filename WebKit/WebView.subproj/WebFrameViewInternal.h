@@ -50,6 +50,7 @@
 - (void)_lineLeft;
 - (void)_lineRight;
 - (void)_goBack;
+- (void)_goForward;
 + (NSMutableDictionary *)_viewTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 @end
