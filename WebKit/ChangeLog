@@ -1,3 +1,25 @@
+2004-10-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3625352> up and down arrow and page up/down keys don't work to scroll overflow:auto/scroll/overlay areas
+
+        Reviewed by hyatt.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream initWithRequestURL:pluginPointer:notifyData:sendNotification:]): fixed typo in comment
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:sendNotification:]): ditto
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _bridge]): new
+        (-[WebFrameView scrollToBeginningOfDocument:]): call the bridge to scroll, if that fails, scroll the document view
+        (-[WebFrameView scrollToEndOfDocument:]): ditto
+        (-[WebFrameView _pageVertically:]): ditto
+        (-[WebFrameView _pageHorizontally:]): ditto
+        (-[WebFrameView _scrollLineVertically:]): ditto
+        (-[WebFrameView _scrollLineHorizontally:]): ditto
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView scrollWheel:]): call the bridge to scroll, if that fails, pass to next responder
+
 === Safari-166 ===
 
 2004-10-05  Chris Blumenberg  <cblu@apple.com>

@@ -43,6 +43,7 @@
 
 #import "KWQDict.h"
 #import "KWQClipboard.h"
+#import "KWQScrollBar.h"
 
 class KHTMLPartPrivate;
 class KWQWindowWidget;
@@ -142,6 +143,8 @@ public:
     void scrollToAnchor(const KURL &);
     void jumpToSelection();
     QString advanceToNextMisspelling(bool startBeforeSelection = false);
+    bool scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity);
+    bool scrollOverflowWithScrollWheelEvent(NSEvent *event);
     
     void setEncoding(const QString &encoding, bool userChosen);
     void addData(const char *bytes, int length);

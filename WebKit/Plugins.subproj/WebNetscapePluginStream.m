@@ -40,7 +40,7 @@
         return nil;
     }
     
-    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case were are released in this method.
+    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case we are released in this method.
     isTerminated = YES;
     
     if (![WebView _canHandleRequest:theRequest]) {

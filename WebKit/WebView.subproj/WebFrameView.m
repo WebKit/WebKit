@@ -449,15 +449,24 @@ static NSMutableDictionary *viewTypes;
     [self _tile];
 }
 
+- (WebBridge *)_bridge
+{
+    return [[self webFrame] _bridge];
+}
+
 - (void)scrollToBeginningOfDocument:(id)sender
 {
-    [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
+    if (![[self _bridge] scrollOverflowInDirection:WebScrollUp granularity:WebScrollDocument]) {
+        [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
+    }
 }
 
 - (void)scrollToEndOfDocument:(id)sender
 {
-    NSRect frame = [[[self _scrollView] documentView] frame];
-    [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
+    if (![[self _bridge] scrollOverflowInDirection:WebScrollDown granularity:WebScrollDocument]) {
+        NSRect frame = [[[self _scrollView] documentView] frame];
+        [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
+    }
 }
 
 - (void)_goBack
@@ -482,11 +491,11 @@ static NSMutableDictionary *viewTypes;
     return [[self _contentView] _scrollTo:&point];
 }
 
-- (void)_scrollHorizontallyBy: (float)delta
+- (BOOL)_scrollHorizontallyBy: (float)delta
 {
     NSPoint point = [[self _contentView] bounds].origin;
     point.x += delta;
-    [[self _contentView] scrollPoint: point];
+    return [[self _contentView] _scrollTo:&point];
 }
 
 - (float)_horizontalKeyboardScrollDistance
@@ -506,26 +515,38 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)_pageVertically:(BOOL)up
 {
+    if ([[self _bridge] scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollPage]) {
+        return YES;
+    }
     float delta = [self _verticalPageScrollDistance];
     return [self _scrollVerticallyBy:up ? -delta : delta];
 }
 
-- (void)_pageHorizontally: (BOOL)left
+- (BOOL)_pageHorizontally:(BOOL)left
 {
+    if ([[self _bridge] scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollPage]) {
+        return YES;
+    }
     float delta = [self _horizontalPageScrollDistance];
-    [self _scrollHorizontallyBy:left ? -delta : delta];
+    return [self _scrollHorizontallyBy:left ? -delta : delta];
 }
 
-- (void)_scrollLineVertically: (BOOL)up
+- (BOOL)_scrollLineVertically:(BOOL)up
 {
+    if ([[self _bridge] scrollOverflowInDirection:up ? WebScrollUp : WebScrollDown granularity:WebScrollLine]) {
+        return YES;
+    }
     float delta = [self _verticalKeyboardScrollDistance];
-    [self _scrollVerticallyBy:up ? -delta : delta];
+    return [self _scrollVerticallyBy:up ? -delta : delta];
 }
 
-- (void)_scrollLineHorizontally: (BOOL)left
+- (BOOL)_scrollLineHorizontally:(BOOL)left
 {
+    if ([[self _bridge] scrollOverflowInDirection:left ? WebScrollLeft : WebScrollRight granularity:WebScrollLine]) {
+        return YES;
+    }
     float delta = [self _horizontalKeyboardScrollDistance];
-    [self _scrollHorizontallyBy:left ? -delta : delta];
+    return [self _scrollHorizontallyBy:left ? -delta : delta];
 }
 
 - (void)scrollPageUp:(id)sender

@@ -387,6 +387,22 @@ static bool initializedKJS = FALSE;
     _part->scrollToAnchor(KURL(URL).url().latin1());
 }
 
+- (BOOL)scrollOverflowInDirection:(WebScrollDirection)direction granularity:(WebScrollGranularity)granularity
+{
+    if (_part == NULL) {
+        return NO;
+    }
+    return _part->scrollOverflow((KWQScrollDirection)direction, (KWQScrollGranularity)granularity);
+}
+
+- (BOOL)scrollOverflowWithScrollWheelEvent:(NSEvent *)event
+{
+    if (_part == NULL) {
+        return NO;
+    }    
+    return _part->scrollOverflowWithScrollWheelEvent(event);
+}
+
 - (BOOL)saveDocumentToPageCache
 {
     DocumentImpl *doc = _part->xmlDocImpl();
@@ -1662,9 +1678,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!v)
         return;
 
-    QRect r(_part->selection().expectedVisibleRect());
-    v->ensureVisible(r.right(), r.bottom());
-    v->ensureVisible(r.left(), r.top());
+    Position extent = _part->selection().extent();
+    QRect extentRect = extent.node()->renderer()->caretRect(extent.offset(), true);
+    if (!NSContainsRect([v->getDocumentView() visibleRect], NSRect(extentRect))) {
+        v->ensureRectVisibleCentered(extentRect, true);
+    }
 }
 
 // [info draggingLocation] is in window coords

@@ -15,6 +15,7 @@
 
 @class DOMDocument;
 @class DOMElement;
+@class DOMNode;
 @class NSMutableURLRequest;
 @class NSURLRequest;
 @class WebArchive;

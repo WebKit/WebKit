@@ -36,6 +36,8 @@
 #include "khtml_events.h"
 #include "xml/dom_docimpl.h"
 
+#include "KWQScrollBar.h"
+
 class QPainter;
 class QTextStream;
 class CSSStyle;
@@ -577,6 +579,8 @@ public:
     // object has overflow:hidden/scroll/auto specified and also has overflow.
     int scrollWidth() const;
     int scrollHeight() const;
+    
+    virtual bool scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier=1.0);
 
     // The following seven functions are used to implement collapsing margins.
     // All objects know their maximal positive and negative margins.  The

@@ -1015,6 +1015,70 @@ QString KWQKHTMLPart::advanceToNextMisspelling(bool startBeforeSelection)
     return QString();
 }
 
+bool KWQKHTMLPart::scrollOverflow(KWQScrollDirection direction, KWQScrollGranularity granularity)
+{
+    if (!xmlDocImpl()) {
+        return false;
+    }
+    
+    NodeImpl *node = xmlDocImpl()->focusNode();
+    if (node == 0) {
+        node = d->m_mousePressNode.handle();
+    }
+    
+    if (node != 0) {
+        RenderObject *r = node->renderer();
+        if (r != 0) {
+            return r->scroll(direction, granularity);
+        }
+    }
+    
+    return false;
+}
+
+bool KWQKHTMLPart::scrollOverflowWithScrollWheelEvent(NSEvent *event)
+{
+    RenderObject *r = renderer();
+    if (r == 0) {
+        return false;
+    }
+    
+    NSPoint point = [d->m_view->getDocumentView() convertPoint:[event locationInWindow] fromView:nil];
+    RenderObject::NodeInfo nodeInfo(true, true);
+    r->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);    
+    
+    NodeImpl *node = nodeInfo.innerNode();
+    if (node == 0) {
+        return false;
+    }
+    
+    r = node->renderer();
+    if (r == 0) {
+        return false;
+    }
+    
+    KWQScrollDirection direction;
+    float multiplier;
+    float deltaX = [event deltaX];
+    float deltaY = [event deltaY];
+    if (deltaX < 0) {
+        direction = KWQScrollRight;
+        multiplier = -deltaX;
+    } else if (deltaX > 0) {
+        direction = KWQScrollLeft;
+        multiplier = deltaX;
+    } else if (deltaY < 0) {
+        direction = KWQScrollDown;
+        multiplier = -deltaY;
+    }  else if (deltaY > 0) {
+        direction = KWQScrollUp;
+        multiplier = deltaY;
+    } else {
+        return false;
+    }
+    return r->scroll(direction, KWQScrollWheel, multiplier);
+}
+
 void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 {
     // Don't report history navigations, just actual redirection.
@@ -1903,6 +1967,8 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
     // Careful that the drag starting logic stays in sync with eventMayStartDrag()
     _mouseDownMayStartDrag = singleClick;
 
+    d->m_mousePressNode = event->innerNode();
+    
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
         // because we don't want to do it until we know we didn't hit a widget.

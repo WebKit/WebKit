@@ -1,3 +1,33 @@
+2004-10-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 
+	<rdar://problem/3625352> up and down arrow and page up/down keys don't work to scroll overflow:auto/scroll/overlay areas
+	<rdar://problem/3822027> REGRESSION (Mail): When selection moves out of visible area, should center as NSText does
+
+        Reviewed by hyatt, kocienda.
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::scroll): new
+        * khtml/rendering/render_layer.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::scroll): new
+        * khtml/rendering/render_object.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::scrollOverflow): new
+        (KWQKHTMLPart::scrollOverflowWithScrollWheelEvent): new
+        (KWQKHTMLPart::khtmlMousePressEvent): store pressed node so we know where the focus is
+        * kwq/KWQScrollBar.h:
+        * kwq/KWQScrollBar.mm:
+        (QScrollBar::setValue): return a bool
+        (QScrollBar::scrollbarHit): ditto
+        (QScrollBar::scroll): new
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge scrollOverflowInDirection:granularity:]): new
+        (-[WebCoreBridge scrollOverflowWithScrollWheelEvent:]): new
+        (-[WebCoreBridge ensureSelectionVisible]): visually center the extent of the selection
+
 2004-10-06  David Hyatt  <hyatt@apple.com>
 
 	Back out style sharing perf fix.

@@ -709,6 +709,27 @@ RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
 }
 #endif
 
+bool RenderLayer::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
+{
+    bool didHorizontalScroll = false;
+    bool didVerticalScroll = false;
+    
+    if (m_hBar != 0) {
+        if (granularity == KWQScrollDocument) {
+            // Special-case for the KWQScrollDocument granularity. A document scroll can only be up 
+            // or down and in both cases the horizontal bar goes all the way to the left.
+            didHorizontalScroll = m_hBar->scroll(KWQScrollLeft, KWQScrollDocument, multiplier);
+        } else {
+            didHorizontalScroll = m_hBar->scroll(direction, granularity, multiplier);
+        }
+    }
+    if (m_vBar != 0) {
+        didVerticalScroll = m_vBar->scroll(direction, granularity, multiplier);
+    }
+
+    return (didHorizontalScroll || didVerticalScroll);
+}
+
 void
 RenderLayer::paint(QPainter *p, const QRect& damageRect, bool selectionOnly, RenderObject *paintingRoot)
 {

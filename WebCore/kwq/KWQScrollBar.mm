@@ -38,7 +38,6 @@
 
 @implementation KWQScrollBar
 
-
 - (id)initWithQScrollBar:(QScrollBar*)s
 {
     scrollBar = s;
@@ -67,6 +66,7 @@
 {
     scrollBar->scrollbarHit([sender hitPart]);
 }
+
 @end
 
 QScrollBar::QScrollBar(Qt::Orientation orientation, QWidget* parent)
@@ -97,20 +97,22 @@ QScrollBar::~QScrollBar()
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollBar::setValue(int v)
+bool QScrollBar::setValue(int v)
 {
     int maxPos = m_totalSize - m_visibleSize;
     if (v < 0) v = 0;
     if (v > maxPos)
         v = maxPos;
     if (m_currentPos == v)
-        return; // Our value stayed the same.
+        return false; // Our value stayed the same.
     m_currentPos = v;
     KWQ_BLOCK_EXCEPTIONS;
     [m_scroller setFloatValue: (float)m_currentPos/maxPos
                knobProportion: [m_scroller knobProportion]];
     KWQ_UNBLOCK_EXCEPTIONS;
     valueChanged(); // Emit the signal that indicates our value has changed.
+    
+    return true;
 }
 
 void QScrollBar::setSteps(int lineStep, int pageStep)
@@ -131,11 +133,11 @@ void QScrollBar::setKnobProportion(int visibleArea, int totalArea)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
-void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
+bool QScrollBar::scrollbarHit(NSScrollerPart hitPart)
 {
     int maxPos = m_totalSize - m_visibleSize;
     if (maxPos <= 0)
-        return; // Impossible to scroll anywhere.
+        return false; // Impossible to scroll anywhere.
     
     volatile int newPos = m_currentPos;
     switch (hitPart) {
@@ -162,10 +164,39 @@ void QScrollBar::scrollbarHit(NSScrollerPart hitPart)
         default: ;
     }
 
-    setValue(newPos);
+    return setValue(newPos);
 }
 
 void QScrollBar::valueChanged()
 {
     m_valueChanged.call(m_currentPos);
 }
+
+bool QScrollBar::scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier)
+{
+    float delta = 0.0;
+    if ((direction == KWQScrollUp && m_orientation == Vertical) || (direction == KWQScrollLeft && m_orientation == Horizontal)) {
+        if (granularity == KWQScrollLine) {
+            delta = -(m_lineStep * 4);
+        } else if (granularity == KWQScrollPage) {
+            delta = -m_pageStep;
+        } else if (granularity == KWQScrollDocument) {
+            delta = -m_currentPos;
+        } else if (granularity == KWQScrollWheel) {
+            delta = -m_lineStep;
+        }
+    } else if ((direction == KWQScrollDown && m_orientation == Vertical) || (direction == KWQScrollRight && m_orientation == Horizontal)) {
+        if (granularity == KWQScrollLine) {
+            delta = (m_lineStep * 4);
+        } else if (granularity == KWQScrollPage) {
+            delta = m_pageStep;
+        } else if (granularity == KWQScrollDocument) {
+            delta = m_totalSize - m_visibleSize - m_currentPos;
+        } else if (granularity == KWQScrollWheel) {
+            delta = m_lineStep;
+        }
+    }
+    int newPos = (int)(m_currentPos + (delta * multiplier));
+    return setValue(newPos);
+}
+

@@ -35,7 +35,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 {
     [super init];
  
-    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case were are released in this method.
+    // Temporarily set isTerminated to YES to avoid assertion failure in dealloc in case we are released in this method.
     isTerminated = YES;
 
     if (theRequestURL == nil || thePluginPointer == NULL) {

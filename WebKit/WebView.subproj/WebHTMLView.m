@@ -2056,6 +2056,13 @@ static WebHTMLView *lastHitView = nil;
     [[self _pluginController] destroyAllPlugins];
 }
 
+- (void)scrollWheel:(NSEvent *)event
+{
+    if (![[self _bridge] scrollOverflowWithScrollWheelEvent:event]) {
+        [[self nextResponder] scrollWheel:event];
+    }    
+}
+
 - (BOOL)_isSelectionEvent:(NSEvent *)event
 {
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];

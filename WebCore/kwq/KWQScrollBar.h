@@ -36,6 +36,21 @@ class NSScroller;
 typedef int NSScrollerPart;
 #endif
 
+typedef enum {
+    KWQScrollUp,
+    KWQScrollDown,
+    KWQScrollLeft,
+    KWQScrollRight
+} KWQScrollDirection;
+
+typedef enum {
+    KWQScrollLine,
+    KWQScrollPage,
+    KWQScrollDocument,
+    KWQScrollWheel
+} KWQScrollGranularity;
+
+
 class QScrollBar : public QWidget {
 public:
     QScrollBar(Qt::Orientation orientation, QWidget* parent);
@@ -44,13 +59,15 @@ public:
     Qt::Orientation orientation() { return m_orientation; };
 
     int value() { return m_currentPos; }
-    void setValue(int v);
+    bool setValue(int v);
 
     void setSteps(int lineStep, int pageStep);
     void setKnobProportion(int visibleSize, int totalSize);
     
-    void scrollbarHit(NSScrollerPart hitPart);
+    bool scrollbarHit(NSScrollerPart hitPart);
     void valueChanged();
+    
+    bool scroll(KWQScrollDirection direction, KWQScrollGranularity granularity, float multiplier=1.0);
     
 private:
     Qt::Orientation m_orientation : 1;
