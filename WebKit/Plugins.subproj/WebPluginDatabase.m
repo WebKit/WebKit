@@ -177,9 +177,10 @@ static NSArray *extensionPlugInPaths;
 
 + (void)setAdditionalWebPlugInPaths:(NSArray *)a
 {
-    if (a != extensionPlugInPaths)
+    if (a != extensionPlugInPaths) {
         [extensionPlugInPaths release];
-    extensionPlugInPaths = [a copyWithZone:nil];
+        extensionPlugInPaths = [a copyWithZone:nil];
+    }
 }
 
 
@@ -196,11 +197,11 @@ static NSArray *pluginLocations(void)
         [array addObjectsFromArray:extensionPlugInPaths];
     }
     
-    return [array addObjectsFromArray: [NSArray arrayWithObjects:
-        [NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"],
-    	@"/Library/Internet Plug-Ins",
-    	[[NSBundle mainBundle] builtInPlugInsPath],
-        nil]];
+    [array addObject:[NSHomeDirectory() stringByAppendingPathComponent:@"Library/Internet Plug-Ins"]];
+    [array addObject:@"/Library/Internet Plug-Ins"];
+    [array addObject:[[NSBundle mainBundle] builtInPlugInsPath]];
+        
+    return array;
 }
 
 - init

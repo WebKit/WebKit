@@ -1,3 +1,13 @@
+2004-06-04  Richard Williamson   <rjw@apple.com>
+
+        Fixed crasher from last checkin.
+        
+        Reviewed by Ken.
+
+        * Plugins.subproj/WebPluginDatabase.m:
+        (+[WebPluginDatabase setAdditionalWebPlugInPaths:]):
+        (pluginLocations):
+
 2004-06-03  Richard Williamson   <rjw@apple.com>
 
 		Add SPI to allow setting of plugin load path.
