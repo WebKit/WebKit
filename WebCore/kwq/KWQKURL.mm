@@ -315,6 +315,7 @@ KURL::KURL(const KURL &base, const QString &relative)
 		while (baseStringStart < pathStart) {
 		    *bufferPos++ = *baseStringStart++;
 		}
+                char *bufferPathStart = bufferPos;
 
 		// now copy the base path 
 		const char *baseStringEnd = baseString + base.pathEndPos;
@@ -339,10 +340,10 @@ KURL::KURL(const KURL &base, const QString &relative)
 			    // ".." segments - we choose to drop them since some web content
 			    // relies on this.
 			    baseStringPos += 3;
-			    if (bufferPos > buffer + 1) {
+			    if (bufferPos > bufferPathStart + 1) {
 				bufferPos--;
 			    }
-			    while (bufferPos > buffer && bufferPos[-1] != '/') {
+			    while (bufferPos > bufferPathStart && bufferPos[-1] != '/') {
 				bufferPos--;
 			    }
 			    // don't strip the slash before the last path segment if it was the final one
@@ -379,10 +380,10 @@ KURL::KURL(const KURL &base, const QString &relative)
 			    if (relStringPos[0] == '/') {
 				relStringPos++;
 			    }
-			    if (bufferPos > buffer + 1) {
+			    if (bufferPos > bufferPathStart + 1) {
 				bufferPos--;
 			    }
-			    while (bufferPos > buffer + 1  && bufferPos[-1] != '/') {
+			    while (bufferPos > bufferPathStart + 1  && bufferPos[-1] != '/') {
 				bufferPos--;
 			    }
 			    continue;

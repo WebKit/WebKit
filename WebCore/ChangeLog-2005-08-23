@@ -1,5 +1,12 @@
 2002-08-23  Darin Adler  <darin@apple.com>
 
+	Got the kurl-test in the Tests directory working again.
+
+        * kwq/KWQKURL.mm: (KURL::KURL): Fixed problem where relative path resolution code
+	for "../" could eat up the host name too, treating it as part of the path.
+
+2002-08-23  Darin Adler  <darin@apple.com>
+
 	- fixed 3032058 -- Links on local developer doc pages all broken (all local files?)
 
         * kwq/KWQKURL.mm: (KURL::getNSURL): Re-added a workaround for CFURL bug 2908969.
