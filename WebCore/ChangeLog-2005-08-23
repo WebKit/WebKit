@@ -1,3 +1,14 @@
+2004-12-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Ken Kocienda and Dave Hyatt (OOPS!).
+
+		<rdar://problem/3849947> Typing after pasting line does not appear until after window resize.
+		
+		
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLinesFromChangedChild):
+		Dirty the line above because new child can inval the cached line break position of previous line.
+
 2004-12-06  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3254464, radio buttons do not work for quiz on netscape.com.  Left/top overflow needed to be implemented.

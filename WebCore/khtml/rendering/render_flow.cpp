@@ -267,11 +267,23 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child, bool adding)
 
     // If we found a line box, then dirty it.
     if (box) {
+        RootInlineBox* adjacentBox;
         box->markDirty();
+        
+        // dirty the adjacent lines that might be affected
+        // NOTE: we dirty the previous line because RootInlineBox objects cache
+        // the address of the first object on the next line after a BR, which we may be
+        // invalidating here.  For more info, see how RenderBlock::layoutInlineChildren
+        // calls setLineBreakInfo with the result of findNextLineBreak.  findNextLineBreak,
+        // despite the name, actually returns the first RenderObject after the BR.
+        // <rdar://problem/3849947> "Typing after pasting line does not appear until after window resize."
+        adjacentBox = box->prevRootBox();
+        if (adjacentBox)
+            adjacentBox->markDirty();
         if (child->isBR()) {
-            RootInlineBox* next = box->nextRootBox();
-            if (next)
-                next->markDirty();
+            adjacentBox = box->nextRootBox();
+            if (adjacentBox)
+                adjacentBox->markDirty();
         }
     }
 }
