@@ -485,4 +485,18 @@ unsigned DOMStringImpl::computeHash(const char *s)
     return h;
 }
 
+const char *DOMStringImpl::ascii() const
+{
+    char *buffer = new char[l];
+    char *p = buffer;
+    for (unsigned i = 0; i != l; ++i) {
+        unsigned short c = s[i].unicode();
+        if (c >= 0x20 && c < 0x7F)
+            *p++ = c;
+        else
+            *p++ = '?';
+    }
+    return buffer;
+}
+
 } // namespace DOM

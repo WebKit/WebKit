@@ -1,3 +1,16 @@
+2004-08-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - added an ascii() member function to DOMString and DOMStringImpl to help debugging
+
+        * khtml/dom/dom_string.h: Add ascii member function for debugging.
+        * khtml/dom/dom_string.cpp: (DOM::DOMString::ascii): Added. Calls through to DOMStringImpl::ascii.
+        * khtml/xml/dom_stringimpl.h: Add ascii member function for debugging.
+        * khtml/xml/dom_stringimpl.cpp: (DOM::DOMStringImpl::ascii): Added. Makes a new buffer and puts
+        a simple ASCII version in it. Maybe make it better about characters outside the 0x20-0x7E range
+        some day, but for now this is way better than what we had before.
+
 2004-08-20  David Hyatt  <hyatt@apple.com>
 
 	Divorce the notion of a marquee being stopped from JS from the notion of being suspended by the back/forward cache.
@@ -10,7 +23,6 @@
         (Marquee::stop):
         (Marquee::updateMarqueePosition):
         * khtml/rendering/render_layer.h:
-        (khtml::):
 
 2004-08-20  Richard Williamson   <rjw@apple.com>
 

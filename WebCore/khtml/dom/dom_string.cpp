@@ -270,6 +270,11 @@ khtml::Length* DOMString::toLengthArray(int& len) const
     return impl ? impl->toLengthArray(len) : 0;
 }
 
+const char *DOMString::ascii() const
+{
+    return impl ? impl->ascii() : "(null impl)";
+}
+
 //-----------------------------------------------------------------------------
 
 bool DOM::operator==( const DOMString &a, const DOMString &b )
@@ -315,6 +320,5 @@ bool DOM::operator==( const DOMString &a, const char *b )
     }
     return *b == 0;
 }
-
 
 }

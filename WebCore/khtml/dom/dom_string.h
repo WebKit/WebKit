@@ -120,6 +120,10 @@ public:
     operator NSString *() const;
 #endif
 
+private:
+    // For debugging only, leaks memory.
+    const char *ascii() const;
+
 protected:
     DOMStringImpl *impl;
 };
