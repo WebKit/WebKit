@@ -133,10 +133,13 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     }
     
     [bridge showWindow];
+
+    if ([bridge part]) {
+	[bridge part]->setName(urlArgs.frameName);
+    }
     
     if (partResult) {
 	*partResult = [bridge part];
-	(*partResult)->setName(urlArgs.frameName);
     }
     return;
 

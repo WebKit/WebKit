@@ -1,3 +1,11 @@
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Check for the
+	returned part being NULL, not the out value pointer.
+
 2003-11-16  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3485779, <input type=image> and <button> should not be mouse focusable.
