@@ -242,7 +242,12 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     // to wrap itself in additional boxes (e.g., table construction).
     newBlockBox->addChildToFlow(newChild, 0);
     
+    // Always just do a full layout in order to ensure that line boxes (especially wrappers for images)
+    // get deleted properly.  Because objects moves from the pre block into the post block, we want to
+    // make new line boxes instead of leaving the old line boxes around.
+    pre->setNeedsLayoutAndMinMaxRecalc();
     block->setNeedsLayoutAndMinMaxRecalc();
+    post->setNeedsLayoutAndMinMaxRecalc();
 }
 
 void RenderInline::paint(PaintInfo& i, int _tx, int _ty)
