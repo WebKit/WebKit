@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/4012978> -[DOMRange markupString] crashes when range contains only a text node with a single space
+
+        * khtml/editing/markup.cpp: (khtml::createMarkup): Added updateLayout calls, and added a missing
+        nil check.
+
+2005-02-21  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/4005435> Safari hung while pasting text into a <textarea> (Panther-only)
 
         * kwq/KWQTextEdit.mm: (QTextEdit::setScrollBarModes): Don't setAutohidesScrollers:YES on Panther.

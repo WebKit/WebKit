@@ -300,6 +300,10 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     int exceptionCode = 0;
     NodeImpl *commonAncestor = range->commonAncestorContainer(exceptionCode);
     ASSERT(exceptionCode == 0);
+
+    DocumentImpl *doc = commonAncestor->getDocument();
+    doc->updateLayout();
+
     NodeImpl *commonAncestorBlock = 0;
     if (commonAncestor != 0) {
         commonAncestorBlock = commonAncestor->enclosingBlockFlowElement();
@@ -314,7 +318,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     QPtrList<NodeImpl> ancestorsToClose;
 
     // calculate the "default style" for this markup
-    Position pos(commonAncestor->getDocument()->documentElement(), 0);
+    Position pos(doc->documentElement(), 0);
     CSSMutableStyleDeclarationImpl *defaultStyle = pos.computedStyle()->copyInheritableProperties();
     defaultStyle->ref();
     
@@ -382,28 +386,30 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     ASSERT(exceptionCode == 0);
     
     // Add ancestors up to the common ancestor block so inline ancestors such as FONT and B are part of the markup.
-    for (NodeImpl *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
-        if (RangeImpl::compareBoundaryPoints(ancestor, 0, rangeStartNode, rangeStartOffset) >= 0) {
-            // we have already added markup for this node
-            continue;
-        }
-        bool breakAtEnd = false;
-        if (commonAncestorBlock == ancestor) {
-            NodeImpl::Id id = ancestor->id();
-            // Tables and lists must be part of the markup to avoid broken structures. 
-            if (id == ID_TABLE || id == ID_OL || id == ID_UL) {
-                breakAtEnd = true;
-            } else {
+    if (lastClosed) {
+        for (NodeImpl *ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
+            if (RangeImpl::compareBoundaryPoints(ancestor, 0, rangeStartNode, rangeStartOffset) >= 0) {
+                // we have already added markup for this node
+                continue;
+            }
+            bool breakAtEnd = false;
+            if (commonAncestorBlock == ancestor) {
+                NodeImpl::Id id = ancestor->id();
+                // Tables and lists must be part of the markup to avoid broken structures. 
+                if (id == ID_TABLE || id == ID_OL || id == ID_UL) {
+                    breakAtEnd = true;
+                } else {
+                    break;
+                }
+            }
+            markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle));
+            markups.append(endMarkup(ancestor));
+            if (nodes) {
+                nodes->append(ancestor);
+            }        
+            if (breakAtEnd) {
                 break;
             }
-        }
-        markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle));
-        markups.append(endMarkup(ancestor));
-        if (nodes) {
-            nodes->append(ancestor);
-        }        
-        if (breakAtEnd) {
-            break;
         }
     }
 
@@ -452,6 +458,14 @@ QString createMarkup(const DOM::NodeImpl *node, EChildrenOnly includeChildren,
     QPtrList<DOM::NodeImpl> *nodes, EAnnotateForInterchange annotate)
 {
     ASSERT(annotate == DoNotAnnotateForInterchange); // annotation not yet implemented for this code path
+
+    // FIXME: We could take out this if statement if we had more time to test.
+    // I'm concerned that making this crash when the document is nil might be too risky a change at the moment.
+    DocumentImpl *doc = node->getDocument();
+    assert(doc);
+    if (doc)
+        doc->updateLayout();
+
     return markup(node, includeChildren, false, nodes);
 }
 
