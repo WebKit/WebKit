@@ -1,3 +1,14 @@
+2002-10-15  Ken Kocienda  <kocienda@apple.com>
+
+	Fixed an "unused variable" build breaker. Note that I just 
+	commented out the code and put a FIXME, as I know this is code
+	that David has been banging on a lot. This should be either
+	used for real or removed eventually, but I'll leave that for 
+	Hyatt.
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
 2002-10-14  David Hyatt  <hyatt@apple.com>
 
 	More collapsing margin surgery.  Working on setting up blocks 

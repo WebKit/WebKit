@@ -345,7 +345,8 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         xPos = marginLeft() + m_width - paddingRight() - borderRight();
     }
 
-    bool canCollapseWithChildren = !isPositioned() && !isFloating() && !isTableCell();
+    // FIXME: The following variable appears to be unused.
+    // bool canCollapseWithChildren = !isPositioned() && !isFloating() && !isTableCell();
     
     RenderObject *child = firstChild();
     RenderFlow *prevFlow = 0;
