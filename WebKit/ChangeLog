@@ -1,5 +1,15 @@
 2003-10-20  Richard Williamson   <rjw@apple.com>
 
+	Conditionally excluded fix for 3446192.  We'll enable the fix once 3446669
+	has been fixed.  This patch switches to the new UTI typing API for pasteboard types.
+ 
+        Reviewed by Ken.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (+[NSPasteboard initialize]):
+
+2003-10-20  Richard Williamson   <rjw@apple.com>
+
 	Fixed 3456103.  Don't assert, just check for inappropriate state.
 	Reviewed by Hyatt
 
