@@ -48,7 +48,7 @@ static IFPreferences *_standardPreferences = nil;
     NSNumber *javaEnabled = [NSNumber numberWithBool:FALSE];
     NSNumber *jScriptEnabled = [NSNumber numberWithBool:TRUE];
     NSNumber *timedLayoutEnabled = [NSNumber numberWithBool:TRUE];
-    NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:FALSE];
+    NSNumber *resourceTimedLayoutEnabled = [NSNumber numberWithBool:TRUE];
 
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
         @"0x0", 			WebKitLogLevelPreferenceKey,
@@ -61,7 +61,7 @@ static IFPreferences *_standardPreferences = nil;
         @"6", 				WebKitMinimumFontSizePreferenceKey,
         @"1.5",		 		WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096", 			WebKitInitialTimedLayoutSizePreferenceKey,
-        @"1.0", 			WebKitResourceTimedLayoutDelayPreferenceKey,
+        @"1.5", 			WebKitResourceTimedLayoutDelayPreferenceKey,
         timedLayoutEnabled,		WebKitInitialTimedLayoutEnabledPreferenceKey,
         resourceTimedLayoutEnabled,	WebKitResourceTimedLayoutEnabledPreferenceKey,
         fontSizeArray,			WebKitFontSizesPreferenceKey,

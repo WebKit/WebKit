@@ -131,8 +131,33 @@ char *stateNames[6] = {
 
 - (void)_scheduleLayout: (NSTimeInterval)inSeconds
 {
-    [NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    if (data->scheduledLayoutPending == NO){
+        [NSTimer scheduledTimerWithTimeInterval:inSeconds target:self selector: @selector(_timedLayout:) userInfo: nil repeats:FALSE];
+        data->scheduledLayoutPending = YES;
+    }
 }
+
+- (void)_timedLayout: userInfo
+{
+    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
+
+    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
+    
+    data->scheduledLayoutPending = NO;
+    if (data->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
+        if ([self controller])
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        [[self view] setNeedsLayout: YES];
+        [[self view] setNeedsDisplay: YES];
+    }
+    else {
+        if ([self controller])
+            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+    }
+}
+
 
 - (void)_transitionProvisionalToLayoutAcceptable
 {
@@ -246,24 +271,6 @@ char *stateNames[6] = {
     }
 }
 
-
-- (void)_timedLayout: userInfo
-{
-    IFWebFramePrivate *data = (IFWebFramePrivate *)_framePrivate;
-
-    WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  state = %s\n", [[self name] cString], stateNames[data->state]);
-    
-    if (data->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE){
-        if ([self controller])
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
-        [[self view] setNeedsLayout: YES];
-        [[self view] setNeedsDisplay: YES];
-    }
-    else {
-        if ([self controller])
-            WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
-    }
-}
 
 - (IFWebFrameState)_state
 {

@@ -1,3 +1,12 @@
+2002-04-04  Richard Williamson  <rjw@apple.com>
+
+        Tuned and re-enabled resource layouts.
+        
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]):
+	* WebView.subproj/IFWebFramePrivate.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _scheduleLayout:]),
+	(-[IFWebFrame _timedLayout:]):
+
 2002-04-04  Darin Adler  <darin@apple.com>
 
 	* WebKit.pbproj/project.pbxproj: Add an Unoptimized build
