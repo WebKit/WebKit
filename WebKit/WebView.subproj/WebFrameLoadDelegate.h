@@ -5,12 +5,11 @@
         Public header file.
 */
 
-#import <Foundation/Foundation.h>
+#import <Cocoa/Cocoa.h>
 
-@class WebView;
-@class WebDataSource;
 @class NSError;
 @class WebFrame;
+@class WebView;
 
 /*!
     @category WebFrameLoadDelegate

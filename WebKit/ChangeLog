@@ -1,5 +1,11 @@
 2003-04-25  Chris Blumenberg  <cblu@apple.com>
 
+	Don't do "@class WebDataSource" as that class isn't mentioned in this file.
+
+        * WebView.subproj/WebFrameLoadDelegate.h:
+
+2003-04-25  Chris Blumenberg  <cblu@apple.com>
+
 	Turned WebLocationChangeDelegate into WebFrameLoadDelegate. Renamed WebFrameLoadDelegate all methods to pass a frame instead of the data source.
 
         Reviewed by rjw.
