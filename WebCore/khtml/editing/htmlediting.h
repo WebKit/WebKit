@@ -312,9 +312,9 @@ private:
 
     void initializePositionData();
     void saveTypingStyleState();
-    bool canPerformSpecialCaseAllContentDelete();
-    bool canPerformSpecialCaseBRDelete();
-    void performGeneralDelete();
+    bool handleSpecialCaseAllContentDelete();
+    bool handleSpecialCaseBRDelete();
+    void handleGeneralDelete();
     void fixupWhitespace();
     void moveNodesAfterNode();
     void calculateEndingPosition();

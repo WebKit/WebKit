@@ -1,6 +1,24 @@
 2004-11-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
+
+        Improved some function names, at John's urging. No changes to the
+        functions themselves.
+        
+        canPerformSpecialCaseAllContentDelete() --> handleSpecialCaseAllContentDelete()
+        canPerformSpecialCaseBRDelete() --> handleSpecialCaseBRDelete()
+        performGeneralDelete() --> handleGeneralDelete()
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleSpecialCaseAllContentDelete)
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete)
+        (khtml::DeleteSelectionCommand::handleGeneralDelete)
+        (khtml::DeleteSelectionCommand::doApply)
+        * khtml/editing/htmlediting.h
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
         
         Updated some layout test results that changed as a result of my last checking.
         Added a new test that has been in my tree for a few days.
