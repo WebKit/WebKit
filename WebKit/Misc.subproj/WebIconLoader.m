@@ -34,6 +34,12 @@
 
 @implementation WebIconLoader
 
++ (void)_resizeImage:(NSImage *)image
+{
+    [image setScalesWhenResized:YES];
+    [image setSize:NSMakeSize(IconWidth,IconHeight)];
+}
+
 + (NSImage *)defaultIcon
 {
     static NSImage *defaultIcon = nil;
@@ -46,12 +52,33 @@
             [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
         if (pathForDefaultImage != nil) {
             defaultIcon = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
+            [[self class] _resizeImage:defaultIcon];
         }
         loadedDefaultImage = YES;
     }
 
     return defaultIcon;
 }
+
++ (NSImage *)iconForFileAtPath:(NSString *)path
+{
+    static NSImage *htmlIcon = nil;
+    NSImage *icon;
+
+    if([[path pathExtension] rangeOfString:@"htm"].length != 0){
+        if(!htmlIcon){
+            htmlIcon = [[[NSWorkspace sharedWorkspace] iconForFile:path] retain];
+            [[self class] _resizeImage:htmlIcon];
+        }
+        icon = htmlIcon;
+    }else{
+        icon = [[NSWorkspace sharedWorkspace] iconForFile:path];
+        [[self class] _resizeImage:icon];
+    }
+
+    return icon;
+}
+
 
 - initWithURL:(NSURL *)iconURL
 {
@@ -103,6 +130,7 @@
 {
     NSImage *image = [[NSImage alloc] initWithData:data];
     if (image) {
+        [[self class] _resizeImage:image];
         [_private->delegate iconLoader:self receivedPageIcon:image];
         [image release];
     }

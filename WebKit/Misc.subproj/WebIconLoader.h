@@ -13,12 +13,16 @@
 @class WebIconLoaderPrivate;
 @protocol WebResourceClient;
 
+#define IconWidth 16
+#define IconHeight 16
+
 @interface WebIconLoader : NSObject <WebResourceClient>
 {
     WebIconLoaderPrivate *_private;
 }
 
 + (NSImage *)defaultIcon;
++ (NSImage *)iconForFileAtPath:(NSString *)path;
 
 - initWithURL:(NSURL *)iconURL;
 - (void)setDelegate:(id)delegate;
