@@ -368,8 +368,8 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     bool topMarginContributor = true;
     
     // These flags track the previous maximal positive and negative margins.
-    int prevPosMargin = maxTopMargin(true);
-    int prevNegMargin = maxTopMargin(false);
+    int prevPosMargin = canCollapseWithChildren ? maxTopMargin(true) : 0;
+    int prevNegMargin = canCollapseWithChildren ? maxTopMargin(false) : 0;
     
     // Whether or not we encountered an element with clear set that actually had to
     // be pushed down below a float.

@@ -1,5 +1,15 @@
 2002-10-22  David Hyatt  <hyatt@apple.com>
 
+	Fix for left-hand-side of wired.com.  A disturbingly basic
+	bug.  I was applying a parent's margins to its children
+	when collapsing, even if the parent had a border/padding set
+	that should have separated it from its kids.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
+2002-10-22  David Hyatt  <hyatt@apple.com>
+
 	Optimize my inline margin discarding to be smart about the
 	case when the inline has a block and its beginning or
 	end.  Fixes aintitcool.com.
