@@ -17,14 +17,14 @@ class KHTMLView;
     IFWebController *controller;
     KHTMLView *widget;
     KHTMLView *provisionalWidget;
-    NSScrollView *frameScrollView;
-    bool isFlipped;
-    bool needsLayout;
-    bool needsToApplyStyles;
-    bool canDragTo;
-    bool canDragFrom;
+    BOOL isFlipped;
+    BOOL needsLayout;
+    BOOL needsToApplyStyles;
+    BOOL canDragTo;
+    BOOL canDragFrom;
     NSArray *draggingTypes;
     NSCursor *cursor;
+    BOOL liveAllowsScrolling;
 }
 
 @end
@@ -36,7 +36,4 @@ class KHTMLView;
 - (KHTMLView *)_provisionalWidget;
 - (void)_stopPlugins;
 - (void)_removeSubviews;
-- (void)_setFrameScrollView: (NSScrollView *)sv;
-- (NSScrollView *)_frameScrollView;
-- (void)_setupScrollers;
 @end

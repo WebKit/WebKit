@@ -106,8 +106,6 @@
     // the actual view once the datasource has been committed.
     provisionalView = [[IFHTMLView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
         
-    // PROBLEM!!  This provisionalView may become the actual view in the case
-    // of a sub frame.  We need to create an IFWebView/IFDSV here.
     _private->provisionalWidget->setView (provisionalView);
     
     [provisionalView release];
@@ -127,12 +125,9 @@
 {
     IFHTMLViewPrivate *data = _private;
     IFWebView *webView = (IFWebView *)[self _IF_superviewWithName:@"IFWebView"];
+    id frameScrollView = [webView frameScrollView];
     
-    // Setup the real view.
-    if ([webView _frameScrollView])
-        data->provisionalWidget->setView ([webView _frameScrollView]);
-    else
-        data->provisionalWidget->setView (self);
+    data->provisionalWidget->setView (frameScrollView);
 
     // Only delete the widget if we're the top level widget.  In other
     // cases the widget is associated with a RenderFrame which will
@@ -474,11 +469,31 @@
 }
 
 
+- (void)viewWillStartLiveResize
+{
+    id scrollView = [[self superview] superview];
+    _private->liveAllowsScrolling = [scrollView allowsScrolling];
+    [scrollView setAllowsScrolling: NO];
+}
+
+- (void)viewDidEndLiveResize
+{
+    id scrollView = [[self superview] superview];
+    [scrollView setAllowsScrolling: _private->liveAllowsScrolling];
+    [self setNeedsLayout: YES];
+    [self setNeedsDisplay: YES];
+    [scrollView updateScrollers];
+}
+
+
 - (void)windowResized: (NSNotification *)notification
 {
-    if ([notification object] == [self window])
+    if ([notification object] == [self window]){
         [self setNeedsLayout: YES];
+        [self setNeedsDisplay: YES];
+    }
 }
+
 
 - (void)_addModifiers:(unsigned)modifiers toState:(int *)state
 {

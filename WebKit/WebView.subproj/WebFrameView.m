@@ -16,11 +16,13 @@
     
     _private = [[IFWebViewPrivate alloc] init];
 
-    IFDynamicScrollBarsView *scrollView  = [[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)];
+    IFDynamicScrollBarsView *scrollView  = [[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];
+    _private->frameScrollView = scrollView;
+    [scrollView setDrawsBackground: NO];
     [scrollView setHasVerticalScroller: NO];
     [scrollView setHasHorizontalScroller: NO];
-    [self _setFrameScrollView: scrollView];
-    [scrollView release];
+    [scrollView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+    [self addSubview: scrollView];
     
     return self;
 }
@@ -34,18 +36,24 @@
 
 - (void)setAllowsScrolling: (BOOL)flag
 {
-    _private->allowsScrolling = flag;
+    [[self frameScrollView] setAllowsScrolling: flag];
 }
 
 - (BOOL)allowsScrolling
 {
-    return _private->allowsScrolling;
+    return [[self frameScrollView] allowsScrolling];
 }
 
 
-- (id)documentView
+- frameScrollView
 {
-    return _private->documentView;
+    return _private->frameScrollView;
+}   
+
+
+- documentView
+{
+    return [[self frameScrollView] documentView];
 }
 
 // Note that the controller is not retained.
@@ -88,6 +96,15 @@
         }
     }
     return nil;
+}
+
+- (BOOL)isOpaque
+{
+    return YES;
+}
+
+- (void)drawRect:(NSRect)rect
+{
 }
 
 

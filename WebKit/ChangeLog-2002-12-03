@@ -1,3 +1,45 @@
+2002-06-13  Richard Williamson  <rjw@apple.com>
+
+    Lots of cleanup.  Fixed most regressions.
+    Added removal of scrollbars during resizing,
+    not sure if it's the correct behavior, but it makes resizing
+    much smoother.  Let's see what people think.
+    
+	* WebView.subproj/IFDynamicScrollBarsView.h:
+	* WebView.subproj/IFDynamicScrollBarsView.m:
+	(-[IFDynamicScrollBarsView initWithFrame:]):
+	(-[IFDynamicScrollBarsView reflectScrolledClipView:]):
+	(-[IFDynamicScrollBarsView updateScrollers]):
+	(-[IFDynamicScrollBarsView setCursor:]):
+	(-[IFDynamicScrollBarsView setAllowsScrolling:]):
+	(-[IFDynamicScrollBarsView allowsScrolling]):
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView provisionalDataSourceChanged:]):
+	(-[IFHTMLView provisionalDataSourceCommitted:]):
+	(-[IFHTMLView viewWillStartLiveResize]):
+	(-[IFHTMLView viewDidEndLiveResize]):
+	* WebView.subproj/IFHTMLViewPrivate.h:
+	* WebView.subproj/IFHTMLViewPrivate.mm:
+	(-[IFHTMLViewPrivate dealloc]):
+	(-[IFHTMLView _provisionalWidget]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _timedLayout:]):
+	(-[IFWebFrame _isLoadComplete]):
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView initWithFrame:]):
+	(-[IFWebView setAllowsScrolling:]):
+	(-[IFWebView allowsScrolling]):
+	(-[IFWebView frameScrollView]):
+	(-[IFWebView documentView]):
+	(+[IFWebView createViewForMIMEType:]):
+	(-[IFWebView isOpaque]):
+	(-[IFWebView drawRect:]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm:
+	(-[IFWebViewPrivate dealloc]):
+	(-[IFWebView _setDocumentView:]):
+
 2002-06-13  Chris Blumenberg  <cblu@apple.com>
 
 	Removed MIME.subproj. Moved IFDownloadHandler to Misc.

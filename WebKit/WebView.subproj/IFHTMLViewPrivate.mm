@@ -21,12 +21,8 @@
 - (void)dealloc
 {
     [controller release];
-    [frameScrollView release];
     [draggingTypes release];
     [cursor release];
-
-    //if (widget)
-    //    delete widget;
 
     [super dealloc];
 }
@@ -116,37 +112,6 @@
 - (KHTMLView *)_provisionalWidget
 {
     return _private->provisionalWidget;    
-}
-
-- (void)_setFrameScrollView: (NSScrollView *)sv
-{
-    [sv retain];
-    [_private->frameScrollView release];
-    _private->frameScrollView = sv;    
-    //[sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    //[sv setHasVerticalScroller: YES];
-    //[sv setHasHorizontalScroller: YES];
-    [self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [sv setDocumentView: self];
-}
-
-- (NSScrollView *)_frameScrollView
-{
-    return _private->frameScrollView;    
-}
-
-- (void)_setupScrollers
-{
-    BOOL scrollsVertically;
-    BOOL scrollsHorizontally;
-
-    if ([self _frameScrollView]) {
-        scrollsVertically = [self bounds].size.height > [[self _frameScrollView] frame].size.height;
-        scrollsHorizontally = [self bounds].size.width > [[self _frameScrollView] frame].size.width;
-    
-        [[self _frameScrollView] setHasVerticalScroller: scrollsVertically];
-        [[self _frameScrollView] setHasHorizontalScroller: scrollsHorizontally];
-    }
 }
 
 @end

@@ -30,7 +30,6 @@ static NSMutableDictionary *_viewTypes=nil;
 - (void)dealloc
 {
     [frameScrollView release];
-    [documentView release];
     [super dealloc];
 }
 
@@ -60,16 +59,9 @@ static NSMutableDictionary *_viewTypes=nil;
 
 - (void)_setDocumentView:(id)view
 {
-    [[self _frameScrollView] setDocumentView: view];
-    
-    // Set the size of the new document scroll view to the size
-    // of the IFWebView.
-    [[self _frameScrollView] setFrame:[self frame]];
-    
-    [view retain];
-    [_private->documentView release];
-    _private->documentView = view;
+    [[self frameScrollView] setDocumentView: view];    
 }
+
 
 - (void)_setController: (IFWebController *)controller
 {
@@ -77,33 +69,6 @@ static NSMutableDictionary *_viewTypes=nil;
     _private->controller = controller;    
 }
 
-- (void)_setFrameScrollView: (NSScrollView *)sv
-{
-    [sv retain];
-    [_private->frameScrollView release];
-    _private->frameScrollView = sv;    
-    [sv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [self addSubview: sv];
-}
-
-- (NSScrollView *)_frameScrollView
-{
-    return _private->frameScrollView;    
-}
-
-- (void)_setupScrollers
-{
-    BOOL scrollsVertically;
-    BOOL scrollsHorizontally;
-
-    if ([self _frameScrollView]) {
-        scrollsVertically = [self bounds].size.height > [[self _frameScrollView] frame].size.height;
-        scrollsHorizontally = [self bounds].size.width > [[self _frameScrollView] frame].size.width;
-    
-        [[self _frameScrollView] setHasVerticalScroller: scrollsVertically];
-        [[self _frameScrollView] setHasHorizontalScroller: scrollsHorizontally];
-    }
-}
 
 + (NSMutableDictionary *)_viewTypes
 {
@@ -117,6 +82,7 @@ static NSMutableDictionary *_viewTypes=nil;
     }
     return _viewTypes;
 }
+
 
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType
 {

@@ -3,16 +3,17 @@
 	    
     Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <WebKit/IFWebDataSource.h>
-#import <WebKit/IFWebDataSourcePrivate.h>
-#import <WebKit/IFWebViewPrivate.h>
-#import <WebKit/IFWebFramePrivate.h>
-#import <WebKit/IFPreferencesPrivate.h>
-#import <WebKit/IFWebController.h>
-#import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFHTMLView.h>
 #import <WebKit/IFHTMLViewPrivate.h>
+#import <WebKit/IFLocationChangeHandler.h>
+#import <WebKit/IFPreferencesPrivate.h>
+#import <WebKit/IFWebController.h>
+#import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebDataSourcePrivate.h>
+#import <WebKit/IFWebFramePrivate.h>
+#import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/IFError.h>
@@ -137,12 +138,15 @@ static const char * const stateNames[6] = {
     
     _private->scheduledLayoutPending = NO;
     if (_private->state == IFWEBFRAMESTATE_LAYOUT_ACCEPTABLE) {
+        id documentView = [[self view] documentView];
+        
         if ([self controller])
             WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "%s:  performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
             
-        if([[[self view] documentView] isKindOfClass: NSClassFromString(@"IFHTMLView")])
-            [[[self view] documentView] setNeedsLayout: YES];
-        [[[self view] documentView] setNeedsDisplay: YES];
+        if([[self view] isDocumentHTML])
+            [documentView setNeedsLayout: YES];
+            
+        [documentView setNeedsDisplay: YES];
     }
     else {
         if ([self controller])
@@ -331,6 +335,7 @@ static const char * const stateNames[6] = {
             if (![ds isLoading]) {
                 id mainView = [[[self controller] mainFrame] view];
                 id thisView = [self view];
+                id mainDocumentView = [mainView documentView];
 
                 [self _setState: IFWEBFRAMESTATE_COMPLETE];
                 
@@ -340,30 +345,31 @@ static const char * const stateNames[6] = {
                 if ([mainView isDocumentHTML]){
                     // May need to relayout each time a frame is completely
                     // loaded.
-                    [[mainView documentView] setNeedsLayout: YES];
+                    [mainDocumentView setNeedsLayout: YES];
                 }
                 
                 if ([thisView isDocumentHTML]){
                     // Layout this view (eventually).
                     [[thisView documentView] setNeedsLayout: YES];
                 }
-                
-                // Draw this view (eventually), and it's scroll view
-                // (eventually).
-                [thisView setNeedsDisplay: YES];
-                if ([thisView _frameScrollView])
-                    [[thisView _frameScrollView] setNeedsDisplay: YES];
 
-                // Force a relayout and draw NOW if we are complete are the top level.
-                if ([[self controller] mainFrame] == self) {
-                    [[mainView documentView] layout];
-                    [[mainView documentView] display];
-                }
- 
                 // Jump to anchor point, if necessary.
                 if ([ds _isDocumentHTML])
                     [[ds representation] part]->impl->gotoBaseAnchor();
-                   
+                                   
+                // Draw this view (eventually), and it's scroll view
+                // (eventually).
+                //[[thisView documentView] setNeedsDisplay: YES];
+                //[[thisView frameScrollView] setNeedsDisplay: YES];
+                [[thisView frameScrollView] display];
+                [[thisView documentView] display];
+
+                // Force a relayout and draw NOW if we are complete are the top level.
+                if ([[self controller] mainFrame] == self) {
+                    [mainDocumentView layout];
+                    [mainDocumentView display];
+                }
+ 
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
  
                 //if ([ds _isDocumentHTML])
