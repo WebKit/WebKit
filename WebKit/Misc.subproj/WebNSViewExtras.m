@@ -14,6 +14,9 @@
 #define WebDragStartHysteresisX			5.0
 #define WebDragStartHysteresisY			5.0
 #define WebMaxDragImageSize 			NSMakeSize(400, 400)
+#define WebMaxOriginalImageArea			(1500 * 1500)
+#define WebDragIconRightInset			7.0
+#define WebDragIconBottomInset			3.0
 
 #ifdef DEBUG_VIEWS
 @interface NSObject (Foo)
@@ -175,28 +178,38 @@
                       fileType:(NSString *)fileType
                          title:(NSString *)title
                          event:(NSEvent *)event
-{    
-    NSSize originalSize = rect.size;
-    NSPoint origin = rect.origin;
-    
-    NSImage *dragImage = [[image copy] autorelease];
-    [dragImage setScalesWhenResized:YES];
-    [dragImage setSize:originalSize];
-
-    [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
-    NSSize newSize = [dragImage size];
-
-    [dragImage _web_dissolveToFraction:WebDragImageAlpha];
-
+{
     NSPoint mouseDownPoint = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
+    NSImage *dragImage;
+    NSPoint origin;
+    NSSize offset;
 
-    // Properly orient the drag image and orient it differently if it's smaller than the original
-    origin.x = mouseDownPoint.x - (((mouseDownPoint.x - origin.x) / originalSize.width) * newSize.width);
-    origin.y = origin.y + originalSize.height;
-    origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
-
-    NSSize offset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
+    if ([image size].height * [image size].width <= WebMaxOriginalImageArea) {
+        NSSize originalSize = rect.size;
+        origin = rect.origin;
+        
+        dragImage = [[image copy] autorelease];
+        [dragImage setScalesWhenResized:YES];
+        [dragImage setSize:originalSize];
+    
+        [dragImage _web_scaleToMaxSize:WebMaxDragImageSize];
+        NSSize newSize = [dragImage size];
+    
+        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+    
+        NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
+    
+        // Properly orient the drag image and orient it differently if it's smaller than the original
+        origin.x = mouseDownPoint.x - (((mouseDownPoint.x - origin.x) / originalSize.width) * newSize.width);
+        origin.y = origin.y + originalSize.height;
+        origin.y = mouseDownPoint.y - (((mouseDownPoint.y - origin.y) / originalSize.height) * newSize.height);
+    
+        offset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
+    } else {
+        dragImage = [[NSWorkspace sharedWorkspace] iconForFileType:fileType];
+        offset = NSMakeSize([dragImage size].width - WebDragIconRightInset, -WebDragIconBottomInset);
+        origin = NSMakePoint(mouseDownPoint.x - offset.width, mouseDownPoint.y - offset.height);
+    }
 
     NSArray *filesTypes = [NSArray arrayWithObject:fileType];
     

@@ -1,3 +1,12 @@
+2003-06-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3167792>: hang in _web_dragPromisedImage dragging 4 MB image
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:rect:URL:fileType:title:event:]): if the original image is greater than 1500x1500, use a file icon for the drag image to avoid hanging
+
 2003-06-02  Richard Williamson  <rjw@apple.com>
 
 	Fix for 3250352.
@@ -19,6 +28,7 @@
 	Fixed: <rdar://problem/3154910>: No video when viewing QT plug-in content at some pages but audio works
 
 	This fix works around QT plug-in bug 3275755, but I think the fix is logical and worth keeping even after 3275755 is fixed.
+
 
 	Eric Carlson:
 	The problem happens when you call NPP_SetWindow with a 0 width or height more than once. The first call to NPP_SetWindow always seems to have width and height set to 0, but the next call sometimes has it set to the correct values (those in the EMBED tag). This is when it draws successfully. It seems to me that the fix is to always pass the correct width and height to NPP_SetWindow. You always position the plug-in far offscreen (1000000, -52) and set the clip region to an empty rect (48576, 52, 48576, 52) so there isn't really any danger of the plug-in drawing anyway. Additionally, you pass the correct width and height in the call to NPP_New before the first call to NPP_SetWindow.
