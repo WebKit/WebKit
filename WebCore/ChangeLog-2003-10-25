@@ -1,3 +1,13 @@
+2002-01-30  Kenneth Kocienda  <kocienda@apple.com>
+
+        Added *.lo, *.la, and .libs to .cvsignore files
+        
+	* .cvsignore:
+	* src/.cvsignore:
+	* src/kdelibs/khtml/css/.cvsignore:
+	* src/kdelibs/khtml/misc/.cvsignore:
+	* src/kdelibs/kjs/.cvsignore:
+
 2002-01-29  Richard Williamson  <rjw@apple.com>
 
     Fixed QConstString to make a copy on initial chars.

@@ -1,3 +1,9 @@
+2002-01-30  Kenneth Kocienda  <kocienda@apple.com>
+
+        Added *.lo, *.la, Icon, and .libs to .cvsignore files
+        
+	* .cvsignore:
+
 2002-01-29  Richard Williamson  <rjw@apple.com>
 
 	* ChangeLog:

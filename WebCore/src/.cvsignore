@@ -3,3 +3,6 @@ Makefile
 .deps
 *.dylib
 *-stamp
+*.la
+*.lo
+.libs

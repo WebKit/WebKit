@@ -6,3 +6,6 @@ grammar.cpp.h
 grammar.h
 .deps
 *-stamp
+*.lo
+*.la
+.libs
