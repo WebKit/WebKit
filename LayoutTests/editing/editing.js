@@ -39,6 +39,20 @@ function extendSelectionForwardByCharacterCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execExtendSelectionForwardByLineCommand() {
+    selection.modify("extend", "forward", "line");
+}
+function extendSelectionForwardByCharacterCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execExtendSelectionForwardByCharacterCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execExtendSelectionForwardByCharacterCommand();
+    }
+}
+//-------------------------------------------------------------------------------------------------------
+
 function execMoveSelectionBackwardByCharacterCommand() {
     selection.modify("move", "backward", "character");
 }
@@ -81,6 +95,7 @@ function boldCommand() {
         execBoldCommand();
     }
 }
+
 
 //-------------------------------------------------------------------------------------------------------
 
@@ -243,6 +258,7 @@ function runEditingTest() {
 
 //-------------------------------------------------------------------------------------------------------
 
+
 function execBackColorCommand() {
     document.execCommand("BackColor", false, "Chartreuse");
 }
@@ -256,22 +272,9 @@ function backColorCommand() {
     }
 }
 
-//-------------------------------------------------------------------------------------------------------
-
-function execForeColorCommand() {
-    document.execCommand("ForeColor", false, "Purple");
-}
-function foreColorCommand() {
-    if (commandDelay > 0) {
-        window.setTimeout(execForeColorCommand, commandCount * commandDelay);
-        commandCount++;
-    }
-    else {
-        execForeColorCommand();
-    }
-}
 
 //-------------------------------------------------------------------------------------------------------
+
 
 function execFontNameCommand() {
     document.execCommand("FontName", false, "Courier");
@@ -288,15 +291,18 @@ function fontNameCommand() {
 
 //-------------------------------------------------------------------------------------------------------
 
-function execFontSizeCommand() {
-    document.execCommand("FontSize", false, "48px");
+
+function runCommand(command, arg1, arg2) {
+    document.execCommand(command,arg1,arg2);
 }
-function fontSizeCommand() {
+
+function executeCommand(command,arg1,arg2) {
     if (commandDelay > 0) {
-        window.setTimeout(execFontSizeCommand, commandCount * commandDelay);
+        window.setTimeout(runCommand, commandCount * commandDelay);
         commandCount++;
     }
     else {
-        execFontSizeCommand();
+        runCommand(command,arg1,arg2);
     }
 }
+
