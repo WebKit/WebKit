@@ -1204,6 +1204,17 @@ NSMutableDictionary *countInvocations;
     }
 }
 
++ (NSURL *)URLFromPasteboard:(NSPasteboard *)pasteboard
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
++ (NSURL *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard
+{
+    ERROR("unimplemented");
+    return nil;
+}
 
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
@@ -1819,6 +1830,34 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (double)estimatedProgress
 {
     return _private->progressValue;
+}
+
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    ERROR("unimplemented");
+    return NSDragOperationNone;
+}
+
+- (NSArray *)pasteboardTypesForSelection
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    ERROR("unimplemented");
+}
+
+- (NSArray *)pasteboardTypesForElement:(NSDictionary *)element
+{
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (void)writeElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
+{
+    ERROR("unimplemented");
 }
 
 @end

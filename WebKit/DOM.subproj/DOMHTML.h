@@ -629,8 +629,9 @@
 - (void)setCellPadding:(NSString *)cellPadding;
 - (NSString *)cellSpacing;
 - (void)setCellSpacing:(NSString *)cellSpacing;
-- (NSString *)frame;
-- (void)setFrame:(NSString *)frame;
+// frameBorders corresponds to the frame method
+- (NSString *)frameBorders; 
+- (void)setFrameBorders:(NSString *)frameBorders;
 - (NSString *)rules;
 - (void)setRules:(NSString *)rules;
 - (NSString *)summary;

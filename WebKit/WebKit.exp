@@ -34,6 +34,7 @@ _WebActionModifierFlagsKey
 _WebActionNavigationTypeKey
 _WebActionNavigationTypeKey
 _WebActionOriginalURLKey
+_WebElementDOMNodeKey
 _WebElementFrameKey
 _WebElementImageAltStringKey
 _WebElementImageKey

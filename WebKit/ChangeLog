@@ -1,3 +1,27 @@
+2004-05-13  Chris Blumenberg  <cblu@apple.com>
+
+	- Added stubs for WebView action and drag & drop customization API's
+	- Fixed: <rdar://problem/3616555>: (API: Make DOM extensions and WebKit DOM operations public)
+
+        Reviewed by rjw.
+
+        * DOM.subproj/WebDOMOperations.h: added remaining DOM operations
+        * DOM.subproj/WebDOMOperationsPrivate.h:
+	* Misc.subproj/WebKit.h: added new public headers
+        * WebKit.pbproj/project.pbxproj:
+	* WebKit.exp: added symbol for WebElementDOMNodeKey
+        * WebView.subproj/WebUIDelegate.h: added new UI delegate methods
+        * WebView.subproj/WebView.h: added new pasteboard related methods
+        * WebView.subproj/WebView.m:
+        (+[WebView URLFromPasteboard:]): new stub
+        (+[WebView URLTitleFromPasteboard:]): new stub
+        (-[WebView dragOperationForDraggingInfo:]): new stub
+        (-[WebView pasteboardTypesForSelection]): new stub
+        (-[WebView writeSelectionWithPasteboardTypes:toPasteboard:]): new stub
+        (-[WebView pasteboardTypesForElement:]): new stub
+        (-[WebView writeElement:withPasteboardTypes:toPasteboard:]): new stub
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
 	Changed imports of all DOM headers.  DOM headers

@@ -12,7 +12,7 @@
     access to Java VM via the plug-in.
 */
 
-@interface NSObject <WebJavaPlugIn>
+@interface NSObject (WebJavaPlugIn)
 
 /*!
 	@method webPlugInGetApplet

@@ -26,9 +26,6 @@ typedef struct _WebResourceDelegateImplementationCache {
     uint delegateImplementsIdentifierForRequest:1;
 } WebResourceDelegateImplementationCache;
 
-// To be made public:
-extern NSString *WebElementDOMNodeKey;
-
 extern NSString *_WebCanGoBackKey;
 extern NSString *_WebCanGoForwardKey;
 extern NSString *_WebEstimatedProgressKey;

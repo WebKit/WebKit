@@ -3202,14 +3202,14 @@ using DOM::NodeImpl;
     [self _tableElementImpl]->setAttribute(ATTR_CELLSPACING, cellSpacing);
 }
 
-- (NSString *)frame
+- (NSString *)frameBorders
 {
     return [self _tableElementImpl]->getAttribute(ATTR_FRAME);
 }
 
-- (void)setFrame:(NSString *)frame
+- (void)setFrameBorders:(NSString *)frameBorders
 {
-    [self _tableElementImpl]->setAttribute(ATTR_FRAME, frame);
+    [self _tableElementImpl]->setAttribute(ATTR_FRAME, frameBorders);
 }
 
 - (NSString *)rules

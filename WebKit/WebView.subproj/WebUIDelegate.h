@@ -320,4 +320,66 @@ enum {
 */
 - (NSArray *)webView:(WebView *)sender contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
 
+/*!
+    @method webView:validateUserInterfaceItem:defaultValidation:
+    @abstract Controls UI validation
+    @param webView The WebView sending the delegate method
+    @param item The user interface item being validated
+    @pararm defaultValidation Whether or not the WebView thinks the item is valid
+    @discussion This method allows the UI delegate to control WebView's validation of user interface items.
+    See WebView.h to see the methods to that WebView can currently validate. See NSUserInterfaceValidations and
+    NSValidatedUserInterfaceItem for information about UI validation.
+*/
+- (BOOL)webView:(WebView *)webView validateUserInterfaceItem:(id <NSValidatedUserInterfaceItem>)item defaultValidation:(BOOL)defaultValidation;
+
+/*!
+    @method webView:shouldPerformAction:fromSender:
+    @abstract Controls actions
+    @param webView The WebView sending the delegate method
+    @param action The action being sent
+    @param sender The sender of the action
+    @discussion This method allows the UI delegate to control WebView's behavior when an action is being sent.
+    For example, if the action is copy:, the delegate can return YES to allow WebView to perform its default
+    copy behavior or return NO and perform copy: in some other way. See WebView.h to see the actions that
+    WebView can perform.
+*/
+- (BOOL)webView:(WebView *)webView shouldPerformAction:(SEL)action fromSender:(id)sender;
+
+/*!
+    @method webView:shouldBeginDragForElement:dragImage:mouseDownEvent:mouseDraggedEvent:
+    @abstract Controls behavior when dragging from a WebView
+    @param webView The WebView sending the delegate method
+    @param element The element being dragged
+    @param dragImage The drag image representing the element being dragged
+    @param mouseDownEvent The mouse down event that started the drag
+    @param mouseDraggedEvent The mouse dragged event that started the drag
+    @discussion This method allows the UI delegate to control WebView's behavior when a drag has begun. The delegate
+    can return YES to allow WebView to start the drag or return NO to disallow the drag or customize the drag in some
+    other way.
+*/
+- (BOOL)webView:(WebView *)webView shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent;
+
+/*!
+    @method webView:dragOperationForDraggingInfo:overElement:
+    @abstract Controls behavior when dragging to a WebView
+    @param webView The WebView sending the delegate method
+    @param draggingInfo The dragging info of the drag
+    @param element The element that is under the drag
+    @discussion This method allows the UI delegate to control WebView's behavior when something is being dragged to
+    the WebView. The delegate can return the value returned by WebView's dragOperationForDraggingInfo: method,
+    NSDragOperationNone to invalidate the drag or another drag operation.
+*/
+- (NSDragOperation)webView:(WebView *)webView dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo overElement:(NSDictionary *)element;
+
+/*!
+    @method webView:shouldProcessDragWithDraggingInfo:overElement:
+    @abstract Controls behavior when something is dropped on a WebView
+    @param webView The WebView sending the delegate method
+    @param draggingInfo The dragging info of the drag
+    @param element The element that is under the drag
+    @discussion This method allows the UI delegate to control WebView's behavior when something is dropped on a WebView.
+    The delegate can return YES to allow WebView to process the drag or return NO and process the drag in some other way.
+*/
+- (BOOL)webView:(WebView *)webView shouldProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo overElement:(NSDictionary *)element;
+
 @end

@@ -1,3 +1,15 @@
+2004-05-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3616555>: (API: Make DOM extensions and WebKit DOM operations public)
+
+        Reviewed by rjw.
+
+        * kwq/DOM.h: added DOMExtensions.h
+        * kwq/DOMHTML.h: renamed frame on DOMHTMLTableElement to frameBorders to avoid NSView conflicts
+        * kwq/DOMHTML.mm:
+        (-[DOMHTMLTableElement frameBorders]):
+        (-[DOMHTMLTableElement setFrameBorders:]):
+
 2004-05-13  Richard Williamson   <rjw@apple.com>
 
 	Changed imports of all DOM headers.  DOM headers

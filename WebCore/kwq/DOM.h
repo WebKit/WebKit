@@ -24,10 +24,11 @@
  */
 
 #import <WebCore/DOMCore.h>
-#import <WebCore/DOMViews.h>
-#import <WebCore/DOMEvents.h>
-#import <WebCore/DOMStylesheets.h>
 #import <WebCore/DOMCSS.h>
-#import <WebCore/DOMTraversal.h>
-#import <WebCore/DOMRange.h>
+#import <WebCore/DOMExtensions.h>
+#import <WebCore/DOMEvents.h>
 #import <WebCore/DOMHTML.h>
+#import <WebCore/DOMRange.h>
+#import <WebCore/DOMStylesheets.h>
+#import <WebCore/DOMTraversal.h>
+#import <WebCore/DOMViews.h>

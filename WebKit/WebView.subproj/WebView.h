@@ -26,6 +26,7 @@
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebwebViewPolicyDelegate's clickPolicyForElement.
 
+extern NSString *WebElementDOMNodeKey;          // DOMNode of the element
 extern NSString *WebElementFrameKey;		// WebFrame of the element
 extern NSString *WebElementImageAltStringKey;	// NSString of the ALT attribute of the image element
 extern NSString *WebElementImageKey;		// NSImage of the image element
@@ -123,6 +124,26 @@ extern NSString *WebViewProgressFinishedNotification;
     array.
 */
 + (void)setMIMETypesShownAsHTML:(NSArray *)MIMETypes;
+
+/*!
+    @method URLFromPasteboard:
+    @abstract Returns a URL from a pasteboard
+    @param pasteboard The pasteboard with a URL
+    @result A URL if the pasteboard has one. Nil if it does not.
+    @discussion This method differs than NSURL's URLFromPasteboard method in that it tries multiple pasteboard types
+    including NSURLPboardType to find a URL on the pasteboard.
+*/
++ (NSURL *)URLFromPasteboard:(NSPasteboard *)pasteboard;
+
+/*!
+    @method URLTitleFromPasteboard:
+    @abstract Returns a URL title from a pasteboard
+    @param pasteboard The pasteboard with a URL title
+    @result A URL title if the pasteboard has one. Nil if it does not.
+    @discussion This method returns a title that refers a URL on the pasteboard. An example of this is the link label
+    which is the text inside the anchor tag.
+*/
++ (NSURL *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard;
 
 /*!
     @method initWithFrame:frameName:groupName:
@@ -457,6 +478,44 @@ extern NSString *WebViewProgressFinishedNotification;
     WebResourceLoadDelegate.
 */
 - (double)estimatedProgress;
+
+/*!
+    @method dragOperationForDraggingInfo:
+    @abstract Returns a drag operation for a dragging info
+    @param draggingInfo The dragging info
+    @result The drag operation
+*/
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+
+/*!
+    @method pasteboardTypesForSelection
+    @abstract Returns the pasteboard types that WebView can use for the current selection
+*/
+- (NSArray *)pasteboardTypesForSelection;
+
+/*!
+    @method writeSelectionWithPasteboardTypes:toPasteboard:
+    @abstract Writes the current selection to the pasteboard
+    @param types The types that WebView will write to the pasteboard
+    @param pasteboard The pasteboard to write to
+*/
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+
+/*!
+    @method pasteboardTypesForElement:
+    @abstract Returns the pasteboard types that WebView can use for an element
+    @param element The element
+*/
+- (NSArray *)pasteboardTypesForElement:(NSDictionary *)element;
+
+/*!
+    @method writeElement:withPasteboardTypes:toPasteboard:
+    @abstract Writes an element to the pasteboard
+    @param element The element to write to the pasteboard
+    @param types The types that WebView will write to the pasteboard
+    @param pasteboard The pasteboard to write to
+*/
+- (void)writeElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 
 @end
 

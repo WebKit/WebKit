@@ -47,7 +47,7 @@ extern NSString * const DOMException;
 
 enum {
     //
-    // DOM exception codesxx
+    // DOM exception codes
     //
     DOM_INDEX_SIZE_ERR                = 1,
     DOM_DOMSTRING_SIZE_ERR            = 2,
