@@ -1,5 +1,13 @@
 2002-11-15  David Hyatt  <hyatt@apple.com>
 
+	Fix the problem where the last lines of paragrpahs were getting
+	justified incorrectly.
+	
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+
+2002-11-15  David Hyatt  <hyatt@apple.com>
+
 	Fix bustage with <nobr> tags.  Inline nowrap elements were
 	breaking on images when they shouldn't have.
 	

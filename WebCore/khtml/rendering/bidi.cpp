@@ -1437,8 +1437,12 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
         //else if (lBreak.pos > 0)
         //    lBreak.pos--;
         else if (lBreak.obj == 0 && trailingSpaceObject->isText()) {
-            lBreak.obj = trailingSpaceObject;
-            lBreak.pos = static_cast<RenderText *>(trailingSpaceObject)->length() - 1;
+            // Add a new end midpoint that stops right at the very end.
+            BidiIterator* endMid = new (trailingSpaceObject->renderArena()) BidiIterator();
+            endMid->obj = trailingSpaceObject;
+            RenderText* text = static_cast<RenderText *>(trailingSpaceObject);
+            endMid->pos = text->length() >=2 ? text->length() - 2 : 0;
+            midpoints.append(endMid);
         }
     }
     
