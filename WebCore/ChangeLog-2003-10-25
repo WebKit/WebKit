@@ -1,5 +1,11 @@
 2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
 
+        Checked in the missing file
+        
+	* include/WCURLHandle.h:
+
+2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
+
         Changed over to the new cache loader in WebFoundation
         
 	* src/kwq/KWQKHTMLPart.h:
