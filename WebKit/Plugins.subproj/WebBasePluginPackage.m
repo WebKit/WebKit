@@ -22,7 +22,7 @@
 #define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
 
 #define QuickTimeCarbonPluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
-#define QuickTimeCocoaPluginIdentifier        @"com.apple.qtcocoaplugin"
+#define QuickTimeCocoaPluginIdentifier        @"com.apple.quicktime.webplugin"
 
 @interface NSArray (WebPluginExtensions)
 - (NSArray *)_web_lowercaseStrings;
