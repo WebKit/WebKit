@@ -851,7 +851,6 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
 #ifdef APPLE_CHANGES
 
     bool canDraw = false;
-#ifdef APPLE_PROGRESSIVE_LOADING_WORKS
     if (!eof) {
         // If we didn't get all the data for the image we will always
         // attempt to load the image incrementally.  If the AppKit is
@@ -864,8 +863,6 @@ void CachedImage::data ( QBuffer &_buffer, bool eof )
     if (p)
         canDraw = p->receivedData (_buffer.buffer(), eof);
         
-#endif
-
     // If we're at eof and don't have a pixmap yet, the data
     // must have arrived in one chunk.  This avoids the attempt
     // to perform incremental decoding.

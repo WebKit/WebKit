@@ -26,7 +26,6 @@ static NSMutableArray *activeImageRenderers;
 
 - initWithSize:(NSSize)size
 {
-    lastStatus = -9999;
     return [super initWithSize:size];
 }
 
@@ -44,47 +43,39 @@ static NSMutableArray *activeImageRenderers;
 
 - (BOOL)incrementalLoadWithBytes: (const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
-// FIXME:  This won't compile unless you have > 6C48.
-#ifdef APPLE_PROGRESSIVE_IMAGE_LOADING
-
     NSBitmapImageRep* imageRep = [[self representations] objectAtIndex:0];
     //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
     NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
     int status;
     
-    lastLength = length;
-    lastStatus = status = [imageRep incrementalLoadFromData:data complete:isComplete];
+    status = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];
     switch (status){
     case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data
-        printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
-        return (lastReturn = NO);
+        //printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
+        return NO;
     case NSImageRepLoadStatusReadingHeader:     // image format known, reading header. not yet valid. more data needed
-        printf ("NSImageRepLoadStatusReadingHeader size %d, isComplete %d\n", length, isComplete);
-        return (lastReturn = NO);
+        //printf ("NSImageRepLoadStatusReadingHeader size %d, isComplete %d\n", length, isComplete);
+        return NO;
     case NSImageRepLoadStatusWillNeedAllData:   // can't read incrementally. will wait for complete data to become avail.
-        printf ("NSImageRepLoadStatusWillNeedAllData size %d, isComplete %d\n", length, isComplete);
-        return (lastReturn = NO);
+        //printf ("NSImageRepLoadStatusWillNeedAllData size %d, isComplete %d\n", length, isComplete);
+        return NO;
     case NSImageRepLoadStatusInvalidData:       // image decompression encountered error.
-        printf ("NSImageRepLoadStatusInvalidData size %d, isComplete %d\n", length, isComplete);
-        return (lastReturn = NO);
+        //printf ("NSImageRepLoadStatusInvalidData size %d, isComplete %d\n", length, isComplete);
+        return NO;
     case NSImageRepLoadStatusUnexpectedEOF:     // ran out of data before full image was decompressed.
-        printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
-        return (lastReturn = NO);
+        //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
+        return NO;
     case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
-        printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
+        //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
         // Force the image to use the pixel size and ignore the dpi.
         [imageRep setSize:NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh])];
-        return (lastReturn = YES);
+        return YES;
     default:
-        printf ("incrementalLoadFromData:complete: returned %d,  size %d, isComplete %d (wide %d, hight %d)\n", status, length, isComplete, [imageRep pixelsWide], [imageRep pixelsHigh]);
-        return (lastReturn = YES);
+        return NO;
     }
-    return (lastReturn = NO);
-#else
-    [NSException raise: @"TEMPORARY!!  This code will be removed." format: @"foo"];
-    return 0;
-#endif
+    
+    return NO;
 }
 
 - (void)dealloc

@@ -32,11 +32,7 @@
 
 QPixmap::QPixmap()
 {
-#ifdef APPLE_PROGRESSIVE_IMAGE_LOADING
     imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRenderer] retain];
-#else
-    imageRenderer = nil;
-#endif
     needCopyOnWrite = false;
 }
 

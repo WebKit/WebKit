@@ -1,5 +1,16 @@
 2002-06-25  Richard Williamson  <rjw@apple.com>
 
+        Enabled progressive image loading code.
+        
+        * WebCoreSupport.subproj/IFImageRenderer.h:
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer initWithSize:]):
+        (-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+        * WebCoreSupport.subproj/IFImageRendererFactory.m:
+        (-[IFImageRendererFactory imageRenderer]):
+
+2002-06-25  Richard Williamson  <rjw@apple.com>
+
        Extended our text measurement rounding work-around for integer-float 
        mismatch to round on word boundaries as well as spaces.
 
