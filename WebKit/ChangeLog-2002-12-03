@@ -1,4 +1,21 @@
-y2002-10-21  Darin Adler  <darin@apple.com>
+2002-10-21  Darin Adler  <darin@apple.com>
+
+	- fixed 3080246 -- REGRESSION: Animated GIFs sometimes disappear after drag or scroll
+
+	Once more, with feeling.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _setNeedsLayoutIfSizeChanged:]): Added setNeedsDisplay:YES here. The lack
+	of this is what caused the bug. But also don't do any work when the size doesn't change.
+	This prevents this from being called at all in the scrolling case, which is what we want.
+        (-[WebHTMLView viewWillMoveToSuperview:]): Just the name change.
+        (-[WebHTMLView layout]): Store the layout size for the above methods.
+        * WebView.subproj/WebHTMLViewPrivate.h: Add a place to store the size.
+
+        * WebView.subproj/WebImageView.m: (-[WebImageView layout]):
+	Roll this change back in.
+
+2002-10-21  Darin Adler  <darin@apple.com>
 
 	- fixed 3080246 -- REGRESSION: Animated GIFs sometimes disappear after drag or scroll
 

@@ -61,6 +61,8 @@
     WebImageRenderer *image = [representation image];
     if (image) {
         [self setFrameSize:[image size]];
+    } else {
+        [self setFrameSize:NSMakeSize(0, 0)];
     }
 }
 

@@ -172,9 +172,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver: self name: NSWindowDidResignMainNotification object: nil];
 }
 
-- (void)_setNeedsLayoutToYes:(NSNotification *)notification
+- (void)_setNeedsLayoutIfSizeChanged:(NSNotification *)notification
 {
-    [self setNeedsLayout:YES];
+    if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
+        [self setNeedsLayout:YES];
+        [self setNeedsDisplay:YES];
+    }
 }
 
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview
@@ -196,9 +199,9 @@
     }
 
     if (newSuperview) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutToYes:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutIfSizeChanged:) 
             name:NSViewFrameDidChangeNotification object:newSuperview];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutToYes:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutIfSizeChanged:) 
             name:NSViewBoundsDidChangeNotification object:newSuperview];
     }
 }
@@ -269,6 +272,8 @@
     LOG(View, "%@ doing layout", self);
     [[self _bridge] forceLayout];
     _private->needsLayout = NO;
+    
+    _private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
     
     [self setNeedsDisplay:YES];
 

@@ -30,6 +30,8 @@
     NSDictionary *draggingImageElement;
     
     BOOL lastMouseOverElementWasNotNil;
+    
+    NSSize lastLayoutSize;
 }
 @end
 
