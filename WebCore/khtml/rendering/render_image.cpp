@@ -118,12 +118,8 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 
     bool needlayout = false;
 
-    // In the case of generated image content using :before/:after, we aren't in the
-    // tree yet.  We don't need to worry about doing this check, since we'll get a
-    // layout when we get added in to the render tree hierarchy anyway.
     // Image dimensions have been changed, see what needs to be done
-     if ( parent() &&
-         ( o->pixmap_size().width() != intrinsicWidth() ||
+     if ( ( o->pixmap_size().width() != intrinsicWidth() ||
            o->pixmap_size().height() != intrinsicHeight() || iwchanged) )
     {
 //          qDebug("image dimensions have been changed, old: %d/%d  new: %d/%d",
@@ -135,17 +131,23 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
             setIntrinsicHeight( o->pixmap_size().height() );
         }
 
-        // lets see if we need to relayout at all..
-        int oldwidth = m_width;
-        int oldheight = m_height;
-        calcWidth();
-        calcHeight();
-
-        if(iwchanged || m_width != oldwidth || m_height != oldheight)
-            needlayout = true;
-
-        m_width = oldwidth;
-        m_height = oldheight;
+        // In the case of generated image content using :before/:after, we aren't in the
+        // tree yet.  We don't need to worry about doing this check, since we'll get a
+        // layout when we get added in to the render tree hierarchy anyway.
+         
+        if (parent()) {
+            // lets see if we need to relayout at all..
+            int oldwidth = m_width;
+            int oldheight = m_height;
+            calcWidth();
+            calcHeight();
+    
+            if(iwchanged || m_width != oldwidth || m_height != oldheight)
+                needlayout = true;
+    
+            m_width = oldwidth;
+            m_height = oldheight;
+        }
     }
 
 #if APPLE_CHANGES
