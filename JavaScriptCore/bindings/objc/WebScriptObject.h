@@ -57,7 +57,7 @@
     and unwrapped when returned to ObjectiveC.  Similar conversion happens in the
     other direction.
 */
-@interface NSObject (WebScriptMethods)
+@interface NSObject (WebScripting)
 
 /*!
     @method webScriptNameForSelector:

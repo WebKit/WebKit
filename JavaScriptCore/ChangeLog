@@ -1,3 +1,12 @@
+2004-05-27  Richard Williamson   <rjw@apple.com>
+
+	Renamed WebScriptMethods to WebScripting based on feedback
+	from Nancy.
+
+        Reviewed by Chris.
+
+        * bindings/objc/WebScriptObject.h:
+
 2004-05-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
