@@ -194,8 +194,31 @@ void XMLHttpRequest::changeState(XMLHttpRequestState newState)
   }
 }
 
+bool XMLHttpRequest::urlMatchesDocumentDomain(const KURL& _url) const
+{
+  KURL documentURL(doc->URL());
+
+  // a local file can load anything
+  if (documentURL.protocol() != "file") {
+    return true;
+  }
+
+  // but a remote document can only load from the same port on the server
+  if (documentURL.protocol() == _url.protocol() &&
+      documentURL.host() == _url.host() &&
+      documentURL.port() == _url.port()) {
+    return true;
+  }
+
+  return false;
+}
+
 void XMLHttpRequest::open(const QString& _method, const KURL& _url, bool _async)
 {
+  if (!urlMatchesDocumentDomain(_url)) {
+    return;
+  }
+
   method = _method;
   url = _url;
   async = _async;
@@ -352,6 +375,10 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
 
 void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
 {
+  if (!urlMatchesDocumentDomain(url)) {
+    job->kill();
+    job = 0;
+  }
 }
 
 #if APPLE_CHANGES

@@ -28,6 +28,7 @@
 @protocol WebCoreResourceLoader <NSObject>
 
 - (void)receivedResponse:(NSURLResponse *)response;
+- (void)redirectedToURL:(NSURL *)url;
 
 - (void)addData:(NSData *)data;
 

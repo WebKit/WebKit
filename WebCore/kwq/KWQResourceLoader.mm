@@ -58,6 +58,13 @@ using KIO::TransferJob;
     _job->emitReceivedResponse(response);
 }
 
+- (void)redirectedToURL:(NSURL *)url
+{
+    ASSERT(url);
+    ASSERT(_job);
+    _job->emitRedirection( KURL(url) );
+}
+
 - (void)addData:(NSData *)data
 {
     ASSERT(data);

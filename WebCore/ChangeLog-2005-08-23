@@ -1,3 +1,18 @@
+2003-11-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/3487185>: implement security checks for XMLHttpRequest
+	
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::open): Refuse to start if the URL is not one
+	this document is allowed to access.
+        (KJS::XMLHttpRequest::slotRedirection): Stop the job if we redirect
+	to a URL the home document is not allowed to access.
+        * kwq/KWQResourceLoader.mm:
+        (-[KWQResourceLoader redirectedToURL:]): emit the right signal
+        * kwq/WebCoreResourceLoader.h: Prototype new method
+
 2003-12-01  Richard Williamson   <rjw@apple.com>
 
 Fixed parameter passing to applet.  Child elements are NOT valid in setStyle().  So we now either create the widget before needed with createWidgetIfNecessary.  This either happens when doing the first layout, or when JavaScript first references the applet element.

@@ -68,6 +68,7 @@ namespace KJS {
 
     Value getStatusText() const;
     Value getStatus() const;
+    bool urlMatchesDocumentDomain(const KURL&) const;
 
     XMLHttpRequestQObject *qObject;
 
