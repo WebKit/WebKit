@@ -36,6 +36,8 @@ public:
     static QWidget *desktop();
     static int startDragDistance();
     static QSize globalStrut();
+    static void	setOverrideCursor(const QCursor &);
+    static void restoreOverrideCursor();
 };
 
 #endif
