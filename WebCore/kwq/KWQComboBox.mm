@@ -418,6 +418,16 @@ void QComboBox::populateMenu()
     return resign;
 }
 
+- (BOOL)canBecomeKeyView {
+    // Simplified method from NSView; overridden to replace NSView's way of checking
+    // for full keyboard access with ours.
+    if (!KWQKHTMLPart::partForWidget([self widget])->tabsToAllControls()) {
+        return NO;
+    }
+    
+    return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
+}
+
 - (NSView *)nextKeyView
 {
     QWidget *widget = [self widget];

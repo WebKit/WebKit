@@ -1093,7 +1093,10 @@ bool KWQKHTMLPart::tabsToLinks() const
 
 bool KWQKHTMLPart::tabsToAllControls() const
 {
-    return ([_bridge keyboardUIMode] & WebCoreKeyboardAccessFull);
+    if ([_bridge keyboardUIMode] & WebCoreKeyboardAccessFull)
+        return !KWQKHTMLPart::currentEventIsKeyboardOptionTab();
+    else
+        return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
 }
 
 QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
@@ -1271,19 +1274,28 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     checkCompleted();
 }
 
-WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
+KWQKHTMLPart *KWQKHTMLPart::partForWidget(const QWidget *widget)
 {
     ASSERT_ARG(widget, widget);
-
+    
     NodeImpl *node = nodeForWidget(widget);
     if (node) {
-	return partForNode(node)->bridge() ;
+	return partForNode(node);
     }
     
     // Assume all widgets are either form controls, or KHTMLViews.
     const KHTMLView *view = dynamic_cast<const KHTMLView *>(widget);
     ASSERT(view);
-    return KWQ(view->part())->bridge();
+    return KWQ(view->part());
+}
+
+WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
+{
+    ASSERT_ARG(widget, widget);
+    
+    KWQKHTMLPart *part = partForWidget(widget);
+    ASSERT(part);
+    return part->bridge();
 }
 
 KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)

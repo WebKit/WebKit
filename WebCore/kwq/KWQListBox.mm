@@ -421,6 +421,16 @@ void QListBox::setWritingDirection(QPainter::TextDirection d)
     return resign;
 }
 
+- (BOOL)canBecomeKeyView {
+    // Simplified method from NSView; overridden to replace NSView's way of checking
+    // for full keyboard access with ours.
+    if (!KWQKHTMLPart::partForWidget(_box)->tabsToAllControls()) {
+        return NO;
+    }
+    
+    return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
+}
+
 - (NSView *)nextKeyView
 {
     return _box && inNextValidKeyView

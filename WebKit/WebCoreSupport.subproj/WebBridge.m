@@ -1099,9 +1099,11 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     // turns on both bits.
     _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
     
-    // check for tabbing to links
+    // check for tabbing to links; also, we always do full keyboard access when this preference is set,
+    // regardless of the system preferences setting
     if ([[WebPreferences standardPreferences] tabsToLinks]) {
         _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
+        _keyboardUIMode |= WebCoreKeyboardAccessFull;
     }
 }
 

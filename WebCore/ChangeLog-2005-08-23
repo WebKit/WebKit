@@ -1,3 +1,30 @@
+2004-02-25  John Sullivan  <sullivan@apple.com>
+
+        WebCore part of fix for <rdar://problem/3546370>: add a way to tab to menus, 
+        checkmarks, and buttons without turning on Full Keyboard Acceess
+
+        Reviewed by Ken.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::tabsToAllControls):
+        now checks for option-tab like tabsToLinks
+        (KWQKHTMLPart::partForWidget):
+        new method, extracted from bridgeForWidget
+        (KWQKHTMLPart::bridgeForWidget):
+        now calls extracted method
+
+        * kwq/KWQButton.mm:
+        (-[KWQButton canBecomeKeyView]):
+        overridden to handle our rules about full keyboard access, different
+        than NSView's rules
+        * kwq/KWQComboBox.mm:
+        (-[KWQPopUpButton canBecomeKeyView]):
+        ditto
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView canBecomeKeyView]):
+        ditto
+        
 2004-02-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

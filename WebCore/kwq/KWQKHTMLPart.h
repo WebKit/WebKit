@@ -180,6 +180,7 @@ public:
     void createEmptyDocument();
 
     static WebCoreBridge *bridgeForWidget(const QWidget *);
+    static KWQKHTMLPart *partForWidget(const QWidget *);
     
     QString requestedURLString() const;
     QString incomingReferrer() const;

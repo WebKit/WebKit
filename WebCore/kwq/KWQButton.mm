@@ -152,6 +152,16 @@
     return view;
 }
 
+- (BOOL)canBecomeKeyView {
+    // Simplified method from NSView; overridden to replace NSView's way of checking
+    // for full keyboard access with ours.
+    if (!KWQKHTMLPart::partForWidget(button)->tabsToAllControls()) {
+        return NO;
+    }
+    
+    return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
+}
+
 -(NSView *)nextValidKeyView
 {
     inNextValidKeyView = YES;

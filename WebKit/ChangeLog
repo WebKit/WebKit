@@ -1,3 +1,15 @@
+2004-02-25  John Sullivan  <sullivan@apple.com>
+
+        WebKit part of fix for <rdar://problem/3546370>: add a way to tab to menus, 
+        checkmarks, and buttons without turning on Full Keyboard Acceess
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge _retrieveKeyboardUIModeFromPreferences:]):
+        turn on WebCoreKeyboardAccessFull bit whenever we turn on
+        WebCoreKeyboardAccessTabsToLinks bit
+
 2004-02-24  Chris Blumenberg  <cblu@apple.com>
 
 	I forgot to add these files in my last check-in.
