@@ -249,18 +249,6 @@ void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject
     // have no generated content and can now return.
     if (!newContentWanted)
         return;
-    
-    // From the CSS2 specification:
-    // User agents must ignore the following properties with :before and :after
-    // pseudo-elements: 'position', 'float', list properties, and table properties.
-    // Basically we need to ensure that no RenderLayer gets made for generated
-    // content.
-    pseudo->setOpacity(1.0f);
-    pseudo->setPosition(STATIC);
-    pseudo->setFloating(FNONE);
-    pseudo->setOverflow(OVISIBLE); // FIXME: Glazman's blog does this. Wacky.
-                                   // This property might need to be allowed if the
-                                   // generated content is a block.
 
     if (isInlineFlow() && pseudo->display() != INLINE)
         // According to the CSS2 spec (the end of section 12.1), the only allowed

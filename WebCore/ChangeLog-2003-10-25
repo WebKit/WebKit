@@ -1,3 +1,15 @@
+2003-10-20  David Hyatt  <hyatt@apple.com>
+
+	Fix generated content (before/after) so that it no longer has any restrictions on it.   CSS2.1 lifted 
+	restrictions preventing the floating/positioning of generated content.
+	
+        Reviewed by rjw
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+
 2003-10-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by David

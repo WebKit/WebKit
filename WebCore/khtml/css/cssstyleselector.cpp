@@ -488,12 +488,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
     // Cache our original display.
     style->setOriginalDisplay(style->display());
 
-    if (style->display() != NONE && e) {
+    if (style->display() != NONE) {
         // If we have a <td> that specifies a float property, in quirks mode we just drop the float
         // property.
         // Sites also commonly use display:inline/block on <td>s and <table>s.  In quirks mode we force
         // these tags to retain their display types.
-        if (!strictParsing) {
+        if (!strictParsing && e) {
             if (e->id() == ID_TD) {
                 style->setDisplay(TABLE_CELL);
                 style->setFloating(FNONE);
@@ -506,12 +506,9 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         // position or float an inline, compact, or run-in.  Cache the original display, since it
         // may be needed for positioned elements that have to compute their static normal flow
         // positions.  We also force inline-level roots to be block-level.
-        // FIXME: For now we do not mutate pseudo styles.  This is because we do not yet support the
-        // ability to position and float generated content.  This is per the CSS 2 spec, but it's changing
-        // in CSS2.1.  For now, we will just support CSS2.
         if (style->display() != BLOCK && style->display() != TABLE && style->display() != BOX &&
             (style->position() == ABSOLUTE || style->position() == FIXED || style->floating() != FNONE ||
-             e->getDocument()->documentElement() == e)) {
+             (e && e->getDocument()->documentElement() == e))) {
             if (style->display() == INLINE_TABLE)
                 style->setDisplay(TABLE);
             else if (style->display() == INLINE_BOX)
