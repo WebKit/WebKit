@@ -61,27 +61,29 @@ namespace DOM
   class Node;
   class HTMLEventListener;
   class EventListener;
-};
+}
 
 using DOM::TristateFlag;
 
 namespace khtml
 {
+  class CachedObject;
+  struct ChildFrame;
+  class CSSStyleSelector;
   class DocLoader;
+  class DrawContentsEvent;
+  class EditCommand;
+  class HTMLTokenizer;
+  class MouseDoubleClickEvent;
+  class MouseEvent;
+  class MouseMoveEvent;
+  class MousePressEvent;
+  class MouseReleaseEvent;
   class RenderPart;
   class RenderPartObject;
-  struct ChildFrame;
-  class MouseEvent;
-  class MousePressEvent;
-  class MouseDoubleClickEvent;
-  class MouseMoveEvent;
-  class MouseReleaseEvent;
-  class DrawContentsEvent;
-  class CachedObject;
   class RenderWidget;
-  class CSSStyleSelector;
-  class EditCommand;
-};
+  class XMLTokenizer;
+}
 
 namespace KJS {
     class Window;
@@ -158,8 +160,8 @@ class KHTMLPart : public KParts::ReadOnlyPart
   friend class DOM::DocumentImpl;
   friend class DOM::HTMLDocumentImpl;
   friend class KHTMLPartBrowserHostExtension;
-  friend class HTMLTokenizer;
-  friend class XMLTokenizer;
+  friend class khtml::HTMLTokenizer;
+  friend class khtml::XMLTokenizer;
   friend class khtml::RenderWidget;
   friend class khtml::CSSStyleSelector;
   friend class KHTMLPartIface;

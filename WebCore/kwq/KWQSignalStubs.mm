@@ -32,6 +32,7 @@
 using khtml::CachedObject;
 using khtml::DocLoader;
 using khtml::Loader;
+using khtml::Tokenizer;
 
 void KHTMLView::cleared()
 {

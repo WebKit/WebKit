@@ -50,8 +50,6 @@ class QPaintDeviceMetrics;
 class KHTMLView;
 class KHTMLPart;
 class KHTMLSelection;
-class Tokenizer;
-class XMLHandler;
 class RenderArena;
 
 #if APPLE_CHANGES
@@ -61,8 +59,10 @@ class KWQAccObjectCache;
 namespace khtml {
     class CSSStyleSelector;
     class DocLoader;
-    class RenderImage;
     class EditCommand;
+    class RenderImage;
+    class Tokenizer;
+    class XMLHandler;
 }
 
 #ifndef KHTML_NO_XBL
@@ -300,9 +300,9 @@ public:
     QString printStyleSheet() const { return m_printSheet; }
 
     CSSStyleSheetImpl* elementSheet();
-    virtual Tokenizer *createTokenizer();
-    Tokenizer *tokenizer() { return m_tokenizer; }
-    virtual XMLHandler* createTokenHandler();
+    virtual khtml::Tokenizer *createTokenizer();
+    khtml::Tokenizer *tokenizer() { return m_tokenizer; }
+    virtual khtml::XMLHandler* createTokenHandler();
     
     QPaintDeviceMetrics *paintDeviceMetrics() { return m_paintDeviceMetrics; }
     QPaintDevice *paintDevice() const { return m_paintDevice; }
@@ -508,7 +508,7 @@ protected:
     QStringList m_state;
 
     khtml::DocLoader *m_docLoader;
-    Tokenizer *m_tokenizer;
+    khtml::Tokenizer *m_tokenizer;
     QString m_url;
     QString m_baseURL;
     QString m_baseTarget;

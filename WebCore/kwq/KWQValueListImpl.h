@@ -73,6 +73,7 @@ public:
     void removeEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *));
     uint containsEqualNodes(KWQValueListNodeImpl *node, bool (*equalFunc)(const KWQValueListNodeImpl *, const KWQValueListNodeImpl *)) const;
 
+    KWQValueListIteratorImpl insert(const KWQValueListIteratorImpl &iterator, KWQValueListNodeImpl* node);
     KWQValueListIteratorImpl removeIterator(KWQValueListIteratorImpl &iterator);
     KWQValueListIteratorImpl fromLast();
 
@@ -87,7 +88,8 @@ public:
 
     KWQValueListIteratorImpl begin() const;
     KWQValueListIteratorImpl end() const;
-
+    KWQValueListIteratorImpl fromLast() const;
+    
     KWQValueListNodeImpl *nodeAt(uint index);
     KWQValueListNodeImpl *nodeAt(uint index) const;
     

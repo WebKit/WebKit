@@ -1,3 +1,78 @@
+2004-02-06  David Hyatt  <hyatt@apple.com>
+
+        Implemented a TokenizerString that can walk a list of substrings, so that data can be enqueued
+        in the list without having to do a copy.  Speeds up voodooextreme by 20% or so, giving the overall
+        page-load tests get a 2% boost.
+        
+        Reviewed by darin
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::begin):
+        (khtml::HTMLTokenizer::processListing):
+        (khtml::HTMLTokenizer::parseSpecial):
+        (khtml::HTMLTokenizer::scriptHandler):
+        (khtml::HTMLTokenizer::parseComment):
+        (khtml::HTMLTokenizer::parseServer):
+        (khtml::HTMLTokenizer::parseProcessingInstruction):
+        (khtml::HTMLTokenizer::parseText):
+        (khtml::HTMLTokenizer::parseEntity):
+        (khtml::HTMLTokenizer::parseTag):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::notifyFinished):
+        (khtml::HTMLTokenizer::setSrc):
+        (khtml::HTMLTokenizer::setOnHold):
+        * khtml/html/htmltokenizer.h:
+        (khtml::Token::Token):
+        (khtml::Token::~Token):
+        (khtml::Token::addAttribute):
+        (khtml::Token::reset):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::handleMousePressEventDoubleClick):
+        * khtml/khtml_part.h:
+        * khtml/misc/stringit.cpp: Added.
+        (khtml::TokenizerString::length):
+        (khtml::TokenizerString::clear):
+        (khtml::TokenizerString::append):
+        (khtml::TokenizerString::prepend):
+        (khtml::TokenizerString::advanceSubstring):
+        (khtml::TokenizerString::toString):
+        * khtml/misc/stringit.h:
+        (khtml::TokenizerSubstring::TokenizerSubstring):
+        (khtml::TokenizerSubstring::clear):
+        (khtml::TokenizerSubstring::appendTo):
+        (khtml::TokenizerString::TokenizerString):
+        (khtml::TokenizerString::push):
+        (khtml::TokenizerString::isEmpty):
+        (khtml::TokenizerString::advance):
+        (khtml::TokenizerString::escaped):
+        (khtml::TokenizerString::lineCount):
+        (khtml::TokenizerString::resetLineCount):
+        (khtml::TokenizerString::operator++):
+        (khtml::TokenizerString::operator*):
+        (khtml::TokenizerString::operator->):
+        (khtml::TokenizerString::current):
+        * khtml/xbl/xbl_docimpl.cpp:
+        * khtml/xbl/xbl_docimpl.h:
+        (XBL::):
+        * khtml/xbl/xbl_tokenizer.h:
+        (XBL::):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::tokenizer):
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::write):
+        * khtml/xml/xml_tokenizer.h:
+        * kwq/KWQSignalStubs.mm:
+        * kwq/KWQValueList.h:
+        (QValueList::insert):
+        (QValueList::fromLast):
+        * kwq/KWQValueListImpl.h:
+        * kwq/KWQValueListImpl.mm:
+        (KWQValueListImpl::clear):
+        (KWQValueListImpl::insert):
+        (KWQValueListImpl::fromLast):
+
 === Safari-127 ===
 
 2004-02-06  Ken Kocienda  <kocienda@apple.com>

@@ -16,7 +16,7 @@ class XBLDocument;
 
 // This class is used to handle tokens returned from an XML parser for the purpose of building the
 // custom data structures required by an XBL document.
-class XBLTokenHandler: public XMLHandler
+class XBLTokenHandler: public khtml::XMLHandler
 {
 typedef enum {
     eXBL_InDocument,

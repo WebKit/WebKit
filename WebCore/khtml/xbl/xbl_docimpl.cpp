@@ -5,6 +5,7 @@
 #include "xbl_protobinding.h"
 
 using DOM::DocumentImpl;
+using khtml::XMLHandler;
 
 namespace XBL {
 

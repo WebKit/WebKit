@@ -186,9 +186,12 @@ KWQValueListImpl::~KWQValueListImpl()
 
 void KWQValueListImpl::clear()
 {
-    d->deleteList(d->head);
-    d->head = NULL;
-    d->count = 0;
+    if (d->head) {
+        copyOnWrite();
+        d->deleteList(d->head);
+        d->head = NULL;
+        d->count = 0;
+    }
 }
 
 uint KWQValueListImpl::count() const
@@ -285,6 +288,30 @@ uint KWQValueListImpl::containsEqualNodes(KWQValueListNodeImpl *node, bool (*equ
     return contains;
 }
 
+KWQValueListIteratorImpl KWQValueListImpl::insert(const KWQValueListIteratorImpl &iterator, KWQValueListNodeImpl *node)
+{
+    copyOnWrite();
+    
+    KWQValueListNodeImpl *next = iterator.nodeImpl;
+    
+    if (next == NULL)
+        return appendNode(node);
+    
+    if (next == d->head)
+        return prependNode(node);
+    
+    KWQValueListNodeImpl *prev = next->prev;
+    
+    node->next = next;
+    node->prev = prev;
+    next->prev = node;
+    prev->next = node;
+    
+    d->count++;
+    
+    return node;
+}
+
 KWQValueListIteratorImpl KWQValueListImpl::removeIterator(KWQValueListIteratorImpl &iterator)
 {
     copyOnWrite();
@@ -313,6 +340,7 @@ KWQValueListIteratorImpl KWQValueListImpl::removeIterator(KWQValueListIteratorIm
 
 KWQValueListIteratorImpl KWQValueListImpl::fromLast()
 {
+    copyOnWrite();
     return KWQValueListIteratorImpl(lastNode());
 }
 
@@ -373,6 +401,10 @@ KWQValueListIteratorImpl KWQValueListImpl::end() const
     return KWQValueListIteratorImpl(NULL);
 }
 
+KWQValueListIteratorImpl KWQValueListImpl::fromLast() const
+{
+    return KWQValueListIteratorImpl(lastNode());
+}
 
 KWQValueListNodeImpl *KWQValueListImpl::nodeAt(uint index)
 {

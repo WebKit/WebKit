@@ -70,7 +70,7 @@ public:
 
     void setBody(HTMLElementImpl *_body, int& exceptioncode);
 
-    virtual Tokenizer *createTokenizer();
+    virtual khtml::Tokenizer *createTokenizer();
 
     virtual bool childAllowed( NodeImpl *newChild );
 

@@ -38,7 +38,8 @@
 #include <klocale.h>
 
 using namespace DOM;
-using namespace khtml;
+
+namespace khtml {
 
 const int maxErrors = 25;
 
@@ -387,9 +388,9 @@ void XMLTokenizer::begin()
 {
 }
 
-void XMLTokenizer::write( const QString &str, bool /*appendData*/ )
+void XMLTokenizer::write(const TokenizerString &s, bool /*appendData*/ )
 {
-    m_xmlCode += str;
+    m_xmlCode += s.toString();
 }
 
 void XMLTokenizer::end()
@@ -539,5 +540,6 @@ bool XMLTokenizer::isWaitingForScripts()
     return m_cachedScript != 0;
 }
 
-#include "xml_tokenizer.moc"
+}
 
+#include "xml_tokenizer.moc"

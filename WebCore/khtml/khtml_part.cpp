@@ -100,9 +100,10 @@ using namespace DOM;
 
 using khtml::Decoder;
 using khtml::EditCommand;
+using khtml::InlineTextBox;
 using khtml::RenderObject;
 using khtml::RenderText;
-using khtml::InlineTextBox;
+using khtml::Tokenizer;
 
 using KParts::BrowserInterface;
 
@@ -4480,7 +4481,7 @@ void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
             selection.expandToElement(KHTMLSelection::WORD);
         }
     }
-
+    
     if (selection.state() != KHTMLSelection::CARET) {
         d->m_textElement = KHTMLSelection::WORD;
     }

@@ -800,6 +800,7 @@
 				BEB1DD3D05C1982000DD1F43,
 				BC7FDE3305C1D9AB0070A902,
 				BC3B364805C9D5E200E42902,
+				BC433AD005D3046F003A5A14,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1945,6 +1946,20 @@
 		};
 		BC419796059294CA0016347F = {
 			fileRef = BC419795059294CA0016347F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		BC433ACF05D3046F003A5A14 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.cpp;
+			path = stringit.cpp;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BC433AD005D3046F003A5A14 = {
+			fileRef = BC433ACF05D3046F003A5A14;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5118,6 +5133,7 @@
 				F523D28502DE43D7018635CA,
 				F523D28602DE43D7018635CA,
 				F523D28802DE43D7018635CA,
+				BC433ACF05D3046F003A5A14,
 				F523D28902DE43D7018635CA,
 				BC7294F703804B3C00A80166,
 				BC7294F803804B3C00A80166,

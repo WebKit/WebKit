@@ -28,68 +28,101 @@
 #include "dom/dom_string.h"
 
 #include <qstring.h>
+#include <qvaluelist.h>
 
 #include <assert.h>
 
 namespace khtml
 {
 
-class DOMStringIt
+class TokenizerString;
+
+class TokenizerSubstring
+{
+private:
+    friend class TokenizerString;
+    
+    TokenizerSubstring() : m_length(0), m_current(0) {}
+    TokenizerSubstring(const QString &str) : m_string(str), m_length(str.length()), m_current(m_length == 0 ? 0 : str.unicode()) {}
+    TokenizerSubstring(const QChar *str, int length) : m_length(length), m_current(length == 0 ? 0 : str) {}
+
+    void clear() { m_length = 0; m_current = 0; }
+    
+    void appendTo(QString &str) const {
+        if (m_string.unicode() == m_current) {
+            if (str.isEmpty())
+                str = m_string;
+            else
+                str.append(m_string);
+        } else {
+            str.insert(str.length(), m_current, m_length);
+        }
+    }
+
+    QString m_string;
+    int m_length;
+    const QChar *m_current;
+};
+
+class TokenizerString
 {
 public:
-    DOMStringIt()
-	{ s = 0, l = 0; lines = 0; }
-    DOMStringIt(QChar *str, uint len)
-	{ s = str, l = len; lines = 0; }
-    DOMStringIt(const QString &str)
-	{ s = str.unicode(); l = str.length(); lines = 0; }
-    DOMStringIt(const DOM::DOMString &str)
-	{ s = str.unicode(); l = str.length(); lines = 0; }
+    TokenizerString() : m_lines(0), m_composite(false) {}
+    TokenizerString(const QChar *str, int length) : m_currentString(str, length), m_lines(0), m_composite(false) {}
+    TokenizerString(const QString &str) : m_currentString(str), m_lines(0), m_composite(false) {}
 
-    DOMStringIt *operator++()
-    {
-        if (!pushedChar1.isNull()) {
-            pushedChar1 = pushedChar2;
-            pushedChar2 = 0;
-        } else if (l > 0) {
-            if (*s == '\n')
-                lines++;
-	    s++, l--;
-        }
-	return this;
-    }
+    void clear();
 
-    void push(const QChar& c) {
-        if (pushedChar1.isNull())
-            pushedChar1 = c;
+    void append(const TokenizerString &);
+    void prepend(const TokenizerString &);
+    
+    void push(QChar c) {
+        if (m_pushedChar1.isNull())
+            m_pushedChar1 = c;
         else {
-            assert(pushedChar2.isNull());
-            pushedChar2 = c;
+            assert(m_pushedChar2.isNull());
+            m_pushedChar2 = c;
         }
-    }
-
-    const QChar *current() const {
-        if (!pushedChar1.isNull())
-            return &pushedChar1;
-        if (!pushedChar2.isNull())
-            return &pushedChar2;
-        return s;
     }
     
-    const QChar& operator*() const { return *current(); }
-    const QChar* operator->() const { return current(); }
+    bool isEmpty() const { return !current(); }
+    uint length() const;
 
-    bool escaped() const { return !pushedChar1.isNull(); }
-    uint length() const { return l + !pushedChar1.isNull() + !pushedChar2.isNull(); }
+    void advance() {
+        if (!m_pushedChar1.isNull()) {
+            m_pushedChar1 = m_pushedChar2;
+            m_pushedChar2 = 0;
+        } else if (m_currentString.m_current) {
+            m_lines += *m_currentString.m_current++ == '\n';
+            if (--m_currentString.m_length == 0)
+                advanceSubstring();
+        }
+    }
+    
+    bool escaped() const { return !m_pushedChar1.isNull(); }
 
-    int lineCount() const { return lines; }
+    int lineCount() const { return m_lines; }
+    void resetLineCount() { m_lines = 0; }
+    
+    QString toString() const;
 
-protected:
-    QChar pushedChar1;
-    QChar pushedChar2;
-    const QChar *s;
-    int l;
-    int lines;
+    void operator++() { advance(); }
+    const QChar &operator*() const { return *current(); }
+    const QChar *operator->() const { return current(); }
+    
+private:
+    void append(const TokenizerSubstring &);
+    void prepend(const TokenizerSubstring &);
+
+    void advanceSubstring();
+    const QChar *current() const { return m_pushedChar1.isNull() ? m_currentString.m_current : &m_pushedChar1; }
+
+    QChar m_pushedChar1;
+    QChar m_pushedChar2;
+    TokenizerSubstring m_currentString;
+    QValueList<TokenizerSubstring> m_substrings;
+    int m_lines;
+    bool m_composite;
 };
 
 }

@@ -28,17 +28,13 @@
 #include <qptrlist.h>
 #include <qobject.h>
 #include "misc/loader_client.h"
+#include "misc/stringit.h"
 
 #if APPLE_CHANGES
 #include "KWQSignal.h"
 #endif
 
 class KHTMLView;
-
-namespace khtml {
-    class CachedObject;
-    class CachedScript;
-};
 
 namespace DOM {
     class DocumentImpl;
@@ -47,6 +43,11 @@ namespace DOM {
     class DocumentPtr;
     class HTMLScriptElementImpl;
 };
+
+namespace khtml {
+    
+class CachedObject;
+class CachedScript;
 
 class XMLHandler : public QXmlDefaultHandler
 {
@@ -117,7 +118,7 @@ public:
     // received during executing a script must be appended, hence the
     // extra bool to be able to distinguish between both cases. document.write()
     // always uses false, while khtmlpart uses true
-    virtual void write( const QString &str, bool appendData) = 0;
+    virtual void write(const TokenizerString &str, bool appendData) = 0;
     virtual void end() = 0;
     virtual void finish() = 0;
     virtual void setOnHold(bool /*_onHold*/) {}
@@ -134,18 +135,18 @@ private:
 #endif
 };
 
-class XMLTokenizer : public Tokenizer, public khtml::CachedObjectClient
+class XMLTokenizer : public Tokenizer, public CachedObjectClient
 {
 public:
     XMLTokenizer(DOM::DocumentPtr *, KHTMLView * = 0);
     virtual ~XMLTokenizer();
     virtual void begin();
-    virtual void write( const QString &str, bool );
+    virtual void write(const TokenizerString &str, bool);
     virtual void end();
     virtual void finish();
 
     // from CachedObjectClient
-    void notifyFinished(khtml::CachedObject *finishedObj);
+    void notifyFinished(CachedObject *finishedObj);
 
     virtual bool isWaitingForScripts();
 protected:
@@ -158,7 +159,9 @@ protected:
     QString m_xmlCode;
     QPtrList<DOM::HTMLScriptElementImpl> m_scripts;
     QPtrListIterator<DOM::HTMLScriptElementImpl> *m_scriptsIt;
-    khtml::CachedScript *m_cachedScript;
+    CachedScript *m_cachedScript;
 };
+
+}
 
 #endif
