@@ -924,14 +924,10 @@
 {
 }
 
-#if INTERCEPT_ALL_CLICKS // gonna do this soon
-
 - (NSView *)hitTest:(NSPoint)point
 {
     // We handle all clicks. We don't allow subviews to handle them.
     return [super hitTest:point] ? self : nil;
 }
-
-#endif
 
 @end

@@ -2,7 +2,7 @@
 
         Reviewed by Chris.
 
-	- fixed 3122608 -- Downloads can't be cancelled
+	- fixed 3122608 -- REGRESSION: Downloads can't be cancelled
 
 	When I fixed the leak for other categories of policy interruption, I messed
 	things up for downloads. Added new parameters to handle this right.
