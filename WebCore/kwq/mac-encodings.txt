@@ -151,9 +151,9 @@ Big5_HKSCS_1999: big5-hkscs
 EBCDIC_US
 EBCDIC_CP037: cp037
 
-# There doesn't seem to be a kCFStringEncoding constant for this one.
-# In fact, I got this value from Mail source code, and I'm not sure how or if it works.
-0xAFE: japanese-autodetect
+# We need to decide what to do about this.
+# I'm not sure that the string japanese-autodetect actually shows up out there on the web.
+# 0xAFE: japanese-autodetect
 
 # I got these additional items from the Perl module I18N-Charset-1.17,
 # but could not figure out what to do with them.
