@@ -1,3 +1,7 @@
+2003-08-21  Darin Adler  <darin@apple.com>
+
+        * khtml/khtmlview.h: Formatting tweak.
+
 2003-08-21  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3386673>: a particular fidelity.com "Log in" link does nothing because of cross-domain JavaScript rules

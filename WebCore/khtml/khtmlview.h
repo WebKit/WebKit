@@ -190,7 +190,7 @@ public:
 #if APPLE_CHANGES
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
-    void KHTMLView::adjustViewSize();
+    void adjustViewSize();
 #endif
 
     void ref() { ++_refCount; }
