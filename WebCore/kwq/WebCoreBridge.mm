@@ -25,6 +25,8 @@
 
 #import "WebCoreBridge.h"
 
+#include <CoreFoundation/CFCharacterSetPriv.h>
+
 #import "csshelper.h"
 #import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
@@ -1607,6 +1609,97 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (DOMRange *)markedTextDOMRange
 {
     return [DOMRange _rangeWithImpl:_part->markedTextRange().handle()];
+}
+
+// Given proposedRange, returns an extended range that includes adjacent whitespace that should
+// be deleted along with the proposed range in order to preserve proper spacing and punctuation of
+// the text surrounding the deletion.
+- (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedRange
+{
+    NodeImpl *startContainer = [[proposedRange startContainer] _nodeImpl];
+    NodeImpl *endContainer = [[proposedRange endContainer] _nodeImpl];
+    if (startContainer == nil || endContainer == nil)
+        return nil;
+
+    ASSERT(startContainer->getDocument());
+    ASSERT(startContainer->getDocument() == endContainer->getDocument());
+    
+    _part->xmlDocImpl()->updateLayout();
+
+    Position start(startContainer, [proposedRange startOffset]);
+    Position end(endContainer, [proposedRange endOffset]);
+    Position newStart = start.upstream(DOM::StayInBlock).leadingWhitespacePosition(khtml::DOWNSTREAM, true);
+    if (newStart.isNull())
+        newStart = start;
+    Position newEnd = end.downstream(DOM::StayInBlock).trailingWhitespacePosition(khtml::DOWNSTREAM, true);
+    if (newEnd.isNull())
+        newEnd = end;
+
+    return [DOMRange _rangeWithImpl:Range(newStart.node(), newStart.offset(), newEnd.node(), newEnd.offset()).handle()];
+}
+
+// Determines whether whitespace needs to be added around aString to preserve proper spacing and
+// punctuation when itÕs inserted into the receiverÕs text over charRange. Returns by reference
+// in beforeString and afterString any whitespace that should be added, unless either or both are
+// nil. Both are returned as nil if aString is nil or if smart insertion and deletion are disabled.
+- (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)rangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString
+{
+    // give back nil pointers in case of early returns
+    if (beforeString)
+        *beforeString = nil;
+    if (afterString)
+        *afterString = nil;
+        
+    // inspect destination
+    NodeImpl *startContainer = [[rangeToReplace startContainer] _nodeImpl];
+    NodeImpl *endContainer = [[rangeToReplace endContainer] _nodeImpl];
+
+    Position startPos(startContainer, [rangeToReplace startOffset]);
+    Position endPos(endContainer, [rangeToReplace endOffset]);
+
+    VisiblePosition startVisiblePos = VisiblePosition(startPos, khtml::VP_DEFAULT_AFFINITY);
+    VisiblePosition endVisiblePos = VisiblePosition(endPos, khtml::VP_DEFAULT_AFFINITY);
+    
+    // this check also ensures startContainer, startPos, endContainer, and endPos are non-null
+    if (startVisiblePos.isNull() || endVisiblePos.isNull())
+        return;
+
+    bool addLeadingSpace = startPos.leadingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isFirstVisiblePositionInParagraph(startVisiblePos);
+    if (addLeadingSpace) {
+        QChar previousChar = startVisiblePos.previous().character();
+        if (!previousChar.isNull()) {
+            addLeadingSpace = !_part->isCharacterSmartReplaceExempt(previousChar, true);
+        }
+    }
+    
+    bool addTrailingSpace = endPos.trailingWhitespacePosition(khtml::VP_DEFAULT_AFFINITY, true).isNull() && !isLastVisiblePositionInParagraph(endVisiblePos);
+    if (addTrailingSpace) {
+        QChar thisChar = endVisiblePos.character();
+        if (!thisChar.isNull()) {
+            addTrailingSpace = !_part->isCharacterSmartReplaceExempt(thisChar, false);
+        }
+    }
+    
+    // inspect source
+    bool hasWhitespaceAtStart = false;
+    bool hasWhitespaceAtEnd = false;
+    unsigned pasteLength = [pasteString length];
+    if (pasteLength > 0) {
+        NSCharacterSet *whiteSet = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+        
+        if ([whiteSet characterIsMember:[pasteString characterAtIndex:0]]) {
+            hasWhitespaceAtStart = YES;
+        }
+        if ([whiteSet characterIsMember:[pasteString characterAtIndex:(pasteLength - 1)]]) {
+            hasWhitespaceAtEnd = YES;
+        }
+    }
+    
+    // issue the verdict
+    if (beforeString && addLeadingSpace && !hasWhitespaceAtStart)
+        *beforeString = @" ";
+    if (afterString && addTrailingSpace && !hasWhitespaceAtEnd)
+        *afterString = @" ";
 }
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 

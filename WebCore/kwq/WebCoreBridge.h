@@ -366,6 +366,8 @@ typedef enum {
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)distance;
 - (WebSelectionGranularity)selectionGranularity;
+- (DOMRange *)smartDeleteRangeForProposedRange:(DOMRange *)proposedCharRange;
+- (void)smartInsertForString:(NSString *)pasteString replacingRange:(DOMRange *)charRangeToReplace beforeString:(NSString **)beforeString afterString:(NSString **)afterString;
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
 - (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text;
