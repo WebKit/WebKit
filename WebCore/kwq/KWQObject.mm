@@ -138,33 +138,36 @@ void QObject::pauseTimer (int _timerId, const void *key)
     NSMutableDictionary *timers = (NSMutableDictionary *)CFDictionaryGetValue(timerDictionaries, this);
     NSNumber *timerId = [NSNumber numberWithInt:_timerId];
     NSTimer *timer = (NSTimer *)[timers objectForKey:timerId];
-    KWQObjectTimerTarget *target = (KWQObjectTimerTarget *)[timer userInfo];
-    
-    if (target && [timer isValid]){
-        NSDate *fireDate = [timer fireDate];
-        NSTimeInterval remainingTime = [fireDate timeIntervalSinceDate: [NSDate date]];
-    
-        if (remainingTime < 0)
-            remainingTime = DBL_EPSILON;
-        
-        if (allPausedTimers == NULL) {
-            // The global targets dictionary itself leaks, but the contents are removed
-            // when each timer fires or is killed.
-            allPausedTimers = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
-        }
 
-        NSMutableArray *pausedTimers = (NSMutableArray *)CFDictionaryGetValue(allPausedTimers, key);
-        if (pausedTimers == nil) {
-            pausedTimers = [[NSMutableArray alloc] init];
-            CFDictionarySetValue(allPausedTimers, key, pausedTimers);
-            [pausedTimers release];
-        }
+    if ([timer isValid]){
+        KWQObjectTimerTarget *target = (KWQObjectTimerTarget *)[timer userInfo];
+
+        if (target){
+            NSDate *fireDate = [timer fireDate];
+            NSTimeInterval remainingTime = [fireDate timeIntervalSinceDate: [NSDate date]];
         
-        target->remainingTime = remainingTime;
-        [pausedTimers addObject:target];
-                
-        [timer invalidate];
-        [timers removeObjectForKey:timerId];
+            if (remainingTime < 0)
+                remainingTime = DBL_EPSILON;
+            
+            if (allPausedTimers == NULL) {
+                // The global targets dictionary itself leaks, but the contents are removed
+                // when each timer fires or is killed.
+                allPausedTimers = CFDictionaryCreateMutable(NULL, 0, NULL, &kCFTypeDictionaryValueCallBacks);
+            }
+    
+            NSMutableArray *pausedTimers = (NSMutableArray *)CFDictionaryGetValue(allPausedTimers, key);
+            if (pausedTimers == nil) {
+                pausedTimers = [[NSMutableArray alloc] init];
+                CFDictionarySetValue(allPausedTimers, key, pausedTimers);
+                [pausedTimers release];
+            }
+            
+            target->remainingTime = remainingTime;
+            [pausedTimers addObject:target];
+                    
+            [timer invalidate];
+            [timers removeObjectForKey:timerId];
+        }
     }
 }
 
@@ -211,7 +214,7 @@ void QObject::resumeTimers (const void *key, QObject *_target)
         [pausedTimers removeLastObject];
 
         maxId = MAX (maxId, target->timerId);
-                
+                        
         _addTimer (timer, target->timerId);
     }
     nextTimerID = maxId+1;
