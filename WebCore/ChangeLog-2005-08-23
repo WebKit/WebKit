@@ -1,3 +1,19 @@
+2003-07-08  Dave Hyatt  <hyatt@apple.com>
+
+	Make sure that the contents width and height of the view are
+	used as the root height and width when a view exists.  This
+	ensures that the root element background properly tiles over 
+	the entire height of the document.  (This used to be ensured
+	by growing the height of the <html> element, but that violates
+	the CSS2 spec.)
+
+	This fixes bugs 3317809, 3299789, and 3318066.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::paintRootBoxDecorations):
+
 2003-07-08  Chris Blumenberg  <cblu@apple.com>
 
         * WebCore.pbproj/project.pbxproj: Xcode-ified
@@ -13,6 +29,7 @@
         * khtml/html/htmltokenizer.cpp:
         (HTMLTokenizer::parseTag): use tolower() to lowercase a char, don't use | 0x20 because that will cause chars like '_' to turn into junk
 
+>>>>>>> 1.1814
 2003-07-08  Dave Hyatt  <hyatt@apple.com>
 
 	Implementation of inline-block and a prototype of the XUL
