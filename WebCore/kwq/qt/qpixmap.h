@@ -93,7 +93,6 @@ public:
 #else
     void *nsimage;
 #endif
-    QWMatrix xmatrix;
 #endif
 }; // class QPixmap ============================================================
 

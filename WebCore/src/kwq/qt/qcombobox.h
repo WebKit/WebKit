@@ -58,6 +58,7 @@ public:
     void insertItem(const QString &text, int index=-1);
     void clear();
     virtual void setCurrentItem(int);
+    QSize sizeHint() const;
 
     // operators ---------------------------------------------------------------
 

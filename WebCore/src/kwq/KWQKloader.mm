@@ -923,6 +923,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
         NSLog (@"cacheDataAvailable: Received invalid notication, %@", notificationName);
     }
     else {
+        NSLog (@"cacheDataAvailable: Received notication, %@", notificationName);
         id <WCURICacheData> data = [notification object];
         KIO::Job *job = static_cast<KIO::Job *>([data userData]);
         m_loader->slotData(job, (const char *)[data cacheData], [data cacheDataSize]);
@@ -936,6 +937,7 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
         NSLog (@"cacheFinished: Received invalid notication, %@", notificationName);
     }
     else {
+        NSLog (@"cacheFinished: Received notication, %@", notificationName);
         // FIXME: need an implementation for this
         id <WCURICacheData> data = [notification object];
         KIO::Job *job = static_cast<KIO::Job *>([data userData]);

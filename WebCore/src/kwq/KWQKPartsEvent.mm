@@ -45,7 +45,7 @@ bool Event::test(const QEvent *, const char *)
 
 Event::Event(const char *)
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
 }
 
 } // namespace KParts

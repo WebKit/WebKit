@@ -66,7 +66,13 @@ QPixmap::QPixmap(const QByteArray&bytes)
     //NSData *nsdata = [[[NSData alloc] initWithBytesNoCopy: bytes.data() length: bytes.size()] autorelease];
     NSData *nsdata = [[[NSData alloc] initWithBytes: bytes.data() length: bytes.size() copy:NO freeWhenDone:NO bytesAreVM:NO] autorelease];
     nsimage = [[NSImage alloc] initWithData: nsdata];
+    if (nsimage == nil){
+        NSLog (@"unable to create image");
+    } else {
+        NSLog (@"image created");
+    }
     [nsimage setFlipped: YES];
+    [nsimage setScalesWhenResized: YES];
 }
 
 
@@ -78,11 +84,13 @@ QPixmap::QPixmap(int w, int h)
 
 QPixmap::QPixmap(const QPixmap &copyFrom)
 {
-    if (copyFrom.nsimage != nil)
-        nsimage = [copyFrom.nsimage retain];
+    if (copyFrom.nsimage != nil){
+        // Do a deep copy of the image.  This is required because the image
+        // may be transformed, i.e. scaled.
+        nsimage = [copyFrom.nsimage copyWithZone: [copyFrom.nsimage zone]];    
+    }
     else
         nsimage = nil;
-    xmatrix = copyFrom.xmatrix;
 }
 
 
@@ -155,8 +163,14 @@ void QPixmap::resize(int w, int h) {
 
 QPixmap QPixmap::xForm(const QWMatrix &xmatrix) const
 {
+    // This function is only called when an image needs to be scaled.  
+    // We can depend on render_image.cpp to call resize AFTER
+    // creating a copy of the image to be scaled.   So, this
+    // implementation simply returns a copy of the image.  Note,
+    // this implementation depends on the implementation of
+    // RenderImage::printObject.   
     QPixmap xPix = *this;
-    xPix.xmatrix = xmatrix;
+    [xPix.nsimage setScalesWhenResized: YES];
     return xPix;
 }
 
@@ -173,7 +187,6 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
         return *this;
     [nsimage release];
     nsimage = [assignFrom.nsimage retain];
-    xmatrix = assignFrom.xmatrix;
     return *this;
 }
 

@@ -33,13 +33,13 @@ static const QPoint ORIGIN(0,0);
 
 QEvent::QEvent(Type)
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
 }
 
 
 QEvent::~QEvent()
 {
-    _logNotYetImplemented();
+    //_logNotYetImplemented();
 }
 
 

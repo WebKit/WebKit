@@ -187,6 +187,18 @@ void QMultiLineEdit::selectAll()
     [textView selectAll];
 }
 
+int QMultiLineEdit::verticalScrollBarWidth() const
+{
+    return (int)[NSScroller scrollerWidth];
+}
+
+
+int QMultiLineEdit::horizontalScrollBarHeight() const
+{
+    return (int)[NSScroller scrollerWidth];
+}
+
+
 
 KEdit::KEdit()
 {

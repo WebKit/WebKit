@@ -23,6 +23,7 @@
     subs = [containerView subviews];
     htmlView = (KWQHTMLView *)[[subs objectAtIndex: 0] documentView];
     [htmlView setURL: url];
+    [htmlView setNeedsLayout: YES];
     [containerView setNeedsDisplay: YES];
     
     return self;

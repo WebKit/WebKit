@@ -22,7 +22,6 @@
  *
  * $Id$
  */
-
 #include <kdebug.h>
 #include <kurl.h>
 #include <klocale.h>
@@ -942,6 +941,7 @@ void RenderSelect::layout( )
         QSize s(m_widget->sizeHint());
         setIntrinsicWidth( s.width() );
         setIntrinsicHeight( s.height() );
+        fprintf (stderr, "select box size w %d, h %d\n", s.width(), s.height());
     }
 
     /// uuh, ignore the following line..
@@ -1155,12 +1155,21 @@ void RenderTextArea::calcMinMaxWidth()
     TextAreaWidget* w = static_cast<TextAreaWidget*>(m_widget);
     HTMLTextAreaElementImpl* f = static_cast<HTMLTextAreaElementImpl*>(m_element);
     QFontMetrics m = fontMetrics(style()->font());
+#ifdef _KWQ_
+    QSize size( QMAX(f->cols(), 1)*m.width('x') + w->frameWidth()*5 +
+                w->verticalScrollBarWidth(),
+                QMAX(f->rows(), 1)*m.height() + w->frameWidth()*3 +
+                (w->wordWrap() == QMultiLineEdit::NoWrap ?
+                 w->horizontalScrollBarHeight() : 0)
+        );
+#else
     QSize size( QMAX(f->cols(), 1)*m.width('x') + w->frameWidth()*5 +
                 w->verticalScrollBar()->sizeHint().width(),
                 QMAX(f->rows(), 1)*m.height() + w->frameWidth()*3 +
                 (w->wordWrap() == QMultiLineEdit::NoWrap ?
                  w->horizontalScrollBar()->sizeHint().height() : 0)
         );
+#endif
 
     setIntrinsicWidth( size.width() );
     setIntrinsicHeight( size.height() );

@@ -91,6 +91,11 @@
 }
 
 
+- (void)setNeedsLayout: (bool)flag
+{
+    needsLayout = flag;
+}
+
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect {
     if (widget != 0l){
@@ -103,7 +108,7 @@
             ((KHTMLView *)widget)->part()->xmlDocImpl()->renderer()){
             if (needsLayout){
                 ((KHTMLView *)widget)->layout(TRUE);
-                needsLayout = NO;
+                //needsLayout = NO;
             }
         }
     

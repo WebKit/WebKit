@@ -380,18 +380,9 @@ void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r)
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
 			int sx, int sy, int sw, int sh )
 {
-    NSSize originalSize;
-
     _lockFocus();
 
     if (pixmap.nsimage != nil){
-        if (pixmap.xmatrix.empty == FALSE){
-            originalSize = [pixmap.nsimage size];
-            [pixmap.nsimage setScalesWhenResized: YES];
-            [pixmap.nsimage setSize: NSMakeSize (originalSize.width * pixmap.xmatrix.sx,
-                                                originalSize.height * pixmap.xmatrix.sy)];
-        }
-        
         if (sw == -1)
             sw = (int)[pixmap.nsimage size].width;
         if (sh == -1)
@@ -400,9 +391,6 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
                     fromRect: NSMakeRect(sx, sy, sw, sh)
                     operation: NSCompositeSourceOver	// Renders transparency correctly
                     fraction: 1.0];
-                    
-        if (pixmap.xmatrix.empty == FALSE)
-            [pixmap.nsimage setSize: originalSize];
     }
     
     _unlockFocus();

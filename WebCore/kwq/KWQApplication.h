@@ -98,7 +98,6 @@ private:
     void *globalPool;
 #endif
 
-
 }; // class QApplication =======================================================
 
 #endif
