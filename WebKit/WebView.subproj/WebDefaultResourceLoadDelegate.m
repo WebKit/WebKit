@@ -11,7 +11,7 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebPluginError.h>
-#import <WebKit/WebController.h>
+#import <WebKit/WebView.h>
 
 
 @implementation WebDefaultResourceLoadDelegate

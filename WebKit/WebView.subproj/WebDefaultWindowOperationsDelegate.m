@@ -6,8 +6,8 @@
 
 #import <WebFoundation/WebRequest.h>
 
-#import <WebKit/WebController.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 

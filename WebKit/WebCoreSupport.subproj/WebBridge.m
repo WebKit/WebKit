@@ -9,7 +9,6 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBasePluginPackage.h>
 #import <WebKit/WebBaseResourceHandleDelegate.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
@@ -38,6 +37,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>

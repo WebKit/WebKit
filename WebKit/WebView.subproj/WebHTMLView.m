@@ -8,8 +8,6 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDOMDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
@@ -28,6 +26,7 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebUnicode.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <AppKit/NSResponder_Private.h>
 #import <CoreGraphics/CGContextGState.h>

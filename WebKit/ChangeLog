@@ -1,5 +1,49 @@
 2003-03-18  Richard Williamson   <rjw@apple.com>
 
+        Another rename WebController*.[hm] to WebView*.[hm]
+        
+        Reviewed by darin.
+
+        * Carbon.subproj/HIWebView.h:
+        * Misc.subproj/WebKit.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        * Panels.subproj/WebStandardPanelsPrivate.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        * Plugins.subproj/WebNullPluginView.m:
+        * Plugins.subproj/WebPluginController.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebController.h: Removed.
+        * WebView.subproj/WebController.m: Removed.
+        * WebView.subproj/WebControllerPrivate.h: Removed.
+        * WebView.subproj/WebControllerPrivate.m: Removed.
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        * WebView.subproj/WebDefaultWindowOperationsDelegate.m:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLView.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebImageView.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebTextView.m:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+
+2003-03-18  Richard Williamson   <rjw@apple.com>
+
         Renamed WebView*.[hm] to WebFrameView*.[hm]
         
         Reviewed by me (I'm bad, it's just a file rename).

@@ -6,13 +6,13 @@
 #import <WebKit/WebImageView.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebNSViewExtras.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
 

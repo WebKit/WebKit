@@ -6,7 +6,7 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 
 #import <WebKit/WebBaseNetscapePluginViewPrivate.h>
-#import <WebKit/WebController.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebNSViewExtras.h>

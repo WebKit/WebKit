@@ -6,8 +6,6 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
 #import <WebKit/WebFrame.h>
@@ -18,6 +16,7 @@
 #import <WebKit/WebNullPluginView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>

@@ -7,12 +7,11 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebTextView.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebResponse.h>

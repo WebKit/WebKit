@@ -3,16 +3,16 @@
 	Copyright 2001, 2002, Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebBridge.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
-#import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebMainResourceClient.h>
-#import <WebKit/WebBridge.h>
-#import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
+#import <WebKit/WebMainResourceClient.h>
+#import <WebKit/WebView.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>

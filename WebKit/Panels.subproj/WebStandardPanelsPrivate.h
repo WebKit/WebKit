@@ -5,7 +5,7 @@
 */
 
 #import <WebKit/WebStandardPanels.h>
-#import <WebKit/WebController.h>
+#import <WebKit/WebView.h>
 
 @interface WebStandardPanels (Private)
 

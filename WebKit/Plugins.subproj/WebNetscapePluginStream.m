@@ -3,11 +3,11 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNetscapePluginStream.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
 

@@ -5,7 +5,6 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
@@ -21,6 +20,7 @@
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>

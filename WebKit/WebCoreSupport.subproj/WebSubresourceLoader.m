@@ -6,9 +6,9 @@
 #import <WebKit/WebSubresourceClient.h>
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>

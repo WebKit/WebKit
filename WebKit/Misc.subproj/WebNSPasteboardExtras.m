@@ -6,9 +6,9 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebURLsWithTitles.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSStringExtras.h>

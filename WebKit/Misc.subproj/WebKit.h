@@ -5,7 +5,6 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
@@ -24,4 +23,5 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanels.h>
+#import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>

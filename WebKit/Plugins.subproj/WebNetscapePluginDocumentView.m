@@ -3,7 +3,6 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
@@ -16,6 +15,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPluginErrorPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResponse.h>

@@ -8,10 +8,8 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
 #import <WebKit/WebControllerPolicyDelegatePrivate.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultWindowOperationsDelegate.h>
@@ -28,6 +26,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferencesPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSURLExtras.h>

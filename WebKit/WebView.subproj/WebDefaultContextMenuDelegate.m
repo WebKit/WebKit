@@ -7,13 +7,13 @@
 
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebLocalizableStrings.h>

@@ -5,9 +5,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownload.h>
 #import <WebKit/WebException.h>
@@ -28,6 +26,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
+#import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebHTTPResponse.h>

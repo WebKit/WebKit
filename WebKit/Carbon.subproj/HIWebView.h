@@ -2,7 +2,7 @@
 #define __HIWebFrameView__
 
 #ifndef __HIWEBCONTROLLER__
-#include <WebKit/WebController.h>
+#include <WebKit/WebView.h>
 #endif
 
 

@@ -3,9 +3,10 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
+#import <WebKit/WebView.h>
 
+@class WebBackForwardList;
 @class WebError;
 @class WebFrame;
 @class WebPreferences;

@@ -6,7 +6,6 @@
 
 #import <WebKit/WebClipView.h>
 #import <WebKit/WebCookieAdapter.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
@@ -23,6 +22,7 @@
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextView.h>
 #import <WebKit/WebViewFactory.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebError.h>

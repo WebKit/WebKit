@@ -9,7 +9,6 @@
 
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
@@ -19,6 +18,7 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>

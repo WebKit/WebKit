@@ -8,12 +8,12 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResponse.h>
 
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
+#import <WebKit/WebViewPrivate.h>
 
 @implementation WebTextView
 

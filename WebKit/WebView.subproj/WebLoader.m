@@ -12,12 +12,12 @@
 #import <WebFoundation/WebRequest.h>
 #import <WebFoundation/WebResponse.h>
 
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 @implementation WebBaseResourceHandleDelegate
 

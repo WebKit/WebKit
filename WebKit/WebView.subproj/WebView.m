@@ -2,16 +2,11 @@
     WebView.m
     Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
-
-#import <WebKit/WebController.h>
-
 #import <WebKit/WebBackForwardList.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebContextMenuDelegate.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerSets.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>
@@ -27,6 +22,7 @@
 #import <WebKit/WebPluginDatabase.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>

@@ -8,7 +8,6 @@
 
 #import <WebKit/WebPluginController.h>
 
-#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameView.h>
@@ -17,6 +16,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebRequest.h>

@@ -15,12 +15,10 @@
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebMutableResponse.h>
 
-#import <WebKit/WebController.h>
-#import <WebKit/WebControllerPrivate.h>
+#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
-#import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadPrivate.h>
 #import <WebKit/WebFrame.h>
@@ -31,6 +29,7 @@
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebResourceResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
+#import <WebKit/WebViewPrivate.h>
 
 // FIXME: More that is in common with WebSubresourceClient should move up into WebBaseResourceHandleDelegate.
 
