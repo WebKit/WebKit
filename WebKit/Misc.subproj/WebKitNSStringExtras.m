@@ -10,6 +10,8 @@
 
 #import <WebCore/WebCoreUnicode.h>
 
+#import <Foundation/NSString_NSURLExtras.h>
+
 @implementation NSString (WebKitExtras)
 
 static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
@@ -120,6 +122,57 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     [newString replaceOccurrencesOfString:@"\r" withString:@"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])];
     [newString replaceOccurrencesOfString:@"\n" withString:@"" options:NSLiteralSearch range:NSMakeRange(0, [newString length])];
     return newString;
+}
+
++ (NSStringEncoding)_web_encodingForResource:(Handle)resource
+{
+	short resRef = HomeResFile(resource);
+	if (ResError() != noErr) {
+		return NSMacOSRomanStringEncoding;
+	}
+	
+	// Get the FSRef for the current resource file
+	FSRef fref;
+	OSStatus error = FSGetForkCBInfo(resRef, 0, NULL, NULL, NULL, &fref, NULL);
+	if (error != noErr) {
+		return NSMacOSRomanStringEncoding;
+	}
+	
+	CFURLRef URL = CFURLCreateFromFSRef(NULL, &fref);
+	if (URL == NULL) {
+		return NSMacOSRomanStringEncoding;
+	}
+	
+	NSString *path = [(NSURL *)URL path];
+	CFRelease(URL);
+	
+	// Get the lproj directory name
+	path = [path stringByDeletingLastPathComponent];
+	if (![[path pathExtension] _web_isCaseInsensitiveEqualToString:@"lproj"]) {
+		return NSMacOSRomanStringEncoding;
+	}
+	
+	NSString *directoryName = [[path stringByDeletingPathExtension] lastPathComponent];
+	NSString *locale = (NSString *)CFLocaleCreateCanonicalLocaleIdentifierFromString(NULL, (CFStringRef)directoryName);
+	if (locale == nil) {
+		return NSMacOSRomanStringEncoding;
+	}
+		
+	LangCode lang;
+	RegionCode region;
+	error = LocaleStringToLangAndRegionCodes([locale UTF8String], &lang, &region);
+	[locale release];
+	if (error != noErr) {
+		return NSMacOSRomanStringEncoding;
+	}
+	
+	TextEncoding encoding;
+	error = UpgradeScriptInfoToTextEncoding(kTextScriptDontCare, lang, region, NULL, &encoding);
+	if (error != noErr) {
+		return NSMacOSRomanStringEncoding;
+	}
+	
+	return CFStringConvertEncodingToNSStringEncoding(encoding);
 }
 
 @end

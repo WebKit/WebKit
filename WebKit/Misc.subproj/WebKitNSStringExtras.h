@@ -20,4 +20,6 @@
 
 - (NSString *)_web_stringByStrippingReturnCharacters;
 
++ (NSStringEncoding)_web_encodingForResource:(Handle)resource;
+
 @end

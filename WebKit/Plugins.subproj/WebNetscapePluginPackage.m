@@ -6,6 +6,7 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebKitNSStringExtras.h>
 
 #import <CoreFoundation/CFBundlePriv.h>
 
@@ -102,7 +103,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         p += 1 + *p;
     
     // Convert the one we found into an NSString.
-    return [[[NSString alloc] initWithBytes:(p + 1) length:*p encoding:NSMacOSRomanStringEncoding] autorelease];
+    return [[[NSString alloc] initWithBytes:(p + 1) length:*p encoding:[NSString _web_encodingForResource:stringHandle]] autorelease];
 }
 
 - (BOOL)getPluginInfoFromResources

@@ -1,3 +1,15 @@
+2004-01-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3522900>: REGRESSION (100-117): Java plug-in description is garbled when displaying Plug-ins.html
+
+        Reviewed by darin.
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (+[NSString _web_encodingForResource:]): new method, returns the encoding for a resource handle given its file system path
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage stringForStringListID:andIndex:]): call _web_encodingForResource when creating the NSString
+
 === Safari-120 ===
 
 2004-01-06  Richard Williamson   <rjw@apple.com>
