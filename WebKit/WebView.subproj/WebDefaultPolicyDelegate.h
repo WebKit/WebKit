@@ -19,17 +19,6 @@
 }
 
 /*!
-    @method defaultURLPolicyForRequest:
-    @abstract Provides the default WebURLPolicy for a Request
-    @discussion WebControllerPolicyDelegates can use this method to
-    implement the standard behavior for -URLPolicyForRequest:.
-    @param Request use this request to determine an appropriate policy
-    @result The WebURLPolicy to use for the request.
-*/    
-+ (WebURLAction)defaultURLPolicyForRequest:(WebResourceRequest *)request;
-
-
-/*!
     @method initWithWebController:
     @param webController The controller that will use this delegate.  Note that the controller is not retained.
     @result An initialized WebDefaultPolicyDelegate

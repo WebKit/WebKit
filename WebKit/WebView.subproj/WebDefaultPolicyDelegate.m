@@ -14,26 +14,11 @@
 
 @implementation WebDefaultPolicyDelegate
 
-+ (WebURLAction)defaultURLPolicyForRequest: (WebResourceRequest *)request
-{
-    if([WebResourceHandle canInitWithRequest:request]){
-        return WebURLPolicyUseContentPolicy;
-    }else{
-        return WebURLPolicyOpenExternally;
-    }
-}
-
-
 - initWithWebController: (WebController *)wc
 {
     [super init];
     webController = wc;  // Non-retained, like a delegate.
     return self;
-}
-
-- (WebURLAction)URLPolicyForRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
-{
-    return [WebDefaultPolicyDelegate defaultURLPolicyForRequest:request];
 }
 
 - (WebFileAction)fileURLPolicyForMIMEType:(NSString *)type andRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
@@ -71,11 +56,15 @@
     return nil;
 }
 
-- (WebClickAction)clickPolicyForAction:(NSDictionary *)actionInformation 
-			      andRequest:(WebResourceRequest *)request
-				 inFrame:(WebFrame *)frame
+- (WebPolicyAction)navigationPolicyForAction:(NSDictionary *)actionInformation 
+				  andRequest:(WebResourceRequest *)request
+				     inFrame:(WebFrame *)frame
 {
-    return [WebDefaultPolicyDelegate defaultURLPolicyForRequest:request];
+    if([WebResourceHandle canInitWithRequest:request]){
+        return WebPolicyUse;
+    }else{
+        return WebPolicyOpenURL;
+    }
 }
 
 @end

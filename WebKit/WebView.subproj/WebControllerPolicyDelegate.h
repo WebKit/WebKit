@@ -58,35 +58,6 @@ typedef enum {
 } WebPolicyAction;
 
 /*!
-@enum WebClickAction
- @constant WebClickPolicyShow Have WebKit show the clicked URL.
- @constant WebClickPolicyOpenNewWindow Open the clicked URL in another window.
- @constant WebClickPolicyOpenNewWindowBehind Open the clicked URL in another window behind this window.
- @constant WebClickPolicySave Save the clicked URL to disk.
- @constant WebClickPolicyIgnore Do nothing with the clicked URL.
- */
-typedef enum {
-    WebClickPolicyShow = WebPolicyUse,
-    WebClickPolicyOpenExternally = WebPolicyOpenURL,
-    WebClickPolicyOpenNewWindow = WebPolicyOpenNewWindow,
-    WebClickPolicyOpenNewWindowBehind = WebPolicyOpenNewWindowBehind,
-    WebClickPolicySave = WebPolicySave,
-    WebClickPolicyIgnore = WebPolicyIgnore
-} WebClickAction;
-
-/*!
-    @enum WebURLAction
-    @constant WebURLPolicyUseContentPolicy Continue processing URL, ask for content policy.
-    @constant WebURLPolicyOpenExternally Open the URL in another application. 
-    @constant WebURLPolicyIgnore Do nothing with the URL.
-*/
-typedef enum {
-    WebURLPolicyUseContentPolicy = WebPolicyUse,
-    WebURLPolicyOpenExternally = WebPolicyOpenURL,
-    WebURLPolicyIgnore = WebPolicyIgnore
-} WebURLAction;
-
-/*!
     @enum WebFileAction
     @constant WebFileURLPolicyUseContentPolicy Continue processing the file, ask for content policy.
     @constant WebFileURLPolicyOpenExternally Open the file in another application.
@@ -130,27 +101,16 @@ typedef enum {
 @protocol WebControllerPolicyDelegate <NSObject>
 
 /*!
-     @method clickPolicyForElement:button:modifierFlags:
+     @method navigationPolicyForAction:andRequest:inFrame:
      @discussion Called right after the user clicks on a link.
-     @param elementInformation Dictionary that describes the clicked element.
-     @param eventType The type of event.
-     @param modifierFlags The modifier flags as described in NSEvent.h.
-     @result The WebClickPolicy for WebKit to implement
+     @param actionInformation Dictionary that describes the action that triggered this navigation.
+     @param andRequest The request for the proposed navigation
+     @param frame The frame in which the navigation is taking place
+     @result The WebPolicyAction for WebKit to implement
 */
-- (WebClickAction)clickPolicyForAction:(NSDictionary *)actionInformation
-                              andRequest:(WebResourceRequest *)request
-                                 inFrame:(WebFrame *)frame;
-
-/*!
-    @method URLPolicyForURL:inFrame:
-    @discussion URLPolicyForURL: is used to determine what to do BEFORE a URL is loaded, i.e.
-    before it is clicked or loaded via a URL bar.  Clients can choose to handle the
-    URL normally, hand the URL off to launch services, or
-    ignore the URL.  The default implementation could return +defaultURLPolicyForURL:.
-    @param URL The URL that WebKit has been asked to load.
-    @param frame The frame which will load the URL.
-*/
-- (WebURLAction)URLPolicyForRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame;
+- (WebPolicyAction)navigationPolicyForAction:(NSDictionary *)actionInformation
+                                  andRequest:(WebResourceRequest *)request
+                                     inFrame:(WebFrame *)frame;
 
 /*!
      @method fileURLPolicyForMIMEType:inFrame:isDirectory:
@@ -196,5 +156,3 @@ typedef enum {
 - (void)unableToImplementPolicy:(WebPolicyAction)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 @end
-
-

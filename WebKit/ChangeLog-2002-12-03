@@ -1,3 +1,19 @@
+2002-11-12  Maciej Stachowiak  <mjs@apple.com>
+
+	Combine click policy and URL policy into navigation policy.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate navigationPolicyForAction:andRequest:inFrame:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowRequest:]):
+        (-[WebFrame _actionInformationForNavigationType:event:]):
+        (-[WebFrame _continueAfterFileURLPolicyForRequest:]):
+        (-[WebFrame _continueAfterNavigationPolicyForRequest:event:]):
+        (-[WebFrame _loadURL:loadType:clientRedirect:triggeringEvent:]):
+
 2002-11-12  Trey Matteson  <trey@apple.com>
 
 	fixed 3096030 - Crash in -[WebBackForwardList goToEntry:] when playing with SnapBack and dictionary.com
