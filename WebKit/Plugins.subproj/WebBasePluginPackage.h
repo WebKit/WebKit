@@ -63,5 +63,6 @@
 - (void)setMIMEToExtensionsDictionary:(NSDictionary *)MIMEToExtensionsDictionary;
 
 - (BOOL)isQuickTimePlugIn;
+- (BOOL)isJavaPlugIn;
 
 @end

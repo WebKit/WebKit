@@ -23,11 +23,6 @@
 #import <Foundation/NSString_NSURLExtras.h>
 #import <Foundation/NSURLFileTypeMappings.h>
 
-#define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
-#define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
-#define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
-#define JavaCarbonPluginBadVersion 	@"1.0.0"
-
 @implementation WebPluginDatabase
 
 static WebPluginDatabase *database = nil;
@@ -235,6 +230,10 @@ static NSArray *pluginLocations(void)
             continue;
         }
         plugin = [self pluginForMIMEType:MIMEType];
+        if ([plugin isJavaPlugIn]) {
+            // Don't register the Java plug-in for a document view since Java files should be downloaded when not embedded.
+            continue;
+        }
         if ([plugin isQuickTimePlugIn] && [[WebFrameView _viewTypesAllowImageTypeOmission:NO] objectForKey:MIMEType] != nil) {
             // Don't allow the QT plug-in to override any types because it claims many that we can handle ourselves.
             continue;

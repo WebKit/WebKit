@@ -1,4 +1,16 @@
 2004-10-20  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: <rdar://problem/3846943> REGRESSION: JNLP files are rendered instead of downloaded
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (-[WebBasePluginPackage isJavaPlugIn]): new
+        * Plugins.subproj/WebPluginDatabase.m:
+        (-[WebPluginDatabase refresh]): don't register the Java plug-in for a document view since Java file should be downloaded when not embedded.
+
+2004-10-20  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed:
 	<rdar://problem/3842030> WebKit needs to pass the mode (NP_FULL, NP_EMBED, etc) when calling plugInViewWithArguments

@@ -14,6 +14,10 @@
 
 #import <Foundation/NSString_NSURLExtras.h>
 
+#define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
+#define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
+#define JavaCFMPluginFilename		@"Java Applet Plugin Enabler"
+
 #define QuickTimeCarbonPluginIdentifier       @"com.apple.QuickTime Plugin.plugin"
 #define QuickTimeCocoaPluginIdentifier        @"com.apple.qtcocoaplugin"
 
@@ -305,6 +309,14 @@
     NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
     return [bundleIdentifier _web_isCaseInsensitiveEqualToString:QuickTimeCarbonPluginIdentifier] || 
         [bundleIdentifier _web_isCaseInsensitiveEqualToString:QuickTimeCocoaPluginIdentifier];
+}
+
+- (BOOL)isJavaPlugIn
+{
+    NSString *bundleIdentifier = [[self bundle] bundleIdentifier];
+    return [bundleIdentifier _web_isCaseInsensitiveEqualToString:JavaCocoaPluginIdentifier] || 
+        [bundleIdentifier _web_isCaseInsensitiveEqualToString:JavaCarbonPluginIdentifier] ||
+        [[path lastPathComponent] _web_isCaseInsensitiveEqualToString:JavaCFMPluginFilename];
 }
 
 @end
