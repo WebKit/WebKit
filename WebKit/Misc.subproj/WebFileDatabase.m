@@ -443,6 +443,8 @@ static void databaseInit()
     [data release];
     [filePath release];
 
+    LOG(Timing, "getting value for %@ took %f", key, (CFAbsoluteTimeGetCurrent() - touch));
+    
     return result;
 }
 

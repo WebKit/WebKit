@@ -1,3 +1,16 @@
+2004-11-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3396872> ICONS: icon DB inconsistencies can cause slowness during startup, idle and quit
+
+        Reviewed by john.
+
+        * Misc.subproj/WebFileDatabase.m:
+        (-[WebFileDatabase objectForKey:]): added logging code
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase init]): use alloc, init rather than autorelease, retain
+        (-[WebIconDatabase _loadIconDictionaries]): use 1 object for mapping icon URLs to site URLs and vice versa rather than 3. This avoids inconsistencies and is faster.
+        (-[WebIconDatabase _updateFileDatabase]): write 1 object out
+
 2004-11-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3873234, Safari UI is unresponsive when parsing multiple HTML docs and 3873233, Safari hangs when

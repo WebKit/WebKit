@@ -16,12 +16,12 @@
 #import <Foundation/NSString_NSURLExtras.h>
 
 NSString * const WebIconDatabaseVersionKey = 	@"WebIconDatabaseVersion";
-NSString * const WebIconsOnDiskKey = 		@"WebIconsOnDisk";
 NSString * const WebURLToIconURLKey = 		@"WebSiteURLToIconURLKey";
-NSString * const WebIconURLToURLsKey = 		@"WebIconURLToSiteURLs";
-NSString * const WebHostToURLsKey = 		@"WebHostToSiteURLs";
 
-static const int WebIconDatabaseCurrentVersion = 1;
+NSString * const ObsoleteIconsOnDiskKey =       @"WebIconsOnDisk";
+NSString * const ObsoleteIconURLToURLsKey =     @"WebIconURLToSiteURLs";
+
+static const int WebIconDatabaseCurrentVersion = 2;
 
 NSString *WebIconDatabaseDidAddIconNotification = @"WebIconDatabaseDidAddIconNotification";
 NSString *WebIconNotificationUserInfoURLKey =     @"WebIconNotificationUserInfoURLKey";
@@ -78,13 +78,13 @@ NSSize WebIconLargeSize = {128, 128};
     [self _createFileDatabase];
     [self _loadIconDictionaries];
 
-    _private->iconURLToIcons = 			[[NSMutableDictionary dictionary] retain];
-    _private->iconURLToRetainCount = 		[[NSMutableDictionary dictionary] retain];
-    _private->futureURLToRetainCount = 		[[NSMutableDictionary dictionary] retain];
+    _private->iconURLToIcons =          [[NSMutableDictionary alloc] init];
+    _private->iconURLToRetainCount =    [[NSMutableDictionary alloc] init];
+    _private->futureURLToRetainCount =  [[NSMutableDictionary alloc] init];
 
-    _private->iconsToEraseWithURLs = 	[[NSMutableSet set] retain];
-    _private->iconsToSaveWithURLs = 	[[NSMutableSet set] retain];
-    _private->iconURLsWithNoIcons = 	[[NSMutableSet set] retain];
+    _private->iconsToEraseWithURLs =    [[NSMutableSet alloc] init];
+    _private->iconsToSaveWithURLs =     [[NSMutableSet alloc] init];
+    _private->iconURLsWithNoIcons =     [[NSMutableSet alloc] init];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(applicationWillTerminate:)
@@ -239,47 +239,6 @@ NSSize WebIconLargeSize = {128, 128};
     [_private->fileDatabase open];
 }
 
-- (BOOL)_iconDictionariesAreGood
-{
-    NSEnumerator *e;
-    id o;
-
-    if (![_private->iconsOnDiskWithURLs isKindOfClass:[NSMutableSet class]]) {
-        return NO;
-    }
-    if (![[_private->iconsOnDiskWithURLs objectEnumerator] _web_isAllStrings]) {
-        return NO;
-    }
-
-    if (![_private->URLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
-        return NO;
-    }
-    if (![[_private->URLToIconURL keyEnumerator] _web_isAllStrings]) {
-        return NO;
-    }
-    if (![[_private->URLToIconURL objectEnumerator] _web_isAllStrings]) {
-        return NO;
-    }
-
-    if (![_private->iconURLToURLs isKindOfClass:[NSMutableDictionary class]]) {
-        return NO;
-    }
-    if (![[_private->iconURLToURLs keyEnumerator] _web_isAllStrings]) {
-        return NO;
-    }
-    e = [_private->iconURLToURLs objectEnumerator];
-    while ((o = [e nextObject])) {
-        if (![o isKindOfClass:[NSMutableSet class]]) {
-            return NO;
-        }
-        if (![[o objectEnumerator] _web_isAllStrings]) {
-            return NO;
-        }
-    }
-    
-    return YES;
-}
-
 - (void)_loadIconDictionaries
 {
     WebFileDatabase *fileDB = _private->fileDatabase;
@@ -295,23 +254,55 @@ NSSize WebIconLargeSize = {128, 128};
     } else if ([version isKindOfClass:[NSNumber class]]) {
 	v = [version intValue];
     }
-
-    if (v == WebIconDatabaseCurrentVersion) {
-        _private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
-        _private->URLToIconURL = 		[fileDB objectForKey:WebURLToIconURLKey];
-        _private->iconURLToURLs = 	[fileDB objectForKey:WebIconURLToURLsKey];
+    
+    // Get the site URL to icon URL dictionary from the file DB.
+    NSMutableDictionary *URLToIconURL = nil;
+    if (v <= WebIconDatabaseCurrentVersion) {
+        URLToIconURL = [[fileDB objectForKey:WebURLToIconURLKey] retain];
+        
+        // Remove the old unnecessary mapping files.
+        if (v < WebIconDatabaseCurrentVersion) {
+            [fileDB removeObjectForKey:ObsoleteIconsOnDiskKey];
+            [fileDB removeObjectForKey:ObsoleteIconURLToURLsKey];
+        }        
+    }
+    
+    if (![URLToIconURL isKindOfClass:[NSMutableDictionary class]]) {
+        [URLToIconURL release];
+        URLToIconURL = [[NSMutableDictionary alloc] init];
     }
 
-    if (![self _iconDictionariesAreGood]) {
-        _private->iconsOnDiskWithURLs = [NSMutableSet set];
-        _private->URLToIconURL = 	[NSMutableDictionary dictionary];
-        _private->iconURLToURLs = 	[NSMutableDictionary dictionary];
+    // Keep a set of icon URLs on disk so we know what we need to write out or remove.
+    NSMutableSet *iconsOnDiskWithURLs = [[NSMutableSet alloc] initWithArray:[URLToIconURL allValues]];
+
+    // Reverse URLToIconURL so we have an icon URL to site URLs dictionary. 
+    NSMutableDictionary *iconURLToURLs = [[NSMutableDictionary alloc] initWithCapacity:[_private->iconsOnDiskWithURLs count]];
+    NSEnumerator *enumerator = [URLToIconURL keyEnumerator];
+    NSString *URL;
+    while ((URL = [enumerator nextObject])) {
+        NSString *iconURL = (NSString *)[URLToIconURL objectForKey:URL];
+        if (![URL isKindOfClass:[NSString class]] || ![iconURL isKindOfClass:[NSString class]]) {
+            [URLToIconURL release];
+            [iconURLToURLs release];
+            [iconsOnDiskWithURLs release];
+            URLToIconURL = [[NSMutableDictionary alloc] init];
+            iconURLToURLs = [[NSMutableDictionary alloc] init];
+            iconsOnDiskWithURLs = [[NSMutableSet alloc] init];
+            break;
+        }
+        NSMutableSet *iconURLs = (NSMutableSet *)[iconURLToURLs objectForKey:iconURL];
+        if (iconURLs == nil) {
+            iconURLs = [[NSMutableSet alloc] init];
+            [iconURLToURLs setObject:iconURLs forKey:iconURL];
+            [iconURLs release];
+        }
+        [iconURLs addObject:URL];
     }
 
-    _private->originalIconsOnDiskWithURLs = [_private->iconsOnDiskWithURLs copy];
-    [_private->iconsOnDiskWithURLs retain];
-    [_private->iconURLToURLs retain];
-    [_private->URLToIconURL retain];
+    _private->URLToIconURL = URLToIconURL;
+    _private->iconURLToURLs = iconURLToURLs;
+    _private->iconsOnDiskWithURLs = iconsOnDiskWithURLs;
+    _private->originalIconsOnDiskWithURLs = [iconsOnDiskWithURLs copy];
 }
 
 // Only called by _setIconURL:forKey:
@@ -369,15 +360,9 @@ NSSize WebIconLargeSize = {128, 128};
 
     // Save the icon dictionaries to disk. Save them as mutable copies otherwise WebFileDatabase may access the 
     // same dictionaries on a separate thread as it's being modified. We think this fixes 3566336.
-    NSMutableDictionary *iconsOnDiskWithURLsCopy = [_private->iconsOnDiskWithURLs mutableCopy];
     NSMutableDictionary *URLToIconURLCopy = [_private->URLToIconURL mutableCopy];
-    NSMutableDictionary *iconURLToURLsCopy = [_private->iconURLToURLs mutableCopy];
-    [fileDB setObject:iconsOnDiskWithURLsCopy forKey:WebIconsOnDiskKey];
     [fileDB setObject:URLToIconURLCopy forKey:WebURLToIconURLKey];
-    [fileDB setObject:iconURLToURLsCopy forKey:WebIconURLToURLsKey];
-    [iconsOnDiskWithURLsCopy release];
     [URLToIconURLCopy release];
-    [iconURLToURLsCopy release];
 }
 
 - (BOOL)_hasIconForIconURL:(NSString *)iconURL;
