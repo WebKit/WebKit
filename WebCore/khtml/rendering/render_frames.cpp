@@ -615,10 +615,8 @@ void RenderPartObject::updateWidget()
               params.append(aStr);
           }
       }
-#ifndef APPLE_CHANGES
       params.append( QString::fromLatin1("__KHTML__PLUGINEMBED=\"YES\"") );
       params.append( QString::fromLatin1("__KHTML__PLUGINBASEURL=\"%1\"").arg( part->url().url() ) );
-#endif /* APPLE_CHANGES not defined */
   }
 
   if(element()->id() == ID_OBJECT) {

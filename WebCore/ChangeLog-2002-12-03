@@ -1,3 +1,11 @@
+2002-04-04  Chris Blumenberg  <cblu@apple.com>
+
+	* src/kdelibs/khtml/rendering/render_frames.cpp:
+	(RenderPartObject::updateWidget):
+	* src/kwq/WCPluginWidget.mm: (WCPluginWidget::WCPluginWidget):
+
+	Moved the removal of __KHTML__ EMBED to attributes WCPluginWidget. One less APPLE_CHANGES.
+
 2002-04-04  Darin Adler  <darin@apple.com>
 
 	Redo clobbered fixes for problems that show up only when xNDEBUG is set

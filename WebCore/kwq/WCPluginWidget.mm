@@ -53,13 +53,16 @@ WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, c
     URL = QSTRING_TO_NSSTRING(url);
     arguments = [NSMutableDictionary dictionaryWithCapacity:10];
     for(i=0; i<args.count(); i++){
-    arg = QSTRING_TO_NSSTRING(args[i]);
-        r1 = [arg rangeOfString:@"="]; // parse out attributes and values
-        r2 = [arg rangeOfString:@"\""];
-        r3.location = r2.location + 1;
-        r3.length = [arg length] - r2.location - 2; // don't include quotes
-        [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
+        if(!args[i].contains("__KHTML__")){
+            arg = QSTRING_TO_NSSTRING(args[i]);
+            r1 = [arg rangeOfString:@"="]; // parse out attributes and values
+            r2 = [arg rangeOfString:@"\""];
+            r3.location = r2.location + 1;
+            r3.length = [arg length] - r2.location - 2; // don't include quotes
+            [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
+        }
     }
+    
     if(serviceType.isNull()){
         plugin = [[WCPluginDatabase installedPlugins] getPluginForExtension:[URL pathExtension]];
         if(plugin != nil){
