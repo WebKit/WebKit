@@ -1,3 +1,12 @@
+2002-08-02  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3015705 -- Command-up-arrow and -down-arrow should go to
+	beginning and end of web page
+
+        * WebView.subproj/WebView.m:
+        (-[WebView keyDown:]):
+	Added checks for command key.
+
 2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
 
         Effort towards 3014555 (going back to frame), but not fixed.  

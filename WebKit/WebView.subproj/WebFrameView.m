@@ -237,7 +237,9 @@ enum {
                 callSuper = NO;
                 break;
             case NSUpArrowFunctionKey:
-                if ([event modifierFlags] & NSAlternateKeyMask) {
+                if ([event modifierFlags] & NSCommandKeyMask) {
+                    [self _scrollToTopLeft];
+                } else if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self _pageUp];
                 } else {
                     [self _lineUp];
@@ -245,7 +247,9 @@ enum {
                 callSuper = NO;
                 break;
             case NSDownArrowFunctionKey:
-                if ([event modifierFlags] & NSAlternateKeyMask) {
+                if ([event modifierFlags] & NSCommandKeyMask) {
+                    [self _scrollToBottomLeft];
+                } else if ([event modifierFlags] & NSAlternateKeyMask) {
                     [self _pageDown];
                 } else {
                     [self _lineDown];
