@@ -1,3 +1,39 @@
+2003-11-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3486998 - Implement asynchronous http loading for XMLHttpRequest
+	
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequestQObject::XMLHttpRequestQObject): New QObject to use to
+	connect to signals.
+        (KJS::XMLHttpRequestQObject::slotData): Call XMLHttpRequest.
+        (KJS::XMLHttpRequestQObject::slotFinished): Ditto.
+        (KJS::XMLHttpRequestQObject::slotRedirection): Ditto.
+        (KJS::XMLHttpRequest::getValueProperty): Implemented, onrequeststatechange,
+	readyState and responseText.
+        (KJS::XMLHttpRequest::putValue): Implemented onrequeststatechange.
+        (KJS::XMLHttpRequest::XMLHttpRequest): Initialize new fields.
+        (KJS::XMLHttpRequest::~XMLHttpRequest): Delete decoder.
+        (KJS::XMLHttpRequest::changeState): Update state, and send event if needed.
+        (KJS::XMLHttpRequest::open): Save the parameters.
+        (KJS::XMLHttpRequest::send): Fire up a post or get job.
+        (KJS::XMLHttpRequest::slotFinished): go to final state.
+        (KJS::XMLHttpRequest::slotRedirection): Just stub for now.
+        (KJS::XMLHttpRequest::slotData): Update state; decode & save data.
+        (KJS::XMLHttpRequestProtoFunc::tryCall): Implemented open and send.
+        * khtml/ecma/xmlhttprequest.h: Prototyped new stuff.
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId): Added "readystatechange" event.
+        (EventImpl::idToType): Ditto.
+        * khtml/xml/dom2_eventsimpl.h: Ditto.
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): New variant that doesn't need a Request.
+        * kwq/KWQSlot.mm:
+        (KWQSlot::KWQSlot): Handle XMLHttpRequestQObject's slots.
+        (KWQSlot::call): Ditto.
+
 2003-11-19  Richard Williamson   <rjw@apple.com>
 
 	More LiveConnect stuff.  With that patch we make the applet

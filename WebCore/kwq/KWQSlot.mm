@@ -32,6 +32,7 @@
 #import "kjs_window.h"
 #import "render_form.h"
 #import "render_layer.h"
+#import "xmlhttprequest.h"
 
 using DOM::DocumentImpl;
 using khtml::CachedObject;
@@ -47,6 +48,7 @@ using khtml::RenderWidget;
 using khtml::RenderScrollMediator;
 using KIO::Job;
 using KJS::WindowQObject;
+using KJS::XMLHttpRequestQObject;
 
 enum FunctionNumber {
     signalFinishedParsing,
@@ -71,10 +73,13 @@ enum FunctionNumber {
     slotTextChangedWithString_RenderFileButton,
     slotValueChanged,
     slotWidgetDestructed,
-    slotData,
-    slotRedirection,
+    slotData_Loader,
+    slotData_XMLHttpRequest,
+    slotRedirection_KHTMLPart,
+    slotRedirection_XMLHttpRequest,
     slotFinished_KHTMLPart,
     slotFinished_Loader,
+    slotFinished_XMLHttpRequest,
     slotReceivedResponse
 };
 
@@ -125,17 +130,27 @@ KWQSlot::KWQSlot(QObject *object, const char *member)
 	    m_function = slotTextChangedWithString_RenderFileButton;
 	}
     } else if (KWQNamesMatch(member, SLOT(slotData(KIO::Job *, const char *, int)))) {
-	ASSERT(dynamic_cast<khtml::Loader *>(object));
-	m_function = slotData;
+	ASSERT(dynamic_cast<Loader *>(object) || dynamic_cast<XMLHttpRequestQObject *>(object));
+	if (dynamic_cast<Loader *>(object)) {
+	    m_function = slotData_Loader;
+	} else {
+	    m_function = slotData_XMLHttpRequest;
+	}
     } else if (KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL&)))) {
-	ASSERT(dynamic_cast<KHTMLPart *>(object));
-	m_function = slotRedirection;
+	ASSERT(dynamic_cast<KHTMLPart *>(object) || dynamic_cast<XMLHttpRequestQObject *>(object));
+	if (dynamic_cast<KHTMLPart *>(object)) {
+	    m_function = slotRedirection_KHTMLPart;
+	} else {
+	    m_function = slotRedirection_XMLHttpRequest;
+	}
     } else if (KWQNamesMatch(member, SLOT(slotFinished(KIO::Job *)))) {
-	ASSERT(dynamic_cast<khtml::Loader *>(object) || dynamic_cast<KHTMLPart *>(object));
+	ASSERT(dynamic_cast<khtml::Loader *>(object) || dynamic_cast<KHTMLPart *>(object) || dynamic_cast<XMLHttpRequestQObject *>(object));
 	if (dynamic_cast<khtml::Loader *>(object)) {
 	    m_function = slotFinished_Loader;
-	} else {
+	} else if (dynamic_cast<KHTMLPart *>(object)) {
 	    m_function = slotFinished_KHTMLPart;
+	} else {
+	    m_function = slotFinished_XMLHttpRequest;
 	}
     } else if (KWQNamesMatch(member, SLOT(slotReceivedResponse(KIO::Job *, void *)))) {
 	ASSERT(dynamic_cast<khtml::Loader *>(object));
@@ -253,6 +268,9 @@ void KWQSlot::call(Job *job) const
         case slotFinished_Loader:
             static_cast<Loader *>(m_object.pointer())->slotFinished(job);
             return;
+        case slotFinished_XMLHttpRequest:
+            static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotFinished(job);
+            return;
     }
     
     call();
@@ -265,8 +283,11 @@ void KWQSlot::call(Job *job, const char *data, int size) const
     }
     
     switch (m_function) {
-        case slotData:
+        case slotData_Loader:
 	    static_cast<Loader *>(m_object.pointer())->slotData(job, data, size);
+	    return;
+        case slotData_XMLHttpRequest:
+	    static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotData(job, data, size);
 	    return;
     }
 
@@ -280,8 +301,11 @@ void KWQSlot::call(Job *job, const KURL &url) const
     }
     
     switch (m_function) {
-        case slotRedirection:
+        case slotRedirection_KHTMLPart:
 	    static_cast<KHTMLPart *>(m_object.pointer())->slotRedirection(job, url);
+	    return;
+        case slotRedirection_XMLHttpRequest:
+	    static_cast<XMLHttpRequestQObject *>(m_object.pointer())->slotRedirection(job, url);
 	    return;
     }
 

@@ -229,6 +229,8 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return KEYUP_EVENT;
     else if (type == "textInput")
 	return TEXTINPUT_EVENT;
+    else if (type == "readystatechange")
+	return KHTML_READYSTATECHANGE_EVENT;
     // ignore: KHTML_DBLCLICK_EVENT
     // ignore: KHTML_CLICK_EVENT
     return UNKNOWN_EVENT;
@@ -316,6 +318,8 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
             return "khtml_move";
         case KHTML_ORIGCLICK_MOUSEUP_EVENT:
             return "khtml_origclick_mouseup_event";
+        case KHTML_READYSTATECHANGE_EVENT:
+	    return "readystatechange";
 	default:
 	    return DOMString();
 	    break;

@@ -37,6 +37,7 @@ namespace KIO {
 }
 
 bool KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
+bool KWQServeRequest(khtml::Loader *, khtml::DocLoader *, KIO::TransferJob *);
 void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
 bool KWQCheckIfReloading(khtml::DocLoader *loader);
 void KWQRetainResponse(void *response);

@@ -47,10 +47,15 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
         request->m_docLoader->part()->baseURL().url().latin1(),
         request->object->url().string().latin1());
     
-    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(request->m_docLoader->part());
+    return KWQServeRequest(loader, request->m_docLoader, job);
+}
+
+bool KWQServeRequest(Loader *loader, DocLoader *docLoader, TransferJob *job)
+{
+    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(docLoader->part());
     WebCoreBridge *bridge = part->bridge();
 
-    part->didTellBridgeAboutLoad(request->object->url().string());
+    part->didTellBridgeAboutLoad(job->url().url());
 
     KWQ_BLOCK_EXCEPTIONS;
     KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithJob:job];

@@ -23,9 +23,22 @@
 
 #include "ecma/kjs_binding.h"
 #include "ecma/kjs_dom.h"
-#include "misc/loader.h"
+#include "misc/decoder.h"
+#include "kio/jobclasses.h"
 
 namespace KJS {
+
+  class JSEventListener;
+  class XMLHttpRequestQObject;
+
+  // these exact numeric values are important because JS expects them
+  enum XMLHttpRequestState {
+    Uninitialized = 0,
+    Loading = 1,
+    Loaded = 2,
+    Interactive = 3,
+    Completed = 4
+  };
 
   class XMLHttpRequestConstructorImp : public ObjectImp {
   public:
@@ -36,7 +49,7 @@ namespace KJS {
     DOM::Document doc;
   };
 
-  class XMLHttpRequest : public DOMObject, public khtml::CachedObjectClient {
+  class XMLHttpRequest : public DOMObject {
   public:
     XMLHttpRequest(ExecState *, const DOM::Document &d);
     ~XMLHttpRequest();
@@ -44,12 +57,62 @@ namespace KJS {
     Value getValueProperty(ExecState *exec, int token) const;
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
-    void notifyFinished(khtml::CachedObject *);
     virtual bool toBoolean(ExecState *) const { return true; }
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status, StatusText, Abort, GetAllResponseHeaders, GetResponseHeader, Open, Send, SetRequestHeader };
+
   private:
+    friend class XMLHttpRequestProtoFunc;
+    friend class XMLHttpRequestQObject;
+
+    XMLHttpRequestQObject *qObject;
+
+#if APPLE_CHANGES
+    void slotData( KIO::Job* job, const char *data, int size );
+#else
+    void slotData( KIO::Job* job, const QByteArray &data );
+#endif
+    void slotFinished( KIO::Job* );
+    void slotRedirection( KIO::Job*, const KURL& );
+
+    void open(const QString& _method, const KURL& _url, bool _async);
+    void send(const QString& _body);
+
+    void changeState(XMLHttpRequestState newState);
+
+    QGuardedPtr<DOM::DocumentImpl> doc;
+    KIO::TransferJob * job;
+    XMLHttpRequestState state;
+    JSEventListener *onReadyStateChangeListener;
+    QString method;
+    KURL url;
+    bool async;
+
+    khtml::Decoder *decoder;
+    QString encoding;
+
+    QString response;
+  };
+
+
+  class XMLHttpRequestQObject : public QObject {
+    Q_OBJECT
+	
+  public:
+    XMLHttpRequestQObject(XMLHttpRequest *_jsObject);
+
+  public slots:
+#if APPLE_CHANGES
+    void slotData( KIO::Job* job, const char *data, int size );
+#else
+    void slotData( KIO::Job* job, const QByteArray &data );
+#endif
+    void slotFinished( KIO::Job* job );
+    void slotRedirection( KIO::Job* job, const KURL& url);
+
+  private:
+    XMLHttpRequest *jsObject;
   };
 
 }; // namespace
