@@ -1,3 +1,12 @@
+2004-05-07  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by darin.
+
+	Turn off GC since it uses ppc only instructions (which breaks 
+	the B&I build).   
+    
+        * kjs/value.h: set USE_CONSERVATIVE_GC to 0
+
 === Safari-139 ===
 
 2004-05-07  Maciej Stachowiak  <mjs@apple.com>
