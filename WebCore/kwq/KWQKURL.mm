@@ -233,7 +233,8 @@ KURL::KURL(const QString &url, int encoding_hint) :
 
 KURL::KURL(const KURL &base, const QString &relative)
 {
-    if (!base.m_isValid) {
+    // Allow at lest absolute URLs to resolve against an empty URL.
+    if (!base.m_isValid && !base.isEmpty()) {
         m_isValid = false;
         return;
     }

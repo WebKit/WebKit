@@ -1,3 +1,41 @@
+2002-12-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin and Trey.
+
+	- fixed 3124933 - abcnews.com leads to empty window with sheet complaining about javascript: URL
+	- fixed 3091248 - picture does not show up in window from epinions
+	- made "about:blank" load synchronously, which I'm told is required by some sites.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]): If the URL is nil
+	or empty, pass a nil request - otherwise WebBrowser will try to
+	load it, resulting in an extra back/forward list entry.
+        (-[WebBridge loadEmptyDocumentSynchronously]): Tell the frame to
+	load a request with an empty URL - this will cause a synchronous
+	load of an empty html document
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+	(-[WebBaseResourceHandleDelegate loadWithRequest:]): Split off
+	startLoading: part of method to allow behavior to be subclassed.
+        (-[WebBaseResourceHandleDelegate startLoading:]): 
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady:]): Lie and claim the URL is
+	"about:blank" if it's really empty to avoid confusing WebCore.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]): Don't put the empty URL in
+	global history.
+        (-[WebFrame
+	_checkNavigationPolicyForRequest:dataSource:andCall:withSelector:]):
+	Don't check policy if URL is empty - this is likely to confuse the
+	client and we know what the right behavior here is.
+        * WebView.subproj/WebMainResourceClient.m:
+	(-[WebMainResourceClient startLoading:]): Try to load
+	"about:blank" and the empty URL synchronously, bypassing
+	WebFoundation.
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]): Ditto.
+        (-[WebMainResourceClient setDefersCallbacks:]): Ditto.
+        * English.lproj/StringsNotToBeLocalized.txt: Updated.
+
 2002-12-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 2862385 - need to pass browser's user agent and version to plug-ins

@@ -463,8 +463,15 @@
             [self _makeRepresentation];
             
         [[self webFrame] _transitionToCommitted: pageCache];
-	
-        [[self _bridge] openURL:[[_private->response URL] absoluteString] 
+
+	NSString *urlString = [[_private->response URL] absoluteString];
+
+	// WebCore will crash if given an empty URL here.
+	if ([urlString length] == 0) {
+	    urlString = @"about:blank";
+	}
+
+        [[self _bridge] openURL:urlString
                 reload:reload 
                 headers:headers 
                 lastModified: (pageCache ? nil : [_private->response lastModifiedDate])

@@ -560,7 +560,7 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
-    _part->createDummyDocument();
+    _part->createEmptyDocument();
     return _part->executeScript(QString::fromNSString(string)).asString().getNSString();
 }
 

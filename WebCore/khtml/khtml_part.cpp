@@ -1303,6 +1303,15 @@ void KHTMLPart::slotFinished( KIO::Job * job )
 
 void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 {
+#if APPLE_CHANGES
+  // If we aren't loading an actual URL, then we need to make sure
+  // that we have at least an empty document. createEmptyDocument will
+  // do that if we don't have a document already.
+  if (d->m_workingURL.isEmpty()) {
+    KWQ(this)->createEmptyDocument();
+  }
+#endif
+
   clear();
   d->m_bCleared = false;
   d->m_cacheId = 0;

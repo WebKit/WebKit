@@ -201,6 +201,7 @@
 "_parent"
 "_self"
 "_top"
+"about:blank"
 "application/octet-stream"
 "application/pdf"
 "application/x-java-applet"

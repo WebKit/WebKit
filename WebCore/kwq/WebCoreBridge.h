@@ -246,6 +246,8 @@ enum FrameBorderStyle {
 
 - (int)getObjectCacheSize;
 
+- (void)loadEmptyDocumentSynchronously;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

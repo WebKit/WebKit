@@ -20,9 +20,9 @@
 @protected
     WebDataSource *dataSource;
     WebResourceHandle *handle;
+    WebResourceRequest *request;
 @private
     WebController *controller;
-    WebResourceRequest *request;
     WebResourceResponse *response;
     id identifier;
     id <WebResourceLoadDelegate>resourceLoadDelegate;
@@ -33,6 +33,9 @@
 }
 
 - (BOOL)loadWithRequest:(WebResourceRequest *)request;
+
+// this method exists only to be subclassed, don't call it directly
+- (void)startLoading:(WebResourceRequest *)r;
 
 - (void)setDataSource:(WebDataSource *)d;
 - (WebDataSource *)dataSource;

@@ -126,7 +126,7 @@ public:
     void forceLayout();
     void paint(QPainter *, const QRect &);
 
-    void createDummyDocument();
+    void createEmptyDocument();
 
     static WebCoreBridge *bridgeForWidget(QWidget *);
     

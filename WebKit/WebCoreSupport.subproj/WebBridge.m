@@ -100,7 +100,12 @@
 {
     ASSERT(frame != nil);
 
-    WebResourceRequest *request = [WebResourceRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+    WebResourceRequest *request = nil;
+
+    if (URL != nil && [URL length] > 0) {
+	request = [WebResourceRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+    }
+
     WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithRequest:request];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
@@ -549,5 +554,13 @@ static BOOL loggedObjectCacheSize = NO;
     return cacheSize * multiplier;
 }
 
+- (void)loadEmptyDocumentSynchronously
+{
+    NSURL *url = [[NSURL alloc] initWithString:@""];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:url];
+    [frame loadRequest:request];
+    [request release];
+    [url release];
+}
 
 @end

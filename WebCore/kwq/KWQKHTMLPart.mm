@@ -642,22 +642,9 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     return ok;
 }
 
-void KWQKHTMLPart::createDummyDocument()
+void KWQKHTMLPart::createEmptyDocument()
 {
-    if (d->m_doc) {
-        ASSERT(d->m_view);
-    } else {
-        d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument(d->m_view);
-        d->m_doc->ref();
-        
-        ASSERT(d->m_view == 0);
-        KHTMLView *kview = new KHTMLView(this, 0);
-        setView(kview, true);
-        
-        NSView *view = [[KWQDummyView alloc] initWithWindow:[_bridge window]];
-        kview->setView(view);
-        [view release];
-    }
+    [_bridge loadEmptyDocumentSynchronously];
 }
 
 void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)

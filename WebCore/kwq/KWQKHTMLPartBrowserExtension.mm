@@ -37,8 +37,19 @@ void KHTMLPartBrowserExtension::openURLRequest(const KURL &url,
 {
     if (url.protocol().lower() == "javascript") {
 	QString string = url.url();
-	KWQ(m_part)->createDummyDocument();
-	KWQ(m_part)->executeScript(string.mid(strlen("javascript:")));
+	KWQ(m_part)->createEmptyDocument();
+	QString script = KURL::decode_string(string.mid(strlen("javascript:")));
+	QVariant ret = KWQ(m_part)->executeScript(script);
+
+	// some sites open windows with a javascript: URL that
+	// evaluates to an HTML string which they want placed in the
+	// window - should executing a script always do this?
+	if (ret.type() == QVariant::String) {
+	    m_part->begin();
+	    m_part->write(ret.asString());
+	    m_part->end();
+	}
+
      } else {
 	KWQ(m_part)->openURLRequest(url, args);
     }

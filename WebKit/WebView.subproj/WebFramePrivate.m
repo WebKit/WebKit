@@ -562,9 +562,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeStandard:
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
-                    entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
-                    if (ptitle)
-                        [entry setTitle: ptitle];
+		    NSURL *URL = [[[ds _originalRequest] URL] _web_canonicalize];
+		    if ([[URL absoluteString] length] > 0) {
+			entry = [[WebHistory sharedHistory] addEntryForURL:URL];
+			if (ptitle)
+			    [entry setTitle: ptitle];
+		    }
 
                     [self _addBackForwardItemClippedAtTarget:YES];
                 } else {
@@ -1228,6 +1231,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // Don't ask more than once for the same request
     if ([request isEqual:[dataSource _lastCheckedRequest]]) {
+        [target performSelector:selector withObject:(id)YES withObject:request];
+        return;
+    }
+
+    // If we are loading the empty URL, don't bother to ask - clients
+    // are likely to get confused.
+    if ([[[request URL] absoluteString] length] == 0) {
         [target performSelector:selector withObject:(id)YES withObject:request];
         return;
     }

@@ -1,3 +1,40 @@
+2002-12-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey and Darin.
+
+	- fixed 3124933 - abcnews.com leads to empty window with sheet complaining about javascript: URL
+	- fixed 3091248 - picture does not show up in window from epinions
+	
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Put back document-creating code that was in #if
+	!APPLE_CHANGES.
+	(Window::isSafeScript): Extend access to a window that was opened
+	to no URL or to about:blank by the active window.
+        (shouldLoadAsEmptyDocument): Helper for the above.
+        (WindowFunc::tryCall): Update APPLE_CHANGES comments - now it's
+	clear we don't need to create a document in a fresh window
+	(accessing document will take care of that), and that it will be
+	counter-productive, possibly adding a useless entry to the
+	back/forward list.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::begin): If we're not loading a URL, make a dummy
+	document (the call will check if we have a dummy document
+	already).
+        * kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPart::createEmptyDocument): Isntead of setting up a
+	half-assed document, ask bridge to synchronously load a fully
+	assed (but empty) document. Renamed from createDummyDocument.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::openURLRequest): Decode script. Also,
+	check if return value is a string - if so, write it into the
+	document. Maybe we want this to be more general.
+        * kwq/KWQKURL.mm:
+        (KURL::KURL): Changed to successfully resolve absolute URLs
+	against an empty base URL.
+        * kwq/WebCoreBridge.h: prototyped new
+	loadEmptyDocumentSynchronously method.
+
 2002-12-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3052731 - qt file complains about lack of active-x handler

@@ -8,10 +8,12 @@
 #import <WebFoundation/WebCookieConstants.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResourceResponsePrivate.h>
 
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebController.h>
@@ -243,6 +245,10 @@
     }
 
     [super handle:handle didReceiveResponse:r];
+
+    if ([[req URL] _web_shouldLoadAsEmptyDocument]) {
+	[self handleDidFinishLoading:handle];
+    }
 }
 
 
@@ -351,5 +357,29 @@
 
     [self release];
 }
+
+- (void)startLoading:(WebResourceRequest *)r
+{
+    if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
+	[self handle:handle willSendRequest:r];
+
+	WebResourceResponse *rsp = [[WebResourceResponse alloc] init];
+	[rsp _setURL:[r URL]];
+	[rsp _setContentType:@"text/html"];
+	[rsp _setContentLength:0];
+	[self handle:handle didReceiveResponse:rsp];
+	[rsp release];
+    } else {
+	[super startLoading:r];
+    }
+}
+
+- (void)setDefersCallbacks:(BOOL)defers
+{
+    if (request && !([[request URL] _web_shouldLoadAsEmptyDocument])) {
+	[super setDefersCallbacks:defers];
+    }
+}
+
 
 @end

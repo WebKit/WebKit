@@ -61,6 +61,11 @@
     [super dealloc];
 }
 
+- (void)startLoading:(WebResourceRequest *)r
+{
+    [handle loadWithDelegate:self];
+}
+
 - (BOOL)loadWithRequest:(WebResourceRequest *)r
 {
     ASSERT(handle == nil);
@@ -72,7 +77,9 @@
     if (defersCallbacks) {
         [handle _setDefersCallbacks:YES];
     }
-    [handle loadWithDelegate:self];
+
+    [self startLoading:r];
+
     return YES;
 }
 
