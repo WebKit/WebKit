@@ -1,3 +1,13 @@
+2003-03-04  Richard Williamson   <rjw@apple.com>
+
+        Remove initWithURL: and frameName from WebDataSource public API.
+        
+        Reviewed by trey.
+
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource webFrame]):
+
 2003-03-04  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

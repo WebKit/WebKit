@@ -24,22 +24,6 @@
 
 @implementation WebDataSource
 
--(id)initWithURL:(NSURL *)URL
-{
-    id result = nil;
-
-    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
-    if (request) {
-        result = [self initWithRequest:request];
-        [request release];
-    }
-    else {
-        [self release];
-    }
-    
-    return result;
-}
-
 -(id)initWithRequest:(WebRequest *)request
 {
     self = [super init];
@@ -83,13 +67,6 @@
 - (WebFrame *)webFrame
 {
     return _private->webFrame;
-}
-
-// Returns the name of the frame containing this data source, or nil
-// if the data source is not in a frame set.
-- (NSString *)frameName 
-{
-    return [[self webFrame] name];    
 }
 
 - (WebController *)controller
