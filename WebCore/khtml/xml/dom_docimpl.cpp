@@ -1355,7 +1355,7 @@ void DocumentImpl::setParsing(bool b)
     if (m_bParsing != b) {
         m_bParsing = b;
         if (!b && haveStylesheetsLoaded() && 
-            (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout()) && 
+            (!ownerElement() || (ownerElement()->renderer() && !ownerElement()->renderer()->needsLayout())) && 
             renderer() && renderer()->needsLayout())
             updateLayout();
     }
