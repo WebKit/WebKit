@@ -1,3 +1,10 @@
+2004-06-15  Darin Adler  <darin@apple.com>
+
+        - rolled out Ken's fix for <rdar://problem/3672377> assertion failure in AppendNodeCommandImpl::doApply due to non-0 exception code trying to insert a DIV markup string
+          (it was making most layout tests fail)
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeImpl::checkAddChild): Rolled check back in.
+
 2004-06-15  David Hyatt  <hyatt@apple.com>
 
 	Add a truncation variable to text run boxes that will eventually be used to know how to cut out some of the glyphs when
@@ -17508,4 +17515,4 @@ Added support for getting at Java object fields.
         link to the parent node, not just when following a link to the next child node.
         * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString): Ditto.
 
-== Rolled over to ChangeLog-2003-10-25 ==
+== Rolled over to ChangeLog-2003-10-25 ==ite
