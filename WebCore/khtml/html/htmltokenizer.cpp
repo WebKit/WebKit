@@ -65,7 +65,7 @@ using DOM::DocumentImpl;
 using DOM::FORBIDDEN;
 using DOM::Node;
 using DOM::emptyAtom;
-using DOM::endTag;
+using DOM::endTagRequirement;
 
 // turn off inlining to void warning with newer gcc
 #undef __inline
@@ -1460,7 +1460,7 @@ void HTMLTokenizer::parseTag(TokenizerString &src)
                 break;
             }
             
-            if (beginTag && endTag[tagID] == FORBIDDEN)
+            if (beginTag && endTagRequirement(tagID) == FORBIDDEN)
                 // Don't discard LFs since this element has no end tag.
                 discard = NoneDiscard;
                 

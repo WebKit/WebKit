@@ -1,3 +1,33 @@
+2005-02-18  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+
+        Fix for <rdar://problem/3975568> REGRESSION(125-180)Australian Open pages have drawing problem
+
+        This patch fixes two problems caused by our added support for custom tags.  First, the layout problem at the sites mentioned in the bug
+        was caused by custom tags within tables.  In checkChild, we needed to treat these tags as spans so they get placed correctly in the DOM tree.
+        Also, we were indexing the tagPriority and endTag arrays with id values from the custom tags that were greater than the size of the array.  So now 
+        we have functions to check for the custom tags, and again, treat them as spans.  To avoid confusion, we changed the names of the arrays to
+        endTagArray and tagPriorityArray.
+
+        * khtml/html/dtd.h: changed all uses of the endTag array to endTagArray for our new wrapper functions
+        (DOM::tagPriority): added function to check array bounds and to treat custom tags as spans
+        (DOM::endTagRequirement): added function to check array bounds and to treat custom tags as spans
+        * khtml/html/dtd.cpp: changed name of endTag and tagPriority arrays to endTagArray and tagPriorityArray
+        (DOM::checkChild): treat custom tags as spans during this check
+        * khtml/html/html_elementimpl.cpp: changed all uses of the endTag array to the endTagRequirement function
+        (HTMLElementImpl::createContextualFragment):
+        (HTMLElementImpl::setInnerText):
+        (HTMLElementImpl::setOuterText):
+        (HTMLElementImpl::toString):
+        * khtml/html/htmlparser.cpp: changed all uses of the endTag array to the endTagRequirement function and all uses of the tagPriority array to the tagPriority function.
+        (KHTMLParser::parseToken):
+        (KHTMLParser::insertNode):
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::parseTag): changed all uses of the endTag array to the endTagRequirement function
+       * khtml/editing/markup.cpp: changed all uses of the endTag array to the endTagRequirement function
+        (khtml::endMarkup): 
+        (khtml::markup):
+
 2005-02-18  Jens Alfke  <jens@apple.com>
 
         Reviewed by Hyatt.

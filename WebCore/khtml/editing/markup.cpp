@@ -45,8 +45,8 @@ using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DOMString;
 using DOM::ElementImpl;
-using DOM::endTag;
 using DOM::FORBIDDEN;
+using DOM::endTagRequirement;
 using DOM::HTMLElementImpl;
 using DOM::NamedAttrMapImpl;
 using DOM::Node;
@@ -230,7 +230,7 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
 
 static QString endMarkup(const NodeImpl *node)
 {
-    if ((!node->isHTMLElement() || endTag[node->id()] != FORBIDDEN) && node->nodeType() != Node::TEXT_NODE && node->nodeType() != Node::DOCUMENT_NODE) {
+    if ((!node->isHTMLElement() || endTagRequirement(node->id()) != FORBIDDEN) && node->nodeType() != Node::TEXT_NODE && node->nodeType() != Node::DOCUMENT_NODE) {
         return "</" + node->nodeName().string() + ">";
     }
     return "";
@@ -248,7 +248,7 @@ static QString markup(const NodeImpl *startNode, bool onlyIncludeChildren, bool 
             }
             me += startMarkup(current, 0, DoNotAnnotateForInterchange, 0);
         }        
-        if (!current->isHTMLElement() || endTag[current->id()] != FORBIDDEN) {
+        if (!current->isHTMLElement() || endTagRequirement(current->id()) != FORBIDDEN) {
             // print children
             if (NodeImpl *n = current->firstChild()) {
                 me += markup(n, false, true, nodes);

@@ -44,7 +44,7 @@ using namespace DOM;
 // 8 table
 // 9 body frameset
 // 10 html
-const unsigned short DOM::tagPriority[] = {
+const unsigned short DOM::tagPriorityArray[] = {
     0, // 0
     1, // ID_A == 1
     1, // ID_ABBR
@@ -151,7 +151,7 @@ const unsigned short DOM::tagPriority[] = {
     0, // ID_TEXT
 };
 
-const tagStatus DOM::endTag[] = {
+const tagStatus DOM::endTagArray[] = {
     REQUIRED,  // 0
     REQUIRED,  // ID_A == 1
     REQUIRED,  // ID_ABBR
@@ -559,8 +559,11 @@ bool DOM::checkChild(ushort tagID, ushort childID)
 
     // ### allow comments inside ANY node that can contain children
 
-    if (tagID > ID_LAST_TAG || childID > ID_LAST_TAG)
-        return true; // one or both of the elements is an XML element; just allow for now
+    // Treat custom elements the same as <span>.
+    if (tagID > ID_LAST_TAG)
+        tagID = ID_SPAN;
+    if (childID > ID_LAST_TAG)
+        childID = ID_SPAN;
 
     switch(tagID)
     {

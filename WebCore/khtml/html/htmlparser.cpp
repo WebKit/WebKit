@@ -247,7 +247,7 @@ void KHTMLParser::parseToken(Token *t)
         e->setAttributeMap(t->attrs);
 
         // take care of optional close tags
-        if(endTag[e->id()] == DOM::OPTIONAL)
+        if(endTagRequirement(e->id()) == DOM::OPTIONAL)
             popBlock(t->id);
             
         if (isHeaderTag(t->id))
@@ -317,9 +317,9 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
         kdDebug( 6035 ) << "added " << n->nodeName().string() << " to " << tmp->nodeName().string() << ", new current=" << newNode->nodeName().string() << endl;
 #endif
         // don't push elements without end tag on the stack
-        if(tagPriority[id] != 0 && !flat)
+        if(tagPriority(id) != 0 && !flat)
         {
-            pushBlock(id, tagPriority[id]);
+            pushBlock(id, tagPriority(id));
             if (newNode == current)
                 popBlock(id);
             else
@@ -415,7 +415,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             if ( head ) {
                 DOM::NodeImpl *newNode = head->addChild(n);
                 if ( newNode ) {
-                    pushBlock(id, tagPriority[id]);
+                    pushBlock(id, tagPriority(id));
                     setCurrent(newNode);
 #if SPEED_DEBUG < 2
 		    if(!n->attached() && HTMLWidget)
@@ -523,7 +523,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                     NodeImpl* table = tsection->parent();
                     int exceptioncode = 0;
                     table->insertBefore(n, tsection, exceptioncode);
-                    pushBlock(id, tagPriority[id]);
+                    pushBlock(id, tagPriority(id));
                     setCurrent(n);
                     inStrayTableContent++;
                     blockStack->strayTableContent = true;
@@ -663,10 +663,10 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
 #endif
                         break;
                     }
-                    if (n->isElementNode() && tagPriority[id] != 0 && 
-                        !flat && endTag[id] != DOM::FORBIDDEN)
+                    if (n->isElementNode() && tagPriority(id) != 0 && 
+                        !flat && endTagRequirement(id) != DOM::FORBIDDEN)
                     {
-                        pushBlock(id, tagPriority[id]);
+                        pushBlock(id, tagPriority(id));
                         setCurrent(n);
                         inStrayTableContent++;
                         blockStack->strayTableContent = true;

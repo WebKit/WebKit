@@ -23,6 +23,7 @@
 #define _DOM_dtd_h_
 
 #include "dom/dom_string.h"
+#include "misc/htmltags.h"
 
 namespace DOM
 {
@@ -34,8 +35,24 @@ enum tagStatus { OPTIONAL, REQUIRED, FORBIDDEN };
 
 bool checkChild(ushort tagID, ushort childID);
 
-extern const unsigned short tagPriority[];
-extern const tagStatus endTag[];
+extern const unsigned short tagPriorityArray[];
+extern const tagStatus endTagArray[];
+
+inline unsigned short tagPriority(Q_UINT32 tagId)
+{
+    // Treat custom elements the same as <span>; also don't read past the end of the array.
+    if (tagId > ID_LAST_TAG)
+        return tagPriorityArray[ID_SPAN];
+    return tagPriorityArray[tagId];
+}
+
+inline tagStatus endTagRequirement(Q_UINT32 tagId)
+{
+    // Treat custom elements the same as <span>; also don't read past the end of the array.
+    if (tagId > ID_LAST_TAG)
+        return endTagArray[ID_SPAN];
+    return endTagArray[tagId];
+}
 
 } //namespace DOM
 #endif

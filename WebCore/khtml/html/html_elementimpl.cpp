@@ -741,7 +741,7 @@ DOMString HTMLElementImpl::outerText() const
 DocumentFragmentImpl *HTMLElementImpl::createContextualFragment(const DOMString &html)
 {
     // the following is in accordance with the definition as used by IE
-    if( endTag[id()] == FORBIDDEN )
+    if( endTagRequirement(id()) == FORBIDDEN )
         return NULL;
     // IE disallows innerHTML on inline elements. I don't see why we should have this restriction, as our
     // dhtml engine can cope with it. Lars
@@ -847,7 +847,7 @@ bool HTMLElementImpl::setOuterHTML( const DOMString &html )
 bool HTMLElementImpl::setInnerText( const DOMString &text )
 {
     // following the IE specs.
-    if( endTag[id()] == FORBIDDEN )
+    if( endTagRequirement(id()) == FORBIDDEN )
         return false;
     // IE disallows innerText on inline elements. I don't see why we should have this restriction, as our
     // dhtml engine can cope with it. Lars
@@ -881,7 +881,7 @@ bool HTMLElementImpl::setInnerText( const DOMString &text )
 bool HTMLElementImpl::setOuterText( const DOMString &text )
 {
     // following the IE specs.
-    if( endTag[id()] == FORBIDDEN )
+    if( endTagRequirement(id()) == FORBIDDEN )
         return false;
     switch( id() ) {
         case ID_COL:
@@ -1072,7 +1072,7 @@ DOMString HTMLElementImpl::toString() const
 	DOMString result = openTagStartToString();
 	result += ">";
 
-	if (endTag[id()] == REQUIRED) {
+	if (endTagRequirement(id()) == REQUIRED) {
 	    result += "</";
 	    result += tagName();
 	    result += ">";
