@@ -1,5 +1,13 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- fix hash function and key comparison for the other kind of hash table; yields 3%
+
+        * kjs/lookup.cpp:
+        (keysMatch): Added.
+        (Lookup::findEntry): Don't allocate and convert to ASCII just to search.
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- another hash table fix; yields a 2% improvement on iBench JavaScript
 
         * kjs/property_map.cpp: A few more places where we use & instead of %.

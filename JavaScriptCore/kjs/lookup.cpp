@@ -30,43 +30,39 @@
 
 using namespace KJS;
 
+static bool keysMatch(const UChar *c, unsigned len, const char *s)
+{
+  for (unsigned i = 0; i != len; i++, c++, s++)
+    if (c->unicode() != (unsigned char)*s)
+      return false;
+  return *s == 0;
+}
+
 const HashEntry* Lookup::findEntry( const struct HashTable *table,
                               const UChar *c, unsigned int len )
 {
+#ifndef NDEBUG
   if (table->type != 2) {
     fprintf(stderr, "KJS: Unknown hash table version.\n");
     return 0;
   }
-  char *ascii = new char[len+1];
-  unsigned int i;
-  for(i = 0; i < len; i++, c++) {
-    if (!c->high())
-      ascii[i] = c->low();
-    else
-      break;
-  }
-  ascii[i] = '\0';
+#endif
 
-  int h = hash(ascii) % table->hashSize;
+  int h = hash(c, len) % table->hashSize;
   const HashEntry *e = &table->entries[h];
 
   // empty bucket ?
-  if (!e->s) {
-    delete [] ascii;
+  if (!e->s)
     return 0;
-  }
 
   do {
     // compare strings
-    if (strcmp(ascii, e->s) == 0) {
-      delete [] ascii;
+    if (keysMatch(c, len, e->s))
       return e;
-    }
     // try next bucket
     e = e->next;
   } while (e);
 
-  delete [] ascii;
   return 0;
 }
 
