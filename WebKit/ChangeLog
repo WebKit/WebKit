@@ -5958,8 +5958,6 @@ Source::
 	The core is a new support method that loads a WebView given a HistoryItem, which
 	thus restores all frames of that item, and optionally the form and scroll state.
 
-        Reviewed by NOBODY (OOPS!).
-
         * History.subproj/WebHistoryItem.m:
         (-[WebHistoryItem copyWithZone:]):  Copy the docState, scrollPosition, isTargetItem.
 	No good	reason to have left these out when I wrote this method.
