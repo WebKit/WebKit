@@ -96,6 +96,8 @@ public:
     
     void layout();
     
+    QString userAgent() const;
+    
     // Incoming calls, used by the bridge.
     
     DOM::DocumentImpl *getDocument();

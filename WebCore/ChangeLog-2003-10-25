@@ -1,3 +1,22 @@
+2002-08-16  Darin Adler  <darin@apple.com>
+
+	Step 2 in adding user agent API to WebKit and WebFoundation.
+	In this step, I change WebCore so that it the KWQKHTMLPartImpl
+	is responsible for fetching the user agent. Later it will
+	get the user agent from WebKit via the bridge.
+
+        * khtml/ecma/kjs_navigator.cpp: (Navigator::getValueProperty):
+	Get the user agent from the part, not KProtocolManager.
+        * khtml/ecma/kjs_proxy.cpp: (KJSProxyImpl::initScript):
+	Get the user agent from the part, not KProtocolManager.
+
+        * kwq/KWQKHTMLPartImpl.h: Add userAgent member function.
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::userAgent): Added.
+
+        * WebCore.pbproj/project.pbxproj: Removed KWQKProtocolManager.mm.
+        * kwq/KWQKProtocolManager.mm: Removed.
+        * kwq/kio/kprotocolmanager.h: Made empty.
+
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
         * force-clean-timestamp: Need to rebuild for JavaScriptCore changes.

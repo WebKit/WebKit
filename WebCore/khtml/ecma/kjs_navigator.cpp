@@ -176,8 +176,12 @@ Value Navigator::get(ExecState *exec, const UString &propertyName) const
 
 Value Navigator::getValueProperty(ExecState *exec, int token) const
 {
+#if APPLE_CHANGES
+  QString userAgent = m_part->impl->userAgent();
+#else
   KURL url = m_part->url();
   QString userAgent = KProtocolManager::userAgentForHost(url.host());
+#endif
   switch (token) {
   case AppCodeName:
     return String("Mozilla");

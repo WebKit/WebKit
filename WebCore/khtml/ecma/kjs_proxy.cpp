@@ -274,7 +274,11 @@ void KJSProxyImpl::initScript()
   globalObject.put(m_script->globalExec(),
 		   "debug", Value(new TestFunctionImp()), Internal);
 
+#if APPLE_CHANGES
+  QString userAgent = m_part->impl->userAgent();
+#else
   QString userAgent = KProtocolManager::userAgentForHost(m_part->url().host());
+#endif
   if (userAgent.find(QString::fromLatin1("Microsoft")) >= 0 ||
       userAgent.find(QString::fromLatin1("MSIE")) >= 0)
     m_script->setCompatMode(Interpreter::IECompat);
