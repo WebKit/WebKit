@@ -99,6 +99,8 @@ Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instanc
 
     if (objcValue)
         aValue = convertObjcValueToValue (exec, &objcValue, ObjcObjectType);
+    else
+        aValue = Undefined();
 
     return aValue;
 }
