@@ -83,6 +83,8 @@ class RenderListItem : public RenderBlock
 public:
     RenderListItem(DOM::NodeImpl*);
     virtual ~RenderListItem();
+    
+    virtual void detach(RenderArena *);
 
     virtual const char *renderName() const { return "RenderListItem"; }
 
@@ -111,6 +113,7 @@ protected:
     long int predefVal;
     RenderListMarker *m_marker;
     bool _notInList;
+    bool _markerInstalledInParent;
 };
 
 }; //namespace

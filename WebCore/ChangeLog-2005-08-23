@@ -1,3 +1,18 @@
+2003-03-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed a storage leak when running cvs-base
+
+        * khtml/rendering/render_list.h: Added _markerInstalledInParent.
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::setStyle): Set _markerInstalledInParent to false when
+        creating a new marker.
+        (RenderListItem::detach): Detach the marker if it's not not installed in the
+        parent yet.
+        (RenderListItem::updateMarkerLocation): Set _markerInstalledInParent to true
+        when installing the marker in a parent.
+
 2003-03-26  David Hyatt  <hyatt@apple.com>
 
 	Make <label> use tag list 1.  Fixes 3206063.  Residual style

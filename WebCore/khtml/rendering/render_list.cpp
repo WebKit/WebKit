@@ -143,6 +143,7 @@ void RenderListItem::setStyle(RenderStyle *_style)
         m_marker = new (renderArena()) RenderListMarker();
         m_marker->setStyle(newStyle);
         m_marker->setListItem(this);
+        _markerInstalledInParent = false;
     } else if ( m_marker && style()->listStyleType() == LNONE) {
         m_marker->detach(renderArena());
         m_marker = 0;
@@ -156,6 +157,15 @@ void RenderListItem::setStyle(RenderStyle *_style)
 
 RenderListItem::~RenderListItem()
 {
+}
+
+void RenderListItem::detach(RenderArena* renderArena)
+{    
+    if (m_marker && !_markerInstalledInParent) {
+        m_marker->detach(renderArena);
+        m_marker = 0;
+    }
+    RenderBlock::detach(renderArena);
 }
 
 void RenderListItem::calcListValue()
@@ -236,6 +246,7 @@ void RenderListItem::updateMarkerLocation()
             if (!lineBoxParent)
                 lineBoxParent = this;
             lineBoxParent->addChild(m_marker, lineBoxParent->firstChild());
+            _markerInstalledInParent = true;
             if (!m_marker->minMaxKnown())
                 m_marker->calcMinMaxWidth();
             recalcMinMaxWidths();
