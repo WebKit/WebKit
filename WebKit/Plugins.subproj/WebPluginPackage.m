@@ -120,4 +120,9 @@
 {
 }
 
+- (BOOL)isLoaded
+{
+    return [bundle isLoaded];
+}
+
 @end

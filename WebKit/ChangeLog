@@ -1,3 +1,22 @@
+2002-11-03  Chris Blumenberg  <cblu@apple.com>
+
+	- Added MacBinary decoding code. Not yet used.
+
+        * Downloads.subproj/WebMacBinaryDecoder.h: Added.
+        * Downloads.subproj/WebMacBinaryDecoder.m: Added.
+        (+[WebMacBinaryDecoder canDecodeHeaderData:]):
+        (-[WebMacBinaryDecoder init]):
+        (-[WebMacBinaryDecoder dealloc]):
+        (-[WebMacBinaryDecoder decodeData:dataForkData:resourceForkData:]):
+        (-[WebMacBinaryDecoder finishDecoding]):
+        (-[WebMacBinaryDecoder fileAttributes]):
+        * Downloads.subproj/crc16.h: Added.
+        * Downloads.subproj/crc16.m: Added.
+        (CRC16):
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage isLoaded]): 
+        * WebKit.pbproj/project.pbxproj:
+
 2002-11-03  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent

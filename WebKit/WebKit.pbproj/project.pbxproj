@@ -299,6 +299,8 @@
 				832E26A5036F9614005E2B4F,
 				517FA6AC03709FCE00CA2D3A,
 				830A567403731461000C720C,
+				83413E8E0375BCD3004719BE,
+				83413E8F0375BCD3004719BE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -407,6 +409,8 @@
 				517FA6AD03709FCE00CA2D3A,
 				517FA6AE03709FCE00CA2D3A,
 				830A567503731461000C720C,
+				83413E8A0375BCBE004719BE,
+				83413E900375BCD3004719BE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1520,9 +1524,13 @@
 		};
 		832E269E036F952E005E2B4F = {
 			children = (
+				83413E8B0375BCD3004719BE,
+				83413E890375BCBE004719BE,
 				832E26A1036F95CA005E2B4F,
 				832E26A3036F9614005E2B4F,
 				832E26A4036F9614005E2B4F,
+				83413E8C0375BCD3004719BE,
+				83413E8D0375BCD3004719BE,
 			);
 			isa = PBXGroup;
 			name = Downloads;
@@ -1599,6 +1607,58 @@
 		};
 		83402EFD035A58D100BE770A = {
 			fileRef = 83402EFB035A58D100BE770A;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83413E890375BCBE004719BE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = crc16.m;
+			path = Downloads.subproj/crc16.m;
+			refType = 4;
+		};
+		83413E8A0375BCBE004719BE = {
+			fileRef = 83413E890375BCBE004719BE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83413E8B0375BCD3004719BE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = crc16.h;
+			path = Downloads.subproj/crc16.h;
+			refType = 4;
+		};
+		83413E8C0375BCD3004719BE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebMacBinaryDecoder.h;
+			path = Downloads.subproj/WebMacBinaryDecoder.h;
+			refType = 4;
+		};
+		83413E8D0375BCD3004719BE = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebMacBinaryDecoder.m;
+			path = Downloads.subproj/WebMacBinaryDecoder.m;
+			refType = 4;
+		};
+		83413E8E0375BCD3004719BE = {
+			fileRef = 83413E8B0375BCD3004719BE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83413E8F0375BCD3004719BE = {
+			fileRef = 83413E8C0375BCD3004719BE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		83413E900375BCD3004719BE = {
+			fileRef = 83413E8D0375BCD3004719BE;
 			isa = PBXBuildFile;
 			settings = {
 			};
