@@ -1,3 +1,18 @@
+2005-01-26  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3757712> REGRESSION (Mail): WebCore does not allow Devanagari ligature input
+
+	For now we are using ICU UBreakIterator to determine grapheme boundaries for
+	cursor and deletion.  This does not match what Cocoa does exactly, but does match
+	what Carbon does.  The areas are difference are obscure, but, according to
+	Deborah Goldsmith, using the UBreakIterator is the reasonable approach.
+
+        Reviewed by Ken.
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::previousOffset):
+        (RenderText::nextOffset):
+
 2005-01-25  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej and Richard.

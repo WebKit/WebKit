@@ -688,17 +688,8 @@ long RenderText::previousOffset (long current) const
     // in the future (according to Deborah Goldsmith).
     UBreakIterator* iterator = ubrk_open (UBRK_CHARACTER, "en_us", (const UChar*)str->s, str->l, &status);
     if (iterator) {
-        // ICU gives us the leading and trailing edges of ligature graphemes, so we determine if
-        // the size of the previous grapheme is larger than 1 (i.e. we have a ligature or some sort),
-        // and if so, move back to the leading edge of the the grapheme, which is the same
-        // as the start of the previous character.
-        long off1 = ubrk_preceding (iterator, current);
-        long off2 = ubrk_preceding (iterator, off1);
+        long off1 = ubrk_preceding (iterator, current);	
         ubrk_close (iterator);
-        
-        if (off2 >= 0 && off1 - off2 > 1)
-            return off2;
-            
         return off1;
     }
     
@@ -718,17 +709,8 @@ long RenderText::nextOffset (long current) const
     // in the future (according to Deborah Goldsmith).
     UBreakIterator* iterator = ubrk_open (UBRK_CHARACTER, "en_us", (const UChar*)str->s, str->l, &status);
     if (iterator) {
-        // ICU gives us the leading and trailing edges of ligature graphemes, so we determine if
-        // the size of the next grapheme is larger than 1 (i.e. we have a ligature or some sort),
-        // and if so, move forward to the trailing edge of the the grapheme, which is the same
-        // as the start of the next character.
         long off1 = ubrk_following (iterator, current);
-        long off2 = ubrk_following (iterator, off1);
         ubrk_close (iterator);
-        
-        if (off2 >= 0 && off1 - current > 1)
-            return off2;
-
         return off1;
     }
     
