@@ -68,10 +68,15 @@ public:
 
 private:
 
-// add copy constructor and assignment operator
-#ifdef KWQ_PEDANTIC
-    // no copying or assignment
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     DCOPClient(const DCOPClient &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     DCOPClient &operator=(const DCOPClient &);
 #endif
 

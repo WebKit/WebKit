@@ -53,7 +53,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QTableView();
-    
     ~QTableView();
 
     // member functions --------------------------------------------------------
@@ -70,9 +69,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     QTableView(const QTableView &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     QTableView &operator=(const QTableView &);
+#endif
 
 }; // class QTableView =========================================================
 
@@ -98,7 +106,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QMultiLineEdit();
-    
     ~QMultiLineEdit();
 
     // member functions --------------------------------------------------------
@@ -123,6 +130,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     QMultiLineEdit(const QMultiLineEdit &);
     QMultiLineEdit &operator=(const QMultiLineEdit &);
 
@@ -144,7 +152,6 @@ public:
 
     KEdit();
     KEdit(QWidget *);
-
     ~KEdit();
 
     // member functions --------------------------------------------------------
@@ -154,9 +161,18 @@ public:
 // private ---------------------------------------------------------------------
 
 private:
-    // no copying or assignment
+
+// add copy constructor
+// this private declaration prevents copying
+#ifdef _KWQ_PEDANTIC_
     KEdit(const KEdit &);
+#endif
+
+// add assignment operator 
+// this private declaration prevents assignment
+#ifdef _KWQ_PEDANTIC_
     KEdit &operator=(const KEdit &);
+#endif
 
 }; // class KEdit ==============================================================
 

@@ -48,7 +48,6 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     KFileDialog();
-    
     ~KFileDialog();
     
     // member functions --------------------------------------------------------
@@ -59,6 +58,7 @@ public:
 
 private:
     // no copying or assignment
+    // note that these are "standard" (no pendantic stuff needed)
     KFileDialog(const KFileDialog &);
     KFileDialog &operator=(const KFileDialog &);
 
