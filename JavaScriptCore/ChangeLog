@@ -1,3 +1,13 @@
+2002-10-25  Darin Adler  <darin@apple.com>
+
+	- fixed 3038011 -- drop-down menu hierarchy broken at yahoo new acct page
+
+        * kjs/array_object.cpp: (ArrayProtoFuncImp::call):
+	Fix bug calling concat on an empty array. The old code tried to
+	optimize in a way that would prevent appending any arrays until
+	at least one element was in the destination array. So if you were
+	concatenating a non-empty array into an empty array, you got an empty array.
+
 === Alexander-29 ===
 
 === Alexander-28 ===

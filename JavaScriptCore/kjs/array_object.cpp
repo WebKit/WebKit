@@ -290,8 +290,9 @@ Value ArrayProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args
       if (curArg.type() == ObjectType &&
           curObj.inherits(&ArrayInstanceImp::info)) {
         unsigned int k = 0;
-        if (n > 0)
-          length = curObj.get(exec,lengthPropertyName).toUInt32(exec);
+        // Older versions tried to optimize out getting the length of thisObj
+        // by checking for n != 0, but that doesn't work if thisObj is an empty array.
+        length = curObj.get(exec,lengthPropertyName).toUInt32(exec);
         while (k < length) {
           if (curObj.hasProperty(exec,k))
             arr.put(exec, n, curObj.get(exec, k));
