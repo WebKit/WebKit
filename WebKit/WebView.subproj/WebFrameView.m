@@ -181,17 +181,6 @@ enum {
     [super setFrameSize:size];
 }
 
-- (NSWindow *)window
-{
-    NSWindow *window = [super window];
-
-    if (window == nil) {
-	window = [[[self controller] windowOperationsDelegate] window];
-    }
-
-    return window;
-}
-
 - (void)keyDown:(NSEvent *)event
 {
     NSString *characters = [event characters];

@@ -165,7 +165,7 @@
 - (NSWindow *)window
 {
     ASSERT(frame != nil);
-    return [[[frame controller] windowOperationsDelegate] window];
+    return [[frame webView] window];
 }
 
 - (WebDataSource *)dataSource

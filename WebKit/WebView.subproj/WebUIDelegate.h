@@ -47,6 +47,56 @@
 - (void)showWindowBehindFrontmost;
 
 /*!
+    @method closeWindow
+    @abstract Close the current window. 
+    @discussion Clients showing multiple views in one window may
+    choose to close only the one corresponding to this
+    controller. Other clients may choose to ignore this method
+    entirely.
+*/
+- (void)closeWindow;
+
+/*!
+    @method focusWindow
+    @abstract Focus the current window (i.e. makeKeyAndOrderFront:).
+    @discussion Clients showing multiple views in one window may want to
+    also do something to focus the one corresponding to this controller.
+*/
+- (void)focusWindow;
+
+/*!
+    @method unfocusWindow
+    @abstract Unfocus the current window.
+    @discussion Clients showing multiple views in one window may want to
+    also do something to unfocus the one corresponding to this controller.
+*/
+- (void)unfocusWindow;
+
+/*!
+    @method firstResponderInWindow
+    @abstract Get the first responder for this window.
+    @discussion This method should return the focused control in the
+    controller's view, if any. If the view is out of the window
+    hierarchy, this might return something than calling firstResponder
+    on the real NSWindow would. It's OK to return either nil or the
+    real first responder if some control not in the window has focus.
+*/
+- (NSResponder *)firstResponderInWindow;
+
+/*!
+    @method makeFirstResponderInWindow:
+    @abstract Set the first responder for this window.
+    @param responder The responder to make first (will always be a view)
+    @discussion responder will always be a view that is in the view
+    subhierarchy of the top-level web view for this controller. If the
+    controller's top level view is currently out of the view
+    hierarchy, it may be desirable to save the first responder
+    elsewhere, or possibly ignore this call.
+*/
+- (void)makeFirstResponderInWindow:(NSResponder *)responder;
+
+
+/*!
     @method setStatusText:
     @abstract Set the window's status display, if any, to the specified string.
     @param text The status text to set
@@ -108,6 +158,26 @@
 - (void)setStatusBarVisible:(BOOL)visible;
 
 /*!
+    @method isResizable
+    @abstract Determine whether the window is resizable or not.
+    @result YES if resizable, NO if not.
+    @discussion If there are multiple views in the same window, they
+    have have their own separate resize controls and this may need to
+    be handled specially.
+*/
+- (BOOL)isResizable;
+
+/*!
+    @method setResizable:
+    @abstract Set the window to resizable or not
+    @param resizable YES if the window should be made resizable, NO if not.
+    @discussion If there are multiple views in the same window, they
+    have have their own separate resize controls and this may need to
+    be handled specially.
+*/
+- (void)setResizbale:(BOOL)resizable;
+
+/*!
     @method setFrame:
     @abstract Set the window's frame rect
     @param frame The new window frame size
@@ -116,12 +186,12 @@
     things on programmatic move/resize, like avoiding autosaving of the size.
 */
 - (void)setFrame:(NSRect)frame;
-   
-/*!
-    @method window
-    @abstract Get the NSWindow that contains the top-level view of the WebController
-    @result The NSWindow corresponding to this WebController
-*/
-- (NSWindow *)window;
 
+/*!
+    @method frame
+    @abstract REturn the window's frame rect
+    @discussion 
+*/
+- (NSRect)frame;
+   
 @end

@@ -1,3 +1,13 @@
+2003-02-27  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge window]): Avoid calling removed call.
+        * WebView.subproj/WebView.m: Remove override of window method.
+        * WebView.subproj/WebWindowOperationsDelegate.h: 
+	Adjust for new API.	
+
 === Safari-64 ===
 
 === Safari-63 ===
