@@ -54,7 +54,7 @@ namespace KJS {
     virtual void pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const;
 
     enum { NodeName, NodeValue, NodeType, ParentNode, ParentElement,
-           ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling,
+           ChildNodes, FirstChild, LastChild, PreviousSibling, NextSibling, Item,
            Attributes, NamespaceURI, Prefix, LocalName, OwnerDocument, InsertBefore,
            ReplaceChild, RemoveChild, AppendChild, HasAttributes, HasChildNodes,
            CloneNode, Normalize, IsSupported, AddEventListener, RemoveEventListener,

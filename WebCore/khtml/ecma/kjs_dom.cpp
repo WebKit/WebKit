@@ -61,6 +61,8 @@ using DOM::DOMException;
   removeEventListener	DOMNode::RemoveEventListener	DontDelete|Function 3
   dispatchEvent		DOMNode::DispatchEvent	DontDelete|Function 1
   contains	DOMNode::Contains		DontDelete|Function 1
+# "DOM level 0" (from Gecko DOM reference; also in WinIE)
+  item          DOMNode::Item           DontDelete|Function 1
 @end
 */
 DEFINE_PROTOTYPE("DOMNode",DOMNodeProto)
@@ -475,7 +477,10 @@ Value DOMNodeProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &ar
 	    bool retval = !impl->checkNoOwner(other.handle(),exceptioncode);
 	    return Boolean(retval && exceptioncode == 0);
 	}
+        return Undefined();
     }
+    case DOMNode::Item:
+      return getDOMNode(exec, node.childNodes().item(static_cast<unsigned long>(args[0].toNumber(exec))));
   }
 
   return Undefined();

@@ -1,3 +1,13 @@
+2003-10-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3464702 -- node.item(x) is not implemented (dynamic menus not filled out at techcu.com)
+
+        * khtml/ecma/kjs_dom.cpp: (DOMNodeProtoFunc::tryCall): Add implementation of item function.
+        * khtml/ecma/kjs_dom.h: Added Item to the enum.
+        * khtml/ecma/kjs_dom.lut.h: Regenerated.
+
 2003-10-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave,
