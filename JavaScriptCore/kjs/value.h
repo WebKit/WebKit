@@ -95,10 +95,10 @@ namespace KJS {
     virtual ~ValueImp();
 
 #ifdef APPLE_CHANGES
-    // The collecter lock is not locked around the ref() and unref()
+    // The collector lock is not locked around the ref() and unref()
     // methods for the following reasons:
     //
-    // - The only cases where chaging the refcount could possibly
+    // - The only cases where changing the refcount could possibly
     // affect the collector's behavior is incrementing from 0 to 1,
     // and decrementing from 1 to 0.
     //

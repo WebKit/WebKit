@@ -1,3 +1,7 @@
+2002-05-13  Darin Adler  <darin@apple.com>
+
+	* kjs/value.h: Fix comment typos.
+
 === JavaScriptCore-4 ===
 
 2002-05-10  Maciej Stachowiak  <mjs@apple.com>
