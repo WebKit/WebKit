@@ -26,15 +26,34 @@
 #include "reference_list.h"
 
 #define DO_CONSISTENCY_CHECK 0
-
-// At the time I added this switch, the optimization still gave a 1.5% performance boost so I couldn't remove it.
+#define DUMP_STATISTICS 0
 #define USE_SINGLE_ENTRY 1
+
+// At the time I added USE_SINGLE_ENTRY, the optimization still gave a 1.5% performance boost so I couldn't remove it.
 
 #if !DO_CONSISTENCY_CHECK
 #define checkConsistency() ((void)0)
 #endif
 
 namespace KJS {
+
+#if DUMP_STATISTICS
+
+static int numProbes;
+static int numCollisions;
+
+struct PropertyMapStatisticsExitLogger { ~PropertyMapStatisticsExitLogger(); };
+
+static PropertyMapStatisticsExitLogger logger;
+
+PropertyMapStatisticsExitLogger::~PropertyMapStatisticsExitLogger()
+{
+    printf("\nKJS::PropertyMap statistics\n\n");
+    printf("%d probes\n", numProbes);
+    printf("%d collisions (%.1f%%)\n", numCollisions, 100.0 * numCollisions / numProbes);
+}
+
+#endif
 
 struct PropertyMapHashTable
 {
@@ -115,6 +134,10 @@ ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
     }
     
     int i = hash(rep);
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table->entries[i].key && _table->entries[i].key != rep;
+#endif
     while (UString::Rep *key = _table->entries[i].key) {
         if (rep == key) {
             attributes = _table->entries[i].attributes;
@@ -139,6 +162,10 @@ ValueImp *PropertyMap::get(const Identifier &name) const
     }
     
     int i = hash(rep);
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table->entries[i].key && _table->entries[i].key != rep;
+#endif
     while (UString::Rep *key = _table->entries[i].key) {
         if (rep == key)
             return _table->entries[i].value;
@@ -176,6 +203,10 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
         expand();
     
     int i = hash(rep);
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table->entries[i].key && _table->entries[i].key != rep;
+#endif
     while (UString::Rep *key = _table->entries[i].key) {
         if (rep == key) {
             // Put a new value in an existing hash table entry.
@@ -201,6 +232,10 @@ inline void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attribut
     assert(_table);
 
     int i = hash(key);
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table->entries[i].key && _table->entries[i].key != key;
+#endif
     while (_table->entries[i].key)
         i = (i + 1) & _table->sizeMask;
     
@@ -262,6 +297,10 @@ void PropertyMap::remove(const Identifier &name)
 
     // Find the thing to remove.
     int i = hash(rep);
+#if DUMP_STATISTICS
+    ++numProbes;
+    numCollisions += _table->entries[i].key && _table->entries[i].key != rep;
+#endif
     while ((key = _table->entries[i].key)) {
         if (rep == key)
             break;

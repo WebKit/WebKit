@@ -1,3 +1,21 @@
+2002-11-22  Darin Adler  <darin@apple.com>
+
+	- prepare to reimplement KJS::List; move to its own file, add statistics
+
+        * kjs/function_object.cpp: (FunctionProtoFuncImp::call): Use new copyTail()
+	function rather than copy() and removeFirst().
+
+        * kjs/identifier.cpp: Add statistics, off by default.
+        * kjs/property_map.cpp: Add statistics, off by default.
+
+        * kjs/list.cpp: Added. Moved code here. To be rewritten.
+        * kjs/list.h: Added. Moved interface here. To be rewritten.
+
+        * kjs/types.cpp: Removed.
+        * kjs/types.h: Now just an empty header that includes other headers.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Add new files, rearrange.
+
 2002-11-22  Maciej Stachowiak  <mjs@apple.com>
 
 	- reduce cell size to 56 bytes from 64, now that nearly all
