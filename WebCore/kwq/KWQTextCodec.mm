@@ -92,6 +92,20 @@ QTextCodec::~QTextCodec()
 
 // member functions --------------------------------------------------------
 
+const char* QTextCodec::name() const
+{
+    // FIXME: need real implementation here
+    _logNotYetImplemented();
+    return "\0";
+}
+
+int QTextCodec::mibEnum() const
+{
+    // FIXME: need real implementation here
+    _logNotYetImplemented();
+    return 0;
+}
+
 QTextDecoder *QTextCodec::makeDecoder() const
 {
     // FIXME: will this leak or do clients dispose of the object?
