@@ -1,3 +1,20 @@
+2004-05-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+        
+        Defer setting the selection to delete when none has been passed in to the
+        time that the command is run. This fixes a problem where a command nested
+        in a composite was not correctly picking up the right selection to begin
+        its work. Now, the command will correctly use the ending selection of
+        its parent when no selection has been passed in.
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteCollapsibleWhitespaceCommandImpl::DeleteCollapsibleWhitespaceCommandImpl):
+        (khtml::DeleteCollapsibleWhitespaceCommandImpl::doApply):
+        (khtml::DeleteSelectionCommandImpl::DeleteSelectionCommandImpl):
+        (khtml::DeleteSelectionCommandImpl::doApply):
+        * khtml/editing/htmlediting_impl.h:
+
 2004-05-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

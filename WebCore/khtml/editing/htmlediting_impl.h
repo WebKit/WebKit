@@ -237,8 +237,9 @@ public:
 private:
     DOM::Position deleteWhitespace(const DOM::Position &pos);
 
-    DOM::Selection m_selectionToCollapse;
     unsigned long m_charactersDeleted;
+    DOM::Selection m_selectionToCollapse;
+    bool m_hasSelectionToCollapse;
 };
 
 //------------------------------------------------------------------------------------------
@@ -262,6 +263,7 @@ private:
     void joinTextNodesWithSameStyle();
 
     DOM::Selection m_selectionToDelete;
+    bool m_hasSelectionToDelete;
 };
 
 //------------------------------------------------------------------------------------------
