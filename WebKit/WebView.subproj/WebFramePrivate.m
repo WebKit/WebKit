@@ -731,11 +731,6 @@ static const char * const stateNames[] = {
     [[[self controller] policyDelegate] unableToImplementPolicy:policy error:error forURL:URL inFrame:self];    
 }
 
-- (BOOL)_shouldShowRequest:(WebResourceRequest *)request
-{
-    return [self _continueAfterNavigationPolicyForRequest:request dataSource:[self provisionalDataSource]];
-}
-
 - (void)_clearProvisionalDataSource
 {
     [_private setProvisionalDataSource:nil];
@@ -920,6 +915,12 @@ static const char * const stateNames[] = {
 			 forKey:WebActionNavigationTypeKey];
 }
 
+- (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector
+{
+    BOOL shouldContinue = [self _continueAfterNavigationPolicyForRequest:request dataSource:dataSource];
+    [target performSelector:selector withObject:(id)(unsigned)shouldContinue withObject:request];
+}
+
 -(BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource
 {
     NSDictionary *action = [dataSource _triggeringAction];
@@ -984,6 +985,35 @@ static const char * const stateNames[] = {
     return NO;
 }
 
+
+
+-(void)_continueFragmentScrollAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
+{
+    if (!shouldContinue) {
+	return;
+    }
+
+    NSURL *URL = [request URL];
+    WebDataSource *dataSrc = [self dataSource];
+
+    // save scroll position before we open URL, which will jump to anchor
+    [self _saveScrollPositionToItem:[_private currentItem]];
+    
+    // ???Might need to save scroll-state, form-state for all other frames
+    
+    ASSERT(![_private previousItem]);
+    // will save form state to current item, since prevItem not set
+    [_private->bridge openURL:URL reload:NO headers:nil];
+    [dataSrc _setURL:URL];
+    // NB: must happen after _setURL, since we add based on the current request
+    [self _addBackForwardItemClippedAtTarget:NO];
+    // This will clear previousItem from the rest of the frame tree tree that didn't
+    // doing any loading.  We need to make a pass on this now, since for anchor nav
+    // we'll not go through a real load and reach Completed state
+    [self _checkLoadComplete];
+    [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSrc];
+}
+
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
 - (void)_loadURL:(NSURL *)URL loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event isFormSubmission:(BOOL)isFormSubmission
 {
@@ -1013,26 +1043,7 @@ static const char * const stateNames[] = {
 
         WebDataSource *dataSrc = [self dataSource];
 	[dataSrc _setTriggeringAction:action];
-	if (![self _continueAfterNavigationPolicyForRequest:request dataSource:dataSrc]) {
-	    return;
-	}
-
-        // save scroll position before we open URL, which will jump to anchor
-        [self _saveScrollPositionToItem:[_private currentItem]];
-
-        // ???Might need to save scroll-state, form-state for all other frames
-
-        ASSERT(![_private previousItem]);
-        // will save form state to current item, since prevItem not set
-        [_private->bridge openURL:URL reload:NO headers:nil];
-        [dataSrc _setURL:URL];
-        // NB: must happen after _setURL, since we add based on the current request
-        [self _addBackForwardItemClippedAtTarget:NO];
-        // This will clear previousItem from the rest of the frame tree tree that didn't
-        // doing any loading.  We need to make a pass on this now, since for anchor nav
-        // we'll not go through a real load and reach Completed state
-        [self _checkLoadComplete];
-        [[[self controller] locationChangeDelegate] locationChangedWithinPageForDataSource:dataSrc];
+	[self _checkNavigationPolicyForRequest:request dataSource:dataSrc andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
@@ -1259,6 +1270,25 @@ static const char * const stateNames[] = {
     return [_private currentItem];
 }
 
+-(void)_continueLoadRequestAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
+{
+    if (!shouldContinue) {
+	[self _setLoadType: WebFrameLoadTypeStandard];
+	[_private setProvisionalDataSource:nil];
+        return;
+    }
+    
+    // We tell the documentView provisionalDataSourceChanged:
+    // once it has been created by the controller.
+    
+    [self _setState: WebFrameStateProvisional];
+    
+    if (self == [[self controller] mainFrame])
+        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
+
+    [_private->provisionalDataSource startLoading];
+}
+
 - (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType: (WebFrameLoadType)loadType
 {
     ASSERT([self controller] != nil);
@@ -1272,16 +1302,8 @@ static const char * const stateNames[] = {
         [self stopLoading];
     }
 
-    [self _setLoadType: WebFrameLoadTypeStandard];
+    [self _setLoadType:loadType];
 
-    // _continueAfterNavigationPolicyForRequest:dataSource: asks the
-    // client for the URL policies and reports errors if there are any
-    // returns YES if we should show the data source
-
-    if (![self _continueAfterNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource]) {
-        return;
-    }
-    
     if ([self parent]) {
         [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
     }
@@ -1289,18 +1311,8 @@ static const char * const stateNames[] = {
     [_private setProvisionalDataSource:newDataSource];
     
     ASSERT([newDataSource webFrame] == self);
-    
-    // We tell the documentView provisionalDataSourceChanged:
-    // once it has been created by the controller.
-    
-    [self _setState: WebFrameStateProvisional];
-    
-    [self _setLoadType:loadType];
 
-    if (self == [[self controller] mainFrame])
-        LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
-
-    [_private->provisionalDataSource startLoading];
+    [self _checkNavigationPolicyForRequest:[newDataSource request] dataSource:newDataSource andCall:self withSelector:@selector(_continueLoadRequestAfterNavigationPolicy:request:)];
 }
 
 - (void)_downloadRequest:(WebResourceRequest *)request toPath:(NSString *)path

@@ -91,6 +91,25 @@
     [self release];
 }
 
+
+-(void)stopLoadingForPolicyChange
+{
+    [[dataSource webFrame] _clearProvisionalDataSource];
+    [self notifyDelegatesOfInterruptionByPolicyChange];
+    [self cancelQuietly];
+}
+
+-(void)continueAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
+{
+    if (!defersBeforeCheckingPolicy) {
+	[[dataSource controller] _setDefersCallbacks:NO];
+    }
+
+    if (!shouldContinue) {
+	[self stopLoadingForPolicyChange];
+    }
+}
+
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
     newRequest = [super handle:h willSendRequest:newRequest];
@@ -99,16 +118,6 @@
 
     NSURL *URL = [newRequest URL];
 
-    if (![[dataSource webFrame] _shouldShowRequest:newRequest]) {
-        [self cancelQuietly];
-
-        [[dataSource webFrame] _clearProvisionalDataSource];
-	[[[dataSource controller] locationChangeDelegate] locationChangeDone:
-            [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil]
-            forDataSource:dataSource];
-        return nil;
-    }
-    
     LOG(Redirect, "URL = %@", URL);
     
     // Update cookie policy base URL as URL changes, except for subframes, which use the
@@ -120,7 +129,14 @@
     // Don't set this on the first request.  It is set
     // when the main load was started.
     [dataSource _setRequest:newRequest];
-    
+
+    defersBeforeCheckingPolicy = [[dataSource controller] _defersCallbacks];
+    if (!defersBeforeCheckingPolicy) {
+	[[dataSource controller] _setDefersCallbacks:YES];
+    }
+
+    [[dataSource webFrame] _checkNavigationPolicyForRequest:newRequest dataSource:dataSource andCall:self withSelector:@selector(continueAfterNavigationPolicy:request:)];
+
     return newRequest;
 }
 
@@ -131,14 +147,6 @@
     [[[dataSource controller] locationChangeDelegate] locationChangeDone:interruptError forDataSource:dataSource];
 
     [super notifyDelegatesOfInterruptionByPolicyChange];
-}
-
-
--(void)stopLoadingAfterContentPolicy
-{
-    [[dataSource webFrame] _clearProvisionalDataSource];
-    [self notifyDelegatesOfInterruptionByPolicyChange];
-    [self cancelQuietly];
 }
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
@@ -165,7 +173,7 @@
     case WebPolicyShow:
 	if (![WebController canShowMIMEType:[r contentType]]) {
 	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorCannotShowMIMEType forURL:[req URL]];
-	    [self stopLoadingAfterContentPolicy];
+	    [self stopLoadingForPolicyChange];
 	    return;
 	}
         break;
@@ -198,7 +206,7 @@
 	    }
 	}
 
-	[self stopLoadingAfterContentPolicy];
+	[self stopLoadingForPolicyChange];
 	return;
 	break;
 	
@@ -209,12 +217,12 @@
 	    [[dataSource webFrame] _handleUnimplementablePolicy:contentPolicy errorCode:WebErrorFinderCannotOpenDirectory forURL:[req URL]];
 	}
 
-	[self stopLoadingAfterContentPolicy];
+	[self stopLoadingForPolicyChange];
 	return;
 	break;
     
     case WebPolicyIgnore:
-	[self stopLoadingAfterContentPolicy];
+	[self stopLoadingForPolicyChange];
 	return;
         break;
     

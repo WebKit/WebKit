@@ -103,10 +103,11 @@ typedef enum {
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
 - (WebBridge *)_bridge;
-- (BOOL)_shouldShowRequest:(WebResourceRequest *)request;
 - (void)_clearProvisionalDataSource;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;
+
+- (void)_checkNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource andCall:(id)target withSelector:(SEL)selector;
 
 - (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event;
 - (BOOL)_continueAfterNavigationPolicyForRequest:(WebResourceRequest *)request dataSource:(WebDataSource *)dataSource;

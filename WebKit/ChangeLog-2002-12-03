@@ -1,3 +1,23 @@
+2002-11-15  Maciej Stachowiak  <mjs@apple.com>
+
+	Refactor so that all invocations of navigation policy are set up
+	to be asynchronous. However, the actually delegate method is not
+	async yet.
+	
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:andCall:withSelector:]):
+        (-[WebFrame _continueFragmentScrollAfterNavigationPolicy:request:]):
+        (-[WebFrame _loadURL:loadType:triggeringEvent:isFormSubmission:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):
+        (-[WebFrame _loadDataSource:withLoadType:]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient stopLoadingForPolicyChange]):
+        (-[WebMainResourceClient continueAfterNavigationPolicy:request:]):
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+
 2002-11-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Refactor things a bit so all loads bottleneck through a single
