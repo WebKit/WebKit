@@ -240,6 +240,8 @@
     [self removeWindowObservers];
     [self removeSuperviewObservers];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
+
+    [[[[self _frame] dataSource] _pluginController] stopAllPlugins];
 }
 
 - (void)viewDidMoveToWindow
@@ -248,6 +250,9 @@
         [self addWindowObservers];
         [self addSuperviewObservers];
         [self addMouseMovedObserver];
+
+        [[[[self _frame] dataSource] _pluginController] startAllPlugins];
+
         _private->inWindow = YES;
     } else {
         // Reset when we are moved out of a window after being moved into one.
@@ -263,11 +268,11 @@
 
 - (void)addSubview:(NSView *)view
 {
-    [super addSubview:view];
-
     if ([view conformsToProtocol:@protocol(WebPlugin)]) {
-        [[[self _frame] _pluginController] didAddPluginView:view];
+        [[[[self _frame] dataSource] _pluginController] addPlugin:view];
     }
+
+    [super addSubview:view];
 }
 
 - (void)reapplyStyles

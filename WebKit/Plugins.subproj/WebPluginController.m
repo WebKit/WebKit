@@ -6,114 +6,119 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
+#import <WebKit/WebPluginController.h>
+
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPlugin.h>
-#import <WebKit/WebPluginController.h>
-#import <WebKit/WebWindowOperationsDelegate.h>
+#import <WebKit/WebPluginContainer.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebPluginController
 
-- initWithWebFrame:(WebFrame *)theFrame
+- initWithDataSource:(WebDataSource *)dataSource
 {
     [super init];
-    
-    // Not retained because the frame retains this plug-in controller.
-    frame = theFrame;
-    
-    views = [[NSMutableArray array] retain];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(windowWillClose:)
-                                                 name:NSWindowWillCloseNotification
-                                               object:nil];
-    
+    _dataSource = dataSource;
+    _views = [[NSMutableArray alloc] init];
     return self;
-}
-
-- (void)dealloc
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    
-    ASSERT([views count] == 0);
-    [views release];
-    [super dealloc];
-}
-
-- (void)addPluginView:(NSView <WebPlugin> *)view
-{
-    LOG(Plugins, "pluginInitialize: %s", [[view className] lossyCString]);
-    
-    [views addObject:view];
-    [view pluginInitialize];
-}
-
-- (void)didAddPluginView:(NSView <WebPlugin> *)view
-{
-    LOG(Plugins, "pluginStart: %s", [[view className] lossyCString]);
-    
-    [view pluginStart];
 }
 
 - (void)startAllPlugins
 {
-    LOG(Plugins, "pluginStart");
+    if (_started) {
+        return;
+    }
     
-    [views makeObjectsPerformSelector:@selector(pluginStart)];
+    LOG(Plugins, "starting all plugins");
+
+    [_views makeObjectsPerformSelector:@selector(pluginStart)];
+    _started = YES;
 }
 
 - (void)stopAllPlugins
 {
-    LOG(Plugins, "pluginStop");
+    if (!_started) {
+        return;
+    }
     
-    [views makeObjectsPerformSelector:@selector(pluginStop)];
+    LOG(Plugins, "stopping all plugins");
+
+    [_views makeObjectsPerformSelector:@selector(pluginStop)];
+    _started = NO;
 }
 
-- (void)destroyAllPlugins
+- (void)addPlugin:(NSView <WebPlugin> *)view
 {
-    LOG(Plugins, "pluginDestroy");
+    if (!_dataSource) {
+        ERROR("can't add a plug-in to a defunct WebPluginController");
+        return;
+    }
+    
+    if (![_views containsObject:view]) {
+        [_views addObject:view];
+
+        LOG(Plugins, "initializing plug-in %@", view);
+        [view pluginInitialize];
+
+        if (_started) {
+            LOG(Plugins, "starting plug-in %@", view);
+            [view pluginStart];
+        }
+    }
+}
+
+- (void)dataSourceWillBeDeallocated
+{
+    LOG(Plugins, "destroying all plug-ins");
     
     [self stopAllPlugins];
-    [views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
-    [views makeObjectsPerformSelector:@selector(pluginDestroy)];
-    [views removeAllObjects];
+    [_views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
+    [_views makeObjectsPerformSelector:@selector(pluginDestroy)];
+    [_views release];
+    _views = nil;
 
-    // after this point, do not try to do anything with the frame, even if we get some
-    // late arriving messages from the plugin
-    frame = nil;
-}
-
-- (void)windowWillClose:(NSNotification *)notification
-{
-    if([notification object] == [[frame webView] window]){
-        [self destroyAllPlugins];
-    }
+    _dataSource = nil;
 }
 
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target
 {
-    if ( !URL || !frame ){
+    if (!URL) {
+        ERROR("nil URL passed");
         return;
     }
-
-    WebFrame *otherFrame = [frame findOrCreateFramedNamed:target];
-
-    [otherFrame loadRequest:[WebResourceRequest requestWithURL:URL]];
+    if (!_dataSource) {
+        ERROR("could not load URL %@ because plug-in has already been destroyed", URL);
+        return;
+    }
+    WebFrame *frame = [_dataSource webFrame];
+    if (!frame) {
+        ERROR("could not load URL %@ because plug-in has already been stopped", URL);
+        return;
+    }
+    WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
+    if (!request) {
+        ERROR("could not load URL %@", URL);
+        return;
+    }
+    [[frame findOrCreateFramedNamed:target] loadRequest:request];
 }
 
 - (void)showStatus:(NSString *)message
 {
-    if(!message || !frame){
+    if (!message) {
+        message = @"";
+    }
+    if (!_dataSource) {
+        ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
-
-    [[[frame controller] windowOperationsDelegate] setStatusText:message];
+    [[[_dataSource controller] windowOperationsDelegate] setStatusText:message];
 }
 
 @end

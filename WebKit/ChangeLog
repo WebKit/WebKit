@@ -1,3 +1,53 @@
+2002-12-31  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3137287 -- REGRESSION: Java applets don't work when you go back to them (Java 1.4.1 plug-in)
+
+	By attaching the plug-in controller to the frame, we run into trouble.
+	It really needs to be attached to the data source, which has the right lifetime
+	and is kept around in the page cache.
+
+        * Plugins.subproj/WebPluginController.h: Keep a reference to a data source, not a frame.
+	Add a new _started variable. Rename addPluginView: to addPlugin:, get rid of didAddPluginView:,
+	replace destroyAllPlugins with dataSourceWillBeDeallocated, add startAllPlugins and stopAllPlugins.
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithDataSource:]): Store a data source reference, not a frame reference.
+	Don't bother registering for the window will close notification, WebHTMLView handles that fine.
+        (-[WebPluginController startAllPlugins]): Do nothing if they are already started, call pluginStart on each otherwise.
+        (-[WebPluginController stopAllPlugins]): Do nothing if they are not started, call pluginStop on each otherwise.
+        (-[WebPluginController addPlugin:]): Initialize the plugin if it's not already in our list. Also start
+	it if we are in "started" mode.
+        (-[WebPluginController dataSourceWillBeDeallocated]): Stop all the plugins, then destroy them.
+	Also nil out the fields of the object. This is always called before the controller is released so we
+	don't need to override dealloc.
+        (-[WebPluginController showURL:inFrame:]): Added error checking and changed now that we start with a data source.
+        (-[WebPluginController showStatus:]): Ditto.
+
+        * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge pluginViewWithPackage:attributes:baseURL:]):
+	Use the data source, not the view. Don't add the plugin here, wait until we are ready to start.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Store a pointer to the plug-in controller here.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Tell the plug-in controller to go away.
+	(-[WebDataSource _makeHandleDelegates:deferCallbacks:]): Remove unused empty method.
+        (-[WebDataSource _pluginController]): Create a plug-in controller if needed.
+
+        * WebView.subproj/WebFramePrivate.h: Remove plug-in controller code.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFramePrivate dealloc]): Remove plug-in controller code.
+        (-[WebFrame _detachFromParent]): Remove plug-in controller code.
+        (-[WebFrame _transitionToCommitted:]): Remove plug-in controller code.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewWillMoveToWindow:]): Stop plug-ins when view moves out of a window.
+	This includes the case when the window is being destroyed.
+        (-[WebHTMLView viewDidMoveToWindow]): Start plug-ins when view moves into a window.
+        (-[WebHTMLView addSubview:]): Add plug-ins to the controller as they are added to us.
+
+        * WebView.subproj/WebController.m: Added now-needed include due to header change.
+        * WebView.subproj/WebDefaultContextMenuDelegate.m: Ditto.
+
 === Alexander-47 ===
 
 2002-12-30  Darin Adler  <darin@apple.com>

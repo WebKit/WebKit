@@ -12,7 +12,6 @@
 @class WebBridge;
 @class WebFrameBridge;
 @class WebHistoryItem;
-@class WebPluginController;
 @class WebView;
 @class WebResourceRequest;
 
@@ -62,7 +61,6 @@ typedef enum {
     WebFrameLoadType loadType;
     WebFrame *parent;
     NSMutableArray *children;
-    WebPluginController *pluginController;
     WebHistoryItem *currentItem;	// BF item for our current content
     WebHistoryItem *provisionalItem;	// BF item for where we're trying to go
                                         // (only known when navigating to a pre-existing BF item)
@@ -140,8 +138,6 @@ typedef enum {
 - (void)_addChild:(WebFrame *)child;
 
 - (NSString *)_generateFrameName;
-
-- (WebPluginController *)_pluginController;
 
 - (NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event originalURL:(NSURL *)URL;
 

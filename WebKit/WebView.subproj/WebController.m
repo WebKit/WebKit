@@ -6,6 +6,7 @@
 #import <WebKit/WebController.h>
 
 #import <WebKit/WebBackForwardList.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerSets.h>

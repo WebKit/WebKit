@@ -386,19 +386,17 @@
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL
 {
-    WebPluginController *pluginController = [frame _pluginController];
+    WebPluginController *pluginController = [[self dataSource] _pluginController];
     
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
         baseURL, WebPluginBaseURLKey,
         attributes, WebPluginAttributesKey,
-        pluginController, WebPluginContainerKey, nil];
+        pluginController, WebPluginContainerKey,
+        nil];
 
-    LOG(Plugins, "arguments:\n%s", [[arguments description] lossyCString]);
+    LOG(Plugins, "arguments:\n%@", arguments);
     
-    NSView<WebPlugin> *view = [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
-    [pluginController addPluginView:view];
-
-    return view;
+    return [[pluginPackage viewFactory] pluginViewWithArguments:arguments];
 }
 
 - (NSView *)viewForPluginWithURL:(NSString *)URL

@@ -8,22 +8,24 @@
 
 #import <Foundation/Foundation.h>
 
-#import <WebKit/WebPluginContainer.h>
-
-@class WebFrame;
+@class WebDataSource;
 
 @protocol WebPlugin;
+@protocol WebPluginContainer;
 
 @interface WebPluginController : NSObject <WebPluginContainer>
 {
-    WebFrame *frame;
-
-    NSMutableArray *views;
+    WebDataSource *_dataSource;
+    NSMutableArray *_views;
+    BOOL _started;
 }
 
-- initWithWebFrame:(WebFrame *)theFrame;
-- (void)addPluginView:(NSView <WebPlugin> *)view;
-- (void)didAddPluginView:(NSView <WebPlugin> *)view;
-- (void)destroyAllPlugins;
+- (id)initWithDataSource:(WebDataSource *)dataSource;
+- (void)dataSourceWillBeDeallocated;
+
+- (void)addPlugin:(NSView <WebPlugin> *)view;
+
+- (void)startAllPlugins;
+- (void)stopAllPlugins;
 
 @end

@@ -7,16 +7,15 @@
 */
 
 #import <WebKit/WebDataSource.h>
-#import <WebKit/WebBridge.h>
 
+@class WebBridge;
+@class WebHistoryItem;
 @class WebIconLoader;
 @class WebMainResourceClient;
-@class WebNetscapePluginStream;
-@class WebResourceHandle;
+@class WebPluginController;
 @class WebResourceRequest;
 @class WebResourceResponse;
 @class WebSubresourceClient;
-@class WebHistoryItem;
 
 @protocol WebDocumentRepresentation;
 
@@ -88,6 +87,8 @@
 
     BOOL storedInPageCache;
     BOOL loadingFromPageCache;
+
+    WebPluginController *pluginController;
 }
 
 @end
@@ -148,5 +149,6 @@
 - (void)_setStoredInPageCache:(BOOL)f;
 - (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;
+- (WebPluginController *)_pluginController;
 
 @end

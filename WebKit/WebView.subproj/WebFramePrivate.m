@@ -24,7 +24,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
-#import <WebKit/WebPluginController.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -101,8 +100,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 - (WebHistoryItem *)_createItemTreeWithTargetFrame:(WebFrame *)targetFrame clippedAtTarget:(BOOL)doClip;
 
 - (void)_resetBackForwardListToCurrent;
-
-- (void)_destroyPluginController;
 @end
 
 @implementation WebFramePrivate
@@ -133,7 +130,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [bridge release];
     [scheduledLayoutTimer release];
     [children release];
-    [pluginController release];
 
     [currentItem release];
     [provisionalItem release];
@@ -338,9 +334,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     WebBridge *bridge = _private->bridge;
     _private->bridge = nil;
 
-    // Destroy plug-ins before blowing away the view.
-    [self _destroyPluginController];
-
     [self stopLoading];
     [self _saveScrollPositionToItem:[_private currentItem]];
 
@@ -508,9 +501,6 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 {
     ASSERT([self controller] != nil);
 
-    // Destroy plug-ins before blowing away the view.
-    [self _destroyPluginController];
-        
     switch ([self _state]) {
         case WebFrameStateProvisional:
         {
@@ -1616,27 +1606,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     child->_private->parent = self;
     [[child _bridge] setParent:_private->bridge];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
-}
-
-- (void)_destroyPluginController
-{
-    [_private->pluginController destroyAllPlugins];
-    // We flush this PluginController, so if a later page requests one we will make a new one
-    // instead of reusing the old one.  Plugin views retain their PluginController, so a
-    // wayward view might try to message an old controller even after we call destroyAllPlugins.
-    // We don't want to have a controller that has to both ignore requests from stale views
-    // and honor those from current views, so it's easiest to make a new controller.
-    [_private->pluginController release];
-    _private->pluginController = nil;
-}
-
-- (WebPluginController *)_pluginController
-{
-    if(!_private->pluginController){
-        _private->pluginController = [[WebPluginController alloc] initWithWebFrame:self];
-    }
-
-    return _private->pluginController;
 }
 
 - (void)_addFramePathToString:(NSMutableString *)path

@@ -24,6 +24,7 @@
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNetscapePluginStream.h>
+#import <WebKit/WebPluginController.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
@@ -46,6 +47,8 @@
     // retained while loading, so no need to release here
     ASSERT(!loading);
     
+    [pluginController dataSourceWillBeDeallocated];
+    
     [resourceData release];
     [representation release];
     [request release];
@@ -62,6 +65,7 @@
     [triggeringAction release];
     [lastCheckedRequest release];
     [downloadPath release];
+    [pluginController release];
 
     [super dealloc];
 }
@@ -575,12 +579,6 @@
     _private->iconURL = [URL retain];
 }
 
-
-- (void)_makeHandleDelegates:(NSArray *)handleDelegates deferCallbacks:(BOOL)deferCallbacks
-{
-
-}
-
 - (void)_defersCallbacksChanged
 {
     BOOL defers = [_private->controller _defersCallbacks];
@@ -671,5 +669,12 @@
     return _private->loadingFromPageCache;
 }
 
-@end
+- (WebPluginController *)_pluginController
+{
+    if (!_private->pluginController) {
+        _private->pluginController = [[WebPluginController alloc] initWithDataSource:self];
+    }
+    return _private->pluginController;
+}
 
+@end
