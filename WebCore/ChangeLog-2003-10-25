@@ -1,3 +1,16 @@
+2002-01-19  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kdelibs/kjs/Makefile.am: Fix testkjs build.
+
+	Fix a couple more static initialization problems:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::urlCursor):
+	* src/kwq/KWQRegion.mm: (QRegion::QRegion), (QRegion::operator=):
+
+	* src/.cvsignore, src/kdelibs/.cvsignore,
+	src/kdelibs/khtml/css/.cvsignore,
+	src/kdelibs/khtml/misc/.cvsignore, src/kdelibs/kjs/.cvsignore:
+	Ignore stamp files.
+
 2002-01-18  Richard Williamson  <rjw@apple.com>
 
     First pass at new view/datasource/controller API.

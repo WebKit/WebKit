@@ -1,5 +1,5 @@
 Makefile.in
 Makefile
 .deps
-.libs
 *.dylib
+*-stamp

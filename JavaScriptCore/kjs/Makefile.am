@@ -1,8 +1,8 @@
 NULL =
 
 noinst_LIBRARIES = libkjs.o
-LDFLAGS = -Wl,-r -nostdlib
-libkjs_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o
+libkjs_o_LDFLAGS = -Wl,-r -nostdlib
+libkjs_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDFLAGS) $(libkjs_o_LDFLAGS) -o
 
 libkjs_o_SOURCES = \
 	array_object.cpp \

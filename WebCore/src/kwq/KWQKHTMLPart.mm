@@ -732,11 +732,15 @@ void KHTMLPart::setURLCursor( const QCursor &c )
 }
 
 // FIXME: this should be removed
-static const QCursor staticURLCursor = QCursor();
+static const QCursor *staticURLCursor = NULL;
+
 const QCursor& KHTMLPart::urlCursor() const
 {
     _logNeverImplemented();
-    return staticURLCursor;
+    if (staticURLCursor == NULL) {
+        staticURLCursor = new QCursor();
+    }
+    return *staticURLCursor;
 }
 
 

@@ -37,8 +37,9 @@ void QRegion::_initialize() {
 QRegion::QRegion()
 {
     _initialize();
+    
     // Create lazily - RJW
-    //data->path = [[NSBezierPath bezierPath] retain];
+    //data->path = [[NSBezierPath alloc] init];
 }
 
 QRegion::QRegion(const QRect &rect)
@@ -78,7 +79,7 @@ QRegion::QRegion(const QPointArray &arr)
 QRegion::QRegion(const QRegion &other)
 {
     _initialize();
-    data->path = [[NSBezierPath bezierPath] retain];
+    data->path = [[NSBezierPath alloc] init];
     [data->path appendBezierPath:other.data->path];
 }
 
@@ -118,7 +119,7 @@ QRegion &QRegion::operator=(const QRegion &other)
     if (data->path) {
         [data->path release];
     }
-    data->path = [[NSBezierPath bezierPath] retain];
+    data->path = [[NSBezierPath alloc] init];
     [data->path appendBezierPath:other.data->path];
     return *this;
 }

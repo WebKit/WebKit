@@ -8,6 +8,4 @@ htmlattrs.c
 htmlattrs.h
 htmlattrs.gperf
 .deps
-.libs
-*.lo
-*.la
+*-stamp
