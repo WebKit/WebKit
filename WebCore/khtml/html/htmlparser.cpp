@@ -533,6 +533,16 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             }
             break;
         }
+        case ID_THEAD:
+        case ID_TBODY:
+        case ID_TFOOT:
+        case ID_COLGROUP: {
+            if (current->id() == ID_THEAD || current->id() == ID_TBODY || current->id() == ID_TFOOT ||
+                current->id() == ID_COLGROUP) {
+                popOneBlock();
+                return insertNode(n);
+            }
+        }
         default:
             break;
         }
