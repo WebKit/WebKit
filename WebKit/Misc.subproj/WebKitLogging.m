@@ -13,6 +13,7 @@ WebLogChannel WebKitLogLoading =      		{ 0x00000040, "WebKitLogLevel", WebLogCh
 
 WebLogChannel WebKitLogFontCache =    		{ 0x00000100, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogFontSubstitution =	{ 0x00000200, "WebKitLogLevel", WebLogChannelUninitialized };
+WebLogChannel WebKitLogFontSelection =	        { 0x02000000, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogDownload =     		{ 0x00000800, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogDocumentLoad =		{ 0x00001000, "WebKitLogLevel", WebLogChannelUninitialized };
 WebLogChannel WebKitLogPlugins =		{ 0x00002000, "WebKitLogLevel", WebLogChannelUninitialized };
@@ -30,4 +31,5 @@ WebLogChannel WebKitLogFileDatabaseActivity =   { 0x00400000, "WebKitLogLevel", 
 
 WebLogChannel WebKitLogHistory =                { 0x00800000, "WebKitLogLevel", WebLogChannelUninitialized };
 
-WebLogChannel WebKitLogBindings =                { 0x01000000, "WebKitLogLevel", WebLogChannelUninitialized };
+WebLogChannel WebKitLogBindings =               { 0x01000000, "WebKitLogLevel", WebLogChannelUninitialized };
+

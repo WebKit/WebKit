@@ -18,6 +18,7 @@
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -820,3 +821,20 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 }
 
 @end
+
+@implementation WebView (WebDebugBinding)
+
+- (void)addObserver:(NSObject *)anObserver forKeyPath:(NSString *)keyPath options:(NSKeyValueObservingOptions)options context:(void *)context
+{
+    LOG (Bindings, "addObserver:%p forKeyPath:%@ options:%x context:%p", anObserver, keyPath, options, context);
+    [super addObserver:anObserver forKeyPath:keyPath options:options context:context];
+}
+
+- (void)removeObserver:(NSObject *)anObserver forKeyPath:(NSString *)keyPath
+{
+    LOG (Bindings, "removeObserver:%p forKeyPath:%@", anObserver, keyPath);
+    [super removeObserver:anObserver forKeyPath:keyPath];
+}
+
+@end
+

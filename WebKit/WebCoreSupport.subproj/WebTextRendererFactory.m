@@ -326,20 +326,41 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     return NO;
 }
 
+// Family name is somewhat of a misnomer here.  We first attempt to find an exact match
+// comparing the desiredFamily to the PostScript name of the installed fonts.  If that fails
+// we then do a search based on the family names of the installed fonts.
 - (NSFont *)fontWithFamily:(NSString *)desiredFamily traits:(NSFontTraitMask)desiredTraits size:(float)size
 {
+    NSFontManager *fontManager = [NSFontManager sharedFontManager];
+    
+    LOG (FontSelection, "looking for %@ with traits %x\n", desiredFamily, desiredTraits);
+    
+    // Look for an exact match first.
+    NSEnumerator *availableFonts = [[fontManager availableFonts] objectEnumerator];
+    NSString *availableFont;
+    while ((availableFont = [availableFonts nextObject])) {
+        if ([desiredFamily caseInsensitiveCompare:availableFont] == NSOrderedSame) {
+            NSFont *nameMatchedFont = [NSFont fontWithName:desiredFamily size:size];
+            NSFontTraitMask traits = [fontManager traitsOfFont:nameMatchedFont];
+            
+            if ((traits & desiredTraits) == desiredTraits){
+                LOG (FontSelection, "returning exact match\n\n");
+                return  [fontManager convertFont: [NSFont fontWithName:desiredFamily size:size] toHaveTrait:desiredTraits];
+            }
+            LOG (FontSelection, "found exact match, but not desired traits, available traits %x\n", traits);
+            break;
+        }
+    }
+    
     // Do a simple case insensitive search for a matching font family.
     // NSFontManager requires exact name matches.
     // This addresses the problem of matching arial to Arial, etc., but perhaps not all the issues.
-    NSEnumerator *e = [[[NSFontManager sharedFontManager] availableFontFamilies] objectEnumerator];
+    NSEnumerator *e = [[fontManager availableFontFamilies] objectEnumerator];
     NSString *availableFamily;
     while ((availableFamily = [e nextObject])) {
         if ([desiredFamily caseInsensitiveCompare:availableFamily] == NSOrderedSame) {
             break;
         }
-    }
-    if (availableFamily == nil) {
-        return nil;
     }
     
     // Found a family, now figure out what weight and traits to use.
@@ -347,7 +368,7 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     int chosenWeight = 0;
     NSFontTraitMask chosenTraits = 0;
 
-    NSArray *fonts = [[NSFontManager sharedFontManager] availableMembersOfFontFamily:availableFamily];    
+    NSArray *fonts = [fontManager availableMembersOfFontFamily:availableFamily];    
     unsigned n = [fonts count];
     unsigned i;
     for (i = 0; i < n; i++) {
@@ -379,10 +400,16 @@ static BOOL betterChoice(NSFontTraitMask desiredTraits, int desiredWeight,
     }
     
     if (!choseFont) {
+        LOG (FontSelection, "nothing appropriate to return\n\n");
         return nil;
     }
+
+    NSFont *font = [fontManager fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
     
-    return [[NSFontManager sharedFontManager] fontWithFamily:availableFamily traits:chosenTraits weight:chosenWeight size:size];
+    LOG (FontSelection, "returning font family %@ (%@) traits %x\n\n", 
+            availableFamily, [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute], chosenTraits);
+    
+    return font;
 }
 
 typedef struct {

@@ -1,3 +1,19 @@
+2003-08-26  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3385478.  Look for an exact match for font names (using PS names)	before matching on family names.
+
+	Also added logging to help debug now resolved binding problem.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebKitLogging.m:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory fontWithFamily:traits:size:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView addObserver:forKeyPath:options:context:]):
+        (-[WebView removeObserver:forKeyPath:]):
+
 2003-08-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -27,6 +43,7 @@
 
         Reviewed by Maciej.
 
+>>>>>>> 1.2044
         - fixed 3321247 -- window size box disappears from Help window (caused by WebKit NSView hackery)
 
         * WebView.subproj/WebHTMLViewPrivate.m:
