@@ -1,3 +1,10 @@
+2002-11-14  Don Melton  <gramps@apple.com>
+
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+
+	Added missing semi-colon in definition of WebPolicyDecisionListener to
+	fix build error.
+
 2002-11-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Combined file URL policy with content policy. We don't actually
