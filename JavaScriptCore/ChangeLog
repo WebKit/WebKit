@@ -1,3 +1,40 @@
+2003-12-12  Richard Williamson   <rjw@apple.com>
+
+	Ensure that all calls from Java into JavaScript are
+	performed on a designated thread (the main thread).
+
+        Reviewed by Ken.
+
+        * bindings/jni_jsobject.cpp:
+        (isJavaScriptThread):
+        (rootForImp):
+        (Bindings::performJavaScriptAccess):
+        (Bindings::completedJavaScriptAccess):
+        (Bindings::initializeJavaScriptAccessLock):
+        (Bindings::lockJavaScriptAccess):
+        (Bindings::unlockJavaScriptAccess):
+        (Bindings::dispatchToJavaScriptThread):
+        (Bindings::RootObject::setFindRootObjectForNativeHandleFunction):
+        (Bindings::RootObject::removeAllJavaReferencesForRoot):
+        (Bindings::JSObject::invoke):
+        (Bindings::JSObject::JSObject):
+        (Bindings::JSObject::call):
+        (Bindings::JSObject::eval):
+        (Bindings::JSObject::getMember):
+        (Bindings::JSObject::setMember):
+        (Bindings::JSObject::removeMember):
+        (Bindings::JSObject::getSlot):
+        (Bindings::JSObject::setSlot):
+        (Bindings::JSObject::toString):
+        (Bindings::JSObject::finalize):
+        (Bindings::JSObject::getWindow):
+        * bindings/jni_jsobject.h:
+        (Bindings::RootObject::~RootObject):
+        (Bindings::RootObject::findRootObjectForNativeHandleFunction):
+        (Bindings::RootObject::runLoop):
+        (Bindings::RootObject::performJavaScriptSource):
+        (Bindings::):
+
 2003-12-11  Richard Williamson   <rjw@apple.com>
 
 	Added support for calling a JavaScript function from

@@ -1,3 +1,15 @@
+2003-12-12  Richard Williamson   <rjw@apple.com>
+
+	Replace call to global functions with static member functions.
+
+        Reviewed by Ken.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::cleanupPluginRootObjects):
+        * kwq/WebCoreBridge.mm:
+        (rootForView):
+        (-[WebCoreBridge init]):
+
 2003-12-11  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -24,6 +24,8 @@
  */
 #include <CoreFoundation/CoreFoundation.h>
 
+#include <assert.h>
+
 #include <identifier.h>
 #include <internal.h>
 #include <interpreter.h>
@@ -32,19 +34,22 @@
 #include <jni_runtime.h>
 #include <jni_utility.h>
 
+
 using namespace Bindings;
 using namespace KJS;
 
-static KJSFindRootObjectForNativeHandleFunctionPtr findRootObjectForNativeHandleFunctionPtr = 0;
-
-void KJS_setFindRootObjectForNativeHandleFunction(KJSFindRootObjectForNativeHandleFunctionPtr aFunc)
-{
-    findRootObjectForNativeHandleFunctionPtr = aFunc;
+#ifdef NDEBUG
+#define JS_LOG(formatAndArgs...) ((void)0)
+#else
+#define JS_LOG(formatAndArgs...) { \
+    fprintf (stderr, "%s(%p,%p):  ", __PRETTY_FUNCTION__, RootObject::runLoop(), CFRunLoopGetCurrent()); \
+    fprintf(stderr, formatAndArgs); \
 }
+#endif
 
-KJSFindRootObjectForNativeHandleFunctionPtr KJS_findRootObjectForNativeHandleFunction()
+static bool isJavaScriptThread()
 {
-    return findRootObjectForNativeHandleFunctionPtr;
+    return (RootObject::runLoop() == CFRunLoopGetCurrent());
 }
 
 // Java does NOT always call finalize (and thus KJS_JSObject_JSFinalize) when
@@ -116,7 +121,7 @@ static CFMutableDictionaryRef findReferenceDictionary(ObjectImp *imp)
 
 // FIXME:  This is a potential performance bottleneck with many applets.  We could fix be adding a
 // imp to root dictionary.
-const Bindings::RootObject *rootForImp (ObjectImp *imp)
+static const Bindings::RootObject *rootForImp (ObjectImp *imp)
 {
     CFMutableDictionaryRef refsByRoot = getReferencesByRootDictionary ();
     const Bindings::RootObject *rootObject = 0;
@@ -172,10 +177,145 @@ static void removeJavaReference (ObjectImp *imp)
     }
 }
 
-extern "C" {
+namespace Bindings
+{
+
+// May only be set by dispatchToJavaScriptThread().
+static CFRunLoopSourceRef completionSource;
+
+static void performJavaScriptAccess(void *info);
+static void performJavaScriptAccess(void *i)
+{
+    assert (CFRunLoopGetCurrent() == RootObject::runLoop());
+
+    JS_LOG ("completionSource = %p\n", completionSource);
+    
+    // Dispatch JavaScript calls here.
+    CFRunLoopSourceContext sourceContext;
+    CFRunLoopSourceGetContext (completionSource, &sourceContext);
+    JSObjectCallContext *callContext = (JSObjectCallContext *)sourceContext.info;    
+    CFRunLoopRef originatingLoop = callContext->originatingLoop;
+
+    JSObject::invoke (callContext);
+    
+    JS_LOG ("originatingLoop = %p\n", originatingLoop);
+
+    // Signal the originating thread that we're done.
+    CFRunLoopSourceSignal (completionSource);
+    if (CFRunLoopIsWaiting(originatingLoop)) {
+        CFRunLoopWakeUp(originatingLoop);
+    }
+}
+
+static void completedJavaScriptAccess (void *i);
+static void completedJavaScriptAccess (void *i)
+{
+    assert (CFRunLoopGetCurrent() != RootObject::runLoop());
+
+    JSObjectCallContext *callContext = (JSObjectCallContext *)i;
+    CFRunLoopRef runLoop = (CFRunLoopRef)callContext->originatingLoop;
+
+    assert (CFRunLoopGetCurrent() == runLoop);
+
+    JS_LOG ("runLoop = %p\n", runLoop);
+    CFRunLoopStop(runLoop);
+}
+
+static pthread_once_t javaScriptAccessLockOnce = PTHREAD_ONCE_INIT;
+static pthread_mutex_t javaScriptAccessLock;
+static int javaScriptAccessLockCount = 0;
+
+static void initializeJavaScriptAccessLock()
+{
+    pthread_mutexattr_t attr;
+    
+    pthread_mutexattr_init(&attr);
+    pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
+    
+    pthread_mutex_init(&javaScriptAccessLock, &attr);
+}
+
+static inline void lockJavaScriptAccess()
+{
+    // Perhaps add deadlock detection?
+    pthread_once(&javaScriptAccessLockOnce, initializeJavaScriptAccessLock);
+    pthread_mutex_lock(&javaScriptAccessLock);
+    javaScriptAccessLockCount++;
+}
+
+static inline void unlockJavaScriptAccess()
+{
+    javaScriptAccessLockCount--;
+    pthread_mutex_unlock(&javaScriptAccessLock);
+}
+
+typedef struct JSObjectCallContext JSObjectCallContext;
+
+static void dispatchToJavaScriptThread(JSObjectCallContext *context)
+{
+    // This lock guarantees that only one thread can invoke
+    // at a time, and also guarantees that completionSource;
+    // won't get clobbered.
+    lockJavaScriptAccess();
+
+    CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
+
+    assert (currentRunLoop != RootObject::runLoop());
+
+    // Setup a source to signal once the invocation of the JavaScript
+    // call completes.
+    //
+    // FIXME:  This could be a potential performance issue.  Creating and
+    // adding run loop sources is expensive.  We could create one source 
+    // per thread, as needed, instead.
+    context->originatingLoop = currentRunLoop;
+    CFRunLoopSourceContext sourceContext = {0, context, NULL, NULL, NULL, NULL, NULL, NULL, NULL, completedJavaScriptAccess};
+    completionSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    CFRunLoopAddSource(currentRunLoop, completionSource, kCFRunLoopDefaultMode);
+
+    JS_LOG ("signalling, completionSource = %p\n", completionSource);
+
+    // Wakeup JavaScript access thread and make it do it's work.
+    CFRunLoopSourceSignal(RootObject::performJavaScriptSource());
+    if (CFRunLoopIsWaiting(RootObject::runLoop())) {
+        CFRunLoopWakeUp(RootObject::runLoop());
+    }
+    
+    // Wait until the JavaScript access thread is done.
+    CFRunLoopRun ();
+
+    CFRunLoopRemoveSource(currentRunLoop, completionSource, kCFRunLoopDefaultMode);
+    CFRelease (completionSource);
+
+    JS_LOG ("done\n");
+
+    unlockJavaScriptAccess();
+}
+
+FindRootObjectForNativeHandleFunctionPtr RootObject::_findRootObjectForNativeHandleFunctionPtr = 0;
+CFRunLoopRef RootObject::_runLoop = 0;
+CFRunLoopSourceRef RootObject::_performJavaScriptSource = 0;
+
+// Must be called from the thread that will be used to access JavaScript.
+void RootObject::setFindRootObjectForNativeHandleFunction(FindRootObjectForNativeHandleFunctionPtr aFunc) {
+    // Should only be called once.
+    assert (_findRootObjectForNativeHandleFunctionPtr == 0);
+
+    _findRootObjectForNativeHandleFunctionPtr = aFunc;
+    
+    // Assume that we can retain this run loop forever.  It'll most 
+    // likely (always?) be the main loop.
+    _runLoop = (CFRunLoopRef)CFRetain (CFRunLoopGetCurrent ());
+
+    // Setup a source the other threads can use to signal the _runLoop
+    // thread that a JavaScript call needs to be invoked.
+    CFRunLoopSourceContext sourceContext = {0, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, performJavaScriptAccess};
+    _performJavaScriptSource = CFRunLoopSourceCreate(NULL, 0, &sourceContext);
+    CFRunLoopAddSource(_runLoop, _performJavaScriptSource, kCFRunLoopDefaultMode);
+}
 
 // Must be called when the applet is shutdown.
-void KJS_removeAllJavaReferencesForRoot (Bindings::RootObject *root)
+void RootObject::removeAllJavaReferencesForRoot (Bindings::RootObject *root)
 {
     CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (root);
     
@@ -199,9 +339,171 @@ void KJS_removeAllJavaReferencesForRoot (Bindings::RootObject *root)
     }
 }
 
-jlong KJS_JSCreateNativeJSObject (JNIEnv *env, jclass clazz, jstring jurl, jlong nativeHandle, jboolean ctx)
+jvalue JSObject::invoke (JSObjectCallContext *context)
 {
-    KJSFindRootObjectForNativeHandleFunctionPtr aFunc = KJS_findRootObjectForNativeHandleFunction();
+    jvalue result;
+
+    if (!isJavaScriptThread()) {        
+        // Send the call context to the thread that is allowed to
+        // call JavaScript.
+        dispatchToJavaScriptThread(context);
+        result = context->result;
+    }
+    else {
+        jlong nativeHandle = context->nativeHandle;
+        switch (context->type){
+            case GetWindow: {
+                result.j = JSObject::getWindow(nativeHandle);
+                break;
+            }
+        
+            case Call: {
+                result.l = JSObject(nativeHandle).call(JavaString(context->string).characters(), context->args);
+                break;
+            }
+            
+            case Eval: {
+                result.l = JSObject(nativeHandle).eval(JavaString(context->string).characters());
+                break;
+            }
+        
+            case GetMember: {
+                result.l = JSObject(nativeHandle).getMember(JavaString(context->string).characters());
+                break;
+            }
+            
+            case SetMember: {
+                JSObject(nativeHandle).setMember(JavaString(context->string).characters(), context->value);
+                break;
+            }
+            
+            case RemoveMember: {
+                JSObject(nativeHandle).removeMember(JavaString(context->string).characters());
+                break;
+            }
+        
+            case GetSlot: {
+                result.l = JSObject(nativeHandle).getSlot(context->index);
+                break;
+            }
+            
+            case SetSlot: {
+                JSObject(nativeHandle).setSlot(context->index, context->value);
+                break;
+            }
+        
+            case ToString: {
+                result.l = (jobject) JSObject(nativeHandle).toString();
+                break;
+            }
+            default: {
+                fprintf (stderr, "%s:  invalid JavaScript call\n", __PRETTY_FUNCTION__);
+            }
+        }
+        context->result = result;
+    }
+
+    return result;
+}
+
+
+JSObject::JSObject(jlong nativeJSObject)
+{
+    _imp = jlong_to_impptr(nativeJSObject);
+    
+    // If we are unable to cast the nativeJSObject to an ObjectImp something is
+    // terribly wrong.
+    assert (_imp != 0);
+    
+    // Find the root (window) object associated with the imp.
+    _root = rootForImp (_imp);
+    
+    // If we can't find the root for the object something is terrible wrong.
+    assert (_root != 0);
+}
+
+
+jobject JSObject::call(const char *methodName, jobjectArray args) const
+{
+    JS_LOG ("methodName = %s\n", methodName);
+
+    // Lookup the function object.
+    ExecState *exec = _root->interpreter()->globalExec();
+    Value func = _imp->get (exec, Identifier (methodName));
+    if (func.isNull() || func.type() == UndefinedType) {
+        // Maybe throw an exception here?
+        return 0;
+    }
+
+    // Call the function object.
+    ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
+    Object thisObj = Object(const_cast<ObjectImp*>(_imp));
+    List argList = listFromJArray(args);
+    Value result = funcImp->call (exec, thisObj, argList);
+
+    // Convert and return the result of the function call.
+    return convertValueToJObject (exec, result);
+}
+
+jobject JSObject::eval(const char *script) const
+{
+    JS_LOG ("script = %s\n", script);
+    return 0;
+}
+
+jobject JSObject::getMember(const char *memberName) const
+{
+    JS_LOG ("memberName = %s\n", memberName);
+    return 0;
+}
+
+void JSObject::setMember(const char *memberName, jobject value) const
+{
+    JS_LOG ("memberName = %s\n", memberName);
+}
+
+
+void JSObject::removeMember(const char *memberName) const
+{
+    JS_LOG ("memberName = %s\n", memberName);
+}
+
+
+jobject JSObject::getSlot(jint index) const
+{
+    JS_LOG ("index = %d\n", index);
+    return 0;
+}
+
+
+void JSObject::setSlot(jint index, jobject value) const
+{
+    JS_LOG ("index = %d, value = %p\n", index, value);
+}
+
+
+jstring JSObject::toString() const
+{
+    JS_LOG ("\n");
+
+    Object thisObj = Object(const_cast<ObjectImp*>(_imp));
+    ExecState *exec = _root->interpreter()->globalExec();
+    
+    return (jstring)convertValueToJValue (exec, thisObj, object_type, "java.lang.String").l;
+}
+
+void JSObject::finalize() const
+{
+    JS_LOG ("\n");
+
+    removeJavaReference (_imp);
+}
+
+jlong JSObject::getWindow(jlong nativeHandle)
+{
+    JS_LOG ("nativeHandle = %d\n", (int)nativeHandle);
+
+    FindRootObjectForNativeHandleFunctionPtr aFunc = RootObject::findRootObjectForNativeHandleFunction();
     if (aFunc) {
         Bindings::RootObject *root = aFunc(jlong_to_ptr(nativeHandle));
         addJavaReference (root, root->rootObjectImp());        
@@ -211,77 +513,97 @@ jlong KJS_JSCreateNativeJSObject (JNIEnv *env, jclass clazz, jstring jurl, jlong
     return ptr_to_jlong(0);
 }
 
-void KJS_JSObject_JSFinalize (JNIEnv *env, jclass jsClass, jlong nativeJSObject)
-{
-    removeJavaReference (jlong_to_impptr(nativeJSObject));
 }
 
-jobject KJS_JSObject_JSObjectCall (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring mName, jobjectArray args, jboolean ctx)
+extern "C" {
+
+jlong KJS_JSCreateNativeJSObject (JNIEnv *env, jclass clazz, jstring jurl, jlong nativeHandle, jboolean ctx)
 {
-    ObjectImp *imp = jlong_to_impptr(nativeJSObject);
-    const Bindings::RootObject *root = rootForImp (imp);
-    
-    // Change to assert.
-    if (!root) {
-        return 0;
-    }
-    
-    // Lookup the function object.
-    ExecState *exec = root->interpreter()->globalExec();
-    const char *methodName = JavaString(mName).characters();
-    Value func = imp->get (exec, Identifier (methodName));
-    if (func.isNull() || func.type() == UndefinedType) {
-        // Maybe throw an exception here?
-        return 0;
-    }
-
-    // Call the function object.
-    ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
-    Object thisObj = Object(const_cast<ObjectImp*>(imp));
-    List argList = listFromJArray(args);
-    Value result = funcImp->call (exec, thisObj, argList);
-
-    // Convert and return the result of the function call.
-    return convertValueToJObject (exec, result);
+    JSObjectCallContext context;
+    context.type = GetWindow;
+    context.nativeHandle = nativeHandle;
+    return JSObject::invoke (&context).j;
 }
 
-jobject KJS_JSObject_JSObjectEval (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring jscript, jboolean ctx)
+void KJS_JSObject_JSFinalize (JNIEnv *env, jclass jsClass, jlong nativeHandle)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
-    return 0;
+    JSObjectCallContext context;
+    context.type = Finalize;
+    context.nativeHandle = nativeHandle;
+    JSObject::invoke (&context);
 }
 
-jobject KJS_JSObject_JSObjectGetMember (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring jname, jboolean ctx)
+jobject KJS_JSObject_JSObjectCall (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jstring methodName, jobjectArray args, jboolean ctx)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
-    return 0;
+    JSObjectCallContext context;
+    context.type = Call;
+    context.nativeHandle = nativeHandle;
+    context.string = methodName;
+    return JSObject::invoke (&context).l;
 }
 
-void KJS_JSObject_JSObjectSetMember (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring jname, jobject value, jboolean ctx)
+jobject KJS_JSObject_JSObjectEval (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jstring jscript, jboolean ctx)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
+    JSObjectCallContext context;
+    context.type = Eval;
+    context.nativeHandle = nativeHandle;
+    context.string = jscript;
+    return JSObject::invoke (&context).l;
 }
 
-void KJS_JSObject_JSObjectRemoveMember (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jstring jname, jboolean ctx)
+jobject KJS_JSObject_JSObjectGetMember (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jstring jname, jboolean ctx)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
+    JSObjectCallContext context;
+    context.type = GetMember;
+    context.nativeHandle = nativeHandle;
+    context.string = jname;
+    return JSObject::invoke (&context).l;
 }
 
-jobject KJS_JSObject_JSObjectGetSlot (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jint jindex, jboolean ctx)
+void KJS_JSObject_JSObjectSetMember (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jstring jname, jobject value, jboolean ctx)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
-    return 0;
+    JSObjectCallContext context;
+    context.type = SetMember;
+    context.nativeHandle = nativeHandle;
+    context.string = jname;
+    context.value = value;
+    JSObject::invoke (&context);
 }
 
-void KJS_JSObject_JSObjectSetSlot (JNIEnv *env, jclass jsClass, jlong nativeJSObject, jstring jurl, jint jindex, jobject value, jboolean ctx)
+void KJS_JSObject_JSObjectRemoveMember (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jstring jname, jboolean ctx)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
+    JSObjectCallContext context;
+    context.type = RemoveMember;
+    context.nativeHandle = nativeHandle;
+    context.string = jname;
+    JSObject::invoke (&context);
 }
 
-jstring KJS_JSObject_JSObjectToString (JNIEnv *env, jclass clazz, jlong nativeJSObject)
+jobject KJS_JSObject_JSObjectGetSlot (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jint jindex, jboolean ctx)
 {
-    fprintf (stderr, "%s:\n", __PRETTY_FUNCTION__);
-    return 0;
+    JSObjectCallContext context;
+    context.type = GetSlot;
+    context.nativeHandle = nativeHandle;
+    context.index = jindex;
+    return JSObject::invoke (&context).l;
+}
+
+void KJS_JSObject_JSObjectSetSlot (JNIEnv *env, jclass jsClass, jlong nativeHandle, jstring jurl, jint jindex, jobject value, jboolean ctx)
+{
+    JSObjectCallContext context;
+    context.type = SetSlot;
+    context.nativeHandle = nativeHandle;
+    context.index = jindex;
+    context.value = value;
+    JSObject::invoke (&context);
+}
+
+jstring KJS_JSObject_JSObjectToString (JNIEnv *env, jclass clazz, jlong nativeHandle)
+{
+    JSObjectCallContext context;
+    context.type = ToString;
+    context.nativeHandle = nativeHandle;
+    return (jstring)JSObject::invoke (&context).l;
 }
 
 }

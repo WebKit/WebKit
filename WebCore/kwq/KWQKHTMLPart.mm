@@ -2787,7 +2787,7 @@ void KWQKHTMLPart::cleanupPluginRootObjects()
 {
     Bindings::RootObject *root;
     while ((root = rootObjects.getLast())) {
-        KJS_removeAllJavaReferencesForRoot (root);
+        Bindings::RootObject::removeAllJavaReferencesForRoot (root);
         rootObjects.removeLast();
     }
 }
