@@ -1,3 +1,29 @@
+2003-04-15  David Hyatt  <hyatt@apple.com>
+
+	A collection of fixes.
+
+	(1) Don't lay out positioned elements so early in
+	layoutInlineChildren.  They need to get a layout only after
+	all the normal flow kids have gotten a layout (and this happens
+	already in layoutPositionedObjects).
+
+	(2) Fix a mistake with overflow:hidden.  I was applying the
+	overflow-clip for positioned elements only if you had defined
+	clip using the clip property.  This makes iht.com look better
+	(although it still misrenders pretty badly due to some JS error
+	we hit in the source).
+
+	(3) Patch RenderText's height method to give more accurate
+	information.  This affects all the layout tests. :)
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::height):
+
 2003-04-14  Trey Matteson  <trey@apple.com>
 
 	3009051 - Find on Page stops (once) at end of page, should wrap automatically	WebKit
@@ -38,6 +64,7 @@
 	Return a nil for a null element instead of croaking.
         (-[WebCoreDOMNode initWithImpl:DOM::]):  Ditto.
 
+>>>>>>> 1.1620
 2003-04-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

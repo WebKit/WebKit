@@ -1149,15 +1149,9 @@ void RenderText::setText(DOMStringImpl *text, bool force)
 
 int RenderText::height() const
 {
-    int retval;
+    int retval = 0;
     if ( m_lines.count() )
         retval = m_lines[m_lines.count()-1]->m_y + m_lineHeight - m_lines[0]->m_y;
-    else
-        retval = metrics( false ).height();
-
-    // FIXME: Totally bogus.
-    retval += borderTop() + paddingTop() + borderBottom() + paddingBottom();
-    
     return retval;
 }
 

@@ -500,11 +500,11 @@ RenderLayer::constructZTree(QRect overflowClipRect, QRect posClipRect,
             QRect newOverflowClip = m_object->getOverflowClipRect(x,y);
             overflowClipRect  = newOverflowClip.intersect(overflowClipRect);
             clipRectToApply = clipRectToApply.intersect(newOverflowClip);
+            if (m_object->isPositioned() || m_object->isRelPositioned())
+                posClipRect = newOverflowClip.intersect(posClipRect);
         }
         if (m_object->hasClip()) {
             QRect newPosClip = m_object->getClipRect(x,y);
-            if (m_object->hasOverflowClip())
-                newPosClip = newPosClip.intersect(m_object->getOverflowClipRect(x,y));
             posClipRect = newPosClip.intersect(posClipRect);
             overflowClipRect = overflowClipRect.intersect(posClipRect);
             clipRectToApply = clipRectToApply.intersect(newPosClip);

@@ -1249,10 +1249,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 //kdDebug(6041) << "layouting replaced or floating child" << endl;
                 if (relayoutChildren || o->style()->width().isPercent() || o->style()->height().isPercent())
                     o->setLayouted(false);
-                if( !o->layouted() )
-                    o->layout();
                 if (o->isPositioned())
                     o->containingBlock()->insertPositionedObject(o);
+                else if( !o->layouted() )
+                    o->layout();
             }
             else if(o->isText()) // FIXME: Should be able to combine deleteLineBoxes/Runs
                 static_cast<RenderText *>(o)->deleteRuns();
