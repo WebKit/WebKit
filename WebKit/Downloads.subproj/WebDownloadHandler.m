@@ -6,18 +6,18 @@
 //  Copyright (c) 2002 Apple Computer, Inc.
 //
 
+#import <WebKit/WebDownloadHandler.h>
+
+#import <WebKit/WebBinHexDecoder.h>
 #import <WebKit/WebControllerPolicyDelegatePrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDownloadDecoder.h>
-#import <WebKit/WebDownloadHandler.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMacBinaryDecoder.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebResourceRequest.h>
-
-#define MinimumHeaderLength 8192
 
 @implementation WebDownloadHandler
 
@@ -27,7 +27,10 @@
     
     dataSource = [dSource retain];
 
-    decoderClasses = [[NSArray arrayWithObjects:[WebMacBinaryDecoder class], nil] retain];
+    decoderClasses = [[NSArray arrayWithObjects:
+        [WebBinHexDecoder class],
+        [WebMacBinaryDecoder class],
+        nil] retain];
     
     LOG(Download, "Download started for: %s", [[[[dSource request] URL] absoluteString] cString]);
     return self;
@@ -53,21 +56,18 @@
         resourceForkData:(NSData **)resourceForkData
 {
     ASSERT(headerData);
+    ASSERT([headerData length]);
     ASSERT(dataForkData);
     ASSERT(resourceForkData);
     
-    NSObject <WebDownloadDecoder> *decoder;
-    BOOL didDecode;
     unsigned i;
+    for (i = 0; i < [decoderClasses count]; i++) {
+        Class decoderClass = [decoderClasses objectAtIndex:i];
 
-    for(i=0; i<[decoderClasses count]; i++){
-        Class DecoderClass = [decoderClasses objectAtIndex:i];
-
-        if([DecoderClass canDecodeHeaderData:headerData]){
-            decoder = [[[DecoderClass alloc] init] autorelease];
-            didDecode = [decoder decodeData:headerData dataForkData:dataForkData resourceForkData:resourceForkData];
-
-            if(!didDecode){
+        if ([decoderClass canDecodeHeaderData:headerData]) {
+            NSObject <WebDownloadDecoder> *decoder = [[[decoderClass alloc] init] autorelease];
+            BOOL didDecode = [decoder decodeData:headerData dataForkData:dataForkData resourceForkData:resourceForkData];
+            if (!didDecode) {
                 // Though the decoder said it could decode the header, actual decoding failed. Shouldn't happen.
                 ERROR("Download decoder \"%s\" failed to decode header even though it claimed to handle it.",
                       [[decoder className] lossyCString]);
@@ -91,21 +91,16 @@
     ASSERT(dataForkData);
     ASSERT(resourceForkData);
     
-    if(!decoderSequence){
+    if (!decoderSequence) {
         decoderSequence = [[NSMutableArray array] retain];
         [self decodeHeaderData:data dataForkData:dataForkData resourceForkData:resourceForkData];
-    }
-    else{
-
-        NSObject <WebDownloadDecoder> *decoder;
-        BOOL didDecode;
+    } else {
         unsigned i;
-        
-        for(i=0; i<[decoderSequence count]; i++){
-            decoder = [decoderSequence objectAtIndex:i];            
-            didDecode = [decoder decodeData:data dataForkData:dataForkData resourceForkData:resourceForkData];
+        for (i = 0; i< [decoderSequence count]; i++) {
+            NSObject <WebDownloadDecoder> *decoder = [decoderSequence objectAtIndex:i];            
+            BOOL didDecode = [decoder decodeData:data dataForkData:dataForkData resourceForkData:resourceForkData];
     
-            if(!didDecode){
+            if (!didDecode) {
                 return NO;
             }
             
@@ -113,7 +108,7 @@
         }
     }
 
-    if([decoderSequence count] == 0){
+    if ([decoderSequence count] == 0) {
         *dataForkData = data;
         *resourceForkData = nil;
     }
@@ -123,8 +118,14 @@
 
 - (void)closeFile
 {
-    FSCloseFork(dataForkRefNum);
-    FSCloseFork(resourceForkRefNum);
+    if (dataForkRefNum) {
+        FSCloseFork(dataForkRefNum);
+        dataForkRefNum = 0;
+    }
+    if (resourceForkRefNum) {
+        FSCloseFork(resourceForkRefNum);
+        resourceForkRefNum = 0;
+    }
 }
 
 - (void)cleanUpAfterFailure
@@ -140,7 +141,7 @@
 
 - (WebError *)createFileIfNecessary
 {
-    if(fileRefPtr){
+    if (fileRefPtr) {
         return nil;
     }
     
@@ -150,20 +151,20 @@
         
     NSString *filename = [lastDecoder filename];
 
-    if(filename){
+    if (filename) {
         path = [[path stringByDeletingLastPathComponent] stringByAppendingPathComponent:filename];
     }
 
-    if([fileManager fileExistsAtPath:path]){
+    if ([fileManager fileExistsAtPath:path]) {
         NSString *pathWithoutExtension = [path stringByDeletingPathExtension];
         NSString *extension = [path pathExtension];
         NSString *pathWithAppendedNumber;
         unsigned i;
 
-        for(i=1; 1; i++){
+        for (i = 1; 1; i++) {
             pathWithAppendedNumber = [NSString stringWithFormat:@"%@-%d", pathWithoutExtension, i];
             path = [pathWithAppendedNumber stringByAppendingPathExtension:extension];
-            if(![fileManager fileExistsAtPath:path]){
+            if (![fileManager fileExistsAtPath:path]) {
                 break;
             }
         }
@@ -171,7 +172,7 @@
 
     [[dataSource contentPolicy] _setPath:path];
 
-    if(![fileManager createFileAtPath:path contents:nil attributes:[lastDecoder fileAttributes]]){
+    if (![fileManager createFileAtPath:path contents:nil attributes:[lastDecoder fileAttributes]]) {
         ERROR("-[NSFileManager createFileAtPath:contents:attributes:] failed.");
         return [self errorWithCode:WebErrorCannotCreateFile];
     }
@@ -179,9 +180,9 @@
     [[NSWorkspace sharedWorkspace] noteFileSystemChanged:path];
 
     OSErr result = FSPathMakeRef([path UTF8String], &fileRef, nil);
-    if(result == noErr){
+    if (result == noErr) {
         fileRefPtr = &fileRef;
-    }else{
+    } else {
         ERROR("FSPathMakeRef failed.");
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebErrorCannotCreateFile];
@@ -194,28 +195,28 @@
 {
     OSErr result;
     
-    if(*forkRefNum == 0){
+    if (*forkRefNum == 0) {
         HFSUniStr255 forkName;
-        if(forkRefNum == &dataForkRefNum){
+        if (forkRefNum == &dataForkRefNum) {
             result = FSGetDataForkName(&forkName);
-        }else{
+        } else {
             result = FSGetResourceForkName(&forkName);
         }
                 
-        if(result != noErr){
+        if (result != noErr) {
             ERROR("Couldn't get fork name of download file.");
             return NO;
         }
 
         result = FSOpenFork(fileRefPtr, forkName.length, forkName.unicode, fsWrPerm, forkRefNum);
-        if(result != noErr){
+        if (result != noErr) {
             ERROR("Couldn't open fork of download file.");
             return NO;
         }
     }
 
     result = FSWriteFork(*forkRefNum, fsAtMark, 0, [data length], [data bytes], NULL);
-    if(result != noErr){
+    if (result != noErr) {
         ERROR("Couldn't write to fork of download file.");
         return NO;
     }
@@ -226,21 +227,21 @@
 - (WebError *)writeDataForkData:(NSData *)dataForkData resourceForkData:(NSData *)resourceForkData
 {
     WebError *error = [self createFileIfNecessary];
-    if(error){
+    if (error) {
         return error;
     }
     
     BOOL didWrite = YES;
     
-    if(dataForkData && [dataForkData length]){
+    if ([dataForkData length]) {
         didWrite = [self writeData:dataForkData toFork:&dataForkRefNum];
     }
 
-    if(didWrite && resourceForkData && [resourceForkData length]){
+    if (didWrite && [resourceForkData length]) {
         didWrite = [self writeData:resourceForkData toFork:&resourceForkRefNum];
     }
 
-    if(!didWrite){
+    if (!didWrite) {
         ERROR("Writing to download file failed.");
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebErrorCannotWriteToFile];
@@ -251,23 +252,23 @@
 
 - (NSData *)dataIfDoneBufferingData:(NSData *)data
 {
-    if(!bufferedData){
-        bufferedData = [[NSMutableData dataWithData:data] retain];
-    }else if([bufferedData length] == 0){
+    if (!bufferedData) {
+        bufferedData = [data mutableCopy];
+    } else if([bufferedData length] == 0) {
         // When bufferedData's length is 0, we're done buffering.
         return data;
-    }else{
+    } else {
         // Append new data. 
         [bufferedData appendData:data];
     }
 
-    if([bufferedData length] >= MinimumHeaderLength){
+    if ([bufferedData length] >= WEB_DOWNLOAD_DECODER_MINIMUM_HEADER_LENGTH) {
         // We've have enough now. Make a copy so we can set bufferedData's length to 0,
         // so we're know we're done buffering.
-        data = [NSData dataWithData:bufferedData];
+        data = [[bufferedData copy] autorelease];
         [bufferedData setLength:0];
         return data;
-    }else{
+    } else {
         // Keep buffering. The header is not big enough to determine the encoding sequence.
         return nil;
     }
@@ -277,26 +278,26 @@
 {
     ASSERT(data);
 
-    if([data length] == 0){
+    if ([data length] == 0) {
         // Workaround for 3093170.
         return nil;
     }
     
     data = [self dataIfDoneBufferingData:data];
-    if(!data){
+    if (!data) {
         return nil;
     }	
     
     NSData *dataForkData, *resourceForkData;
     
-    if(![self decodeData:data dataForkData:&dataForkData resourceForkData:&resourceForkData]){
+    if (![self decodeData:data dataForkData:&dataForkData resourceForkData:&resourceForkData]) {
         ERROR("Download decoding failed.");
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebErrorDownloadDecodingFailedMidStream];
     }
 
     WebError *error = [self writeDataForkData:dataForkData resourceForkData:resourceForkData];
-    if(error){
+    if (error) {
         return error;
     }
 
@@ -308,9 +309,9 @@
     NSObject <WebDownloadDecoder> *decoder;
     unsigned i;
     
-    for(i=0; i<[decoderSequence count]; i++){
+    for (i = 0; i < [decoderSequence count]; i++) {
         decoder = [decoderSequence objectAtIndex:i];
-        if(![decoder finishDecoding]){
+        if (![decoder finishDecoding]) {
             return NO;
         }
     }
@@ -326,11 +327,11 @@
         return [self errorWithCode:WebErrorDownloadDecodingFailedToComplete];
     }
 
-    if([bufferedData length] > 0){
-        // All data has been buffered because we never received MinimumHeaderLength or more.
+    if ([bufferedData length]) {
+        // All data has been buffered because we never received the minimum header length.
         // Write it out now.
         WebError *error = [self writeDataForkData:bufferedData resourceForkData:nil];
-        if(error){
+        if (error) {
             return error;
         }
     }
@@ -341,8 +342,8 @@
     
     LOG(Download, "Download complete. Saved to: %s", [path cString]);
     
-    if([[dataSource contentPolicy] policyAction] == WebContentPolicySaveAndOpenExternally){
-        if(![[NSWorkspace sharedWorkspace] openFile:path]){
+    if ([[dataSource contentPolicy] policyAction] == WebContentPolicySaveAndOpenExternally) {
+        if (![[NSWorkspace sharedWorkspace] openFile:path]) {
             return [self errorWithCode:WebErrorCannotFindApplicationForFile];
         }
     }
@@ -354,6 +355,5 @@
 {
     [self cleanUpAfterFailure];
 }
-
 
 @end

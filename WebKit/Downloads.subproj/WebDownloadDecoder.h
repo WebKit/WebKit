@@ -9,6 +9,8 @@
 
 #include <Foundation/Foundation.h>
 
+#define WEB_DOWNLOAD_DECODER_MINIMUM_HEADER_LENGTH 8192
+
 @protocol WebDownloadDecoder <NSObject>
 
 // Returns YES if the decoder can decode headerData, NO otherwise.
@@ -29,6 +31,7 @@
 // fileAttributes is called after finishDecoding.
 - (NSDictionary *)fileAttributes;
 
+// Returns the decoded filename.
 - (NSString *)filename;
 
 @end

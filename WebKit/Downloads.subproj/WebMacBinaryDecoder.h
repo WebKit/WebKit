@@ -13,6 +13,8 @@
     int _offset;
     
     unsigned char _name[64];
+    ScriptCode _scriptCode;
+    
     int _dataForkLength;
     int _resourceForkLength;
     u_int32_t _creationDate;

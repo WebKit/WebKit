@@ -301,6 +301,7 @@
 				830A567403731461000C720C,
 				83413E8E0375BCD3004719BE,
 				83413E8F0375BCD3004719BE,
+				9316400E0379832D008635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,6 +412,7 @@
 				830A567503731461000C720C,
 				83413E8A0375BCBE004719BE,
 				83413E900375BCD3004719BE,
+				9316400F0379832D008635CE,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1526,6 +1528,8 @@
 			children = (
 				83413E8B0375BCD3004719BE,
 				83413E890375BCBE004719BE,
+				9316400C0379832D008635CE,
+				9316400D0379832D008635CE,
 				832E26A1036F95CA005E2B4F,
 				832E26A3036F9614005E2B4F,
 				832E26A4036F9614005E2B4F,
@@ -1533,14 +1537,13 @@
 				83413E8D0375BCD3004719BE,
 			);
 			isa = PBXGroup;
-			name = Downloads;
+			path = Downloads.subproj;
 			refType = 4;
 		};
 		832E26A1036F95CA005E2B4F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = WebDownloadDecoder.h;
-			path = Downloads.subproj/WebDownloadDecoder.h;
+			path = WebDownloadDecoder.h;
 			refType = 4;
 		};
 		832E26A2036F95CA005E2B4F = {
@@ -1552,15 +1555,13 @@
 		832E26A3036F9614005E2B4F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = WebDownloadHandler.h;
-			path = Downloads.subproj/WebDownloadHandler.h;
+			path = WebDownloadHandler.h;
 			refType = 4;
 		};
 		832E26A4036F9614005E2B4F = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = WebDownloadHandler.m;
-			path = Downloads.subproj/WebDownloadHandler.m;
+			path = WebDownloadHandler.m;
 			refType = 4;
 		};
 		832E26A5036F9614005E2B4F = {
@@ -1614,8 +1615,7 @@
 		83413E890375BCBE004719BE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = crc16.m;
-			path = Downloads.subproj/crc16.m;
+			path = crc16.m;
 			refType = 4;
 		};
 		83413E8A0375BCBE004719BE = {
@@ -1627,22 +1627,19 @@
 		83413E8B0375BCD3004719BE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = crc16.h;
-			path = Downloads.subproj/crc16.h;
+			path = crc16.h;
 			refType = 4;
 		};
 		83413E8C0375BCD3004719BE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = WebMacBinaryDecoder.h;
-			path = Downloads.subproj/WebMacBinaryDecoder.h;
+			path = WebMacBinaryDecoder.h;
 			refType = 4;
 		};
 		83413E8D0375BCD3004719BE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
-			name = WebMacBinaryDecoder.m;
-			path = Downloads.subproj/WebMacBinaryDecoder.m;
+			path = WebMacBinaryDecoder.m;
 			refType = 4;
 		};
 		83413E8E0375BCD3004719BE = {
@@ -1875,6 +1872,30 @@
 		};
 		9311022B03667CF1008635CE = {
 			fileRef = 9311022903667CF1008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9316400C0379832D008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebBinHexDecoder.h;
+			refType = 4;
+		};
+		9316400D0379832D008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebBinHexDecoder.m;
+			refType = 4;
+		};
+		9316400E0379832D008635CE = {
+			fileRef = 9316400C0379832D008635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9316400F0379832D008635CE = {
+			fileRef = 9316400D0379832D008635CE;
 			isa = PBXBuildFile;
 			settings = {
 			};

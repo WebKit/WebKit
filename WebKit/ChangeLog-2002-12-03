@@ -1,3 +1,24 @@
+2002-11-06  Darin Adler  <darin@apple.com>
+
+	- added a BinHex decoder and did a little work on the MacBinary decoder
+        
+        I'm not supposed to be working on this, but I didn't feel like doing "real" work.
+
+        * Downloads.subproj/WebBinHexDecoder.h: Added.
+        * Downloads.subproj/WebBinHexDecoder.m: Added.
+        * WebKit.pbproj/project.pbxproj: Added WebBinHexDecoder.
+
+        * Downloads.subproj/WebDownloadDecoder.h: Added WEB_DOWNLOAD_DECODER_MINIMUM_HEADER_LENGTH.
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler closeFile]): Check to be sure we don't close the same file twice.
+
+        * Downloads.subproj/WebMacBinaryDecoder.h: Added _scriptCode.
+        * Downloads.subproj/WebMacBinaryDecoder.m:
+        (+[WebMacBinaryDecoder canDecodeHeaderData:]): Added check of MacBinary version field.
+        (-[WebMacBinaryDecoder decodeData:dataForkData:resourceForkData:]): Added MacBinary III
+	part that gets the script code.
+        (-[WebMacBinaryDecoder filename]): Use the script code.
+
 2002-11-06  Maciej Stachowiak  <mjs@apple.com>
 
 	Took URL field out of click policy - open in new window policy

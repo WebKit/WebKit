@@ -26,7 +26,7 @@
     }
     const u_int8_t *header = [headerData bytes];
 
-    // Version must be 0, also the zero fill byte at byte 74,
+    // Version must be 0, also the zero fill bytes at 74 and 82,
     // and the last two bytes of the header.
     if (header[0] || header[74] || header[82] || header[126] || header[127]) {
         return NO;
@@ -38,19 +38,29 @@
     }
 
     // And the CRC is the most important check.
-    if (((header[124] << 8) | header[125]) != CRC16(header, 124, 0)) {
-        // MacBinary I doesn't have a CRC. Make MacBinary I specific checks.
+    if (((header[124] << 8) | header[125]) == CRC16(header, 124, 0)) {
+        // CRC matches, so we have MacBinary II or III.
+        
+        // Version 129 is MacBinary II, and MacBinary III is compatible.
+        // If we see any other value here, it's something newer that we can't handle.
+        if (header[123] != 129) {
+            return NO;
+        }
+        
+        return YES;
+    }
+    
+    // MacBinary I doesn't have a CRC. So now we have to see if we have a MacBinary I file.
 
-        // 99-127 is 0 in MacBinary I
-        int i;
-        for(i=99; i<=127; i++){
-            if(header[i]){
-                return NO;
-            }
+    // Bytes 99-127 must be 0 in MacBinary I (already checked 126 and 127 above).
+    int i;
+    for (i = 99; i <= 125; i++) {
+        if (header[i]) {
+            return NO;
         }
     }
-
-    // FIXME: Specification says we should also check the minimum version at byte 123.
+    
+    // FIXME: The specification recommends also reality-checking the file lengths.
 
     return YES;
 }
@@ -85,6 +95,11 @@
         _resourceForkLength = (((((header[87] << 8) | header[88]) << 8) | header[89]) << 8) | header[90];
         _creationDate = (((((header[91] << 8) | header[92]) << 8) | header[93]) << 8) | header[94];
         _modificationDate = (((((header[95] << 8) | header[96]) << 8) | header[97]) << 8) | header[98];
+        
+        // MacBinary III.
+        if (header[102] == 'm' && header[103] == 'B' && header[104] == 'I' && header[105] == 'N') {
+            _scriptCode = header[106];
+        }
     }
     
     int dataForkStart = HEADER_SIZE;
@@ -141,9 +156,9 @@
 
 - (NSString *)filename
 {
-    // FIXME: We should use the encoding specified in the header if one is present.
-    return [(NSString *)CFStringCreateWithPascalString(NULL, _name, kCFStringEncodingMacRoman) autorelease];
+    // FIXME: We pass _scriptCode in here, but does CFString know how to handle all the script
+    // codes? What about when we have a bad script code? Is it OK to just return nil here?
+    return [(NSString *)CFStringCreateWithPascalString(NULL, _name, _scriptCode) autorelease];
 }
-
 
 @end
