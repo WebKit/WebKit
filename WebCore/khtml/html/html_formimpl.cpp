@@ -1309,13 +1309,25 @@ void HTMLInputElementImpl::click()
             if (renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
                 // using this method gives us nice Cocoa user interface feedback
                 static_cast<QButton *>(widget)->click();
+                break;
             }
-            else
-                HTMLGenericFormElementImpl::click();
-            break;
         }
 #endif
-        default:
+            HTMLGenericFormElementImpl::click();
+            break;
+        case FILE:
+#if APPLE_CHANGES
+            if (renderer()) {
+                static_cast<RenderFileButton *>(renderer())->click();
+                break;
+            }
+#endif
+            HTMLGenericFormElementImpl::click();
+            break;
+        case IMAGE:
+        case ISINDEX:
+        case PASSWORD:
+        case TEXT:
             HTMLGenericFormElementImpl::click();
             break;
     }
@@ -1330,7 +1342,6 @@ void HTMLInputElementImpl::accessKeyAction()
         case TEXT:
         case PASSWORD:
         case ISINDEX:
-        case FILE:
             focus();
             break;
         case CHECKBOX:
@@ -1339,6 +1350,7 @@ void HTMLInputElementImpl::accessKeyAction()
         case RESET:
         case IMAGE:
         case BUTTON:
+        case FILE:
             // focus and click
             focus();
             click();

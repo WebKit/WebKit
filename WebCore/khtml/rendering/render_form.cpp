@@ -904,7 +904,8 @@ void RenderFileButton::slotReturnPressed()
 
 void RenderFileButton::slotTextChanged(const QString &string)
 {
-   element()->m_value = DOMString(string);
+    element()->m_value = DOMString(string);
+    element()->onChange();
 }
 
 void RenderFileButton::select()
@@ -914,6 +915,14 @@ void RenderFileButton::select()
 #endif
 }
 
+#if APPLE_CHANGES
+
+void RenderFileButton::click()
+{
+    static_cast<KWQFileButton *>(widget())->click();
+}
+
+#endif
 
 // -------------------------------------------------------------------------
 

@@ -40,7 +40,6 @@ namespace khtml {
     class RenderObject;
 }
 
-
 typedef khtml::RenderPart KHTMLRenderPart;
 
 #else
@@ -392,6 +391,7 @@ typedef enum {
 
 @protocol WebCoreFileButton <NSObject>
 - (void)setFilename:(NSString *)filename;
+- (void)performClick;
 - (NSString *)filename;
 - (float)baseline;
 - (void)setVisualFrame:(NSRect)rect;

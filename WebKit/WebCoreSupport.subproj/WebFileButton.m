@@ -289,6 +289,11 @@
     return view;
 }
 
+- (void)performClick
+{
+    [_button performClick:nil];
+}
+
 @end
 
 @implementation WebFileChooserButton

@@ -1,3 +1,25 @@
+2003-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3311205: click() on a file input type form element does not work bring up the file chooser as it does in IE
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::click): Add a case for FILE that calls RenderFileButton's click() function.
+        Get rid of the default case and list more cases explicitly.
+        (HTMLInputElementImpl::accessKeyAction): Change FILE from just focus to focus/click.
+
+        * khtml/rendering/render_form.h: Added a click() function to RenderFileButton.
+        * khtml/rendering/render_form.cpp:
+        (RenderFileButton::slotTextChanged): Added call to onChange on the element to match text input
+        fields; helpful for the test case Adobe supplied.
+        (RenderFileButton::click): Added. Calls click() on KWQFileButton.
+
+        * kwq/KWQFileButton.h: Added a click function.
+        * kwq/KWQFileButton.mm: (KWQFileButton::click): Added. Calls performClick on the file button.
+
+        * kwq/WebCoreBridge.h: Add a performClick method to WebCoreFileButton.
+
 2003-12-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -74,6 +74,15 @@ void KWQFileButton::setFilename(const QString &f)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+void KWQFileButton::click()
+{
+    NSView <WebCoreFileButton> *button = getView();
+
+    KWQ_BLOCK_EXCEPTIONS;
+    [button performClick];
+    KWQ_UNBLOCK_EXCEPTIONS;
+}
+
 QSize KWQFileButton::sizeForCharacterWidth(int characters) const
 {
     ASSERT(characters > 0);

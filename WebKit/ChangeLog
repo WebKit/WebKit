@@ -1,3 +1,13 @@
+2003-12-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3311205: click() on a file input type form element does not work bring up the file chooser as it does in IE
+
+        * WebCoreSupport.subproj/WebFileButton.m: (-[WebFileButton performClick]):
+        Add method for clicking, now part of the WebCoreFileButton protocol.
+        The rest of the fix is in WebCore.
+
 2003-12-13  Darin Adler  <darin@apple.com>
 
         Fixed by Ed Voas, reviewed by me.
