@@ -1,3 +1,20 @@
+2003-04-09  Richard Williamson   <rjw@apple.com>
+
+        Fix for 3222904.  This change fixes the immediate symptoms of the bug,
+        but we need to come back to this issue after beta 2.  Bug 3223929 captures
+        the other problems.
+        
+        Reviewed by gramps.
+
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource __setRequest:]):
+        (-[WebDataSource _setRequest:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldReloadForCurrent:andDestination:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]):
+
 2003-04-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris, Trey, Darin and Don.

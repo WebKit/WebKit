@@ -318,6 +318,14 @@
     _private->request = newRequest;
 }
 
+- (void)__setRequest:(NSURLRequest *)request
+{
+    if (request != _private->request){
+        [_private->request release];
+        _private->request = [request retain];
+    }
+}
+
 - (void)_setRequest:(NSURLRequest *)request
 {
     // We should never be getting a redirect callback after the data
@@ -326,7 +334,7 @@
     ASSERT(!_private->committed);
 
     NSURLRequest *oldRequest = _private->request;
-    
+
     _private->request = [request retain];
 
     // Only send serverRedirectedForDataSource: if URL changed.

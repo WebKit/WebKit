@@ -1051,6 +1051,12 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+- (BOOL)_shouldReloadForCurrent:(NSURL *)currentURL andDestination:(NSURL *)destinationURL
+{
+    return !(([currentURL fragment] || [destinationURL fragment]) &&
+    [[currentURL _web_URLByRemovingFragment] isEqual: [destinationURL _web_URLByRemovingFragment]]);
+}
+
 // loads content into this frame, as specified by item
 - (void)_loadItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)loadType
 {
@@ -1065,25 +1071,34 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form.
     
-    // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:target:triggeringEvent:isFormSubmission:
-    // Perhaps they should.
-    
-    if (!formData
-        && [item anchor]
-        && [[itemURL _web_URLByRemovingFragment] isEqual: [currentURL _web_URLByRemovingFragment]]
-        && (!_private->children || ![_private->children count]))
+    if (!formData && ![self _shouldReloadForCurrent:itemURL andDestination:currentURL] )
     {
+#if 0
+        // FIXME:  We need to normalize the code paths for anchor navigation.  Something
+        // like the following line of code should be done, but also accounting for correct
+        // updates to the back/forward list and scroll position.
+        // rjw 4/9/03 See 3223929.
+        [self _loadURL:itemURL referrer:[[[self dataSource] request] HTTPReferrer] loadType:loadType target:nil triggeringEvent:nil form:nil formValues:nil];
+#endif
         // must do this maintenance here, since we don't go through a real page reload
         [self _saveScrollPositionToItem:[_private currentItem]];
         // FIXME: form state might want to be saved here too
 
         // FIXME: Perhaps we can use scrollToAnchorWithURL here instead and remove the older scrollToAnchor:?
-        [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
+        if ([item anchor])
+            [[_private->dataSource _bridge] scrollToAnchor: [item anchor]];
     
         // must do this maintenance here, since we don't go through a real page reload
         [_private setCurrentItem:item];
         [self _restoreScrollPosition];
 
+        // Fake the URL change by updating the datasource's request.  This will no longer
+        // be necessary if we do the better fix described above.
+        NSMutableURLRequest *hackedRequest = [[[self dataSource] request] mutableCopy];
+        [hackedRequest setURL: itemURL];
+        [[self dataSource] __setRequest: [[hackedRequest copy] autorelease]];
+        [hackedRequest release];
+        
         [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:_private->dataSource];
     } else {
         // Remember this item so we can traverse any child items as child frames load
@@ -1577,9 +1592,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (!isFormSubmission
         && loadType != WebFrameLoadTypeReload
         && loadType != WebFrameLoadTypeSame
-        && ![_private->bridge isFrameSet]
-        && [URL fragment]
-        && [[URL _web_URLByRemovingFragment] isEqual:[[NSURL _web_URLWithString:[_private->bridge URL]] _web_URLByRemovingFragment]]) {
+        && ![self _shouldReloadForCurrent:URL andDestination:[NSURL _web_URLWithString:[_private->bridge URL]]]) {
         
         // Just do anchor navigation within the existing content.
         

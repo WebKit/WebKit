@@ -133,6 +133,7 @@
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;
 - (void)_setURL:(NSURL *)URL;
+- (void)__setRequest:(NSURLRequest *)request;
 - (void)_setRequest:(NSURLRequest *)request;
 - (void)_setResponse:(NSURLResponse *)response;
 - (void)_layoutChildren;
