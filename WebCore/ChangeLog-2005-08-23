@@ -1,3 +1,12 @@
+2004-07-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::inRenderedContent): I broke selection drawing with my last patch. This 
+        function is now used in selection drawing, and it was making an unneeded check to see
+        that content was editable to answer whether or not is was rendered. Bad. Fixed.
+
 2004-07-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3621138, crash on hrweb.apple.com.  Make sure that in the case where objects get pulled up from merging

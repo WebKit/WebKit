@@ -620,7 +620,7 @@ bool Position::inRenderedContent() const
         return false;
         
     RenderObject *renderer = node()->renderer();
-    if (!renderer || !renderer->isEditable())
+    if (!renderer)
         return false;
     
     if (renderer->style()->visibility() != khtml::VISIBLE)
