@@ -4,7 +4,7 @@
 	(RelativeURLKeyRetainCallBack): Use a ref count.
 	(RelativeURLKeyReleaseCallBack): Use a ref count instead of assuming there will
 	never be more than one reference.
-	(KURL::normalizeRelativeURLString): Use a ref count.
+	(KURL::normalizeRelativeURLString): Remove the workaround for CFURL bug 2891336.
 	(operator==): Don't put URLs on the autorelease pool just to compare them.
 
 2002-06-10  Darin Adler  <darin@apple.com>
