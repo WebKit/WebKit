@@ -1,3 +1,11 @@
+2002-10-20  Darin Adler  <darin@apple.com>
+
+	Roll out my render_image.cpp change. It was causing a big problem
+	getting images from the cache. I need to study further to figure out why.
+
+        * khtml/rendering/render_image.cpp: (RenderImage::updateFromElement):
+	Roll back the change.
+
 2002-10-20  David Hyatt  <hyatt@apple.com>
 
 	Rewrite the clearing code for floats.  Rewrote the
