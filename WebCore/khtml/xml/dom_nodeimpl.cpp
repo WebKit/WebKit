@@ -940,27 +940,41 @@ NodeImpl *NodeImpl::childNode(unsigned long /*index*/)
 
 NodeImpl *NodeImpl::traverseNextNode(NodeImpl *stayWithin) const
 {
-    if (firstChild())
+    if (firstChild()) {
+        assert(!stayWithin || firstChild()->isAncestor(stayWithin));
 	return firstChild();
-    if (nextSibling())
+    }
+    if (this == stayWithin)
+        return 0;
+    if (nextSibling()) {
+        assert(!stayWithin || nextSibling()->isAncestor(stayWithin));
 	return nextSibling();
+    }
     const NodeImpl *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n)
+    if (n) {
+        assert(!stayWithin || !n->nextSibling() || n->nextSibling()->isAncestor(stayWithin));
         return n->nextSibling();
+    }
     return 0;
 }
 
 NodeImpl *NodeImpl::traverseNextSibling(NodeImpl *stayWithin) const
 {
-    if (nextSibling())
+    if (this == stayWithin)
+        return 0;
+    if (nextSibling()) {
+        assert(!stayWithin || nextSibling()->isAncestor(stayWithin));
 	return nextSibling();
+    }
     const NodeImpl *n = this;
     while (n && !n->nextSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n)
+    if (n) {
+        assert(!stayWithin || !n->nextSibling() || n->nextSibling()->isAncestor(stayWithin));
         return n->nextSibling();
+    }
     return 0;
 }
 
@@ -982,15 +996,23 @@ NodeImpl *NodeImpl::traversePreviousNode() const
 
 NodeImpl *NodeImpl::traversePreviousNodePostOrder(NodeImpl *stayWithin) const
 {
-    if (lastChild())
+    if (lastChild()) {
+        assert(!stayWithin || lastChild()->isAncestor(stayWithin));
 	return lastChild();
-    if (previousSibling())
+    }
+    if (this == stayWithin)
+        return 0;
+    if (previousSibling()) {
+        assert(!stayWithin || previousSibling()->isAncestor(stayWithin));
 	return previousSibling();
+    }
     const NodeImpl *n = this;
     while (n && !n->previousSibling() && (!stayWithin || n->parentNode() != stayWithin))
         n = n->parentNode();
-    if (n)
+    if (n) {
+        assert(!stayWithin || !n->previousSibling() || n->previousSibling()->isAncestor(stayWithin));
         return n->previousSibling();
+    }
     return 0;
 }
 
