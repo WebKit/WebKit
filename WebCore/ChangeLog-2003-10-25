@@ -1,3 +1,7 @@
+2002-11-19  Darin Adler  <darin@apple.com>
+
+        * force-js-clean-timestamp: Make other people's builds work.
+
 2002-11-19  David Hyatt  <hyatt@apple.com>
 
 	I screwed up the line breaking for inline replaced elements.
