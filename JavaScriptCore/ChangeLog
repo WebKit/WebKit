@@ -1,3 +1,12 @@
+2003-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John (concept, not code, which is just the old code coming back).
+
+        - fixed 3518092: REGRESSION (100-119): getting NaN instead of HH:MM times
+
+        * kjs/date_object.cpp: Added back our CF-based implementations of gmtime, localtime,
+        mktime, timegm, and time, because mktime, at least, won't handle a year of 0.
+
 2003-12-19  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3515597.  When an error occurs we need
