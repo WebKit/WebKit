@@ -1,3 +1,20 @@
+2002-11-24  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3109945 - Assertion failure in -[WebIconDatabase_largestIconFromDictionary:]
+	Added error strings for download decoding errors.
+
+        * English.lproj/Localizable.strings: Added error strings for download decoding errors
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _loadIconDictionaries]): tweak
+        (-[WebIconDatabase _updateFileDatabase]): more error checking to prevent assert
+        (-[WebIconDatabase _setIconURL:forSiteURL:]): added asserts to prevent a site URL <-> icon URL mapping without a icon URL -> icon mapping
+        (-[WebIconDatabase _largestIconFromDictionary:]): tweak
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:]): declare pboard types if none have been declared, else append types
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]): Added error strings for download decoding errors
+
 2002-11-24  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3067939 - no support for window.document.lastModified

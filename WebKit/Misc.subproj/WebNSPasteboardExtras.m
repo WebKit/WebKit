@@ -72,7 +72,11 @@ NSString *WebURLNamePboardType = nil;
     ASSERT(URL);
     
     NSArray *types = [NSArray arrayWithObjects:WebURLsWithTitlesPboardType, NSURLPboardType, NSStringPboardType, nil];
-    [self declareTypes:types owner:owner];
+    if([self types] && [[self types] count] > 0){
+        [self addTypes:types owner:owner];
+    }else{
+        [self declareTypes:types owner:owner];
+    }
 
     [URL writeToPasteboard:self];
     [self setString:[URL absoluteString] forType:NSStringPboardType];

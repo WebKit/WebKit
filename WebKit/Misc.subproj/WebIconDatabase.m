@@ -268,14 +268,14 @@ NSSize WebIconLargeSize = {128, 128};
 {
     WebFileDatabase *fileDB = _private->fileDatabase;
 
-    _private->iconsOnDiskWithURLs = [fileDB objectForKey:WebIconsOnDiskKey];
-    _private->siteURLToIconURL = [fileDB objectForKey:WebSiteURLToIconURLKey];
-    _private->iconURLToSiteURLs = [fileDB objectForKey:WebIconURLToSiteURLsKey];
+    _private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
+    _private->siteURLToIconURL = 	[fileDB objectForKey:WebSiteURLToIconURLKey];
+    _private->iconURLToSiteURLs = 	[fileDB objectForKey:WebIconURLToSiteURLsKey];
 
     if (![self _iconDictionariesAreGood]) {
         _private->iconsOnDiskWithURLs = [NSMutableSet set];
-        _private->siteURLToIconURL = [NSMutableDictionary dictionary];
-        _private->iconURLToSiteURLs = [NSMutableDictionary dictionary];
+        _private->siteURLToIconURL = 	[NSMutableDictionary dictionary];
+        _private->iconURLToSiteURLs = 	[NSMutableDictionary dictionary];
     }
 
     [_private->iconsOnDiskWithURLs retain];
@@ -306,12 +306,14 @@ NSSize WebIconLargeSize = {128, 128};
 
     while ((iconURLString = [enumerator nextObject]) != nil) {
         NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
-        NSImage *icon = [self _largestIconFromDictionary:icons];
-        NSData *iconData = [icon TIFFRepresentation];
-        if(iconData){
-            //NSLog(@"Writing icon: %@", iconURLString);
-            [fileDB setObject:iconData forKey:iconURLString];
-            [_private->iconsOnDiskWithURLs addObject:iconURLString];
+        if(icons){
+            NSImage *icon = [self _largestIconFromDictionary:icons];
+            NSData *iconData = [icon TIFFRepresentation];
+            if(iconData){
+                //NSLog(@"Writing icon: %@", iconURLString);
+                [fileDB setObject:iconData forKey:iconURLString];
+                [_private->iconsOnDiskWithURLs addObject:iconURLString];
+            }
         }
     }
     
@@ -326,7 +328,9 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (BOOL)_hasIconForIconURL:(NSURL *)iconURL;
 {
-    return ([_private->iconURLToSiteURLs objectForKey:[iconURL absoluteString]] != nil);
+    NSString *iconURLString = [iconURL absoluteString];
+    return ([_private->iconURLToIcons objectForKey:iconURLString] ||
+            [_private->iconsOnDiskWithURLs containsObject:iconURLString]);
 }
 
 - (NSMutableDictionary *)_iconsForIconURLString:(NSString *)iconURLString
@@ -410,12 +414,14 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(iconURL);
     ASSERT(siteURL);
+    ASSERT([self _hasIconForIconURL:iconURL]);
+    ASSERT([_private->iconURLToRetainCount objectForKey:[iconURL absoluteString]]);
     
     NSString *siteURLString = [siteURL absoluteString];
     NSString *iconURLString = [iconURL absoluteString];
 
     if([[_private->siteURLToIconURL objectForKey:siteURLString] isEqualToString:iconURLString]){
-        // Don't do any work if the iconURL is already bound to the site URL
+        // Don't do any work if the icon URL is already bound to the site URL
         return;
     }
     
@@ -433,8 +439,6 @@ NSSize WebIconLargeSize = {128, 128};
 
     if(futureRetainCount){
         NSNumber *retainCount = [_private->iconURLToRetainCount objectForKey:iconURLString];
-        ASSERT(retainCount);
-
         int newRetainCount = [retainCount intValue] + [futureRetainCount intValue];
         [_private->iconURLToRetainCount setObject:[NSNumber numberWithInt:newRetainCount] forKey:iconURLString];
         [_private->futureSiteURLToRetainCount removeObjectForKey:siteURLString];
@@ -585,6 +589,7 @@ NSSize WebIconLargeSize = {128, 128};
 - (NSImage *)_largestIconFromDictionary:(NSMutableDictionary *)icons
 {
     ASSERT(icons);
+    
     NSEnumerator *enumerator = [icons keyEnumerator];
     NSValue *currentSize, *largestSize=nil;
     float largestSizeArea=0;

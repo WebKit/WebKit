@@ -52,6 +52,8 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 #define WebErrorDescriptionWebErrorCannotFindPlugin UI_STRING("Cannot find plug-in", "WebErrorCannotFindPlugin description")
 #define WebErrorDescriptionWebErrorCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebErrorCannotLoadPlugin description")
 #define WebErrorDescriptionWebErrorJavaUnavailable UI_STRING("Java is unavailable", "WebErrorJavaUnavailable description")
+#define WebErrorDescriptionDownloadDecodingFailedToComplete UI_STRING("Download decoding failed", "WebErrorDownloadDecodingFailedToComplete description")
+#define WebErrorDescriptionDownloadDecodingFailedMidStream UI_STRING("Download decoding failed", "WebErrorDownloadDecodingFailedMidStream description")
 
 + (void)initialize
 {
@@ -69,6 +71,8 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
     WebErrorDescriptionWebErrorCannotFindPlugin,	[NSNumber numberWithInt: WebErrorCannotFindPlugin],
     WebErrorDescriptionWebErrorCannotLoadPlugin,	[NSNumber numberWithInt: WebErrorCannotLoadPlugin],
     WebErrorDescriptionWebErrorJavaUnavailable,		[NSNumber numberWithInt: WebErrorJavaUnavailable],
+    WebErrorDescriptionDownloadDecodingFailedToComplete,[NSNumber numberWithInt: WebErrorDownloadDecodingFailedToComplete],
+    WebErrorDescriptionDownloadDecodingFailedMidStream, [NSNumber numberWithInt: WebErrorDownloadDecodingFailedMidStream],
     nil];
 
     [WebError addErrorsWithCodesAndDescriptions:dict inDomain:WebErrorDomainWebKit];
