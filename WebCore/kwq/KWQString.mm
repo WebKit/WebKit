@@ -2384,16 +2384,7 @@ QString &QString::remove(uint index, uint len)
 
 QString &QString::replace( uint index, uint len, const QString &str )
 {
-    // No need to detach here, detach will happen if necessary
-    // in remove() or insert().
-    
-    if (str.data()->_length == 0)
-        return *this;
-        
-    remove( index, len );
-    insert( index, str );
-
-    return *this;
+    return remove(index, len).insert(index, str);
 }
 
 QString &QString::replace(const QRegExp &qre, const QString &str)

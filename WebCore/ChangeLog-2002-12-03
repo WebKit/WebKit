@@ -1,3 +1,10 @@
+2002-10-06  Darin Adler  <darin@apple.com>
+
+	- fixed 3046737 -- infinite loop in font name matching code on some pages
+
+        * kwq/KWQString.mm: (QString::replace): Removed the incorrect early exit if
+	the passed in string was the empty string.
+
 2002-10-04  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKURL.mm: (KURL::parse): Fix code that adds "//" to file URLs.
