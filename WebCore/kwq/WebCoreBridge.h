@@ -253,8 +253,9 @@ typedef enum {
 - (int)selectionStartOffset;
 - (DOMNode *)selectionEnd;
 - (int)selectionEndOffset;
-- (void)setSelectedDOMRange:(DOMRange *)range;
+- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
 - (DOMRange *)selectedDOMRange;
+- (NSSelectionAffinity)selectionAffinity;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 

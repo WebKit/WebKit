@@ -1,5 +1,28 @@
 2004-04-22  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Adds the notion of selection affinity to the editing API, bringing it up to
+        date with the latest proposal.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _alterCurrentSelection:direction:granularity:]): Pass selection affinity
+        to the delegate. We can just pass the current one since this does not change with arrow keys.
+        (-[WebView setSelectedDOMRange:affinity:]): Set the affinity on the selection.
+        (-[WebView selectionAffinity]): New accessor.
+        (-[WebView insertNode:replacingDOMRange:]): Change to pass selection affinity to call
+        to set selection. This is just to get the code to compile for now, since this method
+        will soon be removed in place of a similar one from the latest proposal that always
+        works on the current selection.
+        (-[WebView insertText:replacingDOMRange:]): Ditto.
+        (-[WebView insertMarkupString:replacingDOMRange:]): Ditto.
+        (-[WebView insertWebArchive:replacingDOMRange:]): Ditto.
+        (-[WebView deleteDOMRange:]): Ditto.
+        (-[WebView applyStyle:toElementsInDOMRange:]): Ditto.
+        * WebView.subproj/WebViewPrivate.h: Add selection affinity to API declarations as needed.
+
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         Work around this bug:

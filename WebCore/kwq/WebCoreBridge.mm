@@ -1355,7 +1355,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         _part->setXPosForVerticalArrowNavigation(xPos);
 }
 
-- (void)setSelectedDOMRange:(DOMRange *)range
+- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     NodeImpl *startContainer = [[range startContainer] _nodeImpl];
     NodeImpl *endContainer = [[range endContainer] _nodeImpl];
@@ -1367,12 +1367,18 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     DocumentImpl *doc = startContainer->getDocument();
     doc->updateLayout();
     Selection selection(Position(startContainer, [range startOffset]), Position(endContainer, [range endOffset]));
+    selection.setAffinity(static_cast<Selection::EAffinity>(selectionAffinity));
     _part->setSelection(selection);
 }
 
 - (DOMRange *)selectedDOMRange
 {
     return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
+}
+
+- (NSSelectionAffinity)selectionAffinity
+{
+    return static_cast<NSSelectionAffinity>(_part->selection().affinity());
 }
 
 - (void)replaceSelectionWithNode:(DOMNode *)node

@@ -2051,7 +2051,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 {
     WebBridge *bridge = [self _bridgeForCurrentSelection];
     DOMRange *proposedRange = [bridge rangeByAlteringCurrentSelection:alteration direction:direction granularity:granularity];
-    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange stillSelecting:NO]) {
+    if ([[self _editingDelegateForwarder] webView:self shouldChangeSelectedDOMRange:[self selectedDOMRange] toDOMRange:proposedRange affinity:[bridge selectionAffinity] stillSelecting:NO]) {
         [bridge alterCurrentSelection:alteration direction:direction granularity:granularity];
         [bridge ensureCaretVisible];
     }
@@ -2092,14 +2092,19 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self interpretKeyEvents:[NSArray arrayWithObject:event]];
 }
 
-- (void)setSelectedDOMRange:(DOMRange *)range
+- (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
-    [[self _bridgeForCurrentSelection] setSelectedDOMRange:range];
+    [[self _bridgeForCurrentSelection] setSelectedDOMRange:range affinity:selectionAffinity];
 }
 
 - (DOMRange *)selectedDOMRange
 {
     return [[self _bridgeForCurrentSelection] selectedDOMRange];
+}
+
+- (NSSelectionAffinity)selectionAffinity
+{
+    return [[self _bridgeForCurrentSelection] selectionAffinity];
 }
 
 - (void)setEditable:(BOOL)flag
@@ -2182,7 +2187,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
         
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range];
+    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
     [bridge replaceSelectionWithNode:node];
 }    
 
@@ -2192,7 +2197,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range];
+    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
     [bridge replaceSelectionWithText:text];
 }
 
@@ -2202,7 +2207,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range];
+    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
     [bridge replaceSelectionWithMarkupString:markupString baseURLString:nil];
 }
 
@@ -2212,7 +2217,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range];
+    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
     [[[bridge webFrame] dataSource] _replaceSelectionWithWebArchive:archive];
 }
 
@@ -2222,7 +2227,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range];
+    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
     [bridge deleteSelection];
 }
     
@@ -2232,7 +2237,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
         return;
 
     WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [bridge setSelectedDOMRange:range];
+    [bridge setSelectedDOMRange:range affinity:[bridge selectionAffinity]];
     [bridge applyStyle:style toElementsInDOMRange:range];
 }
 

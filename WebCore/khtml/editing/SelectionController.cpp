@@ -96,6 +96,7 @@ Selection::Selection(const Selection &o)
 	assignStartAndEnd(o.start(), o.end());
 
     m_state = o.m_state;
+    m_affinity = o.m_affinity;
 
     m_baseIsStart = o.m_baseIsStart;
     m_needsCaretLayout = o.m_needsCaretLayout;
@@ -123,6 +124,7 @@ void Selection::init()
     m_baseIsStart = true;
     m_needsCaretLayout = true;
     m_modifyBiasSet = false;
+    m_affinity = DOWNSTREAM;
 }
 
 Selection &Selection::operator=(const Selection &o)
@@ -131,6 +133,7 @@ Selection &Selection::operator=(const Selection &o)
 	assignStartAndEnd(o.start(), o.end());
 
     m_state = o.m_state;
+    m_affinity = o.m_affinity;
 
     m_baseIsStart = o.m_baseIsStart;
     m_needsCaretLayout = o.m_needsCaretLayout;
@@ -148,6 +151,15 @@ Selection &Selection::operator=(const Selection &o)
     }
     
     return *this;
+}
+
+void Selection::setAffinity(EAffinity affinity)
+{
+    if (affinity == m_affinity)
+        return;
+        
+    m_affinity = affinity;
+    setNeedsLayout();
 }
 
 void Selection::moveTo(const Range &r)
@@ -384,6 +396,8 @@ void Selection::layoutCaret()
         m_caretX = m_caretY = m_caretSize = 0;
     }
     else {
+        // EDIT FIXME: Enhance call to pass along selection 
+        // upstream/downstream affinity to get the right position.
         int w;
         start().node()->renderer()->caretPos(start().offset(), true, m_caretX, m_caretY, w, m_caretSize);
     }

@@ -45,18 +45,26 @@ class Range;
 class Selection
 {
 public:
+	enum EState { NONE, CARET, RANGE };
+	enum EAlter { MOVE, EXTEND };
+	enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT, UP, DOWN };
+	enum ETextGranularity { CHARACTER, WORD, LINE };
+
+    // These match the AppKit values for these concepts.
+    // From NSTextView.h:
+    // NSSelectionAffinityUpstream = 0
+    // NSSelectionAffinityUpstream = 1
+    enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
+
     Selection();
     Selection(const Position &);
     Selection(const Position &, const Position &);
     Selection(const Selection &);
     ~Selection() {}
 
-	enum EState { NONE, CARET, RANGE };
-	enum EAlter { MOVE, EXTEND };
-	enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT, UP, DOWN };
-	enum ETextGranularity { CHARACTER, WORD, LINE };
-
 	EState state() const { return m_state; }
+	EAffinity affinity() const { return m_affinity; }
+    void setAffinity(EAffinity);
 
     void moveTo(const Range &);
     void moveTo(const Selection &);
@@ -123,6 +131,7 @@ private:
     Position m_end;               // end position for the selection
 
 	EState m_state;               // the state of the selection
+	EAffinity m_affinity;         // the upstream/downstream affinity of the selection
 
 	int m_caretX;                 // caret coordinates and size
 	int m_caretY;

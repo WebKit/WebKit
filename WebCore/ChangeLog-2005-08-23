@@ -1,3 +1,26 @@
+2004-04-22  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Adds the notion of selection affinity to the editing API, bringing it up to
+        date with the latest proposal.
+
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::Selection): Adds support for selection affinity member variable.
+        (DOM::Selection::init): Ditto.
+        (DOM::Selection::operator=): Ditto.
+        (DOM::Selection::setAffinity): New function.
+        (DOM::Selection::layoutCaret): Added comment to indicate that we need to enhance this
+        function to handle selection affinity.
+        * khtml/xml/dom_selection.h: Added EAffinity enum and m_affinity member variable.
+        (DOM::Selection::): Moved the enums above the constructors. No code change.
+        (DOM::Selection::affinity): New accessor.
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm: Add selection affinity to API declarations as needed.
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]): Ditto.
+        (-[WebCoreBridge selectedDOMRange]): Ditto.
+        (-[WebCoreBridge selectionAffinity]): Ditto.
+
 2004-04-21  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
