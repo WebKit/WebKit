@@ -1,3 +1,20 @@
+2003-04-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3221400 -- REGRESSION: password field with onfocus handler that does select causes focus/typing trouble
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField selectText:]): Rearrange slightly.
+        (-[KWQTextField becomeFirstResponder]): Add code to make the secure field first responder
+        when in password mode. The old code did this indirectly through the call to setDocumentFocus,
+        which caused minor trouble.
+        (-[KWQSecureTextField selectText:]): Correct the current editor check to use a technique
+        that works even for the secure text field's editor (which does not get returned by currentEditor).
+        
+        * kwq/KWQWidget.mm: (QWidget::hasFocus): Update the logic here so it works for the secure text
+        field and the secure text field's editor.
+
 2003-04-08  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3166374.  Making the nudie blog work.  My loop for

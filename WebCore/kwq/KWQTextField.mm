@@ -161,9 +161,10 @@
     NSText *editor = [self currentEditor];
     if (editor) {
         [editor setSelectedRange:NSMakeRange(0, [[editor string] length])];
-    } else {
-        [super selectText:sender];
+        return;
     }
+    
+    [super selectText:sender];
 }
 
 - (BOOL)isEditable
@@ -323,10 +324,10 @@
 
 - (BOOL)becomeFirstResponder
 {
-    KWQKHTMLPart::setDocumentFocus(widget);
-    if (!widget->hasFocus()) {
-        return NO;
+    if ([self passwordMode]) {
+        return [[self window] makeFirstResponder:secureField];
     }
+    KWQKHTMLPart::setDocumentFocus(widget);
     [self _KWQ_scrollFrameToVisible];
     return [super becomeFirstResponder];
 }
@@ -446,15 +447,20 @@
         return;
     }
     
-    // Don't call the NSTextField's selectText if the field is already first responder.
+    // Don't call the NSSecureTextField's selectText if the field is already first responder.
     // If we do, we'll end up deactivating and then reactivating, which will send
-    // unwanted onBlur events.
-    NSText *editor = [self currentEditor];
-    if (editor) {
-        [editor setSelectedRange:NSMakeRange(0, [[editor string] length])];
-    } else {
-        [super selectText:sender];
+    // unwanted onBlur events and wreak havoc in other ways as well by setting the focus
+    // back to the window.
+    NSResponder *firstResponder = [[self window] firstResponder];
+    if ([firstResponder isKindOfClass:[NSTextView class]]) {
+        NSTextView *textView = (NSTextView *)firstResponder;
+        if ([textView delegate] == self) {
+            [textView setSelectedRange:NSMakeRange(0, [[textView string] length])];
+            return;
+        }
     }
+
+    [super selectText:sender];
 }
 
 - (void)setFrameSize:(NSSize)size

@@ -171,11 +171,11 @@ bool QWidget::hasFocus() const
     if (firstResponder == view) {
         return true;
     }
-    if ([view isKindOfClass:[NSControl class]]) {
-        NSControl *control = view;
-        if (firstResponder == [control currentEditor]) {
-            return true;
-        }
+    // The following check handles both text field editors and the secure text field
+    // that goes inside the KWQTextField (and its editor). We have to check the class
+    // of the view because we don't want to be fooled by subviews of NSScrollView, for example.
+    if ([view isKindOfClass:[NSTextField class]] && [firstResponder isDescendantOf:view]) {
+        return true;
     }
     return false;
 }
