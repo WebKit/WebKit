@@ -501,6 +501,7 @@ void HTMLObjectElementImpl::attach()
         } else {
             if (needWidgetUpdate) {
                 static_cast<RenderPartObject*>(m_render)->updateWidget();
+                dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
                 needWidgetUpdate = false;
             } else {
                 needWidgetUpdate = true;
@@ -508,10 +509,6 @@ void HTMLObjectElementImpl::attach()
             }
         }
     }
-
-    // ### do this when we are actually finished loading instead
-    if (m_render)
-        dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
 }
 
 void HTMLObjectElementImpl::detach()
@@ -528,6 +525,7 @@ void HTMLObjectElementImpl::recalcStyle(StyleChange ch)
 {
     if (needWidgetUpdate && m_render && !canRenderImageType(serviceType)) {
         static_cast<RenderPartObject*>(m_render)->updateWidget();
+        dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
         needWidgetUpdate = false;
     }
     HTMLElementImpl::recalcStyle(ch);

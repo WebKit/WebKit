@@ -1,3 +1,13 @@
+2004-09-30  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: <rdar://problem/3792822> Safari is calling the Cocoa QuickTime plugin twice for the OBJECT and EMBED tags
+
+        Reviewed by hyatt.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::attach): call dispatchHTMLEvent after updateWidget instead of every time this method is called
+        (HTMLObjectElementImpl::recalcStyle): ditto
+
 2004-09-30  Darin Adler  <darin@apple.com>
 
         - rolled out bad image change that caused performance regression
