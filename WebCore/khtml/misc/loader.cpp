@@ -196,7 +196,7 @@ CachedCSSStyleSheet::CachedCSSStyleSheet(DocLoader* dl, const DOMString &url, KI
     if(!charset.isEmpty())
 	m_codec = KGlobal::charsets()->codecForName(charset, b);
     else
-        m_codec = QTextCodec::codecForMib(4); // latin-1
+        m_codec = QTextCodec::codecForName("iso8859-1");
 }
 
 CachedCSSStyleSheet::CachedCSSStyleSheet(const DOMString &url, const QString &stylesheet_data)
@@ -276,7 +276,7 @@ CachedScript::CachedScript(DocLoader* dl, const DOMString &url, KIO::CacheContro
     if(!charset.isEmpty())
         m_codec = KGlobal::charsets()->codecForName(charset, b);
     else
-	m_codec = QTextCodec::codecForMib(4); // latin-1
+	m_codec = QTextCodec::codecForName("iso8859-1");
 }
 
 CachedScript::CachedScript(const DOMString &url, const QString &script_data)

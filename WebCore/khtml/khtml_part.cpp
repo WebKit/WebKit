@@ -1752,8 +1752,13 @@ KURL KHTMLPart::completeURL( const QString &url )
 {
   if ( !d->m_doc ) return url;
 
+#if APPLE_CHANGES
+  // FIXME: We probably want to pass the encoding to the KURL constructor
+  // that's inside m_doc->completeURL().
+#else
   if (d->m_decoder)
     return KURL(d->m_doc->completeURL(url), d->m_decoder->codec()->mibEnum());
+#endif
 
   return KURL( d->m_doc->completeURL( url ) );
 }

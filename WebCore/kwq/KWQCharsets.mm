@@ -27,7 +27,6 @@
 
 struct CharsetEntry {
     const char *name;
-    int mib;
     CFStringEncoding encoding;
 };
 
@@ -40,25 +39,16 @@ static CFHashCode encodingNameHash(const void *value);
 static CFDictionaryKeyCallBacks encodingNameKeyCallbacks = { 0, NULL, NULL, NULL, encodingNamesEqual, encodingNameHash };
 
 static CFMutableDictionaryRef nameToEncoding = NULL;
-static CFMutableDictionaryRef mibToEncoding = NULL;
 static CFMutableDictionaryRef encodingToName = NULL;
-static CFMutableDictionaryRef encodingToMIB = NULL;
 
 static void buildDictionaries()
 {
     nameToEncoding = CFDictionaryCreateMutable(NULL, 0, &encodingNameKeyCallbacks, NULL);
-    mibToEncoding = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     encodingToName = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
-    encodingToMIB = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
 
     for (int i = 0; table[i].name != NULL; i++) {
         CFDictionarySetValue(nameToEncoding, table[i].name, (void *)table[i].encoding);
         CFDictionarySetValue(encodingToName, (void *)table[i].encoding, table[i].name);
-
-        if (table[i].mib != -1) {
-            CFDictionarySetValue(mibToEncoding, (void *)table[i].mib, (void *)table[i].encoding);
-            CFDictionarySetValue(encodingToMIB, (void *)table[i].encoding, (void *)table[i].mib);
-        }
     }
 }
 
@@ -75,20 +65,6 @@ CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *name)
     return (CFStringEncoding)value;
 }
 
-
-CFStringEncoding KWQCFStringEncodingFromMIB(int mib)
-{
-    if (mibToEncoding == NULL) {
-        buildDictionaries();
-    }
-    
-    const void *value;
-    if (!CFDictionaryGetValueIfPresent(mibToEncoding, (void *)mib, &value)) {
-        return kCFStringEncodingInvalidId;
-    }
-    return (CFStringEncoding)value;
-}
-
 const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding encoding)
 {
     if (encodingToName == NULL) {
@@ -100,19 +76,6 @@ const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding encoding)
         return NULL;
     }
     return (const char *)value;
-}
-
-int KWQCFStringEncodingToMIB(CFStringEncoding encoding)
-{
-    if (encodingToMIB == NULL) {
-        buildDictionaries();
-    }
-    
-    const void *value;
-    if (!CFDictionaryGetValueIfPresent(encodingToMIB, (void *)encoding, &value)) {
-        return -1;
-    }
-    return (int)value;
 }
 
 static Boolean encodingNamesEqual(const void *value1, const void *value2)

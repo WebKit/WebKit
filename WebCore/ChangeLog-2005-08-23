@@ -1,3 +1,45 @@
+2003-02-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - we say goodbye to "MIB numbers"
+
+        * khtml/misc/decoder.cpp:
+        (Decoder::Decoder): Get the Latin-1 codec using a name.
+        (Decoder::setEncoding): Detect the Hebrew encoding using isISOLatin1Hebrew()
+        instead of MIB number.
+        (Decoder::decode): Get the UCS-2 codec using a name. Redo APPLE_CHANGES so
+        we don't get the MIB-number-based workaround for a bug in QTextCodec that
+        KWQ doesn't have. Get the Latin-1 codec using a name.
+        * khtml/misc/loader.cpp:
+        (CachedCSSStyleSheet::CachedCSSStyleSheet): Get the Latin-1 codec using a name.
+        (CachedScript::CachedScript): Get the Latin-1 codec using a name.
+        
+        * kwq/KWQCharsets.h: Remove the two MIB-related functions.
+        * kwq/KWQCharsets.mm: Remove the MIB number from the character set table struct.
+        Remove the MIB-related dictionary globals and functions.
+        (buildDictionaries): Remove code to set up the MIB-related dictionaries.
+
+        * kwq/KWQTextCodec.h: Remove codecForMib, mibEnum, and encoding member functions.
+        Add isISOLatin1Hebrew member function.
+        * kwq/KWQTextCodec.mm:
+        (QTextCodec::makeDecoder): Pass in the encoding when making KWQTextDecoder rather
+        than passing in the QTextCodec object.
+        (QTextCodec::toUnicode): Ditto.
+        (QTextCodec::isISOLatin1Hebrew): Return true for kCFStringEncodingISOLatinHebrew only.
+        (KWQTextDecoder::convertUsingTEC): Get encoding directly instead of from a QTextCodec.
+        (KWQTextDecoder::toUnicode): Ditto.
+
+        * kwq/make-charset-table.pl: Don't write out MIB numbers.
+        * kwq/KWQCharsetData.c: Regenerated.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::completeURL):
+        Don't bother passing the MIB number to KURL. Soon, we'll have to
+        do something smart here, but we won't use MIB numbers.
+
+        * kwq/mac-encodings.txt: Added more 16-bit Unicode character set names.
+        Updated some comments.
+
 2003-02-04  David Hyatt  <hyatt@apple.com>
 
 	Patch calcInlineMaxWidth to add in left/right margins/borders/padding

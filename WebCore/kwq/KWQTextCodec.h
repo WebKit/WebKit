@@ -33,14 +33,13 @@ class QTextDecoder;
 
 class QTextCodec {
 public:
-    static QTextCodec *codecForMib(int);
     static QTextCodec *codecForName(const char *);
     static QTextCodec *codecForLocale();
 
     QTextCodec(CFStringEncoding e) : _encoding(e) { }
 
-    const char* name() const;
-    int mibEnum() const;
+    const char *name() const;
+    bool isISOLatin1Hebrew() const;
 
     QTextDecoder *makeDecoder() const;
 
@@ -49,8 +48,6 @@ public:
     QString toUnicode(const char *, int) const;
     QString toUnicode(const QByteArray &, int) const;
     
-    CFStringEncoding encoding() const { return _encoding; }
-
 private:
     CFStringEncoding _encoding;
 };

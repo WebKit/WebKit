@@ -31,7 +31,4 @@
 CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *);
 const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding);
 
-CFStringEncoding KWQCFStringEncodingFromMIB(int mib);
-int KWQCFStringEncodingToMIB(CFStringEncoding);
-
 #endif /* KWQCHARSETS_H_ */

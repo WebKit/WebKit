@@ -5,7 +5,6 @@ use strict;
 
 my $MAC_SUPPORTED_ONLY = 1;
 
-my %MIBNumberFromCharsetsFile;
 my %aliasesFromCharsetsFile;
 my %namesWritten;
 
@@ -23,14 +22,13 @@ sub error ($)
 
 sub emit_line
 {
-    my ($name, $mibNum, $encodingNum) = @_;
+    my ($name, $encodingNum) = @_;
  
     error "$name shows up twice in output" if $namesWritten{$name};
     $namesWritten{$name} = 1;
         
     $encodingNum = "kCFStringEncoding" . $encodingNum if $encodingNum !~ /^[0-9]/;
-    $mibNum = -1 if !$mibNum;
-    $output .= "    { \"$name\", $mibNum, $encodingNum },\n";
+    $output .= "    { \"$name\", $encodingNum },\n";
 }
 
 sub process_mac_encodings
@@ -91,14 +89,8 @@ sub process_mac_encodings
             }
             
             # write out
-            my $MIBNumber;
-            my @aliases = sort keys %aliases;
-            for my $alias (@aliases) {
-                $MIBNumber = $MIBNumberFromCharsetsFile{$alias} if $MIBNumberFromCharsetsFile{$alias};
-            }
-            
-            for my $alias (@aliases) {
-                emit_line($alias, $MIBNumber, $MacName);
+            for my $alias (sort keys %aliases) {
+                emit_line($alias, $MacName);
             }
 	} elsif (/./) {
             my $MacName = $_;
@@ -113,14 +105,13 @@ sub process_mac_encodings
 
 sub process_iana_charset 
 {
-    my ($canonical_name, $mib_enum, @aliases) = @_;
+    my ($canonical_name, @aliases) = @_;
     
     return if !$canonical_name;
     
     my @names = sort $canonical_name, @aliases;
     
     for my $name (@names) {
-        $MIBNumberFromCharsetsFile{$name} = $mib_enum if $mib_enum;
         $aliasesFromCharsetsFile{$name} = \@names;
     }
 }
@@ -134,7 +125,6 @@ sub process_iana_charsets
     my %seen;
     
     my $canonical_name;
-    my $mib_enum;
     my @aliases;
     
     while (<CHARSETS>) {
@@ -145,13 +135,10 @@ sub process_iana_charsets
             error "saw $new_canonical_name twice in character-sets.txt", if $seen{$new_canonical_name};
             $seen{$new_canonical_name} = 1;
             
-	    process_iana_charset $canonical_name, $mib_enum, @aliases;
+	    process_iana_charset $canonical_name, @aliases;
 	    
 	    $canonical_name = $new_canonical_name;
-	    $mib_enum = "";
 	    @aliases = ();
-	} elsif ((my $new_mib_enum) = /MIBenum: ([^ \t]*).*/) {
-	    $mib_enum = $new_mib_enum;
 	} elsif ((my $new_alias) = /Alias: ([^ \t]*).*/) {
             next if $new_alias eq "None";
             
@@ -164,7 +151,7 @@ sub process_iana_charsets
 	}
     }
     
-    process_iana_charset $canonical_name, $mib_enum, @aliases;
+    process_iana_charset $canonical_name, @aliases;
     
     close CHARSETS;
 }
@@ -178,4 +165,4 @@ exit 1 if $error;
 
 print "static const CharsetEntry table[] = {\n";
 print $output;
-print "    { NULL, -1, $invalid_encoding }\n};\n";
+print "    { 0, $invalid_encoding }\n};\n";

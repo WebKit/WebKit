@@ -30,14 +30,14 @@
 
 class KWQTextDecoder : public QTextDecoder {
 public:
-    KWQTextDecoder(const QTextCodec &c) : _codec(c), _state(atStart), _haveBufferedByte(false) { }
+    KWQTextDecoder(CFStringEncoding e) : _encoding(e), _state(atStart), _haveBufferedByte(false) { }
     QString toUnicode(const char *chs, int len);
 
 private:
     QString convertUTF16(const unsigned char *chs, int len);
     QString convertUsingTEC(const UInt8 *chs, int len);
 
-    QTextCodec _codec;
+    CFStringEncoding _encoding;
     
     // State for Unicode decoding.
     enum UnicodeEndianState {
@@ -67,11 +67,6 @@ static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding)
     return codec;
 }
 
-QTextCodec *QTextCodec::codecForMib(int mib)
-{
-    return codecForCFStringEncoding(KWQCFStringEncodingFromMIB(mib));
-}
-
 QTextCodec *QTextCodec::codecForName(const char *name)
 {
     return codecForCFStringEncoding(KWQCFStringEncodingFromIANACharsetName(name));
@@ -87,14 +82,9 @@ const char *QTextCodec::name() const
     return KWQCFStringEncodingToIANACharsetName(_encoding);
 }
 
-int QTextCodec::mibEnum() const
-{
-    return KWQCFStringEncodingToMIB(_encoding);
-}
-
 QTextDecoder *QTextCodec::makeDecoder() const
 {
-    return new KWQTextDecoder(*this);
+    return new KWQTextDecoder(_encoding);
 }
 
 QCString QTextCodec::fromUnicode(const QString &qcs) const
@@ -111,12 +101,17 @@ QCString QTextCodec::fromUnicode(const QString &qcs) const
 
 QString QTextCodec::toUnicode(const char *chs, int len) const
 {
-    return KWQTextDecoder(*this).toUnicode(chs, len);
+    return KWQTextDecoder(_encoding).toUnicode(chs, len);
 }
 
 QString QTextCodec::toUnicode(const QByteArray &qba, int len) const
 {
-    return KWQTextDecoder(*this).toUnicode(qba, len);
+    return KWQTextDecoder(_encoding).toUnicode(qba, len);
+}
+
+bool QTextCodec::isISOLatin1Hebrew() const
+{
+    return _encoding == kCFStringEncodingISOLatinHebrew;
 }
 
 QString KWQTextDecoder::convertUTF16(const unsigned char *s, int length)
@@ -216,12 +211,12 @@ QString KWQTextDecoder::convertUsingTEC(const UInt8 *chs, int len)
     static TECObjectRef converter;
     static CFStringEncoding converterEncoding = kCFStringEncodingInvalidId;
     OSStatus status;
-    if (_codec.encoding() != converterEncoding) {
+    if (_encoding != converterEncoding) {
         TECObjectRef newConverter;
-        status = TECCreateConverter(&newConverter, _codec.encoding(),
+        status = TECCreateConverter(&newConverter, _encoding,
             CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat));
         if (status) {
-            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", _codec.encoding(), status);
+            ERROR("the Text Encoding Converter won't convert from text encoding 0x%X, error %d", _encoding, status);
             return QString::null;
         }
         if (converter) {
@@ -289,7 +284,7 @@ QString KWQTextDecoder::toUnicode(const char *chs, int len)
         return QString::null;
     }
 
-    if (_codec.encoding() == kCFStringEncodingUnicode) {
+    if (_encoding == kCFStringEncodingUnicode) {
         return convertUTF16(reinterpret_cast<const unsigned char *>(chs), len);
     }
     

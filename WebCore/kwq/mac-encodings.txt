@@ -8,14 +8,12 @@ WindowsLatin1: windows-1252, winlatin1, x-ansi
 ISOLatin1: 8859_1, iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep
 ASCII: iso-ir-6us, us-ascii
-Unicode: iso-10646-ucs-2 # utf-16be, unicodeFFFE, unicode? (would adding these help us?)
+Unicode: iso-10646-ucs-2, unicode, unicodefeff, unicodefffe, utf-16be, utf-16le
 # Note the bogus entry below that makes UTF-16 mean UTF-8.
 # We do this because Internet Explorer does, and because web pages say UTF-16 and mean UTF-8.
 # See bug 2969378 and http://zingermans.com/ for a concrete example.
-# It's not clear what to do about 16-bit encodings in general.
-# We may have to add code to deal with encodings vs. character sets
-# that understands that characters sets in <head> can't change to a 16-bit
-# encoding, while character sets from the server can.
+# We may have to add code that understands that characters sets in <head> can't change to a 16-bit
+# encoding, but character set headers from the server can.
 UTF8: unicode-1-1-utf-8, unicode-2-0-utf-8, utf-16, utf-8, x-unicode-2-0-utf-8
 NonLossyASCII
 
@@ -72,8 +70,6 @@ ISOLatin4: iso-8859-4
 ISOLatinCyrillic: iso-8859-5
 ISOLatinArabic: iso-8859-6
 ISOLatinGreek: iso-8859-7
-  # This includes both logical and visual variants of Hebrew.
-  # That's probably not going to work in the real thing.
 ISOLatinHebrew: dos-862, iso-8859-8, iso-8859-8-e, iso-8859-8-i, logical, visual
 ISOLatin5: iso-8859-9
 ISOLatin6: iso-8859-10
