@@ -1,3 +1,15 @@
+2002-01-29  Kenneth Kocienda  <kocienda@apple.com>
+
+        - Added in a dummy protocol to clean up a warning that results
+        from calling a method on an id.
+        - Cleaned up handle variable in KWQKHTMLPart. This can now be freed
+        once we get a proper notification that a load is done.
+        - Support for reading text encoding from HTTP headers added back in.
+        
+	* include/WCURLHandle.h:
+	* src/kwq/KWQKHTMLPart.mm: (encodingFromContentType), (KHTMLPart::slotData),
+	(KHTMLPart::openURL), (KHTMLPart::closeURL):
+
 2002-01-29  Richard Williamson  <rjw@apple.com>
 
     First pass as frame code.  Still needs cleanup.

@@ -160,6 +160,7 @@ public:
     
     KHTMLPart *m_part;
     KHTMLPartLoadClient *m_recv;
+    id m_handle;
 
     bool m_bFirstData:1;
     bool m_haveEncoding:1;
@@ -207,6 +208,7 @@ public:
         m_haveEncoding = false;
         m_recv = [[KHTMLPartLoadClient alloc] init];
         m_recv->m_part = part;
+        m_handle = nil;
         
         m_jscript = 0L;
         m_runningScripts = 0;
@@ -260,7 +262,6 @@ KHTMLPart::~KHTMLPart()
     NSLog(@"destructing KHTMLPart");
 }
 
-#if 0
 static NSString *
 encodingFromContentType (NSString *contentType)
 {
@@ -281,12 +282,11 @@ encodingFromContentType (NSString *contentType)
 
     return result;
 }
-#endif
 
 // NOTE: This code emulates the interface used by the original khtml part  
 void KHTMLPart::slotData(id handle, const char *bytes, int length)
 {
-    //NSString *encoding;
+    NSString *encoding;
     QString enc;
 
     if (!d->m_workingURL.isEmpty()) {
@@ -294,17 +294,15 @@ void KHTMLPart::slotData(id handle, const char *bytes, int length)
         begin(d->m_workingURL, 0, 0);
         d->m_workingURL = KURL();
     }
-    
-    // FIXME: need to turn this back on
-    #if 0
-    encoding = encodingFromContentType ([[data headers] objectForKey:@"Content-Type"]);
-    if (encoding != NULL) {
-        enc = QString::fromCFString((CFStringRef) encoding);
 
-        setEncoding (enc, true);
+    if (!d->m_encoding && [handle respondsToSelector:@selector(responseHeaderForKey:)]) {
+        encoding = encodingFromContentType([handle responseHeaderForKey:@"Content-Type"]);
+        if (encoding != NULL) {
+            enc = QString::fromCFString((CFStringRef) encoding);
+            setEncoding (enc, true);
+        }
     }
-    #endif
-    
+
     write(bytes, length);
 }
 
@@ -336,7 +334,6 @@ bool KHTMLPart::openURL( const KURL &url )
     d->m_workingURL = url;
     d->m_url = url;
 
-    id handle;
     NSString *urlString;
     NSURL *theURL;
     
@@ -346,8 +343,8 @@ bool KHTMLPart::openURL( const KURL &url )
     }
     theURL = [NSURL URLWithString:urlString];
     
-    handle = WCURLHandleCreate(theURL, d->m_recv, NULL);
-    [handle loadInBackground];
+    d->m_handle = WCURLHandleCreate(theURL, d->m_recv, NULL);
+    [d->m_handle loadInBackground];
     
     [[NSNotificationCenter defaultCenter] addObserver:d->m_recv
         selector:@selector(checkCompleted:) name:urlString object:nil];
@@ -376,7 +373,6 @@ bool KHTMLPart::closeURL()
     // Reset the the current working URL to the default URL.
     d->m_workingURL = KURL();
     
-
     //d->m_doc = 0;
     
     return true;
