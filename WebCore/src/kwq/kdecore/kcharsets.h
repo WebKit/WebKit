@@ -31,8 +31,8 @@
 #endif
 
 #include <qfont.h>
+#include <qstring.h>
 
-class QString;
 class QTextCodec;
 
 // class KCharsets =============================================================
@@ -40,59 +40,26 @@ class QTextCodec;
 class KCharsets {
 public:
 
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
     // constructors, copy constructors, and destructors ------------------------
 
     KCharsets();
-    virtual ~KCharsets();
+    ~KCharsets();
 
     // member functions --------------------------------------------------------
 
     QTextCodec *codecForName(const QString &) const;
     QTextCodec *codecForName(const QString &, bool &) const;
-    void setQFont(QFont &, QFont::CharSet charset=QFont::Unicode) const;
+
+    QFont::CharSet charsetForEncoding(const QString &) const;
+    QFont::CharSet charsetForEncoding(const QString &, bool) const;
+
+    void setQFont(QFont &, QFont::CharSet) const;
     void setQFont(QFont &, QString) const;
+
     QString name(QFont::CharSet);
     QString xCharsetName(QFont::CharSet) const;
+
     bool supportsScript(const QFont &, QFont::CharSet);
-
-    /**
-     * @returns the charset that fits a given encoding best (that can display a
-     * file in the given encoding)
-     */
-    QFont::CharSet charsetForEncoding(const QString &encoding) const;
-
-    // ### BCI merge with above in 3.0
-    /**
-     * overloaded member function. Usually you don't mind getting unicode charsets, so
-     * this method should rarely be needed.
-     */
-    QFont::CharSet charsetForEncoding(const QString &e, bool noUnicode) const;
-
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KCharsets(const KCharsets &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KCharsets &operator=(const KCharsets &);
-#endif
 
 }; // class KCharsets ==========================================================
 

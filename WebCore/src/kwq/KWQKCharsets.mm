@@ -22,80 +22,87 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
+// FIXME: obviously many functions here can be made inline
+
+#include <kcharsets.h>
+#include <qtextcodec.h>
 #include <kwqdebug.h>
 
-#include <qstring.h>
-#include <qtextcodec.h>
-#include <kcharsets.h>
+// constructors, copy constructors, and destructors ----------------------------
 
 KCharsets::KCharsets()
 {
-    _logNotYetImplemented();
+    // do nothing
 }
-
 
 KCharsets::~KCharsets()
 {
-    _logNotYetImplemented();
+    // do nothing
 }
 
+// member functions --------------------------------------------------------
 
-QTextCodec *KCharsets::codecForName(const QString &s) const
+QTextCodec *KCharsets::codecForName(const QString &qs) const
 {
-    //_logNotYetImplemented();
-    // FIXME: implement correctly
-    QTextCodec::codecForName(s.latin1());
+    // FIXME: need real implementation here
+    _logPartiallyImplemented();
+    return QTextCodec::codecForName(qs.latin1());
 }
 
-
-QTextCodec *KCharsets::codecForName(const QString &s, bool &b) const
+QTextCodec *KCharsets::codecForName(const QString &qs, bool &ok) const
 {
-    //_logNotYetImplemented();
-    // FIXME: implement correctly
-    QTextCodec::codecForName(s.latin1());
+    // FIXME: need real implementation here
+    _logPartiallyImplemented();
+    ok = false;
+    return QTextCodec::codecForName(qs.latin1());
 }
 
-
-void KCharsets::setQFont(QFont &, QFont::CharSet charset=QFont::Unicode) const
+QFont::CharSet KCharsets::charsetForEncoding(const QString &) const
 {
-    _logNotYetImplemented();
+    // FIXME: need real implementation here
+    _logPartiallyImplemented();
+    return QFont::Latin1;
 }
 
+QFont::CharSet KCharsets::charsetForEncoding(const QString &, bool) const
+{
+    // FIXME: need real implementation here
+    _logPartiallyImplemented();
+    return QFont::Latin1;
+}
+
+void KCharsets::setQFont(QFont &, QFont::CharSet) const
+{
+    // FIXME: do we need a real implementation here?
+    _logPartiallyImplemented();
+    // do nothing
+}
 
 void KCharsets::setQFont(QFont &, QString) const
 {
-    _logNotYetImplemented();
+    // FIXME: do we need a real implementation here?
+    _logPartiallyImplemented();
+    // do nothing
 }
-
 
 QString KCharsets::name(QFont::CharSet)
 {
-    _logNotYetImplemented();
+    // FIXME: need real implementation here
+    _logPartiallyImplemented();
+    return QString();
 }
-
 
 QString KCharsets::xCharsetName(QFont::CharSet) const
 {
-    _logNotYetImplemented();
+    // FIXME: do we need a real implementation here?
+    _logPartiallyImplemented();
+    return QString();
 }
-
 
 bool KCharsets::supportsScript(const QFont &, QFont::CharSet)
 {
-    _logNotYetImplemented();
+    // FIXME: do we need a real implementation here?
+    _logPartiallyImplemented();
+    return true;
 }
-
-
-QFont::CharSet KCharsets::charsetForEncoding(const QString &encoding) const
-{
-    _logNotYetImplemented();
-}
-
-
-QFont::CharSet KCharsets::charsetForEncoding(const QString &e, bool noUnicode) const
-{
-    _logNotYetImplemented();
-}
-
-
-
