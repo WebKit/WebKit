@@ -248,48 +248,8 @@ void RenderListItem::layout( )
     KHTMLAssert( !layouted() );
     KHTMLAssert( minMaxKnown() );
 
-    if ( !checkChildren() ) {
-        m_height = 0;
-        //kdDebug(0) << "empty item" << endl;
-        return;
-    }
-    
     updateMarkerLocation();    
     RenderFlow::layout();
-}
-
-// this function checks if there is other rendered contents in the list item than a marker. If not, the whole
-// list item will not get printed.
-bool RenderListItem::checkChildren() const
-{
-    //kdDebug(0) << " checkCildren" << endl;
-    if(!firstChild())
-        return false;
-    RenderObject *o = firstChild();
-    while(o->firstChild())
-        o = o->firstChild();
-    while (!o->nextSibling() && o->parent() != static_cast<const RenderObject*>(this))
-        o = o->parent();
-    //o = o->nextSibling();
-    while( o ) {
-        //kdDebug(0) << "checking " << renderName() << endl;
-        if ( o->isText() || o->isReplaced() ) {
-            //kdDebug(0) << "found" << endl;
-            return true;
-        }
-        RenderObject *next = o->firstChild();
-        if ( !next )
-            next = o->nextSibling();
-        while ( !next && o->parent() != static_cast<const RenderObject*>(this) ) {
-            o = o->parent();
-            next =  o->nextSibling();
-        }
-        if( !next )
-            break;
-        o = next;
-    }
-    //kdDebug(0) << "not found" << endl;
-    return false;
 }
 
 void RenderListItem::paint(QPainter *p, int _x, int _y, int _w, int _h,
