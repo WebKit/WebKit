@@ -50,15 +50,15 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     KSharedPtr() {}
-    KSharedPtr(const KSharedPtr &);
+    KSharedPtr(const KSharedPtr &) {}
     ~KSharedPtr() {}
 
     // member functions --------------------------------------------------------
 
     // operators ---------------------------------------------------------------
 
-    KSharedPtr &operator=(const KSharedPtr &);
-    T *operator->();
+    KSharedPtr &operator=(const KSharedPtr &) {}
+    T *operator->() {}
 
 
 // protected -------------------------------------------------------------------

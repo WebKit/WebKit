@@ -22,47 +22,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+ 
+#include <khtmlview.h>
+#include <misc/loader.h>
+#include <java/kjavaappletcontext.h>
+#include <java/kjavaprocess.h>
 
-#ifndef QGUARDEDPTR_H_
-#define QGUARDEDPTR_H_
+void KHTMLView::cleared()
+{
+}
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+void KJavaAppletContext::showStatus  ( const QString& txt )
+{
+}
 
-#include "qobject.h"
 
-// class QGuardedPtr ===========================================================
+void KJavaAppletContext::showDocument( const QString& url, const QString& target )
+{
+}
 
-template <class T> class QGuardedPtr : public QObject {
-public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+void KJavaProcess::received( const QByteArray& )
+{
+}
 
-    // constructors, copy constructors, and destructors ------------------------
 
-    QGuardedPtr() {}
-    QGuardedPtr(T *o) {}
-    QGuardedPtr(const QGuardedPtr<T> &) {}
+void khtml::Loader::requestDone( const DOM::DOMString &baseURL, khtml::CachedObject *obj )
+{
+}
 
-    ~QGuardedPtr() {}
 
-    // member functions --------------------------------------------------------
+void khtml::Loader::requestFailed( const DOM::DOMString &baseURL, khtml::CachedObject *obj )
+{
+}
 
-    bool isNull() const {}
-
-    // operators ---------------------------------------------------------------
-
-    QGuardedPtr &operator=(const QGuardedPtr &) {}
-    operator T *() const {}
-    T *operator->() const {}
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QGuardedPtr ========================================================
-
-#endif

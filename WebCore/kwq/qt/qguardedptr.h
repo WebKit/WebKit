@@ -44,21 +44,21 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
 
-    QGuardedPtr();
-    QGuardedPtr(T *o);
-    QGuardedPtr(const QGuardedPtr<T> &);
+    QGuardedPtr() {}
+    QGuardedPtr(T *o) {}
+    QGuardedPtr(const QGuardedPtr<T> &) {}
 
-    ~QGuardedPtr();
+    ~QGuardedPtr() {}
 
     // member functions --------------------------------------------------------
 
-    bool isNull() const;
+    bool isNull() const {}
 
     // operators ---------------------------------------------------------------
 
-    QGuardedPtr &operator=(const QGuardedPtr &);
-    operator T *() const;
-    T *operator->() const;
+    QGuardedPtr &operator=(const QGuardedPtr &) {}
+    operator T *() const {}
+    T *operator->() const {}
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------

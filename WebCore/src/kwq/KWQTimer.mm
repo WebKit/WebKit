@@ -23,46 +23,10 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef QGUARDEDPTR_H_
-#define QGUARDEDPTR_H_
+#include <qtimer.h>
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+void QTimer::singleShot(int, QObject *, const char *)
+{
+}
 
-#include "qobject.h"
 
-// class QGuardedPtr ===========================================================
-
-template <class T> class QGuardedPtr : public QObject {
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    QGuardedPtr() {}
-    QGuardedPtr(T *o) {}
-    QGuardedPtr(const QGuardedPtr<T> &) {}
-
-    ~QGuardedPtr() {}
-
-    // member functions --------------------------------------------------------
-
-    bool isNull() const {}
-
-    // operators ---------------------------------------------------------------
-
-    QGuardedPtr &operator=(const QGuardedPtr &) {}
-    operator T *() const {}
-    T *operator->() const {}
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-}; // class QGuardedPtr ========================================================
-
-#endif
