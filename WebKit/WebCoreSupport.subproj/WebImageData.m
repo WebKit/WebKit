@@ -660,7 +660,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         }
     }
     else {
-        if (!haveSize) {
+        if (sizeAvailable && !haveSize) {
             [decodeLock lock];
             CFDictionaryRef properties = [self propertiesAtIndex:0];
             if (properties) {
