@@ -71,6 +71,7 @@
 - (void)_setTitle: (NSString *)title;
 - (void)_setFinalURL: (NSURL *)url;
 - (id <IFLocationChangeHandler>)_locationChangeHandler;
+- (BOOL)_isStopping;
 @end
 
 // This should not be allowed here.  data source should not reference view

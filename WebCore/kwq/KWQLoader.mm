@@ -1258,6 +1258,12 @@ void Loader::servePendingRequests()
     KWQDEBUGLEVEL (KWQ_LOG_LOADING, "Serving request for base %s, url %s\n", 
           req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
     //job->begin(d->m_recv, job);
+    
+    if ([((URLLoadClient *)req->client)->m_dataSource _isStopping])
+    {
+        //NSLog (@"Attempt to start loading %@ during cancelation\n", QSTRING_TO_NSSTRING(req->object->url().string()));
+        return;
+    }
     job->begin((URLLoadClient *)req->client, job);
     if (job->handle() == nil){
         // Must be a malformed URL.
