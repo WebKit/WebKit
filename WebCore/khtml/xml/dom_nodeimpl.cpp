@@ -2212,8 +2212,9 @@ void NodeBaseImpl::dispatchChildRemovalEvents( NodeImpl *child, int &exceptionco
 
 
 NodeListImpl::NodeListImpl(NodeImpl *_rootNode)
+    : rootNode(_rootNode),
+      isCacheValid(false)
 {
-    rootNode = _rootNode;
     rootNode->ref();
     rootNode->registerNodeList(this);
 }    

@@ -1,6 +1,6 @@
 2004-11-12  Maciej Stachowiak  <mjs@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by Gramps.
 
 	- fixed another bug in the last checkin, isCacheValid was unitialized, resulting in
 	sometimes using a huge bogus length value.
