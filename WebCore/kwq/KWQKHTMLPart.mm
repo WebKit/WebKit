@@ -676,14 +676,12 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
 
   NSString *message;
 
-  if (url.find(QString::fromLatin1("javascript:"), 0, false) != -1) {
-      // FIXME: Is it worthwhile to special-case scripts that do a
-      // window.open and nothing else?
-      
-      NSString *script = url.mid(url.find("javascript:", 0, false) + strlen("javascript:")).getNSString();
-      // FIXME: should use curly quotes
-      message = [NSString stringWithFormat:@"Run script \"%@\"", script];
-
+  // FIXME: This would do strange things with a link that said "xjavascript:".
+  int position = url.find("javascript:", 0, false);
+  if (position != -1) {
+      // FIXME: Is it worthwhile to special-case scripts that do a window.open and nothing else?
+      const QString scriptName = url.mid(position + strlen("javascript:"));
+      message = [NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()];
       setStatusBarText(QString::fromNSString(message));
       return;
   }
@@ -710,10 +708,8 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
       if (frameExists(target)) {
 	  // FIXME: distinguish existing frame in same window from
 	  // existing frame name for other window
-	  // FIXME: should use curly quotes
           format = @"Go to \"%@\" in another frame";
       } else {
-	  // FIXME: should use curly quotes
 	  format = @"Open \"%@\" in a new window";
       }
   } else {
@@ -723,14 +719,11 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
   if ([bridge modifierTrackingEnabled]) {
       if (modifierState & MetaButton) {
 	  if (modifierState & ShiftButton) {
-	      // FIXME: should use curly quotes
 	      format = @"Open \"%@\" in a new window, behind the current window";
 	  } else {
-	      // FIXME: should use curly quotes
 	      format = @"Open \"%@\" in a new window";
 	  }
       } else if (modifierState & AltButton) {
-	  // FIXME: should use curly quotes
 	  format = @"Download \"%@\"";
       }
   }

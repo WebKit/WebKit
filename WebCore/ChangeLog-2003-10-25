@@ -1,6 +1,14 @@
+2002-07-24  Darin Adler  <darin@apple.com>
+
+	- 3006336 -- crash in _NSDescriptionWithLocaleFunc
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::overURL):
+	Don't use the result of getNSString() on a C++ temporary object.
+	We could also fix this by doing retain autorelease in getNSString().
+
 2002-07-23  Chris Blumenberg  <cblu@apple.com>
 
-More plumbing for contextual menu support.
+	More plumbing for contextual menu support.
 
         * kwq/WebCoreBridge.h:
         * kwq/WebCoreBridge.mm:
