@@ -20,7 +20,10 @@
  *
  */
 #include "render_br.h"
-#include "xml/dom_position.h"
+
+#include "dom_position.h"
+#include "render_block.h"
+#include "render_line.h"
 
 using namespace khtml;
 using DOM::Position;
@@ -126,4 +129,65 @@ void RenderBR::caretPos(int offset, bool override, int &_x, int &_y, int &_w, in
 InlineBox *RenderBR::inlineBox(long offset)
 {
     return firstTextBox();
+}
+
+void RenderBR::paint(PaintInfo& i, int tx, int ty)
+{
+#if APPLE_CHANGES
+    if (!firstTextBox() || selectionState() == SelectionNone || (i.phase != PaintActionForeground && i.phase != PaintActionSelection))
+        return;
+
+    bool isPrinting = (i.p->device()->devType() == QInternal::Printer);
+    if (isPrinting)
+        return;
+    
+    // Do the calculations to draw selections as tall as the line.
+    // Use the bottom of the line above as the y position (if there is one, 
+    // otherwise use the top of this renderer's line) and the height of the line as the height. 
+    // This mimics Cocoa.
+    int y = 0;
+    RootInlineBox *root = firstTextBox()->root();
+    if (root->prevRootBox())
+        y = root->prevRootBox()->bottomOverflow();
+    else
+        y = root->topOverflow();
+
+    int h = root->bottomOverflow() - y;
+
+    RenderBlock *cb = containingBlock();
+ 
+    // Extend selection to the start of the line if:
+    // 1. The starting point of the selection is at or beyond the start of the text box; and
+    // 2. This box is the first box on the line; and
+    // 3. There is a another line before this one (first lines have special behavior;
+    //    the selection never extends on the first line); and 
+    // 4. The last leaf renderer on the previous line is selected.
+    int x = firstTextBox()->xPos();
+    RenderObject *prevLineLastLeaf = root->prevRootBox() ? root->prevRootBox()->lastLeafChild()->object() : 0;
+    if (root->firstLeafChild() == firstTextBox() && root->prevRootBox() && prevLineLastLeaf && 
+        prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
+        x = kMax(cb->leftOffset(y), cb->leftOffset(root->blockHeight()));
+
+    // Extending to the end of the line is "automatic" with BR's.
+    int maxX = kMin(cb->rightOffset(y), cb->rightOffset(root->blockHeight()));
+    int w = maxX - x;
+    
+    // Macintosh-style text highlighting is to draw with a particular background color, not invert.
+    i.p->save();
+    QColor textColor = style()->color();
+    QColor c = i.p->selectedTextBackgroundColor();
+    
+    // if text color and selection background color are identical, invert background color.
+    if (textColor == c)
+        c = QColor(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
+
+    RenderStyle* pseudoStyle = getPseudoStyle(RenderStyle::SELECTION);
+    if (pseudoStyle && pseudoStyle->backgroundColor().isValid())
+        c = pseudoStyle->backgroundColor();
+    
+    QBrush brush = i.p->brush();
+    brush.setColor(c);
+    i.p->fillRect(x + tx, y + ty, w, h, brush);
+    i.p->restore();
+#endif
 }

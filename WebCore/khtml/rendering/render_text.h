@@ -100,7 +100,7 @@ public:
     virtual bool isInlineTextBox() { return true; }
     
     void paintDecoration( QPainter *pt, int _tx, int _ty, int decoration);
-    void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos, bool extendSelection);
+    void paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos);
 
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;

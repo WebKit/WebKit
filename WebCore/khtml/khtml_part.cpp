@@ -4874,8 +4874,8 @@ void KHTMLPart::selectAll()
     first = d->m_doc;
   NodeImpl *next;
 
-  // Look for first text/cdata node that has a renderer
-  while ( first && !((first->nodeType() == Node::TEXT_NODE || first->nodeType() == Node::CDATA_SECTION_NODE) && first->renderer()) )
+  // Look for first rendered text node
+  while (first && !(first->renderer() && first->renderer()->isText()))
   {
     next = first->firstChild();
     if ( !next ) next = first->nextSibling();
@@ -4893,8 +4893,8 @@ void KHTMLPart::selectAll()
     last = static_cast<HTMLDocumentImpl*>(d->m_doc)->body();
   else
     last = d->m_doc;
-  // Look for last text/cdata node that has a renderer
-  while ( last && !((last->nodeType() == Node::TEXT_NODE || last->nodeType() == Node::CDATA_SECTION_NODE) && last->renderer()) )
+  // Look for last rendered text node
+  while (last && !(last->renderer() && last->renderer()->isText()))
   {
     next = last->lastChild();
     if ( !next ) next = last->previousSibling();

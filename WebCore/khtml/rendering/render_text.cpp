@@ -25,6 +25,7 @@
 //#define BIDI_DEBUG
 
 #include "rendering/render_canvas.h"
+#include "rendering/render_object.h"
 #include "rendering/render_text.h"
 #include "rendering/break_lines.h"
 #include "xml/dom_nodeimpl.h"
@@ -137,7 +138,7 @@ int InlineTextBox::placeEllipsisBox(bool ltr, int blockEdge, int ellipsisWidth, 
     return -1;
 }
 
-void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos, bool extendSelection)
+void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
 {
     int offset = m_start;
     int sPos = kMax(startPos - offset, 0);
@@ -174,25 +175,38 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
     // This mimics Cocoa.
     RenderBlock *cb = object()->containingBlock();
 
+    int y = 0;
     if (root()->prevRootBox())
-        ty = root()->prevRootBox()->bottomOverflow();
+        y = root()->prevRootBox()->bottomOverflow();
     else
-        ty = root()->topOverflow();
+        y = root()->topOverflow();
 
-    int h = root()->bottomOverflow() - ty;
+    int h = root()->bottomOverflow() - y;
 
-    int absx, absy;
-    cb->absolutePosition(absx, absy);
-    
-    int x = m_x + tx;
+    int x = m_x;
     int minX = x;
     int maxX = x;
-    if ((extendSelection || startPos < m_start) && root()->firstLeafChild() == this)
-        minX = absx + kMax(cb->leftOffset(ty), cb->leftOffset(root()->blockHeight()));
-    if ((extendSelection || endPos > m_start + m_len) && root()->lastLeafChild() == this)
-        maxX = absx + kMin(cb->rightOffset(ty), cb->rightOffset(root()->blockHeight()));
+
+    // Extend selection to the start of the line if:
+    // 1. The starting point of the selection is at or beyond the start of the text box; and
+    // 2. This box is the first box on the line; and
+    // 3. There is a another line before this one (first lines have special behavior;
+    //    the selection never extends on the first line); and 
+    // 4. The last leaf renderer on the previous line is selected.
+    RenderObject *prevLineLastLeaf = root()->prevRootBox() ? root()->prevRootBox()->lastLeafChild()->object() : 0;
+    if (startPos <= m_start && root()->firstLeafChild() == this && root()->prevRootBox() && prevLineLastLeaf && 
+        prevLineLastLeaf->selectionState() != RenderObject::SelectionNone)
+        minX = kMax(cb->leftOffset(y), cb->leftOffset(root()->blockHeight()));
+        
+    // Extend selection to the end of the line if:
+    // 1. The ending point of the selection is at or beyond the end of the text box; and
+    // 2. There is a another line after this one (last lines have special behavior;
+    //    the selection never extends on the last line); and 
+    // 3. The last leaf renderer of the root box is this box.
+    if (endPos >= m_start + m_len && root()->nextRootBox() && root()->lastLeafChild() == this)
+        maxX = kMin(cb->rightOffset(y), cb->rightOffset(root()->blockHeight()));
     
-    f->drawHighlightForText(p, x, minX, maxX, absy + ty, h, text->str->s, text->str->l, m_start, m_len,
+    f->drawHighlightForText(p, x + tx, minX + tx, maxX + tx, y + ty, h, text->str->s, text->str->l, m_start, m_len,
 		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
 #else
     f->drawHighlightForText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
@@ -848,7 +862,7 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
         if (drawSelectionBackground)
 #endif
         if (!isPrinting && (selectionState() != SelectionNone))
-            s->paintSelection(font, this, p, _style, tx, ty, startPos, endPos, selectionState() == SelectionInside);
+            s->paintSelection(font, this, p, _style, tx, ty, startPos, endPos);
 
 #ifdef BIDI_DEBUG
         {

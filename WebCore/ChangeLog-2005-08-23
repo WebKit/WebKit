@@ -1,3 +1,22 @@
+2004-07-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fixed the problem where BR elements on lines by themselves don't paint when selected.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectAll): Related fix. Include BR's when figuring out what "all" is.
+        * khtml/rendering/render_br.cpp:
+        (RenderBR::paint): New function implementation. Teach BR's how to paint selections.
+        * khtml/rendering/render_br.h:
+        * khtml/rendering/render_text.cpp: 
+        (InlineTextBox::paintSelection): Fix some geometry calculations to be more readable (i.e. don't
+        reuse function argument as a local). Also, improve the logic for determining whether to 
+        extend the selection to block boundaries.
+        (RenderText::paint): Remove extendSelection argument from paintSelection. The logic to figure out
+        extensions is now fully contained in paintSelection.
+        * khtml/rendering/render_text.h:
+
 2004-07-27  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3665211 (again).  Make sure not to leave child line boxes pointing to deleted ancestor line boxes.
