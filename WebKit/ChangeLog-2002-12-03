@@ -1,5 +1,10 @@
 2002-06-25  Darin Adler  <darin@apple.com>
 
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer tileInRect:fromPoint:]): Remove stray NSLog.
+
+2002-06-25  Darin Adler  <darin@apple.com>
+
 	- fixed 2968298 -- IFImageRenderer crash at download.com
 
         * WebCoreSupport.subproj/IFImageRenderer.m:

@@ -249,8 +249,6 @@ static NSMutableArray *activeImageRenderers;
     [NSBezierPath fillRect:rect];
 
     [NSGraphicsContext restoreGraphicsState];
-
-    NSLog(@"used %@, retain count %d", patternColor, [patternColor retainCount]);
 }
 
 // required by protocol -- apparently inherited methods don't count
