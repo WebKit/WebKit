@@ -1,3 +1,14 @@
+2003-01-23  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed a divide by zero problem.
+
+        Reviewed by darin.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::calcReplacedWidth):
+        (RenderImage::calcReplacedHeight):
+
 2003-01-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
@@ -21,6 +32,7 @@
 	prevent default if this is an html event handler, rather than one
 	set with addEventListener or the like.
 
+>>>>>>> 1.1299
 2003-01-23  Chris Blumenberg  <cblu@apple.com>
 
 	Replaced the paint phase constants with the PaintAction enum. Added PaintActionSelection as a paint action. This will eventually allow us to only paint selected objects. This is needed for the text dragging image.
