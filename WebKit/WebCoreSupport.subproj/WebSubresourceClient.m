@@ -16,7 +16,7 @@
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
@@ -91,7 +91,7 @@
     return [super resource: h willSendRequest: newRequest];
 }
 
--(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
+-(void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(r);
     [loader receivedResponse:r];

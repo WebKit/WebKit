@@ -13,7 +13,7 @@
 @class WebIconLoader;
 @class WebMainResourceClient;
 @class NSURLRequest;
-@class WebResponse;
+@class NSURLResponse;
 @class WebSubresourceClient;
 @class WebView;
 
@@ -43,7 +43,7 @@
     // headers, cookie information, canonicalization and redirects.
     NSMutableURLRequest *request;
     
-    WebResponse *response;
+    NSURLResponse *response;
 
     // Client for main resource.
     WebMainResourceClient *mainClient;
@@ -134,7 +134,7 @@
 - (void)_setTitle:(NSString *)title;
 - (void)_setURL:(NSURL *)URL;
 - (void)_setRequest:(NSURLRequest *)request;
-- (void)_setResponse:(WebResponse *)response;
+- (void)_setResponse:(NSURLResponse *)response;
 - (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(WebError *)error;
@@ -173,7 +173,7 @@
 - (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;
 
-- (void)_addResponse: (WebResponse *)r;
+- (void)_addResponse: (NSURLResponse *)r;
 - (NSArray *)_responses;
 
 - (void)_stopLoadingWithError:(WebError *)error;

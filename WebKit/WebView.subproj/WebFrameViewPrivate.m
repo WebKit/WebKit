@@ -14,7 +14,7 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 @implementation WebFrameViewPrivate
 

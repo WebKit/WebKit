@@ -6,7 +6,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -38,7 +38,7 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
     return newRequest;
 }
 
--(void)webView: (WebView *)wv resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource
+-(void)webView: (WebView *)wv resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
 }
 

@@ -16,14 +16,14 @@
 #import <WebKit/WebMacBinaryDecoder.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNSWorkspaceExtras.h>
-#import <WebKit/WebResourceResponseExtras.h>
+#import <WebKit/WebNSURLResponseExtras.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 typedef struct WebFSForkIOParam
 {
@@ -56,7 +56,7 @@ typedef struct WebFSRefParam
 
     WebResource *resource;
     NSURLRequest *request;
-    WebResponse *response;
+    NSURLResponse *response;
     WebResourceDelegateProxy *proxy;
 
     id delegate;
@@ -78,7 +78,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 - (void)_downloadStarted;
 - (void)_downloadEnded;
 - (void)_setRequest:(NSURLRequest *)request;
-- (void)_setResponse:(WebResponse *)response;
+- (void)_setResponse:(NSURLResponse *)response;
 #pragma mark CREATING
 - (NSString *)_pathWithUniqueFilenameForPath:(NSString *)path;
 - (BOOL)_createFSRefForPath:(NSString *)path;
@@ -178,7 +178,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 - _initWithLoadingResource:(WebResource *)resource
                    request:(NSURLRequest *)request
-                  response:(WebResponse *)response
+                  response:(NSURLResponse *)response
                   delegate:(id)delegate
                      proxy:(WebResourceDelegateProxy *)proxy
 {
@@ -229,7 +229,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 + _downloadWithLoadingResource:(WebResource *)resource
                        request:(NSURLRequest *)request
-                      response:(WebResponse *)response
+                      response:(NSURLResponse *)response
                       delegate:(id)delegate
                          proxy:(WebResourceDelegateProxy *)proxy
 {
@@ -311,7 +311,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     }
 }
 
-- (void)_setResponse:(WebResponse *)response
+- (void)_setResponse:(NSURLResponse *)response
 {
     if (_private->response != response) {
         [_private->response release];
@@ -338,7 +338,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     return request;
 }
 
--(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)response
+-(void)resource:(WebResource *)resource didReceiveResponse:(NSURLResponse *)response
 {
     [self _setResponse:response];
     

@@ -1,3 +1,63 @@
+2003-03-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Changed WebResponse to NSURLResponse. Some other "supporting" names
+        changed as well. Note that there are no functional modifications,
+        only name changes.
+
+        * Downloads.subproj/WebDownload.h:
+        * Downloads.subproj/WebDownload.m:
+        (-[WebDownload _initWithLoadingResource:request:response:delegate:proxy:]):
+        (+[WebDownload _downloadWithLoadingResource:request:response:delegate:proxy:]):
+        (-[WebDownload _setResponse:]):
+        (-[WebDownload resource:didReceiveResponse:]):
+        * Downloads.subproj/WebDownloadPrivate.h:
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader resource:didReceiveResponse:]):
+        * Misc.subproj/WebKit.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream resource:didReceiveResponse:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient resource:didReceiveResponse:]):
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate resource:didReceiveResponse:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource response]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setResponse:]):
+        (-[WebDataSource _commitIfReady:]):
+        (-[WebDataSource _addResponse:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didReceiveResponse:fromDataSource:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _opened]):
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient continueAfterContentPolicy:response:]):
+        (-[WebMainResourceClient continueAfterContentPolicy:]):
+        (-[WebMainResourceClient checkContentPolicyForResponse:]):
+        (-[WebMainResourceClient resource:didReceiveResponse:]):
+        (-[WebMainResourceClient startLoading:]):
+        (-[WebResourceDelegateProxy resource:didReceiveResponse:]):
+        * WebView.subproj/WebPolicyDelegate.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebTextRepresentation.m:
+        * WebView.subproj/WebTextView.m:
+
 2003-03-26  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

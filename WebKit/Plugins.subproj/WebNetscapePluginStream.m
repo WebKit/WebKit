@@ -74,7 +74,7 @@
     }
 }
 
-- (void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)theResponse
+- (void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)theResponse
 {
     [self setResponse:theResponse];
     [super resource:h didReceiveResponse:theResponse];    

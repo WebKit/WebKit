@@ -1,13 +1,13 @@
 /*
-    WebResourceResponseExtras.h
+    WebNSURLResponseExtras.h
     Copyright 2003, Apple, Inc. All rights reserved.
 
     Public header file.
 */
 
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
-@interface WebResponse (WebResourceResponseExtras)
+@interface NSURLResponse (WebNSURLResponseExtras)
 
 /*!
     @method suggestedFilenameForSaving

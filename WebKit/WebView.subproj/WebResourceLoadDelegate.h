@@ -7,7 +7,7 @@
 @class WebView;
 @class WebDataSource;
 @class WebPlugInError;
-@class WebResponse;
+@class NSURLResponse;
 @class NSURLRequest;
 
 /*!
@@ -65,7 +65,7 @@
     should assume that each new response resets progress so far for the resource back to 0,
     and should check the new response for the expected content length.
 */
--(void)webView:(WebView *)sender resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource;
+-(void)webView:(WebView *)sender resource:identifier didReceiveResponse: (NSURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveContentLength:fromDataSource:

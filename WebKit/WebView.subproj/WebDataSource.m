@@ -18,7 +18,7 @@
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 
 @implementation WebDataSource
@@ -74,7 +74,7 @@
     return _private->request;
 }
 
-- (WebResponse *)response
+- (NSURLResponse *)response
 {
     return _private->response;
 }

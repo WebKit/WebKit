@@ -1,24 +1,24 @@
 //
-//  WebResourceResponseExtras.m
+//  WebNSURLResponseExtras.m
 //  WebKit
 //
 //  Created by Chris Blumenberg on Thu Jan 09 2003.
 //  Copyright (c) 2003 Apple Inc. All rights reserved.
 //
 
-#import <WebKit/WebResourceResponseExtras.h>
+#import <WebKit/WebNSURLResponseExtras.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/WebHTTPResponse.h>
+#import <WebFoundation/NSHTTPURLResponse.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSStringExtras.h>
 
-@interface NSURL (WebResourceResponseInternalURLExtras)
+@interface NSURL (WebNSURLResponseInternalURLExtras)
 - (NSString *)_web_suggestedFilenameForSavingWithMIMEType:(NSString *)MIMEType;
 @end
 
-@implementation WebResponse (WebResourceResponseExtras)
+@implementation NSURLResponse (WebNSURLResponseExtras)
 
 - (NSString *)suggestedFilenameForSaving
 {
@@ -30,7 +30,7 @@
 
 @end
 
-@implementation WebHTTPResponse (WebResourceResponseExtras)
+@implementation NSHTTPURLResponse (WebNSURLResponseExtras)
 
 - (NSString *)suggestedFilenameForSaving
 {
@@ -51,7 +51,7 @@
 
 @end
 
-@implementation NSURL (WebResourceResponseInternalURLExtras)
+@implementation NSURL (WebNSURLResponseInternalURLExtras)
 
 - (NSString *)_web_suggestedFilenameForSavingWithMIMEType:(NSString *)MIMEType
 {

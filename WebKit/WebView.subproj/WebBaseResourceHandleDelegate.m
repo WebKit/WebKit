@@ -11,7 +11,7 @@
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -179,7 +179,7 @@
     return request;
 }
 
--(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
+-(void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);

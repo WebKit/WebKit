@@ -7,7 +7,7 @@
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 
 @class WebDataSource;
-@class WebResponse;
+@class NSURLResponse;
 
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;

@@ -9,13 +9,13 @@
 
 @class NSURLRequest;
 @class WebResource;
-@class WebResponse;
+@class NSURLResponse;
 @class WebResourceDelegateProxy;
 
 @interface WebDownload (WebPrivate)
 + _downloadWithLoadingResource:(WebResource *)resource
                        request:(NSURLRequest *)request
-                      response:(WebResponse *)response
+                      response:(NSURLResponse *)response
                       delegate:(id)delegate
                          proxy:(WebResourceDelegateProxy *)proxy;
 - (void)_setDirectoryPath:(NSString *)directoryPath;

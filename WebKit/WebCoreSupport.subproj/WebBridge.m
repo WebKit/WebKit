@@ -49,7 +49,7 @@
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebSystemBits.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebLocalizableStrings.h>

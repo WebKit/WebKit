@@ -8,7 +8,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 
 @implementation WebBaseNetscapePluginStream
@@ -46,7 +46,7 @@
     NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
-- (void)setResponse:(WebResponse *)r
+- (void)setResponse:(NSURLResponse *)r
 {
     if(![plugin isLoaded]){
         return;

@@ -18,7 +18,7 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 @implementation WebNetscapePluginDocumentView
 

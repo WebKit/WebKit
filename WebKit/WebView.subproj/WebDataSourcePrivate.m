@@ -30,13 +30,13 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPResponse.h>
+#import <WebFoundation/NSHTTPURLResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 
 @implementation WebDataSourcePrivate 
@@ -337,7 +337,7 @@
     [oldRequest release];
 }
 
-- (void)_setResponse:(WebResponse *)response
+- (void)_setResponse:(NSURLResponse *)response
 {
     [_private->response release];
     _private->response = [response retain];
@@ -477,8 +477,8 @@
         bool reload = loadType == WebFrameLoadTypeReload
             || loadType == WebFrameLoadTypeReloadAllowingStaleData;
         
-        NSDictionary *headers = [_private->response isKindOfClass:[WebHTTPResponse class]]
-            ? [(WebHTTPResponse *)_private->response header] : nil;
+        NSDictionary *headers = [_private->response isKindOfClass:[NSHTTPURLResponse class]]
+            ? [(NSHTTPURLResponse *)_private->response header] : nil;
 
         [frame _closeOldDataSources];
 
@@ -696,7 +696,7 @@
     return _private->loadingFromPageCache;
 }
 
-- (void)_addResponse: (WebResponse *)r
+- (void)_addResponse: (NSURLResponse *)r
 {
     if (!_private->responses)
         _private->responses = [[NSMutableArray alloc] init];

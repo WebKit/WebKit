@@ -6,7 +6,7 @@
 #import "WebTextRepresentation.h"
 
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 @implementation WebTextRepresentation
 

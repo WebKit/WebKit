@@ -11,7 +11,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDOMElement.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {

@@ -13,7 +13,7 @@
 @class WebResource;
 @class NSURLRequest;
 @class NSMutableURLRequest;
-@class WebResponse;
+@class NSURLResponse;
 
 @protocol WebDocumentRepresentation;
 
@@ -80,7 +80,7 @@
     @method response
     @result returns the WebResourceResponse for the data source.
 */
-- (WebResponse *)response;
+- (NSURLResponse *)response;
 
 /*!
     @method isLoading

@@ -114,7 +114,7 @@
     return request;
 }
 
--(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)theResponse
+-(void)resource:(WebResource *)resource didReceiveResponse:(NSURLResponse *)theResponse
 {
     // no-op
 }

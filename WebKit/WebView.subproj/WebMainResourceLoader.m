@@ -13,8 +13,9 @@
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/WebResponse.h>
-#import <WebFoundation/WebMutableResponse.h>
+#import <WebFoundation/NSURLResponse.h>
+#import <WebFoundation/NSURLResponsePrivate.h>
+
 
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
@@ -26,7 +27,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
-#import <WebKit/WebResourceResponseExtras.h>
+#import <WebKit/WebNSURLResponseExtras.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -137,7 +138,7 @@
     return newRequest;
 }
 
--(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResponse *)r
+-(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(NSURLResponse *)r
 {
     [[dataSource _controller] setDefersCallbacks:NO];
     NSURLRequest *req = [dataSource request];
@@ -180,13 +181,13 @@
 
 -(void)continueAfterContentPolicy:(WebPolicyAction)policy
 {
-    WebResponse *r = [policyResponse retain];
+    NSURLResponse *r = [policyResponse retain];
     [self cancelContentPolicy];
     [self continueAfterContentPolicy:policy response:r];
     [r release];
 }
 
--(void)checkContentPolicyForResponse:(WebResponse *)r
+-(void)checkContentPolicyForResponse:(NSURLResponse *)r
 {
     listener = [[WebPolicyDecisionListener alloc]
 		   _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
@@ -201,7 +202,7 @@
 }
 
 
--(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
+-(void)resource:(WebResource *)h didReceiveResponse:(NSURLResponse *)r
 {
     ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
@@ -273,7 +274,7 @@
     if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
 	[self resource:resource willSendRequest:r];
 
-	WebResponse *rsp = [[WebResponse alloc] init];
+	NSURLResponse *rsp = [[NSURLResponse alloc] init];
 	[rsp setURL:[[[self dataSource] request] URL]];
 	[rsp setContentType:@"text/html"];
 	[rsp setContentLength:0];
@@ -307,7 +308,7 @@
     return [delegate resource:resource willSendRequest:request];
 }
 
--(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)response
+-(void)resource:(WebResource *)resource didReceiveResponse:(NSURLResponse *)response
 {
     ASSERT(delegate);
     [delegate resource:resource didReceiveResponse:response];

@@ -10,7 +10,7 @@
 @class WebError;
 @class WebResource;
 @class NSURLRequest;
-@class WebResponse;
+@class NSURLResponse;
 
 @protocol WebResourceDelegate;
 
@@ -22,7 +22,7 @@
     NSURLRequest *request;
 @private
     WebView *controller;
-    WebResponse *response;
+    NSURLResponse *response;
     id identifier;
     id resourceLoadDelegate;
     id downloadDelegate;

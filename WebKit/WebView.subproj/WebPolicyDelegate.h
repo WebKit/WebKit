@@ -11,7 +11,7 @@
 @class WebError;
 @class WebFrame;
 @class WebPolicyPrivate;
-@class WebResponse;
+@class NSURLResponse;
 @class NSURLRequest;
 
 

@@ -25,7 +25,7 @@
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
     WebPolicyDecisionListener *listener;
-    WebResponse *policyResponse;
+    NSURLResponse *policyResponse;
     WebResourceDelegateProxy *proxy;
 }
 

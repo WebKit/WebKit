@@ -33,7 +33,7 @@
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
-#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/NSURLResponse.h>
 
 #import <WebFoundation/WebSynchronousResult.h>
 
@@ -826,7 +826,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _restoreScrollPosition];
         
         NSArray *responses = [[self dataSource] _responses];
-        WebResponse *response;
+        NSURLResponse *response;
         int i, count = [responses count];
         for (i = 0; i < count; i++){
             response = [responses objectAtIndex: i];

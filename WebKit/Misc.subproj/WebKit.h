@@ -21,7 +21,7 @@
 #import <WebKit/WebPluginError.h>
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
-#import <WebKit/WebResourceResponseExtras.h>
+#import <WebKit/WebNSURLResponseExtras.h>
 #import <WebKit/WebStandardPanels.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
