@@ -1,3 +1,14 @@
+2003-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3280582 - REGRESSION (74-85): authentication sheet doesn't state that previous login was incorrect
+
+        * Panels.subproj/WebAuthenticationPanel.m:
+        (-[WebAuthenticationPanel setUpForChallenge:]): Use chall, the
+	parameter, not challenge, the not-yet-set ivar so we get the right
+	failure count &c.
+
 2003-07-25  Richard Williamson   <rjw@apple.com>
 
 	Use 11 point bold, instead of 12 point bold to draw dragged link

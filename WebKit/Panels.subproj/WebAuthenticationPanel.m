@@ -106,7 +106,7 @@
     NSString *realm = [space realm];
     NSString *message;
 
-    if ([challenge previousFailureCount] == 0) {
+    if ([chall previousFailureCount] == 0) {
         if ([space isProxy]) {
             message = [NSString stringWithFormat:UI_STRING("To view this page, you need to log in to the %@ proxy server %@.",
                                                            "prompt string in authentication panel"),
@@ -141,8 +141,8 @@
                 "message in authentication panel")];
     }
 
-    if ([[challenge proposedCredential] user] != nil) {
-        [username setStringValue:[[challenge proposedCredential] user]];
+    if ([[chall proposedCredential] user] != nil) {
+        [username setStringValue:[[chall proposedCredential] user]];
         [panel setInitialFirstResponder:password];
     } else {
         [username setStringValue:@""];
