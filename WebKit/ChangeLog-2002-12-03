@@ -39,6 +39,37 @@
 	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
 	* Documentation/WebKit-White-Paper/images/webkit-cache-loader.jpg:
 
+2001-12-14  Richard Williamson  <rjw@apple.com>
+
+        Remove WKContextMenuHandler for want of a better way to describe the
+        not-yet-existing WKDOMNode.  We can't think of any initial clients that want
+        to override the default behavior anyway.  Put it in WKGrabBag.h for now.
+
+	* WebView.subproj/WKWebController.h:   
+
+2001-12-14  Richard Williamson  <rjw@apple.com>
+        
+        Remove explicit API to get/set the selection range.  This will be postponed until we
+        have a DOM API that allows us to express selection ranges correctly.  Instead we have API
+        that should support searching and getting a NSAttributedString that corresponds to
+        the selected text.
+
+        Added the following methods:
+            - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)case
+            - deselectText;
+            - (NSAttributedString *)selectedText;
+       
+	* WebView.subproj/WKWebView.h:    
+
+        Moved search API to WKWebView.
+        
+        Moved WKPreferences to a new file, WKPreferences.h.  We are still discussing
+        this item and it will not make it into the white paper.
+                    
+	Minor naming changes.
+
+	* WebView.subproj/WKDataSource.h:        
+
 2001-12-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Simplified WKLocationChangeHandler and updated
@@ -91,6 +122,15 @@
 	* WebView.subproj/WKWebDataSource.h: remove resolvedURL method,
 	and mentions of it in comments.
 
+2001-12-13  Richard Williamson  <rjw@apple.com>
+  
+        Removed WKFrameSetHandler, placed that functionality on WKWebDataSource.
+        
+        Changed WKLocationChangeHandler to add a parameter specifying the data source
+        that sent the message.
+
+	* WebView.subproj/WKWebController.h:
+
 2001-12-13  Maciej Stachowiak  <mjs@apple.com>
 
 	Warning fixes and support to pass the http headers along with
@@ -130,6 +170,73 @@
 	WKSimpleAuthenticationRequest and WKSimpleAuthenticationResult
 	structs.
 
+2001-12-13  Richard Williamson  <rjw@apple.com>
+    
+        Remove setBase: and setBaseTarget:
+        
+        Changed return type of baseTarget to (NSString *)
+        
+        Added the following two methods:
+            - (WKDataSource *)parent;
+            - (NSArry *)children;
+            - (BOOL)isMainDocument;
+  
+        Added the following methods:
+        
+            - (NSArray *)frameNames;
+            - (WKWebDataSource) findDataSourceForFrameNamed: (NSString *)name;
+            - (BOOL)frameExists: (NSString *)name;
+            - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName;
+            - (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier;
+
+	* WebView.subproj/WKWebDataSource.h:
+
+2001-12-12  Richard Williamson  <rjw@apple.com>
+
+        Changed WKConcreteWebController to WKDefaultWebController.
+        
+        Changed WKLocationChangedHandler naming, replace "loadingXXX" with
+        "locationChangeXXX".
+
+        Changed loadingStopped in WKLocationChangedHandler to locationChangeStopped:(WKError *).
+
+        Changed loadingCancelled in WKLocationChangedHandler to locationChangeCancelled:(WKError *).
+        
+        Changed loadedPageTitle in WKLocationChangedHandler to receivedPageTitle:.
+
+        Added inputURL:(NSURL *) resolvedTo: (NSURL *) to WKLocationChangedHandler.
+        
+        Added the following two methods to WKLocationChangedHandler:
+        
+            - (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL;
+            - (void)serverRedirectTo: (NSURL *)url;
+       
+        Put locationWillChangeTo: back on WKLocationChangedHandler.
+        
+        Changed XXXforLocation in WKLoadHandler to XXXforResource.
+        
+        Changed timeoutForLocation: in WKLoadHandler to receivedError:forResource:partialProgress:
+        
+        Added the following two methods to WKDefaultWebController:
+        
+            - setDirectsAllLinksToSystemBrowser: (BOOL)flag
+            - (BOOL)directsAllLinksToSystemBrowser;
+            
+        Removed WKError.  This will be described in WKError.h.
+
+        * WebView.subproj/WKWebController.h:
+
+2001-12-12  Richard Williamson  <rjw@apple.com>
+    
+        After group discussion we decided to classify API as :
+        Tier 1:  Needed by our browser (or Sherlock).
+        Tier 2:  Nedded by Apple internal clients (Mail, Help, PB, other TBD).
+        Tier 3:  Third party software vendors.
+    
+        Added finalURL and isRedirected.
+	
+        * WebView.subproj/WKWebDataSource.h:
+
 2001-12-11  Chris Blumenberg  <cblu@apple.com>
 
 	* ChangeLog:
@@ -147,7 +254,7 @@
 
 	Fixed some typos and misspellings.
 
-2001-12-07  Richard Williamson  <richwill@richwill.com>
+2001-12-07  Richard Williamson  <rjw@apple.com>
 
 	* WebView.subproj/NSWebPageDataSource.h:
 	* WebView.subproj/NSWebPageDataSourcePrivate.h:
