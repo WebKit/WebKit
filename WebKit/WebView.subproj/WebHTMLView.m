@@ -4438,7 +4438,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
             break;
         // The writingDirectionForSelectionStart method will never return "natural". It
         // will always return a concrete direction. So, keep the compiler happy, and assert not reached.
-#if !BUILDING_ON_PANTHER   
+#if !BUILDING_ON_PANTHER
         case NSWritingDirectionNatural:
             ASSERT_NOT_REACHED();
             break;
@@ -4460,7 +4460,9 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     NSString *direction = @"LTR";
     switch (writingDirection) {
         case NSWritingDirectionLeftToRight:
+#if !BUILDING_ON_PANTHER
         case NSWritingDirectionNatural:
+#endif
             break;
         case NSWritingDirectionRightToLeft:
             direction = @"RTL";
