@@ -1,3 +1,21 @@
+2004-09-08  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed the localization aspect of: 
+        <rdar://problem/3790011> undoable operations all say "Undo" in the menu, no specific action names
+        
+        We now have all the strings ready for localization; we just don't actually use them yet.
+
+        * English.lproj/Localizable.strings:
+        updated for this change
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge setUndoActionNamePlaceholder]):
+        added this placeholder method whose purpose is to hold localizable strings for all the Undo
+        action names that NSTextView uses. Later we will use some or all of these, but we can do
+        that part after the localization freeze.
+
 2004-09-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed previous "Reviewed by" line.
