@@ -22,6 +22,11 @@ WebInitForCarbon()
 
     if ( !sAppKitLoaded )
     {
+        ProcessSerialNumber    process;
+
+        // Force us to register with process server, this ensure that the process
+        // "flavour" is correctly established.
+        GetCurrentProcess( &process ); 
         NSApplicationLoad();
         
         sPool = [[NSAutoreleasePool allocWithZone:NULL] init];

@@ -1,3 +1,19 @@
+2003-06-03  Richard Williamson   <rjw@apple.com>
+	
+	Fixed 3263188, 3274636.
+	
+        Written by Ed Voas.  Reviewed by Richard.
+
+        * Carbon.subproj/CarbonUtils.m:
+        (WebInitForCarbon):
+	Ensure the process info is correctly initialized so the correct
+	"flavour" (carbon) is detected.
+
+        * Carbon.subproj/HIWebView.m:
+        (Draw):
+	Always draw the growbox after drawing the web view,
+	assuming overlap.
+
 === Safari-82 ===
 
 2003-06-03  Chris Blumenberg  <cblu@apple.com>

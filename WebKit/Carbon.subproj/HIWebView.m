@@ -349,9 +349,32 @@ Draw( HIWebView* inView, RgnHandle limitRgn, CGContextRef inContext )
     else
         [inView->fWebView displayRect:*(NSRect*)&hiRect];
 
-	[[inView->fKitWindow _threadContext] setCGContext: temp];
+    [[inView->fKitWindow _threadContext] setCGContext: temp];
 
-	CGContextRelease( temp );
+    if ( !inView->fIsComposited )
+    {
+        HIViewRef      view;
+        HIViewFindByID( HIViewGetRoot( GetControlOwner( inView->fViewRef ) ), kHIViewWindowGrowBoxID, &view );
+        if ( view )
+        {
+            HIRect     frame;
+
+            HIViewGetBounds( view, &frame );
+            HIViewConvertRect( &frame, view, NULL );
+
+            hiRect.origin.x = drawRect.left;
+            hiRect.origin.y = drawRect.top;
+            hiRect.size.width = drawRect.right - drawRect.left;
+            hiRect.size.height = drawRect.bottom - drawRect.top;
+
+            HIViewConvertRect( &hiRect, inView->fViewRef, NULL );
+
+            if ( CGRectIntersectsRect( frame, hiRect ) )
+                HIViewSetNeedsDisplay( view, true );
+        }
+     }
+
+    CGContextRelease( temp );
     
     if ( createdContext )
     {
