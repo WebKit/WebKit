@@ -2361,25 +2361,22 @@ void InsertParagraphSeparatorCommand::doApply()
     // Check if pos.node() is a <br>. If it is, and the document is in quirks mode, 
     // then this <br> will collapse away when we add a block after it. Add an extra <br>.
     if (!document()->inStrictMode()) {
-        Position downstreamPos = pos.downstream(StayInBlock);
-        if (downstreamPos.node()->id() == ID_BR) {
-            NodeImpl *extraBreak = createBreakElement(document());
-            insertNodeAfter(extraBreak, downstreamPos.node());
-        }
-        else {
-            Position upstreamPos = pos.upstream(StayInBlock);
-            if (upstreamPos.node()->id() == ID_BR)
-                insertNodeAfter(createBreakElement(document()), upstreamPos.node());
-            // leave pos where it is
-        }
+        Position upstreamPos = pos.upstream(StayInBlock);
+        if (upstreamPos.node()->id() == ID_BR)
+            insertNodeAfter(createBreakElement(document()), upstreamPos.node());
     }
+    
+    // Move downstream. Typing style code will take care of carrying along the 
+    // style of the upstream position.
+    pos = pos.downstream(StayInBlock);
+    startNode = pos.node();
 
     // Build up list of ancestors in between the start node and the start block.
     if (startNode != startBlock) {
         for (NodeImpl *n = startNode->parentNode(); n && n != startBlock; n = n->parentNode())
             ancestors.prepend(n);
     }
-
+    
     // Split at pos if in the middle of a text node.
     if (startNode->isTextNode()) {
         TextImpl *textNode = static_cast<TextImpl *>(startNode);
@@ -2391,14 +2388,6 @@ void InsertParagraphSeparatorCommand::doApply()
             startNode = splitCommand->node();
             pos = Position(startNode, 0);
         }
-        else if (atEnd) {
-            startNode = startNode->traverseNextNode();
-            ASSERT(startNode);
-        }
-    }
-    else if (pos.offset() > 0) {
-        startNode = startNode->traverseNextNode();
-        ASSERT(startNode);
     }
 
     // Put the added block in the tree.
@@ -2425,8 +2414,6 @@ void InsertParagraphSeparatorCommand::doApply()
     // Move the start node and the siblings of the start node.
     if (startNode != startBlock) {
         NodeImpl *n = startNode;
-        if (n->id() == ID_BR)
-            n = n->nextSibling();
         while (n && n != blockToInsert) {
             NodeImpl *next = n->nextSibling();
             removeNode(n);

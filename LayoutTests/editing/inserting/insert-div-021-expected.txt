@@ -18,17 +18,11 @@ layer at (0,0) size 800x600
         RenderInline {SPAN} at (0,0) size 32x28
           RenderText {TEXT} at (0,0) size 32x28
             text run at (0,0) width 32: "foo"
-      RenderBlock (anonymous) at (0,152) size 784x84
-        RenderBlock {P} at (0,0) size 784x28 [border: (2px solid #0000FF)]
-        RenderBlock {P} at (0,28) size 784x56 [border: (2px solid #0000FF)]
-          RenderInline {SPAN} at (0,0) size 31x28
-            RenderText {TEXT} at (14,14) size 31x28
-              text run at (14,14) width 31: "bar"
-      RenderBlock (anonymous) at (0,236) size 784x0
-        RenderInline {SPAN} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
-        RenderText {TEXT} at (0,0) size 0x0
+      RenderBlock {P} at (0,152) size 784x28 [border: (2px solid #0000FF)]
+      RenderBlock {P} at (0,180) size 784x56 [border: (2px solid #0000FF)]
+        RenderText {TEXT} at (14,14) size 31x28
+          text run at (14,14) width 31: "bar"
 selection is CARET:
-start:      position 0 of child 1 {TEXT} of child 1 {SPAN} of child 3 {P} of child 6 {SPAN} of root {BODY}
-upstream:   position 0 of child 3 {P} of child 6 {SPAN} of root {BODY}
-downstream: position 0 of child 1 {TEXT} of child 1 {SPAN} of child 3 {P} of child 6 {SPAN} of root {BODY}
+start:      position 0 of child 1 {TEXT} of child 8 {P} of root {BODY}
+upstream:   position 0 of child 8 {P} of root {BODY}
+downstream: position 0 of child 1 {TEXT} of child 8 {P} of root {BODY}

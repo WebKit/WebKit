@@ -1,3 +1,23 @@
+2005-01-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3927554> Style info applied to remainder of document after a newline is entered
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Clean up and simplification in code that inserts
+        a paragraph separator. The bug was all about applying styles to the new paragraph that did not need
+        to be applied. Now the code will detect when at the end of a style run and will not move and apply 
+        that ending style to the new paragraph, though it will place that style into the typing style. This
+        seems to match NSText behavior.
+        * layout-tests/editing/inserting/insert-div-021-expected.txt: This test result exhibited the bug fixed 
+        here. The only reason it was not noticed is that the erroneously copied inline was a span, and so did
+        not have any visible effect on the document.
+        * layout-tests/editing/inserting/insert-div-022-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-022.html: Added.
+
 2005-01-04  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3904562, make sure to clear the outline dictionary when drawing so that random focus rings dont get drawn
