@@ -22,8 +22,8 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
 
 @implementation WebFrame
@@ -106,13 +106,13 @@
     return [_private dataSource];
 }
 
-- (void)loadRequest:(WebResourceRequest *)request
+- (void)loadRequest:(WebRequest *)request
 {
     WebFrameLoadType loadType;
 
     // note this copies request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
-    WebResourceRequest *r = [newDataSource request];
+    WebRequest *r = [newDataSource request];
     [self _addExtraFieldsToRequest:r alwaysFromRequest: NO];
     if ([self _shouldTreatURLAsSameAsCurrent:[request URL]]) {
         [r setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
@@ -149,11 +149,11 @@
 
     // initWithRequest copies the request
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:[dataSource request]];
-    WebResourceRequest *request = [newDataSource request];
+    WebRequest *request = [newDataSource request];
     [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
 
     // If we're about to rePOST, set up action so the app can warn the user
-    if ([[request method] _web_isCaseInsensitiveEqualToString:@"POST"]) {
+    if ([[request requestMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
         NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeFormResubmitted event:nil originalURL:[request URL]];
         [newDataSource _setTriggeringAction:action];
     }

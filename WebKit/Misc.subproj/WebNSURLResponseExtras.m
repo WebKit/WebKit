@@ -10,7 +10,7 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/WebHTTPResourceResponse.h>
+#import <WebFoundation/WebHTTPResponse.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebNSStringExtras.h>
 
@@ -18,7 +18,7 @@
 - (NSString *)_web_suggestedFilenameForSavingWithMIMEType:(NSString *)MIMEType;
 @end
 
-@implementation WebResourceResponse (WebResourceResponseExtras)
+@implementation WebResponse (WebResourceResponseExtras)
 
 - (NSString *)suggestedFilenameForSaving
 {
@@ -30,14 +30,14 @@
 
 @end
 
-@implementation WebHTTPResourceResponse (WebResourceResponseExtras)
+@implementation WebHTTPResponse (WebResourceResponseExtras)
 
 - (NSString *)suggestedFilenameForSaving
 {
     NSString *filename = nil;
 
     // Use the content disposition of the filename if present.
-    NSString *contentDispositionHeader = [[self headers] objectForKey:@"Content-Disposition"];
+    NSString *contentDispositionHeader = [[self header] objectForKey:@"Content-Disposition"];
     filename = [contentDispositionHeader _web_fileNameFromContentDispositionHeader];
     filename = [filename _web_filenameByFixingIllegalCharacters];
 

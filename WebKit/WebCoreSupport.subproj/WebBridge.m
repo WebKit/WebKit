@@ -37,12 +37,12 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebSystemBits.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 
@@ -104,10 +104,10 @@
 {
     ASSERT(frame != nil);
 
-    WebResourceRequest *request = nil;
+    WebRequest *request = nil;
 
     if (URL != nil && [URL length] > 0) {
-	request = [WebResourceRequest requestWithURL:[NSURL _web_URLWithString:URL]];
+	request = [WebRequest requestWithURL:[NSURL _web_URLWithString:URL]];
     }
 
     WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithRequest:request];
@@ -222,7 +222,7 @@
     ASSERT(frame != nil);
     ASSERT(response != nil);
 
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
+    WebRequest *request = [[WebRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
     id <WebResourceLoadDelegate> delegate = [[frame controller] resourceLoadDelegate];
     id identifier;
     
@@ -361,12 +361,12 @@
 
 - (BOOL)defersLoading
 {
-    return [[frame controller] _defersCallbacks];
+    return [[frame controller] defersCallbacks];
 }
 
 - (void)setDefersLoading:(BOOL)defers
 {
-    [[frame controller] _setDefersCallbacks:defers];
+    [[frame controller] setDefersCallbacks:defers];
 }
 
 - (void)setNeedsReapplyStyles
@@ -580,7 +580,7 @@ static BOOL loggedObjectCacheSize = NO;
 - (void)loadEmptyDocumentSynchronously
 {
     NSURL *url = [[NSURL alloc] initWithString:@""];
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:url];
+    WebRequest *request = [[WebRequest alloc] initWithURL:url];
     [frame loadRequest:request];
     [request release];
     [url release];

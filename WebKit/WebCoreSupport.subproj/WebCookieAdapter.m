@@ -35,12 +35,12 @@
 
 - (NSString *)cookiesForURL:(NSString *)URL
 {
-    return [[[WebCookieManager sharedCookieManager] cookieRequestHeadersForURL:[NSURL _web_URLWithString:URL]] objectForKey:@"Cookie"];
+    return [[[WebCookieManager sharedCookieManager] cookieRequestHeaderFieldsForURL:[NSURL _web_URLWithString:URL]] objectForKey:@"Cookie"];
 }
 
 - (void)setCookies:(NSString *)cookies forURL:(NSString *)URL policyBaseURL:(NSString *)policyBaseURL
 {
-    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeaders:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"]
+    [[WebCookieManager sharedCookieManager] setCookiesFromResponseHeader:[NSDictionary dictionaryWithObject:cookies forKey:@"Set-Cookie"]
         forURL:[NSURL _web_URLWithString:URL] policyBaseURL:[NSURL _web_URLWithString:policyBaseURL]];    
 }
 

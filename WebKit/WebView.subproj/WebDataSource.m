@@ -17,9 +17,9 @@
 #import <WebKit/WebKitStatisticsPrivate.h>
 
 #import <WebFoundation/WebFileTypeMappings.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 
 @implementation WebDataSource
@@ -28,7 +28,7 @@
 {
     id result = nil;
 
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
     if (request) {
         result = [self initWithRequest:request];
         [request release];
@@ -40,7 +40,7 @@
     return result;
 }
 
--(id)initWithRequest:(WebResourceRequest *)request
+-(id)initWithRequest:(WebRequest *)request
 {
     self = [super init];
     if (!self) {
@@ -100,17 +100,17 @@
     return _private->controller;
 }
 
--(WebResourceRequest *)initialRequest
+-(WebRequest *)initialRequest
 {
     return _private->originalRequest;
 }
 
--(WebResourceRequest *)request
+-(WebRequest *)request
 {
     return _private->request;
 }
 
-- (WebResourceResponse *)response
+- (WebResponse *)response
 {
     return _private->response;
 }

@@ -13,13 +13,13 @@
 
 @implementation WebNetscapePluginStream
 
-- initWithRequest:(WebResourceRequest *)theRequest
+- initWithRequest:(WebRequest *)theRequest
     pluginPointer:(NPP)thePluginPointer
        notifyData:(void *)theNotifyData
 {
     [super init];
 
-    if(!theRequest || !thePluginPointer || ![WebResourceHandle canInitWithRequest:theRequest]){
+    if(!theRequest || !thePluginPointer || ![WebResource canInitWithRequest:theRequest]){
         return nil;
     }
 
@@ -72,13 +72,13 @@
     }
 }
 
-- (void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)theResponse
+- (void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)theResponse
 {
     [self setResponse:theResponse];
-    [super handle:h didReceiveResponse:theResponse];    
+    [super resource:h didReceiveResponse:theResponse];    
 }
 
-- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
+- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
 {
     if (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         [resourceData appendData:data];
@@ -86,10 +86,10 @@
     
     [self receivedData:data];
 
-    [super handle:h didReceiveData:data];
+    [super resource:h didReceiveData:data];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)h
+- (void)resourceDidFinishLoading:(WebResource *)h
 {
     [[view controller] _finishedLoadingResourceFromDataSource:[view dataSource]];
     [self finishedLoadingWithData:resourceData];
@@ -97,10 +97,10 @@
     [view release];
     view = nil;
     
-    [super handleDidFinishLoading: h];
+    [super resourceDidFinishLoading: h];
 }
 
-- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
+- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)result
 {
     [[view controller] _receivedError:result fromDataSource:[view dataSource]];
 
@@ -109,7 +109,7 @@
     [view release];
     view = nil;
     
-    [super handle:h didFailLoadingWithError:result];
+    [super resource:h didFailLoadingWithError:result];
 }
 
 @end

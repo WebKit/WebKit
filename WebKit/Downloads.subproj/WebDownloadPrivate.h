@@ -8,12 +8,12 @@
 #import <WebKit/WebDownload.h>
 
 @class WebDataSource;
-@class WebResourceHandle;
+@class WebResource;
 
 @interface WebDownload (WebPrivate)
-- _initWithLoadingHandle:(WebResourceHandle *)handle
-                 request:(WebResourceRequest *)request
-                response:(WebResourceRequest *)response
+- _initWithLoadingHandle:(WebResource *)handle
+                 request:(WebRequest *)request
+                response:(WebRequest *)response
                 delegate:(id <WebDownloadDelegate>)delegate;
 // FIXME: Remove many of the following methods.
 - initWithDataSource:(WebDataSource *)dSource;

@@ -7,10 +7,10 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebHTTPRequest.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebResponse.h>
 
 #import <WebKit/WebController.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -61,21 +61,21 @@
     [super dealloc];
 }
 
-- (void)startLoading:(WebResourceRequest *)r
+- (void)startLoading:(WebRequest *)r
 {
     [handle loadWithDelegate:self];
 }
 
-- (BOOL)loadWithRequest:(WebResourceRequest *)r
+- (BOOL)loadWithRequest:(WebRequest *)r
 {
     ASSERT(handle == nil);
     
-    handle = [[WebResourceHandle alloc] initWithRequest:r];
+    handle = [[WebResource alloc] initWithRequest:r];
     if (!handle) {
         return NO;
     }
     if (defersCallbacks) {
-        [handle _setDefersCallbacks:YES];
+        [handle setDefersCallbacks:YES];
     }
 
     [self startLoading:r];
@@ -86,7 +86,7 @@
 - (void)setDefersCallbacks:(BOOL)defers
 {
     defersCallbacks = defers;
-    [handle _setDefersCallbacks:defers];
+    [handle setDefersCallbacks:defers];
 }
 
 - (BOOL)defersCallbacks
@@ -133,7 +133,7 @@
     return NO;
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
+-(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
 {
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
@@ -173,7 +173,7 @@
     return request;
 }
 
--(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
+-(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
 {
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
@@ -190,7 +190,7 @@
     }
 }
 
-- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
+- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
@@ -201,7 +201,7 @@
         [resourceLoadDelegate resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)h
+- (void)resourceDidFinishLoading:(WebResource *)h
 {
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
@@ -217,7 +217,7 @@
     [self _releaseResources];
 }
 
-- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
+- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)result
 {
     ASSERT(handle == h);
     ASSERT(!reachedTerminalState);
@@ -267,7 +267,7 @@
 
 - (WebError *)cancelledError
 {
-    return [WebError errorWithCode:WebErrorCodeCancelled
+    return [WebError errorWithCode:WebFoundationErrorCancelled
                           inDomain:WebErrorDomainWebFoundation
                         failingURL:[[request URL] absoluteString]];
 }

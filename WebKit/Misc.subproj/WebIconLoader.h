@@ -8,12 +8,12 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebIconLoaderPrivate;
-@protocol WebResourceHandleDelegate;
+@protocol WebResourceDelegate;
 
 /*!
     @class WebIconLoader
 */
-@interface WebIconLoader : NSObject <WebResourceHandleDelegate>
+@interface WebIconLoader : NSObject <WebResourceDelegate>
 {
     WebIconLoaderPrivate *_private;
 }

@@ -31,7 +31,7 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSUserDefaultsExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
+#import <WebFoundation/WebResource.h>
 
 static const struct UserAgentSpoofTableEntry *_web_findSpoofTableEntry(const char *, unsigned);
 
@@ -538,17 +538,17 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 @implementation WebResourceLoadDelegate
 
-- identifierForInitialRequest: (WebResourceRequest *)request fromDataSource: (WebDataSource *)dataSource
+- identifierForInitialRequest: (WebRequest *)request fromDataSource: (WebDataSource *)dataSource
 {
     return [[[NSObject alloc] init] autorelease];
 }
 
--(WebResourceRequest *)resource:identifier willSendRequest: (WebResourceRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
+-(WebRequest *)resource:identifier willSendRequest: (WebRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
 {
     return newRequest;
 }
 
--(void)resource:identifier didReceiveResponse: (WebResourceResponse *)response fromDataSource:(WebDataSource *)dataSource
+-(void)resource:identifier didReceiveResponse: (WebResponse *)response fromDataSource:(WebDataSource *)dataSource
 {
 }
 

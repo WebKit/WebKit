@@ -20,8 +20,8 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebResponse.h>
 
 typedef struct WebFSForkIOParam
 {
@@ -93,7 +93,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @implementation WebDownload
 
-- initWithRequest:(WebResourceRequest *)request delegate:(id <WebDownloadDelegate>)delegate
+- initWithRequest:(WebRequest *)request delegate:(id <WebDownloadDelegate>)delegate
 {
     [super init];
     // FIXME: Implement.
@@ -116,9 +116,9 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 @implementation WebDownload (WebPrivate)
 
-- _initWithLoadingHandle:(WebResourceHandle *)handle
-                 request:(WebResourceRequest *)request
-                response:(WebResourceRequest *)response
+- _initWithLoadingHandle:(WebResource *)handle
+                 request:(WebRequest *)request
+                response:(WebRequest *)response
                 delegate:(id <WebDownloadDelegate>)delegate
 {
     [super init];
@@ -303,7 +303,7 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
     // FIXME: This assumes that if we get any file attributes, they will include the creation
     // and modification date, which is not necessarily true.
     if (!fileAttributes) {
-        WebResourceResponse *response = [_private->dataSource response];
+        WebResponse *response = [_private->dataSource response];
         fileAttributes = [NSDictionary dictionaryWithObjectsAndKeys:
             [response createdDate], NSFileCreationDate,
             [response lastModifiedDate], NSFileModificationDate, nil];

@@ -19,13 +19,12 @@
 
 #import <WebFoundation/WebAssertions.h>
 
-#import <WebFoundation/WebCacheLoaderConstants.h>
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSDataExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
 
 #import <WebCore/WebCoreSettings.h>
 
@@ -236,19 +235,19 @@
 {
     ASSERT(URL);
     
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    WebRequest *request = [[WebRequest alloc] initWithURL:URL];
     WebFrame *webFrame = [self mainFrame];
 
     [webFrame _downloadRequest:request toDirectory:directory];
     [request release];
 }
 
-- (BOOL)_defersCallbacks
+- (BOOL)defersCallbacks
 {
     return _private->defersCallbacks;
 }
 
-- (void)_setDefersCallbacks:(BOOL)defers
+- (void)setDefersCallbacks:(BOOL)defers
 {
     if (defers == _private->defersCallbacks) {
         return;
@@ -297,7 +296,7 @@
     return frame;
 }
 
-- (WebController *)_openNewWindowWithRequest:(WebResourceRequest *)request behind:(BOOL)behind
+- (WebController *)_openNewWindowWithRequest:(WebRequest *)request behind:(BOOL)behind
 {
     WebController *newWindowController = [[self windowOperationsDelegate] createWindowWithRequest:request];
     if (behind) {

@@ -12,16 +12,16 @@
 #import <WebKit/WebIconDatabasePrivate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebHTTPRequest.h>
 
 #define WebIconLoaderWeeksWorthOfSeconds (60 * 60 * 24 * 7)
 
 @interface WebIconLoaderPrivate : NSObject
 {
 @public
-    WebResourceHandle *handle;
+    WebResource *handle;
     id delegate;
     NSURL *URL;
     NSMutableData *resourceData;
@@ -84,9 +84,9 @@
         return;
     }
     
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->URL];
+    WebRequest *request = [[WebRequest alloc] initWithURL:_private->URL];
     [request setPageNotFoundCacheLifetime:WebIconLoaderWeeksWorthOfSeconds];
-    _private->handle = [[WebResourceHandle alloc] initWithRequest:request];
+    _private->handle = [[WebResource alloc] initWithRequest:request];
     [_private->handle loadWithDelegate:self];
     [request release];
 }
@@ -98,7 +98,7 @@
     _private->handle = nil;
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)sender
+- (void)resourceDidFinishLoading:(WebResource *)sender
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon) {
@@ -108,22 +108,22 @@
     }
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
+-(WebRequest *)resource:(WebResource *)resource willSendRequest:(WebRequest *)request
 {
     return request;
 }
 
--(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
+-(void)resource:(WebResource *)resource didReceiveResponse:(WebResponse *)theResponse
 {
     // no-op
 }
 
-- (void)handle:(WebResourceHandle *)sender didReceiveData:(NSData *)data
+- (void)resource:(WebResource *)sender didReceiveData:(NSData *)data
 {
     [_private->resourceData appendData:data];
 }
 
-- (void)handle:(WebResourceHandle *)sender didFailLoadingWithError:(WebError *)result
+- (void)resource:(WebResource *)sender didFailLoadingWithError:(WebError *)result
 {
 }
 

@@ -18,7 +18,7 @@
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
-#import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebRequest.h>
 
 @implementation WebPluginController
 
@@ -102,7 +102,7 @@
         ERROR("could not load URL %@ because plug-in has already been stopped", URL);
         return;
     }
-    WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
+    WebRequest *request = [WebRequest requestWithURL:URL];
     if (!request) {
         ERROR("could not load URL %@", URL);
         return;

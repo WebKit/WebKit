@@ -20,7 +20,7 @@
 #import <WebKit/WebWindowOperationsDelegate.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -48,14 +48,14 @@ typedef struct {
 
 @interface WebPluginRequest : NSObject
 {
-    WebResourceRequest *_request;
+    WebRequest *_request;
     WebFrame *_frame;
     void *_notifyData;
 }
 
-- (id)initWithRequest:(WebResourceRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData;
+- (id)initWithRequest:(WebRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData;
 
-- (WebResourceRequest *)request;
+- (WebRequest *)request;
 - (WebFrame *)webFrame;
 - (void *)notifyData;
 
@@ -279,9 +279,9 @@ typedef struct {
         return NO;
     }
 
-    BOOL defers = [[self controller] _defersCallbacks];
+    BOOL defers = [[self controller] defersCallbacks];
     if (!defers) {
-        [[self controller] _setDefersCallbacks:YES];
+        [[self controller] setDefersCallbacks:YES];
     }
 
     PortState portState = [self saveAndSetPortStateForUpdate:event->what == updateEvt];
@@ -302,7 +302,7 @@ typedef struct {
     [self restorePortState:portState];
 
     if (!defers) {
-        [[self controller] _setDefersCallbacks:NO];
+        [[self controller] setDefersCallbacks:NO];
     }
     
     return acceptedEvent;
@@ -993,7 +993,7 @@ typedef struct {
 
 @implementation WebBaseNetscapePluginView (WebNPPCallbacks)
 
-- (WebResourceRequest *)requestWithURLCString:(const char *)URLCString
+- (WebRequest *)requestWithURLCString:(const char *)URLCString
 {
     if (!URLCString) {
         return nil;
@@ -1007,12 +1007,12 @@ typedef struct {
         return nil;
     }
     
-    return [WebResourceRequest requestWithURL:URL];
+    return [WebRequest requestWithURL:URL];
 }
 
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
 {
-    WebResourceRequest *request = [pluginRequest request];
+    WebRequest *request = [pluginRequest request];
     WebFrame *frame = [pluginRequest webFrame];
     void *notifyData = [pluginRequest notifyData];
 
@@ -1046,7 +1046,7 @@ typedef struct {
     }
 }
 
-- (NPError)loadRequest:(WebResourceRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
+- (NPError)loadRequest:(WebRequest *)request inTarget:(const char *)cTarget withNotifyData:(void *)notifyData
 {
     if (![request URL]) {
         return NPERR_INVALID_URL;
@@ -1081,7 +1081,7 @@ typedef struct {
 {
     LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URLCString, cTarget);
 
-    WebResourceRequest *request = [self requestWithURLCString:URLCString];
+    WebRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
 
@@ -1089,7 +1089,7 @@ typedef struct {
 {
     LOG(Plugins, "NPN_GetURL: %s target: %s", URLCString, cTarget);
 
-    WebResourceRequest *request = [self requestWithURLCString:URLCString];
+    WebRequest *request = [self requestWithURLCString:URLCString];
     return [self loadRequest:request inTarget:cTarget withNotifyData:NULL];
 }
 
@@ -1131,9 +1131,9 @@ typedef struct {
         return NPERR_INVALID_PARAM;
     }
 
-    WebResourceRequest *request = [self requestWithURLCString:URLCString];
-    [request setMethod:@"POST"];
-    [request setData:postData];
+    WebRequest *request = [self requestWithURLCString:URLCString];
+    [request setRequestMethod:@"POST"];
+    [request setRequestData:postData];
     
     return [self loadRequest:request inTarget:cTarget withNotifyData:notifyData];
 }
@@ -1215,7 +1215,7 @@ typedef struct {
 
 @implementation WebPluginRequest
 
-- (id)initWithRequest:(WebResourceRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData
+- (id)initWithRequest:(WebRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData
 {
     [super init];
     _request = [request retain];
@@ -1231,7 +1231,7 @@ typedef struct {
     [super dealloc];
 }
 
-- (WebResourceRequest *)request
+- (WebRequest *)request
 {
     return _request;
 }

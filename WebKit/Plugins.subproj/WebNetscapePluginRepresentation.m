@@ -33,7 +33,7 @@
 
 - (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)ds
 {
-    if([error errorCode] == WebErrorCodeCancelled){
+    if([error errorCode] == WebFoundationErrorCancelled){
         [self receivedError:NPRES_USER_BREAK];
     } else {
         [self receivedError:NPRES_NETWORK_ERR];

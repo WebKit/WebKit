@@ -19,7 +19,7 @@
 #import <WebKit/WebTextView.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResponse.h>
 
 @implementation WebViewPrivate
 

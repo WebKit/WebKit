@@ -13,11 +13,11 @@
 
 @class WebDownload;
 @class WebDataSource;
-@class WebResourceHandle;
-@class WebResourceRequest;
-@class WebResourceResponse;
+@class WebResource;
+@class WebRequest;
+@class WebResponse;
 
-@protocol WebResourceHandleDelegate;
+@protocol WebResourceDelegate;
 @protocol WebResourceLoadDelegate;
 
 @interface WebMainResourceClient : WebBaseResourceHandleDelegate

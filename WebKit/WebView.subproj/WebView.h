@@ -15,7 +15,7 @@
 @class WebDownload;
 @class WebError;
 @class WebFrame;
-@class WebResourceHandle;
+@class WebResource;
 @class WebPreferences;
 @class WebView;
 

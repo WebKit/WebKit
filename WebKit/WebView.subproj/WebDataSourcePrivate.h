@@ -12,8 +12,8 @@
 @class WebHistoryItem;
 @class WebIconLoader;
 @class WebMainResourceClient;
-@class WebResourceRequest;
-@class WebResourceResponse;
+@class WebRequest;
+@class WebResponse;
 @class WebSubresourceClient;
 
 @protocol WebDocumentRepresentation;
@@ -31,18 +31,18 @@
     // This should only be used by the resourceLoadDelegate's
     // identifierForInitialRequest:fromDatasource: method.  It is
     // not guaranteed to remain unchanged, as requests are mutable.
-    WebResourceRequest *originalRequest;
+    WebRequest *originalRequest;
     
     // A copy of the original request used to create the data source.
     // We have to copy the request because requests are mutable.
-    WebResourceRequest *originalRequestCopy;
+    WebRequest *originalRequestCopy;
     
     // The 'working' request for this datasource.  It may be mutated
     // several times from the original request to include additional
     // headers, cookie information, canonicalization and redirects.
-    WebResourceRequest *request;
+    WebRequest *request;
     
-    WebResourceResponse *response;
+    WebResponse *response;
 
     // Client for main resource.
     WebMainResourceClient *mainClient;
@@ -90,7 +90,7 @@
 
     // The last request that we checked click policy for - kept around
     // so we can avoid asking again needlessly.
-    WebResourceRequest *lastCheckedRequest;
+    WebRequest *lastCheckedRequest;
 
     // We retain all the received responses so we can play back the
     // WebResourceLoadDelegate messages if the item is loaded from the
@@ -125,8 +125,8 @@
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;
 - (void)_setURL:(NSURL *)URL;
-- (void)_setRequest:(WebResourceRequest *)request;
-- (void)_setResponse:(WebResourceResponse *)response;
+- (void)_setRequest:(WebRequest *)request;
+- (void)_setResponse:(WebResponse *)response;
 - (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(WebError *)error;
@@ -154,11 +154,11 @@
 - (void)_finishedLoading;
 - (void)_receivedError:(WebError *)error complete:(BOOL)isComplete;
 - (void)_defersCallbacksChanged;
-- (WebResourceRequest *)_originalRequest;
+- (WebRequest *)_originalRequest;
 - (NSDictionary *)_triggeringAction;
 - (void)_setTriggeringAction:(NSDictionary *)action;
-- (WebResourceRequest *)_lastCheckedRequest;
-- (void)_setLastCheckedRequest:(WebResourceRequest *)request;
+- (WebRequest *)_lastCheckedRequest;
+- (void)_setLastCheckedRequest:(WebRequest *)request;
 - (void)_setIsDownloading:(BOOL)isDownloading;
 - (void)_setDownloadPath:(NSString *)downloadPath;
 - (void)_setDownloadDirectory:(NSString *)downloadDirectory;
@@ -169,7 +169,7 @@
 - (BOOL)_storedInPageCache;
 - (BOOL)_loadingFromPageCache;
 
-- (void)_addResponse: (WebResourceResponse *)r;
+- (void)_addResponse: (WebResponse *)r;
 - (NSArray *)_responses;
 
 - (void)_stopLoadingWithError:(WebError *)error;

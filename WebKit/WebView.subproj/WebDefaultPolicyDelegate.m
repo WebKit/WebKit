@@ -7,9 +7,9 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebFrame.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebResponse.h>
 
 
 @implementation WebDefaultPolicyDelegate
@@ -33,7 +33,7 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
 
 
 - (WebPolicyAction)contentPolicyForMIMEType:(NSString *)type
-				 andRequest:(WebResourceRequest *)request
+				 andRequest:(WebRequest *)request
 				    inFrame:(WebFrame *)frame;
 {
     if ([[request URL] isFileURL]) {
@@ -54,18 +54,18 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     }
 }
 
-- (NSString *)savePathForResponse:(WebResourceResponse *)response
-                       andRequest:(WebResourceRequest *)request
+- (NSString *)savePathForResponse:(WebResponse *)response
+                       andRequest:(WebRequest *)request
 {
     return nil;
 }
 
 - (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation 
-			     andRequest:(WebResourceRequest *)request
+			     andRequest:(WebRequest *)request
 				inFrame:(WebFrame *)frame
 		       decisionListener:(WebPolicyDecisionListener *)listener
 {
-    if ([WebResourceHandle canInitWithRequest:request]) {
+    if ([WebResource canInitWithRequest:request]) {
 	[listener usePolicy:WebPolicyUse];
     }else{
         [listener usePolicy:WebPolicyOpenURL];

@@ -13,10 +13,10 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebResourceHandleDelegate.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResourceDelegate.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebHTTPRequest.h>
+#import <WebFoundation/WebResponse.h>
 
 #import <WebCore/WebCoreResourceLoader.h>
 
@@ -46,7 +46,7 @@
     
     [source _addSubresourceClient:client];
 
-    WebResourceRequest *newRequest = [[WebResourceRequest alloc] initWithURL:URL];
+    WebRequest *newRequest = [[WebRequest alloc] initWithURL:URL];
     [newRequest setRequestCachePolicy:[[source request] requestCachePolicy]];
     [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
     [newRequest setReferrer:referrer];
@@ -61,7 +61,7 @@
 
         [rLoader reportError];
 
-        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
+        WebError *badURLError = [[WebError alloc] initWithErrorCode:WebFoundationErrorBadURL
                                                            inDomain:WebErrorDomainWebFoundation
                                                          failingURL:[URL absoluteString]];
         [[source controller] _receivedError:badURLError fromDataSource:source];
@@ -77,7 +77,7 @@
     [[dataSource controller] _receivedError:error fromDataSource:dataSource];
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
+-(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
 {
     // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on
@@ -87,23 +87,23 @@
     // properly on redirect when we have the new redirect
     // request-adjusting API
 
-    return [super handle: h willSendRequest: newRequest];
+    return [super resource: h willSendRequest: newRequest];
 }
 
--(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
+-(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
 {
     ASSERT(r);
     [loader receivedResponse:r];
-    [super handle:h didReceiveResponse:r];
+    [super resource:h didReceiveResponse:r];
 }
 
-- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
+- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
 {
     [loader addData:data];
-    [super handle:h didReceiveData:data];
+    [super resource:h didReceiveData:data];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)h
+- (void)resourceDidFinishLoading:(WebResource *)h
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -116,10 +116,10 @@
     
     [self release];
     
-    [super handleDidFinishLoading:h];
+    [super resourceDidFinishLoading:h];
 }
 
-- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
+- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)error
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
@@ -127,7 +127,7 @@
     [loader reportError];
     [dataSource _removeSubresourceClient:self];
     [self receivedError:error];
-    [super handle:h didFailLoadingWithError:error];
+    [super resource:h didFailLoadingWithError:error];
 
     [self release];
 }

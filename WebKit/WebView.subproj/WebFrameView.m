@@ -28,7 +28,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebRequest.h>
 
 enum {
     SpaceKey = 0x0020
@@ -127,7 +127,7 @@ enum {
     NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
 
     if (URL) {
-	WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+	WebRequest *request = [[WebRequest alloc] initWithURL:URL];
 	[[[self controller] mainFrame] loadRequest:request];
 	[request release];
     }

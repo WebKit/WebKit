@@ -5,9 +5,9 @@
     Public header file.
 */
 
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResponse.h>
 
-@interface WebResourceResponse (WebResourceResponseExtras)
+@interface WebResponse (WebResourceResponseExtras)
 
 /*!
     @method suggestedFilenameForSaving

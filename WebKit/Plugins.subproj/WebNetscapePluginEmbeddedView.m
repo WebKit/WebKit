@@ -12,7 +12,7 @@
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebView.h>
 
-#import <WebFoundation/WebResourceRequest.h>
+#import <WebFoundation/WebRequest.h>
 
 @implementation WebNetscapePluginEmbeddedView
 
@@ -53,7 +53,7 @@
     [super viewDidMoveToWindow];
     
     if ([self window] && [self start] && URL) {
-        WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
+        WebRequest *request = [WebRequest requestWithURL:URL];
         [self loadRequest:request inTarget:nil withNotifyData:nil];
     }
 }

@@ -9,12 +9,11 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceHandlePrivate.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
-#import <WebFoundation/WebResourceResponsePrivate.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebHTTPRequest.h>
+#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/WebMutableResponse.h>
 
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
@@ -128,15 +127,15 @@
     [self cancelQuietly];
 }
 
--(void)continueAfterNavigationPolicy:(WebResourceRequest *)_request formValues:(NSDictionary *)values
+-(void)continueAfterNavigationPolicy:(WebRequest *)_request formValues:(NSDictionary *)values
 {
-    [[dataSource controller] _setDefersCallbacks:NO];
+    [[dataSource controller] setDefersCallbacks:NO];
     if (!_request) {
 	[self stopLoadingForPolicyChange];
     }
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
+-(WebRequest *)resource:(WebResource *)h willSendRequest:(WebRequest *)newRequest
 {
     // Note that there are no asserts here as there are for the other callbacks. This is due to the
     // fact that this "callback" is sent when starting every load, and the state of callback
@@ -155,7 +154,7 @@
     }
 
     // note super will make a copy for us, so reassigning newRequest is important
-    newRequest = [super handle:h willSendRequest:newRequest];
+    newRequest = [super resource:h willSendRequest:newRequest];
 
     // Don't set this on the first request.  It is set
     // when the main load was started.
@@ -165,10 +164,10 @@
     return newRequest;
 }
 
--(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResourceResponse *)r
+-(void)continueAfterContentPolicy:(WebPolicyAction)contentPolicy response:(WebResponse *)r
 {
-    [[dataSource controller] _setDefersCallbacks:NO];
-    WebResourceRequest *req = [dataSource request];
+    [[dataSource controller] setDefersCallbacks:NO];
+    WebRequest *req = [dataSource request];
 
     switch (contentPolicy) {
     case WebPolicyShow:
@@ -242,15 +241,15 @@
         ERROR("contentPolicyForMIMEType:andRequest:inFrame: returned an invalid content policy.");
     }
 
-    [super handle:handle didReceiveResponse:r];
+    [super resource:handle didReceiveResponse:r];
 
     if ([[req URL] _web_shouldLoadAsEmptyDocument]) {
-	[self handleDidFinishLoading:handle];
+	[self resourceDidFinishLoading:handle];
     }
 }
 
 
--(void)checkContentPolicyForResponse:(WebResourceResponse *)r andCallSelector:(SEL)selector
+-(void)checkContentPolicyForResponse:(WebResponse *)r andCallSelector:(SEL)selector
 {
     WebPolicyAction contentPolicy = 
 	[[[dataSource controller] policyDelegate] contentPolicyForMIMEType:[r contentType]
@@ -260,16 +259,16 @@
 }
 
 
--(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
+-(void)resource:(WebResource *)h didReceiveResponse:(WebResponse *)r
 {
-    ASSERT(![h _defersCallbacks]);
+    ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([dataSource isDownloading] || ![[dataSource controller] _defersCallbacks]);
+    ASSERT([dataSource isDownloading] || ![[dataSource controller] defersCallbacks]);
     [dataSource _setResponse:r];
 
     LOG(Download, "main content type: %@", [r contentType]);
 
-    [[dataSource controller] _setDefersCallbacks:YES];
+    [[dataSource controller] setDefersCallbacks:YES];
 
     // Figure out the content policy.
     if (![dataSource isDownloading]) {
@@ -281,13 +280,13 @@
     _contentLength = [r contentLength];
 }
 
-- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
+- (void)resource:(WebResource *)h didReceiveData:(NSData *)data
 {
     ASSERT(data);
     ASSERT([data length] != 0);
-    ASSERT(![h _defersCallbacks]);
+    ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource controller] _defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource controller] defersCallbacks]);
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
 
@@ -303,7 +302,7 @@
                                                 complete:NO];
     }
     
-    [super handle:h didReceiveData:data];
+    [super resource:h didReceiveData:data];
     _bytesReceived += [data length];
     
     if(downloadError){
@@ -314,11 +313,11 @@
     LOG(Download, "%d of %d", _bytesReceived, _contentLength);
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)h
+- (void)resourceDidFinishLoading:(WebResource *)h
 {
-    ASSERT(![h _defersCallbacks]);
+    ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource controller] _defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource controller] defersCallbacks]);
     LOG(Loading, "URL = %@", [dataSource URL]);
         
     // Calls in this method will most likely result in a call to release, so we must retain.
@@ -338,9 +337,9 @@
     }
 
     if(downloadError){
-        [super handle:h didFailLoadingWithError:downloadError];
+        [super resource:h didFailLoadingWithError:downloadError];
     } else {
-        [super handleDidFinishLoading:h];
+        [super resourceDidFinishLoading:h];
     }
 
     [download release];
@@ -349,32 +348,32 @@
     [self release];
 }
 
-- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
+- (void)resource:(WebResource *)h didFailLoadingWithError:(WebError *)error
 {
-    ASSERT(![h _defersCallbacks]);
+    ASSERT(![h defersCallbacks]);
     ASSERT(![self defersCallbacks]);
-    ASSERT([self isDownload] || ![[dataSource controller] _defersCallbacks]);
+    ASSERT([self isDownload] || ![[dataSource controller] defersCallbacks]);
     LOG(Loading, "URL = %@, error = %@", [error failingURL], [error errorDescription]);
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
     [self receivedError:error complete:YES];
-    [super handle:h didFailLoadingWithError:error];
+    [super resource:h didFailLoadingWithError:error];
 
     [self release];
 }
 
-- (void)startLoading:(WebResourceRequest *)r
+- (void)startLoading:(WebRequest *)r
 {
     if ([[r URL] _web_shouldLoadAsEmptyDocument]) {
-	[self handle:handle willSendRequest:r];
+	[self resource:handle willSendRequest:r];
 
-	WebResourceResponse *rsp = [[WebResourceResponse alloc] init];
-	[rsp _setURL:[r URL]];
-	[rsp _setContentType:@"text/html"];
-	[rsp _setContentLength:0];
-	[self handle:handle didReceiveResponse:rsp];
+	WebResponse *rsp = [[WebResponse alloc] init];
+	[rsp setURL:[r URL]];
+	[rsp setContentType:@"text/html"];
+	[rsp setContentLength:0];
+	[self resource:handle didReceiveResponse:rsp];
 	[rsp release];
     } else {
 	[super startLoading:r];

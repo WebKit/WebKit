@@ -6,7 +6,7 @@
 #import <WebKit/WebTextView.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebResourceResponse.h>
+#import <WebFoundation/WebResponse.h>
 
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>

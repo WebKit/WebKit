@@ -30,14 +30,14 @@
 #import <WebKit/WebViewPrivate.h>
 
 #import <WebFoundation/WebError.h>
-#import <WebFoundation/WebHTTPResourceResponse.h>
+#import <WebFoundation/WebHTTPResponse.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
-#import <WebFoundation/WebHTTPResourceRequest.h>
+#import <WebFoundation/WebResource.h>
+#import <WebFoundation/WebRequest.h>
+#import <WebFoundation/WebResponse.h>
+#import <WebFoundation/WebHTTPRequest.h>
 
 @implementation WebDataSourcePrivate 
 
@@ -196,7 +196,7 @@
     if (_private->subresourceClients == nil) {
         _private->subresourceClients = [[NSMutableArray alloc] init];
     }
-    if ([_private->controller _defersCallbacks]) {
+    if ([_private->controller defersCallbacks]) {
         [client setDefersCallbacks:YES];
     }
     [_private->subresourceClients addObject:client];
@@ -227,7 +227,7 @@
         [_private->mainClient cancel];
     }else{
         // Main handle is already done. Set the cancelled error.
-        WebError *cancelledError = [WebError errorWithCode:WebErrorCodeCancelled
+        WebError *cancelledError = [WebError errorWithCode:WebFoundationErrorCancelled
                                                   inDomain:WebErrorDomainWebFoundation
                                                 failingURL:[[self URL] absoluteString]];
         [self _setMainDocumentError:cancelledError];
@@ -301,20 +301,20 @@
 
 - (void)_setURL:(NSURL *)URL
 {
-    WebResourceRequest *newRequest = [_private->request copy];
+    WebRequest *newRequest = [_private->request copy];
     [_private->request release];
     [newRequest setURL:URL];
     _private->request = newRequest;
 }
 
-- (void)_setRequest:(WebResourceRequest *)request
+- (void)_setRequest:(WebRequest *)request
 {
     // We should never be getting a redirect callback after the data
     // source is committed. It would be a WebFoundation bug if it sent
     // a redirect callback after commit.
     ASSERT(!_private->committed);
 
-    WebResourceRequest *oldRequest = _private->request;
+    WebRequest *oldRequest = _private->request;
     
     _private->request = [request retain];
 
@@ -327,7 +327,7 @@
     [oldRequest release];
 }
 
-- (void)_setResponse:(WebResourceResponse *)response
+- (void)_setResponse:(WebResponse *)response
 {
     [_private->response release];
     _private->response = [response retain];
@@ -466,8 +466,8 @@
         bool reload = loadType == WebFrameLoadTypeReload
             || loadType == WebFrameLoadTypeReloadAllowingStaleData;
         
-        NSDictionary *headers = [_private->response isKindOfClass:[WebHTTPResourceResponse class]]
-            ? [(WebHTTPResourceResponse *)_private->response headers] : nil;
+        NSDictionary *headers = [_private->response isKindOfClass:[WebHTTPResponse class]]
+            ? [(WebHTTPResponse *)_private->response header] : nil;
 
         LOG(Loading, "committed resource = %@", [[self request] URL]);
 	_private->committed = TRUE;
@@ -603,7 +603,7 @@
 
 - (void)_defersCallbacksChanged
 {
-    BOOL defers = [_private->controller _defersCallbacks];
+    BOOL defers = [_private->controller defersCallbacks];
     
     if (defers == _private->defersCallbacks) {
         return;
@@ -621,7 +621,7 @@
     [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
 }
 
-- (WebResourceRequest *)_originalRequest
+- (WebRequest *)_originalRequest
 {
     return _private->originalRequestCopy;
 }
@@ -639,16 +639,16 @@
 }
 
 
-- (WebResourceRequest *)_lastCheckedRequest
+- (WebRequest *)_lastCheckedRequest
 {
     // It's OK not to make a copy here because we know the caller
     // isn't going to modify this request
     return [[_private->lastCheckedRequest retain] autorelease];
 }
 
-- (void)_setLastCheckedRequest:(WebResourceRequest *)request
+- (void)_setLastCheckedRequest:(WebRequest *)request
 {
-    WebResourceRequest *oldRequest = _private->lastCheckedRequest;
+    WebRequest *oldRequest = _private->lastCheckedRequest;
     _private->lastCheckedRequest = [request copy];
     [oldRequest release];
 }
@@ -717,7 +717,7 @@
     return _private->loadingFromPageCache;
 }
 
-- (void)_addResponse: (WebResourceResponse *)r
+- (void)_addResponse: (WebResponse *)r
 {
     if (!_private->responses)
         _private->responses = [[NSMutableArray alloc] init];

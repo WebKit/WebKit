@@ -11,9 +11,9 @@
 @class WebDataSourcePrivate;
 @class WebError;
 @class WebFrame;
-@class WebResourceHandle;
-@class WebResourceRequest;
-@class WebResourceResponse;
+@class WebResource;
+@class WebRequest;
+@class WebResponse;
 
 @protocol WebDocumentRepresentation;
 
@@ -44,7 +44,7 @@
     @param request The request to use in creating a datasource.
     @result Returns an initialized WebDataSource.
 */
-- initWithRequest:(WebResourceRequest *)request;
+- initWithRequest:(WebRequest *)request;
 
 /*!
     @method data
@@ -83,19 +83,19 @@
     @result Returns a reference to the original request that created the
     datasource.  This request will be unmodified by WebKit. 
 */
-- (WebResourceRequest *)initialRequest;
+- (WebRequest *)initialRequest;
 
 /*!
     @method request
     @result Returns the request that was used to create this datasource.
 */
--(WebResourceRequest *)request;
+-(WebRequest *)request;
 
 /*!
     @method response
     @result returns the WebResourceResponse for the data source.
 */
-- (WebResourceResponse *)response;
+- (WebResponse *)response;
 
 /*!
     @method URL

@@ -10,8 +10,8 @@
 @class WebError;
 @class WebFrame;
 @class WebPolicyPrivate;
-@class WebResourceResponse;
-@class WebResourceRequest;
+@class WebResponse;
+@class WebRequest;
 
 
 /*!
@@ -101,7 +101,7 @@ typedef enum {
      @param listener The object to call when the decision is made
 */
 - (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation
-                             andRequest:(WebResourceRequest *)request
+                             andRequest:(WebRequest *)request
                                 inFrame:(WebFrame *)frame
                        decisionListener:(WebPolicyDecisionListener *)listener;
 
@@ -114,7 +114,7 @@ typedef enum {
     @param frame The frame which is loading the URL.
 */
 - (WebPolicyAction)contentPolicyForMIMEType:(NSString *)type
-                                 andRequest:(WebResourceRequest *)request
+                                 andRequest:(WebRequest *)request
                                     inFrame:(WebFrame *)frame;
 
 
@@ -125,8 +125,8 @@ typedef enum {
     @param request A WebResourceRequest for the partially loaded content.
     @result The filename to use to save a loaded resource.
 */
-- (NSString *)savePathForResponse:(WebResourceResponse *)response
-                       andRequest:(WebResourceRequest *)request;
+- (NSString *)savePathForResponse:(WebResponse *)response
+                       andRequest:(WebRequest *)request;
 
 
 /*!

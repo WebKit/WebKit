@@ -65,14 +65,14 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 - (void)_downloadURL:(NSURL *)URL;
 - (void)_downloadURL:(NSURL *)URL toDirectory:(NSString *)directoryPath;
 
-- (BOOL)_defersCallbacks;
-- (void)_setDefersCallbacks:(BOOL)defers;
+- (BOOL)defersCallbacks;
+- (void)setDefersCallbacks:(BOOL)defers;
 
 - (void)_setTopLevelFrameName:(NSString *)name;
 - (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name;
 - (WebFrame *)_findFrameNamed: (NSString *)name;
 
-- (WebController *)_openNewWindowWithRequest:(WebResourceRequest *)request behind:(BOOL)behind;
+- (WebController *)_openNewWindowWithRequest:(WebRequest *)request behind:(BOOL)behind;
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element;
 

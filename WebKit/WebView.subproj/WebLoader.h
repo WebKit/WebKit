@@ -8,22 +8,22 @@
 @class WebController;
 @class WebDataSource;
 @class WebError;
-@class WebResourceHandle;
-@class WebResourceRequest;
-@class WebResourceResponse;
+@class WebResource;
+@class WebRequest;
+@class WebResponse;
 
-@protocol WebResourceHandleDelegate;
+@protocol WebResourceDelegate;
 @protocol WebResourceLoadDelegate;
 
-@interface WebBaseResourceHandleDelegate : NSObject <WebResourceHandleDelegate>
+@interface WebBaseResourceHandleDelegate : NSObject <WebResourceDelegate>
 {
 @protected
     WebDataSource *dataSource;
-    WebResourceHandle *handle;
-    WebResourceRequest *request;
+    WebResource *handle;
+    WebRequest *request;
 @private
     WebController *controller;
-    WebResourceResponse *response;
+    WebResponse *response;
     id identifier;
     id <WebResourceLoadDelegate>resourceLoadDelegate;
     id <WebResourceLoadDelegate>downloadDelegate;
@@ -32,10 +32,10 @@
     BOOL defersCallbacks;
 }
 
-- (BOOL)loadWithRequest:(WebResourceRequest *)request;
+- (BOOL)loadWithRequest:(WebRequest *)request;
 
 // this method exists only to be subclassed, don't call it directly
-- (void)startLoading:(WebResourceRequest *)r;
+- (void)startLoading:(WebRequest *)r;
 
 - (void)setDataSource:(WebDataSource *)d;
 - (WebDataSource *)dataSource;

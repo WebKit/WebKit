@@ -9,18 +9,18 @@
 #import <WebKit/WebBaseNetscapePluginStream.h>
 
 @class WebNetscapePluginEmbeddedView;
-@class WebResourceHandle;
-@class WebResourceRequest;
+@class WebResource;
+@class WebRequest;
 
 
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {
     WebNetscapePluginEmbeddedView *view;
     NSMutableData *resourceData;
-    WebResourceRequest *_startingRequest;
+    WebRequest *_startingRequest;
 }
 
-- initWithRequest:(WebResourceRequest *)theRequest
+- initWithRequest:(WebRequest *)theRequest
     pluginPointer:(NPP)thePluginPointer
        notifyData:(void *)theNotifyData;
 

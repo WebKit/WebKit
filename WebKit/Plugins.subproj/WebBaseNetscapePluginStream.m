@@ -46,7 +46,7 @@
     NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
-- (void)setResponse:(WebResourceResponse *)r
+- (void)setResponse:(WebResponse *)r
 {
     if(![plugin isLoaded]){
         return;

@@ -26,7 +26,7 @@
     @param request The request to load.
     @result The WebController for the WebView in the new window.
 */
-- (WebController *)createWindowWithRequest:(WebResourceRequest *)request;
+- (WebController *)createWindowWithRequest:(WebRequest *)request;
 
 /*!
     @method showWindow
