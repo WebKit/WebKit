@@ -52,7 +52,9 @@ public:
     QCString(int);
     QCString(const char *);
     QCString(const char *, uint);
-    QCString(const QCString&);
+    QCString(const QCString &);
+
+    ~QCString();
 
     // member functions --------------------------------------------------------
 
@@ -68,10 +70,10 @@ public:
     // operators ---------------------------------------------------------------
 
     operator const char *() const;
-    QCString &operator=(const QCString&);
+    QCString &operator=(const QCString &);
     QCString &operator=(const char *);
     QCString &operator+=(const char *);
-    QCString &operator+=(const QCString&);
+    QCString &operator+=(const QCString &);
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------

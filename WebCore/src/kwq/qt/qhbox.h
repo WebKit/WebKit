@@ -44,6 +44,8 @@ public:
     QHBox();
     QHBox(QWidget *);
 
+    ~QHBox();
+
     // member functions --------------------------------------------------------
 
     bool setStretchFactor(QWidget*, int stretch);

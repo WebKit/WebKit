@@ -43,6 +43,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QFontDatabase();
+
+    ~QFontDatabase();
     
     // member functions --------------------------------------------------------
 

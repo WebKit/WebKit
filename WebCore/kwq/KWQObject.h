@@ -71,6 +71,7 @@ public:
     // typedefs ----------------------------------------------------------------
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
+
     // static member functions -------------------------------------------------
 
     static bool connect(const QObject *, const char *, const QObject *, 
@@ -82,6 +83,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QObject(QObject *parent=0, const char *name=0);
+
+    virtual ~QObject();
 
     // member functions --------------------------------------------------------
 

@@ -63,6 +63,8 @@ public:
     QChar(uint);
     QChar(int);
 
+    ~QChar() {}
+
     // member functions --------------------------------------------------------
 
     QChar lower() const;
@@ -237,12 +239,19 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QConstString(QChar *, uint);
+    QConstString(const QConstString &);
+
+    ~QConstString();
 
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+
+private:
+    // no assignment
+    QConstString &operator=(const QConstString &);
 
 }; // class QConstString =======================================================
 

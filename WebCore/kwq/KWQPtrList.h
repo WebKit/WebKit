@@ -42,6 +42,8 @@ public:
     
     QList();
     QList(const QList<T> &);
+
+    virtual ~QList(); 
      
     // member functions --------------------------------------------------------
 
@@ -97,6 +99,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QListIterator(const QList<T> &);
+
+    ~QListIterator();
 
     // member functions --------------------------------------------------------
 

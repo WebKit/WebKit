@@ -134,7 +134,6 @@ private:
     // no copying or assignment
     QPainter(const QPainter &);
     QPainter &operator=(const QPainter &);
-    
 
 }; // end class QPainter
 

@@ -48,6 +48,7 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QScrollView();
+
     virtual ~QScrollView();
 
     // member functions --------------------------------------------------------

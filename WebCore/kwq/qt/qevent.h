@@ -89,6 +89,8 @@ public:
 
     QMouseEvent(Type type, const QPoint &pos, int button, int state);
 
+    virtual ~QMouseEvent();
+
     // member functions --------------------------------------------------------
 
     int x();
@@ -126,6 +128,8 @@ public:
     
     QTimerEvent(int timerId);
 
+    virtual ~QTimerEvent();
+
     // member functions --------------------------------------------------------
 
     int timerId() const;
@@ -156,6 +160,8 @@ public:
 
     QKeyEvent();
     QKeyEvent(Type, Key, int, int);
+
+    virtual ~QKeyEvent();
 
     // member functions --------------------------------------------------------
 
@@ -190,6 +196,8 @@ public:
 
     QFocusEvent();
 
+    virtual ~QFocusEvent();
+
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
@@ -218,6 +226,8 @@ public:
     
     QHideEvent();
     
+    virtual ~QHideEvent();
+
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 
@@ -245,6 +255,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QResizeEvent();
+
+    virtual ~QResizeEvent();
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -273,6 +285,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QShowEvent();
+
+    virtual ~QShowEvent();
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
@@ -301,6 +315,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QWheelEvent();
+
+    virtual ~QWheelEvent();
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------

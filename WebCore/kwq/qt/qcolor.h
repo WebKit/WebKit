@@ -45,6 +45,8 @@ public:
     QColor(const char *);
     QColor(const QColor &);
 
+    ~QColor();
+
     // member functions --------------------------------------------------------
 
     QString name() const;

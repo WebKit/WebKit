@@ -47,6 +47,8 @@ public:
     // constructors, copy constructors, and destructors ------------------------
     
     QGVector();
+
+    virtual ~QGVector();
     
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------

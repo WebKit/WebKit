@@ -81,6 +81,8 @@ public:
 
     QPtrDictIterator(const QPtrDict<T> &);
 
+    ~QPtrDictIterator();
+
     // member functions --------------------------------------------------------
 
     T *current() const;

@@ -45,6 +45,11 @@ public:
         const char *name=0);
 
     // constructors, copy constructors, and destructors ------------------------
+
+    QInputDialog() {}
+
+    ~QInputDialog() {}
+    
     // member functions --------------------------------------------------------
     // operators ---------------------------------------------------------------
 

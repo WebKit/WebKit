@@ -42,13 +42,16 @@ public:
 
     QBitmap();
     QBitmap(int,int);
+    QBitmap(const QBitmap &);
+
+    ~QBitmap();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
 
     QBitmap &operator=(const QBitmap &);
     QBitmap &operator=(const QPixmap &);
     QBitmap &operator=(const QImage &);
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------

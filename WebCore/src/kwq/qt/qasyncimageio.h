@@ -44,6 +44,8 @@ public:
 
     // constructors, copy constructors, and destructors ------------------------
     
+    QImageDecoder();
+
     ~QImageDecoder();
     
     // member functions --------------------------------------------------------

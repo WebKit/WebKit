@@ -44,6 +44,8 @@ public:
     QRegExp(const QString &);
     QRegExp(const QRegExp &);    
 
+    ~QRegExp();
+
     // member functions --------------------------------------------------------
 
     // operators ---------------------------------------------------------------
