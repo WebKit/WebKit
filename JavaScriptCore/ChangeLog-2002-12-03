@@ -1,5 +1,7 @@
 2002-05-21  Maciej Stachowiak  <mjs@apple.com>
 
+	Reviewed by: Richard Williamson
+
 	Fixed Radar 2928775 - Sherlock crashes sitting in stocks channel
 
 	* kjs/internal.cpp:
@@ -9,11 +11,15 @@
 
 2002-05-15  Darin Adler  <darin@apple.com>
 
+	Reviewed by: Maciej Stachowiak
+	
 	* Makefile.am:
 	Use all-am and clean-am instead of all and clean because it's better and
 	to make "make check" at the top level work right.
 
 2002-05-13  Darin Adler  <darin@apple.com>
+
+	Reviewed by: Maciej Stachowiak
 
 	* kjs/value.h: Fix comment typos.
 
