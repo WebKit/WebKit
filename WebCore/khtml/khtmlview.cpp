@@ -71,7 +71,6 @@ public:
     {
         underMouse = 0;
         reset();
-        tp=0;
         paintBuffer=0;
         formCompletions=0;
         prevScrollbarVisible = true;
@@ -79,7 +78,6 @@ public:
     ~KHTMLViewPrivate()
     {
         delete formCompletions;
-        delete tp; tp = 0;
         delete paintBuffer; paintBuffer =0;
         if (underMouse)
 	    underMouse->deref();
@@ -110,7 +108,6 @@ public:
 	isDoubleClick = false;
     }
 
-    QPainter *tp;
     QPixmap  *paintBuffer;
     NodeImpl *underMouse;
 
@@ -226,8 +223,6 @@ void KHTMLView::init()
 
     if(!d->paintBuffer) d->paintBuffer = new QPixmap(PAINT_BUFFER_HEIGHT, PAINT_BUFFER_HEIGHT);
     
-    if(!d->tp) d->tp = new QPainter();
-
     setFocusPolicy(QWidget::StrongFocus);
     viewport()->setFocusPolicy( QWidget::WheelFocus );
     viewport()->setFocusProxy(this);
@@ -309,10 +304,6 @@ static void printRenderTree(RenderObject *node, int level)
 
 void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 {
-    // FIXME: make the height work correctly with the scroll view
-    eh = 780;
-
-
     if(!m_part->xmlDocImpl()) {
         p->fillRect(ex, ey, ew, eh, palette().normal().brush(QColorGroup::Base));
         return;
@@ -321,16 +312,11 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
     //kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
 
     if ( d->paintBuffer->width() < visibleWidth() )
-        // FIXME: make the height work correctly with the scroll view
-        //d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
-        d->paintBuffer->resize(visibleWidth(),780);
+        d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
 
     int py=0;
     while (py < eh) {
         int ph = eh-py < PAINT_BUFFER_HEIGHT ? eh-py : PAINT_BUFFER_HEIGHT;
-        d->tp->begin(d->paintBuffer);
-        d->tp->translate(-ex, -ey-py);
-        d->tp->fillRect(ex, ey+py, ew, ph, palette().normal().brush(QColorGroup::Base));
         
         // FIXME!
         RenderObject *ro;
@@ -343,21 +329,16 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 #ifdef RENDER_TREE_DEBUG
                 printRenderTree (ro, 0);
 #endif
-                ro->print(d->tp, ex, ey+py, ew, ph, 0, 0);
+                ro->print(p, ex, ey+py, ew, ph, 0, 0);
             }
         }
 #ifdef BOX_DEBUG
 	if (m_part->xmlDocImpl()->focusNode())
 	{
-	    d->tp->setBrush(Qt::NoBrush);
-	    d->tp->drawRect(m_part->xmlDocImpl()->focusNode()->getRect());
+	    p->setBrush(Qt::NoBrush);
+	    p->drawRect(m_part->xmlDocImpl()->focusNode()->getRect());
 	}
 #endif
-        d->tp->end();
-
-        // FIXME: make the height work correctly with the scroll view
-        //p->drawPixmap(ex, ey+py, *d->paintBuffer, 0, 0, ew, ph);
-        p->drawPixmap(ex, ey+py, *d->paintBuffer, ex, ey+py, ew, ph);
         py += PAINT_BUFFER_HEIGHT;
     }
 

@@ -86,7 +86,7 @@
 {
     [super initWithFrame: r];
     widget = w;
-    isFlipped = NO;
+    isFlipped = YES;
 }
 
 
