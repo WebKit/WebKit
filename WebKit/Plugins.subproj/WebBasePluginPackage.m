@@ -12,7 +12,10 @@
 #import <WebKit/WebNSObjectExtras.h>
 #import <WebKit/WebPluginPackage.h>
 
+#import <Foundation/NSPrivateDecls.h>
 #import <Foundation/NSString_NSURLExtras.h>
+
+#import <CoreFoundation/CFBundlePriv.h>
 
 #define JavaCocoaPluginIdentifier 	@"com.apple.JavaPluginCocoa"
 #define JavaCarbonPluginIdentifier 	@"com.apple.JavaAppletPlugin"
@@ -36,6 +39,17 @@
     }
 
     return [pluginPackage autorelease];
+}
+
++ (NSString *)preferredLocalizationName
+{
+    SInt32 languageCode;
+    SInt32 regionCode;
+    SInt32 scriptCode;
+    CFStringEncoding stringEncoding;
+    
+    CFBundleGetLocalizationInfoForLocalization(NULL, &languageCode, &regionCode, &scriptCode, &stringEncoding);
+    return WebCFAutorelease(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
 }
 
 - (NSString *)pathByResolvingSymlinksAndAliasesInPath:(NSString *)thePath
@@ -142,14 +156,65 @@
     return YES;
 }
 
+- (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
+{
+    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences) {
+        BP_CreatePluginMIMETypesPreferences();
+    }
+    
+    NSDictionary *pList = nil;
+    NSData *data = [NSData dataWithContentsOfFile:pListPath];
+    if (data) {
+        pList = [NSPropertyListSerialization propertyListFromData:data
+                                                 mutabilityOption:NSPropertyListImmutable
+                                                           format:nil
+                                                 errorDescription:nil];
+    }
+    
+    return pList;
+}
+
+- (BOOL)getPluginInfoFromPLists
+{
+    if (!bundle) {
+        return NO;
+    }
+    
+    NSDictionary *MIMETypes = nil;
+    NSString *pListFilename = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
+    
+    // Check if the MIME types are claimed in a plist in the user's preferences directory.
+    if (pListFilename) {
+        NSString *pListPath = [NSString stringWithFormat:@"%@/Library/Preferences/%@", NSHomeDirectory(), pListFilename];
+        NSDictionary *pList = [self pListForPath:pListPath createFile:NO];
+        if (pList) {
+            // If the plist isn't localized, have the plug-in recreate it in the preferred language.
+            NSString *localizationName = [pList objectForKey:WebPluginLocalizationNameKey];
+            if (![localizationName isEqualToString:[[self class] preferredLocalizationName]]) {
+                pList = [self pListForPath:pListPath createFile:YES];
+            }
+            MIMETypes = [pList objectForKey:WebPluginMIMETypesKey];
+        } else {
+            // Plist doesn't exist, ask the plug-in to create it.
+            MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
+        }
+    }
+    
+    // Pass the MIME dictionary to the superclass to parse it.
+    return [self getPluginInfoFromBundleAndMIMEDictionary:MIMETypes];
+}
+
 - (BOOL)isLoaded
 {
-    return NO;
+    return isLoaded;
 }
 
 - (BOOL)load
 {
-    return NO;
+    if (isLoaded && bundle != nil && BP_CreatePluginMIMETypesPreferences == NULL) {
+        BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName([bundle _cfBundle], CFSTR("BP_CreatePluginMIMETypesPreferences"));
+    }
+    return isLoaded;
 }
 
 - (void)unload

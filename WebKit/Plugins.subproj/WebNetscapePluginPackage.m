@@ -11,8 +11,6 @@
 
 #import <JavaScriptCore/npruntime_impl.h>
 
-#import <CoreFoundation/CFBundlePriv.h>
-
 #import <Foundation/NSPrivateDecls.h>
 
 typedef void (* FunctionPointer) (void);
@@ -43,17 +41,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         LMSetCurApRefNum(CurResFile());
         UseResFile(savedCurResFile);
     }
-}
-
-+ (NSString *)preferredLocalizationName
-{
-    SInt32 languageCode;
-    SInt32 regionCode;
-    SInt32 scriptCode;
-    CFStringEncoding stringEncoding;
-
-    CFBundleGetLocalizationInfoForLocalization(NULL, &languageCode, &regionCode, &scriptCode, &stringEncoding);
-    return WebCFAutorelease(CFBundleCopyLocalizationForLocalizationInfo(languageCode, regionCode, scriptCode, stringEncoding));
 }
 
 - (SInt16)openResourceFile
@@ -181,54 +168,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     [self closeResourceFile:resRef];
     
     return YES;
-}
-
-- (NSDictionary *)pListForPath:(NSString *)pListPath createFile:(BOOL)createFile
-{
-    if (createFile && [self load] && BP_CreatePluginMIMETypesPreferences) {
-        BP_CreatePluginMIMETypesPreferences();
-    }
-
-    NSDictionary *pList = nil;
-    NSData *data = [NSData dataWithContentsOfFile:pListPath];
-    if (data) {
-        pList = [NSPropertyListSerialization propertyListFromData:data
-                                                 mutabilityOption:NSPropertyListImmutable
-                                                           format:nil
-                                                 errorDescription:nil];
-    }
-
-    return pList;
-}
-
-- (BOOL)getPluginInfoFromPLists
-{
-    if (!bundle) {
-        return NO;
-    }
-
-    NSDictionary *MIMETypes = nil;
-    NSString *pListFilename = [bundle objectForInfoDictionaryKey:WebPluginMIMETypesFilenameKey];
-
-    // Check if the MIME types are claimed in a plist in the user's preferences directory.
-    if (pListFilename) {
-        NSString *pListPath = [NSString stringWithFormat:@"%@/Library/Preferences/%@", NSHomeDirectory(), pListFilename];
-        NSDictionary *pList = [self pListForPath:pListPath createFile:NO];
-        if (pList) {
-            // If the plist isn't localized, have the plug-in recreate it in the preferred language.
-            NSString *localizationName = [pList objectForKey:WebPluginLocalizationNameKey];
-            if (![localizationName isEqualToString:[[self class] preferredLocalizationName]]) {
-                pList = [self pListForPath:pListPath createFile:YES];
-            }
-            MIMETypes = [pList objectForKey:WebPluginMIMETypesKey];
-        } else {
-            // Plist doesn't exist, ask the plug-in to create it.
-            MIMETypes = [[self pListForPath:pListPath createFile:YES] objectForKey:WebPluginMIMETypesKey];
-        }
-    }
-
-    // Pass the MIME dictionary to the superclass to parse it.
-    return [self getPluginInfoFromBundleAndMIMEDictionary:MIMETypes];
 }
 
 - initWithPath:(NSString *)pluginPath
@@ -377,8 +316,6 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
                 goto abort;
             }
         }
-
-        BP_CreatePluginMIMETypesPreferences = (BP_CreatePluginMIMETypesPreferencesFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("BP_CreatePluginMIMETypesPreferences"));
     } else {
         // single CFM file
         FSSpec spec;
@@ -611,7 +548,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
     LOG(Plugins, "%f Total load time: %f seconds", currentTime, duration);
 
-    return YES;
+    return [super load];
 
 abort:
     [self unloadWithoutShutdown];

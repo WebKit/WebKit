@@ -1,3 +1,26 @@
+2005-01-13  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3932107> Safari does not load QT Cocoa plug-in if the WebPluginMIMETypes key is not in the info.plist
+
+	Fixing this bug required that we allow WebKit plug-ins (as well as Netscape plug-ins) support BP_CreatePluginMIMETypesPreferences
+	which allows plug-ins create an auxiliary MIME types file.
+
+        Reviewed by adele.
+
+        * Plugins.subproj/WebBasePluginPackage.h:
+        * Plugins.subproj/WebBasePluginPackage.m:
+        (+[WebBasePluginPackage preferredLocalizationName]): moved from WebNetscapePluginPackage
+        (-[WebBasePluginPackage pListForPath:createFile:]): ditto
+        (-[WebBasePluginPackage getPluginInfoFromPLists]): ditto
+        (-[WebBasePluginPackage isLoaded]): return isLoaded ivar
+        (-[WebBasePluginPackage load]): if loaded, get BP_CreatePluginMIMETypesPreferences symbol
+        * Plugins.subproj/WebNetscapePluginPackage.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]): call super when done so BP_CreatePluginMIMETypesPreferences can be initialized
+        * Plugins.subproj/WebPluginPackage.m:
+        (-[WebPluginPackage initWithPath:]): call getPluginInfoFromPLists
+        (-[WebPluginPackage load]): call super when done so BP_CreatePluginMIMETypesPreferences can be initialized
+
 2005-01-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3952809> WebJavaPlugIn.h comments need method name corrected (webPlugInCallJava)

@@ -44,7 +44,7 @@ extern NSString *WebPlugInContainingElementKey;
         }
     }
 
-    if (![self getPluginInfoFromBundleAndMIMEDictionary:nil]) {
+    if (![self getPluginInfoFromPLists]) {
         [self release];
         return nil;
     }
@@ -59,21 +59,25 @@ extern NSString *WebPlugInContainingElementKey;
 
 - (BOOL)load
 {
+    if (isLoaded) {
+        return YES;
+    }
+    
 #if !LOG_DISABLED
-    BOOL wasLoaded = [self isLoaded];
     CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
 #endif
     
     [bundle principalClass];
+    isLoaded = [bundle isLoaded];
+    if (!isLoaded) {
+        return NO;
+    }
 
 #if !LOG_DISABLED
-    if (!wasLoaded) {
-        CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - start;
-        LOG(Plugins, "principalClass took %f seconds for: %@", duration, [self name]);
-    }
+    CFAbsoluteTime duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(Plugins, "principalClass took %f seconds for: %@", duration, [self name]);
 #endif
-   
-    return YES;
+    return [super load];
 }
 
 - (void)unload
