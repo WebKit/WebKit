@@ -315,13 +315,9 @@ void RenderTable::layout()
             Length ch = c->style()->height();
             if (ch.isFixed())
                 th = h.width(ch.value);
-            else {
+            else
                 // we need to substract out the margins of this block. -dwh
                 th = h.width(viewRect().height() - c->marginBottom() - c->marginTop());
-                // not really, but this way the view height change
-                // gets propagated correctly
-                setOverhangingContents();
-            }
         }
     }
 
@@ -409,8 +405,7 @@ void RenderTable::paint(PaintInfo& i, int _tx, int _ty)
 #ifdef TABLE_PRINT
     kdDebug( 6040 ) << "RenderTable::paint() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-    if (!overhangingContents() && !isRelPositioned() && !isPositioned())
-    {
+    if (!isRelPositioned() && !isPositioned()) {
         int os = 2*maximalOutlineSize(paintAction);
         if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + height() <= i.r.y() - os)) return;
         if ((_tx >= i.r.x() + i.r.width() + os) || (_tx + width() <= i.r.x() - os)) return;
@@ -2076,8 +2071,8 @@ void RenderTableCell::paint(PaintInfo& i, int _tx, int _ty)
 
     // check if we need to do anything at all...
     int os = 2*maximalOutlineSize(i.phase);
-    if (!overhangingContents() && ((_ty >= i.r.y() + i.r.height() + os)
-                                   || (_ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os))) return;
+    if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + _topExtra + m_height + _bottomExtra <= i.r.y() - os))
+        return;
     
     if (i.phase == PaintActionCollapsedTableBorders && style()->visibility() == VISIBLE) {
         int w = width();

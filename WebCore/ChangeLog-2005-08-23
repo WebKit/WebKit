@@ -1,3 +1,36 @@
+2004-04-25  David Hyatt  <hyatt@apple.com>
+
+	Eliminate overhangingContents.  This concept was redundant with the overflowHeight mechanism that I
+	implemented some time ago, and in fact, it causes us to grovel through much more of the render tree
+	than we should when painting.  It turns out that none of the places that used this boolean needed
+	to any longer, and so the entire implementation can now be removed from the tree.
+	
+        Reviewed by mjs, darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::addChildToFlow):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::insertPositionedObject):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcHeight):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::setStyle):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::addChildToFlow):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):
+        (RenderObject::containingBlock):
+        (RenderObject::information):
+        (RenderObject::dump):
+        (RenderObject::nodeAtPoint):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::minMaxKnown):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        (RenderTable::paint):
+        (RenderTableCell::paint):
+
 2004-04-23  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3258403, implement support for min-height and max-height on normal flow elements.  With this patch the

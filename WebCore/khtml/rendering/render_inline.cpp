@@ -76,10 +76,7 @@ void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeCh
     // Make sure we don't append things after :after-generated content if we have it.
     if (!beforeChild && lastChild() && lastChild()->style()->styleType() == RenderStyle::AFTER)
         beforeChild = lastChild();
-    
-    if (!newChild->isText() && newChild->style()->position() != STATIC)
-        setOverhangingContents();
-    
+
     if (!newChild->isInline() && !newChild->isFloatingOrPositioned() )
     {
         // We are placing a block inside an inline. We have to perform a split of this
