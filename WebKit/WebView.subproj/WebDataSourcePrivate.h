@@ -28,6 +28,7 @@
     
     WebController *controller;
     
+    WebResourceRequest *originalRequest;
     WebResourceRequest *request;
     WebResourceResponse *response;
 
@@ -113,5 +114,6 @@
 - (void)_finishedLoading;
 
 - (void)_defersCallbacksChanged;
+- (WebResourceRequest *)_originalRequest;
 
 @end

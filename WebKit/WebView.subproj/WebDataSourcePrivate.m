@@ -48,6 +48,7 @@
     [resourceData release];
     [representation release];
     [request release];
+    [originalRequest release];
     [mainClient release];
     [mainHandle release];
     [subresourceClients release];
@@ -505,6 +506,11 @@
     }
 
     [[[self webFrame] children] makeObjectsPerformSelector:@selector(_defersCallbacksChanged)];
+}
+
+- (WebResourceRequest *)_originalRequest
+{
+    return _private->originalRequest;
 }
 
 @end

@@ -322,7 +322,7 @@ static const char * const stateNames[] = {
     
                 case WebFrameLoadTypeStandard:
                     // Add item to history.
-                    entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds request] URL] _web_canonicalize]];
+                    entry = [[WebHistory sharedHistory] addEntryForURL: [[[ds _originalRequest] URL] _web_canonicalize]];
                     if (ptitle)
                         [entry setTitle: ptitle];
                 
