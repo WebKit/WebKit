@@ -338,6 +338,10 @@ void HTMLDocumentImpl::close()
 
     processingLoadEvent = true;
     if (body() && doload) {
+	// We have to clear the tokenizer, in case someone document.write()s from the
+	// onLoad event handler, as in Radar 3206524
+	delete m_tokenizer;
+	m_tokenizer = 0;
         dispatchImageLoadEventsNow();
         body()->dispatchWindowEvent(EventImpl::LOAD_EVENT, false, false);
     }
@@ -364,7 +368,7 @@ void HTMLDocumentImpl::close()
     }
                 
     // The initial layout happens here.
-    DocumentImpl::close();
+    DocumentImpl::closeInternal(!doload);
 
     // Now do our painting
     if (body() && doload) {

@@ -1,5 +1,22 @@
 2003-03-30  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+	- fixed 3206524 - incyte.com "load properties" function does not work
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close): Make sure to clear the tokenizer before firing
+	the onLoad handler, otherwise document.write from inside an onLoad handler
+	will fail.
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::close): Call closeInternal.
+        (DocumentImpl::closeInternal): New version of close that allows
+	bypassing the tokenizer null check, in case we already deleted the
+	tokenizer/
+
+2003-03-30  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Trey.
 
 	- fixed 3169064 - can't search at lonelyplanet.com; onSubmit handler fails due to problem addressing radio button

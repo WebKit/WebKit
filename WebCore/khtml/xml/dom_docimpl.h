@@ -244,6 +244,7 @@ public:
 
     void open (  );
     virtual void close (  );
+    void closeInternal ( bool checkTokenizer );
     void write ( const DOMString &text );
     void write ( const QString &text );
     void writeln ( const DOMString &text );
