@@ -153,6 +153,7 @@ protected:
 
 #if APPLE_CHANGES
 public:
+    void clearPart();
 #endif
     virtual void resizeEvent ( QResizeEvent * event );
     virtual void showEvent ( QShowEvent * );

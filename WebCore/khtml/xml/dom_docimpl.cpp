@@ -1004,6 +1004,11 @@ void DocumentImpl::attach()
     m_render = render;
 }
 
+void DocumentImpl::restoreRenderer(RenderObject* render)
+{
+    m_render = render;
+}
+
 void DocumentImpl::detach()
 {
 #if APPLE_CHANGES
@@ -1028,9 +1033,9 @@ void DocumentImpl::detach()
     }
 #if APPLE_CHANGES
     }
-    //else {
-    //    printf ("not detaching document\n");
-    //}
+    else {
+        m_render = 0;
+    }
 #endif
 }
 

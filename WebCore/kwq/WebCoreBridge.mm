@@ -83,12 +83,14 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     KURL *URL;
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
+    khtml::RenderObject *docRenderer; 
 }
 - initWithDocument: (DOM::DocumentImpl *)doc URL: (KURL)u windowProperties: (KJS::SavedProperties *)wp locationProperties: (KJS::SavedProperties *)lp;
 - (DOM::DocumentImpl *)document;
 - (KURL *)URL;
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;
+- (khtml::RenderObject *)renderer;
 @end
 
 @implementation WebCoreBridge
@@ -144,6 +146,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 {
     if (pageCache) {
         KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
+        [state document]->restoreRenderer([state renderer]);
         _part->kwq->openURLFromPageCache([state document], [state URL], [state windowProperties], [state locationProperties]);
         return;
     }
@@ -231,6 +234,10 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 
         _part->kwq->saveWindowProperties(windowProperties);
         _part->kwq->saveLocationProperties(locationProperties);
+        if (doc->isHTMLDocument()) {
+            DOM::HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>(doc);
+            hdoc->clearTimers();
+        }
         KWQPageState *pageState = [[[KWQPageState alloc] initWithDocument: doc URL:_part->m_url windowProperties:windowProperties locationProperties:locationProperties] autorelease];
         return [self saveDocumentToPageCache: pageState];
     }
@@ -914,6 +921,7 @@ DOM::Node next = n.firstChild();
     [super init];
     doc->ref();
     document = doc;
+    docRenderer = doc->renderer();
     document->setInPageCache(YES);
     URL = new KURL(u);
     windowProperties = wp;
@@ -924,11 +932,19 @@ DOM::Node next = n.firstChild();
 - (void)dealloc
 {
     KHTMLView *view = document->view();
+
+    if (document->isHTMLDocument()) {
+        DOM::HTMLDocumentImpl* hdoc = static_cast<HTMLDocumentImpl*>(document);
+        hdoc->clearTimers();
+    }
     document->setInPageCache(NO);
     document->detach();
     document->deref();
     document = 0;
+    
+    view->clearPart();
     delete view;
+    
     delete URL;
     URL = 0;
     delete windowProperties;
@@ -954,6 +970,11 @@ DOM::Node next = n.firstChild();
 - (KJS::SavedProperties *)locationProperties
 {
     return locationProperties;
+}
+
+- (khtml::RenderObject *)renderer
+{
+    return docRenderer;
 }
 
 

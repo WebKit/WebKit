@@ -623,7 +623,8 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         }
     }
     
-    if (pagesCached > sizeLimit){
+    // Snapback items are never directly purged here.
+    if (pagesCached >= sizeLimit && ![oldestItem alwaysAttemptToUsePageCache]){
         LOG(PageCache, "Purging back/forward cache, %s\n", [[[oldestItem URL] absoluteString] cString]);
         [oldestItem setHasPageCache: NO];
     }
@@ -632,6 +633,12 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 - (WebFrameState)_state
 {
     return _private->state;
+}
+
+static CFAbsoluteTime _timeOfLastCompletedLoad;
++ (CFAbsoluteTime)_timeOfLastCompletedLoad
+{
+    return _timeOfLastCompletedLoad;
 }
 
 - (void)_setState: (WebFrameState)newState
@@ -693,6 +700,19 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         [_private->scheduledLayoutTimer fire];
         ASSERT(_private->scheduledLayoutTimer == nil);
         [_private setPreviousItem:nil];
+        _timeOfLastCompletedLoad = CFAbsoluteTimeGetCurrent();
+    }
+}
+
+// Called after we send an openURL:... down to WebCore.
+- (void)_opened
+{
+    if ([[self dataSource] _loadingFromPageCache]){
+        // Force a layout to update view size and thereby
+        // update scrollbars.
+        [_private->bridge reapplyStyles];
+        [[[self webView] documentView] setNeedsLayout: YES];
+        [[[self webView] documentView] layout];
     }
 }
 
@@ -1579,7 +1599,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
         [[_private provisionalItem] hasPageCache]){
-        LOG(PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
+        LOG (PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
         [_private->provisionalDataSource _startLoading: [[_private provisionalItem] pageCache]];
     }
     else 

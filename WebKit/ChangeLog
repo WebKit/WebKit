@@ -1,3 +1,51 @@
+2002-12-09  Richard Williamson   <rjw@apple.com>
+
+        Many changes for b/f list.
+        1.  Always attempt to cache snap back items.
+        2.  Lazily release resources from page cache.  This garners gains on the PLT (and presumably iBench) tests, both for uncached.
+        3.  Set the page cache size to 4 (+ snap back items).  After releasing resources we hover around 28MB footprint.  Closing windows releases all resources.
+        4.  Turn on the back/forward cache by default.  The menu item still allows you to toggle b/f on and off.  Useful when conducting speed comparison in the PLT.
+        5.  Addition of lazy update to PLT memory statistics to show footprint after lazy release of page cache resources.
+        6.  Delayed to leak detector to account for lazy release of resources.
+        7.  A change when saving a page to back/forward cache to clear and restore the documents root renderer.  Without this fix pages would appear to 'flicker' more when content arrived.
+        8.  A change to ensure a layout when restoring a page from the b/f cache.  Without this fix scrollbars wouldn't appear correctly.
+        9.  A change to ensure that khtmlview layout and paint timers are unscheduled when a page is placed in the b/f cache.
+        10.  A fix to decouple of khtmlview from it's part when placed in the b/f cache.  This fixed a crash caused by inappropriate deference of the part when a page cache item was released.
+        11.  A comment in KHTMLPageCache.h explaining the that our page cache is not the same as the khtml page cache.  (Their cache just cached the html source.)
+        12.  Reapply styles when loading page from cache.  This ensures that visited link get the appropriate style.
+
+        Reviewed by kocienda.
+
+        * History.subproj/WebBackForwardList.m:
+        (+[WebBackForwardList pageCacheSize]):
+        (+[WebBackForwardList setUsesPageCache:]):
+        (+[WebBackForwardList usesPageCache]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem setAlwaysAttemptToUsePageCache:]):
+        (-[WebHistoryItem alwaysAttemptToUsePageCache]):
+        (+[WebHistoryItem _invalidateReleaseTimer]):
+        (-[WebHistoryItem _scheduleRelease]):
+        (+[WebHistoryItem _releaseAllPendingPageCaches]):
+        (-[WebHistoryItem _releasePageCache:]):
+        (-[WebHistoryItem setHasPageCache:]):
+        (-[WebWindowWatcher windowWillClose:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _commitIfReady:]):
+        (-[WebDataSource _loadingFromPageCache]):
+        * WebView.subproj/WebDynamicScrollBarsView.h:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _purgePageCache]):
+        (+[WebFrame _timeOfLastCompletedLoad]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _opened]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences load]):
+
 2002-12-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Chris.

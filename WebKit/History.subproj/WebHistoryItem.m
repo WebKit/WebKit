@@ -5,12 +5,16 @@
 
 #import <WebKit/WebHistoryItem.h>
 
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
+#import <WebKit/WebKitLogging.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+#import <CoreGraphics/CoreGraphicsPrivate.h>
 
 @implementation WebHistoryItem
 
@@ -404,13 +408,94 @@
     return self;
 }
 
+- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag
+{
+    _alwaysAttemptToUsePageCache = flag;
+}
+
+- (BOOL)alwaysAttemptToUsePageCache
+{
+    return _alwaysAttemptToUsePageCache;
+}
+
+
+@end
+
+@interface WebWindowWatcher : NSObject
 @end
 
 @implementation WebHistoryItem (WebPrivate)
 
+static WebWindowWatcher *_windowWatcher;
+static NSMutableSet *_pendingPageCacheToRelease = nil;
+static NSTimer *_pageCacheReleaseTimer = nil;
+
 - (BOOL)hasPageCache;
 {
     return pageCache != nil;
+}
+
++ (void)_invalidateReleaseTimer
+{
+    if (_pageCacheReleaseTimer){
+        [_pageCacheReleaseTimer invalidate];
+        [_pageCacheReleaseTimer release];
+        _pageCacheReleaseTimer = nil;
+    }
+}
+
+- (void)_scheduleRelease
+{
+    LOG (PageCache, "Scheduling release of %@", [self URLString]);
+    if (!_pageCacheReleaseTimer){
+        _pageCacheReleaseTimer = [[NSTimer scheduledTimerWithTimeInterval: 2.5 target:self selector:@selector(_releasePageCache:) userInfo:nil repeats:NO] retain];
+        if (_pendingPageCacheToRelease == nil){
+            _pendingPageCacheToRelease = [[NSMutableSet alloc] init];
+        }
+    }
+    
+    // Only add the pageCache on first scheduled attempt.
+    if (pageCache){
+        [_pendingPageCacheToRelease addObject: pageCache];
+        [pageCache release]; // Last reference held by _pendingPageCacheToRelease.
+    }
+    
+    if (!_windowWatcher){
+        _windowWatcher = [[WebWindowWatcher alloc] init];
+        [[NSNotificationCenter defaultCenter] addObserver:_windowWatcher selector:@selector(windowWillClose:)
+                        name:NSWindowWillCloseNotification object:nil];
+    }
+}
+
++ (void)_releaseAllPendingPageCaches
+{
+    LOG (PageCache, "releasing %d items\n", [_pendingPageCacheToRelease count]);
+    [WebHistoryItem _invalidateReleaseTimer];
+    [_pendingPageCacheToRelease removeAllObjects];
+}
+
+- (void)_releasePageCache: (NSTimer *)timer
+{
+    CGSRealTimeDelta userDelta;
+    CFAbsoluteTime loadDelta;
+    
+    loadDelta = CFAbsoluteTimeGetCurrent()-[WebFrame _timeOfLastCompletedLoad];
+    userDelta = CGSSecondsSinceLastInputEvent(kCGSAnyInputEventType);
+
+    [_pageCacheReleaseTimer release];
+    _pageCacheReleaseTimer = nil;
+
+    if ((userDelta < 0.5 || loadDelta < 1.25) && [_pendingPageCacheToRelease count] < 42){
+        LOG (PageCache, "postponing again because not quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
+        [self _scheduleRelease];
+        return;
+    }
+    else
+        LOG (PageCache, "releasing, quiescent for more than a second (%f since last input, %f since last load).", userDelta, loadDelta);
+
+    [WebHistoryItem _releaseAllPendingPageCaches];
+    
+    LOG (PageCache, "Done releasing %p %@", self, [self URLString]);
 }
 
 - (void)setHasPageCache: (BOOL)f
@@ -418,7 +503,7 @@
     if (f && !pageCache)
         pageCache = [[NSMutableDictionary alloc] init];
     if (!f && pageCache){
-        [pageCache release];
+        [self _scheduleRelease];
         pageCache = 0;
     }
 }
@@ -430,3 +515,12 @@
 
 
 @end
+
+@implementation WebWindowWatcher
+-(void)windowWillClose:(NSNotification *)notification
+{
+    [WebHistoryItem _releaseAllPendingPageCaches];
+}
+@end
+
+

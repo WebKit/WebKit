@@ -21,5 +21,6 @@
 
 - (void)setAllowsScrolling:(BOOL)flag;
 - (BOOL)allowsScrolling;
+- (void)updateScrollers;
 
 @end

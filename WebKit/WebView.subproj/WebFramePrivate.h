@@ -161,9 +161,11 @@ typedef enum {
 
 - (void)_setProvisionalDataSource: (WebDataSource *)d;
 
++ (CFAbsoluteTime)_timeOfLastCompletedLoad;
 - (BOOL)_canCachePage;
 - (void)_purgePageCache;
 
+- (void)_opened;
 // used to decide to use loadType=Same
 - (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL;
 

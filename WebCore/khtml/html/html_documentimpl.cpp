@@ -296,6 +296,14 @@ static bool isTransitional(const QString &spec, int start)
     return false;
 }
 
+#ifdef APPLE_CHANGES
+void HTMLDocumentImpl::clearTimers()
+{
+    view()->unscheduleRelayout();
+    view()->unscheduleRepaint();
+}
+#endif
+
 void HTMLDocumentImpl::close()
 {
     // First fire the onload.

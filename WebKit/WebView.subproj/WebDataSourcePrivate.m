@@ -158,6 +158,7 @@
         _private->loadingFromPageCache = YES;
         [self _commitIfReady: pageCache];
     } else if (!_private->mainClient) {
+        _private->loadingFromPageCache = NO;
         if ([self webFrame] == [[self controller] mainFrame]) {
 	    [_private->request setCookiePolicyBaseURL:[self URL]];
 	} else {
@@ -464,6 +465,8 @@
                 headers:headers 
                 lastModified: (pageCache ? nil : [_private->response lastModifiedDate])
                 pageCache: pageCache];
+
+        [[self webFrame] _opened];
     }
 }
 
@@ -651,5 +654,11 @@
 {
     return _private->storedInPageCache;
 }
+
+- (BOOL)_loadingFromPageCache
+{
+    return _private->loadingFromPageCache;
+}
+
 @end
 

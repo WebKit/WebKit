@@ -189,21 +189,8 @@
     return result;
 }
 
-// Off be default for now.
-static BOOL usesPageCache = 0;
-
-+ (void)setUsesPageCache: (BOOL)f
-{
-    usesPageCache = f ? YES : NO;
-}
-
-+ (BOOL)usesPageCache
-{
-    return usesPageCache;
-}
-
 static BOOL pageCacheSizeModified = NO;
-static unsigned pageCacheSize = 10;
+static unsigned pageCacheSize = 4;
 
 + (void)setPageCacheSize: (unsigned)size
 {
@@ -217,6 +204,21 @@ static unsigned pageCacheSize = 10;
     if (!pageCacheSizeModified)
         return [[WebPreferences standardPreferences] _pageCacheSize];
     return pageCacheSize;
+}
+
+// On be default for now.
+static BOOL usesPageCache = YES;
+
++ (void)setUsesPageCache: (BOOL)f
+{
+    usesPageCache = f ? YES : NO;
+}
+
++ (BOOL)usesPageCache
+{
+    if ([WebBackForwardList pageCacheSize] == 0)
+        return NO;
+    return usesPageCache;
 }
 
 

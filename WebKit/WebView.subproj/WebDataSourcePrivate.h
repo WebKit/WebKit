@@ -147,5 +147,6 @@
 - (BOOL)_justOpenedForTargetedLink;
 - (void)_setStoredInPageCache:(BOOL)f;
 - (BOOL)_storedInPageCache;
+- (BOOL)_loadingFromPageCache;
 
 @end

@@ -27,6 +27,7 @@
     NSMutableDictionary *pageCache;
     BOOL _loadedIcon;
     BOOL _isTargetItem;
+    BOOL _alwaysAttemptToUsePageCache;
 }
 
 + (WebHistoryItem *)entryWithURL:(NSURL *)URL;
@@ -68,9 +69,13 @@
 - (WebHistoryItem *)childItemWithName:(NSString *)name;
 - (WebHistoryItem *)targetItem;
 
+- (void)setAlwaysAttemptToUsePageCache: (BOOL)flag;
+- (BOOL)alwaysAttemptToUsePageCache;
+
 @end
 
 @interface WebHistoryItem (WebPrivate)
++ (void)_releaseAllPendingPageCaches;
 - (BOOL)hasPageCache;
 - (void)setHasPageCache: (BOOL)f;
 - (NSMutableDictionary *)pageCache;

@@ -64,6 +64,7 @@ public:
 #if APPLE_CHANGES
     DOMString policyBaseURL() const { return m_policyBaseURL; }
     void setPolicyBaseURL(const DOMString &s) { m_policyBaseURL = s; }
+    void clearTimers();
 #endif
 
     HTMLElementImpl *body();

@@ -94,7 +94,7 @@
         @"1.00",                        WebKitInitialTimedLayoutDelayPreferenceKey,
         @"4096",                        WebKitInitialTimedLayoutSizePreferenceKey,
         @"1.00",                        WebKitResourceTimedLayoutDelayPreferenceKey,
-        @"10",                          WebKitPageCacheSizePreferenceKey,
+        @"4",                          WebKitPageCacheSizePreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitInitialTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitResourceTimedLayoutEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUserStyleSheetEnabledPreferenceKey,

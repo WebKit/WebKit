@@ -416,6 +416,7 @@ public:
 
     bool inPageCache();
     void setInPageCache (bool flag);
+    void restoreRenderer(khtml::RenderObject* render);
    
 private:
     bool m_inPageCache;
