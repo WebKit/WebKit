@@ -1,3 +1,32 @@
+2004-09-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3461499> JavaScript function document.open() is buggy with 2nd argument "replace"
+
+        Experiments with Firefox indicate that document.open() should not be treated as window.open() unless there
+        are more than two parameters. Also, Firefox does not implement the "replace" behavior, so we don't have
+        to worry about it either.
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLDocFunction::tryCall): Only forward to window if there are more than
+        two parameters, rather than if there are more than one.
+
+        - fixed <rdar://problem/3672933> oninput is firing at page load time for <input type=range>
+
+        * kwq/KWQSlider.mm: (QSlider::setValue): Don't emit a signal here. This follows the usual pattern, where
+        a signal is only emitted for changes that are not explicitly requested by the caller.
+
+        - fixed <rdar://problem/3821167> leaks of something allocated by recalcStyle after loading altavista page from cvs-base
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::recalcStyle): Ref and deref the style we allocate so it's
+        not left floating if setStyle decides not to ref it.
+
+        - fixed <rdar://problem/3821172> leak of HTML attribute string after loading the ESPN page from cvs-base
+
+        * khtml/html/html_elementimpl.cpp: (HTMLElementImpl::parseHTMLAttribute): Use the DOMString version of
+        the lower() operation so we don't end up leaving a DOMStringImpl * floating if AtomicString decides not
+        to ref it.
+
 2004-09-30  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3822330> REGRESSION: crash on launch when homepage is set to about:blank

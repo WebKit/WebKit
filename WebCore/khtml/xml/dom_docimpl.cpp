@@ -1065,6 +1065,7 @@ void DocumentImpl::recalcStyle( StyleChange change )
         RenderStyle* oldStyle = m_render->style();
         if ( oldStyle ) oldStyle->ref();
         RenderStyle* _style = new (m_renderArena) RenderStyle();
+        _style->ref();
         _style->setDisplay(BLOCK);
         _style->setVisuallyOrdered( visuallyOrdered );
         // ### make the font stuff _really_ work!!!!
@@ -1102,11 +1103,10 @@ void DocumentImpl::recalcStyle( StyleChange change )
         StyleChange ch = diff( _style, oldStyle );
         if(m_render && ch != NoChange)
             m_render->setStyle(_style);
-	else
-	    delete _style;
         if ( change != Force )
             change = ch;
 
+        _style->deref(m_renderArena);
         if (oldStyle)
             oldStyle->deref(m_renderArena);
     }
