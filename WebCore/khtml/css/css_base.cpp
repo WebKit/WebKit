@@ -167,7 +167,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString after("after");
     static AtomicString anyLink("-khtml-any-link");
     static AtomicString before("before");
-    static AtomicString drag("drag");
+    static AtomicString drag("-khtml-drag");
     static AtomicString empty("empty");
     static AtomicString firstChild("first-child");
     static AtomicString firstLetter("first-letter");

@@ -1,3 +1,16 @@
+2004-06-14  Trey Matteson  <trey@apple.com>
+
+	Two tweaks to recently added "drag" pseudo-class, as suggested by
+	Dave.  The class is renamed to "-khtml-drag", and we update layout
+	when using it, instead of only updating styles.
+
+        Reviewed by hyatt.
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::snapshotDragImage):
+
 2004-06-13  Trey Matteson  <trey@apple.com>
 
 	Support for DHTML cut/copy/paste.  We now support oncut, oncopy, onpaste.  The events

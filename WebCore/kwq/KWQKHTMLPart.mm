@@ -3055,7 +3055,7 @@ NSImage *KWQKHTMLPart::snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRe
     }
     
     renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
-    d->m_doc->updateRendering();        // forces style recalc - needed since changing the drag state might
+    d->m_doc->updateLayout();        // forces style recalc - needed since changing the drag state might
                                         // imply new styles, plus JS could have changed other things
     QRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
