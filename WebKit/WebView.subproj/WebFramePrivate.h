@@ -126,7 +126,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 /*!
     @method loadArchive:
     @abstract Causes WebFrame to load a WebArchive.
-    @param The archive to be loaded.
+    @param archive The archive to be loaded.
 */
 - (void)loadArchive:(WebArchive *)archive;
 

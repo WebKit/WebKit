@@ -118,9 +118,31 @@
 @interface WebDataSource (WebPrivate)
 
 // API Considerations:
+
+/*!
+    @method subresources
+    @abstract Returns all the subresources associated with the data source.
+*/
 - (NSArray *)subresources;
+
+/*!
+    method subresourceForURL:
+    @abstract Returns a subresource for a given URL.
+    @param URL The URL of the subresource.
+*/
 - (WebResource *)subresourceForURL:(NSURL *)URL;
+
+/*!
+    @method addSubresource:
+    @abstract Adds a subresource to the data source.
+    @param subresource The subresource to be added.
+    @description addSubresource: adds a subresource to the data source's list of subresources. 
+    From then on, if something causes the data source to load the URL of the subresource, the data source 
+    will load the data from the subresource instead of from the network. NOTE: If the data source already has
+    a subresource with the same URL, addSubresource: will replace it.
+*/
 - (void)addSubresource:(WebResource *)subresource;
+
 - (void)addSubresources:(NSArray *)subresources;
 
 // Other private methods

@@ -1,3 +1,8 @@
+2004-04-26  Chris Blumenberg  <cblu@apple.com>
+
+        * WebView.subproj/WebDataSourcePrivate.h: added some header doc comments
+        * WebView.subproj/WebFramePrivate.h: fixed header doc typo
+
 2004-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
