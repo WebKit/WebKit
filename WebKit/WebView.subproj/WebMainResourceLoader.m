@@ -42,8 +42,6 @@
         // set the user agent for the request
         // consult the data source's controller
         WebController *controller = [dataSource controller];
-        WebResourceRequest *newRequest = [dataSource request];
-        [newRequest setUserAgent:[controller userAgentForURL:[newRequest URL]]];
         resourceProgressDelegate = [[controller resourceProgressDelegate] retain];
     }
 
@@ -208,7 +206,10 @@
 
     [newRequest setUserAgent:[controller userAgentForURL:URL]];
 
-    [dataSource _setRequest:newRequest];
+    // Don't set this on the first request.  It is set
+    // when the main load was started.
+    if (request)
+        [dataSource _setRequest:newRequest];
 
     // Not the first send, so reload.
     if (request) {
@@ -219,9 +220,9 @@
     // Let the resourceProgressDelegate get a crack at modifying the request.
     newRequest = [resourceProgressDelegate resourceRequest: request willSendRequest: newRequest fromDataSource: dataSource];
 
-    [newRequest retain];
-    [request release];
-    request = newRequest;
+    WebResourceRequest *oldRequest = request;
+    request = [newRequest copy];
+    [oldRequest release];
         
     return newRequest;
 }

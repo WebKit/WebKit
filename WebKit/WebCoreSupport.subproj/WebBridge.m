@@ -172,12 +172,12 @@
 {
     ASSERT(frame != nil);
 
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
-    WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request];
-    [handle loadWithDelegate:nil];
-    [[frame controller] _receivedProgressForResourceHandle:handle fromDataSource:[self dataSource] complete:YES];
-    [handle release];
-    [request release];
+    //WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
+    //WebResourceHandle *handle = [[WebResourceHandle alloc] initWithRequest:request];
+    //[handle loadWithDelegate:nil];
+    [[frame controller] _receivedProgressForResourceHandle:nil fromDataSource:[self dataSource] complete:YES];
+    //[handle release];
+    //[request release];
 }
 
 - (BOOL)isReloading

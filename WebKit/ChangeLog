@@ -1,3 +1,18 @@
+2002-10-03  Richard Williamson   <rjw@apple.com>
+
+        
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:size:]):
+        Hack to prevent handle creation with nil delegate,
+        still perform frame complete check.
+        
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        Removed unused code.
+        
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        Copy the request, ugh.
+
 2002-10-03  Darin Adler  <darin@apple.com>
 
 	Add API for executing JavaScript.
