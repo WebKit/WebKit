@@ -1,5 +1,14 @@
 2003-12-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3475761, list bullets mislayout after text zooming.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle):
+
+2003-12-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3493356, table cells didn't repaint properly.
 	
         Reviewed by kocienda
