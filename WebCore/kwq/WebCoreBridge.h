@@ -349,6 +349,8 @@ typedef enum {
 - (BOOL)tryDHTMLCopy;
 - (BOOL)tryDHTMLPaste;
 
+- (NSMutableDictionary *)dashboardRegions;
+
 @end
 
 // The WebCoreBridge protocol contains methods for use by the WebCore side of the bridge.
@@ -515,7 +517,7 @@ typedef enum {
 
 - (void)didFirstLayout;
 
-- (void)dashboardRegionsChanged:(NSDictionary *)regions;
+- (void)dashboardRegionsChanged:(NSMutableDictionary *)regions;
 
 @end
 

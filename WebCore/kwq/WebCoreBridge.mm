@@ -1825,6 +1825,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMRange _rangeWithImpl:makeRange(previous, next).handle()];
 }
 
+- (NSMutableDictionary *)dashboardRegions
+{
+    return _part->dashboardRegionsDictionary();
+}
+
 @end
 
 @implementation WebCoreBridge (WebCoreBridgePrivate)

@@ -214,6 +214,9 @@ Could be worth adding to the API.
 - (void)_writeImageElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 - (void)_writeLinkElement:(NSDictionary *)element withPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
 
+- (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions;
+- (NSDictionary *)_dashboardRegions;
+
 @end
 
 @interface WebView (WebViewPrintingPrivate)

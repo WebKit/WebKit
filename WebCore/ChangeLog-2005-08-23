@@ -1,3 +1,45 @@
+2004-09-28  Richard Williamson   <rjw@apple.com>
+
+	More dashboard region changes for John.
+
+        <rdar://problem/3817421> add getter for dashboard regions (debugging)
+        
+        <rdar://problem/3817417> NSScrollView need autoregions for dashboard
+        
+        <rdar://problem/3817388> should have short form form control regions
+        
+        <rdar://problem/3817477> visibility does not work with dashboard control regions
+
+        Reviewed by Hyatt.
+
+        * WebCore-combined.exp:
+        * WebCore.exp:
+        * khtml/css/cssparser.cpp:
+        (skipCommaInDashboardRegion):
+        (CSSParser::parseDashboardRegions):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::updateDashboardRegions):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        (RenderObject::addDashboardRegions):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::setDashboardRegions):
+        * khtml/xml/dom_docimpl.h:
+        (DOM::DocumentImpl::setDashboardRegionsDirty):
+        (DOM::DocumentImpl::dashboardRegionsDirty):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::paint):
+        (KWQKHTMLPart::dashboardRegionsDictionary):
+        (KWQKHTMLPart::dashboardRegionsChanged):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dashboardRegions]):
+        * kwq/WebDashboardRegion.h:
+        * kwq/WebDashboardRegion.m:
+        (-[WebDashboardRegion description]):
+
 2004-09-28  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Chris.

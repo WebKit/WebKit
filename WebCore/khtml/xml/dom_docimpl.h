@@ -708,6 +708,8 @@ public:
     void setDecoder(khtml::Decoder *);
     khtml::Decoder *decoder() const { return m_decoder; }
 
+    void setDashboardRegionsDirty(bool f) { m_dashboardRegionsDirty = f; }
+    bool dashboardRegionsDirty() const { return m_dashboardRegionsDirty; }
     bool hasDashboardRegions () const { return m_hasDashboardRegions; }
     void setHasDashboardRegions (bool f) { m_hasDashboardRegions = f; }
     const QValueList<khtml::DashboardRegionValue> & dashboardRegions() const;
@@ -737,6 +739,7 @@ private:
     
     QValueList<khtml::DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;
+    bool m_dashboardRegionsDirty;
 #endif
 };
 

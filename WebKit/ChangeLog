@@ -1,3 +1,21 @@
+2004-09-28  Richard Williamson   <rjw@apple.com>
+
+        <rdar://problem/3817421> add getter for dashboard regions (debugging)
+        
+        <rdar://problem/3817417> NSScrollView need autoregions for dashboard
+	Also KWQScrollBars
+
+        Reviewed by Hyatt.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dashboardRegionsChanged:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _setInitiatedDrag:]):
+        (-[WebView _addScrollerDashboardRegions:from:]):
+        (-[WebView _addScrollerDashboardRegions:]):
+        (-[WebView _dashboardRegions]):
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-09-27  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3814705> 8A266: Safari authentication dialog "remember password" text should match Mail

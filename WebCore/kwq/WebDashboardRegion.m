@@ -62,7 +62,8 @@
         type == WebDashboardRegionTypeNone ? "None" :
             (type == WebDashboardRegionTypeCircle ? "Circle" :
                 (type == WebDashboardRegionTypeRectangle ? "Rectangle" :
-                    "Unknown"))];
+                    (type == WebDashboardRegionTypeScrollerRectangle ? "ScrollerRectangle" :
+                        "Unknown")))];
 }
 
 @end

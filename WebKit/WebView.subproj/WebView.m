@@ -12,6 +12,7 @@
 #import <WebKit/WebBaseNetscapePluginView.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebControllerSets.h>
+#import <WebKit/WebDashboardRegion.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultEditingDelegate.h>
@@ -1125,6 +1126,59 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 - (void)_setInitiatedDrag:(BOOL)initiatedDrag
 {
     _private->initiatedDrag = initiatedDrag;
+}
+
+
+- (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions from:(NSArray *)views
+{
+    // Add scroller regions for NSScroller and KWQScrollBar
+    int i, count = [views count];
+    
+    for (i = 0; i < count; i++) {
+        NSView *aView = [views objectAtIndex:i];
+        
+        if ([aView isKindOfClass:[NSScroller class]] ||
+            [aView isKindOfClass:NSClassFromString (@"KWQScrollBar")]) {
+            NSRect bounds = [aView bounds];
+            NSRect adjustedBounds;
+            adjustedBounds.origin = [self convertPoint:bounds.origin fromView:aView];
+            adjustedBounds.origin.y = [self bounds].size.height - adjustedBounds.origin.y;
+            
+            // AppKit has horrible hack of placing absent scrollers at -100,-100
+            if (adjustedBounds.origin.y == -100)
+                continue;
+            adjustedBounds.size = bounds.size;
+            NSRect clip = [aView visibleRect];
+            NSRect adjustedClip;
+            adjustedClip.origin = [self convertPoint:clip.origin fromView:aView];
+            adjustedClip.origin.y = [self bounds].size.height - adjustedClip.origin.y;
+            adjustedClip.size = clip.size;
+            WebDashboardRegion *aRegion = 
+                        [[[WebDashboardRegion alloc] initWithRect:adjustedBounds 
+                                    clip:adjustedClip type:WebDashboardRegionTypeScrollerRectangle] autorelease];
+            NSMutableArray *scrollerRegions;
+            scrollerRegions = [regions objectForKey:@"scroller"];
+            if (!scrollerRegions) {
+                scrollerRegions = [NSMutableArray array];
+                [regions setObject:scrollerRegions forKey:@"scroller"];
+            }
+            [scrollerRegions addObject:aRegion];
+        }
+        [self _addScrollerDashboardRegions:regions from:[aView subviews]];
+    }
+}
+
+- (void)_addScrollerDashboardRegions:(NSMutableDictionary *)regions
+{
+    [self _addScrollerDashboardRegions:regions from:[self subviews]];
+}
+
+- (NSDictionary *)_dashboardRegions
+{
+    // Only return regions from main frame.
+    NSMutableDictionary *regions = [[[self mainFrame] _bridge] dashboardRegions];
+    [self _addScrollerDashboardRegions:regions];
+    return regions;
 }
 
 @end

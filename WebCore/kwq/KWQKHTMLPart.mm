@@ -1055,6 +1055,13 @@ void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
         // _elementToDraw is used to draw only one element
         RenderObject *eltRenderer = (_elementToDraw != 0) ? _elementToDraw.handle()->renderer() : 0;
         renderer()->layer()->paint(p, rect, _drawSelectionOnly, eltRenderer);
+
+#if APPLE_CHANGES
+        // Regions may have changed as a result of the visibility/z-index of element changing.
+        if (renderer()->document()->dashboardRegionsDirty()){
+            renderer()->canvas()->view()->updateDashboardRegions();
+        }
+#endif
     } else {
         ERROR("called KWQKHTMLPart::paint with nil renderer");
     }
@@ -3933,12 +3940,18 @@ void KWQKHTMLPart::didFirstLayout()
     [_bridge didFirstLayout];
 }
 
-void KWQKHTMLPart::dashboardRegionsChanged(const QValueList<DashboardRegionValue>& regions)
+NSMutableDictionary *KWQKHTMLPart::dashboardRegionsDictionary()
 {
+    DocumentImpl *doc = xmlDocImpl();
+    if (!doc) {
+        return nil;
+    }
+
+    const QValueList<DashboardRegionValue> regions = doc->dashboardRegions();
     uint i, count = regions.count();
 
     // Convert the QValueList<DashboardRegionValue> into a NSDictionary of WebDashboardRegions
-    NSMutableDictionary *webRegions = [[NSMutableDictionary alloc] initWithCapacity:count];
+    NSMutableDictionary *webRegions = [[[NSMutableDictionary alloc] initWithCapacity:count] autorelease];
     for (i = 0; i < count; i++) {
         DashboardRegionValue region = regions[i];
         NSRect clip;
@@ -3967,5 +3980,11 @@ void KWQKHTMLPart::dashboardRegionsChanged(const QValueList<DashboardRegionValue
         [regionValues addObject:webRegion];
     }
     
+    return webRegions;
+}
+
+void KWQKHTMLPart::dashboardRegionsChanged()
+{
+    NSMutableDictionary *webRegions = dashboardRegionsDictionary();
     [_bridge dashboardRegionsChanged:webRegions];
 }

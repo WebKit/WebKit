@@ -1382,12 +1382,16 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     [[wv _frameLoadDelegateForwarder] webView:wv didFirstLayoutInFrame:_frame];
 }
 
-- (void)dashboardRegionsChanged:(NSDictionary *)regions
+- (void)dashboardRegionsChanged:(NSMutableDictionary *)regions
 {
     WebView *wv = [_frame webView];
     id wd = [wv UIDelegate];
-    if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)])
+    
+    [wv _addScrollerDashboardRegions:regions];
+    
+    if ([wd respondsToSelector: @selector(webView:dashboardRegionsChanged:)]) {
         [wd webView:wv dashboardRegionsChanged:regions];
+    }
 }
 
 // This method exists to hold localizable strings for action names for the Undo menu item. It contains
