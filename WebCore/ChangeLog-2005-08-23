@@ -1,3 +1,20 @@
+2003-03-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3127705 - don't open new window on opt-click even if the link requests it
+	- fixed 3143971 - cmd-click should override the target="_blank" and target="_new" (important for tabs)
+	
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL): Don't use findOrCreateFrameNamed, instead pass target along.
+        (KWQKHTMLPart::openURLRequest): Likewise.
+        (KWQKHTMLPart::submitForm): Likewise.
+        (KWQKHTMLPart::urlSelected): Likewise.
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): Likewise.
+        * kwq/WebCoreBridge.h:
+
 2003-03-07  David Hyatt  <hyatt@apple.com>
 
         better fix for text-decoration issue on time.com.  

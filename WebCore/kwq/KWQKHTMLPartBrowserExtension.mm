@@ -83,10 +83,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     WebCoreBridge *bridge;
 
     if (frameName != nil) {
-	bridge = [_part->bridge() findFramedNamed:frameName];
+	bridge = [_part->bridge() findFrameNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
-		[bridge loadURL:url.url().getNSString() referrer:[_part->bridge() referrer] reload:urlArgs.reload triggeringEvent:nil form:nil formValues:nil];
+		[bridge loadURL:url.url().getNSString() referrer:[_part->bridge() referrer] reload:urlArgs.reload target:nil triggeringEvent:nil form:nil formValues:nil];
 	    }
 	    *partResult = [bridge part];
 	    return;

@@ -46,7 +46,7 @@
     @method createWindowWithRequest:
     @abstract Create a new window and begin to load the specified request.
     @discussion The newly created window is hidden, and the window operations delegate on the
-    new controllers will get a showWindow or showWindowBehindFrontmost call.
+    new controllers will get a showWindow call.
     @param request The request to load.
     @result The WebController for the WebView in the new window.
 */
@@ -60,15 +60,6 @@
     is used to create a new window.
 */
 - (void)showWindow;
-
-/*!
-    @method showWindowBehindFrontmost
-    @abstract Show the window that contains the top level view of the controller,
-    ordering it behind the main window.
-    @discussion This will only be called just after createWindowWithRequest:
-    is used to create a new window.
-*/
-- (void)showWindowBehindFrontmost;
 
 /*!
     @method closeWindow

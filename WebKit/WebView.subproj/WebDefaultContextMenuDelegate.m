@@ -148,7 +148,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
 	[request setReferrer:referrer];
     }
     
-    [controller _openNewWindowWithRequest:request behind:NO];
+    [controller _openNewWindowWithRequest:request];
 }
 
 - (void)downloadURL:(NSURL *)URL

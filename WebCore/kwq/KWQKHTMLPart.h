@@ -207,8 +207,6 @@ private:
     
     NSView *mouseDownViewIfStillGood();
 
-    WebCoreBridge *bridgeForFrameName(const QString &frameName);
-
     QString generateFrameName();
 
     NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);

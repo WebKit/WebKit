@@ -1,3 +1,41 @@
+2003-03-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3127705 - don't open new window on opt-click even if the link requests it
+	- fixed 3143971 - cmd-click should override the target="_blank" and target="_new" (important for tabs)
+
+	- removed open new window and open new window behind policies
+	- removed [WebFrame findOrCreateFrameNamed:] from API
+	- remved showWindowBehind from window operations delegate
+	- added decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener: delegate method
+	
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadPluginRequest:]):
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        (-[WebPluginRequest initWithRequest:frameName:notifyData:]):
+        (-[WebPluginRequest dealloc]):
+        (-[WebPluginRequest frameName]):
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:referrer:reload:target:triggeringEvent:form:formValues:]):
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _openNewWindowWithRequest:]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:]):
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (-[WebDefaultPolicyDelegate decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener:]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[NSObject performSelector:withObject:withObject:withObject:]):
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2003-03-07  Chris Blumenberg  <cblu@apple.com>
 
 	Updated header doc comments.
@@ -26,7 +64,6 @@
         * WebView.subproj/WebView.h:
         * WebView.subproj/WebView.m:
 
-=======
 2003-03-07  John Sullivan  <sullivan@apple.com>
 
 	WebKit part of fixes to these two synching-related bugs:

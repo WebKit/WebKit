@@ -37,6 +37,8 @@
 #import <WebFoundation/WebHTTPRequest.h>
 #import <WebFoundation/WebSynchronousResult.h>
 
+#import <objc/objc-runtime.h>
+
 #ifndef NDEBUG
 static const char * const stateNames[] = {
     "WebFrameStateProvisional",
@@ -88,6 +90,22 @@ Repeat load of the same URL (by any other means of navigation other than the rel
  WF Cache policy: WebRequestCachePolicyLoadFromOrigin
  Add to back/forward list: NO
 */
+
+@interface NSObject (WebExtraPerformMethod)
+
+- (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3;
+
+@end
+
+@implementation NSObject (WebExtraPerformMethod)
+
+- (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3
+{
+    return objc_msgSend(self, aSelector, object1, object2, object3);
+}
+
+@end
+
 
 // One day we might want to expand the use of this kind of class such that we'd receive one
 // over the bridge, and possibly hand it on through to the FormsDelegate.
@@ -151,6 +169,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     
     ASSERT(listener == nil);
     ASSERT(policyRequest == nil);
+    ASSERT(policyFrameName == nil);
     ASSERT(policyTarget == nil);
     ASSERT(policyFormState == nil);
 
@@ -1035,7 +1054,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form.
     
-    // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:triggeringEvent:isFormSubmission:
+    // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:target:triggeringEvent:isFormSubmission:
     // Perhaps they should.
     
     if (!formData
@@ -1265,23 +1284,82 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = nil;
 
     WebRequest *request = _private->policyRequest;
+    NSString *frameName = _private->policyFrameName;
     id target = _private->policyTarget;
     SEL selector = _private->policySelector;
     WebFormState *formState = _private->policyFormState;
 
     _private->policyRequest = nil;
+    _private->policyFrameName = nil;
     _private->policyTarget = nil;
     _private->policySelector = nil;
     _private->policyFormState = nil;
 
     if (call) {
-        [target performSelector:selector withObject:nil withObject:nil];
+	if (frameName) {
+	    [target performSelector:selector withObject:nil withObject:nil withObject:nil];
+	} else {
+	    [target performSelector:selector withObject:nil withObject:nil];
+	}
     }
 
     [request release];
+    [frameName release];
     [target release];
     [formState release];
 }
+
+- (void)_checkNewWindowPolicyForRequest:(WebRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
+{
+    WebPolicyDecisionListener *listener = [[WebPolicyDecisionListener alloc]
+        _initWithTarget:self action:@selector(_continueAfterNewWindowPolicy:)];
+
+    _private->policyRequest = [request retain];
+    _private->policyTarget = [target retain];
+    _private->policyFrameName = [frameName retain];
+    _private->policySelector = selector;
+    _private->listener = [listener retain];
+    _private->policyFormState = [formState retain];
+
+    [[[self controller] _policyDelegateForwarder] decideNewWindowPolicyForAction:action
+						                      andRequest:request
+						                    newFrameName:frameName
+						                decisionListener:listener];
+    
+    [listener release];
+}
+
+-(void)_continueAfterNewWindowPolicy:(WebPolicyAction)policy
+{
+    WebRequest *request = [[_private->policyRequest retain] autorelease];
+    NSString *frameName = [[_private->policyFrameName retain] autorelease];
+    id target = [[_private->policyTarget retain] autorelease];
+    SEL selector = _private->policySelector;
+    WebFormState *formState = [[_private->policyFormState retain] autorelease];
+
+    // will release _private->policy* objects, hence the above retains
+    [self _invalidatePendingPolicyDecisionCallingDefaultAction:NO];
+
+    BOOL shouldContinue = NO;
+
+    switch (policy) {
+    case WebPolicyIgnore:
+        break;
+    case WebPolicySave:
+	// FIXME: should download full request
+        [[self controller] _downloadURL:[request URL]];
+        break;
+    case WebPolicyUse:
+	shouldContinue = YES;
+        break;
+    default:
+        [NSException raise:NSInvalidArgumentException
+                    format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+    }
+
+    [target performSelector:selector withObject:(shouldContinue ? request : nil) withObject:frameName withObject:formState];
+}
+
 
 - (void)_checkNavigationPolicyForRequest:(WebRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector
 {
@@ -1335,23 +1413,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     BOOL shouldContinue = NO;
 
-    // If we've just opened a new window as part of finding the right frame to load, no point
-    // in immediately opening another window.
-    if ([[self provisionalDataSource] _justOpenedForTargetedLink] && 
-	(policy == WebPolicyOpenNewWindow || policy == WebPolicyOpenNewWindowBehind)) {
-	policy = WebPolicyUse;
-    }
-
     switch (policy) {
     case WebPolicyIgnore:
         break;
-    case WebPolicyOpenNewWindow:
-        [[self controller] _openNewWindowWithRequest:request behind:NO];
-        break;
-    case WebPolicyOpenNewWindowBehind:
-        [[self controller] _openNewWindowWithRequest:request behind:YES];
-        break;
     case WebPolicySave:
+	// FIXME: should download full request
         [[self controller] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
@@ -1422,22 +1488,57 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+
+
+-(void)_continueLoadRequestAfterNewWindowPolicy:(WebRequest *)request frameName:(NSString *)frameName formState:(WebFormState *)formState
+{
+    if (!request) {
+        return;
+    }
+    
+    WebController *controller = nil;
+    id wd = [[self controller] windowOperationsDelegate];
+    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
+	controller = [wd createWindowWithRequest:nil];
+        
+    [controller _setTopLevelFrameName:frameName];
+    [[controller _windowOperationsDelegateForwarder] showWindow];
+    WebFrame *frame = [controller mainFrame];
+
+    [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
+}
+
+
 // main funnel for navigating via callback from WebCore (e.g., clicking a link, redirect)
-- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)_loadURL:(NSURL *)URL referrer:(NSString *)referrer loadType:(WebFrameLoadType)loadType target:(NSString *)target triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
 {
     BOOL isFormSubmission = (values != nil);
+
     WebRequest *request = [[WebRequest alloc] initWithURL:URL];
     [request setReferrer:referrer];
     [self _addExtraFieldsToRequest:request alwaysFromRequest: (event != nil || isFormSubmission)];
     if (loadType == WebFrameLoadTypeReload) {
         [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
+
     // I believe this is never called with LoadSame.  If it is, we probably want to set the cache
     // policy of LoadFromOrigin, but I didn't test that.
     ASSERT(loadType != WebFrameLoadTypeSame);
 
     NSDictionary *action = [self _actionInformationForLoadType:loadType isFormSubmission:isFormSubmission event:event originalURL:URL];
     WebFormState *formState = [[WebFormState alloc] initWithForm:form values:values];
+
+    if (target != nil) {
+	WebFrame *targetFrame = [self findFrameNamed:target];
+	if (targetFrame != nil) {
+	    [targetFrame _loadURL:URL referrer:referrer loadType:loadType target:nil triggeringEvent:event form:form formValues:values];
+	} else {
+	    [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+	}
+	[request release];
+	[formState release];
+	return;
+    }
 
     WebDataSource *oldDataSource = [[self dataSource] retain];
 
@@ -1529,10 +1630,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 
     // FIXME: is this the right referrer?
-    [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType triggeringEvent:nil form:nil formValues:nil];
+    [childFrame _loadURL:URL referrer:[[self _bridge] referrer] loadType:childLoadType target:nil triggeringEvent:nil form:nil formValues:nil];
 }
 
-- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)_postWithURL:(NSURL *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
 {
     // When posting, use the WebResourceHandleFlagLoadFromOrigin load flag.
     // This prevents a potential bug which may cause a page with a form that uses itself
@@ -1548,7 +1649,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = [[WebFormState alloc] initWithForm:form values:values];
 
-    [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
+    WebFrame *targetFrame = self;
+
+    if (target != nil) {
+	WebFrame *targetFrame = [self findFrameNamed:target];
+	if (targetFrame == nil) {
+	    [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+	    [request release];
+	    [formState release];
+	    return;
+	}
+    }
+
+    [targetFrame _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
 
     [request release];
     [formState release];
@@ -1809,6 +1922,24 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSString* URLString = [URL absoluteString];
     return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
 }    
+
+- (void)_loadRequest:(WebRequest *)request inFrameNamed:(NSString *)frameName
+{
+    if (frameName == nil) {
+	[self loadRequest:request];
+	return;
+    }
+
+    WebFrame *frame = [self findFrameNamed:frameName];
+    
+    if (frame != nil) {
+	[frame loadRequest:request];
+	return;
+    }
+
+    NSDictionary *action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil originalURL:[request URL]];
+    [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+}
 
 @end
 

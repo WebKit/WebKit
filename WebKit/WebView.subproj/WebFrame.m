@@ -184,28 +184,6 @@
     return frame;
 }
 
-- (WebFrame *)findOrCreateFrameNamed:(NSString *)name
-{
-    WebFrame *frame = [self findFrameNamed:name];
-
-    if(!frame){
-        id wd = [[self controller] windowOperationsDelegate];
-        WebController *controller = nil;
-        
-        if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
-            controller = [wd createWindowWithRequest:nil];
-        
-        [controller _setTopLevelFrameName:name];
-        [[controller _windowOperationsDelegateForwarder] showWindow];
-        frame = [controller mainFrame];
-	[frame _setJustOpenedForTargetedLink:YES];
-    }
-
-    ASSERT(frame);
-    
-    return frame;
-}
-
 - (WebFrame *)parent
 {
     return [[_private->parent retain] autorelease];

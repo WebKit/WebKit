@@ -93,16 +93,10 @@
     return [[[frame controller] mainFrame] _bridge];
 }
 
-- (WebCoreBridge *)findFramedNamed:(NSString *)name;
+- (WebCoreBridge *)findFrameNamed:(NSString *)name;
 {
     ASSERT(frame != nil);
     return [[frame findFrameNamed:name] _bridge];
-}
-
-- (WebCoreBridge *)findOrCreateFrameNamed:(NSString *)name
-{
-    ASSERT(frame != nil);
-    return [[frame findOrCreateFrameNamed:name] _bridge];
 }
 
 - (WebCoreBridge *)createWindowWithURL:(NSString *)URL frameName:(NSString *)name
@@ -329,14 +323,22 @@
     [[self dataSource] _setIconURL:[NSURL _web_URLWithString:URL] withType:type];
 }
 
-- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)loadURL:(NSString *)URL referrer:(NSString *)referrer reload:(BOOL)reload target:(NSString *)target triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
 {
-    [frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard)  triggeringEvent:event form:form formValues:values];
+    if ([target length] == 0) {
+	target = nil;
+    }
+
+    [frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
 }
 
-- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
+- (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
 {
-    [frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer data:data contentType:contentType triggeringEvent:event form:form formValues:values];
+    if ([target length] == 0) {
+	target = nil;
+    }
+
+    [frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
 }
 
 - (NSString *)generateFrameName

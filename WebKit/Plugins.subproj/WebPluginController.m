@@ -10,6 +10,7 @@
 
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
@@ -107,7 +108,7 @@
         ERROR("could not load URL %@", URL);
         return;
     }
-    [[frame findOrCreateFrameNamed:target] loadRequest:request];
+    [frame _loadRequest:request inFrameNamed:target];
 }
 
 - (void)showStatus:(NSString *)message

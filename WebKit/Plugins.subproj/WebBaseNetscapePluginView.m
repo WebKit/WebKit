@@ -49,14 +49,14 @@ typedef struct {
 @interface WebPluginRequest : NSObject
 {
     WebRequest *_request;
-    WebFrame *_frame;
+    NSString *_frameName;
     void *_notifyData;
 }
 
-- (id)initWithRequest:(WebRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData;
+- (id)initWithRequest:(WebRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData;
 
 - (WebRequest *)request;
-- (WebFrame *)webFrame;
+- (NSString *)frameName;
 - (void *)notifyData;
 
 @end
@@ -1013,11 +1013,21 @@ typedef struct {
 - (void)loadPluginRequest:(WebPluginRequest *)pluginRequest
 {
     WebRequest *request = [pluginRequest request];
-    WebFrame *frame = [pluginRequest webFrame];
+    NSString *frameName = [pluginRequest frameName];
     void *notifyData = [pluginRequest notifyData];
 
+    // FIXME - need to get rid of this window creation which
+    // bypasses normal targeted link handling
+    WebController *controller = nil;
+    id wd = [[self controller] windowOperationsDelegate];
+    if ([wd respondsToSelector:@selector(createWindowWithRequest:)])
+	controller = [wd createWindowWithRequest:nil];
+        
+    [controller _setTopLevelFrameName:frameName];
+    [[controller _windowOperationsDelegateForwarder] showWindow];
+    WebFrame *frame = [controller mainFrame];
+
     NSURL *URL = [request URL];
-    
     NSString *JSString = [URL _web_scriptIfJavaScriptURL];
     if (JSString) {
         [[frame _bridge] stringByEvaluatingJavaScriptFromString:JSString];
@@ -1027,7 +1037,7 @@ typedef struct {
             NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
         }
     } else {
-        [frame loadRequest:request];
+        [[self webFrame] loadRequest:request];
         if (notifyData) {
             // FIXME: How do we notify about failures? It seems this will only notify about success.
         
@@ -1064,14 +1074,13 @@ typedef struct {
     } else {
         // Find the frame given the target string.
         NSString *target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
-        WebFrame *frame = [[self webFrame] findOrCreateFrameNamed:target];
-        [target release];
 
         // Make a request, but don't do it right away because it could make the plugin view go away.
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc]
-            initWithRequest:request frame:frame notifyData:notifyData];
+            initWithRequest:request frameName:target notifyData:notifyData];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];
+	[target release];
     }
     
     return NPERR_NO_ERROR;
@@ -1215,11 +1224,11 @@ typedef struct {
 
 @implementation WebPluginRequest
 
-- (id)initWithRequest:(WebRequest *)request frame:(WebFrame *)frame notifyData:(void *)notifyData
+- (id)initWithRequest:(WebRequest *)request frameName:(NSString *)frameName notifyData:(void *)notifyData
 {
     [super init];
     _request = [request retain];
-    _frame = [frame retain];
+    _frameName = [frameName retain];
     _notifyData = notifyData;
     return self;
 }
@@ -1227,7 +1236,7 @@ typedef struct {
 - (void)dealloc
 {
     [_request release];
-    [_frame release];
+    [_frameName release];
     [super dealloc];
 }
 
@@ -1236,9 +1245,9 @@ typedef struct {
     return _request;
 }
 
-- (WebFrame *)webFrame
+- (NSString *)frameName
 {
-    return _frame;
+    return _frameName;
 }
 
 - (void *)notifyData

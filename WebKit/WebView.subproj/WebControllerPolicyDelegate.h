@@ -47,15 +47,11 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @abstract Potential actions to take when loading a URL
     @constant WebPolicyUse Have WebKit use the resource.
     @constant WebPolicySave Save the resource to disk.
-    @constant WebPolicyOpenNewWindow Open the resource in another window.
-    @constant WebPolicyOpenNewWindowBehind Open the resource in another window behind this window.
     @constant WebPolicyIgnore Do nothing with the resource.
 */
 typedef enum {
     WebPolicyUse,
     WebPolicySave,
-    WebPolicyOpenNewWindow,
-    WebPolicyOpenNewWindowBehind,
     WebPolicyIgnore,
 } WebPolicyAction;
 
@@ -75,28 +71,51 @@ typedef enum {
 
 /*!
     @category WebPolicyDelegate
-    @discussion While loading a URL, WebKit asks the WebPolicyDelegate for
+    @discussion While loading a URL, WebKit asks the WebControllerPolicyDelegate for
     policies that determine the action of what to do with the URL or the data that
     the URL represents. Typically, the policy handler methods are called in this order:
 
-    decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:<BR>
-    contentPolicyForMIMEType:andRequest:inFrame:<BR>
+    decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener: (at most once)<BR>
+    decideNavigationPolicyForAction:inFrame::decisionListener: (one or more times)<BR>
+    contentPolicyForMIMEType:andRequest:inFrame: (at most once)<BR>
 */
 @interface NSObject (WebPolicyDelegate)
 
 /*!
-     @method decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:
-     @discussion Called right after the user clicks on a link.
-     @param actionInformation Dictionary that describes the action that triggered this navigation.
-     @param request The request for the proposed navigation
-     @param frame The frame in which the navigation is taking place
-     @param listener The object to call when the decision is made
+   @method decideNavigationPolicyForAction:andRequest:inFrame:decisionListener:
+   @abstract This method is called to decide what to do with a proposed navigation.
+   @param actionInformation Dictionary that describes the action that triggered this navigation.
+   @param request The request for the proposed navigation
+   @param frame The WebFrame in which the navigation is happening
+   @param listener The object to call when the decision is made
+   @discussion This method will be called before loading starts, and
+   on every redirect.
 */
 - (void)decideNavigationPolicyForAction:(NSDictionary *)actionInformation
                              andRequest:(WebRequest *)request
                                 inFrame:(WebFrame *)frame
                        decisionListener:(WebPolicyDecisionListener *)listener;
 
+/*!
+     @method decideNewWindowPolicyForAction:andRequest:newFrameName:decisionListener:
+     @discussion This method is called to decide what to do with an targetted nagivation that would open a new window.
+     @param actionInformation Dictionary that describes the action that triggered this navigation.
+     @param request The request for the proposed navigation
+     @param frame The frame in which the navigation is taking place
+     @param listener The object to call when the decision is made
+     @discussion This method is provided so that modified clicks on a targetted link which
+     opens a new frame can prevent the new window from being opened if they decide to
+     do something else, like download or present the new frame in a specialized way. 
+
+     <p>If this method picks a policy of Use, the new window will be
+     opened, and decideNavigationPolicyForAction:andRequest:inFrame:decisionListner:
+     will be called with a WebNavigationType of WebNavigationTypeOther
+     in its action. This is to avoid possible confusion about the modifiers.
+*/
+- (void)decideNewWindowPolicyForAction:(NSDictionary *)actionInformation
+                            andRequest:(WebRequest *)request
+                          newFrameName:(NSString *)frameName
+                      decisionListener:(WebPolicyDecisionListener *)listener;
 
 /*!
     @method contentPolicyForMIMEType:andRequest:inFrame:

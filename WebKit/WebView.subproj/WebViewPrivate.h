@@ -92,7 +92,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 - (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name;
 - (WebFrame *)_findFrameNamed: (NSString *)name;
 
-- (WebController *)_openNewWindowWithRequest:(WebRequest *)request behind:(BOOL)behind;
+- (WebController *)_openNewWindowWithRequest:(WebRequest *)request;
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element;
 

@@ -103,15 +103,6 @@
 - (WebFrame *)findFrameNamed:(NSString *)name;
 
 /*!
-    @method findOrCreateFrameNamed:
-    @discussion This method calls findFrameNamed but if no frame is found, a new window is opened
-    and the main frame of the new window is named with the given name.
-    @param name The name of the frame to find.
-    @result The frame matching the provided name. Won't be nil.
-*/
-- (WebFrame *)findOrCreateFrameNamed:(NSString *)name;
-
-/*!
     @method parent
     @result The frame containing this frame, or nil if this is a top level frame.
 */

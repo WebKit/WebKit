@@ -293,7 +293,7 @@
     return frame;
 }
 
-- (WebController *)_openNewWindowWithRequest:(WebRequest *)request behind:(BOOL)behind
+- (WebController *)_openNewWindowWithRequest:(WebRequest *)request
 {
     id wd = [self windowOperationsDelegate];
     WebController *newWindowController = nil;
@@ -302,11 +302,9 @@
     else {
         [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] createWindowWithRequest: request];
     }
-    if (behind) {
-        [[newWindowController _windowOperationsDelegateForwarder] showWindowBehindFrontmost];
-    } else {
-        [[newWindowController _windowOperationsDelegateForwarder] showWindow];
-    }
+
+    [[newWindowController _windowOperationsDelegateForwarder] showWindow];
+
     return newWindowController;
 }
 

@@ -71,5 +71,13 @@ static WebDefaultPolicyDelegate *sharedDelegate = nil;
     }
 }
 
+- (void)decideNewWindowPolicyForAction:(NSDictionary *)actionInformation 
+			     andRequest:(WebRequest *)request
+			   newFrameName:(NSString *)frameName
+		       decisionListener:(WebPolicyDecisionListener *)listener
+{
+    [listener usePolicy:WebPolicyUse];
+}
+
 @end
 
