@@ -1,5 +1,13 @@
 2002-09-20  Richard Williamson   <rjw@apple.com>
 
+        Assume triple click for selection if click count >= 3,
+        not == 3, as in OS X.
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::khtmlMousePressEvent):
+
+2002-09-20  Richard Williamson   <rjw@apple.com>
+
         Fixed crasher in findTextSlave.
         * khtml/rendering/render_text.cpp:
         (RenderText::findTextSlave):

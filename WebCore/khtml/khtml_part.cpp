@@ -4117,7 +4117,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
         emitSelectionChanged();
         startAutoScroll();
     }
-    else if (event->qmouseEvent()->clickCount() == 3){
+    else if (event->qmouseEvent()->clickCount() >= 3){
         QMouseEvent *_mouse = event->qmouseEvent();
         DOM::Node innerNode = event->innerNode();
         
