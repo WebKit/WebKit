@@ -308,7 +308,14 @@ NSSize WebIconLargeSize = {128, 128};
     while ((iconURLString = [enumerator nextObject]) != nil) {
         NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
         if(icons){
-            NSImage *icon = [self _largestIconFromDictionary:icons];
+            // Save the 16 x 16 size icons as this is the only size the Safari uses.
+            // If we ever use larger sizes, we should save the largest size so icons look better when scaling up.
+            // This also worksaround the problem with cnet's blank 32x32 icon (3105486).
+            NSImage *icon = [icons objectForKey:[NSValue valueWithSize:NSMakeSize(16,16)]];
+            if (!icon) {
+                // In case there is no 16 x 16 size.
+                icon = [self _largestIconFromDictionary:icons];
+            }
             NSData *iconData = [icon TIFFRepresentation];
             if(iconData){
                 //NSLog(@"Writing icon: %@", iconURLString);
