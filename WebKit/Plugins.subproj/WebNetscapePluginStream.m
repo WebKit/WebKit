@@ -10,8 +10,10 @@
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <Foundation/NSURLRequest.h>
+#import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSURLConnection.h>
+#import <Foundation/NSURLResponsePrivate.h>
+#import <Foundation/NSURLRequest.h>
 
 @interface WebNetscapePluginConnectionDelegate : WebBaseResourceHandleDelegate
 {
@@ -99,6 +101,14 @@
     [self retain]; 
     [stream setResponse:theResponse];
     [super connection:con didReceiveResponse:theResponse];
+    if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
+        [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
+        [stream receivedError:NPRES_NETWORK_ERR];
+        NSError *error = [NSError _web_errorWithDomain:NSURLErrorDomain
+                                                  code:NSURLErrorFileDoesNotExist
+                                            failingURL:[[theResponse URL] absoluteString]];
+        [self cancelWithError:error];
+    }
     [self release];
 }
 

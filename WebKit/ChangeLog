@@ -1,3 +1,12 @@
+2003-06-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3294803>: HTTP error sent as content instead of error to plug-ins
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): if the response is an error, cancel the load, return a network error
+
 === Safari-85.1 ===
 
 2003-06-15  Vicki Murley  <vicki@apple.com>
