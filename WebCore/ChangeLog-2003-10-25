@@ -1,3 +1,15 @@
+2003-02-18  Maciej Stachowiak  <mjs@apple.com
+
+	Reviewed by Chris.
+	
+	Merged changes from Safari-58-1-branch.
+	
+    2003-02-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+        * WebCore.pbproj/project.pbxproj: Include /System/Library/PrivateFrameworks.
+
 2003-02-18  Trey Matteson  <trey@apple.com>
 
 	3171982 - REGRESSION: onClick handlers run twice when button pressed (DSLReports.com forums)

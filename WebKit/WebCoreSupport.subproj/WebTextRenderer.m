@@ -258,7 +258,7 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
         ATSUFontID *valueArray[1] = {&fontId};
 
         if (fontId) {
-            if (ATSUSetAttributes(style, 1, &tag, &size, (void **)valueArray) != noErr)
+            if (ATSUSetAttributes(style, 1, &tag, &size, (void *)valueArray) != noErr)
                 [NSException raise:NSInternalInconsistencyException format:@"Failed to set font (%@) ATSUStyle 0x%X", theFont, style];
         }
     }

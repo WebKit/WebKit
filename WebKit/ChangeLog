@@ -1,3 +1,31 @@
+2003-02-18  Maciej Stachowiak  <mjs@ap0101m-dhcp138.apple.com>
+
+	Reviewed by Chris.
+	
+	Merged changes from Safari-58-1-branch.
+	
+    2003-02-11  Richard Williamson   <rjw@apple.com>
+
+        Add import of CGFontCache.h, which is no longer
+        included by CoreGraphicsPrivate.h.
+        
+        Reviewed by Vicki.
+
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+
+    2003-02-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m: Change (void **) cast
+	to (void *) for compatibility with the latest Panther.
+	
+    2003-02-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+        * WebKit.pbproj/project.pbxproj: Add /System/Library/PrivateFrameworks
+
 === Safari-62 ===
 
 2003-02-17  Ken Kocienda  <kocienda@apple.com>

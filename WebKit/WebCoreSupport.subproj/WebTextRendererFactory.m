@@ -12,6 +12,7 @@
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 #import <CoreGraphics/CGFontLCDSupport.h>
+#import <CoreGraphics/CGFontCache.h>
 
 #import <mach-o/dyld.h>
 
