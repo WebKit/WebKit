@@ -1337,6 +1337,23 @@ void RenderFlow::calcInlineMinMaxWidth()
                     margins += (type == Fixed ? cstyle->marginRight().value : child->marginRight());
                 childMin += margins;
                 childMax += margins;
+                
+                if (child->isInline() && child->isFlow()) {
+                    // Add in padding for inline flow elements.  This is wrong in the
+                    // same way the margin addition is wrong. XXXdwh fixme.
+                    int padding = 0;
+                    type = cstyle->paddingLeft().type;
+                    if ( type != Variable )
+                        padding += (type == Fixed ? cstyle->paddingLeft().value : child->paddingLeft());
+                    type = cstyle->paddingRight().type;
+                    if ( type != Variable )
+                        padding += (type == Fixed ? cstyle->paddingRight().value : child->paddingRight());
+                    childMin += padding;
+                    childMax += padding;
+                    
+                    inlineMin += childMin;
+                    inlineMax += childMax;
+                }
             }
             
             if (!(child->isInline() && child->isFlow()) && !child->isText()) {

@@ -1,5 +1,14 @@
 2002-11-12  David Hyatt  <hyatt@apple.com>
 
+	Fix the top of moveabletype.org.  The maxwidth/minwidth
+	calculation for blocks with inline content did not properly
+	deal with margins and padding on inline elements like <a>.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::calcInlineMinMaxWidth):
+
+2002-11-12  David Hyatt  <hyatt@apple.com>
+
 	Fix for 2953367, padding is incorrectly inherited into table cells
 	and also incorrectly overrides cellpadding on the table itself.
 	Fixes dailyf1.com.
