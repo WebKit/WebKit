@@ -1,3 +1,35 @@
+2004-08-17  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3759093> Need PDF context menu: "Open in Preview" or other external app
+
+        Added support for "Open with ..." in PDF view.
+		
+        Reviewed by Chris and Trey.
+
+        * ChangeLog:
+        * English.lproj/Localizable.strings:
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * WebView.subproj/WebPDFView.h:
+        * WebView.subproj/WebPDFView.m:
+        (-[WebPDFView initWithFrame:]):
+        (-[WebPDFView dealloc]):
+        (applicationInfoForMIMEType):
+        (-[WebPDFView path]):
+        (-[WebPDFView menuForEvent:]):
+        (-[WebPDFView setDataSource:]):
+        (-[WebPDFView layout]):
+        (-[WebPDFView viewDidMoveToHostWindow]):
+        (-[WebPDFView openWithFinder:]):
+
+2004-08-17  Richard Williamson   <rjw@apple.com>
+
+        JNI needs both the jmethodID and return type.  Changed API to 
+        pass both.
+		
+        Reviewed by Chris.
+
+        * Plugins.subproj/WebJavaPlugIn.h:
+
 2004-08-17  Trey Matteson  <trey@apple.com>
 
 	3764147 - failure of subframe to load leaves links in parent doc broken
