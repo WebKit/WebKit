@@ -459,9 +459,36 @@ void CSSStyleDeclarationImpl::diff(CSSMutableStyleDeclarationImpl *style) const
         style->removeProperty(*it);
 }
 
+// This is the list of properties we want to copy in the copyInheritableProperties() function.
+// It is the intersection of the list of inherited CSS properties and the
+// properties for which we have a computed implementation in this file.
+const int inheritableProperties[] = {
+    CSS_PROP_BORDER_COLLAPSE,
+    CSS_PROP_BORDER_SPACING,
+    CSS_PROP_COLOR,
+    CSS_PROP_FONT_FAMILY,
+    CSS_PROP_FONT_SIZE,
+    CSS_PROP_FONT_STYLE,
+    CSS_PROP_FONT_VARIANT,
+    CSS_PROP_FONT_WEIGHT,
+    CSS_PROP_LETTER_SPACING,
+    CSS_PROP_LINE_HEIGHT,
+    CSS_PROP_TEXT_ALIGN,
+    CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT,
+    CSS_PROP_TEXT_INDENT,
+    CSS_PROP__APPLE_TEXT_SIZE_ADJUST,
+    CSS_PROP_TEXT_TRANSFORM,
+    CSS_PROP_ORPHANS,
+    CSS_PROP_WHITE_SPACE,
+    CSS_PROP_WIDOWS,
+    CSS_PROP_WORD_SPACING,
+};
+
+const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
+
 // This is the list of properties we want to copy in the copyBlockProperties() function.
 // It is the list of CSS properties that apply to specially to block-level elements.
-static const int BlockProperties[] = {
+static const int blockProperties[] = {
     CSS_PROP_ORPHANS,
     CSS_PROP_OVERFLOW, // This can be also be applied to replaced elements
     CSS_PROP_PAGE_BREAK_AFTER,
@@ -472,14 +499,21 @@ static const int BlockProperties[] = {
     CSS_PROP_WIDOWS
 };
 
+const unsigned numBlockProperties = sizeof(blockProperties) / sizeof(blockProperties[0]);
+
 CSSMutableStyleDeclarationImpl *CSSMutableStyleDeclarationImpl::copyBlockProperties() const
 {
-    return copyPropertiesInSet(BlockProperties, sizeof(BlockProperties) / sizeof(BlockProperties[0]));
+    return copyPropertiesInSet(blockProperties, numBlockProperties);
 }
 
 void CSSMutableStyleDeclarationImpl::removeBlockProperties()
 {
-    removePropertiesInSet(BlockProperties, sizeof(BlockProperties) / sizeof(BlockProperties[0]));
+    removePropertiesInSet(blockProperties, numBlockProperties);
+}
+
+void CSSMutableStyleDeclarationImpl::removeInheritableProperties()
+{
+    removePropertiesInSet(inheritableProperties, numInheritableProperties);
 }
 
 CSSMutableStyleDeclarationImpl *CSSStyleDeclarationImpl::copyPropertiesInSet(const int *set, unsigned length) const

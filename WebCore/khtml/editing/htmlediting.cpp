@@ -4354,7 +4354,8 @@ void ReplacementFragment::removeStyleNodes()
         NodeImpl *next = node->traverseNextNode();
         // This list of tags change the appearance of content
         // in ways we can add back on later with CSS, if necessary.
-        if (node->id() == ID_BIG || 
+        if (node->id() == ID_B || 
+            node->id() == ID_BIG || 
             node->id() == ID_CENTER || 
             node->id() == ID_FONT || 
             node->id() == ID_I || 
@@ -4372,20 +4373,8 @@ void ReplacementFragment::removeStyleNodes()
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
             CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->inlineStyleDecl();
             if (inlineStyleDecl) {
-                if (elem->id() == ID_P) {
-                    // For <p> elements, we want to retain any margin-cancelling properties
-                    // that have been added by our old editing code or by current Mail.app code.
-                    DOMString marginTop = inlineStyleDecl->getPropertyValue(CSS_PROP_MARGIN_TOP);                        
-                    DOMString marginBottom = inlineStyleDecl->getPropertyValue(CSS_PROP_MARGIN_BOTTOM);
-                    inlineStyleDecl->clear();
-                    if (!marginTop.isEmpty())
-                        inlineStyleDecl->setProperty(CSS_PROP_MARGIN_TOP, marginTop);
-                    if (!marginBottom.isEmpty())
-                        inlineStyleDecl->setProperty(CSS_PROP_MARGIN_BOTTOM, marginBottom);
-                }
-                else {
-                    inlineStyleDecl->clear();
-                }
+                inlineStyleDecl->removeBlockProperties();
+                inlineStyleDecl->removeInheritableProperties();
             }
         }
         node = next;

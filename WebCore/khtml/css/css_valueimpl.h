@@ -39,6 +39,9 @@ namespace DOM {
 class CSSMutableStyleDeclarationImpl;
 class CounterImpl;
 
+extern const int inheritableProperties[];
+extern const unsigned numInheritableProperties;
+
 class CSSStyleDeclarationImpl : public StyleBaseImpl
 {
 public:
@@ -486,6 +489,7 @@ public:
  
     CSSMutableStyleDeclarationImpl *copyBlockProperties() const;
     void removeBlockProperties();
+    void removeInheritableProperties();
     void removePropertiesInSet(const int *set, unsigned length);
 
     void merge(CSSMutableStyleDeclarationImpl *, bool argOverridesOnConflict = true);

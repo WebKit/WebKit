@@ -1,3 +1,32 @@
+2005-02-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3972665> 8A360: HTML message partially truncated on left hand side, text-indent from Script Editor
+
+        * khtml/css/css_computedstyle.cpp: inheritableProperties array now defined in css_valueimpl.cpp.
+        * khtml/css/css_valueimpl.cpp: Define inheritableProperties array here.
+        (DOM::CSSMutableStyleDeclarationImpl::copyBlockProperties): Use new name for blockProperties, and use the new
+        constant for the number of items in the array.
+        (DOM::CSSMutableStyleDeclarationImpl::removeBlockProperties): Ditto.
+        (DOM::CSSMutableStyleDeclarationImpl::removeInheritableProperties): New function.
+        * khtml/css/css_valueimpl.h: Declare inheritableProperties array and numInheritableProperties extern so they
+        can be defined in css_valueimpl.cpp and used in css_computedstyle.cpp.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::removeStyleNodes): This code was misguided, and removed too much style from HTML
+        elements. Now, it removes from HTML elements only the styles that we replace later with a call to applyStyle().
+        Also, add ID_B to list of inline "style" nodes we are willing to remove. Leaving it off was an oversight.
+
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt: ID_B fix made this result change, without any
+        visible change in the test.
+        
+        New test:
+        
+        * layout-tests/editing/style/smoosh-styles-003.html
+        * layout-tests/editing/style/smoosh-styles-003-expected.txt
+
 2005-02-28  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4026985> CrashTracer: ...14 crashes at com.apple.WebCore: -[KWQPageState invalidate] + 32

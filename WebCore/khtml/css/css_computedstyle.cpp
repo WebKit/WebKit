@@ -157,33 +157,6 @@ static const int computedProperties[] = {
 
 const unsigned numComputedProperties = sizeof(computedProperties) / sizeof(computedProperties[0]);
 
-// This is the list of properties we want to copy in the copyInheritableProperties() function.
-// It is the intersection of the list of inherited CSS properties and the
-// properties for which we have a computed implementation in this file.
-static const int inheritableProperties[] = {
-    CSS_PROP_BORDER_COLLAPSE,
-    CSS_PROP_BORDER_SPACING,
-    CSS_PROP_COLOR,
-    CSS_PROP_FONT_FAMILY,
-    CSS_PROP_FONT_SIZE,
-    CSS_PROP_FONT_STYLE,
-    CSS_PROP_FONT_VARIANT,
-    CSS_PROP_FONT_WEIGHT,
-    CSS_PROP_LETTER_SPACING,
-    CSS_PROP_LINE_HEIGHT,
-    CSS_PROP_TEXT_ALIGN,
-    CSS_PROP__KHTML_TEXT_DECORATIONS_IN_EFFECT,
-    CSS_PROP_TEXT_INDENT,
-    CSS_PROP__APPLE_TEXT_SIZE_ADJUST,
-    CSS_PROP_TEXT_TRANSFORM,
-    CSS_PROP_ORPHANS,
-    CSS_PROP_WHITE_SPACE,
-    CSS_PROP_WIDOWS,
-    CSS_PROP_WORD_SPACING,
-};
-
-const unsigned numInheritableProperties = sizeof(inheritableProperties) / sizeof(inheritableProperties[0]);
-
 static CSSValueImpl* valueForLength(const Length &length)
 {
     switch (length.type) {
