@@ -1,3 +1,13 @@
+2003-10-22  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by 
+
+	- fixed 3460664 - Exception handlers not properly removed
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::mouseMoved): Don't return from exception block
+        (KWQKHTMLPart::khtmlMouseReleaseEvent): Add exception blocking (whoops)
+
 2003-10-22  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3460652 -- REGRESSION (100-110+): Can't tab out of a 

@@ -1735,7 +1735,9 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
     }
     
     _sendingEventToSubview = true;
+    KWQ_BLOCK_NS_EXCEPTIONS;
     [view mouseUp:_currentEvent];
+    KWQ_UNBLOCK_NS_EXCEPTIONS;
     _sendingEventToSubview = false;
 }
 
@@ -2031,8 +2033,6 @@ void KWQKHTMLPart::sendFakeEventsAfterWidgetTracking(NSEvent *initiatingEvent)
 
 void KWQKHTMLPart::mouseMoved(NSEvent *event)
 {
-    KWQ_BLOCK_NS_EXCEPTIONS;
-
     KHTMLView *v = d->m_view;
     // Reject a mouse moved if the button is down - screws up tracking during autoscroll
     // These happen because WebKit sometimes has to fake up moved events.
@@ -2040,6 +2040,8 @@ void KWQKHTMLPart::mouseMoved(NSEvent *event)
         return;
     }
     
+    KWQ_BLOCK_NS_EXCEPTIONS;
+
     NSEvent *oldCurrentEvent = _currentEvent;
     _currentEvent = [event retain];
     
