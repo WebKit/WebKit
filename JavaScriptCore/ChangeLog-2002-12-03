@@ -1,3 +1,10 @@
+2002-09-25  Darin Adler  <darin@apple.com>
+
+	- fixed 3057964 -- JS problem performing MD5 script embedded in yahoo login page
+
+        * kjs/simple_number.h: Fix incorrect check for sign bit that was munging numbers
+	in the range 0x10000000 to 0x1FFFFFFF.
+
 === Alexander-24 ===
 
 === Alexander-22 ===
