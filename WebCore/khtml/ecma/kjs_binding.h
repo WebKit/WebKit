@@ -310,7 +310,7 @@ namespace KJS {
     ClassFunc(ExecState *exec, int i, int len) \
        : DOMFunction( /*proto? */ ), id(i) { \
        Value protect(this); \
-       put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum); \
+       put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum); \
     } \
     /** You need to implement that one */ \
     virtual Value tryCall(ExecState *exec, Object &thisObj, const List &args); \

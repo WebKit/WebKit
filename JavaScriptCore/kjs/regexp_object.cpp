@@ -195,10 +195,11 @@ Object RegExpObjectImp::arrayOfMatches(ExecState *exec, const UString &result) c
 
 Value RegExpObjectImp::get(ExecState *exec, const Identifier &p) const
 {
-  if (p[0] == '$' && lastOvector)
+  UString s = p.ustring();
+  if (s[0] == '$' && lastOvector)
   {
     bool ok;
-    unsigned long i = p.substr(1).toULong(&ok);
+    unsigned long i = s.substr(1).toULong(&ok);
     if (ok)
     {
       if (i < lastNrSubPatterns + 1)

@@ -373,7 +373,7 @@ Value Plugins::get(ExecState *exec, const Identifier &propertyName) const
 #endif
     if (propertyName == "refresh")
       return lookupOrCreateFunction<PluginsFunc>(exec,propertyName,this,0,0,DontDelete|Function);
-    else if ( propertyName =="length" )
+    else if ( propertyName ==lengthPropertyName )
       return Number(plugins->count());
     else {
 
@@ -400,7 +400,7 @@ Value MimeTypes::get(ExecState *exec, const Identifier &propertyName) const
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "MimeTypes::get " << propertyName.qstring() << endl;
 #endif
-    if( propertyName=="length" )
+    if( propertyName==lengthPropertyName )
         return Number( mimes->count() );
     else {
 
@@ -436,7 +436,7 @@ Value Plugin::get(ExecState *exec, const Identifier &propertyName) const
         return String( m_info->file );
     else if ( propertyName == "description" )
         return String( m_info->desc );
-    else if ( propertyName == "length" )
+    else if ( propertyName == lengthPropertyName )
         return Number( m_info->mimes.count() );
     else {
 

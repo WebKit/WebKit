@@ -26,12 +26,50 @@
 
 namespace KJS {
 
-  class Identifier : public UString {
-  public:
-    Identifier() { }
-    Identifier(const char *s) : UString(s) { }
-    Identifier(const UString &s) : UString(s) { }
-  };
+    class Identifier {
+        friend class PropertyMap;
+    public:
+        Identifier() { }
+        Identifier(const char *s) : _ustring(s) { }
+        Identifier(const UString &s) : _ustring(s) { }
+        
+        const UString &ustring() const { return _ustring; }
+        DOM::DOMString string() const;
+        QString qstring() const;
+        
+        const UChar *data() const { return _ustring.data(); }
+        int size() const { return _ustring.size(); }
+        
+        const char *ascii() const { return _ustring.ascii(); }
+        
+        static Identifier from(unsigned y) { return UString::from(y); }
+        
+        bool isNull() const { return _ustring.isNull(); }
+        bool isEmpty() const { return _ustring.isEmpty(); }
+        
+        unsigned long toULong(bool *ok) const { return _ustring.toULong(ok); }
+        double toDouble() const { return _ustring.toDouble(); }
+        
+        static Identifier null;
+        
+        friend bool operator==(const Identifier &, const Identifier &);
+        friend bool operator!=(const Identifier &, const Identifier &);
+
+        friend bool operator==(const Identifier &, const char *);
+    
+    private:
+        UString _ustring;
+    };
+    
+    inline bool operator==(const Identifier &a, const Identifier &b)
+    {
+        return a._ustring == b._ustring;
+    }
+
+    inline bool operator!=(const Identifier &a, const Identifier &b)
+    {
+        return a._ustring != b._ustring;
+    }
 
 }
 

@@ -1,3 +1,45 @@
+2002-11-19  Darin Adler  <darin@apple.com>
+
+	- next step towards atomic identifiers; Identifier is no longer derived from UString
+
+        * khtml/ecma/kjs_binding.cpp:
+        (Identifier::string): Added.
+        (Identifier::qstring): Added.
+
+        * khtml/ecma/kjs_binding.h:
+        * khtml/ecma/kjs_css.cpp:
+        (jsNameToProp):
+        (DOMCSSStyleDeclaration::tryPut):
+        (DOMStyleSheet::tryPut):
+        (DOMStyleSheetList::tryGet):
+        (DOMMediaList::tryGet):
+        (DOMCSSRuleList::tryGet):
+        (DOMCSSValueList::tryGet):
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNodeList::hasProperty):
+        (DOMNodeList::tryGet):
+        (DOMNodeListFunc::DOMNodeListFunc):
+        (DOMElement::tryGet):
+        (DOMNamedNodeMap::hasProperty):
+        (DOMNamedNodeMap::tryGet):
+        (DOMNamedNodesCollection::tryGet):
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        (HTMLElementFunction::HTMLElementFunction):
+        (KJS::HTMLElement::putValue):
+        (KJS::HTMLCollection::hasProperty):
+        (KJS::HTMLCollection::tryGet):
+        (KJS::HTMLSelectCollection::tryPut):
+        (OptionConstructorImp::OptionConstructorImp):
+        * khtml/ecma/kjs_navigator.cpp:
+        (Plugins::get):
+        (MimeTypes::get):
+        (Plugin::get):
+        * khtml/ecma/kjs_window.cpp:
+        (WindowFunc::tryCall):
+        (FrameArray::get):
+	Use lengthPropertyName instead of "length" for better speed.
+
 2002-11-19  David Hyatt  <hyatt@apple.com>
 
 	Fix backgrounds not painting in deployment builds.

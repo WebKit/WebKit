@@ -94,11 +94,11 @@ Value FunctionProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &a
     if (thisObj.inherits(&DeclaredFunctionImp::info)) {
        DeclaredFunctionImp *fi = static_cast<DeclaredFunctionImp*>
                                  (thisObj.imp());
-       return String("function " + fi->name() + "(" +
+       return String("function " + fi->name().ustring() + "(" +
          fi->parameterString() + ") " + fi->body->toString());
     } else if (thisObj.inherits(&FunctionImp::info) &&
         !static_cast<FunctionImp*>(thisObj.imp())->name().isNull()) {
-      result = String("function " + static_cast<FunctionImp*>(thisObj.imp())->name() + "()");
+      result = String("function " + static_cast<FunctionImp*>(thisObj.imp())->name().ustring() + "()");
     }
     else {
       result = String("(Internal function)");

@@ -173,7 +173,7 @@ UString FunctionImp::parameterString() const
   while (*p) {
     if (!s.isEmpty())
         s += ", ";
-    s += (*p)->name;
+    s += (*p)->name.ustring();
     p = &(*p)->next;
   }
 

@@ -1347,7 +1347,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
       // To conform to the SPEC, we only ask if the window
       // has more than one entry in the history (NS does that too).
       History history(exec,part);
-      if ( history.get( exec, "length" ).toInt32(exec) <= 1
+      if ( history.get( exec, lengthPropertyName ).toInt32(exec) <= 1
 #if APPLE_CHANGES
            // FIXME: How are we going to handle this?
 #else
@@ -1530,7 +1530,7 @@ Value FrameArray::get(ExecState *exec, const Identifier &p) const
 
   QPtrList<KParts::ReadOnlyPart> frames = part->frames();
   int len = frames.count();
-  if (p == "length")
+  if (p == lengthPropertyName)
     return Number(len);
   else if (p== "location") // non-standard property, but works in NS and IE
   {

@@ -1,5 +1,23 @@
 2002-11-19  Darin Adler  <darin@apple.com>
 
+	- next step towards atomic identifiers; Identifier is no longer derived from UString
+
+        * kjs/identifier.h: Remove base class and add _ustring member.
+        * kjs/identifier.cpp: Add null and an == that works with const char *.
+        * kjs/property_map.cpp: Get rep through _ustring.
+
+        * kjs/function.cpp: (FunctionImp::parameterString): Call ustring().
+        * kjs/function_object.cpp: (FunctionProtoFuncImp::call): Ditto.
+        * kjs/nodes.cpp:
+        (PropertyNode::evaluate): Ditto.
+        (VarDeclNode::evaluate): Ditto.
+        (ForInNode::execute): Ditto.
+        * kjs/nodes2string.cpp: (SourceStream::operator<<): Add overload for Identifier.
+        * kjs/reference.cpp: (Reference::getValue): Call ustring().
+        * kjs/regexp_object.cpp: (RegExpObjectImp::get): Call ustring().
+
+2002-11-19  Darin Adler  <darin@apple.com>
+
 	- fixed memory trasher
 
         * kjs/ustring.cpp: (UString::from): Fix "end of buffer" computation.

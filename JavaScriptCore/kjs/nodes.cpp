@@ -460,8 +460,9 @@ Value PropertyNode::evaluate(ExecState */*exec*/)
 
   if (str.isNull()) {
     s = String(UString::from(numeric));
-  } else
-    s = String(str);
+  } else {
+    s = String(str.ustring());
+  }
 
   return s;
 }
@@ -1636,7 +1637,7 @@ Value VarDeclNode::evaluate(ExecState *exec)
   // "var location" creates a dynamic property instead of activating window.location.
   variable.put(exec, ident, val, DontDelete | Internal);
 
-  return String(ident);
+  return String(ident.ustring());
 }
 
 void VarDeclNode::processVarDecls(ExecState *exec)
@@ -2098,7 +2099,7 @@ Completion ForInNode::execute(ExecState *exec)
 
     Reference ref = lexpr->evaluateReference(exec);
     KJS_CHECKEXCEPTION
-    ref.putValue(exec,String(name));
+    ref.putValue(exec, String(name.ustring()));
 
     c = statement->execute(exec);
     if (c.isValueCompletion())

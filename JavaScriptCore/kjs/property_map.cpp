@@ -97,16 +97,16 @@ ValueImp *PropertyMap::get(const Identifier &name, int &attributes) const
 {
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
-        if (key && keysMatch(name.rep, key)) {
+        if (key && keysMatch(name._ustring.rep, key)) {
             attributes = _singleEntry.attributes;
             return _singleEntry.value;
         }
         return 0;
     }
     
-    int i = hash(name.rep);
+    int i = hash(name._ustring.rep);
     while (UString::Rep *key = _table[i].key) {
-        if (keysMatch(name.rep, key)) {
+        if (keysMatch(name._ustring.rep, key)) {
             attributes = _table[i].attributes;
             return _table[i].value;
         }
@@ -119,14 +119,14 @@ ValueImp *PropertyMap::get(const Identifier &name) const
 {
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
-        if (key && keysMatch(name.rep, key))
+        if (key && keysMatch(name._ustring.rep, key))
             return _singleEntry.value;
         return 0;
     }
     
-    int i = hash(name.rep);
+    int i = hash(name._ustring.rep);
     while (UString::Rep *key = _table[i].key) {
-        if (keysMatch(name.rep, key))
+        if (keysMatch(name._ustring.rep, key))
             return _table[i].value;
         i = (i + 1) & _tableSizeHashMask;
     }
@@ -138,13 +138,13 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     if (!_table) {
         UString::Rep *key = _singleEntry.key;
         if (key) {
-            if (keysMatch(name.rep, key)) {
+            if (keysMatch(name._ustring.rep, key)) {
             	_singleEntry.value = value;
                 return;
             }
         } else {
-            name.rep->ref();
-            _singleEntry.key = name.rep;
+            name._ustring.rep->ref();
+            _singleEntry.key = name._ustring.rep;
             _singleEntry.value = value;
             _singleEntry.attributes = attributes;
             _keyCount = 1;
@@ -155,9 +155,9 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     if (_keyCount * 2 >= _tableSize)
         expand();
     
-    int i = hash(name.rep);
+    int i = hash(name._ustring.rep);
     while (UString::Rep *key = _table[i].key) {
-        if (keysMatch(name.rep, key)) {
+        if (keysMatch(name._ustring.rep, key)) {
             // Put a new value in an existing hash table entry.
             _table[i].value = value;
             // Attributes are intentionally not updated.
@@ -167,8 +167,8 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     }
     
     // Create a new hash table entry.
-    name.rep->ref();
-    _table[i].key = name.rep;
+    name._ustring.rep->ref();
+    _table[i].key = name._ustring.rep;
     _table[i].value = value;
     _table[i].attributes = attributes;
     ++_keyCount;
@@ -215,7 +215,7 @@ void PropertyMap::remove(const Identifier &name)
 
     if (!_table) {
         key = _singleEntry.key;
-        if (key && keysMatch(name.rep, key)) {
+        if (key && keysMatch(name._ustring.rep, key)) {
             key->deref();
             _singleEntry.key = 0;
             _keyCount = 0;
@@ -224,9 +224,9 @@ void PropertyMap::remove(const Identifier &name)
     }
 
     // Find the thing to remove.
-    int i = hash(name.rep);
+    int i = hash(name._ustring.rep);
     while ((key = _table[i].key)) {
-        if (keysMatch(name.rep, key))
+        if (keysMatch(name._ustring.rep, key))
             break;
         i = (i + 1) & _tableSizeHashMask;
     }

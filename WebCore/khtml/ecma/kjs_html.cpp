@@ -208,7 +208,7 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
       // To be implemented. Meanwhile, return an object with a length property set to 0
       kdWarning() << "KJS::HTMLDocument document.scripts called - not implemented" << endl;
       Object obj( new ObjectImp() );
-      obj.put( exec, "length", Number(0) );
+      obj.put( exec, lengthPropertyName, Number(0) );
       return obj;
     }
     case All:
@@ -1762,7 +1762,7 @@ HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
   : DOMFunction(), id(i)
 {
   Value protect(this);
-  put(exec,"length",Number(len),DontDelete|ReadOnly|DontEnum);
+  put(exec,lengthPropertyName,Number(len),DontDelete|ReadOnly|DontEnum);
 }
 
 Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const List &args)
@@ -2078,7 +2078,7 @@ void KJS::HTMLElement::putValue(ExecState *exec, int token, const Value& value, 
       case SelectLength:          { // read-only according to the NS spec, but webpages need it writeable
                                          Object coll = Object::dynamicCast( getSelectHTMLCollection(exec, select.options(), select) );
                                          if ( !coll.isNull() )
-                                           coll.put(exec,"length",value);
+                                           coll.put(exec,lengthPropertyName,value);
                                          return;
                                        }
       // read-only: form
@@ -2655,7 +2655,7 @@ HTMLCollection::~HTMLCollection()
 // ## this breaks "for (..in..)" though.
 bool KJS::HTMLCollection::hasProperty(ExecState *exec, const Identifier &p) const
 {
-  if (p == "selectedIndex" || p == "length")
+  if (p == "selectedIndex" || p == lengthPropertyName)
     return true;
   return DOMObject::hasProperty(exec, p);
 }
@@ -2665,7 +2665,7 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
 #ifdef KJS_VERBOSE
   kdDebug() << "KJS::HTMLCollection::tryGet " << propertyName.ascii() << endl;
 #endif
-  if (propertyName == "length")
+  if (propertyName == lengthPropertyName)
     return Number(collection.length());
   else if (propertyName == "selectedIndex" &&
 	   collection.item(0).elementId() == ID_OPTION) {
@@ -2853,7 +2853,7 @@ void KJS::HTMLSelectCollection::tryPut(ExecState *exec, const Identifier &proper
     return;
   }
   // resize ?
-  else if (propertyName == "length") {
+  else if (propertyName == lengthPropertyName) {
     long newLen = value.toInteger(exec);
     long diff = element.length() - newLen;
 
@@ -2912,7 +2912,7 @@ OptionConstructorImp::OptionConstructorImp(ExecState *exec, const DOM::Document 
 
   // no. of arguments for constructor
   // ## is 4 correct ? 0 to 4, it seems to be
-  put(exec,"length", Number(4), ReadOnly|DontDelete|DontEnum);
+  put(exec,lengthPropertyName, Number(4), ReadOnly|DontDelete|DontEnum);
 }
 
 bool OptionConstructorImp::implementsConstruct() const

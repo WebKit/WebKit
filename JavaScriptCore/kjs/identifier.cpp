@@ -21,3 +21,13 @@
 
 #include "identifier.h"
 
+namespace KJS {
+
+Identifier Identifier::null;
+
+bool operator==(const Identifier &a, const char *b)
+{
+    return a._ustring == b;
+}
+
+} // namespace KJS

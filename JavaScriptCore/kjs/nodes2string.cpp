@@ -33,7 +33,9 @@ namespace KJS {
     };
 
     UString toString() const { return str; }
-    SourceStream& operator<<(const KJS::UString &);
+    SourceStream& operator<<(const Identifier &);
+    SourceStream& operator<<(const UString &);
+    SourceStream& operator<<(const char *);
     SourceStream& operator<<(char);
     SourceStream& operator<<(Format f);
     SourceStream& operator<<(const Node *);
@@ -51,9 +53,21 @@ SourceStream& SourceStream::operator<<(char c)
   return *this;
 }
 
-SourceStream& SourceStream::operator<<(const KJS::UString &s)
+SourceStream& SourceStream::operator<<(const char *s)
+{
+  str += UString(s);
+  return *this;
+}
+
+SourceStream& SourceStream::operator<<(const UString &s)
 {
   str += s;
+  return *this;
+}
+
+SourceStream& SourceStream::operator<<(const Identifier &s)
+{
+  str += s.ustring();
   return *this;
 }
 

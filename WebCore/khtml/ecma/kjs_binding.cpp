@@ -233,6 +233,16 @@ QConstString UString::qconststring() const
   return QConstString((QChar*) data(), size());
 }
 
+DOM::DOMString Identifier::string() const
+{
+  return DOM::DOMString((QChar*) data(), size());
+}
+
+QString Identifier::qstring() const
+{
+  return QString((QChar*) data(), size());
+}
+
 DOM::Node KJS::toNode(const Value& val)
 {
   Object obj = Object::dynamicCast(val);
