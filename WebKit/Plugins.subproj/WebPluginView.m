@@ -279,6 +279,26 @@
     }
 }
 
+- (BOOL)performKeyEquivalent:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+
+    [self getCarbonEvent:&event withEvent:theEvent];
+    event.what = keyDown;
+
+    if(event.message == 0){
+        event.message = [self keyMessageForEvent:theEvent];
+    }
+
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(performKeyEquivalent): %d charCode:%c keyCode:%lu\n",
+                     acceptedEvent, (char) (event.message & charCodeMask), (event.message & keyCodeMask));
+    
+    return acceptedEvent;
+}
+
 // Must subclass menuForEvent: for right-click to work.
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
