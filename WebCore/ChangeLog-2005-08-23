@@ -1,3 +1,5 @@
+=== Safari-402 ===
+
 2005-03-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3992803> Cannot navigate through list items with the keyboard, you're stuck in the same <li> block unless you click out
