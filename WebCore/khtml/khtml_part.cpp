@@ -3736,8 +3736,11 @@ void KHTMLPart::slotDecZoom()
 
 void KHTMLPart::setZoomFactor (int percent)
 {
+#ifndef APPLE_CHANGES // limits are client's responsibility
   if (percent < minZoom) percent = minZoom;
   if (percent > maxZoom) percent = maxZoom;
+#endif
+  
   if (d->m_zoomFactor == percent) return;
   d->m_zoomFactor = percent;
 
