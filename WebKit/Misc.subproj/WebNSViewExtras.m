@@ -185,7 +185,7 @@
     NSArray *filesTypes = [NSArray arrayWithObject:[[URL path] pathExtension]];
     
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    [pboard declareTypes:[NSArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType] owner:self];
+    [pboard declareTypes:[NSArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil] owner:self];
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
     [pboard _web_writeURL:URL andTitle:title withOwner:self];

@@ -109,6 +109,21 @@ OBJECT {
 	display: block;
 } 
 
+/* Dave: Please add support for ~ so we can match on "image/" instead specific image mime types. */ 
+
+OBJECT[type="image/png"] {
+	display: inline;
+}
+
+OBJECT[type="image/gif"] {
+	display: inline;
+}
+
+OBJECT[type="image/jpeg"] {
+	display: inline;
+}
+
+
 APPLET { 
 	display: block;
 } 
@@ -133,16 +148,6 @@ HR  {
 MAP { 
 	display: inline;
 } 
-
-object {
-        width: 50px;
-        height: 50px;
-}   
-
-embed {
-        width: 50px;
-        height: 50px;
-}   
 
 
 /* 

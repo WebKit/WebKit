@@ -724,7 +724,9 @@
                 NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
                 NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
                 NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
-                
+
+                // Retain this view during the drag because it may be released before the drag ends.
+                [self retain];
                 [self dragImage:dragImage
                              at:imagePoint
                          offset:centerOffset

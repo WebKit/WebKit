@@ -1,5 +1,14 @@
 2002-11-25  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed 2 drag-related crashes. Oops.
+
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragPromisedImage:fromOrigin:withURL:title:event:]): put nil at the end of the array list.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]): retain self before drag
+
+2002-11-25  Chris Blumenberg  <cblu@apple.com>
+
 	- Allow missing icons to be restored when going to the page of the missing icon.
 
         * Misc.subproj/WebIconDatabase.m:

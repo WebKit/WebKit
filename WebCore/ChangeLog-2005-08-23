@@ -1,3 +1,19 @@
+2002-11-25  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 2987001 - spurious mime-type errors from <object> images
+
+	KHTML didn't seem to have any clean support for OBJECT tags that are images. Added support for that.
+
+        * khtml/css/html4.css: OBJECTs that are images should be rendered inline
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::attach): if the type is an image, create a render image
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::updateFromElement): if the element is an object, use DATA for the URL
+        * kwq/KWQDOMNode.cpp:
+        (isImage): if it is an OBJECT element, check the type
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): if the element is an object, use DATA for the URL
+
 2002-11-25  David Hyatt  <hyatt@apple.com>
 
 	Fix this even further.  JUst drop support for arbitrary

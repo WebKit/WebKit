@@ -37,6 +37,7 @@
 #include "css/cssvalues.h"
 #include "rendering/render_applet.h"
 #include "rendering/render_frames.h"
+#include "rendering/render_image.h"
 #include "xml/dom2_eventsimpl.h"
 
 #ifndef Q_WS_QWS // We don't have Java in Qt Embedded
@@ -332,9 +333,21 @@ void HTMLObjectElementImpl::attach()
 {
     assert(!attached());
     assert(!m_render);
-
+    
     KHTMLView* w = getDocument()->view();
     bool loadplugin = w->part()->pluginsEnabled();
+    RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
+    
+    _style->ref();
+    
+    if(serviceType.startsWith("image/") && parentNode()->renderer() && _style->display() != NONE){
+        m_render = new (getDocument()->renderArena()) RenderImage(this);
+        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+        parentNode()->renderer()->addChild(m_render, nextRenderer());
+        m_render->updateFromElement();
+        loadplugin = false;
+    }
+    
 #if APPLE_CHANGES
     // This check showed up during the KDE 3.0 -> 3.0.1 transition.
     // We can't figure out exactly what it's supposed to do, but it prevents
@@ -356,9 +369,11 @@ void HTMLObjectElementImpl::attach()
     if (loadplugin && parentNode()->renderer()) {
         needWidgetUpdate = false;
         m_render = new (getDocument()->renderArena()) RenderPartObject(this);
-        m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
+        m_render->setStyle(_style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
+
+    _style->deref();
 
     NodeBaseImpl::attach();
 

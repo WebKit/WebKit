@@ -552,19 +552,26 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
         }
     }
 
-    NodeImpl *imageNode = nodeInfo.innerNonSharedNode();
-    if (imageNode && isImage(imageNode)) {
-        ElementImpl* i =  static_cast<ElementImpl*>(imageNode);
-        NSString *altString = i->getAttribute(ATTR_ALT).string().getNSString();
-        if(altString){
-            [element setObject:altString forKey:WebCoreElementImageAltStringKey];
+    NodeImpl *node = nodeInfo.innerNonSharedNode();
+    if (node && isImage(node)){
+
+        ElementImpl* i =  static_cast<ElementImpl*>(node);
+        DOMString attr = i->getAttribute(ATTR_SRC);
+        if(attr.isEmpty()){
+            // Look for the URL in the DATA attribute of the OBJECT tag.
+            attr = i->getAttribute(ATTR_DATA);
         }
-        
-        NSString *URLString = _part->kwq->document()->completeURL(i->getAttribute(ATTR_SRC).string()).getNSString();
-        
+
+        NSString *URLString = _part->kwq->document()->completeURL(attr.string()).getNSString();        
         if (URLString) {
             [element setObject:URLString forKey:WebCoreElementImageURLKey];
-            RenderImage *r = (RenderImage *)imageNode->renderer();
+            
+            NSString *altString = i->getAttribute(ATTR_ALT).string().getNSString();
+            if(altString){
+                [element setObject:altString forKey:WebCoreElementImageAltStringKey];
+            }
+            
+            RenderImage *r = (RenderImage *)node->renderer();
             id <WebCoreImageRenderer> image = r->pixmap().image();
             if (image) {
                 [element setObject:image forKey:WebCoreElementImageKey];

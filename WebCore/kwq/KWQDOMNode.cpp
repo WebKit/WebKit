@@ -39,6 +39,11 @@ bool isImage(DOM::NodeImpl *node)
         if(i->getAttribute(ATTR_TYPE) == "image"){
             return true;
         }
+    }else if(node->id() == ID_OBJECT){
+        ElementImpl* i =  static_cast<ElementImpl*>(node);
+        if(i->getAttribute(ATTR_TYPE).string().startsWith("image/")){
+            return true;
+        }
     }
 
     return false;
