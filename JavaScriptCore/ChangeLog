@@ -1,5 +1,15 @@
 2002-08-16  Maciej Stachowiak  <mjs@apple.com>
 
+	Fix Development build - some NDEBUG code had to be changed for the
+	Value/Reference split.
+	
+        * kjs/internal.cpp:
+        (KJS::printInfo):
+        * kjs/nodes.cpp:
+        (FunctionCallNode::evaluate):
+
+2002-08-16  Maciej Stachowiak  <mjs@apple.com>
+
         * kjs/reference_list.h: Added file I forgot to check in last time.
 
 2002-08-15  Maciej Stachowiak  <mjs@apple.com>

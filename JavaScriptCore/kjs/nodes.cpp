@@ -705,7 +705,7 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 
   if (v.type() != ObjectType) {
 #ifndef NDEBUG
-    printInfo(exec, "WARNING: Failed function call attempt on", e, line);
+    printInfo(exec, "WARNING: Failed function call attempt on", v, line);
 #endif
     return throwError(exec, TypeError, "Expression is no object. Cannot be called.");
   }
@@ -714,7 +714,7 @@ Value FunctionCallNode::evaluate(ExecState *exec)
 
   if (!func.implementsCall()) {
 #ifndef NDEBUG
-    printInfo(exec, "Failed function call attempt on", e, line);
+    printInfo(exec, "Failed function call attempt on", v, line);
 #endif
     return throwError(exec, TypeError, "Expression does not allow calls.");
   }
