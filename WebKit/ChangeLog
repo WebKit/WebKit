@@ -1,3 +1,7 @@
+2002-11-10  Darin Adler  <darin@apple.com>
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2002-11-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3021681 - downloaded files' creation and modification dates are not set
