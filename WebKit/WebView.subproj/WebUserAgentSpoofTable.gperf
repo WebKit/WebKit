@@ -27,7 +27,9 @@ battle.net, MacIE
 freebsd.org, MacIE
 #
 # pretend to be Mac IE to work around bug and avoid "spewage" at the bottom of some pages
+# the problems is that if the site thinks we are netscape, it tries to use layers
 oregonlive.com, MacIE
+nj.com, MacIE
 #
 # pretend to be Win IE to get the smaller font sizes the site gives for Windows
 abcnews.go.com, WinIE
