@@ -131,7 +131,16 @@
         NSData *data = [resource data];
         [self didReceiveData:data lengthReceived:[data length]];
         [self didFinishLoading];
+        deliveredResource = YES;
         waitingToDeliverResource = NO;
+    }
+}
+
+- (void)deliverResourceAfterDelay
+{
+    if (resource && !defersCallbacks && !waitingToDeliverResource && !deliveredResource) {
+        [self performSelector:@selector(deliverResource) withObject:nil afterDelay:0];
+        waitingToDeliverResource = YES;
     }
 }
 
@@ -143,6 +152,9 @@
     NSURL *URL = [[r URL] retain];
     [originalURL release];
     originalURL = URL;
+    
+    deliveredResource = NO;
+    waitingToDeliverResource = NO;
 
     r = [self connection:connection willSendRequest:r redirectResponse:nil];
     
@@ -150,11 +162,8 @@
         resource = [dataSource subresourceForURL:originalURL];
         if (resource) {
             [resource retain];
-            waitingToDeliverResource = YES;
-            if (!defersCallbacks) {
-                // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
-                [self performSelector:@selector(deliverResource) withObject:nil afterDelay:0];
-            }
+            // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+            [self deliverResourceAfterDelay];
             return YES;
         }
     }
@@ -171,9 +180,8 @@
 {
     defersCallbacks = defers;
     [connection setDefersCallbacks:defers];
-    if (!defersCallbacks && waitingToDeliverResource) {
-        [self deliverResource];
-    }
+    // Deliver the resource after a delay because callers don't expect to receive callbacks while calling this method.
+    [self deliverResourceAfterDelay];
 }
 
 - (BOOL)defersCallbacks

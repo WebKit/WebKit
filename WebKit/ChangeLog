@@ -1,3 +1,18 @@
+2004-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3574979>: REGRESSION (129-TOT): crash loading macromedia.com
+
+	deliverResource was being called after it had already been called in setDefersCallbacks:.
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate deliverResource]): set deliveredResource to YES
+        (-[WebBaseResourceHandleDelegate deliverResourceAfterDelay]): new, calls deliverResource after a delay
+        (-[WebBaseResourceHandleDelegate loadWithRequest:]): call deliverResourceAfterDelay
+        (-[WebBaseResourceHandleDelegate setDefersCallbacks:]): call deliverResourceAfterDelay
+
 2004-03-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
