@@ -109,7 +109,7 @@
         (KWQDictImpl::find): Ditto.
         (KWQDictIteratorImpl::currentStringKey): Whitespace cleanup.
 
-=== 144 ===
+=== Safari-144 ===
 
 2004-06-10  Ken Kocienda  <kocienda@apple.com>
 
