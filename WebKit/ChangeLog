@@ -1,8 +1,6 @@
-2004-09-07  Chris Blumenberg  <cblu@apple.com>
+2004-09-07  Darin Adler  <darin@apple.com>
 
-        Fixed previous "Reviewed by" line.
-
-        * ChangeLog:
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
 
 2004-09-07  Chris Blumenberg  <cblu@apple.com>
 
