@@ -1,5 +1,12 @@
 2004-11-18  Maciej Stachowiak  <mjs@apple.com>
 
+        still even more build fixing
+
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::resetCollectionInfo):
+
+2004-11-18  Maciej Stachowiak  <mjs@apple.com>
+
         more build fixing
 
         * khtml/html/html_miscimpl.cpp:

@@ -70,11 +70,10 @@ void HTMLCollectionImpl::resetCollectionInfo() const
 {
     unsigned int docversion = static_cast<HTMLDocumentImpl*>(base->getDocument())->domTreeVersion();
     if (info->version != docversion) {
-        version = 0;
-        current = 0;
-        position = 0;
-        length = 0;
-        haslength = false;
+        info->current = 0;
+        info->position = 0;
+        info->length = 0;
+        info->haslength = false;
         info->version = docversion;
     }
 }
