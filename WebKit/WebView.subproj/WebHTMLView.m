@@ -783,7 +783,7 @@ static WebHTMLView *lastHitView = nil;
     return dragImage;
 }
 
-- (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent
+- (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent sourceIsDHTML:(BOOL)srcIsDHTML DHTMLWroteData:(BOOL)dhtmlWroteData
 {
     // Once we start a drag session we may not get a mouseup, so clear this out here as well as mouseUp:
     _private->firstMouseDownEvent = nil;
@@ -801,28 +801,47 @@ static WebHTMLView *lastHitView = nil;
     NSPoint mouseDraggedPoint = [self convertPoint:[mouseDraggedEvent locationInWindow] fromView:nil];
     _private->webCoreDragOp = op;     // will be DragNone if WebCore doesn't care
     NSImage *dragImage = nil;
-    
-    if (imageURL) {
+    NSPoint dragLoc;
+
+    // We allow WebCore to override the drag image, even if its a link, image or text we're dragging.
+    // This is in the spirit of the IE API, which allows overriding of pasteboard data and DragOp.
+    // We could verify that ActionDHTML is allowed, although WebCore does claim to respect the action.
+    if (wcDragImage) {
+        dragImage = wcDragImage;
+        // wcDragLoc is the cursor position relative to the lower-left corner of the image.
+        // We add in the Y dimension because we are a flipped view, so adding moves the image down.
+        if (linkURL) {
+            // see HACK below
+            dragLoc = NSMakePoint(mouseDraggedPoint.x - wcDragLoc.x, mouseDraggedPoint.y + wcDragLoc.y);
+        } else {
+            dragLoc = NSMakePoint(mouseDownPoint.x - wcDragLoc.x, mouseDownPoint.y + wcDragLoc.y);
+        }
+    } else if (imageURL) {
+        // This image is only for the benefit of the delegate!?  _web_dragImage figures out its own version
         dragImage = [[[element objectForKey:WebElementImageKey] copy] autorelease];
         [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+        dragLoc = NSZeroPoint;  // unused below, _web_dragImage figures out the location
     } else if (linkURL) {
         dragImage = [self _dragImageForLinkElement:element];
+        NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
+        dragLoc = NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height);
     } else if (isSelected) {
         dragImage = [[self _bridge] selectionImage];
         [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+        NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
+        dragLoc = NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect));
     } else {
-        //FIXME - for which of these types should WC control the image?
-        if (wcDragImage) {
-            dragImage = wcDragImage;
-        } else {
-            NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"missing_image" ofType:@"tiff"];
-            dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
-        }
+        ASSERT(srcIsDHTML);
+        // WebCore should have given us an image, but we'll make one up
+        NSString *imagePath = [[NSBundle bundleForClass:[self class]] pathForResource:@"missing_image" ofType:@"tiff"];
+        dragImage = [[[NSImage alloc] initWithContentsOfFile:imagePath] autorelease];
+        NSSize imageSize = [dragImage size];
+        dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width/2, mouseDownPoint.y + imageSize.height/2);
     }
     
     ASSERT(dragImage != nil);
-    
     WebView *webView = [self _webView];
+    //??? use srcIsDHTML to determine DragDestAction
     if (![[webView _UIDelegateForwarder] webView:webView
                        shouldBeginDragForElement:element 
                                        dragImage:dragImage 
@@ -831,6 +850,7 @@ static WebHTMLView *lastHitView = nil;
         return YES;   
     }
     
+    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     // note per kwebster, the offset arg below is always ignored in positioning the image
     if (imageURL) {
         _private->draggingImageURL = [imageURL retain];
@@ -841,50 +861,43 @@ static WebHTMLView *lastHitView = nil;
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
-                       event:_private->mouseDownEvent];
-        
+                       event:_private->mouseDownEvent
+                   dragImage:wcDragImage
+                dragLocation:wcDragLoc
+             writePasteboard:!dhtmlWroteData];
     } else if (linkURL) {
-        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        NSArray *types = [NSPasteboard _web_writableTypesForURL];
-        [pasteboard declareTypes:types owner:self];
-        [pasteboard _web_writeURL:linkURL andTitle:[element objectForKey:WebElementLinkLabelKey] types:types];
-        NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
+        if (!dhtmlWroteData) {
+            NSArray *types = [NSPasteboard _web_writableTypesForURL];
+            [pasteboard declareTypes:types owner:self];
+            [pasteboard _web_writeURL:linkURL andTitle:[element objectForKey:WebElementLinkLabelKey] types:types];            
+        }
+        // HACK:  We should pass the mouseDown event instead of the mouseDragged!  This hack gets rid of
+        // a flash of the image at the mouseDown location when the drag starts.
         [self dragImage:dragImage
-                     at:NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height)
-                 offset:offset
+                     at:dragLoc
+                 offset:NSZeroSize
                   event:mouseDraggedEvent
              pasteboard:pasteboard
                  source:self
               slideBack:NO];
-        
     } else if (isSelected) {
-        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-        [self _writeSelectionToPasteboard:pasteboard];
-        NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
+        if (!dhtmlWroteData) {
+            [self _writeSelectionToPasteboard:pasteboard];
+        }
         [self dragImage:dragImage
-                     at:NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect))
-                 offset:NSMakeSize(mouseDraggedPoint.x - mouseDownPoint.x, mouseDraggedPoint.y - mouseDownPoint.y)
+                     at:dragLoc
+                 offset:NSZeroSize
                   event:_private->mouseDownEvent
              pasteboard:pasteboard
                  source:self
               slideBack:YES];
     } else {
         // FIXME - need slideback control for WC
-        // FIXME - is offset totally ignored by the CG-based system? seems like it to me
-        NSPoint dragLoc;
-        if (wcDragImage) {
-            // wcDragLoc is the cursor position relative to the lower-left corner of the image.
-            // We add in the Y dimension because we are a flipped view, so adding moves the image down.
-            dragLoc = NSMakePoint(mouseDownPoint.x - wcDragLoc.x, mouseDownPoint.y + wcDragLoc.y);
-        } else {
-            NSSize imageSize = [dragImage size];
-            dragLoc = NSMakePoint(mouseDownPoint.x - imageSize.width/2, mouseDownPoint.y + imageSize.height/2);
-        }
         [self dragImage:dragImage
                      at:dragLoc
-                 offset:NSMakeSize(mouseDraggedPoint.x - mouseDownPoint.x, mouseDraggedPoint.y - mouseDownPoint.y)
+                 offset:NSZeroSize
                   event:_private->mouseDownEvent
-             pasteboard:[NSPasteboard pasteboardWithName:NSDragPboard]
+             pasteboard:pasteboard
                  source:self
               slideBack:YES];
     }
@@ -1845,7 +1858,7 @@ static void FlipImageSpec(CoreDragImageSpec* imageSpec) {
         // Handle the drag directly instead of getting callbacks from WebCore.
         // FIXME - how does this play with DHTML dragging?
         if ([self _mayStartDragWithMouseDragged:event]) {
-            [self _startDraggingImage:nil at:NSZeroPoint operation:NSDragOperationNone event:event];
+            [self _startDraggingImage:nil at:NSZeroPoint operation:NSDragOperationNone event:event sourceIsDHTML:NO DHTMLWroteData:NO];
         }
     } else if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];

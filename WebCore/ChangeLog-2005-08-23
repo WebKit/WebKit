@@ -1,3 +1,27 @@
+2004-07-10  Trey Matteson  <trey@apple.com>
+
+	Prep work for latest delegate API for dragging.  In addition, I also straightened out all
+	the cases of DHTML setting a drag image or setting pasteboard data, and how that would
+	override WebKit's default behavior (which follows how WinIE does things).
+
+        Reviewed by Chris.
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::draggableNode):  Obey new params for whether a DHTML or UserAgent (i.e.,
+	WebKit) drag source is allowed.
+        * khtml/rendering/render_object.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dispatchDragSrcEvent):  Setting pasteboard data was moved out of here, now
+	caller's responsibility.
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Ask bridge for allowable drag actions (DHTML vs UA).
+	Only send drag events if DHTML is allowed.  Only generate a drag image if the source is
+	a DHTML element.  Note whether event handler set any pasteboard	data, and pass that fact
+	to WebKit.
+        (KWQKHTMLPart::dragSourceMovedTo): Only send drag events if DHTML is allowed.  
+        (KWQKHTMLPart::dragSourceEndedAt): Only send drag events if DHTML is allowed.  
+        * kwq/WebCoreBridge.h:
+
 2004-06-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey

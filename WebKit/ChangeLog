@@ -1,3 +1,27 @@
+2004-07-10  Trey Matteson  <trey@apple.com>
+
+	Prep work for latest delegate API for dragging.  In addition, I also straightened out all
+	the cases of DHTML setting a drag image or setting pasteboard data, and how that would
+	override WebKit's default behavior (which follows how WinIE does things).
+
+        Reviewed by Chris.
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:archive:rect:URL:title:event:dragImage:dragLocation:writePasteboard:]):
+	New args to allow WebCore override of dragImage and pasteboard data.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge allowDHTMLDrag:UADrag:]):  New method to return the drag action info to WC.
+        (-[WebBridge startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+	Pass along new args.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:sourceIsDHTML:DHTMLWroteData:]):
+	Allow WebCore to override drag image and pasteboard data for any type of drag.
+        (-[WebHTMLView mouseDragged:]):  Pass NO for new args.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView mouseDragged:]):  Pass NO/nil for new args.
+
 === 144 ===
 
 2004-06-10  Kevin Decker  <kdecker@apple.com>

@@ -248,7 +248,10 @@
                     rect:[self drawingRect]
                      URL:[rep URL]
                    title:nil
-                   event:mouseDraggedEvent];
+                   event:mouseDraggedEvent
+               dragImage:nil
+            dragLocation:NSZeroPoint
+         writePasteboard:YES];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination

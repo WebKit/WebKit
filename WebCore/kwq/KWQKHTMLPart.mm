@@ -1905,18 +1905,12 @@ bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocatio
     return deltaX >= threshold || deltaY >= threshold;
 }
 
-// returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc, NSDragOperation *op) const
+// returns if we should continue "default processing", i.e., whether to start up the drag
+bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, NSImage **dragImage, NSPoint *dragLoc, NSDragOperation *op) const
 {
-    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-    if (declareTypes) {
-        // Must be done before ondragstart adds types and data to the pboard,
-        // also done for security, as it erases data from the last drag
-        [pasteboard declareTypes:[NSArray array] owner:nil];
-    }
-    KWQClipboard *clipboard = new KWQClipboard(true, pasteboard, KWQClipboard::Writable);
+    KWQClipboard *clipboard = new KWQClipboard(true, [NSPasteboard pasteboardWithName:NSDragPboard], KWQClipboard::Writable);
     clipboard->ref();
-    bool DHTMLBailed = d->m_view->dispatchDragEvent(eventId, _dragSrc.handle(), loc, clipboard);
+    bool noDefaultProc = d->m_view->dispatchDragEvent(eventId, _dragSrc.handle(), loc, clipboard);
     clipboard->becomeNumb();    // invalidate clipboard here for security
 
     if (dragImage) {
@@ -1938,7 +1932,7 @@ bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool dec
     }
 
     clipboard->deref();
-    return !DHTMLBailed;
+    return !noDefaultProc;
 }
 
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
@@ -1956,10 +1950,20 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
         }
 
 	if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
+            BOOL tempFlag1, tempFlag2;
+            [_bridge allowDHTMLDrag:&tempFlag1 UADrag:&tempFlag2];
+            _dragSrcMayBeDHTML = tempFlag1;
+            _dragSrcMayBeUA = tempFlag2;
+            if (!_dragSrcMayBeDHTML && !_dragSrcMayBeUA) {
+                _mouseDownMayStartDrag = false;     // no element is draggable
+            }
+        }
+        
+        if (_mouseDownMayStartDrag && _dragSrc.isNull()) {
             // try to find an element that wants to be dragged
             RenderObject::NodeInfo nodeInfo(true, false);
             renderer()->layer()->nodeAtPoint(nodeInfo, _mouseDownX, _mouseDownY);
-            _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode();
+            _dragSrc = nodeInfo.innerNode()->renderer()->draggableNode(_dragSrcMayBeDHTML, _dragSrcMayBeUA, _dragSrcIsDHTML);
             if (_dragSrc.isNull()) {
                 _mouseDownMayStartDrag = false;     // no element is draggable
             } else {
@@ -1983,24 +1987,38 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
                 NSImage *dragImage = nil;
                 NSPoint dragLoc = NSZeroPoint;
                 NSDragOperation srcOp = NSDragOperationNone;
-                if (dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation), true, &dragImage, &dragLoc, &srcOp)) {
-                    if (!dragImage && !_dragSrcIsLink && !_dragSrcIsImage && !_dragSrcInSelection) {
-                        // Element accepted, but didn't supply an image, and WebKit won't be making one
-                        // either - so we make a default one
-                        NSRect imageRect;
-                        dragImage = elementImage(_dragSrc, &imageRect);
-                        dragLoc.x = _mouseDownX - imageRect.origin.x;
-                        dragLoc.y = imageRect.size.height - (_mouseDownY - imageRect.origin.y);
+                BOOL wcWrotePasteboard = NO;
+                if (_dragSrcMayBeDHTML) {
+                    NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+                    // Must be done before ondragstart adds types and data to the pboard,
+                    // also done for security, as it erases data from the last drag
+                    [pasteboard declareTypes:[NSArray array] owner:nil];
+
+                    if (dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation), &dragImage, &dragLoc, &srcOp)) {
+                        NSArray *types = [pasteboard types];
+                        wcWrotePasteboard = types && [types count] > 0;
+
+                        if (!dragImage && _dragSrcIsDHTML) {
+                            // Element accepted, but didn't supply an image, and WebKit won't be making one
+                            // either - so we make a default one
+                            NSRect imageRect;
+                            dragImage = elementImage(_dragSrc, &imageRect);
+                            dragLoc.x = _mouseDownX - imageRect.origin.x;
+                            dragLoc.y = imageRect.size.height - (_mouseDownY - imageRect.origin.y);
+                        }
+                    } else {
+                        _mouseDownMayStartDrag = false;  // ondragstart makes us bail
                     }
-                    if ([_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent]) {
+                }
+
+                if (_mouseDownMayStartDrag) {
+                    if ([_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent sourceIsDHTML:_dragSrcIsDHTML DHTMLWroteData:wcWrotePasteboard]) {
                         // Prevent click handling from taking place once we start dragging.
                         d->m_view->invalidateClick();
-                    } else {
+                    } else if (_dragSrcMayBeDHTML) {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
-                        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation), false, NULL, NULL, NULL);
+                        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation), NULL, NULL, NULL);
                     }
-                } else {
-                    _mouseDownMayStartDrag = false;
                 }
             }
 
@@ -2032,11 +2050,11 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
 void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 {
-    if (!_dragSrc.isNull()) {
+    if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
         NSImage *dragImage = nil;
         NSPoint dragLoc = NSZeroPoint;
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, false, &dragImage, &dragLoc, NULL);
+        dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, &dragImage, &dragLoc, NULL);
         if (dragImage) {
             [_bridge setDraggingImage:dragImage at:dragLoc];
         }
@@ -2045,9 +2063,9 @@ void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 
 void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
 {
-    if (!_dragSrc.isNull()) {
+    if (!_dragSrc.isNull() && _dragSrcMayBeDHTML) {
         // for now we don't care if event handler cancels default behavior, since there is none
-        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc, false, NULL, NULL, NULL);
+        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc, NULL, NULL, NULL);
     }
 }
 

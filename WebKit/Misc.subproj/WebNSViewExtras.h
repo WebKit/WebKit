@@ -46,5 +46,8 @@
                   rect:(NSRect)rect
                    URL:(NSURL *)URL
                  title:(NSString *)title
-                 event:(NSEvent *)event;
+                 event:(NSEvent *)event
+             dragImage:(NSImage *)dragImageOverride
+          dragLocation:(NSPoint)dragLocOverride
+       writePasteboard:(BOOL)writePB;
 @end

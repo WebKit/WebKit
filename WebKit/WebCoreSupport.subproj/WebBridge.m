@@ -987,11 +987,18 @@ static BOOL loggedObjectCacheSize = NO;
     return [type length] == 0 ? @"application/octet-stream" : type;
 }
 
-- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event
+- (void)allowDHTMLDrag:(BOOL *)flagDHTML UADrag:(BOOL *)flagUA
+{
+    // FIXME: call up to the WebView, then out to the delegate for the drag action
+    *flagDHTML = YES;
+    *flagUA = YES;
+}
+
+- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event sourceIsDHTML:(BOOL)flag DHTMLWroteData:(BOOL)dhtmlWroteData
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event];
+    return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event sourceIsDHTML:flag DHTMLWroteData:dhtmlWroteData];
 }
 
 - (void)setDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc

@@ -1376,27 +1376,37 @@ bool RenderObject::shouldSelect() const
     return true;
 }
 
-DOM::NodeImpl* RenderObject::draggableNode() const
+DOM::NodeImpl* RenderObject::draggableNode(bool dhtmlOK, bool uaOK, bool& dhtmlWillDrag) const
 {
+    if (!dhtmlOK && !uaOK)
+        return 0;
+
     const RenderObject* curr = this;
     while (curr) {
         DOM::NodeImpl *elt = curr->element();
         if (elt && elt->nodeType() == Node::TEXT_NODE) {
             // Since there's no way for the author to address the -khtml-user-drag style for a text node,
             // we use our own judgement.
-            if (canvas()->view()->part()->shouldDragAutoNode(curr->node()))
+            if (uaOK && canvas()->view()->part()->shouldDragAutoNode(curr->node())) {
+                dhtmlWillDrag = false;
                 return curr->node();
-            else if (curr->shouldSelect())
+            } else if (curr->shouldSelect()) {
                 // In this case we have a click in the unselected portion of text.  If this text is
                 // selectable, we want to start the selection process instead of looking for a parent
                 // to try to drag.
                 return 0;
+            }
         } else {
             EUserDrag dragMode = curr->style()->userDrag();
-            if (dragMode == DRAG_ELEMENT)
+            if (dhtmlOK && dragMode == DRAG_ELEMENT) {
+                dhtmlWillDrag = true;
                 return curr->node();
-            else if (dragMode == DRAG_AUTO && canvas()->view()->part()->shouldDragAutoNode(curr->node()))
+            } else if (uaOK && dragMode == DRAG_AUTO
+                       && canvas()->view()->part()->shouldDragAutoNode(curr->node()))
+            {
+                dhtmlWillDrag = false;
                 return curr->node();
+            }
         }
         curr = curr->parent();
     }

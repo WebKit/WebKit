@@ -328,7 +328,7 @@ private:
     static NSView *documentViewForNode(DOM::NodeImpl *);
     
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
-    bool dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc, unsigned *op) const;
+    bool dispatchDragSrcEvent(int eventId, const QPoint &loc, NSImage **dragImage, NSPoint *dragLoc, unsigned *op) const;
 
     NSImage *KWQKHTMLPart::imageFromRect(NSRect rect) const;
 
@@ -376,6 +376,8 @@ private:
     bool _dragSrcIsLink;
     bool _dragSrcIsImage;
     bool _dragSrcInSelection;
+    bool _dragSrcMayBeDHTML, _dragSrcMayBeUA;   // Are DHTML and/or the UserAgent allowed to drag out?
+    bool _dragSrcIsDHTML;
     
     mutable DOM::Node _elementToDraw;
 };
