@@ -184,8 +184,6 @@
         }
     }
     
-    NSLog(@"_MIMETypeForFile: %@ -> %@", path, result);
-    
     return result;
 }
 

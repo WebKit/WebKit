@@ -1,5 +1,13 @@
 2002-08-30  Ken Kocienda  <kocienda@apple.com>
 
+	Failed to remove debugging spam before my last checkin. Sorry.
+
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPrivate.m:
+        (+[WebController _MIMETypeForFile:])
+
+2002-08-30  Ken Kocienda  <kocienda@apple.com>
+
         * WebView.subproj/WebControllerPrivate.m:
         (+[WebController _MIMETypeForFile:]): Small tweak to account for change
 	in behavior of a WebFoundation method upon which this method depends.
