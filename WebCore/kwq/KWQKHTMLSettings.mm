@@ -159,7 +159,6 @@ int KHTMLSettings::maxFormCompletionItems() const
 {
     _logNotYetImplemented();
     return 0;
-    
 }
 
 
