@@ -1,10 +1,6 @@
-//
-//  WKBackForwardList.h
-//  WebKit
-//
-//  Created by Kenneth Kocienda on Thu Nov 29 2001.
-//  Copyright (c) 2001 __MyCompanyName__. All rights reserved.
-//
+/*	WKBackForwardList.h
+	Copyright 2001, Apple, Inc. All rights reserved.
+*/
 
 #import <Foundation/Foundation.h>
 #import "WKURIList.h"
@@ -31,3 +27,37 @@
 -(BOOL)canGoForward;
 
 @end
+
+
+#ifdef NEW_WEBKIT_API
+
+//=============================================================================
+//
+// WKBackForwardList.h
+//
+// It provides the list that enables the "Back" and "Forward" buttons to
+// work correctly. As such, it is merely a user convenience that aids in
+// basic navigation in ways that users have come to expect.
+//
+
+@interface WKBackForwardList
+{
+
+-(id)init;
+
+-(void)addAttributedURL:(WKAttributedURL *)url;
+
+-(WKAttributedURL *)back;
+-(WKAttributedURL *)forward;
+
+-(NSArray *)backList;
+-(NSArray *)forwardList;
+
+-(BOOL)canGoBack;
+-(BOOL)canGoForward;
+
+}
+
+//=============================================================================
+
+#endif // NEW_WEBKIT_API

@@ -1,5 +1,15 @@
 2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
 
+        Fixed small cpp glitch in WKWebCache.
+        Added WKAttributedURL header.
+        Updated WKBackForwardList with ifdef'ed out new design.
+        
+	* Cache.subproj/WKWebCache.h:
+	* History.subproj/WKAttributedURL.h:
+	* History.subproj/WKBackForwardList.h:
+
+2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
+
         Added header files by chopping up the CacheAPI.h document I have been working on.
 
 	* Cache.subproj/WKLoadChunk.h:
