@@ -308,8 +308,6 @@
     if (downloadHandler) {
         downloadError = [downloadHandler finishedLoading];
         [dataSource _setPrimaryLoadComplete:YES];
-        [downloadHandler release];
-        downloadHandler = nil;
     } else {
         [dataSource _setResourceData:resourceData];
         [dataSource _finishedLoading];
@@ -324,6 +322,9 @@
         [super handleDidFinishLoading:h];
     }
 
+    [downloadHandler release];
+    downloadHandler = nil;
+    
     [self release];
 }
 

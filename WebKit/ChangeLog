@@ -1,3 +1,12 @@
+2002-12-10  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3124079 - REGRESSION: Downloads never complete
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:]): release and set to nil the download handler after calling [super handleDidFinishLoading:h]
+
 2002-12-10  Richard Williamson   <rjw@apple.com>
 
         Fixed 3115427.  Page now draws instantly instead of 20 seconds.
