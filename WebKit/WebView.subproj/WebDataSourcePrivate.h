@@ -117,6 +117,7 @@
 - (void)_commitIfReady;
 - (void)_makeRepresentation;
 - (void)_receivedData:(NSData *)data;
+- (void)_finishedLoading;
 
 - (void)_defersCallbacksChanged;
 

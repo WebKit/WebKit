@@ -434,6 +434,12 @@
     [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
 }
 
+- (void)_finishedLoading
+{
+    _private->gotFirstByte = YES;
+    [self _commitIfReady];
+}
+
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;
 {
     [[WebIconDatabase sharedIconDatabase] _setIconURL:[iconLoader URL] forSiteURL:[self URL]];

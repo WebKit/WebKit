@@ -160,8 +160,8 @@
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
     
     // Don't retain data for downloaded files
-    if(contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally){
-       [dataSource _setResourceData:resourceData];
+    if (contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally) {
+    	[dataSource _setResourceData:resourceData];
     }
 
     if (contentAction == WebContentPolicyShow) {
@@ -177,8 +177,10 @@
         downloadHandler = nil;
         [downloadProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
     }
-    else
+    else {
+        [dataSource _finishedLoading];
         [resourceProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
+    }
 
     // Either send a final error message or a final progress message.
     WebError *nonTerminalError = [[dataSource response] error];
@@ -189,7 +191,6 @@
     }
     
     [self didStopLoading];
-
     
     [self release];
 }
@@ -284,7 +285,6 @@
     
     WebError *downloadError = nil;
     
-
     if (downloadHandler) {
         downloadError = [downloadHandler receivedData:data];
         [downloadProgressDelegate resourceRequest: request didReceiveContentLength: [data length] fromDataSource:dataSource];

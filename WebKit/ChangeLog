@@ -1,5 +1,18 @@
 2002-10-10  Darin Adler  <darin@apple.com>
 
+	- fixed 3071799 -- REGRESSION: hang and strange download loading about:blank
+
+	Chris fixed the strange download earlier. This fixes the "hang' by making sure
+	we commit even if we receive 0 bytes of data.
+
+        * WebView.subproj/WebDataSourcePrivate.h: Added a _finishedLoading method.
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _finishedLoading]):
+	Added. Sets the "first byte of data received" flag, and calls _commitIfReady.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:]): Call _finishedLoading.
+
+2002-10-10  Darin Adler  <darin@apple.com>
+
 	- fixed 3072015 -- REGRESSION: frames multiply endlessly
 
         * WebCoreSupport.subproj/WebBridge.m: (-[WebBridge setFrame:]):
