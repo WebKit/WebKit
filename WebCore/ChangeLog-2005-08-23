@@ -1,3 +1,35 @@
+2003-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - another try at fixing the -[KWQPageState dealloc] bug, even though we don't fully understand it
+        
+        This change saves the renderer inside the document rather than in the KWQPageState to
+        try to eliminate the possibility that multiple KWQPageState objects could restore the
+        same renderer multiple times, resulting in multiple detaches of the same renderer.
+
+        * khtml/xml/dom_docimpl.h: Add a m_savedRenderer field.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl): Initialize m_savedRenderer to 0.
+        (DocumentImpl::~DocumentImpl): Added some asserts to make sure we don't get destroyed
+        while we are in the page cache.
+        (DocumentImpl::attach): Added an assert.
+        (DocumentImpl::setInPageCache): Save the renderer when setting the flag, and restore
+        the renderer when clearing it.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::openURLFromPageCache): Instead of doing a restoreRenderer
+        call, just do setInPageCache(NO), which will restore the renderer as a side effect.
+
+        * kwq/KWQPageState.h: Removed the renderer method and field.
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState initWithDocument:URL:windowProperties:locationProperties:interpreterBuiltins:]):
+        Don't store a pointer to the renderer.
+        (-[KWQPageState clear]): New method, shared by invalidate and dealloc.
+        (-[KWQPageState invalidate]): Removed code relating to "relinquishing object ownership";
+        just deallocate everything here without doing a detach().
+        (-[KWQPageState dealloc]): Removed restoreRenderer now that setInPageCache(NO) handles that.
+        Added some assertions. Share code with invalidate by calling clear.
+
 2003-12-22  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3508798>: ACCESSIBILITY: role/description/value strings not defined

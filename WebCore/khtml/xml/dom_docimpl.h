@@ -593,6 +593,7 @@ public:
 private:
     mutable DOMString m_domain;
     bool m_inPageCache;
+    khtml::RenderObject *m_savedRenderer;
     int m_passwordFields;
     int m_secureForms;
     

@@ -35,10 +35,6 @@ namespace DOM {
     class DocumentImpl;
 }
 
-namespace khtml {
-    class RenderObject;
-}
-
 namespace KJS {
     class SavedProperties;
 }
@@ -50,7 +46,6 @@ namespace KJS {
     KJS::SavedProperties *windowProperties;
     KJS::SavedProperties *locationProperties;
     KJS::SavedBuiltins *interpreterBuiltins;
-    khtml::RenderObject *docRenderer; 
     QMap<int, KJS::ScheduledAction*> *pausedActions;
 }
 
@@ -61,7 +56,6 @@ namespace KJS {
 - (KJS::SavedProperties *)windowProperties;
 - (KJS::SavedProperties *)locationProperties;
 - (KJS::SavedBuiltins *)interpreterBuiltins;
-- (khtml::RenderObject *)renderer;
 - (void)setPausedActions: (QMap<int, KJS::ScheduledAction*> *)pa;
 - (QMap<int, KJS::ScheduledAction*> *)pausedActions;
 - (void)invalidate;

@@ -48,7 +48,6 @@ using KJS::SavedBuiltins;
     [super init];
     doc->ref();
     document = doc;
-    docRenderer = doc->renderer();
     document->setInPageCache(YES);
     document->view()->ref();
     URL = new KURL(u);
@@ -82,62 +81,54 @@ using KJS::SavedBuiltins;
     QObject::clearPausedTimers(self);
 }
 
-// Called when the KWQPageState is restored.  It relinquishs ownership
-// of objects to core.
-- (void)invalidate
+- (void)clear
 {
-    // Should only ever invalidate once.
-    ASSERT(document);
-    
-    document->setInPageCache(NO);
-
-    // Do NOT detach the renderer here.  The ownership of the renderer
-    // has been handed off to core.  The renderer is being used in an
-    // active page.  It will be either cleaned up with the document or
-    // re-added to another page cache.
-    docRenderer = 0;
-
-    document->view()->deref();
-    document->deref();
     document = 0;
 
     delete URL;
     URL = 0;
-    
-    [self _cleanupPausedActions];
-    
     delete windowProperties;
     windowProperties = 0;
     delete locationProperties;
     locationProperties = 0;
     delete interpreterBuiltins;
     interpreterBuiltins = 0;
+    [self _cleanupPausedActions];
+}
+
+- (void)invalidate
+{
+    // Should only ever invalidate once.
+    ASSERT(document);
+    ASSERT(!document->inPageCache());
+
+    document->view()->deref();
+    document->deref();
+
+    [self clear];
 }
 
 - (void)dealloc
 {
     if (document) {
+        ASSERT(document->inPageCache());
+        ASSERT(document->view());
+
         KHTMLView *view = document->view();
 
         KWQKHTMLPart::clearTimers(view);
 
         document->setInPageCache(NO);
-        document->restoreRenderer(docRenderer);
         document->detach();
         document->deref();
         
         if (view) {
             view->clearPart();
-	    view->deref();
+            view->deref();
         }
     }
-    
-    delete URL;
-    delete windowProperties;
-    delete locationProperties;
-    delete interpreterBuiltins;
-    
-    [self _cleanupPausedActions];
+
+    [self clear];
 
     [super dealloc];
 }
@@ -165,11 +156,6 @@ using KJS::SavedBuiltins;
 - (SavedBuiltins *)interpreterBuiltins
 {
     return interpreterBuiltins;
-}
-
-- (RenderObject *)renderer
-{
-    return docRenderer;
 }
 
 @end

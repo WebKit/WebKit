@@ -230,7 +230,8 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     , m_imageLoadEventTimer(0)
 #if APPLE_CHANGES
     , m_finishedParsing(this, SIGNAL(finishedParsing()))
-    , m_inPageCache(0), m_passwordFields(0), m_secureForms(0)
+    , m_inPageCache(false), m_savedRenderer(0)
+    , m_passwordFields(0), m_secureForms(0)
     , m_decoder(0), m_createRenderers(true)
 #endif
 {
@@ -314,6 +315,10 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
 DocumentImpl::~DocumentImpl()
 {
     assert(!m_render);
+#if APPLE_CHANGES
+    assert(!m_inPageCache);
+    assert(m_savedRenderer == 0);
+#endif
     
     KJS::ScriptInterpreter::forgetDOMObjectsForDocument(this);
 
@@ -1089,6 +1094,9 @@ void DocumentImpl::updateLayout()
 void DocumentImpl::attach()
 {
     assert(!attached());
+#if APPLE_CHANGES
+    assert(!m_inPageCache);
+#endif
 
     if ( m_view )
         setPaintDevice( m_view );
@@ -2533,9 +2541,21 @@ bool DocumentImpl::inPageCache()
 
 void DocumentImpl::setInPageCache(bool flag)
 {
+    if (m_inPageCache == flag)
+        return;
+
     m_inPageCache = flag;
-    if (m_view && m_inPageCache)
-        m_view->resetScrollBars();
+    if (flag) {
+        assert(m_savedRenderer == 0);
+        m_savedRenderer = m_render;
+        if (m_view) {
+            m_view->resetScrollBars();
+        }
+    } else {
+        assert(m_render == 0 || m_render == m_savedRenderer);
+        m_render = m_savedRenderer;
+        m_savedRenderer = 0;
+    }
 }
 
 void DocumentImpl::passwordFieldAdded()

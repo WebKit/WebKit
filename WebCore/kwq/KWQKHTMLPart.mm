@@ -1189,7 +1189,6 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     // does not throw
 
     DocumentImpl *doc = [state document];
-    RenderObject *renderer = [state renderer];
     KURL *url = [state URL];
     SavedProperties *windowProperties = [state windowProperties];
     SavedProperties *locationProperties = [state locationProperties];
@@ -1234,8 +1233,8 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
     // -----------begin-----------
     clear();
 
-    doc->restoreRenderer(renderer);
-    
+    doc->setInPageCache(NO);
+
     d->m_bCleared = false;
     d->m_cacheId = 0;
     d->m_bComplete = false;
