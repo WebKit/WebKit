@@ -1,3 +1,7 @@
+2002-09-23  Maciej Stachowiak  <mjs@apple.com>
+
+        * WebView.subproj/WebWindowContext.h: Added inline header docs.
+
 2002-09-23  Ken Kocienda  <kocienda@apple.com>
 
 	Fixes for some build problems I missed earlier due to the fact that PB can't handle header dependencies,
