@@ -53,6 +53,8 @@ public:
 
     QPoint topLeft() const;
     QSize size() const;
+    void setX(int x) { xp = x; }
+    void setY(int y) { yp = y; }
     void setWidth(int width) { w = width; }
     void setHeight(int height) { h = height; }
     QRect intersect(const QRect &) const;

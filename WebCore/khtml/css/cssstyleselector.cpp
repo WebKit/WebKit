@@ -2317,18 +2317,26 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
         break;
     case CSS_PROP_Z_INDEX:
     {
-	int z_index = 0;
-        if(value->cssValueType() == CSSValue::CSS_INHERIT)
-       {
+        int z_index = 0;
+        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
             if(!parentNode) return;
             z_index = parentStyle->zIndex();
         } else {
-            if(!primitiveValue ||
-               primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
+            if (!primitiveValue)
                 return;
-	    z_index = (int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
-	}
-        style->setZIndex( z_index );
+
+            if (primitiveValue->getIdent() == CSS_VAL_AUTO) {
+                style->setHasAutoZIndex();
+                return;
+            }
+            
+            if (primitiveValue->primitiveType() != CSSPrimitiveValue::CSS_NUMBER)
+                return; // Error case.
+            
+            z_index = (int)primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_NUMBER);
+        }
+        
+        style->setZIndex(z_index);
         return;
     }
 

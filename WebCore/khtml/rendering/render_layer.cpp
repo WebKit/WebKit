@@ -24,7 +24,7 @@
 #include <kdebug.h>
 #include <assert.h>
 #include "khtmlview.h"
-#include "render_object.h"
+#include "render_box.h"
 
 using namespace DOM;
 using namespace khtml;
@@ -54,28 +54,51 @@ void RenderLayer::updateLayerPosition()
     int x = m_object->xPos();
     int y = m_object->yPos();
 
-    RenderObject* curr = m_object->parent();
-    while (curr && !curr->layer()) {
-        x += curr->xPos();
-        y += curr->yPos();
+    if (!m_object->isPositioned()) {
+        // We must adjust our position by walking up the render tree looking for the
+        // nearest enclosing object with a layer.
+        RenderObject* curr = m_object->parent();
+        while (curr && !curr->layer()) {
+            x += curr->xPos();
+            y += curr->yPos();
+            curr = curr->parent();
+        }
     }
 
+    if (m_object->isRelPositioned())
+        static_cast<RenderBox*>(m_object)->relativePositionOffset(x, y);
+    
     setPos(x,y);
 }
 
-void RenderLayer::addChild(RenderLayer *child, RenderLayer *beforeChild)
+RenderLayer*
+RenderLayer::enclosingAncestor()
 {
-    if (!beforeChild)
-        setLastChild(child);
-        
-    if(beforeChild == firstChild()) // Handles the null case too.
-        setFirstChild(child);
+    RenderObject* o = m_object->parent();
+    if (m_object->isPositioned()) {
+        if (m_object->style()->position() == FIXED) {
+            while (o && o->style()->position() == STATIC && !o->isHtml() && !o->isRoot())
+                o = o->parent();
+        }
+        else
+            o = m_object->containingBlock();
+    }
+    
+    return o->enclosingLayer();
+}
 
-    RenderLayer* prev = beforeChild ? beforeChild->previousSibling() : 0;
-    child->setNextSibling(beforeChild);
-    if (beforeChild) beforeChild->setPreviousSibling(child);
-    if(prev) prev->setNextSibling(child);
-    child->setPreviousSibling(prev);
+void RenderLayer::addChild(RenderLayer *child)
+{
+    if (!firstChild()) {
+        setFirstChild(child);
+        setLastChild(child);
+    } else {
+        RenderLayer* last = lastChild();
+        setLastChild(child);
+        child->setPreviousSibling(last);
+        last->setNextSibling(child);
+    }
+
     child->setParent(this);
 }
 
@@ -104,8 +127,17 @@ RenderLayer::convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y)
 {
     x = xPos();
     y = yPos();
-    if (ancestorLayer == this) return;
-    
+    if (ancestorLayer == this)
+        return;
+    if (m_object->style()->position() == FIXED) {
+        // Add in the offset of the view.  We can obtain this by calling
+        // absolutePosition() on the RenderRoot.
+        int xOff, yOff;
+        m_object->absolutePosition(xOff, yOff, true);
+        x += xOff;
+        y += yOff;
+        return;
+    }
     for (RenderLayer* current = parent(); current && current != ancestorLayer;
          current = current->parent()) {
         x += current->xPos();
@@ -113,10 +145,39 @@ RenderLayer::convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y)
     }
 }
 
+void
+RenderLayer::paint(QPainter *p, int x, int y, int w, int h, int tx, int ty)
+{
+    // Create the z-tree of layers that should be displayed.
+    RenderLayer::RenderZTreeNode* node = constructZTree(QRect(x, y, w, h), this);
+    if (!node)
+        return;
+
+    // Flatten the tree into a back-to-front list for painting.
+    QPtrVector<RenderLayer::RenderLayerElement> layerList;
+    constructLayerList(node, &layerList);
+
+    // Walk the list and paint each layer, adding in the appropriate offset.
+    uint count = layerList.count();
+    for (uint i = 0; i < count; i++) {
+        RenderLayer::RenderLayerElement* elt = layerList.at(i);
+
+        // Elements add in their own positions as a translation factor.  This forces
+        // us to subtract that out, so that when it's added back in, we get the right
+        // bounds.  This is really disgusting (that print only sets up the right paint
+        // position after you call into it). -dwh
+        //printf("Painting layer at %d %d\n", elt->absBounds.x(), elt->absBounds.y());
+        
+        elt->layer->renderer()->print(p, x, y, w, h,
+                                      tx + elt->absBounds.x() - elt->layer->renderer()->xPos(),
+                                      ty + elt->absBounds.y() - elt->layer->renderer()->yPos());
+    }
+    delete node;
+}
+
 RenderLayer::RenderZTreeNode*
 RenderLayer::constructZTree(const QRect& damageRect, 
-                            RenderLayer* rootLayer, 
-                            RenderLayer* paintingLayer)
+                            RenderLayer* rootLayer)
 {
     // This variable stores the result we will hand back.
     RenderLayer::RenderZTreeNode* returnNode = 0;
@@ -128,36 +189,35 @@ RenderLayer::constructZTree(const QRect& damageRect,
     
     // Compute this layer's absolute position, so that we can compare it with our
     // damage rect and avoid repainting the layer if it falls outside that rect.
-    // If we have overhanging contents, we can't just bail, since we may need to paint
-    // our child layers (they may fall outside our bounds and therefore might still
-    // intersect the damage rect).
+    // An exception to this rule is the root layer, which always paints (hence the
+    // m_parent null check below).
     int x, y;
     convertToLayerCoords(rootLayer, x, y);
     QRect layerBounds(x, y, width(), height());
-    if (!layerBounds.intersects(damageRect) && !m_object->overhangingContents())
-        return 0;
-    
-    // Compute our coordinates relative to the layer being painted.
-    convertToLayerCoords(paintingLayer, x, y);
-
+     
     returnNode = new RenderLayer::RenderZTreeNode(this);
     
     // Walk our list of child layers looking only for those layers that have a 
     // non-negative z-index (a z-index >= 0).
+    RenderZTreeNode* lastChildNode = 0;
     for (RenderLayer* child = firstChild(); child; child = child->nextSibling()) {
         if (child->zIndex() < 0)
             continue; // Ignore negative z-indices in this first pass.
 
-        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer, paintingLayer);
+        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer);
         if (childNode) {
             // Put the new node into the tree at the front of the parent's list.
-            childNode->next = returnNode->child;
-            returnNode->child = childNode;
+            if (lastChildNode)
+                lastChildNode->next = childNode;
+            else
+                returnNode->child = childNode;
+            lastChildNode = childNode;
         }
     }
 
-    // Now add a leaf node for ourselves, but only if we overlap the damage rect.
-    if (layerBounds.intersects(damageRect)) {
+    // Now add a leaf node for ourselves, but only if we intersect the damage
+    // rect.
+    if (!m_parent || layerBounds.intersects(damageRect)) {
         RenderLayerElement* layerElt = new RenderLayerElement(this, layerBounds, x, y);
         if (returnNode->child) {
             RenderZTreeNode* leaf = new RenderZTreeNode(layerElt);
@@ -173,7 +233,7 @@ RenderLayer::constructZTree(const QRect& damageRect,
         if (child->zIndex() >= 0)
             continue; // Ignore non-negative z-indices in this second pass.
 
-        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer, paintingLayer);
+        RenderZTreeNode* childNode = child->constructZTree(damageRect, rootLayer);
         if (childNode) {
             // Deal with the case where all our children views had negative z-indices.
             // Demote our leaf node and make a new interior node that can hold these
@@ -277,7 +337,10 @@ static void sortByZOrder(QPtrVector<RenderLayer::RenderLayerElement>* buffer,
 void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElement>* mergeTmpBuffer,
                                                       QPtrVector<RenderLayerElement>* buffer)
 {
-    bool autoZIndex = layer->hasAutoZIndex();
+    // The root always establishes a stacking context.  We could add a rule for this
+    // to the UA sheet, but this code guarantees that nobody can do anything wacky
+    // in CSS to prevent the root from establishing a stacking context.
+    bool autoZIndex = layer->parent() ? layer->hasAutoZIndex() : false;
     int explicitZIndex = layer->zIndex();
 
     if (layerElement) {
@@ -285,7 +348,7 @@ void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElem
         // the buffer.
         if (buffer->count() == buffer->size())
             // Resize by a power of 2.
-            buffer->resize(2*buffer->size());
+            buffer->resize(2*(buffer->size()+1));
         
         buffer->insert(buffer->count(), layerElement);
         layerElement->zindex = explicitZIndex;
@@ -293,7 +356,7 @@ void RenderLayer::RenderZTreeNode::constructLayerList(QPtrVector<RenderLayerElem
     }
 
     uint startIndex = buffer->count();
-    for (RenderZTreeNode* current = child; child; child = child->next)
+    for (RenderZTreeNode* current = child; current; current = current->next)
         current->constructLayerList(mergeTmpBuffer, buffer);
     uint endIndex = buffer->count();
 

@@ -882,6 +882,7 @@ public:
     void setFlowAroundFloats(bool b=true) {  noninherited_flags._flowAroundFloats = b; }
 
     bool hasAutoZIndex() { return box->z_auto; }
+    void setHasAutoZIndex() { SET_VAR(box, z_auto, true) }
     int zIndex() const { return box->z_index; }
     void setZIndex(int v) { SET_VAR(box, z_auto, false); SET_VAR(box,z_index,v) }
 

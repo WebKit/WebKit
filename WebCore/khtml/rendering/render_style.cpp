@@ -56,7 +56,7 @@ StyleBoxData::StyleBoxData(const StyleBoxData& o )
       width( o.width ), height( o.height ),
       min_width( o.min_width ), max_width( o.max_width ),
       min_height ( o.min_height ), max_height( o.max_height ),
-      z_index( o.z_index )
+      z_index( o.z_index ), z_auto( o.z_auto )
 {
 }
 
@@ -69,7 +69,8 @@ bool StyleBoxData::operator==(const StyleBoxData& o) const
 	    max_width == o.max_width &&
 	    min_height == o.min_height &&
 	    max_height == o.max_height &&
-	    z_index == o.z_index;
+	    z_index == o.z_index &&
+        z_auto == o.z_auto;
 }
 
 StyleVisualData::StyleVisualData()

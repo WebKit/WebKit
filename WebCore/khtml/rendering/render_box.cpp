@@ -80,8 +80,11 @@ void RenderBox::setStyle(RenderStyle *_style)
         if(_style->isFloating()) {
             setFloating(true);
         } else {
-            if(_style->position() == RELATIVE)
+            if(_style->position() == RELATIVE) {
                 setRelPositioned(true);
+                if (!m_layer)
+                    m_layer = new RenderLayer(this);
+            }
         }
     }
 }
@@ -599,8 +602,21 @@ void RenderBox::calcHeight()
             if (h.isFixed())
                 fh = h.value + borderTop() + paddingTop() + borderBottom() + paddingBottom();
             else if (h.isPercent()) {
+                // Handle a common case: nested 100% height <div>s.
+                // This is kind of a one-off hack rather than doing it right.
+                // Makes dbaron's z-index root bg testcases work. Bad dave. - dwh
+                RenderObject* cb = containingBlock();
                 Length ch = containingBlock()->style()->height();
-                if (ch.isFixed())
+                while (cb && !cb->isTableCell() && ch.isPercent() && ch.value == 100) {
+                    cb = cb->containingBlock();
+                    ch = cb->style()->height();
+                }
+
+                if (cb->isRoot()) {
+                    static_cast<RenderRoot*>(cb)->calcHeight();
+                    fh = h.width(cb->height()) + borderTop() + paddingTop() + borderBottom() + paddingBottom();
+                }
+                else if (ch.isFixed())
                     fh = h.width(ch.value) + borderTop() + paddingTop() + borderBottom() + paddingBottom();
             }
             if (fh!=-1)
@@ -876,7 +892,6 @@ void RenderBox::calcAbsoluteHorizontal()
     m_marginLeft = ml;
     m_marginRight = mr;
     m_x = l + ml + containingBlock()->borderLeft();
-
 //    printf("h: w=%d, l=%d, r=%d, ml=%d, mr=%d\n",w,l,r,ml,mr);
 }
 

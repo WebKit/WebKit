@@ -138,9 +138,8 @@ protected:
         enum Type {
             FloatLeft,
             FloatRight,
-            Positioned,
-            RelPositioned
-	};
+            Positioned
+        };
 
         SpecialObject(Type _type) {
 	    node = 0;

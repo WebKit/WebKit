@@ -59,7 +59,8 @@ void RenderReplaced::print( QPainter *p, int _x, int _y, int _w, int _h,
     _tx += m_x;
     _ty += m_y;
 
-    if((_ty > _y + _h) || (_ty + m_height < _y)) return;
+    if((_ty > _y + _h) || (_ty + m_height < _y))
+        return;
 
     if(hasSpecialObjects()) printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
 
@@ -240,10 +241,6 @@ void RenderWidget::printObject(QPainter* /*p*/, int, int, int, int, int _tx, int
 	m_widget->hide();
 	return;
     }
-
-    // add offset for relative positioning
-    if(isRelPositioned())
-	relativePositionOffset(_tx, _ty);
 
     int xPos = _tx+borderLeft()+paddingLeft();
     int yPos = _ty+borderTop()+paddingTop();

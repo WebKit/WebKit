@@ -70,9 +70,15 @@ void RenderFlow::setStyle(RenderStyle *_style)
 
     RenderBox::setStyle(_style);
 
-    if(isPositioned())
+    if(isPositioned()) {
         setInline(false);
+        if (!m_layer)
+            m_layer = new RenderLayer(this);
+    }
 
+    if (isRelPositioned() && !m_layer)
+        m_layer = new RenderLayer(this);
+    
     if(isFloating() || !style()->display() == INLINE)
         setInline(false);
 
@@ -141,42 +147,35 @@ void RenderFlow::printObject(QPainter *p, int _x, int _y,
 #ifdef DEBUG_LAYOUT
 //    kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::printObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-    // add offset for relative positioning
-    if(isRelPositioned())
-        relativePositionOffset(_tx, _ty);
-
-
+    
     // 1. print background, borders etc
     if(hasSpecialObjects() && !isInline() && style()->visibility() == VISIBLE )
         printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
-
 
     bool clipped = false;
     // overflow: hidden
     if (style()->overflow()==OHIDDEN || style()->jsClipMode() ) {
         calcClip(p, _tx, _ty);
-	clipped = true;
+        clipped = true;
     }
-
-
 
     // 2. print contents
     RenderObject *child = firstChild();
     while(child != 0)
     {
-        if(!child->isFloating() && !child->isPositioned() && !child->isRelPositioned())
+        if(!child->layer() && !child->isFloating())
             child->print(p, _x, _y, _w, _h, _tx, _ty);
         child = child->nextSibling();
     }
 
     // 3. print floats and other non-flow objects
     if(specialObjects)
-	printSpecialObjects( p,  _x, _y, _w, _h, _tx , _ty);
+        printSpecialObjects( p,  _x, _y, _w, _h, _tx , _ty);
 
     // overflow: hidden
     // restore clip region
     if ( clipped ) {
-	p->restore();
+        p->restore();
     }
 
     if(!isInline() && !childrenInline() && style()->outlineWidth())
@@ -202,11 +201,9 @@ void RenderFlow::printSpecialObjects( QPainter *p, int x, int y, int w, int h, i
     for ( ; (r = it.current()); ++it ) {
         // A special object may be registered with several different objects... so we only print the
         // object if we are its containing block
-       if ((r->node->isPositioned() || r->node->isRelPositioned()) && r->node->containingBlock() == this)
-           r->node->print(p, x, y, w, h, tx , ty);
-       else if ( ( r->node->isFloating() && !r->noPaint ) ) {
-	    r->node->print(p, x, y, w, h, tx + r->left - r->node->xPos() + r->node->marginLeft(),
-			   ty + r->startY - r->node->yPos() + r->node->marginTop() );
+        if ( ( r->node->isFloating() && !r->noPaint ) ) {
+           r->node->print(p, x, y, w, h, tx + r->left - r->node->xPos() + r->node->marginLeft(),
+                          ty + r->startY - r->node->yPos() + r->node->marginTop() );
  	}
 #ifdef FLOAT_DEBUG
 	p->save();
@@ -302,6 +299,13 @@ void RenderFlow::layout()
 
     //kdDebug() << renderName() << " layout width=" << m_width << " height=" << m_height << endl;
 
+    RenderLayer* l = layer();
+    if (l) {
+        l->setWidth(m_width);
+        l->setHeight(m_height);
+        l->updateLayerPosition();
+    }
+      
     setLayouted();
 }
 
@@ -314,13 +318,11 @@ void RenderFlow::layoutSpecialObjects( bool relayoutChildren )
         for ( ; (r = it.current()); ++it ) {
             //kdDebug(6040) << "   have a positioned object" << endl;
             if (r->type == SpecialObject::Positioned) {
-		if ( relayoutChildren ) {
-		    r->node->setLayouted( false );
-		}
-		if ( !r->node->layouted() )
-		    r->node->layout();
-	    }
-            // We don't lay out relative positioned objects here.  They get a layout during the normal flow - dwh
+                if ( relayoutChildren )
+                    r->node->setLayouted( false );
+                if ( !r->node->layouted() )
+                    r->node->layout();
+            }
         }
         specialObjects->sort();
     }
@@ -395,27 +397,13 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 //         kdDebug( 6040 ) << t.elapsed() << endl;
         // ### might be some layouts are done two times... FIX that.
 
-        if (child->isPositioned() || child->isRelPositioned())
+        if (child->isPositioned())
         {
             static_cast<RenderFlow*>(child->containingBlock())->insertSpecialObject(child);
 	    //kdDebug() << "RenderFlow::layoutBlockChildren inserting positioned into " << child->containingBlock()->renderName() << endl;
             
-            // Absolute positioned objects aren't part of the flow, but relative objects are.
-            // Both types of positioned objects have to be painted after all normal flow objects though,
-            // and relative objects can even paint on top of absolute positioned objects if they occur later in
-            // the content model (or have a higher z-index). -dwh
-            //
-            // A simple example:
-            /* <div style="width:317px;height:381px;background-color:red;position: absolute;"></div>
-               <div style="background-color: green; color: white; position: relative; height: 30px;">
-                    This text should be clearly visible.
-               </div> 
-               </div>
-            */
-            if (child->isPositioned()) {
-                child = child->nextSibling();
-                continue;
-            }
+            child = child->nextSibling();
+            continue;
         } else if ( child->isReplaced() ) {
             if ( !child->layouted() )
                 child->layout();
@@ -557,13 +545,9 @@ void RenderFlow::insertSpecialObject(RenderObject *o)
 
     SpecialObject *newObj;
     if (o->isPositioned()) {
-	// positioned object
-	newObj = new SpecialObject(SpecialObject::Positioned);
+        // positioned object
+        newObj = new SpecialObject(SpecialObject::Positioned);
         setOverhangingContents();
-    }
-    else if (o->isRelPositioned()) {
-        // relative positioned object.
-        newObj = new SpecialObject(SpecialObject::RelPositioned);
     }
     else if (o->isFloating()) {
 	// floating object

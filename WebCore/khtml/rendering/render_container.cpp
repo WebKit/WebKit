@@ -137,9 +137,9 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
 
     // Keep our layer hierarchy updated.
     if (newChild->layer()) {
-        RenderObject* ancestor = (newChild->isPositioned()) ? newChild->containingBlock() : this;
-        ancestor->enclosingLayer()->addChild(newChild->layer());
-        ancestor->setHasChildLayers(true);
+        newChild->layer()->enclosingAncestor()->addChild(newChild->layer());
+        if (!newChild->isPositioned())
+            setHasChildLayers(true);
     }
 }
 
@@ -148,11 +148,9 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     KHTMLAssert(oldChild->parent() == this);
 
     // Keep our layer hierarchy updated.
-    if (oldChild->layer()) {
-        RenderObject* ancestor = (oldChild->isPositioned()) ? oldChild->containingBlock() : this;
-        ancestor->enclosingLayer()->removeChild(oldChild->layer());
-    }
-    
+    if (oldChild->layer())
+        oldChild->layer()->enclosingAncestor()->removeChild(oldChild->layer());
+   
     // if oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers
 

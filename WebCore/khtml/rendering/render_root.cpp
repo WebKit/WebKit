@@ -69,6 +69,18 @@ RenderRoot::~RenderRoot()
 {
 }
 
+void RenderRoot::calcHeight()
+{
+    if (!m_printingMode && m_view)
+    {
+        m_height = m_view->visibleHeight();
+    }
+    else if (!m_view)
+    {
+        m_height = m_rootHeight;
+    }    
+}
+
 void RenderRoot::calcWidth()
 {
     // the width gets set by KHTMLView::print when printing to a printer.
@@ -144,21 +156,24 @@ void RenderRoot::layout()
 
     if (!m_printingMode && m_view)
     {
-       m_height = m_view->visibleHeight();
-       m_width = m_view->visibleWidth();
+        m_height = m_view->visibleHeight();
+        m_width = m_view->visibleWidth();
     }
     else if (!m_view)
     {
         m_height = m_rootHeight;
         m_width = m_rootWidth;
     }
-
+    
     // ### we could maybe do the call below better and only pass true if the docsize changed.
     layoutSpecialObjects( true );
 #ifdef SPEED_DEBUG
     kdDebug() << "RenderRoot::end time used=" << qt.elapsed() << endl;
 #endif
 
+    layer()->setHeight(m_height);
+    layer()->setWidth(m_width);
+    
     setLayouted();
     //kdDebug(0) << "root: height = " << m_height << endl;
 }
@@ -186,10 +201,6 @@ void RenderRoot::printObject(QPainter *p, int _x, int _y,
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << renderName() << "(RenderFlow) " << this << " ::printObject() w/h = (" << width() << "/" << height() << ")" << endl;
 #endif
-    // add offset for relative positioning
-    if(isRelPositioned())
-        relativePositionOffset(_tx, _ty);
-
     // 1. print background, borders etc
     if(hasSpecialObjects() && !isInline())
         printBoxDecorations(p, _x, _y, _w, _h, _tx, _ty);
@@ -197,7 +208,7 @@ void RenderRoot::printObject(QPainter *p, int _x, int _y,
     // 2. print contents
     RenderObject *child = firstChild();
     while(child != 0) {
-        if(!child->isFloating() && !child->isPositioned()) {
+        if(!child->layer() && !child->isFloating()) {
             child->print(p, _x, _y, _w, _h, _tx, _ty);
         }
         child = child->nextSibling();
