@@ -84,7 +84,6 @@ address {
 blockquote {
 	display: block;
 	margin: 1_qem 40px 1em 40px;
-    -konq-flow-mode: -konq-around-floats
 }
 
 Q        {
@@ -292,7 +291,7 @@ UL, MENU, DIR {
         list-style-type: disc;
         margin: 1_qem 0 1em 0;
         padding-left: 40px;
-        -konq-flow-mode: -konq-around-floats
+        -konq-flow-mode: -konq-around-floats;
 }
 
 OL {
@@ -300,7 +299,7 @@ OL {
         list-style-type: decimal;
         margin: 1_qem 0 1em 0;
         padding-left: 40px;
-        -konq-flow-mode: -konq-around-floats
+        -konq-flow-mode: -konq-around-floats;
 }
 
 LI {
@@ -329,7 +328,6 @@ DD {
 DL {
 	display: block;
 	margin: 1_qem 0 1em 0;
-    -konq-flow-mode: -konq-around-floats
 } 
 
 DT {
