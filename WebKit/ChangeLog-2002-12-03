@@ -1,5 +1,15 @@
 2002-10-03  Richard Williamson   <rjw@apple.com>
 
+        Add calls to downloadProgressDelegate.
+        
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]):
+
+2002-10-03  Richard Williamson   <rjw@apple.com>
+
         
         * WebCoreSupport.subproj/WebBridge.m:
         (-[WebBridge objectLoadedFromCache:size:]):
