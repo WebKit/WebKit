@@ -153,15 +153,13 @@ static NSArray *pluginLocations(void)
     }
     
     NSMutableArray *pluginArray = [NSMutableArray arrayWithCapacity:[pluginPaths count]];
-    WebBasePluginPackage *pluginPackage;
     
     for (i = 0; i < [pluginPaths count]; i++) {
-        pluginPackage = [WebBasePluginPackage pluginWithPath:[pluginPaths objectAtIndex:i]];
+        WebBasePluginPackage *pluginPackage = [WebBasePluginPackage pluginWithPath:[pluginPaths objectAtIndex:i]];
         if (pluginPackage) {
             [pluginArray addObject:pluginPackage];
             LOG(Plugins, "Found plugin: %s", [[pluginPackage name] lossyCString]);
             LOG(Plugins, "%s", [[pluginPackage description] lossyCString]);
-            [pluginPackage release];
         }
     }
 

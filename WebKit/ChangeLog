@@ -1,3 +1,11 @@
+2002-10-28  Darin Adler  <darin@apple.com>
+
+	- fixed crash I just introduced
+
+        * Plugins.subproj/WebPluginDatabase.m: (-[WebPluginDatabase init]):
+	Remove the release call here. When I added the autorelease, I didn't realize that
+	the caller was doing a release.
+
 2002-10-28  Trey Matteson  <trey@apple.com>
 
 	Fixed 3041616 - Extra page added in back button history
