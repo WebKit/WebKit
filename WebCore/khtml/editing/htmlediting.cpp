@@ -2118,7 +2118,6 @@ InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(DocumentImpl *d
 
 InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand() 
 {
-    derefNodesInList(ancestors);
     derefNodesInList(clonedNodes);
 }
 
@@ -2171,6 +2170,7 @@ void InsertParagraphSeparatorCommand::doApply()
         addedBlock = startBlock->cloneNode(false);
         insertNodeAfter(addedBlock, startBlock);
     }
+    addedBlock->ref();
     clonedNodes.append(addedBlock);
 
     if (!isLastVisiblePositionInNode(VisiblePosition(pos), startBlock)) {
@@ -2199,6 +2199,7 @@ void InsertParagraphSeparatorCommand::doApply()
         NodeImpl *parent = addedBlock;
         for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
             NodeImpl *child = it.current()->cloneNode(false); // shallow clone
+            child->ref();
             clonedNodes.append(child);
             appendNode(child, parent);
             parent = child;
@@ -2244,7 +2245,6 @@ InsertParagraphSeparatorInQuotedContentCommand::InsertParagraphSeparatorInQuoted
 
 InsertParagraphSeparatorInQuotedContentCommand::~InsertParagraphSeparatorInQuotedContentCommand()
 {
-    derefNodesInList(ancestors);
     derefNodesInList(clonedNodes);
     if (m_breakNode)
         m_breakNode->deref();
@@ -2316,6 +2316,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
 
         // Insert a clone of the top blockquote after the break.
         NodeImpl *clonedBlockquote = topBlockquote->cloneNode(false);
+        clonedBlockquote->ref();
         clonedNodes.append(clonedBlockquote);
         insertNodeAfter(clonedBlockquote, m_breakNode);
         
@@ -2323,6 +2324,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
         NodeImpl *parent = clonedBlockquote;
         for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
             NodeImpl *child = it.current()->cloneNode(false); // shallow clone
+            child->ref();
             clonedNodes.append(child);
             appendNode(child, parent);
             parent = child;
@@ -2347,6 +2349,7 @@ void InsertParagraphSeparatorInQuotedContentCommand::doApply()
             if (!leftParent)
                 leftParent = topBlockquote;
             ElementImpl *b = document()->createHTMLElement("BR", exceptionCode);
+            b->ref();
             clonedNodes.append(b);
             ASSERT(exceptionCode == 0);
             appendNode(b, leftParent);

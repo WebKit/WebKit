@@ -2,6 +2,22 @@
 
         Reviewed by Harrison
 
+        Fix some object lifetime issues in these two commands. This fixes some crashes
+        I am seeing in some new code I am working on, but have not yet reproduced otherwise.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand): No longer deref nodes
+        in the ancestor list. They are not ref'ed when put on list. D'uh.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Ref all cloned nodes that are created by the command
+        before putting them on the cloned nodes list. This are still deref'ed in the destructor.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::~InsertParagraphSeparatorInQuotedContentCommand): Ditto
+        destructor comment.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Ditto doApply comment.
+
+2004-11-19  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         Fix for this bug:
         
         <rdar://problem/3655241> setTypingStyle: does not set the real typing style, and typingStyle does not return it
