@@ -40,7 +40,6 @@ namespace KJS {
     virtual bool hasProperty(ExecState *exec, unsigned propertyName) const;
     virtual bool deleteProperty(ExecState *exec, const Identifier &propertyName);
     virtual bool deleteProperty(ExecState *exec, unsigned propertyName);
-    virtual ReferenceList propList(ExecState *exec, bool recursive);
 
     virtual void mark();
 
