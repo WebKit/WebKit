@@ -1,3 +1,14 @@
+2003-02-05  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3164949.  My fix to make form controls actually obey
+	display settings in CSS exposed a bug in the html4.css 
+	stylesheet.  SELECT had been set to be display: block, which
+	is of course just plain wrong.
+	
+        Reviewed by darin
+
+        * khtml/css/html4.css:
+
 2003-02-05  Richard Williamson   <rjw@apple.com>
 
         Cleanup public WebHistory API, stage 1.

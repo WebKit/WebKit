@@ -385,7 +385,7 @@ PARAM  {
 	display: none; 
 }
 
-SELECT { display: block; margin: 2px; }
+SELECT { margin: 2px; }
 
 /*
  * inline elements
