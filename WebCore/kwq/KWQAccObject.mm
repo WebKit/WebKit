@@ -908,8 +908,9 @@ static QRect boundingBoxRect(RenderObject* obj)
 {
     static NSArray* paramAttributes = nil;
     if (paramAttributes == nil) {
-        paramAttributes = [[NSArray alloc] initWithObjects: 
-            (id) kAXLineForTextMarkerParameterizedAttribute,
+        paramAttributes = [[NSArray alloc] initWithObjects:
+            @"AXUIElementForTextMarker",
+            kAXLineForTextMarkerParameterizedAttribute,
             kAXTextMarkerRangeForLineParameterizedAttribute,
             kAXStringForTextMarkerRangeParameterizedAttribute,
             kAXTextMarkerForPositionParameterizedAttribute,
@@ -940,6 +941,19 @@ static QRect boundingBoxRect(RenderObject* obj)
     return paramAttributes;
 }
 
+- (id)doAXUIElementForTextMarker: (AXTextMarkerRef) textMarker
+{
+    VisiblePosition visiblePos = [self visiblePositionForTextMarker:textMarker];
+    if (visiblePos.isNull())
+        return nil;
+
+    RenderObject * obj = visiblePos.position().node()->renderer();
+    if (!obj)
+        return nil;
+    
+    return obj->document()->getAccObjectCache()->accObject(obj);
+}
+
 - (id)doAXLineForTextMarker: (AXTextMarkerRef) textMarker
 {
     unsigned int    lineCount = 0;
@@ -958,7 +972,6 @@ static QRect boundingBoxRect(RenderObject* obj)
     // NOTE: Can we use Selection::modify(EAlter alter, int verticalDistance)?
     while (visiblePos.isNotNull() && visiblePos != savedVisiblePos) {
         lineCount += 1;
-        visiblePos.debugPosition("doAXLineForTextMarker");
         savedVisiblePos = visiblePos;
         visiblePos = previousLinePosition(visiblePos, khtml::DOWNSTREAM, 0);
     }
@@ -984,10 +997,11 @@ static QRect boundingBoxRect(RenderObject* obj)
     }
     
     // make a caret selection for the marker position, then extend it to the line
+    // NOTE: ignores results of sel.modify because it returns false when
+    // starting at an empty line.  The resulting selection in that case
+    // will be a caret at visiblePos. 
     Selection sel = Selection(visiblePos, visiblePos);
-    bool worked = sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
-    if (!worked)
-        return nil;
+    (void)sel.modify(Selection::EXTEND, Selection::RIGHT, khtml::LINE_BOUNDARY);
 
     // return a marker range for the selection start to end
     VisiblePosition startPosition = VisiblePosition(sel.start());
@@ -1206,11 +1220,13 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // make a caret selection for the marker position, then extend it to the line
+    // make a caret selection for the position after marker position (to make sure
+    // we move off of a line end)
     VisiblePosition nextVisiblePos = visiblePos.next();
     if (nextVisiblePos.isNull())
         return nil;
         
+    // extend selection to the line
     // NOTE: ignores results of sel.modify because it returns false when
     // starting at an empty line.  The resulting selection in that case
     // will be a caret at nextVisiblePos. 
@@ -1272,15 +1288,18 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // make a caret selection for the marker position, then move it to the line end
+    // make a caret selection for the position after marker position (to make sure
+    // we move off of a line end)
     VisiblePosition nextVisiblePos = visiblePos.next();
     if (nextVisiblePos.isNull())
         return nil;
         
+    // extend selection to the line
+    // NOTE: ignores results of sel.modify because it returns false when
+    // starting at an empty line.  The resulting selection in that case
+    // will be a caret at nextVisiblePos. 
     Selection sel = Selection(nextVisiblePos, nextVisiblePos);
-    bool worked = sel.modify(Selection::MOVE, Selection::RIGHT, khtml::LINE_BOUNDARY);
-    if (!worked)
-        return nil;
+    (void)sel.modify(Selection::MOVE, Selection::RIGHT, khtml::LINE_BOUNDARY);
 
     // return a marker for the selection end
     VisiblePosition endPosition = VisiblePosition(sel.end());
@@ -1295,15 +1314,18 @@ static QRect boundingBoxRect(RenderObject* obj)
     if (visiblePos.isNull())
         return nil;
     
-    // make a caret selection for the marker position, then move it to the line start
+    // make a caret selection for the position before marker position (to make sure
+    // we move off of a line start)
     VisiblePosition prevVisiblePos = visiblePos.previous();
     if (prevVisiblePos.isNull())
         return nil;
         
+    // extend selection to the line
+    // NOTE: ignores results of sel.modify because it returns false when
+    // starting at an empty line.  The resulting selection in that case
+    // will be a caret at prevVisiblePos. 
     Selection sel = Selection(prevVisiblePos, prevVisiblePos);
-    bool worked = sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
-    if (!worked)
-        return nil;
+    (void)sel.modify(Selection::MOVE, Selection::LEFT, khtml::LINE_BOUNDARY);
 
     // return a marker for the selection start
     VisiblePosition startPosition = VisiblePosition(sel.start());
@@ -1420,6 +1442,9 @@ static QRect boundingBoxRect(RenderObject* obj)
     }
   
     // dispatch
+    if ([attribute isEqualToString: @"AXUIElementForTextMarker"])
+        return [self doAXUIElementForTextMarker: textMarker];
+
     if ([attribute isEqualToString: (NSString *) kAXLineForTextMarkerParameterizedAttribute])
         return [self doAXLineForTextMarker: textMarker];
 

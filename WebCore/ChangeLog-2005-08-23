@@ -1,3 +1,23 @@
+2005-01-06  David Harrison  <harrison@apple.com>
+
+        Reviewed by Chris.
+
+        (addendum to previous checkin for this bug) 
+        <rdar://problem/3776056> AX: Editable HTML should not be viewed as AXStaticText
+
+        Fix line navigation.  Add AXUIElementForTextMarker.
+
+        * ChangeLog:
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityParameterizedAttributeNames]):
+        (-[KWQAccObject doAXUIElementForTextMarker:]):
+        (-[KWQAccObject doAXLineForTextMarker:]):
+        (-[KWQAccObject doAXTextMarkerRangeForLine:]):
+        (-[KWQAccObject doAXRightLineTextMarkerRangeForTextMarker:]):
+        (-[KWQAccObject doAXNextLineEndTextMarkerForTextMarker:]):
+        (-[KWQAccObject doAXPreviousLineStartTextMarkerForTextMarker:]):
+        (-[KWQAccObject accessibilityAttributeValue:forParameter:]):
+
 2004-12-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
