@@ -31,7 +31,6 @@
 #include <qstringlist.h>
 
 #if APPLE_CHANGES
-#include <JavaVM/jni.h>
 #include <JavaScriptCore/runtime.h>
 #endif
 

@@ -1,3 +1,13 @@
+2004-11-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3870907> WebCore unnecessary links against JavaVM and Security
+
+        Reviewed by darin.
+
+        * WebCore.pbproj/project.pbxproj: stop unnecessary linking
+        * khtml/html/html_objectimpl.h: don't unnecessarily include JavaVM header
+        * kwq/KWQKHTMLPart.h: ditto
+
 2004-11-08  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

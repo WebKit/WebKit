@@ -115,10 +115,8 @@
 				F5C2869402846DCD018635CA,
 				F5C2869502846DCD018635CA,
 				F8216299029F4FB501000131,
-				704FD2FE056972FA003DBED9,
 				93F1D31A0558CC5C00821BC0,
 				840633070731A77200DB1FD1,
-				848A320F057E688B001A2362,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -840,8 +838,6 @@
 				F5C287BD02846DCD018635CA,
 				F82162D7029F4FB501000131,
 				93F1D31B0558CC5C00821BC0,
-				704FD2FF056972FA003DBED9,
-				848A3210057E688B001A2362,
 				840633080731A77200DB1FD1,
 			);
 			isa = PBXFrameworksBuildPhase;
@@ -1280,30 +1276,6 @@
 //652
 //653
 //654
-//700
-//701
-//702
-//703
-//704
-		704FD2FE056972FA003DBED9 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = JavaVM.framework;
-			path = /System/Library/Frameworks/JavaVM.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		704FD2FF056972FA003DBED9 = {
-			fileRef = 704FD2FE056972FA003DBED9;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-//700
-//701
-//702
-//703
-//704
 //830
 //831
 //832
@@ -1379,20 +1351,6 @@
 		};
 		842F72DD06405FDF00CC271B = {
 			fileRef = 842F72DC06405FDF00CC271B;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		848A320F057E688B001A2362 = {
-			isa = PBXFileReference;
-			lastKnownFileType = wrapper.framework;
-			name = Security.framework;
-			path = /System/Library/Frameworks/Security.framework;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		848A3210057E688B001A2362 = {
-			fileRef = 848A320F057E688B001A2362;
 			isa = PBXBuildFile;
 			settings = {
 			};

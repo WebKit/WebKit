@@ -35,7 +35,6 @@
 
 #import <CoreFoundation/CoreFoundation.h>
 
-#import <JavaVM/jni.h>
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/NP_jsobject.h>
