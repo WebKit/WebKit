@@ -28,6 +28,7 @@
     
     NSString *MIMEType;
     BOOL isNull;
+    int useCount;
 @public    
     NSData *originalData;
 }

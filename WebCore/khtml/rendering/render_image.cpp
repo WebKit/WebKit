@@ -63,6 +63,7 @@ RenderImage::RenderImage(NodeImpl *_node)
 RenderImage::~RenderImage()
 {
     if(image) image->deref(this);
+    pix.decreaseUseCount();
 }
 
 void RenderImage::setStyle(RenderStyle* _style)
@@ -162,7 +163,13 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
     pix.stopAnimations();
 #endif
     
+#if APPLE_CHANGES
+    pix.decreaseUseCount();
+#endif
     pix = p;
+#if APPLE_CHANGES
+    p.increaseUseCount();
+#endif
 
     if (needlayout) {
         if (!selfNeedsLayout())

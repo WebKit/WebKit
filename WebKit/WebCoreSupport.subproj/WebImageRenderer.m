@@ -115,11 +115,27 @@ static NSMutableSet *activeImageRenderers;
     return result;
 }
 
+- (void)increaseUseCount
+{
+    useCount++;
+}
+
+- (void)decreaseUseCount
+{
+    useCount--;
+}
+
 - (id <WebCoreImageRenderer>)retainOrCopyIfNeeded
 {
     WebImageRenderer *copy;
 
-    if (originalData){
+    // If an animated image appears multiple times in a given page, we
+    // must create multiple WebCoreImageRenderers so that each copy
+    // animates. However, we don't want to incur the expense of
+    // re-decoding for the very first use on a page, since QPixmap
+    // assignment always calls this method, even when just fetching
+    // the image from the cache for the first time for a page.
+    if (originalData && useCount){
         copy = [[[WebImageRendererFactory sharedFactory] imageRendererWithData:originalData MIMEType:MIMEType] retain];
     }
     else {

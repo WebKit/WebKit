@@ -195,6 +195,16 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
     return *this;
 }
 
+void QPixmap::increaseUseCount() const
+{
+    [imageRenderer increaseUseCount];
+}
+
+void QPixmap::decreaseUseCount() const
+{
+    [imageRenderer decreaseUseCount];
+}
+
 void QPixmap::stopAnimations()
 {
     [imageRenderer stopAnimation];

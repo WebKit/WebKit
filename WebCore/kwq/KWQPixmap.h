@@ -82,6 +82,9 @@ public:
     void stopAnimations();
 
     WebCoreImageRendererPtr image() { return imageRenderer; };
+
+    void increaseUseCount() const;
+    void decreaseUseCount() const;
     
 private:
 

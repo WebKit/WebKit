@@ -1,5 +1,18 @@
 2004-05-10  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Darin.
+
+	- avoid redecoding animated images that are only used once for
+	~2.5% iBench speedup (WebCore part of fix)
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer increaseUseCount]):
+        (-[WebImageRenderer decreaseUseCount]):
+        (-[WebImageRenderer retainOrCopyIfNeeded]):
+
+2004-05-10  Maciej Stachowiak  <mjs@apple.com>
+
         Fix build.
 
         * WebView.subproj/WebFrame.m:
