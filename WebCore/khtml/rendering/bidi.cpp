@@ -1386,7 +1386,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             }
             goto end;
         }
-
+        
         last = o;
         o = Bidinext( start.par, o );
 
