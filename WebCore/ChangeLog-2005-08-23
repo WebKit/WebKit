@@ -1,3 +1,14 @@
+2004-03-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for crasher 3598204, previousKeyView was calling nextKeyView instead.
+	
+        Reviewed by darin
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField previousKeyView]):
+        (-[KWQSecureTextField previousKeyView]):
+        (-[KWQSearchField previousKeyView]):
+
 2004-03-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Vicki.

@@ -164,9 +164,8 @@
     
     [self setHasFocus:NO];
 
-    if ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement) {
+    if ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
         widget->returnPressed();
-    }
 }
 
 - (void)controlTextDidChange:(NSNotification *)notification
@@ -466,7 +465,7 @@
 - (NSView *)previousKeyView
 {
     if (!inNextValidKeyView)
-	return [super nextKeyView];
+	return [super previousKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super previousKeyView];
@@ -608,7 +607,7 @@
 - (NSView *)previousKeyView
 {
     if (!inNextValidKeyView)
-	return [super nextKeyView];
+	return [super previousKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super previousKeyView];
@@ -814,7 +813,7 @@
 - (NSView *)previousKeyView
 {
     if (!inNextValidKeyView)
-	return [super nextKeyView];
+	return [super previousKeyView];
     QWidget* widget = [controller widget];
     if (!widget)
 	return [super previousKeyView];
