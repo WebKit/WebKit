@@ -1415,6 +1415,12 @@ void RenderBlock::positionNewFloats()
                                //kdDebug( 6040 ) << " Object width: " << fwidth << " available width: " << ro - lo << endl;
         if (ro - lo < fwidth)
             fwidth = ro - lo; // Never look for more than what will be available.
+        
+#ifdef INCREMENTAL_REPAINTING
+        int oldChildX = o->xPos();
+        int oldChildY = o->yPos();
+#endif
+        
         if (o->style()->floating() == FLEFT)
         {
             if ( o->style()->clear() & CLEFT )
@@ -1452,6 +1458,11 @@ void RenderBlock::positionNewFloats()
         f->startY = y;
         f->endY = f->startY + _height;
 
+#ifdef INCREMENTAL_REPAINTING
+        // If the child moved, we have to repaint it.
+        if (checkForRepaintDuringLayout())
+            o->repaintDuringLayoutIfMoved(oldChildX, oldChildY);
+#endif    
 
         //kdDebug( 6040 ) << "floatingObject x/y= (" << f->left << "/" << f->startY << "-" << f->width << "/" << f->endY - f->startY << ")" << endl;
 

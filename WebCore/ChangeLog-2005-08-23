@@ -1,5 +1,14 @@
 2004-01-08  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3524118, floats don't repaint when moved.
+	
+        Reviewed by darin
+
+         * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionNewFloats):
+ 
+2004-01-08  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3519003, crash in mail because <dir> and <menu> don't allow the same children as <ul> and <ol>.
 	
         Reviewed by darin
