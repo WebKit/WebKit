@@ -151,7 +151,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"${DSTROOT}\" \"${MERGE_DIR}/$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\" \"$(SYSTEM_LIBRARY_DIR)/Frameworks/WebKit.framework/Frameworks\"";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = ForwardingHeaders;
+				HEADER_SEARCH_PATHS = "ForwardingHeaders /usr/include/libxml2";
 				INSTALL_PATH = /System/Library/Frameworks/WebKit.framework/Versions/A/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x9000000;
