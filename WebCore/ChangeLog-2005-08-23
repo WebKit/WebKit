@@ -1,3 +1,13 @@
+2004-07-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for layer positioning error that occurs when absolute positioned blocks are inside static positioned overflow:auto
+	elements.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+
 2004-07-20  Trey Matteson  <trey@apple.com>
 
 	3705624	REGRESSION: can't rearrange photos on homepage.mac.com album
