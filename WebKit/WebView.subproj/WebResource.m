@@ -2,7 +2,7 @@
     WebResource.m
     Copyright (C) 2004 Apple Computer, Inc. All rights reserved.    
 */
-
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebResourcePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
 
@@ -140,6 +140,11 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
     return _private->frameName;
 }
 
+- (id)description
+{
+    return [NSString stringWithFormat:@"<%@ %@>", [self className], [self URL]];
+}
+
 @end
 
 @implementation WebResource (WebResourcePrivate)
@@ -226,6 +231,17 @@ NSString *WebResourceTextEncodingNameKey =  @"WebResourceTextEncodingName";
                                       MIMEType:_private->MIMEType 
                          expectedContentLength:[_private->data length]
                               textEncodingName:_private->textEncodingName] autorelease];
+}
+
+- (NSString *)_stringValue
+{
+    NSString *textEncodingName = [self textEncodingName];
+    
+    if(textEncodingName){
+        return [WebBridge stringWithData:_private->data textEncodingName:textEncodingName];
+    }else{
+        return [WebBridge stringWithData:_private->data textEncoding:kCFStringEncodingISOLatin1];
+    }
 }
 
 @end

@@ -1,3 +1,16 @@
+2004-06-10  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John.
+
+        * WebView.subproj/WebResource.m:
+        (-[WebResource description]):
+            -added per request of cblu
+        (-[WebResource _response]):
+            -added this method to the header
+        (-[WebResource _stringValue]):
+            - gives the string value of the NSData representation
+        * WebView.subproj/WebResourcePrivate.h:
+
 2004-06-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -1,3 +1,14 @@
+2004-06-10  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by John.
+
+        * kjs/lexer.cpp: 
+        (Lexer::setCode):
+            - fixed <rdar://problem/3682398>: (error console line numbers are offset by 1)
+        * kjs/lexer.h:
+        (KJS::Lexer::lineNo):
+            - fixed <rdar://problem/3682398>: (error console line numbers are offset by 1)
+
 === JavaScriptCore-143.2 ===
 
 2004-06-07  Darin Adler  <darin@apple.com>

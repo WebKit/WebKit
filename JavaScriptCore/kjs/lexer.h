@@ -41,7 +41,7 @@ namespace KJS {
     void setCode(const UString &sourceURL, int startingLineNumber, const UChar *c, unsigned int len);
     int lex();
 
-    int lineNo() const { return yylineno + 1; }
+    int lineNo() const { return yylineno; }
     UString sourceURL() const { return m_sourceURL; }
 
     bool prevTerminator() const { return terminator; }
