@@ -987,9 +987,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
         if ([gContext isDrawingToScreen]){
             NSFont *screenFont = [font screenFont];
             if (screenFont != font){
-                NSLog (@"Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
+                // We are getting this in too many places (3406411); use ERROR so it only prints on
+                // debug versions for now. (We should debug this also, eventually).
+                ERROR ("Attempting to set non-screen font (%@) when drawing to screen.  Using screen font anyway, may result in incorrect metrics.", [[[font fontDescriptor] fontAttributes] objectForKey: NSFontNameAttribute]);
             }
-            [[font screenFont] set];
+            [screenFont set];
         }
         else {
             NSFont *printerFont = [font printerFont];
