@@ -170,6 +170,12 @@ QString &QString::operator=(char ch)
 
 // member functions ------------------------------------------------------------
 
+QString QString::copy() const
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
 uint QString::length() const
 {
     return s ? CFStringGetLength(s) : 0;
@@ -204,6 +210,12 @@ const QChar *QString::unicode() const
     // NOTE: this only works since our QChar implementation contains a single
     // UniChar data member
     return reinterpret_cast<const QChar *>(ucs); 
+}
+
+QChar QString::at(uint) const
+{
+    // FIXME: not yet implemented
+    return QChar(0);
 }
 
 const char *QString::latin1() const
@@ -268,6 +280,12 @@ bool QString::startsWith(const QString &) const
     return FALSE;
 }
 
+ushort QString::toUShort() const
+{
+    // FIXME: not yet implemented
+    return 0;
+}
+
 int QString::toInt() const
 {
     // FIXME: not yet implemented
@@ -328,13 +346,13 @@ int QString::contains(char) const
     return 0;
 }
 
-int QString::find(char, int) const
+int QString::find(char, int, bool) const
 {
     // FIXME: not yet implemented
     return 0;
 }
 
-int QString::find(const char *, int, bool) const
+int QString::find(QChar, int, bool) const
 {
     // FIXME: not yet implemented
     return 0;
@@ -352,13 +370,13 @@ int QString::find(const QRegExp &, int, bool) const
     return 0;
 }
 
-int QString::findRev(char, int) const
+int QString::findRev(char, int, bool) const
 {
     // FIXME: not yet implemented
     return 0;
 }
 
-int QString::findRev(const char *, int) const
+int QString::findRev(const char *, int, bool) const
 {
     // FIXME: not yet implemented
     return 0;
@@ -377,6 +395,18 @@ QString &QString::replace(const QRegExp &, const QString &)
 }
 
 QString &QString::insert(uint, char)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
+QString &QString::insert(uint, QChar)
+{
+    // FIXME: not yet implemented
+    return *this;
+}
+
+QString &QString::insert(uint, const QString &)
 {
     // FIXME: not yet implemented
     return *this;
@@ -422,7 +452,19 @@ QString QString::mid(int, int) const
     return QString(*this);
 }
 
+int QString::compare(const QString &) const
+{
+    // FIXME: not yet implemented
+    return 0;
+}
+
 QString QString::fromLatin1(const char *, int)
+{
+    // FIXME: not yet implemented
+    return QString();
+}
+
+QString QString::fromLocal8Bit(const char *, int)
 {
     // FIXME: not yet implemented
     return QString();
