@@ -1,3 +1,21 @@
+2002-10-01  Chris Blumenberg  <cblu@apple.com>
+
+	- Added debug drawing
+	- removed unnecessary ifdef'ing.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendActivateEvent:]):
+        (-[WebBaseNetscapePluginView becomeFirstResponder]):
+        (-[WebBaseNetscapePluginView resignFirstResponder]):
+        (-[WebBaseNetscapePluginView mouseDown:]):
+        (-[WebBaseNetscapePluginView mouseUp:]):
+        (-[WebBaseNetscapePluginView mouseEntered:]):
+        (-[WebBaseNetscapePluginView mouseExited:]):
+        (-[WebBaseNetscapePluginView menuForEvent:]):
+        (-[WebBaseNetscapePluginView setWindow]):
+        (-[WebBaseNetscapePluginView start]):
+        (-[WebBaseNetscapePluginView drawRect:]):
+
 2002-10-01  Ken Kocienda  <kocienda@apple.com>
 
         * WebCoreSupport.subproj/WebSubresourceClient.m:

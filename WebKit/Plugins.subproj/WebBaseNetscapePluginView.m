@@ -140,10 +140,8 @@
     if (activate)
         event.modifiers |= activeFlag;
     
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(activateEvent): %d  isActive: %d", acceptedEvent, (event.modifiers & activeFlag));
 }
@@ -176,10 +174,8 @@
     [self getCarbonEvent:&event];
     event.what = getFocusEvent;
     
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(getFocusEvent): %d", acceptedEvent);
     return YES;
@@ -192,10 +188,8 @@
     [self getCarbonEvent:&event];
     event.what = loseFocusEvent;
     
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(loseFocusEvent): %d", acceptedEvent);
     return YES;
@@ -208,10 +202,8 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseDown;
 
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 }
@@ -223,10 +215,8 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = mouseUp;
 
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 }
@@ -238,10 +228,8 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(mouseEntered): %d", acceptedEvent);
 }
@@ -253,10 +241,8 @@
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = adjustCursorEvent;
 
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event]; 
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event]; 
     
     LOG(Plugins, "NPP_HandleEvent(mouseExited): %d", acceptedEvent);
     
@@ -359,10 +345,9 @@
     EventRecord event;
     
     [self getCarbonEvent:&event withEvent:theEvent];
-#if !LOG_DISABLED
-    BOOL acceptedEvent =
-#endif
-    [self sendEvent:&event];
+
+    BOOL acceptedEvent;
+    acceptedEvent = [self sendEvent:&event];
     
     LOG(Plugins, "NPP_HandleEvent(menuForEvent): %d pt.v=%d, pt.h=%d", acceptedEvent, event.where.v, event.where.h);
 
@@ -408,9 +393,7 @@
 {
     [self setUpWindowAndPort];
 
-#if !LOG_DISABLED
-    NPError npErr =
-#endif
+    NPError npErr;
     NPP_SetWindow(instance, &window);
     LOG(Plugins, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d",
                      npErr, (int)nPort.port, (int)window.x, (int)window.y);
@@ -453,10 +436,8 @@
     
     isStarted = YES;
     
-#if !LOG_DISABLED
-    NPError npErr =
-#endif
-    NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
+    NPError npErr;
+    npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
     LOG(Plugins, "NPP_New: %d", npErr);
     
     // Create a WindowRef is one doesn't already exist
@@ -645,6 +626,10 @@
 
 - (void)drawRect:(NSRect)rect
 {
+#if 0
+    [[NSColor redColor] set];
+    NSRectFill([self bounds]);
+#endif
     if(isStarted){
         [self sendUpdateEvent];
     }
