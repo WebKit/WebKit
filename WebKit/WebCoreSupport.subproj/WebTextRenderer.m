@@ -584,21 +584,27 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     while (families && families[i] != 0) {
         family = families[i++];
         substituteFont = [[WebTextRendererFactory sharedFactory] cachedFontFromFamily: family traits:[[NSFontManager sharedFontManager] traitsOfFont:font] size:[font pointSize]];
-        if (substituteFont && _fontContainsString(substituteFont, string)){
-            return substituteFont;
+        if (substituteFont) {
+            if (_fontContainsString(substituteFont, string))
+                break;
+            substituteFont = nil; 
         }
     }
     
     // Now do string based lookup.
-    substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,[string length]) inLanguage:[NSLanguage defaultLanguage]];
+    if (substituteFont == nil)
+        substituteFont = [NSFont findFontLike:font forString:string withRange:NSMakeRange (0,[string length]) inLanguage:[NSLanguage defaultLanguage]];
 
     // Now do character based lookup.
     if (substituteFont == nil && [string length] == 1)
         substituteFont = [NSFont findFontLike:font forCharacter: [string characterAtIndex: 0] inLanguage:[NSLanguage defaultLanguage]];
-    
+
+    // Get the screen or printer variation of the font.
+    substituteFont = usingPrinterFont ? [substituteFont printerFont] : [substituteFont screenFont];
+
     if ([substituteFont isEqual: font])
         substituteFont = nil;
-    
+
     return substituteFont;
 }
 
@@ -731,7 +737,7 @@ static inline BOOL _fontContainsString (NSFont *font, NSString *string)
     return YES;
 }
 
-- (BOOL)_setupFont: (NSFont *)f
+- (BOOL)_setupFont
 {
     OSStatus errCode;
     ATSUStyle fontStyle;
@@ -787,10 +793,6 @@ static NSString *WebFallbackFontFamily;
 
 - initWithFont:(NSFont *)f usingPrinterFont:(BOOL)p
 {
-    if ([f glyphPacking] != NSNativeShortGlyphPacking &&
-        [f glyphPacking] != NSTwoByteGlyphPacking)
-        FATAL_ALWAYS ("%@: Don't know how to pack glyphs for font %@ %f", self, [f displayName], [f pointSize]);
-        
     [super init];
     
     maxSubstituteFontWidthMaps = NUM_SUBSTITUTE_FONT_MAPS;
@@ -798,7 +800,11 @@ static NSString *WebFallbackFontFamily;
     font = [(p ? [f printerFont] : [f screenFont]) retain];
     usingPrinterFont = p;
     
-    if (![self _setupFont:font]){
+    if ([font glyphPacking] != NSNativeShortGlyphPacking &&
+        [font glyphPacking] != NSTwoByteGlyphPacking)
+        FATAL_ALWAYS ("%@: Don't know how to pack glyphs for font %@ %f", self, [font displayName], [font pointSize]);
+        
+    if (![self _setupFont]){
         // Ack!  Something very bad happened, like a corrupt font.  Try
         // looking for an alternate 'base' font for this renderer.
 
@@ -818,20 +824,20 @@ static NSString *WebFallbackFontFamily;
         }
         
         // Try setting up the alternate font.
-        NSFont *alternateFont = [[NSFontManager sharedFontManager] convertFont:font toFamily:fallbackFontFamily];
         NSFont *initialFont = font;
         [initialFont autorelease];
-        font = [alternateFont retain];
+        NSFont *af = [[NSFontManager sharedFontManager] convertFont:font toFamily:fallbackFontFamily];
+        font = [(p ? [af printerFont] : [af screenFont]) retain];
         NSString *filePath = pathFromFont(initialFont);
         filePath = filePath ? filePath : @"not known";
-        if (![self _setupFont:alternateFont]){
+        if (![self _setupFont]){
             // Give up!
             FATAL_ALWAYS ("%@ unable to initialize with font %@ at %@", self, initialFont, filePath);
         }
 
         // Report the problem.
         ERROR ("Corrupt font detected, using %@ in place of %@ (%d glyphs) located at \"%@\".", 
-                    [alternateFont familyName], 
+                    [font familyName], 
                     [initialFont familyName],
                     ATSFontGetGlyphCount(ATSFontRefFromNSFont(initialFont)),
                     filePath);
@@ -839,10 +845,10 @@ static NSString *WebFallbackFontFamily;
 
     // We emulate the appkit metrics by applying rounding as is done
     // in the appkit.
-    CGFontRef cgFont = [f _backingCGSFont];
+    CGFontRef cgFont = [font _backingCGSFont];
     const CGFontHMetrics *metrics = CGFontGetHMetrics(cgFont);
     unsigned int unitsPerEm = CGFontGetUnitsPerEm(cgFont);
-    float pointSize = [f pointSize];
+    float pointSize = [font pointSize];
     float asc = (ScaleEmToUnits(metrics->ascent, unitsPerEm)*pointSize);
     float dsc = (-ScaleEmToUnits(metrics->descent, unitsPerEm)*pointSize);
     float lineGap = ScaleEmToUnits(metrics->lineGap, unitsPerEm)*pointSize;
@@ -867,23 +873,23 @@ static NSString *WebFallbackFontFamily;
     lineSpacing =  ascent + descent + (int)(lineGap > 0.0 ? floor(lineGap + 0.5) : 0.0);
 
 #ifdef COMPARE_APPKIT_CG_METRICS
-    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[f displayName] cString], [f pointSize], lineGap, adjustment, (int)[f _canDrawOutsideLineHeight], (int)[f _isSystemFont]);
-    if ((int)ROUND_TO_INT([f ascender]) != ascent ||
-        (int)ROUND_TO_INT(-[f descender]) != descent ||
+    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[font displayName] cString], [font pointSize], lineGap, adjustment, (int)[font _canDrawOutsideLineHeight], (int)[font _isSystemFont]);
+    if ((int)ROUND_TO_INT([font ascender]) != ascent ||
+        (int)ROUND_TO_INT(-[font descender]) != descent ||
         (int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
-        printf ("\nCG/Appkit mismatched metrics for font %s, %f (%s)\n", [[f displayName] cString], [f pointSize],
-                ([f screenFont] ? [[[f screenFont] displayName] cString] : "none"));
+        printf ("\nCG/Appkit mismatched metrics for font %s, %f (%s)\n", [[font displayName] cString], [font pointSize],
+                ([font screenFont] ? [[[font screenFont] displayName] cString] : "none"));
         printf ("ascent(%s), descent(%s), lineSpacing(%s)\n",
-                ((int)ROUND_TO_INT([f ascender]) != ascent) ? "different" : "same",
-                ((int)ROUND_TO_INT(-[f descender]) != descent) ? "different" : "same",
+                ((int)ROUND_TO_INT([font ascender]) != ascent) ? "different" : "same",
+                ((int)ROUND_TO_INT(-[font descender]) != descent) ? "different" : "same",
                 ((int)ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing) ? "different" : "same");
         printf ("CG:  ascent %f, ", asc);
         printf ("descent %f, ", dsc);
         printf ("lineGap %f, ", lineGap);
         printf ("lineSpacing %d\n", lineSpacing);
         
-        printf ("NSFont:  ascent %f, ", [f ascender]);
-        printf ("descent %f, ", [f descender]);
+        printf ("NSFont:  ascent %f, ", [font ascender]);
+        printf ("descent %f, ", [font descender]);
         printf ("lineSpacing %f\n", [font defaultLineHeightForFont]);
     }
 #endif

@@ -1,3 +1,17 @@
+2003-09-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3406660 -- screen fonts are not being used for substitute fonts (Japanese text, Roman font)
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer substituteFontForString:families:]): Get a printer or screen font,
+        based on the renderer's mode. The old code didn't do anything explicit.
+        (-[WebTextRenderer _setupFont]): Remove ignored parameter for clarity.
+        (-[WebTextRenderer initWithFont:usingPrinterFont:]): Fixed code paths that would not
+        explicitly get a printer or screen font, and code paths that would get data from the
+        original "before mapping to printer or screen font" NSFont object.
+
 === Safari-98 ===
 
 2003-09-05  Ken Kocienda  <kocienda@apple.com>
