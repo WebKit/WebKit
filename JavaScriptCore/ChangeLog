@@ -1,3 +1,13 @@
+2003-05-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Chris.
+
+	- fixed 3259673 - REGRESSION: marvel.com thinks I don't have the flash plugin any more
+
+        * kjs/nodes.cpp:
+        (ContinueNode::execute): Return a Continue completion, not a Break
+	completion, in the normal non-exception case.
+
 2003-05-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

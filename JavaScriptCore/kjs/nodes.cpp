@@ -2169,7 +2169,7 @@ Completion ContinueNode::execute(ExecState *exec)
 
   Value dummy;
   return exec->context().imp()->seenLabels()->contains(ident) ?
-    Completion(Break, dummy, ident) :
+    Completion(Continue, dummy, ident) :
     Completion(Throw,
 	       throwError(exec, SyntaxError, "Label %s not found in containing block. Can't continue.", ident));
 }
