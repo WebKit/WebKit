@@ -76,12 +76,14 @@
 }
 
 - (oneway void)release {
+#ifdef THIS_MAY_BE_BAD
     if ([self retainCount] == 1){
         _IFFrameHolder *ch = [[[_IFFrameHolder alloc] initWithObject: self] autorelease];
         [self stopLoading];
         [NSTimer scheduledTimerWithTimeInterval:1.0 target:ch selector: @selector(_checkReadyToDealloc:) userInfo: nil repeats:FALSE];
         return;
     }
+#endif
     [super release];
 }
 

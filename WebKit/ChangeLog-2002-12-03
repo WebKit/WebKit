@@ -1,5 +1,11 @@
 2002-04-05  Richard Williamson  <rjw@apple.com>
 
+        Back out some changes to lazily dealloc frame.
+        
+	* WebView.subproj/IFWebFrame.mm: (-[IFWebFrame release]):
+
+2002-04-05  Richard Williamson  <rjw@apple.com>
+
         New method on controller to find a frame of a particular name
         anywhere in the frame hierarchy.
         
