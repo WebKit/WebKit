@@ -1,5 +1,12 @@
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * WebCore.pbproj/project.pbxproj: Backed out unintentional
+        change.
+
+2004-05-04  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
         
         Implemented DOM traversal objects, NodeIterator and TreeWalker.
