@@ -53,6 +53,13 @@ void QLineEdit::setCursorPosition(int)
 }
 
 
+int QLineEdit::cursorPosition() const
+{
+    // Not needed.  We ignore setCursorPosition().
+    return 0;
+}
+
+
 void QLineEdit::setText(const QString &s)
 {
     KWQNSTextField *field = (KWQNSTextField *)getView();
@@ -94,13 +101,6 @@ bool QLineEdit::event(QEvent *)
 bool QLineEdit::frame() const
 {
     _logNotYetImplemented();
-}
-
-
-int QLineEdit::cursorPosition() const
-{
-    // Not needed.  We ignore setCursorPosition().
-    return 0;
 }
 
 

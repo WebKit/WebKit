@@ -30,10 +30,12 @@
 
 KLineEdit::KLineEdit(QWidget *parent, const char *name)
 {
+    // This space intentionally left blank.
 }
 
 KLineEdit::~KLineEdit()
 {
+    // This space intentionally left blank.
 }
 
 

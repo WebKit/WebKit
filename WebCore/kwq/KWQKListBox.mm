@@ -28,12 +28,12 @@
 
 KListBox::KListBox()
 {
-    _logNotYetImplemented();
+    // This space intentionally left blank.
 }
 
 
-KListBox::KListBox(QWidget *)
+KListBox::KListBox(QWidget *w)
 {
-    _logNotYetImplemented();
+    // This space intentionally left blank.
 }
 

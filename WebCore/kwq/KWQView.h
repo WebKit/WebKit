@@ -26,3 +26,10 @@ class QWidget;
 - initWithFrame: (NSRect)r widget: (QWidget *)w; 
 @end
 
+@interface KWQNSScrollView : NSScrollView
+{
+    QWidget *widget;
+}
+- initWithFrame: (NSRect)r widget: (QWidget *)w; 
+@end
+

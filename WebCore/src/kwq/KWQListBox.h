@@ -33,12 +33,17 @@
 #include <qscrollview.h>
 #include <qstring.h>
 
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#include <Cocoa/Cocoa.h>
+#endif
+
 class QListBoxItem;
 class QListBoxText;
 
 // class QListBox ==============================================================
 
 class QListBox : public QScrollView {
+friend class QListBoxItem;
 public:
 
     // structs -----------------------------------------------------------------
@@ -79,12 +84,21 @@ private:
     QListBox(const QListBox &);
     QListBox &operator=(const QListBox &);
 
+    QListBoxItem *head;
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    NSMatrix *matrix;
+#else
+    void *matrix;
+#endif
+
 }; // class QListBox ===========================================================
 
 
 // class QListBoxItem ==========================================================
 
 class QListBoxItem {
+friend class QListBox;
+friend class QListBoxText;
 public:
 
     // structs -----------------------------------------------------------------
@@ -117,6 +131,15 @@ private:
     // note that these are "standard" (no pendantic stuff needed)
     QListBoxItem(const QListBoxItem &);
     QListBoxItem &operator=(const QListBoxItem &);
+
+    QString text;
+    QListBoxItem *previousItem, *nextItem;
+    QListBox *box;
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    NSButtonCell *cell;
+#else
+    void *cell;
+#endif
 
 }; // class QListBoxItem =======================================================
 

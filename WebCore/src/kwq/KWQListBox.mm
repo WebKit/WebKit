@@ -24,72 +24,136 @@
  */
 #include <kwqdebug.h>
 
+#include <KWQView.h>
 #include <KWQListBox.h>
 
 
+// Emulated with a NSScrollView that contains a NSMatrix.  Use a prototype cell.
 QListBox::QListBox()
 {
-    _logNotYetImplemented();
+    KWQNSScrollView *scrollview = [[NSScrollView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
+    NSButtonCell *cell = [[[NSButtonCell alloc] init] autorelease];
+    
+    [cell setBordered: NO];
+    [cell setAlignment: NSLeftTextAlignment];
+       
+    matrix  = [[NSMatrix alloc] initWithFrame: NSMakeRect (0,0,0,0) mode:NSHighlightModeMatrix prototype:cell numberOfRows:0 numberOfColumns:0];
+    
+    [scrollview setHasVerticalScroller: NO];
+    [scrollview setHasHorizontalScroller: YES];
+    [scrollview setDocumentView: matrix];
+
+    head = 0L;
+    
+    setView (scrollview);
 }
 
 
 QListBox::~QListBox()
 {
-    _logNotYetImplemented();
+    KWQNSScrollView *scrollview = (KWQNSScrollView *)getView();
+
+    [scrollview setDocumentView: nil];
+    [matrix release];
 }
 
 
 uint QListBox::count() const
 {
-    _logNotYetImplemented();
+    (uint)[matrix numberOfRows];
 }
 
 
 void QListBox::clear()
 {
-    _logNotYetImplemented();
+    [matrix renewRows: 0 columns: 0];
+    [matrix sizeToCells];
 }
 
 
-void QListBox::setSelectionMode(SelectionMode)
+void QListBox::setSelectionMode(SelectionMode mode)
 {
-    _logNotYetImplemented();
+    if (mode == QListBox::Extended){
+        [matrix setMode: NSListModeMatrix];
+    }
+    else {
+        [matrix setMode: NSHighlightModeMatrix];
+    }
 }
 
 
 QListBoxItem *QListBox::firstItem() const
 {
-    _logNotYetImplemented();
+    return head;
 }
 
 
 int QListBox::currentItem() const
 {
-    _logNotYetImplemented();
+    return [matrix selectedRow];
 }
 
 
-void QListBox::insertItem(const QString &, int index=-1)
+void QListBox::insertItem(const QString &t, int index)
 {
-    _logNotYetImplemented();
+    insertItem( new QListBoxText(t), index );
 }
 
 
-void QListBox::insertItem(const QListBoxItem *, int index=-1)
+void QListBox::insertItem(const QListBoxItem *newItem, int index)
 {
-    _logNotYetImplemented();
+    if ( !newItem )
+	return;
+
+    if ( index < 0 || index >= count())
+	index = count();
+
+    QListBoxItem *item = (QListBoxItem *)newItem;
+
+    item->box = this;
+    if ( !head || index == 0 ) {
+	item->nextItem = head;
+	item->previousItem = 0;
+	head = item;
+	if ( item->nextItem )
+	    item->nextItem->previousItem = item;
+    } else {
+	QListBoxItem * i = head;
+	while ( i->nextItem && index > 1 ) {
+	    i = i->nextItem;
+	    index--;
+	}
+	if ( i->nextItem ) {
+	    item->nextItem = i->nextItem;
+	    item->previousItem = i;
+	    item->nextItem->previousItem = item;
+	    item->previousItem->nextItem = item;
+	} else {
+	    i->nextItem = item;
+	    item->previousItem = i;
+	    item->nextItem = 0;
+	}
+    }
+    [matrix insertRow: index];
+    
+    NSButtonCell *cell = [matrix cellAtRow: index column: 0];
+    [cell setTitle:  QSTRING_TO_NSSTRING(item->text)];
+    
+    item->cell = [cell retain];
+}
+
+void QListBox::setSelected(int index, bool selectIt)
+{
+    if (selectIt)
+        [matrix selectCellAtRow: index column: 0];
+    else
+        [matrix deselectSelectedCell];
 }
 
 
-void QListBox::setSelected(int, bool)
+bool QListBox::isSelected(int index)
 {
-    _logNotYetImplemented();
-}
-
-
-bool QListBox::isSelected(int)
-{
-    _logNotYetImplemented();
+    return [matrix selectedRow] == index;
 }
 
 
@@ -97,61 +161,65 @@ bool QListBox::isSelected(int)
 
 QListBoxItem::QListBoxItem()
 {
-    _logNotYetImplemented();
+    cell = 0L;
 }
 
 QListBoxItem::~QListBoxItem()
 {
-    _logNotYetImplemented();
+    [cell release];
 }
 
 
-void QListBoxItem::setSelectable(bool)
+void QListBoxItem::setSelectable(bool flag)
 {
+    [cell setSelectable: flag];
 }
 
 
 QListBox *QListBoxItem::listBox() const
 {
-    _logNotYetImplemented();
+    return box;
 }
 
 
 int QListBoxItem::width(const QListBox *) const
 {
-    _logNotYetImplemented();
+    // Is this right?
+    NSSize size = [cell cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
+    return (int)size.width;
 }
 
 
 int QListBoxItem::height(const QListBox *) const
 {
-    _logNotYetImplemented();
+    // Is this right?
+    NSSize size = [cell cellSizeForBounds: NSMakeRect (0,0,10000,10000)];
+    return (int)size.height;
 }
 
 
 QListBoxItem *QListBoxItem::next() const
 {
-    _logNotYetImplemented();
+    return nextItem;
 }
 
 
 QListBoxItem *QListBoxItem::prev() const
 {
-    _logNotYetImplemented();
+    return previousItem;
 }
 
 
 
 // class QListBoxText ==========================================================
 
-QListBoxText::QListBoxText(const QString &text=QString::null)
+QListBoxText::QListBoxText(const QString &t)
 {
-    _logNotYetImplemented();
+    text = t;
 }
 
 
 QListBoxText::~QListBoxText()
 {
-    _logNotYetImplemented();
 }
 
