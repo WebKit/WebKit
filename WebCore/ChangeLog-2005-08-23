@@ -1,3 +1,18 @@
+2004-10-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+
+        <rdar://problem/3834779> Mail crashes when editing HTML message - khtml::Selection::layout()
+    
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::styleForSelectionStart): Table code seems to be more robust when the call to
+        insert our style-checking node is done with an appendChild rather than an insertBefore. Note 
+        that this table-related problem was exposed by fixing Selection::layout(), which I did
+        yesterday. This change simply improves things even more so that we do not crash in the
+        scenario described in the bug.
+
 2004-10-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

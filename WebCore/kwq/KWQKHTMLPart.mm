@@ -3461,7 +3461,7 @@ RenderStyle *KWQKHTMLPart::styleForSelectionStart(NodeImpl *&nodeToRemove) const
     styleElement->appendChild(text, exceptionCode);
     ASSERT(exceptionCode == 0);
 
-    node->parentNode()->insertBefore(styleElement, node, exceptionCode);
+    node->parentNode()->appendChild(styleElement, exceptionCode);
     ASSERT(exceptionCode == 0);
 
     nodeToRemove = styleElement;    
