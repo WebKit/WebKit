@@ -23,10 +23,12 @@ PROGRAMS = \
     qpoint-test \
     qsize-test \
     qrect-test \
+    qarray-test \
     qmap-test \
     qvaluelist-test \
     qstringlist-test \
     qlist-test \
+    qregexp-test \
     $(NULL)
 
 CLEAN_FILES = *.o \
@@ -69,6 +71,9 @@ qrect-test: qrect-test.o
 qsize-test: qsize-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
+qarray-test: qarray-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
 qmap-test: qmap-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
@@ -79,6 +84,9 @@ qstringlist-test: qstringlist-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 qlist-test: qlist-test.o
+	$(CXX) -o $@ $< $(LDFLAGS)
+
+qregexp-test: qregexp-test.o
 	$(CXX) -o $@ $< $(LDFLAGS)
 
 depend: 
