@@ -716,11 +716,14 @@
     // workaround for this AppKit bug, we detect this circumstance
     // (changing from one secure field to another) and set selectable
     // to YES, and then back to whatever it was - this has the side
-    // effect of turning on bullet mode.
+    // effect of turning on bullet mode. This is also helpful when
+    // we end editing once, but we've already started editing
+    // again on the same text field. (On Panther we only did this when
+    // advancing to a *different* secure text field.)
 
     NSTextView *textObject = [notification object];
     id delegate = [textObject delegate];
-    if (delegate != self && [delegate isKindOfClass:[NSSecureTextField class]]) {
+    if ([delegate isKindOfClass:[NSSecureTextField class]]) {
 	BOOL oldSelectable = [textObject isSelectable];
 	[textObject setSelectable:YES];
 	[textObject setSelectable:oldSelectable];

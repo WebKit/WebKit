@@ -1,3 +1,13 @@
+2004-08-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3715878> 8A162: connect.apple.com password field showed in cleartext
+
+        * kwq/KWQTextField.mm: (-[KWQSecureTextField textDidEndEditing:]):
+        Enhanced workaround for shifting focus from one secure text field to another so that it works
+        even for the case of shifting focus from a secure text field back to itself.
+
 2004-08-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
