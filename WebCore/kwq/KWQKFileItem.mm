@@ -29,13 +29,11 @@
 
 KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool, bool)
 {
-    ERROR("not yet implemented");
 }
 
 bool KFileItem::isDir() const
 {
-    ERROR("not yet implemented");
-    return FALSE;
+    return false;
 }
 
 

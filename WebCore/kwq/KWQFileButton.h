@@ -30,8 +30,10 @@
 
 #ifdef __OBJC__
 @class KWQFileButtonAdapter;
+@class NSImage;
 #else
 class KWQFileButtonAdapter;
+class NSImage;
 #endif
 
 class KWQFileButton : public QPushButton {
@@ -54,6 +56,7 @@ private:
     KWQSignal _textChanged;
     QString _filename;
     KWQFileButtonAdapter *_adapter;
+    NSImage *_icon;
 };
 
 #endif

@@ -25,8 +25,14 @@
 
 #import "KWQFileButton.h"
 
-#define BUTTON_FILENAME_SPACING 4
+#define AFTER_BUTTON_SPACING 4
+#define ICON_HEIGHT 16
+#define ICON_WIDTH 16
+#define ICON_FILENAME_SPACING 2
 #define FILENAME_WIDTH 200
+
+#define ADDITIONAL_WIDTH (AFTER_BUTTON_SPACING + ICON_WIDTH + ICON_FILENAME_SPACING + FILENAME_WIDTH)
+
 #define FONT_FAMILY ("Lucida Grande")
 
 // FIXME: Clicks on the text should pull up the sheet too.
@@ -46,6 +52,7 @@ KWQFileButton::KWQFileButton()
     : QPushButton("Choose File", 0)
     , _textChanged(this, SIGNAL(textChanged(const QString &)))
     , _adapter([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this])
+    , _icon(nil)
 {
 }
 
@@ -53,6 +60,7 @@ KWQFileButton::~KWQFileButton()
 {
     _adapter->button = 0;
     [_adapter release];
+    [_icon release];
 }
     
 void KWQFileButton::setFilename(const QString &f)
@@ -63,10 +71,14 @@ void KWQFileButton::setFilename(const QString &f)
     _filename = f;
     _textChanged.call(_filename);
     
-    // Dirty the filename part of the view.
+    // Get the icon.
+    [_icon release];
+    _icon = [[[NSWorkspace sharedWorkspace] iconForFile:_filename.getNSString()] retain];
+    
+    // Dirty the part of the view past the button, including the icon and text.
     QRect r = QPushButton::frameGeometry();
-    r.setX(r.x() + r.width() + BUTTON_FILENAME_SPACING);
-    r.setWidth(FILENAME_WIDTH);
+    r.setX(r.x() + r.width() + AFTER_BUTTON_SPACING);
+    r.setWidth(ADDITIONAL_WIDTH - AFTER_BUTTON_SPACING);
     [[getView() superview] setNeedsDisplayInRect:frameGeometry()];
 }
 
@@ -74,9 +86,11 @@ void KWQFileButton::clicked()
 {
     NSOpenPanel *sheet = [NSOpenPanel openPanel];
     
+    [sheet setPrompt:@"Choose"];
+    
     [_adapter retain];
     
-    [sheet beginSheetForDirectory:@"" file:@"" types:nil
+    [sheet beginSheetForDirectory:@"~" file:@"" types:nil
         modalForWindow:[getView() window] modalDelegate:_adapter
         didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)
         contextInfo:nil];
@@ -87,21 +101,21 @@ void KWQFileButton::clicked()
 QSize KWQFileButton::sizeHint() const 
 {
     QSize s = QPushButton::sizeHint();
-    s.setWidth(s.width() + (BUTTON_FILENAME_SPACING + FILENAME_WIDTH));
+    s.setWidth(s.width() + ADDITIONAL_WIDTH);
     return s;
 }
 
 QRect KWQFileButton::frameGeometry() const
 {
     QRect r = QPushButton::frameGeometry();
-    r.setWidth(r.width() + (BUTTON_FILENAME_SPACING + FILENAME_WIDTH));
+    r.setWidth(r.width() + ADDITIONAL_WIDTH);
     return r;
 }
 
 void KWQFileButton::setFrameGeometry(const QRect &rect)
 {
     QRect r = rect;
-    r.setWidth(r.width() - (BUTTON_FILENAME_SPACING + FILENAME_WIDTH));
+    r.setWidth(r.width() - ADDITIONAL_WIDTH);
     QPushButton::setFrameGeometry(r);
 }
 
@@ -114,12 +128,25 @@ void KWQFileButton::paint()
 {
     QPushButton::paint();
     
-    QString leafName = _filename;
-    int slashPosition = leafName.findRev('/');
-    if (slashPosition >= 0 || leafName == "/") {
-        leafName.remove(0, slashPosition + 1);
+    QString text = _filename;
+    if (text.isEmpty()) {
+        text = "no file selected";
+    } else {
+        int slashPosition = text.findRev('/');
+        if (slashPosition >= 0 || text == "/") {
+            text.remove(0, slashPosition + 1);
+        }
     }
     
+    int left = x() + width() - ADDITIONAL_WIDTH + AFTER_BUTTON_SPACING;
+
+    if (_icon) {
+        [_icon drawInRect:NSMakeRect(left, y() + (height() - ICON_HEIGHT) / 2, ICON_WIDTH, ICON_HEIGHT)
+            fromRect:NSMakeRect(0, 0, [_icon size].width, [_icon size].height)
+            operation:NSCompositeSourceOver fraction:1.0];
+        left += ICON_WIDTH + ICON_FILENAME_SPACING;
+    }
+
     // FIXME: Use same font as button, don't hardcode Lucida Grande.
     // FIXME: Ellipsize the text to fit in the box.
     QPainter painter;
@@ -129,7 +156,7 @@ void KWQFileButton::paint()
     painter.save(); // wouldn't be needed in real Qt, but we need it
     painter.addClip(frameGeometry());
     painter.setFont(font);
-    painter.drawText(x() + width() - FILENAME_WIDTH, y() + baselinePosition(), 0, 0, 0, leafName);
+    painter.drawText(left, y() + baselinePosition(), 0, 0, 0, text);
     painter.restore(); // wouldn't be needed in real Qt, but we need it
 }
 

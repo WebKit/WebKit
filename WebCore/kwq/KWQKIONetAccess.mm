@@ -26,39 +26,29 @@
 #import <KWQLogging.h>
 #import <netaccess.h>
 
-//FIX ME:
-static QString *tempQString;
-
 namespace KIO {
 
 bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
 {
-    ERROR("not yet implemented");
-    return FALSE;
+    return true;
 }
 
 
 QString NetAccess::lastErrorString()
 {
-    ERROR("not yet implemented");
-    if (tempQString == NULL) {
-	tempQString = new QString();
-    }
-
-    return *tempQString;
+    return QString::null;
 }
 
 
-bool NetAccess::download(const KURL &, QString &)
+bool NetAccess::download(const KURL &url, QString &filename)
 {
-    ERROR("not yet implemented");
-    return FALSE;
+    filename = url.path();
+    return true;
 }
 
 
 void NetAccess::removeTempFile(const QString &)
 {
-    ERROR("not yet implemented");
 }
 
 } // namespace KIO

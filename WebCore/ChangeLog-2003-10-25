@@ -1,5 +1,21 @@
 2002-09-20  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQFileButton.h: Add an icon.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Nil out icon.
+        (KWQFileButton::~KWQFileButton): Release icon.
+        (KWQFileButton::setFilename): Get icon with [NSWorkspace iconForFile:].
+        (KWQFileButton::clicked): Set prompt string to "Choose", and start directory to "~".
+        (KWQFileButton::sizeHint): Pad more for icon width.
+        (KWQFileButton::frameGeometry): Ditto.
+        (KWQFileButton::setFrameGeometry): Ditto.
+        (KWQFileButton::paint): Draw icon. Draw "no file selected" if no filename.
+
+        * kwq/KWQKFileItem.mm: Our "nonimplementation" is good enough. Stop complaining.
+        * kwq/KWQKnetaccess.mm: Ditto. Also just extract path when asked to download.
+
+2002-09-20  Darin Adler  <darin@apple.com>
+
 	Some first steps toward implementing input=file.
 
         * khtml/rendering/render_form.cpp:
