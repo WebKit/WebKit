@@ -87,7 +87,7 @@
     [field setAction:@selector(action:)];
 }
 
-- initWithFrame:(NSRect)frame
+-(id)initWithFrame:(NSRect)frame
 {
     [super initWithFrame:frame];
     formatter = [[KWQTextFieldFormatter alloc] init];
@@ -96,14 +96,23 @@
     return self;
 }
 
-- initWithQLineEdit:(QLineEdit *)w 
+-(id)initWithQLineEdit:(QLineEdit *)w 
 {
     widget = w;
     return [self init];
 }
 
+-(void)invalidate
+{
+    widget = NULL;
+}
+
 - (void)action:sender
 {
+    if (!widget) {
+	return;
+    }
+
     widget->returnPressed();
 }
 
@@ -221,22 +230,34 @@
     edited = ed;
 }
 
-- (void)controlTextDidBeginEditing:(NSNotification *)notification
+-(void)controlTextDidBeginEditing:(NSNotification *)notification
 {
+    if (!widget) {
+	return;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidBeginEditing:notification];
 }
 
-- (void)controlTextDidEndEditing:(NSNotification *)notification
+-(void)controlTextDidEndEditing:(NSNotification *)notification
 {
     [self setHasFocus:NO];
+
+    if (!widget) {
+	return;
+    }
 
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidEndEditing:notification];
 }
 
-- (void)controlTextDidChange:(NSNotification *)notification
+-(void)controlTextDidChange:(NSNotification *)notification
 {
+    if (!widget) {
+	return;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidChange:notification];
 
@@ -244,43 +265,67 @@
     widget->textChanged();
 }
 
-- (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
+-(BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
 {
+    if (!widget) {
+	return NO;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     return [bridge control:control textShouldBeginEditing:fieldEditor];
 }
 
-- (BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
+-(BOOL)control:(NSControl *)control textShouldEndEditing:(NSText *)fieldEditor
 {
+    if (!widget) {
+	return NO;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     return [bridge control:control textShouldEndEditing:fieldEditor];
 }
 
-- (BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
+-(BOOL)control:(NSControl *)control didFailToFormatString:(NSString *)string errorDescription:(NSString *)error
 {
+    if (!widget) {
+	return NO;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     return [bridge control:control didFailToFormatString:string errorDescription:error];
 }
 
-- (void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
+-(void)control:(NSControl *)control didFailToValidatePartialString:(NSString *)string errorDescription:(NSString *)error
 {
+    if (!widget) {
+	return;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge control:control didFailToValidatePartialString:string errorDescription:error];
 }
 
-- (BOOL)control:(NSControl *)control isValidObject:(id)obj
+-(BOOL)control:(NSControl *)control isValidObject:(id)obj
 {
+    if (!widget) {
+	return NO;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     return [bridge control:control isValidObject:obj];
 }
 
-- (BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
+-(BOOL)control:(NSControl *)control textView:(NSTextView *)textView doCommandBySelector:(SEL)commandSelector
 {
+    if (!widget) {
+	return NO;
+    }
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     return [bridge control:control textView:textView doCommandBySelector:commandSelector];
 }
 
-- (NSString *)stringValue
+-(NSString *)stringValue
 {
     if ([secureField superview]) {
         return [secureField stringValue];
@@ -288,8 +333,12 @@
     return [super stringValue];
 }
 
-- (void)setStringValue:(NSString *)string
+-(void)setStringValue:(NSString *)string
 {
+    if (!widget) {
+	return;
+    }
+
     int maxLength = [formatter maximumLength];
     if ((int)[string length] > maxLength) {
         string = [string substringToIndex:maxLength];
@@ -299,27 +348,35 @@
     widget->textChanged();
 }
 
-- (void)setFont:(NSFont *)font
+-(void)setFont:(NSFont *)font
 {
     [secureField setFont:font];
     [super setFont:font];
 }
 
-- (NSView *)nextKeyView
+-(NSView *)nextKeyView
 {
+    if (!widget) {
+	return [super nextKeyView];
+    }
+
     return inNextValidKeyView
         ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
-- (NSView *)previousKeyView
+-(NSView *)previousKeyView
 {
-   return inNextValidKeyView
+    if (!widget) {
+	return [super previousKeyView];
+    }
+
+    return inNextValidKeyView
         ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
 
-- (NSView *)nextValidKeyView
+-(NSView *)nextValidKeyView
 {
     inNextValidKeyView = YES;
     NSView *view = [super nextValidKeyView];
@@ -327,7 +384,7 @@
     return view;
 }
 
-- (NSView *)previousValidKeyView
+-(NSView *)previousValidKeyView
 {
     inNextValidKeyView = YES;
     NSView *view = [super previousValidKeyView];
@@ -358,6 +415,9 @@
 // FIXME: We can remove this once we require AppKit-705 or newer.
 - (void)fieldEditorDidMouseDown:(NSEvent *)event
 {
+    if (!widget) {
+	return;
+    }
     widget->sendConsumedMouseUp();
     widget->clicked();
 }
@@ -407,6 +467,10 @@
 
 - (BOOL)textView:(NSTextView *)view shouldHandleEvent:(NSEvent *)event
 {
+    if (!widget) {
+	return YES;
+    }
+
     if ([event type] == NSKeyDown) {
         WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
         [bridge interceptKeyEvent:event toView:view];
@@ -418,6 +482,9 @@
 
 - (void)textView:(NSTextView *)view didHandleEvent:(NSEvent *)event
 {
+    if (!widget) {
+	return;
+    }
     if ([event type] == NSLeftMouseUp) {
         widget->sendConsumedMouseUp();
         widget->clicked();
@@ -460,6 +527,10 @@
 
 - (void)setHasFocus:(BOOL)nowHasFocus
 {
+    if (!widget) {
+	return;
+    }
+
     if (nowHasFocus == hasFocus) {
         return;
     }

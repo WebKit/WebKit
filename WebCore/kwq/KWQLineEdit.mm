@@ -43,6 +43,11 @@ QLineEdit::QLineEdit()
     [view release];
 }
 
+QLineEdit::~QLineEdit()
+{
+    [(KWQTextField *)getView() invalidate];
+}
+
 void QLineEdit::setEchoMode(EchoMode mode)
 {
     KWQTextField *textField = (KWQTextField *)getView();

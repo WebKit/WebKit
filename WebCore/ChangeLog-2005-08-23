@@ -1,3 +1,40 @@
+2003-07-25  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3332460 - nil-deref in khtml::RenderWidget::eventFilter with onchange handler
+	
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::eventFilter): We want to ref element() across this call, but it could get
+	unset, so store it in a local variable.
+        * kwq/KWQLineEdit.h:
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::~QLineEdit): invalidate our KWQTextField.
+        * kwq/KWQTextField.h:
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField invalidate]): Set widget to NULL.
+        (-[KWQTextField action:]): Do nothing if widget is NULL.
+        (-[KWQTextField controlTextDidBeginEditing:]): Likewise.
+        (-[KWQTextField controlTextDidEndEditing:]): Likewise.
+        (-[KWQTextField controlTextDidChange:]): Likewise.
+        (-[KWQTextField control:textShouldBeginEditing:]): Likewise.
+        (-[KWQTextField control:textShouldEndEditing:]): Likewise.
+        (-[KWQTextField control:didFailToFormatString:errorDescription:]): Likewise.
+        (-[KWQTextField control:didFailToValidatePartialString:errorDescription:]): Likewise.
+        (-[KWQTextField control:isValidObject:]): Likewise.
+        (-[KWQTextField control:textView:doCommandBySelector:]): Likewise.
+        (-[KWQTextField stringValue]): Likewise.
+        (-[KWQTextField setStringValue:]): Likewise.
+        (-[KWQTextField setFont:]): Likewise.
+        (-[KWQTextField nextKeyView]): Likewise.
+        (-[KWQTextField previousKeyView]): Likewise.
+        (-[KWQTextField nextValidKeyView]): Likewise.
+        (-[KWQTextField previousValidKeyView]): Likewise.
+        (-[KWQTextField fieldEditorDidMouseDown:]): Likewise.
+        (-[KWQTextField textView:shouldHandleEvent:]): Likewise.
+        (-[KWQTextField textView:didHandleEvent:]): Likewise.
+        (-[KWQTextField setHasFocus:]): Likewise.
+
 2003-07-24  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3332622 -- Safari Abbreviates Attribute Names in EMBED tags

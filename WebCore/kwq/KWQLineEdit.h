@@ -34,7 +34,7 @@ public:
     enum EchoMode { Normal, Password };
 
     QLineEdit();
-
+    ~QLineEdit();
     void setAlignment(AlignmentFlags);
 
     void setCursorPosition(int);
