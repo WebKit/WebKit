@@ -1,3 +1,14 @@
+2002-08-20  Darin Adler  <darin@apple.com>
+
+	- fix 3028936 -- fields are not submitting the correct data if they are selected
+	when you submit
+
+        * kwq/KWQNSTextField.mm: (-[KWQNSTextField controlTextDidChange:]):
+	Call widget->textChanged and set edited to true here. The old code had two problems.
+	First, it only sent textChanged from controlTextDidEndEditing. Second, it overrode
+	textDidChange without calling super, preventing controlTextDidChange from being
+	sent to the delegate.
+
 2002-08-20  David Hyatt  <hyatt@apple.com>
 
 	Fix background positioning so that it works with table cells.

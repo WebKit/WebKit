@@ -100,11 +100,6 @@
     widget->returnPressed();
 }
 
-- (void)controlTextDidEndEditing:(NSNotification *)aNotification
-{
-    widget->textChanged();
-}
-
 - (void)dealloc
 {
     [secureField release];
@@ -199,9 +194,10 @@
     edited = ed;
 }
 
-- (void)textDidChange:(NSNotification *)aNotification
+- (void)controlTextDidChange:(NSNotification *)aNotification
 {
     edited = true;
+    widget->textChanged();
 }
 
 - (NSString *)stringValue
