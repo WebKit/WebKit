@@ -39,9 +39,8 @@ QLineEdit::QLineEdit(Type type)
     , m_performSearch(this, SIGNAL(performSearch()))
     , m_type(type)
 {
-    id view = nil;
-
     KWQ_BLOCK_EXCEPTIONS;
+    id view = nil;
     switch (type) {
         case Normal:
             view = [KWQTextField alloc];
@@ -53,6 +52,7 @@ QLineEdit::QLineEdit(Type type)
             view = [KWQSearchField alloc];
             break;
     }
+    ASSERT(view);
     [view initWithQLineEdit:this];
     m_controller = [view controller];
     setView(view);
