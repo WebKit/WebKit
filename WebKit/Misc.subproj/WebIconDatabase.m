@@ -23,10 +23,11 @@ NSString * const ObsoleteIconURLToURLsKey =     @"WebIconURLToSiteURLs";
 
 static const int WebIconDatabaseCurrentVersion = 2;
 
-NSString *WebIconDatabaseDidAddIconNotification = @"WebIconDatabaseDidAddIconNotification";
-NSString *WebIconNotificationUserInfoURLKey =     @"WebIconNotificationUserInfoURLKey";
+NSString *WebIconDatabaseDidAddIconNotification =   @"WebIconDatabaseDidAddIconNotification";
+NSString *WebIconNotificationUserInfoURLKey =       @"WebIconNotificationUserInfoURLKey";
 
-NSString *WebIconDatabaseDirectoryDefaultsKey =   @"WebIconDatabaseDirectoryDefaultsKey";
+NSString *WebIconDatabaseDirectoryDefaultsKey = @"WebIconDatabaseDirectoryDefaultsKey";
+NSString *WebIconDatabaseEnabledDefaultsKey =   @"WebIconDatabaseEnabled";
 
 NSSize WebIconSmallSize = {16, 16};
 NSSize WebIconMediumSize = {32, 32};
@@ -42,7 +43,6 @@ NSSize WebIconLargeSize = {128, 128};
 - (void)_updateFileDatabase;
 - (NSMutableDictionary *)_iconsForIconURLString:(NSString *)iconURL;
 - (NSImage *)_iconForFileURL:(NSString *)fileURL withSize:(NSSize)size;
-- (NSMutableDictionary *)_builtInIconsForHost:(NSString *)host;
 - (void)_retainIconForIconURLString:(NSString *)iconURL;
 - (void)_releaseIconForIconURLString:(NSString *)iconURL;
 - (void)_retainFutureIconForURL:(NSString *)URL;
@@ -82,6 +82,14 @@ NSSize WebIconLargeSize = {128, 128};
     
     _private = [[WebIconDatabasePrivate alloc] init];
 
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSDictionary *initialDefaults = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], WebIconDatabaseEnabledDefaultsKey, nil];
+    [defaults registerDefaults:initialDefaults];
+    [initialDefaults release];
+    if (![defaults boolForKey:WebIconDatabaseEnabledDefaultsKey]) {
+        return self;
+    }
+    
     [self _createFileDatabase];
     [self _loadIconDictionaries];
 
@@ -93,7 +101,7 @@ NSSize WebIconLargeSize = {128, 128};
     _private->iconURLsWithNoIcons = [[NSMutableSet alloc] init];
     
     [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(applicationWillTerminate:)
+                                             selector:@selector(_applicationWillTerminate:)
                                                  name:NSApplicationWillTerminateNotification
                                                object:NSApp];
 
@@ -105,17 +113,12 @@ NSSize WebIconLargeSize = {128, 128};
     return self;
 }
 
-- (BOOL)iconsAreSaved
-{
-    return (_private->fileDatabase != nil);
-}
-
 - (NSImage *)iconForURL:(NSString *)URL withSize:(NSSize)size cache:(BOOL)cache
 {
     ASSERT(size.width);
     ASSERT(size.height);
     
-    if (!URL) {
+    if (!URL || ![self _isEnabled]) {
         return [self defaultIconWithSize:size];
     }
 
@@ -147,6 +150,9 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (NSString *)iconURLForURL:(NSString *)URL
 {
+    if (![self _isEnabled]) {
+        return nil;
+    }
     return URL ? [_private->URLToIconURL objectForKey:URL] : nil;
 }
 
@@ -172,6 +178,10 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(URL);
     
+    if (![self _isEnabled]) {
+        return;
+    }    
+    
     NSString *iconURLString = [_private->URLToIconURL objectForKey:URL];
     
     if(iconURLString){
@@ -185,6 +195,10 @@ NSSize WebIconLargeSize = {128, 128};
 {
     ASSERT(URL);
     
+    if (![self _isEnabled]) {
+        return;
+    }    
+    
     NSString *iconURLString = [_private->URLToIconURL objectForKey:URL];
     
     if(iconURLString){
@@ -196,6 +210,10 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)delayDatabaseCleanup
 {
+    if (![self _isEnabled]) {
+        return;
+    }
+    
     if(_private->didCleanup){
         ERROR("delayDatabaseCleanup cannot be called after cleanup has begun");
         return;
@@ -206,6 +224,10 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)allowDatabaseCleanup
 {
+    if (![self _isEnabled]) {
+        return;
+    }
+    
     if(_private->didCleanup){
         ERROR("allowDatabaseCleanup cannot be called after cleanup has begun");
         return;
@@ -218,25 +240,106 @@ NSSize WebIconLargeSize = {128, 128};
     }
 }
 
-- (void)applicationWillTerminate:(NSNotification *)notification
-{
-    // Should only cause a write if user quit before 3 seconds after the last _updateFileDatabase
-    [_private->fileDatabase sync];
-}
-
 @end
 
 
 @implementation WebIconDatabase (WebPrivate)
 
+- (BOOL)_isEnabled
+{
+    return (_private->fileDatabase != nil);
+}
+
+- (void)_setIcon:(NSImage *)icon forIconURL:(NSString *)iconURL
+{
+    ASSERT(icon);
+    ASSERT(iconURL);
+    ASSERT([self _isEnabled]);
+    
+    NSMutableDictionary *icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
+    
+    if (!icons) {
+        return;
+    }
+    
+    [_private->iconURLToIcons setObject:icons forKey:iconURL];
+    
+    [self _retainIconForIconURLString:iconURL];
+    
+    // Release the newly created icon much like an autorelease.
+    // This gives the client enough time to retain it.
+    // FIXME: Should use an actual autorelease here using a proxy object instead.
+    [self performSelector:@selector(_releaseIconForIconURLString:) withObject:iconURL afterDelay:0];
+}
+
+- (void)_setHaveNoIconForIconURL:(NSString *)iconURL
+{
+    ASSERT(iconURL);
+    ASSERT([self _isEnabled]);
+
+    [_private->iconURLsWithNoIcons addObject:iconURL];
+    
+    [self _retainIconForIconURLString:iconURL];
+    
+    // Release the newly created icon much like an autorelease.
+    // This gives the client enough time to retain it.
+    // FIXME: Should use an actual autorelease here using a proxy object instead.
+    [self performSelector:@selector(_releaseIconForIconURLString:) withObject:iconURL afterDelay:0];
+}
+
+
+- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL
+{
+    ASSERT(iconURL);
+    ASSERT(URL);
+    ASSERT([self _isEnabled]);
+    ASSERT([self _hasIconForIconURL:iconURL]);    
+    
+    if ([[_private->URLToIconURL objectForKey:URL] isEqualToString:iconURL] &&
+        [_private->iconsOnDiskWithURLs containsObject:iconURL]) {
+        // Don't do any work if the icon URL is already bound to the site URL
+        return;
+    }
+    
+    [_private->URLToIconURL setObject:iconURL forKey:URL];
+    [_private->iconURLToURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
+    
+    int futureRetainCount = (int)(void *)CFDictionaryGetValue(_private->futureURLToRetainCount, URL);
+    
+    if (futureRetainCount != 0) {
+        int retainCount = (int)(void *)CFDictionaryGetValue(_private->iconURLToRetainCount, iconURL);
+        int newRetainCount = retainCount + futureRetainCount;
+        CFDictionarySetValue(_private->iconURLToRetainCount, iconURL, (void *)newRetainCount);
+        CFDictionaryRemoveValue(_private->futureURLToRetainCount, URL);
+    }
+    
+    [self _sendNotificationForURL:URL];
+    [self _updateFileDatabase];
+}
+
+- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
+{
+    ASSERT([self _isEnabled]);
+    
+    return (([_private->iconURLToIcons objectForKey:iconURL] ||
+	     [_private->iconURLsWithNoIcons containsObject:iconURL] ||
+             [_private->iconsOnDiskWithURLs containsObject:iconURL]) &&
+            CFDictionaryGetValue(_private->iconURLToRetainCount,iconURL));
+}
+
+@end
+
+@implementation WebIconDatabase (WebInternal)
+
 - (void)_createFileDatabase
 {
     // FIXME: Make defaults key public somehow
-    NSString *databaseDirectory = [[NSUserDefaults standardUserDefaults] objectForKey:WebIconDatabaseDirectoryDefaultsKey];
+    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+    NSString *databaseDirectory = [defaults objectForKey:WebIconDatabaseDirectoryDefaultsKey];
 
     if (!databaseDirectory) {
         databaseDirectory = @"~/Library/Icons";
-        [[NSUserDefaults standardUserDefaults] setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
+        [defaults setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
     }
     databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
     
@@ -371,12 +474,10 @@ NSSize WebIconLargeSize = {128, 128};
     [URLToIconURLCopy release];
 }
 
-- (BOOL)_hasIconForIconURL:(NSString *)iconURL;
+- (void)_applicationWillTerminate:(NSNotification *)notification
 {
-    return (([_private->iconURLToIcons objectForKey:iconURL] ||
-	     [_private->iconURLsWithNoIcons containsObject:iconURL] ||
-             [_private->iconsOnDiskWithURLs containsObject:iconURL]) &&
-            CFDictionaryGetValue(_private->iconURLToRetainCount,iconURL));
+    // Should only cause a write if user quit before 3 seconds after the last _updateFileDatabase
+    [_private->fileDatabase sync];
 }
 
 - (NSMutableDictionary *)_iconsForIconURLString:(NSString *)iconURLString
@@ -428,7 +529,6 @@ NSSize WebIconLargeSize = {128, 128};
     return icons;
 }
 
-
 - (NSImage *)_iconForFileURL:(NSString *)file withSize:(NSSize)size
 {
     ASSERT(size.width);
@@ -456,70 +556,6 @@ NSSize WebIconLargeSize = {128, 128};
     }
 
     return icon;
-}
-
-- (void)_setIcon:(NSImage *)icon forIconURL:(NSString *)iconURL
-{
-    ASSERT(icon);
-    ASSERT(iconURL);
-    
-    NSMutableDictionary *icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
-
-    if (!icons) {
-        return;
-    }
-
-    [_private->iconURLToIcons setObject:icons forKey:iconURL];
-
-    [self _retainIconForIconURLString:iconURL];
-    
-    // Release the newly created icon much like an autorelease.
-    // This gives the client enough time to retain it.
-    // FIXME: Should use an actual autorelease here using a proxy object instead.
-    [self performSelector:@selector(_releaseIconForIconURLString:) withObject:iconURL afterDelay:0];
-}
-
-- (void)_setHaveNoIconForIconURL:(NSString *)iconURL
-{
-    ASSERT(iconURL);
-
-    [_private->iconURLsWithNoIcons addObject:iconURL];
-
-    [self _retainIconForIconURLString:iconURL];
-    
-    // Release the newly created icon much like an autorelease.
-    // This gives the client enough time to retain it.
-    // FIXME: Should use an actual autorelease here using a proxy object instead.
-    [self performSelector:@selector(_releaseIconForIconURLString:) withObject:iconURL afterDelay:0];
-}
-
-
-- (void)_setIconURL:(NSString *)iconURL forURL:(NSString *)URL
-{
-    ASSERT(iconURL);
-    ASSERT(URL);
-    ASSERT([self _hasIconForIconURL:iconURL]);
-
-    if ([[_private->URLToIconURL objectForKey:URL] isEqualToString:iconURL] &&
-       [_private->iconsOnDiskWithURLs containsObject:iconURL]) {
-        // Don't do any work if the icon URL is already bound to the site URL
-        return;
-    }
-    
-    [_private->URLToIconURL setObject:iconURL forKey:URL];
-    [_private->iconURLToURLs _web_setObjectUsingSetIfNecessary:URL forKey:iconURL];
-
-    int futureRetainCount = (int)(void *)CFDictionaryGetValue(_private->futureURLToRetainCount, URL);
-
-    if (futureRetainCount != 0) {
-        int retainCount = (int)(void *)CFDictionaryGetValue(_private->iconURLToRetainCount, iconURL);
-        int newRetainCount = retainCount + futureRetainCount;
-        CFDictionarySetValue(_private->iconURLToRetainCount, iconURL, (void *)newRetainCount);
-        CFDictionaryRemoveValue(_private->futureURLToRetainCount, URL);
-    }
-
-    [self _sendNotificationForURL:URL];
-    [self _updateFileDatabase];
 }
 
 - (void)_retainIconForIconURLString:(NSString *)iconURLString

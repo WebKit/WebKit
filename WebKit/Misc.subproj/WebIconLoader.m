@@ -8,11 +8,10 @@
 
 #import <WebKit/WebIconLoader.h>
 
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconDatabasePrivate.h>
 #import <WebKit/WebNSURLExtras.h>
-
-#define WebIconLoaderWeeksWorthOfSeconds (60 * 60 * 24 * 7)
 
 @interface WebIconLoaderPrivate : NSObject
 {
@@ -37,6 +36,7 @@
 
 - (id)initWithRequest:(NSURLRequest *)initialRequest;
 {
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
     [super init];
     _private = [[WebIconLoaderPrivate alloc] init];
     _private->initialRequest = [initialRequest copy];

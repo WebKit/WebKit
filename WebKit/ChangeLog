@@ -1,3 +1,30 @@
+2004-11-23  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3890944> disable icon database for Dashboard
+
+        Reviewed by kevin.
+
+        * Misc.subproj/WebIconDatabase.h:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase init]): don't create dictionaries if disabled
+        (-[WebIconDatabase iconForURL:withSize:cache:]): return default icon if disabled
+        (-[WebIconDatabase iconURLForURL:]): return nil if disabled
+        (-[WebIconDatabase retainIconForURL:]): return if disabled
+        (-[WebIconDatabase releaseIconForURL:]): ditto
+        (-[WebIconDatabase delayDatabaseCleanup]): ditto
+        (-[WebIconDatabase allowDatabaseCleanup]): ditto
+        (-[WebIconDatabase _isEnabled]): new
+        (-[WebIconDatabase _setIcon:forIconURL:]): assert if called when disabled, moved to own category implementation
+        (-[WebIconDatabase _setHaveNoIconForIconURL:]): ditto
+        (-[WebIconDatabase _setIconURL:forURL:]): ditto
+        (-[WebIconDatabase _createFileDatabase]): tweak
+        (-[WebIconDatabase _applicationWillTerminate:]): moved out of public code
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * Misc.subproj/WebIconLoader.m:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _updateIconDatabaseWithURL:]): assert if called when icon DB is disabled
+        (-[WebDataSource _loadIcon]): don't load icon if icon DB is disabled
+
 2004-11-22  David Hyatt  <hyatt@apple.com>
 
 	Make sure the WebCore cache grows at 512mb and at 1024mb exactly.

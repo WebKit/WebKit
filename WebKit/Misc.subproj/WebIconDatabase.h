@@ -13,6 +13,7 @@ extern NSString *WebIconDatabaseDidAddIconNotification;
 extern NSString *WebIconNotificationUserInfoURLKey;
 
 extern NSString *WebIconDatabaseDirectoryDefaultsKey;
+extern NSString *WebIconDatabaseEnabledDefaultsKey;
 
 extern NSSize WebIconSmallSize;  // 16 x 16
 extern NSSize WebIconMediumSize; // 32 x 32
@@ -50,8 +51,6 @@ extern NSSize WebIconLargeSize;  // 128 x 128
     @abstract Returns a shared instance of the icon database
 */
 + (WebIconDatabase *)sharedIconDatabase;
-
-- (BOOL)iconsAreSaved;
 
 /*!
     @method iconForURL:withSize:

@@ -821,6 +821,8 @@
 
 - (void)_updateIconDatabaseWithURL:(NSURL *)iconURL
 {
+    ASSERT([[WebIconDatabase sharedIconDatabase] _isEnabled]);
+    
     WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
 
     // Bind the URL of the original request and the final URL to the icon URL.
@@ -849,7 +851,7 @@
 {
     // Don't load an icon if 1) this is not the main frame 2) we ended in error 3) we already did 4) they aren't save by the DB.
     if ([self webFrame] != [[self _webView] mainFrame] || _private->mainDocumentError || _private->iconLoader ||
-       ![[WebIconDatabase sharedIconDatabase] iconsAreSaved]) {
+       ![[WebIconDatabase sharedIconDatabase] _isEnabled]) {
         return;
     }
                 
