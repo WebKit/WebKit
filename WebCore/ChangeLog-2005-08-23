@@ -1,3 +1,12 @@
+2004-05-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3650026>: "background property doesn't work right on webdevtips.com due to background:inherit"
+
+        * khtml/css/cssstyleselector.cpp: (khtml::CSSStyleSelector::applyDeclarations):
+        Added CSS_PROP_BACKGROUND to the list of properties that must be applied in the first pass.
+
 2004-05-13  David Hyatt  <hyatt@apple.com>
 
 	Fix image loading for <input type=image> and <object>.  Make sure it works dynamically and make sure

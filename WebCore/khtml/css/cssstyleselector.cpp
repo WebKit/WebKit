@@ -1632,14 +1632,15 @@ void CSSStyleSelector::applyDeclarations(bool applyFirst, bool isImportant,
                     bool first;
                     switch(current->id())
                     {
-                        case CSS_PROP_FONT_STYLE:
-                        case CSS_PROP_FONT_SIZE:
-                        case CSS_PROP_FONT_WEIGHT:
-                        case CSS_PROP_FONT_FAMILY:
-                        case CSS_PROP_FONT:
-                        case CSS_PROP_COLOR:
+                        case CSS_PROP_BACKGROUND:
                         case CSS_PROP_BACKGROUND_IMAGE:
+                        case CSS_PROP_COLOR:
                         case CSS_PROP_DISPLAY:
+                        case CSS_PROP_FONT:
+                        case CSS_PROP_FONT_SIZE:
+                        case CSS_PROP_FONT_STYLE:
+                        case CSS_PROP_FONT_FAMILY:
+                        case CSS_PROP_FONT_WEIGHT:
                             // these have to be applied first, because other properties use the computed
                             // values of these porperties.
                             first = true;
