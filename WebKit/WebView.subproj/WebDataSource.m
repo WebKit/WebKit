@@ -58,6 +58,7 @@
     [originalRequestCopy release];
     [mainClient release];
     [subresourceClients release];
+    [plugInStreamClients release];
     [pageTitle release];
     [response release];
     [mainDocumentError release];
@@ -217,6 +218,21 @@
 - (void)_removeSubresourceClient:(WebBaseResourceHandleDelegate *)client
 {
     [_private->subresourceClients removeObject:client];
+    [self _updateLoading];
+}
+
+- (void)_addPlugInStreamClient:(WebBaseResourceHandleDelegate *)client
+{
+    if (_private->plugInStreamClients == nil) {
+        _private->plugInStreamClients = [[NSMutableArray alloc] init];
+    }
+    [_private->plugInStreamClients addObject:client];
+    [self _setLoading:YES];
+}
+
+- (void)_removePlugInStreamClient:(WebBaseResourceHandleDelegate *)client
+{
+    [_private->plugInStreamClients removeObject:client];
     [self _updateLoading];
 }
 
@@ -670,6 +686,10 @@
 
     NSEnumerator *e = [_private->subresourceClients objectEnumerator];
     WebBaseResourceHandleDelegate *client;
+    while ((client = [e nextObject])) {
+        [client setDefersCallbacks:defers];
+    }
+    e = [_private->plugInStreamClients objectEnumerator];
     while ((client = [e nextObject])) {
         [client setDefersCallbacks:defers];
     }

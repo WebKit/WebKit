@@ -62,14 +62,14 @@
 {
     ASSERT(_startingRequest);
 
-    [[_loader dataSource] _addSubresourceClient:_loader];
+    [[_loader dataSource] _addPlugInStreamClient:_loader];
 
     BOOL succeeded = [_loader loadWithRequest:_startingRequest];
     [_startingRequest release];
     _startingRequest = nil;
 
     if (!succeeded) {
-        [[_loader dataSource] _removeSubresourceClient:_loader];
+        [[_loader dataSource] _removePlugInStreamClient:_loader];
     }
 }
 
@@ -148,10 +148,10 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
     [self retain];
 
-    [[self dataSource] _removeSubresourceClient:self];
+    [[self dataSource] _removePlugInStreamClient:self];
     [[view webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [stream finishedLoadingWithData:resourceData];
     [super connectionDidFinishLoading:con];
@@ -161,15 +161,26 @@
 
 - (void)connection:(NSURLConnection *)con didFailWithError:(NSError *)error
 {
-    // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
+    // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
     // The other additional processing can do anything including possibly releasing self;
     // one example of this is 3266216
     [self retain];
 
-    [[self dataSource] _removeSubresourceClient:self];
+    [[self dataSource] _removePlugInStreamClient:self];
     [[view webView] _receivedError:error fromDataSource:[self dataSource]];
     [stream receivedError:error];
     [super connection:con didFailWithError:error];
+
+    [self release];
+}
+
+- (void)cancelWithError:(NSError *)error
+{
+    // Calling _removePlugInStreamClient will likely result in a call to release, so we must retain.
+    [self retain];
+
+    [[self dataSource] _removePlugInStreamClient:self];
+    [super cancelWithError:error];
 
     [self release];
 }

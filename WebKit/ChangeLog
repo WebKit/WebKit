@@ -1,3 +1,28 @@
+2004-01-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3524906: REGRESSION (114-115): page with plug-in content never stops loading (travelking.com.tw)
+
+        Put the plug-in streams clients into their own separate set. Now a plug-in client is not considered part
+        of "loading", but it does participate in the callback deferral mechanism, which was the real goal of the
+        change I made that introduced this regression. Also remove the plug-in client in one case I had missed
+        before (cancel).
+
+        * WebView.subproj/WebDataSourcePrivate.h: Added a new set of plugInStreamClients.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSourcePrivate dealloc]): Release the set.
+        (-[WebDataSource _addPlugInStreamClient:]): Added. Adds to the set.
+        (-[WebDataSource _removePlugInStreamClient:]): Added. Removes from the set.
+        (-[WebDataSource _defersCallbacksChanged]): Added code to loop through plugInStreamClients too.
+
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream start]): Use _add/removePlugInStreamClient instead of _add/removeSubresourceClient.
+        (-[WebNetscapePluginConnectionDelegate connectionDidFinishLoading:]): Ditto.
+        (-[WebNetscapePluginConnectionDelegate connection:didFailWithError:]): Ditto.
+        (-[WebNetscapePluginConnectionDelegate cancelWithError:]): Override to call _removePlugInStreamClient and
+        then call super.
+
 2004-01-09  Darin Adler  <darin@apple.com>
 
         - rolled out most of Dave's change for 3510669 and 3515442; it is not working yet

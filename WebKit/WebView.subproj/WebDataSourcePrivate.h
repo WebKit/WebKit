@@ -51,6 +51,7 @@
     
     // Clients for other resources.
     NSMutableArray *subresourceClients;
+    NSMutableArray *plugInStreamClients;
 
     // The time when the data source was told to start loading.
     double loadingStartedTime;
@@ -125,6 +126,8 @@
 - (void)_recursiveStopLoading;
 - (void)_addSubresourceClient:(WebBaseResourceHandleDelegate *)client;
 - (void)_removeSubresourceClient:(WebBaseResourceHandleDelegate *)client;
+- (void)_addPlugInStreamClient:(WebBaseResourceHandleDelegate *)client;
+- (void)_removePlugInStreamClient:(WebBaseResourceHandleDelegate *)client;
 - (void)_setPrimaryLoadComplete:(BOOL)flag;
 - (double)_loadingStartedTime;
 - (void)_setTitle:(NSString *)title;
