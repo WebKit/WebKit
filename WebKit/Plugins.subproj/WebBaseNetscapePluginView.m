@@ -188,21 +188,36 @@ typedef struct {
     
     window.x = (int32)boundsInWindow.origin.x; 
     window.y = (int32)boundsInWindow.origin.y;
-    window.width = NSWidth(boundsInWindow) > 0 ? NSWidth(boundsInWindow) : specifiedWidth;
-    window.height = NSHeight(boundsInWindow) > 0 ? NSHeight(boundsInWindow) : specifiedHeight;
+    window.width = NSWidth(boundsInWindow);
+    window.height = NSHeight(boundsInWindow);
 
     window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
     window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
+    window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
+    window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
 
-    // Clip out the plug-in when it's not really in a window.
-    if ([self window]) {
-        window.clipRect.bottom = (uint16)(visibleRectInWindow.origin.y + visibleRectInWindow.size.height);
-        window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
-    } else {
+    // Clip out the plug-in when it's not really in a window or off screen or has no height or width.
+    // The "big negative number" technique is how WebCore expresses off-screen widgets.
+    if (window.width <= 0 || window.height <= 0 || window.x < -100000 || [self window] == nil) {
+        // The following code tries to give plug-ins the same size they will eventually have.
+        // The specifiedWidth and specifiedHeight variables are used to predict the size that
+        // WebCore will eventually resize us to.
+
+        // The QuickTime plug-in has problems if you give it a width or height of 0.
+        // Since other plug-ins also might have the same sort of trouble, we make sure
+        // to always give plug-ins a size other than 0,0.
+
+        if (window.width <= 0) {
+            window.width = specifiedWidth > 0 ? specifiedWidth : 100;
+        }
+        if (window.height <= 0) {
+            window.height = specifiedHeight > 0 ? specifiedHeight : 100;
+        }
+
         window.clipRect.bottom = window.clipRect.top;
         window.clipRect.left = window.clipRect.right;
     }
-    
+
     window.type = NPWindowTypeWindow;
     
     // Save the port state.

@@ -1,3 +1,18 @@
+2003-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed 3291778 -- REGRESSION (51-52): QT controller never shows up for mp3 in frame
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView saveAndSetPortStateForUpdate:]):
+        Handle the "invisible" plug-in cases in a more complete way.
+        Detect the various ways of being invisible (big negative X value, 0 size,
+        not really in a window) and in all those cases, use a clip rect to guarantee
+        we won't be seen, and make sure the size passed to the plug-in is *not* 0.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2003-06-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3291319, scrolling is much worse since 79.  The problem
