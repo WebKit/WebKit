@@ -525,7 +525,11 @@ KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
   : UIEventImpl(key->type() == QEvent::KeyRelease ? KEYUP_EVENT : key->isAutoRepeat() ? KHTML_KEYPRESS_EVENT : KEYDOWN_EVENT,
                 true,true,view,0)
 {
-    m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->unmodifiedText(), key->isAutoRepeat(), key->count());
+#if APPLE_CHANGES
+    m_keyEvent = new QKeyEvent(*key);
+#else
+    m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count());
+#endif
     // Events are supposed to be accepted by default in Qt!
     // This line made QLineEdit's keyevents be ignored, so they were sent to the khtmlview
     // (and e.g. space would make it scroll down)

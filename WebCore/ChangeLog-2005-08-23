@@ -1,3 +1,40 @@
+2003-11-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3452554 -- keyCode attribute for DOM events reports incorrect value
+
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::keyCode): Return the Windows key code for keydown and keyup events.
+        But for other events, return the character code. This matches IE.
+        (UIEvent::which): Same behavior for now; may need further refinement.
+
+        * kwq/KWQEvent.h: Change QEvent to allow copying. The Qt version probably doesn't
+        allow it, but for us it's no big deal. Our event objects are just data holders.
+        (QKeyEvent::QKeyEvent): Change parameters; take an NSEvent and figure the rest out
+        here. Except for now get the type, button state, and auto repeat flag from the caller
+        because that's a smaller change from how things are done now. I'll take this the next
+        step later.
+        * kwq/KWQEvent.mm:
+        (characterCode): Added. Extracts the character code from the string if it's exactly
+        1 character long.
+        (WindowsKeyCode): Added. Given an event, figures out the Windows key code. 
+        (QKeyEvent::QKeyEvent): Changed to get things from the NSEvent rather than having them
+        passed individually. One change is that _ascii is now the Unicode value of the first
+        character in the string. This causes us to return the Unicode value from keyCode for
+        keypress events. Another change is that we now compute the Windows key code.
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::keyEvent): Change to use the new QKeyEvent
+        constructor, passing in the NSEvent.
+
+        * khtml/xml/dom2_eventsimpl.cpp: (KeyboardEventImpl::KeyboardEventImpl):
+        In APPLE_CHANGES, copy the QKeyEvent using the copy constructor rather than
+        listing the fields. This is easier to maintain when the list of fields changes.
+
+        * khtml/rendering/render_form.cpp: (ComboBoxWidget::eventFilter): Put #if
+        !APPLE_CHANGES around code that constructs a QKeyEvent. We don't ever run this
+        code, but now we can't compile it either so we need the #if.
+
 2003-11-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3482132, incremental repainting for layout, i.e., only repaint areas that change when

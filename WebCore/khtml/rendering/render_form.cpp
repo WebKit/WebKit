@@ -946,6 +946,7 @@ bool ComboBoxWidget::event(QEvent *e)
 
 bool ComboBoxWidget::eventFilter(QObject *dest, QEvent *e)
 {
+#if !APPLE_CHANGES
     if (dest==listBox() &&  e->type()==QEvent::KeyPress)
     {
 	QKeyEvent *ke = static_cast<QKeyEvent *>(e);
@@ -966,6 +967,7 @@ bool ComboBoxWidget::eventFilter(QObject *dest, QEvent *e)
 	    return KComboBox::eventFilter(dest, e);
 	}
     }
+#endif
     return KComboBox::eventFilter(dest, e);
 }
 

@@ -286,10 +286,16 @@ int UIEvent::keyCode() const
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
     KeyboardEventImpl *keyEvent = dynamic_cast<KeyboardEventImpl*>(impl);
-    if (keyEvent)
+    if (keyEvent) {
+#if APPLE_CHANGES
+        if (impl->id() == EventImpl::KEYDOWN_EVENT || impl->id() == EventImpl::KEYUP_EVENT) {
+            return keyEvent->qKeyEvent()->WindowsKeyCode();
+        }
+#endif
         return keyEvent->qKeyEvent()->ascii();
-    else
-        return 0;
+    }
+
+    return 0;
 }
 
 int UIEvent::pageX() const
@@ -347,10 +353,16 @@ int UIEvent::which() const
 
     // Note: This property supports both key events and mouse events
 
-    // Value is just ascii of key event
+    // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.
     KeyboardEventImpl *keyEvent = dynamic_cast<KeyboardEventImpl*>(impl);
-    if (keyEvent)
+    if (keyEvent) {
+#if APPLE_CHANGES
+        if (impl->id() == EventImpl::KEYDOWN_EVENT || impl->id() == EventImpl::KEYUP_EVENT) {
+            return keyEvent->qKeyEvent()->WindowsKeyCode();
+        }
+#endif
         return keyEvent->qKeyEvent()->ascii();
+    }
 
     // For khtml, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
