@@ -245,9 +245,9 @@ void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
   connect( khtml::Cache::loader(), SIGNAL( requestFailed( khtml::DocLoader*, khtml::CachedObject *) ),
            this, SLOT( slotLoaderRequestDone( khtml::DocLoader*, khtml::CachedObject *) ) );
 
-#ifndef APPLE_CHANGES
   findTextBegin(); //reset find variables
 
+#ifndef APPLE_CHANGES
   connect( &d->m_redirectionTimer, SIGNAL( timeout() ),
            this, SLOT( slotRedirect() ) );
 
@@ -913,9 +913,9 @@ void KHTMLPart::clear()
     }
   }
 
+#endif
 
   findTextBegin(); // resets d->m_findNode and d->m_findPos
-#endif
 
   d->m_mousePressNode = DOM::Node();
 
@@ -1883,8 +1883,6 @@ void KHTMLPart::setOnlyLocalReferences(bool enable)
   d->m_onlyLocalReferences = enable;
 }
 
-#ifndef APPLE_CHANGES
-
 void KHTMLPart::findTextBegin()
 {
   d->m_findPos = -1;
@@ -1923,6 +1921,7 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
             QConstString s(t->s, t->l);
 
             int matchLen = 0;
+#ifndef APPLE_CHANGES
             if ( isRegExp ) {
               QRegExp matcher( str );
               matcher.setCaseSensitive( caseSensitive );
@@ -1934,6 +1933,10 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
               d->m_findPos = s.string().find(str, d->m_findPos+1, caseSensitive);
               matchLen = str.length();
             }
+#else
+            d->m_findPos = s.string().find(str, d->m_findPos+1, caseSensitive);
+            matchLen = str.length();
+#endif
 
             if(d->m_findPos != -1)
             {
@@ -1989,8 +1992,6 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
         if(!d->m_findNode) return false;
     }
 }
-
-#endif
 
 QString KHTMLPart::selectedText() const
 {

@@ -1,3 +1,13 @@
+2002-07-23  Richard Williamson (Local)  <rjw@apple.com>
+
+        Turn on find related code in part in preparation for
+        implementing find in WebKit.
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        (KHTMLPart::clear):
+        (KHTMLPart::findTextNext):
+
 2002-07-23  David Hyatt  <hyatt@apple.com>
 
 	Fixing two bugs here.  The first is bug with @import sheets not inheriting strict parsing mode from their parent sheet.
