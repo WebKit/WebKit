@@ -1,3 +1,13 @@
+2003-01-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for percentage table heights.  A check was missing to
+	look for a fixed height on the containing block.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layoutRows):
+
 === Alexander-48 ===
 
 2003-01-02  David Hyatt  <hyatt@apple.com>

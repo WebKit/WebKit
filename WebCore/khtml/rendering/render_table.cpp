@@ -1475,13 +1475,16 @@ void RenderTable::layoutRows(int yoff)
         }
         
         if (!c->isTableCell()) {
-            // we need to substract out the margins of this block. -dwh
-            th = h.width(viewRect().height() 
-                - c->marginBottom()
-                - c->marginTop());
-            // not really, but this way the view height change
-            // gets propagated correctly
-            setOverhangingContents();
+            Length ch = c->style()->height();
+            if (ch.isFixed())
+                th = h.width(ch.value);
+            else {
+                // we need to substract out the margins of this block. -dwh
+                th = h.width(viewRect().height() - c->marginBottom() - c->marginTop());
+                // not really, but this way the view height change
+                // gets propagated correctly
+                setOverhangingContents();
+            }
         }
     }
     
