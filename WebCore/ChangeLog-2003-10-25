@@ -1,3 +1,15 @@
+2003-01-22  Richard Williamson   <rjw@apple.com>
+
+        Fix 3119777 (and a host of other international bugs).  Word break
+        was broken.  Use unicode services to detect work breaks
+        for non basic latin1.  We may want to go further and
+        always use unicode services so we get correct hyphenation
+        breaking.
+        
+        Reviewed by hyatt.
+
+        * khtml/rendering/break_lines.cpp:
+
 2003-01-22  David Hyatt  <hyatt@apple.com>
 
 	Fix word-spacing bugs in text measurement calculations.  This

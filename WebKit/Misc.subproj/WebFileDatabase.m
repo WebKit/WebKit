@@ -603,9 +603,10 @@ static void databaseInit()
         [mutex unlock];
     }
 
-    LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", WebLRUFileListDescription(lru));
-
 #ifndef NDEBUG
+    if (lru)
+        LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", WebLRUFileListDescription(lru));
+
     CFTimeInterval now = CFAbsoluteTimeGetCurrent();
     LOG(WebFileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
 #endif

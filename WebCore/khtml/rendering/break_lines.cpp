@@ -8,6 +8,10 @@ static QCString *cachedString = 0;
 static ThBreakIterator *thaiIt = 0;
 #endif
 
+#if APPLE_CHANGES
+#include <CoreServices/CoreServices.h>
+#endif
+
 void cleanupLineBreaker()
 {
 #ifdef HAVE_THAI_BREAKS
@@ -27,9 +31,10 @@ namespace khtml {
 #ifdef HAVE_THAI_BREAKS
 bool isBreakable( const QChar *s, int pos, int len )
 #else
-bool isBreakable( const QChar *s, int pos, int )
+bool isBreakable( const QChar *s, int pos, int len)
 #endif    
 {
+#if !APPLE_CHANGES
     const QChar *c = s+pos;
     unsigned short ch = c->unicode();
     if ( ch > 0xff ) {
@@ -76,6 +81,26 @@ bool isBreakable( const QChar *s, int pos, int )
 	    return true;
     }
     return false;
+#else
+    OSStatus status, findStatus = 0;
+    TextBreakLocatorRef breakLocator;
+    UniCharArrayOffset end;
+    const QChar *c = s+pos;
+    unsigned short ch = c->unicode();
+    
+    if (ch > 0x7f){
+        status = UCCreateTextBreakLocator (NULL, 0, kUCTextBreakWordMask, &breakLocator);
+        if (status == 0){
+            findStatus = UCFindTextBreak (breakLocator,  kUCTextBreakWordMask, NULL, (const UniChar *)c, (UniCharCount)len-pos, (UniCharArrayOffset)0, (UniCharArrayOffset *)&end);
+        }
+        // If carbon fails, fail back on simple white space detection.
+        if (findStatus == 0)
+            return end == 0 ? true : false;
+    }
+    // What about hypenation?  We will correctly handle japanese hyphenation above, but
+    // not here.
+    return c->direction() == QChar::DirWS || ch == '\n';
+#endif    
 }
 
 };
