@@ -1,3 +1,15 @@
+2005-01-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        <rdar://problem/3953366> Problems with typing attributes in HTML compose
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::calculateTypingStyleAfterDelete): Remove misguided "optimization"
+        that tried to sense when typing style could be cleared without actually doing a style diff between
+        before-delete and after-delete positions. Removing this extra check and running the 
+        general-purpose code fixes the bug.
+
 2005-01-17  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3753030> Need to ensure same origin for plugin binding invocations (origin security rules)

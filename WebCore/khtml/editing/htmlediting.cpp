@@ -2201,18 +2201,14 @@ void DeleteSelectionCommand::calculateTypingStyleAfterDelete()
     // has completed.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    if (m_startNode == m_endingPosition.node())
-        document()->part()->setTypingStyle(0);
-    else {
-        CSSComputedStyleDeclarationImpl endingStyle(m_endingPosition.node());
-        endingStyle.diff(m_typingStyle);
-        if (!m_typingStyle->length()) {
-            m_typingStyle->deref();
-            m_typingStyle = 0;
-        }
-        document()->part()->setTypingStyle(m_typingStyle);
-        setTypingStyle(m_typingStyle);
+    CSSComputedStyleDeclarationImpl endingStyle(m_endingPosition.node());
+    endingStyle.diff(m_typingStyle);
+    if (!m_typingStyle->length()) {
+        m_typingStyle->deref();
+        m_typingStyle = 0;
     }
+    document()->part()->setTypingStyle(m_typingStyle);
+    setTypingStyle(m_typingStyle);
 }
 
 void DeleteSelectionCommand::clearTransientState()
