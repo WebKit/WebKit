@@ -1,5 +1,12 @@
 2003-09-24  Darin Adler  <darin@apple.com>
 
+        - a new test for JavaScript date parsing
+
+        * layout-tests/fast/js/date-parse-test-expected.txt: Added.
+        * layout-tests/fast/js/date-parse-test.html: Added.
+
+2003-09-24  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed ownerElement for documents in HTML objects (helpful for some work Dave is doing)
