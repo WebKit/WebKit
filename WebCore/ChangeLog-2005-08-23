@@ -1,5 +1,13 @@
 2004-12-21  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded): Note to self: Must compile code before
+        checking in (aka must return false from function returning bool).
+
+2004-12-21  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
         
         Fix for this bug:
