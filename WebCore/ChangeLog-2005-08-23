@@ -1,3 +1,16 @@
+2002-12-17  Don Melton  <gramps@apple.com>
+
+        Reviewed by Joyce Chow.
+
+        * khtml/misc/arena.cpp:
+        * khtml/misc/arena.h:
+        * khtml/rendering/render_arena.cpp:
+        * khtml/rendering/render_arena.h:
+        * khtml/rendering/render_layer.cpp:
+        * khtml/rendering/render_layer.h:
+
+	Changed copyright and licensing.
+
 2002-12-17  David Hyatt  <hyatt@apple.com>
 
 	NOWRAP was completely broken.  This fixes the problem

@@ -1,9 +1,43 @@
+/*
+ * Copyright (C) 1998-2000 Netscape Communications Corporation.
+ *
+ * Other contributors:
+ *   Nick Blievers <nickb@adacel.com.au>
+ *   Jeff Hostetler <jeff@nerdone.com>
+ *   Tom Rini <trini@kernel.crashing.org>
+ *   Raffaele Sena <raff@netwinder.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of either the Mozilla Public License Version 1.1, found at
+ * http://www.mozilla.org/MPL/ (the "MPL") or the GNU General Public
+ * License Version 2.0, found at http://www.fsf.org/copyleft/gpl.html
+ * (the "GPL"), in which case the provisions of the MPL or the GPL are
+ * applicable instead of those above.  If you wish to allow use of your
+ * version of this file only under the terms of one of those two
+ * licenses (the MPL or the GPL) and not to allow others to use your
+ * version of this file under the LGPL, indicate your decision by
+ * deletingthe provisions above and replace them with the notice and
+ * other provisions required by the MPL or the GPL, as the case may be.
+ * If you do not delete the provisions above, a recipient may use your
+ * version of this file under any of the LGPL, the MPL or the GPL.
+ */
+
 #ifndef ARENA_H
 #define ARENA_H
-
-// This code is a more-or-less direct port of the PLArena code found in the NSPR (the runtime
-// used by Gecko).  This version is not thread safe.  It sacrifices thread safety for speed
-// (no lock overhead when allocing out of the arena). -dwh
 
 #define ARENA_ALIGN_MASK 3
 
