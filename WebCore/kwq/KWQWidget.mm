@@ -380,7 +380,7 @@ void QWidget::enableFlushDrawing()
 {
     NSWindow *window = [getView() window];
     [window enableFlushWindow];
-    [window flushWindowIfNeeded];
+    [window flushWindow];
 }
 
 void QWidget::setDrawingAlpha(float alpha)

@@ -1,3 +1,10 @@
+2002-10-16  Richard Williamson  <rjw@apple.com>
+
+        Added some drawing debug code (ifdef excluded).
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView drawRect:]):
+
 2002-10-16  Darin Adler  <darin@apple.com>
 
 	Fixed anomalies with plugin positioning caused by my switch to

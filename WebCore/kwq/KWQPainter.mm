@@ -141,7 +141,8 @@ void QPainter::drawRect(int x, int y, int w, int h)
         
     if (data->state.brush.style() != NoBrush) {
         _setColorFromBrush();
-        NSRectFill(NSMakeRect(x, y, w, h));
+        
+        NSRectFillUsingOperation (NSMakeRect(x,y,w,h), NSCompositeSourceOver);
     }
     if (data->state.pen.style() != NoPen) {
         _setColorFromPen();

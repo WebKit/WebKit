@@ -407,6 +407,13 @@
     if ([WebTextRenderer shouldBufferTextDrawing] && focusView)
         [[WebTextRendererFactory sharedFactory] startCoalesceTextDrawing];
 
+#ifdef DEBUG_DRAWING
+    if ([[self _bridge] isFrameSet]){
+        [[NSColor redColor] set];
+        NSRectFill(rect);
+    }
+#endif
+
     //double start = CFAbsoluteTimeGetCurrent();
     [[self _bridge] drawRect:rect];
     //LOG(Timing, "draw time %e", CFAbsoluteTimeGetCurrent() - start);

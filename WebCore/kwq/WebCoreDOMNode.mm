@@ -56,7 +56,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (DOM::NodeImpl *)impl
 {
-    return (DOM::NodeImpl *)impl;
+    return impl;
 }
 
 - (void)dealloc
@@ -272,7 +272,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (DOM::NodeListImpl *)impl
 {
-    return (DOM::NodeListImpl *)impl;
+    return impl;
 }
 
 - (void)dealloc
@@ -313,7 +313,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (DOM::NamedNodeMapImpl *)impl
 {
-    return (DOM::NamedNodeMapImpl *)impl;
+    return impl;
 }
 
 - (void)dealloc
@@ -388,7 +388,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 - (DOM::AttrImpl *)attrImpl
 {
-    return (DOM::AttrImpl *)impl;
+    return static_cast<DOM::AttrImpl *>(impl);
 }
 
 - (NSString *)name
@@ -432,7 +432,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 { 
     return [[(WebCoreDOMDocumentFragment *)[[self class] alloc] initWithImpl: _impl] autorelease]; 
 }
-- (DOM::DocumentFragmentImpl *)documentFragmentImpl { return (DOM::DocumentFragmentImpl *)impl; }
+- (DOM::DocumentFragmentImpl *)documentFragmentImpl { return static_cast<DOM::DocumentFragmentImpl *>(impl); }
 
 // No additional methods.
 @end
@@ -440,7 +440,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMElement
 
 + (WebCoreDOMElement *)elementWithImpl: (DOM::ElementImpl *)_impl { return [[(WebCoreDOMElement *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- (DOM::ElementImpl *)elementImpl { return (DOM::ElementImpl *)impl; }
+- (DOM::ElementImpl *)elementImpl { return static_cast<DOM::ElementImpl *>(impl); }
 
 - (NSString *)tagName
 {
@@ -569,14 +569,14 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMEntityReference
 
 + (WebCoreDOMEntityReference *)entityReferenceWithImpl: (DOM::EntityReferenceImpl *)_impl { return [[(WebCoreDOMEntityReference *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- (DOM::EntityReferenceImpl *)entityReferenceImpl { return (DOM::EntityReferenceImpl *)impl; }
+- (DOM::EntityReferenceImpl *)entityReferenceImpl { return static_cast<DOM::EntityReferenceImpl *>(impl); }
 
 @end
 
 @implementation WebCoreDOMCharacterData
 
 + (WebCoreDOMCharacterData *)commentWithImpl: (DOM::CharacterDataImpl *)_impl { return [[(WebCoreDOMCharacterData *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- (DOM::CharacterDataImpl *)characterDataImpl { return (DOM::CharacterDataImpl *)impl; }
+- (DOM::CharacterDataImpl *)characterDataImpl { return static_cast<DOM::CharacterDataImpl *>(impl); }
 
 - (NSString *)data
 {
@@ -633,7 +633,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMComment
 
 + (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl { return [[(WebCoreDOMComment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- (DOM::CommentImpl *)commentImpl { return (DOM::CommentImpl *)impl; }
+- (DOM::CommentImpl *)commentImpl { return static_cast<DOM::CommentImpl *>(impl); }
 
 // No additional methods.
 
@@ -642,7 +642,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMText
 
 + (WebCoreDOMText *)textWithImpl: (DOM::TextImpl *)_impl { return [[(WebCoreDOMText *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- (DOM::TextImpl *)textImpl { return (DOM::TextImpl *)impl; }
+- (DOM::TextImpl *)textImpl { return static_cast<DOM::TextImpl *>(impl); }
 
 - (id<WebDOMText>)splitText: (unsigned long)offset
 {
@@ -658,7 +658,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 {
     return [[(WebCoreDOMCDATASection *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
-- (DOM::CDATASectionImpl *)CDATASectionImpl { return (DOM::CDATASectionImpl *)impl; }
+- (DOM::CDATASectionImpl *)CDATASectionImpl { return static_cast<DOM::CDATASectionImpl *>(impl); }
 
 // No additional methods.
 @end
@@ -667,7 +667,7 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMProcessingInstruction *)processingInstructionWithImpl: (DOM::ProcessingInstructionImpl *)_impl
 { return [[(WebCoreDOMProcessingInstruction *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
-- (DOM::ProcessingInstructionImpl *)processingInstructionImpl { return (DOM::ProcessingInstructionImpl *)impl; }
+- (DOM::ProcessingInstructionImpl *)processingInstructionImpl { return static_cast<DOM::ProcessingInstructionImpl *>(impl); }
 
 - (NSString *)target;
 {

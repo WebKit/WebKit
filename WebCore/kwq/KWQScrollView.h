@@ -60,8 +60,8 @@ public:
     int childY(QWidget *child);
 
     virtual void resizeContents(int w, int h);
-    void updateContents(int x, int y, int w, int h);
-    void updateContents(const QRect &r);
+    void updateContents(int x, int y, int w, int h, bool now=false);
+    void updateContents(const QRect &r, bool now=false);
     void repaintContents(int x, int y, int w, int h, bool erase = true);
     QPoint contentsToViewport(const QPoint &);
     void contentsToViewport(int x, int y, int& vx, int& vy);

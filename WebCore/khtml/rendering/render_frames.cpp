@@ -463,7 +463,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
                 // the damage rect alone isn't sufficient. areas outside
                 // the specified rect are getting partially drawn.
                 v->updateContents(v->contentsX(), v->contentsY(),
-                                v->visibleWidth(), v->visibleHeight());
+                                v->visibleWidth(), v->visibleHeight(), true);
                 //root()->view()->displayRect( m_oldpos + sw/2 - rBord , r.y(), 2*rBord, r.height() );
 #else
                 paint.drawRect( m_oldpos + sw/2 - rBord , r.y(),
@@ -471,6 +471,8 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
 #endif
             if ( p >= 0 ){
 #ifdef APPLE_CHANGES
+                paint.setPen( Qt::NoPen );
+                paint.setBrush( Qt::gray );
                 v->setDrawingAlpha((float)0.25);
                 paint.drawRect( p  + sw/2 - rBord, r.y(), 2*rBord, r.height() );
                 v->setDrawingAlpha((float)1.0);
@@ -485,7 +487,7 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
                 // the damage rect alone isn't sufficient. areas outside
                 // the specified rect are getting partially drawn.
                 v->updateContents(v->contentsX(), v->contentsY(),
-                                v->visibleWidth(), v->visibleHeight());
+                                v->visibleWidth(), v->visibleHeight(), true);
                 //root()->view()->displayRect( r.x(), m_oldpos + sw/2 - rBord, r.width(), 2*rBord );
 #else
                 paint.drawRect( r.x(), m_oldpos + sw/2 - rBord,
@@ -493,6 +495,8 @@ bool RenderFrameSet::userResize( MouseEventImpl *evt )
 #endif
             if ( p >= 0 ){
 #ifdef APPLE_CHANGES
+                paint.setPen( Qt::NoPen );
+                paint.setBrush( Qt::gray );
                 v->setDrawingAlpha((float)0.25);
                 paint.drawRect( r.x(), p + sw/2 - rBord, r.width(), 2*rBord );
                 v->setDrawingAlpha((float)1.0);

@@ -1,3 +1,28 @@
+2002-10-16  Richard Williamson  <rjw@apple.com>
+
+        Fixed a few regressions in drawing of frame resize handle
+        in preparation for drawing frame borders and completing
+        2982466.
+        
+        * khtml/rendering/render_frames.cpp:
+        (RenderFrameSet::userResize):
+        * kwq/KWQPainter.mm:
+        (QPainter::drawRect):
+        * kwq/qt/qscrollview.h:
+        * kwq/KWQScrollView.mm:
+        (QScrollView::updateContents):
+        * kwq/KWQWidget.mm:
+        (QWidget::enableFlushDrawing):
+        
+        Use static_cast everywhere DOM::NodeImpl is cast to
+        subclass.
+        
+        * kwq/WebCoreDOMNode.mm:
+        (-[WebCoreDOMNode DOM::]):
+        (-[WebCoreDOMNodeList DOM::]):
+        (-[WebCoreDOMNamedNodeMap DOM::]):
+        (-[WebCoreDOMAttr DOM::]):
+
 2002-10-16  David Hyatt  <hyatt@apple.com>
 
 	Fix crash on pages with bulleted lists.  Making sure the list
