@@ -1,3 +1,18 @@
+2005-03-24  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4052683> After adding/removing stocks from Stocks Widget, stock areas went blank
+
+	The request was being collected before firing it's load handler.
+	We now gc protect the request while it's loading.
+
+        Reviewed by Maciej.
+
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::send):
+        (KJS::XMLHttpRequest::abort):
+        (KJS::XMLHttpRequest::slotFinished):
+        (KJS::XMLHttpRequestProtoFunc::tryCall):
+
 === Safari-411 ===
 
 2005-03-23  Darin Adler   <darin@apple.com>

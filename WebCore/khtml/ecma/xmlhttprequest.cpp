@@ -350,10 +350,13 @@ void XMLHttpRequest::send(const QString& _body)
     data = KWQServeSynchronousRequest(khtml::Cache::loader(), doc->docLoader(), job, finalURL, headers);
     job = 0;
     processSyncLoadResults(data, finalURL, headers);
+    
     return;
   }
 #endif
 
+  gcProtect (this);
+  
   qObject->connect( job, SIGNAL( result( KIO::Job* ) ),
 		    SLOT( slotFinished( KIO::Job* ) ) );
 #if APPLE_CHANGES
@@ -384,6 +387,8 @@ void XMLHttpRequest::abort()
     decoder = 0;
   }
   aborted = true;
+
+  gcUnprotect (this);
 }
 
 void XMLHttpRequest::setRequestHeader(const QString& name, const QString &value)
@@ -526,6 +531,8 @@ void XMLHttpRequest::slotFinished(KIO::Job *)
     decoder->deref();
     decoder = 0;
   }
+
+  gcUnprotect (this);
 }
 
 void XMLHttpRequest::slotRedirection(KIO::Job*, const KURL& url)
@@ -586,22 +593,25 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
   XMLHttpRequest *request = static_cast<XMLHttpRequest *>(thisObj.imp());
 
   switch (id) {
-  case XMLHttpRequest::Abort:
+  case XMLHttpRequest::Abort: {
     request->abort();
     return Undefined();
-  case XMLHttpRequest::GetAllResponseHeaders:
+  }
+  case XMLHttpRequest::GetAllResponseHeaders: {
     if (args.size() != 0) {
       return Undefined();
     }
 
     return request->getAllResponseHeaders();
-  case XMLHttpRequest::GetResponseHeader:
+  }
+  case XMLHttpRequest::GetResponseHeader: {
     if (args.size() != 1) {
       return Undefined();
     }
 
     return request->getResponseHeader(args[0].toString(exec).qstring());
-  case XMLHttpRequest::Open: 
+  }
+  case XMLHttpRequest::Open:
     {
       if (args.size() < 2 || args.size() > 5) {
 	return Undefined();
@@ -663,7 +673,7 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
 
       return Undefined();
     }
-  case XMLHttpRequest::SetRequestHeader:
+  case XMLHttpRequest::SetRequestHeader: {
     if (args.size() != 2) {
       return Undefined();
     }
@@ -671,12 +681,14 @@ Value XMLHttpRequestProtoFunc::tryCall(ExecState *exec, Object &thisObj, const L
     request->setRequestHeader(args[0].toString(exec).qstring(), args[1].toString(exec).qstring());
     
     return Undefined();
-  case XMLHttpRequest::OverrideMIMEType:
+  }
+  case XMLHttpRequest::OverrideMIMEType: {
     if (args.size() != 1) {
       return Undefined();
     }
     request->MIMETypeOverride = args[0].toString(exec).qstring();
     return Undefined();
+  }
   }
 
   return Undefined();
