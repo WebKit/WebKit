@@ -55,7 +55,10 @@
 - (void)_updateAllViews
 {
     for (QPtrListIterator<KWQKHTMLPart> it(KWQKHTMLPart::instances()); it.current(); ++it) {
-        [it.current()->bridge() setNeedsReapplyStyles];
+        KWQKHTMLPart *part = it.current();
+        if (part->settings() == settings) {
+            [part->bridge() setNeedsReapplyStyles];
+        }
     }
 }
 

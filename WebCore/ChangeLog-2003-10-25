@@ -2,6 +2,16 @@
 
         Reviewed by Dave.
 
+	- fixed part of the cause of 3251979 -- switching tabs hoses page layout
+
+        * kwq/WebCoreSettings.mm: (-[WebCoreSettings _updateAllViews]): Only update views that are
+        using this settings object. The old way would result in re-laying out all views every time
+        you created a new one.
+
+2003-05-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
         - fixed regression caused by my last check-in; need to use the KHTMLView layout function
 
         * kwq/KWQWidget.mm: (QWidget::setFocus): Use KHTMLView's layout instead of RenderCanvas's.
