@@ -101,10 +101,7 @@
 {
     WebFrame *webFrame = [element objectForKey:WebContextFrame];
     WebController *controller = [webFrame controller];
-    WebDataSource *dataSource = [[WebDataSource alloc] initWithURL:URL];
-
-    // FIXME: This is a hack
-    WebContentPolicy *contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:@"application/octet-stream" dataSource:dataSource];
+    WebContentPolicy *contentPolicy = [[controller policyHandler] contentPolicyForMIMEType:@"application/octet-stream" URL:URL inFrame:webFrame];
     [controller _downloadURL:URL toPath:[contentPolicy path]];
 }
 

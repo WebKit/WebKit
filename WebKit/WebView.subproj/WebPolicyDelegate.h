@@ -8,7 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class WebPolicyPrivate;
-@class WebDataSource;
+@class WebFrame;
 @class WebError;
 
 typedef enum {
@@ -86,31 +86,21 @@ typedef enum {
 // before it is clicked or loaded via a URL bar.  Clients can choose to handle the
 // URL normally, hand the URL off to launch services, or
 // ignore the URL.  The default implementation could return +defaultURLPolicyForURL:.
-- (WebURLPolicy *)URLPolicyForURL: (NSURL *)URL;
+- (WebURLPolicy *)URLPolicyForURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 // Sent after locationChangeStarted.
 // Implementations typically call haveContentPolicy:forLocationChangeHandler: on WebController
 // after determining the appropriate policy, perhaps by presenting a non-blocking dialog to the user.
-- (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource;
+- (WebContentPolicy *)contentPolicyForMIMEType: (NSString *)type URL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 // Called when the response to URLPolicyForURL is WebURLPolicyUseContentPolicy and the URL is
 // a file URL. This allows clients to special-case WebKit's behavior for file URLs.
-- (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type dataSource: (WebDataSource *)dataSource isDirectory: (BOOL)isDirectory;
+- (WebFileURLPolicy *)fileURLPolicyForMIMEType: (NSString *)type inFrame:(WebFrame *)frame isDirectory: (BOOL)isDirectory;
 
 - (WebClickPolicy *)clickPolicyForElement: (NSDictionary *)elementInformation button: (NSEventType)eventType modifierMask: (unsigned int)eventMask;
 
-// We may have different errors that cause the the policy to be un-implementable, i.e.
-// launch services failure, etc.
-- (void)unableToImplementURLPolicy: (WebPolicy *)policy error: (WebError *)error forURL: (NSURL *)URL;
-
-// Called when a WebFileURLPolicy could not be completed. This is usually caused by files not
-// existing or not readable.
-- (void)unableToImplementFileURLPolicy: (WebPolicy *)policy error: (WebError *)error forDataSource: (WebDataSource *)dataSource;
-
-
-// Sent when errors are encountered with an un-implementable policy, i.e.
-// file i/o failure, launch services failure, type mismatches, etc.
-- (void)unableToImplementContentPolicy: (WebPolicy *)policy error: (WebError *)error forDataSource: (WebDataSource *)dataSource;
+// Called when a WebPolicy could not be implemented. It is up to the client to display appropriate feedback.
+- (void)unableToImplementPolicy:(WebPolicy *)policy error:(WebError *)error forURL:(NSURL *)URL inFrame:(WebFrame *)frame;
 
 // Called when a plug-in for a certain mime type is not installed
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)URL;

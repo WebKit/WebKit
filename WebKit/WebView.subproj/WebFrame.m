@@ -145,9 +145,9 @@
 
     [self _setLoadType: WebFrameLoadTypeStandard];
 
-    // _shouldShowDataSource asks the client for the URL policies and reports errors if there are any
+    // _shouldShowURL asks the client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
-    if([self _shouldShowDataSource:newDataSource]){
+    if([self _shouldShowURL:[newDataSource URL]]){
         
         locationChangeHandler = [[self controller] locationChangeHandler];
         

@@ -543,103 +543,92 @@ static const char * const stateNames[] = {
     return _private->bridge;
 }
 
-- (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource
+- (void)handleUnimplementablePolicy:(WebPolicy *)policy errorCode:(int)code forURL:(NSURL *)URL
+{
+    WebError *error = [WebError errorWithCode:code
+                                     inDomain:WebErrorDomainWebKit
+                                   failingURL:[URL absoluteString]];
+    [[[self controller] policyHandler] unableToImplementPolicy:policy error:error forURL:URL inFrame:self];    
+}
+
+- (BOOL)_shouldShowURL:(NSURL *)URL
 {
     id <WebControllerPolicyHandler> policyHandler = [[self controller] policyHandler];
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-    NSURL *URL = [dataSource originalURL];
-    WebFileURLPolicy *fileURLPolicy;
-    NSString *path = [URL path], *URLString = [URL absoluteString];
-    BOOL isDirectory, fileExists;
-    WebError *error;
-    
-    WebURLPolicy *URLPolicy = [policyHandler URLPolicyForURL:URL];
-    
-    if([URLPolicy policyAction] == WebURLPolicyUseContentPolicy){
-                    
-        if([URL isFileURL]){
-        
-            fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
-            
-            NSString *type = [WebController _MIMETypeForFile: path];
-                
-            if(isDirectory){
-                fileURLPolicy = [policyHandler fileURLPolicyForMIMEType: nil dataSource: dataSource isDirectory:YES];
-            }else{
-                fileURLPolicy = [policyHandler fileURLPolicyForMIMEType: type dataSource: dataSource isDirectory:NO];
-            }
-            
-            if([fileURLPolicy policyAction] == WebFileURLPolicyIgnore)
-                return NO;
-            
-            if(!fileExists){
-                error = [WebError errorWithCode:WebErrorFileDoesNotExist inDomain:WebErrorDomainWebKit failingURL:URLString];
-                [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
-                return NO;
-            }
-            
-            if(![fileManager isReadableFileAtPath:path]){
-                error = [WebError errorWithCode:WebErrorFileNotReadable  inDomain:WebErrorDomainWebKit failingURL:URLString];
-                [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
-                return NO;
-            }
-            
-            if([fileURLPolicy policyAction] == WebFileURLPolicyUseContentPolicy){
-                if(isDirectory){
-                    error = [WebError errorWithCode:WebErrorCannotShowDirectory  inDomain:WebErrorDomainWebKit failingURL:URLString];
-                    [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
+    WebURLPolicy *URLPolicy = [policyHandler URLPolicyForURL:URL inFrame:self];
 
+    switch ([URLPolicy policyAction]) {
+        case WebURLPolicyIgnore:
+            return NO;
+
+        case WebURLPolicyOpenExternally:
+            if(![[NSWorkspace sharedWorkspace] openURL:URL]){
+                [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCouldNotFindApplicationForURL forURL:URL];
+            }
+            return NO;
+
+        case WebURLPolicyUseContentPolicy:
+            // handle non-file case first because it's short and sweet
+            if (![URL isFileURL]) {
+                if (![WebResourceHandle canInitWithURL:URL]) {
+                    [self handleUnimplementablePolicy:URLPolicy errorCode:WebErrorCannotShowURL forURL:URL];
                     return NO;
                 }
-                else if(![WebController canShowMIMEType: type]){
-                    error = [WebError errorWithCode:WebErrorCannotShowMIMEType  inDomain:WebErrorDomainWebKit failingURL:URLString];
-                    [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
+                return YES;
+            } else {
+                // file URL
+                NSFileManager *fileManager = [NSFileManager defaultManager];
+                NSString *path = [URL path];
+                BOOL isDirectory;
+                BOOL fileExists = [fileManager fileExistsAtPath:path isDirectory:&isDirectory];
+                NSString *type = [WebController _MIMETypeForFile: path];
+                WebFileURLPolicy *fileURLPolicy = [policyHandler fileURLPolicyForMIMEType:type inFrame:self isDirectory:YES];
+
+                if([fileURLPolicy policyAction] == WebFileURLPolicyIgnore)
                     return NO;
-                }else{
-                    // File exists, its readable, we can show it
-                    return YES;
+
+                if(!fileExists){
+                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFileDoesNotExist forURL:URL];
+                    return NO;
                 }
-            }else if([fileURLPolicy policyAction] == WebFileURLPolicyOpenExternally){
-                if(![workspace openFile:path]){
-                    error = [WebError errorWithCode:WebErrorCouldNotFindApplicationForFile  inDomain:WebErrorDomainWebKit failingURL:URLString];
-                    [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
+
+                if(![fileManager isReadableFileAtPath:path]){
+                    [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFileNotReadable forURL:URL];
+                    return NO;
                 }
-                return NO;
-            }else if([fileURLPolicy policyAction] == WebFileURLPolicyRevealInFinder){
-                if(![workspace selectFile:path inFileViewerRootedAtPath:@""]){
-                        error = [WebError errorWithCode:WebErrorFinderCouldNotOpenDirectory  inDomain:WebErrorDomainWebKit failingURL:URLString];
-                        [policyHandler unableToImplementFileURLPolicy: fileURLPolicy error: error forDataSource: dataSource];
-                    }
-                return NO;
-            }else{
-                [NSException raise:NSInvalidArgumentException format:
-                    @"fileURLPolicyForMIMEType:dataSource:isDirectory: returned an invalid WebFileURLPolicy"];
-                return NO;
+
+                switch ([fileURLPolicy policyAction]) {
+                    case WebFileURLPolicyUseContentPolicy:
+                        if (isDirectory) {
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowDirectory forURL:URL];
+                            return NO;
+                        } else if (![WebController canShowMIMEType: type]) {
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCannotShowMIMEType forURL:URL];
+                            return NO;
+                        }
+                        return YES;
+                        
+                    case WebFileURLPolicyOpenExternally:
+                        if(![[NSWorkspace sharedWorkspace] openFile:path]){
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorCouldNotFindApplicationForFile forURL:URL];
+                        }
+                        return NO;
+
+                    case WebFileURLPolicyRevealInFinder:
+                        if(![[NSWorkspace sharedWorkspace] selectFile:path inFileViewerRootedAtPath:@""]){
+                            [self handleUnimplementablePolicy:fileURLPolicy errorCode:WebErrorFinderCouldNotOpenDirectory forURL:URL];
+                        }
+                        return NO;
+
+                    default:
+                        [NSException raise:NSInvalidArgumentException format:
+                @"fileURLPolicyForMIMEType:inFrame:isDirectory: returned WebFileURLPolicy with invalid action %d", [fileURLPolicy policyAction]];
+                        return NO;
+                }
             }
-        }else{
-            if(![WebResourceHandle canInitWithURL:URL]){
-            	error = [WebError errorWithCode:WebErrorCannotShowURL inDomain:WebErrorDomainWebKit failingURL:URLString];
-                [policyHandler unableToImplementURLPolicy: URLPolicy error: error forURL: URL];
-                return NO;
-            }
-            // we can handle this URL
-            return YES;
-        }
-    }
-    else if([URLPolicy policyAction] == WebURLPolicyOpenExternally){
-        if(![workspace openURL:URL]){
-            error = [WebError errorWithCode:WebErrorCouldNotFindApplicationForURL inDomain:WebErrorDomainWebKit failingURL:URLString];
-            [policyHandler unableToImplementURLPolicy: URLPolicy error: error forURL: URL];
-        }
-        return NO;
-    }
-    else if([URLPolicy policyAction] == WebURLPolicyIgnore){
-        return NO;
-    }
-    else{
-        [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid WebURLPolicy"];
-        return NO;
+
+        default:
+            [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid WebURLPolicy"];
+            return NO;
     }
 }
 

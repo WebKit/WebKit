@@ -194,10 +194,10 @@
         downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
 
         if(![dataSource contentPolicy]){
-            contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType dataSource: dataSource];
+            contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType URL:currentURL inFrame:frame];
             [dataSource _setContentPolicy:contentPolicy];
         }
-        policyAction = [[dataSource contentPolicy] policyAction];
+        policyAction = [contentPolicy policyAction];
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
@@ -222,7 +222,7 @@
         break;
     default:
         [NSException raise:NSInvalidArgumentException format:
-             @"contentPolicyForMIMEType: dataSource: returned an invalid content policy."];
+@"contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy."];
     }
 
     [self receivedProgressWithHandle:handle complete:NO];

@@ -87,7 +87,7 @@ typedef enum {
 - (void)_checkLoadComplete;
 - (void)_timedLayout: userInfo;
 - (WebBridge *)_bridge;
-- (BOOL)_shouldShowDataSource:(WebDataSource *)dataSource;
+- (BOOL)_shouldShowURL:(NSURL *)URL;
 - (void)_setProvisionalDataSource:(WebDataSource *)d;
 - (void)_setLoadType: (WebFrameLoadType)loadType;
 - (WebFrameLoadType)_loadType;

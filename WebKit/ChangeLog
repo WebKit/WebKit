@@ -1,3 +1,37 @@
+2002-08-20  John Sullivan  <sullivan@apple.com>
+
+	WebKit part of fixes for:
+	- 3027491 -- failure loading frame's resource leads to misbehaving panel
+	- 3027494 -- failure loading frame's resource leads to error message in Alex, silence in IE
+	- 3027697 -- alert box for missing file covered by browser window; should be a sheet
+	- 3014123 -- error sheet when iframe has URL with bad path
+
+	Cleaned up the WebPolicy APIs to pass frames and URLs consistently. Also cleaned
+	up _shouldShowURL: (formerly _shouldShowDataSource:) method quite a bit.
+
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        * WebView.subproj/WebDefaultContextMenuHandler.m:
+        (-[WebDefaultContextMenuHandler downloadURL:]):
+        * WebView.subproj/WebDefaultPolicyHandler.m:
+        (-[WebDefaultPolicyHandler URLPolicyForURL:inFrame:]):
+        (-[WebDefaultPolicyHandler fileURLPolicyForMIMEType:inFrame:isDirectory:]):
+        (-[WebDefaultPolicyHandler unableToImplementPolicy:error:forURL:inFrame:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidReceiveData:data:]):
+	Made various Policy-related methods pass the frame and when necessary the
+	URL instead of the dataSource (or not even that in some broken cases).
+	Collapsed the three unableToImplementXXXPolicy: methods into one.
+
+        * WebView.subproj/WebFramePrivate.h: Change _shouldShowDataSource: to
+	_shouldShowURL:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame handleUnimplementablePolicy:errorCode:forURL:]): New helper method.
+        (-[WebFrame _shouldShowURL:]): use case statements instead of nested ifs;
+	use handleUnimplementablePolicy: to reduce duplicated code; update for API
+	changes; eliminate non-useful local variables.
+
 2002-08-20  Darin Adler  <darin@apple.com>
 
 	- fixed 3023076 -- Strange font chosen, widths screwed up, when text includes 007F characters
