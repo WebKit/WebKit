@@ -1,3 +1,17 @@
+2003-01-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3147036 -- words separated only by newlines are getting rammed together on XML page
+	- fixed 3147032 -- preformatted text is missing much whitespace on XML page
+
+        * khtml/xml/xml_tokenizer.cpp: (XMLHandler::characters): Don't try to strip whitespace at all,
+	because it needs to be in the DOM.
+
+	- add support for more MIME types
+
+        * khtml/khtml_part.cpp: (KHTMLPart::begin): Add "application/xml" and "application/xhtml+xml".
+
 2003-01-14  David Hyatt  <hyatt@apple.com>
 
 	Make FOUC work with XML.

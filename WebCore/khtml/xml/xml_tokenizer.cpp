@@ -151,29 +151,14 @@ bool XMLHandler::endCDATA()
 
 bool XMLHandler::characters( const QString& ch )
 {
-    if (ch.stripWhiteSpace().isEmpty())
-        return true;
-
     if (m_currentNode->nodeType() == Node::TEXT_NODE ||
         m_currentNode->nodeType() == Node::CDATA_SECTION_NODE ||
         enterText()) {
 
-        unsigned short parentId = m_currentNode->parentNode() ? m_currentNode->parentNode()->id() : 0;
-        if (parentId == ID_SCRIPT || parentId == ID_STYLE || parentId == ID_XMP || parentId == ID_TEXTAREA) {
-            // ### hack.. preserve whitespace for script, style, xmp and textarea... is this the correct
-            // way of doing this?
-            int exceptioncode = 0;
-            static_cast<TextImpl*>(m_currentNode)->appendData(ch,exceptioncode);
-            if (exceptioncode)
-                return false;
-        }
-        else {
-            // for all others, simplify the whitespace
-            int exceptioncode = 0;
-            static_cast<TextImpl*>(m_currentNode)->appendData(ch.simplifyWhiteSpace(),exceptioncode);
-            if (exceptioncode)
-                return false;
-        }
+        int exceptioncode = 0;
+        static_cast<TextImpl*>(m_currentNode)->appendData(ch,exceptioncode);
+        if (exceptioncode)
+            return false;
         return true;
     }
     else
