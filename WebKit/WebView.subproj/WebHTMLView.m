@@ -926,8 +926,21 @@
 
 - (NSView *)hitTest:(NSPoint)point
 {
-    // We handle all clicks. They are passed along to subviews by WebCore.
-    return [super hitTest:point] ? self : nil;
+    // WebHTMLView objects handle all clicks for objects inside them.
+    // They are passed along to subviews by WebCore.
+    // But this doesn't apply to anything inside nested WebViews.
+    NSView *hitView = [super hitTest:point];
+    NSView *superview = hitView;
+    while (superview) {
+        if (superview == self) {
+            return self;
+        }
+        if ([superview isKindOfClass:[WebView class]]) {
+            return hitView;
+        }
+        superview = [superview superview];
+    }
+    return nil;
 }
 
 @end

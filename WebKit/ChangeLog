@@ -1,5 +1,16 @@
 2002-12-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+	- fixed 3124302 -- REGRESSION: Can't use directory.apple.com because
+	frame resize bar intercepts mouse clicks
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView hitTest:]):
+	Don't steal clicks for views that are inside nested WebViews.
+        This isn't the real fix, but it's good enough for now. The real fix will be in WebCore.
+
+2002-12-10  Darin Adler  <darin@apple.com>
+
 	- fixed fix for 3124081 -- REGRESSION: partial progress is left in address field after download
 
         Reviewed by Chris.
