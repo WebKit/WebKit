@@ -1312,12 +1312,11 @@ void RenderBlock::paintObject(PaintInfo& i, int _tx, int _ty)
         const Selection &s = document()->part()->selection();
         NodeImpl *caretNode = s.start().node();
         RenderObject *renderer = caretNode ? caretNode->renderer() : 0;
-        if (renderer && renderer->containingBlock() == this && caretNode->isContentEditable()) {
+        if (renderer && renderer->containingBlock() == this && caretNode && caretNode->isContentEditable()) {
             document()->part()->paintCaret(i.p, i.r);
             document()->part()->paintDragCaret(i.p, i.r);
         }
     }
-    
 
 #ifdef BOX_DEBUG
     if ( style() && style()->visibility() == VISIBLE ) {

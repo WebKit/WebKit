@@ -1,3 +1,11 @@
+2004-07-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject): Add null check on DOM node before
+        asking if it is contentEditable.
+
 2004-07-14  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3595073, setting innerHTML on a <table> should work.
