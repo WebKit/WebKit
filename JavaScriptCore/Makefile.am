@@ -1,4 +1,4 @@
-SUBDIRS = pcre kjs bindings
+SUBDIRS = pcre kjs
 
 # FIXME: need to build the other kjs test program too
 

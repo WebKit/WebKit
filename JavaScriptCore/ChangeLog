@@ -1,3 +1,11 @@
+2003-11-12  Darin Adler  <darin@apple.com>
+
+        - fixed the build
+
+        * Makefile.am: Fix the build by removing the bindings directory from SUBDIRS.
+        Later, we can either add this back and add the Makefile.am files to the top
+        level configure.in or leave it out and remove the Makefile.am files.
+
 2003-11-12  Richard Williamson   <rjw@apple.com>
 
 	Added utility functions for calling JNI methods.
