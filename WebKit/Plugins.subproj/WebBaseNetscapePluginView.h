@@ -55,7 +55,9 @@
     NPP_SetValueProcPtr NPP_SetValue;
 }
 
-- (void)start;
++ (WebBaseNetscapePluginView *)currentPluginView;
+
+- (BOOL)start;
 - (void)stop;
 
 - (WebFrame *)webFrame;

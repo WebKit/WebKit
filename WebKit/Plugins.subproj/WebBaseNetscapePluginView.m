@@ -29,6 +29,8 @@
 #define NullEventIntervalActive 	0.1
 #define NullEventIntervalNotActive	0.25
 
+static WebBaseNetscapePluginView *currentPluginView = nil;
+
 @implementation WebBaseNetscapePluginView
 
 #pragma mark EVENTS
@@ -465,20 +467,38 @@
     }
 }
 
--(void)start
++ (void)setCurrentPluginView:(WebBaseNetscapePluginView *)view
 {
-    if (isStarted || !canRestart || NPP_New == 0){
-        return;
+    currentPluginView = view;
+}
+
++ (WebBaseNetscapePluginView *)currentPluginView
+{
+    return currentPluginView;
+}
+
+- (BOOL)start
+{
+    if (isStarted) {
+        return YES;
     }
+
+    if (!canRestart || NPP_New == 0) {
+        return NO;
+    }
+
+    [[self class] setCurrentPluginView:self];
     
-    isStarted = YES;
-    
-    NPError npErr;
-    npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
+    NPError npErr = NPP_New((char *)[MIMEType cString], instance, mode, argsCount, cAttributes, cValues, NULL);
     LOG(Plugins, "NPP_New: %d", npErr);
-    
-    // Create a WindowRef is one doesn't already exist
-    [_window windowRef];
+    if (npErr != NPERR_NO_ERROR) {
+        ERROR("NPP_New failed with error: %d", npErr);
+        return NO;
+    }
+
+    [[self class] setCurrentPluginView:nil];
+
+    isStarted = YES;
         
     [self setWindow];
     
@@ -512,6 +532,8 @@
     }
     
     [self resetTrackingRect];
+
+    return YES;
 }
 
 - (void)stop
@@ -956,6 +978,11 @@
         
     [(WebNetscapePluginStream *)stream->ndata stop];
     return NPERR_NO_ERROR;
+}
+
+- (const char *)userAgent
+{
+    return [[[self controller] userAgentForURL:baseURL] lossyCString];
 }
 
 -(void)status:(const char *)message

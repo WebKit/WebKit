@@ -8,19 +8,14 @@
 #import <WebKit/WebKitLogging.h>
 #import "WebBaseNetscapePluginViewPrivate.h"
 
-// general plug-in to browser functions
+WebBaseNetscapePluginView *pluginViewForInstance(NPP instance);
 
-const char* NPN_UserAgent(NPP instance)
-{
-    LOG(Plugins, "NPN_UserAgent");
-    return "Microsoft Internet Explorer";
-}
+// general plug-in to browser functions
 
 void* NPN_MemAlloc(UInt32 size)
 {
     //LOG(Plugins, "NPN_MemAlloc");
     return malloc(size);
-
 }
 
 void NPN_MemFree(void* ptr)
@@ -42,97 +37,109 @@ void NPN_ReloadPlugins(NPBool reloadPages)
 
 NPError NPN_RequestRead(NPStream* stream, NPByteRange* rangeList)
 {
+    LOG(Plugins, "NPN_RequestRead");
     return NPERR_GENERIC_ERROR;
 }
 
 // instance-specific functions
+// The plugin view is always the ndata of the instance. Sometimes, plug-ins will call an instance-specific function
+// with a NULL instance. To workaround this, call the last plug-in view that made a call to a plug-in.
+// Currently, the current plug-in view is only set before NPP_New in [WebBaseNetscapePluginView start].
+// This specifically works around Flash and Shockwave. When we call NPP_New, they call NPN_UserAgent with a NULL instance.
+WebBaseNetscapePluginView *pluginViewForInstance(NPP instance)
+{
+    if (instance && instance->ndata) {
+        return (WebBaseNetscapePluginView *)instance->ndata;
+    } else {
+        return [WebBaseNetscapePluginView currentPluginView];
+    }
+}
 
 NPError NPN_GetURLNotify(NPP instance, const char* URL, const char* target, void* notifyData)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin getURLNotify:URL target:target notifyData:notifyData];
+    return [pluginViewForInstance(instance) getURLNotify:URL target:target notifyData:notifyData];
 }
 
 NPError NPN_GetURL(NPP instance, const char* URL, const char* target)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin getURL:URL target:target];
+    return [pluginViewForInstance(instance) getURL:URL target:target];
 }
 
 NPError NPN_PostURLNotify(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file, void* notifyData)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin postURLNotify:URL target:target len:len buf:buf file:file notifyData:notifyData];
+    return [pluginViewForInstance(instance) postURLNotify:URL target:target len:len buf:buf file:file notifyData:notifyData];
 }
 
 NPError NPN_PostURL(NPP instance, const char* URL, const char* target, UInt32 len, const char* buf, NPBool file)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin postURL:URL target:target len:len buf:buf file:file];
+    return [pluginViewForInstance(instance) postURL:URL target:target len:len buf:buf file:file];
 }
 
 NPError NPN_NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin newStream:type target:target stream:stream];
+    return [pluginViewForInstance(instance) newStream:type target:target stream:stream];
 }
 
 SInt32	NPN_Write(NPP instance, NPStream* stream, SInt32 len, void* buffer)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin write:stream len:len buffer:buffer];
+    return [pluginViewForInstance(instance) write:stream len:len buffer:buffer];
 }
 
 NPError NPN_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    return [plugin destroyStream:stream reason:reason];
+    return [pluginViewForInstance(instance) destroyStream:stream reason:reason];
+}
+
+const char* NPN_UserAgent(NPP instance)
+{
+    return [pluginViewForInstance(instance) userAgent];
 }
 
 void NPN_Status(NPP instance, const char* message)
 {
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    [plugin status:message];
+    [pluginViewForInstance(instance) status:message];
 }
 
-// According to the plug-in API documentation, 
-// NPN_GetValue and NPN_SetValue are not used in Mac OS.
+void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
+{
+    [pluginViewForInstance(instance) invalidateRect:invalidRect];
+}
 
+void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion)
+{
+    [pluginViewForInstance(instance) invalidateRegion:invalidRegion];
+}
+
+void NPN_ForceRedraw(NPP instance)
+{
+    [pluginViewForInstance(instance) forceRedraw];
+}
+
+// Unsupported functions
+
+// According to the plug-in API documentation,
+// NPN_GetValue and NPN_SetValue are not used in Mac OS.
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
 {
+    LOG(Plugins, "NPN_GetValue");
     return NPERR_GENERIC_ERROR;
 }
 
 NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
 {
+    LOG(Plugins, "NPN_SetValue");
     return NPERR_GENERIC_ERROR;
 }	
 
-void NPN_InvalidateRect(NPP instance, NPRect *invalidRect)
-{
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    [plugin invalidateRect:invalidRect];
-}
-
-void NPN_InvalidateRegion(NPP instance, NPRegion invalidRegion)
-{
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    [plugin invalidateRegion:invalidRegion];
-}
-
-void NPN_ForceRedraw(NPP instance)
-{
-    WebBaseNetscapePluginView *plugin = (WebBaseNetscapePluginView *)instance->ndata;
-    [plugin forceRedraw];
-}
-
 void* NPN_GetJavaEnv(void)
 {
+    LOG(Plugins, "NPN_GetJavaEnv");
     return NULL;
 }
 
 void* NPN_GetJavaPeer(NPP instance)
 {
+    LOG(Plugins, "NPN_GetJavaPeer");
     return NULL;
 }
 

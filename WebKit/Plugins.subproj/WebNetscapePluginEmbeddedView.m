@@ -52,13 +52,9 @@
 {
     [super viewDidMoveToWindow];
     
-    if ([self window]){
-        [self start];
-        
-        if(URL){
-            WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
-            [self loadRequest:request inTarget:nil withNotifyData:nil];
-        }
+    if ([self window] && [self start] && URL) {
+        WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
+        [self loadRequest:request inTarget:nil withNotifyData:nil];
     }
 }
 

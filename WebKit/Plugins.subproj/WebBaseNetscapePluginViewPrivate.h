@@ -18,8 +18,7 @@
 - (NPError)write:(NPStream*)stream len:(SInt32)len buffer:(void *)buffer;
 - (NPError)destroyStream:(NPStream*)stream reason:(NPReason)reason;
 - (void)status:(const char *)message;
-- (NPError)getValue:(NPNVariable)variable value:(void *)value;
-- (NPError)setValue:(NPPVariable)variable value:(void *)value;
+- (const char *)userAgent;
 - (void)invalidateRect:(NPRect *)invalidRect;
 - (void)invalidateRegion:(NPRegion)invalidateRegion;
 - (void)forceRedraw;

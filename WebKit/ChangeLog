@@ -1,3 +1,40 @@
+2002-12-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 2862385 - need to pass browser's user agent and version to plug-ins
+	Added some more error checking to the plug-in code
+
+        Reviewed by trey.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (+[WebBaseNetscapePluginView setCurrentPluginView:]): new, sets a global variable for the current plug-in
+        (+[WebBaseNetscapePluginView currentPluginView]): new, returns the current plug-in
+        (-[WebBaseNetscapePluginView start]): check if NPP_New fails, return NO if it does, set the current plug-in view. Currently, this is the only place we need to do this.
+        (-[WebBaseNetscapePluginView userAgent]): made instance-specific because it depends on the plug-in view's WebController
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins.subproj/WebNetscapePluginEmbeddedView.m:
+        (-[WebNetscapePluginEmbeddedView viewDidMoveToWindow]): don't start the stream is start fails
+        * Plugins.subproj/npapi.m: 
+        (NPN_MemAlloc): tweak
+        (NPN_RequestRead): tweak
+        (pluginViewForInstance): returns the instance's plug-in view if it has one, if not, return the current plug-in view
+        (NPN_GetURLNotify): get the instance from pluginViewForInstance  
+        (NPN_GetURL):
+        (NPN_PostURLNotify):
+        (NPN_PostURL):
+        (NPN_NewStream):
+        (NPN_Write):
+        (NPN_DestroyStream):
+        (NPN_UserAgent):
+        (NPN_Status):
+        (NPN_InvalidateRect):
+        (NPN_InvalidateRegion):
+        (NPN_ForceRedraw):
+        (NPN_GetValue):
+        (NPN_SetValue):
+        (NPN_GetJavaEnv):
+        (NPN_GetJavaPeer):
+
 2002-12-18  Richard Williamson   <rjw@apple.com>
 
         Fixed 3109590.  We now set the cookie policy URL to a frame's URL if the

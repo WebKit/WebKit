@@ -1,3 +1,21 @@
+2002-12-18  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3052731 - qt file complains about lack of active-x handler
+	Fixed: 3025872 - Black square where lion should be on mgm.com
+
+	3052731: The page has a syntax error. Notice the missing ">"? He treat this as an OBJECT without an EMBED. khtml actually has a fallback for this. They check the classid and map a mime type to it. They currently map for  realaudio and flash, but not quicktime. I added a quicktime mapping as well as a mapping for shockwave.
+
+	3025872: khtml was unable to parse the EMBED tag within the OBJECT tag (similar to 3052731). When this happens, it looks at the classid and maps it to a mime type. This part was successful because it has a classid->mime type mapping for flash. The strange thing was that it was setting the main URL of the plug-in to "dummy". The code has this comment:
+
+	url = "dummy"; // Not needed, but KHTMLPart aborts the request if empty
+
+	It does this even if the url is valid. It even handles the invalid url case before even calling the part. The fix is to disable this line of code.
+
+        Reviewed by trey.
+
+        * khtml/rendering/render_frames.cpp:
+        (RenderPartObject::updateWidget):
+
 2002-12-18  Trey Matteson  <trey@apple.com>
 
 	3105755 - can't log in to amex

@@ -692,7 +692,9 @@ void RenderPartObject::updateWidget()
               if(!o->classId.isEmpty()) {
                   // We have a clsid, means this is activex (Niko)
                   serviceType = "application/x-activex-handler";
+#ifndef APPLE_CHANGES
                   url = "dummy"; // Not needed, but KHTMLPart aborts the request if empty
+#endif
               }
 
               if(o->classId.contains(QString::fromLatin1("D27CDB6E-AE6D-11cf-96B8-444553540000"))) {
@@ -706,7 +708,11 @@ void RenderPartObject::updateWidget()
               }
               else if(o->classId.contains(QString::fromLatin1("CFCDAA03-8BE4-11cf-B84B-0020AFBBCCFA")))
                   serviceType = "audio/x-pn-realaudio-plugin";
-
+              else if(o->classId.contains(QString::fromLatin1("02BF25D5-8C17-4B23-BC80-D3488ABDDC6B")))
+                  serviceType = "video/quicktime";
+              else if(o->classId.contains(QString::fromLatin1("166B1BCA-3F9C-11CF-8075-444553540000")))
+                  serviceType = "application/x-director";
+              
               // TODO: add more plugins here
           }
 
