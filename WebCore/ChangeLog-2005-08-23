@@ -1,3 +1,24 @@
+2005-01-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+        
+        Fix for this bug:
+        
+        <rdar://problem/3928250> REGRESSION (Mail): Typing style lost after hitting return key
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertLineBreakCommand::preservesTypingStyle): Now implemented, returning yes for this command.
+        (khtml::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand): Initialize new typing style member variable.
+        (khtml::InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand): Deref new typing style member variable.
+        (khtml::InsertParagraphSeparatorCommand::preservesTypingStyle): Now implemented, returning yes for this command.
+        (khtml::InsertParagraphSeparatorCommand::setFullTypingStyleBeforeInsertion): New function to set the typing style
+        (khtml::InsertParagraphSeparatorCommand::calculateAndSetTypingStyleAfterInsertion): Function called after the <p>
+        insertion is done. This function diffs the style created in setFullTypingStyleBeforeInsertion() with the style
+        of the new <p> and only sets those styles needed to preserve the style in effect before the insertion.
+        (khtml::InsertParagraphSeparatorCommand::doApply): Call new functions.
+        (khtml::TypingCommand::preservesTypingStyle): Now yes for inserting line breaks and paragraphs.
+         * khtml/editing/htmlediting.h: Declare new functions.
+
 2004-12-25  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Hyatt.

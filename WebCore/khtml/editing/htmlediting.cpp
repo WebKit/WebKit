@@ -2040,6 +2040,11 @@ InsertLineBreakCommand::InsertLineBreakCommand(DocumentImpl *document)
 {
 }
 
+bool InsertLineBreakCommand::preservesTypingStyle() const
+{
+    return true;
+}
+
 void InsertLineBreakCommand::insertNodeAfterPosition(NodeImpl *node, const Position &pos)
 {
     // Insert the BR after the caret position. In the case the
@@ -2201,13 +2206,20 @@ void InsertNodeBeforeCommand::doUnapply()
 // InsertParagraphSeparatorCommand
 
 InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand(DocumentImpl *document) 
-    : CompositeEditCommand(document)
+    : CompositeEditCommand(document), m_fullTypingStyle(0)
 {
 }
 
 InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand() 
 {
     derefNodesInList(clonedNodes);
+    if (m_fullTypingStyle)
+        m_fullTypingStyle->deref();
+}
+
+bool InsertParagraphSeparatorCommand::preservesTypingStyle() const
+{
+    return true;
 }
 
 ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
@@ -2216,6 +2228,36 @@ ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
     element->ref();
     clonedNodes.append(element);
     return element;
+}
+
+void InsertParagraphSeparatorCommand::setFullTypingStyleBeforeInsertion(const Position &pos)
+{
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();
+    computedStyle->ref();
+    if (m_fullTypingStyle)
+        m_fullTypingStyle->deref();
+    m_fullTypingStyle = computedStyle->copyInheritableProperties();
+    m_fullTypingStyle->ref();
+    computedStyle->deref();
+}
+
+void InsertParagraphSeparatorCommand::calculateAndSetTypingStyleAfterInsertion()
+{
+    // FIXME: Improve typing style.
+    // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
+    if (!m_fullTypingStyle)
+        return;
+
+    CSSComputedStyleDeclarationImpl endingStyle(endingSelection().start().node());
+    endingStyle.diff(m_fullTypingStyle);
+    if (!m_fullTypingStyle->length()) {
+        m_fullTypingStyle->deref();
+        m_fullTypingStyle = 0;
+    }
+    document()->part()->setTypingStyle(m_fullTypingStyle);
+    setTypingStyle(m_fullTypingStyle);
 }
 
 void InsertParagraphSeparatorCommand::doApply()
@@ -2230,19 +2272,24 @@ void InsertParagraphSeparatorCommand::doApply()
     // moving the selection downstream so it is in the ending block (if that block is
     // still around, that is).
     Position pos = selection.start();
+        
     if (selection.isRange()) {
         NodeImpl *startBlockBeforeDelete = selection.start().node()->enclosingBlockFlowElement();
         NodeImpl *endBlockBeforeDelete = selection.end().node()->enclosingBlockFlowElement();
         bool doneAfterDelete = startBlockBeforeDelete != endBlockBeforeDelete;
+        setFullTypingStyleBeforeInsertion(pos);
         deleteSelection(false, false);
         if (doneAfterDelete) {
             document()->updateLayout();
             setEndingSelection(endingSelection().start().downstream());
             rebalanceWhitespace();
+            calculateAndSetTypingStyleAfterInsertion();
             return;
         }
         pos = endingSelection().start();
     }
+
+    setFullTypingStyleBeforeInsertion(pos);
 
     // Find the start block.
     NodeImpl *startNode = pos.node();
@@ -2257,7 +2304,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     // This is the block that is going to be inserted.
     NodeImpl *blockToInsert = startBlockIsRoot ? createParagraphElement() : startBlock->cloneNode(false);
-    
+
     //---------------------------------------------------------------------
     // Handle empty block case.
     if (isFirstInBlock && isLastInBlock) {
@@ -2273,6 +2320,7 @@ void InsertParagraphSeparatorCommand::doApply()
         }
         insertBlockPlaceholderIfNeeded(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0));
+        calculateAndSetTypingStyleAfterInsertion();
         return;
     }
 
@@ -2287,6 +2335,7 @@ void InsertParagraphSeparatorCommand::doApply()
         insertNodeBefore(blockToInsert, refNode);
         insertBlockPlaceholderIfNeeded(blockToInsert);
         setEndingSelection(pos);
+        calculateAndSetTypingStyleAfterInsertion();
         return;
     }
 
@@ -2300,6 +2349,7 @@ void InsertParagraphSeparatorCommand::doApply()
         insertNodeAfter(blockToInsert, refNode);
         insertBlockPlaceholderIfNeeded(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0));
+        calculateAndSetTypingStyleAfterInsertion();
         return;
     }
 
@@ -2401,6 +2451,7 @@ void InsertParagraphSeparatorCommand::doApply()
 
     setEndingSelection(Position(blockToInsert, 0));
     rebalanceWhitespace();
+    calculateAndSetTypingStyleAfterInsertion();
 }
 
 //------------------------------------------------------------------------------------------
@@ -4058,9 +4109,9 @@ bool TypingCommand::preservesTypingStyle() const
 {
     switch (m_commandType) {
         case DeleteKey:
-            return true;
-        case InsertLineBreak:
         case InsertParagraphSeparator:
+        case InsertLineBreak:
+            return true;
         case InsertParagraphSeparatorInQuotedContent:
         case InsertText:
             return false;
