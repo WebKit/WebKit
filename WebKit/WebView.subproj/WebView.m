@@ -65,10 +65,6 @@
 #import <Foundation/NSURLRequestPrivate.h>
 #import <Foundation/NSUserDefaults_NSURLExtras.h>
 
-// Included to help work around this bug:
-// <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
-#import <AppKit/NSKeyBindingManager.h>
-
 @interface NSSpellChecker (AppKitSecretsIKnow)
 - (void)_preflightChosenSpellServer;
 @end
@@ -2396,26 +2392,6 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (DOMRange *)editableDOMRangeForPoint:(NSPoint)point
 {
     return [[self _bridgeAtPoint:point] editableDOMRangeForPoint:point];
-}
-
-- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
-{   
-    // Work around this bug:
-    // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
-    [NSKeyBindingManager sharedKeyBindingManager];
-    
-    // Use the isEditable state to determine whether or not to process tab key events.
-    // The idea here is that isEditable will be NO when this WebView is being used
-    // in a browser, and we desire the behavior where tab moves to the next element
-    // in tab order. If isEditable is YES, it is likely that the WebView is being
-    // embedded as the whole view, as in Mail, and tabs should input tabs as expected
-    // in a text editor.
-    if (![self isEditable] && [event _web_isTabKeyEvent]) 
-        return NO;
-    
-    // Now process the key normally
-    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
-    return YES;
 }
 
 - (BOOL)_shouldBeginEditingInDOMRange:(DOMRange *)range

@@ -48,6 +48,7 @@
 @end
 
 @interface WebHTMLView (WebInternal)
+- (void)_selectionChanged;
 - (void)_updateFontPanel;
 - (unsigned int)_delegateDragSourceActionMask;
 @end

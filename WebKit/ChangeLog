@@ -1,3 +1,36 @@
+2004-07-29  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	Added stubbed-out versions of all the NSTextInput protocol
+	methods, and put comments in places where we will need to call the
+	input manager to make input methods work 100%.
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge respondToChangedSelection]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDown:]):
+        (-[WebHTMLView mouseDragged:]):
+        (-[WebHTMLView mouseUp:]):
+        (-[WebHTMLView _interceptEditingKeyEvent:]):
+        (-[WebHTMLView keyDown:]):
+        (-[WebHTMLView _selectionChanged]):
+        (-[WebHTMLView _delegateDragSourceActionMask]):
+        (-[WebHTMLView validAttributesForMarkedText]):
+        (-[WebHTMLView characterIndexForPoint:]):
+        (-[WebHTMLView firstRectForCharacterRange:]):
+        (-[WebHTMLView selectedRange]):
+        (-[WebHTMLView markedRange]):
+        (-[WebHTMLView attributedSubstringFromRange:]):
+        (-[WebHTMLView conversationIdentifier]):
+        (-[WebHTMLView hasMarkedText]):
+        (-[WebHTMLView unmarkText]):
+        (-[WebHTMLView setMarkedText:selectedRange:]):
+        (-[WebHTMLView doCommandBySelector:]):
+        (-[WebHTMLView insertText:]):
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebView.m:
+
 === Safari-154 ===
 
 2004-07-29  Darin Adler  <darin@apple.com>

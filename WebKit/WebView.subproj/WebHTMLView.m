@@ -53,6 +53,10 @@
 
 #import <CoreGraphics/CGContextGState.h>
 
+// Included to help work around this bug:
+// <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
+#import <AppKit/NSKeyBindingManager.h>
+
 // By imaging to a width a little wider than the available pixels,
 // thin pages will be scaled down a little, matching the way they
 // print in IE and Camino. This lets them use fewer sheets than they
@@ -96,6 +100,9 @@ static BOOL forceRealHitTest = NO;
 - (void)_updateTextSizeMultiplier;
 - (float)_calculatePrintHeight;
 - (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation;
+@end
+
+@interface WebHTMLView (WebNSTextInputSupport) <NSTextInput>
 @end
 
 // Any non-zero value will do, but using somethign recognizable might help us debug some day.
@@ -1766,6 +1773,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDown:(NSEvent *)event
 {    
+    // TEXTINPUT: if there is marked text and the current input
+    // manager wants to handle mouse events, we need to make sure to
+    // pass it to them. If not, then we need to notify the input
+    // manager when the marked text is abandoned (user clicks outside
+    // the marked area)
+
     // If the web page handles the context menu event and menuForEvent: returns nil, we'll get control click events here.
     // We don't want to pass them along to KHTML a second time.
     if ([event modifierFlags] & NSControlKeyMask) {
@@ -1807,6 +1820,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseDragged:(NSEvent *)event
 {
+    // TEXTINPUT: if there is marked text and the current input
+    // manager wants to handle mouse events, we need to make sure to
+    // pass it to them.
+
     if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];
     }
@@ -1990,6 +2007,10 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)mouseUp:(NSEvent *)event
 {
+    // TEXTINPUT: if there is marked text and the current input
+    // manager wants to handle mouse events, we need to make sure to
+    // pass it to them.
+
     [self _stopAutoscrollTimer];
     [[self _bridge] mouseUp:event];
     [self _updateMouseoverWithFakeEvent];
@@ -2271,14 +2292,33 @@ static WebHTMLView *lastHitView = nil;
     return [super performKeyEquivalent:event];
 }
 
+- (BOOL)_interceptEditingKeyEvent:(NSEvent *)event
+{   
+    // Work around this bug:
+    // <rdar://problem/3630640>: "Calling interpretKeyEvents: in a custom text view can fail to process keys right after app startup"
+    [NSKeyBindingManager sharedKeyBindingManager];
+    
+    // Use the isEditable state to determine whether or not to process tab key events.
+    // The idea here is that isEditable will be NO when this WebView is being used
+    // in a browser, and we desire the behavior where tab moves to the next element
+    // in tab order. If isEditable is YES, it is likely that the WebView is being
+    // embedded as the whole view, as in Mail, and tabs should input tabs as expected
+    // in a text editor.
+    if (![[self _webView] isEditable] && [event _web_isTabKeyEvent]) 
+        return NO;
+    
+    // Now process the key normally
+    [self interpretKeyEvents:[NSArray arrayWithObject:event]];
+    return YES;
+}
+
 - (void)keyDown:(NSEvent *)event
 {
     WebBridge *bridge = [self _bridge];
     if ([bridge interceptKeyEvent:event toView:self])
         return;
         
-    WebView *webView = [self _webView];
-    if (([webView isEditable] || [bridge isSelectionEditable]) && [webView _interceptEditingKeyEvent:event]) 
+    if (([[self _webView] isEditable] || [bridge isSelectionEditable]) && [self _interceptEditingKeyEvent:event]) 
         return;
     
     [super keyDown:event];
@@ -3133,23 +3173,6 @@ static WebHTMLView *lastHitView = nil;
     [NSApp stopSpeaking:sender];
 }
 
-- (void)insertText:(NSString *)text
-{
-    WebBridge *bridge = [self _bridge];
-
-    // avoid entering empty strings because it confuses WebCore
-    if ([text length] == 0) {
-	return;
-    }
-
-    if ([bridge isSelectionEditable]) {
-        WebView *webView = [self _webView];
-        if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
-            [bridge insertText:text];
-        }
-    }
-}
-
 @end
 
 @implementation WebHTMLView (WebTextSizing)
@@ -3193,6 +3216,14 @@ static WebHTMLView *lastHitView = nil;
 @end
 
 @implementation WebHTMLView (WebInternal)
+
+- (void)_selectionChanged
+{
+    // TEXTINPUT: if there is marked text, we need to tell the input
+    // manager that the selection changed
+
+    [self _updateFontPanel];
+}
 
 - (void)_updateFontPanel
 {
@@ -3271,6 +3302,100 @@ static WebHTMLView *lastHitView = nil;
     NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     _private->dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
     return _private->dragSourceActionMask;
+}
+
+@end
+
+
+@implementation WebHTMLView (WebNSTextInputSupport)
+
+- (NSArray *)validAttributesForMarkedText
+{
+    ERROR("TEXTINPUT: validAttributesForMarkedText not yet implemented");
+    return [NSArray array];
+}
+
+- (unsigned int)characterIndexForPoint:(NSPoint)thePoint
+{
+    ERROR("TEXTINPUT: characterIndexForPoint: not yet implemented");
+    return 0;
+}
+
+- (NSRect)firstRectForCharacterRange:(NSRange)theRange
+{
+    ERROR("TEXTINPUT: firstRectForCharacterRange: not yet implemented");
+    return NSMakeRect(0,0,0,0);
+}
+
+- (NSRange)selectedRange
+{
+    ERROR("TEXTINPUT: selectedRange not yet implemented");
+    return NSMakeRange(0,0);
+}
+
+- (NSRange)markedRange
+{
+    ERROR("TEXTINPUT: markedRange not yet implemented");
+    return NSMakeRange(0,0);
+}
+
+- (NSAttributedString *)attributedSubstringFromRange:(NSRange)theRange
+{
+    ERROR("TEXTINPUT: attributedSubstringFromRange: not yet implemented");
+    return nil;
+}
+
+- (long)conversationIdentifier
+{
+    ERROR("TEXTINPUT: conversationIdentifier not yet implemented");
+    return 0;
+}
+
+- (BOOL)hasMarkedText
+{
+    ERROR("TEXTINPUT: hasMarkedText not yet implemented");
+    return FALSE;
+}
+
+- (void)unmarkText
+{
+    ERROR("TEXTINPUT: unmarkText not yet implemented");
+}
+
+- (void)setMarkedText:(id)aString selectedRange:(NSRange)selRange
+{
+    ERROR("TEXTINPUT: setMarkedText:selectedRange: not yet implemented");
+}
+
+- (void)doCommandBySelector:(SEL)aSelector
+{
+    [super doCommandBySelector:aSelector];
+}
+	
+- (void)insertText:(id)string
+{
+    WebBridge *bridge = [self _bridge];
+
+    NSString *text;
+
+    if ([string isKindOfClass:[NSAttributedString class]]) {
+	ERROR("TEXTINPUT: requested insert of attributed string");
+	text = [string string];
+    } else {
+	text = string;
+    }
+
+    // avoid entering empty strings because it confuses WebCore
+    if ([text length] == 0) {
+	return;
+    }
+
+    if ([bridge isSelectionEditable]) {
+        WebView *webView = [self _webView];
+        if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
+            [bridge insertText:text];
+        }
+    }
 }
 
 @end

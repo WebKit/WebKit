@@ -1275,7 +1275,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
     NSView <WebDocumentView> *view = [[_frame frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
-        [(WebHTMLView *)view _updateFontPanel];
+        [(WebHTMLView *)view _selectionChanged];
     }
     [[_frame webView] setTypingStyle:nil];
     [[NSNotificationCenter defaultCenter] postNotificationName:WebViewDidChangeSelectionNotification object:[_frame webView]];
