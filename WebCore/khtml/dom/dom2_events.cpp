@@ -169,14 +169,6 @@ bool Event::isNull() const
     return (impl == 0);
 }
 
-DOMString Event::eventModuleName()
-{
-    if (!impl)
-	throw DOMException(DOMException::INVALID_STATE_ERR);
-
-    return impl->eventModuleName();
-}
-
 void Event::setCancelBubble(bool cancel)
 {
     if (!impl)

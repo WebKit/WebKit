@@ -1,3 +1,51 @@
+2003-11-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - event cleanup motivated by questions on khtml-devel
+
+        * khtml/dom/dom2_events.h: Removed eventModuleName.
+        * khtml/dom/dom2_events.cpp: Removed eventModuleName.
+
+        * khtml/xml/dom2_eventsimpl.h: Removed eventModuleName, made many trivially simple
+        functions inline, made virtual functions no longer inline. Also made some functions const.
+        (DOM::EventImpl::propagationStopped): Made this non-virtual; there was no reason for
+        it to be virtual I could see.
+        (DOM::EventImpl::defaultPrevented): Ditto.
+        (DOM::EventImpl::setDefaultHandled): Ditto.
+        (DOM::UIEventImpl::view): Made this inline.
+        (DOM::UIEventImpl::detail): Ditto.
+        (DOM::MouseEventImpl::screenX): Ditto.
+        (DOM::MouseEventImpl::screenY): Ditto.
+        (DOM::MouseEventImpl::clientX): Ditto.
+        (DOM::MouseEventImpl::clientY): Ditto.
+        (DOM::MouseEventImpl::layerX): Ditto.
+        (DOM::MouseEventImpl::layerY): Ditto.
+        (DOM::MouseEventImpl::ctrlKey): Ditto.
+        (DOM::MouseEventImpl::shiftKey): Ditto.
+        (DOM::MouseEventImpl::altKey): Ditto.
+        (DOM::MouseEventImpl::metaKey): Ditto.
+        (DOM::MouseEventImpl::button): Ditto.
+        (DOM::MouseEventImpl::relatedTarget): Ditto.
+        (DOM::MutationEventImpl::relatedNode): Ditto.
+        (DOM::MutationEventImpl::prevValue): Ditto.
+        (DOM::MutationEventImpl::newValue): Ditto.
+        (DOM::MutationEventImpl::attrName): Ditto.
+        (DOM::MutationEventImpl::attrChange): Ditto.
+
+        * khtml/ecma/kjs_events.cpp: (KJS::getDOMEvent): Changed implementation to no longer
+        require eventModuleName(), and removed some unneeded casts.
+
+        * khtml/xml/dom2_eventsimpl.cpp: Made lots of functions inline.
+        (EventImpl::isUIEvent): Since this is virtual, make it no longer inline.
+        (EventImpl::isMouseEvent): Ditto.
+        (EventImpl::isMutationEvent): Ditto.
+        (EventImpl::isKeyboardEvent): Ditto.
+        (UIEventImpl::isUIEvent): Ditto.
+        (MouseEventImpl::isMouseEvent): Ditto.
+        (KeyboardEventImpl::isKeyboardEvent): Ditto.
+        (MutationEventImpl::isMutationEvent): Ditto.
+
 2003-11-07  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3020196>: links with href="" don't show hand cursor when you mouse over them

@@ -249,15 +249,6 @@ public:
     EventImpl *handle() const;
     bool isNull() const;
 
-    /**
-     * @internal
-     * not part of the DOM
-     *
-     * Returns the module name of the event - this is the same as passed to
-     * Document::createEvent() (e.g. UIEvents)
-     */
-    DOMString eventModuleName();
-
     /* Nonstandard extensions needed to support widely used JS event properties */
     void setCancelBubble(bool cancel);
     void setDefaultPrevented(bool returnValue);

@@ -322,9 +322,24 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
     }
 }
 
-void EventImpl::setDefaultHandled()
+bool EventImpl::isUIEvent() const
 {
-    m_defaultHandled = true;
+    return false;
+}
+
+bool EventImpl::isMouseEvent() const
+{
+    return false;
+}
+
+bool EventImpl::isMutationEvent() const
+{
+    return false;
+}
+
+bool EventImpl::isKeyboardEvent() const
+{
+    return false;
 }
 
 // -----------------------------------------------------------------------------
@@ -351,16 +366,6 @@ UIEventImpl::~UIEventImpl()
         m_view->deref();
 }
 
-AbstractViewImpl *UIEventImpl::view() const
-{
-    return m_view;
-}
-
-long UIEventImpl::detail() const
-{
-    return m_detail;
-}
-
 void UIEventImpl::initUIEvent(const DOMString &typeArg,
 			      bool canBubbleArg,
 			      bool cancelableArg,
@@ -376,6 +381,11 @@ void UIEventImpl::initUIEvent(const DOMString &typeArg,
     if (m_view)
 	m_view->ref();
     m_detail = detailArg;
+}
+
+bool UIEventImpl::isUIEvent() const
+{
+    return true;
 }
 
 // -----------------------------------------------------------------------------
@@ -463,66 +473,6 @@ MouseEventImpl::~MouseEventImpl()
 	m_relatedTarget->deref();
 }
 
-long MouseEventImpl::screenX() const
-{
-    return m_screenX;
-}
-
-long MouseEventImpl::screenY() const
-{
-    return m_screenY;
-}
-
-long MouseEventImpl::clientX() const
-{
-    return m_clientX;
-}
-
-long MouseEventImpl::clientY() const
-{
-    return m_clientY;
-}
-
-long MouseEventImpl::layerX() const
-{
-    return m_layerX;
-}
-
-long MouseEventImpl::layerY() const
-{
-    return m_layerY;
-}
-
-bool MouseEventImpl::ctrlKey() const
-{
-    return m_ctrlKey;
-}
-
-bool MouseEventImpl::shiftKey() const
-{
-    return m_shiftKey;
-}
-
-bool MouseEventImpl::altKey() const
-{
-    return m_altKey;
-}
-
-bool MouseEventImpl::metaKey() const
-{
-    return m_metaKey;
-}
-
-unsigned short MouseEventImpl::button() const
-{
-    return m_button;
-}
-
-NodeImpl *MouseEventImpl::relatedTarget() const
-{
-    return m_relatedTarget;
-}
-
 void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
                                     bool canBubbleArg,
                                     bool cancelableArg,
@@ -557,6 +507,11 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
     if (m_relatedTarget)
 	m_relatedTarget->ref();
     computeLayerPos();
+}
+
+bool MouseEventImpl::isMouseEvent() const
+{
+    return true;
 }
 
 //---------------------------------------------------------------------------------------------
@@ -663,6 +618,11 @@ void KeyboardEventImpl::initKeyboardEvent(const DOMString &typeArg,
     m_altGraphKey = altGraphKeyArg;
 }
 
+bool KeyboardEventImpl::isKeyboardEvent() const
+{
+    return true;
+}
+
 // -----------------------------------------------------------------------------
 
 MutationEventImpl::MutationEventImpl()
@@ -711,31 +671,6 @@ MutationEventImpl::~MutationEventImpl()
 	m_attrName->deref();
 }
 
-Node MutationEventImpl::relatedNode() const
-{
-    return m_relatedNode;
-}
-
-DOMString MutationEventImpl::prevValue() const
-{
-    return m_prevValue;
-}
-
-DOMString MutationEventImpl::newValue() const
-{
-    return m_newValue;
-}
-
-DOMString MutationEventImpl::attrName() const
-{
-    return m_attrName;
-}
-
-unsigned short MutationEventImpl::attrChange() const
-{
-    return m_attrChange;
-}
-
 void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
 					  bool canBubbleArg,
 					  bool cancelableArg,
@@ -769,6 +704,11 @@ void MutationEventImpl::initMutationEvent(const DOMString &typeArg,
     if (m_newValue)
 	m_newValue->ref();
     m_attrChange = attrChangeArg;
+}
+
+bool MutationEventImpl::isMutationEvent() const
+{
+    return true;
 }
 
 // -----------------------------------------------------------------------------

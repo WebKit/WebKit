@@ -375,26 +375,25 @@ Value DOMEventProtoFunc::tryCall(ExecState *exec, Object & thisObj, const List &
 
 Value KJS::getDOMEvent(ExecState *exec, DOM::Event e)
 {
-  DOMObject *ret;
-  if (e.isNull())
+  DOM::EventImpl *ei = e.handle();
+  if (!ei)
     return Null();
   ScriptInterpreter* interp = static_cast<ScriptInterpreter *>(exec->interpreter());
-  if ((ret = interp->getDOMObject(e.handle())))
-    return Value(ret);
+  DOMObject *ret = interp->getDOMObject(ei);
+  if (!ret) {
+    if (ei->isKeyboardEvent())
+      ret = new DOMKeyboardEvent(exec, e);
+    else if (ei->isMouseEvent())
+      ret = new DOMMouseEvent(exec, e);
+    else if (ei->isUIEvent())
+      ret = new DOMUIEvent(exec, e);
+    else if (ei->isMutationEvent())
+      ret = new DOMMutationEvent(exec, e);
+    else
+      ret = new DOMEvent(exec, e);
 
-  DOM::DOMString module = e.eventModuleName();
-  if (e.handle()->isKeyboardEvent())
-    ret = new DOMKeyboardEvent(exec, static_cast<DOM::KeyboardEvent>(e));
-  else if (module == "UIEvents")
-    ret = new DOMUIEvent(exec, static_cast<DOM::UIEvent>(e));
-  else if (module == "MouseEvents")
-    ret = new DOMMouseEvent(exec, static_cast<DOM::MouseEvent>(e));
-  else if (module == "MutationEvents")
-    ret = new DOMMutationEvent(exec, static_cast<DOM::MutationEvent>(e));
-  else
-    ret = new DOMEvent(exec, e);
-
-  interp->putDOMObject(e.handle(),ret);
+    interp->putDOMObject(ei, ret);
+  }
   return Value(ret);
 }
 

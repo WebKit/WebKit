@@ -1,8 +1,9 @@
 /*
  * This file is part of the DOM implementation for KDE.
  *
- * (C) 2001 Peter Kelly (pmk@post.com)
- * (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
+ * Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ * Copyright (C) 2001 Tobias Anton (anton@stud.fbi.fh-darmstadt.de)
+ * Copyright (C) 2003 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -113,19 +114,18 @@ public:
     void preventDefault();
     void initEvent(const DOMString &eventTypeArg, bool canBubbleArg, bool cancelableArg);
 
-    virtual bool isUIEvent() { return false; }
-    virtual bool isMouseEvent() { return false; }
-    virtual bool isMutationEvent() { return false; }
-    virtual bool isKeyboardEvent() { return false; }
-    virtual DOMString eventModuleName() { return ""; }
+    virtual bool isUIEvent() const;
+    virtual bool isMouseEvent() const;
+    virtual bool isMutationEvent() const;
+    virtual bool isKeyboardEvent() const;
 
-    virtual bool propagationStopped() const { return m_propagationStopped; }
-    virtual bool defaultPrevented() const { return m_defaultPrevented; }
+    bool propagationStopped() const { return m_propagationStopped; }
+    bool defaultPrevented() const { return m_defaultPrevented; }
 
     static EventId typeToId(DOMString type);
     static DOMString idToType(EventId id);
 
-    virtual void setDefaultHandled();
+    void setDefaultHandled() { m_defaultHandled = true; }
     bool defaultHandled() const { return m_defaultHandled; }
 
     void setCancelBubble(bool cancel) { m_cancelBubble = cancel; }
@@ -161,15 +161,14 @@ public:
 		AbstractViewImpl *viewArg,
 		long detailArg);
     virtual ~UIEventImpl();
-    AbstractViewImpl *view() const;
-    long detail() const;
+    AbstractViewImpl *view() const { return m_view; }
+    long detail() const { return m_detail; }
     void initUIEvent(const DOMString &typeArg,
 		     bool canBubbleArg,
 		     bool cancelableArg,
 		     const AbstractView &viewArg,
 		     long detailArg);
-    virtual bool isUIEvent() { return true; }
-    virtual DOMString eventModuleName() { return "UIEvents"; }
+    virtual bool isUIEvent() const;
 
 protected:
     AbstractViewImpl *m_view;
@@ -200,18 +199,18 @@ public:
 		   unsigned short buttonArg,
 		   NodeImpl *relatedTargetArg);
     virtual ~MouseEventImpl();
-    long screenX() const;
-    long screenY() const;
-    long clientX() const;
-    long clientY() const;
-    long layerX() const;
-    long layerY() const;
-    bool ctrlKey() const;
-    bool shiftKey() const;
-    bool altKey() const;
-    bool metaKey() const;
-    unsigned short button() const;
-    NodeImpl *relatedTarget() const;
+    long screenX() const { return m_screenX; }
+    long screenY() const { return m_screenY; }
+    long clientX() const { return m_clientX; }
+    long clientY() const { return m_clientY; }
+    long layerX() const { return m_layerX; }
+    long layerY() const { return m_layerY; }
+    bool ctrlKey() const { return m_ctrlKey; }
+    bool shiftKey() const { return m_shiftKey; }
+    bool altKey() const { return m_altKey; }
+    bool metaKey() const { return m_metaKey; }
+    unsigned short button() const { return m_button; }
+    NodeImpl *relatedTarget() const { return m_relatedTarget; }
     void initMouseEvent(const DOMString &typeArg,
 			bool canBubbleArg,
 			bool cancelableArg,
@@ -227,8 +226,7 @@ public:
 			bool metaKeyArg,
 			unsigned short buttonArg,
 			const Node &relatedTargetArg);
-    virtual bool isMouseEvent() { return true; }
-    virtual DOMString eventModuleName() { return "MouseEvents"; }
+    virtual bool isMouseEvent() const;
 protected:
     long m_screenX;
     long m_screenY;
@@ -288,7 +286,7 @@ public:
     
     QKeyEvent *qKeyEvent() const { return m_keyEvent; }
     
-    virtual bool isKeyboardEvent() { return true; }
+    virtual bool isKeyboardEvent() const;
 
 private:
     QKeyEvent *m_keyEvent;
@@ -315,11 +313,11 @@ public:
 		      unsigned short attrChangeArg);
     ~MutationEventImpl();
 
-    Node relatedNode() const;
-    DOMString prevValue() const;
-    DOMString newValue() const;
-    DOMString attrName() const;
-    unsigned short attrChange() const;
+    Node relatedNode() const { return m_relatedNode; }
+    DOMString prevValue() const { return m_prevValue; }
+    DOMString newValue() const { return m_newValue; }
+    DOMString attrName() const { return m_attrName; }
+    unsigned short attrChange() const { return m_attrChange; }
     void initMutationEvent(const DOMString &typeArg,
 			   bool canBubbleArg,
 			   bool cancelableArg,
@@ -328,8 +326,7 @@ public:
 			   const DOMString &newValueArg,
 			   const DOMString &attrNameArg,
 			   unsigned short attrChangeArg);
-    virtual bool isMutationEvent() { return true; }
-    virtual DOMString eventModuleName() { return "MutationEvents"; }
+    virtual bool isMutationEvent() const;
 protected:
     NodeImpl *m_relatedNode;
     DOMStringImpl *m_prevValue;
