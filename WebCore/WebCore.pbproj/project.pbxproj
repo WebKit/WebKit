@@ -742,6 +742,7 @@
 			);
 			isa = PBXVariantGroup;
 			name = InfoPlist.strings;
+			path = "";
 			refType = 4;
 		};
 		089C1667FE841158C02AAC07 = {
@@ -793,7 +794,7 @@
 		F505847502E0934D018635CE = {
 			isa = PBXFileReference;
 			name = qucomextra_p.h;
-			path = kwq/qt/private/qucomextra_p.h;
+			path = qt/private/qucomextra_p.h;
 			refType = 4;
 		};
 		F505847602E0934D018635CE = {
@@ -808,6 +809,7 @@
 			);
 			isa = PBXGroup;
 			name = private;
+			path = "";
 			refType = 4;
 		};
 		F523D15002DE4271018635CA = {
@@ -847,56 +849,47 @@
 		};
 		F523D15102DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtml_events.cpp;
-			path = khtml/khtml_events.cpp;
+			path = khtml_events.cpp;
 			refType = 4;
 		};
 		F523D15202DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtml_events.h;
-			path = khtml/khtml_events.h;
+			path = khtml_events.h;
 			refType = 4;
 		};
 		F523D15302DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtml_part.cpp;
-			path = khtml/khtml_part.cpp;
+			path = khtml_part.cpp;
 			refType = 4;
 		};
 		F523D15402DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtml_part.h;
-			path = khtml/khtml_part.h;
+			path = khtml_part.h;
 			refType = 4;
 		};
 		F523D15502DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtml_part.moc;
-			path = khtml/khtml_part.moc;
+			path = khtml_part.moc;
 			refType = 4;
 		};
 		F523D15602DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtmlpart_p.h;
-			path = khtml/khtmlpart_p.h;
+			path = khtmlpart_p.h;
 			refType = 4;
 		};
 		F523D15702DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtmlview.cpp;
-			path = khtml/khtmlview.cpp;
+			path = khtmlview.cpp;
 			refType = 4;
 		};
 		F523D15802DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtmlview.h;
-			path = khtml/khtmlview.h;
+			path = khtmlview.h;
 			refType = 4;
 		};
 		F523D15902DE42AD018635CA = {
 			isa = PBXFileReference;
-			name = khtmlview.moc;
-			path = khtml/khtmlview.moc;
+			path = khtmlview.moc;
 			refType = 4;
 		};
 		F523D15A02DE42AD018635CA = {
@@ -961,91 +954,77 @@
 				F523D15902DE42AD018635CA,
 			);
 			isa = PBXGroup;
-			name = khtml;
+			path = khtml;
 			refType = 4;
 		};
 		F523D16402DE42E6018635CA = {
 			isa = PBXFileReference;
-			name = css_ruleimpl.cpp;
-			path = khtml/css/css_ruleimpl.cpp;
+			path = css_ruleimpl.cpp;
 			refType = 4;
 		};
 		F523D16502DE42E6018635CA = {
 			isa = PBXFileReference;
-			name = css_ruleimpl.h;
-			path = khtml/css/css_ruleimpl.h;
+			path = css_ruleimpl.h;
 			refType = 4;
 		};
 		F523D16602DE42E6018635CA = {
 			isa = PBXFileReference;
-			name = css_stylesheetimpl.cpp;
-			path = khtml/css/css_stylesheetimpl.cpp;
+			path = css_stylesheetimpl.cpp;
 			refType = 4;
 		};
 		F523D16702DE42E6018635CA = {
 			isa = PBXFileReference;
-			name = css_stylesheetimpl.h;
-			path = khtml/css/css_stylesheetimpl.h;
+			path = css_stylesheetimpl.h;
 			refType = 4;
 		};
 		F523D16802DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = css_valueimpl.cpp;
-			path = khtml/css/css_valueimpl.cpp;
+			path = css_valueimpl.cpp;
 			refType = 4;
 		};
 		F523D16902DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = css_valueimpl.h;
-			path = khtml/css/css_valueimpl.h;
+			path = css_valueimpl.h;
 			refType = 4;
 		};
 		F523D16A02DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = csshelper.cpp;
-			path = khtml/css/csshelper.cpp;
+			path = csshelper.cpp;
 			refType = 4;
 		};
 		F523D16B02DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = csshelper.h;
-			path = khtml/css/csshelper.h;
+			path = csshelper.h;
 			refType = 4;
 		};
 		F523D16C02DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = cssparser.cpp;
-			path = khtml/css/cssparser.cpp;
+			path = cssparser.cpp;
 			refType = 4;
 		};
 		F523D16D02DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = cssparser.h;
-			path = khtml/css/cssparser.h;
+			path = cssparser.h;
 			refType = 4;
 		};
 		F523D16F02DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = cssproperties.h;
-			path = khtml/css/cssproperties.h;
+			path = cssproperties.h;
 			refType = 4;
 		};
 		F523D17002DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = cssstyleselector.cpp;
-			path = khtml/css/cssstyleselector.cpp;
+			path = cssstyleselector.cpp;
 			refType = 4;
 		};
 		F523D17102DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = cssstyleselector.h;
-			path = khtml/css/cssstyleselector.h;
+			path = cssstyleselector.h;
 			refType = 4;
 		};
 		F523D17302DE42E7018635CA = {
 			isa = PBXFileReference;
-			name = cssvalues.h;
-			path = khtml/css/cssvalues.h;
+			path = cssvalues.h;
 			refType = 4;
 		};
 		F523D17402DE42E7018635CA = {
@@ -1150,337 +1129,282 @@
 				F523D17302DE42E7018635CA,
 			);
 			isa = PBXGroup;
-			name = css;
+			path = css;
 			refType = 4;
 		};
 		F523D18502DE4322018635CA = {
 			isa = PBXFileReference;
-			name = css_rule.cpp;
-			path = khtml/dom/css_rule.cpp;
+			path = css_rule.cpp;
 			refType = 4;
 		};
 		F523D18602DE4322018635CA = {
 			isa = PBXFileReference;
-			name = css_rule.h;
-			path = khtml/dom/css_rule.h;
+			path = css_rule.h;
 			refType = 4;
 		};
 		F523D18702DE4322018635CA = {
 			isa = PBXFileReference;
-			name = css_stylesheet.cpp;
-			path = khtml/dom/css_stylesheet.cpp;
+			path = css_stylesheet.cpp;
 			refType = 4;
 		};
 		F523D18802DE4322018635CA = {
 			isa = PBXFileReference;
-			name = css_stylesheet.h;
-			path = khtml/dom/css_stylesheet.h;
+			path = css_stylesheet.h;
 			refType = 4;
 		};
 		F523D18902DE4322018635CA = {
 			isa = PBXFileReference;
-			name = css_value.cpp;
-			path = khtml/dom/css_value.cpp;
+			path = css_value.cpp;
 			refType = 4;
 		};
 		F523D18A02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = css_value.h;
-			path = khtml/dom/css_value.h;
+			path = css_value.h;
 			refType = 4;
 		};
 		F523D18B02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_core.h;
-			path = khtml/dom/dom_core.h;
+			path = dom_core.h;
 			refType = 4;
 		};
 		F523D18C02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_doc.cpp;
-			path = khtml/dom/dom_doc.cpp;
+			path = dom_doc.cpp;
 			refType = 4;
 		};
 		F523D18D02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_doc.h;
-			path = khtml/dom/dom_doc.h;
+			path = dom_doc.h;
 			refType = 4;
 		};
 		F523D18E02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_element.cpp;
-			path = khtml/dom/dom_element.cpp;
+			path = dom_element.cpp;
 			refType = 4;
 		};
 		F523D18F02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_element.h;
-			path = khtml/dom/dom_element.h;
+			path = dom_element.h;
 			refType = 4;
 		};
 		F523D19002DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_exception.h;
-			path = khtml/dom/dom_exception.h;
+			path = dom_exception.h;
 			refType = 4;
 		};
 		F523D19102DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_html.h;
-			path = khtml/dom/dom_html.h;
+			path = dom_html.h;
 			refType = 4;
 		};
 		F523D19202DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_misc.cpp;
-			path = khtml/dom/dom_misc.cpp;
+			path = dom_misc.cpp;
 			refType = 4;
 		};
 		F523D19302DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_misc.h;
-			path = khtml/dom/dom_misc.h;
+			path = dom_misc.h;
 			refType = 4;
 		};
 		F523D19402DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_node.cpp;
-			path = khtml/dom/dom_node.cpp;
+			path = dom_node.cpp;
 			refType = 4;
 		};
 		F523D19502DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_node.h;
-			path = khtml/dom/dom_node.h;
+			path = dom_node.h;
 			refType = 4;
 		};
 		F523D19602DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_string.cpp;
-			path = khtml/dom/dom_string.cpp;
+			path = dom_string.cpp;
 			refType = 4;
 		};
 		F523D19702DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_string.h;
-			path = khtml/dom/dom_string.h;
+			path = dom_string.h;
 			refType = 4;
 		};
 		F523D19802DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_text.cpp;
-			path = khtml/dom/dom_text.cpp;
+			path = dom_text.cpp;
 			refType = 4;
 		};
 		F523D19902DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_text.h;
-			path = khtml/dom/dom_text.h;
+			path = dom_text.h;
 			refType = 4;
 		};
 		F523D19A02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_xml.cpp;
-			path = khtml/dom/dom_xml.cpp;
+			path = dom_xml.cpp;
 			refType = 4;
 		};
 		F523D19B02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom_xml.h;
-			path = khtml/dom/dom_xml.h;
+			path = dom_xml.h;
 			refType = 4;
 		};
 		F523D19C02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_events.cpp;
-			path = khtml/dom/dom2_events.cpp;
+			path = dom2_events.cpp;
 			refType = 4;
 		};
 		F523D19D02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_events.h;
-			path = khtml/dom/dom2_events.h;
+			path = dom2_events.h;
 			refType = 4;
 		};
 		F523D19E02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_range.cpp;
-			path = khtml/dom/dom2_range.cpp;
+			path = dom2_range.cpp;
 			refType = 4;
 		};
 		F523D19F02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_range.h;
-			path = khtml/dom/dom2_range.h;
+			path = dom2_range.h;
 			refType = 4;
 		};
 		F523D1A002DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_traversal.cpp;
-			path = khtml/dom/dom2_traversal.cpp;
+			path = dom2_traversal.cpp;
 			refType = 4;
 		};
 		F523D1A102DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_traversal.h;
-			path = khtml/dom/dom2_traversal.h;
+			path = dom2_traversal.h;
 			refType = 4;
 		};
 		F523D1A202DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_views.cpp;
-			path = khtml/dom/dom2_views.cpp;
+			path = dom2_views.cpp;
 			refType = 4;
 		};
 		F523D1A302DE4322018635CA = {
 			isa = PBXFileReference;
-			name = dom2_views.h;
-			path = khtml/dom/dom2_views.h;
+			path = dom2_views.h;
 			refType = 4;
 		};
 		F523D1A402DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_base.cpp;
-			path = khtml/dom/html_base.cpp;
+			path = html_base.cpp;
 			refType = 4;
 		};
 		F523D1A502DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_base.h;
-			path = khtml/dom/html_base.h;
+			path = html_base.h;
 			refType = 4;
 		};
 		F523D1A602DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_block.cpp;
-			path = khtml/dom/html_block.cpp;
+			path = html_block.cpp;
 			refType = 4;
 		};
 		F523D1A702DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_block.h;
-			path = khtml/dom/html_block.h;
+			path = html_block.h;
 			refType = 4;
 		};
 		F523D1A802DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_document.cpp;
-			path = khtml/dom/html_document.cpp;
+			path = html_document.cpp;
 			refType = 4;
 		};
 		F523D1A902DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_document.h;
-			path = khtml/dom/html_document.h;
+			path = html_document.h;
 			refType = 4;
 		};
 		F523D1AA02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_element.cpp;
-			path = khtml/dom/html_element.cpp;
+			path = html_element.cpp;
 			refType = 4;
 		};
 		F523D1AB02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_element.h;
-			path = khtml/dom/html_element.h;
+			path = html_element.h;
 			refType = 4;
 		};
 		F523D1AC02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_form.cpp;
-			path = khtml/dom/html_form.cpp;
+			path = html_form.cpp;
 			refType = 4;
 		};
 		F523D1AD02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_form.h;
-			path = khtml/dom/html_form.h;
+			path = html_form.h;
 			refType = 4;
 		};
 		F523D1AE02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_head.cpp;
-			path = khtml/dom/html_head.cpp;
+			path = html_head.cpp;
 			refType = 4;
 		};
 		F523D1AF02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_head.h;
-			path = khtml/dom/html_head.h;
+			path = html_head.h;
 			refType = 4;
 		};
 		F523D1B002DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_image.cpp;
-			path = khtml/dom/html_image.cpp;
+			path = html_image.cpp;
 			refType = 4;
 		};
 		F523D1B102DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_image.h;
-			path = khtml/dom/html_image.h;
+			path = html_image.h;
 			refType = 4;
 		};
 		F523D1B202DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_inline.cpp;
-			path = khtml/dom/html_inline.cpp;
+			path = html_inline.cpp;
 			refType = 4;
 		};
 		F523D1B302DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_inline.h;
-			path = khtml/dom/html_inline.h;
+			path = html_inline.h;
 			refType = 4;
 		};
 		F523D1B402DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_list.cpp;
-			path = khtml/dom/html_list.cpp;
+			path = html_list.cpp;
 			refType = 4;
 		};
 		F523D1B502DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_list.h;
-			path = khtml/dom/html_list.h;
+			path = html_list.h;
 			refType = 4;
 		};
 		F523D1B602DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_misc.cpp;
-			path = khtml/dom/html_misc.cpp;
+			path = html_misc.cpp;
 			refType = 4;
 		};
 		F523D1B702DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_misc.h;
-			path = khtml/dom/html_misc.h;
+			path = html_misc.h;
 			refType = 4;
 		};
 		F523D1B802DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_object.cpp;
-			path = khtml/dom/html_object.cpp;
+			path = html_object.cpp;
 			refType = 4;
 		};
 		F523D1B902DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_object.h;
-			path = khtml/dom/html_object.h;
+			path = html_object.h;
 			refType = 4;
 		};
 		F523D1BA02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_table.cpp;
-			path = khtml/dom/html_table.cpp;
+			path = html_table.cpp;
 			refType = 4;
 		};
 		F523D1BB02DE4322018635CA = {
 			isa = PBXFileReference;
-			name = html_table.h;
-			path = khtml/dom/html_table.h;
+			path = html_table.h;
 			refType = 4;
 		};
 		F523D1BC02DE4322018635CA = {
@@ -1872,200 +1796,167 @@
 				F523D1BB02DE4322018635CA,
 			);
 			isa = PBXGroup;
-			name = dom;
-			path = "";
+			path = dom;
 			refType = 4;
 		};
 		F523D1F402DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_binding.cpp;
-			path = khtml/ecma/kjs_binding.cpp;
+			path = kjs_binding.cpp;
 			refType = 4;
 		};
 		F523D1F502DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_binding.h;
-			path = khtml/ecma/kjs_binding.h;
+			path = kjs_binding.h;
 			refType = 4;
 		};
 		F523D1F602DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_css.cpp;
-			path = khtml/ecma/kjs_css.cpp;
+			path = kjs_css.cpp;
 			refType = 4;
 		};
 		F523D1F702DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_css.h;
-			path = khtml/ecma/kjs_css.h;
+			path = kjs_css.h;
 			refType = 4;
 		};
 		F523D1F802DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_css.lut.h;
-			path = khtml/ecma/kjs_css.lut.h;
+			path = kjs_css.lut.h;
 			refType = 4;
 		};
 		F523D1F902DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_dom.cpp;
-			path = khtml/ecma/kjs_dom.cpp;
+			path = kjs_dom.cpp;
 			refType = 4;
 		};
 		F523D1FA02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_dom.h;
-			path = khtml/ecma/kjs_dom.h;
+			path = kjs_dom.h;
 			refType = 4;
 		};
 		F523D1FB02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_dom.lut.h;
-			path = khtml/ecma/kjs_dom.lut.h;
+			path = kjs_dom.lut.h;
 			refType = 4;
 		};
 		F523D1FC02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_events.cpp;
-			path = khtml/ecma/kjs_events.cpp;
+			path = kjs_events.cpp;
 			refType = 4;
 		};
 		F523D1FD02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_events.h;
-			path = khtml/ecma/kjs_events.h;
+			path = kjs_events.h;
 			refType = 4;
 		};
 		F523D1FE02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_events.lut.h;
-			path = khtml/ecma/kjs_events.lut.h;
+			path = kjs_events.lut.h;
 			refType = 4;
 		};
 		F523D1FF02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_html.cpp;
-			path = khtml/ecma/kjs_html.cpp;
+			path = kjs_html.cpp;
 			refType = 4;
 		};
 		F523D20002DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_html.h;
-			path = khtml/ecma/kjs_html.h;
+			path = kjs_html.h;
 			refType = 4;
 		};
 		F523D20102DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_html.lut.h;
-			path = khtml/ecma/kjs_html.lut.h;
+			path = kjs_html.lut.h;
 			refType = 4;
 		};
 		F523D20202DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_navigator.cpp;
-			path = khtml/ecma/kjs_navigator.cpp;
+			path = kjs_navigator.cpp;
 			refType = 4;
 		};
 		F523D20302DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_navigator.h;
-			path = khtml/ecma/kjs_navigator.h;
+			path = kjs_navigator.h;
 			refType = 4;
 		};
 		F523D20402DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_navigator.lut.h;
-			path = khtml/ecma/kjs_navigator.lut.h;
+			path = kjs_navigator.lut.h;
 			refType = 4;
 		};
 		F523D20502DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_proxy.cpp;
-			path = khtml/ecma/kjs_proxy.cpp;
+			path = kjs_proxy.cpp;
 			refType = 4;
 		};
 		F523D20602DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_proxy.h;
-			path = khtml/ecma/kjs_proxy.h;
+			path = kjs_proxy.h;
 			refType = 4;
 		};
 		F523D20702DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_range.cpp;
-			path = khtml/ecma/kjs_range.cpp;
+			path = kjs_range.cpp;
 			refType = 4;
 		};
 		F523D20802DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_range.h;
-			path = khtml/ecma/kjs_range.h;
+			path = kjs_range.h;
 			refType = 4;
 		};
 		F523D20902DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_range.lut.h;
-			path = khtml/ecma/kjs_range.lut.h;
+			path = kjs_range.lut.h;
 			refType = 4;
 		};
 		F523D20A02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_traversal.cpp;
-			path = khtml/ecma/kjs_traversal.cpp;
+			path = kjs_traversal.cpp;
 			refType = 4;
 		};
 		F523D20B02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_traversal.h;
-			path = khtml/ecma/kjs_traversal.h;
+			path = kjs_traversal.h;
 			refType = 4;
 		};
 		F523D20C02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_traversal.lut.h;
-			path = khtml/ecma/kjs_traversal.lut.h;
+			path = kjs_traversal.lut.h;
 			refType = 4;
 		};
 		F523D20D02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_views.cpp;
-			path = khtml/ecma/kjs_views.cpp;
+			path = kjs_views.cpp;
 			refType = 4;
 		};
 		F523D20E02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_views.h;
-			path = khtml/ecma/kjs_views.h;
+			path = kjs_views.h;
 			refType = 4;
 		};
 		F523D20F02DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_views.lut.h;
-			path = khtml/ecma/kjs_views.lut.h;
+			path = kjs_views.lut.h;
 			refType = 4;
 		};
 		F523D21002DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_window.cpp;
-			path = khtml/ecma/kjs_window.cpp;
+			path = kjs_window.cpp;
 			refType = 4;
 		};
 		F523D21102DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_window.h;
-			path = khtml/ecma/kjs_window.h;
+			path = kjs_window.h;
 			refType = 4;
 		};
 		F523D21202DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_window.lut.h;
-			path = khtml/ecma/kjs_window.lut.h;
+			path = kjs_window.lut.h;
 			refType = 4;
 		};
 		F523D21302DE4369018635CA = {
 			isa = PBXFileReference;
-			name = kjs_window.moc;
-			path = khtml/ecma/kjs_window.moc;
+			path = kjs_window.moc;
 			refType = 4;
 		};
 		F523D21402DE4369018635CA = {
@@ -2290,200 +2181,167 @@
 				F523D21302DE4369018635CA,
 			);
 			isa = PBXGroup;
-			name = ecma;
-			path = "";
+			path = ecma;
 			refType = 4;
 		};
 		F523D23502DE4396018635CA = {
 			isa = PBXFileReference;
-			name = dtd.cpp;
-			path = khtml/html/dtd.cpp;
+			path = dtd.cpp;
 			refType = 4;
 		};
 		F523D23602DE4396018635CA = {
 			isa = PBXFileReference;
-			name = dtd.h;
-			path = khtml/html/dtd.h;
+			path = dtd.h;
 			refType = 4;
 		};
 		F523D23702DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_baseimpl.cpp;
-			path = khtml/html/html_baseimpl.cpp;
+			path = html_baseimpl.cpp;
 			refType = 4;
 		};
 		F523D23802DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_baseimpl.h;
-			path = khtml/html/html_baseimpl.h;
+			path = html_baseimpl.h;
 			refType = 4;
 		};
 		F523D23902DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_blockimpl.cpp;
-			path = khtml/html/html_blockimpl.cpp;
+			path = html_blockimpl.cpp;
 			refType = 4;
 		};
 		F523D23A02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_blockimpl.h;
-			path = khtml/html/html_blockimpl.h;
+			path = html_blockimpl.h;
 			refType = 4;
 		};
 		F523D23B02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_documentimpl.cpp;
-			path = khtml/html/html_documentimpl.cpp;
+			path = html_documentimpl.cpp;
 			refType = 4;
 		};
 		F523D23C02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_documentimpl.h;
-			path = khtml/html/html_documentimpl.h;
+			path = html_documentimpl.h;
 			refType = 4;
 		};
 		F523D23D02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_documentimpl.moc;
-			path = khtml/html/html_documentimpl.moc;
+			path = html_documentimpl.moc;
 			refType = 4;
 		};
 		F523D23E02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_elementimpl.cpp;
-			path = khtml/html/html_elementimpl.cpp;
+			path = html_elementimpl.cpp;
 			refType = 4;
 		};
 		F523D23F02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_elementimpl.h;
-			path = khtml/html/html_elementimpl.h;
+			path = html_elementimpl.h;
 			refType = 4;
 		};
 		F523D24002DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_formimpl.cpp;
-			path = khtml/html/html_formimpl.cpp;
+			path = html_formimpl.cpp;
 			refType = 4;
 		};
 		F523D24102DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_formimpl.h;
-			path = khtml/html/html_formimpl.h;
+			path = html_formimpl.h;
 			refType = 4;
 		};
 		F523D24202DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_headimpl.cpp;
-			path = khtml/html/html_headimpl.cpp;
+			path = html_headimpl.cpp;
 			refType = 4;
 		};
 		F523D24302DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_headimpl.h;
-			path = khtml/html/html_headimpl.h;
+			path = html_headimpl.h;
 			refType = 4;
 		};
 		F523D24402DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_imageimpl.cpp;
-			path = khtml/html/html_imageimpl.cpp;
+			path = html_imageimpl.cpp;
 			refType = 4;
 		};
 		F523D24502DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_imageimpl.h;
-			path = khtml/html/html_imageimpl.h;
+			path = html_imageimpl.h;
 			refType = 4;
 		};
 		F523D24602DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_inlineimpl.cpp;
-			path = khtml/html/html_inlineimpl.cpp;
+			path = html_inlineimpl.cpp;
 			refType = 4;
 		};
 		F523D24702DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_inlineimpl.h;
-			path = khtml/html/html_inlineimpl.h;
+			path = html_inlineimpl.h;
 			refType = 4;
 		};
 		F523D24802DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_listimpl.cpp;
-			path = khtml/html/html_listimpl.cpp;
+			path = html_listimpl.cpp;
 			refType = 4;
 		};
 		F523D24902DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_listimpl.h;
-			path = khtml/html/html_listimpl.h;
+			path = html_listimpl.h;
 			refType = 4;
 		};
 		F523D24A02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_miscimpl.cpp;
-			path = khtml/html/html_miscimpl.cpp;
+			path = html_miscimpl.cpp;
 			refType = 4;
 		};
 		F523D24B02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_miscimpl.h;
-			path = khtml/html/html_miscimpl.h;
+			path = html_miscimpl.h;
 			refType = 4;
 		};
 		F523D24C02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_objectimpl.cpp;
-			path = khtml/html/html_objectimpl.cpp;
+			path = html_objectimpl.cpp;
 			refType = 4;
 		};
 		F523D24D02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_objectimpl.h;
-			path = khtml/html/html_objectimpl.h;
+			path = html_objectimpl.h;
 			refType = 4;
 		};
 		F523D24E02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_tableimpl.cpp;
-			path = khtml/html/html_tableimpl.cpp;
+			path = html_tableimpl.cpp;
 			refType = 4;
 		};
 		F523D24F02DE4396018635CA = {
 			isa = PBXFileReference;
-			name = html_tableimpl.h;
-			path = khtml/html/html_tableimpl.h;
+			path = html_tableimpl.h;
 			refType = 4;
 		};
 		F523D25002DE4396018635CA = {
 			isa = PBXFileReference;
-			name = htmlparser.cpp;
-			path = khtml/html/htmlparser.cpp;
+			path = htmlparser.cpp;
 			refType = 4;
 		};
 		F523D25102DE4396018635CA = {
 			isa = PBXFileReference;
-			name = htmlparser.h;
-			path = khtml/html/htmlparser.h;
+			path = htmlparser.h;
 			refType = 4;
 		};
 		F523D25202DE4396018635CA = {
 			isa = PBXFileReference;
-			name = htmltokenizer.cpp;
-			path = khtml/html/htmltokenizer.cpp;
+			path = htmltokenizer.cpp;
 			refType = 4;
 		};
 		F523D25302DE4396018635CA = {
 			isa = PBXFileReference;
-			name = htmltokenizer.h;
-			path = khtml/html/htmltokenizer.h;
+			path = htmltokenizer.h;
 			refType = 4;
 		};
 		F523D25402DE4396018635CA = {
 			isa = PBXFileReference;
-			name = htmltokenizer.moc;
-			path = khtml/html/htmltokenizer.moc;
+			path = htmltokenizer.moc;
 			refType = 4;
 		};
 		F523D25602DE4396018635CA = {
@@ -2702,104 +2560,87 @@
 				F523D25402DE4396018635CA,
 			);
 			isa = PBXGroup;
-			name = html;
-			path = "";
+			path = html;
 			refType = 4;
 		};
 		F523D27802DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = decoder.cpp;
-			path = khtml/misc/decoder.cpp;
+			path = decoder.cpp;
 			refType = 4;
 		};
 		F523D27902DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = decoder.h;
-			path = khtml/misc/decoder.h;
+			path = decoder.h;
 			refType = 4;
 		};
 		F523D27A02DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = helper.cpp;
-			path = khtml/misc/helper.cpp;
+			path = helper.cpp;
 			refType = 4;
 		};
 		F523D27B02DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = helper.h;
-			path = khtml/misc/helper.h;
+			path = helper.h;
 			refType = 4;
 		};
 		F523D27D02DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = htmlattrs.h;
-			path = khtml/misc/htmlattrs.h;
+			path = htmlattrs.h;
 			refType = 4;
 		};
 		F523D27E02DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = htmlhashes.cpp;
-			path = khtml/misc/htmlhashes.cpp;
+			path = htmlhashes.cpp;
 			refType = 4;
 		};
 		F523D27F02DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = htmlhashes.h;
-			path = khtml/misc/htmlhashes.h;
+			path = htmlhashes.h;
 			refType = 4;
 		};
 		F523D28102DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = htmltags.h;
-			path = khtml/misc/htmltags.h;
+			path = htmltags.h;
 			refType = 4;
 		};
 		F523D28202DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = khtmldata.h;
-			path = khtml/misc/khtmldata.h;
+			path = khtmldata.h;
 			refType = 4;
 		};
 		F523D28302DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = khtmllayout.h;
-			path = khtml/misc/khtmllayout.h;
+			path = khtmllayout.h;
 			refType = 4;
 		};
 		F523D28402DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = loader_client.h;
-			path = khtml/misc/loader_client.h;
+			path = loader_client.h;
 			refType = 4;
 		};
 		F523D28502DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = loader.cpp;
-			path = khtml/misc/loader.cpp;
+			path = loader.cpp;
 			refType = 4;
 		};
 		F523D28602DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = loader.h;
-			path = khtml/misc/loader.h;
+			path = loader.h;
 			refType = 4;
 		};
 		F523D28702DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = loader.moc;
-			path = khtml/misc/loader.moc;
+			path = loader.moc;
 			refType = 4;
 		};
 		F523D28802DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = shared.h;
-			path = khtml/misc/shared.h;
+			path = shared.h;
 			refType = 4;
 		};
 		F523D28902DE43D7018635CA = {
 			isa = PBXFileReference;
-			name = stringit.h;
-			path = khtml/misc/stringit.h;
+			path = stringit.h;
 			refType = 4;
 		};
 		F523D28A02DE43D7018635CA = {
@@ -2912,265 +2753,222 @@
 				F523D28902DE43D7018635CA,
 			);
 			isa = PBXGroup;
-			name = misc;
+			path = misc;
 			refType = 4;
 		};
 		F523D29D02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = bidi.cpp;
-			path = khtml/rendering/bidi.cpp;
+			path = bidi.cpp;
 			refType = 4;
 		};
 		F523D29E02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = bidi.h;
-			path = khtml/rendering/bidi.h;
+			path = bidi.h;
 			refType = 4;
 		};
 		F523D29F02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = break_lines.cpp;
-			path = khtml/rendering/break_lines.cpp;
+			path = break_lines.cpp;
 			refType = 4;
 		};
 		F523D2A002DE4438018635CA = {
 			isa = PBXFileReference;
-			name = break_lines.h;
-			path = khtml/rendering/break_lines.h;
+			path = break_lines.h;
 			refType = 4;
 		};
 		F523D2A102DE4438018635CA = {
 			isa = PBXFileReference;
-			name = font.cpp;
-			path = khtml/rendering/font.cpp;
+			path = font.cpp;
 			refType = 4;
 		};
 		F523D2A202DE4438018635CA = {
 			isa = PBXFileReference;
-			name = font.h;
-			path = khtml/rendering/font.h;
+			path = font.h;
 			refType = 4;
 		};
 		F523D2A302DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_applet.cpp;
-			path = khtml/rendering/render_applet.cpp;
+			path = render_applet.cpp;
 			refType = 4;
 		};
 		F523D2A402DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_applet.h;
-			path = khtml/rendering/render_applet.h;
+			path = render_applet.h;
 			refType = 4;
 		};
 		F523D2A502DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_body.cpp;
-			path = khtml/rendering/render_body.cpp;
+			path = render_body.cpp;
 			refType = 4;
 		};
 		F523D2A602DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_body.h;
-			path = khtml/rendering/render_body.h;
+			path = render_body.h;
 			refType = 4;
 		};
 		F523D2A702DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_box.cpp;
-			path = khtml/rendering/render_box.cpp;
+			path = render_box.cpp;
 			refType = 4;
 		};
 		F523D2A802DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_box.h;
-			path = khtml/rendering/render_box.h;
+			path = render_box.h;
 			refType = 4;
 		};
 		F523D2A902DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_br.cpp;
-			path = khtml/rendering/render_br.cpp;
+			path = render_br.cpp;
 			refType = 4;
 		};
 		F523D2AA02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_br.h;
-			path = khtml/rendering/render_br.h;
+			path = render_br.h;
 			refType = 4;
 		};
 		F523D2AB02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_container.cpp;
-			path = khtml/rendering/render_container.cpp;
+			path = render_container.cpp;
 			refType = 4;
 		};
 		F523D2AC02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_container.h;
-			path = khtml/rendering/render_container.h;
+			path = render_container.h;
 			refType = 4;
 		};
 		F523D2AD02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_flow.cpp;
-			path = khtml/rendering/render_flow.cpp;
+			path = render_flow.cpp;
 			refType = 4;
 		};
 		F523D2AE02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_flow.h;
-			path = khtml/rendering/render_flow.h;
+			path = render_flow.h;
 			refType = 4;
 		};
 		F523D2AF02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_form.cpp;
-			path = khtml/rendering/render_form.cpp;
+			path = render_form.cpp;
 			refType = 4;
 		};
 		F523D2B002DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_form.h;
-			path = khtml/rendering/render_form.h;
+			path = render_form.h;
 			refType = 4;
 		};
 		F523D2B102DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_form.moc;
-			path = khtml/rendering/render_form.moc;
+			path = render_form.moc;
 			refType = 4;
 		};
 		F523D2B202DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_frames.cpp;
-			path = khtml/rendering/render_frames.cpp;
+			path = render_frames.cpp;
 			refType = 4;
 		};
 		F523D2B302DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_frames.h;
-			path = khtml/rendering/render_frames.h;
+			path = render_frames.h;
 			refType = 4;
 		};
 		F523D2B402DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_frames.moc;
-			path = khtml/rendering/render_frames.moc;
+			path = render_frames.moc;
 			refType = 4;
 		};
 		F523D2B502DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_html.cpp;
-			path = khtml/rendering/render_html.cpp;
+			path = render_html.cpp;
 			refType = 4;
 		};
 		F523D2B602DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_html.h;
-			path = khtml/rendering/render_html.h;
+			path = render_html.h;
 			refType = 4;
 		};
 		F523D2B702DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_image.cpp;
-			path = khtml/rendering/render_image.cpp;
+			path = render_image.cpp;
 			refType = 4;
 		};
 		F523D2B802DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_image.h;
-			path = khtml/rendering/render_image.h;
+			path = render_image.h;
 			refType = 4;
 		};
 		F523D2B902DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_list.cpp;
-			path = khtml/rendering/render_list.cpp;
+			path = render_list.cpp;
 			refType = 4;
 		};
 		F523D2BA02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_list.h;
-			path = khtml/rendering/render_list.h;
+			path = render_list.h;
 			refType = 4;
 		};
 		F523D2BB02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_object.cpp;
-			path = khtml/rendering/render_object.cpp;
+			path = render_object.cpp;
 			refType = 4;
 		};
 		F523D2BC02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_object.h;
-			path = khtml/rendering/render_object.h;
+			path = render_object.h;
 			refType = 4;
 		};
 		F523D2BD02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_replaced.cpp;
-			path = khtml/rendering/render_replaced.cpp;
+			path = render_replaced.cpp;
 			refType = 4;
 		};
 		F523D2BE02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_replaced.h;
-			path = khtml/rendering/render_replaced.h;
+			path = render_replaced.h;
 			refType = 4;
 		};
 		F523D2BF02DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_replaced.moc;
-			path = khtml/rendering/render_replaced.moc;
+			path = render_replaced.moc;
 			refType = 4;
 		};
 		F523D2C002DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_root.cpp;
-			path = khtml/rendering/render_root.cpp;
+			path = render_root.cpp;
 			refType = 4;
 		};
 		F523D2C102DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_root.h;
-			path = khtml/rendering/render_root.h;
+			path = render_root.h;
 			refType = 4;
 		};
 		F523D2C202DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_style.cpp;
-			path = khtml/rendering/render_style.cpp;
+			path = render_style.cpp;
 			refType = 4;
 		};
 		F523D2C302DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_style.h;
-			path = khtml/rendering/render_style.h;
+			path = render_style.h;
 			refType = 4;
 		};
 		F523D2C402DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_table.cpp;
-			path = khtml/rendering/render_table.cpp;
+			path = render_table.cpp;
 			refType = 4;
 		};
 		F523D2C502DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_table.h;
-			path = khtml/rendering/render_table.h;
+			path = render_table.h;
 			refType = 4;
 		};
 		F523D2C602DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_text.cpp;
-			path = khtml/rendering/render_text.cpp;
+			path = render_text.cpp;
 			refType = 4;
 		};
 		F523D2C702DE4438018635CA = {
 			isa = PBXFileReference;
-			name = render_text.h;
-			path = khtml/rendering/render_text.h;
+			path = render_text.h;
 			refType = 4;
 		};
 		F523D2C802DE4438018635CA = {
@@ -3460,151 +3258,127 @@
 				F523D2C702DE4438018635CA,
 			);
 			isa = PBXGroup;
-			name = rendering;
+			path = rendering;
 			refType = 4;
 		};
 		F523D2F402DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_docimpl.cpp;
-			path = khtml/xml/dom_docimpl.cpp;
+			path = dom_docimpl.cpp;
 			refType = 4;
 		};
 		F523D2F502DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_docimpl.h;
-			path = khtml/xml/dom_docimpl.h;
+			path = dom_docimpl.h;
 			refType = 4;
 		};
 		F523D2F602DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_docimpl.moc;
-			path = khtml/xml/dom_docimpl.moc;
+			path = dom_docimpl.moc;
 			refType = 4;
 		};
 		F523D2F702DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_elementimpl.cpp;
-			path = khtml/xml/dom_elementimpl.cpp;
+			path = dom_elementimpl.cpp;
 			refType = 4;
 		};
 		F523D2F802DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_elementimpl.h;
-			path = khtml/xml/dom_elementimpl.h;
+			path = dom_elementimpl.h;
 			refType = 4;
 		};
 		F523D2F902DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_nodeimpl.cpp;
-			path = khtml/xml/dom_nodeimpl.cpp;
+			path = dom_nodeimpl.cpp;
 			refType = 4;
 		};
 		F523D2FA02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_nodeimpl.h;
-			path = khtml/xml/dom_nodeimpl.h;
+			path = dom_nodeimpl.h;
 			refType = 4;
 		};
 		F523D2FB02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_stringimpl.cpp;
-			path = khtml/xml/dom_stringimpl.cpp;
+			path = dom_stringimpl.cpp;
 			refType = 4;
 		};
 		F523D2FC02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_stringimpl.h;
-			path = khtml/xml/dom_stringimpl.h;
+			path = dom_stringimpl.h;
 			refType = 4;
 		};
 		F523D2FD02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_textimpl.cpp;
-			path = khtml/xml/dom_textimpl.cpp;
+			path = dom_textimpl.cpp;
 			refType = 4;
 		};
 		F523D2FE02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_textimpl.h;
-			path = khtml/xml/dom_textimpl.h;
+			path = dom_textimpl.h;
 			refType = 4;
 		};
 		F523D2FF02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_xmlimpl.cpp;
-			path = khtml/xml/dom_xmlimpl.cpp;
+			path = dom_xmlimpl.cpp;
 			refType = 4;
 		};
 		F523D30002DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom_xmlimpl.h;
-			path = khtml/xml/dom_xmlimpl.h;
+			path = dom_xmlimpl.h;
 			refType = 4;
 		};
 		F523D30102DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_eventsimpl.cpp;
-			path = khtml/xml/dom2_eventsimpl.cpp;
+			path = dom2_eventsimpl.cpp;
 			refType = 4;
 		};
 		F523D30202DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_eventsimpl.h;
-			path = khtml/xml/dom2_eventsimpl.h;
+			path = dom2_eventsimpl.h;
 			refType = 4;
 		};
 		F523D30302DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_rangeimpl.cpp;
-			path = khtml/xml/dom2_rangeimpl.cpp;
+			path = dom2_rangeimpl.cpp;
 			refType = 4;
 		};
 		F523D30402DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_rangeimpl.h;
-			path = khtml/xml/dom2_rangeimpl.h;
+			path = dom2_rangeimpl.h;
 			refType = 4;
 		};
 		F523D30502DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_traversalimpl.cpp;
-			path = khtml/xml/dom2_traversalimpl.cpp;
+			path = dom2_traversalimpl.cpp;
 			refType = 4;
 		};
 		F523D30602DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_traversalimpl.h;
-			path = khtml/xml/dom2_traversalimpl.h;
+			path = dom2_traversalimpl.h;
 			refType = 4;
 		};
 		F523D30702DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_viewsimpl.cpp;
-			path = khtml/xml/dom2_viewsimpl.cpp;
+			path = dom2_viewsimpl.cpp;
 			refType = 4;
 		};
 		F523D30802DE4476018635CA = {
 			isa = PBXFileReference;
-			name = dom2_viewsimpl.h;
-			path = khtml/xml/dom2_viewsimpl.h;
+			path = dom2_viewsimpl.h;
 			refType = 4;
 		};
 		F523D30902DE4476018635CA = {
 			isa = PBXFileReference;
-			name = xml_tokenizer.cpp;
-			path = khtml/xml/xml_tokenizer.cpp;
+			path = xml_tokenizer.cpp;
 			refType = 4;
 		};
 		F523D30A02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = xml_tokenizer.h;
-			path = khtml/xml/xml_tokenizer.h;
+			path = xml_tokenizer.h;
 			refType = 4;
 		};
 		F523D30B02DE4476018635CA = {
 			isa = PBXFileReference;
-			name = xml_tokenizer.moc;
-			path = khtml/xml/xml_tokenizer.moc;
+			path = xml_tokenizer.moc;
 			refType = 4;
 		};
 		F523D30C02DE4476018635CA = {
@@ -3768,12 +3542,12 @@
 			);
 			isa = PBXGroup;
 			name = xml;
-			refType = 4;
+			path = khtml/xml;
+			refType = 2;
 		};
 		F52CA70F02DFACBD018635CA = {
 			isa = PBXFileReference;
-			name = WebCoreFrameBridge.mm;
-			path = kwq/WebCoreFrameBridge.mm;
+			path = WebCoreFrameBridge.mm;
 			refType = 4;
 		};
 		F52CA71002DFACBD018635CA = {
@@ -3784,9 +3558,8 @@
 		};
 		F54A61D302E3523B01A80180 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLPartImpl.cpp;
-			path = kwq/KWQKHTMLPartImpl.cpp;
-			refType = 2;
+			path = KWQKHTMLPartImpl.cpp;
+			refType = 4;
 		};
 		F54A61D402E3523B01A80180 = {
 			fileRef = F54A61D302E3523B01A80180;
@@ -3796,32 +3569,27 @@
 		};
 		F550D70902E13281018635CA = {
 			isa = PBXFileReference;
-			name = KWQCharsetData.c;
-			path = kwq/KWQCharsetData.c;
+			path = KWQCharsetData.c;
 			refType = 4;
 		};
 		F550D70A02E13281018635CA = {
 			isa = PBXFileReference;
-			name = KWQPushButton.mm;
-			path = kwq/KWQPushButton.mm;
+			path = KWQPushButton.mm;
 			refType = 4;
 		};
 		F550D70B02E13281018635CA = {
 			isa = PBXFileReference;
-			name = "mac-encodings.txt";
-			path = "kwq/mac-encodings.txt";
+			path = "mac-encodings.txt";
 			refType = 4;
 		};
 		F550D70C02E13281018635CA = {
 			isa = PBXExecutableFileReference;
-			name = "make-charset-table.pl";
-			path = "kwq/make-charset-table.pl";
+			path = "make-charset-table.pl";
 			refType = 4;
 		};
 		F550D70E02E13281018635CA = {
 			isa = PBXFileReference;
-			name = "make-mac-encodings.c";
-			path = "kwq/make-mac-encodings.c";
+			path = "make-mac-encodings.c";
 			refType = 4;
 		};
 		F550D71002E132BB018635CA = {
@@ -3832,842 +3600,702 @@
 		};
 		F58784C402DE375801EA4122 = {
 			isa = PBXFileReference;
-			name = KWQApplication.mm;
-			path = kwq/KWQApplication.mm;
+			path = KWQApplication.mm;
 			refType = 4;
 		};
 		F58784C502DE375801EA4122 = {
 			isa = PBXFileReference;
-			name = KWQArrayImpl.h;
-			path = kwq/KWQArrayImpl.h;
+			path = KWQArrayImpl.h;
 			refType = 4;
 		};
 		F58784C602DE375801EA4122 = {
 			isa = PBXFileReference;
-			name = KWQArrayImpl.mm;
-			path = kwq/KWQArrayImpl.mm;
+			path = KWQArrayImpl.mm;
 			refType = 4;
 		};
 		F58784C702DE375801EA4122 = {
 			isa = PBXFileReference;
-			name = KWQbrowserinterface.mm;
-			path = kwq/KWQbrowserinterface.mm;
+			path = KWQbrowserinterface.mm;
 			refType = 4;
 		};
 		F58784C802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQBuffer.mm;
-			path = kwq/KWQBuffer.mm;
+			path = KWQBuffer.mm;
 			refType = 4;
 		};
 		F58784C902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQButton.mm;
-			path = kwq/KWQButton.mm;
+			path = KWQButton.mm;
 			refType = 4;
 		};
 		F58784CA02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQChar.mm;
-			path = kwq/KWQChar.mm;
+			path = KWQChar.mm;
 			refType = 4;
 		};
 		F58784CC02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCharsets.h;
-			path = kwq/KWQCharsets.h;
+			path = KWQCharsets.h;
 			refType = 4;
 		};
 		F58784CD02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCharsets.mm;
-			path = kwq/KWQCharsets.mm;
+			path = KWQCharsets.mm;
 			refType = 4;
 		};
 		F58784CE02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCheckBox.mm;
-			path = kwq/KWQCheckBox.mm;
+			path = KWQCheckBox.mm;
 			refType = 4;
 		};
 		F58784CF02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCollection.mm;
-			path = kwq/KWQCollection.mm;
+			path = KWQCollection.mm;
 			refType = 4;
 		};
 		F58784D002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQColor.mm;
-			path = kwq/KWQColor.mm;
+			path = KWQColor.mm;
 			refType = 4;
 		};
 		F58784D102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQColorGroup.mm;
-			path = kwq/KWQColorGroup.mm;
+			path = KWQColorGroup.mm;
 			refType = 4;
 		};
 		F58784D202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQComboBox.mm;
-			path = kwq/KWQComboBox.mm;
+			path = KWQComboBox.mm;
 			refType = 4;
 		};
 		F58784D302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCompletion.h;
-			path = kwq/KWQCompletion.h;
+			path = KWQCompletion.h;
 			refType = 4;
 		};
 		F58784D402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCompletion.mm;
-			path = kwq/KWQCompletion.mm;
+			path = KWQCompletion.mm;
 			refType = 4;
 		};
 		F58784D502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCString.mm;
-			path = kwq/KWQCString.mm;
+			path = KWQCString.mm;
 			refType = 4;
 		};
 		F58784D602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQCursor.mm;
-			path = kwq/KWQCursor.mm;
+			path = KWQCursor.mm;
 			refType = 4;
 		};
 		F58784D702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQDateTime.mm;
-			path = kwq/KWQDateTime.mm;
+			path = KWQDateTime.mm;
 			refType = 4;
 		};
 		F58784D802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = kwqdebug.h;
-			path = kwq/kwqdebug.h;
+			path = kwqdebug.h;
 			refType = 4;
 		};
 		F58784D902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = kwqdebug.mm;
-			path = kwq/kwqdebug.mm;
+			path = kwqdebug.mm;
 			refType = 4;
 		};
 		F58784DA02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQDef.h;
-			path = kwq/KWQDef.h;
+			path = KWQDef.h;
 			refType = 4;
 		};
 		F58784DB02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQDictImpl.h;
-			path = kwq/KWQDictImpl.h;
+			path = KWQDictImpl.h;
 			refType = 4;
 		};
 		F58784DC02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQDictImpl.mm;
-			path = kwq/KWQDictImpl.mm;
+			path = KWQDictImpl.mm;
 			refType = 4;
 		};
 		F58784DD02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQDrawUtil.mm;
-			path = kwq/KWQDrawUtil.mm;
+			path = KWQDrawUtil.mm;
 			refType = 4;
 		};
 		F58784DE02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQEvent.mm;
-			path = kwq/KWQEvent.mm;
+			path = KWQEvent.mm;
 			refType = 4;
 		};
 		F58784DF02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQFile.mm;
-			path = kwq/KWQFile.mm;
+			path = KWQFile.mm;
 			refType = 4;
 		};
 		F58784E002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQFont.mm;
-			path = kwq/KWQFont.mm;
+			path = KWQFont.mm;
 			refType = 4;
 		};
 		F58784E102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQFontInfo.mm;
-			path = kwq/KWQFontInfo.mm;
+			path = KWQFontInfo.mm;
 			refType = 4;
 		};
 		F58784E202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQFontMetrics.mm;
-			path = kwq/KWQFontMetrics.mm;
+			path = KWQFontMetrics.mm;
 			refType = 4;
 		};
 		F58784E302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQFrame.h;
-			path = kwq/KWQFrame.h;
+			path = KWQFrame.h;
 			refType = 4;
 		};
 		F58784E402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQFrame.mm;
-			path = kwq/KWQFrame.mm;
+			path = KWQFrame.mm;
 			refType = 4;
 		};
 		F58784E502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQGlobal.mm;
-			path = kwq/KWQGlobal.mm;
+			path = KWQGlobal.mm;
 			refType = 4;
 		};
 		F58784E602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQGuardedPtr.mm;
-			path = kwq/KWQGuardedPtr.mm;
+			path = KWQGuardedPtr.mm;
 			refType = 4;
 		};
 		F58784E702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQHBox.mm;
-			path = kwq/KWQHBox.mm;
+			path = KWQHBox.mm;
 			refType = 4;
 		};
 		F58784E802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQInputDialog.mm;
-			path = kwq/KWQInputDialog.mm;
+			path = KWQInputDialog.mm;
 			refType = 4;
 		};
 		F58784E902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQInvisibleButton.h;
-			path = kwq/KWQInvisibleButton.h;
+			path = KWQInvisibleButton.h;
 			refType = 4;
 		};
 		F58784EA02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQInvisibleButton.mm;
-			path = kwq/KWQInvisibleButton.mm;
+			path = KWQInvisibleButton.mm;
 			refType = 4;
 		};
 		F58784EB02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKCharsets.mm;
-			path = kwq/KWQKCharsets.mm;
+			path = KWQKCharsets.mm;
 			refType = 4;
 		};
 		F58784EC02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKComboBox.mm;
-			path = kwq/KWQKComboBox.mm;
+			path = KWQKComboBox.mm;
 			refType = 4;
 		};
 		F58784ED02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKConfigBase.mm;
-			path = kwq/KWQKConfigBase.mm;
+			path = KWQKConfigBase.mm;
 			refType = 4;
 		};
 		F58784EE02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKCookieJar.h;
-			path = kwq/KWQKCookieJar.h;
+			path = KWQKCookieJar.h;
 			refType = 4;
 		};
 		F58784EF02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKCookieJar.mm;
-			path = kwq/KWQKCookieJar.mm;
+			path = KWQKCookieJar.mm;
 			refType = 4;
 		};
 		F58784F002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKCursor.mm;
-			path = kwq/KWQKCursor.mm;
+			path = KWQKCursor.mm;
 			refType = 4;
 		};
 		F58784F202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKFileDialog.mm;
-			path = kwq/KWQKFileDialog.mm;
+			path = KWQKFileDialog.mm;
 			refType = 4;
 		};
 		F58784F302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKFileItem.mm;
-			path = kwq/KWQKFileItem.mm;
+			path = KWQKFileItem.mm;
 			refType = 4;
 		};
 		F58784F402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKGlobal.mm;
-			path = kwq/KWQKGlobal.mm;
+			path = KWQKGlobal.mm;
 			refType = 4;
 		};
 		F58784F502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKGlobalSettings.mm;
-			path = kwq/KWQKGlobalSettings.mm;
+			path = KWQKGlobalSettings.mm;
 			refType = 4;
 		};
 		F58784F602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHistoryProvider.mm;
-			path = kwq/KWQKHistoryProvider.mm;
+			path = KWQKHistoryProvider.mm;
 			refType = 4;
 		};
 		F58784F702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLFactory.mm;
-			path = kwq/KWQKHTMLFactory.mm;
+			path = KWQKHTMLFactory.mm;
 			refType = 4;
 		};
 		F58784F802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLPartImpl.mm;
-			path = kwq/KWQKHTMLPartImpl.mm;
+			path = KWQKHTMLPartImpl.mm;
 			refType = 4;
 		};
 		F58784F902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLPartBrowserExtension.mm;
-			path = kwq/KWQKHTMLPartBrowserExtension.mm;
+			path = KWQKHTMLPartBrowserExtension.mm;
 			refType = 4;
 		};
 		F58784FA02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLPartImpl.h;
-			path = kwq/KWQKHTMLPartImpl.h;
+			path = KWQKHTMLPartImpl.h;
 			refType = 4;
 		};
 		F58784FB02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLSettings.mm;
-			path = kwq/KWQKHTMLSettings.mm;
+			path = KWQKHTMLSettings.mm;
 			refType = 4;
 		};
 		F58784FC02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKHTMLView.mm;
-			path = kwq/KWQKHTMLView.mm;
+			path = KWQKHTMLView.mm;
 			refType = 4;
 		};
 		F58784FD02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKIconLoader.mm;
-			path = kwq/KWQKIconLoader.mm;
+			path = KWQKIconLoader.mm;
 			refType = 4;
 		};
 		F58784FF02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKJavaAppletWidget.mm;
-			path = kwq/KWQKJavaAppletWidget.mm;
+			path = KWQKJavaAppletWidget.mm;
 			refType = 4;
 		};
 		F587850002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKJob.mm;
-			path = kwq/KWQKJob.mm;
+			path = KWQKJob.mm;
 			refType = 4;
 		};
 		F587850102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKjobclasses.mm;
-			path = kwq/KWQKjobclasses.mm;
+			path = KWQKjobclasses.mm;
 			refType = 4;
 		};
 		F587850202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKLineEdit.mm;
-			path = kwq/KWQKLineEdit.mm;
+			path = KWQKLineEdit.mm;
 			refType = 4;
 		};
 		F587850302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQLoaderImpl.mm;
-			path = kwq/KWQLoaderImpl.mm;
+			path = KWQLoaderImpl.mm;
 			refType = 4;
 		};
 		F587850402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKLocale.mm;
-			path = kwq/KWQKLocale.mm;
+			path = KWQKLocale.mm;
 			refType = 4;
 		};
 		F587850502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKMessageBox.mm;
-			path = kwq/KWQKMessageBox.mm;
+			path = KWQKMessageBox.mm;
 			refType = 4;
 		};
 		F587850602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKMimeType.mm;
-			path = kwq/KWQKMimeType.mm;
+			path = KWQKMimeType.mm;
 			refType = 4;
 		};
 		F587850702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKnetaccess.mm;
-			path = kwq/KWQKnetaccess.mm;
+			path = KWQKnetaccess.mm;
 			refType = 4;
 		};
 		F587850802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKPartsEvent.mm;
-			path = kwq/KWQKPartsEvent.mm;
+			path = KWQKPartsEvent.mm;
 			refType = 4;
 		};
 		F587850A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKProtocolManager.mm;
-			path = kwq/KWQKProtocolManager.mm;
+			path = KWQKProtocolManager.mm;
 			refType = 4;
 		};
 		F587850B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKSimpleConfig.mm;
-			path = kwq/KWQKSimpleConfig.mm;
+			path = KWQKSimpleConfig.mm;
 			refType = 4;
 		};
 		F587850C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKstddirs.mm;
-			path = kwq/KWQKstddirs.mm;
+			path = KWQKstddirs.mm;
 			refType = 4;
 		};
 		F587850D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKStringHandler.mm;
-			path = kwq/KWQKStringHandler.mm;
+			path = KWQKStringHandler.mm;
 			refType = 4;
 		};
 		F587850E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKURL.mm;
-			path = kwq/KWQKURL.mm;
+			path = KWQKURL.mm;
 			refType = 4;
 		};
 		F587850F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKWin.mm;
-			path = kwq/KWQKWin.mm;
+			path = KWQKWin.mm;
 			refType = 4;
 		};
 		F587851002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQKWinModule.mm;
-			path = kwq/KWQKWinModule.mm;
+			path = KWQKWinModule.mm;
 			refType = 4;
 		};
 		F587851102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQLabel.mm;
-			path = kwq/KWQLabel.mm;
+			path = KWQLabel.mm;
 			refType = 4;
 		};
 		F587851202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQLineEdit.mm;
-			path = kwq/KWQLineEdit.mm;
+			path = KWQLineEdit.mm;
 			refType = 4;
 		};
 		F587851302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQListBox.h;
-			path = kwq/KWQListBox.h;
+			path = KWQListBox.h;
 			refType = 4;
 		};
 		F587851402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQListBox.mm;
-			path = kwq/KWQListBox.mm;
+			path = KWQListBox.mm;
 			refType = 4;
 		};
 		F587851502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQListImpl.h;
-			path = kwq/KWQListImpl.h;
+			path = KWQListImpl.h;
 			refType = 4;
 		};
 		F587851602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQListImpl.mm;
-			path = kwq/KWQListImpl.mm;
+			path = KWQListImpl.mm;
 			refType = 4;
 		};
 		F587851702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQLoaderImpl.h;
-			path = kwq/KWQLoaderImpl.h;
+			path = KWQLoaderImpl.h;
 			refType = 4;
 		};
 		F587851802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQMapImpl.h;
-			path = kwq/KWQMapImpl.h;
+			path = KWQMapImpl.h;
 			refType = 4;
 		};
 		F587851902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQMapImpl.mm;
-			path = kwq/KWQMapImpl.mm;
+			path = KWQMapImpl.mm;
 			refType = 4;
 		};
 		F587851A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQMovie.mm;
-			path = kwq/KWQMovie.mm;
+			path = KWQMovie.mm;
 			refType = 4;
 		};
 		F587851B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQNSTextField.h;
-			path = kwq/KWQNSTextField.h;
+			path = KWQNSTextField.h;
 			refType = 4;
 		};
 		F587851C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQNSTextField.mm;
-			path = kwq/KWQNSTextField.mm;
+			path = KWQNSTextField.mm;
 			refType = 4;
 		};
 		F587851D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQObject.mm;
-			path = kwq/KWQObject.mm;
+			path = KWQObject.mm;
 			refType = 4;
 		};
 		F587851E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPaintDeviceMetrics.mm;
-			path = kwq/KWQPaintDeviceMetrics.mm;
+			path = KWQPaintDeviceMetrics.mm;
 			refType = 4;
 		};
 		F587851F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPainter.mm;
-			path = kwq/KWQPainter.mm;
+			path = KWQPainter.mm;
 			refType = 4;
 		};
 		F587852002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPalette.mm;
-			path = kwq/KWQPalette.mm;
+			path = KWQPalette.mm;
 			refType = 4;
 		};
 		F587852102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPen.mm;
-			path = kwq/KWQPen.mm;
+			path = KWQPen.mm;
 			refType = 4;
 		};
 		F587852202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPixmap.mm;
-			path = kwq/KWQPixmap.mm;
+			path = KWQPixmap.mm;
 			refType = 4;
 		};
 		F587852302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPoint.mm;
-			path = kwq/KWQPoint.mm;
+			path = KWQPoint.mm;
 			refType = 4;
 		};
 		F587852402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPointArray.mm;
-			path = kwq/KWQPointArray.mm;
+			path = KWQPointArray.mm;
 			refType = 4;
 		};
 		F587852502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPtrDictImpl.h;
-			path = kwq/KWQPtrDictImpl.h;
+			path = KWQPtrDictImpl.h;
 			refType = 4;
 		};
 		F587852602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQPtrDictImpl.mm;
-			path = kwq/KWQPtrDictImpl.mm;
+			path = KWQPtrDictImpl.mm;
 			refType = 4;
 		};
 		F587852802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQRadioButton.mm;
-			path = kwq/KWQRadioButton.mm;
+			path = KWQRadioButton.mm;
 			refType = 4;
 		};
 		F587852902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQRect.mm;
-			path = kwq/KWQRect.mm;
+			path = KWQRect.mm;
 			refType = 4;
 		};
 		F587852A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQRefPtr.h;
-			path = kwq/KWQRefPtr.h;
+			path = KWQRefPtr.h;
 			refType = 4;
 		};
 		F587852B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQRegExp.mm;
-			path = kwq/KWQRegExp.mm;
+			path = KWQRegExp.mm;
 			refType = 4;
 		};
 		F587852C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQRegion.mm;
-			path = kwq/KWQRegion.mm;
+			path = KWQRegion.mm;
 			refType = 4;
 		};
 		F587852D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQScrollBar.h;
-			path = kwq/KWQScrollBar.h;
+			path = KWQScrollBar.h;
 			refType = 4;
 		};
 		F587852E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQScrollView.mm;
-			path = kwq/KWQScrollView.mm;
+			path = KWQScrollView.mm;
 			refType = 4;
 		};
 		F587852F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQsignals.mm;
-			path = kwq/KWQsignals.mm;
+			path = KWQsignals.mm;
 			refType = 4;
 		};
 		F587853002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQSize.mm;
-			path = kwq/KWQSize.mm;
+			path = KWQSize.mm;
 			refType = 4;
 		};
 		F587853102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQString.mm;
-			path = kwq/KWQString.mm;
+			path = KWQString.mm;
 			refType = 4;
 		};
 		F587853202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQStringList.mm;
-			path = kwq/KWQStringList.mm;
+			path = KWQStringList.mm;
 			refType = 4;
 		};
 		F587853302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQStyle.h;
-			path = kwq/KWQStyle.h;
+			path = KWQStyle.h;
 			refType = 4;
 		};
 		F587853402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQStyleSheet.mm;
-			path = kwq/KWQStyleSheet.mm;
+			path = KWQStyleSheet.mm;
 			refType = 4;
 		};
 		F587853502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQTextArea.h;
-			path = kwq/KWQTextArea.h;
+			path = KWQTextArea.h;
 			refType = 4;
 		};
 		F587853602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQTextArea.mm;
-			path = kwq/KWQTextArea.mm;
+			path = KWQTextArea.mm;
 			refType = 4;
 		};
 		F587853702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQtextcodec.mm;
-			path = kwq/KWQtextcodec.mm;
+			path = KWQtextcodec.mm;
 			refType = 4;
 		};
 		F587853802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQTextEdit.mm;
-			path = kwq/KWQTextEdit.mm;
+			path = KWQTextEdit.mm;
 			refType = 4;
 		};
 		F587853902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQtextstream.mm;
-			path = kwq/KWQtextstream.mm;
+			path = KWQtextstream.mm;
 			refType = 4;
 		};
 		F587853A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQTimer.mm;
-			path = kwq/KWQTimer.mm;
+			path = KWQTimer.mm;
 			refType = 4;
 		};
 		F587853B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQValueListImpl.h;
-			path = kwq/KWQValueListImpl.h;
+			path = KWQValueListImpl.h;
 			refType = 4;
 		};
 		F587853C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQValueListImpl.mm;
-			path = kwq/KWQValueListImpl.mm;
+			path = KWQValueListImpl.mm;
 			refType = 4;
 		};
 		F587853D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQVariant.mm;
-			path = kwq/KWQVariant.mm;
+			path = KWQVariant.mm;
 			refType = 4;
 		};
 		F587853E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQVectorImpl.h;
-			path = kwq/KWQVectorImpl.h;
+			path = KWQVectorImpl.h;
 			refType = 4;
 		};
 		F587853F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQVectorImpl.mm;
-			path = kwq/KWQVectorImpl.mm;
+			path = KWQVectorImpl.mm;
 			refType = 4;
 		};
 		F587854002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQView.h;
-			path = kwq/KWQView.h;
+			path = KWQView.h;
 			refType = 4;
 		};
 		F587854102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQView.mm;
-			path = kwq/KWQView.mm;
+			path = KWQView.mm;
 			refType = 4;
 		};
 		F587854202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQWidget.mm;
-			path = kwq/KWQWidget.mm;
+			path = KWQWidget.mm;
 			refType = 4;
 		};
 		F587854302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQWindowWidget.h;
-			path = kwq/KWQWindowWidget.h;
+			path = KWQWindowWidget.h;
 			refType = 4;
 		};
 		F587854402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQWindowWidget.mm;
-			path = kwq/KWQWindowWidget.mm;
+			path = KWQWindowWidget.mm;
 			refType = 4;
 		};
 		F587854602DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = KWQxml.mm;
-			path = kwq/KWQxml.mm;
+			path = KWQxml.mm;
 			refType = 4;
 		};
 		F587854702DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreBridge.h;
-			path = kwq/WebCoreBridge.h;
+			path = WebCoreBridge.h;
 			refType = 4;
 		};
 		F587854802DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreBridge.mm;
-			path = kwq/WebCoreBridge.mm;
+			path = WebCoreBridge.mm;
 			refType = 4;
 		};
 		F587854902DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreCookieAdapter.h;
-			path = kwq/WebCoreCookieAdapter.h;
+			path = WebCoreCookieAdapter.h;
 			refType = 4;
 		};
 		F587854A02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreCookieAdapter.m;
-			path = kwq/WebCoreCookieAdapter.m;
+			path = WebCoreCookieAdapter.m;
 			refType = 4;
 		};
 		F587854B02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreFrameBridge.h;
-			path = kwq/WebCoreFrameBridge.h;
+			path = WebCoreFrameBridge.h;
 			refType = 4;
 		};
 		F587854C02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreFrameView.h;
-			path = kwq/WebCoreFrameView.h;
+			path = WebCoreFrameView.h;
 			refType = 4;
 		};
 		F587854D02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreImageRenderer.h;
-			path = kwq/WebCoreImageRenderer.h;
+			path = WebCoreImageRenderer.h;
 			refType = 4;
 		};
 		F587854E02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreImageRendererFactory.h;
-			path = kwq/WebCoreImageRendererFactory.h;
+			path = WebCoreImageRendererFactory.h;
 			refType = 4;
 		};
 		F587854F02DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreImageRendererFactory.m;
-			path = kwq/WebCoreImageRendererFactory.m;
+			path = WebCoreImageRendererFactory.m;
 			refType = 4;
 		};
 		F587855002DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreResourceLoader.h;
-			path = kwq/WebCoreResourceLoader.h;
+			path = WebCoreResourceLoader.h;
 			refType = 4;
 		};
 		F587855102DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreTextRenderer.h;
-			path = kwq/WebCoreTextRenderer.h;
+			path = WebCoreTextRenderer.h;
 			refType = 4;
 		};
 		F587855202DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreTextRendererFactory.h;
-			path = kwq/WebCoreTextRendererFactory.h;
+			path = WebCoreTextRendererFactory.h;
 			refType = 4;
 		};
 		F587855302DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreTextRendererFactory.m;
-			path = kwq/WebCoreTextRendererFactory.m;
+			path = WebCoreTextRendererFactory.m;
 			refType = 4;
 		};
 		F587855402DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreViewFactory.h;
-			path = kwq/WebCoreViewFactory.h;
+			path = WebCoreViewFactory.h;
 			refType = 4;
 		};
 		F587855502DE375901EA4122 = {
 			isa = PBXFileReference;
-			name = WebCoreViewFactory.m;
-			path = kwq/WebCoreViewFactory.m;
+			path = WebCoreViewFactory.m;
 			refType = 4;
 		};
 		F587855602DE375901EA4122 = {
@@ -5553,7 +5181,7 @@
 				F523D15002DE4271018635CA,
 			);
 			isa = PBXGroup;
-			name = kwq;
+			path = kwq;
 			refType = 4;
 		};
 		F58785E902DE378A01EA4122 = {
@@ -5583,18 +5211,17 @@
 			);
 			isa = PBXGroup;
 			name = "WebCore SPI";
+			path = kwq;
 			refType = 4;
 		};
 		F58785EA02DE37CB01EA4122 = {
 			isa = PBXFileReference;
-			name = dcopclient.h;
-			path = kwq/dcop/dcopclient.h;
+			path = dcopclient.h;
 			refType = 4;
 		};
 		F58785EB02DE37CB01EA4122 = {
 			isa = PBXFileReference;
-			name = kdatastream.h;
-			path = kwq/dcop/kdatastream.h;
+			path = kdatastream.h;
 			refType = 4;
 		};
 		F58785EC02DE37CB01EA4122 = {
@@ -5615,139 +5242,139 @@
 				F58785EB02DE37CB01EA4122,
 			);
 			isa = PBXGroup;
-			name = dcop;
+			path = dcop;
 			refType = 4;
 		};
 		F58785F002DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kapplication.h;
-			path = kwq/kdecore/kapplication.h;
+			path = kdecore/kapplication.h;
 			refType = 4;
 		};
 		F58785F102DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kcharsets.h;
-			path = kwq/kdecore/kcharsets.h;
+			path = kdecore/kcharsets.h;
 			refType = 4;
 		};
 		F58785F202DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kcmdlineargs.h;
-			path = kwq/kdecore/kcmdlineargs.h;
+			path = kdecore/kcmdlineargs.h;
 			refType = 4;
 		};
 		F58785F302DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kconfig.h;
-			path = kwq/kdecore/kconfig.h;
+			path = kdecore/kconfig.h;
 			refType = 4;
 		};
 		F58785F402DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kdebug.h;
-			path = kwq/kdecore/kdebug.h;
+			path = kdecore/kdebug.h;
 			refType = 4;
 		};
 		F58785F502DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kglobal.h;
-			path = kwq/kdecore/kglobal.h;
+			path = kdecore/kglobal.h;
 			refType = 4;
 		};
 		F58785F602DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kglobalsettings.h;
-			path = kwq/kdecore/kglobalsettings.h;
+			path = kdecore/kglobalsettings.h;
 			refType = 4;
 		};
 		F58785F702DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kiconloader.h;
-			path = kwq/kdecore/kiconloader.h;
+			path = kdecore/kiconloader.h;
 			refType = 4;
 		};
 		F58785F802DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kinstance.h;
-			path = kwq/kdecore/kinstance.h;
+			path = kdecore/kinstance.h;
 			refType = 4;
 		};
 		F58785F902DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = klibloader.h;
-			path = kwq/kdecore/klibloader.h;
+			path = kdecore/klibloader.h;
 			refType = 4;
 		};
 		F58785FA02DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = klocale.h;
-			path = kwq/kdecore/klocale.h;
+			path = kdecore/klocale.h;
 			refType = 4;
 		};
 		F58785FB02DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kmultipledrag.h;
-			path = kwq/kdecore/kmultipledrag.h;
+			path = kdecore/kmultipledrag.h;
 			refType = 4;
 		};
 		F58785FC02DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = ksimpleconfig.h;
-			path = kwq/kdecore/ksimpleconfig.h;
+			path = kdecore/ksimpleconfig.h;
 			refType = 4;
 		};
 		F58785FD02DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kstandarddirs.h;
-			path = kwq/kdecore/kstandarddirs.h;
+			path = kdecore/kstandarddirs.h;
 			refType = 4;
 		};
 		F58785FE02DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kstaticdeleter.h;
-			path = kwq/kdecore/kstaticdeleter.h;
+			path = kdecore/kstaticdeleter.h;
 			refType = 4;
 		};
 		F58785FF02DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kstddirs.h;
-			path = kwq/kdecore/kstddirs.h;
+			path = kdecore/kstddirs.h;
 			refType = 4;
 		};
 		F587860002DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kstringhandler.h;
-			path = kwq/kdecore/kstringhandler.h;
+			path = kdecore/kstringhandler.h;
 			refType = 4;
 		};
 		F587860102DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = ktempfile.h;
-			path = kwq/kdecore/ktempfile.h;
+			path = kdecore/ktempfile.h;
 			refType = 4;
 		};
 		F587860202DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kurl.h;
-			path = kwq/kdecore/kurl.h;
+			path = kdecore/kurl.h;
 			refType = 4;
 		};
 		F587860302DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kurldrag.h;
-			path = kwq/kdecore/kurldrag.h;
+			path = kdecore/kurldrag.h;
 			refType = 4;
 		};
 		F587860402DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kwin.h;
-			path = kwq/kdecore/kwin.h;
+			path = kdecore/kwin.h;
 			refType = 4;
 		};
 		F587860502DE382001EA4122 = {
 			isa = PBXFileReference;
 			name = kwinmodule.h;
-			path = kwq/kdecore/kwinmodule.h;
+			path = kdecore/kwinmodule.h;
 			refType = 4;
 		};
 		F587860602DE382001EA4122 = {
@@ -5926,60 +5553,61 @@
 			);
 			isa = PBXGroup;
 			name = kdecore;
+			path = "";
 			refType = 4;
 		};
 		F587861D02DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kaction.h;
-			path = kwq/kdeui/kaction.h;
+			path = kdeui/kaction.h;
 			refType = 4;
 		};
 		F587861E02DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kcombobox.h;
-			path = kwq/kdeui/kcombobox.h;
+			path = kdeui/kcombobox.h;
 			refType = 4;
 		};
 		F587861F02DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kcompletionbox.h;
-			path = kwq/kdeui/kcompletionbox.h;
+			path = kdeui/kcompletionbox.h;
 			refType = 4;
 		};
 		F587862002DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kcursor.h;
-			path = kwq/kdeui/kcursor.h;
+			path = kdeui/kcursor.h;
 			refType = 4;
 		};
 		F587862102DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = klineedit.h;
-			path = kwq/kdeui/klineedit.h;
+			path = kdeui/klineedit.h;
 			refType = 4;
 		};
 		F587862202DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = klistbox.h;
-			path = kwq/kdeui/klistbox.h;
+			path = kdeui/klistbox.h;
 			refType = 4;
 		};
 		F587862302DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kmessagebox.h;
-			path = kwq/kdeui/kmessagebox.h;
+			path = kdeui/kmessagebox.h;
 			refType = 4;
 		};
 		F587862402DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kstdaction.h;
-			path = kwq/kdeui/kstdaction.h;
+			path = kdeui/kstdaction.h;
 			refType = 4;
 		};
 		F587862502DE398401EA4122 = {
 			isa = PBXFileReference;
 			name = kxmlguifactory.h;
-			path = kwq/kdeui/kxmlguifactory.h;
+			path = kdeui/kxmlguifactory.h;
 			refType = 4;
 		};
 		F587862602DE398401EA4122 = {
@@ -6060,7 +5688,7 @@
 		F587863002DE39E601EA4122 = {
 			isa = PBXFileReference;
 			name = kfiledialog.h;
-			path = kwq/kfile/kfiledialog.h;
+			path = kfile/kfiledialog.h;
 			refType = 4;
 		};
 		F587863102DE39E601EA4122 = {
@@ -6082,49 +5710,49 @@
 		F587863302DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_ext.h;
-			path = kwq/khtml/khtml_ext.h;
+			path = khtml/khtml_ext.h;
 			refType = 4;
 		};
 		F587863402DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_factory.h;
-			path = kwq/khtml/khtml_factory.h;
+			path = khtml/khtml_factory.h;
 			refType = 4;
 		};
 		F587863502DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_find.h;
-			path = kwq/khtml/khtml_find.h;
+			path = khtml/khtml_find.h;
 			refType = 4;
 		};
 		F587863602DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_iface.h;
-			path = kwq/khtml/khtml_iface.h;
+			path = khtml/khtml_iface.h;
 			refType = 4;
 		};
 		F587863702DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_pagecache.h;
-			path = kwq/khtml/khtml_pagecache.h;
+			path = khtml/khtml_pagecache.h;
 			refType = 4;
 		};
 		F587863802DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_printsettings.h;
-			path = kwq/khtml/khtml_printsettings.h;
+			path = khtml/khtml_printsettings.h;
 			refType = 4;
 		};
 		F587863902DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_run.h;
-			path = kwq/khtml/khtml_run.h;
+			path = khtml/khtml_run.h;
 			refType = 4;
 		};
 		F587863A02DE3A1401EA4122 = {
 			isa = PBXFileReference;
 			name = khtml_settings.h;
-			path = kwq/khtml/khtml_settings.h;
+			path = khtml/khtml_settings.h;
 			refType = 4;
 		};
 		F587863B02DE3A1401EA4122 = {
@@ -6197,13 +5825,13 @@
 		F587864402DE3A7701EA4122 = {
 			isa = PBXFileReference;
 			name = kjavaappletcontext.h;
-			path = kwq/khtml/java/kjavaappletcontext.h;
+			path = khtml/java/kjavaappletcontext.h;
 			refType = 4;
 		};
 		F587864502DE3A7701EA4122 = {
 			isa = PBXFileReference;
 			name = kjavaappletwidget.h;
-			path = kwq/khtml/java/kjavaappletwidget.h;
+			path = khtml/java/kjavaappletwidget.h;
 			refType = 4;
 		};
 		F587864602DE3A7701EA4122 = {
@@ -6232,67 +5860,67 @@
 		F587864902DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = global.h;
-			path = kwq/kio/global.h;
+			path = kio/global.h;
 			refType = 4;
 		};
 		F587864A02DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = job.h;
-			path = kwq/kio/job.h;
+			path = kio/job.h;
 			refType = 4;
 		};
 		F587864B02DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = jobclasses.h;
-			path = kwq/kio/jobclasses.h;
+			path = kio/jobclasses.h;
 			refType = 4;
 		};
 		F587864C02DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = kfileitem.h;
-			path = kwq/kio/kfileitem.h;
+			path = kio/kfileitem.h;
 			refType = 4;
 		};
 		F587864D02DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = kimageio.h;
-			path = kwq/kio/kimageio.h;
+			path = kio/kimageio.h;
 			refType = 4;
 		};
 		F587864E02DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = kmimetype.h;
-			path = kwq/kio/kmimetype.h;
+			path = kio/kmimetype.h;
 			refType = 4;
 		};
 		F587864F02DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = kprinter.h;
-			path = kwq/kio/kprinter.h;
+			path = kio/kprinter.h;
 			refType = 4;
 		};
 		F587865002DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = kprotocolmanager.h;
-			path = kwq/kio/kprotocolmanager.h;
+			path = kio/kprotocolmanager.h;
 			refType = 4;
 		};
 		F587865102DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = ktrader.h;
-			path = kwq/kio/ktrader.h;
+			path = kio/ktrader.h;
 			refType = 4;
 		};
 		F587865202DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = netaccess.h;
-			path = kwq/kio/netaccess.h;
+			path = kio/netaccess.h;
 			refType = 4;
 		};
 		F587865302DE3A9A01EA4122 = {
 			isa = PBXFileReference;
 			name = scheduler.h;
-			path = kwq/kio/scheduler.h;
+			path = kio/scheduler.h;
 			refType = 4;
 		};
 		F587865402DE3A9A01EA4122 = {
@@ -6391,19 +6019,19 @@
 		F587866002DE3B1101EA4122 = {
 			isa = PBXFileReference;
 			name = ksslcertchain.h;
-			path = kwq/kio/kssl/ksslcertchain.h;
+			path = kio/kssl/ksslcertchain.h;
 			refType = 4;
 		};
 		F587866102DE3B1101EA4122 = {
 			isa = PBXFileReference;
 			name = ksslinfodlg.h;
-			path = kwq/kio/kssl/ksslinfodlg.h;
+			path = kio/kssl/ksslinfodlg.h;
 			refType = 4;
 		};
 		F587866202DE3B1101EA4122 = {
 			isa = PBXFileReference;
 			name = ksslkeygen.h;
-			path = kwq/kio/kssl/ksslkeygen.h;
+			path = kio/kssl/ksslkeygen.h;
 			refType = 4;
 		};
 		F587866302DE3B1101EA4122 = {
@@ -6432,48 +6060,49 @@
 			);
 			isa = PBXGroup;
 			name = kssl;
+			path = "";
 			refType = 4;
 		};
 		F587866702DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = browserextension.h;
-			path = kwq/kparts/browserextension.h;
+			path = kparts/browserextension.h;
 			refType = 4;
 		};
 		F587866802DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = browserinterface.h;
-			path = kwq/kparts/browserinterface.h;
+			path = kparts/browserinterface.h;
 			refType = 4;
 		};
 		F587866902DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = event.h;
-			path = kwq/kparts/event.h;
+			path = kparts/event.h;
 			refType = 4;
 		};
 		F587866A02DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = factory.h;
-			path = kwq/kparts/factory.h;
+			path = kparts/factory.h;
 			refType = 4;
 		};
 		F587866B02DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = historyprovider.h;
-			path = kwq/kparts/historyprovider.h;
+			path = kparts/historyprovider.h;
 			refType = 4;
 		};
 		F587866C02DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = part.h;
-			path = kwq/kparts/part.h;
+			path = kparts/part.h;
 			refType = 4;
 		};
 		F587866D02DE3B3201EA4122 = {
 			isa = PBXFileReference;
 			name = partmanager.h;
-			path = kwq/kparts/partmanager.h;
+			path = kparts/partmanager.h;
 			refType = 4;
 		};
 		F587866E02DE3B3201EA4122 = {
@@ -6542,481 +6171,481 @@
 			isa = PBXFileReference;
 			lineEnding = 0;
 			name = qapplication.h;
-			path = kwq/qt/qapplication.h;
+			path = qt/qapplication.h;
 			refType = 4;
 		};
 		F587867702DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qarray.h;
-			path = kwq/qt/qarray.h;
+			path = qt/qarray.h;
 			refType = 4;
 		};
 		F587867802DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qasyncimageio.h;
-			path = kwq/qt/qasyncimageio.h;
+			path = qt/qasyncimageio.h;
 			refType = 4;
 		};
 		F587867902DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qasyncio.h;
-			path = kwq/qt/qasyncio.h;
+			path = qt/qasyncio.h;
 			refType = 4;
 		};
 		F587867A02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qbitmap.h;
-			path = kwq/qt/qbitmap.h;
+			path = qt/qbitmap.h;
 			refType = 4;
 		};
 		F587867B02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qbrush.h;
-			path = kwq/qt/qbrush.h;
+			path = qt/qbrush.h;
 			refType = 4;
 		};
 		F587867C02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qbuffer.h;
-			path = kwq/qt/qbuffer.h;
+			path = qt/qbuffer.h;
 			refType = 4;
 		};
 		F587867D02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qbutton.h;
-			path = kwq/qt/qbutton.h;
+			path = qt/qbutton.h;
 			refType = 4;
 		};
 		F587867E02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qcheckbox.h;
-			path = kwq/qt/qcheckbox.h;
+			path = qt/qcheckbox.h;
 			refType = 4;
 		};
 		F587867F02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qclipboard.h;
-			path = kwq/qt/qclipboard.h;
+			path = qt/qclipboard.h;
 			refType = 4;
 		};
 		F587868002DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qcollection.h;
-			path = kwq/qt/qcollection.h;
+			path = qt/qcollection.h;
 			refType = 4;
 		};
 		F587868102DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qcolor.h;
-			path = kwq/qt/qcolor.h;
+			path = qt/qcolor.h;
 			refType = 4;
 		};
 		F587868202DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qcombobox.h;
-			path = kwq/qt/qcombobox.h;
+			path = qt/qcombobox.h;
 			refType = 4;
 		};
 		F587868302DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qcstring.h;
-			path = kwq/qt/qcstring.h;
+			path = qt/qcstring.h;
 			refType = 4;
 		};
 		F587868402DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qcursor.h;
-			path = kwq/qt/qcursor.h;
+			path = qt/qcursor.h;
 			refType = 4;
 		};
 		F587868502DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qdatetime.h;
-			path = kwq/qt/qdatetime.h;
+			path = qt/qdatetime.h;
 			refType = 4;
 		};
 		F587868602DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qdict.h;
-			path = kwq/qt/qdict.h;
+			path = qt/qdict.h;
 			refType = 4;
 		};
 		F587868702DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qdrawutil.h;
-			path = kwq/qt/qdrawutil.h;
+			path = qt/qdrawutil.h;
 			refType = 4;
 		};
 		F587868802DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qevent.h;
-			path = kwq/qt/qevent.h;
+			path = qt/qevent.h;
 			refType = 4;
 		};
 		F587868902DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qfile.h;
-			path = kwq/qt/qfile.h;
+			path = qt/qfile.h;
 			refType = 4;
 		};
 		F587868A02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qfont.h;
-			path = kwq/qt/qfont.h;
+			path = qt/qfont.h;
 			refType = 4;
 		};
 		F587868B02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qfontdatabase.h;
-			path = kwq/qt/qfontdatabase.h;
+			path = qt/qfontdatabase.h;
 			refType = 4;
 		};
 		F587868C02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qfontinfo.h;
-			path = kwq/qt/qfontinfo.h;
+			path = qt/qfontinfo.h;
 			refType = 4;
 		};
 		F587868D02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qfontmetrics.h;
-			path = kwq/qt/qfontmetrics.h;
+			path = qt/qfontmetrics.h;
 			refType = 4;
 		};
 		F587868E02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qframe.h;
-			path = kwq/qt/qframe.h;
+			path = qt/qframe.h;
 			refType = 4;
 		};
 		F587868F02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qglobal.h;
-			path = kwq/qt/qglobal.h;
+			path = qt/qglobal.h;
 			refType = 4;
 		};
 		F587869002DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qguardedptr.h;
-			path = kwq/qt/qguardedptr.h;
+			path = qt/qguardedptr.h;
 			refType = 4;
 		};
 		F587869102DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qhbox.h;
-			path = kwq/qt/qhbox.h;
+			path = qt/qhbox.h;
 			refType = 4;
 		};
 		F587869202DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qimage.h;
-			path = kwq/qt/qimage.h;
+			path = qt/qimage.h;
 			refType = 4;
 		};
 		F587869302DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qinputdialog.h;
-			path = kwq/qt/qinputdialog.h;
+			path = qt/qinputdialog.h;
 			refType = 4;
 		};
 		F587869402DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qintcache.h;
-			path = kwq/qt/qintcache.h;
+			path = qt/qintcache.h;
 			refType = 4;
 		};
 		F587869502DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qintdict.h;
-			path = kwq/qt/qintdict.h;
+			path = qt/qintdict.h;
 			refType = 4;
 		};
 		F587869602DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qiodevice.h;
-			path = kwq/qt/qiodevice.h;
+			path = qt/qiodevice.h;
 			refType = 4;
 		};
 		F587869702DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qlabel.h;
-			path = kwq/qt/qlabel.h;
+			path = qt/qlabel.h;
 			refType = 4;
 		};
 		F587869802DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qlineedit.h;
-			path = kwq/qt/qlineedit.h;
+			path = qt/qlineedit.h;
 			refType = 4;
 		};
 		F587869902DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qlist.h;
-			path = kwq/qt/qlist.h;
+			path = qt/qlist.h;
 			refType = 4;
 		};
 		F587869A02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qmap.h;
-			path = kwq/qt/qmap.h;
+			path = qt/qmap.h;
 			refType = 4;
 		};
 		F587869B02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qmemarray.h;
-			path = kwq/qt/qmemarray.h;
+			path = qt/qmemarray.h;
 			refType = 4;
 		};
 		F587869C02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qmetaobject.h;
-			path = kwq/qt/qmetaobject.h;
+			path = qt/qmetaobject.h;
 			refType = 4;
 		};
 		F587869D02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qmovie.h;
-			path = kwq/qt/qmovie.h;
+			path = qt/qmovie.h;
 			refType = 4;
 		};
 		F587869E02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qnamespace.h;
-			path = kwq/qt/qnamespace.h;
+			path = qt/qnamespace.h;
 			refType = 4;
 		};
 		F587869F02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qobject.h;
-			path = kwq/qt/qobject.h;
+			path = qt/qobject.h;
 			refType = 4;
 		};
 		F58786A002DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qobjectlist.h;
-			path = kwq/qt/qobjectlist.h;
+			path = qt/qobjectlist.h;
 			refType = 4;
 		};
 		F58786A102DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpaintdevice.h;
-			path = kwq/qt/qpaintdevice.h;
+			path = qt/qpaintdevice.h;
 			refType = 4;
 		};
 		F58786A202DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpaintdevicemetrics.h;
-			path = kwq/qt/qpaintdevicemetrics.h;
+			path = qt/qpaintdevicemetrics.h;
 			refType = 4;
 		};
 		F58786A302DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpainter.h;
-			path = kwq/qt/qpainter.h;
+			path = qt/qpainter.h;
 			refType = 4;
 		};
 		F58786A402DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpalette.h;
-			path = kwq/qt/qpalette.h;
+			path = qt/qpalette.h;
 			refType = 4;
 		};
 		F58786A502DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpen.h;
-			path = kwq/qt/qpen.h;
+			path = qt/qpen.h;
 			refType = 4;
 		};
 		F58786A602DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpixmap.h;
-			path = kwq/qt/qpixmap.h;
+			path = qt/qpixmap.h;
 			refType = 4;
 		};
 		F58786A702DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpoint.h;
-			path = kwq/qt/qpoint.h;
+			path = qt/qpoint.h;
 			refType = 4;
 		};
 		F58786A802DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpointarray.h;
-			path = kwq/qt/qpointarray.h;
+			path = qt/qpointarray.h;
 			refType = 4;
 		};
 		F58786AA02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qprinter.h;
-			path = kwq/qt/qprinter.h;
+			path = qt/qprinter.h;
 			refType = 4;
 		};
 		F58786AB02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qptrdict.h;
-			path = kwq/qt/qptrdict.h;
+			path = qt/qptrdict.h;
 			refType = 4;
 		};
 		F58786AC02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qptrlist.h;
-			path = kwq/qt/qptrlist.h;
+			path = qt/qptrlist.h;
 			refType = 4;
 		};
 		F58786AD02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qptrqueue.h;
-			path = kwq/qt/qptrqueue.h;
+			path = qt/qptrqueue.h;
 			refType = 4;
 		};
 		F58786AE02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qptrstack.h;
-			path = kwq/qt/qptrstack.h;
+			path = qt/qptrstack.h;
 			refType = 4;
 		};
 		F58786AF02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qptrvector.h;
-			path = kwq/qt/qptrvector.h;
+			path = qt/qptrvector.h;
 			refType = 4;
 		};
 		F58786B002DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qpushbutton.h;
-			path = kwq/qt/qpushbutton.h;
+			path = qt/qpushbutton.h;
 			refType = 4;
 		};
 		F58786B102DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qradiobutton.h;
-			path = kwq/qt/qradiobutton.h;
+			path = qt/qradiobutton.h;
 			refType = 4;
 		};
 		F58786B202DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qrect.h;
-			path = kwq/qt/qrect.h;
+			path = qt/qrect.h;
 			refType = 4;
 		};
 		F58786B302DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qregexp.h;
-			path = kwq/qt/qregexp.h;
+			path = qt/qregexp.h;
 			refType = 4;
 		};
 		F58786B402DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qregion.h;
-			path = kwq/qt/qregion.h;
+			path = qt/qregion.h;
 			refType = 4;
 		};
 		F58786B502DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qscrollview.h;
-			path = kwq/qt/qscrollview.h;
+			path = qt/qscrollview.h;
 			refType = 4;
 		};
 		F58786B602DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qsize.h;
-			path = kwq/qt/qsize.h;
+			path = qt/qsize.h;
 			refType = 4;
 		};
 		F58786B702DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qsortedlist.h;
-			path = kwq/qt/qsortedlist.h;
+			path = qt/qsortedlist.h;
 			refType = 4;
 		};
 		F58786B802DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qstack.h;
-			path = kwq/qt/qstack.h;
+			path = qt/qstack.h;
 			refType = 4;
 		};
 		F58786B902DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qstring.h;
-			path = kwq/qt/qstring.h;
+			path = qt/qstring.h;
 			refType = 4;
 		};
 		F58786BA02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qstringlist.h;
-			path = kwq/qt/qstringlist.h;
+			path = qt/qstringlist.h;
 			refType = 4;
 		};
 		F58786BB02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qstyle.h;
-			path = kwq/qt/qstyle.h;
+			path = qt/qstyle.h;
 			refType = 4;
 		};
 		F58786BC02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qstylesheet.h;
-			path = kwq/qt/qstylesheet.h;
+			path = qt/qstylesheet.h;
 			refType = 4;
 		};
 		F58786BD02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qtextcodec.h;
-			path = kwq/qt/qtextcodec.h;
+			path = qt/qtextcodec.h;
 			refType = 4;
 		};
 		F58786BE02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qtextedit.h;
-			path = kwq/qt/qtextedit.h;
+			path = qt/qtextedit.h;
 			refType = 4;
 		};
 		F58786BF02DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qtextstream.h;
-			path = kwq/qt/qtextstream.h;
+			path = qt/qtextstream.h;
 			refType = 4;
 		};
 		F58786C002DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qtimer.h;
-			path = kwq/qt/qtimer.h;
+			path = qt/qtimer.h;
 			refType = 4;
 		};
 		F58786C102DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qtooltip.h;
-			path = kwq/qt/qtooltip.h;
+			path = qt/qtooltip.h;
 			refType = 4;
 		};
 		F58786C202DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qvaluelist.h;
-			path = kwq/qt/qvaluelist.h;
+			path = qt/qvaluelist.h;
 			refType = 4;
 		};
 		F58786C302DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qvariant.h;
-			path = kwq/qt/qvariant.h;
+			path = qt/qvariant.h;
 			refType = 4;
 		};
 		F58786C402DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qvector.h;
-			path = kwq/qt/qvector.h;
+			path = qt/qvector.h;
 			refType = 4;
 		};
 		F58786C502DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qwidget.h;
-			path = kwq/qt/qwidget.h;
+			path = qt/qwidget.h;
 			refType = 4;
 		};
 		F58786C602DE3B8601EA4122 = {
 			isa = PBXFileReference;
 			name = qxml.h;
-			path = kwq/qt/qxml.h;
+			path = qt/qxml.h;
 			refType = 4;
 		};
 		F58786C702DE3B8601EA4122 = {
@@ -7653,8 +7282,8 @@
 			);
 			isa = PBXGroup;
 			name = qt;
-			path = "";
-			refType = 4;
+			path = kwq;
+			refType = 2;
 		};
 		F58C8A07025BD3BC018635CA = {
 			buildRules = (
@@ -7674,12 +7303,14 @@
 		};
 		F58EF58D02DFDFB7018635CA = {
 			isa = PBXFileReference;
-			path = "WebCore-tests.exp";
+			name = "WebCore-tests.exp";
+			path = "../WebCore-tests.exp";
 			refType = 4;
 		};
 		F58EF58E02DFDFB7018635CA = {
 			isa = PBXFileReference;
-			path = WebCore.exp;
+			name = WebCore.exp;
+			path = ../WebCore.exp;
 			refType = 4;
 		};
 		F5A1B04902DE8ABA018635CA = {
@@ -7708,14 +7339,12 @@
 		};
 		F5B2A4FC02E2220F018635CB = {
 			isa = PBXFileReference;
-			name = WebCoreCache.h;
-			path = kwq/WebCoreCache.h;
+			path = WebCoreCache.h;
 			refType = 4;
 		};
 		F5B2A4FD02E2220F018635CB = {
 			isa = PBXFileReference;
-			name = WebCoreCache.mm;
-			path = kwq/WebCoreCache.mm;
+			path = WebCoreCache.mm;
 			refType = 4;
 		};
 		F5B2A4FE02E2220F018635CB = {
@@ -7735,14 +7364,12 @@
 		};
 		F5B2A52B02E22573018635CB = {
 			isa = PBXFileReference;
-			name = WebCoreJavaScript.h;
-			path = kwq/WebCoreJavaScript.h;
+			path = WebCoreJavaScript.h;
 			refType = 4;
 		};
 		F5B2A52C02E22573018635CB = {
 			isa = PBXFileReference;
-			name = WebCoreJavaScript.mm;
-			path = kwq/WebCoreJavaScript.mm;
+			path = WebCoreJavaScript.mm;
 			refType = 4;
 		};
 		F5B2A52D02E22573018635CB = {
