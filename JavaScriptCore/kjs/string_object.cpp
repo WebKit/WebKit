@@ -43,6 +43,40 @@ StringInstanceImp::StringInstanceImp(const Object &proto)
   setInternalValue(String(""));
 }
 
+StringInstanceImp::StringInstanceImp(const Object &proto, const UString &string)
+  : ObjectImp(proto)
+{
+  setInternalValue(String(string));
+}
+
+Value StringInstanceImp::get(ExecState *exec, const UString &propertyName) const
+{
+  if (propertyName == lengthPropertyName)
+    return Number(internalValue().toString(exec).size());
+  return ObjectImp::get(exec, propertyName);
+}
+
+void StringInstanceImp::put(ExecState *exec, const UString &propertyName, const Value &value, int attr)
+{
+  if (propertyName == lengthPropertyName)
+    return;
+  ObjectImp::put(exec, propertyName, value, attr);
+}
+
+bool StringInstanceImp::hasProperty(ExecState *exec, const UString &propertyName) const
+{
+  if (propertyName == lengthPropertyName)
+    return true;
+  return ObjectImp::hasProperty(exec, propertyName);
+}
+
+bool StringInstanceImp::deleteProperty(ExecState *exec, const UString &propertyName)
+{
+  if (propertyName == lengthPropertyName)
+    return false;
+  return ObjectImp::deleteProperty(exec, propertyName);
+}
+
 // ------------------------------ StringPrototypeImp ---------------------------
 const ClassInfo StringPrototypeImp::info = {"String", &StringInstanceImp::info, &stringTable, 0};
 /* Source for string_object.lut.h
@@ -516,18 +550,9 @@ bool StringObjectImp::implementsConstruct() const
 Object StringObjectImp::construct(ExecState *exec, const List &args)
 {
   Object proto = exec->interpreter()->builtinStringPrototype();
-  Object obj(new StringInstanceImp(proto ));
-
-  UString s;
-  if (args.size() > 0)
-    s = args.begin()->dispatchToString(exec);
-  else
-    s = UString("");
-
-  obj.setInternalValue(String(s));
-  obj.put(exec, lengthPropertyName, Number(s.size()), ReadOnly|DontEnum|DontDelete);
-
-  return obj;
+  if (args.size() == 0)
+    return Object(new StringInstanceImp(proto));
+  return Object(new StringInstanceImp(proto, args.begin()->dispatchToString(exec)));
 }
 
 bool StringObjectImp::implementsCall() const

@@ -1,3 +1,29 @@
+2002-11-18  Darin Adler  <darin@apple.com>
+
+	- property and string improvements giving a 7% or so improvement in JavaScript iBench
+
+        * kjs/property_map.h: Rewrite to use a hash table.
+        * kjs/property_map.cpp: Ditto.
+
+        * kjs/string_object.h:
+        * kjs/string_object.cpp:
+        (StringInstanceImp::StringInstanceImp): Construct a string with the right value
+	instead of putting the string in later.
+        (StringInstanceImp::get): Get the length from the string, not a separate property.
+        (StringInstanceImp::put): Ignore attempts to set length, since we don't put it in
+	the property map.
+        (StringInstanceImp::hasProperty): Return true for length.
+        (StringInstanceImp::deleteProperty): Return false for length.
+        (StringObjectImp::construct): Call new StringInstanceImp constructor. Don't try
+	to set a length property.
+
+        * kjs/ustring.h: Make the rep deref know how to deallocate the rep.
+        * kjs/ustring.cpp:
+        (UString::release): Move the real work to the rep's deref, since the hash table
+	now uses the rep directly.
+
+        * kjs/object.h: Remove unused field.
+
 2002-11-18  Maciej Stachowiak  <mjs@apple.com>
 
 	Change List to completely avoid going through the GC

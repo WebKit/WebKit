@@ -1,7 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2002 Darin Adler (darin@apple.com)
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -20,66 +20,56 @@
  *
  */
 
-
 #ifndef _KJS_PROPERTY_MAP_H_
 #define _KJS_PROPERTY_MAP_H_
 
 #include "ustring.h"
-#include "value.h"
 
 namespace KJS {
 
-  class PropertyMapNode;
-  class ReferenceList;
-
-  /**
-   * @internal
-   *
-   * Provides a name/value map for storing properties based on UString keys. The
-   * map is implemented using an AVL tree, which provides O(log2 n) performance
-   * for insertion and deletion, and retrieval.
-   *
-   * For a description of AVL tree operations, see
-   * http://www.cis.ksu.edu/~howell/300f99/minavl/rotations.html
-   * http://www.cgc.cs.jhu.edu/~jkloss/htmls/structures/avltree.html
-   */
-  class PropertyMap {
-  public:
-    PropertyMap();
-    ~PropertyMap();
-
-    void put(const UString &name, ValueImp *value, int attr);
-    void remove(const UString &name);
-    ValueImp *get(const UString &name) const;
-    ValueImp *get(const UString &name, int &attributes) const;
+    class Object;
+    class ReferenceList;
+    class ValueImp;
     
-    void clear();
-    void mark();
+    struct PropertyMapHashTableEntry
+    {
+        PropertyMapHashTableEntry() : key(0) { }
+        UString::Rep *key;
+        ValueImp *value;
+        int attributes;
+    };
     
-    void addEnumerablesToReferenceList(ReferenceList &, const Object &) const;
+    class PropertyMap {
+    public:
+        PropertyMap();
+        ~PropertyMap();
 
-  private:
+        void clear();
+        
+        void put(const UString &name, ValueImp *value, int attributes);
+        void remove(const UString &name);
+        ValueImp *get(const UString &name) const;
+        ValueImp *get(const UString &name, int &attributes) const;
 
-    void clear(PropertyMapNode *node);
-    void dump(const PropertyMapNode *node = 0, int indent = 0) const;
-    void checkTree(const PropertyMapNode *node = 0) const;
+        void mark() const;
+        void addEnumerablesToReferenceList(ReferenceList &, const Object &) const;
 
-    PropertyMapNode *getNode(const UString &name) const;
-    PropertyMapNode *first() const;
-
-    PropertyMapNode *remove(PropertyMapNode *node);
-    void balance(PropertyMapNode* node);
-    void updateHeight(PropertyMapNode* &node);
-
-    void rotateRR(PropertyMapNode* &node);
-    void rotateLL(PropertyMapNode* &node);
-    void rotateRL(PropertyMapNode* &node);
-    void rotateLR(PropertyMapNode* &node);
-
-    PropertyMapNode *root;
-  };
-
-  int uscompare(const UString &s1, const UString &s2);
+    private:
+        int hash(const UString::Rep *) const;
+        static bool keysMatch(const UString::Rep *, const UString::Rep *);
+        void expand();
+        
+        void insert(UString::Rep *, ValueImp *value, int attributes);
+        
+        typedef PropertyMapHashTableEntry Entry;
+        
+        int _tableSizeHashMask;
+        int _tableSize;
+        Entry *_table;
+        int _keyCount;
+        
+        Entry _singleEntry;
+    };
 
 }; // namespace
 

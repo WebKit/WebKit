@@ -43,7 +43,6 @@
 
 namespace KJS {
 
-  class ObjectImpPrivate;
   class PropertyMap;
   class HashTable;
   class HashEntry;
@@ -583,7 +582,6 @@ namespace KJS {
     ValueImp* getDirect(const UString& propertyName) const;
   private:
     const HashEntry* findPropertyHashEntry( const UString& propertyName ) const;
-    ObjectImpPrivate *_od;
     PropertyMap *_prop;
     ValueImp *_proto;
     ValueImp *_internalValue;

@@ -591,10 +591,7 @@ void UString::detach()
 
 void UString::release()
 {
-  if (!rep->deref()) {
-    delete [] rep->dat;
-    delete rep;
-  }
+  rep->deref();
 }
 
 bool KJS::operator==(const UString& s1, const UString& s2)
@@ -663,18 +660,4 @@ int KJS::compare(const UString& s1, const UString& s2)
     return 0;
   }
   return (l1 < l2) ? 1 : -1;
-}
-
-// Algorithm concept from Algorithms in C++, Sedgewick, Program 14.1.
-int KJS::hash(const UString &s, int hashTableSize)
-{
-    int h = 0;
-    int length = s.size();
-    int prefix = length < 8 ? length : 8;
-    for (int i = 0; i != prefix; i++)
-        h = (127 * h + s[i].unicode()) % hashTableSize;
-    int suffix = length < 16 ? 8 : length - 8;
-    for (int i = suffix; i != length; i++)
-        h = (127 * h + s[i].unicode()) % hashTableSize;
-    return h;
 }

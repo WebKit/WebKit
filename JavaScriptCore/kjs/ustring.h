@@ -143,11 +143,11 @@ namespace KJS {
     /**
      * @return Unicode value.
      */
-    unsigned short unicode() const { return ref().unicode(); }
+    unsigned short unicode() const { return ref().uc; }
     /**
      * @return Lower byte.
      */
-    unsigned char low() const { return ref().uc & 0xFF; }
+    unsigned char low() const { return ref().uc; }
     /**
      * @return Higher byte.
      */
@@ -199,6 +199,8 @@ namespace KJS {
   class UString {
     friend bool operator==(const UString&, const UString&);
     friend class UCharReference;
+    friend class PropertyMap;
+    friend class PropertyMapHashTableEntry;
     /**
      * @internal
      */
@@ -210,7 +212,12 @@ namespace KJS {
       inline int size() const { return len; }
 
       inline void ref() { rc++; }
-      inline int deref() { return --rc; }
+      inline void deref() {
+        if (--rc == 0) {
+          delete [] dat;
+          delete this;
+        }
+      }
 
       UChar *dat;
       int len;
@@ -402,6 +409,7 @@ namespace KJS {
     static void globalClear();
 #endif
   private:
+    UString(Rep *r) { attach(r); }
     void attach(Rep *r);
     void detach();
     void release();
@@ -432,7 +440,6 @@ namespace KJS {
   }
   
   int compare(const UString &, const UString &);
-  int hash(const UString &, int hashTableSize);
 
 }; // namespace
 
