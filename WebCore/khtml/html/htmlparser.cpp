@@ -1184,13 +1184,21 @@ bool KHTMLParser::isResidualStyleTag(int _id)
     switch (_id) {
         case ID_A:
         case ID_FONT:
-        case ID_EM:
-        case ID_B:
-        case ID_STRONG:
-        case ID_I:
         case ID_TT:
-        case ID_CODE:
+        case ID_U:
+        case ID_B:
+        case ID_I:
+        case ID_S:
+        case ID_STRIKE:
+        case ID_BIG:
         case ID_SMALL:
+        case ID_EM:
+        case ID_STRONG:
+        case ID_DFN:
+        case ID_CODE:
+        case ID_SAMP:
+        case ID_KBD:
+        case ID_VAR:
             return true;
         default:
             return false;
@@ -1214,6 +1222,13 @@ bool KHTMLParser::isAffectedByResidualStyle(int _id)
         case ID_H5:
         case ID_H6:
         case ID_CENTER:
+        case ID_UL:
+        case ID_OL:
+        case ID_LI:
+        case ID_DL:
+        case ID_DT:
+        case ID_DD:
+        case ID_PRE:
             return true;
         default:
             return false;
