@@ -74,14 +74,9 @@
 
 - (void)startLoading
 {
-    if([_private->url isFileURL]){
-        NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
-        [_private->delegate receivedPageIcon:[workspace iconForFile:[_private->url path]]];
-    }else{
-        _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->url];
-        [_private->resourceHandle addClient:self];
-        [_private->resourceHandle loadInBackground];
-    }
+    _private->resourceHandle = [[WebResourceHandle alloc] initWithURL:_private->url];
+    [_private->resourceHandle addClient:self];
+    [_private->resourceHandle loadInBackground];
 }
 
 - (void)startLoadingOnlyFromCache

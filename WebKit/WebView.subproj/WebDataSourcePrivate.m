@@ -138,21 +138,6 @@
     _private->parent = p;
 }
 
-- (void)_setDefaultIconURLIfUnset
-{
-    // Use the site icon from the server's root directory 
-    // since no site icon has already been requested with the LINK tag
-    if(_private->iconURL == nil && !_private->mainDocumentError){
-        NSURL *dataSourceURL = [self wasRedirected] ? [self redirectedURL] : [self inputURL];
-        
-        if([dataSourceURL isFileURL]){
-            _private->iconURL = [dataSourceURL retain];
-        } else {
-            _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
-        }
-    }
-}
-
 - (void)_setPrimaryLoadComplete: (BOOL)flag
 {
     _private->primaryLoadComplete = flag;
@@ -506,12 +491,26 @@
 {
     WEBKIT_ASSERT(!_private->iconLoader);
 
-    [self _setDefaultIconURLIfUnset];
+    if([self isMainDocument] && !_private->mainDocumentError){
+        
+        // If no icon URL has been set using the LINK tag, use the icon at the server's root directory
+        // If it is file URL, return its icon provided by NSWorkspace.
+        if(_private->iconURL == nil){
+            NSURL *dataSourceURL = [self wasRedirected] ? [self redirectedURL] : [self inputURL];
     
-    if([self isMainDocument] && _private->iconURL != nil) {
-        _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
-        [_private->iconLoader setDelegate:self];
-        [_private->iconLoader startLoading];
+            if([dataSourceURL isFileURL]){
+                NSImage *icon = [[NSWorkspace sharedWorkspace] iconForFile:[dataSourceURL path]];
+                [_private->locationChangeHandler receivedPageIcon:icon forDataSource:self];
+            } else {
+                _private->iconURL = [[NSURL _web_URLWithString:@"/favicon.ico" relativeToURL:dataSourceURL] retain];
+            }
+        }
+
+        if(_private->iconURL != nil){
+            _private->iconLoader = [[WebIconLoader alloc] initWithURL:_private->iconURL];
+            [_private->iconLoader setDelegate:self];
+            [_private->iconLoader startLoading];
+        }
     }
 }
 

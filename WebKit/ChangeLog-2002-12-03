@@ -1,3 +1,15 @@
+2002-07-21  Chris Blumenberg  <cblu@apple.com>
+
+	- We were loading icons when page loads ended in error. Fixed.
+	- Special-case file URLs once instead of twice by moving NSWorkspace
+	  call out of WebIconLoader
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader startLoading]): removed file URL special-case
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _loadIcon]): check for document error, send file 
+icon to client if none has been set with the LINK tag
+
 2002-07-21  Maciej Stachowiak  <mjs@apple.com>
 
         * Makefile.am: Remove products from symroots on `make clean'.
