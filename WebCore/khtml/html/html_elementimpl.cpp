@@ -301,14 +301,12 @@ DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString
         case ID_COLGROUP:
         case ID_FRAMESET:
         case ID_HEAD:
-        case ID_HTML:
         case ID_STYLE:
         case ID_TABLE:
         case ID_TBODY:
         case ID_TFOOT:
         case ID_THEAD:
         case ID_TITLE:
-        case ID_TR:
             return NULL;
         default:
             break;

@@ -1,3 +1,25 @@
+2002-12-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3125412 - HOMEPAGE: 2nd load of html in the same div fails.
+	- fixed 3052113 - HOMEPAGE: "site menu" part of .mac home page editing doesn't work
+	- fixed 3075392 - HOMEPAGE: "pages" section of mac.com homepage editing is missing
+
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::updateForNewURL): Function that loads new URL,
+	to be called if src attribute is set explicitly and the element is already
+	attached.
+        (HTMLFrameElementImpl::parseAttribute): Call updateForNewURL when src
+	attrinute is set.
+        (HTMLFrameElementImpl::contentDocument): Don't involve render widget
+	in getting the content document.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::createContextualFragment): Allow contextual
+	fragments to be created (and therefore innerHTML to be set on) TR
+	and HTML elements.
+
 2002-12-16  David Hyatt  <hyatt@apple.com>
 
 	Use the layer's bounds as the damage rect not the object's.

@@ -227,12 +227,37 @@ NodeImpl::Id HTMLFrameElementImpl::id() const
     return ID_FRAME;
 }
 
+void HTMLFrameElementImpl::updateForNewURL()
+{
+    if (attached()) {
+	// ignore display: none for this element!
+	KHTMLView* w = getDocument()->view();
+	// avoid endless recursion
+	KURL u;
+	if (!url.isEmpty()) u = getDocument()->completeURL( url.string() );
+	bool selfreference = false;
+	for (KHTMLPart* part = w->part(); part; part = part->parentPart())
+	    if (part->url() == u) {
+		selfreference = true;
+		break;
+	    }
+
+	// load the frame contents
+	if ( !url.isEmpty() && !(w->part()->onlyLocalReferences() && u.protocol() != "file")) {
+	    KHTMLPart *part = w->part()->findFrame( name.string() );
+	    part->openURL(u);
+	}
+    }
+}
+
+
 void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
 {
     switch(attr->id())
     {
     case ATTR_SRC:
         url = khtml::parseURL(attr->val());
+	updateForNewURL();
         break;
     case ATTR_ID:
     case ATTR_NAME:
@@ -363,12 +388,12 @@ void HTMLFrameElementImpl::setFocus(bool received)
 
 DocumentImpl* HTMLFrameElementImpl::contentDocument() const
 {
-    if ( !m_render ) return 0;
+    KHTMLView* w = getDocument()->view();
 
-    RenderPart* render = static_cast<RenderPart*>( m_render );
-
-    if(render->widget() && render->widget()->inherits("KHTMLView"))
-        return static_cast<KHTMLView*>( render->widget() )->part()->xmlDocImpl();
+    if (w) {
+	KHTMLPart *part = w->part()->findFrame( name.string() );
+	return part->xmlDocImpl();
+    }
 
     return 0;
 }
