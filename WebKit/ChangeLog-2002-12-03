@@ -1,3 +1,8 @@
+2002-11-07  Richard Williamson  <rjw@apple.com>
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer stopAnimation]):
+
 2002-11-07  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3095628 - REGRESSION: exception when clicking on link to load content into iframe
@@ -8,15 +13,11 @@
 	happened, not the current document view. Add some asserts to make
 	sure this is working.
 
-2002-11-07  Richard Williamson  <rjw@apple.com>
-
-        * ChangeLog:
-        * WebCoreSupport.subproj/WebTextRenderer.m:
-        (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
-        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
 
 2002-11-07  Richard Williamson  <rjw@apple.com>
 
+        Tweaks
+        
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (-[WebTextRenderer convertCharacters:length:toGlyphs:skipControlCharacters:]):
         (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
