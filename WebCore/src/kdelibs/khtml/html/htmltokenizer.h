@@ -133,7 +133,8 @@ public:
     virtual void setOnHold(bool /*_onHold*/) {}
 
 signals:
-    void finishedParsing();
+    // temporary implementation here to get test to link
+    void finishedParsing() {};
 
 };
 

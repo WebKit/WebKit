@@ -23,38 +23,40 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include <kglobal.h>
+#include <browserextension.h>
 
+namespace KParts {
 
+// class BrowserExtension ======================================================
 
-KInstance *KGlobal::instance()
+BrowserExtension::~BrowserExtension()
 {
 }
 
 
-KCharsets *KGlobal::charsets()
+BrowserInterface *BrowserExtension::browserInterface() const
 {
 }
 
 
-KLocale *KGlobal::locale()
+void BrowserExtension::createNewWindow(const KURL &)
 {
 }
 
 
-KStandardDirs *KGlobal::dirs()
+// class BrowserHostExtension ==================================================
+
+BrowserHostExtension::BrowserHostExtension()
 {
 }
 
 
-KConfig *KGlobal::config()
+BrowserHostExtension::~BrowserHostExtension()
 {
 }
 
 
+} // namespace KParts
 
-const QString &KGlobal::staticQString(const QString &)
-{
-}
 
 

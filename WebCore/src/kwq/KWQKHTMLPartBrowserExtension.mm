@@ -23,38 +23,14 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include <kglobal.h>
+#include <khtml_ext.h>
 
 
-
-KInstance *KGlobal::instance()
+void KHTMLPartBrowserExtension::editableWidgetFocused( QWidget *widget )
 {
 }
 
 
-KCharsets *KGlobal::charsets()
+void KHTMLPartBrowserExtension::editableWidgetBlurred( QWidget *widget )
 {
 }
-
-
-KLocale *KGlobal::locale()
-{
-}
-
-
-KStandardDirs *KGlobal::dirs()
-{
-}
-
-
-KConfig *KGlobal::config()
-{
-}
-
-
-
-const QString &KGlobal::staticQString(const QString &)
-{
-}
-
-

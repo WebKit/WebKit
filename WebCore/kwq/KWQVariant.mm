@@ -23,38 +23,55 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include <kglobal.h>
+#include <qvariant.h>
 
 
-
-KInstance *KGlobal::instance()
+QVariant::QVariant()
 {
 }
 
 
-KCharsets *KGlobal::charsets()
+QVariant::QVariant(bool, int)
 {
 }
 
 
-KLocale *KGlobal::locale()
+QVariant::QVariant(double)
 {
 }
 
 
-KStandardDirs *KGlobal::dirs()
+QVariant::QVariant(const QString &)
 {
 }
 
 
-KConfig *KGlobal::config()
+QVariant::QVariant(const QVariant &)
 {
 }
 
 
-
-const QString &KGlobal::staticQString(const QString &)
+QVariant::~QVariant()
 {
 }
 
+
+QVariant::Type QVariant::type() const
+{
+}
+
+
+bool QVariant::toBool() const
+{
+}
+
+
+uint QVariant::toUInt() const
+{
+}
+
+
+QVariant &QVariant::operator=(const QVariant &)
+{
+}
 

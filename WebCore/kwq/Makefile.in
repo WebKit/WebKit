@@ -25,6 +25,7 @@ MMOBJECTS = \
 	_KWQOwner.o \
 	KWQasyncimageio.o \
 	KWQasyncio.o \
+	KWQbrowserextension.o \
 	KWQsignals.o \
 	KWQtextcodec.o \
 	KWQtextstream.o \
@@ -59,10 +60,12 @@ MMOBJECTS = \
         KWQKDebug.o \
         KWQKFactory.o \
         KWQKFileItem.o \
+        KWQKFileDialog.o \
         KWQKGlobal.o \
 	KWQKGlobalSettings.o \
         KWQKHistoryProvider.o \
         KWQKHTMLPart.o \
+        KWQKHTMLPartBrowserExtension.o \
         KWQKHTMLFactory.o \
         KWQKHTMLSettings.o \
         KWQKIconLoader.o \
@@ -70,6 +73,7 @@ MMOBJECTS = \
         KWQKInstance.o \
         KWQKJavaEmbed.o \
         KWQKJob.o \
+        KWQKLocale.o \
         KWQKLineEdit.o \
         KWQKListBox.o \
         KWQKMimeType.o \
@@ -103,6 +107,7 @@ MMOBJECTS = \
 	KWQTextEdit.o \
 	KWQTimer.o \
 	KWQToolTip.o \
+	KWQVariant.o \
 	KWQView.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
@@ -138,6 +143,7 @@ CMMFLAGS = $(BASECMMFLAGS) \
     -I$(TOPSRCDIR)/src/kwq/kde \
     -I$(TOPSRCDIR)/src/kwq/kdecore \
     -I$(TOPSRCDIR)/src/kwq/kdeui \
+    -I$(TOPSRCDIR)/src/kwq/kfile \
     -I$(TOPSRCDIR)/src/kwq/khtml \
     -I$(TOPSRCDIR)/src/kwq/khtml/java \
     -I$(TOPSRCDIR)/src/kwq/kio \

@@ -23,38 +23,20 @@
 * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
 */
 
-#include <kglobal.h>
+#include <kfiledialog.h>
 
-
-
-KInstance *KGlobal::instance()
+QString KFileDialog::getOpenFileName(const QString &startDir, 
+    const QString &filter, QWidget *parent, const QString &caption)
 {
 }
 
 
-KCharsets *KGlobal::charsets()
+KFileDialog::KFileDialog()
 {
 }
 
 
-KLocale *KGlobal::locale()
+KFileDialog::~KFileDialog()
 {
 }
-
-
-KStandardDirs *KGlobal::dirs()
-{
-}
-
-
-KConfig *KGlobal::config()
-{
-}
-
-
-
-const QString &KGlobal::staticQString(const QString &)
-{
-}
-
 

@@ -47,7 +47,7 @@ KStandardDirs *KGlobal::dirs()
 }
 
 
-KConfig KGlobal::*config()
+KConfig *KGlobal::config()
 {
 }
 
