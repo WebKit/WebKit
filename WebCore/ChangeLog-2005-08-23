@@ -1,3 +1,20 @@
+2004-02-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - Fixed some dynamic casts that Dirk complained about to use virtual functions instead.
+          Since the virtual functions were already there, this is faster and better in most
+          ways anyway.
+
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::keyCode): Use virtual function instead of dynamic_cast.
+        (UIEvent::charCode): Ditto.
+        (UIEvent::pageX): Ditto.
+        (UIEvent::pageY): Ditto.
+        (UIEvent::layerX): Ditto.
+        (UIEvent::layerY): Ditto.
+        (UIEvent::which): Ditto.
+
 2004-02-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
@@ -158,7 +175,6 @@
         * kwq/KWQTextCodec.mm:
         (KWQTextDecoder::convertLatin1):
 	Fix off by one error.
-
 
 2004-02-11  David Hyatt  <hyatt@apple.com>
 

@@ -285,9 +285,8 @@ int UIEvent::keyCode() const
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
-    KeyboardEventImpl *keyEvent = dynamic_cast<KeyboardEventImpl*>(impl);
-    if (keyEvent)
-        return keyEvent->keyCode();
+    if (impl->isKeyboardEvent())
+        return static_cast<KeyboardEventImpl*>(impl)->keyCode();
     else
         return 0;
 }
@@ -297,9 +296,8 @@ int UIEvent::charCode() const
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
-    KeyboardEventImpl *keyEvent = dynamic_cast<KeyboardEventImpl*>(impl);
-    if (keyEvent)
-        return keyEvent->charCode();
+    if (impl->isKeyboardEvent())
+        return static_cast<KeyboardEventImpl*>(impl)->charCode();
     else
         return 0;
 }
@@ -309,9 +307,8 @@ int UIEvent::pageX() const
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
-    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
-    if (mouseEvent)
-        return mouseEvent->clientX();
+    if (impl->isMouseEvent())
+        return static_cast<MouseEventImpl*>(impl)->clientX();
     else
         return 0;
 }
@@ -321,9 +318,8 @@ int UIEvent::pageY() const
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
-    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
-    if (mouseEvent)
-        return  mouseEvent->clientY();
+    if (impl->isMouseEvent())
+        return static_cast<MouseEventImpl*>(impl)->clientY();
     else
         return 0;
 }
@@ -333,9 +329,8 @@ int UIEvent::layerX() const
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
-    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
-    if (mouseEvent)
-        return mouseEvent->layerX();
+    if (impl->isMouseEvent())
+        return static_cast<MouseEventImpl*>(impl)->layerX();
     else
         return 0;
 }
@@ -345,9 +340,8 @@ int UIEvent::layerY() const
     if (!impl)
 	throw DOMException(DOMException::INVALID_STATE_ERR);
     
-    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
-    if (mouseEvent)
-        return  mouseEvent->layerY();
+    if (impl->isMouseEvent())
+        return static_cast<MouseEventImpl*>(impl)->layerY();
     else
         return 0;
 }
@@ -361,16 +355,14 @@ int UIEvent::which() const
 
     // Netscape's "which" returns a virtual key code for keydown and keyup, and a character code for keypress.
     // That's exactly what IE's "keyCode" returns.
-    KeyboardEventImpl *keyEvent = dynamic_cast<KeyboardEventImpl*>(impl);
-    if (keyEvent)
-        return keyEvent->keyCode();
+    if (impl->isKeyboardEvent())
+        return static_cast<KeyboardEventImpl*>(impl)->keyCode();
 
     // For khtml, the return values for left, middle and right mouse buttons are 0, 1, 2, respectively.
     // For the Netscape "which" property, the return values for left, middle and right mouse buttons are 1, 2, 3, respectively. 
     // So we can just add 1 to the value returned by calling button().
-    MouseEventImpl *mouseEvent = dynamic_cast<MouseEventImpl*>(impl);
-    if (mouseEvent)
-        return mouseEvent->button() + 1;
+    if (impl->isMouseEvent())
+        return static_cast<MouseEventImpl*>(impl)->button() + 1;
 
     return 0;
 }
