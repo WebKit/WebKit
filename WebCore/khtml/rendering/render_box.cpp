@@ -84,7 +84,7 @@ void RenderBox::setStyle(RenderStyle *_style)
             setRelPositioned(true);
     }
     
-    if ((isPositioned() || isRelPositioned()) && !m_layer)
+    if (!isTableCell() && (isPositioned() || isRelPositioned()) && !m_layer)
         m_layer = new (renderArena()) RenderLayer(this);
 }
 
