@@ -141,6 +141,14 @@ static BOOL forceRealHitTest = NO;
 - (float)_calculatePrintHeight;
 - (void)_updateTextSizeMultiplier;
 - (DOMRange *)_selectedRange;
+- (BOOL)_shouldDeleteRange:(DOMRange *)range;
+- (void)_deleteRange:(DOMRange *)range 
+           preflight:(BOOL)preflight 
+            killRing:(BOOL)killRing 
+             prepend:(BOOL)prepend 
+       smartDeleteOK:(BOOL)smartDeleteOK;
+- (void)_deleteSelection;
+- (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard;
 @end
 
 @interface WebHTMLView (WebForwardDeclaration) // FIXME: Put this in a normal category and stop doing the forward declaration trick.
@@ -351,7 +359,7 @@ static BOOL forceRealHitTest = NO;
     DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:allowPlainText];
     WebBridge *bridge = [self _bridge];
     if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[self _selectedRange] givenAction:WebViewInsertActionPasted]) {
-        [bridge replaceSelectionWithFragment:fragment selectReplacement:NO];
+        [bridge replaceSelectionWithFragment:fragment selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
     }
 }
 
@@ -392,6 +400,54 @@ static BOOL forceRealHitTest = NO;
 - (DOMRange *)_selectedRange
 {
     return [[self _bridge] selectedDOMRange];
+}
+
+- (BOOL)_shouldDeleteRange:(DOMRange *)range
+{
+    if (range == nil || [range collapsed])
+        return NO;
+    WebView *webView = [self _webView];
+    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
+}
+
+- (void)_deleteRange:(DOMRange *)range 
+           preflight:(BOOL)preflight 
+            killRing:(BOOL)killRing 
+             prepend:(BOOL)prepend 
+       smartDeleteOK:(BOOL)smartDeleteOK 
+{
+    if (![self _shouldDeleteRange:range]) {
+        return;
+    }
+    WebBridge *bridge = [self _bridge];
+    if (killRing && _private->startNewKillRingSequence) {
+        _NSNewKillRingSequence();
+    }
+    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
+    if (killRing) {
+        if (prepend) {
+            _NSPrependToKillRing([bridge selectedString]);
+        } else {
+            _NSAppendToKillRing([bridge selectedString]);
+        }
+        _private->startNewKillRingSequence = NO;
+    }
+    BOOL smartDelete = smartDeleteOK ? [self _canSmartCopyOrDelete] : NO;
+    [bridge deleteSelectionWithSmartDelete:smartDelete];
+}
+
+- (void)_deleteSelection
+{
+    [self _deleteRange:[self _selectedRange]
+             preflight:YES 
+              killRing:YES 
+               prepend:NO
+         smartDeleteOK:YES];
+}
+
+- (BOOL)_canSmartReplaceWithPasteboard:(NSPasteboard *)pasteboard
+{
+    return [[self _webView] smartInsertDeleteEnabled] && [[pasteboard types] containsObject:WebSmartPastePboardType];
 }
 
 @end
@@ -1187,7 +1243,7 @@ static WebHTMLView *lastHitView = nil;
 - (void)_changeSpellingFromMenu:(id)sender
 {
     ASSERT([[self selectedString] length] != 0);
-    [[self _bridge] replaceSelectionWithText:[sender title] selectReplacement:YES];
+    [[self _bridge] replaceSelectionWithText:[sender title] selectReplacement:YES smartReplace:NO];
 }
 
 - (void)_ignoreSpellingFromMenu:(id)sender
@@ -1349,7 +1405,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSArray *)pasteboardTypesForSelection
 {
-    if ([[self _bridge] selectionGranularity] == WebSelectByWord) {
+    if ([self _canSmartCopyOrDelete]) {
         NSMutableArray *types = [[[[self class] _selectionPasteboardTypes] mutableCopy] autorelease];
         [types addObject:WebSmartPastePboardType];
         return types;
@@ -1429,7 +1485,7 @@ static WebHTMLView *lastHitView = nil;
         [s release];
     }
     
-    if ([types containsObject:WebSmartPastePboardType] && [[self _bridge] selectionGranularity] == WebSelectByWord) {
+    if ([self _canSmartCopyOrDelete] && [types containsObject:WebSmartPastePboardType]) {
         [pasteboard setData:nil forType:WebSmartPastePboardType];
     }
 }
@@ -2235,14 +2291,15 @@ static WebHTMLView *lastHitView = nil;
     } else if (actionMask & WebDragDestinationActionEdit) {
         BOOL didInsert = NO;
         if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
+            NSPasteboard *pasteboard = [draggingInfo draggingPasteboard];
+            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard allowPlainText:YES];
             if (fragment && [self _shouldInsertFragment:fragment replacingDOMRange:[bridge dragCaretDOMRange] givenAction:WebViewInsertActionDropped]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
                 if ([self _isMoveDrag]) {
                     [bridge moveSelectionToDragCaret:fragment];
                 } else {
                     [bridge setSelectionToDragCaret];
-                    [bridge replaceSelectionWithFragment:fragment selectReplacement:YES];
+                    [bridge replaceSelectionWithFragment:fragment selectReplacement:YES smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
                 }
                 didInsert = YES;
             }
@@ -2888,47 +2945,19 @@ static WebHTMLView *lastHitView = nil;
     [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
 }
 
-- (BOOL)_shouldDeleteRange:(DOMRange *)range
-{
-    if (range == nil || [range collapsed])
-        return NO;
-    WebView *webView = [self _webView];
-    return [[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:range];
-}
-
-- (void)_deleteRange:(DOMRange *)range preflight:(BOOL)preflight killRing:(BOOL)killRing prepend:(BOOL)prepend
-{
-    if (![self _shouldDeleteRange:range]) {
-        return;
-    }
-    WebBridge *bridge = [self _bridge];
-    if (killRing && _private->startNewKillRingSequence) {
-        _NSNewKillRingSequence();
-    }
-    [bridge setSelectedDOMRange:range affinity:NSSelectionAffinityUpstream];
-    if (killRing) {
-        if (prepend) {
-            _NSPrependToKillRing([bridge selectedString]);
-        } else {
-            _NSAppendToKillRing([bridge selectedString]);
-        }
-        _private->startNewKillRingSequence = NO;
-    }
-    [bridge deleteSelection];
-}
-
 - (void)delete:(id)sender
 {
     if (![self _canDelete]) {
         NSBeep();
         return;
     }
-    [self _deleteRange:[self _selectedRange] preflight:YES killRing:YES prepend:NO];
+    [self _deleteSelection];
 }
 
 - (void)cut:(id)sender
 {
-    if ([[self _bridge] tryDHTMLCut]) {
+    WebBridge *bridge = [self _bridge];
+    if ([bridge tryDHTMLCut]) {
         return;     // DHTML did the whole operation
     }
     if (![self _canCut]) {
@@ -2938,8 +2967,8 @@ static WebHTMLView *lastHitView = nil;
     DOMRange *range = [self _selectedRange];
     if ([self _shouldDeleteRange:range]) {
         [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
-        [self _deleteRange:[self _selectedRange] preflight:NO killRing:YES prepend:NO];
-    }
+        [bridge deleteSelectionWithSmartDelete:[self _canSmartCopyOrDelete]];
+   }
 }
 
 - (void)paste:(id)sender
@@ -3043,10 +3072,11 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)pasteAsPlainText:(id)sender
 {
-    NSString *text = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
+    NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+    NSString *text = [pasteboard stringForType:NSStringPboardType];
     WebBridge *bridge = [self _bridge];
     if ([self _shouldReplaceSelectionWithText:text givenAction:WebViewInsertActionPasted]) {
-        [bridge replaceSelectionWithText:text selectReplacement:NO];
+        [bridge replaceSelectionWithText:text selectReplacement:NO smartReplace:[self _canSmartReplaceWithPasteboard:pasteboard]];
     }
 }
 
@@ -3386,7 +3416,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     NSString *word = [[bridge selectedString] performSelector:selector];
     // FIXME: Does this need a different action context other than "typed"?
     if ([self _shouldReplaceSelectionWithText:word givenAction:WebViewInsertActionTyped]) {
-        [bridge replaceSelectionWithText:word selectReplacement:NO];
+        [bridge replaceSelectionWithText:word selectReplacement:NO smartReplace:NO];
     }
 }
 
@@ -3413,8 +3443,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
         return NO;
     DOMRange *range;
     BOOL prepend = NO;
+    BOOL smartDeleteOK = NO;
     if ([self _hasSelection]) {
         range = [self _selectedRange];
+        smartDeleteOK = YES;
     } else {
         WebBridge *bridge = [self _bridge];
         range = [bridge rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
@@ -3430,7 +3462,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
                 break;
         }
     }
-    [self _deleteRange:range preflight:YES killRing:killRing prepend:prepend];
+    [self _deleteRange:range preflight:YES killRing:killRing prepend:prepend smartDeleteOK:smartDeleteOK];
     return YES;
 }
 
@@ -3443,10 +3475,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     if (![self _isEditable])
         return;
-    WebBridge *bridge = [self _bridge];
-    WebView *webView = [self _webView];
-    if ([[webView _editingDelegateForwarder] webView:webView shouldDeleteDOMRange:[self _selectedRange]]) {
-        [bridge deleteKeyPressed];
+    if ([self _hasSelection]) {
+        [self _deleteSelection];
+    } else {
+        // FIXME: We are not calling the delegate here. Why can't we just call _deleteRange here?
+        [[self _bridge] deleteKeyPressed];
     }
 }
 
@@ -3546,7 +3579,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 
     if ([self _shouldReplaceSelectionWithText:newWord givenAction:WebViewInsertActionPasted]) {
-        [bridge replaceSelectionWithText:newWord selectReplacement:YES];
+        [bridge replaceSelectionWithText:newWord selectReplacement:YES smartReplace:NO];
     }
 }
 
@@ -3682,7 +3715,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
         } @catch (NSException *exception) {
             r = selection;
         }
-        [self _deleteRange:r preflight:YES killRing:YES prepend:YES];
+        [self _deleteRange:r preflight:YES killRing:YES prepend:YES smartDeleteOK:NO];
     }
     [self setMark:sender];
 }
@@ -3739,7 +3772,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     }
     [bridge setSelectedDOMRange:r affinity:NSSelectionAffinityUpstream];
     if ([self _shouldReplaceSelectionWithText:transposed givenAction:WebViewInsertActionTyped]) {
-        [bridge replaceSelectionWithText:transposed selectReplacement:NO];
+        [bridge replaceSelectionWithText:transposed selectReplacement:NO smartReplace:NO];
     }
 }
 
@@ -3924,6 +3957,11 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     return _private->dragSourceActionMask;
 }
 
+- (BOOL)_canSmartCopyOrDelete
+{
+    return [[self _webView] smartInsertDeleteEnabled] && [[self _bridge] selectionGranularity] == WebSelectByWord;
+}
+
 @end
 
 @implementation WebHTMLView (WebNSTextInputSupport)
@@ -4036,7 +4074,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 	text = string;
     }
 
-    [bridge replaceSelectionWithText:text selectReplacement:YES];
+    [bridge replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
     [bridge setMarkedTextDOMRange:[self _selectedRange]];
     [self _selectRangeInMarkedText:newSelRange];
 
@@ -4063,7 +4101,8 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     [self _selectMarkedText];
     [[NSInputManager currentInputManager] markedTextAbandoned:self];
     [self unmarkText];
-    [[self _bridge] deleteSelection];
+    // FIXME: Should we be calling the delegate here?
+    [[self _bridge] deleteSelectionWithSmartDelete:NO];
 
     _private->ignoreMarkedTextSelectionChange = NO;
 }
@@ -4186,7 +4225,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
     // able to revert that).  Mimic NSText.
     WebBridge *bridge = [_view _bridge];
     NSString *newText = [match substringFromIndex:prefixLength];
-    [bridge replaceSelectionWithText:newText selectReplacement:YES];
+    [bridge replaceSelectionWithText:newText selectReplacement:YES smartReplace:NO];
 }
 
 // mostly lifted from NSTextView_KeyBinding.m
@@ -4339,7 +4378,7 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
         if (revertChange) {
             WebBridge *bridge = [_view _bridge];
-            [bridge replaceSelectionWithText:_originalString selectReplacement:YES];
+            [bridge replaceSelectionWithText:_originalString selectReplacement:YES smartReplace:NO];
         } else if (goLeft) {
             [_view moveBackward:nil];
         } else {

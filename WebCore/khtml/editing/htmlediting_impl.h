@@ -232,8 +232,8 @@ private:
 class DeleteSelectionCommandImpl : public CompositeEditCommandImpl
 { 
 public:
-    DeleteSelectionCommandImpl(DOM::DocumentImpl *document);
-    DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection);
+    DeleteSelectionCommandImpl(DOM::DocumentImpl *document, bool smartDelete=false);
+    DeleteSelectionCommandImpl(DOM::DocumentImpl *document, const DOM::Selection &selection, bool smartDelete=false);
 	
     virtual void doApply();
     
@@ -247,6 +247,7 @@ private:
 
     DOM::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;
+    bool m_smartDelete;
 };
 
 //------------------------------------------------------------------------------------------
@@ -380,7 +381,7 @@ private:
 class ReplaceSelectionCommandImpl : public CompositeEditCommandImpl
 {
 public:
-    ReplaceSelectionCommandImpl(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true);
+    ReplaceSelectionCommandImpl(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true, bool smartReplace=false);
     virtual ~ReplaceSelectionCommandImpl();
     
     virtual void doApply();
@@ -388,6 +389,7 @@ public:
 private:
     DOM::DocumentFragmentImpl *m_fragment;
     bool m_selectReplacement;
+    bool m_smartReplace;
 };
 
 //------------------------------------------------------------------------------------------

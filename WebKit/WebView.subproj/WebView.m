@@ -31,8 +31,7 @@
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLRepresentation.h>
-#import <WebKit/WebHTMLView.h>
-#import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebHTMLViewInternal.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
@@ -1251,6 +1250,7 @@ NSMutableDictionary *countInvocations;
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     _private->drawsBackground = YES;
+    _private->smartInsertDeleteEnabled = YES;
 
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
@@ -2564,17 +2564,17 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)replaceSelectionWithNode:(DOMNode *)node
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithNode:node selectReplacement:YES];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithNode:node selectReplacement:YES smartReplace:NO];
 }    
 
 - (void)replaceSelectionWithText:(NSString *)text
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithText:text selectReplacement:YES];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithText:text selectReplacement:YES smartReplace:NO];
 }
 
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES smartReplace:NO];
 }
 
 - (void)replaceSelectionWithArchive:(WebArchive *)archive
@@ -2584,7 +2584,8 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (void)deleteSelection
 {
-    [[self _bridgeForCurrentSelection] deleteSelection];
+    WebBridge *bridge = [self _bridgeForCurrentSelection];
+    [bridge deleteSelectionWithSmartDelete:[(WebHTMLView *)[[[bridge webFrame] frameView] documentView] _canSmartCopyOrDelete]];
 }
     
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style

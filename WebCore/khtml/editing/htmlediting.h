@@ -157,8 +157,8 @@ private:
 class DeleteSelectionCommand : public CompositeEditCommand
 {
 public:
-    DeleteSelectionCommand(DOM::DocumentImpl *document);
-    DeleteSelectionCommand(DOM::DocumentImpl *document, const DOM::Selection &selection);
+    DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false);
+    DeleteSelectionCommand(DOM::DocumentImpl *document, const DOM::Selection &selection, bool smartDelete=false);
 
 private:
     DeleteSelectionCommandImpl *impl() const;
@@ -261,7 +261,7 @@ private:
 class ReplaceSelectionCommand : public CompositeEditCommand
 {
 public:
-    ReplaceSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true);
+    ReplaceSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true, bool smartReplace=false);
 
 private:
     ReplaceSelectionCommandImpl *impl() const;

@@ -1,3 +1,45 @@
+2004-09-21  Chris Blumenberg  <cblu@apple.com
+
+	Fixed:
+	<rdar://problem/3735071> REGRESSION (Mail): WebCore Editing must do smart paste
+	<rdar://problem/3799163> REGRESSION (Mail): Deleting a word doesn't delete whitespace
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _replaceSelectionWithArchive:selectReplacement:]): pass NO for smartReplace
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _pasteWithPasteboard:allowPlainText:]): pass parameter for smartReplace using _canSmartReplaceWithPasteboard
+        (-[WebHTMLView _changeSpellingFromMenu:]): pass NO for smartReplace
+        (-[WebHTMLView pasteboardTypesForSelection]): include WebSmartPastePboardType when _canSmartCopyOrDelete return YES
+        (-[WebHTMLView writeSelectionWithPasteboardTypes:toPasteboard:]): ditto
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): pass parameter for smartReplace using _canSmartReplaceWithPasteboard
+        (-[WebHTMLView delete:]): call _deleteSelection
+        (-[WebHTMLView cut:]): don't call delegate twice, call _deleteRange to delete
+        (-[WebHTMLView pasteAsPlainText:]): pass parameter for smartReplace using _canSmartReplaceWithPasteboard
+        (-[WebHTMLView _changeWordCaseWithSelector:]): pass NO for smartReplace
+        (-[WebHTMLView deleteBackward:]): call _deleteSelection when there is a selected range
+        (-[WebHTMLView _changeSpellingToWord:]): pass NO for smartReplace
+        (-[WebHTMLView deleteToMark:]): pass NO for smartDeleteOK
+        (-[WebHTMLView transpose:]): pass NO for smartReplace
+        (-[WebHTMLView _shouldDeleteRange:]): moved
+        (-[WebHTMLView _deleteRange:preflight:killRing:prepend:smartDeleteOK:]): moved, handle smartDelete
+        (-[WebHTMLView _deleteWithDirection:granularity:killRing:]): moved
+        (-[WebHTMLView _deleteSelection]): new
+	(-[WebHTMLView _canSmartReplaceWithPasteboard]): new
+	(-[WebHTMLView _canSmartCopyOrDelete]): new
+        (-[WebHTMLView setMarkedText:selectedRange:]): pass NO for smartReplace
+        (-[WebHTMLView _discardMarkedText]): call _deleteSelection
+        (-[WebTextCompleteController _insertMatch:]): pass NO for smartReplace
+        (-[WebTextCompleteController endRevertingChange:moveLeft:]): pass NO for smartReplace
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _commonInitializationWithFrameName:groupName:]): set smartInsertDeleteEnabled to YES
+        (-[WebView replaceSelectionWithNode:]): pass NO for smartReplace
+        (-[WebView replaceSelectionWithText:]): pass NO for smartReplace
+        (-[WebView replaceSelectionWithMarkupString:]): pass NO for smartReplace
+        (-[WebView deleteSelection]): call _deleteSelection on WebHTMLView
+
 2004-09-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

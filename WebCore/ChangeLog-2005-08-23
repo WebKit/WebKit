@@ -1,3 +1,29 @@
+2004-09-21  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3735071> REGRESSION (Mail): WebCore Editing must do smart paste
+	<rdar://problem/3799163> REGRESSION (Mail): Deleting a word doesn't delete whitespace
+
+        Reviewed by darin.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::DeleteSelectionCommand): take smartDelete parameter
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand): take smartReplace parameter
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::DeleteSelectionCommandImpl): take smartDelete parameter
+        (khtml::DeleteSelectionCommandImpl::doApply): delete whitespace before and after selection if necessary
+        (khtml::ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl): take smartReplace parameter
+        (khtml::ReplaceSelectionCommandImpl::doApply): add whitespace before and after the replacement if necessary
+        * khtml/editing/htmlediting_impl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:]): take smartReplace parameter
+        (-[WebCoreBridge replaceSelectionWithNode:selectReplacement:smartReplace:]): ditto
+        (-[WebCoreBridge replaceSelectionWithMarkupString:baseURLString:selectReplacement:smartReplace:]): ditto
+        (-[WebCoreBridge replaceSelectionWithText:selectReplacement:smartReplace:]): ditto
+        (-[WebCoreBridge deleteSelectionWithSmartDelete:]): take smartDelete parameter
+
 2004-09-21  Richard Williamson   <rjw@apple.com>
 
 	More dashboard region work.

@@ -58,4 +58,5 @@
 - (void)_selectionChanged;
 - (void)_updateFontPanel;
 - (unsigned int)_delegateDragSourceActionMask;
+- (BOOL)_canSmartCopyOrDelete;
 @end
