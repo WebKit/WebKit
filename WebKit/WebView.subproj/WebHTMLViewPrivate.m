@@ -178,7 +178,7 @@
 
     [elementInfo setObject:webFrame forKey:WebElementFrameKey];
     
-    return elementInfo;
+    return [elementInfo autorelease];
 }
 
 - (void)_setAsideSubviews

@@ -1,5 +1,15 @@
 2002-12-03  Darin Adler  <darin@apple.com>
 
+	- fixed 3114796 -- WORLD LEAKS: 1 WebFrame leaked on trivial source file with <html> tag only
+	(probably fixed a ton of other bugs too, since this always leaks)
+
+	Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView _elementAtPoint:]):
+	Added a missing autorelease.
+
+2002-12-03  Darin Adler  <darin@apple.com>
+
 	Reviewed by Maciej.
 
         * WebView.subproj/WebView.m: Fixed a pair of strings that conflict.
