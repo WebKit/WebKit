@@ -3706,8 +3706,7 @@ QStringList KHTMLPart::frameNames() const
 QPtrList<KParts::ReadOnlyPart> KHTMLPart::frames() const
 {
 #ifdef APPLE_CHANGES
-  // FIXME: Get rid of this method altogether rather than returning a bogus value?
-  return QPtrList<KParts::ReadOnlyPart>();
+  return impl->frames();
 #else
   QPtrList<KParts::ReadOnlyPart> res;
 

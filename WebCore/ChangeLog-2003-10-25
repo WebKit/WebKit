@@ -1,5 +1,16 @@
 2002-06-05  Richard Williamson  <rjw@apple.com>
 
+    Fixed 2938552.  This required an implementation of KHTMLPart::frames which
+    is used by the JS window.frames property.
+    
+	* khtml/khtml_part.cpp:
+	(KHTMLPart::frames):
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::frames):
+	* kwq/KWQKHTMLPartImpl.h:
+
+2002-06-05  Richard Williamson  <rjw@apple.com>
+
     Fixed window.top JS property (2939353).  This caused funny recursion problems at
     www.megapixel.net and other pages that try to pop frames.
 

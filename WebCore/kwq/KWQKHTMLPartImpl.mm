@@ -649,6 +649,21 @@ bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
     return [getDataSource() frameExists: (NSString *)frameName.getCFMutableString()];
 }
 
+QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
+{
+    QPtrList<KParts::ReadOnlyPart> res;
+    IFWebDataSource *thisDataSource = ((KWQKHTMLPartImpl *)this)->getDataSource();
+    NSArray *children = [thisDataSource children];
+    IFWebFrame *aFrame;
+    unsigned int i;
+    
+    for (i = 0; i < [children count]; i++){
+        aFrame = [children objectAtIndex: i];
+        res.append( [[aFrame dataSource] _part] );
+    }
+    return res;
+}
+
 QString KWQKHTMLPartImpl::documentSource() const
 {
     return m_documentSource;
