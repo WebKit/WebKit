@@ -1,3 +1,14 @@
+2004-08-04  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by mjs.
+ 
+	- fix <rdar://problem/3649789> SAP WebGUI has problems loading first page because of parse error        
+
+	* kjs/lexer.cpp:
+        (Lexer::lex): if the current character is a '\' and the next character is a line terminator,
+	go to the next line and continue parsing the string (instead of failing).  This matches 
+	behavior in Mac IE and Mozilla.
+
 2004-08-03  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Darin.
