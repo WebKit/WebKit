@@ -837,10 +837,11 @@ RenderLayer::nodeAtPoint(RenderObject::NodeInfo& info, int x, int y)
     QRect damageRect(m_x, m_y, width(), height());
     RenderLayer* insideLayer = nodeAtPointForLayer(this, info, x, y, damageRect);
 
-    // Now determine if the result is inside an anchor.
+    // Now determine if the result is inside an anchor; make sure an image map wins if
+    // it already set URLElement and only use the innermost.
     DOM::NodeImpl* node = info.innerNode();
     while (node) {
-        if (node->hasAnchor())
+        if (node->hasAnchor() && !info.URLElement())
             info.setURLElement(node);
         node = node->parentNode();
     }

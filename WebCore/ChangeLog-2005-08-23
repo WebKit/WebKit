@@ -1,3 +1,13 @@
+2004-04-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - rolled over fix from KHTML tree; anchor inside another anchor
+
+        * khtml/rendering/render_layer.cpp: (RenderLayer::nodeAtPoint):
+        Make sure the URL element is the innermost one, by not setting it once
+        it's already set.
+
 2004-04-05  David Hyatt  <hyatt@apple.com>
 
 	Implement overflow: overlay so that a scrollbar can show/hide without causing a layout.
