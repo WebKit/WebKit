@@ -668,8 +668,11 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
     int padPerSpace = 0;
     int numGlyphs = 0;
 
-    if (len <= 0)
+    if (len <= 0){
+        if (_numGlyphs)
+            *_numGlyphs = 0;
         return 0;
+    }
         
     // If the padding is non-zero, count the number of spaces in the string
     // and divide that by the padding for per space addition.
@@ -707,9 +710,9 @@ static void _drawGlyphs(NSFont *font, NSColor *color, CGGlyph *glyphs, CGSize *a
             break;
         }
 
-        if (IsNonBaseChar(c)) {
-            return [self slowFloatWidthForCharacters: &characters[pos] stringLength: stringLength-pos fromCharacterPostion: 0 numberOfCharacters: len applyRounding: applyRounding];
-        }
+        //if (IsNonBaseChar(c)) {
+        //    return [self slowFloatWidthForCharacters: &characters[pos] stringLength: stringLength-pos fromCharacterPostion: 0 numberOfCharacters: len applyRounding: applyRounding];
+        //}
 
         glyphID = glyphForCharacter(characterToGlyphMap, c);
         if (glyphID == nonGlyphID) {

@@ -1,3 +1,10 @@
+2002-10-28  Richard Williamson   <rjw@apple.com>
+
+        Fixed crasher.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:]):
+
 2002-10-28  John Sullivan  <sullivan@apple.com>
 
         * Bookmarks.subproj/WebBookmark.h:
