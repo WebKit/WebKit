@@ -1,3 +1,11 @@
+2002-09-23  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:topView:]):
+	Don't special case the top level frame's view so much.
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]): Ditto.
+        (-[NSView _web_propagateDirtyRectToAncestor]): Use public method here instead of private.
+
 2002-09-23  Ken Kocienda  <kocienda@apple.com>
 
         * WebCoreSupport.subproj/WebBridge.m:

@@ -28,7 +28,6 @@
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
-- (NSRect)_convertRectToSuperview:(NSRect)rect;
 - (void)_drawRect:(NSRect)rect clip:(BOOL)clip;
 @end
 
@@ -170,33 +169,27 @@ BOOL _modifierTrackingEnabled = FALSE;
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
 {
-    BOOL setAsideSubviews = [self _isMainFrame];
-    
-    if (setAsideSubviews) {
-        [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
-    
-        ASSERT(!_private->subviewsSetAside);
-        ASSERT(_private->savedSubviews == nil);
-        _private->savedSubviews = _subviews;
-        _subviews = nil;
-        _private->subviewsSetAside = YES;
-    }
+    [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+
+    ASSERT(!_private->subviewsSetAside);
+    ASSERT(_private->savedSubviews == nil);
+    _private->savedSubviews = _subviews;
+    _subviews = nil;
+    _private->subviewsSetAside = YES;
     
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
         rectIsVisibleRectForView:visibleView topView:topView];
     
-    if (setAsideSubviews) {
-        ASSERT(_subviews == nil);
-        _subviews = _private->savedSubviews;
-        _private->savedSubviews = nil;
-        _private->subviewsSetAside = NO;
-    }
+    ASSERT(_subviews == nil);
+    _subviews = _private->savedSubviews;
+    _private->savedSubviews = nil;
+    _private->subviewsSetAside = NO;
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect
 {
-    BOOL setAsideSubviews = [self _isMainFrame] && !_private->subviewsSetAside;
+    BOOL setAsideSubviews = !_private->subviewsSetAside;
     
     if (setAsideSubviews) {
         [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
@@ -234,7 +227,7 @@ BOOL _modifierTrackingEnabled = FALSE;
 {
     [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
     if ([self needsDisplay]) {
-        [[self superview] setNeedsDisplayInRect:[self _convertRectToSuperview:[self _dirtyRect]]];
+        [[self superview] setNeedsDisplayInRect:[self convertRect:[self _dirtyRect] toView:[self superview]]];
     }
 }
 
