@@ -1,5 +1,18 @@
 2002-12-16  David Hyatt  <hyatt@apple.com>
 
+	Use the layer's bounds as the damage rect not the object's.
+	The layer knows about the overflow out of the object.  The
+	object does not.  Duh.
+
+	Fixes disney.com bustage.
+	
+        Reviewed by sullivan
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::constructZTree):
+
+2002-12-16  David Hyatt  <hyatt@apple.com>
+
 	Code needs to go in calcMinMaxWidth instead, so parents computing
 	their own minmax widths will get the correct value during the ifrst
 	pass.  With this change weather.com is actually fixed.
