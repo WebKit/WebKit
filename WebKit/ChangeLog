@@ -1,3 +1,5 @@
+=== Safari-92 ===
+
 2003-08-07  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3362939.  Checked flippyness of view and adjust y coord accordingly.
