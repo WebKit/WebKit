@@ -1,5 +1,18 @@
 2003-03-19  Richard Williamson   <rjw@apple.com>
 
+        Removed initWithView:* constructors from WebView.
+        New designated initializer for WebView is initWithFrame:frameName:groupName:
+        
+        Reviewed by cblu & ed.
+
+        * Carbon.subproj/HIWebView.m:
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView init]):
+        (-[WebView initWithFrame:]):
+
+2003-03-19  Richard Williamson   <rjw@apple.com>
+
         Rename WebControllerPolicyDelegate*.[hm] to WebPolicyDelegate*.[hm]
         
         Reviewed by trey.

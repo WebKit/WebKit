@@ -85,27 +85,19 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 */
 + (BOOL)canShowMIMEType:(NSString *)MIMEType;
 
-
 /*!
-    @method initWithView:
-    @abstract This method is a convenience equivalent to initWithView:view frameName:nil groupName:nil
-    @param view The view to use.
-*/
-- initWithView: (WebFrameView *)view;
-
-/*!
-    @method initWithView:frameName:setName:
+    @method initWithFrame:frameName:groupName:
     @abstract The designated initializer for WebView.
     @discussion Initialize a WebView with the supplied parameters. This method will 
     create a main WebFrame with the view. Passing a top level frame name is useful if you
     handle a targetted frame navigation that would normally open a window in some other 
     way that still ends up creating a new WebView.
-    @param view The main view to be associated with the controller.  May be nil.
+    @param frame The frame used to create the view.
     @param frameName The name to use for the top level frame. May be nil.
     @param groupName The name of the controller set to which this controller will be added.  May be nil.
     @result Returns an initialized WebView.
 */
-- initWithView: (WebFrameView *)view frameName: (NSString *)frameName groupName: (NSString *)name ;
+- initWithFrame: (NSRect)frame frameName: (NSString *)frameName groupName: (NSString *)groupName;
 
 /*!
     @method setWindowOperationsDelegate:

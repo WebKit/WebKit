@@ -88,29 +88,22 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - init
 {
-    return [self initWithView: nil frameName: nil groupName: nil];
+    return [self initWithFrame: NSZeroRect frameName: nil groupName: nil];
 }
 
 - initWithFrame: (NSRect)f
+{
+    [self initWithFrame: f frameName:nil groupName:nil];
+    return self;
+}
+
+- initWithFrame: (NSRect)f frameName: (NSString *)frameName groupName: (NSString *)groupName;
 {
     [super initWithFrame: f];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
     [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: wv];
-    [self _commonInitialization: wv frameName:nil groupName:nil];
-    return self;
-}
-
-- initWithView: (WebFrameView *)view
-{
-    return [self initWithView: view frameName: nil groupName: nil];
-}
-
-
-- initWithView: (WebFrameView *)view frameName: (NSString *)frameName groupName: (NSString *)groupName;
-{
-    [super initWithFrame: NSZeroRect];
-    [self _commonInitialization: view frameName:frameName groupName:groupName];
+    [self _commonInitialization: wv frameName:frameName groupName:groupName];
     return self;
 }
 

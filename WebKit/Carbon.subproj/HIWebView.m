@@ -249,6 +249,7 @@ HIWebFrameViewGetController( HIViewRef inControl )
 extern WebView*
 WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName )
 {
+#ifdef XXXX
 	NSView*			view = HIWebFrameViewGetNSView( inView );
 	WebView*	result = NULL;
 	
@@ -256,6 +257,9 @@ WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName )
 		result = [[WebView alloc] initWithView: (WebFrameView*)view frameName:nil groupName:(NSString*)inName];
 
 	return result;
+#else
+        return NULL;
+#endif
 }
 
 //----------------------------------------------------------------------------------
