@@ -1,3 +1,16 @@
+2003-05-09  David Hyatt  <hyatt@apple.com>
+
+	Change the minfontsize to 1, i.e., to have no minimum.  This
+	matches other browsers while still retaining the pref control
+	in WebKit.
+
+	Fixes www.gamespot.com.  The bug is 3254489.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+
 2003-05-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

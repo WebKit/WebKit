@@ -86,7 +86,7 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
         @"Helvetica",                   WebKitSansSerifFontPreferenceKey,
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
-        @"9",                           WebKitMinimumFontSizePreferenceKey,
+        @"1",                           WebKitMinimumFontSizePreferenceKey,
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"latin1",                      WebKitDefaultTextEncodingNamePreferenceKey,
