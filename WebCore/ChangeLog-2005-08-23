@@ -1,3 +1,13 @@
+2004-10-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3296652> checkbox input type does not respond to onchange
+
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::updateFromElement): Some new code, commented out, for form element colors.
+        (RenderCheckBox::slotStateChanged): Added call to onChange.
+
 2004-10-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

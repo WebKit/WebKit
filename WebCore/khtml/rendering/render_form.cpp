@@ -99,7 +99,9 @@ void RenderFormElement::updateFromElement()
 {
     m_widget->setEnabled(!element()->disabled());
 
-#if !APPLE_CHANGES
+#if APPLE_CHANGES
+    //m_widget->setPalette(QPalette(style()->backgroundColor(), style()->color()));
+#else
     QColor color = style()->color();
     QColor backgroundColor = style()->backgroundColor();
 
@@ -310,6 +312,7 @@ void RenderCheckBox::updateFromElement()
 void RenderCheckBox::slotStateChanged(int state)
 {
     element()->setChecked(state == 2);
+    element()->onChange();
 }
 
 // -------------------------------------------------------------------------------
