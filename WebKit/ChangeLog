@@ -1,3 +1,17 @@
+2002-10-15  Richard Williamson  <rjw@apple.com>
+
+        Added attributed string to pasteboard.  Fixes 3006760.
+        We may want to scale back the content that is included in the
+        attributed string.  Currently all text nodes in the selection
+        are converted.  This include text nodes for non-visible content,
+        i.e. scripts.
+        [Note we may also want to put HTML snippet on the pboard.  The appkit
+        does support reading text using htmldisplay today.  Of course this should
+        eventually migrate to use WebView.]
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView copy:]):
+
 2002-10-15  Darin Adler  <darin@apple.com>
 
 	Fixed bug where URLs dragged to the content area were not made canonical

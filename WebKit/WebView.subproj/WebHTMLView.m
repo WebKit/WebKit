@@ -92,8 +92,26 @@
 - (void)copy:(id)sender
 {
     NSPasteboard *pboard = [NSPasteboard generalPasteboard];
-    [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, nil] owner:nil];
-    [pboard setString:[[self _bridge] selectedText] forType:NSStringPboardType];
+    NSAttributedString *attributedString;
+    NSData *attributedData;
+    WebBridge *b = [self _bridge];
+    
+#ifdef SUPPORT_HTML_PBOARD
+    [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, NSHTMLPboardType, NSRTFPboardType, nil] owner:nil];
+#endif
+    [pboard declareTypes:[NSArray arrayWithObjects:NSStringPboardType, NSRTFPboardType, nil] owner:nil];
+    [pboard setString:[b selectedText] forType:NSStringPboardType];
+    
+    // Put attributed string on the pasteboard.
+    attributedString = [b
+        attributedStringFrom: [b selectionStart] startOffset: [b selectionStartOffset]
+        to: [b selectionEnd] endOffset: [b selectionEndOffset]];
+    attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+    [pboard setData:attributedData forType:NSRTFPboardType];
+
+#ifdef SUPPORT_HTML_PBOARD
+    // Put HTML on the pasteboard.
+#endif
 }
 
 

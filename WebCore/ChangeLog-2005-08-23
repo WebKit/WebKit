@@ -1,3 +1,17 @@
+2002-10-15  Richard Williamson  <rjw@apple.com>
+
+        Added API to get attributed string from bridge.
+        Added API to get selection in terms of the DOM API
+        from the bridge.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (attributedString):
+        (-[WebCoreBridge selectionStart]):
+        (-[WebCoreBridge selectionStartOffset]):
+        (-[WebCoreBridge selectionEnd]):
+        (-[WebCoreBridge selectionEndOffset]):
+
 2002-10-15  Darin Adler  <darin@apple.com>
 
 	- fixed 3054791 -- crash in WebCoreSettings _updateAllViews changing font

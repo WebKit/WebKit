@@ -101,9 +101,6 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 - (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh;
 
-- (NSString *)selectedText;
-- (void)selectAll;
-
 - (BOOL)isFrameSet;
 
 - (void)reapplyStyles;
@@ -139,6 +136,14 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (id<WebDOMDocument>)DOMDocument;
 
 - (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset;
+
+- (NSString *)selectedText;
+- (void)selectAll;
+
+- (id<WebDOMNode>)selectionStart;
+- (int)selectionStartOffset;
+- (id<WebDOMNode>)selectionEnd;
+- (int)selectionEndOffset;
 
 - (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset;
 

@@ -571,6 +571,7 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
     NSFont *font;
     NSMutableAttributedString *result = [[[NSMutableAttributedString alloc] init] autorelease];
     NSAttributedString *partialString;
+    NSColor *color;
     
     while(!n.isNull()) {
         if(n.nodeType() == DOM::Node::TEXT_NODE) {
@@ -581,8 +582,10 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
             font = nil;
             if (renderer){
                 style = renderer->style();
-                if (style)
+                if (style) {
                     font = style->font().getNSFont();
+                    color = style->color().getNSColor();
+                }
             }
             
             hasNewLine = false;            
@@ -596,7 +599,7 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
                 text = str;
                 
             if (font)
-                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: [NSDictionary dictionaryWithObjectsAndKeys: font, NSFontAttributeName, 0]];
+                partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: [NSDictionary dictionaryWithObjectsAndKeys: font, NSFontAttributeName, NSForegroundColorAttributeName, color, 0]];
             else
                 partialString = [[NSAttributedString alloc] initWithString: text.getNSString() attributes: nil];
                 
@@ -725,5 +728,27 @@ static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int start
 {
     return attributedString ([(WebCoreDOMNode *)startNode impl], startOffset, [(WebCoreDOMNode *)endNode impl], endOffset);
 }
+
+
+- (id<WebDOMNode>)selectionStart
+{
+    return [WebCoreDOMNode nodeWithImpl: part->impl->selectionStart()];
+}
+
+- (int)selectionStartOffset
+{
+    return part->impl->selectionStartOffset();
+}
+
+- (id<WebDOMNode>)selectionEnd
+{
+    return [WebCoreDOMNode nodeWithImpl: part->impl->selectionEnd()];
+}
+
+- (int)selectionEndOffset
+{
+    return part->impl->selectionEndOffset();
+}
+
 
 @end
