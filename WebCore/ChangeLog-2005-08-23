@@ -1,5 +1,16 @@
 2005-01-28  David Harrison  <harrison@apple.com>
 
+        Reviewed by John Sullivan.
+
+        <rdar://problem/3968144> AX need to be able to focus an AXLink by setting AXFocused to true
+        
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityPerformAction:]):
+        (-[KWQAccObject accessibilityIsAttributeSettable:]):
+        Add AXFocused for AXLinks.
+
+2005-01-28  David Harrison  <harrison@apple.com>
+
         Reviewed by Darin.
 
         <rdar://problem/3584942> AX: Safari Accessibility parent-child mismatch

@@ -711,7 +711,6 @@ static QRect boundingBoxRect(RenderObject* obj)
 
 - (void)accessibilityPerformAction:(NSString *)action
 {
-    // We only have the one action (press).
     if ([action isEqualToString:NSAccessibilityPressAction]) {
         // Locate the anchor element. If it doesn't exist, just bail.
         HTMLAnchorElementImpl* anchorElt = [self anchorElement];
@@ -726,7 +725,7 @@ static QRect boundingBoxRect(RenderObject* obj)
             }
         }
 
-        anchorElt->click();
+        anchorElt->accessKeyAction();
     }
 }
 
@@ -1880,6 +1879,10 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 #else
     if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute])
         return YES;
+    if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
+        if ([[self role] isEqualToString:@"AXLink"])
+            return YES;
+    }
 #endif
 
     return NO;
@@ -1910,12 +1913,28 @@ static void AXAttributedStringAppendReplaced (NSMutableAttributedString *attrStr
 - (void)accessibilitySetValue:(id)value forAttribute:(NSString *)attributeName;
 {
     AXTextMarkerRangeRef    textMarkerRange = nil;
+    NSNumber *              number = nil;
 
+    // decode the parameter
     if (CFGetTypeID(value) == AXTextMarkerRangeGetTypeID())
         textMarkerRange = (AXTextMarkerRangeRef) value;
-        
+
+    else if ([value isKindOfClass:[NSNumber self]])
+        number = value;
+    
+    // handle the command
     if ([attributeName isEqualToString: (NSString *) kAXSelectedTextMarkerRangeAttribute]) {
+        ASSERT(textMarkerRange);
         [self doSetAXSelectedTextMarkerRange:textMarkerRange];
+        
+    } else if ([attributeName isEqualToString: NSAccessibilityFocusedAttribute]) {
+        ASSERT(number);
+        if ([[self role] isEqualToString:@"AXLink"]) {
+            if ([number intValue] != 0)
+                m_renderer->document()->setFocusNode(m_renderer->element());
+            else
+                m_renderer->document()->setFocusNode(0);
+        }
     }
 }
 #endif
