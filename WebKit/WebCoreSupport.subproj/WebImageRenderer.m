@@ -7,6 +7,8 @@
 
 #import <WebFoundation/WebAssertions.h>
 
+extern NSString *NSImageLoopCount;
+
 #define MINIMUM_DURATION (1.0/30.0)
 
 @implementation WebImageRenderer
@@ -115,8 +117,7 @@ static NSMutableArray *activeImageRenderers;
 - (float)unadjustedFrameDuration
 {
     id property = [self firstRepProperty:NSImageCurrentFrameDuration];
-    float duration = property ? [property floatValue] : 0.0;
-    return duration;
+    return property ? [property floatValue] : 0.0;
 }
 
 - (float)frameDuration
@@ -136,6 +137,12 @@ static NSMutableArray *activeImageRenderers;
         duration = MINIMUM_DURATION;
     }
     return duration;
+}
+
+- (int)repetitionCount
+{
+    id property = [self firstRepProperty:NSImageLoopCount];
+    return property ? [property intValue] : 0;
 }
 
 - (void)scheduleFrame
@@ -193,6 +200,10 @@ static NSMutableArray *activeImageRenderers;
     
     currentFrame = [self currentFrame] + 1;
     if (currentFrame >= [self frameCount]) {
+        repetitionsComplete += 1;
+        if ([self repetitionCount] && repetitionsComplete >= [self repetitionCount]) {
+            animationFinished = YES;
+        }
 	// Don't repeat if the last frame has a duration of 0.  
         // IE doesn't repeat, so we don't.
         if ([self unadjustedFrameDuration] == 0) {

@@ -14,9 +14,10 @@
     int loadStatus;
     NSColor *patternColor;
     int patternColorLoadStatus;
+    int repetitionsComplete;
     BOOL animationFinished;
 }
 
-+ (void)stopAnimationsInView: (NSView *)aView;
++ (void)stopAnimationsInView:(NSView *)aView;
 
 @end

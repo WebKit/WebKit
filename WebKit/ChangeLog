@@ -1,3 +1,12 @@
+2002-11-01  Darin Adler  <darin@apple.com>
+
+	- implemented loop counts
+
+        * WebCoreSupport.subproj/WebImageRenderer.h: Added repetitionsComplete field.
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer repetitionCount]): Get NSImageLoopCount.
+        (-[WebImageRenderer nextFrame:]): Check repetitionCount and stop once we hit it.
+
 2002-10-31  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebFrame.m: (-[WebFrame setController:]): Add an assert,
