@@ -291,7 +291,7 @@ DOMStringImpl *DOMStringImpl::capitalize()
 
     if ( l ) c->s[0] = s[0].upper();
     for (unsigned int i = 1; i < l; i++)
-	c->s[i] = s[i-1].isLetterOrNumber() ? s[i].lower() : s[i].upper();
+	c->s[i] = s[i-1].isLetterOrNumber() ? s[i] : s[i].upper();
 
     return c;
 }

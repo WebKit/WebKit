@@ -1,3 +1,13 @@
+2003-02-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3179059 -- CSS1: capitalized letters should remain capitalized when
+        text-transform: capitalize is applied
+
+        * khtml/xml/dom_stringimpl.cpp: (DOMStringImpl::capitalize): Capitalize the first
+        letters of words, but don't make any letters lowercase.
+
 2003-02-23  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
