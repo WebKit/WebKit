@@ -105,11 +105,6 @@ using KJS::SavedProperties;
     if (document) {
         KHTMLView *view = document->view();
 
-        // FIXME: We see evidence that view is nil in backtraces
-        // from the field. So we know this assert would sometimes fire.
-        // We check for nil below anyway until we figure out the cause.
-        ASSERT(view);
-        
         KWQKHTMLPart::clearTimers(view);
 
         document->setInPageCache(NO);

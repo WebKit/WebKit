@@ -1,3 +1,20 @@
+2003-01-27  Richard Williamson   <rjw@apple.com>
+
+        Reviewed by trey.
+
+        Added ASSERT trap to help track down non-repro crash reported
+        by 3144546.
+        
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURLFromPageCache):
+        
+        Remove assert that caused 3155781.  We believe this was happening
+        because of a delayed release of the page cache after emptying cache
+        from "Empty Cache" menu item.
+        
+        * kwq/KWQPageState.mm:
+        (-[KWQPageState dealloc]):
+
 2003-01-27  David Hyatt  <hyatt@apple.com>
 
 	Fix text dragging so that text inside floats paints when you

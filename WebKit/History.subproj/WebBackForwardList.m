@@ -193,6 +193,7 @@
     for (i = 0; i < (int)[_entries count]; i++) {
         [[_entries objectAtIndex:i] setHasPageCache:NO];
     }
+    [WebHistoryItem _releaseAllPendingPageCaches];
 }
 
 static BOOL pageCacheSizeModified = NO;

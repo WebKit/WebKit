@@ -575,6 +575,8 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
         d->m_kjsDefaultStatusBarText = QString::null;
     }
 
+    ASSERT (url);
+    
     m_url = *url;
     
     // set the javascript flags according to the current url
