@@ -256,10 +256,10 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 
 @implementation WebFrame (WebPrivate)
 
-- (void)loadHTMLPropertyList:(id)HTMLPropertyList
+- (void)loadPropertyList:(id)propertyList
 {
-    if ([HTMLPropertyList isKindOfClass:[NSDictionary class]]) {
-        NSDictionary *resourcePropertyList = [HTMLPropertyList objectForKey:WebMainResourceKey];
+    if ([propertyList isKindOfClass:[NSDictionary class]]) {
+        NSDictionary *resourcePropertyList = [propertyList objectForKey:WebMainResourceKey];
         if (resourcePropertyList) {
             WebResource *resource = [[WebResource alloc] _initWithPropertyList:resourcePropertyList];
             if (resource) {
@@ -267,7 +267,8 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
                                                             MIMEType:[resource MIMEType]
                                                     textEncodingName:[resource textEncodingName]
                                                              baseURL:[resource URL]];
-                NSArray *subresourcePropertyLists = [HTMLPropertyList objectForKey:WebSubresourcesKey];
+                [resource release];
+                NSArray *subresourcePropertyLists = [propertyList objectForKey:WebSubresourcesKey];
                 [self _loadRequest:request subresources:subresourcePropertyLists ? [WebResource _resourcesFromPropertyLists:subresourcePropertyLists] : nil];
             }
         }

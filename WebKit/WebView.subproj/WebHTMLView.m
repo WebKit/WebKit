@@ -519,41 +519,12 @@ static WebHTMLView *lastHitView = nil;
     return [NSArray arrayWithObjects:WebHTMLPboardType, NSHTMLPboardType, NSRTFPboardType, NSRTFDPboardType, NSStringPboardType, nil];
 }
 
-- (NSDictionary *)_selectedHTMLPropertyList:(NSString **)HTMLString
+- (id)_selectedPropertyList:(NSString **)HTMLString
 {
     NSArray *subresourceURLStrings;
     *HTMLString = [[self _bridge] selectedHTMLString:&subresourceURLStrings];
-    NSMutableDictionary *HTMLPropertyList = [NSMutableDictionary dictionary];
-
-    WebDataSource *dataSource = [self _dataSource];
-    NSURLResponse *response = [dataSource response];
-    WebResource *resource = [[WebResource alloc] initWithData:[*HTMLString dataUsingEncoding:NSUTF8StringEncoding] 
-                                                          URL:[response URL] 
-                                                     MIMEType:[response MIMEType]
-                                             textEncodingName:[response textEncodingName]];
-    [HTMLPropertyList setObject:[resource _propertyListRepresentation] forKey:WebMainResourceKey];
-    [resource release];
-    
-    NSEnumerator *enumerator = [subresourceURLStrings objectEnumerator];
-    NSMutableArray *subresources = [[NSMutableArray alloc] init];
-    NSString *URLString;
-    while ((URLString = [enumerator nextObject]) != nil) {
-        NSURL *URL = [NSURL _web_URLWithDataAsString:URLString];
-        resource = [dataSource subresourceForURL:URL];
-        if (resource) {
-            [subresources addObject:[resource _propertyListRepresentation]];
-        } else {
-            ERROR("Failed to copy subresource because data source does not have subresource for %@", URLString);
-        }
-    }
-    
-    if ([subresources count] > 0) {
-        [HTMLPropertyList setObject:subresources forKey:WebSubresourcesKey];
-    }
-    
-    [subresources release];
-    
-    return HTMLPropertyList;
+    return [[self _dataSource] _propertyListWithData:[*HTMLString dataUsingEncoding:NSUTF8StringEncoding]  
+                               subresourceURLStrings:subresourceURLStrings];
 }
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
@@ -562,7 +533,7 @@ static WebHTMLView *lastHitView = nil;
 
     // Put HTML on the pasteboard.
     NSString *HTMLString;
-    NSDictionary *HTMLPropertyList = [self _selectedHTMLPropertyList:&HTMLString];
+    NSDictionary *HTMLPropertyList = [self _selectedPropertyList:&HTMLString];
     [pasteboard setString:HTMLString forType:NSHTMLPboardType];
     [pasteboard setPropertyList:HTMLPropertyList forType:WebHTMLPboardType];
     

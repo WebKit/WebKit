@@ -1,3 +1,34 @@
+2004-02-26  Chris Blumenberg  <cblu@apple.com>
+
+	WebKit side of:
+	<rdar://problem/3056566>: mail a link to this page
+	<rdar://problem/2961206>: implement ability to e-mail entire page
+
+        Reviewed by john.
+
+        * English.lproj/StringsNotToBeLocalized.txt:
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase _createFileDatabase]): tweaks
+        (-[WebIconDatabase _loadIconDictionaries]): fixed an assertion failure I found in Blot. Keep the original list of icon URLs as a separate list when doing the initial clean-up so we don't over release any icons.
+        (-[WebIconDatabase _updateFileDatabase]): tweaks
+        (-[WebIconDatabase _setIcon:forIconURL:]): tweaks
+        (-[WebIconDatabase _releaseIconForIconURLString:]): tweaks
+        (-[WebIconDatabase _retainOriginalIconsOnDisk]): use the original list of icons on disk instead of the current list
+        (-[WebIconDatabase _releaseOriginalIconsOnDisk]): use the original list of icons on disk instead of the current list
+        * Misc.subproj/WebIconDatabasePrivate.h:
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _propertyListWithData:subresourceURLStrings:]): new, code moved from [WebHTMLView _selectedPropertyList:], creates property list rep of data and subresources
+        (-[WebDataSource propertyList]): does the above with all the data source data, this is what "Mail Page" uses
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame loadPropertyList:]): renamed from loadHTMLPropertyList because the property list may contain non-HTML data
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _selectedPropertyList:]): renamed, code moved to [WebDataSource _propertyListWithData:subresourceURLStrings:]
+        (-[WebHTMLView _writeSelectionToPasteboard:]): call renamed _selectedPropertyList
+
 2004-02-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
@@ -1269,6 +1300,7 @@
 
         * WebView.subproj/WebTextView.m:
         (-[WebTextView setFixedWidthFont]): Use [[WebTextRendererFactory sharedFactory] fontWithFamilies:traits:size:] to get the font since it takes the font family which is what we store in WebPreferences and it does fallback work. Only set the font if 
+
 non-nil is returned.
 
 2003-11-21  Maciej Stachowiak  <mjs@apple.com>
@@ -1824,6 +1856,7 @@ non-nil is returned.
 
         * WebView.subproj/WebTextView.m:
         (-[WebTextView menuForEvent:]): Made WebTextView's context menu behavior like WebHTMLView's context menu behavior with regards to selection. If the control-click was on a selection, show menu options for the selection like copy. If it was not on a
+
  selection, show menu options such as save and print. Don't select anything when control-clicking.
 
 2003-11-08  Chris Blumenberg  <cblu@apple.com>
@@ -2284,6 +2317,7 @@ non-nil is returned.
 
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _isLoadComplete]): call _progressCompleted after we deliver the didFailLoadWithError or didFinishLoadForFrame message as we do in other places. This allows to be aware of the error (if there is one), when they get the WebViewProgressFi
+
 nishedNotification notification.
 
 2003-10-27  Maciej Stachowiak  <mjs@apple.com>
@@ -2403,6 +2437,7 @@ nishedNotification notification.
 
         * WebView.subproj/WebView.m:
 	(+[WebView _viewClass:andRepresentationClass:forMIMEType:]): use _web_objectForMIMEType when getting an object for a MIME. Removed unnecessary code that checked for the document classes after loading the plug-in DB since it is not an optimization because
+
  the plug-in DB calls _viewTypesAllowImageTypeOmission:NO.
 
 2003-10-23  Chris Blumenberg  <cblu@apple.com>
@@ -2425,6 +2460,7 @@ nishedNotification notification.
         (+[WebFrameView _viewClassForMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
         * WebView.subproj/WebView.m:
 	(+[WebView _viewClass:andRepresentationClass:forMIMEType:]): new, central place for mapping from a MIME to the document classes. We now load the plug-in DB when a non-HTML MIME type is encountered instead of loading the plug-in DB when the class for the 
+
 MIME type is not found. This is required to fully fix 3364036.
         (+[WebView canShowMIMEType:]): call [WebView _viewClass:andRepresentationClass:forMIMEType:]
         (+[WebView registerViewClass:representationClass:forMIMEType:]): tweak
@@ -2559,6 +2595,7 @@ MIME type is not found. This is required to fully fix 3364036.
 
         * Plugins.subproj/WebPluginDatabase.m:
         (-[WebPluginDatabase pluginForExtension:]): If no plug-in is found from the extension, attempt to map from the extension to a MIME type using our mappings and find a plug-in from the MIME type. This improves our chances of finding a plug-in when n
+
 o MIME type is specified.
         * WebCoreSupport.subproj/WebBridge.m:
 	(-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]): If the passed MIME is empty, nil it out so that clients only need to check for nil. This avoids error sheets complaining about "" MIME types.
@@ -3231,6 +3268,7 @@ o MIME type is specified.
 2003-09-30  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3420396.  If a frame targets _top and a URL that contains a fragment (very unusual, it's meaningless for a frameset to contain a named anchor point) the frameset won't be reloaded.  Our normal path is to just scroll to the anchor point.  This is on
+
 ly important because our Help folks oddly depend on the behavior.
 
         Reviewed by Chris.
@@ -3764,7 +3802,9 @@ ly important because our Help folks oddly depend on the behavior.
 	Fixed: <rdar://problem/3412380>: REGRESSION (85-98): www.minoltan.com is decoded incorrectly on Japanese system
 
 	The default encoding that Safari uses is latin1 regardless of the current system encoding. This is how it's always been. The problem is that the UI is displaying shift JIS for the default text encoding instead of latin1. This is happening because WebKit 
+
 is using "latin1" instead of "ISO-8859-1" for the default text encoding name. "ISO-8859-1" is the IANA character set name for latin1 and this is what the  WebKitDefaultTextEncodingNamePreferenceKey preference expects. This ends up confusing Safari, so Saf
+
 ari just ends up displaying the first item in the pop-up menu which is shift JIS.
 
         Reviewed by rjw.
@@ -3963,6 +4003,7 @@ ari just ends up displaying the first item in the pop-up menu which is shift JIS
 2003-08-29  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3400807.  Don't release state associated with the current b/f item.  We shouldn't normally have page cache state associated with the current item (3401376).  This fix guarantees that we won't prematurely release the page cache state for the current
+
  item.
 
         Reviewed byJohn Sullivan.
@@ -4000,6 +4041,7 @@ ari just ends up displaying the first item in the pop-up menu which is shift JIS
 2003-08-27  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3398229.  When we request a font from NSFont by name we should use a case specific name.  We do case insensitve comparsion, but once a match is found we should use the actual font name, not the requested name.  Two layout tests are still failing, b
+
 ut I don't think the failures are font related.
 
         Reviewed by Hyatt.
@@ -5956,6 +5998,7 @@ ut I don't think the failures are font related.
         (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): this method covers the regular load case. This is where we need to stop the load, set the load type and the provisional data source. Code was in _prepareForProvisionalLoadWithData
 
 
+
 Source::
         (-[WebFrame _loadDataSource:withLoadType:formState:]): set the policyLoadType and policyDataSource (the beginning of the regular load case)
 
@@ -5986,6 +6029,7 @@ Source::
         (-[WebFrame _loadURL:referrer:loadType:target:triggeringEvent:form:formValues:]): formatting tweak
         (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): if there is no request to continue with, don't reset things like the provisional data source since it was never unset in this case
         (-[WebFrame _loadDataSource:withLoadType:formState:]): don't call stopLoading, _setLoadType and _setProvisionalDataSource, since that stops the frame even for command-click and option-click. Do this work in _prepareForProvisionalLoadWithDataSource
+
 
 
 :loadType: instead.
@@ -6256,7 +6300,9 @@ Source::
 	The problem happens when you call NPP_SetWindow with a 0 width or height more than once. The first call to NPP_SetWindow always seems to have width and height set to 0, but the next call sometimes has it set to the correct values (those in the EMBED tag)
 
 
+
 . This is when it draws successfully. It seems to me that the fix is to always pass the correct width and height to NPP_SetWindow. You always position the plug-in far offscreen (1000000, -52) and set the clip region to an empty rect (48576, 52, 48576, 52)
+
 
 
  so there isn't really any danger of the plug-in drawing anyway. Additionally, you pass the correct width and height in the call to NPP_New before the first call to NPP_SetWindow.
@@ -12204,6 +12250,7 @@ Source::
 
 
 
+
 is to retain the incomplete data even though the load ends in error.
 
         Reviewed by darin.
@@ -12265,6 +12312,7 @@ is to retain the incomplete data even though the load ends in error.
 	Fixed: 3189675 - assertion in plug-in code fails (nil window) with .swf page displaying standalone in a tab
 
 	We start plug-ins when they are added to the window and stop them when they are removed. To restart a plug-in, the data stream must be redelivered. This works in the embedded plug-in case, but in the standalone plug-in case, the stream is delivered by th
+
 
 
 
@@ -12735,6 +12783,7 @@ e machinery in WebKit. The stream is only delivered once. This fix addresses tha
 
 
 
+
 t leak when we cancel a download.
         (-[WebDownload _setRequest:]): added
         (-[WebDownload _setResponse:]): added
@@ -12871,6 +12920,7 @@ t leak when we cancel a download.
         Reviewed by trey.
 
         * Downloads.subproj/WebDownload.h: Changed the download delegate method from download:didStartFromDataSource: download:didStartFromRequest:. Passing the data source wasn't that helpful. It was also quirky that the data source would sometimes be ni
+
 
 
 
@@ -16677,6 +16727,7 @@ l.
 
 
 
+
 ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
 
 	We should:
@@ -16693,6 +16744,7 @@ ts each with 60 timeouts. The event also cause the Finder to do a lot of work.
         * Misc.subproj/WebNSWorkspaceExtras.h: Added.
         * Misc.subproj/WebNSWorkspaceExtras.m: Added.
         (-[NSWorkspace _web_noteFileChangedAtPath:]): Notifies the Finder (or any other app that cares) that we added, removed or changed the attributes of a file. This method is better than calling noteFileSystemChanged: because noteFileSystemChanged: se
+
 
 
 
@@ -17327,6 +17379,7 @@ nds 2 apple events both with a 60 second timeout. This method returns immediatel
         Reviewed by john.
 
 	We were reusing the drag types from the previous drag pasteboard. For example, we would declare image types when dragging URLs. This would confuse the Finder, so location files weren't being created. This would occasional cause us to crash because we wer
+
 
 
 

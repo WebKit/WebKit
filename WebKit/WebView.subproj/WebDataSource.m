@@ -104,6 +104,46 @@
     }
 }
 
+- (id)_propertyListWithData:(NSData *)data subresourceURLStrings:(NSArray *)subresourceURLStrings
+{
+    NSMutableDictionary *propertyList = [NSMutableDictionary dictionary];
+    WebResource *resource = [[WebResource alloc] initWithData:data
+                                                          URL:[_private->response URL] 
+                                                     MIMEType:[_private->response MIMEType]
+                                             textEncodingName:[self _isDocumentHTML] ? @"UTF-8" : [_private->response textEncodingName]];
+    [propertyList setObject:[resource _propertyListRepresentation] forKey:WebMainResourceKey];
+    [resource release];
+    
+    NSEnumerator *enumerator = [subresourceURLStrings objectEnumerator];
+    NSMutableArray *subresources = [[NSMutableArray alloc] init];
+    NSString *URLString;
+    while ((URLString = [enumerator nextObject]) != nil) {
+        resource = [_private->subresources objectForKey:URLString];
+        if (resource) {
+            [subresources addObject:[resource _propertyListRepresentation]];
+        } else {
+            ERROR("Failed to copy subresource because data source does not have subresource for %@", URLString);
+        }
+    }
+    
+    if ([subresources count] > 0) {
+        [propertyList setObject:subresources forKey:WebSubresourcesKey];
+    }
+    
+    [subresources release];
+    
+    return propertyList;
+}
+
+- (id)propertyList
+{
+    if ([self isLoading] || [_private->resourceData length] == 0) {
+        return nil;
+    }
+    NSData *data = [self _isDocumentHTML] ? [[[self _bridge] HTMLString:nil] dataUsingEncoding:NSUTF8StringEncoding] : _private->resourceData;
+    return [self _propertyListWithData:data subresourceURLStrings:[_private->subresources allKeys]];
+}
+
 - (WebView *)_webView
 {
     return _private->webView;
@@ -843,7 +883,6 @@
     NSString *MIMEType = [[self response] MIMEType];
     return [WebView canShowMIMETypeAsHTML:MIMEType];
 }
-
 
 @end
 

@@ -228,7 +228,7 @@ NSSize WebIconLargeSize = {128, 128};
         [[NSUserDefaults standardUserDefaults] setObject:databaseDirectory forKey:WebIconDatabaseDirectoryDefaultsKey];
     }
     databaseDirectory = [databaseDirectory stringByExpandingTildeInPath];
-
+    
     _private->fileDatabase = [[WebFileDatabase alloc] initWithPath:databaseDirectory];
     [_private->fileDatabase setSizeLimit:20000000];
     [_private->fileDatabase open];
@@ -292,9 +292,9 @@ NSSize WebIconLargeSize = {128, 128};
     }
 
     if (v == WebIconDatabaseCurrentVersion) {
-	_private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
-	_private->URLToIconURL = 		[fileDB objectForKey:WebURLToIconURLKey];
-	_private->iconURLToURLs = 	[fileDB objectForKey:WebIconURLToURLsKey];
+        _private->iconsOnDiskWithURLs = 	[fileDB objectForKey:WebIconsOnDiskKey];
+        _private->URLToIconURL = 		[fileDB objectForKey:WebURLToIconURLKey];
+        _private->iconURLToURLs = 	[fileDB objectForKey:WebIconURLToURLsKey];
     }
 
     if (![self _iconDictionariesAreGood]) {
@@ -303,6 +303,7 @@ NSSize WebIconLargeSize = {128, 128};
         _private->iconURLToURLs = 	[NSMutableDictionary dictionary];
     }
 
+    _private->originalIconsOnDiskWithURLs = [_private->iconsOnDiskWithURLs copy];
     [_private->iconsOnDiskWithURLs retain];
     [_private->iconURLToURLs retain];
     [_private->URLToIconURL retain];
@@ -337,7 +338,7 @@ NSSize WebIconLargeSize = {128, 128};
 
     while ((iconURLString = [enumerator nextObject]) != nil) {
         NSMutableDictionary *icons = [_private->iconURLToIcons objectForKey:iconURLString];
-        if(icons){
+        if (icons) {
             // Save the 16 x 16 size icons as this is the only size the Safari uses.
             // If we ever use larger sizes, we should save the largest size so icons look better when scaling up.
             // This also worksaround the problem with cnet's blank 32x32 icon (3105486).
@@ -347,15 +348,15 @@ NSSize WebIconLargeSize = {128, 128};
                 icon = [self _largestIconFromDictionary:icons];
             }
             NSData *iconData = [icon TIFFRepresentation];
-            if(iconData){
+            if (iconData) {
                 //NSLog(@"Writing icon: %@", iconURLString);
                 [fileDB setObject:iconData forKey:iconURLString];
                 [_private->iconsOnDiskWithURLs addObject:iconURLString];
             }
         } else if ([_private->iconURLsWithNoIcons containsObject:iconURLString]) {
-	    [fileDB setObject:[NSNull null] forKey:iconURLString];
-	    [_private->iconsOnDiskWithURLs addObject:iconURLString];
-	}
+            [fileDB setObject:[NSNull null] forKey:iconURLString];
+            [_private->iconsOnDiskWithURLs addObject:iconURLString];
+        }
     }
     
     [_private->iconsToEraseWithURLs removeAllObjects];
@@ -461,7 +462,7 @@ NSSize WebIconLargeSize = {128, 128};
     
     NSMutableDictionary *icons = [self _iconsBySplittingRepresentationsOfIcon:icon];
 
-    if(!icons){
+    if (!icons) {
         return;
     }
 
@@ -560,7 +561,7 @@ NSSize WebIconLargeSize = {128, 128};
     int newRetainCount = [retainCount intValue] - 1;
     [_private->iconURLToRetainCount setObject:[NSNumber numberWithInt:newRetainCount] forKey:iconURLString];
 
-    if(newRetainCount == 0){
+    if (newRetainCount == 0) {
         
         if([_private->iconsOnDiskWithURLs containsObject:iconURLString]){
             [_private->iconsToEraseWithURLs addObject:iconURLString];
@@ -571,7 +572,7 @@ NSSize WebIconLargeSize = {128, 128};
         [_private->iconURLToIcons removeObjectForKey:iconURLString];
 
         // Remove negative cache item for icon, if any
-	[_private->iconURLsWithNoIcons removeObject:iconURLString];
+        [_private->iconURLsWithNoIcons removeObject:iconURLString];
 
         // Remove the icon's retain count
         [_private->iconURLToRetainCount removeObjectForKey:iconURLString];
@@ -623,11 +624,8 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)_retainOriginalIconsOnDisk
 {
-    NSEnumerator *enumerator;
+    NSEnumerator *enumerator = [_private->originalIconsOnDiskWithURLs objectEnumerator];;
     NSString *iconURLString;
-
-    enumerator = [_private->iconsOnDiskWithURLs objectEnumerator];
-
     while ((iconURLString = [enumerator nextObject]) != nil) {
         [self _retainIconForIconURLString:iconURLString];
     }
@@ -635,17 +633,19 @@ NSSize WebIconLargeSize = {128, 128};
 
 - (void)_releaseOriginalIconsOnDisk
 {
-    if(_private->cleanupCount > 0){
+    if (_private->cleanupCount > 0) {
         _private->waitingToCleanup = YES;
         return;
     }
 
-    NSEnumerator *enumerator = [_private->iconsOnDiskWithURLs objectEnumerator];
+    NSEnumerator *enumerator = [_private->originalIconsOnDiskWithURLs objectEnumerator];
     NSString *iconURLString;
-
     while ((iconURLString = [enumerator nextObject]) != nil) {
         [self _releaseIconForIconURLString:iconURLString];
     }
+    
+    [_private->originalIconsOnDiskWithURLs release];
+    _private->originalIconsOnDiskWithURLs = nil;
 
     _private->didCleanup = YES;
 }

@@ -1071,6 +1071,9 @@
 			fileRef = 39446072020F50ED0ECA1767;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
 			};
 		};
 		39446091020F50ED0ECA1767 = {

@@ -19,6 +19,7 @@
 .objc_class_name_WebKitStatistics
 .objc_class_name_WebPreferences
 .objc_class_name_WebRenderNode
+.objc_class_name_WebResource
 .objc_class_name_WebStringTruncator
 .objc_class_name_WebTextView
 .objc_class_name_WebURLsWithTitles
@@ -62,6 +63,7 @@ _WebKitErrorPlugInNameKey
 _WebKitErrorPlugInPageURLStringKey
 _WebLocalizedString
 _WebLog
+_WebMainResourceKey
 _WebReportArgumentAssertionFailure
 _WebReportAssertionFailure
 _WebReportAssertionFailureWithMessage
