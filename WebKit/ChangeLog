@@ -1,5 +1,23 @@
 2003-01-02  Darin Adler  <darin@apple.com>
 
+        Reviewed by John and Don.
+
+	- fixed 3137661 -- REGRESSION: autoscroll selection is broken
+
+	The new logic in WebCore is slightly pickier, and can't abide a mouse-moved event
+	coming in during a drag. Unfortunately, we were sending a fake mouse-moved event
+	during a drag, so lets not do that.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDown:]): Cancel any scheduled fake mouse-moved event.
+        (-[WebHTMLView mouseUp:]): Send a fake mouse-moved event because we didn't update during the drag.
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebHTMLView _frameOrBoundsChanged]):
+	Don't schedule a fake mouse-moved event if the mouse is down, because that means we are in the
+        middle of a drag.
+
+2003-01-02  Darin Adler  <darin@apple.com>
+
         Reviewed by John and Ken.
 
 	- fixed 3135548 -- exception in Internet Explorer bookmark import code at first startup

@@ -596,10 +596,12 @@
 
 - (void)mouseDown: (NSEvent *)event
 {
-    // Record the mouse down position so we can determine
-    // drag hysteresis.
+    // Record the mouse down position so we can determine drag hysteresis.
     [_private->mouseDownEvent release];
     _private->mouseDownEvent = [event retain];
+
+    // Don't do any mouseover while the mouse is down.
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
     // Let khtml get a chance to deal with the event.
     [[self _bridge] mouseDown:event];
@@ -662,6 +664,7 @@
 - (void)mouseUp: (NSEvent *)event
 {
     [[self _bridge] mouseUp:event];
+    [self _updateMouseoverWithFakeEvent];
 }
 
 - (void)mouseMovedNotification:(NSNotification *)notification

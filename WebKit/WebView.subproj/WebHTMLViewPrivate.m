@@ -5,6 +5,7 @@
 
 #import <WebKit/WebHTMLViewPrivate.h>
 
+#import <AppKit/NSGraphicsContextPrivate.h> // for PSbuttondown
 #import <AppKit/NSResponder_Private.h>
 
 #import <WebFoundation/WebAssertions.h>
@@ -177,8 +178,14 @@ static BOOL forceRealHitTest = NO;
         [self setNeedsDisplay:YES];
     }
     
-    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
-    [self performSelector:@selector(_updateMouseoverWithFakeEvent) withObject:nil afterDelay:0];
+    // Don't update mouseover while mouse is down.
+    int mouseIsDown;
+    PSbuttondown(&mouseIsDown);
+    if (!mouseIsDown) {
+        SEL selector = @selector(_updateMouseoverWithFakeEvent);
+        [NSObject cancelPreviousPerformRequestsWithTarget:self selector:selector object:nil];
+        [self performSelector:selector withObject:nil afterDelay:0];
+    }
 }
 
 - (NSDictionary *)_elementAtPoint:(NSPoint)point
