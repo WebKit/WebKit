@@ -1,3 +1,14 @@
+2004-04-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3608430 and 3608462, crashes in findNextLineBreak when deleting.  Make sure that the removal of line boxes
+	always checks the previous root line box's line break information and dirties the line if it is pointing
+	to the deleted object.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_line.cpp:
+        (InlineFlowBox::removeChild):
+
 2004-04-08  Chris Blumenberg  <cblu@apple.com>
 
 	Removed DOMExtensions.h from DOM.h until it is public.

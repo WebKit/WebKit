@@ -204,8 +204,7 @@ void InlineFlowBox::removeChild(InlineBox* child)
     if (!m_dirty)
         dirtyLineBoxes();
 
-    if (!child->nextOnLineExists())
-        child->root()->childRemoved(child);
+    root()->childRemoved(child);
 
     if (child == m_firstChild)
         m_firstChild = child->nextOnLine();
