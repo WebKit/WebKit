@@ -130,21 +130,23 @@
 
         // Turn off auto expiration of glyphs in CG's cache
         // and increase the cache size.
-        NSSymbol symbol = NULL;
+        NSSymbol symbol1 = NULL, symbol2 = NULL;
         if (NSIsSymbolNameDefined ("_CGFontCacheSetShouldAutoExpire")){
-            symbol = NSLookupAndBindSymbol("_CGFontCacheSetShouldAutoExpire");
-            if (symbol != NULL) {
-                void (*functionPtr)(CGFontCache *,bool) = NSAddressOfSymbol(symbol);
+            symbol1 = NSLookupAndBindSymbol("_CGFontCacheSetShouldAutoExpire");
+            symbol2 = NSLookupAndBindSymbol("_CGFontCacheSetMaxSize");
+            if (symbol1 != NULL && symbol2 != NULL) {
+                void (*functionPtr1)(CGFontCache *,bool) = NSAddressOfSymbol(symbol1);
+                void (*functionPtr2)(CGFontCache *,size_t) = NSAddressOfSymbol(symbol2);
         
                 CGFontCache *fontCache;
                 fontCache = CGFontCacheCreate();
-                CGFontCacheSetMaxSize (fontCache, 1024*1024);
-                functionPtr (fontCache, false);
+                functionPtr1 (fontCache, false);
+                functionPtr2 (fontCache, 1024*1024);
                 CGFontCacheRelease(fontCache);
             }
         }
 
-        if (symbol == NULL)
+        if (symbol1 == NULL || symbol2 == NULL)
             NSLog(@"CoreGraphics is missing call to disable glyph auto expiration. Pages will load more slowly.");
     }
     ASSERT([[self sharedFactory] isKindOfClass:self]);

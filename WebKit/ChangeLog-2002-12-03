@@ -1,3 +1,12 @@
+2002-09-09  Richard Williamson  <rjw@apple.com>
+
+        Make both calls to adjust CG font cache dynamic.
+        The new CGFontCacheSetMaxSize() adds a font cache
+        parameter.  Ugh!  This is needed so we can compile
+        w/o warnings on stock Jag.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+
 2002-09-09  Ken Kocienda  <kocienda@apple.com>
 
 	Character set information now accessible via WebResourceResponse object,
