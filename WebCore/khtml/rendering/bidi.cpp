@@ -816,7 +816,10 @@ void RenderBlock::computeHorizontalPositionsForLine(RootInlineBox* lineBox, Bidi
     
     // The widths of all runs are now known.  We can now place every inline box (and
     // compute accurate widths for the inline flow boxes).
-    lineBox->placeBoxesHorizontally(x);
+    int leftPosition = x;
+    int rightPosition = x;
+    lineBox->placeBoxesHorizontally(x, leftPosition, rightPosition);
+    lineBox->setHorizontalOverflowPositions(leftPosition, rightPosition);
 }
 
 void RenderBlock::computeVerticalPositionsForLine(RootInlineBox* lineBox)
@@ -2351,13 +2354,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
 void RenderBlock::checkLinesForOverflow()
 {
-    // FIXME: Work for left overflow also.
     // FIXME: Inline blocks can have overflow.  Need to understand when those objects are present on a line
     // and factor that in somehow.
     m_overflowWidth = m_width;
     for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-        int rightPos = curr->xPos() + curr->width();
-        m_overflowWidth = kMax(rightPos, m_overflowWidth);
+        m_overflowLeft = kMin(curr->leftOverflow(), m_overflowLeft);
+        m_overflowTop = kMin(curr->topOverflow(), m_overflowTop);
+        m_overflowWidth = kMax(curr->rightOverflow(), m_overflowWidth);
+        m_overflowHeight = kMax(curr->bottomOverflow(), m_overflowHeight);
     }
 }
 

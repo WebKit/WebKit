@@ -141,6 +141,14 @@ QRect QRect::intersect(const QRect &r) const
     return QRect(nx, ny, nw, nh);
 }
 
+void QRect::inflate(int s)
+{
+    xp -= s;
+    yp -= s;
+    w += 2*s;
+    h += 2*s;
+}
+
 QRect::operator NSRect() const
 {
     return NSMakeRect(xp, yp, w, h);

@@ -1,3 +1,74 @@
+2004-12-06  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3254464, radio buttons do not work for quiz on netscape.com.  Left/top overflow needed to be implemented.
+	This also fixes 3106907, link hover color only partially set on rollover and the more general architecture bug
+	3126929, handle top/left overflow.
+
+	This patch also fixes 3902891, scroll bar of position:fixed content moves when a page is scrolled.
+
+	Finally, the Emerson regression 3869718 (error involving computing the rightmost/lowest position of overflow:auto
+	regions and web pages) has been fixed.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::computeHorizontalPositionsForLine):
+        (khtml::RenderBlock::checkLinesForOverflow):
+        * khtml/rendering/render_block.cpp:
+        (khtml:::RenderFlow):
+        (khtml::RenderBlock::overflowHeight):
+        (khtml::RenderBlock::overflowWidth):
+        (khtml::RenderBlock::overflowLeft):
+        (khtml::RenderBlock::overflowTop):
+        (khtml::RenderBlock::overflowRect):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::paint):
+        (khtml::RenderBlock::floatRect):
+        (khtml::RenderBlock::lowestPosition):
+        (khtml::RenderBlock::rightmostPosition):
+        (khtml::RenderBlock::leftmostPosition):
+        (khtml::RenderBlock::nodeAtPoint):
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.h:
+        (khtml::RenderBox::borderBox):
+        (khtml::RenderBox::borderTopExtra):
+        (khtml::RenderBox::borderBottomExtra):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paintScrollbars):
+        (mustExamineRenderer):
+        (RenderLayer::intersectsDamageRect):
+        (RenderLayer::containsPoint):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::placeBoxesHorizontally):
+        (khtml::InlineFlowBox::verticallyAlignBoxes):
+        * khtml/rendering/render_line.h:
+        (khtml::InlineBox::leftOverflow):
+        (khtml::InlineBox::rightOverflow):
+        (khtml::InlineFlowBox::setVerticalOverflowPositions):
+        (khtml::RootInlineBox::RootInlineBox):
+        (khtml::RootInlineBox::leftOverflow):
+        (khtml::RootInlineBox::rightOverflow):
+        (khtml::RootInlineBox::setVerticalOverflowPositions):
+        (khtml::RootInlineBox::setHorizontalOverflowPositions):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::borderBox):
+        (khtml::RenderObject::overflowLeft):
+        (khtml::RenderObject::overflowTop):
+        (khtml::RenderObject::overflowRect):
+        (khtml::RenderObject::floatRect):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+        (RenderTable::paint):
+        (RenderTable::paintBoxDecorations):
+        (RenderTable::calcMinMaxWidth):
+        * khtml/rendering/render_table.h:
+        (khtml::RenderTableCell::borderTopExtra):
+        (khtml::RenderTableCell::borderBottomExtra):
+        * kwq/KWQRect.h:
+        * kwq/KWQRect.mm:
+        (QRect::inflate):
+
 2004-12-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

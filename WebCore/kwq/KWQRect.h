@@ -69,6 +69,8 @@ public:
         return x >= xp && x < (xp + w) && y >= yp && y < (yp + h);
     }
     
+    void inflate(int s);
+
     inline QRect operator&(const QRect &r) const { return intersect(r); }
 
     operator NSRect() const;

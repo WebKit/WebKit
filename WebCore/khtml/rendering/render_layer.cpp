@@ -722,6 +722,18 @@ RenderLayer::updateScrollInfoAfterLayout()
 void
 RenderLayer::paintScrollbars(QPainter* p, const QRect& damageRect)
 {
+    // Move the widgets if necessary.  We normally move and resize widgets during layout, but sometimes
+    // widgets can move without layout occurring (most notably when you scroll a document that
+    // contains fixed positioned elements).
+    if (m_hBar || m_vBar) {
+        int x = 0;
+        int y = 0;
+        convertToLayerCoords(root(), x, y);
+        QRect layerBounds = QRect(x, y, width(), height());
+        positionScrollbars(layerBounds);
+    }
+
+    // Now that we're sure the scrollbars are in the right place, paint them.
     if (m_hBar)
         m_hBar->paint(p, damageRect);
     if (m_vBar)
@@ -1074,20 +1086,30 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& pain
     }
 }
 
+static bool mustExamineRenderer(RenderObject* renderer)
+{
+    if (renderer->isCanvas() || renderer->isRoot() || renderer->isInlineFlow())
+        return true;
+    
+    QRect bbox = renderer->borderBox();
+    QRect overflowRect = renderer->overflowRect(false);
+    if (bbox != overflowRect)
+        return true;
+    QRect floatRect = renderer->floatRect();
+    if (bbox != floatRect)
+        return true;
+
+    return false;
+}
+
 bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& damageRect) const
 {
-    return (renderer()->isCanvas() || renderer()->isRoot() || renderer()->isBody() ||
-            (renderer()->hasOverhangingFloats() && !renderer()->hasOverflowClip()) ||
-            (renderer()->isInline() && !renderer()->isReplaced()) ||
-            layerBounds.intersects(damageRect));
+    return mustExamineRenderer(renderer()) || layerBounds.intersects(damageRect);
 }
 
 bool RenderLayer::containsPoint(int x, int y, const QRect& damageRect) const
 {
-    return (renderer()->isCanvas() || renderer()->isRoot() || renderer()->isBody() ||
-            (renderer()->hasOverhangingFloats() && !renderer()->hasOverflowClip()) ||
-            (renderer()->isInline() && !renderer()->isReplaced()) ||
-            damageRect.contains(x, y));
+    return mustExamineRenderer(renderer()) || damageRect.contains(x, y);
 }
 
 // This code has been written to anticipate the addition of CSS3-::outside and ::inside generated

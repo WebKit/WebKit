@@ -81,6 +81,8 @@ public:
     virtual void setWidth( int width ) { m_width = width; }
     virtual void setHeight( int height ) { m_height = height; }
 
+    virtual QRect borderBox() const { return QRect(0, -borderTopExtra(), width(), height() + borderTopExtra() + borderBottomExtra()); }
+
     // This method is now public so that centered objects like tables that are
     // shifted right by left-aligned floats can recompute their left and
     // right margins (so that they can remain centered after being 
@@ -150,8 +152,8 @@ protected:
     void paintBackground(QPainter *p, const QColor& c, const BackgroundLayer* bgLayer, int clipy, int cliph, int _tx, int _ty, int w, int h);
     void outlineBox(QPainter *p, int _tx, int _ty, const char *color = "red");
 
-    virtual int borderTopExtra() { return 0; }
-    virtual int borderBottomExtra() { return 0; }
+    virtual int borderTopExtra() const { return 0; }
+    virtual int borderBottomExtra() const { return 0; }
 
     void calcAbsoluteHorizontal();
     void calcAbsoluteVertical();

@@ -469,10 +469,11 @@ void InlineFlowBox::determineSpacingForFlowBoxes(bool lastLine, RenderObject* en
     }
 }
 
-int InlineFlowBox::placeBoxesHorizontally(int x)
+int InlineFlowBox::placeBoxesHorizontally(int x, int& leftPosition, int& rightPosition)
 {
     // Set our x position.
     setXPos(x);
+    leftPosition = kMin(x, leftPosition);
 
     int startX = x;
     x += borderLeft() + paddingLeft();
@@ -481,6 +482,8 @@ int InlineFlowBox::placeBoxesHorizontally(int x)
         if (curr->object()->isText()) {
             InlineTextBox* text = static_cast<InlineTextBox*>(curr);
             text->setXPos(x);
+            leftPosition = kMin(x, leftPosition);
+            rightPosition = kMax(x + text->width(), rightPosition);
             x += text->width();
         }
         else {
@@ -498,17 +501,19 @@ int InlineFlowBox::placeBoxesHorizontally(int x)
                 InlineFlowBox* flow = static_cast<InlineFlowBox*>(curr);
                 if (curr->object()->isCompact()) {
                     int ignoredX = x;
-                    flow->placeBoxesHorizontally(ignoredX);
+                    flow->placeBoxesHorizontally(ignoredX, leftPosition, rightPosition);
                 }
                 else {
                     x += flow->marginLeft();
-                    x = flow->placeBoxesHorizontally(x);
+                    x = flow->placeBoxesHorizontally(x, leftPosition, rightPosition);
                     x += flow->marginRight();
                 }
             }
             else if (!curr->object()->isCompact()) {
                 x += curr->object()->marginLeft();
                 curr->setXPos(x);
+                leftPosition = kMin(x, leftPosition);
+                rightPosition = kMax(x + curr->width(), rightPosition);
                 x += curr->width() + curr->object()->marginRight();
             }
         }
@@ -516,6 +521,8 @@ int InlineFlowBox::placeBoxesHorizontally(int x)
 
     x += borderRight() + paddingRight();
     setWidth(x-startX);
+    rightPosition = kMax(xPos() + width(), rightPosition);
+
     return x;
 }
 
@@ -543,7 +550,7 @@ void InlineFlowBox::verticallyAlignBoxes(int& heightOfBlock)
     int bottomPosition = heightOfBlock;
     placeBoxesVertically(heightOfBlock, maxHeight, maxAscent, strictMode, topPosition, bottomPosition);
 
-    setOverflowPositions(topPosition, bottomPosition);
+    setVerticalOverflowPositions(topPosition, bottomPosition);
 
     // Shrink boxes with no text children in quirks and almost strict mode.
     if (!strictMode)

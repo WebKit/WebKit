@@ -568,6 +568,8 @@ public:
     virtual int width() const { return 0; }
     virtual int height() const { return 0; }
 
+    virtual QRect borderBox() const { return QRect(0, 0, width(), height()); }
+
     // The height of a block when you include normal flow overflow spillage out of the bottom
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
@@ -575,6 +577,9 @@ public:
     virtual int overflowWidth(bool includeInterior=true) const { return width(); }
     virtual void setOverflowHeight(int) {}
     virtual void setOverflowWidth(int) {}
+    virtual int overflowLeft(bool includeInterior=true) const { return 0; }
+    virtual int overflowTop(bool includeInterior=true) const { return 0; }
+    virtual QRect overflowRect(bool includeInterior=true) const { return borderBox(); }
 
     // IE extensions. Used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) 
     // to return the remaining width on a given line (and the height of a single line). -dwh
@@ -723,6 +728,7 @@ public:
     virtual bool containsFloats() { return false; }
     virtual bool containsFloat(RenderObject* o) { return false; }
     virtual bool hasOverhangingFloats() { return false; }
+    virtual QRect floatRect() { return borderBox(); }
 
     bool avoidsFloats() const;
     bool usesLineWidth() const;
