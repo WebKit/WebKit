@@ -1,3 +1,17 @@
+2005-01-03  David Hyatt  <hyatt@apple.com>
+
+	Fix for float painting regressions 3932524, 3931664, and 3933068.  Make the noPaint flag setting more
+	robust and make it work regardless of which objects get a layout or not.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::insertFloatingObject):
+        (khtml::RenderBlock::addOverhangingFloats):
+        (khtml::RenderBlock::addIntrudingFloats):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::FloatingObject::FloatingObject):
+
 2005-01-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Kevin.

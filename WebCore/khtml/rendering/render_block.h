@@ -279,8 +279,8 @@ protected:
             left = 0;
             width = 0;
             noPaint = false;
-
         }
+
         RenderObject* node;
         int startY;
         int endY;

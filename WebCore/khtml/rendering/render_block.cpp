@@ -1759,6 +1759,7 @@ void RenderBlock::insertFloatingObject(RenderObject *o)
         newObj->startY = -1;
         newObj->endY = -1;
         newObj->width = o->width() + o->marginLeft() + o->marginRight();
+        newObj->noPaint = o->layer(); // If a layer exists, the float will paint itself.  Otherwise someone else will.
     }
     else {
         // We should never get here, as insertFloatingObject() should only ever be called with floating
@@ -2265,20 +2266,17 @@ void RenderBlock::addOverhangingFloats(RenderBlock* child, int xoff, int yoff)
                 floatingObj->startY = r->startY - yoff;
                 floatingObj->endY = r->endY - yoff;
                 floatingObj->left = r->left - xoff;
-                
+                floatingObj->width = r->width;
+                floatingObj->node = r->node;
+
                 // The nearest enclosing layer always paints the float (so that zindex and stacking
                 // behaves properly).  We always want to propagate the desire to paint the float as
                 // far out as we can, to the outermost block that overlaps the float, stopping only
                 // if we hit a layer boundary.
-                if (r->noPaint || child->enclosingLayer() != enclosingLayer())
-                    floatingObj->noPaint = true;
-                else {
-                    floatingObj->noPaint = false;
+                if (r->node->enclosingLayer() == enclosingLayer())
                     r->noPaint = true;
-                }
-
-                floatingObj->width = r->width;
-                floatingObj->node = r->node;
+                else
+                    floatingObj->noPaint = true;
                 
                 // We create the floating object list lazily.
                 if (!m_floatingObjects) {
@@ -2323,7 +2321,7 @@ void RenderBlock::addIntrudingFloats(RenderBlock* prev, int xoff, int yoff)
                 if (prev != parent())
                     floatingObj->left += prev->marginLeft();
                 floatingObj->left -= marginLeft();
-                floatingObj->noPaint = true;
+                floatingObj->noPaint = true;  // We are not in the direct inheritance chain for this float. We will never paint it.
                 floatingObj->width = r->width;
                 floatingObj->node = r->node;
                 
