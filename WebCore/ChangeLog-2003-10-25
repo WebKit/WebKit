@@ -1,3 +1,16 @@
+2003-06-02  Ken Kocienda  <kocienda@apple.com>
+
+        Code written by darin
+        Reviewed by me
+
+	Fix for this bug:
+
+	<rdar://problem/3272162>: repro crash in khtml::CachedImage::checkNotify() on particular page
+
+        * khtml/ecma/kjs_html.cpp:
+        (Image::putValue): ref onLoadListener when setting a value to onLoad
+        (Image::~Image): deref onLoadListener when destructing the image.
+
 2003-06-02  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3263679, color: # doesn't parse.  Fix is to add an

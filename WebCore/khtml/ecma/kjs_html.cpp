@@ -3169,6 +3169,7 @@ void Image::putValue(ExecState *exec, int token, const Value& value, int /*attr*
   }
   case OnLoad:
     onLoadListener = Window::retrieveActive(exec)->getJSEventListener(value, true);
+    onLoadListener->ref();
     break;
   default:
     kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
@@ -3192,6 +3193,7 @@ Image::Image(const DOM::Document &d)
 Image::~Image()
 {
   if ( img ) img->deref(this);
+  if ( onLoadListener ) onLoadListener->deref();
 }
 
 Value KJS::getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c)
