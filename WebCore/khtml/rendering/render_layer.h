@@ -101,7 +101,8 @@ public:
     
     void start();
     void suspend();
-    
+    void stop();
+
     void updateMarqueeStyle();
     void updateMarqueePosition();
 
@@ -114,8 +115,9 @@ private:
     int m_end;
     int m_speed;
     int m_unfurlPos;
-    bool m_reset;
-    bool m_suspended;
+    bool m_reset: 1;
+    bool m_suspended : 1;
+    bool m_stopped : 1;
     EWhiteSpace m_whiteSpace : 2;
     EMarqueeDirection m_direction : 4;
 };

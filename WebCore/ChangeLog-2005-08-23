@@ -1,3 +1,17 @@
+2004-08-20  David Hyatt  <hyatt@apple.com>
+
+	Divorce the notion of a marquee being stopped from JS from the notion of being suspended by the back/forward cache.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::tryCall):
+        * khtml/rendering/render_layer.cpp:
+        (m_direction):
+        (Marquee::start):
+        (Marquee::stop):
+        (Marquee::updateMarqueePosition):
+        * khtml/rendering/render_layer.h:
+        (khtml::):
+
 2004-08-20  Richard Williamson   <rjw@apple.com>
 
         Implemented new JNI abstraction.  We no longer invoke Java methods
@@ -75,6 +89,7 @@
         (-[WebCoreBridge rangeByExpandingSelectionWithGranularity:]):
 	Fixed former misleading method name.
 
+>>>>>>> 1.3116
 2004-08-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Trey
@@ -243,20 +258,12 @@
 
 2004-08-18  Richard Williamson   <rjw@apple.com>
 
-<<<<<<< ChangeLog
         Replace horrible pollForAppletInView: with new
         webPlugInGetApplet.  The details of how the applet instance
         is provided now belong to the Java team.  Yeh.
 		
         Reviewed by Chris.
 
-=======
-        Replace horrible pollForAppletInView: with new
-        webPlugInGetApplet.  The details of how the applet instance
-        is provided now belong to the Java team.  Yeh.
-		
-        Reviewed by Chris.
->>>>>>> 1.3109
         * kwq/KWQKHTMLPart.mm:
         (KWQKHTMLPart::getAppletInstanceForView):
         * kwq/WebCoreBridge.h:

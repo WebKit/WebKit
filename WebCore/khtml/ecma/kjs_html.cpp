@@ -2149,7 +2149,7 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
         else if (id == KJS::HTMLElement::MarqueeStop && element.handle()->renderer() && 
                  element.handle()->renderer()->layer() &&
                  element.handle()->renderer()->layer()->marquee()) {
-            element.handle()->renderer()->layer()->marquee()->suspend();
+            element.handle()->renderer()->layer()->marquee()->stop();
             return Undefined();
         }
         break;
