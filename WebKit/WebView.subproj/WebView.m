@@ -154,6 +154,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (void)setWindowOperationsDelegate:delegate
 {
     _private->windowContext = delegate;
+    [_private->windowOperationsDelegateForwarder release];
+    _private->windowOperationsDelegateForwarder = nil;
 }
 
 - windowOperationsDelegate
@@ -164,6 +166,9 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (void)setResourceLoadDelegate: delegate
 {
     _private->resourceProgressDelegate = delegate;
+    [_private->resourceProgressDelegateForwarder release];
+    _private->resourceProgressDelegateForwarder = nil;
+    [self _cacheResourceLoadDelegateImplementations];
 }
 
 
@@ -187,6 +192,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (void)setContextMenuDelegate: delegate
 {
     _private->contextMenuDelegate = delegate;
+    [_private->contextMenuDelegateForwarder release];
+    _private->contextMenuDelegateForwarder = nil;
 }
 
 - contextMenuDelegate
@@ -197,6 +204,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (void)setPolicyDelegate:delegate
 {
     _private->policyDelegate = delegate;
+    [_private->policyDelegateForwarder release];
+    _private->policyDelegateForwarder = nil;
 }
 
 - policyDelegate
@@ -207,6 +216,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - (void)setLocationChangeDelegate:delegate
 {
     _private->locationChangeDelegate = delegate;
+    [_private->locationChangeDelegateForwarder release];
+    _private->locationChangeDelegateForwarder = nil;
 }
 
 - locationChangeDelegate

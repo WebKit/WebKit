@@ -1,3 +1,42 @@
+2003-04-01  Richard Williamson  <rjw@apple.com>
+
+        Fixed ~2% performance regression problem.  The regression
+        was caused by the allocation of a forwarder on every 
+        delegate callback.  Modified code to only create forwarders once,
+        and reset when delegates change.
+        
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCacheWithURL:response:size:]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate setDataSource:]):
+        (-[WebBaseResourceHandleDelegate connection:willSendRequest:redirectResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate connection:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate connectionDidFinishLoading:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView setWindowOperationsDelegate:]):
+        (-[WebView setResourceLoadDelegate:]):
+        (-[WebView setContextMenuDelegate:]):
+        (-[WebView setPolicyDelegate:]):
+        (-[WebView setLocationChangeDelegate:]):
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _locationChangeDelegateForwarder]):
+        (-[WebView _resourceLoadDelegateForwarder]):
+        (-[WebView _cacheResourceLoadDelegateImplementations]):
+        (-[WebView _resourceLoadDelegateImplementations]):
+        (-[WebView _policyDelegateForwarder]):
+        (-[WebView _contextMenuDelegateForwarder]):
+        (-[WebView _windowOperationsDelegateForwarder]):
+        (-[_WebSafeForwarder forwardInvocation:]):
+
+        * API-Issues.rtf:
+        Notes to self.
+        
 2003-04-01  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Allowed update-alex-localizable-strings

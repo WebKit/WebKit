@@ -2,7 +2,6 @@
     WebViewPrivate.m
     Copyright 2001, Apple, Inc. All rights reserved.
 */
-
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
 
@@ -18,17 +17,30 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 
 #define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
 
+typedef struct _WebResourceDelegateImplementationCache {
+    uint delegateImplementsDidReceiveResponse:1;
+    uint delegateImplementsDidReceiveContentLength:1;
+    uint delegateImplementsDidFinishLoadingFromDataSource:1;
+    uint delegateImplementsWillSendRequest:1;
+    uint delegateImplementsIdentifierForRequest:1;
+} WebResourceDelegateImplementationCache;
+
 @interface WebViewPrivate : NSObject
 {
 @public
     WebFrame *mainFrame;
     
     id windowContext;
+    id windowOperationsDelegateForwarder;
     id resourceProgressDelegate;
+    id resourceProgressDelegateForwarder;
     id downloadDelegate;
     id contextMenuDelegate;
+    id contextMenuDelegateForwarder;
     id policyDelegate;
+    id policyDelegateForwarder;
     id locationChangeDelegate;
+    id locationChangeDelegateForwarder;
     id <WebFormDelegate> formDelegate;
     
     id defaultContextMenuDelegate;
@@ -52,6 +64,8 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
     BOOL lastElementWasNonNil;
 
     NSWindow *hostWindow;
+    
+    WebResourceDelegateImplementationCache resourceLoadDelegateImplementations;
 }
 @end
 
@@ -124,6 +138,8 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 
 - _locationChangeDelegateForwarder;
 - _resourceLoadDelegateForwarder;
+- (void)_cacheResourceLoadDelegateImplementations;
+- (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations;
 - _policyDelegateForwarder;
 - _contextMenuDelegateForwarder;
 - _windowOperationsDelegateForwarder;
@@ -135,6 +151,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
     id defaultTarget;
     Class templateClass;
 }
+- initWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
 + safeForwarderWithTarget: t defaultTarget: dt templateClass: (Class)aClass;
 @end
 

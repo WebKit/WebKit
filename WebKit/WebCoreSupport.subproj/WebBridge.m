@@ -343,19 +343,33 @@
     NSURLRequest *request = [[NSURLRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
     WebView *c = [frame webView];
     id delegate = [c resourceLoadDelegate];
-    id _delegate = [c _resourceLoadDelegateForwarder];
+    id sharedDelegate = [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate];
     id identifier;
+    WebResourceDelegateImplementationCache implementations = [c _resourceLoadDelegateImplementations];
     
     // No chance for delegate to modify request, so we don't send a willSendRequest:redirectResponse: message.
-    if ([delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
+    if (implementations.delegateImplementsIdentifierForRequest)
         identifier = [delegate webView:c identifierForInitialRequest: request fromDataSource: [self dataSource]];
     else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:c identifierForInitialRequest:request fromDataSource:[self dataSource]];
-    [_delegate webView:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
-    [_delegate webView:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-    [_delegate webView:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+        identifier = [sharedDelegate webView:c identifierForInitialRequest:request fromDataSource:[self dataSource]];
+    
+    if (implementations.delegateImplementsDidReceiveResponse)
+        [delegate webView:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+    else
+        [sharedDelegate webView:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+
+    if (implementations.delegateImplementsDidReceiveContentLength)
+        [delegate webView:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+    else
+        [sharedDelegate webView:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+
+    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
+        [delegate webView:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+    else
+        [sharedDelegate webView:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
     [[frame webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
+
     [request release];
 }
 

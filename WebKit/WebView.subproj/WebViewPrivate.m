@@ -87,6 +87,12 @@
     [settings release];
     [hostWindow release];
     
+    [policyDelegateForwarder release];
+    [contextMenuDelegateForwarder release];
+    [resourceProgressDelegateForwarder release];
+    [windowOperationsDelegateForwarder release];
+    [locationChangeDelegateForwarder release];
+    
     [super dealloc];
 }
 
@@ -402,27 +408,56 @@
 
 - _locationChangeDelegateForwarder
 {
-    return [_WebSafeForwarder safeForwarderWithTarget: [self locationChangeDelegate]  defaultTarget: [WebDefaultLocationChangeDelegate sharedLocationChangeDelegate] templateClass: [WebDefaultLocationChangeDelegate class]];
+    if (!_private->locationChangeDelegateForwarder)
+        _private->locationChangeDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self locationChangeDelegate]  defaultTarget: [WebDefaultLocationChangeDelegate sharedLocationChangeDelegate] templateClass: [WebDefaultLocationChangeDelegate class]];
+    return _private->locationChangeDelegateForwarder;
 }
 
 - _resourceLoadDelegateForwarder
 {
-    return [_WebSafeForwarder safeForwarderWithTarget: [self resourceLoadDelegate] defaultTarget: [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] templateClass: [WebDefaultResourceLoadDelegate class]];
+    if (!_private->resourceProgressDelegateForwarder)
+        _private->resourceProgressDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self resourceLoadDelegate] defaultTarget: [WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] templateClass: [WebDefaultResourceLoadDelegate class]];
+    return _private->resourceProgressDelegateForwarder;
+}
+
+- (void)_cacheResourceLoadDelegateImplementations
+{
+    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didFinishLoadingFromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsDidFinishLoadingFromDataSource = YES;
+    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveContentLength:fromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsDidReceiveContentLength = YES;
+    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:didReceiveResponse:fromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsDidReceiveResponse = YES;
+    if ([[self resourceLoadDelegate] respondsToSelector:@selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsWillSendRequest = YES;
+    if ([[self resourceLoadDelegate] respondsToSelector: @selector(webView:identifierForInitialRequest:fromDataSource:)])
+        _private->resourceLoadDelegateImplementations.delegateImplementsIdentifierForRequest = YES;
+}
+
+- (WebResourceDelegateImplementationCache)_resourceLoadDelegateImplementations
+{
+    return _private->resourceLoadDelegateImplementations;
 }
 
 - _policyDelegateForwarder
 {
-    return [_WebSafeForwarder safeForwarderWithTarget: [self policyDelegate] defaultTarget: [WebDefaultPolicyDelegate sharedPolicyDelegate] templateClass: [WebDefaultPolicyDelegate class]];
+    if (!_private->policyDelegateForwarder)
+        _private->policyDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self policyDelegate] defaultTarget: [WebDefaultPolicyDelegate sharedPolicyDelegate] templateClass: [WebDefaultPolicyDelegate class]];
+    return _private->policyDelegateForwarder;
 }
 
 - _contextMenuDelegateForwarder
 {
-    return [_WebSafeForwarder safeForwarderWithTarget: [self contextMenuDelegate] defaultTarget: [WebDefaultContextMenuDelegate sharedContextMenuDelegate] templateClass: [WebDefaultContextMenuDelegate class]];
+    if (!_private->contextMenuDelegateForwarder)
+        _private->contextMenuDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self contextMenuDelegate] defaultTarget: [WebDefaultContextMenuDelegate sharedContextMenuDelegate] templateClass: [WebDefaultContextMenuDelegate class]];
+    return _private->contextMenuDelegateForwarder;
 }
 
 - _windowOperationsDelegateForwarder
 {
-    return [_WebSafeForwarder safeForwarderWithTarget: [self windowOperationsDelegate] defaultTarget: [WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] templateClass: [WebDefaultWindowOperationsDelegate class]];
+    if (!_private->windowOperationsDelegateForwarder)
+        _private->windowOperationsDelegateForwarder = [[_WebSafeForwarder alloc] initWithTarget: [self windowOperationsDelegate] defaultTarget: [WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] templateClass: [WebDefaultWindowOperationsDelegate class]];
+    return _private->windowOperationsDelegateForwarder;
 }
 
 
@@ -508,8 +543,23 @@
     return [[[_WebSafeForwarder alloc] initWithTarget: t defaultTarget: dt templateClass: aClass] autorelease];
 }
 
+#ifndef NDEBUG
+NSMutableDictionary *countInvocations;
+#endif
+
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
+#ifndef NDEBUG
+    if (!countInvocations){
+        countInvocations = [[NSMutableDictionary alloc] init];
+    }
+    NSNumber *count = [countInvocations objectForKey: NSStringFromSelector([anInvocation selector])];
+    if (!count)
+        count = [NSNumber numberWithInt: 1];
+    else
+        count = [NSNumber numberWithInt: [count intValue] + 1];
+    [countInvocations setObject: count forKey: NSStringFromSelector([anInvocation selector])];
+#endif
     if ([target respondsToSelector: [anInvocation selector]])
         [anInvocation invokeWithTarget: target];
     else if ([defaultTarget respondsToSelector: [anInvocation selector]])

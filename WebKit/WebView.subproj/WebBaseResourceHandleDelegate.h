@@ -5,6 +5,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/WebViewPrivate.h>
+
 @class WebView;
 @class WebDataSource;
 @class WebError;
@@ -29,6 +31,7 @@
     NSURL *currentURL;
     BOOL reachedTerminalState;
     BOOL defersCallbacks;
+    WebResourceDelegateImplementationCache implementations;
 }
 
 - (BOOL)loadWithRequest:(NSURLRequest *)request;

@@ -22,6 +22,8 @@
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f1\fs24 \cf0 \CocoaLigature1 \
+Need to add other more complete action methods to WebView.\
+\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 \
 It seems non-parallel that WebHistory has change notifications but WebBackForwardList doesn't.\
@@ -35,18 +37,6 @@ It seems non-parallel that WebHistory has change notifications but WebBackForwar
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 \cf0 Yes.\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 \
-WebHistoryItem\
----\
-\
-Even though we need to have the fields inline for performance, we should add a few void * ivars to the end for future extensibility.\
-\
-WebHistoryItemPrivate,h has a boatload of private methods with no leading underscore.\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Good point.\
-\
-\
 \
 On Thursday, March 20, 2003, at 11:43 AM, Ali Ozer wrote:\
 \
@@ -56,25 +46,6 @@ On Thursday, March 20, 2003, at 11:43 AM, Ali Ozer wrote:\
 \
 WebHistory:\
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
-
-\f2\fs20 \cf3 /*!\
-    @method initWithFile:\
-    @abstract The designated initializer for WebHistory.\
-    @result Returns an initialized WebHistory.\
-*/\
-- initWithFile: (NSString *)file;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f1\fs24 \cf2 \
-Would it be better to have this take a URL instead?  Like many kit classes you could limit the URLs to those on the local disk for now; but at least the API would support history lists coming from the web...  (On the other hand with WebDav and all perhaps interesting history files from the web will always be representable via file names, I don't know.)\
-\
-The direction in new APIs has been to use URL instead of file names where applicable...\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 OK.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
 
 \f2\fs20 \cf3 - (NSArray *)orderedLastVisitedDays;\
@@ -191,19 +162,61 @@ See NSArray, NSMutableArray, NSBundle, and NSSet for similar method names.\
 \
 P.S. The WebHistory.h file you dropped a few days ago doesn't contain the file->URL changes you mentioned. Can't write the method descriptions for this class until I get the new headers.\
 \
+
+\f0\b From: 
+\f1\b0 Richard Williamson <rjw@apple.com>\
+
+\f0\b Date: 
+\f1\b0 Mon Mar 31, 2003  4:31:00 PM US/Pacific\
+
+\f0\b To: 
+\f1\b0 Nancy Craighill <ncraighill@apple.com>\
+
+\f0\b Cc: 
+\f1\b0 Scott Anguish <sanguish@apple.com>\
+
+\f0\b Subject: 
+\f1\b0 Re: WK: Feedback on 3/28 Web Kit Headers\
 \
-From WebHistory.h:\
 \
-// Notifications sent when history is modified.\
-// The first two come with a userInfo dictionary with a single key "Entries", which contains\
-// an array of items that were added or removed.\
+On Monday, March 31, 2003, at 03:24 PM, Nancy Craighill wrote:\
 \
-The API has been updated to always call the things items instead of entries, but this key is:\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 Richard,\
 \
-    1) still "Entries"\
-    2) still a constant in a comment, rather than an NSString constant\
+Incorporated the API changes as of March 28th into the current reference docs and discovered these few nits with the headers:\
 \
-I think we should fix this.\
+WebPreferences.h:\
 \
-    -- Darin\
+(1)\
+- (void)setUserStyleSheetLocation:(NSURL *)string;\
+                                                                                ^ Should be URL.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 OK.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 (2) The "Is" should be taken out of the following method names (e.g., Cocoa uses -isEnabled and -setEnabled: in NSCell, NSControl, NSFontManager, NSFontPanel, NSLayoutManager...):\
+\
+setIsJavaEnabled:\
+setIsJavaScriptEnabled:\
+\
+NOTE: It's true that a few methods in Cocoa (four to be exact) begin with "setIs" but those methods don't contain the key word "Enabled".\
+\
+(3) And to be consistent, remove the "are" from this method too:\
+\
+setArePlugInsEnabled:\
+\
+Let me know if you decide NOT to make the changes above!\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Gah!  I just changed these methods to include the "is" and "are"!  I thought you had made that suggestion, or maybe it was Ali.\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+(4) You also dropped a WebResourceResponseExtras.h header which should have been replaced by WebNSURLResponseExtras.h, right??\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes.\
 }

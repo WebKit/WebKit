@@ -111,6 +111,7 @@
     
     [resourceLoadDelegate release];
     resourceLoadDelegate = [[controller resourceLoadDelegate] retain];
+    implementations = [controller _resourceLoadDelegateImplementations];
 
     [downloadDelegate release];
     downloadDelegate = [[controller downloadDelegate] retain];
@@ -144,18 +145,16 @@
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
-        if ([resourceLoadDelegate respondsToSelector: @selector(webView:identifierForInitialRequest:fromDataSource:)])
+        if (implementations.delegateImplementsIdentifierForRequest)
             identifier = [[resourceLoadDelegate webView: controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
         else
             identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
     }
 
-    if (resourceLoadDelegate) {
-        if ([resourceLoadDelegate respondsToSelector: @selector(webView:resource:willSendRequest:redirectResponse:fromDataSource:)])
-            newRequest = [resourceLoadDelegate webView:controller resource:identifier willSendRequest:newRequest redirectResponse:redirectResponse fromDataSource:dataSource];
-        else
-            newRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier willSendRequest:newRequest redirectResponse:redirectResponse fromDataSource:dataSource];
-    }
+    if (implementations.delegateImplementsWillSendRequest)
+        newRequest = [resourceLoadDelegate webView:controller resource:identifier willSendRequest:newRequest redirectResponse:redirectResponse fromDataSource:dataSource];
+    else
+        newRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier willSendRequest:newRequest redirectResponse:redirectResponse fromDataSource:dataSource];
 
     // Store a copy of the request.
     [request autorelease];
@@ -190,7 +189,11 @@
     response = r;
 
     [dataSource _addResponse: r];
-    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+    
+    if (implementations.delegateImplementsDidReceiveResponse)
+        [resourceLoadDelegate webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveData:(NSData *)data
@@ -198,7 +201,10 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
-    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+    if (implementations.delegateImplementsDidReceiveContentLength)
+        [resourceLoadDelegate webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
@@ -206,7 +212,10 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
-    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
+    if (implementations.delegateImplementsDidFinishLoadingFromDataSource)
+        [resourceLoadDelegate webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
+    else
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
 
     ASSERT(currentURL);
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
