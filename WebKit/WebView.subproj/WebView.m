@@ -29,12 +29,12 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebResourceHandle.h>
 
-NSString * WebContextMenuElementLinkURLKey = @"WebContextLinkURL";
-NSString * WebContextMenuElementLinkLabelKey = @"WebContextLinkLabel";
-NSString * WebContextMenuElementImageURLKey = @"WebContextImageURL";
-NSString * WebContextMenuElementStringKey = @"WebContextString";
-NSString * WebContextMenuElementImageKey = @"WebContextImage";
-NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
+NSString * WebElementLinkURLKey = @"WebElementLinkURL";
+NSString * WebElementLinkLabelKey = @"WebElementLinkLabel";
+NSString * WebElementImageURLKey = @"WebElementImageURL";
+NSString * WebElementStringKey = @"WebElementString";
+NSString * WebElementImageKey = @"WebElementImage";
+NSString * WebElementFrameKey = @"WebElementFrame";
 
 @implementation WebController
 

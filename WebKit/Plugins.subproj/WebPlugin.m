@@ -163,34 +163,32 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (BOOL)load
 {    
-    OSErr err;
-    FSSpec spec;
-    FSRef fref; 
-    mainFuncPtr pluginMainFunc;
-    initializeFuncPtr NP_Initialize = NULL;
     getEntryPointsFuncPtr NP_GetEntryPoints = NULL;
+    initializeFuncPtr NP_Initialize = NULL;
+    mainFuncPtr pluginMainFunc;
     NPError npErr;
-    Boolean didLoad;
-    NSBundle *tempBundle;
-    NSFileHandle *executableFile;
-    NSData *data;
-    
-    if(isLoaded)
-        return YES;
+    OSErr err;
 
-    if(isBundle){ //CFM or Mach-o bundle
-        tempBundle = [NSBundle bundleWithPath:path];
-        executableFile = [NSFileHandle fileHandleForReadingAtPath:[tempBundle executablePath]];
-        data = [executableFile readDataOfLength:8];
+
+    if(isLoaded){
+        return YES;
+    }
+    
+    if(isBundle){
+        // Check if the executable is mach-o or CFM
+        NSBundle *tempBundle = [NSBundle bundleWithPath:path];
+        NSFileHandle *executableFile = [NSFileHandle fileHandleForReadingAtPath:[tempBundle executablePath]];
+        NSData *data = [executableFile readDataOfLength:8];
         if(!memcmp([data bytes], "Joy!peff", 8)){
             isCFM = TRUE;
         }else{
             isCFM = FALSE;
         }
         [executableFile closeFile];
-        didLoad = CFBundleLoadExecutable(bundle);
-        if (!didLoad)
+        
+        if (!CFBundleLoadExecutable(bundle)){
             return NO;
+        }
 
         if(isCFM){
             pluginMainFunc = (mainFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
@@ -200,10 +198,14 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
             NP_Initialize = (initializeFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Initialize") );
             NP_GetEntryPoints = (getEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_GetEntryPoints") );
             NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Shutdown") );
-            if(!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown)
+            if(!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown){
                 return NO;
+            }
         }
     }else{ // single CFM file
+        FSSpec spec;
+        FSRef fref;
+        
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
         if(err != noErr){
             ERROR("FSPathMakeRef failed. Error=%d", err);
@@ -220,8 +222,9 @@ TransitionVector tVectorForFunctionPointer(FunctionPointer);
             return NO;
         }
         pluginMainFunc = (mainFuncPtr)functionPointerForTVector((TransitionVector)pluginMainFunc);
-        if(!pluginMainFunc)
+        if(!pluginMainFunc){
             return NO;
+        }
             
         isCFM = TRUE;
     }

@@ -5,15 +5,6 @@
         Public header file.
 */
 
-// These strings are keys into the element dictionary provided in 
-// contextMenuItemsForElement.
-extern NSString *WebContextMenuElementLinkURLKey;
-extern NSString *WebContextMenuElementLinkLabelKey;
-extern NSString *WebContextMenuElementImageURLKey;
-extern NSString *WebContextMenuElementStringKey;
-extern NSString *WebContextMenuElementImageKey;
-extern NSString *WebContextMenuElementFrameKey;
-
 /*!
     @protocol WebContextMenuHandler
     @discussion WebContextMenuHandler determine what context menu items are visible over

@@ -26,6 +26,14 @@
 @protocol WebResourceProgressDelegate;
 @protocol WebContextMenuDelegate;
 
+// These strings are keys into the element dictionary provided in
+// the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
+extern NSString *WebElementLinkURLKey;
+extern NSString *WebElementLinkLabelKey;
+extern NSString *WebElementImageURLKey;
+extern NSString *WebElementStringKey;
+extern NSString *WebElementImageKey;
+extern NSString *WebElementFrameKey;
 
 /*!
     @class WebController

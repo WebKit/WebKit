@@ -38,7 +38,7 @@
     [element release];
     element = [theElement retain];
 
-    linkURL = [element objectForKey:WebContextMenuElementLinkURLKey];
+    linkURL = [element objectForKey:WebElementLinkURLKey];
 
     if(linkURL){
     
@@ -55,7 +55,7 @@
                                    toArray:menuItems];
     }
 
-    imageURL = [element objectForKey:WebContextMenuElementImageURLKey];
+    imageURL = [element objectForKey:WebElementImageURLKey];
 
     if(imageURL){
         
@@ -79,7 +79,7 @@
 
     if(!imageURL && !linkURL){
     
-        WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
+        WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
 
         if(![[webFrame dataSource] isMainDocument]){
             [[self class] addMenuItemWithTitle:NSLocalizedString(@"Open Frame in New Window", @"Open Frame in New Window context menu item") 				                action:@selector(openFrameInNewWindow:)
@@ -93,14 +93,14 @@
 
 - (void)openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer
 {
-    WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
     [[controller windowOperationsDelegate] openNewWindowWithURL:URL referrer:referrer];
 }
 
 - (void)downloadURL:(NSURL *)URL
 {
-    WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
     WebContentPolicy *contentPolicy = [[controller policyDelegate] contentPolicyForMIMEType:@"application/octet-stream" URL:URL inFrame:webFrame];
     [controller _downloadURL:URL toPath:[contentPolicy path]];
@@ -108,36 +108,36 @@
 
 - (void)openLinkInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebContextMenuElementLinkURLKey] referrer:nil];
+    [self openNewWindowWithURL:[element objectForKey:WebElementLinkURLKey] referrer:nil];
 }
 
 - (void)downloadLinkToDisk:(id)sender
 {
-    [self downloadURL:[element objectForKey:WebContextMenuElementLinkURLKey]];
+    [self downloadURL:[element objectForKey:WebElementLinkURLKey]];
 }
 
 - (void)copyLinkToClipboard:(id)sender
 {
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    [pasteboard _web_writeURL:[element objectForKey:WebContextMenuElementLinkURLKey]
-                     andTitle:[element objectForKey:WebContextMenuElementLinkLabelKey]
+    [pasteboard _web_writeURL:[element objectForKey:WebElementLinkURLKey]
+                     andTitle:[element objectForKey:WebElementLinkLabelKey]
                     withOwner:self];
 }
 
 - (void)openImageInNewWindow:(id)sender
 {
-    [self openNewWindowWithURL:[element objectForKey:WebContextMenuElementImageURLKey] referrer:nil];
+    [self openNewWindowWithURL:[element objectForKey:WebElementImageURLKey] referrer:nil];
 }
 
 - (void)downloadImageToDisk:(id)sender
 {
-    [self downloadURL:[element objectForKey:WebContextMenuElementImageURLKey]];
+    [self downloadURL:[element objectForKey:WebElementImageURLKey]];
 }
 
 - (void)copyImageToClipboard:(id)sender
 {
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-    NSData *tiff = [[element objectForKey:WebContextMenuElementImageKey] TIFFRepresentation];
+    NSData *tiff = [[element objectForKey:WebElementImageKey] TIFFRepresentation];
     
     [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
     [pasteboard setData:tiff forType:NSTIFFPboardType];
@@ -145,7 +145,7 @@
 
 - (void)openFrameInNewWindow:(id)sender
 {
-    WebFrame *webFrame = [element objectForKey:WebContextMenuElementFrameKey];
+    WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebDataSource *dataSource = [webFrame dataSource];
     NSURL *URL = [dataSource URL];
     [self openNewWindowWithURL:URL referrer:nil];

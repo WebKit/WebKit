@@ -1,3 +1,33 @@
+2002-09-24  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed element info keys to WebElement* instead of WebContextMenuElement*
+	Added WebKit API documentation
+
+        * Plugins.subproj/WebPlugin.m:	
+        (-[WebNetscapePlugin load]): clean-up
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebContextMenuDelegate.h:
+        * WebView.subproj/WebController.h:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate contextMenuItemsForElement:defaultMenuItems:]):
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:referrer:]):
+        (-[WebDefaultContextMenuDelegate downloadURL:]):
+        (-[WebDefaultContextMenuDelegate openLinkInNewWindow:]):
+        (-[WebDefaultContextMenuDelegate downloadLinkToDisk:]):
+        (-[WebDefaultContextMenuDelegate copyLinkToClipboard:]):
+        (-[WebDefaultContextMenuDelegate openImageInNewWindow:]):
+        (-[WebDefaultContextMenuDelegate downloadImageToDisk:]):
+        (-[WebDefaultContextMenuDelegate copyImageToClipboard:]):
+        (-[WebDefaultContextMenuDelegate openFrameInNewWindow:]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]):
+
 2002-09-24  Darin Adler  <darin@apple.com>
 
 	Cleaned up some loose ends from adding setNeedsLayout to the WebDocumentView

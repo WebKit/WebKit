@@ -1,3 +1,11 @@
+2002-09-24  Chris Blumenberg  <cblu@apple.com>
+
+	Renamed element info keys to WebElement* instead of WebContextMenuElement*
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2002-09-24  Darin Adler  <darin@apple.com>
 
 	- fixed 3056579 -- various crashes at http://www.auspost.com.au/

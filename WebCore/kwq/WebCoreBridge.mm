@@ -450,13 +450,13 @@ using khtml::RenderPart;
                     DOMStringImpl *dv = childNode->nodeValue().implementation();
                     if (dv){
                         NSString *value = [NSString stringWithCharacters: (const unichar *)dv->s length: dv->l];
-                        [elementInfo setObject:value forKey:WebCoreContextLinkLabel];
+                        [elementInfo setObject:value forKey:WebCoreElementLinkLabel];
                         break;
                     }
                 }
                 labelParent = childNode;
             }
-            [elementInfo setObject:URL forKey:WebCoreContextLinkURL];
+            [elementInfo setObject:URL forKey:WebCoreElementLinkURL];
         }
     }
 
@@ -465,17 +465,17 @@ using khtml::RenderPart;
         ElementImpl* i =  static_cast<ElementImpl*>(node);
         NSURL *URL = [self completeURLForDOMString:parseURL(i->getAttribute(ATTR_SRC))];
         if (URL) {
-            [elementInfo setObject:URL forKey:WebCoreContextImageURL];
+            [elementInfo setObject:URL forKey:WebCoreElementImageURL];
             RenderImage *r = (RenderImage *)node->renderer();
             id <WebCoreImageRenderer> image = r->pixmap().image();
             if (image) {
-                [elementInfo setObject:image forKey:WebCoreContextImage];
+                [elementInfo setObject:image forKey:WebCoreElementImage];
             }
         }
     }
 
     if (part->hasSelection()) {
-        [elementInfo setObject:[self selectedText] forKey:WebCoreContextString];
+        [elementInfo setObject:[self selectedText] forKey:WebCoreElementString];
     }
     
     return elementInfo;

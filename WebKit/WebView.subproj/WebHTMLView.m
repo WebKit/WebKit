@@ -465,8 +465,8 @@
 
     NSPoint point = [self convertPoint:_private->mouseDownPoint fromView:nil];
     NSDictionary *element = [self _elementAtPoint: point];
-    NSURL *linkURL = [element objectForKey: WebContextMenuElementLinkURLKey];
-    NSURL *imageURL = [element objectForKey: WebContextMenuElementImageURLKey];
+    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
+    NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
     
     if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
         if((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
@@ -476,9 +476,21 @@
             if (imageURL){
                 _private->draggedURL = imageURL;
 
-                NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
-                NSRect rect = NSMakeRect(point.x + -16, point.y - 16, 32, 32);
-                [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
+                NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
+                NSImage *image = [element objectForKey: WebElementImageKey];
+                //NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
+                //NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
+
+                NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+                [pasteboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+                
+                [self dragImage:image
+                             at:mousePoint
+                         offset:NSZeroSize
+                          event:event
+                     pasteboard:pasteboard
+                         source:self
+                      slideBack:YES];
             }
             else if (linkURL) {
                 BOOL drawURLString = YES;
@@ -486,7 +498,7 @@
                 
                 _private->draggedURL = linkURL;
                                 
-                NSString *label = [element objectForKey: WebContextMenuElementLinkLabelKey];
+                NSString *label = [element objectForKey: WebElementLinkLabelKey];
                 NSString *urlString = [linkURL absoluteString];
                 
                 if (!label){

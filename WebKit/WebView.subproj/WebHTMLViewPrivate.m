@@ -129,7 +129,7 @@ BOOL _modifierTrackingEnabled = FALSE;
 
     WebView *webView = [self _web_parentWebView];
     WebFrame *webFrame = [[webView controller] frameForView:webView];
-    [elementInfo setObject:webFrame forKey:WebContextMenuElementFrameKey];
+    [elementInfo setObject:webFrame forKey:WebElementFrameKey];
        
     return elementInfo;
 }
