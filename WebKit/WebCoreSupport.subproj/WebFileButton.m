@@ -10,7 +10,7 @@
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebLocalizableStrings.h>
-#import <WebCore/WebCoreViewFactory.h>
+#import <WebKit/WebBridge.h>
 #import <WebKit/WebStringTruncator.h>
 
 #define NO_FILE_SELECTED 
@@ -36,6 +36,15 @@
 {
     [_button sizeToFit];
     [_button setFrameOrigin:NSMakePoint(0, 0)];
+}
+
+- (id)initWithBridge:(WebBridge *)bridge
+{
+    self = [super init];
+    if (self) {
+	_bridge = bridge; // Don't retain to avoid cycle
+    }
+    return self;
 }
 
 - (id)initWithFrame:(NSRect)frame
@@ -191,15 +200,22 @@
 
 - (void)beginSheet
 {
-    [self retain];
-    
-    NSOpenPanel *sheet = [NSOpenPanel openPanel];    
-    [sheet setPrompt:UI_STRING("Choose", "title for button in open panel from file button used in HTML forms")];
-    [sheet beginSheetForDirectory:@"~" file:@"" types:nil
-        modalForWindow:[self window] modalDelegate:self
-        didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:)
-        contextInfo:nil];
+    [_bridge retain];
+    [_bridge runOpenPanelForFileButtonWithResultListener:self];
 }
+
+- (void)chooseFilename:(NSString *)fileName
+{
+    [self setFilename:fileName];
+    [[NSNotificationCenter defaultCenter] postNotificationName:WebCoreFileButtonFilenameChanged object:self];
+    [_bridge release];
+}
+
+- (void)cancel
+{
+    [_bridge release];
+}
+
 
 - (void)chooseButtonPressed:(id)sender
 {
@@ -209,15 +225,6 @@
 - (void)mouseDown:(NSEvent *)event
 {
     [self beginSheet];
-}
-
-- (void)openPanelDidEnd:(NSOpenPanel *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
-{
-    if (returnCode == NSOKButton && [[sheet filenames] count] == 1) {
-        [self setFilename:[[sheet filenames] objectAtIndex:0]];
-        [[NSNotificationCenter defaultCenter] postNotificationName:WebCoreFileButtonFilenameChanged object:self];
-    }
-    [self release];
 }
 
 @end

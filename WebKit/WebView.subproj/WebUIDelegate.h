@@ -6,6 +6,30 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import <WebFoundation/WebRequest.h>
+
+/*!
+    @protocol WebOpenPanelResultListener
+    @discussion This protocol is used to call back with the results of
+    the file open panel requested by runOpenPanelForFileButtonWithResultListener:
+*/
+
+@protocol WebOpenPanelResultListener <NSObject>
+
+/*!
+    @method chooseFilename:
+    @abstract Call this method to return a filename from the file open panel.
+    @param fileName
+*/
+- (void)chooseFilename:(NSString *)fileName;
+
+/*!
+    @method cancel
+    @abstract Call this method to indicate that the file open panel was cancelled.
+*/
+- (void)cancel;
+
+@end
 
 @class WebController;
 
@@ -175,7 +199,7 @@
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (void)setResizbale:(BOOL)resizable;
+- (void)setResizable:(BOOL)resizable;
 
 /*!
     @method setFrame:
@@ -193,5 +217,46 @@
     @discussion 
 */
 - (NSRect)frame;
+
+/*!
+    @method runJavaScriptAlertPanelWithMessage:
+    @abstract Display a JavaScript alert panel
+    @param message The message to display
+    @discussion Clients should visually indicate that this panel comes
+    from JavaScript. The panel should have a single OK button.
+*/
+- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
+
+/*!
+    @method runJavaScriptAlertPanelWithMessage:
+    @abstract Display a JavaScript confirm panel
+    @param message The message to display
+    @result YES if the user hit OK, no if the user chose Cancel.
+    @discussion Clients should visually indicate that this panel comes
+    from JavaScript. The panel should have two buttons, e.g. "OK" and
+    "Cancel".
+*/
+- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
+
+/*!
+    @method runJavaScriptTextInputPanelWithPrompt:defaultText:
+    @abstract Display a JavaScript text input panel
+    @param message The message to display
+    @param defaultText The initial text for the text entry area.
+    @result The typed text if the user hit OK, otherwise nil.
+    @discussion Clients should visually indicate that this panel comes
+    from JavaScript. The panel should have two buttons, e.g. "OK" and
+    "Cancel", and an area to type text.
+*/
+- (NSString *)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+
+/*!
+    @message runOpenPanelForFileButtonWithResultListener:
+    @abstract Display a file open panel for a file input control.
+    @param resultListener The object to call back with the results.
+    @discussion This method is passed a callback object instead of giving a return
+    value so that it can be handled with a sheet.
+*/
+- (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
    
 @end

@@ -27,6 +27,7 @@
 #define KWQFILEBUTTON_H
 
 #include "KWQWidget.h"
+#include "khtml_part.h"
 
 #ifdef __OBJC__
 @class KWQFileButtonAdapter;
@@ -36,7 +37,7 @@ class KWQFileButtonAdapter;
 
 class KWQFileButton : public QWidget {
 public:
-    KWQFileButton();
+    KWQFileButton(KHTMLPart *part);
     ~KWQFileButton();
     
     void setFilename(const QString &);

@@ -34,6 +34,8 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 #import <WebKit/WebFormDelegate.h>
+#import <WebKit/WebFileButton.h>
+#import <WebKit/WebJavaScriptTextInputPanel.h>
 
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebError.h>
@@ -45,6 +47,7 @@
 #import <WebFoundation/WebResponse.h>
 #import <WebFoundation/WebSystemBits.h>
 #import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebLocalizableStrings.h>
 
 
 @interface NSApplication (DeclarationStolenFromAppKit)
@@ -168,6 +171,34 @@
     ASSERT(frame != nil);
     return [[frame webView] window];
 }
+
+- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
+{
+    [[[frame controller] windowOperationsDelegate] runJavaScriptAlertPanelWithMessage:message];
+}
+
+- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
+{
+    return [[[frame controller] windowOperationsDelegate] runJavaScriptConfirmPanelWithMessage:message];
+}
+
+- (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
+{
+    *result = [[[frame controller] windowOperationsDelegate] runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+
+    return *result != nil;
+}
+
+- (NSView <WebCoreFileButton> *)fileButton
+{
+    return [[WebFileButton alloc] initWithBridge:self];
+}
+
+- (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
+{
+    [[[frame controller] windowOperationsDelegate] runOpenPanelForFileButtonWithResultListener:resultListener];
+}
+
 
 - (WebDataSource *)dataSource
 {

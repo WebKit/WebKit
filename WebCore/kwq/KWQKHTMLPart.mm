@@ -826,18 +826,18 @@ void KWQKHTMLPart::forceLayout()
 
 void KWQKHTMLPart::runJavaScriptAlert(const QString &message)
 {
-    [[WebCoreViewFactory sharedFactory] runJavaScriptAlertPanelWithMessage:message.getNSString()];
+    [_bridge runJavaScriptAlertPanelWithMessage:message.getNSString()];
 }
 
 bool KWQKHTMLPart::runJavaScriptConfirm(const QString &message)
 {
-    return [[WebCoreViewFactory sharedFactory] runJavaScriptConfirmPanelWithMessage:message.getNSString()];
+    return [_bridge runJavaScriptConfirmPanelWithMessage:message.getNSString()];
 }
 
 bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &defaultValue, QString &result)
 {
     NSString *returnedText;
-    bool ok = [[WebCoreViewFactory sharedFactory] runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
+    bool ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
         defaultText:defaultValue.getNSString() returningText:&returnedText];
     if (ok)
         result = QString::fromNSString(returnedText);

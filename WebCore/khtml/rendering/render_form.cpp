@@ -556,7 +556,7 @@ RenderFileButton::RenderFileButton(HTMLInputElementImpl *element)
     : RenderFormElement(element)
 {
 #if APPLE_CHANGES
-    KWQFileButton *w = new KWQFileButton;
+    KWQFileButton *w = new KWQFileButton(view()->part());
     connect(w, SIGNAL(textChanged(const QString &)),this,SLOT(slotTextChanged(const QString &)));
     setQWidget(w);
 #else

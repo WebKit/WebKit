@@ -26,7 +26,8 @@
 #import "KWQFileButton.h"
 
 #import "KWQAssertions.h"
-#import "WebCoreViewFactory.h"
+#import "KWQKHTMLPart.h"
+#import "WebCoreBridge.h"
 
 @interface KWQFileButtonAdapter : NSObject
 {
@@ -37,8 +38,8 @@
 
 @end
 
-KWQFileButton::KWQFileButton()
-    : QWidget([[WebCoreViewFactory sharedFactory] fileButton])
+KWQFileButton::KWQFileButton(KHTMLPart *part)
+    : QWidget([KWQ(part)->bridge() fileButton])
     , _textChanged(this, SIGNAL(textChanged(const QString &)))
     , _adapter([[KWQFileButtonAdapter alloc] initWithKWQFileButton:this])
 {

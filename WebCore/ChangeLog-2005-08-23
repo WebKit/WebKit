@@ -1,3 +1,24 @@
+2003-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3163855 - Need control over certain potential dialogs/sheets
+
+        * khtml/rendering/render_form.cpp:
+        (RenderFileButton::RenderFileButton): Pass the part to KWQFileButton.
+        * kwq/KWQFileButton.h:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::KWQFileButton): Go through the bridge for the view,
+	not the view factory.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::runJavaScriptAlert): Go through the bridge for the panel,
+	not the view factory.
+        (KWQKHTMLPart::runJavaScriptConfirm): Likewise.
+        (KWQKHTMLPart::runJavaScriptPrompt): Likewise.
+        * kwq/WebCoreViewFactory.h: Move methods from here...
+        * kwq/WebCoreBridge.h: ...to here.
+
 2003-03-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
@@ -68,6 +89,7 @@
         a bit of overhead.
         (WindowQObject::installTimeout): Change parameter to UString, not Identifier.
 
+>>>>>>> 1.1469
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
 	I messed up when i merged Lars' quirks color patch for CSS with

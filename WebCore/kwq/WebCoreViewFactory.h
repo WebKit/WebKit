@@ -28,15 +28,7 @@
 @class NSString;
 @class NSView;
 
-@protocol WebCoreFileButton;
-
 @protocol WebCoreViewFactory
-
-- (NSView <WebCoreFileButton> *)fileButton;
-
-- (void)runJavaScriptAlertPanelWithMessage:(NSString *)message;
-- (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message;
-- (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result;
 
 - (NSArray *)pluginsInfo; // array of id <WebCorePluginInfo>
 
@@ -69,13 +61,3 @@
 - (NSArray *)extensionsForMIMEType:(NSString *)MIMEType;
 @end
 
-@protocol WebCoreFileButton <NSObject>
-- (void)setFilename:(NSString *)filename;
-- (NSString *)filename;
-- (float)baseline;
-- (void)setVisualFrame:(NSRect)rect;
-- (NSRect)visualFrame;
-- (NSSize)bestVisualFrameSizeForCharacterCount:(int)count;
-@end
-
-extern NSString *WebCoreFileButtonFilenameChanged;

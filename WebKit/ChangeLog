@@ -1,3 +1,31 @@
+2003-03-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3163855 - Need control over certain potential dialogs/sheets
+
+        * WebCoreSupport.subproj/WebBridge.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge runJavaScriptAlertPanelWithMessage:]): Moved here from
+	view factory. Call the bridge instead of popping up the dialog.
+        (-[WebBridge runJavaScriptConfirmPanelWithMessage:]): Likewise.
+        (-[WebBridge runJavaScriptTextInputPanelWithPrompt:defaultText:returningText:]):
+	Likewise.
+	(-[WebBridge fileButton]): Moved here from view factory, so we can
+	pass the bridge to the button.
+        (-[WebBridge runOpenPanelForFileButtonWithResultListener:]): Call the delegate.
+        * WebCoreSupport.subproj/WebFileButton.h:
+        * WebCoreSupport.subproj/WebFileButton.m:
+        (-[WebFileButton initWithBridge:]): New method so this object knows about the bridge.
+        (-[WebFileButton beginSheet]): Instead of popping up the sheet directly,
+	call the bridge (which will call the delegate).
+        (-[WebFileButton chooseFilename:]): Update for the new filename.
+        (-[WebFileButton cancel]): Do nothing.
+        * WebCoreSupport.subproj/WebViewFactory.m: Removed some methods.
+        * WebKit.exp: Export .objc_class_WebJavaScriptTextInputPanel (for now).
+        * WebKit.pbproj/project.pbxproj: Export WebJavaScriptTextInputPanel.h (for now).
+        * WebView.subproj/WebWindowOperationsDelegate.h: Added new methods.
+
 2003-03-01  Richard Williamson   <rjw@apple.com>
 
         Reviewed by Chris & Darin.
