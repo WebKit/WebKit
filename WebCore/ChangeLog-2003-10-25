@@ -30,7 +30,6 @@
         nodes at each level of the tree, so our recursion is O(depth of tree) rather
         than O(size of tree).
 
->>>>>>> 1.1706
 2003-05-10  David Hyatt  <hyatt@apple.com>
 
 	Fix the misrendering at the top of cnn.com (the extra tearing
