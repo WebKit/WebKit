@@ -183,7 +183,7 @@
 - (void)_receivedData:(NSData *)data;
 - (void)_setData:(NSData *)data;
 - (void)_finishedLoading;
-- (void)_receivedError:(NSError *)error complete:(BOOL)isComplete;
+- (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete;
 - (void)_defersCallbacksChanged;
 - (NSURLRequest *)_originalRequest;
 - (NSDictionary *)_triggeringAction;

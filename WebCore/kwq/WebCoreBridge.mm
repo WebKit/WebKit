@@ -331,9 +331,19 @@ static bool initializedKJS = FALSE;
     _part->closeURL();
 }
 
-- (void)didNotOpenURL:(NSURL *)URL
+- (void)didNotOpenURL:(NSURL *)URL pageCache:(NSDictionary *)pageCache
 {
     _part->didNotOpenURL(KURL(URL).url());
+
+    // We might have made a page cache item, but now we're bailing out due to an error before we ever
+    // transitioned to the new page (before WebFrameState==commit).  The goal here is to restore any state
+    // so that the existing view (that wenever got far enough to replace) can continue being used.
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+        doc->setInPageCache(NO);
+    }
+    KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
+    [state invalidate];
 }
 
 - (void)saveDocumentState

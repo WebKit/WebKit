@@ -805,11 +805,9 @@
     [[self representation] finishedLoadingWithDataSource:self];
 }
 
-- (void)_receivedError:(NSError *)error complete:(BOOL)isComplete
+- (void)_receivedMainResourceError:(NSError *)error complete:(BOOL)isComplete
 {
-    if (!_private->committed) {
-        [[[self webFrame] _bridge] didNotOpenURL:[_private->originalRequestCopy URL]];
-    }
+    [[self webFrame] _receivedMainResourceError:error];
     [[self _webView] _mainReceivedError:error
                            fromDataSource:self
                                  complete:isComplete];

@@ -180,6 +180,7 @@ extern NSString *WebPageCacheDocumentViewKey;
 - (void)_saveDocumentAndScrollState;
 
 - (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL;
+- (void)_receivedMainResourceError:(NSError *)error;
 
 - (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState;
 

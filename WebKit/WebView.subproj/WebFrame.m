@@ -644,6 +644,16 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
     [documentView setDataSource:_private->dataSource];
 }
 
+- (void)_receivedMainResourceError:(NSError *)error
+{
+    if ([self _state] == WebFrameStateProvisional) {
+        NSURL *failedURL = [[_private->provisionalDataSource _originalRequest] URL];
+        // When we are pre-commit, the currentItem is where the pageCache data resides
+        NSDictionary *pageCache = [[_private currentItem] pageCache];
+        [[self _bridge] didNotOpenURL:failedURL pageCache:pageCache];
+    }
+}
+
 - (void)_transitionToCommitted: (NSDictionary *)pageCache
 {
     ASSERT([self webView] != nil);

@@ -152,7 +152,7 @@ typedef enum {
 - (void)addData:(NSData *)data;
 - (void)closeURL;
 
-- (void)didNotOpenURL:(NSURL *)URL;
+- (void)didNotOpenURL:(NSURL *)URL pageCache:(NSDictionary *)pageCache;
 
 - (void)saveDocumentState;
 - (void)restoreDocumentState;

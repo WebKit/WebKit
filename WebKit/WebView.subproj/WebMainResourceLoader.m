@@ -66,9 +66,9 @@
 
 - (void)receivedError:(NSError *)error
 {
-    // Calling _receivedError will likely result in a call to release, so we must retain.
+    // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
-    [dataSource _receivedError:error complete:YES];
+    [dataSource _receivedMainResourceError:error complete:YES];
     [super connection:connection didFailWithError:error];
     [self release];
 }
@@ -84,10 +84,10 @@
 
 -(void)cancelWithError:(NSError *)error
 {
-    // Calling _receivedError will likely result in a call to release, so we must retain.
+    // Calling _receivedMainResourceError will likely result in a call to release, so we must retain.
     [self retain];
     [self cancelContentPolicy];
-    [dataSource _receivedError:error complete:YES];
+    [dataSource _receivedMainResourceError:error complete:YES];
     [super cancelWithError:error];
     [self release];
 }

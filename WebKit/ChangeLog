@@ -1,3 +1,35 @@
+2004-08-08  Trey Matteson  <trey@apple.com>
+
+	3745023 - Safari crashes trying to access anchor while downloading
+
+	I bet this is behind a few other crashers as well.  In this bug the start of the
+	download leaves a KWQPageState hanging around, and when that is freed it damages
+	the part and view.  If you're still using that page, you're dead.
+
+	The fix is to properly invalidate the PageState when we receive an error before
+	reaching WebFrameCommitted state.  Normally this happens when a page is reheated
+	from the PageState, but in this case we never manage to leave the page to begin
+	with, although we've already created the PageState.
+
+	Other errors besides the synthetic one download generates would have caused similar
+	crashing.  Another example would be clicking on a second link before the load
+	caused by clicking on the first link reached committed state.
+
+        Reviewed by Richard
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _receivedMainResourceError:complete:]):  Let the frame do the
+	main work (since it has access to the pageCache state).  Also renamed to make
+	it clear that this is about an error for the main resource.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _receivedMainResourceError:]):  Let WC know about the failure, as
+	the DataSource used to, but now pass the pageCache state along too.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient receivedError:]):  Call renamed method.
+        (-[WebMainResourceClient cancelWithError:]):  Ditto.
+
 2004-08-08  Vicki Murley  <vicki@apple.com>
 
         Reviewed by vicki (changes by rjw)

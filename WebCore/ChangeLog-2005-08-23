@@ -1,3 +1,27 @@
+2004-08-08  Trey Matteson  <trey@apple.com>
+
+	3745023 - Safari crashes trying to access anchor while downloading
+
+	I bet this is behind a few other crashers as well.  In this bug the start of the
+	download leaves a KWQPageState hanging around, and when that is freed it damages
+	the part and view.  If you're still using that page, you're dead.
+
+	The fix is to properly invalidate the PageState when we receive an error before
+	reaching WebFrameCommitted state.  Normally this happens when a page is reheated
+	from the PageState, but in this case we never manage to leave the page to begin
+	with, although we've already created the PageState.
+
+	Other errors besides the synthetic one download generates would have caused similar
+	crashing.  Another example would be clicking on a second link before the load
+	caused by clicking on the first link reached committed state.
+
+        Reviewed by Richard
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge didNotOpenURL:pageCache:]):  Invalidate the pageCache state
+	when a load doesn't get off the ground.
+
 2004-08-06  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej
