@@ -1,3 +1,13 @@
+2005-01-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej.
+
+        <rdar://problem/3973067> AXWebArea for http://apple.netscape.com/ has an empty AXLinkUIElements
+
+        * kwq/KWQAccObject.mm:
+        (-[KWQAccObject accessibilityAttributeValue:]):
+        Omit ignored AXLinks from AXLinkUIElements result
+
 2005-01-25  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

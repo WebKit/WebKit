@@ -823,8 +823,12 @@ static QRect boundingBoxRect(RenderObject* obj)
             Node curr = coll.firstItem();
             while (!curr.isNull()) {
                 RenderObject* obj = curr.handle()->renderer();
-                if (obj)
-                    [links addObject: obj->document()->getAccObjectCache()->accObject(obj)];
+                if (obj) {
+                    KWQAccObject *axobj = obj->document()->getAccObjectCache()->accObject(obj);
+                    ASSERT([[axobj role] isEqualToString:@"AXLink"]);
+                    if (![axobj accessibilityIsIgnored])
+                        [links addObject: axobj];
+                }
                 curr = coll.nextItem();
             }
             return links;
