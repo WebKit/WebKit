@@ -18,6 +18,7 @@
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageRenderer.h>
+#import <WebKit/WebKitNSStringExtras.h>
 #import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -44,8 +45,10 @@
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
 #define DRAG_LABEL_RADIUS		5.0
+#define DRAG_LABEL_BORDER_Y_OFFSET              2.0
 
 #define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
+#define MAX_DRAG_LABEL_WIDTH                    320.0
 
 #import <CoreGraphics/CGStyle.h>
 #import <CoreGraphics/CGSTypes.h>
@@ -423,12 +426,12 @@ static WebHTMLView *lastHitView = nil;
 }
 
 
--(NSImage *)_dragImageForElement:(NSDictionary *)element
+-(NSImage *)_dragImageForLinkElement:(NSDictionary *)element
 {
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
 
     BOOL drawURLString = YES;
-    BOOL clipURLString = NO;
+    BOOL clipURLString = NO, clipLabelString = NO;
     
     NSString *label = [element objectForKey: WebElementLinkLabelKey];
     NSString *urlString = [linkURL absoluteString];
@@ -438,21 +441,26 @@ static WebHTMLView *lastHitView = nil;
 	label = urlString;
     }
     
-    // FIXME: This mega-block of code needs to be cleaned-up or put into another method.
-    NSFont *labelFont = [NSFont systemFontOfSize: 12.0];
-    NSFont *urlFont = [NSFont systemFontOfSize: 8.0];
-    NSDictionary *labelAttributes = [NSDictionary dictionaryWithObjectsAndKeys: labelFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
-    NSDictionary *urlAttributes = [NSDictionary dictionaryWithObjectsAndKeys: urlFont, NSFontAttributeName, [NSColor whiteColor], NSForegroundColorAttributeName, nil];
-    NSSize labelSize = [label sizeWithAttributes: labelAttributes];
+    NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:12.0]
+                                                   toHaveTrait:NSBoldFontMask];
+    NSFont *urlFont = [NSFont systemFontOfSize: 10.0];
+    NSSize labelSize;
+    labelSize.width = [label _web_widthWithFont: labelFont];
+    labelSize.height = [labelFont ascender] - [labelFont descender];
+    if (labelSize.width > MAX_DRAG_LABEL_WIDTH){
+        labelSize.width = MAX_DRAG_LABEL_WIDTH;
+        clipLabelString = YES;
+    }
+    
     NSSize imageSize, urlStringSize;
     imageSize.width += labelSize.width + DRAG_LABEL_BORDER_X * 2;
-    imageSize.height += labelSize.height + DRAG_LABEL_BORDER_Y *2;
+    imageSize.height += labelSize.height + DRAG_LABEL_BORDER_Y * 2;
     if (drawURLString) {
-	urlStringSize = [urlString sizeWithAttributes: urlAttributes];
+	urlStringSize.width = [urlString _web_widthWithFont: urlFont];
+        urlStringSize.height = [urlFont ascender] - [urlFont descender];
 	imageSize.height += urlStringSize.height;
-	// Clip the url string to 2.5 times the width of the label.
-	if (urlStringSize.width > MAX(2.5 * labelSize.width, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP)) {
-	    imageSize.width = MAX((labelSize.width * 2.5) + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
+	if (urlStringSize.width > MAX_DRAG_LABEL_WIDTH) {
+	    imageSize.width = MAX(MAX_DRAG_LABEL_WIDTH + DRAG_LABEL_BORDER_X * 2, MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP);
 	    clipURLString = YES;
 	} else {
 	    imageSize.width = MAX(labelSize.width + DRAG_LABEL_BORDER_X * 2, urlStringSize.width + DRAG_LABEL_BORDER_X * 2);
@@ -461,7 +469,7 @@ static WebHTMLView *lastHitView = nil;
     NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
     [dragImage lockFocus];
     
-    [[NSColor colorWithCalibratedRed: 0.5 green: 0.5 blue: 0.5 alpha: 0.8] set];
+    [[NSColor colorWithCalibratedRed: 0.7 green: 0.7 blue: 0.7 alpha: 0.8] set];
     
     // Drag a rectangle with rounded corners/
     NSBezierPath *path = [NSBezierPath bezierPath];
@@ -474,32 +482,21 @@ static WebHTMLView *lastHitView = nil;
     [path appendBezierPathWithRect: NSMakeRect(0, DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 10, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
     [path appendBezierPathWithRect: NSMakeRect(imageSize.width - DRAG_LABEL_RADIUS - 20,DRAG_LABEL_RADIUS, DRAG_LABEL_RADIUS + 20, imageSize.height - 2 * DRAG_LABEL_RADIUS)];
     [path fill];
-    
-    // Draw the label with a slight shadow.
-    CGShadowStyle shadow;
-    CGSGenericObj style;
-    
-    shadow.version    = 0;
-    shadow.elevation  = kCGShadowElevationDefault;
-    shadow.azimuth    = 136.869995;
-    shadow.ambient    = 0.317708;
-    shadow.height     = 2.187500;
-    shadow.radius     = 1.875000;
-    shadow.saturation = kCGShadowSaturationDefault;
-    style = CGStyleCreateShadow(&shadow);
-    [NSGraphicsContext saveGraphicsState];
-    CGContextSetStyle([[NSGraphicsContext currentContext] graphicsPort], style);
-    
+        
+    NSColor *topColor = [NSColor colorWithCalibratedWhite:0.0 alpha:0.75];
+    NSColor *bottomColor = [NSColor colorWithCalibratedWhite:1.0 alpha:0.5];
     if (drawURLString) {
-	if (clipURLString) {
-	    urlString = [WebStringTruncator rightTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
-	}
-	[urlString drawAtPoint: NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y) withAttributes: urlAttributes];
+	if (clipURLString)
+	    urlString = [WebStringTruncator centerTruncateString: urlString toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:urlFont];
+
+        [urlString _web_drawDoubledAtPoint:NSMakePoint(DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y - [urlFont descender]) 
+             withTopColor:topColor bottomColor:bottomColor font:urlFont];
     }
-    [label drawAtPoint: NSMakePoint (DRAG_LABEL_BORDER_X, DRAG_LABEL_BORDER_Y + urlStringSize.height) withAttributes: labelAttributes];
-    
-    [NSGraphicsContext restoreGraphicsState];
-    CGStyleRelease(style);
+
+    if (clipLabelString)
+	    label = [WebStringTruncator rightTruncateString: label toWidth:imageSize.width - (DRAG_LABEL_BORDER_X * 2) withFont:labelFont];
+    [label _web_drawDoubledAtPoint:NSMakePoint (DRAG_LABEL_BORDER_X, imageSize.height - DRAG_LABEL_BORDER_Y_OFFSET - [labelFont ascender])
+             withTopColor:topColor bottomColor:bottomColor font:labelFont];
     
     [dragImage unlockFocus];
     
@@ -552,7 +549,7 @@ static WebHTMLView *lastHitView = nil;
         NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
         NSString *label = [element objectForKey:WebElementLinkLabelKey];
         [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
-        NSImage *dragImage = [self _dragImageForElement:element];
+        NSImage *dragImage = [self _dragImageForLinkElement:element];
         NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
         [self dragImage:dragImage
                      at:NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height)

@@ -48,6 +48,25 @@ static BOOL canUseFastRenderer (const UniChar *buffer, unsigned length)
     free(buffer);
 }
 
+- (void)_web_drawDoubledAtPoint:(NSPoint)textPoint
+             withTopColor:(NSColor *)topColor
+              bottomColor:(NSColor *)bottomColor
+                     font:(NSFont *)font
+{
+    // turn off font smoothing so translucent text draws correctly (Radar 3118455)
+    [NSGraphicsContext saveGraphicsState];
+    CGContextSetShouldSmoothFonts([[NSGraphicsContext currentContext] graphicsPort], false);
+    [self _web_drawAtPoint:textPoint
+                      font:font
+                 textColor:bottomColor];
+
+    textPoint.y += 1;
+    [self _web_drawAtPoint:textPoint
+                      font:font
+                 textColor:topColor];
+    [NSGraphicsContext restoreGraphicsState];
+}
+
 - (float)_web_widthWithFont:(NSFont *)font
 {
     unsigned length = [self length];

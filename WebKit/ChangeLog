@@ -1,5 +1,21 @@
 2003-07-24  Richard Williamson   <rjw@apple.com>
 
+	Fixed 3279910.  Change the way we draw dragged link to use
+	WebKit's measurement and drawing.  Also made the look match
+	the bookmarks bar text.
+
+        Reviewed by Maciej.
+
+        * Misc.subproj/WebKitNSStringExtras.h:
+        * Misc.subproj/WebKitNSStringExtras.m:
+        (-[NSString _web_drawDoubledAtPoint:withTopColor:bottomColor:font:]):
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _dragImageForLinkElement:]):
+        (-[WebHTMLView _handleMouseDragged:]):
+
+2003-07-24  Richard Williamson   <rjw@apple.com>
+
 	Removed unnecessary log.
 
         Reviewed by John.
