@@ -1,5 +1,57 @@
 2004-03-05  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Dave.
+
+        Added initial support for retrieving the computed 
+        style of document elements.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_computedstyle.cpp: Added.
+        (DOM::valueForLength): Helper to turn a khtml::Length into a computed value string.
+        (DOM::stringForBorderStyle): Helper to turn an EBorderStyle into a computed value string.
+        (DOM::stringForTextAlign): Helper to turn an ETextAlign into a computed value string.
+        (DOM::CSSComputedStyleDeclarationImpl::CSSComputedStyleDeclarationImpl): New function.
+        (DOM::CSSComputedStyleDeclarationImpl::~CSSComputedStyleDeclarationImpl): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::cssText): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::setCssText): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyValue): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyPriority): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::removeProperty): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::setProperty): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::setLengthProperty): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::item): Ditto.
+        (DOM::CSSComputedStyleDeclarationImpl::property): Ditto.
+        * khtml/css/css_computedstyle.h: Added.
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::cssText): Fixed some formatting of Rect. Added
+        suppoprt for rgba colors.
+        * khtml/css/css_valueimpl.h:
+        (DOM::CSSStyleDeclarationImpl::node):
+        * khtml/ecma/kjs_css.cpp:
+        (KJS::getDOMCSSStyleDeclaration):
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocument::getValueProperty): defaultView is a property, used to be a function, 
+        which was wrong. Fixed.
+        (DOMDocumentProtoFunc::tryCall): Ditto.
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::): Regenerated file.
+        * khtml/misc/khtmllayout.h:
+        (khtml::Length::length): Added an accessor to the value, to promote better coding
+        style, rather than peeking and poking the value directly.
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::borderLeftWidth): BHIDDEN also should be treated like BNONE when it comes
+        to returning a zero value. Now it is.
+        (khtml::RenderStyle::borderRightWidth): Ditto.
+        (khtml::RenderStyle::borderTopWidth): Ditto.
+        (khtml::RenderStyle::borderBottomWidth): Ditto.
+        (khtml::RenderStyle::outlineWidth): Ditto.
+        (khtml::RenderStyle::outlineOffset): Ditto.
+        * khtml/xml/dom2_viewsimpl.cpp:
+        (AbstractViewImpl::getComputedStyle): Added an implementation for this formerly stubbed out function.
+
+2004-03-05  Ken Kocienda  <kocienda@apple.com>
+
         Change by Darin. Reviewed by me.
 
         * kwq/DOM.mm: Fixed the following functions to deal with

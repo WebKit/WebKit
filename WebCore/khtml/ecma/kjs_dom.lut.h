@@ -123,7 +123,7 @@ namespace KJS {
 const struct HashEntry DOMDocumentProtoTableEntries[] = {
    { "createCDATASection", DOMDocument::CreateCDATASection, DontDelete|Function, 1, 0 },
    { 0, 0, 0, 0, 0 },
-   { "createDocumentFragment", DOMDocument::CreateDocumentFragment, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[28] },
+   { "createDocumentFragment", DOMDocument::CreateDocumentFragment, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[29] },
    { 0, 0, 0, 0, 0 },
    { "getElementsByTagName", DOMDocument::GetElementsByTagName, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[25] },
    { 0, 0, 0, 0, 0 },
@@ -136,7 +136,7 @@ const struct HashEntry DOMDocumentProtoTableEntries[] = {
    { "createAttribute", DOMDocument::CreateAttribute, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[24] },
    { "createTextNode", DOMDocument::CreateTextNode, DontDelete|Function, 1, 0 },
    { "createEntityReference", DOMDocument::CreateEntityReference, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[26] },
-   { "createProcessingInstruction", DOMDocument::CreateProcessingInstruction, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[29] },
+   { "createProcessingInstruction", DOMDocument::CreateProcessingInstruction, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[28] },
    { 0, 0, 0, 0, 0 },
    { "createComment", DOMDocument::CreateComment, DontDelete|Function, 1, &DOMDocumentProtoTableEntries[27] },
    { 0, 0, 0, 0, 0 },
@@ -149,28 +149,28 @@ const struct HashEntry DOMDocumentProtoTableEntries[] = {
    { "getElementsByTagNameNS", DOMDocument::GetElementsByTagNameNS, DontDelete|Function, 2, 0 },
    { "getElementById", DOMDocument::GetElementById, DontDelete|Function, 1, 0 },
    { "createRange", DOMDocument::CreateRange, DontDelete|Function, 0, 0 },
-   { "defaultView", DOMDocument::DefaultView, DontDelete|Function, 0, &DOMDocumentProtoTableEntries[30] },
    { "createEvent", DOMDocument::CreateEvent, DontDelete|Function, 1, 0 },
    { "getOverrideStyle", DOMDocument::GetOverrideStyle, DontDelete|Function, 2, 0 }
 };
 
-const struct HashTable DOMDocumentProtoTable = { 2, 31, DOMDocumentProtoTableEntries, 23 };
+const struct HashTable DOMDocumentProtoTable = { 2, 30, DOMDocumentProtoTableEntries, 23 };
 
 } // namespace
 
 namespace KJS {
 
 const struct HashEntry DOMDocumentTableEntries[] = {
-   { "doctype", DOMDocument::DocType, DontDelete|ReadOnly, 0, 0 },
+   { "doctype", DOMDocument::DocType, DontDelete|ReadOnly, 0, &DOMDocumentTableEntries[7] },
    { "documentElement", DOMDocument::DocumentElement, DontDelete|ReadOnly, 0, &DOMDocumentTableEntries[4] },
    { "implementation", DOMDocument::Implementation, DontDelete|ReadOnly, 0, &DOMDocumentTableEntries[6] },
    { "selectedStylesheetSet", DOMDocument::SelectedStylesheetSet, DontDelete, 0, 0 },
    { "styleSheets", DOMDocument::StyleSheets, DontDelete|ReadOnly, 0, &DOMDocumentTableEntries[5] },
    { "preferredStylesheetSet", DOMDocument::PreferredStylesheetSet, DontDelete|ReadOnly, 0, 0 },
-   { "readyState", DOMDocument::ReadyState, DontDelete|ReadOnly, 0, 0 }
+   { "readyState", DOMDocument::ReadyState, DontDelete|ReadOnly, 0, 0 },
+   { "defaultView", DOMDocument::DefaultView, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMDocumentTable = { 2, 7, DOMDocumentTableEntries, 4 };
+const struct HashTable DOMDocumentTable = { 2, 8, DOMDocumentTableEntries, 4 };
 
 } // namespace
 

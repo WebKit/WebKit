@@ -56,33 +56,33 @@ public:
 
     unsigned long length() const;
     CSSRuleImpl *parentRule() const;
-    DOM::DOMString removeProperty(int propertyID, bool notifyChanged = true);
-    bool setProperty(int propertyId, const DOM::DOMString &value, bool important = false, bool notifyChanged = true);
-    void setProperty(int propertyId, int value, bool important = false, bool notifyChanged = true);
+    virtual DOM::DOMString removeProperty(int propertyID, bool notifyChanged = true);
+    virtual bool setProperty(int propertyId, const DOM::DOMString &value, bool important = false, bool notifyChanged = true);
+    virtual void setProperty(int propertyId, int value, bool important = false, bool notifyChanged = true);
     // this treats integers as pixels!
     // needed for conversion of html attributes
-    void setLengthProperty(int id, const DOM::DOMString &value, bool important,bool multiLength = false);
-    void setStringProperty(int propertyId, const DOM::DOMString &value, DOM::CSSPrimitiveValue::UnitTypes, bool important = false); // parsed string value
-    void setImageProperty(int propertyId, const DOM::DOMString &URL, bool important = false);
+    virtual void setLengthProperty(int id, const DOM::DOMString &value, bool important,bool multiLength = false);
+    virtual void setStringProperty(int propertyId, const DOM::DOMString &value, DOM::CSSPrimitiveValue::UnitTypes, bool important = false); // parsed string value
+    virtual void setImageProperty(int propertyId, const DOM::DOMString &URL, bool important = false);
 
     // add a whole, unparsed property
-    void setProperty ( const DOMString &propertyString);
-    DOM::DOMString item ( unsigned long index );
+    virtual void setProperty ( const DOMString &propertyString);
+    virtual DOM::DOMString item ( unsigned long index );
 
     virtual DOM::DOMString cssText() const;
-    void setCssText(const DOM::DOMString& str);
+    virtual void setCssText(const DOM::DOMString& str);
 
     virtual bool isStyleDeclaration() { return true; }
 
     virtual bool parseString( const DOMString &string, bool = false );
 
-    CSSValueImpl *getPropertyCSSValue( int propertyID ) const;
-    DOMString getPropertyValue( int propertyID ) const;
-    bool getPropertyPriority( int propertyID ) const;
+    virtual CSSValueImpl *getPropertyCSSValue( int propertyID ) const;
+    virtual DOMString getPropertyValue( int propertyID ) const;
+    virtual bool getPropertyPriority( int propertyID ) const;
 
     QPtrList<CSSProperty> *values() { return m_lstValues; }
     void setNode(NodeImpl *_node) { m_node = _node; }
-    NodeImpl* node() { return m_node; }
+    NodeImpl* node() const { return m_node; }
 
     void setChanged();
 
@@ -393,6 +393,9 @@ public:
     bool m_bImportant 	: 1;
 protected:
     CSSValueImpl *m_value;
+
+private:
+    CSSProperty &operator=(const CSSProperty&);
 };
 
 

@@ -58,6 +58,8 @@ namespace khtml
             { return *((Q_UINT32 *)this) != *((Q_UINT32 *)&o); }
 
 
+	int length() const { return value; }
+
 	/*
 	 * works only for Fixed and Percent, returns -1 otherwise
 	 */

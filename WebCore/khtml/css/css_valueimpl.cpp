@@ -750,7 +750,7 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	    // ###
 	    break;
 	case CSSPrimitiveValue::CSS_STRING:
-	    // ###
+	    text = DOMString(m_value.string);
 	    break;
 	case CSSPrimitiveValue::CSS_URI:
             text  = "url(";
@@ -768,17 +768,29 @@ DOM::DOMString CSSPrimitiveValueImpl::cssText() const
 	    break;
         case CSSPrimitiveValue::CSS_RECT: {
 	    RectImpl* rectVal = getRectValue();
-            text = "rect(";
-            text += rectVal->top()->cssText() + " ";
-            text += rectVal->right()->cssText() + " ";
-            text += rectVal->bottom()->cssText() + " ";
-            text += rectVal->left()->cssText() + ")";
+        text = "rect(";
+        text += rectVal->top()->cssText() + " ";
+        text += rectVal->right()->cssText() + " ";
+        text += rectVal->bottom()->cssText() + " ";
+        text += rectVal->left()->cssText() + ")";
 	    break;
         }
 	case CSSPrimitiveValue::CSS_RGBCOLOR:
-	    text = QColor(m_value.rgbcolor).name();
+    {
+        QColor color(m_value.rgbcolor);
+        if (qAlpha(m_value.rgbcolor))
+            text = "rgba(";
+        else
+            text = "rgb(";
+        text += QString::number(color.red()) + ", ";
+        text += QString::number(color.green()) + ", ";
+        text += QString::number(color.blue());
+        if (qAlpha(m_value.rgbcolor))
+            text += ", " + QString::number((float)qAlpha(m_value.rgbcolor) / 0xFF);
+	    text += ")";
 	    break;
-	default:
+	}
+    default:
 	    break;
     }
     return text;
