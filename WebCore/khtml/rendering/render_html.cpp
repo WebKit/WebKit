@@ -32,6 +32,7 @@ using namespace khtml;
 RenderHtml::RenderHtml(DOM::HTMLElementImpl* node)
     : RenderFlow(node)
 {
+    m_layer = new RenderLayer(this);
 }
 
 RenderHtml::~RenderHtml()

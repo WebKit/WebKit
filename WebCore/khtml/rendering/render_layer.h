@@ -67,7 +67,8 @@ public:
     void setHeight( int height ) { m_height = height; }
     
     void setPos( int xPos, int yPos ) { m_x = xPos; m_y = yPos; }
-
+    void updateLayerPosition();
+    
     void convertToLayerCoords(RenderLayer* ancestorLayer, int& x, int& y);
     
     bool hasAutoZIndex() { return renderer()->style()->hasAutoZIndex(); }

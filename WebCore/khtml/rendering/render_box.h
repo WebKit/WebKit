@@ -25,10 +25,10 @@
 
 #include "render_container.h"
 #include "misc/loader.h"
+#include "render_layer.h"
 
 namespace khtml {
     class CachedObject;
-    class RenderLayer;
     
 class RenderBox : public RenderContainer
 {
@@ -69,8 +69,8 @@ public:
     virtual short marginLeft() const { return m_marginLeft; }
     virtual short marginRight() const { return m_marginRight; }
 
-    virtual void setWidth( int width ) { m_width = width; }
-    virtual void setHeight( int height ) { m_height = height; }
+    virtual void setWidth( int width ) { m_width = width; if (m_layer) m_layer->setWidth(width); }
+    virtual void setHeight( int height ) { m_height = height; if (m_layer) m_layer->setHeight(height); }
 
     // This method is now public so that centered objects like tables that are
     // shifted right by left-aligned floats can recompute their left and
@@ -101,8 +101,19 @@ public:
 
     void relativePositionOffset(int &tx, int &ty);
 
-    RenderLayer* layer() { return m_layer; }
-    
+    virtual RenderLayer* layer() const { return m_layer; }
+    virtual bool hasChildLayers() const { return m_hasChildLayers; }
+    virtual void setHasChildLayers(bool hasLayers) {
+        if (m_hasChildLayers == hasLayers)
+            return;
+        
+        m_hasChildLayers = hasLayers;
+
+        if (parent() && hasLayers)
+            parent()->setHasChildLayers(hasLayers);
+    }
+    virtual void positionChildLayers();
+
 protected:
     virtual void printBoxDecorations(QPainter *p,int _x, int _y,
                                        int _w, int _h, int _tx, int _ty);
@@ -144,6 +155,7 @@ protected:
     // A pointer to our layer if we have one.  Currently only positioned elements
     // and floaters have layers.
     RenderLayer* m_layer;
+    bool m_hasChildLayers : 1;
 };
 
 

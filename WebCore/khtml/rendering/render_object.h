@@ -65,6 +65,7 @@ namespace khtml {
     class RenderRoot;
     class RenderText;
     class RenderFrameSet;
+    class RenderLayer;
 
 /**
  * Base Class for all rendering tree objects.
@@ -84,6 +85,12 @@ public:
     virtual RenderObject *firstChild() const { return 0; }
     virtual RenderObject *lastChild() const { return 0; }
 
+    virtual RenderLayer* layer() const { return 0; }
+    virtual RenderLayer* enclosingLayer() { return 0; }
+    virtual bool hasChildLayers() const { return false; }
+    virtual void setHasChildLayers(bool hasLayers) { }
+    virtual void positionChildLayers() { }
+    
     // RenderObject tree manipulation
     //////////////////////////////////////////
     virtual void addChild(RenderObject *newChild, RenderObject *beforeChild = 0);
@@ -171,25 +178,26 @@ public:
     void closeEntireTree() {
       RenderObject *child = firstChild();
       while (child) {
-	child->closeEntireTree();
-	child = child->nextSibling();
+          child->closeEntireTree();
+          child = child->nextSibling();
       }
       close();
     }
 
     void setLayouted(bool b=true) {
-	m_layouted = b;
-	if(!b) {
-	    RenderObject *o = m_parent;
-	    RenderObject *root = this;
-	    while( o ) {
-		o->m_layouted = false;
-		root = o;
-		o = o->m_parent;
-	    }
-	    root->scheduleRelayout();
-	}
+        m_layouted = b;
+        if(!b) {
+            RenderObject *o = m_parent;
+            RenderObject *root = this;
+            while( o ) {
+                o->m_layouted = false;
+                root = o;
+                o = o->m_parent;
+            }
+            root->scheduleRelayout();
+        }
     }
+    
     // hack to block inline layouts during parsing
     // evil, evil. I didn't do it. <tm>
     virtual void setBlockBidi() {}

@@ -57,6 +57,7 @@ RenderBox::RenderBox(DOM::NodeImpl* node)
     m_marginLeft = 0;
     m_marginRight = 0;
     m_layer = 0;
+    m_hasChildLayers = false;
 }
 
 void RenderBox::setStyle(RenderStyle *_style)
@@ -88,6 +89,7 @@ void RenderBox::setStyle(RenderStyle *_style)
 RenderBox::~RenderBox()
 {
     //kdDebug( 6040 ) << "Element destructor: this=" << nodeName().string() << endl;
+    delete m_layer;
 }
 
 short RenderBox::contentWidth() const
@@ -111,7 +113,26 @@ int RenderBox::contentHeight() const
 
 void RenderBox::setPos( int xPos, int yPos )
 {
+    if (xPos == m_x && yPos == m_y)
+        return; // Optimize for the case where we don't move at all.
+    
     m_x = xPos; m_y = yPos;
+    if (m_layer)
+        m_layer->updateLayerPosition();
+    else if (m_hasChildLayers)
+        // We don't have a layer, but we have children whose positions need to
+        // be updated.  Crawl into our frame tree, find those views, and
+        // reposition the children.
+        positionChildLayers();
+}
+
+void RenderBox::positionChildLayers()
+{
+    if (m_layer)
+        m_layer->updateLayerPosition();
+    else
+        for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+            curr->positionChildLayers();
 }
 
 short RenderBox::width() const

@@ -47,7 +47,7 @@ RenderContainer::~RenderContainer()
 {
     RenderObject* next;
     for(RenderObject* n = m_first; n; n = next ) {
-	n->removeFromSpecialObjects();
+        n->removeFromSpecialObjects();
         n->setParent(0);
         next = n->nextSibling();
         n->detach();
@@ -134,12 +134,25 @@ void RenderContainer::addChild(RenderObject *newChild, RenderObject *beforeChild
     }
     newChild->setLayouted( false );
     newChild->setMinMaxKnown( false );
+
+    // Keep our layer hierarchy updated.
+    if (newChild->layer()) {
+        RenderObject* ancestor = (newChild->isPositioned()) ? newChild->containingBlock() : this;
+        ancestor->enclosingLayer()->addChild(newChild->layer());
+        ancestor->setHasChildLayers(true);
+    }
 }
 
 RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
 {
     KHTMLAssert(oldChild->parent() == this);
 
+    // Keep our layer hierarchy updated.
+    if (oldChild->layer()) {
+        RenderObject* ancestor = (oldChild->isPositioned()) ? oldChild->containingBlock() : this;
+        ancestor->enclosingLayer()->removeChild(oldChild->layer());
+    }
+    
     // if oldChild is the start or end of the selection, then clear the selection to
     // avoid problems of invalid pointers
 
@@ -176,6 +189,7 @@ RenderObject* RenderContainer::removeChildNode(RenderObject* oldChild)
     setLayouted( false );
     setMinMaxKnown( false );
 
+          
     return oldChild;
 }
 

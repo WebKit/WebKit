@@ -19,7 +19,7 @@
  * Boston, MA 02111-1307, USA.
  */
 #include "rendering/render_root.h"
-
+#include "render_layer.h"
 
 #include "khtmlview.h"
 #include <kdebug.h>
@@ -60,6 +60,9 @@ RenderRoot::RenderRoot(DOM::NodeImpl* node, KHTMLView *view)
     m_selectionEnd = 0;
     m_selectionStartPos = -1;
     m_selectionEndPos = -1;
+
+    // Create a new root layer for our layer hierarchy.
+    m_layer = new RenderLayer(this);
 }
 
 RenderRoot::~RenderRoot()

@@ -49,6 +49,20 @@ RenderLayer::~RenderLayer()
     // our destructor doesn't have to do anything.
 }
 
+void RenderLayer::updateLayerPosition()
+{
+    int x = m_object->xPos();
+    int y = m_object->yPos();
+
+    RenderObject* curr = m_object->parent();
+    while (curr && !curr->layer()) {
+        x += curr->xPos();
+        y += curr->yPos();
+    }
+
+    setPos(x,y);
+}
+
 void RenderLayer::addChild(RenderLayer *child, RenderLayer *beforeChild)
 {
     if (!beforeChild)
