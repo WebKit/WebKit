@@ -1,3 +1,13 @@
+2004-11-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3880387> REGRESSION: www.shockplay.com site gives "Unexpected server response"
+
+        Reviewed by mjs.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[NSData _web_locationAfterFirstBlankLine]): support both formats ("\r\n\n" and "\r\n\r\n") for separating header data from body data because Shockwave still sends the prior format
+
+
 2004-11-19  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Harrison

@@ -1765,7 +1765,11 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             i += 2;
             if (i == 2) {
                 return i;
+            } else if (bytes[i] == '\n') {
+                // Support for Director. It sends "\r\n\n" (3880387).
+                return i+1;
             } else if (bytes[i] == '\r' && bytes[i+1] == '\n') {
+                // Support for Flash. It sends "\r\n\r\n" (3758113).
                 return i+2;
             }
         }
