@@ -184,28 +184,27 @@ void QPainter::drawLine(int x1, int y1, int x2, int y2)
     
     NSBezierPath *path = [NSBezierPath bezierPath];
     [path setLineWidth:width];
-#if 0
+
     switch (penStyle) {
     case NoPen:
     case SolidLine:
         break;
     case DotLine:
         {
-            const float dottedLine[2] = { 1, 1 };
+            const float dottedLine[2] = { 3, 3 };
             [path setLineDash:dottedLine count:2 phase:0];
         }
         break;
     case DashLine:
         {
-            const float dashedLine[2] = { 3, 2 };
+            const float dashedLine[2] = { 4, 2 };
             [path setLineDash:dashedLine count:2 phase:0];
         }
         break;
     }
-#endif
+
     [path moveToPoint:p1];
     [path lineToPoint:p2];
-    [path closePath];
 
     _setColorFromPen();
     [path stroke];

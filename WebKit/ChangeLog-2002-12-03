@@ -1,3 +1,12 @@
+2002-08-28  Richard Williamson (Local)  <rjw@apple.com>
+
+        Tell CG to not use time expiration of glyph cache and increase it's
+        size.
+        
+        THIS CHANGE REQUIRES THAT YOU INSTALL THE CG ROOT.
+        
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+
 2002-08-28  Richard Williamson (Home)  <rjw@apple.com>
 
         Fixed selection horkage I introduced with drag

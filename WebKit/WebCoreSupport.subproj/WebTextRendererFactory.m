@@ -6,6 +6,8 @@
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebKitDebug.h>
 
+#import <CoreGraphics/CoreGraphicsPrivate.h>
+
 @interface WebFontCacheKey : NSObject
 {
     NSString *family;
@@ -121,19 +123,20 @@
 {
     if (![self sharedFactory]) {
         [[[self alloc] init] release];
+
+        // Turn off auto expiration of glyphs in CG's cache
+        // and increase the cache size.
+        CGFontCache *fontCache;
+        fontCache = CGFontCacheCreate();
+        CGFontCacheSetMaxSize (fontCache, 1024*1024);
+        CGFontCacheSetShouldAutoExpire (fontCache, false);
+        CGFontCacheRelease(fontCache);
     }
     WEBKIT_ASSERT([[self sharedFactory] isMemberOfClass:self]);
 }
 
 + (WebTextRendererFactory *)sharedFactory;
 {
-#if 0        
-        CGFontCache *fontCache;
-        fontCache = CGFontCacheCreate();
-        CGFontCacheSetMaxSize (fontCache, 1024*1024);
-        CGFontCacheSetLifetime (fontCache, 1024*1024*1024);
-        CGFontCacheRelease(fontCache);
-#endif
     return (WebTextRendererFactory *)[super sharedFactory];
 }
 

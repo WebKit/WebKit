@@ -1,3 +1,11 @@
+2002-08-28  Richard Williamson (Local)  <rjw@apple.com>
+
+        Fixed outline of for active link style.
+        
+        * khtml/css/html4.css:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawLine):
+
 2002-08-28  David Hyatt  <hyatt@apple.com>
 
 	Adding knowledge to the style system of auto z-indices.  The old
