@@ -1,3 +1,13 @@
+2004-11-16  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Richard.
+        
+        - fixed <rdar://problem/3881929> 32 byte leak in editingStyle() in KHTMLPart (one-time only)
+
+        * khtml/khtml_part.cpp:
+        (editingStyle):
+        delete the list we created when we're done with it
+
 2004-11-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

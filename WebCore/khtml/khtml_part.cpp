@@ -5518,6 +5518,7 @@ static CSSStyleDeclarationImpl *editingStyle()
         QPtrList<CSSProperty> *propList = new QPtrList<CSSProperty>;
         propList->setAutoDelete(true);
         editingStyle = new CSSStyleDeclarationImpl(0, propList);
+        delete propList;
         editingStyle->setCssText("word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;");
     }
     return editingStyle;
