@@ -1,3 +1,14 @@
+2004-09-17  Chris Blumenberg  <cblu@apple.com>
+	
+    	Fixed:
+	<rdar://problem/3805757> don't unnecessarily put RTFD on the pasteboard
+	<rdar://problem/3805756> strip attachments before generating RTF
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView writeSelectionWithPasteboardTypes:toPasteboard:]): only put RTFD on the pasteboard if it has attachments, strip attachments when writing RTF
+
 2004-09-16  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

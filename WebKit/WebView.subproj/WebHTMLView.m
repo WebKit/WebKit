@@ -1358,6 +1358,36 @@ static WebHTMLView *lastHitView = nil;
     }
 }
 
+// This method is copied from NSTextView
+- (NSAttributedString *)_stripAttachmentCharactersFromAttributedString:(NSAttributedString *)originalAttributedString
+{
+    NSRange attachmentRange;
+    NSString *originalString = [originalAttributedString string];
+    static NSString *attachmentCharString = nil;
+    
+    if (!attachmentCharString) {
+        unichar chars[2];
+        if (!attachmentCharString) {
+            chars[0] = NSAttachmentCharacter;
+            chars[1] = 0;
+            attachmentCharString = [[NSString alloc] initWithCharacters:chars length:1];
+        }
+    }
+    
+    attachmentRange = [originalString rangeOfString:attachmentCharString];
+    if (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
+        NSMutableAttributedString *newAttributedString = [[originalAttributedString mutableCopyWithZone:NULL] autorelease];
+        
+        while (attachmentRange.location != NSNotFound && attachmentRange.length > 0) {
+            [newAttributedString replaceCharactersInRange:attachmentRange withString:@""];
+            attachmentRange = [[newAttributedString string] rangeOfString:attachmentCharString];
+        }
+        return newAttributedString;
+    } else {
+        return originalAttributedString;
+    }
+}
+
 - (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard
 {
     // Put HTML on the pasteboard.
@@ -1368,18 +1398,24 @@ static WebHTMLView *lastHitView = nil;
     
     // Put the attributed string on the pasteboard (RTF/RTFD format).
     NSAttributedString *attributedString = nil;
-    if ([types containsObject:NSRTFPboardType]) {
-        attributedString = [self selectedAttributedString];
-        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        [pasteboard setData:RTFData forType:NSRTFPboardType];
-    }
     if ([types containsObject:NSRTFDPboardType]) {
+        attributedString = [self selectedAttributedString];
+        if ([attributedString containsAttachments]) {
+            NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+            [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+        }
+    }        
+    if ([types containsObject:NSRTFPboardType]) {
         if (attributedString == nil) {
             attributedString = [self selectedAttributedString];
         }
-        NSData *RTFDData = [attributedString RTFDFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
-        [pasteboard setData:RTFDData forType:NSRTFDPboardType];
+        if ([attributedString containsAttachments]) {
+            attributedString = [self _stripAttachmentCharactersFromAttributedString:attributedString];
+        }
+        NSData *RTFData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+        [pasteboard setData:RTFData forType:NSRTFPboardType];
     }
+        
     
     // Put plain string on the pasteboard.
     if ([types containsObject:NSStringPboardType]) {
