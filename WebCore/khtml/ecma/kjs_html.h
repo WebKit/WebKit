@@ -262,7 +262,7 @@ namespace KJS {
         ClearRect, FillRect, StrokeRect,
         DrawImage, DrawImageFromRect,
         SetShadow, ClearShadow,
-        SetAlpha};
+        SetAlpha, SetCompositeOperation};
 
     DOM::HTMLElementImpl *_element;
     unsigned int _needsFlushRasterCache;

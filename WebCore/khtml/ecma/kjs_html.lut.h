@@ -1060,7 +1060,7 @@ const struct HashEntry Context2DTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { "addArcToPoint", Context2D::AddArcToPoint, DontDelete|Function, 5, &Context2DTableEntries[36] },
    { 0, 0, 0, 0, 0 },
-   { "setMiterLimit", Context2D::SetMiterLimit, DontDelete|Function, 1, 0 },
+   { "setMiterLimit", Context2D::SetMiterLimit, DontDelete|Function, 1, &Context2DTableEntries[42] },
    { "scale", Context2D::Scale, DontDelete|Function, 2, 0 },
    { "setFillColor", Context2D::SetFillColor, DontDelete|Function, 1, 0 },
    { 0, 0, 0, 0, 0 },
@@ -1078,9 +1078,10 @@ const struct HashEntry Context2DTableEntries[] = {
    { "fillRect", Context2D::FillRect, DontDelete|Function, 4, 0 },
    { "strokeRect", Context2D::StrokeRect, DontDelete|Function, 4, 0 },
    { "drawImage", Context2D::DrawImage, DontDelete|Function, 6, 0 },
-   { "clearShadow", Context2D::ClearShadow, DontDelete|Function, 0, 0 }
+   { "clearShadow", Context2D::ClearShadow, DontDelete|Function, 0, 0 },
+   { "setCompositeOperation", Context2D::SetCompositeOperation, DontDelete|Function, 1, 0 }
 };
 
-const struct HashTable Context2DTable = { 2, 42, Context2DTableEntries, 31 };
+const struct HashTable Context2DTable = { 2, 43, Context2DTableEntries, 31 };
 
 } // namespace

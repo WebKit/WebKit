@@ -477,8 +477,10 @@ void QPainter::setCompositeOperation (CGContextRef context, int op)
     [[WebCoreImageRendererFactory sharedFactory] setCGCompositeOperation:op inContext:context];
 }
 
-static NSCompositingOperation compositeOperatorFromString (QString aString)
+int QPainter::compositeOperatorFromString (QString aString)
 {
+    NSCompositingOperation op = NSCompositeSourceOver;
+    
     if (aString.length()) {
         const char *operatorString = aString.ascii();
         int i;
@@ -489,12 +491,12 @@ static NSCompositingOperation compositeOperatorFromString (QString aString)
             }
         }
     }
-    return NSCompositeSourceOver;
+    return (int)op;
 }
 
 void QPainter::drawPixmap(const QPoint &p, const QPixmap &pix, const QRect &r, const QString &compositeOperator)
 {
-    drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), (int)compositeOperatorFromString(compositeOperator));
+    drawPixmap(p.x(), p.y(), pix, r.x(), r.y(), r.width(), r.height(), compositeOperatorFromString(compositeOperator));
 }
 
 void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,

@@ -3885,7 +3885,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             QString compositeOperator = args[5].toString(exec).qstring().lower();
             QPixmap pixmap = i->image()->pixmap();
             QPainter p;
-            p.drawPixmap (x, y, pixmap, 0, 0, w, h, 1, drawingContext);
+            p.drawPixmap (x, y, pixmap, 0, 0, w, h, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
             
             if (contextObject->_needsFlushRasterCache)
                 pixmap.flushRasterCache();
@@ -3894,7 +3894,7 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             break;
         }
         case Context2D::DrawImageFromRect: {
-            if (args.size() != 6) {
+            if (args.size() != 10) {
                 Object err = Error::create(exec,SyntaxError);
                 exec->setException(err);
                 return err;
@@ -3917,7 +3917,8 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             QString compositeOperator = args[9].toString(exec).qstring().lower();
             QPixmap pixmap = i->image()->pixmap();
             QPainter p;
-            p.drawPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, 1, drawingContext);
+
+            p.drawPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
             
             if (contextObject->_needsFlushRasterCache)
                 pixmap.flushRasterCache();
@@ -3933,6 +3934,16 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
             }
             float a =  (float)args[0].toNumber(exec);
             CGContextSetAlpha (drawingContext, a);
+            break;
+        }
+        case Context2D::SetCompositeOperation: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            QString compositeOperator = args[0].toString(exec).qstring().lower();
+            QPainter::setCompositeOperation (drawingContext,compositeOperator);
             break;
         }
     }
@@ -3975,6 +3986,7 @@ const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
   setShadow                Context2D::SetShadow                   DontDelete|Function 3
   clearShadow              Context2D::ClearShadow                 DontDelete|Function 0
   setAlpha                 Context2D::SetAlpha                    DontDelete|Function 1
+  setCompositeOperation    Context2D::SetCompositeOperation       DontDelete|Function 1
 @end
 */
 
