@@ -1,3 +1,17 @@
+2002-04-02  Darin Adler  <darin@apple.com>
+
+        Fix some small storage leaks.
+
+	* src/kwq/KWQWidget.mm: (QWidget::QWidget): Use a single shared default style
+        instead of creating a new one for each widget.
+        (QWidget::setFont): Since we store a QFont here, we don't have to delete the
+        old font and we don't leak.
+        (QWidget::setCursor): Since now store a QCursor here, we don't have to delete
+        the old cursor.
+        Also removed a lot of unused code in here.
+        
+	* src/kwq/KWQKURL.mm: Minor code cleanup.
+
 2002-04-02  Richard Williamson  <rjw@apple.com>
 
         Added ref() of part from KHTMView.

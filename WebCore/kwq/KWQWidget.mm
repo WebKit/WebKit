@@ -55,55 +55,31 @@ class QWidgetPrivate
 friend class QWidget;
 public:
     
-    QWidgetPrivate(QWidget *widget) : pos(0,0), rect(0,0,0,0), pal()
-    {
-        view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: widget];
-        // FIXME!  We really don't care about widget styles.
-        style = new QStyle();
-        font = 0L;
-        cursor = 0L;
-    }
+    QWidgetPrivate() { }
     
     ~QWidgetPrivate() {}
     
 private:
-    QPoint	pos;
-    QRect	rect;
     QWidget::FocusPolicy focusPolicy;
     QStyle	*style;
-    QFont	*font;
-    QCursor	*cursor;
-    QPalette pal;
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    QFont	font;
+    QCursor	cursor;
+    QPalette    pal;
     NSView	*view;
-#else
-    void 	*view;
-#endif
-    void	*action();
 };
 
 QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0) 
 {
-    _initialize();
+    static QStyle *defaultStyle = new QStyle;
+    
+    data = new QWidgetPrivate;
+    data->view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
+    data->style = defaultStyle;
 }
-
-
-void QWidget::_initialize()
-{
-    data = new QWidgetPrivate(this);
-}
-
-
 
 QWidget::~QWidget() 
 {
     [data->view release];
-
-    // What about:
-    // 	data->style
-    // 	data->font
-    // 	data->cursor
-    
     delete data;
 }
 
@@ -291,7 +267,6 @@ const QPalette& QWidget::palette() const
 
 void QWidget::setPalette(const QPalette &palette)
 {
-    // FIXME!  What do we do about releasing the old palette?
     data->pal = palette;
 }
 
@@ -322,14 +297,13 @@ void QWidget::setStyle(QStyle *style)
 
 QFont QWidget::font() const
 {
-    return *data->font;
+    return data->font;
 }
 
 
 void QWidget::setFont(const QFont &font)
 {
-    // FIXME Not clear what we should do with old font!
-    data->font = new QFont (font);
+    data->font = font;
 }
 
 
@@ -362,25 +336,19 @@ bool QWidget::isVisible() const
 void QWidget::setCursor(const QCursor &cur)
 {
     _logNotYetImplemented();
-    if (data->cursor)
-        delete data->cursor;
-    data->cursor = new QCursor (cur);
+    data->cursor = cur;
 }
 
 QCursor QWidget::cursor()
 {
     _logNotYetImplemented();
-    if (!data->cursor) {
-	data->cursor = new QCursor();
-    }
-    return *(data->cursor);
+    return data->cursor;
 }
 
 void QWidget::unsetCursor()
 {
     _logNotYetImplemented();
-    if (!data->cursor)
-	data->cursor = new QCursor();
+    data->cursor = QCursor();
 }
 
 bool QWidget::event(QEvent *)
@@ -503,10 +471,6 @@ QPoint QWidget::mapFromGlobal(const QPoint &point) const
     return QPoint(0,0);
 }
 
-
-
-#ifdef _KWQ_
-
 void QWidget::paint (void *)
 {
     _logNotYetImplemented();
@@ -539,6 +503,3 @@ void QWidget::endEditing()
     if ([firstResponder isKindOfClass: NSClassFromString(@"NSText")])
         [window makeFirstResponder: nil];
 }
-
-#endif _KWQ_
-

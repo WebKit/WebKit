@@ -364,7 +364,7 @@ QString KURL::normalizeURLString(const QString &s)
 	}
 
 	if (d.isNull()) {
-	    d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(qurl));
+	    d = KWQRefPtr<KWQKURLPrivate>(new KWQKURLPrivate(qurl));
 	}
 
 	qurl = d->sURL;
@@ -681,7 +681,7 @@ QString KURL::prettyURL(int trailing=0) const
 
 void KURL::swap(KURL &other)
 {
-    KWQRefPtr<KURL::KWQKURLPrivate> tmpD = other.d;
+    KWQRefPtr<KWQKURLPrivate> tmpD = other.d;
     QString tmpString = other.urlString;
     
     other.d = d;
@@ -710,14 +710,14 @@ void KURL::copyOnWrite()
 {
     parse();
     if (d->refCount > 1) {
-	d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(*d));
+	d = KWQRefPtr<KWQKURLPrivate>(new KWQKURLPrivate(*d));
     }
 }
 
 void KURL::parse() const
 {
     if (d.isNull()) {
-	d = KWQRefPtr<KURL::KWQKURLPrivate>(new KURL::KWQKURLPrivate(urlString));
+	d = KWQRefPtr<KWQKURLPrivate>(new KWQKURLPrivate(urlString));
     }
 }
 
@@ -730,4 +730,3 @@ void KURL::assemble()
 }
 
 #endif
-
