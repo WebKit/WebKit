@@ -1292,7 +1292,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
     
     m_height = borderTop() + paddingTop();
     int toAdd = borderBottom() + paddingBottom();
-    if (style()->overflow() == OSCROLL && m_layer)
+    if (style()->hidesOverflow() && m_layer)
         toAdd += m_layer->horizontalScrollbarHeight();
     
     // Clear out our line boxes.

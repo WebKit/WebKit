@@ -1,3 +1,16 @@
+2003-12-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3507097, overflow:auto should include the height of the horizontal scrollbar when the height
+	of the block is auto.
+	
+        Reviewed by darin
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+
 2003-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
