@@ -120,6 +120,20 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         }
     }
 
+    // Workaround for this bug:
+    // Radar 3134219 (MPEG-4 files don't work with the QuickTime plugin in Safari, work fine in Mozilla, IE)
+    // For beta 1, when getting the MIME information for the QuickTime plugin, we directly insert the 
+    // information to handle MP4. 
+    // In the future, we will use the additional plugin entry points to dynamically load this information
+    // from the plugin itself.
+    if ([[self filename] isEqualToString:@"QuickTime Plugin.plugin"]) {
+        NSArray *extensions = [NSArray arrayWithObjects:@"mp4", @"mpg4", nil];
+        [MIMEToExtensionsDictionary setObject:extensions forKey:@"video/mp4"];
+        [MIMEToDescriptionDictionary setObject:@"MP4 Video" forKey:@"video/mp4"];
+        [MIMEToExtensionsDictionary setObject:extensions forKey:@"audio/mp4"];
+        [MIMEToDescriptionDictionary setObject:@"MP4 Audio" forKey:@"audio/mp4"];
+    }
+
     [self setMIMEToDescriptionDictionary:MIMEToDescriptionDictionary];
     [self setMIMEToExtensionsDictionary:MIMEToExtensionsDictionary];
 
