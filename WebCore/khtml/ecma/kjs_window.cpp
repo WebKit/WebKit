@@ -175,7 +175,7 @@ Value Screen::getValueProperty(ExecState *exec, int token) const
 const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
 
 /*
-@begin WindowTable 89
+@begin WindowTable 90
   closed	Window::Closed		DontDelete|ReadOnly
   crypto	Window::Crypto		DontDelete|ReadOnly
   defaultStatus	Window::DefaultStatus	DontDelete
@@ -231,6 +231,7 @@ const ClassInfo Window::info = { "Window", 0, &WindowTable, 0 };
   confirm	Window::Confirm		DontDelete|Function 1
   prompt	Window::Prompt		DontDelete|Function 2
   open		Window::Open		DontDelete|Function 3
+  print		Window::Print		DontDelete|Function 2
   setTimeout	Window::SetTimeout	DontDelete|Function 2
   clearTimeout	Window::ClearTimeout	DontDelete|Function 1
   focus		Window::Focus		DontDelete|Function 0
@@ -544,6 +545,9 @@ Value Window::get(ExecState *exec, const Identifier &p) const
     case Confirm:
     case Prompt:
     case Open:
+#if APPLE_CHANGES
+    case Print:
+#endif
     case Focus:
     case Blur:
     case Close:
@@ -1327,6 +1331,11 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
         return Undefined();
     }
   }
+#if APPLE_CHANGES
+  case Window::Print:
+    KWQ(part)->print();
+    return Undefined();
+#endif
   case Window::ScrollBy:
     window->updateLayout();
     if(args.size() == 2 && widget)

@@ -325,6 +325,7 @@
 				833987820543012D00EE146E,
 				BE26F18F05517E0800BFA0C3,
 				BECD142B0565830A005BB09C,
+				65A7D44B0568AB2600E70EF6,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1727,6 +1728,23 @@
 			settings = {
 			};
 		};
+		65A7D44A0568AB2600E70EF6 = {
+			expectedFileType = sourcecode.c.h;
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebUIDelegatePrivate.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		65A7D44B0568AB2600E70EF6 = {
+			fileRef = 65A7D44A0568AB2600E70EF6;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
 		65CBE7AA04B53388006ACFE6 = {
 			buildActionMask = 2147483647;
 			files = (
@@ -2534,6 +2552,7 @@
 				9CAE9D070252A4130ECA16EA,
 				513D422E034CF55A00CA2ACD,
 				515E27CC0458C86500CA2D3A,
+				65A7D44A0568AB2600E70EF6,
 				51A8B579042834F700CA2D3A,
 				51A8B57A042834F700CA2D3A,
 				51A8B57D0428353A00CA2D3A,

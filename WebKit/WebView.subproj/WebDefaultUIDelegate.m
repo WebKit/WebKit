@@ -9,7 +9,7 @@
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebJavaScriptTextInputPanel.h>
 #import <WebKit/WebView.h>
-#import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebUIDelegatePrivate.h>
 
 @interface NSApplication (DeclarationStolenFromAppKit)
 - (void)_cycleWindowsReversed:(BOOL)reversed;
@@ -162,6 +162,10 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 - (void)webView: (WebView *)wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
     // FIXME: We want a default here, but that would add localized strings.
+}
+
+- (void)webViewPrint:(WebView *)sender
+{
 }
 
 @end

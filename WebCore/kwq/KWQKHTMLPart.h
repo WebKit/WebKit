@@ -246,6 +246,7 @@ public:
 
     void didTellBridgeAboutLoad(const QString &urlString);
     bool haveToldBridgeAboutLoad(const QString &urlString);
+    void print();
 
 private:
     virtual void khtmlMousePressEvent(khtml::MousePressEvent *);

@@ -1,3 +1,19 @@
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	WebKit part of fix for:
+
+	<rdar://problem/3131664>: add support for the window.print() command used for "print this page" buttons
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge print]): Call delegate.
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webViewPrint:]): Implemented (do nothing).
+        * WebView.subproj/WebUIDelegatePrivate.h: Added. Add extra SPI method webViewPrint:
+	for UI delegate.
+        * WebKit.pbproj/project.pbxproj: Install WebUIDelegatePrivate.h as private header
+
 2003-11-15  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

@@ -39,7 +39,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebViewPrivate.h>
-#import <WebKit/WebUIDelegate.h>
+#import <WebKit/WebUIDelegatePrivate.h>
 
 #import <Foundation/NSURLRequest.h>
 #import <Foundation/NSURLRequestPrivate.h>
@@ -1033,6 +1033,17 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 - (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL
 {
     return [[_frame webView] _fileWrapperForURL:URL];
+}
+
+- (void)print
+{
+    id wd = [[_frame webView] UIDelegate];
+    
+    if ([wd respondsToSelector:@selector(webViewPrint:)]) {
+        [wd webViewPrint:[_frame webView]];
+    } else {
+        [[WebDefaultUIDelegate sharedUIDelegate] webViewPrint:[_frame webView]];
+    }
 }
 
 @end

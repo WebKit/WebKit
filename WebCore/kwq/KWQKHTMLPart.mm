@@ -2792,3 +2792,8 @@ void KWQKHTMLPart::clear()
     urlsBridgeKnowsAbout.clear();
     KHTMLPart::clear();
 }
+
+void KWQKHTMLPart::print()
+{
+    [_bridge print];
+}

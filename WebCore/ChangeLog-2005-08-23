@@ -1,5 +1,21 @@
 2003-11-16  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Dave.
+
+	<rdar://problem/3131664>: add support for the window.print() command used for "print this page" buttons
+        
+	* khtml/ecma/kjs_window.cpp:
+        (Window::get): add support for window.print (Apple-only)
+        (WindowFunc::tryCall): ditto
+        * khtml/ecma/kjs_window.h: Add Print to enum
+        * khtml/ecma/kjs_window.lut.h: Regenerated
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::print): Call bridge.
+        * kwq/KWQKHTMLPart.h: Declare above.
+        * kwq/WebCoreBridge.h: prototype print method for other side of bridge.
+
+2003-11-16  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Darin.
 
         * kwq/KWQKHTMLPartBrowserExtension.mm:
