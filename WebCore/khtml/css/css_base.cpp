@@ -261,7 +261,7 @@ DOMString CSSSelector::selectorText() const
         str = "#";
         str += cs->value.string();
     }
-    else if ( tag == anyLocalName && cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
+    else if ( tag == anyLocalName && cs->attr == ATTR_CLASS && cs->match == CSSSelector::Class )
     {
         str = ".";
         str += cs->value.string();

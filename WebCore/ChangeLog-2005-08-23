@@ -1,3 +1,13 @@
+2004-09-24  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Maciej.
+
+	<rdar://problem/3799334> DIG: Safari does not properly return style names [DigCSS.htm]
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::selectorText): Properly returns Class Selector names.  
+	Before we would get *[CLASS"foo"] instead of .foo
+
 2004-09-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
