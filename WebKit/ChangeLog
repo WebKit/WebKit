@@ -1,3 +1,31 @@
+2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
+
+        Effort towards 3014555 (going back to frame), but not fixed.  
+        Need to think more about appropriate solution and compromises.
+        
+        * History.subproj/WebBackForwardList.h:
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList backEntryAtIndex:]):
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initWithURL:title:]):
+        (-[WebHistoryItem initWithURL:title:image:]):
+        (-[WebHistoryItem initWithURL:target:parent:title:image:]):
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem parent]):
+        (-[WebHistoryItem setTitle:]):
+        (-[WebHistoryItem setTarget:]):
+        (-[WebHistoryItem setParent:]):
+        (-[WebHistoryItem setDisplayTitle:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebView.subproj/WebController.m:
+        (-[WebController _goToItem:withFrameLoadType:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted]):
+        (-[WebFrame _isLoadComplete]):
+        (-[WebFrame _scrollToTop]):
+
 2002-08-01  Chris Blumenberg  <cblu@apple.com>
 
 	Only send command key events if the plug-in is in the responder chain.
@@ -23,7 +51,7 @@
 
 2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
 
-        More back/forward word.  Support for restoring scroll position.
+        More back/forward work.  Support for restoring scroll position.
         We still have a big remaining issue.  We don't record the entire
         frame tree in back/forward items.  This means going back or forward
         to a frame will looose the context of the containing frameset,

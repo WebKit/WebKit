@@ -23,15 +23,15 @@
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title
 {
-    return [self initWithURL:url target: nil title:title image:nil];
+    return [self initWithURL:url target: nil parent: nil title:title image:nil];
 }
 
 -(id)initWithURL:(NSURL *)url title:(NSString *)title image:(NSImage *)image
 {
-    return [self initWithURL:url target: nil title:title image:image];
+    return [self initWithURL:url target: nil parent: nil title:title image:image];
 }
 
--(id)initWithURL:(NSURL *)url target: (NSString *)target title:(NSString *)title image:(NSImage *)image
+-(id)initWithURL:(NSURL *)url target: (NSString *)target parent: (NSString *)parent title:(NSString *)title image:(NSImage *)image
 {
     if (self != [super init])
     {
@@ -39,8 +39,9 @@
     }
     
     _url = [url retain];
-    _target = [target copy];
-    _title = [title copy];
+    _target = [target retain];
+    _parent = [parent retain];
+    _title = [title retain];
     _image = [image retain];
     _lastVisitedDate = [[NSCalendarDate alloc] init];
     
@@ -51,6 +52,7 @@
 {
     [_url release];
     [_target release];
+    [_parent release];
     [_title release];
     [_displayTitle release];
     [_image release];
@@ -67,6 +69,11 @@
 -(NSString *)target
 {
     return _target;
+}
+
+-(NSString *)parent
+{
+    return _parent;
 }
 
 -(NSString *)title
@@ -105,7 +112,7 @@
 {
     if (title != _title) {
         [_title release];
-        _title = [title copy];
+        _title = [title retain];
     }
 }
 
@@ -113,7 +120,15 @@
 {
     if (target != _target) {
         [_target release];
-        _target = [target copy];
+        _target = [target retain];
+    }
+}
+
+-(void)setParent:(NSString *)parent
+{
+    if (parent != _parent) {
+        [_parent release];
+        _parent = [parent retain];
     }
 }
 
@@ -121,7 +136,7 @@
 {
     if (displayTitle != _displayTitle) {
         [_displayTitle release];
-        _displayTitle = [displayTitle copy];
+        _displayTitle = [displayTitle retain];
     }
 }
 

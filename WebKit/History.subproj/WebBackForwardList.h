@@ -25,6 +25,7 @@
 -(void)goForwardToIndex: (int)pos;
 
 // examine entries without changing position
+- (WebHistoryItem *)backEntryAtIndex: (int)pos;
 -(WebHistoryItem *)backEntry;
 -(WebHistoryItem *)currentEntry;
 -(WebHistoryItem *)forwardEntry;

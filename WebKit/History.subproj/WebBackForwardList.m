@@ -51,6 +51,21 @@
 {
 }
 
+- (WebHistoryItem *)backEntryAtIndex: (int)pos
+{
+    WebHistoryItem *result;
+    int count;
+    
+    count = [uriList count];
+    if (count > 1 && index+pos < (count - 1)) {
+        result = [uriList entryAtIndex:index+1+pos];
+    } else {
+        result = nil;
+    }
+
+    return result;
+}
+
 -(WebHistoryItem *)backEntry
 {
     WebHistoryItem *result;

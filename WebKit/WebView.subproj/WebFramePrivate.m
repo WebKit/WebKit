@@ -240,6 +240,7 @@ static const char * const stateNames[6] = {
     NSView <WebDocumentView> *documentView;
     WebHistoryItem *backForwardItem;
     WebBackForwardList *backForwardList = [[self controller] backForwardList];
+    WebFrame *parentFrame;
     
     documentView = [[self webView] documentView];
 
@@ -264,6 +265,9 @@ static const char * const stateNames[6] = {
                     [self _restoreScrollPosition];
                     break;
     
+                case WebFrameLoadTypeIntermediateBack:
+                    break;
+                    
                 case WebFrameLoadTypeBack:
                     [backForwardList goBack];
                     [self _restoreScrollPosition];
@@ -274,7 +278,8 @@ static const char * const stateNames[6] = {
                     break;
     
                 case WebFrameLoadTypeStandard:
-                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] inputURL] target: [self name] title:[[self dataSource] pageTitle] image: nil];
+                    parentFrame = [[self controller] frameForDataSource: [[self dataSource] parent]]; 
+                    backForwardItem = [[WebHistoryItem alloc] initWithURL:[[self dataSource] inputURL] target: [self name] parent: [parentFrame name] title:[[self dataSource] pageTitle] image: nil];
                     [[[self controller] backForwardList] addEntry: backForwardItem];
                     [backForwardItem release];
                     // Scroll to top.
@@ -448,6 +453,10 @@ static const char * const stateNames[6] = {
                         [self _restoreScrollPosition];
                         break;
         
+                    case WebFrameLoadTypeIntermediateBack:
+                        [[self controller] goBack];
+                        break;
+                        
                     case WebFrameLoadTypeBack:
                         [self _restoreScrollPosition];
                         break;
@@ -700,7 +709,6 @@ static const char * const stateNames[6] = {
     origin.x = origin.y = 0.0;
     [[[self webView] documentView] scrollPoint: origin];
 }
-
 
 
 @end

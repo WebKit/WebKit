@@ -311,9 +311,23 @@
 - (void)_goToItem: (WebHistoryItem *)item withFrameLoadType: (WebFrameLoadType)type
 {
     WebFrame *targetFrame;
+    
     targetFrame = [self frameNamed: [item target]];
     if (targetFrame == nil){
-        NSLog (@"Target frame not found, using main frame instead, will be fixed soon.\n");
+        NSLog (@"Target frame not found, using main frame instead, will be fixed soon\n");
+#if 0
+        int pos = 1;
+        WebHistoryItem *next = item;
+        while (next){
+            NSLog (@"frame name %@, parent %@\n", [next target], [next parent]);
+            nextFrame = [self frameNamed: [next parent]];
+            next = [[self backForwardList] backEntryAtIndex: pos++];
+            if ([[next target] isEqual: @"_top"]){
+                [[self mainFrame] _goToItem: next withFrameLoadType: WebFrameLoadTypeIntermediateBack];
+                return;
+            }
+        }
+#endif            
         targetFrame = [self mainFrame];
     }
     [targetFrame _goToItem: item withFrameLoadType: type];

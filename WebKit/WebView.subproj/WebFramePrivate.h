@@ -39,7 +39,8 @@ typedef enum {
     WebFrameLoadTypeIndexedBack = 4,
     WebFrameLoadTypeIndexedForward = 5,
     WebFrameLoadTypeRefresh = 6,
-    WebFrameLoadTypeInternal = 7
+    WebFrameLoadTypeInternal = 7,
+    WebFrameLoadTypeIntermediateBack = 8
 } WebFrameLoadType;
 
 #define WebFrameStateChangedNotification @"WebFrameStateChangedNotification"
