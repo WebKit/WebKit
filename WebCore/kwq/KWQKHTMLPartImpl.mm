@@ -167,6 +167,8 @@ public:
     bool m_haveCharset:1;
     bool m_onlyLocalReferences:1;
     bool m_startBeforeEnd:1;
+    
+    bool m_decodingStarted:1;
 
     KJSProxy *m_jscript;
     int m_runningScripts;
@@ -218,6 +220,7 @@ public:
         m_frameNameId = 1;
         
         m_documentSource = "";
+        m_decodingStarted = 0;
     }
 
     ~KHTMLPartPrivate()
@@ -617,15 +620,25 @@ void KHTMLPart::write(const char *str, int len)
     if ( len == -1 )
         len = strlen( str );
     
-    double start = CFAbsoluteTimeGetCurrent();
-    
 #ifdef _KWQ_TIMING        
-    QString decoded = d->m_decoder->decode( str, len );
+    double start = CFAbsoluteTimeGetCurrent();
 #endif
-            
-    if(decoded.isEmpty())
-        return;
     
+    d->m_documentSource += str;
+
+    QString decoded;
+    if (d->m_decodingStarted)
+        decoded = d->m_decoder->decode( str, len );
+    else    
+        decoded = d->m_decoder->decode( d->m_documentSource, d->m_documentSource.length() );
+
+    if(decoded.isEmpty()){
+        fprintf (stderr, "WARNING:  DECODER unable to decode string, length = %d, total length = %d\n", len, d->m_documentSource.length());
+        return;
+    }
+
+    d->m_decodingStarted = 1;
+        
     d->m_doc->applyChanges(true, true);
     
     // end lines added in lieu of big fixme
@@ -640,7 +653,6 @@ void KHTMLPart::write(const char *str, int len)
     KWQDEBUGLEVEL3 (0x200, "tokenize/parse length = %d, milliseconds = %f, total = %f\n", len, thisTime, totalWriteTime);
 #endif
 
-    d->m_documentSource += str;
 }
 
 

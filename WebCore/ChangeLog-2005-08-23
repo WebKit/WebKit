@@ -1,3 +1,8 @@
+2002-01-31  Richard Williamson  <rjw@apple.com>
+
+	* src/kdelibs/khtml/html/html_headimpl.cpp: (HTMLStyleElementImpl::detach):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::write):
+
 2002-01-31  Kenneth Kocienda  <kocienda@apple.com>
 
         Changes to incorporate use of the no-copy NSData object.

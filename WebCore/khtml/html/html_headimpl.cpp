@@ -432,7 +432,9 @@ void HTMLStyleElementImpl::attach()
 
 void HTMLStyleElementImpl::detach()
 {
-    if (m_sheet) getDocument()->createSelector();
+    // RJW:  Why is this done?
+    //if (m_sheet)
+    //    getDocument()->createSelector();
     HTMLElementImpl::detach();
 }
 
