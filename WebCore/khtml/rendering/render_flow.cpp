@@ -184,9 +184,30 @@ void RenderFlow::detach()
 {
     if (!documentBeingDestroyed()) {
         if (m_firstLineBox) {
+            // We can't wait for RenderContainer::detach to clear the selection,
+            // because by then we will have nuked the line boxes.
+            if (isSelectionBorder())
+                canvas()->clearSelection();
+
+            // If line boxes are contained inside a root, that means we're an inline.
+            // In that case, we need to remove all the line boxes so that the parent
+            // lines aren't pointing to deleted children. If the first line box does
+            // not have a parent that means they are either already disconnected or
+            // root lines that can just be destroyed without disconnecting.
             if (m_firstLineBox->parent()) {
                 for (InlineRunBox* box = m_firstLineBox; box; box = box->nextLineBox())
-                    box->parent()->removeChild(box);
+                    box->remove();
+            }
+
+            // If we are an anonymous block, then our line boxes might have children
+            // that will outlast this block. In the non-anonymous block case those
+            // children will be destroyed by the time we return from this function.
+            if (isAnonymousBlock()) {
+                for (InlineFlowBox* box = m_firstLineBox; box; box = box->nextFlowBox()) {
+                    while (InlineBox *childBox = box->firstChild()) {
+                        childBox->remove();
+                    }
+                }
             }
         }
         else if (isInline() && parent())
@@ -194,6 +215,7 @@ void RenderFlow::detach()
     }
 
     deleteLineBoxes();
+
     RenderContainer::detach();
 }
 

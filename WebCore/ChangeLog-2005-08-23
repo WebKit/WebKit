@@ -1,3 +1,15 @@
+2004-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed <rdar://problem/3786467> REGRESSION (Mail): Reproducible crash replying to an HTML message when your preference is for plain text composing.
+
+        * khtml/rendering/render_block.h: Remove removeChildrenFromLineBoxes.
+        * khtml/rendering/render_block.cpp: (khtml::RenderBlock::removeChild): Remove calls
+        to removeChildrenFromLineBoxes which was the old way of working around this.
+        * khtml/rendering/render_flow.cpp: (RenderFlow::detach): Add comments and code to handle
+        removing children from line boxes we are about to delete.
+
 2004-09-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3781561> REGRESSION (Mail): typing in Mail became suddenly really sluggish (substitute font code)
