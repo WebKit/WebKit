@@ -2306,6 +2306,7 @@ QString KHTMLPart::text(const DOM::Range &r) const
       if(n.nodeType() == DOM::Node::TEXT_NODE) {
           if (hasNewLine) {
               addedSpace = true;
+              needSpace = false;
               hasNewLine = false;
           }
           QString str = n.nodeValue().string();

@@ -2280,6 +2280,9 @@ NSAttributedString *KWQKHTMLPart::attributedString(NodeImpl *_start, int startOf
             if (n.nodeType() == Node::TEXT_NODE) {
                 if (hasNewLine) {
                     addedSpace = true;
+                    needSpace = false;
+                    [pendingStyledSpace release];
+                    pendingStyledSpace = nil;
                     hasNewLine = false;
                 }
                 QString text;

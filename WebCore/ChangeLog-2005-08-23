@@ -1,3 +1,15 @@
+2004-03-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        - fixed rdar://problem/3312803>: extra space in copied text (3g.co.uk)
+
+        * khtml/khtml_part.cpp: (KHTMLPart::text): Explicitly set neededSpace to false after
+        processing a line break. Doesn't really have an effect here, but matches the change
+        to the styled text version.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::attributedString): Same change in the styled
+        text version.
+
 2004-03-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
