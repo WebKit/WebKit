@@ -34,5 +34,5 @@ namespace KIO {
     class TransferJob;
 }
 
-void KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
+bool KWQServeRequest(khtml::Loader *, khtml::Request *, KIO::TransferJob *);
 void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);

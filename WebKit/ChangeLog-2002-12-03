@@ -1,5 +1,14 @@
 2002-08-06  Darin Adler  <darin@apple.com>
 
+	Fix assert I saw while fixing bug 2965321.
+
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _receivedError:forResourceHandle:partialProgress:fromDataSource:]):
+	Create a suitable resource identifier from the failing URL in the WebError for cases
+	where we fail before we are able to construct a resource handle.
+
+2002-08-06  Darin Adler  <darin@apple.com>
+
 	- fixed 2970516 -- Activate Events don't appear to be coming in to the
 	Java Applet.plugin correctly.
 

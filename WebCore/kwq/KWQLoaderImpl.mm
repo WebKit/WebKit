@@ -92,7 +92,7 @@ using KIO::TransferJob;
 
 @end
 
-void KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
+bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
 {
     KWQDEBUGLEVEL(KWQ_LOG_LOADING, "Serving request for base %s, url %s", 
         request->m_docLoader->part()->baseURL().url().latin1(),
@@ -107,12 +107,20 @@ void KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
                                                          failingURL:job->url().url().getNSString()];
         [bridge reportError:badURLError];
         [badURLError release];
-        return;
+        delete job;
+        return false;
     }
     
     WebCoreResourceLoader *resourceLoader = [[WebCoreResourceLoader alloc] initWithLoader:loader job:job];
-    job->setHandle([bridge startLoadingResource:resourceLoader withURL:URL]);
+    WebResourceHandle *handle = [bridge startLoadingResource:resourceLoader withURL:URL];
     [resourceLoader release];
+
+    if (handle == nil) {
+        return false;
+    }
+    
+    job->setHandle(handle);
+    return true;
 }
 
 void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)

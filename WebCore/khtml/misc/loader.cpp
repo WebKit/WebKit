@@ -1111,7 +1111,8 @@ void Loader::servePendingRequests()
   KIO::TransferJob* job = KIO::get( u, false, false /*no GUI*/);
 
 #ifdef APPLE_CHANGES
-  KWQServeRequest(this, req, job);
+  if (KWQServeRequest(this, req, job))
+      m_requestsLoading.insert(job, req);
 #else
   job->addMetaData("cache", getCacheControlString(req->object->cachePolicy()));
   if (!req->object->accept().isEmpty())
@@ -1135,9 +1136,9 @@ void Loader::servePendingRequests()
 
   if ( req->object->schedule() )
       KIO::Scheduler::scheduleJob( job );
-#endif // APPLE_CHANGES
 
   m_requestsLoading.insert(job, req);
+#endif // APPLE_CHANGES
 }
 
 void Loader::slotFinished( KIO::Job* job )

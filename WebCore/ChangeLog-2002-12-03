@@ -1,3 +1,13 @@
+2002-08-06  Darin Adler  <darin@apple.com>
+
+	- fixed 2965321 -- Crash on window close in kthml::Loader::cancelRequests from particular page
+
+        * khtml/misc/loader.cpp: (Loader::servePendingRequests):
+	Look at return value from KWQServeRequest instead of assuming it will always succeed.
+        * kwq/KWQLoaderImpl.h: Add return value for KWQServeRequest.
+        * kwq/KWQLoaderImpl.mm: (KWQServeRequest): Return false if we fail to make either the NSURL
+	or the WebResourceHandle. Also make sure that we delete the job if necessary.
+
 2002-08-06  John Sullivan  <sullivan@apple.com>
 
         * force-clean-timestamp:

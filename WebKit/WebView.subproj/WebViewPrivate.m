@@ -132,7 +132,13 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
 
-    [dataSource _addError: error forResource:[[resourceHandle originalURL] absoluteString]];
+    NSString *resourceIdentifier = [[resourceHandle originalURL] absoluteString];
+    if (resourceIdentifier == nil) {
+        resourceIdentifier = [error failingURL];
+    }
+    if (resourceIdentifier) {
+        [dataSource _addError:error forResource:resourceIdentifier];
+    }
     
     [frame _checkLoadComplete];
 }
