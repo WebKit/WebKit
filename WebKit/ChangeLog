@@ -1,5 +1,14 @@
 2003-05-27  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3270013 - Exception raised when visiting http://www.shutterfly.com/favicon.ico
+
+        Reviewed by john.
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory imageRendererWithBytes:length:MIMEType:]): return nil if the image has no representations
+
+2003-05-27  Chris Blumenberg  <cblu@apple.com>
+
         Fixed: 3242864 - repro assertion failure in WebIconDatabase.m for www.shutterfly.com
 
         Reviewed by john.

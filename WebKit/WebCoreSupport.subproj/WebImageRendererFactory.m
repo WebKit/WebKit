@@ -68,13 +68,21 @@
     //NSData *data = [[NSData alloc] initWithBytesNoCopy:(void *)bytes length:length freeWhenDone:NO];
     NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
     WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType];
-    [imageRenderer setScalesWhenResized:NO];
-    NSArray *reps = [imageRenderer representations];
-    NSImageRep *rep = [reps objectAtIndex:0];
-    // Force the image to use the pixel size and ignore the dpi.
-    [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
     [data release];
+    
+    NSArray *reps = [imageRenderer representations];
+    if ([reps count] == 0) {
+        [self release];
+        return nil;
+    }
+
+    // Force the image to use the pixel size and ignore the dpi.
+    [imageRenderer setScalesWhenResized:NO];
+    NSImageRep *rep = [reps objectAtIndex:0];
+    [rep setSize:NSMakeSize([rep pixelsWide], [rep pixelsHigh])];
+    
     [imageRenderer setFlipped:YES];
+    
     return [imageRenderer autorelease];
 }
 
