@@ -63,7 +63,7 @@ public:
     Position equivalentRangeCompliantPosition() const;
     Position equivalentShallowPosition() const;
     bool atStartOfContainingEditableBlock() const;
-    bool atStartOfRootEditableBlock() const;
+    bool atStartOfRootEditableElement() const;
     bool inRenderedContent() const;
     bool inRenderedText() const;
     bool rendersOnSameLine(const Position &pos) const;
@@ -71,8 +71,8 @@ public:
     bool isFirstRenderedPositionOnLine() const;
     bool isLastRenderedPositionOnLine() const;
     bool isLastRenderedPositionInEditableBlock() const;
-    bool inFirstEditableInRootEditableBlock() const;
-    bool inLastEditableInRootEditableBlock() const;
+    bool inFirstEditableInRootEditableElement() const;
+    bool inLastEditableInRootEditableElement() const;
     bool inFirstEditableInContainingEditableBlock() const;
     bool inLastEditableInContainingEditableBlock() const;
     

@@ -641,14 +641,14 @@ bool Selection::moveToRenderedContent()
         
     // not currently rendered, try moving to prev
     Position prev = pos.previousCharacterPosition();
-    if (prev != pos && prev.node()->inSameContainingEditableBlock(pos.node())) {
+    if (prev != pos && prev.node()->inSameContainingBlockFlowElement(pos.node())) {
         moveTo(prev);
         return true;
     }
 
     // could not be moved to prev, try next
     Position next = pos.nextCharacterPosition();
-    if (next != pos && next.node()->inSameContainingEditableBlock(pos.node())) {
+    if (next != pos && next.node()->inSameContainingBlockFlowElement(pos.node())) {
         moveTo(next);
         return true;
     }

@@ -49,15 +49,16 @@ namespace khtml {
 
 namespace DOM {
 
-class NodeListImpl;
-class NamedNodeMapImpl;
-class DocumentImpl;
 class CSSStyleDeclarationImpl;
+class DocumentImpl;
+class ElementImpl;
+class EventImpl;
+class NamedNodeMapImpl;
+class NodeListImpl;
+class Position;
 class Range;
 class RangeImpl;
 class RegisteredEventListener;
-class EventImpl;
-class Position;
 
 // The namespace used for XHTML elements
 #define XHTML_NAMESPACE "http://www.w3.org/1999/xhtml"
@@ -162,11 +163,11 @@ public:
     NodeImpl *previousLeafNode() const;
 
     bool isEditableBlock() const;
-    NodeImpl *containingBlock() const;
-    NodeImpl *rootEditableBlock() const;
+    ElementImpl *enclosingBlockFlowElement() const;
+    ElementImpl *rootEditableElement() const;
     
-    bool inSameRootEditableBlock(NodeImpl *);
-    bool inSameContainingEditableBlock(NodeImpl *);
+    bool inSameRootEditableElement(NodeImpl *);
+    bool inSameContainingBlockFlowElement(NodeImpl *);
     
     Position positionForCoordinates(int x, int y);
 

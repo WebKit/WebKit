@@ -1321,23 +1321,23 @@ bool NodeImpl::isEditableBlock() const
     return isContentEditable() && isBlockFlow();
 }
 
-NodeImpl *NodeImpl::containingBlock() const
+ElementImpl *NodeImpl::enclosingBlockFlowElement() const
 {
     NodeImpl *n = const_cast<NodeImpl *>(this);
     if (isBlockFlow())
-        return n;
+        return static_cast<ElementImpl *>(n);
 
     while (1) {
         n = n->parentNode();
         if (!n)
             break;
         if (n->isBlockFlow() || n->id() == ID_BODY)
-            return n;
+            return static_cast<ElementImpl *>(n);
     }
     return 0;
 }
 
-NodeImpl *NodeImpl::rootEditableBlock() const
+ElementImpl *NodeImpl::rootEditableElement() const
 {
     if (!isContentEditable())
         return 0;
@@ -1355,17 +1355,17 @@ NodeImpl *NodeImpl::rootEditableBlock() const
         if (n->isBlockFlow())
             result = n;
     }
-    return result;
+    return static_cast<ElementImpl *>(result);
 }
 
-bool NodeImpl::inSameRootEditableBlock(NodeImpl *n)
+bool NodeImpl::inSameRootEditableElement(NodeImpl *n)
 {
-    return n ? rootEditableBlock() == n->rootEditableBlock() : false;
+    return n ? rootEditableElement() == n->rootEditableElement() : false;
 }
 
-bool NodeImpl::inSameContainingEditableBlock(NodeImpl *n)
+bool NodeImpl::inSameContainingBlockFlowElement(NodeImpl *n)
 {
-    return n ? containingBlock() == n->containingBlock() : false;
+    return n ? enclosingBlockFlowElement() == n->enclosingBlockFlowElement() : false;
 }
 
 #if APPLE_CHANGES

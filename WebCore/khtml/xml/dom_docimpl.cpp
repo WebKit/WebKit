@@ -2285,7 +2285,7 @@ bool DocumentImpl::relinquishesEditingFocus(NodeImpl *node)
     if (!part())
         return true;
     
-    NodeImpl *rootImpl = node->rootEditableBlock();
+    NodeImpl *rootImpl = node->rootEditableElement();
     Node root(rootImpl);
     Range range(root, 0, root, rootImpl->childNodeCount());
     return part()->shouldEndEditing(range);
@@ -2299,7 +2299,7 @@ bool DocumentImpl::acceptsEditingFocus(NodeImpl *node)
     if (!part())
         return true;
 
-    NodeImpl *rootImpl = node->rootEditableBlock();
+    NodeImpl *rootImpl = node->rootEditableElement();
     Node root(rootImpl);
     Range range(root, 0, root, rootImpl->childNodeCount());
     return part()->shouldBeginEditing(range);

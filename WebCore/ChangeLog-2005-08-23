@@ -1,3 +1,62 @@
+2004-06-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for layout regression I caused when fixing:
+
+        <rdar://problem/3668619>: "REGRESSION: text placed on pasteboard by WebKit is offset by one character"
+
+        Extra height is added to empty blocks that are editable, so we can click to place
+        the caret in them. This extra height was erroneously being added to non-editable
+        blocks as a result of my earlier change. After looking at this and doing some
+        code review, there are the following changes:
+        
+        Change away from "containingBlock" terminology in the NodeImpl class. The
+        operation we are doing in NodeImpl is not the same as what is done in CSS
+        when it uses the term "containingBlock" so:
+            containingBlock changes to enclosingBlockFlowElement, and
+            rootEditableBlock changes to rootEditableElement
+        
+        The vast majority of changes here are to make these name changes. The other
+        significant piece of work, and the fix for the regression, is to change 
+        bidi.cpp to only include this extra line height if a block is empty
+        and is content-editable.    
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::leadingWhitespacePosition):
+        (khtml::trailingWhitespacePosition):
+        (khtml::DeleteSelectionCommandImpl::doApply):
+        (khtml::InputNewlineCommandImpl::doApply):
+        (khtml::RemoveNodeAndPruneCommandImpl::doApply):
+        (khtml::TypingCommandImpl::issueCommandForDeleteKey):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::relinquishesEditingFocus):
+        (DocumentImpl::acceptsEditingFocus):
+        * khtml/xml/dom_nodeimpl.cpp:
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentLeafPosition):
+        (DOM::Position::previousCharacterPosition):
+        (DOM::Position::nextCharacterPosition):
+        (DOM::Position::previousLinePosition):
+        (DOM::Position::nextLinePosition):
+        (DOM::Position::equivalentUpstreamPosition):
+        (DOM::Position::equivalentDownstreamPosition):
+        (DOM::Position::atStartOfRootEditableElement):
+        (DOM::Position::inRenderedContent):
+        (DOM::Position::rendersOnSameLine):
+        (DOM::Position::rendersInDifferentPosition):
+        (DOM::Position::isLastRenderedPositionInEditableBlock):
+        (DOM::Position::inFirstEditableInRootEditableElement):
+        (DOM::Position::inLastEditableInRootEditableElement):
+        (DOM::Position::inFirstEditableInContainingEditableBlock):
+        (DOM::Position::inLastEditableInContainingEditableBlock):
+        * khtml/xml/dom_position.h:
+        * khtml/xml/dom_selection.cpp:
+        (DOM::Selection::moveToRenderedContent):
+
 2004-06-02  Trey Matteson  <trey@apple.com>
 
 	Added types property to JS clipboard object.

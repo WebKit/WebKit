@@ -177,7 +177,7 @@ Position Position::equivalentLeafPosition() const
     int count = 0;
     while (1) {
         n = n->nextLeafNode();
-        if (!n || !n->inSameContainingEditableBlock(node()))
+        if (!n || !n->inSameContainingBlockFlowElement(node()))
             return *this;
         if (count + n->maxOffset() >= offset()) {
             count = offset() - count;
@@ -233,7 +233,7 @@ Position Position::previousCharacterPosition() const
     if (isEmpty())
         return Position();
 
-    NodeImpl *fromRootEditableBlock = node()->rootEditableBlock();
+    NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
     bool atStartOfLine = isFirstRenderedPositionOnLine();
@@ -241,7 +241,7 @@ Position Position::previousCharacterPosition() const
     while (!it.atStart()) {
         Position pos = it.previous();
 
-        if (pos.node()->rootEditableBlock() != fromRootEditableBlock)
+        if (pos.node()->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atStartOfLine) {
@@ -260,7 +260,7 @@ Position Position::nextCharacterPosition() const
     if (isEmpty())
         return Position();
 
-    NodeImpl *fromRootEditableBlock = node()->rootEditableBlock();
+    NodeImpl *fromRootEditableElement = node()->rootEditableElement();
     PositionIterator it(*this);
 
     bool atEndOfLine = isLastRenderedPositionOnLine();
@@ -268,7 +268,7 @@ Position Position::nextCharacterPosition() const
     while (!it.atEnd()) {
         Position pos = it.next();
 
-        if (pos.node()->rootEditableBlock() != fromRootEditableBlock)
+        if (pos.node()->rootEditableElement() != fromRootEditableElement)
             return *this;
 
         if (atEndOfLine) {
@@ -355,14 +355,14 @@ Position Position::previousLinePosition(int x) const
         // This containing editable block does not have a previous line.
         // Need to move back to previous containing editable block in this root editable
         // block and find the last root line box in that block.
-        NodeImpl *startBlock = node()->containingBlock();
+        NodeImpl *startBlock = node()->enclosingBlockFlowElement();
         NodeImpl *n = node()->previousEditable();
-        while (n && startBlock == n->containingBlock())
+        while (n && startBlock == n->enclosingBlockFlowElement())
             n = n->previousEditable();
         if (n) {
             while (n && !Position(n, n->caretMaxOffset()).inRenderedContent())
                 n = n->previousEditable();
-            if (n && n->inSameRootEditableBlock(node())) {
+            if (n && n->inSameRootEditableElement(node())) {
                 ASSERT(n->renderer());
                 box = n->renderer()->inlineBox(n->caretMaxOffset());
                 ASSERT(box);
@@ -404,14 +404,14 @@ Position Position::nextLinePosition(int x) const
         // This containing editable block does not have a next line.
         // Need to move forward to next containing editable block in this root editable
         // block and find the first root line box in that block.
-        NodeImpl *startBlock = node()->containingBlock();
+        NodeImpl *startBlock = node()->enclosingBlockFlowElement();
         NodeImpl *n = node()->nextEditable();
-        while (n && startBlock == n->containingBlock())
+        while (n && startBlock == n->enclosingBlockFlowElement())
             n = n->nextEditable();
         if (n) {
             while (n && !Position(n, n->caretMinOffset()).inRenderedContent())
                 n = n->nextEditable();
-            if (n && n->inSameRootEditableBlock(node())) {
+            if (n && n->inSameRootEditableElement(node())) {
                 ASSERT(n->renderer());
                 box = n->renderer()->inlineBox(n->caretMinOffset());
                 ASSERT(box);
@@ -437,11 +437,11 @@ Position Position::equivalentUpstreamPosition() const
     if (!node())
         return Position();
 
-    NodeImpl *block = node()->containingBlock();
+    NodeImpl *block = node()->enclosingBlockFlowElement();
     
     PositionIterator it(*this);            
     for (; !it.atStart(); it.previous()) {   
-        NodeImpl *currentBlock = it.current().node()->containingBlock();
+        NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
         if (block != currentBlock)
             return it.next();
 
@@ -483,11 +483,11 @@ Position Position::equivalentDownstreamPosition() const
     if (!node())
         return Position();
 
-    NodeImpl *block = node()->containingBlock();
+    NodeImpl *block = node()->enclosingBlockFlowElement();
     
     PositionIterator it(*this);            
     for (; !it.atEnd(); it.next()) {   
-        NodeImpl *currentBlock = it.current().node()->containingBlock();
+        NodeImpl *currentBlock = it.current().node()->enclosingBlockFlowElement();
         if (block != currentBlock)
             return it.previous();
 
@@ -563,9 +563,9 @@ bool Position::atStartOfContainingEditableBlock() const
     return renderedOffset() == 0 && inFirstEditableInContainingEditableBlock();
 }
 
-bool Position::atStartOfRootEditableBlock() const
+bool Position::atStartOfRootEditableElement() const
 {
-    return renderedOffset() == 0 && inFirstEditableInRootEditableBlock();
+    return renderedOffset() == 0 && inFirstEditableInRootEditableElement();
 }
 
 bool Position::inRenderedContent() const
@@ -599,7 +599,7 @@ bool Position::inRenderedContent() const
     }
     else if (offset() >= renderer->caretMinOffset() && offset() <= renderer->caretMaxOffset()) {
         // don't return containing editable blocks unless they are empty
-        if (node()->containingBlock() == node() && node()->firstChild())
+        if (node()->enclosingBlockFlowElement() == node() && node()->firstChild())
             return false;
         return true;
     }
@@ -639,7 +639,7 @@ bool Position::rendersOnSameLine(const Position &pos) const
     if (node() == pos.node() && offset() == pos.offset())
         return true;
 
-    if (node()->containingBlock() != pos.node()->containingBlock())
+    if (node()->enclosingBlockFlowElement() != pos.node()->enclosingBlockFlowElement())
         return false;
 
     RenderObject *renderer = node()->renderer();
@@ -693,7 +693,7 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     if (pos.node()->id() == ID_BR && inRenderedContent())
         return true;
                 
-    if (node()->containingBlock() != pos.node()->containingBlock())
+    if (node()->enclosingBlockFlowElement() != pos.node()->enclosingBlockFlowElement())
         return true;
 
     if (node()->isTextNode() && !inRenderedText())
@@ -809,7 +809,7 @@ bool Position::isLastRenderedPositionInEditableBlock() const
     PositionIterator it(pos);
     while (!it.atEnd()) {
         it.next();
-        if (!it.current().node()->inSameContainingEditableBlock(node()))
+        if (!it.current().node()->inSameContainingBlockFlowElement(node()))
             return true;
         if (it.current().inRenderedContent())
             return false;
@@ -817,7 +817,7 @@ bool Position::isLastRenderedPositionInEditableBlock() const
     return true;
 }
 
-bool Position::inFirstEditableInRootEditableBlock() const
+bool Position::inFirstEditableInRootEditableElement() const
 {
     if (isEmpty() || !inRenderedContent())
         return false;
@@ -831,7 +831,7 @@ bool Position::inFirstEditableInRootEditableBlock() const
     return true;
 }
 
-bool Position::inLastEditableInRootEditableBlock() const
+bool Position::inLastEditableInRootEditableElement() const
 {
     if (isEmpty() || !inRenderedContent())
         return false;
@@ -850,14 +850,14 @@ bool Position::inFirstEditableInContainingEditableBlock() const
     if (isEmpty() || !inRenderedContent())
         return false;
     
-    NodeImpl *block = node()->containingBlock();
+    NodeImpl *block = node()->enclosingBlockFlowElement();
 
     PositionIterator it(*this);
     while (!it.atStart()) {
         it.previous();
         if (!it.current().inRenderedContent())
             continue;
-        return block != it.current().node()->containingBlock();
+        return block != it.current().node()->enclosingBlockFlowElement();
     }
 
     return true;
@@ -868,14 +868,14 @@ bool Position::inLastEditableInContainingEditableBlock() const
     if (isEmpty() || !inRenderedContent())
         return false;
     
-    NodeImpl *block = node()->containingBlock();
+    NodeImpl *block = node()->enclosingBlockFlowElement();
 
     PositionIterator it(*this);
     while (!it.atEnd()) {
         it.next();
         if (!it.current().inRenderedContent())
             continue;
-        return block != it.current().node()->containingBlock();
+        return block != it.current().node()->enclosingBlockFlowElement();
     }
 
     return true;
