@@ -1,5 +1,18 @@
 2003-06-12  Richard Williamson  <rjw@apple.com>
 
+	Restoring fix for 3221078 that I earlier backed out in a
+	panic about performance.  In careful performance testing
+	I now see no performance regression, and maybe a tiny improvement.
+	The earlier performance regression Vicki saw was entirely
+	due to the incorrect checkin for the fix to 3288532.
+
+        Reviewed by Chris & Gramps.
+
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+
+2003-06-12  Richard Williamson  <rjw@apple.com>
+
 	Correct fix for 3288532 again.  This time will feeling!
 
         Reviewed by Gramps.
