@@ -1,5 +1,13 @@
 2002-06-05  Richard Williamson  <rjw@apple.com>
 
+    Fixed snafu in recursion over frame tree.
+    
+	* WebView.subproj/IFWebFrame.mm:
+	(+[IFWebFrame _frameNamed:fromFrame:]):
+	(-[IFWebFrame frameNamed:]):
+
+2002-06-05  Richard Williamson  <rjw@apple.com>
+
     Normalized frame naming.  (We still don't support cross
     window name lookups.)
     

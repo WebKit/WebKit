@@ -208,6 +208,31 @@
     [_private setView: nil];
 }
 
++ _frameNamed:(NSString *)name fromFrame: (IFWebFrame *)aFrame
+{
+    int i, count;
+    IFWebFrame *foundFrame;
+    NSArray *children;
+
+    if ([[aFrame name] isEqualToString: name])
+        return aFrame;
+
+    children = [[aFrame dataSource] children];
+    count = [children count];
+    for (i = 0; i < count; i++){
+        aFrame = [children objectAtIndex: i];
+        foundFrame = [IFWebFrame _frameNamed: name fromFrame: aFrame];
+        if (foundFrame)
+            return foundFrame;
+    }
+    
+    // FIXME:  Need to look in other controller's frame namespaces.
+
+    // FIXME:  What do we do if a frame name isn't found?  create a new window
+    
+    return nil;
+}
+
 - (IFWebFrame *)frameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
@@ -235,28 +260,7 @@
     }
     
     // Now search the namespace associated with this frame's controller.
-    int i, count;
-    IFWebFrame *aFrame, *foundFrame;
-    NSArray *children;
-
-    aFrame = [[self controller] mainFrame];
-    if ([[aFrame name] isEqualToString: name])
-        return self;
-
-    children = [[aFrame dataSource] children];
-    count = [children count];
-    for (i = 0; i < count; i++){
-        aFrame = [children objectAtIndex: i];
-        foundFrame = [aFrame frameNamed: name];
-        if (foundFrame)
-            return foundFrame;
-    }
-    
-    // FIXME:  Need to look in other controller's frame namespaces.
-
-    // FIXME:  What do we do if a frame name isn't found?  create a new window
-    
-    return nil;
+    return [IFWebFrame _frameNamed: name fromFrame: [[self controller] mainFrame]];
 }
 
 @end
