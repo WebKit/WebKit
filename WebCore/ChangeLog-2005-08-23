@@ -1,3 +1,12 @@
+2003-03-05  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3189442 -- REGRESSION: utf-16-little-endian.html crashes making decoder
+
+        * kwq/KWQCharsets.mm: (encodingNameHash): Re-add tolower call to hash function to
+        match the equality function.
+
 2003-03-04  Trey Matteson  <trey@apple.com>
 
 	New support for autofill.  We provide a routine that scans backwards in the text

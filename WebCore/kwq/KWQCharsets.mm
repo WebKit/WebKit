@@ -124,7 +124,7 @@ static CFHashCode encodingNameHash(const void *value)
         if (!c) {
             break;
         }
-        h += c;
+        h += tolower(c);
 	h += (h << 10); 
 	h ^= (h << 6); 
     }
