@@ -1,3 +1,18 @@
+2003-02-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3145899 -- tf1.fr page marked UTF-8 is being decoded as Latin-1 (due to <noscript> before <meta>)
+
+        * khtml/misc/decoder.cpp: (Decoder::decode): Add NOSCRIPT to the list of tags
+        that are allowed before META tags that specify character sets.
+
+        - fixed 3144214 -- treat Big5 as Windows CP 950 the same way TEC does
+
+        * kwq/mac-encodings.txt: Move Big5 names to kCFStringEncodingDOSChineseTrad
+        instead of kCFStringEncodingBig5.
+        * kwq/KWQCharsetData.c: Regenerated.
+
 2003-02-07  Richard Williamson   <rjw@apple.com>
 
         Changes to support per WebController preferences.

@@ -98,7 +98,7 @@ DOSThai: cp874, dos-874, tis-620, windows-874
 DOSJapanese: cp932, cswindows31j, shift-jis, shift_jis, x-ms-cp932, x-sjis
 DOSChineseSimplif
 DOSKorean: cp949
-DOSChineseTrad: cp950
+DOSChineseTrad: big5, cn-big5, cp950, x-x-big5
 WindowsLatin2: windows-1250, winlatin2, x-cp1250
 WindowsCyrillic: wincyrillic, windows-1251, x-cp1251
 WindowsGreek: windows-1253, wingreek
@@ -139,7 +139,7 @@ EUC_KR: euc-kr
 
 ShiftJIS
 KOI8_R: koi, koi8, koi8-r, koi8r
-Big5: big5, cn-big5, x-x-big5
+Big5
 MacRomanLatin1: x-mac-roman-latin1
 HZ_GB_2312: hz-gb-2312
 Big5_HKSCS_1999: big5-hkscs

@@ -447,6 +447,8 @@ QString Decoder::decode(const char *data, int len)
 		    }
                     case ID_SCRIPT:
                     case (ID_SCRIPT+ID_CLOSE_TAG):
+                    case ID_NOSCRIPT:
+                    case (ID_NOSCRIPT+ID_CLOSE_TAG):
                     case ID_STYLE:
                     case (ID_STYLE+ID_CLOSE_TAG):
                     case ID_LINK:
