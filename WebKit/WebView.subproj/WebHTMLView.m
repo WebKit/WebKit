@@ -631,7 +631,6 @@
 
 - (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
-    NSLog(@"draggingSourceOperationMaskForLocal");
     return (NSDragOperationGeneric|NSDragOperationCopy);
 }
 

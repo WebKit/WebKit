@@ -1,5 +1,14 @@
 2003-01-22  Chris Blumenberg  <cblu@apple.com>
 
+	Removed comment that I added by mistake.
+
+        Reviewed by me.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):
+
+2003-01-22  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3153651 - text dragging does not work to Terminal
 
         Reviewed by trey.
