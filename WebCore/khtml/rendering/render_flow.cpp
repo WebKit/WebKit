@@ -364,7 +364,11 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
     // These flags track the previous maximal positive and negative margins.
     int prevPosMargin = maxTopMargin(true);
     int prevNegMargin = maxTopMargin(false);
-        
+    int clearOccurred = false;
+    
+    int oldPosMargin = prevPosMargin;
+    int oldNegMargin = prevNegMargin;
+    
     //kdDebug() << "RenderFlow::layoutBlockChildren " << prevMargin << endl;
 
     // take care in case we inherited floats
@@ -384,6 +388,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 style()->width().isFixed() && child->minWidth() > lineWidth( m_height ) ) {
             m_height = QMAX( m_height, floatBottom() );
             shouldCollapseChild = false;
+            clearOccurred = true;
         }
 	
 //         kdDebug( 6040 ) << "   " << child->renderName() << " loop " << child << ", " << child->isInline() << ", " << child->layouted() << endl;
@@ -410,8 +415,6 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 
         child->calcVerticalMargins();
 
-        if(checkClear(child)) shouldCollapseChild = false; // ### should only be 0
-        
         //kdDebug(0) << "margin = " << margin << " yPos = " << m_height << endl;
 
         if(prevFlow)
@@ -433,7 +436,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
             int posTop = child->maxTopMargin(true);
             int negTop = child->maxTopMargin(false);
             
-            if (canCollapseWithChildren && topMarginContributor) {
+            if (canCollapseWithChildren && topMarginContributor && !clearOccurred) {
                 // This child is collapsing with the top of the
                 // block.  If it has larger margin values, then we need to update
                 // our own maximal values.
@@ -472,13 +475,35 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                     m_height += collapsedMargin;
                     ypos = m_height;
                 }
-                topMarginContributor = false;
                 prevPosMargin = child->maxBottomMargin(true);
                 prevNegMargin = child->maxBottomMargin(false);
             }
             child->setPos(child->xPos(), ypos);
         }
+
+        // Now check for clear.
+        if (checkClear(child)) {
+            // The child needs to be lowered.  Move the child so that it just clears the float.
+            child->setPos(child->xPos(), m_height);
+            clearOccurred = true;
+            
+            if (topMarginContributor) {
+                // We can no longer collapse with the top of the block since a clear
+                // occurred.  The empty blocks collapse into the cleared block.
+                // XXX This isn't quite correct.  Need clarification for what to do
+                // if the height the cleared block is offset by is smaller than the
+                // margins involved. -dwh
+                m_maxTopPosMargin = oldPosMargin;
+                m_maxTopNegMargin = oldNegMargin;
+            }
+        }
         
+        // Reset the top margin contributor to false if we encountered
+        // a non-empty child.  This has to be done after checking for clear,
+        // so that margins can be reset if a clear occurred.
+        if (topMarginContributor && !child->isSelfCollapsingBlock())
+            topMarginContributor = false;
+                
         int chPos = xPos + child->marginLeft();
 
         if(style()->direction() == LTR) {
@@ -577,11 +602,14 @@ bool RenderFlow::checkClear(RenderObject *child)
         break;
     case CBOTH:
         bottom = floatBottom();
-	break;
+        break;
     }
-    if(m_height < bottom)
-	m_height = bottom;
-    return true;
+    
+    if (m_height < bottom) {
+        m_height = bottom;
+        return true;
+    }
+    return false;
 }
 
 void RenderFlow::insertSpecialObject(RenderObject *o)
@@ -1401,47 +1429,45 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     bool madeBoxesNonInline = FALSE;
 
     if ( newChild->isPositioned() ) {
-	m_blockBidi = false;
+        m_blockBidi = false;
     }
     if (m_blockBidi)
 	    newChild->setBlockBidi();
 
     RenderStyle* pseudoStyle=0;
     if ( !isInline() && ( !firstChild() || firstChild() == beforeChild )
-	&& ( pseudoStyle=style()->getPseudoStyle(RenderStyle::FIRST_LETTER) ) )
+        && ( pseudoStyle=style()->getPseudoStyle(RenderStyle::FIRST_LETTER) ) )
     {
-
         if (newChild->isText()) {
-	    RenderText* newTextChild = static_cast<RenderText*>(newChild);
+            RenderText* newTextChild = static_cast<RenderText*>(newChild);
 
-	    //kdDebug( 6040 ) << "first letter" << endl;
-
-	    RenderFlow* firstLetter = new RenderFlow(0 /* anonymous box */);
-	    pseudoStyle->setDisplay( INLINE );
-	    firstLetter->setStyle(pseudoStyle);
-
-	    addChild(firstLetter);
-
-	    DOMStringImpl* oldText = newTextChild->string();
-
-	    if(oldText->l >= 1) {
-		unsigned int length = 0;
-		while ( length < oldText->l &&
-			( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
-		    length++;
-		length++;
-		//kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
-		newTextChild->setText(oldText->substring(length,oldText->l-length));
-
-		RenderText* letter = new RenderText(0 /* anonymous object */, oldText->substring(0,length));
-		RenderStyle* newStyle = new RenderStyle();
-		newStyle->inheritFrom(pseudoStyle);
-		letter->setStyle(newStyle);
-		firstLetter->addChild(letter);
-	    }
-	    firstLetter->close();
-
-	}
+            //kdDebug( 6040 ) << "first letter" << endl;
+    
+            RenderFlow* firstLetter = new RenderFlow(0 /* anonymous box */);
+            pseudoStyle->setDisplay( INLINE );
+            firstLetter->setStyle(pseudoStyle);
+    
+            addChild(firstLetter);
+    
+            DOMStringImpl* oldText = newTextChild->string();
+    
+            if(oldText->l >= 1) {
+                unsigned int length = 0;
+                while ( length < oldText->l &&
+                    ( (oldText->s+length)->isSpace() || (oldText->s+length)->isPunct() ) )
+                    length++;
+                length++;
+                //kdDebug( 6040 ) << "letter= '" << DOMString(oldText->substring(0,length)).string() << "'" << endl;
+                newTextChild->setText(oldText->substring(length,oldText->l-length));
+    
+                RenderText* letter = new RenderText(0 /* anonymous object */, oldText->substring(0,length));
+                RenderStyle* newStyle = new RenderStyle();
+                newStyle->inheritFrom(pseudoStyle);
+                letter->setStyle(newStyle);
+                firstLetter->addChild(letter);
+            }
+            firstLetter->close();
+        }
     }
 
     insertPseudoChild(RenderStyle::BEFORE, newChild, beforeChild);
@@ -1457,8 +1483,8 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 
         if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
-	    newChild->setLayouted( false );
-	    newChild->setMinMaxKnown( false );
+            newChild->setLayouted( false );
+            newChild->setMinMaxKnown( false );
             return;
         }
         else {
@@ -1469,10 +1495,11 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             RenderObject *anonBox = beforeChild->parent();
             KHTMLAssert (anonBox->isFlow()); // ### RenderTableSection the only exception - should never happen here
 
-	    if ( anonBox->childrenInline() ) {
-		static_cast<RenderFlow*>(anonBox)->makeChildrenNonInline(beforeChild);
-		madeBoxesNonInline = true;
-	    }
+            if ( anonBox->childrenInline() ) {
+                static_cast<RenderFlow*>(anonBox)->makeChildrenNonInline(beforeChild);
+                madeBoxesNonInline = true;
+            }
+            
             beforeChild = beforeChild->parent();
 
             RenderObject *child;
@@ -1504,16 +1531,17 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     // inline children into anonymous block boxes
     if ( m_childrenInline && !newChild->isInline() && !newChild->isSpecial() )
     {
-	if ( m_childrenInline ) {
-	    makeChildrenNonInline(beforeChild);
-	    madeBoxesNonInline = true;
-	}
+        if ( m_childrenInline ) {
+            makeChildrenNonInline(beforeChild);
+            madeBoxesNonInline = true;
+        }
+        
         if (beforeChild) {
-	    if ( beforeChild->parent() != this ) {
-		beforeChild = beforeChild->parent();
-		KHTMLAssert(beforeChild->isAnonymousBox());
-		KHTMLAssert(beforeChild->parent() == this);
-	    }
+            if ( beforeChild->parent() != this ) {
+                beforeChild = beforeChild->parent();
+                KHTMLAssert(beforeChild->isAnonymousBox());
+                KHTMLAssert(beforeChild->parent() == this);
+            }
         }
     }
     else if (!m_childrenInline)
@@ -1525,17 +1553,17 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             if (beforeChild) {
                 if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousBox()) {
                     beforeChild->previousSibling()->addChild(newChild);
-		    newChild->setLayouted( false );
-		    newChild->setMinMaxKnown( false );
+                    newChild->setLayouted( false );
+                    newChild->setMinMaxKnown( false );
                     return;
                 }
             }
             else{
                 if (m_last && m_last->isAnonymousBox()) {
                     m_last->addChild(newChild);
-		    newChild->setLayouted( false );
-		    newChild->setMinMaxKnown( false );
-		    return;
+                    newChild->setLayouted( false );
+                    newChild->setMinMaxKnown( false );
+                    return;
                 }
             }
 
@@ -1552,8 +1580,8 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
             newBox->addChild(newChild);
             newBox->setPos(newBox->xPos(), -500000);
 
-	    newChild->setLayouted( false );
-	    newChild->setMinMaxKnown( false );
+            newChild->setLayouted( false );
+            newChild->setMinMaxKnown( false );
             return;
         }
         else {
