@@ -6,9 +6,9 @@ int main() {
 
     char c_char = 'a';
     uchar c_uchar = 'b';
-    ushort c_ushort = 'd';
+    ushort c_ushort = 'D';
     short c_short = ' ';
-    uint c_uint = 'f';
+    uint c_uint = '3';
     int c_int = '-';
     
     QChar q0 = QChar();
@@ -33,6 +33,18 @@ int main() {
     cout << q7.isPunct() << endl;
     cout << q6.isSpace() << endl;
     cout << q5.isSpace() << endl;
+    cout << q0.isNull() << endl;
+    cout << q1.isNull() << endl;
+    cout << q7.isNumber() << endl;
+    cout << q8.isNumber() << endl;
+    cout << q3.isPrint() << endl;
+    cout << q5.lower() << endl;
+    cout << q1.upper() << endl;
+    
+    cout << (q2 <= c_char) << endl;
+    cout << (q2 >= c_char) << endl;
+    cout << (q2 <= q1) << endl;
+    cout << (q2 >= q1) << endl;
     
     return 0;
 }
