@@ -28,14 +28,30 @@
  * KWQ emulation package.  Only the API in the emulation package should
  * be used.
  *
+ * Classes tested (and needed to link):
+ *	QApplication
+ *	QBrush
+ *	QByteArray
+ *	QColor
+ *	QFont
+ *	QFontMetrics
+ *	QPainter
+ *	QPen
+ *	QPixmap
+ *	QPoint
+ *	QRect
+ *	QSize
+ *	QString
+ *	QWidget
+ *	QWMatrix
  *
+ *  Also needs QPaintEvent.  This is only used by the Qt version of the app.
 */
 
 #include <qwidget.h>
 #include <qpainter.h>
 #include <qpixmap.h>
 #include <qapplication.h>
-#include <math.h>
 
 // Voodoo required to get compiler to compile correctly.
 #undef DEBUG
@@ -84,27 +100,58 @@ void drawColors( QPainter *p )
 
 void drawImages( QPainter *p)
 {
-    QByteArray *byteArray;
-    QPixmap *pixmap;
-    NSString *files[] = { @"powermac.jpg", @"qt.png", @"yahoo.gif" };
-    NSData *data;
-    const QPoint point (10, 200);
+    QByteArray *byteArray[3];
+    QPixmap *pixmap[3];
+    NSString *files[3] = { @"qt.png", @"powermac.jpg", @"yahoo.gif" };
+    NSData *data[3];
     int i;
+    QPoint *point;
     
     for (i = 0; i < 3; i++){
-        const QPoint point (10 + 60*i, 200);
-        data = [[NSData alloc] initWithContentsOfFile: files[i]];
-        byteArray = new QByteArray();
-        byteArray->setRawData ((const char *)[data bytes], (unsigned int)[data length]);
-        pixmap = new QPixmap (*byteArray);
+        point = new QPoint (10 + 60 * i, 200);
+        data[i] = [[NSData alloc] initWithContentsOfFile: files[i]];
+        byteArray[i] = new QByteArray();
+        byteArray[i]->setRawData ((const char *)[data[i] bytes], (unsigned int)[data[i] length]);
+        pixmap[i] = new QPixmap (*byteArray[i]);
+        if (i == 1)
+            p->setRasterOp(Qt::XorROP);
+        else
+            p->setRasterOp(Qt::CopyROP);
         if (i == 2){
             QWMatrix matrix;
             matrix.scale((double)0.5, (double)0.5);
-            QPixmap rp = pixmap->xForm (matrix);
-            p->drawPixmap (point,rp); 
+            QPixmap rp = pixmap[i]->xForm (matrix);
+            p->drawPixmap (*point,rp); 
         }
         else
-            p->drawPixmap (point,*pixmap); 
+            p->drawPixmap (*point,*pixmap[i]); 
+        delete point;
+    }
+
+    for (i = 0; i < 3; i++){
+        point = new QPoint (10 + 60 * i, 200);
+
+        QSize imageSize = pixmap[i]->size();
+        
+        p->setPen( Qt::yellow );
+        p->drawRect (point->x(), point->y(), imageSize.width(), imageSize.height());
+
+        p->setPen( Qt::blue );
+        p->drawLine (point->x(), point->y(), point->x() + imageSize.width(), point->y() + imageSize.height());
+        p->drawLine (point->x(), point->y() + imageSize.height(), point->x() + imageSize.width(), point->y());
+        delete point;
+    }
+
+    int x = 480, y = 20, w = 400, h = 300;
+    p->drawTiledPixmap (x, y, w, h, *pixmap[0], 0, 0);
+    p->drawLine (x, y, x + w, y + h);
+    p->drawLine (x, y + h, x + w, y);
+    
+    for (i = 0; i < 3; i++){
+        delete byteArray[i];
+        delete pixmap[i];
+        // Problematic, as QByteArray expects ownership.
+        //[data[i] release];
     }
 }
 
@@ -113,7 +160,7 @@ void drawImages( QPainter *p)
 // This function draws a few lines of text using different fonts.
 //
 
-#define DRAW_FONT_OFFSET 270.0F
+#define DRAW_FONT_OFFSET 360.0F
 
 void drawFonts( QPainter *p )
 {
@@ -132,6 +179,7 @@ void drawFonts( QPainter *p )
     y += (int)DRAW_FONT_OFFSET;
 #endif
 
+    p->setPen( Qt::black );
     while ( fonts[f] ) {
         int s = 0;
         while ( sizes[s] ) {
@@ -154,7 +202,7 @@ void drawFonts( QPainter *p )
 // This function draws some shapes
 //
 
-#define DRAW_SHAPES_OFFSET 600.0F
+#define DRAW_SHAPES_OFFSET 690.0F
 
 void drawShapes( QPainter *p )
 {
@@ -177,12 +225,10 @@ void drawShapes( QPainter *p )
     p->setPen( Qt::red );
     p->setBrush( b1 );
     p->drawRect( 10, y, 200, 100 );
-    p->setBrush( b2 );
-    p->drawRoundRect( 10, y+140, 200, 100, 20, 20 );
     p->setBrush( b3 );
     p->drawEllipse( 250, y, 200, 100 );
     p->setBrush( b4 );
-    p->drawPie( 250, y+140, 200, 100, 45*16, 90*16 );
+    p->drawArc( 250, y+140, 200, 100, 45*16, 90*16 );
 
     p->restore();
 }
@@ -207,7 +253,7 @@ DrawView::DrawView()
 {
     setCaption( "Qt Draw Demo Application" );
     setBackgroundColor( white );    
-    resize( 640,900 );
+    resize( 900,900 );
 }
 
 //
