@@ -1,5 +1,11 @@
 2002-06-15  Darin Adler  <darin@apple.com>
 
+	* WebView.subproj/IFHTMLView.mm:
+	(-[IFHTMLView provisionalDataSourceChanged:]): Don't turn negative numbers into
+	0 for margins. This was a mistake.
+
+2002-06-15  Darin Adler  <darin@apple.com>
+
 	- fixed 2942808 -- remove all calls to WebKit from WebCore
 
 	Update to use the WebCore bridge for more things, reducing

@@ -101,16 +101,10 @@
     
     NSRect r = [self frame];
     
-    int mw = [[[dataSource webFrame] webView] _marginWidth];
-    if (mw < 0)
-        mw = 0;
-    int mh = [[[dataSource webFrame] webView] _marginHeight];
-    if (mh < 0)
-        mh = 0;
-
     _private->provisionalWidget = [bridge createKHTMLViewWithNSView:provisionalView
         width:(int)r.size.width height:(int)r.size.height
-        marginWidth:mw marginHeight:mh];
+        marginWidth:[[[dataSource webFrame] webView] _marginWidth]
+        marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
     
     [provisionalView release];
 }
