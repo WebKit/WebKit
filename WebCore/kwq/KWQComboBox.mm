@@ -26,6 +26,8 @@
 #import <qcombobox.h>
 
 #import <kwqdebug.h>
+#import <KWQKHTMLPartImpl.h>
+#import <WebCoreBridge.h>
 
 // We empirically determined that combo boxes have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.
@@ -43,26 +45,15 @@
 {
     QComboBox *box;
 }
-
 - initWithQComboBox:(QComboBox *)b;
 - (void)action:(id)sender;
-
 @end
 
 @interface KWQPopUpButtonCell : NSPopUpButtonCell
 {
+    QWidget *widget;
 }
-@end
-
-@implementation KWQPopUpButtonCell
-
-- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
-{
-    cellFrame.origin.y += TEXT_VERTICAL_NUDGE;
-    cellFrame.size.height -= TEXT_VERTICAL_NUDGE;
-    [super drawInteriorWithFrame:cellFrame inView:controlView];
-}
-
+- initWithWidget:(QWidget *)widget;
 @end
 
 QComboBox::QComboBox()
@@ -71,7 +62,7 @@ QComboBox::QComboBox()
 {
     NSPopUpButton *button = [[NSPopUpButton alloc] init];
     
-    KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] init];
+    KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] initWithWidget:this];
     [button setCell:cell];
     [cell release];
 
@@ -169,6 +160,44 @@ int QComboBox::currentItem() const
 - (void)action:(id)sender
 {
     box->activated();
+}
+
+@end
+
+@implementation KWQPopUpButtonCell
+
+- initWithWidget:(QWidget *)w
+{
+    [super init];
+    widget = w;
+    return self;
+}
+
+- (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
+{
+    // We need to "defer loading" while we are tracking the menu.
+    // That's because we don't want the new page to load while the user is holding the mouse down.
+    // Normally, this is not a problem because we use a different run loop mode, but pop-up menus
+    // use a Carbon implementation, and it uses the default run loop mode.
+    // See bug 3021018 for more information.
+    
+    WebCoreBridge *bridge = KWQKHTMLPartImpl::bridgeForWidget(widget);
+    BOOL wasDeferringLoading = [bridge defersLoading];
+    if (!wasDeferringLoading) {
+        [bridge setDefersLoading:YES];
+    }
+    BOOL result = [super trackMouse:event inRect:rect ofView:view untilMouseUp:flag];
+    if (!wasDeferringLoading) {
+        [bridge setDefersLoading:NO];
+    }
+    return result;
+}
+
+- (void)drawInteriorWithFrame:(NSRect)cellFrame inView:(NSView *)controlView
+{
+    cellFrame.origin.y += TEXT_VERTICAL_NUDGE;
+    cellFrame.size.height -= TEXT_VERTICAL_NUDGE;
+    [super drawInteriorWithFrame:cellFrame inView:controlView];
 }
 
 @end

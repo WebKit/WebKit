@@ -108,6 +108,8 @@ public:
     NSView *nextKeyViewInFrameHierarchy(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static NSView *nextKeyViewForWidget(QWidget *startingPoint, KWQSelectionDirection);
     
+    static WebCoreBridge *bridgeForWidget(QWidget *);
+    
     // Incoming calls, used by the bridge.
     
     DOM::DocumentImpl *document();
@@ -121,6 +123,8 @@ private:
     WebCoreBridge *bridgeForFrameName(const QString &frameName);
 
     NSView *nextKeyViewInFrame(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
+    static DOM::NodeImpl *nodeForWidget(QWidget *);
+    static KWQKHTMLPartImpl *partForNode(DOM::NodeImpl *);
 
     KHTMLPart *part;
     KHTMLPartPrivate *d;

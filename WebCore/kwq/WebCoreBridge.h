@@ -181,6 +181,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (NSView *)nextKeyViewOutsideWebViews;
 - (NSView *)previousKeyViewOutsideWebViews;
 
+- (BOOL)defersLoading;
+- (void)setDefersLoading:(BOOL)loading;
+
 @end
 
 // This interface definition allows those who hold a WebCoreBridge * to call all the methods

@@ -618,6 +618,21 @@ NSView *KWQKHTMLPartImpl::nextKeyViewForWidget(QWidget *startingWidget, KWQSelec
 {
     // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
     // Then get the next key view in the order determined by the DOM.
-    NodeImpl *node = static_cast<const RenderWidget *>(startingWidget->eventFilterObject())->element();
-    return node->getDocument()->view()->part()->impl->nextKeyView(node, direction);
+    NodeImpl *node = nodeForWidget(startingWidget);
+    return partForNode(node)->nextKeyView(node, direction);
+}
+
+WebCoreBridge *KWQKHTMLPartImpl::bridgeForWidget(QWidget *widget)
+{
+    return partForNode(nodeForWidget(widget))->bridge();
+}
+
+KWQKHTMLPartImpl *KWQKHTMLPartImpl::partForNode(NodeImpl *node)
+{
+    return node->getDocument()->view()->part()->impl;
+}
+
+NodeImpl *KWQKHTMLPartImpl::nodeForWidget(QWidget *widget)
+{
+    return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
 }
