@@ -62,6 +62,11 @@ NSString *WebElementStringKey = 		@"WebElementString";
 
     [self setUsesBackForwardList: YES];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(_defaultsDidChange)
+                                                 name:NSUserDefaultsDidChangeNotification
+                                               object:[NSUserDefaults standardUserDefaults]];
+    
     ++WebControllerCount;
 
     return self;
@@ -74,6 +79,8 @@ NSString *WebElementStringKey = 		@"WebElementString";
     }
 
     --WebControllerCount;
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     [_private release];
     [super dealloc];
@@ -307,11 +314,13 @@ NSString *WebElementStringKey = 		@"WebElementString";
     NSString *name = [applicationName copy];
     [_private->applicationNameForUserAgent release];
     _private->applicationNameForUserAgent = name;
+    [_private->userAgent release];
+    _private->userAgent = nil;
 }
 
 - (NSString *)applicationNameForUserAgent
 {
-    return [[_private->applicationNameForUserAgent copy] autorelease];
+    return [[_private->applicationNameForUserAgent retain] autorelease];
 }
 
 - (void)setCustomUserAgent:(NSString *)userAgentString
@@ -340,15 +349,17 @@ NSString *WebElementStringKey = 		@"WebElementString";
         ERROR("must not ask for customUserAgent is hasCustomUserAgent is NO");
     }
 
-    return [[_private->userAgentOverride copy] autorelease];
+    return [[_private->userAgentOverride retain] autorelease];
 }
 
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
-    NSString *result = [[_private->userAgentOverride copy] autorelease];
-    if (result) {
-        return result;
+    if (_private->userAgentOverride) {
+        return [[_private->userAgentOverride retain] autorelease];
+    }
+    if (_private->userAgent) {
+        return [[_private->userAgent retain] autorelease];
     }
 
     // Note that we currently don't look at the URL.
@@ -362,12 +373,17 @@ NSString *WebElementStringKey = 		@"WebElementString";
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;
 
+    NSString *userAgent;
     if ([applicationName length]) {
-        return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) WebKit/%@ %@",
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) WebKit/%@ %@",
             language, sourceVersion, applicationName];
+    } else {
+        userAgent = [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) WebKit/%@",
+            language, sourceVersion];
     }
-    return [NSString stringWithFormat:@"Mozilla/5.0 (Macintosh; U; PPC; %@) WebKit/%@",
-        language, sourceVersion];
+    
+    _private->userAgent = [userAgent retain];
+    return userAgent;
 }
 
 - (BOOL)supportsTextEncoding
@@ -463,6 +479,5 @@ NSString *WebElementStringKey = 		@"WebElementString";
 - (void)pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource
 {
 }
-
 
 @end

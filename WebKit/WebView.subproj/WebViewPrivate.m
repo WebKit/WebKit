@@ -64,6 +64,7 @@
     [backForwardList release];
     [applicationNameForUserAgent release];
     [userAgentOverride release];
+    [userAgent release];
     
     [controllerSetName release];
     [topLevelFrameName release];
@@ -328,6 +329,12 @@
         [[self windowOperationsDelegate] mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
     }
     _private->lastElementWasNonNil = dictionary != nil;
+}
+
+- (void)_defaultsDidChange
+{
+    [_private->userAgent release];
+    _private->userAgent = nil;
 }
 
 @end

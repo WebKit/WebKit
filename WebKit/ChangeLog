@@ -2,6 +2,30 @@
 
         Reviewed by Maciej.
 
+        - fixed most likely cause of 3125565 -- 2% regression running the PLT for uncached loads
+        
+        Don't recompute the user agent when it doesn't change. It almost never changes.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController initWithView:controllerSetName:]): Add observer so we know when defaults change.
+        (-[WebController dealloc]): Remove observer.
+        (-[WebController setApplicationNameForUserAgent:]): Clear out computed user agent to force it
+	to be recomputed later.
+        (-[WebController applicationNameForUserAgent]): Just retain since we copied when we stored it
+	so we know it's not mutable.
+        (-[WebController customUserAgent]): Ditto.
+        (-[WebController userAgentForURL:]): Use the cached user agent if it's good. Otherwise compute
+	and cache the user agent string. This means that we will almost never recompute it.
+
+        * WebView.subproj/WebControllerPrivate.h: Add userAgent field to cache in.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebControllerPrivate dealloc]): Release userAgent.
+        (-[WebController _defaultsDidChange]): Release and nil userAgent.
+
+2002-12-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
 	- fixed 3125504 -- REGRESSION: Selection not working correctly for text area on http://glish.com/css/7.asp
 
 	The problem is that the text area lost its first responder status because WebHTMLView took the click,
