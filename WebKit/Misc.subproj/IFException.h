@@ -22,26 +22,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#ifndef _WKEXCEPTION_H
+#define _WKEXCEPTION_H
 
-#ifndef KWQOWNER_H_
-#define KWQOWNER_H_
-
-#import <Cocoa/Cocoa.h>
-#import <WCBackForwardList.h>
-
-@interface _KWQOwner : NSApplication
-{
-    IBOutlet id window;
-    IBOutlet id containerView;
-    IBOutlet NSProgressIndicator *throbber;
-    IBOutlet NSComboBox *urlBar;
-    IBOutlet NSButton *backButton;
-    IBOutlet NSButton *forwardButton;
-    id <WCBackForwardList> backForwardList;
-}
-
--(void)updateButtons;
-
-@end
+extern NSString * const WKMethodNotYetImplemented;
+extern NSString * const WKRuntimeError;
 
 #endif

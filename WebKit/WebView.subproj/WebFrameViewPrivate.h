@@ -5,9 +5,26 @@
         in WebCore.  Instances of this class are referenced by _viewPrivate in 
         NSWebPageView.
 */
+#import <Cocoa/Cocoa.h>
 
-@interface NSWebPageViewPrivate : NSObject
+#import <WebKit/WKWebController.h>
+#import <WebKit/WKWebView.h>
+
+class QWidget;
+class KHTMLPart;
+class KHTMLView;
+
+@interface WKWebViewPrivate : NSObject
 {
+    id <WKWebController>controller;
+    KHTMLView *widget;
+    bool isFlipped;
+    bool needsLayout;
 }
 
+@end
+
+@interface WKWebView (WKPrivate)
+- (void)_setController: (id <WKWebController>)controller;
+- (void)_resetView;
 @end

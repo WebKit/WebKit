@@ -118,7 +118,6 @@ libkwq_o_SOURCES = \
 	KWQtextcodec.mm \
 	KWQtextstream.mm \
 	KWQxml.mm \
-	_KWQOwner.m \
 	kwqdebug.mm \
 	WKPlugin.mm \
 	WKPluginView.mm \

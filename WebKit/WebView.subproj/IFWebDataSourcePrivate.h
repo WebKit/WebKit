@@ -5,12 +5,28 @@
         in WebCore.  Instances of this class are referenced by _dataSourcePrivate in
         NSWebPageDataSource.
 */
+#import <Cocoa/Cocoa.h>
 
+#import <WebKit/WKWebDataSource.h>
 
-@interface NSWebPageDataSourcePrivate : NSObject
+// includes from kde
+#include <khtmlview.h>
+
+@interface WKWebDataSourcePrivate : NSObject
 {
+    WKWebDataSource *parent;
+    NSArray *children;
+    id <WKWebController>controller;
+    NSURL *inputURL;
+    KHTMLPart *part;
 }
 
+- init;
+- (void)dealloc;
 
 @end
 
+@interface WKWebDataSource (WKPrivate)
+- (void)_setController: (id <WKWebController>)controller;
+- (KHTMLPart *)_part;
+@end

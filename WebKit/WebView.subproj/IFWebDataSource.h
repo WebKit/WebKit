@@ -66,7 +66,10 @@
 	Minor naming changes.
 
    ============================================================================= */
-   
+
+#ifdef TENTATIVE_API
+@class WKLoader;
+#endif
 
 @interface WKWebDataSource : NSObject
 {
@@ -74,22 +77,19 @@
     id _dataSourcePrivate;
 }
 
-#ifdef READY_FOR_PRIMETIME
-
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
 - initWithURL: (NSURL *)inputURL;
 
+#ifdef TENTATIVE_API
 - initWithData: (NSData *)data;
 - initWithString: (NSString *)string;
-
-// Ken, need some help with one.
 - initWithLoader: (WKLoader *)loader;
-
+#endif
 
 // Returns nil if this data source represents the main document.  Otherwise
 // returns the parent data source.
-- (WKDataSource *)parent;
+- (WKWebDataSource *)parent;
 
 
 // Returns YES if this is the main document.  The main document is the 'top'
@@ -109,7 +109,7 @@
 
 // findDataSourceForFrameNamed: returns the child data source associated with
 // the frame named 'name', or nil. 
-- (WKWebDataSource) findDataSourceForFrameNamed: (NSString *)name;
+- (WKWebDataSource *) findDataSourceForFrameNamed: (NSString *)name;
 
 
 - (BOOL)frameExists: (NSString *)name;
@@ -161,9 +161,10 @@
 - (BOOL)isLoading;
 
 
+#ifdef TENTATIVE_API
 // Get DOM access to the document.
 - (WKDOMDocument *)document;
-
+#endif
 
 // Get the actual source of the docment.
 - (NSString *)documentText;
@@ -178,8 +179,8 @@
 
 
 // Style sheet
-- (void)setUserStyleSheet: (NSURL *)url;
-- (void)setUserStyleSheet: (NSString *)sheet;
+- (void)setUserStyleSheetFromURL: (NSURL *)url;
+- (void)setUserStyleSheetFromString: (NSString *)sheet;
 
 
 // a.k.a shortcut icons, http://msdn.microsoft.com/workshop/Author/dhtml/howto/ShortcutIcon.asp.
@@ -194,8 +195,6 @@
 
 // Returns nil or the page title.
 - (NSString *)pageTitle;
-
-#endif
 
 @end
 

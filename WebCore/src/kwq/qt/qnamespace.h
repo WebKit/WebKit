@@ -249,6 +249,7 @@ public:
 
     // constants ---------------------------------------------------------------
 
+
     QT_STATIC_CONST QColor &color0;
     QT_STATIC_CONST QColor &color1;
     QT_STATIC_CONST QColor &black;

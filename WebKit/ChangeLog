@@ -1,3 +1,79 @@
+2002-01-18  Richard Williamson  <rjw@apple.com>
+
+    First pass at new view/datasource/controller API.
+    
+	* Misc.subproj/WKException.h:
+	* Misc.subproj/WKException.m:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/WKDefaultWebController.h:
+	* WebView.subproj/WKDefaultWebController.mm: (+[WKObjectHolder
+	holderWithObject:]), (-[WKObjectHolder initWithObject:]), (-[WKObjectHolder
+	dealloc]), (-[WKObjectHolder copyWithZone:]), (-[WKObjectHolder hash]),
+	(-[WKObjectHolder object]), (-[WKObjectHolder isEqual:]),
+	(-[WKDefaultWebController initWithView:dataSource:]), (-[WKDefaultWebController
+	dealloc]), (-[WKDefaultWebController setDirectsAllLinksToSystemBrowser:]),
+	(-[WKDefaultWebController directsAllLinksToSystemBrowser]),
+	(-[WKDefaultWebController setView:andDataSource:]), (-[WKDefaultWebController
+	viewForDataSource:]), (-[WKDefaultWebController dataSourceForView:]),
+	(-[WKDefaultWebController mainView]), (-[WKDefaultWebController mainDataSource]),
+	(-[WKDefaultWebController createViewForDataSource:inFrameNamed:]),
+	(-[WKDefaultWebController createViewForDataSource:inIFrame:]),
+	(-[WKDefaultWebController setStatusText:forDataSource:]),
+	(-[WKDefaultWebController statusTextForDataSource:]), (-[WKDefaultWebController
+	authenticate:]), (-[WKDefaultWebController
+	receivedProgress:forResource:fromDataSource:]), (-[WKDefaultWebController
+	receivedError:forResource:partialProgress:fromDataSource:]),
+	(-[WKDefaultWebController locationWillChangeTo:]), (-[WKDefaultWebController
+	locationChangeStartedForDataSource:]), (-[WKDefaultWebController
+	locationChangeInProgressForDataSource:]), (-[WKDefaultWebController
+	locationChangeDone:forDataSource:]), (-[WKDefaultWebController
+	receivedPageTitle:forDataSource:]), (-[WKDefaultWebController
+	serverRedirectTo:forDataSource:]):
+	* WebView.subproj/WKDefaultWebControllerPrivate.h:
+	* WebView.subproj/WKDefaultWebControllerPrivate.mm:
+	(-[WKDefaultWebControllerPrivate init]), (-[WKDefaultWebControllerPrivate
+	dealloc]):
+	* WebView.subproj/WKWebController.h:
+	* WebView.subproj/WKWebController.mm:
+	* WebView.subproj/WKWebDataSource.h:
+	* WebView.subproj/WKWebDataSource.mm: (-[WKWebDataSource _commonInitialization]),
+	(-[WKWebDataSource initWithURL:]), (-[WKWebDataSource parent]),
+	(-[WKWebDataSource isMainDocument]), (-[WKWebDataSource children]),
+	(-[WKWebDataSource frameNames]), (-[WKWebDataSource
+	findDataSourceForFrameNamed:]), (-[WKWebDataSource frameExists:]),
+	(-[WKWebDataSource openURL:inFrameNamed:]), (-[WKWebDataSource
+	openURL:inIFrame:]), (-[WKWebDataSource controller]), (-[WKWebDataSource
+	inputURL]), (-[WKWebDataSource finalURL]), (-[WKWebDataSource wasRedirected]),
+	(-[WKWebDataSource startLoading:]), (-[WKWebDataSource stopLoading]),
+	(-[WKWebDataSource isLoading]), (-[WKWebDataSource documentText]),
+	(-[WKWebDataSource base]), (-[WKWebDataSource baseTarget]), (-[WKWebDataSource
+	encoding]), (-[WKWebDataSource setUserStyleSheetFromURL:]), (-[WKWebDataSource
+	setUserStyleSheetFromString:]), (-[WKWebDataSource icon]), (-[WKWebDataSource
+	isPageSecure]), (-[WKWebDataSource pageTitle]):
+	* WebView.subproj/WKWebDataSourcePrivate.h:
+	* WebView.subproj/WKWebDataSourcePrivate.mm: (-[WKWebDataSourcePrivate init]),
+	(-[WKWebDataSourcePrivate dealloc]), (-[WKWebDataSource _setController:]),
+	(-[WKWebDataSource _part]):
+	* WebView.subproj/WKWebView.h:
+	* WebView.subproj/WKWebView.mm: (-[WKWebView initWithFrame:]), (-[WKWebView
+	dealloc]), (-[WKWebView controller]), (-[WKWebView dataSourceChanged]),
+	(-[WKWebView layout]), (-[WKWebView stopAnimations]), (-[WKWebView
+	setFontSizes:]), (-[WKWebView fontSizes]), (-[WKWebView resetFontSizes]),
+	(-[WKWebView setStandardFont:]), (-[WKWebView standardFont]), (-[WKWebView
+	setFixedFont:]), (-[WKWebView fixedFont]), (-[WKWebView setCanDragFrom:]),
+	(-[WKWebView canDragFrom]), (-[WKWebView setCanDragTo:]), (-[WKWebView
+	canDragTo]), (-[WKWebView defaultContextMenuItemsForNode:]), (-[WKWebView
+	setContextMenusEnabled:]), (-[WKWebView deselectText]), (-[WKWebView
+	searchFor:direction:caseSensitive:]), (-[WKWebView selectedText]), (-[WKWebView
+	delayLayout:]), (-[WKWebView notificationReceived:]), (-[WKWebView
+	setNeedsLayout:]), (-[WKWebView drawRect:]), (-[WKWebView setIsFlipped:]),
+	(-[WKWebView isFlipped]), (-[WKWebView setFrame:]), (-[WKWebView mouseUp:]),
+	(-[WKWebView mouseDown:]), (-[WKWebView mouseDragged:]):
+	* WebView.subproj/WKWebViewPrivate.h:
+	* WebView.subproj/WKWebViewPrivate.mm: (-[WKWebViewPrivate init]),
+	(-[WKWebViewPrivate dealloc]), (-[WKWebView _resetView]), (-[WKWebView
+	_setController:]):
+
 2002-01-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Convert build system to automake

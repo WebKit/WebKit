@@ -27,8 +27,6 @@
 #include <qapplication.h>
 #include <qpalette.h>
 
-#import "_KWQOwner.h"
-
 // FIXME: 
 static QPalette *DEFAULT_PALETTE = NULL;
 static QSize *DEFAULT_SIZE = NULL;
@@ -100,10 +98,13 @@ void QApplication::sendPostedEvents(QObject *receiver, int event_type)
 
 QApplication::QApplication( int &argc, char **argv)
 {
+#ifdef TRANSITIONAL_CODE
     _initialize();
+#endif    
 }
 
 
+#ifdef TRANSITIONAL_CODE
 void QApplication::_initialize(){
     NSDictionary *info;
     NSString *principalClassName;
@@ -127,6 +128,7 @@ void QApplication::_initialize(){
     //  Force linkage
     [_KWQOwner class];
 }
+#endif
 
 
 QApplication::~QApplication()
@@ -137,6 +139,7 @@ QApplication::~QApplication()
 
 void QApplication::setMainWidget(QWidget *w)
 {
+#ifdef TRANSITIONAL_CODE
     NSRect b = [((_KWQOwner *)application)->containerView bounds];
     
     if (application == nil){
@@ -156,22 +159,29 @@ void QApplication::setMainWidget(QWidget *w)
     [sv setHasHorizontalScroller: YES];
     [w->getView() setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [sv setDocumentView: w->getView()];
-    
     [((_KWQOwner *)application)->window setOpaque: FALSE];
     //[((_KWQOwner *)application)->window setAlphaValue: (float)0.8];
     
      
     [((_KWQOwner *)application)->containerView addSubview: sv];
+#else
+    [NSException raise:@"Not implemented" format:@"QApplication::setMainWidget(QWidget *) is not implemented"];
+#endif
 }
 
 
 int QApplication::exec()
 {
+#ifdef TRANSITIONAL_CODE
     if (application == nil){
         KWQDEBUGLEVEL(KWQ_LOG_ERROR, "ERROR: QApplication::exec() application not set.\n");
         return 0;
     }
     [application run];
     return 1;
+#else
+    [NSException raise:@"Not implemented" format:@"QApplication::exec() is not implemented"];
+    return 0;
+#endif
 }
 

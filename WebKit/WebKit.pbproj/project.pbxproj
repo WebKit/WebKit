@@ -124,8 +124,8 @@
 				HEADER_SEARCH_PATHS = ../WebCore/include;
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare";
-				OTHER_LDFLAGS = "-ljpeg -lwebcore";
+				OTHER_CFLAGS = "-Wall -Werror -Wchar-subscripts -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wcast-align -Wsign-compare -DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_  -I.. -I../WebCore/src/kdelibs/khtml -I../WebCore/src/kwq -I../WebCore/src/kwq/kparts -I../WebCore/include -I../WebCore/include/private";
+				OTHER_LDFLAGS = "-lwebcore";
 				PRODUCT_NAME = WebKit;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -191,6 +191,9 @@
 				9C04853101CFFD060ECA16EA,
 				9C04853201CFFD060ECA16EA,
 				9C04853301CFFD060ECA16EA,
+				9C64424901F790750ECA16EA,
+				9C64424F01F7AF2D0ECA16EA,
+				9C64425001F7AF2D0ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -218,7 +221,12 @@
 				25A8177401B698760ECA149E,
 				25A8177801B6A5240ECA149E,
 				9C04852A01CFF9CE0ECA16EA,
-				9C04852B01CFF9CE0ECA16EA,
+				9C64424601F78B4B0ECA16EA,
+				9C64424A01F790750ECA16EA,
+				9C64425101F7AF2D0ECA16EA,
+				9C64425201F7AF2D0ECA16EA,
+				9C64425401F7B1740ECA16EA,
+				9C64425601F7B4E20ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -360,6 +368,8 @@
 				2568C72B017491070ECA149E,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
+				9C64424701F790750ECA16EA,
+				9C64424801F790750ECA16EA,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -797,12 +807,6 @@
 			path = WebView.subproj/WKWebView.h;
 			refType = 2;
 		};
-		9C04852301CFF9CE0ECA16EA = {
-			isa = PBXFileReference;
-			name = WKWebController.mm;
-			path = WebView.subproj/WKWebController.mm;
-			refType = 2;
-		};
 		9C04852401CFF9CE0ECA16EA = {
 			isa = PBXFileReference;
 			name = WKWebViewPrivate.h;
@@ -856,12 +860,6 @@
 		};
 		9C04852A01CFF9CE0ECA16EA = {
 			fileRef = 9C04852001CFF9CE0ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C04852B01CFF9CE0ECA16EA = {
-			fileRef = 9C04852301CFF9CE0ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -926,6 +924,123 @@
 				);
 			};
 		};
+		9C64424501F78B4B0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebViewPrivate.mm;
+			path = WebView.subproj/WKWebViewPrivate.mm;
+			refType = 2;
+		};
+		9C64424601F78B4B0ECA16EA = {
+			fileRef = 9C64424501F78B4B0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C64424701F790750ECA16EA = {
+			isa = PBXFileReference;
+			name = WKException.h;
+			path = Misc.subproj/WKException.h;
+			refType = 2;
+		};
+		9C64424801F790750ECA16EA = {
+			isa = PBXFileReference;
+			name = WKException.m;
+			path = Misc.subproj/WKException.m;
+			refType = 2;
+		};
+		9C64424901F790750ECA16EA = {
+			fileRef = 9C64424701F790750ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C64424A01F790750ECA16EA = {
+			fileRef = 9C64424801F790750ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C64424B01F7AF2D0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKDefaultWebController.h;
+			path = WebView.subproj/WKDefaultWebController.h;
+			refType = 2;
+		};
+		9C64424C01F7AF2D0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKDefaultWebController.mm;
+			path = WebView.subproj/WKDefaultWebController.mm;
+			refType = 2;
+		};
+		9C64424D01F7AF2D0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKDefaultWebControllerPrivate.h;
+			path = WebView.subproj/WKDefaultWebControllerPrivate.h;
+			refType = 2;
+		};
+		9C64424E01F7AF2D0ECA16EA = {
+			isa = PBXFileReference;
+			name = WKDefaultWebControllerPrivate.mm;
+			path = WebView.subproj/WKDefaultWebControllerPrivate.mm;
+			refType = 2;
+		};
+		9C64424F01F7AF2D0ECA16EA = {
+			fileRef = 9C64424B01F7AF2D0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		9C64425001F7AF2D0ECA16EA = {
+			fileRef = 9C64424D01F7AF2D0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		9C64425101F7AF2D0ECA16EA = {
+			fileRef = 9C64424C01F7AF2D0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C64425201F7AF2D0ECA16EA = {
+			fileRef = 9C64424E01F7AF2D0ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C64425301F7B1740ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebDataSourcePrivate.mm;
+			path = WebView.subproj/WKWebDataSourcePrivate.mm;
+			refType = 2;
+		};
+		9C64425401F7B1740ECA16EA = {
+			fileRef = 9C64425301F7B1740ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C64425501F7B4E20ECA16EA = {
+			isa = PBXFileReference;
+			name = WKWebView.mm;
+			path = WebView.subproj/WKWebView.mm;
+			refType = 2;
+		};
+		9C64425601F7B4E20ECA16EA = {
+			fileRef = 9C64425501F7B4E20ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		9C7CABBB0190A37C0ECA16EA = {
 			children = (
 				9C04851E01CFF9CE0ECA16EA,
@@ -933,8 +1048,14 @@
 				9C04852001CFF9CE0ECA16EA,
 				9C04852101CFF9CE0ECA16EA,
 				9C04852201CFF9CE0ECA16EA,
-				9C04852301CFF9CE0ECA16EA,
 				9C04852401CFF9CE0ECA16EA,
+				9C64424501F78B4B0ECA16EA,
+				9C64424B01F7AF2D0ECA16EA,
+				9C64424C01F7AF2D0ECA16EA,
+				9C64424D01F7AF2D0ECA16EA,
+				9C64424E01F7AF2D0ECA16EA,
+				9C64425301F7B1740ECA16EA,
+				9C64425501F7B4E20ECA16EA,
 			);
 			isa = PBXGroup;
 			name = WebView;

@@ -1,3 +1,16 @@
+2002-01-18  Richard Williamson  <rjw@apple.com>
+
+    First pass at new view/datasource/controller API.
+
+	* src/kwq/KWQApplication.mm: (QApplication::QApplication),
+	(QApplication::setMainWidget), (QApplication::exec):
+	* src/kwq/KWQRegion.mm: (QRegion::QRegion), (QRegion::~QRegion),
+	(QRegion::contains), (QRegion::isNull):
+	* src/kwq/Makefile.am:
+	* src/kwq/_KWQOwner.h:
+	* src/kwq/_KWQOwner.m:
+	* src/kwq/qt/qnamespace.h:
+
 2002-01-18  Maciej Stachowiak  <mjs@apple.com>
 
 	Avoid static initialization of objects as much as possible. Order

@@ -37,7 +37,8 @@ void QRegion::_initialize() {
 QRegion::QRegion()
 {
     _initialize();
-    data->path = [[NSBezierPath bezierPath] retain];
+    // Create lazily - RJW
+    //data->path = [[NSBezierPath bezierPath] retain];
 }
 
 QRegion::QRegion(const QRect &rect)
@@ -83,7 +84,8 @@ QRegion::QRegion(const QRegion &other)
 
 QRegion::~QRegion()
 {
-    [data->path release];
+    if (data->path)
+        [data->path release];
     free(data);
 }
 
@@ -99,12 +101,16 @@ bool QRegion::contains(const QPoint &point) const
 
     nspoint = NSMakePoint(point.x(), point.y());
     
-    return [data->path containsPoint:nspoint] ? 1 : 0;
+    if (data->path)
+        return [data->path containsPoint:nspoint] ? 1 : 0;
+    return 0;
 }
 
 bool QRegion::isNull() const
 {
-    return [data->path elementCount] == 0 ? 1 : 0;
+    if (data->path)
+        return [data->path elementCount] == 0 ? 1 : 0;
+    return 1;
 }
 
 QRegion &QRegion::operator=(const QRegion &other)
