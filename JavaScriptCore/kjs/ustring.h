@@ -387,6 +387,14 @@ namespace KJS {
     uint32_t toStrictUInt32(bool *ok = 0) const;
 
     /**
+     * Attempts an conversion to an array index. The "ok" boolean will be set
+     * to true if it is a valid array index according to the rule from
+     * ECMA 15.2 about what an array index is. It must exactly match the string
+     * form of an unsigned integer, and be less than 2^32 - 1.
+     */
+    unsigned toArrayIndex(bool *ok = 0) const;
+
+    /**
      * @return Position of first occurrence of f starting at position pos.
      * -1 if the search was not successful.
      */

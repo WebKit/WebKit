@@ -53,6 +53,7 @@ namespace KJS {
         unsigned long toULong(bool *ok) const { return _ustring.toULong(ok); }
         uint32_t toUInt32(bool *ok) const { return _ustring.toUInt32(ok); }
         uint32_t toStrictUInt32(bool *ok) const { return _ustring.toStrictUInt32(ok); }
+        unsigned toArrayIndex(bool *ok) const { return _ustring.toArrayIndex(ok); }
         double toDouble() const { return _ustring.toDouble(); }
         
         static const Identifier &null();

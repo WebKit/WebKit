@@ -70,25 +70,14 @@ ArrayInstanceImp::~ArrayInstanceImp()
   free(storage);
 }
 
-// Rule from ECMA 15.2 about what an array index is.
-// Must exactly match string form of an unsigned integer, and be less than 2^32 - 1.
-bool getArrayIndex(const Identifier &propertyName, unsigned &index)
-{
-  bool ok;
-  unsigned i = propertyName.toStrictUInt32(&ok);
-  if (!ok || i >= 0xFFFFFFFFU)
-    return false;
-  index = i;
-  return true;
-}
-
 Value ArrayInstanceImp::get(ExecState *exec, const Identifier &propertyName) const
 {
   if (propertyName == lengthPropertyName)
     return Number(length);
 
-  unsigned index;
-  if (getArrayIndex(propertyName, index)) {
+  bool ok;
+  unsigned index = propertyName.toArrayIndex(&ok);
+  if (ok) {
     if (index >= length)
       return Undefined();
     if (index < storageLength) {
@@ -120,8 +109,9 @@ void ArrayInstanceImp::put(ExecState *exec, const Identifier &propertyName, cons
     return;
   }
   
-  unsigned index;
-  if (getArrayIndex(propertyName, index)) {
+  bool ok;
+  unsigned index = propertyName.toArrayIndex(&ok);
+  if (ok) {
     put(exec, index, value, attr);
     return;
   }
@@ -153,8 +143,9 @@ bool ArrayInstanceImp::hasProperty(ExecState *exec, const Identifier &propertyNa
   if (propertyName == lengthPropertyName)
     return true;
   
-  unsigned index;
-  if (getArrayIndex(propertyName, index)) {
+  bool ok;
+  unsigned index = propertyName.toArrayIndex(&ok);
+  if (ok) {
     if (index >= length)
       return false;
     if (index < storageLength) {
@@ -261,8 +252,9 @@ void ArrayInstanceImp::setLength(unsigned newLength, ExecState *exec)
     ReferenceListIterator it = sparseProperties.begin();
     while (it != sparseProperties.end()) {
       Reference ref = it++;
-      unsigned index;
-      if (getArrayIndex(ref.getPropertyName(exec), index) && index > newLength) {
+      bool ok;
+      unsigned index = ref.getPropertyName(exec).toArrayIndex(&ok);
+      if (ok && index > newLength) {
 	ref.deleteValue(exec);
       }
     }

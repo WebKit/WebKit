@@ -1,3 +1,29 @@
+2003-08-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by John Sullivan.
+
+        - fixed 3365527 -- subscripting JavaScript strings does not work (leads to hang at www.newmagna.com.au)
+
+        The JavaScript specification says nothing about this, but other browsers seem to give
+        read-only access to the characters in a string as if the string was an array of characters.
+
+        * kjs/array_object.cpp:
+        (ArrayInstanceImp::get): Update to use a public toArrayIndex function instead of our own getArrayIndex
+        function, so we can share with string.
+        (ArrayInstanceImp::put): Ditto.
+        (ArrayInstanceImp::hasProperty): Ditto.
+        (ArrayInstanceImp::setLength): Ditto.
+
+        * kjs/ustring.h: Add toArrayIndex.
+        * kjs/ustring.cpp: (UString::toArrayIndex): Added. Implements the rule from array.
+        * kjs/identifier.h: Add a forwarding function so we can use toArrayIndex.
+
+        * kjs/string_object.cpp:
+        (StringInstanceImp::get): Return a single character string if the property name is an array index.
+        (StringInstanceImp::hasProperty): Return true for property names that are suitable array indices.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Let Xcode be Xcode.
+
 === Safari-92 ===
 
 2003-08-07  Maciej Stachowiak  <mjs@apple.com>
