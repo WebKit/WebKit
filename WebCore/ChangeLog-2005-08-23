@@ -1,3 +1,17 @@
+2003-12-22  John Sullivan  <sullivan@apple.com>
+
+	- WebCore part of fix for <rdar://problem/3515706>: 
+	REGRESSION (100-118): Web Kit printing does not honor Page Setup scale factor
+
+        Reviewed by Darin.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge computePageRectsWithPrintWidth:printHeight:]):
+	renamed method for clarity; now iterates over pages horizontally as well 
+	as vertically; assume x starts at 0 as we were already assuming that y
+	starts at 0; now returns autoreleased result
+
 2003-12-22  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

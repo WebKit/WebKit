@@ -1688,6 +1688,11 @@ static WebHTMLView *lastHitView = nil;
     return [printInfo paperSize].width - [printInfo leftMargin] - [printInfo rightMargin];
 }
 
+- (float)_userScaleFactorForPrintOperation:(NSPrintOperation *)printOperation
+{
+	return [[[[printOperation printInfo] dictionary] objectForKey:NSPrintScalingFactor] floatValue];
+}
+
 - (float)_scaleFactorForPrintOperation:(NSPrintOperation *)printOperation
 {
     float viewWidth = NSWidth([self bounds]);
@@ -1695,7 +1700,11 @@ static WebHTMLView *lastHitView = nil;
         ERROR("%@ has no width when printing", self);
         return 1.0;
     }
-    return MAX(1/PrintingMaximumShrinkFactor, [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth);
+	
+    float userScaleFactor = [self _userScaleFactorForPrintOperation:printOperation];
+    float maxShrinkToFitScaleFactor = 1/PrintingMaximumShrinkFactor;
+    float shrinkToFitScaleFactor = [self _availablePaperWidthForPrintOperation:printOperation]/viewWidth;
+    return userScaleFactor * MAX(maxShrinkToFitScaleFactor, shrinkToFitScaleFactor);
 }
 
 // FIXME 3491344: This is a secret AppKit-internal method that we need to override in order
@@ -1729,9 +1738,11 @@ static WebHTMLView *lastHitView = nil;
     // you'd simply see the printer fonts on screen. As of this writing, this does not happen with Safari.
 
     range->location = 1;
-    float scaleFactor = [self _scaleFactorForPrintOperation:[NSPrintOperation currentOperation]];
-    _private->pageRects = [[self _bridge] computePageRects:NSWidth([self bounds]) 
-                                            withPageHeight:[self _calculatePrintHeight]/scaleFactor];
+    float totalScaleFactor = [self _scaleFactorForPrintOperation:[NSPrintOperation currentOperation]];
+    float userScaleFactor = [self _userScaleFactorForPrintOperation:[NSPrintOperation currentOperation]];
+    [_private->pageRects release];
+    _private->pageRects = [[[self _bridge] computePageRectsWithPrintWidth:NSWidth([self bounds])/userScaleFactor
+                                                             printHeight:[self _calculatePrintHeight]/totalScaleFactor] retain];
     range->length = [_private->pageRects count];
     return YES;
 }

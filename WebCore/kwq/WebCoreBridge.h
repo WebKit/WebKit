@@ -151,7 +151,7 @@ typedef enum {
 - (BOOL)needsLayout;
 - (void)drawRect:(NSRect)rect;
 - (void)adjustPageHeightNew:(float *)newBottom top:(float)oldTop bottom:(float)oldBottom limit:(float)bottomLimit;
-- (NSArray*)computePageRects:(float)pageWidth withPageHeight:(float)pageHeight;
+- (NSArray*)computePageRectsWithPrintWidth:(float)printWidth printHeight:(float)printHeight;
 
 - (void)setUsesInactiveTextBackgroundColor:(BOOL)uses;
 - (BOOL)usesInactiveTextBackgroundColor;
