@@ -1,5 +1,15 @@
 2002-10-20  Darin Adler  <darin@apple.com>
 
+	Redid my fix. It was just an ordering thing. The image had to already be
+	installed as the current image before calling ref(), because in the cached
+	case, you get the loading complete callback right then.
+
+        * khtml/rendering/render_image.cpp: (RenderImage::updateFromElement):
+	Call deref on the old image later. Basically, instead of moving the ref
+	of the new image up, I moved the deref of the old image down.
+
+2002-10-20  Darin Adler  <darin@apple.com>
+
 	Roll out my render_image.cpp change. It was causing a big problem
 	getting images from the cache. I need to study further to figure out why.
 

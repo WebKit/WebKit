@@ -376,10 +376,11 @@ void RenderImage::updateFromElement()
 
     if(new_image && new_image != image && (!style() || !style()->contentObject())) {
         loadEventSent = false;
-        if(image) image->deref(this);
+        CachedImage *old_image = image;
         image = new_image;
         image->ref(this);
         berrorPic = image->isErrorImage();
+        if (old_image) old_image->deref(this);
     }
 
     if (element()->id() == ID_INPUT)
