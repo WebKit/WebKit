@@ -1,3 +1,13 @@
+2003-07-23  Dave Hyatt  <hyatt@apple.com>
+
+	Temporary hack to ensure that the layout tests will not all
+	be failures if/when the layout tests regression gets fixed.
+	Will remove once we can run the tests.
+	
+        Reviewed by ken
+
+        * khtml/rendering/render_block.cpp:
+
 2003-07-22  Dave Hyatt  <hyatt@apple.com>
 
 	Allow HTML and BODY to be any display type.  This patch primarily eliminates the
