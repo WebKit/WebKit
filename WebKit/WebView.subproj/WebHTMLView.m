@@ -2420,14 +2420,41 @@ static WebHTMLView *lastHitView = nil;
     ERROR("unimplemented");
 }
 
+- (DOMCSSStyleDeclaration *)_colorPanelColorAsStyleUsingSelector:(SEL)selector
+{
+    WebBridge *bridge = [self _bridge];
+    DOMCSSStyleDeclaration *style = [[bridge DOMDocument] createCSSStyleDeclaration];
+    NSColor *color = [[NSColorPanel sharedColorPanel] color];
+    NSString *colorAsString = [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", [color redComponent]*255, [color greenComponent]*255, [color blueComponent]*255];
+    ASSERT([style respondsToSelector:selector]);
+    [style performSelector:selector withObject:colorAsString];
+    
+    return style;
+}
+
+- (void)_changeCSSColorUsingSelector:(SEL)selector
+{
+    DOMCSSStyleDeclaration *style = [self _colorPanelColorAsStyleUsingSelector:selector];
+    WebView *webView = [self _webView];
+    WebBridge *bridge = [self _bridge];
+    if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
+        [bridge applyStyle:style];
+    }
+}
+
 - (void)changeDocumentBackgroundColor:(id)sender
 {
-    ERROR("unimplemented");
+    [self _changeCSSColorUsingSelector:@selector(setBackgroundColor:)];
 }
 
 - (void)changeColor:(id)sender
 {
-    ERROR("unimplemented");
+    // FIXME: in NSTextView, this method calls changeDocumentBackgroundColor: when a
+    // private call has earlier been made by [NSFontFontEffectsBox changeColor:], see 3674493. 
+    // AppKit will have to be revised to allow this to work with anything that isn't an 
+    // NSTextView. However, this might not be required for Tiger, since the background-color 
+    // changing box in the font panel doesn't work in Mail (3674481), though it does in TextEdit.
+    [self _changeCSSColorUsingSelector:@selector(setColor:)];
 }
 
 - (void)alignCenter:(id)sender

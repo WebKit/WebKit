@@ -1,3 +1,21 @@
+2004-06-01  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin.
+        
+        - fixed <rdar://problem/3657003>: (HTML Editing: Color panel doesn't work)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _colorPanelColorAsStyleUsingSelector:]):
+        new method, returns a DOMCSSStyleDeclaration *
+        (-[WebHTMLView _changeCSSColorUsingSelector:]):
+        new method, sets a color-related style attribute on the selection
+        (-[WebHTMLView changeDocumentBackgroundColor:]):
+        call _changeCSSColorUsingSelector: with @selector(setBackgroundColor:)
+        (-[WebHTMLView changeColor:]):
+        call _changeCSSColorUsingSelector: with @selector(setColor:); also added
+        comments explaining why changeDocumentBackgroundColor: will never actually
+        be called until an AppKit code-incest mess is straighted out.
+
 2004-06-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
