@@ -1,3 +1,14 @@
+2004-05-22  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3664260>: (JS needs to listen to timezone change notifications)
+
+        * kjs/date_object.cpp: (CopyLocalTimeZone): As per Chris Kane and Jordan Hubbard, use <notify.h>
+        with a hardcoded string of "com.apple.system.timezone", and do CFTimeZoneResetSystem since
+        CoreFoundation doesn't do this itself. Turns out this affects the default time zone as long as
+        it hasn't been set explicitly.
+
 === Safari-141 ===
 
 2004-05-20  Richard Williamson   <rjw@apple.com>
