@@ -182,7 +182,7 @@
         [dataSource _setEncoding:[handle characterSet]];
         
         // retain the downloadProgressHandler just in case this is a download.
-        // Alexander releases the WebController if no window is created for it.
+        // Alexander releases the IFWebController if no window is created for it.
         // This happens in the cases mentioned in 2981866 and 2965312.
         downloadProgressHandler = [[[dataSource controller] downloadProgressHandler] retain];
         
