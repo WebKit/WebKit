@@ -416,6 +416,26 @@ static char *newCString(NSString *string)
 #endif
 }
 
+- (void)removeTrackingRect
+{
+    if (trackingTag) {
+        [self removeTrackingRect:trackingTag];
+        // Must release the window to balance the retain in resetTrackingRect.
+        [[self window] release];
+        trackingTag = 0;
+    }
+}
+
+- (void)resetTrackingRect
+{
+    [self removeTrackingRect];
+    if (isStarted) {
+        // Must retain the window so that removeTrackingRect can work after the window is closed.
+        [[self window] retain];
+        trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
+    }
+}
+
 -(void)start
 {
     NSNotificationCenter *notificationCenter;
@@ -472,17 +492,17 @@ static char *newCString(NSString *string)
     
     eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent window:theWindow];
     [eventSender sendNullEvents];
-    trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
+    [self resetTrackingRect];
 }
 
 - (void)stop
 {
+    [self removeTrackingRect];
+    
     if (!isStarted)
         return;
     isStarted = NO;
 
-    [self removeTrackingRect:trackingTag];
-    
     // Stop any active streams
     [streams makeObjectsPerformSelector:@selector(stop)];
     
@@ -604,10 +624,19 @@ static char *newCString(NSString *string)
     return YES;
 }
 
+- (void)viewWillMoveToWindow:(NSWindow *)newWindow
+{
+    // We must remove the tracking rect before we move to the new window.
+    // Once we move to the new window, it will be too late.
+    [self removeTrackingRect];
+    [super viewWillMoveToWindow:newWindow];
+}
+
 - (void)viewDidMoveToWindow
 {
     if (![self window])
         [self stop];
+    [self resetTrackingRect];
     [super viewDidMoveToWindow];
 }
 
@@ -618,8 +647,7 @@ static char *newCString(NSString *string)
     [self setUpWindowAndPort];
 
     // reset the tracking rect
-    [self removeTrackingRect:trackingTag];
-    trackingTag = [self addTrackingRect:[self bounds] owner:self userData:nil assumeInside:NO];
+    [self resetTrackingRect];
 }
 
 -(void) windowBecameKey:(NSNotification *)notification

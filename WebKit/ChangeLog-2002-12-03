@@ -1,5 +1,19 @@
 2002-07-10  Darin Adler  <darin@apple.com>
 
+	- fixed 2983025 -- crash in sendEvent on pages with flash playing
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView removeTrackingRect]): New, removes tracking rect and releases window.
+        (-[IFPluginView resetTrackingRect]): New, adds tracking rect and retains window.
+        (-[IFPluginView start]): Use resetTrackingRect.
+        (-[IFPluginView stop]): Use removeTrackingRect.
+        (-[IFPluginView viewWillMoveToWindow:]): Call removeTrackingRect because the window
+	will change by the time we get to viewDidMoveToWindow.
+        (-[IFPluginView viewDidMoveToWindow]): Call resetTrackingRect.
+        (-[IFPluginView viewHasMoved:]): Call resetTrackingRect.
+
+2002-07-10  Darin Adler  <darin@apple.com>
+
         * WebView.subproj/IFWebViewPrivate.mm:
         (-[IFWebView _scrollToBottomLeft]): Fix this to use the document view to define what
 	the bottom left is, not the content view (which is often much smaller than the document).
