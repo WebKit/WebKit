@@ -99,6 +99,9 @@ public:
 
     virtual void selectionStartEnd(int& spos, int& epos);
 
+    QRect printRect() const { return m_printRect; }
+    void setPrintRect(const QRect& r) { m_printRect = r; }
+
 protected:
 
     KHTMLView *m_view;
@@ -120,6 +123,7 @@ protected:
     int m_truncatedAt;
     
     int m_maximalOutlineSize; // Used to apply a fudge factor to dirty-rect checks on blocks/tables.
+    QRect m_printRect; // Used when printing.
 };
 
 };

@@ -403,22 +403,15 @@ void RenderListMarker::paint(PaintInfo& i, int _tx, int _ty)
     }
 
     bool isPrinting = (p->device()->devType() == QInternal::Printer);
-    if (isPrinting)
-    {
+    if (isPrinting) {
         if (_ty < i.r.y())
-        {
             // This has been printed already we suppose.
             return;
-        }
-        if (_ty + m_height + paddingBottom() + borderBottom() >= i.r.y() + i.r.height())
-        {
-            RenderCanvas *rootObj = canvas();
-            if (_ty < rootObj->truncatedAt())
-#if APPLE_CHANGES
-                rootObj->setBestTruncatedAt(_ty, this);
-#else
-                rootObj->setTruncatedAt(_ty);
-#endif
+        
+        RenderCanvas* c = canvas();
+        if (_ty + m_height + paddingBottom() + borderBottom() >= c->printRect().y() + c->printRect().height()) {
+            if (_ty < c->truncatedAt())
+                c->setBestTruncatedAt(_ty, this);
             // Let's print this on the next page.
             return; 
         }
