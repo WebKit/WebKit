@@ -1,3 +1,17 @@
+2003-07-11  Dave Hyatt  <hyatt@apple.com>
+
+	Make sure image compositing obeys the current global alpha that
+	is in effect, e.g., if someone has set an opacity within the
+	current layer.
+
+	It's worth noting that I'm not even sure *why* this patch works,
+	but it does, even with nested opacity layers.
+	
+        Reviewed by darin
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer drawClippedToValidInRect:fromRect:]):
+
 === Safari-89 ===
 
 2003-07-10  Richard Williamson   <rjw@apple.com>

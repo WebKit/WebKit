@@ -10,6 +10,8 @@
 #import <WebCore/WebCoreImageRenderer.h>
 #import <WebKit/WebAssertions.h>
 
+#import <CoreGraphics/CGContextGState.h>
+
 extern NSString *NSImageLoopCount;
 
 #define MINIMUM_DURATION (1.0/30.0)
@@ -277,7 +279,8 @@ static NSMutableSet *activeImageRenderers;
     }
     
     // This is the operation that handles transparent portions of the source image correctly.
-    [self drawInRect:ir fromRect:fr operation:NSCompositeSourceOver fraction:1.0];
+    CGContextRef context = (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+    [self drawInRect:ir fromRect:fr operation:NSCompositeSourceOver fraction:CGContextGetAlpha(context)];
 }
 
 - (void)nextFrame:(id)context
