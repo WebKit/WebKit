@@ -1,3 +1,8 @@
+2002-07-17  Richard Williamson  <rjw@apple.com>
+
+        * WebView.subproj/WebHTMLView.m:
+        Removed unnecessary (and incorrect) lockFocus.
+        
 2002-07-17  Maciej Stachowiak  <mjs@apple.com>
 
 	Some refactoring in preparation for the KHTMLPart change.

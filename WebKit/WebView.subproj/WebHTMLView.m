@@ -294,8 +294,6 @@
 #ifdef _KWQ_TIMING
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-
-    [self lockFocus];
     
     //double start = CFAbsoluteTimeGetCurrent();
     [[self _bridge] drawRect:rect];
@@ -318,8 +316,6 @@
     [path closePath];
     [path stroke];
 #endif
-
-    [self unlockFocus];
 
 #ifdef _KWQ_TIMING
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
