@@ -1,4 +1,17 @@
-=== Safari-125 ===
+2004-01-21  David Hyatt  <hyatt@apple.com>
+
+	Add some methods to dicts and stacks that exist in Qt.
+	
+        Reviewed by darin
+
+        * kwq/KWQDict.h:
+        (QDict::replace):
+        * kwq/KWQPtrDict.h:
+        (QPtrDict::replace):
+        (QPtrDict::find):
+        * kwq/KWQPtrStack.h:
+        (QPtrStack::current):
+        (QPtrStack::setAutoDelete):
 
 2004-01-19  Maciej Stachowiak  <mjs@apple.com>
 

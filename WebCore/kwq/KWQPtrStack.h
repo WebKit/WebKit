@@ -36,7 +36,10 @@ public:
     void push(const T *item) { list.append (item); }
     T *pop() { T *tmp = list.getLast(); list.removeLast(); return tmp; }
     uint count() const { return list.count(); }
-
+    T* current() const { return list.getLast(); }
+    
+    void setAutoDelete(bool b) { list.setAutoDelete(b); }
+    
  private:
     QPtrList<T> list;
 
