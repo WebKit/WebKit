@@ -99,7 +99,7 @@
 {
     ASSERT(frame != nil);
 
-    WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithURL:URL referrer:[self referrer]];
+    WebController *newController = [[[frame controller] windowOperationsDelegate] createWindowWithRequest:[WebResourceRequest requestWithURL:URL]];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
 }

@@ -831,10 +831,10 @@ static const char * const stateNames[] = {
 	}
 	break;
     case WebClickPolicyOpenNewWindow:
-	[controller _openNewWindowWithURL:[request URL] referrer:[[self _bridge] referrer] behind:NO];
+	[controller _openNewWindowWithRequest:request behind:NO];
 	break;
     case WebClickPolicyOpenNewWindowBehind:
-	[controller _openNewWindowWithURL:[request URL] referrer:[[self _bridge] referrer] behind:YES];
+	[controller _openNewWindowWithRequest:request behind:YES];
 	break;
     case WebClickPolicySave:
     case WebClickPolicySaveAndOpenExternally:

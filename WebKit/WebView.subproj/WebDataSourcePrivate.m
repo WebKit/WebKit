@@ -60,6 +60,7 @@
     [provisionalBackForwardItem release];
     [previousBackForwardItem release];
     [ourBackForwardItems release];
+    [triggeringEvent release];
 
     [super dealloc];
 }
@@ -579,4 +580,17 @@
     return _private->originalRequest;
 }
 
+- (void)_setTriggeringEvent:(NSEvent *)event
+{
+    [event retain];
+    [_private->triggeringEvent release];
+    _private->triggeringEvent = event;
+}
+
+- (NSEvent *)_triggeringEvent
+{
+    return [[_private->triggeringEvent retain] autorelease];
+}
+
 @end
+

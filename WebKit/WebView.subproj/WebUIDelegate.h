@@ -19,15 +19,14 @@
 @protocol WebWindowOperationsDelegate <NSObject>
 
 /*!
-    @method createWindowWithURL:referrer:
-    @abstract Create a new window and begin to load the specified URL.
+    @method createWindowWithRequest:
+    @abstract Create a new window and begin to load the specified request.
     @discussion The newly created window is hidden, and the window operations delegate on the
     new controllers will get a showWindow or showWindowBehindFrontmost call.
-    @param URL The URL to load, may be nil.
-    @param referrer The referrer to use when loading the URL.
+    @param request The request to load.
     @result The WebController for the WebView in the new window.
 */
-- (WebController *)createWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer;
+- (WebController *)createWindowWithRequest:(WebResourceRequest *)request;
 
 /*!
     @method showWindow

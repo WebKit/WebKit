@@ -12,6 +12,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebWindowOperationsDelegate.h>
 
+#import <WebFoundation/WebHTTPResourceRequest.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebFoundation/WebResourceHandle.h>
 #import <WebFoundation/WebResourceRequest.h>
@@ -98,7 +99,14 @@
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     WebController *controller = [webFrame controller];
-    [controller _openNewWindowWithURL:URL referrer:[[webFrame _bridge] referrer] behind:NO];
+    
+    WebResourceRequest *request = [WebResourceRequest requestWithURL:URL];
+    NSString *referrer = [[webFrame _bridge] referrer];
+    if (referrer) {
+	[request setReferrer:referrer];
+    }
+    
+    [controller _openNewWindowWithRequest:request behind:NO];
 }
 
 - (void)downloadURL:(NSURL *)URL

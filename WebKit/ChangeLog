@@ -1,3 +1,27 @@
+2002-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+	Changed things so that creating a window takes a request rather
+	than a URL and referrer.
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _openNewWindowWithRequest:behind:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _setTriggeringEvent:]):
+        (-[WebDataSource _triggeringEvent]):
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultContextMenuDelegate openNewWindowWithURL:]):
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame setProvisionalDataSource:]):
+        (-[WebFrame findOrCreateFramedNamed:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _continueAfterClickPolicyForEvent:request:]):
+        * WebView.subproj/WebWindowOperationsDelegate.h:
+
 2002-11-06  Darin Adler  <darin@apple.com>
 
 	- fixed problem where files small enough to fit entirely in the buffer

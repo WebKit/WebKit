@@ -252,9 +252,9 @@
     return frame;
 }
 
-- (WebController *)_openNewWindowWithURL:(NSURL *)URL referrer:(NSString *)referrer behind:(BOOL)behind
+- (WebController *)_openNewWindowWithRequest:(WebResourceRequest *)request behind:(BOOL)behind
 {
-    WebController *newWindowController = [[self windowOperationsDelegate] createWindowWithURL:URL referrer:referrer];
+    WebController *newWindowController = [[self windowOperationsDelegate] createWindowWithRequest:request];
     if (behind) {
         [[newWindowController windowOperationsDelegate] showWindowBehindFrontmost];
     } else {

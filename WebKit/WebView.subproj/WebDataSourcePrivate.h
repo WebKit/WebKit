@@ -77,6 +77,11 @@
     WebHistoryItem *previousBackForwardItem;
     // BF items that reference what we loaded - we must keep their titles up to date
     NSMutableArray *ourBackForwardItems;
+
+    // The event that triggered loading of this data source, if any -
+    // we keep this around for the benefit of the various policy
+    // handlers.
+    NSEvent *triggeringEvent;
 }
 
 @end
@@ -133,5 +138,8 @@
 
 - (void)_defersCallbacksChanged;
 - (WebResourceRequest *)_originalRequest;
+
+- (void)_setTriggeringEvent:(NSEvent *)event;
+- (NSEvent *)_triggeringEvent;
 
 @end

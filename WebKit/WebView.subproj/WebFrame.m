@@ -138,8 +138,9 @@
 
     [self _setLoadType: WebFrameLoadTypeStandard];
 
-    // _shouldShowURL asks the client for the URL policies and reports errors if there are any
+    // _shouldShowRequest asks the client for the URL policies and reports errors if there are any
     // returns YES if we should show the data source
+
     if (![self _shouldShowRequest:[newDataSource request]]) {
         return NO;
     }
@@ -238,7 +239,7 @@
 
     if(!frame){
         WebController *controller = [[[self controller] windowOperationsDelegate]
-                                        createWindowWithURL:nil referrer:[[self _bridge] referrer]];
+                                        createWindowWithRequest:nil];
         
         [controller _setTopLevelFrameName:name];
         [[controller windowOperationsDelegate] showWindow];
