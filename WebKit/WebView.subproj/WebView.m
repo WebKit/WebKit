@@ -427,6 +427,8 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
 // Get the appropriate user-agent string for a particular URL.
 - (NSString *)userAgentForURL:(NSURL *)URL
 {
+    // FIXME: Lock can go away once WebFoundation's user agent API is replaced with something
+    // that's thread safe.
     [_private->userAgentLock lock];
     NSString *result = [[_private->userAgentOverride copy] autorelease];
     [_private->userAgentLock unlock];
@@ -435,46 +437,72 @@ NSString * WebContextMenuElementFrameKey = @"WebContextFrame";
     }
 
     // Note that we currently don't look at the URL.
-    // If we find that we need different user agent strings for different web pages
+    // If we find that we need to spoof different user agent strings for different web pages
     // for best results, then that logic will go here.
 
     // FIXME: Incorporate applicationNameForUserAgent in this string so that people
-    // can tell that they are talking to Alexander. Maybe also incorporate something
-    // that identifies WebKit's involvement.
+    // can tell that they are talking to Alexander and not another WebKit client.
+    // Maybe also incorporate something that identifies WebKit's involvement.
+    
     return @"Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715";
 }
 
 - (BOOL)supportsTextEncoding
 {
-    // FIXME: Implement this.
-    return YES;
+    id documentView = [[[self mainFrame] webView] documentView];
+    return [documentView conformsToProtocol:@protocol(WebDocumentTextEncoding)]
+        && [documentView supportsTextEncoding];
 }
 
 - (void)setCustomTextEncoding:(CFStringEncoding)encoding
 {
-    // FIXME: Implement this.
+    if (encoding == kCFStringEncodingInvalidId) {
+        ERROR("setCustomTextEncoding called with kCFStringEncodingInvalidId");
+        return;
+    }
+    
+    if ([self hasCustomTextEncoding] && encoding == [self customTextEncoding]) {
+        return;
+    }
+
+    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:encoding];
 }
 
 - (void)resetTextEncoding
 {
-    // FIXME: Implement this.
+    if (![self hasCustomTextEncoding]) {
+        return;
+    }
+    
+    [[self mainFrame] _reloadAllowingStaleDataWithOverrideEncoding:kCFStringEncodingInvalidId];
+}
+
+- (CFStringEncoding)_mainFrameOverrideEncoding
+{
+    WebDataSource *dataSource = [[self mainFrame] provisionalDataSource];
+    if (dataSource == nil) {
+        dataSource = [[self mainFrame] dataSource];
+    }
+    if (dataSource == nil) {
+        return kCFStringEncodingInvalidId;
+    }
+    return [dataSource _overrideEncoding];
 }
 
 - (BOOL)hasCustomTextEncoding
 {
-    // FIXME: Implement this.
-    return NO;
+    return [self _mainFrameOverrideEncoding] != kCFStringEncodingInvalidId;
 }
 
 - (CFStringEncoding)customTextEncoding
 {
-    if (![self hasCustomTextEncoding]) {
+    CFStringEncoding result = [self _mainFrameOverrideEncoding];
+    
+    if (result == kCFStringEncodingInvalidId) {
         ERROR("must not ask for customTextEncoding is hasCustomTextEncoding is NO");
-        return kCFStringEncodingInvalidId;
     }
 
-    // FIXME: Implement this.
-    return kCFStringEncodingInvalidId;
+    return result;
 }
 
 @end

@@ -700,9 +700,27 @@ static const char * const stateNames[] = {
     [[self dataSource] _defersCallbacksChanged];
 }
 
-- (void)_reloadAllowingStaleData
+- (void)_reloadAllowingStaleDataWithOverrideEncoding:(CFStringEncoding)encoding
 {
-    // FIXME: Implement.
+    WebDataSource *dataSource = [self dataSource];
+    if (dataSource == nil) {
+	return;
+    }
+
+    WebResourceRequest *request = [[dataSource request] copy];
+    [request setRequestCachePolicy:WebRequestCachePolicyReturnCacheObjectLoadFromOriginIfNoCacheObject];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    [request release];
+    
+    [newDataSource _setParent:[dataSource parent]];
+    [newDataSource _setOverrideEncoding:encoding];
+    
+    if ([self setProvisionalDataSource:newDataSource]) {
+	[self _setLoadType:WebFrameLoadTypeReloadAllowingStaleData];
+        [self startLoading];
+    }
+    
+    [newDataSource release];
 }
 
 @end

@@ -140,6 +140,11 @@
 {
     // Non-retained.
     _private->parent = p;
+    
+    // Inherit the override encoding setting from the parent.
+    if (p) {
+        _private->overrideEncoding = p->_private->overrideEncoding;
+    }
 }
 
 - (void)_setPrimaryLoadComplete: (BOOL)flag

@@ -97,6 +97,6 @@ typedef enum {
 
 - (void)_defersCallbacksChanged;
 
-- (void)_reloadAllowingStaleData;
+- (void)_reloadAllowingStaleDataWithOverrideEncoding:(CFStringEncoding)encoding;
 
 @end

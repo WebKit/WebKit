@@ -26,10 +26,7 @@
 @end
 
 @protocol WebDocumentTextEncoding <NSObject>
-- (CFStringEncoding)textEncoding;
-- (void)setTextEncoding: (CFStringEncoding)encoding;
-- (void)setDefaultTextEncoding;
-- (BOOL)usingDefaultTextEncoding;
+- (BOOL)supportsTextEncoding;
 @end
 
 @protocol WebDocumentRepresentation <NSObject>

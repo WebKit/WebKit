@@ -630,28 +630,9 @@
     return [NSArray arrayWithObject:filename];
 }
 
-- (CFStringEncoding)textEncoding
+- (BOOL)supportsTextEncoding
 {
-    return [[self _bridge] textEncoding];
-}
-
-- (void)setTextEncoding:(CFStringEncoding)encoding
-{
-    WebFrame *frame = [self _frame];
-    [frame reload];
-    [[frame provisionalDataSource] _setOverrideEncoding:encoding];
-}
-
-- (void)setDefaultTextEncoding
-{
-    WebFrame *frame = [self _frame];
-    [frame reload];
-    [[frame provisionalDataSource] _setOverrideEncoding:kCFStringEncodingInvalidId];
-}
-
-- (BOOL)usingDefaultTextEncoding
-{
-    return [[[self _frame] dataSource] _overrideEncoding] == kCFStringEncodingInvalidId;
+    return YES;
 }
 
 - (NSView *)nextKeyView

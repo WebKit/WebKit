@@ -190,21 +190,23 @@
 - (void)reload
 {
     WebDataSource *dataSource = [self dataSource];
-    WebResourceRequest *request;
-    
     if (dataSource == nil) {
 	return;
     }
 
-    request = [[dataSource request] copy];
+    WebResourceRequest *request = [[dataSource request] copy];
     [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
-
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
+    [request release];
+    
     [newDataSource _setParent:[dataSource parent]];
+    [newDataSource _setOverrideEncoding:[dataSource _overrideEncoding]];
+    
     if ([self setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeReload];
         [self startLoading];
     }
+    
     [newDataSource release];
 }
 

@@ -1,3 +1,35 @@
+2002-09-13  Darin Adler  <darin@apple.com>
+
+	- fixed 3031685 -- The text encoding setting is not propagated to subframes
+
+        * WebView.subproj/WebDocument.h: Remove old WebDocumentTextEncoding methods,
+	add supportsTextEncoding.
+        * WebView.subproj/WebController.m:
+        (-[WebController supportsTextEncoding]): Check the document view to see if
+	it supports WebDocumentTextEncoding and returns YES.
+        (-[WebController setCustomTextEncoding:]): Call _reloadAllowingStaleDataWithOverrideEncoding.
+        (-[WebController resetTextEncoding]): Ditto.
+        (-[WebController _mainFrameOverrideEncoding]): Added. Gets encoding from the data source
+	of the main frame; provisional if there, main if not.
+        (-[WebController hasCustomTextEncoding]): Call _mainFrameOverrideEncoding.
+        (-[WebController customTextEncoding]): Ditto.
+
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setParent:]): Set the override encoding to the parent's.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload]): Release request to fix storage leak. Set the override encoding
+	on the new data source to match the old.
+
+        * WebView.subproj/WebFramePrivate.h: New name for stale data reload method.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _reloadAllowingStaleDataWithOverrideEncoding:]): Do pretty much the
+	same thing reload does with a few differences. Get the encoding from the parameter
+	rather than the old data source, and set the policy to the one that uses data from
+	the cache, even stale data, if present
+
+        * WebView.subproj/WebHTMLView.m:  (-[WebHTMLView supportsTextEncoding]): Return YES.
+
 2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
 
         Adding padding and widths buffer to our canonical measurement
