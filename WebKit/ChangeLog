@@ -1,3 +1,19 @@
+2003-03-25  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Richard
+
+	Fixed a bug that could occur in the new immutable/mutable
+	request scheme. When opening a javascript window, it was
+	possible for a request passed as a method argument to be
+	released during the course of a method, particularly
+	after that request was passed to willSendRequest:.
+	The solution is to ask the data source for its current
+	request rather than using the one stored in the method
+	argument.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient startLoading:]):
+
 2003-03-24  Trey Matteson  <trey@apple.com>
 
 	Pass -seg_addr_table_filename <FILENAME> to ld.  This makes our frameworks in

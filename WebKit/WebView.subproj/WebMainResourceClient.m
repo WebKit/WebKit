@@ -272,7 +272,7 @@
 	[self resource:resource willSendRequest:r];
 
 	WebResponse *rsp = [[WebResponse alloc] init];
-	[rsp setURL:[r URL]];
+	[rsp setURL:[[[self dataSource] request] URL]];
 	[rsp setContentType:@"text/html"];
 	[rsp setContentLength:0];
 	[self resource:resource didReceiveResponse:rsp];
