@@ -155,7 +155,6 @@
 
 - (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete
 {
-    ASSERT(error);
     ASSERT(dataSource);
 #ifndef NDEBUG
     if (![dataSource isDownloading])

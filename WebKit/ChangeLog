@@ -1,3 +1,17 @@
+2003-01-27  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3151241.  Cleanly handle nil return from resource:willSendRequest:fromDataSource:.
+        
+        Reviewed by trey.
+
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate handleDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate handle:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedError:fromDataSource:complete:]):
+
 2003-01-27  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3156744 -- REGRESSION: Renaming bookmarks dragged 

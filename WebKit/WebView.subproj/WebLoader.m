@@ -147,15 +147,24 @@
 
     // Store a copy of the request.
     [request autorelease];
-    request = [newRequest copy];
 
     if (currentURL) {
         [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
-    }    
-    [currentURL release];
-    currentURL = [[request URL] retain];
-    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:controller];
-
+        [currentURL release];
+        currentURL = nil;
+    }
+    
+    // Client may return a nil request, indicating that the request should be aborted.
+    if (newRequest){
+        request = [newRequest copy];
+        currentURL = [[request URL] retain];
+        if (currentURL)
+            [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:currentURL inController:controller];
+    }
+    else {
+        request = nil;
+    }
+    
     return request;
 }
 
@@ -195,6 +204,7 @@
     else
         [resourceLoadDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
 
+    ASSERT(currentURL);
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     [self _releaseResources];
@@ -210,7 +220,9 @@
     else
         [resourceLoadDelegate resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
+    // currentURL may be nil if the request was aborted
+    if (currentURL)
+        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     [self _releaseResources];
 }
@@ -221,7 +233,9 @@
 
     [handle cancel];
     
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
+    // currentURL may be nil if the request was aborted
+    if (currentURL)
+        [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     if (error) {
         if ([self isDownload]) {
