@@ -36,6 +36,9 @@ public:
     HTMLAnchorElementImpl(DocumentPtr *doc);
     ~HTMLAnchorElementImpl();
 
+#if APPLE_CHANGES
+    virtual bool isMouseFocusable() const { return false; } // FIXME: Could perhaps obey a pref for this some day.
+#endif
     virtual bool isFocusable() const;
     virtual Id id() const;
     virtual void parseAttribute(AttributeImpl *attr);

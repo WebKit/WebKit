@@ -1,5 +1,19 @@
 2003-11-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3470855, links with script action stay focused when clicking.
+
+	Fix for 3470858, clicking and dragging a link and then releasing doesn't clear the glow ring.
+
+	Fix for 3472090, link should not be mouse focusable.
+	
+        Reviewed by mjs
+
+        * khtml/css/html4.css:
+        * khtml/html/html_inlineimpl.h:
+        (DOM::HTMLAnchorElementImpl::isMouseFocusable):
+
+2003-11-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3472030, line-height not properly reset in all cases when the font shorthand is used.
 	
         Reviewed by mjs
