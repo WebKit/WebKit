@@ -392,7 +392,7 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
             ++p;
         }
         if (*p == ':') {
-            if (p[1] != '/' && base.protocol().lower() == QString(str, p - str).lower())
+            if (p[1] != '/' && base.protocol().lower() == QString(str, p - str).lower() && base.isHierarchical())
                 str = p + 1;
             else
                 absolute = true;
@@ -1747,4 +1747,12 @@ static QString substituteBackslashes(const QString &string)
     }
 
     return string.left(pathEnd).replace('\\','/') + string.mid(pathEnd);
+}
+
+bool KURL::isHierarchical() const
+{
+    if (!m_isValid)
+        return false;
+    assert(urlString[schemeEndPos] == ':');
+    return urlString[schemeEndPos + 1] == '/';
 }

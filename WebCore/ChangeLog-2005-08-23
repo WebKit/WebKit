@@ -1,5 +1,19 @@
 2005-02-16  John Sullivan  <sullivan@apple.com>
 
+        Written by Darin, reviewed by Maciej and me
+        
+        - change required to make previous checkin work with English language RSS pages
+
+        * kwq/KWQKURL.h:
+        new private method isHierarchical
+        * kwq/KWQKURL.mm:
+        (KURL::KURL):
+        add hierarchical base URL check when determining whether the URL is absolute
+        (KURL::isHierarchical):
+        new method, returns true if this is a valid URL with a slash just past the scheme's trailing colon
+
+2005-02-16  John Sullivan  <sullivan@apple.com>
+
         Written by Darin, reviewed by me.
         
         - WebCore part of fix for <rdar://problem/4007384> 

@@ -88,6 +88,7 @@ public:
     friend bool operator==(const KURL &, const KURL &);
 
 private:
+    bool isHierarchical() const;
     void parse(const char *url, const QString *originalString);
 
 #ifdef CONSTRUCT_CANONICAL_STRING
