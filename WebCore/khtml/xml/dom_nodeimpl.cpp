@@ -30,6 +30,7 @@
 #include "xml/dom_textimpl.h"
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
 #include "css/csshelper.h"
 #include "css/cssstyleselector.h"
@@ -1419,6 +1420,14 @@ bool NodeImpl::inSameRootEditableBlock(NodeImpl *n)
 bool NodeImpl::inSameContainingEditableBlock(NodeImpl *n)
 {
     return n ? containingEditableBlock() == n->containingEditableBlock() : false;
+}
+
+DOMPosition NodeImpl::positionForCoordinates(int x, int y)
+{
+    if (renderer())
+        return renderer()->positionForCoordinates(x, y);
+    
+    return DOMPosition(this, 0);
 }
 
 //-------------------------------------------------------------------------

@@ -89,7 +89,10 @@ public:
     void setPrevOnLine(InlineBox* prev) { m_prev = prev; }
     bool nextOnLineExists() const;
     bool prevOnLineExists() const;
-    
+
+    virtual InlineBox* firstLeafChild();
+    virtual InlineBox* lastLeafChild();
+        
     RenderObject* object() const { return m_object; }
 
     InlineFlowBox* parent() const { return m_parent; }
@@ -189,7 +192,10 @@ public:
     
     InlineBox* firstChild() { return m_firstChild; }
     InlineBox* lastChild() { return m_lastChild; }
-    
+
+    virtual InlineBox* firstLeafChild();
+    virtual InlineBox* lastLeafChild();
+        
     virtual void setConstructed() {
         InlineBox::setConstructed();
         if (m_firstChild)
@@ -270,7 +276,7 @@ public:
     
     RootInlineBox* nextRootBox() { return static_cast<RootInlineBox*>(m_nextLine); }
     RootInlineBox* prevRootBox() { return static_cast<RootInlineBox*>(m_prevLine); }
-    
+
     virtual void adjustVerticalPosition(int delta);
     
     virtual bool isRootInlineBox() { return true; }

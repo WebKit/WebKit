@@ -33,6 +33,7 @@
 #include "rendering/render_canvas.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_position.h"
 #include "html/html_formimpl.h"
 #include "render_block.h"
 
@@ -2016,15 +2017,119 @@ bool RenderBlock::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return inBox;
 }
 
-FindSelectionResult RenderBlock::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&node, int &offset)
+DOMPosition RenderBlock::positionForBox(InlineBox *box, bool start) const
 {
-    if (!firstChild() && element()) {
-        node = element();
-        offset = 0;
-        return SelectionPointBefore;
+    if (!box)
+        return DOMPosition();
+
+    if (!box->object()->element())
+        return DOMPosition(element(), start ? caretMinOffset() : caretMaxOffset());
+
+    if (!box->isInlineTextBox())
+        return DOMPosition(box->object()->element(), start ? box->object()->caretMinOffset() : box->object()->caretMaxOffset());
+
+    InlineTextBox *textBox = static_cast<InlineTextBox *>(box);
+    return DOMPosition(box->object()->element(), start ? textBox->start() : textBox->start() + textBox->len());
+}
+
+DOMPosition RenderBlock::positionForRenderer(RenderObject *renderer, bool start) const
+{
+    if (!renderer)
+        return DOMPosition();
+
+    NodeImpl *node = renderer->element() ? renderer->element() : element();
+    long offset = start ? node->caretMinOffset() : node->caretMaxOffset();
+    return DOMPosition(node, offset);
+}
+
+DOMPosition RenderBlock::positionForCoordinates(int _x, int _y)
+{
+    if (isTable())
+        return RenderFlow::positionForCoordinates(_x, _y); 
+
+    int absx, absy;
+    absolutePosition(absx, absy);
+
+    int top = absy + borderTop() + paddingTop();
+    int bottom = top + contentHeight();
+
+    if (_y < top)
+        // y coordinate is above block
+        return positionForRenderer(firstLeafChild(), true);
+
+    if (_y >= bottom)
+        // y coordinate is below block
+        return positionForRenderer(lastLeafChild(), false);
+
+    if (childrenInline()) {
+        if (!firstRootBox())
+            return DOMPosition(element(), 0);
+            
+        if (_y >= top && _y < absy + firstRootBox()->topOverflow())
+            // y coordinates is above first root line box
+            return positionForBox(firstRootBox()->firstLeafChild(), true);
+        
+        if (_y < bottom && _y >= absy + lastRootBox()->bottomOverflow())
+            // y coordinates is below last root line box
+            return positionForBox(lastRootBox()->lastLeafChild(), false);
+
+        // look for the closest line box in the root box which is at the passed-in y coordinate
+        for (RootInlineBox *root = firstRootBox(); root; root = root->nextRootBox()) {
+            top = absy + root->topOverflow();
+            if (root->nextRootBox())
+                bottom = absy + root->nextRootBox()->topOverflow();
+            else
+                bottom = absy + root->bottomOverflow();
+            if (_y >= top && _y < bottom) {
+                InlineBox *closestBox = root->firstChild();
+                int min = INT_MAX;
+                bool start = true;
+                for (InlineBox *box = root->firstChild(); box; box = box->nextOnLine()) {
+                    int cmp;
+                    cmp = abs(_x - (absx + box->m_x));   
+                    if (cmp < min) { 
+                        closestBox = box; 
+                        min = cmp; 
+                        start = true; 
+                    }
+                    cmp = abs(_x - (absx + box->m_x + box->m_width));  
+                    if (cmp < min) { 
+                        closestBox = box; 
+                        min = cmp; 
+                        start = false; 
+                    }
+                }
+                if (closestBox)
+                    return positionForBox(start ? closestBox->firstLeafChild() : closestBox->lastLeafChild(), start);
+            }
+        }
+        return DOMPosition(element(), 0);
     }
     
-    return RenderFlow::checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
+    // see if any child blocks exist at this y coordinate
+    for (RenderObject *renderer = firstChild(); renderer; renderer = renderer->nextSibling()) {
+        if (renderer->isFloatingOrPositioned())
+            continue;
+        renderer->absolutePosition(absx, top);
+        RenderObject *next = renderer->nextSibling();
+        while (next && next->isFloatingOrPositioned()) {
+            next = next->nextSibling();
+        }
+        if (next) 
+            next->absolutePosition(absx, bottom);
+        else
+            bottom = top + contentHeight();
+        if (_y >= top && _y < bottom) {
+            return renderer->positionForCoordinates(_x, _y);
+        }
+    }
+
+    // pass along to the first child
+    if (firstChild())
+        return firstChild()->positionForCoordinates(_x, _y);
+    
+    // still no luck...return this render object's element, if there isn't one, and offset 0
+    return DOMPosition(element(), 0);
 }
 
 void RenderBlock::calcMinMaxWidth()

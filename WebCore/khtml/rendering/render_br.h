@@ -64,8 +64,6 @@ public:
     virtual unsigned long caretMaxRenderedOffset() const;
     
     virtual void caretPos(int offset, bool override, int &_x, int &_y, int &_w, int &_h);
-    
-    virtual FindSelectionResult checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset);
 
 private:
     int m_x;

@@ -49,6 +49,7 @@ namespace khtml {
 
 namespace DOM {
 
+class DOMPosition;
 class NodeListImpl;
 class NamedNodeMapImpl;
 class DocumentImpl;
@@ -166,6 +167,8 @@ public:
     
     bool inSameRootEditableBlock(NodeImpl *);
     bool inSameContainingEditableBlock(NodeImpl *);
+    
+    DOMPosition positionForCoordinates(int x, int y);
 
     // used by the parser. Doesn't do as many error checkings as
     // appendChild(), and returns the node into which will be parsed next.

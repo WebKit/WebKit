@@ -408,6 +408,11 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
     return reinterpret_cast<NodeImpl *>(_internal);
 }
 
+- (BOOL)isContentEditable
+{
+    return [self _nodeImpl]->isContentEditable();
+}
+
 @end
 
 //------------------------------------------------------------------------------------------

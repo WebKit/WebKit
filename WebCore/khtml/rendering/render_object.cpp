@@ -30,6 +30,7 @@
 #include "rendering/render_canvas.h"
 #include "xml/dom_elementimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_position.h"
 #include "css/cssstyleselector.h"
 #include "misc/htmlhashes.h"
 #include <kdebug.h>
@@ -358,6 +359,32 @@ RenderObject *RenderObject::previousEditable() const
     }
     return 0;
 } 
+
+RenderObject *RenderObject::firstLeafChild() const
+{
+    RenderObject *r = firstChild();
+    while (r) {
+        RenderObject *n = 0;
+        n = r->firstChild();
+        if (!n)
+            break;
+        r = n;
+    }
+    return r;
+}
+
+RenderObject *RenderObject::lastLeafChild() const
+{
+    RenderObject *r = lastChild();
+    while (r) {
+        RenderObject *n = 0;
+        n = r->lastChild();
+        if (!n)
+            break;
+        r = n;
+    }
+    return r;
+}
 
 static void addLayers(RenderObject* obj, RenderLayer* parentLayer, RenderObject*& newObject,
                       RenderLayer*& beforeChild)
@@ -1694,61 +1721,9 @@ void RenderObject::arenaDelete(RenderArena *arena)
     arenaDelete(arena, dynamic_cast<void *>(this));
 }
 
-FindSelectionResult RenderObject::checkSelectionPoint(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
+DOMPosition RenderObject::positionForCoordinates(int x, int y)
 {
-    FindSelectionResult result = checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
-    
-    if (isInline())
-        for (RenderObject *c = continuation(); result == SelectionPointAfter && c; c = c->continuation())
-            if (c->isInline()) {
-                int ncx, ncy;
-                c->absolutePosition(ncx, ncy);
-                result = c->checkSelectionPointIgnoringContinuations(_x, _y, ncx - c->xPos(), ncy - c->yPos(), node, offset);
-            }
-    
-    return result;
-}
-
-FindSelectionResult RenderObject::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
-{
-    int lastOffset=0;
-    int off = offset;
-    DOM::NodeImpl* nod = node;
-    DOM::NodeImpl* lastNode = 0;
-    
-    for (RenderObject *child = firstChild(); child; child=child->nextSibling()) {
-        FindSelectionResult pos = child->checkSelectionPointIgnoringContinuations(_x, _y, _tx+xPos(), _ty+yPos(), nod, off);
-        //kdDebug(6030) << this << " child->findSelectionNode returned " << pos << endl;
-        switch(pos) {
-        case SelectionPointBeforeInLine:
-        case SelectionPointAfterInLine:
-        case SelectionPointInside:
-            node = nod;
-            offset = off;
-            return SelectionPointInside;
-        case SelectionPointBefore:
-            //x,y is before this element -> stop here
-            if ( lastNode) {
-                node = lastNode;
-                offset = lastOffset;
-//                 kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " before this child "
-//                               << node << "-> returning offset=" << offset << endl;
-                return SelectionPointInside;
-            } else {
-//                 kdDebug(6030) << "ElementImpl::findSelectionNode " << this << " before us -> returning -2" << endl;
-                return SelectionPointBefore;
-            }
-            break;
-        case SelectionPointAfter:
-//             kdDebug(6030) << "ElementImpl::findSelectionNode: selection after: " << nod << " offset: " << off << endl;
-            lastNode = nod;
-            lastOffset = off;
-        }
-    }
-    
-    node = lastNode;
-    offset = lastOffset;
-    return SelectionPointAfter;
+    return DOMPosition(element(), caretMinOffset());
 }
 
 bool RenderObject::mouseInside() const

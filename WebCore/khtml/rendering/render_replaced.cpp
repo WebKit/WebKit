@@ -37,6 +37,7 @@
 #include "xml/dom2_eventsimpl.h"
 #include "khtml_part.h"
 #include "xml/dom_docimpl.h" // ### remove dependency
+#include "xml/dom_position.h"
 #include <kdebug.h>
 
 using namespace khtml;
@@ -126,26 +127,21 @@ unsigned long RenderReplaced::caretMaxRenderedOffset() const
     return 1; 
 }
 
-FindSelectionResult RenderReplaced::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&node, int &offset)
+DOMPosition RenderReplaced::positionForCoordinates(int _x, int _y)
 {
-    int l = xPos() + _tx;
-    int r = xPos() + _tx + width();
-    int t = yPos() + _ty;
-    int b = yPos() + _ty + height();
+    int absx, absy;
+    absolutePosition(absx, absy);
     
-    bool pointIsInside = (_x >= l && _x <= r && _y >= t && _y <= b);
+    bool pointIsInside = (_x >= absx && _x < absx + width() && 
+                          _y >= absy && _y < absx + height());
     
     if (pointIsInside && element()) {
-        node = element();
-        if (_x < l + (width() / 2)) {
-            offset = 0;
-            return SelectionPointBefore;
-        }
-        offset = 1;
-        return SelectionPointAfter;
+        if (_x <= absx + (width() / 2))
+            return DOMPosition(element(), 0);
+        return DOMPosition(element(), 1);
     }
     
-    return RenderBox::checkSelectionPointIgnoringContinuations(_x, _y, _tx, _ty, node, offset);
+    return RenderBox::positionForCoordinates(_x, _y);
 }
 
 // -----------------------------------------------------------------------------

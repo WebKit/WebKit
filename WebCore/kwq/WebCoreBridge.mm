@@ -406,14 +406,7 @@ static bool initializedKJS = FALSE;
         return NO;
     }
         
-    NodeImpl *tempNode;
-    int absX = 0;
-    int absY = 0;
-    int offset;
-    node->renderer()->absolutePosition(absX, absY);
-    node->renderer()->checkSelectionPoint((int)point.x, (int)point.y, absX, absY, tempNode, offset);
-    
-    KHTMLSelection selection(node, offset);
+    KHTMLSelection selection(node->positionForCoordinates((int)point.x, (int)point.y));
     _part->setSelection(selection);
     
     return YES;

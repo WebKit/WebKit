@@ -1,3 +1,62 @@
+2004-04-15  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+        
+        Improved selection behavior. As part of this work, I removed
+        almost all of the checkSelectionPoint() functions, leaving
+        only those associated with fonts, and all of the 
+        checkSelectionPointIgnoringContinuations() functions. Each
+        of these has been replaced by a new function called
+        positionForCoordinates(), which returns a DOMPosition.
+        
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset): Converted to use positionForCoordinates.
+        * khtml/khtml_part.cpp: Ditto.
+        (KHTMLPart::isPointInsideSelection):
+        (KHTMLPart::handleMousePressEventDoubleClick): Ditto.
+        (KHTMLPart::handleMousePressEventTripleClick): Ditto.
+        (KHTMLPart::handleMousePressEventSingleClick): Ditto.
+        (KHTMLPart::handleMouseMoveEventSelection): Ditto.
+        (KHTMLPart::khtmlMouseReleaseEvent): Ditto.
+        * khtml/khtml_part.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::positionForBox): New helper.
+        (khtml::RenderBlock::positionForRenderer): New helper.
+        (khtml::RenderBlock::positionForCoordinates): New selection-node-offset-finder method.
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_br.cpp: Removed checkSelectionPointIgnoringContinuations.
+        No special behavior is needed for this class anymore.
+        * khtml/rendering/render_br.h: Ditoo.
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::positionForCoordinates): New selection-node-offset-finder method.
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_line.cpp:
+        (InlineBox::firstLeafChild): New helper.
+        (InlineBox::lastLeafChild): New helper.
+        (InlineFlowBox::firstLeafChild): New helper.
+        (InlineFlowBox::lastLeafChild): New helper.
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::firstLeafChild): New helper.
+        (RenderObject::lastLeafChild): New helper.
+        (RenderObject::positionForCoordinates):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::positionForCoordinates): New selection-node-offset-finder method.
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::offsetForPosition): New helper, replaces checkSelectionPoint()
+        (RenderText::positionForCoordinates): New selection-node-offset-finder method.
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_nodeimpl.cpp: Added positionForCoordinates() convenience here. This
+        checks to see if the node has a renderer before doing the position check.
+        * khtml/xml/dom_nodeimpl.h: Ditto.
+        * kwq/DOM.mm:
+        (-[DOMNode isContentEditable]): Added this unrelated method, since without it, I crash when dragging an image.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge moveCaretToPoint:]): Converted to use positionForCoordinates.
+
 2004-04-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3603455, block truncation support.

@@ -27,6 +27,10 @@
 class KHTMLView;
 class QWidget;
 
+namespace DOM {
+    class DOMPosition;
+}
+
 namespace khtml {
 
 class RenderReplaced : public RenderBox
@@ -55,9 +59,7 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
-
-    virtual FindSelectionResult checkSelectionPointIgnoringContinuations
-        (int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&, int &);
+    virtual DOM::DOMPosition positionForCoordinates(int x, int y);
     
 private:
     int m_intrinsicWidth;

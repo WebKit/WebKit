@@ -20,6 +20,7 @@
 #include "khtml_events.h"
 #include "rendering/render_object.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_position.h"
 
 using namespace khtml;
 using namespace DOM;
@@ -52,19 +53,15 @@ khtml::MouseEvent::~MouseEvent()
 
 long khtml::MouseEvent::offset() const
 {
-    int offset = 0;
-    DOM::NodeImpl* tempNode = 0;
-    int absX, absY;
-    absX = absY = 0;
-    if (innerNode().handle()->renderer()) {
+    DOMPosition pos;
+    if (innerNode().handle()) {
         // FIXME: Shouldn't be necessary to skip text nodes.
         DOM::Node inner = innerNode();
         if (inner.nodeType() == Node::TEXT_NODE)
             inner = inner.parentNode();
-        inner.handle()->renderer()->absolutePosition(absX, absY);
-        inner.handle()->renderer()->checkSelectionPoint(m_x, m_y, absX, absY, tempNode, offset );
+        pos = inner.handle()->positionForCoordinates(m_x, m_y);
     }
-    return offset;
+    return pos.offset();
 }
 
 const char *khtml::MousePressEvent::s_strMousePressEvent = "khtml/Events/MousePressEvent";

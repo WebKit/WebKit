@@ -29,6 +29,10 @@
 
 #include "render_flow.h"
 
+namespace DOM {
+    class DOMPosition;
+};
+
 namespace khtml {
 
 class RenderBlock : public RenderFlow
@@ -168,8 +172,7 @@ public:
 
     bool isPointInScrollbar(int x, int y, int tx, int ty);
 
-    virtual FindSelectionResult checkSelectionPointIgnoringContinuations
-        (int _x, int _y, int _tx, int _ty, DOM::NodeImpl *&, int &);
+    virtual DOM::DOMPosition positionForCoordinates(int x, int y);
     
     virtual void calcMinMaxWidth();
     void calcInlineMinMaxWidth();
@@ -204,6 +207,10 @@ protected:
     void newLine();
     void removeChildrenFromLineBoxes();
 
+private:
+    DOM::DOMPosition positionForBox(InlineBox *box, bool start=true) const;
+    DOM::DOMPosition positionForRenderer(RenderObject *renderer, bool start=true) const;
+    
 protected:
     struct FloatingObject {
         enum Type {

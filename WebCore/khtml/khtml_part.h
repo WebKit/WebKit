@@ -1187,8 +1187,6 @@ private:
 
   void replaceContentsWithScriptResult( const KURL &url );
 
-  void checkSelectionPoint(khtml::MouseEvent *event, DOM::NodeImpl *&node, int &offset);
-
   bool handleMouseMoveEventDrag(khtml::MouseMoveEvent *event);
   bool handleMouseMoveEventOver(khtml::MouseMoveEvent *event);
   void handleMouseMoveEventSelection(khtml::MouseMoveEvent *event);

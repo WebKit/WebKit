@@ -29,6 +29,7 @@
 #include "rendering/break_lines.h"
 #include "xml/dom_nodeimpl.h"
 #include "xml/dom_docimpl.h"
+#include "xml/dom_position.h"
 #include "render_arena.h"
 
 #include "misc/loader.h"
@@ -202,63 +203,46 @@ unsigned long InlineTextBox::caretMaxRenderedOffset() const
 
 #define LOCAL_WIDTH_BUF_SIZE	1024
 
-FindSelectionResult InlineTextBox::checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineHeight)
+int InlineTextBox::offsetForPosition(int _x, int _tx, const Font *f, const RenderText *text)
 {
-//     kdDebug(6040) << "InlineTextBox::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
-//                   << " _tx+m_x=" << _tx+m_x << " _ty+m_y=" << _ty+m_y << endl;
-    offset = 0;
+    if (_x < _tx + m_x)
+        // we're to the left
+        return -1;
 
-    if ( _y < _ty + root()->topOverflow() )
-        return SelectionPointBefore; // above -> before
-
-    if ( _y > _ty + root()->bottomOverflow() ) {
-        // below -> after
-        // Set the offset to the max
-        offset = m_len;
-        return SelectionPointAfter;
-    }
-    if ( _x > _tx + m_x + m_width ) {
-	// to the right
-	return m_reversed ? SelectionPointBeforeInLine : SelectionPointAfterInLine;
-    }
-
-    // The Y matches, check if we're on the left
-    if ( _x < _tx + m_x ) {
-        return m_reversed ? SelectionPointAfterInLine : SelectionPointBeforeInLine;
-    }
+    if (_x >= _tx + m_x + m_width)
+        // we're to the right
+        return -1;
 
 #if APPLE_CHANGES
-    int pos = f->checkSelectionPoint (text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - (_tx + m_x), m_reversed);
+    return f->checkSelectionPoint(text->str->s, text->str->l, m_start, m_len, m_toAdd, _x - (_tx + m_x), m_reversed);
 #else
-    int delta = _x - (_tx + m_x);
-    //kdDebug(6040) << "InlineTextBox::checkSelectionPoint delta=" << delta << endl;
     int pos = 0;
-    if ( m_reversed ) {
-	delta -= m_width;
-	while(pos < m_len) {
-	    int w = f->width( text->str->s, text->str->l, m_start + pos);
-	    int w2 = w/2;
-	    w -= w2;
-	    delta += w2;
-	    if(delta >= 0) break;
-	    pos++;
-	    delta += w;
-	}
-    } else {
-	while(pos < m_len) {
-	    int w = f->width( text->str->s, text->str->l, m_start + pos);
-	    int w2 = w/2;
-	    w -= w2;
-	    delta -= w2;
-	    if(delta <= 0) break;
-	    pos++;
-	    delta -= w;
-	}
+    int delta = _x - (_tx + m_x);
+    if (m_reversed) {
+        delta -= m_width;
+        while (pos < m_len) {
+            int w = f->width( text->str->s, text->str->l, m_start + pos);
+            int w2 = w/2;
+            w -= w2;
+            delta += w2;
+            if(delta >= 0) break;
+            pos++;
+            delta += w;
+        }
+    } 
+    else {
+        while (pos < m_len) {
+            int w = f->width( text->str->s, text->str->l, m_start + pos);
+            int w2 = w/2;
+            w -= w2;
+            delta -= w2;
+            if(delta <= 0) break;
+            pos++;
+            delta -= w;
+        }
     }
+    return pos;
 #endif
-//     kdDebug( 6040 ) << " Text  --> inside at position " << pos << endl;
-    offset = pos;
-    return SelectionPointInside;
 }
 
 // -------------------------------------------------------------------------------------
@@ -463,48 +447,33 @@ bool RenderText::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
     return inside;
 }
 
-FindSelectionResult RenderText::checkSelectionPointIgnoringContinuations(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int &offset)
+DOMPosition RenderText::positionForCoordinates(int _x, int _y)
 {
-//     kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " _x=" << _x << " _y=" << _y
-//                   << " _tx=" << _tx << " _ty=" << _ty << endl;
-    InlineTextBox *lastPointAfterInline=0;
+    if (!firstTextBox() || stringLength() == 0)
+        return DOMPosition(element(), 0);
 
-    for (InlineTextBox* s = firstTextBox(); s; s = s->nextTextBox()) {
-        int result;
-        const Font *f = htmlFont(s == firstTextBox());
-        result = s->checkSelectionPoint(_x, _y, _tx, _ty, f, this, offset, lineHeight(false));
+    int absx, absy;
+    absolutePosition(absx, absy);
 
-//         kdDebug(6040) << "RenderText::checkSelectionPoint " << this << " line " << si << " result=" << result << " offset=" << offset << endl;
-        if ( result == SelectionPointInside ) // x,y is inside the InlineTextBox
-        {
-            offset += s->m_start; // add the offset from the previous lines
-            //kdDebug(6040) << "RenderText::checkSelectionPoint inside -> " << offset << endl;
-            node = element();
-            return SelectionPointInside;
-        } else if ( result == SelectionPointBefore ) {
-            // x,y is before the InlineTextBox -> stop here
-            if ( s != firstTextBox() && lastPointAfterInline ) {
-                offset = lastPointAfterInline->m_start + lastPointAfterInline->m_len;
-                //kdDebug(6040) << "RenderText::checkSelectionPoint before -> " << offset << endl;
-                node = element();
-                return SelectionPointInside;
-            } else {
-                offset = 0;
-                //kdDebug(6040) << "RenderText::checkSelectionPoint " << this << "before us -> returning Before" << endl;
-                node = element();
-                return SelectionPointBefore;
-            }
-        } else if ( result == SelectionPointAfterInLine ) {
-	    lastPointAfterInline = s;
-	}
+    int top = absy + firstTextBox()->root()->topOverflow();
+    int bottom = absy + lastTextBox()->root()->bottomOverflow();
 
+    if (_y < top)
+        return DOMPosition(element(), caretMinOffset()); // coordinates are above
+    
+    if (_y >= bottom)
+        return DOMPosition(element(), caretMaxOffset()); // coordinates are below
+    
+    for (InlineTextBox *box = firstTextBox(); box; box = box->nextTextBox()) {
+        if (_y >= absy + box->root()->topOverflow() && _y < absy + box->root()->bottomOverflow()) {
+            const Font *f = htmlFont(box == firstTextBox());
+            int offset = box->offsetForPosition(_x, absx, f, this);
+            if (offset != -1)
+                return DOMPosition(element(), offset + box->m_start);
+        }
     }
-
-    // set offset to max
-    offset = str->l;
-    //qDebug("setting node to %p", element());
-    node = element();
-    return SelectionPointAfter;
+    
+    return DOMPosition(element(), 0);
 }
 
 void RenderText::caretPos(int offset, bool override, int &_x, int &_y, int &width, int &height)

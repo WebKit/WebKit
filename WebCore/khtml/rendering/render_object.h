@@ -81,6 +81,7 @@ typedef enum {
 
 namespace DOM {
     class HTMLAreaElementImpl;
+    class DOMPosition;
     class DOMString;
     class DocumentImpl;
     class ElementImpl;
@@ -125,6 +126,9 @@ public:
 
     RenderObject *nextEditable() const; 
     RenderObject *previousEditable() const; 
+
+    RenderObject *firstLeafChild() const;
+    RenderObject *lastLeafChild() const;
     
     virtual RenderLayer* layer() const { return 0; }
     RenderLayer* enclosingLayer();
@@ -473,10 +477,10 @@ public:
         RepaintInfo(RenderObject* o, const QRect& r) :m_object(o), m_repaintRect(r) {}
     };
     
-    FindSelectionResult checkSelectionPoint(int x, int y, int tx, int ty, DOM::NodeImpl*&, int& offset);
-    virtual FindSelectionResult checkSelectionPointIgnoringContinuations(int x, int y, int tx, int ty, DOM::NodeImpl*&, int& offset);
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty,
                              HitTestAction hitTestAction = HitTestAll, bool inside=false);
+    
+    virtual DOM::DOMPosition positionForCoordinates(int x, int y);
     
     virtual void dirtyLinesFromChangedChild(RenderObject* child);
     
