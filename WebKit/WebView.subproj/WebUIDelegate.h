@@ -63,7 +63,7 @@ enum {
     @method webView:createWebViewWithRequest:
     @abstract Create a new window and begin to load the specified request.
     @discussion The newly created window is hidden, and the window operations delegate on the
-    new WebViews will get a showWindow call.
+    new WebViews will get a webViewShow: call.
     @param sender The WebView sending the delegate method.
     @param request The request to load.
     @result The WebView for the new window.
@@ -122,7 +122,7 @@ enum {
 - (NSResponder *)webViewFirstResponder:(WebView *)sender;
 
 /*!
-    @method webView:makeFirstResponderInWindow:
+    @method webView:makeFirstResponder:
     @abstract Set the first responder for this window.
     @param sender The WebView sending the delegate method.
     @param responder The responder to make first (will always be a view)

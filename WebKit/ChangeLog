@@ -1,3 +1,11 @@
+2003-04-30  Richard Williamson   <rjw@apple.com>
+
+        Documentation fixes.
+        Added "ADVISORY NOTE" about possible API change after beta SDK.
+        
+        * History.subproj/WebHistory.h:
+        * WebView.subproj/WebUIDelegate.h:
+
 2003-04-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Maciej
