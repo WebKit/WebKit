@@ -1,5 +1,11 @@
 2002-04-05  Chris Blumenberg  <cblu@apple.com>
 
+	* Plugins.subproj/IFNullPluginView.mm: (+[IFNullPluginView load]):
+
+	Enabled the below.
+
+2002-04-05  Chris Blumenberg  <cblu@apple.com>
+
 	* Plugins.subproj/IFNullPluginView.h: Added.
 	* Plugins.subproj/IFNullPluginView.mm: Added.
 	 (-[IFNullPluginView initWithFrame:mimeType:arguments:]), (-[IFNullPluginView

@@ -11,7 +11,6 @@
 
 @implementation IFNullPluginView
 
-/*
 static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *arguments) 
 {
     return [[[IFNullPluginView alloc] initWithFrame:rect mimeType:mimeType arguments:arguments] autorelease];
@@ -21,7 +20,6 @@ static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *argume
 {
     WCSetIFNullPluginMakeFunc(IFNullPluginMake);
 }
-*/
 
 - initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments{
     NSBundle *bundle;
