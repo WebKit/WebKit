@@ -2219,6 +2219,15 @@ void RenderTableCell::paintCollapsedBorder(QPainter* p, int _tx, int _ty, int w,
     }
 }
 
+QRect RenderTableCell::getAbsoluteRepaintRect()
+{
+    int ow = style() ? style()->outlineSize() : 0;
+    QRect r(-ow, -ow - borderTopExtra(), 
+            overflowWidth(false)+ow*2, overflowHeight(false)+borderTopExtra()+borderBottomExtra()+ow*2);
+    computeAbsoluteRepaintRect(r);
+    return r;
+}
+
 void RenderTableCell::paintObject(QPainter* p, int _x, int _y, int _w, int _h,
                                   int _tx, int _ty, PaintAction paintAction)
 {

@@ -1,5 +1,17 @@
 2003-12-03  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3493356, table cells didn't repaint properly.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::repaintObjectsBeforeLayout):
+        * khtml/rendering/render_table.cpp:
+        (RenderTableCell::getAbsoluteRepaintRect):
+        * khtml/rendering/render_table.h:
+
+2003-12-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3495748, hang in parser at ocelot.ca.  <nobr> needs to have very high priority (equal to the
 	priority of blocks like h1-6, p, and div), so that unclosed <nobr>s will close divs and ps.
 	

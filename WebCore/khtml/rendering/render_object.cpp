@@ -1042,8 +1042,12 @@ void RenderObject::repaintObjectsBeforeLayout()
     
     // FIXME: For now we just always repaint blocks with inline children, regardless of whether
     // they're really dirty or not.
-    if (selfNeedsLayout() || (isRenderBlock() && !isTable() && normalChildNeedsLayout() && childrenInline()))
+    bool blockWithInlineChildren = (isRenderBlock() && !isTable() && normalChildNeedsLayout() && childrenInline());
+    if (selfNeedsLayout() || blockWithInlineChildren) {
         repaint();
+        if (blockWithInlineChildren)
+            return;
+    }
 
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
         if (!current->isPositioned()) // RenderBlock subclass method handles walking the positioned objects.
