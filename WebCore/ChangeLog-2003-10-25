@@ -1,3 +1,14 @@
+2002-10-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3061103 -- Line-breaks lost when submitting after pasting text from
+	MSIE into Alexander textarea
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::text):
+        * kwq/KWQTextEdit.mm: (QTextEdit::text):
+	Turn \r\n sequences and standalone \r characters into \n characters on the way
+	out of AppKit land and into KHTML land. I didn't try to make this efficient
+	for the common case because these are not time-critical functions.
+
 2002-10-16  Richard Williamson  <rjw@apple.com>
 
         Fixed a few regressions in drawing of frame resize handle

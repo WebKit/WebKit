@@ -74,7 +74,10 @@ void QLineEdit::setText(const QString &s)
 QString QLineEdit::text()
 {
     KWQNSTextField *textField = (KWQNSTextField *)getView();
-    return QString::fromNSString([textField stringValue]);
+    NSMutableString *text = [[[textField stringValue] mutableCopy] autorelease];
+    [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+    [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+    return QString::fromNSString(text);
 }
 
 void QLineEdit::setMaxLength(int len)

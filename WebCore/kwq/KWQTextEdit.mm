@@ -44,7 +44,10 @@ void QTextEdit::setText(const QString &string)
 QString QTextEdit::text()
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return QString::fromNSString([textView text]);
+    NSMutableString *text = [[[textView text] mutableCopy] autorelease];
+    [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+    [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+    return QString::fromNSString(text);
 }
 
 int QTextEdit::paragraphs() const
@@ -62,7 +65,10 @@ int QTextEdit::paragraphLength(int paragraph) const
 QString QTextEdit::text(int paragraph)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    return QString::fromNSString([textView textForParagraph:paragraph]);
+    NSMutableString *text = [[[textView textForParagraph:paragraph] mutableCopy] autorelease];
+    [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+    [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
+    return QString::fromNSString(text);
 }
 
 int QTextEdit::lineOfChar(int paragraph, int index)
