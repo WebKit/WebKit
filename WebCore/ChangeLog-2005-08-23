@@ -1,3 +1,13 @@
+2003-01-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for regressions on layout-tests caused by new table code.
+	Make sure cell's padding is used and not just the table's cellpadding.
+	
+        Reviewed by darin.
+
+        * khtml/rendering/table_layout.cpp:
+        (AutoTableLayout::recalcColumn):
+
 2003-01-21  Darin Adler  <darin@apple.com>
 
         - correct our copyrights to 2003; copyright is based on year of publication, not year worked on
