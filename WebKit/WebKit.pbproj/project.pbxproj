@@ -1534,6 +1534,7 @@
 				F501251C0302EA04018635CE,
 			);
 			isa = PBXGroup;
+			name = Debug;
 			path = Misc.subproj;
 			refType = 4;
 		};

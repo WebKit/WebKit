@@ -1,4 +1,8 @@
-2002-08-08  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-08  Darin Adler  <darin@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Change the group name back to Debug.
+
+2002-08-08  Richard Williamson  <rjw@apple.com>
 
         Added flag to turn on/off buffered text drawing to help
         determine if we get any speed boost.  Run from console
