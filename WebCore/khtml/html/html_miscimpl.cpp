@@ -271,7 +271,7 @@ NodeImpl *HTMLCollectionImpl::nextItem() const
 }
 
 NodeImpl *HTMLCollectionImpl::getNamedItem( NodeImpl *current, int attr_id,
-                                            const DOMString &name ) const
+                                            const DOMString &name, bool caseSensitive ) const
 {
     if(name.isEmpty())
         return 0;
@@ -347,14 +347,20 @@ NodeImpl *HTMLCollectionImpl::getNamedItem( NodeImpl *current, int attr_id,
                 kdDebug( 6030 ) << "Error in HTMLCollection, wrong tagId!" << endl;
                 break;
             }
-            if(check && e->getAttribute(attr_id) == name)
-            {
-                //kdDebug( 6030 ) << "found node: " << e << " " << current << " " << e->id() << " " << e->tagName().string() << endl;
-                return current;
+            if (check) {
+                bool found;
+                if (caseSensitive)
+                    found = e->getAttribute(attr_id) == name;
+                else
+                    found = e->getAttribute(attr_id).lower() == name.lower();
+                if (found) {
+                    //kdDebug( 6030 ) << "found node: " << e << " " << current << " " << e->id() << " " << e->tagName().string() << endl;
+                    return current;
+                }
             }
             NodeImpl *retval = 0;
             if(deep && current->firstChild())
-                retval = getNamedItem(current->firstChild(), attr_id, name);
+                retval = getNamedItem(current->firstChild(), attr_id, name, caseSensitive);
             if(retval)
             {
                 //kdDebug( 6030 ) << "got a return value " << retval << endl;
@@ -366,7 +372,7 @@ NodeImpl *HTMLCollectionImpl::getNamedItem( NodeImpl *current, int attr_id,
     return 0;
 }
 
-NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name ) const
+NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name, bool caseSensitive ) const
 {
     // http://msdn.microsoft.com/workshop/author/dhtml/reference/methods/nameditem.asp
     // This method first searches for an object with a matching id
@@ -374,11 +380,11 @@ NodeImpl *HTMLCollectionImpl::namedItem( const DOMString &name ) const
     // object with a matching name attribute, but only on those elements
     // that are allowed a name attribute.
     idsDone = false;
-    currentItem = getNamedItem(base->firstChild(), ATTR_ID, name);
+    currentItem = getNamedItem(base->firstChild(), ATTR_ID, name, caseSensitive);
     if(currentItem)
         return currentItem;
     idsDone = true;
-    currentItem = getNamedItem(base->firstChild(), ATTR_NAME, name);
+    currentItem = getNamedItem(base->firstChild(), ATTR_NAME, name, caseSensitive);
     return currentItem;
 }
 
@@ -483,38 +489,43 @@ NodeImpl* HTMLFormCollectionImpl::getItem(NodeImpl *, int index, int&) const
     return 0;
 }
 
-NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, int attr_id, const DOMString& name) const
+NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, int attr_id, const DOMString& name, bool caseSensitive) const
 {
     currentPos = 0;
-    return getNamedFormItem( attr_id, name, 0 );
+    return getNamedFormItem( attr_id, name, 0, caseSensitive );
 }
 
-NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber) const
+NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const
 {
     if(base->nodeType() == Node::ELEMENT_NODE)
     {
         HTMLElementImpl* e = static_cast<HTMLElementImpl*>(base);
         if(e->id() == ID_FORM)
         {
-            HTMLGenericFormElementImpl* element;
             HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(e);
 
-            for(element = f->formElements.first(); element; element = f->formElements.next())
-                if(element->isEnumeratable() && element->getAttribute(attr_id) == name)
-                {
-                    if (!duplicateNumber)
-                        return element;
-                    --duplicateNumber;
+            for(HTMLGenericFormElementImpl* e = f->formElements.first(); e; e = f->formElements.next())
+                if(e->isEnumeratable()) {
+                    bool found;
+                    if (caseSensitive)
+                        found = e->getAttribute(attr_id) == name;
+                    else
+                        found = e->getAttribute(attr_id).lower() == name.lower();
+                    if (found) {
+                        if (!duplicateNumber)
+                            return e;
+                        --duplicateNumber;
+                    }
                 }
         }
-        NodeImpl* retval = getNamedImgItem( base->firstChild(), attr_id, name, duplicateNumber );
+        NodeImpl* retval = getNamedImgItem( base->firstChild(), attr_id, name, duplicateNumber, caseSensitive );
         if ( retval )
             return retval;
     }
     return 0;
 }
 
-NodeImpl* HTMLFormCollectionImpl::getNamedImgItem(NodeImpl* current, int attr_id, const DOMString& name, int& duplicateNumber) const
+NodeImpl* HTMLFormCollectionImpl::getNamedImgItem(NodeImpl* current, int attr_id, const DOMString& name, int& duplicateNumber, bool caseSensitive) const
 {
     // strange case. IE and NS allow to get hold of <img> tags,
     // but they don't include them in the elements() collection.
@@ -522,17 +533,24 @@ NodeImpl* HTMLFormCollectionImpl::getNamedImgItem(NodeImpl* current, int attr_id
     {
         if(current->nodeType() == Node::ELEMENT_NODE)
         {
-            HTMLElementImpl *currelem = static_cast<HTMLElementImpl *>(current);
-            if(currelem->id() == ID_IMG && currelem->getAttribute(attr_id) == name)
-            {
-                if (!duplicateNumber)
-                    return current;
-                --duplicateNumber;
+            HTMLElementImpl *e = static_cast<HTMLElementImpl *>(current);
+            if(e->id() == ID_IMG) {
+                bool found;
+                if (caseSensitive)
+                    found = e->getAttribute(attr_id) == name;
+                else
+                    found = e->getAttribute(attr_id).lower() == name.lower();
+                if (found)
+                {
+                    if (!duplicateNumber)
+                        return current;
+                    --duplicateNumber;
+                }
             }
             if(current->firstChild())
             {
                 // The recursion here is the reason why this is a separate method
-                NodeImpl *retval = getNamedImgItem(current->firstChild(), attr_id, name, duplicateNumber);
+                NodeImpl *retval = getNamedImgItem(current->firstChild(), attr_id, name, duplicateNumber, caseSensitive);
                 if(retval)
                 {
                     //kdDebug( 6030 ) << "got a return value " << retval << endl;
@@ -561,12 +579,12 @@ NodeImpl * HTMLFormCollectionImpl::nextItem() const
 
 NodeImpl * HTMLFormCollectionImpl::nextNamedItemInternal( const DOMString &name ) const
 {
-    NodeImpl *retval = getNamedFormItem( idsDone ? ATTR_NAME : ATTR_ID, name, ++currentPos );
+    NodeImpl *retval = getNamedFormItem( idsDone ? ATTR_NAME : ATTR_ID, name, ++currentPos, true );
     if ( retval )
         return retval;
     if ( idsDone ) // we're done
         return 0;
     // After doing all ATTR_ID, do ATTR_NAME
     idsDone = true;
-    return getNamedItem(base->firstChild(), ATTR_NAME, name);
+    return getNamedItem(base->firstChild(), ATTR_NAME, name, true);
 }

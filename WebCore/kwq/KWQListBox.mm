@@ -212,9 +212,7 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
     float rowHeight = 0;
     float width = 0;
     for (int row = 0; row < rows; row++) {
-        NSBrowserCell *cell = [browser loadedCellAtRow:row column:0];
-        NSSize size = [cell cellSize];
-        NSLog(@"string is %@, width is %f", [cell stringValue], size.width);
+        NSSize size = [[browser loadedCellAtRow:row column:0] cellSize];
         width = MAX(width, size.width);
         rowHeight = MAX(rowHeight, size.height);
     }

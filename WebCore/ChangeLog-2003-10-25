@@ -1,5 +1,30 @@
 2002-10-17  Darin Adler  <darin@apple.com>
 
+	- fixed 2807340 -- Alex is case sensitive for anchors, but
+	should not be in quirks mode (other browsers aren't)
+
+        * khtml/dom/html_misc.cpp: Touched this file to prevent us from requiring a
+	full build. Damned header dependencies still don't work right.
+
+        * khtml/html/html_miscimpl.h: Add caseSensitive parameters.
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::getNamedItem): Add caseSensitive parameter, and compare
+	by converting both to lower case if it's false and pass it on when recursing.
+        (HTMLCollectionImpl::namedItem): Pass along a caseSensitive parameter.
+        (HTMLFormCollectionImpl::getNamedItem): Pass along a caseSensitive parameter.
+        (HTMLFormCollectionImpl::getNamedFormItem): Pass along, and handle, it.
+        (HTMLFormCollectionImpl::getNamedImgItem): Ditto.
+        (HTMLFormCollectionImpl::nextNamedItemInternal): Pass true for caseSensitive.
+
+        * khtml/khtml_part.cpp: (KHTMLPart::gotoAnchor):
+	Pass false for the new caseSensitive parameter to namedItem when the document
+	mode is not strict.
+
+        * kwq/KWQListBox.mm: (QListBox::sizeForNumberOfLines): Removed a stray NSLog
+	that I left in by accident.
+
+2002-10-17  Darin Adler  <darin@apple.com>
+
 	- fixed 3052547 -- <select> doesn't size properly (size > 1)
 
         * khtml/rendering/render_form.cpp:

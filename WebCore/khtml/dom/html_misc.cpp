@@ -188,4 +188,3 @@ HTMLFormCollection::HTMLFormCollection(NodeImpl *base)
     impl = new HTMLFormCollectionImpl(base);
     impl->ref();
 }
-
