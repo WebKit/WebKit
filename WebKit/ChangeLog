@@ -1,5 +1,14 @@
 2004-12-07  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3905564> REGRESSION (Tiger); in History menu, pixel size appears but is wrong for standalone images in Safari.
+
+        Reviewed by Chris.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer size]):
+
+2004-12-07  Richard Williamson   <rjw@apple.com>
+
 	Support threaded image decoding on machines w/ > 2 CPUs.
 
         Reviewed by Maciej and Chris.

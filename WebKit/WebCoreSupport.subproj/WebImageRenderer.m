@@ -100,6 +100,9 @@
     if (isSizeAdjusted)
         return adjustedSize;
         
+    if (!imageData)
+	return NSZeroSize;
+	
     CGSize sz = [imageData size];
     return NSMakeSize(sz.width, sz.height);
 }
