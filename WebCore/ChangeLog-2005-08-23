@@ -1,5 +1,17 @@
 2002-12-12  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+	- fixed 3125886 -- Failure to set document onkeypress handler causes return key to submit forms incorrectly
+
+	The handler was getting ignored because the property setting code never got to the DOMNode level.
+
+        * khtml/ecma/kjs_dom.cpp: (DOMDocument::tryPut): Pass correct parent class, DOMNode, instead
+	of DOMObject. By passing DOMObject, we skipped all the properties inherited from DOMNode,
+	including onkeypress.
+
+2002-12-12  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey and Ken.
 
 	- fixed 3125613 -- REGRESSION: resizing frames after clicking on scroll bar doesn't work right

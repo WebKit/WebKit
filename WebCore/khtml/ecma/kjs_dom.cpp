@@ -746,8 +746,7 @@ void DOMDocument::tryPut(ExecState *exec, const Identifier& propertyName, const 
 #ifdef KJS_VERBOSE
   kdDebug(6070) << "DOMDocument::tryPut " << propertyName.qstring() << endl;
 #endif
-  DOMObjectLookupPut<DOMDocument,DOMObject>(exec, propertyName, value, attr,
-					    &DOMDocumentTable, this );
+  DOMObjectLookupPut<DOMDocument,DOMNode>(exec, propertyName, value, attr, &DOMDocumentTable, this );
 }
 
 void DOMDocument::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
