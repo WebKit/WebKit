@@ -241,15 +241,7 @@ void RenderInline::splitFlow(RenderObject* beforeChild, RenderBlock* newBlockBox
     // connected, thus allowing newChild access to a renderArena should it need
     // to wrap itself in additional boxes (e.g., table construction).
     newBlockBox->addChildToFlow(newChild, 0);
-
-    // XXXdwh is any of this even necessary? I don't think it is.
-    pre->setPos(0, -500000);
-    pre->setNeedsLayout(true);
-    newBlockBox->setPos(0, -500000);
-    newBlockBox->setNeedsLayout(true);
-    post->setPos(0, -500000);
-    post->setNeedsLayout(true);
-
+    
     block->setNeedsLayoutAndMinMaxRecalc();
 }
 

@@ -127,11 +127,6 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             return addChildToFlow(newChild, beforeChild->parent());
     }
 
-    // prevent elements that haven't received a layout yet from getting painted by pushing
-    // them far above the top of the page
-    if (!newChild->isInline())
-        newChild->setPos(newChild->xPos(), -500000);
-
     // A block has to either have all of its children inline, or all of its children as blocks.
     // So, if our children are currently inline and a block child has to be inserted, we move all our
     // inline children into anonymous block boxes
@@ -170,7 +165,6 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
             RenderBlock* newBox = createAnonymousBlock();
             RenderBox::addChild(newBox,beforeChild);
             newBox->addChild(newChild);
-            newBox->setPos(newBox->xPos(), -500000);
             return;
         }
     }
@@ -259,7 +253,6 @@ void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
             box->appendChildNode(removeChildNode(no));
         }
         box->appendChildNode(removeChildNode(inlineRunEnd));
-        box->setPos(box->xPos(), -500000);
     }
 }
 

@@ -1,3 +1,16 @@
+2004-09-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for the <colgroup> crasher.  Make sure adding to an anonymous box just returns immediately. Also eliminate
+	all the redundant setPos -500000 calls, since we don't need those at all.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::addChildToFlow):
+        (khtml::RenderBlock::makeChildrenNonInline):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::splitFlow):
+
 2004-09-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
