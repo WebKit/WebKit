@@ -1,5 +1,15 @@
 2002-05-31  Darin Adler  <darin@apple.com>
 
+	* khtml/khtmlview.h: Add KWQKHTMLPartImpl as friend class, remove khtml_part.h
+	include that we added inside APPLE_CHANGES.
+
+	* kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::end): Reinstate a line of code that
+	required friend status.
+
+	* kwq/KWQView.mm: Add include of khtml_part.h.
+
+2002-05-31  Darin Adler  <darin@apple.com>
+
 	* kwq/kwqdebug.h: Don't use displayableString; it's an SPI and those
 	are no nos inside WebCore.
 

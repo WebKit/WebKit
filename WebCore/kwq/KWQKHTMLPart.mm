@@ -361,9 +361,7 @@ void KWQKHTMLPartImpl::end()
     d->m_doc->close();
     KURL::clearCaches();
     
-    // FIXME: If this is still needed we will have to add friend to KHTMLView,
-    // but it seems like a better thing to do is to use KHTMLPart::end() instead.
-    //d->m_view->complete();
+    d->m_view->complete();
 }
  
 bool KWQKHTMLPartImpl::gotoBaseAnchor()

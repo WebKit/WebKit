@@ -27,6 +27,7 @@
 #import "kwqdebug.h"
 
 #include <khtmlview.h>
+#include <khtml_part.h>
 #include <qwidget.h>
 #include <qpainter.h>
 #include <qevent.h>
