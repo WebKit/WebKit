@@ -10,14 +10,14 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebSystemBits.h>
 
+#define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX
+
 @interface WebBackForwardListPrivate : NSObject
 {
 @public
     NSMutableArray *entries;
     int current;
     int maximumSize;
-    BOOL usesPageCache;
-    BOOL pageCacheSizeModified;
     unsigned pageCacheSize;
 }
 @end
@@ -46,9 +46,7 @@
     _private->current = -1;
     _private->maximumSize = 100;		// typically set by browser app
 
-    _private->usesPageCache = YES;
-    _private->pageCacheSizeModified = NO;
-    _private->pageCacheSize = 4;
+    _private->pageCacheSize = COMPUTE_DEFAULT_PAGE_CACHE_SIZE;
     
     return self;
 }
@@ -233,11 +231,9 @@
 
 - (void)setPageCacheSize: (unsigned)size
 {
-    _private->pageCacheSizeModified = YES;
     _private->pageCacheSize = size;
-    if (size == 0){
+    if (size == 0) {
         [self _clearPageCache];
-        [self _setUsesPageCache: NO];
     }
 }
 
@@ -247,7 +243,7 @@ static BOOL loggedPageCacheSize = NO;
 
 - (unsigned)pageCacheSize
 {
-    if (!_private->pageCacheSizeModified){
+    if (_private->pageCacheSize == COMPUTE_DEFAULT_PAGE_CACHE_SIZE) {
         unsigned s;
         vm_size_t memSize = WebSystemMainMemory();
         unsigned multiplier = 1;
@@ -265,23 +261,15 @@ static BOOL loggedPageCacheSize = NO;
         }
 #endif
 
-        return s * multiplier;
+        _private->pageCacheSize = s * multiplier;
     }
+    
     return _private->pageCacheSize;
-}
-
-// On be default for now.
-
-- (void)_setUsesPageCache: (BOOL)f
-{
-    _private->usesPageCache = f ? YES : NO;
 }
 
 - (BOOL)_usesPageCache
 {
-    if ([self pageCacheSize] == 0)
-        return NO;
-    return _private->usesPageCache;
+    return _private->pageCacheSize != 0;
 }
 
 - (int)backListCount

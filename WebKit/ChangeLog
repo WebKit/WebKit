@@ -1,3 +1,22 @@
+2003-05-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3242414 -- REGRESSION: PLT times reported 10% slower after emptying cache with B/F cache enabled
+        - made it only compute the page cache size once
+
+        * History.subproj/WebBackForwardList.m:
+        (-[WebBackForwardList init]): Set initial page cache size to special value, COMPUTE_DEFAULT_PAGE_CACHE_SIZE.
+        (-[WebBackForwardList setPageCacheSize:]): Remove code to set pageCacheSizeModified and call to
+        _setUsesPageCache:, not needed any more.
+        (-[WebBackForwardList pageCacheSize]): If cache size is COMPUTE_DEFAULT_PAGE_CACHE_SIZE, then compute it.
+        The old code would compute the cache size each time this method was called until pageCacheSizeModified was set.
+        (-[WebBackForwardList _usesPageCache]): Just check pageCacheSize for 0 to see if we use a page cache.
+        No need for a separate boolean any more.
+        
+        * History.subproj/WebHistoryItemPrivate.h: Remove _setUsesPageCache (gone altogether) and _clearPageCache
+        (now only used internally).
+
 === Safari-78 ===
 
 2003-05-07  Darin Adler  <darin@apple.com>
