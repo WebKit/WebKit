@@ -1,3 +1,14 @@
+2004-04-15  David Hyatt  <hyatt@apple.com>
+
+	Make sure isOpaque returns NO when the WebHTMLVIew doesn't draw its background.
+	
+        Reviewed by darin
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView isOpaque]):
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView isOpaque]):
+
 2004-04-15  John Sullivan  <sullivan@apple.com>
 
         * WebView.subproj/WebPreferencesPrivate.h:

@@ -513,7 +513,7 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)isOpaque
 {
-    return YES;
+    return [[self _webView] drawsBackground];
 }
 
 - (void)drawRect:(NSRect)rect

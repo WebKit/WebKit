@@ -1411,7 +1411,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (BOOL)isOpaque
 {
-    return YES;
+    return [[self _webView] drawsBackground];
 }
 
 - (void)setNeedsDisplay:(BOOL)flag
