@@ -4,6 +4,7 @@
 */
 
 #import <WebKit/WebResourcePrivate.h>
+#import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
@@ -130,10 +131,18 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
 
 + (BOOL)_parseWebArchive:(NSData *)webArchive mainResource:(WebResource **)mainResource subresources:(NSArray **)subresources
 {
+#if !LOG_DISABLED
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+#endif
     NSDictionary *propertyList = [NSPropertyListSerialization propertyListFromData:webArchive 
                                                                   mutabilityOption:NSPropertyListImmutable 
                                                                             format:nil
                                                                   errorDescription:nil];
+#if !LOG_DISABLED
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    CFAbsoluteTime duration = end - start;
+#endif
+    LOG(Timing, "Parsing web archive with [NSPropertyListSerialization propertyListFromData::::] took %f seconds", duration);
     if ([propertyList isKindOfClass:[NSDictionary class]]) {
         NSDictionary *resourcePropertyList = [propertyList objectForKey:WebMainResourceKey];
         if (resourcePropertyList) {
@@ -155,7 +164,16 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
     if ([propertyLists count] > 0) {
         [propertyList setObject:propertyLists forKey:WebSubresourcesKey];
     }
-    return [NSPropertyListSerialization dataFromPropertyList:propertyList format:NSPropertyListXMLFormat_v1_0 errorDescription:nil];
+#if !LOG_DISABLED
+    CFAbsoluteTime start = CFAbsoluteTimeGetCurrent();
+#endif
+    NSData *webArchive = [NSPropertyListSerialization dataFromPropertyList:propertyList format:NSPropertyListBinaryFormat_v1_0 errorDescription:nil];
+#if !LOG_DISABLED
+    CFAbsoluteTime end = CFAbsoluteTimeGetCurrent();
+    CFAbsoluteTime duration = end - start;
+#endif
+    LOG(Timing, "Creating web archive with [NSPropertyListSerialization dataFromPropertyList:::] took %f seconds", duration);
+    return webArchive;
 }
 
 - (id)_initWithPropertyList:(id)propertyList

@@ -1,5 +1,15 @@
 2004-03-09  Chris Blumenberg  <cblu@apple.com>
 
+	Made web archives use NSPropertyListBinaryFormat_v1_0 instead of NSPropertyListXMLFormat_v1_0 because NSPropertyListBinaryFormat_v1_0 is 3-5 times faster to serialize and parse.
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebResource.m:
+        (+[WebResource _parseWebArchive:mainResource:subresources:]): add timing code
+        (+[WebResource _webArchiveWithMainResource:subresources:]): add timing code, use NSPropertyListBinaryFormat_v1_0
+
+2004-03-09  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3577508>: API: web archive related API's
 	Implemented WebKit side of: <rdar://problem/3144033>: ability to save web sites (images and all)
 
