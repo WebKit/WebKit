@@ -1813,9 +1813,7 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
         case SUBMIT:
             if (m_activeSubmit)
             {
-                QString enc_str = value().string();
-                if (enc_str.isEmpty())
-                    enc_str = static_cast<RenderSubmitButton*>(m_render)->defaultLabel();
+                QString enc_str = valueWithDefault().string();
                 if (!enc_str.isEmpty()) {
                     encoding.appendData(name(), enc_str);
                     return true;
@@ -1926,6 +1924,45 @@ DOMString HTMLInputElementImpl::value() const
     return value;
 }
 
+DOMString HTMLInputElementImpl::valueWithDefault() const
+{
+    DOMString v = value();
+    if (v.isEmpty()) {
+        switch (m_type) {
+            case RESET:
+#if APPLE_CHANGES
+                v = resetButtonDefaultLabel();
+#else
+                v = i18n("Reset");
+#endif
+                break;
+
+            case SUBMIT:
+#if APPLE_CHANGES
+                v = submitButtonDefaultLabel();
+#else
+                v = i18n("Submit");
+#endif
+                break;
+
+            case BUTTON:
+            case CHECKBOX:
+            case FILE:
+            case HIDDEN:
+            case IMAGE:
+            case ISINDEX:
+            case PASSWORD:
+            case RADIO:
+        #if APPLE_CHANGES
+            case RANGE:
+            case SEARCH:
+        #endif
+            case TEXT:
+                break;
+        }
+    }
+    return v;
+}
 
 void HTMLInputElementImpl::setValue(const DOMString &value)
 {

@@ -362,7 +362,6 @@ void RenderRadioButton::calcMinMaxWidth()
 
 // -------------------------------------------------------------------------------
 
-
 RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
     : RenderButton(element)
 {
@@ -375,7 +374,7 @@ RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
 
 QString RenderSubmitButton::rawText()
 {
-    QString value = element()->value().isEmpty() ? defaultLabel() : element()->value().string();
+    QString value = element()->valueWithDefault().string();
     value = value.stripWhiteSpace();
     value.replace(QChar('\\'), backslashAsCurrencySymbol());
 #if APPLE_CHANGES
@@ -446,15 +445,6 @@ void RenderSubmitButton::updateFromElement()
     RenderFormElement::updateFromElement();
 }
 
-QString RenderSubmitButton::defaultLabel()
-{
-#if APPLE_CHANGES
-    return submitButtonDefaultLabel();
-#else
-    return i18n("Submit");
-#endif
-}
-
 short RenderSubmitButton::baselinePosition( bool f, bool isRootLineBox ) const
 {
     return RenderFormElement::baselinePosition( f, isRootLineBox );
@@ -470,31 +460,20 @@ RenderImageButton::RenderImageButton(HTMLInputElementImpl *element)
 
 // -------------------------------------------------------------------------------
 
+// FIXME: No real reason to need separate classes for RenderResetButton and
+// RenderSubmitButton now that the default label is handled on the DOM side.
 RenderResetButton::RenderResetButton(HTMLInputElementImpl *element)
     : RenderSubmitButton(element)
 {
 }
 
-QString RenderResetButton::defaultLabel()
-{
-#if APPLE_CHANGES
-    return resetButtonDefaultLabel();
-#else
-    return i18n("Reset");
-#endif
-}
-
-
 // -------------------------------------------------------------------------------
 
+// FIXME: No real reason to need separate classes for RenderPushButton and
+// RenderSubmitButton now that the default label is handled on the DOM side.
 RenderPushButton::RenderPushButton(HTMLInputElementImpl *element)
     : RenderSubmitButton(element)
 {
-}
-
-QString RenderPushButton::defaultLabel()
-{
-    return QString::null;
 }
 
 // -------------------------------------------------------------------------------

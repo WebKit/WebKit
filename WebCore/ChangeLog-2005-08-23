@@ -1,5 +1,26 @@
 2005-02-25  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fixed <rdar://problem/4025618> Crash while searching at hollywoodvideo.com
+
+        * khtml/html/html_formimpl.h: Added valueWithDefault.
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::appendFormData): Call valueWithDefault instead of going at the render object
+        to try to get the default value; there may be no render object if this is display:none.
+        (DOM::HTMLInputElementImpl::valueWithDefault): Added. Knows about the defaults for "submit" and "reset"
+        buttons; otherwise just returns the value as-is.
+
+        * khtml/rendering/render_form.h: Removed the defaultLabel member functions.
+        * khtml/rendering/render_form.cpp:
+        (RenderSubmitButton::rawText): Call valueWithDefault instead of using defaultLabel function here on
+        the render side. The DOM needs to know how to deal with the default anyway for form submission.
+        (RenderSubmitButton::defaultLabel): Removed.
+        (RenderResetButton::defaultLabel): Removed.
+        (RenderPushButton::defaultLabel): Removed.
+
+2005-02-25  Darin Adler  <darin@apple.com>
+
         Reviewed by John.
 
         - fixed <rdar://problem/4025088> window onblur and onfocus don't fire when text field has focus

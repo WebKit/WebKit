@@ -184,8 +184,6 @@ public:
 
     virtual const char *renderName() const { return "RenderSubmitButton"; }
 
-    virtual QString defaultLabel();
-
     virtual void calcMinMaxWidth();
     virtual void updateFromElement();
     virtual short baselinePosition( bool, bool ) const;
@@ -217,8 +215,6 @@ public:
     RenderResetButton(DOM::HTMLInputElementImpl *element);
 
     virtual const char *renderName() const { return "RenderResetButton"; }
-
-    virtual QString defaultLabel();
 };
 
 // -------------------------------------------------------------------------
@@ -227,8 +223,6 @@ class RenderPushButton : public RenderSubmitButton
 {
 public:
     RenderPushButton(DOM::HTMLInputElementImpl *element);
-
-    virtual QString defaultLabel();
 };
 
 // -------------------------------------------------------------------------
