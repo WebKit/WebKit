@@ -1,3 +1,13 @@
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	 - fixed 3465547 - REGRESSION (100-111)?: window.prompt does not work
+	
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::runJavaScriptPrompt): Return the result properly
+	instead of always returning false.
+
 2003-10-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

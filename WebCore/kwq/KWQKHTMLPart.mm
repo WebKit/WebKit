@@ -1372,10 +1372,9 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
 
     KWQ_BLOCK_EXCEPTIONS;
     NSString *returnedText = nil;
-    bool ok = false;
 
-    [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
-        defaultText:defaultValue.getNSString() returningText:(NSString **)&returnedText];
+    bool ok = [_bridge runJavaScriptTextInputPanelWithPrompt:prompt.getNSString()
+	       defaultText:defaultValue.getNSString() returningText:&returnedText];
 
     if (ok) {
         result = QString::fromNSString(returnedText);
