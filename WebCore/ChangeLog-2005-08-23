@@ -1,3 +1,23 @@
+2003-11-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::click): Implemented a programmatic click function for
+	elements.
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLFormElementImpl::submitClick): Implemented a programmatic click function for
+	elements.
+        (HTMLInputElementImpl::click): This implementation calls through
+	to Cocoa button programmatic click function to get user interface
+	feedback for button elements, and calls through to the superclass
+	for other elements.
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_inlineimpl.cpp: Removed click() function for anchors.
+	No longer needed.
+        * khtml/html/html_inlineimpl.h: Ditto.
+
 2003-11-12  David Hyatt  <hyatt@apple.com>
 
 	Fix build bustage in deployment builds.

@@ -609,6 +609,20 @@ void HTMLElementImpl::setContentEditable(const DOMString &enabled) {
     }
 }
 
+void HTMLElementImpl::click()
+{
+    int x = 0;
+    int y = 0;
+    if (renderer()) {
+        renderer()->absolutePosition(x,y);
+        x += renderer()->width() / 2;
+        y += renderer()->height() / 2;
+    }
+    // always send click
+    QMouseEvent evt(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+    dispatchMouseEvent(&evt, EventImpl::KHTML_CLICK_EVENT);
+}
+
 // -------------------------------------------------------------------------
 HTMLGenericElementImpl::HTMLGenericElementImpl(DocumentPtr *doc, ushort i)
     : HTMLElementImpl(doc)

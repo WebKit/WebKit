@@ -152,18 +152,7 @@ void HTMLFormElementImpl::submitClick()
             HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
                 submitFound = true;
-                if (element->inputType() == HTMLInputElementImpl::IMAGE) {
-                    // have to send simulated clicks differently for image types
-                    // since they do not have a widget
-                    int x = 0;
-                    int y = 0;
-                    element->renderer()->absolutePosition(x,y);
-                    QMouseEvent e2(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-                    element->dispatchMouseEvent(&e2, EventImpl::KHTML_CLICK_EVENT);
-                }
-                else {
-                    static_cast<QButton *>(static_cast<RenderWidget *>(element->renderer())->widget())->click();
-                }
+                element->click();
                 break;
             }
         }
@@ -1099,7 +1088,6 @@ bool HTMLButtonElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
     return true;
 }
 
-
 // -------------------------------------------------------------------------
 
 HTMLFieldSetElementImpl::HTMLFieldSetElementImpl(DocumentPtr *doc, HTMLFormElementImpl *f)
@@ -1262,12 +1250,33 @@ void HTMLInputElementImpl::select(  )
         static_cast<RenderFileButton*>(m_render)->select();
 }
 
-void HTMLInputElementImpl::click(  )
+void HTMLInputElementImpl::click()
 {
-    // ###
-#ifdef FORMS_DEBUG
-    kdDebug( 6030 ) << " HTMLInputElementImpl::click(  )" << endl;
+    switch (inputType()) {
+        case HIDDEN:
+            // a no-op for this type
+            break;
+        case CHECKBOX:
+        case RADIO:
+        case SUBMIT:
+        case RESET:
+        case BUTTON: 
+#if APPLE_CHANGES
+        {
+            QWidget *widget;
+            if (renderer() && (widget = static_cast<RenderWidget *>(renderer())->widget())) {
+                // using this method gives us nice Cocoa user interface feedback
+                static_cast<QButton *>(widget)->click();
+            }
+            else
+                HTMLGenericFormElementImpl::click();
+            break;
+        }
 #endif
+        default:
+            HTMLGenericFormElementImpl::click();
+            break;
+    }
 }
 
 void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)

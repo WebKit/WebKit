@@ -189,19 +189,6 @@ void HTMLAnchorElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
-void HTMLAnchorElementImpl::click()
-{
-    int x = 0;
-    int y = 0;
-    if (renderer()) {
-        renderer()->absolutePosition(x,y);
-        x += renderer()->width() / 2;
-        y += renderer()->height() / 2;
-    }
-    QMouseEvent event(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
-    dispatchMouseEvent(&event, EventImpl::KHTML_CLICK_EVENT);
-}
-
 // -------------------------------------------------------------------------
 
 HTMLBRElementImpl::HTMLBRElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
