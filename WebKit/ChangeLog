@@ -1,3 +1,19 @@
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+	
+	Converted download code to use an
+	NSURLDownloadAuthenticationChallenge rather than a vanilla
+	NSURLAuthenticationChallenge.
+
+        * Misc.subproj/WebDownload.m:
+        (-[WebDownloadInternal download:didReceiveAuthenticationChallenge:]):
+        (-[WebDownloadInternal download:didCancelAuthenticationChallenge:]):
+        * Panels.subproj/WebPanelAuthenticationHandler.h:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]):
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithChallenge:result:]):
+
 2003-04-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

@@ -5,6 +5,7 @@
 #import <WebKit/WebDownload.h>
 
 #import <WebFoundation/NSURLDownload.h>
+#import <WebFoundation/NSURLDownloadAuthenticationChallenge.h>
 #import <WebFoundation/NSURLDownloadPrivate.h>
 #import <WebKit/WebPanelAuthenticationHandler.h>
 
@@ -82,7 +83,7 @@
 	    window = [realDelegate downloadWindowForAuthenticationSheet:webDownload];
 	}
 
-	[[WebPanelAuthenticationHandler sharedHandler] startAuthentication:(NSURLConnectionAuthenticationChallenge *)challenge window:window];
+	[[WebPanelAuthenticationHandler sharedHandler] startAuthentication:challenge window:window];
     }
 }
 
@@ -91,7 +92,7 @@
     if ([realDelegate respondsToSelector:@selector(download:didCancelAuthenticationChallenge:)]) {
 	[realDelegate download:download didCancelAuthenticationChallenge:challenge];
     } else {
-	// cancel auth
+	[[WebPanelAuthenticationHandler sharedHandler] cancelAuthentication:challenge];
     }
 }
 
