@@ -1,5 +1,14 @@
 2003-03-03  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+	- fixed 3183445 -- hang in QCString::length reloading page with lots of text in textarea
+
+        * khtml/html/html_formimpl.cpp: (encodeCString): Compute string length only once outside the loop
+        to avoid being O(n^2) in the size of the string.
+
+2003-03-03  Darin Adler  <darin@apple.com>
+
         Reviewed by Trey.
 
 	- fixed 3180364 -- infinite loop in JavaScript at www.vw.dk (due to document.anchors problem) leads to hang
