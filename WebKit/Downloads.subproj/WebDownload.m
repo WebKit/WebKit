@@ -15,6 +15,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMacBinaryDecoder.h>
+#import <WebKit/WebNSWorkspaceExtras.h>
 
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
@@ -138,7 +139,7 @@
     
     [[NSFileManager defaultManager] removeFileAtPath:path handler:nil];
 
-    [[NSWorkspace sharedWorkspace] noteFileSystemChanged:path];
+    [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
 }
 
 - (WebError *)createFileIfNecessary
@@ -189,9 +190,9 @@
         return [self errorWithCode:WebErrorCannotCreateFile];
     }
 
-    [[NSWorkspace sharedWorkspace] noteFileSystemChanged:path];
+    [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
 
-    OSErr result = FSPathMakeRef([path UTF8String], &fileRef, nil);
+    OSErr result = FSPathMakeRef((const UInt8 *)[fileManager fileSystemRepresentationWithPath:path], &fileRef, NULL);
     if (result == noErr) {
         fileRefPtr = &fileRef;
     } else {
@@ -258,8 +259,6 @@
         [self cleanUpAfterFailure];
         return [self errorWithCode:WebErrorCannotWriteToFile];
     }
-
-    [[NSWorkspace sharedWorkspace] noteFileSystemChanged:[dataSource downloadPath]];
 
     return nil;
 }
@@ -350,7 +349,7 @@
 
     [self closeFile];
 
-    [[NSWorkspace sharedWorkspace] noteFileSystemChanged:[dataSource downloadPath]];
+    [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:[dataSource downloadPath]];
 
     LOG(Download, "Download complete. Saved to: %@", [dataSource downloadPath]);
 
