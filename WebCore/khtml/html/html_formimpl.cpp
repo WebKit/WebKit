@@ -1375,10 +1375,30 @@ void HTMLInputElementImpl::select(  )
 {
     if(!m_render) return;
 
-    if (m_type == TEXT || m_type == PASSWORD)
-        static_cast<RenderLineEdit*>(m_render)->select();
-    else if (m_type == FILE)
-        static_cast<RenderFileButton*>(m_render)->select();
+    switch (m_type) {
+        case FILE:
+            static_cast<RenderFileButton*>(m_render)->select();
+            break;
+        case PASSWORD:
+#if APPLE_CHANGES
+        case SEARCH:
+#endif
+        case TEXT:
+            static_cast<RenderLineEdit*>(m_render)->select();
+            break;
+        case BUTTON:
+        case CHECKBOX:
+        case HIDDEN:
+        case IMAGE:
+        case ISINDEX:
+        case RADIO:
+#if APPLE_CHANGES
+        case RANGE:
+#endif
+        case RESET:
+        case SUBMIT:
+            break;
+    }
 }
 
 void HTMLInputElementImpl::click()

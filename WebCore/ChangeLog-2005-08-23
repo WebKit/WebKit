@@ -1,3 +1,13 @@
+2005-01-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Harrison.
+
+        - fixed <rdar://problem/3939176> select() method does not work on <input type=search>
+
+        * khtml/html/html_formimpl.cpp: (DOM::HTMLInputElementImpl::select): Changed if statement
+        to a switch statement. Added SEARCH to the set of types that treat the renderer as a
+        RenderLineEdit.
+
 2005-01-09  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken Kocienda.
