@@ -26,4 +26,6 @@
 #ifndef QFONTMETRICS_H_
 #define QFONTMETRICS_H_
 
+class QFontMetrics;
+
 #endif
