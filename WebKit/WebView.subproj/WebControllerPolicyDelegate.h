@@ -197,9 +197,9 @@ typedef enum {
     the URL represents. Typically, the policy handler methods are called in this order:
 
     clickPolicyForElement:button:modifierFlags:<BR>
-    URLPolicyForURL:inFrame:<BR>
-    fileURLPolicyForMIMEType:inFrame:isDirectory:<BR>
-    contentPolicyForMIMEType:URL:inFrame:<BR>
+    URLPolicyForRequest:inFrame:<BR>
+    fileURLPolicyForMIMEType:andRequest:inFrame:<BR>
+    contentPolicyForMIMEType:andRequest:inFrame:<BR>
 */
 @protocol WebControllerPolicyDelegate <NSObject>
 
@@ -222,7 +222,7 @@ typedef enum {
     @param URL The URL that WebKit has been asked to load.
     @param frame The frame which will load the URL.
 */
-- (WebURLPolicy *)URLPolicyForURL:(NSURL *)URL inFrame:(WebFrame *)frame;
+- (WebURLPolicy *)URLPolicyForRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame;
 
 /*!
      @method fileURLPolicyForMIMEType:inFrame:isDirectory:

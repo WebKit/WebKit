@@ -1,3 +1,16 @@
+2002-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Pass WebResourceRequest rather than just NSURL to URL policy
+	delegate method.
+	
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.h:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        (+[WebDefaultPolicyDelegate defaultURLPolicyForRequest:]):
+        (-[WebDefaultPolicyDelegate URLPolicyForRequest:inFrame:]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _shouldShowRequest:]):
+
 2002-10-30  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

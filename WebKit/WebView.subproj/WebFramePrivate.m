@@ -611,7 +611,7 @@ static const char * const stateNames[] = {
 - (BOOL)_shouldShowRequest:(WebResourceRequest *)request
 {
     id <WebControllerPolicyDelegate> policyDelegate = [[self controller] policyDelegate];
-    WebURLPolicy *URLPolicy = [policyDelegate URLPolicyForURL:[request URL] inFrame:self];
+    WebURLPolicy *URLPolicy = [policyDelegate URLPolicyForRequest:request inFrame:self];
 
     switch ([URLPolicy policyAction]) {
         case WebURLPolicyIgnore:
@@ -685,7 +685,7 @@ static const char * const stateNames[] = {
             }
 
         default:
-            [NSException raise:NSInvalidArgumentException format:@"URLPolicyForURL: returned an invalid WebURLPolicy"];
+            [NSException raise:NSInvalidArgumentException format:@"URLPolicyForRequest: returned an invalid WebURLPolicy"];
             return NO;
     }
 }

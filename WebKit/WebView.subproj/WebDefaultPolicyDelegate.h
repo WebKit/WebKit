@@ -20,14 +20,14 @@
 }
 
 /*!
-    @method defaultURLPolicyForURL:
-    @abstract Provides the default WebURLPolicy for a URL
+    @method defaultURLPolicyForRequest:
+    @abstract Provides the default WebURLPolicy for a Request
     @discussion WebControllerPolicyDelegates can use this method to
-    implement the standard behavior for -URLPolicyForURL:.
-    @param URL use this URL to determine an appropriate policy
-    @result The WebURLPolicy to use for the URL.
+    implement the standard behavior for -URLPolicyForRequest:.
+    @param Request use this request to determine an appropriate policy
+    @result The WebURLPolicy to use for the request.
 */    
-+ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL;
++ (WebURLPolicy *)defaultURLPolicyForRequest:(WebResourceRequest *)request;
 
 
 /*!

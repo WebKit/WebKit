@@ -14,9 +14,9 @@
 
 @implementation WebDefaultPolicyDelegate
 
-+ (WebURLPolicy *)defaultURLPolicyForURL: (NSURL *)URL
++ (WebURLPolicy *)defaultURLPolicyForRequest: (WebResourceRequest *)request
 {
-    if([WebResourceHandle canInitWithRequest:[WebResourceRequest requestWithURL:URL]]){
+    if([WebResourceHandle canInitWithRequest:request]){
         return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyUseContentPolicy];
     }else{
         return [WebURLPolicy webPolicyWithURLAction:WebURLPolicyOpenExternally];
@@ -31,9 +31,9 @@
     return self;
 }
 
-- (WebURLPolicy *)URLPolicyForURL:(NSURL *)URL inFrame:(WebFrame *)frame
+- (WebURLPolicy *)URLPolicyForRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
 {
-    return [WebDefaultPolicyDelegate defaultURLPolicyForURL:URL];
+    return [WebDefaultPolicyDelegate defaultURLPolicyForRequest:request];
 }
 
 - (WebFileURLPolicy *)fileURLPolicyForMIMEType:(NSString *)type andRequest:(WebResourceRequest *)request inFrame:(WebFrame *)frame
