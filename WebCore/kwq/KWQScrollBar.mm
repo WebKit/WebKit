@@ -73,7 +73,9 @@
 
 - (IBAction)scroll:(NSScroller*)sender
 {
-    scrollBar->scrollbarHit([sender hitPart]);
+    if (scrollBar) {
+        scrollBar->scrollbarHit([sender hitPart]);
+    }
 }
 
 - (QWidget *)widget

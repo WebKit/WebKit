@@ -125,8 +125,10 @@
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(button)) {
             [self _KWQ_scrollFrameToVisible];
         }
-        QFocusEvent event(QEvent::FocusIn);
-        const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
+        if (button) {
+            QFocusEvent event(QEvent::FocusIn);
+            const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
+        }
     }
     return become;
 }
@@ -150,9 +152,12 @@
         // widget will remove focus from the widget after
         // we tab to it
         [self resignFirstResponder];
-        view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingNext);
-    }
-    else { 
+        if (button) {
+            view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingNext);
+        } else {
+            view = [super nextKeyView];
+        }
+    } else { 
         view = [super nextKeyView];
     }
     return view;
@@ -167,9 +172,12 @@
         // widget will remove focus from the widget after
         // we tab to it
         [self resignFirstResponder];
-        view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingPrevious);
-    }
-    else { 
+        if (button) {
+            view = KWQKHTMLPart::nextKeyViewForWidget(button, KWQSelectingPrevious);
+        } else {
+            view = [super previousKeyView];
+        }
+    }  else { 
         view = [super previousKeyView];
     }
     return view;

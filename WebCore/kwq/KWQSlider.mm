@@ -74,13 +74,17 @@
     QWidget::afterMouseDown(self);
     if (slider) {
         slider->sendConsumedMouseUp();
+    }
+    if (slider) {
         slider->clicked();
     }
 }
 
 - (IBAction)slide:(NSSlider*)sender
 {
-    slider->sliderValueChanged();
+    if (slider) {
+        slider->sliderValueChanged();
+    }
 }
 
 - (QWidget *)widget
@@ -97,8 +101,11 @@
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(slider)) {
             [self _KWQ_scrollFrameToVisible];
         }
-        QFocusEvent event(QEvent::FocusIn);
-        const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+
+        if (slider) {
+            QFocusEvent event(QEvent::FocusIn);
+            const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+        }
     }
     return become;
 }
@@ -122,9 +129,12 @@
         // widget will remove focus from the widget after
         // we tab to it
         [self resignFirstResponder];
-        view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingNext);
-    }
-    else { 
+        if (slider) {
+            view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingNext);
+        } else {
+            view = [super nextKeyView];
+        }
+    } else { 
         view = [super nextKeyView];
     }
     return view;
@@ -139,9 +149,12 @@
         // widget will remove focus from the widget after
         // we tab to it
         [self resignFirstResponder];
-        view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingPrevious);
-    }
-    else { 
+        if (slider) {
+            view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingPrevious);
+        } else {
+            view = [super previousKeyView];
+        }
+    } else { 
         view = [super previousKeyView];
     }
     return view;

@@ -1,3 +1,45 @@
+2005-03-02  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/4024966> crash happened twice in [KWQTextField setHasFocus:] + 0xe8
+
+        Added more nil checks to the widget implementations. Anywhere a widget pointer is used, do a nil check,
+        rather than relying on high level assumptions about which calls can and can't destroy the HTML element
+        (and hence the widget). The case in the bug seems to be a case where scrolling destroyed the element.
+        We can't be sure this fixes the bug, but we can be relatively sure we didn't introduce any new problems,
+        because this just avoids nil-dereferencing.
+
+        * kwq/KWQButton.mm:
+        (-[KWQButton becomeFirstResponder]):
+        (-[KWQButton nextKeyView]):
+        (-[KWQButton previousKeyView]):
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView mouseDown:]):
+        (-[KWQTableView becomeFirstResponder]):
+        (-[KWQTableView numberOfRowsInTableView:]):
+        (-[KWQTableView tableViewSelectionDidChange:]):
+        (-[KWQTableView tableView:shouldSelectRow:]):
+        (-[KWQTableView selectionShouldChangeInTableView:]):
+        * kwq/KWQScrollBar.mm:
+        (-[KWQScrollBar scroll:]):
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider mouseDown:]):
+        (-[KWQSlider slide:]):
+        (-[KWQSlider becomeFirstResponder]):
+        (-[KWQSlider nextKeyView]):
+        (-[KWQSlider previousKeyView]):
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextAreaTextView becomeFirstResponder]):
+        (-[KWQTextAreaTextView resignFirstResponder]):
+        (-[KWQTextAreaTextView mouseDown:]):
+        * kwq/KWQTextField.mm:
+        (-[KWQTextFieldController action:]):
+        (-[KWQTextFieldController controlTextDidEndEditing:]):
+        (-[KWQTextFieldController controlTextDidChange:]):
+        (-[KWQTextFieldController textView:didHandleEvent:]):
+        (-[KWQTextFieldController setHasFocus:]):
+
 2005-03-02  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4031483> Leak (RenderObject::createInlineBox) reproducible with Stock widget
@@ -191,6 +233,32 @@
 
         * khtml/rendering/render_flow.cpp:
         (RenderFlow::paintLines):
+
+<<<<<<< ChangeLog
+2005-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
+
+        Reviewed by rjw.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): pass true for treatNBSPAsWhiteSpace to leadingWhitespacePosition and trailingWhitespacePosition when testing whether or not we have to delete those characters as well.
+        * khtml/editing/jsediting.cpp: pass true for smartDelete when the selection granularity is WORD. This allows us to write smart delete layout tests.
+        * layout-tests/editing/deleting/smart-delete-001-expected.txt: Added.
+        * layout-tests/editing/deleting/smart-delete-001.html: Added.
+        * layout-tests/editing/deleting/smart-delete-002-expected.txt: Added.
+        * layout-tests/editing/deleting/smart-delete-002.html: Added.
+
+2005-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Vicki
+
+        Fix for this bug:
+        
+        <rdar://problem/4030068> Trailing <return> gets eaten when pasted at the end of a document
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): Add code to handle formerly-unhandled end-of-document case.
 
 2005-03-01  Maciej Stachowiak  <mjs@apple.com>
 

@@ -632,8 +632,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
             [[self enclosingScrollView] _KWQ_scrollFrameToVisible];
         }
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
-	QFocusEvent event(QEvent::FocusIn);
-	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+
+        if (widget) {
+            QFocusEvent event(QEvent::FocusIn);
+            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        }
     }
 
     return become;
@@ -645,8 +648,11 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
     if (resign) {
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
-	QFocusEvent event(QEvent::FocusOut);
-	const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+
+        if (widget) {
+            QFocusEvent event(QEvent::FocusOut);
+            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        }
     }
 
     return resign;
@@ -696,6 +702,8 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     [super mouseDown:event];
     if (widget) {
         widget->sendConsumedMouseUp();
+    }
+    if (widget) {
         widget->clicked();
     }
 }

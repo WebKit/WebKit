@@ -420,6 +420,11 @@ void QListBox::clearCachedTextRenderers()
 
 - (void)mouseDown:(NSEvent *)event
 {
+    if (!_box) {
+        [super mouseDown:event];
+        return;
+    }
+
     processingMouseEvent = YES;
     NSView *outerView = [_box->getOuterView() retain];
     QWidget::beforeMouseDown(outerView);
@@ -466,12 +471,15 @@ void QListBox::clearCachedTextRenderers()
     BOOL become = [super becomeFirstResponder];
     
     if (become) {
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(_box)) {
+        if (_box && !KWQKHTMLPart::currentEventIsMouseDownInWidget(_box)) {
             [self _KWQ_scrollFrameToVisible];
         }        
 	[self _KWQ_setKeyboardFocusRingNeedsDisplay];
-	QFocusEvent event(QEvent::FocusIn);
-	const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
+
+        if (_box) {
+            QFocusEvent event(QEvent::FocusIn);
+            const_cast<QObject *>(_box->eventFilterObject())->eventFilter(_box, &event);
+        }
     }
 
     return become;
@@ -529,7 +537,7 @@ void QListBox::clearCachedTextRenderers()
 
 - (int)numberOfRowsInTableView:(NSTableView *)tableView
 {
-    return _box->count();
+    return _box ? _box->count() : 0;
 }
 
 - (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)column row:(int)row
@@ -539,7 +547,9 @@ void QListBox::clearCachedTextRenderers()
 
 - (void)tableViewSelectionDidChange:(NSNotification *)notification
 {
-    _box->selectionChanged();
+    if (_box) {
+        _box->selectionChanged();
+    }
     if (_box && !_box->changingSelection()) {
 	if (processingMouseEvent) {
 	    clickedDuringMouseEvent = true;
@@ -553,12 +563,12 @@ void QListBox::clearCachedTextRenderers()
 
 - (BOOL)tableView:(NSTableView *)tableView shouldSelectRow:(int)row
 {
-    return !_box->itemAtIndex(row).isGroupLabel;
+    return _box && !_box->itemAtIndex(row).isGroupLabel;
 }
 
 - (BOOL)selectionShouldChangeInTableView:(NSTableView *)aTableView
 {
-    return _box->isEnabled();
+    return _box && _box->isEnabled();
 }
 
 - (void)drawRow:(int)row clipRect:(NSRect)clipRect

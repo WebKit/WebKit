@@ -109,6 +109,8 @@
     if (!widget)
 	return;
     widget->textChanged();
+    if (!widget)
+        return;
     widget->performSearch();
 }
 
@@ -166,7 +168,7 @@
     
     [self setHasFocus:NO];
 
-    if ([[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
+    if (widget && [[[notification userInfo] objectForKey:@"NSTextMovement"] intValue] == NSReturnTextMovement)
         widget->returnPressed();
 }
 
@@ -182,7 +184,9 @@
     [bridge controlTextDidChange:notification];
     
     edited = YES;
-    widget->textChanged();
+    if (widget) {
+        widget->textChanged();
+    }
 }
 
 - (BOOL)control:(NSControl *)control textShouldBeginEditing:(NSText *)fieldEditor
@@ -329,7 +333,9 @@
 
     if ([event type] == NSLeftMouseUp) {
         widget->sendConsumedMouseUp();
-        widget->clicked();
+        if (widget) {
+            widget->clicked();
+        }
     }
 }
 
@@ -382,8 +388,10 @@
         if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget))
             [field _KWQ_scrollFrameToVisible];
         
-        QFocusEvent event(QEvent::FocusIn);
-        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        if (widget) {
+            QFocusEvent event(QEvent::FocusIn);
+            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        }
         
 	// Sending the onFocus event above, may have resulted in a blur() - if this
 	// happens when tabbing from another text field, then endEditing: and
@@ -399,8 +407,10 @@
     } else {
         lastSelectedRange = [self selectedRange];
         
-        QFocusEvent event(QEvent::FocusOut);
-        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        if (widget) {
+            QFocusEvent event(QEvent::FocusOut);
+            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        }
     }
 }
 
