@@ -190,8 +190,9 @@ void RenderWidget::setQWidget(QWidget *widget, bool deleteWidget)
             connect( m_widget, SIGNAL( destroyed()), this, SLOT( slotWidgetDestructed()));
             m_widget->installEventFilter(this);
             // if we've already received a layout, apply the calculated space to the
-            // widget immediately
-            if (!needsLayout()) {
+            // widget immediately, but we have to have really been full constructed (with a non-null
+            // style pointer).
+            if (!needsLayout() && style()) {
 		resizeWidget( m_widget,
 			      m_width-borderLeft()-borderRight()-paddingLeft()-paddingRight(),
 			      m_height-borderLeft()-borderRight()-paddingLeft()-paddingRight() );

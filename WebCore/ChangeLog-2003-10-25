@@ -1,3 +1,13 @@
+2003-09-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3437260, nil deref of the render style because it hasn't been set yet.
+	Fallout from my incremental repainting landing.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::setQWidget):
+
 2003-09-29  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3438479, tables expand on every layout when a cell has percentage height
