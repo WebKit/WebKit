@@ -1910,7 +1910,7 @@ void DocumentImpl::recalcStyleSelector()
             }
 
         }
-        else if (n->id() == ID_LINK || n->id() == ID_STYLE) {
+        else if (n->isHTMLElement() && (n->id() == ID_LINK || n->id() == ID_STYLE)) {
             ElementImpl *e = static_cast<ElementImpl *>(n);
             QString title = e->getAttribute( ATTR_TITLE ).string();
             bool enabledViaScript = false;
@@ -1954,7 +1954,7 @@ void DocumentImpl::recalcStyleSelector()
                     sheet = 0;
             }
         }
-        else if (n->id() == ID_BODY) {
+        else if (n->isHTMLElement() && n->id() == ID_BODY) {
                 // <BODY> element (doesn't contain styles as such but vlink="..." and friends
                 // are treated as style declarations)
             sheet = static_cast<HTMLBodyElementImpl*>(n)->sheet();

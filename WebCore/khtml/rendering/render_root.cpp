@@ -125,8 +125,8 @@ void RenderRoot::layout()
     if (m_printingMode)
        m_minWidth = m_width;
 
-    if(firstChild())
-        firstChild()->setLayouted(false);
+    for (RenderObject *c = firstChild(); c; c = c->nextSibling())
+        c->setLayouted(false);
 
 #ifdef SPEED_DEBUG
     QTime qt;
@@ -598,15 +598,18 @@ int RenderRoot::docHeight() const
     else
         h = m_view->visibleHeight();
 
-    RenderObject *fc = firstChild();
-    if(fc) {
-        int dh = fc->height() + fc->marginTop() + fc->marginBottom();
-        int lowestPos = firstChild()->lowestPosition();
-        if( lowestPos > dh )
-            dh = lowestPos;
-        if( dh > h )
-            h = dh;
+    // FIXME: This doesn't do any margin collapsing.
+    // Instead of this dh computation we should keep the result
+    // when we call RenderBlock::layout.
+    int dh = 0;
+    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
+        dh += c->height() + c->marginTop() + c->marginBottom();
+        int lowestPos = c->lowestPosition();
+        if( lowestPos > h )
+            h = lowestPos;
     }
+    if( dh > h )
+        h = dh;
     return h;
 }
 
@@ -618,14 +621,13 @@ int RenderRoot::docWidth() const
     else
         w = m_view->visibleWidth();
 
-    RenderObject *fc = firstChild();
-    if(fc) {
-        int dw = fc->width() + fc->marginLeft() + fc->marginRight();
-        int rightmostPos = fc->rightmostPosition();
-        if( rightmostPos > dw )
-            dw = rightmostPos;
+    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
+        int dw = c->width() + c->marginLeft() + c->marginRight();
         if( dw > w )
             w = dw;
+        int rightmostPos = c->rightmostPosition();
+        if( rightmostPos > w )
+            w = rightmostPos;
     }
     return w;
 }
