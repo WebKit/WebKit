@@ -4682,6 +4682,11 @@ void KHTMLPart::detachView()
     impl->setView(0);
 }
 
+void KHTMLPart::loadIcon(const KURL &url)
+{
+    impl->loadIcon(url);
+}
+
 #endif
 
 using namespace KParts;

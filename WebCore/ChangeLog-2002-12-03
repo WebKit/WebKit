@@ -1,3 +1,15 @@
+2002-07-19  Chris Blumenberg  <cblu@apple.com>
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process): added an APPLE_CHANGES
+        * khtml/khtml_part.cpp: 
+        (KHTMLPart::loadIcon): added
+        * khtml/khtml_part.h: added loadIcon
+        * kwq/KWQKHTMLPartImpl.h: added loadIcon
+        * kwq/KWQKHTMLPartImpl.mm: added loadIcon
+        (KWQKHTMLPartImpl::loadIcon):
+        * kwq/WebCoreBridge.h: added loadIcon
+
 2002-07-19  Darin Adler  <darin@apple.com>
 
         * khtml/css/makeprop: Fail if we don't find gperf.

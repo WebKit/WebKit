@@ -132,9 +132,9 @@
 
     [[self resourceProgressHandler] receivedError: error forResourceHandle: resourceHandle partialProgress: progress fromDataSource: dataSource];
     
+    [dataSource _setMainDocumentError: error];
     [dataSource _setPrimaryLoadComplete: YES];
 
-    [dataSource _setMainDocumentError: error];
     [frame _checkLoadComplete];
 }
 

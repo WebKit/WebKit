@@ -733,3 +733,8 @@ void KWQKHTMLPartImpl::overURL( const QString &url, const QString &target, int m
   
   setStatusBarText(QString::fromNSString([NSString stringWithFormat:format, url.getNSString()]));
 }
+
+void KWQKHTMLPartImpl::loadIcon(const KURL &url)
+{
+    [bridge loadIcon:url.getNSURL()];
+}

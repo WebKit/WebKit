@@ -1,3 +1,38 @@
+2002-07-19  Chris Blumenberg  <cblu@apple.com>
+
+	Added support favicons.
+
+        * Misc.subproj/WebIconLoader.h: Added.
+        * Misc.subproj/WebIconLoader.m: Added.
+        (-[WebIconLoaderPrivate dealloc]):
+        (+[WebIconLoader defaultIcon]):
+        (-[WebIconLoader initWithURL:]):
+        (-[WebIconLoader dealloc]):
+        (-[WebIconLoader setDelegate:]):
+        (-[WebIconLoader startLoading]):
+        (-[WebIconLoader startLoadingOnlyFromCache]):
+        (-[WebIconLoader stopLoading]):
+        (-[WebIconLoader WebResourceHandleDidBeginLoading:]):
+        (-[WebIconLoader WebResourceHandleDidCancelLoading:]):
+        (-[WebIconLoader WebResourceHandleDidFinishLoading:data:]):
+        (-[WebIconLoader WebResourceHandle:resourceDataDidBecomeAvailable:]):
+        (-[WebIconLoader WebResourceHandle:resourceDidFailLoadingWithResult:]):
+        (-[WebIconLoader WebResourceHandle:didRedirectToURL:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadIcon:]): added
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedError:forResourceHandle:partialProgress:fromDataSource:]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _loadPageIconIfNecessary]): added
+        (-[WebDataSource _setPrimaryLoadComplete:]): start loading icon
+        (-[WebDataSource _stopLoading]): stop icon loader
+        (-[WebDataSource receivedPageIcon:]): added
+        (-[WebDataSource _loadIcon:]): added
+        * WebView.subproj/WebLocationChangeHandler.h:
+
 2002-07-19  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Forgot to export WebKitStatistics.h so it can

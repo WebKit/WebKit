@@ -163,8 +163,13 @@ void HTMLLinkElementImpl::process()
     KHTMLPart* part = getDocument()->view() ? getDocument()->view()->part() : 0;
 
     // IE extension: location of small icon for locationbar / bookmarks
+#ifdef APPLE_CHANGES
+    if ( part && rel.contains("icon") && !m_url.isEmpty() && !part->parentPart())
+        part->loadIcon( KURL(m_url.string()) );
+#else
     if ( part && rel.contains("shortcut icon") && !m_url.isEmpty() && !part->parentPart())
-        part->browserExtension()->setIconURL( KURL(m_url.string()) );
+    	part->browserExtension()->setIconURL( KURL(m_url.string()) );
+#endif
 
     // Stylesheet
     if(type.contains("text/css") || rel == "stylesheet" || rel.contains("alternate")) {

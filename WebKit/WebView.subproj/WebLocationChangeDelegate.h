@@ -43,6 +43,8 @@
 
 - (void)receivedPageTitle: (NSString *)title forDataSource: (WebDataSource *)dataSource;
 
+- (void)receivedPageIcon: (NSImage *)image forDataSource: (WebDataSource *)dataSource;
+
 - (void)serverRedirectTo: (NSURL *)url forDataSource: (WebDataSource *)dataSource;
 
 @end

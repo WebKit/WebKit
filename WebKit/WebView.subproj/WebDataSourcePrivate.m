@@ -12,6 +12,7 @@
 #import <WebKit/WebException.h>
 #import <WebKit/WebHTMLRepresentation.h>
 #import <WebKit/WebHTMLViewPrivate.h>
+#import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebMainResourceClient.h>
@@ -72,7 +73,9 @@
     [errors release];
     [mainDocumentError release];
     [locationChangeHandler release];
-
+    [iconLoader setDelegate:nil];
+    [iconLoader release];
+    
     [super dealloc];
 }
 
@@ -134,10 +137,29 @@
     _private->parent = p;
 }
 
+- (void)_loadPageIconIfNecessary
+{
+    // Start loading the page icon from the server's root directory 
+    // since no page icon has already been requested with the LINK tag
+    if(!_private->iconLoader && !_private->mainDocumentError){
+        NSURL *dataSourceURL = [self wasRedirected] ? [self redirectedURL] : [self inputURL];
+        NSURL *iconURL;
+        
+        if([dataSourceURL isFileURL]){
+            iconURL = dataSourceURL;
+        } else {
+            iconURL = [NSURL _web_URLWithString:@"favicon.ico" relativeToURL:[dataSourceURL absoluteURL]];
+        }
+        [self _loadIcon:iconURL];
+    }
+}
+
 - (void)_setPrimaryLoadComplete: (BOOL)flag
 {
     _private->primaryLoadComplete = flag;
+    
     if (flag) {
+        [self _loadPageIconIfNecessary];
         [_private->mainURLHandleClient release];
         _private->mainURLHandleClient = 0; 
         [_private->mainHandle autorelease];
@@ -145,6 +167,7 @@
         [self _updateLoading];
     }
 }
+
 
 - (void)_startLoading: (BOOL)forceRefresh
 {
@@ -213,6 +236,8 @@
     if (_private->committed) {
 	[[self _bridge] closeURL];        
     }
+
+    [_private->iconLoader stopLoading];
 }
 
 - (void)_recursiveStopLoading
@@ -462,4 +487,19 @@
     [[[[self webFrame] webView] documentView] dataSourceUpdated:self];
 }
 
+- (void)receivedPageIcon:(NSImage *)image
+{
+    [_private->locationChangeHandler receivedPageIcon:image forDataSource:self];
+}
+
+- (void)_loadIcon:(NSURL *)url
+{
+    WEBKIT_ASSERT(!_private->iconLoader);
+    
+    if([self isMainDocument]){
+        _private->iconLoader = [[WebIconLoader alloc] initWithURL:url];
+        [_private->iconLoader setDelegate:self];
+        [_private->iconLoader startLoading];
+    }
+}
 @end

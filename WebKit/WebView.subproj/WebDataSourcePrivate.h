@@ -10,6 +10,7 @@
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebBridge.h>
 
+@class WebIconLoader;
 @class WebResourceHandle;
 @class WebMainResourceClient;
 @protocol WebLocationChangeHandler;
@@ -70,6 +71,8 @@
 
     BOOL gotFirstByte; // got first byte
     BOOL committed; // This data source has been committed
+    
+    WebIconLoader *iconLoader;
 }
 
 @end
@@ -103,6 +106,7 @@
 + (NSMutableDictionary *)_repTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 - (void)_removeFromFrame;
+- (void)_loadIcon:(NSURL *)url;
 
 // Convenience interface for getting here from an WebDataSource.
 // This returns nil if the representation is not an WebHTMLRepresentation.

@@ -1095,7 +1095,7 @@ public:
   void setTitle(const DOM::DOMString &);
   void detachView(); 
   void setStatusBarText(const QString &);
- 
+  void loadIcon(const KURL &url);
   KWQKHTMLPartImpl *impl;
   friend class KWQKHTMLPartImpl;
 #endif
