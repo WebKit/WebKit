@@ -42,7 +42,6 @@
 + (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
 + (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
 - (NSGlyph)_defaultGlyphForChar:(unichar)uu;
-- (BOOL)_isFakeFixedPitch;
 @end
 
 // Macros
@@ -865,7 +864,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     float width = widthForGlyph(self, spaceGlyph, 0);
     spaceWidth = width;
 
-    treatAsFixedPitch = [font isFixedPitch] || [font _isFakeFixedPitch] || [font _web_isFakeFixedPitch];
+    treatAsFixedPitch = [[WebTextRendererFactory sharedFactory] isFontFixedPitch:font];
     adjustedSpaceWidth = treatAsFixedPitch ? CEIL_TO_INT(width) : ROUND_TO_INT(width);
     
     return YES;

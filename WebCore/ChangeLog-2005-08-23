@@ -1,3 +1,15 @@
+2005-03-09  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4032938> Safari: text layout for MS P Gothic font is corrupted
+
+	Remove our hacked special case now we have our own cache of
+	which fonts are fixed  pitch.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQFont.mm:
+        (QFont::isFixedPitch):
+
 2005-03-09  David Harrison  <harrison@apple.com>
 
         Reviewed by Maciej.

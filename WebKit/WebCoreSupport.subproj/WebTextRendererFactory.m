@@ -38,18 +38,6 @@
 - (BOOL)_isFakeFixedPitch;
 @end
 
-@implementation NSFont (WebPrivateExtensions)
-- (BOOL)_web_isFakeFixedPitch
-{
-    // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we should treat Osaka-Mono
-    // as fixed pitch.
-    if ([[self fontName] caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame)
-	return YES;
-    return NO;
-}
-@end
-
-
 @implementation WebTextRendererFactory
 
 - (BOOL)coalesceTextDrawing
@@ -191,7 +179,8 @@ static int getLCDScaleParameters(void)
 
 }
 
-static CFMutableDictionaryRef fontCache = NULL;
+static CFMutableDictionaryRef fontCache;
+static CFMutableDictionaryRef fixedPitchFonts;
 
 - (void)clearCaches
 {
@@ -205,6 +194,11 @@ static CFMutableDictionaryRef fontCache = NULL;
         CFRelease(fontCache);
     fontCache = NULL;
     
+    if (fixedPitchFonts) {
+        CFRelease (fixedPitchFonts);
+        fixedPitchFonts = 0;
+    }
+        
     [super clearCaches];
 }
 
@@ -261,10 +255,33 @@ fontsChanged( ATSFontNotificationInfoRef info, void *_factory)
 
 - (BOOL)isFontFixedPitch: (NSFont *)font
 {
-    // We don't add additional check for [font _web_isFakeFixedPitch] here because of
-    // performance problems.  Instead the check is done down in WebCore (QFont) and
-    // also in WebTextRenderer.
-    return [font isFixedPitch] || [font _isFakeFixedPitch];
+    BOOL ret = NO;
+    
+    if (!fixedPitchFonts) {
+        fixedPitchFonts = CFDictionaryCreateMutable (0, 0, &kCFTypeDictionaryKeyCallBacks, 0);
+    }
+    
+    CFBooleanRef val = CFDictionaryGetValue (fixedPitchFonts, font);
+    if (val) {
+        ret = (val == kCFBooleanTrue);
+    }
+    else {
+        // Special case Osaka-Mono.  According to <rdar://problem/3999467>, we should treat Osaka-Mono
+        // as fixed pitch. Note that the AppKit does not report MS-PGothic as fixed pitch.
+
+        // Special case MS PGothic.  According to <rdar://problem/4032938, we should not treat MS-PGothic
+        // as fixed pitch.  Note that AppKit does report MS-PGothic as fixed pitch.
+        if (([font isFixedPitch] || [font _isFakeFixedPitch] || [[font fontName] caseInsensitiveCompare:@"Osaka-Mono"] == NSOrderedSame) && 
+                ![[font fontName] caseInsensitiveCompare:@"MS-PGothic"] == NSOrderedSame) {
+            CFDictionarySetValue (fixedPitchFonts, font, kCFBooleanTrue);
+            ret = YES;
+        }
+        else {
+            CFDictionarySetValue (fixedPitchFonts, font, kCFBooleanFalse);
+            ret = NO;
+        }
+    }
+    return ret;    
 }
 
 - init

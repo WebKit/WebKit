@@ -1,3 +1,20 @@
+2005-03-09  Richard Williamson   <rjw@apple.com>
+	
+	Fixed <rdar://problem/4032938> Safari: text layout for MS P Gothic font is corrupted
+
+	The AppKit and ATS reports that MS P Gothic is fixed pitch.  It is
+	not!  This is another case of "fixed pitch" being wrong.  I've
+	coalesced all the special cases into our isFontFixedPitch:, and
+	used a dictionary to improve speed.  No performance regression.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _computeWidthForSpace]):
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory clearCaches]):
+        (-[WebTextRendererFactory isFontFixedPitch:]):
+
 2005-03-09  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
