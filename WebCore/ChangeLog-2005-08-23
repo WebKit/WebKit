@@ -1,3 +1,22 @@
+2004-11-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        It is unwise to use the QPtrList autodelete feature on shared objects like DOM nodes.
+        Instead, I replaced this with a helper function that derefs DOM nodes stored in a 
+        QPtrList when the list goes out of scope.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::derefNodesInList): New helper to deref DOM nodes stored in a QPtrList.
+        (khtml::InsertParagraphSeparatorCommand::InsertParagraphSeparatorCommand): No longer set lists to autodelete.
+        (khtml::InsertParagraphSeparatorCommand::~InsertParagraphSeparatorCommand): Call new derefNodesInList helper.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::InsertParagraphSeparatorInQuotedContentCommand):  
+        No longer set lists to autodelete.
+        (khtml::InsertParagraphSeparatorInQuotedContentCommand::~InsertParagraphSeparatorInQuotedContentCommand):
+         Call new derefNodesInList helper.
+        * khtml/editing/htmlediting.h: Add virtual destructor for InsertParagraphSeparatorCommand. It had no need
+        of one before, but now it does.
+
 2004-11-15  David Harrison  <harrison@apple.com>
 
         Reviewed by Chris and Darin.

@@ -403,6 +403,7 @@ class InsertParagraphSeparatorCommand : public CompositeEditCommand
 {
 public:
     InsertParagraphSeparatorCommand(DOM::DocumentImpl *document);
+    virtual ~InsertParagraphSeparatorCommand();
 
     virtual void doApply();
 
