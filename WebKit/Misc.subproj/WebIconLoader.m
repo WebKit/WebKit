@@ -94,4 +94,15 @@
     [super didFinishLoading];
 }
 
+// We don't ever want to prompt for authentication just for a site icon, so
+// override this WebBaseResourceDelegate method to refuse the challenge
+- (void)didReceiveAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+    [[challenge sender] cancelAuthenticationChallenge:challenge];
+}
+
+- (void)didCancelAuthenticationChallenge:(NSURLAuthenticationChallenge *)challenge
+{
+}
+
 @end

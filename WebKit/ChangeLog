@@ -1,3 +1,15 @@
+2004-07-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	<rdar://problem/3632570>: (REGRESSION: SocialText.net wiki keeps asking for auth, even though pages load)
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader didReceiveAuthenticationChallenge:]): Ignore the challenge - we don't
+	want an auth panel for favicons.
+        (-[WebIconLoader didCancelAuthenticationChallenge:]): Ignore cancel, since we are ignoring
+	the challenge.
+
 2004-07-09  Chris Blumenberg  <cblu@apple.com>
 	
 	Allowed my change for 3715785 to compile on Jaguar.
