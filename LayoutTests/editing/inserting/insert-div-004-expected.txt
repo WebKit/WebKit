@@ -11,6 +11,6 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,112) size 784x56 [border: (2px solid #FF0000)]
         RenderBR {BR} at (14,14) size 0x28
 selection is CARET:
-start:      position 0 of child 1 {BR} of child 3 {DIV} of root {BODY}
-upstream:   position 0 of child 3 {DIV} of root {BODY}
-downstream: position 0 of child 1 {BR} of child 3 {DIV} of root {BODY}
+start:      position 0 of child 1 {BR} of child 5 {DIV} of root {BODY}
+upstream:   position 0 of child 5 {DIV} of root {BODY}
+downstream: position 0 of child 1 {BR} of child 5 {DIV} of root {BODY}

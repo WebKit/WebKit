@@ -1,3 +1,42 @@
+2005-03-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3996605> Insert paragraph command puts new block in wrong place, creating difficult-to-handle HTML
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Look for the upstream-most block to insert after
+        when at the visible end of a block. This helps to avoid some undesirable sequences of markup which
+        Dave says will be vary hard to render. Changing the command in this way avoids the "limitations"
+        of the render tree by not asking it to render markup we do not want to make anyway.
+        
+        All these tests change, but either in insignificant ways, or for the better.
+        
+        * layout-tests/editing/deleting/delete-3959464-fix-expected.txt:
+        * layout-tests/editing/inserting/insert-div-001-expected.txt:
+        * layout-tests/editing/inserting/insert-div-002-expected.txt:
+        * layout-tests/editing/inserting/insert-div-004-expected.txt:
+        * layout-tests/editing/inserting/insert-div-005-expected.txt:
+        * layout-tests/editing/inserting/insert-div-009-expected.txt:
+        * layout-tests/editing/inserting/insert-div-024-expected.txt:
+        * layout-tests/editing/pasteboard/paste-text-011-expected.txt:
+        * layout-tests/editing/pasteboard/paste-text-013-expected.txt:
+        * layout-tests/editing/pasteboard/paste-text-015-expected.txt:
+        * layout-tests/editing/style/block-style-004-expected.txt:
+        * layout-tests/editing/style/block-style-005-expected.txt:
+        * layout-tests/editing/style/block-style-006-expected.txt:
+        * layout-tests/editing/style/remove-underline-across-paragraph-expected.txt:
+        * layout-tests/editing/style/remove-underline-across-paragraph-in-bold-expected.txt:
+        * layout-tests/editing/style/remove-underline-after-paragraph-expected.txt:
+        * layout-tests/editing/style/remove-underline-after-paragraph-in-bold-expected.txt:
+
+        New test to check specific problem mentioned in the bug.
+
+        * layout-tests/editing/inserting/insert-div-026-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-026.html: Added.
+
 2005-02-28  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -3247,7 +3247,18 @@ void InsertParagraphSeparatorCommand::doApply()
     if (downstreamInDifferentBlock || isLastInBlock) {
         LOG(Editing, "insert paragraph separator: last in block case");
         NodeImpl *refNode = isLastInBlock && !startBlockIsRoot ? startBlock : pos.node();
-        insertNodeAfter(blockToInsert, refNode);
+        NodeImpl *parent = refNode->parentNode();
+        NodeImpl *rootEditable = refNode->rootEditableElement();
+        ASSERT(parent);
+        ASSERT(rootEditable);
+        while (parent && rootEditable && refNode != rootEditable && isLastVisiblePositionInNode(visiblePos, parent)) {
+            refNode = parent;
+            parent = parent->parentNode();
+        }
+        if (refNode == rootEditable)
+            appendNode(blockToInsert, refNode);
+        else
+            insertNodeAfter(blockToInsert, refNode);
         insertBlockPlaceholder(blockToInsert);
         setEndingSelection(Position(blockToInsert, 0), DOWNSTREAM);
         applyStyleAfterInsertion();

@@ -19,17 +19,15 @@ layer at (0,0) size 800x600
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
             RenderText {TEXT} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-      RenderBlock {DIV} at (0,182) size 784x184 [border: (2px solid #FF0000)]
+      RenderBlock {DIV} at (0,182) size 784x132 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x28
           RenderText {TEXT} at (0,0) size 12x28
             text run at (0,0) width 12: "x"
-        RenderBlock {DIV} at (14,66) size 756x80
+        RenderBlock {DIV} at (14,66) size 756x28
           RenderBlock {BLOCKQUOTE} at (40,0) size 676x28
             RenderText {TEXT} at (0,0) size 32x28
               text run at (0,0) width 32: "foo"
-          RenderBlock {BLOCKQUOTE} at (40,52) size 676x28
-            RenderBR {BR} at (0,0) size 0x28
 selection is CARET:
-start:      position 0 of child 1 {BR} of child 2 {BLOCKQUOTE} of child 2 {DIV} of child 8 {DIV} of root {BODY}
-upstream:   position 0 of child 2 {BLOCKQUOTE} of child 2 {DIV} of child 8 {DIV} of root {BODY}
-downstream: position 0 of child 1 {BR} of child 2 {BLOCKQUOTE} of child 2 {DIV} of child 8 {DIV} of root {BODY}
+start:      position 1 of child 1 {TEXT} of child 8 {DIV} of root {BODY}
+upstream:   position 1 of child 1 {TEXT} of child 8 {DIV} of root {BODY}
+downstream: position 1 of child 1 {TEXT} of child 8 {DIV} of root {BODY}
