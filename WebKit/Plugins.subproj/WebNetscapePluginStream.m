@@ -106,14 +106,20 @@
     // anything including possibly releasing self; one example of this is 3266216
     [self retain];
     [stream startStreamWithResponse:theResponse];
-    [super connection:con didReceiveResponse:theResponse];
-    if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
-        [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
-        NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
-                                                    code:NSURLErrorFileDoesNotExist
-                                                     URL:[theResponse URL]];
-        [stream receivedError:error];
-        [self cancelWithError:error];
+    
+    // Don't continue if the stream is cancelled in startStreamWithResponse or didReceiveResponse.
+    if (stream) {
+        [super connection:con didReceiveResponse:theResponse];
+        if (stream) {
+            if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
+                [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
+                NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                            code:NSURLErrorFileDoesNotExist
+                                                            URL:[theResponse URL]];
+                [stream receivedError:error];
+                [self cancelWithError:error];
+            }
+        }
     }
     [self release];
 }

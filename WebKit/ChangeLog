@@ -1,3 +1,13 @@
+2003-11-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3478022>: assertion failure while loading WMP content
+
+        Reviewed by darin.
+
+        * ChangeLog:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): Don't continue if the stream is cancelled in startStreamWithResponse.
+
 2003-11-07  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3477067.  Use our case unicode conversion routines.
