@@ -1,3 +1,11 @@
+2002-07-30  Richard Williamson  <rjw@apple.com>
+
+        Wow!  Avoid creation of unicode string when only a single character
+        is needed.  Simple change for big gains, 7% - 10% improvement
+        on cached pages.  Other similar gains may remain to be had.
+        
+        * khtml/css/cssparser.cpp:
+
 2002-07-30  Darin Adler  <darin@apple.com>
 
         * khtml/css/makevalues: Fail if we don't find gperf.

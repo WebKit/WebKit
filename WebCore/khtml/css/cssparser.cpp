@@ -844,7 +844,11 @@ public:
     bool strictParsing;
 
     QChar getChar() {
+#ifdef APPLE_CHANGES    
+      return ( m_yyPos == m_yyIn.length() ) ? QChar('\0') : m_yyIn.at(m_yyPos++);
+#else
       return ( m_yyPos == m_yyIn.length() ) ? QChar('\0') : m_yyIn.unicode()[m_yyPos++];
+#endif
     }
 
     void startTokenizer( const QString& str, bool _strictParsing ) {
