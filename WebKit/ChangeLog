@@ -1,3 +1,13 @@
+2003-07-25  Richard Williamson   <rjw@apple.com>
+
+	Use 11 point bold, instead of 12 point bold to draw dragged link
+	labels.  This matches the text drawn in the bookmarks bar.
+
+        Reviewed by John.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _dragImageForLinkElement:]):
+
 2003-07-24  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3279910.  Change the way we draw dragged link to use

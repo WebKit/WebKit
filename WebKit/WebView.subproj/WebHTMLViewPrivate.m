@@ -50,6 +50,9 @@
 #define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
 #define MAX_DRAG_LABEL_WIDTH                    320.0
 
+#define DRAG_LINK_LABEL_FONT_SIZE   11.0
+#define DRAG_LINK_URL_FONT_SIZE   10.0
+
 #import <CoreGraphics/CGStyle.h>
 #import <CoreGraphics/CGSTypes.h>
 #import <CoreGraphics/CGContextGState.h>
@@ -441,9 +444,9 @@ static WebHTMLView *lastHitView = nil;
 	label = urlString;
     }
     
-    NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:12.0]
+    NSFont *labelFont = [[NSFontManager sharedFontManager] convertFont:[NSFont systemFontOfSize:DRAG_LINK_LABEL_FONT_SIZE]
                                                    toHaveTrait:NSBoldFontMask];
-    NSFont *urlFont = [NSFont systemFontOfSize: 10.0];
+    NSFont *urlFont = [NSFont systemFontOfSize: DRAG_LINK_URL_FONT_SIZE];
     NSSize labelSize;
     labelSize.width = [label _web_widthWithFont: labelFont];
     labelSize.height = [labelFont ascender] - [labelFont descender];
