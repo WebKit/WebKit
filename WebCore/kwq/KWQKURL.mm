@@ -266,6 +266,28 @@ KURL::KURL(const KURL &base, const QString &relative, const QTextCodec *codec)
         strBuffer = 0;
         str = relative.ascii();
     } else {
+        // Always use UTF-8 if the protocol is file, mailto, or help because that's
+        // what these protocols expect.
+        if (codec) {
+            QString protocol;
+            for (uint i = 0; i < relative.length(); i++) {
+                char p = relative.at(i).latin1();
+                if (IS_PATH_SEGMENT_END_CHAR(p)) {
+                    break;
+                }
+                if (p == ':') {
+                    protocol = relative.left(i);
+                    break;
+                }
+            }
+            if (!protocol) {
+                protocol = base.protocol();
+            }
+            protocol = protocol.lower();
+            if (protocol == "file" || protocol == "mailto" || protocol == "help") {
+                codec = NULL;
+            }
+        }
         QCString decoded = codec ? codec->fromUnicode(relative)
             : QTextCodec(kCFStringEncodingUTF8).fromUnicode(relative);
         strBuffer = strdup(decoded);
