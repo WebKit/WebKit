@@ -72,6 +72,10 @@
 - (void)_preflightChosenSpellServer;
 @end
 
+@interface NSView (AppKitSecretsIKnow)
+- (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types;
+@end
+
 @interface WebView (WebFileInternal)
 - (void)_preflightSpellChecker;
 - (BOOL)_continuousCheckingAllowed;
@@ -1796,6 +1800,16 @@ NS_ENDHANDLER
             [[self mainFrame] loadRequest:request];
             [request release];
         }
+    }
+}
+
+- (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types
+{
+    NSView *hitView = [super _hitTest:aPoint dragTypes:types];
+    if (!hitView && [[self superview] mouse:*aPoint inRect:[self frame]]) {
+        return self;
+    } else {
+        return hitView;
     }
 }
 

@@ -1,5 +1,19 @@
 2004-06-08  Trey Matteson  <trey@apple.com>
 
+	In DHTML dragging there is no notion of registering for types, so we'd
+	like to just pass all types down to WebCore.  It turns out that the per-type
+	registration doesn't matter as far as the underlying drag service is
+	concerned, so Cocoa is already getting called for any type.  We just hack and
+	override a private method to ensure we accept any type.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _hitTest:dragTypes:]):  We accept any drag type if it is within
+	our view, without overriding a subview's decision.
+
+2004-06-08  Trey Matteson  <trey@apple.com>
+
 	A DHTML drag source can now change the dragging image during the drag.  Currently
 	it may only be set to a static image.
 
