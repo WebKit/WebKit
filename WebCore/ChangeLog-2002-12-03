@@ -1,3 +1,10 @@
+2002-11-21  David Hyatt  <hyatt@apple.com>
+
+	Fix mac.com regression (and weather.com regression).
+	
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::findNextLineBreak):
+
 2002-11-21  Richard Williamson   <rjw@apple.com>
 
         Fixed performance regression!  Argh.

@@ -1201,11 +1201,11 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                 static_cast<RenderFlow*>(o->containingBlock())->insertSpecialObject(o);
             }
         } else if ( o->isReplaced() ) {
-            if (o->style()->whiteSpace() != NOWRAP || (!last || last->style()->whiteSpace() != NOWRAP)) {
+            if (o->style()->whiteSpace() != NOWRAP || last->style()->whiteSpace() != NOWRAP) {
                 w += tmpW;
                 tmpW = 0;
-                lBreak.obj = last;
-                lBreak.pos = last ? last->length() : 0;
+                lBreak.obj = o;
+                lBreak.pos = 0;
             }
 
             tmpW += o->width()+o->marginLeft()+o->marginRight();
@@ -1367,6 +1367,7 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
                 kdDebug() << "RenderFlow::findNextLineBreak new position at " << m_height << " newWidth " << width << endl;
 #endif
             }
+
             if( !w && w + tmpW > width+1 && (o != start.obj || (unsigned) pos != start.pos) ) {
                 // getting below floats wasn't enough...
                 //kdDebug() << "still too wide w=" << w << " tmpW = " << tmpW << " width = " << width << endl;
@@ -1386,7 +1387,10 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             goto end;
         }
 
-        if (o->isReplaced() && o->style()->whiteSpace() != NOWRAP) {
+        last = o;
+        o = Bidinext( start.par, o );
+
+        if (last->isReplaced() && last->style()->whiteSpace() != NOWRAP) {
             // Go ahead and add in tmpW.
             w += tmpW;
             tmpW = 0;
@@ -1394,8 +1398,6 @@ BidiIterator RenderFlow::findNextLineBreak(BidiIterator &start, QPtrList<BidiIte
             lBreak.pos = 0;
         }
 
-        last = o;
-        o = Bidinext( start.par, o );
         pos = 0;
     }
 
