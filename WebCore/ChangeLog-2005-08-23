@@ -1,3 +1,15 @@
+2003-03-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3166759 -- two fields both look like they have focus at webmail.iquest.net due to onblur
+
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField selectText:]): Don't call -[NSTextField selectText:] in the case where we already
+        have an editor, because the NSTextField version will cause the field to relinquish first responder
+        and then take it back, which will send both onblur and onfocus.
+        (-[KWQSecureTextField selectText:]): Same fix for the secure text field.
+
 2003-03-11  David Hyatt  <hyatt@apple.com>
 
 	Fix the 16000 pixel tall scrollbar on macromedia.com/software.

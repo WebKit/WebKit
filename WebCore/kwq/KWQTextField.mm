@@ -151,7 +151,16 @@
         [secureField selectText:sender];
         return;
     }
-    [super selectText:sender];
+    
+    // Don't call the NSTextField's selectText if the field is already first responder.
+    // If we do, we'll end up deactivating and then reactivating, which will send
+    // unwanted onBlur events.
+    NSText *editor = [self currentEditor];
+    if (editor) {
+        [editor setSelectedRange:NSMakeRange(0, [[editor string] length])];
+    } else {
+        [super selectText:sender];
+    }
 }
 
 - (BOOL)isEditable
@@ -426,7 +435,16 @@
     if (sender == self && inSetFrameSize) {
         return;
     }
-    [super selectText:sender];
+    
+    // Don't call the NSTextField's selectText if the field is already first responder.
+    // If we do, we'll end up deactivating and then reactivating, which will send
+    // unwanted onBlur events.
+    NSText *editor = [self currentEditor];
+    if (editor) {
+        [editor setSelectedRange:NSMakeRange(0, [[editor string] length])];
+    } else {
+        [super selectText:sender];
+    }
 }
 
 - (void)setFrameSize:(NSSize)size
