@@ -2,6 +2,18 @@
 
         Reviewed by Harrison
 
+        (khtml::DeleteSelectionCommand::performGeneralDelete): Add some more comments to
+        make things more clear.
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::toRange): Fixed the upstream and downstream calls so that the 
+        resulting positions do not cross block boundaries. This was a bug and caused some
+        delete problems when whole blocks were selected. I will be addressing that issue
+        more fully in upcoming changes.
+
+2004-11-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
         Some cleanups and fixes in upstream and downstream functions. 
         
         Removed redundant checks for isBlockFlow() when calling enclosingBlockFlowElement(). 

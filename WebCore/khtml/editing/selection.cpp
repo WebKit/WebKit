@@ -635,8 +635,8 @@ Range Selection::toRange() const
         //                       ^ selected
         //
         ASSERT(isRange());
-        s = m_start.downstream();
-        e = m_end.upstream();
+        s = m_start.downstream(StayInBlock);
+        e = m_end.upstream(StayInBlock);
         if (RangeImpl::compareBoundaryPoints(s.node(), s.offset(), e.node(), e.offset()) > 0) {
             // Make sure the start is before the end.
             // The end can wind up before the start if collapsed whitespace is the only thing selected.
