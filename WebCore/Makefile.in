@@ -57,7 +57,7 @@ all depend setup install clean distclean maintainer-clean:
 
 test:
 	cd src/kwq/tests && \
-	make && \
+	$(MAKE) && \
 	./harness
 
 local-all:
