@@ -1,0 +1,7 @@
+Makefile.vars
+Makefile.rules
+Makefile
+config.status
+config.log
+config.h
+config.cache
