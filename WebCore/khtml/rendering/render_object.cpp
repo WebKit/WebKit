@@ -147,7 +147,8 @@ m_inline( true ),
 
 m_replaced( false ),
 m_mouseInside( false ),
-m_isSelectionBorder( false )
+m_isSelectionBorder( false ),
+m_hasOverflowClip(false)
 {
 }
 
@@ -470,7 +471,8 @@ RenderLayer* RenderObject::enclosingLayer()
 
 bool RenderObject::requiresLayer()
 {
-    return isRoot() || isPositioned() || isRelPositioned() || style()->opacity() < 1.0f;
+    return isRoot() || isPositioned() || isRelPositioned() || style()->opacity() < 1.0f ||
+           m_hasOverflowClip;
 }
 
 RenderBlock* RenderObject::firstLineBlock() const
@@ -537,14 +539,14 @@ int
 RenderObject::clientWidth() const
 {
     return width() - borderLeft() - borderRight() -
-        (style()->includeScrollbarSize() && layer() ? layer()->verticalScrollbarWidth() : 0);
+        (includeScrollbarSize() ? layer()->verticalScrollbarWidth() : 0);
 }
 
 int
 RenderObject::clientHeight() const
 {
     return height() - borderTop() - borderBottom() -
-      (style()->includeScrollbarSize() && layer() ? layer()->horizontalScrollbarHeight() : 0);
+      (includeScrollbarSize() ? layer()->horizontalScrollbarHeight() : 0);
 }
 
 // scrollWidth/scrollHeight will be the same as clientWidth/clientHeight unless the
@@ -552,13 +554,13 @@ RenderObject::clientHeight() const
 int
 RenderObject::scrollWidth() const
 {
-    return (style()->hidesOverflow() && layer()) ? layer()->scrollWidth() : overflowWidth();
+    return hasOverflowClip() ? layer()->scrollWidth() : overflowWidth();
 }
 
 int
 RenderObject::scrollHeight() const
 {
-    return (style()->hidesOverflow() && layer()) ? layer()->scrollHeight() : overflowHeight();
+    return hasOverflowClip() ? layer()->scrollHeight() : overflowHeight();
 }
 
 bool
@@ -1400,6 +1402,7 @@ void RenderObject::setStyle(RenderStyle *style)
     m_positioned = false;
     m_relPositioned = false;
     m_paintBackground = false;
+    m_hasOverflowClip = false;
     // no support for changing the display type dynamically... object must be
     // detached and re-attached as a different type
     //m_inline = true;
@@ -1485,7 +1488,7 @@ bool RenderObject::absolutePosition(int &xPos, int &yPos, bool f)
     RenderObject* o = parent();
     if (o) {
         o->absolutePosition(xPos, yPos, f);
-        if (o->style()->hidesOverflow() && o->layer())
+        if (o->hasOverflowClip())
             o->layer()->subtractScrollOffset(xPos, yPos); 
         return true;
     }
@@ -1780,7 +1783,7 @@ bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,
             inside = false;
         int stx = _tx + xPos();
         int sty = _ty + yPos();
-        if (style()->hidesOverflow() && layer())
+        if (hasOverflowClip())
             layer()->subtractScrollOffset(stx, sty);
         for (RenderObject* child = lastChild(); child; child = child->previousSibling())
             if (!child->layer() && !child->isFloating() &&
@@ -2102,7 +2105,7 @@ void RenderObject::collectBorders(QValueList<CollapsedBorderValue>& borderStyles
 
 bool RenderObject::avoidsFloats() const
 {
-    return isReplaced() || isTable() || style()->hidesOverflow() || isHR() || isFlexibleBox(); 
+    return isReplaced() || isTable() || hasOverflowClip() || isHR() || isFlexibleBox(); 
 }
 
 bool RenderObject::usesLineWidth() const

@@ -190,7 +190,7 @@ void RenderLayer::updateLayerPosition()
     setWidth(m_object->width());
     setHeight(m_object->height());
 
-    if (!m_object->style()->hidesOverflow()) {
+    if (!m_object->hasOverflowClip()) {
         if (m_object->overflowWidth() > m_object->width())
             setWidth(m_object->overflowWidth());
         if (m_object->overflowHeight() > m_object->height())
@@ -640,7 +640,7 @@ RenderLayer::updateScrollInfoAfterLayout()
     }
 
     // overflow:auto may need to lay out again if scrollbars got added/removed.
-    bool scrollbarsChanged = (m_object->style()->hasAutoScrollbars()) &&
+    bool scrollbarsChanged = (m_object->hasAutoScrollbars()) &&
         (haveHorizontalBar != needHorizontalBar || haveVerticalBar != needVerticalBar);    
     if (scrollbarsChanged) {
         setHasHorizontalScrollbar(needHorizontalBar);
@@ -1015,7 +1015,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const QRect& pain
 bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& damageRect) const
 {
     return (renderer()->isCanvas() || renderer()->isRoot() || renderer()->isBody() ||
-            (renderer()->hasOverhangingFloats() && !renderer()->style()->hidesOverflow()) ||
+            (renderer()->hasOverhangingFloats() && !renderer()->hasOverflowClip()) ||
             (renderer()->isInline() && !renderer()->isReplaced()) ||
             layerBounds.intersects(damageRect));
 }
@@ -1023,7 +1023,7 @@ bool RenderLayer::intersectsDamageRect(const QRect& layerBounds, const QRect& da
 bool RenderLayer::containsPoint(int x, int y, const QRect& damageRect) const
 {
     return (renderer()->isCanvas() || renderer()->isRoot() || renderer()->isBody() ||
-            (renderer()->hasOverhangingFloats() && !renderer()->style()->hidesOverflow()) ||
+            (renderer()->hasOverhangingFloats() && !renderer()->hasOverflowClip()) ||
             (renderer()->isInline() && !renderer()->isReplaced()) ||
             damageRect.contains(x, y));
 }

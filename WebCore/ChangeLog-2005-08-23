@@ -1,3 +1,74 @@
+2004-04-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3559764, make sure overflow is applied consistently using a separate bit on render objects, so that
+	the body scroll quirk can easily disable overflow even when it is present on the style.
+	
+        Reviewed by kocienda
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::putValue):
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle):
+        (khtml::RenderBlock::layoutBlock):
+        (khtml::RenderBlock::layoutBlockChildren):
+        (khtml::RenderBlock::paintObject):
+        (khtml::RenderBlock::rightOffset):
+        (khtml::RenderBlock::lowestPosition):
+        (khtml::RenderBlock::rightmostPosition):
+        (khtml::RenderBlock::leftmostPosition):
+        (khtml::RenderBlock::isPointInScrollbar):
+        (khtml::RenderBlock::nodeAtPoint):
+        (khtml::RenderBlock::inRootBlockContext):
+        * khtml/rendering/render_block.h:
+        (khtml::RenderBlock::overflowHeight):
+        (khtml::RenderBlock::overflowWidth):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::setStyle):
+        (RenderBox::contentWidth):
+        (RenderBox::contentHeight):
+        (RenderBox::absolutePosition):
+        (RenderBox::computeAbsoluteRepaintRect):
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_flexbox.cpp:
+        (khtml::RenderFlexibleBox::layoutBlock):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::lowestPosition):
+        (RenderFlow::rightmostPosition):
+        (RenderFlow::leftmostPosition):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::updateScrollInfoAfterLayout):
+        (RenderLayer::intersectsDamageRect):
+        (RenderLayer::containsPoint):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):
+        (RenderObject::requiresLayer):
+        (RenderObject::clientWidth):
+        (RenderObject::clientHeight):
+        (RenderObject::scrollWidth):
+        (RenderObject::scrollHeight):
+        (RenderObject::setStyle):
+        (RenderObject::absolutePosition):
+        (RenderObject::nodeAtPoint):
+        (RenderObject::avoidsFloats):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::hasOverflowClip):
+        (khtml::RenderObject::hasAutoScrollbars):
+        (khtml::RenderObject::scrollsOverflow):
+        (khtml::RenderObject::includeScrollbarSize):
+        (khtml::RenderObject::setHasOverflowClip):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::overflow):
+        (khtml::RenderStyle::isDisplayReplacedType):
+        (khtml::RenderStyle::isDisplayInlineType):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::setStyle):
+        (RenderTableCell::setStyle):
+        (RenderTableCell::requiresLayer):
+        * khtml/rendering/render_table.h:
+
 2004-04-12  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3556036, make sure that when the position changes via style that all render layer

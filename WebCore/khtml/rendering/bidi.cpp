@@ -1322,7 +1322,7 @@ QRect RenderBlock::layoutInlineChildren(bool relayoutChildren)
     
     m_height = borderTop() + paddingTop();
     int toAdd = borderBottom() + paddingBottom();
-    if (style()->hidesOverflow() && m_layer)
+    if (includeScrollbarSize())
         toAdd += m_layer->horizontalScrollbarHeight();
     
     // Figure out if we should clear out our line boxes.

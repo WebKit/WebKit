@@ -139,8 +139,7 @@ public:
     virtual QRect getOverflowClipRect(int tx, int ty) { return QRect(0,0,0,0); }
     virtual QRect getClipRect(int tx, int ty) { return QRect(0,0,0,0); }
     bool hasClip() { return isPositioned() &&  style()->hasClip(); }
-    bool hasOverflowClip() { return style()->hidesOverflow(); }
-
+    
     virtual int getBaselineOfFirstLineBox() { return -1; } // Tables and blocks implement this.
     virtual InlineFlowBox* getFirstLineBox() { return 0; } // Tables and blocks implement this.
 
@@ -270,6 +269,14 @@ public:
     bool isSelectionBorder() const { return m_isSelectionBorder; }
     bool recalcMinMax() const { return m_recalcMinMax; }
 
+    bool hasOverflowClip() const { return m_hasOverflowClip; }
+    bool hasAutoScrollbars() const { return hasOverflowClip() && 
+        (style()->overflow() == OAUTO || style()->overflow() == OOVERLAY); }
+    bool scrollsOverflow() const { return hasOverflowClip() &&
+        (style()->overflow() == OSCROLL || hasAutoScrollbars()); }
+    bool includeScrollbarSize() const { return hasOverflowClip() &&
+        (style()->overflow() == OSCROLL || style()->overflow() == OAUTO); }
+
     RenderStyle* getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle = 0) const;
     
     RenderCanvas* canvas() const;
@@ -319,6 +326,7 @@ public:
     void setRenderText() { m_isText = true; }
     void setReplaced(bool b=true) { m_replaced = b; }
     void setIsSelectionBorder(bool b=true) { m_isSelectionBorder = b; }
+    void setHasOverflowClip(bool b = true) { m_hasOverflowClip = b; }
 
     void scheduleRelayout();
     
@@ -770,6 +778,8 @@ private:
     bool m_replaced                  : 1;
     bool m_mouseInside               : 1;
     bool m_isSelectionBorder         : 1;
+
+    bool m_hasOverflowClip           : 1;
 
     void arenaDelete(RenderArena *arena, void *objectBase);
 

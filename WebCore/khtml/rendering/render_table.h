@@ -319,6 +319,9 @@ public:
     virtual const char *renderName() const { return "RenderTableCell"; }
     virtual bool isTableCell() const { return true; }
 
+    // overrides RenderObject
+    virtual bool requiresLayer();
+
     // ### FIX these two...
     long cellIndex() const { return 0; }
     void setCellIndex( long ) { }

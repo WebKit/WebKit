@@ -56,9 +56,9 @@ public:
     // of the block (e.g., a <div style="height:25px"> that has a 100px tall image inside
     // it would have an overflow height of borderTop() + paddingTop() + 100px.
     virtual int overflowHeight(bool includeInterior=true) const
-    { return (!includeInterior && style()->hidesOverflow()) ? m_height : m_overflowHeight; }
+    { return (!includeInterior && hasOverflowClip()) ? m_height : m_overflowHeight; }
     virtual int overflowWidth(bool includeInterior=true) const
-    { return (!includeInterior && style()->hidesOverflow()) ? m_width : m_overflowWidth; }
+    { return (!includeInterior && hasOverflowClip()) ? m_width : m_overflowWidth; }
     virtual void setOverflowHeight(int h) { m_overflowHeight = h; }
     virtual void setOverflowWidth(int w) { m_overflowWidth = w; }
 
@@ -181,9 +181,6 @@ public:
     RootInlineBox* firstRootBox() { return static_cast<RootInlineBox*>(m_firstLineBox); }
     RootInlineBox* lastRootBox() { return static_cast<RootInlineBox*>(m_lastLineBox); }
 
-    // overrides RenderObject
-    virtual bool requiresLayer();
-    
     // Obtains the nearest enclosing block (including this block) that contributes a first-line style to our inline
     // children.
     virtual RenderBlock* firstLineBlock() const;

@@ -271,7 +271,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     initMaxMarginValues();
 
-    if (style()->scrollsOverflow() && m_layer) {
+    if (scrollsOverflow()) {
         // For overflow:scroll blocks, ensure we have both scrollbars in place always.
         if (style()->overflow() == OSCROLL) {
             m_layer->setHasHorizontalScrollbar(true);
@@ -325,7 +325,7 @@ void RenderFlexibleBox::layoutBlock(bool relayoutChildren)
 
     // Update our scrollbars if we're overflow:auto/scroll/hidden now that we know if
     // we overflow or not.
-    if (style()->hidesOverflow() && m_layer)
+    if (hasOverflowClip())
         m_layer->updateScrollInfoAfterLayout();
 
     // Repaint with our new bounds if they are different from our old bounds.

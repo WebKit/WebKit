@@ -82,13 +82,7 @@ RenderTable::~RenderTable()
 void RenderTable::setStyle(RenderStyle *_style)
 {
     ETableLayout oldTableLayout = style() ? style()->tableLayout() : TAUTO;
-    if ( _style->display() == INLINE ) _style->setDisplay(INLINE_TABLE);
-    if ( _style->display() != INLINE_TABLE ) _style->setDisplay(TABLE);
     RenderBlock::setStyle(_style);
-
-    // init RenderObject attributes
-    setInline(style()->display()==INLINE_TABLE && !isPositioned());
-    setReplaced(style()->display()==INLINE_TABLE);
 
     // In the collapsed border model, there is no cell spacing.
     hspacing = collapseBorders() ? 0 : style()->horizontalBorderSpacing();
@@ -1739,6 +1733,12 @@ void RenderTableCell::setStyle( RenderStyle *style )
 
     RenderBlock::setStyle( style );
     setShouldPaintBackgroundOrBorder(true);
+}
+
+bool RenderTableCell::requiresLayer() {
+    // FIXME: This is only here until we figure out how to position
+    // table cells properly when they have layers.
+    return false;
 }
 
 // The following rules apply for resolving conflicts and figuring out which border
