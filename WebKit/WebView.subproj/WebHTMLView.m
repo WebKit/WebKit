@@ -3319,7 +3319,7 @@ static WebHTMLView *lastHitView = nil;
     NSShadow *shadow = [dictionary objectForKey:NSShadowAttributeName];
     [style setTextShadow:[self _shadowAsString:shadow]];
 
-    // FIXME: NSStrikethroughStyleAttributeName
+    int strikethroughInt = [[dictionary objectForKey:NSStrikethroughStyleAttributeName] intValue];
 
     int superscriptInt = [[dictionary objectForKey:NSSuperscriptAttributeName] intValue];
     if (superscriptInt > 0)
@@ -3329,7 +3329,15 @@ static WebHTMLView *lastHitView = nil;
     else
         [style setVerticalAlign:@"baseline"];
 
-    // FIXME: NSUnderlineStyleAttributeName
+    int underlineInt = [[dictionary objectForKey:NSUnderlineStyleAttributeName] intValue];
+
+    // FIXME: Underline wins here if we have both (see bug 3790443).
+    if (strikethroughInt == NSUnderlineStyleNone && underlineInt == NSUnderlineStyleNone)
+        [style setTextDecoration:@"none"];
+    else if (underlineInt == NSUnderlineStyleNone)
+        [style setTextDecoration:@"line-through"];
+    else
+        [style setTextDecoration:@"underline"];
 
     return style;
 }

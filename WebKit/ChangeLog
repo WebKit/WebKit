@@ -1,3 +1,19 @@
+2005-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3791158> REGRESSION (Mail): copyFont: and pasteFont: copy and paste only the NSFont, not other attributes
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _styleFromFontAttributes:]): Added the last
+        few loose ends here: strikethrough and underline.
+
+        - fixed <rdar://problem/3967393> add a user default that lets you turn off WebKit PDF support
+
+        * WebView.subproj/WebFrameView.m: (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+        Leave the PDF-handling classes out of the dictionary if the secret default is set.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.
+
 2005-01-20  Darin Adler  <darin@apple.com>
 
         Reviewed by Kristin Forster.

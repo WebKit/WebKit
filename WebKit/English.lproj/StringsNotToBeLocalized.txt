@@ -206,6 +206,7 @@
 "WebKitMinimumFontSize"
 "WebKitMinimumLogicalFontSize"
 "WebKitObjectCacheSizePreferenceKey"
+"WebKitOmitPDFSupport"
 "WebKitPageCacheSizePreferenceKey"
 "WebKitPluginsEnabled"
 "WebKitPrivateBrowsingEnabled"
