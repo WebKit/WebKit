@@ -185,6 +185,30 @@
     return result;
 }
 
++ (NSArray *)_supportedImageMIMETypes
+{
+    static NSArray *imageMIMETypes = nil;
+
+    if(!imageMIMETypes){
+        NSEnumerator *enumerator = [[NSImage imageFileTypes] objectEnumerator];
+        WebFileTypeMappings *mappings = [WebFileTypeMappings sharedMappings];
+        NSMutableSet *mimes = [NSMutableSet set];
+        NSString *type;
+        
+        while ((type = [enumerator nextObject]) != nil) {
+            NSString *mime = [mappings MIMETypeForExtension:type];
+            if(mime && ![mime isEqualToString:@"application/octet-stream"] && ![mime isEqualToString:@"application/pdf"]){
+                [mimes addObject:mime];
+            }
+        }
+    
+        imageMIMETypes = [[mimes allObjects] retain];
+        NSLog([imageMIMETypes description]);
+    }
+
+    return imageMIMETypes;
+}
+
 - (void)_downloadURL:(NSURL *)URL
 {
     [self _downloadURL:URL toPath:nil];

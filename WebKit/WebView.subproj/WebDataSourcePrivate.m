@@ -415,10 +415,13 @@
 	    [WebHTMLRepresentation class], @"text/xml",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
-            [WebImageRepresentation class], @"image/jpeg",
-            [WebImageRepresentation class], @"image/gif",
-            [WebImageRepresentation class], @"image/png",
             nil];
+
+        NSEnumerator *enumerator = [[WebController _supportedImageMIMETypes] objectEnumerator];
+        NSString *mime;
+        while ((mime = [enumerator nextObject]) != nil) {
+            [repTypes setObject:[WebImageRepresentation class] forKey:mime];
+        }
     }
     
     return repTypes;

@@ -1,5 +1,19 @@
 2002-11-26  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3112003 - Show standalone tiffs using AppKit not QT plug-in
+
+	We now dynamically check NSImage for supported image types when registering WebImageView's and WebImageRepresentation's supported MIME types. 
+
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (+[WebController _supportedImageMIMETypes]): convert NSImage types to mime types
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (+[WebDataSource _repTypes]): use _supportedImageMIMETypes to register mime types of WebImageRepresentation
+        * WebView.subproj/WebViewPrivate.m:
+        (+[WebView _viewTypes]): use _supportedImageMIMETypes to register mime types of WebImageView
+
+2002-11-26  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3061174 - javascript: URLs sent by plugins don't work
 
 	For "Javascript:" URLs. 

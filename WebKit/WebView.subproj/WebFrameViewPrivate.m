@@ -12,6 +12,7 @@
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageView.h>
 #import <WebKit/WebTextView.h>
@@ -238,10 +239,13 @@
 	    [WebHTMLView class], @"text/xml",
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
-            [WebImageView class], @"image/jpeg",
-            [WebImageView class], @"image/gif",
-            [WebImageView class], @"image/png",
             nil];
+
+        NSEnumerator *enumerator = [[WebController _supportedImageMIMETypes] objectEnumerator];
+        NSString *mime;
+        while ((mime = [enumerator nextObject]) != nil) {
+            [viewTypes setObject:[WebImageView class] forKey:mime];
+        }
     }
     
     return viewTypes;
