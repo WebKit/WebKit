@@ -94,10 +94,14 @@ void InlineTextBox::attachLine()
     static_cast<RenderText*>(m_object)->attachTextBox(this);
 }
 
-void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos)
+void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p, RenderStyle* style, int tx, int ty, int startPos, int endPos, bool extendSelection)
 {
-    if(startPos > m_len) return;
-    if(startPos < 0) startPos = 0;
+    int offset = m_start;
+    int sPos = kMax(startPos - offset, 0);
+    int ePos = kMin(endPos - offset, (int)m_len);
+
+    if (sPos >= ePos)
+        return;
 
     p->save();
 #if APPLE_CHANGES
@@ -140,16 +144,16 @@ void InlineTextBox::paintSelection(const Font *f, RenderText *text, QPainter *p,
     int x = m_x + tx;
     int minX = x;
     int maxX = x;
-    if (startPos == 0 && root()->firstLeafChild() == this)
+    if ((extendSelection || startPos < m_start) && root()->firstLeafChild() == this)
         minX = absx + kMax(cb->leftOffset(ty), cb->leftOffset(root()->blockHeight()));
-    if (endPos == m_len && root()->lastLeafChild() == this)
+    if ((extendSelection || endPos > m_start + m_len) && root()->lastLeafChild() == this)
         maxX = absx + kMin(cb->rightOffset(ty), cb->rightOffset(root()->blockHeight()));
     
     f->drawHighlightForText(p, x, minX, maxX, absy + ty, h, text->str->s, text->str->l, m_start, m_len,
-		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), startPos, endPos, c);
+		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, style->visuallyOrdered(), sPos, ePos, c);
 #else
     f->drawHighlightForText(p, m_x + tx, m_y + ty, text->str->s, text->str->l, m_start, m_len,
-		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, startPos, endPos, c);
+		m_toAdd, m_reversed ? QPainter::RTL : QPainter::LTR, sPos, ePos, c);
 #endif
     p->restore();
 }
@@ -833,15 +837,7 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
         if (drawSelectionBackground)
 #endif
         if (!isPrinting && (selectionState() != SelectionNone))
-        {
-            int offset = s->m_start;
-            int sPos = QMAX( startPos - offset, 0 );
-            int ePos = QMIN( endPos - offset, s->m_len );
-            //kdDebug(6040) << this << " paintSelection with startPos=" << sPos << " endPos=" << ePos << endl;
-            if ( sPos < ePos )
-                s->paintSelection(font, this, p, _style, tx, ty, sPos, ePos);
-
-        }
+            s->paintSelection(font, this, p, _style, tx, ty, startPos, endPos, selectionState() == SelectionInside);
 
 #ifdef BIDI_DEBUG
         {

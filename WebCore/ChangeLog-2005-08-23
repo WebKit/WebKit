@@ -1,5 +1,25 @@
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+        
+        Fix for behavior which extends selection drawing to beginning and end of blocks.
+        I added this feature a few days ago, but my checks to see if the extension should
+        be done was naive: Is first or last item in root line box selected? Clearly this 
+        needs to be "selection is *beyond* first or last item in root line box. Done.
+
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint): Add selectionState() == SelectionInside check.
+        * khtml/rendering/render_text.cpp:
+        (InlineTextBox::paintSelection): Constrain passed-in offsets to be relative to box.
+        Use passed-in offsets to check whether selection extends beyond this box. Also, now
+        passes in flag to tell whether the whole RenderText has selectionState() == SelectionInside
+        (in which case you always want to extend).
+        (RenderText::paint): Remove box offset constraining from here. Now done in above function.
+        * khtml/rendering/render_text.h: Modify paintSelection interface to add 
+        selectionState() == SelectionInside flag.
+
+2004-05-04  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added layout tests for DOM traversal objects.

@@ -351,11 +351,11 @@ void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
                 int absx, absy;
                 containingBlock()->absolutePosition(absx, absy);
 
-                if (box->root()->firstLeafChild() == box) {
+                if (selectionState() == SelectionInside && box->root()->firstLeafChild() == box) {
                     extendSelectionToLeft = true;
                     selectionLeft = absx + containingBlock()->leftOffset(selectionTop);
                 }
-                if (box->root()->lastLeafChild() == box) {
+                if (selectionState() == SelectionInside && box->root()->lastLeafChild() == box) {
                     extendSelectionToRight = true;
                     selectionRight = absx + containingBlock()->rightOffset(selectionTop);
                 }
