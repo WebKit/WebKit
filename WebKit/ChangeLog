@@ -1,3 +1,14 @@
+2005-02-16  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by me, code change by Darin.
+
+        - fixed the build on Panther
+
+        * WebView.subproj/WebFormDataStream.m: (webSetHTTPBody):
+        Added a Panther-specific code path that just loads all the data into one big
+        NSData object. This means that bug 3686434 won't be fixed on SUPanWheat; we'll
+        still load the file into memory before sending it to the server on Panther.
+
 2005-02-15  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3998368> Tiger8A376: WebTextRenderer assertion failure in Safari while browsing news.bbc.co.uk
