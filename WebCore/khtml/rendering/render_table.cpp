@@ -2034,15 +2034,14 @@ void RenderTableRow::layout()
 
     RenderObject *child = firstChild();
     while( child ) {
-	KHTMLAssert( child->isTableCell() );
-	if ( !child->layouted() ) {
-	    RenderTableCell *cell = static_cast<RenderTableCell *>(child);
-	    cell->calcVerticalMargins();
-	    cell->layout();
-	    cell->setCellTopExtra(0);
-	    cell->setCellBottomExtra(0);
-	}
-	child = child->nextSibling();
+        if (child->isTableCell() && !child->layouted() ) {
+            RenderTableCell *cell = static_cast<RenderTableCell *>(child);
+            cell->calcVerticalMargins();
+            cell->layout();
+            cell->setCellTopExtra(0);
+            cell->setCellBottomExtra(0);
+        }
+        child = child->nextSibling();
     }
     setLayouted();
 }

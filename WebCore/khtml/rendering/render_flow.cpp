@@ -1262,15 +1262,15 @@ static inline RenderObject *next(RenderObject *par, RenderObject *current)
     while(current != 0)
     {
         //kdDebug( 6040 ) << "current = " << current << endl;
-	if(!current->isFloating() && !current->isReplaced() && !current->isPositioned())
-	    next = current->firstChild();
-	if(!next) {
-	    while(current && current != par) {
-		next = current->nextSibling();
-		if(next) break;
-		current = current->parent();
-	    }
-	}
+        if(!current->isFloating() && !current->isReplaced() && !current->isPositioned())
+            next = current->firstChild();
+        if(!next) {
+            while(current && current != par) {
+                next = current->nextSibling();
+                if(next) break;
+                current = current->parent();
+            }
+        }
 
         if(!next) break;
 
@@ -1289,7 +1289,6 @@ void RenderFlow::calcInlineMinMaxWidth()
     int cw = containingBlock()->contentWidth();
 
     RenderObject *child = firstChild();
-    RenderObject *prevchild = 0;
     
     // If we are at the start of a line, we want to ignore all white-space.
     // Also strip spaces if we previously had text that ended in a trailing space.
@@ -1480,7 +1479,6 @@ void RenderFlow::calcInlineMinMaxWidth()
             trailingSpaceChild = 0;
         }
         
-        prevchild = child;
         child = next(this, child);
     }
     
