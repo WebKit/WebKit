@@ -26,6 +26,8 @@
 #ifndef __dom_position_h__
 #define __dom_position_h__
 
+#include "text_affinity.h"
+
 namespace DOM {
 
 class CSSComputedStyleDeclarationImpl;
@@ -33,12 +35,6 @@ class ElementImpl;
 class NodeImpl;
 class Range;
 class RangeImpl;
-
-// These match the AppKit values for these concepts.
-// From NSTextView.h:
-// NSSelectionAffinityUpstream = 0
-// NSSelectionAffinityDownstream = 1
-enum EAffinity { UPSTREAM = 0, DOWNSTREAM = 1 };
 
 enum EStayInBlock { DoNotStayInBlock = false, StayInBlock = true };
 
@@ -83,9 +79,7 @@ public:
     Position downstream(EStayInBlock stayInBlock = DoNotStayInBlock) const;
     
     Position equivalentRangeCompliantPosition() const;
-    Position equivalentShallowPosition() const;
     Position equivalentDeepPosition() const;
-    Position closestRenderedPosition(EAffinity) const;
     bool inRenderedContent() const;
     bool isRenderedCharacter() const;
     bool rendersInDifferentPosition(const Position &pos) const;

@@ -1,5 +1,50 @@
 2004-09-27  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Removed closestRenderedPosition function from Position class and gave this work
+        to VisiblePosition instead. However, in order to make the transfer possible,
+        VisiblePosition needed upstream and downstream affinities added to its
+        constructors. Also moved the EAffinity enum into its own file. Also moved it
+        to the khtml namespace.
+
+        Updated several functions which used closestRenderedPosition to use VisiblePosition
+        instead.
+        
+        Also deleted Position::equivalentShallowPosition. This was unused.
+
+        * ForwardingHeaders/editing/text_affinity.h: Added.
+        * ForwardingHeaders/editing/visible_position.h: Added.
+        * WebCore.pbproj/project.pbxproj: Added new files.
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::validate): Use VisiblePosition instead of closestRenderedPosition.
+        * khtml/editing/selection.h:
+        * khtml/editing/text_affinity.h: Added.
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::VisiblePosition):
+        (khtml::VisiblePosition::initUpstream): New helper for finding upstream visible position.
+        (khtml::VisiblePosition::initDownstream): Was old init function that unconditionally did
+        downstream checks for visible position. Renamed to describe this more clearly.
+        * khtml/editing/visible_position.h:
+        * khtml/editing/visible_units.cpp:
+        (khtml::previousWordBoundary): Use VisiblePosition instead of closestRenderedPosition.
+        (khtml::nextWordBoundary): Use VisiblePosition instead of closestRenderedPosition.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::updateSelection): Use VisiblePosition instead of closestRenderedPosition.
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::closestRenderedPosition): Removed.
+        * khtml/xml/dom_position.h: Removed two functions mentioned above.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fontForSelection) Use VisiblePosition instead of closestRenderedPosition.:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setSelectedDOMRange:affinity:]): Use VisiblePosition instead of closestRenderedPosition.
+        * layout-tests/editing/deleting/delete-block-merge-contents-012-expected.txt: Updated expected results.
+        * layout-tests/editing/deleting/delete-block-merge-contents-017-expected.txt: Ditto.
+        * layout-tests/editing/deleting/delete-contiguous-ws-001-expected.txt: Ditto.
+        * layout-tests/editing/selection/move-by-character-004-expected.txt: Ditto.
+
+2004-09-27  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin and Maciej
 
         Removed EditCommand smart pointer wrappers from htmlediting.cpp/.h, save for the one

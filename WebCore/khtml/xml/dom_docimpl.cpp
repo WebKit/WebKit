@@ -75,6 +75,7 @@
 #include "cssvalues.h"
 
 #include "editing/jsediting.h"
+#include "editing/visible_position.h"
 #include "editing/visible_text.h"
 
 #include <kio/job.h>
@@ -1278,8 +1279,8 @@ void DocumentImpl::updateSelection()
         canvas->clearSelection();
     }
     else {
-        Position startPos = Position(s.start()).closestRenderedPosition(UPSTREAM);
-        Position endPos = Position(s.end()).closestRenderedPosition(DOWNSTREAM);
+        Position startPos = VisiblePosition(s.start(), UPSTREAM).deepEquivalent();
+        Position endPos = VisiblePosition(s.end(), DOWNSTREAM).deepEquivalent();
         if (startPos.isNotNull() && endPos.isNotNull()) {
             RenderObject *startRenderer = startPos.node()->renderer();
             RenderObject *endRenderer = endPos.node()->renderer();

@@ -55,7 +55,6 @@
 #define EDIT_DEBUG 0
 
 using DOM::DOMString;
-using DOM::DOWNSTREAM;
 using DOM::ElementImpl;
 using DOM::Node;
 using DOM::NodeImpl;
@@ -677,14 +676,14 @@ void Selection::validate(ETextGranularity granularity)
     if (m_base.isNotNull()) {
         m_base.node()->getDocument()->updateLayout();
         updatedLayout = true;
-        m_base = m_base.equivalentDeepPosition().closestRenderedPosition(affinity());
+        m_base = VisiblePosition(m_base).deepEquivalent();
         if (baseAndExtentEqual)
             m_extent = m_base;
     }
     if (m_extent.isNotNull() && !baseAndExtentEqual) {
         if (!updatedLayout)
             m_extent.node()->getDocument()->updateLayout();
-        m_extent = m_extent.equivalentDeepPosition().closestRenderedPosition(affinity());
+        m_extent = VisiblePosition(m_extent).deepEquivalent();
     }
 
     // Make sure we do not have a dangling start or end

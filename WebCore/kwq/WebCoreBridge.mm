@@ -99,7 +99,6 @@ using DOM::Node;
 using DOM::NodeImpl;
 using DOM::Position;
 using DOM::Range;
-using DOM::UPSTREAM;
 
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
@@ -117,6 +116,7 @@ using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
 using khtml::Selection;
 using khtml::TypingCommand;
+using khtml::UPSTREAM;
 using khtml::VisiblePosition;
 
 using KJS::ExecState;
@@ -1451,10 +1451,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     // If that bug wasn't an issue, we could just make the position from the range directly.
     Position start(startContainer, [range startOffset]);
     Position end(endContainer, [range endOffset]);
-    start = start.equivalentDeepPosition().closestRenderedPosition(UPSTREAM);
+    start = VisiblePosition(start, UPSTREAM).deepEquivalent();
 
     Selection selection(start, end);
-    selection.setAffinity(static_cast<DOM::EAffinity>(selectionAffinity));
+    selection.setAffinity(static_cast<khtml::EAffinity>(selectionAffinity));
     _part->setSelection(selection);
 }
 

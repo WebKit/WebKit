@@ -45,7 +45,6 @@ public:
     enum EAlter { MOVE, EXTEND };
     enum EDirection { FORWARD, BACKWARD, RIGHT, LEFT };
 
-    typedef DOM::EAffinity EAffinity;
     typedef DOM::Range Range;
     typedef DOM::Position Position;
 

@@ -101,7 +101,6 @@ using DOM::Position;
 using DOM::Range;
 using DOM::RangeImpl;
 using DOM::TextImpl;
-using DOM::UPSTREAM;
 
 using khtml::Cache;
 using khtml::CharacterIterator;
@@ -135,6 +134,7 @@ using khtml::setStart;
 using khtml::startOfWord;
 using khtml::startVisiblePosition;
 using khtml::TextIterator;
+using khtml::UPSTREAM;
 using khtml::VISIBLE;
 using khtml::VisiblePosition;
 using khtml::WordAwareIterator;
@@ -3344,7 +3344,7 @@ NSFont *KWQKHTMLPart::fontForSelection(bool *hasMultipleFonts) const
         return nil;
     
     if (d->m_selection.isCaret()) {
-        Position pos(d->m_selection.start().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
+        Position pos = VisiblePosition(d->m_selection.start(), UPSTREAM).deepEquivalent();
         ASSERT(pos.isNotNull());
         if (!pos.inRenderedContent())
             return nil;

@@ -538,6 +538,7 @@
 				93ABE075070285F600BD91F9,
 				932B9835070297DC0032804F,
 				939FF8EF0702B1B100979E5E,
+				BECE67BE07087B250007C14B,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3454,6 +3455,7 @@
 				BE02D4E7066F908A0076809F,
 				93ABE067070285F600BD91F9,
 				93ABE066070285F600BD91F9,
+				BECE67BD07087B250007C14B,
 				932B9834070297DC0032804F,
 				93ABE069070285F600BD91F9,
 				93ABE068070285F600BD91F9,
@@ -3468,6 +3470,21 @@
 			name = editing;
 			refType = 4;
 			sourceTree = "<group>";
+		};
+		BECE67BD07087B250007C14B = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = text_affinity.h;
+			path = editing/text_affinity.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		BECE67BE07087B250007C14B = {
+			fileRef = BECE67BD07087B250007C14B;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		BEF7EEA005FF8F0D009717EE = {
 			fileEncoding = 30;

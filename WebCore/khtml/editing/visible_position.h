@@ -27,6 +27,7 @@
 #define KHTML_EDITING_VISIBLE_POSITION_H
 
 #include "xml/dom_position.h"
+#include "text_affinity.h"
 
 namespace DOM {
     class Range;
@@ -42,8 +43,8 @@ public:
     typedef DOM::Position Position;
 
     VisiblePosition() { }
-    VisiblePosition(NodeImpl *, long offset);
-    VisiblePosition(const Position &);
+    VisiblePosition(NodeImpl *, long offset, EAffinity affinity=DOWNSTREAM);
+    VisiblePosition(const Position &, EAffinity affinity=DOWNSTREAM);
 
     void clear() { m_deepPosition.clear(); }
 
@@ -67,7 +68,8 @@ public:
 #endif
     
 private:
-    void init(const Position &);
+    void initUpstream(const Position &);
+    void initDownstream(const Position &);
 
     static Position deepEquivalent(const Position &);
     static Position rangeCompliantEquivalent(const Position &);

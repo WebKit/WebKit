@@ -45,20 +45,67 @@ using DOM::RangeImpl;
 
 namespace khtml {
 
-VisiblePosition::VisiblePosition(NodeImpl *node, long offset)
+VisiblePosition::VisiblePosition(NodeImpl *node, long offset, EAffinity affinity)
 {
-    init(Position(node, offset));
+    Position pos = Position(node, offset);
+    switch (affinity) {
+        case UPSTREAM:
+            initUpstream(pos);
+            break;
+        case DOWNSTREAM:
+            initDownstream(pos);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+    }
 }
 
-VisiblePosition::VisiblePosition(const Position &pos)
+VisiblePosition::VisiblePosition(const Position &pos, EAffinity affinity)
 {
-    init(pos);
+    switch (affinity) {
+        case UPSTREAM:
+            initUpstream(pos);
+            break;
+        case DOWNSTREAM:
+            initDownstream(pos);
+            break;
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+    }
 }
 
-void VisiblePosition::init(const Position &pos)
+void VisiblePosition::initUpstream(const Position &pos)
 {
     Position deepPos = deepEquivalent(pos);
-    
+
+    if (isCandidate(deepPos)) {
+        m_deepPosition = deepPos;
+        Position next = nextVisiblePosition(deepPos);
+        if (next.isNotNull()) {
+            Position previous = previousVisiblePosition(next);
+            if (previous.isNotNull())
+                m_deepPosition = previous;
+        }
+    }
+    else {
+        Position previous = previousVisiblePosition(deepPos);
+        if (previous.isNotNull()) {
+            m_deepPosition = previous;
+        }
+        else {
+            Position next = nextVisiblePosition(deepPos);
+            if (next.isNotNull())
+                m_deepPosition = next;
+        }
+    }
+}
+
+void VisiblePosition::initDownstream(const Position &pos)
+{
+    Position deepPos = deepEquivalent(pos);
+
     if (isCandidate(deepPos)) {
         m_deepPosition = deepPos;
         Position previous = previousVisiblePosition(deepPos);

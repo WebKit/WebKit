@@ -486,17 +486,6 @@ Position Position::equivalentRangeCompliantPosition() const
     return Position(node()->parentNode(), o + offset());
 }
 
-Position Position::equivalentShallowPosition() const
-{
-    if (isNull())
-        return *this;
-
-    Position pos(*this);
-    while (pos.offset() == pos.node()->caretMinOffset() && pos.node()->parentNode() && pos.node() == pos.node()->parentNode()->firstChild())
-        pos = Position(pos.node()->parentNode(), 0);
-    return pos;
-}
-
 Position Position::equivalentDeepPosition() const
 {
     if (isNull() || node()->isAtomicNode())
@@ -525,52 +514,6 @@ Position Position::equivalentDeepPosition() const
         }
     }
     return pos;
-}
-
-Position Position::closestRenderedPosition(EAffinity affinity) const
-{
-    if (isNull() || inRenderedContent())
-        return *this;
-
-    Position pos;
-    PositionIterator it(*this);
-    
-    switch (affinity) {
-        case UPSTREAM:
-            // look upstream first
-            it.setPosition(*this);
-            while (!it.atStart()) {
-                it.previous();
-                if (it.current().inRenderedContent())
-                    return it.current();
-            }
-            // if this does not find something rendered, look downstream
-            it.setPosition(*this);
-            while (!it.atEnd()) {
-                it.next();
-                if (it.current().inRenderedContent())
-                    return it.current();
-            }
-            break;
-        case DOWNSTREAM:
-            // look downstream first
-            it.setPosition(*this);
-            while (!it.atEnd()) {
-                it.next();
-                if (it.current().inRenderedContent())
-                    return it.current();
-            }
-            // if this does not find something rendered, look upstream
-            it.setPosition(*this);
-            while (!it.atStart()) {
-                it.previous();
-                if (it.current().inRenderedContent())
-                    return it.current();
-            }
-            break;
-    }
-    
-    return Position();
 }
 
 bool Position::inRenderedContent() const

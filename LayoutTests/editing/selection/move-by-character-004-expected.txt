@@ -25,6 +25,6 @@ layer at (0,0) size 800x600
           RenderImage {IMG} at (75,232) size 76x103
         RenderText {TEXT} at (0,0) size 0x0
 selection is CARET:
-start:      position 0 of child 2 {IMG} of child 2 {SPAN} of root {DIV}
+start:      position 1 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 upstream:   position 1 of child 1 {TEXT} of child 2 {SPAN} of root {DIV}
 downstream: position 0 of child 2 {IMG} of child 2 {SPAN} of root {DIV}
