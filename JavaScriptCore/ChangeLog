@@ -1,5 +1,23 @@
 2004-11-01  Richard Williamson   <rjw@apple.com>
 
+        Fixed <rdar://problem/3861469> Latest Real player crashes Safari on some sites.
+
+        Reviewed by Ken.
+
+        * bindings/c/c_instance.cpp:
+        (CInstance::invokeMethod):
+        (CInstance::invokeDefaultMethod):
+        Initialize out parameters to void type.
+
+        * bindings/c/c_runtime.cpp:
+        (CField::valueFromInstance):
+        (CField::setValueToInstance):
+        Initialize out parameters to void type.
+        Also added additional checks to protect against classes that 
+        don't implement all functions.
+
+2004-11-01  Richard Williamson   <rjw@apple.com>
+
         Fixed <rdar://problem/3861257> WebUndefined should be returned for undefined values
 
         Reviewed by John.
@@ -11,14 +29,6 @@
         * bindings/objc/objc_utility.mm:
         (KJS::Bindings::convertObjcValueToValue):
 	Added additional conversion WebUndefined -> Undefined.
-
-2004-11-01  Richard Williamson   <rjw@apple.com>
-
-
-        Reviewed by John.
-
-        * bindings/objc/WebScriptObject.mm:
-        (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
 
 2004-11-01  Darin Adler  <darin@apple.com>
 
