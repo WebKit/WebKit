@@ -285,11 +285,28 @@
     }
 }
 
+- (BOOL)isInResponderChain
+{
+    NSResponder *responder = [[self window] firstResponder];
+
+    while(responder != nil){
+        if(responder == self){
+            return YES;
+        }
+        responder = [responder nextResponder];
+    }
+    return NO;
+}
+
 - (BOOL)performKeyEquivalent:(NSEvent *)theEvent
 {
     EventRecord event;
     bool acceptedEvent;
 
+    if(![self isInResponderChain]){
+        return NO;
+    }
+    
     [self getCarbonEvent:&event withEvent:theEvent];
     event.what = keyDown;
 
@@ -447,7 +464,8 @@
     NPError npErr =
 #endif
     NPP_SetWindow(instance, &window);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x\n", npErr, (int)nPort.port);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x, window.x:%d window.y:%d\n",
+                     npErr, (int)nPort.port, (int)window.x, (int)window.y);
 
 #if 0
     // Draw test    

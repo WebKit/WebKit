@@ -1,5 +1,14 @@
 2002-08-01  Chris Blumenberg  <cblu@apple.com>
 
+	Only send command key events if the plug-in is in the responder chain.
+
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebPluginView isInResponderChain]):
+        (-[WebPluginView performKeyEquivalent:]):
+        (-[WebPluginView setWindow]): added some more logging
+
+2002-08-01  Chris Blumenberg  <cblu@apple.com>
+
 	Only send command keyDown once by ignoring the keyDown that comes after performKeyEquivalent.
 
         * Plugins.subproj/WebPluginView.m:
