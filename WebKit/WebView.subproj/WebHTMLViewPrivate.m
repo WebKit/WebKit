@@ -52,7 +52,7 @@
 
 - (void)dealloc
 {
-    [draggedURL release];
+    [draggingImageElement release];
     [super dealloc];
 }
 

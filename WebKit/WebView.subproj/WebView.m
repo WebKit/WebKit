@@ -34,6 +34,7 @@ NSString * WebElementLinkLabelKey = @"WebElementLinkLabel";
 NSString * WebElementImageURLKey = @"WebElementImageURL";
 NSString * WebElementStringKey = @"WebElementString";
 NSString * WebElementImageKey = @"WebElementImage";
+NSString * WebElementImageLocationKey = @"WebElementImageLocation";
 NSString * WebElementFrameKey = @"WebElementFrame";
 
 @implementation WebController

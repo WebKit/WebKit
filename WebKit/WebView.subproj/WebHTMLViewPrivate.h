@@ -23,10 +23,11 @@
     BOOL liveAllowsScrolling;
     BOOL inWindow;
     BOOL inNextValidKeyView;
-    NSURL *draggedURL;
     
     id savedSubviews;
     BOOL subviewsSetAside;
+
+    NSDictionary *draggingImageElement;
 }
 @end
 

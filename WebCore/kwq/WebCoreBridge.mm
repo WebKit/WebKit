@@ -470,6 +470,10 @@ using khtml::RenderPart;
             id <WebCoreImageRenderer> image = r->pixmap().image();
             if (image) {
                 [elementInfo setObject:image forKey:WebCoreElementImage];
+                int x, y;
+                if(r->absolutePosition(x, y)){
+                    [elementInfo setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocation];
+                }
             }
         }
     }

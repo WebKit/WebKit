@@ -1,3 +1,21 @@
+2002-09-26  Chris Blumenberg  <cblu@apple.com>
+
+	- When dragging an image, use the image itself for the drag image
+	- Support promised file and image data drag types for dragged images.
+
+        * Misc.subproj/WebNSImageExtras.h: Added.
+        * Misc.subproj/WebNSImageExtras.m: Added.
+        (-[NSImage _web_scaleToMaxSize:]): new, scales an image is greater than max
+        (-[NSImage _web_dissolveToFraction:]): new, dissolves image in place
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h: Added WebElementImageLocationKey to the element dictionary
+        * WebView.subproj/WebController.m: ditto
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): subclassed for only for image drags
+        (-[WebHTMLView mouseDragged:]): use the promised file api again.
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): use the retained element dictionary instead of the dragged URL which I deleted.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 === Alexander-25 ===
 
 2002-09-25  Richard Williamson   <rjw@apple.com>

@@ -277,6 +277,7 @@
 				5152FAEA033FC53500CA2ACD,
 				511D5554033FD51000CA2ACD,
 				933D659B03413FF2008635CE,
+				8398847C03426FB000BC5F5E,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -366,6 +367,7 @@
 				5152FAE4033FC50400CA2ACD,
 				5152FAE8033FC52200CA2ACD,
 				933D659C03413FF2008635CE,
+				8398847D03426FB000BC5F5E,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -440,6 +442,8 @@
 				2568C72C0174912D0ECA149E,
 				F5927D4E02D26C5E01CA2DBB,
 				F5C283730284676D018635CA,
+				8398847A03426FB000BC5F5E,
+				8398847B03426FB000BC5F5E,
 				ED2B2474033A2DA800C1A526,
 				ED2B2475033A2DA800C1A526,
 				F508946902B71D59018A9CD4,
@@ -1284,6 +1288,40 @@
 //652
 //653
 //654
+//830
+//831
+//832
+//833
+//834
+		8398847A03426FB000BC5F5E = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNSImageExtras.h;
+			refType = 4;
+		};
+		8398847B03426FB000BC5F5E = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebNSImageExtras.m;
+			refType = 4;
+		};
+		8398847C03426FB000BC5F5E = {
+			fileRef = 8398847A03426FB000BC5F5E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		8398847D03426FB000BC5F5E = {
+			fileRef = 8398847B03426FB000BC5F5E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//830
+//831
+//832
+//833
+//834
 //930
 //931
 //932

@@ -18,6 +18,7 @@
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebNSImageExtras.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -28,6 +29,17 @@
 
 // Needed for the mouse moved notification.
 #import <AppKit/NSResponder_Private.h>
+
+#define DragStartXHysteresis  		5.0
+#define DragStartYHysteresis  		5.0
+
+#define DRAG_LABEL_BORDER_X		4.0
+#define DRAG_LABEL_BORDER_Y		2.0
+
+#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
+
+#define DragImageAlpha    		0.75
+#define MaxDragSize 			NSMakeSize(400, 400)
 
 @implementation WebHTMLView
 
@@ -436,13 +448,50 @@
     [[self _bridge] mouseDown:event];
 }
 
-#define DragStartXHysteresis  		5.0
-#define DragStartYHysteresis  		5.0
+- (void)dragImage:(NSImage *)anImage
+               at:(NSPoint)imageLoc
+           offset:(NSSize)mouseOffset
+            event:(NSEvent *)theEvent
+       pasteboard:(NSPasteboard *)pboard
+           source:(id)sourceObject
+        slideBack:(BOOL)slideBack
+{
+    if(_private->draggingImageElement){
+        // Subclassing dragImage for image drags let's us change aspects of the drag that the
+        // promised file API doesn't provide such as a different drag image, other pboard types etc.
+        
+        NSImage *originalImage = [_private->draggingImageElement objectForKey:WebElementImageKey];
+        anImage = [[originalImage copy] autorelease];
+        
+        NSSize originalSize = [anImage size];
+        [anImage _web_scaleToMaxSize:MaxDragSize];
+        NSSize newSize = [anImage size];
 
-#define DRAG_LABEL_BORDER_X		4.0
-#define DRAG_LABEL_BORDER_Y		2.0
+        [anImage _web_dissolveToFraction:DragImageAlpha];
 
-#define MIN_DRAG_LABEL_WIDTH_BEFORE_CLIP	120.0
+        NSPoint mouseDownPoint = [self convertPoint:[theEvent locationInWindow] fromView:nil];
+        NSPoint currentPoint = [self convertPoint:[[_window currentEvent] locationInWindow] fromView:nil];
+
+        // Properly orient the drag image if it's smaller than the original
+        imageLoc = [[_private->draggingImageElement objectForKey:WebElementImageLocationKey] pointValue];
+        imageLoc.x = mouseDownPoint.x - (((mouseDownPoint.x - imageLoc.x) / originalSize.width) * newSize.width);
+        imageLoc.y = imageLoc.y + originalSize.height;
+        imageLoc.y = mouseDownPoint.y - (((mouseDownPoint.y - imageLoc.y) / originalSize.height) * newSize.height);
+        
+        mouseOffset = NSMakeSize(currentPoint.x - mouseDownPoint.x, currentPoint.y - mouseDownPoint.y);
+
+        [pboard addTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:self];
+        [pboard setData:[originalImage TIFFRepresentation] forType:NSTIFFPboardType];
+    }
+
+    [super dragImage:anImage
+                  at:imageLoc
+              offset:mouseOffset
+               event:theEvent
+          pasteboard:pboard
+              source:sourceObject
+           slideBack:slideBack];
+}
 
 - (void)mouseDragged:(NSEvent *)event
 {
@@ -462,38 +511,27 @@
     NSDictionary *element = [self _elementAtPoint: point];
     NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
+
+    [_private->draggingImageElement release];
+    _private->draggingImageElement = nil;
     
     if ((deltaX >= DragStartXHysteresis || deltaY >= DragStartYHysteresis) && !didScroll){
-        if((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
-            (!imageURL && linkURL)){
-            [_private->draggedURL release];
+        if((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) || (!imageURL && linkURL)){
             
             if (imageURL){
-                _private->draggedURL = imageURL;
+                _private->draggingImageElement = [element retain];
 
-                NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
-                NSImage *image = [element objectForKey: WebElementImageKey];
-                //NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
-                //NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
-
-                NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-                [pasteboard declareTypes:[NSArray arrayWithObject:NSTIFFPboardType] owner:nil];
-                [pasteboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];
+                // FIXME: This getting the file type this way doesn't always work
+                [self dragPromisedFilesOfTypes:[NSArray arrayWithObject:[[imageURL path] pathExtension]]
+                                      fromRect:NSZeroRect
+                                        source:self
+                                     slideBack:YES
+                                         event:event];
                 
-                [self dragImage:image
-                             at:mousePoint
-                         offset:NSZeroSize
-                          event:event
-                     pasteboard:pasteboard
-                         source:self
-                      slideBack:YES];
-            }
-            else if (linkURL) {
+            }else if (linkURL) {
                 BOOL drawURLString = YES;
                 BOOL clipURLString = NO;
-                
-                _private->draggedURL = linkURL;
-                                
+                                                
                 NSString *label = [element objectForKey: WebElementLinkLabelKey];
                 NSString *urlString = [linkURL absoluteString];
                 
@@ -549,10 +587,6 @@
                          source:self
                       slideBack:NO];
             }
-            else
-                _private->draggedURL = nil;
-            
-            [_private->draggedURL retain];
             
             return;
         }
@@ -560,10 +594,31 @@
 
     // Give khtml a crack at the event only if we haven't started,
     // or potentially starated, a drag
-    if (!linkURL && !imageURL)
+    if (!linkURL && !imageURL){
         [[self _bridge] mouseDragged:event];
+    }
 }
 
+- (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+{
+    return NSDragOperationCopy;
+}
+
+- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
+{
+    NSURL *imageURL = [_private->draggingImageElement objectForKey: WebElementImageURLKey];
+    
+    if(!imageURL){
+        return nil;
+    }
+    
+    NSString *filename = [[imageURL path] lastPathComponent];
+    NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
+
+    [[self _controller] _downloadURL:imageURL toPath:path];
+    
+    return [NSArray arrayWithObject:filename];
+}
 
 - (void)mouseUp: (NSEvent *)event
 {
@@ -652,20 +707,6 @@
 }
 
 #endif
-
-- (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
-{
-    return NSDragOperationCopy;
-}
-
-- (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
-{
-    NSString *filename = [[_private->draggedURL path] lastPathComponent];
-    NSString *path = [[dropDestination path] stringByAppendingPathComponent:filename];
-
-    [[self _controller] _downloadURL:_private->draggedURL toPath:path];
-    return [NSArray arrayWithObject:filename];
-}
 
 - (BOOL)supportsTextEncoding
 {

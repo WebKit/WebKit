@@ -1,3 +1,11 @@
+2002-09-26  Chris Blumenberg  <cblu@apple.com>
+
+	Added WebCoreElementImageLocationKey to the element dictionary.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 === Alexander-25 ===
 
 2002-09-25  David Hyatt  <hyatt@apple.com>

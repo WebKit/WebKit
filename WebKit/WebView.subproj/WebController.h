@@ -31,6 +31,7 @@ extern NSString *WebElementLinkLabelKey;
 extern NSString *WebElementImageURLKey;
 extern NSString *WebElementStringKey;
 extern NSString *WebElementImageKey;
+extern NSString *WebElementImageLocationKey;
 extern NSString *WebElementFrameKey;
 
 /*!
