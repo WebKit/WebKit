@@ -21,6 +21,7 @@
  */
 
 #include "protected_values.h"
+#include "simple_number.h"
 
 namespace KJS {
 
@@ -35,6 +36,9 @@ int ProtectedValues::getProtectCount(ValueImp *k)
 {
     if (!_table)
 	return 0;
+
+    if (SimpleNumber::is(k))
+      return 0;
 
     unsigned hash = computeHash(k);
     
@@ -57,6 +61,9 @@ int ProtectedValues::getProtectCount(ValueImp *k)
 void ProtectedValues::increaseProtectCount(ValueImp *k)
 {
     assert(k);
+
+    if (SimpleNumber::is(k))
+      return;
 
     if (!_table)
         expand();
@@ -103,6 +110,9 @@ inline void ProtectedValues::insert(ValueImp *k, int v)
 void ProtectedValues::decreaseProtectCount(ValueImp *k)
 {
     assert(k);
+
+    if (SimpleNumber::is(k))
+      return;
 
     unsigned hash = computeHash(k);
     

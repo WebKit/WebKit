@@ -1,3 +1,15 @@
+2004-12-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Kevin.
+
+	<rdar://problem/3926869> Opening caches window after running PLT causes crash
+	
+        * kjs/protected_values.cpp:
+        (KJS::ProtectedValues::getProtectCount): Don't include simple numbers in
+	the protected value table.
+        (KJS::ProtectedValues::increaseProtectCount): Ditto.
+        (KJS::ProtectedValues::decreaseProtectCount): Ditto.
+
 2004-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
