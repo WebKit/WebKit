@@ -1,3 +1,132 @@
+2002-08-19  Darin Adler  <darin@apple.com>
+
+	First cut at implementation of "tab to change focus": Lots of loose ends, but it's
+	going well.
+
+        * kwq/KWQNSTextField.h: Change initWithWidget to initWithQLineEdit.
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField initWithQLineEdit:]): Keep a QLineEdit pointer so we don't cast later.
+        (-[KWQNSTextField dealloc]): Sets widget to 0 to make nextKeyView and previousKeyView
+	return nil while deallocating.
+        (-[KWQNSTextField setPasswordMode:]): Pass widget when creating secure text field so it
+	can handle the next/previous links properly.
+        (-[KWQNSTextField nextKeyView]): Added. Calls KWQKHTMLPartImpl::nextKeyView.
+        (-[KWQNSTextField previousKeyView]): Added. Calls KWQKHTMLPartImpl::nextKeyView.
+        (-[KWQTextFieldCell isOpaque]): Added. Returns NO; fixes focus rectangle updating.
+        (-[KWQSecureTextField initWithQWidget:]): Added.
+        (-[KWQSecureTextField dealloc]): Added. Sets widget to 0 to make nextKeyView and
+	previousKeyView return nil while deallocating.
+        (-[KWQSecureTextField nextKeyView]): Added. Calls KWQKHTMLPartImpl::nextKeyView.
+        (-[KWQSecureTextField previousKeyView]): Added. Calls KWQKHTMLPartImpl::nextKeyView.
+
+        * kwq/KWQKHTMLPartImpl.h: Add KWQSelectionDirection. Change name of getBridge() to
+	bridge(), getDocument() to document(), getRenderer() to renderer(), getBridgeForFrameName()
+	to bridgeForFrameName(). Also added nextKeyView family of member functions.
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::nextKeyViewInFrame): Added.
+        (KWQKHTMLPartImpl::nextKeyView): Added.
+
+        * kwq/qt/qwidget.h: Remove unneeded parameters from constructor. Also added a
+	constructor that takes an NSView.
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget): Don't store focus policy (it was uninitialized before).
+        (QWidget::focusPolicy): Return TabFocus for any widget that has a view with a first
+	responder, NoFocus for any other.
+        (QWidget::setFocusPolicy): Do nothing.
+        (QWidget::setFocusProxy): Do nothing.
+
+        * kwq/qt/qobject.h: Store the event filter object when installEventFilter is called.
+	This is used to find the RenderWidget for a QWidget by the new tabbing code.
+        * kwq/KWQObject.mm: Removed event-filter functions. Two are now inlines, one deleted.
+
+	Other changes related to KWQKHTMLPartImpl improvements.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        * kwq/KWQKHTMLPartImpl.mm:
+        * kwq/KWQLoaderImpl.mm:
+        * kwq/WebCoreBridge.mm:
+	Update for KWQKHTMLPartImpl member name changes.
+
+	Various improvements for other widget implementations.
+
+        * kwq/qt/qbutton.h:
+        * kwq/KWQButton.mm: Stop using KWQNSButton. Instead just use a button adapter
+	object, and a plain old NSButton.
+        (QButton::QButton): Put all the NSButton setup in here.
+        (QButton::~QButton): Release the adapter here.
+        (QButton::clicked): Move this in here because it's virtual now so that QCheckBox
+	can override it.
+        (-[KWQButtonAdapter initWithQButton:]): Added.
+        (-[KWQButtonAdapter action:]): Just call clicked().
+
+        * kwq/qt/qpushbutton.h: Don't pass unused parent pointer to QButton constructor.
+        * kwq/KWQPushButton.mm: (QPushButton::QPushButton): Don't pass unused parent pointer to
+	QButton contructor.
+
+        * kwq/qt/qcheckbox.h:
+        * kwq/KWQCheckBox.mm: Just use NSButton, not KWQNSButton.
+        (QCheckBox::clicked): Move the state-changed logic here; used to be in KWQNSButton.
+
+        * kwq/KWQRadioButton.mm:
+        (QRadioButton::QRadioButton): Don't pass unused parent pointer to
+	QButton contructor.
+
+        * kwq/qt/qcombobox.h:
+        * kwq/KWQComboBox.mm:
+        (QComboBox::QComboBox): Removed extra constructor. Make a plain NSPopUpButton,
+	and use an adapter object, rather than having a KWQNSComboBox.
+        (QComboBox::~QComboBox): Release the adapter.
+        (QComboBox::insertItem): New implementation. No need to keep an items array around,
+	because the menu does that just fine.
+        (QComboBox::clear): Remove the items from the pop-up button directly.
+        (-[KWQComboBoxAdapter initWithQComboBox:]): Added.
+        (-[KWQComboBoxAdapter action:]): Just call activated().
+
+        * kwq/kdeui/kcombobox.h: Empty this out and make it use only inlines.
+
+        * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement):
+	Remove the setSize()/doneLoading() optimization for QComboBox because the new
+	simpler QComboBox implementation obviates the speed problem this was originally
+	intended to fix.
+
+        * kwq/qt/qlineedit.h:
+        * kwq/KWQLineEdit.mm: (QLineEdit::QLineEdit): Call initWithQLineEdit instead of
+	initWithWidget. Also don't take an unused parent pointer parameter.
+
+        * kwq/kdeui/klineedit.h: Empty this out and make it use only inlines.
+
+        * kwq/qt/qframe.h: Remove unused parent pointer from constructor.
+        * kwq/KWQFrame.mm: Remove unneeded constructor.
+        * kwq/KWQHBox.mm: (QHBox::QHBox): Don't pass unused parent pointer to QFrame.
+        * kwq/KWQLabel.mm: (QLabel::QLabel): Don't pass unused parent pointer to QFrame.
+        * kwq/qt/qscrollview.h: Make constructor inline.
+        * kwq/KWQScrollView.mm: Remove unneeded constructor.
+        * kwq/KWQWindowWidget.h: Remove unneeded constructor.
+
+        * WebCore.pbproj/project.pbxproj: Remove KWQKComboBox.mm, KWQKLineEdit.mm,
+	and KWQScrollBar.h.
+        * kwq/KWQKComboBox.mm: Removed.
+        * kwq/KWQKLineEdit.mm: Removed.
+        * kwq/KWQScrollBar.h: Removed. Unused.
+
+        * kwq/KWQTextArea.h: Change initWithWidget to initWithQTextEdit.
+        * kwq/KWQTextArea.mm: (-[KWQTextArea initWithQTextEdit:]): Changed name.
+        * kwq/KWQTextEdit.mm: (QTextEdit::QTextEdit): Call initWithQTextEdit instead of
+	initWithWidget.
+
+        * kwq/KWQView.h: Eliminated KWQNSButton, KWQNSComboBox, and KWQNSScrollView.
+        * kwq/KWQView.mm: Ditto.
+
+	Housekeeping.
+
+        * force-clean-timestamp: Yes, again.
+
+        * khtml/khtml_part.h: Rearrange APPLE_CHANGES a bit.
+
+        * kwq/qt/qvaluelist.h: Added -- as well as ++ for the const iterator, and fixed some
+	minor const issues. At one point I needed this for the focus changes, but not any more.
+
 2002-08-16  Darin Adler  <darin@apple.com>
 
         * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::userAgent):

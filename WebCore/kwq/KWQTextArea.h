@@ -25,15 +25,16 @@
  
 #import <Cocoa/Cocoa.h>
 
-class QWidget;
+class QTextEdit;
 
 @interface KWQTextArea : NSScrollView
 {
     NSTextView *textView;
-    QWidget *widget;
+    QTextEdit *widget;
     BOOL wrap;
 }
-- initWithWidget:(QWidget *)w; 
+
+- initWithQTextEdit:(QTextEdit *)w; 
 
 // The following methods corresponds to methods required by KDE.
 - (void)setWordWrap:(BOOL)wrap;

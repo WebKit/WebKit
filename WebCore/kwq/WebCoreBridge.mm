@@ -131,7 +131,7 @@ using khtml::RenderPart;
     // If we own the view, delete the old one - otherwise the render
     // widget should take care of deleting the view
     if (bridgeOwnsKHTMLView) {
-	delete part->impl->getView();
+	delete part->impl->view();
     }
 
     KHTMLView *kview = new KHTMLView(part, 0);
@@ -174,11 +174,11 @@ using khtml::RenderPart;
 
 - (void)forceLayout
 {
-    RenderObject *renderer = part->impl->getRenderer();
+    RenderObject *renderer = part->impl->renderer();
     if (renderer) {
         renderer->setLayouted(false);
     }
-    KHTMLView *view = part->impl->getView();
+    KHTMLView *view = part->impl->view();
     if (view) {
         view->layout();
     }
@@ -186,11 +186,11 @@ using khtml::RenderPart;
 
 - (void)drawRect:(NSRect)rect withPainter:(QPainter *)p
 {
-    RenderObject *renderer = part->impl->getRenderer();
+    RenderObject *renderer = part->impl->renderer();
         
 #ifdef DEBUG_DRAWING
     [[NSColor redColor] set];
-    [NSBezierPath fillRect:[part->impl->getView()->getView() visibleRect]];
+    [NSBezierPath fillRect:[part->impl->view()->getView() visibleRect]];
 #endif
 
     if (renderer) {
@@ -232,7 +232,7 @@ using khtml::RenderPart;
 
 - (NSObject *)copyDOMTree:(id <WebCoreDOMTreeCopier>)copier
 {
-    DOM::DocumentImpl *doc = part->impl->getDocument();
+    DOM::DocumentImpl *doc = part->impl->document();
     if (!doc) {
         return nil;
     }
@@ -265,7 +265,7 @@ using khtml::RenderPart;
 
 - (NSObject *)copyRenderTree:(id <WebCoreRenderTreeCopier>)copier
 {
-    RenderObject *renderer = part->impl->getRenderer();
+    RenderObject *renderer = part->impl->renderer();
     if (!renderer) {
         return nil;
     }
@@ -275,21 +275,21 @@ using khtml::RenderPart;
 - (void)removeFromFrame
 {
     if (bridgeOwnsKHTMLView) {
-        delete part->impl->getView();
+        delete part->impl->view();
     }
     bridgeOwnsKHTMLView = NO;
 }
 
 - (void)installInFrame:(NSView *)view
 {
-    part->impl->getView()->setView(view);
+    part->impl->view()->setView(view);
 
     // If this isn't the main frame, it must have a render part set, or it
     // won't ever get installed in the view hierarchy.
     KWQ_ASSERT(self == [self mainFrame] || renderPart != nil);
 
     if (renderPart) {
-        renderPart->setWidget(part->impl->getView());
+        renderPart->setWidget(part->impl->view());
         // Now that the render part is holding the widget, we don't own it any more.
         bridgeOwnsKHTMLView = NO;
     }
@@ -336,8 +336,8 @@ using khtml::RenderPart;
     state |= [self stateForEvent:event];
     
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
-    if (part->impl->getView()) {
-        part->impl->getView()->viewportMouseReleaseEvent(&kEvent);
+    if (part->impl->view()) {
+        part->impl->view()->viewportMouseReleaseEvent(&kEvent);
     }
 }
 
@@ -363,8 +363,8 @@ using khtml::RenderPart;
     state |= [self stateForEvent:event];
     
     QMouseEvent kEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
-    if (part->impl->getView()) {
-        part->impl->getView()->viewportMousePressEvent(&kEvent);
+    if (part->impl->view()) {
+        part->impl->view()->viewportMousePressEvent(&kEvent);
     }
 }
 
@@ -373,8 +373,8 @@ using khtml::RenderPart;
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), 0, [self stateForEvent:event]);
-    if (part->impl->getView()) {
-        part->impl->getView()->viewportMouseMoveEvent(&kEvent);
+    if (part->impl->view()) {
+        part->impl->view()->viewportMouseMoveEvent(&kEvent);
     }
 }
 
@@ -383,21 +383,21 @@ using khtml::RenderPart;
     NSPoint p = [event locationInWindow];
     
     QMouseEvent kEvent(QEvent::MouseMove, QPoint((int)p.x, (int)p.y), Qt::LeftButton, Qt::LeftButton);
-    if (part->impl->getView()) {
-        part->impl->getView()->viewportMouseMoveEvent(&kEvent);
+    if (part->impl->view()) {
+        part->impl->view()->viewportMouseMoveEvent(&kEvent);
     }
 }
 
 - (NSURL *)completeURLForDOMString:(const DOMString &)s
 {
-    NSString *URLString = part->impl->getDocument()->completeURL(s.string()).getNSString();
+    NSString *URLString = part->impl->document()->completeURL(s.string()).getNSString();
     return [NSURL _web_URLWithString:URLString];
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
     RenderObject::NodeInfo nodeInfo(true, true);
-    part->impl->getRenderer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y, 0, 0);
+    part->impl->renderer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y, 0, 0);
     
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 

@@ -30,7 +30,7 @@
 
 class QPushButton : public QButton {
 public:
-    QPushButton(QWidget *w) : QButton(w) { }
+    QPushButton(QWidget *parent) { }
     QPushButton(const QString &text, QWidget *parent);
 };
 

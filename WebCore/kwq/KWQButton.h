@@ -29,10 +29,17 @@
 #include <qwidget.h>
 #include <qstring.h>
 #include <KWQSignal.h>
-    
+
+#ifdef __OBJC__
+@class KWQButtonAdapter;
+#else
+class KWQButtonAdapter;
+#endif
+
 class QButton : public QWidget {
 public:
-    QButton(QWidget *parent = 0);
+    QButton();
+    ~QButton();
 
     virtual void setText(const QString &);
     QString text() const;
@@ -41,10 +48,11 @@ public:
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
     
-    void clicked() { m_clicked.call(); }
+    virtual void clicked();
 
 private:
     KWQSignal m_clicked;
+    KWQButtonAdapter *m_adapter;
 };
 
 #endif

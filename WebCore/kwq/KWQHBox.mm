@@ -32,7 +32,6 @@
 // to stretch a LineEditWidget. We probably don't need it at all.
 
 QHBox::QHBox(QWidget *parent)
-    : QFrame(parent)
 {
     KWQView *view = (KWQView *)getView();
     [view setIsFlipped: NO];

@@ -27,17 +27,15 @@
 #define KLINEEDIT_H_
 
 #include <qlineedit.h>
-
 #include <KWQCompletion.h>
-
-#include "kcompletionbox.h"
+#include <kcompletionbox.h>
 
 class KLineEdit : public QLineEdit, public KCompletionBase {
 public:
-    KLineEdit(QWidget *parent=0);
+    KLineEdit(QWidget *parent) { }
 
-    void setContextMenuEnabled(bool showMenu);
-    KCompletionBox *completionBox(bool create);
+    void setContextMenuEnabled(bool showMenu) { }
+    KCompletionBox *completionBox(bool create) { return 0; }
     
     int frameWidth() const { return 2; }
 };

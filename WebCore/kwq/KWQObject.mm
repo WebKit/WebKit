@@ -173,22 +173,6 @@ void QObject::killTimers()
     }
 }
 
-void QObject::installEventFilter(const QObject *)
-{
-    _logNeverImplemented();
-}
-
-void QObject::removeEventFilter(const QObject *)
-{
-    _logNeverImplemented();
-}
-
-bool QObject::eventFilter(QObject *o, QEvent *e)
-{
-    _logNeverImplemented();
-    return false;
-}
-
 bool QObject::event(QEvent *)
 {
     return false;

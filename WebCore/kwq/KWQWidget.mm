@@ -40,7 +40,6 @@
 class QWidgetPrivate
 {
 public:
-    QWidget::FocusPolicy focusPolicy;
     QStyle *style;
     QFont font;
     QCursor cursor;
@@ -48,12 +47,21 @@ public:
     NSView *view;
 };
 
-QWidget::QWidget(QWidget *parent, const char *name, int f) 
+QWidget::QWidget() 
+    : data(new QWidgetPrivate)
 {
-    static QStyle defaultStyle;
-    
-    data = new QWidgetPrivate;
     data->view = [[KWQView alloc] initWithWidget:this];
+
+    static QStyle defaultStyle;
+    data->style = &defaultStyle;
+}
+
+QWidget::QWidget(NSView *view)
+    : data(new QWidgetPrivate)
+{
+    data->view = [view retain];
+
+    static QStyle defaultStyle;
     data->style = &defaultStyle;
 }
 
@@ -181,20 +189,15 @@ void QWidget::clearFocus()
 
 QWidget::FocusPolicy QWidget::focusPolicy() const
 {
-    return data->focusPolicy;
+    return [getView() acceptsFirstResponder] ? TabFocus : NoFocus;
 }
 
 void QWidget::setFocusPolicy(FocusPolicy fp)
 {
-    data->focusPolicy = fp;
 }
 
 void QWidget::setFocusProxy(QWidget *w)
 {
-    if (w)
-        data->focusPolicy = w->focusPolicy();
-    // else?  FIXME: [rjw] we need to understand kde's focus policy.  I don't
-    // think this is even relevant for us.
 }
 
 const QPalette& QWidget::palette() const

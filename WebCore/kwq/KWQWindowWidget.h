@@ -52,7 +52,6 @@ class KWQWindowWidget : public QWidget
     virtual QPoint mapFromGlobal(const QPoint &) const;
 
  private:
-    KWQWindowWidget();
     KWQWindowWidget(NSWindow *window);
     KWQWindowWidgetPrivate *d;
 };

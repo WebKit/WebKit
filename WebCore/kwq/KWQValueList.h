@@ -47,14 +47,14 @@ template<class T> class QValueListIterator {
 public: 
     QValueListIterator() { }
 
+    T& operator*() const { return ((QValueListNode<T> *)impl.node())->value; } 
+
+    QValueListIterator &operator++() { ++impl; return *this; }    
+    QValueListIterator &operator--() { --impl; return *this; }
+    QValueListIterator operator++(int) { return impl++; }
+
     bool operator==(const QValueListIterator &other) { return impl == other.impl; }
     bool operator!=(const QValueListIterator &other) { return impl != other.impl; }
-    const T& operator*() const { return ((const QValueListNode<T> *)impl.node())->value; } 
-    QValueListIterator operator++() { ++impl; return *this; }
-    
-    T& operator*() { return ((QValueListNode<T> *)impl.node())->value; } 
-    QValueListIterator& operator--() { --impl; return *this; }
-    QValueListIterator operator++(int) { return impl++; }
 
 private:
     QValueListIterator(const KWQValueListIteratorImpl &pImp) : impl(pImp) { }
@@ -68,13 +68,16 @@ private:
 template<class T> class QValueListConstIterator {
 public:
     QValueListConstIterator() { }
-    QValueListConstIterator(const QValueListIterator<T> &other) : impl(other.impl) { }
+    QValueListConstIterator(const QValueListIterator<T> &it) : impl(it.impl) { }
+
+    const T& operator*() const { return ((const QValueListNode<T> *)impl.node())->value; }
+    
+    QValueListConstIterator &operator++() { ++impl; return *this; }
+    QValueListConstIterator &operator--() { --impl; return *this; }
+    QValueListConstIterator operator++(int) { return impl++; }
 
     bool operator==(const QValueListConstIterator &other) { return impl == other.impl; }
     bool operator!=(const QValueListConstIterator &other) { return impl != other.impl; }
-    const T& operator*() const { return ((const QValueListNode<T> *)impl.node())->value; } 
-    QValueListConstIterator operator++() { ++impl; return *this; }
-    QValueListConstIterator operator++(int) { return impl++; }
 
 private:
     QValueListConstIterator(const KWQValueListIteratorImpl &pImp) : impl(pImp) { }
@@ -92,8 +95,6 @@ public:
 
     QValueList() : impl(deleteNode, copyNode) { }
         
-    // member functions --------------------------------------------------------
-
     void clear() { impl.clear(); }
     uint count() const { return impl.count(); }
     bool isEmpty() const { return impl.isEmpty(); }

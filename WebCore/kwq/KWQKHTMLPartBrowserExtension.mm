@@ -57,7 +57,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 						const KParts::WindowArgs &winArgs, 
 						KParts::ReadOnlyPart **partResult)
 { 
-    WebCoreBridge *bridge = [m_part->impl->getBridge() openNewWindowWithURL:url.getNSURL()];
+    WebCoreBridge *bridge = [m_part->impl->bridge() openNewWindowWithURL:url.getNSURL()];
 
     if (!winArgs.toolBarsVisible) {
 	[bridge setToolbarsVisible:NO];
@@ -110,10 +110,10 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
 
 void KHTMLPartBrowserExtension::setIconURL(const KURL &url)
 {
-    [m_part->impl->getBridge() setIconURL:url.getNSURL()];
+    [m_part->impl->bridge() setIconURL:url.getNSURL()];
 }
 
 void KHTMLPartBrowserExtension::setTypedIconURL(const KURL &url, const QString &type)
 {
-    [m_part->impl->getBridge() setIconURL:url.getNSURL() withType:type.getNSString()];
+    [m_part->impl->bridge() setIconURL:url.getNSURL() withType:type.getNSString()];
 }

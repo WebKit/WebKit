@@ -25,7 +25,7 @@
 
 #import <qpushbutton.h>
 
-QPushButton::QPushButton(const QString &text, QWidget *parent) : QButton(parent)
+QPushButton::QPushButton(const QString &text, QWidget *parent)
 {
     setText(text);
 }

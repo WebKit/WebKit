@@ -67,11 +67,6 @@
 
 @end
 
-QScrollView::QScrollView(QWidget *parent, const char *name, int f)
-    : QFrame(parent)
-{
-}
-
 QWidget* QScrollView::viewport() const
 {
     return const_cast<QScrollView *>(this);

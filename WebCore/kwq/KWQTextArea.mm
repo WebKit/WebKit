@@ -94,12 +94,10 @@ const float LargeNumberForText = 1.0e7;
     
     [self _createTextView];
     
-    widget = 0;
-    
     return self;
 }
 
-- initWithWidget:(QWidget *)w 
+- initWithQTextEdit:(QTextEdit *)w 
 {
     [super init];
     widget = w;
@@ -108,31 +106,25 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)textDidEndEditing:(NSNotification *)aNotification
 {
-    if (widget) {
-        QTextEdit *textEdit = dynamic_cast<QTextEdit *>(widget);
-        if (textEdit) {
-            textEdit->textChanged();
-        }
-    }
+    widget->textChanged();
 }
-
 
 - (void)setWordWrap:(BOOL)f
 {
-    if (f == wrap)
+    if (f == wrap) {
         return;
+    }
         
     // This widget may have issues toggling back and forth between WRAP=YES and WRAP=NO.
     NSDictionary *attr;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
-    if (f){
+    if (f) {
         [self setHasHorizontalScroller:NO];
         [textView setHorizontallyResizable:NO];
         [[textView textContainer] setWidthTracksTextView:NO];
         [style setLineBreakMode:NSLineBreakByWordWrapping];
-    }
-    else {
+    } else {
         [self setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
         [[self contentView] setAutoresizesSubviews:YES];
         [self setHasHorizontalScroller:YES];
@@ -177,24 +169,19 @@ const float LargeNumberForText = 1.0e7;
 {
     NSRange glyphRange = NSMakeRange(0,0), characterRange;
     int lineCount = 0;
-    NSString *stringLine;
     NSLayoutManager *layoutManager = [textView layoutManager];
     unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
     
     while (NSMaxRange(glyphRange) < numberOfGlyphs) {
         (void)[layoutManager lineFragmentRectForGlyphAtIndex:NSMaxRange(glyphRange) effectiveRange:&glyphRange];
         characterRange = [layoutManager characterRangeForGlyphRange:glyphRange actualGlyphRange:NULL];
-        if (line == lineCount){
-            // I hope this works, the alternative is
-            // [[view string] substringWithRange:characterRange]
-            stringLine = [[[textView textStorage] attributedSubstringFromRange:characterRange] string];
-            return stringLine;
+        if (line == lineCount) {
+            return [[[textView textStorage] attributedSubstringFromRange:characterRange] string];
         }
         lineCount++;
     }
     return @"";
 }
-
 
 - (int) numLines
 {
@@ -210,16 +197,14 @@ const float LargeNumberForText = 1.0e7;
     return lineCount;
 }
 
-
 - (void)selectAll
 {
-    [textView setSelectedRange:NSMakeRange(0, [[textView textStorage] length])];
+    [textView selectAll:nil];
 }
-
 
 - (void)setEditable:(BOOL)flag
 {
-    [textView setEditable: flag];
+    [textView setEditable:flag];
 }
 
 - (BOOL)isEditable

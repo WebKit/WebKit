@@ -25,7 +25,7 @@
 
 #import <qbutton.h>
 
-#import <KWQView.h>
+#import <qcheckbox.h>
 
 // We empirically determined that buttons have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.
@@ -34,17 +34,43 @@
 #define LEFT_MARGIN 5
 #define RIGHT_MARGIN 5
 
-QButton::QButton(QWidget *parent)
-    : m_clicked(this, SIGNAL(clicked()))
+@interface KWQButtonAdapter : NSObject
 {
-    KWQNSButton *button = [[KWQNSButton alloc] initWithWidget:this];
+    QButton *button;
+}
+
+- initWithQButton:(QButton *)b;
+- (void)action:(id)sender;
+
+@end
+
+QButton::QButton()
+    : m_clicked(this, SIGNAL(clicked()))
+    , m_adapter([[KWQButtonAdapter alloc] initWithQButton:this])
+{
+    NSButton *button = [[NSButton alloc] init];
+
+    [button setTarget:m_adapter];
+    [button setAction:@selector(action:)];
+
+    [button setTitle:@""];
+    [button setBezelStyle:NSRoundedBezelStyle];
+    [[button cell] setControlSize:NSSmallControlSize];
+    [button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+
     setView(button);
+
     [button release];
+}
+
+QButton::~QButton()
+{
+    [m_adapter release];
 }
 
 QSize QButton::sizeHint() const 
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
+    NSButton *button = (NSButton *)getView();
     return QSize((int)[[button cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
         (int)[[button cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
 }
@@ -66,12 +92,32 @@ void QButton::setFrameGeometry(const QRect &r)
 
 void QButton::setText(const QString &s)
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
+    NSButton *button = (NSButton *)getView();
     [button setTitle:s.getNSString()];
 }
 
 QString QButton::text() const
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
+    NSButton *button = (NSButton *)getView();
     return QString::fromNSString([button title]);
 }
+
+void QButton::clicked()
+{
+    m_clicked.call();
+}
+
+@implementation KWQButtonAdapter
+
+- initWithQButton:(QButton *)b
+{
+    button = b;
+    return [super init];
+}
+
+- (void)action:(id)sender
+{
+    button->clicked();
+}
+
+@end

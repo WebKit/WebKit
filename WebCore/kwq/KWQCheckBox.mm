@@ -25,8 +25,6 @@
 
 #import <qcheckbox.h>
 
-#import <KWQView.h>
-
 // We empirically determined that check boxes have these extra pixels on all
 // sides. It would be better to get this info from AppKit somehow.
 #define TOP_MARGIN 1
@@ -35,12 +33,10 @@
 #define RIGHT_MARGIN 3
 
 QCheckBox::QCheckBox(QWidget *w)
-    : QButton(w)
-    , m_stateChanged(this, SIGNAL(stateChanged(int)))
+    : m_stateChanged(this, SIGNAL(stateChanged(int)))
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
-    [button setButtonType: NSSwitchButton];
-    [button setAction:@selector(stateChanged:)];
+    NSButton *button = (NSButton *)getView();
+    [button setButtonType:NSSwitchButton];
 }
 
 QSize QCheckBox::sizeHint() const 
@@ -65,12 +61,23 @@ void QCheckBox::setFrameGeometry(const QRect &r)
 
 void QCheckBox::setChecked(bool isChecked)
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
+    NSButton *button = (NSButton *)getView();
     [button setState:isChecked ? NSOnState : NSOffState];
 }
 
 bool QCheckBox::isChecked()
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
+    NSButton *button = (NSButton *)getView();
     return [button state] == NSOnState;
+}
+
+void QCheckBox::clicked()
+{
+    // Note that it's important to give the stateChanged signal before
+    // the clicked signal so that the corresponding JavaScript messages
+    // go in the right order. A test for this at the time of this writing
+    // was the languages radio buttons and check boxes at google.com prefs.
+    
+    m_stateChanged.call(isChecked() ? 2 : 0);
+    QButton::clicked();
 }

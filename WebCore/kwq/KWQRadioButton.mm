@@ -34,10 +34,10 @@
 #define LEFT_MARGIN 3
 #define RIGHT_MARGIN 3
 
-QRadioButton::QRadioButton(QWidget *w) : QButton(w)
+QRadioButton::QRadioButton(QWidget *w)
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
-    [button setButtonType: NSRadioButton];
+    NSButton *button = (NSButton *)getView();
+    [button setButtonType:NSRadioButton];
 }
 
 QSize QRadioButton::sizeHint() const 
@@ -62,12 +62,12 @@ void QRadioButton::setFrameGeometry(const QRect &r)
 
 void QRadioButton::setChecked(bool isChecked)
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
-    [button setState: isChecked ? NSOnState : NSOffState];
+    NSButton *button = (NSButton *)getView();
+    [button setState:isChecked ? NSOnState : NSOffState];
 }
 
 bool QRadioButton::isChecked() const
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
+    NSButton *button = (NSButton *)getView();
     return [button state] == NSOnState;
 }

@@ -25,8 +25,6 @@
 
 #import <qcombobox.h>
 
-#import <KWQView.h>
-
 #import <kwqdebug.h>
 
 // We empirically determined that combo boxes have these extra pixels on all
@@ -36,75 +34,60 @@
 #define LEFT_MARGIN 3
 #define RIGHT_MARGIN 3
 
-QComboBox::QComboBox(QWidget *parent, const char *name)
-    : m_activated(this, SIGNAL(activated(int)))
+@interface KWQComboBoxAdapter : NSObject
 {
-    init(false);
+    QComboBox *box;
 }
 
-QComboBox::QComboBox(bool rw, QWidget *parent, const char *name)
-    : m_activated(this, SIGNAL(activated(int)))
-{
-    init(rw);
-}
+- initWithQComboBox:(QComboBox *)b;
+- (void)action:(id)sender;
 
-void QComboBox::init(bool isEditable)
+@end
+
+QComboBox::QComboBox()
+    : m_activated(this, SIGNAL(activated(int)))
+    , m_adapter([[KWQComboBoxAdapter alloc] initWithQComboBox:this])
 {
-    KWQNSComboBox *comboBox = [[KWQNSComboBox alloc] initWithWidget:this];
-    setView(comboBox);
-    [comboBox release];
-    
-    items = [[NSMutableArray alloc] init];
+    NSPopUpButton *button = [[NSPopUpButton alloc] init];
+
+    [button setTarget:m_adapter];
+    [button setAction:@selector(action:)];
+
+    [[button cell] setControlSize:NSSmallControlSize];
+    [button setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+
+    setView(button);
+
+    [button release];
 }
 
 QComboBox::~QComboBox()
 {
-    [items release];
-}
-
-int QComboBox::count() const
-{
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    return [comboBox numberOfItems];
-}
-
-QListBox *QComboBox::listBox() const
-{
-    return 0;
-}
-
-void QComboBox::popup()
-{
-}
-
-bool QComboBox::eventFilter(QObject *object, QEvent *event)
-{
-    _logNotYetImplemented();
-    return FALSE;
+    [m_adapter release];
 }
 
 void QComboBox::insertItem(const QString &text, int index)
 {
-    NSString *string;
-    int numItems = [items count];
-    string = [text.getNSString() copy];
-    if (index < 0 || index == numItems) {
-        [items addObject:string];
-    } else {
-        while (index >= numItems) {
-            [items addObject: @""];
-            ++numItems;
-        }
-        [items replaceObjectAtIndex:index withObject:string];
+    NSPopUpButton *button = (NSPopUpButton *)getView();
+    int numItems = [button numberOfItems];
+    if (index < 0) {
+        index = numItems;
     }
-    [string release];
+    while (index >= numItems) {
+        [button addItemWithTitle:@""];
+        ++numItems;
+    }
+    // It's convenient that we added the item with an empty title,
+    // because addItemWithTitle will not allow multiple items with the
+    // same title. But this way, we can have such duplicate items.
+    [[button itemAtIndex:index] setTitle:text.getNSString()];
 }
 
 QSize QComboBox::sizeHint() const 
 {
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    return QSize((int)[[comboBox cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
-        (int)[[comboBox cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
+    NSPopUpButton *button = (NSPopUpButton *)getView();
+    return QSize((int)[[button cell] cellSize].width - (LEFT_MARGIN + RIGHT_MARGIN),
+        (int)[[button cell] cellSize].height - (TOP_MARGIN + BOTTOM_MARGIN));
 }
 
 QRect QComboBox::frameGeometry() const
@@ -124,28 +107,33 @@ void QComboBox::setFrameGeometry(const QRect &r)
 
 void QComboBox::clear()
 {
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    [comboBox removeAllItems];
-}
-
-int QComboBox::indexOfCurrentItem()
-{
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    return [comboBox indexOfSelectedItem];
+    NSPopUpButton *button = (NSPopUpButton *)getView();
+    [button removeAllItems];
 }
 
 void QComboBox::setCurrentItem(int index)
 {
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    int num = [comboBox numberOfItems];
-    if (num != 0 && index < num)
-        [comboBox selectItemAtIndex:index];
-    else
-        KWQDEBUG("Error, index = %d, numberOfItems = %d", index, num);
+    NSPopUpButton *button = (NSPopUpButton *)getView();
+    [button selectItemAtIndex:index];
 }
 
 int QComboBox::currentItem() const
 {
-    KWQNSComboBox *comboBox = (KWQNSComboBox *)getView();
-    return [comboBox indexOfSelectedItem];
+    NSPopUpButton *button = (NSPopUpButton *)getView();
+    return [button indexOfSelectedItem];
 }
+
+@implementation KWQComboBoxAdapter
+
+- initWithQComboBox:(QComboBox *)b
+{
+    box = b;
+    return [super init];
+}
+
+- (void)action:(id)sender
+{
+    box->activated();
+}
+
+@end

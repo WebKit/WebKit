@@ -740,12 +740,6 @@ signals:
    */
   void nodeActivated(const DOM::Node &);
 
-#ifdef APPLE_CHANGES
-  void completed();
-  void completed(bool);
-  void started(KIO::Job *);
-#endif
-
 protected:
 
   /**
@@ -1091,9 +1085,13 @@ private:
 
 #ifdef APPLE_CHANGES
 public:  
-  void setStatusBarText(const QString &);
   KWQKHTMLPartImpl *impl;
   friend class KWQKHTMLPartImpl;
+
+  void completed();
+  void completed(bool);
+  void setStatusBarText(const QString &);
+  void started(KIO::Job *);
 #endif
 
 };

@@ -62,7 +62,8 @@ public:
         WheelFocus = 0x7
     };
 
-    QWidget(QWidget *parent = 0, const char *name = 0, int flags = 0);
+    QWidget();
+    QWidget(NSView *view);
     virtual ~QWidget();
 
     virtual QSize sizeHint() const;

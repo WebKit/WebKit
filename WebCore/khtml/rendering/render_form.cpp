@@ -811,9 +811,7 @@ void RenderSelect::updateFromElement()
             static_cast<KComboBox*>(m_widget)->clear();
 
 #ifdef APPLE_CHANGES
-        if(!m_useListBox)
-            static_cast<KComboBox*>(m_widget)->setSize(listItems.size());
-	else
+        if (m_useListBox)
             static_cast<KListBox*>(m_widget)->beginBatchInsert();
 #endif
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
@@ -851,9 +849,7 @@ void RenderSelect::updateFromElement()
             m_selectionChanged = true;
         }
 #ifdef APPLE_CHANGES
-        if(!m_useListBox)
-            static_cast<KComboBox*>(m_widget)->doneLoading();
-	else
+        if (m_useListBox)
 	    static_cast<KListBox*>(m_widget)->endBatchInsert();
 #endif
         setMinMaxKnown(false);

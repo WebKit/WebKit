@@ -33,7 +33,7 @@ public:
     enum Shape { NoFrame, Box, StyledPanel };
     enum Shadow { Sunken };
 
-    QFrame(QWidget *parent);
+    QFrame() { }
 
     virtual void setFrameStyle(int);
     int frameStyle();

@@ -27,17 +27,11 @@
 #define KCOMBOBOX_H_
 
 #include <qcombobox.h>
-
 #include <KWQCompletion.h>
 
 class KComboBox : public QComboBox, public KCompletionBase {
 public:
-    KComboBox(QWidget *parent=0, const char *name=0);
-    KComboBox(bool rw, QWidget *parent=0, const char *name=0);
-    virtual ~KComboBox();
-
-    void doneLoading();
-    void setSize(int size);
+    KComboBox(bool, QWidget *) { }
 };
 
 #endif

@@ -41,6 +41,7 @@ namespace KParts {
 namespace DOM {
     class DOMString;
     class DocumentImpl;
+    class NodeImpl;
 }
 
 namespace khtml {
@@ -49,12 +50,17 @@ namespace khtml {
 }
 
 #ifdef __OBJC__
+@class NSView;
 @class WebCoreBridge;
-@class NSMutableSet;
 #else
+class NSView;
 class WebCoreBridge;
-class NSMutableSet;
 #endif
+
+enum KWQSelectionDirection {
+    KWQSelectingNext,
+    KWQSelectingPrevious
+};
 
 class KWQKHTMLPartImpl : public QObject
 {
@@ -62,10 +68,10 @@ public:
     KWQKHTMLPartImpl(KHTMLPart *);
     ~KWQKHTMLPartImpl();
     
-    void setBridge(WebCoreBridge *p) { bridge = p; }
-    WebCoreBridge *getBridge() const { return bridge; }
+    void setBridge(WebCoreBridge *p) { _bridge = p; }
+    WebCoreBridge *bridge() const { return _bridge; }
     void setView(KHTMLView *view);
-    KHTMLView *getView() const;
+    KHTMLView *view() const;
 
     void openURLRequest(const KURL &, const KParts::URLArgs &);
     
@@ -98,22 +104,27 @@ public:
     
     QString userAgent() const;
     
+    static NSView *nextKeyView(QWidget *startingPoint, KWQSelectionDirection);
+    
     // Incoming calls, used by the bridge.
     
-    DOM::DocumentImpl *getDocument();
-    khtml::RenderObject *getRenderer();
+    DOM::DocumentImpl *document();
+    khtml::RenderObject *renderer();
 
     // Used internally, but need to be public because they are used by non-member functions.
 
     void redirectionTimerStartedOrStopped();
     
 private:
-    WebCoreBridge *getBridgeForFrameName(const QString &frameName);
+    WebCoreBridge *bridgeForFrameName(const QString &frameName);
+
+    NSView *nextKeyView(DOM::NodeImpl *, KWQSelectionDirection);
+    NSView *nextKeyViewInFrame(DOM::NodeImpl *, KWQSelectionDirection);
 
     KHTMLPart *part;
     KHTMLPartPrivate *d;
     
-    WebCoreBridge *bridge;
+    WebCoreBridge *_bridge;
 
     friend class KHTMLPart;
 };

@@ -26,6 +26,7 @@
 #import <KWQNSTextField.h>
 
 #import <qlineedit.h>
+#import <KWQKHTMLPartImpl.h>
 
 // KWQTextFieldCell is larger than a normal text field cell, so it includes
 // the focus border as well as the rest of the text field.
@@ -47,12 +48,18 @@
 
 @end
 
-// KWQSecureTextField is a workaround for bug 3024443.
+// KWQSecureTextField has two purposes.
+// One is a workaround for bug 3024443.
+// The other is hook up next and previous key views to KHTML.
 
 @interface KWQSecureTextField : NSSecureTextField
 {
+    QWidget *widget;
     BOOL inSetFrameSize;
 }
+
+- initWithQWidget:(QWidget *)widget;
+
 @end
 
 @implementation KWQNSTextField
@@ -81,31 +88,27 @@
     return self;
 }
 
-- initWithWidget:(QWidget *)w 
+- initWithQLineEdit:(QLineEdit *)w 
 {
-    [super init];
     widget = w;
-    return self;
+    return [super init];
 }
 
 - (void)action:sender
 {
-    QLineEdit *edit = dynamic_cast<QLineEdit *>(widget);
-    if (edit) {
-        edit->returnPressed();
-    }
+    widget->returnPressed();
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
-    QLineEdit *edit = dynamic_cast<QLineEdit *>(widget);
-    if (edit) {
-        edit->textChanged();
-    }
+    widget->textChanged();
 }
 
 - (void)dealloc
 {
+    // Set widget to 0 so that nextKeyView and previousKeyView will return nil.
+    widget = 0;
+    
     [secureField release];
     [formatter release];
     [super dealloc];
@@ -138,7 +141,7 @@
         [secureField removeFromSuperview];
     } else {
         if (secureField == nil) {
-            secureField = [[KWQSecureTextField alloc] init];
+            secureField = [[KWQSecureTextField alloc] initWithQWidget:widget];
             [secureField setDelegate:self];
             [secureField setFormatter:formatter];
             [secureField setFont:[self font]];
@@ -223,12 +226,28 @@
     [super setFont:font];
 }
 
+- (NSView *)nextKeyView
+{
+    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext);
+}
+
+- (NSView *)previousKeyView
+{
+    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious);
+}
+
 @end
 
 // This cell is used so that our frame includes the place where the focus rectangle is drawn.
-// If that makes the widget too big for layout, we'll account for that at the QWidget level.
+// We account for this at the QWidget level so the placement of the text field is still correct,
+// just as we account for the margins in NSButton and other AppKit controls.
 
 @implementation KWQTextFieldCell
+
+- (BOOL)isOpaque
+{
+    return NO;
+}
 
 - (NSSize)cellSizeForBounds:(NSRect)bounds
 {
@@ -303,6 +322,34 @@
 @end
 
 @implementation KWQSecureTextField
+
+- initWithQWidget:(QWidget *)w
+{
+    widget = w;
+    return [super init];
+}
+
+- (void)dealloc
+{
+    // Set widget to 0 so that nextKeyView and previousKeyView will return nil.
+    widget = 0;
+    
+    [super dealloc];
+}
+
+- (NSView *)nextKeyView
+{
+    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingNext);
+}
+
+- (NSView *)previousKeyView
+{
+    return KWQKHTMLPartImpl::nextKeyView(widget, KWQSelectingPrevious);
+}
+
+// These next two methods are the workaround for bug 3024443.
+// Basically, setFrameSize ends up calling an inappropriate selectText, so we just ignore
+// calls to selectText while setFrameSize is running.
 
 - (void)selectText:(id)sender
 {

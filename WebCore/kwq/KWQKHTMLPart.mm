@@ -94,8 +94,8 @@ void KHTMLPart::completed(bool arg)
 	parentPart()->slotChildCompleted(arg);
     }
     
-    QValueList<ChildFrame>::ConstIterator it = d->m_frames.begin();
-    QValueList<ChildFrame>::ConstIterator end = d->m_frames.end();
+    ConstFrameIt it = d->m_frames.begin();
+    ConstFrameIt end = d->m_frames.end();
     for (; it != end; ++it ) {
         KHTMLPart *part = dynamic_cast<KHTMLPart *>((*it).m_part.pointer());
         if (part) {
@@ -114,21 +114,21 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 {
 }
 
-WebCoreBridge *KWQKHTMLPartImpl::getBridgeForFrameName(const QString &frameName)
+WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
 {
     WebCoreBridge *frame;
     if (frameName.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
         KHTMLPart *parentPart = part->parentPart();
-        frame = parentPart ? parentPart->impl->bridge : nil;
+        frame = parentPart ? parentPart->impl->_bridge : nil;
         if ([[frame childFrames] count] != 1) {
-            frame = bridge;
+            frame = _bridge;
         }
     } else {
-        frame = [bridge descendantFrameNamed:frameName.getNSString()];
+        frame = [_bridge descendantFrameNamed:frameName.getNSString()];
         if (frame == nil) {
             NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name. New window will not be named until 2959902 is fixed.\n", frameName.getNSString());
-            frame = [bridge descendantFrameNamed:@"_blank"];
+            frame = [_bridge descendantFrameNamed:@"_blank"];
         }
     }
     
@@ -143,7 +143,7 @@ void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
         return;
     }
 
-    [getBridgeForFrameName(args.frameName) loadURL:cocoaURL];
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
 }
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)
@@ -186,11 +186,11 @@ void KWQKHTMLPartImpl::urlSelected(const QString &url, int button, int state, co
     
     // Open new window on command-click
     if (state & MetaButton) {
-        [bridge openNewWindowWithURL:cocoaURL];
+        [_bridge openNewWindowWithURL:cocoaURL];
         return;
     }
     
-    WebCoreBridge *targetBridge = getBridgeForFrameName(target);
+    WebCoreBridge *targetBridge = bridgeForFrameName(target);
 
     // FIXME: KHTML does this in openURL -- we should do this at that level so we don't
     // have the complexity of dealing with the target here.
@@ -225,7 +225,7 @@ bool KWQKHTMLPartImpl::requestFrame( RenderPart *frame, const QString &url, cons
     KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", frameName.ascii());
     
     HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
-    WebCoreBridge *childBridge = [bridge createChildFrameNamed:frameName.getNSString() withURL:childURL
+    WebCoreBridge *childBridge = [_bridge createChildFrameNamed:frameName.getNSString() withURL:childURL
 				  renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
 				  marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
 
@@ -282,8 +282,7 @@ bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, cons
         [argsArray addObject:args[i].getNSString()];
     }
     
-    QWidget *widget = new QWidget();
-    widget->setView([[WebCoreViewFactory sharedFactory]
+    QWidget *widget = new QWidget([[WebCoreViewFactory sharedFactory]
         viewForPluginWithURL:cocoaURL
                  serviceType:serviceType.getNSString()
                    arguments:argsArray
@@ -330,7 +329,7 @@ void KWQKHTMLPartImpl::submitForm(const char *action, const QString &url, const 
 
     if (strcmp(action, "get") == 0) {
 	u.setQuery(QString(formData.data(), formData.size()));
-	[getBridgeForFrameName(target) loadURL:u.getNSURL()];
+	[bridgeForFrameName(target) loadURL:u.getNSURL()];
     } else {
 #ifdef NEED_THIS
     // construct some user headers if necessary
@@ -340,7 +339,7 @@ void KWQKHTMLPartImpl::submitForm(const char *action, const QString &url, const 
       args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
 #endif
 	NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
-	[getBridgeForFrameName(target) postWithURL:u.getNSURL() data:postData];
+	[bridgeForFrameName(target) postWithURL:u.getNSURL() data:postData];
     }
 
 #ifdef NEED_THIS
@@ -364,18 +363,18 @@ void KWQKHTMLPartImpl::submitForm(const char *action, const QString &url, const 
 
 bool KWQKHTMLPartImpl::frameExists(const QString &frameName)
 {
-    return [bridge frameNamed:frameName.getNSString()] != nil;
+    return [_bridge frameNamed:frameName.getNSString()] != nil;
 }
 
 KHTMLPart *KWQKHTMLPartImpl::findFrame(const QString &frameName)
 {
-    return [[bridge frameNamed:frameName.getNSString()] part];
+    return [[_bridge frameNamed:frameName.getNSString()] part];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> parts;
-    NSEnumerator *e = [[bridge childFrames] objectEnumerator];
+    NSEnumerator *e = [[_bridge childFrames] objectEnumerator];
     WebCoreBridge *childFrame;
     while ((childFrame = [e nextObject])) {
         KHTMLPart *childPart = [childFrame part];
@@ -391,35 +390,35 @@ void KWQKHTMLPartImpl::setView(KHTMLView *view)
     part->setWidget(view);
 }
 
-KHTMLView *KWQKHTMLPartImpl::getView() const
+KHTMLView *KWQKHTMLPartImpl::view() const
 {
     return d->m_view;
 }
 
 void KWQKHTMLPartImpl::setTitle(const DOMString &title)
 {
-    [bridge setTitle:title.string().getNSString()];
+    [_bridge setTitle:title.string().getNSString()];
 }
 
 void KWQKHTMLPartImpl::setStatusBarText(const QString &status)
 {
-    [bridge setStatusText:status.getNSString()];
+    [_bridge setStatusText:status.getNSString()];
 }
 
 void KWQKHTMLPartImpl::scheduleClose()
 {
-    [[bridge window] performSelector:@selector(close) withObject:nil afterDelay:0.0];
+    [[_bridge window] performSelector:@selector(close) withObject:nil afterDelay:0.0];
 }
 
 void KWQKHTMLPartImpl::unfocusWindow()
 {
-    [bridge unfocusWindow];
+    [_bridge unfocusWindow];
 }
 
 void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int modifierState)
 {
     if (url.isEmpty()) {
-        [bridge setStatusText:@""];
+        [_bridge setStatusText:@""];
         return;
     }
 
@@ -427,7 +426,7 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
     if (position == 0) {
         // FIXME: Is it worthwhile to special-case scripts that do a window.open and nothing else?
         const QString scriptName = url.mid(strlen("javascript:"));
-        [bridge setStatusText:[NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()]];
+        [_bridge setStatusText:[NSString stringWithFormat:@"Run script \"%@\"", scriptName.getNSString()]];
         return;
     }
     
@@ -436,7 +435,7 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
     if (u.protocol() == QString("mailto")) {
         // FIXME: Add address book integration so we show the real name instead?
         const QString address = KURL::decode_string(u.path());
-        [bridge setStatusText:[NSString stringWithFormat:@"Send email to %@", address.getNSString()]];
+        [_bridge setStatusText:[NSString stringWithFormat:@"Send email to %@", address.getNSString()]];
         return;
     }
     
@@ -460,7 +459,7 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
         format = @"Go to \"%@\"";
     }
     
-    if ([bridge modifierTrackingEnabled]) {
+    if ([_bridge modifierTrackingEnabled]) {
         if (modifierState & MetaButton) {
             if (modifierState & ShiftButton) {
                 format = @"Open \"%@\" in a new window, behind the current window";
@@ -472,7 +471,7 @@ void KWQKHTMLPartImpl::overURL(const QString &url, const QString &_target, int m
         }
     }
     
-    [bridge setStatusText:[NSString stringWithFormat:format, u.url().getNSString()]];
+    [_bridge setStatusText:[NSString stringWithFormat:format, u.url().getNSString()]];
 }
 
 void KWQKHTMLPartImpl::jumpToSelection()
@@ -494,11 +493,11 @@ void KWQKHTMLPartImpl::jumpToSelection()
 void KWQKHTMLPartImpl::redirectionTimerStartedOrStopped()
 {
     if (d->m_redirectionTimer.isActive()) {
-        [bridge reportClientRedirectTo:[NSURL _web_URLWithString:d->m_redirectURL.getNSString()]
+        [_bridge reportClientRedirectTo:[NSURL _web_URLWithString:d->m_redirectURL.getNSString()]
                                  delay:d->m_delayRedirect
                               fireDate:[d->m_redirectionTimer.getNSTimer() fireDate]];
     } else {
-        [bridge reportClientRedirectCancelled];
+        [_bridge reportClientRedirectCancelled];
     }
 }
 
@@ -521,17 +520,17 @@ void KWQKHTMLPartImpl::layout()
 {
     // Since not all widgets will get a print call, it's important to move them away
     // so that they won't linger in an old position left over from a previous print.
-    if (getRenderer()) {
-        moveWidgetsAside(getRenderer());
+    if (renderer()) {
+        moveWidgetsAside(renderer());
     }
 }
 
-DocumentImpl *KWQKHTMLPartImpl::getDocument()
+DocumentImpl *KWQKHTMLPartImpl::document()
 {
     return part->xmlDocImpl();
 }
 
-RenderObject *KWQKHTMLPartImpl::getRenderer()
+RenderObject *KWQKHTMLPartImpl::renderer()
 {
     DocumentImpl *doc = part->xmlDocImpl();
     return doc ? doc->renderer() : 0;
@@ -539,5 +538,91 @@ RenderObject *KWQKHTMLPartImpl::getRenderer()
 
 QString KWQKHTMLPartImpl::userAgent() const
 {
-    return QString::fromNSString([bridge userAgentForURL:part->m_url.getNSURL()]);
+    return QString::fromNSString([_bridge userAgentForURL:part->m_url.getNSURL()]);
+}
+
+NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
+{
+    DocumentImpl *doc = document();
+    for (;;) {
+        node = direction == KWQSelectingNext ? doc->nextFocusNode(node) : doc->previousFocusNode(node);
+        if (!node) {
+            return nil;
+        }
+        RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(node->renderer());
+        QWidget *widget = renderWidget->widget();
+        KHTMLView *childFrameWidget = dynamic_cast<KHTMLView *>(widget);
+        NSView *view;
+        if (childFrameWidget) {
+            NodeImpl *nullNode = 0;
+            view = childFrameWidget->part()->impl->nextKeyViewInFrame(nullNode, direction);
+        } else {
+            view = widget->getView();
+#if 0
+            NSView *fieldEditor = [[view window] fieldEditor:NO forObject:view];
+            if (fieldEditor) {
+                view = fieldEditor;
+            }
+#endif
+        }
+        if (view) {
+            return view;
+        }
+    }
+}
+
+NSView *KWQKHTMLPartImpl::nextKeyView(NodeImpl *node, KWQSelectionDirection direction)
+{
+    NSView *next = nextKeyViewInFrame(node, direction);
+    if (next) {
+        return next;
+    }
+    
+    KHTMLPart *parentPart = part->parentPart();
+    if (parentPart) {
+        next = parentPart->impl->nextKeyView(parentPart->frame(part)->m_frame->element(), direction);
+        if (next) {
+            return next;
+        }
+    }
+    
+    return nil;
+}
+
+NSView *KWQKHTMLPartImpl::nextKeyView(QWidget *startingWidget, KWQSelectionDirection direction)
+{
+    // The only time the starting widget should be 0 is when we are deallocating a view.
+    // In that case, we return nil to prevent AppKit from going astray trying to remove us from a key view loop.
+    if (!startingWidget) {
+        return nil;
+    }
+    
+    // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
+    // Then get the next key view in the order determined by the DOM.
+    NodeImpl *node = static_cast<const RenderWidget *>(startingWidget->eventFilterObject())->element();
+    KHTMLPart *part = node->getDocument()->view()->part();
+    NSView *next = part->impl->nextKeyView(node, direction);
+    if (next) {
+        return next;
+    }
+
+    // If we are the last key view, then go up to the top level part.
+    KHTMLPart *parentPart;
+    while ((parentPart = part->parentPart())) {
+        part = parentPart;
+    }
+    
+#if 0
+    // Look at views from the top level part up, looking for a next key view that we can use.
+    for (NSView *view = part->widget()->getView(); view; view = [view superview]) {
+        next = direction == KWQSelectingNext ? [view nextKeyView] : [view previousKeyView];
+        if (next) {
+            return next;
+        }
+    }
+#endif
+    
+    // If all else fails, make a loop by starting from 0.
+    NodeImpl *nullNode = 0;
+    return part->impl->nextKeyView(nullNode, direction);
 }

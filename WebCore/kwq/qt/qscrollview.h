@@ -38,7 +38,7 @@ class QScrollView : public QFrame {
 public:
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
 
-    QScrollView(QWidget *parent = 0, const char *name = 0, int flags = 0);
+    QScrollView(QWidget *parent = 0, const char *name = 0, int flags = 0) { }
 
     QWidget *viewport() const;
     int visibleWidth() const;

@@ -27,11 +27,6 @@
 
 #import <kwqdebug.h>
 
-QFrame::QFrame(QWidget *parent)
-    : QWidget(parent)
-{
-}
-
 void QFrame::setFrameStyle(int s)
 {
     _frameStyle = s;

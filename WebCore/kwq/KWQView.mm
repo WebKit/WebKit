@@ -25,9 +25,6 @@
 
 #import "KWQView.h"
 
-#import <qcheckbox.h>
-#import <qcombobox.h>
-
 @implementation KWQView
 
 - initWithFrame:(NSRect)frame
@@ -52,97 +49,6 @@
 - (BOOL)isFlipped 
 {
     return isFlipped;
-}
-
-@end
-
-@implementation KWQNSButton
-
-- initWithFrame:(NSRect)frame 
-{
-    [super initWithFrame:frame];
-
-    [self setTarget:self];
-    [self setAction:@selector(action:)];
-
-    [self setTitle:@""];
-    [self setBezelStyle:NSRoundedBezelStyle];
-    [[self cell] setControlSize:NSSmallControlSize];
-    [self setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
-
-    return self;
-}
-
-- initWithWidget:(QWidget *)w 
-{
-    [super init];
-    widget = w;
-    return self;
-}
-
-- (void)action:(id)sender
-{
-    QButton *button = dynamic_cast<QButton *>(widget);
-    if (button) {
-        button->clicked();
-    }
-}
-
-- (void)stateChanged:(id)sender
-{
-    // Note that it's important to give the stateChanged signal before
-    // the clicked signal so that the corresponding JavaScript messages
-    // go in the right order. A test for this at the time of this writing
-    // was the languages radio buttons and check boxes at google.com prefs.
-    
-    QCheckBox *checkBox = dynamic_cast<QCheckBox *>(widget);
-    if (checkBox) {
-        checkBox->stateChanged();
-    }
-    [self action:sender];
-}
-
-@end
-
-@implementation KWQNSComboBox
-
-- initWithFrame:(NSRect)frame
-{
-    [super initWithFrame:frame];
-
-    [self setTarget:self];
-    [self setAction:@selector(action:)];
-
-    [[self cell] setControlSize:NSSmallControlSize];
-    [self setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
-
-    return self;
-}
-
-- initWithWidget:(QWidget *)w 
-{
-    [super init];
-    widget = w;
-    return self;
-}
-
-- (void)action:(id)sender
-{
-    QComboBox *box = dynamic_cast<QComboBox *>(widget);
-    if (box) {
-        box->activated();
-    }
-}
-
-@end
-
-@implementation KWQNSScrollView
-
-- initWithWidget:(QWidget *)w 
-{
-    [super init];
-    widget = w;
-    return self;
 }
 
 @end

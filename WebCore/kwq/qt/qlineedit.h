@@ -35,7 +35,7 @@ class QLineEdit : public QWidget {
 public:
     enum EchoMode { Normal, Password };
 
-    QLineEdit(QWidget *parent);
+    QLineEdit();
 
     virtual void setEchoMode(EchoMode);
     virtual void setCursorPosition(int);

@@ -39,7 +39,7 @@ public:
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
 
-    void stateChanged() { m_stateChanged.call(isChecked() ? 2 : 0); }
+    virtual void clicked();
 
 private:
     KWQSignal m_stateChanged;

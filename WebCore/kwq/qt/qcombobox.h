@@ -30,40 +30,36 @@
 #include <qwidget.h>
 
 #ifdef __OBJC__
-@class NSMutableArray;
+@class KWQComboBoxAdapter;
 #else
-class NSMutableArray;
+class KWQComboBoxAdapter;
 #endif
 
 class QComboBox : public QWidget {
 public:
-    QComboBox(QWidget *parent=0, const char *name=0);
-    QComboBox(bool rw, QWidget *parent=0, const char *name=0);
+    QComboBox();
     ~QComboBox();
-     
-    int count() const;
-    QListBox *listBox() const;
-    void popup();
-    bool eventFilter(QObject *object, QEvent *event);
-    void insertItem(const QString &text, int index=-1);
+    
     void clear();
-    int currentItem() const;
+    void insertItem(const QString &text, int index=-1);
 
-    int indexOfCurrentItem();
+    int currentItem() const;
     void setCurrentItem(int);
+
+    QListBox *listBox() const { return 0; }
+    void popup() { }
     
     QSize sizeHint() const;
     QRect frameGeometry() const;
     void setFrameGeometry(const QRect &);
 
-    NSMutableArray *items;
+    bool eventFilter(QObject *object, QEvent *event) { return false; }
 
-    void activated() { m_activated.call(indexOfCurrentItem()); }
+    void activated() { m_activated.call(currentItem()); }
 
 private:
-    void init(bool isEditable);
-    
     KWQSignal m_activated;
+    KWQComboBoxAdapter *m_adapter;
 };
 
 #endif

@@ -29,11 +29,11 @@
 #import <kwqdebug.h>
 #import <WebCoreTextRendererFactory.h>
 
-QLineEdit::QLineEdit(QWidget *parent)
+QLineEdit::QLineEdit()
     : m_returnPressed(this, SIGNAL(returnPressed()))
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
 {
-    NSView *view = [[KWQNSTextField alloc] initWithWidget:this];
+    NSView *view = [[KWQNSTextField alloc] initWithQLineEdit:this];
     setView(view);
     [view release];
 }
