@@ -372,8 +372,11 @@ void HTMLMapElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         else
             name = s.string();
 	// ### make this work for XML documents, e.g. in case of <html:map...>
-        if(getDocument()->isHTMLDocument())
-            static_cast<HTMLDocumentImpl*>(getDocument())->mapMap[name] = this;
+        if (getDocument()->isHTMLDocument()) {
+            QMap<QString, HTMLMapElementImpl*> &mapMap = static_cast<HTMLDocumentImpl*>(getDocument())->mapMap;
+            if (!mapMap.contains(name))
+                mapMap.insert(name, this);
+        }
         break;
     }
     default:

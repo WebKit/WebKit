@@ -1,3 +1,12 @@
+2004-04-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3608978>: dual <map> means you can't select the enter site button at jurassicpark.com (same problem in MacIE, works in Netscape)
+
+        * khtml/html/html_imageimpl.cpp: (HTMLMapElementImpl::parseHTMLAttribute):
+        Make the first <map> seen win, as in other browsers. The old code made the last <map> seen win.
+
 2004-04-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
