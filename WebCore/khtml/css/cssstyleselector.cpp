@@ -2526,9 +2526,9 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
         } else
             oldSize = m_fontSizes[3];
 
-        if(value->cssValueType() == CSSValue::CSS_INHERIT) {
+        if (value->cssValueType() == CSSValue::CSS_INHERIT) {
             size = oldSize;
-        } else if(primitiveValue->getIdent()) {
+        } else if (primitiveValue->getIdent()) {
 	    // keywords are being used.  Pick the correct default
 	    // based off the font family.
 	    QValueList<int>& fontSizes = (fontDef.genericFamily == FontDef::eMonospace) ?
@@ -2555,7 +2555,13 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
                 return;
             }
 
+            // This is a "logical" font size in the sense that it is relative to some UA default.
+            // Since the UA default can vary depending on the font family (e.g., monospace could be 11pt
+            // but serif could be 20pt), we don't set our size specified bit.
+            fontDef.sizeSpecified = false;
+
         } else {
+            fontDef.sizeSpecified = true;
             int type = primitiveValue->primitiveType();
             if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
                 size = primitiveValue->computeLengthFloat(parentStyle, paintDeviceMetrics);
@@ -2575,8 +2581,7 @@ void CSSStyleSelector::applyRule( int id, DOM::CSSValueImpl *value )
 
         //kdDebug( 6080 ) << "computed raw font size: " << size << endl;
 
-        fontDef.sizeSpecified = true;
-	fontDef.size = int(size);
+        fontDef.size = int(size);
         if (style->setFontDef( fontDef ))
 	    fontDirty = true;
         return;

@@ -1,3 +1,14 @@
+2003-02-25  David Hyatt  <hyatt@apple.com>
+
+	Fix for bug 3166276.  <tt> uses wrong font size inside a table.
+	Make sure logical font values like "medium" don't set the "size
+	specified" bit on the font, so that the generic family change
+	code will get activated.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+
 2003-02-25  Darin Adler  <darin@apple.com>
 
         Reviewed by me, changes by Dave.
