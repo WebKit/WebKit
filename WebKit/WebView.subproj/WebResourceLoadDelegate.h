@@ -1,5 +1,5 @@
 /*
-        WebResourceProgressDelegate.h
+        WebResourceLoadDelegate.h
         Copyright 2001, 2002, Apple Computer, Inc.
         
         Public header file.

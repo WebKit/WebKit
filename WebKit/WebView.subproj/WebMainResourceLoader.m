@@ -15,7 +15,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
-#import <WebKit/WebResourceProgressDelegate.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebError.h>

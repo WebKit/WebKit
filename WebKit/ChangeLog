@@ -1,5 +1,18 @@
 2002-10-03  Richard Williamson   <rjw@apple.com>
 
+        Renamed WebResourceProgressDelegate.h to WebResourceLoadDelegate.h
+
+        * Misc.subproj/WebKit.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.m:
+        * WebView.subproj/WebControllerPrivate.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebResourceProgressDelegate.h: Removed.
+
+2002-10-03  Richard Williamson   <rjw@apple.com>
+
         Changed to reflect new WebResourceLoadDelegate API.
 
         * Misc.subproj/WebIconLoader.m:

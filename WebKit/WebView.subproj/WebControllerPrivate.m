@@ -11,7 +11,7 @@
 #import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
-#import <WebKit/WebResourceProgressDelegate.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebWindowOperationsDelegate.h>

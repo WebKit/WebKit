@@ -19,7 +19,7 @@
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferences.h>
-#import <WebKit/WebResourceProgressDelegate.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebStandardPanels.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebWindowOperationsDelegate.h>

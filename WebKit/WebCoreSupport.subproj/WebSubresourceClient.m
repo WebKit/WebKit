@@ -7,7 +7,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
-#import <WebKit/WebResourceProgressDelegate.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebSubresourceClient.h>
 
 #import <WebFoundation/WebAssertions.h>
