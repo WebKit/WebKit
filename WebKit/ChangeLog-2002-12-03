@@ -1,5 +1,10 @@
 2002-10-04  Darin Adler  <darin@apple.com>
 
+        * English.lproj/StringsNotToBeLocalized.txt: Add the last few exceptions.
+	We now have a completely-clean run of extract-localizable-strings in WebKit!
+
+2002-10-04  Darin Adler  <darin@apple.com>
+
 	- fixed 3060140 -- REGRESSION: frames of animated gif drawn in wrong position.
 
 	I got the "fromRect" and "toRect" parameters backwards when I made the changes
