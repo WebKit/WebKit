@@ -21,4 +21,6 @@
 + (NSArray *)_userDefaultsKeysForIB;
 - (NSTimeInterval)_backForwardCacheExpirationInterval;
 
++ (void)_setIBCreatorID:(NSString *)string;
+
 @end

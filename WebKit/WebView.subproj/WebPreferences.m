@@ -44,7 +44,7 @@
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
-#define KEY(x) [(_private->identifier?_private->identifier:@"") stringByAppendingString:x]
+#define KEY(x) [self _concatenateKeyWithIBCreatorID:[(_private->identifier?_private->identifier:@"") stringByAppendingString:x]]
 
 enum { WebPreferencesVersion = 1 };
 
@@ -53,6 +53,7 @@ enum { WebPreferencesVersion = 1 };
 @public
     NSMutableDictionary *values;
     NSString *identifier;
+    NSString *IBCreatorID;
     BOOL autosaves;
 }
 @end
@@ -62,8 +63,14 @@ enum { WebPreferencesVersion = 1 };
 {
     [values release];
     [identifier release];
+    [IBCreatorID release];
     [super dealloc];
 }
+@end
+
+@interface WebPreferences (WebInternal)
+- (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key;
++ (NSString *)_IBCreatorID;
 @end
 
 @implementation WebPreferences
@@ -81,6 +88,7 @@ enum { WebPreferencesVersion = 1 };
         anIdentifier = @"";
         
     _private = [[WebPreferencesPrivate alloc] init];
+    _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];
     
     WebPreferences *instance = [[self class] _getInstanceForIdentifier:anIdentifier];
     if (instance){
@@ -108,6 +116,7 @@ NS_DURING
     int version;
 
     _private = [[WebPreferencesPrivate alloc] init];
+    _private->IBCreatorID = [[WebPreferences _IBCreatorID] retain];
     
     if ([decoder allowsKeyedCoding]){
         _private->identifier = [[decoder decodeObjectForKey:@"Identifier"] retain];
@@ -586,6 +595,30 @@ static NSMutableDictionary *webPreferencesInstances = nil;
         WebKitDisplayImagesKey,
         nil
     ];
+}
+
+static NSString *classIBCreatorID = 0;
+
++ (void)_setIBCreatorID:(NSString *)string
+{
+    
+    if (classIBCreatorID != string){
+        [classIBCreatorID release];
+        classIBCreatorID = [string retain];
+    }
+}
+
++ (NSString *)_IBCreatorID
+{
+    return classIBCreatorID;
+}
+
+- (NSString *)_concatenateKeyWithIBCreatorID:(NSString *)key
+{
+    NSString *IBCreatorID = [WebPreferences _IBCreatorID];
+    if (!IBCreatorID)
+        return key;
+    return [IBCreatorID stringByAppendingString:key];
 }
 
 @end

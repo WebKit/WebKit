@@ -1,3 +1,20 @@
+2003-07-28  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3323866.  Provide SPI to IB to enable scoping of preferences
+	values on a document-by-document basis.
+
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferencesPrivate dealloc]):
+        (-[WebPreferences initWithIdentifier:]):
+        (-[WebPreferences initWithCoder:]):
+        (+[WebPreferences _userDefaultsKeysForIB]):
+        (+[WebPreferences _setIBCreatorID:]):
+        (+[WebPreferences _IBCreatorID]):
+        (-[WebPreferences _concatenateKeyWithIBCreatorID:]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+
 2003-07-28  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
