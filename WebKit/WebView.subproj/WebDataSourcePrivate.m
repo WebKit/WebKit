@@ -276,11 +276,6 @@
     // a redirect callback after commit.
     ASSERT(!_private->committed);
 
-    // This happens once at the start.
-    if (_private->request == request) {
-        return;
-    }
-    
     WebResourceRequest *oldRequest = _private->request;
     
     _private->request = [request retain];

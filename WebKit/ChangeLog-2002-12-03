@@ -1,5 +1,10 @@
 2002-11-08  Darin Adler  <darin@apple.com>
 
+        * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setRequest:]):
+	Slightly better fix. Essentially just take out the assert.
+
+2002-11-08  Darin Adler  <darin@apple.com>
+
 	- fixed an assert I am seeing a lot
 
         * WebView.subproj/WebDataSourcePrivate.m: (-[WebDataSource _setRequest:]): Oops.
