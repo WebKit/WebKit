@@ -1,5 +1,24 @@
 2003-03-27  David Hyatt  <hyatt@apple.com>
 
+	A collection of fixes for tables.
+
+	(1) Fixed table layout should only be used if an explicit width
+	is specified on a table.
+	(2) width="0" and height="0" should be ignored on table cells!
+	(3) Fixed table layout wasn't spreading extra space over 
+	columns.
+	
+        Reviewed by mjs
+
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableCellElementImpl::parseAttribute):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::setStyle):
+        * khtml/rendering/table_layout.cpp:
+        (FixedTableLayout::layout):
+
+2003-03-27  David Hyatt  <hyatt@apple.com>
+
 	Fix for the top of directory.apple.com.  Only use the fixed
 	width on the cell (with nowrap set) if it is *larger* than
 	our current minwidth.

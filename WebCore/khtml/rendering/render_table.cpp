@@ -91,7 +91,9 @@ void RenderTable::setStyle(RenderStyle *_style)
     if ( !tableLayout || style()->tableLayout() != oldTableLayout ) {
 	delete tableLayout;
 
-	if (style()->tableLayout() == TFIXED ) {
+        // According to the CSS2 spec, you only use fixed table layout if an
+        // explicit width is specified on the table.  Auto width implies auto table layout.
+	if (style()->tableLayout() == TFIXED && !style()->width().isVariable()) {
 	    tableLayout = new FixedTableLayout(this);
 #ifdef DEBUG_LAYOUT
 	    kdDebug( 6040 ) << "using fixed table layout" << endl;

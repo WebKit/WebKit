@@ -854,10 +854,22 @@ void HTMLTableCellElementImpl::parseAttribute(AttributeImpl *attr)
             removeCSSProperty(CSS_PROP_WHITE_SPACE);
         break;
     case ATTR_WIDTH:
-        if (!attr->value().isEmpty())
-            addCSSLength( CSS_PROP_WIDTH, attr->value() );
+        if (!attr->value().isEmpty()) {
+            int widthInt = attr->val()->toInt();
+            if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
+                addCSSLength( CSS_PROP_WIDTH, attr->value() );
+        }
         else
             removeCSSProperty(CSS_PROP_WIDTH);
+        break;
+    case ATTR_HEIGHT:
+        if (!attr->value().isEmpty()) {
+            int heightInt = attr->val()->toInt();
+            if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
+                addCSSLength( CSS_PROP_HEIGHT, attr->value() );
+        }
+        else
+            removeCSSProperty(CSS_PROP_HEIGHT);
         break;
     case ATTR_NOSAVE:
 	break;
