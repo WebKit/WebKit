@@ -16,6 +16,7 @@ typedef struct GlyphMap GlyphMap;
     int ascent;
     int descent;
     int lineSpacing;
+    ATSGlyphRef spaceGlyph;
     
     struct AttributeGroup *styleGroup;
 
@@ -27,6 +28,12 @@ typedef struct GlyphMap GlyphMap;
 
 - initWithFont:(NSFont *)font;
 
+
+// Will not return a Cocoa equivalent width.  If you need that use
+// floatWidthForCharacters:length:applyRounding: with applyRounding == NO.
 - (float)floatWidthForCharacters:(const unichar *)characters length:(unsigned)length;
+
+// Set applyRounding = NO to get an Cocoa equivalent width.
+- (float)floatWidthForCharacters:(const unichar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding;
 
 @end

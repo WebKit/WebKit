@@ -77,7 +77,7 @@ static float currentEllipsisWidth;
         [IFTextRendererFactory createSharedFactory];
         currentRenderer = [[[IFTextRendererFactory sharedFactory] rendererWithFont:font] retain];
         ellipsis = ELLIPSIS_CHARACTER;
-        currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis length:1];
+        currentEllipsisWidth = [currentRenderer floatWidthForCharacters:&ellipsis length:1 applyRounding: NO];
     }
     
     WEBKIT_ASSERT(currentRenderer);
@@ -96,7 +96,7 @@ static float currentEllipsisWidth;
     }
 
     width = [currentRenderer floatWidthForCharacters:stringBuffer
-                                              length:truncatedLength];
+                                              length:truncatedLength applyRounding: NO];
     if (width <= maxWidth) {
         return string;
     }
@@ -136,7 +136,7 @@ static float currentEllipsisWidth;
                                            keepCount:keepCount
                                             toBuffer:stringBuffer];
         
-        width = [currentRenderer floatWidthForCharacters:stringBuffer length:truncatedLength];
+        width = [currentRenderer floatWidthForCharacters:stringBuffer length:truncatedLength applyRounding: NO];
         if (width <= maxWidth) {
             keepCountForLargestKnownToFit = keepCount;
             widthForLargestKnownToFit = width;

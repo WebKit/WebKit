@@ -302,6 +302,8 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     
     ATSUDisposeStyle(style);
 
+    spaceGlyph = nonGlyphID;
+    
     return self;
 }
 
@@ -425,7 +427,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 - (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
 {
     uint i, numGlyphs;
-    CGGlyph *glyphs, spaceGlyph = -1, localGlyphBuffer[LOCAL_GLYPH_BUFFER_SIZE];
+    CGGlyph *glyphs, localGlyphBuffer[LOCAL_GLYPH_BUFFER_SIZE];
 #ifndef DRAW_WITHOUT_ADVANCES
     CGSize *advances, localAdvanceBuffer[LOCAL_GLYPH_BUFFER_SIZE];
 #endif
@@ -494,9 +496,6 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
             }
         }
 
-        if (c == SPACE)
-            spaceGlyph = glyphID;
-        
         glyphs[i] = glyphID;
     }
 
@@ -537,8 +536,8 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - [self descent] + 1, glyphs, numGlyphs);
 #else      
     CGContextSetTextPosition (cgContext, point.x, point.y - [self descent] + 1);
-    //CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
-    CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
+    CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
+    //CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
 
     if (advances != localAdvanceBuffer) {
         free(advances);
@@ -585,7 +584,7 @@ cleanup:
 }
 
 
-- (float)slowFloatWidthForCharacters: (const UniChar *)characters length: (unsigned)length
+- (float)slowFloatWidthForCharacters: (const UniChar *)characters length: (unsigned)length applyRounding: (BOOL)applyRounding
 {
     float totalWidth = 0;
     unsigned int i, numGlyphs;
@@ -602,7 +601,10 @@ cleanup:
     for (i = 0; i < numGlyphs; i++){
         glyphID = glyphRecord->glyphID;
         glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphVector.recordSize);
-        glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
+        if (glyphID == spaceGlyph && applyRounding)
+            glyphWidth = ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+        else
+            glyphWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
         totalWidth += glyphWidth;
     }
     ATSClearGlyphVector(&glyphVector);
@@ -610,8 +612,13 @@ cleanup:
     return totalWidth;
 }
 
+- (float)slowFloatWidthForCharacters: (const UniChar *)characters length: (unsigned)length 
+{
+    return [self floatWidthForCharacters: characters length: length applyRounding: YES];
+}
 
-- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length
+
+- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding
 {
     float totalWidth = 0;
     unsigned int i;
@@ -649,7 +656,7 @@ cleanup:
             }
         }
 
-        if (c == SPACE)
+        if (glyphID == spaceGlyph && applyRounding)
             totalWidth += ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
         else
             totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
@@ -657,6 +664,12 @@ cleanup:
 
     return totalWidth;
 }
+
+- (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length
+{
+    return [self floatWidthForCharacters: characters length: length applyRounding: YES];
+}
+
 
 - (int)widthForCharacters:(const UniChar *)characters length:(unsigned)length
 {
@@ -726,6 +739,9 @@ cleanup:
             lastMap = lastMap->next;
         lastMap->next = map;
     }
+
+    if (spaceGlyph == nonGlyphID)
+        spaceGlyph = glyphForCharacter (characterToGlyphMap, SPACE);
 
     return map->glyphs[c - start];
 }

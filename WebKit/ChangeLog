@@ -1,3 +1,24 @@
+2002-06-10  Richard Williamson  <rjw@apple.com>
+
+    Tweaks to rounding code.  
+    
+    Added Cocoa-exact width measurement emulation flag to support IFStringTruncator.
+    
+    Remove code that was already conditionally excluded calls to support
+    non-specified advance drawing (we now depend on tweaked advances).
+    
+	* Misc.subproj/IFStringTruncator.m:
+	(+[IFStringTruncator centerTruncateString:toWidth:withFont:]):
+	* WebCoreSupport.subproj/IFTextRenderer.h:
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer initWithFont:]):
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	(-[IFTextRenderer slowFloatWidthForCharacters:length:applyRounding:]):
+	(-[IFTextRenderer slowFloatWidthForCharacters:length:]):
+	(-[IFTextRenderer floatWidthForCharacters:length:applyRounding:]):
+	(-[IFTextRenderer floatWidthForCharacters:length:]):
+	(-[IFTextRenderer extendCharacterToGlyphMapToInclude:]):
+
 2002-06-10  Darin Adler  <darin@apple.com>
 
 	* WebCoreSupport.subproj/IFCachedTextRenderer.m: Removed.
