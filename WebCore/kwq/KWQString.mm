@@ -1533,6 +1533,12 @@ bool QString::isAllLatin1() const
     return true;
 }
 
+bool QString::hasFastLatin1() const
+{
+    KWQStringData *data = *dataHandle;
+    return data->_isAsciiValid;
+}
+
 void QString::copyLatin1(char *buffer) const
 {
     KWQStringData *data = *dataHandle;

@@ -44,11 +44,13 @@ void HistoryProvider::insert(const QString &s)
 
 bool HistoryProvider::contains(const QString &s) const
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    return [[WebCoreHistory historyProvider] containsItemForURLString: KURL(s).canonicalURL().getNSString()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    // the other side of the bridge is careful not to throw exceptions here
 
-    return false;
+    if (s.hasFastLatin1()) {
+	return [[WebCoreHistory historyProvider] containsItemForURLLatin1:s.latin1() length:s.length()];
+    } else {
+	return [[WebCoreHistory historyProvider] containsItemForURLUnicode:(UniChar *)s.unicode() length:s.length()];
+    }
 }
 
 } // namespace KParts

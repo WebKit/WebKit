@@ -26,7 +26,8 @@
 #import <Foundation/Foundation.h>
 
 @protocol WebCoreHistoryProvider <NSObject>
-- (BOOL)containsItemForURLString:(NSString *)urlString;
+- (BOOL)containsItemForURLLatin1:(const char *)latin1 length:(unsigned)length;
+- (BOOL)containsItemForURLUnicode:(const UniChar *)unicode length:(unsigned)length;
 @end
 
 @interface WebCoreHistory : NSObject

@@ -1,3 +1,20 @@
+2004-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- redo visited link history checking for a 2% speed improvement
+
+        * kwq/KWQKHistoryProvider.mm:
+        (KParts::HistoryProvider::contains): Don't make a KURL or an
+	NSString. Punt on canonicalization and directly pass the internal
+	Latin1 or unicode buffer.
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        (QString::hasFastLatin1): New method to check whether getting the
+	latin1 buffer is fast (doesn't allocate).
+        * kwq/WebCoreHistory.h: add new methods to look up by raw latin1
+	or unicode buffer instead of NSString.
+
 === Safari-128 ===
 
 2004-02-12  David Hyatt  <hyatt@apple.com>

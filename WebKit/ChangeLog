@@ -1,3 +1,19 @@
+2004-02-12  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- redo visited link history checking for a 2% speed improvement
+
+        * History.subproj/WebHistory.m:
+        (-[_WebCoreHistoryProvider containsItemForURLString:]): Removed.
+        (-[_WebCoreHistoryProvider containsItemForURLLatin1:length:]): Implemented.
+	For https and http URLs with empty path, add a slash. Make a CFString
+	using the passed-in latin1 buffer without copying.
+        (-[_WebCoreHistoryProvider containsItemForURLUnicode:length:]): Ditto
+	for unicode.
+        (matchLetter): New static helper function.
+        (matchUnicodeLetter): Ditto.
+
 === Safari-128 ===
 
 2004-02-10  Ken Kocienda  <kocienda@apple.com>

@@ -498,9 +498,120 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     return self;
 }
 
-- (BOOL)containsItemForURLString: (NSString *)URLString
+static inline bool matchLetter(char c, char lowercaseLetter)
 {
-    return [history containsItemForURLString: URLString];
+    return (c | 0x20) == lowercaseLetter;
+}
+
+static inline bool matchUnicodeLetter(UniChar c, UniChar lowercaseLetter)
+{
+    return (c | 0x20) == lowercaseLetter;
+}
+
+#define BUFFER_SIZE 2048
+
+- (BOOL)containsItemForURLLatin1:(const char *)latin1 length:(unsigned)length
+{
+    const char *latin1Str = latin1;
+    char staticStrBuffer[BUFFER_SIZE];
+    char *strBuffer = NULL;
+    BOOL needToAddSlash = FALSE;
+
+    if (length >= 6 &&
+	matchLetter(latin1[0], 'h') &&
+	matchLetter(latin1[1], 't') &&
+	matchLetter(latin1[2], 't') &&
+	matchLetter(latin1[3], 'p') &&
+	(latin1[4] == ':' 
+	 || (matchLetter(latin1[4], 's') && latin1[5] == ':'))) {
+	int pos = latin1[4] == ':' ? 5 : 6;
+	// skip possible initial two slashes
+	if (latin1[pos] == '/' && latin1[pos + 1] == '/') {
+	    pos += 2;
+	}
+
+	char *nextSlash = strchr(latin1 + pos, '/');
+	if (nextSlash == NULL) {
+	    needToAddSlash = TRUE;
+	}
+    }
+
+    if (needToAddSlash) {
+	if (length + 1 <= 2048) {
+	    strBuffer = staticStrBuffer;
+	} else {
+	    strBuffer = malloc(length + 2);
+	}
+	memcpy(strBuffer, latin1, length + 1);
+	strBuffer[length] = '/';
+	strBuffer[length+1] = '\0';
+	length++;
+
+	latin1Str = strBuffer;
+    }
+
+    CFStringRef str = CFStringCreateWithCStringNoCopy(NULL, latin1Str, kCFStringEncodingWindowsLatin1, kCFAllocatorNull);
+    BOOL result = [history containsItemForURLString:(id)str];
+    CFRelease(str);
+
+    if (strBuffer != staticStrBuffer) {
+	free(strBuffer);
+    }
+
+    return result;
+}
+
+- (BOOL)containsItemForURLUnicode:(const UniChar *)unicode length:(unsigned)length
+{
+    const UniChar *unicodeStr = unicode;
+    UniChar staticStrBuffer[1024];
+    UniChar *strBuffer = NULL;
+    BOOL needToAddSlash = FALSE;
+
+    if (length >= 6 &&
+	matchUnicodeLetter(unicode[0], 'h') &&
+	matchUnicodeLetter(unicode[1], 't') &&
+	matchUnicodeLetter(unicode[2], 't') &&
+	matchUnicodeLetter(unicode[3], 'p') &&
+	(unicode[4] == ':' 
+	 || (matchLetter(unicode[4], 's') && unicode[5] == ':'))) {
+	unsigned pos = unicode[4] == ':' ? 5 : 6;
+	// skip possible initial two slashes
+	if (unicode[pos] == '/' && unicode[pos + 1] == '/') {
+	    pos += 2;
+	}
+
+	while (unicode[pos] != '/' && pos < length) {
+	    pos++;
+	}
+
+	if (pos == length) {
+	    needToAddSlash = TRUE;
+	}
+    }
+
+    if (needToAddSlash) {
+	if (length + 1 <= 1024) {
+	    strBuffer = staticStrBuffer;
+	} else {
+	    strBuffer = malloc(sizeof(UniChar) * (length + 1));
+	}
+	memcpy(strBuffer, unicode, 2 * length);
+	strBuffer[length] = '/';
+	length++;
+
+	unicodeStr = strBuffer;
+    }
+
+    CFStringRef str = CFStringCreateWithCharactersNoCopy(NULL, unicodeStr, length, kCFAllocatorNull);
+    BOOL result = [history containsItemForURLString:(id)str];
+    CFRelease(str);
+
+    if (strBuffer != staticStrBuffer) {
+	free(strBuffer);
+    }
+
+    return result;
 }
 
 - (void)dealloc
