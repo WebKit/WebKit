@@ -7,7 +7,7 @@
 #import <Cocoa/Cocoa.h>
 
 #import <WebKit/IFLoadProgress.h>
-
+#import <WebKit/IFDownloadHandler.h>
 
 /*
    ============================================================================= 
@@ -144,6 +144,15 @@
 
 // Called when a plug-in for a certain mime type is not installed
 - (void)pluginNotFoundForMIMEType:(NSString *)mime pluginPageURL:(NSURL *)url;
+
+// Called when a file download has started
+- (void) startedDownloadWithHandler:(IFDownloadHandler *)downloadHandler;
+
+// Called when progress of a download has been made
+- (void) receivedProgress:(IFLoadProgress *)progress forDownloadHandler:(IFDownloadHandler *)downloadHandler;
+
+// Called when the download has had an error
+- (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress;
 
 @end
 

@@ -17,8 +17,10 @@
 {
     id dataSource;
     KHTMLPart *part;
-    BOOL sentFakeDocForNonHTMLContentType, typeChecked;
+    BOOL sentFakeDocForNonHTMLContentType, typeChecked, downloadStarted;
     IFMIMEHandler *mimeHandler;
+    IFMIMEHandlerType handlerType;
+    IFDownloadHandler *downloadHandler;
 }
 - initWithDataSource: (IFWebDataSource *)ds part: (KHTMLPart *)p;
 @end

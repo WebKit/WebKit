@@ -4,7 +4,7 @@
 */
 
 #import <Foundation/Foundation.h>
-#import <IFMIMEHandler.h>
+#import <WebKit/IFMIMEHandler.h>
 
 @interface IFContentHandler : NSObject {
     IFMIMEHandlerType handlerType;

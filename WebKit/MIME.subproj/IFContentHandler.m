@@ -3,7 +3,7 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import "IFContentHandler.h"
+#import <WebKit/IFContentHandler.h>
 
 static NSString *imageDocumentTemplate = nil;
 static NSString *pluginDocumentTemplate = nil;

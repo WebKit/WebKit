@@ -1,4 +1,8 @@
-2002-04-11  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+2002-04-12 Chris Blumenberg <cblu@apple.com>
+
+	First implementation of IFDownloadHandler and IFDownloadHandlerPrivate.
+
+2002-04-11  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for non-html content. Non-html content is embedded in a
 	contrived HTML document.
@@ -28,7 +32,7 @@
 	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]),
 	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
 
-2002-04-10  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
+2002-04-10  Chris Blumenberg  <cblu@apple.com>
 
 	Cleaned up stream deallocations.
 

@@ -300,4 +300,19 @@
     // Do nothing.  Subclasses typically override this method.
 }
 
+- (void) startedDownloadWithHandler:(IFDownloadHandler *)downloadHandler
+{
+    // Do nothing.  Subclasses typically override this method.
+}
+
+- (void) receivedProgress:(IFLoadProgress *)progress forDownloadHandler:(IFDownloadHandler *)downloadHandler
+{
+    // Do nothing.  Subclasses typically override this method.
+}
+
+- (void) receivedError:(IFError *)error forDownloadHandler:(IFDownloadHandler *)downloadHandler partialProgress: (IFLoadProgress *)progress
+{
+    // Do nothing.  Subclasses typically override this method.
+}
+
 @end
