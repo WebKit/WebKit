@@ -41,7 +41,6 @@
     [bufferedData release];
     [dataSource release];
     [decoderClasses release];
-    [decoderSequence removeAllObjects];
     [decoderSequence release];
     [super dealloc];
 }
