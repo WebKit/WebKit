@@ -57,7 +57,7 @@ static IFPreferences *_standardPreferences = nil;
         @"Papyrus", 		WebKitFantasyFontPreferenceKey,
         @"6", 			WebKitMinimumFontSizePreferenceKey,
         @"1.5", 		WebKitInitialTimedLayoutDelayPreferenceKey,
-        @"2048", 		WebKitInitialTimedLayoutSizePreferenceKey,
+        @"4096", 		WebKitInitialTimedLayoutSizePreferenceKey,
         timedLayoutEnabled,	WebKitInitialTimedLayoutEnabledPreferenceKey,
         fontSizeArray,		WebKitFontSizesPreferenceKey,
         javaEnabled,		WebKitJavaEnabledPreferenceKey,

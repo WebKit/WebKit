@@ -1,3 +1,10 @@
+2002-03-28  Richard Williamson  <rjw@apple.com>
+
+        Fixed basic font horkage caused by removal of KDE font matching code.  We
+        now work correctly for the basic font families.
+        
+	* src/kwq/KWQFont.mm: (QFont::getFont):
+
 2002-03-28  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQKloader.mm: (Cache::requestImage), (Cache::requestStyleSheet),

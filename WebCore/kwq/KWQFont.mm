@@ -25,6 +25,7 @@
 
 #include <qstring.h>
 #include <qfont.h>
+#include <kwqdebug.h>
 
 #import <Cocoa/Cocoa.h>
 
@@ -152,6 +153,8 @@ static NSMutableDictionary *fontCache = 0;
 
 @end
 
+static NSArray *_availableFamiles = 0;
+
 NSFont *QFont::getFont()
 {
     if (font == nil) {
@@ -168,8 +171,28 @@ NSFont *QFont::getFont()
         if (font == nil) {
             font = [[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size];
             if (font == nil) {
-                loadDefaultFont();
-                font = [[NSFontManager sharedFontManager] fontWithFamily:defaultFontFamilyName traits:_trait weight:5 size:_size];
+                if (_availableFamiles == 0)
+                    _availableFamiles = [[[NSFontManager sharedFontManager] availableFontFamilies] retain];
+                    
+                // FIXME:  For now do a simple case insensitive search for a matching font.
+                // The font manager requires exact name matches.  The will at least address the problem
+                // of matching arial to Arial, etc.
+                int i, count = [_availableFamiles count];
+                NSString *actualFamily;
+                for (i = 0; i < count; i++){
+                    actualFamily = [_availableFamiles objectAtIndex: i];
+                    if ([_family caseInsensitiveCompare: actualFamily] == NSOrderedSame){
+                        [_family release];
+                        _family = [actualFamily retain];
+                        font = [[NSFontManager sharedFontManager] fontWithFamily:_family traits:_trait weight:5 size:_size];
+                        break;
+                    }
+                }
+                if (font == nil){
+                    KWQDEBUGLEVEL1(KWQ_LOG_FONTCACHE, "unable to find font for family %s\n", [_family cString]);
+                    loadDefaultFont();
+                    font = [[NSFontManager sharedFontManager] fontWithFamily:defaultFontFamilyName traits:_trait weight:5 size:_size];
+                }
             }
             [fontCache setObject: font forKey: fontKey];
         }

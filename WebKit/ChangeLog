@@ -1,5 +1,11 @@
 2002-03-28  Richard Williamson  <rjw@apple.com>
 
+        Increased size default for initial layout.
+        
+	* WebView.subproj/IFPreferences.mm: (+[IFPreferences load]):
+
+2002-03-28  Richard Williamson  <rjw@apple.com>
+
         Fixed big leak of any document that had a frame or iframe.
         
 	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource retain]):
