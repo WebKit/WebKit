@@ -9,6 +9,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebFoundation/WebResourceResponse.h>
 
 @interface WebHTMLRepresentationPrivate : NSObject
 {
@@ -50,6 +51,7 @@
 - (void)setDataSource:(WebDataSource *)dataSource
 {
     _private->bridge = [[dataSource webFrame] _bridge];
+    [_private->bridge setContentType: [[dataSource response] contentType]];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource

@@ -1,3 +1,10 @@
+2002-10-22  David Hyatt  <hyatt@apple.com>
+
+	Getting XML docs at least made for XML files...
+	
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation setDataSource:]):
+
 2002-10-22  Chris Blumenberg  <cblu@apple.com>
 
 	Made new plug-in API headers private.
