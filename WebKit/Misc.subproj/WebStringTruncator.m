@@ -170,9 +170,18 @@ static NSString *truncateString(NSString *string, float maxWidth, NSFont *font, 
 
 @implementation WebStringTruncator
 
+static NSFont *defaultMenuFont(void)
+{
+    static NSFont *defaultMenuFont = nil;
+    if (defaultMenuFont == nil) {
+        defaultMenuFont = [[NSFont menuFontOfSize:0] retain];
+    }
+    return defaultMenuFont;
+}
+
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
-    return truncateString(string, maxWidth, [NSFont menuFontOfSize:0], centerTruncateToBuffer);
+    return truncateString(string, maxWidth, defaultMenuFont(), centerTruncateToBuffer);
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font

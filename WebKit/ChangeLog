@@ -1,3 +1,16 @@
+2004-11-02  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Hyatt.
+        
+        - [NSFont menuFontOfSize:], called from WebStringTruncator, was taking > 9% of the time creating a 
+        very large bookmarks menu, so I cached this one NSFont object.
+
+        * Misc.subproj/WebStringTruncator.m:
+        (defaultMenuFont):
+        new function, caches the font used when no font is specified
+        (+[WebStringTruncator centerTruncateString:toWidth:]):
+        call new function
+
 2004-11-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
