@@ -3063,16 +3063,26 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSString *)_colorAsString:(NSColor *)color
 {
-    if (color == nil)
+    NSColor *rgbColor = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+    // FIXME: If color is non-nil and rgbColor is nil, that means we got some kind
+    // of fancy color that can't be converted to RGB. Changing that to "transparent"
+    // might not be great, but it's probably OK.
+    if (rgbColor == nil)
         return @"transparent";
-    float r = [color redComponent];
-    float g = [color greenComponent];
-    float b = [color blueComponent];
-    if (r == 0 && g == 0 && b == 0)
+    float r = [rgbColor redComponent];
+    float g = [rgbColor greenComponent];
+    float b = [rgbColor blueComponent];
+    float a = [rgbColor alphaComponent];
+    if (a == 0)
+        return @"transparent";
+    if (r == 0 && g == 0 && b == 0 && a == 1)
         return @"black";
-    if (r == 1 && g == 1 && b == 1)
+    if (r == 1 && g == 1 && b == 1 && a == 1)
         return @"white";
-    return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", r * 255, g * 255, b * 255];
+    // FIXME: Lots more named colors. Maybe we could use the table in WebCore?
+    if (a == 1)
+        return [NSString stringWithFormat:@"rgb(%.0f,%.0f,%.0f)", r * 255, g * 255, b * 255];
+    return [NSString stringWithFormat:@"rgba(%.0f,%.0f,%.0f,%f)", r * 255, g * 255, b * 255, a];
 }
 
 - (NSString *)_shadowAsString:(NSShadow *)shadow

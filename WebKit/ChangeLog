@@ -1,3 +1,12 @@
+2004-09-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed assertion I saw using the font panel
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _colorAsString:]):
+        Convert color space before trying to get R, G, and B components.
+
 2004-09-15  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3802232> REGRESSION (Mail): WebCore Editing must do smart copy
