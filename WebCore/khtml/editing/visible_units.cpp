@@ -363,9 +363,11 @@ VisiblePosition previousLinePosition(const VisiblePosition &c, int x)
 {
     Position p = c.affinity() == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
     NodeImpl *node = p.node();
-    if (!node)
+    if (!node || !node->getDocument())
         return VisiblePosition();
-
+    
+    node->getDocument()->updateLayout();
+    
     RenderObject *renderer = node->renderer();
     if (!renderer)
         return VisiblePosition();
@@ -424,8 +426,10 @@ VisiblePosition nextLinePosition(const VisiblePosition &c, int x)
 {
     Position p = c.affinity() == UPSTREAM ? c.deepEquivalent() : c.downstreamDeepEquivalent();
     NodeImpl *node = p.node();
-    if (!node)
+    if (!node || !node->getDocument())
         return VisiblePosition();
+    
+    node->getDocument()->updateLayout();
 
     RenderObject *renderer = node->renderer();
     if (!renderer)
