@@ -29,27 +29,75 @@
 #include <KWQDef.h>
 #include <KWQCollection.h>
 
+// class QPtrDict ==============================================================
+
 template <class T> class QPtrDict : public QCollection {
 public:
-    QPtrDict(int size=13);
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QPtrDict(int size=17);
+    QPtrDict(const QPtrDict<T> &);
+
+    ~QPtrDict();
+
+    // member functions --------------------------------------------------------
 
     uint count() const;
     T *at(uint);
     T *take(void *);
+
     void append(const T *);
     void insert(void *, const T *);
     void remove(void *);
+
+    // operators ---------------------------------------------------------------
+
+    QPtrDict<T> &operator=(const QPtrDict<T> &);
     T *operator[](void *) const; 
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QPtrDict ===========================================================
+
+
+// class QPtrDictIterator ======================================================
 
 template<class T> class QPtrDictIterator {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QPtrDictIterator(const QPtrDict<T> &);
+
+    // member functions --------------------------------------------------------
 
     T *current() const;
     void *currentKey() const;
 
+    // operators ---------------------------------------------------------------
+
     T *operator++();
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QPtrDictIterator(const QPtrDictIterator &);
+    QPtrDictIterator &operator=(const QPtrDictIterator &);
+
+}; // class QPtrDictIterator ===================================================
 
 #endif

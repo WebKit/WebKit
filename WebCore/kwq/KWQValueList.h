@@ -28,48 +28,128 @@
 
 #include <KWQDef.h>
 
+// class QValueListIterator ====================================================
+
 template<class T> class QValueListIterator {
 public: 
-    bool operator!=(const QValueListIterator<T>& it);
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QValueListIterator();
+    QValueListIterator(const QValueListIterator<T>&);
+     
+    ~QValueListIterator();
+    
+    // member functions --------------------------------------------------------
+
+    // operators ---------------------------------------------------------------
+
+    bool operator==(const QValueListIterator<T>&);
+    bool operator!=(const QValueListIterator<T>&);
     T& operator*();
     const T& operator*() const;
     QValueListIterator<T>& operator++();
     QValueListIterator<T>& operator++(int);
     QValueListIterator<T>& operator--();
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QValueListIterator =================================================
+
+
+// class QValueListConstIterator ===============================================
 
 template<class T> class QValueListConstIterator {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QValueListConstIterator();
-    QValueListConstIterator(const QValueListIterator<T>& it);
+    QValueListConstIterator(const QValueListIterator<T>&);
+
+    ~QValueListConstIterator();
+
+    // member functions --------------------------------------------------------
+
+    // operators ---------------------------------------------------------------
+
+    bool operator==(const QValueListConstIterator<T>&);
+    bool operator!=(const QValueListConstIterator<T>&);
+    T& operator*();
     QValueListConstIterator operator++();
     QValueListConstIterator operator++(int);
-    bool operator!=(const QValueListConstIterator<T>& it);
-    T& operator*();
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QValueListConstIterator ============================================
+
+
+// class QValueList ============================================================
 
 template <class T> class QValueList {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
     typedef QValueListIterator<T> Iterator;
     typedef QValueListConstIterator<T> ConstIterator;
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QValueList();
+    QValueList(const QValueList<T>&);
+    
+    ~QValueList();
+        
+    // member functions --------------------------------------------------------
 
     void clear();
     uint count() const;
     bool isEmpty() const;
+
     void append(const T&);
     void remove(const T&);
+
     uint contains(const T&);
+
     Iterator remove(Iterator);
     Iterator fromLast();
+
     const T& first() const;
     const T& last() const;
+
     Iterator begin();
     Iterator end();
+
     ConstIterator begin() const;
     ConstIterator end() const;
+
+    // operators ---------------------------------------------------------------
+
+    QValueList<T>& operator=(const QValueList<T>&);
     T& operator[] (uint);
     const T& operator[] (uint) const;
     QValueList<T> &operator+=(const T &);
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QValueList =========================================================
 
 #endif

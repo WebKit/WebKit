@@ -29,25 +29,75 @@
 #include <KWQCollection.h>
 #include "qstring.h"
 
+// class QDict =================================================================
+
 template <class T> class QDict : public QCollection {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QDict(int size=17, bool caseSensitive=TRUE);
+    
+    QDict(const QDict<T> &);
+    
+    ~QDict();
+
+    // member functions --------------------------------------------------------
 
     void insert(const QString &, const T *);
     bool remove(const QString &);
     T *find(const QString &) const;
     uint count() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QDict<T> &operator=(const QDict<T> &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QDict ==============================================================
+
+
+// class QDictIterator =========================================================
 
 template<class T> class QDictIterator {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
     QDictIterator(const QDict<T> &);
+    
+    ~QDictIterator();
+
+    // member functions --------------------------------------------------------
 
     uint count() const;
     T *current() const;
     T *toFirst();
 
+    // operators ---------------------------------------------------------------
+
     T *operator++();
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QDictIterator(const QDictIterator &);
+    QDictIterator &operator=(const QDictIterator &);
+
+}; // class QDictIterator ======================================================
 
 #endif

@@ -30,9 +30,28 @@
 #include <KWQFrame.h>
 #include "qwidget.h"
 
+// class QScrollView ===========================================================
+
 class QScrollView : public QFrame {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
+    // NOTE: alphabetical order
+    enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QScrollView();
+    virtual ~QScrollView();
+
+    // member functions --------------------------------------------------------
+
     QWidget* viewport() const;
     int visibleWidth() const;
     int visibleHeight() const;
@@ -40,18 +59,32 @@ public:
     int contentsX() const;
     int contentsY() const;
     void scrollBy(int dx, int dy);
+
     virtual void setContentsPos(int x, int y);
-    // NOTE: alphabetical order
-    enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
+
     QScrollBar *horizontalScrollBar() const;
     QScrollBar *verticalScrollBar() const;
+
     virtual void setVScrollBarMode(ScrollBarMode);
     virtual void setHScrollBarMode(ScrollBarMode);
+
     virtual void addChild(QWidget* child, int x=0, int y=0);
     void removeChild(QWidget* child);
+
     virtual void resizeContents(int w, int h);
     void updateContents(int x, int y, int w, int h);
     void repaintContents(int x, int y, int w, int h, bool erase=TRUE);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QScrollView(const QScrollView &);
+    QScrollView &operator=(const QScrollView &);
+
+}; // class QScrollView ========================================================
 
 #endif

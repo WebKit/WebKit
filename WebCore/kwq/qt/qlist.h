@@ -29,44 +29,96 @@
 #include <KWQDef.h>
 #include <KWQCollection.h>
 
+// class QList =================================================================
+
 template <class T> class QList : public QCollection {
 public:
-    // FIXME: should any of these functions be moved into a base collection
-    // class implementation?
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QList();
+    QList(const QList<T> &);
+     
+    // member functions --------------------------------------------------------
+
+    bool isEmpty() const;
     uint count() const;
+    void clear();
+    void sort();
+
     T *at(uint);
-    void append(const T *);
+
     void setAutoDelete(bool);
+
     bool insert(uint i, const T *);
     bool remove();
     bool remove(const T *);
     bool removeFirst();
     bool removeLast();
+    bool removeRef(const T *);
+
     T *getLast() const;
     T *current() const;
-    T *prev() const;
-    void prepend(const T *);
-    T *take(uint i);
     T *first();
-    T *next();
     T *last();
-    void clear();
-    bool isEmpty() const;
-    bool removeRef(const T *);
+    T *next();
+    T *prev();
+    T *take(uint i);
+
+    void append(const T *);
+    void prepend(const T *);
+
     uint containsRef(const T *) const;
-    void sort();
-};
+
+    // operators ---------------------------------------------------------------
+
+    QList<T> &operator=(const QList<T> &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QList ==============================================================
+
+
+// class QListIterator =========================================================
 
 template <class T> class QListIterator {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
     QListIterator(const QList<T> &);
+
+    // member functions --------------------------------------------------------
+
     uint count() const;
     T *toFirst();
     T *toLast();
     T *current() const;
+
+    // operators ---------------------------------------------------------------
+
     operator T *() const;
     T *operator--();
     T *operator++();
-};
+    QListIterator<T> &operator=(const QListIterator<T> &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying
+    QListIterator<T>(const QListIterator<T> &);
+
+}; // class QListIterator ======================================================
 
 #endif

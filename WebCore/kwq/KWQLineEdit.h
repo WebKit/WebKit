@@ -30,23 +30,50 @@
 #include "qevent.h"
 #include "qstring.h"
 
+// class QLineEdit =============================================================
+
 class QLineEdit : public QWidget {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum EchoMode { Normal, NoEcho, Password };
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    QLineEdit(QWidget *parent=0, const char *name=0);
+
+    virtual ~QLineEdit();
     
-    QLineEdit(QWidget *parent=0, const char *name=0 );
+    // member functions --------------------------------------------------------
 
     virtual void setEchoMode(EchoMode);
+    virtual void setCursorPosition(int);
+    virtual void setText(const QString &);
+    virtual void setMaxLength(int);
+
     bool isReadOnly() const;
+    void setReadOnly(bool);
     bool event(QEvent *);
     bool frame() const;
-    virtual void setCursorPosition(int);
     int cursorPosition() const;
-    virtual void setText(const QString &);
     int maxLength() const;
-    virtual void setMaxLength(int);
-    void setReadOnly(bool);
     void selectAll();
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QLineEdit(const QLineEdit &);
+    QLineEdit &operator=(const QLineEdit &);
+
+}; // class QLineEdit ==========================================================
 
 #endif

@@ -31,11 +31,35 @@
 #include "qwidget.h"
 #include "qstring.h"
 
+// class QPushButton ===========================================================
+
 class QPushButton : public QButton {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QPushButton();
     QPushButton(QWidget *);
     QPushButton(const QString &text, QWidget *parent, const char* name=0);
-};
+
+    ~QPushButton();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QPushButton(const QPushButton &);
+    QPushButton &operator=(const QPushButton &);
+
+}; // class QPushButton ========================================================
 
 #endif

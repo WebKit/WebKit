@@ -28,11 +28,35 @@
 
 class QPaintDevice;
 
+// class QPaintDeviceMetrics ===================================================
+
 class QPaintDeviceMetrics {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QPaintDeviceMetrics(const QPaintDevice *);
+
+    // member functions --------------------------------------------------------
+
     int logicalDpiY() const;
     int depth() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QPaintDeviceMetrics(const QPaintDeviceMetrics &);
+    QPaintDeviceMetrics &operator=(const QPaintDeviceMetrics &);
+
+}; // class QPaintDeviceMetrics ================================================
 
 #endif

@@ -31,28 +31,55 @@
 #include "qstring.h"
 #include "qnamespace.h"
 #include "qimage.h"
+#include "qsize.h"
+#include "qrect.h"
 
 class QBitmap;
 class QWMatrix;
 
-class QPixmap : public QPaintDevice {
+// class QPixmap ===============================================================
+
+class QPixmap : public QPaintDevice, public Qt {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QPixmap();
     QPixmap(const QSize&);
     QPixmap(const QByteArray&);
     QPixmap(int,int);
+    QPixmap(const QPixmap &);
+    
+    ~QPixmap();
+
+    // member functions --------------------------------------------------------
 
     void setMask(const QBitmap &);
     const QBitmap *mask() const;
     
+    bool isNull() const;
+
     QSize size() const;
     QRect rect() const;
     int width() const;
     int height() const;
-    bool isNull() const;
     void resize(const QSize &);
+
     QPixmap xForm(const QWMatrix &) const;
     QImage convertToImage() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QPixmap &operator=(const QPixmap &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QPixmap ============================================================
 
 #endif

@@ -31,14 +31,14 @@
 class QString;
 class QRegExp;
 
-// =============================================================================
-// QChar class
+// QChar class =================================================================
 
 class QChar {
 public:
 
-    // -------------------------------------------------------------------------
-    // enums
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
 
     enum Direction {
         // NOTE: alphabetical order
@@ -46,13 +46,13 @@ public:
         DirLRO, DirNSM, DirON, DirPDF, DirR, DirRLE, DirRLO, DirS, DirWS
     };
 
-    // -------------------------------------------------------------------------
-    // constants
+    // constants ---------------------------------------------------------------
 
     static const QChar null;
 
-    // -------------------------------------------------------------------------
-    // constructors, copy constructors, and destructors
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
 
     QChar();
     QChar(char);
@@ -63,11 +63,7 @@ public:
     QChar(uint);
     QChar(int);
 
-    // -------------------------------------------------------------------------
-    // static member functions
-
-    // -------------------------------------------------------------------------
-    // member functions
+    // member functions --------------------------------------------------------
 
     QChar lower() const;
     QChar upper() const;
@@ -85,8 +81,7 @@ public:
     QChar mirroredChar() const;
     ushort unicode() const;
 
-    // -------------------------------------------------------------------------
-    // operators
+    // operators ---------------------------------------------------------------
 
     friend int operator==(char, QChar);
     friend int operator==(QChar, char);
@@ -96,48 +91,46 @@ public:
     friend int operator!=(QChar, char);
     operator char() const;
 
-}; // end class QChar
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
 
-// =============================================================================
-// QString class
+}; // class QChar ==============================================================
+
+
+// QString class ===============================================================
 
 class QString {
 public:
-    static QString fromLatin1(const char*, int len = -1);
+    static QString fromLatin1(const char*, int len=-1);
 
-    // -------------------------------------------------------------------------
-    // enums
-
-    // -------------------------------------------------------------------------
-    // constants
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
 
     static const QString null;
 
-    // -------------------------------------------------------------------------
-    // constructors, copy constructors, and destructors
+    // static member functions -------------------------------------------------
+
+    static QString number(long, int base=10);
+
+    // constructors, copy constructors, and destructors ------------------------
 
     QString();
     QString(QChar);
-    QString(const QString&);
-    QString(const QByteArray&);
+    QString(const QString &);
+    QString(const QByteArray &);
     QString(const QChar *, uint);
     QString(const char *);
 
-    QString &operator=(const QString&);
-    QString &operator=(const char *);
-    QString &operator=(const QCString&);
     QString &operator=(QChar);
+    QString &operator=(const QString &);
+    QString &operator=(const char *);
+    QString &operator=(const QCString &);
     QString &operator=(char);
 
     ~QString();
 
-    // -------------------------------------------------------------------------
-    // static member functions
-
-    static QString number(long, int base = 10);
-
-    // -------------------------------------------------------------------------
-    // member functions
+    // member functions --------------------------------------------------------
 
     bool isNull() const;
     bool isEmpty() const;
@@ -146,9 +139,9 @@ public:
 
     int toInt() const;
     int toInt(bool *, int base=10) const;
-    uint toUInt(bool *ok = 0, int base = 10) const;
-    long toLong(bool *ok = 0, int base = 10) const;
-    float toFloat(bool *b = 0) const;
+    uint toUInt(bool *ok=0, int base=10) const;
+    long toLong(bool *ok=0, int base=10) const;
+    float toFloat(bool *b=0) const;
 
     QString &prepend(const QString &);
     QString &append(const char *);
@@ -159,25 +152,25 @@ public:
     int contains(char) const;
 
     int find(char, int index=0) const;
-    int find(const char *, int index = 0, bool b = 0) const;
-    int find(const QString &, int index = 0, bool b = 0) const;
-    int find(const QRegExp &, int index = 0, bool b = 0) const;
-    int findRev(char, int index = 0) const;
-    int findRev(const char *, int index = 0) const;
+    int find(const char *, int index=0, bool b=0) const;
+    int find(const QString &, int index=0, bool b=0) const;
+    int find(const QRegExp &, int index=0, bool b=0) const;
+    int findRev(char, int index=0) const;
+    int findRev(const char *, int index=0) const;
 
     QString &remove(uint, uint);
     QString &replace(const QRegExp &, const QString &);
     QString &insert(uint, char);
     void truncate(uint pos);
-    void fill(QChar, int len = -1);
+    void fill(QChar, int len=-1);
 
     QString arg (int &);
     QString arg(int a, int fieldwidth=0, int base=10) const;
-    QString arg(const QString&, int fieldwidth = 0) const;
+    QString arg(const QString &, int fieldwidth = 0) const;
 
     QString left(uint) const;
     QString right(uint) const;
-    QString mid(int, int len = 0xffffffff) const;
+    QString mid(int, int len=0xffffffff) const;
 
     const char* latin1() const;
     const char *ascii() const;
@@ -186,16 +179,15 @@ public:
     QCString local8Bit() const;
     QString &setUnicode(const QChar *, uint);
     
-    QString &setNum(int, int base = 10);
+    QString &setNum(int, int base=10);
     QString &sprintf(const char *, ...);
     QString lower() const;
     QString stripWhiteSpace() const;
     QString simplifyWhiteSpace() const;
     void compose();
-    QString visual(int index = 0, int len = -1);
+    QString visual(int index=0, int len=-1);
 
-    // -------------------------------------------------------------------------
-    // operators
+    // operators ---------------------------------------------------------------
 
     bool operator!() const;
     operator const char *() const;
@@ -207,11 +199,14 @@ public:
     QString &operator+=(QChar);
     QString &operator+=(const QString &);
     operator QChar () const;
-    
-}; // end class QString
 
-// =============================================================================
-// operators associated with QChar and QString
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+    
+}; // class QString ============================================================
+
+
+// operators associated with QChar and QString =================================
 
 QString &operator+(const char *, const QString &);
 QString &operator+(QChar, const QString &);
@@ -225,36 +220,30 @@ bool operator!=(const QString &, const char *);
 bool operator!=(const char *, const QString &);
 QString operator+(char, const QString &);
 
-// =============================================================================
-// QConstString class
+
+// class QConstString ==========================================================
 
 class QConstString {
 public:
 
-    // -------------------------------------------------------------------------
-    // enums
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // constants
-
-    // -------------------------------------------------------------------------
-    // static member functions
+    // static member functions -------------------------------------------------
 
     const QString string() const;
 
-    // -------------------------------------------------------------------------
-    // constructors, copy constructors, and destructors
+    // constructors, copy constructors, and destructors ------------------------
 
     QConstString(QChar *, uint);
 
-    // -------------------------------------------------------------------------
-    // member functions
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // operators
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
 
-}; // end class QConstString
-
-// =============================================================================
+}; // class QConstString =======================================================
 
 #endif

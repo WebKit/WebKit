@@ -29,10 +29,24 @@
 #include <KWQListBox.h>
 #include "qwidget.h"
 
+// class QComboBox =============================================================
+
 class QComboBox : public QWidget {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QComboBox(QWidget *parent=0, const char *name=0);
     QComboBox(bool rw, QWidget *parent=0, const char *name=0);
+    
+    ~QComboBox();
+     
+    // member functions --------------------------------------------------------
 
     int count() const;
     QListBox *listBox() const;
@@ -41,6 +55,18 @@ public:
     void insertItem(const QString &text, int index=-1);
     void clear();
     virtual void setCurrentItem(int);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QComboBox(const QComboBox &);
+    QComboBox &operator=(const QComboBox &);
+
+}; // class QComboBox ==========================================================
 
 #endif

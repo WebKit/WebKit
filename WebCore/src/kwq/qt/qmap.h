@@ -28,47 +28,120 @@
 
 #include <KWQDef.h>
 
+// class QMapIterator ==========================================================
+
 template<class K, class T> class QMapIterator {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QMapIterator();
     QMapIterator(const QMapIterator<K,T>& it);
+
+    // member functions --------------------------------------------------------
 
     const K& key() const;
     const T& data() const;
 
+    // operators ---------------------------------------------------------------
+
+    QMapIterator<K,T> &operator=(const QMapIterator<K,T> &);
+    bool operator==(const QMapIterator<K,T>&) const;
     bool operator!=(const QMapIterator<K,T>&) const;
     T& operator*();
     const T& operator*() const;
     QMapIterator<K,T>& operator++();
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QMapIterator =======================================================
+
+
+// class QMapConstIterator =====================================================
 
 template<class K, class T> class QMapConstIterator {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QMapConstIterator();
+    QMapConstIterator(const QMapConstIterator<K,T>&);
     QMapConstIterator(const QMapIterator<K,T>&);
+
+    // member functions --------------------------------------------------------
+
     const K& key() const;
     const T& data() const;
 
+    // operators ---------------------------------------------------------------
+
+    QMapConstIterator<K,T> &operator=(const QMapConstIterator<K,T> &);
+    bool operator==(const QMapConstIterator<K,T>&) const;
     bool operator!=(const QMapConstIterator<K,T>&) const;
     const T &operator*() const;
     QMapConstIterator<K,T>& operator++();
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QMapConstIterator ==================================================
+
+
+// class QMap ==================================================================
 
 template <class K, class T> class QMap {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
     typedef QMapIterator<K, T> Iterator;
     typedef QMapConstIterator< K, T> ConstIterator;
-    Iterator begin();
-    Iterator end();
-    ConstIterator begin() const;
-    ConstIterator end() const;
-    Iterator insert(const K&, const T&);
-    ConstIterator find (const K &) const;
-    void remove(const K&);
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QMap();
+    QMap(const QMap<K,T>&);
+    
+    ~QMap();
+    
+    // member functions --------------------------------------------------------
+
     void clear();
     uint count() const;
+
+    Iterator begin();
+    Iterator end();
     
+    ConstIterator begin() const;
+    ConstIterator end() const;
+
+    Iterator insert(const K&, const T&);
+    void remove(const K&);
+
+    ConstIterator find (const K &) const;
+
+    // operators ---------------------------------------------------------------
+
+    QMap<K,T>& operator=(const QMap<K,T>&);
     T& operator[](const K& k);
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QMap ===============================================================
 
 #endif

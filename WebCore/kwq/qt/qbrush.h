@@ -29,11 +29,38 @@
 #include "qcolor.h"
 #include "qnamespace.h"
 
+// class QBrush ================================================================
+
 class QBrush : public Qt {
 friend class QPainter;
 public: 
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
     QBrush();
     QBrush(const QColor &);
-};
+    QBrush(const QBrush &);
+
+    QBrush &operator=(const QBrush &);
+
+    ~QBrush();
+ 
+    // member functions --------------------------------------------------------
+    
+    // operators ---------------------------------------------------------------
+    
+    bool operator==(const QBrush &) const;
+    bool operator!=(const QBrush &) const;
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+
+}; // class QBrush =============================================================
 
 #endif

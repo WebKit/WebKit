@@ -28,10 +28,24 @@
 
 #include "qstring.h"
 
+// class QFile =================================================================
+
 class QFile {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QFile();
     QFile(const QString &);
+
+    ~QFile();
+
+    // member functions --------------------------------------------------------
 
     bool exists() const;
     static bool exists(const QString &);
@@ -39,6 +53,17 @@ public:
     void close();
     uint size() const;
     int readBlock(char *, uint);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QFile(const QFile &);
+    QFile &operator=(const QFile &);
+
+}; // class QFile ==============================================================
 
 #endif

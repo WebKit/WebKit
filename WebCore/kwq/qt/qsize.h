@@ -26,11 +26,26 @@
 #ifndef QSIZE_H_
 #define QSIZE_H_
 
+// class QSize =================================================================
+
 class QSize {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QSize();
     QSize(int,int);
-    
+    QSize(const QSize &);
+
+    ~QSize();
+
+    // member functions --------------------------------------------------------
+
     bool isValid() const;
     int width() const;
     int height() const;
@@ -38,9 +53,17 @@ public:
     void setHeight(int);
     QSize expandedTo(const QSize &) const;
 
+    // operators ---------------------------------------------------------------
+
+    QSize &operator=(const QSize &);
+
     friend inline QSize operator+(const QSize &, const QSize &);
     friend inline bool operator==(const QSize &, const QSize &);
     friend inline bool operator!=(const QSize &, const QSize &);
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QSize ==============================================================
 
 #endif

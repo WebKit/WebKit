@@ -27,25 +27,46 @@
 #define QREGION_H_
 
 #include "qpoint.h"
-
-// FIXME: workaround for error on line 58 of khtml/html/html_imageimpl.h
 #include "qimage.h"
-
 #include "qrect.h"
+
+// class QRegion ===============================================================
 
 class QRegion {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
     // NOTE: alphabetical order
     enum RegionType { Ellipse, Rectangle };
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
 
     QRegion();
     QRegion(const QRect &);
     QRegion(int, int, int, int, RegionType = Rectangle);
     QRegion(const QPointArray &);
+    QRegion(const QRegion &);
+    
+    ~QRegion();
+
+    // member functions --------------------------------------------------------
 
     QRegion intersect(const QRegion &) const;
     bool contains(const QPoint &) const;
     bool isNull() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QRegion &operator=(const QRegion &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QRegion ============================================================
 
 #endif

@@ -29,11 +29,40 @@
 #include "qstring.h"
 #include "qvaluelist.h"
 
+// class QStringList ===========================================================
+
 class QStringList : public QValueList<QString> {
 public:
-    static QStringList split(const QString &sep, const QString &str, bool allowEmptyEntries = FALSE );
-    static QStringList split(const QChar &sep, const QString &str, bool allowEmptyEntries = FALSE );
-    QString join(const QString &sepx ) const;
-};
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static QStringList split(const QString &, const QString &, 
+        bool allowEmptyEntries = FALSE );
+    static QStringList split(const QChar &, const QString &, 
+        bool allowEmptyEntries = FALSE );
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QStringList();
+    QStringList(const QStringList &);
+
+    ~QStringList();
+
+    // member functions --------------------------------------------------------
+
+    QString join(const QString &) const;
+
+    // operators ---------------------------------------------------------------
+
+    QStringList &operator=(const QStringList &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QStringList ========================================================
 
 #endif

@@ -28,12 +28,35 @@
 
 #include <KWQButton.h>
 
+// class QCheckBox =============================================================
+
 class QCheckBox : public QButton {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QCheckBox();
-    QCheckBox(QWidget *parent);
+    QCheckBox(QWidget *);
+
+    // member functions --------------------------------------------------------
 
     void setChecked(bool);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+
+// private ---------------------------------------------------------------------
+
+private:
+     QCheckBox(const QCheckBox &);
+     QCheckBox &operator=(const QCheckBox &);
+     
+}; // class QCheckBox ==========================================================
 
 #endif

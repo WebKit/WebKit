@@ -26,32 +26,96 @@
 #ifndef QDATETIME_H_
 #define QDATETIME_H_
 
+// class QTime =================================================================
+
 class QTime {
 public:
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QTime();
-    QTime(int h, int m);
-    QTime(const QTime &other);
+    QTime(int, int);
+    QTime(const QTime &);
+
+    // member functions --------------------------------------------------------
 
     bool isNull() const;
     void start();
     int msec() const;
     int elapsed() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QTime &operator=(const QTime &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QTime ==============================================================
+
+
+// class QDate =================================================================
 
 class QDate {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QDate(int y, int m, int d);
-};
+
+    QDate(const QDate &);
+
+    // member functions --------------------------------------------------------
+
+    // operators ---------------------------------------------------------------
+
+    QDate &operator=(const QDate &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QDate ==============================================================
+
+
+// class QDateTime =============================================================
 
 class QDateTime {
 public:
-    QDateTime();
-    QDateTime(QDate date, QTime time);
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
 
     static QDateTime currentDateTime();
 
+    // constructors, copy constructors, and destructors ------------------------
+
+    QDateTime();
+    QDateTime(QDate date, QTime time);
+
+    QDateTime(const QDateTime &);
+
+    // member functions --------------------------------------------------------
+
     int secsTo(const QDateTime &) const;
     QTime time() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QDateTime &operator=(const QDateTime &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QDateTime ==========================================================
 
 #endif

@@ -28,20 +28,45 @@
 
 #include <KWQDef.h>
 
+// class QArray ================================================================
+
 template <class T> class QArray {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
     QArray();
     QArray(int);
+    QArray(const QArray<T> &);
+    
+    QArray<T> &operator=(const QArray<T> &);    
+    
+    ~QArray();
+    
+    // member functions --------------------------------------------------------
+
     T &at(uint) const;
     T *data() const;
-
     uint size() const;
     uint count() const;
     bool resize(uint size);
     QArray<T>& duplicate(const T*, int);
-    bool fill(const T &d, int size = -1);
-    
+    bool fill(const T &, int size=-1);
+
+    // operators ---------------------------------------------------------------
+
     T &operator[](int) const;
-};
+    bool operator==(const QArray<T> &);    
+    bool operator!=(const QArray<T> &);    
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QArray =============================================================
 
 #endif

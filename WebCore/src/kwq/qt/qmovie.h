@@ -32,13 +32,30 @@
 #include "qimage.h"
 #include "qrect.h"
 
+// class QMovie ================================================================
+
 class QMovie {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+
     enum Status { EndOfFrame, EndOfMovie };
+
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
 
     QMovie();
     QMovie(QDataSource*, int bufsize=1024);
+    QMovie(const QMovie &);
     
+    ~QMovie();
+     
+    // member functions --------------------------------------------------------
+
     void unpause();
     void pause();
     void restart();
@@ -57,6 +74,14 @@ public:
     void disconnectResize(QObject* receiver, const char *member=0);
     void disconnectUpdate(QObject* receiver, const char *member=0);
     void disconnectStatus(QObject* receiver, const char *member=0);
-};
+
+    // operators ---------------------------------------------------------------
+
+    QMovie &operator=(const QMovie &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QMovie =============================================================
 
 #endif

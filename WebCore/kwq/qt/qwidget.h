@@ -37,8 +37,14 @@
 #include "qevent.h"
 #include <KWQStyle.h>
 
+// class QWidget ===============================================================
+
 class QWidget : public QObject, public QPaintDevice {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
 
     enum FocusPolicy {
         NoFocus = 0,
@@ -48,46 +54,75 @@ public:
         WheelFocus = 0x7
     };
     
-    // FIXME: do any of these methods need to be virtual?
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QWidget(QWidget *parent=0, const char *name=0, WFlags f=0);
+
+    virtual ~QWidget();
+
+    // member functions --------------------------------------------------------
+
+    virtual QSize sizeHint() const;
+    virtual void resize(int,int);
+    virtual void setActiveWindow();
+    virtual void setEnabled(bool);
+    virtual void setAutoMask(bool);
+    virtual void setMouseTracking(bool);
+
     int winId() const;
     int x() const;
     int y() const;
     int width() const;
     int height() const;
     QSize size() const;
-    virtual QSize sizeHint() const;
-    virtual void resize(int,int);
     void resize(const QSize &);
     QPoint pos() const;
-    virtual void move(const QPoint &);
     void move(int, int);
+    virtual void move(const QPoint &);
+
     QWidget *topLevelWidget() const;
+
     QPoint mapToGlobal(const QPoint &) const;
+
     void setFocus();
     void clearFocus();
     FocusPolicy focusPolicy() const;
     virtual void setFocusPolicy(FocusPolicy);
     virtual void setFocusProxy( QWidget * );
-    virtual void setActiveWindow();
-    virtual void setEnabled(bool);
+
     const QPalette& palette() const;
     virtual void setPalette(const QPalette &);
     void unsetPalette();
-    virtual void setAutoMask(bool);
-    virtual void setMouseTracking(bool);
+    
     QStyle &style() const;
     void setStyle(QStyle *);
+    
     QFont font() const;
     virtual void setFont(const QFont &);
+    
     void constPolish() const;
     virtual QSize minimumSizeHint() const;
     bool isVisible() const;
     virtual void setCursor(const QCursor &);
     bool event(QEvent *);
     bool focusNextPrevChild(bool);
+    bool hasMouseTracking() const;
+
     virtual void show();
     virtual void hide();
-    bool hasMouseTracking() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QWidget(const QWidget &);
+    QWidget &operator=(const QWidget &);
+
+}; // class QWidget ============================================================
 
 #endif

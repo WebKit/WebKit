@@ -28,9 +28,37 @@
 
 #include <KWQDef.h>
 
+// =============================================================================
+// class QImageDecoder
+
 class QImageDecoder {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    
+    // static member functions -------------------------------------------------
+
     static const char* formatName(const uchar* buffer, int length);
-};
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    ~QImageDecoder();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QImageDecoder(const QImageDecoder &);
+    QImageDecoder &operator=(const QImageDecoder &);
+
+}; // end class QImageDecoder
+
+// =============================================================================
 
 #endif

@@ -26,11 +26,40 @@
 #ifndef QTOOLTIP_H_
 #define QTOOLTIP_H_
 
-class QPalette;
+#include "qnamespace.h"
+#include "qpalette.h"
+#include "qwidget.h"
 
-class QToolTip {
+// class QToolTip ==============================================================
+
+class QToolTip : public Qt {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    
+    // static member functions -------------------------------------------------
+    
     static QPalette palette();
-};
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QToolTip(QWidget *);
+    
+    ~QToolTip();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QToolTip(const QToolTip &);
+    QToolTip &operator=(const QToolTip &);
+
+}; // class QToolTip ===========================================================
 
 #endif

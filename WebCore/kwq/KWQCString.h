@@ -36,31 +36,50 @@
 
 typedef QArray<char> QByteArray;
 
-// added to help in compilation of khtml/dom/html_documnent.cpp:182
+// class QCString ==============================================================
+
 class QCString : public QByteArray {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QCString();
     QCString(int);
     QCString(const char *);
     QCString(const char *, uint);
     QCString(const QCString&);
 
-    QCString mid(uint index, uint len=0xffffffff) const;
-    
-    int find(const char *str, int index=0, bool cs=TRUE) const;
-    int contains(char) const;
+    // member functions --------------------------------------------------------
+
     bool isEmpty() const;
     bool isNull() const;
+    int find(const char *str, int index=0, bool cs=TRUE) const;
+    int contains(char) const;
     uint length() const;
     bool truncate(uint);
     QCString lower() const;
+    QCString mid(uint index, uint len=0xffffffff) const;
+
+    // operators ---------------------------------------------------------------
 
     operator const char *() const;
     QCString &operator=(const QCString&);
     QCString &operator=(const char *);
     QCString &operator+=(const char *);
     QCString &operator+=(const QCString&);
-};
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QCString ===========================================================
+
+
+// operators associated with QCString ==========================================
 
 bool operator==(const char *, const QCString &);
 bool operator==(const QCString &, const char *);

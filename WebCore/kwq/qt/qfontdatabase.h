@@ -30,12 +30,41 @@
 #include "qfont.h"
 #include "qstring.h"
 
+// class QFontDatabase =========================================================
+
 class QFontDatabase {
 public:
-     QFont font(const QString familyName, const QString &style, int pointSize, const QString charSetName = QString::null);
-     bool isSmoothlyScalable(const QString &family, const QString &style = QString::null, const QString &charSet = QString::null) const;
-     QValueList<int> smoothSizes(const QString &family, const QString &style, const QString &charSet = QString::null);
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QFontDatabase();
+    
+    // member functions --------------------------------------------------------
+
+     QFont font(const QString, const QString &, int, 
+        const QString charSetName = QString::null);
+     bool isSmoothlyScalable(const QString &family, 
+        const QString &style=QString::null, 
+        const QString &charSet=QString::null) const;
+     QValueList<int> smoothSizes(const QString &, const QString &, 
+        const QString &charSet = QString::null);
      QString styleString(const QFont &);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QFontDatabase(const QFontDatabase &);
+    QFontDatabase &operator=(const QFontDatabase &);
+
+}; // class QFontDatabase ======================================================
 
 #endif

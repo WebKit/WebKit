@@ -30,12 +30,37 @@
 
 #include "qwidget.h"
 
+// class QRadioButton ==========================================================
+
 class QRadioButton : public QButton {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QRadioButton();
     QRadioButton(QWidget *);
+    
+    ~QRadioButton();
+
+    // member functions --------------------------------------------------------
 
     void setChecked(bool);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QRadioButton(const QRadioButton &);
+    QRadioButton &operator=(const QRadioButton &);
+
+}; // class QRadioButton =======================================================
 
 #endif

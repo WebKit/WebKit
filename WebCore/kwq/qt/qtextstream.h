@@ -28,26 +28,106 @@
 
 #include "qstring.h"
 
+// class QTextStream ===========================================================
+
 class QTextStream {
 public:
-     QTextStream();
-     QTextStream(QByteArray, int);
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QTextStream();
+    QTextStream(QByteArray, int);
+
+    virtual ~QTextStream();       
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
 
      QTextStream &operator<<(char);
      QTextStream &operator<<(const char *);
-     QTextStream &operator<<(const QCString&);
-     QTextStream &operator<<(const QString&);
-};
+     QTextStream &operator<<(const QCString &);
+     QTextStream &operator<<(const QString &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTextStream(const QTextStream &);
+    QTextStream &operator=(const QTextStream &);
+
+}; // class QTextStream ========================================================
+
+
+// class QTextIStream ==========================================================
 
 class QTextIStream : public QTextStream {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QTextIStream(QString *);
+
+    virtual ~QTextIStream();       
+
+    // member functions --------------------------------------------------------
+
     QString readLine();
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTextIStream(const QTextIStream &);
+    QTextIStream &operator=(const QTextIStream &);
+
+}; // class QTextIStream =======================================================
+
+
+// class QTextOStream ==========================================================
 
 class QTextOStream : public QTextStream {
 public:
-    QTextOStream(QByteArray ba);
-};
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QTextOStream(QString *);
+    QTextOStream(QByteArray);
+
+    virtual ~QTextOStream();       
+
+    // member functions --------------------------------------------------------
+
+    QString readLine();
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTextOStream(const QTextOStream &);
+    QTextOStream &operator=(const QTextOStream &);
+
+}; // class QTextOStream =======================================================
 
 #endif

@@ -29,9 +29,16 @@
 class QColor;
 class QCursor;
 
+// class Qt ====================================================================
+
 class Qt {
 public:
-    enum ButtonState {
+
+    // typedefs ----------------------------------------------------------------
+
+    // enums -------------------------------------------------------------------
+ 
+     enum ButtonState {
         LeftButton,
         MidButton,
         RightButton,
@@ -67,10 +74,12 @@ public:
     };
 
     enum Key {
-        Key_Escape = 0x1000,            // misc keys
+        Key_Escape = 0x1000,            
         Key_Tab = 0x1001,
-        Key_Backtab = 0x1002, Key_BackTab = Key_Backtab,
-        Key_Backspace = 0x1003, Key_BackSpace = Key_Backspace,
+        Key_Backtab = 0x1002, 
+        Key_BackTab = Key_Backtab,
+        Key_Backspace = 0x1003, 
+        Key_BackSpace = Key_Backspace,
         Key_Return = 0x1004,
         Key_Enter = 0x1005,
         Key_Insert = 0x1006,
@@ -78,7 +87,7 @@ public:
         Key_Pause = 0x1008,
         Key_Print = 0x1009,
         Key_SysReq = 0x100a,
-        Key_Home = 0x1010,              // cursor movement
+        Key_Home = 0x1010,              
         Key_End = 0x1011,
         Key_Left = 0x1012,
         Key_Up = 0x1013,
@@ -92,6 +101,8 @@ public:
         XorROP,
     };
 
+    // constants ---------------------------------------------------------------
+
     static const QColor &black;
     static const QColor &white;
     static const QColor &darkGray;
@@ -99,6 +110,24 @@ public:
     static const QCursor &sizeAllCursor;
     static const QCursor &splitHCursor;
     static const QCursor &splitVCursor;
-};
+
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+    
+    Qt();
+    ~Qt();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    Qt(const Qt &);
+    Qt &operator=(const Qt &);
+
+}; // class Qt =================================================================
 
 #endif

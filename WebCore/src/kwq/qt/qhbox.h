@@ -29,12 +29,35 @@
 #include "qwidget.h"
 #include <KWQFrame.h>
 
+// class QHBox =================================================================
+
 class QHBox : public QFrame {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QHBox();
     QHBox(QWidget *);
 
+    // member functions --------------------------------------------------------
+
     bool setStretchFactor(QWidget*, int stretch);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QHBox(const QHBox &);
+    QHBox &operator=(const QHBox &);
+
+}; // class QHBox ==============================================================
 
 #endif

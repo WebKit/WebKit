@@ -28,17 +28,44 @@
 
 #include <KWQDef.h>
 
+#include "qarray.h"
 #include "qstring.h"
+
+// class QBuffer ===============================================================
 
 class QBuffer {
 public:
-    QByteArray buffer() const;
 
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    QBuffer();
+
+    ~QBuffer();
+
+    // member functions --------------------------------------------------------
+
+    QByteArray buffer() const;
     uint size() const;
     bool isOpen();
     bool open(int);
     void close();
     int writeBlock(const char *, uint);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QBuffer(const QBuffer &);
+    QBuffer &operator=(const QBuffer &);
+
+}; // class QBuffer ============================================================
 
 #endif

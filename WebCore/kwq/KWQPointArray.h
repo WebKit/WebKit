@@ -28,28 +28,75 @@
 
 #include <KWQDef.h>
 
+// class QPoint ================================================================
+
 class QPoint {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QPoint();
     QPoint(int, int);
     QPoint(const QPoint &);
-    
+
+    ~QPoint();
+
+    // member functions --------------------------------------------------------
+
     int x() const;
     int y() const;
 
     int manhattanLength() const;
 
+    // operators ---------------------------------------------------------------
+
+    QPoint &operator=(const QPoint &);
+    
     friend QPoint operator+(const QPoint &, const QPoint &);
     friend QPoint operator-(const QPoint &, const QPoint &);
-};
 
-// FIXME: QPointArray here to workaround bug in khtml/html/html_imageimpl.cpp
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QPoint =============================================================
+
+
+// class QPointArray ===========================================================
+
 class QPointArray {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
     QPointArray(int);
     QPointArray(int, const QCOORD *);
+    
+    ~QPointArray();
+
+    // member functions --------------------------------------------------------
+
     void setPoint(uint, int, int);
-    bool setPoints(int, int, int, ... );
-};
+    bool setPoints(int, int, int, ...);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QPointArray(const QPointArray &);
+    QPointArray &operator=(const QPointArray &);
+
+}; // class QPointArray ========================================================
 
 #endif

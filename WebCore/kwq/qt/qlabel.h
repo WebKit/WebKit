@@ -30,13 +30,38 @@
 #include "qwidget.h"
 #include "qstring.h"
 
+// class QLabel ================================================================
+
 class QLabel : public QFrame {
 public:
-     QLabel(QWidget *parent);
-     QLabel(const QString &, QWidget *);
 
-     virtual void setText(const QString &);
-     virtual void setAlignment(int);
-};
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QLabel(QWidget *parent);
+    QLabel(const QString &, QWidget *);
+    
+    virtual ~QLabel();
+
+    // member functions --------------------------------------------------------
+
+    virtual void setText(const QString &);
+    virtual void setAlignment(int);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QLabel(const QLabel &);
+    QLabel &operator=(const QLabel &);
+
+}; // class QLabel =============================================================
 
 #endif

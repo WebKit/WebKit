@@ -28,52 +28,161 @@
 
 class QString;
 
+// class QXmlAttributes ========================================================
+
 class QXmlAttributes {
 public:
-    QString value(const QString& qName) const;
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+        
+    QXmlAttributes();
+    QXmlAttributes(const QXmlAttributes &);
+    
+    virtual ~QXmlAttributes();
+    
+    // member functions --------------------------------------------------------
+
+    QString value(const QString &) const;
     int length() const;
     QString localName(int index) const;
     QString value(int index) const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QXmlAttributes &operator=(const QXmlAttributes &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QXmlAttributes =====================================================
+
+
+// class QXmlInputSource ========================================================
 
 class QXmlInputSource {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    QXmlInputSource();
+    
+    virtual ~QXmlInputSource();
+
+    // member functions --------------------------------------------------------
+
     virtual void setData(const QString& data);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QXmlInputSource(const QXmlInputSource &);
+    QXmlInputSource &operator=(const QXmlInputSource &);
+
+}; // class QXmlInputSource =====================================================
+
+
+class QXmlDTDHandler {};
+
+class QXmlDeclHandler {};
+
+class QXmlErrorHandler {};
+
+class QXmlLexicalHandler {};
+
+class QXmlContentHandler {};
+
+class QXmlDefaultHandler : 
+    public QXmlContentHandler, 
+    public QXmlLexicalHandler, 
+    public QXmlErrorHandler, 
+    public QXmlDeclHandler, 
+    public QXmlDTDHandler {
 };
 
-class QXmlDTDHandler {
-};
 
-class QXmlDeclHandler {
-};
-
-class QXmlErrorHandler {
-};
-
-class QXmlLexicalHandler {
-};
-
-class QXmlContentHandler {
-};
-
-class QXmlDefaultHandler : public QXmlContentHandler, public QXmlLexicalHandler, public QXmlErrorHandler, public QXmlDeclHandler, public QXmlDTDHandler {
-};
+// class QXmlSimpleReader ======================================================
 
 class QXmlSimpleReader {
 public:
-    void setContentHandler(QXmlContentHandler* handler);
-    bool parse(const QXmlInputSource& input);
-    void setLexicalHandler(QXmlLexicalHandler* handler);
-    void setDTDHandler(QXmlDTDHandler* handler);
-    void setDeclHandler(QXmlDeclHandler* handler);
-    void setErrorHandler(QXmlErrorHandler* handler);
-};
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+
+    QXmlSimpleReader();
+    
+    ~QXmlSimpleReader();    
+
+    // member functions --------------------------------------------------------
+
+    void setContentHandler(QXmlContentHandler *handler);
+    bool parse(const QXmlInputSource &input);
+    void setLexicalHandler(QXmlLexicalHandler *handler);
+    void setDTDHandler(QXmlDTDHandler *handler);
+    void setDeclHandler(QXmlDeclHandler *handler);
+    void setErrorHandler(QXmlErrorHandler *handler);
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QXmlSimpleReader(const QXmlSimpleReader &);
+    QXmlSimpleReader &operator=(const QXmlSimpleReader &);
+
+}; // class QXmlSimpleReader ===================================================
+
+
+// class QXmlParseException ====================================================
 
 class QXmlParseException {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+        
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QXmlParseException();
+    
+    ~QXmlParseException();    
+    
+    // member functions --------------------------------------------------------
+
     QString message() const;
     int columnNumber() const;
     int lineNumber() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QXmlParseException(const QXmlParseException &);
+    QXmlParseException &operator=(const QXmlParseException &);
+
+}; // class QXmlParseException =================================================
 
 #endif

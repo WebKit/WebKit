@@ -26,7 +26,33 @@
 #ifndef QPOPUPMENU_H_
 #define QPOPUPMENU_H_
 
+// class QPopupMenu ============================================================
+
 class QPopupMenu {
-};
+public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+        
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QPopupMenu();
+    
+    ~QPopupMenu();
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QPopupMenu(const QPopupMenu &);
+    QPopupMenu &operator=(const QPopupMenu &);
+
+}; // class QPopupMenu =========================================================
 
 #endif

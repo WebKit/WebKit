@@ -29,24 +29,81 @@
 #include "qstring.h"
 #include "qcstring.h"
 
+// class QTextDecoder ==========================================================
+
 class QTextDecoder {
 public:
-    virtual QString toUnicode(const char *, int) = 0;
-};
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QTextDecoder();
+    
+    virtual ~QTextDecoder();
+    
+    // member functions --------------------------------------------------------
+
+    virtual QString toUnicode(const char *, int)=0;
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTextDecoder(const QTextDecoder &);
+    QTextDecoder &operator=(const QTextDecoder &);
+
+}; // class QTextDecoder =======================================================
+
+
+// class QTextCodec ============================================================
 
 class QTextCodec {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
     static QTextCodec *codecForMib(int);
-    static QTextCodec *codecForName(const char *, int accuracy = 0);
+    static QTextCodec *codecForName(const char *, int accuracy=0);
     static QTextCodec *codecForLocale();
 
-    virtual const char* name() const = 0;
-    virtual int mibEnum() const = 0;
+    // constructors, copy constructors, and destructors ------------------------
+
+    QTextCodec();
+    
+    virtual ~QTextCodec();
+
+    // member functions --------------------------------------------------------
+
+    virtual const char* name() const=0;
+    virtual int mibEnum() const=0;
     virtual QTextDecoder *makeDecoder() const;
     QCString fromUnicode(const QString &) const;
+
     virtual QString toUnicode(const char *, int) const;
     QString toUnicode(const QByteArray &, int) const;
     QString toUnicode(const char *) const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTextCodec(const QTextCodec &);
+    QTextCodec &operator=(const QTextCodec &);
+
+}; // class QTextCodec =========================================================
 
 #endif

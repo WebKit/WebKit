@@ -27,11 +27,32 @@
 #define QBITMAP_H_
 
 #include "qpixmap.h"
+#include "qimage.h"
+
+// class QBitmap ===============================================================
 
 class QBitmap : public QPixmap {
 public:
+
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
     QBitmap();
     QBitmap(int,int);
-};
+
+    QBitmap &operator=(const QBitmap &);
+    QBitmap &operator=(const QPixmap &);
+    QBitmap &operator=(const QImage &);
+    
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QBitmap ============================================================
 
 #endif

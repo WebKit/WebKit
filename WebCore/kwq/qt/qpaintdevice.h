@@ -26,10 +26,28 @@
 #ifndef QPAINTDEVICE_H_
 #define QPAINTDEVICE_H_
 
-#include "qrect.h"
+// class QPaintDevice ==========================================================
 
 class QPaintDevice {
-    friend class QPaintDeviceMetrics;
-};
+friend class QPaintDeviceMetrics;
+public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    // constructors, copy constructors, and destructors ------------------------
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QPaintDevice(const QPaintDevice &);
+    QPaintDevice &operator=(const QPaintDevice &);
+
+}; // class QPaintDevice =======================================================
 
 #endif

@@ -27,12 +27,35 @@
 #define QINPUTDIALOG_H_
 
 #include "qstring.h"
-class QWidget;
+#include "qwidget.h"
+
+// class QInputDialog ==========================================================
 
 class QInputDialog {
 public:
-    static QString getText( const QString &caption, const QString &label, const QString &text = QString::null,
-        bool *ok = 0, QWidget *parent = 0, const char *name = 0 );
-};
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static QString getText(const QString &, const QString &, 
+        const QString &text=QString::null, bool *ok=0, QWidget *parent=0, 
+        const char *name=0);
+
+    // constructors, copy constructors, and destructors ------------------------
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QInputDialog(const QInputDialog &);
+    QInputDialog &operator=(const QInputDialog &);
+
+}; // class QInputDialog =======================================================
 
 #endif

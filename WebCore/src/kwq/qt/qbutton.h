@@ -27,16 +27,40 @@
 #define QBUTTON_H_
 
 #include "qwidget.h"
-
-class QString;
+#include "qstring.h"
+    
+// class QButton ===============================================================
 
 class QButton : public QWidget {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
     QButton();
     QButton(QWidget *);
     
+    virtual ~QButton();
+
+    // member functions --------------------------------------------------------
+
     virtual void setText(const QString &);
     QString text() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QButton(const QButton &);
+    QButton &operator=(const QButton &);
+
+}; // class QButton ============================================================
 
 #endif

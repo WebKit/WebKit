@@ -28,10 +28,28 @@
 
 #include "qsize.h"
 
+// class QRect =================================================================
+
 class QRect {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QRect();
     QRect(int l, int t, int w, int h);
+    QRect(const QRect &);
+    
+    ~QRect();
+
+    // member functions --------------------------------------------------------
+
+    bool isNull() const;
+    bool isValid() const;
 
     int x() const;
     int y() const;
@@ -41,14 +59,20 @@ public:
     int bottom() const;
     int width() const;
     int height() const;
-    bool isNull() const;
-    bool isValid() const;
 
     QSize size() const;
     void setWidth(int);
     void setHeight(int);
     QRect intersect(const QRect &) const;
     bool intersects(const QRect &) const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QRect &operator=(const QRect &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QRect ==============================================================
 
 #endif

@@ -30,24 +30,45 @@ typedef unsigned int uint;
 
 class QString;
 
-// this isn't used in this class, but it other classes expect the forward decl
-class QImage;
+// class QVariant ==============================================================
 
 class QVariant {
 public:
+
+    // typedefs ----------------------------------------------------------------
+
     enum Type {
         UInt,
         Bool
     };
 
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
+
     QVariant();
     QVariant(bool, int);
     QVariant(double);
-    QVariant(const QString&);
+    QVariant(const QString &);
+    QVariant(const QVariant &);
+
+    ~QVariant();
     
+    // member functions --------------------------------------------------------
+
     Type type() const;
     bool toBool() const;
     uint toUInt() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QVariant &operator=(const QVariant &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QVariant ===========================================================
 
 #endif

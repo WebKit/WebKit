@@ -26,19 +26,46 @@
 #ifndef QAPPLICATION_H_
 #define QAPPLICATION_H_
 
-#include "qpalette.h"
 #include "qwidget.h"
+#include "qpalette.h"
 #include "qsize.h"
+
+// class QApplication ==========================================================
 
 class QApplication {
 public:
-    static QPalette palette(const QWidget* = 0);
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    
+    // static member functions -------------------------------------------------
+
+    static QPalette palette(const QWidget *p=0);
     static QWidget *desktop();
     static int startDragDistance();
     static QSize globalStrut();
     static void	setOverrideCursor(const QCursor &);
     static void restoreOverrideCursor();
-    static bool sendEvent(QObject *receiver, QEvent *event);
-};
+    static bool sendEvent(QObject *, QEvent *);
+
+    // constructors, copy constructors, and destructors ------------------------
+
+    QApplication();
+    virtual ~QApplication();
+
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QApplication(const QApplication &);
+    QApplication &operator=(const QApplication &);
+
+}; // class QApplication =======================================================
 
 #endif

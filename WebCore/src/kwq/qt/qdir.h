@@ -30,16 +30,36 @@
 #include "qstringlist.h"
 #include "qfile.h"
 
+// class QDir ==================================================================
+
 class QDir {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+
+    // constructors, copy constructors, and destructors ------------------------
     QDir();
-    QDir(const QString&);
+    QDir(const QString &);
+    QDir(const QDir &);
+
+    virtual ~QDir();
+
+    // member functions --------------------------------------------------------
 
     virtual QString absPath() const;
     virtual QString absFilePath( const QString &fileName) const;
     virtual bool cdUp();
     virtual bool exists(const QString&) const;
     virtual QStringList entryList(const QString &nameFilter);
-};
+
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QDir ===============================================================
 
 #endif

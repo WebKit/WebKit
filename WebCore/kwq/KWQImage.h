@@ -26,14 +26,37 @@
 #ifndef QIMAGE_H_
 #define QIMAGE_H_
 
+// class QImage ================================================================
+
 class QImage {
 public:
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+    // static member functions -------------------------------------------------
+    
+    // constructors, copy constructors, and destructors ------------------------
+
+    QImage();
+    QImage(const QImage &);
+
+    // member functions --------------------------------------------------------
+
     int width() const;
     int height() const;
     int depth() const;
     int pixelIndex(int,int) const;
     QImage createAlphaMask(int conversion_flags=0) const;
     bool hasAlphaBuffer() const;
-};
+
+    // operators ---------------------------------------------------------------
+
+    QImage &operator=(const QImage &);
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+}; // class QImage =============================================================
 
 #endif

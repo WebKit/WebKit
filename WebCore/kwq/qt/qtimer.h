@@ -28,9 +28,36 @@
 
 #include "qobject.h"
 
+// class QTimer ================================================================
+
 class QTimer : public QObject {
 public:
-    static void singleShot(int msec, QObject *receiver, const char *member);
-};
+
+    // typedefs ----------------------------------------------------------------
+    // enums -------------------------------------------------------------------
+    // constants ---------------------------------------------------------------
+
+    // static member functions -------------------------------------------------
+
+    static void singleShot(int, QObject *, const char *);
+
+    // constructors, copy constructors, and destructors ------------------------
+    
+    QTimer();
+
+    ~QTimer();
+     
+    // member functions --------------------------------------------------------
+    // operators ---------------------------------------------------------------
+
+// protected -------------------------------------------------------------------
+// private ---------------------------------------------------------------------
+
+private:
+    // no copying or assignment
+    QTimer(const QTimer &);
+    QTimer &operator=(const QTimer &);
+
+}; // class QTimer =============================================================
 
 #endif
