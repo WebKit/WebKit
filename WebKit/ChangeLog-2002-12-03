@@ -1,3 +1,26 @@
+2002-05-13  System Administrator  <cblu@apple.com>
+
+	Added support for setting the content policy on the location change handler
+	and data source at any time instead of depending on an immediate response.
+
+	* WebView.subproj/IFBaseWebController.mm:
+	(-[IFBaseWebController haveContentPolicy:andPath:forLocationChangeHandler:]):
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient initWithDataSource:part:]):
+	(-[IFMainURLHandleClient dealloc]):
+	(-[IFMainURLHandleClient setContentPolicy:]):
+	(-[IFMainURLHandleClient IFURLHandleResourceDidFinishLoading:data:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDidFailLoadingWithResult:]):
+	(-[IFMainURLHandleClient IFURLHandle:didRedirectToURL:]):
+	(-[IFMainURLHandleClient processData:isComplete:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _setContentPolicy:]):
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame setProvisionalDataSource:]):
+
 2002-05-13  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebKitPrefix.h: Gratuitous change to make the prefix file

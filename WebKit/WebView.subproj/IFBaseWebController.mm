@@ -262,6 +262,9 @@
 {
     IFWebDataSource *mainDataSource, *mainProvisionalDataSource, *dataSource;
     
+    if(policy == IFContentPolicyNone)
+        [NSException raise:NSInvalidArgumentException format:@"Can't set policy of IFContentPolicyNone. Use IFContentPolicyIgnore instead"];
+        
     mainProvisionalDataSource = [_private->mainFrame provisionalDataSource];
     mainDataSource = [_private->mainFrame dataSource];
     
@@ -270,8 +273,12 @@
         dataSource = [mainProvisionalDataSource _recursiveDataSourceForLocationChangeHandler:handler];
         
     if(dataSource){
-        [dataSource _setContentPolicy:policy];
-        [dataSource _setDownloadPath:path];
+        if([dataSource contentPolicy] != IFContentPolicyNone){
+            [NSException raise:NSGenericException format:@"Content policy can only be set once on a location change handler."];
+        }else{
+            [dataSource _setContentPolicy:policy];
+            [dataSource _setDownloadPath:path];
+        }
     }
 }
 

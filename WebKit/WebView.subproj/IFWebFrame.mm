@@ -156,6 +156,9 @@
         [IFDownloadHandler launchURL:[newDataSource inputURL]];
     }
     
+    // Do nothing in the IFURLPolicyIgnore case.
+    
+    //FIXME: When do we return NO?
     return YES;
 }
 

@@ -290,9 +290,13 @@
     _private->downloadPath = [path retain];
 }
 
+
+// This method should only be called by haveContentPolicy in IFBaseWebController
+// and should only be called once.
 - (void) _setContentPolicy:(IFContentPolicy)policy
 {
     _private->contentPolicy = policy;
+    [_private->mainURLHandleClient setContentPolicy:policy];
 }
 
 - (IFWebDataSource *) _recursiveDataSourceForLocationChangeHandler:(id <IFLocationChangeHandler>)handler;

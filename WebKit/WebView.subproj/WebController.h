@@ -91,7 +91,6 @@
 */
 
 typedef enum {
-    IFURLPolicyNone,
     IFURLPolicyUseContentPolicy,
     IFURLPolicyOpenExternally,
     IFURLPolicyIgnore
