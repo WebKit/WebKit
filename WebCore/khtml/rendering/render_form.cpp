@@ -1348,12 +1348,7 @@ void RenderTextArea::calcMinMaxWidth()
     const QFontMetrics &m = style()->fontMetrics();
     w->setTabStopWidth(8 * m.width(" "));
 #if APPLE_CHANGES
-    QSize size( QMAX(element()->cols(), 1)*m.width('x') + w->frameWidth() +
-                w->verticalScrollBarWidth(),
-                QMAX(element()->rows(), 1)*m.height() + w->frameWidth()*2 +
-                (w->wordWrap() == QTextEdit::NoWrap ?
-                 w->horizontalScrollBarHeight() : 0)
-        );
+    QSize size(w->sizeWithColumnsAndRows(QMAX(element()->cols(), 1), QMAX(element()->rows(), 1)));
 #else
     QSize size( QMAX(element()->cols(), 1)*m.width('x') + w->frameWidth() +
                 w->verticalScrollBar()->sizeHint().width(),

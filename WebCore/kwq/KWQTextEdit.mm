@@ -105,18 +105,6 @@ void QTextEdit::selectAll()
     [textView selectAll];
 }
 
-int QTextEdit::verticalScrollBarWidth() const
-{
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    return (int)[[textView verticalScroller] frame].size.width;
-}
-
-int QTextEdit::horizontalScrollBarHeight() const
-{
-    KWQTextArea *textView = (KWQTextArea *)getView();
-    return (int)[[textView horizontalScroller] frame].size.height;
-}
-
 void QTextEdit::setFont(const QFont &font)
 {
     QWidget::setFont(font);
@@ -139,4 +127,10 @@ void QTextEdit::setAlignment(AlignmentFlags alignment)
     ASSERT(alignment == AlignLeft || alignment == AlignRight);
     KWQTextArea *textArea = getView();
     [textArea setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
+}
+
+QSize QTextEdit::sizeWithColumnsAndRows(int numColumns, int numRows) const
+{
+    KWQTextArea *textArea = getView();
+    return [textArea sizeWithColumns:numColumns rows:numRows];
 }

@@ -65,14 +65,16 @@ const float LargeNumberForText = 1.0e7;
     NSSize size = [self frame].size;
     NSRect textFrame;
     textFrame.origin.x = textFrame.origin.y = 0;
-    if (size.width > 0 && size.height > 0)
-        textFrame.size = [NSScrollView contentSizeForFrameSize:size
-            hasHorizontalScroller:NO hasVerticalScroller:YES borderType:[self borderType]];
-    else {
+    if (size.width > 0 && size.height > 0) {
+        textFrame.size = [[self class] contentSizeForFrameSize:size
+            hasHorizontalScroller:[self hasHorizontalScroller]
+            hasVerticalScroller:[self hasVerticalScroller]
+            borderType:[self borderType]];
+    } else {
         textFrame.size.width = LargeNumberForText;
         textFrame.size.height = LargeNumberForText;
     }
-        
+
     textView = [[KWQTextAreaTextView alloc] initWithFrame:textFrame];
     [textView setRichText:NO];
     [[textView textContainer] setWidthTracksTextView:YES];
@@ -262,7 +264,7 @@ const float LargeNumberForText = 1.0e7;
     [super setFrame:frameRect];
 
     if ([self wordWrap]) {
-        NSSize contentSize = [NSScrollView contentSizeForFrameSize:frameRect.size
+        NSSize contentSize = [[self class] contentSizeForFrameSize:frameRect.size
             hasHorizontalScroller:[self hasHorizontalScroller]
             hasVerticalScroller:[self hasVerticalScroller]
             borderType:[self borderType]];
@@ -470,6 +472,19 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
     implementation(view, selector, rect);
 
     return NO;
+}
+
+- (NSSize)sizeWithColumns:(int)numColumns rows:(int)numRows
+{
+    NSFont *font = [textView font];
+    NSSize textSize = NSMakeSize(ceil(numColumns * [font widthOfString:@"0"]), numRows * [font defaultLineHeightForFont]);
+    NSSize textContainerSize = NSMakeSize(textSize.width + [[textView textContainer] lineFragmentPadding] * 2, textSize.height);
+    NSSize textContainerInset = [textView textContainerInset];
+    NSSize textViewSize = NSMakeSize(textContainerSize.width + textContainerInset.width, textContainerSize.height + textContainerInset.height); 
+    return [[self class] frameSizeForContentSize:textViewSize
+        hasHorizontalScroller:[self hasHorizontalScroller]
+        hasVerticalScroller:[self hasVerticalScroller]
+        borderType:[self borderType]];
 }
 
 @end

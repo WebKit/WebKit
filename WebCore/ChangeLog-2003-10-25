@@ -1,5 +1,31 @@
 2003-09-22  Darin Adler  <darin@apple.com>
 
+        Reviewed by Maciej.
+
+        - fixed 3306041 -- Airborne tracking number field too narrow, tracking doesn't work (textare col property)
+
+        * khtml/rendering/render_form.cpp: (RenderTextArea::calcMinMaxWidth): Call the QTextEdit
+        to ask it what size, rather than trying to compute it. This is the same thing we do with
+        other widgets, I just hadn't done textarea yet.
+
+        * kwq/KWQTextEdit.h: Added sizeWithColumnsAndRows function.
+        * kwq/KWQTextEdit.mm: (QTextEdit::sizeWithColumnsAndRows): Added. Calls through to the
+        KWQTextArea object.
+
+        * kwq/KWQTextArea.h: Added sizeWithColumns:rows: method.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea _createTextView]): Make consistent with other callers of the size mapping methods
+        by using [self class] instead of NSScrollView, and getting hasHorizontalScroller and
+        hasVerticalScroller from the view.
+        (-[KWQTextArea setFrame:]): Make consistent with other callers of the size mapping methods
+        by using [self class] instead of NSScrollView.
+        (-[KWQTextArea sizeWithColumns:rows:]): Added. Starts by computing the width and height of the
+        columns specified, using a canonical width of a "0" character. Then converts that to a container
+        size by adding line fragment padding. Then converts that into the text view size by adding the
+        text container inset. Then converts that into the scroll view size by calling frameSizeForContentSize:.
+
+2003-09-22  Darin Adler  <darin@apple.com>
+
         * WebCore.pbproj/project.pbxproj: Rename Mixed build style to OptimizedWithSymbols.
 
 2003-09-22  Darin Adler  <darin@apple.com>

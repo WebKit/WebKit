@@ -56,6 +56,8 @@ class QTextEdit;
 
 - (void)selectAll;
 
+- (NSSize)sizeWithColumns:(int)columns rows:(int)rows;
+
 // paragraph-oriented functions for the benefit of QTextEdit
 - (void)setCursorPositionToIndex:(int)index inParagraph:(int)paragraph;
 - (void)getCursorPositionAsIndex:(int *)index inParagraph:(int *)paragraph;

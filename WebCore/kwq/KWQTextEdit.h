@@ -69,8 +69,7 @@ class QTextEdit : public QScrollView
 
     void selectAll();
 
-    int verticalScrollBarWidth() const;
-    int horizontalScrollBarHeight() const;
+    QSize sizeWithColumnsAndRows(int numColumns, int numRows) const;
 
     void textChanged() { _textChanged.call(); }
 
