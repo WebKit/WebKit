@@ -1,3 +1,18 @@
+2002-06-11  Darin Adler  <darin@apple.com>
+
+	* WebView.subproj/IFDOMNode.h: Added.
+	* WebView.subproj/IFDOMNode.mm: Added.
+	* WebView.subproj/IFRenderNode.h: Added.
+	* WebView.subproj/IFRenderNode.mm: Added.
+	These contain all the interesting bits of the code for the render
+	and DOM tree viewers, mostly moved here from WebBrowser.
+
+	* WebView.subproj/IFWebViewPrivate.mm: Remove the methods in here that
+	aren't declared in the header and are only used for the render and DOM
+	tree viewers.
+
+	* WebKit.pbproj/project.pbxproj: Add new files.
+
 2002-06-10  Darin Adler  <darin@apple.com>
 
 	* Makefile.am: Do a clean before building if the force-clean-timestamp file is

@@ -244,6 +244,8 @@
 				9CE1F8A402A5C6F30ECA2ACD,
 				9CE1F8A602A5C6F30ECA2ACD,
 				F59668CA02AD2923018635CA,
+				F5F81C3702B67C0F018635CA,
+				F5F81C3B02B67C26018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -310,6 +312,8 @@
 				9CE1F8A502A5C6F30ECA2ACD,
 				9CE1F8A702A5C6F30ECA2ACD,
 				F59668CB02AD2923018635CA,
+				F5F81C3802B67C0F018635CA,
+				F5F81C3C02B67C26018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -989,6 +993,10 @@
 				F5D538EC02441FDD01A80181,
 				9CAE9D070252A4130ECA16EA,
 				F567433E026B5B7B01A80181,
+				F5F81C3502B67C0F018635CA,
+				F5F81C3602B67C0F018635CA,
+				F5F81C3902B67C26018635CA,
+				F5F81C3A02B67C26018635CA,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -1943,6 +1951,60 @@
 		};
 		F5F7174F02885C5B018635CA = {
 			fileRef = F5F7174D02885C5B018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F81C3502B67C0F018635CA = {
+			isa = PBXFileReference;
+			name = IFDOMNode.h;
+			path = WebView.subproj/IFDOMNode.h;
+			refType = 4;
+		};
+		F5F81C3602B67C0F018635CA = {
+			isa = PBXFileReference;
+			name = IFDOMNode.mm;
+			path = WebView.subproj/IFDOMNode.mm;
+			refType = 4;
+		};
+		F5F81C3702B67C0F018635CA = {
+			fileRef = F5F81C3502B67C0F018635CA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F5F81C3802B67C0F018635CA = {
+			fileRef = F5F81C3602B67C0F018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5F81C3902B67C26018635CA = {
+			isa = PBXFileReference;
+			name = IFRenderNode.h;
+			path = WebView.subproj/IFRenderNode.h;
+			refType = 4;
+		};
+		F5F81C3A02B67C26018635CA = {
+			isa = PBXFileReference;
+			name = IFRenderNode.mm;
+			path = WebView.subproj/IFRenderNode.mm;
+			refType = 4;
+		};
+		F5F81C3B02B67C26018635CA = {
+			fileRef = F5F81C3902B67C26018635CA;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		F5F81C3C02B67C26018635CA = {
+			fileRef = F5F81C3A02B67C26018635CA;
 			isa = PBXBuildFile;
 			settings = {
 			};
