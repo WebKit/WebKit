@@ -611,29 +611,29 @@ void XMLTokenizer::insertErrorMessageBlock()
         root = body;
     }
 
-    ElementImpl* reportDiv = doc->createElementNS(XHTML_NAMESPACE, "div", exceptioncode);
-    reportDiv->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
+    ElementImpl* reportElement = doc->createElementNS(XHTML_NAMESPACE, "parsererror", exceptioncode);
+    reportElement->setAttribute(ATTR_STYLE, "white-space: pre; border: 2px solid #c77; padding: 0 1em 0 1em; margin: 1em; background-color: #fdd; color: black");
     ElementImpl* h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
     h3->appendChild(doc->createTextNode("This page contains the following errors:"), exceptioncode);
-    reportDiv->appendChild(h3, exceptioncode);
+    reportElement->appendChild(h3, exceptioncode);
     ElementImpl* fixed = doc->createElementNS(XHTML_NAMESPACE, "div", exceptioncode);
     fixed->setAttribute(ATTR_STYLE, "font-family:monospace;font-size:12px");
     NodeImpl* textNode = doc->createTextNode(m_errorMessages);
     fixed->appendChild(textNode, exceptioncode);
-    reportDiv->appendChild(fixed, exceptioncode);
+    reportElement->appendChild(fixed, exceptioncode);
     h3 = doc->createElementNS(XHTML_NAMESPACE, "h3", exceptioncode);
-    reportDiv->appendChild(h3, exceptioncode);
+    reportElement->appendChild(h3, exceptioncode);
     
     h3->appendChild(doc->createTextNode("Below is a rendering of the page up to the first error."), exceptioncode);
 #ifdef KHTML_XSLT
     if (doc->transformSourceDocument()) {
         ElementImpl* par = doc->createElementNS(XHTML_NAMESPACE, "p", exceptioncode);
-        reportDiv->appendChild(par, exceptioncode);
+        reportElement->appendChild(par, exceptioncode);
         par->setAttribute(ATTR_STYLE, "white-space: normal");
         par->appendChild(doc->createTextNode("This document was created as the result of an XSL transformation. The line and column numbers given are from the transformed result."), exceptioncode);
     }
 #endif
-    root->insertBefore(reportDiv, root->firstChild(), exceptioncode);
+    root->insertBefore(reportElement, root->firstChild(), exceptioncode);
 
     doc->updateRendering();
 }

@@ -1,3 +1,12 @@
+2004-12-17  Kevin Decker  <kdecker@apple.com>
+
+        Reviewed by Ken.
+
+	Fixed <rdar://problem/3824438> Need a clean way for Dashboard to detect when an XML parsing error occurs
+
+        * khtml/xml/xml_tokenizer.cpp:
+        (khtml::XMLTokenizer::insertErrorMessageBlock): In the xml error report, instead of a generic <div>, use <parsererror> to match Mozilla.
+
 2004-12-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Chris
