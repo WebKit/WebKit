@@ -1,5 +1,11 @@
 2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
 
+        Did some verb tense cleanup.
+
+	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
+
+2001-12-17  Kenneth Kocienda  <kocienda@apple.com>
+
         Added the current draft of the WebKit white paper.
         
 	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
