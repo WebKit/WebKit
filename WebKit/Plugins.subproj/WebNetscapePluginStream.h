@@ -16,13 +16,7 @@
 @interface WebNetscapePluginStream : WebBaseNetscapePluginStream 
 {
     WebNetscapePluginEmbeddedView *view;
-    
-    WebResourceRequest *request;
-    WebResourceHandle *resource;
-    
     NSMutableData *resourceData;
-
-    NSURL *currentURL;
 }
 
 - initWithRequest:(WebResourceRequest *)theRequest

@@ -5,11 +5,35 @@
 
 #import <Foundation/Foundation.h>
 
+@class WebDataSource;
+@class WebResourceHandle;
+@class WebResourceRequest;
+@class WebResourceResponse;
+
 @protocol WebResourceHandleDelegate;
+@protocol WebResourceLoadDelegate;
 
 @interface WebBaseResourceHandleDelegate : NSObject <WebResourceHandleDelegate>
 {
-
+    WebResourceHandle *handle;
+    WebDataSource *dataSource;
+    WebResourceRequest *request;
+    WebResourceResponse *response;
+    id identifier;
+    id <WebResourceLoadDelegate>resourceLoadDelegate;
+    id <WebResourceLoadDelegate>downloadDelegate;
+    NSURL *currentURL;
+    BOOL isDownload;
+    BOOL reachedTerminalState;
 }
+
+- (WebResourceHandle *)handle;
+
+- (void)setDataSource: (WebDataSource *)d;
+- (WebDataSource *)dataSource;
+- (id <WebResourceLoadDelegate>)resourceLoadDelegate;
+- (id <WebResourceLoadDelegate>)downloadDelegate;
+- (void)setIsDownload: (BOOL)f;
+- (void)cancel;
 
 @end

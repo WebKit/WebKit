@@ -153,12 +153,6 @@
 - (NSString *)fileType;
 
 /*!
-    @method errors
-    @result Returns a dictionary of WebErrors from all the resources loaded for this page.
-*/
-- (NSDictionary *)errors;
-
-/*!
     @method mainDocumentError
     @result Returns a WebError associated with the load of the main document, or nil if no error occurred.
 */

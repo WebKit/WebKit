@@ -39,5 +39,6 @@ enum {
     WebErrorCannotShowMIMEType = 10009,
     WebErrorCannotShowURL = 10010,
     WebErrorCannotNotFindApplicationForURL = 10011,
-    WebErrorLocationChangeInterruptedByPolicyChange = 10012
+    WebErrorLocationChangeInterruptedByPolicyChange = 10012,
+    WebErrorResourceLoadInterruptedByPolicyChange = 10013
 };

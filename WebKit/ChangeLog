@@ -1,3 +1,90 @@
+2002-10-23  Richard Williamson  <rjw@apple.com>
+
+        Cleaned up months of accumulated cruft.
+        Added base class to the three WebResourceHandleDelegate implementors.
+        Removed superfluous handle references to controller callbacks.
+        More can still be done.
+        All in the name of fixing 3076050.
+        
+        * Misc.subproj/WebKitErrors.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]):
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedData:withDataSource:]):
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]):
+        (-[WebNetscapePluginRepresentation finishedLoadingWithDataSource:]):
+        * Plugins.subproj/WebNetscapePluginStream.h:
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream initWithRequest:pluginPointer:notifyData:]):
+        (-[WebNetscapePluginStream dealloc]):
+        (-[WebNetscapePluginStream start]):
+        (-[WebNetscapePluginStream stop]):
+        (-[WebNetscapePluginStream handle:willSendRequest:]):
+        (-[WebNetscapePluginStream handle:didReceiveResponse:]):
+        (-[WebNetscapePluginStream handle:didReceiveData:]):
+        (-[WebNetscapePluginStream handleDidFinishLoading:]):
+        (-[WebNetscapePluginStream handle:didFailLoadingWithError:]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge reportBadURL:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.h:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient initWithLoader:dataSource:]):
+        (-[WebSubresourceClient dealloc]):
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]):
+        (-[WebSubresourceClient receivedError:]):
+        (-[WebSubresourceClient handle:willSendRequest:]):
+        (-[WebSubresourceClient handle:didReceiveResponse:]):
+        (-[WebSubresourceClient handle:didReceiveData:]):
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        (-[WebSubresourceClient handle:didFailLoadingWithError:]):
+        (-[WebSubresourceClient cancel]):
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate init]):
+        (-[WebBaseResourceHandleDelegate _releaseResources]):
+        (-[WebBaseResourceHandleDelegate dealloc]):
+        (-[WebBaseResourceHandleDelegate setDataSource:]):
+        (-[WebBaseResourceHandleDelegate dataSource]):
+        (-[WebBaseResourceHandleDelegate resourceLoadDelegate]):
+        (-[WebBaseResourceHandleDelegate downloadDelegate]):
+        (-[WebBaseResourceHandleDelegate setIsDownload:]):
+        (-[WebBaseResourceHandleDelegate isDownload]):
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]):
+        (-[WebBaseResourceHandleDelegate handle:didReceiveResponse:]):
+        (-[WebBaseResourceHandleDelegate handle:didReceiveData:]):
+        (-[WebBaseResourceHandleDelegate handleDidFinishLoading:]):
+        (-[WebBaseResourceHandleDelegate handle:didFailLoadingWithError:]):
+        (-[WebBaseResourceHandleDelegate cancel]):
+        (-[WebBaseResourceHandleDelegate handle]):
+        * WebView.subproj/WebControllerPrivate.h:
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedBytesSoFar:fromDataSource:complete:]):
+        (-[WebController _receivedError:fromDataSource:]):
+        (-[WebController _mainReceivedError:fromDataSource:]):
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]):
+        (-[WebDataSource _startLoading]):
+        (-[WebDataSource _stopLoading]):
+        (-[WebDataSource _clearErrors]):
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _isLoadComplete]):
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]):
+        (-[WebMainResourceClient dealloc]):
+        (-[WebMainResourceClient receivedError:]):
+        (-[WebMainResourceClient cancel]):
+        (-[WebMainResourceClient handle:willSendRequest:]):
+        (-[WebMainResourceClient _notifyDelegatesOfInterruptionByPolicyChange]):
+        (-[WebMainResourceClient handle:didReceiveResponse:]):
+        (-[WebMainResourceClient handle:didReceiveData:]):
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+        (-[WebMainResourceClient handle:didFailLoadingWithError:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+
 2002-10-23  Chris Blumenberg  <cblu@apple.com>
 
 	Support for new plug-in API. This is about as much as I can do without the new java plug-in and java root.

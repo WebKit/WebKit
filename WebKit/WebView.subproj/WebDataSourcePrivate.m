@@ -54,7 +54,6 @@
     [subresourceClients release];
     [pageTitle release];
     [response release];
-    [errors release];
     [mainDocumentError release];
     [contentPolicy release];
     [iconLoader setDelegate:nil];
@@ -166,10 +165,6 @@
         _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request];
         [_private->mainHandle loadWithDelegate:_private->mainClient];
     }
-    
-    if (_private->mainHandle) {
-        [_private->mainClient didStartLoadingWithURL:[_private->request URL]];
-    }
 }
 
 - (void)_addSubresourceClient:(WebSubresourceClient *)client
@@ -203,8 +198,7 @@
 
     _private->stopping = YES;
     
-    [_private->mainHandle cancel];
-    [_private->mainClient didCancelWithHandle:_private->mainHandle];
+    [_private->mainClient cancel];
     
     NSArray *clients = [_private->subresourceClients copy];
     [clients makeObjectsPerformSelector:@selector(cancel)];
@@ -320,19 +314,8 @@
 
 - (void)_clearErrors
 {
-    [_private->errors release];
-    _private->errors = nil;
     [_private->mainDocumentError release];
     _private->mainDocumentError = nil;
-}
-
-
-- (void)_addError: (WebError *)error forResource: (NSString *)resourceDescription
-{
-    if (_private->errors == 0)
-        _private->errors = [[NSMutableDictionary alloc] init];
-        
-    [_private->errors setObject: error forKey: resourceDescription];
 }
 
 

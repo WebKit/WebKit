@@ -4,6 +4,7 @@
         
         Public header file.
 */
+@class WebDataSource;
 @class WebResourceResponse;
 @class WebResourceRequest;
 

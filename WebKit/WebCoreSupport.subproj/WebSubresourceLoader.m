@@ -28,9 +28,8 @@
     [super init];
     
     loader = [l retain];
-    dataSource = [s retain];
 
-    resourceProgressDelegate = [[[dataSource controller] resourceLoadDelegate] retain];
+    [self setDataSource: s];
     
     return self;
 }
@@ -40,30 +39,9 @@
     ASSERT(currentURL == nil);
     
     [loader release];
-    [dataSource release];
-    [handle release];
-    [request release];
-    [response release];
-    [resourceProgressDelegate release];
     
     [super dealloc];
 }
-
-- (void)didStartLoadingWithURL:(NSURL *)URL
-{
-    ASSERT(currentURL == nil);
-    currentURL = [URL retain];
-    [[dataSource controller] _didStartLoading:currentURL];
-}
-
-- (void)didStopLoading
-{
-    ASSERT(currentURL != nil);
-    [[dataSource controller] _didStopLoading:currentURL];
-    [currentURL release];
-    currentURL = nil;
-}
-
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
     withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
@@ -83,16 +61,13 @@
         WebError *badURLError = [[WebError alloc] initWithErrorCode:WebErrorCodeBadURLError
                                                            inDomain:WebErrorDomainWebFoundation
                                                          failingURL:[URL absoluteString]];
-        [[source controller] _receivedError:badURLError forResourceHandle:nil
-            fromDataSource:source];
+        [[source controller] _receivedError:badURLError fromDataSource:source];
         [badURLError release];
         return nil;
     }
     
     WebResourceHandle *h = [[WebResourceHandle alloc] initWithRequest:newRequest];
-    client->handle = h;
     [source _addSubresourceClient:client];
-    [client didStartLoadingWithURL:[newRequest URL]];
     [h loadWithDelegate:client];
     [newRequest release];
         
@@ -101,14 +76,11 @@
 
 - (void)receivedError:(WebError *)error
 {
-    [[dataSource controller] _receivedError:error forResourceHandle:handle
-        fromDataSource:dataSource];
+    [[dataSource controller] _receivedError:error fromDataSource:dataSource];
 }
 
 -(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
-    ASSERT(handle == h);
-
     // FIXME: We do want to tell the client about redirects for subresources.
     // But the current API doesn't give any way to tell redirects on
     // the main page from redirects on subresources.
@@ -117,34 +89,7 @@
     // properly on redirect when we have the new redirect
     // request-adjusting API
 
-    WebController *controller = [dataSource controller];
-    NSURL *URL = [request URL];
-
-    [newRequest setUserAgent:[controller userAgentForURL:URL]];
-
-    // Not the first send, so reload.
-    if (request) {
-        [self didStopLoading];
-        [self didStartLoadingWithURL:URL];
-    }
-
-    // Let the resourceProgressDelegate get a crack at modifying the request.
-    if (resourceProgressDelegate){
-        if (identifier == nil){
-            // The identifier is released after the last callback, rather than in dealloc
-            // to avoid potential cycles.
-            identifier = [[resourceProgressDelegate identifierForInitialRequest: newRequest fromDataSource: dataSource] retain];
-        }
-        newRequest = [resourceProgressDelegate resource: identifier willSendRequest: newRequest fromDataSource: dataSource];
-    }
-        
-    ASSERT (newRequest != nil); 
-
-    [newRequest retain];
-    [request release];
-    request = newRequest;
-
-    return newRequest;
+    return [super handle: h willSendRequest: newRequest];
 }
 
 -(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
@@ -152,22 +97,18 @@
     ASSERT(handle == h);
     ASSERT(r);
 
-    [r retain];
-    [response release];
-    response = r;
-    [resourceProgressDelegate resource:identifier didReceiveResponse:r fromDataSource: dataSource];
-
     [loader receivedResponse:r];
+
+    [super handle: handle didReceiveResponse: r];
 }
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     ASSERT(handle == h);
 
-    [resourceProgressDelegate resource: identifier didReceiveContentLength: [data length] 
-        fromDataSource: dataSource];
-
     [loader addData:data];
+
+    [super handle: handle didReceiveData: data];
 }
 
 - (void)handleDidFinishLoading:(WebResourceHandle *)h
@@ -186,19 +127,11 @@
         [self receivedError:nonTerminalError];
     }
     
-    [resourceProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
-
     [[dataSource controller] _finsishedLoadingResourceFromDataSource:dataSource];
     
-    [self didStopLoading];
-
-    [handle release];
-    handle = nil;
-    
-    [identifier release];
-    identifier = nil;
-    
     [self release];
+    
+    [super handleDidFinishLoading: h];
 }
 
 - (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)error
@@ -211,19 +144,11 @@
     [loader cancel];
     
     [dataSource _removeSubresourceClient:self];
-
-    [resourceProgressDelegate resource: identifier didFailLoadingWithError: error fromDataSource: dataSource];
     
     [self receivedError:error];
 
-    [self didStopLoading];
+    [super handle: handle didFailLoadingWithError: error];
 
-    [handle release];
-    handle = nil;
-
-    [identifier release];
-    identifier = nil;
-        
     [self release];
 }
 
@@ -231,9 +156,7 @@
 {
     // Calling _removeSubresourceClient will likely result in a call to release, so we must retain.
     [self retain];
-    
-    [handle cancel];
-    
+        
     [loader cancel];
     
     [dataSource _removeSubresourceClient:self];
@@ -242,18 +165,10 @@
         inDomain:WebErrorDomainWebFoundation failingURL:[[request URL] absoluteString]];
     [self receivedError:error];
     [error release];
-
-    [self didStopLoading];
-
-    [handle release];
-    handle = nil;
     
-    [self release];
-}
+    [super cancel];
 
-- (WebResourceHandle *)handle
-{
-    return handle;
+    [self release];
 }
 
 @end

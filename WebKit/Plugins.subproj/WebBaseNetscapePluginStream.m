@@ -42,10 +42,10 @@
     NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
-- (void)setResponse:(WebResourceResponse *)response
+- (void)setResponse:(WebResourceResponse *)r
 {
     [URL release];
-    URL = [[response URL] retain];
+    URL = [[r URL] retain];
     
     NSString *URLString = [URL absoluteString];
     char *cURL = (char *)malloc([URLString cStringLength]+1);
@@ -54,7 +54,7 @@
     uint32 lastModified = 0;
 
     if ([response isKindOfClass:[WebHTTPResourceResponse class]]) {
-        NSNumber *timeInterval = [[(WebHTTPResourceResponse *)response headers] objectForKey:@"Last-Modified"];
+        NSNumber *timeInterval = [[(WebHTTPResourceResponse *)r headers] objectForKey:@"Last-Modified"];
         if(timeInterval) {
             NSTimeInterval lastModifiedInterval;
             lastModifiedInterval = [[NSDate dateWithTimeIntervalSinceReferenceDate:[timeInterval doubleValue]] timeIntervalSince1970];
@@ -66,14 +66,14 @@
 
     stream.ndata = self;
     stream.URL = cURL;
-    stream.end = [response contentLength];
+    stream.end = [r contentLength];
     stream.lastmodified = lastModified;
     stream.notifyData = notifyData;
 
     // FIXME: Need a way to check if stream is seekable
 
     NPError npErr;
-    npErr = NPP_NewStream(instance, (char *)[[response contentType] cString], &stream, NO, &transferMode);
+    npErr = NPP_NewStream(instance, (char *)[[r contentType] cString], &stream, NO, &transferMode);
     LOG(Plugins, "NPP_NewStream: %d %@", npErr, URL);
 
     if (npErr != NPERR_NO_ERROR) {

@@ -94,7 +94,6 @@
 - (void)_layoutChildren;
 - (void)_clearErrors;
 - (void)_setMainDocumentError:(WebError *)error;
-- (void)_addError:(WebError *)error forResource:(NSString *)resourceDescription;
 + (NSMutableDictionary *)_repTypes;
 + (BOOL)_canShowMIMEType:(NSString *)MIMEType;
 - (void)_loadIcon;

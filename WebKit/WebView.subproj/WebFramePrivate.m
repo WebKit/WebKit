@@ -428,9 +428,9 @@ static const char * const stateNames[] = {
             LOG(Loading, "%s:  checking complete in WebFrameStateProvisional", [[self name] cString]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
-            if ([[pd errors] count] != 0 || [pd mainDocumentError]) {
+            if ([pd mainDocumentError]) {
                 // Check all children first.
-                LOG(Loading, "%s:  checking complete, current state WebFrameStateProvisional, %d errors", [[self name] cString], [[pd errors] count]);
+                LOG(Loading, "%s:  checking complete, current state WebFrameStateProvisional", [[self name] cString]);
                 if (![pd isLoading]) {
                     LOG(Loading, "%s:  checking complete in WebFrameStateProvisional, load done", [[self name] cString]);
 

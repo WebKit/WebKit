@@ -351,7 +351,6 @@
                                                         inDomain:WebErrorDomainWebFoundation
                                                         failingURL:badURL];
     [[frame controller] _receivedError:badURLError
-                        forResourceHandle:nil
                         fromDataSource:[self dataSource]];
     [badURLError release];
 }

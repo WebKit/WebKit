@@ -45,11 +45,9 @@
 
 - (id <WebContextMenuDelegate>)_defaultContextMenuDelegate;
 - (void)_finsishedLoadingResourceFromDataSource:(WebDataSource *)dataSource;
-- (void)_receivedError:(WebError *)error forResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource;
-- (void)_mainReceivedProgressForResourceHandle:(WebResourceHandle *)resourceHandle bytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
-- (void)_mainReceivedError:(WebError *)error forResourceHandle:(WebResourceHandle *)resourceHandle fromDataSource:(WebDataSource *)dataSource;
-- (void)_didStartLoading:(NSURL *)URL;
-- (void)_didStopLoading:(NSURL *)URL;
+- (void)_receivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
+- (void)_mainReceivedBytesSoFar:(unsigned)bytesSoFar fromDataSource:(WebDataSource *)dataSource complete:(BOOL)isComplete;
+- (void)_mainReceivedError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
 + (NSString *)_MIMETypeForFile:(NSString *)path;
 - (void)_downloadURL:(NSURL *)URL withContentPolicy:(WebContentPolicy *)contentPolicy;
 

@@ -115,7 +115,7 @@
     }
 }
 
-- (void)_mainReceivedProgressForResourceHandle: (WebResourceHandle *)resourceHandle bytesSoFar: (unsigned)bytesSoFar fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete
+- (void)_mainReceivedBytesSoFar: (unsigned)bytesSoFar fromDataSource: (WebDataSource *)dataSource complete: (BOOL)isComplete
 {
     WebFrame *frame = [dataSource webFrame];
     
@@ -125,7 +125,7 @@
     if (frame == nil)
         return;
         
-    // This resouce has completed, so check if the load is complete for all frames.
+    // This resource has completed, so check if the load is complete for all frames.
     if (isComplete){
         // If the load is complete, mark the primary load as done.  The primary load is the load
         // of the main document.  Other resources may still be arriving.
@@ -143,24 +143,15 @@
 }
 
 
-
-- (void)_receivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource
+- (void)_receivedError: (WebError *)error fromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
 
-    NSString *resourceIdentifier = [[[resourceHandle _request] URL] absoluteString];
-    if (resourceIdentifier == nil) {
-        resourceIdentifier = [error failingURL];
-    }
-    if (resourceIdentifier) {
-        [dataSource _addError:error forResource:resourceIdentifier];
-    }
-    
     [frame _checkLoadComplete];
 }
 
 
-- (void)_mainReceivedError: (WebError *)error forResourceHandle: (WebResourceHandle *)resourceHandle fromDataSource: (WebDataSource *)dataSource
+- (void)_mainReceivedError: (WebError *)error fromDataSource: (WebDataSource *)dataSource
 {
     WebFrame *frame = [dataSource webFrame];
     
@@ -168,16 +159,6 @@
     [dataSource _setPrimaryLoadComplete: YES];
 
     [frame _checkLoadComplete];
-}
-
-- (void)_didStartLoading: (NSURL *)URL
-{
-    [[WebStandardPanels sharedStandardPanels] _didStartLoadingURL:URL inController:self];
-}
-
-- (void)_didStopLoading: (NSURL *)URL
-{
-    [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:URL inController:self];
 }
 
 + (NSString *)_MIMETypeForFile: (NSString *)path

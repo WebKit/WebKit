@@ -17,16 +17,16 @@
 {
 }
 
-- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
+- (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)ds
 {
     if(!instance){
-        [self setPluginPointer:[(WebNetscapePluginDocumentView *)[[[dataSource webFrame] webView] documentView] pluginPointer]];
-        [self setResponse:[dataSource response]];
+        [self setPluginPointer:[(WebNetscapePluginDocumentView *)[[[ds webFrame] webView] documentView] pluginPointer]];
+        [self setResponse:[ds response]];
     }
     [self receivedData:data];
 }
 
-- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)dataSource
+- (void)receivedError:(WebError *)error withDataSource:(WebDataSource *)ds
 {
     if([error errorCode] == WebErrorCodeCancelled){
         [self receivedError:NPRES_USER_BREAK];
@@ -35,9 +35,9 @@
     }
 }
 
-- (void)finishedLoadingWithDataSource:(WebDataSource *)dataSource
+- (void)finishedLoadingWithDataSource:(WebDataSource *)ds
 {
-    [self finishedLoadingWithData:[dataSource data]];
+    [self finishedLoadingWithData:[ds data]];
 }
 
 @end

@@ -12,12 +12,6 @@
 
 @implementation WebNetscapePluginStream
 
-- (void)setCurrentURL:(NSURL *)theCurrentURL
-{
-    [currentURL release];
-    currentURL = [theCurrentURL retain];
-}
-
 - initWithRequest:(WebResourceRequest *)theRequest
     pluginPointer:(NPP)thePluginPointer
        notifyData:(void *)theNotifyData
@@ -30,11 +24,11 @@
 
     request = [theRequest retain];
 
-    [self setCurrentURL:[theRequest URL]];
-    
     [self setPluginPointer:thePluginPointer];
 
     view = [(WebNetscapePluginEmbeddedView *)instance->ndata retain];
+
+    [self setDataSource: [view dataSource]];
 
     notifyData = theNotifyData;
     resourceData = [[NSMutableData alloc] init];
@@ -45,16 +39,13 @@
 - (void)dealloc
 {
     [resourceData release];
-    [request release];
-    [currentURL release];
     [super dealloc];
 }
 
 - (void)start
 {
-    resource = [[WebResourceHandle alloc] initWithRequest:request];
-    [resource loadWithDelegate:self];
-    [[view controller] _didStartLoading:currentURL];
+    handle = [[WebResourceHandle alloc] initWithRequest:request];
+    [handle loadWithDelegate:self];
 }
 
 - (void)stop
@@ -62,76 +53,60 @@
     [view release];
     view = nil;
     
-    if (!resource) {
+    if (!handle) {
         return;
     }
 
     // Stopped while loading.
-
-    [resource cancel];
+    [handle cancel];
 
     WebController *controller = [view controller];
 
     WebError *cancelError = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                        inDomain:WebErrorDomainWebFoundation
                                                      failingURL:nil];
-    [controller _receivedError:cancelError
-             forResourceHandle:resource
-                fromDataSource:[view dataSource]];
+    [controller _receivedError:cancelError fromDataSource:[view dataSource]];
 
     [cancelError release];
 
-    [resource release];
-    resource = nil;
+    [handle release];
+    handle = nil;
 
     if(URL){
         // Send error only if the response has been set (the URL is set with the response).
         [self receivedError:NPRES_USER_BREAK];
     }
-
-    [controller _didStopLoading:currentURL];
 }
 
-- (void)loadEnded
+- (WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)theRequest
 {
-    [resource release];
-    resource = nil;
-
-    [self stop];
+    return [super handle: h willSendRequest: theRequest];
 }
 
-- (WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)theRequest
+- (void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)theResponse
 {
-    WebController *webController = [view controller];
-
-    [webController _didStopLoading:currentURL];
-
-    [self setCurrentURL:[theRequest URL]];
-
-    [webController _didStartLoading:currentURL];
+    ASSERT(handle == h);
     
-    return theRequest;
-}
-
-- (void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse
-{
     [self setResponse:theResponse];
+    [super handle: h didReceiveResponse: theResponse];    
 }
 
-- (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
+- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
-    ASSERT(resource == handle);
+    ASSERT(handle == h);
 
     if(transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) {
         [resourceData appendData:data];
     }
     
     [self receivedData:data];
+
+    [super handle: handle didReceiveData: data];
 }
 
-- (void)handleDidFinishLoading:(WebResourceHandle *)handle
+- (void)handleDidFinishLoading:(WebResourceHandle *)h
 {
-    ASSERT(resource == handle);
+    ASSERT(handle == h);
 
     WebController *controller = [view controller];
 
@@ -139,25 +114,26 @@
 
     [self finishedLoadingWithData:resourceData];
 
-    [controller _didStopLoading:currentURL];
-
-    [self loadEnded];
+    [view release];
+    view = nil;
+    
+    [super handleDidFinishLoading: h];
 }
 
-- (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
+- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
 {
-    ASSERT(resource == handle);
+    ASSERT(handle == h);
 
     WebController *controller = [view controller];
 
-    [controller _receivedError: result forResourceHandle: handle
-                fromDataSource: [view dataSource]];
+    [controller _receivedError: result fromDataSource: [view dataSource]];
 
     [self receivedError:NPRES_NETWORK_ERR];
 
-    [controller _didStopLoading:currentURL];
-
-    [self loadEnded];
+    [view release];
+    view = nil;
+    
+    [super handle: h didFailLoadingWithError: result];
 }
 
 @end

@@ -190,11 +190,6 @@
     return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:[[self response] contentType]];
 }
 
-- (NSDictionary *)errors
-{
-    return _private->errors;
-}
-
 - (WebError *)mainDocumentError
 {
     return _private->mainDocumentError;

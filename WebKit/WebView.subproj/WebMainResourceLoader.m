@@ -10,13 +10,14 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDownloadHandler.h>
-#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebResourceLoadDelegate.h>
+#import <WebKit/WebStandardPanelsPrivate.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebError.h>
@@ -37,44 +38,18 @@
     self = [super init];
     
     if (self) {
-        dataSource = [ds retain];
         resourceData = [[NSMutableData alloc] init];
-        
-        // set the user agent for the request
-        // consult the data source's controller
-        WebController *controller = [dataSource controller];
-        resourceProgressDelegate = [[controller resourceLoadDelegate] retain];
+        [self setDataSource: ds];
     }
 
     return self;
 }
 
-- (void)didStartLoadingWithURL:(NSURL *)URL
-{
-    ASSERT(currentURL == nil);
-    currentURL = [URL retain];
-    [[dataSource controller] _didStartLoading:currentURL];
-}
-
-- (void)didStopLoading
-{
-    ASSERT(currentURL != nil);
-    [[dataSource controller] _didStopLoading:currentURL];
-    [currentURL release];
-    currentURL = nil;
-}
-
 - (void)dealloc
 {
-    ASSERT(currentURL == nil);
     ASSERT(downloadHandler == nil);
     
-    [downloadProgressDelegate release];
-    [resourceProgressDelegate release];
     [resourceData release];
-    [dataSource release];
-    [response release];
-    [request release];
     
     [super dealloc];
 }
@@ -89,19 +64,16 @@
     return downloadHandler;
 }
 
-- (void)receivedError:(WebError *)error forHandle:(WebResourceHandle *)handle
+- (void)receivedError:(WebError *)error
 {    
     WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
 
-    if (contentAction == WebContentPolicySaveAndOpenExternally || contentAction == WebContentPolicySave) {
-        [downloadProgressDelegate resource: identifier didFailLoadingWithError:error fromDataSource:dataSource];
-    } else {
-        [[dataSource controller] _mainReceivedError:error forResourceHandle:handle 
-            fromDataSource:dataSource];
+    if (contentAction != WebContentPolicySaveAndOpenExternally && contentAction != WebContentPolicySave) {
+        [[dataSource controller] _mainReceivedError:error fromDataSource:dataSource];
     }
 }
 
-- (void)didCancelWithHandle:(WebResourceHandle *)handle
+- (void)cancel
 {
     if (currentURL == nil) {
         return;
@@ -116,7 +88,7 @@
     WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCodeCancelled
                                                  inDomain:WebErrorDomainWebFoundation
                                                failingURL:[[[dataSource request] URL] absoluteString]];
-    [self receivedError:error forHandle:handle];
+    [self receivedError:error];
     [error release];
 
     if (downloadHandler) {
@@ -124,81 +96,17 @@
         [downloadHandler release];
         downloadHandler = nil;
     }
-    
-    [self didStopLoading];
-    
-    [self release];
-}
-
-- (void)handleDidFinishLoading:(WebResourceHandle *)handle
-{
-    LOG(Loading, "URL = %@", currentURL);
-    
-    // Calling receivedError will likely result in a call to release, so we must retain.
-    [self retain];
-
-    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
-    
-    // Don't retain data for downloaded files
-    if (contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally) {
-    	[dataSource _setResourceData:resourceData];
-    }
-
-    if (contentAction == WebContentPolicyShow) {
-        [[dataSource representation] finishedLoadingWithDataSource:dataSource];
-    }
-    
-    if (downloadHandler) {
-        WebError *downloadError = [downloadHandler finishedLoading];
-        if (downloadError) {
-            [self receivedError:downloadError forHandle:handle];
-        }else{
-            [downloadProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
-        }
-        [dataSource _setPrimaryLoadComplete:YES];
-        [downloadHandler release];
-        downloadHandler = nil;
-    }
-    else {
-        [dataSource _finishedLoading];
-        [resourceProgressDelegate resource:identifier didFinishLoadingFromDataSource:dataSource];
-
-        // FIXME: Please let Chris know if this is really necessary?
-        // Either send a final error message or a final progress message.
-        WebError *nonTerminalError = [[dataSource response] error];
-        if (nonTerminalError) {
-            [self receivedError:nonTerminalError forHandle:handle];
-        } else {
-            [[dataSource controller] _mainReceivedProgressForResourceHandle:handle
-                                                                 bytesSoFar:[resourceData length]
-                                                             fromDataSource:dataSource
-                                                                   complete:YES];
-        }
-    }
-
-    [identifier release];
-    identifier = nil;
         
-    [self didStopLoading];
-    
     [self release];
+    
+    [super cancel];
 }
 
--(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)newRequest
+-(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)newRequest
 {
     WebResourceRequest *result;
 
-    [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
-
-    // Let the resourceProgressDelegate get a crack at modifying the request.
-    if (resourceProgressDelegate) {
-        if (identifier == nil){
-            // The identifier is released after the last callback, rather than in dealloc
-            // to avoid potential cycles.
-            identifier = [[resourceProgressDelegate identifierForInitialRequest: newRequest fromDataSource: dataSource] retain];
-        }
-        newRequest = [resourceProgressDelegate resource: identifier willSendRequest: newRequest fromDataSource: dataSource];
-    }
+    newRequest = [super handle: h willSendRequest: newRequest];
     
     ASSERT(newRequest != nil);
 
@@ -218,45 +126,36 @@
         if ([dataSource webFrame] == [[dataSource controller] mainFrame]) {
             [newRequest setCookiePolicyBaseURL:URL];
         }
-    
-        WebResourceRequest *copy = [newRequest copy];
-    
-        // Don't set this on the first request.  It is set
-        // when the main load was started.
-        if (request)
-            [dataSource _setRequest:copy];
-    
-        // Not the first send, so reload.
-        if (request) {
-            [self didStopLoading];
-            [self didStartLoadingWithURL:URL];
-        }
-    
-        [request release];
-        result = request = copy;
+        result = newRequest;
     }
         
     return result;
 }
 
--(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)r
+- (void)_notifyDelegatesOfInterruptionByPolicyChange
+{
+    WebError *interruptError;
+            
+    // Terminate the locationChangeDelegate correctly.
+    interruptError = [WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
+    [[[dataSource controller] locationChangeDelegate] locationChangeDone: interruptError forDataSource:dataSource];
+
+    // Terminate the resourceLoadDelegate correctly.
+    interruptError = [WebError errorWithCode:WebErrorResourceLoadInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil];
+    [resourceLoadDelegate resource: identifier didFailLoadingWithError: interruptError fromDataSource: dataSource];
+}
+
+-(void)handle:(WebResourceHandle *)h didReceiveResponse:(WebResourceResponse *)r
 {
     ASSERT (response == nil);
     
-    response = [r retain];
-    
-    [dataSource _setResponse:response];
+    [dataSource _setResponse:r];
 
-    LOG(Download, "main content type: %@", [response contentType]);
-
-    // Retain the downloadProgressDelegate just in case this is a download.
-    // Alexander releases the WebController if no window is created for it.
-    // This happens in the cases mentioned in 2981866 and 2965312.
-    downloadProgressDelegate = [[[dataSource controller] downloadDelegate] retain];
+    LOG(Download, "main content type: %@", [r contentType]);
 
     // Figure out the content policy.
     WebContentPolicy *contentPolicy = [dataSource contentPolicy];
-    contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:response
+    contentPolicy = [[[dataSource controller] policyDelegate] contentPolicyForResponse:r
                                                                                 andURL:currentURL
                                                                                inFrame:[dataSource webFrame]
                                                                      withContentPolicy:contentPolicy];
@@ -266,75 +165,125 @@
 
     switch (policyAction) {
     case WebContentPolicyShow:
-        [resourceProgressDelegate resource: identifier didReceiveResponse: response fromDataSource: dataSource];
         break;
+        
     case WebContentPolicySave:
-    case WebContentPolicySaveAndOpenExternally:
-        [[dataSource webFrame] _setProvisionalDataSource:nil];
-	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
-        downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-        WebError *downloadError = [downloadHandler receivedResponse:response];
-        [downloadProgressDelegate resource: identifier didReceiveResponse: response fromDataSource: dataSource];
-
-        if (downloadError) {
-            [self receivedError:downloadError forHandle:handle];
-            [handle cancel];
+    case WebContentPolicySaveAndOpenExternally: 
+        {
+            [[dataSource webFrame] _setProvisionalDataSource:nil];
+            
+            [self _notifyDelegatesOfInterruptionByPolicyChange];
+            
+            // Hand off the dataSource to the download handler.  This will cause the remaining
+            // handle delegate callbacks to go to the controller's download delegate.
+            downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
+            [self setIsDownload: YES];
+            WebError *downloadError = [downloadHandler receivedResponse:r];
+            if (downloadError) {
+                [self receivedError:downloadError];
+                [handle cancel];
+            }
         }
         break;
-    case WebContentPolicyIgnore:
-        [handle cancel];
-        [self didCancelWithHandle:handle];
-        [[dataSource webFrame] _setProvisionalDataSource:nil];
-	[[[dataSource controller] locationChangeDelegate] locationChangeDone:[WebError errorWithCode:WebErrorLocationChangeInterruptedByPolicyChange inDomain:WebErrorDomainWebKit failingURL:nil] forDataSource:dataSource];
+    
+    case WebContentPolicyIgnore: 
+        {
+            [self cancel];
+            [[dataSource webFrame] _setProvisionalDataSource:nil];
+            [self _notifyDelegatesOfInterruptionByPolicyChange];
+        }
         break;
+    
     default:
         ERROR("contentPolicyForMIMEType:URL:inFrame: returned an invalid content policy.");
     }
+
+    [super handle: h didReceiveResponse: r];
 }
 
-- (void)handle:(WebResourceHandle *)handle didReceiveData:(NSData *)data
+- (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
     LOG(Loading, "URL = %@, data = %p, length %d", currentURL, data, [data length]);
-        
+            
     if (downloadHandler) {
         [downloadHandler receivedData:data];
-        [downloadProgressDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource:dataSource];
     } else {
         [resourceData appendData:data];
         [dataSource _receivedData:data];
-        [resourceProgressDelegate resource: identifier didReceiveContentLength: [data length] fromDataSource:dataSource];
-        [[dataSource controller] _mainReceivedProgressForResourceHandle:handle
-                                                             bytesSoFar:[resourceData length]
+        [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
                                                          fromDataSource:dataSource
                                                                complete:NO];
     }
     
+    [super handle: h didReceiveData: data];
+
     LOG(Download, "%d of %d", [response contentLengthReceived], [response contentLength]);
 }
 
-- (void)handle:(WebResourceHandle *)handle didFailLoadingWithError:(WebError *)result
+- (void)handleDidFinishLoading:(WebResourceHandle *)h
+{
+    LOG(Loading, "URL = %@", currentURL);
+        
+    // Calling receivedError will likely result in a call to release, so we must retain.
+    [self retain];
+
+    WebContentAction contentAction = [[dataSource contentPolicy] policyAction];
+    
+    // Don't retain data for downloaded files
+    if (contentAction != WebContentPolicySave && contentAction != WebContentPolicySaveAndOpenExternally) {
+    	[dataSource _setResourceData:resourceData];
+    }
+
+    if (contentAction == WebContentPolicyShow) {
+        [[dataSource representation] finishedLoadingWithDataSource:dataSource];
+    }
+    
+    if (downloadHandler) {
+        WebError *downloadError = [downloadHandler finishedLoading];
+        if (downloadError)
+            [self receivedError:downloadError];
+
+        [dataSource _setPrimaryLoadComplete:YES];
+        [downloadHandler release];
+        downloadHandler = nil;
+    }
+    else {
+        [dataSource _finishedLoading];
+
+        // FIXME: Please let Chris know if this is really necessary?
+        // Either send a final error message or a final progress message.
+        WebError *nonTerminalError = [[dataSource response] error];
+        if (nonTerminalError) {
+            [self receivedError:nonTerminalError];
+        } else {
+            [[dataSource controller] _mainReceivedBytesSoFar:[resourceData length]
+                                                             fromDataSource:dataSource
+                                                                   complete:YES];
+        }
+    }
+    
+    [super handleDidFinishLoading: h];
+
+    [self release];
+}
+
+- (void)handle:(WebResourceHandle *)h didFailLoadingWithError:(WebError *)result
 {
     LOG(Loading, "URL = %@, result = %@", [result failingURL], [result errorDescription]);
-
-    if (!downloadHandler)
-        [resourceProgressDelegate resource: identifier didFailLoadingWithError: result fromDataSource: dataSource];
 
     // Calling receivedError will likely result in a call to release, so we must retain.
     [self retain];
 
-    [self receivedError:result forHandle:handle];
+    [self receivedError:result];
 
     if (downloadHandler) {
         [downloadHandler cancel];
         [downloadHandler release];
         downloadHandler = nil;
     }
+    
+    [super handle: h didFailLoadingWithError: result];
 
-    [identifier release];
-    identifier = nil;
-    
-    [self didStopLoading];
-    
     [self release];
 }
 
