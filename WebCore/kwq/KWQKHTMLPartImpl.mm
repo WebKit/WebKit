@@ -142,6 +142,11 @@ void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const ch
 
 void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
+    QString target = _target;
+    if (target.isEmpty() && d->m_doc) {
+        target = d->m_doc->baseTarget();
+    }
+
     if ( url.find( "javascript:", 0, false ) == 0 )
     {
         part->executeScript( url.right( url.length() - 11) );
@@ -173,7 +178,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     }
     
     WebCoreBridge *frame;
-    if (_target.isEmpty()) {
+    if (target.isEmpty()) {
         // If we're the only frame in a frameset then pop the frame.
         KHTMLPart *parentPart = part->parentPart();
         frame = parentPart ? parentPart->impl->bridge : nil;
@@ -181,9 +186,9 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
             frame = bridge;
         }
     } else {
-        frame = [bridge descendantFrameNamed:_target.getNSString()];
+        frame = [bridge descendantFrameNamed:target.getNSString()];
         if (frame == nil) {
-            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name.  New window will not be named until 2959902 is fixed.\n", _target.getNSString());
+            NSLog (@"WARNING: unable to find frame named %@, creating new window with \"_blank\" name.  New window will not be named until 2959902 is fixed.\n", target.getNSString());
                 frame = [bridge descendantFrameNamed:@"_blank"];
         }
     }
