@@ -449,16 +449,26 @@
                 if (!label)
                     label = [linkURL absoluteString];
                     
-                // FIXME:  Create an image w/ the label.
+                NSFont *dragImageFont = [NSFont systemFontOfSize: 12.0];
+                NSDictionary *dragImageAttributes = [NSDictionary dictionaryWithObject:dragImageFont forKey: NSFontAttributeName];
+                NSSize imageSize = [label sizeWithAttributes: dragImageAttributes];
+                imageSize.width += 4.0;
+                imageSize.height += 4.0;
+                NSImage *dragImage = [[[NSImage alloc] initWithSize: imageSize] autorelease];
+                [dragImage lockFocus];
+                [[NSColor colorWithCalibratedRed: 0.25 green: 0.25 blue: 0.75 alpha: 0.5] set];
+                [NSBezierPath fillRect:NSMakeRect(0, 0, imageSize.width, imageSize.height)];
+                [label drawAtPoint: NSMakePoint (2.0,2.0) withAttributes: dragImageAttributes];
+                [dragImage unlockFocus];
 
                 NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
                 [pasteboard declareTypes:[NSArray arrayWithObjects:NSURLPboardType, WebURLsWithTitlesPboardType, nil] owner:nil];
                 [WebURLsWithTitles writeURLs:[NSArray arrayWithObjects: linkURL, nil] andTitles:[NSArray arrayWithObjects: label, nil] toPasteboard:pasteboard];
-                //[_private->draggedURL writeToPasteboard: pasteboard];
-                NSSize offset = WebIconSmallSize;
-                offset.width /= 2;
-                offset.height /= 2;
-                [self dragImage:[[WebIconDatabase sharedIconDatabase] defaultIconWithSize:WebIconSmallSize]
+
+                NSSize offset;
+                offset.width = 0;
+                offset.height = 0;
+                [self dragImage:dragImage
                             at:[self convertPoint:[event locationInWindow] fromView:nil]
                         offset:offset
                         event:event

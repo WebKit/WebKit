@@ -1,5 +1,13 @@
 2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
 
+        Experiment w/ dragging link label as drag image.
+        Needs some visual tweaking, but good concept, I think.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
+2002-09-05  Richard Williamson (Local)  <rjw@apple.com>
+
         Use the first text child node of the link element
         as the title for a dragged link.  We'll use this for
         the dragged image later too.
