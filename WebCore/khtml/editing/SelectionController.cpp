@@ -874,13 +874,26 @@ void Selection::validate(ETextGranularity granularity)
             break;
         case WORD:
             if (m_baseIsStart) {
-                VisiblePosition wordEnd = endOfWord(VisiblePosition(m_extent));
-                m_end = wordEnd.deepEquivalent();
-                
-                // when double-clicking at end of document, select the last word
-                EWordSide side = (isCaret() && wordEnd.next().isNull() && !isFirstVisiblePositionOnLine(wordEnd)) ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
-                
-                m_start = startOfWord(VisiblePosition(m_base), side).deepEquivalent();
+                // When double clicking (i.e. isCaret() == true), generally select the previous word.  The only time to select the other 
+                // direction is when double-clicking after a hard line break.  The check for a hard line break is "end of paragraph".
+                if (isCaret()) {
+                    VisiblePosition extent = VisiblePosition(m_extent);
+                    bool atEndOfParagraph = isLastVisiblePositionInParagraph(extent);
+                    
+                    EWordSide endSide = !atEndOfParagraph ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
+                    VisiblePosition wordEnd = endOfWord(extent, endSide);
+                    m_end = wordEnd.deepEquivalent();
+
+                    EWordSide startSide = !atEndOfParagraph ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
+
+                    // atEndOfParagraph reflects hard line break well, except at end-of-document, so we are more careful there
+                    if (startSide == RightWordIfOnBoundary && wordEnd.next().isNull() && !isFirstVisiblePositionOnLine(wordEnd))
+                        startSide = LeftWordIfOnBoundary;
+                    m_start = startOfWord(VisiblePosition(m_base), startSide).deepEquivalent();
+                } else {
+                    m_start = startOfWord(VisiblePosition(m_base)).deepEquivalent();
+                    m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
+                }
             } else {
                 m_start = startOfWord(VisiblePosition(m_extent)).deepEquivalent();
                 m_end = endOfWord(VisiblePosition(m_base)).deepEquivalent();

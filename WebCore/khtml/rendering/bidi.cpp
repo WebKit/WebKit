@@ -1837,6 +1837,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
     // this to detect when we encounter a second space so we know we have to terminate
     // a run.
     bool currentCharacterIsSpace = false;
+    bool currentCharacterIsWS = false;
     RenderObject* trailingSpaceObject = 0;
 
     BidiIterator lBreak = start;
@@ -1964,6 +1965,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
             isLineEmpty = false;
             ignoringSpaces = false;
             currentCharacterIsSpace = false;
+            currentCharacterIsWS = false;
             trailingSpaceObject = 0;
             
             if (o->isListMarker() && o->style()->listStylePosition() == OUTSIDE) {
@@ -1974,13 +1976,19 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 // Optimize for a common case. If we can't find whitespace after the list
                 // item, then this is all moot. -dwh
                 RenderObject* next = Bidinext( start.par, o, bidi );
-                if (!m_pre && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0 &&
-                      (static_cast<RenderText*>(next)->text()[0].unicode() == ' ' ||
-                      static_cast<RenderText*>(next)->text()[0] == '\n')) {
-                    currentCharacterIsSpace = true;
-                    ignoringSpaces = true;
-                    BidiIterator endMid( 0, o, 0 );
-                    addMidpoint(endMid);
+                if (!m_pre && next && next->isText() && static_cast<RenderText*>(next)->stringLength() > 0) {
+                    if (static_cast<RenderText*>(next)->text()[0].unicode() == nonBreakingSpace &&
+                        o->style()->whiteSpace() == NORMAL && o->style()->nbspMode() == SPACE) {
+                        currentCharacterIsWS = true;
+                    }
+                    if (static_cast<RenderText*>(next)->text()[0].unicode() == ' ' ||
+                        static_cast<RenderText*>(next)->text()[0] == '\n') {
+                        currentCharacterIsSpace = true;
+                        currentCharacterIsWS = true;
+                        ignoringSpaces = true;
+                        BidiIterator endMid( 0, o, 0 );
+                        addMidpoint(endMid);
+                    }
                 }
             }
         } else if ( o->isText() ) {
@@ -2003,6 +2011,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
             while(len) {
                 bool previousCharacterIsSpace = currentCharacterIsSpace;
+                bool previousCharacterIsWS = currentCharacterIsWS;
                 const QChar c = str[pos];
                 currentCharacterIsSpace = c == ' ' || (!isPre && c == '\n');
                 
@@ -2038,6 +2047,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 bool isNormal = o->style()->whiteSpace() == NORMAL;
                 bool breakNBSP = isNormal && o->style()->nbspMode() == SPACE;
                 bool breakWords = w == 0 && isNormal && o->style()->wordWrap() == BREAK_WORD;
+
+                currentCharacterIsWS = currentCharacterIsSpace || (breakNBSP && c.unicode() == nonBreakingSpace);
+
                 if (breakWords)
                     wrapW += t->width(pos, 1, f);
                 if ((isPre && c == '\n') || (!isPre && isBreakable(str, pos, strlen, breakNBSP)) || (breakWords && wrapW > width)) {
@@ -2049,8 +2061,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                             lastSpace = pos; // e.g., "Foo    goo", don't add in any of the ignored spaces.
                             BidiIterator startMid ( 0, o, pos );
                             addMidpoint(startMid);
-                        }
-                        else {
+                        } else {
                             // Just keep ignoring these spaces.
                             pos++;
                             len--;
@@ -2164,6 +2175,13 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                 if (currentCharacterIsSpace && !previousCharacterIsSpace) {
                     ignoreStart.obj = o;
                     ignoreStart.pos = pos;
+                }
+
+                if (!currentCharacterIsWS && previousCharacterIsWS) {
+                    if (o->style()->khtmlLineBreak() == AFTER_WHITE_SPACE && o->style()->whiteSpace() == NORMAL) {
+                        lBreak.obj = o;
+                        lBreak.pos = pos;
+                    }
                 }
                 
                 if (!isPre && currentCharacterIsSpace && !ignoringSpaces)
