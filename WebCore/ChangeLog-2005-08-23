@@ -1,5 +1,15 @@
 2003-12-02  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3493677, containingBlock() null because we tried to support position:relative on table rows.  Fix
+	is to disallow this.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::adjustRenderStyle):
+
+2003-12-02  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3493697, nil-deref in bidi code.  Need to null-check strings with no length.
 	
         Reviewed by john

@@ -540,7 +540,7 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
         // fix a crash where a site tries to position these objects.
         if (e && (e->id() == ID_FRAME || e->id() == ID_FRAMESET))
             style->setPosition(STATIC);
-            
+
         // Mutate the display to BLOCK or TABLE for certain cases, e.g., if someone attempts to
         // position or float an inline, compact, or run-in.  Cache the original display, since it
         // may be needed for positioned elements that have to compute their static normal flow
@@ -561,6 +561,12 @@ void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, DOM::ElementImpl *e
             else
                 style->setDisplay(BLOCK);
         }
+        
+        // After performing the display mutation, check table rows.  We do not honor position:relative on
+        // table rows.  This has been established in CSS2.1 (and caused a crash in containingBlock() on
+        // some sites).
+        if (style->display() == TABLE_ROW && style->position() == RELATIVE)
+            style->setPosition(STATIC);
     }
 
     // Make sure our z-index value is only applied if the object is positioned,
