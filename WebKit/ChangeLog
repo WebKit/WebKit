@@ -1,3 +1,23 @@
+2002-12-10  John Sullivan  <sullivan@apple.com>
+
+	- tweaked the API of WebBookmarkImporter while implementing
+	real "Import IE Favorites" UI
+
+        Reviewed by Ken
+
+        * Bookmarks.subproj/WebBookmarkImporter.h:
+	fixed a typo in a constant
+        * Bookmarks.subproj/WebBookmarkImporter.m:
+        (-[WebBookmarkImporter initWithPath:]):
+	Don't pass a group here. This method now creates the topBookmark
+	(as it was doing before) but does not attempt to insert it
+	anywhere. It's up to the client to fetch the topBookmark and do
+	something with it. Also, don't name the new folder here; leave
+	that to the caller also.
+
+        * English.lproj/Localizable.strings:
+	kept this file up to date
+
 2002-12-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

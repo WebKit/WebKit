@@ -12,7 +12,6 @@
 #import <WebFoundation/WebLocalizableStrings.h>
 #import <WebKit/WebBookmark.h>
 #import <WebKit/WebBookmarkPrivate.h>
-#import <WebKit/WebBookmarkGroup.h>
 #import <WebKit/WebKitErrors.h>
 
 static NSMutableArray *_breakStringIntoLines(NSString *string)
@@ -192,7 +191,7 @@ static NSString *_linkTextFromSpec(NSString *spec)
 
 @implementation WebBookmarkImporter
 
--(id)initWithPath:(NSString *)path group:(WebBookmarkGroup *)group
+-(id)initWithPath:(NSString *)path
 {
     self = [super init];
     if (!self) {
@@ -216,8 +215,6 @@ static NSString *_linkTextFromSpec(NSString *spec)
     
     // create the top-level folder
     topBookmark = [[WebBookmark bookmarkOfType:WebBookmarkTypeList] retain];
-    [topBookmark setTitle:UI_STRING("Imported IE Favorites", "Imported IE Favorites menu item")];
-    [topBookmark _setGroup:group];
     [bookmarkLists addObject:topBookmark];
     
     for (i = 0; i < lineCount; i++) {
@@ -271,10 +268,6 @@ static NSString *_linkTextFromSpec(NSString *spec)
             // ignore this line
         }
     }
-
-    bookmark = [group topBookmark];
-    numberOfChildren = [bookmark numberOfChildren];
-    [bookmark insertChild:topBookmark atIndex:numberOfChildren];
     
     return self;
 }

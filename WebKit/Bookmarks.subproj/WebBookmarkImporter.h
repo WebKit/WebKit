@@ -10,9 +10,8 @@
 
 @class WebError;
 @class WebBookmark;
-@class WebBookmarkGroup;
 
-#define InteretExplorerBookmarksPath \
+#define InternetExplorerBookmarksPath \
     ([NSString stringWithFormat:@"%@/%@", NSHomeDirectory(), @"Library/Preferences/Explorer/Favorites.html"])
 
 @interface WebBookmarkImporter : NSObject 
@@ -21,7 +20,7 @@
     WebError *error;
 }
 
--(id)initWithPath:(NSString *)path group:(WebBookmarkGroup *)group;
+-(id)initWithPath:(NSString *)path;
 -(WebBookmark *)topBookmark;
 -(WebError *)error;
 
