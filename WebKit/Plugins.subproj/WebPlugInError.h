@@ -26,13 +26,13 @@
     @method contentURL
     @result The URL of the data that caused the error
 */
-- (NSString *)contentURL;
+- (NSString *)contentURLString;
 
 /*!
     @method plugInPageURL
     @result Description forthcoming
 */
-- (NSString *)plugInPageURL;
+- (NSString *)plugInPageURLString;
 
 /*!
     @method pluInName

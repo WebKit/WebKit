@@ -11,9 +11,7 @@
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f2\fs20 \cf0 + Change WebPreferences' userStyleSheetLocation to an NSURL.\
-+ Remove WebController's customUserAgent property.\
-+ On WebController:\
+\f2\fs20 \cf0 + On WebController:\
     Add  -(BOOL)canGoBack, -(BOOL)canGoForward, -(BOOL)canCanel.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
@@ -105,26 +103,7 @@ It's a good idea to try to stay away from ambiguous adjectives (that are also ve
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 \
-WebPluginItem:\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
-
-\f2\fs20 \cf3 - (NSString *)contentURL;\
-- (NSString *)pluginPageURL;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f1\fs24 \cf2 \
-In some other APIs where NSString containing URLs are returned, you use "...URLString" --- should maybe do that here too?\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Yes, good point.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 Also: Official spelling of plugin is supposed to be plugIn. At least that's what CF's plugIn mechanism had to be renamed to, and the word plugIn appears in one API in Foundation. I personally prefer plugin, like autorelease, or superview, but perhaps techpubs should bless this.\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 OK.  I'll check this issue.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 WebKitErrors:\
+WebKitErrors:\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
 
@@ -164,68 +143,6 @@ Should this be "shared"?  I realize NSUserDefaults uses "standard", but it's an 
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
-
-\f2\fs20 \cf6 /*!\
-    @method JavaEnabled\
-*/\cf3 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li600\ql\qnatural
-\cf5 \
-- (\cf4 BOOL\cf5 )JavaEnabled;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f1\fs24 \cf2 \
-Are we not allowed to use "java" ?  8-)\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Not sure.  I'll check with tech pubs.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 Actually, I believe the guidelines prefer the use of "is" for cases like this:\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f2\fs20 \cf2 - (void)setEditable:(BOOL)flag;\
-- (BOOL)isEditable; \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-
-\f1\fs24 \cf0 Yes.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 so perhaps "isJavaEnabled" ? (Although there are a few more methods you'd want to change then...)\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Yes, I'll make the use of 'is' consistent.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
-
-\f2\fs20 \cf3 - (\cf4 BOOL\cf3 )allowAnimatedImages;\
-- (\cf4 void\cf3 )setAllowAnimatedImages:(\cf4 BOOL\cf3 )flag;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f1\fs24 \cf2 \
-allowsAnimatedImages, setAllowsAnimatedImages:  (a few more examples)\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Will change.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
-
-\f2\fs20 \cf3 - (\cf4 void\cf3 )setWillLoadImagesAutomatically: (\cf4 BOOL\cf3 )flag;\
-- (\cf4 BOOL\cf3 )willLoadImagesAutomatically;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f1\fs24 \cf2 \
-loadsImagesAutomatically, ... ?\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Good suggestion.\
-\
-Thanks!\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 Ali\
-\
-\
 Add loadWithData:baseURL: to WebFrame\
 \
 \

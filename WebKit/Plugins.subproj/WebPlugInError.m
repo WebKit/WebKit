@@ -42,12 +42,12 @@
     [super dealloc];
 }
 
-- (NSString *)contentURL;
+- (NSString *)contentURLString;
 {
     return _private->contentURL;
 }
 
-- (NSString *)plugInPageURL
+- (NSString *)plugInPageURLString
 {
     return _private->pluginPageURL;
 }

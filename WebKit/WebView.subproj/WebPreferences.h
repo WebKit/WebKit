@@ -158,29 +158,29 @@ extern NSString *WebPreferencesChangedNotification;
 /*!
     @method JavaEnabled
 */
-- (BOOL)JavaEnabled;
+- (BOOL)isJavaEnabled;
 
 /*!
     @method setJavaEnabled:
     @param flag
 */
-- (void)setJavaEnabled:(BOOL)flag;
+- (void)setIsJavaEnabled:(BOOL)flag;
 
 /*!
     @method JavaScriptEnabled
 */
-- (BOOL)JavaScriptEnabled;
+- (BOOL)isJavaScriptEnabled;
 
 /*!
     @method setJavaScriptEnabled:
     @param flag
 */
-- (void)setJavaScriptEnabled:(BOOL)flag;
+- (void)setIsJavaScriptEnabled:(BOOL)flag;
 
 /*!
     @method JavaScriptCanOpenWindowsAutomatically
 */
-- (BOOL)JavaScriptCanOpenWindowsAutomatically;
+- (BOOL)javaScriptCanOpenWindowsAutomatically;
 
 /*!
     @method setJavaScriptCanOpenWindowsAutomatically:
@@ -191,45 +191,45 @@ extern NSString *WebPreferencesChangedNotification;
 /*!
     @method pluginsEnabled
 */
-- (BOOL)pluginsEnabled;
+- (BOOL)arePlugInsEnabled;
 
 /*!
     @method setPluginsEnabled:
     @param flag
 */
-- (void)setPluginsEnabled:(BOOL)flag;
+- (void)setArePlugInsEnabled:(BOOL)flag;
 
 /*!
     @method allowAnimatedImages
 */
-- (BOOL)allowAnimatedImages;
+- (BOOL)allowsAnimatedImages;
 
 /*!
     @method setAllowAnimatedImages:
     @param flag
 */
-- (void)setAllowAnimatedImages:(BOOL)flag;
+- (void)setAllowsAnimatedImages:(BOOL)flag;
 
 /*!
     @method allowAnimatedImageLooping
 */
-- (BOOL)allowAnimatedImageLooping;
+- (BOOL)allowsAnimatedImageLooping;
 
 /*!
     @method setAllowAnimatedImageLooping:
     @param flag
 */
-- (void)setAllowAnimatedImageLooping: (BOOL)flag;
+- (void)setAllowsAnimatedImageLooping: (BOOL)flag;
 
 /*!
     @method setWillLoadImagesAutomatically:
     @param flag
 */
-- (void)setWillLoadImagesAutomatically: (BOOL)flag;
+- (void)setLoadsImagesAutomatically: (BOOL)flag;
 
 /*!
     @method willLoadImagesAutomatically
 */
-- (BOOL)willLoadImagesAutomatically;
+- (BOOL)loadsImagesAutomatically;
 
 @end

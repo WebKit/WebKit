@@ -363,15 +363,15 @@
     [_private->settings setDefaultFontSize:[preferences defaultFontSize]];
     [_private->settings setFantasyFontFamily:[preferences fantasyFontFamily]];
     [_private->settings setFixedFontFamily:[preferences fixedFontFamily]];
-    [_private->settings setJavaEnabled:[preferences JavaEnabled]];
-    [_private->settings setJavaScriptEnabled:[preferences JavaScriptEnabled]];
-    [_private->settings setJavaScriptCanOpenWindowsAutomatically:[preferences JavaScriptCanOpenWindowsAutomatically]];
+    [_private->settings setJavaEnabled:[preferences isJavaEnabled]];
+    [_private->settings setJavaScriptEnabled:[preferences isJavaScriptEnabled]];
+    [_private->settings setJavaScriptCanOpenWindowsAutomatically:[preferences javaScriptCanOpenWindowsAutomatically]];
     [_private->settings setMinimumFontSize:[preferences minimumFontSize]];
-    [_private->settings setPluginsEnabled:[preferences pluginsEnabled]];
+    [_private->settings setPluginsEnabled:[preferences arePlugInsEnabled]];
     [_private->settings setSansSerifFontFamily:[preferences sansSerifFontFamily]];
     [_private->settings setSerifFontFamily:[preferences serifFontFamily]];
     [_private->settings setStandardFontFamily:[preferences standardFontFamily]];
-    [_private->settings setWillLoadImagesAutomatically:[preferences willLoadImagesAutomatically]];
+    [_private->settings setWillLoadImagesAutomatically:[preferences loadsImagesAutomatically]];
 
     if ([preferences userStyleSheetEnabled]) {
         [_private->settings setUserStyleSheetLocation:[[preferences userStyleSheetLocation] absoluteString]];

@@ -478,7 +478,7 @@ static BOOL forceRealHitTest = NO;
     _private->draggingImageURL = nil;
 
     // We must have started over something draggable:
-    ASSERT((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
+    ASSERT((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
            (!imageURL && linkURL) || isSelectedText); 
 
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
@@ -549,7 +549,7 @@ static BOOL forceRealHitTest = NO;
 
     NSURL *imageURL = [mouseDownElement objectForKey: WebElementImageURLKey];
     
-    if ((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
+    if ((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
         (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey]) ||
         ([[mouseDownElement objectForKey:WebElementIsSelectedTextKey] boolValue] &&
          ([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay)) {

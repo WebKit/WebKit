@@ -268,27 +268,27 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     [self _setStringValue: [URL absoluteString] forKey: WebKitUserStyleSheetLocationPreferenceKey];
 }
 
-- (BOOL)JavaEnabled
+- (BOOL)isJavaEnabled
 {
     return [self _boolValueForKey: WebKitJavaEnabledPreferenceKey];
 }
 
-- (void)setJavaEnabled:(BOOL)flag
+- (void)setIsJavaEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitJavaEnabledPreferenceKey];
 }
 
-- (BOOL)JavaScriptEnabled
+- (BOOL)isJavaScriptEnabled
 {
     return [self _boolValueForKey: WebKitJavaScriptEnabledPreferenceKey];
 }
 
-- (void)setJavaScriptEnabled:(BOOL)flag
+- (void)setIsJavaScriptEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitJavaScriptEnabledPreferenceKey];
 }
 
-- (BOOL)JavaScriptCanOpenWindowsAutomatically
+- (BOOL)javaScriptCanOpenWindowsAutomatically
 {
     return [self _boolValueForKey: WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
 }
@@ -298,42 +298,42 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     [self _setBoolValue: flag forKey: WebKitJavaScriptCanOpenWindowsAutomaticallyPreferenceKey];
 }
 
-- (BOOL)pluginsEnabled
+- (BOOL)arePlugInsEnabled
 {
     return [self _boolValueForKey: WebKitPluginsEnabledPreferenceKey];
 }
 
-- (void)setPluginsEnabled:(BOOL)flag
+- (void)setArePlugInsEnabled:(BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitPluginsEnabledPreferenceKey];
 }
 
-- (BOOL)allowAnimatedImages
+- (BOOL)allowsAnimatedImages
 {
     return [self _boolValueForKey: WebKitAllowAnimatedImagesPreferenceKey];
 }
 
-- (void)setAllowAnimatedImages:(BOOL)flag;
+- (void)setAllowsAnimatedImages:(BOOL)flag;
 {
     [self _setBoolValue: flag forKey: WebKitAllowAnimatedImagesPreferenceKey];
 }
 
-- (BOOL)allowAnimatedImageLooping
+- (BOOL)allowsAnimatedImageLooping
 {
     return [self _boolValueForKey: WebKitAllowAnimatedImageLoopingPreferenceKey];
 }
 
-- (void)setAllowAnimatedImageLooping: (BOOL)flag
+- (void)setAllowsAnimatedImageLooping: (BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitAllowAnimatedImageLoopingPreferenceKey];
 }
 
-- (void)setWillLoadImagesAutomatically: (BOOL)flag
+- (void)setLoadsImagesAutomatically: (BOOL)flag
 {
     [self _setBoolValue: flag forKey: WebKitDisplayImagesKey];
 }
 
-- (BOOL)willLoadImagesAutomatically
+- (BOOL)loadsImagesAutomatically
 {
     return [self _boolValueForKey: WebKitDisplayImagesKey];
 }

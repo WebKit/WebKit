@@ -1,3 +1,102 @@
+2003-03-26  Richard Williamson   <rjw@apple.com>
+
+        WebPreferences API changes:
+        
+        JavaScriptCanOpenWindowsAutomatically -> javaScriptCanOpenWindowsAutomatically
+        setJavaScriptCanOpenWindowsAutomatically -> setJavaScriptCanOpenWindowsAutomatically
+        willLoadImagesAutomatically -> loadsImagesAutomatically
+        setWillLoadImagesAutomatically -> setLoadsImagesAutomatically
+        JavaEnabled -> isJavaEnabled
+        setJavaEnabled -> setIsJavaEnabled
+        JavaScriptEnabled -> isJavaScriptEnabled
+        setJavaScriptEnabled -> setIsJavaScriptEnabled
+        pluginsEnabled -> arePlugInsEnabled
+        setPluginsEnabled -> setArePlugInsEnabled
+        allowAnimatedImageLooping -> allowsAnimatedImageLooping
+        setAllowAnimatedImageLooping -> setAllowsAnimatedImageLooping
+        allowAnimatedImages -> allowsAnimatedImages
+        setAllowAnimatedImages -> setAllowsAnimatedImages
+        
+        Made WebHistoryItem's ivars private.
+
+        WebPluginError API changes:
+        
+        pluginPageURL -> plugInPageURLString
+        contentURL -> contentURLString
+       
+        Reviewed by cblu.
+
+        * API-Issues.rtf:
+        * History.subproj/WebHistoryItem.h:
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItemPrivate dealloc]):
+        (-[WebHistoryItem init]):
+        (-[WebHistoryItem dealloc]):
+        (-[WebHistoryItem URLString]):
+        (-[WebHistoryItem originalURLString]):
+        (-[WebHistoryItem title]):
+        (-[WebHistoryItem setDisplayTitle:]):
+        (-[WebHistoryItem icon]):
+        (-[WebHistoryItem lastVisitedDate]):
+        (-[WebHistoryItem hash]):
+        (-[WebHistoryItem anchor]):
+        (-[WebHistoryItem isEqual:]):
+        (-[WebHistoryItem description]):
+        (-[WebHistoryItem _retainIconInDatabase:]):
+        (-[WebHistoryItem initWithURL:target:parent:title:]):
+        (-[WebHistoryItem URL]):
+        (-[WebHistoryItem target]):
+        (-[WebHistoryItem parent]):
+        (-[WebHistoryItem setURL:]):
+        (-[WebHistoryItem setOriginalURLString:]):
+        (-[WebHistoryItem setTitle:]):
+        (-[WebHistoryItem setTarget:]):
+        (-[WebHistoryItem setParent:]):
+        (-[WebHistoryItem setLastVisitedDate:]):
+        (-[WebHistoryItem documentState]):
+        (-[WebHistoryItem scrollPoint]):
+        (-[WebHistoryItem setScrollPoint:]):
+        (-[WebHistoryItem setAnchor:]):
+        (-[WebHistoryItem isTargetItem]):
+        (-[WebHistoryItem setIsTargetItem:]):
+        (-[WebHistoryItem _recurseToFindTargetItem]):
+        (-[WebHistoryItem targetItem]):
+        (-[WebHistoryItem formData]):
+        (-[WebHistoryItem setFormData:]):
+        (-[WebHistoryItem formContentType]):
+        (-[WebHistoryItem setFormContentType:]):
+        (-[WebHistoryItem formReferrer]):
+        (-[WebHistoryItem setFormReferrer:]):
+        (-[WebHistoryItem children]):
+        (-[WebHistoryItem addChildItem:]):
+        (-[WebHistoryItem childItemWithName:]):
+        (-[WebHistoryItem dictionaryRepresentation]):
+        (-[WebHistoryItem initFromDictionaryRepresentation:]):
+        (-[WebHistoryItem setAlwaysAttemptToUsePageCache:]):
+        (-[WebHistoryItem alwaysAttemptToUsePageCache]):
+        (-[WebHistoryItem _scheduleRelease]):
+        (-[WebHistoryItem setHasPageCache:]):
+        (-[WebHistoryItem pageCache]):
+        * Plugins.subproj/WebPluginError.h:
+        * Plugins.subproj/WebPluginError.m:
+        (-[WebPlugInError plugInPageURLString]):
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences isJavaEnabled]):
+        (-[WebPreferences setIsJavaEnabled:]):
+        (-[WebPreferences isJavaScriptEnabled]):
+        (-[WebPreferences setIsJavaScriptEnabled:]):
+        (-[WebPreferences javaScriptCanOpenWindowsAutomatically]):
+        (-[WebPreferences arePlugInsEnabled]):
+        (-[WebPreferences setArePlugInsEnabled:]):
+        (-[WebPreferences allowsAnimatedImages]):
+        (-[WebPreferences allowsAnimatedImageLooping]):
+        (-[WebPreferences setAllowsAnimatedImageLooping:]):
+        (-[WebPreferences setLoadsImagesAutomatically:]):
+        (-[WebPreferences loadsImagesAutomatically]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
 2003-03-26  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

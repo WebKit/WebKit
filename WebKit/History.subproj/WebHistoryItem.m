@@ -16,10 +16,57 @@
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
+@interface WebHistoryItemPrivate : NSObject
+{
+@public
+    NSString *URLString;
+    NSString *originalURLString;
+    NSString *target;
+    NSString *parent;
+    NSString *title;
+    NSString *displayTitle;
+    NSCalendarDate *lastVisitedDate;
+    NSPoint scrollPoint;
+    NSString *anchor;
+    NSArray *documentState;
+    NSMutableArray *subItems;
+    NSMutableDictionary *pageCache;
+    BOOL isTargetItem;
+    BOOL alwaysAttemptToUsePageCache;
+    // info used to repost form data
+    NSData *formData;
+    NSString *formContentType;
+    NSString *formReferrer;
+}
+@end
+
+@implementation WebHistoryItemPrivate
+- (void)dealloc
+{
+    [URLString release];
+    [originalURLString release];
+    [target release];
+    [parent release];
+    [title release];
+    [displayTitle release];
+    [lastVisitedDate release];
+    [anchor release];
+    [documentState release];
+    [subItems release];
+    [pageCache release];
+    [formData release];
+    [formContentType release];
+    [formReferrer release];
+
+    [super dealloc];
+}
+@end
+
 @implementation WebHistoryItem
 
 - (id)init
 {
+    _private = [[WebHistoryItemPrivate alloc] init];
     return [self initWithURL:nil title:nil];
 }
 
@@ -27,81 +74,68 @@
 {
     [self _retainIconInDatabase:NO];
 
-    [_URLString release];
-    [_originalURLString release];
-    [_target release];
-    [_parent release];
-    [_title release];
-    [_displayTitle release];
-    [_lastVisitedDate release];
-    [anchor release];
-    [_documentState release];
-    [_subItems release];
-    [pageCache release];
-    [_formData release];
-    [_formContentType release];
-    [_formReferrer release];
-
+    [_private release];
+    
     [super dealloc];
 }
 
 // FIXME: need to decide it this class ever returns URLs, and the name of this method
 - (NSString *)URLString
 {
-    return _URLString;
+    return _private->URLString;
 }
 
 // The first URL we loaded to get to where this history item points.  Includes both client
 // and server redirects.
 - (NSString *)originalURLString
 {
-    return _originalURLString;
+    return _private->originalURLString;
 }
 
 - (NSString *)title
 {
-    return _title;
+    return _private->title;
 }
 
 - (void)setDisplayTitle:(NSString *)displayTitle
 {
     NSString *newDisplayTitle;
-    if (displayTitle && [displayTitle isEqualToString:_title]) {
-        newDisplayTitle = [_title retain];
+    if (displayTitle && [displayTitle isEqualToString:_private->title]) {
+        newDisplayTitle = [_private->title retain];
     } else {
         newDisplayTitle = [displayTitle copy];
     }
-    [_displayTitle release];
-    _displayTitle = newDisplayTitle;
+    [_private->displayTitle release];
+    _private->displayTitle = newDisplayTitle;
 }
 
 
 - (NSString *)displayTitle;
 {
-    return _displayTitle;
+    return _private->displayTitle;
 }
 
 - (NSImage *)icon
 {
     // Always get fresh icon from database. It's a client's responsibility to watch
     // for updates to the database if desired.
-    return [[WebIconDatabase sharedIconDatabase] iconForURL:_URLString withSize:WebIconSmallSize];
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:_private->URLString withSize:WebIconSmallSize];
 }
 
 
 - (NSCalendarDate *)lastVisitedDate
 {
-    return _lastVisitedDate;
+    return _private->lastVisitedDate;
 }
 
 - (unsigned)hash
 {
-    return [_URLString hash];
+    return [_private->URLString hash];
 }
 
 - (NSString *)anchor
 {
-    return anchor;
+    return _private->anchor;
 }
 
 - (BOOL)isEqual:(id)anObject
@@ -110,27 +144,27 @@
         return NO;
     }
     
-    NSString *otherURL = ((WebHistoryItem *)anObject)->_URLString;
-    return _URLString == otherURL || [_URLString isEqualToString:otherURL];
+    NSString *otherURL = ((WebHistoryItem *)anObject)->_private->URLString;
+    return _private->URLString == otherURL || [_private->URLString isEqualToString:otherURL];
 }
 
 - (NSString *)description
 {
-    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], _URLString];
-    if (_target) {
-        [result appendFormat:@" in \"%@\"", _target];
+    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], _private->URLString];
+    if (_private->target) {
+        [result appendFormat:@" in \"%@\"", _private->target];
     }
-    if (_isTargetItem) {
+    if (_private->isTargetItem) {
         [result appendString:@" *target*"];
     }
-    if (_formData) {
+    if (_private->formData) {
         [result appendString:@" *POST*"];
     }
-    if (_subItems) {
+    if (_private->subItems) {
         int currPos = [result length];
         int i;
-        for (i = 0; i < (int)[_subItems count]; i++) {
-            WebHistoryItem *child = [_subItems objectAtIndex:i];
+        for (i = 0; i < (int)[_private->subItems count]; i++) {
+            WebHistoryItem *child = [_private->subItems objectAtIndex:i];
             [result appendString:@"\n"];
             [result appendString:[child description]];
         }
@@ -150,12 +184,12 @@
 
 - (void)_retainIconInDatabase:(BOOL)retain
 {
-    if (_URLString) {
+    if (_private->URLString) {
         WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
         if (retain) {
-            [iconDB retainIconForURL:_URLString];
+            [iconDB retainIconForURL:_private->URLString];
         } else {
-            [iconDB releaseIconForURL:_URLString];
+            [iconDB releaseIconForURL:_private->URLString];
         }
     }
 }
@@ -179,11 +213,12 @@
         return nil;
     }
 
-    _URLString = [[URL absoluteString] copy];
-    _target = [target copy];
-    _parent = [parent copy];
-    _title = [title copy];
-    _lastVisitedDate = [[NSCalendarDate alloc] init];
+    _private = [[WebHistoryItemPrivate alloc] init];
+    _private->URLString = [[URL absoluteString] copy];
+    _private->target = [target copy];
+    _private->parent = [parent copy];
+    _private->title = [title copy];
+    _private->lastVisitedDate = [[NSCalendarDate alloc] init];
 
     [self _retainIconInDatabase:YES];
 
@@ -192,26 +227,26 @@
 
 - (NSURL *)URL
 {
-    return _URLString ? [NSURL _web_URLWithString:_URLString] : nil;
+    return _private->URLString ? [NSURL _web_URLWithString:_private->URLString] : nil;
 }
 
 - (NSString *)target
 {
-    return _target;
+    return _private->target;
 }
 
 - (NSString *)parent
 {
-    return _parent;
+    return _private->parent;
 }
 
 - (void)setURL:(NSURL *)URL
 {
     NSString *string = [URL absoluteString];
-    if (!(string == _URLString || [string isEqual:_URLString])) {
+    if (!(string == _private->URLString || [string isEqual:_private->URLString])) {
         [self _retainIconInDatabase:NO];
-        [_URLString release];
-        _URLString = [string copy];
+        [_private->URLString release];
+        _private->URLString = [string copy];
         [self _retainIconInDatabase:YES];
     }
 }
@@ -221,94 +256,94 @@
 - (void)setOriginalURLString:(NSString *)URL
 {
     NSString *newURL = [URL copy];
-    [_originalURLString release];
-    _originalURLString = newURL;
+    [_private->originalURLString release];
+    _private->originalURLString = newURL;
 }
 
 - (void)setTitle:(NSString *)title
 {
     NSString *newTitle;
-    if (title && [title isEqualToString:_displayTitle]) {
-        newTitle = [_displayTitle retain];
+    if (title && [title isEqualToString:_private->displayTitle]) {
+        newTitle = [_private->displayTitle retain];
     } else {
         newTitle = [title copy];
     }
-    [_title release];
-    _title = newTitle;
+    [_private->title release];
+    _private->title = newTitle;
 }
 
 - (void)setTarget:(NSString *)target
 {
     NSString *copy = [target copy];
-    [_target release];
-    _target = copy;
+    [_private->target release];
+    _private->target = copy;
 }
 
 - (void)setParent:(NSString *)parent
 {
     NSString *copy = [parent copy];
-    [_parent release];
-    _parent = copy;
+    [_private->parent release];
+    _private->parent = copy;
 }
 
 - (void)setLastVisitedDate:(NSCalendarDate *)date
 {
     [date retain];
-    [_lastVisitedDate release];
-    _lastVisitedDate = date;
+    [_private->lastVisitedDate release];
+    _private->lastVisitedDate = date;
 }
 
 - (void)setDocumentState:(NSArray *)state;
 {
     NSArray *copy = [state copy];
-    [_documentState release];
-    _documentState = copy;
+    [_private->documentState release];
+    _private->documentState = copy;
 }
 
 - (NSArray *)documentState
 {
-    return _documentState;
+    return _private->documentState;
 }
 
 - (NSPoint)scrollPoint
 {
-    return _scrollPoint;
+    return _private->scrollPoint;
 }
 
 - (void)setScrollPoint:(NSPoint)scrollPoint
 {
-    _scrollPoint = scrollPoint;
+    _private->scrollPoint = scrollPoint;
 }
 
 - (void)setAnchor:(NSString *)a
 {
     NSString *copy = [a copy];
-    [anchor release];
-    anchor = copy;
+    [_private->anchor release];
+    _private->anchor = copy;
 }
 
 - (BOOL)isTargetItem
 {
-    return _isTargetItem;
+    return _private->isTargetItem;
 }
 
 - (void)setIsTargetItem:(BOOL)flag
 {
-    _isTargetItem = flag;
+    _private->isTargetItem = flag;
 }
 
 // Main diff from the public method is that the public method will default to returning
 // the top item if it can't find anything marked as target and has no kids
 - (WebHistoryItem *)_recurseToFindTargetItem
 {
-    if (_isTargetItem) {
+    if (_private->isTargetItem) {
         return self;
-    } else if (!_subItems) {
+    } else if (!_private->subItems) {
         return nil;
     } else {
         int i;
-        for (i = [_subItems count]-1; i >= 0; i--) {
-            WebHistoryItem *match = [[_subItems objectAtIndex:i] _recurseToFindTargetItem];
+        for (i = [_private->subItems count]-1; i >= 0; i--) {
+            WebHistoryItem *match = [[_private->subItems objectAtIndex:i] _recurseToFindTargetItem];
             if (match) {
                 return match;
             }
@@ -319,7 +354,7 @@
 
 - (WebHistoryItem *)targetItem
 {
-    if (_isTargetItem || !_subItems) {
+    if (_private->isTargetItem || !_private->subItems) {
         return self;
     } else {
         return [self _recurseToFindTargetItem];
@@ -328,59 +363,59 @@
 
 - (NSData *)formData
 {
-    return _formData;
+    return _private->formData;
 }
 
 - (void)setFormData:(NSData *)data
 {
     NSData *copy = [data copy];
-    [_formData release];
-    _formData = copy;
+    [_private->formData release];
+    _private->formData = copy;
 }
 
 - (NSString *)formContentType
 {
-    return _formContentType;
+    return _private->formContentType;
 }
 
 - (void)setFormContentType:(NSString *)type
 {
     NSString *copy = [type copy];
-    [_formContentType release];
-    _formContentType = copy;
+    [_private->formContentType release];
+    _private->formContentType = copy;
 }
 
 - (NSString *)formReferrer
 {
-    return _formReferrer;
+    return _private->formReferrer;
 }
 
 - (void)setFormReferrer:(NSString *)referrer
 {
     NSString *copy = [referrer copy];
-    [_formReferrer release];
-    _formReferrer = copy;
+    [_private->formReferrer release];
+    _private->formReferrer = copy;
 }
 
 - (NSArray *)children
 {
-    return _subItems;
+    return _private->subItems;
 }
 
 - (void)addChildItem:(WebHistoryItem *)item
 {
-    if (!_subItems) {
-        _subItems = [[NSMutableArray arrayWithObject:item] retain];
+    if (!_private->subItems) {
+        _private->subItems = [[NSMutableArray arrayWithObject:item] retain];
     } else {
-        [_subItems addObject:item];
+        [_private->subItems addObject:item];
     }
 }
 
 - (WebHistoryItem *)childItemWithName:(NSString *)name
 {
     int i;
-    for (i = (_subItems ? [_subItems count] : 0)-1; i >= 0; i--) {
-        WebHistoryItem *child = [_subItems objectAtIndex:i];
+    for (i = (_private->subItems ? [_private->subItems count] : 0)-1; i >= 0; i--) {
+        WebHistoryItem *child = [_private->subItems objectAtIndex:i];
         if ([[child target] isEqualToString:name]) {
             return child;
         }
@@ -392,24 +427,24 @@
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:6];
 
-    if (_URLString) {
-        [dict setObject:_URLString forKey:@""];
+    if (_private->URLString) {
+        [dict setObject:_private->URLString forKey:@""];
     }
-    if (_title) {
-        [dict setObject:_title forKey:@"title"];
+    if (_private->title) {
+        [dict setObject:_private->title forKey:@"title"];
     }
-    if (_displayTitle) {
-        [dict setObject:_displayTitle forKey:@"displayTitle"];
+    if (_private->displayTitle) {
+        [dict setObject:_private->displayTitle forKey:@"displayTitle"];
     }
-    if (_lastVisitedDate) {
-        [dict setObject:[NSString stringWithFormat:@"%lf", [_lastVisitedDate timeIntervalSinceReferenceDate]]
+    if (_private->lastVisitedDate) {
+        [dict setObject:[NSString stringWithFormat:@"%lf", [_private->lastVisitedDate timeIntervalSinceReferenceDate]]
                  forKey:@"lastVisitedDate"];
     }
-    if (_subItems != nil) {
-        NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_subItems count]];
+    if (_private->subItems != nil) {
+        NSMutableArray *childDicts = [NSMutableArray arrayWithCapacity:[_private->subItems count]];
         int i;
-        for (i = [_subItems count]; i >= 0; i--) {
-            [childDicts addObject: [[_subItems objectAtIndex:i] dictionaryRepresentation]];
+        for (i = [_private->subItems count]; i >= 0; i--) {
+            [childDicts addObject: [[_private->subItems objectAtIndex:i] dictionaryRepresentation]];
         }
         [dict setObject: childDicts forKey: @"children"];
     }
@@ -422,6 +457,7 @@
     NSString *URLString = [dict _web_stringForKey:@""];
     NSString *title = [dict _web_stringForKey:@"title"];
 
+    _private = [[WebHistoryItemPrivate alloc] init];
     [self initWithURL:(URLString ? [NSURL _web_URLWithString:URLString] : nil) title:title];
 
     [self setDisplayTitle:[dict _web_stringForKey:@"displayTitle"]];
@@ -435,11 +471,11 @@
 
     NSArray *childDicts = [dict objectForKey:@"children"];
     if (childDicts) {
-        _subItems = [[NSMutableArray alloc] initWithCapacity:[childDicts count]];
+        _private->subItems = [[NSMutableArray alloc] initWithCapacity:[childDicts count]];
         int i;
         for (i = [childDicts count]; i >= 0; i--) {
             WebHistoryItem *child = [[WebHistoryItem alloc] initFromDictionaryRepresentation: [childDicts objectAtIndex:i]];
-            [_subItems addObject: child];
+            [_private->subItems addObject: child];
         }
     }
 
@@ -448,12 +484,12 @@
 
 - (void)setAlwaysAttemptToUsePageCache: (BOOL)flag
 {
-    _alwaysAttemptToUsePageCache = flag;
+    _private->alwaysAttemptToUsePageCache = flag;
 }
 
 - (BOOL)alwaysAttemptToUsePageCache
 {
-    return _alwaysAttemptToUsePageCache;
+    return _private->alwaysAttemptToUsePageCache;
 }
 
 
@@ -464,7 +500,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
 - (BOOL)hasPageCache;
 {
-    return pageCache != nil;
+    return _private->pageCache != nil;
 }
 
 + (void)_invalidateReleaseTimer
@@ -491,10 +527,10 @@ static NSTimer *_pageCacheReleaseTimer = nil;
     LOG (PageCache, "Scheduling release of %@", [self URLString]);
     [WebHistoryItem _scheduleReleaseTimer];
 
-    if (pageCache){
-        [_pendingPageCacheToRelease addObject: pageCache];
-        [pageCache release]; // Last reference held by _pendingPageCacheToRelease.
-        pageCache = nil;
+    if (_private->pageCache){
+        [_pendingPageCacheToRelease addObject: _private->pageCache];
+        [_private->pageCache release]; // Last reference held by _pendingPageCacheToRelease.
+        _private->pageCache = nil;
     }
     
     if (!_windowWatcher){
@@ -535,16 +571,16 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
 - (void)setHasPageCache: (BOOL)f
 {
-    if (f && !pageCache)
-        pageCache = [[NSMutableDictionary alloc] init];
-    if (!f && pageCache){
+    if (f && !_private->pageCache)
+        _private->pageCache = [[NSMutableDictionary alloc] init];
+    if (!f && _private->pageCache){
         [self _scheduleRelease];
     }
 }
 
 - pageCache
 {
-    return pageCache;
+    return _private->pageCache;
 }
 
 

@@ -7,6 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class WebHistoryItemPrivate;
 @class NSURL;
 
 /*!
@@ -19,28 +20,8 @@
 */
 @interface WebHistoryItem : NSObject
 {
-    NSString *_URLString;
-    NSString *_originalURLString;
-    NSString *_target;
-    NSString *_parent;
-    NSString *_title;
-    NSString *_displayTitle;
-    NSCalendarDate *_lastVisitedDate;
-    NSPoint _scrollPoint;
-    NSString *anchor;
-    NSArray *_documentState;
-    NSMutableArray *_subItems;
-    NSMutableDictionary *pageCache;
-    BOOL _isTargetItem;
-    BOOL _alwaysAttemptToUsePageCache;
-    // info used to repost form data
-    NSData *_formData;
-    NSString *_formContentType;
-    NSString *_formReferrer;
-    void *_reserved1;
-    void *_reserved2;
-    void *_reserved3;
-    void *_reserved4;
+@private
+    WebHistoryItemPrivate *_private;
 }
 
 /*!
