@@ -1,5 +1,10 @@
 2002-10-18  Darin Adler  <darin@apple.com>
 
+        * force-clean-timestamp: Dependencies don't work well enough, so
+	we need a clean build here after the WebFoundation domain change.
+
+2002-10-18  Darin Adler  <darin@apple.com>
+
 	Update for WebFoundation error domain changes.
 
         * Misc.subproj/WebKitErrors.h: Put WebErrorDomainWebKit in here.
