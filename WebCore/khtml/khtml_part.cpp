@@ -4417,49 +4417,52 @@ static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, 
     return false;
 }
 
-static void findWordBoundary(QChar *chars, int len, int position, int *start, int *end){
-    OSStatus status, findStatus = 0;
+static void findWordBoundary(QChar *chars, int len, int position, int *start, int *end)
+{
     TextBreakLocatorRef breakLocator;
-    
-    status = UCCreateTextBreakLocator (NULL, 0, kUCTextBreakWordMask, &breakLocator);
-    if (status == 0){
-        findStatus = UCFindTextBreak (breakLocator,  kUCTextBreakWordMask, NULL, (const UniChar *)chars, (UniCharCount)len, (UniCharArrayOffset)position, (UniCharArrayOffset *)end);
-        findStatus |= UCFindTextBreak (breakLocator,  kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask,  (const UniChar *)chars, (UniCharCount)len, (UniCharArrayOffset)position, (UniCharArrayOffset *)start);
-        UCDisposeTextBreakLocator (&breakLocator);
+    OSStatus status = UCCreateTextBreakLocator(NULL, 0, kUCTextBreakWordMask, &breakLocator);
+    if (status == noErr) {
+        UniCharArrayOffset startOffset, endOffset;
+        status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, 0, (const UniChar *)chars, len, position, &endOffset);
+        if (status == noErr) {
+            status = UCFindTextBreak(breakLocator, kUCTextBreakWordMask, kUCTextBreakGoBackwardsMask, (const UniChar *)chars, len, position, (UniCharArrayOffset *)start);
+        }
+        UCDisposeTextBreakLocator(&breakLocator);
+        if (status == noErr) {
+            *start = startOffset;
+            *end = endOffset;
+            return;
+        }
     }
     
-    // If carbon fails do a simple space/punctuation boundary check.
-    if (findStatus){
-        if (chars[position].isSpace()){
-            int pos = position;
-            while (chars[pos].isSpace() && pos >= 0)
-                pos--;
-            *start = pos+1;
-            pos = position;
-            while (chars[pos].isSpace() && pos < (int)len)
-                pos++;
-            *end = pos;
-        }
-        else if (chars[position].isPunct()){
-            int pos = position;
-            while (chars[pos].isPunct() && pos >= 0)
-                pos--;
-            *start = pos+1;
-            pos = position;
-            while (chars[pos].isPunct() && pos < (int)len)
-                pos++;
-            *end = pos;
-        }
-        else {
-            int pos = position;
-            while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos >= 0)
-                pos--;
-            *start = pos+1;
-            pos = position;
-            while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos < (int)len)
-                pos++;
-            *end = pos;
-        }
+    // If Carbon fails (why would it?), do a simple space/punctuation boundary check.
+    if (chars[position].isSpace()) {
+        int pos = position;
+        while (chars[pos].isSpace() && pos >= 0)
+            pos--;
+        *start = pos+1;
+        pos = position;
+        while (chars[pos].isSpace() && pos < (int)len)
+            pos++;
+        *end = pos;
+    } else if (chars[position].isPunct()) {
+        int pos = position;
+        while (chars[pos].isPunct() && pos >= 0)
+            pos--;
+        *start = pos+1;
+        pos = position;
+        while (chars[pos].isPunct() && pos < (int)len)
+            pos++;
+        *end = pos;
+    } else {
+        int pos = position;
+        while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos >= 0)
+            pos--;
+        *start = pos+1;
+        pos = position;
+        while (!chars[pos].isSpace() && !chars[pos].isPunct() && pos < (int)len)
+            pos++;
+        *end = pos;
     }
 }
 #endif

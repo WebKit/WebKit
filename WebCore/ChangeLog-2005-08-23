@@ -2,6 +2,20 @@
 
         Reviewed by Maciej.
 
+        - fixed uses of NULL in non-pointer contexts
+
+        * khtml/khtml_part.cpp: (findWordBoundary): Changed NULL to 0 and did a little code
+        cleanup of the surrounding code.
+        * khtml/rendering/break_lines.cpp: (khtml::isBreakable): Changed NULL to 0 and did
+        a tiny bit of cleanup.
+
+        * WebCorePrefix.h: Add a definition of NULL here that takes advantage of the GNU
+        __null feature even if the system C library doesn't.
+
+2003-10-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed 3457831 -- REGRESSION: copying particular text and pasting (plain) produces lots of extra text
 
         * khtml/khtml_part.cpp: (KHTMLPart::text): Check for the end node when following a

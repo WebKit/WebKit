@@ -1,3 +1,9 @@
+#ifdef __cplusplus
+#define NULL __null
+#else
+#define NULL ((void *)0)
+#endif
+
 #include <assert.h>
 #include <ctype.h>
 #include <fcntl.h>
