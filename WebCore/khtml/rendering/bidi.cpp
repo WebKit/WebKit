@@ -1354,11 +1354,13 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
     sNumMidpoints = 0;
     sCurrMidpoint = 0;
 
+    // in case we have a float on the last line, it might not be positioned up to now.
+    // This has to be done before adding in the bottom border/padding, or the float will
+    // include the padding incorrectly. -dwh
+    positionNewFloats();
+    
     // Now add in the bottom border/padding.
     m_height += toAdd;
-
-    // in case we have a float on the last line, it might not be positioned up to now.
-    positionNewFloats();
 
     // Always make sure this is at least our height.
     if (m_overflowHeight < m_height)

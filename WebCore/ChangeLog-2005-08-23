@@ -1,3 +1,32 @@
+2003-03-22  David Hyatt  <hyatt@apple.com>
+
+	Bottom border/padding was incorrectly being used in float
+        computations.  The fix is trivial... positioning of floats
+	occurs before you add in the bottom border/padding rather
+        than after.
+
+	Also implementing support for transparent borders and adding
+	code that understands how to draw more complex polys when
+	individual sides are transparent.  This code existed for left
+	and right borders, but not for top and bottom borders.
+
+	These two fixes make the tantek demo found at:
+
+	http://www.tantek.com/map.html
+
+	work properly for the first time in Safari.
+	
+        Reviewed by darin
+
+        * ChangeLog:
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::paintBorder):
+        * khtml/rendering/render_style.h:
+
 2003-03-21  David Hyatt  <hyatt@apple.com>
 
 	Fixes for all 4 macromedia rendering problems.  They were all
