@@ -179,4 +179,10 @@
 */
 - (NSString *)documentSource;
 
+/*!
+    @method title
+    @result Return the title for the document.
+*/
+- (NSString *)title;
+
 @end

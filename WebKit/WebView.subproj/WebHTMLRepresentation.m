@@ -86,6 +86,10 @@
     return [WebBridge stringWithData:[_private->dataSource data] textEncoding:[_private->bridge textEncoding]];
 }
 
+- (NSString *)title
+{
+    return [_private->dataSource _title];
+}
 
 - (id<WebDOMDocument>)DOMDocument
 {

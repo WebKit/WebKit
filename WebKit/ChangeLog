@@ -1,3 +1,31 @@
+2003-05-08  Richard Williamson   <rjw@apple.com>
+
+        Fixed 3252460.  *** Public API Change ***
+        Added title method to WebDocumentRepresentation.
+        
+        Fixed 3250352.  Check that delegate implements method.
+        
+        Reviewed by hyatt.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource pageTitle]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _startLoading:]):
+        (-[WebDataSource _title]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation title]):
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation title]):
+        * WebView.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation title]):
+        * WebView.subproj/WebTextRepresentation.h:
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation dealloc]):
+        (-[WebTextRepresentation setDataSource:]):
+        (-[WebTextRepresentation title]):
+
 2003-05-08  Darin Adler  <darin@apple.com>
 
         * WebKit.pbproj/project.pbxproj: Fixed paths for non-Panther builds.

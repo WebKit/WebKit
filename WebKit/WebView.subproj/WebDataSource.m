@@ -128,7 +128,7 @@
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {
-    return _private->pageTitle;
+    return [[self representation] title];
 }
 
 @end

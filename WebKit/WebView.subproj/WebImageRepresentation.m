@@ -77,5 +77,9 @@
     return nil;
 }
 
+- (NSString *)title
+{
+    return [URL absoluteString];
+}
 
 @end

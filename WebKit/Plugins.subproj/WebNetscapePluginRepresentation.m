@@ -9,6 +9,7 @@
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
+#import <WebFoundation/NSURLResponse.h>
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
@@ -91,6 +92,11 @@
 - (NSString *)documentSource
 {
     return nil;
+}
+
+- (NSString *)title
+{
+    return [[[_dataSource response] URL] absoluteString];
 }
 
 - (void)redeliverStream

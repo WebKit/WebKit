@@ -18,11 +18,14 @@
 - (void)dealloc
 {
     [RTFSource release];
+    [URL release];
     [super dealloc];
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
 {
+    URL = [[[dataSource request] URL] retain];
+
     // FIXME: This is broken. [dataSource data] is incomplete at this point.
     hasRTFSource = [[[dataSource response] MIMEType] isEqualToString:@"text/rtf"];
     if (hasRTFSource){
@@ -64,5 +67,11 @@
 {
     return RTFSource;
 }
+
+- (NSString *)title
+{
+    return [URL absoluteString];
+}
+
 
 @end
