@@ -1,3 +1,16 @@
+2002-03-08  Richard Williamson  <rjw@apple.com>
+
+        Instrumentation of the text fragment metrics cache.
+        Added _FAST_QSTRING_TO_NSSTRING.
+        
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutFragment initWithString:attributes:]),
+	(-[KWQLayoutFragment boundingRect]), (-[KWQLayoutFragment compare:]),
+	(+[KWQLayoutInfo _dumpLayoutCache:]), (+[KWQLayoutInfo _dumpAllLayoutCaches]),
+	(-[KWQLayoutInfo rectForString:]), (QFontMetrics::width),
+	(QFontMetrics::boundingRect), (QFontMetrics::size):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/qt/qstring.h:
+
 2002-03-08  John Sullivan  <sullivan@apple.com>
 
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::openURL), (KHTMLPart::end):

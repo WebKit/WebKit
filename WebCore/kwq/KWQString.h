@@ -37,6 +37,8 @@
 // These macros are TEMPORARY hacks to convert between NSString and QString.
 // They should be replaced with correct implementations.  They should only be
 // used for immutable strings.
+#define _FAST_QSTRING_TO_NSSTRING(aString) \
+    [NSString stringWithCString: aString.latin1()]
 #define QSTRING_TO_NSSTRING(aString) \
     [NSString stringWithCString: aString.latin1()]
 #define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
@@ -60,12 +62,21 @@
 #include "qcstring.h"
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+
+// Use with extreme caution.  Only use _FAST_QSTRING_TO_NSSTRING if you 
+// understand the reference count of the QString's underlying CFString.
+// In cases where QSTRING_TO_NSSTRING is called many times consider using
+// _FAST_QSTRING_TO_NSSTRING to save on unnecessary autoreleasing.
+#define _FAST_QSTRING_TO_NSSTRING(aString) \
+    ((NSString *)(aString.getCFMutableString()))
+    
 #define QSTRING_TO_NSSTRING(aString) \
     [[(NSString *)(aString.getCFMutableString()) retain] autorelease]
 #define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
     [[[(NSString *)(aString.getCFMutableString()) substringToIndex: l] retain] autorelease]
 #define NSSTRING_TO_QSTRING(aString) \
     QString::fromCFMutableString((CFMutableStringRef)aString)
+
 #endif
 
 class QString;

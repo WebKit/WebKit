@@ -27,6 +27,8 @@
 
 #import <Cocoa/Cocoa.h>
 
+#define _DEBUG_LAYOUT_FRAGMENT
+
 @interface KWQLayoutInfo : NSObject
 {
     NSMutableDictionary *attributes;
@@ -43,6 +45,9 @@
 - (void)setColor: (NSColor *)color;
 - (void)setFont: (NSFont *)aFont;
 - (NSDictionary *)attributes;
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (NSDictionary *)_fragmentCache;
+#endif
 @end
 
 @interface KWQLayoutFragment : NSObject
@@ -51,12 +56,19 @@
     NSTextContainer *textContainer;
     NSLayoutManager *layoutManager;
     NSRect boundingRect;
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    int _accessCount;
+#endif
     BOOL cachedRect;
 }
 
 - initWithString: (NSString *)storage attributes: (NSDictionary *)attrs;
 - (NSRect)boundingRect;
 - (void)dealloc;
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (int)_accessCount;
+#endif
 
 @end
 

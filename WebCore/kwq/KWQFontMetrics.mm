@@ -53,7 +53,11 @@ const float LargeNumberForText = 1.0e7;
     //[textContainer setLineFragmentPadding:0.0f];
 
     cachedRect = NO;
-    
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    _accessCount = 0;
+#endif
+
     return self;
 }
 
@@ -64,8 +68,25 @@ const float LargeNumberForText = 1.0e7;
         boundingRect = [layoutManager boundingRectForGlyphRange: NSMakeRange (0, numberOfGlyphs) inTextContainer: [KWQTextContainer sharedInstance]];
         cachedRect = YES;
     }
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    _accessCount++;
+#endif
     return boundingRect;
 }
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (int)_accessCount { return _accessCount; }
+
+- (NSComparisonResult)compare: (id)val
+{
+    if ([val _accessCount] > _accessCount)
+        return NSOrderedDescending;
+    else if ([val _accessCount] < _accessCount)
+        return NSOrderedAscending;
+    return NSOrderedSame;
+}
+
+#endif
 
 - (void)dealloc
 {
@@ -111,6 +132,51 @@ static NSMutableDictionary *metricsCache = nil;
     }
 }
 
+#ifdef _DEBUG_LAYOUT_FRAGMENT
++ (void)_dumpLayoutCache: (NSDictionary *)fragCache
+{
+    int i, count;
+    NSArray *stringKeys;
+    NSString *string;
+    KWQLayoutFragment *fragment;
+
+    if (fragCache == nil){
+        fprintf (stdout, "Fragment cache empty\n");
+        return;
+    }
+    fprintf (stdout, "  Hits   String\n");
+    
+    stringKeys = [fragCache keysSortedByValueUsingSelector:@selector(compare:)];
+    count = [stringKeys count];
+    for (i = 0; i < count; i++){
+        string = [stringKeys objectAtIndex: i];
+        fragment = [fragCache objectForKey: [stringKeys objectAtIndex: i]];
+        fprintf (stdout, "  %06d \"%s\"\n", [fragment _accessCount], [string cString]);
+    }
+}
+
++ (void)_dumpAllLayoutCaches
+{
+    int i, count;
+    NSFont *font;
+    NSArray *fontKeys;
+    KWQLayoutInfo *layoutInfo;
+    int totalObjects = 0;
+    
+    fontKeys = [metricsCache allKeys];
+    count = [fontKeys count];
+    for (i = 0; i < count; i++){
+        font = [fontKeys objectAtIndex: i];
+        layoutInfo = [metricsCache objectForKey: [fontKeys objectAtIndex: i]];
+        fprintf (stdout, "Cache information for font %s %f (%d objects)\n", [[font displayName] cString],[font pointSize], [[layoutInfo _fragmentCache] count]);
+        [KWQLayoutInfo _dumpLayoutCache: [layoutInfo _fragmentCache]];
+        totalObjects += [[layoutInfo _fragmentCache] count];
+    }
+    fprintf (stdout, "Total cached objects %d\n", totalObjects);
+}
+
+#endif
+
 
 + (KWQLayoutInfo *)getMetricsForFont: (NSFont *)aFont
 {
@@ -131,6 +197,9 @@ static NSMutableDictionary *metricsCache = nil;
     [metricsCache setObject: info forKey: aFont];
 }
 
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (NSDictionary *)_fragmentCache { return fragmentCache; }
+#endif
 
 - initWithFont: (NSFont *)aFont
 {
@@ -156,7 +225,6 @@ static NSMutableDictionary *metricsCache = nil;
     return cachedValue->layoutManager;
 }
 
-
 - (NSRect)rectForString:(NSString *)string
  {
     KWQLayoutFragment *cachedFragment, *fragment;
@@ -167,6 +235,9 @@ static NSMutableDictionary *metricsCache = nil;
 
     cachedFragment = [fragmentCache objectForKey: string];
     if (cachedFragment != nil){
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+        cachedFragment->_accessCount++;
+#endif
         return cachedFragment->boundingRect;
     }
 
@@ -316,7 +387,7 @@ int QFontMetrics::width(const QString &qstring, int len) const
     if (len != -1)
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
-        string = QSTRING_TO_NSSTRING (qstring);
+        string = _FAST_QSTRING_TO_NSSTRING (qstring);
     int stringWidth = ROUND_TO_INT([data->info rectForString: string].size.width);
     return stringWidth;
 }
@@ -329,7 +400,7 @@ QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
     if (len != -1)
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
-        string = QSTRING_TO_NSSTRING (qstring);
+        string = _FAST_QSTRING_TO_NSSTRING (qstring);
     NSRect rect = [data->info rectForString: string];
 
     return QRect(ROUND_TO_INT(rect.origin.x),
@@ -365,7 +436,7 @@ QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops,
     if (len != -1)
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
-        string = QSTRING_TO_NSSTRING (qstring);
+        string = _FAST_QSTRING_TO_NSSTRING (qstring);
     NSRect rect = [data->info rectForString: string];
 
     return QSize (ROUND_TO_INT(rect.size.width),ROUND_TO_INT(rect.size.height));
