@@ -10,7 +10,7 @@
 #import <WebKit/WebNetscapePluginRepresentation.h>
 
 #import <WebFoundation/NSURLResponse.h>
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
 #if !defined(MAC_OS_X_VERSION_10_3) || (MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_3)

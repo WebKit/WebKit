@@ -9,7 +9,7 @@
 #import <WebKit/WebStringTruncator.h>
 #import <Cocoa/Cocoa.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 

@@ -1,3 +1,57 @@
+2003-05-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Copied WebAssertions.[hm] from WebFoundation to WebKit
+
+	Updated all imports.
+
+	Added logging exported symbols to exports file.
+
+        * History.subproj/WebBackForwardList.m:
+        * History.subproj/WebHistory.m:
+        * History.subproj/WebHistoryItem.m:
+        * Misc.subproj/WebAssertions.h: Added.
+        * Misc.subproj/WebAssertions.m: Added.
+        (vprintf_stderr_objc):
+        (WebReportAssertionFailure):
+        (WebReportAssertionFailureWithMessage):
+        (WebReportArgumentAssertionFailure):
+        (WebReportFatalError):
+        (WebReportError):
+        (WebLog):
+        * Misc.subproj/WebKitLogging.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        * Misc.subproj/WebStringTruncator.m:
+        * Panels.subproj/WebAuthenticationPanel.m:
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        * WebCoreSupport.subproj/WebBridge.m:
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        * WebCoreSupport.subproj/WebFileButton.m:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        * WebCoreSupport.subproj/WebJavaScriptTextInputPanel.m:
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        * WebCoreSupport.subproj/WebViewFactory.m:
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        * WebView.subproj/WebClipView.m:
+        * WebView.subproj/WebDataProtocol.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDefaultPolicyDelegate.m:
+        * WebView.subproj/WebFrameViewPrivate.m:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        * WebView.subproj/WebImageView.m:
+        * WebView.subproj/WebTextRepresentation.m:
+        * WebView.subproj/WebTextView.m:
+        * WebView.subproj/WebView.m:
+        * WebView.subproj/WebViewPrivate.m:
+
 2003-05-13  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3014661.  We now display (a lame Lemay) image

@@ -20,7 +20,7 @@
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
 
 #import <WebFoundation/WebNSDataExtras.h>

@@ -14,7 +14,7 @@
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebView.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/NSURLConnection.h>
 #import <WebFoundation/NSURLRequest.h>

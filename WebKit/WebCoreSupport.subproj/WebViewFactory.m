@@ -8,7 +8,7 @@
 
 #import <WebKit/WebViewFactory.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebLocalizableStrings.h>
 
 #import <WebKit/WebPluginDatabase.h>

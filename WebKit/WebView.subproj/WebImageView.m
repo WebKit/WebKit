@@ -16,7 +16,7 @@
 
 #import <WebCore/WebCoreImageRenderer.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 
 @implementation WebImageView
 

@@ -6,7 +6,7 @@
 #import <WebKit/WebImageRenderer.h>
 
 #import <WebCore/WebCoreImageRenderer.h>
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 
 extern NSString *NSImageLoopCount;
 

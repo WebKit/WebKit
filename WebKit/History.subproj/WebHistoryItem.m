@@ -10,7 +10,7 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 

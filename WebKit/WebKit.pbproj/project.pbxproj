@@ -292,6 +292,7 @@
 				515E27CD0458C86500CA2D3A,
 				515E27D10458CA4B00CA2D3A,
 				6578F5E0045F817400000128,
+				BEE18F940472A0CF00CA289C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +405,7 @@
 				70ECD6CF043B727400A80181,
 				515E27D20458CA4B00CA2D3A,
 				6578F5E1045F817400000128,
+				BEE18F950472A0CF00CA289C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2376,6 +2378,43 @@
 //9C2
 //9C3
 //9C4
+//BE0
+//BE1
+//BE2
+//BE3
+//BE4
+		BEE18F920472A0CF00CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebAssertions.h;
+			refType = 4;
+		};
+		BEE18F930472A0CF00CA289C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebAssertions.m;
+			refType = 4;
+		};
+		BEE18F940472A0CF00CA289C = {
+			fileRef = BEE18F920472A0CF00CA289C;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		BEE18F950472A0CF00CA289C = {
+			fileRef = BEE18F930472A0CF00CA289C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//BE0
+//BE1
+//BE2
+//BE3
+//BE4
 //ED0
 //ED1
 //ED2
@@ -2565,6 +2604,8 @@
 		};
 		F52CA6C002DF9D78018635CA = {
 			children = (
+				BEE18F920472A0CF00CA289C,
+				BEE18F930472A0CF00CA289C,
 				F59EAE3E0253C7EE018635CA,
 				F59EAE410253C8DE018635CA,
 				F57FB8C4034E180101A80180,

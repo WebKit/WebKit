@@ -6,7 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 
 #ifndef LOG_CHANNEL_PREFIX
 #define LOG_CHANNEL_PREFIX WebKitLog

@@ -26,7 +26,7 @@
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebImageRenderer.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 
 @implementation WebImageRendererFactory

@@ -11,7 +11,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 
 #import <WebFoundation/NSError.h>
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 

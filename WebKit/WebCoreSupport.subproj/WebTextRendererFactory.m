@@ -7,7 +7,7 @@
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebSystemBits.h>
 
 #import <CoreGraphics/CoreGraphicsPrivate.h>

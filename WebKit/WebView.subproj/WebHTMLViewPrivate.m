@@ -8,7 +8,7 @@
 #import <AppKit/NSGraphicsContextPrivate.h> // for PSbuttondown
 #import <AppKit/NSResponder_Private.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
 #import <WebCore/WebCoreFirstResponderChanges.h>

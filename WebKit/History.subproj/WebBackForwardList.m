@@ -7,7 +7,7 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPreferencesPrivate.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebSystemBits.h>
 
 #define COMPUTE_DEFAULT_PAGE_CACHE_SIZE UINT_MAX

@@ -8,7 +8,7 @@
 
 #import "WebClipView.h"
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 
 @implementation WebClipView
 

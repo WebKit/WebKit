@@ -10,7 +10,7 @@
 #import <WebKit/WebURLsWithTitles.h>
 #import <WebKit/WebViewPrivate.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 

@@ -13,19 +13,19 @@
 #import <sys/types.h>
 #import <sys/mman.h>
 
-#import "WebFoundationLogging.h"
+#import "NSURLLogging.h"
 #import "NSLRUFileList.h"
 #import "WebNSFileManagerExtras.h"
 #import "WebSystemBits.h"
 
-#if ERROR_DISABLED
+#if NSURL_ERROR_DISABLED
 #define BEGIN_EXCEPTION_HANDLER
 #define END_EXCEPTION_HANDLER
 #else
 #define BEGIN_EXCEPTION_HANDLER NS_DURING
 #define END_EXCEPTION_HANDLER \
     NS_HANDLER \
-        ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
+        NSURL_ERROR("Uncaught exception: %@ [%@] [%@]", [localException class], [localException reason], [localException userInfo]); \
     NS_ENDHANDLER
 #endif
 
@@ -80,7 +80,7 @@ enum
 
 -(id)initWithCode:(WebFileDatabaseOpcode)theOpcode key:(id)theKey object:(id)theObject
 {
-    ASSERT(theKey);
+    NSURL_ASSERT(theKey);
 
     if ((self = [super init])) {
         
@@ -111,7 +111,7 @@ enum
 
 -(void)perform:(WebFileDatabase *)target
 {
-    ASSERT(target);
+    NSURL_ASSERT(target);
 
     switch (opcode) {
         case WebFileDatabaseSetObjectOp:
@@ -121,7 +121,7 @@ enum
             [target performRemoveObjectForKey:key];
             break;
         default:
-            ASSERT_NOT_REACHED();
+            NSURL_ASSERT_NOT_REACHED();
             break;
     }
 }
@@ -191,7 +191,7 @@ static void UniqueFilePathForKey(id key, char *buffer)
 
     END_EXCEPTION_HANDLER
 
-    LOG(WebFileDatabaseActivity, "lru list created");
+    NSURL_LOG(WebFileDatabaseActivity, "lru list created");
 
     [pool release];
 }
@@ -324,12 +324,12 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    ASSERT(object);
-    ASSERT(key);
+    NSURL_ASSERT(object);
+    NSURL_ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
 
-    LOG(WebFileDatabaseActivity, "%p - %@", object, key);
+    NSURL_LOG(WebFileDatabaseActivity, "%p - %@", object, key);
     
     [mutex lock];
     
@@ -346,7 +346,7 @@ static void databaseInit()
 {
     WebFileDatabaseOp *op;
 
-    ASSERT(key);
+    NSURL_ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
     
@@ -374,14 +374,14 @@ static void databaseInit()
     [self open];
     [mutex unlock];
 
-    LOG(WebFileDatabaseActivity, "removeAllObjects");
+    NSURL_LOG(WebFileDatabaseActivity, "removeAllObjects");
 }
 
 -(id)objectForKey:(id)key
 {
     volatile id result;
     
-    ASSERT(key);
+    NSURL_ASSERT(key);
 
     touch = CFAbsoluteTimeGetCurrent();
 
@@ -420,13 +420,13 @@ static void databaseInit()
                             // but not critically bad
                             NSLRUFileListTouchFileWithPath(lru, uniqueKey);
                         }
-                        LOG(WebFileDatabaseActivity, "read disk cache file - %@", key);
+                        NSURL_LOG(WebFileDatabaseActivity, "read disk cache file - %@", key);
                     }
                 }
             }
         }
     NS_HANDLER
-        LOG(WebFileDatabaseActivity, "cannot unarchive cache file - %@", key);
+        NSURL_LOG(WebFileDatabaseActivity, "cannot unarchive cache file - %@", key);
         result = nil;
     NS_ENDHANDLER
 
@@ -448,12 +448,12 @@ static void databaseInit()
     char uniqueKey[UniqueFilePathSize];
     BOOL result;
 
-    ASSERT(object);
-    ASSERT(key);
+    NSURL_ASSERT(object);
+    NSURL_ASSERT(key);
 
     UniqueFilePathForKey(key, uniqueKey);
 
-    LOG(WebFileDatabaseActivity, "%@ - %s", key, uniqueKey);
+    NSURL_LOG(WebFileDatabaseActivity, "%@ - %s", key, uniqueKey);
 
     data = [NSMutableData data];
     archiver = [[NSArchiver alloc] initForWritingWithMutableData:data];
@@ -497,9 +497,9 @@ static void databaseInit()
     NSString *filePath;
     char uniqueKey[UniqueFilePathSize];
     
-    ASSERT(key);
+    NSURL_ASSERT(key);
 
-    LOG(WebFileDatabaseActivity, "%@", key);
+    NSURL_LOG(WebFileDatabaseActivity, "%@", key);
 
     UniqueFilePathForKey(key, uniqueKey);
     filePath = [[NSString alloc] initWithFormat:@"%@/%s", path, uniqueKey];
@@ -566,11 +566,11 @@ static void databaseInit()
     CFTimeInterval mark = CFAbsoluteTimeGetCurrent();
 #endif
 
-    LOG(WebFileDatabaseActivity, ">>> BEFORE lazySync\n%@", NSLRUFileListDescription(lru));
+    NSURL_LOG(WebFileDatabaseActivity, ">>> BEFORE lazySync\n%@", NSLRUFileListDescription(lru));
 
     WebFileDatabaseOp *op;
 
-    ASSERT(theTimer);
+    NSURL_ASSERT(theTimer);
 
     while (touch + SYNC_IDLE_THRESHOLD < CFAbsoluteTimeGetCurrent() && [ops count] > 0) {
         [mutex lock];
@@ -603,10 +603,10 @@ static void databaseInit()
 
 #ifndef NDEBUG
     if (lru)
-        LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", NSLRUFileListDescription(lru));
+        NSURL_LOG(WebFileDatabaseActivity, "<<< AFTER lazySync\n%@", NSLRUFileListDescription(lru));
 
     CFTimeInterval now = CFAbsoluteTimeGetCurrent();
-    LOG(WebFileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
+    NSURL_LOG(WebFileDatabaseActivity, "lazySync ran in %.3f secs.", now - mark);
 #endif
 }
 
@@ -621,7 +621,7 @@ static void databaseInit()
 
     touch = CFAbsoluteTimeGetCurrent();
 
-    LOG(WebFileDatabaseActivity, ">>> BEFORE sync\n%@", NSLRUFileListDescription(lru));
+    NSURL_LOG(WebFileDatabaseActivity, ">>> BEFORE sync\n%@", NSLRUFileListDescription(lru));
     
     [mutex lock];
     array = [ops copy];
@@ -636,7 +636,7 @@ static void databaseInit()
     [array makeObjectsPerformSelector:@selector(perform:) withObject:self];
     [array release];
 
-    LOG(WebFileDatabaseActivity, "<<< AFTER sync\n%@", NSLRUFileListDescription(lru));
+    NSURL_LOG(WebFileDatabaseActivity, "<<< AFTER sync\n%@", NSLRUFileListDescription(lru));
 }
 
 -(unsigned)count

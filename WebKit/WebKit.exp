@@ -56,6 +56,12 @@ _WebIconSmallSize
 _WebKitErrorMIMETypeKey
 _WebKitErrorPlugInNameKey
 _WebKitErrorPlugInPageURLStringKey
+_WebLog
+_WebReportArgumentAssertionFailure
+_WebReportAssertionFailure
+_WebReportAssertionFailureWithMessage
+_WebReportError
+_WebReportFatalError
 _WebURLNamePboardType
 _WebURLPboardType
 

@@ -23,7 +23,7 @@
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebUIDelegate.h>
 
-#import <WebFoundation/WebAssertions.h>
+#import <WebKit/WebAssertions.h>
 
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebNSDataExtras.h>
