@@ -1,3 +1,11 @@
+2004-09-28  Chris Blumenberg  <cblu@apple.com>
+
+	Added timing code so that Doug can time RTF conversion. 
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView writeSelectionWithPasteboardTypes:toPasteboard:]):
+        (-[WebHTMLView _attributeStringFromDOMRange:]):
+
 2004-09-28  Richard Williamson   <rjw@apple.com>
 
         <rdar://problem/3817421> add getter for dashboard regions (debugging)

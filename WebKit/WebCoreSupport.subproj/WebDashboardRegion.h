@@ -27,7 +27,8 @@
 typedef enum {
     WebDashboardRegionTypeNone,
     WebDashboardRegionTypeCircle,
-    WebDashboardRegionTypeRectangle
+    WebDashboardRegionTypeRectangle,
+    WebDashboardRegionTypeScrollerRectangle
 } WebDashboardRegionType;
 
 @interface WebDashboardRegion : NSObject <NSCopying>

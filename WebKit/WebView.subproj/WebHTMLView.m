@@ -1481,7 +1481,6 @@ static WebHTMLView *lastHitView = nil;
         [pasteboard setData:RTFData forType:NSRTFPboardType];
     }
         
-    
     // Put plain string on the pasteboard.
     if ([types containsObject:NSStringPboardType]) {
         // Map &nbsp; to a plain old space because this is better for source code, other browsers do it,
@@ -1873,7 +1872,14 @@ static WebHTMLView *lastHitView = nil;
 {
     NSAttributedString *attributedString = nil;
 #ifdef USE_APPKIT_FOR_ATTRIBUTED_STRINGS
+#if !LOG_DISABLED        
+    double start = CFAbsoluteTimeGetCurrent();
+#endif    
     attributedString = [[[NSAttributedString alloc] _initWithDOMRange:range] autorelease];
+#if !LOG_DISABLED
+    double duration = CFAbsoluteTimeGetCurrent() - start;
+    LOG(Timing, "creating attributed string from selection took %f seconds.", duration);
+#endif
 #endif
     return attributedString;
 }
