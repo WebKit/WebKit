@@ -1,5 +1,22 @@
 2002-05-31  Darin Adler  <darin@apple.com>
 
+	* kwq/kio/jobclasses.h: Removed SimpleJob and made Job just enough for
+	TransferJob to inherit from it. Removed unused stuff and made url() return
+	an NSURL rather than a KURL.
+	* kwq/KWQKjobclasses.mm: Removed much of the code, and reworked what
+	remains to simplify it.
+	* kwq/KWQKloader.mm: Update users of TransferJob::url since it now returns
+	an NSURL rather than a KURL.
+
+	* kwq/kio/job.h: Simplify.
+	* kwq/KWQKJob.mm: Simplify.
+
+	* kwq/kio/scheduler.h: Emptied this file out.
+	* kwq/KWQKScheduler.mm: Removed.
+	* kwq/Makefile.am: Removed KWQKScheduler.mm.
+
+2002-05-31  Darin Adler  <darin@apple.com>
+
 	Remove some unused stuff; total of 1000s of lines.
 
 	* Makefile.am: Removed some strange uses of "./" and

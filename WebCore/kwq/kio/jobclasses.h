@@ -26,187 +26,48 @@
 #ifndef JOBCLASSES_H_
 #define JOBCLASSES_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <kurl.h>
 #include <qobject.h>
 #include <qstring.h>
 
-#ifdef _KWQ_
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#ifdef __OBJC__
 #import <WebFoundation/WebFoundation.h>
 #endif
-#endif
-
 
 namespace KIO {
 
 class TransferJobPrivate;
 
-// class Job ===================================================================
-
 class Job : public QObject {
 public:
+    virtual int error() const = 0;
+    virtual const QString & errorText() const = 0;
+    virtual void kill() = 0;
+};
 
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    Job() {}
-#endif
-
-    virtual ~Job();
-
-    // member functions --------------------------------------------------------
-
-    virtual int error();
-    const QString & errorText();
-    QString errorString();
-    virtual void kill(bool quietly=TRUE);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    Job(const Job &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    Job &operator=(const Job &);
-#endif
-
-}; // class Job ================================================================
-
-
-// class SimpleJob =============================================================
-
-class SimpleJob : public KIO::Job {
+class TransferJob : public Job {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    SimpleJob() {}
-#endif
-
-    ~SimpleJob();
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    SimpleJob(const SimpleJob &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    SimpleJob &operator=(const SimpleJob &);
-#endif
-
-}; // class SimpleJob ==========================================================
-
-
-// class TransferJob ===========================================================
-
-class TransferJob : public SimpleJob {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-    
-    TransferJob(const KURL &, bool reload=false, bool showProgressInfo=true);
-
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    TransferJob() {}
-#endif
-
+    TransferJob(const KURL &, bool reload = false, bool showProgressInfo = true);
     ~TransferJob();
 
-    // member functions --------------------------------------------------------
-
-    int error();
+    int error() const;
     void setError(int);
+    const QString &errorText() const;
     bool isErrorPage() const;
-    QString queryMetaData(const QString &key);
+    QString queryMetaData(const QString &key) const;
     void addMetaData(const QString &key, const QString &value);
-    void kill(bool quietly=TRUE);
+    void kill();
 
-#ifdef _KWQ_
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+#ifdef __OBJC__
     void begin(id <IFURLHandleClient> client, void *userData);
-    id handle();
-#else
-    void begin(void *requestor, void *userData);
-    void *handle();
-#endif
-    KURL url() { return _url; }
-#endif
-
+    IFURLHandle *handle() const;
     
-    // operators ---------------------------------------------------------------
+    NSURL *url() const;
+#endif
 
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-#ifdef _KWQ_
 private:
-    KURL _url;
-    bool _reload;
-    bool _showProgressInfo;
-    int _status;
     TransferJobPrivate *d;
-#endif
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    TransferJob(const TransferJob &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    TransferJob &operator=(const TransferJob &);
-#endif
-
-}; // class TransferJob ========================================================
-
+};
 
 } // namespace KIO
 

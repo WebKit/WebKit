@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +23,14 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
 #include <job.h>
+#include <kwqdebug.h>
 
 namespace KIO {
 
-SimpleJob *http_update_cache(const KURL &, bool, time_t)
+void http_update_cache(const KURL &, bool, time_t)
 {
     _logNotYetImplemented();
-    return 0L;
-}
-
-TransferJob *get(const KURL &url, bool reload=false, bool showProgressInfo=true)
-{
-    TransferJob *result;
-    
-    result = new TransferJob(url, reload, showProgressInfo);
-
-    return result;
 }
 
 } // namespace KIO
-

@@ -32,97 +32,36 @@
 
 #include <WebFoundation/IFURLHandleClient.h>
 
-static const QString *DEFAULT_ERROR_TEXT = NULL;
-
 namespace KIO {
-
-// class Job ===================================================================
-
-Job::~Job()
-{
-}
-
-
-int Job::error()
-{
-    _logNeverImplemented();
-    return 0;
-}
-
-
-const QString &Job::errorText()
-{
-    _logNotYetImplemented();
-    if (DEFAULT_ERROR_TEXT == NULL) {
-        DEFAULT_ERROR_TEXT = new QString("DEFAULT_ERROR_TEXT");
-    }
-
-    return *DEFAULT_ERROR_TEXT;
-}
-
-
-QString Job::errorString()
-{
-    _logNotYetImplemented();
-    return QString();
-}
-
-
-void Job::kill(bool quietly)
-{
-    _logNotYetImplemented();
-}
-
-
-// class SimpleJob =============================================================
-
-SimpleJob::~SimpleJob()
-{
-    _logNotYetImplemented();
-}
-
-
-// class TransferJobPrivate ====================================================
 
 class TransferJobPrivate
 {
-friend class TransferJob;
 public:
-
-    TransferJobPrivate(TransferJob *parent, KURL &kurl)
+    TransferJobPrivate(const KURL &kurl)
     {
+        status = 0;
         metaData = [[NSMutableDictionary alloc] initWithCapacity:17];
-        url = [kurl.getNSURL() retain];
+        url = [kurl.getNSURL() copy];
         handle = nil;
     }
 
     ~TransferJobPrivate()
     {
-        [metaData autorelease];
-        [url autorelease];
-        [handle autorelease];
+        [metaData release];
+        [url release];
+        [handle release];
     }
 
-private:
-    TransferJob *parent;
+    int status;
     NSMutableDictionary *metaData;
     NSURL *url;
-    id handle;
-    id <IFURLHandleClient> client;
+    IFURLHandle *handle;
 };
 
-// class TransferJob ===========================================================
-
-TransferJob::TransferJob(const KURL &url, bool reload=false, bool showProgressInfo=true)
+TransferJob::TransferJob(const KURL &url, bool reload, bool showProgressInfo)
 {
-    _url = url;
-    _reload = reload;
-    _showProgressInfo = showProgressInfo;
-    _status = 0;
-
-    d = new TransferJobPrivate(this, _url);
+    d = new TransferJobPrivate(url);
 }
-
 
 TransferJob::~TransferJob()
 {
@@ -131,42 +70,42 @@ TransferJob::~TransferJob()
 
 bool TransferJob::isErrorPage() const
 {
-    return (_status != 0);
+    return d->status != 0;
 }
 
-int TransferJob::error()
+int TransferJob::error() const
 {
-    return _status;
+    return d->status;
 }
 
 void TransferJob::setError(int e)
 {
-    _status = e;
+    d->status = e;
 }
 
-QString TransferJob::queryMetaData(const QString &key)
+const QString &TransferJob::errorText() const
 {
-    NSString *_key;
-    NSString *_value;
+    _logNotYetImplemented();
+    static QString text("DEFAULT_ERROR_TEXT");
+    return text;
+}
+
+QString TransferJob::queryMetaData(const QString &key) const
+{
+    NSString *value;
     
-    _key = QSTRING_TO_NSSTRING(key);
-    _value = [d->metaData objectForKey:_key]; 
-    if (!_value) {
-        return QString::null;
-    }
-    else {
-        return NSSTRING_TO_QSTRING(_value);
-    }
+    value = [d->metaData objectForKey:key.getNSString()]; 
+    return value ? QString::fromNSString(value) : QString::null;
 }
  
 void TransferJob::addMetaData(const QString &key, const QString &value)
 {
-    NSString *_key = QSTRING_TO_NSSTRING(key);
-    NSString *_value = QSTRING_TO_NSSTRING(value);
-    [d->metaData setObject:_value forKey:_key];
+    NSString *immutableValue = [value.getNSString() copy];
+    [d->metaData setObject:immutableValue forKey:key.getNSString()];
+    [immutableValue release];
 }
 
-void TransferJob::kill(bool quietly)
+void TransferJob::kill()
 {
     [d->handle cancelLoadInBackground];
 }
@@ -175,16 +114,20 @@ void TransferJob::begin(id <IFURLHandleClient> client, void *userData)
 {
     NSDictionary *attributes;
     
-    d->client = client;
     attributes = [NSDictionary dictionaryWithObject:[NSValue valueWithPointer:userData] forKey:IFURLHandleUserData];
     d->handle = [[IFURLHandle alloc] initWithURL:d->url attributes:attributes flags:0];    
     [d->handle addClient:client];
     [d->handle loadInBackground];
 }
 
-id TransferJob::handle() { return d->handle; }
+IFURLHandle *TransferJob::handle() const
+{
+    return d->handle;
+}
 
+NSURL *TransferJob::url() const
+{
+    return [[d->url retain] autorelease];
+}
 
 } // namespace KIO
-
-

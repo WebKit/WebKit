@@ -74,19 +74,16 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    QString urlString = job->url().url();
 
-    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource,
-                  static_cast<KIO::TransferJob *>(
-                  [[sender attributeForKey:IFURLHandleUserData] pointerValue])->url().url().latin1());
+    KWQDEBUGLEVEL(KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, DEBUG_OBJECT(job->url()));
 
     IFLoadProgress *loadProgress = WCIFLoadProgressMake();
     loadProgress->totalToLoad = contentLength;
     loadProgress->bytesSoFar = contentLengthReceived;
     
     controller = [m_dataSource controller];
-    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
-    [controller _didStartLoading:job->url().getNSURL()];
+    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
+    [controller _didStartLoading:job->url()];
 }
 
 - (void)IFURLHandleResourceDidCancelLoading:(IFURLHandle *)sender
@@ -97,11 +94,10 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    QString urlString = job->url().url();
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, urlString.latin1());
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s\n", m_dataSource, DEBUG_OBJECT(job->url()));
 
     job->setError(1);
     m_loader->slotFinished(job);
@@ -111,9 +107,9 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = -1;
 
     controller = [m_dataSource controller];
-    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
 
-    [controller _didStopLoading:job->url().getNSURL()];
+    [controller _didStopLoading:job->url()];
 
     delete job;
 }
@@ -126,11 +122,10 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    QString urlString = job->url().url();
 
     [m_dataSource _removeURLHandle: job->handle()];
     
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, DEBUG_OBJECT(job->url()), data, [data length]);
 
     m_loader->slotFinished(job);
     
@@ -139,9 +134,9 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = [data length];
 
     controller = [m_dataSource controller];
-    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
 
-    [controller _didStopLoading:job->url().getNSURL()];
+    [controller _didStopLoading:job->url()];
 
     delete job;
 }
@@ -155,9 +150,8 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    QString urlString = job->url().url();
     
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, urlString.latin1(), data, [data length]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p for URL %s data at %p, length %d\n", m_dataSource, DEBUG_OBJECT(job->url()), data, [data length]);
 
     m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 
@@ -175,14 +169,14 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     loadProgress->bytesSoFar = contentLengthReceived;
     
     controller = [m_dataSource controller];
-    [controller _receivedProgress: (IFLoadProgress *)loadProgress forResource: QSTRING_TO_NSSTRING(urlString) fromDataSource: m_dataSource];
+    [controller _receivedProgress: loadProgress forResource: [job->url() absoluteString] fromDataSource: m_dataSource];
 }
 
 - (void)IFURLHandle:(IFURLHandle *)sender resourceDidFailLoadingWithResult:(IFError *)result
 {
     void *userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p, result = %s, URL = %s\n", m_dataSource, [[result errorDescription] lossyCString], job->url().url().latin1());
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "dataSource = %p, result = %s, URL = %s\n", m_dataSource, DEBUG_OBJECT([result errorDescription]), DEBUG_OBJECT(job->url()));
 
     [m_dataSource _removeURLHandle: job->handle()];
 
@@ -195,9 +189,9 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     job->setError(1);
     m_loader->slotFinished(job);
 
-    [(IFBaseWebController *)controller _receivedError: result forResource: QSTRING_TO_NSSTRING(job->url().url()) partialProgress: loadProgress fromDataSource: m_dataSource];
+    [(IFBaseWebController *)controller _receivedError: result forResource: [job->url() absoluteString] partialProgress: loadProgress fromDataSource: m_dataSource];
 
-    [(IFBaseWebController *)controller _didStopLoading:job->url().getNSURL()];
+    [(IFBaseWebController *)controller _didStopLoading:job->url()];
 
     delete job;
 }
@@ -206,9 +200,9 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
 {
     void *userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
     KIO::TransferJob *job = static_cast<KIO::TransferJob *>(userData);
-    NSURL *oldURL = job->url().getNSURL();
+    NSURL *oldURL = job->url();
 
-    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "url = %s\n", [[url absoluteString] cString]);
+    KWQDEBUGLEVEL (KWQ_LOG_LOADING, "url = %s\n", DEBUG_OBJECT(url));
     [m_dataSource _part]->impl->setBaseURL([[url absoluteString] cString]);
     
     [m_dataSource _setFinalURL: url];

@@ -68,7 +68,6 @@ libkwq_o_SOURCES = \
 	KWQKPrinter.mm \
 	KWQKProcess.mm \
 	KWQKProtocolManager.mm \
-	KWQKScheduler.mm \
 	KWQKSimpleConfig.mm \
 	KWQKStringHandler.mm \
 	KWQKURL.mm \
