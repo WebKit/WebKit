@@ -1,8 +1,16 @@
+2004-09-27  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3814705> 8A266: Safari authentication dialog "remember password" text should match Mail
+
+        * Panels.subproj/English.lproj/WebAuthenticationPanel.nib:
+        changed "Remember this password" to "Remember this password in my keychain";
+        this will need to go through CCC for this week's build.
+
 2004-09-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3594754> change null event interval from 20 ms to 10 ms to match speed on Windows
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by John.
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:
 
