@@ -1,3 +1,38 @@
+2002-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+	Converted JavaScriptCore to build with Project Builder, in
+	preparation for B&I submission.
+
+	* English.lproj/InfoPlist.strings: Added.
+	* JavaScriptCore.pbproj/.cvsignore: Added.
+	* JavaScriptCore.pbproj/project.pbxproj: Added.
+	
+	* .cvsignore: Update the set of ignored things.
+
+	* Makefile.am: Hand off to PB for the main build, but still handle
+	the generated files and the test program.
+
+	* kjs/Makefile.am: Don't build anything except the generated
+	source files.
+
+	* kjs/KWQDef.h, kjs/config.h: Added minimal versions of these
+	files to get kjs to build.
+
+	Check in all the genrated files, since Project Builder isn't up to
+	the task of handling built sources:
+	
+	* kjs/array_object.lut.h: Added.
+	* kjs/date_object.lut.h: Added.
+	* kjs/grammar.cpp: Added.
+	* kjs/grammar.cpp.h: Added.
+	* kjs/grammar.h: Added.
+	* kjs/lexer.lut.h: Added.
+	* kjs/math_object.lut.h: Added.
+	* kjs/number_object.lut.h: Added.
+	* kjs/string_object.lut.h: Added.
+
+	* kjs/.cvsignore: Update set of ignored things.
+
 2002-03-28  Maciej Stachowiak  <mjs@apple.com>
 
 	* kjs/kjs-test.chk: Update output for new test results.

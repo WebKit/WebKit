@@ -1,3 +1,8 @@
+2002-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/Makefile.am: Link against JavaScriptCore.framework instead
+	of the defunct libJavaScriptCore.dylib.
+
 2002-03-29  Darin Adler  <darin@apple.com>
 
 	* src/kdelibs/khtml/rendering/render_image.cpp: (RenderImage::updateFromElement):

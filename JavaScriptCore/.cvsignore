@@ -1,4 +1,3 @@
 Makefile.in
 Makefile
-JavaScriptCore-install-stamp
-libJavaScriptCore.dylib
+JavaScriptCore-stamp

@@ -1,14 +1,8 @@
 Makefile.in
 Makefile
 testkjs
-grammar.cpp
-grammar.cpp.h
-grammar.h
 .deps
 *-stamp
-*.lo
-*.la
 .libs
-*.lut.h
 kjs-test.diff
 kjs-test.out

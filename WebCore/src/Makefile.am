@@ -18,7 +18,6 @@ libwebcore_dylib_LIBADD = \
 	./kdelibs/khtml/libkhtml.o \
 	./kwq/libkwq.o \
 	-ljpeg \
-	-L$(symrootsdir) -lJavaScriptCore \
 	$(NULL)
 
 LIBWEBCORE_INSTALL_PATH = @executable_path/../Frameworks
@@ -50,7 +49,9 @@ embed:
 LDFLAGS = \
 	-framework Cocoa \
 	-framework CoreFoundation \
-	-F$(symrootsdir) -framework WebFoundation \
+	-F$(symrootsdir) \
+	-framework WebFoundation \
+	-framework JavaScriptCore \
         -dynamiclib \
 	-twolevel_namespace \
 	-prebind \

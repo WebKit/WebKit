@@ -1,3 +1,9 @@
+2002-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+	* WebKit.pbproj/project.pbxproj: Link against
+	JavaScriptCore.framework instead of the defunct
+	libJavaScriptCore.dylib.
+
 2002-03-29  Richard Williamson  <rjw@apple.com>
 
         Fixes for cancelling.  Still need to think about a better
