@@ -1,5 +1,14 @@
 2004-09-14  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed badness that my last patch caused. Because there was a conflict, my last patch added stuff that darin had just removed.
+
+        Reviewed by darin.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendContextMenuEvent): don't call deref on the view
+
+2004-09-14  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3783595> REGRESSION (Mail): control-click does not select closest word
 
         Reviewed by kocienda.

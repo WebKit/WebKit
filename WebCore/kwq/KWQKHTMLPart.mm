@@ -2684,7 +2684,6 @@ bool KWQKHTMLPart::sendContextMenuEvent(NSEvent *event)
     if (!swallowEvent && ([_bridge isEditable] || mev.innerNode.handle()->isContentEditable())) {
         selectClosetWordFromMouseEvent(&qev, mev.innerNode, xm, ym);
     }
-    v->deref();
 
     ASSERT(_currentEvent == event);
     KWQRelease(event);
