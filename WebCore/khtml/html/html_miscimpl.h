@@ -84,7 +84,7 @@ public:
     NodeImpl *nextNamedItem( const DOMString &name ) const;
 
     struct CollectionInfo {
-        CollectionInfo() : version(0), current(0), position(0), length(0), hasLength(false) {}
+        CollectionInfo() : version(0), current(0), position(0), length(0), haslength(false) {}
         unsigned int version;
         NodeImpl *current;
         unsigned int position;
