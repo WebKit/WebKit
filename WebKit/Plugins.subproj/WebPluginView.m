@@ -154,12 +154,17 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 {
     if(!transferred){
         NSNotificationCenter *notificationCenter;
+        NSWindow *theWindow;
+        
         [self setWindow];
+        theWindow = [self window];
         notificationCenter = [NSNotificationCenter defaultCenter];
         [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
-        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
-        [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:[self window]];
-        [self sendActivateEvent];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:theWindow];
+        [notificationCenter addObserver:self selector:@selector(windowWillClose:) name:@"NSWindowWillCloseNotification" object:theWindow];
+        [notificationCenter addObserver:self selector:@selector(windowBecameKey:) name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
+        [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
+        [self sendActivateEvent:[theWindow isKeyWindow]];
         if(URL)
             [self newStream:URL mimeType:mime notifyData:NULL];
         eventSender = [[IFPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
@@ -181,6 +186,16 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
 {
     [self sendUpdateEvent];
     [self setWindow];
+}
+
+-(void) windowBecameKey:(NSNotification *)notification
+{
+    [self sendActivateEvent:TRUE];
+}
+
+-(void) windowResignedKey:(NSNotification *)notification
+{
+    [self sendActivateEvent:FALSE];
 }
 
 - (void) setWindow
@@ -401,7 +416,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     return YES;
 }
 
--(void)sendActivateEvent
+-(void)sendActivateEvent:(BOOL)isActive;
 {
     EventRecord event;
     bool acceptedEvent;
@@ -411,8 +426,9 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     event.message = (uint32)GetWindowPort([[self window] _windowRef]);
     Microseconds(&msecs);
     event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
+    event.modifiers = isActive;
     acceptedEvent = NPP_HandleEvent(instance, &event); 
-    KWQDebug("NPP_HandleEvent(activateEvent): %d  when: %u\n", acceptedEvent, event.when);
+    KWQDebug("NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
 }
 
 -(void)sendUpdateEvent
@@ -470,6 +486,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
     
     event.what = adjustCursorEvent;
     event.when = (uint32)([theEvent timestamp] * 60);
+    event.modifiers = 1;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     KWQDebug("NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
 }
@@ -481,6 +498,7 @@ static id IFPluginMake(NSRect rect, WCPlugin *plugin, NSString *url, NSString *m
      
     event.what = adjustCursorEvent;
     event.when = (uint32)([theEvent timestamp] * 60);
+    event.modifiers = 0;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     KWQDebug("NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
 }

@@ -75,7 +75,7 @@ typedef struct _StreamData{
 -(BOOL)acceptsFirstResponder;
 -(BOOL)becomeFirstResponder;
 -(BOOL)resignFirstResponder;
--(void)sendActivateEvent;
+-(void)sendActivateEvent:(BOOL)isActive;
 -(void)sendUpdateEvent;
 -(void)mouseDown:(NSEvent *)theEvent;
 -(void)mouseUp:(NSEvent *)theEvent;
