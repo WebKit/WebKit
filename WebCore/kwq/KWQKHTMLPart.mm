@@ -561,7 +561,7 @@ NSView *KWQKHTMLPartImpl::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirecti
                 if (view) {
                     return view;
                 }
-            } else {
+            } else if (widget) {
                 NSView *view = widget->getView();
                 // AppKit won't be able to handle scrolling and making us the first responder
                 // well unless we are actually installed in the correct place. KHTML only does

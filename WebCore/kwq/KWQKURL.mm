@@ -931,7 +931,15 @@ void KURL::parse(const char *url, const QString *originalString)
 
 NSURL *KURL::getNSURL() const
 {
-    return [NSURL URLWithString:urlString.getNSString()];
+    NSString *string = urlString.getNSString();
+    
+    // Had to re-add this hack to work around CFURL bug 2908969, and to prevent the symptoms
+    // described in bug 3032058.
+    if ([string hasPrefix:@"file:/"] && ![string hasPrefix:@"file://"]) {
+        string = [NSString stringWithFormat:@"file://%@", [string substringFromIndex:5]];
+    }
+    
+    return [NSURL URLWithString:string];
 }
 
 QString KURL::encodedHtmlRef() const

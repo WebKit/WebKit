@@ -1,3 +1,13 @@
+2002-08-23  Darin Adler  <darin@apple.com>
+
+	- fixed 3032058 -- Links on local developer doc pages all broken (all local files?)
+
+        * kwq/KWQKURL.mm: (KURL::getNSURL): Re-added a workaround for CFURL bug 2908969.
+	We have to hack to make NSURL take "file:/" URLs.
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::nextKeyViewInFrame): Add a nil check.
+	I ran into this because my frame failed to load.
+
 2002-08-23  Maciej Stachowiak  <mjs@apple.com>
 
 	A few more KURL changes that reduce it down to background noise
