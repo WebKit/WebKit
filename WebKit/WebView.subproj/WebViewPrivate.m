@@ -377,7 +377,7 @@
         return;		// empty back forward list, bail
     }
 
-    WebHistoryItem *newItemToGoTo;
+    WebHistoryItem *newItemToGoTo = nil;
     int lastItemIndex = [otherBFList forwardListCount];
     int i;
     for (i = -[otherBFList backListCount]; i <= lastItemIndex; i++) {
