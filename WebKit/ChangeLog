@@ -1,3 +1,13 @@
+2004-10-18  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3810183> Make WebHTMLView respect return value of webView:doCommandBySelector:
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView doCommandBySelector:]):
+        only do default action if delegate returns NO; this works with Mail as of Tiger 8A275.
+
 === Safari-167 ===
 
 2004-10-14  Ken Kocienda  <kocienda@apple.com>
