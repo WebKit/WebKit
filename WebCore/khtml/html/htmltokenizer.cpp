@@ -1875,11 +1875,14 @@ void HTMLTokenizer::timerEvent(QTimerEvent* e)
 void HTMLTokenizer::allDataProcessed()
 {
     if (noMoreData && !inWrite && !loadingExtScript && !m_executingScript && !onHold && !timerId) {
-        if (!parser || !parser->doc() || !parser->doc()->part())
-            return;
-        KHTMLPart* part = parser->doc()->part();
+        QGuardedPtr<KHTMLView> savedView = view;
         end();
-        part->tokenizerProcessedData();
+        if (savedView) {
+            KHTMLPart *part = savedView->part();
+            if (part) {
+                part->tokenizerProcessedData();
+            }
+        }
     }
 }
 

@@ -1,10 +1,19 @@
+2005-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/4057594> REGRESSION (125-406): Unrepro crash in HTMLTokenizer::allDataProcessed after hitting Back button
+
+        * khtml/html/htmltokenizer.cpp: (khtml::HTMLTokenizer::allDataProcessed):
+        To get the part safely after calling end, save a guarded pointer to the view.
+        The old way could end trying to call a virtual function a part that was destroyed.
+
 2005-03-18  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
 
 	<rdar://problem/4053506> Pasting Tables and Cells in Mail does not allow editing before or after
 	<rdar://problem/4005954> REGRESSION (Mail): After copy/paste of content containing list element cannot go back to entering text at left side of page
-
 	
         * khtml/editing/htmlediting.cpp:
         (khtml::maxDeepOffset):
