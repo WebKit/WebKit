@@ -104,6 +104,7 @@ public:
     KHTMLSettings *m_settings;
     
     KURL m_workingURL;
+    KURL m_baseURL;
     
     KHTMLPart *m_part;
     KHTMLPartNotificationReceiver *m_recv;
@@ -383,6 +384,22 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset)
     
     d->m_doc = new HTMLDocumentImpl(d->m_view);
     d->m_doc->ref();
+
+    d->m_baseURL = KURL();
+    d->m_workingURL = url;
+
+    if (!d->m_workingURL.isEmpty())
+    {
+        KURL::List lst = KURL::split( d->m_workingURL );
+        KURL baseurl;
+        if ( !lst.isEmpty() )
+            baseurl = *lst.begin();
+        // Use this for relative links.
+        // We prefer m_baseURL over m_url because m_url changes when we are
+        // about to load a new page.
+        setBaseURL(baseurl);
+    }
+
     //FIXME: do we need this? 
     d->m_doc->attach( d->m_view );
     d->m_doc->setURL( url.url() );
@@ -487,18 +504,21 @@ void KHTMLPart::end()
 }
 
 
-void KHTMLPart::setBaseURL( const KURL &url )
+void KHTMLPart::setBaseURL(const KURL &url)
 {
-    _logNeverImplemented();
+    d->m_baseURL = url;
+    if (d->m_baseURL.protocol().startsWith( "http" ) && !d->m_baseURL.host().isEmpty() && d->m_baseURL.path().isEmpty()) {
+        d->m_baseURL.setPath( "/" );
+    }
 }
 
 
 KURL KHTMLPart::baseURL() const
 {
-    if (d->m_workingURL.isEmpty()) {
-        return KURL();
+    if (d->m_baseURL.isEmpty()) {
+        return d->m_workingURL;
     }
-    return d->m_workingURL;
+    return d->m_baseURL;
 }
 
 
@@ -718,7 +738,12 @@ KJSProxy *KHTMLPart::jScript()
 
 KURL KHTMLPart::completeURL(const QString &url, const QString &target = QString::null)
 {
-    return KURL(d->m_workingURL);
+    if (d->m_baseURL.isEmpty()) {
+        return KURL(d->m_workingURL);
+    }
+    else {
+        return KURL(d->m_baseURL, url);
+    }
 }
 
 

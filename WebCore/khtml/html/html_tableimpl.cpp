@@ -313,9 +313,18 @@ void HTMLTableElementImpl::parseAttribute(AttrImpl *attr)
     {
         if (!attr->value().isEmpty()) {
             HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
+                        
+#ifdef _KWQ_            
+            // our c++ implementation likes this better
+            DOMString d(khtml::parseURL(attr->value()));
+            QString url = d.string();
+#else            
             QString url = khtml::parseURL( attr->value() ).string();
+#endif
+            
             if ( doc->view() )
                 url = doc->view()->part()->completeURL( url ).url();
+                
             addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
         }
         else
@@ -428,9 +437,17 @@ void HTMLTablePartElementImpl::parseAttribute(AttrImpl *attr)
     {
         if (attr->val()) {
             HTMLDocumentImpl *doc = static_cast<HTMLDocumentImpl *>(ownerDocument());
+
+#ifdef _KWQ_            
+            // our c++ implementation likes this better
+            DOMString d(khtml::parseURL(attr->value()));
+            QString url = d.string();
+#else            
             QString url = khtml::parseURL( attr->value() ).string();
+#endif
             if ( doc->view() )
                 url = doc->view()->part()->completeURL( url ).url();
+                
             addCSSProperty(CSS_PROP_BACKGROUND_IMAGE, "url('"+url+"')" );
         }
         else
