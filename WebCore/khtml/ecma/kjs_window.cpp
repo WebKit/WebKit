@@ -610,7 +610,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
         return Undefined();
     case Onkeydown:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_KEYDOWN_EVENT);
+        return getListener(exec,DOM::EventImpl::KEYDOWN_EVENT);
       else
         return Undefined();
     case Onkeypress:
@@ -620,7 +620,7 @@ Value Window::get(ExecState *exec, const Identifier &p) const
         return Undefined();
     case Onkeyup:
       if (isSafeScript(exec))
-        return getListener(exec,DOM::EventImpl::KHTML_KEYUP_EVENT);
+        return getListener(exec,DOM::EventImpl::KEYUP_EVENT);
       else
         return Undefined();
     case Onload:
@@ -806,7 +806,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
       return;
     case Onkeydown:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_KEYDOWN_EVENT,value);
+        setListener(exec,DOM::EventImpl::KEYDOWN_EVENT,value);
       return;
     case Onkeypress:
       if (isSafeScript(exec))
@@ -814,7 +814,7 @@ void Window::put(ExecState* exec, const Identifier &propertyName, const Value &v
       return;
     case Onkeyup:
       if (isSafeScript(exec))
-        setListener(exec,DOM::EventImpl::KHTML_KEYUP_EVENT,value);
+        setListener(exec,DOM::EventImpl::KEYUP_EVENT,value);
       return;
     case Onload:
       if (isSafeScript(exec))

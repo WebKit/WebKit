@@ -195,7 +195,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
     case ATTR_ONKEYDOWN:
-        setHTMLEventListener(EventImpl::KHTML_KEYDOWN_EVENT,
+        setHTMLEventListener(EventImpl::KEYDOWN_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
 	break;
     case ATTR_ONKEYPRESS:
@@ -203,7 +203,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 	    getDocument()->createHTMLEventListener(attr->value().string()));
 	break;
     case ATTR_ONKEYUP:
-        setHTMLEventListener(EventImpl::KHTML_KEYUP_EVENT,
+        setHTMLEventListener(EventImpl::KEYUP_EVENT,
 	    getDocument()->createHTMLEventListener(attr->value().string()));
         break;
 // other misc attributes

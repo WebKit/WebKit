@@ -889,11 +889,11 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
             if (ext)
                 ext->editableWidgetFocused(widget);
         }
-        if (evt->id()==EventImpl::MOUSEDOWN_EVENT || evt->id()==EventImpl::KHTML_KEYDOWN_EVENT)
+        if (evt->id()==EventImpl::MOUSEDOWN_EVENT || evt->id()==EventImpl::KEYDOWN_EVENT)
         {
             setActive();
         }
-        else if (evt->id() == EventImpl::MOUSEUP_EVENT || evt->id()==EventImpl::KHTML_KEYUP_EVENT)
+        else if (evt->id() == EventImpl::MOUSEUP_EVENT || evt->id()==EventImpl::KEYUP_EVENT)
         {
 	    if (m_active)
 	    {
@@ -909,8 +909,8 @@ void HTMLGenericFormElementImpl::defaultEventHandler(EventImpl *evt)
 	// We don't want this default key event handling, we'll count on
 	// Cocoa event dispatch if the event doesn't get blocked.
 #else
-	if (evt->id()==EventImpl::KHTML_KEYDOWN_EVENT ||
-	    evt->id()==EventImpl::KHTML_KEYUP_EVENT)
+	if (evt->id()==EventImpl::KEYDOWN_EVENT ||
+	    evt->id()==EventImpl::KEYUP_EVENT)
 	{
 	    KeyboardEventImpl * k = static_cast<KeyboardEventImpl *>(evt);
 	    if (k->keyVal() == QChar('\n').unicode() && m_render && m_render->isWidget() && k->qKeyEvent)

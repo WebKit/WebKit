@@ -1,3 +1,33 @@
+2003-11-11  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	In the DOM Level 3 Events specification, keydown and keyup are 
+	standard events. We can remove the KHTML component in the names 
+	of these constants. Note that the keypress event is still 
+	nonstandard and will retain the KHTML name component.
+
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::wasRunByUserGesture)
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty)
+        (DOMNode::putValue)
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get)
+        (Window::put)
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseAttribute)
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::defaultEventHandler)
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::defaultEventHandler)
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId)
+        (EventImpl::idToType)
+        (KeyboardEventImpl::KeyboardEventImpl)
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::)
+
 2003-11-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3480281>: drag image of selected text and images include broken images

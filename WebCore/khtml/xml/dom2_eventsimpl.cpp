@@ -224,9 +224,9 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
     else if (type == "contextmenu")
 	return CONTEXTMENU_EVENT;
     else if (type == "keydown")
-	return KHTML_KEYDOWN_EVENT;
+	return KEYDOWN_EVENT;
     else if (type == "keyup")
-	return KHTML_KEYUP_EVENT;
+	return KEYUP_EVENT;
     else if (type == "textInput")
 	return TEXTINPUT_EVENT;
     // ignore: KHTML_DBLCLICK_EVENT
@@ -295,9 +295,9 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
 	    return "scroll";
         case CONTEXTMENU_EVENT:
             return "contextmenu";
-	case KHTML_KEYDOWN_EVENT:
+	case KEYDOWN_EVENT:
             return "keydown";
-	case KHTML_KEYUP_EVENT:
+	case KEYUP_EVENT:
             return "keyup";
 	case TEXTINPUT_EVENT:
             return "textInput";
@@ -522,7 +522,7 @@ KeyboardEventImpl::KeyboardEventImpl()
 }
 
 KeyboardEventImpl::KeyboardEventImpl(QKeyEvent *key, AbstractViewImpl *view)
-  : UIEventImpl(key->type() == QEvent::KeyRelease ? KHTML_KEYUP_EVENT : key->isAutoRepeat() ? KHTML_KEYPRESS_EVENT : KHTML_KEYDOWN_EVENT,
+  : UIEventImpl(key->type() == QEvent::KeyRelease ? KEYUP_EVENT : key->isAutoRepeat() ? KHTML_KEYPRESS_EVENT : KEYDOWN_EVENT,
                 true,true,view,0)
 {
     m_keyEvent = new QKeyEvent(key->type(), key->key(), key->ascii(), key->state(), key->text(), key->isAutoRepeat(), key->count());
