@@ -459,7 +459,7 @@ void KHTMLPart::slotData(id handle, const char *bytes, int length)
         d->m_workingURL = KURL();
     }
 
-    if (!d->m_encoding && [handle respondsToSelector:@selector(responseHeaders:)]) {
+    if (d->m_encoding.isNull() && [handle respondsToSelector:@selector(responseHeaders)]) {
         encoding = encodingFromContentType([[handle responseHeaders] objectForKey:@"Content-Type"]);
         if (encoding != NULL) {
             enc = QString::fromCFString((CFStringRef) encoding);

@@ -1,5 +1,12 @@
 2002-03-24  Richard Williamson  <rjw@apple.com>
 
+        Changed data source to create IFURLHandle of the appropriate class.
+        The prevented us from getting the response headers correctly.
+        
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _startLoading:]):
+
+2002-03-24  Richard Williamson  <rjw@apple.com>
+
         Removed erroneous comments.
         
 	* WebView.subproj/IFWebView.mm: (-[IFWebView dataSourceChanged:]), (-[IFWebView

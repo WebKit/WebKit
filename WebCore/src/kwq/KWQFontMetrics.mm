@@ -607,7 +607,7 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
                 for (blockID = blockStart; blockID < blockEnd; blockID++)
                     sequentialGlyphs[blockID-blockStart] = blockID;
 
-                errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], blockEnd-blockStart, &widthCache[blockID], [font pointSize]);
+                errorResult = CGFontGetGlyphScaledAdvances ([font _backingCGSFont], &sequentialGlyphs[0], blockEnd-blockStart, &widthCache[blockStart], [font pointSize]);
                 if (errorResult == 0)
                     [NSException raise:NSInternalInconsistencyException format:@"Optimization assumption violation:  unable to cache glyph widths - for %@ %f", self, [font displayName], [font pointSize]];
             }

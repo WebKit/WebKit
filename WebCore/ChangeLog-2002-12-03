@@ -1,5 +1,14 @@
 2002-03-24  Richard Williamson  <rjw@apple.com>
 
+        A number of fixes to support non-latin1 decoding 
+        and font measurement/drawing.
+        
+	* src/kwq/KWQFontMetrics.mm: (_rectForString):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::slotData):
+	* src/kwq/KWQMetrics.h:
+
+2002-03-24  Richard Williamson  <rjw@apple.com>
+
         Cached available families from NSFontManager.  
         http://www.gamespy.com/gdc2002/okamoto went from 4.8 seconds
         to 0.7 seconds. [Do we need to worry about updating the cache if

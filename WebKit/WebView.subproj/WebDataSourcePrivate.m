@@ -104,7 +104,8 @@
     
     // The handle will be released by the client upon receipt of a 
     // terminal callback.
-    handle = [[IFURLHandle alloc] initWithURL:theURL];
+    Class urlClass = [IFURLHandle URLHandleClassForURL: theURL];
+    handle = [[urlClass alloc] initWithURL:theURL];
     [handle addClient: data->mainURLHandleClient];
     [handle loadInBackground];
 
