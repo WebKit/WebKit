@@ -94,6 +94,9 @@ public:
 
     bool readOnly() { return false; }
 
+    NodeImpl *startNode() const;
+    NodeImpl *pastEndNode() const;
+
 #if APPLE_CHANGES
     static Range createInstance (RangeImpl *impl);
 #endif
@@ -117,9 +120,6 @@ private:
     void setEndContainer(NodeImpl *_endContainer);
     void checkDeleteExtract(int &exceptioncode);
     bool containedByReadOnly() const;
-
-    NodeImpl *startNode() const;
-    NodeImpl *pastEndNode() const;
 };
 
 } // namespace

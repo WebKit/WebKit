@@ -1,3 +1,18 @@
+2004-08-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3758756> copying text selected with down arrow results in all text to end of document
+
+        * khtml/xml/dom2_rangeimpl.h: Make startNode and pastEndNode public.
+        * khtml/xml/dom2_rangeimpl.cpp: (DOM::RangeImpl::pastEndNode): Fix bug where this would return
+        one node too far in the case where the end container was not a text node.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): Rewrite loop, using startNode and pastEndNode,
+        to fix bug where it would run past the end node, including too many nodes in the generated
+        HTML. Nice side benefit: easier to read the code.
+
 2004-08-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3758216> PARENTAL: buttons on parental controls page only work once

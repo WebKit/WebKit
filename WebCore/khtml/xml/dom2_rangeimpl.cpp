@@ -1352,7 +1352,7 @@ NodeImpl *RangeImpl::pastEndNode() const
     }
     NodeImpl *child = m_endContainer->childNode(m_endOffset);
     if (child)
-        return child->traverseNextSibling();
+        return child;
     return m_endContainer->traverseNextSibling();
 }
 
