@@ -150,9 +150,7 @@
     [childDataSource _setController: self];
 
     [childView dataSourceChanged];
-    
-    //[child startLoading: YES];
-    
+        
     return newFrame;
 }
 

@@ -227,8 +227,9 @@
 // Get the actual source of the docment.
 - (NSString *)documentText
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::documentText is not implemented"];
-    return nil;
+    KHTMLPart *part = [self _part];
+    
+    return QSTRING_TO_NSSTRING(part->documentSource());
 }
 
 
@@ -243,6 +244,9 @@
         if (doc != 0){
             QString str = doc->recursive_toHTML(1);
             string = QSTRING_TO_NSSTRING(str);
+            
+            // Ensure life of NSString to end of call frame.
+            [[string retain] autorelease];
         }
     }
     if (string == nil) {

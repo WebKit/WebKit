@@ -1,5 +1,11 @@
 2002-01-30  Richard Williamson  <rjw@apple.com>
 
+	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController
+	createFrameNamed:for:inParent:]):
+	* WebView.subproj/WKWebDataSource.mm: (-[WKWebDataSource documentTextFromDOM]):
+
+2002-01-30  Richard Williamson  <rjw@apple.com>
+
     Cleaned up API w/ respect to frames.
     
 	* WebView.subproj/WKDefaultWebController.h:
