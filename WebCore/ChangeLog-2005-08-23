@@ -1,3 +1,13 @@
+2003-11-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3486441, don't use the visibleWidth when computing the containingBlockWidth().  No need to
+	query the view, since the canvas's width has been set to the proper size (when printing).
+	
+        Reviewed by john
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::containingBlockWidth):
+
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

@@ -509,9 +509,6 @@ QRect RenderBox::getClipRect(int tx, int ty)
 
 short RenderBox::containingBlockWidth() const
 {
-    if (isRoot() && canvas()->view())
-        return canvas()->view()->visibleWidth();
-    
     RenderBlock* cb = containingBlock();
     if (usesLineWidth())
         return cb->lineWidth(m_y);
