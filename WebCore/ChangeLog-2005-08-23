@@ -1,3 +1,20 @@
+2003-07-15  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for 3300362, crash on myuhc.com.  The residual style code
+	was messing up and inserting nodes in the wrong place (and also
+	updating the current member variable when it wasn't supposed to).
+
+	Fix for 3331793, nil deref because (astoundingly) someone was
+	using text-shadow and exposed a bug with the color handling
+	of the shadow.
+	
+        Reviewed by darin
+
+        * khtml/html/htmlparser.cpp:
+	* khtml/html/htmlparser.h
+        (KHTMLParser::reopenResidualStyleTags):
+        (KHTMLParser::popBlock):
+
 2003-07-17  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
