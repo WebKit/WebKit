@@ -1,3 +1,12 @@
+2003-07-08  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3272398>: Safari strips/modifies underscores in EMBED tags
+
+        Reviewed by darin.
+
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag): use tolower() to lowercase a char, don't use | 0x20 because that will cause chars like '_' to turn into junk
+
 2003-07-08  Dave Hyatt  <hyatt@apple.com>
 
 	Implementation of inline-block and a prototype of the XUL

@@ -911,11 +911,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     finish = true;
                     break;
                 }
-                // this is a nasty performance trick. will work for the A-Z
-                // characters, but not for others. if it contains one,
-                // we fail anyway
-                char cc = curchar;
-                cBuffer[cBufferPos++] = cc | 0x20;
+                cBuffer[cBufferPos++] = tolower(curchar);
                 ++src;
             }
 
@@ -1028,7 +1024,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         break;
                     }
                 }
-                cBuffer[cBufferPos++] = (char) curchar | 0x20;
+                cBuffer[cBufferPos++] = tolower(curchar);
                 ++src;
             }
             if ( cBufferPos == CBUFLEN ) {
