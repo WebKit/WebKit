@@ -188,7 +188,6 @@ QString::QString(const char *chs)
     if (chs && *chs) {
         s = CFStringCreateMutable(kCFAllocatorDefault, 0);
         if (s) {
-            // FIXME: is ISO Latin-1 the correct encoding?
             CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
         }
     } else {
@@ -295,7 +294,6 @@ const char *QString::latin1() const
     char *chs = NULL;
     uint len = length();
     if (len) {
-        // FIXME: is ISO Latin-1 the correct encoding?
         chs = const_cast<char *>(CFStringGetCStringPtr(s,
                     kCFStringEncodingISOLatin1));
         if (!chs) {
@@ -307,7 +305,6 @@ const char *QString::latin1() const
                 flushCache();
                 cache = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
                 if (cache) {
-                    // FIXME: is ISO Latin-1 the correct encoding?
                     if (!CFStringGetCString(s, cache, len + 1,
                                 kCFStringEncodingISOLatin1)) {
 #ifdef _KWQ_DEBUG_
@@ -436,7 +433,6 @@ int QString::find(const char *chs, int index, bool cs) const
             index += len;
         }
         if (len && (index >= 0) && (index < len)) {
-            // FIXME: is ISO Latin-1 the correct encoding?
             CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                     kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
                     kCFAllocatorNull);
@@ -497,7 +493,6 @@ int QString::findRev(const char *chs, int index) const
             index += len;
         }
         if (len && (index <= len)) {
-            // FIXME: is ISO Latin-1 the correct encoding?
             CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                     kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
                     kCFAllocatorNull);
@@ -536,7 +531,6 @@ int QString::contains(const char *chs, bool cs) const
 {
     int c = 0;
     if (s && chs) {
-        // FIXME: is ISO Latin-1 the correct encoding?
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
                 kCFAllocatorNull);
@@ -1348,7 +1342,6 @@ bool operator==(const QString &qs, const char *chs)
 {
     bool result = FALSE;
     if (qs.s && chs) {
-        // FIXME: is ISO Latin-1 the correct encoding?
         CFStringRef tmp = CFStringCreateWithCStringNoCopy(
                 kCFAllocatorDefault, chs, kCFStringEncodingISOLatin1,
                 kCFAllocatorNull);
@@ -1394,9 +1387,39 @@ QString operator+(const QString &qs, const char *chs)
     return tmp;
 }
 
+QString operator+(const QString &qs, QChar qc)
+{
+    QString tmp(qs);
+    QString tmp2 = QString(qc);
+    tmp += tmp2;
+    return tmp;
+}
+
+QString operator+(const QString &qs, char ch)
+{
+    QString tmp(qs);
+    QString tmp2 = QString(QChar(ch));
+    tmp += tmp2;
+    return tmp;
+}
+
 QString operator+(const char *chs, const QString &qs)
 {
     QString tmp(chs);
+    tmp += qs;
+    return tmp;
+}
+
+QString operator+(QChar qc, const QString &qs)
+{
+    QString tmp = QString(qc);
+    tmp += qs;
+    return tmp;
+}
+
+QString operator+(char ch, const QString &qs)
+{
+    QString tmp = QString(QChar(ch));
     tmp += qs;
     return tmp;
 }
