@@ -1,3 +1,18 @@
+2003-09-12  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3420097.  Pass flag up to WebKit indicating that redirects are being cancelled during a pending load.
+
+        Reviewed by Darin.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::cancelRedirection):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::provisionalLoadStarted):
+        (KWQKHTMLPart::redirectionTimerStartedOrStopped):
+        * kwq/WebCoreBridge.h:
+
 === WebCore-103 ===
 
 2003-09-12  Maciej Stachowiak  <mjs@apple.com>

@@ -395,9 +395,9 @@
     [_frame _clientRedirectedTo:URL delay:seconds fireDate:date lockHistory:lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction];
 }
 
-- (void)reportClientRedirectCancelled
+- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
-    [_frame _clientRedirectCancelled];
+    [_frame _clientRedirectCancelled:cancelWithLoadInProgress];
 }
 
 - (void)close

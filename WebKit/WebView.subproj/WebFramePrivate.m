@@ -1600,6 +1600,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebDataSource *dataSrc = [self dataSource];
 
     BOOL isRedirect = _private->quickRedirectComing;
+    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
     _private->quickRedirectComing = NO;
 
     [dataSrc _setURL:URL];
@@ -1742,6 +1743,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     } else {
         [self _loadRequest:request triggeringAction:action loadType:loadType formState:formState];
         if (_private->quickRedirectComing) {
+            LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
             _private->quickRedirectComing = NO;
             
             // need to transfer BF items from the dataSource that we're replacing
@@ -1845,7 +1847,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction
 {
-    LOG(Redirect, "Client redirect to: %@", URL);
+    LOG(Redirect, "%@(%p) Client redirect to: %@, [self dataSource] = %p, lockHistory = %d, isJavaScriptFormAction = %d", [self name], self, URL, [self dataSource], (int)lockHistory, (int)isJavaScriptFormAction);
 
     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                 willPerformClientRedirectToURL:URL
@@ -1859,16 +1861,20 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // If we don't have a dataSource, we have no "original" load on which to base a redirect,
         // so we better just treat the redirect as a normal load.
         _private->quickRedirectComing = NO;
+        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
     } else {
         _private->quickRedirectComing = lockHistory;
+        LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
     }
 }
 
-- (void)_clientRedirectCancelled
+- (void)_clientRedirectCancelled:(BOOL)cancelWithLoadInProgress
 {
     [[[self webView] _frameLoadDelegateForwarder] webView:_private->webView
                                didCancelClientRedirectForFrame:self];
-    _private->quickRedirectComing = NO;
+    if (!cancelWithLoadInProgress)
+        _private->quickRedirectComing = NO;
+    LOG(Redirect, "%@(%p) _private->quickRedirectComing = %d", [self name], self, (int)_private->quickRedirectComing);
 }
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item

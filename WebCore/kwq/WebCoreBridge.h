@@ -280,7 +280,7 @@ typedef enum {
 - (BOOL)isReloading;
 
 - (void)reportClientRedirectToURL:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
-- (void)reportClientRedirectCancelled;
+- (void)reportClientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
 
 - (void)focusWindow;
 - (void)unfocusWindow;

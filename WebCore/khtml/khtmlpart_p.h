@@ -162,6 +162,8 @@ public:
     m_bPendingChildRedirection = false;
     m_executingJavaScriptFormAction = false;
 
+    m_cancelWithLoadInProgress = false;
+    
     // inherit settings from parent
     if(parent && parent->inherits("KHTMLPart"))
     {
@@ -398,6 +400,8 @@ public:
   bool m_bPendingChildRedirection;
 
   bool m_executingJavaScriptFormAction;
+  
+  bool m_cancelWithLoadInProgress;
 };
 
 #endif

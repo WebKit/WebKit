@@ -188,7 +188,7 @@ void KWQKHTMLPart::provisionalLoadStarted()
     // we don't want to wait until we get an actual http response back
     // to cancel pending redirects, otherwise they might fire before
     // that happens.
-    cancelRedirection();
+    cancelRedirection(true);
 }
 
 bool KWQKHTMLPart::openURL(const KURL &url)
@@ -766,7 +766,7 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
                                lockHistory:d->m_redirectLockHistory
                                isJavaScriptFormAction:d->m_executingJavaScriptFormAction];
     } else {
-        [_bridge reportClientRedirectCancelled];
+        [_bridge reportClientRedirectCancelled:d->m_cancelWithLoadInProgress];
     }
 }
 

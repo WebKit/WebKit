@@ -1076,7 +1076,7 @@ private:
   bool checkLinkSecurity(const KURL &linkURL,const QString &message = QString::null, const QString &button = QString::null);
   QVariant executeScript(QString filename, int baseLine, const DOM::Node &n, const QString &script);
   
-  void cancelRedirection();
+  void cancelRedirection(bool newLoadInProgress = false);
 
   KJSProxy *jScript();
 

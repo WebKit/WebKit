@@ -147,7 +147,7 @@ extern NSString *WebCorePageCacheStateKey;
 - (void)_loadRequest:(NSURLRequest *)request inFrameNamed:(NSString *)frameName;
 
 - (void)_clientRedirectedTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date lockHistory:(BOOL)lockHistory isJavaScriptFormAction:(BOOL)isJavaScriptFormAction;
-- (void)_clientRedirectCancelled;
+- (void)_clientRedirectCancelled:(BOOL)cancelWithLoadInProgress;
 
 - (void)_textSizeMultiplierChanged;
 
