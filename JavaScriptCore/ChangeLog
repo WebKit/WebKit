@@ -1,3 +1,12 @@
+2003-12-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3493799: JavaScript string.replace expands $ if it's the last character in replacement string
+
+        * kjs/ustring.cpp: (KJS::UString::toDouble): Fix backwards handling of the "tolerant" boolean.
+        This indirectly caused the string.replace bug.
+
 2003-12-02  Maciej Stachowiak  <mjs@apple.com>
 
         Merged patches from Harri Porten and David Faure to fix:

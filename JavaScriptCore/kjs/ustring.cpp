@@ -632,7 +632,7 @@ double UString::toDouble( bool tolerant ) const
 
   // empty string ?
   if (*c == '\0')
-    return tolerant ? NaN : 0.0;
+    return tolerant ? 0.0 : NaN;
 
   // hex number ?
   if (*c == '0' && (*(c+1) == 'x' || *(c+1) == 'X')) {
