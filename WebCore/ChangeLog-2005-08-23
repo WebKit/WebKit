@@ -1,3 +1,19 @@
+2003-11-17  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3487136, marquees reset when you return to a page in the b/f cache.  This patch makes
+	marquees suspend and resume properly, so they pick up animating where they left off.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::suspendMarquees):
+        (m_direction):
+        (Marquee::start):
+        (Marquee::suspend):
+        * khtml/rendering/render_layer.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::clearTimers):
+
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
 	Merged from khtml:

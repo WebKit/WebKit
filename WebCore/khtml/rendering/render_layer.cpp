@@ -1214,13 +1214,13 @@ void RenderLayer::styleChanged()
     }
 }
 
-void RenderLayer::stopMarquees()
+void RenderLayer::suspendMarquees()
 {
     if (m_marquee)
-        m_marquee->stop();
+        m_marquee->suspend();
     
     for (RenderLayer* curr = firstChild(); curr; curr = curr->nextSibling())
-        curr->stopMarquees();
+        curr->suspendMarquees();
 }
 
 // --------------------------------------------------------------------------
@@ -1228,7 +1228,7 @@ void RenderLayer::stopMarquees()
 
 Marquee::Marquee(RenderLayer* l)
 :m_layer(l), m_currentLoop(0), m_timerId(0), m_start(0), m_end(0), m_speed(0), m_unfurlPos(0), m_reset(false),
- m_whiteSpace(NORMAL), m_direction(MAUTO)
+ m_suspended(false), m_whiteSpace(NORMAL), m_direction(MAUTO)
 {
 }
 
@@ -1327,31 +1327,34 @@ void Marquee::start()
     if (m_timerId)
         return;
     
-    if (isUnfurlMarquee()) {
-        bool forward = direction() == MDOWN || direction() == MRIGHT;
-        bool isReversed = (forward && m_currentLoop % 2) || (!forward && !(m_currentLoop % 2));
-        m_unfurlPos = isReversed ? m_end : m_start;
-        m_layer->renderer()->setChildNeedsLayout(true);
+    if (!m_suspended) {
+        if (isUnfurlMarquee()) {
+            bool forward = direction() == MDOWN || direction() == MRIGHT;
+            bool isReversed = (forward && m_currentLoop % 2) || (!forward && !(m_currentLoop % 2));
+            m_unfurlPos = isReversed ? m_end : m_start;
+            m_layer->renderer()->setChildNeedsLayout(true);
+        }
+        else {
+            if (isHorizontal())
+                m_layer->scrollToOffset(m_start, 0, false, false);
+            else
+                m_layer->scrollToOffset(0, m_start, false, false);
+        }
     }
-    else {
-        if (isHorizontal())
-            m_layer->scrollToOffset(m_start, 0, false, false);
-        else
-            m_layer->scrollToOffset(0, m_start, false, false);
-    }
+    else
+        m_suspended = false;
 
     m_timerId = startTimer(speed());
 }
 
-void Marquee::stop()
+void Marquee::suspend()
 {
-    m_currentLoop = 0;
-    m_reset = false;
-    
     if (m_timerId) {
         killTimer(m_timerId);
         m_timerId = 0;
     }
+    
+    m_suspended = true;
 }
 
 void Marquee::updateMarqueePosition()

@@ -1831,7 +1831,7 @@ void KWQKHTMLPart::clearTimers(KHTMLView *view)
         if (view->part()) {
             DocumentImpl* document = view->part()->xmlDocImpl();
             if (document && document->renderer() && document->renderer()->layer())
-                document->renderer()->layer()->stopMarquees();
+                document->renderer()->layer()->suspendMarquees();
         }
     }
 }
