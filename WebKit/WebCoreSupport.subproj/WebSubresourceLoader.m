@@ -67,13 +67,11 @@
         [rLoader cancel];
 
         WebError *badURLError = [WebError errorWithCode:WebResultBadURLError
-                                             inDomain:WebErrorDomainWebFoundation
-                                           failingURL:URL
-                                           isTerminal:YES];        
+                                               inDomain:WebErrorDomainWebFoundation
+                                             failingURL:URL
+                                             isTerminal:YES];        
         [[source controller] _receivedError:badURLError forResourceHandle:nil
             partialProgress:nil fromDataSource:source];
-        
-        return nil;
     } else {
         [source _addURLHandle:handle];
         
@@ -82,9 +80,9 @@
         [client release];
         
         [handle loadInBackground];
-        
-        return handle;
     }
+        
+    return handle;
 }
 
 - (void)receivedProgressWithHandle:(WebResourceHandle *)handle complete:(BOOL)isComplete
@@ -166,8 +164,6 @@
 {
     WEBKIT_ASSERT(currentURL != nil);
     WEBKIT_ASSERT([URL isEqual:[handle redirectedURL]]);
-
-    [[dataSource _bridge] setURL:URL];
 
     // FIXME: We do want to tell the client about redirects.
     // But the current API doesn't give any way to tell redirects on

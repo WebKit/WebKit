@@ -187,10 +187,10 @@ enum {
     }
     
     dataSource = [[[WebDataSource alloc] initWithURL:URL] autorelease];
-    frame = nil;
     frame = [[self controller] mainFrame];
-    if([frame setProvisionalDataSource:dataSource])
+    if ([frame setProvisionalDataSource:dataSource]) {
         [frame startLoading];
+    }
 }
 
 + (void) registerViewClass:(Class)viewClass forMIMEType:(NSString *)MIMEType

@@ -3,28 +3,29 @@
 	Copyright (c) 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebException.h>
 #import <WebKit/WebImageRenderer.h>
+
+#import <WebKit/WebException.h>
 #import <WebKit/WebKitDebug.h>
+
+#define MINIMUM_DURATION (1.0/30.0)
 
 @implementation WebImageRenderer
 
 static NSMutableArray *activeImageRenderers;
 
-+ (void)stopAnimationsInView: (NSView *)aView
++ (void)stopAnimationsInView:(NSView *)aView
 {
     int i, count;    
 
     count = [activeImageRenderers count];
-    for (i = count-1; i >= 0; i--){
-        WebImageRenderer *renderer = [activeImageRenderers objectAtIndex: i];
-        if (renderer->frameView == aView){
+    for (i = count-1; i >= 0; i--) {
+        WebImageRenderer *renderer = [activeImageRenderers objectAtIndex:i];
+        if (renderer->frameView == aView) {
             [renderer stopAnimation];
         }
     }
-    
 }
-
 
 - copyWithZone:(NSZone *)zone
 {
@@ -39,16 +40,15 @@ static NSMutableArray *activeImageRenderers;
     return copy;
 }
 
-- (BOOL)incrementalLoadWithBytes: (const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
+- (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
-    NSBitmapImageRep* imageRep = [[self representations] objectAtIndex:0];
-    //NSData *data = [[NSData alloc] initWithBytesNoCopy: (void *)bytes length: length freeWhenDone: NO];
-    NSData *data = [[NSData alloc] initWithBytes: (void *)bytes length: length];
+    NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
+    NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
     NSSize size;
     
     loadStatus = [imageRep incrementalLoadFromData:data complete:isComplete];
     [data release];
-    switch (loadStatus){
+    switch (loadStatus) {
     case NSImageRepLoadStatusUnknownType:       // not enough data to determine image format. please feed me more data
         //printf ("NSImageRepLoadStatusUnknownType size %d, isComplete %d\n", length, isComplete);
         return NO;
@@ -79,14 +79,12 @@ static NSMutableArray *activeImageRenderers;
     return NO;
 }
 
-
 - (void)dealloc
 {
     [self stopAnimation];
     [patternColor release];
     [super dealloc];
 }
-
 
 - (id)firstRepProperty:(NSString *)propertyName
 {
@@ -100,34 +98,32 @@ static NSMutableArray *activeImageRenderers;
 - (int)frameCount
 {
     id property = [self firstRepProperty:NSImageFrameCount];
-    return property != nil ? [property intValue] : 1;
+    return property ? [property intValue] : 1;
 }
 
 - (int)currentFrame
 {
     id property = [self firstRepProperty:NSImageCurrentFrame];
-    return property != nil ? [property intValue] : 1;
+    return property ? [property intValue] : 1;
 }
 
 - (void)setCurrentFrame:(int)frame
 {
-    NSBitmapImageRep* imageRep = [[self representations] objectAtIndex:0];
+    NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     [imageRep setProperty:NSImageCurrentFrame withValue:[NSNumber numberWithInt:frame]];
 }
-
-#define MINIMUM_DURATON  (1.0/30.0)
 
 - (float)unadjustedFrameDuration
 {
     id property = [self firstRepProperty:NSImageCurrentFrameDuration];
-    float duration = (property != nil ? [property floatValue] : 0.0);
+    float duration = property ? [property floatValue] : 0.0;
     return duration;
 }
 
 - (float)frameDuration
 {
     float duration = [self unadjustedFrameDuration];
-    if (duration < MINIMUM_DURATON){
+    if (duration < MINIMUM_DURATION) {
         /*
             Many annoying ads specify a 0 duration to make an image flash
             as quickly as possible.  However a zero duration is faster than
@@ -138,26 +134,24 @@ static NSMutableArray *activeImageRenderers;
             uses 1/100th.  The units in the GIF specification are 1/100th of second.
             We will use 1/30th of second as the minimum time.
         */
-        duration = MINIMUM_DURATON;
+        duration = MINIMUM_DURATION;
     }
     return duration;
 }
 
-- (void)_scheduleFrame
+- (void)scheduleFrame
 {   
-    if (!animationFinished){
-        frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
+    frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
                                                     target:self
                                                     selector:@selector(nextFrame:)
                                                     userInfo:nil
                                                     repeats:NO] retain];
-        if (!activeImageRenderers)
-            activeImageRenderers = [[NSMutableArray alloc] init];
-            
-        [activeImageRenderers addObject: self];
-    }
-}
 
+    if (!activeImageRenderers) {
+        activeImageRenderers = [[NSMutableArray alloc] init];
+    }
+    [activeImageRenderers addObject:self];
+}
 
 - (void)nextFrame:(id)context
 {
@@ -170,20 +164,20 @@ static NSMutableArray *activeImageRenderers;
     
     currentFrame = [self currentFrame] + 1;
     if (currentFrame >= [self frameCount]) {
+	// Don't repeat if the last frame has a duration of 0.  
+        // IE doesn't repeat, so we don't.
         if ([self unadjustedFrameDuration] == 0) {
-            animationFinished = YES;	// Don't repeat if the last frame has a duration of 0.  
-                                // IE doesn't repeat, so we don't.
+            animationFinished = YES;
             return;
         }
-        else
-            currentFrame = 0;
+        currentFrame = 0;
     }
     [self setCurrentFrame:currentFrame];
     
     window = [frameView window];
     
      // We can't use isOpaque because it returns YES for many non-opaque images (Radar 2966937).
-     // But we can at least assume that any image representatin without alpha is opaque.
+     // But we can at least assume that any image representation without alpha is opaque.
      if (![[[self representations] objectAtIndex:0] hasAlpha]) {
         if ([frameView canDraw]) {
             [frameView lockFocus];
@@ -193,32 +187,34 @@ static NSMutableArray *activeImageRenderers;
                     fraction:1.0];
             [frameView unlockFocus];
         }
-        [self _scheduleFrame];
+        if (!animationFinished) {
+            [self scheduleFrame];
+        }
     } else {
         // No need to schedule the next frame in this case.  The display
         // will eventually cause the image to be redrawn and the next frame
-        // will be scheduled in beginAnimationInRect:fromRect:
+        // will be scheduled in beginAnimationInRect:fromRect:.
         [frameView displayRect:targetRect];
     }
     
     [window flushWindow];
 }
 
-- (void)beginAnimationInRect: (NSRect)ir fromRect: (NSRect)fr
+- (void)beginAnimationInRect:(NSRect)ir fromRect:(NSRect)fr
 {
     // The previous, if any, frameView, is released in stopAnimation.
     [self stopAnimation];
 
-    [self drawInRect: ir
-            fromRect: fr
-           operation: NSCompositeSourceOver	// Renders transparency correctly
-            fraction: 1.0];
+    [self drawInRect:ir
+            fromRect:fr
+           operation:NSCompositeSourceOver	// Renders transparency correctly
+            fraction:1.0];
     
-    if ([self frameCount] > 1 && animationFinished != YES) {
+    if ([self frameCount] > 1 && !animationFinished) {
         imageRect = fr;
         targetRect = ir;
         frameView = [[NSView focusView] retain];
-        [self _scheduleFrame];
+        [self scheduleFrame];
     }
 }
 
@@ -231,13 +227,13 @@ static NSMutableArray *activeImageRenderers;
     [frameView release];
     frameView = nil;
 
-    [activeImageRenderers removeObject: self];
+    [activeImageRenderers removeObject:self];
 }
 
 - (void)resize:(NSSize)s
 {
-    [self setScalesWhenResized: YES];
-    [self setSize: s];
+    [self setScalesWhenResized:YES];
+    [self setSize:s];
 }
 
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point

@@ -1,4 +1,18 @@
-2002-07-16  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-16  Darin Adler  <darin@apple.com>
+
+	- fixed 2997891 -- Alexander confused about base page URL for relative links
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient WebResourceHandle:didRedirectToURL:]):
+	Don't tell the bridge the URL changed. The bridge doesn't care about redirects
+	for subresources (and if it did, we'd need some way to tell it that this was
+	a subresource redirect).
+
+        * WebCoreSupport.subproj/WebBridge.m: Formatting tweaks.
+        * WebCoreSupport.subproj/WebImageRenderer.m: Formatting tweaks.
+        * WebView.subproj/WebView.m: Formatting tweaks.
+
+2002-07-16  Richard Williamson  <rjw@apple.com>
 
         Really, stop animation if last frame has zero duration, like IE.
         Was checking adjustedFrameDuration, which is never zero.
@@ -41,7 +55,7 @@
 
         * almost every file: Renamed IF* -> Web*.
 
-2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
+2002-07-15  Richard Williamson  <rjw@apple.com>
 
         Removed dependence on window resize notification.  We now
         use the IFWebView setFrame: method to trigger layouts.  Much
@@ -119,7 +133,7 @@
 	Make data in private class @public, since the main class needs to get at it
 	directly.
 	
-2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
+2002-07-15  Richard Williamson  <rjw@apple.com>
 
         Only adjustFrames in parent if parent is a frame set.
         (Anywhere from 2% to 6% gain, depending on what you believe.)
@@ -278,7 +292,7 @@
 	to match standard used by our other frameworks. (Checked that we no longer have
 	any hard-coding of the bundle identifier anywhere in our code.)
 
-2002-07-13  Richard Williamson (Home)  <rjw@apple.com>
+2002-07-13  Richard Williamson  <rjw@apple.com>
 
         Fixed 2981849 - frames don't always draw correctly.
         
@@ -1158,7 +1172,7 @@ rename
         * WebView.subproj/IFWebDataSource.mm:
         (-[IFWebDataSource stopLoading]): call [downloadHandler cancel] here so clean up is done immediately.
 
-2002-06-27  Richard Williamson (local)  <rjw@apple.com>
+2002-06-27  Richard Williamson  <rjw@apple.com>
 
         Fixed tiling of progressively loaded images.
         
@@ -1169,7 +1183,7 @@ rename
         (-[IFImageRenderer loadStatus]):
         (-[IFImageRenderer tileInRect:fromPoint:]):
 
-2002-06-27  Richard Williamson (local)  <rjw@apple.com>
+2002-06-27  Richard Williamson  <rjw@apple.com>
 
         * WebCoreSupport.subproj/IFImageRenderer.h:
         * WebCoreSupport.subproj/IFImageRenderer.m:
@@ -1177,7 +1191,7 @@ rename
         (-[IFImageRenderer loadStatus]):
         (-[IFImageRenderer tileInRect:fromPoint:]):
 
-2002-06-27  Richard Williamson (local)  <rjw@apple.com>
+2002-06-27  Richard Williamson  <rjw@apple.com>
 
         * WebCoreSupport.subproj/IFTextRenderer.m:
         (-[IFTextRenderer floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:applyRounding:attemptFontSubstitution:]):
@@ -1667,7 +1681,7 @@ guide for the port's coordinates. Also added a workaround for Java.
 	things a bit because beginAnimationInView gets called again, so we don't
 	have to reschedule the timer.
 
-2002-06-20  Richard Williamson (local)  <rjw@apple.com>
+2002-06-20  Richard Williamson  <rjw@apple.com>
 
 	* WebCoreSupport.subproj/IFImageRenderer.m:
 	(-[IFImageRenderer frameDuration]):
@@ -1750,7 +1764,7 @@ guide for the port's coordinates. Also added a workaround for Java.
 
 === Alexander-9 ===
 
-2002-06-19  Richard Williamson (local)  <rjw@apple.com>
+2002-06-19  Richard Williamson  <rjw@apple.com>
 
     Break image renderer reference cycle.  When a view is removed from the view
     hierarchy active image renderers are told to stop animating,

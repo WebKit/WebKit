@@ -138,7 +138,6 @@
     [[[dataSource controller] windowContext] setFrame:frame];
 }
 
-
 - (NSWindow *)window
 {
     return [[[dataSource controller] windowContext] window];
@@ -169,7 +168,7 @@
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
 {
     if (dataSource == nil) {
-        [self setDataSource: withDataSource];
+        [self setDataSource:withDataSource];
         [self openURL:[dataSource inputURL]];
         if ([dataSource redirectedURL]) {
             [self setURL:[dataSource redirectedURL]];
