@@ -1,3 +1,19 @@
+2004-08-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3775316> document sprouts an extra newline character at the end
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::InputNewlineCommandImpl::doApply): There was in insufficient check
+        in the code which adds extra BR elements at the ends of blocks, which we do 
+        to work around the fact that BR elements, when they are the last element in a
+        block, do not render. Now the code sees whether there already is one of these
+        extra BR's in the document and won't add and "extra" extra. 
+        * layout-tests/editing/inserting/insert-3775316-fix.html: Added.
+
 2004-08-26  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3710721 and 3504114, crashes because of bad ownership model for list markers.

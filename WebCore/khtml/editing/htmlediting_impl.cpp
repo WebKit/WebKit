@@ -1346,15 +1346,23 @@ void InputNewlineCommandImpl::doApply()
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
-        // Insert an "extra" BR at the end of the block. This makes the "real" BR we want
-        // to insert appear in the rendering without any significant side effects (and no
-        // real worries either since you can't arrow past this extra one.
+        // Check for a trailing BR. If there isn't one, we'll need to insert an "extra" one.
+        // This makes the "real" BR we want to insert appear in the rendering without any 
+        // significant side effects (and no real worries either since you can't arrow past 
+        // this extra one.
+        NodeImpl *next = pos.node()->traverseNextNode();
+        bool hasTrailingBR = next && next->id() == ID_BR;
         insertNodeAfterPosition(nodeToInsert, pos);
-        exceptionCode = 0;
-        ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
-        ASSERT(exceptionCode == 0);
-        insertNodeAfter(extraBreakNode, nodeToInsert);
-        setEndingSelection(Position(extraBreakNode, 0));
+        if (hasTrailingBR) {
+            setEndingSelection(Position(nodeToInsert, 0));
+        }
+        else {
+            // Insert an "extra" BR at the end of the block. 
+            ElementImpl *extraBreakNode = document()->createHTMLElement("BR", exceptionCode);
+            ASSERT(exceptionCode == 0);
+            insertNodeAfter(extraBreakNode, nodeToInsert);
+            setEndingSelection(Position(extraBreakNode, 0));
+        }
     }
     else if (atStart) {
         LOG(Editing, "input newline case 2");
