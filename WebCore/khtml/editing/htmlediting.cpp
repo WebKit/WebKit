@@ -810,7 +810,16 @@ void CompositeEditCommand::deleteInsignificantText(TextImpl *textNode, int start
 
     if (str) {
         // Replace the text between start and end with our pruned version.
-        replaceText(textNode, start, end - start, str);
+        if (str->l > 0) {
+            replaceText(textNode, start, end - start, str);
+        }
+        else {
+            // Assert that we are not going to delete all of the text in the node.
+            // If we were, that should have been done above with the call to 
+            // removeNode and return.
+            ASSERT(start > 0 || (unsigned long)end - start < textNode->length());
+            deleteText(textNode, start, end - start);
+        }
         str->deref();
     }
 }
@@ -1985,6 +1994,7 @@ InsertTextCommand::InsertTextCommand(DocumentImpl *document, TextImpl *node, lon
 {
     ASSERT(m_node);
     ASSERT(m_offset >= 0);
+    ASSERT(!text.isEmpty());
     
     m_node->ref();
     m_text = text.copy(); // make a copy to ensure that the string never changes
@@ -1999,9 +2009,8 @@ InsertTextCommand::~InsertTextCommand()
 void InsertTextCommand::doApply()
 {
     ASSERT(m_node);
-
-    if (m_text.isEmpty())
-	return;
+    ASSERT(m_offset >= 0);
+    ASSERT(!m_text.isEmpty());
 
     int exceptionCode = 0;
     m_node->insertData(m_offset, m_text, exceptionCode);
@@ -2011,10 +2020,8 @@ void InsertTextCommand::doApply()
 void InsertTextCommand::doUnapply()
 {
     ASSERT(m_node);
+    ASSERT(m_offset >= 0);
     ASSERT(!m_text.isEmpty());
-
-    if (m_text.isEmpty())
-	return;
 
     int exceptionCode = 0;
     m_node->deleteData(m_offset, m_text.length(), exceptionCode);

@@ -1,3 +1,20 @@
+2004-10-26  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::deleteInsignificantText): Do not call replaceText
+        with a zero-length string. That triggers an assert. Call deleteText instead, 
+        using the same indices that are passed to replaceText.
+        
+        Cleaned up the asserts in these three functions below, making them
+        more consistent. This is not needed for the fix, but I tripped over
+        these in the course of debugging.
+        
+        (khtml::InsertTextCommand::InsertTextCommand):
+        (khtml::InsertTextCommand::doApply):
+        (khtml::InsertTextCommand::doUnapply):
+
 2004-10-25  Adele Amchan <adele@apple.com>
 
         Reviewed by Darin.
