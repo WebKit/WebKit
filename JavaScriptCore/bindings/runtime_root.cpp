@@ -129,6 +129,7 @@ const Bindings::RootObject *KJS::Bindings::rootForImp (ObjectImp *imp)
 const Bindings::RootObject *KJS::Bindings::rootForInterpreter (KJS::Interpreter *interpreter)
 {
     CFMutableDictionaryRef refsByRoot = getReferencesByRootDictionary ();
+    const Bindings::RootObject *aRootObject = 0, *result = 0;
     
     if (refsByRoot) {
         const void **allValues = 0;
@@ -140,15 +141,17 @@ const Bindings::RootObject *KJS::Bindings::rootForInterpreter (KJS::Interpreter 
         allValues = (const void **)malloc (sizeof(void *) * count);
         CFDictionaryGetKeysAndValues (refsByRoot, allKeys, allValues);
         for(i = 0; i < count; i++) {
-            const Bindings::RootObject *aRootObject = (const Bindings::RootObject *)allKeys[i];
-            if (aRootObject->interpreter() == interpreter)
-                return aRootObject;
+            aRootObject = (const Bindings::RootObject *)allKeys[i];
+            if (aRootObject->interpreter() == interpreter) {
+                result = aRootObject;
+                break;
+            }
         }
         
         free ((void *)allKeys);
         free ((void *)allValues);
     }
-    return 0;
+    return result;
 }
 
 void KJS::Bindings::addNativeReference (const Bindings::RootObject *root, ObjectImp *imp)

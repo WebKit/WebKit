@@ -93,13 +93,11 @@ MethodList CClass::methodsNamed(const char *_name) const
         return methodList;
     }
     
-    if (NPN_IsValidIdentifier (_name)) {
-        NPIdentifier ident = NPN_GetIdentifier (_name);
-        if (_isa->hasMethod && _isa->hasMethod (_isa, ident)){
-            Method *aMethod = new CMethod (ident);
-            CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
-            methodList.addMethod (aMethod);
-        }
+    NPIdentifier ident = NPN_GetStringIdentifier (_name);
+    if (_isa->hasMethod && _isa->hasMethod (_isa, ident)){
+        Method *aMethod = new CMethod (ident);
+        CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, methodName, aMethod);
+        methodList.addMethod (aMethod);
     }
 
     CFRelease (methodName);
@@ -117,12 +115,10 @@ Field *CClass::fieldNamed(const char *name) const
         return aField;
     }
 
-    if (NPN_IsValidIdentifier (name)) {
-        NPIdentifier ident = NPN_GetIdentifier (name);
-        if (_isa->hasProperty && _isa->hasProperty (_isa, ident)){
-            aField = new CField (ident);
-            CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
-        }
+    NPIdentifier ident = NPN_GetStringIdentifier (name);
+    if (_isa->hasProperty && _isa->hasProperty (_isa, ident)){
+        aField = new CField (ident);
+        CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, fieldName, aField);
     }
     
     CFRelease (fieldName);

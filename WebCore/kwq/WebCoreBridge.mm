@@ -52,6 +52,7 @@
 #import "render_style.h"
 #import "render_replaced.h"
 
+#import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/jni_jsobject.h>
 #import <JavaScriptCore/object.h>
 #import <JavaScriptCore/runtime_root.h>
@@ -1093,6 +1094,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 - (WebScriptObject *)windowScriptObject
 {
     return _part->windowScriptObject();
+}
+
+- (NPObject *)windowScriptNPObject
+{
+    return _part->windowScriptNPObject();
 }
 
 - (DOMDocument *)DOMDocument

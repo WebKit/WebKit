@@ -448,6 +448,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.getJavaEnv = (NPN_GetJavaEnvProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaEnv);
         browserFuncs.getJavaPeer = (NPN_GetJavaPeerProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetJavaPeer);
 
+        browserFuncs.releasevariantvalue = (NPN_ReleaseVariantValueProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ReleaseVariantValue);
+        browserFuncs.getstringidentifier = (NPN_GetStringIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetStringIdentifier);
+        browserFuncs.getstringidentifiers = (NPN_GetStringIdentifiersProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetStringIdentifiers);
+        browserFuncs.getintidentifier = (NPN_GetIntIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetIntIdentifier);
+        browserFuncs.identifierisstring = (NPN_IdentifierIsStringProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_IdentifierIsString);
+        browserFuncs.utf8fromidentifier = (NPN_UTF8FromIdentifierProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_UTF8FromIdentifier);
+        browserFuncs.createobject = (NPN_CreateObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_CreateObject);
+        browserFuncs.retainobject = (NPN_RetainObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_RetainObject);
+        browserFuncs.releaseobject = (NPN_ReleaseObjectProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_ReleaseObject);
+        browserFuncs.call = (NPN_CallProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Call);
+        browserFuncs.evalute = (NPN_EvaluateProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_Evaluate);
+        browserFuncs.getproperty = (NPN_GetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_GetProperty);
+        browserFuncs.setproperty = (NPN_SetPropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetProperty);
+        browserFuncs.removeproperty = (NPN_RemovePropertyProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_RemoveProperty);
+        browserFuncs.setexception = (NPN_SetExceptionProcPtr)tVectorForFunctionPointer((FunctionPointer)NPN_SetException);
+
 #if !LOG_DISABLED
         CFAbsoluteTime mainStart = CFAbsoluteTimeGetCurrent();
 #endif
@@ -525,6 +541,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         browserFuncs.forceredraw = NPN_ForceRedraw;
         browserFuncs.getJavaEnv = NPN_GetJavaEnv;
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
+
+        browserFuncs.releasevariantvalue = NPN_ReleaseVariantValue;
+        browserFuncs.getstringidentifier = NPN_GetStringIdentifier;
+        browserFuncs.getstringidentifiers = NPN_GetStringIdentifiers;
+        browserFuncs.getintidentifier = NPN_GetIntIdentifier;
+        browserFuncs.identifierisstring = NPN_IdentifierIsString;
+        browserFuncs.utf8fromidentifier = NPN_UTF8FromIdentifier;
+        browserFuncs.createobject = NPN_CreateObject;
+        browserFuncs.retainobject = NPN_RetainObject;
+        browserFuncs.releaseobject = NPN_ReleaseObject;
+        browserFuncs.call = NPN_Call;
+        browserFuncs.evalute = NPN_Evaluate;
+        browserFuncs.getproperty = NPN_GetProperty;
+        browserFuncs.setproperty = NPN_SetProperty;
+        browserFuncs.removeproperty = NPN_RemoveProperty;
+        browserFuncs.setexception = NPN_SetException;
 
 #if !LOG_DISABLED
         CFAbsoluteTime initializeStart = CFAbsoluteTimeGetCurrent();

@@ -186,6 +186,7 @@ KWQKHTMLPart::KWQKHTMLPart()
     , _drawSelectionOnly(false)
     , _bindingRoot(0)
     , _windowScriptObject(0)
+    , _windowScriptNPObject(0)
     , _dragSrc(0)
     , _dragClipboard(0)
     , _elementToDraw(0)
@@ -1174,6 +1175,16 @@ WebScriptObject *KWQKHTMLPart::windowScriptObject()
     }
 
     return _windowScriptObject;
+}
+
+NPObject *KWQKHTMLPart::windowScriptNPObject()
+{
+    if (!_windowScriptNPObject) {
+        KJS::ObjectImp *win = static_cast<KJS::ObjectImp *>(KJS::Window::retrieveWindow(this));
+        _windowScriptNPObject = _NPN_CreateScriptObject (win, bindingRootObject());
+    }
+
+    return _windowScriptNPObject;
 }
 
 void KWQKHTMLPart::partClearedInBegin()
@@ -3281,6 +3292,7 @@ KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
 
 @interface NSObject (WebPlugIn)
 - (id)objectForWebScript;
+- (void *)pluginScriptableObject;
 @end
 
 KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
@@ -3289,6 +3301,11 @@ KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
         id object = [aView objectForWebScript];
         if (object)
             return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object);
+    }
+    else if ([aView respondsToSelector:@selector(pluginScriptableObject)]){
+        void *object = [aView pluginScriptableObject];
+        if (object)
+            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object);
     }
     return 0;
 }

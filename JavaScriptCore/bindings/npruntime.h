@@ -48,19 +48,6 @@ extern "C" {
     to support the extended Netscape script-ability API for plugins (NP-SAP).
     NP-SAP is an extension of the Netscape plugin API.  As such we have adopted the
     use of the "NP" prefix for this API.  
-    
-    The following NP-SAP entry points were added to the Netscape plugin API (in npsap.h):
-
-    NPObject *NPP_GetNativeObjectForScript (NPP instance);
-    NPScriptObject *NPN_GetWindowScriptObject (NPP instance);
-    NPScriptObject *NPN_GetInstanceScriptObject (NPP instance);
-
-    These functions are used to establish the initial binding between the user agent
-    and native code.  The DOM objects in the user agent can be examined and manipulated using
-    the NPN_ functions that operate on a NPScriptObject described in this header.
-    
-    To the extent possible the assumptions about the scripting language used by
-    the scripting environment have been minimized.
 */
 
 
@@ -70,11 +57,6 @@ extern "C" {
 */
 typedef struct NPObject NPObject;
 typedef struct NPClass NPClass;
-
-/*
-    A NPScriptObject wraps a script Object in an NPObject.
-*/
-typedef NPObject NPScriptObject;
 
 typedef char NPUTF8;
 typedef struct _NPString {
@@ -177,7 +159,7 @@ void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *
 	String                      NPVariant (with type NPVariantStringType)
 	Undefined                   NPVariant (with type NPVariantUndefinedType)
 	Null                        NPVariant (with type NPVariantNullType)
-	Object (including Array)    NPVariant (with type NPVariantObjectType, objectValue will be a NPScriptObject)
+	Object (including Array)    NPVariant (with type NPVariantObjectType, objectValue will be a NPObject)
 	Object (NPObject wrapper)   NPVariant (with type NPVariantObjectType)
 
 
@@ -189,28 +171,26 @@ void NPN_InitializeVariantWithVariant (NPVariant *destination, const NPVariant *
 	NPVariant (with type NPVariantUndefinedType)          Undefined
 	NPVariant (with type NPVariantNullType)               Null
 	NPArray                                               Array (restricted)
-	NPScriptObject                                        Object
-	other NPObject                                        Object (NPObject wrapper)
+	NObject                                               Object or (NPObject wrapper)
 
 */
 
-typedef const void *NPIdentifier;
+typedef void *NPIdentifier;
 
 /*
-    NPObjects have methods and properties.  Methods and properties are named with NPIdentifiers.
-    These identifiers may be reflected in script.  NPIdentifiers can be compared using ==.
-    
-    NPN_IsValidIdentifier will return true if an identifier for the name has already been
-    assigned with either NPIdentifierFromUTF8() or NPN_GetIdentifiers();
+    NPObjects have methods and properties.  Methods and properties are
+    identified with NPIdentifiers.  These identifiers may be reflected
+    in script.  NPIdentifiers can be either strings or integers, IOW,
+    methods and properties can be identified by either strings or
+    integers (i.e. foo["bar"] vs foo[1]). NPIdentifiers can be
+    compared using ==.  In case of any errors, the requested
+    NPIdentifier(s) will be NULL.
 */
-NPIdentifier NPN_GetIdentifier (const NPUTF8 *name);
-void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *identifiers);
-
-/*
-    The NPUTF8 returned from NPN_UTF8FromIdentifier should be freed.
-*/
+NPIdentifier NPN_GetStringIdentifier(const NPUTF8 *name);
+void NPN_GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers);
+NPIdentifier NPN_GetIntIdentifier(int32_t intid);
+NPBool NPN_IdentifierIsString(NPIdentifier identifier);
 NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier);
-void NPN_ReleaseUTF8 (NPUTF8 *string);
 
 /*
     NPObject behavior is implemented using the following set of callback functions.
@@ -238,11 +218,11 @@ typedef NPBool (*NPSetPropertyFunctionPtr)(NPObject *obj, NPIdentifier name, con
     exist.
     
     NPInvalidateFunctionPtr is called by the scripting environment when the native code is
-    shutdown.  Any attempt to message a NPScriptObject instance after the invalidate
+    shutdown.  Any attempt to message a NPObject instance after the invalidate
     callback has been called will result in undefined behavior, even if the
-    native code is still retaining those NPScriptObject instances.
+    native code is still retaining those NPObject instances.
     (The runtime will typically return immediately, with 0 or NULL, from an attempt to
-    dispatch to a NPScriptObject, but this behavior should not be depended upon.)
+    dispatch to a NPObject, but this behavior should not be depended upon.)
 */
 struct NPClass
 {
@@ -287,15 +267,7 @@ NPObject *NPN_RetainObject (NPObject *obj);
 void NPN_ReleaseObject (NPObject *obj);
 
 /*
-    Built-in data types.  These classes can be passed to NPN_IsKindOfClass().
-*/
-extern NPClass *NPArrayClass;
-extern NPClass *NPScriptObjectClass;
-
-typedef NPObject NPArray;
-
-/*
-    Functions to access script objects represented by NPScriptObject.
+    Functions to access script objects represented by NPObject.
     
     Calls to script objects are asynchronous.  If a function returns a value, it
     will be supplied via the NPScriptResultFunctionPtr callback.
@@ -305,51 +277,16 @@ typedef NPObject NPArray;
     Calls made from script to the plugin will always be made on the main
     user agent thread, this include calls to NPScriptResultFunctionPtr callbacks.
 */
-typedef void (*NPScriptResultFunctionPtr)(const NPVariant *result, void *resultContext);
-
-void NPN_Call (NPScriptObject *obj, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPScriptResultFunctionPtr resultCallback);
-void NPN_Evaluate (NPScriptObject *obj, NPString *script, NPScriptResultFunctionPtr resultCallback, void *resultContext);
-void NPN_GetProperty (NPScriptObject *obj, NPIdentifier  propertyName, NPScriptResultFunctionPtr resultCallback, void *resultContext);
-void NPN_SetProperty (NPScriptObject *obj, NPIdentifier  propertyName, const NPVariant *value);
-void NPN_RemoveProperty (NPScriptObject *obj, NPIdentifier propertyName);
-void NPN_ToString (NPScriptObject *obj, NPScriptResultFunctionPtr result, void *resultContext);
-void NPN_GetPropertyAtIndex (NPScriptObject *obj, int32_t index, NPScriptResultFunctionPtr resultCallback, void *resultContext);
-void NPN_SetPropertyAtIndex (NPScriptObject *obj, unsigned index, const NPVariant *value);
-
-/*
-    NPArrays are immutable.  They are used to pass arguments to 
-    the script functions that expect arrays, or to export 
-    arrays of properties.  NPArray is represented in JavaScript
-    by a restricted Array.  The Array in JavaScript is read-only,
-    only has index accessors, and may not be resized.
-    
-    Objects added to arrays are retained by the array.
-*/
-NPArray *NPN_CreateArray (NPVariant **, int32_t count);
-NPArray *NPN_CreateArrayV (int32_t count, ...);
-
-#if 0
-/*
-    Objects returned by NPN_ObjectAtIndex pass a reference count
-    to the caller.  The caller must release the object.
-*/
-const NPVariant *NPN_ObjectAtIndex (NPArray *array, int32_t index);
-#endif
-
-/*
-    Returns true if the object is a kind of class as specified by
-    aClass.
-*/
-bool NPN_IsKindOfClass (const NPObject *obj, const NPClass *aClass);
+NPBool NPN_Call (NPObject *obj, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result);
+NPBool NPN_Evaluate (NPObject *obj, NPString *script, NPVariant *result);
+NPBool NPN_GetProperty (NPObject *obj, NPIdentifier  propertyName, NPVariant *result);
+NPBool NPN_SetProperty (NPObject *obj, NPIdentifier  propertyName, const NPVariant *value);
+NPBool NPN_RemoveProperty (NPObject *obj, NPIdentifier propertyName);
 
 /*
     NPN_SetException may be called to trigger a script exception upon return
     from entry points into NPObjects.
-        
-    NPN_SetExceptionWithUTF8() takes an UTF8 string and a length.  -1 may be passed for
-    the length if the string is null terminated.
 */
-void NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t length);
 void NPN_SetException (NPObject *obj, NPString *message);
 
 #ifdef __cplusplus

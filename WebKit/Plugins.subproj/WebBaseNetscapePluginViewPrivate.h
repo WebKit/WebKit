@@ -22,5 +22,5 @@
 - (void)invalidateRect:(NPRect *)invalidRect;
 - (void)invalidateRegion:(NPRegion)invalidateRegion;
 - (void)forceRedraw;
-
+- (NPError)getVariable:(NPNVariable)variable value:(void *)value;
 @end

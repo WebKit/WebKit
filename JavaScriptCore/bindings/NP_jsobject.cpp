@@ -24,13 +24,25 @@
  */
 #include <NP_jsobject.h>
 
+#include <JavaScriptCore/npruntime.h>
+#include <JavaScriptCore/c_utility.h>
+
+
 using namespace KJS;
 using namespace KJS::Bindings;
 
 
-static KJS::List listFromNPArray(KJS::ExecState *exec, NPObject **args, unsigned argCount)
+static KJS::List listFromVariantArgs(KJS::ExecState *exec, const NPVariant *args, unsigned argCount)
 {
-    KJS::List aList;    
+    KJS::List aList; 
+    unsigned i;
+    const NPVariant *v = args;
+    
+    for (i = 0; i < argCount; i++) {
+        aList.append (convertNPVariantToValue (exec, v));
+        v++;
+    }
+    
     return aList;
 }
 
@@ -59,9 +71,8 @@ static NPClass _javascriptClass = {
 static NPClass *javascriptClass = &_javascriptClass;
 NPClass *NPScriptObjectClass = javascriptClass;
 
-Identifier identiferFromNPIdentifier(NPIdentifier ident)
+Identifier identiferFromNPIdentifier(const NPUTF8 *name)
 {
-    const NPUTF8 *name = NPN_UTF8FromIdentifier (ident);
     NPUTF16 *methodName;
     unsigned int UTF16Length;
     
@@ -72,144 +83,197 @@ Identifier identiferFromNPIdentifier(NPIdentifier ident)
     return identifier;
 }
 
-void NPN_Call (NPScriptObject *o, NPIdentifier ident, NPObject **args, unsigned argCount, NPScriptResultFunctionPtr resultCallback, void *resultContext)
+NPObject *_NPN_CreateScriptObject (KJS::ObjectImp *imp, KJS::Bindings::RootObject *root)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
-    NPVariant resultVariant;
-    
-    // Lookup the function object.
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Interpreter::lock();
-    Value func = obj->imp->get (exec, identiferFromNPIdentifier(ident));
-    Interpreter::unlock();
+    JavaScriptObject *obj = (JavaScriptObject *)NPN_CreateObject(NPScriptObjectClass);
 
-    if (func.isNull()) {
-        NPN_InitializeVariantAsNull(&resultVariant);
-    }
-    else if ( func.type() == UndefinedType) {
-        NPN_InitializeVariantAsUndefined(&resultVariant);
-    }
-    else {
-        // Call the function object.
-        ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
-        Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
-        List argList = listFromNPArray(exec, args, argCount);
+    obj->imp = imp;
+    obj->root = root;    
+
+    addNativeReference (root, imp);
+    
+    return (NPObject *)obj;
+}
+
+NPBool NPN_Call (NPObject *o, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result)
+{
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
+        
+        PrivateIdentifier *i = (PrivateIdentifier *)methodName;
+        if (!i->isString)
+            return false;
+            
+        // Lookup the function object.
+        ExecState *exec = obj->root->interpreter()->globalExec();
         Interpreter::lock();
-        Value result = funcImp->call (exec, thisObj, argList);
+        Value func = obj->imp->get (exec, identiferFromNPIdentifier(i->value.string));
         Interpreter::unlock();
 
-        // Convert and return the result of the function call.
-        convertValueToNPVariant(exec, result, &resultVariant);
+        if (func.isNull()) {
+            NPN_InitializeVariantAsNull(result);
+            return false;
+        }
+        else if ( func.type() == UndefinedType) {
+            NPN_InitializeVariantAsUndefined(result);
+            return false;
+        }
+        else {
+            // Call the function object.
+            ObjectImp *funcImp = static_cast<ObjectImp*>(func.imp());
+            Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
+            List argList = listFromVariantArgs(exec, args, argCount);
+            Interpreter::lock();
+            Value resultV = funcImp->call (exec, thisObj, argList);
+            Interpreter::unlock();
+
+            // Convert and return the result of the function call.
+            convertValueToNPVariant(exec, resultV, result);
+            return true;
+        }
+    }
+    else {
+        if (o->_class->invoke) {
+            return o->_class->invoke (o, methodName, args, argCount, result);
+        }
     }
     
-    resultCallback (&resultVariant, resultContext);
-    
-    NPN_ReleaseVariantValue (&resultVariant);
+    return true;
 }
 
-void NPN_Evaluate (NPScriptObject *o, NPString *s, NPScriptResultFunctionPtr resultCallback, void *resultContext)
+NPBool NPN_Evaluate (NPObject *o, NPString *s, NPVariant *variant)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
-    NPVariant resultVariant;
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
 
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
+        ExecState *exec = obj->root->interpreter()->globalExec();
+        Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
+        
+        Interpreter::lock();
+        NPUTF16 *scriptString;
+        unsigned int UTF16Length;
+        convertNPStringToUTF16 (s, &scriptString, &UTF16Length);    // requires free() of returned memory.
+        KJS::Value result = obj->root->interpreter()->evaluate(UString(), 0, UString((const UChar *)scriptString,UTF16Length)).value();
+        Interpreter::unlock();
+        
+        free ((void *)scriptString);
+        
+        convertValueToNPVariant(exec, result, variant);
     
-    Interpreter::lock();
-    NPUTF16 *scriptString;
-    unsigned int UTF16Length;
-    convertNPStringToUTF16 (s, &scriptString, &UTF16Length);    // requires free() of returned memory.
-    KJS::Value result = obj->root->interpreter()->evaluate(UString(), 0, UString((const UChar *)scriptString,UTF16Length)).value();
-    Interpreter::unlock();
-    
-    free ((void *)scriptString);
-    
-    convertValueToNPVariant(exec, result, &resultVariant);
-
-    resultCallback (&resultVariant, resultContext);
-
-    NPN_ReleaseVariantValue (&resultVariant);
+        return true;
+    }
+    return false;
 }
 
-void NPN_GetProperty (NPScriptObject *o, NPIdentifier propertyName, NPScriptResultFunctionPtr resultCallback, void *resultContext)
+NPBool NPN_GetProperty (NPObject *o, NPIdentifier propertyName, NPVariant *variant)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
-    NPVariant resultVariant;
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
+        ExecState *exec = obj->root->interpreter()->globalExec();
 
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Interpreter::lock();
-    Value result = obj->imp->get (exec, identiferFromNPIdentifier(propertyName));
-    Interpreter::unlock();
-    
-    convertValueToNPVariant(exec, result, &resultVariant);
-    
-    resultCallback (&resultVariant, resultContext);
+        PrivateIdentifier *i = (PrivateIdentifier *)propertyName;
+        if (i->isString) {
+            if (!obj->imp->hasProperty (exec, identiferFromNPIdentifier(i->value.string))) {
+                NPN_InitializeVariantAsNull(variant);
+                return false;
+            }
+        }
+        else {
+            if (!obj->imp->hasProperty (exec, i->value.number)) {
+                NPN_InitializeVariantAsNull(variant);
+                return false;
+            }
+        }
+        
+        Interpreter::lock();
+        Value result;
+        if (i->isString) {
+            result = obj->imp->get (exec, identiferFromNPIdentifier(i->value.string));
+        }
+        else {
+            result = obj->imp->get (exec, i->value.number);
+        }
+        Interpreter::unlock();
 
-    NPN_ReleaseVariantValue (&resultVariant);
+        if (result.isNull()) {
+            NPN_InitializeVariantAsNull(variant);
+            return false;
+        }
+        else if (result.type() == UndefinedType) {
+            NPN_InitializeVariantAsUndefined(variant);
+            return false;
+        }
+        else {
+            convertValueToNPVariant(exec, result, variant);
+        }
+
+        return true;
+    }
+    else if (o->_class->hasProperty && o->_class->getProperty) {
+        if (o->_class->hasProperty (o->_class, propertyName)) {
+            return o->_class->getProperty (o, propertyName, variant);
+        }
+        else {
+            return false;
+        }
+    }
+    return false;
 }
 
-void NPN_SetProperty (NPScriptObject *o, NPIdentifier propertyName, const NPVariant *variant)
+NPBool NPN_SetProperty (NPObject *o, NPIdentifier propertyName, const NPVariant *variant)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
 
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Interpreter::lock();
-    obj->imp->put (exec, identiferFromNPIdentifier(propertyName), convertNPVariantToValue(exec, variant));
-    Interpreter::unlock();
+        ExecState *exec = obj->root->interpreter()->globalExec();
+        Interpreter::lock();
+        Value result;
+        PrivateIdentifier *i = (PrivateIdentifier *)propertyName;
+        if (i->isString) {
+            obj->imp->put (exec, identiferFromNPIdentifier(i->value.string), convertNPVariantToValue(exec, variant));
+        }
+        else {
+            obj->imp->put (exec, i->value.number, convertNPVariantToValue(exec, variant));
+        }
+        Interpreter::unlock();
+        
+        return true;
+    }
+    else if (o->_class->setProperty) {
+        return o->_class->setProperty (o, propertyName, variant);
+    }
+    return false;
 }
 
-void NPN_RemoveProperty (NPScriptObject *o, NPIdentifier propertyName)
+NPBool NPN_RemoveProperty (NPObject *o, NPIdentifier propertyName)
 {
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
+    if (o->_class == NPScriptObjectClass) {
+        JavaScriptObject *obj = (JavaScriptObject *)o; 
+        ExecState *exec = obj->root->interpreter()->globalExec();
 
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Interpreter::lock();
-    obj->imp->deleteProperty (exec, identiferFromNPIdentifier(propertyName));
-    Interpreter::unlock();
-}
+        PrivateIdentifier *i = (PrivateIdentifier *)propertyName;
+        if (i->isString) {
+            if (!obj->imp->hasProperty (exec, identiferFromNPIdentifier(i->value.string))) {
+                return false;
+            }
+        }
+        else {
+            if (!obj->imp->hasProperty (exec, i->value.number)) {
+                return false;
+            }
+        }
 
-void NPN_ToString (NPScriptObject *o, NPScriptResultFunctionPtr resultCallback, void *resultContext)
-{
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
-    
-    Interpreter::lock();
-    Object thisObj = Object(const_cast<ObjectImp*>(obj->imp));
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    
-    NPVariant resultVariant;
-    coerceValueToNPVariantStringType(exec, thisObj, &resultVariant);
-
-    Interpreter::unlock();
-    
-    resultCallback (&resultVariant, resultContext);
-    
-    NPN_ReleaseVariantValue (&resultVariant);
-}
-
-void NPN_GetPropertyAtIndex (NPScriptObject *o, int32_t index, NPScriptResultFunctionPtr resultCallback, void *resultContext)
-{
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
-
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Interpreter::lock();
-    Value result = obj->imp->get (exec, (unsigned)index);
-    Interpreter::unlock();
-
-    NPVariant resultVariant;
-    convertValueToNPVariant(exec, result, &resultVariant);
-    
-    resultCallback (&resultVariant, resultContext);
-
-    NPN_ReleaseVariantValue (&resultVariant);
-}
-
-void NPN_SetPropertyAtIndex (NPScriptObject *o, unsigned index, const NPVariant *value)
-{
-    JavaScriptObject *obj = (JavaScriptObject *)o; 
-
-    ExecState *exec = obj->root->interpreter()->globalExec();
-    Interpreter::lock();
-    obj->imp->put (exec, (unsigned)index, convertNPVariantToValue(exec, value));
-    Interpreter::unlock();
+        Interpreter::lock();
+        if (i->isString) {
+            obj->imp->deleteProperty (exec, identiferFromNPIdentifier(i->value.string));
+        }
+        else {
+            obj->imp->deleteProperty (exec, i->value.number);
+        }
+        Interpreter::unlock();
+        
+        return true;
+    }
+    return false;
 }
 

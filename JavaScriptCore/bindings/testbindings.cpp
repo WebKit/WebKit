@@ -97,8 +97,8 @@ static const NPUTF8 *myMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
 
 static void initializeIdentifiers()
 {
-	NPN_GetIdentifiers (myPropertyIdentifierNames, NUM_PROPERTY_IDENTIFIERS, myPropertyIdentifiers);
-	NPN_GetIdentifiers (myMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, myMethodIdentifiers);
+	NPN_GetStringIdentifiers (myPropertyIdentifierNames, NUM_PROPERTY_IDENTIFIERS, myPropertyIdentifiers);
+	NPN_GetStringIdentifiers (myMethodIdentifierNames, NUM_METHOD_IDENTIFIERS, myMethodIdentifiers);
 };
 
 bool myHasProperty (NPClass *theClass, NPIdentifier name)
@@ -126,19 +126,40 @@ bool myHasMethod (NPClass *theClass, NPIdentifier name)
 
 void logMessage (const NPVariant *message)
 {
-	printf ("%s\n", message->value.stringValue.UTF8Characters);
+    if (message->type == NPVariantStringType) {
+    	char msgBuf[1024];
+    	strncpy (msgBuf, message->value.stringValue.UTF8Characters, message->value.stringValue.UTF8Length);
+    	msgBuf[message->value.stringValue.UTF8Length] = 0;
+        printf ("%s\n", msgBuf);
+    }
+    else if (message->type == NPVariantDoubleType)
+        printf ("%f\n", (float)message->value.doubleValue);
+    else if (message->type == NPVariantInt32Type)
+        printf ("%d\n", message->value.intValue);
+    else if (message->type == NPVariantObjectType)
+        printf ("%p\n", message->value.objectValue);
 }
 
 void setDoubleValue (MyObject *obj, const NPVariant *variant)
 {
-	if (!NPN_VariantToDouble (variant, &obj->doubleValue))
-		NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set double value with invalid type.", -1);
+	if (!NPN_VariantToDouble (variant, &obj->doubleValue)) {
+		NPUTF8 *msg = "Attempt to set double value with invalid type.";
+		NPString aString;
+		aString.UTF8Characters = msg;
+		aString.UTF8Length = strlen (msg);
+		NPN_SetException ((NPObject *)obj, &aString);
+	}
 }
 
 void setIntValue (MyObject *obj, const NPVariant *variant)
 {
-	if (!NPN_VariantToInt32 (variant, &obj->intValue))
-		NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set int value with invalid type.", -1);
+	if (!NPN_VariantToInt32 (variant, &obj->intValue)) {
+		NPUTF8 *msg = "Attempt to set int value with invalid type.";
+		NPString aString;
+		aString.UTF8Characters = msg;
+		aString.UTF8Length = strlen (msg);
+		NPN_SetException ((NPObject *)obj, &aString);
+	}
 }
 
 void setStringValue (MyObject *obj, const NPVariant *variant)
@@ -149,8 +170,13 @@ void setStringValue (MyObject *obj, const NPVariant *variant)
 
 void setBooleanValue (MyObject *obj, const NPVariant *variant)
 {
-	if (!NPN_VariantToBool (variant, (NPBool *)&obj->boolValue))
-		NPN_SetExceptionWithUTF8 ((NPObject *)obj, "Attempt to set bool value with invalid type.", -1);
+	if (!NPN_VariantToBool (variant, (NPBool *)&obj->boolValue)) {
+		NPUTF8 *msg = "Attempt to set bool value with invalid type.";
+		NPString aString;
+		aString.UTF8Characters = msg;
+		aString.UTF8Length = strlen (msg);
+		NPN_SetException ((NPObject *)obj, &aString);
+	}
 }
 
 void getDoubleValue (MyObject *obj, NPVariant *variant)

@@ -27,12 +27,12 @@
 #include <npruntime.h>
 #include <c_utility.h>
 
-static Boolean identifierEqual(const void *value1, const void *value2)
+static Boolean stringIdentifierEqual(const void *value1, const void *value2)
 {
     return strcmp((const char *)value1, (const char *)value2) == 0;
 }
 
-static CFHashCode identifierHash (const void *value)
+static CFHashCode stringIdentifierHash (const void *value)
 {
     const char *key = (const char *)value;
     unsigned int len = strlen(key);
@@ -52,75 +52,77 @@ static CFHashCode identifierHash (const void *value)
     return result;
 }
 
-CFDictionaryKeyCallBacks identifierCallbacks = {
+CFDictionaryKeyCallBacks stringIdentifierCallbacks = {
     0,
     NULL,
     NULL,
     NULL,
-    identifierEqual,
-    identifierHash
+    stringIdentifierEqual,
+    stringIdentifierHash
 };
 
-static CFMutableDictionaryRef identifierDictionary = 0;
+static CFMutableDictionaryRef stringIdentifierDictionary = 0;
 
-static CFMutableDictionaryRef getIdentifierDictionary()
+static CFMutableDictionaryRef getStringIdentifierDictionary()
 {
-    if (!identifierDictionary)
-        identifierDictionary = CFDictionaryCreateMutable(NULL, 0, &identifierCallbacks, NULL);
-    return identifierDictionary;
+    if (!stringIdentifierDictionary)
+        stringIdentifierDictionary = CFDictionaryCreateMutable(NULL, 0, &stringIdentifierCallbacks, NULL);
+    return stringIdentifierDictionary;
 }
 
-#define INITIAL_IDENTIFIER_NAME_COUNT   128
+static Boolean intIdentifierEqual(const void *value1, const void *value2)
+{
+    return value1 == value2;
+}
 
-static const char **identifierNames = 0;
-static unsigned int maxIdentifierNames;
-static uint32_t identifierCount = 1;
+static CFHashCode intIdentifierHash (const void *value)
+{
+    return (CFHashCode)value;
+}
 
-NPIdentifier NPN_GetIdentifier (const NPUTF8 *name)
+CFDictionaryKeyCallBacks intIdentifierCallbacks = {
+    0,
+    NULL,
+    NULL,
+    NULL,
+    intIdentifierEqual,
+    intIdentifierHash
+};
+
+static CFMutableDictionaryRef intIdentifierDictionary = 0;
+
+static CFMutableDictionaryRef getIntIdentifierDictionary()
+{
+    if (!intIdentifierDictionary)
+        intIdentifierDictionary = CFDictionaryCreateMutable(NULL, 0, &intIdentifierCallbacks, NULL);
+    return intIdentifierDictionary;
+}
+
+NPIdentifier NPN_GetStringIdentifier (const NPUTF8 *name)
 {
     assert (name);
     
     if (name) {
-        NPIdentifier identifier = 0;
+        PrivateIdentifier *identifier = 0;
         
-        identifier = (NPIdentifier)CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name);
+        identifier = (PrivateIdentifier *)CFDictionaryGetValue (getStringIdentifierDictionary(), (const void *)name);
         if (identifier == 0) {
-            identifier = (NPIdentifier)identifierCount++;
+            identifier = (PrivateIdentifier *)malloc (sizeof(PrivateIdentifier));
             // We never release identifier names, so this dictionary will grow, as will
             // the memory for the identifier name strings.
+            identifier->isString = true;
             const char *identifierName = strdup (name);
-            
-            if (!identifierNames) {
-                identifierNames = (const char **)malloc (sizeof(const char *)*INITIAL_IDENTIFIER_NAME_COUNT);
-                maxIdentifierNames = INITIAL_IDENTIFIER_NAME_COUNT;
-            }
-            
-            if (identifierCount >= maxIdentifierNames) {
-                maxIdentifierNames *= 2;
-                identifierNames = (const char **)realloc ((void *)identifierNames, sizeof(const char *)*maxIdentifierNames);
-            }
-            
-            identifierNames[(uint32_t)identifier] = identifierName;
+            identifier->value.string = identifierName;
 
-            CFDictionaryAddValue (getIdentifierDictionary(), identifierName, (const void *)identifier);
+            CFDictionaryAddValue (getStringIdentifierDictionary(), identifierName, (const void *)identifier);
         }
-        return identifier;
+        return (NPIdentifier)identifier;
     }
     
     return 0;
 }
 
-bool NPN_IsValidIdentifier (const NPUTF8 *name)
-{
-    assert (name);
-    
-    if (name)
-        return CFDictionaryGetValue (getIdentifierDictionary(), (const void *)name) == 0 ? false : true;
-
-    return false;
-}
-
-void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *identifiers)
+void NPN_GetStringIdentifiers (const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
 {
     assert (names);
     assert (identifiers);
@@ -129,17 +131,40 @@ void NPN_GetIdentifiers (const NPUTF8 **names, int nameCount, NPIdentifier *iden
         int i;
         
         for (i = 0; i < nameCount; i++) {
-            identifiers[i] = NPN_GetIdentifier (names[i]);
+            identifiers[i] = NPN_GetStringIdentifier (names[i]);
         }
     }
 }
 
+NPIdentifier NPN_GetIntIdentifier(int32_t intid)
+{
+    PrivateIdentifier *identifier = 0;
+    
+    identifier = (PrivateIdentifier *)CFDictionaryGetValue (getIntIdentifierDictionary(), (const void *)intid);
+    if (identifier == 0) {
+        identifier = (PrivateIdentifier *)malloc (sizeof(PrivateIdentifier));
+        // We never release identifier names, so this dictionary will grow.
+        identifier->isString = false;
+        identifier->value.number = intid;
+
+        CFDictionaryAddValue (getIntIdentifierDictionary(), (const void *)intid, (const void *)identifier);
+    }
+    return (NPIdentifier)identifier;
+}
+
+NPBool NPN_IdentifierIsString(NPIdentifier identifier)
+{
+    PrivateIdentifier *i = (PrivateIdentifier *)identifier;
+    return i->isString;
+}
+
 NPUTF8 *NPN_UTF8FromIdentifier (NPIdentifier identifier)
 {
-    if (identifier == 0 || (uint32_t)identifier >= identifierCount)
+    PrivateIdentifier *i = (PrivateIdentifier *)identifier;
+    if (!i->isString)
         return NULL;
         
-    return (NPUTF8 *)identifierNames[(uint32_t)identifier];
+    return (NPUTF8 *)i->value.string;
 }
 
 NPBool NPN_VariantIsVoid (const NPVariant *variant)
@@ -206,7 +231,7 @@ NPBool NPN_VariantToInt32 (const NPVariant *variant, int32_t *result)
 {
     if (variant->type == NPVariantInt32Type)
         *result = variant->value.intValue;
-    else if (variant->type != NPVariantDoubleType)
+    else if (variant->type == NPVariantDoubleType)
         *result = (int32_t)variant->value.doubleValue;
     else
         return false;
@@ -218,7 +243,7 @@ NPBool NPN_VariantToDouble (const NPVariant *variant, double *result)
 {
     if (variant->type == NPVariantInt32Type)
         *result = (double)variant->value.intValue;
-    else if (variant->type != NPVariantDoubleType)
+    else if (variant->type == NPVariantDoubleType)
         *result = variant->value.doubleValue;
     else
         return false;
@@ -399,20 +424,6 @@ void NPN_ReleaseObject (NPObject *obj)
     }
 }
 
-bool NPN_IsKindOfClass (const NPObject *obj, const NPClass *aClass)
-{
-    assert (obj);
-    assert (aClass);
-    
-    if (obj && aClass) {
-        if (obj->_class == aClass)
-            return true;
-    }
-    
-    return false;
-}
-
-
 void NPN_SetExceptionWithUTF8 (NPObject *obj, const NPUTF8 *message, int32_t length)
 {
     assert (obj);
@@ -431,94 +442,3 @@ void NPN_SetException (NPObject *obj, NPString *message)
 {
     // FIX ME.  Need to implement.
 }
-
-// ---------------------------------- Types ----------------------------------
-
-// ---------------------------------- NP_Array ----------------------------------
-
-typedef struct
-{
-    NPObject object;
-    NPObject **objects;
-    int32_t count;
-} ArrayObject;
-
-static NPObject *arrayAllocate()
-{
-    return (NPObject *)malloc(sizeof(ArrayObject));
-}
-
-static void arrayDeallocate (ArrayObject *array)
-{
-    int32_t i;
-    
-    for (i = 0; i < array->count; i++) {
-        NPN_ReleaseObject(array->objects[i]);
-    }
-    free (array->objects);
-    free (array);
-}
-
-
-static NPClass _arrayClass = { 
-    1,
-    arrayAllocate, 
-    (NPDeallocateFunctionPtr)arrayDeallocate, 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-};
-
-static NPClass *arrayClass = &_arrayClass;
-NPClass *NPArrayClass = arrayClass;
-
-NPArray *NPN_CreateArray (NPObject **objects, int32_t count)
-{
-    int32_t i;
-
-    assert (count >= 0);
-    
-    ArrayObject *array = (ArrayObject *)NPN_CreateObject(arrayClass);
-    array->objects = (NPObject **)malloc (sizeof(NPObject *)*count);
-    for (i = 0; i < count; i++) {
-        array->objects[i] = NPN_RetainObject (objects[i]);
-    }
-    
-    return (NPArray *)array;
-}
-
-NPArray *NPN_CreateArrayV (int32_t count, ...)
-{
-    va_list args;
-
-    assert (count >= 0);
-
-    ArrayObject *array = (ArrayObject *)NPN_CreateObject(arrayClass);
-    array->objects = (NPObject **)malloc (sizeof(NPObject *)*count);
-
-    va_start (args, count);
-    
-    int32_t i;
-    for (i = 0; i < count; i++) {
-        NPObject *obj = va_arg (args, NPObject *);
-        array->objects[i] = NPN_RetainObject (obj);
-    }
-        
-    va_end (args);
-
-    return (NPArray *)array;
-}
-
-/*
-NPVariant *NPN_ObjectAtIndex (NPArray *obj, int32_t index)
-{
-    ArrayObject *array = (ArrayObject *)obj;
-
-    assert (index < array->count && array > 0);
-
-    return NPN_RetainObject (array->objects[index]);
-}
-*/

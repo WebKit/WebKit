@@ -1,7 +1,8 @@
 #ifndef _NPFUNCTIONS_H_
 #define _NPFUNCTIONS_H_
 
-#include "npapi.h"
+#include <WebKit/npruntime.h>
+#include <WebKit/npapi.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,6 +30,24 @@ typedef NPError (*NPN_PostURLProcPtr)(NPP instance, const char* URL, const char*
 typedef void* (*NPN_GetJavaEnvProcPtr)(void);
 typedef void* (*NPN_GetJavaPeerProcPtr)(NPP instance);
 
+typedef void (*NPN_ReleaseVariantValueProcPtr) (NPVariant *variant);
+
+typedef NPIdentifier (*NPN_GetStringIdentifierProcPtr) (const NPUTF8 *name);
+typedef void (*NPN_GetStringIdentifiersProcPtr) (const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers);
+typedef NPIdentifier (*NPN_GetIntIdentifierProcPtr) (int32_t intid);
+typedef NPBool (*NPN_IdentifierIsStringProcPtr) (NPIdentifier identifier);
+typedef NPUTF8 *(*NPN_UTF8FromIdentifierProcPtr) (NPIdentifier identifier);
+
+typedef NPObject* (*NPN_CreateObjectProcPtr) (NPClass *aClass);
+typedef NPObject* (*NPN_RetainObjectProcPtr) (NPObject *obj);
+typedef void (*NPN_ReleaseObjectProcPtr) (NPObject *obj);
+typedef NPBool (*NPN_CallProcPtr) (NPObject *obj, NPIdentifier methodName, const NPVariant *args, unsigned argCount, NPVariant *result);
+typedef NPBool (*NPN_EvaluateProcPtr) (NPObject *obj, NPString *script, NPVariant *result);
+typedef NPBool (*NPN_GetPropertyProcPtr) (NPObject *obj, NPIdentifier  propertyName, NPVariant *result);
+typedef NPBool (*NPN_SetPropertyProcPtr) (NPObject *obj, NPIdentifier  propertyName, const NPVariant *value);
+typedef NPBool (*NPN_RemovePropertyProcPtr) (NPObject *obj, NPIdentifier propertyName);
+typedef void (*NPN_SetExceptionProcPtr) (NPObject *obj, NPString *message);
+
 typedef NPError	(*NPP_NewProcPtr)(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc, char* argn[], char* argv[], NPSavedData* saved);
 typedef NPError	(*NPP_DestroyProcPtr)(NPP instance, NPSavedData** save);
 typedef NPError	(*NPP_SetWindowProcPtr)(NPP instance, NPWindow* window);
@@ -36,7 +55,7 @@ typedef NPError	(*NPP_NewStreamProcPtr)(NPP instance, NPMIMEType type, NPStream*
 typedef NPError	(*NPP_DestroyStreamProcPtr)(NPP instance, NPStream* stream, NPReason reason);
 typedef void 	(*NPP_StreamAsFileProcPtr)(NPP instance, NPStream* stream, const char* fname);
 typedef int32 (*NPP_WriteReadyProcPtr)(NPP instance, NPStream* stream);
-typedef int32 (*NPP_WriteProcPtr)(NPP instance, NPStream* stream, int32 offset, int32 len, void* buffer);
+typedef int32 (*NPP_WriteProcPtr)(NPP instance, NPStream* stream, int32_t offset, int32_t len, void* buffer);
 typedef void (*NPP_PrintProcPtr)(NPP instance, NPPrint* platformPrint);
 typedef int16 (*NPP_HandleEventProcPtr)(NPP instance, void* event);
 typedef void (*NPP_URLNotifyProcPtr)(NPP instance, const char* URL, NPReason reason, void* notifyData);
@@ -46,9 +65,6 @@ typedef void (*NPP_ShutdownProcPtr)(void);
 
 typedef void *(*NPP_GetJavaClassProcPtr)(void);
 typedef void*	JRIGlobalRef; //not using this right now
-
-typedef void *(*NPN_GenericFunction)(void);
-typedef NPN_GenericFunction (*NPN_GetFunctionProcPtr)(const char *functionName);
 
 typedef struct _NPNetscapeFuncs {
     uint16 size;
@@ -76,9 +92,21 @@ typedef struct _NPNetscapeFuncs {
     NPN_InvalidateRegionProcPtr invalidateregion;
     NPN_ForceRedrawProcPtr forceredraw;
     
-    // Version 12+
-    NPN_GetFunctionProcPtr getFunction;
-    
+    NPN_ReleaseVariantValueProcPtr releasevariantvalue;
+    NPN_GetStringIdentifierProcPtr getstringidentifier;
+    NPN_GetStringIdentifiersProcPtr getstringidentifiers;
+    NPN_GetIntIdentifierProcPtr getintidentifier;
+    NPN_IdentifierIsStringProcPtr identifierisstring;
+    NPN_UTF8FromIdentifierProcPtr utf8fromidentifier;
+    NPN_CreateObjectProcPtr createobject;
+    NPN_RetainObjectProcPtr retainobject;
+    NPN_ReleaseObjectProcPtr releaseobject;
+    NPN_CallProcPtr call;
+    NPN_EvaluateProcPtr evalute;
+    NPN_GetPropertyProcPtr getproperty;
+    NPN_SetPropertyProcPtr setproperty;
+    NPN_RemovePropertyProcPtr removeproperty;
+    NPN_SetExceptionProcPtr setexception;
 } NPNetscapeFuncs;
 
 typedef struct _NPPluginFuncs {

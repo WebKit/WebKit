@@ -22,14 +22,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <npruntime.h>
+#ifndef _NP_JSOBJECT_H
+#define _NP_JSOBJECT_H
 
-#include <c_utility.h>
+#include <JavaScriptCore/npruntime.h>
 
-#include <runtime.h>
-#include <runtime_object.h>
-#include <runtime_root.h>
+#include <JavaScriptCore/runtime.h>
+#include <JavaScriptCore/runtime_object.h>
+#include <JavaScriptCore/runtime_root.h>
  
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+extern NPClass *NPScriptObjectClass;
+
 typedef struct
 {
     NPObject object;
@@ -37,3 +44,10 @@ typedef struct
     KJS::Bindings::RootObject *root;
 } JavaScriptObject;
 
+NPObject *_NPN_CreateScriptObject (KJS::ObjectImp *imp, KJS::Bindings::RootObject *root);
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif

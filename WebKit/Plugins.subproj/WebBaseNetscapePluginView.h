@@ -84,4 +84,7 @@
 - (void)viewWillMoveToHostWindow:(NSWindow *)hostWindow;
 - (void)viewDidMoveToHostWindow;
 
+/* Returns the NPObject that represents the plugin interface. */
+- (void *)pluginScriptableObject;
+
 @end

@@ -1264,6 +1264,19 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     //FIXME: Need to send other NPReasons
 }
 
+- (void *)pluginScriptableObject
+{
+    void *value;
+    NPError npErr;
+    
+    npErr = NPP_GetValue (instance, NPPVpluginScriptableNPObject, (void *)&value);
+    if (npErr == NPERR_NO_ERROR)
+        return value;
+
+    return (void *)0;
+}
+
+
 @end
 
 @implementation WebBaseNetscapePluginView (WebNPPCallbacks)
@@ -1625,6 +1638,16 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     LOG(Plugins, "forceRedraw");
     [self setNeedsDisplay:YES];
     [[self window] displayIfNeeded];
+}
+
+- (NPError)getVariable:(NPNVariable)variable value:(void *)value
+{
+    if (variable == NPNVWindowNPObject) {
+        void **v = (void **)value;
+        *v = [[[self webFrame] _bridge] windowScriptNPObject];
+        return NPERR_NO_ERROR;
+    }
+    return NPERR_GENERIC_ERROR;
 }
 
 @end

@@ -1,3 +1,57 @@
+2004-06-23  Richard Williamson   <rjw@apple.com>
+
+	Implemented changes for latest npruntime.h.
+	
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/NP_jsobject.cpp:
+        (listFromVariantArgs):
+        (identiferFromNPIdentifier):
+        (_NPN_CreateScriptObject):
+        (NPN_Call):
+        (NPN_Evaluate):
+        (NPN_GetProperty):
+        (NPN_SetProperty):
+        (NPN_RemoveProperty):
+        * bindings/NP_jsobject.h:
+        * bindings/c/c_class.cpp:
+        (CClass::methodsNamed):
+        (CClass::fieldNamed):
+        * bindings/c/c_instance.cpp:
+        (CInstance::invokeMethod):
+        * bindings/c/c_utility.cpp:
+        (convertNPVariantToValue):
+        * bindings/c/c_utility.h:
+        * bindings/npruntime.cpp:
+        (stringIdentifierEqual):
+        (stringIdentifierHash):
+        (getStringIdentifierDictionary):
+        (intIdentifierEqual):
+        (intIdentifierHash):
+        (getIntIdentifierDictionary):
+        (NPN_GetStringIdentifier):
+        (NPN_GetStringIdentifiers):
+        (NPN_GetIntIdentifier):
+        (NPN_IdentifierIsString):
+        (NPN_UTF8FromIdentifier):
+        (NPN_VariantToInt32):
+        (NPN_VariantToDouble):
+        (NPN_SetException):
+        * bindings/npruntime.h:
+        * bindings/objc/WebScriptObject.mm:
+        (+[WebScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::~RuntimeObjectImp):
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::rootForInterpreter):
+        * bindings/testbindings.cpp:
+        (initializeIdentifiers):
+        (logMessage):
+        (setDoubleValue):
+        (setIntValue):
+        (setBooleanValue):
+
 === JavaScriptCore-146.1 ===
 
 2004-06-16  Richard Williamson   <rjw@apple.com>

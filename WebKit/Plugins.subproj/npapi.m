@@ -115,16 +115,12 @@ void NPN_ForceRedraw(NPP instance)
     [pluginViewForInstance(instance) forceRedraw];
 }
 
-// Unsupported functions
-
-// According to the plug-in API documentation,
-// NPN_GetValue and NPN_SetValue are not used in Mac OS.
 NPError NPN_GetValue(NPP instance, NPNVariable variable, void *value)
 {
-    LOG(Plugins, "NPN_GetValue");
-    return NPERR_GENERIC_ERROR;
+    return [pluginViewForInstance(instance) getVariable:variable value:value];
 }
 
+// Unsupported functions
 NPError NPN_SetValue(NPP instance, NPPVariable variable, void *value)
 {
     LOG(Plugins, "NPN_SetValue");

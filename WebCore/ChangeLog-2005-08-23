@@ -1,3 +1,19 @@
+2004-06-23  Richard Williamson   <rjw@apple.com>
+
+	Implemented changes for latest npruntime.h.
+
+        Reviewed by Chris.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::KWQKHTMLPart):
+        (KWQKHTMLPart::windowScriptNPObject):
+        (KWQKHTMLPart::getEmbedInstanceForView):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge windowScriptObject]):
+        (-[WebCoreBridge windowScriptNPObject]):
+
 2004-06-22  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/3707162>: accessing embeds[] plug-in interface may crash

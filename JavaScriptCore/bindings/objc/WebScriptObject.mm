@@ -328,7 +328,11 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         result = [NSNumber numberWithDouble:n.value()];
     }
     
-    // Boolean?
+    else if (value.type() == KJS::BooleanType) {
+        KJS::BooleanImp *b = static_cast<KJS::BooleanImp*>(value.imp());
+        result = [NSNumber numberWithBool:b->value()];
+    }
+    
     return result;
 }
 

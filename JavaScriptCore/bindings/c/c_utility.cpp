@@ -142,11 +142,7 @@ Value convertNPVariantToValue (KJS::ExecState *exec, const NPVariant *variant)
     else if (type == NPVariantObjectType) {
         NPObject *obj = variant->value.objectValue;
         
-        if (NPN_IsKindOfClass (obj, NPArrayClass)) {
-            // FIXME:  Need to implement
-        }
-     
-        else if (NPN_IsKindOfClass (obj, NPScriptObjectClass)) {
+        if (obj->_class == NPScriptObjectClass) {
             // Get ObjectImp from NP_JavaScriptObject.
             JavaScriptObject *o = (JavaScriptObject *)obj;
             return Object(const_cast<ObjectImp*>(o->imp));

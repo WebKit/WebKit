@@ -1,3 +1,25 @@
+2004-06-23  Richard Williamson   <rjw@apple.com>
+
+		Implemented changes for latest npruntime.h.
+		Made npruntime.h public.
+		
+        Reviewed by Chris.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView pluginScriptableObject]):
+        (-[WebBaseNetscapePluginView forceRedraw]):
+        (-[WebBaseNetscapePluginView getVariable:value:]):
+        * Plugins.subproj/WebBaseNetscapePluginViewPrivate.h:
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage load]):
+        * Plugins.subproj/npapi.h:
+        * Plugins.subproj/npapi.m:
+        (NPN_GetValue):
+        * Plugins.subproj/npfunctions.h:
+        * Plugins.subproj/npruntime.h:
+        * WebKit.pbproj/project.pbxproj:
+
 2004-06-21  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

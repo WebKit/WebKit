@@ -98,7 +98,10 @@ typedef long int32;
 #define NULL (0L)
 #endif
 
-typedef unsigned char    NPBool;
+#ifndef _NP_RUNTIME_H_
+// Ack!  Temporary hack to get build working.
+typedef unsigned char NPBool;
+#endif
 typedef int16            NPError;
 typedef int16            NPReason;
 typedef char*            NPMIMEType;
@@ -198,13 +201,69 @@ typedef struct
 #endif /* XP_UNIX */
 
 /*
+ *   The following masks are applied on certain platforms to NPNV and 
+ *   NPPV selectors that pass around pointers to COM interfaces. Newer 
+ *   compilers on some platforms may generate vtables that are not 
+ *   compatible with older compilers. To prevent older plugins from 
+ *   not understanding a new browser's ABI, these masks change the 
+ *   values of those selectors on those platforms. To remain backwards
+ *   compatible with differenet versions of the browser, plugins can 
+ *   use these masks to dynamically determine and use the correct C++
+ *   ABI that the browser is expecting. This does not apply to Windows 
+ *   as Microsoft's COM ABI will likely not change.
+ */
+
+#define NP_ABI_GCC3_MASK  0x10000000
+/*
+ *   gcc 3.x generated vtables on UNIX and OSX are incompatible with 
+ *   previous compilers.
+ */
+#if (defined (XP_UNIX) && defined(__GNUC__) && (__GNUC__ >= 3))
+#define _NP_ABI_MIXIN_FOR_GCC3 NP_ABI_GCC3_MASK
+#else
+#define _NP_ABI_MIXIN_FOR_GCC3 0
+#endif
+
+#define NP_ABI_MACHO_MASK 0x01000000
+/*
+ *   On OSX, the Mach-O executable format is significantly
+ *   different than CFM. In addition to having a different
+ *   C++ ABI, it also has has different C calling convention.
+ *   You must use glue code when calling between CFM and
+ *   Mach-O C functions. 
+ */
+#if (defined(TARGET_RT_MAC_MACHO))
+#define _NP_ABI_MIXIN_FOR_MACHO NP_ABI_MACHO_MASK
+#else
+#define _NP_ABI_MIXIN_FOR_MACHO 0
+#endif
+
+
+#define NP_ABI_MASK (_NP_ABI_MIXIN_FOR_GCC3 | _NP_ABI_MIXIN_FOR_MACHO)
+
+/*
  * List of variable names for which NPP_GetValue shall be implemented
  */
 typedef enum {
     NPPVpluginNameString = 1,
     NPPVpluginDescriptionString,
     NPPVpluginWindowBool,
-    NPPVpluginTransparentBool
+    NPPVpluginTransparentBool,
+
+    NPPVjavaClass,                /* Not implemented in WebKit */
+    NPPVpluginWindowSize,         /* Not implemented in WebKit */
+    NPPVpluginTimerInterval,      /* Not implemented in WebKit */
+
+    NPPVpluginScriptableInstance = (10 | NP_ABI_MASK), /* Not implemented in WebKit */
+    NPPVpluginScriptableIID = 11, /* Not implemented in WebKit */
+
+    /* 12 and over are available on Mozilla builds starting with 0.9.9 */
+    NPPVjavascriptPushCallerBool = 12,  /* Not implemented in WebKit */
+    NPPVpluginKeepLibraryInMemory = 13, /* Not implemented in WebKit */
+    NPPVpluginNeedsXEmbed         = 14, /* Not implemented in WebKit */
+
+    /* Get the NPObject for scripting the plugin. */
+    NPPVpluginScriptableNPObject
 } NPPVariable;
 
 /*
@@ -216,7 +275,20 @@ typedef enum {
     NPNVnetscapeWindow,
     NPNVjavascriptEnabledBool,
     NPNVasdEnabledBool,
-    NPNVisOfflineBool
+    NPNVisOfflineBool,
+
+    /* 10 and over are available on Mozilla builds starting with 0.9.4 */
+    NPNVserviceManager = (10 | NP_ABI_MASK),  /* Not implemented in WebKit */
+    NPNVDOMElement     = (11 | NP_ABI_MASK),  /* Not implemented in WebKit */
+    NPNVDOMWindow      = (12 | NP_ABI_MASK),  /* Not implemented in WebKit */
+    NPNVToolkit        = (13 | NP_ABI_MASK),  /* Not implemented in WebKit */
+    NPNVSupportsXEmbedBool = 14,              /* Not implemented in WebKit */
+
+    /* Get the NPObject wrapper for the browser window. */
+    NPNVWindowNPObject,
+
+    /* Get the NPObject wrapper for the plugins DOM element. */
+    NPNVPluginElementNPObject                 /* Not implemented in WebKit */
 } NPNVariable;
 
 /*
@@ -430,9 +502,9 @@ int16            NPP_HandleEvent(NPP instance, void* event);
 void        NP_LOADDS    NPP_URLNotify(NPP instance, const char* url,
                                       NPReason reason, void* notifyData);
 jref        NP_LOADDS            NPP_GetJavaClass(void);
-NPError     NPP_GetValue(void *instance, NPPVariable variable,
+NPError     NPP_GetValue(NPP instance, NPPVariable variable,
                                      void *value);
-NPError     NPP_SetValue(void *instance, NPNVariable variable,
+NPError     NPP_SetValue(NPP instance, NPNVariable variable,
                                      void *value);
 
 /*

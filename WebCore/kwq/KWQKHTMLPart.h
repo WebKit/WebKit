@@ -38,6 +38,8 @@
 
 #include <JavaVM/jni.h>
 #include <JavaScriptCore/jni_jsobject.h>
+#include <JavaScriptCore/npruntime.h>
+#include <JavaScriptCore/NP_jsobject.h>
 #include <JavaScriptCore/runtime.h>
 
 #include "KWQDict.h"
@@ -307,6 +309,7 @@ public:
     KJS::Bindings::RootObject *bindingRootObject();
     
     WebScriptObject *windowScriptObject();
+    NPObject *KWQKHTMLPart::windowScriptNPObject();
     
     void partClearedInBegin();
     
@@ -383,6 +386,7 @@ private:
                                             // bound outside the context of a plugin.
     QPtrList<KJS::Bindings::RootObject> rootObjects;
     WebScriptObject *_windowScriptObject;
+    NPObject *_windowScriptNPObject;
     
     DOM::Node _dragSrc;     // element that may be a drag source, for the current mouse gesture
     bool _dragSrcIsLink;
