@@ -1,5 +1,16 @@
 2002-11-07  Maciej Stachowiak  <mjs@apple.com>
 
+	- fixed 3094778 - REGRESSION: Assert on logout from schwab.com
+
+	(probably fixed it anyway - I'm flying blind on this one)
+	
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createWindowWithURL:frameName:]): Use a nil request
+	if the URL was nil, instead of making a request that contains a
+	nil URL.
+
+2002-11-07  Maciej Stachowiak  <mjs@apple.com>
+
 	Changed things so that creating a window takes a request rather
 	than a URL and referrer.
 	
