@@ -1,3 +1,7 @@
+2003-05-08  Darin Adler  <darin@apple.com>
+
+        * WebKit.pbproj/project.pbxproj: Fixed paths for non-Panther builds.
+
 2003-05-08  John Sullivan  <sullivan@apple.com>
 
 	Closed up all gaps in WebKit between "ASSERT" and "(" to
