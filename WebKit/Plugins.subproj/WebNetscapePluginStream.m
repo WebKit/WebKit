@@ -39,7 +39,7 @@
 
     WebBridge *bridge = [[view webFrame] _bridge];
     BOOL hideReferrer;
-    if (![bridge canLoadURL:[request URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer])
+    if (![bridge canLoadURL:[theRequest URL] fromReferrer:[bridge referrer] hideReferrer:&hideReferrer])
         return nil;
 
     if ([self initWithRequestURL:[theRequest URL]
