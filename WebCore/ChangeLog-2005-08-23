@@ -1,3 +1,14 @@
+2002-12-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        * khtml/ecma/kjs_events.h: Add listenerObjImp() method so we don't have to
+	ref/unref for speed-critical uses.
+
+        * khtml/ecma/kjs_window.cpp: (Window::getJSEventListener): Change this
+	to work with ObjectImp so we don't ref/unref each listener. This should give
+	us some extra speed.
+
 2002-12-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by: Darin Adler

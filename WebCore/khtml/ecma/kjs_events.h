@@ -35,7 +35,8 @@ namespace KJS {
     virtual ~JSEventListener();
     virtual void handleEvent(DOM::Event &evt);
     virtual DOM::DOMString eventListenerType();
-    Object listenerObj() { return listener; }
+    Object listenerObj() const { return listener; }
+    ObjectImp *listenerObjImp() const { return listener.imp(); }
   protected:
     Object listener;
     bool html;

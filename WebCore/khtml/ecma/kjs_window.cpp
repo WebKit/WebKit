@@ -941,18 +941,18 @@ Value Window::getListener(ExecState *exec, int eventId) const
 
 JSEventListener *Window::getJSEventListener(const Value& val, bool html)
 {
-  Object obj = Object::dynamicCast(val);
-  if (obj.isNull())
+  // This function is so hot that it's worth coding it directly with imps.
+  if (val.type() != ObjectType)
     return 0;
+  ObjectImp *listenerObject = static_cast<ObjectImp *>(val.imp());
 
   QPtrListIterator<JSEventListener> it(jsEventListeners);
-
   for (; it.current(); ++it)
-    if (it.current()->listenerObj().imp() == obj.imp())
+    if (it.current()->listenerObjImp() == listenerObject)
       return it.current();
 
   // Note that the JSEventListener constructor adds it to our jsEventListeners list
-  return new JSEventListener(obj,Object(this),html);
+  return new JSEventListener(Object(listenerObject), Object(this), html);
 }
 
 void Window::clear( ExecState *exec )
