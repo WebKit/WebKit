@@ -259,6 +259,10 @@ static QString keyIdentifierForKeyEvent(NSEvent *event)
         // "Win"
         // "Zoom"
 
+        // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
+        case 0x7F:
+            return "U+000008";
+
         default:
             return QString().sprintf("U+%06X", toupper(c));
     }
@@ -753,4 +757,11 @@ QKeyEvent::QKeyEvent(NSEvent *event, bool forceAutoRepeat)
       _isAccepted(false),
       _WindowsKeyCode(WindowsKeyCodeForKeyEvent(event))
 {
+    // Turn 0x7F into 0x08, because backspace needs to always be 0x08.
+    if (_text == "\x7F") {
+        _text = "\x8";
+    }
+    if (_unmodifiedText == "\x7F") {
+        _unmodifiedText = "\x8";
+    }
 }

@@ -1,3 +1,13 @@
+2004-01-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3525468: REGRESSION (114-115): HOMEPAGE: after hitting textarea limit, backspace key is ignored
+
+        * kwq/KWQEvent.mm:
+        (keyIdentifierForKeyEvent): Treat 7F as 08; matches other browsers.
+        (QKeyEvent::QKeyEvent): Ditto.
+
 2004-01-09  David Hyatt  <hyatt@apple.com>
 
 	Fixes for 3510669 and 3515442, blank frame problems caused by WebKit's use of a separate needsLayout boolean.
