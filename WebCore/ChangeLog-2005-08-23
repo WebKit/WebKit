@@ -1,3 +1,25 @@
+2004-05-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	<rdar://problem/3656722>: Implement outerText and setOuterText DOM extensions
+        
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::outerText): Return same value as innerText().
+        (HTMLElementImpl::setInnerText): Fix comment.
+        (HTMLElementImpl::setOuterText): Replace node with text, merge neighboring text nodes.
+        * khtml/html/html_elementimpl.h: Prototype new methods.
+	* khtml/dom/html_element.cpp:
+        (HTMLElement::outerText): Hook up to impl.
+        (HTMLElement::setOuterText): Ditto.
+        * khtml/dom/html_element.h: Prototype new methods.
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::getValueProperty): Glue up outerText.
+        (KJS::HTMLElement::putValue): Ditto. 
+        * khtml/ecma/kjs_html.h: Added new enum value.
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::): Regenerated.
+
 2004-05-21  Richard Williamson   <rjw@apple.com>
 
         Removed _bindObject:forFrame: SPI.

@@ -176,6 +176,15 @@ public:
     DOMString innerText() const;
 
     /**
+     * Set the text content of this node.
+     *
+     * @exception DOMException
+     * NO_MODIFICATION_ALLOWED_ERR: Raised if there is the element does not allow
+     * children.
+     */
+    void setInnerText( const DOMString &text );
+
+    /**
      * The HTML code of this element, including the element itself.
      * This function is not part of the DOM specifications as defined by the w3c.
      */
@@ -188,13 +197,19 @@ public:
     void setOuterHTML( const DOMString &html );
 
     /**
-     * Set the text content of this node.
+     * The text contained in this element.
+     * This function is not part of the DOM specifications as defined by the w3c.
+     */
+    DOMString outerText() const;
+
+    /**
+     * Replace this element with the given text
      *
      * @exception DOMException
      * NO_MODIFICATION_ALLOWED_ERR: Raised if there is the element does not allow
      * children.
      */
-    void setInnerText( const DOMString &text );
+    void setOuterText( const DOMString &text );
 
     /**
      * Retrieves a collection of nodes that are direct descendants of this node.

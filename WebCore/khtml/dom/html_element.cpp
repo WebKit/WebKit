@@ -161,6 +161,21 @@ void HTMLElement::setOuterHTML( const DOMString &html )
 	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
 }
 
+DOMString HTMLElement::outerText() const
+{
+    if ( !impl ) return DOMString();
+    return ((HTMLElementImpl *)impl)->outerText();
+}
+
+void HTMLElement::setOuterText( const DOMString &text )
+{
+    bool ok = false;
+    if( impl )
+	ok = ((HTMLElementImpl *)impl)->setOuterText( text );
+    if ( !ok )
+	throw DOMException(DOMException::NO_MODIFICATION_ALLOWED_ERR);
+}
+
 HTMLCollection HTMLElement::children() const
 {
     if(!impl) return HTMLCollection();

@@ -672,6 +672,14 @@ DOMString HTMLElementImpl::innerText() const
     return text;
 }
 
+DOMString HTMLElementImpl::outerText() const
+{
+    // getting outerText is the same as getting innerText, only
+    // setting is different.
+    return innerText();
+}
+
+
 DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString &html )
 {
     // the following is in accordance with the definition as used by IE
@@ -779,7 +787,7 @@ bool HTMLElementImpl::setInnerText( const DOMString &text )
     // following the IE specs.
     if( endTag[id()] == FORBIDDEN )
         return false;
-    // IE disallows innerHTML on inline elements. I don't see why we should have this restriction, as our
+    // IE disallows innerText on inline elements. I don't see why we should have this restriction, as our
     // dhtml engine can cope with it. Lars
     //if ( isInline() ) return false;
     switch( id() ) {
@@ -807,6 +815,67 @@ bool HTMLElementImpl::setInnerText( const DOMString &text )
         return true;
     return false;
 }
+
+bool HTMLElementImpl::setOuterText( const DOMString &text )
+{
+    // following the IE specs.
+    if( endTag[id()] == FORBIDDEN )
+        return false;
+    switch( id() ) {
+        case ID_COL:
+        case ID_COLGROUP:
+        case ID_FRAMESET:
+        case ID_HEAD:
+        case ID_HTML:
+        case ID_TABLE:
+        case ID_TBODY:
+        case ID_TFOOT:
+        case ID_THEAD:
+        case ID_TR:
+            return false;
+        default:
+            break;
+    }
+
+    NodeBaseImpl *parent = static_cast<NodeBaseImpl *>(parentNode());
+
+    if (!parent) {
+	return false;
+    }
+
+    TextImpl *t = new TextImpl( docPtr(), text );
+    int ec = 0;
+    parent->replaceChild(t, this, ec);
+
+    if ( ec )
+        return false;
+
+    // is previous node a text node? if so, merge into it
+    NodeImpl *prev = t->previousSibling();
+    if (prev && prev->isTextNode()) {
+	TextImpl *textPrev = static_cast<TextImpl *>(prev);
+	textPrev->appendData(t->data(), ec);
+	t->parentNode()->removeChild(t, ec);
+	t = textPrev;
+    }
+
+    if ( ec )
+        return false;
+
+    // is next node a text node? if so, merge it in
+    NodeImpl *next = t->nextSibling();
+    if (next && next->isTextNode()) {
+	TextImpl *textNext = static_cast<TextImpl *>(next);
+	t->appendData(textNext->data(), ec);
+	textNext->parentNode()->removeChild(textNext, ec);
+    }
+
+    if ( ec )
+        return false;
+
+    return true;
+}
+
 
 DOMString HTMLElementImpl::namespaceURI() const
 {

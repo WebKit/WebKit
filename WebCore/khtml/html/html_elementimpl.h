@@ -148,10 +148,12 @@ public:
     DOMString innerHTML() const;
     DOMString outerHTML() const;
     DOMString innerText() const;
+    DOMString outerText() const;
     DocumentFragmentImpl *createContextualFragment( const DOMString &html );
     bool setInnerHTML( const DOMString &html );
     bool setOuterHTML( const DOMString &html );
     bool setInnerText( const DOMString &text );
+    bool setOuterText( const DOMString &text );
 
     virtual DOMString namespaceURI() const;
     

@@ -148,7 +148,7 @@ namespace KJS {
            MarqueeStart, MarqueeStop,
            ElementInnerHTML, ElementTitle, ElementId, ElementDir, ElementLang,
            ElementClassName, ElementInnerText, ElementDocument, ElementChildren, ElementContentEditable,
-           ElementIsContentEditable, ElementOuterHTML};
+           ElementIsContentEditable, ElementOuterHTML, ElementOuterText};
 
     DOM::HTMLElement toElement() const { return static_cast<DOM::HTMLElement>(node); }
   };
