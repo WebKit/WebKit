@@ -75,26 +75,44 @@
     [[rep image] beginAnimationInRect:drawingRect fromRect:drawingRect];
 }
 
-// Ensures that the view always fills the content area (so we draw over the previous page)
-// and that the view is at least as large as the image.
-- (void)setFrameSizeUsingImage
+- (void)adjustFrameSize
 {
-    NSSize size = [[self _web_superviewOfClass:[NSClipView class]] frame].size;
-    NSSize imageSize = [[rep image] size];
-    size.width = MAX(size.width, imageSize.width);
-    size.height = MAX(size.height, imageSize.height);
+    NSSize size = [[rep image] size];
+    
+    // When drawing on screen, ensure that the view always fills the content area 
+    // (so we draw over the entire previous page), and that the view is at least 
+    // as large as the image.. Otherwise we're printing, and we want the image to 
+    // fill the view so that the printed size doesn't depend on the window size.
+    if ([NSGraphicsContext currentContextDrawingToScreen]) {
+        NSSize clipViewSize = [[self _web_superviewOfClass:[NSClipView class]] frame].size;
+        size.width = MAX(size.width, clipViewSize.width);
+        size.height = MAX(size.height, clipViewSize.height);
+    }
+    
     [super setFrameSize:size];
 }
 
 - (void)setFrameSize:(NSSize)size
 {
-    [self setFrameSizeUsingImage];
+    [self adjustFrameSize];
 }
 
 - (void)layout
 {
-    [self setFrameSizeUsingImage];    
+    [self adjustFrameSize];    
     needsLayout = NO;
+}
+
+- (void)beginDocument
+{
+    [self adjustFrameSize];
+    [super beginDocument];
+}
+
+- (void)endDocument
+{
+    [super endDocument];
+    [self adjustFrameSize];
 }
 
 - (void)setDataSource:(WebDataSource *)dataSource
