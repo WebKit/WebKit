@@ -438,13 +438,13 @@
             NSArray *fileType = [NSArray arrayWithObject:[[_private->draggedURL path] pathExtension]];
             NSRect rect = NSMakeRect(point.x + -16, point.y - 16, 32, 32);
             [self dragPromisedFilesOfTypes: fileType fromRect: rect source: self slideBack: YES event: event];
+            return;
         }
     }
-    else {
-        // Give khtml a crack at the event only if we haven't started
-        // a drag.
-        [[self _bridge] mouseDragged:event];
-    }
+
+    // Give khtml a crack at the event only if we haven't started
+    // a drag.
+    [[self _bridge] mouseDragged:event];
 }
 
 

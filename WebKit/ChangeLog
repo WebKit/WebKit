@@ -1,3 +1,11 @@
+2002-08-28  Richard Williamson (Home)  <rjw@apple.com>
+
+        Fixed selection horkage I introduced with drag
+        fix yesterday.
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView mouseDragged:]):
+
 2002-08-27  Richard Williamson (Local)  <rjw@apple.com>
 
         * WebView.subproj/WebHTMLView.m:
