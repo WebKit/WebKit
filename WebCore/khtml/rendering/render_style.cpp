@@ -30,6 +30,8 @@
 
 using namespace khtml;
 
+using DOM::DOMStringImpl;
+
 StyleSurroundData::StyleSurroundData()
     : margin( Fixed ), padding( Variable )
 {
@@ -468,26 +470,33 @@ void RenderStyle::setClip( Length top, Length right, Length bottom, Length left 
     data->clip.left = left;
 }
 
-void RenderStyle::setContent(DOM::DOMStringImpl* s, bool add)
+void RenderStyle::setContent(DOMStringImpl* s, bool add)
 {
-    if ( !content )
-	content = new ContentData;
-    else if (!add)
-	content->clearContent();
-    
-    if (!s)
-        s = new DOM::DOMStringImpl("");
-
-    if (add) {
-        DOM::DOMStringImpl* oldStr = content->_content.text;
-        content->_content.text = oldStr->copy();
-        content->_content.text->append(s);
-        oldStr->deref();
-    }
-    else
-        content->_content.text = s;
-    content->_content.text->ref();
+    if (add && content && content->_contentType == CONTENT_TEXT) {
+        if (!s)
+            return;
         
+        DOMStringImpl* oldStr = content->_content.text;
+        DOMStringImpl* newStr = oldStr->copy();
+        oldStr->deref();
+        newStr->append(s);
+
+        content->_content.text = newStr;
+    }
+    else {
+        // FIXME: If we try to add a string, and the old content was an object,
+        // then we just clobber the object. This is probably not right, but it's
+        // better than just trashing memory the way this code did before we added
+        // the check of contentType above.
+
+        if (!content)
+            content = new ContentData;
+        else
+            content->clearContent();
+        content->_content.text = s ? s : new DOMStringImpl("");
+    }
+
+    content->_content.text->ref();
     content->_contentType = CONTENT_TEXT;
 }
 

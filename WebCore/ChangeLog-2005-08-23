@@ -1,3 +1,14 @@
+2003-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3230885 -- crash loading hixie test page in -[WebSubresourceClient connection:didReceiveData:]
+
+        * khtml/rendering/render_style.cpp: (RenderStyle::setContent):
+        Change code around so we don't deref the text object without checking
+        the contentType. Also fix the leak of a DOMStringImpl in the case
+        where we are asked to add a string, but the string pointer is 0.
+
 2003-04-28  Richard Williamson  <rjw@apple.com>
 
         API changes from final review meeting.
