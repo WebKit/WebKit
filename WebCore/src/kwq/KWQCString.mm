@@ -82,7 +82,7 @@ QCString::QCString(const QCString &s) : QByteArray(s)
 bool QCString::isEmpty() const
 {
     const char *s = data();
-    return !(s || *s);
+    return !(s && *s);
 }
 
 bool QCString::isNull() const

@@ -1,5 +1,9 @@
 2002-03-27  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQCString.mm: (QCString::isEmpty): The || should be &&.
+
+2002-03-27  Darin Adler  <darin@apple.com>
+
 	* src/kdelibs/khtml/css/css_valueimpl.cpp:
 	(FontFamilyValueImpl::FontFamilyValueImpl): Disable misguided font matching
         code in khtml.
