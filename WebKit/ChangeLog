@@ -1,3 +1,10 @@
+2002-12-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by: Darin
+
+        * English.lproj/InfoPlist.strings: removed letters from
+	CFBundleShortVersionString to make buildit happy.
+
 === Alexander-35 ===
 
 2002-12-05  Darin Adler  <darin@apple.com>
