@@ -1,3 +1,13 @@
+2004-10-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - fixed <rdar://problem/3840052> Crash in removeBlockPlaceholderIfNeeded attaching file to empty document
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::removeBlockPlaceholderIfNeeded):
+        needed a nil check to handle empty document case
+
 2004-10-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

@@ -835,7 +835,7 @@ void CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
     // Of course, a person who hand-edits an HTML file could move a 
     // placeholder around, but it seems OK to be unconcerned about that case.
     NodeImpl *last = node->lastChild();
-    if (last->isHTMLElement()) {
+    if (last && last->isHTMLElement()) {
         ElementImpl *element = static_cast<ElementImpl *>(last);
         if (element->getAttribute(ATTR_CLASS) == blockPlaceholderClassString())
             removeNode(element);
