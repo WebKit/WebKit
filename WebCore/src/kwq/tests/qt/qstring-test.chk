@@ -1,104 +1,92 @@
-t
-t
-eeeee
-test
-this is a string
-test
-yet another string
-hello there
-e
-1
-0
-1
-0
-18
-this is 
-ttttt
-12
-2
-12
-12
-12
-7
-7
-12
-7
-7
-3
-3
-3
-3
-3
-blah
-blah
-blah
-blah....
-....blah
-Hello blah. How has your blah been?
-Hello  blah. How has your  blah been?
-Hello s. How has your s been?
-Hello Gramps. How has your morning been?
-Hello 22.45. How has your 22.45 been?
-Hello 356. How has your 23390082 been?
-Hello 3456. How has your 234234224 been?
-Hello 23409283. How has your 43242 been?
-this was a string in uppercase
-THIS WAS A STRING IN LOWERCASE
-This    was a  string   with a lot of       spaces
-This was a string with a lot of spaces
-221545
-221545
-221545
-221545
-24937
-221545
-221545
-24937
-This is a test. 44, 56.780000
-1
-0
-The answer is: 2
-The answer is: test2
-The answer is: Appletest2
-The answer is: cAppletest2
-The answer is: cAppletest22
-The answer is: cAppletest22c
-The answer is: cAppletest22cApple
-2The answer is: cAppletest22cApple
-c2The answer is: cAppletest22cApple
-Applec2The answer is: cAppletest22cApple
-The answer is: cAppletest22cApple
-There ere e lot of e's in e sentence such es this one
-Ttest ere e lot of e's in e sentence such es this one
-Ttest ere e bellof e's in e sentence such es this one
-22.45
-356
-356
-23390082
-3456
-234234224
-23409283
-43242
-223.234
-1
-0
-abcdef
-abcdefg
-abcdefghijk
-1
-0
-0
-0
-1
-0
-0
-0
-1
-1
-1
-1
-0
-0
-0
-1
-1
+s1: t
+s2: t
+s3: eeeee
+s4: test
+s5: this is a string
+s6: test
+s7: yet another string
+s8: hello there
+s9: e
+s0 isNull: 1
+s5 isNull: 0
+s11 isEmpty: 1
+s5 isEmpty: 0
+s7 length: 18
+s5 truncate 8: this is 
+s0 fill: ccccc
+s12: string
+s7 find "s": 12
+s7 find RegExp "t": 2
+s7 find s12: 12
+s7 find "string": 12
+s7 find "string": 12
+s7 findRev "t": 13
+s7 findRev "string": 12
+s13: blah blah blah
+s13 contains "b": 3
+s13 contains "blah": 3
+s13 left 4: blah
+s13 right 4: blah
+s13 mid 5-8: blah
+s15: Hello blah. How has your blah been?
+s15: Hello  blah. How has your  blah been?
+s15: Hello Gramps. How has your morning been?
+s15: Hello 22.45. How has your 22.45 been?
+s15: Hello 356. How has your 23390082 been?
+s15: Hello 3456. How has your 234234224 been?
+s15: Hello 23409283. How has your 43242 been?
+s16 lower: this was a string in uppercase
+s18 stripWhiteSpace: This    was a  string   with a lot of       spaces
+s18 simplifyWhiteSpace: This was a string with a lot of spaces
+s19: 221545
+s19: 221545
+s19: 221545
+s19: 221545
+s20: This is a test. 44, 56.780000
+s21: Apple Computer Inc.
+s22: Apple
+s23: MS
+s21 startsWith s22: 1
+s21 startsWith s23: 0
+s24: The answer is: 
+c2: 2
+s24 insert c2 at 15: The answer is: 2
+s24 append c2: The answer is: 22
+s24 append s22: The answer is: 22Apple
+s24 prepend c2: 2The answer is: 22Apple
+s24 prepend s22: Apple2The answer is: 22Apple
+s24 remove 0-7: he answer is: 22Apple
+s25 replace RegExp "a" with "e": There ere e lot of e's in e sentence such es this one
+s27: 22.45
+s27: 356
+s27: 356
+s27: 23390082
+s27: 3456
+s27: 234234224
+s27: 23409283
+s27: 43242
+s27: 223.234
+s28 !: 1
+s29 !: 0
+s30: abcde
+c3: f
+ch2: g
+s31: hijk
+s30 += c3: abcdef
+s30 += ch2: abcdefg
+s30 += s31: abcdefghijk
+s33: This is a string
+s34: This is a longer string
+ch3: This is an even longer string
+c4: T
+s33 == ch3: 0
+c3 == s33: 0
+s33 == s34: 0
+s33 == c4: 0
+s33 != ch3: 1
+c3 != s33: 1
+s33 != s34: 1
+s33 != c4: 1
+ch3 + s33: This is an even longer stringThis is a string
+c4 + s33: TThis is a string
+'a' + s33: aThis is a string
