@@ -1,3 +1,7 @@
+2002-10-18  Darin Adler  <darin@apple.com>
+
+        * Makefile.am: Move dependency so clean happens before build.
+
 2002-10-17  Richard Williamson  <rjw@apple.com>
 
         Support for drawing frame borders and frame resizing. (fixes 2982466).

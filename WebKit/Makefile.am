@@ -1,4 +1,4 @@
-all-am:
+all-am: previous-clean-timestamp
 	pbxbuild -buildstyle $(BUILDSTYLE)
 clean-am:
 	pbxbuild clean
@@ -6,7 +6,6 @@ clean-am:
 	rm -rf $(SYMROOTS)/WebKit.framework
 	rm -rf $(SYMROOTS)/Alexander.app/Frameworks/WebKit.framework
 
-all: previous-clean-timestamp
 previous-clean-timestamp: force-clean-timestamp
 	make clean && touch $@
 

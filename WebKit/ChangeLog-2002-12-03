@@ -1,5 +1,9 @@
 2002-10-18  Darin Adler  <darin@apple.com>
 
+        * Makefile.am: Move dependency so clean happens before build.
+
+2002-10-18  Darin Adler  <darin@apple.com>
+
         * force-clean-timestamp: Dependencies don't work well enough, so
 	we need a clean build here after the WebFoundation domain change.
 
