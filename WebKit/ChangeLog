@@ -1,5 +1,32 @@
 2001-12-14  Maciej Stachowiak  <mjs@apple.com>
 
+	Minor cleanups, mostly for naming consistency.
+	
+	* WebView.subproj/WKWebController.h: 
+	(WKSimpleAuthenticationRequest) name field `url', not `uri'.
+	(-[WKWebDataSourceErrorHandler receivedError:forDataSource:]):
+	renamed from `error:inDataSource:' so that it's a verb phrase.
+	
+	* WebView.subproj/WKWebDataSource.h:
+	(-[WKWebDataSource initWithURL:]): Rename `inputUrl' argument to
+	`inputURL'.
+	(-[WKWebDataSource initWithLoader:]): Change argument type from
+	`WKURILoader' to `WKLoader'.
+	(-[WKWebDataSource wasRedirected]): Renamed from `isRedirected',
+	the past tense seems more appropriate here.
+	(-[WKWebDataSource setJavaEnabled:]): Add missing semicolon.
+	(-[WKWebDataSource pluginsEnabled:]): renamed from `pluginEnabled'
+	for consistency with `setPluginsEnabled:'.
+
+	* WebView.subproj/WKWebView.h:
+	(-[WKWebView fontSizes]): renamed from `fontSize' for sonsistency
+	with `setFontSizes:'.
+	(-[WKWebView setContextMenusEnabled]): renamed from
+	'setEnableContextMenus:' for consistency with
+	`contextMenusenabled'.
+
+2001-12-14  Maciej Stachowiak  <mjs@apple.com>
+
 	After discussion with Don, Removed all methods relating to
 	resolved URLs, since browsers don't actually treat aliases
 	specially.

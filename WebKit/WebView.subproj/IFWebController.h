@@ -272,7 +272,7 @@ struct WKSimpleAuthenticationResult {
 
 /* should this be an interface instead? */
 struct WKSimpleAuthenticationRequest {
-    NSURL *uri;         // nil if for something non-URI based
+    NSURL *url;         // nil if for something non-URI based
     NSString *domain;   // http authentication domain or some representation of 
                         // auth domain for non-URI-based locations; otherwise nil.
     NSString *username; // username, if already provided, otherwise nil
@@ -300,7 +300,7 @@ struct WKSimpleAuthenticationRequest {
 
 */
 @protocol WKWebDataSourceErrorHandler
-- error: (WKError *)error inDataSource: (WKWebDataSource *)dataSource;
+- receivedError: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
 @end
 
 
