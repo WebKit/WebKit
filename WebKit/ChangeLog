@@ -1,7 +1,14 @@
+2002-07-02  Darin Adler  <darin@apple.com>
+
+	- fixed 2952837 -- image not rendered if height or width attributes specified incorrectly
+
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer incrementalLoadWithBytes:length:complete:]):
+	Set the size of both the image and the image representation.
+
 2002-07-02  Chris Blumenberg  <cblu@apple.com>
 
-	Can't call startLoading on a frame if setProvisionalDataSource 
-returned NO.
+	Can't call startLoading on a frame if setProvisionalDataSource returned NO.
 
         * Plugins.subproj/IFPluginView.mm:
         (-[IFPluginView loadURL:inTarget:withNotifyData:andHandleAttributes:]):

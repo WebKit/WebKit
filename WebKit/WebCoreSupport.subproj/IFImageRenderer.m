@@ -65,7 +65,9 @@ static NSMutableArray *activeImageRenderers;
     case NSImageRepLoadStatusCompleted:         // all is well, the full pixelsHigh image is valid.
         //printf ("NSImageRepLoadStatusUnexpectedEOF size %d, isComplete %d\n", length, isComplete);
         // Force the image to use the pixel size and ignore the dpi.
-        [imageRep setSize:NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh])];
+        NSSize size = NSMakeSize([imageRep pixelsWide], [imageRep pixelsHigh]);
+        [imageRep setSize:size];
+        [self setSize:size];
         return YES;
     default:
         // We have some data.  Return YES so we can attempt a to draw what we've got.
