@@ -62,8 +62,6 @@ JNIType JNITypeFromPrimitiveType(char type);
 const char *signatureFromPrimitiveType(JNIType type);
 
 jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JNIType, const char *javaClassName);
-jobject convertValueToJObject (KJS::ExecState *exec, KJS::Value value);
-KJS::Value convertJObjectToValue (KJS::ExecState *exec, jobject);
 
 jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature);
 
@@ -88,8 +86,6 @@ jint callJNIIntMethodA( jobject obj, const char *name, const char *sig, jvalue *
 jlong callJNILongMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
 jfloat callJNIFloatMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
 jdouble callJNIDoubleMethodA( jobject obj, const char *name, const char *sig, jvalue *args);
-
-KJS::List listFromJArray(jobjectArray jArray);
 
 JavaVM *getJavaVM();
 JNIEnv *getJNIEnv();

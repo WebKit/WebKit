@@ -1,3 +1,33 @@
+2003-12-15  Richard Williamson   <rjw@apple.com>
+
+	Last piece of LiveConnect!  This checkin adds implementation
+	of the Java to JavaScript object conversion functions.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_utility.cpp:
+        * bindings/jni/jni_utility.h:
+        * bindings/jni_jsobject.cpp:
+        (Bindings::JSObject::invoke):
+        (Bindings::JSObject::call):
+        (Bindings::JSObject::eval):
+        (Bindings::JSObject::getMember):
+        (Bindings::JSObject::setMember):
+        (Bindings::JSObject::getSlot):
+        (Bindings::JSObject::setSlot):
+        (Bindings::JSObject::createNative):
+        (Bindings::JSObject::convertValueToJObject):
+        (Bindings::JSObject::convertJObjectToValue):
+        (Bindings::JSObject::listFromJArray):
+        * bindings/jni_jsobject.h:
+        (Bindings::):
+        * bindings/runtime_method.cpp:
+        (RuntimeMethodImp::get):
+        (RuntimeMethodImp::codeType):
+        (RuntimeMethodImp::execute):
+
 2003-12-12  Richard Williamson   <rjw@apple.com>
 
 	Added implementation of stubs in JSObject.  All that

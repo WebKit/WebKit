@@ -84,8 +84,6 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const Method *method, co
     jvalue *jArgs;
     Value resultValue;
     
-    fprintf(stderr,"%s: this=%p, invoking %s with signature %s\n", __PRETTY_FUNCTION__, this, method->name(), jMethod->signature());
-    
     if (count > 0) {
         jArgs = (jvalue *)malloc (count * sizeof(jvalue));
     }

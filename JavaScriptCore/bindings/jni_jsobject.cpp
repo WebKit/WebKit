@@ -33,7 +33,7 @@
 #include <jni_jsobject.h>
 #include <jni_runtime.h>
 #include <jni_utility.h>
-
+#include <runtime_object.h>
 
 using namespace Bindings;
 using namespace KJS;
@@ -46,6 +46,8 @@ using namespace KJS;
     fprintf(stderr, formatAndArgs); \
 }
 #endif
+
+#define UndefinedHandle 1
 
 static bool isJavaScriptThread()
 {
@@ -352,8 +354,8 @@ jvalue JSObject::invoke (JSObjectCallContext *context)
     else {
         jlong nativeHandle = context->nativeHandle;
         switch (context->type){
-            case GetWindow: {
-                result.j = JSObject::getWindow(nativeHandle);
+            case CreateNative: {
+                result.j = JSObject::createNative(nativeHandle);
                 break;
             }
         
@@ -442,7 +444,7 @@ jobject JSObject::call(jstring methodName, jobjectArray args) const
     Value result = funcImp->call (exec, thisObj, argList);
 
     // Convert and return the result of the function call.
-    return convertValueToJObject (exec, result);
+    return convertValueToJObject (exec, _root, result);
 }
 
 jobject JSObject::eval(jstring script) const
@@ -453,7 +455,7 @@ jobject JSObject::eval(jstring script) const
     KJS::Value result = _root->interpreter()->evaluate(JavaString(script).ustring(),thisObj).value();
     ExecState *exec = _root->interpreter()->globalExec();
 
-    return convertValueToJObject (exec, result);
+    return convertValueToJObject (exec, _root, result);
 }
 
 jobject JSObject::getMember(jstring memberName) const
@@ -463,14 +465,14 @@ jobject JSObject::getMember(jstring memberName) const
     ExecState *exec = _root->interpreter()->globalExec();
     Value result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
 
-    return convertValueToJObject (exec, result);
+    return convertValueToJObject (exec, _root, result);
 }
 
 void JSObject::setMember(jstring memberName, jobject value) const
 {
     JS_LOG ("memberName = %s\n", JavaString(memberName).characters());
     ExecState *exec = _root->interpreter()->globalExec();
-    _imp->put (exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(exec, value));
+    _imp->put (exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
 
 
@@ -490,7 +492,7 @@ jobject JSObject::getSlot(jint index) const
     ExecState *exec = _root->interpreter()->globalExec();
     Value result = _imp->get (exec, (unsigned)index);
 
-    return convertValueToJObject (exec, result);
+    return convertValueToJObject (exec, _root, result);
 }
 
 
@@ -499,7 +501,7 @@ void JSObject::setSlot(jint index, jobject value) const
     JS_LOG ("index = %d, value = %p\n", index, value);
 
     ExecState *exec = _root->interpreter()->globalExec();
-    _imp->put (exec, (unsigned)index, convertJObjectToValue(exec, value));
+    _imp->put (exec, (unsigned)index, convertJObjectToValue(value));
 }
 
 
@@ -520,18 +522,148 @@ void JSObject::finalize() const
     removeJavaReference (_imp);
 }
 
-jlong JSObject::getWindow(jlong nativeHandle)
+// We're either creating a 'Root' object (via a call to JSObject.getWindow()), or
+// another JSObject.
+jlong JSObject::createNative(jlong nativeHandle)
 {
     JS_LOG ("nativeHandle = %d\n", (int)nativeHandle);
 
+    if (nativeHandle == UndefinedHandle)
+        return nativeHandle;
+    else if (rootForImp(jlong_to_impptr(nativeHandle))){
+        return nativeHandle;
+    }
+        
     FindRootObjectForNativeHandleFunctionPtr aFunc = RootObject::findRootObjectForNativeHandleFunction();
     if (aFunc) {
         Bindings::RootObject *root = aFunc(jlong_to_ptr(nativeHandle));
-        addJavaReference (root, root->rootObjectImp());        
-        return ptr_to_jlong(root->rootObjectImp());
+        // If root is !NULL We must have been called via netscape.javascript.JSObject.getWindow(),
+        // otherwise we are being called after creating a JSObject in
+        // JSObject::convertValueToJObject().
+        if (root) {
+            addJavaReference (root, root->rootObjectImp());        
+            return ptr_to_jlong(root->rootObjectImp());
+        }
+        else {
+            return nativeHandle;
+        }
     }
     
     return ptr_to_jlong(0);
+}
+
+jobject JSObject::convertValueToJObject (KJS::ExecState *exec, const Bindings::RootObject *root, KJS::Value value)
+{
+    JNIEnv *env = getJNIEnv();
+    jobject result = 0;
+    
+    // See section 22.7 of 'JavaScript:  The Definitive Guide, 4th Edition',
+    // figure 22-5.
+    // number -> java.lang.Double
+    // string -> java.lang.String
+    // boolean -> java.lang.Boolean
+    // Java instance -> Java instance
+    // Everything else -> JSObject
+    
+    KJS::Type type = value.type();
+    if (type == KJS::NumberType) {
+        jclass JSObjectClass = env->FindClass ("java/lang/Double");
+        jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(D)V");
+        if (constructorID != NULL) {
+            result = env->NewObject (JSObjectClass, constructorID, (jdouble)value.toNumber(exec));
+        }
+    }
+    else if (type == KJS::StringType) {
+        KJS::UString stringValue = value.toString(exec);
+        JNIEnv *env = getJNIEnv();
+        result = env->NewString ((const jchar *)stringValue.data(), stringValue.size());
+    }
+    else if (type == KJS::BooleanType) {
+        jclass JSObjectClass = env->FindClass ("java/lang/Boolean");
+        jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(Z)V");
+        if (constructorID != NULL) {
+            result = env->NewObject (JSObjectClass, constructorID, (jboolean)value.toBoolean(exec));
+        }
+    }
+    else {
+        // Create a JSObject.
+        jlong nativeHandle;
+        
+        if (type == KJS::ObjectType){
+            KJS::ObjectImp *imp = static_cast<KJS::ObjectImp*>(value.imp());
+            
+            // We either have a wrapper around a Java instance or a JavaScript
+            // object.  If we have a wrapper around a Java instance, return that
+            // instance, otherwise create a new Java JSObject with the ObjectImp*
+            // as it's nativeHandle.
+            if (strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
+                KJS::RuntimeObjectImp *runtimeImp = static_cast<KJS::RuntimeObjectImp*>(value.imp());
+                Bindings::JavaInstance *runtimeInstance = static_cast<Bindings::JavaInstance *>(runtimeImp->getInternalInstance());
+                return runtimeInstance->javaInstance();
+            }
+            else {
+                nativeHandle = ptr_to_jlong(imp);
+                
+                // Bump our 'meta' reference count for the imp.  We maintain the reference
+                // until either finalize is called or the applet shuts down.
+                addJavaReference (root, imp);
+            }
+        }
+        // All other types will result in an undefined object.
+        else {
+            nativeHandle = UndefinedHandle;
+        }
+        
+        // Now create the Java JSObject.
+        jclass JSObjectClass = env->FindClass ("apple/applet/JSObject");
+        jmethodID constructorID = env->GetMethodID (JSObjectClass, "<init>", "(J)V");
+        if (constructorID != NULL) {
+            result = env->NewObject (JSObjectClass, constructorID, nativeHandle);
+        }
+    }
+    
+    return result;
+}
+
+KJS::Value JSObject::convertJObjectToValue (jobject theObject)
+{
+    // Instances of netscape.javascript.JSObject get converted back to
+    // JavaScript objects.  All other objects are wrapped.  It's not
+    // possible to pass primitive types from the Java to JavaScript.
+    // See section 22.7 of 'JavaScript:  The Definitive Guide, 4th Edition',
+    // figure 22-4.
+    jobject classOfInstance = callJNIObjectMethod(theObject, "getClass", "()Ljava/lang/Class;");
+    jstring className = (jstring)callJNIObjectMethod(classOfInstance, "getName", "()Ljava/lang/String;");
+    if (strcmp(Bindings::JavaString(className).characters(), "netscape.javascript.JSObject") == 0) {
+        // Pull the nativeJSObject value from the Java instance.  This is a
+        // pointer to the ObjectImp.
+        JNIEnv *env = getJNIEnv();
+        jfieldID fieldID = env->GetFieldID((jclass)classOfInstance, "nativeJSObject", "long");
+        if (fieldID == NULL) {
+            return KJS::Undefined();
+        }
+        jlong nativeHandle = env->GetLongField(theObject, fieldID);
+        if (nativeHandle == UndefinedHandle) {
+            return KJS::Undefined();
+        }
+        KJS::ObjectImp *imp = static_cast<KJS::ObjectImp*>(jlong_to_impptr(nativeHandle));
+        return KJS::Object(const_cast<KJS::ObjectImp*>(imp));
+    }
+
+    return KJS::Object(new KJS::RuntimeObjectImp(new Bindings::JavaInstance (theObject)));
+}
+
+KJS::List JSObject::listFromJArray(jobjectArray jArray) const
+{
+    JNIEnv *env = getJNIEnv();
+    long i, numArgs = env->GetArrayLength (jArray);
+    KJS::List aList;
+    
+    for (i = 0; i < numArgs; i++) {
+        jobject anArg = env->GetObjectArrayElement ((jobjectArray)jArray, i);
+        aList.append (convertJObjectToValue(anArg));
+    }
+    return aList;
 }
 
 }
@@ -541,7 +673,7 @@ extern "C" {
 jlong KJS_JSCreateNativeJSObject (JNIEnv *env, jclass clazz, jstring jurl, jlong nativeHandle, jboolean ctx)
 {
     JSObjectCallContext context;
-    context.type = GetWindow;
+    context.type = CreateNative;
     context.nativeHandle = nativeHandle;
     return JSObject::invoke (&context).j;
 }

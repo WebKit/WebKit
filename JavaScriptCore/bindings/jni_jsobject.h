@@ -82,7 +82,7 @@ private:
 };
 
 enum JSObjectCallType {
-    GetWindow,
+    CreateNative,
     Call,
     Eval,
     GetMember,
@@ -111,6 +111,7 @@ class JSObject
 public:
     JSObject(jlong nativeHandle);
     
+    static jlong createNative(jlong nativeHandle);
     jobject call(jstring methodName, jobjectArray args) const;
     jobject eval(jstring script) const;
     jobject getMember(jstring memberName) const;
@@ -120,10 +121,12 @@ public:
     void setSlot(jint index, jobject value) const;
     jstring toString() const;
     void finalize() const;
-
-    static jlong getWindow(jlong nativeHandle);
     
     static jvalue invoke (JSObjectCallContext *context);
+
+    static jobject convertValueToJObject (KJS::ExecState *exec, const RootObject *root, KJS::Value value);
+    static KJS::Value convertJObjectToValue (jobject theObject);
+    KJS::List listFromJArray(jobjectArray jArray) const;
     
 private:
     const Bindings::RootObject *_root;

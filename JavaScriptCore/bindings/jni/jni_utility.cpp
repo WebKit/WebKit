@@ -617,20 +617,3 @@ jvalue convertValueToJValue (KJS::ExecState *exec, KJS::Value value, JNIType _JN
     return result;
 }
 
-jobject convertValueToJObject (KJS::ExecState *exec, KJS::Value value)
-{
-    // FIXME:  Implement!
-    return 0;
-}
-
-KJS::Value convertJObjectToValue (KJS::ExecState *exec, jobject)
-{
-    // FIXME:  Implement!
-    return KJS::Undefined();
-}
-
-KJS::List listFromJArray(jobjectArray jArray)
-{
-    // FIXME:  Implement!
-    return KJS::List::empty();
-}

@@ -1,3 +1,12 @@
+2003-12-15  Richard Williamson   <rjw@apple.com>
+
+	Return 0 if the view doesn't have a bridge.
+
+        Reviewed by John.
+
+        * kwq/WebCoreBridge.mm:
+        (rootForView):
+
 2003-12-15  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3508792.  Remove tables and cells as AxObjects.
