@@ -27,7 +27,8 @@
     fileInfo = [fileManager fileAttributesAtPath:plugin traverseLink:YES];
     if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeRegular"]){ 
         if([[fileInfo objectForKey:@"NSFileHFSTypeCode"] unsignedLongValue] == 1112690764){ // 1112690764 = 'BRPL'
-            name = [plugin lastPathComponent];
+            name = [plugin lastPathComponent]; // FIXME: Should the name of the plugin be the filename?
+            filename = [plugin lastPathComponent];
             executablePath = plugin;
             err = FSPathMakeRef((UInt8 *)[plugin cString], &fref, NULL);
             if(err != noErr){
@@ -41,6 +42,7 @@
             }
             mimeTypes = getMimeTypesForResourceFile(resRef);
             if(mimeTypes == nil) return FALSE;
+            //FIXME: Need to get plug-in's description
         }else return FALSE;
     }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){
         pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)plugin, kCFURLPOSIXPathStyle, TRUE);
@@ -48,11 +50,13 @@
         bundle2 = [NSBundle bundleWithPath:plugin]; // CFBundleCopyExecutableURL doesn't return full path! Have to use NSBundle
         CFBundleGetPackageInfo(bundle, &type, NULL);
         if(type == 1112690764){  // 1112690764 = 'BRPL'
-            name = [plugin lastPathComponent];
+            name = [plugin lastPathComponent]; // FIXME: Should the name of the plugin be the filename?
+            filename = [plugin lastPathComponent];
             executablePath = [bundle2 executablePath];
             resRef = CFBundleOpenBundleResourceMap(bundle);
             mimeTypes = getMimeTypesForResourceFile(resRef);
             if(mimeTypes == nil) return FALSE;
+            //FIXME: Need to get plug-in's description
         }else return FALSE;
         CFRelease(bundle);
         CFRelease(pluginURL);
@@ -190,6 +194,10 @@
     return name;
 }
 
+- (NSString *)filename{
+    return filename;
+}
+
 - (NSString *)executablePath{
     return executablePath;
 }
@@ -198,6 +206,9 @@
     return isLoaded;
 }
 
+- (NSString *)pluginDescription{
+    return pluginDescription;
+}
 - (NSString *)description{
     NSMutableString *desc;
     

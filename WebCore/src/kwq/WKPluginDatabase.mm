@@ -39,6 +39,10 @@ static WKPluginDatabase *__WKPluginDatabase = nil;
     return nil;
 }
 
+- (NSArray *) plugins{
+    return plugins;
+}
+
 @end
 
 NSArray *findPlugins(void){

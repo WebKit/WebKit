@@ -14,9 +14,20 @@
 
 typedef NPStream* NPS;
 
+@interface WKPluginViewNullEventSender : NSObject{
+    NPP instance;
+    NPP_HandleEventProcPtr NPP_HandleEvent;
+}
+
+-(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;
+-(void)sendNullEvents;
+-(void)stop;
+@end
+
 @interface WKPluginView : NSQuickDrawView {
     QWidget *widget;
     WKPlugin *plugin;
+    WKPluginViewNullEventSender *eventSender;
     
     NPP instance;
     NPP_t instanceStruct;
@@ -32,7 +43,7 @@ typedef NPStream* NPS;
             
     NSString *url, *mime;
     NSTrackingRectTag trackingTag;
-
+    
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
     NPP_SetWindowProcPtr NPP_SetWindow;
@@ -57,7 +68,6 @@ typedef NPStream* NPS;
 -(BOOL)resignFirstResponder;
 -(void)sendActivateEvent;
 -(void)sendUpdateEvent;
--(void)sendNullEvents;
 -(void)mouseDown:(NSEvent *)theEvent;
 -(void)mouseUp:(NSEvent *)theEvent;
 -(void)mouseDragged:(NSEvent *)theEvent;
@@ -83,3 +93,4 @@ typedef NPStream* NPS;
 -(void)forceRedraw;
 
 @end
+

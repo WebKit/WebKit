@@ -16,8 +16,8 @@
 
 + (WKPluginDatabase *)installedPlugins;
 - (WKPlugin *)getPluginForMimeType:(NSString *)mimeType;
+- (NSArray *) plugins;
 
 @end
 
-NSMutableDictionary *getMimeTypesForResourceFile(SInt16 resRef);
 NSArray *findPlugins(void);

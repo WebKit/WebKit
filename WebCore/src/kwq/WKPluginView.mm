@@ -15,7 +15,35 @@
 //#define USE_CARBON 1
 //#import <AppKit/NSWindow_Private.h>
 
+@implementation WKPluginViewNullEventSender
 
+-(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;
+{
+    instance = pluginInstance;
+    NPP_HandleEvent = HandleEventFunction;
+    return self;
+}
+
+-(void)sendNullEvents
+{
+    EventRecord event;
+    bool acceptedEvent;
+    UnsignedWide msecs;
+    
+    event.what = nullEvent;
+    Microseconds(&msecs);
+    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, event.when);
+    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
+}
+
+-(void) stop
+{
+    [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
+}
+
+@end
 
 @implementation WKPluginView
 
@@ -26,6 +54,7 @@
     NPSavedData saved;
     NSArray *attributes, *values;
     NSString *attributeString;
+    
     uint i;
         
     [super initWithFrame: r];
@@ -75,7 +104,8 @@
     }
     transferred = FALSE;
     trackingTag = [self addTrackingRect:r owner:self userData:nil assumeInside:NO];
-    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:2];
+    eventSender = [[[WKPluginViewNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent] autorelease];
+    [eventSender sendNullEvents];
     return self;
 }
 
@@ -216,20 +246,6 @@
     acceptedEvent = NPP_HandleEvent(instance, &event); 
     KWQDebug("NPP_HandleEvent(loseFocusEvent): %d  when: %u\n", acceptedEvent, event.when);
     return YES;
-}
-
--(void)sendNullEvents
-{
-    EventRecord event;
-    bool acceptedEvent;
-    UnsignedWide msecs;
-    
-    event.what = nullEvent;
-    Microseconds(&msecs);
-    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, event.when);
-    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:0];
 }
 
 -(void)sendActivateEvent
@@ -454,13 +470,11 @@
 -(void)dealloc
 {
     NPError npErr;
-    //FIX ME: compiler can't find this method!
-    //[self cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
+    
+    [eventSender stop];
     npErr = NPP_Destroy(instance, NULL);
     KWQDebug("NPP_Destroy: %d\n", npErr);
     [super dealloc];
 }
-
-
 
 @end

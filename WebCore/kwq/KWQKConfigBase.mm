@@ -25,6 +25,15 @@
 
 #include <kwqdebug.h>
 #include <kconfig.h>
+#include <WKPlugin.h>
+#include <WKPluginDatabase.h>
+
+enum files{
+    pluginsinfo
+};
+
+int file;
+unsigned group;
 
 //FIX ME:
 static QString *tempQString = NULL;
@@ -46,7 +55,11 @@ KConfigBase::~KConfigBase()
 
 void KConfigBase::setGroup(const QString &pGroup)
 {
-    _logNotYetImplemented();
+    _logPartiallyImplemented();
+    
+    if(file == pluginsinfo){
+        group = pGroup.toUInt();
+    }
 }
 
 
@@ -62,8 +75,20 @@ void KConfigBase::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfigBase::readEntry(const char *pKey, 
     const QString& aDefault=QString::null) const
 {
-    _logNotYetImplemented();
-    if (tempQString == NULL) {
+    _logPartiallyImplemented();
+    
+    if(file == pluginsinfo){
+        WKPlugin *plugin;
+        plugin = [[[WKPluginDatabase installedPlugins] plugins] objectAtIndex:group];
+        if(strcmp(pKey, "name") == 0){
+            return NSSTRING_TO_QSTRING([plugin name]);
+        }else if(strcmp(pKey, "file") == 0){
+            return NSSTRING_TO_QSTRING([plugin filename]);
+        }else if(strcmp(pKey, "description") == 0){
+            return NSSTRING_TO_QSTRING([plugin pluginDescription]);
+        }
+    }
+    if(tempQString == NULL) {
         tempQString = new QString();
     }
     return *tempQString;
@@ -73,7 +98,11 @@ QString KConfigBase::readEntry(const char *pKey,
 
 int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
 {
-    _logNotYetImplemented();
+    _logPartiallyImplemented();
+    
+    if(file == pluginsinfo){
+        return [[[WKPluginDatabase installedPlugins] plugins] count];
+    }
     return 0;
 }
 
@@ -118,7 +147,10 @@ QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 
 KConfig::KConfig(const QString &n, bool bReadOnly=false)
 {
-    _logNotYetImplemented();
+    _logPartiallyImplemented();
+    if(n.contains(pluginsinfo)){
+        file = pluginsinfo;
+    }
 }
 
 

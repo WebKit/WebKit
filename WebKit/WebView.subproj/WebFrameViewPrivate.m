@@ -49,7 +49,7 @@
     count = [views count];
     while (count--){
         //WebKitDebugAtLevel(0x200, "Removing %p %s\n", [views objectAtIndex: 0], DEBUG_OBJECT([[[views objectAtIndex: 0] class] className]));
-        [[views objectAtIndex: 0] removeFromSuperviewWithoutNeedingDisplay]; 
+        [[views objectAtIndex: count] removeFromSuperviewWithoutNeedingDisplay]; 
     }
     [self setFrameSize: NSMakeSize (0,0)];
 }
