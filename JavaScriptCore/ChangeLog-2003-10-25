@@ -1,3 +1,16 @@
+2003-04-25  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - move from linear probing to double hashing, gives an 0.7% speedup in iBench JavaScript
+
+        * kjs/property_map.h: Remove the hash function.
+        * kjs/property_map.cpp: Added statistics for rehashes and removes.
+        Moved from linear probing to double hashing, using the hash modulo
+        (table size minus one) plus one for the probing distance.
+
+        * kjs/ustring.h: Use unsigned instead of int for hash function result.
+
 === Safari-75 ===
 
 === Safari-74 ===
