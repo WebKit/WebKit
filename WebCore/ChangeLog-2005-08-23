@@ -1,5 +1,14 @@
 2003-07-28  Dave Hyatt  <hyatt@apple.com>
 
+	Fix build bustage on my buggy panther compiler.
+	
+        Reviewed by darin
+
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::~QLineEdit):
+
+2003-07-28  Dave Hyatt  <hyatt@apple.com>
+
 	Fix for 3343250, XML didn't know how to make implicit tbodies when starting new elements,
 	nor did it know to skip implicit elements when popping its element stack.
 	

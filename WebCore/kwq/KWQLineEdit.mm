@@ -45,7 +45,8 @@ QLineEdit::QLineEdit()
 
 QLineEdit::~QLineEdit()
 {
-    [(KWQTextField *)getView() invalidate];
+    KWQTextField* textField = (KWQTextField*)getView();
+    [textField invalidate];
 }
 
 void QLineEdit::setEchoMode(EchoMode mode)
