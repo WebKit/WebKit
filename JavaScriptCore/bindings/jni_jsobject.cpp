@@ -603,7 +603,7 @@ jobject JSObject::convertValueToJObject (KJS::Value value) const
             // object.  If we have a wrapper around a Java instance, return that
             // instance, otherwise create a new Java JSObject with the ObjectImp*
             // as it's nativeHandle.
-            if (strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
+            if (imp->classInfo() && strcmp(imp->classInfo()->className, "RuntimeObject") == 0) {
                 KJS::RuntimeObjectImp *runtimeImp = static_cast<KJS::RuntimeObjectImp*>(value.imp());
                 Bindings::JavaInstance *runtimeInstance = static_cast<Bindings::JavaInstance *>(runtimeImp->getInternalInstance());
                 return runtimeInstance->javaInstance();

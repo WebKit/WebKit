@@ -32,7 +32,7 @@
 
 using namespace KJS::Bindings;
 
-static JavaVM *jvm;
+static JavaVM *jvm = 0;
 
 JavaVM *KJS::Bindings::getJavaVM()
 {
@@ -50,7 +50,7 @@ JavaVM *KJS::Bindings::getJavaVM()
         jvm = jvmArray[0];
     }
     else 
-        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %d", __PRETTY_FUNCTION__, jniError);
+        fprintf(stderr, "%s: JNI_GetCreatedJavaVMs failed, returned %d\n", __PRETTY_FUNCTION__, jniError);
         
     return jvm;
 }
@@ -64,7 +64,7 @@ JNIEnv *KJS::Bindings::getJNIEnv()
     if ( jniError == JNI_OK )
         return env;
     else
-        fprintf(stderr, "%s: AttachCurrentThread failed, returned %d", __PRETTY_FUNCTION__, jniError);
+        fprintf(stderr, "%s: AttachCurrentThread failed, returned %d\n", __PRETTY_FUNCTION__, jniError);
     return NULL;
 }
 
@@ -74,6 +74,7 @@ static jvalue callJNIMethod( JNIType type, jobject obj, const char *name, const 
     JNIEnv *env = getJNIEnv();
     jvalue result;
 
+    bzero (&result, sizeof(jvalue));
     if ( obj != NULL && jvm != NULL && env != NULL) {
         jclass cls = env->GetObjectClass(obj);
         if ( cls != NULL ) {
@@ -112,12 +113,12 @@ static jvalue callJNIMethod( JNIType type, jobject obj, const char *name, const 
                     result.d = env->functions->CallDoubleMethodV(env, obj, mid, args);
                     break;
                 default:
-                    fprintf(stderr, "%s: invalid function type (%d)", __PRETTY_FUNCTION__, (int)type);
+                    fprintf(stderr, "%s: invalid function type (%d)\n", __PRETTY_FUNCTION__, (int)type);
                 }
             }
             else
             {
-                fprintf(stderr, "%s: Could not find method: %s!", __PRETTY_FUNCTION__, name);
+                fprintf(stderr, "%s: Could not find method: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
             }
@@ -125,7 +126,7 @@ static jvalue callJNIMethod( JNIType type, jobject obj, const char *name, const 
             env->DeleteLocalRef(cls);
         }
         else {
-            fprintf(stderr, "%s: Could not find class for object!", __PRETTY_FUNCTION__);
+            fprintf(stderr, "%s: Could not find class for object\n", __PRETTY_FUNCTION__);
         }
     }
 
@@ -138,6 +139,7 @@ static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const
     JNIEnv *env = getJNIEnv();
     jvalue result;
     
+    bzero (&result, sizeof(jvalue));
     if ( obj != NULL && jvm != NULL && env != NULL) {
         jclass cls = env->GetObjectClass(obj);
         if ( cls != NULL ) {
@@ -176,12 +178,12 @@ static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const
                     result.d = env->functions->CallDoubleMethodA(env, obj, mid, args);
                     break;
                 default:
-                    fprintf(stderr, "%s: invalid function type (%d)", __PRETTY_FUNCTION__, (int)type);
+                    fprintf(stderr, "%s: invalid function type (%d)\n", __PRETTY_FUNCTION__, (int)type);
                 }
             }
             else
             {
-                fprintf(stderr, "%s: Could not find method: %s!", __PRETTY_FUNCTION__, name);
+                fprintf(stderr, "%s: Could not find method: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
             }
@@ -189,7 +191,7 @@ static jvalue callJNIMethodA( JNIType type, jobject obj, const char *name, const
             env->DeleteLocalRef(cls);
         }
         else {
-            fprintf(stderr, "%s: Could not find class for object!", __PRETTY_FUNCTION__);
+            fprintf(stderr, "%s: Could not find class for object\n", __PRETTY_FUNCTION__);
         }
     }
 
@@ -478,6 +480,7 @@ jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, 
     JNIEnv *env = getJNIEnv();
     jvalue result;
 
+    bzero (&result, sizeof(jvalue));
     if ( obj != NULL && jvm != NULL && env != NULL) {
         jclass cls = env->GetObjectClass(obj);
         if ( cls != NULL ) {
@@ -512,12 +515,12 @@ jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, 
                     result.d = env->functions->GetDoubleField(env, obj, field);
                     break;
                 default:
-                    fprintf(stderr, "%s: invalid field type (%d)", __PRETTY_FUNCTION__, (int)type);
+                    fprintf(stderr, "%s: invalid field type (%d)\n", __PRETTY_FUNCTION__, (int)type);
                 }
             }
             else
             {
-                fprintf(stderr, "%s: Could not find field: %s!", __PRETTY_FUNCTION__, name);
+                fprintf(stderr, "%s: Could not find field: %s\n", __PRETTY_FUNCTION__, name);
                 env->ExceptionDescribe();
                 env->ExceptionClear();
             }
@@ -525,7 +528,7 @@ jvalue KJS::Bindings::getJNIField( jobject obj, JNIType type, const char *name, 
             env->DeleteLocalRef(cls);
         }
         else {
-            fprintf(stderr, "%s: Could not find class for object!", __PRETTY_FUNCTION__);
+            fprintf(stderr, "%s: Could not find class for object\n", __PRETTY_FUNCTION__);
         }
     }
 

@@ -1,3 +1,21 @@
+2003-12-19  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3515597.  When an error occurs we need
+	to make sure result values are zeroed.
+
+	Cleaned up logs by adding a newline.
+
+        Reviewed by John.
+
+        * bindings/jni/jni_utility.cpp:
+        (KJS::Bindings::getJavaVM):
+        (KJS::Bindings::getJNIEnv):
+        (callJNIMethod):
+        (callJNIMethodA):
+        (KJS::Bindings::getJNIField):
+        * bindings/jni_jsobject.cpp:
+        (JSObject::convertValueToJObject):
+
 === Safari-119 ===
 
 2003-12-17  Richard Williamson   <rjw@apple.com>
