@@ -342,7 +342,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
             NP_Initialize = (NP_InitializeFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Initialize"));
             NP_GetEntryPoints = (NP_GetEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_GetEntryPoints"));
             NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(cfBundle, CFSTR("NP_Shutdown"));
-            if (NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown) {
+            if (!NP_Initialize || !NP_GetEntryPoints || !NPP_Shutdown) {
                 goto abort;
             }
         }
