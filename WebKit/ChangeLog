@@ -50,6 +50,8 @@
 
         Reviewed by Richard and Don.
 
+	- fixed 3218262 - REGRESSION: Page address becomes about:blank when command-clicking bookmark to load tab
+
         * WebView.subproj/WebDataProtocol.m:
 	(-[NSURLRequest _webDataRequestParametersForWriting]): Renamed
 	from _webDataRequestParameters.
