@@ -566,7 +566,7 @@
 
 - (void)keyDown: (NSEvent *)event
 {
-    NSLog (@"keyDown: %@\n", event);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", [[event description] cString]);
     int state = 0;
     
     [self _addModifiers:[event modifierFlags] toState:&state];
@@ -581,7 +581,7 @@
 
 - (void)keyUp: (NSEvent *)event
 {
-    NSLog (@"keyUp: %@\n", event);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s\n", [[event description] cString]);
     int state = 0;
     
     [self _addModifiers:[event modifierFlags] toState:&state];

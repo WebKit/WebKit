@@ -1,5 +1,13 @@
 2002-05-26  Maciej Stachowiak  <mjs@apple.com>
 
+	Fixed Radar 936147 - debug output in console "keyUp: NSEvent: type=KeyUp"
+
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView keyDown:]): Turned NSLog into WEBKITDEBUGLEBEL.
+	(-[IFWebView keyUp:]): Likewise.
+
+2002-05-26  Maciej Stachowiak  <mjs@apple.com>
+
 	WebKit part of fix for:
 
 	Radar 2884085 - add support for changing cursor over links
