@@ -337,6 +337,9 @@ QString KWQKHTMLPart::userAgent() const
 NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection direction)
 {
     DocumentImpl *doc = document();
+    if (!doc) {
+        return nil;
+    }
     for (;;) {
         node = direction == KWQSelectingNext
             ? doc->nextFocusNode(node) : doc->previousFocusNode(node);

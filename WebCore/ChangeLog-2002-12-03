@@ -1,5 +1,11 @@
 2002-10-30  Darin Adler  <darin@apple.com>
 
+	- fixed crash when you open an empty window and just hit tab, tab, tab
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::nextKeyViewInFrame): Check for nil.
+
+2002-10-30  Darin Adler  <darin@apple.com>
+
 	- fixed 3083982 -- Logging into AOL gives null view, crash
 
 	I fixed the crash part. Not the "gives null view" part.
