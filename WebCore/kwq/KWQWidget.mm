@@ -235,7 +235,19 @@ void QWidget::setFocus()
 
     KWQ_BLOCK_EXCEPTIONS;
     if ([view acceptsFirstResponder]) {
-        [KWQKHTMLPart::bridgeForWidget(this) makeFirstResponder:view];
+        WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(this);
+        NSResponder *oldFirstResponder = [bridge firstResponder];
+
+        [bridge makeFirstResponder:view];
+
+        // setting focus can actually cause a style change which might
+        // remove the view from its superview while it's being made
+        // first responder. This confuses AppKit so we must restore
+        // the old first responder.
+
+        if (![view superview]) {
+            [bridge makeFirstResponder:oldFirstResponder];
+        }
     }
     KWQ_UNBLOCK_EXCEPTIONS;
 }
