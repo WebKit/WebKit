@@ -255,7 +255,7 @@ NodeImpl *HTMLCollectionImpl::nextItem() const
         return retval;
     }
     // retval was 0, means we have to go up
-    while( !retval && currentItem->parentNode()
+    while( !retval && currentItem && currentItem->parentNode()
            && currentItem->parentNode() != base )
     {
         currentItem = currentItem->parentNode();

@@ -155,16 +155,6 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
 
   KHTMLView *view = static_cast<DOM::DocumentImpl*>(doc.handle())->view();
 
-  // image and form elements with the name p will be looked up first
-  DOM::HTMLCollection coll = doc.all();
-  DOM::HTMLElement element = coll.namedItem(propertyName.string());
-  if (!element.isNull() &&
-      (element.elementId() == ID_IMG || element.elementId() == ID_FORM))
-  {
-    KJS::HTMLCollection htmlcoll(exec,coll);
-    return htmlcoll.getNamedItems(exec, propertyName); // Get all the items with the same name
-  }
-
   const HashEntry* entry = Lookup::findEntry(&HTMLDocumentTable, propertyName);
   if (entry) {
     switch (entry->value) {
@@ -256,10 +246,43 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
     return DOMDocument::tryGet(exec, propertyName);
 
   //kdDebug(6070) << "KJS::HTMLDocument::tryGet " << propertyName.qstring() << " not found, returning element" << endl;
+  // image and form elements with the name p will be looked up last
+  DOM::HTMLCollection coll = doc.images();
+  DOM::HTMLCollection coll2 = doc.forms();
+  DOM::HTMLElement element = coll.namedItem(propertyName.string());
+  DOM::HTMLElement element2;
+  if (element.isNull()) {
+    element = coll2.namedItem(propertyName.string());
+    element2 = coll2.nextNamedItem(propertyName.string());
+  }
+  else {
+    element2 = coll.nextNamedItem(propertyName.string());
+    if (element2.isNull())
+        element2 = coll2.namedItem(propertyName.string());
+  }
+  
+  if (!element.isNull() && (element.elementId() == ID_IMG || element.elementId() == ID_FORM))
+  {
+    if (element2.isNull())
+        return getDOMNode(exec, element);
+    else {
+        DOM::HTMLCollection collAll = doc.all();
+        KJS::HTMLCollection htmlcoll(exec,collAll);
+        return htmlcoll.getNamedItems(exec, propertyName); // Get all the items with the same name
+    }
+  }
+
+  DOM::HTMLCollection collAll = doc.all();
+  element = collAll.namedItem(propertyName.string());
+  element2 = collAll.nextNamedItem(propertyName.string());
   if(!element.isNull())
   {
-    KJS::HTMLCollection htmlcoll(exec,coll);
-    return htmlcoll.getNamedItems(exec, propertyName); // Get all the items with the same name
+    if (element2.isNull())
+      return getDOMNode(exec, element);
+    else {
+      KJS::HTMLCollection htmlcoll(exec,coll);
+      return htmlcoll.getNamedItems(exec, propertyName); // Get all the items with the same name
+    }
   }
   return Undefined();
 }

@@ -1,5 +1,16 @@
 2002-11-25  David Hyatt  <hyatt@apple.com>
 
+	Rewrite the img/form document property lookup strategy.  This
+	should be faster and actually work (gasp!).  Fixes the dhtml
+	on hrweb to at least show up.
+	
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet):
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::nextItem):
+
+2002-11-25  David Hyatt  <hyatt@apple.com>
+
 	Add support to QFont for multiple families.  NOw all that's left
 	is getting the multiple families out of the font and down into
 	WebKit.
