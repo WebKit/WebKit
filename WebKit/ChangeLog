@@ -1,3 +1,20 @@
+2002-10-17  Darin Adler  <darin@apple.com>
+
+	A small change that eliminates a variety of strange clipping problems, including ones that
+	make large swathes of the page disappear.
+
+        * WebView.subproj/WebClipView.h: Add hasAdditionalClip and additionalClip methods.
+        * WebView.subproj/WebClipView.m:
+        (-[WebClipView resetAdditionalClip]): Add an assertion.
+        (-[WebClipView setAdditionalClip:]): Ditto.
+        (-[WebClipView hasAdditionalClip]): Added.
+        (-[WebClipView additionalClip]): Added.
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView visibleRect]):
+	Turn off the additional clip while computing our visibleRect. This way, the additional
+	clip only affects people who ask for the clip view's visibleRect directly, which basically
+	means just the focus rectangle drawing code we are trying to influence.
+
 2002-10-17  Richard Williamson  <rjw@apple.com>
 
         Support for drawing frame borders (fixes 2982466).

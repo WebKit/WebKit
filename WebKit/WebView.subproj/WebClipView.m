@@ -8,17 +8,32 @@
 
 #import "WebClipView.h"
 
+#import <WebFoundation/WebAssertions.h>
+
 @implementation WebClipView
 
 - (void)resetAdditionalClip
 {
+    ASSERT(_haveAdditionalClip);
     _haveAdditionalClip = NO;
 }
 
 - (void)setAdditionalClip:(NSRect)additionalClip
 {
+    ASSERT(!_haveAdditionalClip);
     _haveAdditionalClip = YES;
     _additionalClip = additionalClip;
+}
+
+- (BOOL)hasAdditionalClip
+{
+    return _haveAdditionalClip;
+}
+
+- (NSRect)additionalClip
+{
+    ASSERT(_haveAdditionalClip);
+    return _additionalClip;
 }
 
 - (NSRect)visibleRect

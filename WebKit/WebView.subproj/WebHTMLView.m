@@ -459,10 +459,10 @@
 #ifdef _KWQ_TIMING
     double start = CFAbsoluteTimeGetCurrent();
 #endif
-    
+
     [NSGraphicsContext saveGraphicsState];
     NSRectClip(rect);
-
+    
     ASSERT([[self superview] isKindOfClass:[WebClipView class]]);
     [(WebClipView *)[self superview] setAdditionalClip:rect];
     
@@ -509,6 +509,24 @@
     if (subviewsWereSetAside) {
         [self _setAsideSubviews];
     }
+}
+
+// Turn off the additional clip while computing our visibleRect.
+- (NSRect)visibleRect
+{
+    ASSERT([[self superview] isKindOfClass:[WebClipView class]]);
+    WebClipView *clipView = (WebClipView *)[self superview];
+
+    BOOL hasAdditionalClip = [clipView hasAdditionalClip];
+    if (!hasAdditionalClip) {
+        return [super visibleRect];
+    }
+    
+    NSRect additionalClip = [clipView additionalClip];
+    [clipView resetAdditionalClip];
+    NSRect visibleRect = [super visibleRect];
+    [clipView setAdditionalClip:additionalClip];
+    return visibleRect;
 }
 
 - (BOOL)isFlipped 

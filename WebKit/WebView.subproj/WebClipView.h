@@ -16,5 +16,7 @@
 
 - (void)setAdditionalClip:(NSRect)additionalClip;
 - (void)resetAdditionalClip;
+- (BOOL)hasAdditionalClip;
+- (NSRect)additionalClip;
 
 @end
