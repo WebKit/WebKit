@@ -677,7 +677,7 @@ void HTMLTableRowElement::setSectionRowIndex( long /*_sectionRowIndex*/ )
 HTMLCollection HTMLTableRowElement::cells() const
 {
     if(!impl) return HTMLCollection();
-    return HTMLCollection(impl, HTMLCollectionImpl::TABLE_ROWS);
+    return HTMLCollection(impl, HTMLCollectionImpl::TR_CELLS);
 }
 
 void HTMLTableRowElement::setCells( const HTMLCollection & /*_cells*/ )
