@@ -74,7 +74,7 @@ const struct HashEntry WindowTableEntries[] = {
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "onselect", Window::Onselect, DontDelete, 0, 0 },
-   { 0, 0, 0, 0, 0 },
+   { "XMLHttpRequest", Window::XMLHttpRequest, DontDelete|ReadOnly, 0, 0 },
    { "document", Window::Document, DontDelete|ReadOnly, 0, 0 },
    { "onunload", Window::Onunload, DontDelete, 0, 0 },
    { "ondblclick", Window::Ondblclick, DontDelete, 0, &WindowTableEntries[109] },

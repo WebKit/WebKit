@@ -1,3 +1,32 @@
+2003-11-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3486991 - Add XMLHttpRequest object and stub methods
+
+        * khtml/ecma/kjs_window.cpp:
+        (Window::get): Handle XMLHttpRequest constructor like Option and Image.
+        * khtml/ecma/kjs_window.h: Ditto.
+        * khtml/ecma/kjs_window.lut.h: Regenerated.
+        * khtml/ecma/xmlhttprequest.cpp: Added. Stub implementations of everything.
+        (KJS::XMLHttpRequestConstructorImp::XMLHttpRequestConstructorImp):
+        (KJS::XMLHttpRequestConstructorImp::implementsConstruct):
+        (KJS::XMLHttpRequestConstructorImp::construct):
+        (KJS::XMLHttpRequest::tryGet):
+        (KJS::XMLHttpRequest::getValueProperty):
+        (KJS::XMLHttpRequest::tryPut):
+        (KJS::XMLHttpRequest::putValue):
+        (KJS::XMLHttpRequest::notifyFinished):
+        (KJS::XMLHttpRequest::XMLHttpRequest):
+        (KJS::XMLHttpRequest::~XMLHttpRequest):
+        (KJS::XMLHttpRequestProtoFunc::tryCall):
+        * khtml/ecma/xmlhttprequest.h: Added. Stub implementations of everything.
+        (KJS::XMLHttpRequest::toBoolean):
+        (KJS::XMLHttpRequest::classInfo):
+        * khtml/ecma/xmlhttprequest.lut.h: Added.
+        * khtml/ecma/Makefile.am: Add new .lut.h file.
+	* WebCore.pbproj/project.pbxproj: Add new files.
+
 2003-11-17  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3487136, marquees reset when you return to a page in the b/f cache.  This patch makes
@@ -18,7 +47,7 @@
 
 	Merged from khtml:
 	
-	-fixed 3487324 -  CSS url values should be wrapped in "url()" for cssText purposes
+	- fixed 3487324 - CSS url values should be wrapped in "url()" for cssText purposes
 	
     2003-11-07  Dirk Mueller  <mueller@kde.org>
 	 
