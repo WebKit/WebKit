@@ -1,5 +1,11 @@
 2002-10-21  David Hyatt  <hyatt@apple.com>
 
+	DLs are supposed to have margins.
+	
+        * khtml/css/html4.css:
+
+2002-10-21  David Hyatt  <hyatt@apple.com>
+
 	Fix for margin problems on aintitcool.com.  There was a subtlety
 	to WinIE's quirk.  For <h1>-<h6> only, they don't collapse the
 	bottom margin for table cells (they still collapse the top

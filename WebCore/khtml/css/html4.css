@@ -328,6 +328,7 @@ DD {
 
 DL {
 	display: block;
+	margin: 1em 0;
         -konq-flow-mode: -konq-around-floats
 } 
 
