@@ -2,7 +2,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003 Apple Computer, Inc.
+ *  Copyright (C) 2004 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -362,7 +362,9 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     // handled above
     break;
   case CharAt:
-    dpos = a0.toInteger(exec);
+    // WinIE treats omitted parameter as 0 rather than NaN.
+    // That doesn't match the ECMA standard, but is needed for site compatibility.
+    dpos = args.size() == 0 ? 0 : a0.toInteger(exec);
     if (dpos >= 0 && dpos < len) // false for NaN
       u = s.substr(static_cast<int>(dpos), 1);
     else
@@ -370,8 +372,10 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     result = String(u);
     break;
   case CharCodeAt:
-    dpos = a0.toInteger(exec);
-    if (dpos >= 0 && dpos < len) {// false for NaN
+    // WinIE treats omitted parameter as 0 rather than NaN.
+    // That doesn't match the ECMA standard, but is needed for site compatibility.
+    dpos = args.size() == 0 ? 0 : a0.toInteger(exec);
+    if (dpos >= 0 && dpos < len) { // false for NaN
       UChar c = s[static_cast<int>(dpos)];
       d = (c.high() << 8) + c.low();
     } else

@@ -1,3 +1,19 @@
+2004-09-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3816097> REGRESSION: mailblocks, and presumably many other pages, failing because variable not found
+
+        * kjs/internal.cpp: (InterpreterImp::evaluate): Process variable declarations before executing
+        the program. We were doing this properly for functions, but not entire programs.
+
+        - fixed <rdar://problem/3814706> REGRESSION: text fields in mailblocks wizards do not accept keystrokes due to use of charCodeAt()
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Changed the implementation of charAt
+        and charCodeAt to treat a missing parameter as an index of 0, rather than an invalid index.
+
+        * tests/mozilla/expected.html: Update for two tests that now pass with these changes.
+
 === Safari-165 ===
 
 === Safari-164 ===
