@@ -24,34 +24,43 @@ to work better with java applets.
 *****************************************************************************/
 
 
+#include <kwqdebug.h>
 #include <javaembed.h>
 
 KJavaEmbed::KJavaEmbed( QWidget *parent=0, const char *name=0, WFlags f = 0 )
 {
+    _logNotYetImplemented();
 }
 
 
 KJavaEmbed::~KJavaEmbed()
 {
+    _logNotYetImplemented();
 }
 
 
 void KJavaEmbed::embed( WId w )
 {
+    _logNotYetImplemented();
 }
 
 
 QSize KJavaEmbed::sizeHint() const
 {
+    _logNotYetImplemented();
+    return QSize();
 }
 
 
 QSize KJavaEmbed::minimumSizeHint() const
 {
+    _logNotYetImplemented();
+    return QSize();
 }
 
 
 void KJavaEmbed::focusOutEvent( QFocusEvent * )
 {
+    _logNotYetImplemented();
 }
 

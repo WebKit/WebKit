@@ -95,12 +95,14 @@ void QLineEdit::setReadOnly(bool flag)
 bool QLineEdit::event(QEvent *)
 {
     _logNotYetImplemented();
+    return FALSE;
 }
 
 
 bool QLineEdit::frame() const
 {
     _logNotYetImplemented();
+    return FALSE;
 }
 
 
@@ -128,6 +130,7 @@ QLineEdit::QLineEdit(const QLineEdit &)
 QLineEdit &QLineEdit::operator=(const QLineEdit &)
 {
     _logNeverImplemented();
+    return *this;
 }
 
 

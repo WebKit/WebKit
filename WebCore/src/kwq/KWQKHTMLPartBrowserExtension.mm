@@ -23,14 +23,17 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <khtml_ext.h>
 
 
 void KHTMLPartBrowserExtension::editableWidgetFocused( QWidget *widget )
 {
+    _logNotYetImplemented();
 }
 
 
 void KHTMLPartBrowserExtension::editableWidgetBlurred( QWidget *widget )
 {
+    _logNotYetImplemented();
 }

@@ -68,6 +68,7 @@ int QComboBox::count() const
 QListBox *QComboBox::listBox() const
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
@@ -80,6 +81,7 @@ void QComboBox::popup()
 bool QComboBox::eventFilter(QObject *object, QEvent *event)
 {
     _logNotYetImplemented();
+    return FALSE;
 }
 
 

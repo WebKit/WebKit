@@ -17,6 +17,7 @@
 * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 * Boston, MA 02111-1307, USA.
 */
+#include <kwqdebug.h>
 #include <khtml_factory.h>
 
 QList<KHTMLPart> *KHTMLFactory::s_parts;
@@ -24,24 +25,31 @@ QList<KHTMLPart> *KHTMLFactory::s_parts;
 
 KHTMLFactory::KHTMLFactory( bool clone = false )
 {
+    _logNotYetImplemented();
 }
-
 
 KHTMLFactory::~KHTMLFactory()
 {
+    _logNotYetImplemented();
 }
 
 KParts::Part *KHTMLFactory::createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *className, const QStringList &args )
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 
 
 KInstance *KHTMLFactory::instance()
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 
 
 KHTMLSettings *KHTMLFactory::defaultHTMLSettings()
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 

@@ -23,29 +23,39 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qfontdatabase.h>
 
 QFontDatabase::QFontDatabase()
 {
+    _logNotYetImplemented();
 }
 
 
 QFont QFontDatabase::font(const QString, const QString &, int, const QString charSetName)
 {
+    _logNotYetImplemented();
+    return QFont();
 }
 
 
 bool QFontDatabase::isSmoothlyScalable(const QString &family, const QString &style, const QString &charSet) const
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 QValueList<int> QFontDatabase::smoothSizes(const QString &, const QString &, const QString &charSet)
 {
+    _logNotYetImplemented();
+    return QValueList<int>();
 }
 
 
 QString QFontDatabase::styleString(const QFont &)
 {
+    _logNotYetImplemented();
+    return QString();
 }
 

@@ -23,35 +23,45 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kprinter.h>
 
 bool KPrinter::setup(QWidget *parent=0)
 {
+    _logNeverImplemented();
+    return FALSE;
 }
 
 
 bool KPrinter::newPage()
 {
+    _logNeverImplemented();
+    return FALSE;
 }
 
 
 void KPrinter::setDocName(const QString &)
 {
+    _logNeverImplemented();
 }
 
 
 void KPrinter::setCreator(const QString &)
 {
+    _logNeverImplemented();
 }
 
 
 void KPrinter::setFullPage(bool)
 {
+    _logNeverImplemented();
 }
 
 
 QSize KPrinter::margins() const
 {
+    _logNeverImplemented();
+    return QSize();
 }
 
 

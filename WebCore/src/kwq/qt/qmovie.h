@@ -36,6 +36,10 @@
 #include "qimage.h"
 #include "qrect.h"
 
+#ifdef _KWQ_
+class QMoviePrivate;
+#endif
+
 // class QMovie ================================================================
 
 class QMovie {
@@ -84,6 +88,10 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+private:
+#ifdef _KWQ_
+    QMoviePrivate *d;
+#endif
 
 }; // class QMovie =============================================================
 

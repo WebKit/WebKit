@@ -23,27 +23,35 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <netaccess.h>
 
 namespace KIO {
 
 bool NetAccess::stat(const KURL &, KIO::UDSEntry &)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 QString NetAccess::lastErrorString()
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 
 bool NetAccess::download(const KURL &, QString &)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 void NetAccess::removeTempFile(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 } // namespace KIO

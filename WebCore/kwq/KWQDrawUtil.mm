@@ -23,11 +23,82 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qdrawutil.h>
 
-void qDrawShadePanel(QPainter *, int, int, int, int, const QColorGroup &, bool
-        sunken = FALSE, int lineWidth = 1, const QBrush *fill = 0)
+void qDrawShadePanel(QPainter *p, int x, int y, int w, int h, const QColorGroup &g, bool
+        sunken = FALSE, int lineWidth, const QBrush *fill)
 {
-    NSLog (@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    if ( w == 0 || h == 0 ) {
+        return;
+    }
+
+    QPen oldPen = p->pen();                     // save pen
+    QPointArray a(4 * lineWidth);
+    
+    if (sunken) {
+        p->setPen(g.dark());
+    }
+    else {
+        p->setPen(g.light());
+    }
+
+    int x1, y1, x2, y2;
+    int i;
+    int n = 0;
+    x1 = x;
+    y1 = y2 = y;
+    x2 = x+w-2;
+
+    for (i = 0; i < lineWidth; i++) {             // top shadow
+        a.setPoint(n++, x1, y1++);
+        a.setPoint(n++, x2--, y2++);
+    }
+
+    x2 = x1;
+    y1 = y+h-2;
+
+    for (i = 0; i < lineWidth; i++) {             // left shadow
+        a.setPoint(n++, x1++, y1);
+        a.setPoint(n++, x2++, y2--);
+    }
+
+    p->drawLineSegments(a);
+    n = 0;
+
+    if (sunken) {
+        p->setPen(g.light());
+    }
+    else {
+        p->setPen(g.dark());
+    }
+
+    x1 = x;
+    y1 = y2 = y+h-1;
+    x2 = x+w-1;
+
+    for (i = 0; i < lineWidth; i++) {             // bottom shadow
+        a.setPoint(n++, x1++, y1--);
+        a.setPoint(n++, x2, y2--);
+    }
+
+    x1 = x2;
+    y1 = y;
+    y2 = y+h-lineWidth-1;
+
+    for (i = 0; i < lineWidth; i++) {             // right shadow
+        a.setPoint(n++, x1--, y1++);
+        a.setPoint(n++, x2--, y2);
+    }
+
+    p->drawLineSegments(a);
+    if (fill) {                               // fill with fill color
+        QBrush oldBrush = p->brush();
+        p->setPen(Qt::NoPen);
+        p->setBrush(*fill);
+        p->drawRect(x+lineWidth, y+lineWidth, w-lineWidth*2, h-lineWidth*2);
+        p->setBrush(oldBrush);
+    }
+    p->setPen(oldPen);                        // restore pen
 }
 

@@ -23,86 +23,115 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qimage.h>
 
 
 QImage::QImage()
 {
+    _logNotYetImplemented();
 }
 
 
 QImage::QImage(const QImage &)
 {
+    _logNotYetImplemented();
 }
 
 
 QImage::~QImage()
 {
+    _logNotYetImplemented();
 }
 
 
 bool QImage::isNull()
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 QRgb QImage::color(int) const
 {
+    _logNotYetImplemented();
+    return qRgb(0,0,0);
 }
 
 
 void QImage::setColor(int, QRgb)
 {
+    _logNotYetImplemented();
 }
 
 
 int QImage::width() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QImage::height() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QImage::depth() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QImage::pixelIndex(int,int) const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 bool QImage::create(int,int,int,int numColors=0)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 QImage QImage::createAlphaMask(int conversion_flags=0) const
 {
+    _logNotYetImplemented();
+    return QImage();
 }
 
 
 bool QImage::hasAlphaBuffer() const
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 uchar **QImage::jumpTable() const
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 
 
 uchar *QImage::scanLine(int) const
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 
 
 QImage &QImage::operator=(const QImage &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 

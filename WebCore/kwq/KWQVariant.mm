@@ -22,71 +22,160 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <qvariant.h>
+#include <qstring.h>
+#include <_qshared.h>
 
-#include <kwqdebug.h>
+class QVariantPrivate : public QShared {
+friend class QVariant;
+public:
+    QVariantPrivate() {
+        t = QVariant::Invalid;
+    }
+    
+    QVariantPrivate(QVariantPrivate *other) {
+        switch (other->t) {
+            case QVariant::Invalid:
+                break;
+            case QVariant::String:
+                value.p = new QString(*((QString*)other->value.p));
+                break;
+            case QVariant::UInt:
+                value.u = other->value.u;
+                break;
+            case QVariant::Double:
+                value.d = other->value.d;
+                break;
+            case QVariant::Bool:
+                value.b = other->value.b;
+                break;
+        }
+    }
+    
+    ~QVariantPrivate() {
+         clear();
+    }
+    
+    void clear()
+    {
+        switch (t) {
+            case QVariant::Invalid:
+            case QVariant::UInt:
+            case QVariant::Double:
+            case QVariant::Bool:
+                break;
+            case QVariant::String:
+                delete (QString*)value.p;
+                break;
+        }
+        t = QVariant::Invalid;
+    }
+    
+    QVariant::Type t;
+
+    union {
+        bool b;
+        uint u;
+        double d;
+        void *p;
+    } value;
+};
 
 QVariant::QVariant()
 {
-    _logNotYetImplemented();
+    d = new QVariantPrivate();
 }
 
 
-QVariant::QVariant(bool b, int i)
+QVariant::QVariant(bool val, int i)
 {
-    _logNotYetImplemented();
+    d = new QVariantPrivate();
+    d->t = Bool;
+    d->value.d = val;
 }
 
 
-QVariant::QVariant(double d)
+QVariant::QVariant(double val)
 {
-    _logNotYetImplemented();
+    d = new QVariantPrivate();
+    d->t = Double;
+    d->value.d = val;
 }
 
 
 QVariant::QVariant(const QString &s)
 {
-    _logNotYetImplemented();
+    d = new QVariantPrivate();
+    d->t = String;
+    d->value.p = new QString(s);
 }
 
 
 QVariant::QVariant(const QVariant &other)
 {
-    _logNotYetImplemented();
+    d = new QVariantPrivate();
+    *this = other;
 }
 
 
 QVariant::~QVariant()
 {
-    _logNotYetImplemented();
+    if (d->deref()) {
+        delete d;
+    }
 }
 
 
 QVariant::Type QVariant::type() const
 {
-    _logNotYetImplemented();
-    return UInt;
+    return d->t;
 }
 
 
 bool QVariant::toBool() const
 {
-    _logNotYetImplemented();
-    return 0;
+    if (d->t == Bool) {
+        return d->value.b;
+    }
+    if (d->t == Double) {
+        return d->value.d != 0.0;
+    }
+    if (d->t == UInt) {
+        return d->value.u != 0;
+    }
+
+    return FALSE;
 }
 
 
 uint QVariant::toUInt() const
 {
-    _logNotYetImplemented();
+    if (d->t == UInt) {
+        return (int)d->value.u;
+    }
+    if (d->t == Double) {
+        return (int)d->value.d;
+    }
+    if (d->t == Bool) {
+        return (int)d->value.b;
+    }
+    
     return 0;
 }
 
 
 QVariant &QVariant::operator=(const QVariant &other)
 {
-    _logNotYetImplemented();
+    QVariant &variant = (QVariant &)other;
+    
+    variant.d->ref();
+    if (d->deref()) {
+        delete d;
+    }
+    d = variant.d;
+    
     return *this;
 }
 

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <event.h>
 
 class QPainter;
@@ -31,15 +32,20 @@ namespace KParts {
 
 bool Event::test(const QEvent *)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 bool Event::test(const QEvent *, const char *)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 Event::Event(const char *)
 {
+    _logNotYetImplemented();
 }
 
 } // namespace KParts

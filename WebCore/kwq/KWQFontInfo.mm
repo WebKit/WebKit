@@ -23,26 +23,31 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-
+#include <kwqdebug.h>
 #include <qfontinfo.h>
 
 QFontInfo::QFontInfo(const QFont &)
 {
+    _logNotYetImplemented();
 }
 
 
 QFontInfo::QFontInfo(const QFontInfo &)
 {
+    _logNotYetImplemented();
 }
 
 
 QFontInfo::~QFontInfo()
 {
+    _logNotYetImplemented();
 }
 
 
 bool QFontInfo::fixedPitch() const
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
@@ -50,5 +55,7 @@ bool QFontInfo::fixedPitch() const
 
 QFontInfo &QFontInfo::operator=(const QFontInfo &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 

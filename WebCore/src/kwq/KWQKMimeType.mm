@@ -23,18 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kmimetype.h>
 
 KMimeType::Ptr KMimeType::findByURL(const KURL &, mode_t=0, bool=false, bool)
 {
+    _logNotYetImplemented();
 }
 
 
 KMimeType::~KMimeType()
 {
+    _logNotYetImplemented();
 }
 
 
 QString KMimeType::name() const
 {
+    _logNotYetImplemented();
+    return QString();
 }

@@ -23,51 +23,64 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kprocess.h>
 
 KProcess::KProcess()
 {
+    _logNotYetImplemented();
 }
 
 
 KProcess::~KProcess()
 {
+    _logNotYetImplemented();
 }
 
 
 QStrList *KProcess::args()
 {
+    _logNotYetImplemented();
+    return new QStrList();
 }
 
 
 bool KProcess::isRunning() const
 {
+    _logNotYetImplemented();
+    return FALSE;    
 }
 
 
 bool KProcess::writeStdin(const char *buffer, int buflen)
 {
+    _logNotYetImplemented();
+    return FALSE;    
 }
 
 
 bool KProcess::start(RunMode runmode, Communication comm)
 {
+    _logNotYetImplemented();
+    return FALSE;    
 }
 
 
 bool KProcess::kill(int signo=SIGTERM)
 {
+    _logNotYetImplemented();
+    return FALSE;    
 }
 
 
 void KProcess::resume()
 {
+    _logNotYetImplemented();
 }
 
 
 KProcess &KProcess::operator<<(const QString& arg)
 {
+    _logNotYetImplemented();
+    return *this;
 }
-
-
-

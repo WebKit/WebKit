@@ -23,34 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <KWQCompletion.h>
 
 KCompletion::KCompletion()
 {
+    _logNotYetImplemented();
 }
-
 
 KCompletion::~KCompletion()
 {
+    _logNotYetImplemented();
 }
-
 
 void KCompletion::setItems(const QStringList &)
 {
+    _logNotYetImplemented();
 }
-
 
 KCompletionBase::KCompletionBase()
 {
+    _logNotYetImplemented();
 }
-
 
 KCompletionBase::~KCompletionBase()
 {
+    _logNotYetImplemented();
 }
 
 KCompletion *KCompletionBase::completionObject(bool hsig = true)
 {
+    _logNotYetImplemented();
+    return 0L;
 }
-
-

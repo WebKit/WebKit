@@ -31,6 +31,8 @@
 #include <Foundation/Foundation.h>
 #include <WCURICache.h>
 
+static const QString DEFAULT_ERROR_TEXT = "DEFAULT_ERROR_TEXT";
+
 namespace KIO {
 
 // class Job ===================================================================
@@ -42,23 +44,28 @@ Job::~Job()
 
 int Job::error()
 {
-    _logNotYetImplemented();
+    _logNeverImplemented();
     return 0;
 }
 
 
-const QString & Job::errorText()
+const QString &Job::errorText()
 {
+    _logNotYetImplemented();
+    return DEFAULT_ERROR_TEXT;
 }
 
 
 QString Job::errorString()
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 
 void Job::kill(bool quietly=TRUE)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -66,6 +73,7 @@ void Job::kill(bool quietly=TRUE)
 
 SimpleJob::~SimpleJob()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -121,6 +129,11 @@ bool TransferJob::isErrorPage() const
     return (_status != 0);
 }
 
+int TransferJob::error()
+{
+    return _status;
+}
+
 QString TransferJob::queryMetaData(const QString &key)
 {
     NSString *_key;
@@ -145,20 +158,14 @@ void TransferJob::addMetaData(const QString &key, const QString &value)
 
 void TransferJob::kill(bool quietly=TRUE)
 {
-    id <WCURICache> uriCache;
-
-    uriCache = WCGetDefaultURICache();
-    [uriCache cancelRequestWithURL:d->url requestor:d->requestor];
+    [WCGetDefaultURICache() cancelRequestWithURL:d->url requestor:d->requestor];
 }
 
 void TransferJob::begin(id requestor, void *userData)
 {
-    id <WCURICache> uriCache;
-
-    uriCache = WCGetDefaultURICache();
     //FIXME: load uri
     d->requestor = requestor;
-    [uriCache requestWithURL:d->url requestor:requestor userData:userData];
+    [WCGetDefaultURICache() requestWithURL:d->url requestor:requestor userData:userData];
 }
 
 } // namespace KIO

@@ -25,52 +25,91 @@
 
 #include <qbrush.h>
 
+void QBrush::init(const QColor &color, BrushStyle style)
+{
+    data = new QBrushData();
+    data->color = color;
+    data->brushStyle = style;
+}
+
 QBrush::QBrush()
 {
-    qcolor = Qt::black;
-    qbrushstyle = SolidPattern;
+    init(Qt::black, SolidPattern);
 }
 
 
 QBrush::QBrush(const QColor &c)
 {
-    qcolor = c;
-    qbrushstyle = SolidPattern;
+    init(c, SolidPattern);
 }
 
+QBrush::QBrush(const QColor &c, BrushStyle style)
+{
+    init(c, style);
+}
 
 QBrush::QBrush(const QBrush &copyFrom)
 {
-    qcolor = copyFrom.qcolor;
-    qbrushstyle = copyFrom.qbrushstyle;
+    data = copyFrom.data;
+    data->ref();
 }
-
 
 QBrush &QBrush::operator=(const QBrush &assignFrom)
 {
-    qcolor = assignFrom.qcolor;
-    qbrushstyle = assignFrom.qbrushstyle;
+    assignFrom.data->ref();
+    if (data->deref()) {
+        delete data;
+    }
+    data = assignFrom.data;
     return *this;
 }
 
-
 QBrush::~QBrush()
 {
+    if (data->deref()) {
+        delete data;
+    }
+}
+
+QBrush QBrush::copy() const
+{
+    return QBrush(data->color, data->brushStyle);
+}
+
+void QBrush::detach()
+{
+    if (data->count != 1) {
+        *this = copy();
+    }
 }
 
 const QColor &QBrush::color() const
 {
-    return qcolor;
+    return data->color;
 }
 
 void QBrush::setColor(const QColor &c)
 {
-    qcolor = c;
+    detach();
+    data->color = c;
+}
+
+Qt::BrushStyle QBrush::style() const
+{
+    return data->brushStyle;
+}
+
+void QBrush::setStyle(Qt::BrushStyle bs)
+{
+    detach();
+    data->brushStyle = bs;
 }
 
 bool QBrush::operator==(const QBrush &compareTo) const
 {
-    return qcolor == compareTo.qcolor;
+    return (compareTo.data == data) || 
+        (compareTo.data->brushStyle == data->brushStyle && 
+         compareTo.data->color == data->color);
 }
 
 

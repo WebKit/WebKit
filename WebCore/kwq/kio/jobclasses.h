@@ -59,7 +59,7 @@ public:
 
     // member functions --------------------------------------------------------
 
-    int error();
+    virtual int error();
     const QString & errorText();
     QString errorString();
     virtual void kill(bool quietly=TRUE);
@@ -153,6 +153,7 @@ public:
 
     // member functions --------------------------------------------------------
 
+    int error();
     bool isErrorPage() const;
     QString queryMetaData(const QString &key);
     void addMetaData(const QString &key, const QString &value);

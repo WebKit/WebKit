@@ -24,8 +24,9 @@
  */
 #include <kwqdebug.h>
 
-#include <kconfig.h>
 #include <kglobal.h>
+#include <kconfig.h>
+#include <kcharsets.h>
 
 #include <qdict.h>
 
@@ -37,35 +38,44 @@
 #undef Rect
 #undef Boolean
 
+KWQStaticStringDict *KGlobal::_stringDict = 0L;
+KInstance *KGlobal::_instance = 0L;
+KLocale *KGlobal::_locale = 0L;
+KCharsets *KGlobal::_charsets = 0L;
+
 class KWQStaticStringDict : public QDict<QString>
 {
 public:
     KWQStaticStringDict() : QDict<QString>() { };
 };
 
-KWQStaticStringDict *KGlobal::staticStringDict = 0;
-
 KInstance *KGlobal::instance()
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
 KCharsets *KGlobal::charsets()
 {
-    _logNotYetImplemented();
+    if (_charsets == 0L) {
+        _charsets = new KCharsets();    
+    }
+    return _charsets;
 }
 
 
 KLocale *KGlobal::locale()
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
 KStandardDirs *KGlobal::dirs()
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
@@ -77,14 +87,14 @@ KConfig *KGlobal::config()
 
 const QString &KGlobal::staticQString(const QString &str)
 {
-    if (!staticStringDict) {
-        staticStringDict = new KWQStaticStringDict;
+    if (!_stringDict) {
+        _stringDict = new KWQStaticStringDict;
     }
-    QString *result = staticStringDict->find(str);
+    QString *result = _stringDict->find(str);
     if (!result)
     {
         result = new QString(str);
-        staticStringDict->insert(str, result);
+        _stringDict->insert(str, result);
     }
     return *result;
 }

@@ -72,18 +72,20 @@ QFont::CharSet KCharsets::charsetForEncoding(const QString &, bool) const
     return QFont::Latin1;
 }
 
-void KCharsets::setQFont(QFont &, QFont::CharSet) const
+void KCharsets::setQFont(QFont &font, QFont::CharSet) const
 {
     // FIXME: do we need a real implementation here?
-    _logPartiallyImplemented();
+    // [kocienda: 2001-11-05] I don't think we need to implement this
     // do nothing
+    _logNeverImplemented();
 }
 
 void KCharsets::setQFont(QFont &, QString) const
 {
     // FIXME: do we need a real implementation here?
-    _logPartiallyImplemented();
+    // [kocienda: 2001-11-05] I don't think we need to implement this
     // do nothing
+    _logNeverImplemented();
 }
 
 QString KCharsets::name(QFont::CharSet)

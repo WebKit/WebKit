@@ -113,12 +113,14 @@ void QScrollView::setContentsPos(int x, int y)
 QScrollBar *QScrollView::horizontalScrollBar() const
 {
     _logNeverImplemented();
+    return 0L;
 }
 
 
 QScrollBar *QScrollView::verticalScrollBar() const
 {
     _logNeverImplemented();
+    return 0L;
 }
 
 
@@ -178,6 +180,7 @@ void QScrollView::repaintContents(int x, int y, int w, int h, bool erase=TRUE)
 QPoint QScrollView::contentsToViewport(const QPoint &)
 {
     _logNeverImplemented();
+    return QPoint();
 }
 
 
@@ -196,6 +199,7 @@ void QScrollView::viewportWheelEvent(QWheelEvent *)
 QWidget *QScrollView::clipper() const
 {
     _logNeverImplemented();
+    return (QWidget *)this;
 }
 
 

@@ -23,17 +23,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <factory.h>
 
 namespace KParts {
 
 Factory::Factory()
 {
+    _logNotYetImplemented();
 }
 
 
 Factory::~Factory()
 {
+    _logNotYetImplemented();
 }
 
 

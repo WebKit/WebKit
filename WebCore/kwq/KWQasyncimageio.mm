@@ -23,29 +23,36 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h> 
 #include <qasyncimageio.h> 
 
 // class QImageConsumer ========================================================
 
-const char* QImageConsumer::formatName(const uchar* buffer, int length)
+const char *QImageConsumer::formatName(const uchar* buffer, int length)
 {
+    _logNotYetImplemented();
+    return "";
 }
 
 
 // class QImageDecoder =========================================================
 
-const char* QImageDecoder::formatName(const uchar* buffer, int length)
+const char *QImageDecoder::formatName(const uchar* buffer, int length)
 {
+    _logNotYetImplemented();
+    return "";
 }
 
 
 QImageDecoder::QImageDecoder(QImageConsumer *)
 {
+    _logNotYetImplemented();
 }
 
 
 QImageDecoder::~QImageDecoder()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -53,6 +60,7 @@ QImageDecoder::~QImageDecoder()
 
 QImageFormat::~QImageFormat()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -60,5 +68,6 @@ QImageFormat::~QImageFormat()
 
 QImageFormatType::~QImageFormatType()
 {
+    _logNotYetImplemented();
 }
 

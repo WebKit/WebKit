@@ -450,6 +450,7 @@ acronym {
 }
 
 :focus          { outline: 1px dotted invert }
+a:link          { color: blue; text-decoration: underline; }
 a:link:active          { color: red; outline: 1px dotted invert; }
 a:visited:active          { color: red; outline: 1px dotted invert; }
 

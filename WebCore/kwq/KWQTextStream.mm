@@ -25,42 +25,55 @@
 
 #define NEED_BOGUS_TEXTSTREAMS 1
 
+#include <kwqdebug.h>
+
 #include <qtextstream.h>
 
 // class QTextStream ===========================================================
 
 QTextStream::QTextStream()
 {
+    _logNotYetImplemented();
 }
 
 
 QTextStream::QTextStream(QByteArray, int)
 {
+    _logNotYetImplemented();
 }
 
 
 QTextStream::~QTextStream()
 {
+    _logNotYetImplemented();
 }
 
 
 QTextStream &QTextStream::operator<<(char)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
 QTextStream &QTextStream::operator<<(const char *)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
 QTextStream &QTextStream::operator<<(const QCString &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
 QTextStream &QTextStream::operator<<(const QString &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
@@ -68,11 +81,14 @@ QTextStream &QTextStream::operator<<(const QString &)
 
 QTextIStream::QTextIStream(QString *)
 {
+    _logNotYetImplemented();
 }
 
 
 QString QTextIStream::readLine()
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 
@@ -80,14 +96,18 @@ QString QTextIStream::readLine()
 
 QTextOStream::QTextOStream(QString *)
 {
+    _logNotYetImplemented();
 }
 
 
 QTextOStream::QTextOStream(QByteArray)
 {
+    _logNotYetImplemented();
 }
 
 QString QTextOStream::readLine()
 {
+    _logNotYetImplemented();
+    return QString();
 }
 

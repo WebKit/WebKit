@@ -22,14 +22,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
-
+#include <kwqdebug.h>
 #include <kimageio.h>
 
 // class KImageIO ==============================================================
 
 void KImageIO::registerFormats()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -38,5 +38,6 @@ QStringList KImageIO::mimeTypes(Mode mode=Writing)
     // FIXME: need real implementation
     QStringList mimeList;
     mimeList.append ( "image/gif" );
+    mimeList.append ( "image/jpeg" );
     return mimeList;
 }

@@ -23,20 +23,24 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kconfig.h>
 
 KConfigBase::KConfigBase()
 {
+    _logNotYetImplemented();
 }
 
 
 KConfigBase::~KConfigBase()
 {
+    _logNotYetImplemented();
 }
 
 
 void KConfigBase::setGroup(const QString &pGroup)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -44,6 +48,7 @@ void KConfigBase::writeEntry(const QString &pKey, const QStringList &rValue,
     char sep=',', bool bPersistent=true, bool bGlobal=false, 
     bool bNLS=false)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -51,7 +56,7 @@ void KConfigBase::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfigBase::readEntry(const char *pKey, 
     const QString& aDefault=QString::null) const
 {
-    // FIXME: need to return a real value
+    _logNotYetImplemented();
     return QString();
 }
 
@@ -59,7 +64,7 @@ QString KConfigBase::readEntry(const char *pKey,
 
 int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
 {
-    // FIXME: need to return a real value
+    _logNotYetImplemented();
     return 0;
 }
 
@@ -68,28 +73,28 @@ int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
 unsigned int KConfigBase::readUnsignedNumEntry(const char *pKey, 
     unsigned int nDefault=0) const
 {
-    // FIXME: need to return a real value
+    _logNotYetImplemented();
     return 0;
 }
 
 
 bool KConfigBase::readBoolEntry(const char *pKey, bool nDefault=0) const
 {
-    // FIXME: need to return a real value
+    _logNotYetImplemented();
     return FALSE;
 }
 
 
 QColor KConfigBase::readColorEntry(const char *pKey, const QColor *pDefault=0L) const
 {
-    // FIXME: need to return a real value
+    _logNotYetImplemented();
     return QColor(0,0,0);
 }
 
 
 QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 {
-    // FIXME: need to return a real value
+    _logNotYetImplemented();
     return QStringList();
 }
 
@@ -98,12 +103,11 @@ QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
 
 KConfig::KConfig(const QString &n, bool bReadOnly=false)
 {
+    _logNotYetImplemented();
 }
 
 
 KConfig::~KConfig()
 {
+    _logNotYetImplemented();
 }
-
-
-

@@ -33,6 +33,8 @@
 #include "qcolor.h"
 #include "qnamespace.h"
 
+class QBrushPrivate;
+
 // class QBrush ================================================================
 
 class QBrush : public Qt {
@@ -48,6 +50,7 @@ public:
 
     QBrush();
     QBrush(const QColor &);
+    QBrush::QBrush(const QColor &c, BrushStyle style);
     QBrush(const QBrush &);
     QBrush &operator=(const QBrush &);
     ~QBrush();
@@ -56,6 +59,8 @@ public:
     
     const QColor &color() const;
     void setColor(const QColor &);
+    BrushStyle style() const;
+    void setStyle(BrushStyle);
     
     // operators ---------------------------------------------------------------
     
@@ -64,8 +69,14 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
-    QColor qcolor;
-    BrushStyle qbrushstyle;
+private:
+    void init(const QColor &, BrushStyle);
+    QBrush copy() const;
+    void detach();
+    struct QBrushData : public QShared { 
+        BrushStyle brushStyle;
+        QColor color;
+    } *data;
 
 }; // class QBrush =============================================================
 

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qcursor.h>
 
 const QCursor & Qt::sizeAllCursor = QCursor();
@@ -31,27 +32,32 @@ const QCursor & Qt::splitVCursor = QCursor();
 
 QCursor::QCursor()
 {
+    _logNotYetImplemented();
 }
-
 
 QCursor::QCursor(const QPixmap &pixmap, int hotX, int hotY)
 {
-}
-
-QPoint QCursor::pos()
-{
+    _logNotYetImplemented();
 }
 
 QCursor::QCursor(const QCursor &)
 {
+    _logNotYetImplemented();
 }
-
 
 QCursor::~QCursor()
 {
+    _logNotYetImplemented();
 }
       
+QPoint QCursor::pos()
+{
+    _logNotYetImplemented();
+    return QPoint();
+}
 
 QCursor &QCursor::operator=(const QCursor &)
 {
+    _logNotYetImplemented();
+    return *this;
 }

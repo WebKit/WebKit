@@ -23,10 +23,13 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
+
 #include <qtimer.h>
 
 void QTimer::singleShot(int, QObject *, const char *)
 {
+    _logNotYetImplemented();
 }
 
 

@@ -41,11 +41,13 @@ QHBox::QHBox()
 
 QHBox::QHBox(QWidget *)
 {
+    _logNotYetImplemented();
 }
 
 
 QHBox::~QHBox()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -62,5 +64,7 @@ void QHBox::setFocusProxy( QWidget *lineEdit)
 
 bool QHBox::setStretchFactor(QWidget*, int stretch)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 

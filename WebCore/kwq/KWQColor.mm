@@ -49,10 +49,13 @@ QColor::QColor()
 
 QColor::QColor(int r, int g, int b)
 {
-    if ( !globals_init )
-	initGlobalColors();
-    else
+    color = nil;
+    if (!globals_init) {
+	    initGlobalColors();
+	}
+    else {
         _initialize (r, g, b);
+    }
 }
 
 QColor::QColor(const QString &name)
@@ -85,14 +88,12 @@ QColor::~QColor(){
 
 QColor::QColor(const QColor &copyFrom)
 {
-    if (color == copyFrom.color)
-        return;
-    //if (color != nil)
-    //    [color release];
-    if (copyFrom.color != nil)
+    if (copyFrom.color != nil) {
         color = [copyFrom.color retain];
-    else
+    }
+    else {
         color = nil;
+    }
 }
 
 QString QColor::name() const
@@ -241,9 +242,41 @@ void QColor::setRgb(int rgb)
 }
 
 
-void QColor::hsv(int *, int *, int *) const
+void QColor::hsv(int *h, int *s, int *v) const
 {
-    _logNotYetImplemented();
+    int r = red(); 
+    int g = green(); 
+    int b = blue(); 
+    int i, w, x, f;
+        
+    x = w = r;
+    
+    if (g > x) {
+        x = g;
+    } 
+    if (g < w) {
+        w = g;
+    }
+    
+    if (b > x) {
+        x = b;
+    } 
+    if (b < w) {
+        w = b;
+    }
+  
+    if (w == x) {
+        *h = -1;
+        *s = 0;
+        *v = w;
+    }
+    else {
+        f = (r == x) ? g - b : ((g == x) ? b - r : r - g); 
+        i = (r == x) ? 3 : ((g == x) ? 5 : 1); 
+        *h = i - f /(w - x);
+        *s = (w - x)/w;
+        *v = w; 
+    }
 }
 
 QColor QColor::light(int f = 150) const

@@ -34,14 +34,32 @@
 #undef Rect
 #undef Boolean
 
+extern int KWQ_LOG_LEVEL;
+extern int KWQ_LOG_NEVER_IMPLEMENTED;
+extern int KWQ_LOG_PARTIALLY_IMPLEMENTED;
+extern int KWQ_LOG_NOT_YET_IMPLEMENTED;
+
 #define _logNeverImplemented() \
-        NSLog(@"ERROR %s:%d  %s (NOT IMPLEMENTED)\n", __FILE__, __LINE__, \
-                __FUNCTION__)
+    do { \
+        if (KWQ_LOG_LEVEL & KWQ_LOG_NEVER_IMPLEMENTED) { \
+            NSLog(@"ERROR %s:%d  %s (NOT IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__); \
+        } \
+    } while (0)
+
 #define _logPartiallyImplemented() \
-        NSLog(@"ERROR %s:%d  %s (PARTIALLY IMPLEMENTED)\n", __FILE__, \
-                __LINE__, __FUNCTION__)
+    do { \
+        if (KWQ_LOG_LEVEL & KWQ_LOG_PARTIALLY_IMPLEMENTED) { \
+            NSLog(@"WARNING %s:%d  %s (PARTIALLY IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__); \
+        } \
+    } while (0)
+
 #define _logNotYetImplemented() \
-        NSLog (@"WARNING %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, \
-                __LINE__, __FUNCTION__)
+    do { \
+        if (KWQ_LOG_LEVEL & KWQ_LOG_NOT_YET_IMPLEMENTED) { \
+            NSLog (@"WARNING %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__); \
+        } \
+    } while (0)
 
 #endif
+
+void KWQSetLogLevel(int mask);

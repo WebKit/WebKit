@@ -111,7 +111,8 @@ public:
     bool m_bFirstData:1;
     bool m_haveEncoding:1;
     bool m_haveCharset:1;
-    
+    bool m_onlyLocalReferences:1;
+
     KJSProxy *m_jscript;
     int m_runningScripts;
 
@@ -134,6 +135,7 @@ public:
         
         m_jscript = 0L;
         m_runningScripts = 0;
+        m_onlyLocalReferences = 0;
     }
 
     ~KHTMLPartPrivate()
@@ -322,12 +324,14 @@ bool KHTMLPart::javaEnabled() const
 KJavaAppletContext *KHTMLPart::javaContext()
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
 KJavaAppletContext *KHTMLPart::createJavaContext()
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
@@ -340,6 +344,7 @@ void KHTMLPart::setPluginsEnabled( bool enable )
 bool KHTMLPart::pluginsEnabled() const
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -352,18 +357,19 @@ void KHTMLPart::setAutoloadImages( bool enable )
 bool KHTMLPart::autoloadImages() const
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
 void KHTMLPart::setOnlyLocalReferences(bool enable)
 {
-    _logNeverImplemented();
+    d->m_onlyLocalReferences = enable;
 }
 
 
 bool KHTMLPart::onlyLocalReferences() const
 {
-    _logNeverImplemented();
+    return d->m_onlyLocalReferences;
 }
 
 
@@ -501,18 +507,21 @@ void KHTMLPart::setBaseTarget( const QString &target )
 QString KHTMLPart::baseTarget() const
 {
     _logNeverImplemented();
+    return QString();
 }
 
 
 bool KHTMLPart::setCharset( const QString &name, bool override = false )
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
 bool KHTMLPart::setEncoding( const QString &name, bool override = false )
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -520,6 +529,7 @@ bool KHTMLPart::setEncoding( const QString &name, bool override = false )
 QString KHTMLPart::encoding()
 {
     _logNeverImplemented();
+    return d->m_settings->encoding();
 }
 
 
@@ -569,6 +579,7 @@ void KHTMLPart::setFixedFont( const QString &name )
 bool KHTMLPart::gotoAnchor( const QString &name )
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -595,6 +606,7 @@ void KHTMLPart::findTextBegin()
 bool KHTMLPart::findTextNext( const QRegExp &exp, bool forward )
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -602,6 +614,7 @@ bool KHTMLPart::findTextNext( const QRegExp &exp, bool forward )
 bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensitive )
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -609,6 +622,7 @@ bool KHTMLPart::findTextNext( const QString &str, bool forward, bool caseSensiti
 QString KHTMLPart::selectedText() const
 {
     _logNeverImplemented();
+    return QString();
 }
 
 
@@ -630,6 +644,7 @@ void KHTMLPart::setSelection( const DOM::Range & )
 bool KHTMLPart::hasSelection() const
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -655,12 +670,14 @@ void KHTMLPart::setJSDefaultStatusBarText( const QString &text )
 QString KHTMLPart::jsStatusBarText() const
 {
     _logNeverImplemented();
+    return QString();
 }
 
 
 QString KHTMLPart::jsDefaultStatusBarText() const
 {
     _logNeverImplemented();
+    return QString();
 }
 
 
@@ -695,9 +712,9 @@ KJSProxy *KHTMLPart::jScript()
 }
 
 
-KURL KHTMLPart::completeURL( const QString &url, const QString &target = QString::null )
+KURL KHTMLPart::completeURL(const QString &url, const QString &target = QString::null)
 {
-    _logNotYetImplemented();
+    return KURL(d->m_workingURL);
 }
 
 
@@ -727,30 +744,35 @@ void KHTMLPart::setView(KHTMLView *view)
 QWidget *KHTMLPart::widget()
 {
     _logNotYetImplemented();
+    return 0L;
 }
 
 
 KHTMLPart *KHTMLPart::opener()
 {
     _logNeverImplemented();
+    return 0L;
 }
 
 
 KHTMLPart *KHTMLPart::parentPart()
 {
     _logNeverImplemented();
+    return 0L;
 }
 
 
 const QList<KParts::ReadOnlyPart> KHTMLPart::frames() const
 {
     _logNeverImplemented();
+    return QList<KParts::ReadOnlyPart>(); 
 }
 
 
 KHTMLPart *KHTMLPart::findFrame( const QString &f )
 {
     _logNeverImplemented();
+    return this;
 }
 
 
@@ -763,6 +785,7 @@ void KHTMLPart::setOpener(KHTMLPart *_opener)
 bool KHTMLPart::openedByJS()
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -775,24 +798,28 @@ void KHTMLPart::setOpenedByJS(bool _openedByJS)
 KParts::BrowserExtension *KHTMLPart::browserExtension() const
 {
     _logNeverImplemented();
+    return 0L;
 }
 
 
 DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
 {
     _logNeverImplemented();
+    return 0L;
 }
 
 
 QString KHTMLPart::requestFrameName()
 {
     _logNeverImplemented();
+    return QString();
 }
 
 
 bool KHTMLPart::frameExists( const QString &frameName )
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -800,6 +827,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
                     const QStringList &args, bool isIFrame)
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -828,6 +856,7 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
                     const QStringList &args)
 {
     _logNeverImplemented();
+    return FALSE;
 }
 
 
@@ -840,6 +869,7 @@ void KHTMLPart::nodeActivated(const DOM::Node &)
 QVariant KHTMLPart::executeScheduledScript()
 {
     _logNeverImplemented();
+    return QVariant();
 }
 
 

@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kiconloader.h>
 
 
@@ -30,17 +31,20 @@
 
 KIcon::KIcon()
 {
+    _logNotYetImplemented();
 }
 
 // class KIconLoader ===========================================================
     
 KIconLoader::KIconLoader()
 {
+    _logNotYetImplemented();
 }
 
 
 KIconLoader::~KIconLoader()
 {
+    _logNotYetImplemented();
 }
 
         
@@ -48,4 +52,6 @@ QPixmap KIconLoader::loadIcon(const QString &name, int group, int size=0,
     int state=KIcon::DefaultState, QString *path_store=0L, 
     bool canReturnNull=false) const
 {
+    _logNotYetImplemented();
+    return QPixmap();
 }

@@ -23,19 +23,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <KWQStyle.h>
 
 QStyle::QStyle()
 {
+    _logNotYetImplemented();
 }
 
 
 QStyle::~QStyle()
 {
+    _logNotYetImplemented();
 }
 
 
 Qt::GUIStyle QStyle::guiStyle() const
 {
+    return MacStyle;
 }
 

@@ -23,26 +23,32 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kwinmodule.h>
 
 
 KWinModule::KWinModule(QObject* parent=0)
 {
+    _logNotYetImplemented();
 }
 
 
 KWinModule::~KWinModule()
 {
+    _logNotYetImplemented();
 }
 
 
 QRect KWinModule::workArea(int desktop=-1) const
 {
+    _logNotYetImplemented();
+    return QRect();
 }
 
 
 void KWinModule::doNotManage(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 

@@ -23,21 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qasyncio.h>
 
 // class QAsyncIO ==============================================================
 
 QAsyncIO::QAsyncIO()
 {
+    _logNotYetImplemented();
 }
 
 
 QAsyncIO::~QAsyncIO()
 {
+    _logNotYetImplemented();
 }
 
 void QAsyncIO::ready()
 {
+    _logNotYetImplemented();
 }
 
 // class QDataSource ===========================================================
@@ -45,10 +49,12 @@ void QAsyncIO::ready()
 
 void QDataSource::rewind()
 {
+    _logNotYetImplemented();
 }
 
 
 void QDataSource::maybeReady()
 {
+    _logNotYetImplemented();
 }
 

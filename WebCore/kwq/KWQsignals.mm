@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
+#include <kwqdebug.h>
 #include <khtmlview.h>
 #include <misc/loader.h>
 #include <java/kjavaappletcontext.h>
@@ -30,29 +31,35 @@
 
 void KHTMLView::cleared()
 {
+    _logNotYetImplemented();
 }
 
 void KJavaAppletContext::showStatus  ( const QString& txt )
 {
+    _logNotYetImplemented();
 }
 
 
 void KJavaAppletContext::showDocument( const QString& url, const QString& target )
 {
+    _logNotYetImplemented();
 }
 
 
 void KJavaProcess::received( const QByteArray& )
 {
+    _logNotYetImplemented();
 }
 
 
 void khtml::Loader::requestDone( const DOM::DOMString &baseURL, khtml::CachedObject *obj )
 {
+    _logNotYetImplemented();
 }
 
 
 void khtml::Loader::requestFailed( const DOM::DOMString &baseURL, khtml::CachedObject *obj )
 {
+    _logNotYetImplemented();
 }
 

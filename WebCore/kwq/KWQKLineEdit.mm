@@ -54,5 +54,6 @@ void KLineEdit::setContextMenuEnabled(bool showMenu)
 KCompletionBox *KLineEdit::completionBox(bool create)
 {
     _logNotYetImplemented();
+    return 0L;
 }
 

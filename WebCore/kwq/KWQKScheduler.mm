@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <scheduler.h>
 
 namespace KIO {
@@ -30,11 +31,13 @@ namespace KIO {
 
 void Scheduler::scheduleJob(SimpleJob *job)
 {
+    _logNeverImplemented();
 }
 
 
 Scheduler::~Scheduler()
 {
+    _logNeverImplemented();
 }
 
 

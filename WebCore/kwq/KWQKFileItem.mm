@@ -23,22 +23,27 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kfileitem.h>
 
 
 KFileItem::KFileItem(const KIO::UDSEntry &, const KURL &, bool foo=false, 
     bool bar=false)
 {
+    _logNotYetImplemented();
 }
 
 
 KFileItem::~KFileItem()
 {
+    _logNotYetImplemented();
 }
 
 
 bool KFileItem::isDir() const
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 

@@ -123,6 +123,7 @@ public:
     const QPen &pen() const;
     void setPen(const QPen &);
     void setPen(PenStyle);
+    const QBrush &QPainter::brush() const;
     void setBrush(const QBrush &);
     void setBrush(BrushStyle);
 
@@ -133,6 +134,7 @@ public:
     
     void drawRect(int, int, int, int);
     void drawLine(int, int, int, int);
+    void drawLineSegments(const QPointArray &, int index=0, int nlines=-1);
     void drawEllipse(int, int, int, int);
     void drawArc(int, int, int, int, int, int);
     void drawPolyline(const QPointArray &, int index=0, int npoints=-1);

@@ -22,10 +22,12 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
-#include <qfontmetrics.h>
+#include <math.h>
 
 #include <kwqdebug.h>
+#include <qfontmetrics.h>
+
+#define ROUND_TO_INT(f) ((int)rint((f)))
 
 QFontMetrics::QFontMetrics()
 {
@@ -83,7 +85,7 @@ int QFontMetrics::ascent() const
     // Qt seems to use [font defaultLineHeightForFont] + [font descender] instead
     // of what seems more natural [font ascender].
     // Remember that descender is negative. 
-    return (int)([data->font defaultLineHeightForFont] + [data->font descender]);
+    return ROUND_TO_INT([data->font defaultLineHeightForFont] + [data->font descender]);
 }
 
 
@@ -92,7 +94,7 @@ int QFontMetrics::height() const
     // According to Qt documentation: 
     // "This is always equal to ascent()+descent()+1 (the 1 is for the base line)."
     // However, the [font defaultLineHeightForFont] seems more appropriate.
-    return (int)[data->font defaultLineHeightForFont];
+    return ROUND_TO_INT([data->font defaultLineHeightForFont]);
 }
 
 
@@ -100,14 +102,14 @@ int QFontMetrics::width(QChar qc) const
 {
     ushort c = qc.unicode();
     NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
-    return (int)[data->font widthOfString: string];
+    return ROUND_TO_INT([data->font widthOfString: string]);
 }
 
 
 int QFontMetrics::width(char c) const
 {
     NSString *string = [NSString stringWithCString: &c length: 1];
-    return (int)[data->font widthOfString: string];
+    return ROUND_TO_INT([data->font widthOfString: string]);
 }
 
 
@@ -119,32 +121,33 @@ int QFontMetrics::width(const QString &qstring, int len) const
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
         string = QSTRING_TO_NSSTRING (qstring);
-    return (int)[data->font widthOfString: string];
+    return ROUND_TO_INT([data->font widthOfString: string]);
 }
 
 
 int QFontMetrics::descent() const
 {
-    return -(int)[data->font descender];
+    return -ROUND_TO_INT([data->font descender]);
 }
 
 
 QRect QFontMetrics::boundingRect(const QString &, int len=-1) const
 {
     _logNotYetImplemented();
+    return QRect();
 }
 
 
 QRect QFontMetrics::boundingRect(QChar) const
 {
     _logNotYetImplemented();
+    return QRect();
 }
 
 
 QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops, 
     int *tabarray, char **intern ) const
 {
-    _logNotYetImplemented();
     if (tabstops != 0){
         NSLog (@"ERROR:  QFontMetrics::size() tabs not supported.\n");
     }

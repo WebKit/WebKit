@@ -23,6 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <part.h>
 
 
@@ -30,21 +31,25 @@
 
 KParts::Part::Part()
 {
+    _logNotYetImplemented();
 }
 
 
 KParts::Part::~Part()
 {
+    _logNotYetImplemented();
 }
 
 
 QWidget *KParts::Part::widget()
 {
+    _logNotYetImplemented();
 }
 
 
 void KParts::Part::setWindowCaption(const QString &)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -52,16 +57,18 @@ void KParts::Part::setWindowCaption(const QString &)
 
 KParts::ReadOnlyPart::ReadOnlyPart()
 {
+    _logNotYetImplemented();
 }
 
 
 KParts::ReadOnlyPart::~ReadOnlyPart()
 {
+    _logNotYetImplemented();
 }
 
 
 const KURL &KParts::ReadOnlyPart::url() const
 {
+    // must override
+    _logNeverImplemented();
 }
-
-

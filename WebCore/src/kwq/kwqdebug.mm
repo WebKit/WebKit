@@ -24,3 +24,17 @@
  */
 
 #include <kwqdebug.h>
+
+int KWQ_LOG_NONE = 0;
+int KWQ_LOG_ALL = 0x7f;
+
+int KWQ_LOG_NEVER_IMPLEMENTED = 0x1;
+int KWQ_LOG_PARTIALLY_IMPLEMENTED = 0x2;
+int KWQ_LOG_NOT_YET_IMPLEMENTED = 0x4;
+
+int KWQ_LOG_LEVEL = KWQ_LOG_ALL;
+
+
+void KWQSetLogLevel(int mask) {
+    KWQ_LOG_LEVEL = mask;    
+}

@@ -22,6 +22,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+#include <kwqdebug.h>
 
 #include <qapplication.h>
 #include <qpalette.h>
@@ -30,6 +31,7 @@
 
 // FIXME: 
 static QPalette DEFAULT_PALETTE = QPalette();
+static QSize DEFAULT_SIZE = QSize(0,0);
 
 QPalette QApplication::palette(const QWidget *p)
 {
@@ -39,46 +41,46 @@ QPalette QApplication::palette(const QWidget *p)
 
 QWidget *QApplication::desktop()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
     return 0;
 }
 
 
 int QApplication::startDragDistance()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
      return 2;
 }
 
 
 QSize QApplication::globalStrut()
 {
-    static QSize *structSize = new QSize(0,0); 
-    NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
-    return *structSize;
+    _logNotYetImplemented();
+    return DEFAULT_SIZE;
 }
 
 
 void QApplication::setOverrideCursor(const QCursor &c)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 void QApplication::restoreOverrideCursor()
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 
 bool QApplication::sendEvent(QObject *o, QEvent *e)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 void QApplication::sendPostedEvents(QObject *receiver, int event_type)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    _logNotYetImplemented();
 }
 
 

@@ -145,13 +145,16 @@ void QPainter::setBrush(const QBrush &brush)
     data->qbrush = brush;
 }
 
-
 void QPainter::setBrush(BrushStyle style)
 {
     // Either NoBrush or SolidPattern.
-    data->qbrush.qbrushstyle = style;
+    data->qbrush.setStyle(style);
 }
 
+const QBrush &QPainter::brush() const
+{
+    return data->qbrush;
+}
 
 QRect QPainter::xForm(const QRect &) const
 {
@@ -202,7 +205,7 @@ void QPainter::restore()
 void QPainter::drawRect(int x, int y, int w, int h)
 {
     _lockFocus();
-    if (data->qbrush.qbrushstyle == SolidPattern){
+    if (data->qbrush.style() == SolidPattern){
         //_setColorFromBrush();
         //[NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
@@ -214,7 +217,7 @@ void QPainter::drawRect(int x, int y, int w, int h)
 
 void QPainter::_setColorFromBrush()
 {
-    [data->qbrush.qcolor.color set];
+    [data->qbrush.color().color set];
 }
 
 
@@ -226,9 +229,18 @@ void QPainter::_setColorFromPen()
 
 void QPainter::drawLine(int x1, int y1, int x2, int y2)
 {
+    NSBezierPath *path;
+
+    [NSBezierPath setDefaultLineWidth:0];
+
     _lockFocus();
     _setColorFromPen();
-    [NSBezierPath strokeLineFromPoint:NSMakePoint(x1, y1) toPoint:NSMakePoint(x2, y2)];
+    path = [NSBezierPath bezierPath];
+    [path setLineWidth:0];
+    [path moveToPoint:NSMakePoint(x1, y1)];
+    [path lineToPoint:NSMakePoint(x2, y2)];
+    [path closePath];
+    [path stroke];
     _unlockFocus();
 }
 
@@ -240,7 +252,7 @@ void QPainter::drawEllipse(int x, int y, int w, int h)
     path = [NSBezierPath bezierPathWithOvalInRect: NSMakeRect (x, y, w, h)];
     
     _lockFocus();
-    if (data->qbrush.qbrushstyle == SolidPattern){
+    if (data->qbrush.style() == SolidPattern){
         _setColorFromBrush();
         [path fill];
     }
@@ -277,6 +289,10 @@ void QPainter::drawArc (int x, int y, int w, int h, int a, int alen)
     _unlockFocus();
 }
 
+void QPainter::drawLineSegments(const QPointArray &points, int index, int nlines)
+{
+    _drawPoints (points, 0, index, nlines, FALSE);
+}
 
 void QPainter::drawPolyline(const QPointArray &points, int index, int npoints)
 {
@@ -314,7 +330,7 @@ void QPainter::_drawPoints (const QPointArray &_points, bool winding, int index,
         
         _lockFocus();
 
-        if (fill == TRUE && data->qbrush.qbrushstyle == SolidPattern){
+        if (fill == TRUE && data->qbrush.style() == SolidPattern){
             if (winding == TRUE)
                 [path setWindingRule: NSNonZeroWindingRule];
             else
@@ -488,8 +504,8 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
     _lockFocus();
-    if (brush.qbrushstyle == SolidPattern){
-        [brush.qcolor.color set];
+    if (brush.style() == SolidPattern){
+        [brush.color().color set];
         [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
     _unlockFocus();

@@ -23,12 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <job.h>
 
 namespace KIO {
 
 SimpleJob *http_update_cache(const KURL &, bool, time_t)
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 
 TransferJob *get(const KURL &url, bool reload=false, bool showProgressInfo=true)

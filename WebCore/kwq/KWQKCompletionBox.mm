@@ -23,12 +23,15 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kcompletionbox.h>
   
 KCompletionBox::KCompletionBox()
 {
+    _logNotYetImplemented();
 }
 
 KCompletionBox::~KCompletionBox() 
 {
+    _logNotYetImplemented();
 }

@@ -25,6 +25,9 @@
 #include <kwqdebug.h>
 #include <khtml_settings.h>
 
+// FIXME: remove this hack
+static const QString DEFAULT_ENCODING = NSSTRING_TO_QSTRING(@"NSISOLatin1StringEncoding");
+
 KHTMLSettings::KHTMLSettings()
 {    
     // set available font families...ask the system
@@ -41,6 +44,8 @@ KHTMLSettings::KHTMLSettings()
     for(i=0; i<[fontSizeArray count]; i++){
         m_fontSizes << [[fontSizeArray objectAtIndex:i] intValue];
     }
+    
+    m_charSet = QFont::Latin1;
 }
 
 QString KHTMLSettings::stdFontName() const
@@ -87,19 +92,21 @@ QString KHTMLSettings::settingsToCSS() const
 
 QFont::CharSet KHTMLSettings::charset() const
 {
-    _logNotYetImplemented();
+    return m_charSet;
 }
 
 
 void KHTMLSettings::setCharset( QFont::CharSet c )
 {
-    _logNotYetImplemented();
+    m_charSet = c;
 }
 
 
 const QString &KHTMLSettings::encoding() const
 {
     _logNotYetImplemented();
+    // FIXME: remove this hack
+    return DEFAULT_ENCODING;
 }
 
 
@@ -117,13 +124,13 @@ QString KHTMLSettings::availableFamilies() const
 
 QFont::CharSet KHTMLSettings::script() const
 {
-    _logNotYetImplemented();
+    return m_charSet;
 }
 
 
-void KHTMLSettings::setScript( QFont::CharSet c )
+void KHTMLSettings::setScript(QFont::CharSet c)
 {
-    _logNotYetImplemented();
+    m_charSet = c;
 }
 
 
@@ -137,18 +144,21 @@ const QValueList<int> &KHTMLSettings::fontSizes() const
 bool KHTMLSettings::changeCursor()
 {
     _logNotYetImplemented();
+    return FALSE;
 }
 
 
 bool KHTMLSettings::isFormCompletionEnabled() const
 {
     _logNotYetImplemented();
+    return FALSE;
 }
 
 
 int KHTMLSettings::maxFormCompletionItems() const
 {
     _logNotYetImplemented();
+    return 0;
 }
 
 

@@ -23,6 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
+
 #include <qstring.h>
 
 #include <qxml.h>
@@ -31,41 +33,54 @@
     
 QXmlAttributes::QXmlAttributes()
 {
+    _logNotYetImplemented();
 }
 
 
 QXmlAttributes::QXmlAttributes(const QXmlAttributes &)
 {
+    _logNotYetImplemented();
 }
 
 
 QXmlAttributes::~QXmlAttributes()
 {
+    _logNotYetImplemented();
 }
 
 
 QString QXmlAttributes::value(const QString &) const
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 
 int QXmlAttributes::length() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 QString QXmlAttributes::localName(int index) const
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 
 QString QXmlAttributes::value(int index) const
 {
+    _logNotYetImplemented();
+    return QString();
 }
 
 
 QXmlAttributes &QXmlAttributes::operator=(const QXmlAttributes &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
@@ -76,16 +91,19 @@ QXmlAttributes &QXmlAttributes::operator=(const QXmlAttributes &)
 
 QXmlInputSource::QXmlInputSource()
 {
+    _logNotYetImplemented();
 }
 
 
 QXmlInputSource::~QXmlInputSource()
 {
+    _logNotYetImplemented();
 }
 
 
 void QXmlInputSource::setData(const QString& data)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -111,6 +129,7 @@ void QXmlInputSource::setData(const QString& data)
 
 QXmlDefaultHandler::~QXmlDefaultHandler()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -118,41 +137,50 @@ QXmlDefaultHandler::~QXmlDefaultHandler()
 
 QXmlSimpleReader::QXmlSimpleReader()
 {
+    _logNotYetImplemented();
 }
 
 
 QXmlSimpleReader::~QXmlSimpleReader()
 {
+    _logNotYetImplemented();
 }
 
 
 void QXmlSimpleReader::setContentHandler(QXmlContentHandler *handler)
 {
+    _logNotYetImplemented();
 }
 
 
 bool QXmlSimpleReader::parse(const QXmlInputSource &input)
 {
+    _logNotYetImplemented();
+    return FALSE;
 }
 
 
 void QXmlSimpleReader::setLexicalHandler(QXmlLexicalHandler *handler)
 {
+    _logNotYetImplemented();
 }
 
 
 void QXmlSimpleReader::setDTDHandler(QXmlDTDHandler *handler)
 {
+    _logNotYetImplemented();
 }
 
 
 void QXmlSimpleReader::setDeclHandler(QXmlDeclHandler *handler)
 {
+    _logNotYetImplemented();
 }
 
 
 void QXmlSimpleReader::setErrorHandler(QXmlErrorHandler *handler)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -160,21 +188,27 @@ void QXmlSimpleReader::setErrorHandler(QXmlErrorHandler *handler)
 
 QXmlParseException::QXmlParseException()
 {
+    _logNotYetImplemented();
 }
 
 
 QString QXmlParseException::message() const
 {
+    _logNotYetImplemented();
 }
 
 
 int QXmlParseException::columnNumber() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QXmlParseException::lineNumber() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 

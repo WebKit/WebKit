@@ -23,35 +23,43 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qbitmap.h>
 
 QBitmap::QBitmap()
 {
+    _logNotYetImplemented();
 }
 
 
 QBitmap::QBitmap(int,int)
 {
+    _logNotYetImplemented();
 }
 
 
 QBitmap::QBitmap(const QBitmap &)
 {
+    _logNotYetImplemented();
 }
 
 
 QBitmap &QBitmap::operator=(const QBitmap &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
 QBitmap &QBitmap::operator=(const QPixmap &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 
 
 QBitmap &QBitmap::operator=(const QImage &)
 {
+    _logNotYetImplemented();
+    return *this;
 }
-
-

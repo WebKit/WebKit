@@ -25,92 +25,109 @@
 
 #include <qpen.h>
 
-class QPenPrivate
+void QPen::init(const QColor &color, uint width, uint linestyle)
 {
-friend class QPen;
-public:
-
-    QPenPrivate(const QColor &c, uint w, QPen::PenStyle ps) : 
-        qcolor(c), width(w), penStyle(ps)
-    {
-    }
-
-    ~QPenPrivate() {}
-
-private:    
-    QColor qcolor;
-    uint width;
-    QPen::PenStyle penStyle;
-};
-
+    data = new QPenData();
+    data->style = (PenStyle)(linestyle & MPenStyle);
+    data->width = width;
+    data->color = color;
+    data->linest = linestyle;
+}
 
 QPen::QPen()
 {
-    d = new QPenPrivate(Qt::black, 3, SolidLine);
+    init(Qt::black, 1, SolidLine);
 }
 
 
-QPen::QPen(const QColor &c, uint w, PenStyle ps)
+QPen::QPen(const QColor &color, uint width, PenStyle style)
 {
-    d = new QPenPrivate(c, w, ps);
+    init(color, width, style);
 }
 
 
 QPen::QPen(const QPen &copyFrom)
 {
-    d->qcolor = copyFrom.d->qcolor;
+    data = copyFrom.data;
+    data->ref();
 }
 
 
 QPen::~QPen()
 {
-    delete d;
+    if (data->deref()) {
+        delete data;
+    }
 }
 
+QPen QPen::copy() const
+{
+    QPen p(data->color, data->width, data->style);
+    return p;
+}
+
+void QPen::detach()
+{
+    if (data->count != 1) {
+        *this = copy();
+    }
+}
 
 const QColor &QPen::color() const
 {
-    return d->qcolor;
+    return data->color;
 }
 
 uint QPen::width() const
 {
-    return d->width;
+    return data->width;
 }
 
 QPen::PenStyle QPen::style() const
 {
-    return d->penStyle;
+    return data->style;
 }
 
-void QPen::setColor(const QColor &c)
+void QPen::setColor(const QColor &color)
 {
-    d->qcolor = c;
+    detach();
+    data->color = color;
 }
 
-void QPen::setWidth(uint w)
+void QPen::setWidth(uint width)
 {
-    d->width = w;
+    if (data->width == width) {
+        return;
+    }
+    detach();
+    data->width = width;
 }
 
-void QPen::setStyle(PenStyle ps)
+void QPen::setStyle(PenStyle style)
 {
-    d->penStyle = ps;
+    if (data->style == style) {
+        return;
+    }
+    detach();
+    data->style = style;
+    data->linest = (data->linest & ~MPenStyle) | style;
 }
 
 QPen &QPen::operator=(const QPen &assignFrom)
 {
-    d->qcolor = assignFrom.d->qcolor;
-    d->width = assignFrom.d->width;
-    d->penStyle = assignFrom.d->penStyle;
+    assignFrom.data->ref();
+    if (data->deref()) {
+        delete data;
+    }
+    data = assignFrom.data;
     return *this;
 }
 
 bool QPen::operator==(const QPen &compareTo) const
 {
-    return (d->width == compareTo.d->width) &&
-        (d->penStyle == compareTo.d->penStyle) &&
-        (d->qcolor == compareTo.d->qcolor);
+    return (data->width == compareTo.data->width) &&
+        (data->style == compareTo.data->style) &&
+        (data->color == compareTo.data->color);
 }
 
 

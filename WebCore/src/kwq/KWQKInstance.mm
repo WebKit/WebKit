@@ -23,20 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <kinstance.h>
 
 KInstance::KInstance(const QCString &)
 {
+    _logNotYetImplemented();
 }
 
 
 KInstance::~KInstance()
 {
+    _logNotYetImplemented();
 }
 
 
 KIconLoader *KInstance::iconLoader() const
 {
+    _logNotYetImplemented();
+    return 0L;
 }
 
 

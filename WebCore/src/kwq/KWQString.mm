@@ -26,6 +26,7 @@
 // FIXME: obviously many functions here can be made inline
 
 #include <Foundation/Foundation.h>
+#include <kwqdebug.h>
 #include <qstring.h>
 #include <qregexp.h>
 #include <stdio.h>
@@ -1143,15 +1144,13 @@ void QString::fill(QChar qc, int len)
 void QString::compose()
 {
     // FIXME: unimplemented because we don't do ligatures yet
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    _logNotYetImplemented();
 }
 
 QString QString::visual()
 {
     // FIXME: unimplemented because we don't do BIDI yet
-    NSLog(@"WARNING %s:%s:%d (NOT YET IMPLEMENTED)\n", __FILE__, __FUNCTION__,
-            __LINE__);
+    _logNotYetImplemented();
     return QString(*this);
 }
 

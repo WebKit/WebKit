@@ -33,6 +33,7 @@
 typedef unsigned int uint;
 
 class QString;
+class QVariantPrivate;
 
 // class QVariant ==============================================================
 
@@ -42,7 +43,10 @@ public:
     // typedefs ----------------------------------------------------------------
 
     enum Type {
+        Invalid,
+        String,
         UInt,
+        Double,
         Bool
     };
 
@@ -71,6 +75,9 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+private:
+    
+    QVariantPrivate *d;
 
 }; // class QVariant ===========================================================
 

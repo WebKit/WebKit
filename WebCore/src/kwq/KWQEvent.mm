@@ -23,22 +23,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#include <kwqdebug.h>
 #include <qevent.h>
+
+// FIXME: replace this hack
+static const QPoint ORIGIN(0,0);
 
 // class QEvent ================================================================
 
 QEvent::QEvent(Type)
 {
+    _logNotYetImplemented();
 }
 
 
 QEvent::~QEvent()
 {
+    _logNotYetImplemented();
 }
 
 
 QEvent::Type QEvent::type() const
 {
+    _logNotYetImplemented();
+    return MouseButtonPress;
 }
 
 
@@ -46,46 +54,64 @@ QEvent::Type QEvent::type() const
 
 QMouseEvent::QMouseEvent(Type type, const QPoint &pos, int button, int state)
 {
+    _logNotYetImplemented();
 }
 
 
 int QMouseEvent::x()
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QMouseEvent::y()
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QMouseEvent::globalX()
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 int QMouseEvent::globalY()
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 const QPoint &QMouseEvent::pos() const
 {
+    _logNotYetImplemented();
+    // FIXME: replace this hack
+    return ORIGIN;
 }
 
 
 Qt::ButtonState QMouseEvent::button()
 {
+    _logNotYetImplemented();
+    return Qt::NoButton;
 }
 
 
 Qt::ButtonState QMouseEvent::state()
 {
+    _logNotYetImplemented();
+    return Qt::NoButton;
 }
 
 
 Qt::ButtonState QMouseEvent::stateAfter()
 {
+    _logNotYetImplemented();
+    return Qt::NoButton;
 }
 
 
@@ -93,16 +119,20 @@ Qt::ButtonState QMouseEvent::stateAfter()
 
 QTimerEvent::QTimerEvent(int timerId)
 {
+    _logNotYetImplemented();
 }
 
 
 QTimerEvent::~QTimerEvent()
 {
+    _logNotYetImplemented();
 }
 
 
 int QTimerEvent::timerId() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
@@ -110,26 +140,33 @@ int QTimerEvent::timerId() const
 
 QKeyEvent::QKeyEvent(Type, Key, int, int)
 {
+    _logNotYetImplemented();
 }
 
 
 int QKeyEvent::key() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 Qt::ButtonState QKeyEvent::state() const
 {
+    _logNotYetImplemented();
+    return Qt::NoButton;
 }
 
 
 void QKeyEvent::accept()
 {
+    _logNotYetImplemented();
 }
 
 
 void QKeyEvent::ignore()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -137,6 +174,7 @@ void QKeyEvent::ignore()
 
 QFocusEvent::QFocusEvent(Type)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -144,6 +182,7 @@ QFocusEvent::QFocusEvent(Type)
 
 QHideEvent::QHideEvent(Type)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -151,6 +190,7 @@ QHideEvent::QHideEvent(Type)
 
 QResizeEvent::QResizeEvent(Type)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -158,6 +198,7 @@ QResizeEvent::QResizeEvent(Type)
 
 QShowEvent::QShowEvent(Type)
 {
+    _logNotYetImplemented();
 }
 
 
@@ -165,16 +206,19 @@ QShowEvent::QShowEvent(Type)
 
 QWheelEvent::QWheelEvent(Type)
 {
+    _logNotYetImplemented();
 }
 
 
 void QWheelEvent::accept()
 {
+    _logNotYetImplemented();
 }
 
 
 void QWheelEvent::ignore()
 {
+    _logNotYetImplemented();
 }
 
 
@@ -182,4 +226,5 @@ void QWheelEvent::ignore()
 
 QCustomEvent::QCustomEvent(Type)
 {
+    _logNotYetImplemented();
 }

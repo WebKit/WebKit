@@ -22,20 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-
+#include <kwqdebug.h>
 #include <kcombobox.h>
-
 
 KComboBox::KComboBox(QWidget *parent=0, const char *name=0)
 {
+    _logNotYetImplemented();
 }
 
 
 KComboBox::KComboBox(bool rw, QWidget *parent=0, const char *name=0)
 {
+    _logNotYetImplemented();
 }
 
 KComboBox::~KComboBox()
 {
+    _logNotYetImplemented();
 }
 
