@@ -75,6 +75,8 @@
 
 @interface NSView (AppKitSecretsIKnow)
 - (NSView *)_hitTest:(NSPoint *)aPoint dragTypes:(NSSet *)types;
+- (void)_autoscrollForDraggingInfo:(id)dragInfo timeDelta:(NSTimeInterval)repeatDelta;
+- (BOOL)_shouldAutoscrollForDraggingInfo:(id)dragInfo;
 @end
 
 @interface WebView (WebFileInternal)
@@ -1682,9 +1684,14 @@ NS_ENDHANDLER
     return _private->hostWindow;
 }
 
+- (NSView <WebDocumentView> *)documentViewAtWindowPoint:(NSPoint)point
+{
+    return [[self _frameViewAtWindowPoint:point] documentView];
+}
+
 - (NSView <WebDocumentDragging> *)_draggingDocumentViewAtWindowPoint:(NSPoint)point
 {
-    NSView <WebDocumentView> *documentView = [[self _frameViewAtWindowPoint:point] documentView];
+    NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:point];
     if ([documentView conformsToProtocol:@protocol(WebDocumentDragging)]) {
         return (NSView <WebDocumentDragging> *)documentView;
     }
@@ -1752,6 +1759,22 @@ NS_ENDHANDLER
     }
     
     return operation;
+}
+
+// The following 2 internal NSView methods are called on the drag destination by make scrolling while dragging work.
+// Scrolling while dragging will only work if the drag destination is in a scroll view. The WebView is the drag destination. 
+// When dragging to a WebView, the document subview should scroll, but it doesn't because it is not the drag destination. 
+// Forward these calls to the document subview to make its scroll view scroll.
+- (void)_autoscrollForDraggingInfo:(id)draggingInfo timeDelta:(NSTimeInterval)repeatDelta
+{
+    NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
+    [documentView _autoscrollForDraggingInfo:draggingInfo timeDelta:repeatDelta];
+}
+
+- (BOOL)_shouldAutoscrollForDraggingInfo:(id)draggingInfo
+{
+    NSView <WebDocumentView> *documentView = [self documentViewAtWindowPoint:[draggingInfo draggingLocation]];
+    return [documentView _shouldAutoscrollForDraggingInfo:draggingInfo];
 }
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)draggingInfo
