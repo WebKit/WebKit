@@ -260,6 +260,8 @@
 				F5927D4B02D253C401CA2DBB,
 				F5927D4F02D26C5E01CA2DBB,
 				F508472402DED36E01257167,
+				F53444D002E87CBA018635CA,
+				F53444D302E87D4B018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -338,6 +340,7 @@
 				F5A7B11C02BC8413018635CA,
 				F5488CF702CB04EE01FF6274,
 				F508472502DED36E01257167,
+				F53444D102E87CBA018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1469,6 +1472,9 @@
 				F59EAE410253C8DE018635CA,
 				F5F81C3502B67C0F018635CA,
 				F5F81C3602B67C0F018635CA,
+				F53444CE02E87CBA018635CA,
+				F53444D202E87D4B018635CA,
+				F53444CF02E87CBA018635CA,
 				F5F81C3902B67C26018635CA,
 				F5F81C3A02B67C26018635CA,
 			);
@@ -1476,6 +1482,42 @@
 			name = Debugging;
 			path = "";
 			refType = 4;
+		};
+		F53444CE02E87CBA018635CA = {
+			isa = PBXFileReference;
+			name = WebKitStatistics.h;
+			path = Misc.subproj/WebKitStatistics.h;
+			refType = 4;
+		};
+		F53444CF02E87CBA018635CA = {
+			isa = PBXFileReference;
+			name = WebKitStatistics.m;
+			path = Misc.subproj/WebKitStatistics.m;
+			refType = 4;
+		};
+		F53444D002E87CBA018635CA = {
+			fileRef = F53444CE02E87CBA018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53444D102E87CBA018635CA = {
+			fileRef = F53444CF02E87CBA018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53444D202E87D4B018635CA = {
+			isa = PBXFileReference;
+			name = WebKitStatisticsPrivate.h;
+			path = Misc.subproj/WebKitStatisticsPrivate.h;
+			refType = 4;
+		};
+		F53444D302E87D4B018635CA = {
+			fileRef = F53444D202E87D4B018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
 		};
 		F5488CF402CB04EE01FF6274 = {
 			isa = PBXFileReference;

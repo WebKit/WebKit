@@ -36,7 +36,7 @@ print ""; \
 print "#define CSS_PROP_MAX CSS_PROP_Z_INDEX"; \
 print "#define CSS_PROP_TOTAL " i \
 }' >> cssproperties.h
-gperf -a -L 'ANSI-C' -E -C -c -o -t -k '*' -NfindProp -Hhash_prop -Wwordlist_prop -D -s 2 cssproperties.gperf > cssproperties.c
+gperf -a -L 'ANSI-C' -E -C -c -o -t -k '*' -NfindProp -Hhash_prop -Wwordlist_prop -D -s 2 cssproperties.gperf > cssproperties.c || exit 1
 echo -e '#endif\n' >> cssproperties.h
 
 cat cssproperties.strip | awk '{ \

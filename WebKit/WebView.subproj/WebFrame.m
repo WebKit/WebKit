@@ -16,9 +16,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebLocationChangeHandler.h>
-
-#import <WebFoundation/WebFoundation.h>
-
+#import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 @implementation WebFrame
@@ -73,11 +71,15 @@
     if (v)
         [self setWebView: v];
     
+    ++WebFrameCount;
+    
     return self;
 }
 
 - (void)dealloc
 {
+    --WebFrameCount;
+    
     [_private release];
     [super dealloc];
 }

@@ -14,7 +14,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebLoadProgress.h>
-
+#import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebResourceHandle.h>
@@ -24,6 +24,20 @@
 @end
 
 @implementation WebBridge
+
+- init
+{
+    ++WebBridgeCount;
+
+    return [super init];
+}
+
+- (void)dealloc
+{
+    --WebBridgeCount;
+    
+    [super dealloc];
+}
 
 - (WebCoreFrameBridge *)frame
 {
@@ -210,7 +224,6 @@
 	[NSApp _cycleWindowsReversed:FALSE];
     }
 }
-
 
 - (BOOL)modifierTrackingEnabled
 {

@@ -1,3 +1,29 @@
+2002-07-19  Darin Adler  <darin@apple.com>
+
+	Added some stats that we can use to sniff out "leak the world" problems.
+
+        * Misc.subproj/WebKitStatistics.h: Added.
+        * Misc.subproj/WebKitStatistics.m: Added.
+        * Misc.subproj/WebKitStatisticsPrivate.h: Added.
+
+        * WebKit.pbproj/project.pbxproj: Added new files.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge init]): Bump count.
+        (-[WebBridge dealloc]): Decrement count.
+        * WebView.subproj/WebController.m:
+        (-[WebController initWithView:provisionalDataSource:]): Bump count.
+        (-[WebController dealloc]): Decrement count.
+        * WebView.subproj/WebDataSource.m:
+	(-[WebDataSource initWithURL:attributes:flags:): Bump count.
+        (-[WebDataSource dealloc]): Decrement count.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame initWithName:webView:provisionalDataSource:controller:]): Bump count.
+        (-[WebFrame dealloc]): Decrement count.
+        * WebView.subproj/WebView.m:
+        (-[WebView initWithFrame:]): Bump count.
+        (-[WebView dealloc]): Decrement count.
+
 2002-07-19  Maciej Stachowiak  <mjs@apple.com>
 
         More refactoring: Use assertions to make sure a provisional data

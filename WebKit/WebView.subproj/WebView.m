@@ -3,11 +3,12 @@
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 
+#import <WebKit/WebController.h>
+
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -16,6 +17,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyHandler.h>
 #import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebFoundation.h>
@@ -34,11 +36,15 @@
     _private = [[WebControllerPrivate alloc] init];
     _private->mainFrame = [[WebFrame alloc] initWithName: @"_top" webView: view provisionalDataSource: dataSource controller: self];
 
+    ++WebControllerCount;
+
     return self;
 }
 
 - (void)dealloc
 {
+    --WebControllerCount;
+    
     [_private release];
     [super dealloc];
 }

@@ -14,6 +14,7 @@
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebKitDebug.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebFileTypeMappings.h>
@@ -33,16 +34,26 @@
 
 -(id)initWithURL:(NSURL *)theURL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
 {
-    [super init];
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
     _private = [[WebDataSourcePrivate alloc] init];
     _private->inputURL = [theURL retain];
     _private->mainHandle = [[WebResourceHandle alloc] initWithURL: _private->inputURL attributes:theAttributes flags:theFlags];
+    
+    ++WebDataSourceCount;
+    
     return self;
 }
 
 - (void)dealloc
 {
+    --WebDataSourceCount;
+    
     [_private release];
+    
     [super dealloc];
 }
 

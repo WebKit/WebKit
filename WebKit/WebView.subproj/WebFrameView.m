@@ -19,6 +19,7 @@
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebImageRendererFactory.h>
 #import <WebKit/WebCookieAdapter.h>
+#import <WebKit/WebKitStatisticsPrivate.h>
 
 #import <WebFoundation/WebNSDictionaryExtras.h>
 #import <WebFoundation/WebNSStringExtras.h>
@@ -71,13 +72,18 @@ enum {
                                     @"NSURLPboardType", @"NSStringPboardType", nil] retain];
     [self registerForDraggedTypes:_private->draggingTypes];
     
+    ++WebViewCount;
+    
     return self;
 }
 
 
 - (void)dealloc 
 {
+    --WebViewCount;
+    
     [_private release];
+    
     [super dealloc];
 }
 
