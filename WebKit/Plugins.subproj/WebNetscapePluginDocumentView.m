@@ -12,7 +12,7 @@
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginError.h>
+#import <WebKit/WebPluginErrorPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebView.h>
 
@@ -73,7 +73,7 @@
         // FIXME: It would be nice to stop the load here.
         
         WebPluginError *error = [WebPluginError pluginErrorWithCode:WebErrorCannotLoadPlugin
-                                                         contentURL:[theDataSource URL]
+                                                         contentURL:[[theDataSource URL] absoluteString]
                                                       pluginPageURL:nil
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];

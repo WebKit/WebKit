@@ -7,14 +7,14 @@
 //
 
 #import <WebKit/WebKitErrors.h>
-#import <WebKit/WebPluginError.h>
+#import <WebKit/WebPluginErrorPrivate.h>
 
 
 @interface WebPluginErrorPrivate : NSObject
 {
 @public
-    NSURL *contentURL;
-    NSURL *pluginPageURL;
+    NSString *contentURL;
+    NSString *pluginPageURL;
     NSString *MIMEType;
     NSString *pluginName;
 }
@@ -36,49 +36,18 @@
 
 @implementation WebPluginError
 
-+ (WebPluginError *)pluginErrorWithCode:(int)code
-                             contentURL:(NSURL *)contentURL
-                          pluginPageURL:(NSURL *)pluginPageURL
-                             pluginName:(NSString *)pluginName
-                               MIMEType:(NSString *)MIMEType;
-{
-    WebPluginError *error = [[WebPluginError alloc] initWithErrorWithCode:code
-                                                               contentURL:contentURL
-                                                            pluginPageURL:pluginPageURL
-                                                               pluginName:pluginName
-                                                                 MIMEType:MIMEType];
-    return [error autorelease];
-}
-
-- initWithErrorWithCode:(int)code
-             contentURL:(NSURL *)contentURL
-          pluginPageURL:(NSURL *)pluginPageURL
-             pluginName:(NSString *)pluginName
-               MIMEType:(NSString *)MIMEType;
-{
-    [super initWithErrorCode:code inDomain:WebErrorDomainWebKit failingURL:[contentURL absoluteString]];
-    
-    _private = [[WebPluginErrorPrivate alloc] init];
-    _private->contentURL = [contentURL retain];
-    _private->pluginPageURL = [pluginPageURL retain];
-    _private->pluginName = [pluginName retain];
-    _private->MIMEType = [MIMEType retain];
-    
-    return self;
-}
-
 - (void)dealloc
 {
     [_private release];
     [super dealloc];
 }
 
-- (NSURL *)contentURL;
+- (NSString *)contentURL;
 {
     return _private->contentURL;
 }
 
-- (NSURL *)pluginPageURL
+- (NSString *)pluginPageURL
 {
     return _private->pluginPageURL;
 }
@@ -94,4 +63,40 @@
 }
 
 @end
+
+@implementation WebPluginError (WebPrivate)
+
++ (WebPluginError *)pluginErrorWithCode:(int)code
+                             contentURL:(NSString *)contentURL
+                          pluginPageURL:(NSString *)pluginPageURL
+                             pluginName:(NSString *)pluginName
+                               MIMEType:(NSString *)MIMEType;
+{
+    WebPluginError *error = [[WebPluginError alloc] initWithErrorWithCode:code
+                                                               contentURL:contentURL
+                                                            pluginPageURL:pluginPageURL
+                                                               pluginName:pluginName
+                                                                 MIMEType:MIMEType];
+    return [error autorelease];
+}
+
+- initWithErrorWithCode:(int)code
+             contentURL:(NSString *)contentURL
+          pluginPageURL:(NSString *)pluginPageURL
+             pluginName:(NSString *)pluginName
+               MIMEType:(NSString *)MIMEType;
+{
+    [super initWithErrorCode:code inDomain:WebErrorDomainWebKit failingURL:contentURL];
+
+    _private = [[WebPluginErrorPrivate alloc] init];
+    _private->contentURL = [contentURL retain];
+    _private->pluginPageURL = [pluginPageURL retain];
+    _private->pluginName = [pluginName retain];
+    _private->MIMEType = [MIMEType retain];
+
+    return self;
+}
+
+@end
+
 

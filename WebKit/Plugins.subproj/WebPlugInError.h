@@ -18,20 +18,8 @@
     WebPluginErrorPrivate *_private;
 }
 
-+ (WebPluginError *)pluginErrorWithCode:(int)code
-                             contentURL:(NSURL *)contentURL
-                          pluginPageURL:(NSURL *)URL
-                             pluginName:(NSString *)pluginName
-                               MIMEType:(NSString *)MIMEType;
-
-- initWithErrorWithCode:(int)code
-             contentURL:(NSURL *)contentURL
-          pluginPageURL:(NSURL *)pluginPageURL
-             pluginName:(NSString *)pluginName
-               MIMEType:(NSString *)MIMEType;
-
-- (NSURL *)contentURL;
-- (NSURL *)pluginPageURL;
+- (NSString *)contentURL;
+- (NSString *)pluginPageURL;
 - (NSString *)pluginName;
 - (NSString *)MIMEType;
 

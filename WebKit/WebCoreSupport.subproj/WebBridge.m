@@ -24,7 +24,7 @@
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginController.h>
 #import <WebKit/WebPluginDatabase.h>
-#import <WebKit/WebPluginError.h>
+#import <WebKit/WebPluginErrorPrivate.h>
 #import <WebKit/WebPluginPackage.h>
 #import <WebKit/WebPluginViewFactory.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
@@ -475,15 +475,9 @@
     }
 
     if(errorCode){
-        NSString *pluginPageString = [attributes objectForKey:@"pluginspage"];
-        NSURL *pluginPageURL = nil;
-        if(pluginPageString){
-            pluginPageURL = [NSURL _web_URLWithString:pluginPageString];
-        }
-
         WebPluginError *error = [WebPluginError pluginErrorWithCode:errorCode
-                                                         contentURL:[NSURL _web_URLWithString:URL]
-                                                      pluginPageURL:pluginPageURL
+                                                         contentURL:URL
+                                                      pluginPageURL:[attributes objectForKey:@"pluginspage"]
                                                          pluginName:[pluginPackage name]
                                                            MIMEType:MIMEType];
         

@@ -298,6 +298,7 @@
 				516F297003A6C45A00CA2D3A,
 				832B2D1603B10990009CF105,
 				84A992C403CE696800CA2ACA,
+				8466AEDE03F1F82100CA2ACA,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1241,7 +1242,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Private,
 				);
 			};
 		};
@@ -1863,6 +1863,18 @@
 //842
 //843
 //844
+		8466AEDD03F1F82100CA2ACA = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebPluginErrorPrivate.h;
+			refType = 4;
+		};
+		8466AEDE03F1F82100CA2ACA = {
+			fileRef = 8466AEDD03F1F82100CA2ACA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		8467275C0367158500CA2ACA = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3567,6 +3579,7 @@
 				F5F717200288493C018635CA,
 				F5F717210288493C018635CA,
 				830A567203731461000C720C,
+				8466AEDD03F1F82100CA2ACA,
 				830A567303731461000C720C,
 			);
 			isa = PBXGroup;
