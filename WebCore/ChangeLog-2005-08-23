@@ -1,3 +1,12 @@
+2005-03-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and Maciej.
+
+        - fixed <rdar://problem/4049040> REGRESSION (403-405): security check prevents user stylesheet from loading (Dictionary.app doesn't work at all!)
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge canLoadURL:fromReferrer:hideReferrer:]): Changed to give "applewebdata:"
+        documents the same privileges to open local files that "file:" documents have.
+
 2005-03-13  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by mjs.

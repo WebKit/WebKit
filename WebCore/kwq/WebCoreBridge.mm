@@ -388,12 +388,12 @@ static bool initializedKJS = FALSE;
 
 - (BOOL)canLoadURL:(NSURL *)URL fromReferrer:(NSString *)referrer hideReferrer:(BOOL *)hideReferrer
 {
-    *hideReferrer = !hasCaseInsensitivePrefix(referrer,@"http:") && !hasCaseInsensitivePrefix(referrer, @"https:");
-    BOOL referrerIsFileURL = hasCaseInsensitivePrefix(referrer, @"file:");
-
+    BOOL referrerIsWebURL = hasCaseInsensitivePrefix(referrer, @"http:") || hasCaseInsensitivePrefix(referrer, @"https:");
+    BOOL referrerIsLocalURL = hasCaseInsensitivePrefix(referrer, @"file:") || hasCaseInsensitivePrefix(referrer, @"applewebdata:");
     BOOL URLIsFileURL = [[URL scheme] compare:@"file" options:(NSCaseInsensitiveSearch|NSLiteralSearch)] == NSOrderedSame;
 
-    return !URLIsFileURL || referrerIsFileURL;
+    *hideReferrer = !referrerIsWebURL;
+    return !URLIsFileURL || referrerIsLocalURL;
 }
 
 - (void)saveDocumentState
