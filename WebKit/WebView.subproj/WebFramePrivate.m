@@ -2148,6 +2148,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
 }
 
+- (void)_setShouldCreateRenderers:(BOOL)f
+{
+    [_private->bridge setShouldCreateRenderers:f];
+}
+
+- (BOOL)_shouldCreateRenderers
+{
+    return [_private->bridge shouldCreateRenderers];
+}
+
+
 @end
 
 @implementation WebFormState : NSObject

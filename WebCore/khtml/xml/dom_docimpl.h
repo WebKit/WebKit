@@ -535,12 +535,17 @@ public:
     void secureFormRemoved();
     bool hasSecureForm() const;
 
+    void setShouldCreateRenderers(bool f);
+    bool shouldCreateRenderers();
+    
 private:
     bool m_inPageCache;
     int m_passwordFields;
     int m_secureForms;
     
     khtml::Decoder *m_decoder;
+    
+    bool m_createRenderers;
 #endif
 };
 

@@ -38,9 +38,11 @@
 #ifdef __OBJC__
 @protocol WebCoreImageRenderer;
 typedef id <WebCoreImageRenderer> WebCoreImageRendererPtr;
+@class NSString;
 #else
 class WebCoreImageRenderer;
 typedef WebCoreImageRenderer *WebCoreImageRendererPtr;
+class NSString;
 #endif
 
 class QWMatrix;
@@ -50,8 +52,10 @@ bool canRenderImageType(const QString &type);
 class QPixmap : public QPaintDevice, public Qt {
 public:
     QPixmap();
+    QPixmap(void *MIMEType);
     QPixmap(const QSize&);
     QPixmap(const QByteArray&);
+    QPixmap(const QByteArray&, void *MIMEType);
     QPixmap(int, int);
     QPixmap(const QPixmap &);
     ~QPixmap();
@@ -81,7 +85,9 @@ private:
     WebCoreImageRendererPtr imageRenderer;
         
     mutable bool needCopyOnWrite;
-
+    
+    NSString *MIMEType;
+    
     friend class QPainter;
 
 };

@@ -1,3 +1,33 @@
+2003-05-12  Richard Williamson  <rjw@apple.com>
+
+        Fixed 3194614 and 3194751.  We avoid creating and render objects
+        and loading any images if the document is in 'renderless' mode.
+        
+        Also, we now unique instances of the ObjC DOM wrappers.
+        
+        Reviewed by hyatt/darin.
+
+        * khtml/misc/loader.cpp:
+        * khtml/xml/dom_docimpl.cpp:
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_nodeimpl.cpp:
+        * kwq/KWQLoader.h:
+        * kwq/KWQLoader.mm:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        * kwq/WebCoreDOMNode.mm:
+        * kwq/WebDOMNode.h:
+
+        Pass the reported MIME type of an image up to WebKit when
+        creating an WebImageRenderer.  This is useful to help speed up
+        the selection of an appropriate decoder.
+        
+        Reviewed by darin.
+
+        * kwq/WebCoreImageRendererFactory.h:
+        * kwq/KWQPixmap.h:
+        * kwq/KWQPixmap.mm:
+
 2003-05-12  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

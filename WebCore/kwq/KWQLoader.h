@@ -41,6 +41,7 @@ void KWQCheckCacheObjectStatus(khtml::DocLoader *, khtml::CachedObject *);
 bool KWQCheckIfReloading(khtml::DocLoader *loader);
 void KWQRetainResponse(void *response);
 void KWQReleaseResponse(void *response);
+void *KWQResponseMIMEType(void *response);
 
 class KWQLoader
 {

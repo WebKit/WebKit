@@ -36,43 +36,64 @@ bool canRenderImageType(const QString &type)
 QPixmap::QPixmap()
 {
     imageRenderer = nil;
+    MIMEType = 0;
+    needCopyOnWrite = false;
+}
+
+QPixmap::QPixmap(void *MIME)
+{
+    imageRenderer = nil;
+    MIMEType = (NSString *)[((NSString *)MIME) copy];
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QSize &sz)
 {
     imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(sz.width(), sz.height())] retain];
+    MIMEType = 0;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QByteArray &bytes)
 {
     imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size()] retain];
+    MIMEType = 0;
+    needCopyOnWrite = false;
+}
+
+QPixmap::QPixmap(const QByteArray &bytes, void *MIME)
+{
+    MIMEType = (NSString *)[((NSString *)MIME) copy];
+    imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithBytes:bytes.data() length:bytes.size() MIMEType:(NSString *)MIMEType] retain];
+    MIMEType = 0;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(int w, int h)
 {
     imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithSize:NSMakeSize(w, h)] retain];
+    MIMEType = 0;
     needCopyOnWrite = false;
 }
 
 QPixmap::QPixmap(const QPixmap &copyFrom) : QPaintDevice(copyFrom)
 {
     imageRenderer = [copyFrom.imageRenderer retain];
+    MIMEType = [copyFrom.MIMEType copy];
     copyFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
 }
 
 QPixmap::~QPixmap()
 {
+    [MIMEType release];
     [imageRenderer release];
 }
 
 bool QPixmap::receivedData(const QByteArray &bytes, bool isComplete)
 {
     if (imageRenderer == nil) {
-        imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRenderer] retain];
+        imageRenderer = [[[WebCoreImageRendererFactory sharedFactory] imageRendererWithMIMEType:MIMEType] retain];
     }
     return [imageRenderer incrementalLoadWithBytes:bytes.data() length:bytes.size() complete:isComplete];
 }
@@ -153,6 +174,7 @@ QPixmap &QPixmap::operator=(const QPixmap &assignFrom)
     [assignFrom.imageRenderer retain];
     [imageRenderer release];
     imageRenderer = assignFrom.imageRenderer;
+    MIMEType = [assignFrom.MIMEType copy];
     assignFrom.needCopyOnWrite = true;
     needCopyOnWrite = true;
     return *this;

@@ -232,7 +232,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
 #if APPLE_CHANGES
     , m_finishedParsing(this, SIGNAL(finishedParsing()))
     , m_inPageCache(0), m_passwordFields(0), m_secureForms(0)
-    , m_decoder(0)
+    , m_decoder(0), m_createRenderers(true)
 #endif
 {
     document->doc = this;
@@ -2278,6 +2278,19 @@ bool DocumentImpl::hasSecureForm() const
 {
     return m_secureForms > 0;
 }
+
+#if APPLE_CHANGES
+void DocumentImpl::setShouldCreateRenderers(bool f)
+{
+    m_createRenderers = f;
+}
+
+bool DocumentImpl::shouldCreateRenderers()
+{
+    return m_createRenderers;
+}
+#endif
+    
 
 #endif // APPLE_CHANGES
 

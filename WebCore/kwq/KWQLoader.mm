@@ -97,6 +97,16 @@ void KWQReleaseResponse(void *response)
     [(id)response release];
 }
 
+@interface NSObject (WebPrivateResponse)
+- (void *)MIMEType;
+@end
+
+void *KWQResponseMIMEType(void *response)
+{
+    return [(id)response MIMEType];
+}
+
+
 KWQLoader::KWQLoader(Loader *loader)
     : _requestStarted(loader, SIGNAL(requestStarted(khtml::DocLoader *, khtml::CachedObject *)))
     , _requestDone(loader, SIGNAL(requestDone(khtml::DocLoader *, khtml::CachedObject *)))

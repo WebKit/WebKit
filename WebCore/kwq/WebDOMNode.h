@@ -54,7 +54,7 @@ enum WebNodeType {
 - (id<WebDOMNodeList>)childNodes;
 - (id<WebDOMNode>)firstChild;
 - (id<WebDOMNode>)lastChild;
-- (id<WebDOMNode>) previousSibling;
+- (id<WebDOMNode>)previousSibling;
 - (id<WebDOMNode>)nextSibling;
 - (id<WebDOMNamedNodeMap>)attributes;
 - (id<WebDOMDocument>)ownerDocument;

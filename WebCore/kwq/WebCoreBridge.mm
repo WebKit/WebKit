@@ -107,6 +107,8 @@ static bool initializedObjectCacheSize = FALSE;
         initializedObjectCacheSize = TRUE;
     }
     
+    _shouldCreateRenderers = YES;
+    
     return self;
 }
 
@@ -190,6 +192,11 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (void)addData:(NSData *)data
 {
+    DocumentImpl *doc = _part->xmlDocImpl();
+    
+    ASSERT (doc);
+    doc->setShouldCreateRenderers([self shouldCreateRenderers]);
+
     _part->addData((const char *)[data bytes], [data length]);
 }
 
@@ -924,5 +931,17 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 {
     return _part->usesInactiveTextBackgroundColor();
 }
+
+- (void)setShouldCreateRenderers:(BOOL)f
+{
+    _shouldCreateRenderers = f;
+}
+
+- (BOOL)shouldCreateRenderers
+{
+    return _shouldCreateRenderers;
+}
+
+
 
 @end

@@ -1,3 +1,23 @@
+2003-05-12  Richard Williamson  <rjw@apple.com>
+
+        Fixed 3194614 and 3194751.  Add SPI to set 'renderless' mode
+        for a frame.
+        
+        Reviewed by darin.  
+
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        
+        WebImageRenderers now get a MIME type that can be used to faciliate
+        selection of an appropriate decoder.
+        
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        * WebKit.pbproj/project.pbxproj:
+
 2003-05-12  John Sullivan  <sullivan@apple.com>
 
 	- addition to Darin's previous patch; when checking whether a request can

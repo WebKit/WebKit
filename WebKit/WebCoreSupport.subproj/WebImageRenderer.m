@@ -89,11 +89,20 @@ static NSMutableArray *activeImageRenderers;
     }
 }
 
+- (id)initWithMIMEType:(NSString *)MIME
+{
+    [super init];
+    MIMEType = [MIME copy];
+    return self;
+}
+
 // Part of the workaround for bug 3090341.
-- initWithData:(NSData *)data
+- (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME
 {
     [self checkDataForGIFExtensionSignature:data];
-    return [super initWithData:data];
+    [super initWithData:data];
+    MIMEType = [MIME copy];
+    return self;
 }
 
 #endif
@@ -107,16 +116,19 @@ static NSMutableArray *activeImageRenderers;
     copy->frameTimer = nil;
     copy->frameView = nil;
     copy->patternColor = nil;
-    
+    copy->MIMEType = [MIMEType copy];
+        
     return copy;
 }
+
 
 - (BOOL)incrementalLoadWithBytes:(const void *)bytes length:(unsigned)length complete:(BOOL)isComplete
 {
     NSBitmapImageRep *imageRep = [[self representations] objectAtIndex:0];
     NSData *data = [[NSData alloc] initWithBytes:bytes length:length];
     NSSize size;
-    
+
+
 #if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
     // Part of the workaround for bug 3090341.
     [self checkDataForGIFExtensionSignature:data];
@@ -161,6 +173,7 @@ static NSMutableArray *activeImageRenderers;
     ASSERT(frameTimer == nil);
     ASSERT(frameView == nil);
     [patternColor release];
+    [MIMEType release];
     [super dealloc];
 }
 
@@ -344,12 +357,6 @@ static NSMutableArray *activeImageRenderers;
     [activeImageRenderers removeObject:self];
 }
 
-- (void)resize:(NSSize)s
-{
-    [self setScalesWhenResized:YES];
-    [self setSize:s];
-}
-
 - (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
 {
     // These calculations are only correct for the flipped case.
@@ -404,6 +411,12 @@ static NSMutableArray *activeImageRenderers;
     [NSBezierPath fillRect:rect];
     
     [NSGraphicsContext restoreGraphicsState];
+}
+
+- (void)resize:(NSSize)s
+{
+    [self setScalesWhenResized:YES];
+    [self setSize:s];
 }
 
 // required by protocol -- apparently inherited methods don't count

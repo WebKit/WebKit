@@ -30,7 +30,9 @@
 @protocol WebCoreImageRendererFactory
 
 - (id <WebCoreImageRenderer>)imageRenderer;
+- (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType;
 - (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length;
+- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType;
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)size;
 - (NSArray *)supportedMIMETypes;
 

@@ -25,6 +25,71 @@
 
 #import "WebCoreDOMPrivate.h"
 
+// Psuedo templates for init and dealloc.
+#define INIT_WITH_IMPL(_impl) \
+    if (!_impl){\
+        [self release];\
+        return nil;\
+    }\
+    \
+    id cachedInstance;\
+    cachedInstance = wrapperForImpl(_impl);\
+    if (cachedInstance){\
+        [self release];\
+        return [cachedInstance retain];\
+    }\
+    \
+    [super init];\
+    impl = _impl;\
+    setWrapperForImpl(self, _impl);\
+    impl->ref();\
+    return self;
+
+#define DEALLOC_WITH_IMPL(impl) \
+    if (impl){\
+        removeWrapperForImpl (impl);\
+        [self impl]->deref();\
+    }\
+    [super dealloc];
+
+static Boolean WrapperKeyEqual(const void *value1, const void *value2)
+{
+    return value1 == value2;
+}
+
+static CFHashCode WrapperKeyHash(const void *value)
+{
+    return ((unsigned int)value) >> 2;
+}
+
+static CFMutableDictionaryRef wrapperCache()
+{
+    static CFMutableDictionaryRef wrapperCache = NULL;
+    if (!wrapperCache) {
+        // No need to retain/free either impl key, or id value.  Items will be removed
+        // from the cache in WebDOMNode's dealloc method.
+        static const CFDictionaryKeyCallBacks wrapperKeyCallBacks = { 0, NULL, NULL, NULL, WrapperKeyEqual, WrapperKeyHash };
+        static const CFDictionaryValueCallBacks wrapperValueCallBacks = { 0, NULL, NULL, NULL, NULL };
+        wrapperCache = CFDictionaryCreateMutable(NULL, 0, &wrapperKeyCallBacks, &wrapperValueCallBacks);
+    }
+    return wrapperCache;
+}
+
+static id wrapperForImpl (const void *impl)
+{
+    return (id)CFDictionaryGetValue(wrapperCache(), impl);
+}
+
+static void setWrapperForImpl (id wrapper, const void *impl)
+{
+    CFDictionarySetValue (wrapperCache(), (const void *)impl, wrapper);
+}
+
+static void removeWrapperForImpl (const void *impl)
+{
+    CFDictionaryRemoveValue (wrapperCache(), impl);
+}
+
 DOM::NodeList DOM::NodeListImpl::createInstance(DOM::NodeListImpl *impl)
 {
     return DOM::NodeList(impl);
@@ -70,17 +135,14 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     return [[(WebCoreDOMNode *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl:(DOM::NodeImpl *)coreImpl
+- initWithImpl:(DOM::NodeImpl *)_impl
 {
-    [super init];
-    if (coreImpl) {
-        impl = coreImpl;
-        impl->ref();
-        return self;
-    } else {
-        [self release];
-        return nil;
-    }
+    INIT_WITH_IMPL (_impl);
+}
+
+- (void)dealloc
+{
+    DEALLOC_WITH_IMPL (impl);
 }
 
 - (BOOL)isEqual:(id)other
@@ -98,12 +160,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (DOM::NodeImpl *)impl
 {
     return impl;
-}
-
-- (void)dealloc
-{
-    [self impl]->deref();
-    [super dealloc];
 }
 
 - (NSString *)nodeName
@@ -177,7 +233,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::NamedNodeMap ret;
     
     ret = instance.attributes();
-    
     return [WebCoreDOMNamedNodeMap namedNodeMapWithImpl: (DOM::NamedNodeMapImpl *)ret.handle()];
 }
 
@@ -187,7 +242,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::Document ret;
     
     ret = instance.ownerDocument();
-    
     return [WebCoreDOMDocument documentWithImpl: (DOM::DocumentImpl *)ret.handle()];
 }
 
@@ -199,7 +253,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::Node ret;
     
     ret = instance.insertBefore (_newChild, _refChild);
-    
     return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)ret.handle()];
 }
 
@@ -211,7 +264,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::Node ret;
     
     ret = instance.replaceChild (_newChild, _oldChild);
-    
     return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)ret.handle()];
 }
 
@@ -222,7 +274,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::Node ret;
     
     ret = instance.removeChild (_oldChild);
-    
     return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)ret.handle()];
 }
 
@@ -233,7 +284,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::Node ret;
     
     ret = instance.appendChild (_newChild);
-    
     return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)ret.handle()];
 }
 
@@ -303,23 +353,19 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     return [[(WebCoreDOMNodeList *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl:(DOM::NodeListImpl *)coreImpl
+- initWithImpl:(DOM::NodeListImpl *)_impl
 {
-    [super init];
-    impl = coreImpl;
-    impl->ref();
-    return self;
+    INIT_WITH_IMPL (_impl);
+}
+
+- (void)dealloc
+{
+    DEALLOC_WITH_IMPL (impl);
 }
 
 - (DOM::NodeListImpl *)impl
 {
     return impl;
-}
-
-- (void)dealloc
-{
-    [self impl]->deref();
-    [super dealloc];
 }
 
 - (unsigned long)length
@@ -344,23 +390,19 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     return [[(WebCoreDOMNamedNodeMap *)[[self class] alloc] initWithImpl: _impl] autorelease];
 }
 
-- initWithImpl:(DOM::NamedNodeMapImpl *)coreImpl
+- initWithImpl:(DOM::NamedNodeMapImpl *)_impl
 {
-    [super init];
-    impl = coreImpl;
-    impl->ref();
-    return self;
+    INIT_WITH_IMPL (_impl);
+}
+
+- (void)dealloc
+{
+    DEALLOC_WITH_IMPL (impl);
 }
 
 - (DOM::NamedNodeMapImpl *)impl
 {
     return impl;
-}
-
-- (void)dealloc
-{
-    [self impl]->deref();
-    [super dealloc];
 }
 
 - (unsigned long) length

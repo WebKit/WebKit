@@ -97,6 +97,7 @@ enum FrameBorderStyle {
     KHTMLRenderPart *_renderPart;
     RenderArena *_renderPartArena;
     BOOL _drawSelectionOnly;
+    BOOL _shouldCreateRenderers;
 }
 
 - (void)initializeSettings:(WebCoreSettings *)settings;
@@ -214,6 +215,9 @@ enum FrameBorderStyle {
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName;
 
 - (BOOL)interceptKeyEvent:(NSEvent *)event toView:(NSView *)view;
+
+- (void)setShouldCreateRenderers:(BOOL)f;
+- (BOOL)shouldCreateRenderers;
 
 @end
 

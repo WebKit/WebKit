@@ -180,4 +180,7 @@ typedef enum {
 - (WebFrame *)_nextFrameWithWrap:(BOOL)wrapFlag;
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag;
 
+- (void)_setShouldCreateRenderers:(BOOL)f;
+- (BOOL)_shouldCreateRenderers;
+
 @end

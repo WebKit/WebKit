@@ -24,8 +24,12 @@
     BOOL sawGIFExtensionSignature;
     char GIFExtensionBuffer[10];
     int GIFExtensionBufferLength;
+    
+    NSString *MIMEType;
 }
 
+- (id)initWithMIMEType:(NSString *)MIME;
+- (id)initWithData:(NSData *)data MIMEType:(NSString *)MIME;
 + (void)stopAnimationsInView:(NSView *)aView;
 
 @end

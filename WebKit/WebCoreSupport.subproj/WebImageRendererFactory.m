@@ -44,9 +44,9 @@
     return (WebImageRendererFactory *)[super sharedFactory];
 }
 
-- (id <WebCoreImageRenderer>)imageRenderer
+- (id <WebCoreImageRenderer>)imageRendererWithMIMEType:(NSString *)MIMEType
 {
-    NSImage *imageRenderer = [[WebImageRenderer alloc] init];
+    NSImage *imageRenderer = [[WebImageRenderer alloc] initWithMIMEType:MIMEType];
 
     NSBitmapImageRep *rep = [[NSBitmapImageRep alloc] initForIncrementalLoad];
     [imageRenderer addRepresentation:rep];
@@ -57,13 +57,17 @@
     return [imageRenderer autorelease];
 }
 
+- (id <WebCoreImageRenderer>)imageRenderer
+{
+    return [self imageRendererWithMIMEType:nil];
+}
 
-- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length
+- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length MIMEType:(NSString *)MIMEType
 {
     // FIXME: Why must we copy the data here?
     //NSData *data = [[NSData alloc] initWithBytesNoCopy:(void *)bytes length:length freeWhenDone:NO];
     NSData *data = [[NSData alloc] initWithBytes:(void *)bytes length:length];
-    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data];
+    WebImageRenderer *imageRenderer = [[WebImageRenderer alloc] initWithData:data MIMEType:MIMEType];
     [imageRenderer setScalesWhenResized:NO];
     NSArray *reps = [imageRenderer representations];
     NSImageRep *rep = [reps objectAtIndex:0];
@@ -72,6 +76,11 @@
     [data release];
     [imageRenderer setFlipped:YES];
     return [imageRenderer autorelease];
+}
+
+- (id <WebCoreImageRenderer>)imageRendererWithBytes:(const void *)bytes length:(unsigned)length
+{
+    return [self imageRendererWithBytes:bytes length:length MIMEType:nil];
 }
 
 - (id <WebCoreImageRenderer>)imageRendererWithSize:(NSSize)s
