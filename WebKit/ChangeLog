@@ -1,3 +1,14 @@
+2003-09-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3410980 - FileMaker: going forward with an empty forward list makes a frame come out blank sometimes
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge backOrForwardItemWithDistance:]): Factored out from goBackOrForward.
+        (-[WebBridge canGoBackOrForward:]): Use the new method.
+        (-[WebBridge goBackOrForward:]): Likewise.
+
 2003-09-17  John Sullivan  <sullivan@apple.com>
 
 	- WebKit part of fix for 3157018 -- Would like option to

@@ -306,7 +306,7 @@ void HTMLDocumentImpl::close()
     // First fire the onload.
     bool doload = !parsing() && m_tokenizer && !processingLoadEvent;
     
-    bool wasNotRedirecting = !view() || view()->part()->d->m_scheduledRedirection == noRedirectionScheduled;
+    bool wasNotRedirecting = !view();
 
     processingLoadEvent = true;
     if (body() && doload) {
@@ -323,7 +323,6 @@ void HTMLDocumentImpl::close()
     // fires. This will improve onload scores, and other browsers do it.
     // If they wanna cheat, we can too. -dwh
     if (doload && wasNotRedirecting && view()
-            && view()->part()->d->m_scheduledRedirection != noRedirectionScheduled
             && view()->part()->d->m_delayRedirect == 0
             && m_startTime.elapsed() < 1000) {
         static int redirectCount = 0;

@@ -1,3 +1,19 @@
+2003-09-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+	
+	- fixed 3410980 - FileMaker: going forward with an empty forward list makes a frame come out blank sometimes
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close): Remove redundant check removed.
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::scheduleHistoryNavigation): Only call the base class
+	method to actually schedule when it's possible to go back or forward
+	that number of steps.
+        * kwq/WebCoreBridge.h:
+
 2003-09-17  John Sullivan  <sullivan@apple.com>
 
 	- WebCore part of fix for 3157018 -- Would like option to
