@@ -157,6 +157,8 @@ namespace khtml
         CSSStyleSelectorList *userStyle;
         DOM::CSSStyleSheetImpl *userSheet;
 
+	static RenderStyle* displayNoneStyle;
+ 
     private:
         void init();
 

@@ -72,6 +72,7 @@ namespace khtml {
 CSSStyleSelectorList *CSSStyleSelector::defaultStyle = 0;
 CSSStyleSelectorList *CSSStyleSelector::defaultPrintStyle = 0;
 CSSStyleSheetImpl *CSSStyleSelector::defaultSheet = 0;
+RenderStyle* CSSStyleSelector::displayNoneStyle = 0;
 
 static CSSStyleSelector::Encodedurl *encodedurl = 0;
 
@@ -225,9 +226,11 @@ void CSSStyleSelector::clear()
     delete defaultStyle;
     delete defaultPrintStyle;
     delete defaultSheet;
+    delete displayNoneStyle;
     defaultStyle = 0;
     defaultPrintStyle = 0;
     defaultSheet = 0;
+    displayNoneStyle = 0;
 }
 
 #define MAXFONTSIZES 15
@@ -289,6 +292,15 @@ static inline void bubbleSort( CSSOrderedProperty **b, CSSOrderedProperty **e )
 
 RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e, int state)
 {
+    if (!e->getDocument()->haveStylesheetsLoaded()) {
+        if (!displayNoneStyle) {
+            displayNoneStyle = new RenderStyle();
+	    displayNoneStyle->setDisplay(NONE);
+	    displayNoneStyle->ref();
+	}
+	return displayNoneStyle;
+    }
+  
     // set some variables we will need
     dynamicState = state;
     usedDynamicStates = StyleSelector::None;

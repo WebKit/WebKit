@@ -156,6 +156,8 @@ void HTMLLinkElementImpl::parseAttribute(AttributeImpl *attr)
     }
 }
 
+static bool inProcessFunction = false;
+
 void HTMLLinkElementImpl::process()
 {
     if (!inDocument())
@@ -186,13 +188,21 @@ void HTMLLinkElementImpl::process()
         // ### there may be in some situations e.g. for an editor or script to manipulate
         if( m_media.isNull() || m_media.contains("screen") || m_media.contains("all") || m_media.contains("print") ) {
             m_loading = true;
-
+            inProcessFunction = true;
+            
             QString chset = getAttribute( ATTR_CHARSET ).string();
             if (m_cachedSheet)
 		m_cachedSheet->deref(this);
             m_cachedSheet = getDocument()->docLoader()->requestStyleSheet(m_url, chset);
             if (m_cachedSheet)
 		m_cachedSheet->ref(this);
+
+            // If the stylesheet was synchronously available, then our m_loading variable will have
+            // been set to false when the cached sheet above gets a ref.  In this case, we don't
+            // need to add the sheet to our list of pending sheets, because it has already loaded.
+            if (m_loading)
+                getDocument()->addPendingSheet(); // Let the document know that we're pending.
+            inProcessFunction = false;
         }
     }
     else if (m_sheet) {
@@ -232,7 +242,11 @@ void HTMLLinkElementImpl::setStyleSheet(const DOM::DOMString &url, const DOM::DO
 
     m_loading = false;
 
-    getDocument()->updateStyleSelector();
+    // Just tell the doc about the sheet.
+    if (!inProcessFunction)
+        getDocument()->stylesheetLoaded();
+    else
+        getDocument()->updateStyleSelector();
 }
 
 bool HTMLLinkElementImpl::isLoading() const
@@ -381,7 +395,7 @@ bool HTMLStyleElementImpl::isLoading() const
 
 void HTMLStyleElementImpl::sheetLoaded()
 {
-    getDocument()->updateStyleSelector();
+  getDocument()->updateStyleSelector();
 }
 
 // -------------------------------------------------------------------------

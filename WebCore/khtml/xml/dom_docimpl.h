@@ -157,6 +157,23 @@ public:
     khtml::CSSStyleSelector *styleSelector() { return m_styleSelector; }
 
     /**
+     * Updates the pending sheet count and then calls updateStyleSelector.
+     */
+    void stylesheetLoaded();
+
+    /**
+     * This method returns true if all top-level stylesheets have loaded (including
+     * any @imports that they may be loading).
+     */
+    bool haveStylesheetsLoaded() { return m_pendingStylesheets <= 0; }
+
+    /**
+     * Increments the number of pending sheets.  The <link> elements
+     * invoke this to add themselves to the loading list.
+     */
+    void addPendingSheet() { m_pendingStylesheets++; }
+
+    /**
      * Called when one or more stylesheets in the document may have been added, removed or changed.
      *
      * Creates a new style selector and assign it to this document. This is done by iterating through all nodes in
@@ -386,6 +403,12 @@ protected:
     QString m_usersheet;
     QString m_printSheet;
     QStringList m_availableSheets;
+
+    // Track the number of currently loading top-level stylesheets.  Sheets
+    // loaded using the @import directive are not included in this count.
+    // We use this count of pending sheets to detect when we can begin attaching
+    // elements.
+    int m_pendingStylesheets;
 
     CSSStyleSheetImpl *m_elemSheet;
 

@@ -279,6 +279,7 @@ DocumentImpl::DocumentImpl(DOMImplementationImpl *_implementation, KHTMLView *v)
     m_styleSelector = new CSSStyleSelector( this, m_usersheet, m_styleSheets, m_url,
                                             pMode == Strict );
     m_windowEventListeners.setAutoDelete(true);
+    m_pendingStylesheets = 0;
 }
 
 DocumentImpl::~DocumentImpl()
@@ -1667,8 +1668,22 @@ StyleSheetListImpl* DocumentImpl::styleSheets()
     return m_styleSheets;
 }
 
+// This method is called whenever a top-level stylesheet has finished loading.
+void DocumentImpl::stylesheetLoaded()
+{
+  // Make sure we knew this sheet was pending, and that our count isn't out of sync.
+  assert(m_pendingStylesheets > 0);
+
+  m_pendingStylesheets--;
+  updateStyleSelector();    
+}
+
 void DocumentImpl::updateStyleSelector()
 {
+    // Don't bother updating, since we haven't loaded all our style info yet.
+    if (m_pendingStylesheets > 0)
+        return;
+
     recalcStyleSelector();
     recalcStyle(Force);
 #if 0

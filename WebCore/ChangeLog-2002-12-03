@@ -1,3 +1,50 @@
+2002-07-20  David Hyatt  <hyatt@apple.com>
+
+	This patch fixes the FOUC (flash of unstyled content) problem.
+	
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+	If stylesheets are still loading, the styleForElement method
+	will return a default "display: none" style that prevents
+	the rendering tree from being built for that element.  
+	
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::process):
+        (HTMLLinkElementImpl::setStyleSheet):
+        (HTMLStyleElementImpl::sheetLoaded):
+	The link element has been patched to notify the document
+	when stylesheet loads start and finish.
+	
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::startBody):
+	This function has been hacked to unblock the layout of
+	inlines within a block.  This can be done the moment the
+	stylesheet loads have been kicked off (you don't have to
+	wait for them to finish).
+	
+        * khtml/rendering/render_object.h:
+	Contains a new method for recursively descending into the
+	render tree to unblock the layout of inlines.  This is done
+	as soon as the <body> is encountered, so the render tree is
+	small at the time the unblocking occurs.
+	
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::stylesheetLoaded):
+        (DocumentImpl::updateStyleSelector):
+	The new function, stylesheetLoaded, is invoked by link elements
+	when a stylesheet loads.  It simply decrements the loading sheet
+	count and calls updateStyleSelector.  updateStyleSelector has
+	been patched to avoid the recalculation of style until all 
+	stylesheets have loaded.
+	
+        * khtml/xml/dom_docimpl.h:
+	Two new methods.  The first, stylesheetLoaded, is described
+	above.  The second is haveStylesheetsLoaded, which indicates
+	whether or not all the sheets have completed loading.  A single
+	new member variable, m_pendingStylesheets, tracks the number
+	of sheets currently pending.
+	
 2002-07-20  Darin Adler  <darin@apple.com>
 
         * khtml/css/css_ruleimpl.cpp: (CSSImportRuleImpl::~CSSImportRuleImpl):
