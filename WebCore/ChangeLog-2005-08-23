@@ -1,3 +1,12 @@
+2003-12-02  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3495746, nil deref of containing block (frame inside frameset).
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::containingBlockWidth):
+
 2003-12-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
