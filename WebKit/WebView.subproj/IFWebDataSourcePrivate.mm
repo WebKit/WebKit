@@ -173,8 +173,7 @@
 {
     if (_private->urlHandles == nil)
         _private->urlHandles = [[NSMutableArray alloc] init];
-    if(handle)
-        [_private->urlHandles addObject: handle];
+    [_private->urlHandles addObject: handle];
     [self _setLoading:YES];
 }
 

@@ -1,3 +1,10 @@
+2002-05-28  Richard Williamson  <rjw@apple.com>
+
+    Backed out band-aid add to fixed malformed resources URLs.
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSource _addURLHandle:]):
+
 2002-05-28  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for creating a new window from a plug-in (2938004)
