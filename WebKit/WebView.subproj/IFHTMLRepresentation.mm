@@ -44,7 +44,7 @@
 
 - (KHTMLPart *)part
 {
-    return [_private->bridge KHTMLPart];
+    return [_private->bridge part];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource

@@ -1,5 +1,16 @@
 2002-06-14  Darin Adler  <darin@apple.com>
 
+	* Panels.subproj/IFStandardPanels.m:
+	(-[IFStandardPanelsPrivate frontmostWindowLoadingURL:]): Change to call webView
+	instead of view. Not sure why anyone was able to compile this.
+
+	* Plugins.subproj/IFNullPluginView.mm: Remove include of obsolete WCPluginWidget.h.
+
+	* WebView.subproj/IFHTMLRepresentation.mm: (-[IFHTMLRepresentation part]):
+	Call part instead of KHTMLPart. Not sure why anyone was able to compile this.
+
+2002-06-14  Darin Adler  <darin@apple.com>
+
 	Add the new bridge class that connects us to WebCore in a nicer way.
 	Started to use it for some things. More to come.
 

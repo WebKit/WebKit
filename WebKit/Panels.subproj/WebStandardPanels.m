@@ -8,6 +8,7 @@
 #import <WebKit/IFStandardPanelsPrivate.h>
 #import <WebKit/IFPanelAuthenticationHandler.h>
 #import <WebKit/IFWebFrame.h>
+#import <WebKit/IFWebView.h>
 #import <WebFoundation/IFAuthenticationManager.h>
 #import <WebFoundation/IFCookieManager.h>
 
@@ -19,10 +20,6 @@
     IFPanelAuthenticationHandler *panelAuthenticationHandler;
     NSMutableDictionary *urlContainers;
 }
-@end
-
-@interface IFStandardPanels (Internal)
--(id)_init;
 @end
 
 @implementation IFStandardPanelsPrivate
@@ -41,9 +38,7 @@
     [panelAuthenticationHandler release];
     [super dealloc];
 }
-@end
 
-@implementation IFStandardPanels (Internal)
 // Private init method to implement the singleton pattern
 -(id)_init
 {
@@ -53,14 +48,10 @@
     }
     return self;
 }
-@end
 
-
-@implementation IFStandardPanels
 -(id)init
 {
-    // FIXME: should assert instead (or return a reference to the
-    // shared instance)
+    // FIXME: should assert instead (or return a reference to the shared instance)
     [self release];
     return nil;
 }
@@ -201,7 +192,7 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
 	if ([object isKindOfClass:[NSWindow class]]) {
 	    window = object;
 	} else {
-	    window = [[[object mainFrame] view] window];
+	    window = [[[object mainFrame] webView] window];
 	}
 
 	if (window != nil && (frontmostWindow == nil || WindowInFront(window, frontmostWindow))) {

@@ -4,13 +4,11 @@
 */
 
 #import <WebKit/IFNullPluginView.h>
+
 #import <WebKit/IFWebView.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFNSViewExtras.h>
 
-#import <WCPluginWidget.h>
-
-static BOOL imageLoaded = NO;
 static NSImage *image = nil;
 
 @implementation IFNullPluginView
@@ -22,13 +20,11 @@ static NSImage *image = nil;
     
     self = [super initWithFrame:frame];
     if (self) {
-    
         // Set the view's image to the null plugin icon
-        if(!imageLoaded){
+        if (!image) {
             bundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
             imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
             image = [[NSImage alloc] initWithContentsOfFile:imagePath];
-            imageLoaded = YES;
         }
         [self setImage:image];
         
@@ -69,7 +65,5 @@ static NSImage *image = nil;
         [webController pluginNotFoundForMIMEType:mimeType pluginPageURL:pluginPage];
     }
 }
-
-
 
 @end
