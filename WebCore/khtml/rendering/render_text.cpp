@@ -492,34 +492,14 @@ void RenderText::cursorPos(int offset, int &_x, int &_y, int &height)
       _x += fm.rightBearing( *(str->s + s->m_start + pos - 1 ) );
 
   int absx, absy;
-
-  RenderObject *cb = containingBlock();
-
-  if (cb && cb != this && cb->absolutePosition(absx,absy))
-  {
-    _x += absx;
-    _y += absy;
-  } else {
-    // we don't know our absolute position, and there is not point returning
-    // just a relative one
-    _x = _y = -1;
-  }
-}
-
-bool RenderText::absolutePosition(int &xPos, int &yPos, bool)
-{
-    return RenderObject::absolutePosition(xPos, yPos, false);
+  absolutePosition(absx,absy);
+  _x += absx;
+  _y += absy;
 }
 
 void RenderText::posOfChar(int chr, int &x, int &y)
 {
-    if (!parent())
-    {
-       x = -1;
-       y = -1;
-       return;
-    }
-    parent()->absolutePosition( x, y, false );
+    absolutePosition( x, y, false );
 
     //if( chr > (int) str->l )
     //chr = str->l;

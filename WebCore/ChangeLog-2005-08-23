@@ -1,3 +1,27 @@
+2003-10-29  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3466628, widgets in overflow blocks don't move when the overflow block is scrolled.  This
+	was a regression caused by my change to move widgets only during layout and not at paint time.  The
+	problem with this is that scrolling an overflow block doesn't do a layout, just a repaint.  I patched
+	the layer code to update widget positions on an overflow block scroll.
+
+	This then exposed a bug in absolutePosition, namely that the scroll offset was never factored in when
+	computing absolutePosition.  This bug also explains why text selection and cursor display were wrong
+	inside scrolled overflow blocks.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::absolutePosition):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::scrollToOffset):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::absolutePosition):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::cursorPos):
+        (RenderText::posOfChar):
+        * khtml/rendering/render_text.h:
+
 2003-10-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.
