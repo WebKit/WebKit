@@ -1,3 +1,28 @@
+2004-07-21  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Added some more handlers for standard Cocoa key bindings. 
+        These are "secrets" of NSText, meaning they are not public API, but we choose to mimic.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView moveToBeginningOfDocumentAndModifySelection:]):
+        (-[WebHTMLView moveToBeginningOfLineAndModifySelection:]):
+        (-[WebHTMLView moveToBeginningOfParagraphAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfDocumentAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfLineAndModifySelection:]):
+        (-[WebHTMLView moveToEndOfParagraph:]):
+        (-[WebHTMLView moveToEndOfParagraphAndModifySelection:]):
+        * WebView.subproj/WebView.h: Add these declarations to the comment in the header listing
+        the responder-like methods we support.
+        * WebView.subproj/WebView.m:
+        (-[WebView moveToBeginningOfParagraphAndModifySelection:]):
+        (-[WebView moveToEndOfParagraphAndModifySelection:]):
+        (-[WebView moveToBeginningOfLineAndModifySelection:]):
+        (-[WebView moveToEndOfLineAndModifySelection:]):
+        (-[WebView moveToBeginningOfDocumentAndModifySelection:]):
+        (-[WebView moveToEndOfDocumentAndModifySelection:]):
+
 2004-07-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Richard

@@ -2740,6 +2740,36 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     [self _performResponderOperation:_cmd with:sender];
 }
 
+- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
+{
+    [self _performResponderOperation:_cmd with:sender];
+}
+
+- (void)moveToEndOfParagraphAndModifySelection:(id)sender
+{
+    [self _performResponderOperation:_cmd with:sender];
+}
+
+- (void)moveToBeginningOfLineAndModifySelection:(id)sender
+{
+    [self _performResponderOperation:_cmd with:sender];
+}
+
+- (void)moveToEndOfLineAndModifySelection:(id)sender
+{
+    [self _performResponderOperation:_cmd with:sender];
+}
+
+- (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
+{
+    [self _performResponderOperation:_cmd with:sender];
+}
+
+- (void)moveToEndOfDocumentAndModifySelection:(id)sender
+{
+    [self _performResponderOperation:_cmd with:sender];
+}
+
 - (void)pageDown:(id)sender
 {
     [self _performResponderOperation:_cmd with:sender];

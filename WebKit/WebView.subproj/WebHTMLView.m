@@ -2388,7 +2388,17 @@ static WebHTMLView *lastHitView = nil;
     ERROR("unimplemented");
 }
 
+- (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
+{
+    ERROR("unimplemented");
+}
+
 - (void)moveToBeginningOfLine:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToBeginningOfLineAndModifySelection:(id)sender
 {
     ERROR("unimplemented");
 }
@@ -2398,7 +2408,17 @@ static WebHTMLView *lastHitView = nil;
     ERROR("unimplemented");
 }
 
+- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
+{
+    ERROR("unimplemented");
+}
+
 - (void)moveToEndOfDocument:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
     ERROR("unimplemented");
 }
@@ -2408,7 +2428,17 @@ static WebHTMLView *lastHitView = nil;
     ERROR("unimplemented");
 }
 
+- (void)moveToEndOfLineAndModifySelection:(id)sender
+{
+    ERROR("unimplemented");
+}
+
 - (void)moveToEndOfParagraph:(id)sender
+{
+    ERROR("unimplemented");
+}
+
+- (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
     ERROR("unimplemented");
 }

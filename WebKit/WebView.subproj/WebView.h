@@ -650,11 +650,17 @@ a custom implementation for each.
 - (void)moveRight:(id)sender;
 - (void)moveRightAndModifySelection:(id)sender;
 - (void)moveToBeginningOfDocument:(id)sender;
+- (void)moveToBeginningOfDocumentAndModifySelection:(id)sender;
 - (void)moveToBeginningOfLine:(id)sender;
+- (void)moveToBeginningOfLineAndModifySelection:(id)sender;
 - (void)moveToBeginningOfParagraph:(id)sender;
+- (void)moveToBeginningOfParagraphAndModifySelection:(id)sender;
 - (void)moveToEndOfDocument:(id)sender;
+- (void)moveToEndOfDocumentAndModifySelection:(id)sender;
 - (void)moveToEndOfLine:(id)sender;
+- (void)moveToEndOfLineAndModifySelection:(id)sender;
 - (void)moveToEndOfParagraph:(id)sender;
+- (void)moveToEndOfParagraphAndModifySelection:(id)sender;
 - (void)moveUp:(id)sender;
 - (void)moveUpAndModifySelection:(id)sender;
 - (void)moveWordBackward:(id)sender;
