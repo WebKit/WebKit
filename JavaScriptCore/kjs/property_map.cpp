@@ -25,7 +25,7 @@
 #include "object.h"
 #include "reference_list.h"
 
-#define DO_CONSISTENCY_CHECK 1
+#define DO_CONSISTENCY_CHECK 0
 
 // At the time I added this switch, the optimization still gave a 1.5% performance boost so I couldn't remove it.
 #define USE_SINGLE_ENTRY 1
