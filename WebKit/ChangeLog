@@ -1,3 +1,20 @@
+2003-10-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin, with much help from Maciej and Hyatt
+
+	Fix for this bug:
+
+	<rdar://problem/3441321>: Form buttons do not respond to key events when focused
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _firstResponderIsControl]): Added to tell if the focus
+	is on a form control.
+        (-[WebFrameView keyDown:]): Call new _firstResponderIsControl method to see
+	whether space bar key events should propagate. Adding this check keeps us
+	from blocking the event here and allows AppKit to handle it.
+        * WebView.subproj/WebFrameViewPrivate.h: Add new _firstResponderIsControl 
+	method.
+
 2003-10-02  Maciej Stachowiak  <mjs@apple.com>
 
         Folded Private implementation files into the regular ones as the

@@ -25,8 +25,10 @@
 
 #import "KWQButton.h"
 
+#import "KWQAssertions.h"
 #import "KWQCheckBox.h"
 #import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
 #import "WebCoreBridge.h"
 
 #import "render_form.h"
@@ -40,6 +42,7 @@
 
 - (id)initWithQButton:(QButton *)b;
 - (void)sendConsumedMouseUpIfNeeded;
+- (void)simulateClick;
 
 @end
 
@@ -66,11 +69,39 @@
     } 
 }
 
+-(void)simulateClick
+{
+    [self performClick:self];
+}
+
 -(void)mouseDown:(NSEvent *)event
 {
     needToSendConsumedMouseUp = YES;
     [super mouseDown:event];
     [self sendConsumedMouseUpIfNeeded];
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL become = [super becomeFirstResponder];
+    if (become) {
+        QFocusEvent event(QEvent::FocusIn);
+        const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(button)) {
+            [self _KWQ_scrollFrameToVisible];
+        }
+    }
+    return become;
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign) {
+        QFocusEvent event(QEvent::FocusOut);
+        const_cast<QObject *>(button->eventFilterObject())->eventFilter(button, &event);
+    }
+    return resign;
 }
 
 -(NSView *)nextKeyView
@@ -155,6 +186,12 @@ void QButton::clicked()
     if ([button target]) {
         m_clicked.call();
     }
+}
+
+void QButton::simulateClick()
+{
+    KWQButton *button = (KWQButton *)getView();
+    [button simulateClick];
 }
 
 void QButton::setFont(const QFont &f)

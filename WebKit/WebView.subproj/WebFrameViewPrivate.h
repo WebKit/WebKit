@@ -57,5 +57,6 @@
 - (void)_tile;
 - (void)_drawBorder;
 - (BOOL)_shouldDrawBorder;
+- (BOOL)_firstResponderIsControl;
 
 @end

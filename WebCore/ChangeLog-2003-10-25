@@ -1,3 +1,35 @@
+2003-10-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin, with much help from Maciej and Hyatt
+
+        Fix for these bugs:
+
+        <rdar://problem/3441321>: Form buttons do not respond to key events when focused
+        <rdar://problem/3441060>: Form buttons do not scroll to view when focused
+
+        * khtml/html/html_formimpl.cpp:
+        (HTMLInputElementImpl::simulateMouseClickForEvent): Added helper to simulate
+        mouse clicks in elements. Used to trigger button actions in response to
+        keyboard events.
+        (HTMLInputElementImpl::defaultEventHandler): Improved handler to process
+        key press events for radio, checkbox, image, reset, and submit buttons.
+        * khtml/html/html_formimpl.h: Added simulateMouseClickForEvent function.
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::isKeyboardEvent): Added type check virtual function.
+        (DOM::KeyEventImpl::isKeyboardEvent): Ditto.
+        * kwq/KWQButton.h:
+        * kwq/KWQButton.mm:
+        (-[KWQButton simulateClick]): New method. This makes AppKit do a 
+	button click programatically for button types. For <input type=image>, 
+	we just simulate a the click in the DOM since there is no real "clickable"
+	AppKit widget.
+        (-[KWQButton becomeFirstResponder]): Fixes the button scroll to visible when
+        focused issue.
+        (-[KWQButton resignFirstResponder]): Correctly give up focus when user clicks
+        into the page body when a button has the focus.
+        (QButton::simulateClick): QWidget bridge to the KWQButton simulateClick
+	method.
+
 2003-10-03  David Hyatt  <hyatt@apple.com>
 
 	Removing redundant layouts and adding a few !needsLayout and !normalChildNeedsLayout

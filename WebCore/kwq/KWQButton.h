@@ -39,6 +39,7 @@ public:
     QString text() const;
     
     virtual void clicked();
+    virtual void simulateClick();
 
     // QWidget overrides
     virtual void setFont(const QFont &);

@@ -396,6 +396,11 @@ static NSMutableDictionary *viewTypes;
     [self _tile];
 }
 
+- (BOOL)_firstResponderIsControl
+{
+    return [[[self window] firstResponder] isKindOfClass:[NSControl class]];
+}
+
 @end
 
 @implementation WebFrameView
@@ -526,7 +531,10 @@ static NSMutableDictionary *viewTypes;
                 callSuper = NO;
                 break;
             case SpaceKey:
-                if (![self allowsScrolling]) {
+                // Checking for a control will allow events to percolate 
+                // correctly when the focus is on a form control and we
+                // are in full keyboard access mode.
+                if (![self allowsScrolling] || [self _firstResponderIsControl]) {
                     callSuper = YES;
                     break;
                 }

@@ -113,6 +113,7 @@ public:
     virtual bool isUIEvent() { return false; }
     virtual bool isMouseEvent() { return false; }
     virtual bool isMutationEvent() { return false; }
+    virtual bool isKeyboardEvent() { return false; }
     virtual DOMString eventModuleName() { return ""; }
 
     virtual bool propagationStopped() { return m_propagationStopped; }
@@ -487,6 +488,8 @@ public:
   *  DOM_VK_UNDEFINED.
   */
     unsigned long virtKeyVal() const { return m_virtKeyVal; }
+
+    virtual bool isKeyboardEvent() { return true; }
 
  QKeyEvent *qKeyEvent;
 

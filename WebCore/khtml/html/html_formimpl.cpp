@@ -1652,6 +1652,32 @@ void HTMLInputElementImpl::focus()
     getDocument()->setFocusNode(this);
 }
 
+#if APPLE_CHANGES
+void HTMLInputElementImpl::simulateButtonClickForEvent(EventImpl *evt)
+{
+    assert(m_type == CHECKBOX || m_type == IMAGE || m_type == RADIO || 
+           m_type == RESET || m_type == SUBMIT);
+
+    if (m_render) {
+        if (m_type == IMAGE) {
+            // have to send simulated clicks differently for image types
+            // since they to not have a widget
+            int x = 0;
+            int y = 0;
+            if (m_render)
+                m_render->absolutePosition(x,y);
+            QMouseEvent e2(QEvent::MouseButtonRelease, QPoint(x,y), Qt::LeftButton, 0);
+            dispatchMouseEvent(&e2, EventImpl::KHTML_CLICK_EVENT);
+        }
+        else {
+            static_cast<QButton *>(static_cast<RenderWidget *>(m_render)->widget())->simulateClick();
+        }
+    }
+    
+    evt->setDefaultHandled();
+}
+#endif
+
 void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 {
     if (evt->isMouseEvent() &&
@@ -1690,6 +1716,49 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
             m_activeSubmit = false;
         }
     }
+
+#if APPLE_CHANGES
+    // Use key press event here since sending simulated mouse events
+    // on key down blocks the proper sending of the key press event.
+    if (evt->id() == EventImpl::KHTML_KEYPRESS_EVENT) {
+    
+        if (!m_form || !m_render || !evt->isKeyboardEvent())
+            return;
+        
+        unsigned long keyVal = static_cast<KeyEventImpl *>(evt)->keyVal();
+        
+        switch (m_type) {
+            case IMAGE:
+            case RESET:
+            case SUBMIT:
+                // simulate mouse click for spacebar, return, and enter
+                if (keyVal == ' ' || keyVal == '\r' || keyVal == 0x3) {
+                    simulateButtonClickForEvent(evt);
+                }
+                break;
+            case CHECKBOX:
+            case RADIO:
+                // for return or enter, find the first successful image or submit element 
+                // send it a simulated mouse click
+                if (keyVal == '\r' || keyVal == 0x3) {
+                    QPtrListIterator<HTMLGenericFormElementImpl> it(m_form->formElements);
+                    for (; it.current(); ++it) {
+                        if (it.current()->id() == ID_INPUT) {
+                            HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
+                            if (element->isSuccessfulSubmitButton()) {
+                                element->simulateButtonClickForEvent(evt);
+                                break;
+                            }
+                        }
+                    }
+                }
+                break;
+            default:
+                // not handled for the other widgets
+                break;
+        }
+    }
+#endif
     HTMLGenericFormElementImpl::defaultEventHandler(evt);
 }
 
