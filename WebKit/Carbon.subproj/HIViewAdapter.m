@@ -109,7 +109,27 @@ static CFMutableDictionaryRef	sViewMap;
 			//printf( "  flipped to %g %g %g %g\n", rect.origin.y, rect.origin.x,
 			//	CGRectGetMaxY( rect ), CGRectGetMaxX( rect ) );
 
-			_HIViewSetNeedsDisplayInRect( hiView, &rect, false );
+			// For now, call the region-based API.
+			{
+				RgnHandle rgn = NewRgn();
+				if ( rgn )
+				{
+					Rect		qdRect;
+					qdRect.top = (SInt16)rect.origin.y;
+					qdRect.left = (SInt16)rect.origin.x;
+					qdRect.bottom = CGRectGetMaxY( rect );
+					qdRect.right = CGRectGetMaxX( rect );
+				
+					RectRgn( rgn, &qdRect );
+					HIViewSetNeedsDisplayInRegion( hiView, rgn, false );
+					DisposeRgn( rgn );
+				}
+				else
+				{
+					HIViewSetNeedsDisplay( hiView, false );
+				}
+			}
+			//_HIViewSetNeedsDisplayInRect( hiView, &rect, false );
 		}
 	}
 }
@@ -154,7 +174,27 @@ static CFMutableDictionaryRef	sViewMap;
     			//printf( "  flipped to %g %g %g %g\n", rect.origin.y, rect.origin.x,
     			//	CGRectGetMaxY( rect ), CGRectGetMaxX( rect ) );
 
-	    		_HIViewSetNeedsDisplayInRect( hiView, &rect, true );
+				// For now, call the region-based API.
+				{
+					RgnHandle rgn = NewRgn();
+					if ( rgn )
+					{
+						Rect		qdRect;
+						qdRect.top = (SInt16)rect.origin.y;
+						qdRect.left = (SInt16)rect.origin.x;
+						qdRect.bottom = CGRectGetMaxY( rect );
+						qdRect.right = CGRectGetMaxX( rect );
+					
+						RectRgn( rgn, &qdRect );
+						HIViewSetNeedsDisplayInRegion( hiView, rgn, true );
+						DisposeRgn( rgn );
+					}
+					else
+					{
+						HIViewSetNeedsDisplay( hiView, true );
+					}
+				}
+	    		//_HIViewSetNeedsDisplayInRect( hiView, &rect, true );
 	    	}
     	}
     	else

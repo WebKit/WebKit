@@ -1,3 +1,14 @@
+2003-03-06  Ed Voas  voas@apple.com
+
+        Reviewed by Richard.
+
+		Don't use _HIViewSetNeedsDisplayInRect for now. Fixes
+		Jaguar builds.
+
+        * Carbon.subproj/HIViewAdapter.m:
+        (-[HIViewAdapter setNeedsDisplay:]):
+        (-[HIViewAdapter setNeedsDisplayInRect:]):
+
 2003-03-05  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
