@@ -218,7 +218,6 @@ protected:
     QString   m_currValue;
     typeEnum  m_type : 2;
     bool      m_dirty : 1;
-    bool      m_clicked : 1;
     bool      m_activeSubmit : 1;
 };
 
@@ -321,7 +320,6 @@ protected:
     short     yPos;
 
     typeEnum m_type : 4;
-    bool m_clicked : 1 ;
     bool m_checked : 1;
     bool m_haveType : 1;
     bool m_activeSubmit : 1;

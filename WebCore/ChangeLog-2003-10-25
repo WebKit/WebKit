@@ -1,3 +1,26 @@
+2002-12-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3132141 -- enter key does not work with input type=image
+
+	Made the logic handle image and submit type inputs in the same way.
+
+        * khtml/html/html_formimpl.h: Remove unused m_clicked flags.
+        * khtml/html/html_formimpl.cpp:
+        (HTMLButtonElementImpl::HTMLButtonElementImpl): Remove code to set the m_clicked flag.
+	The only place this flag was looked at is better handled by the m_activeSubmit flag.
+        (HTMLButtonElementImpl::defaultEventHandler): Remove more m_clicked flag code.
+        (HTMLInputElementImpl::HTMLInputElementImpl): Remove more m_clicked flag code.
+        (HTMLInputElementImpl::isSuccessfulSubmitButton): An image is also a successful submit
+	button, and unlike a submit element, it doesn't require a name because it will just submit
+        x and y with no name in that case. I suppose we could rename this function, but I think it's
+        still a pretty clear name even if not 100% accurate.
+        (HTMLInputElementImpl::encoding): Remove use of m_clicked and use m_activeSubmit instead.
+	This was the only place using m_clicked at all. Also remove bogus check for a -1 coordinate.
+	The coordinate defaults to 0, not -1, and it was never happening.
+        (HTMLInputElementImpl::defaultEventHandler): Remove more m_clicked flag code.
+
 2002-12-30  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3129016, make sure that zero-height tables and lists
