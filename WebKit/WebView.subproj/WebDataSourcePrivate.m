@@ -279,11 +279,6 @@
     _private->locationChangeHandler = l;
 }
 
-- (NSString *)_downloadPath
-{
-    return _private->downloadPath;
-}
-
 - (void) _setDownloadPath:(NSString *)path
 {
     [_private->downloadPath release];

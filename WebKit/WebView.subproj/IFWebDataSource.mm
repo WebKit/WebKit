@@ -323,6 +323,11 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
     return _private->contentPolicy;
 }
 
+- (NSString *)downloadPath
+{
+    return _private->downloadPath;
+}
+
 - (NSDictionary *)errors
 {
     return _private->errors;

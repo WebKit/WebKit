@@ -1,3 +1,12 @@
+2002-06-04  Chris Blumenberg  <cblu@apple.com>
+
+	* MIME.subproj/IFDownloadHandler.mm: Use public methods
+	* WebView.subproj/IFWebDataSource.h: Made downloadPath public
+	* WebView.subproj/IFWebDataSource.mm:
+	(-[IFWebDataSource downloadPath]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+
 2002-06-04  Richard Williamson  <rjw@apple.com>
 
     More exclusion for pre 6C48.

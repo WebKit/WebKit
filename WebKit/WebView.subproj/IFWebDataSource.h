@@ -148,6 +148,8 @@
 
 - (IFContentPolicy)contentPolicy;
 
+- (NSString *)downloadPath;
+
 /*
 */
 - (NSDictionary *)errors;

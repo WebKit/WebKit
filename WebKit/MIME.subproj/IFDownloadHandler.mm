@@ -26,7 +26,7 @@
 
 - (void)downloadCompletedWithData:(NSData *)data;
 {
-    NSString *path = [dataSource _downloadPath];
+    NSString *path = [dataSource downloadPath];
     NSFileManager *fileManager;
     NSWorkspace *workspace;
     
