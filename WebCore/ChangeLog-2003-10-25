@@ -1,3 +1,23 @@
+2002-06-27  Darin Adler  <darin@apple.com>
+
+	Fix Java. My changes this morning broke it.
+
+        * khtml/rendering/render_applet.cpp: (RenderApplet::processArguments):
+	Re-add required APPLE_CHANGES. Pass arguments to KJavaAppletWidget::processArguments.
+        * kwq/khtml/java/kjavaappletwidget.h: Added KJavaAppletWidget::processArguments.
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::processArguments): Added.
+
+	Some QFont fixes.
+
+        * kwq/qt/qfont.h: Remove unused setPixelSizeFloat.
+        * kwq/KWQFont.mm: Change to keep family names in a set. Since there are only
+	a small number of family names ever encountered, this is a bit of a memory win.
+        (QFont::QFont): Don't retain the family name.
+        (QFont::~QFont): Don't release the family name.
+        (QFont::setFamily): Put the family name in a set, and use the one from the set.
+        (QFont::operator=): Don't retain or release.
+        (QFont::operator==): Use == to compare the name.
+
 === Alexander-10 ===
 
 2002-06-27  Richard Williamson  <rjw@apple.com>

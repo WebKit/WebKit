@@ -55,6 +55,13 @@ void KJavaAppletWidget::setParameter(const QString &name, const QString &value)
     [immutableString release];
 }
 
+void KJavaAppletWidget::processArguments(const QMap<QString, QString> &arguments)
+{
+    for (QMap<QString, QString>::ConstIterator it = arguments.begin(); it != arguments.end(); ++it) {
+        setParameter(it.key(), it.data());
+    }
+}
+
 void KJavaAppletWidget::showApplet()
 {
     setView([[WebCoreViewFactory sharedFactory] 

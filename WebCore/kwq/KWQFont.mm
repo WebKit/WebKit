@@ -29,14 +29,14 @@
 #import <Cocoa/Cocoa.h>
 
 QFont::QFont()
-    : _family([@"" retain])
+    : _family(@"")
     , _trait(0)
     , _size(12.0)
 {
 }
 
 QFont::QFont(const QFont &copyFrom)
-    : _family([copyFrom._family retain])
+    : _family(copyFrom._family)
     , _trait(copyFrom._trait)
     , _size(copyFrom._size)
 {
@@ -44,7 +44,6 @@ QFont::QFont(const QFont &copyFrom)
 
 QFont::~QFont()
 {
-    [_family release];
 }
 
 int QFont::pixelSize() const
@@ -59,16 +58,21 @@ QString QFont::family() const
 
 void QFont::setFamily(const QString &qfamilyName)
 {
-    [_family release];
-    _family = [qfamilyName.getNSString() copy];
+    // Uset an immutable copy of the name, but keep a set of
+    // all family names so we don't end up with too many objects.
+    static NSMutableSet *families;
+    if (families == nil) {
+        families = [[NSMutableSet alloc] init];
+    }
+    NSString *mutableName = qfamilyName.getNSString();
+    _family = [families member:mutableName];
+    if (!_family) {
+        [families addObject:mutableName];
+        _family = [families member:mutableName];
+    }
 }
 
 void QFont::setPixelSize(int sz)
-{
-    _size = sz;
-}
-
-void QFont::setPixelSizeFloat(float sz)
 {
     _size = sz;
 }
@@ -111,8 +115,6 @@ bool QFont::bold() const
 
 QFont &QFont::operator=(const QFont &assignFrom)
 {
-    [assignFrom._family retain];
-    [_family release];
     _family = assignFrom._family;
     _trait = assignFrom._trait;
     _size = assignFrom._size;
@@ -121,7 +123,7 @@ QFont &QFont::operator=(const QFont &assignFrom)
 
 bool QFont::operator==(const QFont &compareFont) const
 {
-    return [_family isEqual:compareFont._family]
+    return _family == compareFont._family
         && _trait == compareFont._trait
         && _size == compareFont._size;
 }

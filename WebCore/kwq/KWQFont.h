@@ -51,7 +51,6 @@ public:
     QString family() const;
     void setFamily(const QString &);
     void setPixelSize(int);
-    void setPixelSizeFloat(float);
     void setWeight(int);
     int weight() const;
     bool setItalic(bool);
