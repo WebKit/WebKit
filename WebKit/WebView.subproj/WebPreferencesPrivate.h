@@ -19,5 +19,6 @@
 + (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)identifier;
 + (void)_removeReferenceForIdentifier:(NSString *)identifier;
 + (NSArray *)_userDefaultsKeysForIB;
+- (NSTimeInterval)_backForwardCacheExpirationInterval;
 
 @end

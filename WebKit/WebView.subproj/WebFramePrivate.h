@@ -50,6 +50,12 @@ typedef enum {
 #define WebPreviousFrameState @"WebPreviousFrameState"
 #define WebCurrentFrameState  @"WebCurrentFrameState"
 
+// Keys for accessing the values in the page cache dictionary.
+extern NSString *WebPageCacheEntryDateKey;
+extern NSString *WebPageCacheDataSourceKey;
+extern NSString *WebPageCacheDocumentViewKey;
+extern NSString *WebCorePageCacheStateKey;
+
 @interface WebFramePrivate : NSObject
 {
 @public

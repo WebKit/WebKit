@@ -253,7 +253,7 @@ extern NSString *WebPreferencesChangedNotification;
 - (BOOL)loadsImagesAutomatically;
 
 /*!
-    @method setAutosavesPreferences:
+    @method setAutosaves:
     @param flag 
     @discussion If autosave preferences is YES the settings represented by
     WebPreferences will be stored in the user defaults database.
@@ -261,7 +261,7 @@ extern NSString *WebPreferencesChangedNotification;
 - (void)setAutosaves:(BOOL)flag;
 
 /*!
-    @method autosavesPreferences
+    @method autosaves
     @result The value of the autosave preferences flag.
 */
 - (BOOL)autosaves;

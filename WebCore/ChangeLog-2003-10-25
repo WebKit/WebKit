@@ -1,3 +1,13 @@
+2003-05-30  Richard Williamson  <rjw@apple.com>
+
+	As part of some cleanup when fixing 3272516 changed use of
+	@"" for cache keys to NSString declarations.
+
+        Reviewed by Ken.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge openURL:reload:contentType:refresh:lastModified:pageCache:]):
+
 2003-05-30  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3269129 and 3269220.  setAttribute('value') didn't work

@@ -1,3 +1,31 @@
+2003-05-30  Richard Williamson  <rjw@apple.com>
+
+	Fixed 3272516.  Items are now expired from the
+	b/f cache if they are older than 30 minutes.  This
+	number was pulled out of our #!$es.  Also did
+	some cleanup of the b/f cache code.
+
+        Reviewed by Ken.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge saveDocumentToPageCache:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _createPageCacheForItem:]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _loadItem:withLoadType:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]):
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences initialize]):
+        (-[WebPreferences _resourceTimedLayoutEnabled]):
+        (-[WebPreferences _backForwardCacheExpirationInterval]):
+        * WebView.subproj/WebPreferencesPrivate.h:
+        * WebView.subproj/WebView.h:
+
+        * WebView.subproj/WebPreferences.h: Cleaned up some headerdoc
+	comments.
+	
 2003-05-29  Richard Williamson   <rjw@apple.com>
 
 	Implemented 'estimatedProgress' method on WebView.  This should

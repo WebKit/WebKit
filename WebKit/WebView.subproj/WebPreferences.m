@@ -37,6 +37,7 @@
 #define WebKitDisplayImagesKey @"WebKitDisplayImagesKey"
 #define WebKitPageCacheSizePreferenceKey @"WebKitPageCacheSizePreferenceKey"
 #define WebKitObjectCacheSizePreferenceKey @"WebKitObjectCacheSizePreferenceKey"
+#define WebKitBackForwardCacheExpirationIntervalKey @"WebKitBackForwardCacheExpirationIntervalKey"
 
 NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotification";
 
@@ -197,6 +198,7 @@ NS_ENDHANDLER
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImagesPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitAllowAnimatedImageLoopingPreferenceKey,
         [NSNumber numberWithBool:YES],  WebKitDisplayImagesKey,
+        @"1800",                        WebKitBackForwardCacheExpirationIntervalKey,
         nil];
 
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
@@ -510,6 +512,11 @@ NS_ENDHANDLER
 - (BOOL)_resourceTimedLayoutEnabled
 {
     return [[NSUserDefaults standardUserDefaults] boolForKey:WebKitResourceTimedLayoutEnabledPreferenceKey];
+}
+
+- (NSTimeInterval)_backForwardCacheExpirationInterval
+{
+    return (NSTimeInterval)[[NSUserDefaults standardUserDefaults] floatForKey:WebKitBackForwardCacheExpirationIntervalKey];
 }
 
 static NSMutableDictionary *webPreferencesInstances = nil;

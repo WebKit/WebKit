@@ -92,6 +92,11 @@ Repeat load of the same URL (by any other means of navigation other than the rel
  Add to back/forward list: NO
 */
 
+NSString *WebPageCacheEntryDateKey = @"WebPageCacheEntryDateKey";
+NSString *WebPageCacheDataSourceKey = @"WebPageCacheDataSourceKey";
+NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
+NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
+
 @interface NSObject (WebExtraPerformMethod)
 
 - (id)performSelector:(SEL)aSelector withObject:(id)object1 withObject:(id)object2 withObject:(id)object3;
@@ -634,7 +639,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     
                     // Create a document view for this document, or used the cached view.
                     if (pageCache){
-                        NSView <WebDocumentView> *cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
+                        NSView <WebDocumentView> *cachedView = [pageCache objectForKey: WebPageCacheDocumentViewKey];
                         ASSERT(cachedView != nil);
                         [[self frameView] _setDocumentView: cachedView];
                     }
@@ -782,6 +787,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return _timeOfLastCompletedLoad;
 }
 
+- (void)_createPageCacheForItem:(WebHistoryItem *)item
+{
+    NSMutableDictionary *pageCache;
+
+    [item setHasPageCache: YES];
+    pageCache = [item pageCache];
+    [[self dataSource] _setStoredInPageCache: YES];
+    [pageCache setObject: [NSDate date]  forKey: WebPageCacheEntryDateKey];
+    [pageCache setObject: [self dataSource] forKey: WebPageCacheDataSourceKey];
+    [pageCache setObject: [[self frameView] documentView] forKey: WebPageCacheDocumentViewKey];
+    [_private->bridge saveDocumentToPageCache];
+}
+
 - (void)_setState: (WebFrameState)newState
 {
     LOG(Loading, "%@:  transition from %s to %s", [self name], stateNames[_private->state], stateNames[newState]);
@@ -826,13 +844,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         {
             if (![item pageCache]){
                 LOG(PageCache, "Saving page to back/forward cache, %s\n", [[[[self dataSource] _URL] absoluteString] cString]);
-                [item setHasPageCache: YES];
-                [[self dataSource] _setStoredInPageCache: YES];
-                [[item pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
-                [[item pageCache] setObject: [[self frameView] documentView] forKey: @"WebKitDocumentView"];
-                [_private->bridge saveDocumentToPageCache];
+
+                // Add the items to this page's cache.
+                [self _createPageCacheForItem:item];
+
+                // See if any page caches need to be purged after the addition of this
+                // new page cache.
                 [self _purgePageCache];
             }
+        }
+        else {
+            LOG(PageCache, "NOT saving page to back/forward cache, %s\n", [[[[self dataSource] _URL] absoluteString] cString]);
         }
     }
     
@@ -1167,11 +1189,28 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private setProvisionalItem:item];
 
         WebDataSource *newDataSource;
+        BOOL inPageCache = NO;
+        
+        // Check if we'll be using the page cache.  We only use the page cache
+        // if one exists and it is less than _backForwardCacheExpirationInterval
+        // seconds old.  If the cache is expired it gets flushed here.
         if ([item hasPageCache]){
-            newDataSource = [[item pageCache] objectForKey: @"WebKitDataSource"];
-            [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];            
+            NSDictionary *pageCache = [item pageCache];
+            NSDate *cacheDate = [pageCache objectForKey: WebPageCacheEntryDateKey];
+            NSTimeInterval delta = [[NSDate date] timeIntervalSinceDate: cacheDate];
+
+            if (delta <= [[WebPreferences standardPreferences] _backForwardCacheExpirationInterval]){
+                newDataSource = [pageCache objectForKey: WebPageCacheDataSourceKey];
+                [self _loadDataSource:newDataSource withLoadType:loadType formState:nil];   
+                inPageCache = YES;
+            }         
+            else {
+                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %s (%3.5f > %3.5f seconds)\n", [[[[_private provisionalItem] URL] absoluteString] cString], delta, [[WebPreferences standardPreferences] _backForwardCacheExpirationInterval]);
+                [item setHasPageCache: NO];
+            }
         }
-        else {
+        
+        if (!inPageCache) {
             NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:itemURL];
             [self _addExtraFieldsToRequest:request alwaysFromRequest: (formData != nil)?YES:NO];
 
@@ -2010,25 +2049,28 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (self == [[self webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
+    WebHistoryItem *item = [_private provisionalItem];
     WebFrameLoadType loadType = [self _loadType];
     if ((loadType == WebFrameLoadTypeForward ||
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
-        [[_private provisionalItem] hasPageCache]){
+        [item hasPageCache]){
         NSDictionary *pageCache = [[_private provisionalItem] pageCache];
-        if ([pageCache objectForKey:@"WebCorePageState"]){
+        if ([pageCache objectForKey:WebCorePageCacheStateKey]){
             LOG (PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
             [_private->provisionalDataSource _startLoading: pageCache];
+            return;
         }
-    } else {
-        if (formState) {
-            // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
-            // mechanism across the willSubmitForm callout.
-            _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterWillSubmitForm:)];
-            [[[self webView] _formDelegate] frame:self sourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:_private->listener];
-        } else {
-            [self _continueAfterWillSubmitForm:WebPolicyUse];
-        }
+    }
+
+    if (formState) {
+        // It's a bit of a hack to reuse the WebPolicyDecisionListener for the continuation
+        // mechanism across the willSubmitForm callout.
+        _private->listener = [[WebPolicyDecisionListener alloc] _initWithTarget:self action:@selector(_continueAfterWillSubmitForm:)];
+        [[[self webView] _formDelegate] frame:self sourceFrame:[formState sourceFrame] willSubmitForm:[formState form] withValues:[formState values] submissionListener:_private->listener];
+    } 
+    else {
+        [self _continueAfterWillSubmitForm:WebPolicyUse];
     }
 }
 

@@ -506,7 +506,7 @@
     if (![item hasPageCache]) {
         return false;
     }
-    [[item pageCache] setObject: documentInfo forKey: @"WebCorePageState"];
+    [[item pageCache] setObject: documentInfo forKey: WebCorePageCacheStateKey];
     return true;
 }
 

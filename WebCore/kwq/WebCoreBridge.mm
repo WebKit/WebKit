@@ -92,6 +92,8 @@ NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebCoreElementLinkTitleKey = 		@"WebElementLinkTitle";
 NSString *WebCoreElementNameKey = 		@"WebElementName";
 
+NSString *WebCorePageCacheStateKey =               @"WebCorePageCacheState";
+
 @implementation WebCoreBridge
 
 static bool initializedObjectCacheSize = FALSE;
@@ -159,7 +161,7 @@ static bool initializedObjectCacheSize = FALSE;
 - (void)openURL:(NSString *)URL reload:(BOOL)reload contentType:(NSString *)contentType refresh:(NSString *)refresh lastModified:(NSDate *)lastModified pageCache:(NSDictionary *)pageCache
 {
     if (pageCache) {
-        KWQPageState *state = [pageCache objectForKey:@"WebCorePageState"];
+        KWQPageState *state = [pageCache objectForKey:WebCorePageCacheStateKey];
         _part->openURLFromPageCache(state);
         [state invalidate];
         return;
