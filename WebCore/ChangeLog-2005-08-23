@@ -1,3 +1,5 @@
+=== Safari-122 ===
+
 2004-01-14  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3527819, marquee makes page layout too wide.  Make sure marquees have a minimum width of 0.
