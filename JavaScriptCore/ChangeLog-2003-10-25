@@ -1,5 +1,13 @@
 2003-04-25  Darin Adler  <darin@apple.com>
 
+	- fixed 3241344 -- REGRESSION: top of page missing on wired.com and cnn.com
+
+        Caused by the ResolveNode speedup. Roll it out until I can figure out why.
+
+        * kjs/nodes.cpp: (ResolveNode::evaluate): Go back to using evaluateReference.
+
+2003-04-25  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - a couple improvements that give a 6.6% speedup on iBench JavaScript
