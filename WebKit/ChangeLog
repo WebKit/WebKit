@@ -1,3 +1,26 @@
+2003-04-13  Trey Matteson  <trey@apple.com>
+
+	3150693 - open new window on "same page" doesn't give me the same frame content
+
+	The core is a new support method that loads a WebView given a HistoryItem, which
+	thus restores all frames of that item, and optionally the form and scroll state.
+
+        Reviewed by NOBODY (OOPS!).
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem copyWithZone:]):  Copy the docState, scrollPosition, isTargetItem.
+	No good	reason to have left these out when I wrote this method.
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _saveDocumentAndScrollState]):  New method to run the frame tree and
+	save all form/scroll state to the current item.
+        * WebView.subproj/WebView.m:
+	_goToItem:withLoadType: moved to WebViewPrivate.m
+        * WebView.subproj/WebViewPrivate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _goToItem:withLoadType:]):  Moved from WebView.m, no change.
+        (-[WebView _loadItem:showingInView:]):  New method to load the view with the item.
+
 2003-04-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3162338 - Embedding SVG with <object type="image/svg+xml"> doesn't work

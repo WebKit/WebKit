@@ -127,7 +127,6 @@ typedef enum {
 
 - (void)_addExtraFieldsToRequest:(NSMutableURLRequest *)request alwaysFromRequest: (BOOL)f;
 
-
 - (void)_checkNewWindowPolicyForRequest:(NSURLRequest *)request action:(NSDictionary *)action frameName:(NSString *)frameName formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
 
 - (void)_checkNavigationPolicyForRequest:(NSURLRequest *)request dataSource:(WebDataSource *)dataSource formState:(WebFormState *)formState andCall:(id)target withSelector:(SEL)selector;
@@ -161,6 +160,9 @@ typedef enum {
 
 - (WebHistoryItem *)_itemForSavingDocState;
 - (WebHistoryItem *)_itemForRestoringDocState;
+
+- (void)_saveDocumentAndScrollState;
+
 - (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL;
 
 - (void)_loadDataSource:(WebDataSource *)dataSource withLoadType:(WebFrameLoadType)type formState:(WebFormState *)formState;

@@ -16,6 +16,7 @@
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebFrameViewPrivate.h>
+#import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
@@ -342,6 +343,39 @@
         [[self _windowOperationsDelegateForwarder] webView:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
     }
     _private->lastElementWasNonNil = dictionary != nil;
+}
+
+- (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type
+{
+    // We never go back/forward on a per-frame basis, so the target must be the main frame
+    ASSERT([item target] == nil || [self _findFrameNamed:[item target]] == [self mainFrame]);
+
+    // abort any current load if we're going back/forward
+    [[self mainFrame] stopLoading];
+    [[self mainFrame] _goToItem:item withLoadType:type];
+}
+
+- (void)_loadItem:(WebHistoryItem *)item showingInView:(WebView *)otherView
+{
+    // It turns out the right combination of behavior is done with the back/forward load
+    // type.  (See behavior matrix at the top of WebFramePrivate.)  So we put this item in
+    // the back forward list, and go there.
+
+    if (otherView && [[otherView backForwardList] currentItem] == item) {
+        // If this item is showing somewhere, save away its current scroll and form state
+        [[otherView mainFrame] _saveDocumentAndScrollState];
+    }
+
+    WebHistoryItem *newItem = [item copy];	// Makes a deep copy, happily
+    // Make the top item the target.  This ensures we reload all frames if we go forward and
+    // back to this item later, which seems good for the first page of a window, where this
+    // feature is typically used.
+    [[item targetItem] setIsTargetItem:NO];
+    [item setIsTargetItem:YES];
+    
+    [[self backForwardList] addItem:newItem];
+
+    [self _goToItem:newItem withLoadType:WebFrameLoadTypeIndexedBackForward];
 }
 
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate

@@ -1931,6 +1931,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     return nil;
 }
 
+// Walk the frame tree, telling all frames to save their form state into their current
+// history item.
+- (void)_saveDocumentAndScrollState
+{
+    [_private->bridge saveDocumentState];
+    [self _saveScrollPositionToItem:[_private currentItem]];
+
+    NSArray *frames = [self children];
+    int count = [frames count];
+    int i;
+    for (i = 0; i < count; i++) {
+        [[frames objectAtIndex:i] _saveDocumentAndScrollState];
+    }
+}
+
 // Called after the FormsDelegate is done processing willSubmitForm:
 -(void)_continueAfterWillSubmitForm:(WebPolicyAction)policy
 {

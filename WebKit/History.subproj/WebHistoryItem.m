@@ -93,10 +93,13 @@
     copy->_private->title = [_private->title copy];
     copy->_private->displayTitle = [_private->displayTitle copy];
     copy->_private->lastVisitedDate = [_private->lastVisitedDate copy];
+    copy->_private->scrollPoint = _private->scrollPoint;
     copy->_private->anchor = [_private->anchor copy];
+    copy->_private->documentState = [_private->documentState copy];
     if (_private->subItems) {
         copy->_private->subItems = [[NSMutableArray alloc] initWithArray:_private->subItems copyItems:YES];
     }
+    copy->_private->isTargetItem = _private->isTargetItem;
     copy->_private->formData = [_private->formData copy];
     copy->_private->formContentType = [_private->formContentType copy];
     copy->_private->formReferrer = [_private->formReferrer copy];

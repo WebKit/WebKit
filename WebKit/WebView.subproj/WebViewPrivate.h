@@ -4,6 +4,7 @@
 */
 #import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
+#import <WebKit/WebFramePrivate.h>
 
 @class WebBackForwardList;
 @class WebError;
@@ -128,6 +129,21 @@ typedef struct _WebResourceDelegateImplementationCache {
 - (NSMenu *)_menuForElement:(NSDictionary *)element;
 
 - (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(unsigned)modifierFlags;
+
+/*!
+Could be worth adding to the API.
+    @method loadItem:showingInView:
+    @abstract Loads the view with the contents described by the item, including frame content
+        described by child items.
+    @param item   The item to load.  It is not retained, but a copy will appear in the
+        BackForwardList on this WebView.
+    @param otherView   An optional WebView where the item is currently showing.  If this is
+        specified, the resulting load will have the same scroll position and form state
+        as present in otherView.
+*/
+- (void)_loadItem:(WebHistoryItem *)item showingInView:(WebView *)otherView;
+
+- (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type;
 
 // May well become public
 - (void)_setFormDelegate: (id<WebFormDelegate>)delegate;
