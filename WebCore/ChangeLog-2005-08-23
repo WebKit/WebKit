@@ -1,3 +1,12 @@
+2002-10-31  Richard Williamson  <rjw@apple.com>
+
+        Turned on use of lookup tables.
+        
+        * kwq/KWQChar.mm:
+        (QChar::direction):
+        (QChar::mirrored):
+        (QChar::mirroredChar):
+
 2002-10-31  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3075803 - yahoo customize layout - delete, ordering of items doesn't work

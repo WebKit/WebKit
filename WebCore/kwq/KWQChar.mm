@@ -25,6 +25,8 @@
 
 #import "KWQString.h"
 #import "KWQLogging.h"
+#import "WebCoreUnicode.h"
+
 #import <Foundation/Foundation.h>
 
 #import <CoreFoundation/CFBidi.h>
@@ -105,6 +107,7 @@ QChar QChar::upper() const
 
 QChar::Direction QChar::direction() const
 {
+#ifdef OLD_WAY
     uint8_t type;
     QChar::Direction dir = DirL;
 
@@ -176,22 +179,18 @@ QChar::Direction QChar::direction() const
             break;
     }
     return dir;
+#endif
+    return (QChar::Direction)WebCoreUnicodeDirectionFunction(c);
 }
 
 bool QChar::mirrored() const
 {
-    // FIXME: unimplemented because we don't do BIDI yet
-    ERROR("not yet implemented");
-    // return whether character should be reversed if text direction is reversed
-    return false;
+    return WebCoreUnicodeMirroredFunction(c);
 }
 
 QChar QChar::mirroredChar() const
 {
-    // FIXME: unimplemented because we don't do BIDI yet
-    ERROR("not yet implemented");
-    // return mirrored character if it is mirrored else return itself
-    return *this;
+    return QChar(WebCoreUnicodeMirroredCharFunction(c));
 }
 
 int QChar::digitValue() const

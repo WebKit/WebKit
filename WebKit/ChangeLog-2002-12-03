@@ -1,3 +1,13 @@
+2002-10-31  Richard Williamson  <rjw@apple.com>
+
+        Corrected extern definitions of lookup tables.
+        
+        * Misc.subproj/WebUnicode.h:
+        * Misc.subproj/WebUnicode.m:
+        (_unicodeDirection):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (+[WebTextRenderer initialize]):
+
 === 30 ===
 
 2002-10-30  Richard Williamson  <rjw@apple.com>

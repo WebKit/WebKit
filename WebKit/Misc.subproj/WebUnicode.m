@@ -26,6 +26,7 @@ static WebCoreUnicodeCategory _unicodeCategory(UniChar c)
 static WebCoreUnicodeDirection _unicodeDirection(UniChar c)
 {
     const unsigned char *rowp = direction_info[ROW(c)];
+    
     if(!rowp) 
         return DirectionL;
     return (WebCoreUnicodeDirection) ( *(rowp+CELL(c)) &0x1f );

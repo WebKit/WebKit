@@ -11,8 +11,9 @@
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
 #import <WebKit/WebGlyphBuffer.h>
-#import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebKitLogging.h>
+#import <WebKit/WebTextRendererFactory.h>
+#import <WebKit/WebUnicode.h>
 
 #import <QD/ATSUnicodePriv.h>
 
@@ -221,6 +222,7 @@ static BOOL bufferTextDrawing = NO;
 
 + (void)initialize
 {
+    WebKitInitializeUnicode();
     nonBaseChars = CFCharacterSetGetPredefined(kCFCharacterSetNonBase);
     bufferTextDrawing = [[[NSUserDefaults standardUserDefaults] stringForKey:@"BufferTextDrawing"] isEqual: @"YES"];
 }
