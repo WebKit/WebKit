@@ -1,4 +1,5 @@
 .objc_class_name_WebCoreBridge
+.objc_class_name_WebCoreCookieAdapter
 .objc_class_name_WebCoreImageRendererFactory
 .objc_class_name_WebCoreTextRendererFactory
 .objc_class_name_WebCoreViewFactory

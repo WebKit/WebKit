@@ -32,6 +32,9 @@
 #include "kjs_navigator.lut.h"
 #include "kjs_binding.h"
 #include "khtml_part.h"
+#ifdef APPLE_CHANGES
+#include <KWQKCookieJar.h>
+#endif
 
 using namespace KJS;
 
@@ -230,7 +233,11 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
   case _MimeTypes:
     return Value(new MimeTypes(exec));
   case CookieEnabled:
+#ifdef APPLE_CHANGES
+      return Boolean(KWQKCookieJar::cookieEnabled());
+#else
     return Boolean(true); /// ##### FIXME
+#endif
   default:
     kdWarning() << "Unhandled token in DOMEvent::getValueProperty : " << token << endl;
     return Value();

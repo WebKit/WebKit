@@ -40,6 +40,7 @@ libkwq_o_SOURCES = \
 	KWQKCharsets.mm \
 	KWQKComboBox.mm \
 	KWQKConfigBase.mm \
+        KWQKCookieJar.mm \
 	KWQKCursor.mm \
 	KWQKDebug.mm \
 	KWQKFileDialog.mm \
@@ -109,6 +110,7 @@ libkwq_o_SOURCES = \
 	KWQxml.mm \
 	kwqdebug.mm \
 	WebCoreBridge.mm \
+        WebCoreCookieAdapter.m \
 	WebCoreImageRendererFactory.m \
 	WebCoreTextRendererFactory.m \
 	WebCoreViewFactory.m \

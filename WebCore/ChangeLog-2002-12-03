@@ -1,3 +1,36 @@
+2002-06-27  Maciej Stachowiak  <mjs@apple.com>
+
+	WebCore part of fixes for JavaScript cookie bugs:
+	
+	2943749 - JavaScript navigator.cookieEnabled property is always "true"
+	2856039 - JavaScript document.cookies property is not implemented
+	
+	Thereby also fixing:
+	
+	2944378 - Trying to log into my Yahoo web mail account sent
+	Alexander into a loop
+	
+        * kwq/KWQKCookieJar.h: Added.
+        * kwq/KWQKCookieJar.mm: Added.
+        (KWQKCookieJar::cookie): C++ veneer over WebCoreCookieAdapter call.
+        (KWQKCookieJar::setCookie): Likewise.
+        (KWQKCookieJar::cookieEnabled): Likewise.
+        * kwq/Makefile.am: Add new files to build.
+        * kwq/WebCoreCookieAdapter.h: Added.
+        * kwq/WebCoreCookieAdapter.m: Added.
+	(+[WebCoreCookieAdapter sharedAdapter]): Method to return shared
+	instance, al la the WebCoreFactory classes.
+        (-[WebCoreCookieAdapter init]): Establish self as shared instance.
+        (-[WebCoreCookieAdapter cookiesEnabled]): No-op implementation.
+        (-[WebCoreCookieAdapter cookiesForURL:]): Likewise.
+        (-[WebCoreCookieAdapter setCookies:forURL:]): Likewise.
+        * WebCore.exp: Export WebCoreCookieAdapter class.
+        * khtml/ecma/kjs_navigator.cpp:
+        (Navigator::getValueProperty): Call appropriate KWQCookieJar method.
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::cookie): Call appropriate KWQCookieJar method.
+        (HTMLDocumentImpl::setCookie): Likewise
+
 2002-06-27  Chris Blumenberg  <cblu@apple.com>
 
 	Fix to support sending PARAM tags to the Java plug-in.

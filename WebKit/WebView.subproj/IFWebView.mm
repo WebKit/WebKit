@@ -13,6 +13,7 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFTextRendererFactory.h>
 #import <WebKit/IFImageRendererFactory.h>
+#import <WebKit/IFCookieAdapter.h>
 
 #import <WebFoundation/IFNSStringExtensions.h>
 #import <WebFoundation/IFNSURLExtensions.h>
@@ -26,7 +27,8 @@
     [IFWebCoreViewFactory createSharedFactory];
     [IFTextRendererFactory createSharedFactory];
     [IFImageRendererFactory createSharedFactory];
-   
+    [IFCookieAdapter createSharedAdapter];
+    
     _private = [[IFWebViewPrivate alloc] init];
 
     IFDynamicScrollBarsView *scrollView  = [[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,frame.size.width,frame.size.height)];

@@ -1,3 +1,28 @@
+2002-06-27  Maciej Stachowiak  <mjs@apple.com>
+
+	WebKit part of fixes for JavaScript cookie bugs:
+	
+	2943749 - JavaScript navigator.cookieEnabled property is always "true"
+	2856039 - JavaScript document.cookies property is not implemented
+	
+	Thereby also fixing:
+	
+	2944378 - Trying to log into my Yahoo web mail account sent
+	Alexander into a loop
+	
+        * WebCoreSupport.subproj/IFCookieAdapter.h: Added.
+        * WebCoreSupport.subproj/IFCookieAdapter.m: Added.
+        (+[IFCookieAdapter createSharedAdapter]): Set up an instance of
+	IFCookieAdapter as the WebCoreCookieAdapter shared instance.
+        (-[IFCookieAdapter cookiesEnabled]): Implement in terms of
+	WebFoundation stuff.
+        (-[IFCookieAdapter cookiesForURL:]): Likewise.
+        (-[IFCookieAdapter setCookies:forURL:]): Likewise.
+        * WebKit.pbproj/project.pbxproj: Add new files to build.
+        * WebView.subproj/IFWebView.mm:        
+	(-[IFWebView initWithFrame:]): Hook up the cookie adapter just
+	like the various factory classes.
+	
 2002-06-27  Chris Blumenberg  <cblu@apple.com>
 
 	Support for Java.

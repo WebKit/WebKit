@@ -48,11 +48,15 @@
 #include <kcharsets.h>
 #include <kglobalsettings.h>
 
+
 #include "css/cssproperties.h"
 #include "css/cssstyleselector.h"
 #include "css/css_stylesheetimpl.h"
 #include <stdlib.h>
 #include <qptrstack.h>
+#ifdef APPLE_CHANGES
+#include <KWQKCookieJar.h>
+#endif
 
 template class QPtrStack<DOM::NodeImpl>;
 
@@ -130,7 +134,7 @@ DOMString HTMLDocumentImpl::lastModified() const
 DOMString HTMLDocumentImpl::cookie() const
 {
 #ifdef APPLE_CHANGES
-    return DOMString();
+    return KWQKCookieJar::cookie(KURL(URL()));
 #else
     QCString replyType;
     QByteArray params, reply;
@@ -162,7 +166,9 @@ DOMString HTMLDocumentImpl::cookie() const
 
 void HTMLDocumentImpl::setCookie( const DOMString & value )
 {
-#ifndef APPLE_CHANGES
+#ifdef APPLE_CHANGES
+    return KWQKCookieJar::setCookie(KURL(URL()), value.string());
+#else
     long windowId = view() ? view()->winId() : 0;
     QByteArray params;
     QDataStream stream(params, IO_WriteOnly);
