@@ -215,6 +215,7 @@ public:
     void _commonDelete() {
         delete _name;
         delete _returnType;
+        delete _signature;
         delete [] _parameters;
     };
     
@@ -232,6 +233,7 @@ public:
         for (i = 0; i < _numParameters; i++) {
             _parameters[i] = other._parameters[i];
         }
+        _signature = other._signature;
     };
     
     JavaMethod(const JavaMethod &other) : Method() {
@@ -251,17 +253,20 @@ public:
 
     virtual KJS::Value value() const { return KJS::Value(0); }
     virtual const char *name() const { return _name->characters(); };
-    virtual const char *signature() const { return _signature->characters(); };
     virtual RuntimeType returnType() const { return _returnType->characters(); };
     virtual Parameter *parameterAt(long i) const { return &_parameters[i]; };
     virtual long numParameters() const { return _numParameters; };
+    
+    const char *signature() const;
+    JNIType JNIReturnType() const;
     
 private:
     JavaParameter *_parameters;
     long _numParameters;
     JavaString *_name;
-    JavaString *_signature;
+    mutable KJS::UString *_signature;
     JavaString *_returnType;
+    JNIType _JNIReturnType;
 };
 
 }

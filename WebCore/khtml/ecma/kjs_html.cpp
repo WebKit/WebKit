@@ -2904,6 +2904,20 @@ Value KJS::HTMLCollection::tryGet(ExecState *exec, const Identifier &propertyNam
     unsigned int u = propertyName.toULong(&ok);
     if (ok) {
       DOM::Node node = collection.item(u);
+
+#if APPLE_CHANGES
+        if (node.handle()->id() == ID_APPLET) {
+            DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
+            DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
+            
+            fprintf (stderr,"%s:  need to return applet instance\n", __PRETTY_FUNCTION__);
+            if (appletElement->getAppletInstance()) {
+                // The instance is owned by the applet element.
+                RuntimeObjectImp *appletImp = new RuntimeObjectImp(appletElement->getAppletInstance(), false);
+                return Value(appletImp);
+            }
+        }
+#endif
       return getDOMNode(exec,node);
     }
     else

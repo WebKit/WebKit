@@ -1,3 +1,46 @@
+2003-12-02  Richard Williamson   <rjw@apple.com>
+
+	Added support for calling simple methods in Java from JavaScript.
+	(void return and no parameters).  Yay, LiveConnect lives.
+
+	Still need write argument and return value conversion code.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::getClass):
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_instance.h:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaMethod::JavaMethod):
+        (JavaMethod::signature):
+        (JavaMethod::JNIReturnType):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaMethod::_commonDelete):
+        (Bindings::JavaMethod::_commonCopy):
+        (Bindings::JavaMethod::name):
+        * bindings/jni/jni_utility.cpp:
+        (signatureFromPrimitiveType):
+        * bindings/jni/jni_utility.h:
+        * bindings/runtime.h:
+        * bindings/runtime_method.cpp: Added.
+        (RuntimeMethodImp::RuntimeMethodImp):
+        (RuntimeMethodImp::~RuntimeMethodImp):
+        (RuntimeMethodImp::get):
+        (RuntimeMethodImp::implementsCall):
+        (RuntimeMethodImp::call):
+        (RuntimeMethodImp::codeType):
+        (RuntimeMethodImp::execute):
+        * bindings/runtime_method.h: Added.
+        * bindings/runtime_object.cpp:
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::get):
+        * bindings/runtime_object.h:
+        * kjs/function.cpp:
+        (FunctionImp::FunctionImp):
+        * kjs/interpreter.h:
+
 2003-12-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

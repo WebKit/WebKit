@@ -59,7 +59,6 @@ FunctionImp::FunctionImp(ExecState *exec, const Identifier &n)
       static_cast<FunctionPrototypeImp*>(exec->interpreter()->builtinFunctionPrototype().imp())
       ), param(0L), ident(n)
 {
-  //fprintf(stderr,"FunctionImp::FunctionImp this=%p\n");
 }
 
 FunctionImp::~FunctionImp()

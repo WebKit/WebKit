@@ -363,6 +363,46 @@ JNIType primitiveTypeFromClassName(const char *name)
     return type;
 }
 
+const char *signatureFromPrimitiveType(JNIType type)
+{
+    switch (type){
+        case void_type: 
+            return "V";
+        
+        case object_type:
+            return "L";
+        
+        case boolean_type:
+            return "Z";
+        
+        case byte_type:
+            return "B";
+            
+        case char_type:
+            return "C";
+        
+        case short_type:
+            return "S";
+        
+        case int_type:
+            return "I";
+        
+        case long_type:
+            return "J";
+        
+        case float_type:
+            return "F";
+        
+        case double_type:
+            return "D";
+
+        case invalid_type:
+        default:
+        break;
+    }
+    return "";
+}
+
 jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature)
 {
     JavaVM *jvm = getJavaVM();

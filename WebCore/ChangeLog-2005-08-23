@@ -1,3 +1,14 @@
+2003-12-02  Richard Williamson   <rjw@apple.com>
+
+	Return a value that is backed by RuntimeObjectImpl, instead
+	of a DOM object for applet[0].  This is better than having
+	the DOM object redirect to the RuntimeObjectImpl.
+
+        Reviewed by Chris.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLCollection::tryGet):
+
 2003-12-02  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -23,15 +23,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-#include "operations.h"
-#include "runtime_object.h"
 #include "error_object.h"
-
+#include "function.h"
+#include "interpreter.h"
+#include "object.h"
+#include "operations.h"
+#include "runtime_method.h"
 #include "runtime_object.h"
+#include "types.h"
+#include "value.h"
+
 
 #include <assert.h>
 
@@ -62,6 +63,9 @@ RuntimeObjectImp::RuntimeObjectImp(Bindings::Instance *i, bool oi) : ObjectImp (
 {
     ownsInstance = oi;
     instance = i;
+    _classInfo.className = 0;
+    _classInfo.parentClass = 0;
+    _classInfo.propHashTable = 0;
     _initializeClassInfoFromInstance();
 }
 
@@ -78,6 +82,11 @@ Value RuntimeObjectImp::get(ExecState *exec, const Identifier &propertyName) con
     
     // Now check if a method with specified name exists, if so return a function object for
     // that method.
+    Method *aMethod = instance->getClass()->methodNamed(propertyName.ascii());
+    if (aMethod) {
+        printf ("%s: found %s(%p)\n", __PRETTY_FUNCTION__, propertyName.ascii(), aMethod);
+        return Object (new RuntimeMethodImp(exec, propertyName, aMethod));
+    }
     
     return Undefined();
 }

@@ -22,53 +22,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_OBJECT_H_
-#define _RUNTIME_OBJECT_H_
-
-#include <JavaVM/jni.h>
+#ifndef _RUNTIME_FUNCTION_H_
+#define _RUNTIME_FUNCTION_H_
 
 #include <JavaScriptCore/runtime.h>
 #include <JavaScriptCore/object.h>
 
 namespace KJS {
 
-class RuntimeObjectImp : public ObjectImp {
-public:
-    RuntimeObjectImp(ObjectImp *proto);
-    
-    ~RuntimeObjectImp();
-    
-    RuntimeObjectImp(Bindings::Instance *i, bool ownsInstance = true);
 
-    const ClassInfo *classInfo() const;
+class RuntimeMethodImp : public FunctionImp 
+{
+public:
+    RuntimeMethodImp(ExecState *exec, const Identifier &n = Identifier::null(), Bindings::Method *method = 0);
+    
+    virtual ~RuntimeMethodImp();
 
     virtual Value get(ExecState *exec, const Identifier &propertyName) const;
 
-    virtual void put(ExecState *exec, const Identifier &propertyName,
-                     const Value &value, int attr = None);
+    virtual bool implementsCall() const;
+    virtual Value call(ExecState *exec, Object &thisObj, const List &args);
 
-    virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
-
-    virtual bool hasProperty(ExecState *exec,
-			     const Identifier &propertyName) const;
-
-
-    virtual bool deleteProperty(ExecState *exec,
-                                const Identifier &propertyName);
-
-    virtual Value defaultValue(ExecState *exec, Type hint) const;
-
-    void setInternalInstance (Bindings::Instance *i) { instance = i; }
-    Bindings::Instance *getInternalInstance() const { return instance; }
+    virtual CodeType codeType() const;
+    
+    virtual Completion execute(ExecState *exec);
 
 private:
-    void _initializeClassInfoFromInstance();
-    
-    ClassInfo _classInfo;
-    Bindings::Instance *instance;
-    bool ownsInstance;
+    Bindings::Method *method;
 };
-    
-}; // namespace
+
+};
 
 #endif

@@ -48,6 +48,8 @@ const char *getCharactersFromJStringInEnv (JNIEnv *env, jstring aJString);
 void releaseCharactersForJStringInEnv (JNIEnv *env, jstring aJString, const char *s);
 
 JNIType primitiveTypeFromClassName(const char *name);
+const char *signatureFromPrimitiveType(JNIType type);
+
 jvalue getJNIField( jobject obj, JNIType type, const char *name, const char *signature);
 
 jobject callJNIObjectMethod( jobject obj, const char *name, const char *sig, ... );

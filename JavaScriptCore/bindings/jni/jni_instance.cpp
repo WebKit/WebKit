@@ -22,12 +22,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <jni_utility.h>
 #include <jni_class.h>
 #include <jni_instance.h>
 #include <jni_runtime.h>
+#include <jni_utility.h>
 
 using namespace Bindings;
+using namespace KJS;
 
 JavaInstance::JavaInstance (jobject instance) 
 {
@@ -49,6 +50,88 @@ JavaInstance::JavaInstance (const JavaInstance &other) : Instance()
 Class *JavaInstance::getClass() const 
 {
     return JavaClass::classForInstance (_instance->_instance);
+}
+
+Value JavaInstance::invokeMethod (const Method *method, const List &args)
+{
+    const JavaMethod *jMethod = static_cast<const JavaMethod*>(method);
+    int i, count = args.size();
+    jvalue *jArgs;
+    
+    fprintf(stderr,"%s: this=%p, invoking %s which returns %s and takes %d args\n", __PRETTY_FUNCTION__, this, method->name(), method->returnType(), count);
+    
+    if (count > 0) {
+        jArgs = (jvalue *)malloc (count * sizeof(jvalue));
+    }
+    else
+        jArgs = 0;
+        
+    for (i = 0; i < count; i++) {
+        fprintf (stderr, "%s:  %d, type %d\n", __PRETTY_FUNCTION__, i, args.at(i).type());
+    }
+    
+    jvalue result;
+    switch (jMethod->JNIReturnType()){
+        case void_type: {
+            callJNIVoidMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case object_type: {
+            result.l = callJNIObjectMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case boolean_type: {
+            result.z = callJNIBooleanMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case byte_type: {
+            result.b = callJNIByteMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case char_type: {
+            result.c = callJNICharMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case short_type: {
+            result.s = callJNIShortMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case int_type: {
+            result.i = callJNIIntMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case long_type: {
+            result.j = callJNILongMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case float_type: {
+            result.f = callJNIFloatMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+        
+        case double_type: {
+            result.d = callJNIDoubleMethod (_instance->_instance, method->name(), jMethod->signature(), jArgs);
+        }
+        break;
+
+        case invalid_type:
+        default:
+        break;
+    }
+    
+    // FIXME:  create a KJS::Value from the jvalue result.
+    
+    free (jArgs);
+    
+    return Undefined();
 }
 
 

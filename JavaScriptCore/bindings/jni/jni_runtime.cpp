@@ -22,8 +22,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#include <value.h>
 #include <internal.h>
+#include <ustring.h>
+#include <value.h>
 
 #include <jni_utility.h>
 #include <jni_runtime.h>
@@ -125,8 +126,34 @@ JavaMethod::JavaMethod (JNIEnv *env, jobject aMethod)
     jobject returnType = callJNIObjectMethod (aMethod, "getReturnType", "()Ljava/lang/Class;");
     jstring returnTypeName = (jstring)callJNIObjectMethod (returnType, "getName", "()Ljava/lang/String;");
     _returnType = new JavaString (env, returnTypeName);
+    _JNIReturnType = primitiveTypeFromClassName (_returnType->characters());
 
     // Get method name
     jstring methodName = (jstring)callJNIObjectMethod (aMethod, "getName", "()Ljava/lang/String;");
     _name = new JavaString (env, methodName);
+}
+
+const char *JavaMethod::signature() const 
+{
+    if (_signature == 0){
+        int i;
+        
+        _signature = new UString("(");
+        for (i = 0; i < _numParameters; i++) {
+        }
+        _signature->append(")");
+        
+        _signature->append(signatureFromPrimitiveType (_JNIReturnType));
+        if (_JNIReturnType == object_type) {
+            _signature->append(_returnType->characters());
+            _signature->append(";");
+        }
+    }
+    
+    return _signature->ascii();
+}
+
+JNIType JavaMethod::JNIReturnType() const
+{
+    return _JNIReturnType;
 }
