@@ -24,6 +24,8 @@ typedef struct UnicodeGlyphMap UnicodeGlyphMap;
     UnicodeGlyphMap *unicodeCharacterToGlyphMap; 	// Used for surrogates.
     WidthMap *glyphToWidthMap;
     float spaceWidth;
+    float ceiledSpaceWidth;
+    float roundedSpaceWidth;
     float adjustedSpaceWidth;
 }
 

@@ -1,3 +1,18 @@
+2002-12-05  Richard Williamson   <rjw@apple.com>
+
+        Don't ceil spaces if not a fixed pitch font.  This make sites
+        that have hard coded block widths have less wrapping beyond what the
+        designer expected.  Fixes 3117225.
+        
+        Reviewed by: mjs
+
+        * WebCoreSupport.subproj/WebTextRenderer.h:
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (widthForGlyph):
+        (-[WebTextRenderer _computeWidthForSpace]):
+        (-[WebTextRenderer initWithFont:]):
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:fontFamilies:]):
+
 2002-12-05  Chris Blumenberg  <cblu@apple.com>
 
 	Added WebDocumentText protocol. Made WebHTMLView and WebTextView implement it.

@@ -193,7 +193,7 @@ static inline WebGlyphWidth widthForGlyph (WebTextRenderer *renderer, WidthMap *
     // the same width as a space in that font.  In practice this is not an issue as the
     // adjustment is always as the sub-pixel level.
     if (width == renderer->spaceWidth)
-        return renderer->adjustedSpaceWidth;
+        return renderer->ceiledSpaceWidth;
 
     return width;
 }
@@ -387,6 +387,42 @@ static BOOL bufferTextDrawing = NO;
     }
 }
 
+// Nasty hack to determine if we should round or ceil space widths.
+// If the font is monospace, or all the ascii characters have the same
+// width as the space character we ceil to ensure that every character
+// and the space are the same width.  Otherwise we round.
+- (void)_computeWidthForSpace
+{
+    ATSGlyphRef glyphID;
+    float aWidth;
+    UniChar i;
+    UniChar c = ' ';
+    float _spaceWidth;
+
+    spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
+    _spaceWidth = widthForGlyph(self, glyphToWidthMap, spaceGlyph);
+    ceiledSpaceWidth = (float)CEIL_TO_INT(_spaceWidth);
+    roundedSpaceWidth = (float)ROUND_TO_INT(_spaceWidth);
+    if ([font isFixedPitch]){
+        adjustedSpaceWidth = ceiledSpaceWidth;
+    }
+    else {
+        for (i = 0x21; i < 0x7f; i++){
+            glyphID = glyphForCharacter(characterToGlyphMap, i);
+            aWidth = widthForGlyph(self, glyphToWidthMap, glyphID);
+            if (aWidth != 0 && aWidth != _spaceWidth)
+                break;
+        }
+        if (i == 0x7f){
+            adjustedSpaceWidth = ceiledSpaceWidth;
+        }
+        else {
+            adjustedSpaceWidth = roundedSpaceWidth;
+        }
+    }
+    spaceWidth = _spaceWidth;
+}
+
 
 - initWithFont:(NSFont *)f
 {
@@ -415,10 +451,7 @@ static BOOL bufferTextDrawing = NO;
     
     ATSUDisposeStyle(style);
 
-    UniChar c = ' ';
-    spaceGlyph = [self extendCharacterToGlyphMapToInclude: c];
-    spaceWidth = widthForGlyph(self, glyphToWidthMap, spaceGlyph);
-    adjustedSpaceWidth = (float)CEIL_TO_INT(spaceWidth);
+    [self _computeWidthForSpace];
     
     return self;
 }
@@ -912,7 +945,7 @@ static const char *joiningNames[] = {
                     totalWidth += delta;
                     if (widthBuffer)
                         widthBuffer[numGlyphs - 1] += delta;
-                }   
+                } 
                 lastWidth = adjustedSpaceWidth;
                 if (padding > 0){
                     // Only use left over padding if note evenly divisible by 
