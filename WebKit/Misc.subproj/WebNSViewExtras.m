@@ -228,11 +228,11 @@
     NSMutableArray *types = [NSMutableArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
     if (originalData) {
-        [types insertObject:NSFileContentsPboardType atIndex:0];
+        [types insertObject:NSRTFDPboardType atIndex:0];
     }
     [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
     if (originalData) {
-        [pboard _web_writeFileContents:originalData withFilename:filename];
+        [pboard _web_writeFileDataAsRTFDAttachment:originalData withFilename:filename];
     }
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];

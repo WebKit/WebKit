@@ -180,11 +180,11 @@
     NSCachedURLResponse *cachedResponse = [webView _cachedResponseForURL:[element objectForKey:WebElementImageURLKey]];
     NSData *data = [cachedResponse data];
     if (data) {
-        [types insertObject:NSFileContentsPboardType atIndex:0];
+        [types insertObject:NSRTFDPboardType atIndex:0];
     }
     [pasteboard declareTypes:types owner:nil];
     if (data) {
-        [pasteboard _web_writeFileContents:data withFilename:[[cachedResponse response] suggestedFilename]];
+        [pasteboard _web_writeFileDataAsRTFDAttachment:data withFilename:[[cachedResponse response] suggestedFilename]];
     }
     [pasteboard setData:[[element objectForKey:WebElementImageKey] TIFFRepresentation] forType:NSTIFFPboardType];
 }

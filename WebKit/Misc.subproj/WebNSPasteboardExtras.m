@@ -133,12 +133,19 @@ NSString *WebURLNamePboardType = nil;
     return [findPasteboard changeCount];
 }
 
-- (void)_web_writeFileContents:(NSData *)data withFilename:(NSString *)filename
+- (void)_web_writeFileDataAsRTFDAttachment:(NSData *)data withFilename:(NSString *)filename
 {
     NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:data];
     [wrapper setPreferredFilename:filename];
-    [self writeFileWrapper:wrapper];
+    
+    NSTextAttachment *attachment = [[NSTextAttachment alloc] initWithFileWrapper:wrapper];
     [wrapper release];
+
+    NSAttributedString *string = [NSAttributedString attributedStringWithAttachment:attachment];
+    [attachment release];
+    
+    NSData *RTFDData = [string RTFDFromRange:NSMakeRange(0, [string length]) documentAttributes:nil];
+    [self setData:RTFDData forType:NSRTFDPboardType];
 }
 
 @end

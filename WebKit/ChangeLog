@@ -1,3 +1,21 @@
+2003-11-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3472377>: Provide NSRTFDPboardType on pasteboard when copying or dragging images
+	<rdar://problem/3470809>: REGRESSION (111-112): Can't copy & paste image into Photoshop 7
+
+        Reviewed by hyatt.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeFileDataAsRTFDAttachment:withFilename:]): renamed, now writes file data as an RTF attachment
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:originalData:rect:URL:title:event:]): call renamed _web_writeFileDataAsRTFDAttachment
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): call renamed _web_writeFileDataAsRTFDAttachment
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView writeImageToPasteboard:]): call renamed _web_writeFileDataAsRTFDAttachment
+
 2003-11-03  Vicki Murley <vicki@apple.com>
 
         Reviewed by kocienda.

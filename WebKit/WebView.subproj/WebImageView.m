@@ -188,8 +188,8 @@
 - (BOOL)writeImageToPasteboard:(NSPasteboard *)pasteboard
 {    
     if ([self haveCompleteImage]) {
-        [pasteboard declareTypes:[NSArray arrayWithObjects:NSFileContentsPboardType, NSTIFFPboardType, nil] owner:nil];
-        [pasteboard _web_writeFileContents:[rep data] withFilename:[rep filename]];
+        [pasteboard declareTypes:[NSArray arrayWithObjects:NSRTFDPboardType, NSTIFFPboardType, nil] owner:nil];
+        [pasteboard _web_writeFileDataAsRTFDAttachment:[rep data] withFilename:[rep filename]];
         [pasteboard setData:[[rep image] TIFFRepresentation] forType:NSTIFFPboardType];
         return YES;
     }
