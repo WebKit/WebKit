@@ -42,23 +42,6 @@ class JSEditor {
 public:
     JSEditor(DocumentImpl *);
 
-    typedef bool (JSEditor::*execCommandFn)(bool userInterface, const DOMString &value);
-    typedef bool (JSEditor::*queryBoolFn)();
-    typedef DOMString (JSEditor::*queryValueFn)();
-
-    struct CommandIdentifier {
-        CommandIdentifier() {}
-        CommandIdentifier(execCommandFn exec, queryBoolFn enabled, queryBoolFn indeterm, queryBoolFn state, queryBoolFn supported, queryValueFn value)
-            : execFn(exec), enabledFn(enabled), indetermFn(indeterm), stateFn(state), supportedFn(supported), valueFn(value) {}
-
-        execCommandFn execFn;
-        queryBoolFn enabledFn;
-        queryBoolFn indetermFn;
-        queryBoolFn stateFn;
-        queryBoolFn supportedFn;
-        queryValueFn valueFn;
-    };
-    
     bool execCommand(const DOMString &command, bool userInterface, const DOMString &value);
     bool queryCommandEnabled(const DOMString &command);
     bool queryCommandIndeterm(const DOMString &command);
@@ -66,35 +49,25 @@ public:
     bool queryCommandSupported(const DOMString &command);
     DOMString queryCommandValue(const DOMString &command);
 
+    typedef bool (*execCommandFn)(KHTMLPart *part, bool userInterface, const DOMString &value);
+    typedef bool (*queryBoolFn)(KHTMLPart *part);
+    typedef DOMString (*queryValueFn)(KHTMLPart *part);
+
 private:
     JSEditor(const JSEditor &);
     JSEditor &operator=(const JSEditor &);
 
-    // execCommand implementations
-    bool execCommandCopy(bool userInterface, const DOMString &value);
-    bool execCommandCut(bool userInterface, const DOMString &value);
-    bool execCommandDelete(bool userInterface, const DOMString &value);
-    bool execCommandInsertText(bool userInterface, const DOMString &value);
-    bool execCommandPaste(bool userInterface, const DOMString &value);
-    bool execCommandRedo(bool userInterface, const DOMString &value);
-    bool execCommandSelectAll(bool userInterface, const DOMString &value);
-    bool execCommandUndo(bool userInterface, const DOMString &value);
-
-    // queryCommandEnabled implementations
-    bool enabledIfPartNotNull();
-    bool enabledIfSelectionNotEmpty();
-    bool enabledIfSelectionIsRange();
-
-    // queryCommandSupported implementations
-    bool commandSupported();
-
-    QDict<CommandIdentifier> &commandDict();
-    DocumentImpl *document() { return m_doc; }
-    KHTMLPart *part() { return document()->part(); }
-    CommandIdentifier *commandIdentifier(const DOMString &command);
-
-    void addCommand(const QString &cmd, execCommandFn exec, queryBoolFn enabled, queryBoolFn indeterm, queryBoolFn state, queryBoolFn supported, queryValueFn value);
-    void initDict();
+    struct CommandImp {
+        execCommandFn execFn;
+        queryBoolFn enabledFn;
+        queryBoolFn indetermFn;
+        queryBoolFn stateFn;
+        queryValueFn valueFn;
+    };
+    
+    static QDict<CommandImp> &commandDict();
+    static CommandImp *commandImp(const DOMString &command);
+    static void initDict();
 
     DocumentImpl *m_doc;
 };

@@ -1426,17 +1426,17 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
 #endif
   case Window::ScrollBy:
     window->updateLayout();
-    if(args.size() == 2 && widget)
+    if(args.size() >= 2 && widget)
       widget->scrollBy(args[0].toInt32(exec), args[1].toInt32(exec));
     return Undefined();
   case Window::Scroll:
   case Window::ScrollTo:
     window->updateLayout();
-    if(args.size() == 2 && widget)
+    if(args.size() >= 2 && widget)
       widget->setContentsPos(args[0].toInt32(exec), args[1].toInt32(exec));
     return Undefined();
   case Window::MoveBy:
-    if(args.size() == 2 && widget)
+    if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
 	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
@@ -1449,7 +1449,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     }
     return Undefined();
   case Window::MoveTo:
-    if(args.size() == 2 && widget)
+    if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
 	  QRect sg = QApplication::desktop()->screenGeometry(QApplication::desktop()->screenNumber(tl));
@@ -1462,7 +1462,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     }
     return Undefined();
   case Window::ResizeBy:
-    if(args.size() == 2 && widget)
+    if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
       QSize dest = tl->size() + QSize( args[0].toInt32(exec), args[1].toInt32(exec) );
@@ -1480,7 +1480,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
     }
     return Undefined();
   case Window::ResizeTo:
-    if(args.size() == 2 && widget)
+    if(args.size() >= 2 && widget)
     {
       QWidget * tl = widget->topLevelWidget();
       QSize dest = QSize( args[0].toInt32(exec), args[1].toInt32(exec) );
@@ -1500,7 +1500,7 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
   case Window::SetTimeout:
     if (!window->isSafeScript(exec))
         return Undefined();
-    if (args.size() == 2 && v.isA(StringType)) {
+    if (args.size() >= 2 && v.isA(StringType)) {
       int i = args[1].toInt32(exec);
       int r = (const_cast<Window*>(window))->installTimeout(s, i, true /*single shot*/);
       return Number(r);

@@ -58,8 +58,7 @@
 		};
 		034768E0FF38A50411DB9C8B = {
 			explicitFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			path = WebCore.framework;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -6670,9 +6669,8 @@
 			sourceTree = "<group>";
 		};
 		F550D70C02E13281018635CA = {
-			fallbackIsa = PBXFileReference;
 			fileEncoding = 30;
-			isa = PBXExecutableFileReference;
+			isa = PBXFileReference;
 			lastKnownFileType = text.script.perl;
 			path = "make-charset-table.pl";
 			refType = 4;
@@ -10444,8 +10442,7 @@
 			sourceTree = "<group>";
 		};
 		F5C2869302846DCD018635CA = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = ApplicationServices.framework;
 			path = /System/Library/Frameworks/ApplicationServices.framework;
@@ -10453,8 +10450,7 @@
 			sourceTree = "<absolute>";
 		};
 		F5C2869402846DCD018635CA = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = Carbon.framework;
 			path = /System/Library/Frameworks/Carbon.framework;
@@ -10462,8 +10458,7 @@
 			sourceTree = "<absolute>";
 		};
 		F5C2869502846DCD018635CA = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
@@ -10537,8 +10532,7 @@
 //F83
 //F84
 		F8216299029F4FB501000131 = {
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
 			lastKnownFileType = wrapper.framework;
 			path = JavaScriptCore.framework;
 			refType = 3;

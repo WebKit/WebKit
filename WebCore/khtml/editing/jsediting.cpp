@@ -20,7 +20,7 @@
  * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #include "jsediting.h"
@@ -52,568 +52,95 @@ const JSEditor::execCommandFn NoExec = 0;
 const JSEditor::queryBoolFn NoEnabled = 0;
 const JSEditor::queryBoolFn NoIndeterm = 0;
 const JSEditor::queryBoolFn NoState = 0;
-const JSEditor::queryBoolFn NoSupported = 0;
 const JSEditor::queryValueFn NoValue = 0;
 
-QDict<JSEditor::CommandIdentifier> &JSEditor::commandDict()
+QDict<JSEditor::CommandImp> &JSEditor::commandDict()
 {
-    static QDict<CommandIdentifier> dict;
+    static QDict<CommandImp> dict;
     return dict;
 }
 
-JSEditor::JSEditor(DocumentImpl *doc) : m_doc(doc) 
+JSEditor::JSEditor(DocumentImpl *doc) : m_doc(doc)
 {
     initDict();
 }
 
-JSEditor::CommandIdentifier *JSEditor::commandIdentifier(const DOMString &command)
+JSEditor::CommandImp *JSEditor::commandImp(const DOMString &command)
 {
     return commandDict().find(command.string().lower());
 }
 
-void JSEditor::addCommand(const QString &command, execCommandFn exec, queryBoolFn enabled, queryBoolFn indeterm, queryBoolFn state, queryBoolFn supported, queryValueFn value)
+bool JSEditor::execCommand(const DOMString &command, bool userInterface, const DOMString &value)
 {
-    commandDict().insert(command.lower(), new CommandIdentifier(exec, enabled, indeterm, state, supported, value));
-}
-
-void JSEditor::initDict()
-{
-    static bool initFlag = false;
-    if (initFlag)
-        return;
-    initFlag = true;
-    
-    //
-    // All commands are listed with a "supported" or "not supported" label.
-    //
-    // The "supported" commands need to have all their functions implemented. These bugs 
-    // correspond to this work.
-    // <rdar://problem/3675867>: "Make execCommand work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675898>: "Make queryCommandEnabled work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675899>: "Make queryCommandIndeterm work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675901>: "Make queryCommandState work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675903>: "Make queryCommandSupported work as specified in the Javascript execCommand Compatibility Plan"
-    // <rdar://problem/3675904>: "Make queryCommandValue work as specified in the Javascript execCommand Compatibility Plan"
-    //
-    // The "unsupported" commands are listed here since they appear in the Microsoft
-    // documentation used as the basis for the list. It seems reasonable that these
-    // commands should do something, even if it is to return a default placeholder value.
-    //
-    
-    // 2d-position command (not supported)
-    addCommand("2d-position", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // absoluteposition command (not supported)
-    addCommand("absoluteposition", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // backcolor command (supported)
-    addCommand(
-        "backcolor", 
-        NoExec, 
-        &JSEditor::enabledIfPartNotNull, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // blockdirltr command (not supported)
-    addCommand("blockdirltr", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // blockdirrtl command (not supported)
-    addCommand("blockdirrtl", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // bold command (supported)
-    addCommand(
-        "bold", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // browsemode command (not supported)
-    addCommand("browsemode", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // clearauthenticationcache command (not supported)
-    addCommand("clearauthenticationcache", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // copy command (supported)
-    addCommand(
-        "copy", 
-        &JSEditor::execCommandCopy, 
-        &JSEditor::enabledIfSelectionIsRange, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // createbookmark command (not supported)
-    addCommand("createbookmark", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // createlink command (not supported)
-    addCommand("createlink", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // cut command (supported)
-    addCommand(
-        "cut", 
-        &JSEditor::execCommandCut, 
-        &JSEditor::enabledIfSelectionIsRange, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // delete command (supported)
-    addCommand(
-        "delete", 
-        &JSEditor::execCommandDelete, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // dirltr command (not supported)
-    addCommand("dirltr", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // dirrtl command (not supported)
-    addCommand("dirrtl", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // editmode command (not supported)
-    addCommand("editmode", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // fontname command (supported)
-    addCommand(
-        "fontname", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // fontsize command (supported)
-    addCommand(
-        "fontsize", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // forecolor command (supported)
-    addCommand(
-        "forecolor", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // formatblock command (not supported)
-    addCommand("formatblock", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // indent command (supported)
-    addCommand(
-        "indent", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // inlinedirltr command (not supported)
-    addCommand("inlinedirltr", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // inlinedirrtl command (not supported)
-    addCommand("inlinedirrtl", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertbutton command (not supported)
-    addCommand("insertbutton", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertfieldset command (not supported)
-    addCommand("insertfieldset", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // inserthorizontalrule command (not supported)
-    addCommand("inserthorizontalrule", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertiframe command (not supported)
-    addCommand("insertiframe", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertimage command (not supported)
-    addCommand("insertimage", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputbutton command (not supported)
-    addCommand("insertinputbutton", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputcheckbox command (not supported)
-    addCommand("insertinputcheckbox", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputfileupload command (not supported)
-    addCommand("insertinputfileupload", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputhidden command (not supported)
-    addCommand("insertinputhidden", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputimage command (not supported)
-    addCommand("insertinputimage", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputpassword command (not supported)
-    addCommand("insertinputpassword", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputradio command (not supported)
-    addCommand("insertinputradio", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputreset command (not supported)
-    addCommand("insertinputreset", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputsubmit command (not supported)
-    addCommand("insertinputsubmit", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertinputtext command (not supported)
-    addCommand("insertinputtext", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertmarquee command (not supported)
-    addCommand("insertmarquee", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertorderedlist command (not supported)
-    addCommand("insertorderedlist", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertparagraph command (supported)
-    addCommand(
-        "insertparagraph", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // insertselectdropdown command (not supported)
-    addCommand("insertselectdropdown", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertselectlistbox command (not supported)
-    addCommand("insertselectlistbox", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // inserttext command (supported)
-    addCommand(
-        "inserttext", 
-        &JSEditor::execCommandInsertText, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // inserttextarea command (not supported)
-    addCommand("inserttextarea", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // insertunorderedlist command (not supported)
-    addCommand("insertunorderedlist", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // italic command (supported)
-    addCommand(
-        "italic", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // justifycenter command (supported)
-    addCommand(
-        "justifycenter", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // justifyfull command (supported)
-    addCommand(
-        "justifyfull", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // justifyleft command (supported)
-    addCommand(
-        "justifyleft", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // justifynone command (supported)
-    addCommand(
-        "justifynone", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // justifyright command (supported)
-    addCommand(
-        "justifyright", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // liveresize command (not supported)
-    addCommand("liveresize", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // multipleselection command (not supported)
-    addCommand("multipleselection", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // open command (not supported)
-    addCommand("open", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // outdent command (supported)
-    addCommand(
-        "outdent", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // overwrite command (not supported)
-    addCommand("overwrite", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // paste command (supported)
-    addCommand(
-        "paste", 
-        &JSEditor::execCommandPaste, 
-        // EDIT FIXME: Should check if there is something on the pasteboard to paste
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // playimage command (not supported)
-    addCommand("playimage", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // print command (supported)
-    addCommand(
-        "print", 
-        NoExec, 
-        &JSEditor::enabledIfPartNotNull, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // redo command (supported)
-    addCommand(
-        "redo", 
-        &JSEditor::execCommandRedo, 
-        // EDIT FIXME: Should check if the undo manager has something to redo
-        &JSEditor::enabledIfPartNotNull, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // refresh command (not supported)
-    addCommand("refresh", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // removeformat command (not supported)
-    addCommand("removeformat", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // removeparaformat command (not supported)
-    addCommand("removeparaformat", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // saveas command (not supported)
-    addCommand("saveas", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // selectall command (supported)
-    addCommand(
-        "selectAll", 
-        &JSEditor::execCommandSelectAll, 
-        &JSEditor::enabledIfPartNotNull, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // sizetocontrol command (not supported)
-    addCommand("sizetocontrol", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // sizetocontrolheight command (not supported)
-    addCommand("sizetocontrolheight", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // sizetocontrolwidth command (not supported)
-    addCommand("sizetocontrolwidth", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // stop command (not supported)
-    addCommand("stop", NoExec, NoEnabled, NoIndeterm, NoState, &JSEditor::commandSupported, NoValue);
-
-    // stopimage command (not supported)
-    addCommand("stopimage", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // strikethrough command (not supported)
-    addCommand("strikethrough", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // subscript command (supported)
-    addCommand(
-        "subscript", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // superscript command (supported)
-    addCommand(
-        "superscript", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionNotEmpty, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // unbookmark command (not supported)
-    addCommand("unbookmark", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // underline command (not supported)
-    addCommand("underline", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // undo command (supported)
-    addCommand(
-        "undo", 
-        &JSEditor::execCommandUndo, 
-        // EDIT FIXME: Should check if the undo manager has something to undo
-        &JSEditor::enabledIfPartNotNull, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-
-    // unlink command (not supported)
-    addCommand("unlink", NoExec, NoEnabled, NoIndeterm, NoState, NoSupported, NoValue);
-
-    // unselect command (supported)
-    addCommand(
-        "unselect", 
-        NoExec, 
-        &JSEditor::enabledIfSelectionIsRange, 
-        NoIndeterm, 
-        NoState, 
-        &JSEditor::commandSupported, 
-        NoValue
-    );
-}
-
-bool JSEditor::execCommand(const DOMString &command, bool userInterface, const DOMString &value) 
-{ 
-    CommandIdentifier *cmd = commandIdentifier(command);
+    CommandImp *cmd = commandImp(command);
     if (!cmd || !cmd->execFn)
         return false;
-        
-    ASSERT(document());
-    document()->updateLayout();
-    return (this->*(cmd->execFn))(userInterface, value);
+    KHTMLPart *part = m_doc->part();
+    if (!part)
+        return false;
+    ASSERT(cmd->enabledFn);
+    m_doc->updateLayout();
+    return cmd->enabledFn(part) && cmd->execFn(part, userInterface, value);
 }
 
 bool JSEditor::queryCommandEnabled(const DOMString &command)
-{ 
-    CommandIdentifier *cmd = commandIdentifier(command);
+{
+    CommandImp *cmd = commandImp(command);
     if (!cmd || !cmd->enabledFn)
         return false;
-        
-    ASSERT(document());
-    document()->updateLayout();
-    return (this->*(cmd->enabledFn))();
+    KHTMLPart *part = m_doc->part();
+    if (!part)
+        return false;
+    m_doc->updateLayout();
+    return cmd->enabledFn(part);
 }
 
 bool JSEditor::queryCommandIndeterm(const DOMString &command)
 {
-    CommandIdentifier *cmd = commandIdentifier(command);
+    CommandImp *cmd = commandImp(command);
     if (!cmd || !cmd->indetermFn)
         return false;
-        
-    ASSERT(document());
-    document()->updateLayout();
-    return (this->*(cmd->indetermFn))();
+    KHTMLPart *part = m_doc->part();
+    if (!part)
+        return false;
+    m_doc->updateLayout();
+    return cmd->indetermFn(part);
 }
 
 bool JSEditor::queryCommandState(const DOMString &command)
 {
-    CommandIdentifier *cmd = commandIdentifier(command);
+    CommandImp *cmd = commandImp(command);
     if (!cmd || !cmd->stateFn)
         return false;
-        
-    ASSERT(document());
-    document()->updateLayout();
-    return (this->*(cmd->stateFn))();
+    KHTMLPart *part = m_doc->part();
+    if (!part)
+        return false;
+    m_doc->updateLayout();
+    return cmd->stateFn(part);
 }
 
 bool JSEditor::queryCommandSupported(const DOMString &command)
 {
-    CommandIdentifier *cmd = commandIdentifier(command);
-    if (!cmd || !cmd->supportedFn)
-        return false;
-        
-    ASSERT(document());
-    document()->updateLayout();
-    return (this->*(cmd->supportedFn))();
+    return commandImp(command) != 0;
 }
 
 DOMString JSEditor::queryCommandValue(const DOMString &command)
-{ 
-    CommandIdentifier *cmd = commandIdentifier(command);
+{
+    CommandImp *cmd = commandImp(command);
     if (!cmd || !cmd->valueFn)
         return DOMString();
-    
-    ASSERT(document());
-    document()->updateLayout();
-    return (this->*(cmd->valueFn))();
+    KHTMLPart *part = m_doc->part();
+    if (!part)
+        return DOMString();
+    m_doc->updateLayout();
+    return cmd->valueFn(part);
 }
+
+// =============================================================================================
+
+// Private stuff, all inside an anonymous namespace.
+
+namespace {
 
 // =============================================================================================
 //
@@ -623,73 +150,50 @@ DOMString JSEditor::queryCommandValue(const DOMString &command)
 // of Microsoft browsers to ensure we are as compatible with their
 // behavior as is sensible.
 
-bool JSEditor::execCommandCopy(bool userInterface, const DOMString &value)
+bool execCommandCopy(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part || part->selection().state() != Selection::RANGE)
-        return false;
     KWQ(part)->issueCopyCommand();
     return true;
 }
 
-bool JSEditor::execCommandCut(bool userInterface, const DOMString &value)
+bool execCommandCut(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    if (!part() || part()->selection().state() != Selection::RANGE)
-        return false;
-    KWQ(part())->issueCutCommand();
+    KWQ(part)->issueCutCommand();
     return true;
 }
 
-bool JSEditor::execCommandDelete(bool userInterface, const DOMString &value)
+bool execCommandDelete(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part || part->selection().isEmpty())
-        return false;
-    TypingCommand::deleteKeyPressed(document());
+    TypingCommand::deleteKeyPressed(part->xmlDocImpl());
     return true;
 }
 
-bool JSEditor::execCommandInsertText(bool userInterface, const DOMString &value)
+bool execCommandInsertText(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part || part->selection().isEmpty())
-        return false;
-    TypingCommand::insertText(document(), value);
+    TypingCommand::insertText(part->xmlDocImpl(), value);
     return true;
 }
 
-bool JSEditor::execCommandPaste(bool userInterface, const DOMString &value)
+bool execCommandPaste(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part || part->selection().isEmpty())
-        return false;
     KWQ(part)->issuePasteCommand();
     return true;
 }
 
-bool JSEditor::execCommandRedo(bool userInterface, const DOMString &value)
+bool execCommandRedo(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part || part->selection().state() != Selection::RANGE)
-        return false;
     KWQ(part)->issueRedoCommand();
     return true;
 }
 
-bool JSEditor::execCommandSelectAll(bool userInterface, const DOMString &value)
+bool execCommandSelectAll(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part)
-        return false;
     part->selectAll();
     return true;
 }
 
-bool JSEditor::execCommandUndo(bool userInterface, const DOMString &value)
+bool execCommandUndo(KHTMLPart *part, bool userInterface, const DOMString &value)
 {
-    KHTMLPart *part = document()->part();
-    if (!part || part->selection().state() != Selection::RANGE)
-        return false;
     KWQ(part)->issueUndoCommand();
     return true;
 }
@@ -708,24 +212,24 @@ bool JSEditor::execCommandUndo(bool userInterface, const DOMString &value)
 // what little I could glean from that seems to make some sense.
 //     Supported = The command is supported by this object.
 //     Enabled =   The command is available and enabled.
-// 
+//
 // With this definition, the different commands return true or false
 // based on simple, and for now incomplete, checks on the part and
 // selection.
 
-bool JSEditor::enabledIfPartNotNull()
+bool enabled(KHTMLPart *part)
 {
-    return part() != 0;
+    return true;
 }
 
-bool JSEditor::enabledIfSelectionNotEmpty()
+bool enabledIfSelectionNotEmpty(KHTMLPart *part)
 {
-    return part() && part()->selection().notEmpty();
+    return part->selection().notEmpty();
 }
 
-bool JSEditor::enabledIfSelectionIsRange()
+bool enabledIfSelectionIsRange(KHTMLPart *part)
 {
-    return part() && part()->selection().state() == Selection::RANGE;
+    return part->selection().state() == Selection::RANGE;
 }
 
 // =============================================================================================
@@ -744,11 +248,11 @@ bool JSEditor::enabledIfSelectionIsRange()
 //     the two bits of information that are needed to tell, for instance,
 //     if the text of a selection is bold. The answer can be "yes", "no", or
 //     "partially".
-// 
+//
 // If this is so, then queryCommandState should return "yes" in the case where
 // all the text is bold and "no" for non-bold or partially-bold text.
 // Then, queryCommandIndeterm should return "no" in the case where
-// all the text is either all bold or not-bold and and "yes" for partially-bold 
+// all the text is either all bold or not-bold and and "yes" for partially-bold
 // text.
 //
 // Note that, for now, the returned values are just place-holders.
@@ -769,37 +273,15 @@ bool JSEditor::enabledIfSelectionIsRange()
 //     the two bits of information that are needed to tell, for instance,
 //     if the text of a selection is bold. The answer can be "yes", "no", or
 //     "partially".
-// 
+//
 // If this is so, then queryCommandState should return "yes" in the case where
 // all the text is bold and "no" for non-bold or partially-bold text.
 // Then, queryCommandIndeterm should return "no" in the case where
-// all the text is either all bold or not-bold and and "yes" for partially-bold 
+// all the text is either all bold or not-bold and and "yes" for partially-bold
 // text.
 //
 // Note that, for now, the returned values are just place-holders.
 
-
-// =============================================================================================
-//
-// queryCommandSupported implementations
-//
-// EDIT FIXME: All these responses should be tested against the behavior
-// of Microsoft browsers to ensure we are as compatible with their
-// behavior as is sensible. For now, the returned values are just my best
-// guesses.
-//
-// It's a bit confusing to get a clear notion of the difference between
-// "supported" and "enabled" from reading the Microsoft documentation, but
-// what little I could glean from that seems to make some sense.
-//     Supported = The command is supported by this object.
-//     Enabled =   The command is available and enabled.
-// 
-// With this definition, all the commands we support return true unconditionally.
-
-bool JSEditor::commandSupported()
-{
-    return true;
-}
 
 // =============================================================================================
 //
@@ -809,6 +291,351 @@ bool JSEditor::commandSupported()
 // of Microsoft browsers to ensure we are as compatible with their
 // behavior as is sensible. For now, the returned values are just place-holders.
 
+}
+
 // =============================================================================================
+
+void JSEditor::initDict()
+{
+    static bool initFlag = false;
+    if (initFlag)
+        return;
+    initFlag = true;
+   
+    //
+    // All commands are listed with a "supported" or "not supported" label.
+    //
+    // The "supported" commands need to have all their functions implemented. These bugs
+    // correspond to this work.
+    // <rdar://problem/3675867>: "Make execCommand work as specified in the Javascript execCommand Compatibility Plan"
+    // <rdar://problem/3675898>: "Make queryCommandEnabled work as specified in the Javascript execCommand Compatibility Plan"
+    // <rdar://problem/3675899>: "Make queryCommandIndeterm work as specified in the Javascript execCommand Compatibility Plan"
+    // <rdar://problem/3675901>: "Make queryCommandState work as specified in the Javascript execCommand Compatibility Plan"
+    // <rdar://problem/3675903>: "Make queryCommandSupported work as specified in the Javascript execCommand Compatibility Plan"
+    // <rdar://problem/3675904>: "Make queryCommandValue work as specified in the Javascript execCommand Compatibility Plan"
+    //
+    // The "unsupported" commands are listed here since they appear in the Microsoft
+    // documentation used as the basis for the list. It seems reasonable that these
+    // commands should do something, even if it is to return a default placeholder value.
+    //
+
+    struct EditorCommand { const char *name; CommandImp imp; };
+
+    static const EditorCommand commands[] = {
+
+        // 2d-position command (not supported)
+        // absoluteposition command (not supported)
+
+        // backcolor command (supported)
+        { "backcolor", {
+            NoExec,
+            enabled,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // blockdirltr command (not supported)
+        // blockdirrtl command (not supported)
+
+        // bold command (supported)
+        { "bold", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // browsemode command (not supported)
+        // clearauthenticationcache command (not supported)
+
+        // copy command (supported)
+        { "copy", {
+            execCommandCopy,
+            enabledIfSelectionIsRange,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // createbookmark command (not supported)
+        // createlink command (not supported)
+
+        // cut command (supported)
+        { "cut", {
+            execCommandCut,
+            enabledIfSelectionIsRange,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // delete command (supported)
+        { "delete", {
+            execCommandDelete,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // dirltr command (not supported)
+        // dirrtl command (not supported)
+        // editmode command (not supported)
+
+        // fontname command (supported)
+        { "fontname", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // fontsize command (supported)
+        { "fontsize", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // forecolor command (supported)
+        { "forecolor", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // formatblock command (not supported)
+
+        // indent command (supported)
+        { "indent", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // inlinedirltr command (not supported)
+        // inlinedirrtl command (not supported)
+        // insertbutton command (not supported)
+        // insertfieldset command (not supported)
+        // inserthorizontalrule command (not supported)
+        // insertiframe command (not supported)
+        // insertimage command (not supported)
+        // insertinputbutton command (not supported)
+        // insertinputcheckbox command (not supported)
+        // insertinputfileupload command (not supported)
+        // insertinputhidden command (not supported)
+        // insertinputimage command (not supported)
+        // insertinputpassword command (not supported)
+        // insertinputradio command (not supported)
+        // insertinputreset command (not supported)
+        // insertinputsubmit command (not supported)
+        // insertinputtext command (not supported)
+        // insertmarquee command (not supported)
+        // insertorderedlist command (not supported)
+
+        // insertparagraph command (supported)
+        { "insertparagraph", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // insertselectdropdown command (not supported)
+        // insertselectlistbox command (not supported)
+
+        // inserttext command (supported)
+        { "inserttext", {
+            execCommandInsertText,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // inserttextarea command (not supported)
+        // insertunorderedlist command (not supported)
+
+        // italic command (supported)
+        { "italic", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // justifycenter command (supported)
+        { "justifycenter", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // justifyfull command (supported)
+        { "justifyfull", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // justifyleft command (supported)
+        { "justifyleft", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // justifynone command (supported)
+        { "justifynone", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // justifyright command (supported)
+        { "justifyright", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // liveresize command (not supported)
+        // multipleselection command (not supported)
+        // open command (not supported)
+
+        // outdent command (supported)
+        { "outdent", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // overwrite command (not supported)
+
+        // paste command (supported)
+        { "paste", {
+            execCommandPaste,
+            // EDIT FIXME: Should check if there is something on the pasteboard to paste
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // playimage command (not supported)
+
+        // print command (supported)
+        { "print", {
+            NoExec,
+            enabled,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // redo command (supported)
+        { "redo", {
+            execCommandRedo,
+            // EDIT FIXME: Should check if the undo manager has something to redo
+            enabled,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // refresh command (not supported)
+        // removeformat command (not supported)
+        // removeparaformat command (not supported)
+        // saveas command (not supported)
+
+        // selectall command (supported)
+        { "selectAll", {
+            execCommandSelectAll,
+            enabled,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // sizetocontrol command (not supported)
+        // sizetocontrolheight command (not supported)
+        // sizetocontrolwidth command (not supported)
+        // stop command (not supported)
+        // stopimage command (not supported)
+        // strikethrough command (not supported)
+
+        // subscript command (supported)
+        { "subscript", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // superscript command (supported)
+        { "superscript", {
+            NoExec,
+            enabledIfSelectionNotEmpty,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // unbookmark command (not supported)
+        // underline command (not supported)
+
+        // undo command (supported)
+        { "undo", {
+            execCommandUndo,
+            // EDIT FIXME: Should check if the undo manager has something to undo
+            enabled,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } },
+
+        // unlink command (not supported)
+
+        // unselect command (supported)
+        { "unselect", {
+            NoExec,
+            enabledIfSelectionIsRange,
+            NoIndeterm,
+            NoState,
+            NoValue
+        } }
+
+    };
+
+    QDict<CommandImp> &dict = commandDict();
+    const int numCommands = sizeof(commands) / sizeof(commands[0]);
+    for (int i = 0; i < numCommands; ++i) {
+        dict.insert(commands[i].name, &commands[i].imp);
+    }
+}
 
 } // namespace khtml

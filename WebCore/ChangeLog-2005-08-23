@@ -1,3 +1,20 @@
+2004-06-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Chris.
+
+        - fixed <rdar://problem/3682821>: (setTimeout fails when additional parameters are used and timeout function is a string)
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Ignore excess arguments instead
+        of rejecting the argument list for window.scrollBy, scroll, scrollTo, moveBy, moveTo,
+        resizeBy, resizeTo, and setTimeout (when the timeout is a string rather than an object).
+
+        - did a refinement of JSEditor to be slightly more efficient, and not have to edit
+          both the .cpp file and the .h when adding more implementation
+
+        * khtml/khtml_part.h: Hack so we can get to the docImpl and xmlDocImpl without being a friend.
+        * khtml/editing/jsediting.h: Simplified a bit.
+        * khtml/editing/jsediting.cpp: Redid to use a table, and simplified a bit.
+
 2004-06-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
