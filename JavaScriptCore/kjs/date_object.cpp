@@ -69,6 +69,7 @@ const time_t invalidDate = -1;
 #include <CoreFoundation/CoreFoundation.h>
 #include <CoreServices/CoreServices.h>
 
+using KJS::UChar;
 using KJS::UString;
 
 #define gmtime(x) gmtimeUsingCF(x)
@@ -240,26 +241,32 @@ static UString formatTime(struct tm &tm)
     return UString(buffer);
 }
 
-static UString formatLocaleDate(time_t tv)
+static UString formatLocaleDate(time_t tv, bool includeDate, bool includeTime)
 {
     LongDateTime longDateTime;
     UCConvertCFAbsoluteTimeToLongDateTime(tv - kCFAbsoluteTimeIntervalSince1970, &longDateTime);
 
-    unsigned char string[257];
-    LongDateString(&longDateTime, longDate, string, 0);
-    string[string[0] + 1] = '\0';
-    return (char *)&string[1];
-}
+    CFLocaleRef locale = CFLocaleCopyCurrent();
+    CFDateFormatterRef formatter = CFDateFormatterCreate(NULL, locale,
+        includeDate ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle,
+        includeTime ? kCFDateFormatterLongStyle : kCFDateFormatterNoStyle);
+    CFStringRef string = CFDateFormatterCreateStringWithAbsoluteTime(NULL, formatter, tv - kCFAbsoluteTimeIntervalSince1970);
 
-static UString formatLocaleTime(time_t tv)
-{
-    LongDateTime longDateTime;
-    UCConvertCFAbsoluteTimeToLongDateTime(tv - kCFAbsoluteTimeIntervalSince1970, &longDateTime);
+    // We truncate the string returned from CFDateFormatter if it's absurdly long (> 200 characters).
+    // That's not great error handling, but it just won't happen so it doesn't matter.
+    UChar buffer[200];
+    const size_t bufferLength = sizeof(buffer) / sizeof(buffer[0]);
+    size_t length = CFStringGetLength(string);
+    assert(length <= bufferLength);
+    if (length > bufferLength)
+        length = bufferLength;
+    CFStringGetCharacters(string, CFRangeMake(0, length), reinterpret_cast<UniChar *>(buffer));
 
-    unsigned char string[257];
-    LongTimeString(&longDateTime, true, string, 0);
-    string[string[0] + 1] = '\0';
-    return (char *)&string[1];
+    CFRelease(string);
+    CFRelease(formatter);
+    CFRelease(locale);
+    
+    return UString(buffer, length);
 }
 
 #endif // APPLE_CHANGES
@@ -439,13 +446,13 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     result = String(formatDateUTCVariant(*t) + " " + formatTime(*t));
     break;
   case ToLocaleString:
-    result = String(formatLocaleDate(tv) + " " + formatLocaleTime(tv));
+    result = String(formatLocaleDate(tv, true, true));
     break;
   case ToLocaleDateString:
-    result = String(formatLocaleDate(tv));
+    result = String(formatLocaleDate(tv, true, false));
     break;
   case ToLocaleTimeString:
-    result = String(formatLocaleTime(tv));
+    result = String(formatLocaleDate(tv, false, true));
     break;
 #else
   case ToString:

@@ -1,3 +1,14 @@
+2004-09-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3798209> any non-ASCII characters are garbled in the result of toLocaleString
+
+        * kjs/date_object.cpp:
+        (formatLocaleDate): Replaced two old functions that used LongDateTime with this one new function that
+        uses CFDateFormatter.
+        (DateProtoFuncImp::call): Call the new formatLocaleDate instead of both formatLocaleDate and formatLocaleTime.
+
 2004-09-09  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
