@@ -443,7 +443,7 @@ NSView *QWidget::getOuterView() const
     // A QScrollView is a widget normally used to represent a frame.
     // If this widget's view is a WebCoreFrameView the we resize its containing view, a WebFrameView.
     // The scroll view contained by the WebFrameView will be autosized.
-    volatile NSView * volatile view = data->view;
+    NSView * volatile view = data->view;
     ASSERT(view);
 
     KWQ_BLOCK_NS_EXCEPTIONS;
@@ -453,7 +453,7 @@ NSView *QWidget::getOuterView() const
     }
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return (NSView *)view;
+    return view;
 }
 
 void QWidget::lockDrawingFocus()

@@ -1,3 +1,36 @@
+2003-10-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - change "volatile X * volatile" to "X * volatile" in cases where the
+          pointer needs to be volatile but the object pointed to do does not
+
+        * kwq/KWQKConfigBase.mm: (KConfig::readEntry):
+        * kwq/KWQKCursor.mm: (+[NSCursor _WebCore_cursorWithName:hotSpot:]):
+        * kwq/KWQKLocale.mm:
+        (inputElementAltText):
+        (resetButtonDefaultLabel):
+        (searchableIndexIntroduction):
+        (submitButtonDefaultLabel):
+        (KLocale::language):
+        * kwq/KWQLineEdit.mm: (QLineEdit::text):
+        * kwq/KWQScrollView.mm:
+        (QScrollView::setContentsPos):
+        (QScrollView::addChild):
+        (QScrollView::updateContents):
+        (QScrollView::contentsToViewport):
+        (QScrollView::viewportToContents):
+        (QScrollView::getDocumentView):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::text):
+        (QTextEdit::textWithHardLineBreaks):
+        * kwq/KWQWidget.mm: (QWidget::getOuterView):
+        Removed the excess volatiles and excess casts that go with them.
+
+        * kwq/KWQKCookieJar.mm: (KWQKCookieJar::cookie): Do the same, but also
+        remove an unnecessary nil check that is the same as QString::fromNSString's
+        default behavior.
+
 2003-10-15  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

@@ -32,54 +32,54 @@
 
 QString inputElementAltText()
 {
-    volatile NSString * volatile altText = @"";
+    NSString * volatile altText = @"";
     KWQ_BLOCK_NS_EXCEPTIONS;
     altText = [[WebCoreViewFactory sharedFactory] inputElementAltText];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return QString::fromNSString((NSString *)altText);
+    return QString::fromNSString(altText);
 }
 
 QString resetButtonDefaultLabel()
 {
-    volatile NSString * volatile defaultLabel = @"";
+    NSString * volatile defaultLabel = @"";
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     defaultLabel = [[WebCoreViewFactory sharedFactory] resetButtonDefaultLabel];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return QString::fromNSString((NSString *)defaultLabel);
+    return QString::fromNSString(defaultLabel);
 }
 
 QString searchableIndexIntroduction()
 {
-    volatile NSString * volatile introduction = @"";
+    NSString * volatile introduction = @"";
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     introduction = [[WebCoreViewFactory sharedFactory] searchableIndexIntroduction];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return QString::fromNSString((NSString *)introduction);
+    return QString::fromNSString(introduction);
 }
 
 QString submitButtonDefaultLabel()
 {
-    volatile NSString * volatile defaultLabel = @"";
+    NSString * volatile defaultLabel = @"";
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     defaultLabel = [[WebCoreViewFactory sharedFactory] submitButtonDefaultLabel];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return QString::fromNSString((NSString *)defaultLabel);
+    return QString::fromNSString(defaultLabel);
 }
 
 QString KLocale::language()
 {
-    volatile NSString * volatile code = @"";
+    NSString * volatile code = @"";
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     code = [[WebCoreViewFactory sharedFactory] defaultLanguageCode];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return QString::fromNSString((NSString *)code);
+    return QString::fromNSString(code);
 }

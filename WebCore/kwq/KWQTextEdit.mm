@@ -51,25 +51,25 @@ void QTextEdit::setText(const QString &string)
 QString QTextEdit::text() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    volatile NSString * volatile text = @"";
+    NSString * volatile text = @"";
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     text = [textView text];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    return QString::fromNSString((NSString *)text);
+    return QString::fromNSString(text);
 }
 
 QString QTextEdit::textWithHardLineBreaks() const
 {
     KWQTextArea *textView = (KWQTextArea *)getView();
-    volatile NSString * volatile text = @"";
+    NSString * volatile text = @"";
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     text = [textView textWithHardLineBreaks];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
     
-    return QString::fromNSString((NSString *)text);
+    return QString::fromNSString(text);
 }
 
 void QTextEdit::getCursorPosition(int *paragraph, int *index) const

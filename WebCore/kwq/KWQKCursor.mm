@@ -48,7 +48,7 @@
         nameToCursor = [[NSMutableDictionary alloc] init];
     }
     
-    volatile NSCursor * volatile cursor = [nameToCursor objectForKey:name];
+    NSCursor * volatile cursor = [nameToCursor objectForKey:name];
     if (!cursor) { 
 	KWQ_BLOCK_NS_EXCEPTIONS;
 	NSImage *cursorImage = [[NSImage alloc] initWithContentsOfFile:
@@ -57,13 +57,13 @@
         if (cursorImage) {
             cursor = [[NSCursor alloc] initWithImage:cursorImage hotSpot:hotSpot];
             [cursorImage release];
-            [nameToCursor setObject:(NSCursor *)cursor forKey:name];
-            [(NSCursor *)cursor release];
+            [nameToCursor setObject:cursor forKey:name];
+            [cursor release];
         }
 	KWQ_UNBLOCK_NS_EXCEPTIONS;
     }
 
-    return (NSCursor *)cursor;
+    return cursor;
 }
 
 @end

@@ -180,7 +180,7 @@ void QScrollView::scrollBy(int dx, int dy)
 void QScrollView::setContentsPos(int x, int y)
 {
     NSView *docView;
-    volatile NSView * volatile view = getView();    
+    NSView * volatile view = getView();    
     docView = getDocumentView();
     if (docView)
         view = docView;
@@ -303,7 +303,7 @@ void QScrollView::suppressScrollBars(bool suppressed,  bool repaintOnUnsuppress)
 
 void QScrollView::addChild(QWidget* child, int x, int y)
 {
-    volatile NSView * volatile thisView;
+    NSView * volatile thisView;
     NSView *thisDocView, *subview;
 
     ASSERT(child != this);
@@ -368,7 +368,7 @@ void QScrollView::updateContents(int x, int y, int w, int h, bool now)
 
 void QScrollView::updateContents(const QRect &rect, bool now)
 {
-    volatile NSView * volatile view = getView();
+    NSView * volatile view = getView();
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view _KWQ_isScrollView])
@@ -396,7 +396,7 @@ QPoint QScrollView::contentsToViewport(const QPoint &p)
 void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
     NSView *docView;
-    volatile NSView * volatile view = getView();    
+    NSView * volatile view = getView();    
      
     docView = getDocumentView();
     if (docView)
@@ -414,7 +414,7 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
     NSView *docView;
-    volatile NSView * volatile view = getView();    
+    NSView * volatile view = getView();    
 
     docView = getDocumentView();
     if (docView)
@@ -459,12 +459,12 @@ void QScrollView::ensureVisible(int x, int y, int w, int h)
 NSView *QScrollView::getDocumentView() const
 {
     id view = getView();
-    volatile NSView * volatile result = nil;
+    NSView * volatile result = nil;
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     if ([view respondsToSelector:@selector(documentView)]) 
 	result = [view documentView];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
     
-    return (NSView *)result;
+    return result;
 }

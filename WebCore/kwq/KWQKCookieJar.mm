@@ -32,17 +32,13 @@
 
 QString KWQKCookieJar::cookie(const KURL &url)
 {
-    volatile NSString * volatile result = nil;
+    NSString * volatile result = nil;
 
     KWQ_BLOCK_NS_EXCEPTIONS;
     result = [[WebCoreCookieAdapter sharedAdapter] cookiesForURL:url.url().getNSString()];
     KWQ_UNBLOCK_NS_EXCEPTIONS;
 
-    if (result != nil) {
-        return QString::fromNSString((NSString *)result);
-    } else {
-        return QString();
-    }
+    return QString::fromNSString(result);
 }
 
 void KWQKCookieJar::setCookie(const KURL &url, const KURL &policyBaseURL, const QString &cookie)

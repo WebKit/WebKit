@@ -70,13 +70,13 @@ void KConfig::writeEntry(const QString &pKey, const QStringList &rValue,
 QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 {
     if (impl->isPluginInfo) {
-	volatile NSString * volatile result = @"";
+	NSString * volatile result = @"";
 
 	KWQ_BLOCK_NS_EXCEPTIONS;
 
         id <WebCorePluginInfo> plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
         if (strcmp(pKey, "name") == 0) {
-            result =[plugin name];
+            result = [plugin name];
         } else if (strcmp(pKey, "file") == 0) {
             result = [plugin filename];
         } else if (strcmp(pKey, "description") == 0) {
@@ -106,11 +106,11 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
 
 	KWQ_UNBLOCK_NS_EXCEPTIONS;
 	
-	return QString::fromNSString((NSString *)result);
+	return QString::fromNSString(result);
     }
     
     ERROR("not yet implemented");
-    return QString::null;
+    return QString();
 }
 
 int KConfig::readNumEntry(const char *pKey, int nDefault) const
