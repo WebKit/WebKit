@@ -1,5 +1,81 @@
 2004-04-06  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by me
+
+        Added a new suite of layout tests for editing, all added
+        in the new layout-tests/editing subtree.
+
+        * layout-tests/editing/abe.jpg: Added.
+        * layout-tests/editing/deleting/delete-block-contents-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-contents-001.html: Added.
+        * layout-tests/editing/deleting/delete-block-contents-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-contents-002.html: Added.
+        * layout-tests/editing/deleting/delete-block-contents-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-block-contents-003.html: Added.
+        * layout-tests/editing/deleting/delete-br-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-001.html: Added.
+        * layout-tests/editing/deleting/delete-br-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-002.html: Added.
+        * layout-tests/editing/deleting/delete-br-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-003.html: Added.
+        * layout-tests/editing/deleting/delete-br-004-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-004.html: Added.
+        * layout-tests/editing/deleting/delete-br-005-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-005.html: Added.
+        * layout-tests/editing/deleting/delete-br-006-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-br-006.html: Added.
+        * layout-tests/editing/deleting/delete-character-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-character-001.html: Added.
+        * layout-tests/editing/deleting/delete-contiguous-ws-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-contiguous-ws-001.html: Added.
+        * layout-tests/editing/deleting/delete-image-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-image-001.html: Added.
+        * layout-tests/editing/deleting/delete-image-002-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-image-002.html: Added.
+        * layout-tests/editing/deleting/delete-image-003-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-image-003.html: Added.
+        * layout-tests/editing/deleting/delete-leading-ws-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-leading-ws-001.html: Added.
+        * layout-tests/editing/deleting/delete-selection-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-selection-001.html: Added.
+        * layout-tests/editing/deleting/delete-trailing-ws-001-expected.txt: Added.
+        * layout-tests/editing/deleting/delete-trailing-ws-001.html: Added.
+        * layout-tests/editing/editing.js: Added.
+        * layout-tests/editing/inserting/typing-001-expected.txt: Added.
+        * layout-tests/editing/inserting/typing-001.html: Added.
+        * layout-tests/editing/inserting/typing-002-expected.txt: Added.
+        * layout-tests/editing/inserting/typing-002.html: Added.
+        * layout-tests/editing/inserting/typing-around-br-001-expected.txt: Added.
+        * layout-tests/editing/inserting/typing-around-br-001.html: Added.
+        * layout-tests/editing/inserting/typing-around-image-001-expected.txt: Added.
+        * layout-tests/editing/inserting/typing-around-image-001.html: Added.
+        * layout-tests/editing/selection/extend-by-character-001-expected.txt: Added.
+        * layout-tests/editing/selection/extend-by-character-001.html: Added.
+        * layout-tests/editing/selection/extend-by-character-002-expected.txt: Added.
+        * layout-tests/editing/selection/extend-by-character-002.html: Added.
+        * layout-tests/editing/selection/extend-by-character-003-expected.txt: Added.
+        * layout-tests/editing/selection/extend-by-character-003.html: Added.
+        * layout-tests/editing/selection/extend-by-character-004-expected.txt: Added.
+        * layout-tests/editing/selection/extend-by-character-004.html: Added.
+        * layout-tests/editing/selection/extend-by-character-005-expected.txt: Added.
+        * layout-tests/editing/selection/extend-by-character-005.html: Added.
+        * layout-tests/editing/selection/move-by-character-001-expected.txt: Added.
+        * layout-tests/editing/selection/move-by-character-001.html: Added.
+        * layout-tests/editing/selection/move-by-character-002-expected.txt: Added.
+        * layout-tests/editing/selection/move-by-character-002.html: Added.
+        * layout-tests/editing/selection/move-by-character-003-expected.txt: Added.
+        * layout-tests/editing/selection/move-by-character-003.html: Added.
+        * layout-tests/editing/selection/move-by-character-004-expected.txt: Added.
+        * layout-tests/editing/selection/move-by-character-004.html: Added.
+        * layout-tests/editing/selection/move-by-character-005-expected.txt: Added.
+        * layout-tests/editing/selection/move-by-character-005.html: Added.
+        * layout-tests/editing/undo/redo-typing-001-expected.txt: Added.
+        * layout-tests/editing/undo/redo-typing-001.html: Added.
+        * layout-tests/editing/undo/undo-typing-001-expected.txt: Added.
+        * layout-tests/editing/undo/undo-typing-001.html: Added.
+
+2004-04-06  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Dave
 
         Added execCommand feature. 

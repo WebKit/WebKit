@@ -1,0 +1,36 @@
+<html> 
+<head>
+
+<style>
+.editing { 
+    border: 2px solid red; 
+    padding: 12px; 
+    font-size: 24px; 
+}
+</style>
+<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+
+<script>
+
+function editingTest() {
+    moveSelectionForwardByCharacterCommand();
+    extendSelectionForwardByCharacterCommand();
+    extendSelectionForwardByCharacterCommand();
+    deleteCommand();
+}
+
+</script>
+
+<title>Editing Test</title> 
+</head> 
+<body>
+<div contenteditable id="root" class="editing">
+<span id="test">a<img src="../abe.jpg"><img src="../abe.jpg"> lincoln
+</div>
+
+<script>
+runEditingTest();
+</script>
+
+</body>
+</html>
