@@ -1,3 +1,15 @@
+2003-07-02  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by David
+
+	Fix some more build problems with warnings being issued
+	when casting and calling methods.
+
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild):
+        (QScrollView::resizeContents):
+        (QScrollView::repaintContents):
+
 2003-07-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
