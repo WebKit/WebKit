@@ -32,6 +32,7 @@ MMOBJECTS = \
         KWQComboBox.o \
         KWQCompletion.o \
         KWQCursor.o \
+        KWQEvent.o \
 	KWQFont.o \
 	KWQFontMetrics.o \
 	KWQFrame.o \
@@ -73,6 +74,7 @@ MMOBJECTS = \
 	KWQView.o \
 	KWQWMatrix.o \
 	KWQWidget.o \
+	KWQxml.o \
 	KWQChar.o \
 	KWQString.o \
 	KWQCString.o \
