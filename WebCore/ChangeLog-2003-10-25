@@ -1,5 +1,13 @@
 2002-08-28  Richard Williamson (Local)  <rjw@apple.com>
 
+        More tweaks to ccs.
+        Added underline to visited links.
+        Made outline for active normal and visited links gray.
+        
+        * khtml/css/html4.css:
+
+2002-08-28  Richard Williamson (Local)  <rjw@apple.com>
+
         Fixed outline of for active link style.
         
         * khtml/css/html4.css:
