@@ -6,6 +6,7 @@
 #import "IFPluginNullEventSender.h"
 #import <Carbon/Carbon.h>
 #import <WebKitDebug.h>
+#import <WebKit/IFPluginView.h>
 
 @implementation IFPluginNullEventSender
 
@@ -19,20 +20,15 @@
 
 -(void)sendNullEvents
 {
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
+    if (!shouldStop) {
+        EventRecord event;
+        bool acceptedEvent;
     
-    GetGlobalMouse(&point);
-    
-    if(!shouldStop){
-        event.what = nullEvent;
-        event.message = 0;
-        event.when = TickCount();
-        event.where = point;
-        event.modifiers = GetCurrentKeyModifiers();
+        [IFPluginView getCarbonEvent:&event];
         acceptedEvent = NPP_HandleEvent(instance, &event);
+        
         //WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
+        
         [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.01];
     }
 }

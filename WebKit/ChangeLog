@@ -1,3 +1,33 @@
+2002-05-15  Darin Adler  <darin@apple.com>
+
+	Another quick events cleanup pass.
+
+	* Plugins.subproj/IFPluginNullEventSender.m:
+	(-[IFPluginNullEventSender sendNullEvents]): Use [IFPluginView getCarbonEvent:].
+
+	* Plugins.subproj/IFPluginView.h: Make almost all methods private.
+	* Plugins.subproj/IFPluginView.mm:
+	(+[IFPluginView getCarbonEvent:]): New.
+	(-[IFPluginView getCarbonEvent:]): New, calls class method.
+	(-[IFPluginView modifiersForEvent:isMouseDown:]): Reversed sense of btnState.
+	This flag is set if the mouse is up, not if the mouse is down.
+	(-[IFPluginView getCarbonEvent:withEvent:isMouseDown:]): New.
+	(-[IFPluginView getCarbonEvent:withEvent:]): New.
+	(-[IFPluginView sendActivateEvent:]): Now takes parameter for activate vs.
+	deactivate and uses [getCarbonEvent:].
+	(-[IFPluginView sendUpdateEvent]): Uses [getCarbonEvent:].
+	(-[IFPluginView becomeFirstResponder]): Uses [getCarbonEvent:].
+	(-[IFPluginView resignFirstResponder]): Uses [getCarbonEvent:].
+	(-[IFPluginView mouseDown:]): Uses [getCarbonEvent:withEvent:isMouseDown:].
+	(-[IFPluginView mouseUp:]): Uses [getCarbonEvent:withEvent:isMouseDown:].
+	(-[IFPluginView mouseEntered:]): Uses [getCarbonEvent:withEvent:].
+	(-[IFPluginView mouseExited:]): Uses [getCarbonEvent:withEvent:].
+	(-[IFPluginView keyUp:]): Uses [getCarbonEvent:withEvent:].
+	(-[IFPluginView keyDown:]): Uses [getCarbonEvent:withEvent:].
+	(-[IFPluginView start]): Call [sendActivateEvent:YES].
+	(-[IFPluginView windowBecameKey:]): Call [sendActivateEvent:YES].
+	(-[IFPluginView windowResignedKey:]): Call [sendActivateEvent:NO].
+
 2002-05-15  Richard J. Williamson  <rjw@apple.com>
 
     Fixed problem dealing w/ characters in range 0x7f - 0xa0.

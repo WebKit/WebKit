@@ -28,7 +28,224 @@
 #import <IFPluginNullEventSender.h>
 #import "IFNullPluginView.h"
 
+static NSString* startupVolumeName(void);
+
 @implementation IFPluginView
+
+#pragma mark EVENTS
+
++ (void)getCarbonEvent:(EventRecord *)carbonEvent
+{
+    carbonEvent->what = nullEvent;
+    carbonEvent->message = 0;
+    carbonEvent->when = TickCount();
+    GetGlobalMouse(&carbonEvent->where);
+    carbonEvent->modifiers = GetCurrentKeyModifiers();
+    if (!Button())
+        carbonEvent->modifiers |= btnState;
+}
+
+- (void)getCarbonEvent:(EventRecord *)carbonEvent
+{
+    [[self class] getCarbonEvent:carbonEvent];
+}
+
+- (EventModifiers)modifiersForEvent:(NSEvent *)event isMouseDown:(BOOL)isMouseDown
+{
+    EventModifiers modifiers;
+    unsigned int modifierFlags = [event modifierFlags];
+    
+    modifiers = 0;
+    
+    if (!isMouseDown)
+        modifiers |= btnState;
+    
+    if (modifierFlags & NSCommandKeyMask)
+        modifiers |= cmdKey;
+    
+    if (modifierFlags & NSShiftKeyMask)
+        modifiers |= shiftKey;
+
+    if (modifierFlags & NSAlphaShiftKeyMask)
+        modifiers |= alphaLock;
+
+    if (modifierFlags & NSAlternateKeyMask)
+        modifiers |= optionKey;
+
+    if (modifierFlags & NSControlKeyMask)
+        modifiers |= controlKey;
+
+    return modifiers;
+}
+
+- (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent isMouseDown:(BOOL)isMouseDown
+{
+    NSPoint where;
+    
+    where = [[cocoaEvent window] convertBaseToScreen:[cocoaEvent locationInWindow]];
+    
+    carbonEvent->what = nullEvent;
+    carbonEvent->message = 0;
+    carbonEvent->when = (UInt32)([cocoaEvent timestamp] * 60); // seconds to ticks
+    carbonEvent->where.h = (short)where.x;
+    carbonEvent->where.v = (short)(NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - where.y);
+    carbonEvent->modifiers = [self modifiersForEvent:cocoaEvent isMouseDown:isMouseDown];    
+}
+
+- (void)getCarbonEvent:(EventRecord *)carbonEvent withEvent:(NSEvent *)cocoaEvent
+{
+    [self getCarbonEvent:carbonEvent withEvent:cocoaEvent isMouseDown:Button()];
+}
+
+-(void)sendActivateEvent:(BOOL)activate
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event];
+    event.what = activateEvt;
+    event.message = (UInt32)[[self window] _windowRef];
+    if (activate)
+        event.modifiers |= activMask;
+    
+    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
+}
+
+- (void)sendUpdateEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event];
+    event.what = updateEvt;
+    event.message = (UInt32)[[self window] _windowRef];
+
+    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
+}
+
+-(BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event];
+    event.what = getFocusEvent;
+    
+    acceptedEvent = NPP_HandleEvent(instance, &event); 
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
+    return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event];
+    event.what = loseFocusEvent;
+    
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
+    return YES;
+}
+
+
+-(void)mouseDown:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event withEvent:theEvent isMouseDown:YES];
+    event.what = mouseDown;
+    
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, event.where.v, event.where.h, event.when);
+}
+
+-(void)mouseUp:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    Point point;
+    
+    [self getCarbonEvent:&event withEvent:theEvent isMouseDown:NO];
+    event.what = mouseUp;
+
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, point.v, point.h, event.when);
+}
+
+- (void)mouseEntered:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event withEvent:theEvent];
+    event.what = adjustCursorEvent;
+
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
+}
+
+- (void)mouseExited:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event withEvent:theEvent];
+    event.what = adjustCursorEvent;
+
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
+}
+
+- (void)keyUp:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+        
+    [self getCarbonEvent:&event withEvent:theEvent];
+    event.what = keyUp;
+    // FIXME: Unicode characters vs. Macintosh ASCII character codes?
+    // FIXME: Multiple characters?
+    // FIXME: Key codes?
+    event.message = [[theEvent characters] characterAtIndex:0];
+
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    
+    [self getCarbonEvent:&event withEvent:theEvent];
+    event.what = keyDown;
+    // FIXME: Unicode characters vs. Macintosh ASCII character codes?
+    // FIXME: Multiple characters?
+    // FIXME: Key codes?
+    event.message = [[theEvent characters] characterAtIndex:0];
+    
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
+}
 
 #pragma mark IFPLUGINVIEW
 
@@ -221,6 +438,20 @@ static char *newCString(NSString *string)
     }
 }
 
+- (NSView *) findSuperview:(NSString *)viewName
+{
+    NSView *view;
+    
+    view = self;
+    while(view){
+        view = [view superview];
+        if([[view className] isEqualToString:viewName]){
+            return view;
+        }
+    }
+    return nil;
+}
+
 -(void)start
 {
     NPSavedData saved;
@@ -250,7 +481,8 @@ static char *newCString(NSString *string)
     [notificationCenter addObserver:self selector:@selector(windowResignedKey:) name:@"NSWindowDidResignKeyNotification" object:theWindow];
     [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) name:@"NSUserDefaultsDidChangeNotification" object:nil];
     
-    [self sendActivateEvent];
+    if ([theWindow isKeyWindow])
+        [self sendActivateEvent:YES];
     if(URL)
         [self newStream:[NSURL URLWithString:URL] mimeType:mime notifyData:NULL];
     eventSender = [[IFPluginNullEventSender alloc] initializeWithNPP:instance functionPointer:NPP_HandleEvent];
@@ -280,20 +512,6 @@ static char *newCString(NSString *string)
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_Destroy: %d\n", npErr);
 }
 
-- (NSView *) findSuperview:(NSString *)viewName
-{
-    NSView *view;
-    
-    view = self;
-    while(view){
-        view = [view superview];
-        if([[view className] isEqualToString:viewName]){
-            return view;
-        }
-    }
-    return nil;
-}
-
 #pragma mark NSVIEW
 
 - (void)drawRect:(NSRect)rect
@@ -309,229 +527,6 @@ static char *newCString(NSString *string)
     return YES;
 }
 
-#pragma mark EVENTS
-
-- (UInt32)currentModifiers
-{
-    UInt32 modifiers = GetCurrentKeyModifiers();
-    
-    if([[self window] isKeyWindow])
-        modifiers |= activeFlag;
-        
-    //FIXME: Need to also set btnStateBit on modifiers
-    
-    return modifiers;
-}
-
-- (UInt32)modifiersForEvent:(NSEvent *)theEvent isMouseDown:(BOOL)isMouseDown
-{
-    UInt32 modifiers;
-    unsigned int modifierFlags = [theEvent modifierFlags];
-    
-    modifiers = 0;
-    
-    if([[self window] isKeyWindow])
-        modifiers |= activeFlag;
-    
-    if(isMouseDown)
-        modifiers |= btnState;
-    
-    if(modifierFlags & NSCommandKeyMask)
-        modifiers |= cmdKey;
-    
-    if(modifierFlags & NSShiftKeyMask)
-        modifiers |= shiftKey;
-
-    if(modifierFlags & NSAlphaShiftKeyMask)
-        modifiers |= alphaLock;
-
-    if(modifierFlags & NSAlternateKeyMask)
-        modifiers |= optionKey;
-
-    if(modifierFlags & NSControlKeyMask)
-        modifiers |= controlKey;
-
-    return modifiers;
-}
-
--(void)sendActivateEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = activateEvt;
-    event.message = (UInt32)[[self window] _windowRef];
-    event.when = TickCount();
-    event.where = point;
-    event.modifiers = [self currentModifiers];
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(activateEvent): %d  isActive: %d\n", acceptedEvent, (event.modifiers & activeFlag));
-}
-
-- (void)sendUpdateEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = updateEvt;
-    event.message = (UInt32)[[self window] _windowRef];
-    event.when = TickCount();
-    event.where = point;
-    event.modifiers = [self currentModifiers];
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(updateEvt): %d  when: %lu\n", acceptedEvent, event.when);
-}
-
--(BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
-- (BOOL)becomeFirstResponder
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = getFocusEvent;
-    event.message = 0;
-    event.when = TickCount();
-    event.where = point;
-    event.modifiers = [self currentModifiers];
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(getFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
-    return YES;
-}
-
-- (BOOL)resignFirstResponder
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = loseFocusEvent;
-    event.message = 0;
-    event.when = TickCount();
-    event.where = point;
-    event.modifiers = [self currentModifiers];
-    acceptedEvent = NPP_HandleEvent(instance, &event); 
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(loseFocusEvent): %d  when: %lu\n", acceptedEvent, event.when);
-    return YES;
-}
-
-
--(void)mouseDown:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = mouseDown;
-    event.message = 0;
-    event.when = (uint32)([theEvent timestamp] * 60); // seconds to ticks
-    event.where = point;
-    event.modifiers = [self modifiersForEvent:theEvent isMouseDown:YES];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, point.v, point.h, event.when);
-}
-
--(void)mouseUp:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = mouseUp;
-    event.message = 0;
-    event.when = (uint32)([theEvent timestamp] * 60); 
-    event.where = point;
-    event.modifiers = [self modifiersForEvent:theEvent isMouseDown:NO];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%lu\n", acceptedEvent, point.v, point.h, event.when);
-}
-
-- (void)mouseEntered:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = adjustCursorEvent;
-    event.message = 0;
-    event.when = (uint32)([theEvent timestamp] * 60);
-    event.where = point;
-    event.modifiers = [self modifiersForEvent:theEvent isMouseDown:NO];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseEntered): %d\n", acceptedEvent);
-}
-
-- (void)mouseExited:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-    
-    event.what = adjustCursorEvent;
-    event.message = 0;
-    event.when = (uint32)([theEvent timestamp] * 60);
-    event.where = point;
-    event.modifiers = [self modifiersForEvent:theEvent isMouseDown:NO];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(mouseExited): %d\n", acceptedEvent);
-}
-
-- (void)keyUp:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-        
-    event.what = keyUp;
-    event.message = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
-    event.when = (uint32)([theEvent timestamp] * 60);
-    event.where = point;
-    event.modifiers = [self modifiersForEvent:theEvent isMouseDown:NO];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyUp): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
-}
-
-- (void)keyDown:(NSEvent *)theEvent
-{
-    EventRecord event;
-    bool acceptedEvent;
-    Point point;
-    
-    GetGlobalMouse(&point);
-        
-    event.what = keyDown;
-    event.message = [[theEvent charactersIgnoringModifiers] characterAtIndex:0];
-    event.when = (uint32)([theEvent timestamp] * 60);
-    event.where = point;
-    event.modifiers = [self modifiersForEvent:theEvent isMouseDown:NO];
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_HandleEvent(keyDown): %d key:%c\n", acceptedEvent, (char) (event.message & charCodeMask));
-}
-
 #pragma mark NOTIFICATIONS
 
 -(void) viewHasMoved:(NSNotification *)notification
@@ -542,12 +537,12 @@ static char *newCString(NSString *string)
 
 -(void) windowBecameKey:(NSNotification *)notification
 {
-    [self sendActivateEvent];
+    [self sendActivateEvent:YES];
 }
 
 -(void) windowResignedKey:(NSNotification *)notification
 {
-    [self sendActivateEvent];
+    [self sendActivateEvent:NO];
 }
 
 - (void) windowWillClose:(NSNotification *)notification
