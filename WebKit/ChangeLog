@@ -1,3 +1,13 @@
+2003-04-07  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- fixed 3219584 - REGRESSION: launch times appear slower in v71
+
+        * WebView.subproj/WebView.m:
+        (+[WebView canShowMIMEType:]): Avoid loading plugin database if we
+	can find a view without doing so.
+
 2003-04-07  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebUserAgentSpoofTable.c: Regenerated.
