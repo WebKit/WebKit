@@ -1,3 +1,11 @@
+2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+
+        Implemented find for text views.
+        
+        * WebView.subproj/WebTextView.m:
+        (-[NSString findString:selectedRange:options:wrap:]):
+        (-[WebTextView searchFor:direction:caseSensitive:]):
+
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
 	Implemented initial contextual menus. None activated yet.
