@@ -1,5 +1,12 @@
 2002-07-19  Chris Blumenberg  <cblu@apple.com>
 
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem image]): call [WebIconLoader defaultIcon]
+        * Misc.subproj/WebIconLoader.m:
+        (+[WebIconLoader defaultIcon]): move bundle image loading code from [WebHistoryItem image] to here.
+
+2002-07-19  Chris Blumenberg  <cblu@apple.com>
+
 	Added support favicons.
 
         * Misc.subproj/WebIconLoader.h: Added.

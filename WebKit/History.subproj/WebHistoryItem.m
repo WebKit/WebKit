@@ -6,8 +6,9 @@
 //  Copyright (c) 2001, 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import "WebHistoryItem.h"
-#import "WebKitReallyPrivate.h"
+#import <WebKit/WebHistoryItem.h>
+#import <WebKit/WebIconLoader.h>
+#import <WebKit/WebKitReallyPrivate.h>
 
 #import <WebFoundation/WebNSURLExtras.h>
 
@@ -65,26 +66,12 @@
 }
 
 -(NSImage *)image
-{
-    static NSImage *defaultImage = nil;
-    static BOOL loadedDefaultImage = NO;
-    
+{    
     if (_image != nil) {
         return _image;
     }
 
-    // Attempt to load default image only once, to avoid performance penalty of repeatedly
-    // trying and failing to find it.
-    if (!loadedDefaultImage) {
-        NSString *pathForDefaultImage =
-            [[NSBundle bundleForClass:[WebHistoryItem class]] pathForResource:@"url_icon" ofType:@"tiff"];
-        if (pathForDefaultImage != nil) {
-            defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
-        }
-        loadedDefaultImage = YES;
-    }
-
-    return defaultImage;
+    return [WebIconLoader defaultIcon];
 }
 
 -(NSCalendarDate *)lastVisitedDate
