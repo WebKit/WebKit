@@ -1,3 +1,25 @@
+2003-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        * Downloads.subproj/WebBinHexDecoder.m: (-[WebBinHexDecoder fileAttributes]):
+        * Downloads.subproj/WebMacBinaryDecoder.m: (-[WebMacBinaryDecoder fileAttributes]):
+	Use "FinderFlags" instead of "FinderInfo" as appropriate, since these are
+	just the Finder flags, not all the Finder info.
+
+        * Downloads.subproj/WebDownloadHandler.m: (-[WebDownloadHandler createFileIfNecessary]):
+        * Misc.subproj/WebNSWorkspaceExtras.m: (-[NSWorkspace _web_noteFileChangedAtPath:]):
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage openResourceFile]):
+        (-[WebNetscapePluginPackage pathByResolvingSymlinksAndAliasesInPath:]):
+        (-[WebNetscapePluginPackage load]):
+	Use fileSystemRepresentation instead of fileSystemRepresentationWithPath:
+	because it's simpler and there's no good reason to use the other one.
+
+        * WebView.subproj/WebUserAgentSpoofTable.gperf: Improved one of the motivating comments.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.
+
 === Safari-54 ===
 
 2003-01-22  Chris Blumenberg  <cblu@apple.com>

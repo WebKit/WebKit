@@ -17,7 +17,7 @@ nj.com, MacIE
 oregonlive.com, MacIE
 watch.com, MacIE
 #
-# pretend to be Mac IE to make the return key work to log in
+# pretend to be Mac IE because the site has JavaScript that works only for "Netscape" or "Microsoft"
 firstusa.com, MacIE
 #
 # pretend to be Mac IE to avoid bad-quality CSS the site gives us otherwise

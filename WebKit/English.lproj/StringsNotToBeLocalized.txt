@@ -107,6 +107,7 @@
 "WebBookmarkTypeLeaf"
 "WebBookmarkTypeList"
 "WebBookmarkTypeProxy"
+"WebBookmarkUUID"
 "WebBookmarkWillChangeNotification"
 "WebBookmarksWereAddedNotification"
 "WebBookmarksWereRemovedNotification"

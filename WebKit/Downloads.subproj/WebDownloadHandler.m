@@ -211,7 +211,7 @@
 
     [[NSWorkspace sharedWorkspace] _web_noteFileChangedAtPath:path];
 
-    OSErr result = FSPathMakeRef((const UInt8 *)[fileManager fileSystemRepresentationWithPath:path], &fileRef, NULL);
+    OSErr result = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fileRef, NULL);
     if (result == noErr) {
         fileRefPtr = &fileRef;
     } else {

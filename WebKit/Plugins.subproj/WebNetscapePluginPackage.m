@@ -38,7 +38,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     if(isBundle){
         return CFBundleOpenBundleResourceMap(bundle);
     }else{
-        err = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:path], &fref, NULL);
+        err = FSPathMakeRef((const UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if(err != noErr){
             return -1;
         }
@@ -164,7 +164,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     FSRef fref;
     OSErr err;
 
-    err = FSPathMakeRef((const UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:thePath], &fref, NULL);
+    err = FSPathMakeRef((const UInt8 *)[thePath fileSystemRepresentation], &fref, NULL);
     if(err != noErr){
         return newPath;
     }
@@ -295,7 +295,7 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         FSSpec spec;
         FSRef fref;
         
-        err = FSPathMakeRef((UInt8 *)[[NSFileManager defaultManager] fileSystemRepresentationWithPath:path], &fref, NULL);
+        err = FSPathMakeRef((UInt8 *)[path fileSystemRepresentation], &fref, NULL);
         if(err != noErr){
             ERROR("FSPathMakeRef failed. Error=%d", err);
             return NO;

@@ -362,7 +362,7 @@ done:
     return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedLong:_fileType], NSFileHFSTypeCode,
         [NSNumber numberWithUnsignedLong:_fileCreator], NSFileHFSCreatorCode,
-        [NSNumber numberWithUnsignedShort:_finderFlags], WebFinderInfo,
+        [NSNumber numberWithUnsignedShort:_finderFlags], WebFinderFlags,
         nil];
 }
 

@@ -159,8 +159,8 @@
         [NSDate dateWithTimeIntervalSinceReferenceDate:kCFAbsoluteTimeIntervalSince1904 + _modificationDate], NSFileModificationDate,
         [NSNumber numberWithUnsignedLong:_fileType], NSFileHFSTypeCode,
         [NSNumber numberWithUnsignedLong:_fileCreator], NSFileHFSCreatorCode,
-        [NSNumber numberWithUnsignedShort:_finderFlags], WebFinderInfo,
-        [NSNumber numberWithUnsignedShort:_extendedFinderFlags], WebExtendedFinderInfo,
+        [NSNumber numberWithUnsignedShort:_finderFlags], WebFinderFlags,
+        [NSNumber numberWithUnsignedShort:_extendedFinderFlags], WebExtendedFinderFlags,
         nil];
 }
 

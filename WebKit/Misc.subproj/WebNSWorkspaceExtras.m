@@ -16,10 +16,8 @@
 {
     ASSERT(path);
     
-    NSFileManager *fileManager = [NSFileManager defaultManager];
-    
     NSString *directoryPath = [path stringByDeletingLastPathComponent];
-    const char *dirRep = [fileManager fileSystemRepresentationWithPath:directoryPath];
+    const char *dirRep = [directoryPath fileSystemRepresentation];
 
     // Send the notificaition that directory contents have changed.
     FNNotifyByPath(dirRep, kFNDirectoryModifiedMessage, kNilOptions);
@@ -41,7 +39,7 @@
                                                     returnID:0
                                                transactionID:0];
 
-    const char *fileRep = [[NSFileManager defaultManager] fileSystemRepresentationWithPath:path];
+    const char *fileRep = [path fileSystemRepresentation];
     FSRef fref;
     OSStatus error = FSPathMakeRef(fileRep, &fref, NULL);
     if(error){
