@@ -28,7 +28,8 @@ typedef NPStream* NPS;
     bool transferred;
     NPWindow window;
     NP_Port nPort;
-    
+    uint16 transferMode;
+        
     NPP_NewProcPtr NPP_New;
     NPP_DestroyProcPtr NPP_Destroy;
     NPP_SetWindowProcPtr NPP_SetWindow;
@@ -49,7 +50,8 @@ typedef NPStream* NPS;
 -(void)drawRect:(NSRect)rect;
 -(BOOL)acceptsFirstResponder;
 -(void)sendNullEvents;
--(void)mouseDown:(NSEvent *)event;
+-(void)mouseDown:(NSEvent *)theEvent;
+-(void)mouseUp:(NSEvent *)theEvent;
 -(void)dealloc;
 
 @end

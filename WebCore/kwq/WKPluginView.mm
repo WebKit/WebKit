@@ -11,6 +11,7 @@
 #include <WCURICache.h>
 #include <Carbon/Carbon.h> 
 
+
 @implementation WKPluginView
 
 - initWithFrame: (NSRect) r widget: (QWidget *)w plugin: (WKPlugin *)plug url: (NSString *)location mime:(NSString *)mimeType
@@ -48,7 +49,6 @@
 - (void)drawRect:(NSRect)rect {
     NPError npErr;
     char cMime[200], cURL[800];
-    uint16 stype;
     id <WCURICache> cache;
     NSRect frame;
     
@@ -86,19 +86,19 @@
         stream->notifyData = NULL;
         [mime getCString:cMime];
         
-        npErr = NPP_NewStream(instance, cMime, stream, TRUE, &stype);
+        npErr = NPP_NewStream(instance, cMime, stream, TRUE, &transferMode);
         KWQDebug("NPP_NewStream: %d\n", npErr);
         
         cache = WCGetDefaultURICache();
-        if(stype == NP_NORMAL){
+        if(transferMode == NP_NORMAL){
             KWQDebug("Stream type: NP_NORMAL\n");
             [cache requestWithString:url requestor:self userData:nil];
-        }else if(stype == NP_ASFILEONLY){
-            KWQDebug("Stream type: NP_ASFILEONLY\n");
-        }else if(stype == NP_ASFILE){
-            KWQDebug("Stream type: NP_ASFILE\n");
-        }else if(stype == NP_SEEK){
-            KWQDebug("Stream type: NP_SEEK\n");
+        }else if(transferMode == NP_ASFILEONLY){
+            KWQDebug("Stream type: NP_ASFILEONLY not yet supported\n");
+        }else if(transferMode == NP_ASFILE){
+            KWQDebug("Stream type: NP_ASFILE not yet supported\n");
+        }else if(transferMode == NP_SEEK){
+            KWQDebug("Stream type: NP_SEEK not yet supported\n");
         }
         transferred = TRUE;
     }
@@ -137,7 +137,7 @@
     EventRecord event;
     bool acceptedEvent;
     
-    event.what = 0;
+    event.what = nullEvent;
     acceptedEvent = NPP_HandleEvent(instance, &event);
     //KWQDebug("NPP_HandleEvent: %d\n", acceptedEvent);
     [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:0];
@@ -145,7 +145,42 @@
 
 -(void)mouseDown:(NSEvent *)theEvent
 {
+    EventRecord event;
+    bool acceptedEvent;
+    Point pt;
+    NSPoint viewPoint;
+    NSRect frame;
+    
+    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:[[theEvent window] contentView]];
+    frame = [self frame];
+    
+    pt.v = (short)viewPoint.y; 
+    pt.h = (short)viewPoint.x;
+    event.what = mouseDown;
+    event.where = pt;
+    event.when = (uint32)[theEvent timestamp] / 60; // seconds to ticks
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    KWQDebug("NPP_HandleEvent(mouseDown): %d pt.v=%d, pt.h=%d ticks=%d\n", acceptedEvent, pt.v, pt.h, event.when);
+}
 
+-(void)mouseUp:(NSEvent *)theEvent
+{
+    EventRecord event;
+    bool acceptedEvent;
+    Point pt;
+    NSPoint viewPoint;
+    NSRect frame;
+    
+    viewPoint = [self convertPoint:[theEvent locationInWindow] fromView:[[theEvent window] contentView]];
+    frame = [self frame];
+    
+    pt.v = (short)viewPoint.y; 
+    pt.h = (short)viewPoint.x;
+    event.what = mouseUp;
+    event.where = pt;
+    event.when = (uint32)[theEvent timestamp] / 60; // seconds to ticks
+    acceptedEvent = NPP_HandleEvent(instance, &event);
+    KWQDebug("NPP_HandleEvent(mouseUp): %d pt.v=%d, pt.h=%d ticks=%d\n", acceptedEvent, pt.v, pt.h, event.when);
 }
 
 -(void)dealloc
