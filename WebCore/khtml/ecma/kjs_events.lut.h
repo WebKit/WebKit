@@ -107,25 +107,32 @@ const struct HashTable DOMUIEventProtoTable = { 2, 1, DOMUIEventProtoTableEntrie
 namespace KJS {
 
 const struct HashEntry DOMMouseEventTableEntries[] = {
-   { "screenX", DOMMouseEvent::ScreenX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[3] },
-   { "screenY", DOMMouseEvent::ScreenY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[2] },
-   { "clientX", DOMMouseEvent::ClientX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[5] },
-   { "x", DOMMouseEvent::X, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[4] },
-   { "clientY", DOMMouseEvent::ClientY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[7] },
-   { "y", DOMMouseEvent::Y, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[6] },
-   { "offsetX", DOMMouseEvent::OffsetX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[9] },
-   { "offsetY", DOMMouseEvent::OffsetY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[8] },
-   { "ctrlKey", DOMMouseEvent::CtrlKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[10] },
-   { "shiftKey", DOMMouseEvent::ShiftKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[15] },
-   { "altKey", DOMMouseEvent::AltKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[11] },
-   { "metaKey", DOMMouseEvent::MetaKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[12] },
-   { "button", DOMMouseEvent::Button, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[13] },
-   { "relatedTarget", DOMMouseEvent::RelatedTarget, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[14] },
+   { 0, 0, 0, 0, 0 },
+   { "x", DOMMouseEvent::X, DontDelete|ReadOnly, 0, 0 },
+   { "y", DOMMouseEvent::Y, DontDelete|ReadOnly, 0, 0 },
+   { "ctrlKey", DOMMouseEvent::CtrlKey, DontDelete|ReadOnly, 0, 0 },
+   { "offsetX", DOMMouseEvent::OffsetX, DontDelete|ReadOnly, 0, 0 },
+   { "offsetY", DOMMouseEvent::OffsetY, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[20] },
+   { "shiftKey", DOMMouseEvent::ShiftKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[18] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "relatedTarget", DOMMouseEvent::RelatedTarget, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
    { "fromElement", DOMMouseEvent::FromElement, DontDelete|ReadOnly, 0, 0 },
-   { "toElement", DOMMouseEvent::ToElement, DontDelete|ReadOnly, 0, 0 }
+   { 0, 0, 0, 0, 0 },
+   { "clientX", DOMMouseEvent::ClientX, DontDelete|ReadOnly, 0, 0 },
+   { "screenX", DOMMouseEvent::ScreenX, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[17] },
+   { "screenY", DOMMouseEvent::ScreenY, DontDelete|ReadOnly, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "clientY", DOMMouseEvent::ClientY, DontDelete|ReadOnly, 0, 0 },
+   { "altKey", DOMMouseEvent::AltKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[19] },
+   { "metaKey", DOMMouseEvent::MetaKey, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[21] },
+   { "button", DOMMouseEvent::Button, DontDelete|ReadOnly, 0, 0 },
+   { "toElement", DOMMouseEvent::ToElement, DontDelete|ReadOnly, 0, &DOMMouseEventTableEntries[22] },
+   { "dataTransfer", DOMMouseEvent::DataTransfer, DontDelete|ReadOnly, 0, 0 }
 };
 
-const struct HashTable DOMMouseEventTable = { 2, 16, DOMMouseEventTableEntries, 2 };
+const struct HashTable DOMMouseEventTable = { 2, 23, DOMMouseEventTableEntries, 17 };
 
 } // namespace
 
@@ -201,5 +208,29 @@ const struct HashEntry DOMMutationEventProtoTableEntries[] = {
 };
 
 const struct HashTable DOMMutationEventProtoTable = { 2, 1, DOMMutationEventProtoTableEntries, 1 };
+
+} // namespace
+
+namespace KJS {
+
+const struct HashEntry ClipboardTableEntries[] = {
+   { "dropEffect", Clipboard::DropEffect, DontDelete, 0, 0 },
+   { "dropAllowed", Clipboard::DropAllowed, DontDelete, 0, 0 }
+};
+
+const struct HashTable ClipboardTable = { 2, 2, ClipboardTableEntries, 2 };
+
+} // namespace
+
+namespace KJS {
+
+const struct HashEntry ClipboardProtoTableEntries[] = {
+   { "clearData", Clipboard::ClearData, DontDelete|Function, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "getData", Clipboard::GetData, DontDelete|Function, 1, &ClipboardProtoTableEntries[3] },
+   { "setData", Clipboard::SetData, DontDelete|Function, 2, 0 }
+};
+
+const struct HashTable ClipboardProtoTable = { 2, 4, ClipboardProtoTableEntries, 3 };
 
 } // namespace

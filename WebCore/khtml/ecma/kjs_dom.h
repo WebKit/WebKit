@@ -60,6 +60,7 @@ namespace KJS {
            CloneNode, Normalize, IsSupported, AddEventListener, RemoveEventListener,
            DispatchEvent, Contains,
            OnAbort, OnBlur, OnChange, OnClick, OnContextMenu, OnDblClick, OnDragDrop, OnError,
+           OnDragEnter, OnDragOver, OnDragLeave, OnDrop,
            OnFocus, OnInput, OnKeyDown, OnKeyPress, OnKeyUp, OnLoad, OnMouseDown,
            OnMouseMove, OnMouseOut, OnMouseOver, OnMouseUp, OnMove, OnReset,
            OnResize, OnScroll, OnSearch, OnSelect, OnSubmit, OnUnload,

@@ -1103,6 +1103,16 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     _private->initiatedDrag = initiatedDrag;
 }
 
+- (void)_setWebKitDragRespondsToDragging:(BOOL)flag
+{
+    _private->doWebKitDragReponse = flag;
+}
+
+- (BOOL)_webKitDragRespondsToDragging
+{
+    return _private->doWebKitDragReponse;
+}
+
 @end
 
 
@@ -1227,6 +1237,7 @@ NSMutableDictionary *countInvocations;
 - (void)_commonInitializationWithFrameName:(NSString *)frameName groupName:(NSString *)groupName
 {
     _private->drawsBackground = YES;
+    _private->doWebKitDragReponse = YES;
 
     NSRect f = [self frame];
     WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
@@ -1723,6 +1734,7 @@ NS_ENDHANDLER
     }
     
     if (operation == NSDragOperationNone) {
+        // ??? this is bad, it is causing false exit events in WebCore
         [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
     }
     

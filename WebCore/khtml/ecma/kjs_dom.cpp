@@ -119,6 +119,10 @@ bool DOMNode::toBoolean(ExecState *) const
   oncontextmenu	DOMNode::OnContextMenu		DontDelete
   ondblclick	DOMNode::OnDblClick		DontDelete
   ondragdrop	DOMNode::OnDragDrop		DontDelete
+  ondragenter	DOMNode::OnDragEnter		DontDelete
+  ondragleave	DOMNode::OnDragLeave		DontDelete
+  ondragover	DOMNode::OnDragOver		DontDelete
+  ondrop	DOMNode::OnDrop                 DontDelete
   onerror	DOMNode::OnError		DontDelete
   onfocus	DOMNode::OnFocus       		DontDelete
   oninput       DOMNode::OnInput                DontDelete
@@ -232,6 +236,14 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     return getListener(DOM::EventImpl::MOUSEOVER_EVENT);
   case OnMouseUp:
     return getListener(DOM::EventImpl::MOUSEUP_EVENT);
+  case OnDragEnter:
+    return getListener(DOM::EventImpl::DRAGENTER_EVENT);
+  case OnDragOver:
+    return getListener(DOM::EventImpl::DRAGOVER_EVENT);
+  case OnDragLeave:
+    return getListener(DOM::EventImpl::DRAGLEAVE_EVENT);
+  case OnDrop:
+    return getListener(DOM::EventImpl::DROP_EVENT);
   case OnMove:
     return getListener(DOM::EventImpl::KHTML_MOVE_EVENT);
   case OnReset:
@@ -369,6 +381,18 @@ void DOMNode::putValue(ExecState *exec, int token, const Value& value, int /*att
     break;
   case OnMouseUp:
     setListener(exec,DOM::EventImpl::MOUSEUP_EVENT,value);
+    break;
+  case OnDragEnter:
+    setListener(exec,DOM::EventImpl::DRAGENTER_EVENT,value);
+    break;
+  case OnDragOver:
+    setListener(exec,DOM::EventImpl::DRAGOVER_EVENT,value);
+    break;
+  case OnDragLeave:
+    setListener(exec,DOM::EventImpl::DRAGLEAVE_EVENT,value);
+    break;
+  case OnDrop:
+    setListener(exec,DOM::EventImpl::DROP_EVENT,value);
     break;
   case OnMove:
     setListener(exec,DOM::EventImpl::KHTML_MOVE_EVENT,value);

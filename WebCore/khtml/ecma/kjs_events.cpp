@@ -535,7 +535,7 @@ Value DOMUIEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List 
 const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMouseEventTable, 0 };
 
 /*
-@begin DOMMouseEventTable 2
+@begin DOMMouseEventTable 17
   screenX	DOMMouseEvent::ScreenX	DontDelete|ReadOnly
   screenY	DOMMouseEvent::ScreenY	DontDelete|ReadOnly
   clientX	DOMMouseEvent::ClientX	DontDelete|ReadOnly
@@ -552,6 +552,7 @@ const ClassInfo DOMMouseEvent::info = { "MouseEvent", &DOMUIEvent::info, &DOMMou
   relatedTarget	DOMMouseEvent::RelatedTarget DontDelete|ReadOnly
   fromElement	DOMMouseEvent::FromElement DontDelete|ReadOnly
   toElement	DOMMouseEvent::ToElement	DontDelete|ReadOnly
+  dataTransfer	DOMMouseEvent::DataTransfer DontDelete|ReadOnly
 @end
 @begin DOMMouseEventProtoTable 1
   initMouseEvent	DOMMouseEvent::InitMouseEvent	DontDelete|Function 15
@@ -563,6 +564,14 @@ IMPLEMENT_PROTOTYPE_WITH_PARENT(DOMMouseEventProto,DOMMouseEventProtoFunc,DOMUIE
 
 DOMMouseEvent::~DOMMouseEvent()
 {
+}
+
+// pass marks through to JS objects we hold during garbage collection
+void DOMMouseEvent::mark()
+{
+  ObjectImp::mark();
+  if (clipboard && !clipboard->marked())
+    clipboard->mark();
 }
 
 Value DOMMouseEvent::tryGet(ExecState *exec, const Identifier &p) const
@@ -633,6 +642,12 @@ Value DOMMouseEvent::getValueProperty(ExecState *exec, int token) const
     /* fall through */
   case RelatedTarget:
     return getDOMNode(exec,static_cast<DOM::MouseEvent>(event).relatedTarget());
+  case DataTransfer:
+    if (!clipboard) {
+      DOM::MouseEventImpl *impl = static_cast<DOM::MouseEventImpl *>(event.handle());
+      clipboard = new Clipboard(exec, impl->clipboard());
+    }
+    return Object(clipboard);
   default:
     kdWarning() << "Unhandled token in DOMMouseEvent::getValueProperty : " << token << endl;
     return Value();
@@ -852,3 +867,126 @@ Value DOMMutationEventProtoFunc::tryCall(ExecState *exec, Object &thisObj, const
   }
   return Undefined();
 }
+
+// -------------------------------------------------------------------------
+
+const ClassInfo Clipboard::info = { "Clipboard", 0, &ClipboardTable, 0 };
+
+/* Source for ClipboardTable. Use "make hashtables" to regenerate.
+@begin ClipboardTable 2
+  dropEffect	Clipboard::DropEffect	DontDelete
+  dropAllowed	Clipboard::DropAllowed	DontDelete
+@end
+@begin ClipboardProtoTable 3
+  clearData	Clipboard::ClearData	DontDelete|Function 0
+  getData	Clipboard::GetData	DontDelete|Function 1
+  setData	Clipboard::SetData	DontDelete|Function 2
+@end
+*/
+
+DEFINE_PROTOTYPE("Clipboard", ClipboardProto)
+IMPLEMENT_PROTOFUNC(ClipboardProtoFunc)
+IMPLEMENT_PROTOTYPE(ClipboardProto, ClipboardProtoFunc)
+
+Clipboard::Clipboard(ExecState *exec, DOM::ClipboardImpl *cb)
+: DOMObject(ClipboardProto::self(exec)), clipboard(cb)
+{
+    if (clipboard)
+        clipboard->ref();
+}
+
+Clipboard::~Clipboard()
+{
+    if (clipboard)
+        clipboard->deref();
+}
+
+// FIXME lookups of dropEffect and dropAllowed should fail if !clipboard->isForDragging
+
+Value Clipboard::tryGet(ExecState *exec, const Identifier &propertyName) const
+{
+    return DOMObjectLookupGetValue<Clipboard,DOMObject>(exec, propertyName, &ClipboardTable, this);
+}
+
+Value Clipboard::getValueProperty(ExecState *exec, int token) const
+{
+    switch (token) {
+        case DropEffect:
+            return String(clipboard->dropEffect());
+        case DropAllowed:
+            return String(clipboard->dropAllowed());
+        default:
+            kdWarning() << "Clipboard::getValueProperty unhandled token " << token << endl;
+            return Value();
+    }
+}
+
+void Clipboard::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+{
+    DOMObjectLookupPut<Clipboard,DOMObject>(exec, propertyName, value, attr, &ClipboardTable, this );
+}
+
+void Clipboard::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+{
+    switch (token) {
+        case DropEffect:
+            clipboard->setDropEffect(value.toString(exec).string());
+            break;
+        case DropAllowed:
+            clipboard->setDropAllowed(value.toString(exec).string());
+            break;
+        default:
+            kdWarning() << "Clipboard::putValue unhandled token " << token << endl;
+    }
+}
+
+Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+    if (!thisObj.inherits(&KJS::Clipboard::info)) {
+        Object err = Error::create(exec,TypeError);
+        exec->setException(err);
+        return err;
+    }
+
+    Clipboard *cb = static_cast<Clipboard *>(thisObj.imp());
+    switch (id) {
+        case Clipboard::ClearData:
+            if (args.size() == 0) {
+                cb->clipboard->clearAllData();
+                return Undefined();
+            } else if (args.size() == 1) {
+                cb->clipboard->clearData(args[0].toString(exec).string());
+                return Undefined();
+            } else {
+                Object err = Error::create(exec,SyntaxError,"clearData: Invalid number of arguments");
+                exec->setException(err);
+                return err;
+            }
+        case Clipboard::GetData:
+        {
+            if (args.size() == 1) {
+                bool success;
+                DOM::DOMString result = cb->clipboard->getData(args[0].toString(exec).string(), success);
+                if (success) {
+                    return String(result);
+                } else {
+                    return Undefined();
+                }
+            } else {
+                Object err = Error::create(exec,SyntaxError,"getData: Invalid number of arguments");
+                exec->setException(err);
+                return err;
+            }
+        }
+        case Clipboard::SetData:
+            if (args.size() == 2) {
+                return Boolean(cb->clipboard->setData(args[0].toString(exec).string(), args[1].toString(exec).string()));
+            } else {
+                Object err = Error::create(exec,SyntaxError,"setData: Invalid number of arguments");
+                exec->setException(err);
+                return err;
+            }
+    }
+    return Undefined();
+}
+

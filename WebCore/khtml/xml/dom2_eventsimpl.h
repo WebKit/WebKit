@@ -38,6 +38,7 @@ namespace DOM {
 class AbstractViewImpl;
 class DOMStringImpl;
 class NodeImpl;
+class ClipboardImpl;
 
 // ### support user-defined events
 
@@ -57,6 +58,11 @@ public:
         MOUSEOVER_EVENT,
         MOUSEMOVE_EVENT,
         MOUSEOUT_EVENT,
+        // IE drag and drop events
+        DRAGENTER_EVENT,
+        DRAGOVER_EVENT,
+        DRAGLEAVE_EVENT,
+        DROP_EVENT,
         // Mutation events
         DOMSUBTREEMODIFIED_EVENT,
         DOMNODEINSERTED_EVENT,
@@ -203,7 +209,8 @@ public:
 		   bool shiftKeyArg,
 		   bool metaKeyArg,
 		   unsigned short buttonArg,
-		   NodeImpl *relatedTargetArg);
+		   NodeImpl *relatedTargetArg,
+                   ClipboardImpl *clipboardArg=0);
     virtual ~MouseEventImpl();
     long screenX() const { return m_screenX; }
     long screenY() const { return m_screenY; }
@@ -217,6 +224,7 @@ public:
     bool metaKey() const { return m_metaKey; }
     unsigned short button() const { return m_button; }
     NodeImpl *relatedTarget() const { return m_relatedTarget; }
+    ClipboardImpl *clipboard() const { return m_clipboard; }
     void initMouseEvent(const DOMString &typeArg,
 			bool canBubbleArg,
 			bool cancelableArg,
@@ -246,6 +254,7 @@ protected:
     bool m_metaKey;
     unsigned short m_button;
     NodeImpl *m_relatedTarget;
+    ClipboardImpl *m_clipboard;
  private:
     void computeLayerPos();
 };
@@ -358,6 +367,25 @@ public:
 private:
     RegisteredEventListener( const RegisteredEventListener & );
     RegisteredEventListener & operator=( const RegisteredEventListener & );
+};
+
+// State available during IE's events for drag and drop and copy/paste
+class ClipboardImpl : public khtml::Shared<ClipboardImpl> {
+public:
+    ClipboardImpl();
+    virtual ~ClipboardImpl();
+    // Is this operation a drag-drop or a copy-paste?
+    virtual bool isForDragging() const = 0;
+
+    virtual DOMString dropEffect() const = 0;
+    virtual void setDropEffect(const DOMString &s) = 0;
+    virtual DOMString dropAllowed() const = 0;
+    virtual void setDropAllowed(const DOMString &s) = 0;
+    
+    virtual void clearData(const DOMString &type) = 0;
+    virtual void clearAllData() = 0;
+    virtual DOMString getData(const DOMString &type, bool &success) const = 0;
+    virtual bool setData(const DOMString &type, const DOMString &data) = 0;
 };
 
 }; //namespace

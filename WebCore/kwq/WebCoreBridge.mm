@@ -31,6 +31,7 @@
 #import "dom_nodeimpl.h"
 #import "dom_position.h"
 #import "dom_selection.h"
+#import "dom2_eventsimpl.h"
 #import "dom2_rangeimpl.h"
 #import "dom2_viewsimpl.h"
 #import "htmlediting.h"
@@ -58,6 +59,7 @@
 
 #import "KWQAssertions.h"
 #import "KWQCharsets.h"
+#import "KWQClipboard.h"
 #import "KWQDOMNode.h"
 #import "KWQEditCommand.h"
 #import "KWQFont.h"
@@ -1543,6 +1545,72 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     QRect r(_part->selection().getRepaintRect());
     v->ensureVisible(r.right(), r.bottom());
     v->ensureVisible(r.left(), r.top());
+}
+
+// [info draggingLocation] is in window coords
+
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info
+{
+    if (_part) {
+        KHTMLView *v = _part->view();
+        if (v) {
+            // Sending an event can result in the destruction of the view and part.
+            v->ref();
+            
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
+            clipboard->ref();
+
+            // FIXME - massage result into NSDragOperation
+            //  consult event.stopped and event.dataTransfer.dropEffect
+            //  perhaps put that smarts in KWQClipboard 
+            NSDragOperation op = v->updateDragAndDrop(QPoint([info draggingLocation]), clipboard) ? NSDragOperationCopy : NSDragOperationNone;
+
+            clipboard->deref();
+            v->deref();
+            return op;
+        }
+    }
+    return NSDragOperationNone;
+}
+
+- (void)dragExitedWithDraggingInfo:(id <NSDraggingInfo>)info
+{
+    if (_part) {
+        KHTMLView *v = _part->view();
+        if (v) {
+            // Sending an event can result in the destruction of the view and part.
+            v->ref();
+
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
+            clipboard->ref();
+            
+            v->cancelDragAndDrop(QPoint([info draggingLocation]), clipboard);
+
+            clipboard->deref();
+            v->deref();
+        }
+    }
+}
+
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info {
+    if (_part) {
+        KHTMLView *v = _part->view();
+        if (v) {
+            // Sending an event can result in the destruction of the view and part.
+            v->ref();
+
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
+            clipboard->ref();
+
+            BOOL result = v->performDragAndDrop(QPoint([info draggingLocation]), clipboard);
+
+            clipboard->deref();
+            v->deref();
+
+            return result;
+        }
+    }
+    return NO;
 }
 
 @end

@@ -24,6 +24,8 @@
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
     BOOL initiatedDrag;
+    // Is WebCore handling drag destination duties (DHTML dragging)?
+    BOOL webCoreHandlingDrag;
     
     id savedSubviews;
     BOOL subviewsSetAside;

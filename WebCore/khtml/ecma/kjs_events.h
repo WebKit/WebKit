@@ -23,13 +23,17 @@
 #define _KJS_EVENTS_H_
 
 #include "ecma/kjs_dom.h"
+#include "ecma/kjs_html.h"
 #include "dom/dom2_events.h"
 #include "dom/dom_misc.h"
+
+namespace DOM { class ClipboardImpl; }
 
 namespace KJS {
 
   class Window;
-
+  class Clipboard;
+    
   class JSEventListener : public DOM::EventListener {
   public:
     JSEventListener(Object _listener, const Object &_win, bool _html = false);
@@ -127,18 +131,21 @@ namespace KJS {
 
   class DOMMouseEvent : public DOMUIEvent {
   public:
-    DOMMouseEvent(ExecState *exec, DOM::MouseEvent me) : DOMUIEvent(exec, me) {}
+    DOMMouseEvent(ExecState *exec, DOM::MouseEvent me) : DOMUIEvent(exec, me), clipboard(0) {}
     ~DOMMouseEvent();
     virtual Value tryGet(ExecState *exec,const Identifier &p) const;
     Value getValueProperty(ExecState *, int token) const;
+    virtual void mark();
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { ScreenX, ScreenY, ClientX, X, ClientY, Y, OffsetX, OffsetY,
            CtrlKey, ShiftKey, AltKey,
-           MetaKey, Button, RelatedTarget, FromElement, ToElement,
+           MetaKey, Button, RelatedTarget, FromElement, ToElement, DataTransfer,
            InitMouseEvent };
     DOM::MouseEvent toMouseEvent() const { return static_cast<DOM::MouseEvent>(event); }
+  protected:
+    mutable Clipboard *clipboard;
   };
 
   class DOMKeyboardEvent : public DOMUIEvent {
@@ -180,7 +187,25 @@ namespace KJS {
            InitMutationEvent };
     DOM::MutationEvent toMutationEvent() const { return static_cast<DOM::MutationEvent>(event); }
   };
-
+  
+  class Clipboard : public DOMObject {
+  friend class ClipboardProtoFunc;
+  public:
+    Clipboard(ExecState *exec, DOM::ClipboardImpl *ds);
+    ~Clipboard();
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
+    void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
+    virtual bool toBoolean(ExecState *) const { return true; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+    enum { ClearData, GetData, SetData, DropEffect, DropAllowed };
+  private:
+    DOM::ClipboardImpl *clipboard;
+  };
+  
+  
 }; // namespace
 
 #endif

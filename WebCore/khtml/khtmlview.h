@@ -35,6 +35,7 @@ class QRect;
 namespace DOM {
     class HTMLDocumentImpl;
     class DocumentImpl;
+    class ClipboardImpl;
     class ElementImpl;
     class HTMLElementImpl;
     class HTMLTitleElementImpl;
@@ -203,6 +204,10 @@ public:
     void contentsContextMenuEvent ( QContextMenuEvent *_ce );
     void doAutoScroll();
 
+    bool updateDragAndDrop(const QPoint &, DOM::ClipboardImpl *clipboard);
+    void cancelDragAndDrop(const QPoint &, DOM::ClipboardImpl *clipboard);
+    bool performDragAndDrop(const QPoint &, DOM::ClipboardImpl *clipboard);
+
     void timerEvent ( QTimerEvent * );
 
     void repaintRectangle(const QRect& r, bool immediate);
@@ -276,6 +281,7 @@ private:
     bool dispatchMouseEvent(int eventId, DOM::NodeImpl *targetNode, bool cancelable,
 			    int detail,QMouseEvent *_mouse, bool setUnder,
 			    int mouseEventType);
+    bool dispatchDragEvent(int eventId, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard);
 
     void applyBodyScrollQuirk(khtml::RenderObject* o, ScrollBarMode& hMode, ScrollBarMode& vMode);
 

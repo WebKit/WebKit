@@ -24,6 +24,7 @@
  */
 
 #import <Foundation/Foundation.h>
+#import <AppKit/NSDragging.h>       // for NSDragOperation typedef
 
 #import <WebCore/WebCoreKeyboardAccess.h>
 
@@ -311,6 +312,10 @@ typedef enum {
 - (void)ensureCaretVisible;
 
 - (WebScriptObject *)windowScriptObject;
+
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info;
+- (void)dragExitedWithDraggingInfo:(id <NSDraggingInfo>)info;
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)info;
 
 @end
 

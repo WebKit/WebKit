@@ -1,3 +1,85 @@
+2004-05-27  Trey Matteson  <trey@apple.com>
+
+ 	First cut at DHTML dragging, destination side.  Dragging text, files
+        and URLs onto elements works.  Type conversion from NSPasteboard to
+	MIME types is hardwired.  No JS access yet to modifier keys, or
+	drag operations mask.
+
+	Per IE's dragging API, we have the new DOM events ondragenter,
+	ondragover, ondragleave and ondrop.
+	We also have an event.dataTransfer object providing access to the
+	NSPasteboard bearing the incoming data.
+
+        Reviewed by rjw.
+
+        * WebCore.pbproj/project.pbxproj:  add 2 new files.
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNode::getValueProperty):  JS access to ondragenter and pals
+        (DOMNode::putValue):  Ditto
+        * khtml/ecma/kjs_dom.h:
+        (KJS::DOMNode::):  New attr enum values.
+        * khtml/ecma/kjs_dom.lut.h:
+        (KJS::):
+        * khtml/ecma/kjs_events.cpp:
+        (DOMMouseEvent::mark):  Pass along mark to dataTransfer we hold.
+        (DOMMouseEvent::getValueProperty):  Create and return dataTransfer.
+        (Clipboard::Clipboard):  New class exposed in JS.
+        (Clipboard::~Clipboard):
+        (Clipboard::tryGet):  Boilerplate.
+        (Clipboard::getValueProperty):  Return the clipboard's props.
+        (Clipboard::tryPut):  Boilerplate.
+        (Clipboard::putValue):  Set the clipboard's props.
+        (ClipboardProtoFunc::tryCall): Implement clipboard's funcs.
+        * khtml/ecma/kjs_events.h:
+        (KJS::DOMMouseEvent::DOMMouseEvent):  Init clipboard ptr.
+        (KJS::DOMMouseEvent::):
+        (KJS::Clipboard::toBoolean):
+        (KJS::Clipboard::classInfo):
+        (KJS::Clipboard::):
+        * khtml/ecma/kjs_events.lut.h:
+        (KJS::):
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseHTMLAttribute):  Enable setting ondragenter
+	and friends as html attributes.
+        * khtml/khtmlview.cpp:
+        (KHTMLView::dispatchDragEvent):  Send a drag related event to the DOM.
+        (KHTMLView::updateDragAndDrop):  Handle a dragenter or dragupdate.
+        (KHTMLView::cancelDragAndDrop):  Handle a dragexit.
+        (KHTMLView::performDragAndDrop):  Handle an actual drop.
+        * khtml/khtmlview.h:
+        * khtml/misc/htmlattrs.c:  Generated code.
+        * khtml/misc/htmlattrs.h:  Generated code.
+        * khtml/misc/htmlattrs.in:  Add ondragenter, etc
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (EventImpl::typeToId):  Handle new event types for dragging.
+        (EventImpl::idToType):  Ditto.
+        (MouseEventImpl::MouseEventImpl):  Init new clipboard ptr.
+        (MouseEventImpl::~MouseEventImpl):  Deref clipboard.
+        (ClipboardImpl::ClipboardImpl):
+        (ClipboardImpl::~ClipboardImpl):
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::):  New event enums.
+        (DOM::MouseEventImpl::clipboard):
+        * kwq/KWQClipboard.h: Added.
+        * kwq/KWQClipboard.mm: Added.
+        (KWQClipboard::KWQClipboard):
+        (KWQClipboard::~KWQClipboard):
+        (KWQClipboard::isForDragging): Trivial getter/setters.
+        (KWQClipboard::dropEffect):
+        (KWQClipboard::setDropEffect):
+        (KWQClipboard::dropAllowed):
+        (KWQClipboard::setDropAllowed):
+        (cocoaTypeFromMIMEType):  Convert MIME pboard type to Cocoa type.
+        (KWQClipboard::clearData):  OSX specific clipboard impl. of IE func
+        (KWQClipboard::clearAllData):   Ditto
+        (KWQClipboard::getData): Ditto
+        (KWQClipboard::setData): Ditto
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragOperationForDraggingInfo:]):  Passthrough from WebKit to khtmlpart
+        (-[WebCoreBridge dragExitedWithDraggingInfo:]):  Ditto
+        (-[WebCoreBridge concludeDragForDraggingInfo:]): Ditto
+
 2004-05-27  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Gramps

@@ -447,7 +447,23 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         setHTMLEventListener(EventImpl::SCROLL_EVENT,
             getDocument()->createHTMLEventListener(attr->value().string()));
         break;
-// other misc attributes
+    case ATTR_ONDRAGENTER:
+        setHTMLEventListener(EventImpl::DRAGENTER_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONDRAGOVER:
+        setHTMLEventListener(EventImpl::DRAGOVER_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONDRAGLEAVE:
+        setHTMLEventListener(EventImpl::DRAGLEAVE_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    case ATTR_ONDROP:
+        setHTMLEventListener(EventImpl::DROP_EVENT,
+                             getDocument()->createHTMLEventListener(attr->value().string()));
+        break;
+    // other misc attributes
     default:
 #ifdef UNSUPPORTED_ATTR
 	kdDebug(6030) << "UATTR: <" << this->nodeName().string() << "> ["

@@ -183,6 +183,14 @@ EventImpl::EventId EventImpl::typeToId(DOMString type)
 	return MOUSEMOVE_EVENT;
     else if (type == "mouseout")
 	return MOUSEOUT_EVENT;
+    else if (type == "dragenter")
+	return DRAGENTER_EVENT;
+    else if (type == "dragover")
+	return DRAGOVER_EVENT;
+    else if (type == "dragleave")
+	return DRAGLEAVE_EVENT;
+    else if (type == "drop")
+	return DROP_EVENT;
     else if (type == "DOMSubtreeModified")
 	return DOMSUBTREEMODIFIED_EVENT;
     else if (type == "DOMNodeInserted")
@@ -263,6 +271,14 @@ DOMString EventImpl::idToType(EventImpl::EventId id)
 	    return "mousemove";
 	case MOUSEOUT_EVENT:
 	    return "mouseout";
+	case DRAGENTER_EVENT:
+            return "dragenter";
+	case DRAGOVER_EVENT:
+            return "dragover";
+	case DRAGLEAVE_EVENT:
+            return "dragleave";
+	case DROP_EVENT:
+	    return "drop";
 	case DOMSUBTREEMODIFIED_EVENT:
 	    return "DOMSubtreeModified";
 	case DOMNODEINSERTED_EVENT:
@@ -418,6 +434,7 @@ MouseEventImpl::MouseEventImpl()
     m_metaKey = false;
     m_button = 0;
     m_relatedTarget = 0;
+    m_clipboard = 0;
 }
 
 MouseEventImpl::MouseEventImpl(EventId _id,
@@ -434,7 +451,8 @@ MouseEventImpl::MouseEventImpl(EventId _id,
 			       bool shiftKeyArg,
 			       bool metaKeyArg,
 			       unsigned short buttonArg,
-			       NodeImpl *relatedTargetArg)
+			       NodeImpl *relatedTargetArg,
+                               ClipboardImpl *clipboardArg)
 		   : UIEventImpl(_id,canBubbleArg,cancelableArg,viewArg,detailArg)
 {
     m_screenX = screenXArg;
@@ -449,6 +467,9 @@ MouseEventImpl::MouseEventImpl(EventId _id,
     m_relatedTarget = relatedTargetArg;
     if (m_relatedTarget)
 	m_relatedTarget->ref();
+    m_clipboard = clipboardArg;
+    if (m_clipboard)
+	m_clipboard->ref();
     computeLayerPos();
 }
 
@@ -487,6 +508,8 @@ MouseEventImpl::~MouseEventImpl()
 {
     if (m_relatedTarget)
 	m_relatedTarget->deref();
+    if (m_clipboard)
+	m_clipboard->deref();
 }
 
 void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
@@ -776,4 +799,14 @@ bool RegisteredEventListener::operator==(const RegisteredEventListener &other)
     return (id == other.id &&
 	    listener == other.listener &&
 	    useCapture == other.useCapture);
+}
+
+// -----------------------------------------------------------------------------
+
+ClipboardImpl::ClipboardImpl()
+{
+}
+
+ClipboardImpl::~ClipboardImpl()
+{
 }

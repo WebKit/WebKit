@@ -150,6 +150,7 @@ public:
         linkPressed = false;
         useSlowRepaints = false;
         originalNode = 0;
+        dragTarget = 0;
 	borderTouched = false;
 #if !APPLE_CHANGES
 #ifndef KHTML_NO_SCROLLBARS
@@ -238,6 +239,8 @@ public:
     // Used by objects during layout to communicate repaints that need to take place only
     // after all layout has been completed.
     QPtrList<RenderObject::RepaintInfo>* repaintRects;
+    
+    Node dragTarget;
 };
 
 #ifndef QT_NO_TOOLTIP
@@ -1152,6 +1155,74 @@ void KHTMLView::contentsContextMenuEvent ( QContextMenuEvent *_ce )
         setIgnoreEvents(false);
     }
 #endif
+}
+
+bool KHTMLView::dispatchDragEvent(int eventId, DOM::NodeImpl *dragTarget, const QPoint &loc, DOM::ClipboardImpl *clipboard)
+{
+    int clientX, clientY;
+    viewportToContents(loc.x(), loc.y(), clientX, clientY);
+    // Typically we'd use the mouse event's globalX/Y, but we have no mouse event to query, and in practice
+    // the globalX/Y fields are the window level coords anyway.
+    int screenX = loc.x();
+    int screenY = loc.y();
+    bool ctrlKey = 0;   // FIXME - set up modifiers, grab from AK or CG
+    bool altKey = 0;
+    bool shiftKey = 0;
+    bool metaKey = 0;
+    
+    MouseEventImpl *me = new MouseEventImpl(static_cast<EventImpl::EventId>(eventId),
+                                            true, true, m_part->xmlDocImpl()->defaultView(),
+                                            0, screenX, screenY, clientX, clientY,
+                                            ctrlKey, altKey, shiftKey, metaKey,
+                                            0, 0, clipboard);
+    me->ref();
+    int exceptioncode = 0;
+    dragTarget->dispatchEvent(me, exceptioncode, true);
+    bool accept = me->defaultPrevented();
+    me->deref();
+    return accept;
+}
+
+bool KHTMLView::updateDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
+{
+    bool accept = false;
+    int xm, ym;
+    viewportToContents(loc.x(), loc.y(), xm, ym);
+    DOM::NodeImpl::MouseEvent mev(0, DOM::NodeImpl::MouseMove);
+    m_part->xmlDocImpl()->prepareMouseEvent(true, xm, ym, &mev);
+    DOM::Node newTarget = mev.innerNode;
+    
+    if (d->dragTarget != newTarget) {
+        if (!d->dragTarget.isNull()) {
+            dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.handle(), loc, clipboard);
+        }
+        if (!newTarget.isNull()) {
+            accept = dispatchDragEvent(EventImpl::DRAGENTER_EVENT, newTarget.handle(), loc, clipboard);
+        }
+    } else if (!newTarget.isNull()) {
+        accept = dispatchDragEvent(EventImpl::DRAGOVER_EVENT, newTarget.handle(), loc, clipboard);
+    }
+    d->dragTarget = newTarget;
+
+    return accept;
+}
+
+void KHTMLView::cancelDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
+{
+    if (!d->dragTarget.isNull()) {
+        dispatchDragEvent(EventImpl::DRAGLEAVE_EVENT, d->dragTarget.handle(), loc, clipboard);
+    }
+    d->dragTarget = 0;
+}
+
+bool KHTMLView::performDragAndDrop(const QPoint &loc, DOM::ClipboardImpl *clipboard)
+{
+    bool accept = false;
+    if (!d->dragTarget.isNull()) {
+        accept = dispatchDragEvent(EventImpl::DROP_EVENT, d->dragTarget.handle(), loc, clipboard);
+    }
+    d->dragTarget = 0;
+    return accept;
 }
 
 #if !APPLE_CHANGES

@@ -1706,36 +1706,46 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSDragOperation)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+    NSDragOperation operation = [[self _bridge] dragOperationForDraggingInfo:draggingInfo];
+    _private->webCoreHandlingDrag = (operation != NSDragOperationNone);
+    if (!_private->webCoreHandlingDrag
+        && [self _canProcessDragWithDraggingInfo:draggingInfo]
+        && [[self _webView] _webKitDragRespondsToDragging])
+    {
         [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
-        return (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
+        operation = (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
     } else {
         [[self _bridge] removeDragCaret];
-        return NSDragOperationNone;
     }
+    return operation;
 }
 
 - (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
+    [[self _bridge] dragExitedWithDraggingInfo:draggingInfo];
     [[self _bridge] removeDragCaret];
 }
 
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     WebBridge *bridge = [self _bridge];
-    BOOL didInsert = NO;
-    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        if (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) {
-            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
-            [bridge moveSelectionToDragCaret:fragment];
-        } else {
-            [bridge setSelectionToDragCaret];
-            [self _replaceSelectionWithPasteboard:[draggingInfo draggingPasteboard] selectReplacement:YES allowPlainText:YES];
+    if (_private->webCoreHandlingDrag) {
+        return [[self _bridge] concludeDragForDraggingInfo:draggingInfo];
+    } else {
+        BOOL didInsert = NO;
+        if ([self _canProcessDragWithDraggingInfo:draggingInfo] && [[self _webView] _webKitDragRespondsToDragging]) {
+            if (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) {
+                DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard] allowPlainText:YES];
+                [bridge moveSelectionToDragCaret:fragment];
+            } else {
+                [bridge setSelectionToDragCaret];
+                [self _replaceSelectionWithPasteboard:[draggingInfo draggingPasteboard] selectReplacement:YES allowPlainText:YES];
+            }
+            didInsert = YES;
         }
-        didInsert = YES;
+        [bridge removeDragCaret];
+        return didInsert;
     }
-    [bridge removeDragCaret];
-    return didInsert;
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

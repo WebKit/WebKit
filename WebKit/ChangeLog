@@ -1,3 +1,24 @@
+2004-05-27  Trey Matteson  <trey@apple.com>
+
+	First cut at DHTML dragging, destination side.  Dragging text, files and URLs onto
+	elements works.  Type conversion from NSPasteboard to MIME types is hardwired.
+	No JS access yet to modifier keys, or operations mask.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:]): Call DHTML dragging via bridge.
+        (-[WebHTMLView draggingCancelledWithDraggingInfo:]): Ditto.
+        (-[WebHTMLView concludeDragForDraggingInfo:]): Ditto.
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _setWebKitDragRespondsToDragging:]):  New SPI for finer grained control than the
+	delegate currently has.
+        (-[WebView _webKitDragRespondsToDragging]): Ditto.
+        (-[WebView _commonInitializationWithFrameName:groupName:]):  Init new flag.
+        (-[WebView _dragOperationForDraggingInfo:]):  Comment.
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-05-27  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/WebFrameView.m: (-[WebFrameView _scrollVerticallyBy:]): Added comment.
