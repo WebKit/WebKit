@@ -96,6 +96,7 @@ using DOM::TreeWalkerImpl;
 #define ASSERT(assertion) assert(assertion)
 #if LOG_DISABLED
 #define debugPosition(a,b) ((void)0)
+#define debugNode(a,b) ((void)0)
 #endif
 #endif
 
@@ -182,6 +183,16 @@ static void debugPosition(const char *prefix, const Position &pos)
         LOG(Editing, "%s <null>", prefix);
     else
         LOG(Editing, "%s%s %p : %d", prefix, getTagName(pos.node()->id()).string().latin1(), pos.node(), pos.offset());
+}
+
+static void debugNode(const char *prefix, const NodeImpl *node)
+{
+    if (!prefix)
+        prefix = "";
+    if (!node)
+        LOG(Editing, "%s <null>", prefix);
+    else
+        LOG(Editing, "%s%s %p", prefix, getTagName(node->id()).string().latin1(), node);
 }
 
 //------------------------------------------------------------------------------------------
@@ -1402,8 +1413,8 @@ DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Sel
 
 void DeleteSelectionCommand::initializePositionData()
 {
-    Position start = startPositionForDelete();
-    Position end = endPositionForDelete();
+    Position start = m_selectionToDelete.start();
+    Position end = m_selectionToDelete.end();
 
     m_upstreamStart = start.upstream(StayInBlock);
     m_downstreamStart = start.downstream(StayInBlock);
@@ -1435,44 +1446,22 @@ void DeleteSelectionCommand::initializePositionData()
         
     m_trailingWhitespaceValid = true;
     
+    m_startBlock = m_downstreamStart.node()->enclosingBlockFlowElement();
+    m_startBlock->ref();
+    m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowElement();
+    m_endBlock->ref();
+
     debugPosition("m_upstreamStart      ", m_upstreamStart);
     debugPosition("m_downstreamStart    ", m_downstreamStart);
     debugPosition("m_upstreamEnd        ", m_upstreamEnd);
     debugPosition("m_downstreamEnd      ", m_downstreamEnd);
     debugPosition("m_leadingWhitespace  ", m_leadingWhitespace);
     debugPosition("m_trailingWhitespace ", m_trailingWhitespace);
-    
-    m_startBlock = m_downstreamStart.node()->enclosingBlockFlowElement();
-    m_startBlock->ref();
-    m_endBlock = m_upstreamEnd.node()->enclosingBlockFlowElement();
-    m_endBlock->ref();
+    debugNode(    "m_startBlock         ", m_startBlock);
+    debugNode(    "m_endBlock           ", m_endBlock);    
 
     m_startNode = m_upstreamStart.node();
     m_startNode->ref();
-}
-
-Position DeleteSelectionCommand::startPositionForDelete() const
-{
-    Position pos = m_selectionToDelete.start();
-    ASSERT(pos.node()->inDocument());
-
-    ElementImpl *rootElement = pos.node()->rootEditableElement();
-    Position rootStart = Position(rootElement, 0);
-    if (pos == VisiblePosition(rootStart).deepEquivalent())
-        pos = rootStart;
-    return pos;
-}
-
-Position DeleteSelectionCommand::endPositionForDelete() const
-{
-    Position pos = m_selectionToDelete.end();
-    ASSERT(pos.node()->inDocument());
-
-    ElementImpl *rootElement = pos.node()->rootEditableElement();
-    Position rootEnd = Position(rootElement, rootElement ? rootElement->childNodeCount() : 0).equivalentDeepPosition();
-    if (pos == VisiblePosition(rootEnd).deepEquivalent())
-        pos = rootEnd;
-    return pos;
 }
 
 void DeleteSelectionCommand::saveTypingStyleState()
@@ -1485,6 +1474,27 @@ void DeleteSelectionCommand::saveTypingStyleState()
     m_typingStyle = computedStyle->copyInheritableProperties();
     m_typingStyle->ref();
     computedStyle->deref();
+}
+
+bool DeleteSelectionCommand::canPerformSpecialCaseAllContentDelete()
+{
+    Position start = m_downstreamStart;
+    Position end = m_upstreamEnd;
+
+    ElementImpl *rootElement = start.node()->rootEditableElement();
+    Position rootStart = Position(rootElement, 0);
+    Position rootEnd = Position(rootElement, rootElement ? rootElement->childNodeCount() : 0).equivalentDeepPosition();
+    if (start == VisiblePosition(rootStart).downstreamDeepEquivalent() && end == VisiblePosition(rootEnd).deepEquivalent()) {
+        // Delete every child of the root editable element
+        NodeImpl *node = rootElement->firstChild();
+        while (node) {
+            NodeImpl *next = node->traverseNextSibling();
+            removeNode(node);
+            node = next;
+        }
+        return true;
+    }
+    return false;
 }
 
 bool DeleteSelectionCommand::canPerformSpecialCaseBRDelete()
@@ -1814,8 +1824,9 @@ void DeleteSelectionCommand::doApply()
 
     saveTypingStyleState();
     
-    if (!canPerformSpecialCaseBRDelete())
-        performGeneralDelete();
+    if (!canPerformSpecialCaseAllContentDelete())
+        if (!canPerformSpecialCaseBRDelete())
+            performGeneralDelete();
     
     // Do block merge if start and end of selection are in different blocks.
     moveNodesAfterNode();

@@ -1,8 +1,24 @@
+2004-11-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::debugNode): New debugging helper.
+        (khtml::DeleteSelectionCommand::initializePositionData): No longer call obsoleted
+        startPositionForDelete() and endPositionForDelete() functions. Just use the 
+        m_selectionToDelete object to determine start and end positions for the delete.
+        (khtml::DeleteSelectionCommand::canPerformSpecialCaseAllContentDelete): New
+        function that creates a special case for deleting all the content in a root
+        editable element.
+        (khtml::DeleteSelectionCommand::doApply): Call canPerformSpecialCaseAllContentDelete()
+        function before BR special case and the general case delete functions.
+        * khtml/editing/htmlediting.h: Updated for changed functions.
+
 2004-11-10  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by mjs.
 	
-	Fixed <rdar://problem/3875011> DOMNodeList::tryGet() performs unnecessary (and expensive) dom tree traversals. Improved a loop from 2-n-squared to just n-squared.  
+        Fixed <rdar://problem/3875011> DOMNodeList::tryGet() performs unnecessary (and expensive) dom tree traversals. Improved a loop from 2-n-squared to just n-squared.  
 
         * khtml/ecma/kjs_dom.cpp:
         (DOMNodeList::tryGet): Got rid of an unnecessary node traversal. 
