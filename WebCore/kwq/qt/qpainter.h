@@ -51,12 +51,15 @@ public:
     QFontMetrics fontMetrics() const;
     const QPen &pen() const;
     void setPen(const QPen &);
+    void setBrush(const QBrush &);
     void setBrush(BrushStyle);
 
     QRect xForm(const QRect &) const;
 
     void drawRect(int, int, int, int);
     void fillRect(int, int, int, int, const QBrush &);
+    void drawEllipse(int, int, int, int);
+    void drawArc(int, int, int, int, int, int);
     void drawPixmap(const QPoint &, const QPixmap &);
     void drawPixmap(const QPoint &, const QPixmap &, const QRect &);
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx = 0, int
