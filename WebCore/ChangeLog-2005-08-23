@@ -1,3 +1,12 @@
+2005-03-27  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, fix by Kida-san.
+
+        - fixed <rdar://problem/4067474> 8A424: Safari immediately quit by Cmd+Ctrll+'D'
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge convertToNSRange:DOM::]):
+        Added nil check.
+
 === Safari-412 ===
 
 2005-03-24  Richard Williamson   <rjw@apple.com>

@@ -1628,6 +1628,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSRange)convertToNSRange:(DOM::RangeImpl *)drange
 {
+    if (!drange) {
+        return NSMakeRange(NSNotFound, 0);
+    }
+
     Range toStartRange, toEndRange;
     Range actualRange = Range(drange);
     long startPosition, endPosition;
