@@ -349,7 +349,10 @@ void QColor::hsv(int *h, int *s, int *v) const
         f = (r == x) ? g - b : ((g == x) ? b - r : r - g); 
         i = (r == x) ? 3 : ((g == x) ? 5 : 1); 
         *h = i - f /(w - x);
-        *s = (w - x)/w;
+        if (w != 0)
+            *s = (w - x)/w;
+        else
+            *s = 0;
         *v = w; 
     }
 }

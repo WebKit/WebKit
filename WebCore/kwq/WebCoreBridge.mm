@@ -368,13 +368,22 @@ using khtml::RenderPart;
     if (part->impl->view()) {
         int clickCount = [event clickCount];
 
-        // Qt documentation says you always get a release event before a double-click event.
-        QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
-        part->impl->view()->viewportMouseReleaseEvent(&releaseEvent);
-        
+        // Our behavior here is a little different that Qt.  Qt always sends
+        // a mouse release event, even for a double click.  To correct problems
+        // in khtml's DOM click event handling we do not send a release here
+        // for a double click.  Instead we send that event from khtmlview's
+        // viewportMouseDoubleClickEvent.
         if (clickCount > 0 && clickCount % 2 == 0) {
             QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
             part->impl->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
+        }
+        else if (clickCount > 0 && clickCount % 3 == 0) {
+            QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
+            part->impl->view()->viewportMouseTripleClickEvent(&doubleClickEvent);
+        }
+        else {
+            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
+            part->impl->view()->viewportMouseReleaseEvent(&releaseEvent);
         }
     }
 }

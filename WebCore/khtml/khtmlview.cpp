@@ -471,9 +471,39 @@ void KHTMLView::viewportMousePressEvent( QMouseEvent *_mouse )
     }
 }
 
+#ifdef APPLE_CHANGES
 void KHTMLView::viewportMouseTripleClickEvent( QMouseEvent *_mouse )
 {
+    if ( !m_part->xmlDocImpl() ) return;
+
+    int xm, ym;
+    viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
+
+    //kdDebug( 6000 ) << "\nmouseReleaseEvent: x=" << xm << ", y=" << ym << endl;
+
+    DOM::NodeImpl::MouseEvent mev( _mouse->stateAfter(), DOM::NodeImpl::MouseRelease );
+    m_part->xmlDocImpl()->prepareMouseEvent( false, xm, ym, &mev );
+
+    bool swallowEvent = dispatchMouseEvent(EventImpl::MOUSEUP_EVENT,mev.innerNode.handle(),true,
+                                           d->clickCount,_mouse,false,DOM::NodeImpl::MouseRelease);
+
+    if (d->clickCount > 0 &&
+        QPoint(d->clickX-xm,d->clickY-ym).manhattanLength() <= QApplication::startDragDistance())
+	dispatchMouseEvent(EventImpl::CLICK_EVENT,mev.innerNode.handle(),true,
+			   d->clickCount,_mouse,true,DOM::NodeImpl::MouseRelease);
+
+    if (mev.innerNode.handle())
+	mev.innerNode.handle()->setPressed(false);
+
+    if (!swallowEvent) {
+	khtml::MouseReleaseEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
+	QApplication::sendEvent( m_part, &event );
+
+	khtml::MouseTripleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
+	QApplication::sendEvent( m_part, &event2 );
+    }
 }
+#endif    
 
 void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
 {
@@ -500,9 +530,13 @@ void KHTMLView::viewportMouseDoubleClickEvent( QMouseEvent *_mouse )
     if (mev.innerNode.handle())
 	mev.innerNode.handle()->setPressed(false);
 
+    // Qt delivers a release event AND a double click event.
     if (!swallowEvent) {
-	khtml::MouseDoubleClickEvent event( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
-	QApplication::sendEvent( m_part, &event );
+	khtml::MouseReleaseEvent event1( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
+	QApplication::sendEvent( m_part, &event1 );
+
+	khtml::MouseDoubleClickEvent event2( _mouse, xm, ym, mev.url, mev.target, mev.innerNode );
+	QApplication::sendEvent( m_part, &event2 );
     }
 
 #else
