@@ -639,7 +639,7 @@ static WebHTMLView *lastHitView = nil;
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
         ASSERT([image isKindOfClass:[WebImageRenderer class]]);
         [self _web_dragImage:image
-                originalData:[[[self _webView] _cachedResponseForURL:imageURL] data]
+                 fileWrapper:[[self _webView] _fileWrapperForURL:imageURL]
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
@@ -1503,16 +1503,15 @@ static WebHTMLView *lastHitView = nil;
     ASSERT(_private->draggingImageURL);
     
     WebView *webView = [self _webView];
-    NSCachedURLResponse *cachedResponse = [webView _cachedResponseForURL:_private->draggingImageURL];
-    NSData *data = [cachedResponse data];
+    NSFileWrapper *wrapper = [webView _fileWrapperForURL:_private->draggingImageURL];
     NSString *filename;
     
-    if (data) {
+    if (wrapper) {
         // FIXME: Report an error if we fail to create a file.
-        NSString *path = [[dropDestination path] stringByAppendingPathComponent:[[cachedResponse response] suggestedFilename]];
+        NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
         path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
-        if (![data writeToFile:path atomically:NO]) {
-            ERROR("Failed to create image file via [NSData writeToFile:atomically:]");
+        if (![wrapper writeToFile:path atomically:NO updateFilenames:YES]) {
+            ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
         }
         filename = [path lastPathComponent];
     } else {

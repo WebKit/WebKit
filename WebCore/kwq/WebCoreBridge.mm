@@ -862,14 +862,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
 - (NSAttributedString *)selectedAttributedString
 {
-    return KWQKHTMLPart::attributedString(_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
+    return _part->attributedString(_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
 }
 
 - (NSAttributedString *)attributedStringFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int)endOffset
 {
     WebCoreDOMNode *startNode = start;
     WebCoreDOMNode *endNode = end;
-    return KWQKHTMLPart::attributedString([startNode impl], startOffset, [endNode impl], endOffset);
+    return _part->attributedString([startNode impl], startOffset, [endNode impl], endOffset);
 }
 
 - (id<WebDOMNode>)selectionStart

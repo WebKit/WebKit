@@ -177,14 +177,13 @@
     NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
     NSMutableArray *types = [NSMutableArray arrayWithObject:NSTIFFPboardType];
     WebView *webView = [[element objectForKey:WebElementFrameKey] webView];
-    NSCachedURLResponse *cachedResponse = [webView _cachedResponseForURL:[element objectForKey:WebElementImageURLKey]];
-    NSData *data = [cachedResponse data];
-    if (data) {
+    NSFileWrapper *wrapper = [webView _fileWrapperForURL:[element objectForKey:WebElementImageURLKey]];
+    if (wrapper) {
         [types insertObject:NSRTFDPboardType atIndex:0];
     }
     [pasteboard declareTypes:types owner:nil];
-    if (data) {
-        [pasteboard _web_writeFileDataAsRTFDAttachment:data withFilename:[[cachedResponse response] suggestedFilename]];
+    if (wrapper) {
+        [pasteboard _web_writeFileWrapperAsRTFDAttachment:wrapper];
     }
     [pasteboard setData:[[element objectForKey:WebElementImageKey] TIFFRepresentation] forType:NSTIFFPboardType];
 }

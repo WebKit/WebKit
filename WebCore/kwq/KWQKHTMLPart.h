@@ -52,6 +52,7 @@ namespace KJS {
 #ifdef __OBJC__
 @class NSAttributedString;
 @class NSEvent;
+@class NSFileWrapper;
 @class NSResponder;
 @class NSView;
 @class WebCoreBridge;
@@ -64,6 +65,7 @@ namespace KJS {
 #else
 class NSAttributedString;
 class NSEvent;
+class NSFileWrapper;
 class NSResponder;
 class NSView;
 class WebCoreBridge;
@@ -179,7 +181,8 @@ public:
 
     QRect selectionRect() const;
 
-    static NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);
+    NSFileWrapper *fileWrapperForElement(DOM::ElementImpl *);
+    NSAttributedString *attributedString(DOM::NodeImpl *startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset);
 
     void addMetaData(const QString &key, const QString &value);
 

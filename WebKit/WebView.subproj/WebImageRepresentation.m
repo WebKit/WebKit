@@ -96,4 +96,11 @@
     return filename;
 }
 
+- (NSFileWrapper *)fileWrapper
+{
+    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:data];
+    [wrapper setPreferredFilename:filename];
+    return [wrapper autorelease]; 
+}
+
 @end

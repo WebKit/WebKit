@@ -2116,22 +2116,29 @@ struct ListItemInfo {
     unsigned end;
 };
 
-static NSFileWrapper *fileWrapperForElement(ElementImpl *e)
+NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 {
-    RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
-    NSImage *image = renderer->pixmap().image();
+    NSFileWrapper *wrapper = nil;
 
     KWQ_BLOCK_EXCEPTIONS;
-    NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
-
-    NSFileWrapper *wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
-    [wrapper setPreferredFilename:@"image.tiff"];
-    [wrapper autorelease];
-
-    return wrapper;
+    
+    DOMString attr = e->getAttribute(ATTR_SRC);
+    if (!attr.isEmpty()) {
+        NSURL *URL = completeURL(attr.string()).getNSURL();
+        wrapper = [_bridge fileWrapperForURL:URL];
+    }    
+    if (!wrapper) {
+        RenderImage *renderer = static_cast<RenderImage *>(e->renderer());
+        NSImage *image = renderer->pixmap().image();
+        NSData *tiffData = [image TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
+        wrapper = [[NSFileWrapper alloc] initRegularFileWithContents:tiffData];
+        [wrapper setPreferredFilename:@"image.tiff"];
+        [wrapper autorelease];
+    }
+    
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return nil;
+    return wrapper;
 }
 
 static ElementImpl *listParent(ElementImpl *item)

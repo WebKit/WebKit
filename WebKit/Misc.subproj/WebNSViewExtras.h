@@ -41,7 +41,7 @@
 
 // Resizes and applies alpha to image, extends pboard and sets drag origins for dragging promised image files.
 - (void)_web_dragImage:(WebImageRenderer *)image
-          originalData:(NSData *)originalData
+           fileWrapper:(NSFileWrapper *)fileWrapper
                   rect:(NSRect)rect
                    URL:(NSURL *)URL
                  title:(NSString *)title

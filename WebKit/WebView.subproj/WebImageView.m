@@ -189,7 +189,7 @@
 {    
     if ([self haveCompleteImage]) {
         [pasteboard declareTypes:[NSArray arrayWithObjects:NSRTFDPboardType, NSTIFFPboardType, nil] owner:nil];
-        [pasteboard _web_writeFileDataAsRTFDAttachment:[rep data] withFilename:[rep filename]];
+        [pasteboard _web_writeFileWrapperAsRTFDAttachment:[rep fileWrapper]];
         [pasteboard setData:[[rep image] TIFFRepresentation] forType:NSTIFFPboardType];
         return YES;
     }
@@ -239,7 +239,7 @@
     [self retain];
 
     [self _web_dragImage:[rep image]
-            originalData:[rep data]
+             fileWrapper:[rep fileWrapper]
                     rect:[self drawingRect]
                      URL:[rep URL]
                    title:nil

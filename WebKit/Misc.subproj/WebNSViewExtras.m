@@ -178,7 +178,7 @@
 #endif
 
 - (void)_web_dragImage:(WebImageRenderer *)image
-          originalData:(NSData *)originalData
+           fileWrapper:(NSFileWrapper *)fileWrapper
                   rect:(NSRect)rect
                    URL:(NSURL *)URL
                  title:(NSString *)title
@@ -227,12 +227,12 @@
     NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     NSMutableArray *types = [NSMutableArray arrayWithObjects:NSFilesPromisePboardType, NSTIFFPboardType, nil];
     [types addObjectsFromArray:[NSPasteboard _web_writableDragTypesForURL]];
-    if (originalData) {
+    if (fileWrapper) {
         [types insertObject:NSRTFDPboardType atIndex:0];
     }
     [pboard _web_writeURL:URL andTitle:title withOwner:self types:types];
-    if (originalData) {
-        [pboard _web_writeFileDataAsRTFDAttachment:originalData withFilename:filename];
+    if (fileWrapper) {
+        [pboard _web_writeFileWrapperAsRTFDAttachment:fileWrapper];
     }
     [pboard setPropertyList:filesTypes forType:NSFilesPromisePboardType];
     [pboard setData:[image TIFFRepresentation] forType:NSTIFFPboardType];

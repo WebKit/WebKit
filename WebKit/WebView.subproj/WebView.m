@@ -1059,6 +1059,21 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     return cachedResponse;
 }
 
+- (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
+{
+    if ([URL isFileURL]) {
+        return [[[NSFileWrapper alloc] initWithPath:[URL path]] autorelease];
+    } else {
+        NSCachedURLResponse *cachedResponse = [self _cachedResponseForURL:URL];
+        if (cachedResponse) {
+            NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
+            [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
+            return wrapper;
+        }
+    }
+    return nil;
+}
+
 @end
 
 

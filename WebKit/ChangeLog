@@ -1,3 +1,35 @@
+2003-11-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3472403>: RTFD of copied text and images should use original image data not tiffs
+	<rdar://problem/3472435>: dragging local image file downloads it instead of copies it
+	<rdar://problem/3472450>: copied and dragged local image files are TIFF, not original image data
+	
+        Reviewed by john.
+
+        * Misc.subproj/WebNSPasteboardExtras.h:
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeFileWrapperAsRTFDAttachment:]): new
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        (-[NSView _web_dragImage:fileWrapper:rect:URL:title:event:]): take a file wrapper instead of data so [NSPasteboard _web_writeFileWrapperAsRTFDAttachment:] can be called
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge fileWrapperForURL:]): call fileWrapperForURL on the WebView
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): call [NSPasteboard _web_writeFileWrapperAsRTFDAttachment:]
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]): when calling _web_dragImage, pass a file wrapper from fileWrapperForURL
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): call fileWrapperForURL
+        * WebView.subproj/WebImageRepresentation.h:
+        * WebView.subproj/WebImageRepresentation.m:
+        (-[WebImageRepresentation fileWrapper]): new
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView writeImageToPasteboard:]): call [NSPasteboard _web_writeFileWrapperAsRTFDAttachment:]
+        (-[WebImageView mouseDragged:]): pass the file wrapper to _web_dragImage
+        * WebView.subproj/WebView.m:
+        (-[WebView _fileWrapperForURL:]): new, returns a file wrapper from a local file or from the cache
+        * WebView.subproj/WebViewPrivate.h:
+
 2003-11-04  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3472813>: REGRESSION (100-111): Some tabs start 

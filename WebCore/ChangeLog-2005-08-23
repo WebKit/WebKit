@@ -1,3 +1,18 @@
+2003-11-04  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3472403>: RTFD of copied text and images should use original image data not tiffs
+
+        Reviewed by john.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fileWrapperForElement): call [_bridge _fileWrapperForURL:] to get cached data
+        * kwq/WebCoreBridge.h: added _fileWrapperForURL: to the bridge protocol
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedAttributedString]): call the instance method attributedString 
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]): call the instance method attributedString 
+
 2003-11-04  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Chris.
