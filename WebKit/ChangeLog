@@ -1,3 +1,12 @@
+2002-05-15  Richard J. Williamson  <rjw@apple.com>
+
+    Fixed problem dealing w/ characters in range 0x7f - 0xa0.
+    
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(setGlyphForCharacter):
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	(-[IFTextRenderer floatWidthForCharacters:length:]):
+
 2002-05-15  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed Flash mouse-down, mouse-over Flash bug.

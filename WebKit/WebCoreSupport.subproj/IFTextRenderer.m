@@ -68,6 +68,7 @@ struct GlyphMap {
 // Private method to find a font for a character.
 + (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
 + (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
+- (NSGlyph)_defaultGlyphForChar:(unichar)uu;
 @end
 
 @class NSCGSFont;
@@ -116,6 +117,18 @@ static inline ATSGlyphRef glyphForCharacter (GlyphMap *map, UniChar c)
 }
  
  
+static void setGlyphForCharacter (GlyphMap *map, ATSGlyphRef glyph, UniChar c)
+{
+    if (map == 0)
+        return;
+        
+    if (c >= map->startRange && c <= map->endRange)
+        ((ATSGlyphRef *)map->glyphs)[c-map->startRange] = glyph;
+    else    
+        setGlyphForCharacter (map->next, glyph, c);
+}
+
+
 #ifdef _TIMING        
 static double totalCGGetAdvancesTime = 0;
 #endif
@@ -470,7 +483,12 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
             break;
         }
     
-        glyphID = glyphForCharacter (characterToGlyphMap, characters[i]);
+        glyphID = glyphForCharacter (characterToGlyphMap, c);
+        
+        if (glyphID == 0){
+            glyphID = [font _defaultGlyphForChar: c];
+            setGlyphForCharacter (characterToGlyphMap, glyphID, c);
+        }
         
         // glyphID == 0 means that the font doesn't contain a glyph for the character.
         if (glyphID == 0){
@@ -603,6 +621,11 @@ cleanup:
         glyphID = glyphForCharacter(characterToGlyphMap, c);
         if (glyphID == nonGlyphID){
             glyphID = [self extendCharacterToGlyphMapToInclude: c];
+        }
+        
+        if (glyphID == 0){
+            glyphID = [font _defaultGlyphForChar: c];
+            setGlyphForCharacter (characterToGlyphMap, glyphID, c);
         }
         
         // Try to find a substitute font if this font didn't have a glyph for a character in the
