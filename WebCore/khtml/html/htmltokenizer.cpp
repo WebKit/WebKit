@@ -1441,7 +1441,8 @@ void HTMLTokenizer::write( const QString &str, bool appendData )
                 else if ( !parser->selectMode() &&
                           ( !parser->noSpaces() || dest > buffer )) {
                     addPending();
-                    discard = AllDiscard;
+                    discard = NoneDiscard; // Set to NoneDiscard. AllDiscard will cause loss of 
+                                           // spaces in this case <tag> <img> <tag> -dwh
                 }
                 // just forget it
                 else

@@ -348,6 +348,11 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
             }
             if(n->renderer())
                 n->renderer()->close();
+                
+            // if n is inline, then go ahead and treat as though we're
+            // inline, since we know we're going to be wrapped anyway.
+            // e.g., <img> -dwh
+            if(n->isInline()) m_inline = true;
 #endif
         }
 

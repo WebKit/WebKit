@@ -1,3 +1,16 @@
+2002-10-19  David Hyatt  <hyatt@apple.com>
+
+	A couple of whitespace fixes.  What's really odd about these
+	fixes is that they *work* but only if you load the page by
+	hitting "Back".  I suspect that I've now fixed the bugs on
+	KHTML's end, and we have some sort of whitepsace dropping
+	problem on our end.
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::write):
+
 2002-10-18  Richard Williamson   <rjw@apple.com>
 
         Fixed khtml to ignore <title> tags after the first tag.
