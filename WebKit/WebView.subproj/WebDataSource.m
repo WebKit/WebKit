@@ -346,16 +346,4 @@
     [[self _repTypes] setObject:repClass forKey:MIMEType];
 }
 
-- (void) makeRepresentation
-{
-    Class repClass = [self _representationClass];
-
-    // Check if the data source was already bound?
-    if (![[self representation] isKindOfClass:repClass]) {
-	[self _setRepresentation:repClass != nil ? [[repClass alloc] init] : nil];
-    }
-
-    [[[self webFrame] webView] makeDocumentViewForDataSource:self];
-}
-
 @end

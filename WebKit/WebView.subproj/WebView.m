@@ -235,17 +235,15 @@
         [NSException raise:NSGenericException format:@"Content policy can only be set once on for a dataSource."];
     }
     
-    [dataSource _setContentPolicy:policy];
-    [dataSource _setDownloadPath:path];
-        
-    if (policy == WebContentPolicyShow){
-	if ([[self class] canShowMIMEType:[dataSource contentType]]){
-	    [dataSource makeRepresentation];
-	} else {
-	    WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
+    if (policy == WebContentPolicyShow &&
+	![[self class] canShowMIMEType:[dataSource contentType]]) {
+
+	WebError *error = [[WebError alloc] initWithErrorCode:WebErrorCannotShowMIMEType 
 			           inDomain:WebErrorDomainWebKit failingURL: [dataSource inputURL]];
-	    [[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
-	}
+	[[self policyHandler] unableToImplementContentPolicy:error forDataSource:dataSource];
+    } else {
+	[dataSource _setContentPolicy:policy];
+	[dataSource _setDownloadPath:path];
     }
 }
 

@@ -94,14 +94,6 @@
     if (frame == nil)
         return;
         
-    // Check to see if this is these are the first bits of a provisional data source,
-    // if so we need to transition the data source from provisional to committed.
-    // This transition is only done for the WebContentPolicyShow policy.
-    if([frame provisionalDataSource] == dataSource && [dataSource contentPolicy] == WebContentPolicyShow){
-        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committing resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
-        [frame _transitionProvisionalToCommitted];
-    }
-
     // This resouce has completed, so check if the load is complete for all frames.
     if (isComplete){
         // If the load is complete, mark the primary load as done.  The primary load is the load

@@ -173,6 +173,4 @@
 
 + (void) registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType;
 
-- (void) makeRepresentation;
-
 @end

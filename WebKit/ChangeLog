@@ -1,5 +1,46 @@
 2002-07-18  Maciej Stachowiak  <mjs@apple.com>
 
+	Even more exciting refactoring. Change the rules for committing
+	the data source and creating the representation so that both
+	happen when the first byte has been received _and_ the content
+	policy has been set to show. Previously these actions happened at
+	different times. Now we maintain the invariant that the data
+	source has a representation if and only if it is committed.
+	
+	* WebView.subproj/WebController.m:
+        (-[WebController haveContentPolicy:andPath:forDataSource:]): Simplify
+	further by putting more of the work in WebDataSource.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]):
+	
+        * WebView.subproj/WebDataSource.h, WebView.subproj/WebDataSource.m: Move
+	makeRepresentation method to private file.
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _setContentPolicy:]): If the policy is set to show,
+	commit if we have already gotten the first byte.
+        (-[WebDataSource _commitIfReady]): Create representation and
+	commit if we have the first byte and have a policy of show.
+	(-[WebDataSource _gotFirstByte]): Method to check if this data source
+	has gotten the first byte yet. Commit here if ready. 
+	(-[WebDataSource _setGotFirstByte]): Method to report that some
+	data has been received.
+        (-[WebDataSource _makeRepresentation]): Make and set up teh document view too.
+        (-[WebDataSource _isReadyForData]): Return TRUE if policy is set (and if the policy
+	is Show, if we have also received the first byte.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionProvisionalToCommitted]): Don't call the datasource (it now
+	calls us)
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient WebResourceHandle:resourceDataDidBecomeAvailable:]):
+
+        * WebView.subproj/WebView.h, WebView.subproj/WebView.m: move
+	makeDocumentViewForDataSource...  
+	* WebView.subproj/WebViewPrivate.h, WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]): To here.
+
+2002-07-18  Maciej Stachowiak  <mjs@apple.com>
+
 	Avoid throwing an exception while stopping animations. Image
 	renders were getting into the array multiple times, which means
 	the code that iterated over the array backwards could throw an

@@ -19,7 +19,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebFramePrivate.h>
-#import <WebKit/WebView.h>
+#import <WebKit/WebViewPrivate.h>
 #import <WebKit/WebKitDebug.h>
 
 #import <WebFoundation/WebError.h>
@@ -293,6 +293,7 @@
 - (void) _setContentPolicy:(WebContentPolicy)policy
 {
     _private->contentPolicy = policy;
+    [self _commitIfReady];
 }
 
 - (void)_setContentType:(NSString *)type
@@ -411,9 +412,48 @@
     return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
 }
 
--(void)_commit
+-(void)_commitIfReady
 {
-    _private->committed = TRUE;
+    if (_private->contentPolicy == WebContentPolicyShow && _private->gotFirstByte) {
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self inputURL] absoluteString] cString]);
+	_private->committed = TRUE;
+	[self _makeRepresentation];
+        [[self webFrame] _transitionProvisionalToCommitted];
+    }
+}
+
+-(BOOL)_gotFirstByte
+{
+    return _private->gotFirstByte;
+}
+
+-(void)_setGotFirstByte
+{
+    _private->gotFirstByte = TRUE;
+    [self _commitIfReady];
+}
+
+
+-(void)_makeRepresentation
+{
+    Class repClass = [self _representationClass];
+
+    // Check if the data source was already bound?
+    if (![[self representation] isKindOfClass:repClass]) {
+	[self _setRepresentation:(id<WebDocumentRepresentation>)(repClass != nil ? [[repClass alloc] init] : nil)];
+    }
+
+    [[[self webFrame] webView] _makeDocumentViewForDataSource:self];
+}
+
+-(BOOL)_isReadyForData
+{
+    // The data source is ready for data when the content policy is
+    // determined, and if the policy is show, if it has been committed
+    // (so that we know it's representation and such are ready).
+
+    return _private->contentPolicy != WebContentPolicyNone &&
+	(_private->committed || _private->contentPolicy != WebContentPolicyShow);
 }
 
 @end

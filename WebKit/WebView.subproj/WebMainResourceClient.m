@@ -190,46 +190,53 @@
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
+
+    // Check to see if this is these are the first bits of a provisional data source,
+    // if so we need to tell the data source it got the first byte.
+    // It will transition from provisional to committed when and if it gets a policy of
+    // WebContentPolicyShow policy.
+    if(![dataSource _gotFirstByte]) {
+        WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "got first byte for resource = %s\n", [[[dataSource inputURL] absoluteString] cString]);
+	[dataSource _setGotFirstByte];
+    }
     
     WebContentPolicy contentPolicy = [dataSource contentPolicy];
 
-    if(contentPolicy != WebContentPolicyNone){
-        if(!processedBufferedData){
-            // Process all data that has been received now that we have a content policy
-            // and don't call resourceData if this is the first chunk since resourceData is a copy
-            if(isFirstChunk){
-                data = incomingData;
-            }else{
-                data = [handle resourceData];
-            }
-            processedBufferedData = YES;          
-        }else{
+    if([dataSource _isReadyForData]){
+        if (!processedBufferedData && !isFirstChunk) {
+            // Process all data that has been received now that we are ready for data
+	    data = [handle resourceData];
+        } else {
             data = incomingData;
         }
+	
+	processedBufferedData = YES;          
+
+	switch (contentPolicy) {
+	case WebContentPolicyShow:
+	    [[dataSource representation] receivedData:data withDataSource:dataSource];
+	    [[view documentView] dataSourceUpdated:dataSource];
+	    break;
+	case WebContentPolicySave:
+	case WebContentPolicySaveAndOpenExternally:
+	    if (!downloadHandler) {
+		[frame _setProvisionalDataSource:nil];
+		[[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+		downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
+	    }
+	    [downloadHandler receivedData:data];
+	    break;
+	case WebContentPolicyIgnore:
+	    [handle cancelLoadInBackground];
+	    [frame _setProvisionalDataSource:nil];
+	    [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
+	    break;
+	default:
+	    [NSException raise:NSInvalidArgumentException format:
+			     @"haveContentPolicy: andPath:path forDataSource: set an invalid content policy."];
+	}
     }
-    
-    if(contentPolicy == WebContentPolicyShow){
-        [[dataSource representation] receivedData:data withDataSource:dataSource];
-        [[view documentView] dataSourceUpdated:dataSource];
-    }
-    else if(contentPolicy == WebContentPolicySave || contentPolicy == WebContentPolicySaveAndOpenExternally){
-        if(!downloadHandler){
-            [frame _setProvisionalDataSource:nil];
-            [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
-            downloadHandler = [[WebDownloadHandler alloc] initWithDataSource:dataSource];
-        }
-        [downloadHandler receivedData:data];
-    }
-    else if(contentPolicy == WebContentPolicyIgnore){
-        [handle cancelLoadInBackground];
-        [frame _setProvisionalDataSource:nil];
-        [[dataSource _locationChangeHandler] locationChangeDone:nil forDataSource:dataSource];
-    }
-    else{
-        [NSException raise:NSInvalidArgumentException format:
-            @"haveContentPolicy: andPath:path forDataSource: set an invalid content policy."];
-    }
-    
+
     [self receivedProgressWithHandle:handle complete:NO];
     
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "%d of %d", [handle contentLengthReceived], [handle contentLength]);

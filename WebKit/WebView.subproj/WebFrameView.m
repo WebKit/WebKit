@@ -200,14 +200,6 @@ enum {
     [[self _viewTypes] setObject:viewClass forKey:MIMEType];
 }
 
--(void)makeDocumentViewForDataSource:(WebDataSource *)dataSource
-{
-    Class viewClass = [[[self class] _viewTypes] _web_objectForMIMEType:[dataSource contentType]];
-    [self _setDocumentView: (id<WebDocumentLoading>)(viewClass ? [[[viewClass alloc] init] autorelease] : nil)];
-
-    [[self documentView] provisionalDataSourceChanged:dataSource];
-}
-
 -(BOOL)acceptsFirstResponder
 {
     return YES;
