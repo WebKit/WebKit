@@ -1,3 +1,12 @@
+2004-03-08  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3554876>: REGRESSION (100-125): cannot upload file if path contains non-ASCII characters
+
+        * kwq/KWQKURL.mm: Remove Colon constant so we can fit in 8 bits again.
+        (KURL::KURL): Rewrite so we don't need isSchemeCharOrColon.
+
 === Safari-131 ===
 
 2004-03-08  Ken Kocienda  <kocienda@apple.com>
