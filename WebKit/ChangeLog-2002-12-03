@@ -1,5 +1,12 @@
 2002-10-24  Richard Williamson   <rjw@apple.com>
 
+        Don't leak request.
+        
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate handle:willSendRequest:]):
+
+2002-10-24  Richard Williamson   <rjw@apple.com>
+
         Always copy request, we can't count on it being immutable.
         This was the cause of the ASSERT from last night's checkin.
         

@@ -122,6 +122,7 @@
     [newRequest setUserAgent:[[dataSource controller] userAgentForURL:[newRequest URL]]];
 
     // No need to retain here, will be copied after delegate callback.
+    [request autorelease];
     request = newRequest;
 
     if (identifier == nil){
