@@ -1,3 +1,54 @@
+2004-11-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3482935> JavaScript so slow it seems like a hang (hrweb.apple.com) (HTMLCollection?)
+	<rdar://problem/3759149> PeopleSoft page in Safari twice as slow as Mozilla engine (HTMLFormCollection)
+	<rdar://problem/3888368> selecting an item on the Apache bugzilla query page can be improved 95% (HTMLFormCollection)
+
+	Many optimizations to HTMLFormCollection. Iterating it should not
+	be N^2 any more, though finding items by name could still be.
+	
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLFormElementImpl::~HTMLFormElementImpl):
+        (DOM::HTMLFormElementImpl::length):
+        (DOM::HTMLFormElementImpl::submitClick):
+        (DOM::HTMLFormElementImpl::formData):
+        (DOM::HTMLFormElementImpl::submit):
+        (DOM::HTMLFormElementImpl::reset):
+        (DOM::HTMLFormElementImpl::radioClicked):
+        (DOM::appendToVector):
+        (DOM::removeFromVector):
+        (DOM::HTMLFormElementImpl::registerFormElement):
+        (DOM::HTMLFormElementImpl::removeFormElement):
+        (DOM::HTMLFormElementImpl::makeFormElementDormant):
+        (DOM::HTMLFormElementImpl::registerImgElement):
+        (DOM::HTMLFormElementImpl::removeImgElement):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLFormCollectionImpl::FormCollectionInfo::FormCollectionInfo):
+        (void::HTMLFormCollectionImpl::FormCollectionInfo::reset):
+        (HTMLFormCollectionImpl::resetCollectionInfo):
+        (HTMLFormCollectionImpl::calcLength):
+        (HTMLFormCollectionImpl::item):
+        (HTMLFormCollectionImpl::getNamedItem):
+        (HTMLFormCollectionImpl::getNamedFormItem):
+        (HTMLFormCollectionImpl::firstItem):
+        (HTMLFormCollectionImpl::nextItem):
+        * khtml/html/html_miscimpl.h:
+        (DOM::HTMLFormCollectionImpl::~HTMLFormCollectionImpl):
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::setAttribute):
+        (ElementImpl::setAttributeMap):
+        * kwq/KWQPtrVector.h:
+        (QPtrVector::findRef):
+        * kwq/KWQVectorImpl.h:
+        * kwq/KWQVectorImpl.mm:
+        (KWQVectorImpl::findRef):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementWithName:inForm:]):
+        (-[WebCoreBridge controlsInForm:]):
+
 2004-11-19  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken and Darin.

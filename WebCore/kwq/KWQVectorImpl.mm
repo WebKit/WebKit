@@ -131,6 +131,18 @@ bool KWQVectorImpl::insert(uint n, void *item, bool delItems)
     return true;
 }
 
+int KWQVectorImpl::findRef(void *item)
+{
+    for (unsigned i = 0; i < m_count; i++) {
+        if (m_data[i] == item) {
+            return i;
+        }
+    }
+    
+    return -1;
+}
+
+
 KWQVectorImpl &KWQVectorImpl::assign(KWQVectorImpl &vi, bool delItems)
 {
     clear(delItems);

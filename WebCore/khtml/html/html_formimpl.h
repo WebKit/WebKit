@@ -28,7 +28,7 @@
 #include "html/html_elementimpl.h"
 #include "dom/html_element.h"
 
-#include <qptrlist.h>
+#include <qptrvector.h>
 #include <qmemarray.h>
 
 class KHTMLView;
@@ -111,9 +111,9 @@ public:
     friend class HTMLFormElement;
     friend class HTMLFormCollectionImpl;
 
-    QPtrList<HTMLGenericFormElementImpl> formElements;
-    QPtrList<HTMLGenericFormElementImpl> dormantFormElements;
-    QPtrList<HTMLImageElementImpl> imgElements;
+    QPtrVector<HTMLGenericFormElementImpl> formElements;
+    QPtrVector<HTMLGenericFormElementImpl> dormantFormElements;
+    QPtrVector<HTMLImageElementImpl> imgElements;
     DOMString m_url;
     DOMString m_target;
     DOMString m_enctype;

@@ -886,7 +886,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 {
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        QPtrList<HTMLGenericFormElementImpl> elements = formElement->formElements;
+        QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
         QString targetName = QString::fromNSString(name);
         for (unsigned int i = 0; i < elements.count(); i++) {
             HTMLGenericFormElementImpl *elt = elements.at(i);
@@ -937,7 +937,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     NSMutableArray *results = nil;
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
-        QPtrList<HTMLGenericFormElementImpl> elements = formElement->formElements;
+        QPtrVector<HTMLGenericFormElementImpl> &elements = formElement->formElements;
         for (unsigned int i = 0; i < elements.count(); i++) {
             if (elements.at(i)->isEnumeratable()) {		// Skip option elements, other duds
                 NSView *view = viewForElement(elements.at(i));

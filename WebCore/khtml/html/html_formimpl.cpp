@@ -109,15 +109,12 @@ HTMLFormElementImpl::HTMLFormElementImpl(DocumentPtr *doc)
 
 HTMLFormElementImpl::~HTMLFormElementImpl()
 {
-    QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
-    for (; it.current(); ++it)
-        it.current()->m_form = 0;
-    QPtrListIterator<HTMLGenericFormElementImpl> it2(dormantFormElements);
-    for (; it2.current(); ++it2)
-        it2.current()->m_form = 0;
-    QPtrListIterator<HTMLImageElementImpl> it3(imgElements);
-    for (; it3.current(); ++it3)
-        it3.current()->m_form = 0;
+    for (unsigned i = 0; i < formElements.count(); ++i)
+        formElements[i]->m_form = 0;
+    for (unsigned i = 0; i < dormantFormElements.count(); ++i)
+        dormantFormElements[i]->m_form = 0;
+    for (unsigned i = 0; i < imgElements.count(); ++i)
+        imgElements[i]->m_form = 0;
 }
 
 NodeImpl::Id HTMLFormElementImpl::id() const
@@ -169,9 +166,8 @@ void HTMLFormElementImpl::detach()
 long HTMLFormElementImpl::length() const
 {
     int len = 0;
-    QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
-    for (; it.current(); ++it)
-	if (it.current()->isEnumeratable())
+    for (unsigned i = 0; i < formElements.count(); ++i)
+	if (formElements[i]->isEnumeratable())
 	    ++len;
 
     return len;
@@ -182,10 +178,9 @@ long HTMLFormElementImpl::length() const
 void HTMLFormElementImpl::submitClick()
 {
     bool submitFound = false;
-    QPtrListIterator<HTMLGenericFormElementImpl> it(formElements);
-    for (; it.current(); ++it) {
-        if (it.current()->id() == ID_INPUT) {
-            HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(it.current());
+    for (unsigned i = 0; i < formElements.count(); ++i) {
+        if (formElements[i]->id() == ID_INPUT) {
+            HTMLInputElementImpl *element = static_cast<HTMLInputElementImpl *>(formElements[i]);
             if (element->isSuccessfulSubmitButton() && element->renderer()) {
                 submitFound = true;
                 element->click();
@@ -353,8 +348,8 @@ bool HTMLFormElementImpl::formData(FormData &form_data) const
     QStringList fileUploads;
 #endif
 
-    for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
-        HTMLGenericFormElementImpl* current = it.current();
+    for (unsigned i = 0; i < formElements.count(); ++i) {
+        HTMLGenericFormElementImpl* current = formElements[i];
         FormDataList lst(codec);
 
         if (!current->disabled() && current->appendFormData(lst, m_multipart))
@@ -525,8 +520,8 @@ void HTMLFormElementImpl::submit( bool activateSubmitButton )
 #if APPLE_CHANGES
     KWQ(part)->clearRecordedFormValues();
 #endif
-    for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
-        HTMLGenericFormElementImpl* current = it.current();
+    for (unsigned i = 0; i < formElements.count(); ++i) {
+        HTMLGenericFormElementImpl* current = formElements[i];
 #if APPLE_CHANGES
         // Our app needs to get form values for password fields for doing password autocomplete,
         // so we are more lenient in pushing values, and let the app decide what to save when.
@@ -603,8 +598,8 @@ void HTMLFormElementImpl::reset(  )
         return;
     }
 
-    for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it)
-        it.current()->reset();
+    for (unsigned i = 0; i < formElements.count(); ++i)
+        formElements[i]->reset();
 
     m_inreset = false;
 }
@@ -690,8 +685,8 @@ void HTMLFormElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
 
 void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
 {
-    for (QPtrListIterator<HTMLGenericFormElementImpl> it(formElements); it.current(); ++it) {
-        HTMLGenericFormElementImpl *current = it.current();
+    for (unsigned i = 0; i < formElements.count(); ++i) {
+        HTMLGenericFormElementImpl *current = formElements[i];
         if (current->id() == ID_INPUT &&
             static_cast<HTMLInputElementImpl*>(current)->inputType() == HTMLInputElementImpl::RADIO &&
             current != caller && current->form() == caller->form() && current->name() == caller->name()) {
@@ -700,22 +695,44 @@ void HTMLFormElementImpl::radioClicked( HTMLGenericFormElementImpl *caller )
     }
 }
 
+template<class T> static void appendToVector(QPtrVector<T> &vec, T *item)
+{
+    unsigned size = vec.size();
+    unsigned count = vec.count();
+    if (size == count)
+        vec.resize(size == 0 ? 8 : (int)(size * 1.5));
+    vec.insert(count, item);
+}
+
+template<class T> static void removeFromVector(QPtrVector<T> &vec, T *item)
+{
+    int pos = vec.findRef(item);
+    int count = vec.count();
+    if (pos < 0)
+        return;
+
+    for (int i = pos; i < count - 2; i++) {
+        vec.insert(i, vec[i+1]);
+    }
+    vec.remove(count - 1);
+}
+
 void HTMLFormElementImpl::registerFormElement(HTMLGenericFormElementImpl *e)
 {
-    formElements.append(e);
-    dormantFormElements.remove(e);
+    appendToVector(formElements, e);
+    removeFromVector(dormantFormElements, e);
 }
 
 void HTMLFormElementImpl::removeFormElement(HTMLGenericFormElementImpl *e)
 {
-    formElements.remove(e);
-    dormantFormElements.remove(e);
+    removeFromVector(formElements, e);
+    removeFromVector(dormantFormElements, e);
 }
 
 void HTMLFormElementImpl::makeFormElementDormant(HTMLGenericFormElementImpl *e)
 {
-    dormantFormElements.append(e);
-    formElements.remove(e);
+    appendToVector(dormantFormElements, e);
+    removeFromVector(formElements, e);
 }
 
 bool HTMLFormElementImpl::isURLAttribute(AttributeImpl *attr) const
@@ -725,12 +742,12 @@ bool HTMLFormElementImpl::isURLAttribute(AttributeImpl *attr) const
 
 void HTMLFormElementImpl::registerImgElement(HTMLImageElementImpl *e)
 {
-    imgElements.append(e);
+    appendToVector(imgElements, e);
 }
 
 void HTMLFormElementImpl::removeImgElement(HTMLImageElementImpl *e)
 {
-    imgElements.remove(e);
+    removeFromVector(imgElements, e);
 }
 
 // -------------------------------------------------------------------------

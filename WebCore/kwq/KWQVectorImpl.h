@@ -47,6 +47,7 @@ class KWQVectorImpl
     bool insert(uint n, void *item, bool delItems);
     void *at(uint n) const { return m_data[n]; }
     void **data() { return m_data; }
+    int findRef(void *item);
 
   private:
     KWQVectorImpl &operator=(const KWQVectorImpl&);

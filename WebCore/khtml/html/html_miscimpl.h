@@ -71,11 +71,11 @@ public:
     };
 
     HTMLCollectionImpl(NodeImpl *_base, int _tagId);
-
     virtual ~HTMLCollectionImpl();
+    
     unsigned long length() const;
-    // This method is o(n), so you should't use it to iterate over all items. Use firstItem/nextItem instead.
-    NodeImpl *item ( unsigned long index ) const;
+    
+    virtual NodeImpl *item ( unsigned long index ) const;
     virtual NodeImpl *firstItem() const;
     virtual NodeImpl *nextItem() const;
 
@@ -97,7 +97,7 @@ protected:
     virtual NodeImpl *getItem(NodeImpl *current, int index, int &pos) const;
     virtual NodeImpl *getNamedItem(NodeImpl *current, int attr_id, const DOMString &name, bool caseSensitive = true) const;
     virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
-    void resetCollectionInfo() const;
+    virtual void resetCollectionInfo() const;
     // the base node, the collection refers to
     NodeImpl *base;
     // The collection list the following elements
@@ -118,17 +118,25 @@ public:
     HTMLFormCollectionImpl(NodeImpl* _base)
         : HTMLCollectionImpl(_base, 0)
     {};
-    ~HTMLFormCollectionImpl() { };
+    ~HTMLFormCollectionImpl() {}
 
+    struct FormCollectionInfo {
+        FormCollectionInfo(); 
+        void reset();
+        int elementsArrayPosition;
+     };
+
+    virtual NodeImpl *item ( unsigned long index ) const;
     virtual NodeImpl *firstItem() const;
     virtual NodeImpl *nextItem() const;
 protected:
     virtual unsigned long calcLength(NodeImpl* current) const;
-    virtual NodeImpl *getItem(NodeImpl *current, int index, int& pos) const;
     virtual NodeImpl *getNamedItem(NodeImpl* current, int attr_id, const DOMString& name, bool caseSensitive) const;
     virtual NodeImpl *nextNamedItemInternal( const DOMString &name ) const;
 private:
+    virtual void resetCollectionInfo() const;
     NodeImpl* getNamedFormItem(int attr_id, const DOMString& name, int duplicateNumber, bool caseSensitive) const;
+    mutable FormCollectionInfo formInfo;
     mutable int currentPos;
 };
 

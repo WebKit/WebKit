@@ -514,9 +514,28 @@ NodeImpl *HTMLCollectionImpl::nextNamedItemInternal( const DOMString &name ) con
 
 // -----------------------------------------------------------------------------
 
+HTMLFormCollectionImpl::FormCollectionInfo::FormCollectionInfo()
+{
+    reset();
+}
+
+void::HTMLFormCollectionImpl::FormCollectionInfo::reset()
+{
+    elementsArrayPosition = 0;
+}
+
+void HTMLFormCollectionImpl::resetCollectionInfo() const
+{
+    unsigned int docversion = static_cast<HTMLDocumentImpl*>(base->getDocument())->domTreeVersion();
+    if (info->version != docversion) {
+        formInfo.reset();
+    }
+    HTMLCollectionImpl::resetCollectionInfo();
+}
+
 unsigned long HTMLFormCollectionImpl::calcLength(NodeImpl*) const
 {
-    QPtrList<HTMLGenericFormElementImpl> l = static_cast<HTMLFormElementImpl*>( base )->formElements;
+    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>( base )->formElements;
 
     int len = 0;
     for ( unsigned i = 0; i < l.count(); i++ )
@@ -526,17 +545,35 @@ unsigned long HTMLFormCollectionImpl::calcLength(NodeImpl*) const
     return len;
 }
 
-NodeImpl* HTMLFormCollectionImpl::getItem(NodeImpl *, int index, int&) const
+NodeImpl *HTMLFormCollectionImpl::item(unsigned long index) const
 {
-    QPtrList<HTMLGenericFormElementImpl> l = static_cast<HTMLFormElementImpl*>( base )->formElements;
+    resetCollectionInfo();
 
-    for ( unsigned i = 0; i < l.count(); i++ ) {
+    if (info->current && info->position == index) {
+        return info->current;
+    }
+    if (info->haslength && info->length <= index) {
+        return 0;
+    }
+    if (!info->current || info->position > index) {
+        info->current = 0;
+        info->position = 0;
+        formInfo.elementsArrayPosition = 0;
+    }
 
-        if( l.at( i )->isEnumeratable() ) {
-            if ( !index )
-                return l.at( i );
+    QPtrVector<HTMLGenericFormElementImpl> &l = static_cast<HTMLFormElementImpl*>( base )->formElements;
+    unsigned currentIndex = info->position;
+    
+    for (unsigned i = formInfo.elementsArrayPosition; i < l.count(); i++) {
+        if (l[i]->isEnumeratable() ) {
+            if (index == currentIndex) {
+                info->position = index;
+                info->current = l[i];
+                formInfo.elementsArrayPosition = i;
+                return l[i];
+            }
 
-            --index;
+            currentIndex++;
         }
     }
 
@@ -545,7 +582,7 @@ NodeImpl* HTMLFormCollectionImpl::getItem(NodeImpl *, int index, int&) const
 
 NodeImpl* HTMLFormCollectionImpl::getNamedItem(NodeImpl*, int attr_id, const DOMString& name, bool caseSensitive) const
 {
-    currentPos = 0;
+    info->position = 0;
     return getNamedFormItem( attr_id, name, 0, caseSensitive );
 }
 
@@ -553,14 +590,14 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString&
 {
     if(base->nodeType() == Node::ELEMENT_NODE)
     {
-        HTMLElementImpl* e = static_cast<HTMLElementImpl*>(base);
+        HTMLElementImpl* baseElement = static_cast<HTMLElementImpl*>(base);
         bool foundInputElements = false;
-        if(e->id() == ID_FORM)
+        if(baseElement->id() == ID_FORM)
         {
-            HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(e);
-
-            for(HTMLGenericFormElementImpl* e = f->formElements.first(); e; e = f->formElements.next())
-                if(e->isEnumeratable()) {
+            HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
+            for (unsigned i = 0; i < f->formElements.count(); ++i) {
+                HTMLGenericFormElementImpl* e = f->formElements[i];
+                if (e->isEnumeratable()) {
                     bool found;
                     if (caseSensitive)
                         found = e->getAttribute(attr_id) == name;
@@ -573,14 +610,16 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString&
                         --duplicateNumber;
                     }
                 }
+            }
         }
 
         if ( !foundInputElements )
         {
-            HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(e);
+            HTMLFormElementImpl* f = static_cast<HTMLFormElementImpl*>(baseElement);
 
-            for(HTMLImageElementImpl* e = f->imgElements.first(); e; e = f->imgElements.next())
+            for(unsigned i = 0; i < f->imgElements.count(); ++i)
             {
+                HTMLImageElementImpl* e = f->imgElements[i];
                 bool found;
                 if (caseSensitive)
                     found = e->getAttribute(attr_id) == name;
@@ -599,16 +638,12 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString&
 
 NodeImpl * HTMLFormCollectionImpl::firstItem() const
 {
-    currentPos = 0;
-    int dummy = 0;
-    return getItem(0 /*base->firstChild() unused*/, currentPos, dummy);
+    return item(0);
 }
 
 NodeImpl * HTMLFormCollectionImpl::nextItem() const
 {
-    // This implementation loses the whole benefit of firstItem/nextItem :(
-    int dummy = 0;
-    return getItem(0 /*base->firstChild() unused*/, ++currentPos, dummy);
+    return item(info->position + 1);
 }
 
 NodeImpl * HTMLFormCollectionImpl::nextNamedItemInternal( const DOMString &name ) const

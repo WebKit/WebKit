@@ -57,6 +57,7 @@ public:
     bool insert(uint n, T *item) {return impl.insert(n, item, del_item); }
     T *at(int n) const {return (T *)impl.at(n); }
     T **data() {return (T **)impl.data(); }
+    int findRef(T *item) {return impl.findRef(item);}
 
     virtual int compareItems(void *a, void *b) { return a != b; }
 
