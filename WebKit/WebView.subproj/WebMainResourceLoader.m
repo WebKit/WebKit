@@ -256,8 +256,11 @@
 
 - (void)handle:(WebResourceHandle *)h didReceiveData:(NSData *)data
 {
-    LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
+    ASSERT(data);
+    ASSERT([data length] != 0);
 
+    LOG(Loading, "URL = %@, data = %p, length %d", [dataSource URL], data, [data length]);
+    
     if (downloadHandler) {
         WebError *downloadError = [downloadHandler receivedData:data];
         if (downloadError) {

@@ -307,11 +307,6 @@
 - (WebError *)receivedData:(NSData *)data
 {
     ASSERT(data);
-
-    if ([data length] == 0) {
-        // Workaround for 3093170.
-        return nil;
-    }
     
     return [self decodeData:[self dataIfDoneBufferingData:data]];
 }

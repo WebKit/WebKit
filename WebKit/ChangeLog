@@ -1,3 +1,14 @@
+2002-11-21  Chris Blumenberg  <cblu@apple.com>
+
+	Removed workaround for: 3093170 - Handle clients receive data with length 0
+
+	as it's now fixed.
+
+        * Downloads.subproj/WebDownloadHandler.m:
+        (-[WebDownloadHandler receivedData:]): remove workaround
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:didReceiveData:]): added asserts
+
 2002-11-21  Richard Williamson   <rjw@apple.com>
 
         A different fix to 3078065 that doesn't depend on the appkit's idea of
