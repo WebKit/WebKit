@@ -632,8 +632,8 @@ static const char * const stateNames[] = {
                 if (!([[self webView] isDocumentHTML])) {
                     [thisDocumentView setNeedsLayout:YES];
                     [thisDocumentView layout];
-                    [thisDocumentView setNeedsDisplay:YES];
                 }
+                [thisDocumentView setNeedsDisplay:YES];
                 
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks

@@ -1,3 +1,12 @@
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
+	The needsdisplay is necessary even for HTML documents.
+	I over-optimized here.  Fixes the directory.apple.com
+	regression and the santa clara library regression.
+	
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _isLoadComplete]):
+
 2002-11-17  Darin Adler  <darin@apple.com>
 
 	- update for change to WebCore API so it never uses NSURL
