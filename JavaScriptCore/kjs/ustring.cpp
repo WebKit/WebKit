@@ -614,7 +614,7 @@ UString &UString::append(const UString &t)
     rep->_hash = 0;
   } else if (thisOffset + thisSize == usedCapacity()) {
     // this reaches the end of the buffer - extend it
-    expandCapacity(length);
+    expandCapacity(thisOffset + length);
     memcpy(const_cast<UChar *>(data() + thisSize), t.data(), tSize * sizeof(UChar));
     Rep *newRep = Rep::create(rep, 0, length);
     release();

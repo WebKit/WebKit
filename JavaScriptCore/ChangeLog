@@ -1,3 +1,12 @@
+2004-08-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3753467> REGRESSION (137-138): reproducible buffer overrun in UString manipulation code
+
+        * kjs/ustring.cpp: (KJS::UString::append): Fix incorrect size computation. Without it
+        we get a buffer overflow.
+
 === Safari-155 ===
 
 2004-08-05  Richard Williamson   <rjw@apple.com>
