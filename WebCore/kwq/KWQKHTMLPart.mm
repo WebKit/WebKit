@@ -361,12 +361,12 @@ void KWQKHTMLPartImpl::timerEvent(QTimerEvent *e)
 {
     if (e->timerId()==m_redirectionTimer)
     {
-    	redirectJS();
+    	redirectURL();
     	return;
     }
 }
 
-void KWQKHTMLPartImpl::redirectJS()
+void KWQKHTMLPartImpl::redirectURL()
 {
   QString u = d->m_redirectURL;
   d->m_delayRedirect = 0;
@@ -426,6 +426,12 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     if (_target.isEmpty()){
         oldDataSource = getDataSource();
         frame = [oldDataSource webFrame];
+        
+        // If we're the only frame in a frameset then pop
+        // the frame.
+        if ([[[oldDataSource parent] children] count] == 1){
+            frame = [[oldDataSource parent] webFrame];
+        }
     }
     else {
         frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(_target)];

@@ -1,5 +1,22 @@
 2002-06-04  Richard Williamson  <rjw@apple.com>
 
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::timerEvent):
+	(KWQKHTMLPartImpl::redirectURL):
+	
+	Renamed redirectJS to redirectURL to more correctly reflect it's
+	function.
+	
+	(KWQKHTMLPartImpl::urlSelected):
+
+    Fixed 2935505.  We now pop out of a frame if a link is clicked in a frame
+    and that frame is the only frame in a frameset.  This emulates the behavior of IE.
+
+	* kwq/KWQKHTMLPartImpl.h:
+	* kwq/external.h:
+
+2002-06-04  Richard Williamson  <rjw@apple.com>
+
     More exclusion for pre 6C48.
     
 	* kwq/KWQPixmap.mm:
