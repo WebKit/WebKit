@@ -4147,7 +4147,6 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
 
 ReplacementFragment::~ReplacementFragment()
 {
-    derefNodesAndStylesInMap(m_styles);
     if (m_document)
         m_document->deref();
     if (m_fragment)
@@ -4301,9 +4300,8 @@ void ReplacementFragment::computeStylesUsingTestRendering(NodeImpl *holder)
 
     m_document->updateLayout();
 
-    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder)) {
-        mapDesiredStyleForNode(node, m_styles);
-    }
+    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode(holder))
+        computeAndStoreNodeDesiredStyle(node, m_styles);
 }
 
 void ReplacementFragment::removeUnrenderedNodesUsingTestRendering(NodeImpl *holder)
@@ -4383,6 +4381,53 @@ void ReplacementFragment::removeStyleNodes()
         }
         node = next;
     }
+}
+
+NodeDesiredStyle::NodeDesiredStyle(NodeImpl *node, CSSMutableStyleDeclarationImpl *style) 
+    : m_node(node), m_style(style)
+{
+    if (m_node)
+        m_node->ref();
+    if (m_style)
+        m_style->ref();
+}
+
+NodeDesiredStyle::NodeDesiredStyle(const NodeDesiredStyle &other)
+    : m_node(other.node()), m_style(other.style())
+{
+    if (m_node)
+        m_node->ref();
+    if (m_style)
+        m_style->ref();
+}
+
+NodeDesiredStyle::~NodeDesiredStyle()
+{
+    if (m_node)
+        m_node->deref();
+    if (m_style)
+        m_style->deref();
+}
+
+NodeDesiredStyle &NodeDesiredStyle::operator=(const NodeDesiredStyle &other)
+{
+    NodeImpl *oldNode = m_node;
+    CSSMutableStyleDeclarationImpl *oldStyle = m_style;
+
+    m_node = other.node();
+    m_style = other.style();
+    
+    if (m_node)
+        m_node->ref();
+    if (m_style)
+        m_style->ref();
+    
+    if (oldNode)
+        oldNode->deref();
+    if (oldStyle)
+        oldStyle->deref();
+        
+    return *this;
 }
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace, bool matchStyle) 
@@ -4653,14 +4698,14 @@ void ReplaceSelectionCommand::doApply()
 
         if (moveNodesAfterEnd) {
             document()->updateLayout();
-            QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> styles;
+            QValueList<NodeDesiredStyle> styles;
             QPtrList<NodeImpl> blocks;
             NodeImpl *node = beyondEndNode;
             NodeImpl *refNode = m_lastNodeInserted;
             while (node) {
                 NodeImpl *next = node->nextSibling();
                 blocks.append(node->enclosingBlockFlowElement());
-                mapDesiredStyleForNode(node, styles);
+                computeAndStoreNodeDesiredStyle(node, styles);
                 removeNode(node);
                 // No need to update inserted node variables.
                 insertNodeAfter(node, refNode);
@@ -4681,7 +4726,6 @@ void ReplaceSelectionCommand::doApply()
             }
 
             fixupNodeStyles(styles);
-            derefNodesAndStylesInMap(styles);
         }
     }
     
@@ -4805,17 +4849,17 @@ void ReplaceSelectionCommand::updateNodesInserted(NodeImpl *node)
         old->deref();
 }
 
-void ReplaceSelectionCommand::fixupNodeStyles(const QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> &map)
+void ReplaceSelectionCommand::fixupNodeStyles(const QValueList<NodeDesiredStyle> &list)
 {
     // This function uses the mapped "desired style" to apply the additional style needed, if any,
     // to make the node have the desired style.
 
     document()->updateLayout();
 
-    QMapConstIterator<NodeImpl *, CSSMutableStyleDeclarationImpl *> it;
-    for (it = map.begin(); it != map.end(); ++it) {
-        NodeImpl *node = it.key();
-        CSSMutableStyleDeclarationImpl *desiredStyle = it.data();
+    QValueListConstIterator<NodeDesiredStyle> it;
+    for (it = list.begin(); it != list.end(); ++it) {
+        NodeImpl *node = (*it).node();
+        CSSMutableStyleDeclarationImpl *desiredStyle = (*it).style();
         ASSERT(desiredStyle);
 
         if (!node->inDocument())
@@ -4867,7 +4911,7 @@ void ReplaceSelectionCommand::fixupNodeStyles(const QMap<NodeImpl *, CSSMutableS
     }
 }
 
-void mapDesiredStyleForNode(DOM::NodeImpl *node, QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> &map)
+void computeAndStoreNodeDesiredStyle(DOM::NodeImpl *node, QValueList<NodeDesiredStyle> &list)
 {
     if (!node || !node->inDocument())
         return;
@@ -4875,9 +4919,7 @@ void mapDesiredStyleForNode(DOM::NodeImpl *node, QMap<NodeImpl *, CSSMutableStyl
     CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
     computedStyle->ref();
     CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
-    node->ref();
-    style->ref();
-    map[node] = style;
+    list.append(NodeDesiredStyle(node, style));
     computedStyle->deref();
 
     // In either of the color-matching tests below, set the color to a pseudo-color that will
@@ -4897,15 +4939,6 @@ void mapDesiredStyleForNode(DOM::NodeImpl *node, QMap<NodeImpl *, CSSMutableStyl
             style->setProperty(CSS_PROP__KHTML_MATCH_NEAREST_MAIL_BLOCKQUOTE_COLOR, matchNearestBlockquoteColorString());
         }
     }
-}
-
-void derefNodesAndStylesInMap(const QMap<NodeImpl *, CSSMutableStyleDeclarationImpl *> &map)
-{
-    QMapConstIterator<NodeImpl *, CSSMutableStyleDeclarationImpl *> it;
-    for (it = map.begin(); it != map.end(); ++it) {
-        it.key()->deref();
-        it.data()->deref();
-    }    
 }
 
 //------------------------------------------------------------------------------------------

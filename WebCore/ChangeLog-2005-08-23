@@ -1,3 +1,42 @@
+2005-03-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+        
+        Fix for this bug:
+        
+        <rdar://problem/4035198> Pasting text with different styles does not get reproducible results
+
+        I had a good idea yesterday to improve the way we "fixup" styles after
+        pasting, but i chose a poor data structure to do it, a map of
+        nodes-to-styles. In the fixup step, I iterated over the map elements and
+        did the fixup. However, since the order in which the items would come
+        out of the map is indeterminate, we got unpredictable results.
+
+        So, the concept was good, but the implementation was flawed. I have
+        fixed this mapping to be a list instead, so the order that nodes are
+        evaluated in the fixup step is document order. This works nicely.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::~ReplacementFragment): No longer need to explicity deref nodes and
+        styles saved away for later fixup. This is now handled by the new NodeDesiredStyle class.
+        (khtml::ReplacementFragment::computeStylesUsingTestRendering): Now calls computeAndStoreNodeDesiredStyle,
+        function renamed from mapDesiredStyleForNode.
+        Now accepts a QValueList<NodeDesiredStyle> in place of the old map.
+        (khtml::NodeDesiredStyle::NodeDesiredStyle): New class that represents a node-to-style mapping.
+        (khtml::NodeDesiredStyle::~NodeDesiredStyle): Ditto.
+        (khtml::NodeDesiredStyle::operator=): Ditto.
+        (khtml::ReplaceSelectionCommand::doApply): Now calls computeAndStoreNodeDesiredStyle,
+        function renamed from mapDesiredStyleForNode.
+        (khtml::ReplaceSelectionCommand::fixupNodeStyles): Now operates on a QValueList<NodeDesiredStyle> in 
+        place of the old map.
+        (khtml::computeAndStoreNodeDesiredStyle): Renamed from mapDesiredStyleForNode.  Now operates on a 
+        QValueList<NodeDesiredStyle> in place of the old map.
+        * khtml/editing/htmlediting.h:
+        (khtml::NodeDesiredStyle): New class that represents a node-to-style mapping.
+        (khtml::ReplacementFragment::desiredStyles): Now returns a QValueList<NodeDesiredStyle> in place of the old map.
+
+        * layout-tests/editing/style/typing-style-003-expected.txt: Results changed in an acceptable way.
+
 2005-03-02  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
