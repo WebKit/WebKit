@@ -124,7 +124,7 @@ private:
     void needsCaretRepaint();
     void paintCaret(QPainter *p, const QRect &rect);
 
-    bool nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2);
+    bool nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) const;
     int xPosForVerticalArrowNavigation(EPositionType, bool recalc=false) const;
 
     Position m_base;              // base position for the selection

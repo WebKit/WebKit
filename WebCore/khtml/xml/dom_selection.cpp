@@ -397,8 +397,39 @@ Range Selection::toRange() const
     if (isEmpty())
         return Range();
 
-    Position s(start().equivalentRangeCompliantPosition());
-    Position e(end().equivalentRangeCompliantPosition());
+    Position s, e;
+    if (state() == CARET) {
+        // If the selection is a caret, move the range start upstream. This helps us match
+        // the conventions of text editors tested, which make style determinations based
+        // on the character before the caret, if any. 
+        s = start().equivalentUpstreamPosition().equivalentRangeCompliantPosition();
+        e = s;
+    }
+    else {
+        // If the selection is a range, select the minimum range that encompasses the selection.
+        // Again, this is to match the conventions of text editors tested, which make style 
+        // determinations based on the first character of the selection. 
+        // For instance, this operation helps to make sure that the "X" selected below is the 
+        // only thing selected. The range should not be allowed to "leak" out to the end of the 
+        // previous text node, or to the beginning of the next text node, each of which has a 
+        // different style.
+        // 
+        // On a treasure map, <b>X</b> marks the spot.
+        //                       ^ selected
+        //
+        ASSERT(state() == RANGE);
+        s = start().equivalentDownstreamPosition().equivalentRangeCompliantPosition();
+        e = end().equivalentUpstreamPosition().equivalentRangeCompliantPosition();
+        if ((s.node() == e.node() && s.offset() > e.offset()) || !nodeIsBeforeNode(s.node(), e.node())) {
+            // Make sure the start is before the end.
+            // The end can wind up before the start if collapsed whitespace is the only thing selected.
+            Position tmp = s;
+            s = e;
+            e = tmp;
+        }
+    }
+    ASSERT((s.node() == e.node() && s.offset() <= e.offset()) || nodeIsBeforeNode(s.node(), e.node()));
+
     return Range(Node(s.node()), s.offset(), Node(e.node()), e.offset());
 }
 
@@ -628,7 +659,7 @@ bool Selection::moveToRenderedContent()
     return false;
 }
 
-bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) 
+bool Selection::nodeIsBeforeNode(NodeImpl *n1, NodeImpl *n2) const
 {
     if (!n1 || !n2) 
         return true;
