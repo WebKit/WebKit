@@ -2,6 +2,24 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3811890> when selecting and moving the caret, some words aren't spell-checked (test case included)
+
+        This was mostly fixed by changes I made recently, but using the test case in the bug
+        I discovered one regression I introduced and another problem that wasn't fixed yet.
+        This change fixes both.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::markMisspellingsInSelection): Removed unneeded inRenderedContent() check. It was returning false
+        in cases involving a <br> at the end of line, and the check isn't all that helpful now that we use VisiblePosition,
+        which takes care of that sort of thing for you. Changed code to determine the range to check to use the two
+        different flavors of word boundary to expand to words we touch in both directions.
+        (KWQKHTMLPart::updateSpellChecking): Changed to use the same logic about word boundaries. By being consistent,
+        the anomalies reported in the bug report go away.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3811584> REGRESSION (85-125): iframe.document undefined in function called from button onclick; works from img onclick
 
         Since we are doing a bit less "defers callbacks" work, when testing I ran into this code path.

@@ -3782,11 +3782,8 @@ bool KHTMLPart::canRedo() const
 
 void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
 {
-    // No work to do if there is no selection or continuous spell check is off, or the
-    // selection start position is not now rendered (maybe it has been deleted).
-    if (selection.isNone() || 
-        ![_bridge isContinuousSpellCheckingEnabled] || 
-        !selection.start().inRenderedContent())
+    // No work to do if there is no selection or continuous spell check is off.
+    if (selection.isNone() || ![_bridge isContinuousSpellCheckingEnabled])
         return;
 
     // Expand selection to word boundaries so that complete words wind up being passed to the spell checker.
@@ -3796,16 +3793,13 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
     // of the selection passed in.
     // This is not ideal by any means, but this is the convention.
-    VisiblePosition end = endOfWord(selection.start());
-    if (end == selection.start())
-        end = endOfWord(end.next());
-    Selection s(startOfWord(selection.start()), end);
-    if (s.isNone())
+    VisiblePosition start = selection.start();
+    Selection s(startOfWord(start, LeftWordIfOnBoundary), endOfWord(start, RightWordIfOnBoundary));
+    if (!s.isRange())
         return;
     // Change to this someday to spell check the entire selection.
     // The rest of this function is prepared to handle finding multiple misspellings in a 
     // more-than-one-word selection.
-    //Selection s = Selection(selection.start().previousWordBoundary(), selection.end().nextWordBoundary());
 
     Range searchRange(s.toRange());
     
@@ -3860,12 +3854,9 @@ void KWQKHTMLPart::updateSpellChecking()
         if ([_bridge isContinuousSpellCheckingEnabled]) {
             // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
             // matches AppKit.
-            VisiblePosition start(startOfWord(selection().start(), LeftWordIfOnBoundary));
-            VisiblePosition end(endOfWord(selection().start(), LeftWordIfOnBoundary));
-            if (end == selection().start())
-                end = endOfWord(end, RightWordIfOnBoundary);
-            Selection selection(start, end);
-            xmlDocImpl()->removeMarker(selection.toRange(), DocumentMarker::Spelling);
+            VisiblePosition start = selection().start();
+            Selection s(startOfWord(start, LeftWordIfOnBoundary), endOfWord(start, RightWordIfOnBoundary));
+            xmlDocImpl()->removeMarker(s.toRange(), DocumentMarker::Spelling);
         }
         else {
             // When continuous spell checking is off, no markers appear after the selection changes.
