@@ -2,6 +2,16 @@
 
         Reviewed by Ken.
 
+        - fixed <rdar://problem/3636566>: "space bar on a form button hits default button instead (autorestore.apple.com)"
+
+        * khtml/html/html_formimpl.cpp: (HTMLInputElementImpl::defaultEventHandler):
+        Remove special handling for space, falling back to default AppKit behavior. Change enter handling to
+        click the form element itself in the case of elements other than text input ones.
+
+2004-04-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
         - fixed <rdar://problem/3636673>: "unrepro nil-deref crash in KHTMLPart::frameDetached() (espn.com)"
 
         * kwq/KWQKHTMLPart.mm: (KHTMLPart::frameDetached): Check for nil.

@@ -1882,49 +1882,39 @@ void HTMLInputElementImpl::defaultEventHandler(EventImpl *evt)
 #if APPLE_CHANGES
     // Use key press event here since sending simulated mouse events
     // on key down blocks the proper sending of the key press event.
-    if (evt->id() == EventImpl::KEYPRESS_EVENT) {
-    
-        if (!m_form || !m_render || !evt->isKeyboardEvent())
-            return;
-        
+    if (evt->id() == EventImpl::KEYPRESS_EVENT && evt->isKeyboardEvent()) {
         DOMString key = static_cast<KeyboardEventImpl *>(evt)->keyIdentifier();
-        
         switch (m_type) {
+            case BUTTON:
+            case CHECKBOX:
+            case FILE:
             case IMAGE:
+            case RADIO:
             case RESET:
             case SUBMIT:
-                // simulate mouse click for spacebar and enter
+                // Simulate mouse click for enter or spacebar for these types of elements.
+                // The AppKit already does this for spacebar for some, but not all, of them.
                 if (key == "U+000020" || key == "Enter") {
-                    m_form->submitClick();
+                    click();
                     evt->setDefaultHandled();
                 }
                 break;
-            case CHECKBOX:
-            case RADIO:
-                // for enter, find the first successful image or submit element 
-                // send it a simulated mouse click
-                if (key == "Enter") {
-                    m_form->submitClick();
-                    evt->setDefaultHandled();
-                }
-                break;
-            case TEXT:
+            case HIDDEN:
+            case ISINDEX:
+            case PASSWORD:
+            case RANGE:
             case SEARCH:
-            case PASSWORD: {
-                // For enter, find the first successful image or submit element 
-                // send it a simulated mouse click.
-                if (key == "Enter") {
+            case TEXT:
+                // Simulate mouse click on the default form button for enter for these types of elements.
+                if (key == "Enter" && m_form) {
                     m_form->submitClick();
                     evt->setDefaultHandled();
                 }
-                break;
-            }
-            default:
-                // not handled for the other widgets
                 break;
         }
     }
 #endif
+
     HTMLGenericFormElementImpl::defaultEventHandler(evt);
 }
 
