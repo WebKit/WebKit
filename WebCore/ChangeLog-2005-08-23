@@ -1,3 +1,11 @@
+2005-03-01  David Hyatt  <hyatt@apple.com>
+
+	Fix for 4030890, regression with <sup> on Google.  Fix some bogus != comparison checks in verticalPositionHint.
+	
+        Reviewed by John
+
+        (RenderObject::getVerticalPosition):
+        
 2005-03-01  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/4030669> smart delete does not delete spaces from pasted content
@@ -71,6 +79,7 @@
         * layout-tests/editing/deleting/smart-delete-002-expected.txt: Added.
         * layout-tests/editing/deleting/smart-delete-002.html: Added.
 
+>>>>>>> 1.3972
 2005-03-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Vicki
