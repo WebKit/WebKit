@@ -1023,7 +1023,7 @@ QRect RenderText::caretRect(int offset, EAffinity affinity, int *extraWidthToEnd
     int left;
     if (box->m_reversed) {
 	long len = box->m_start+box->m_len-offset;
-	QString string(str->s + box->m_start+offset,len);
+	QString string(str->s +offset,len);
 	left = box->m_x + fm.boundingRect(string,len).right();
     } else {
 	long len = offset - box->m_start; // the number of characters we are into the string
