@@ -30,7 +30,18 @@ class QString;
 
 class QFont {
 public:
-    void setFamily( const QString &);
+
+    enum Weight { Normal = 50, Bold = 63 };
+    
+    int pixelSize() const;
+    QString family() const;
+    void setFamily(const QString &);
+    void setPixelSizeFloat(float);
+    void setWeight(int);
+    int weight() const;
+    bool setItalic(bool);
+    bool italic() const;
+    bool bold() const;
     bool operator==(const QFont &x) const;
     bool operator!=(const QFont &x) const;
     enum CharSet {};

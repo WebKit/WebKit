@@ -31,7 +31,9 @@ class QString;
 
 class KCharsets {
 public:
-	void setQFont(QFont &f, QString charset) const;
+    void setQFont(QFont &f, QString charset) const;
+    QString xCharsetName(QFont::CharSet) const;
+    bool supportsScript(const QFont &f, QFont::CharSet charset);
 };
 
 #endif

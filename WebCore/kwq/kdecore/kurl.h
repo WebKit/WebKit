@@ -30,7 +30,12 @@ class QString;
 
 class KURL {
 public:
+        KURL();
+        KURL(const QString& url, int encoding_hint = 0);
 	QString url() const;
+        void setQuery(const QString& _txt, int encoding_hint = 0);
+        void setRef(const QString& _txt);
+        void setPath(const QString& path);
 	bool isEmpty() const;
 };
 

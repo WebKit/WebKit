@@ -26,6 +26,12 @@
 #ifndef QFONTMETRICS_H_
 #define QFONTMETRICS_H_
 
-class QFontMetrics;
+class QRect;
+class QChar;
+
+class QFontMetrics {
+public:
+    QRect boundingRect(QChar) const;
+};
 
 #endif

@@ -33,11 +33,12 @@ typedef kdbgstream & (*KDBGFUNC)(kdbgstream &);
 
 class kdbgstream {
 public:
-	kdbgstream &operator<<(const char *string);
-	kdbgstream &operator<<(const void *p);
-	kdbgstream &operator<<(const QString& string);
-	kdbgstream &operator<<(const QCString& string);
-	kdbgstream &operator<<(KDBGFUNC f);
+	kdbgstream &operator<<(int);
+	kdbgstream &operator<<(const char *);
+	kdbgstream &operator<<(const void *);
+	kdbgstream &operator<<(const QString&);
+	kdbgstream &operator<<(const QCString&);
+	kdbgstream &operator<<(KDBGFUNC);
 };
 
 inline kdbgstream &endl( kdbgstream &s) { s << "\n"; return s; }

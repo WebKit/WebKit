@@ -29,11 +29,15 @@
 // Forward declaration for khtml/html/html_imageimpl.h:58
 class QImage;
 
+class QString;
+
 class QColor {
 public:
+    QString name() const;
     int red() const;
     int green() const;
     int blue() const;
+    bool isValid() const;
 
 bool operator==(const QColor &x) const;
 bool operator!=(const QColor &x) const;

@@ -26,4 +26,16 @@
 #ifndef QFONTDATABASE_H_
 #define QFONTDATABASE_H_
 
+#include "qvaluelist.h"
+
+class QFont;
+class QString;
+
+class QFontDatabase {
+public:
+     bool isSmoothlyScalable(const QString &family, const QString &style = QString::null, const QString &charSet = QString::null) const;
+     QValueList<int> smoothSizes(const QString &family, const QString &style, const QString &charSet = QString::null);
+     QString styleString(const QFont &);
+};
+
 #endif

@@ -37,9 +37,10 @@ public:
     T *at(uint);
     void append(const T *);
     void setAutoDelete(bool);
-    bool remove(const T *d);
+    bool insert(uint i, const T *);
+    bool remove(const T *);
     bool removeLast();
-    void prepend(const T *d);
+    void prepend(const T *);
     T *take(uint i);
     T *first();
     T *next();
@@ -47,6 +48,8 @@ public:
     void clear();
     bool isEmpty() const;
     bool removeRef(const T *);
+    uint containsRef(const T *) const;
+    void sort();
 };
 
 template <class T> class QListIterator {

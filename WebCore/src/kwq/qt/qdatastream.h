@@ -34,10 +34,11 @@ public:
     QDataStream( QByteArray, int mode );
     virtual ~QDataStream();
 
-    QDataStream &operator<<( const char *str );
-    QDataStream &operator<<( const QString &str );
-    QDataStream &operator<<( const QCString &str );
-    QDataStream &operator>>( const QString &str );
+    QDataStream &operator<<(long int);
+    QDataStream &operator<<(const char *);
+    QDataStream &operator<<(const QString &);
+    QDataStream &operator<<(const QCString &);
+    QDataStream &operator>>(const QString &);
 };
 
 #endif

@@ -28,13 +28,13 @@
 
 class QColorGroup {
 public:
-    enum ColorRole {};
+    enum ColorRole { Shadow, Light, Mid, Dark, Base, ButtonText, Button, Background };
     void setColor(ColorRole role, const QColor &color);
 };
 
 class QPalette {
 public:
-    enum ColorGroup {};
+    enum ColorGroup { Active, Inactive };
     void setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color);
 }; 
 

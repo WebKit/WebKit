@@ -42,4 +42,7 @@ class CSS2AzimuthImpl;
 #define TRUE (1)
 #define FALSE (0)
 
+void qDebug(const char *msg, ...);
+
+
 #endif

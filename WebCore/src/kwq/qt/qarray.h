@@ -26,7 +26,16 @@
 #ifndef QARRAY_H_
 #define QARRAY_H_
 
+#include <kwq.h>
+
 template <class T> class QArray {
+public:
+    T *data() const;
+
+    uint size() const;
+    bool resize(uint size);
+    
+    T& operator[](int i) const;
 };
 
 #endif

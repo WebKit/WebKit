@@ -40,6 +40,7 @@ dnl
 
 SUBDIRS='
 	src/kdelibs/kjs
+	src/kdelibs/khtml/css
 	src/kdelibs/khtml/dom
 	src/kdelibs/khtml/xml
 '
@@ -182,6 +183,7 @@ AC_OUTPUT(
 	Makefile.vars
 	Makefile.rules
 	src/kdelibs/kjs/Makefile 
+	src/kdelibs/khtml/css/Makefile
 	src/kdelibs/khtml/dom/Makefile
 	src/kdelibs/khtml/xml/Makefile
 )

@@ -27,9 +27,11 @@
 #define KGLOBAL_H_
 
 class KCharsets;
+class KInstance;
 
 class KGlobal {
 public:
+    static KInstance *instance();
     static KCharsets *charsets();
 };
 

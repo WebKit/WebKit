@@ -32,7 +32,10 @@
 typedef QArray<char> QByteArray;
 
 // added to help in compilation of khtml/dom/html_documnent.cpp:182
-class QCString {
+class QCString : public QByteArray {
+public:
+    QCString();
+    QCString(uint);
 };
 
 bool operator!=(const char *s1, const QCString &s2);
