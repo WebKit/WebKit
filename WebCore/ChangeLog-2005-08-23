@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        - re-fixed <rdar://problem/3701893> show expert preferences notes in xcode causes crash (in EllipsisBox code)
+
+        * khtml/rendering/render_block.cpp: (khtml::RenderBlock::paintEllipsisBoxes):
+        Check !isInlineFlow rather than checking hasMarkupTruncation. Otherwise, we break
+        plain old non-markup truncation.
+
+2004-06-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3701893> show expert preferences notes in xcode causes crash (in EllipsisBox code)
 
         * khtml/rendering/render_block.cpp: (khtml::RenderBlock::paintEllipsisBoxes):
