@@ -1,3 +1,62 @@
+2005-03-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these bugs:
+        
+        <rdar://problem/4045511> Copying and pasting end-of-paragraph selection puts insertion point in wrong place
+        <rdar://problem/4045513> Copying and pasting selection starting at end of paragraph can incorrectly remove line break
+
+        The copy/paste code before this patch had no notion of a "logical newline" at the start of the selection. We have
+        had a similar notion for "logical newline" at the end of the selection for quite some time. To fix these bugs, we
+        need to introduce the same idea for selection starts.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplacementFragment::ReplacementFragment): Process the "logical newline" at start as we write it out
+        in markup. Set the bit we added to this object to signify we have such a newline.
+        (khtml::ReplaceSelectionCommand::doApply): Many, many changes to introduce the new "logical newline" at start concept.
+        I also tried to simply the code that sets the start position for inserting content to be pasted. I also improved a
+        weakness in the smart-paste code. Now, we check before and after the paste for whether we need to add a leading or
+        trailing space. The code previous to this patch only did a "before" check, with the result that we sometimes added
+        a second space. In other words, the code did not realize that DOM changes done by pasting could cause formerly
+        unrendered whitespace to become rendered. Also moved line placeholder clean up code to its own function.
+        (khtml::ReplaceSelectionCommand::removeLinePlaceholderIfNeeded): New helper that further refines the notion
+        of when we can remove a line placeholder. The definition is now, "If a line placeholder is at the visible start
+        and visible end of its line, keep it; otherwise remove it".
+        * khtml/editing/htmlediting.h: Declare new functions. Rework inlines in ReplacementFragment class to account for
+        addition of new "logical newline" at start concept.
+        (khtml::ReplacementFragment::hasInterchangeNewlineAtStart): New accessor.
+        (khtml::ReplacementFragment::hasInterchangeNewlineAtEnd): Renamed from hasInterchangeNewline(), since before we
+        only had a bit for the end, hence we did not need to distinguish it from the start.
+        * khtml/editing/markup.cpp:
+        (khtml::createMarkup): Added code to detect and write out markup for cases where we have a "logical newline" at start.
+        * khtml/xml/dom2_rangeimpl.cpp:
+        (DOM::RangeImpl::startPosition): New helper.
+        (DOM::RangeImpl::endPosition): Ditto.
+        * khtml/xml/dom2_rangeimpl.h: Declare new helpers.
+        
+        New tests:
+        * layout-tests/editing/pasteboard/paste-line-endings-001-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-001.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-002-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-002.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-003-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-003.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-004-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-004.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-005-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-005.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-006-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-006.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-007-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-007.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-008-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-008.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-009-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-009.html: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-010-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-line-endings-010.html: Added.
+
 2005-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

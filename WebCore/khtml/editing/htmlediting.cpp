@@ -4101,7 +4101,12 @@ void RemoveNodePreservingChildrenCommand::doApply()
 // ReplaceSelectionCommand
 
 ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmentImpl *fragment, bool matchStyle)
-    : m_document(document), m_fragment(fragment), m_matchStyle(matchStyle), m_hasInterchangeNewline(false), m_hasMoreThanOneBlock(false)
+    : m_document(document), 
+      m_fragment(fragment), 
+      m_matchStyle(matchStyle), 
+      m_hasInterchangeNewlineAtStart(false), 
+      m_hasInterchangeNewlineAtEnd(false), 
+      m_hasMoreThanOneBlock(false)
 {
     if (!m_document)
         return;
@@ -4130,12 +4135,19 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
     m_type = TreeFragment;
 
     NodeImpl *node = m_fragment->firstChild();
-    NodeImpl *nodeToDelete = 0;
+    NodeImpl *newlineAtStartNode = 0;
+    NodeImpl *newlineAtEndNode = 0;
     while (node) {
         NodeImpl *next = node->traverseNextNode();
         if (isInterchangeNewlineNode(node)) {
-            m_hasInterchangeNewline = true;
-            nodeToDelete = node;
+            if (next || node == m_fragment->firstChild()) {
+                m_hasInterchangeNewlineAtStart = true;
+                newlineAtStartNode = node;
+            }
+            else {
+                m_hasInterchangeNewlineAtEnd = true;
+                newlineAtEndNode = node;
+            }
         }
         else if (isInterchangeConvertedSpaceSpan(node)) {
             NodeImpl *n = 0;
@@ -4152,9 +4164,10 @@ ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmen
         node = next;
     }
 
-    if (nodeToDelete)
-        removeNode(nodeToDelete);
-
+    if (newlineAtStartNode)
+        removeNode(newlineAtStartNode);
+    if (newlineAtEndNode)
+        removeNode(newlineAtEndNode);
     
     NodeImpl *holder = insertFragmentForTestRendering();
     holder->ref();
@@ -4498,7 +4511,8 @@ void ReplaceSelectionCommand::doApply()
         mergeStart = true;
     } else {
         // merge if current selection starts inside a paragraph, or there is only one block and no interchange newline to add
-        mergeStart = !isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewline() && !m_fragment.hasMoreThanOneBlock());
+        mergeStart = !m_fragment.hasInterchangeNewlineAtStart() && 
+            (!isStartOfParagraph(visibleStart) || (!m_fragment.hasInterchangeNewlineAtEnd() && !m_fragment.hasMoreThanOneBlock()));
         
         // This is a workaround for this bug:
         // <rdar://problem/4013642> REGRESSION (Mail): Copied quoted word does not paste as a quote if pasted at the start of a line
@@ -4510,41 +4524,55 @@ void ReplaceSelectionCommand::doApply()
     
     // decide whether to later append nodes to the end
     NodeImpl *beyondEndNode = 0;
-    if (!isEndOfParagraph(visibleEnd)) {
+    if (!isEndOfParagraph(visibleEnd) && !m_fragment.hasInterchangeNewlineAtEnd()) {
         beyondEndNode = selection.end().downstream(StayInBlock).node();
     }
-    bool moveNodesAfterEnd = beyondEndNode && !m_fragment.hasInterchangeNewline() && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
-    
-    Position startPos = Position(selection.start().node()->enclosingBlockFlowElement(), 0);
-    Position endPos; 
-    EStayInBlock upstreamStayInBlock = StayInBlock;
+    bool moveNodesAfterEnd = beyondEndNode && (startBlock != endBlock || m_fragment.hasMoreThanOneBlock());
 
+    Position startPos = selection.start();
+    
     // delete the current range selection, or insert paragraph for caret selection, as needed
     if (selection.isRange()) {
-        deleteSelection(false, !(m_fragment.hasInterchangeNewline() || m_fragment.hasMoreThanOneBlock()));
-    } else if (selection.isCaret() && !startAtBlockBoundary &&
-             !m_fragment.hasInterchangeNewline() && m_fragment.hasMoreThanOneBlock() && !isEndOfParagraph(visibleEnd)) {
-        // The start and the end need to wind up in separate blocks.
-        // Insert a paragraph separator to make that happen.
-        insertParagraphSeparator();
-        upstreamStayInBlock = DoNotStayInBlock;
-    }
-    
-    // calculate the start and end of the resulting selection
-    selection = endingSelection();
-    if (m_matchStyle) {
-        startPos = selection.start();
-    } else {
-        if (startAtStartOfBlock && startBlock->inDocument()) {
-            startPos = Position(startBlock, 0);
-        } else if (startAtEndOfBlock) {
-            startPos = selection.start().downstream(StayInBlock);
-        } else {
-            startPos = selection.start().upstream(upstreamStayInBlock);
+        deleteSelection(false, !(m_fragment.hasInterchangeNewlineAtStart() || m_fragment.hasInterchangeNewlineAtEnd() || m_fragment.hasMoreThanOneBlock()));
+        document()->updateLayout();
+        visibleStart = VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY);
+        if (m_fragment.hasInterchangeNewlineAtStart()) {
+            if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
+                if (!isEndOfDocument(visibleStart))
+                    setEndingSelection(visibleStart.next());
+            }
+            else {
+                insertParagraphSeparator();
+                setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY));
+            }
         }
+        startPos = endingSelection().start();
+    } 
+    else {
+        ASSERT(selection.isCaret());
+        if (m_fragment.hasInterchangeNewlineAtStart()) {
+            if (isEndOfParagraph(visibleStart) && !isStartOfParagraph(visibleStart)) {
+                if (!isEndOfDocument(visibleStart))
+                    setEndingSelection(visibleStart.next());
+            }
+            else {
+                insertParagraphSeparator();
+                setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY));
+            }
+        }
+        if (!m_fragment.hasInterchangeNewlineAtEnd() && m_fragment.hasMoreThanOneBlock() && 
+            !startAtBlockBoundary && !isEndOfParagraph(visibleEnd)) {
+            // The start and the end need to wind up in separate blocks.
+            // Insert a paragraph separator to make that happen.
+            insertParagraphSeparator();
+            setEndingSelection(VisiblePosition(endingSelection().start(), VP_DEFAULT_AFFINITY).previous());
+        }
+        startPos = endingSelection().start();
     }
-    endPos = selection.end().downstream(); 
-    
+
+    if (startAtStartOfBlock && startBlock->inDocument())
+        startPos = Position(startBlock, 0);
+
     KHTMLPart *part = document()->part();
     if (m_matchStyle) {
         m_insertionStyle = styleAtPosition(startPos);
@@ -4560,14 +4588,13 @@ void ReplaceSelectionCommand::doApply()
     if (!m_fragment.firstChild())
         return;
     
-    // now that we are about to add content, check whether a placeholder element can be removed
-    // if so, do it and update startPos and endPos
+    // check for a line placeholder, and store it away for possible removal later.
     NodeImpl *block = startPos.node()->enclosingBlockFlowElement();
     NodeImpl *linePlaceholder = findBlockPlaceholder(block);
     if (!linePlaceholder) {
         Position downstream = startPos.downstream(StayInBlock);
         if (downstream.node()->id() == ID_BR && downstream.offset() == 0 && 
-            m_fragment.hasInterchangeNewline() &&
+            m_fragment.hasInterchangeNewlineAtEnd() &&
             isFirstVisiblePositionOnLine(VisiblePosition(downstream, VP_DEFAULT_AFFINITY)))
             linePlaceholder = downstream.node();
     }
@@ -4658,32 +4685,44 @@ void ReplaceSelectionCommand::doApply()
 
     // step 3 : handle "smart replace" whitespace
     if (addTrailingSpace && m_lastNodeInserted) {
-        if (m_lastNodeInserted->isTextNode()) {
-            TextImpl *text = static_cast<TextImpl *>(m_lastNodeInserted);
-            insertTextIntoNode(text, text->length(), nonBreakingSpaceString());
-            insertionPos = Position(text, text->length());
-        }
-        else {
-            NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
-            insertNodeAfterAndUpdateNodesInserted(node, m_lastNodeInserted);
-            insertionPos = Position(node, 1);
+        document()->updateLayout();
+        Position pos(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset());
+        bool needsTrailingSpace = pos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull();
+        if (needsTrailingSpace) {
+            if (m_lastNodeInserted->isTextNode()) {
+                TextImpl *text = static_cast<TextImpl *>(m_lastNodeInserted);
+                insertTextIntoNode(text, text->length(), nonBreakingSpaceString());
+                insertionPos = Position(text, text->length());
+            }
+            else {
+                NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
+                insertNodeAfterAndUpdateNodesInserted(node, m_lastNodeInserted);
+                insertionPos = Position(node, 1);
+            }
         }
     }
 
     if (addLeadingSpace && m_firstNodeInserted) {
-        if (m_firstNodeInserted->isTextNode()) {
-            TextImpl *text = static_cast<TextImpl *>(m_firstNodeInserted);
-            insertTextIntoNode(text, 0, nonBreakingSpaceString());
-        } else {
-            NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
-            insertNodeBeforeAndUpdateNodesInserted(node, m_firstNodeInserted);
+        document()->updateLayout();
+        Position pos(m_firstNodeInserted, 0);
+        bool needsLeadingSpace = pos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull();
+        if (needsLeadingSpace) {
+            if (m_firstNodeInserted->isTextNode()) {
+                TextImpl *text = static_cast<TextImpl *>(m_firstNodeInserted);
+                insertTextIntoNode(text, 0, nonBreakingSpaceString());
+            } else {
+                NodeImpl *node = document()->createEditingTextNode(nonBreakingSpaceString());
+                insertNodeBeforeAndUpdateNodesInserted(node, m_firstNodeInserted);
+            }
         }
     }
     
     Position lastPositionToSelect;
 
     // step 4 : handle trailing newline
-    if (m_fragment.hasInterchangeNewline()) {
+    if (m_fragment.hasInterchangeNewlineAtEnd()) {
+        removeLinePlaceholderIfNeeded(linePlaceholder);
+
         if (!m_lastNodeInserted) {
             lastPositionToSelect = endingSelection().end().downstream();
         }
@@ -4764,29 +4803,24 @@ void ReplaceSelectionCommand::doApply()
     completeHTMLReplacement(lastPositionToSelect);
     
     // step 5 : mop up
-    if (linePlaceholder) {
-        document()->updateLayout();
-        if (linePlaceholder->inDocument()) {
-            // remove the placeholder if it seems to have no effect
-            // FIXME: cannot rely on height() alone, tho, because it is zero for a BR on a line
-            // that has only non-text in it (e.g. replaced elements).  See <rdar://problem/4040358>.
-            bool dumpIt = (!linePlaceholder->renderer() || linePlaceholder->renderer()->height() == 0);
-            if (dumpIt) {
-                // start workaround for <rdar://problem/4040358>
-                VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
-                dumpIt = placeholderPos.next().isNull() || isFirstVisiblePositionOnLine(placeholderPos);
-                // end workaround for <rdar://problem/4040358>
-            }
-            
-            if (dumpIt) {
-                removeNode(linePlaceholder);
-            } else if (!mergeStart && !m_fragment.hasInterchangeNewline()) {
-                NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
-                removeNode(linePlaceholder);
-                document()->updateLayout();
-                if (!block->renderer() || block->renderer()->height() == 0)
-                    removeNode(block);
-            }
+    removeLinePlaceholderIfNeeded(linePlaceholder);
+}
+
+void ReplaceSelectionCommand::removeLinePlaceholderIfNeeded(NodeImpl *linePlaceholder)
+{
+    if (!linePlaceholder)
+        return;
+        
+    document()->updateLayout();
+    if (linePlaceholder->inDocument()) {
+        VisiblePosition placeholderPos(linePlaceholder, linePlaceholder->renderer()->caretMinOffset(), DOWNSTREAM);
+        if (placeholderPos.next().isNull() ||
+            !(isFirstVisiblePositionOnLine(placeholderPos) && isLastVisiblePositionOnLine(placeholderPos))) {
+            NodeImpl *block = linePlaceholder->enclosingBlockFlowElement();
+            removeNode(linePlaceholder);
+            document()->updateLayout();
+            if (!block->renderer() || block->renderer()->height() == 0)
+                removeNode(block);
         }
     }
 }

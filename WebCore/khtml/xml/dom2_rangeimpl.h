@@ -93,6 +93,9 @@ public:
     };
     DocumentFragmentImpl *processContents ( ActionType action, int &exceptioncode );
 
+    Position startPosition() const;
+    Position endPosition() const;
+
     NodeImpl *startNode() const;
     NodeImpl *pastEndNode() const;
 

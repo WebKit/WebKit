@@ -29,6 +29,8 @@
 
 #include "css/css_computedstyle.h"
 #include "css/css_valueimpl.h"
+#include "editing/visible_position.h"
+#include "editing/visible_units.h"
 #include "html/html_elementimpl.h"
 #include "xml/dom_position.h"
 #include "xml/dom2_rangeimpl.h"
@@ -301,6 +303,8 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     if (!range || range->isDetached())
         return QString();
 
+    static const QString interchangeNewlineString = QString("<br class=\"") + AppleInterchangeNewline + "\">";
+
     int exceptionCode = 0;
     NodeImpl *commonAncestor = range->commonAncestorContainer(exceptionCode);
     ASSERT(exceptionCode == 0);
@@ -326,9 +330,19 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     CSSMutableStyleDeclarationImpl *defaultStyle = pos.computedStyle()->copyInheritableProperties();
     defaultStyle->ref();
     
+    NodeImpl *startNode = range->startNode();
+    VisiblePosition visibleStart(range->startPosition(), VP_DEFAULT_AFFINITY);
+    VisiblePosition visibleEnd(range->endPosition(), VP_DEFAULT_AFFINITY);
+    if (isEndOfBlock(visibleStart)) {
+        if (visibleStart == visibleEnd.previous())
+            return interchangeNewlineString;
+        markups.append(interchangeNewlineString);
+        startNode = startNode->traverseNextNode();
+    }
+    
     // Iterate through the nodes of the range.
     NodeImpl *next;
-    for (NodeImpl *n = range->startNode(); n != pastEnd; n = next) {
+    for (NodeImpl *n = startNode; n != pastEnd; n = next) {
         next = n->traverseNextNode();
 
         if (n->isBlockFlow() && next == pastEnd) {
@@ -424,7 +438,6 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
         NodeImpl *block = pos.node()->enclosingBlockFlowElement();
         NodeImpl *upstreamBlock = pos.upstream().node()->enclosingBlockFlowElement();
         if (block != upstreamBlock) {
-            static const QString interchangeNewlineString = QString("<br class=\"") + AppleInterchangeNewline + "\">";
             markups.append(interchangeNewlineString);
         }
     }
