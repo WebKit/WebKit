@@ -264,6 +264,7 @@ void HTMLEmbedElementImpl::attach()
 HTMLObjectElementImpl::HTMLObjectElementImpl(DocumentPtr *doc) : HTMLElementImpl(doc)
 {
     needWidgetUpdate = false;
+    m_childrenLoaded = false;
 }
 
 HTMLObjectElementImpl::~HTMLObjectElementImpl()
@@ -348,6 +349,10 @@ void HTMLObjectElementImpl::attach()
         }
 #endif
 
+    // If we are already cleared, then it means that we were attach()-ed previously
+    // with no renderer.  We will actually need to do an update in order to ensure
+    // that the plugin shows up.  This fix is necessary to work with async
+    // render tree construction caused by stylesheet loads. -dwh
     if (loadplugin && parentNode()->renderer()) {
         needWidgetUpdate = false;
         m_render = new RenderPartObject(this);
@@ -355,10 +360,12 @@ void HTMLObjectElementImpl::attach()
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
 
-    NodeBaseImpl::attach();
-
-  // ### do this when we are actually finished loading instead
-  dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
+    // Go ahead and perform the update.
+    if (m_childrenLoaded && m_render && strcmp(m_render->renderName(), "RenderPartObject") == 0)
+        static_cast<RenderPartObject*>(m_render)->updateWidget();
+    
+    // ### do this when we are actually finished loading instead
+    dispatchHTMLEvent(EventImpl::LOAD_EVENT,false,false);
 }
 
 void HTMLObjectElementImpl::detach()

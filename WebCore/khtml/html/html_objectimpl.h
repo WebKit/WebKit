@@ -98,10 +98,13 @@ public:
 
     DocumentImpl* contentDocument() const;
 
+    void setChildrenLoaded() { m_childrenLoaded = true; }
+    
     QString serviceType;
     QString url;
     QString classId;
     bool needWidgetUpdate;
+    bool m_childrenLoaded;
 };
 
 // -------------------------------------------------------------------------

@@ -1,5 +1,21 @@
 2002-07-22  David Hyatt  <hyatt@apple.com>
 
+	Fix for bug 3004889, plugin content on stylesheet pages not
+	showing up.  The rendering tree needed to perform an update
+	when all children had arrived, and this was being handled by
+	the parser.  With async rendering construction, I had to store
+	this in the content node instead, so it could do the update
+	once the render object was built at a later date.
+	
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::HTMLObjectElementImpl):
+        (HTMLObjectElementImpl::attach):
+        * khtml/html/html_objectimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::processCloseTag):
+
+2002-07-22  David Hyatt  <hyatt@apple.com>
+
 	This checkin adds support for querying the selected style set,
 	for querying the preferred style set, and for changing the
 	selected style set dynamically.  With this checkin, a Web page

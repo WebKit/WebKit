@@ -1095,6 +1095,12 @@ void KHTMLParser::processCloseTag(Token *t)
     case ID_SELECT+ID_CLOSE_TAG:
         inSelect = false;
         break;
+    case ID_OBJECT+ID_CLOSE_TAG:
+        // This case has been added to deal with async rendering tree construction
+        // caused by <link rel=stylesheet>. We need to update the widget if and only
+        // if all children have loaded.  -dwh
+        if (current && !current->renderer())
+            static_cast<HTMLObjectElementImpl*>(current)->setChildrenLoaded();
     default:
         break;
     }
