@@ -1,5 +1,20 @@
 2002-03-15  Darin Adler  <darin@apple.com>
 
+	Some more optimizations. Carves another 6% or so off of NSView.html.
+
+	* src/kwq/KWQChar.mm: (QChar::QChar): Handle characters > 0x7F correctly.
+	(QChar::cell): Remove unnecessary & operation.
+	(QChar::row): Remove unnecessary & operation.
+	(QChar::latin1): Do a simpler check rather than calling row().
+	(QChar::operator char): Do the same work as latin1 inline.
+	(operator==) (operator!=), (operator>=), (operator>), (operator<=), (operator<):
+	Handle characters > 0x7F correctly.
+
+	* src/kwq/KWQFontMetrics.mm: (QFontMetrics::ascent), (QFontMetrics::descent):
+	Cache the ascent and descent rather than computing it each time we are called.
+
+2002-03-15  Darin Adler  <darin@apple.com>
+
 	Optimizations for creating empty QFont objects, measuring certain single
 	characters, and copying QFontMetrics objects. Makes loading NSView.html about
 	18% faster.

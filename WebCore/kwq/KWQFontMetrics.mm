@@ -312,6 +312,8 @@ struct QFontMetricsPrivate {
         info = [[KWQLayoutInfo getMetricsForFont: aFont] retain];
         spaceWidth = -1;
         xWidth = -1;
+        ascent = -1;
+        descent = -1;
     }
     ~QFontMetricsPrivate()
     {
@@ -323,6 +325,8 @@ struct QFontMetricsPrivate {
     NSFont *font;
     int spaceWidth;
     int xWidth;
+    int ascent;
+    int descent;
 };
 
 QFontMetrics::QFontMetrics()
@@ -356,12 +360,16 @@ int QFontMetrics::baselineOffset() const
 
 int QFontMetrics::ascent() const
 {
-    return ROUND_TO_INT([data->font ascender]);
+    if (data->ascent < 0)
+        data->ascent = ROUND_TO_INT([data->font ascender]);
+    return data->ascent;
 }
 
 int QFontMetrics::descent() const
 {
-    return ROUND_TO_INT(-[data->font descender]);
+    if (data->descent < 0)
+        data->descent = ROUND_TO_INT([data->font descender]);
+    return data->descent;
 }
 
 int QFontMetrics::height() const

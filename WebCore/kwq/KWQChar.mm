@@ -61,7 +61,7 @@ QChar::QChar()
 
 QChar::QChar(char ch)
 {
-    c = ch;
+    c = (uchar) ch;
 }
 
 QChar::QChar(uchar uch)
@@ -111,23 +111,23 @@ ushort QChar::unicode() const
 uchar QChar::cell() const
 {
     // return least significant byte
-    return c & 0xff;
+    return c;
 }
 
 uchar QChar::row() const
 {
     // return most significant byte
-    return (c & 0xff00) >> 8;
+    return c >> 8;
 }
 
 char QChar::latin1() const
 {
-    return row() ? 0 : cell();
+    return c > 0xff ? 0 : c;
 }
 
 QChar::operator char() const
 {
-    return latin1();
+    return c > 0xff ? 0 : c;
 }
 
 bool QChar::isNull() const
@@ -139,7 +139,7 @@ bool QChar::isSpace() const
 {
     // FIXME: should we use this optimization?
 #if 0
-    if (!row()) {
+    if (c <= 0xff) {
 	return isspace(c);
     }
 #endif
@@ -245,12 +245,12 @@ bool operator==(QChar qc1, QChar qc2)
 
 bool operator==(QChar qc, char ch)
 {
-    return qc.c == ch;
+    return qc.c == (uchar) ch;
 }
 
 bool operator==(char ch, QChar qc)
 {
-    return ch == qc.c;
+    return (uchar) ch == qc.c;
 }
 
 bool operator!=(QChar qc1, QChar qc2)
@@ -260,12 +260,12 @@ bool operator!=(QChar qc1, QChar qc2)
 
 bool operator!=(QChar qc, char ch)
 {
-    return qc.c != ch;
+    return qc.c != (uchar) ch;
 }
 
 bool operator!=(char ch, QChar qc)
 {
-    return ch != qc.c;
+    return (uchar) ch != qc.c;
 }
 
 bool operator>=(QChar qc1, QChar qc2)
@@ -275,12 +275,12 @@ bool operator>=(QChar qc1, QChar qc2)
 
 bool operator>=(QChar qc, char ch)
 {
-    return qc.c >= ch;
+    return qc.c >= (uchar) ch;
 }
 
 bool operator>=(char ch, QChar qc)
 {
-    return ch >= qc.c;
+    return (uchar) ch >= qc.c;
 }
 
 bool operator>(QChar qc1, QChar qc2)
@@ -295,7 +295,7 @@ bool operator>(QChar qc, char ch)
 
 bool operator>(char ch, QChar qc)
 {
-    return ch > qc.c;
+    return (uchar) ch > qc.c;
 }
 
 bool operator<=(QChar qc1, QChar qc2)
@@ -305,12 +305,12 @@ bool operator<=(QChar qc1, QChar qc2)
 
 bool operator<=(QChar qc, char ch)
 {
-    return qc.c <= ch;
+    return qc.c <= (uchar) ch;
 }
 
 bool operator<=(char ch, QChar qc)
 {
-    return ch <= qc.c;
+    return (uchar) ch <= qc.c;
 }
 
 bool operator<(QChar qc1, QChar qc2)
@@ -320,12 +320,12 @@ bool operator<(QChar qc1, QChar qc2)
 
 bool operator<(QChar qc, char ch)
 {
-    return qc.c < ch;
+    return qc.c < (uchar) ch;
 }
 
 bool operator<(char ch, QChar qc)
 {
-    return ch < qc.c;
+    return (uchar) ch < qc.c;
 }
 
 #endif  // _KWQ_QCHAR_INLINES_
