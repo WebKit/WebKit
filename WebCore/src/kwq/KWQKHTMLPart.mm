@@ -44,9 +44,12 @@ class KHTMLPartPrivate
 public:
     DOM::DocumentImpl *m_doc;
     khtml::Decoder *m_decoder;
+
     QString m_encoding;
     QFont::CharSet m_charset;
     KHTMLSettings *m_settings;
+
+    KURL m_workingURL;
 
     bool m_bFirstData:1;
     bool m_haveEncoding:1;
@@ -90,12 +93,40 @@ KHTMLPart::~KHTMLPart()
 
 bool KHTMLPart::openURL( const KURL &url )
 {
-    _logNotYetImplemented();
+    // Close the previous URL.
+    closeURL();
+    
+    //if ( args.doPost() && (url.protocol().startsWith("http")) )
+    //{
+    //    d->m_job = KIO::http_post( url, args.postData, false );
+    //    d->m_job->addMetaData("content-type", args.contentType() );
+    //}
+    //else
+    //    d->m_job = KIO::get( url, args.reload, false );
+        
+    //connect( d->m_job, SIGNAL( result( KIO::Job * ) ),
+    //        SLOT( slotFinished( KIO::Job * ) ) );
+    //connect( d->m_job, SIGNAL( data( KIO::Job*, const QByteArray &)),
+    //        SLOT( slotData( KIO::Job*, const QByteArray &)));
+    //connect( d->m_job, SIGNAL(redirection(KIO::Job*, const KURL&) ),
+    //        SLOT( slotRedirection(KIO::Job*,const KURL&) ) );
+    
+    // Initiate request for URL data.
+    
+    // Setup callbacks for incoming data.
+    
+    // Keep a reference to the current working URL.
+    d->m_workingURL = url;
+        
+    return true;
 }
 
 bool KHTMLPart::closeURL()
 {
-    _logNotYetImplemented();
+    // Cancel any pending loads.
+    
+    // Reset the the current working URL to the default URL.
+    d->m_workingURL = KURL();
 }
 
 
@@ -242,7 +273,7 @@ void KHTMLPart::write( const char *str, int len)
         d->m_doc->determineParseMode( decoded );
         d->m_bFirstData = false;
     
-    //kdDebug(6050) << "KHTMLPart::write haveEnc = " << d->m_haveEncoding << endl;
+        //kdDebug(6050) << "KHTMLPart::write haveEnc = " << d->m_haveEncoding << endl;
         // ### this is still quite hacky, but should work a lot better than the old solution
         if(d->m_decoder->visuallyOrdered())
             d->m_doc->setVisuallyOrdered();
