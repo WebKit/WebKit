@@ -1,3 +1,24 @@
+2004-11-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Harrison
+
+        Some cleanups and fixes in upstream and downstream functions. 
+        
+        Removed redundant checks for isBlockFlow() when calling enclosingBlockFlowElement(). 
+        Blocks do not need to skip the call to enclosingBlockFlowElement() for fear that the 
+        block's enclosing block will be returned. 
+        
+        Remove code from upstream that confined the serach to block boundaries outside of
+        the code which runs in the StayInBlock case. This code was redundant, and caused
+        incorrect results to be returned in the DoNotStayInBlock case.
+        
+        In downstream, the check for crossing into a new block should use the equivalentDeepPosition()
+        node, not the the this pointer's node.
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::upstream)
+        (DOM::Position::downstream)
+
 2004-11-09  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3873234, Safari UI is unresponsive when parsing multiple HTML docs and 3873233, Safari hangs when

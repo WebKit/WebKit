@@ -368,14 +368,14 @@ Position Position::upstream(EStayInBlock stayInBlock) const
     if (!startNode)
         return Position();
 
-    NodeImpl *block = startNode->isBlockFlow() ? startNode : startNode->enclosingBlockFlowElement();
+    NodeImpl *block = startNode->enclosingBlockFlowElement();
     
     PositionIterator it(start);
     for (; !it.atStart(); it.previous()) {
         NodeImpl *currentNode = it.current().node();
 
         if (stayInBlock) {
-            NodeImpl *currentBlock = currentNode->isBlockFlow() ? currentNode : currentNode->enclosingBlockFlowElement();
+            NodeImpl *currentBlock = currentNode->enclosingBlockFlowElement();
             if (block != currentBlock)
                 return it.next();
         }
@@ -387,7 +387,7 @@ Position Position::upstream(EStayInBlock stayInBlock) const
         if (renderer->style()->visibility() != VISIBLE)
             continue;
 
-        if ((currentNode != startNode && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
+        if (renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() >= renderer->caretMaxOffset())
                 return Position(currentNode, renderer->caretMaxOffset());
             else
@@ -424,14 +424,14 @@ Position Position::downstream(EStayInBlock stayInBlock) const
     if (!startNode)
         return Position();
 
-    NodeImpl *block = startNode->isBlockFlow() ? startNode : startNode->enclosingBlockFlowElement();
+    NodeImpl *block = startNode->enclosingBlockFlowElement();
     
     PositionIterator it(start);            
     for (; !it.atEnd(); it.next()) {   
         NodeImpl *currentNode = it.current().node();
 
         if (stayInBlock) {
-            NodeImpl *currentBlock = currentNode->isBlockFlow() ? currentNode : currentNode->enclosingBlockFlowElement();
+            NodeImpl *currentBlock = currentNode->enclosingBlockFlowElement();
             if (block != currentBlock)
                 return it.previous();
         }
@@ -443,7 +443,7 @@ Position Position::downstream(EStayInBlock stayInBlock) const
         if (renderer->style()->visibility() != VISIBLE)
             continue;
 
-        if ((currentNode != node() && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
+        if ((currentNode != startNode && renderer->isBlockFlow()) || renderer->isReplaced() || renderer->isBR()) {
             if (it.current().offset() <= renderer->caretMinOffset())
                 return Position(currentNode, renderer->caretMinOffset());
             else
