@@ -1,3 +1,22 @@
+2005-01-31  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dave Hyatt.
+        
+        - fixed <rdar://problem/3949203> cannot tab to, within, or out of the RSS sidebar
+
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider becomeFirstResponder]):
+        (-[KWQSlider resignFirstResponder]):
+        (-[KWQSlider nextKeyView]):
+        (-[KWQSlider previousKeyView]):
+        (-[KWQSlider canBecomeKeyView]):
+        (-[KWQSlider nextValidKeyView]):
+        (-[KWQSlider previousValidKeyView]):
+        Copied these methods from KWQButton. The lack of special handling for first-responder-ness
+        here was causing the focus to get "stuck" on the RSS page's slider widget. Added FIXME
+        about how it would be nice to share more of this code rather than replicating it in each
+        KWQ widget subclass.
+
 2005-01-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.

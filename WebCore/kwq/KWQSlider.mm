@@ -27,11 +27,14 @@
 
 #import "KWQButton.h"
 #import "KWQExceptions.h"
+#import "KWQKHTMLPart.h"
+#import "KWQNSViewExtras.h"
 #import "KWQView.h"
 
 @interface KWQSlider : NSSlider <KWQWidgetHolder>
 {
     QSlider* slider;
+    BOOL inNextValidKeyView;
 }
 
 - (id)initWithQSlider:(QSlider*)s;
@@ -82,6 +85,91 @@
 - (QWidget *)widget
 {
     return slider;
+}
+
+// FIXME: All the firstResponder and keyView code here is replicated in KWQButton and
+// other KWQ classes. We should find a way to share this code.
+- (BOOL)becomeFirstResponder
+{
+    BOOL become = [super becomeFirstResponder];
+    if (become && slider) {
+        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(slider)) {
+            [self _KWQ_scrollFrameToVisible];
+        }
+        QFocusEvent event(QEvent::FocusIn);
+        const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+    }
+    return become;
+}
+
+- (BOOL)resignFirstResponder
+{
+    BOOL resign = [super resignFirstResponder];
+    if (resign && slider) {
+        QFocusEvent event(QEvent::FocusOut);
+        const_cast<QObject *>(slider->eventFilterObject())->eventFilter(slider, &event);
+    }
+    return resign;
+}
+
+-(NSView *)nextKeyView
+{
+    NSView *view = nil;
+    if (slider && inNextValidKeyView) {
+        // resign so we send a blur before setting focus on
+        // the next widget, otherwise the blur for this
+        // widget will remove focus from the widget after
+        // we tab to it
+        [self resignFirstResponder];
+        view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingNext);
+    }
+    else { 
+        view = [super nextKeyView];
+    }
+    return view;
+}
+
+-(NSView *)previousKeyView
+{
+    NSView *view = nil;
+    if (slider && inNextValidKeyView) {
+        // resign so we send a blur before setting focus on
+        // the next widget, otherwise the blur for this
+        // widget will remove focus from the widget after
+        // we tab to it
+        [self resignFirstResponder];
+        view = KWQKHTMLPart::nextKeyViewForWidget(slider, KWQSelectingPrevious);
+    }
+    else { 
+        view = [super previousKeyView];
+    }
+    return view;
+}
+
+- (BOOL)canBecomeKeyView
+{
+    // Simplified method from NSView; overridden to replace NSView's way of checking
+    // for full keyboard access with ours.
+    if (slider && !KWQKHTMLPart::partForWidget(slider)->tabsToAllControls()) {
+        return NO;
+    }
+    return ([self window] != nil) && ![self isHiddenOrHasHiddenAncestor] && [self acceptsFirstResponder];
+}
+
+-(NSView *)nextValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super nextValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
+}
+
+-(NSView *)previousValidKeyView
+{
+    inNextValidKeyView = YES;
+    NSView *view = [super previousValidKeyView];
+    inNextValidKeyView = NO;
+    return view;
 }
 
 @end
