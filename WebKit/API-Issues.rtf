@@ -1,7 +1,8 @@
 {\rtf1\mac\ansicpg10000\cocoartf102
 {\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
 }
-{\colortbl;\red255\green255\blue255;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue221;\red0\green99\blue18;\red118\green15\blue80;
+\red84\green0\blue0;\red35\green110\blue37;}
 \margl1440\margr1440\vieww16540\viewh12180\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
@@ -10,19 +11,259 @@
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f2\fs20 \cf0 + Use "WebFrame" in the API when we refer to a WebFrame, rather than just "Frame".\
-+ Change WebController's userStyleSheetLocation to an NSURL.\
-+ Change WebController's setUsesBackForwardList to setMaintainsBackForwardList.\
+\f2\fs20 \cf0 + Change WebPreferences' userStyleSheetLocation to an NSURL.\
 + Remove WebController's customUserAgent property.\
-+ Remove suggestedFileExtensionForMIMEType from public API.\
 + On WebController:\
     Add  -(BOOL)canGoBack, -(BOOL)canGoForward, -(BOOL)canCanel.\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f1\fs24 \cf0 \
-+ remove 
-\f2\fs20 \CocoaLigature0 suggestedFileExtensionForMIMEType\
-+ remove canShowFile\
-+ put class methods from WebContentTypes back on WebController (WebView)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f2\fs20 \cf0 \CocoaLigature0 + put class methods from WebContentTypes back on WebController (WebView)\
 move isDocumentHTML off WebFrameView and WebDataSource\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \CocoaLigature1 Why are these class methods? Global per-program settings seem wrong for these. They needs to be settable per-controller.\
+\
++ (void)setUsesPageCache: (BOOL)flag;\
++ (BOOL)usesPageCache;\
++ (void)setPageCacheSize: (unsigned)size;\
++ (unsigned)pageCacheSize;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes, good point.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 Is it an entry or an item? Let's pick one of Item or Entry and stick to it, in both class names and method names.\
+\
+- (void)addEntry:(WebHistoryItem *)entry;\
+- (void)goToEntry:(WebHistoryItem *)entry;\
+- (WebHistoryItem *)currentEntry;\
+- (WebHistoryItem *)forwardEntry;\
+- (BOOL)containsEntry:(WebHistoryItem *)entry;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 We will standardize on Item.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+It seems non-parallel that WebHistory has change notifications but WebBackForwardList doesn't.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes, this is not good.  It's an artifact of implementation, not intentional design.\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 + (WebHistory *)createSharedHistoryWithFile: (NSString*)file;\
+\
+how about this (seems closer to existing Cocoa practice):\
+\
++(void)setSharedHistory:(WebHistory *)history\
+\
+Same issue about entry vs. item for history.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Good suggestion.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 WebHistoryPrivate.h (not included, but I looked) includes WebHistory methods with no leading underscore. Private methods should start with an underscore.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+WebHistoryItem\
+---\
+\
+Even though we need to have the fields inline for performance, we should add a few void * ivars to the end for future extensibility.\
+\
+WebHistoryItemPrivate,h has a boatload of private methods with no leading underscore.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Good point.\
+\
+\
+\
+On Thursday, March 20, 2003, at 11:43 AM, Ali Ozer wrote:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 Some comments, mostly at the method level:\
+\
+\
+WebHistory:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf3 /*!\
+    @method initWithFile:\
+    @abstract The designated initializer for WebHistory.\
+    @result Returns an initialized WebHistory.\
+*/\
+- initWithFile: (NSString *)file;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+Would it be better to have this take a URL instead?  Like many kit classes you could limit the URLs to those on the local disk for now; but at least the API would support history lists coming from the web...  (On the other hand with WebDav and all perhaps interesting history files from the web will always be representable via file names, I don't know.)\
+\
+The direction in new APIs has been to use URL instead of file names where applicable...\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 OK.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+Seems like a whole lot of convenience; why not just\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f2\fs20 \cf2 - (void)addEntries:(NSArray *)newEntries;\
+- (void)removeEntries:(NSArray *)entries;
+\f1\fs24 \cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes, this suggestion is reasonable.  Add removeAll.\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf3 - (NSArray *)orderedLastVisitedDays;\
+- (NSArray *)orderedEntriesLastVisitedOnDay: (NSCalendarDate *)calendarDate;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+Why NSCalendarDate and not NSDate?\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 NSCalendarDate has more convenient API (i.e. the days) than NSDate?  Do you see a problem with the use of NSCalendarDate?\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+WebHistoryItem:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf3 - (\cf4 void\cf3 )setDisplayTitle:(NSString *)displayTitle;\
+- (NSString *)displayTitle;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+It's a good idea to try to stay away from ambiguous adjectives (that are also verbs). For "display" we tend to use "localized...", but that's clearly not appropriate here. Perhaps "custom" ?  (given this is distinct than just "title" ?)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes.  How about "displayable"?  I suppose "custom" would work too, but that doesn't feel like a good fit.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+WebPluginItem:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf3 - (NSString *)contentURL;\
+- (NSString *)pluginPageURL;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+In some other APIs where NSString containing URLs are returned, you use "...URLString" --- should maybe do that here too?\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes, good point.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 Also: Official spelling of plugin is supposed to be plugIn. At least that's what CF's plugIn mechanism had to be renamed to, and the word plugIn appears in one API in Foundation. I personally prefer plugin, like autorelease, or superview, but perhaps techpubs should bless this.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 OK.  I'll check this issue.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 WebKitErrors:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf4 enum\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li600\ql\qnatural
+\cf5  \{\
+    WebKitErrorCannotCreateFile,\
+    WebKitErrorCannotOpenFile,\
+    ...\
+    WebKitErrorDownloadDecodingFailedMidStream,\
+    WebKitErrorDownloadDecodingFailedToComplete,\
+\};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+I think this is a situation where use of "WK" would be better than "WebKit" in these cases... It also makes me think that the big reason we can get away with "Web" or "WebKit" is because these are short; using a name instead of a prefix is not a general solution...\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Hmm.  OK, I have no problem switching to WK in this case.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 WebPreferences:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf6 /*!\
+    @method standardPreferences\
+*/\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li600\ql\qnatural
+\cf5 \
++ (WebPreferences *)standardPreferences;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+Should this be "shared"?  I realize NSUserDefaults uses "standard", but it's an anomaly.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 OK.  Tough to choose one over the other given the existing conflicting precedent.  I suppose 'shared' is used more often than 'standard', even though the closest analogue is the use of 'standard' in NSUserDefaults.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf6 /*!\
+    @method JavaEnabled\
+*/\cf3 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li600\ql\qnatural
+\cf5 \
+- (\cf4 BOOL\cf5 )JavaEnabled;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+Are we not allowed to use "java" ?  8-)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Not sure.  I'll check with tech pubs.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 Actually, I believe the guidelines prefer the use of "is" for cases like this:\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f2\fs20 \cf2 - (void)setEditable:(BOOL)flag;\
+- (BOOL)isEditable; \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+
+\f1\fs24 \cf0 Yes.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 so perhaps "isJavaEnabled" ? (Although there are a few more methods you'd want to change then...)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Yes, I'll make the use of 'is' consistent.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf3 - (\cf4 BOOL\cf3 )allowAnimatedImages;\
+- (\cf4 void\cf3 )setAllowAnimatedImages:(\cf4 BOOL\cf3 )flag;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+allowsAnimatedImages, setAllowsAnimatedImages:  (a few more examples)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Will change.\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
+
+\f2\fs20 \cf3 - (\cf4 void\cf3 )setWillLoadImagesAutomatically: (\cf4 BOOL\cf3 )flag;\
+- (\cf4 BOOL\cf3 )willLoadImagesAutomatically;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+
+\f1\fs24 \cf2 \
+loadsImagesAutomatically, ... ?\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Good suggestion.\
+\
+Thanks!\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 Ali\
 }
