@@ -38,6 +38,7 @@
 #import "WebCoreViewFactory.h"
 #import "csshelper.h"
 #import "html_documentimpl.h"
+#import "html_misc.h"
 #import "htmltokenizer.h"
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
@@ -1125,7 +1126,9 @@ bool KWQKHTMLPart::canCachePage()
     if (d->m_frames.count() ||
         parentPart() ||
         m_url.protocol().startsWith("https") || 
-	(d->m_doc && (d->m_doc->hasWindowEventListener(EventImpl::UNLOAD_EVENT) ||
+	(d->m_doc && (
+//	(d->m_doc && (htmlDocument().applets().length() != 0 ||
+                      d->m_doc->hasWindowEventListener(EventImpl::UNLOAD_EVENT) ||
 		      d->m_doc->hasPasswordField()))) {
         return false;
     }

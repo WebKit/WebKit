@@ -1,3 +1,14 @@
+2004-01-15  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3529426.  Exclude pages that contain Java applets from 
+	the page cache.  The means applets get the normal stop/destroy
+	messages that they expect when a user leaves a page.
+
+        Reviewed by John.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::canCachePage):
+
 2004-01-15  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Darin.
