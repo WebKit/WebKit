@@ -447,8 +447,8 @@ void InlineFlowBox::shrinkBoxesWithNoTextChildren(int topPos, int bottomPos)
     if (!hasTextChildren()) {
         if (yPos() < topPos)
             setYPos(topPos);
-        if (height() > bottomPos - topPos)
-            setHeight(bottomPos - topPos);
+        if (yPos() + height() > bottomPos)
+            setHeight(bottomPos - yPos());
         if (baseline() > height())
             setBaseline(height());
     }

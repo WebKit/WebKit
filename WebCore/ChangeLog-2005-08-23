@@ -1,3 +1,15 @@
+2003-03-13  David Hyatt  <hyatt@apple.com>
+
+	Fix for ew.com, hrweb and arstechnica forums.  A <br> should
+	not create a nonempty line in the case where the previous line
+	didn't break cleanly.  The fix is to have a new boolean that
+	tracks how the previous line broke and to have <br> check that
+	to figure out if it should set the line to be non-empty.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/bidi.cpp:
+
 2003-03-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
