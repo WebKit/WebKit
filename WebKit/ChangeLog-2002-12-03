@@ -1,3 +1,18 @@
+2002-06-24  Richard Williamson  <rjw@apple.com>
+
+        Changed our usage of +[NSFont findFontLike:forString:withRange:inLanguage:]
+        after talking with Aki.  We were erroneously passing a complete
+        string rather than a character cluster.  Fixed 2964793.
+        
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (findLengthOfCharacterCluster):
+        (-[IFTextRenderer slowPackGlyphsForCharacters:numCharacters:glyphBuffer:numGlyphs:]):
+        (-[IFTextRenderer drawGlyphs:numGlyphs:atPoint:withColor:]):
+        (-[IFTextRenderer slowDrawCharacters:length:atPoint:withColor:]):
+        (-[IFTextRenderer _drawCharacters:length:atPoint:withColor:]):
+        (-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+        (-[IFTextRenderer floatWidthForCharacters:length:applyRounding:]):
+
 2002-06-24  Darin Adler  <darin@apple.com>
 
         * WebView.subproj/IFWebFramePrivate.mm:

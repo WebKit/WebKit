@@ -187,19 +187,33 @@ static void FillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 }
 
 
-static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
+static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsigned int length)
 {
-    unsigned int i, numGlyphs = glyphs->numGlyphs;
-    ATSLayoutRecord *glyphRecord;
+    unsigned int clusterLength = 1, k;
+    UniChar nextC;
 
-    glyphRecord = (ATSLayoutRecord *)glyphs->firstRecord;
-    for (i = 0; i < numGlyphs; i++) {
-        if (glyphRecord->glyphID == 0) {
-            return YES;
+    if (length == 0)
+        return 0;
+            
+    if (length == 1)
+        return 1;
+    
+    if (IsNonBaseChar(characters[0]))
+        return 1;
+                
+    nextC = characters[1];
+    if (IsNonBaseChar(nextC)){
+        // Find all the non base characters after the current character.
+        for (k = 2; k < length; k++){
+            if (!IsNonBaseChar(characters[k]))
+                break;
         }
-        glyphRecord = (ATSLayoutRecord *)((char *)glyphRecord + glyphs->recordSize);
+        clusterLength = k;
     }
-    return NO;
+    else
+        clusterLength = 1;
+
+    return clusterLength;
 }
 
 
@@ -375,7 +389,7 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 }
 
 
-- (bool) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs
+- (void) slowPackGlyphsForCharacters:(const UniChar *)characters numCharacters: (unsigned int)numCharacters glyphBuffer:(CGGlyph **)glyphBuffer numGlyphs:(unsigned int *)numGlyphs
 {
     ATSGlyphVector glyphVector;
     unsigned int j;
@@ -384,8 +398,6 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
     ATSInitializeGlyphVector(numCharacters, 0, &glyphVector);
     [self convertCharacters: characters length: numCharacters toGlyphs: &glyphVector];
-    if (hasMissingGlyphs (&glyphVector))
-        return NO;
 
     *numGlyphs = glyphVector.numGlyphs;
     *glyphBuffer = glyphBufPtr = (CGGlyph *)malloc (*numGlyphs * sizeof(CGGlyph));
@@ -396,8 +408,6 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
     }
     
     ATSClearGlyphVector(&glyphVector);
-
-    return YES;
 }
 
 
@@ -424,16 +434,108 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 }
 
 
-- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+- (NSPoint)drawGlyphs: (CGGlyph *)glyphs numGlyphs: (unsigned int)numGlyphs atPoint: (NSPoint)point withColor: (NSColor *)color
 {
-    uint i, numGlyphs;
-    CGGlyph *glyphs, localGlyphBuffer[LOCAL_BUFFER_SIZE];
-#ifndef DRAW_WITHOUT_ADVANCES
+    unsigned int i;
     CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
-#endif
-    ATSGlyphRef glyphID;
     CGContextRef cgContext;
+    NSPoint advancePoint = point;
+
+    if (numGlyphs == 0)
+        return point;
+        
+    // Determine if we can use the local stack buffer, otherwise allocate.
+    if (numGlyphs > LOCAL_BUFFER_SIZE) {
+        advances = (CGSize *)malloc(numGlyphs * sizeof(CGSize));
+    } else {
+        advances = localAdvanceBuffer;
+    }
+
+    for (i = 0; i < numGlyphs; i++) {
+        advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
+        if (glyphs[i] == spaceGlyph)
+            advances[i].width = ROUND_TO_INT(advances[i].width);
+        advances[i].height = 0;
+        advancePoint.x += advances[i].width;
+    }
+
+    // Setup the color and font.
+    [color set];
+    [font set];
+    
+    // Finally, draw the glyphs.
+    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+
+    CGContextSetTextPosition (cgContext, point.x, point.y);
+    CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
+    //CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
+
+    if (advances != localAdvanceBuffer) {
+        free(advances);
+    }
+    return advancePoint;
+}
+
+// Useful page for testing http://home.att.net/~jameskass
+
+- (NSPoint)slowDrawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+{
+    unsigned int charPos = 0, lastDrawnGlyph = 0;
+    unsigned int clusterLength, i, numGlyphs, fragmentLength;
     NSFont *substituteFont;
+    CGGlyph *glyphs;
+    ATSGlyphRef glyphID;
+    
+    [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &glyphs numGlyphs: &numGlyphs];
+
+    // FIXME:  This assumes that we'll always get one glyph per character cluster.
+    for (i = 0; i < numGlyphs; i++){
+        glyphID = glyphs[i];
+
+        clusterLength = findLengthOfCharacterCluster (&characters[charPos], length - charPos);
+        
+        if (glyphID == 0){
+            // Draw everthing up to this point.
+            fragmentLength = i - lastDrawnGlyph;
+            if (fragmentLength > 0)
+                point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength atPoint: point withColor: color];
+            
+            // Draw the character in the alternate font.
+            substituteFont = [self substituteFontForCharacters: &characters[charPos] length: clusterLength];
+            if (substituteFont)
+                point = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] slowDrawCharacters: &characters[charPos] length: clusterLength atPoint: point withColor: color];
+            else
+                point = [self drawGlyphs: &glyphs[i] numGlyphs: 1 atPoint: point withColor: color];
+                
+            lastDrawnGlyph = i+1;
+        }
+
+        charPos += clusterLength;
+    }
+
+    fragmentLength = numGlyphs - lastDrawnGlyph;
+    if (fragmentLength > 0)
+        point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength atPoint: point withColor: color];
+        
+    if (glyphs)
+        free(glyphs);
+    
+    return point;
+}
+
+
+typedef enum {
+	_IFNonBaseCharacter,
+	_IFMissingGlyph,
+	_IFDrawSucceeded,
+} _IFFailedDrawReason;
+
+- (_IFFailedDrawReason)_drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+{
+    uint i;
+    CGGlyph *glyphs, localGlyphBuffer[LOCAL_BUFFER_SIZE];
+    ATSGlyphRef glyphID;
+    _IFFailedDrawReason result = _IFDrawSucceeded;
     
     // FIXME: Deal with other styles of glyph packing.
     if ([font glyphPacking] != NSNativeShortGlyphPacking &&
@@ -447,12 +549,9 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         glyphs = localGlyphBuffer;
     }
     
-    // Set the number of glyphs to the character length. This may change during the character
-    // scan if we find any non base characters.
-    numGlyphs = length;
-    
     // Pack the glyph buffer and ensure that we have glyphs for all the
-    // characters.  If we're missing a glyph look for an alternate font.
+    // characters.  If we're missing a glyph or have a non-base character
+    // stop drawing and return a failure code.
     for (i = 0; i < length; i++) {
         UniChar c = characters[i];
 
@@ -460,87 +559,59 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
         if (c == NON_BREAKING_SPACE)
             c = SPACE;
 
-        // Is the a combining character?  If so we have to do expensive
-        // glyph lookup.
+        // Is the a non-base character?
         if (IsNonBaseChar(c)) {
-            CGGlyph *slowGlyphBuffer;
-            bool hasGlyphs = [self slowPackGlyphsForCharacters: characters numCharacters: length glyphBuffer: &slowGlyphBuffer numGlyphs: &numGlyphs];
-            if (hasGlyphs) {
-                if (glyphs != localGlyphBuffer) {
-                    free(glyphs);
-                }
-                glyphs = slowGlyphBuffer;
-            } else {
-                substituteFont = [self substituteFontForCharacters: characters length: length];
-                if (substituteFont) {
-                    [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
-                    goto cleanup;
-                }
-            }
-            break;
+            result = _IFNonBaseCharacter;
+            goto cleanup;
         }
-    
-        glyphID = glyphForCharacter (characterToGlyphMap, c);
         
-        // glyphID == 0 means that the font doesn't contain a glyph for the character.
-        if (glyphID == 0) {
-            substituteFont = [self substituteFontForCharacters: characters length: length];
-            if (substituteFont) {
-                [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] drawCharacters: characters length: length atPoint: point withColor: color];
-                goto cleanup;
-            }
+        glyphID = glyphForCharacter (characterToGlyphMap, c);
+        if (glyphID == nonGlyphID) {
+            glyphID = [self extendCharacterToGlyphMapToInclude: c];
         }
 
+        // Does this font not contain a glyph for the character?
+        if (glyphID == 0){
+            result = _IFMissingGlyph;
+            goto cleanup;
+        }
+            
         glyphs[i] = glyphID;
     }
 
-#ifndef DRAW_WITHOUT_ADVANCES
-    // Determine if we can use the local stack buffer, otherwise allocate.
-    if (numGlyphs > LOCAL_BUFFER_SIZE) {
-        advances = (CGSize *)malloc(numGlyphs * sizeof(CGSize));
-    } else {
-        advances = localAdvanceBuffer;
-    }
-
-    for (i = 0; i < numGlyphs; i++) {
-        advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
-        if (glyphs[i] == spaceGlyph)
-            advances[i].width = ROUND_TO_INT(advances[i].width);
-        advances[i].height = 0;
-    }
-#endif
-
-    // This will draw the text from the top of the bounding box down.
-    // Qt expects to draw from the baseline.
-#ifdef DRAW_WITHOUT_ADVANCES
-    point.y -= [self lineSpacing] - [self descent];
-#else
-    point.y += [self descent] - 1;
-#endif
-
-    // Setup the color and font.
-    [color set];
-    [font set];
-    
-    // Finally, draw the characters.
-    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-
-#ifdef DRAW_WITHOUT_ADVANCES
-    CGContextSetCharacterSpacing(cgContext, 0.0);
-    CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - [self descent] + 1, glyphs, numGlyphs);
-#else      
-    CGContextSetTextPosition (cgContext, point.x, point.y - [self descent] + 1);
-    CGContextShowGlyphsWithAdvances (cgContext, glyphs, advances, numGlyphs);
-    //CGContextShowGlyphsWithDeviceAdvances (cgContext, glyphs, advances, numGlyphs);
-
-    if (advances != localAdvanceBuffer) {
-        free(advances);
-    }
-#endif
+    [self drawGlyphs: glyphs numGlyphs: length atPoint: point withColor: color];
 
 cleanup:
     if (glyphs != localGlyphBuffer) {
         free(glyphs);
+    }
+    return result;
+}
+
+
+- (void)drawCharacters:(const UniChar *)characters length: (unsigned int)length atPoint:(NSPoint)point withColor:(NSColor *)color
+{
+    NSFont *substituteFont;
+    _IFFailedDrawReason reason = [self _drawCharacters: characters length: length atPoint: point withColor: color];
+    
+    // ASSUMPTION:  We normally fail because we're trying to render characters
+    // that doesn't have glyphs in the specified fonts.  Instead of immediately using the slow path
+    // we look for a font corresponding to the first character cluster in the string
+    // and try rendering the entire string with that font.  If that fails we fall back 
+    // to the safe slow drawing.
+    if (reason == _IFMissingGlyph) {
+        unsigned int clusterLength;
+        
+        clusterLength = findLengthOfCharacterCluster(characters, length);
+        substituteFont = [self substituteFontForCharacters: characters length: clusterLength];
+        if (substituteFont)
+            reason = [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] _drawCharacters: characters length: length atPoint: point withColor: color];
+         
+         if (!substituteFont || reason != _IFDrawSucceeded)
+            [self slowDrawCharacters: characters length: length atPoint: point withColor: color];
+    }
+    else if (reason == _IFNonBaseCharacter) {
+        [self slowDrawCharacters: characters length: length atPoint: point withColor: color];
     }
 }
 
@@ -605,10 +676,11 @@ cleanup:
     return totalWidth;
 }
 
+
 - (float)floatWidthForCharacters:(const UniChar *)characters length:(unsigned)length applyRounding: (BOOL)applyRounding
 {
     float totalWidth = 0;
-    unsigned int i;
+    unsigned int i, clusterLength;
     NSFont *substituteFont;
     ATSGlyphRef glyphID;
     
@@ -631,17 +703,20 @@ cleanup:
         // Try to find a substitute font if this font didn't have a glyph for a character in the
         // string.  If one isn't found we end up drawing and measuring a box.
         if (glyphID == 0) {
-            substituteFont = [self substituteFontForCharacters: characters length: length];
+            clusterLength = findLengthOfCharacterCluster (&characters[i], length - i);
+            substituteFont = [self substituteFontForCharacters: &characters[i] length: clusterLength];
             if (substituteFont) {
-                WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT(substituteFont), DEBUG_OBJECT([font displayName]), c);
-                return [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] widthForCharacters: characters length: length];
+                //WEBKITDEBUGLEVEL (WEBKIT_LOG_FONTCACHE, "substituting %s for %s, missing 0x%04x\n", DEBUG_OBJECT(substituteFont), DEBUG_OBJECT([font displayName]), c);
+                totalWidth += [[[IFTextRendererFactory sharedFactory] rendererWithFont: substituteFont] floatWidthForCharacters: &characters[i] length: clusterLength applyRounding: YES];
             }
         }
-
-        if (glyphID == spaceGlyph && applyRounding)
-            totalWidth += ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
-        else
-            totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
+        
+        if (glyphID > 0 || ((glyphID == 0) && substituteFont == nil)) {
+            if (glyphID == spaceGlyph && applyRounding)
+                totalWidth += ROUND_TO_INT(widthForGlyph(self, glyphToWidthMap, glyphID));
+            else
+                totalWidth += widthForGlyph(self, glyphToWidthMap, glyphID);
+        }                    
     }
 
     return totalWidth;
