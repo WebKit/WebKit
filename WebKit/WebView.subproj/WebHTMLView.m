@@ -3978,6 +3978,10 @@ static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
 
 - (unsigned int)_delegateDragSourceActionMask
 {
+    // Quick fix for <rdar://problem/3814810> REGRESSION (125-164): Exception adding nil to dictionary in dragging code:
+    if (_private->mouseDownEvent == nil) {
+        return WebDragSourceActionNone;
+    }
     WebView *webView = [self _webView];
     NSPoint point = [webView convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
     _private->dragSourceActionMask = [[webView _UIDelegateForwarder] webView:webView dragSourceActionMaskForPoint:point];
