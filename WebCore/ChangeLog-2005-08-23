@@ -1,3 +1,12 @@
+2003-08-26  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3286229, popup menu misplaced.  <form> needs to be allowed as a child of
+	<h1>-<h6> tags.  All other browsers allow this.
+	
+        Reviewed by darin
+
+        * khtml/html/dtd.cpp:
+
 2003-08-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

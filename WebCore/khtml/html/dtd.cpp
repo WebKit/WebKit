@@ -594,7 +594,8 @@ bool DOM::checkChild(ushort tagID, ushort childID)
     case ID_H4:
     case ID_H5:
     case ID_H6:
-        if (childID == ID_TABLE || (tagID != ID_P && childID == ID_CENTER)) return true;
+        if (childID == ID_TABLE || (tagID != ID_P && (childID == ID_FORM || childID == ID_CENTER)))
+            return true;
         return check_array(childID, tag_list_0);
     case ID_BASEFONT:
     case ID_BR:
