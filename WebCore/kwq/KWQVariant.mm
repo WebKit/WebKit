@@ -25,53 +25,68 @@
 
 #include <qvariant.h>
 
+#include <kwqdebug.h>
 
 QVariant::QVariant()
 {
+    _logNotYetImplemented();
 }
 
 
-QVariant::QVariant(bool, int)
+QVariant::QVariant(bool b, int i)
 {
+    _logNotYetImplemented();
 }
 
 
-QVariant::QVariant(double)
+QVariant::QVariant(double d)
 {
+    _logNotYetImplemented();
 }
 
 
-QVariant::QVariant(const QString &)
+QVariant::QVariant(const QString &s)
 {
+    _logNotYetImplemented();
 }
 
 
-QVariant::QVariant(const QVariant &)
+QVariant::QVariant(const QVariant &other)
 {
+    _logNotYetImplemented();
 }
 
 
 QVariant::~QVariant()
 {
+    _logNotYetImplemented();
 }
 
 
 QVariant::Type QVariant::type() const
 {
+    _logNotYetImplemented();
+    return UInt;
 }
 
 
 bool QVariant::toBool() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
 uint QVariant::toUInt() const
 {
+    _logNotYetImplemented();
+    return 0;
 }
 
 
-QVariant &QVariant::operator=(const QVariant &)
+QVariant &QVariant::operator=(const QVariant &other)
 {
+    _logNotYetImplemented();
+    return *this;
 }
 

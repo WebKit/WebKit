@@ -73,7 +73,6 @@ static int usedDynamicStates;
 static int selectorDynamicState;
 static CSSStyleSelector::Encodedurl *encodedurl;
 
-
 CSSStyleSelector::CSSStyleSelector(DocumentImpl * doc)
 {
     strictParsing = doc->parseMode() == DocumentImpl::Strict;
@@ -1945,8 +1944,9 @@ void khtml::applyRule(khtml::RenderStyle *style, DOM::CSSProperty *prop, DOM::El
         float toPix = 1.; // fallback
         if ( !khtml::printpainter )
             toPix = paintDeviceMetrics->logicalDpiY()/72.;
-        if ( !khtml::printpainter && toPix < 96./72. )
-            toPix = 96./72.;
+        // FIXME: SCREEN_RESOLUTION hack good enough to keep?
+        if ( !khtml::printpainter && toPix < SCREEN_RESOLUTION/72 )
+            toPix = SCREEN_RESOLUTION/72;
 
         QValueList<int> standardSizes = e->ownerDocument()->view()->part()->fontSizes();
         if(e->parentNode()) {

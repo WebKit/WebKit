@@ -67,6 +67,9 @@ public:
 
     // enums -------------------------------------------------------------------
     // constants ---------------------------------------------------------------
+    
+    static const QRegion null;
+    
     // static member functions -------------------------------------------------
 
     // constructors, copy constructors, and destructors ------------------------

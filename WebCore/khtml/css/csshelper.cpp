@@ -54,8 +54,10 @@ float khtml::computeLengthFloat(DOM::CSSPrimitiveValueImpl *val, RenderStyle *st
     float dpiY = 72.; // fallback
     if ( devMetrics )
         dpiY = devMetrics->logicalDpiY();
-    if ( !khtml::printpainter && dpiY < 96 )
-        dpiY = 96.;
+        
+    // FIXME: SCREEN_RESOLUTION hack good enough to keep?
+    if ( !khtml::printpainter && dpiY < SCREEN_RESOLUTION )
+        dpiY = SCREEN_RESOLUTION;
 
     float factor = 1.;
     switch(type)

@@ -637,10 +637,14 @@ double QString::toDouble(bool *ok) const
     if (ok) {
         // NOTE: since CFStringGetDoubleValue returns 0.0 on error there is no
         // way to know if "n" is valid in that case
-        if (n == 0.0) {
+        //
+        // EXTRA NOTE: We can't assume 0.0 is bad, since it totally breaks
+        // html like border="0". So, only trigger breakage if the char 
+        // at index 0 is neither a '0' nor a '.' nor a '-'.
+        UniChar uc = CFStringGetCharacterAtIndex(s,0);
+        *ok = TRUE;
+        if (n == 0.0 && uc != '0' && uc != '.' && uc != '-') {
             *ok = FALSE;
-        } else {
-            *ok = TRUE;
         }
     }
     return n;
@@ -1261,24 +1265,24 @@ ulong QString::convertToNumber(bool *ok, int base, bool *neg) const
                 uc = CFStringGetCharacterFromInlineBuffer(&buf, i);
                 // NOTE: ignore anything other than base 10 and base 16
                 if ((uc >= '0') && (uc <= '9')) {
-                    if (n > (max / 10)) {
+                    if (n > (max / base)) {
                         valid = FALSE;
                         break;
                     }
-                    n = (n * 10) + (uc - '0');
+                    n = (n * base) + (uc - '0');
                 } else if (base == 16) {
                     if ((uc >= 'A') && (uc <= 'F')) {
-                        if (n > (max / 16)) {
+                        if (n > (max / base)) {
                             valid = FALSE;
                             break;
                         }
-                        n = (n * 16) + (10 + (uc - 'A'));
+                        n = (n * base) + (10 + (uc - 'A'));
                     } else if ((uc >= 'a') && (uc <= 'f')) {
-                        if (n > (max / 16)) {
+                        if (n > (max / base)) {
                             valid = FALSE;
                             break;
                         }
-                        n = (n * 16) + (10 + (uc - 'a'));
+                        n = (n * base) + (10 + (uc - 'a'));
                     } else {
                         break;
                     }

@@ -240,7 +240,7 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = ../../../../../lib;
 				OTHER_CFLAGS = "-DHAVE_CONFIG_H -DQT_NO_DATASTREAM -D_KWQ_ -I../../../qt -I../../.. -I../../../../..";
-				OTHER_LDFLAGS = "-lwebcore";
+				OTHER_LDFLAGS = "-lwebcore -framework Webkit";
 				PRODUCT_NAME = drawApp;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";

@@ -63,6 +63,7 @@ public:
 
     QColor();
     QColor(int,int,int);
+    QColor(const QString &);
     QColor(const char *);
     QColor(const QColor &);
 

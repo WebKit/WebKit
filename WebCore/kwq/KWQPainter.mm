@@ -34,6 +34,36 @@
 
 #import <Cocoa/Cocoa.h>
 
+struct QPainterPrivate {
+friend class QPainter;
+public:
+    
+    QPainterPrivate(QWidget *widget) : 
+        widget(widget), 
+        qfont(), 
+        qbrush(),
+        qpen(), 
+        isFocusLocked(0), 
+        ps_stack(0L),
+        compositingOperation(NSCompositeCopy), 
+        bufferDevice(0L)
+    {
+    }
+    
+    ~QPainterPrivate() {}
+    
+private:
+    QWidget *widget;	// Has a reference to a KWQView.
+    QFont qfont;
+    QBrush qbrush;
+    QPen qpen;
+    uint isFocusLocked:1;
+    void *ps_stack;
+    NSCompositingOperation compositingOperation;
+    const QPaintDevice *bufferDevice;
+};
+
+
 struct QPState {				// painter state
     QFont	font;
     QPen	pen;
@@ -64,20 +94,14 @@ QPainter::QPainter(QWidget *widget)
 
 void QPainter::_initialize(QWidget *widget)
 {
-    data = (struct KWQPainterData *)calloc (1, sizeof (struct KWQPainterData));
-    data->widget = widget;
-    data->qpen = QPen (Qt::black);
-    data->isFocusLocked = 0;
-    data->compositingOperation = NSCompositeCopy;
-    data->bufferDevice = 0L;
+    data = new QPainterPrivate(widget);
 }
 
 
 QPainter::~QPainter()
 {
-    free (data);
+    delete data;
 }
-
     
 const QFont &QPainter::font() const
 {
@@ -108,9 +132,11 @@ void QPainter::setPen(const QPen &pen)
 }
 
 
-void QPainter::setPen(PenStyle)
+void QPainter::setPen(PenStyle ps)
 {
-    _logNotYetImplemented();
+    data->qpen.setStyle(ps);
+    data->qpen.setColor(Qt::black);
+    data->qpen.setWidth(0);
 }
 
 
@@ -175,7 +201,6 @@ void QPainter::restore()
 // Draws a filled rectangle with a stroked border.
 void QPainter::drawRect(int x, int y, int w, int h)
 {
-    /*
     _lockFocus();
     if (data->qbrush.qbrushstyle == SolidPattern){
         //_setColorFromBrush();
@@ -184,7 +209,6 @@ void QPainter::drawRect(int x, int y, int w, int h)
     _setColorFromPen();
     [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
     _unlockFocus();
-    */
 }
 
 
@@ -196,7 +220,7 @@ void QPainter::_setColorFromBrush()
 
 void QPainter::_setColorFromPen()
 {
-    [data->qpen.qcolor.color set];
+    [data->qpen.color().color set];
 }
 
 
@@ -406,7 +430,7 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     
     //font = data->qfont.data->font;    
     font = data->qfont.font;    
-    
+
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
     else
@@ -415,7 +439,8 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     // This will draw the text from the top of the bounding box down.
     // Qt expects to draw from the baseline.
     y = y - (int)([font defaultLineHeightForFont] + [font descender]);
-    [string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.qcolor.color, NSForegroundColorAttributeName, nil]];
+    
+    [string drawAtPoint:NSMakePoint(x, y) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, nil]];
 
     _unlockFocus();
 }
@@ -433,7 +458,7 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
     
     //font = data->qfont.data->font;    
     font = data->qfont.font;    
-    
+        
     if (len == -1)
         string = QSTRING_TO_NSSTRING(qstring);
     else
@@ -454,7 +479,7 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
         [style setAlignment: NSLeftTextAlignment];
     }
     
-    [string drawInRect:NSMakeRect(x, y, w, h) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.qcolor.color, NSForegroundColorAttributeName, style, NSParagraphStyleAttributeName, nil]];
+    [string drawInRect:NSMakeRect(x, y, w, h) withAttributes:[NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, data->qpen.color().color, NSForegroundColorAttributeName, style, NSParagraphStyleAttributeName, nil]];
 
     _unlockFocus();
 }
@@ -463,14 +488,12 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
 
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
-    /*
     _lockFocus();
     if (brush.qbrushstyle == SolidPattern){
-        //[brush.qcolor.color set];
-        //[NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
+        [brush.qcolor.color set];
+        [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
     _unlockFocus();
-    */
 }
 
 
@@ -488,8 +511,8 @@ void QPainter::setClipRegion(const QRegion &)
 
 const QRegion &QPainter::clipRegion() const
 {
-    _logNotYetImplemented();
-    return QRegion();
+    _logPartiallyImplemented();
+    return QRegion::null;
 }
 
 

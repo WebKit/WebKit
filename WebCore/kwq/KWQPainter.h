@@ -44,6 +44,7 @@
 class QFont;
 class QPixmap;
 class QWidget;
+class QPainterPrivate;
 
 // class QWMatrix ==============================================================
 
@@ -186,20 +187,8 @@ private:
     void _initialize(QWidget *widget);
     void _drawPoints (const QPointArray &_points, bool winding, int index, int _npoints, bool fill);
 
-    struct KWQPainterData {	// QPainter data.
-        QWidget *widget;	// Has a reference to a KWQView.
-	QFont qfont;
-	QBrush qbrush;
-	QPen qpen;
-	uint isFocusLocked:1;
-        void *ps_stack;
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-        NSCompositingOperation compositingOperation;
-#else
-        uint compositingOperation;
-#endif
-        const QPaintDevice  *bufferDevice;
-    } *data;
+    QPainterPrivate *data;
+
 #endif
 }; // end class QPainter
 

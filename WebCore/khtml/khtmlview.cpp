@@ -309,15 +309,21 @@ static void printRenderTree(RenderObject *node, int level)
 
 void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 {
+    // FIXME: make the height work correctly with the scroll view
+    eh = 780;
+
+
     if(!m_part->xmlDocImpl()) {
         p->fillRect(ex, ey, ew, eh, palette().normal().brush(QColorGroup::Base));
         return;
     }
 
-    kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
+    //kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
 
     if ( d->paintBuffer->width() < visibleWidth() )
-        d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
+        // FIXME: make the height work correctly with the scroll view
+        //d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);
+        d->paintBuffer->resize(visibleWidth(),780);
 
     int py=0;
     while (py < eh) {
@@ -334,7 +340,9 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         if (doc){
             ro = doc->renderer();
             if (ro){
+#ifdef RENDER_TREE_DEBUG
                 printRenderTree (ro, 0);
+#endif
                 ro->print(d->tp, ex, ey+py, ew, ph, 0, 0);
             }
         }
@@ -347,7 +355,9 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
 #endif
         d->tp->end();
 
-        p->drawPixmap(ex, ey+py, *d->paintBuffer, 0, 0, ew, ph);
+        // FIXME: make the height work correctly with the scroll view
+        //p->drawPixmap(ex, ey+py, *d->paintBuffer, 0, 0, ew, ph);
+        p->drawPixmap(ex, ey+py, *d->paintBuffer, ex, ey+py, ew, ph);
         py += PAINT_BUFFER_HEIGHT;
     }
 

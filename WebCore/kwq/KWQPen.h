@@ -30,8 +30,10 @@
 #include <config.h>
 #endif
 
-#include "qnamespace.h"
-#include "qcolor.h"
+#include <qnamespace.h>
+#include <qcolor.h>
+
+class QPenPrivate;
 
 // class QPen ==================================================================
 
@@ -46,13 +48,19 @@ public:
     // constructors, copy constructors, and destructors ------------------------
 
     QPen();
-    QPen(const QColor &color, uint width=0, PenStyle style=SolidLine);
-    QPen(const QPen &);
+    QPen(const QColor &c, uint w=0, PenStyle ps=SolidLine);
+    QPen(const QPen &pen);
     ~QPen();
 
     // member functions --------------------------------------------------------
 
     const QColor &color() const;
+    uint width() const;
+    PenStyle style() const;
+
+    void setColor(const QColor &);
+    void setWidth(uint);
+    void setStyle(PenStyle);
 
     // operators ---------------------------------------------------------------
 
@@ -63,7 +71,8 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
-    QColor qcolor;
+private:
+    QPenPrivate *d;
 
 }; // class QPen ===============================================================
 

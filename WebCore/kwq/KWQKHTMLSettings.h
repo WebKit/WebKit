@@ -35,6 +35,9 @@
 #include <qfont.h>
 #include <qmap.h>
 
+// FIXME: I am resetting the default screen resolution to 72
+#define SCREEN_RESOLUTION 72.0f
+
 class KHTMLSettings
 {
 public:

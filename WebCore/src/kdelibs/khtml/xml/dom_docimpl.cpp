@@ -78,6 +78,7 @@
 using namespace DOM;
 using namespace khtml;
 
+
 //template class QStack<DOM::NodeImpl>; // needed ?
 
 
@@ -585,8 +586,11 @@ void DocumentImpl::recalcStyle()
         float dpiY = 72.; // fallback
         if ( !khtml::printpainter )
             dpiY = paintDeviceMetrics()->logicalDpiY();
-        if ( !khtml::printpainter && dpiY < 96 )
-            dpiY = 96.;
+        // FIXME: Is SCREEN_RESOLUTION hack good enough?
+        //if ( !khtml::printpainter && dpiY < 96 )
+        //    dpiY = 96.;
+        if ( !khtml::printpainter && dpiY < SCREEN_RESOLUTION )
+            dpiY = SCREEN_RESOLUTION;
         float size = fs[3] * dpiY / 72.;
         if(size < settings->minFontSize())
             size = settings->minFontSize();

@@ -27,6 +27,8 @@
 
 #include <kwqdebug.h>
 
+const QRegion QRegion::null;
+
 void QRegion::_initialize() {
     data = calloc(1, sizeof(struct KWQRegionData));
     data->type = Rectangle;

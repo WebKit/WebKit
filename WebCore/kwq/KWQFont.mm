@@ -61,7 +61,8 @@ void QFont::_initializeWithFont (const QFont *withFont)
 QFont::QFont(const QFont &copyFrom)
 {
     _initializeWithFont(&copyFrom);
-    _free();
+    // FIXME: why were we freeing here?
+    //_free();
 }
 
 

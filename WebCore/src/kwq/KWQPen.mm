@@ -25,44 +25,92 @@
 
 #include <qpen.h>
 
+class QPenPrivate
+{
+friend class QPen;
+public:
+
+    QPenPrivate(const QColor &c, uint w, QPen::PenStyle ps) : 
+        qcolor(c), width(w), penStyle(ps)
+    {
+    }
+
+    ~QPenPrivate() {}
+
+private:    
+    QColor qcolor;
+    uint width;
+    QPen::PenStyle penStyle;
+};
+
+
 QPen::QPen()
 {
-    qcolor = Qt::black;
+    d = new QPenPrivate(Qt::black, 3, SolidLine);
 }
 
 
-QPen::QPen(const QColor &color, uint width, PenStyle style)
+QPen::QPen(const QColor &c, uint w, PenStyle ps)
 {
-    qcolor = color;
+    d = new QPenPrivate(c, w, ps);
 }
 
 
 QPen::QPen(const QPen &copyFrom)
 {
-    qcolor = copyFrom.qcolor;
+    d->qcolor = copyFrom.d->qcolor;
 }
 
 
 QPen::~QPen()
 {
+    delete d;
 }
 
 
 const QColor &QPen::color() const
 {
-    return qcolor;
+    return d->qcolor;
 }
 
+uint QPen::width() const
+{
+    return d->width;
+}
+
+QPen::PenStyle QPen::style() const
+{
+    return d->penStyle;
+}
+
+void QPen::setColor(const QColor &c)
+{
+    d->qcolor = c;
+}
+
+void QPen::setWidth(uint w)
+{
+    d->width = w;
+}
+
+void QPen::setStyle(PenStyle ps)
+{
+    d->penStyle = ps;
+}
 
 QPen &QPen::operator=(const QPen &assignFrom)
 {
-    qcolor = assignFrom.qcolor;
+    d->qcolor = assignFrom.d->qcolor;
+    d->width = assignFrom.d->width;
+    d->penStyle = assignFrom.d->penStyle;
     return *this;
 }
 
 bool QPen::operator==(const QPen &compareTo) const
 {
-    return qcolor == compareTo.qcolor;
+    return (d->width == compareTo.d->width) &&
+        (d->penStyle == compareTo.d->penStyle) &&
+        (d->qcolor == compareTo.d->qcolor);
 }
 
 
