@@ -1,3 +1,9 @@
+2002-03-25  Richard Williamson  <rjw@apple.com>
+
+        Tweaks to force layout of frames and iframes.
+        
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _isLoadComplete]):
+
 2002-03-25  Maciej Stachowiak  <mjs@apple.com>
 
 	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource

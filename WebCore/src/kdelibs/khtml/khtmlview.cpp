@@ -413,7 +413,7 @@ void KHTMLView::layout()
 
          if (document->isHTMLDocument()) {
              NodeImpl *body = static_cast<HTMLDocumentImpl*>(document)->body();
-             if(body && body->renderer() && body->id() == ID_FRAMESET) {
+            if(body && body->renderer() && body->id() == ID_FRAMESET) {
                  QScrollView::setVScrollBarMode(AlwaysOff);
                  QScrollView::setHScrollBarMode(AlwaysOff);
                  body->renderer()->setLayouted(false);

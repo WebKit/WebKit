@@ -233,11 +233,14 @@ char *stateNames[5] = {
                 
                 [[self dataSource] _part]->end();
                 
-                //if ([[self controller] mainFrame] == self){
-                    [[self view] setNeedsLayout: YES];
-                    [[self view] layout];
-                    [[self view] display];
-                //}
+                [[[[self controller] mainFrame] view] setNeedsLayout: YES];
+                [[self view] setNeedsLayout: YES];
+                [[self view] setNeedsDisplay: YES];
+                
+                if ([[self controller] mainFrame] == self){
+                    [[[[self controller] mainFrame] view] layout];
+                    [[[[self controller] mainFrame] view] display];
+                }
                 [[self controller] locationChangeDone: [self mainDocumentError] forFrame: self];
                 
                 return;

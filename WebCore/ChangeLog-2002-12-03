@@ -1,3 +1,10 @@
+2002-03-25  Richard Williamson  <rjw@apple.com>
+
+        Removed conditional check that prevent layout of iframes.  I don't
+        understand why the check was being done.
+        
+	* src/kdelibs/khtml/rendering/render_flow.cpp: (RenderFlow::layout):
+
 2002-03-25  Maciej Stachowiak  <mjs@apple.com>
 
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::slotData): Use
