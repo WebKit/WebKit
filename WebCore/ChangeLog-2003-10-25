@@ -1,5 +1,16 @@
 2002-11-17  David Hyatt  <hyatt@apple.com>
 
+	More refinements to immediate painting code.  Still doesn't
+	fix the scrollbar problem though. :(
+	
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::close):
+        * khtml/khtmlview.cpp:
+        (KHTMLView::init):
+        (KHTMLView::timerEvent):
+
+2002-11-17  David Hyatt  <hyatt@apple.com>
+
 	Make immediate repainting of the root element more robust.
 	
         * khtml/html/html_documentimpl.cpp:

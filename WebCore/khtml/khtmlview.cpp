@@ -265,6 +265,7 @@ void KHTMLView::init()
     _height = 0;
 
     setAcceptDrops(true);
+    
     resizeContents(visibleWidth(), visibleHeight());
 }
 
@@ -1464,16 +1465,16 @@ void KHTMLView::timerEvent ( QTimerEvent *e )
     }
 
     if( m_part->xmlDocImpl() ) {
-	DOM::DocumentImpl *document = m_part->xmlDocImpl();
-	khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
-	resizeContents(root->docWidth(), root->docHeight());
-	if ( !root->layouted() ) {
-	    killTimer(d->repaintTimerId);
-	    d->repaintTimerId = 0;
-	    //qDebug("not layouted, delaying repaint");
-	    scheduleRelayout();
-	    return;
-	}
+        DOM::DocumentImpl *document = m_part->xmlDocImpl();
+        khtml::RenderRoot* root = static_cast<khtml::RenderRoot *>(document->renderer());
+        if ( !root->layouted() ) {
+            killTimer(d->repaintTimerId);
+            d->repaintTimerId = 0;
+            //qDebug("not layouted, delaying repaint");
+            scheduleRelayout();
+            return;
+        }
+        resizeContents(root->docWidth(), root->docHeight());
     }
     setStaticBackground(d->useSlowRepaints);
 
