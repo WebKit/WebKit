@@ -117,6 +117,7 @@ QObject::QObject(QObject *parent, const char *name)
 
 QObject::~QObject()
 {
+    _destroyed.call();
     ASSERT(_signalListHead == &_destroyed);
     killTimers();
 }
@@ -132,7 +133,7 @@ bool QObject::event(QEvent *)
 
 int QObject::startTimer(int milliseconds)
 {
-    static int timerCount = 1;
+    static int nextTimerID = 1;
 
     if (timerDictionaries == NULL) {
         // The global timers dictionary itself leaks, but the contents are removed
@@ -147,17 +148,17 @@ int QObject::startTimer(int milliseconds)
         [timers release];
     }
 
-    NSNumber *timerId = [NSNumber numberWithInt:timerCount];
-    KWQObjectTimerTarget *target = [[KWQObjectTimerTarget alloc] initWithQObject:this timerId:timerCount];
+    KWQObjectTimerTarget *target = [[KWQObjectTimerTarget alloc] initWithQObject:this timerId:nextTimerID];
     NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:milliseconds / 1000.0
           target:target
         selector:@selector(timerFired)
         userInfo:target
          repeats:YES];
     [target release];
-    [timers setObject:timer forKey:timerId];
     
-    return timerCount++;    
+    [timers setObject:timer forKey:[NSNumber numberWithInt:nextTimerID]];
+    
+    return nextTimerID++;    
 }
 
 void QObject::killTimer(int _timerId)
@@ -184,13 +185,7 @@ void QObject::killTimers()
     if (timers == nil) {
         return;
     }
-    NSArray *keys = [timers allKeys];
-    int count = [keys count];
-    for (int i = 0; i < count; i++) {
-        NSNumber *key = (NSNumber *)[keys objectAtIndex:i];
-        NSTimer *timer = (NSTimer *)[timers objectForKey:key];
-        [timer invalidate];
-    }
+    [[timers allValues] makeObjectsPerformSelector:@selector(invalidate)];
     CFDictionaryRemoveValue(timerDictionaries, this);
 }
 

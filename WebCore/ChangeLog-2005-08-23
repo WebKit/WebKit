@@ -1,5 +1,12 @@
 2002-11-12  Darin Adler  <darin@apple.com>
 
+	- fixed 3094819 -- Crash in -[KWQObjectTimerTarget timerFired]
+
+        * kwq/KWQObject.mm: (QObject::~QObject): Call the _destroyed signal.
+        (QObject::killTimers): Simplify the code a bit using makeObjectsPerformSelector:.
+
+2002-11-12  Darin Adler  <darin@apple.com>
+
 	- fixed 3079499 -- blank page at http://www.sonyericsson.com/T68i/
 
         * khtml/misc/loader.cpp:
