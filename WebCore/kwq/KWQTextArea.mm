@@ -261,7 +261,7 @@ const float LargeNumberForText = 1.0e7;
 	searchRange.location += advance;
     }
     
-    return paragraphSoFar;
+    return paragraphSoFar + searchRange.length == 0 ? 0 : 1;
 }
 
 static NSRange RangeOfParagraph(NSString *text, int paragraph)
