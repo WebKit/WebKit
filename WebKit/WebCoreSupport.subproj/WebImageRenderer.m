@@ -117,10 +117,16 @@ static NSMutableArray *activeImageRenderers;
 
 #define MINIMUM_DURATON  (1.0/30.0)
 
-- (float)frameDuration
+- (float)unadjustedFrameDuration
 {
     id property = [self firstRepProperty:NSImageCurrentFrameDuration];
     float duration = (property != nil ? [property floatValue] : 0.0);
+    return duration;
+}
+
+- (float)frameDuration
+{
+    float duration = [self unadjustedFrameDuration];
     if (duration < MINIMUM_DURATON){
         /*
             Many annoying ads specify a 0 duration to make an image flash
@@ -164,7 +170,7 @@ static NSMutableArray *activeImageRenderers;
     
     currentFrame = [self currentFrame] + 1;
     if (currentFrame >= [self frameCount]) {
-        if ([self frameDuration] == 0) {
+        if ([self unadjustedFrameDuration] == 0) {
             animationFinished = YES;	// Don't repeat if the last frame has a duration of 0.  
                                 // IE doesn't repeat, so we don't.
             return;

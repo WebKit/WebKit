@@ -1,3 +1,13 @@
+2002-07-16  Richard Williamson (Local)  <rjw@apple.com>
+
+        Really, stop animation if last frame has zero duration, like IE.
+        Was checking adjustedFrameDuration, which is never zero.
+
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer unadjustedFrameDuration]):
+        (-[WebImageRenderer frameDuration]):
+        (-[WebImageRenderer nextFrame:]):
+
 2002-07-16  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit part of fix for:
