@@ -1,3 +1,18 @@
+2002-10-09  Richard Williamson   <rjw@apple.com>
+
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handleDidFinishLoading:]):
+        * WebKit.exp:
+        * WebView.subproj/WebController.m:
+        (-[WebResourceLoadDelegate resourceRequest:willSendRequest:fromDataSource:]):
+        (-[WebResourceLoadDelegate resourceRequest:didReceiveResponse:fromDataSource:]):
+        (-[WebResourceLoadDelegate resourceRequest:didReceiveContentLength:fromDataSource:]):
+        (-[WebResourceLoadDelegate resourceRequest:didFinishLoadingFromDataSource:]):
+        (-[WebResourceLoadDelegate resourceRequest:didFailLoadingWithError:fromDataSource:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handleDidFinishLoading:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+
 2002-10-09  John Sullivan  <sullivan@apple.com>
 
 	- removed unnecessary concept of unique identifiers for bookmarks

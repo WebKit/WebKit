@@ -188,15 +188,15 @@
         [self receivedError:nonTerminalError];
     }
     
+    [resourceProgressDelegate resourceRequest:request didFinishLoadingFromDataSource:dataSource];
+
     [self receivedProgressWithComplete:YES];
     
     [self didStopLoading];
 
     [handle release];
     handle = nil;
-
-    [resourceProgressDelegate resourceRequest:request didFinishLoadingFromDataSource:dataSource];
-    
+        
     [self release];
 }
 

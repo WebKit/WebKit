@@ -463,3 +463,29 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 }
 
 @end
+
+@implementation WebResourceLoadDelegate
+
+-(WebResourceRequest *)resourceRequest:(WebResourceRequest *)oldRequest willSendRequest: (WebResourceRequest *)newRequest fromDataSource:(WebDataSource *)dataSource
+{
+    return newRequest;
+}
+
+-(void)resourceRequest:(WebResourceRequest *)request didReceiveResponse: (WebResourceResponse *)response fromDataSource:(WebDataSource *)dataSource
+{
+}
+
+-(void)resourceRequest:(WebResourceRequest *)request didReceiveContentLength: (unsigned)length fromDataSource:(WebDataSource *)dataSource
+{
+}
+
+-(void)resourceRequest:(WebResourceRequest *)request didFinishLoadingFromDataSource:(WebDataSource *)dataSource
+{
+}
+
+-(void)resourceRequest:(WebResourceRequest *)request didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource
+{
+}
+
+
+@end

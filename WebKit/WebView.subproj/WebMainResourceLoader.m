@@ -168,14 +168,6 @@
         [[dataSource representation] finishedLoadingWithDataSource:dataSource];
     }
     
-    // Either send a final error message or a final progress message.
-    WebError *nonTerminalError = [[dataSource response] error];
-    if (nonTerminalError) {
-        [self receivedError:nonTerminalError forHandle:handle];
-    } else {
-        [self receivedProgressWithHandle:handle complete:YES];
-    }
-
     if (downloadHandler) {
         WebError *downloadError = [downloadHandler finishedLoading];
         if (downloadError) {
@@ -187,6 +179,14 @@
     }
     else
         [resourceProgressDelegate resourceRequest:[handle _request] didFinishLoadingFromDataSource:dataSource];
+
+    // Either send a final error message or a final progress message.
+    WebError *nonTerminalError = [[dataSource response] error];
+    if (nonTerminalError) {
+        [self receivedError:nonTerminalError forHandle:handle];
+    } else {
+        [self receivedProgressWithHandle:handle complete:YES];
+    }
     
     [self didStopLoading];
 

@@ -16,8 +16,10 @@
 .objc_class_name_WebIconDatabase
 .objc_class_name_WebIconLoader
 .objc_class_name_WebKitStatistics
+.objc_class_name_WebLocationChangeDelegate
 .objc_class_name_WebPreferences
 .objc_class_name_WebRenderNode
+.objc_class_name_WebResourceLoadDelegate
 .objc_class_name_WebStandardPanels
 .objc_class_name_WebStringTruncator
 .objc_class_name_WebTestController

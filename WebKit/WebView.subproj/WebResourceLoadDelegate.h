@@ -63,3 +63,15 @@
 @end
 
 
+/*!
+    @class WebResourceLoadDelegate
+    @discussion The WebResourceLoadDelegate class responds to all WebResourceLoadDelegate protocol
+    methods by doing nothing, except for resourceRequest:willSendRequest:fromDataSource:, which
+    will return the newRequest. It's provided for the convenience of clients who only want
+    to implement some of the above methods and ignore others.
+*/
+@interface WebResourceLoadDelegate : NSObject <WebResourceLoadDelegate>
+{
+}
+@end
+
