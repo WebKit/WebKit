@@ -1,3 +1,16 @@
+2003-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3127431 - bring the window with the named frame to the front
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge focusWindow]): Tell the window operations delegate to focus.
+        (-[WebBridge loadURL:referrer:reload:target:triggeringEvent:form:formValues:]):
+	If this navigation is meant for a different frame, focus its window.
+        (-[WebBridge postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]):
+	Likewise.
+
 2003-03-18  Trey Matteson  <trey@apple.com>
 
 	3077223 full keyboard UI navigation fails in authentication sheet

@@ -1,3 +1,14 @@
+2003-03-18  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3146407 - bring the window with the targeted frame to the front
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): If we use an existing frame,
+	focus it.
+        * kwq/WebCoreBridge.h: Prototype focusWindow method.
+
 2003-03-17  Trey Matteson  <trey@apple.com>
 
 	Support for password saving in forms.  Added elementIsPassword:,

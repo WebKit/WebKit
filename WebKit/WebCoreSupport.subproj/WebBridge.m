@@ -328,6 +328,11 @@
     }
 }
 
+- (void)focusWindow
+{
+    [[[frame webView] _windowOperationsDelegateForwarder] webViewFocusWindow:[frame webView]];
+}
+
 - (void)unfocusWindow
 {
     if ([[self window] isKeyWindow] || [[[self window] attachedSheet] isKeyWindow]) {
@@ -351,7 +356,13 @@
 	target = nil;
     }
 
+    WebFrame *targetFrame = [frame findFrameNamed:target];
+
     [frame _loadURL:[NSURL _web_URLWithString:URL] referrer:referrer loadType:(reload ? WebFrameLoadTypeReload : WebFrameLoadTypeStandard) target:target triggeringEvent:event form:form formValues:values];
+
+    if (targetFrame != nil && frame != targetFrame) {
+	[[targetFrame _bridge] focusWindow];
+    }
 }
 
 - (void)postWithURL:(NSString *)URL referrer:(NSString *)referrer target:(NSString *)target data:(NSData *)data contentType:(NSString *)contentType triggeringEvent:(NSEvent *)event form:(id <WebDOMElement>)form formValues:(NSDictionary *)values
@@ -360,7 +371,13 @@
 	target = nil;
     }
 
+    WebFrame *targetFrame = [frame findFrameNamed:target];
+
     [frame _postWithURL:[NSURL _web_URLWithString:URL] referrer:(NSString *)referrer target:target data:data contentType:contentType triggeringEvent:event form:form formValues:values];
+
+    if (targetFrame != nil && frame != targetFrame) {
+	[[targetFrame _bridge] focusWindow];
+    }
 }
 
 - (NSString *)generateFrameName
