@@ -1,3 +1,12 @@
+2005-02-16  Chris Blumenberg  <cblu@apple.com>
+	
+	Fixed: <rdar://problem/3954842> Forward/reply to an HTML email can result in nothing (in cases with <link> tags for CSS)
+
+        Reviewed by john.
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeBaseImpl::addChild): don't call insertedIntoDocument on the added child if "this" itself is not in the document.
+
 2005-02-16  John Sullivan  <sullivan@apple.com>
 
         Written by Darin, reviewed by Maciej and me

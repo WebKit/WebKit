@@ -1915,7 +1915,8 @@ NodeImpl *NodeBaseImpl::addChild(NodeImpl *newChild)
         _first = _last = newChild;
     }
 
-    newChild->insertedIntoDocument();
+    if (inDocument())
+        newChild->insertedIntoDocument();
     childrenChanged();
 
     if(newChild->nodeType() == Node::ELEMENT_NODE)
