@@ -1593,7 +1593,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Private,
 				);
 			};
 		};
@@ -1937,7 +1936,6 @@
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (
-					Private,
 				);
 			};
 		};

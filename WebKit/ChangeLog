@@ -1,5 +1,13 @@
 2002-06-04  Darin Adler  <darin@apple.com>
 
+	- fixed 2943513 -- move StringTruncator into WebKit from WebBrowser so we
+	don't need text measuring API exported
+
+	* WebKit.pbproj/project.pbxproj: No longer export the text renderer headers
+	as Private.
+
+2002-06-04  Darin Adler  <darin@apple.com>
+
 	* WebKit.pbproj/project.pbxproj: Exported IFStringTruncator.h as Private.
 
 2002-06-04  Darin Adler  <darin@apple.com>
