@@ -20,7 +20,7 @@
 
 @implementation WebHistoryPrivate
 
-#define FIX_VISITED
+//#define FIX_VISITED
 
 #pragma mark OBJECT FRAMEWORK
 
