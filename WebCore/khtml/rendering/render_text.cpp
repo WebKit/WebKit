@@ -1024,6 +1024,9 @@ void RenderText::calcMinMaxWidth()
             bool isBreakableCharSpace = (i+wordlen < len) ? ((!isPre && str->s[i+wordlen] == '\n') || 
                                                              str->s[i+wordlen] == ' ') : false;
 
+            if (i+wordlen < len && style()->whiteSpace() == NORMAL)
+                m_hasBreakableChar = true;
+            
             // Add in wordspacing to our maxwidth, but not if this is the last word on a line or the
             // last word in the run.
             if (wordSpacing && isBreakableCharSpace && !containsOnlyWhitespace(i+wordlen, len-(i+wordlen)))
@@ -1031,7 +1034,13 @@ void RenderText::calcMinMaxWidth()
 
             if (firstWord) {
                 firstWord = false;
-                m_beginMinWidth = w;
+                // If the first character in the run is breakable, then we consider ourselves to have a beginning
+                // minimum width of 0, since a break could occur right before our run starts, preventing us from ever
+                // being appended to a previous text run when considering the total minimum width of the containing block.
+                bool hasBreak = isBreakable(str->s, i, str->l);
+                if (hasBreak)
+                    m_hasBreakableChar = true;
+                m_beginMinWidth = hasBreak ? 0 : w;
             }
             m_endMinWidth = w;
             

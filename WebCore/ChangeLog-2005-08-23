@@ -1,3 +1,13 @@
+2003-12-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3503022, asahi.com is too wide.  Bugs in line breaking of breakable Japanese characters caused
+	the breaks to be ignored.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::calcMinMaxWidth):
+
 2003-12-05  David Hyatt  <hyatt@apple.com>
 
 	Fix the position method to return screen coords like it should and to use the lower left corner instead of
