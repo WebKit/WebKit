@@ -1,3 +1,18 @@
+2004-08-16  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3704339> Context2D forces integer positions in drawImage
+
+	Use floats instead of ints to draw images.
+
+        Reviewed by Ken.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::Context2DFunction::tryCall):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::drawPixmap):
+        (QPainter::drawFloatPixmap):
+
 2004-08-13  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.

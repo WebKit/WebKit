@@ -91,6 +91,8 @@ public:
 			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
     void drawPixmap( int x, int y, int w, int h, const QPixmap &,
 			    int sx=0, int sy=0, int sw=-1, int sh=-1, int compositeOperator=-1, CGContextRef context=0);
+    void drawFloatPixmap( float x, float y, float w, float h, const QPixmap &,
+			    float sx=0, float sy=0, float sw=-1, float sh=-1, int compositeOperator=-1, CGContextRef context=0);
     void drawTiledPixmap(int, int, int, int, const QPixmap &, int sx=0, int sy=0, CGContextRef context=0);
 
     void addClip(const QRect &);

@@ -3890,16 +3890,16 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             Image *i = static_cast<Image*>(o);
-            int x = args[1].toInt32(exec);
-            int y = args[2].toInt32(exec);
-            int w = args[3].toInt32(exec);
-            int h = args[4].toInt32(exec);
+            float x = args[1].toNumber(exec);
+            float y = args[2].toNumber(exec);
+            float w = args[3].toNumber(exec);
+            float h = args[4].toNumber(exec);
             QString compositeOperator = args[5].toString(exec).qstring().lower();
             khtml::CachedImage *ci = i->image();
             if (ci) {
                 QPixmap pixmap = ci->pixmap();
                 QPainter p;
-                p.drawPixmap (x, y, pixmap, 0, 0, w, h, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
+                p.drawFloatPixmap (x, y, w, h, pixmap, 0.f, 0.f, w, h, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
                 
                 if (contextObject->_needsFlushRasterCache)
                     pixmap.flushRasterCache();
@@ -3921,21 +3921,21 @@ Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const Li
                 return err;
             }
             Image *i = static_cast<Image*>(o);
-            int sx = args[1].toInt32(exec);
-            int sy = args[2].toInt32(exec);
-            int sw = args[3].toInt32(exec);
-            int sh = args[4].toInt32(exec);
-            int dx = args[5].toInt32(exec);
-            int dy = args[6].toInt32(exec);
-            int dw = args[7].toInt32(exec);
-            int dh = args[8].toInt32(exec);
+            float sx = args[1].toNumber(exec);
+            float sy = args[2].toNumber(exec);
+            float sw = args[3].toNumber(exec);
+            float sh = args[4].toNumber(exec);
+            float dx = args[5].toNumber(exec);
+            float dy = args[6].toNumber(exec);
+            float dw = args[7].toNumber(exec);
+            float dh = args[8].toNumber(exec);
             QString compositeOperator = args[9].toString(exec).qstring().lower();
             khtml::CachedImage *ci = i->image();
             if (ci) {
                 QPixmap pixmap = ci->pixmap();
                 QPainter p;
 
-                p.drawPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
+                p.drawFloatPixmap (dx, dy, dw, dh, pixmap, sx, sy, sw, sh, QPainter::compositeOperatorFromString(compositeOperator), drawingContext);
                 
                 if (contextObject->_needsFlushRasterCache)
                     pixmap.flushRasterCache();

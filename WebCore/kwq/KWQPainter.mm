@@ -542,6 +542,12 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
 void QPainter::drawPixmap( int x, int y, int w, int h, const QPixmap &pixmap,
                            int sx, int sy, int sw, int sh, int compositeOperator, CGContextRef context)
 {
+    drawFloatPixmap ((float)x, (float)y, (float)w, (float)h, pixmap, (float)sx, (float)sy, (float)sw, (float)sh, compositeOperator, context);
+}
+
+void QPainter::drawFloatPixmap( float x, float y, float w, float h, const QPixmap &pixmap,
+                           float sx, float sy, float sw, float sh, int compositeOperator, CGContextRef context)
+{
     if (data->state.paintingDisabled)
         return;
         
