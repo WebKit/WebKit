@@ -2,6 +2,20 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3943038> <input type=search> that is focused in onload handler doesn't have a visible editor
+
+        * khtml/xml/dom_docimpl.cpp: (DocumentImpl::setFocusNode): Always update layout before giving focus to a widget.
+        This prevents the bad case where we give a widget focus before it has been positioned or sized, causing us to
+        exercise edge cases AppKit doesn't handle well.
+
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController initWithTextField:QLineEdit:]): Remove workaround code I added
+        to fix bug 3943049. Updating the layout fixes the same problem in a cleaner, safer way, and solves another problem,
+        with the way the clip view is set up.
+
+2005-02-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3425232> textarea won't trigger onchange action when clicking to new field
 
         * khtml/rendering/render_form.h: Added new m_dirty data member.

@@ -2483,8 +2483,13 @@ bool DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
         if (getDocument()->view()) {
             if (!m_focusNode->renderer() || !m_focusNode->renderer()->isWidget())
                 getDocument()->view()->setFocus();
-            else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget())
+            else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget()) {
+                // Make sure a widget has the right size before giving it focus.
+                // Otherwise, we are testing edge cases of the QWidget code.
+                // Specifically, in WebCore this does not work well for text fields.
+                getDocument()->updateLayout();
                 static_cast<RenderWidget*>(m_focusNode->renderer())->widget()->setFocus();
+            }
         }
    }
 

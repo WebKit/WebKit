@@ -96,15 +96,6 @@
         [field setAction:@selector(action:)];
     }
     
-    // Set a non-empty size in case the field is made first responder before it
-    // is positioned and sized by KHTML code. This dodges bad behavior in AppKit
-    // if you try to create an editor for a 0-sized text field.
-    // For a secure text field, this is both unnecessary and harmful, so leave
-    // it out; worth figuring out why at some point.
-    if (![field isKindOfClass:[NSSecureTextField class]]) {
-        [field setFrameSize:NSMakeSize(100, 100)];
-    }
-
     return self;
 }
 
