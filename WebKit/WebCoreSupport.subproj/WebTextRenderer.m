@@ -428,7 +428,7 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     CGSize *advances, localAdvanceBuffer[LOCAL_BUFFER_SIZE];
     CGContextRef cgContext;
     NSPoint advancePoint = point;
-    float startX, backgroundWidth;
+    float startX, backgroundWidth = 0.0;
 
     if (numGlyphs == 0)
         return point;
@@ -440,6 +440,9 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
         advances = localAdvanceBuffer;
     }
 
+    // Calculate advances for the entire string taking into account.
+    // 1.  Rounding of spaces.
+    // 2.  Rounding at the end of words.
     for (i = 0; i < numGlyphs; i++) {
         advances[i].width = widthForGlyph(self, glyphToWidthMap, glyphs[i]);
         if (glyphs[i] == spaceGlyph){
@@ -453,15 +456,15 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
     }
 
     startX = point.x;
-    for (i = 0; (int)i < from; i++)
+    for (i = 0; (int)i < MIN(from,(int)numGlyphs); i++)
         startX += advances[i].width;
  
-     for (i = from; (int)i < to; i++)
+     for (i = from; (int)i < MIN(to,(int)numGlyphs); i++)
         backgroundWidth += advances[i].width;
     
     if (backgroundColor != nil){
         [backgroundColor set];
-        [NSBezierPath fillRect:NSMakeRect(startX, point.y - ascent, backgroundWidth, lineSpacing)];
+        [NSBezierPath fillRect:NSMakeRect(startX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
     }
     
     // Setup the color and font.
@@ -515,8 +518,13 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
             
             // Draw everthing up to this point.
             fragmentLength = i - lastDrawnGlyph;
-            if (fragmentLength > 0)
-                point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: fromGlyph-lastDrawnGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
+            if (fragmentLength > 0){
+                int _fromGlyph = fromGlyph-lastDrawnGlyph;
+                
+                if (_fromGlyph < 0)
+                    _fromGlyph = 0;
+                point = [self drawGlyphs: &glyphs[lastDrawnGlyph] numGlyphs: fragmentLength fromGlyphPosition: _fromGlyph toGlyphPosition:MIN(toGlyph-lastDrawnGlyph,fragmentLength) atPoint: point withTextColor: textColor backgroundColor: backgroundColor];
+            }
             
             // Draw the character in the alternate font.
             substituteFont = [self substituteFontForCharacters: &characters[charPos] length: clusterLength];

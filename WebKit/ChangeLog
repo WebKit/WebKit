@@ -1,4 +1,12 @@
 2002-06-27  Richard Williamson  <rjw@apple.com>
+        
+        Fix selection in 'slow' code path (non-base characters and font substitution).
+        
+        * WebCoreSupport.subproj/IFTextRenderer.m:
+        (-[IFTextRenderer drawGlyphs:numGlyphs:fromGlyphPosition:toGlyphPosition:atPoint:withTextColor:backgroundColor:]):
+        (-[IFTextRenderer slowDrawCharacters:length:fromCharacterPosition:toCharacterPosition:atPoint:withTextColor:backgroundColor:attemptFontSubstitution:]):
+
+2002-06-27  Richard Williamson  <rjw@apple.com>
 
         Implemented auto scrolling.
         
