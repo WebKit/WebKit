@@ -1048,7 +1048,7 @@ static const char *joiningNames[] = {
     if (shouldUseATSU(run))
         return [self _ATSU_floatWidthForRun:run style:style];
     
-    return [self _CG_floatWidthForRun:run style:style applyRounding:YES attemptFontSubstitution:YES widths:widthBuffer fonts:fontBuffer glyphs:glyphBuffer startGlyph:startGlyph endGlyph:endGlyph numGlyphs:_numGlyphs];
+    return [self _CG_floatWidthForRun:run style:style applyRounding:applyRounding attemptFontSubstitution:attemptSubstitution widths:widthBuffer fonts:fontBuffer glyphs:glyphBuffer startGlyph:startGlyph endGlyph:endGlyph numGlyphs:_numGlyphs];
 
 }
 

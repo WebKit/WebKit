@@ -1,3 +1,12 @@
+2003-07-25  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3344519.  Prevent infinite recursion attempting font substitution.
+
+        Reviewed by Darin.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _floatWidthForRun:style:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:startGlyph:endGlyph:numGlyphs:]):
+
 2003-07-25  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.
