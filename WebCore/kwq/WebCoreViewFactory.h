@@ -29,9 +29,6 @@
 @class NSString;
 @class NSView;
 
-typedef NSView *(*IFPluginViewCreationFunction)();
-void IFSetPluginViewCreationFunction(IFPluginViewCreationFunction);
-
 @interface WebCoreViewFactory : NSObject
 {
 }
@@ -53,4 +50,8 @@ void IFSetPluginViewCreationFunction(IFPluginViewCreationFunction);
 - (NSString *)pluginDescription;
 - (NSArray *)mimeTypes; // array of NSArrays with 3 parts of MIME type in each
 
+@end
+
+@protocol WebCoreCursorSetting
+- (void)setCursor:(NSCursor *)cursor;
 @end

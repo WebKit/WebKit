@@ -35,20 +35,13 @@
 
 #import <khtmlpart_p.h>
 
-#import <WCPluginWidget.h>
+#import <WebCoreViewFactory.h>
+#import <WebCoreBridge.h>
 #import <WCWebDataSource.h>
-#import <external.h>
 
 #import <kwqdebug.h>
 
 #undef _KWQ_TIMING
-
-static WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
-
-void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
-{
-    WCIFWebDataSourceMake = func;
-}
 
 static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 {
@@ -68,7 +61,6 @@ KWQKHTMLPartImpl::KWQKHTMLPartImpl(KHTMLPart *p)
     , d(part->d)
     , m_redirectionTimer(0)
     , m_decodingStarted(false)
-    , m_dataSource(0)
 {
 }
 
@@ -79,29 +71,20 @@ KWQKHTMLPartImpl::~KWQKHTMLPartImpl()
 
 bool KWQKHTMLPartImpl::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
 {
-  IFWebDataSource *oldDataSource, *newDataSource;
-  IFWebFrame *frame;
+    WebCoreBridge *frame;
 
+    if (!urlArgs.frameName.isEmpty()) {
+        frame = [bridge frameNamed:urlArgs.frameName.getNSString()];
+        if (frame == nil) {
+            frame = [bridge mainFrame];
+        }
+    } else {
+        frame = bridge;
+    }
 
-  if (!urlArgs.frameName.isEmpty()) {
-    frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(urlArgs.frameName)];
-    oldDataSource = [frame dataSource];
-  } else {
-      oldDataSource = getDataSource();
-      frame = [oldDataSource webFrame];
-  }
+    [frame loadURL:url.getNSURL()];
 
-  if (frame == nil) {
-    frame = [[getDataSource() controller] mainFrame];
-  }
-
-  newDataSource = WCIFWebDataSourceMake(url.getNSURL(), nil, 0);
-  [newDataSource _setParent: [oldDataSource parent]];
-
-  [frame setProvisionalDataSource: newDataSource];
-  [frame startLoading];
-
-  return true;
+    return true;
 }
 
 void KWQKHTMLPartImpl::openURL(const KURL &url)
@@ -398,10 +381,9 @@ void KWQKHTMLPartImpl::redirectURL()
 
 void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
-    IFWebDataSource *oldDataSource, *newDataSource;
     KURL clickedURL(part->completeURL( url));
-    IFWebFrame *frame, *currentFrame;
     KURL refLess(clickedURL);
+    WebCoreBridge *frame;
 	
     if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
     {
@@ -411,7 +393,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
 
     // Open new window on command-click
     if (state & MetaButton) {
-        [[getDataSource() controller] openNewWindowWithURL:clickedURL.getNSURL()];
+        [bridge openNewWindowWithURL:clickedURL.getNSURL()];
         return;
     }
 
@@ -423,86 +405,52 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
         return;
     }
     
-    oldDataSource = getDataSource();
-    currentFrame = [oldDataSource webFrame];
-    if (_target.isEmpty()){
-        // If we're the only frame in a frameset then pop
-        // the frame.
-        if ([[[oldDataSource parent] children] count] == 1){
-            frame = [[oldDataSource parent] webFrame];
+    if (_target.isEmpty()) {
+        // If we're the only frame in a frameset then pop the frame.
+        if ([[[bridge parent] children] count] == 1) {
+            frame = [bridge parent];
+        } else {
+            frame = bridge;
         }
-        else
-            frame = currentFrame;
     }
     else {
-        frame = [currentFrame frameNamed: QSTRING_TO_NSSTRING(_target)];
-        if (frame == nil){
-            // FIXME:  What is the correct behavior here?
-            NSLog (@"ERROR:  unable to find frame named %@\n",
-                        QSTRING_TO_NSSTRING(_target));
+        frame = [bridge frameNamed:_target.getNSString()];
+        if (frame == nil) {
+            // FIXME: What is the correct behavior here? Other browsers seem to open new windows.
+            NSLog (@"ERROR: unable to find frame named %@\n", _target.getNSString());
             return;
         }
-        oldDataSource = [frame dataSource];
     }
     
-    newDataSource = WCIFWebDataSourceMake(clickedURL.getNSURL(), nil, 0);
-    [newDataSource _setParent: [oldDataSource parent]];
-    
-    [frame setProvisionalDataSource: newDataSource];
-    [frame startLoading];
+    [frame loadURL:clickedURL.getNSURL()];
 }
 
 bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
                                      const QStringList &params, bool isIFrame )
 {
-    NSString *nsframeName = QSTRING_TO_NSSTRING(frameName);
-    IFWebFrame *aFrame;
-    IFWebDataSource *dataSource;
-    
-    dataSource = getDataSource();
+    NSString *name = frameName.getNSString();
 
-    KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "name %s\n", [nsframeName cString]);
-    aFrame =[dataSource frameNamed: nsframeName];
-    if (aFrame){
-        KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "found %s\n", [nsframeName cString]);
-        QWidget *khtmlview = [[[aFrame webView] documentView] _provisionalWidget];
-        if (khtmlview)
-            frame->setWidget (khtmlview);
-        else
-            frame->setWidget ([[[aFrame webView] documentView] _widget]);
+    KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "name %s\n", DEBUG_OBJECT(name));
+    WebCoreBridge *framePart = [bridge frameNamed:name];
+    if (framePart) {
+        KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "found %s\n", DEBUG_OBJECT(name));
+        frame->setWidget([framePart widget]);
     }
     else {        
-        KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "creating %s\n", [nsframeName cString]);
-        IFWebDataSource *oldDataSource, *newDataSource;
-        NSURL *childURL;
-        IFWebFrame *newFrame;
-        IFWebController *controller;
-        HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
-                
-        childURL = part->completeURL(url).getNSURL();
+        KWQDEBUGLEVEL(KWQ_LOG_FRAMES, "creating %s\n", DEBUG_OBJECT(name));
+        
+        NSURL *childURL = part->completeURL(url).getNSURL();
         if (childURL == nil || [childURL path] == nil) {
             NSLog (@"ERROR (probably need to fix CFURL): unable to create URL with path");
             return false;
         }
         
-        oldDataSource = getDataSource();
-        controller = [oldDataSource controller];
-        newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource inScrollView: o->scrollingMode() != QScrollView::AlwaysOff];
-        if (newFrame == nil) {
-            // Controller return NO to location change, now what?
+        HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
+        if (![bridge createNewFrameNamed:name withURL:childURL
+                renderPart:frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
+                marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()]) {
             return false;
         }
-        [newFrame _setRenderFramePart: frame];
-        
-        newDataSource = WCIFWebDataSourceMake(childURL, nil, 0);
-        [newDataSource _setParent: oldDataSource];
-        [newFrame setProvisionalDataSource: newDataSource];
-    
-        
-        [[newFrame webView] _setMarginWidth: o->getMarginWidth()];
-        [[newFrame webView] _setMarginHeight: o->getMarginHeight()];
-
-        [newFrame startLoading];
     }
 
 #ifdef _SUPPORT_JAVASCRIPT_URL_    
@@ -527,16 +475,29 @@ bool KWQKHTMLPartImpl::requestFrame( khtml::RenderPart *frame, const QString &ur
     return true;
 }
 
-bool KWQKHTMLPartImpl::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
-			              const QStringList &args )
+bool KWQKHTMLPartImpl::requestObject(khtml::RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args)
 {
-  if (url.isEmpty()) {
-    return false;
-  }
-  if (!frame->widget()) {
-    frame->setWidget(IFPluginWidgetCreate(part->completeURL(url).url(), serviceType, args, m_baseURL.url()));
-  }
-  return true;
+    if (url.isEmpty()) {
+        return false;
+    }
+    if (frame->widget()) {
+        return true;
+    }
+    
+    NSMutableArray *argsArray = [NSMutableArray arrayWithCapacity:args.count()];
+    for (uint i = 0; i < args.count(); i++) {
+        [argsArray addObject:args[i].getNSString()];
+    }
+    
+    QWidget *widget = new QWidget();
+    widget->setView([[WebCoreViewFactory sharedFactory]
+        viewForPluginWithURL:part->completeURL(url).url().getNSString()
+                    serviceType:serviceType.getNSString()
+                    arguments:argsArray
+                        baseURL:m_baseURL.url().getNSString()]);
+    frame->setWidget(widget);
+    
+    return true;
 }
 
 void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary )
@@ -569,9 +530,6 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
     return;
 #endif
 
-  NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-  unsigned loadFlags = 0;
-
 #ifdef NEED_THIS
   KParts::URLArgs args;
 
@@ -588,7 +546,7 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
   if ( strcmp( action, "get" ) == 0 )
   {
     u.setQuery( QString( formData.data(), formData.size() ) );
-    [attributes setObject:@"GET" forKey:IFHTTPURLHandleRequestMethod];
+    [bridge loadURL:u.getNSURL()];
 
 #ifdef NEED_THIS
     args.frameName = target;
@@ -608,14 +566,8 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
     else // contentType must be "multipart/form-data"
       args.setContentType( "Content-Type: " + contentType + "; boundary=" + boundary );
 #endif
-      NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
-      [attributes setObject:postData forKey:IFHTTPURLHandleRequestData];
-      [attributes setObject:@"POST" forKey:IFHTTPURLHandleRequestMethod];
-      // When posting, use the IFURLHandleFlagLoadFromOrigin load flag. 
-      // This prevents a potential bug which may cause a page
-      // with a form that uses itself as an action to be returned 
-      // from the cache without submitting.
-      loadFlags = IFURLHandleFlagLoadFromOrigin;
+    NSData *postData = [NSData dataWithBytes:formData.data() length:formData.size()];
+    [bridge postWithURL:u.getNSURL() data:postData];
   }
 
 #ifdef NEED_THIS
@@ -635,35 +587,23 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
   else
     emit d->m_extension->openURLRequest( u, args );
 #endif
-    IFWebDataSource *oldDataSource, *newDataSource;
-    IFWebFrame *frame;
-    
-    oldDataSource = getDataSource();
-    frame = [oldDataSource webFrame];
-
-    newDataSource = WCIFWebDataSourceMake(u.getNSURL(), attributes, loadFlags);
-    [newDataSource _setParent: [oldDataSource parent]];
-    
-    [frame setProvisionalDataSource: newDataSource];
-    [frame startLoading];
 }
 
 bool KWQKHTMLPartImpl::frameExists( const QString &frameName )
 {
-    return [getDataSource() frameExists: (NSString *)frameName.getCFMutableString()];
+    return [bridge frameNamed:frameName.getNSString()];
 }
 
 QPtrList<KParts::ReadOnlyPart> KWQKHTMLPartImpl::frames() const
 {
     QPtrList<KParts::ReadOnlyPart> res;
-    IFWebDataSource *thisDataSource = ((KWQKHTMLPartImpl *)this)->getDataSource();
-    NSArray *children = [thisDataSource children];
-    IFWebFrame *aFrame;
+    NSArray *children = [bridge children];
+    WebCoreBridge *childPart;
     unsigned int i;
     
     for (i = 0; i < [children count]; i++){
-        aFrame = [children objectAtIndex: i];
-        res.append( [[[aFrame dataSource] representation] part] );
+        childPart = [children objectAtIndex: i];
+        res.append([childPart part]);
     }
     return res;
 }
@@ -692,24 +632,15 @@ void KWQKHTMLPartImpl::setView(KHTMLView *view)
 
 void KWQKHTMLPartImpl::setTitle(const DOMString &title)
 {
-    [getDataSource() _setTitle:title.string().getNSString()];
-}
-
-void KWQKHTMLPartImpl::setDataSource(IFWebDataSource *dataSource)
-{
-    m_dataSource = dataSource; // not retained
+    [bridge setTitle:title.string().getNSString()];
 }
 
 IFWebDataSource *KWQKHTMLPartImpl::getDataSource()
 {
-    return m_dataSource;
+    return [bridge dataSource];
 }
-
 
 KHTMLPart *KWQKHTMLPartImpl::parentPart()
 {
-    IFWebDataSource *parent, *dataSource = getDataSource();
-    
-    parent = [dataSource parent];
-    return [[parent representation] part];
+    return [[bridge parent] part];
 }

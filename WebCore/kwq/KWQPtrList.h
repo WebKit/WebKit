@@ -31,7 +31,7 @@
 #include <KWQListImpl.h>
 
 #ifdef _KWQ_IOSTREAM_
-#include <iostream>
+#include <ostream>
 #endif
 
 template <class T> class QPtrListIterator;

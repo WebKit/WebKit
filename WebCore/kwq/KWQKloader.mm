@@ -29,10 +29,63 @@
 #include <misc/loader.h>
 #include <KWQKHTMLPartImpl.h>
 
-#include <external.h>
 #include <WCLoadProgress.h>
 
 #include <kwqdebug.h>
+
+// ==== start of temporary section, formerly from external.h, to be killed ====
+
+@class IFWebDataSource;
+@class IFLoadProgress;
+
+typedef enum {
+    IF_LOAD_TYPE_CSS    = 1,
+    IF_LOAD_TYPE_IMAGE  = 2,
+    IF_LOAD_TYPE_SCRIPT = 3,
+    IF_LOAD_TYPE_HTML   = 4
+} IF_LOAD_TYPE;
+
+@interface IFLoadProgress : NSObject
+{
+    int bytesSoFar;	// 0 if this is the start of load
+    int totalToLoad;	// -1 if this is not known.
+                        // bytesSoFar == totalLoaded when complete
+    IF_LOAD_TYPE type;	// load types, either image, css, or jscript
+}
+- init;
+@end
+
+@protocol IFLocationChangeHandler
+- (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource;
+@end
+
+@interface IFWebController <IFLocationChangeHandler>
+- (void)_receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
+- (void)_receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+- (void)_mainReceivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
+- (void)_mainReceivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+- (void)_didStartLoading: (NSURL *)url;
+- (void)_didStopLoading: (NSURL *)url;
+@end
+
+@interface IFWebDataSource : NSObject
+- (IFWebController *)controller;
+- (void)_addURLHandle: (IFURLHandle *)handle;
+- (void)_removeURLHandle: (IFURLHandle *)handle;
+- (void)_setFinalURL: (NSURL *)url;
+- representation;
+@end
+
+@interface IFHTMLRepresentation : NSObject
+- (KHTMLPart *)part;
+@end
+
+@protocol IFLoadHandler
+- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
+- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
+@end
+
+// ==== end of temporary section, formerly from external.h, to be killed ====
 
 using khtml::DocLoader;
 using khtml::Loader;
@@ -45,9 +98,19 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
     WCIFLoadProgressMake = func;
 }
 
-@implementation URLLoadClient
+@interface KWQURLLoadClient : NSObject <IFURLHandleClient>
+{
+    khtml::Loader *m_loader;
+    IFWebDataSource *m_dataSource;
+}
 
--(id)initWithLoader:(Loader *)loader dataSource: dataSource
+-(id)initWithLoader:(khtml::Loader *)loader dataSource:(IFWebDataSource *)dataSource;
+
+@end
+
+@implementation KWQURLLoadClient
+
+-(id)initWithLoader:(Loader *)loader dataSource:(IFWebDataSource *)dataSource
 {
     if ((self = [super init])) {
         m_loader = loader;
@@ -67,8 +130,8 @@ void WCSetIFLoadProgressMakeFunc(WCIFLoadProgressMakeFunc func)
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
     id controller;
-	int contentLength = [sender contentLength];
-	int contentLengthReceived = [sender contentLengthReceived];
+    int contentLength = [sender contentLength];
+    int contentLengthReceived = [sender contentLengthReceived];
     void *userData;
 
     userData = [[sender attributeForKey:IFURLHandleUserData] pointerValue];
@@ -226,7 +289,7 @@ KWQLoaderImpl::~KWQLoaderImpl()
 void KWQLoaderImpl::setClient(Request *req)
 {
     IFWebDataSource *dataSource = ((KHTMLPart *)((DocLoader *)req->object->loader())->part())->impl->getDataSource();
-    req->client = [[[URLLoadClient alloc] initWithLoader:loader dataSource: dataSource] autorelease];
+    req->client = [[[KWQURLLoadClient alloc] initWithLoader:loader dataSource: dataSource] autorelease];
 }
 
 void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
@@ -235,17 +298,17 @@ void KWQLoaderImpl::serveRequest(Request *req, KIO::TransferJob *job)
           req->m_docLoader->part()->baseURL().url().latin1(), req->object->url().string().latin1());
     //job->begin(d->m_recv, job);
     
-    job->begin((URLLoadClient *)req->client, job);
-    if (job->handle() == nil){
+    job->begin(req->client, job);
+    if (job->handle() == nil) {
         // Must be a malformed URL.
         NSString *urlString = QSTRING_TO_NSSTRING(req->object->url().string());
         IFError *error = [IFError errorWithCode:IFURLHandleResultBadURLError inDomain:IFErrorCodeDomainWebFoundation isTerminal:YES];
 
-        id <IFLoadHandler> controller = [((URLLoadClient *)req->client)->m_dataSource controller];
-        [(IFWebController *)controller _receivedError: error forResource: urlString partialProgress: nil fromDataSource: ((URLLoadClient *)req->client)->m_dataSource];
+        id <IFLoadHandler> controller = [(req->client)->m_dataSource controller];
+        [(IFWebController *)controller _receivedError: error forResource: urlString partialProgress: nil fromDataSource: req->client->m_dataSource];
     }
     else {
-        [((URLLoadClient *)req->client)->m_dataSource _addURLHandle: job->handle()];
+        [req->client->m_dataSource _addURLHandle: job->handle()];
     }
 }
 

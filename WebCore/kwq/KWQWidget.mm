@@ -23,11 +23,11 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <qwidget.h>
+#import <qwidget.h>
 
-#include <external.h>
+#import <WebCoreViewFactory.h>
 
-#include <kwqdebug.h>
+#import <kwqdebug.h>
 
 #import <KWQView.h>
 
@@ -250,7 +250,7 @@ QSize QWidget::minimumSizeHint() const
 {
     NSView *view = getView();
     
-    if ([view isKindOfClass: [NSControl class]]) {
+    if ([view isKindOfClass:[NSControl class]]) {
         NSControl *control = (NSControl *)view;
         [control sizeToFit];
         NSRect frame = [view frame];

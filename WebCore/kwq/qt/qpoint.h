@@ -29,7 +29,7 @@
 #include <KWQDef.h>
 
 #ifdef _KWQ_IOSTREAM_
-#include <iostream>
+#include <iosfwd>
 #endif
 
 #include "qarray.h"

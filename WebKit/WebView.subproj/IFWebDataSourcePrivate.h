@@ -69,9 +69,6 @@
     BOOL loading; // self and controller are retained while loading
 }
 
-- init;
-- (void)dealloc;
-
 @end
 
 @interface IFWebDataSource (IFPrivate)

@@ -26,6 +26,8 @@
 {
     [[representation image] stopAnimation];
     [representation release];
+    
+    [super dealloc];
 }
 
 - (BOOL)isFlipped 

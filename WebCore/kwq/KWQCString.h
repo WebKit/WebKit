@@ -28,11 +28,6 @@
 
 #include <qarray.h>
 #include <string.h>
-#include <KWQDef.h>
-
-#ifdef _KWQ_IOSTREAM_
-#include <iostream>
-#endif
 
 typedef QMemArray<char> QByteArray;
 

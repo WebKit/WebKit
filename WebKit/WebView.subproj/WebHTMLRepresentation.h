@@ -8,15 +8,17 @@
 
 @class IFError;
 @class IFWebDataSource;
+@class IFWebCoreBridge;
 
 class KHTMLPart;
 
 @protocol IFDocumentRepresentation;
 
+@class IFHTMLRepresentationPrivate;
+
 @interface IFHTMLRepresentation : NSObject <IFDocumentRepresentation>
 {
-    KHTMLPart *part;
-    BOOL isFirstChunk;
+    IFHTMLRepresentationPrivate *_private;
 }
 
 - (KHTMLPart *)part;

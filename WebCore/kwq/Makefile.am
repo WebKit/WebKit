@@ -110,7 +110,7 @@ libkwq_o_SOURCES = \
 	KWQtextstream.mm \
 	KWQxml.mm \
 	kwqdebug.mm \
-	WCPluginWidget.mm \
+	WebCoreBridge.mm \
 	WebCoreImageRendererFactory.m \
 	WebCoreTextRendererFactory.m \
 	WebCoreViewFactory.m \

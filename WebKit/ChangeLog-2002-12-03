@@ -1,3 +1,39 @@
+2002-06-14  Darin Adler  <darin@apple.com>
+
+	Add the new bridge class that connects us to WebCore in a nicer way.
+	Started to use it for some things. More to come.
+
+	* WebKit.pbproj/project.pbxproj:
+	* IFWebCoreBridge.h: Added.
+	* IFWebCoreBridge.mm: Added.
+
+	* Misc.subproj/IFDownloadHandler.mm:
+	(-[IFDownloadHandler initWithDataSource:]): Call [super init].
+	(-[IFDownloadHandler dealloc]): Call [super dealloc].
+	* Plugins.subproj/IFPluginNullEventSender.m:
+	(-[IFPluginNullEventSender initializeWithNPP:functionPointer:window:]): Call [super init].
+	(-[IFPluginNullEventSender dealloc]): Call [super dealloc].
+	* WebView.subproj/IFDOMNode.mm: (-[IFDOMNode dealloc]): Call [super dealloc].
+	* WebView.subproj/IFImageView.m: (-[IFImageView dealloc]): Call [super dealloc].
+	* WebView.subproj/IFRenderNode.mm: (-[IFRenderNode dealloc]): Call [super dealloc].
+
+	* WebView.subproj/IFHTMLRepresentation.h: Moved variables into a private structure so
+	this class can be made public.
+	* WebView.subproj/IFHTMLRepresentationPrivate.h: Added. Has _bridge method.
+	* WebView.subproj/IFHTMLRepresentation.mm:
+	(-[IFHTMLRepresentation init]): Call [super init]. Also use the new private structure,
+	and allocate the IFWebCoreBridge.
+	(-[IFHTMLRepresentation dealloc]): Release the private structure and the IFWebCoreBridge.
+	Also, call [super dealloc].
+	(-[IFHTMLRepresentation _bridge]): Private method to get to the bridge.
+	(-[IFHTMLRepresentation receivedData:withDataSource:]): Use IFWebCoreBridge.
+
+	* WebView.subproj/IFWebViewPrivate.h: Add _setMarginWidth and _setMarginHeight.
+
+	* WebView.subproj/IFWebDataSourcePrivate.h: Tweak.
+	* WebView.subproj/IFWebDataSource.mm: Tweak.
+	* History.subproj/IFWebHistoryPrivate.m: Tweak.
+
 2002-06-14  Richard Williamson  <rjw@apple.com>
 
     Lots of frame related cleanup.  Added attempt to get

@@ -334,14 +334,19 @@ void HTMLObjectElementImpl::attach()
 
     KHTMLView* w = getDocument()->view();
     bool loadplugin = w->part()->pluginsEnabled();
+#ifdef APPLE_CHANGES
+    // This check showed up during the KDE 3.0 -> 3.0.1 transition.
+    // We can't figure out exactly what it's supposed to do, but it prevents
+    // plugins from working properly for us, so we've rolled back to the way
+    // it was in KDE 3.0.1.
+#else
     KURL u = getDocument()->completeURL(url);
     for (KHTMLPart* part = w->part(); part; part = part->parentPart())
         if (part->url() == u) {
-#ifndef APPLE_CHANGES
             loadplugin = false;
-#endif
             break;
         }
+#endif
 
     if (loadplugin && parentNode()->renderer()) {
         needWidgetUpdate = false;

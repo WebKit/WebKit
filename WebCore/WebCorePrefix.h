@@ -16,9 +16,11 @@
 #ifdef __cplusplus
 
 #include <cstddef>
-// FIXME: We really need to precompile iostream, but we can't until Radar 2920556 is fixed.
-//#include <iostream>
 #include <new>
+
+#ifndef NDEBUG
+#include <ostream>
+#endif
 
 #endif
 

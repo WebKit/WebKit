@@ -14,6 +14,8 @@
 
 - initWithDataSource:(IFWebDataSource *)dSource
 {
+    [super init];
+    
     dataSource = [dSource retain];
     WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "Download started for: %s", [[[dSource inputURL] absoluteString] cString]);
     return self;
@@ -23,6 +25,8 @@
 {
     [fileHandle release];
     [dataSource release];
+    
+    [super dealloc];
 }
 
 - (void)receivedData:(NSData *)data

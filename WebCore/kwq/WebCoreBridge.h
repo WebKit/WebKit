@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,22 +22,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#import "WCPluginWidget.h"
-#import <qwidget.h>
-#import <WebCoreViewFactory.h>
 
-QWidget *IFPluginWidgetCreate(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL)
-{
-    NSMutableArray *argsArray = [NSMutableArray arrayWithCapacity:args.count()];
-    for (uint i = 0; i < args.count(); i++) {
-        [argsArray addObject:args[i].getNSString()];
-    }
-    QWidget *widget = new QWidget();
-    widget->setView([[WebCoreViewFactory sharedFactory]
-        viewForPluginWithURL:url.getNSString()
-                    serviceType:serviceType.getNSString()
-                    arguments:argsArray
-                        baseURL:baseURL.getNSString()]);
-    return widget;
+#import <Foundation/Foundation.h>
+
+class KHTMLPart;
+class KHTMLView;
+
+namespace khtml {
+    class RenderPart;
 }
+
+@class IFWebDataSource; // temporary -- here only until I finish KWQKloader.mm
+
+@interface WebCoreBridge : NSObject
+{
+    KHTMLPart *part;
+}
+
+- (KHTMLPart *)part;
+
+- (WebCoreBridge *)parent;
+- (NSArray *)children; // WebCoreBridge objects
+
+- (WebCoreBridge *)mainFrame;
+- (WebCoreBridge *)frameNamed:(NSString *)name; // always searches entire hierarchy starting with mainFrame
+
+- (void)setTitle:(NSString *)title;
+
+- (void)loadURL:(NSURL *)URL;
+- (void)postWithURL:(NSURL *)URL data:(NSData *)data;
+
+- (BOOL)createNewFrameNamed:(NSString *)frameName
+    withURL:(NSURL *)URL renderPart:(khtml::RenderPart *)renderPart
+    allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height;
+
+- (void)openNewWindowWithURL:(NSURL *)URL;
+
+- (KHTMLView *)widget;
+
+- (IFWebDataSource *)dataSource; // temporary -- here only until I finish KWQKloader.mm
+
+@end

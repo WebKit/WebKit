@@ -27,8 +27,6 @@
 
 #include <kwqdebug.h>
 
-#include <external.h>
-
 /*
     This class implementation does NOT actually emulate the Qt QScrollView.
     Instead our WebPageView, like any other NSView can be set as the document
@@ -41,6 +39,25 @@
 QScrollView::QScrollView(QWidget *parent, const char *name, int f)
     : QFrame(parent)
 {
+}
+
+static NSView *getDocumentView(NSView *view)
+{
+    if ([view respondsToSelector:@selector(documentView)]) {
+        id untypedView = view;
+        view = [untypedView documentView];
+    }
+    return view;
+}
+
+static NSView *getDocumentView(const QWidget *widget)
+{
+    return getDocumentView(widget->getView());
+}
+
+NSView *QScrollView::getDocumentView() const
+{
+    return ::getDocumentView(this);
 }
 
 QWidget* QScrollView::viewport() const
@@ -63,7 +80,7 @@ int QScrollView::visibleWidth() const
 #else
     NSScrollView *view = (NSScrollView *)getView();
     int visibleWidth;
-    if (view != nil && [view isKindOfClass: [NSScrollView class]]){
+    if (view != nil && [view isKindOfClass:[NSScrollView class]]){
         visibleWidth = (int)[view documentVisibleRect].size.width;
     }
     else
@@ -92,7 +109,7 @@ int QScrollView::visibleHeight() const
     NSScrollView *view = (NSScrollView *)getView();
     int visibleHeight;
     
-    if (view != nil && [view isKindOfClass: [NSScrollView class]]){
+    if (view != nil && [view isKindOfClass:[NSScrollView class]]){
         visibleHeight = (int)[view documentVisibleRect].size.height;
     }
     else
@@ -107,25 +124,19 @@ int QScrollView::visibleHeight() const
 
 int QScrollView::contentsWidth() const
 {
-    NSScrollView *view = (NSScrollView *)getView();
-    if ([view respondsToSelector: @selector(documentView)])
-        return (int)[[view documentView] bounds].size.width;
-    return (int)[view bounds].size.width;
+    return (int)[getDocumentView() bounds].size.width;
 }
 
 
 int QScrollView::contentsHeight() const
 {
-    NSScrollView *view = (NSScrollView *)getView();
-    if ([view respondsToSelector: @selector(documentView)])
-        return (int)[[view documentView] bounds].size.height;
-    return (int)[view bounds].size.height;
+    return (int)[getDocumentView() bounds].size.height;
 }
 
 int QScrollView::contentsX() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    if ([view respondsToSelector: @selector(documentView)])
+    if ([view respondsToSelector:@selector(documentView)])
         return (int)[[view documentView] bounds].origin.x;
     return 0;
 }
@@ -133,7 +144,7 @@ int QScrollView::contentsX() const
 int QScrollView::contentsY() const
 {
     NSScrollView *view = (NSScrollView *)getView();
-    if ([view respondsToSelector: @selector(documentView)])
+    if ([view respondsToSelector:@selector(documentView)])
         return (int)[[view documentView] bounds].origin.y;
     return 0;
 }
@@ -155,17 +166,11 @@ void QScrollView::scrollBy(int dx, int dy)
 
 void QScrollView::setContentsPos(int x, int y)
 {
-    NSView *view = getView();    
-    if ([view isKindOfClass: [NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)view;
-        view = [scrollView documentView];
-    }
-
     if (x < 0)
         x = 0;
     if (y < 0)
         y = 0;
-    [view scrollPoint: NSMakePoint(x,y)];
+    [getDocumentView() scrollPoint: NSMakePoint(x,y)];
 }
 
 void QScrollView::setVScrollBarMode(ScrollBarMode)
@@ -185,16 +190,8 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     if (child->x() != x || child->y() != y)
         child->move(x, y);
         
-    thisView = getView();
-    if ([thisView isKindOfClass: [NSScrollView class]]) {
-        NSScrollView *scrollView = thisView;
-        thisView = [scrollView documentView];
-    }
-
-    subView = child->getView();
-    if ([subView isKindOfClass: [NSScrollView class]]) {
-        subView = [subView superview];
-    }
+    thisView = getDocumentView();
+    subView = ::getDocumentView(child);
 
     if ([subView superview] == thisView) {
         return;
@@ -214,21 +211,20 @@ void QScrollView::removeChild(QWidget* child)
 void QScrollView::resizeContents(int w, int h)
 {
     KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", getView(), [[[getView() class] className] cString], w, h);
-    if ([getView() isKindOfClass: [NSScrollView class]]){
-        NSScrollView *scrollView = (NSScrollView *)getView();
-        IFWebView *wview = [scrollView documentView];
+    if ([getView() isKindOfClass:[NSScrollView class]]){
+        NSView *wview = getDocumentView();
         
         KWQDEBUGLEVEL (KWQ_LOG_FRAMES, "%p %s at w %d h %d\n", wview, [[[wview class] className] cString], w, h);
         //w -= (int)[NSScroller scrollerWidth];
         //w -= 1;
         if (w < 0)
             w = 0;
-        // Why isn't there a scollerHeight?
+        // Why isn't there a scrollerHeight?
         //h -= (int)[NSScroller scrollerWidth];
         //h -= 1;
         if (h < 0)
             h = 0;
-        [wview setFrameSize: NSMakeSize (w,h)];
+        [wview setFrameSize:NSMakeSize(w,h)];
     }
     else {
         resize (w, h);
@@ -260,13 +256,7 @@ QPoint QScrollView::contentsToViewport(const QPoint &p)
 
 void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 {
-    NSView *view = getView();    
-    if ([view isKindOfClass: [NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)view;
-        view = [scrollView documentView];
-    }
-        
-    NSPoint np = [view convertPoint: NSMakePoint (x, y) toView: nil];
+    NSPoint np = [getDocumentView() convertPoint: NSMakePoint (x, y) toView: nil];
     
     vx = (int)np.x;
     vy = (int)np.y;
@@ -274,13 +264,7 @@ void QScrollView::contentsToViewport(int x, int y, int& vx, int& vy)
 
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
-    NSView *view = getView();    
-    if ([view isKindOfClass: [NSScrollView class]]) {
-        NSScrollView *scrollView = (NSScrollView *)view;
-        view = [scrollView documentView];
-    }
-        
-    NSPoint np = [view convertPoint: NSMakePoint (vx, vy) fromView: nil];
+    NSPoint np = [getDocumentView() convertPoint: NSMakePoint (vx, vy) fromView: nil];
     
     x = (int)np.x;
     y = (int)np.y;

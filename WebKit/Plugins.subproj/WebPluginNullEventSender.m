@@ -12,16 +12,21 @@
 
 -(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)handleEventFunction window:(NSWindow *)theWindow
 {
+    [super init];
+    
     instance = pluginInstance;
     NPP_HandleEvent = handleEventFunction;
     shouldStop = FALSE;
     window = [theWindow retain];
+    
     return self;
 }
 
 -(void) dealloc
 {
     [window release];
+    
+    [super dealloc];
 }
 
 -(void)sendNullEvents

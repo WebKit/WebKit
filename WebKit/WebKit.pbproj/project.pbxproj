@@ -252,7 +252,9 @@
 				35081DAF02B6D4F50ACA2ACA,
 				F508946B02B71D59018A9CD4,
 				F5FBAB9102B88CBF01FF6074,
+				F5AFB46002B94DC8018635CA,
 				F5E0A77002B8FEE401C1A525,
+				F5A55DC802BAA2E8018635CC,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -327,6 +329,7 @@
 				35081DAD02B6D4E40ACA2ACA,
 				F508946C02B71D59018A9CD4,
 				F5FBAB9202B88CBF01FF6074,
+				F5AFB46102B94DC8018635CA,
 				F5E0A77102B8FEE401C1A525,
 			);
 			isa = PBXSourcesBuildPhase;
@@ -1131,6 +1134,7 @@
 				F5143A370221DCCE01A80181,
 				9CF0E249021361B00ECA16EA,
 				9CF0E24A021361B00ECA16EA,
+				F5A55DC702BAA2E8018635CC,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -1599,6 +1603,18 @@
 			settings = {
 			};
 		};
+		F5A55DC702BAA2E8018635CC = {
+			isa = PBXFileReference;
+			name = IFHTMLRepresentationPrivate.h;
+			path = WebView.subproj/IFHTMLRepresentationPrivate.h;
+			refType = 4;
+		};
+		F5A55DC802BAA2E8018635CC = {
+			fileRef = F5A55DC702BAA2E8018635CC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5A672B70263866E01000102 = {
 			isa = PBXFileReference;
 			name = IFPluginNullEventSender.h;
@@ -1659,6 +1675,28 @@
 			settings = {
 			};
 		};
+		F5AFB45E02B94DC8018635CA = {
+			isa = PBXFileReference;
+			path = IFWebCoreBridge.h;
+			refType = 4;
+		};
+		F5AFB45F02B94DC8018635CA = {
+			isa = PBXFileReference;
+			path = IFWebCoreBridge.mm;
+			refType = 4;
+		};
+		F5AFB46002B94DC8018635CA = {
+			fileRef = F5AFB45E02B94DC8018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5AFB46102B94DC8018635CA = {
+			fileRef = F5AFB45F02B94DC8018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5B36B400281DE87018635CB = {
 			children = (
 				F5B36B450281DF9C018635CB,
@@ -1671,6 +1709,8 @@
 				9CE1F8A102A5C6F30ECA2ACD,
 				9CE1F8A202A5C6F30ECA2ACD,
 				9CE1F8A302A5C6F30ECA2ACD,
+				F5AFB45E02B94DC8018635CA,
+				F5AFB45F02B94DC8018635CA,
 			);
 			isa = PBXGroup;
 			name = "WebCore Support";

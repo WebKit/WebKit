@@ -5,40 +5,51 @@
 
 #import <WebKit/IFHTMLRepresentation.h>
 #import <WebKit/IFWebDataSource.h>
+#import <WebKit/IFWebCoreBridge.h>
 #import <KWQKHTMLPartImpl.h>
+
+@interface IFHTMLRepresentationPrivate : NSObject
+{
+    IFWebCoreBridge *bridge;
+}
+@end
+
+@implementation IFHTMLRepresentationPrivate
+@end
 
 @implementation IFHTMLRepresentation
 
 - init
 {
-    part = new KHTMLPart();
-    isFirstChunk = YES;
+    [super init];
+    
+    _private = [[IFHTMLRepresentationPrivate alloc] init];
+    _private->bridge = [[IFWebCoreBridge alloc] init];
     
     return self;
 }
 
 - (void)dealloc
 {
-    part->deref();
+    [_private->bridge release];
+    [_private release];
+
+    [super dealloc];
+}
+
+- (IFWebCoreBridge *)_bridge
+{
+    return _private->bridge;
 }
 
 - (KHTMLPart *)part
 {
-    return part;
+    return [_private->bridge KHTMLPart];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)dataSource
 {
-    if(isFirstChunk){
-        // FIXME [rjw]:  Do any work need in the kde engine.  This should be removed.
-        // We should move any code needed out of KWQ.
-        part->openURL([[[dataSource inputURL] absoluteString] cString]);
-        part->impl->setDataSource(dataSource);
-    }
-    
-    part->impl->slotData([dataSource encoding], (const char *)[data bytes], [data length], NO);
-    
-    isFirstChunk = NO;
+    [_private->bridge receivedData:data withDataSource:dataSource];
 }
 
 - (void)receivedError:(IFError *)error withDataSource:(IFWebDataSource *)dataSource

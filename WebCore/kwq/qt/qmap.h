@@ -31,7 +31,7 @@
 #include <KWQMapImpl.h>
 
 #ifdef _KWQ_IOSTREAM_
-#include <iostream>
+#include <ostream>
 #endif
 
 template <class K, class V> class QMap;

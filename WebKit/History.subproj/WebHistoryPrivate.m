@@ -429,7 +429,7 @@
     start = CFAbsoluteTimeGetCurrent();
     result = [self _loadHistoryGuts: &numberOfItems];
 
-    if (result == YES) {
+    if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds\n",
                            numberOfItems, DEBUG_OBJECT([self file]), duration);
@@ -469,7 +469,7 @@
     start = CFAbsoluteTimeGetCurrent();
     result = [self _saveHistoryGuts: &numberOfItems];
 
-    if (result == YES) {
+    if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         WEBKITDEBUGLEVEL (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds\n",
                            numberOfItems, DEBUG_OBJECT([self file]), duration);

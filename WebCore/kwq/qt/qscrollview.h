@@ -28,6 +28,12 @@
 
 #include <qframe.h>
 
+#ifdef __OBJC__
+@class NSView;
+#else
+class NSView;
+#endif
+
 class QScrollView : public QFrame {
 public:
     enum ScrollBarMode { AlwaysOff, AlwaysOn, Auto };
@@ -72,6 +78,8 @@ public:
 
     void ensureVisible(int,int);
     void ensureVisible(int,int,int,int);
+    
+    NSView *getDocumentView() const;
 };
 
 #endif

@@ -24,16 +24,6 @@
 
 @implementation IFWebDataSource
 
-static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags) 
-{
-    return [[[IFWebDataSource alloc] initWithURL:(NSURL *)url attributes:(NSDictionary *)attributes flags:flags] autorelease];
-}
-
-+ (void)load
-{
-    WCSetIFWebDataSourceMakeFunc(IFWebDataSourceMake);
-}
-
 - (void)_commonInitialization
 {
     _private = [[IFWebDataSourcePrivate alloc] init];
@@ -161,9 +151,9 @@ static id IFWebDataSourceMake(void *url, void *attributes, unsigned flags)
 
 - (IFWebController *)controller
 {
-    // All data sources used in a document share the same
-    // controller.  A single document may have many datasource corresponding to
-    // frame or iframes.
+    // All data sources used in a document share the same controller.
+    // A single document may have many data sources corresponding to
+    // frames or iframes.
     if (_private->parent != nil)
         return [_private->parent controller];
     return _private->controller;

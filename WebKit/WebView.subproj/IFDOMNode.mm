@@ -47,6 +47,8 @@
     [value release];
     [source release];
     [children release];
+    
+    [super dealloc];
 }
 
 - (NSArray *)children

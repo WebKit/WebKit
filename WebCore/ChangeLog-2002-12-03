@@ -1,3 +1,70 @@
+2002-06-14  Darin Adler  <darin@apple.com>
+
+	Worked on eliminating calls to WebKit. About 3/4 done.
+
+	* WebCore.exp: Export new WebCoreBridge class, fewer other things.
+
+	* WebCorePrefix.h: #include <ostream> in debug builds; we couldn't
+	before because of a PFE bug that has since been fixed (2920556).
+
+	* khtml/html/html_objectimpl.cpp: (HTMLObjectElementImpl::attach):
+	Add a comment explaining our latest change here.
+
+	* khtml/khtml_part.cpp: (KHTMLPart::~KHTMLPart): Fix storage leak
+	by deleting m_hostExtension.
+
+	* khtml/misc/loader.h: Set type properly on client member so we
+	don't have to do so much casting.
+
+	* kwq/KWQKHTMLPartImpl.h: Add getBridge and setBridge, remove setDataSource.
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::KWQKHTMLPartImpl): Eliminate m_dataSource.
+	(KWQKHTMLPartImpl::openURLInFrame): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::urlSelected): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::requestFrame): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::requestObject): Move WebCoreViewFactory code
+	here; we don't need an entire WCPluginWidget file just for this
+	function.
+	(KWQKHTMLPartImpl::submitForm): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::frameExists): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::frames): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::setTitle): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::getDataSource): Use WebCoreBridge.
+	(KWQKHTMLPartImpl::parentPart): Use WebCoreBridge.
+
+	* kwq/KWQKHTMLPartBrowserExtension.mm:
+	(KHTMLPartBrowserExtension::createNewWindow): Use WebCoreBridge.
+
+	* kwq/KWQKloader.mm: Move the part of external.h that we still use in
+	here, with the expectation of eliminating it soon. Also renamed
+	URLLoadClient to KWQURLLoadClient so we don't hog namespace.
+
+	* kwq/qt/qscrollview.h:
+	* kwq/KWQScrollView.mm: Used helper functions to do the "documentView"
+	selector thing more consistently.
+
+	* kwq/KWQWidget.mm: Get interface for changing the cursor from
+	WebCoreViewFactory.h instead of from external.h.
+
+	* kwq/WebCoreViewFactory.h:
+	* kwq/Makefile.am: Remove WCPluginWidget.mm, add WebCoreBridge.mm.
+	* kwq/WCPluginWidget.h: Removed.
+	* kwq/WCPluginWidget.mm: Removed.
+	* kwq/WebCoreBridge.h: Added.
+	* kwq/WebCoreBridge.mm: Added.
+
+	* kwq/qt/qarray.h: Use <ostream> instead of <iostream>.
+	* kwq/qt/qcstring.h: Remove <iostream> include since we include <qarray.h>.
+	* kwq/qt/qdatetime.h: Replace unconditional <iostream> include with a
+	conditional <ostream> include. Also made streaming operators conditional.
+	* kwq/qt/qlist.h: Use <ostream> instead of <iostream>.
+	* kwq/qt/qmap.h: Use <ostream> instead of <iostream>.
+	* kwq/qt/qpoint.h: Use <iosfwd> instead of <iostream>.
+	* kwq/qt/qsize.h: Use <iosfwd> instead of <iostream>.
+	* kwq/qt/qvaluelist.h: Use <ostream> instead of <iostream>.
+	* kwq/qt/qvector.h: Replace unconditional <iostream> include with a
+	conditional <ostream> include. Also made streaming operators conditional.
+
 2002-06-14  Richard Williamson  <rjw@apple.com>
 
     Name change view -> webView.
