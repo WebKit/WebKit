@@ -1,3 +1,7 @@
+2002-11-15  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebFramePrivate.m: Removed a bunch of tabs and fixed indenting.
+
 2002-11-15  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3102016 - REGRESSION: Command-clicking on a link can open _two_ windows.

@@ -1,6 +1,6 @@
-/*	
+/*
     WebFramePrivate.m
-	    
+    
     Copyright 2001, 2002, Apple Computer, Inc. All rights reserved.
 */
 
@@ -346,18 +346,18 @@ static const char * const stateNames[] = {
         }
           
         [documentView setNeedsDisplay: YES];
-	  }
-	 else {
-	 if ([self controller])
-	  LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
-	    }
+    }
+    else {
+        if ([self controller])
+            LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+    }
 }
 
 
 - (void)_transitionToLayoutAcceptable
 {
     switch ([self _state]) {
-    	case WebFrameStateCommittedPage:
+        case WebFrameStateCommittedPage:
         {
             [self _setState: WebFrameStateLayoutAcceptable];
                     
@@ -395,7 +395,7 @@ static const char * const stateNames[] = {
         
         default:
         {
-	    ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
         }
     }
 }
@@ -409,7 +409,7 @@ static const char * const stateNames[] = {
     [_private->pluginController destroyAllPlugins];
         
     switch ([self _state]) {
-    	case WebFrameStateProvisional:
+        case WebFrameStateProvisional:
         {
             WebFrameLoadType loadType = [self _loadType];
             if (loadType == WebFrameLoadTypeForward ||
@@ -487,19 +487,19 @@ static const char * const stateNames[] = {
                 // FIXME Remove this check when dummy ds is removed.  An exception should be thrown
                 // if we're in the WebFrameLoadTypeUninitialized state.
                 default:
-		    ASSERT_NOT_REACHED();
+                    ASSERT_NOT_REACHED();
                 }
             }
 
             
             // Tell the client we've committed this URL.
             ASSERT([[self webView] documentView] != nil);
-	    [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:ds];
+            [[[self controller] locationChangeDelegate] locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.
             if (ptitle) {
                 [entry setTitle:ptitle];
-		[[[self controller] locationChangeDelegate] receivedPageTitle:ptitle forDataSource:ds];
+                [[[self controller] locationChangeDelegate] receivedPageTitle:ptitle forDataSource:ds];
             }
             break;
         }
@@ -509,7 +509,7 @@ static const char * const stateNames[] = {
         case WebFrameStateComplete:
         default:
         {
-	    ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
         }
     }
 }
@@ -551,7 +551,7 @@ static const char * const stateNames[] = {
         // WebCore based on whether the page's contents are dynamic or not.
         [[sv contentView] setCopiesOnScroll:YES];
         [_private->scheduledLayoutTimer fire];
-   	ASSERT(_private->scheduledLayoutTimer == nil);
+        ASSERT(_private->scheduledLayoutTimer == nil);
         [_private setPreviousItem:nil];
     }
 }
@@ -597,13 +597,13 @@ static const char * const stateNames[] = {
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
                 ASSERT(thisDocumentView != nil);
 
-		// FIXME: need to avoid doing this in the non-HTML case or the bridge may assert.
+                // FIXME: need to avoid doing this in the non-HTML case or the bridge may assert.
                 // Should instead make sure the bridge/part is in the proper state even for
-		// non-HTML content, or make a call to the document and let it deal with the bridge.
+                // non-HTML content, or make a call to the document and let it deal with the bridge.
 
                 if ([ds isDocumentHTML]) {
-		    [_private->bridge end];
-		}
+                    [_private->bridge end];
+                }
 
                 // Important to flip the state after we end the load, because client redirects will
                 // come out of those, and we want to treat them as part of the same op from the
@@ -692,7 +692,7 @@ static const char * const stateNames[] = {
         // Yikes!  Serious horkage.
         default:
         {
-	    ASSERT_NOT_REACHED();
+            ASSERT_NOT_REACHED();
         }
     }
 }
@@ -756,10 +756,10 @@ static const char * const stateNames[] = {
             NSString *itemTargetName = [[childItems objectAtIndex:i] target];
             //Search recursive here?
             if (![self _immediateChildFrameNamed:itemTargetName]) {
-                return NO;	// couldn't match the i'th itemTarget
+                return NO; // couldn't match the i'th itemTarget
             }
         }
-        return YES;		// found matches for all itemTargets
+        return YES; // found matches for all itemTargets
     }
 }
 
@@ -817,7 +817,7 @@ static const char * const stateNames[] = {
 
         WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
         [request release];
-	[self _loadDataSource:newDataSource withLoadType:type];
+        [self _loadDataSource:newDataSource withLoadType:type];
         [newDataSource release];
     }
 }
@@ -899,25 +899,25 @@ static const char * const stateNames[] = {
 -(NSDictionary *)_actionInformationForNavigationType:(WebNavigationType)navigationType event:(NSEvent *)event
 {
     if (event != nil) {
-	NSView *topViewInEventWindow = [[event window] contentView];
-	NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
-	
-	ASSERT(viewContainingPoint != nil);
-	ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
-	
-	NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
-	NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
-	
-	return [NSDictionary dictionaryWithObjectsAndKeys:
-				 [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
-			     elementInfo, WebActionElementKey,
-			     [NSNumber numberWithInt:[event type]], WebActionButtonKey,
-			     [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
-			     nil];
+        NSView *topViewInEventWindow = [[event window] contentView];
+        NSView *viewContainingPoint = [topViewInEventWindow hitTest:[topViewInEventWindow convertPoint:[event locationInWindow] fromView:nil]];
+
+        ASSERT(viewContainingPoint != nil);
+        ASSERT([viewContainingPoint isKindOfClass:[WebHTMLView class]]);
+
+        NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
+        NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
+
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,
+            elementInfo, WebActionElementKey,
+            [NSNumber numberWithInt:[event type]], WebActionButtonKey,
+            [NSNumber numberWithInt:[event modifierFlags]], WebActionModifierFlagsKey,
+            nil];
     }
 
     return [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:navigationType]
-			 forKey:WebActionNavigationTypeKey];
+                                       forKey:WebActionNavigationTypeKey];
 }
 
 - (void) _invalidatePendingPolicyDecisionCallingDefaultAction:(BOOL)call
@@ -935,7 +935,7 @@ static const char * const stateNames[] = {
     _private->policySelector = nil;
 
     if (call) {
-	[target performSelector:selector withObject:(id)NO withObject:request];
+        [target performSelector:selector withObject:(id)NO withObject:request];
     }
 
     [request release];
@@ -946,14 +946,14 @@ static const char * const stateNames[] = {
 {
     NSDictionary *action = [dataSource _triggeringAction];
     if (action == nil) {
-	action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil];
-	[dataSource _setTriggeringAction:action];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:nil];
+        [dataSource _setTriggeringAction:action];
     }
 
     // Don't ask more than once for the same request
     if ([request isEqual:[dataSource _lastCheckedRequest]]) {
-	[target performSelector:selector withObject:(id)YES withObject:request];
-	return;
+        [target performSelector:selector withObject:(id)YES withObject:request];
+        return;
     }
 
     [dataSource _setLastCheckedRequest:request];
@@ -967,9 +967,9 @@ static const char * const stateNames[] = {
     _private->listener = [listener retain];
 
     [[[self controller] policyDelegate] decideNavigationPolicyForAction:action
-					                     andRequest:request
-					                        inFrame:self
-					               decisionListener:listener];
+                                                             andRequest:request
+                                                                inFrame:self
+                                                       decisionListener:listener];
     
     [listener release];
 }
@@ -991,45 +991,45 @@ static const char * const stateNames[] = {
 
     switch (policy) {
     case WebPolicyIgnore:
-	break;
+        break;
     case WebPolicyOpenURL:
-	if ([[request URL] isFileURL]) {
-	    if(![[NSWorkspace sharedWorkspace] openFile:[[request URL] path]]){
-		[self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotFindApplicationForFile forURL:[request URL]];
-	    }
-	} else {
-	    if(![[NSWorkspace sharedWorkspace] openURL:[request URL]]){
-		[self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
-	    }
-	}
-	break;
+        if ([[request URL] isFileURL]) {
+            if (![[NSWorkspace sharedWorkspace] openFile:[[request URL] path]]) {
+                [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotFindApplicationForFile forURL:[request URL]];
+            }
+        } else {
+            if (![[NSWorkspace sharedWorkspace] openURL:[request URL]]) {
+                [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotNotFindApplicationForURL forURL:[request URL]];
+            }
+        }
+        break;
     case WebPolicyOpenNewWindow:
-	[[self controller] _openNewWindowWithRequest:request behind:NO];
-	break;
+        [[self controller] _openNewWindowWithRequest:request behind:NO];
+        break;
     case WebPolicyOpenNewWindowBehind:
-	[[self controller] _openNewWindowWithRequest:request behind:YES];
-	break;
+        [[self controller] _openNewWindowWithRequest:request behind:YES];
+        break;
     case WebPolicySave:
-	[[self controller] _downloadURL:[request URL]];
-	break;
+        [[self controller] _downloadURL:[request URL]];
+        break;
     case WebPolicyRevealInFinder:
-	if (![[request URL] isFileURL]) {
-	    [NSException raise:NSInvalidArgumentException
-			 format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
-	} else if (![[NSWorkspace sharedWorkspace] selectFile:[[request URL] path] inFileViewerRootedAtPath:@""]) {
-	    [self _handleUnimplementablePolicy:policy errorCode:WebErrorFinderCannotOpenDirectory forURL:[request URL]];
-	}
-	break;
+        if (![[request URL] isFileURL]) {
+            [NSException raise:NSInvalidArgumentException
+                        format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+        } else if (![[NSWorkspace sharedWorkspace] selectFile:[[request URL] path] inFileViewerRootedAtPath:@""]) {
+            [self _handleUnimplementablePolicy:policy errorCode:WebErrorFinderCannotOpenDirectory forURL:[request URL]];
+        }
+        break;
     case WebPolicyUse:
-	if (![WebResourceHandle canInitWithRequest:request]) {
-	    [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotShowURL forURL:[request URL]];
-	} else {
-	    shouldContinue = YES;
-	}
-	break;
+        if (![WebResourceHandle canInitWithRequest:request]) {
+            [self _handleUnimplementablePolicy:policy errorCode:WebErrorCannotShowURL forURL:[request URL]];
+        } else {
+            shouldContinue = YES;
+        }
+        break;
     default:
-	[NSException raise:NSInvalidArgumentException
-		     format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
+        [NSException raise:NSInvalidArgumentException
+                    format:@"clickPolicyForElement:button:modifierFlags: returned an invalid WebClickPolicy"];
     }
 
     [target performSelector:selector withObject:(id)(unsigned)shouldContinue withObject:request];
@@ -1038,7 +1038,7 @@ static const char * const stateNames[] = {
 -(void)_continueFragmentScrollAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
 {
     if (!shouldContinue) {
-	return;
+        return;
     }
 
     NSURL *URL = [request URL];
@@ -1068,17 +1068,17 @@ static const char * const stateNames[] = {
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     [request setReferrer:[_private->bridge referrer]];
     if (loadType == WebFrameLoadTypeReload) {
-	[request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+        [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
     }
 
     NSDictionary *action = nil;
 
     if (isFormSubmission) {
-	action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeFormSubmitted event:event];
     } else if (event == nil) {
-	action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:event];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeOther event:event];
     } else {
-	action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event];
+        action = [self _actionInformationForNavigationType:WebNavigationTypeLinkClicked event:event];
     }
 
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
@@ -1090,11 +1090,11 @@ static const char * const stateNames[] = {
         // from within a frame is trying to reload the frameset into _top).
 
         WebDataSource *dataSrc = [self dataSource];
-	[dataSrc _setTriggeringAction:action];
+        [dataSrc _setTriggeringAction:action];
 
-	[self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
+        [self _invalidatePendingPolicyDecisionCallingDefaultAction:YES];
 
-	[self _checkNavigationPolicyForRequest:request dataSource:dataSrc andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
+        [self _checkNavigationPolicyForRequest:request dataSource:dataSrc andCall:self withSelector:@selector(_continueFragmentScrollAfterNavigationPolicy:request:)];
     } else {
         WebFrameLoadType previousLoadType = [self _loadType];
         WebDataSource *oldDataSource = [[self dataSource] retain];
@@ -1232,7 +1232,7 @@ static const char * const stateNames[] = {
 {
     WebDataSource *dataSource = [self dataSource];
     if (dataSource == nil) {
-	return;
+        return;
     }
 
     WebResourceRequest *request = [[dataSource request] copy];
@@ -1243,7 +1243,7 @@ static const char * const stateNames[] = {
     [newDataSource _setOverrideEncoding:encoding];
     
     [self _loadDataSource:newDataSource 
-	  withLoadType:WebFrameLoadTypeReloadAllowingStaleData];
+        withLoadType:WebFrameLoadTypeReloadAllowingStaleData];
     
     [newDataSource release];
 }
@@ -1275,7 +1275,7 @@ static const char * const stateNames[] = {
         NSRange ourPathRange = {14, [_private->name length] - 14 - 3};
         [path appendString:[_private->name substringWithRange:ourPathRange]];
     } else {
-        // we have a generated name - just add our simple name to the end
+        // we don't have a generated name - just add our simple name to the end
         if (_private->parent) {
             [_private->parent _addFramePathToString:path];
         }
@@ -1324,8 +1324,8 @@ static const char * const stateNames[] = {
 -(void)_continueLoadRequestAfterNavigationPolicy:(BOOL)shouldContinue request:(WebResourceRequest *)request
 {
     if (!shouldContinue) {
-	[self _setLoadType: WebFrameLoadTypeStandard];
-	[_private setProvisionalDataSource:nil];
+        [self _setLoadType: WebFrameLoadTypeStandard];
+        [_private setProvisionalDataSource:nil];
         return;
     }
     
