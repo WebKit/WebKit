@@ -1,3 +1,11 @@
+2004-12-07  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
+        - fixed <rdar://problem/3908701> REGRESSION: Cursor does not change to "hand" over active links
+
+        * kwq/KWQEvent.mm: (positionForEvent): Add NSMouseMoved to list of events that have mouse location.
+
 2004-12-07  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

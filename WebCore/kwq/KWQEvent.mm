@@ -758,6 +758,7 @@ static QPoint positionForEvent(NSEvent *event)
         case NSOtherMouseDown:
         case NSOtherMouseUp:
         case NSOtherMouseDragged:
+        case NSMouseMoved:
             return QPoint([event locationInWindow]);
         default:
             return QPoint();
