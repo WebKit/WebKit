@@ -757,11 +757,19 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
             case WebFrameLoadTypeInternal:
                 // Add an item to the item tree for this frame
                 ASSERT(![ds _isClientRedirect]);
-                WebHistoryItem *parentItem = [[self parentFrame]->_private currentItem];
-                // The only case where parentItem==nil should be when a parent frame loaded an
-                // empty URL, which doesn't set up a current item in that parent.
-                if (parentItem) {
-                    [parentItem addChildItem:[self _createItem: YES]];
+                WebFrame *parentFrame = [self parentFrame];
+                if (parentFrame) {
+                    WebHistoryItem *parentItem = [parentFrame->_private currentItem];
+                    // The only case where parentItem==nil should be when a parent frame loaded an
+                    // empty URL, which doesn't set up a current item in that parent.
+                    if (parentItem) {
+                        [parentItem addChildItem:[self _createItem: YES]];
+                    }
+                } else {
+                    // See 3556159.  It's not clear if it's valid to be in WebFrameLoadTypeOnLoadEvent
+                    // for a top-level frame, but that was a likely explanation for those crashes,
+                    // so let's guard against it.
+                    ERROR("no parent frame in _transitionToCommitted:, loadType=%d", loadType);
                 }
                 [self _makeDocumentView];
                 break;
