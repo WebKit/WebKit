@@ -1,3 +1,10 @@
+2002-11-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3068112 - extra line breaks when copying from source window
+
+        * Misc.subproj/WebSearchableTextView.m:
+        (-[WebSearchableTextView copy:]): Convert CRLF to LF
+
 2002-11-19  David Hyatt  <hyatt@apple.com>
 
 	Make sure that if the scrollers are shown/hidden that we
