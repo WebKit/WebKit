@@ -1405,33 +1405,13 @@ void HTMLInputElementImpl::attach()
         m_inited = true;
     }
 
-    // make sure we don't inherit a color to the form elements
-    // by adding a non-CSS color property. this his higher
-    // priority than inherited color, but lesser priority than
-    // any color specified by CSS for the elements.
     switch( m_type ) {
-    case TEXT:
-    case PASSWORD:
-#if !APPLE_CHANGES
-        addCSSProperty(CSS_PROP_FONT_FAMILY, CSS_VAL_MONOSPACE);
-#endif
-        /* nobreak */
-    case ISINDEX:
-    case FILE:
-        addCSSProperty(CSS_PROP_COLOR, "text");
-        break;
-    case SUBMIT:
-    case RESET:
-    case BUTTON:
-    case CHECKBOX:
-    case RADIO:
-        addCSSProperty(CSS_PROP_COLOR, "buttontext");
-        // FIXME: There was no break here in the original KHTML. Was that intentional?
-        break;
     case HIDDEN:
     case IMAGE:
         if (!getAttribute(ATTR_WIDTH).isEmpty())
             addCSSLength(CSS_PROP_WIDTH, getAttribute(ATTR_WIDTH));
+        break;
+    default:
         break;
     }
 
@@ -2151,8 +2131,6 @@ RenderObject *HTMLSelectElementImpl::createRenderer(RenderArena *arena, RenderSt
 
 void HTMLSelectElementImpl::attach()
 {
-    addCSSProperty(CSS_PROP_COLOR, "text");
-
     createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
 }
@@ -2677,8 +2655,6 @@ RenderObject *HTMLTextAreaElementImpl::createRenderer(RenderArena *arena, Render
 
 void HTMLTextAreaElementImpl::attach()
 {
-    addCSSProperty(CSS_PROP_COLOR, "text");
-
     createRendererIfNeeded();
     HTMLGenericFormElementImpl::attach();
 }
