@@ -4696,28 +4696,35 @@ void ReplaceSelectionCommand::doApply()
 
     // step 4 : handle trailing newline
     if (m_fragment.hasInterchangeNewline()) {
-        bool insertParagraph = false;
-        if (startBlock == endBlock && !isProbablyBlock(m_lastTopNodeInserted)) {
-            insertParagraph = true;
+        if (!m_lastNodeInserted) {
+            lastPositionToSelect = endingSelection().end().downstream();
         }
         else {
-            // Handle end-of-document case.
-            document()->updateLayout();
-            VisiblePosition pos(Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()), DOWNSTREAM);
-            if (isEndOfDocument(pos))
+            bool insertParagraph = false;
+            if (startBlock == endBlock && !isProbablyBlock(m_lastTopNodeInserted)) {
                 insertParagraph = true;
+            }
+            else {
+                // Handle end-of-document case.
+                document()->updateLayout();
+                VisiblePosition pos(Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()), DOWNSTREAM);
+                if (isEndOfDocument(pos))
+                    insertParagraph = true;
+            }
+            if (insertParagraph) {
+                setEndingSelection(insertionPos, DOWNSTREAM);
+                insertParagraphSeparator();
+                updateNodesInserted(endingSelection().end().downstream().node());
+                // Select up to the paragraph separator that was added.
+                lastPositionToSelect = endingSelection().end().downstream();
+            } 
+            else {
+                // Select up to the preexising paragraph separator.
+                lastPositionToSelect = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()).downstream();
+            }
         }
-        if (insertParagraph) {
-            setEndingSelection(insertionPos, DOWNSTREAM);
-            insertParagraphSeparator();
-            updateNodesInserted(endingSelection().end().downstream().node());
-            // Select up to the paragraph separator that was added.
-            lastPositionToSelect = endingSelection().end().downstream();
-        } else {
-            // Select up to the preexising paragraph separator.
-            lastPositionToSelect = Position(m_lastNodeInserted, m_lastNodeInserted->caretMaxOffset()).downstream();
-        }
-    } else {
+    } 
+    else {
         if (m_lastNodeInserted && m_lastNodeInserted->id() == ID_BR && !document()->inStrictMode()) {
             document()->updateLayout();
             VisiblePosition pos(Position(m_lastNodeInserted, 0), DOWNSTREAM);
@@ -4788,47 +4795,55 @@ void ReplaceSelectionCommand::doApply()
 
 void ReplaceSelectionCommand::completeHTMLReplacement(const Position &lastPositionToSelect)
 {
-    if (!m_firstNodeInserted || !m_firstNodeInserted->inDocument() ||
-        !m_lastNodeInserted || !m_lastNodeInserted->inDocument())
+    Position start;
+    Position end;
+
+    if (m_firstNodeInserted && m_firstNodeInserted->inDocument() &&
+        m_lastNodeInserted && m_lastNodeInserted->inDocument()) {
+
+        // Find the last leaf.
+        NodeImpl *lastLeaf = m_lastNodeInserted;
+        while (1) {
+            NodeImpl *nextChild = lastLeaf->lastChild();
+            if (!nextChild)
+                break;
+            lastLeaf = nextChild;
+        }
+    
+        // Find the first leaf.
+        NodeImpl *firstLeaf = m_firstNodeInserted;
+        while (1) {
+            NodeImpl *nextChild = firstLeaf->firstChild();
+            if (!nextChild)
+                break;
+            firstLeaf = nextChild;
+        }
+        
+        // Call updateLayout so caretMinOffset and caretMaxOffset return correct values.
+        document()->updateLayout();
+        start = Position(firstLeaf, firstLeaf->caretMinOffset());
+        end = Position(lastLeaf, lastLeaf->caretMaxOffset());
+
+        if (m_matchStyle) {
+            assert(m_insertionStyle);
+            setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
+            applyStyle(m_insertionStyle);
+        }    
+        
+        if (lastPositionToSelect.isNotNull())
+            end = lastPositionToSelect;
+    }
+    else if (lastPositionToSelect.isNotNull()) {
+        start = end = lastPositionToSelect;
+    }
+    else {
         return;
-
-    // Find the last leaf.
-    NodeImpl *lastLeaf = m_lastNodeInserted;
-    while (1) {
-        NodeImpl *nextChild = lastLeaf->lastChild();
-        if (!nextChild)
-            break;
-        lastLeaf = nextChild;
-    }
-
-    // Find the first leaf.
-    NodeImpl *firstLeaf = m_firstNodeInserted;
-    while (1) {
-        NodeImpl *nextChild = firstLeaf->firstChild();
-        if (!nextChild)
-            break;
-        firstLeaf = nextChild;
     }
     
-    // Call updateLayout so caretMinOffset and caretMaxOffset return correct values.
-    document()->updateLayout();
-    Position start(firstLeaf, firstLeaf->caretMinOffset());
-    Position end(lastLeaf, lastLeaf->caretMaxOffset());
-    
-    if (m_matchStyle) {
-        assert(m_insertionStyle);
+    if (m_selectReplacement)
         setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
-        applyStyle(m_insertionStyle);
-    }    
-    
-    if (lastPositionToSelect.isNotNull())
-        end = lastPositionToSelect;
-    
-    if (m_selectReplacement) {
-        setEndingSelection(Selection(start, SEL_DEFAULT_AFFINITY, end, SEL_DEFAULT_AFFINITY));
-    } else {
+    else
         setEndingSelection(end, SEL_DEFAULT_AFFINITY);
-    }
     
     rebalanceWhitespace();
 }

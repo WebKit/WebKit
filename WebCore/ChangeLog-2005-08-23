@@ -1,3 +1,27 @@
+2005-03-05  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/4038267> REGRESSION (Mail): Crash copying and pasting end of paragraph
+
+        Code to handle content that has a "logical" newline at the end of the pasted content, and the code
+        to adjust the selection at the end of the paste operation made an assumption that at least one
+        node had been inserted by the paste command. This is not necessarily true in the case where the sole content
+        in the pasted content is one of these "logical" newlines. Adjust some code around so that we don't deref
+        null, but still adjust the selection correctly for this case. In each of the two functions below, some
+        null checks have been added, and some code has been rearranged a little bit to continue on through
+        the end of completeHTMLReplacement, even if no nodes have been inserted. The patch looks bigger and more
+        complicated than the conceptual change.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply)
+        (khtml::ReplaceSelectionCommand::completeHTMLReplacement)
+        
+        * layout-tests/editing/pasteboard/paste-4038267-fix-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-4038267-fix.html: Added.
+
 2005-03-05  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
