@@ -34,6 +34,9 @@
 #include "qstyle.h"
 #include "qfont.h"
 
+// FIXME: include to workaround bug in khtml/rendering/render_frames.cpp
+#include "qcursor.h"
+
 class QWidget : public QObject, public QPaintDevice {
 public:
     // FIXME: do any of these methods need to be virtual?
