@@ -2,6 +2,18 @@
 
         Reviewed by Hyatt
 
+        Changes to the selection state for these tests as a result of my previous
+        checkin. The changes are minor to a couple of offsets. I looked at the
+        changes and approve them.
+
+        * layout-tests/editing/deleting/delete-block-contents-001-expected.txt
+        * layout-tests/editing/deleting/delete-block-contents-002-expected.txt
+        * layout-tests/editing/deleting/delete-block-contents-003-expected.txt
+
+2004-06-08  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         Fix for this bug:
 
         <rdar://problem/3654841>: "Hitting delete key with start of block selected 
