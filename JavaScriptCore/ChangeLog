@@ -1,3 +1,27 @@
+2004-04-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	Optimize prepend using the shared substring optimization. Also,
+	limit the applicability of shared append and shared prepend. If
+	you overdo it, it does more harm than good, because you create a
+	bunch of strings that are disqualified from future shared
+	append/prepend, for not much immediate savings in allocate/copy
+	expense.
+	
+        * kjs/ustring.cpp:
+        (KJS::):
+        (KJS::UString::Rep::create):
+        (KJS::UString::expandedSize):
+        (KJS::UString::usedPreCapacity):
+        (KJS::UString::expandCapacity):
+        (KJS::UString::expandPreCapacity):
+        (KJS::UString::UString):
+        (KJS::UString::append):
+        (KJS::UString::operator=):
+        * kjs/ustring.h:
+        (KJS::UString::Rep::data):
+
 2004-04-16  Maciej Stachowiak  <mjs@apple.com>
         Reviewed by Richard.
 

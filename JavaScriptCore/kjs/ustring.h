@@ -209,7 +209,7 @@ namespace KJS {
       static Rep *create(Rep *base, int offset, int length);
       void destroy();
       
-      UChar *data() const { return baseString ? (baseString->buf + offset) : (buf + offset); }
+      UChar *data() const { return baseString ? (baseString->buf + baseString->preCapacity + offset) : (buf + preCapacity + offset); }
       int size() const { return len; }
       
       unsigned hash() const { if (_hash == 0) _hash = computeHash(data(), len); return _hash; }
@@ -231,6 +231,8 @@ namespace KJS {
       UChar *buf;
       int usedCapacity;
       int capacity;
+      int usedPreCapacity;
+      int preCapacity;
       
       static Rep null;
       static Rep empty;
@@ -454,9 +456,11 @@ namespace KJS {
     void attach(Rep *r);
     void detach();
     void release();
-    int expandedSize(int size) const;
+    int expandedSize(int size, int otherSize) const;
     int usedCapacity() const;
+    int usedPreCapacity() const;
     void expandCapacity(int requiredLength);
+    void expandPreCapacity(int requiredPreCap);
 
     Rep *rep;
   };
