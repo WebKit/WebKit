@@ -1959,14 +1959,11 @@ short RenderObject::getVerticalPosition( bool firstLine ) const
     } else if ( va == LENGTH ) {
         vpos = -style()->verticalAlignLength().width( lineHeight( firstLine ) );
     } else  {
-        bool checkParent = parent()->isInline() && !parent()->isInlineBlockOrInlineTable();
+        bool checkParent = parent()->isInline() && !parent()->isInlineBlockOrInlineTable() && !parent()->style()->verticalAlign() == TOP && !parent()->style()->verticalAlign() == BOTTOM;
         vpos = checkParent ? parent()->verticalPositionHint( firstLine ) : 0;
         // don't allow elements nested inside text-top to have a different valignment.
         if ( va == BASELINE )
             return vpos;
-
-    //     if ( vpos == PositionTop )
-//                 vpos = 0;
 
         const QFont &f = parent()->font( firstLine );
         int fontsize = f.pixelSize();

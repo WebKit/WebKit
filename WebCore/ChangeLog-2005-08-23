@@ -1,3 +1,13 @@
+2004-12-16  David Hyatt  <hyatt@apple.com>
+
+	Fix a bug where vertical-align values that depended on their parent's value went crazy if the parent was
+	vertical-align top or bottom.  The bug is 3771007, bankofamerica's ebills page.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::getVerticalPosition):
+
 2004-12-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
