@@ -1,3 +1,22 @@
+2003-11-14  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Ken.
+
+	- fixed 3471925 - getting and setting cssText not implemented
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSStyleDeclarationImpl::cssText): Implemented by gathering text of all
+	properties, separated with semicolons.
+        (CSSStyleDeclarationImpl::setCssText): Implemented by clearing all existing
+	properties and invoking css parser.
+        (CSSValueListImpl::cssText): Implemented.
+        (FontValueImpl::cssText): Implemented.
+        (ShadowValueImpl::cssText): Implemented.
+        (CSSProperty::cssText): Implemented.
+        * khtml/css/css_valueimpl.h: Declared new methods; made
+	CSSValueImpl::cssText() pure virtual; removed
+	CSSValueImpl::setCssText().
+
 2003-11-14  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
