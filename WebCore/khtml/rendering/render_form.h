@@ -142,6 +142,7 @@ public:
     QCheckBox *widget() const { return static_cast<QCheckBox*>(m_widget); }
 #ifdef APPLE_CHANGES
     void performAction(QObject::Actions action);
+    short baselinePosition( bool f ) const;
 #endif /* APPLE_CHANGES */
 
 public slots:
@@ -160,6 +161,10 @@ public:
 
     virtual void calcMinMaxWidth();
     virtual void updateFromElement();
+
+#ifdef APPLE_CHANGES
+    short baselinePosition( bool f ) const;
+#endif
 
     QRadioButton *widget() const { return static_cast<QRadioButton*>(m_widget); }
 

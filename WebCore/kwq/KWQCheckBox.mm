@@ -37,6 +37,9 @@ QCheckBox::QCheckBox(QWidget *w) : QButton (w)
     [button setButtonType: NSSwitchButton];
     [button setAction: @selector(stateChanged:)];
     setView (button);
+    
+    // Use the small control size.
+    [[button cell] setControlSize: NSSmallControlSize];
 }
 
 

@@ -31,6 +31,10 @@ QRadioButton::QRadioButton(QWidget *w) : QButton(w)
 {
     KWQNSButton *button = (KWQNSButton *)getView();
     [button setButtonType: NSRadioButton];
+    
+    // Use the small control size.
+    [[button cell] setControlSize: NSSmallControlSize];
+    
     [button sizeToFit];
 }
 

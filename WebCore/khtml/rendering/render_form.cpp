@@ -227,6 +227,13 @@ RenderCheckBox::RenderCheckBox(HTMLInputElementImpl *element)
     connect(b, SIGNAL(clicked()), this, SLOT(slotClicked()));
 }
 
+#ifdef APPLE_CHANGES
+// Override to deal with our widget.
+short RenderCheckBox::baselinePosition( bool f ) const
+{
+    return RenderWidget::baselinePosition( f ) - 9;
+}
+#endif
 
 void RenderCheckBox::calcMinMaxWidth()
 {
@@ -276,6 +283,14 @@ RenderRadioButton::RenderRadioButton(HTMLInputElementImpl *element)
     setQWidget(b);
     connect(b, SIGNAL(clicked()), this, SLOT(slotClicked()));
 }
+
+#ifdef APPLE_CHANGES
+// Override to deal with our widget.
+short RenderRadioButton::baselinePosition( bool f ) const
+{
+    return RenderWidget::baselinePosition( f ) - 10;
+}
+#endif
 
 void RenderRadioButton::updateFromElement()
 {
