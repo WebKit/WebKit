@@ -1,3 +1,13 @@
+2002-10-11  Darin Adler  <darin@apple.com>
+
+	Apply a simplified technique I learned while working on the Favorites button
+	class in the browser code.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]): Use the NSViewFocusDidChangeNotification
+	to track the plugin rectangles instead of the NSViewFrameDidChangeNotification
+	and NSViewBoundsDidChangeNotification on all the superviews.
+
 2002-10-11  John Sullivan  <sullivan@apple.com>
 
         * Resources/url_icon.tiff: new generic URL icon -- no more @!
