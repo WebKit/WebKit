@@ -1,3 +1,31 @@
+2002-08-08  Richard Williamson (Home)  <rjw@apple.com>
+
+        Changes to coalesce all drawing calls of the same text
+        style and color into one call to CG.  Significantly
+        improves drawing time.  My tests should about 7-8% on 
+        ALL pages.  Disabled the code for now until I can verify
+        on speed improvements on Ken's test rig.
+        
+        * WebCoreSupport.subproj/WebGlyphBuffer.h: Added.
+        * WebCoreSupport.subproj/WebGlyphBuffer.m: Added.
+        (-[WebGlyphBuffer initWithFont:color:]):
+        (-[WebGlyphBuffer font]):
+        (-[WebGlyphBuffer color]):
+        (-[WebGlyphBuffer reset]):
+        (-[WebGlyphBuffer dealloc]):
+        (-[WebGlyphBuffer drawInView:]):
+        (-[WebGlyphBuffer addGlyphs:advances:count:at::]):
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer drawGlyphs:numGlyphs:fromGlyphPosition:toGlyphPosition:atPoint:withTextColor:backgroundColor:]):
+        * WebCoreSupport.subproj/WebTextRendererFactory.h:
+        * WebCoreSupport.subproj/WebTextRendererFactory.m:
+        (-[WebTextRendererFactory coalesceTextDrawing]):
+        (-[WebTextRendererFactory startCoalesceTextDrawing]):
+        (-[WebTextRendererFactory endCoalesceTextDrawing]):
+        (-[WebTextRendererFactory glyphBufferForFont:andColor:]):
+        (-[WebTextRendererFactory dealloc]):
+        * WebKit.pbproj/project.pbxproj:
+
 2002-08-07  Maciej Stachowiak  <mjs@apple.com>
 
 	WebKit work for:

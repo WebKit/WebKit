@@ -40,6 +40,7 @@
 #import <csshelper.h>
 #import <KWQDOMNode.h>
 #import <WebCoreImageRenderer.h>
+#import <WebCoreTextRendererFactory.h>
 #import <WebFoundation/WebNSURLExtras.h>
 #import <KWQCharsets.h>
 
@@ -192,9 +193,18 @@ using khtml::RenderPart;
     [NSBezierPath fillRect:[part->impl->getView()->getView() visibleRect]];
 #endif
 
+#ifdef DRAW_FAST_TEXT
+    NSView *focusView = [NSView focusView];
+    if (focusView)
+        [[WebCoreTextRendererFactory sharedFactory] startCoalesceTextDrawing];
+#endif
     if (renderer) {
         renderer->print(p, (int)rect.origin.x, (int)rect.origin.y, (int)rect.size.width, (int)rect.size.height, 0, 0);
     }
+#ifdef DRAW_FAST_TEXT
+    if (focusView)
+        [[WebCoreTextRendererFactory sharedFactory] endCoalesceTextDrawing];
+#endif
 }
 
 - (void)drawRect:(NSRect)rect

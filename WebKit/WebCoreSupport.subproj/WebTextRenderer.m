@@ -1,7 +1,6 @@
 /*	
-        WebTextRenderer.m
-	    
-	    Copyright 2002, Apple, Inc. All rights reserved.
+    WebTextRenderer.m	    
+    Copyright 2002, Apple, Inc. All rights reserved.
 */
 
 #import "WebTextRenderer.h"
@@ -11,6 +10,7 @@
 #import <ApplicationServices/ApplicationServices.h>
 #import <CoreGraphics/CoreGraphicsPrivate.h>
 
+#import <WebKit/WebGlyphBuffer.h>
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebKitDebug.h>
 
@@ -452,15 +452,26 @@ static unsigned int findLengthOfCharacterCluster(const UniChar *characters, unsi
         [NSBezierPath fillRect:NSMakeRect(startX, point.y - [self ascent], backgroundWidth, [self lineSpacing])];
     }
     
-    // Setup the color and font.
-    [textColor set];
-    [font set];
-    
     // Finally, draw the glyphs.
     if (from < (int)numGlyphs){
-        cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-        CGContextSetTextPosition (cgContext, startX, point.y);
-        CGContextShowGlyphsWithAdvances (cgContext, &glyphs[from], &advances[from], to - from);
+#ifdef DRAW_FAST_TEXT
+        if ([[WebTextRendererFactory sharedFactory] coalesceTextDrawing]){
+            // Add buffered glyphs and advances
+            WebGlyphBuffer *glyphBuffer = [[WebTextRendererFactory sharedFactory] glyphBufferForFont: font andColor: textColor];
+            [glyphBuffer addGlyphs: &glyphs[from] advances: &advances[from] count: to - from at: startX : point.y];
+        }
+        else {
+#endif
+            cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+            // Setup the color and font.
+            [textColor set];
+            [font set];
+    
+            CGContextSetTextPosition (cgContext, startX, point.y);
+            CGContextShowGlyphsWithAdvances (cgContext, &glyphs[from], &advances[from], to - from);
+#ifdef DRAW_FAST_TEXT
+        }
+#endif
     }
 
     if (advances != localAdvanceBuffer) {

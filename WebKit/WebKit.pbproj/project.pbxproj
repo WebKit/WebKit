@@ -266,6 +266,7 @@
 				F649E40602EE0D1901CA2ACD,
 				354F260002EF441D0ACA2ACA,
 				3519E9EF02F0DF570ACA2ACA,
+				F5E7B24703025CE801A80180,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -350,6 +351,7 @@
 				35E371B502F0BAC60ACA2ACA,
 				F505C20C02FB4F18018635CE,
 				F5F732D302FF4D4F01A80180,
+				F5E7B24803025CE801A80180,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1892,6 +1894,8 @@
 				F5E0E10902BC45F8018635CA,
 				F5488CF402CB04EE01FF6274,
 				F5488CF502CB04EE01FF6274,
+				F5E7B24503025CE801A80180,
+				F5E7B24603025CE801A80180,
 			);
 			isa = PBXGroup;
 			name = "WebCore Support";
@@ -2107,6 +2111,30 @@
 		};
 		F5E0E10B02BC45F8018635CA = {
 			fileRef = F5E0E10902BC45F8018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5E7B24503025CE801A80180 = {
+			isa = PBXFileReference;
+			name = WebGlyphBuffer.h;
+			path = WebCoreSupport.subproj/WebGlyphBuffer.h;
+			refType = 2;
+		};
+		F5E7B24603025CE801A80180 = {
+			isa = PBXFileReference;
+			name = WebGlyphBuffer.m;
+			path = WebCoreSupport.subproj/WebGlyphBuffer.m;
+			refType = 2;
+		};
+		F5E7B24703025CE801A80180 = {
+			fileRef = F5E7B24503025CE801A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5E7B24803025CE801A80180 = {
+			fileRef = F5E7B24603025CE801A80180;
 			isa = PBXBuildFile;
 			settings = {
 			};

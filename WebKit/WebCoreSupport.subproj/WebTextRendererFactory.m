@@ -1,11 +1,7 @@
-//
-//  WebTextRendererFactory.m
-//  WebKit
-//
-//  Created by Darin Adler on Thu May 02 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
-
+/*	
+    WebTextRendererFactory.m
+    Copyright 2002, Apple, Inc. All rights reserved.
+*/
 #import <WebKit/WebTextRendererFactory.h>
 #import <WebKit/WebTextRenderer.h>
 #import <WebKit/WebKitDebug.h>
@@ -61,6 +57,66 @@
 
 @implementation WebTextRendererFactory
 
+- (BOOL)coalesceTextDrawing
+{
+    return [viewStack objectAtIndex: [viewStack count]-1] == [NSView focusView] ? YES : NO;
+}
+
+- (void)startCoalesceTextDrawing
+{
+    if (!viewStack)
+        viewStack = [[NSMutableArray alloc] init];
+    if (!viewBuffers)
+        viewBuffers = [[NSMutableDictionary alloc] init];
+    [viewStack addObject: [NSView focusView]];
+}
+
+- (void)endCoalesceTextDrawing
+{
+    WEBKIT_ASSERT ([self coalesceTextDrawing]);
+    
+    NSView *targetView = [viewStack objectAtIndex: [viewStack count]-1];
+    [viewStack removeLastObject];
+    NSValue *viewKey = [NSValue valueWithNonretainedObject: targetView];
+    NSMutableSet *glyphBuffers = [viewBuffers objectForKey:viewKey];
+
+    [glyphBuffers makeObjectsPerformSelector: @selector(drawInView:) withObject: targetView];
+    [glyphBuffers makeObjectsPerformSelector: @selector(reset)];
+    [viewBuffers removeObjectForKey: viewKey];
+}
+
+- (WebGlyphBuffer *)glyphBufferForFont: (NSFont *)font andColor: (NSColor *)color
+{
+    WEBKIT_ASSERT ([self coalesceTextDrawing]);
+
+    NSMutableSet *glyphBuffers;
+    WebGlyphBuffer *glyphBuffer = nil;
+    NSValue *viewKey = [NSValue valueWithNonretainedObject: [NSView focusView]];
+    
+    glyphBuffers = [viewBuffers objectForKey:viewKey];
+    if (glyphBuffers == nil){
+        glyphBuffers = [[NSMutableSet alloc] init];
+        [viewBuffers setObject: glyphBuffers forKey: viewKey];
+        [glyphBuffers release];
+    }
+    
+    NSEnumerator *enumerator = [glyphBuffers objectEnumerator];
+    id value;
+    
+    // Could use a dictionary w/ font/color key for faster lookup.
+    while ((value = [enumerator nextObject])) {
+        if ([value font] == font && [[value color] isEqual: color])
+            glyphBuffer = value;
+    }
+    if (glyphBuffer == nil){
+        glyphBuffer = [[WebGlyphBuffer alloc] initWithFont: font color: color];
+        [glyphBuffers addObject: glyphBuffer];
+        [glyphBuffer release];
+    }
+        
+    return glyphBuffer;
+}
+
 + (void)createSharedFactory;
 {
     if (![self sharedFactory]) {
@@ -86,6 +142,8 @@
 - (void)dealloc
 {
     [cache release];
+    [viewBuffers release];
+    [viewStack release];
     
     [super dealloc];
 }

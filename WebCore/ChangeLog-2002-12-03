@@ -1,3 +1,18 @@
+2002-08-08  Richard Williamson (Home)  <rjw@apple.com>
+
+        Changes to coalesce all drawing calls of the same text
+        style and color into one call to CG.  Significantly
+        improves drawing time.  My tests should about 7-8% on 
+        ALL pages.  Disabled the code for now until I can verify
+        on speed improvements on Ken's test rig.
+        
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge drawRect:withPainter:]):
+        * kwq/WebCoreTextRendererFactory.h:
+        * kwq/WebCoreTextRendererFactory.m:
+        (-[WebCoreTextRendererFactory endCoalesceTextDrawing]):
+        (-[WebCoreTextRendererFactory startCoalesceTextDrawing]):
+
 2002-08-07  Maciej Stachowiak  <mjs@apple.com>
 
 	WebCore work for:

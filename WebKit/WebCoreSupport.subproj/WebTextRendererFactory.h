@@ -1,18 +1,19 @@
-//
-//  WebTextRendererFactory.h
-//  WebKit
-//
-//  Created by Darin Adler on Thu May 02 2002.
-//  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
-//
+/*	
+    WebTextRendererFactory.m
+    Copyright 2002, Apple, Inc. All rights reserved.
+*/
 
 #import <WebCore/WebCoreTextRendererFactory.h>
+#import <WebKit/WebGlyphBuffer.h>
+#import <WebFoundation/WebQueue.h>
 
 @class WebTextRenderer;
 
 @interface WebTextRendererFactory : WebCoreTextRendererFactory
 {
     NSMutableDictionary *cache;
+    NSMutableDictionary *viewBuffers;
+    NSMutableArray *viewStack;
 }
 
 + (void)createSharedFactory;
@@ -20,5 +21,8 @@
 - init;
 
 - (WebTextRenderer *)rendererWithFont:(NSFont *)font;
+
+- (BOOL)coalesceTextDrawing;
+- (WebGlyphBuffer *)glyphBufferForFont: (NSFont *)font andColor: (NSColor *)color;
 
 @end
