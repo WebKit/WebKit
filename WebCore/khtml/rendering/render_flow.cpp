@@ -1286,6 +1286,27 @@ void RenderFlow::close()
     RenderBox::close();
 }
 
+short RenderFlow::offsetWidth() const
+{
+    if (isInline() && !isText()) {
+        short w = 0;
+        RenderObject* object = firstChild();
+        while (object) {
+            w += object->offsetWidth();
+            object = object->nextSibling();
+        }
+        return w;
+    }    
+    return width();
+}
+
+int RenderFlow::offsetHeight() const
+{
+   // if (isInline() && !isText() && firstChild())
+   //     return firstChild()->height();
+    return height();
+}
+
 void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
 {
 #ifdef DEBUG_LAYOUT

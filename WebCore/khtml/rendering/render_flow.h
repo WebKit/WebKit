@@ -107,6 +107,11 @@ public:
     inline int rightBottom();
     bool checkClear(RenderObject *child);
 
+    // used to calculate offsetWidth/Height.  Overridden by inlines (render_flow) to return
+    // the remaining width on a given line (and the height of a single line).
+    virtual short offsetWidth() const;
+    virtual int offsetHeight() const;
+
     void insertSpecialObject(RenderObject *o);
 
     // from BiDiParagraph

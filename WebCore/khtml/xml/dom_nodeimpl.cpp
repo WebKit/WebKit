@@ -1073,8 +1073,14 @@ NodeImpl *NodeBaseImpl::insertBefore ( NodeImpl *newChild, NodeImpl *refChild, i
 
         // Add child to the rendering tree
         // ### should we detach() it first if it's already attached?
-        if (attached() && !child->attached())
+        if (attached() && !child->attached()) {
             child->attach();
+            // This is extremely important, as otherwise a fresh layout
+            // isn't scheduled, and you end up with stale data (especially
+            // with inline runs of text). -dwh
+            if (child->renderer())
+                child->renderer()->setLayouted(false);
+        }
 
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
@@ -1142,8 +1148,14 @@ NodeImpl *NodeBaseImpl::replaceChild ( NodeImpl *newChild, NodeImpl *oldChild, i
 
         // Add child to the rendering tree
         // ### should we detach() it first if it's already attached?
-        if (attached() && !child->attached())
+        if (attached() && !child->attached()) {
             child->attach();
+            // This is extremely important, as otherwise a fresh layout
+            // isn't scheduled, and you end up with stale data (especially
+            // with inline runs of text). -dwh
+            if (child->renderer())
+                child->renderer()->setLayouted(false);
+        }
 
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
@@ -1289,9 +1301,15 @@ NodeImpl *NodeBaseImpl::appendChild ( NodeImpl *newChild, int &exceptioncode )
 
         // Add child to the rendering tree
         // ### should we detach() it first if it's already attached?
-        if (attached() && !child->attached())
+        if (attached() && !child->attached()) {
             child->attach();
-
+            // This is extremely important, as otherwise a fresh layout
+            // isn't scheduled, and you end up with stale data (especially
+            // with inline runs of text). -dwh
+            if (child->renderer())
+                child->renderer()->setLayouted(false);
+        }
+          
         // Dispatch the mutation events
         dispatchChildInsertedEvents(child,exceptioncode);
 

@@ -250,9 +250,9 @@ Value DOMNode::getValueProperty(ExecState *exec, int token) const
     case OffsetTop:
       return rend ? static_cast<Value>(Number(rend->yPos())) : Value(Undefined());
     case OffsetWidth:
-      return rend ? static_cast<Value>(Number(rend->width()) ) : Value(Undefined());
+      return rend ? static_cast<Value>(Number(rend->offsetWidth()) ) : Value(Undefined());
     case OffsetHeight:
-      return rend ? static_cast<Value>(Number(rend->height() ) ) : Value(Undefined());
+      return rend ? static_cast<Value>(Number(rend->offsetHeight() ) ) : Value(Undefined());
     case OffsetParent:
       return getDOMNode(exec,node.parentNode()); // not necessarily correct
     case ClientWidth:
