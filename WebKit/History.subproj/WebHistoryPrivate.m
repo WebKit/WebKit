@@ -14,6 +14,7 @@
 #import <WebFoundation/WebNSCalendarDateExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+
 @interface WebHistoryPrivate (Private)
 -(WebHistoryItem *)_entryForURLString:(NSString *)URLString;
 @end

@@ -8,9 +8,6 @@
 */
 #import <Foundation/Foundation.h>
 
-// FIXME  Cannot inherit from WebCoreHistory
-#import <WebCore/WebCoreHistory.h>
-
 @class WebHistoryItem;
 @class WebHistoryPrivate;
 
@@ -32,7 +29,7 @@ extern NSString *WebHistoryLoadedNotification;
     @discussion WebHistory is used to track pages that have been loaded
     by WebKit.
 */
-@interface WebHistory : WebCoreHistory {
+@interface WebHistory : NSObject {
 @private
     WebHistoryPrivate *_historyPrivate;
 }
@@ -40,11 +37,11 @@ extern NSString *WebHistoryLoadedNotification;
 + (WebHistory *)sharedHistory;
 
 /*!
-    @method webHistoryWithFile:
+    @method createSharedHistoryWithFile:
     @param file The file to use to initialize the WebHistory.
     @result Returns a WebHistory initialized with the contents of file.
 */
-+ (WebHistory *)webHistoryWithFile: (NSString *)file;
++ (WebHistory *)createSharedHistoryWithFile: (NSString*)file;
 
 /*!
     @method initWithFile:

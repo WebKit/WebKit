@@ -25,14 +25,15 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol WebCoreHistoryProvider <NSObject>
+- (BOOL)containsEntryForURLString: (NSString *)urlString;
+@end
+
 @interface WebCoreHistory : NSObject
 {
 }
 
-+ (void)setSharedHistory: (WebCoreHistory *)h;
-+ (WebCoreHistory *)sharedHistory;
-
-- (void)addEntryForURLString: (NSString *)urlString;
-- (BOOL)containsEntryForURLString: (NSString *)urlString;
++ (void)setHistoryProvider: (id<WebCoreHistoryProvider>)h;
++ (id<WebCoreHistoryProvider>)historyProvider;
 
 @end

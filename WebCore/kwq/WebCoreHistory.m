@@ -29,28 +29,19 @@
 
 @implementation WebCoreHistory
 
-static WebCoreHistory *_sharedHistory = nil;
+static id<WebCoreHistoryProvider> _historyProvider = nil;
 
-+ (void)setSharedHistory: (WebCoreHistory *)h
++ (void)setHistoryProvider: (id<WebCoreHistoryProvider>)h
 {
-    if (_sharedHistory != h && _sharedHistory != nil)
-        [_sharedHistory release];
-    _sharedHistory = [h retain];
+    if (_historyProvider != h){
+        [_historyProvider release];
+        _historyProvider = [h retain];
+    }
 }
 
-+ (WebCoreHistory *)sharedHistory
++ (id<WebCoreHistoryProvider>)historyProvider
 {
-    return _sharedHistory;
+    return _historyProvider;
 }
-
-- (void)addEntryForURLString: (NSString *)urlString
-{
-}
-
-- (BOOL)containsEntryForURLString: (NSString *)urlString;
-{
-    return false;
-}
-
 
 @end

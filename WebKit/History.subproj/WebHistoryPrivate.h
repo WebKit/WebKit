@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import <WebKit/WebHistory.h>
+
 @class WebHistoryItem;
 
 @interface WebHistoryPrivate : NSObject {
@@ -36,4 +38,8 @@
 - (BOOL)loadHistory;
 - (BOOL)saveHistory;
 
+@end
+
+@interface WebHistory (WebPrivate)
+- (BOOL)containsEntryForURLString: (NSString *)URLString;
 @end

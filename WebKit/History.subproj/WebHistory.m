@@ -12,26 +12,58 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSURLExtras.h>
 
+#import <WebCore/WebCoreHistory.h>
+
+
 NSString *WebHistoryEntriesAddedNotification = @"WebHistoryEntriesAddedNotification";
 NSString *WebHistoryEntriesRemovedNotification = @"WebHistoryEntriesRemovedNotification";
 NSString *WebHistoryAllEntriesRemovedNotification = @"WebHistoryAllEntriesRemovedNotification";
 NSString *WebHistoryLoadedNotification = @"WebHistoryLoadedNotification";
 
+static WebHistory *_sharedHistory = nil;
+
+@interface _WebCoreHistoryProvider : NSObject  <WebCoreHistoryProvider> 
+{
+    WebHistory *history;
+}
+- initWithHistory: (WebHistory *)h;
+@end
+
+@implementation _WebCoreHistoryProvider
+- initWithHistory: (WebHistory *)h
+{
+    history = [h retain];
+    return self;
+}
+
+- (BOOL)containsEntryForURLString: (NSString *)URLString
+{
+    return [history containsEntryForURLString: URLString];
+}
+
+- (void)dealloc
+{
+    [history release];
+    [super dealloc];
+}
+
+@end
+
 @implementation WebHistory
 
 + (WebHistory *)sharedHistory
 {
-    return (WebHistory *)[super sharedHistory];
+    return _sharedHistory;
 }
 
 
-+ (WebHistory *)webHistoryWithFile: (NSString*)file
++ (WebHistory *)createSharedHistoryWithFile: (NSString*)file
 {
-    // Should only be called once.  Need to rationalize usage
-    // of history.    
+    // FIXME.  Need to think about multiple instances of WebHistory per application
+    // and correct synchronization of history file between applications.
     WebHistory *h = [[self alloc] initWithFile:file];
-    [[self class] setSharedHistory: h];
-    [h release];
+    [WebCoreHistory setHistoryProvider: [[[_WebCoreHistoryProvider alloc] initWithHistory: h] autorelease]];
+    _sharedHistory = h;
     
     return h;
 }

@@ -43,7 +43,7 @@ void HistoryProvider::insert(const QString &s)
 
 bool HistoryProvider::contains(const QString &s) const
 {
-    return [[WebCoreHistory sharedHistory] containsEntryForURLString: KURL(s).canonicalURL().getNSString()];
+    return [[WebCoreHistory historyProvider] containsEntryForURLString: KURL(s).canonicalURL().getNSString()];
 }
 
 } // namespace KParts
