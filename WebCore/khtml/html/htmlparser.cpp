@@ -399,7 +399,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
 		    for (unsigned long l = 0; map && l < map->length(); ++l) {
 			AttributeImpl* it = map->attributeItem(l);
 			changed = !bmap->getAttributeItem(it->id());
-			bmap->insertAttribute(it->clone());
+			bmap->insertAttribute(it->clone(false));
 		    }
 		    if ( changed )
 			doc()->recalcStyle( NodeImpl::Inherit );
@@ -445,7 +445,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 for (unsigned long l = 0; map && l < map->length(); ++l) {
                     AttributeImpl* it = map->attributeItem(l);
                     changed = !bmap->getAttributeItem(it->id());
-                    bmap->insertAttribute(it->clone());
+                    bmap->insertAttribute(it->clone(false));
                 }
                 if ( changed )
                     doc()->recalcStyle( NodeImpl::Inherit );

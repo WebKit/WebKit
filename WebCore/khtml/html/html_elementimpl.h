@@ -72,7 +72,7 @@ public:
 
     ~HTMLAttributeImpl();
 
-    virtual AttributeImpl* clone() const;
+    virtual AttributeImpl* clone(bool preserveDecl=true) const;
 
     CSSMappedAttributeDeclarationImpl* decl() const { return m_styleDecl; }
     void setDecl(CSSMappedAttributeDeclarationImpl* decl) 

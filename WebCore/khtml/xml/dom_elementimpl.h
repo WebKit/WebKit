@@ -74,7 +74,7 @@ public:
     bool isNull() const { return _value.isNull(); }
     bool isEmpty() const { return _value.isEmpty(); }
     
-    virtual AttributeImpl* clone() const;
+    virtual AttributeImpl* clone(bool preserveDecl=true) const;
 
 private:
     void setValue(const AtomicString& value) {

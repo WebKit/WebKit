@@ -49,7 +49,7 @@
 using namespace DOM;
 using namespace khtml;
 
-AttributeImpl* AttributeImpl::clone() const
+AttributeImpl* AttributeImpl::clone(bool) const
 {
     AttributeImpl* result = new AttributeImpl(m_id, _value);
     result->setPrefix(_prefix);

@@ -118,9 +118,9 @@ HTMLAttributeImpl::~HTMLAttributeImpl()
         m_styleDecl->deref();
 }
 
-AttributeImpl* HTMLAttributeImpl::clone() const
+AttributeImpl* HTMLAttributeImpl::clone(bool preserveDecl) const
 {
-    return new HTMLAttributeImpl(m_id, _value, m_styleDecl);
+    return new HTMLAttributeImpl(m_id, _value, preserveDecl ? m_styleDecl : 0);
 }
 
 HTMLNamedAttrMapImpl::HTMLNamedAttrMapImpl(ElementImpl *e)

@@ -1,3 +1,16 @@
+2004-02-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for the bad background color on abcnews.com.  Make cloning optionally drop the style declarations.
+
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLAttributeImpl::clone):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttributeImpl::clone):
+        * khtml/xml/dom_elementimpl.h:
+
 2004-02-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3552545>: Cut, Paste and Delete must support Undo and Redo
