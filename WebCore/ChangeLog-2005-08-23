@@ -2,6 +2,15 @@
 
         Reviewed by Maciej.
 
+        - fixed <rdar://problem/3792082> zero character codes in UTF-16 input cause crash
+
+        * kwq/KWQTextCodec.mm: (KWQTextDecoder::convertUTF16): Fixed code that was using the wrong variable
+        to decrement the input length, causing buffer overrun.
+
+2004-09-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
         - fixed <rdar://problem/3798240> computed style error log messages seen with numbers in the range 74-77
 
         * khtml/css/css_computedstyle.cpp: (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
