@@ -1,3 +1,12 @@
+2002-10-07  Darin Adler  <darin@apple.com>
+
+	Fixed absurdly high memory usage when looking at pages that use a lot of JavaScript.
+
+        * kjs/collector.cpp:
+        (Collector::allocate): Implement a new policy of doing a garbage collect every 1000
+	allocations. The old policy was both complicated and misguided.
+        (Collector::collect): Zero out the "number of allocations since last collect".
+
 2002-10-06  Darin Adler  <darin@apple.com>
 
 	I noticed some broken lists at mapblast.com and tracked it down to this.
