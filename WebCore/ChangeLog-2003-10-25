@@ -1,3 +1,11 @@
+2002-04-05  Richard Williamson  <rjw@apple.com>
+
+        Various scrolling, hit detection, and goto anchor fixes to account for frames being
+        translated in scroll views.
+        
+	* src/kwq/KWQScrollView.mm: (QScrollView::setContentsPos),
+	(QScrollView::viewportToContents):
+
 2002-04-05  Chris Blumenberg  <cblu@apple.com>
 
 	* src/kwq/WCPluginWidget.h:

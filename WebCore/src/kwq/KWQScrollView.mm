@@ -114,11 +114,15 @@ void QScrollView::scrollBy(int dx, int dy)
 
 void QScrollView::setContentsPos(int x, int y)
 {
+    NSView *view = getView();    
+    if ([view isKindOfClass: [NSScrollView class]])
+        view = [(NSScrollView *)view documentView];
+
     if (x < 0)
         x = 0;
     if (y < 0)
         y = 0;
-    [getView() scrollPoint: NSMakePoint (x,y)];
+    [view scrollPoint: NSMakePoint (x,y)];
 }
 
 
@@ -225,8 +229,13 @@ QPoint QScrollView::contentsToViewport(const QPoint &)
 
 void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
 {
-    NSPoint p = NSMakePoint (vx, vy);
-    NSPoint np = [getView() convertPoint: NSMakePoint (vx, vy) fromView: nil];
+    NSView *view = getView();    
+    if ([view isKindOfClass: [NSScrollView class]])
+        view = [(NSScrollView *)view documentView];
+        
+    NSPoint np = [view convertPoint: NSMakePoint (vx, vy) fromView: nil];
+
+    
     x = (int)np.x;
     y = (int)np.y;
 }
