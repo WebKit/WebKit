@@ -4116,6 +4116,57 @@ static void findWordBoundary(QChar *chars, int len, int position, int *start, in
 }
 #endif
 
+bool KHTMLPart::isPointSelected(int x, int y)
+{
+    if (!xmlDocImpl()->renderer()) {
+        return false;
+    }
+    
+    RenderObject::NodeInfo nodeInfo(true, true);
+    xmlDocImpl()->renderer()->layer()->nodeAtPoint(nodeInfo, x, y);
+    DOM::NodeImpl* innerNode = nodeInfo.innerNode();
+    if (!innerNode->renderer()) {
+        return false;
+    }
+    
+    int offset = 0, ax, ay;
+    DOM::NodeImpl* node = 0;
+
+    // FIXME: Shouldn't be necessary to skip text nodes.
+    if (innerNode->nodeType() == Node::TEXT_NODE) {
+        innerNode = innerNode->parentNode();
+    }
+    innerNode->renderer()->absolutePosition (ax, ay);
+    innerNode->renderer()->checkSelectionPoint( x, y, ax-innerNode->renderer()->xPos(), ay-innerNode->renderer()->yPos(), node, offset);
+    if (!node) {
+        return false;
+    }
+
+    DOM::Node n = d->m_selectionStart;
+    while(!n.isNull()) {
+        if (n == node) {
+            if ((n == d->m_selectionStart && offset < d->m_startOffset) ||
+                (n == d->m_selectionEnd && offset > d->m_endOffset)) {
+                return false;
+            }
+            return true;
+        }
+        if (n == d->m_selectionEnd) {
+            break;
+        }
+        DOM::Node next = n.firstChild();
+        if (next.isNull()) {
+            next = n.nextSibling();
+        }
+        while (next.isNull() && !n.parentNode().isNull()) {
+            n = n.parentNode();
+            next = n.nextSibling();
+        }
+        n = next;
+    }
+    return false;
+}
+
 void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
 {
   DOM::DOMString url = event->url();
@@ -4141,6 +4192,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
 #if APPLE_CHANGES
     d->m_selectionInitiatedWithDoubleClick = false;
     d->m_selectionInitiatedWithTripleClick = false;
+    d->m_mouseMovedSinceLastMousePress = false;
 
     if (event->qmouseEvent()->clickCount() == 2){
         QMouseEvent *_mouse = event->qmouseEvent();
@@ -4159,7 +4211,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
                 // FIXME: Shouldn't be necessary to skip text nodes.
                 if (innerNode.nodeType() == Node::TEXT_NODE)
                     innerNode = innerNode.parentNode();
-                innerNode.handle()->renderer()->checkSelectionPoint( event,
+                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
                                             event->absX()-innerNode.handle()->renderer()->xPos(),
                                             event->absY()-innerNode.handle()->renderer()->yPos(), 
                                             node, startOffset);
@@ -4210,7 +4262,7 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
                 // FIXME: Shouldn't be necessary to skip text nodes.
                 if (innerNode.nodeType() == Node::TEXT_NODE)
                     innerNode = innerNode.parentNode();
-                innerNode.handle()->renderer()->checkSelectionPoint( event,
+                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
                                             event->absX()-innerNode.handle()->renderer()->xPos(),
                                             event->absY()-innerNode.handle()->renderer()->yPos(), 
                                             node, startOffset);
@@ -4238,13 +4290,20 @@ void KHTMLPart::khtmlMousePressEvent( khtml::MousePressEvent *event )
         if ( _mouse->button() == LeftButton )
         {
             if ( !innerNode.isNull()  && innerNode.handle()->renderer()) {
+#if APPLE_CHANGES
+                // Don't restart the selection when the mouse is pressed on an
+                // existing selection so we can allow for text dragging.
+                if (isPointSelected(event->x(), event->y())) {
+                    return;
+                }
+#endif
                 int offset = 0;
                 DOM::NodeImpl* node = 0;
 
                 // FIXME: Shouldn't be necessary to skip text nodes.
                 if (innerNode.nodeType() == Node::TEXT_NODE)
                     innerNode = innerNode.parentNode();
-                innerNode.handle()->renderer()->checkSelectionPoint( event,
+                innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
                                                                     event->absX()-innerNode.handle()->renderer()->xPos(),
                                                                     event->absY()-innerNode.handle()->renderer()->yPos(), node, offset);
                 
@@ -4401,7 +4460,7 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
         // FIXME: Shouldn't be necessary to skip text nodes.
         if (innerNode.nodeType() == Node::TEXT_NODE)
             innerNode = innerNode.parentNode();
-        innerNode.handle()->renderer()->checkSelectionPoint( event,
+        innerNode.handle()->renderer()->checkSelectionPoint( event->x(), event->y(),
                                                             event->absX()-innerNode.handle()->renderer()->xPos(),
                                                             event->absY()-innerNode.handle()->renderer()->yPos(), node, offset);
         //        if (d->m_selectionEnd.handle() && d->m_selectionEnd.handle()->renderer())
@@ -4412,6 +4471,17 @@ void KHTMLPart::khtmlMouseMoveEvent( khtml::MouseMoveEvent *event )
         // Don't modify the selection if we're not on a node.
         if (node == 0)
             return;
+
+        // Restart the selection if this is the first mouse move. This work is usually
+        // done in khtmlMousePressEvent, but not if the mouse press was on an existing selection.
+        if (!d->m_mouseMovedSinceLastMousePress) {
+            d->m_mouseMovedSinceLastMousePress = true;
+            d->m_selectionStart = node;
+            d->m_startOffset = offset;
+            d->m_selectionEnd = node;
+            d->m_endOffset = offset;
+            d->m_doc->clearSelection();
+        }
 #endif        
         // we have to get to know if end is before start or not...
         DOM::Node n = d->m_selectionStart;
@@ -4567,7 +4637,20 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
     }
   }
 #endif
-
+  
+#if APPLE_CHANGES
+  // Clear the selection if the mouse didn't move after the last mouse press.
+  // We do this so when clicking on the selection, the selection goes away.
+  if (!d->m_mouseMovedSinceLastMousePress &&
+      !d->m_selectionInitiatedWithDoubleClick &&
+      !d->m_selectionInitiatedWithTripleClick) {
+      d->m_selectionStart = 0;
+      d->m_selectionEnd = 0;
+      d->m_startOffset = 0;
+      d->m_endOffset = 0;
+      d->m_doc->clearSelection();
+  }
+#endif
 #ifndef KHTML_NO_SELECTION
   // delete selection in case start and end position are at the same point
   if(d->m_selectionStart == d->m_selectionEnd && d->m_startOffset == d->m_endOffset) {

@@ -1077,7 +1077,7 @@ void RenderObject::arenaDelete(RenderArena *arena)
     arenaDelete(arena, dynamic_cast<void *>(this));
 }
 
-FindSelectionResult RenderObject::checkSelectionPoint( const khtml::MouseEvent *event, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
+FindSelectionResult RenderObject::checkSelectionPoint(int _x, int _y, int _tx, int _ty, DOM::NodeImpl*& node, int & offset )
 {
     int lastOffset=0;
     int off = offset;
@@ -1085,7 +1085,7 @@ FindSelectionResult RenderObject::checkSelectionPoint( const khtml::MouseEvent *
     DOM::NodeImpl* lastNode = 0;
     
     for (RenderObject *child = firstChild(); child; child=child->nextSibling()) {
-        khtml::FindSelectionResult pos = child->checkSelectionPoint(event, _tx+xPos(), _ty+yPos(), nod, off);
+        khtml::FindSelectionResult pos = child->checkSelectionPoint(_x, _y, _tx+xPos(), _ty+yPos(), nod, off);
         //kdDebug(6030) << this << " child->findSelectionNode returned " << pos << endl;
         switch(pos) {
         case SelectionPointBeforeInLine:
@@ -1121,7 +1121,7 @@ FindSelectionResult RenderObject::checkSelectionPoint( const khtml::MouseEvent *
     if (nextCont){
         int ncx, ncy;
         nextCont->absolutePosition(ncx, ncy);
-        return nextCont->checkSelectionPoint(event, ncx-nextCont->xPos(), ncy-nextCont->yPos(), node, offset);
+        return nextCont->checkSelectionPoint(_x, _y, ncx-nextCont->xPos(), ncy-nextCont->yPos(), node, offset);
     }
     
     node = lastNode;

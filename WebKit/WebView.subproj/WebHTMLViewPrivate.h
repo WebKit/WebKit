@@ -64,6 +64,6 @@
 - (NSImage *)_dragImageForElement:(NSDictionary *)element;
 - (void)_handleMouseDragged:(NSEvent *)event;
 - (void)_handleAutoscrollForMouseDragged:(NSEvent *)event;
-- (BOOL)_mayStartDragWithMouseDown:(NSEvent *)event;
+- (BOOL)_mayStartDragWithMouseDragged:(NSEvent *)event;
 
 @end

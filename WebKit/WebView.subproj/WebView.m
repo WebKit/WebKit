@@ -44,11 +44,11 @@ NSString *WebElementImageKey = 			@"WebElementImage";
 NSString *WebElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebElementImageLocationKey = 		@"WebElementImageLocation";
 NSString *WebElementImageURLKey = 		@"WebElementImageURL";
+NSString *WebElementIsSelectedTextKey = 	@"WebElementIsSelectedTextKey";
 NSString *WebElementLinkURLKey = 		@"WebElementLinkURL";
 NSString *WebElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
-NSString *WebElementStringKey = 		@"WebElementString";
 
 @implementation WebController
 

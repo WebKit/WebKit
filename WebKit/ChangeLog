@@ -1,3 +1,21 @@
+2003-01-21  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for text dragging.
+
+        Reviewed by dave.
+
+        * Resources/text_clipping.tiff: Added. Temp drag image until we can create an image of the selected text.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge mayStartDragWithMouseDraggedEvent:]): renamed, we now ask if OK to drag during the drag
+        * WebKit.exp: renamed element key for selected text
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.h: renamed element key for selected text
+        * WebView.subproj/WebController.m: renamed element key for selected text
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _handleMouseDragged:]): added support for text dragging
+        (-[WebHTMLView _mayStartDragWithMouseDragged:]): renamed, we now ask if OK to drag during the drag
+
 2003-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

@@ -36,6 +36,8 @@
 #define DragStartXHysteresis  		10.0
 #define DragStartYHysteresis  		10.0
 
+#define TextDragDelay			0.2
+
 #define DRAG_LABEL_BORDER_X		4.0
 #define DRAG_LABEL_BORDER_Y		2.0
 #define DRAG_LABEL_RADIUS	5
@@ -466,6 +468,9 @@ static BOOL forceRealHitTest = NO;
     if ([[self _frame] provisionalDataSource]) {
 	return;
     }
+
+    // FIXME: This cursor change should probably be moved to WebCore.
+    [[NSCursor arrowCursor] set];
     
     NSPoint mouseDownPoint = [_private->mouseDownEvent locationInWindow];
     float deltaX = ABS([event locationInWindow].x - mouseDownPoint.x);
@@ -480,14 +485,16 @@ static BOOL forceRealHitTest = NO;
     _private->draggingImageURL = nil;
 
     // We must have started over something draggable:
-    ASSERT((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) || (!imageURL && linkURL)); 
+    ASSERT((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
+           (!imageURL && linkURL) ||
+           [[element objectForKey:WebElementIsSelectedTextKey] boolValue]); 
 
     // drag hysteresis hasn't ben met yet but we don't want to do
     // other drag actions like selection.
     if (deltaX < DragStartXHysteresis && deltaY < DragStartYHysteresis) {
 	return;
     }
-
+    
     if (imageURL) {
 	_private->draggingImageURL = [imageURL retain];
 	
@@ -497,16 +504,24 @@ static BOOL forceRealHitTest = NO;
 	      fileType:[[imageURL path] pathExtension]
 	      title:[element objectForKey:WebElementImageAltStringKey]
 	      event:_private->mouseDownEvent];
-    } else if (linkURL) {
-	NSImage *dragImage = [self _dragImageForElement:element];
-	NSString *label = [element objectForKey: WebElementLinkLabelKey];
+    } else if (linkURL || [[element objectForKey:WebElementIsSelectedTextKey] boolValue]) {
+        NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+        NSSize centerOffset;
+        NSImage *dragImage;
+        
+        if (linkURL) {
+            dragImage = [self _dragImageForElement:element];
+            NSString *label = [element objectForKey: WebElementLinkLabelKey];
+            centerOffset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
+            [pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
+        } else {
+            NSString *path = [[NSBundle bundleForClass:[self class]] pathForResource:@"text_clipping" ofType:@"tiff"];
+            dragImage = [[[NSImage alloc] initByReferencingFile:path] autorelease];
+            centerOffset = NSMakeSize([dragImage size].width / 2, -([dragImage size].width/4));
+            [self _writeSelectionToPasteboard:pasteboard];
+        }
 	
-	NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
-	[pasteboard _web_writeURL:linkURL andTitle:label withOwner:self];
-	
-	NSSize imageSize = [dragImage size];
 	NSPoint mousePoint = [self convertPoint:[event locationInWindow] fromView:nil];
-	NSSize centerOffset = NSMakeSize(imageSize.width / 2, -DRAG_LABEL_BORDER_Y);
 	NSPoint imagePoint = NSMakePoint(mousePoint.x - centerOffset.width, mousePoint.y - centerOffset.height);
 	
 	[self dragImage:dragImage
@@ -525,21 +540,24 @@ static BOOL forceRealHitTest = NO;
     [self autoscroll:event];
 }
 
-- (BOOL)_mayStartDragWithMouseDown:(NSEvent *)event
+- (BOOL)_mayStartDragWithMouseDragged:(NSEvent *)mouseDraggedEvent
 {
-    NSPoint mouseDownPoint = [event locationInWindow];
-
-    NSPoint point = [self convertPoint:mouseDownPoint fromView:nil];
-
-    NSDictionary *element = [[self _elementAtPoint: point] retain];
+    NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
+    NSDictionary *mouseDownElement = [[self _elementAtPoint:mouseDownPoint] retain];
+    
     [_private->dragElement release];
-    _private->dragElement = element;
+    _private->dragElement = mouseDownElement;
 
-    NSURL *linkURL = [element objectForKey: WebElementLinkURLKey];
-    NSURL *imageURL = [element objectForKey: WebElementImageURLKey];
+    NSURL *imageURL = [mouseDownElement objectForKey: WebElementImageURLKey];
+    
+    if ((imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) ||
+        (!imageURL && [mouseDownElement objectForKey: WebElementLinkURLKey]) ||
+        ([[mouseDownElement objectForKey:WebElementIsSelectedTextKey] boolValue] &&
+         ([mouseDraggedEvent timestamp] - [_private->mouseDownEvent timestamp]) > TextDragDelay)) {
+        return YES;
+    }
 
-    // are we over something draggable?
-    return (imageURL && [[WebPreferences standardPreferences] willLoadImagesAutomatically]) || (!imageURL && linkURL);
+    return NO;
 }
 
 @end

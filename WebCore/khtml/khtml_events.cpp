@@ -56,7 +56,7 @@ long khtml::MouseEvent::offset() const
         if (inner.nodeType() == Node::TEXT_NODE)
             inner = inner.parentNode();
         inner.handle()->renderer()->absolutePosition(absX, absY);
-        inner.handle()->renderer()->checkSelectionPoint( this, absX, absY, tempNode, offset );
+        inner.handle()->renderer()->checkSelectionPoint(m_x, m_y, absX, absY, tempNode, offset );
     }
     return offset;
 }

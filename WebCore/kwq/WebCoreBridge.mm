@@ -74,12 +74,12 @@ NSString *WebCoreElementImageAltStringKey = 	@"WebElementImageAltString";
 NSString *WebCoreElementImageKey = 		@"WebElementImage";
 NSString *WebCoreElementImageLocationKey = 	@"WebElementImageLocation";
 NSString *WebCoreElementImageURLKey = 		@"WebElementImageURL";
+NSString *WebCoreElementIsSelectedTextKey = 	@"WebElementIsSelectedTextKey";
 NSString *WebCoreElementLinkURLKey = 		@"WebElementLinkURL";
 NSString *WebCoreElementLinkTargetFrameKey =	@"WebElementTargetFrame";
 NSString *WebCoreElementLinkLabelKey = 		@"WebElementLinkLabel";
 NSString *WebCoreElementLinkTitleKey = 		@"WebElementLinkTitle";
 NSString *WebCoreElementNameKey = 		@"WebElementName";
-NSString *WebCoreElementStringKey = 		@"WebElementString";
 
 @implementation WebCoreBridge
 
@@ -437,6 +437,8 @@ static bool initializedObjectCacheSize = FALSE;
     renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     
     NSMutableDictionary *element = [NSMutableDictionary dictionary];
+    [element setObject:[NSNumber numberWithBool:_part->isPointSelected((int)point.x, (int)point.y)]
+                forKey:WebCoreElementIsSelectedTextKey];
     
     NodeImpl *URLNode = nodeInfo.URLElement();
     if (URLNode) {
@@ -503,10 +505,6 @@ static bool initializedObjectCacheSize = FALSE;
         if (r->absolutePosition(x, y)) {
             [element setObject:[NSValue valueWithPoint:NSMakePoint(x,y)] forKey:WebCoreElementImageLocationKey];
         }
-    }
-
-    if (_part->hasSelection()) {
-        [element setObject:[self selectedString] forKey:WebCoreElementStringKey];
     }
     
     return element;

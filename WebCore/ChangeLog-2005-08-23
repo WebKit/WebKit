@@ -1,3 +1,31 @@
+2003-01-21  Chris Blumenberg  <cblu@apple.com>
+
+	Added support for text dragging.
+
+        Reviewed by dave.
+
+        * khtml/khtml_events.cpp:
+        (khtml::MouseEvent::offset): made checkSelectionPoint take x,y coords, passing the whole event is unnecessary
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::isPointSelected): new
+        (KHTMLPart::khtmlMousePressEvent): don't restart the selection when click was on the selection
+        (KHTMLPart::khtmlMouseMoveEvent): restart the selection since we may not do it in khtmlMousePressEvent
+        (KHTMLPart::khtmlMouseReleaseEvent): clear the selection if no selection took place
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::checkSelectionPoint): made checkSelectionPoint take x,y coords, passing the whole event is unnecessary
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::checkSelectionPoint): made checkSelectionPoint take x,y coords, passing the whole event is unnecessary
+        * khtml/rendering/render_text.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::khtmlMousePressEvent): set booleans indicating that it is OK to drag or select
+        (KWQKHTMLPart::khtmlMouseMoveEvent): ask WebKit if we can drag. Make this decision here instead of in khtmlMousePressEvent because WebKit needs the drag hysteresis to make the decision. 
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]): set the selection bit
+
 2003-01-21  Trey Matteson  <trey@apple.com>
 
 	3032718 - I-beam cursor behavior different between web view and text view

@@ -814,11 +814,8 @@ void KWQKHTMLPart::khtmlMousePressEvent(MousePressEvent *event)
 {
     // If we got the event back, that must mean it wasn't prevented,
     // so it's allowed to start a drag or selection.
-    if ([_bridge mayStartDragWithMouseDown:_currentEvent]) {
-	_mouseDownMayStartDrag = true;
-    } else {
-	_mouseDownMayStartSelect = true;
-    }
+    _mouseDownMayStartDrag = true;
+    _mouseDownMayStartSelect = true;
 
     if (!passWidgetMouseDownEventToWidget(event)) {
         // We don't do this at the start of mouse down handling (before calling into WebCore),
@@ -953,12 +950,14 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             return;
         }
 
-	if (_mouseDownMayStartDrag) {
+	if (_mouseDownMayStartDrag && [_bridge mayStartDragWithMouseDragged:_currentEvent]) {
 	    [_bridge handleMouseDragged:_currentEvent];
 	    return;
 	} else if (_mouseDownMayStartSelect) {
 	    // we use khtml's selection but our own autoscrolling
 	    [_bridge handleAutoscrollForMouseDragged:_currentEvent];
+            // Don't allow dragging after we've started selecting.
+            _mouseDownMayStartDrag = false;
 	} else {
 	    return;
 	}
