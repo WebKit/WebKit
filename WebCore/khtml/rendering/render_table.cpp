@@ -293,8 +293,14 @@ void RenderTable::layout()
                 break;
             }
         }
-        
-        if (!c->isTableCell()) {
+
+        if (c->isTableCell()) {
+            RenderTableCell* cell = static_cast<RenderTableCell*>(c);
+            int cellHeight = cell->getCellPercentageHeight();
+            if (cellHeight && cell->style()->height().isFixed())
+                th = h.width(cellHeight);
+        }
+        else  {
             Length ch = c->style()->height();
             if (ch.isFixed())
                 th = h.width(ch.value);

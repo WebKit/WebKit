@@ -1,5 +1,17 @@
 2003-05-01  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3226030, percentage height tables inside table cells
+	don't grow to fill the space inside the cell.  There was
+	a missing edge case here for the case where the table was
+	nested inside a table cell.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::layout):
+
+2003-05-01  David Hyatt  <hyatt@apple.com>
+
 	Add a cycle check when importing stylesheets to prevent
 	infinite loops.
 	
