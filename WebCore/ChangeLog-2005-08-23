@@ -1,5 +1,46 @@
 2004-10-09  Darin Adler  <darin@apple.com>
 
+        Reviewed by Adele.
+
+        - fixed <rdar://problem/3829452> REGRESSION (156-157): onload handler doesn't run on page with meta refresh of 0 duration (new Apple start page)
+
+        The fix for <rdar://problem/3773150> made it so <meta> redirects prevent tokenizing the rest of the page.
+        This is incorrect; the reason the JavaScript-triggered loads prevent tokenizing is that they take place
+        "right away" in other browsers, but that is not true of <meta> redirect. We fixed this by using a separate
+        call for <meta> redirect and not preventing tokenizing when that's in effect.
+
+        * khtml/khtml_part.h: Removed userGesture parameter from scheduleRedirection. Renamed
+        isImmediateRedirectPending to isScheduledLocationChangePending. Added scheduleLocationChange.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::openURL): Updated for new constant name.
+        (KHTMLPart::scheduleRedirection): Removed now-unneeded userGesture parameter, and removed code that
+        does the special case for redirection during load; a <meta> refresh can never be one of those special
+        redirects during a load because it redirects the frame itself, not another frame. Also tightened up
+        the logic by always stopping the redirect timer even if we aren't restarting it.
+        (KHTMLPart::scheduleLocationChange): Added. Like scheduleRedirection, but with a different constant
+        so we can tell it apart and always a delay of 0. The "redirection during load" case was moved in here
+        and renamed to locationChangeScheduledDuringLoad.
+        (KHTMLPart::isScheduledLocationChangePending): Renamed from isImmediateRedirectPending. This now
+        returns true only for location changes and history navigation, not <meta> redirects.
+        (KHTMLPart::scheduleHistoryNavigation): Tightened up logic to do the stop() outside the if as above,
+        and got rid of a silly timer delay computation that always resulted in 0.
+
+        * khtml/khtmlpart_p.h: Added a new value to the RedirectionScheduled enum for scheduleLocationChange
+        and also renamed one of the existing values.
+
+        * khtml/html/htmltokenizer.cpp: (HTMLTokenizer::write): Changed to use isScheduledLocationChangePending instead
+        of isImmediateRedirectPending, because we do want to continue tokenizing if it's actually a redirect.
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLDocument::putValue): Changed to call the new scheduleLocationChange
+        instead of calling scheduleRedirection with delay of 0.
+        * khtml/ecma/kjs_window.cpp:
+        (Window::put): Ditto.
+        (WindowFunc::tryCall): Ditto.
+        (Location::put): Ditto.
+        (LocationFunc::tryCall): Ditto.
+
+2004-10-09  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin.
 
         - fixed <rdar://problem/3658277> REGRESSION (1.1-1.2): form submission should either not simulate a click at all or use (0,0) the way Mozilla does

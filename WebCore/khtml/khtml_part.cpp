@@ -397,7 +397,7 @@ bool KHTMLPart::openURL( const KURL &url )
 {
   kdDebug( 6050 ) << "KHTMLPart(" << this << ")::openURL " << url.url() << endl;
 
-  if (d->m_scheduledRedirection == redirectionDuringLoad){
+  if (d->m_scheduledRedirection == locationChangeScheduledDuringLoad) {
     // We're about to get a redirect that happened before the document was
     // created.  This can happen when one frame may change the location of a 
     // sibling.
@@ -1953,35 +1953,51 @@ KURL KHTMLPart::completeURL( const QString &url )
   return KURL( d->m_doc->completeURL( url ) );
 }
 
-void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLockHistory, bool userGesture )
+void KHTMLPart::scheduleRedirection( double delay, const QString &url, bool doLockHistory)
 {
     kdDebug(6050) << "KHTMLPart::scheduleRedirection delay=" << delay << " url=" << url << endl;
     if (delay < 0 || delay > INT_MAX / 1000)
       return;
     if ( d->m_scheduledRedirection == noRedirectionScheduled || delay <= d->m_delayRedirect )
     {
-       if (d->m_doc == 0){
-        // Handle a location change of a page with no document as a special case.
-        // This may happens when a frame changes the location of another frame.
-        d->m_scheduledRedirection = redirectionDuringLoad;
-       }
-       else
-         d->m_scheduledRedirection = redirectionScheduled;
+       d->m_scheduledRedirection = redirectionScheduled;
        d->m_delayRedirect = delay;
        d->m_redirectURL = url;
        d->m_redirectLockHistory = doLockHistory;
-       d->m_redirectUserGesture = userGesture;
+       d->m_redirectUserGesture = false;
 
-       if ( d->m_bComplete ) {
-         d->m_redirectionTimer.stop();
+       d->m_redirectionTimer.stop();
+       if ( d->m_bComplete )
          d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
-       }
     }
 }
 
-bool KHTMLPart::isImmediateRedirectPending() const
+void KHTMLPart::scheduleLocationChange(const QString &url, bool lockHistory, bool userGesture)
 {
-  return d->m_scheduledRedirection != noRedirectionScheduled && d->m_delayRedirect == 0;
+    // Handle a location change of a page with no document as a special case.
+    // This may happen when a frame changes the location of another frame.
+    d->m_scheduledRedirection = d->m_doc ? locationChangeScheduled : locationChangeScheduledDuringLoad;
+    d->m_delayRedirect = 0;
+    d->m_redirectURL = url;
+    d->m_redirectLockHistory = lockHistory;
+    d->m_redirectUserGesture = userGesture;
+    d->m_redirectionTimer.stop();
+    if (d->m_bComplete)
+        d->m_redirectionTimer.start(0, true);
+}
+
+bool KHTMLPart::isScheduledLocationChangePending() const
+{
+    switch (d->m_scheduledRedirection) {
+        case noRedirectionScheduled:
+        case redirectionScheduled:
+            return false;
+        case historyNavigationScheduled:
+        case locationChangeScheduled:
+        case locationChangeScheduledDuringLoad:
+            return true;
+    }
+    return false;
 }
 
 void KHTMLPart::scheduleHistoryNavigation( int steps )
@@ -1989,18 +2005,19 @@ void KHTMLPart::scheduleHistoryNavigation( int steps )
 #if APPLE_CHANGES
     // navigation will always be allowed in the 0 steps case, which is OK because
     // that's supposed to force a reload.
-    if (!KWQ(this)->canGoBackOrForward(steps))
+    if (!KWQ(this)->canGoBackOrForward(steps)) {
+        cancelRedirection();
         return;
+    }
 #endif
 
     d->m_scheduledRedirection = historyNavigationScheduled;
     d->m_delayRedirect = 0;
     d->m_redirectURL = QString::null;
     d->m_scheduledHistoryNavigationSteps = steps;
-    if ( d->m_bComplete ) {
-        d->m_redirectionTimer.stop();
-        d->m_redirectionTimer.start( (int)(1000 * d->m_delayRedirect), true );
-    }
+    d->m_redirectionTimer.stop();
+    if (d->m_bComplete)
+        d->m_redirectionTimer.start(0, true);
 }
 
 void KHTMLPart::cancelRedirection(bool cancelWithLoadInProgress)

@@ -385,11 +385,15 @@ public:
 
   /**
    * Schedules a redirection after @p delay seconds.
-   * Note that this is used for JavaScript-triggered location changes as well.
    */
-  void scheduleRedirection( double delay, const QString &url, bool lockHistory = true, bool userGesture = false );
+  void scheduleRedirection(double delay, const QString &url, bool lockHistory = true);
 
-  bool isImmediateRedirectPending() const;
+  /**
+   * Schedules a location change.
+   * This is used for JavaScript-triggered location changes.
+   */
+  void scheduleLocationChange(const QString &url, bool lockHistory = true, bool userGesture = false);
+  bool isScheduledLocationChangePending() const;
 
   /**
    * Schedules a history navigation operation (go forward, go back, etc.).

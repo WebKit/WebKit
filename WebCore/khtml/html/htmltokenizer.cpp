@@ -1525,7 +1525,7 @@ void HTMLTokenizer::write(const TokenizerString &str, bool appendData)
 //     if (Entity)
 //         parseEntity(src, dest);
 
-    while (!src.isEmpty() && (!parser->doc()->part() || !parser->doc()->part()->isImmediateRedirectPending())) {
+    while (!src.isEmpty() && (!parser->doc()->part() || !parser->doc()->part()->isScheduledLocationChangePending())) {
         // do we need to enlarge the buffer?
         checkBuffer();
 
