@@ -659,8 +659,7 @@ static void URLFileReaderInit(void)
 
         sizeFilePathString = [NSString stringWithFormat:@"%@/%@", path, SIZE_FILE_NAME];
         tmp = [[NSFileManager defaultManager] fileSystemRepresentationWithPath:sizeFilePathString];
-        sizeFilePath = malloc(strlen(tmp) + 1);
-        strcpy(sizeFilePath, tmp);
+        sizeFilePath = strdup(tmp);
         usage = [self readSizeFile];
     }
     
