@@ -1,3 +1,45 @@
+2002-09-13  David Hyatt  <hyatt@apple.com>
+
+	Landing code that makes textfields, buttons, checkboxes, radio
+	buttons, and dropdown lists all draw correctly with respect to
+	z-index.  They all employ the same simple hack (just never paint
+	unless KHTML tells them to).
+
+	Unpatched widgets include the password field, the listbox, and the
+	textarea.  
+
+	The only issue with regards to painting with the widgets I've
+	patched is the textfield... its editor floats to the top when the
+	field is being edited.
+
+	Event handling will also be incorrect and will need to be patched
+	separately.
+	
+        * khtml/rendering/render_body.cpp:
+        (RenderBody::printBoxDecorations):
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::printObject):
+        * kwq/KWQButton.mm:
+        (QButton::QButton):
+        (QButton::paint):
+        (-[KWQNSButton drawRect:]):
+        (-[KWQNSButton paint]):
+        * kwq/KWQComboBox.mm:
+        (-[KWQNSPopUpButton drawRect:]):
+        (-[KWQNSPopUpButton paint]):
+        (QComboBox::QComboBox):
+        (QComboBox::insertItem):
+        (QComboBox::paint):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::paint):
+        * kwq/KWQNSTextField.h:
+        * kwq/KWQNSTextField.mm:
+        (-[KWQNSTextField paint]):
+        * kwq/qt/qbutton.h:
+        * kwq/qt/qcombobox.h:
+        * kwq/qt/qlineedit.h:
+        * kwq/qt/qwidget.h:
+
 2002-09-13  Richard Williamson (Home)  <rjw@apple.com>
 
         Fixed navigation to link on mouse up after drag.

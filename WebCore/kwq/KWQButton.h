@@ -45,7 +45,8 @@ public:
     QString text() const;
     
     virtual void clicked();
-
+    virtual void paint();
+    
 private:
     KWQSignal m_clicked;
     KWQButtonAdapter *m_adapter;

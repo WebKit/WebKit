@@ -267,6 +267,12 @@ void RenderWidget::printObject(QPainter* /*p*/, int, int, int, int, int _tx, int
     }
     m_view->addChild(m_widget, xPos, yPos );
     m_widget->show();
+    
+#ifdef APPLE_CHANGES
+    // Tell the widget to paint now.  This is the only time the widget is allowed
+    // to paint itself.  That way it will composite properly with z-indexed layers.
+    m_widget->paint();
+#endif
 }
 
 bool RenderWidget::eventFilter(QObject* /*o*/, QEvent* e)

@@ -42,6 +42,9 @@ class QLineEdit;
 
 - initWithQLineEdit:(QLineEdit *)widget;
 
+- (void)drawRect:(NSRect)rect;
+- (void)paint;
+
 - (void)setPasswordMode:(BOOL)flag;
 - (BOOL)passwordMode;
 - (void)setMaximumLength:(int)len;

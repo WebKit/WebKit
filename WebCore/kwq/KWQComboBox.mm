@@ -55,11 +55,35 @@
 - initWithWidget:(QWidget *)widget;
 @end
 
+@interface KWQNSPopUpButton : NSPopUpButton
+{
+}
+
+- (void)paint;
+- (void)drawRect: (NSRect)rect;
+
+@end
+
+@implementation KWQNSPopUpButton
+
+- (void)drawRect: (NSRect)rect
+{
+}
+
+- (void)paint
+{
+    [self lockFocus];
+    [super drawRect: [self bounds]];
+    [self unlockFocus];
+}
+
+@end
+
 QComboBox::QComboBox()
     : m_activated(this, SIGNAL(activated(int)))
     , m_adapter([[KWQComboBoxAdapter alloc] initWithQComboBox:this])
 {
-    NSPopUpButton *button = [[NSPopUpButton alloc] init];
+    KWQNSPopUpButton *button = [[KWQNSPopUpButton alloc] init];
     
     KWQPopUpButtonCell *cell = [[KWQPopUpButtonCell alloc] initWithWidget:this];
     [button setCell:cell];
@@ -98,6 +122,12 @@ void QComboBox::insertItem(const QString &text, int index)
     // because addItemWithTitle will not allow multiple items with the
     // same title. But this way, we can have such duplicate items.
     [[button itemAtIndex:index] setTitle:text.getNSString()];
+}
+
+void QComboBox::paint()
+{
+    KWQNSPopUpButton *button = (NSPopUpButton *)getView();
+    [button paint];
 }
 
 QSize QComboBox::sizeHint() const 
