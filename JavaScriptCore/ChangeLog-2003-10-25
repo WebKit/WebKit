@@ -1,3 +1,9 @@
+2003-06-10  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by john.
+
+        * JavaScriptCore.order: new order file for 1.0
+
 === Safari-83 ===
 
 2003-06-04  Darin Adler  <darin@apple.com>

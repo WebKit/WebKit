@@ -1,3 +1,9 @@
+2003-06-10  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by john. 
+
+        * WebKit.order: new order file for 1.0
+
 2003-06-09  Chris Blumenberg  <cblu@apple.com>
 
         * WebView.subproj/WebDataSource.h: Removed FIXME related to pageTitle.
