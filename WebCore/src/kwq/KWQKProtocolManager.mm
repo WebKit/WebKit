@@ -47,6 +47,7 @@ QString KProtocolManager::httpProxy()
 QString KProtocolManager::userAgentForHost( const QString& )
 {
     _logNotYetImplemented();
-    return QString("intrigue-0.000001");
+    // make us look like msie for now
+    return QString("Mozilla/4.0 (compatible; MSIE 5.12; Mac_PowerPC)");
 }
 

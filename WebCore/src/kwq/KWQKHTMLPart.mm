@@ -287,8 +287,6 @@ QVariant KHTMLPart::executeScript( const QString &script )
 // passed to the interpreter.
 QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
 {
-    return QVariant();
-#if 0
     KJSProxy *proxy = jScript();
     
     if (!proxy) {
@@ -310,7 +308,6 @@ QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
     
     //kdDebug(6050) << "KHTMLPart::executeScript - done" << endl;
     return ret;
-#endif
 }
 
 void KHTMLPart::setJavaEnabled( bool enable )

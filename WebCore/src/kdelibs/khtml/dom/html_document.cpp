@@ -178,8 +178,10 @@ HTMLCollection HTMLDocument::all() const
 
 DOMString HTMLDocument::cookie() const
 {
+// FIXME: implement cookies
 #ifdef _KWQ_
     fprintf(stderr, "ERROR %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__);
+    return DOMString("");
 #else
     QCString replyType;
     QByteArray params, reply;
