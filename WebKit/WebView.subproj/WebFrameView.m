@@ -244,12 +244,13 @@ enum {
 
 - (void)_scrollToTopLeft
 {
-    [[self _contentView] scrollPoint: NSMakePoint(0, 0)];
+    [[self _contentView] scrollPoint:[[[self _scrollView] documentView] frame].origin];
 }
 
 - (void)_scrollToBottomLeft
 {
-    [[self _contentView] scrollPoint: NSMakePoint(0, [[[self _scrollView] documentView] bounds].size.height)];
+    NSRect frame = [[[self _scrollView] documentView] frame];
+    [[self _contentView] scrollPoint:NSMakePoint(frame.origin.x, NSMaxY(frame))];
 }
 
 - (void)scrollLineUp:(id)sender

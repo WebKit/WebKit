@@ -1,21 +1,31 @@
 /*
     CarbonUtils.h
-    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.
+    Copyright (C) 2004 Apple Computer, Inc. All rights reserved.
     
     Public header file.
 */
+
 #ifndef __HIWEBCARBONUTILS__
 #define __HIWEBCARBONUTILS__
 
-#import <Carbon/Carbon.h>
-#import <WebKit/WebKit.h>
+#ifdef __OBJC__
+#import <CoreGraphics/CGImage.h>
+@class NSImage;
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-extern void 		WebInitForCarbon( void );
-extern CGImageRef 	WebConvertNSImageToCGImageRef( NSImage* inImage );
+extern void
+WebInitForCarbon(void);
+
+#ifdef __OBJC__
+
+extern CGImageRef
+WebConvertNSImageToCGImageRef(NSImage * inImage);
+
+#endif
 
 #ifdef __cplusplus
 }

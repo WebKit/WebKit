@@ -1,7 +1,23 @@
+2004-05-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3520322>: "can't use <WebKit/HIWebView.h> or <WebKit/CarbonUtils.h> from non-Objective C"
+
+        * Carbon.subproj/CarbonUtils.h: Added ifdefs so file compiles when included from non-Objective-C.
+        Changed style to match other Carbon headers a bit more closely. Also remove unnecessary includes.
+        * Carbon.subproj/HIWebView.h: Ditto.
+
+        - fixed <rdar://problem/3648505>: "this text file scrolls to the second line instead of first when pressing home"
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView _scrollToTopLeft]): Scroll to origin.y instead of assuming that top is 0; can be non-0 for text view.
+        (-[WebFrameView _scrollToBottomLeft]): Use NSMaxY instead of height for the same reason.
+
 2004-05-17  David Hyatt  <hyatt@apple.com>
 
-	Fix for performance "regression."  This wasn't really a regression... I just forgot to update a variable that
-	I can only assume is used by the PLT.
+	Fix for performance regression in PLT caused by not setting _timeOfLastCompletedLoad, causing
+        page cache to release during the benchmark.
 	
         * WebView.subproj/WebFrame.m:
         (-[WebFrame _setState:]):

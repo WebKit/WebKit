@@ -1,6 +1,6 @@
 /*
     HIWebView.h
-    Copyright (C) 2003 Apple Computer, Inc. All rights reserved.
+    Copyright (C) 2004 Apple Computer, Inc. All rights reserved.
     
     Public header file.
 */
@@ -8,7 +8,7 @@
 #ifndef __HIWebView__
 #define __HIWebView__
 
-#include <WebKit/WebView.h>
+#include <Carbon/Carbon.h>
 
 #include <AvailabilityMacros.h>
 
@@ -18,6 +18,10 @@
 
 #ifdef __cplusplus
 extern "C" {
+#endif
+
+#ifdef __OBJC__
+@class WebView;
 #endif
 
 /*
@@ -42,6 +46,7 @@ extern "C" {
 extern OSStatus 
 HIWebViewCreate(HIViewRef * outControl);
 
+#ifdef __OBJC__
 
 /*
  *  HIWebViewCreateWithClass(HIViewRef * outControl, Class aClass)
@@ -51,6 +56,8 @@ HIWebViewCreate(HIViewRef * outControl);
  *  
  *  Parameters:
  *    
+ *    aClass:
+ *      Either WebView, or a subclass, to be created and wrapped in an HIWebView.
  *    outControl:
  *      The new web view.
  *  
@@ -62,7 +69,10 @@ HIWebViewCreate(HIViewRef * outControl);
  *    CarbonLib:        not available
  *    Non-Carbon CFM:   not available
  */
-extern OSStatus HIWebViewCreateWithClass(Class aClass, HIViewRef * outControl);
+extern OSStatus
+HIWebViewCreateWithClass(
+  Class       aClass,
+  HIViewRef * outControl);
 
 /*
  *  HIWebViewGetWebView()
@@ -83,12 +93,13 @@ extern OSStatus HIWebViewCreateWithClass(Class aClass, HIViewRef * outControl);
  *    CarbonLib:        not available
  *    Non-Carbon CFM:   not available
  */
-extern WebView*
-HIWebViewGetWebView( HIViewRef inView );
+extern WebView *
+HIWebViewGetWebView(HIViewRef inView);
+
+#endif
 
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __HIWebView__ */
-
