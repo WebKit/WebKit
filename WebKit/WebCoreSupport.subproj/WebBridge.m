@@ -39,7 +39,12 @@
 
 - (IFWebCoreBridge *)_bridge
 {
-    return [[self dataSource] _bridge];
+    IFWebCoreBridge *aBridge;
+    
+    aBridge = [[self dataSource] _bridge];
+    if (!aBridge)
+        aBridge = [[self provisionalDataSource] _bridge];
+    return aBridge;
 }
 
 @end
@@ -78,7 +83,9 @@
     NSMutableArray *children = [NSMutableArray arrayWithCapacity:[frames count]];
     IFWebFrame *frame;
     while ((frame = [e nextObject])) {
-        [children addObject:[frame _bridge]];
+        IFWebCoreBridge *aBridge = [frame _bridge];
+        if (aBridge)
+            [children addObject:aBridge];
     }
     return children;
 }

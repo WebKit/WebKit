@@ -369,10 +369,12 @@ static const char * const stateNames[6] = {
                 // able to just draw the document associated with this
                 // frame, but that doesn't work.  Not sure why.
                 [mainDocumentView setNeedsDisplay: YES];
+                [mainDocumentView display];
  
                 // This should be redundant, given the setNeedsDisplay: on the
                 // main view above.
                 [thisDocumentView setNeedsDisplay: YES];
+                [thisDocumentView display];
                 
                 [[ds _locationChangeHandler] locationChangeDone: [ds mainDocumentError]];
  

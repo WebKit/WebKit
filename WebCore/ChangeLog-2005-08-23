@@ -1,3 +1,23 @@
+2002-06-15  Richard Williamson  <rjw@apple.com>
+
+    Fixed factoring problem.
+    
+	* kwq/KWQScrollView.mm:
+	(-[NSView _IF_getDocumentView]):
+	(-[NSView _IF_isScrollView]):
+	(QScrollView::visibleWidth):
+	(QScrollView::visibleHeight):
+	(QScrollView::contentsWidth):
+	(QScrollView::contentsHeight):
+	(QScrollView::contentsX):
+	(QScrollView::contentsY):
+	(QScrollView::setContentsPos):
+	(QScrollView::addChild):
+	(QScrollView::resizeContents):
+	(QScrollView::contentsToViewport):
+	(QScrollView::viewportToContents):
+	* kwq/qt/qscrollview.h:
+
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	* kwq/WebCoreBridge.mm:

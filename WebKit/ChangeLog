@@ -1,3 +1,23 @@
+2002-06-15  Richard Williamson  <rjw@apple.com>
+
+	* ChangeLog:
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebFrame _bridge]):
+	(-[IFWebCoreBridge children]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _isLoadComplete]):
+
+2002-06-15  Richard Williamson  <rjw@apple.com>
+
+    Fixed _bridge not accounting for provisional data source,
+    broke access to window.frames during load.
+    
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebFrame _bridge]):
+	(-[IFWebCoreBridge children]):
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _isLoadComplete]):
+
 2002-06-15  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFHTMLView.mm:
