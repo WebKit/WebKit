@@ -696,7 +696,22 @@ static NSRect _rectForString (KWQLayoutInfo *self, const UniChar *internalBuffer
 - (void)dealloc
 {
     [font release];
-#ifndef DIRECT_TO_CG
+#ifdef DIRECT_TO_CG
+    if (_styleGroup)
+        ATSUDisposeStyleGroup(_styleGroup);
+    if (_style)
+        ATSUDisposeStyle(_style);
+    if (_glyphVector.numAllocatedGlyphs > 0)
+        ATSClearGlyphVector(&_glyphVector);
+    if (_latinStyleGroup)
+        ATSUDisposeStyleGroup(_latinStyleGroup);
+    if (_latinStyle)
+        ATSUDisposeStyle(_latinStyle);
+    if (_latinCacheGlyphVector.numAllocatedGlyphs > 0)
+        ATSClearGlyphVector(&_latinCacheGlyphVector);
+    free(widthCache);
+    free(characterToGlyph);
+#else
     [attributes release];
 #endif
     [super dealloc];

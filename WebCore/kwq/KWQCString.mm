@@ -81,7 +81,8 @@ QCString::QCString(const QCString &s) : QByteArray(s)
 
 bool QCString::isEmpty() const
 {
-    return length() == 0;
+    const char *s = data();
+    return !(s || *s);
 }
 
 bool QCString::isNull() const
@@ -161,7 +162,8 @@ int QCString::contains(char c, bool cs=TRUE) const
 
 uint QCString::length() const
 {
-    return data() == NULL ? 0 : strlen(data());
+    const char *s = data();
+    return s == NULL ? 0 : strlen(s);
 }
 
 bool QCString::resize(uint len)

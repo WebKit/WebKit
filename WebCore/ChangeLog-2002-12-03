@@ -1,3 +1,15 @@
+2002-03-26  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo dealloc]): Free the
+        style groups, styles, and glyph vectors.
+       
+	* src/kwq/KWQFont.mm: (QFont::getFont): Use default font if we can't
+        find a font from the passed-in family. Before, we were raising an
+        exception and quitting the application.
+
+	* src/kwq/KWQCString.mm: (QCString::isEmpty): Faster version that
+        doesn't call strlen.
+         
 2002-03-25  Richard Williamson  <rjw@apple.com>
 
         Removed conditional check that prevent layout of iframes.  I don't
