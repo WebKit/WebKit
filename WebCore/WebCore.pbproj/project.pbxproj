@@ -541,6 +541,7 @@
 				BECE67BE07087B250007C14B,
 				BEA5E01E075CEDAC0098A432,
 				9378D9FC07640A46004B97BF,
+				EDA4AC98076FB89100DD23EC,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3456,6 +3457,7 @@
 		};
 		BEB1DD0805C197DF00DD1F43 = {
 			children = (
+				EDA4AC97076FB89100DD23EC,
 				BE9185DD05EE59B80081354D,
 				BE9185E005EE59B80081354D,
 				BEA5DBDA075CEDA00098A432,
@@ -3530,6 +3532,31 @@
 //BE2
 //BE3
 //BE4
+//ED0
+//ED1
+//ED2
+//ED3
+//ED4
+		EDA4AC97076FB89100DD23EC = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = edit_actions.h;
+			path = editing/edit_actions.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		EDA4AC98076FB89100DD23EC = {
+			fileRef = EDA4AC97076FB89100DD23EC;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//ED0
+//ED1
+//ED2
+//ED3
+//ED4
 //F50
 //F51
 //F52

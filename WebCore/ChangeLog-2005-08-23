@@ -1,3 +1,59 @@
+2004-12-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - rest of WebCore fix for <rdar://problem/3790011> undoable operations all say "Undo" 
+        in the menu, no specific action names
+
+        * khtml/editing/edit_actions.h: new header, contains EditAction enum
+        (renamed from HTMLEditAction, formerly in htmlediting.h)
+
+        * ForwardingHeaders/editing/edit_actions.h: new forwarding header
+        
+        * khtml/editing/htmlediting.h:
+        removed HTMLEditAction enum in favor of including edit_actions.h; added khtml::
+        namespace to EditAction usages; added m_editingAction ivar to ApplyStyleCommand
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommandPtr::editingAction):
+        update for enum name change
+        (khtml::EditCommand::editingAction):
+        ditto
+        (khtml::ApplyStyleCommand::ApplyStyleCommand):
+        added editingAction parameter to this constructor
+        (khtml::ApplyStyleCommand::editingAction):
+        return new ivar
+        (khtml::DeleteSelectionCommand::editingAction):
+        update for enum name change
+        (khtml::MoveSelectionCommand::editingAction):
+        ditto
+        (khtml::TypingCommand::editingAction):
+        ditto
+        (khtml::ReplaceSelectionCommand::editingAction):
+        ditto
+        
+        * khtml/khtml_part.h:
+        added EditAction parameter to applyStyle and computeAndSetTypingStyle
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::computeAndSetTypingStyle):
+        added EditAction parameter
+        (KHTMLPart::applyStyle):
+        ditto
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::registerCommandForUndoOrRedo):
+        do the cast from EditAction to WebUndoAction a different way to match other code
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setTypingStyle:withUndoAction:]):
+        added WebUndoAction parameter, passed into ApplyStyleCommand constructor
+        (-[WebCoreBridge applyStyle:withUndoAction:]):
+        ditto
+
+        * WebCore.pbproj/project.pbxproj:
+        updated for new files
+
 2004-12-14  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3562458, rowspan and colspan converted to ints so that large values will work for them.  Remove

@@ -108,6 +108,7 @@ using khtml::createMarkup;
 using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EAffinity;
+using khtml::EditAction;
 using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
 using khtml::IncludeNode;
@@ -1706,18 +1707,18 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return [DOMCSSStyleDeclaration _styleDeclarationWithImpl:_part->typingStyle()];
 }
 
-- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style
+- (void)setTypingStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!_part)
         return;
-    _part->computeAndSetTypingStyle([style _styleDeclarationImpl]);
+    _part->computeAndSetTypingStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
 }
 
-- (void)applyStyle:(DOMCSSStyleDeclaration *)style
+- (void)applyStyle:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (!_part)
         return;
-    _part->applyStyle([style _styleDeclarationImpl]);
+    _part->applyStyle([style _styleDeclarationImpl], static_cast<EditAction>(undoAction));
 }
 
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style

@@ -28,6 +28,7 @@
 #define __khtml_part_h__
 
 #include "editing/text_granularity.h"
+#include "editing/edit_actions.h"
 
 #include <kparts/part.h>
 #include <kparts/browserextension.h>
@@ -888,8 +889,8 @@ public:
   void undo();
   bool canRedo() const;
   bool canUndo() const;
-  void computeAndSetTypingStyle(DOM::CSSStyleDeclarationImpl *);
-  void applyStyle(DOM::CSSStyleDeclarationImpl *);
+  void computeAndSetTypingStyle(DOM::CSSStyleDeclarationImpl *, khtml::EditAction editingAction=khtml::EditActionUnspecified);
+  void applyStyle(DOM::CSSStyleDeclarationImpl *, khtml::EditAction editingAction=khtml::EditActionUnspecified);
   TriState selectionHasStyle(DOM::CSSStyleDeclarationImpl *) const;
   bool selectionStartHasStyle(DOM::CSSStyleDeclarationImpl *) const;
   DOM::DOMString selectionStartStylePropertyValue(int stylePropertyID) const;

@@ -3828,7 +3828,7 @@ void KWQKHTMLPart::registerCommandForUndoOrRedo(const EditCommandPtr &cmd, bool 
     KWQEditCommand *kwq = [KWQEditCommand commandWithEditCommand:cmd.get()];
     NSUndoManager *undoManager = [_bridge undoManager];
     [undoManager registerUndoWithTarget:_bridge selector:(isRedo ? @selector(redoEditing:) : @selector(undoEditing:)) object:kwq];
-    NSString *actionName = [_bridge nameForUndoAction:(WebUndoAction)cmd.editingAction()];
+    NSString *actionName = [_bridge nameForUndoAction:static_cast<WebUndoAction>(cmd.editingAction())];
     if (actionName != nil) {
         [undoManager setActionName:actionName];
     }

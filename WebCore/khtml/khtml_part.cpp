@@ -112,6 +112,7 @@ using khtml::CHARACTER;
 using khtml::ChildFrame;
 using khtml::Decoder;
 using khtml::EAffinity;
+using khtml::EditAction;
 using khtml::EditCommandPtr;
 using khtml::ETextGranularity;
 using khtml::FormData;
@@ -5359,7 +5360,7 @@ bool KHTMLPart::canUndo() const
 
 #endif
 
-void KHTMLPart::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style)
+void KHTMLPart::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
     if (!style || style->length() == 0) {
         clearTypingStyle();
@@ -5385,7 +5386,7 @@ void KHTMLPart::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style)
     blockStyle->ref();
     blockStyle->diff(mutableStyle);
     if (xmlDocImpl() && blockStyle->length() > 0) {
-        EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), blockStyle));
+        EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), blockStyle, editingAction));
         cmd.apply();
     }
     blockStyle->deref();
@@ -5395,19 +5396,19 @@ void KHTMLPart::computeAndSetTypingStyle(CSSStyleDeclarationImpl *style)
     mutableStyle->deref();
 }
 
-void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style)
+void KHTMLPart::applyStyle(CSSStyleDeclarationImpl *style, EditAction editingAction)
 {
     switch (selection().state()) {
         case Selection::NONE:
             // do nothing
             break;
         case Selection::CARET: {
-            computeAndSetTypingStyle(style);
+            computeAndSetTypingStyle(style, editingAction);
             break;
         }
         case Selection::RANGE:
             if (xmlDocImpl() && style) {
-                EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), style));
+                EditCommandPtr cmd(new ApplyStyleCommand(xmlDocImpl(), style, editingAction));
                 cmd.apply();
             }
             break;

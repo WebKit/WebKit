@@ -2415,7 +2415,7 @@ static WebHTMLView *lastHitView = nil;
             [style setProperty:@"color" :[self _colorAsString:color] :@""];
             if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[bridge selectedDOMRange]]) {
                 [[webView _UIDelegateForwarder] webView:webView willPerformDragDestinationAction:WebDragDestinationActionEdit forDraggingInfo:draggingInfo];
-                [bridge applyStyle:style];
+                [bridge applyStyle:style withUndoAction:WebUndoActionSetColor];
                 return YES;
             }
             return NO;
@@ -3237,14 +3237,14 @@ static WebHTMLView *lastHitView = nil;
     return style;
 }
 
-- (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style
+- (void)_applyStyleToSelection:(DOMCSSStyleDeclaration *)style withUndoAction:(WebUndoAction)undoAction
 {
     if (style == nil || [style length] == 0 || ![self _canEdit])
         return;
     WebView *webView = [self _webView];
     WebBridge *bridge = [self _bridge];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:[self _selectedRange]]) {
-        [bridge applyStyle:style];
+        [bridge applyStyle:style withUndoAction:undoAction];
     }
 }
 
@@ -3254,7 +3254,7 @@ static WebHTMLView *lastHitView = nil;
     [style setFontWeight:@"bold"];
     if ([[self _bridge] selectionStartHasStyle:style])
         [style setFontWeight:@"normal"];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSetFont];
 }
 
 - (void)_toggleItalic
@@ -3263,7 +3263,7 @@ static WebHTMLView *lastHitView = nil;
     [style setFontStyle:@"italic"];
     if ([[self _bridge] selectionStartHasStyle:style])
         [style setFontStyle:@"normal"];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSetFont];
 }
 
 - (BOOL)_handleStyleKeyEquivalent:(NSEvent *)event
@@ -3318,7 +3318,7 @@ static WebHTMLView *lastHitView = nil;
 {
     // Read RTF with font attributes from the pasteboard.
     // Maybe later we should add a pasteboard type that contains CSS text for "native" copy and paste font.
-    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]]];
+    [self _applyStyleToSelection:[self _styleFromFontAttributes:[self _fontAttributesFromFontPasteboard]] withUndoAction:WebUndoActionPasteFont];
 }
 
 - (void)pasteAsPlainText:(id)sender
@@ -3413,7 +3413,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)changeFont:(id)sender
 {
-    [self _applyStyleToSelection:[self _styleFromFontManagerOperation]];
+    [self _applyStyleToSelection:[self _styleFromFontManagerOperation] withUndoAction:WebUndoActionSetFont];
 }
 
 - (DOMCSSStyleDeclaration *)_styleForAttributeChange:(id)sender
@@ -3519,7 +3519,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)changeAttributes:(id)sender
 {
-    [self _applyStyleToSelection:[self _styleForAttributeChange:sender]];
+    [self _applyStyleToSelection:[self _styleForAttributeChange:sender] withUndoAction:WebUndoActionChangeAttributes];
 }
 
 - (DOMCSSStyleDeclaration *)_styleFromColorPanelWithSelector:(SEL)selector
@@ -3532,12 +3532,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     return style;
 }
 
+- (WebUndoAction)_undoActionFromColorPanelWithSelector:(SEL)selector
+{
+    if (selector == @selector(setBackgroundColor:)) {
+        return WebUndoActionSetBackgroundColor;
+    }
+    
+    return WebUndoActionSetColor;
+}
+
 - (void)_changeCSSColorUsingSelector:(SEL)selector inRange:(DOMRange *)range
 {
     DOMCSSStyleDeclaration *style = [self _styleFromColorPanelWithSelector:selector];
     WebView *webView = [self _webView];
     if ([[webView _editingDelegateForwarder] webView:webView shouldApplyStyle:style toElementsInDOMRange:range]) {
-        [[self _bridge] applyStyle:style];
+        [[self _bridge] applyStyle:style withUndoAction:[self _undoActionFromColorPanelWithSelector:selector]];
     }
 }
 
@@ -3564,10 +3573,11 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // AppKit will have to be revised to allow this to work with anything that isn't an 
     // NSTextView. However, this might not be required for Tiger, since the background-color 
     // changing box in the font panel doesn't work in Mail (3674481), though it does in TextEdit.
-    [self _applyStyleToSelection:[self _styleFromColorPanelWithSelector:@selector(setColor:)]];
+    [self _applyStyleToSelection:[self _styleFromColorPanelWithSelector:@selector(setColor:)] 
+                  withUndoAction:WebUndoActionSetColor];
 }
 
-- (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue
+- (void)_alignSelectionUsingCSSValue:(NSString *)CSSAlignmentValue withUndoAction:(WebUndoAction)undoAction
 {
     if (![self _canEdit])
         return;
@@ -3576,27 +3586,27 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     // just applyStyle: needs to be called for block-level attributes like this.
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setTextAlign:CSSAlignmentValue];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:undoAction];
 }
 
 - (void)alignCenter:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"center"];
+    [self _alignSelectionUsingCSSValue:@"center" withUndoAction:WebUndoActionCenter];
 }
 
 - (void)alignJustified:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"justify"];
+    [self _alignSelectionUsingCSSValue:@"justify" withUndoAction:WebUndoActionJustify];
 }
 
 - (void)alignLeft:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"left"];
+    [self _alignSelectionUsingCSSValue:@"left" withUndoAction:WebUndoActionAlignLeft];
 }
 
 - (void)alignRight:(id)sender
 {
-    [self _alignSelectionUsingCSSValue:@"right"];
+    [self _alignSelectionUsingCSSValue:@"right" withUndoAction:WebUndoActionAlignRight];
 }
 
 - (void)insertTab:(id)sender
@@ -3885,21 +3895,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"sub"];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSubscript];
 }
 
 - (void)superscript:(id)sender
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"super"];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:WebUndoActionSuperscript];
 }
 
 - (void)unscript:(id)sender
 {
     DOMCSSStyleDeclaration *style = [self _emptyStyle];
     [style setVerticalAlign:@"baseline"];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:WebUndoActionUnscript];
 }
 
 - (void)underline:(id)sender
@@ -3910,7 +3920,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     [style setTextDecoration:@"underline"];
     if ([[self _bridge] selectionStartHasStyle:style])
         [style setTextDecoration:@"none"];
-    [self _applyStyleToSelection:style];
+    [self _applyStyleToSelection:style withUndoAction:WebUndoActionUnderline];
 }
 
 - (void)yank:(id)sender

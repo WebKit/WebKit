@@ -1,3 +1,59 @@
+2004-12-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ken.
+        
+        - rest of WebKit fix for <rdar://problem/3790011> undoable operations all say "Undo" 
+        in the menu, no specific action names
+        
+        I only know of one loose end currently, which I wrote up as <rdar://problem/3920971> Edit menu 
+        says "Undo Change Attributes" when it should say "Undo Set Color", from font panel
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]):
+        use WebUndoActionSetColor when dragging color swatch
+        (-[WebHTMLView _applyStyleToSelection:withUndoAction:]):
+        new WebUndoAction parameter, passed across bridge
+        (-[WebHTMLView _toggleBold]):
+        use WebUndoActionSetFont
+        (-[WebHTMLView _toggleItalic]):
+        use WebUndoActionSetFont
+        (-[WebHTMLView pasteFont:]):
+        use WebUndoActionPasteFont
+        (-[WebHTMLView changeFont:]):
+        use WebUndoActionSetFont
+        (-[WebHTMLView changeAttributes:]):
+        use WebUndoActionChangeAttributes
+        (-[WebHTMLView _undoActionFromColorPanelWithSelector:]):
+        new method, returns WebUndoActionSetBackgroundColor or WebUndoActionSetColor
+        (-[WebHTMLView _changeCSSColorUsingSelector:inRange:]):
+        now calls _undoActionFromColorPanelWithSelector
+        (-[WebHTMLView changeColor:]):
+        use WebUndoActionSetColor
+        (-[WebHTMLView _alignSelectionUsingCSSValue:withUndoAction:]):
+        new WebUndoAction parameter, passed through
+        (-[WebHTMLView alignCenter:]):
+        use WebUndoActionCenter
+        (-[WebHTMLView alignJustified:]):
+        use WebUndoActionJustify
+        (-[WebHTMLView alignLeft:]):
+        use WebUndoActionAlignLeft
+        (-[WebHTMLView alignRight:]):
+        use WebUndoActionAlignRight
+        (-[WebHTMLView subscript:]):
+        use WebUndoActionAlignSubscript
+        (-[WebHTMLView superscript:]):
+        use WebUndoActionAlignSuperscript
+        (-[WebHTMLView unscript:]):
+        use WebUndoActionAlignUnscript
+        (-[WebHTMLView underline:]):
+        use WebUndoActionAlignUnderline
+        
+        * WebView.subproj/WebView.m:
+        (-[WebView setTypingStyle:]):
+        pass WebUndoActionUnspecified through as new parameter since we don't have any more specific info
+        (-[WebView applyStyle:]):
+        ditto
+
 2004-12-14  Richard Williamson   <rjw@apple.com>
 
 	Helper method to get URL of plugin view.
@@ -30,7 +86,7 @@
 
         Reviewed by Ken.
 
-        - WebKit part of fix for <rdar://problem/3790011> undoable operations all say "Undo" in the menu, 
+        - WebKit part of plumbing of fix for <rdar://problem/3790011> undoable operations all say "Undo" in the menu, 
         no specific action names
 
         * WebCoreSupport.subproj/WebBridge.m:
