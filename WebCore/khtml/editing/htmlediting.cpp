@@ -178,18 +178,12 @@ static DOMString &styleSpanClassString()
 
 static bool isEmptyStyleSpan(const NodeImpl *node)
 {
-    if (!node || !node->isHTMLElement())
+    if (!node || !node->isHTMLElement() || node->id() != ID_SPAN)
         return false;
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
     CSSMutableStyleDeclarationImpl *inlineStyleDecl = elem->inlineStyleDecl();
-    if (!inlineStyleDecl || inlineStyleDecl->length() == 0) {
-        NamedAttrMapImpl *map = elem->attributes();
-        if (map && map->length() == 1 && elem->getAttribute(ATTR_CLASS) == styleSpanClassString())
-            return true;
-    }
-    
-    return false;
+    return (!inlineStyleDecl || inlineStyleDecl->length() == 0) && elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
 }
 
 static bool isStyleSpan(const NodeImpl *node)
@@ -198,7 +192,7 @@ static bool isStyleSpan(const NodeImpl *node)
         return false;
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
-    return elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
+    return elem->id() == ID_SPAN && elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
 }
 
 static DOMString &blockPlaceholderClassString()
@@ -1545,17 +1539,8 @@ void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclarationImpl *style, HT
         }
     }
 
-    if (elem->id() == ID_SPAN && elem->renderer() && elem->renderer()->isInline()) {
-        // Check to see if the span is one we added to apply style.
-        // If it is, and there are no more attributes on the span other than our
-        // class marker, remove the span.
-        if (decl->length() == 0) {
-            removeNodeAttribute(elem, ATTR_STYLE);
-            NamedAttrMapImpl *map = elem->attributes();
-            if (map && map->length() == 1 && elem->getAttribute(ATTR_CLASS) == styleSpanClassString())
-                removeNodePreservingChildren(elem);
-        }
-    }
+    if (isEmptyStyleSpan(elem))
+        removeNodePreservingChildren(elem);
 }
 
 void ApplyStyleCommand::removeBlockStyle(CSSMutableStyleDeclarationImpl *style, const Position &start, const Position &end)
@@ -3933,14 +3918,18 @@ void RemoveNodePreservingChildrenCommand::doApply()
 //------------------------------------------------------------------------------------------
 // ReplaceSelectionCommand
 
-ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
-    : m_fragment(fragment), m_hasInterchangeNewline(false), m_hasMoreThanOneBlock(false)
+ReplacementFragment::ReplacementFragment(DocumentImpl *document, DocumentFragmentImpl *fragment)
+    : m_document(document), m_fragment(fragment), m_hasInterchangeNewline(false), m_hasMoreThanOneBlock(false)
 {
+    if (!m_document)
+        return;
+
     if (!m_fragment) {
         m_type = EmptyFragment;
         return;
     }
 
+    m_document->ref();
     m_fragment->ref();
 
     NodeImpl *firstChild = m_fragment->firstChild();
@@ -3957,30 +3946,6 @@ ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
     }
     
     m_type = TreeFragment;
-
-    // look for default style
-    if (firstChild == lastChild && isStyleSpan(firstChild)) {
-        NodeImpl *styleSpan = firstChild;
-        DOMString styleString = static_cast<ElementImpl *>(styleSpan)->getAttribute(ATTR_STYLE);
-        if (styleString.length() > 0) {
-            CSSParser parser(true);
-            m_defaultStyle = new CSSMutableStyleDeclarationImpl;
-            if (!parser.parseDeclaration(m_defaultStyle, styleString)) {
-                m_defaultStyle->deref();
-                m_defaultStyle = 0;
-            }
-        }
-        NodeImpl *n = styleSpan->firstChild();
-        while (n) {
-            NodeImpl *next = n->traverseNextSibling();
-            n->ref();
-            removeNode(n);
-            insertNodeBefore(n, styleSpan);
-            n->deref();
-            n = next;
-        }
-        removeNode(styleSpan);
-    }
 
     NodeImpl *node = m_fragment->firstChild();
     int realBlockCount = 0;
@@ -4021,10 +3986,21 @@ ReplacementFragment::ReplacementFragment(DocumentFragmentImpl *fragment)
 
      if (blockCount > 1)
         m_hasMoreThanOneBlock = true;
+        
+    // Prepare this fragment to merge styles correctly into the destination.
+    computeStylesForNodes();
+    removeStyleNodes();
 }
 
 ReplacementFragment::~ReplacementFragment()
 {
+    QMapIterator<NodeImpl *, CSSMutableStyleDeclarationImpl *> it;
+    for (it = m_styles.begin(); it != m_styles.end(); ++it) {
+        it.key()->deref();
+        it.data()->deref();
+    }
+    if (m_document)
+        m_document->deref();
     if (m_fragment)
         m_fragment->deref();
 }
@@ -4037,6 +4013,12 @@ NodeImpl *ReplacementFragment::firstChild() const
 NodeImpl *ReplacementFragment::lastChild() const 
 { 
     return  m_fragment->lastChild(); 
+}
+
+CSSMutableStyleDeclarationImpl *ReplacementFragment::styleForNode(NodeImpl *node)
+{
+    QMapConstIterator<NodeImpl *,CSSMutableStyleDeclarationImpl *> it = m_styles.find(node);
+    return it != m_styles.end() ? *it : 0;
 }
 
 NodeImpl *ReplacementFragment::mergeStartNode() const
@@ -4089,6 +4071,20 @@ NodeImpl *ReplacementFragment::enclosingBlock(NodeImpl *node) const
     return node ? node : m_fragment;
 }
 
+void ReplacementFragment::removeNodePreservingChildren(NodeImpl *node)
+{
+    if (!node)
+        return;
+
+    while (NodeImpl *n = node->firstChild()) {
+        n->ref();
+        removeNode(n);
+        insertNodeBefore(n, node);
+        n->deref();
+    }
+    removeNode(node);
+}
+
 void ReplacementFragment::removeNode(NodeImpl *node)
 {
     if (!node)
@@ -4115,8 +4111,79 @@ void ReplacementFragment::insertNodeBefore(NodeImpl *node, NodeImpl *refNode)
     int exceptionCode = 0;
     parent->insertBefore(node, refNode, exceptionCode);
     ASSERT(exceptionCode == 0);
- }
+}
 
+void ReplacementFragment::computeStylesForNodes()
+{
+    // This function inserts the nodes from the fragment into the destination
+    // document and computes the style for each. This information will be
+    // used later to apply the necessary styles to the nodes after placing
+    // them in their intended location.
+    NodeImpl *body = m_document->body();
+    if (!body)
+        return;
+
+    ElementImpl *holder = createDefaultParagraphElement(m_document);
+    holder->ref();
+
+    int exceptionCode = 0;
+    holder->appendChild(m_fragment, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    body->appendChild(holder, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    m_document->updateLayout();
+    for (NodeImpl *node = holder->firstChild(); node; node = node->traverseNextNode()) {
+        CSSComputedStyleDeclarationImpl *computedStyle = Position(node, 0).computedStyle();
+        computedStyle->ref();
+        CSSMutableStyleDeclarationImpl *style = computedStyle->copyInheritableProperties();
+        style->ref();
+        node->ref();
+        m_styles[node] = style;
+        computedStyle->deref();
+    }
+    body->removeChild(holder, exceptionCode);
+    ASSERT(exceptionCode == 0);
+    m_document->updateLayout();
+
+    while (NodeImpl *node = holder->firstChild()) {
+        node->ref();
+        holder->removeChild(node, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        m_fragment->appendChild(node, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        node->deref();
+    }
+
+    holder->deref();
+}
+
+void ReplacementFragment::removeStyleNodes()
+{
+    // Since style information has been computed and cached away in
+    // computeStylesForNodes(), these style nodes can be removed, since
+    // the correct styles will be added back in applyStyleToInsertedNodes().
+    NodeImpl *node = m_fragment->firstChild();
+    while (node) {
+        NodeImpl *next = node->traverseNextNode();
+        // This list of tags change the appearance of content
+        // in ways we can add back on later with CSS, if necessary.
+        if (node->id() == ID_BIG || 
+            node->id() == ID_CENTER || 
+            node->id() == ID_FONT || 
+            node->id() == ID_I || 
+            node->id() == ID_S || 
+            node->id() == ID_SMALL || 
+            node->id() == ID_STRIKE || 
+            node->id() == ID_SUB || 
+            node->id() == ID_SUP || 
+            node->id() == ID_TT || 
+            node->id() == ID_U || 
+            isStyleSpan(node)) {
+            removeNodePreservingChildren(node);
+        }
+        node = next;
+    }
+}
 
 bool isProbablyBlock(const NodeImpl *node)
 {
@@ -4151,7 +4218,7 @@ bool isProbablyBlock(const NodeImpl *node)
 
 ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DocumentFragmentImpl *fragment, bool selectReplacement, bool smartReplace) 
     : CompositeEditCommand(document), 
-      m_fragment(fragment),
+      m_fragment(document, fragment),
       m_firstNodeInserted(0),
       m_lastNodeInserted(0),
       m_lastTopNodeInserted(0),
@@ -4406,6 +4473,8 @@ void ReplaceSelectionCommand::doApply()
             }
         }
     
+        applyStyleToInsertedNodes();
+    
         completeHTMLReplacement();
     }
     
@@ -4515,6 +4584,55 @@ void ReplaceSelectionCommand::updateNodesInserted(NodeImpl *node)
     m_lastNodeInserted->ref();
     if (old)
         old->deref();
+}
+
+void ReplaceSelectionCommand::applyStyleToInsertedNodes()
+{
+    // This function uses the cached style information computed in by the 
+    // ReplacementFragment class to apply the styles necessary to make
+    // the document look right.
+
+    document()->updateLayout();
+
+    NodeImpl *node = m_firstNodeInserted;
+    NodeImpl *beyondEnd = m_lastNodeInserted->traverseNextNode();
+    while (node && node != beyondEnd) {
+        NodeImpl *next = node->traverseNextNode();
+        
+        // See if this node was present in the fragment, or was added by the paste algorithm. 
+        // If it was in the fragment, then we need to check, and perhaps fix up, its style.
+        CSSMutableStyleDeclarationImpl *desiredStyle = m_fragment.styleForNode(node);
+        if (desiredStyle) {
+            // The desiredStyle declaration tells what style this node wants to be.
+            // Compare that to the style that it is right now in the document.
+            Position pos(node, 0);
+            CSSComputedStyleDeclarationImpl *currentStyle = pos.computedStyle();
+            currentStyle->ref();
+            currentStyle->diff(desiredStyle);
+            
+            // Only add in block perperties if the node is at the start of a 
+            // paragraph. This matches AppKit.
+            if (!isStartOfParagraph(VisiblePosition(pos, DOWNSTREAM)))
+                desiredStyle->removeBlockProperties();
+            
+            // If the desiredStyle is non-zero length, that means the current style differs
+            // from the desired by the styles remaining in the desiredStyle declaration.
+            if (desiredStyle->length() > 0) {
+                DOM::RangeImpl *rangeAroundNode = document()->createRange();
+                rangeAroundNode->ref();
+                int exceptionCode = 0;
+                rangeAroundNode->selectNode(node, exceptionCode);
+                ASSERT(exceptionCode == 0);
+                setEndingSelection(Selection(rangeAroundNode, DOWNSTREAM, UPSTREAM));
+                applyStyle(desiredStyle);
+                rangeAroundNode->deref();
+            }
+
+            currentStyle->deref();
+        }
+
+        node = next;
+    }
 }
 
 //------------------------------------------------------------------------------------------

@@ -1,3 +1,67 @@
+2005-02-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Fix for this bug:
+        
+        <rdar://problem/3965158> Drag-n-drop within a rich text message sometimes changes the color of the dragged text
+        
+        This change fixes the bug....and much more. Now, for the first time, the paste code can do "smart merging"
+        or "smooshing" of styles during its operation. Since this new code is actively, rather than passively
+        working with styles, it fixes the bug, and lays the groundwork for similar work we need to do to
+        preserve quote levels in Mail.
+
+        * khtml/css/css_valueimpl.cpp:
+        (DOM::CSSMutableStyleDeclarationImpl::clear): New method.
+        (DOM::CSSMutableStyleDeclarationImpl::removeBlockProperties): Ditto.
+        (DOM::CSSMutableStyleDeclarationImpl::removePropertiesInSet): Ditto.
+        (DOM::operator==): Add operator for CSSProperty.
+        * khtml/css/css_valueimpl.h: Declare new functions.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isEmptyStyleSpan): Improved the test in this function, rolling together the old implementation
+        with some code that did this work inline elsewhere. Sum of the parts is better than either test was by itself.
+        (khtml::isStyleSpan): Check for ID_SPAN.
+        (khtml::ApplyStyleCommand::removeCSSStyle): Call isEmptyStyleSpan. This was the place with an inline implementation before.
+        (khtml::ReplacementFragment::ReplacementFragment): Now takes a DocumentImpl argument. No longer does a "default style"
+        check, but rather calls functions which do a similar check to that, and much more.
+        (khtml::ReplacementFragment::~ReplacementFragment): Deref document, and computed styles.
+        (khtml::ReplacementFragment::styleForNode): New helper. Looks up and returns computed style for a node.
+        (khtml::ReplacementFragment::removeNodePreservingChildren): New helper.
+        (khtml::ReplacementFragment::computeStylesForNodes): New function which computes the "desired" style for
+        every node in the fragment. This information is used later after paste is done as a reference for testing
+        what styles need to be added, and which can be removed as redundant, from all the nodes inserted by the
+        replacement code.
+        (khtml::ReplacementFragment::removeStyleNodes): Clears out all style nodes from the fragment. They are
+        no longer needed after the call to computeStylesForNodes(),
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand): Add a document to the call to initialize the
+        command's ReplacementFragment.
+        (khtml::ReplaceSelectionCommand::doApply): Call applyStyleToInsertedNodes() after inserting nodes to make
+        styles come out right.
+        (khtml::ReplaceSelectionCommand::applyStyleToInsertedNodes): This is the "style smooshing" function. It 
+        computes the styles that need to be added to each node inserted, comparing the style it gets from just
+        being inserted into its correct destination with the computed "desired style" done in the 
+        ReplacementFragment constructor. It then adds in all the necessary styles, and will also remove redundant styles.
+        * khtml/editing/htmlediting.h: Update declarations and member variables as needed.
+        * khtml/editing/markup.cpp:
+        (khtml::startMarkup): Add additional style annotations to the markup we generate, so that paste code can preserve it.
+        (khtml::markup): Ditto.
+        (khtml::createMarkup): Ditto.
+        
+        These test results are subtly better with this change. They no longer have an unneeded empty span.
+        Visually the same as before.
+        
+        * layout-tests/editing/style/remove-underline-across-paragraph-expected.txt
+        * layout-tests/editing/style/remove-underline-across-paragraph-in-bold-expected.txt
+        * layout-tests/editing/style/remove-underline-expected.txt
+        * layout-tests/editing/style/remove-underline-from-stylesheet-expected.txt
+
+        New tests:
+
+        * layout-tests/editing/style/smoosh-styles-001-expected.txt
+        * layout-tests/editing/style/smoosh-styles-002-expected.txt
+        * layout-tests/editing/style/smoosh-styles-001.html
+        * layout-tests/editing/style/smoosh-styles-002.html
+
 2005-02-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Adele.

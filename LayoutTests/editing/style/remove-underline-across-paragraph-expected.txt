@@ -10,23 +10,20 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 78x28
             RenderText {TEXT} at (0,0) size 78x28
               text run at (0,0) width 78: "xxxxxx "
-          RenderInline {SPAN} at (0,0) size 72x28
-            RenderText {TEXT} at (78,0) size 72x28
-              text run at (78,0) width 72: "xxxxxx"
-        RenderBlock (anonymous) at (14,42) size 756x28
-          RenderBlock {P} at (0,0) size 756x28
-            RenderInline {SPAN} at (0,0) size 78x28
-              RenderText {TEXT} at (0,0) size 78x28
-                text run at (0,0) width 78: " xxxxxx"
-            RenderInline {SPAN} at (0,0) size 78x28
-              RenderText {TEXT} at (78,0) size 78x28
-                text run at (78,0) width 78: " xxxxxx"
+          RenderText {TEXT} at (78,0) size 72x28
+            text run at (78,0) width 72: "xxxxxx"
+        RenderBlock {P} at (14,42) size 756x28
+          RenderText {TEXT} at (0,0) size 78x28
+            text run at (0,0) width 78: " xxxxxx"
+          RenderInline {SPAN} at (0,0) size 78x28
+            RenderText {TEXT} at (78,0) size 78x28
+              text run at (78,0) width 78: " xxxxxx"
         RenderBlock (anonymous) at (14,70) size 756x0
-          RenderInline {SPAN} at (0,0) size 0x0
+        RenderBlock (anonymous) at (14,70) size 756x0
 selection is RANGE:
-start:      position 0 of child 1 {TEXT} of child 5 {SPAN} of root {DIV}
+start:      position 0 of child 5 {TEXT} of root {DIV}
 upstream:   position 7 of child 1 {TEXT} of child 4 {SPAN} of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 5 {SPAN} of root {DIV}
-end:        position 7 of child 1 {TEXT} of child 1 {SPAN} of child 2 {P} of child 5 {SPAN} of root {DIV}
-upstream:   position 7 of child 1 {TEXT} of child 1 {SPAN} of child 2 {P} of child 5 {SPAN} of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 2 {SPAN} of child 2 {P} of child 5 {SPAN} of root {DIV}
+downstream: position 0 of child 5 {TEXT} of root {DIV}
+end:        position 7 of child 1 {TEXT} of child 6 {P} of root {DIV}
+upstream:   position 7 of child 1 {TEXT} of child 6 {P} of root {DIV}
+downstream: position 0 of child 1 {TEXT} of child 2 {SPAN} of child 6 {P} of root {DIV}

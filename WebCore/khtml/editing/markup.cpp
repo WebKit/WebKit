@@ -157,7 +157,7 @@ static QString renderedText(const NodeImpl *node, const RangeImpl *range)
     return result;
 }
 
-static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnotateForInterchange annotate)
+static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnotateForInterchange annotate, CSSMutableStyleDeclarationImpl *defaultStyle)
 {
     unsigned short type = node->nodeType();
     switch (type) {
@@ -170,9 +170,21 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
                         return stringValueForRange(node, range);
                 }
             }
-            if (annotate)
-                return convertHTMLTextToInterchangeFormat(escapeHTML(renderedText(node, range))); 
-            return escapeHTML(stringValueForRange(node, range));
+            QString markup = annotate ? escapeHTML(renderedText(node, range)) : escapeHTML(stringValueForRange(node, range));            
+            if (defaultStyle) {
+                NodeImpl *element = node->parentNode();
+                if (element) {
+                    CSSMutableStyleDeclarationImpl *style = Position(element, 0).computedStyle()->copyInheritableProperties();
+                    style->ref();
+                    defaultStyle->diff(style);
+                    if (style->length() > 0) {
+                        QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().string() + "\">";
+                        markup = openTag + markup + "</span>";
+                    }
+                    style->deref();
+                }            
+            }
+            return annotate ? convertHTMLTextToInterchangeFormat(markup) : markup;
         }
         case Node::COMMENT_NODE:
             return static_cast<const CommentImpl *>(node)->toString().string();
@@ -182,11 +194,32 @@ static QString startMarkup(const NodeImpl *node, const RangeImpl *range, EAnnota
             QString markup = QChar('<') + node->nodeName().string();
             if (type == Node::ELEMENT_NODE) {
                 const ElementImpl *el = static_cast<const ElementImpl *>(node);
+                DOMString additionalStyle;
+                if (defaultStyle && el->isHTMLElement()) {
+                    CSSMutableStyleDeclarationImpl *style = Position(const_cast<ElementImpl *>(el), 0).computedStyle()->copyInheritableProperties();
+                    style->ref();
+                    defaultStyle->diff(style);
+                    if (style->length() > 0) {
+                        CSSMutableStyleDeclarationImpl *inlineStyleDecl = static_cast<const HTMLElementImpl *>(el)->inlineStyleDecl();
+                        if (inlineStyleDecl)
+                            inlineStyleDecl->diff(style);
+                        additionalStyle = style->cssText();
+                    }
+                    style->deref();
+                }
                 NamedAttrMapImpl *attrs = el->attributes();
                 unsigned long length = attrs->length();
-                for (unsigned int i=0; i<length; i++) {
-                    AttributeImpl *attr = attrs->attributeItem(i);
-                    markup += " " + node->getDocument()->attrName(attr->id()).string() + "=\"" + attr->value().string() + "\"";
+                if (length == 0 && additionalStyle.length() > 0) {
+                    markup += " " + node->getDocument()->attrName(ATTR_STYLE).string() + "=\"" + additionalStyle.string() + "\"";
+                }
+                else {
+                    for (unsigned int i=0; i<length; i++) {
+                        AttributeImpl *attr = attrs->attributeItem(i);
+                        DOMString value = attr->value();
+                        if (attr->id() == ATTR_STYLE && additionalStyle.length() > 0)
+                            value += "; " + additionalStyle;
+                        markup += " " + node->getDocument()->attrName(attr->id()).string() + "=\"" + value.string() + "\"";
+                    }
                 }
             }
             markup += node->isHTMLElement() ? ">" : "/>";
@@ -213,7 +246,7 @@ static QString markup(const NodeImpl *startNode, bool onlyIncludeChildren, bool 
             if (nodes) {
                 nodes->append(current);
             }
-            me += startMarkup(current, 0, DoNotAnnotateForInterchange);
+            me += startMarkup(current, 0, DoNotAnnotateForInterchange, 0);
         }        
         if (!current->isHTMLElement() || endTag[current->id()] != FORBIDDEN) {
             // print children
@@ -266,6 +299,11 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     NodeImpl *pastEnd = range->pastEndNode();
     NodeImpl *lastClosed = 0;
     QPtrList<NodeImpl> ancestorsToClose;
+
+    // calculate the "default style" for this markup
+    Position pos(commonAncestor->getDocument()->documentElement(), 0);
+    CSSMutableStyleDeclarationImpl *defaultStyle = pos.computedStyle()->copyInheritableProperties();
+    defaultStyle->ref();
     
     // Iterate through the nodes of the range.
     NodeImpl *next;
@@ -280,7 +318,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
         }
         
         // Add the node to the markup.
-        markups.append(startMarkup(n, range, annotate));
+        markups.append(startMarkup(n, range, annotate, defaultStyle));
         if (nodes) {
             nodes->append(n);
         }
@@ -309,7 +347,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
                         NodeImpl *nextParent = next->parentNode();
                         if (n != nextParent) {
                             for (NodeImpl *parent = n->parent(); parent != 0 && parent != nextParent; parent = parent->parentNode()) {
-                                markups.prepend(startMarkup(parent, range, annotate));
+                                markups.prepend(startMarkup(parent, range, annotate, defaultStyle));
                                 markups.append(endMarkup(parent));
                                 if (nodes) {
                                     nodes->append(parent);
@@ -338,7 +376,7 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
                 break;
             }
         }
-        markups.prepend(startMarkup(ancestor, range, annotate));
+        markups.prepend(startMarkup(ancestor, range, annotate, defaultStyle));
         markups.append(endMarkup(ancestor));
         if (nodes) {
             nodes->append(ancestor);
@@ -359,13 +397,10 @@ QString createMarkup(const RangeImpl *range, QPtrList<NodeImpl> *nodes, EAnnotat
     }
 
     // add in the "default style" for this markup
-    Position pos(commonAncestor->getDocument()->documentElement(), 0);
-    CSSMutableStyleDeclarationImpl *style = pos.computedStyle()->copyInheritableProperties();
-    style->ref();
-    QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + style->cssText().string() + "\">";
+    QString openTag = QString("<span class=\"") + AppleStyleSpanClass + "\" style=\"" + defaultStyle->cssText().string() + "\">";
     markups.prepend(openTag);
     markups.append("</span>");
-    style->deref();
+    defaultStyle->deref();
 
     return markups.join("");
 }

@@ -422,6 +422,8 @@ public:
     int  m_id;
     bool m_bImportant;
 
+    friend bool operator==(const CSSProperty &, const CSSProperty &);
+
 protected:
     CSSValueImpl *m_value;
 };
@@ -466,6 +468,8 @@ public:
     DOMString removeProperty(int propertyID, bool notifyChanged = true)
         { int exceptionCode; return removeProperty(propertyID, notifyChanged, exceptionCode); }
 
+    void clear();
+
     void setChanged();
  
     // setLengthProperty treats integers as pixels! (Needed for conversion of HTML attributes.)
@@ -481,6 +485,8 @@ public:
     void addParsedProperties(const CSSProperty * const *, int numProperties);
  
     CSSMutableStyleDeclarationImpl *copyBlockProperties() const;
+    void removeBlockProperties();
+    void removePropertiesInSet(const int *set, unsigned length);
 
     void merge(CSSMutableStyleDeclarationImpl *, bool argOverridesOnConflict = true);
  
