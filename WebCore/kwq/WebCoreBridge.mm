@@ -1556,7 +1556,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // Sending an event can result in the destruction of the view and part.
             v->ref();
             
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::TypesReadable);
+            KWQClipboard::AccessPolicy policy = _part->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
             clipboard->ref();
             NSDragOperation srcOp = [info draggingSourceOperationMask];
             clipboard->setSourceOperation(srcOp);
@@ -1599,7 +1600,8 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             // Sending an event can result in the destruction of the view and part.
             v->ref();
 
-            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], KWQClipboard::TypesReadable);
+            KWQClipboard::AccessPolicy policy = _part->baseURL().isLocalFile() ? KWQClipboard::Readable : KWQClipboard::TypesReadable;
+            KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard], policy);
             clipboard->ref();
             
             v->cancelDragAndDrop(QPoint([info draggingLocation]), clipboard);

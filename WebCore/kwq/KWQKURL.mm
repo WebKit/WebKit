@@ -976,6 +976,12 @@ QString KURL::decode_string(const QString &urlString, const QTextCodec *codec)
     return result;
 }
 
+bool KURL::isLocalFile() const
+{
+    // FIXME - include feed: here too?
+    return protocol() == "file";
+}
+
 static void appendEscapingBadChars(char*& buffer, const char *strStart, size_t length)
 {
     char *p = buffer;

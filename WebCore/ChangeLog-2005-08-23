@@ -1,3 +1,22 @@
+2004-06-14  Trey Matteson  <trey@apple.com>
+
+	Dashboard wants access to pastboard data during the drag gesture.
+
+	We address this need be allowing docs that are local files to access the
+	pasteboard data during a drag, while other pages can only get at the types
+	list until the drop happens.  This is deemed safe because local files already
+	have such broad super powers.
+
+        Reviewed by Maciej.
+
+        * kwq/KWQKURL.h:
+        * kwq/KWQKURL.mm:
+        (KURL::isLocalFile):  Implement this QT method to look for the file scheme.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragOperationForDraggingInfo:]):  Use more relaxed clipboard
+	security for local file pages.
+        (-[WebCoreBridge dragExitedWithDraggingInfo:]):  Ditto.
+
 2004-06-14  Darin Adler  <darin@apple.com>
 
         Reviewed by me, code changes by Patrick Beard.

@@ -87,7 +87,9 @@ public:
     
     NSURL *getNSURL() const;
     NSData *getNSData() const;
-    
+
+    bool isLocalFile() const;
+
     static QString decode_string(const QString &, const QTextCodec * = 0);
     static QString encode_string(const QString &);
     
