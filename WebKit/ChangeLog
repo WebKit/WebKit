@@ -1,3 +1,14 @@
+2004-08-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	- a bit of code cleanup
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _stringWithData:]): Call textEncodingName instead of
+	copying it's code.
+        (-[WebDataSource textEncodingName]): Tweak formatting.
+
 2004-08-23  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed build.

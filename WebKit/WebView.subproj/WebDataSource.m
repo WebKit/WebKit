@@ -1012,15 +1012,11 @@
 
 - (NSString *)_stringWithData:(NSData *)data
 {
-    NSString *textEncodingName = [self _overrideEncoding];
+    NSString *textEncodingName = [self textEncodingName];
 
-    if(!textEncodingName){
-        textEncodingName = [[self response] textEncodingName];
-    }
-
-    if(textEncodingName){
+    if (textEncodingName) {
         return [WebBridge stringWithData:data textEncodingName:textEncodingName];
-    }else{
+    } else {
         return [WebBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
     }
 }
@@ -1120,7 +1116,7 @@
 {
     NSString *textEncodingName = [self _overrideEncoding];
 
-    if(!textEncodingName){
+    if (!textEncodingName) {
         textEncodingName = [[self response] textEncodingName];
     }
     return textEncodingName;
