@@ -1,5 +1,17 @@
 2002-01-29  Richard Williamson  <rjw@apple.com>
 
+	* ChangeLog:
+	* WebView.subproj/WKDefaultWebController.h:
+	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController
+	setView:andDataSource:]), (-[WKDefaultWebController dataSourceForView:]):
+
+2002-01-29  Richard Williamson  <rjw@apple.com>
+
+	* WebView.subproj/WKDefaultWebController.mm: (-[WKDefaultWebController
+	setView:andDataSource:]):
+
+2002-01-29  Richard Williamson  <rjw@apple.com>
+
     First pass at frame code.  Still needs lots of cleanup.
     
 	* WebKit.pbproj/project.pbxproj:

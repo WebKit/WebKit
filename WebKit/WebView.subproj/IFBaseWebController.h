@@ -31,6 +31,7 @@
 // Find the data source for the specified view.
 - (WKWebDataSource *)dataSourceForView: (WKWebView *)view;
 
+- (void)setMainView: (WKWebView *)view;
 - (WKWebView *)mainView;
 
 - (void)setMainDataSource: (WKWebDataSource *)dataSource;

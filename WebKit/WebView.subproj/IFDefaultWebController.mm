@@ -106,22 +106,25 @@
 {
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
 
-    [data->viewMap release];
+    [data->viewMap autorelease];
     data->viewMap = [[NSMutableDictionary alloc] init];
     
-    [data->dataSourceMap release];
+    [data->dataSourceMap autorelease];
     data->dataSourceMap = [[NSMutableDictionary alloc] init];
     
-    [data->mainView release];
+    [data->mainView autorelease];
     data->mainView = [view retain];
     [view _setController: self];
     
-    [data->mainDataSource release];
+    [data->mainDataSource autorelease];
     data->mainDataSource = [dataSource retain];
     [dataSource _setController: self];
 
-    [data->viewMap setObject: view forKey: [WKObjectHolder holderWithObject:dataSource]];
-    [data->dataSourceMap setObject: dataSource forKey: [WKObjectHolder holderWithObject:view]];
+    if (dataSource != nil && view != nil){
+        [data->viewMap setObject: view forKey: [WKObjectHolder holderWithObject:dataSource]];
+
+        [data->dataSourceMap setObject: dataSource forKey: [WKObjectHolder holderWithObject:view]];
+    }
     
     [view dataSourceChanged];
 }
@@ -155,6 +158,12 @@
 {
     WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
     return [data->dataSourceMap objectForKey: [WKObjectHolder holderWithObject:view]];
+}
+
+- (void)setMainView: (WKWebView *)m;
+{
+    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    [self setView: m andDataSource: data->mainDataSource];
 }
 
 
