@@ -175,13 +175,15 @@ Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
         return appletInstance;
     
     RenderApplet *r = static_cast<RenderApplet*>(m_render);
-    r->createWidgetIfNecessary();
-    if (r && r->widget()){
-        // Call into the part (and over the bridge) to pull the Bindings::Instance
-        // from the guts of the Java VM.
-        void *_view = r->widget()->getView();
-        KHTMLPart* part = getDocument()->part();
-        appletInstance = part ? KWQ(part)->getAppletInstanceForView((NSView *)_view) : 0;
+    if (r) {
+        r->createWidgetIfNecessary();
+        if (r->widget()){
+            // Call into the part (and over the bridge) to pull the Bindings::Instance
+            // from the guts of the Java VM.
+            void *_view = r->widget()->getView();
+            KHTMLPart* part = getDocument()->part();
+            appletInstance = part ? KWQ(part)->getAppletInstanceForView((NSView *)_view) : 0;
+        }
     }
     return appletInstance;
 }

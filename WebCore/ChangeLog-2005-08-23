@@ -1,3 +1,13 @@
+2003-12-06  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3502655>: REGRESSION: Repro crash at espn.com
+
+        Reviewed by Darin.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::getAppletInstance):
+        Check for nil RenderApplet before dereferencing rather than after.
+
 2003-12-05  David Hyatt  <hyatt@apple.com>
 
 	Add support for link clicking as an accessibility action.
