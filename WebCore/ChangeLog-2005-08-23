@@ -1,3 +1,14 @@
+2002-11-29  Don Melton  <gramps@apple.com>
+
+        * khtml/css/html4.css:
+
+        Finally tweak headline font sizes and margins to match Gecko and CSS
+        standard:
+            - increase H1 font-size from 1.7em to 2em
+            - increase H2 font-size from 1.4em to 1.5em
+            - make H2 top and bottom margin match (bottom was strangely .87em)
+            - increase H4 margin from 1.0em to 1.33em
+
 2002-11-27  David Hyatt  <hyatt@apple.com>
 
 	Fix DHTML on phoenix.com.  Add support for window.addEventListener

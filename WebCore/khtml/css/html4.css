@@ -144,15 +144,15 @@ MAP {
       
 H1 { 
 	display: block;
-	font-size: 1.7em; 
+	font-size: 2em; 
 	margin: .67_qem auto .67em auto;
 	font-weight: bolder;
 }
       
 H2 { 
 	display: block;
-	font-size: 1.4em; 
-	margin: .83_qem auto .87em auto;
+	font-size: 1.5em; 
+	margin: .83_qem auto .83em auto;
 	font-weight: bolder;
 }
       
@@ -165,7 +165,7 @@ H3 {
       
 H4 {
 	display: block;
-	margin: 1.0_qem auto 1.0em auto;
+	margin: 1.33_qem auto 1.33em auto;
 	font-weight: bolder;
 }
 
