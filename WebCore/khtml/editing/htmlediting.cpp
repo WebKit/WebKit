@@ -136,10 +136,20 @@ static inline bool nextCharacterIsCollapsibleWhitespace(const Position &pos)
 
 static const int spacesPerTab = 4;
 
-static inline bool isTableStructureNode(const NodeImpl *node)
+static bool isTableStructureNode(const NodeImpl *node)
 {
     RenderObject *r = node->renderer();
     return (r && (r->isTableCell() || r->isTableRow() || r->isTableSection() || r->isTableCol()));
+}
+
+static bool isListStructureNode(const NodeImpl *node)
+{
+    // FIXME: Irritating that we can get away with just going at the render tree for isTableStructureNode,
+    // but here we also have to peek at the type of DOM node?
+    RenderObject *r = node->renderer();
+    NodeImpl::Id nodeID = node->id();
+    return (r && r->isListItem())
+        || (nodeID == ID_OL || nodeID == ID_UL || nodeID == ID_DD || nodeID == ID_DT || nodeID == ID_DIR || nodeID == ID_MENU);
 }
 
 static DOMString &nonBreakingSpaceString()
@@ -2964,8 +2974,8 @@ void DeleteSelectionCommand::moveNodesAfterNode()
         return;
 
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
-    if (isTableStructureNode(startBlock))
-        // Do not move content between parts of a table
+    if (isTableStructureNode(startBlock) || isListStructureNode(startBlock))
+        // Do not move content between parts of a table or list.
         return;
 
     // Now that we are about to add content, check to see if a placeholder element

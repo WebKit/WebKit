@@ -1,3 +1,13 @@
+2005-03-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by me, code change by Ken.
+
+        - fixed <rdar://problem/4059852> Deleting from first element of list makes content jump to wrong place
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::isListStructureNode): Added.
+        (khtml::DeleteSelectionCommand::moveNodesAfterNode): Check for list nodes as well as table nodes.
+
 2005-03-20  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
