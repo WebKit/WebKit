@@ -126,15 +126,24 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
     return frame;
 }
 
+void KWQKHTMLPartImpl::openURL(const KURL &url)
+{
+    NSURL *cocoaURL = url.getNSURL();
+    if (cocoaURL == nil) {
+        // FIXME: We need to report this error to someone.
+    } else {
+        [_bridge loadURL:cocoaURL];
+    }
+}
+
 void KWQKHTMLPartImpl::openURLRequest(const KURL &url, const URLArgs &args)
 {
     NSURL *cocoaURL = url.getNSURL();
     if (cocoaURL == nil) {
         // FIXME: We need to report this error to someone.
-        return;
+    } else {
+        [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
     }
-
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
 }
 
 void KWQKHTMLPartImpl::slotData(NSString *encoding, bool forceEncoding, const char *bytes, int length, bool complete)

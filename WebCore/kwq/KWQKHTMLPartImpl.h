@@ -75,6 +75,7 @@ public:
     void setView(KHTMLView *view);
     KHTMLView *view() const;
 
+    void openURL(const KURL &);
     void openURLRequest(const KURL &, const KParts::URLArgs &);
     
     void slotData(NSString *, bool forceEncoding, const char *bytes, int length, bool complete = false);

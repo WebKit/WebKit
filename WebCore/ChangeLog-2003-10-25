@@ -1,3 +1,17 @@
+2002-10-16  Darin Adler  <darin@apple.com>
+
+	- fixed 3045570 -- can't select a printer at inkfinder.com
+
+        * khtml/khtml_part.cpp: (KHTMLPart::processObjectRequest):
+	Call the new openURL for the case where we are reusing a part.
+	We do this backwards from how KHTML does, so it's twisted.
+
+        * kwq/KWQKHTMLPartImpl.h: Add openURL.
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::openURL):
+	Tell the bridge to load the URL.
+
+        * kwq/mac-encodings.txt: Tweak Korean encoding names.
+
 2002-10-16  David Hyatt  <hyatt@apple.com>
 
 	A very substantial change.  Absolute/fixed positioned elements that

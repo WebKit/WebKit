@@ -2747,7 +2747,13 @@ bool KHTMLPart::processObjectRequest( khtml::ChildFrame *child, const KURL &_url
   }
 
 #if APPLE_CHANGES
-  if ( !child->m_part )
+  if ( child->m_part )
+  {
+    KHTMLPart *part = dynamic_cast<KHTMLPart *>(&*child->m_part);
+    if (part)
+      part->impl->openURL(url);
+  }
+  else
   {
     KParts::ReadOnlyPart *part = impl->createPart(*child, url, mimetype);
 #else

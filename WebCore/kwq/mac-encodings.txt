@@ -21,7 +21,7 @@ NonLossyASCII
 
 MacJapanese: x-mac-japanese
 MacChineseTrad: x-mac-chinesetrad, x-mac-trad-chinese
-MacKorean: x-mac-korean
+MacKorean: ks_c_5601, ks_c_5601-1987, ks_c_5601_1987, ksc5601, x-mac-korean
 MacArabic: x-mac-arabic
 MacHebrew: x-mac-hebrew
 MacGreek: x-mac-greek
@@ -122,7 +122,7 @@ ShiftJIS_X0213_00
 GB_2312_80: csgb231280, gb2312-80, gb231280, gb_2312-80
 GBK_95: x-gbk
 GB_18030_2000: gb18030
-KSC_5601_87: ks_c_5601, ks_c_5601-1987, ks_c_5601_1987, ksc5601
+KSC_5601_87
 KSC_5601_92_Johab
 CNS_11643_92_P1
 CNS_11643_92_P2
