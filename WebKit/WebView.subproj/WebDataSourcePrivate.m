@@ -64,6 +64,7 @@
     [representation release];
     [inputURL release];
     [attributes release];
+    [request release];
     [finalURL release];
     [frames release];
     [mainClient release];
@@ -181,9 +182,7 @@
     // Fire this guy up.
     if (!_private->mainHandle) {
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-        WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:_private->inputURL attributes:_private->attributes flags:_private->flags];
-        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:request client:_private->mainClient];
-        [request release];
+        _private->mainHandle = [[WebResourceHandle alloc] initWithRequest:_private->request client:_private->mainClient];
     }
     [_private->mainClient didStartLoadingWithURL:[_private->mainHandle URL]];
     [_private->mainHandle loadInBackground];

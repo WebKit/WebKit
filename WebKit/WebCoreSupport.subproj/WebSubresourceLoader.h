@@ -20,8 +20,8 @@
     WebResourceHandle *handle;
 }
 
-+ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader
-    withURL:(NSURL *)URL attributes:(NSDictionary *)attributes forDataSource:(WebDataSource *)dataSource;
++ (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
+    withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source;
 
 - (WebResourceHandle *)handle;
 

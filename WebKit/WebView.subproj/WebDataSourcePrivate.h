@@ -11,6 +11,7 @@
 
 @class WebIconLoader;
 @class WebResourceHandle;
+@class WebResourceRequest;
 @class WebMainResourceClient;
 @class WebSubresourceClient;
 @protocol WebDocumentRepresentation;
@@ -30,6 +31,7 @@
     NSURL *inputURL;
     NSDictionary *attributes;
     unsigned flags;
+    WebResourceRequest *request;
 
     // The original URL we may have been redirected to.
     NSURL *finalURL;

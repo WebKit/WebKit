@@ -666,7 +666,7 @@ static const char * const stateNames[] = {
         if (type == WebFrameLoadTypeBack || type == WebFrameLoadTypeForward) {
             flags = WebResourceHandleUseCachedObjectIfPresent;
         }
-        dataSource = [[WebDataSource alloc] initWithURL:itemURL attributes:nil flags:flags];
+        dataSource = [[WebDataSource alloc] initWithURL:itemURL flags:flags];
         [self setProvisionalDataSource: dataSource];
         [self _setLoadType: type];
         [self startLoading];

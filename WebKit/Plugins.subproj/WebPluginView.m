@@ -24,6 +24,7 @@
 #import <WebFoundation/WebError.h>
 #import <WebFoundation/WebNSStringExtras.h>
 #import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 #import <AppKit/NSEvent_Private.h>
 #import <AppKit/NSWindow_Private.h>
@@ -837,23 +838,34 @@
 
 @implementation WebNetscapePluginView (WebNPPCallbacks)
 
-- (NPError)loadURL:(NSString *)URLString inTarget:(NSString *)target withNotifyData:(void *)notifyData andHandleAttributes:(NSDictionary *)attributes
+- (NSURL *)pluginURLFromCString:(const char *)URLCString
+{
+    NSString *URLString;
+    NSURL *URL;
+
+    URLString = [NSString stringWithCString:URLCString];
+
+    if ([URLString _web_looksLikeAbsoluteURL]) {
+        URL = [NSURL _web_URLWithString:URLString];
+    }
+    else {
+        URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
+    }
+    
+    return URL;
+}
+
+- (NPError) loadRequest:(WebResourceRequest *)request inTarget:(NSString *)target withNotifyData:(void *)notifyData
 {
     WebNetscapePluginStream *stream;
     WebDataSource *dataSource;
     WebFrame *frame;
     NSURL *URL;
     
-    if([URLString _web_looksLikeAbsoluteURL])
-        URL = [NSURL _web_URLWithString:URLString];
-    else
-        URL = [NSURL _web_URLWithString:URLString relativeToURL:baseURL];
-    
-    if(!URL)
-        return NPERR_INVALID_URL;
+    URL = [request URL];
     
     if(!target){
-        stream = [[WebNetscapePluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData attributes:attributes];
+        stream = [[WebNetscapePluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData];
         if(stream){
             [stream startLoad];
             [streams addObject:stream];
@@ -883,7 +895,7 @@
                 // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
                 // so we have to allow this as well. Needed for iTools.
             }
-            dataSource = [[WebDataSource alloc] initWithURL:URL attributes:attributes];
+            dataSource = [[WebDataSource alloc] initWithRequest:request];
             if ([frame setProvisionalDataSource:dataSource]) {
                 [frame startLoading];
             }
@@ -896,6 +908,8 @@
 -(NPError)getURLNotify:(const char *)URL target:(const char *)target notifyData:(void *)notifyData
 {
     NSString *theTarget = nil;
+    NSURL *pluginURL;
+    WebResourceRequest *request;
         
     LOG(Plugins, "NPN_GetURLNotify: %s target: %s", URL, target);
         
@@ -904,13 +918,22 @@
         
     if(target)
         theTarget = [NSString stringWithCString:target];
+
+    pluginURL = [self pluginURLFromCString:URL]; 
+
+    if(!pluginURL)
+        return NPERR_INVALID_URL;
+        
+    request = [[[WebResourceRequest alloc] initWithURL:pluginURL] autorelease];
     
-    return [self loadURL:[NSString stringWithCString:URL] inTarget:theTarget withNotifyData:notifyData andHandleAttributes:nil];
+    return [self loadRequest:request inTarget:theTarget withNotifyData:notifyData];
 }
 
 -(NPError)getURL:(const char *)URL target:(const char *)target
 {
     NSString *theTarget = nil;
+    NSURL *pluginURL;
+    WebResourceRequest *request;
     
     LOG(Plugins, "NPN_GetURL: %s target: %s", URL, target);
     
@@ -919,16 +942,24 @@
         
     if(target)
         theTarget = [NSString stringWithCString:target];
+
+    pluginURL = [self pluginURLFromCString:URL]; 
+
+    if(!pluginURL)
+        return NPERR_INVALID_URL;
+        
+    request = [[[WebResourceRequest alloc] initWithURL:pluginURL] autorelease];
     
-    return [self loadURL:[NSString stringWithCString:URL] inTarget:theTarget withNotifyData:NULL andHandleAttributes:nil];
+    return [self loadRequest:request inTarget:theTarget withNotifyData:NULL];
 }
 
 -(NPError)postURLNotify:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file notifyData:(void *)notifyData
 {
-    NSDictionary *attributes=nil;
     NSData *postData;
     NSURL *tempURL;
     NSString *path, *theTarget = nil;
+    NSURL *pluginURL;
+    WebResourceRequest *request;
     
     LOG(Plugins, "NPN_PostURLNotify: %s", URL);
  
@@ -949,13 +980,17 @@
     }else{
         postData = [NSData dataWithBytes:buf length:len];
     }
+
+    pluginURL = [self pluginURLFromCString:URL]; 
+
+    if(!pluginURL)
+        return NPERR_INVALID_URL;
+        
+    request = [[[WebResourceRequest alloc] initWithURL:pluginURL] autorelease];
+    [request setMethod:@"POST"];
+    [request setData:postData];
     
-    attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-        postData,	WebHTTPResourceHandleRequestData,
-        @"POST", 	WebHTTPResourceHandleRequestMethod, nil];
-                
-    return [self loadURL:[NSString stringWithCString:URL] inTarget:theTarget 
-                withNotifyData:notifyData andHandleAttributes:attributes];
+    return [self loadRequest:request inTarget:theTarget withNotifyData:notifyData];
 }
 
 -(NPError)postURL:(const char *)URL target:(const char *)target len:(UInt32)len buf:(const char *)buf file:(NPBool)file

@@ -21,6 +21,7 @@
 @class WebController;
 
 @class WebDataSourcePrivate;
+@class WebResourceRequest;
 @protocol WebDocumentRepresentation;
 
 @interface WebDataSource : NSObject
@@ -31,17 +32,14 @@
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
 -(id)initWithURL:(NSURL *)URL;
--(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes;
--(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags;
+-(id)initWithURL:(NSURL *)URL flags:(unsigned)theFlags;
+-(id)initWithRequest:(WebResourceRequest *)request;
 
 #ifdef TENTATIVE_API
 - initWithData: (NSData *)data;
 - initWithString: (NSString *)string;
 - initWithLoader: (WebLoader *)loader;
 #endif
-
--(NSDictionary *)attributes;
--(unsigned)flags;
 
 - (NSData *)data;
 
@@ -88,6 +86,8 @@
 // WebController?
 //- (void)setController: (WebController *)controller;
 - (WebController *)controller;
+
+-(WebResourceRequest *)request;
 
 // May return nil if not initialized with a URL.
 // The value of URL will change if a redirect occurs.

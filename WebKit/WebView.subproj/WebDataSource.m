@@ -18,21 +18,33 @@
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebFileTypeMappings.h>
+#import <WebFoundation/WebResourceRequest.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
 
 @implementation WebDataSource
 
 -(id)initWithURL:(NSURL *)URL
 {
-    return [self initWithURL:URL attributes:nil flags:0];
+    return [self initWithURL:URL flags:0];
 }
 
--(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes
+-(id)initWithURL:(NSURL *)URL flags:(unsigned)theFlags
 {
-    return [self initWithURL:URL attributes:theAttributes flags:0];
+    id result = nil;
+
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:theFlags];
+    if (request) {
+        result = [self initWithRequest:request];
+        [request release];
+    }
+    else {
+        [self release];
+    }
+    
+    return result;
 }
 
--(id)initWithURL:(NSURL *)URL attributes:(NSDictionary *)theAttributes flags:(unsigned)theFlags
+-(id)initWithRequest:(WebResourceRequest *)request
 {
     self = [super init];
     if (!self) {
@@ -40,10 +52,11 @@
     }
     
     _private = [[WebDataSourcePrivate alloc] init];
-    _private->inputURL = [URL retain];
-    _private->flags = theFlags;
-    _private->attributes = [theAttributes retain];
-    
+    _private->request = [request retain];
+    _private->inputURL = [[request canonicalURL] retain];
+    _private->attributes = nil;
+    _private->flags = [request flags];
+
     ++WebDataSourceCount;
     
     return self;
@@ -56,16 +69,6 @@
     [_private release];
     
     [super dealloc];
-}
-
--(NSDictionary *)attributes
-{
-    return _private->attributes;
-}
-
--(unsigned)flags;
-{
-    return _private->flags;
 }
 
 - (NSData *)data
@@ -172,6 +175,10 @@
     return _private->controller;
 }
 
+-(WebResourceRequest *)request
+{
+    return _private->request;
+}
 
 // May return nil if not initialized with a URL.
 - (NSURL *)URL

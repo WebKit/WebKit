@@ -1,3 +1,53 @@
+2002-09-11  Ken Kocienda  <kocienda@apple.com>
+
+        Major change to the API and design of WebFoundation. WebKit has been modified
+	to use the new API.
+
+        WebFoundation attributes, as a design concept, are now completely gone. The old usages of
+        attributes have been replaced with new API on the WebResourceRequest
+        and WebResourceResponse classes.
+
+        * Plugins.subproj/WebPluginStream.h: Removed attribute usage in init API. No need for replacement.
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream initWithURL:pluginPointer:]): Removed attribute usage in init API.
+        (-[WebNetscapePluginStream initWithURL:pluginPointer:notifyData:]): Ditto.
+        (-[WebNetscapePluginStream dealloc]): Remove attribute release.
+        (-[WebNetscapePluginStream startLoad]): Removed attribute usage. Replace with calls to new API.
+        (-[WebNetscapePluginStream receivedData:withHandle:]): Ditto.
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView pluginURLFromCString:]): Added this helper method.
+        (-[WebNetscapePluginView loadRequest:inTarget:withNotifyData:]): Added.
+        (-[WebNetscapePluginView getURLNotify:target:notifyData:]): Modified to call new loadRequest:inTarget:withNotifyData: method.
+        (-[WebNetscapePluginView getURL:target:]): Ditto.
+        (-[WebNetscapePluginView postURLNotify:target:len:buf:file:notifyData:]): Ditto.
+        * WebCoreSupport.subproj/WebBridge.h: Removed attribute usage in loadURL API. No need for replacement.
+        * WebCoreSupport.subproj/WebBridge.m: Added loadRequest:withParent:
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+        (-[WebBridge startLoadingResource:withURL:referrer:]): Removed attribute usage. Replace with calls to new API.
+        (-[WebBridge isReloading]): Ditto.
+        (-[WebBridge loadRequest:withParent:]): Added.
+        (-[WebBridge loadURL:]): Modified to use new loadRequest:withParent: API
+        (-[WebBridge loadURL:referrer:]): Ditto.
+        (-[WebBridge loadURL:flags:withParent:]): Ditto.
+        (-[WebBridge postWithURL:data:]): Ditto.
+        * WebCoreSupport.subproj/WebSubresourceClient.h: Changed API to use an NSString referrer instead of an attributes dictionary.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]): Removed attribute usage. Replace with calls to new API.
+        * WebView.subproj/WebDataSource.h: Added initWithRequest: method.
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource initWithURL:]): Removed attribute usage in init API.
+        (-[WebDataSource initWithURL:flags:]): Ditto.
+        (-[WebDataSource initWithRequest:]): Added.
+        (-[WebDataSource request]): Added.
+        * WebView.subproj/WebDataSourcePrivate.h: Added WebResourceRequest ivar.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): Added WebResourceRequest ivar.
+        (-[WebDataSource _startLoading:]): Removed attribute usage. Replace with calls to new API.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame reload:]): Removed attribute usage. Replace with calls to new API.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _goToItem:withFrameLoadType:]): Use new WebDataSource init API.
+
 2002-09-10  Darin Adler  <darin@apple.com>
 
 	WebKit part of support for the "Referer" header.

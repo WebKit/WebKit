@@ -22,6 +22,7 @@
 
 #import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSURLExtras.h>
+#import <WebFoundation/WebResourceRequest.h>
 
 @implementation WebFrame
 
@@ -195,9 +196,9 @@
 	return;
     }
 
-    flags = [dataSource flags] | WebResourceHandleFlagLoadFromOrigin;
+    flags = [[dataSource request] flags] | WebResourceHandleFlagLoadFromOrigin;
 
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] attributes:[dataSource attributes] flags:flags];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:[dataSource originalURL] flags:flags];
     [newDataSource _setParent:[dataSource parent]];
     if ([self setProvisionalDataSource:newDataSource]) {
 	[self _setLoadType:WebFrameLoadTypeRefresh];

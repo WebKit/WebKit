@@ -50,16 +50,11 @@
 
 - initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer
 {        
-    return [self initWithURL:theURL pluginPointer:thePluginPointer notifyData:nil attributes:nil];
+    return [self initWithURL:theURL pluginPointer:thePluginPointer notifyData:nil];
 }
 
 - initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer notifyData:(void *)theNotifyData
 {
-    return [self initWithURL:theURL pluginPointer:thePluginPointer notifyData:theNotifyData attributes:nil];
-}
-
-- initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer notifyData:(void *)theNotifyData attributes:(NSDictionary *)theAttributes
-{    
     [super init];
     
     if(!theURL)
@@ -70,7 +65,6 @@
     
     view = [(WebNetscapePluginView *)thePluginPointer->ndata retain];
     URL = [theURL retain];
-    attributes = [theAttributes retain];
     instance = thePluginPointer;
     notifyData = theNotifyData;
     resourceData = [[NSMutableData alloc] init];
@@ -93,14 +87,13 @@
     }
     free((void *)npStream.URL);
     [URL release];
-    [attributes release];
     [resourceData release];
     [super dealloc];
 }
 
 - (void)startLoad
 {
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL attributes:attributes flags:0];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     resource = [[WebResourceHandle alloc] initWithRequest:request client:self];
     [resource loadInBackground];
     [request release];
@@ -125,7 +118,7 @@
         char *cURL = (char *)malloc([URLString cStringLength]+1);
         [URLString getCString:cURL];
 
-        NSNumber *timeInterval = [handle attributeForKey:@"Last-Modified"];
+        NSNumber *timeInterval = [[[handle response] headers] objectForKey:@"Last-Modified"];
         uint32 lastModified;
         
         if(timeInterval){

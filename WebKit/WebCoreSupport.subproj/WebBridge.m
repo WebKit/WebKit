@@ -78,7 +78,7 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
     
-    [[newFrame _bridge] loadURL:URL attributes:nil flags:0 withParent:[self dataSource]];
+    [[newFrame _bridge] loadURL:URL flags:0 withParent:[self dataSource]];
     
     // Set the load type so this load doesn't end up in the back
     // forward list.
@@ -179,29 +179,9 @@
     }
 }
 
-- (void)addAttributeForReferrer:(NSString *)referrer toDictionary:(NSMutableDictionary *)attributes
-{
-    if ([referrer length] == 0) {
-        return;
-    }
-    NSDictionary *headers = [NSDictionary dictionaryWithObject:[[referrer copy] autorelease] forKey:@"Referer"]; // note the misspelling
-    [attributes setObject:headers forKey:WebHTTPResourceHandleRequestHeaders];
-}
-
-- (NSDictionary *)attributesForReferrer:(NSString *)referrer
-{
-    if ([referrer length] == 0) {
-        return nil;
-    }
-    NSMutableDictionary *attributes = [NSMutableDictionary dictionary];
-    [self addAttributeForReferrer:referrer toDictionary:attributes];
-    return attributes;
-}
-
 - (id <WebCoreResourceHandle>)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL referrer:(NSString *)referrer
 {
-    return [WebSubresourceClient startLoadingResource:resourceLoader withURL:URL
-        attributes:[self attributesForReferrer:referrer] forDataSource:[self dataSource]];
+    return [WebSubresourceClient startLoadingResource:resourceLoader withURL:URL referrer:referrer forDataSource:[self dataSource]];
 }
 
 - (void)objectLoadedFromCache:(NSURL *)URL size:(unsigned)bytes
@@ -219,7 +199,7 @@
 
 - (BOOL)isReloading
 {
-    return ([[self dataSource] flags] & WebResourceHandleFlagLoadFromOrigin);
+    return ([[[self dataSource] request] flags] & WebResourceHandleFlagLoadFromOrigin);
 }
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
@@ -284,9 +264,9 @@
     [[self dataSource] _setIconURL:URL withType:type];
 }
 
-- (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags withParent:(WebDataSource *)parent
+- (void)loadRequest:(WebResourceRequest *)request withParent:(WebDataSource *)parent
 {
-    WebDataSource *newDataSource = [[WebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
+    WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setParent:parent];
     if ([frame setProvisionalDataSource:newDataSource]) {
         [frame startLoading];
@@ -296,7 +276,17 @@
 
 - (void)loadURL:(NSURL *)URL referrer:(NSString *)referrer
 {
-    [self loadURL:URL attributes:[self attributesForReferrer:referrer] flags:0 withParent:[[frame dataSource] parent]];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:0];
+    [request setReferrer:referrer];
+    [self loadRequest:request withParent:[[frame dataSource] parent]];
+    [request release];
+}
+
+- (void)loadURL:(NSURL *)URL flags:(unsigned)flags withParent:(WebDataSource *)parent
+{
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:flags];
+    [self loadRequest:request withParent:parent];
+    [request release];
 }
 
 - (void)postWithURL:(NSURL *)URL referrer:(NSString *)referrer data:(NSData *)data
@@ -305,23 +295,22 @@
     // This prevents a potential bug which may cause a page
     // with a form that uses itself as an action to be returned 
     // from the cache without submitting.
-    NSMutableDictionary *attributes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
-        data, WebHTTPResourceHandleRequestData,
-        @"POST", WebHTTPResourceHandleRequestMethod,
-        nil];
-    [self addAttributeForReferrer:referrer toDictionary:attributes];
-    [self loadURL:URL attributes:attributes flags:WebResourceHandleFlagLoadFromOrigin withParent:[[frame dataSource] parent]];
-    [attributes release];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:WebResourceHandleFlagLoadFromOrigin];
+    [request setMethod:@"POST"];
+    [request setData:data];
+    [request setReferrer:referrer];
+    [self loadRequest:request withParent:[[frame dataSource] parent]];
+    [request release];
 }
 
 - (void)reportBadURL:(NSString *)badURL
 {
     WebError *badURLError = [[WebError alloc] initWithErrorCode:WebResultBadURLError
-                                                       inDomain:WebErrorDomainWebFoundation
-                                                     failingURL:badURL];
+                                                        inDomain:WebErrorDomainWebFoundation
+                                                        failingURL:badURL];
     [[frame controller] _receivedError:badURLError
-                     forResourceHandle:nil
-                       partialProgress:nil
+                        forResourceHandle:nil
+                        partialProgress:nil
                         fromDataSource:[self dataSource]];
     [badURLError release];
 }

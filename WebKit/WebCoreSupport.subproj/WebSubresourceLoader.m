@@ -66,10 +66,11 @@
 }
 
 + (WebSubresourceClient *)startLoadingResource:(id <WebCoreResourceLoader>)rLoader
-    withURL:(NSURL *)URL attributes:(NSDictionary *)attributes forDataSource:(WebDataSource *)source
+    withURL:(NSURL *)URL referrer:(NSString *)referrer forDataSource:(WebDataSource *)source
 {
     WebSubresourceClient *client = [[self alloc] initWithLoader:rLoader dataSource:source];
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL attributes:attributes flags:[source flags]];
+    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL flags:[[source request] flags]];
+    [request setReferrer:referrer];
     WebResourceHandle *h = [[[WebResourceHandle alloc] initWithRequest:request client:client] autorelease];
     [request release];
     
