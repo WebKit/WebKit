@@ -53,7 +53,7 @@ const struct HashEntry WindowTableEntries[] = {
    { "onblur", Window::Onblur, DontDelete, 0, 0 },
    { "addEventListener", Window::AddEventListener, DontDelete|Function, 3, 0 },
    { "Node", Window::Node, DontDelete, 0, &WindowTableEntries[100] },
-   { 0, 0, 0, 0, 0 },
+   { "XMLSerializer", Window::XMLSerializer, DontDelete|ReadOnly, 0, 0 },
    { "scrollBy", Window::ScrollBy, DontDelete|Function, 2, 0 },
    { "Image", Window::Image, DontDelete|ReadOnly, 0, 0 },
    { "window", Window::_Window, DontDelete|ReadOnly, 0, 0 },

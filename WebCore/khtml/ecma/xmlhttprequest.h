@@ -104,9 +104,11 @@ namespace KJS {
 
     khtml::Decoder *decoder;
     QString encoding;
-    QString response;
-
     QString responseHeaders;
+
+    QString response;
+    mutable bool createdDocument;
+    mutable DOM::Document responseXML;
   };
 
 

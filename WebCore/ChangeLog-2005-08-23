@@ -1,5 +1,23 @@
 2003-12-09  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by John.
+
+	<rdar://problem/3487195>: Implement responseXML property for XMLHttpRequest
+        
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::getValueProperty): Implemented responseXML by parsing the
+	document and returning it.
+        (KJS::XMLHttpRequest::XMLHttpRequest): Initialize new field
+        * khtml/ecma/xmlhttprequest.h:
+
+        * khtml/ecma/kjs_window.cpp: 
+	(Windw::get): Forgot this in last commit; add XMLSerializer
+	constructor.
+        * khtml/ecma/kjs_window.lut.h:
+	* khtml/ecma/Makefile.am: Forgot to include this in the last commit.
+
+2003-12-09  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Richard.
 
 	<rdar://problem/3504049>: XMLSerializer object and serializeToString method needed for XMLHttpRequest testing
