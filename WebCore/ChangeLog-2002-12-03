@@ -1,5 +1,10 @@
 2002-11-15  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQWindowWidget.mm: (KWQWindowWidget::setFrameGeometry):
+	Oops. Make that display:YES.
+
+2002-11-15  Darin Adler  <darin@apple.com>
+
 	- fixed 3090219 -- Window jumps up and down when loading nikon page
 
         * kwq/KWQWindowWidget.mm: (KWQWindowWidget::setFrameGeometry):

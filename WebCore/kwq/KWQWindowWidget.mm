@@ -115,7 +115,7 @@ void KWQWindowWidget::setFrameGeometry(const QRect &r)
 {
     // FIXME: Could do something to make it easy for the browser to avoid saving this change.
     [d->window setFrame:NSMakeRect(r.x(), NSMaxY([[[NSScreen screens] objectAtIndex:0] frame]) - (r.y() + r.height()),
-        r.width(), r.height())];
+        r.width(), r.height()) display:YES];
 }
 
 @implementation KWQWindowWidgetDeleter
