@@ -1,3 +1,16 @@
+2003-11-14  John Sullivan  <sullivan@apple.com>
+        
+        - WebKit part of fix for <rdar://problem/3474757>: Safari on-screen text needs review
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate menuItemWithTag:]):
+        change "Download Link to Disk" to "Download Linked File to Disk"
+
+        * English.lproj/Localizable.strings:
+        updated for these changes
+
 2003-11-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
