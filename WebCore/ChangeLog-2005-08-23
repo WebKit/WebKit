@@ -1,5 +1,51 @@
 2004-09-29  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3815895> exception inside fontForSelection causes Mail to abort when selection hits bottom
+
+        * khtml/editing/selection.cpp:
+        (khtml::Selection::toRange): Use RangeImpl calls to detect exceptions when creating a Range
+        from a Selection. Return an empty Range when there is an exception.
+
+        Fix for this bug:
+        
+        <rdar://problem/3817268> REGRESSION (Mail): Window does not scroll when selecting out of 
+        visible area of view with arrow keys
+
+        * khtml/editing/selection.cpp: Did some name changing. m_needsCaretLayout -> m_needsLayout.
+        Added m_expectedVisibleRect which supplies the right rectangle to update when scrolling.
+        (khtml::Selection::Selection): m_needsCaretLayout -> m_needsLayout name change.
+        (khtml::Selection::init): Handle m_expectedVisibleRect in initialization.
+        (khtml::Selection::operator=): Handle m_expectedVisibleRect in assignment.
+        (khtml::Selection::setNeedsLayout): m_needsCaretLayout -> m_needsLayout name change.
+        (khtml::Selection::layout): Changed name from layoutCaret, since m_expectedVisibleRect
+        is also calculated here.
+        (khtml::Selection::caretRect): m_needsCaretLayout -> m_needsLayout name change.
+        (khtml::Selection::expectedVisibleRect): New. Returns m_expectedVisibleRect, doing a 
+        layout if needed.
+        (khtml::Selection::needsCaretRepaint): m_needsCaretLayout -> m_needsLayout name change.
+        (khtml::Selection::paintCaret): Ditto.
+        (khtml::Selection::validate): Ditto.
+        * khtml/editing/selection.h: Add m_expectedVisibleRect member variable and 
+        expectedVisibleRect accessor.
+        * kwq/WebCoreBridge.h: Change name of ensureCaretVisible to ensureSelectionVisible, since
+        this is not only about making the caret visible anymore. Now it can reveal the varying
+        end of the selection when scrolling with arrow keys.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge alterCurrentSelection:direction:granularity:]): ensureCaretVisible to 
+        ensureSelectionVisible name change.
+        (-[WebCoreBridge alterCurrentSelection:verticalDistance:]): Ditto
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:smartReplace:]): Ditto
+        (-[WebCoreBridge insertNewline]): Ditto
+        (-[WebCoreBridge insertText:selectInsertedText:]): Ditto
+        (-[WebCoreBridge deleteKeyPressed]): Ditto
+        (-[WebCoreBridge ensureSelectionVisible]): Ditto
+
+2004-09-29  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
         
         Fix for this bug:

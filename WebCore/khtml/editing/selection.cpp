@@ -105,7 +105,7 @@ Selection::Selection(const Selection &o)
     , m_start(o.m_start), m_end(o.m_end)
     , m_state(o.m_state), m_affinity(o.m_affinity)
     , m_baseIsStart(o.m_baseIsStart)
-    , m_needsCaretLayout(o.m_needsCaretLayout)
+    , m_needsLayout(o.m_needsLayout)
     , m_modifyBiasSet(o.m_modifyBiasSet)
 {
     // Only copy the coordinates over if the other object
@@ -113,8 +113,9 @@ Selection::Selection(const Selection &o)
     // coordinates. This prevents drawing artifacts from
     // remaining when the caret is painted and then moves,
     // and the old rectangle needs to be repainted.
-    if (!m_needsCaretLayout) {
+    if (!m_needsLayout) {
         m_caretRect = o.m_caretRect;
+        m_expectedVisibleRect = o.m_expectedVisibleRect;
     }
 }
 
@@ -123,7 +124,7 @@ void Selection::init()
     m_state = NONE; 
     m_affinity = DOWNSTREAM;
     m_baseIsStart = true;
-    m_needsCaretLayout = true;
+    m_needsLayout = true;
     m_modifyBiasSet = false;
 }
 
@@ -138,7 +139,7 @@ Selection &Selection::operator=(const Selection &o)
     m_affinity = o.m_affinity;
 
     m_baseIsStart = o.m_baseIsStart;
-    m_needsCaretLayout = o.m_needsCaretLayout;
+    m_needsLayout = o.m_needsLayout;
     m_modifyBiasSet = o.m_modifyBiasSet;
     
     // Only copy the coordinates over if the other object
@@ -146,8 +147,9 @@ Selection &Selection::operator=(const Selection &o)
     // coordinates. This prevents drawing artifacts from
     // remaining when the caret is painted and then moves,
     // and the old rectangle needs to be repainted.
-    if (!m_needsCaretLayout) {
+    if (!m_needsLayout) {
         m_caretRect = o.m_caretRect;
+        m_expectedVisibleRect = o.m_expectedVisibleRect;
     }
     
     return *this;
@@ -539,7 +541,7 @@ void Selection::setBaseAndExtent(const Position &base, const Position &extent)
 
 void Selection::setNeedsLayout(bool flag)
 {
-    m_needsCaretLayout = flag;
+    m_needsLayout = flag;
 }
 
 Range Selection::toRange() const
@@ -587,30 +589,68 @@ Range Selection::toRange() const
         e = e.equivalentRangeCompliantPosition();
     }
 
-    return Range(s.node(), s.offset(), e.node(), e.offset());
+    // Use this roundabout way of creating the Range in order to have defined behavior
+    // when there is a DOM exception.
+    int exceptionCode = 0;
+    Range result(s.node()->getDocument());
+    RangeImpl *handle = result.handle();
+    ASSERT(handle);
+    handle->setStart(s.node(), s.offset(), exceptionCode);
+    if (exceptionCode) {
+        ERROR("Exception setting Range start from Selection: %d", exceptionCode);
+        return Range();
+    }
+    handle->setEnd(e.node(), e.offset(), exceptionCode);
+    if (exceptionCode) {
+        ERROR("Exception setting Range end from Selection: %d", exceptionCode);
+        return Range();
+    }
+    return result;
 }
 
-void Selection::layoutCaret()
+void Selection::layout()
 {
-    if (!isCaret() || !m_start.node()->inDocument()) {
+    if (isNone() || !m_start.node()->inDocument() || !m_end.node()->inDocument()) {
         m_caretRect = QRect();
+        m_expectedVisibleRect = QRect();
         return;
     }
-    
-    // EDIT FIXME: Enhance call to pass along selection 
-    // upstream/downstream affinity to get the right position.
-    m_caretRect = m_start.node()->renderer()->caretRect(m_start.offset(), false);
+        
+    if (isCaret()) {
+        // EDIT FIXME: Enhance call to pass along selection 
+        // upstream/downstream affinity to get the right position.
+        m_caretRect = m_start.node()->renderer()->caretRect(m_start.offset(), false);
+        m_expectedVisibleRect = m_caretRect;
+    }
+    else {
+        // Calculate which position to use based on whether the base is the start.
+        // We want the position, start or end, that was calculated using the extent. 
+        // This makes the selection follow the extent position while scrolling as a 
+        // result of arrow navigation. 
+        Position pos = m_baseIsStart ? m_end : m_start;
+        m_expectedVisibleRect = pos.node()->renderer()->caretRect(pos.offset(), false);
+        m_caretRect = QRect();
+    }
 
-    m_needsCaretLayout = false;
+    m_needsLayout = false;
 }
 
 QRect Selection::caretRect() const
 {
-    if (m_needsCaretLayout) {
-        const_cast<Selection *>(this)->layoutCaret();
+    if (m_needsLayout) {
+        const_cast<Selection *>(this)->layout();
     }
 
     return m_caretRect;
+}
+
+QRect Selection::expectedVisibleRect() const
+{
+    if (m_needsLayout) {
+        const_cast<Selection *>(this)->layout();
+    }
+
+    return m_expectedVisibleRect;
 }
 
 QRect Selection::caretRepaintRect() const
@@ -634,10 +674,10 @@ void Selection::needsCaretRepaint()
     if (!v)
         return;
 
-    if (m_needsCaretLayout) {
+    if (m_needsLayout) {
         // repaint old position and calculate new position
         v->updateContents(caretRepaintRect(), false);
-        layoutCaret();
+        layout();
         
         // EDIT FIXME: This is an unfortunate hack.
         // Basically, we can't trust this layout position since we 
@@ -650,7 +690,7 @@ void Selection::needsCaretRepaint()
         // changes which may have been done.
         // And, we need to leave this layout here so the caret moves right 
         // away after clicking.
-        m_needsCaretLayout = true;
+        m_needsLayout = true;
     }
     v->updateContents(caretRepaintRect(), false);
 }
@@ -660,8 +700,8 @@ void Selection::paintCaret(QPainter *p, const QRect &rect)
     if (m_state != CARET)
         return;
 
-    if (m_needsCaretLayout)
-        layoutCaret();
+    if (m_needsLayout)
+        layout();
 
     if (m_caretRect.isValid())
         p->fillRect(m_caretRect & rect, QBrush());
@@ -809,7 +849,7 @@ void Selection::validate(ETextGranularity granularity)
         m_end = m_end.upstream(StayInBlock);
     }
 
-    m_needsCaretLayout = true;
+    m_needsLayout = true;
     
 #if EDIT_DEBUG
     debugPosition();

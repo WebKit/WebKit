@@ -331,7 +331,7 @@ typedef enum {
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style;
 - (BOOL)selectionStartHasStyle:(DOMCSSStyleDeclaration *)style;
 
-- (void)ensureCaretVisible;
+- (void)ensureSelectionVisible;
 
 - (WebScriptObject *)windowScriptObject;
 - (NPObject *)windowScriptNPObject;

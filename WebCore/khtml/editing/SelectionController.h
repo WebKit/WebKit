@@ -91,6 +91,7 @@ public:
     Position end() const { return m_end; }
 
     QRect caretRect() const;
+    QRect expectedVisibleRect() const;
     void setNeedsLayout(bool flag = true);
 
     void clearModifyBias() { m_modifyBiasSet = false; }
@@ -123,7 +124,7 @@ private:
     VisiblePosition modifyExtendingLeftBackward(ETextGranularity);
     VisiblePosition modifyMovingLeftBackward(ETextGranularity);
 
-    void layoutCaret();
+    void layout();
     void needsCaretRepaint();
     void paintCaret(QPainter *p, const QRect &rect);
     QRect caretRepaintRect() const;
@@ -139,9 +140,10 @@ private:
     EAffinity m_affinity;         // the upstream/downstream affinity of the selection
 
     QRect m_caretRect;            // caret coordinates, size, and position
+    QRect m_expectedVisibleRect;  // rectangle used to update scroll position as selection changes
     
     bool m_baseIsStart : 1;       // true if base node is before the extent node
-    bool m_needsCaretLayout : 1;  // true if the caret position needs to be calculated
+    bool m_needsLayout : 1;       // true if the caret and expectedVisible rectangles need to be calculated
     bool m_modifyBiasSet : 1;     // true if the selection has been horizontally 
                                   // modified with EAlter::EXTEND
 };

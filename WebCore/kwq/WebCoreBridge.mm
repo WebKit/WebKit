@@ -1405,7 +1405,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (xPos != KHTMLPart::NoXPosForVerticalArrowNavigation)
         _part->setXPosForVerticalArrowNavigation(xPos);
 
-    [self ensureCaretVisible];
+    [self ensureSelectionVisible];
 }
 
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration verticalDistance:(float)verticalDistance
@@ -1431,7 +1431,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->setSelection(selection);
     _part->setXPosForVerticalArrowNavigation(xPos);
 
-    [self ensureCaretVisible];
+    [self ensureSelectionVisible];
 }
 
 - (WebSelectionGranularity)selectionGranularity
@@ -1522,7 +1522,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     
     EditCommandPtr cmd(new ReplaceSelectionCommand(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement, smartReplace));
     cmd.apply();
-    [self ensureCaretVisible];
+    [self ensureSelectionVisible];
 }
 
 - (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement smartReplace:(BOOL)smartReplace
@@ -1549,7 +1549,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertNewline(_part->xmlDocImpl());
-    [self ensureCaretVisible];
+    [self ensureSelectionVisible];
 }
 
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
@@ -1558,7 +1558,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertText(_part->xmlDocImpl(), text, selectInsertedText);
-    [self ensureCaretVisible];
+    [self ensureSelectionVisible];
 }
 
 - (void)setSelectionToDragCaret
@@ -1627,7 +1627,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::deleteKeyPressed(_part->xmlDocImpl());
-    [self ensureCaretVisible];
+    [self ensureSelectionVisible];
 }
 
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style
@@ -1655,16 +1655,16 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return font;
 }
 
-- (void)ensureCaretVisible
+- (void)ensureSelectionVisible
 {
-    if (!_part || !_part->selection().isCaret())
+    if (!_part || _part->selection().isNone())
         return;
     
     KHTMLView *v = _part->view();
     if (!v)
         return;
 
-    QRect r(_part->selection().caretRect());
+    QRect r(_part->selection().expectedVisibleRect());
     v->ensureVisible(r.right(), r.bottom());
     v->ensureVisible(r.left(), r.top());
 }
