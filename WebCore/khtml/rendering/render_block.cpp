@@ -622,7 +622,19 @@ void RenderBlock::layoutBlockChildren( bool relayoutChildren )
                     child->setStaticX(borderRight()+paddingRight());
             }
             if (child->hasStaticY()) {
-                int marginOffset = (!topMarginContributor || !canCollapseTopWithChildren) ? (prevPosMargin - prevNegMargin) : 0;
+                int marginOffset = 0;
+                bool shouldSynthesizeCollapse = (!topMarginContributor || !canCollapseTopWithChildren);
+                if (shouldSynthesizeCollapse) {
+                    int collapsedTopPos = prevPosMargin;
+                    int collapsedTopNeg = prevNegMargin;
+                    bool posMargin = child->marginTop() >= 0;
+                    if (posMargin && child->marginTop() > collapsedTopPos)
+                        collapsedTopPos = child->marginTop();
+                    else if (!posMargin && child->marginTop() > collapsedTopNeg)
+                        collapsedTopNeg = child->marginTop();
+                    marginOffset += (collapsedTopPos - collapsedTopNeg) - child->marginTop();
+                }
+                
                 int yPosEstimate = m_height + marginOffset;
                 child->setStaticY(yPosEstimate);
             }

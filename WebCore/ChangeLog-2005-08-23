@@ -1,5 +1,34 @@
 2004-01-22  David Hyatt  <hyatt@apple.com>
 
+	Fix a bug I accidentally introduced in static positioned elements.  Add more margin collapsing tests.
+	
+        * ChangeLog:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+        * layout-tests/fast/block/margin-collapse/044-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/044.html: Added.
+        * layout-tests/fast/block/margin-collapse/045-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/045.html: Added.
+        * layout-tests/fast/block/margin-collapse/062-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/062.html: Added.
+        * layout-tests/fast/block/margin-collapse/063-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/063.html: Added.
+        * layout-tests/fast/block/positioning/007-expected.txt:
+
+2004-01-22  David Hyatt  <hyatt@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+        * layout-tests/fast/block/margin-collapse/062-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/062.html: Added.
+        * layout-tests/fast/block/margin-collapse/063-expected.txt: Added.
+        * layout-tests/fast/block/margin-collapse/063.html: Added.
+        * layout-tests/fast/block/positioning/007-expected.txt:
+
+2004-01-22  David Hyatt  <hyatt@apple.com>
+
 	(1) Implement better XML error handling.
 	(2) Fix a minor z-index bug with the 'initial' value.
 	(3) Initial landing of XBL support.  Code is all ifnef KHTML_NO_XBL so that it can be turned off easily if
