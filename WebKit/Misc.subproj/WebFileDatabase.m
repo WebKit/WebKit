@@ -815,33 +815,21 @@ static void databaseInit()
 -(void)sync
 {
     NSArray *array;
-    int opCount;
-    int i;
-    IFURLFileDatabaseOp *op;
 
     touch = CFAbsoluteTimeGetCurrent();
     
-    array = nil;
-
     [mutex lock];
-    if ([ops count] > 0) {
-        array = [NSArray arrayWithArray:ops];
-        [ops removeAllObjects];
-    }
-    if (timer) {
-        [timer invalidate];
-        [timer autorelease];
-        timer = nil;
-    }
+    array = [ops copy];
+    [ops removeAllObjects];
+    [timer invalidate];
+    [timer autorelease];
+    timer = nil;
     [setCache removeAllObjects];
     [removeCache removeAllObjects];
     [mutex unlock];
 
-    opCount = [array count];
-    for (i = 0; i < opCount; i++) {
-        op = [array objectAtIndex:i];
-        [op perform:self];
-    }
+    [array makeObjectsPerformSelector:@selector(perform:) withObject:self];
+    [array release];
 }
 
 -(unsigned)count
