@@ -1,3 +1,12 @@
+2003-04-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed 3222708 -- REGRESSION: repro crash trying to read news at nttdocomo
+
+        * khtml/ecma/kjs_window.cpp: (WindowFunc::tryCall): Make window.open do its location
+        change with scheduleRedirection like all the other JavaScript calls that change location.
+
 2003-04-08  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

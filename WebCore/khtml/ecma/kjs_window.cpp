@@ -1255,12 +1255,18 @@ Value WindowFunc::tryCall(ExecState *exec, Object &thisObj, const List &args)
             khtmlpart->docImpl()->setBaseURL( part->docImpl()->baseURL() );
           }
         }
+#if APPLE_CHANGES
+        if (!url.isEmpty())
+          // FIXME: Need to pass referrer here.
+          khtmlpart->scheduleRedirection(0, url.url(), false);
+#else
         uargs.serviceType = QString::null;
         if (uargs.frameName == "_blank")
           uargs.frameName = QString::null;
         if (!url.isEmpty())
 	  // FIXME: need to pass referrer here
           emit khtmlpart->browserExtension()->openURLRequest(url,uargs);
+#endif
         return Window::retrieve(khtmlpart); // global object
       } else
         return Undefined();
