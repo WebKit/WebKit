@@ -1,3 +1,19 @@
+2005-01-12  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3926825> Safari ignores GIF loop count
+
+	Get loop count from file properties, not image properties.
+
+        Reviewed by Ken Kocienda.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _commonTermination]):
+        (-[WebImageData fileProperties]):
+        (-[WebImageData _floatProperty:type:at:]):
+        (-[WebImageData _floatFileProperty:type:]):
+        (-[WebImageData _repetitionCount]):
+
 2005-01-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3934749> assertion failure in WebBaseNetscapePluginView loading movie

@@ -77,6 +77,9 @@ static CFDictionaryRef imageSourceOptions;
     [self _invalidateImages];
     [self _invalidateImageProperties];
         
+    if (fileProperties)
+	CFRelease (fileProperties);
+	
     if (imageSource)
         CFRelease (imageSource); 
         
@@ -195,6 +198,15 @@ static CFDictionaryRef imageSourceOptions;
     }
     
     return images[index];
+}
+
+- (CFDictionaryRef)fileProperties
+{
+    if (!fileProperties) {
+	fileProperties = CGImageSourceCopyProperties (imageSource, 0);
+    }
+    
+    return fileProperties;
 }
 
 - (CFDictionaryRef)propertiesAtIndex:(size_t)index
@@ -556,8 +568,39 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
         return 0.f;
     }
     
-    // FIXME:  Use constant instead of DelayTime
     CFNumberRef num = CFDictionaryGetValue (typeProperties, property);
+    if (!num) {
+        [decodeLock unlock];
+        return 0.f;
+    }
+    
+    float value = 0.f;
+    CFNumberGetValue (num, kCFNumberFloat32Type, &value);
+
+    [decodeLock unlock];
+    
+    return value;
+}
+
+- (float)_floatFileProperty:(CFStringRef)property type:(CFStringRef)type 
+{
+    [decodeLock lock];
+    
+    CFDictionaryRef properties = [self fileProperties];
+    if (!properties) {
+        [decodeLock unlock];
+        return 0.f;
+    }
+    
+    if (type) {
+	properties = CFDictionaryGetValue (properties, type);
+	if (!properties) {
+	    [decodeLock unlock];
+	    return 0.f;
+	}
+    }
+    
+    CFNumberRef num = CFDictionaryGetValue (properties, property);
     if (!num) {
         [decodeLock unlock];
         return 0.f;
@@ -619,7 +662,7 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 
 - (int)_repetitionCount
 {
-    return [self _floatProperty:kCGImagePropertyGIFLoopCount type:kCGImagePropertyGIFDictionary at:0];
+    return [self _floatFileProperty:kCGImagePropertyGIFLoopCount type:kCGImagePropertyGIFDictionary];
 }
 
 - (BOOL)isAnimationFinished
