@@ -1,3 +1,24 @@
+2003-11-05  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- fixed 3475092 - Notifying the bridge about duplicate images takes 13% of time on intel page
+
+	Another 15% speedup on the intel page.
+
+	This also results in a 3% speedup on cvs-base PLT! (or maybe that was my last change)
+	
+        * kwq/KWQLoader.mm:
+        (KWQServeRequest): Note that we told the bridge about the load.
+        (KWQCheckCacheObjectStatus): Don't tell the bridge about the load
+	if we have alrady; if we do tell it, then note it down.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::didTellBridgeAboutLoad): Helper method for the above.
+        (KWQKHTMLPart::haveToldBridgeAboutLoad): Ditto.
+        (KWQKHTMLPart::clear): Clear our idea of what URLs we told the bridge about.
+        * khtml/khtml_part.h: make clear() virtual.
+
 2003-11-05  Darin Adler  <darin@apple.com>
 
         * WebCore-combined.exp: Checked in generated file.

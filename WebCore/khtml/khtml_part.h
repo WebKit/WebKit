@@ -1054,7 +1054,7 @@ private:
 
   void init( KHTMLView *view, GUIProfile prof );
 
-  void clear();
+  virtual void clear();
 
   bool scheduleScript( const DOM::Node &n, const QString& script);
 

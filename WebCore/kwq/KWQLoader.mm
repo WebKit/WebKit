@@ -47,7 +47,10 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
         request->m_docLoader->part()->baseURL().url().latin1(),
         request->object->url().string().latin1());
     
-    WebCoreBridge *bridge = static_cast<KWQKHTMLPart *>(request->m_docLoader->part())->bridge();
+    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(request->m_docLoader->part());
+    WebCoreBridge *bridge = part->bridge();
+
+    part->didTellBridgeAboutLoad(request->object->url().string());
 
     KWQ_BLOCK_EXCEPTIONS;
     KWQResourceLoader *resourceLoader = [[KWQResourceLoader alloc] initWithLoader:loader job:job];
@@ -94,13 +97,22 @@ void KWQCheckCacheObjectStatus(DocLoader *loader, CachedObject *cachedObject)
     ASSERT(cachedObject->response());
     
     // Notify the caller that we "loaded".
-    WebCoreBridge *bridge = static_cast<KWQKHTMLPart *>(loader->part())->bridge();
-    CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
-    KWQ_BLOCK_EXCEPTIONS;
-    [bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().string()).getNSURL()
-                                response:(id)cachedObject->response()
-                                    size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    KWQKHTMLPart *part = static_cast<KWQKHTMLPart *>(loader->part());
+
+    QString urlString = cachedObject->url().string();
+
+    if (!part->haveToldBridgeAboutLoad(urlString)) {
+	WebCoreBridge *bridge = part->bridge();
+	CachedImage *cachedImage = dynamic_cast<CachedImage *>(cachedObject);
+
+	KWQ_BLOCK_EXCEPTIONS;
+	[bridge objectLoadedFromCacheWithURL:KURL(cachedObject->url().string()).getNSURL()
+	        response:(id)cachedObject->response()
+	        size:cachedImage ? cachedImage->dataSize() : cachedObject->size()];
+	KWQ_UNBLOCK_EXCEPTIONS;
+
+	part->didTellBridgeAboutLoad(urlString);
+    }
 }
 
 void KWQRetainResponse(void *response)

@@ -2713,3 +2713,21 @@ void KWQKHTMLPart::setName(const QString &name)
     [_bridge didSetName:n.getNSString()];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
+
+
+void KWQKHTMLPart::didTellBridgeAboutLoad(const QString &urlString)
+{
+    urlsBridgeKnowsAbout.insert(urlString, (char *)1);
+}
+
+
+bool KWQKHTMLPart::haveToldBridgeAboutLoad(const QString &urlString)
+{
+    return urlsBridgeKnowsAbout.find(urlString) != 0;
+}
+
+void KWQKHTMLPart::clear()
+{
+    urlsBridgeKnowsAbout.clear();
+    KHTMLPart::clear();
+}
