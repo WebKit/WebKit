@@ -19,7 +19,8 @@
     IFWebHistoryPrivate *_historyPrivate;
 }
 
-+ (IFWebHistory *)sharedWebHistory;
++ (IFWebHistory *)webHistoryWithFile: (NSString *)file;
+- (id)initWithFile: (NSString *)file;
 
 // modifying contents
 - (void)addEntry: (IFURIEntry *)entry;
@@ -46,7 +47,15 @@
 // testing contents for visited-link mechanism
 - (BOOL)containsURL: (NSURL *)url;
 
-// saving contents to disk
-- (void)saveHistory;
+// storing contents on disk
+
+// The file path used for storing history, specified in -[IFWebHistory initWithFile:] or +[IFWebHistory webHistoryWithFile:]
+- (NSString *)file;
+
+// Load history from file. This happens automatically at init time, and need not normally be called.
+- (BOOL)loadHistory;
+
+// Save history to file. It is the client's responsibility to call this at appropriate times.
+- (BOOL)saveHistory;
 
 @end

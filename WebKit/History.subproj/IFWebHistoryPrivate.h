@@ -14,7 +14,10 @@
     NSMutableDictionary *_urlDictionary;
     NSMutableArray *_datesWithEntries;
     NSMutableArray *_entriesByDate;
+    NSString *_file;
 }
+
+- (id)initWithFile: (NSString *)file;
 
 - (void)addEntry: (IFURIEntry *)entry;
 - (BOOL)removeEntry: (IFURIEntry *)entry;
@@ -27,6 +30,8 @@
 - (NSArray *)entriesWithTitleOrAddressContainingString: (NSString *)string;
 - (BOOL)containsURL: (NSURL *)url;
 
-- (void)saveHistory;
+- (NSString *)file;
+- (BOOL)loadHistory;
+- (BOOL)saveHistory;
 
 @end

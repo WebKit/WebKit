@@ -1,3 +1,36 @@
+2002-03-15  John Sullivan  <sullivan@apple.com>
+	
+	Fixed bug where history entry images weren't showing up, except by historical
+	accident in some cases.
+	Made IFWebHistory no longer be a singleton class; made the file location
+	be passed in at init time.
+
+	* History.subproj/IFURIEntry.m: (-[IFURIEntry image]): Get the default image 
+	a way that works with frameworks; only get the default image once.
+
+	* History.subproj/IFWebHistory.h:
+	* History.subproj/IFWebHistory.m: 
+	(+[IFWebHistory webHistoryWithFile:]): New convenience constructor that returns
+	a new IFWebHistory object with a particular disk file.
+	(-[IFWebHistory initWithFile:]): New init method for specifying a disk file.
+	(-[IFWebHistory file]): New accessor for file path.
+	(-[IFWebHistory loadHistory]),
+	(-[IFWebHistory	saveHistory]): Use file accessor.
+	Also removed the methods that were computing a file path to use.
+
+	* History.subproj/IFWebHistoryPrivate.h:
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(-[IFWebHistoryPrivate initWithFile:]),
+	(-[IFWebHistoryPrivate dealloc]), (-[IFWebHistoryPrivate file]),
+	(-[IFWebHistoryPrivate loadHistory]), (-[IFWebHistoryPrivate saveHistory]):
+	Guts of implementation for file-manipulation stuff.
+
+	* Resources/url_icon.tiff: ran tiffUtil to premultiply the alpha channel. This
+	was spewing error messages that I didn't notice before because they only
+	happen on Puma and I was on Jaguar.
+
+	* WebKit.pbproj/project.pbxproj: not sure what change I made, maybe version wars.
+
 2002-03-14  John Sullivan  <sullivan@apple.com>
 
 	Made history store its data in ~/Library/Application Support/<app name>/History.plist

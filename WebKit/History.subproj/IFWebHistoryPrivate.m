@@ -19,16 +19,19 @@
 
 #pragma mark OBJECT FRAMEWORK
 
-- (id)init
+- (id)initWithFile: (NSString *)file
 {
-    if ((self = [super init]) != nil) {
-        _urlDictionary = [[NSMutableDictionary alloc] init];
-        _datesWithEntries = [[NSMutableArray alloc] init];
-        _entriesByDate = [[NSMutableArray alloc] init];
-
-        // read history from disk
-        [self loadHistory];
+    if (![super init]) {
+        return nil;
     }
+    
+    _urlDictionary = [[NSMutableDictionary alloc] init];
+    _datesWithEntries = [[NSMutableArray alloc] init];
+    _entriesByDate = [[NSMutableArray alloc] init];
+    _file = [file retain];
+
+    // read history from disk
+    [self loadHistory];
     
     return self;
 }
@@ -38,6 +41,7 @@
     [_urlDictionary release];
     [_datesWithEntries release];
     [_entriesByDate release];
+    [_file release];
     
     [super dealloc];
 }
@@ -259,74 +263,21 @@
     return arrayRep;
 }
 
-static NSString* GetRefPath(FSRef* ref)
+- (NSString *)file
 {
-    // This function was cribbed from NSSavePanel.m
-    CFURLRef    url  = CFURLCreateFromFSRef((CFAllocatorRef)NULL, ref);
-    CFStringRef path = CFURLCopyFileSystemPath(url, kCFURLPOSIXPathStyle);
-    CFRelease(url);
-    return [(NSString*)path autorelease];
+    return _file;
 }
 
-static NSString* FindFolderPath(OSType domainType, OSType folderType)
-{
-    // create URL from FSRef. Then get path string in our POSIX style that we so know and love
-    // This function was cribbed from NSSavePanel.m, 'cept the createFolder parameter flopped.
-    FSRef     folderRef;
-    if (FSFindFolder(domainType, folderType, YES /*createFolder*/, &folderRef) == noErr) {
-        return GetRefPath(&folderRef);
-    } else {
-        return nil;
-    }
-}
-
-- (NSString *)historyFilePath
-{
-    NSFileManager *fileManager;
-    NSString *applicationSupportDirectoryPath;
-    NSString *appName;
-    NSString *appInAppSupportPath;
-    BOOL fileExists;
-    BOOL isDirectory;
-
-    // FIXME: Ken's going to put the equivalent of FindFolderPath in IFNSFileManagerExtensions; use
-    // that when it's available and delete the previous two functions.
-    applicationSupportDirectoryPath = FindFolderPath(kUserDomain, kApplicationSupportFolderType);
-    if (applicationSupportDirectoryPath == nil) {
-        WEBKITDEBUG("FindFolderPath(kUserDomain, kApplicationSupportFolderType) failed\n");
-        return nil;
-    }
-
-    appName = [[[NSBundle mainBundle] infoDictionary] objectForKey: (NSString *)kCFBundleExecutableKey];
-    if (appName == nil) {
-        WEBKITDEBUG("Couldn't get application name using kCFBundleExecutableKey\n");
-        return nil;
-    }
-
-    appInAppSupportPath = [applicationSupportDirectoryPath stringByAppendingPathComponent: appName];
-    fileManager = [NSFileManager defaultManager];
-    fileExists = [fileManager fileExistsAtPath: appInAppSupportPath isDirectory: &isDirectory];
-    if (fileExists && !isDirectory) {
-        WEBKITDEBUG1("Non-directory file exists at %s\n", DEBUG_OBJECT(appInAppSupportPath));
-        return nil;
-    } else if (!fileExists && ![fileManager createDirectoryAtPath: appInAppSupportPath attributes: nil]) {
-        WEBKITDEBUG1("Couldn't create directory %s\n", DEBUG_OBJECT(appInAppSupportPath));
-        return nil;
-    }
-
-    return [appInAppSupportPath stringByAppendingPathComponent: @"History.plist"];
-}
-
-- (void)loadHistory
+- (BOOL)loadHistory
 {
     NSString *path;
     NSArray *array;
     int index, count;
     
-    path = [self historyFilePath];
+    path = [self file];
     if (path == nil) {
         WEBKITDEBUG("couldn't load history; couldn't find or create directory to store it in\n");
-        return;
+        return NO;
     }
 
     array = [NSArray arrayWithContentsOfFile: path];
@@ -338,7 +289,7 @@ static NSString* FindFolderPath(OSType domainType, OSType folderType)
             WEBKITDEBUG1("attempt to read history from %s failed; perhaps contents are corrupted\n",
                          DEBUG_OBJECT(path));
         }
-        return;
+        return NO;
     }
 
     count = [array count];
@@ -347,23 +298,28 @@ static NSString* FindFolderPath(OSType domainType, OSType folderType)
             [array objectAtIndex: index]];
         [self addEntry: entry];
     }
+
+    return YES;
 }
 
-- (void)saveHistory
+- (BOOL)saveHistory
 {
     NSString *path;
     NSArray *array;
 
-    path = [self historyFilePath];
+    path = [self file];
     if (path == nil) {
         WEBKITDEBUG("couldn't save history; couldn't find or create directory to store it in\n");
-        return;
+        return NO;
     }
 
     array = [self arrayRepresentation];
-    if (![array writeToFile:path atomically:NO]) {
-        WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+    if ([array writeToFile:path atomically:YES]) {
+        return YES;
     }
+
+    WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+    return NO;
 }
 
 @end

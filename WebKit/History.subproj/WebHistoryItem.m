@@ -69,10 +69,23 @@
 
 -(NSImage *)image
 {
+    static NSImage *defaultImage = nil;
+    static BOOL loadedDefaultImage = NO;
+    
     if (_image != nil) {
         return _image;
     }
-    return [NSImage imageNamed:@"url_icon"];
+
+    // Attempt to load default image only once, to avoid performance penalty of repeatedly
+    // trying and failing to find it.
+    if (!loadedDefaultImage) {
+        NSString *pathForDefaultImage =
+            [[NSBundle bundleForClass:[self class]] pathForResource:@"url_icon" ofType:@"tiff"];
+        defaultImage = [[NSImage alloc] initByReferencingFile: pathForDefaultImage];
+        loadedDefaultImage = YES;
+    }
+
+    return defaultImage;
 }
 
 -(NSString *)comment
