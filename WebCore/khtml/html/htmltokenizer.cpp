@@ -84,6 +84,61 @@ static const char titleEnd [] = "</title";
 //      http://www.obviously.com/
 //
 // There may be better equivalents
+
+#ifdef APPLE_CHANGES
+
+// Note that we have more Unicode characters than Qt, so we use the
+// official mapping table from the Unicode 2.0 standard here instead of
+// one with hacks to avoid certain Unicode characters. Also, we don't
+// need the unrelated hacks to avoid Unicode characters that are in the
+// original version.
+
+// We need this for entities at least. For non-entity text, we could
+// handle this in the text codec.
+
+// To cover non-entity text, I think this function would need to be called
+// in more places. There seem to be many places that set *dest without
+// calling fixUpChar.
+
+inline void fixUpChar(QChar& c) {
+    switch (c.unicode()) {
+        case 0x0080: c = 0x20AC; break;
+        case 0x0081: break;
+        case 0x0082: c = 0x201A; break;
+        case 0x0083: c = 0x0192; break;
+        case 0x0084: c = 0x201E; break;
+        case 0x0085: c = 0x2026; break;
+        case 0x0086: c = 0x2020; break;
+        case 0x0087: c = 0x2021; break;
+        case 0x0088: c = 0x02C6; break;
+        case 0x0089: c = 0x2030; break;
+        case 0x008A: c = 0x0160; break;
+        case 0x008B: c = 0x2039; break;
+        case 0x008C: c = 0x0152; break;
+        case 0x008D: break;
+        case 0x008E: c = 0x017D; break;
+        case 0x008F: break;
+        case 0x0090: break;
+        case 0x0091: c = 0x2018; break;
+        case 0x0092: c = 0x2019; break;
+        case 0x0093: c = 0x201C; break;
+        case 0x0094: c = 0x201D; break;
+        case 0x0095: c = 0x2022; break;
+        case 0x0096: c = 0x2013; break;
+        case 0x0097: c = 0x2014; break;
+        case 0x0098: c = 0x02DC; break;
+        case 0x0099: c = 0x2122; break;
+        case 0x009A: c = 0x0161; break;
+        case 0x009B: c = 0x203A; break;
+        case 0x009C: c = 0x0153; break;
+        case 0x009D: break;
+        case 0x009E: c = 0x017E; break;
+        case 0x009F: c = 0x0178; break;
+    }
+}
+
+#else // APPLE_CHANGES
+
 #define fixUpChar(x) \
             if (!(x).row() ) { \
                 switch ((x).cell()) \
@@ -139,6 +194,8 @@ static const char titleEnd [] = "</title";
                 default: break; \
                 } \
             }
+
+#endif // APPLE_CHANGES
 
 // ----------------------------------------------------------------------------
 

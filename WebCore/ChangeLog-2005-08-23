@@ -1,3 +1,14 @@
+2002-08-03  Darin Adler  <darin@apple.com>
+
+	- fixed 2943519 - &#149; is rendered as an asterisk rather than a bullet
+
+        * khtml/html/htmltokenizer.cpp: (fixUpChar): Replaced the macro of this
+	name by an inline function that follows the Unicode specification. The
+	macro was both making Windows Latin 1 extensions character codes
+	(like 149 for bullet) work, but also mapping to characters that were
+	suitable for Qt. Since OS X has no problem with the real Unicode values,
+	we don't need that hack.
+
 2002-08-02  Darin Adler  <darin@apple.com>
 
 	- fixed 3015522 -- crash decoding http://www.haaretz.co.il/
