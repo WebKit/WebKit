@@ -114,8 +114,6 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     DOM::Node instance([self impl]);
     DOM::NodeImpl *lastChild = instance.lastChild().handle();
     
-    printf ("lastChild = %p\n", lastChild);
-    
     if (lastChild)
         return [WebCoreDOMNode nodeWithImpl: lastChild];
 

@@ -138,7 +138,6 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 + (WebCoreDOMDocument *)documentWithImpl: (DOM::DocumentImpl *)_impl
 {
-    printf ("documentWithImpl:  _impl = %p, lastChild = %p\n", _impl, _impl->lastChild());
     return [[(WebCoreDOMDocument *)[WebCoreDOMDocument alloc] initWithImpl: _impl] autorelease];
 }
 

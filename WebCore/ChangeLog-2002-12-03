@@ -1,5 +1,14 @@
 2002-10-11  Richard Williamson   <rjw@apple.com>
 
+        Remove debugging.
+        
+        * kwq/WebCoreDOMDocument.mm:
+        (+[WebCoreDOMDocument documentWithImpl:DOM::]):
+        * kwq/WebCoreDOMNode.mm:
+        (-[WebCoreDOMNode lastChild]):
+
+2002-10-11  Richard Williamson   <rjw@apple.com>
+
         More DOM/attributed string work.  Still need to fix more
         inappropriate casting problems.
         
