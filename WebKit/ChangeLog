@@ -1,5 +1,11 @@
 2004-09-07  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: <rdar://problem/3790143> exception raised when dragging a URL with 2-byte characters
+
+	(checked in with last check-in)
+
+2004-09-07  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed:
 	<rdar://problem/3080103> Need to pass cmd-modified keys to plug-ins
 	<rdar://problem/3751509> can't use safari edit menu to copy and paste with Vantage Learning's My Access
