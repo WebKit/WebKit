@@ -2653,6 +2653,9 @@ bool DocumentImpl::execCommand(const DOMString &command, bool userInterface, con
     static AtomicString undoCommand("undo");
     static AtomicString redoCommand("redo");
     static AtomicString deleteCommand("delete");
+    static AtomicString cutCommand("cut");
+    static AtomicString copyCommand("copy");
+    static AtomicString pasteCommand("paste");
 
     updateLayout();
 
@@ -2685,6 +2688,24 @@ bool DocumentImpl::execCommand(const DOMString &command, bool userInterface, con
         if (!part() || part()->selection().isEmpty())
             return false;
         TypingCommand::deleteKeyPressed(this);
+        return true;
+    }
+    else if (atom == cutCommand) {
+        if (!part() || part()->selection().state() != KHTMLSelection::RANGE)
+            return false;
+        KWQ(part())->issueCutCommand();
+        return true;
+    }
+    else if (atom == copyCommand) {
+        if (!part() || part()->selection().state() != KHTMLSelection::RANGE)
+            return false;
+        KWQ(part())->issueCopyCommand();
+        return true;
+    }
+    else if (atom == pasteCommand) {
+        if (!part() || part()->selection().isEmpty())
+            return false;
+        KWQ(part())->issuePasteCommand();
         return true;
     }
 

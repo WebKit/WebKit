@@ -144,6 +144,51 @@ function changeRootSize() {
 
 //-------------------------------------------------------------------------------------------------------
 
+function execCutCommand() {
+    document.execCommand("Cut");
+}
+function cutCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execCutCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execCutCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execCopyCommand() {
+    document.execCommand("Copy");
+}
+function copyCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execCopyCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execCopyCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
+function execPasteCommand() {
+    document.execCommand("Paste");
+}
+function pasteCommand() {
+    if (commandDelay > 0) {
+        window.setTimeout(execPasteCommand, commandCount * commandDelay);
+        commandCount++;
+    }
+    else {
+        execPasteCommand();
+    }
+}
+
+//-------------------------------------------------------------------------------------------------------
+
 function execDeleteCommand() {
     document.execCommand("Delete");
 }

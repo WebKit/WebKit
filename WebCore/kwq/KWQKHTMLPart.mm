@@ -2903,3 +2903,18 @@ void KWQKHTMLPart::issueRedoCommand()
 {
     [_bridge issueRedoCommand];
 }
+
+void KWQKHTMLPart::issueCutCommand()
+{
+    [_bridge issueCutCommand];
+}
+
+void KWQKHTMLPart::issueCopyCommand()
+{
+    [_bridge issueCopyCommand];
+}
+
+void KWQKHTMLPart::issuePasteCommand()
+{
+    [_bridge issuePasteCommand];
+}

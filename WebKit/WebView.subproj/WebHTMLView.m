@@ -909,6 +909,22 @@ static WebHTMLView *lastHitView = nil;
     [self mouseDragged:fakeEvent];
 }
 
+- (void)copy:(id)sender
+{
+    [self _writeSelectionToPasteboard:[NSPasteboard generalPasteboard]];
+}
+
+- (void)cut:(id)sender
+{   
+    [self copy:sender];
+    [[self _bridge] deleteSelection];
+}
+
+- (void)paste:(id)sender
+{
+    [self _pasteFromPasteboard:[NSPasteboard generalPasteboard]];
+}
+
 @end
 
 @implementation NSView (WebHTMLViewPrivate)

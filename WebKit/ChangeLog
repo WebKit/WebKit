@@ -1,3 +1,26 @@
+2004-04-12  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Dave
+        
+        Added execCommand support for cut/copy/paste.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge issueCutCommand]): Glue for calling from WebCore to do a cut in Cocoa.
+        (-[WebBridge issueCopyCommand]): Same as above, but for copy.
+        (-[WebBridge issuePasteCommand]): Same as above, but for paste.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView copy:]): Move this to private implementation category so the bridge can see it.
+        (-[WebHTMLView cut:]): Ditto.
+        (-[WebHTMLView paste:]): Ditto.
+        * WebView.subproj/WebHTMLViewPrivate.h: Move copy;, cut:, and paste: to private implementation 
+        category so the bridge can see it.
+        * WebView.subproj/WebView.m:
+        (-[WebView copy:]): Implemented by calling WebHTMLView to do the work.
+        (-[WebView cut:]): Ditto.
+        (-[WebView paste:]): Ditto.
+        * WebView.subproj/WebViewPrivate.h: Added all the NSReponder methods we plan to implement as
+        part of the WebKit editing API.
+
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

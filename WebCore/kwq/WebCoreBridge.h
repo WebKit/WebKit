@@ -433,6 +433,9 @@ typedef enum {
 - (void)clearUndoRedoOperations;
 - (void)issueUndoCommand;
 - (void)issueRedoCommand;
+- (void)issueCutCommand;
+- (void)issueCopyCommand;
+- (void)issuePasteCommand;
 
 - (void)editingKeyDown:(NSEvent *)event;
 

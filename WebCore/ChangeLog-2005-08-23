@@ -1,5 +1,30 @@
 2004-04-12  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Dave
+
+        Added execCommand support for cut/copy/paste.
+        
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::execCommand): Added cut/copy/paste atoms and added else if cases
+        for the commands.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::issueCutCommand): Glue for calling from WebCore to do a cut in Cocoa.
+        (KWQKHTMLPart::issueCopyCommand): Same as above, but for copy.
+        (KWQKHTMLPart::issuePasteCommand): Same as above, but for paste.
+        * kwq/WebCoreBridge.h: Declared issueCutCommand, issueCopyCommand, and issuePasteCommand
+        to be implemented on the WebKit side of the bridge.
+        * layout-tests/editing/editing.js: Added cut/copy/paste support to js library to support
+        making layout tests.
+        * layout-tests/editing/pasteboard/copy-paste-text-001-expected.txt: Added.
+        * layout-tests/editing/pasteboard/copy-paste-text-001.html: Added.
+        * layout-tests/editing/pasteboard/cut-paste-text-002-expected.txt: Added.
+        * layout-tests/editing/pasteboard/cut-paste-text-002.html: Added.
+        * layout-tests/editing/pasteboard/cut-text-001-expected.txt: Added.
+        * layout-tests/editing/pasteboard/cut-text-001.html: Added.
+
+2004-04-12  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
         
         Some delete and insert cleanups.

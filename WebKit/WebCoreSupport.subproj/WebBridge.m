@@ -1203,6 +1203,21 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
         [undoManager redo];
 }
 
+- (void)issueCutCommand
+{
+    [[_frame webView] cut:nil];
+}
+
+- (void)issueCopyCommand
+{
+    [[_frame webView] copy:nil];
+}
+
+- (void)issuePasteCommand
+{
+    [[_frame webView] paste:nil];
+}
+
 - (void)setIsSelected:(BOOL)isSelected forView:(NSView *)view
 {
     if ([view conformsToProtocol:@protocol(WebPluginSelection)]) {

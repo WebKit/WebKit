@@ -370,6 +370,126 @@ extern NSString * const WebViewDidChangeSelectionNotification;
 - (NSUndoManager *)undoManagerForWebView:(WebView *)webView;
 @end
 
+@interface WebView (WebViewEditingActions)
+
+    /* Selection movement and scrolling */
+
+- (void)centerSelectionInVisibleArea:(id)sender;
+- (void)moveBackward:(id)sender;
+- (void)moveBackwardAndModifySelection:(id)sender;
+- (void)moveDown:(id)sender;
+- (void)moveDownAndModifySelection:(id)sender;
+- (void)moveForward:(id)sender;
+- (void)moveForwardAndModifySelection:(id)sender;
+- (void)moveLeft:(id)sender;
+- (void)moveLeftAndModifySelection:(id)sender;
+- (void)moveRight:(id)sender;
+- (void)moveRightAndModifySelection:(id)sender;
+- (void)moveToBeginningOfDocument:(id)sender;
+- (void)moveToBeginningOfLine:(id)sender;
+- (void)moveToBeginningOfParagraph:(id)sender;
+- (void)moveToEndOfDocument:(id)sender;
+- (void)moveToEndOfLine:(id)sender;
+- (void)moveToEndOfParagraph:(id)sender;
+- (void)moveUp:(id)sender;
+- (void)moveUpAndModifySelection:(id)sender;
+- (void)moveWordBackward:(id)sender;
+- (void)moveWordBackwardAndModifySelection:(id)sender;
+- (void)moveWordForward:(id)sender;
+- (void)moveWordForwardAndModifySelection:(id)sender;
+- (void)moveWordLeft:(id)sender;
+- (void)moveWordLeftAndModifySelection:(id)sender;
+- (void)moveWordRight:(id)sender;
+- (void)moveWordRightAndModifySelection:(id)sender;
+- (void)pageDown:(id)sender;
+- (void)pageUp:(id)sender;
+- (void)scrollLineDown:(id)sender;
+- (void)scrollLineUp:(id)sender;
+- (void)scrollPageDown:(id)sender;
+- (void)scrollPageUp:(id)sender;
+
+    /* Selections */
+
+- (void)selectAll:(id)sender;
+- (void)selectParagraph:(id)sender;
+- (void)selectLine:(id)sender;
+- (void)selectWord:(id)sender;
+
+    /* "Edit menu" actions */
+
+- (void)copy:(id)sender;
+- (void)cut:(id)sender;
+- (void)paste:(id)sender;
+- (void)copyFont:(id)sender;
+- (void)pasteFont:(id)sender;
+- (void)delete:(id)sender;
+- (void)pasteAsPlainText:(id)sender;
+- (void)pasteAsRichText:(id)sender;
+
+    /* Fonts */
+
+- (void)changeFont:(id)sender;
+- (void)changeAttributes:(id)sender;
+- (void)changeDocumentBackgroundColor:(id)sender;
+
+    /* Colors */
+
+- (void)changeColor:(id)sender;
+
+	/* Alignment */
+
+- (void)alignCenter:(id)sender;
+- (void)alignJustified:(id)sender;
+- (void)alignLeft:(id)sender;
+- (void)alignRight:(id)sender;
+
+    /* Insertions and Indentations */
+
+- (void)indent:(id)sender;
+- (void)insertTab:(id)sender;
+- (void)insertBacktab:(id)sender;
+- (void)insertNewline:(id)sender;
+- (void)insertParagraphSeparator:(id)sender;
+
+    /* Case changes */
+
+- (void)changeCaseOfLetter:(id)sender;
+- (void)uppercaseWord:(id)sender;
+- (void)lowercaseWord:(id)sender;
+- (void)capitalizeWord:(id)sender;
+
+    /* Deletions */
+
+- (void)deleteForward:(id)sender;
+- (void)deleteBackward:(id)sender;
+- (void)deleteBackwardByDecomposingPreviousCharacter:(id)sender;
+- (void)deleteWordForward:(id)sender;
+- (void)deleteWordBackward:(id)sender;
+- (void)deleteToBeginningOfLine:(id)sender;
+- (void)deleteToEndOfLine:(id)sender;
+- (void)deleteToBeginningOfParagraph:(id)sender;
+- (void)deleteToEndOfParagraph:(id)sender;
+
+    /* Completion */
+
+- (void)complete:(id)sender;
+
+    /* Spelling */
+
+- (void)checkSpelling:(id)sender;
+- (void)showGuessPanel:(id)sender;
+
+    /* Finding */
+    
+- (void)performFindPanelAction:(id)sender;
+
+	/* Speech */
+
+- (void)startSpeaking:(id)sender;
+- (void)stopSpeaking:(id)sender;
+
+@end
+
 @interface WebView (WebViewEditingExtras)
 - (void)_editingKeyDown:(NSEvent *)event;
 @end

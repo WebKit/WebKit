@@ -28,6 +28,7 @@
 #import <WebKit/WebFrameViewPrivate.h>
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebIconDatabase.h>
 #import <WebKit/WebKitErrors.h>
 #import <WebKit/WebKitLogging.h>
@@ -2575,7 +2576,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)copy:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            [(WebHTMLView *)view copy:nil];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(copy:) with:sender];
@@ -2584,7 +2588,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)cut:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            [(WebHTMLView *)view cut:nil];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(cut:) with:sender];
@@ -2593,7 +2600,10 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)paste:(id)sender
 {
     if ([self _currentSelectionIsEditable]) {
-        ERROR("unimplemented");
+        id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
+        if ([view isKindOfClass:[WebHTMLView class]]) {
+            [(WebHTMLView *)view paste:nil];
+        }
         return;
     }
     [[self nextResponder] tryToPerform:@selector(paste:) with:sender];
