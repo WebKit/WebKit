@@ -1,0 +1,73 @@
+#======================================================================
+#
+# Makefile
+#
+# $RCSfile$
+# $Revision$
+# $Author$
+# $Date$
+#
+#======================================================================
+# set top source dir relative to this directory
+# include make vars boilerplate
+#
+
+TOPSRCDIR = ../../
+include $(TOPSRCDIR)/Makefile.vars
+
+#----------------------------------------------------------------------
+# Set variables for this directory
+
+SOURCES = $(wildcard *.mm)
+HEADERS = $(wildcard *.h)
+
+MMOBJECTS = \
+	KWQApplication.o \
+	KWQBrush.o \
+	KWQFont.o \
+	KWQFontMetrics.o \
+	KWQPainter.o \
+	KWQPen.o \
+	KWQPixmap.o \
+	KWQString.o \
+	KWQWMatrix.o \
+	KWQWidget.o \
+	$(NULL)
+
+OBJECTS = $(MMOBJECTS) 
+
+LIBRARY = libkwq.a
+
+CLEAN_FILES = $(OBJECTS) \
+	$(LIBRARY) \
+	$(NULL)
+
+#----------------------------------------------------------------------
+# Set flags for this directory
+
+CMMFLAGS = $(BASECXXFLAGS) \
+    -I$(TOPSRCDIR) \
+    -I$(TOPSRCDIR)/src/kwq \
+    -I$(TOPSRCDIR)/src/kwq/qt \
+    -I. \
+    $(NULL)
+
+DEPFLAGS = $(CXXFLAGS)
+
+#----------------------------------------------------------------------
+# Set targets for this directory
+
+all: $(OBJECTS) $(LIBRARY)
+
+$(LIBRARY): $(MMOBJECTS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(MMOBJECTS)
+	$(RANLIB) $(LIBRARY)
+
+#----------------------------------------------------------------------
+# include make rules boilerplate
+
+include $(TOPSRCDIR)/Makefile.rules
+
+#======================================================================
+# end
+#======================================================================
