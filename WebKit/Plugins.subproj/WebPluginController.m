@@ -80,6 +80,7 @@
     LOG(Plugins, "pluginDestroy");
     
     [self stopAllPlugins];
+    [views makeObjectsPerformSelector:@selector(removeFromSuperviewWithoutNeedingDisplay)];
     [views makeObjectsPerformSelector:@selector(pluginDestroy)];
     [views removeAllObjects];
 }
@@ -93,7 +94,7 @@
 
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target
 {
-    if(!URL || !target){
+    if ( !URL ){
         return;
     }
 
@@ -114,7 +115,7 @@
     if(!message){
         return;
     }
-    
+
     [[[frame controller] windowOperationsDelegate] setStatusText:message];
 }
 
