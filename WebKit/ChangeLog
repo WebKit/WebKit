@@ -1,3 +1,5 @@
+=== Safari-172 ===
+
 2004-11-19  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3880387> REGRESSION: www.shockplay.com site gives "Unexpected server response"
