@@ -9,6 +9,7 @@
 #import <Foundation/NSError_NSURLExtras.h>
 #import <Foundation/NSString_NSURLExtras.h>
 #import <WebKit/WebAssertions.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 
 NSString *WebDataProtocolScheme = @"applewebdata";
 static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
@@ -198,7 +199,7 @@ static NSString *WebDataRequestPropertyKey = @"WebDataRequest";
 
         resultCode = NSURLErrorResourceUnavailable;
 
-        [client URLProtocol:self didFailWithError:[NSError _web_errorWithDomain:NSURLErrorDomain code:resultCode failingURL:[[request URL] absoluteString]]];
+        [client URLProtocol:self didFailWithError:[NSError _webKitErrorWithDomain:NSURLErrorDomain code:resultCode URL:[request URL]]];
     }
 }
 

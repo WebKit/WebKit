@@ -99,9 +99,9 @@
 {
     NSImage *icon = [[NSImage alloc] initWithData:_private->resourceData];
     if (icon && [[icon representations] count]) {
-        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] absoluteString]];
+        [[WebIconDatabase sharedIconDatabase] _setIcon:icon forIconURL:[[self URL] _web_originalDataAsString]];
     } else {
-	[[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] absoluteString]];
+	[[WebIconDatabase sharedIconDatabase] _setHaveNoIconForIconURL:[[self URL] _web_originalDataAsString]];
     }
     [_private->delegate _iconLoaderReceivedPageIcon:self];    
     [icon release];

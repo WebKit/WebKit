@@ -46,7 +46,7 @@
     URLStrings = [NSMutableArray arrayWithCapacity:count];
     titlesOrEmptyStrings = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLStrings addObject:[[URLs objectAtIndex:index] absoluteString]];
+        [URLStrings addObject:[[URLs objectAtIndex:index] _web_userVisibleString]];
         [titlesOrEmptyStrings addObject:(titles == nil) ? @"" : [titles objectAtIndex:index]];
     }
 

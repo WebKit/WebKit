@@ -86,8 +86,7 @@
 
 - (NSError *)interruptForPolicyChangeError
 {
-    return [NSError _webKitErrorWithCode:WebKitErrorFrameLoadInterruptedByPolicyChange
-                              failingURL:[[request URL] absoluteString]];
+    return [NSError _webKitErrorWithDomain:WebKitErrorDomain code:WebKitErrorFrameLoadInterruptedByPolicyChange URL:[request URL]];
 }
 
 -(void)stopLoadingForPolicyChange

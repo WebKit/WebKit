@@ -294,7 +294,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
 
     bfItem = [[[WebHistoryItem alloc] initWithURL:URL target:[self name] parent:[[self parentFrame] name] title:[dataSrc pageTitle]] autorelease];
     [dataSrc _addBackForwardItem:bfItem];
-    [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] absoluteString]];
+    [bfItem setOriginalURLString:[[[dataSrc _originalRequest] URL] _web_originalDataAsString]];
 
     // save form state if this is a POST
     if ([[request HTTPMethod] _web_isCaseInsensitiveEqualToString:@"POST"]) {
@@ -661,7 +661,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
             case WebFrameLoadTypeSame:
             {
                 WebHistoryItem *currItem = [_private currentItem];
-                LOG(PageCache, "Clearing back/forward cache, %s\n", [[[currItem URL] absoluteString] cString]);
+                LOG(PageCache, "Clearing back/forward cache, %@\n", [currItem URL]);
                 // FIXME: rjw sez this cache clearing is no longer needed
                 [currItem setHasPageCache:NO];
                 if (loadType == WebFrameLoadTypeReload) {
@@ -687,7 +687,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
                 if (![ds _isClientRedirect]) {
                     // Add item to history.
 		    NSURL *URL = [[[ds _originalRequest] URL] _webkit_canonicalize];
-		    if ([[URL absoluteString] length] > 0 && ![WebDataProtocol _webIsDataProtocolURL:URL]) {
+		    if (![URL _web_isEmpty] && ![WebDataProtocol _webIsDataProtocolURL:URL]) {
 			entry = [[WebHistory optionalSharedHistory] addItemForURL:URL];
 			if (ptitle)
 			    [entry setTitle: ptitle];
@@ -777,7 +777,7 @@ NSString *WebCorePageCacheStateKey = @"WebCorePageCacheState";
     
     // Snapback items are never directly purged here.
     if (pagesCached >= sizeLimit && ![oldestItem alwaysAttemptToUsePageCache]){
-        LOG(PageCache, "Purging back/forward cache, %s\n", [[[oldestItem URL] absoluteString] cString]);
+        LOG(PageCache, "Purging back/forward cache, %@\n", [oldestItem URL]);
         [oldestItem setHasPageCache: NO];
     }
 }
@@ -851,7 +851,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && [[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]])
         {
             if (![item pageCache]){
-                LOG(PageCache, "Saving page to back/forward cache, %s\n", [[[[self dataSource] _URL] absoluteString] cString]);
+                LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 
                 // Add the items to this page's cache.
                 [self _createPageCacheForItem:item];
@@ -862,7 +862,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             }
         }
         else {
-            LOG(PageCache, "NOT saving page to back/forward cache, %s\n", [[[[self dataSource] _URL] absoluteString] cString]);
+            LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
         }
     }
     
@@ -1089,7 +1089,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
 {
-    NSError *error = [NSError _webKitErrorWithCode:code failingURL:[URL absoluteString]];
+    NSError *error = [NSError _webKitErrorWithDomain:WebKitErrorDomain code:code URL:URL];
     WebView *wv = [self webView];
     [[wv _policyDelegateForwarder] webView:wv unableToImplementPolicyWithError:error frame:self];    
 }
@@ -1217,7 +1217,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 inPageCache = YES;
             }         
             else {
-                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %s (%3.5f > %3.5f seconds)\n", [[[[_private provisionalItem] URL] absoluteString] cString], delta, [[WebPreferences standardPreferences] _backForwardCacheExpirationInterval]);
+                LOG (PageCache, "Not restoring page from back/forward cache because cache entry has expired, %@ (%3.5f > %3.5f seconds)\n", [[_private provisionalItem] URL], delta, [[WebPreferences standardPreferences] _backForwardCacheExpirationInterval]);
                 [item setHasPageCache: NO];
             }
         }
@@ -1528,7 +1528,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
     // Don't ask more than once for the same request or if we are loading an empty URL.
     // This avoids confusion on the part of the client.
-    if ([request isEqual:[dataSource _lastCheckedRequest]] || [[[request URL] absoluteString] length] == 0) {
+    if ([request isEqual:[dataSource _lastCheckedRequest]] || [[request URL] _web_isEmpty]) {
         [target performSelector:selector withObject:request withObject:nil];
         return;
     }
@@ -2091,7 +2091,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [item hasPageCache]){
         NSDictionary *pageCache = [[_private provisionalItem] pageCache];
         if ([pageCache objectForKey:WebCorePageCacheStateKey]){
-            LOG (PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
+            LOG (PageCache, "Restoring page from back/forward cache, %@\n", [[_private provisionalItem] URL]);
             [_private->provisionalDataSource _startLoading: pageCache];
             return;
         }
@@ -2155,7 +2155,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (BOOL)_shouldTreatURLAsSameAsCurrent:(NSURL *)URL
 {
     WebHistoryItem *item = [_private currentItem];
-    NSString* URLString = [URL absoluteString];
+    NSString* URLString = [URL _web_originalDataAsString];
     return [URLString isEqual:[item URLString]] || [URLString isEqual:[item originalURLString]];
 }    
 

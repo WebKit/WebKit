@@ -6,6 +6,7 @@
 #import <WebKit/WebNetscapePluginStream.h>
 
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebViewPrivate.h>
@@ -103,9 +104,9 @@
     if ([theResponse isKindOfClass:[NSHTTPURLResponse class]] &&
         [NSHTTPURLResponse isErrorStatusCode:[(NSHTTPURLResponse *)theResponse statusCode]]) {
         [stream receivedError:NPRES_NETWORK_ERR];
-        NSError *error = [NSError _web_errorWithDomain:NSURLErrorDomain
-                                                  code:NSURLErrorFileDoesNotExist
-                                            failingURL:[[theResponse URL] absoluteString]];
+        NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                    code:NSURLErrorFileDoesNotExist
+                                                     URL:[theResponse URL]];
         [self cancelWithError:error];
     }
     [self release];

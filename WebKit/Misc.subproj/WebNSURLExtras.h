@@ -17,6 +17,7 @@
 + (NSURL *)_web_URLWithData:(NSData *)data relativeToURL:(NSURL *)baseURL;
 
 - (NSData *)_web_originalData;
+- (NSString *)_web_originalDataAsString;
 
 - (NSString *)_web_userVisibleString;
 - (const char *)_web_URLCString;

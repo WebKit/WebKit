@@ -10,6 +10,7 @@
 #import <WebKit/WebKitErrors.h>
 
 #import <WebKit/WebLocalizableStrings.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <Foundation/NSError_NSURLExtras.h>
 
 #import <pthread.h>
@@ -48,6 +49,13 @@ static void registerErrors(void);
     return [self _web_errorWithDomain:WebKitErrorDomain code:code failingURL:URL];
 }
 
++ (NSError *)_webKitErrorWithDomain:(NSString *)domain code:(int)code URL:(NSURL *)URL
+{
+    [self _registerWebKitErrors];
+
+    return [self _web_errorWithDomain:domain code:code failingURL:[URL _web_userVisibleString]];
+}
+
 - (id)_initWithPluginErrorCode:(int)code
               contentURLString:(NSString *)contentURLString
            pluginPageURLString:(NSString *)pluginPageURLString
@@ -78,6 +86,19 @@ static void registerErrors(void);
     return error;
 }
 
+- (id)_initWithPluginErrorCode:(int)code
+                    contentURL:(NSURL *)contentURL
+                 pluginPageURL:(NSURL *)pluginPageURL
+                    pluginName:(NSString *)pluginName
+                      MIMEType:(NSString *)MIMEType
+{
+    return [self _initWithPluginErrorCode:code 
+                         contentURLString:[contentURL _web_userVisibleString]
+                      pluginPageURLString:[pluginPageURL _web_userVisibleString]
+                               pluginName:pluginName
+                                 MIMEType:MIMEType
+           ];
+}
 
 @end
 

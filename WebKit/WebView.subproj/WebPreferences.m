@@ -426,7 +426,7 @@ NS_ENDHANDLER
     if ([URL isFileURL]) {
         locationString = [[URL path] _web_stringByAbbreviatingWithTildeInPath];
     } else {
-        locationString = [URL absoluteString];
+        locationString = [URL _web_originalDataAsString];
     }
     
     [self _setStringValue:locationString forKey: WebKitUserStyleSheetLocationPreferenceKey];

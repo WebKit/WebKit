@@ -176,6 +176,11 @@ static int hexDigitValue(char c)
     }
 }
 
+- (NSString *)_web_originalDataAsString
+{
+    return [[[NSString alloc] initWithData:[self _web_originalData] encoding:NSISOLatin1StringEncoding] autorelease];
+}
+
 - (NSString *)_web_userVisibleString
 {
     NSData *data = [self _web_originalData];
@@ -304,22 +309,22 @@ static int hexDigitValue(char c)
 
 - (BOOL)_webkit_isJavaScriptURL
 {
-    return [[self absoluteString] _webkit_isJavaScriptURL];
+    return [[self _web_originalDataAsString] _webkit_isJavaScriptURL];
 }
 
 - (NSString *)_webkit_scriptIfJavaScriptURL
 {
-    return [[self absoluteString] _webkit_scriptIfJavaScriptURL];
+    return [[self _web_originalDataAsString] _webkit_scriptIfJavaScriptURL];
 }
 
 - (BOOL)_webkit_isFTPDirectoryURL
 {
-    return [[self absoluteString] _webkit_isFTPDirectoryURL];
+    return [[self _web_originalDataAsString] _webkit_isFTPDirectoryURL];
 }
 
 - (BOOL)_webkit_shouldLoadAsEmptyDocument
 {
-    return [[self absoluteString] _web_hasCaseInsensitivePrefix:@"about:"] || [[self absoluteString] length] == 0;
+    return [[self _web_originalDataAsString] _web_hasCaseInsensitivePrefix:@"about:"] || [self _web_isEmpty];
 }
 
 @end

@@ -21,6 +21,7 @@
 #import <WebKit/WebHistoryItemPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNSPasteboardExtras.h>
+#import <WebKit/WebNSURLExtras.h>
 #import <WebKit/WebPreferencesPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebUIDelegate.h>
@@ -445,7 +446,7 @@ NSString *_WebMainFrameURLKey = @"mainFrameURL";
     [_private->settings setWillLoadImagesAutomatically:[preferences loadsImagesAutomatically]];
 
     if ([preferences userStyleSheetEnabled]) {
-        [_private->settings setUserStyleSheetLocation:[[preferences userStyleSheetLocation] absoluteString]];
+        [_private->settings setUserStyleSheetLocation:[[preferences userStyleSheetLocation] _web_originalDataAsString]];
     } else {
         [_private->settings setUserStyleSheetLocation:@""];
     }

@@ -22,6 +22,7 @@
 #import <WebKit/WebIconLoader.h>
 #import <WebKit/WebImageRepresentation.h>
 #import <WebKit/WebImageView.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebNSURLExtras.h>
@@ -246,9 +247,9 @@
         [_private->mainClient cancel];
     }else{
         // Main handle is already done. Set the cancelled error.
-        NSError *cancelledError = [NSError _web_errorWithDomain:NSURLErrorDomain
-                                                           code:NSURLErrorCancelled
-                                                     failingURL:[[self _URL] absoluteString]];
+        NSError *cancelledError = [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                                             code:NSURLErrorCancelled
+                                                              URL:[self _URL]];
         [self _setMainDocumentError:cancelledError];
     }
     
@@ -610,14 +611,14 @@
     WebIconDatabase *iconDB = [WebIconDatabase sharedIconDatabase];
 
     // Bind the URL of the original request and the final URL to the icon URL.
-    [iconDB _setIconURL:[iconURL absoluteString] forURL:[[self _URL] absoluteString]];
-    [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[self _URL] _web_originalDataAsString]];
+    [iconDB _setIconURL:[iconURL _web_originalDataAsString] forURL:[[[self _originalRequest] URL] _web_originalDataAsString]];
 
     
     if ([self webFrame] == [_private->webView mainFrame])
         [_private->webView _willChangeValueForKey:_WebMainFrameIconKey];
     
-    NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
+    NSImage *icon = [iconDB iconForURL:[[self _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
     [[_private->webView _frameLoadDelegateForwarder] webView:_private->webView
                                                       didReceiveIcon:icon
                                                             forFrame:[self webFrame]];
@@ -650,7 +651,7 @@
     }
 
     if(_private->iconURL != nil){
-        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL absoluteString]]){
+        if([[WebIconDatabase sharedIconDatabase] _hasIconForIconURL:[_private->iconURL _web_originalDataAsString]]){
             [self _updateIconDatabaseWithURL:_private->iconURL];
         }else{
             ASSERT(!_private->iconLoader);

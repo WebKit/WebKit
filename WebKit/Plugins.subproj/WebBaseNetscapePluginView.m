@@ -1305,7 +1305,7 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
             // Find the frame given the target string.
             target = (NSString *)CFStringCreateWithCString(kCFAllocatorDefault, cTarget, kCFStringEncodingWindowsLatin1);
         }        
-        [request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] absoluteString]];
+        [request setHTTPReferrer:[[[[[self webFrame] dataSource] request] URL] _web_originalDataAsString]];
         WebPluginRequest *pluginRequest = [[WebPluginRequest alloc] initWithRequest:request frameName:target notifyData:notifyData];
         [self performSelector:@selector(loadPluginRequest:) withObject:pluginRequest afterDelay:0];
         [pluginRequest release];

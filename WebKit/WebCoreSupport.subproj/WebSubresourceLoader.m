@@ -8,6 +8,7 @@
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
 
 #import <Foundation/NSURLConnection.h>
@@ -61,9 +62,9 @@
 
         [rLoader reportError];
 
-        NSError *badURLError = [[NSError alloc] _web_initWithDomain:NSURLErrorDomain 
-                                                               code:NSURLErrorBadURL
-                                                         failingURL:[URL absoluteString]];
+        NSError *badURLError = [[NSError alloc] _webKitErrorWithDomain:NSURLErrorDomain 
+                                                                  code:NSURLErrorBadURL
+                                                                   URL:URL];
         [_webView _receivedError:badURLError fromDataSource:source];
         [badURLError release];
         client = nil;

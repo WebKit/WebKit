@@ -81,8 +81,8 @@
     if (![thePlugin load]){
         // FIXME: It would be nice to stop the load here.
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorCannotLoadPlugin
-                                                  contentURLString:[[[theDataSource request] URL] absoluteString]
-                                               pluginPageURLString:nil
+                                                        contentURL:[[theDataSource request] URL]
+                                                     pluginPageURL:nil
                                                         pluginName:[thePlugin name]
                                                           MIMEType:MIME];
         WebView *webView = [[theDataSource webFrame] webView];

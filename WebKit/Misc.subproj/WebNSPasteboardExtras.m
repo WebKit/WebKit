@@ -87,14 +87,14 @@ NSString *WebURLNamePboardType = nil;
     if(!title || [title isEqualToString:@""]){
         title = [[URL path] lastPathComponent];
         if(!title || [title isEqualToString:@""]){
-            title = [URL absoluteString];
+            title = [URL _web_userVisibleString];
         }
     }
     
     [URL writeToPasteboard:self];
     [self setString:title forType:WebURLNamePboardType];
-    [self setString:[URL absoluteString] forType:WebURLPboardType];
-    [self setString:[URL absoluteString] forType:NSStringPboardType];
+    [self setString:[URL _web_userVisibleString] forType:WebURLPboardType];
+    [self setString:[URL _web_userVisibleString] forType:NSStringPboardType];
     [WebURLsWithTitles writeURLs:[NSArray arrayWithObject:URL] andTitles:[NSArray arrayWithObject:title] toPasteboard:self];
 }
 

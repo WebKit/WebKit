@@ -375,7 +375,7 @@ static WebHTMLView *lastHitView = nil;
     BOOL clipURLString = NO, clipLabelString = NO;
     
     NSString *label = [element objectForKey: WebElementLinkLabelKey];
-    NSString *urlString = [linkURL absoluteString];
+    NSString *urlString = [linkURL _web_userVisibleString];
     
     if (!label) {
 	drawURLString = NO;

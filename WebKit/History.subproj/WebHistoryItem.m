@@ -249,12 +249,12 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (id)initWithURL:(NSURL *)URL title:(NSString *)title
 {
-    return [self initWithURLString:[URL absoluteString] title:title lastVisitedTimeInterval:0];
+    return [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
 }
 
 - (id)initWithURL:(NSURL *)URL target:(NSString *)target parent:(NSString *)parent title:(NSString *)title
 {
-    self = [self initWithURLString:[URL absoluteString] title:title lastVisitedTimeInterval:0];
+    self = [self initWithURLString:[URL _web_originalDataAsString] title:title lastVisitedTimeInterval:0];
     if (self) {
         _private->target = [target copy];
         _private->parent = [parent copy];
@@ -279,7 +279,7 @@ NSString *WebHistoryItemChangedNotification = @"WebHistoryItemChangedNotificatio
 
 - (void)setURL:(NSURL *)URL
 {
-    NSString *string = [URL absoluteString];
+    NSString *string = [URL _web_originalDataAsString];
     if (!(string == _private->URLString || [string isEqual:_private->URLString])) {
         [self _retainIconInDatabase:NO];
         [_private->URLString release];

@@ -26,8 +26,6 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 @implementation WebHistoryPrivate
 
-//#define FIX_VISITED
-
 #pragma mark OBJECT FRAMEWORK
 
 + (void)initialize
@@ -148,11 +146,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     ASSERT_ARG(entry, entry);
     ASSERT_ARG(entry, [entry lastVisitedTimeInterval] != 0);
 
-#ifdef FIX_VISITED
-    URLString = [[[entry URL] _web_canonicalize] absoluteString];
-#else
     URLString = [entry URLString];
-#endif
 
     // If we already have an item with this URL, we need to merge info that drives the
     // URL autocomplete heuristics from that item into the new one.
@@ -180,11 +174,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     WebHistoryItem *matchingEntry;
     NSString *URLString;
 
-#ifdef FIX_VISITED
-    URLString = [[[entry URL] _web_canonicalize] absoluteString];
-#else
     URLString = [entry URLString];
-#endif
 
     // If this exact object isn't stored, then make no change.
     // FIXME: Is this the right behavior if this entry isn't present, but another entry for the same URL is?
@@ -276,20 +266,12 @@ NSString *DatesArrayKey = @"WebHistoryDates";
 
 - (BOOL)containsURL: (NSURL *)URL
 {
-#ifdef FIX_VISITED
-    return [self itemForURLString:[[URL _web_canonicalize] absoluteString]] != nil;
-#else
-    return [self itemForURLString:[URL absoluteString]] != nil;
-#endif
+    return [self itemForURLString:[URL _web_originalDataAsString]] != nil;
 }
 
 - (WebHistoryItem *)itemForURL:(NSURL *)URL
 {
-#ifdef FIX_VISITED
-    return [self itemForURLString:[[URL _web_canonicalize] absoluteString]];
-#else
-    return [self itemForURLString:[URL absoluteString]];
-#endif
+    return [self itemForURLString:[URL _web_originalDataAsString]];
 }	
 
 #pragma mark ARCHIVING/UNARCHIVING
@@ -442,7 +424,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "loading %d history entries from %@ took %f seconds",
-            numberOfItems, [URL absoluteString], duration);
+            numberOfItems, URL, duration);
     }
 
     return result;
@@ -462,7 +444,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
         [NSNumber numberWithInt:currentFileVersion], FileVersionKey,
         nil];
     if (![dictionary writeToURL:URL atomically:YES]) {
-        ERROR("attempt to save %@ to %@ failed", dictionary, [URL absoluteString]);
+        ERROR("attempt to save %@ to %@ failed", dictionary, URL);
         return NO;
     }
     
@@ -482,7 +464,7 @@ NSString *DatesArrayKey = @"WebHistoryDates";
     if (result) {
         duration = CFAbsoluteTimeGetCurrent() - start;
         LOG(Timing, "saving %d history entries to %@ took %f seconds",
-            numberOfItems, [URL absoluteString], duration);
+            numberOfItems, URL, duration);
     }
 
     return result;

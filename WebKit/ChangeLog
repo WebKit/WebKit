@@ -1,3 +1,83 @@
+2003-08-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	Fix for this bug:
+
+	<rdar://problem/3375042>: Change usages of NSURL absoluteString in WebKit 
+	to use improved variants
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem initWithURL:title:]): Use data-as-string.
+        (-[WebHistoryItem initWithURL:target:parent:title:]): Use data-as-string.
+        (-[WebHistoryItem setURL:]): Use data-as-string.
+        * History.subproj/WebHistoryPrivate.m:
+        (-[WebHistoryPrivate addItem:]): Remove FIX_VISITED ifdef
+        (-[WebHistoryPrivate removeItem:]): Ditto
+        (-[WebHistoryPrivate containsURL:]): Ditto. Use data-as-string.
+        (-[WebHistoryPrivate itemForURL:]): Ditto. Ditto.
+        (-[WebHistoryPrivate loadFromURL:error:]): Fix log message to URL.
+        (-[WebHistoryPrivate _saveHistoryGuts:URL:error:]): Ditto.
+        (-[WebHistoryPrivate saveToURL:error:]): Ditto.
+        * History.subproj/WebURLsWithTitles.m:
+        (+[WebURLsWithTitles writeURLs:andTitles:toPasteboard:]): Use visible-string.
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader connectionDidFinishLoading:]): Use data-as-string.
+        * Misc.subproj/WebKitErrors.m:
+        (+[NSError _webKitErrorWithDomain:code:URL:]): Added new convenience that takes
+	a URL instead of a URL string.
+        (-[NSError _initWithPluginErrorCode:contentURL:pluginPageURL:pluginName:MIMEType:]):
+	Added new convenience that takes URLs instead of a URL stringis.
+        * Misc.subproj/WebKitErrorsPrivate.h: Declared new conveniences.
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeURL:andTitle:withOwner:types:]): Use visible-string.
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (-[NSURL _web_originalDataAsString]): Added.
+        (-[NSURL _webkit_isJavaScriptURL]): Use data-as-string.
+        (-[NSURL _webkit_scriptIfJavaScriptURL]): Ditto
+        (-[NSURL _webkit_isFTPDirectoryURL]): Ditto
+        (-[NSURL _webkit_shouldLoadAsEmptyDocument]): Ditto. Also use _web_isEmpty.
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): Use data-as-string.
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]): Use new error convenience.
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginConnectionDelegate connection:didReceiveResponse:]): Ditto.
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge requestedURLString]): Use data-as-string.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:referrer:forDataSource:]): Use new error convenience.
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate cancelledError]): Ditto.
+        * WebView.subproj/WebDataProtocol.m:
+        (-[WebDataProtocol startLoading]): Ditto.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stopLoadingInternal]): Ditto.
+        (-[WebDataSource _updateIconDatabaseWithURL:]): Use data-as-string.
+        (-[WebDataSource _loadIcon]): Ditto.
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _createItem:]): Use data-as-string.
+        (-[WebFrame _transitionToCommitted:]): Fix log message to use URL.
+        (-[WebFrame _purgePageCache]): Use _web_isEmpty
+        (-[WebFrame _setState:]): Fix log message to use URL.
+        (-[WebFrame _handleUnimplementablePolicyWithErrorCode:forURL:]): Use new error convenience.
+        (-[WebFrame _loadItem:withLoadType:]): Fix log message to use URL.
+        (-[WebFrame _checkNavigationPolicyForRequest:dataSource:formState:andCall:withSelector:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:formState:]): Fix log messages to use URL.
+        (-[WebFrame _shouldTreatURLAsSameAsCurrent:]): Use data-as-string.
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _dragImageForLinkElement:]): Use visible-string.
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeError]): Use new error convenience.
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences setUserStyleSheetLocation:]): Use data-as-string.
+        * WebView.subproj/WebView.m:
+        (-[WebView mainFrameURL]): Use data-as-string.
+        (-[WebView mainFrameIcon]): Use data-as-string.
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]): Use data-as-string.
+
 2003-08-12  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Ken.

@@ -568,7 +568,7 @@
 // This URL is only used for coloring visited links.
 - (NSString *)requestedURLString
 {
-    return [[[[self dataSource] request] URL] _web_userVisibleString];
+    return [[[[self dataSource] request] URL] _web_originalDataAsString];
 }
 
 - (NSString *)incomingReferrer
@@ -735,8 +735,8 @@
 
     if (!view) {
         NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorJavaUnavailable
-                                                  contentURLString:nil
-                                               pluginPageURLString:nil
+                                                        contentURL:nil
+                                                     pluginPageURL:nil
                                                         pluginName:[pluginPackage name]
                                                           MIMEType:MIMEType];
         view = [[[WebNullPluginView alloc] initWithFrame:theFrame error:error] autorelease];

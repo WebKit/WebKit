@@ -800,7 +800,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
     ds = [[self mainFrame] provisionalDataSource];
     if (!ds)
         ds = [[self mainFrame] dataSource];
-    return [[[ds request] URL] absoluteString];
+    return [[[ds request] URL] _web_originalDataAsString];
 }
 
 - (BOOL)isLoading
@@ -816,7 +816,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 - (NSImage *)mainFrameIcon
 {
-    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] absoluteString] withSize:WebIconSmallSize];
+    return [[WebIconDatabase sharedIconDatabase] iconForURL:[[[[self mainFrame] dataSource] _URL] _web_originalDataAsString] withSize:WebIconSmallSize];
 }
 
 @end

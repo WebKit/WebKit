@@ -19,6 +19,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebViewPrivate.h>
 
@@ -407,9 +408,9 @@
 
 - (NSError *)cancelledError
 {
-    return [NSError _web_errorWithDomain:NSURLErrorDomain
+    return [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                     code:NSURLErrorCancelled
-                              failingURL:[[request URL] absoluteString]];
+                                     URL:[request URL]];
 }
 
 - (void)setIdentifier: ident
