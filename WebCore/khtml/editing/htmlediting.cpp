@@ -3115,6 +3115,13 @@ ElementImpl *InsertParagraphSeparatorCommand::createParagraphElement()
 
 void InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion(const Position &pos)
 {
+    // It is only important to set a style to apply later if we're at the boundaries of
+    // a paragraph. Otherwise, content that is moved as part of the work of the command
+    // will lend their styles to the new paragraph without any extra work needed.
+    VisiblePosition visiblePos(pos, UPSTREAM);
+    if (!isFirstVisiblePositionInParagraph(visiblePos) && !isLastVisiblePositionInParagraph(visiblePos))
+        return;
+
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
     CSSComputedStyleDeclarationImpl *computedStyle = pos.computedStyle();

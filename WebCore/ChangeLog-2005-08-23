@@ -1,5 +1,27 @@
 2005-02-23  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3977962> font loses bold style after pasting next to existing text and pressing return
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::calculateStyleBeforeInsertion): Problem here was
+        that we were doing work in cases where we should not, and content whose style would have
+        been correct if we had done nothing was getting clobbered. It turns out that extra work
+        to apply style to the new paragraph added in this command only needs to be done if we're 
+        at the boundaries of a paragraph. Otherwise, content that is moved as part of the work 
+        of the command will lend their styles to the new paragraph without any extra work needed.
+        So, make this position check and return unless at a paragraph boundary.
+
+        New test:
+
+        * layout-tests/editing/style/block-styles-007-expected.txt
+        * layout-tests/editing/style/block-styles-007.html
+
+2005-02-23  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         Fix for this bug:
