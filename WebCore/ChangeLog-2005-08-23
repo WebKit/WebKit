@@ -1,3 +1,15 @@
+2004-09-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+        
+        Fix for this bug:
+        
+        <rdar://problem/3787168> REGRESSION (Mail): Deleting text from the beginning of a quoted range removes the quoting from the rest
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::DeleteSelectionCommandImpl::moveNodesAfterNode): Only move the text nodes (and their siblings) when
+        doing this move between blocks. This serves to mimic NSText behavior very well.
+
 2004-09-15  Darin Adler  <darin@apple.com>
 
         - fixed Panther build
