@@ -158,6 +158,7 @@ static const CharsetEntry table[] = {
     { "iso-8859-15", 111, kCFStringEncodingISOLatin9 },
     { "iso_8859-15", 111, kCFStringEncodingISOLatin9 },
     { "l9", 111, kCFStringEncodingISOLatin9 },
+    { "latin-9", 111, kCFStringEncodingISOLatin9 },
     { "latin9", 111, kCFStringEncodingISOLatin9 },
     { "437", 2011, kCFStringEncodingDOSLatinUS },
     { "cp437", 2011, kCFStringEncodingDOSLatinUS },

@@ -2,7 +2,7 @@
 ===================================================================
 CHARACTER SETS
 
-(last updated 2002-06-14)
+(last updated 2002-09-30)
 (Apple Changes: added MIBenum: 1004 for ISO-10646-J-1, 2002-06-26) 
 
 These are the official names for character sets that may be used in
@@ -45,7 +45,7 @@ letter but want to use mixed case thereafter that cannot contain any
 special characters, such as underbar ("_") and dash ("-").  If the
 character set is from an ISO standard, its cs alias is the ISO
 standard number or name.  If the character set is not from an ISO
-standard, but is registered with ISO (ECMA is the current ISO
+standard, but is registered with ISO (IPSJ/ITSCJ is the current ISO
 Registration Authority), the ISO Registry number is specified as
 ISOnnn followed by letters suggestive of the name or standards number
 of the code set.  When a national or international standard is
@@ -1279,10 +1279,24 @@ Alias: CCSID01149
 Alias: CP01149
 Alias: ebcdic-is-871+euro
 
-Name: Big5-HKSCS
+Name: Big5-HKSCS                                                  [Yick]
 MIBenum: 2101
-Source:   See (http://www.iana.org/assignments/charset-reg/Big5-HKSCS)     [Yick]
+Source:   See (http://www.iana.org/assignments/charset-reg/Big5-HKSCS) 
 Alias: None
+
+Name: IBM1047                                                [Robrigado]
+MIBenum: 2102
+Source: IBM1047 (EBCDIC Latin 1/Open Systems)
+http://www-1.ibm.com/servers/eserver/iseries/software/globalization/pdf/cp01047z.pdf
+Alias: IBM-1047
+
+Name: PTCP154                                                    [Uskov]
+MIBenum: 2103
+Source: See (http://www.iana.org/assignments/charset-reg/PTCP154)
+Alias: csPTCP154
+Alias: PT154
+Alias: CP154
+Alias: Cyrillic-Asian
 
 Name: UNICODE-1-1                                              [RFC1641]
 MIBenum: 1010
@@ -1334,6 +1348,11 @@ MIBenum: 1019
 Source: <http://www.unicode.org/unicode/reports/tr19/>
 Alias: None
 
+Name: BOCU-1                                                   [Scherer]
+MIBenum: 1020
+Source: http://www.unicode.org/notes/tn6/
+Alias: csBOCU-1
+
 Name: UNICODE-1-1-UTF-7                                        [RFC1642]
 MIBenum: 103
 Source: RFC 1642
@@ -1361,13 +1380,19 @@ Alias: l8
 
 Name: ISO-8859-15
 MIBenum: 111
-Source: ISO
+Source: ISO 
+        Please see: <http://www.iana.org/assignments/charset-reg/ISO-8859-15>
 Alias: ISO_8859-15
+Alias: Latin-9
 
 Name: ISO-8859-16
 MIBenum: 112
 Source: ISO
-Alias: 
+Alias: iso-ir-226
+Alias: ISO_8859-16:2001
+Alias: ISO_8859-16
+Alias: latin10
+Alias: l10 
 
 Name: GBK                                                 
 MIBenum: 113
@@ -1674,6 +1699,7 @@ Source: RFC 1842, RFC 1843                              [RFC1842, RFC1843]
 
 
 REFERENCES
+----------
 
 [RFC1345]  Simonsen, K., "Character Mnemonics & Character Sets",
            RFC 1345, Rationel Almen Planlaegning, Rationel Almen
@@ -1721,6 +1747,10 @@ REFERENCES
            Manual, second edition, Addison-Wesley Publishing Company,
            Inc., 1990.
 
+[ECMA Registry]  ISO-IR: International Register of Escape Sequences
+           http://www.itscj.ipsj.or.jp/ISO-IE/  Note: The current
+           registration authority is IPSJ/ITSCJ, Japan.
+
 [HP-PCL5]  Hewlett-Packard Company, "HP PCL 5 Comparison Guide", 
            (P/N 5021-0329) pp B-13, 1996.
 
@@ -1749,6 +1779,7 @@ REFERENCES
 
 
 PEOPLE
+------
 
 [KXS2] Keld Simonsen <Keld.Simonsen@dkuug.dk>
 
@@ -1768,15 +1799,20 @@ PEOPLE
 
 [Phipps] Toby Phipps, <tphipps@peoplesoft.com>, March 2002.
 
-[Pond] Rick Pond, <rickpond@vnet.ibm.com> March 1997.
+[Pond] Rick Pond, <rickpond@vnet.ibm.com>, March 1997.
 
-[Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000.
+[Robrigado] Reuel Robrigado, <reuelr@ca.ibm.com>, September 2002.
+
+[Scherer] Markus Scherer, <markus.scherer@jtcsv.com>, August 2000, 
+          September 2002.
 
 [Simonsen] Keld Simonsen, <Keld.Simonsen@rap.dk>, August 2000.
 
 [Tantsetthi] Trin Tantsetthi, <trin@mozart.inet.co.th>, September 1998.
 
 [Tumasonis] Vladas Tumasonis, <vladas.tumasonis@maf.vu.lt>, August 2000.
+
+[Uskov] Alexander Uskov, <auskov@idc.kz>, September 2002.
 
 [Wendt] Chris Wendt, <christw@microsoft.com>, December 1999.
 

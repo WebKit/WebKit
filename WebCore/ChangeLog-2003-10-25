@@ -1,5 +1,14 @@
 2002-12-06  Darin Adler  <darin@apple.com>
 
+        Reviewed by Trey.
+
+	Update to latest character-sets document.
+
+        * kwq/character-sets.txt: Got the newest one and merged in our change.
+        * kwq/KWQCharsetData.c: Regenerated this. Added just one character set name.
+
+2002-12-06  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         * khtml/ecma/kjs_events.h: Add listenerObjImp() method so we don't have to
