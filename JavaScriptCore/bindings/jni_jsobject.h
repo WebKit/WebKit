@@ -124,8 +124,8 @@ public:
     
     static jvalue invoke (JSObjectCallContext *context);
 
-    static jobject convertValueToJObject (KJS::ExecState *exec, const RootObject *root, KJS::Value value);
-    static KJS::Value convertJObjectToValue (jobject theObject);
+    jobject convertValueToJObject (KJS::Value value) const;
+    KJS::Value convertJObjectToValue (jobject theObject) const;
     KJS::List listFromJArray(jobjectArray jArray) const;
     
 private:

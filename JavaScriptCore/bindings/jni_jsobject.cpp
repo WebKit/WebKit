@@ -444,7 +444,7 @@ jobject JSObject::call(jstring methodName, jobjectArray args) const
     Value result = funcImp->call (exec, thisObj, argList);
 
     // Convert and return the result of the function call.
-    return convertValueToJObject (exec, _root, result);
+    return convertValueToJObject (result);
 }
 
 jobject JSObject::eval(jstring script) const
@@ -453,9 +453,7 @@ jobject JSObject::eval(jstring script) const
 
     Object thisObj = Object(const_cast<ObjectImp*>(_imp));
     KJS::Value result = _root->interpreter()->evaluate(JavaString(script).ustring(),thisObj).value();
-    ExecState *exec = _root->interpreter()->globalExec();
-
-    return convertValueToJObject (exec, _root, result);
+    return convertValueToJObject (result);
 }
 
 jobject JSObject::getMember(jstring memberName) const
@@ -465,12 +463,12 @@ jobject JSObject::getMember(jstring memberName) const
     ExecState *exec = _root->interpreter()->globalExec();
     Value result = _imp->get (exec, Identifier (JavaString(memberName).ustring()));
 
-    return convertValueToJObject (exec, _root, result);
+    return convertValueToJObject (result);
 }
 
 void JSObject::setMember(jstring memberName, jobject value) const
 {
-    JS_LOG ("memberName = %s\n", JavaString(memberName).characters());
+    JS_LOG ("memberName = %s, value = %p\n", JavaString(memberName).characters(), value);
     ExecState *exec = _root->interpreter()->globalExec();
     _imp->put (exec, Identifier (JavaString(memberName).ustring()), convertJObjectToValue(value));
 }
@@ -492,7 +490,7 @@ jobject JSObject::getSlot(jint index) const
     ExecState *exec = _root->interpreter()->globalExec();
     Value result = _imp->get (exec, (unsigned)index);
 
-    return convertValueToJObject (exec, _root, result);
+    return convertValueToJObject (result);
 }
 
 
@@ -552,8 +550,9 @@ jlong JSObject::createNative(jlong nativeHandle)
     return ptr_to_jlong(0);
 }
 
-jobject JSObject::convertValueToJObject (KJS::ExecState *exec, const Bindings::RootObject *root, KJS::Value value)
+jobject JSObject::convertValueToJObject (KJS::Value value) const
 {
+    ExecState *exec = _root->interpreter()->globalExec();
     JNIEnv *env = getJNIEnv();
     jobject result = 0;
     
@@ -606,7 +605,7 @@ jobject JSObject::convertValueToJObject (KJS::ExecState *exec, const Bindings::R
                 
                 // Bump our 'meta' reference count for the imp.  We maintain the reference
                 // until either finalize is called or the applet shuts down.
-                addJavaReference (root, imp);
+                addJavaReference (_root, imp);
             }
         }
         // All other types will result in an undefined object.
@@ -625,7 +624,7 @@ jobject JSObject::convertValueToJObject (KJS::ExecState *exec, const Bindings::R
     return result;
 }
 
-KJS::Value JSObject::convertJObjectToValue (jobject theObject)
+KJS::Value JSObject::convertJObjectToValue (jobject theObject) const
 {
     // Instances of netscape.javascript.JSObject get converted back to
     // JavaScript objects.  All other objects are wrapped.  It's not
@@ -650,18 +649,22 @@ KJS::Value JSObject::convertJObjectToValue (jobject theObject)
         return KJS::Object(const_cast<KJS::ObjectImp*>(imp));
     }
 
-    return KJS::Object(new KJS::RuntimeObjectImp(new Bindings::JavaInstance (theObject)));
+    _root->interpreter()->lock();
+    KJS::RuntimeObjectImp *newImp = new KJS::RuntimeObjectImp(new Bindings::JavaInstance (theObject));
+    _root->interpreter()->unlock();
+
+    return KJS::Object(newImp);
 }
 
 KJS::List JSObject::listFromJArray(jobjectArray jArray) const
 {
     JNIEnv *env = getJNIEnv();
-    long i, numArgs = env->GetArrayLength (jArray);
+    long i, numObjects = jArray ? env->GetArrayLength (jArray) : 0;
     KJS::List aList;
     
-    for (i = 0; i < numArgs; i++) {
-        jobject anArg = env->GetObjectArrayElement ((jobjectArray)jArray, i);
-        aList.append (convertJObjectToValue(anArg));
+    for (i = 0; i < numObjects; i++) {
+        jobject anObject = env->GetObjectArrayElement ((jobjectArray)jArray, i);
+        aList.append (convertJObjectToValue(anObject));
     }
     return aList;
 }
@@ -692,6 +695,7 @@ jobject KJS_JSObject_JSObjectCall (JNIEnv *env, jclass jsClass, jlong nativeHand
     context.type = Call;
     context.nativeHandle = nativeHandle;
     context.string = methodName;
+    context.args = args;
     return JSObject::invoke (&context).l;
 }
 

@@ -1,5 +1,23 @@
 2003-12-15  Richard Williamson   <rjw@apple.com>
 
+	args weren't passed to 'call' invocation.  d'oh.
+	lock interpreter when we create instances of JS impls.	
+
+        Reviewed by Maciej.
+
+        * bindings/jni_jsobject.cpp:
+        (Bindings::JSObject::call):
+        (Bindings::JSObject::eval):
+        (Bindings::JSObject::getMember):
+        (Bindings::JSObject::setMember):
+        (Bindings::JSObject::getSlot):
+        (Bindings::JSObject::convertValueToJObject):
+        (Bindings::JSObject::convertJObjectToValue):
+        (Bindings::JSObject::listFromJArray):
+        * bindings/jni_jsobject.h:
+
+2003-12-15  Richard Williamson   <rjw@apple.com>
+
 	Last piece of LiveConnect!  This checkin adds implementation
 	of the Java to JavaScript object conversion functions.
 
