@@ -1,3 +1,15 @@
+2003-10-14  David Hyatt  <hyatt@apple.com>
+
+	Fix an obvious little typo with smallCaps inheritance.  Richard reviewed.
+
+	Also merge in Dirk's patch to fix a crasher caused by an obvious deref mistake.
+	
+        Reviewed by rjw and nobody
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::convertToLength):
+        (khtml::CSSStyleSelector::applyRule):
+
 2003-10-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
