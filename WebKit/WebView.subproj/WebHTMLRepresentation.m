@@ -203,7 +203,7 @@
     return [_private->bridge formForElement:element];
 }
 
-- (DOMElement *)currentForm;
+- (DOMElement *)currentForm
 {
     return [_private->bridge currentForm];
 }

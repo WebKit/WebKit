@@ -1,5 +1,10 @@
 2004-11-18  Chris Blumenberg  <cblu@apple.com>
 
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation currentForm]): removed stray ";"
+
+2004-11-18  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed development build failure.
 
         * Misc.subproj/WebIconDatabase.m:
