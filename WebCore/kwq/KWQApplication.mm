@@ -24,12 +24,16 @@
  */
 
 #include <qapplication.h>
+#include <qpalette.h>
 
 #import "_KWQOwner.h"
 
+// FIXME: 
+static QPalette DEFAULT_PALETTE = QPalette();
+
 QPalette QApplication::palette(const QWidget *p)
 {
-     NSLog (@"ERROR %s:%s:%d (NOT IMPLEMENTED)\n", __FILE__, __FUNCTION__, __LINE__);
+    return DEFAULT_PALETTE;
 }
 
 

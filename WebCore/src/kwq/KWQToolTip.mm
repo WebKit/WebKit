@@ -24,9 +24,12 @@
  */
 #include <qtooltip.h>
 
+// FIXME: 
+static QPalette DEFAULT_PALETTE = QPalette();
 
 QPalette QToolTip::palette()
 {
+    return DEFAULT_PALETTE;
 }
 
 

@@ -25,67 +25,92 @@
 
 #include <qpalette.h>
 
+
+class QPalettePrivate
+{
+friend class QPalette;
+public:
+    QPalettePrivate() : active(), inactive(), disabled() 
+    {
+    }
+
+    QPalettePrivate(const QPalettePrivate *other) :
+        active(other->active),
+        inactive(other->inactive),
+        disabled(other->disabled)
+    {
+    }
+
+private:
+    QColorGroup active;  
+    QColorGroup inactive;  
+    QColorGroup disabled;  
+};
+
 #include <kwqdebug.h>
 
 QPalette::QPalette()
 {
-    _logNotYetImplemented();
+    d = new QPalettePrivate(); 
 }
 
 
-QPalette::QPalette(const QPalette &)
+QPalette::QPalette(const QPalette &other)
 {
-    _logNotYetImplemented();
+    d = new QPalettePrivate(other.d); 
 }
 
 
 QPalette::~QPalette()
 {
-    _logNotYetImplemented();
+    delete d;
 }
 
 
-void QPalette::setColor(ColorGroup, QColorGroup::ColorRole role, const QColor &color)
+void QPalette::setColor(ColorGroup cg, QColorGroup::ColorRole role, const QColor &color)
 {
-    _logNotYetImplemented();
+    switch (cg) {
+        case Active:
+            d->active.setColor(role, color);
+            break;
+        case Inactive:
+            d->inactive.setColor(role, color);
+            break;
+        case Disabled:
+            d->disabled.setColor(role, color);
+            break;
+    }
 }
 
 
 const QColorGroup &QPalette::active() const
 {
-    _logNotYetImplemented();
-    return data->active;
+    return d->active;
 }
 
 
 const QColorGroup &QPalette::inactive() const
 {
-    _logNotYetImplemented();
-    return data->inactive;
+    return d->inactive;
 }
 
 
 const QColorGroup &QPalette::disabled() const
 {
-    _logNotYetImplemented();
-    return data->disabled;
+    return d->disabled;
 }
 
 
 const QColorGroup &QPalette::normal() const
 {
-    _logNotYetImplemented();
-    return data->normal;
+    return d->active;
 }
 
 
-QPalette &QPalette::operator=(const QPalette &p)
+QPalette &QPalette::operator=(const QPalette &other)
 {
-    _logNotYetImplemented();
-    //p.data->ref();
-    //if ( data->deref() )
-    //    delete data;
-    data = p.data;
+    d->active = other.d->active;
+    d->inactive = other.d->inactive;
+    d->disabled = other.d->disabled;
     return *this;
 }
-

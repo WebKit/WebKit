@@ -175,6 +175,7 @@ void QPainter::restore()
 // Draws a filled rectangle with a stroked border.
 void QPainter::drawRect(int x, int y, int w, int h)
 {
+    /*
     _lockFocus();
     if (data->qbrush.qbrushstyle == SolidPattern){
         //_setColorFromBrush();
@@ -183,6 +184,7 @@ void QPainter::drawRect(int x, int y, int w, int h)
     _setColorFromPen();
     [NSBezierPath strokeRect:NSMakeRect(x, y, w, h)];
     _unlockFocus();
+    */
 }
 
 
@@ -461,12 +463,14 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qst
 
 void QPainter::fillRect(int x, int y, int w, int h, const QBrush &brush)
 {
+    /*
     _lockFocus();
     if (brush.qbrushstyle == SolidPattern){
         //[brush.qcolor.color set];
         //[NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
     }
     _unlockFocus();
+    */
 }
 
 

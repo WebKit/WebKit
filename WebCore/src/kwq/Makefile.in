@@ -119,6 +119,7 @@ MMOBJECTS = \
 	KWQChar.o \
 	KWQString.o \
 	KWQCString.o \
+	KWQRegion.o \
 	$(NULL)
 
 MOBJECTS = \

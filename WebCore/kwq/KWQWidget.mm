@@ -49,6 +49,37 @@
     rework work that code rather than add NSWindow glue code.
 */
 
+
+class QWidgetPrivate
+{
+friend class QWidget;
+public:
+    
+    QWidgetPrivate(QWidget *widget) : pos(0,0), rect(0,0,0,0), pal()
+    {
+        view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: widget];
+        style = 0L;
+        font = 0L;
+        cursor = 0L;
+    }
+    
+    ~QWidgetPrivate() {}
+    
+private:
+    QPoint	pos;
+    QRect	rect;
+    QWidget::FocusPolicy focusPolicy;
+    QStyle	*style;
+    QFont	*font;
+    QCursor	*cursor;
+    QPalette pal;
+#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
+    NSView	*view;
+#else
+    void 	*view;
+#endif
+};
+
 QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0) 
 {
     _initialize();
@@ -57,8 +88,7 @@ QWidget::QWidget(QWidget *parent=0, const char *name=0, WFlags f=0)
 
 void QWidget::_initialize()
 {
-    data = (struct KWQWidgetData *)calloc (1, sizeof (struct KWQWidgetData));
-    data->view = [[KWQView alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this];
+    data = new QWidgetPrivate(this);
 }
 
 
@@ -72,7 +102,7 @@ QWidget::~QWidget()
     // 	data->font
     // 	data->cursor
     
-    free (data);
+    delete data;
 }
 
 

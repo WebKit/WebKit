@@ -205,7 +205,9 @@ bool KHTMLPart::openURL( const KURL &url )
     cache = WCGetDefaultURICache();
     nsurl = [NSString stringWithCString:url.url().latin1()];
     
-    [cache requestWithString:nsurl requestor:d->m_recv];
+    id jobID = [cache requestWithString:nsurl requestor:d->m_recv];
+    
+    NSLog(@"part: %@", jobID);
 
     return true;
 }
@@ -410,7 +412,7 @@ void KHTMLPart::write( const char *str, int len)
     // begin lines added in lieu of big fixme
     
     QString decoded = QString(str);
-    //d->m_doc->applyChanges(true, true);
+    d->m_doc->applyChanges(true, true);
     
     // end lines added in lieu of big fixme
     

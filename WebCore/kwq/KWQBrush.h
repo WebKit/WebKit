@@ -54,6 +54,9 @@ public:
  
     // member functions --------------------------------------------------------
     
+    const QColor &color() const;
+    void setColor(const QColor &);
+    
     // operators ---------------------------------------------------------------
     
     bool operator==(const QBrush &) const;

@@ -13,7 +13,7 @@ QPoint
 QPtrDict
 QRect
 QRegExp
-QRegion
+#QRegion
 QSize
 QSortedList
 QStack

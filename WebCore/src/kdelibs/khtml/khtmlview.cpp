@@ -314,7 +314,7 @@ void KHTMLView::drawContents( QPainter *p, int ex, int ey, int ew, int eh )
         return;
     }
 
-    //kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
+    kdDebug( 6000 ) << "drawContents x=" << ex << ",y=" << ey << ",w=" << ew << ",h=" << eh << endl;
 
     if ( d->paintBuffer->width() < visibleWidth() )
         d->paintBuffer->resize(visibleWidth(),PAINT_BUFFER_HEIGHT);

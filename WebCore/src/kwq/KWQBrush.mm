@@ -28,7 +28,7 @@
 QBrush::QBrush()
 {
     qcolor = Qt::black;
-    qbrushstyle = NoBrush;
+    qbrushstyle = SolidPattern;
 }
 
 
@@ -58,6 +58,15 @@ QBrush::~QBrush()
 {
 }
 
+const QColor &QBrush::color() const
+{
+    return qcolor;
+}
+
+void QBrush::setColor(const QColor &c)
+{
+    qcolor = c;
+}
 
 bool QBrush::operator==(const QBrush &compareTo) const
 {

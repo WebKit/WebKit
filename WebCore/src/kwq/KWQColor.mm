@@ -227,8 +227,33 @@ QColor QColor::light(int f = 150) const
 
 QColor QColor::dark(int f = 200) const
 {
-    _logNotYetImplemented();
-    return *this;
+    QColor result;
+    NSColor *newColor;
+    float factor;
+
+    if (f <= 0) {
+        result.setRgb(red(), green(), blue());
+        return result;
+    }
+    else if (f < 100) {
+        // NOTE: this is actually a lighten operation
+        factor = 10000.0f / (float)f; 
+        newColor = [color highlightWithLevel:factor];    
+    }
+    else if (f > 10000) {
+        newColor = [color shadowWithLevel:1.0f];    
+    }
+    else {
+        factor = (float)f / 10000.0f;
+        newColor = [color shadowWithLevel:factor];    
+    }
+
+    result.setRgb(
+        (int)([color redComponent] * 255),
+        (int)([color greenComponent] * 255),
+        (int)([color blueComponent] * 255)
+    );
+    return result;
 }
 
 

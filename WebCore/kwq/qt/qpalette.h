@@ -33,6 +33,9 @@
 #include <qcolor.h>
 #include <qbrush.h>
 
+class QColorGroupPrivate;
+class QPalettePrivate;
+
 // class QColorGroup ===========================================================
 
 class QColorGroup {
@@ -41,17 +44,17 @@ public:
     // typedefs ----------------------------------------------------------------
 
     enum ColorRole { 
-        Foreground, 
-        Shadow, 
-        Light, 
-        Mid, 
-        Midlight, 
-        Dark, 
-        Base, 
-        ButtonText, 
-        Button, 
-        Background, 
-        Text 
+        Foreground = 0, 
+        Shadow = 1, 
+        Light = 2, 
+        Midlight = 3, 
+        Mid = 4, 
+        Dark = 5, 
+        Base = 6, 
+        ButtonText = 7, 
+        Button = 8, 
+        Background = 9, 
+        Text = 10 
     };
 
     // enums -------------------------------------------------------------------
@@ -83,8 +86,12 @@ public:
 
     // operators ---------------------------------------------------------------
 
+    QColorGroup &operator=(const QColorGroup &);
+
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+private:
+    QColorGroupPrivate *d;
 
 }; // class QColorGroup ========================================================
 
@@ -98,7 +105,11 @@ public:
  
     // enums -------------------------------------------------------------------
 
-    enum ColorGroup { Active, Inactive, Disabled };
+    enum ColorGroup { 
+        Active = 0, 
+        Inactive = 1, 
+        Disabled = 2, 
+    };
 
     // constants ---------------------------------------------------------------
     // static member functions -------------------------------------------------
@@ -124,13 +135,9 @@ public:
 
 // protected -------------------------------------------------------------------
 // private ---------------------------------------------------------------------
+
 private:
-    struct QPalData : public QShared {
-	QColorGroup normal; // ##### alias for active due to inline functions above, remove 3.0
-	QColorGroup disabled;
-	QColorGroup active;
-	QColorGroup inactive;
-    } *data;
+    QPalettePrivate *d;
 
 }; // class QPalette ===========================================================
 
