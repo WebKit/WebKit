@@ -252,6 +252,10 @@ Could be worth adding to the API.
 - (void)_drawHeaderAndFooter;
 @end
 
+@interface WebView (WebViewEditingInMail)
+- (void)_insertNewlineInQuotedContent;
+@end
+
 @interface _WebSafeForwarder : NSObject
 {
     id target;	// Non-retained.  Don't retain delegates;

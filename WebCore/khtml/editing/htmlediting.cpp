@@ -677,18 +677,18 @@ void CompositeEditCommand::replaceText(TextImpl *node, long offset, long count, 
     applyCommandToComposite(insertCommand);
 }
 
-void CompositeEditCommand::deleteSelection(bool smartDelete)
+void CompositeEditCommand::deleteSelection(bool smartDelete, bool mergeBlocksAfterDelete)
 {
     if (endingSelection().isRange()) {
-        EditCommandPtr cmd(new DeleteSelectionCommand(document(), smartDelete));
+        EditCommandPtr cmd(new DeleteSelectionCommand(document(), smartDelete, mergeBlocksAfterDelete));
         applyCommandToComposite(cmd);
     }
 }
 
-void CompositeEditCommand::deleteSelection(const Selection &selection, bool smartDelete)
+void CompositeEditCommand::deleteSelection(const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete)
 {
     if (selection.isRange()) {
-        EditCommandPtr cmd(new DeleteSelectionCommand(document(), selection, smartDelete));
+        EditCommandPtr cmd(new DeleteSelectionCommand(document(), selection, smartDelete, mergeBlocksAfterDelete));
         applyCommandToComposite(cmd);
     }
 }
@@ -1243,13 +1243,13 @@ Position ApplyStyleCommand::positionInsertionPoint(Position pos)
 //------------------------------------------------------------------------------------------
 // DeleteSelectionCommand
 
-DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, bool smartDelete)
-    : CompositeEditCommand(document), m_hasSelectionToDelete(false), m_smartDelete(smartDelete)
+DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, bool smartDelete, bool mergeBlocksAfterDelete)
+    : CompositeEditCommand(document), m_hasSelectionToDelete(false), m_smartDelete(smartDelete), m_mergeBlocksAfterDelete(mergeBlocksAfterDelete)
 {
 }
 
-DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Selection &selection, bool smartDelete)
-    : CompositeEditCommand(document), m_selectionToDelete(selection), m_hasSelectionToDelete(true), m_smartDelete(smartDelete)
+DeleteSelectionCommand::DeleteSelectionCommand(DocumentImpl *document, const Selection &selection, bool smartDelete, bool mergeBlocksAfterDelete)
+    : CompositeEditCommand(document), m_selectionToDelete(selection), m_hasSelectionToDelete(true), m_smartDelete(smartDelete), m_mergeBlocksAfterDelete(m_mergeBlocksAfterDelete)
 {
 }
 
@@ -1468,7 +1468,7 @@ void DeleteSelectionCommand::doApply()
     }
     
     // Do block merge if start and end of selection are in different blocks.
-    if (endBlock != startBlock && downstreamEnd.node()->inDocument()) {
+    if (m_mergeBlocksAfterDelete && endBlock != startBlock && downstreamEnd.node()->inDocument()) {
         LOG(Editing,  "merging content from end block");
         moveNodesAfterNode(downstreamEnd.node(), upstreamStart.node());
     }
@@ -1722,6 +1722,151 @@ void InputNewlineCommand::doApply()
         
         setEndingSelection(endingPosition);
     }
+}
+
+//------------------------------------------------------------------------------------------
+// InputNewlineInQuotedContentCommand
+
+InputNewlineInQuotedContentCommand::InputNewlineInQuotedContentCommand(DocumentImpl *document)
+    : CompositeEditCommand(document)
+{
+    ancestors.setAutoDelete(true);
+    clonedNodes.setAutoDelete(true);
+}
+
+InputNewlineInQuotedContentCommand::~InputNewlineInQuotedContentCommand()
+{
+    if (m_breakNode)
+        m_breakNode->deref();
+}
+
+bool InputNewlineInQuotedContentCommand::isMailBlockquote(const NodeImpl *node) const
+{
+    if (!node || !node->renderer() || !node->isElementNode() && node->id() != ID_BLOCKQUOTE)
+        return false;
+        
+    return static_cast<const ElementImpl *>(node)->getAttribute("type") == "cite";
+}
+
+bool InputNewlineInQuotedContentCommand::isLastVisiblePositionInBlockquote(const VisiblePosition &pos, const NodeImpl *blockquote) const
+{
+    if (pos.isNull())
+        return false;
+        
+    VisiblePosition next = pos.next();
+    return next.isNull() || !next.deepEquivalent().node()->isAncestor(blockquote);
+}
+
+void InputNewlineInQuotedContentCommand::doApply()
+{
+    Selection selection = endingSelection();
+    if (selection.isNone())
+        return;
+    
+    // Delete the current selection.
+    Position pos = selection.start();
+    if (selection.isRange()) {
+        deleteSelection(false, false);
+        pos = endingSelection().start().upstream();
+    }
+    
+    // Find the top-most blockquote from the start.
+    NodeImpl *startNode = pos.node();
+    NodeImpl *topBlockquote = 0;
+    for (NodeImpl *n = startNode->parentNode(); n; n = n->parentNode()) {
+        if (isMailBlockquote(n))
+            topBlockquote = n;
+    }
+    if (!topBlockquote || !topBlockquote->parentNode())
+        return;
+
+    // Build up list of ancestors in between the start node and the top blockquote.
+    for (NodeImpl *n = startNode->parentNode(); n && n != topBlockquote; n = n->parentNode())
+        ancestors.prepend(n);
+
+    // Insert a break after the top blockquote.
+    int exceptionCode = 0;
+    m_breakNode = document()->createHTMLElement("BR", exceptionCode);
+    m_breakNode->ref();
+    ASSERT(exceptionCode == 0);
+    insertNodeAfter(m_breakNode, topBlockquote);
+
+    if (!isLastVisiblePositionInBlockquote(VisiblePosition(pos), topBlockquote)) {
+        // Split at pos if in the middle of a text node.
+        if (startNode->isTextNode()) {
+            TextImpl *textNode = static_cast<TextImpl *>(startNode);
+            bool atEnd = (unsigned long)pos.offset() >= textNode->length();
+            if (pos.offset() > 0 && !atEnd) {
+                SplitTextNodeCommand *splitCommand = new SplitTextNodeCommand(document(), textNode, pos.offset());
+                EditCommandPtr cmd(splitCommand);
+                applyCommandToComposite(cmd);
+                startNode = splitCommand->node();
+                pos = Position(startNode, 0);
+            }
+            else if (atEnd) {
+                startNode = startNode->traverseNextNode();
+                ASSERT(startNode);
+            }
+        }
+        else if (pos.offset() > 0) {
+            startNode = startNode->traverseNextNode();
+            ASSERT(startNode);
+        }
+
+        // Insert a clone of the top blockquote after the break.
+        NodeImpl *clonedBlockquote = topBlockquote->cloneNode(false);
+        clonedNodes.append(clonedBlockquote);
+        insertNodeAfter(clonedBlockquote, m_breakNode);
+        
+        // Make clones of ancestors in between the start node and the top blockquote.
+        NodeImpl *parent = clonedBlockquote;
+        for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
+            NodeImpl *child = it.current()->cloneNode(false); // shallow clone
+            clonedNodes.append(child);
+            appendNode(child, parent);
+            parent = child;
+        }
+
+        // Move the start node and the siblings of the start node.
+        NodeImpl *n = startNode;
+        bool startIsBR = n->id() == ID_BR;
+        if (startIsBR)
+            n = n->nextSibling();
+        while (n) {
+            NodeImpl *next = n->nextSibling();
+            removeNode(n);
+            appendNode(n, parent);
+            n = next;
+        }
+        
+        // Move everything after the start node.
+        NodeImpl *leftParent = ancestors.last();
+
+        if (!startIsBR) {
+            if (!leftParent)
+                leftParent = topBlockquote;
+            ElementImpl *b = document()->createHTMLElement("BR", exceptionCode);
+            clonedNodes.append(b);
+            ASSERT(exceptionCode == 0);
+            appendNode(b, leftParent);
+        }
+        
+        leftParent = ancestors.last();
+        while (leftParent && leftParent != topBlockquote) {
+            parent = parent->parentNode();
+            NodeImpl *n = leftParent->nextSibling();
+            while (n) {
+                NodeImpl *next = n->nextSibling();
+                removeNode(n);
+                appendNode(n, parent);
+                n = next;
+            }
+            leftParent = leftParent->parentNode();
+        }
+    }
+    
+    // Put the selection right before the break.
+    setEndingSelection(Position(m_breakNode, 0));
 }
 
 //------------------------------------------------------------------------------------------
@@ -2563,6 +2708,23 @@ void TypingCommand::insertNewline(DocumentImpl *document)
     }
 }
 
+void TypingCommand::insertNewlineInQuotedContent(DocumentImpl *document)
+{
+    ASSERT(document);
+    
+    KHTMLPart *part = document->part();
+    ASSERT(part);
+    
+    EditCommandPtr lastEditCommand = part->lastEditCommand();
+    if (isOpenForMoreTypingCommand(lastEditCommand)) {
+        static_cast<TypingCommand *>(lastEditCommand.get())->insertNewlineInQuotedContent();
+    }
+    else {
+        EditCommandPtr cmd(new TypingCommand(document, InsertNewlineInQuotedContent));
+        cmd.apply();
+    }
+}
+
 bool TypingCommand::isOpenForMoreTypingCommand(const EditCommandPtr &cmd)
 {
     return cmd.isTypingCommand() &&
@@ -2589,6 +2751,9 @@ void TypingCommand::doApply()
             return;
         case InsertNewline:
             insertNewline();
+            return;
+        case InsertNewlineInQuotedContent:
+            insertNewlineInQuotedContent();
             return;
     }
 
@@ -2654,6 +2819,13 @@ void TypingCommand::insertText(const DOMString &text, bool selectInsertedText)
 void TypingCommand::insertNewline()
 {
     EditCommandPtr cmd(new InputNewlineCommand(document()));
+    applyCommandToComposite(cmd);
+    typingAddedToOpenCommand();
+}
+
+void TypingCommand::insertNewlineInQuotedContent()
+{
+    EditCommandPtr cmd(new InputNewlineInQuotedContentCommand(document()));
     applyCommandToComposite(cmd);
     typingAddedToOpenCommand();
 }
@@ -2744,6 +2916,7 @@ bool TypingCommand::preservesTypingStyle() const
             return true;
         case InsertText:
         case InsertNewline:
+        case InsertNewlineInQuotedContent:
             return false;
     }
     ASSERT_NOT_REACHED();

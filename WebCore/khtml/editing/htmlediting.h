@@ -27,6 +27,7 @@
 #define __htmlediting_h__
 
 #include "dom_nodeimpl.h"
+#include "qptrlist.h"
 #include "qvaluelist.h"
 #include "selection.h"
 #include "shared.h"
@@ -42,6 +43,7 @@ namespace khtml {
 
 class EditCommand;
 class Selection;
+class VisiblePosition;
 
 //------------------------------------------------------------------------------------------
 // EditCommandPtr
@@ -176,8 +178,8 @@ protected:
     void appendNode(DOM::NodeImpl *appendChild, DOM::NodeImpl *parentNode);
     void applyCommandToComposite(EditCommandPtr &);
     void deleteKeyPressed();
-    void deleteSelection(bool smartDelete=false);
-    void deleteSelection(const khtml::Selection &selection, bool smartDelete=false);
+    void deleteSelection(bool smartDelete=false, bool mergeBlocksAfterDelete=true);
+    void deleteSelection(const khtml::Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
     void deleteText(DOM::TextImpl *node, long offset, long count);
     void inputText(const DOM::DOMString &text, bool selectInsertedText = false);
     void insertNodeAfter(DOM::NodeImpl *insertChild, DOM::NodeImpl *refChild);
@@ -265,8 +267,8 @@ private:
 class DeleteSelectionCommand : public CompositeEditCommand
 { 
 public:
-    DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false);
-    DeleteSelectionCommand(DOM::DocumentImpl *document, const khtml::Selection &selection, bool smartDelete=false);
+    DeleteSelectionCommand(DOM::DocumentImpl *document, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
+    DeleteSelectionCommand(DOM::DocumentImpl *document, const khtml::Selection &selection, bool smartDelete=false, bool mergeBlocksAfterDelete=true);
 	
     virtual void doApply();
     
@@ -280,6 +282,7 @@ private:
     khtml::Selection m_selectionToDelete;
     bool m_hasSelectionToDelete;
     bool m_smartDelete;
+    bool m_mergeBlocksAfterDelete;
 };
 
 //------------------------------------------------------------------------------------------
@@ -318,6 +321,26 @@ public:
 private:
     void insertNodeAfterPosition(DOM::NodeImpl *node, const DOM::Position &pos);
     void insertNodeBeforePosition(DOM::NodeImpl *node, const DOM::Position &pos);
+};
+
+//------------------------------------------------------------------------------------------
+// InputNewlineInQuotedContentCommand
+
+class InputNewlineInQuotedContentCommand : public CompositeEditCommand
+{
+public:
+    InputNewlineInQuotedContentCommand(DOM::DocumentImpl *);
+    virtual ~InputNewlineInQuotedContentCommand();
+	
+    virtual void doApply();
+    
+private:
+    bool isMailBlockquote(const DOM::NodeImpl *) const;
+    bool isLastVisiblePositionInBlockquote(const VisiblePosition &pos, const DOM::NodeImpl *) const;
+
+    QPtrList<DOM::NodeImpl> ancestors;
+    QPtrList<DOM::NodeImpl> clonedNodes;
+    DOM::ElementImpl *m_breakNode;
 };
 
 //------------------------------------------------------------------------------------------
@@ -571,13 +594,14 @@ private:
 class TypingCommand : public CompositeEditCommand
 {
 public:
-    enum ETypingCommand { DeleteKey, InsertText, InsertNewline };
+    enum ETypingCommand { DeleteKey, InsertText, InsertNewline, InsertNewlineInQuotedContent };
 
     TypingCommand(DOM::DocumentImpl *document, ETypingCommand, const DOM::DOMString &text = "", bool selectInsertedText = false);
 
     static void deleteKeyPressed(DOM::DocumentImpl *document);
     static void insertText(DOM::DocumentImpl *document, const DOM::DOMString &text, bool selectInsertedText = false);
     static void insertNewline(DOM::DocumentImpl *document);
+    static void insertNewlineInQuotedContent(DOM::DocumentImpl *document);
     static bool isOpenForMoreTypingCommand(const EditCommandPtr &);
     static void closeTyping(const EditCommandPtr &);
     
@@ -588,6 +612,7 @@ public:
 
     void insertText(const DOM::DOMString &text, bool selectInsertedText);
     void insertNewline();
+    void insertNewlineInQuotedContent();
     void deleteKeyPressed();
 
 private:

@@ -1,3 +1,28 @@
+2004-10-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::CompositeEditCommand::deleteSelection): Added new mergeBlocksAfterDelete flag to control
+        whether content not in the block containing the start of the selection is moved to that block
+        after the selection is deleted.
+        (khtml::DeleteSelectionCommand::DeleteSelectionCommand): Ditto.
+        (khtml::DeleteSelectionCommand::doApply): Ditto.
+        (khtml::InputNewlineInQuotedContentCommand::InputNewlineInQuotedContentCommand): New command
+        to handle the case of inserting a newline when in quoted content in Mail.
+        (khtml::InputNewlineInQuotedContentCommand::~InputNewlineInQuotedContentCommand): Ditto.
+        (khtml::InputNewlineInQuotedContentCommand::isMailBlockquote): Ditto.
+        (khtml::InputNewlineInQuotedContentCommand::isLastVisiblePositionInBlockquote): Ditto.
+        (khtml::InputNewlineInQuotedContentCommand::doApply): Ditto.
+        (khtml::TypingCommand::insertNewlineInQuotedContent): Support for new newline command.
+        (khtml::TypingCommand::doApply): Ditto.
+        (khtml::TypingCommand::preservesTypingStyle): Ditto.
+        * khtml/editing/htmlediting.h: Add new delclarations.
+        (khtml::TypingCommand::): Ditto.
+        * kwq/WebCoreBridge.h: Added new bridge method called from WebKit.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge insertNewlineInQuotedContent]): Ditto.
+
 2004-10-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3774243> page up/down, arrow up/down, etc in Safari RSS should scroll main content

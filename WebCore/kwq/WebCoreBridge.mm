@@ -1564,6 +1564,19 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     [self ensureSelectionVisible];
 }
 
+- (void)insertNewlineInQuotedContent
+{
+    if (!_part || !_part->xmlDocImpl())
+        return;
+    
+    Selection selection(_part->selection());
+    if (selection.isNone())
+        return;
+    
+    TypingCommand::insertNewlineInQuotedContent(_part->xmlDocImpl());
+    [self ensureSelectionVisible];
+}
+
 - (void)insertText:(NSString *)text selectInsertedText:(BOOL)selectInsertedText
 {
     if (!_part || !_part->xmlDocImpl())

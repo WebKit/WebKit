@@ -2834,6 +2834,15 @@ FORWARD(yankAndSelect)
 
 @end
 
+@implementation WebView (WebViewEditingInMail)
+
+- (void)_insertNewlineInQuotedContent;
+{
+    [[self _bridgeForCurrentSelection] insertNewlineInQuotedContent];
+}
+
+@end
+
 @implementation WebView (WebFileInternal)
 
 - (void)_preflightSpellCheckerNow:(id)sender

@@ -1,3 +1,13 @@
+2004-10-27  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        Added new SPI for Mail so it can get the behavior it needs when the user hits
+        the return key with the selection in quoted content.
+
+        * WebView.subproj/WebView.m
+        * WebView.subproj/WebViewPrivate.h
+
 2004-10-26  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed exception that Darin encountered in Mail.
