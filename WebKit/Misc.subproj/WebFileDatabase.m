@@ -273,7 +273,7 @@ enum
         unarchiver = [[NSUnarchiver alloc] initForReadingWithData:data];
         fileKey = [unarchiver decodeObject];
         object = [unarchiver decodeObject];
-        if ([fileKey isEqual:key]) {
+        if (object && [fileKey isEqual:key]) {
             // make sure this object stays around until client has had a chance at it
             result = [object retain];
             [result autorelease];
