@@ -38,22 +38,45 @@ QString::QString(QChar qc)
     CFStringAppendCharacters(s, &qc.c, 1);
 }
 
-QString::QString(const QChar *qc, uint len)
+QString::QString(const QByteArray &qba)
 {
-    if (qc || len) {
+    if (qba.size() && *qba.data()) {
         s = CFStringCreateMutable(NULL, 0);
-        CFStringAppendCharacters(s, &qc->c, len);
+        const int capacity = 64;
+        UniChar buf[capacity];
+        int fill = 0;
+        for (uint len = 0; (len < qba.size()) && qba[len]; len++) {
+            buf[fill] = qba[len];
+            fill++;
+            if (fill == capacity) {
+                CFStringAppendCharacters(s, buf, fill);
+                fill = 0;
+            }
+        }
+        if (fill) {
+            CFStringAppendCharacters(s, buf, fill);
+        }
     } else {
         s = NULL;
     }
 }
 
-QString::QString(const char *ch)
+QString::QString(const QChar *qcs, uint len)
 {
-    if (ch) {
+    if (qcs || len) {
+        s = CFStringCreateMutable(NULL, 0);
+        CFStringAppendCharacters(s, &qcs->c, len);
+    } else {
+        s = NULL;
+    }
+}
+
+QString::QString(const char *chs)
+{
+    if (chs && *chs) {
         s = CFStringCreateMutable(NULL, 0);
         // FIXME: is ISO Latin-1 the correct encoding?
-        CFStringAppendCString(s, ch, kCFStringEncodingISOLatin1);
+        CFStringAppendCString(s, chs, kCFStringEncodingISOLatin1);
     } else {
         s = NULL;
     }
@@ -64,12 +87,41 @@ QString::~QString()
     CFRelease(s);
 }
 
-QConstString::QConstString(QChar *qc, uint len)
+QString &QString::operator=(const QString &qs)
 {
-    if (qc || len) {
+    // shared copy
+    CFRetain(qs.s);
+    CFRelease(s);
+    s = qs.s;
+    return *this;
+}
+
+QString &QString::operator=(const QCString &qcs)
+{
+    return *this = QString(qcs);
+}
+
+QString &QString::operator=(const char *chs)
+{
+    return *this = QString(chs);
+}
+
+QString &QString::operator=(QChar qc)
+{
+    return *this = QString(qc);
+}
+
+QString &QString::operator=(char ch)
+{
+    return *this = QString(QChar(ch));
+}
+
+QConstString::QConstString(QChar *qcs, uint len)
+{
+    if (qcs || len) {
         // NOTE: use instead of CFStringCreateWithCharactersNoCopy function to
         // guarantee backing store is not copied even though string is mutable
-        s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, &qc->c,
+        s = CFStringCreateMutableWithExternalCharactersNoCopy(NULL, &qcs->c,
                 len, len, kCFAllocatorNull);
     } else {
         s = NULL;
