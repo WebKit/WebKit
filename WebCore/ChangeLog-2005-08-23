@@ -1,3 +1,13 @@
+2004-04-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3639530, regression on generated content pages.  They crash because I forgot to null-check the style
+	object.
+	
+        Reviewed by kocienda
+
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):
+
 2004-04-30  John Sullivan  <sullivan@apple.com>
 
         - added bridge method to get the NSFont used to render a node, to

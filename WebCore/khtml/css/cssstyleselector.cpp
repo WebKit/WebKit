@@ -1039,7 +1039,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         }
         else if (sel->match == CSSSelector::Id)
             return e->hasID() && e->getIDAttribute() == sel->value;
-        else if (e != element || !htmlElement || !htmlElement->isMappedAttribute(sel->attr))
+        else if (style && (e != element || !htmlElement || !htmlElement->isMappedAttribute(sel->attr)))
             style->setAffectedByAttributeSelectors();
 
         const AtomicString& value = e->getAttribute(sel->attr);
