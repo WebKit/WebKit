@@ -378,7 +378,7 @@ static CFDictionaryRef imageSourceOptions;
         CGContextSetCompositeOperation (aContext, op);
         CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
         CGContextScaleCTM (aContext, 1, -1);
-        CGContextTranslateCTM (aContext, 0, -fr.size.height);
+        CGContextTranslateCTM (aContext, 0, -ir.size.height);
         
         // Translated to origin, now draw at 0,0.
         ir.origin.x = ir.origin.y = 0;

@@ -1,3 +1,11 @@
+2005-01-05  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3936865> REGRESSION: canvas.drawImage no longer scales properly
+
+        Reviewed by john.
+
+        * WebCoreSupport.subproj/WebImageData.m: use the height of the inRect instead of the fromRect when setting the origin of the context
+
 2005-01-04  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3928329> WebKit should pass nil for "language" to checkSpellingOfString:
