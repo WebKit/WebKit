@@ -1,3 +1,12 @@
+2003-10-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3440063>: Safari 1.1 won't load new pages after visiting adultswim.com, assertion failure on debug build
+
+        Reviewed by rjw.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): if not data was received for a stream, create the temp file anyway. Plug-ins expect this.
+
 === Safari-108 ===
 
 2003-10-02  Darin Adler  <darin@apple.com>

@@ -171,7 +171,7 @@
         return;
     }
     
-    if ((transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) && [data length] > 0 && !path) {
+    if ((transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY) && !path) {
         path = strdup("/tmp/WebKitPlugInStreamXXXXXX");
         int fd = mkstemp(path);
         if (fd == -1) {
@@ -184,16 +184,18 @@
             return;
         }
         int dataLength = [data length];
-        int byteCount = write(fd, [data bytes], dataLength);
-        if (byteCount != dataLength) {
-            // This happens only rarely, when we are out of disk space or have a disk I/O error.
-            ERROR("error writing to temporary file, errno %d", errno);
-            close(fd);
-            // This is not a network error, but the only error codes are "network error" and "user break".
-            [self cancelWithReason:NPRES_NETWORK_ERR];
-            free(path);
-            path = NULL;
-            return;
+        if (dataLength > 0) {
+            int byteCount = write(fd, [data bytes], dataLength);
+            if (byteCount != dataLength) {
+                // This happens only rarely, when we are out of disk space or have a disk I/O error.
+                ERROR("error writing to temporary file, errno %d", errno);
+                close(fd);
+                // This is not a network error, but the only error codes are "network error" and "user break".
+                [self cancelWithReason:NPRES_NETWORK_ERR];
+                free(path);
+                path = NULL;
+                return;
+            }
         }
         close(fd);
     }
