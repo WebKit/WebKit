@@ -48,7 +48,6 @@
 #include "khtml_part.h"
 #include "khtml_part.h"
 #include "khtmlview.h"
-#include "qcolor.h"
 #include "qptrlist.h"
 #include "render_object.h"
 #include "render_style.h"
@@ -194,16 +193,6 @@ static bool isStyleSpan(const NodeImpl *node)
 
     const HTMLElementImpl *elem = static_cast<const HTMLElementImpl *>(node);
     return elem->id() == ID_SPAN && elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
-}
-
-static bool isEmptyFontTag(const NodeImpl *node)
-{
-    if (!node || node->id() != ID_FONT)
-        return false;
-
-    const ElementImpl *elem = static_cast<const ElementImpl *>(node);
-    NamedAttrMapImpl *map = elem->attributes(true); // true for read-only
-    return (!map || map->length() == 1) && elem->getAttribute(ATTR_CLASS) == styleSpanClassString();
 }
 
 static DOMString &blockPlaceholderClassString()
@@ -451,12 +440,7 @@ void StyleChange::init(CSSStyleDeclarationImpl *style, const Position &position)
     m_cssStyle = styleText.stripWhiteSpace();
 }
 
-StyleChange::ELegacyHTMLStyles StyleChange::styleModeForParseMode(bool isQuirksMode)
-{
-    return isQuirksMode ? UseLegacyHTMLStyles : DoNotUseLegacyHTMLStyles;
-}
-
-bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
+bool StyleChange::checkForLegacyHTMLStyleChange(const DOM::CSSProperty *property)
 {
     DOMString valueText(property->value()->cssText());
     switch (property->id()) {
@@ -472,41 +456,6 @@ bool StyleChange::checkForLegacyHTMLStyleChange(const CSSProperty *property)
                 return true;
             }
             break;
-        case CSS_PROP_COLOR: {
-            QColor color(CSSParser::parseColor(valueText));
-            m_applyFontColor = color.name();
-            return true;
-        }
-        case CSS_PROP_FONT_FAMILY:
-            m_applyFontFace = valueText;
-            return true;
-        case CSS_PROP_FONT_SIZE:
-            if (property->value()->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE) {
-                CSSPrimitiveValueImpl *value = static_cast<CSSPrimitiveValueImpl *>(property->value());
-                float number = value->getFloatValue(CSSPrimitiveValue::CSS_PX);
-                if (number <= 9)
-                    m_applyFontSize = "1";
-                else if (number <= 10)
-                    m_applyFontSize = "2";
-                else if (number <= 13)
-                    m_applyFontSize = "3";
-                else if (number <= 16)
-                    m_applyFontSize = "4";
-                else if (number <= 18)
-                    m_applyFontSize = "5";
-                else if (number <= 24)
-                    m_applyFontSize = "6";
-                else
-                    m_applyFontSize = "7";
-                // Huge quirk in Microsft Entourage is that they understand CSS font-size, but also write 
-                // out legacy 1-7 values in font tags (I guess for mailers that are not CSS-savvy at all, 
-                // like Eudora). Yes, they write out *both*. We need to write out both as well. Return false.
-                return false; 
-            }
-            else {
-                // Can't make sense of the number. Put no font size.
-                return true;
-            }
     }
     return false;
 }
@@ -1562,6 +1511,7 @@ bool ApplyStyleCommand::isHTMLStyleNode(CSSMutableStyleDeclarationImpl *style, H
             case CSS_PROP_FONT_STYLE:
                 if (elem->id() == ID_I)
                     return true;
+                break;
         }
     }
 
@@ -1576,37 +1526,6 @@ void ApplyStyleCommand::removeHTMLStyleNode(HTMLElementImpl *elem)
     // Not so often I think.
     ASSERT(elem);
     removeNodePreservingChildren(elem);
-}
-
-void ApplyStyleCommand::removeHTMLFontStyle(CSSMutableStyleDeclarationImpl *style, HTMLElementImpl *elem)
-{
-    ASSERT(style);
-    ASSERT(elem);
-
-    if (elem->id() != ID_FONT)
-        return;
-
-    int exceptionCode = 0;
-    QValueListConstIterator<CSSProperty> end;
-    for (QValueListConstIterator<CSSProperty> it = style->valuesIterator(); it != end; ++it) {
-        switch ((*it).id()) {
-            case CSS_PROP_COLOR:
-                elem->removeAttribute(ATTR_COLOR, exceptionCode);
-                ASSERT(exceptionCode == 0);
-                break;
-            case CSS_PROP_FONT_FAMILY:
-                elem->removeAttribute(ATTR_FACE, exceptionCode);
-                ASSERT(exceptionCode == 0);
-                break;
-            case CSS_PROP_FONT_SIZE:
-                elem->removeAttribute(ATTR_SIZE, exceptionCode);
-                ASSERT(exceptionCode == 0);
-                break;
-        }
-    }
-
-    if (isEmptyFontTag(elem))
-        removeNodePreservingChildren(elem);
 }
 
 void ApplyStyleCommand::removeCSSStyle(CSSMutableStyleDeclarationImpl *style, HTMLElementImpl *elem)
@@ -1760,7 +1679,7 @@ void ApplyStyleCommand::applyTextDecorationStyle(NodeImpl *node, CSSMutableStyle
 
     HTMLElementImpl *element = static_cast<HTMLElementImpl *>(node);
         
-    StyleChange styleChange(style, Position(element, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
+    StyleChange styleChange(style, Position(element, 0), StyleChange::DoNotUseLegacyHTMLStyles);
     if (styleChange.cssStyle().length() > 0) {
         DOMString cssText = styleChange.cssStyle();
         CSSMutableStyleDeclarationImpl *decl = element->inlineStyleDecl();
@@ -1842,13 +1761,10 @@ void ApplyStyleCommand::removeInlineStyle(CSSMutableStyleDeclarationImpl *style,
         NodeImpl *next = node->traverseNextNode();
         if (node->isHTMLElement() && nodeFullySelected(node, start, end)) {
             HTMLElementImpl *elem = static_cast<HTMLElementImpl *>(node);
-            if (isHTMLStyleNode(style, elem)) {
+            if (isHTMLStyleNode(style, elem))
                 removeHTMLStyleNode(elem);
-            }
-            else {
-                removeHTMLFontStyle(style, elem);
+            else
                 removeCSSStyle(style, elem);
-            }
         }
         if (node == end.node())
             break;
@@ -2139,7 +2055,7 @@ void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *st
     if (!block)
         return;
         
-    StyleChange styleChange(style, Position(block, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
+    StyleChange styleChange(style, Position(block, 0), StyleChange::DoNotUseLegacyHTMLStyles);
     if (styleChange.cssStyle().length() > 0) {
         moveParagraphContentsToNewBlockIfNecessary(Position(node, 0));
         block = static_cast<HTMLElementImpl *>(node->enclosingBlockFlowElement());
@@ -2153,25 +2069,9 @@ void ApplyStyleCommand::addBlockStyleIfNeeded(CSSMutableStyleDeclarationImpl *st
 
 void ApplyStyleCommand::addInlineStyleIfNeeded(CSSMutableStyleDeclarationImpl *style, NodeImpl *startNode, NodeImpl *endNode)
 {
-    StyleChange styleChange(style, Position(startNode, 0), StyleChange::styleModeForParseMode(document()->inCompatMode()));
+    StyleChange styleChange(style, Position(startNode, 0));
     int exceptionCode = 0;
     
-    //
-    // Font tags need to go outside of CSS so that CSS font sizes override leagcy font sizes.
-    //
-    if (styleChange.applyFontColor() || styleChange.applyFontFace() || styleChange.applyFontSize()) {
-        ElementImpl *fontElement = createFontElement(document());
-        ASSERT(exceptionCode == 0);
-        insertNodeBefore(fontElement, startNode);
-        if (styleChange.applyFontColor())
-            fontElement->setAttribute(ATTR_COLOR, styleChange.fontColor());
-        if (styleChange.applyFontFace())
-            fontElement->setAttribute(ATTR_FACE, styleChange.fontFace());
-        if (styleChange.applyFontSize())
-            fontElement->setAttribute(ATTR_SIZE, styleChange.fontSize());
-        surroundNodeRangeWithElement(startNode, endNode, fontElement);
-    }
-
     if (styleChange.cssStyle().length() > 0) {
         ElementImpl *styleElement = createStyleSpanElement(document());
         styleElement->setAttribute(ATTR_STYLE, styleChange.cssStyle());
@@ -5570,15 +5470,6 @@ ElementImpl *createBreakElement(DocumentImpl *document)
     ElementImpl *breakNode = document->createHTMLElement("br", exceptionCode);
     ASSERT(exceptionCode == 0);
     return breakNode;
-}
-
-ElementImpl *createFontElement(DocumentImpl *document)
-{
-    int exceptionCode = 0;
-    ElementImpl *fontNode = document->createHTMLElement("font", exceptionCode);
-    ASSERT(exceptionCode == 0);
-    fontNode->setAttribute(ATTR_CLASS, styleSpanClassString());
-    return fontNode;
 }
 
 ElementImpl *createStyleSpanElement(DocumentImpl *document)

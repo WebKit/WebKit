@@ -6,7 +6,7 @@ layer at (0,0) size 800x600
       RenderBlock {DIV} at (0,0) size 784x356 [border: (2px solid #FF0000)]
         RenderBlock (anonymous) at (14,14) size 756x56
           RenderInline {SPAN} at (0,0) size 687x56
-            RenderInline {FONT} at (0,0) size 10x28 [color=#008000]
+            RenderInline {SPAN} at (0,0) size 10x28 [color=#008000]
               RenderText {TEXT} at (0,0) size 10x28
                 text run at (0,0) width 10: "\""
             RenderText {TEXT} at (10,0) size 687x56
@@ -39,9 +39,9 @@ layer at (0,0) size 800x600
           RenderInline {SPAN} at (0,0) size 0x0
           RenderText {TEXT} at (0,0) size 0x0
 selection is RANGE:
-start:      position 0 of child 1 {TEXT} of child 1 {FONT} of child 2 {SPAN} of root {DIV}
+start:      position 0 of child 1 {TEXT} of child 1 {SPAN} of child 2 {SPAN} of root {DIV}
 upstream:   position 0 of  of root {DIV}
-downstream: position 0 of child 1 {TEXT} of child 1 {FONT} of child 2 {SPAN} of root {DIV}
-end:        position 1 of child 1 {TEXT} of child 1 {FONT} of child 2 {SPAN} of root {DIV}
-upstream:   position 1 of child 1 {TEXT} of child 1 {FONT} of child 2 {SPAN} of root {DIV}
+downstream: position 0 of child 1 {TEXT} of child 1 {SPAN} of child 2 {SPAN} of root {DIV}
+end:        position 1 of child 1 {TEXT} of child 1 {SPAN} of child 2 {SPAN} of root {DIV}
+upstream:   position 1 of child 1 {TEXT} of child 1 {SPAN} of child 2 {SPAN} of root {DIV}
 downstream: position 0 of child 2 {TEXT} of child 2 {SPAN} of root {DIV}
