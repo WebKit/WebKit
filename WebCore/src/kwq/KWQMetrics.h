@@ -33,17 +33,21 @@
 #ifdef DIRECT_TO_CG
 
 #define LOCAL_GLYPH_BUFFER_SIZE 1024
-#define GLYPH_CACHE_MAX 1024
+
+#define INITIAL_GLYPH_CACHE_MAX 512
+#define INCREMENTAL_GLYPH_CACHE_BLOCK 512
+
+#define UNITIALIZED_GLYPH_WIDTH FLT_MAX
 
 // These definitions are used to bound the character-to-glyph mapping cache.  The
-// range is limited to LATIN1.  Also a check must be made to determine that a
-// character range does not include a composable charcter.
+// range is limited to LATIN1.  When accessing the cache a check must be made to
+// determine that a character range does not include a composable charcter.
 
 // The first displayable character in latin1. (SPACE)
-#define FIRST_CACHE_CHAR (0x20)
+#define FIRST_CACHE_CHARACTER (0x20)
 
 // The last character in latin1 extended A. (LATIN SMALL LETTER LONG S)
-#define LAST_CACHE_CHAR (0x17F)
+#define LAST_CACHE_CHARACTER (0x17F)
 
 #define Boolean MacBoolean
 #define Fixed MacFixed
@@ -68,13 +72,12 @@ CG_EXTERN size_t CGFontGetNumberOfGlyphs(CGFontRef font);
 
 }
 
+typedef float _IFGlyphWidth;
+
 #endif
 
 @interface KWQLayoutInfo : NSObject
 {
-    NSMutableDictionary *attributes;
-    NSLayoutManager *layoutManager;
-    KWQTextStorage *textStorage;
     NSFont *font;
     int lineHeight;
 #ifdef DIRECT_TO_CG
@@ -84,9 +87,13 @@ CG_EXTERN size_t CGFontGetNumberOfGlyphs(CGFontRef font);
     ATSStyleGroupPtr _latinStyleGroup;
     ATSUStyle _latinStyle;
     ATSGlyphVector _latinCacheGlyphVector;
-    int widthCacheSize;
-    float *widthCache;
+    unsigned int widthCacheSize;
+    _IFGlyphWidth *widthCache;
     ATSGlyphRef *characterToGlyph;
+#else
+    NSMutableDictionary *attributes;
+    NSLayoutManager *layoutManager;
+    KWQTextStorage *textStorage;
 #endif
 }
 

@@ -1,3 +1,14 @@
+2002-03-19  Richard Williamson  <rjw@apple.com>
+
+        Improved cache-miss case for non-latin1 characters.
+        
+	* src/kwq/KWQFontMetrics.mm: (-[KWQLayoutInfo initWithFont:]), (-[KWQLayoutInfo
+	layoutManager]), (-[KWQLayoutInfo textStorage]), (-[KWQLayoutInfo
+	_initializeCaches]), (_rectForString), (-[KWQLayoutInfo setColor:]),
+	(-[KWQLayoutInfo attributes]), (-[KWQLayoutInfo dealloc]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/kwqdebug.h:
+
 2002-03-18  Darin Adler  <darin@apple.com>
 
 	* src/kwq/KWQListImpl.mm: (KWQListImpl::sort): Use insertion sort for
