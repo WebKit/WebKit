@@ -1806,6 +1806,12 @@ static WebHTMLView *lastHitView = nil;
     [[self _pluginController] destroyAllPlugins];
 }
 
+- (BOOL)_isSelectionEvent:(NSEvent *)event
+{
+    NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
+    return [[[self elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
+}
+
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
 {
     // We hack AK's hitTest method to catch all events at the topmost WebHTMLView.  However, for
@@ -1817,7 +1823,7 @@ static WebHTMLView *lastHitView = nil;
     if ([hitView isKindOfClass:[self class]]) {
         WebHTMLView *hitHTMLView = (WebHTMLView *)hitView;
         [[hitHTMLView _bridge] setActivationEventNumber:[event eventNumber]];
-        return [[hitHTMLView _bridge] eventMayStartDrag:event];
+        return [self _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
     } else {
         return [hitView acceptsFirstMouse:event];
     }
@@ -1833,7 +1839,7 @@ static WebHTMLView *lastHitView = nil;
     
     if ([hitView isKindOfClass:[self class]]) {
         WebHTMLView *hitHTMLView = (WebHTMLView *)hitView;
-        return [[hitHTMLView _bridge] eventMayStartDrag:event];
+        return [self _isSelectionEvent:event] ? [[hitHTMLView _bridge] eventMayStartDrag:event] : NO;
     } else {
         return [hitView shouldDelayWindowOrderingForEvent:event];
     }

@@ -1,3 +1,15 @@
+2004-08-24  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed with help from Trey:
+	<rdar://problem/3764856> REGRESSION !25-154): Safari accepts mouse clicks (follows links) when not key
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _isSelectionEvent:]): brought back from CVS
+        (-[WebHTMLView acceptsFirstMouse:]): only call eventMayStartDrag if _isSelectionEvent returns YES since we only want to allow selection dragging on the first mouse down
+        (-[WebHTMLView shouldDelayWindowOrderingForEvent:]): ditto
+
 2004-08-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
