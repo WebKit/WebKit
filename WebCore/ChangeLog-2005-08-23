@@ -1,3 +1,19 @@
+2004-12-10  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
+        <rdar://problem/3915047> HItting return in empty document inserts <p> but 
+        insertion point does not move
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): The issue is that the
+        code to insert the <p> element for the return is not detecting the fact
+        that the document is empty. Inserting a <p> into an empty body will not
+        "add a new line" as the user expects. With this change, we'll add a second 
+        <p> when the root editable element has no rendered kids.
+
 2004-12-10  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

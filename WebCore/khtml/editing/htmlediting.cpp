@@ -2199,8 +2199,21 @@ void InsertParagraphSeparatorCommand::doApply()
     // If the start block is the body, just make a P tag, otherwise, make a shallow clone
     // of the the start block.
     NodeImpl *addedBlock = 0;
-    if (startBlock->id() == ID_BODY) {
+    if (startBlock == startBlock->rootEditableElement()) {
         int exceptionCode = 0;
+        if (startBlock->renderer() && !startBlock->renderer()->firstChild()) {
+            // No rendered kids in the root editable element.
+            // Just inserting a <p> in this situation is not enough, since this operation
+            // is supposed to add an additional user-visible line to the content.
+            // So, insert an extra <p> to make the one we insert right appear as the second
+            // line in the root editable element.
+            NodeImpl *extraBlock = document()->createHTMLElement("P", exceptionCode);
+            ASSERT(exceptionCode == 0);
+            appendNode(extraBlock, startBlock);
+            extraBlock->ref();
+            insertBlockPlaceholderIfNeeded(extraBlock);
+            clonedNodes.append(extraBlock);
+        }
         addedBlock = document()->createHTMLElement("P", exceptionCode);
         ASSERT(exceptionCode == 0);
         appendNode(addedBlock, startBlock);
