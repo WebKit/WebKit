@@ -113,6 +113,7 @@
 
 @interface WebDataSource (WebPrivate)
 
+- (NSString *)_stringWithData:(NSData *)data;
 - (void)_startLoading;
 - (void)_stopLoading;
 - (NSURL *)_URL;

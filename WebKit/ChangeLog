@@ -1,5 +1,30 @@
 2003-03-06  Richard Williamson   <rjw@apple.com>
 
+        Move tweaks to WebKit API.
+        
+        Removed [WebFrame setController:] from public API.
+        Removed [WebDataSource stringWithData:] from public API.
+         
+        Reviewed by hyatt.
+
+        * WebView.subproj/WebDataSource.h:
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource mainDocumentError]):
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _stringWithData:]):
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        * WebView.subproj/WebTextRepresentation.m:
+        (-[WebTextRepresentation setDataSource:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView dataSourceUpdated:]):
+
+2003-03-06  Richard Williamson   <rjw@apple.com>
+
         Tweaks to WebKit API.
         Dropped URL on WebDataSource.
         Dropped start/stop loading on WebDataSource.

@@ -5,7 +5,7 @@
 
 #import "WebTextRepresentation.h"
 
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebFoundation/WebResponse.h>
 
 @implementation WebTextRepresentation
@@ -20,7 +20,7 @@
 {
     hasRTFSource = [[[dataSource response] contentType] isEqualToString:@"text/rtf"];
     if (hasRTFSource){
-        RTFSource = [[dataSource stringWithData: [dataSource data]] retain];
+        RTFSource = [[dataSource _stringWithData: [dataSource data]] retain];
     }
 }
 

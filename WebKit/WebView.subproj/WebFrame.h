@@ -43,12 +43,6 @@
 - (NSString *)name;
 
 /*!
-    @method setController:
-    @param controller The controller to assign to this frame.
-*/
-- (void)setController: (WebController *)controller;
-
-/*!
     @method controller
     @result Returns the controller of this frame.
 */

@@ -766,6 +766,19 @@
     return [[self request] URL];
 }
 
+- (NSString *)_stringWithData:(NSData *)data
+{
+    NSString *textEncodingName = [self _overrideEncoding];
 
+    if(!textEncodingName){
+        textEncodingName = [[self response] textEncodingName];
+    }
+
+    if(textEncodingName){
+        return [WebBridge stringWithData:data textEncodingName:textEncodingName];
+    }else{
+        return [WebBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
+    }
+}
 
 @end

@@ -115,16 +115,6 @@
 - (WebError *)mainDocumentError;
 
 /*!
-    @method stringWithData:
-    @result A string decoded using the determined encoding.
-    @discussion The overidden encoding is used if one is present. If no overidden encoding is specified,
-    the server specified encoding is used. If no server specified encoding is specified,
-    kCFStringEncodingISOLatin1 is used.
-*/
-- (NSString *)stringWithData:(NSData *)data;
-
-
-/*!
     @method isDownloading
     @result Description forthcoming.
 */

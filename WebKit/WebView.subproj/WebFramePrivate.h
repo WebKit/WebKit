@@ -99,6 +99,7 @@ typedef enum {
 @end
 
 @interface WebFrame (WebPrivate)
+- (void)setController: (WebController *)controller;
 - (void)_setName:(NSString *)name;
 - (WebFrame *)_descendantFrameNamed:(NSString *)name;
 - (void)_controllerWillBeDeallocated;

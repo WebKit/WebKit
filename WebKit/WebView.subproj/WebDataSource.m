@@ -13,9 +13,9 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebView.h>
-#import <WebFoundation/WebAssertions.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 
+#import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebFileTypeMappings.h>
 #import <WebFoundation/WebResource.h>
 #import <WebFoundation/WebRequest.h>
@@ -140,21 +140,6 @@
 - (WebError *)mainDocumentError
 {
     return _private->mainDocumentError;
-}
-
-- (NSString *)stringWithData:(NSData *)data
-{
-    NSString *textEncodingName = [self _overrideEncoding];
-
-    if(!textEncodingName){
-        textEncodingName = [[self response] textEncodingName];
-    }
-
-    if(textEncodingName){
-        return [WebBridge stringWithData:data textEncodingName:textEncodingName];
-    }else{
-        return [WebBridge stringWithData:data textEncoding:kCFStringEncodingISOLatin1];
-    }
 }
 
 + (void)registerRepresentationClass:(Class)repClass forMIMEType:(NSString *)MIMEType

@@ -5,7 +5,7 @@
 
 #import <WebKit/WebHTMLRepresentation.h>
 
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebKitStatisticsPrivate.h>
 #import <WebKit/WebFramePrivate.h>

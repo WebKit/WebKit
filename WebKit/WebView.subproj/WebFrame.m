@@ -87,14 +87,6 @@
 }
 
 
-- (void)setController: (WebController *)controller
-{
-    // To set controller to nil, we have to use _controllerWillBeDeallocated, not this.
-    ASSERT(controller);
-    [_private setController: controller];
-}
-
-
 - (WebDataSource *)provisionalDataSource
 {
     return [_private provisionalDataSource];

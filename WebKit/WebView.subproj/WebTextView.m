@@ -9,7 +9,7 @@
 #import <WebFoundation/WebResponse.h>
 
 #import <WebKit/WebControllerPrivate.h>
-#import <WebKit/WebDataSource.h>
+#import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebPreferences.h>
@@ -59,7 +59,7 @@
     } else {
         [self setRichText:NO];
         [self setFixedWidthFont];
-        [self setString:[dataSource stringWithData:[dataSource data]]];
+        [self setString:[dataSource _stringWithData:[dataSource data]]];
     }
     
     
