@@ -354,6 +354,7 @@ static char *newCString(NSString *string)
 {
     NPError npErr;
     NSRect windowFrame, frameInWindow, visibleRectInWindow;
+    CGrafPtr port = GetWindowPort([[self window] _windowRef]);
     
     windowFrame = [[self window] frame];
     frameInWindow = [self convertRect:[self bounds] toView:nil];
@@ -363,7 +364,7 @@ static char *newCString(NSString *string)
     frameInWindow.origin.y =  windowFrame.size.height - frameInWindow.origin.y - frameInWindow.size.height; 
     visibleRectInWindow.origin.y =  windowFrame.size.height - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
-    nPort.port = GetWindowPort([[self window] _windowRef]);
+    nPort.port = port;
     
     // FIXME: Are these values correct? Without them, Flash freaks.
     nPort.portx = -(int32)frameInWindow.origin.x;
@@ -385,6 +386,16 @@ static char *newCString(NSString *string)
     
     npErr = NPP_SetWindow(instance, &window);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x\n", npErr, (int)nPort.port);
+
+    // Draw test    
+#if 0
+    Rect portRect;
+
+    GetPortBounds(port, &portRect);
+    SetPort(port);
+    MoveTo(0,0);
+    LineTo(portRect.right, portRect.bottom);
+#endif
 }
 
 -(void)start

@@ -1,3 +1,14 @@
+2002-06-26  Chris Blumenberg  <cblu@apple.com>
+
+	- added "complete" to to progress methods to indicate last progress message
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView setWindow]): added a draw test
+        * WebView.subproj/IFWebController.h:
+        * WebView.subproj/IFWebControllerPrivate.mm:
+        (-[IFWebController _receivedProgress:forResourceHandle:fromDataSource:complete:]):
+        (-[IFWebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]):
+
 2002-06-26  Richard Williamson  <rjw@apple.com>
 
         Fixed recursion problems.  +[NSFont findFontLike:forString:withRange:inLanguage:]

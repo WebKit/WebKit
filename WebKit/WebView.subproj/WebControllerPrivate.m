@@ -89,7 +89,8 @@
         return;
     }
 
-    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle fromDataSource: dataSource];
+    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
+        fromDataSource: dataSource complete:isComplete];
 
     // This resouce has completed, so check if the load is complete for all frames.
     if (isComplete){
@@ -118,7 +119,8 @@
         return;
     }
 
-    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle fromDataSource: dataSource];
+    [[self resourceProgressHandler] receivedProgress: progress forResourceHandle: resourceHandle 
+        fromDataSource: dataSource complete:isComplete];
 
     if(isComplete){
         if(contentPolicy == IFContentPolicyOpenExternally || contentPolicy == IFContentPolicySave)
