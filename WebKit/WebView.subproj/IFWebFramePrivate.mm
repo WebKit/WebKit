@@ -47,7 +47,7 @@ static const char * const stateNames[6] = {
     [webView autorelease];
     [dataSource autorelease];
     [provisionalDataSource autorelease];
-    [bridgeFrame release];
+    [frameBridge release];
     
     [super dealloc];
 }
@@ -249,7 +249,7 @@ static const char * const stateNames[6] = {
         case IFWEBFRAMESTATE_COMPLETE:
         default:
         {
-            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED from %s", stateNames[_private->state]] userInfo: nil] raise];
+            [[NSException exceptionWithName:NSGenericException reason:[NSString stringWithFormat: @"invalid state attempting to transition to IFWEBFRAMESTATE_COMMITTED_PAGE from %s", stateNames[_private->state]] userInfo: nil] raise];
             return;
         }
     }
@@ -428,9 +428,9 @@ static const char * const stateNames[6] = {
     [IFWebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
-- (IFWebCoreFrame *)_bridgeFrame
+- (IFWebCoreFrame *)_frameBridge
 {
-    return _private->bridgeFrame;
+    return _private->frameBridge;
 }
 
 - (BOOL)_shouldShowDataSource:(IFWebDataSource *)dataSource

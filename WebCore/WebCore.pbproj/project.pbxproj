@@ -582,7 +582,6 @@
 				F58785B502DE375901EA4122,
 				F58785B602DE375901EA4122,
 				F58785B802DE375901EA4122,
-				F58785B902DE375901EA4122,
 				F58785BA02DE375901EA4122,
 				F58785BB02DE375901EA4122,
 				F58785BD02DE375901EA4122,
@@ -708,6 +707,7 @@
 				F523D31F02DE4476018635CA,
 				F523D32102DE4476018635CA,
 				F52CA71002DFACBD018635CA,
+				F550D71002E132BB018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -3779,6 +3779,42 @@
 			settings = {
 			};
 		};
+		F550D70902E13281018635CA = {
+			isa = PBXFileReference;
+			name = KWQCharsetData.c;
+			path = kwq/KWQCharsetData.c;
+			refType = 4;
+		};
+		F550D70A02E13281018635CA = {
+			isa = PBXFileReference;
+			name = KWQPushButton.mm;
+			path = kwq/KWQPushButton.mm;
+			refType = 4;
+		};
+		F550D70B02E13281018635CA = {
+			isa = PBXFileReference;
+			name = "mac-encodings.txt";
+			path = "kwq/mac-encodings.txt";
+			refType = 4;
+		};
+		F550D70C02E13281018635CA = {
+			isa = PBXExecutableFileReference;
+			name = "make-charset-table.pl";
+			path = "kwq/make-charset-table.pl";
+			refType = 4;
+		};
+		F550D70E02E13281018635CA = {
+			isa = PBXFileReference;
+			name = "make-mac-encodings.c";
+			path = "kwq/make-mac-encodings.c";
+			refType = 4;
+		};
+		F550D71002E132BB018635CA = {
+			fileRef = F550D70A02E13281018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F58784C402DE375801EA4122 = {
 			isa = PBXFileReference;
 			name = KWQApplication.mm;
@@ -4353,12 +4389,6 @@
 			isa = PBXFileReference;
 			name = KWQPtrDictImpl.mm;
 			path = kwq/KWQPtrDictImpl.mm;
-			refType = 4;
-		};
-		F587852702DE375901EA4122 = {
-			isa = PBXFileReference;
-			name = KWQPushButton.mm;
-			path = kwq/KWQPushButton.mm;
 			refType = 4;
 		};
 		F587852802DE375901EA4122 = {
@@ -5213,12 +5243,6 @@
 			settings = {
 			};
 		};
-		F58785B902DE375901EA4122 = {
-			fileRef = F587852702DE375901EA4122;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F58785BA02DE375901EA4122 = {
 			fileRef = F587852802DE375901EA4122;
 			isa = PBXBuildFile;
@@ -5868,6 +5892,10 @@
 				F58785F002DE382001EA4122,
 				F58784C402DE375801EA4122,
 				F58785F102DE382001EA4122,
+				F550D70902E13281018635CA,
+				F550D70B02E13281018635CA,
+				F550D70C02E13281018635CA,
+				F550D70E02E13281018635CA,
 				F58784EB02DE375901EA4122,
 				F58785F202DE382001EA4122,
 				F58785F302DE382001EA4122,
@@ -7596,7 +7624,7 @@
 				F58786AE02DE3B8601EA4122,
 				F58786AF02DE3B8601EA4122,
 				F58786B002DE3B8601EA4122,
-				F587852702DE375901EA4122,
+				F550D70A02E13281018635CA,
 				F58786B102DE3B8601EA4122,
 				F587852802DE375901EA4122,
 				F58786B202DE3B8601EA4122,

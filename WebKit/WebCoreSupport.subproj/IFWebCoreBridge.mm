@@ -36,7 +36,7 @@
 
 - (WebCoreFrame *)frame
 {
-    return [[dataSource webFrame] _bridgeFrame];
+    return [[dataSource webFrame] _frameBridge];
 }
 
 - (WebCoreBridge *)parent
@@ -50,14 +50,14 @@
     WEBKIT_ASSERT(dataSource);
     NSArray *frames = [dataSource children];
     NSEnumerator *e = [frames objectEnumerator];
-    NSMutableArray *bridgeFrames = [NSMutableArray arrayWithCapacity:[frames count]];
+    NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
     IFWebFrame *frame;
     while ((frame = [e nextObject])) {
-        id bridgeFrame = [frame _bridgeFrame];
-        if (bridgeFrame)
-            [bridgeFrames addObject:bridgeFrame];
+        id frameBridge = [frame _frameBridge];
+        if (frameBridge)
+            [frameBridges addObject:frameBridge];
     }
-    return bridgeFrames;
+    return frameBridges;
 }
 
 - (WebCoreFrame *)childFrameNamed:(NSString *)name
@@ -66,14 +66,14 @@
     
     pd = [[dataSource webFrame] provisionalDataSource];
     if (pd)
-        return [[pd frameNamed: name] _bridgeFrame];
+        return [[pd frameNamed: name] _frameBridge];
 
-    return [[dataSource frameNamed:name] _bridgeFrame];
+    return [[dataSource frameNamed:name] _frameBridge];
 }
 
 - (WebCoreFrame *)descendantFrameNamed:(NSString *)name
 {
-    return [[[dataSource webFrame] frameNamed:name] _bridgeFrame];
+    return [[[dataSource webFrame] frameNamed:name] _frameBridge];
 }
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
@@ -87,12 +87,12 @@
         return NO;
     }
     
-    [[frame _bridgeFrame] setRenderPart:renderPart];
+    [[frame _frameBridge] setRenderPart:renderPart];
     
     [[frame webView] _setMarginWidth:width];
     [[frame webView] _setMarginHeight:height];
 
-    [[frame _bridgeFrame] loadURL:URL attributes:nil flags:0 withParent:dataSource];
+    [[frame _frameBridge] loadURL:URL attributes:nil flags:0 withParent:dataSource];
     
     return YES;
 }
@@ -164,12 +164,12 @@
 
 - (WebCoreFrame *)mainFrame
 {
-    return [[[dataSource controller] mainFrame] _bridgeFrame];
+    return [[[dataSource controller] mainFrame] _frameBridge];
 }
 
 - (WebCoreFrame *)frameNamed:(NSString *)name
 {
-    return [[[dataSource controller] frameNamed:name] _bridgeFrame];
+    return [[[dataSource controller] frameNamed:name] _frameBridge];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)withDataSource

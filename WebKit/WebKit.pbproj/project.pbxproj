@@ -259,7 +259,6 @@
 				F5488CF602CB04EE01FF6274,
 				F5927D4B02D253C401CA2DBB,
 				F5927D4F02D26C5E01CA2DBB,
-				F558FF8402DA308B01CA2DBB,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -337,7 +336,6 @@
 				F5E0E10B02BC45F8018635CA,
 				F5A7B11C02BC8413018635CA,
 				F5488CF702CB04EE01FF6274,
-				F558FF8502DA308B01CA2DBB,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,8 +402,6 @@
 				F5FBAB9002B88CBF01FF6074,
 				3944607A020F50ED0ECA1767,
 				3944607B020F50ED0ECA1767,
-				F558FF8202DA308B01CA2DBB,
-				F558FF8302DA308B01CA2DBB,
 				F508946902B71D59018A9CD4,
 				F508946A02B71D59018A9CD4,
 				F59668C802AD2923018635CA,
@@ -1469,30 +1465,6 @@
 		};
 		F5488CF702CB04EE01FF6274 = {
 			fileRef = F5488CF502CB04EE01FF6274;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F558FF8202DA308B01CA2DBB = {
-			isa = PBXFileReference;
-			name = IFNSEventExtras.h;
-			path = Misc.subproj/IFNSEventExtras.h;
-			refType = 4;
-		};
-		F558FF8302DA308B01CA2DBB = {
-			isa = PBXFileReference;
-			name = IFNSEventExtras.m;
-			path = Misc.subproj/IFNSEventExtras.m;
-			refType = 4;
-		};
-		F558FF8402DA308B01CA2DBB = {
-			fileRef = F558FF8202DA308B01CA2DBB;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F558FF8502DA308B01CA2DBB = {
-			fileRef = F558FF8302DA308B01CA2DBB;
 			isa = PBXBuildFile;
 			settings = {
 			};

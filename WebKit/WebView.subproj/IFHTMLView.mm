@@ -6,7 +6,6 @@
 #import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFNSEventExtras.h>
 #import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
@@ -500,25 +499,28 @@
 // We already handle normal typing through the responder chain.
 
 // One of the benefits of not calling through to KHTMLView is that we don't
-// have to have the _IF_isScrollEvent function at all.
+// have to have the isScrollEvent function at all.
 
 - (void)keyDown: (NSEvent *)event
 {
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
-    // If this is a scroll event, let IFWebView handle it instead of the KHTMLView.
-    if ([event _IF_isScrollEvent]) {
+    // FIXME: We don't want to call keyPressEvent for scrolling key events,
+    // so we have to have some logic for deciding which events go to the KHTMLView.
+    // Best option is probably to only pass in certain events that we know it
+    // handles in a way we like.
+    
+    if (passToWidget) {
+        [self _addModifiers:[event modifierFlags] toState:&state];
+        QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
+        
+        KHTMLView *widget = _private->widget;
+        if (widget)
+            widget->keyPressEvent(&kEvent);
+    } else {
         [super keyDown:event];
-        return;
     }
-    
-    [self _addModifiers:[event modifierFlags] toState:&state];
-    QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
-    
-    KHTMLView *widget = _private->widget;
-    if (widget)
-        widget->keyPressEvent(&kEvent);
 }
 
 - (void)keyUp: (NSEvent *)event
@@ -526,18 +528,18 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
-    // If this is a scroll event, let IFWebView handle it instead of the KHTMLView.
-    if ([event _IF_isScrollEvent]) {
+    // FIXME: Make sure this logic matches keyDown above.
+    
+    if (passToWidget) {
+        [self _addModifiers:[event modifierFlags] toState:&state];
+        QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
+        
+        KHTMLView *widget = _private->widget;
+        if (widget)
+            widget->keyReleaseEvent(&kEvent);
+    } else {
         [super keyUp:event];
-        return;
     }
-    
-    [self _addModifiers:[event modifierFlags] toState:&state];
-    QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
-    
-    KHTMLView *widget = _private->widget;
-    if (widget)
-        widget->keyReleaseEvent(&kEvent);
 }
 
 #endif

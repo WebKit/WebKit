@@ -33,7 +33,7 @@
     [super init];
 
     _private = [[IFWebFramePrivate alloc] init];
-    _private->bridgeFrame = [[IFWebCoreFrame alloc] initWithWebFrame:self];
+    _private->frameBridge = [[IFWebCoreFrame alloc] initWithWebFrame:self];
 
     [self _setState: IFWEBFRAMESTATE_UNINITIALIZED];    
 

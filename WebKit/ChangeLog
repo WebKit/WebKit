@@ -1,5 +1,25 @@
 2002-07-13  Darin Adler  <darin@apple.com>
 
+        * Misc.subproj/IFNSEventExtras.h: Removed.
+        * Misc.subproj/IFNSEventExtras.m: Removed.
+        * WebKit.pbproj/project.pbxproj: Removed IFNSEventExtras.*.
+
+        * WebCoreSupport.subproj/IFWebCoreBridge.mm:
+        * WebView.subproj/IFWebFrame.mm:
+        * WebView.subproj/IFWebFramePrivate.h:
+        * WebView.subproj/IFWebFramePrivate.mm:
+	Renamed all bridgeFrame to frameBridge for greater clarity.
+
+        * WebView.subproj/IFHTMLView.mm: Updated comments and commented-out code.
+
+        * WebView.subproj/IFWebDataSource.h: Fix comment that mentioned IFDefaultWebController.
+
+        * WebView.subproj/IFWebFramePrivate.mm:
+        (-[IFWebFrame _transitionProvisionalToCommitted]): Fix exception string that cited
+	the wrong state name.
+
+2002-07-13  Darin Adler  <darin@apple.com>
+
         * History.subproj/IFURIEntry.m: (-[IFURIEntry image]):
 	Use [IFURIEntry class] instead of [self class] so we get the
 	icon from the WebKit bundle even if someone subclasses IFURIEntry.
