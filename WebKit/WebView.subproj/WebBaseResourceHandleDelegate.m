@@ -139,17 +139,17 @@
     if (identifier == nil) {
         // The identifier is released after the last callback, rather than in dealloc
         // to avoid potential cycles.
-        if ([resourceLoadDelegate respondsToSelector: @selector(controller:identifierForInitialRequest:fromDataSource:)])
-            identifier = [[resourceLoadDelegate controller: controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
+        if ([resourceLoadDelegate respondsToSelector: @selector(webView:identifierForInitialRequest:fromDataSource:)])
+            identifier = [[resourceLoadDelegate webView: controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
         else
-            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] controller:controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
+            identifier = [[[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller identifierForInitialRequest:newRequest fromDataSource:dataSource] retain];
     }
 
     if (resourceLoadDelegate) {
-        if ([resourceLoadDelegate respondsToSelector: @selector(controller:resource:willSendRequest:fromDataSource:)])
-            newRequest = [resourceLoadDelegate controller:controller resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
+        if ([resourceLoadDelegate respondsToSelector: @selector(webView:resource:willSendRequest:fromDataSource:)])
+            newRequest = [resourceLoadDelegate webView:controller resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
         else
-            newRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] controller:controller resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
+            newRequest = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier willSendRequest:newRequest fromDataSource:dataSource];
     }
 
     // Store a copy of the request.
@@ -185,7 +185,7 @@
     response = r;
 
     [dataSource _addResponse: r];
-    [[controller _resourceLoadDelegateForwarder] controller:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveResponse:r fromDataSource:dataSource];
 }
 
 - (void)resource:(WebResource *)h didReceiveData:(NSData *)data
@@ -193,7 +193,7 @@
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
 
-    [[controller _resourceLoadDelegateForwarder] controller:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didReceiveContentLength:[data length] fromDataSource:dataSource];
 }
 
 - (void)resourceDidFinishLoading:(WebResource *)h
@@ -201,7 +201,7 @@
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
 
-    [[controller _resourceLoadDelegateForwarder] controller:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFinishLoadingFromDataSource:dataSource];
 
     ASSERT(currentURL);
     [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
@@ -214,7 +214,7 @@
     ASSERT(resource == h);
     ASSERT(!reachedTerminalState);
     
-    [[controller _resourceLoadDelegateForwarder] controller:controller resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
+    [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:result fromDataSource:dataSource];
 
     // currentURL may be nil if the request was aborted
     if (currentURL)
@@ -234,7 +234,7 @@
         [[WebStandardPanels sharedStandardPanels] _didStopLoadingURL:currentURL inController:controller];
 
     if (error) {
-        [[controller _resourceLoadDelegateForwarder] controller:controller resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
+        [[controller _resourceLoadDelegateForwarder] webView:controller resource:identifier didFailLoadingWithError:error fromDataSource:dataSource];
     }
 
     [self _releaseResources];

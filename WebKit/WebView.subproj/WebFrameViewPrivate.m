@@ -41,7 +41,7 @@
 @implementation WebFrameView (WebPrivate)
 
 // Note that the controller is not retained.
-- (WebController *)_controller
+- (WebView *)_controller
 {
     return _private->controller;
 }
@@ -69,7 +69,7 @@
 
 - (void)_setDocumentView:(NSView *)view
 {
-    WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self frameScrollView];
+    WebDynamicScrollBarsView *sv = (WebDynamicScrollBarsView *)[self scrollView];
     
     [sv setSuppressLayout: YES];
     
@@ -92,7 +92,7 @@
     return documentView;
 }
 
-- (void)_setController: (WebController *)controller
+- (void)_setController: (WebView *)controller
 {
     // Not retained; the controller owns the view, indirectly through the frame tree.
     _private->controller = controller;    
@@ -100,7 +100,7 @@
 
 - (NSClipView *)_contentView
 {
-    return [[self frameScrollView] contentView];
+    return [[self scrollView] contentView];
 }
 
 - (void)_scrollVerticallyBy: (float)delta
@@ -122,7 +122,7 @@
     // verticalLineScroll is quite small, to make scrolling from the scroll bar
     // arrows relatively smooth. But this seemed too small for scrolling with
     // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self frameScrollView] verticalLineScroll] * 4;
+    return [[self scrollView] verticalLineScroll] * 4;
 }
 
 - (float)_horizontalKeyboardScrollAmount
@@ -130,7 +130,7 @@
     // verticalLineScroll is quite small, to make scrolling from the scroll bar
     // arrows relatively smooth. But this seemed too small for scrolling with
     // the arrow keys, so we bump up the number here. Cheating? Perhaps.
-    return [[self frameScrollView] horizontalLineScroll] * 4;
+    return [[self scrollView] horizontalLineScroll] * 4;
 }
 
 - (void)_pageVertically:(BOOL)up
@@ -220,7 +220,7 @@
 
 - (void)_scrollToBottomLeft
 {
-    [[self _contentView] scrollPoint: NSMakePoint(0, [[[self frameScrollView] documentView] bounds].size.height)];
+    [[self _contentView] scrollPoint: NSMakePoint(0, [[[self scrollView] documentView] bounds].size.height)];
 }
 
 - (void)scrollLineUp:(id)sender
@@ -257,7 +257,7 @@
             [WebTextView class], @"application/x-javascript",
             nil];
 
-        NSEnumerator *enumerator = [[WebController _supportedImageMIMETypes] objectEnumerator];
+        NSEnumerator *enumerator = [[WebView _supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             [viewTypes setObject:[WebImageView class] forKey:mime];

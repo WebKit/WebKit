@@ -60,10 +60,10 @@ HIWebFrameViewCreate(HIViewRef * outControl);
  *    CarbonLib:        not available
  *    Non-Carbon CFM:   not available
  */
-extern WebController* 
+extern WebView* 
 HIWebFrameViewGetController(HIViewRef inView);
 
-extern WebController*
+extern WebView*
 WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName );
 
 #ifdef __cplusplus

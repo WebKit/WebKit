@@ -1,6 +1,6 @@
 /*	
-    WebController.m
-	Copyright 2001, Apple, Inc. All rights reserved.
+    WebViewPrivate.m
+    Copyright 2001, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebController.h>
@@ -17,7 +17,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 
 #define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
 
-@interface WebControllerPrivate : NSObject
+@interface WebViewPrivate : NSObject
 {
 @public
     WebFrame *mainFrame;
@@ -52,7 +52,22 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 }
 @end
 
-@interface WebController (WebPrivate)
+@interface WebView (WebPrivate)
+
+/*!
+    @method canShowFile:
+    @abstract Checks if the WebKit can show the content of the file at the specified path.
+    @param path The path of the file to check
+    @result YES if the WebKit can show the content of the file at the specified path.
+*/
++ (BOOL)canShowFile:(NSString *)path;
+
+/*!
+    @method suggestedFileExtensionForMIMEType:
+    @param MIMEType The MIME type to check.
+    @result The extension based on the MIME type
+*/
++ (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
 
 /*!
     @method frameForDataSource:
@@ -92,7 +107,7 @@ enum { NumUserAgentStringTypes = WinIE + 1 };
 - (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name;
 - (WebFrame *)_findFrameNamed: (NSString *)name;
 
-- (WebController *)_openNewWindowWithRequest:(WebRequest *)request;
+- (WebView *)_openNewWindowWithRequest:(WebRequest *)request;
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element;
 

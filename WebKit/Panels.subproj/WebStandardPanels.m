@@ -143,10 +143,10 @@ static void initSharedStandardPanels(void)
     }
 }
 
--(void)_didStartLoadingURL:(NSURL *)URL inController:(WebController *)controller
+-(void)_didStartLoadingURL:(NSURL *)URL inController:(WebView *)webView
 {
     ASSERT_ARG(URL, URL);
-    ASSERT_ARG(controller, controller);
+    ASSERT_ARG(webView, webView);
     
     NSString *URLString = [URL absoluteString];
     
@@ -157,25 +157,25 @@ static void initSharedStandardPanels(void)
 	[_privatePanels->URLContainers setObject:set forKey:URLString];
     }
 
-    [set addObject:controller];
+    [set addObject:webView];
 }
 
--(void)_didStopLoadingURL:(NSURL *)URL inController:(WebController *)controller
+-(void)_didStopLoadingURL:(NSURL *)URL inController:(WebView *)webView
 {
     ASSERT_ARG(URL, URL);
-    ASSERT_ARG(controller, controller);
+    ASSERT_ARG(webView, webView);
     
     NSString *URLString = [URL absoluteString];
     
     NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URLString];
 
-    ASSERT([set containsObject:controller]);
+    ASSERT([set containsObject:webView]);
 
     if (set == nil) {
 	return;
     }
 
-    [set removeObject:controller];
+    [set removeObject:webView];
     
     if ([set count] == 0) {
 	[_privatePanels->URLContainers removeObjectForKey:URLString];
@@ -215,7 +215,7 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
 	if ([object isKindOfClass:[NSWindow class]]) {
 	    window = object;
 	} else {
-	    window = [[[object mainFrame] view] window];
+	    window = [[[object mainFrame] frameView] window];
 	}
 
 	if (window != nil && [window isVisible] && (frontmostWindow == nil || WindowInFront(window, frontmostWindow))) {

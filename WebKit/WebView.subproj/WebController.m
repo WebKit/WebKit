@@ -1,5 +1,5 @@
 /*	
-    WebController.m
+    WebView.m
     Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 
@@ -55,7 +55,8 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 
 
-@implementation WebContentTypes
+
+@implementation WebView
 
 + (BOOL)canShowMIMEType:(NSString *)MIMEType
 {
@@ -70,27 +71,10 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     return NO;
 }
 
-+ (BOOL)canShowFile:(NSString *)path
-{
-    NSString *MIMEType;
-
-    MIMEType = [WebController _MIMETypeForFile:path];
-    return [[self class] canShowMIMEType:MIMEType];
-}
-
-+ (NSString *)suggestedFileExtensionForMIMEType: (NSString *)type
-{
-    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
-}
-
-@end
-
-@implementation WebController
-
 - (void)_commonInitialization: (WebFrameView *)wv frameName:(NSString *)frameName groupName:(NSString *)groupName
 {
-    _private = [[WebControllerPrivate alloc] init];
-    _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  controller: self];
+    _private = [[WebViewPrivate alloc] init];
+    _private->mainFrame = [[WebFrame alloc] initWithName: frameName webFrameView: wv  webView: self];
     _private->controllerSetName = [groupName retain];
     if (_private->controllerSetName != nil) {
         [WebControllerSets addController:self toSetNamed:_private->controllerSetName];
@@ -114,7 +98,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 - initWithFrame: (NSRect)f
 {
     [super initWithFrame: f];
-    WebFrameView *wv = [[WebFrameView alloc] initWithFrame: f];
+    WebFrameView *wv = [[WebFrameView alloc] initWithFrame: NSMakeRect(0,0,f.size.width,f.size.height)];
     [wv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [self addSubview: wv];
     [self _commonInitialization: wv frameName:nil groupName:nil];
@@ -327,7 +311,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 
 - (BOOL)supportsTextEncoding
 {
-    id documentView = [[[self mainFrame] view] documentView];
+    id documentView = [[[self mainFrame] frameView] documentView];
     return [documentView conformsToProtocol:@protocol(WebDocumentText)]
         && [documentView supportsTextEncoding];
 }
@@ -421,7 +405,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
     // FIXME: Some day we will start reporting the actual CPU here instead of hardcoding PPC.
 
     NSString *language = [NSUserDefaults _web_preferredLanguageCode];
-    id sourceVersion = [[NSBundle bundleForClass:[WebController class]]
+    id sourceVersion = [[NSBundle bundleForClass:[WebView class]]
         objectForInfoDictionaryKey:(id)kCFBundleVersionKey];
     NSString *applicationName = _private->applicationNameForUserAgent;
 
@@ -462,7 +446,7 @@ NSString *WebElementLinkTitleKey = 		@"WebElementLinkTitle";
 @end
 
 
-@implementation WebController (WebIBActions)
+@implementation WebView (WebIBActions)
 
 - (IBAction)takeStringURLFrom: sender
 {

@@ -7,7 +7,6 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class WebController;
 @class WebDataSourcePrivate;
 @class WebError;
 @class WebFrame;

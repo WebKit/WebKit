@@ -9,7 +9,7 @@
 
 @interface WebStandardPanels (Private)
 
--(void)_didStartLoadingURL:(NSURL *)URL inController:(WebController *)controller;
--(void)_didStopLoadingURL:(NSURL *)URL inController:(WebController *)controller;
+-(void)_didStartLoadingURL:(NSURL *)URL inController:(WebView *)controller;
+-(void)_didStopLoadingURL:(NSURL *)URL inController:(WebView *)controller;
 
 @end

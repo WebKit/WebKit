@@ -201,8 +201,8 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     dataSource = d;
 }
 
-- (WebController *)controller { return controller; }
-- (void)setController: (WebController *)c
+- (WebView *)controller { return controller; }
+- (void)setController: (WebView *)c
 {
     controller = c; // not retained (yet)
 }
@@ -249,7 +249,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 @implementation WebFrame (WebPrivate)
 
-- (void)setController: (WebController *)controller
+- (void)setController: (WebView *)controller
 {
     // To set controller to nil, we have to use _controllerWillBeDeallocated, not this.
     ASSERT(controller);
@@ -260,8 +260,8 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 // helper method used in various nav cases below
 - (WebHistoryItem *)_addBackForwardItemClippedAtTarget:(BOOL)doClip
 {
-    WebHistoryItem *bfItem = [[[self controller] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
-    [[[self controller] backForwardList] addEntry:bfItem];
+    WebHistoryItem *bfItem = [[[self webView] mainFrame] _createItemTreeWithTargetFrame:self clippedAtTarget:doClip];
+    [[[self webView] backForwardList] addEntry:bfItem];
     return bfItem;
 }
 
@@ -389,7 +389,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         }
     }
     if (_private->dataSource) {
-        [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller willCloseLocationForDataSource:_private->dataSource];
+        [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller willCloseLocationForDataSource:_private->dataSource];
     }
 }
 
@@ -420,7 +420,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [bridge release];
 }
 
-- (void)_setController: (WebController *)controller
+- (void)_setController: (WebView *)controller
 {
     [_private setController:controller];
 }
@@ -442,7 +442,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     [_private->dataSource _setWebFrame:nil];
 
     [_private setDataSource:ds];
-    [ds _setController:[self controller]];
+    [ds _setController:[self webView]];
     [ds _setWebFrame:self];
 }
 
@@ -472,10 +472,10 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     _private->scheduledLayoutTimer = nil;
     
     if (_private->state == WebFrameStateLayoutAcceptable) {
-        NSView <WebDocumentView> *documentView = [[self view] documentView];
+        NSView <WebDocumentView> *documentView = [[self frameView] documentView];
         
-        if ([self controller])
-            LOG(Timing, "%@:  performing timed layout, %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        if ([self webView])
+            LOG(Timing, "%@:  performing timed layout, %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
             
         [documentView setNeedsLayout: YES];
 
@@ -501,8 +501,8 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         [documentView setNeedsDisplay: YES];
     }
     else {
-        if ([self controller])
-            LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        if ([self webView])
+            LOG(Timing, "%@:  NOT performing timed layout (not needed), %f seconds since start of document load", [self name], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
     }
 }
 
@@ -557,7 +557,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     // FIXME: We could save work and not do this for a top-level view that is not a WebHTMLView.
     WebFrameView *v = _private->webFrameView;
     [_private->bridge createKHTMLViewWithNSView:documentView marginWidth:[v _marginWidth] marginHeight:[v _marginHeight]];
-    [_private->bridge installInFrame:[v frameScrollView]];
+    [_private->bridge installInFrame:[v scrollView]];
 
     // Call setDataSource on the document view after it has been placed in the view hierarchy.
     // This what we for the top-level view, so should do this for views in subframes as well.
@@ -566,7 +566,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
 - (void)_transitionToCommitted: (NSDictionary *)pageCache
 {
-    ASSERT([self controller] != nil);
+    ASSERT([self webView] != nil);
 
     switch ([self _state]) {
         case WebFrameStateProvisional:
@@ -602,7 +602,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeForward:
             case WebFrameLoadTypeBack:
             case WebFrameLoadTypeIndexedBackForward:
-                if ([[self controller] backForwardList]) {
+                if ([[self webView] backForwardList]) {
                     // Must grab the current scroll position before disturbing it
                     [self _saveScrollPositionToItem:[_private previousItem]];
                     
@@ -610,7 +610,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
                     if (pageCache){
                         NSView <WebDocumentView> *cachedView = [pageCache objectForKey: @"WebKitDocumentView"];
                         ASSERT (cachedView != nil);
-                        [[self view] _setDocumentView: cachedView];
+                        [[self frameView] _setDocumentView: cachedView];
                     }
                     else
                         [self _makeDocumentView];
@@ -678,13 +678,13 @@ Repeat load of the same URL (by any other means of navigation other than the rel
 
             
             // Tell the client we've committed this URL.
-            ASSERT([[self view] documentView] != nil);
-            [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeCommittedForDataSource:ds];
+            ASSERT([[self frameView] documentView] != nil);
+            [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangeCommittedForDataSource:ds];
             
             // If we have a title let the controller know about it.
             if (ptitle) {
                 [entry setTitle:ptitle];
-                [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller receivedPageTitle:ptitle forDataSource:ds];
+                [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller receivedPageTitle:ptitle forDataSource:ds];
             }
             break;
         }
@@ -715,7 +715,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     // This method implements the rule for purging the page cache.
     unsigned sizeLimit = [WebBackForwardList pageCacheSize];
     unsigned pagesCached = 0;
-    WebBackForwardList *backForwardList = [[self controller] backForwardList];
+    WebBackForwardList *backForwardList = [[self webView] backForwardList];
     NSArray *backList = [backForwardList backListWithSizeLimit: 999999];
     WebHistoryItem *oldestItem = nil;
     
@@ -750,10 +750,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_setState: (WebFrameState)newState
 {
     LOG(Loading, "%@:  transition from %s to %s", [self name], stateNames[_private->state], stateNames[newState]);
-    if ([self controller])
-        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [self name], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+    if ([self webView])
+        LOG(Timing, "%@:  transition from %s to %s, %f seconds since start of document load", [self name], stateNames[_private->state], stateNames[newState], CFAbsoluteTimeGetCurrent() - [[[[self webView] mainFrame] dataSource] _loadingStartedTime]);
     
-    if (newState == WebFrameStateComplete && self == [[self controller] mainFrame]){
+    if (newState == WebFrameStateComplete && self == [[self webView] mainFrame]){
         LOG(DocumentLoad, "completed %@ (%f seconds)", [[[self dataSource] request] URL], CFAbsoluteTimeGetCurrent() - [[self dataSource] _loadingStartedTime]);
     }
     
@@ -769,7 +769,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // FIXME: This is OK as long as no one resizes the window,
         // but in the case where someone does, it means garbage outside
         // the occupied part of the scroll view.
-        [[[self view] frameScrollView] setDrawsBackground:NO];
+        [[[self frameView] scrollView] setDrawsBackground:NO];
 
         // Cache the page, if possible.
         // Don't write to the cache if in the middle of a redirect, since we will want to
@@ -794,7 +794,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 [item setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
                 [[item pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
-                [[item pageCache] setObject: [[self view] documentView] forKey: @"WebKitDocumentView"];
+                [[item pageCache] setObject: [[self frameView] documentView] forKey: @"WebKitDocumentView"];
                 [_private->bridge saveDocumentToPageCache];
                 [self _purgePageCache];
             }
@@ -802,7 +802,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     }
     
     if (_private->state == WebFrameStateComplete) {
-        NSScrollView *sv = [[self view] frameScrollView];
+        NSScrollView *sv = [[self frameView] scrollView];
         [sv setDrawsBackground:YES];
         // FIXME: This overrides the setCopiesOnScroll setting done by
         // WebCore based on whether the page's contents are dynamic or not.
@@ -821,8 +821,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         // Force a layout to update view size and thereby
         // update scrollbars.
         [_private->bridge reapplyStyles];
-        [[[self view] documentView] setNeedsLayout: YES];
-        [[[self view] documentView] layout];
+        [[[self frameView] documentView] setNeedsLayout: YES];
+        [[[self frameView] documentView] layout];
         [self _restoreScrollPosition];
         
         NSArray *responses = [[self dataSource] _responses];
@@ -845,7 +845,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_isLoadComplete
 {
-    ASSERT([self controller] != nil);
+    ASSERT([self webView] != nil);
 
     switch ([self _state]) {
         case WebFrameStateProvisional:
@@ -862,7 +862,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 if (![pd isLoading]) {
                     LOG(Loading, "%@:  checking complete in WebFrameStateProvisional, load done", [self name]);
 
-                    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeDone:[pd _mainDocumentError] forDataSource:pd];
+                    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangeDone:[pd _mainDocumentError] forDataSource:pd];
 
                     // We know the provisional data source didn't cut the muster, release it.
                     [self _setProvisionalDataSource:nil];
@@ -881,7 +881,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             
             //LOG(Loading, "%@:  checking complete, current state WEBFRAMESTATE_COMMITTED", [self name]);
             if (![ds isLoading]) {
-                WebFrameView *thisView = [self view];
+                WebFrameView *thisView = [self frameView];
                 NSView <WebDocumentView> *thisDocumentView = [thisView documentView];
                 ASSERT(thisDocumentView != nil);
 
@@ -903,14 +903,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // be a reasonably inexpensive operation.
                 WebDataSource *parentDS = [[self parent] dataSource];
                 if ([[parentDS _bridge] isFrameSet]){
-                    WebFrameView *parentWebFrameView = [[self parent] view];
+                    WebFrameView *parentWebFrameView = [[self parent] frameView];
                     if ([parentWebFrameView isDocumentHTML])
                         [(WebHTMLView *)[parentWebFrameView documentView] _adjustFrames];
                 }
 
                 // Tell the just loaded document to layout.  This may be necessary
                 // for non-html content that needs a layout message.
-                if (!([[self view] isDocumentHTML])) {
+                if (!([[self frameView] isDocumentHTML])) {
                     [thisDocumentView setNeedsLayout:YES];
                     [thisDocumentView layout];
                     [thisDocumentView setNeedsDisplay:YES];
@@ -919,7 +919,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                 // If the user had a scroll point scroll to it.  This will override
                 // the anchor point.  After much discussion it was decided by folks
                 // that the user scroll point should override the anchor point.
-                if ([[self controller] backForwardList]) {
+                if ([[self webView] backForwardList]) {
                     switch ([self _loadType]) {
                     case WebFrameLoadTypeForward:
                     case WebFrameLoadTypeBack:
@@ -941,7 +941,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
                     }
                 }
 
-                [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangeDone:[ds _mainDocumentError] forDataSource:ds];
+                [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangeDone:[ds _mainDocumentError] forDataSource:ds];
  
                 //if ([ds isDocumentHTML])
                 //    [[ds representation] part]->closeURL();        
@@ -995,10 +995,10 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // Called every time a resource is completely loaded, or an error is received.
 - (void)_checkLoadComplete
 {
-    ASSERT([self controller] != nil);
+    ASSERT([self webView] != nil);
 
     // Now walk the frame tree to see if any frame that may have initiated a load is done.
-    [WebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
+    [WebFrame _recursiveCheckCompleteFromFrame: [[self webView] mainFrame]];
 }
 
 - (WebBridge *)_bridge
@@ -1011,8 +1011,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     WebError *error = [WebError errorWithCode:code
                                      inDomain:WebErrorDomainWebKit
                                    failingURL:[URL absoluteString]];
-    WebController *c = [self controller];
-    [[c _policyDelegateForwarder] controller:c unableToImplementPolicyWithError:error inFrame:self];    
+    WebView *c = [self webView];
+    [[c _policyDelegateForwarder] webView:c unableToImplementPolicyWithError:error inFrame:self];    
 }
 
 - (void)_clearProvisionalDataSource
@@ -1074,7 +1074,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [_private setCurrentItem:item];
         [self _restoreScrollPosition];
 
-        [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangedWithinPageForDataSource:_private->dataSource];
+        [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:_private->dataSource];
     } else {
         // Remember this item so we can traverse any child items as child frames load
         [_private setProvisionalItem:item];
@@ -1200,7 +1200,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_goToItem: (WebHistoryItem *)item withLoadType: (WebFrameLoadType)type
 {
     ASSERT(!_private->parent);
-    WebBackForwardList *backForwardList = [[self controller] backForwardList];
+    WebBackForwardList *backForwardList = [[self webView] backForwardList];
     WebHistoryItem *currItem = [backForwardList currentEntry];
     // Set the BF cursor before commit, which lets the user quickly click back/forward again.
     // - plus, it only makes sense for the top level of the operation through the frametree,
@@ -1328,8 +1328,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
 
-    WebController *c = [self controller];
-    [[c _policyDelegateForwarder] controller:c decideNewWindowPolicyForAction:action
+    WebView *c = [self webView];
+    [[c _policyDelegateForwarder] webView:c decideNewWindowPolicyForAction:action
 						                      andRequest:request
 						                    newFrameName:frameName
 						                decisionListener:listener];
@@ -1355,7 +1355,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         break;
     case WebPolicyDownload:
 	// FIXME: should download full request
-        [[self controller] _downloadURL:[request URL]];
+        [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
 	shouldContinue = YES;
@@ -1400,8 +1400,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     _private->listener = [listener retain];
     _private->policyFormState = [formState retain];
 
-    WebController *c = [self controller];
-    [[c _policyDelegateForwarder] controller:c decideNavigationPolicyForAction:action
+    WebView *c = [self webView];
+    [[c _policyDelegateForwarder] webView:c decideNavigationPolicyForAction:action
                                                              andRequest:request
                                                                 inFrame:self
                                                        decisionListener:listener];
@@ -1426,7 +1426,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         break;
     case WebPolicyDownload:
 	// FIXME: should download full request
-        [[self controller] _downloadURL:[request URL]];
+        [[self webView] _downloadURL:[request URL]];
         break;
     case WebPolicyUse:
         if (![WebResource canInitWithRequest:request]) {
@@ -1478,19 +1478,19 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         [self _checkLoadComplete];
     }
 
-    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller locationChangedWithinPageForDataSource:dataSrc];
+    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller locationChangedWithinPageForDataSource:dataSrc];
 }
 
 - (void)_addExtraFieldsToRequest:(WebRequest *)request alwaysFromRequest: (BOOL)f
 {
-    [request setUserAgent:[[self controller] userAgentForURL:[request URL]]];
+    [request setUserAgent:[[self webView] userAgentForURL:[request URL]]];
     
     // Don't set the cookie policy URL if it's already been set.
     if ([request cookiePolicyBaseURL] == nil){
-        if (self == [[self controller] mainFrame] || f) {
+        if (self == [[self webView] mainFrame] || f) {
             [request setCookiePolicyBaseURL:[request URL]];
         } else {
-            [request setCookiePolicyBaseURL:[[[[self controller] mainFrame] dataSource] _URL]];
+            [request setCookiePolicyBaseURL:[[[[self webView] mainFrame] dataSource] _URL]];
         }
     }
 }
@@ -1503,16 +1503,16 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         return;
     }
     
-    WebController *controller = nil;
-    WebController *currentController = [self controller];
+    WebView *controller = nil;
+    WebView *currentController = [self webView];
     id wd = [currentController windowOperationsDelegate];
-    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
-	controller = [wd controller:currentController createWindowWithRequest:nil];
+    if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
+	controller = [wd webView:currentController createWindowWithRequest:nil];
     else
-        controller = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:nil];
+        controller = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:currentController createWindowWithRequest:nil];
         
     [controller _setTopLevelFrameName:frameName];
-    [[controller _windowOperationsDelegateForwarder] controllerShowWindow:controller];
+    [[controller _windowOperationsDelegateForwarder] webViewShowWindow:controller];
     WebFrame *frame = [controller mainFrame];
 
     [frame _loadRequest:request triggeringAction:nil loadType:WebFrameLoadTypeStandard formState:formState];
@@ -1683,7 +1683,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     LOG(Redirect, "Client redirect to: %@", URL);
 
-    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
+    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller clientWillRedirectTo:URL delay:seconds fireDate:date forFrame:self];
     // If a "quick" redirect comes in an, we set a special mode so we treat the next
     // load as part of the same navigation.
 
@@ -1698,14 +1698,14 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_clientRedirectCancelled
 {
-    [[[self controller] _locationChangeDelegateForwarder] controller: _private->controller clientRedirectCancelledForFrame:self];
+    [[[self webView] _locationChangeDelegateForwarder] webView: _private->controller clientRedirectCancelledForFrame:self];
     _private->quickRedirectComing = NO;
 }
 
 - (void)_saveScrollPositionToItem:(WebHistoryItem *)item
 {
     if (item) {
-        NSView *clipView = [[[self view] documentView] superview];
+        NSView *clipView = [[[self frameView] documentView] superview];
         // we might already be detached when this is called from detachFromParent, in which
         // case we don't want to override real data earlier gathered with (0,0)
         if (clipView) {
@@ -1717,17 +1717,17 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 - (void)_restoreScrollPosition
 {
     ASSERT([_private currentItem]);
-    [[[self view] documentView] scrollPoint:[[_private currentItem] scrollPoint]];
+    [[[self frameView] documentView] scrollPoint:[[_private currentItem] scrollPoint]];
 }
 
 - (void)_scrollToTop
 {
-    [[[self view] documentView] scrollPoint: NSZeroPoint];
+    [[[self frameView] documentView] scrollPoint: NSZeroPoint];
 }
 
 - (void)_textSizeMultiplierChanged
 {
-    [_private->bridge setTextSizeMultiplier:[[self controller] textSizeMultiplier]];
+    [_private->bridge setTextSizeMultiplier:[[self webView] textSizeMultiplier]];
     [[self children] makeObjectsPerformSelector:@selector(_textSizeMultiplierChanged)];
 }
 
@@ -1808,9 +1808,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         || loadType == WebFrameLoadTypeBack
         || loadType == WebFrameLoadTypeIndexedBackForward)
         && [_private currentItem]
-        && self == [[self controller] mainFrame])
+        && self == [[self webView] mainFrame])
     {
-        [[[self controller] backForwardList] goToEntry:[_private currentItem]];
+        [[[self webView] backForwardList] goToEntry:[_private currentItem]];
     }
 }
 
@@ -1864,7 +1864,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     
     [self _setState: WebFrameStateProvisional];
     
-    if (self == [[self controller] mainFrame])
+    if (self == [[self webView] mainFrame])
         LOG(DocumentLoad, "loading %@", [[[self provisionalDataSource] request] URL]);
 
     WebFrameLoadType loadType = [self _loadType];
@@ -1879,7 +1879,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
         }
     } else {
         if (formState) {
-            [[[self controller] _formDelegate] frame:self willSubmitForm:[formState form] withValues:[formState values]];
+            [[[self webView] _formDelegate] frame:self willSubmitForm:[formState form] withValues:[formState values]];
         }
         [_private->provisionalDataSource _startLoading];
     }
@@ -1887,13 +1887,13 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_loadDataSource:(WebDataSource *)newDataSource withLoadType:(WebFrameLoadType)loadType formState:(WebFormState *)formState
 {
-    ASSERT([self controller] != nil);
+    ASSERT([self webView] != nil);
 
     // Unfortunately the view must be non-nil, this is ultimately due
     // to KDE parser requiring a KHTMLView.  Once we settle on a final
     // KDE drop we should fix this dependency.
 
-    ASSERT([self view] != nil);
+    ASSERT([self frameView] != nil);
 
     [self stopLoading];
 
@@ -1902,7 +1902,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if ([self parent]) {
         [newDataSource _setOverrideEncoding:[[[self parent] dataSource] _overrideEncoding]];
     }
-    [newDataSource _setController:[self controller]];
+    [newDataSource _setController:[self webView]];
     [newDataSource _setJustOpenedForTargetedLink:_private->justOpenedForTargetedLink];
     _private->justOpenedForTargetedLink = NO;
 

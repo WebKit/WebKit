@@ -50,7 +50,7 @@
     [newRequest setResponseCachePolicy:[[source request] responseCachePolicy]];
     [newRequest setReferrer:referrer];
     
-    WebController *_controller = [source _controller];
+    WebView *_controller = [source _controller];
     [newRequest setCookiePolicyBaseURL:[[[[_controller mainFrame] dataSource]  request] URL]];
     [newRequest setUserAgent:[_controller userAgentForURL:URL]];
     

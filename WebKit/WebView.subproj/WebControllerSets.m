@@ -18,7 +18,7 @@ CFHash
 
 NSMutableDictionary *sets = nil;
 
-+(void)addController:(WebController *)controller toSetNamed: (NSString *)name
++(void)addController:(WebView *)controller toSetNamed: (NSString *)name
 {
     if (sets == nil) {
 	sets = [[NSMutableDictionary alloc] init];
@@ -36,7 +36,7 @@ NSMutableDictionary *sets = nil;
     CFSetSetValue(set, controller);
 }
 
-+(void)removeController:(WebController *)controller fromSetNamed: (NSString *)name
++(void)removeController:(WebView *)controller fromSetNamed: (NSString *)name
 {
     CFMutableSetRef set = (CFMutableSetRef)[sets objectForKey:name];
 

@@ -120,8 +120,8 @@
         ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
-    WebController *c = [_HTMLView _controller];
-    [[c _windowOperationsDelegateForwarder] controller:c setStatusText:message];
+    WebView *c = [_HTMLView _controller];
+    [[c _windowOperationsDelegateForwarder] webView:c setStatusText:message];
 }
 
 @end

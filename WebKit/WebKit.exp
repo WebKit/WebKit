@@ -1,6 +1,4 @@
 .objc_class_name_WebBackForwardList
-.objc_class_name_WebContentTypes
-.objc_class_name_WebController
 .objc_class_name_WebCoreStatistics
 .objc_class_name_WebDataSource
 .objc_class_name_WebDebugDOMNode
@@ -9,6 +7,7 @@
 .objc_class_name_WebDownload
 .objc_class_name_WebFormDelegate
 .objc_class_name_WebFrame
+.objc_class_name_WebFrameView
 .objc_class_name_WebHTMLRepresentation
 .objc_class_name_WebHTMLView
 .objc_class_name_WebHistory
@@ -23,7 +22,7 @@
 .objc_class_name_WebStringTruncator
 .objc_class_name_WebTextView
 .objc_class_name_WebURLsWithTitles
-.objc_class_name_WebFrameView
+.objc_class_name_WebView
 _WebActionButtonKey
 _WebActionButtonKey
 _WebActionElementKey

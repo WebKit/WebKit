@@ -15,6 +15,7 @@
 @class WebRequest;
 @class WebResponse;
 @class WebSubresourceClient;
+@class WebView;
 
 @protocol WebDocumentRepresentation;
 
@@ -25,7 +26,7 @@
 
     id <WebDocumentRepresentation> representation;
     
-    WebController *controller;
+    WebView *controller;
     
     // A reference to actual request used to create the data source.
     // This should only be used by the resourceLoadDelegate's
@@ -118,10 +119,10 @@
 - (void)_startLoading;
 - (void)_stopLoading;
 - (NSURL *)_URL;
-- (WebController *)_controller;
+- (WebView *)_controller;
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
-- (void)_setController:(WebController *)controller;
+- (void)_setController:(WebView *)controller;
 - (void)_startLoading: (NSDictionary *)pageCache;
 - (void)_stopLoadingInternal;
 - (BOOL)_isStopping;

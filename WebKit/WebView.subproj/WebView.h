@@ -1,5 +1,5 @@
 /*	
-        WebController.h
+        WebView.h
 	Copyright 2001, 2002, Apple Computer, Inc.
 
         Public header file.
@@ -9,8 +9,7 @@
 
 @class WebBackForwardList;
 @class WebHistoryItem;
-@class WebController;
-@class WebControllerPrivate;
+@class WebViewPrivate;
 @class WebDataSource;
 @class WebDownload;
 @class WebError;
@@ -19,32 +18,6 @@
 @class WebPreferences;
 @class WebFrameView;
 
-@interface WebContentTypes : NSObject
-/*!
-    @method canShowMIMEType:
-    @abstract Checks if the WebKit can show content of a certain MIME type.
-    @param MIMEType The MIME type to check.
-    @result YES if the WebKit can show content with MIMEtype.
-*/
-+ (BOOL)canShowMIMEType:(NSString *)MIMEType;
-
-/*!
-    @method canShowFile:
-    @abstract Checks if the WebKit can show the content of the file at the specified path.
-    @param path The path of the file to check
-    @result YES if the WebKit can show the content of the file at the specified path.
-*/
-+ (BOOL)canShowFile:(NSString *)path;
-
-/*!
-    @method suggestedFileExtensionForMIMEType:
-    @param MIMEType The MIME type to check.
-    @result The extension based on the MIME type
-*/
-+ (NSString *)suggestedFileExtensionForMIMEType: (NSString *)MIMEType;
-
-
-@end
 
 // These strings are keys into the element dictionary provided in
 // the WebContextMenuDelegate's contextMenuItemsForElement and the WebControllerPolicyDelegate's clickPolicyForElement.
@@ -61,48 +34,57 @@ extern NSString *WebElementLinkTitleKey;	// NSString of the title of the anchor
 extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anchor
 
 /*!
-    @class WebController
-    WebController manages the interaction between WebFrameViews and WebDataSources.  Modification
-    of the policies and behavior of the WebKit is largely managed by WebControllers and their
+    @class WebView
+    WebView manages the interaction between WebFrameViews and WebDataSources.  Modification
+    of the policies and behavior of the WebKit is largely managed by WebViews and their
     delegates.
     
     <p>
     Typical usage:
     </p>
     <pre>
-    WebController *webController;
+    WebView *WebView;
     WebFrame *mainFrame;
     
-    webController  = [[WebController alloc] initWithView: webFrameView];
-    mainFrame = [webController mainFrame];
+    webView  = [[WebController alloc] initWithFrame: NSMakeRect (0,0,640,480)];
+    mainFrame = [webView mainFrame];
     [mainFrame loadRequest:request];
     </pre>
     
-    WebControllers have the following delegates:  WebWindowOperationsDelegate,
+    WebViews have the following delegates:  WebWindowOperationsDelegate,
     WebResourceLoadDelegate, WebContextMenuDelegate, WebLocationChangeDelegate,
-    and WebControllerPolicyDelegate.
+    and WebPolicyDelegate.
     
-    WebKit depends on the WebController's WebWindowOperationsDelegate for all window
+    WebKit depends on the WebView's WebWindowOperationsDelegate for all window
     related management, including opening new windows and controlling the user interface
     elements in those windows.
     
     WebResourceLoadDelegate is used to monitor the progress of resources as they are
     loaded.  This delegate may be used to present users with a progress monitor.
     
-    WebController's WebContextMenuDelegate can customize the context menus that appear
+    WebView's WebContextMenuDelegate can customize the context menus that appear
     over content managed by the WebKit.
     
     The WebLocationChangeDelegate receives messages when the URL in a WebFrame is
     changed.
     
-    WebController's WebControllerPolicyDelegate can make determinations about how
+    WebView's WebPolicyDelegate can make determinations about how
     content should be handled, based on the resource's URL and MIME type.
 */
-@interface WebController : NSView
+@interface WebView : NSView
 {
 @private
-    WebControllerPrivate *_private;
+    WebViewPrivate *_private;
 }
+
+/*!
+    @method canShowMIMEType:
+    @abstract Checks if the WebKit can show content of a certain MIME type.
+    @param MIMEType The MIME type to check.
+    @result YES if the WebKit can show content with MIMEtype.
+*/
++ (BOOL)canShowMIMEType:(NSString *)MIMEType;
+
 
 /*!
     @method initWithView:
@@ -113,15 +95,15 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method initWithView:frameName:setName:
-    @abstract The designated initializer for WebController.
-    @discussion Initialize a WebController with the supplied parameters. This method will 
+    @abstract The designated initializer for WebView.
+    @discussion Initialize a WebView with the supplied parameters. This method will 
     create a main WebFrame with the view. Passing a top level frame name is useful if you
     handle a targetted frame navigation that would normally open a window in some other 
-    way that still ends up creating a new WebController.
+    way that still ends up creating a new WebView.
     @param view The main view to be associated with the controller.  May be nil.
     @param frameName The name to use for the top level frame. May be nil.
     @param groupName The name of the controller set to which this controller will be added.  May be nil.
-    @result Returns an initialized WebController.
+    @result Returns an initialized WebView.
 */
 - initWithView: (WebFrameView *)view frameName: (NSString *)frameName groupName: (NSString *)name ;
 
@@ -197,15 +179,15 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 
 /*!
     @method setPolicyDelegate:
-    @abstract Set the controller's WebControllerPolicyDelegate delegate.
-    @param delegate The WebControllerPolicyDelegate to set as the delegate.
+    @abstract Set the controller's WebPolicyDelegate delegate.
+    @param delegate The WebPolicyDelegate to set as the delegate.
 */    
 - (void)setPolicyDelegate: (id)delegate;
 
 /*!
     @method policyDelegate
-    @abstract Return the controller's WebControllerPolicyDelegate.
-    @result The controller's WebControllerPolicyDelegate.
+    @abstract Return the controller's WebPolicyDelegate.
+    @result The controller's WebPolicyDelegate.
 */    
 - (id)policyDelegate;
 
@@ -357,7 +339,7 @@ extern NSString *WebElementLinkLabelKey;	// NSString of the text within the anch
 @end
 
 
-@interface WebController (WebIBActions)
+@interface WebView (WebIBActions)
 - (IBAction)stopLoading:(id)sender;
 - (IBAction)goBack:(id)sender;
 - (IBAction)goForward:(id)sender;

@@ -31,7 +31,7 @@
 
 @end
 
-@class WebController;
+@class WebView;
 
 /*!
     @category WebWindowOperationsDelegate
@@ -48,9 +48,9 @@
     @discussion The newly created window is hidden, and the window operations delegate on the
     new controllers will get a showWindow call.
     @param request The request to load.
-    @result The WebController for the WebView in the new window.
+    @result The WebView for the new window.
 */
-- (WebController *)controller:(WebController *)controller createWindowWithRequest:(WebRequest *)request;
+- (WebView *)webView:(WebView *)webView createWindowWithRequest:(WebRequest *)request;
 
 /*!
     @method showWindow
@@ -59,7 +59,7 @@
     @discussion This will only be called just after createWindowWithRequest:
     is used to create a new window.
 */
-- (void)controllerShowWindow:(WebController *)controller;
+- (void)webViewShowWindow:(WebView *)webView;
 
 /*!
     @method closeWindow
@@ -69,7 +69,7 @@
     controller. Other clients may choose to ignore this method
     entirely.
 */
-- (void)controllerCloseWindow:(WebController *)controller;
+- (void)webViewCloseWindow:(WebView *)webView;
 
 /*!
     @method focusWindow
@@ -77,7 +77,7 @@
     @discussion Clients showing multiple views in one window may want to
     also do something to focus the one corresponding to this controller.
 */
-- (void)controllerFocusWindow:(WebController *)controller;
+- (void)webViewFocusWindow:(WebView *)webView;
 
 /*!
     @method unfocusWindow
@@ -85,7 +85,7 @@
     @discussion Clients showing multiple views in one window may want to
     also do something to unfocus the one corresponding to this controller.
 */
-- (void)controllerUnfocusWindow:(WebController *)controller;
+- (void)webViewUnfocusWindow:(WebView *)webView;
 
 /*!
     @method firstResponderInWindow
@@ -96,7 +96,7 @@
     on the real NSWindow would. It's OK to return either nil or the
     real first responder if some control not in the window has focus.
 */
-- (NSResponder *)controllerFirstResponderInWindow:(WebController *)controller;
+- (NSResponder *)webViewFirstResponderInWindow:(WebView *)webView;
 
 /*!
     @method makeFirstResponderInWindow:
@@ -108,7 +108,7 @@
     hierarchy, it may be desirable to save the first responder
     elsewhere, or possibly ignore this call.
 */
-- (void)controller: (WebController *)wv makeFirstResponderInWindow:(NSResponder *)responder;
+- (void)webView: (WebView *)webView makeFirstResponderInWindow:(NSResponder *)responder;
 
 
 /*!
@@ -116,14 +116,14 @@
     @abstract Set the window's status display, if any, to the specified string.
     @param text The status text to set
 */
-- (void)controller: (WebController *)wv setStatusText:(NSString *)text;
+- (void)webView: (WebView *)webView setStatusText:(NSString *)text;
 
 /*!
     @method statusText
     @abstract Get the currently displayed status text.
     @result The status text
 */
-- (NSString *)controllerStatusText:(WebController *)controller ;
+- (NSString *)webViewStatusText:(WebView *)webView ;
 
 /*!
     @method mouseDidMoveOverElement:modifierFlags:
@@ -132,7 +132,7 @@
     @param elementInformation Dictionary that describes the element that the mouse is over, or nil.
     @param modifierFlags The modifier flags as in NSEvent.
 */
-- (void)controller: (WebController *)wv mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
+- (void)webView: (WebView *)webView mouseDidMoveOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned int)modifierFlags;
 
 /*!
     @method areToolbarsVisible
@@ -144,7 +144,7 @@
     this method if at least one is on.
     @result YES if at least one toolbar is visible, otherwise NO.
 */
-- (BOOL)controllerAreToolbarsVisible: (WebController *)webView;
+- (BOOL)webViewAreToolbarsVisible: (WebView *)webView;
 
 /*!
     @method setToolbarsVisible:
@@ -154,14 +154,14 @@
     (except for a possible status bar). Setting it to NO should turn
     off all toolbars (with the same exception).
 */
-- (void)controller: (WebController *)wv setToolbarsVisible:(BOOL)visible;
+- (void)webView: (WebView *)webView setToolbarsVisible:(BOOL)visible;
 
 /*!
     @method isStatusBarVisible
     @abstract Determine whether the status bar is visible.
     @result YES if the status bar is visible, otherwise NO.
 */
-- (BOOL)controllerIsStatusBarVisible: (WebController *)webView;
+- (BOOL)webViewIsStatusBarVisible: (WebView *)webView;
 
 /*!
     @method setStatusBarVisible:
@@ -170,7 +170,7 @@
     @discussion Setting this to YES should show the status bar,
     setting it to NO should hide it.
 */
-- (void)controller: (WebController *)wv setStatusBarVisible:(BOOL)visible;
+- (void)webView: (WebView *)webView setStatusBarVisible:(BOOL)visible;
 
 /*!
     @method isResizable
@@ -180,7 +180,7 @@
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (BOOL)controllerIsResizable: (WebController *)webView;
+- (BOOL)webViewIsResizable: (WebView *)webView;
 
 /*!
     @method setResizable:
@@ -190,7 +190,7 @@
     have have their own separate resize controls and this may need to
     be handled specially.
 */
-- (void)controller: (WebController *)wv setResizable:(BOOL)resizable;
+- (void)webView: (WebView *)webView setResizable:(BOOL)resizable;
 
 /*!
     @method setFrame:
@@ -200,14 +200,14 @@
     this method is provided so implementors of this protocol can do special
     things on programmatic move/resize, like avoiding autosaving of the size.
 */
-- (void)controller: (WebController *)wv setFrame:(NSRect)frame;
+- (void)webView: (WebView *)webView setFrame:(NSRect)frame;
 
 /*!
     @method frame
     @abstract REturn the window's frame rect
     @discussion 
 */
-- (NSRect)controllerFrame: (WebController *)webView;
+- (NSRect)webViewFrame: (WebView *)webView;
 
 /*!
     @method runJavaScriptAlertPanelWithMessage:
@@ -216,7 +216,7 @@
     @discussion Clients should visually indicate that this panel comes
     from JavaScript. The panel should have a single OK button.
 */
-- (void)controller: (WebController *)wv runJavaScriptAlertPanelWithMessage:(NSString *)message;
+- (void)webView: (WebView *)webView runJavaScriptAlertPanelWithMessage:(NSString *)message;
 
 /*!
     @method runJavaScriptAlertPanelWithMessage:
@@ -227,7 +227,7 @@
     from JavaScript. The panel should have two buttons, e.g. "OK" and
     "Cancel".
 */
-- (BOOL)controller: (WebController *)wv runJavaScriptConfirmPanelWithMessage:(NSString *)message;
+- (BOOL)webView: (WebView *)webView runJavaScriptConfirmPanelWithMessage:(NSString *)message;
 
 /*!
     @method runJavaScriptTextInputPanelWithPrompt:defaultText:
@@ -239,7 +239,7 @@
     from JavaScript. The panel should have two buttons, e.g. "OK" and
     "Cancel", and an area to type text.
 */
-- (NSString *)controller: (WebController *)wv runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
+- (NSString *)webView: (WebView *)webView runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText;
 
 /*!
     @message runOpenPanelForFileButtonWithResultListener:
@@ -248,6 +248,6 @@
     @discussion This method is passed a callback object instead of giving a return
     value so that it can be handled with a sheet.
 */
-- (void)controller: (WebController *)wv runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
+- (void)webView: (WebView *)webView runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener;
    
 @end

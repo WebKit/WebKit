@@ -78,7 +78,7 @@
 
 @implementation WebDataSource (WebPrivate)
 
-- (WebController *)_controller
+- (WebView *)_controller
 {
     return _private->controller;
 }
@@ -121,7 +121,7 @@
     [self _setLoading:_private->mainClient || [_private->subresourceClients count]];
 }
 
-- (void)_setController: (WebController *)controller
+- (void)_setController: (WebView *)controller
 {
     if (_private->loading) {
         [controller retain];
@@ -179,7 +179,7 @@
     
     [self _setLoading:YES];
     
-    [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller locationChangeStartedForDataSource:self];
+    [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller locationChangeStartedForDataSource:self];
 
     if (pageCache){
         _private->loadingFromPageCache = YES;
@@ -188,7 +188,7 @@
         _private->loadingFromPageCache = NO;
         _private->mainClient = [[WebMainResourceClient alloc] initWithDataSource:self];
         id identifier;
-        identifier = [[_private->controller resourceLoadDelegate] controller:_private->controller identifierForInitialRequest:_private->originalRequest fromDataSource:self];
+        identifier = [[_private->controller resourceLoadDelegate] webView:_private->controller identifierForInitialRequest:_private->originalRequest fromDataSource:self];
         [_private->mainClient setIdentifier: identifier];
         [[self webFrame] _addExtraFieldsToRequest:_private->request alwaysFromRequest: NO];
         if (![_private->mainClient loadWithRequest:_private->request]) {
@@ -305,7 +305,7 @@
         // Must update the entries in the back-forward list too.
         [_private->ourBackForwardItems makeObjectsPerformSelector:@selector(setTitle:) withObject:_private->pageTitle];
 
-        [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller receivedPageTitle:_private->pageTitle forDataSource:self];
+        [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller receivedPageTitle:_private->pageTitle forDataSource:self];
     }
 }
 
@@ -331,7 +331,7 @@
     // Only send serverRedirectedForDataSource: if URL changed.
     if (![[oldRequest URL] isEqual: [request URL]]) {
         LOG(Redirect, "Server redirect to: %@", [request URL]);
-        [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller serverRedirectedForDataSource:self];
+        [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller serverRedirectedForDataSource:self];
     }
         
     [oldRequest release];
@@ -420,8 +420,8 @@
         id dview;
         for (i = 0; i < [subFrames count]; i++){
             subFrame = [subFrames objectAtIndex: i];
-            dview = [[subFrame view] documentView];
-            if ([[subFrame view] isDocumentHTML])
+            dview = [[subFrame frameView] documentView];
+            if ([[subFrame frameView] isDocumentHTML])
                 [dview _adjustFrames];
             [dview setNeedsDisplay: YES];
             [[subFrame dataSource] _layoutChildren];
@@ -443,7 +443,7 @@
             [WebTextRepresentation class], @"application/x-javascript",
             nil];
 
-        NSEnumerator *enumerator = [[WebController _supportedImageMIMETypes] objectEnumerator];
+        NSEnumerator *enumerator = [[WebView _supportedImageMIMETypes] objectEnumerator];
         NSString *mime;
         while ((mime = [enumerator nextObject]) != nil) {
             [repTypes setObject:[WebImageRepresentation class] forKey:mime];
@@ -537,7 +537,7 @@
     [self _commitIfReady];
 
     [[self representation] receivedData:data withDataSource:self];
-    [[[[self webFrame] view] documentView] dataSourceUpdated:self];
+    [[[[self webFrame] frameView] documentView] dataSourceUpdated:self];
 }
 
 - (void)_finishedLoading
@@ -567,7 +567,7 @@
     [iconDB _setIconURL:[iconURL absoluteString] forURL:[[[self _originalRequest] URL] absoluteString]];
 
     NSImage *icon = [iconDB iconForURL:[[self _URL] absoluteString] withSize:WebIconSmallSize];
-    [[_private->controller _locationChangeDelegateForwarder] controller: _private->controller receivedPageIcon:icon forDataSource:self];
+    [[_private->controller _locationChangeDelegateForwarder] webView: _private->controller receivedPageIcon:icon forDataSource:self];
 }
 
 - (void)iconLoader:(WebIconLoader *)iconLoader receivedPageIcon:(NSImage *)icon;

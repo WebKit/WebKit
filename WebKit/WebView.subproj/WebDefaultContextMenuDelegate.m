@@ -94,7 +94,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
     return [menuItem autorelease];
 }
 
-- (NSArray *)controller: (WebController *)wv contextMenuItemsForElement: (NSDictionary *)theElement  defaultMenuItems: (NSArray *)defaultMenuItems
+- (NSArray *)webView: (WebView *)wv contextMenuItemsForElement: (NSDictionary *)theElement  defaultMenuItems: (NSArray *)defaultMenuItems
 {
     NSMutableArray *menuItems = [NSMutableArray array];
     NSURL *linkURL, *imageURL;
@@ -128,7 +128,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
         } else {        
             WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
     
-            if(webFrame != [[webFrame controller] mainFrame]){
+            if(webFrame != [[webFrame webView] mainFrame]){
                 [menuItems addObject:[self menuItemWithTag:WebMenuItemTagOpenFrameInNewWindow]];
             }
         }
@@ -140,7 +140,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
 - (void)openNewWindowWithURL:(NSURL *)URL
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    WebController *controller = [webFrame controller];
+    WebView *controller = [webFrame webView];
     
     WebRequest *request = [WebRequest requestWithURL:URL];
     NSString *referrer = [[webFrame _bridge] referrer];
@@ -154,7 +154,7 @@ static WebDefaultContextMenuDelegate *sharedDelegate = nil;
 - (void)downloadURL:(NSURL *)URL
 {
     WebFrame *webFrame = [element objectForKey:WebElementFrameKey];
-    WebController *controller = [webFrame controller];
+    WebView *controller = [webFrame webView];
     [controller _downloadURL:URL];
 }
 

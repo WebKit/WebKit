@@ -1,5 +1,5 @@
 /*	
-        WebControllerPolicyDelegate.h
+        WebPolicyDelegate.h
 	Copyright 2002, Apple, Inc. All rights reserved.
 
         Public header file.
@@ -7,7 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@class WebController;
+@class WebView;
 @class WebError;
 @class WebFrame;
 @class WebPolicyPrivate;
@@ -116,7 +116,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
    @discussion This method will be called before loading starts, and
    on every redirect.
 */
-- (void)controller:(WebController *)c decideNavigationPolicyForAction:(NSDictionary *)actionInformation
+- (void)webView:(WebView *)webView decideNavigationPolicyForAction:(NSDictionary *)actionInformation
                              andRequest:(WebRequest *)request
                                 inFrame:(WebFrame *)frame
                        decisionListener:(id<WebPolicyDecisionListener>)listener;
@@ -137,7 +137,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
      will be called with a WebNavigationType of WebNavigationTypeOther
      in its action. This is to avoid possible confusion about the modifiers.
 */
-- (void)controller:(WebController *)c decideNewWindowPolicyForAction:(NSDictionary *)actionInformation
+- (void)webView:(WebView *)webView decideNewWindowPolicyForAction:(NSDictionary *)actionInformation
                             andRequest:(WebRequest *)request
                           newFrameName:(NSString *)frameName
                       decisionListener:(id<WebPolicyDecisionListener>)listener;
@@ -150,7 +150,7 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @param frame The frame which is loading the URL.
     @param listener The object to call when the decision is made
 */
-- (void)controller:(WebController *)c decideContentPolicyForMIMEType:(NSString *)type
+- (void)webView:(WebView *)webView decideContentPolicyForMIMEType:(NSString *)type
                                  andRequest:(WebRequest *)request
                                     inFrame:(WebFrame *)frame
                            decisionListener:(id<WebPolicyDecisionListener>)listener;
@@ -163,6 +163,6 @@ extern NSString *WebActionOriginalURLKey; // NSURL
     @param URL The URL of the resource for which a particular action was requested but failed.
     @param frame The frame in which the policy could not be implemented.
 */
-- (void)controller:(WebController *)c unableToImplementPolicyWithError:(WebError *)error inFrame:(WebFrame *)frame;
+- (void)webView:(WebView *)webView unableToImplementPolicyWithError:(WebError *)error inFrame:(WebFrame *)frame;
 
 @end

@@ -80,7 +80,7 @@
     [super viewDidMoveToWindow];
 }
 
-- (WebController *)controller
+- (WebView *)controller
 {
     return [[self _web_parentWebFrameView] _controller];
 }
@@ -127,7 +127,7 @@
 - (NSMenu *)menuForEvent:(NSEvent *)theEvent
 {
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    WebController *controller = [webFrameView _controller];
+    WebView *controller = [webFrameView _controller];
     WebFrame *frame = [webFrameView webFrame];
 
     ASSERT(frame);

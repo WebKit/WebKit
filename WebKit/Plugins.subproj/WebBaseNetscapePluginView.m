@@ -760,9 +760,9 @@ typedef struct {
     return [[self dataSource] webFrame];
 }
 
-- (WebController *)controller
+- (WebView *)controller
 {
-    return [[self webFrame] controller];
+    return [[self webFrame] webView];
 }
 
 - (NPP)pluginPointer
@@ -1036,16 +1036,16 @@ typedef struct {
     WebFrame *frame = [[self webFrame] findFrameNamed:frameName];
 
     if (frame == nil) {
-	WebController *newController = nil;
-	WebController *currentController = [self controller];
+	WebView *newController = nil;
+	WebView *currentController = [self controller];
 	id wd = [currentController windowOperationsDelegate];
-	if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
-	    newController = [wd controller:currentController createWindowWithRequest:nil];
+	if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
+	    newController = [wd webView:currentController createWindowWithRequest:nil];
 	else
-	    newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:nil];
+	    newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:currentController createWindowWithRequest:nil];
         
 	[newController _setTopLevelFrameName:frameName];
-	[[newController _windowOperationsDelegateForwarder] controllerShowWindow:newController];
+	[[newController _windowOperationsDelegateForwarder] webViewShowWindow:newController];
 	frame = [newController mainFrame];
     }
 

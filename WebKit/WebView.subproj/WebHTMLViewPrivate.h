@@ -9,7 +9,7 @@
 #import <WebKit/WebHTMLView.h>
 
 @class WebBridge;
-@class WebController;
+@class WebView;
 @class WebFrame;
 @class WebPluginController;
 
@@ -42,7 +42,7 @@
 @interface WebHTMLView (WebPrivate)
 
 - (void)_reset;
-- (WebController *)_controller;
+- (WebView *)_controller;
 - (WebFrame *)_frame;
 - (WebBridge *)_bridge;
 - (void)_adjustFrames;

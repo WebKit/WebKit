@@ -10,12 +10,14 @@
 #import <WebKit/WebControllerPolicyDelegatePrivate.h>
 
 @class WebBridge;
-@class WebFrameBridge;
-@class WebHistoryItem;
-@class WebFrameView;
-@class WebRequest;
 @class WebFormState;
+@class WebFrameBridge;
+@class WebFrameView;
+@class WebHistoryItem;
+@class WebRequest;
 @class WebPolicyDecisionListener;
+@class WebView;
+
 @protocol WebDOMElement;
 
 typedef enum {
@@ -55,7 +57,7 @@ typedef enum {
     WebDataSource *dataSource;
     WebDataSource *provisionalDataSource;
     WebBridge *bridge;
-    WebController *controller;
+    WebView *controller;
     WebFrameState state;
     NSTimer *scheduledLayoutTimer;
     WebFrameLoadType loadType;
@@ -80,8 +82,8 @@ typedef enum {
 
 - (void)setName:(NSString *)name;
 - (NSString *)name;
-- (void)setController:(WebController *)c;
-- (WebController *)controller;
+- (void)setController:(WebView *)c;
+- (WebView *)controller;
 - (void)setWebFrameView:(WebFrameView *)v;
 - (WebFrameView *)webFrameView;
 - (void)setDataSource:(WebDataSource *)d;
@@ -101,13 +103,13 @@ typedef enum {
 @end
 
 @interface WebFrame (WebPrivate)
-- (void)setController: (WebController *)controller;
+- (void)setController: (WebView *)controller;
 - (void)_setName:(NSString *)name;
 - (WebFrame *)_descendantFrameNamed:(NSString *)name;
 - (void)_controllerWillBeDeallocated;
 - (void)_detachFromParent;
 - (void)_closeOldDataSources;
-- (void)_setController: (WebController *)controller;
+- (void)_setController: (WebView *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
 - (void)_transitionToCommitted: (NSDictionary *)pageCache;
 - (void)_transitionToLayoutAcceptable;

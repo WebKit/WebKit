@@ -134,7 +134,7 @@ static BOOL forceRealHitTest = NO;
     [WebImageRenderer stopAnimationsInView:self];
 }
 
-- (WebController *)_controller
+- (WebView *)_controller
 {
     return [[self _web_parentWebFrameView] _controller];
 }

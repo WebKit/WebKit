@@ -10,7 +10,6 @@
 
 
 @class WebDataSource;
-@class WebController;
 @class WebHTMLViewPrivate;
 
 /*!

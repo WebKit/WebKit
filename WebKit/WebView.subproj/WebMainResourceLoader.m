@@ -144,7 +144,7 @@
 
     switch (contentPolicy) {
     case WebPolicyUse:
-	if (![WebContentTypes canShowMIMEType:[r contentType]]) {
+	if (![WebView canShowMIMEType:[r contentType]]) {
 	    [[dataSource webFrame] _handleUnimplementablePolicyWithErrorCode:WebKitErrorCannotShowMIMEType forURL:[req URL]];
 	    [self stopLoadingForPolicyChange];
 	    return;
@@ -192,9 +192,9 @@
 		   _initWithTarget:self action:@selector(continueAfterContentPolicy:)];
     policyResponse = [r retain];
 
-    WebController *c = [dataSource _controller];
+    WebView *c = [dataSource _controller];
     [c setDefersCallbacks:YES];
-    [[c _policyDelegateForwarder] controller:c decideContentPolicyForMIMEType:[r contentType]
+    [[c _policyDelegateForwarder] webView:c decideContentPolicyForMIMEType:[r contentType]
                                                                    andRequest:[dataSource request]
                                                                       inFrame:[dataSource webFrame]
                                                              decisionListener:listener];

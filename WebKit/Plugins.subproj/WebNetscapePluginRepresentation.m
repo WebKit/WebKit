@@ -30,14 +30,14 @@
 
 - (BOOL)isPluginViewStarted
 {
-    WebNetscapePluginDocumentView *view = (WebNetscapePluginDocumentView *)[[[_dataSource webFrame] view] documentView];
+    WebNetscapePluginDocumentView *view = (WebNetscapePluginDocumentView *)[[[_dataSource webFrame] frameView] documentView];
     ASSERT([view isKindOfClass:[WebNetscapePluginDocumentView class]]);
     return [view isStarted];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)ds
 {
-    WebNetscapePluginDocumentView *view = (WebNetscapePluginDocumentView *)[[[_dataSource webFrame] view] documentView];
+    WebNetscapePluginDocumentView *view = (WebNetscapePluginDocumentView *)[[[_dataSource webFrame] frameView] documentView];
     ASSERT([view isKindOfClass:[WebNetscapePluginDocumentView class]]);
     
     if (![view isStarted]) {

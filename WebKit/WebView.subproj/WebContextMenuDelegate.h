@@ -5,7 +5,7 @@
         Public header file.
 */
 
-@class WebController;
+@class WebView;
 
 /*!
     @category WebContextMenuDelegate
@@ -41,7 +41,7 @@ enum {
     @param defaultMenuItems An array of default NSMenuItems to include in all contextual menus.
     @result An array of NSMenuItems to include in the contextual menu.
 */
-- (NSArray *)controller:(WebController *)controller contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
+- (NSArray *)webView:(WebView *)webView contextMenuItemsForElement:(NSDictionary *)element defaultMenuItems:(NSArray *)defaultMenuItems;
 
 @end
 

@@ -1,6 +1,6 @@
 /*	
     WebControllerPrivate.m
-	Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
+    Copyright (c) 2001, 2002, Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebBackForwardList.h>
@@ -34,7 +34,7 @@
 
 #import <WebCore/WebCoreSettings.h>
 
-@implementation WebControllerPrivate
+@implementation WebViewPrivate
 
 - init 
 {
@@ -54,7 +54,7 @@
     int i, count;
         
     [[aFrame dataSource] _setController: nil];
-    [[aFrame view] _setController: nil];
+    [[aFrame frameView] _setController: nil];
     [aFrame _setController: nil];
 
     // Walk the frame tree, niling the controller.
@@ -92,7 +92,21 @@
 @end
 
 
-@implementation WebController (WebPrivate)
+@implementation WebView (WebPrivate)
+
++ (BOOL)canShowFile:(NSString *)path
+{
+    NSString *MIMEType;
+
+    MIMEType = [WebView _MIMETypeForFile:path];
+    return [[self class] canShowMIMEType:MIMEType];
+}
+
++ (NSString *)suggestedFileExtensionForMIMEType: (NSString *)type
+{
+    return [[WebFileTypeMappings sharedMappings] preferredExtensionForMIMEType:type];
+}
+
 
 - (WebFrame *)_createFrameNamed:(NSString *)fname inParent:(WebFrame *)parent allowsScrolling:(BOOL)allowsScrolling
 {
@@ -101,7 +115,7 @@
     [childView _setController:self];
     [childView setAllowsScrolling:allowsScrolling];
     
-    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webFrameView:childView controller:self];
+    WebFrame *newFrame = [[WebFrame alloc] initWithName:fname webFrameView:childView webView:self];
 
     [childView release];
 
@@ -284,7 +298,7 @@
     // Try other controllers in the same set
     if (_private->controllerSetName != nil) {
         NSEnumerator *enumerator = [WebControllerSets controllersInSetNamed:_private->controllerSetName];
-        WebController *controller;
+        WebView *controller;
         while ((controller = [enumerator nextObject]) != nil && frame == nil) {
 	    frame = [controller _findFrameInThisWindowNamed:name];
         }
@@ -293,17 +307,17 @@
     return frame;
 }
 
-- (WebController *)_openNewWindowWithRequest:(WebRequest *)request
+- (WebView *)_openNewWindowWithRequest:(WebRequest *)request
 {
     id wd = [self windowOperationsDelegate];
-    WebController *newWindowController = nil;
-    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
-        newWindowController = [wd controller:self createWindowWithRequest:request];
+    WebView *newWindowController = nil;
+    if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
+        newWindowController = [wd webView:self createWindowWithRequest:request];
     else {
-        newWindowController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:self createWindowWithRequest: request];
+        newWindowController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:self createWindowWithRequest: request];
     }
 
-    [[newWindowController _windowOperationsDelegateForwarder] controllerShowWindow: self];
+    [[newWindowController _windowOperationsDelegateForwarder] webViewShowWindow: self];
 
     return newWindowController;
 }
@@ -311,7 +325,7 @@
 - (NSMenu *)_menuForElement:(NSDictionary *)element
 {
     NSArray *defaultMenuItems = [_private->defaultContextMenuDelegate
-          controller:self contextMenuItemsForElement:element defaultMenuItems:nil];
+          webView:self contextMenuItemsForElement:element defaultMenuItems:nil];
     NSArray *menuItems = defaultMenuItems;
     NSMenu *menu = nil;
     unsigned i;
@@ -319,8 +333,8 @@
     if (_private->contextMenuDelegate) {
         id cd = _private->contextMenuDelegate;
         
-        if ([cd respondsToSelector:@selector(controller:contextMenuItemsForElement:defaultMenuItems:)])
-            menuItems = [cd controller:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
+        if ([cd respondsToSelector:@selector(webView:contextMenuItemsForElement:defaultMenuItems:)])
+            menuItems = [cd webView:self contextMenuItemsForElement:element defaultMenuItems:defaultMenuItems];
     } 
 
     if (menuItems && [menuItems count] > 0) {
@@ -341,7 +355,7 @@
     // for that case.
     
     if (dictionary && _private->lastElementWasNonNil) {
-        [[self _windowOperationsDelegateForwarder] controller:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
+        [[self _windowOperationsDelegateForwarder] webView:self mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
     }
     _private->lastElementWasNonNil = dictionary != nil;
 }
@@ -473,7 +487,7 @@
     int i, count;
     WebFrame *result, *aFrame;
 
-    if ([frame view] == aView)
+    if ([frame frameView] == aView)
         return frame;
 
     frames = [frame children];

@@ -8,7 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebController;
+@class WebView;
 @class WebDataSource;
 @class WebError;
 @class WebFramePrivate;
@@ -34,7 +34,7 @@
     @param controller The controller that manages the frame.
     @result Returns an initialized WebFrame.
 */
-- (id)initWithName: (NSString *)name webFrameView: (WebFrameView *)view controller: (WebController *)controller;
+- (id)initWithName: (NSString *)name webFrameView: (WebFrameView *)view webView: (WebView *)webView;
 
 /*!
     @method name
@@ -43,16 +43,16 @@
 - (NSString *)name;
 
 /*!
-    @method controller
-    @result Returns the controller of this frame.
+    @method webView
+    @result Returns the WebView for the document that includes this frame.
 */
-- (WebController *)controller;
+- (WebView *)webView;
 
 /*!
-    @method webFrameView
+    @method frameView
     @result The WebFrameView for this frame.
 */
-- (WebFrameView *)view;
+- (WebFrameView *)frameView;
 
 /*!
     @method loadRequest:

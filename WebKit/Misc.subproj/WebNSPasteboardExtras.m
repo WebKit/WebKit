@@ -6,7 +6,7 @@
 //  Copyright (c) 2002 Apple Computer, Inc. All rights reserved.
 //
 
-#import <WebKit/WebController.h>
+#import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebURLsWithTitles.h>
 
@@ -66,7 +66,7 @@ NSString *WebURLNamePboardType = nil;
             NSString *file = [files objectAtIndex:0];
             BOOL isDirectory;
             if([[NSFileManager defaultManager] fileExistsAtPath:file isDirectory:&isDirectory] && !isDirectory){
-                if ([WebContentTypes canShowFile:file]) {
+                if ([WebView canShowFile:file]) {
                     return [[NSURL fileURLWithPath:file] _web_canonicalize];
                 }
             }

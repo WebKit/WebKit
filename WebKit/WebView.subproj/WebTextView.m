@@ -158,7 +158,7 @@
     [super menuForEvent:theEvent];
     
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    WebController *controller = [webFrameView _controller];
+    WebView *controller = [webFrameView _controller];
     WebFrame *frame = [webFrameView webFrame];
 
     ASSERT(frame);

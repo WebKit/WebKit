@@ -1,5 +1,6 @@
 {\rtf1\mac\ansicpg10000\cocoartf102
-{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;}
+{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fnil\fcharset77 Monaco;
+}
 {\colortbl;\red255\green255\blue255;}
 \margl1440\margr1440\vieww16540\viewh12180\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
@@ -7,42 +8,20 @@
 \f0\b\fs24 \cf0 API Cleanup:
 \f1\b0 \
 \
-1.  WebHistory currently inherits from WebCoreHistory.  No WebCore related APIs should be publicly visible. (1day) (DONE)\
-2.  Methods from specific representations (WebHTMLView and WebHTMLRepresentation) need to be factored into protocols or moved to WebView and WebDataSource.  This task is mostly complete already. (3083733, 1 day) (DONE)\
-3.  Need closure on whether WebFoundation APIs will be public or not.  If public, not much work needs to be done.  If private, we need to expose relevant WebFoundation APIs in WebKit (WebError, WebResourceRequest, WebResourceResponse, WebHandle).  (2 days) (DONE)\
-3a.  Need to finalize decision on use of NSString or NSURL to express URLs in APIs.  (1 day)\
-4.  WebKit error codes should use WebKit prefix.  (3078996, .5 day). (DONE, still need to update WebFoundation errors)\
-5.  Remove all references to DOM classes from public API and make DOM classes SPI. (.5 day) DONE\
-6.  Separate download behavior from WebResourceLoadDelegate. (DONE)\
-7.  Make NSMenuItems identifiable in WebContentMenuDelegate. (DONE)\
-\
-\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b Incomplete API:
-\f1\b0 \
-\
-1.  API to support the notion of a focused frame.  (2959069, 2 days)\
-2.  WebPreferences needs to be scoped to a WebController (and/or set).  (3083707, 3 days) (DONE)\
-\
+\f2\fs20 \cf0 + Use "WebFrame" in the API when we refer to a WebFrame, rather than just "Frame".\
++ Change WebController's userStyleSheetLocation to an NSURL.\
++ Change WebController's setUsesBackForwardList to setMaintainsBackForwardList.\
++ Remove WebController's customUserAgent property.\
++ Remove suggestedFileExtensionForMIMEType from public API.\
++ On WebController:\
+    Add  -(BOOL)canGoBack, -(BOOL)canGoForward, -(BOOL)canCanel.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b Issues relating to internal clients:
-\f1\b0 \
-\
-1.  Ensure that all interaction with users via sheets and panels is done with delegates. (Ed Voas, carbon integration, 2 days)\
-1a.  Ensure that WebWindowOperations delegate is sufficient for tabbed browsing. (? days)\
-2.  Allow custom views to share scrollview with WebView. (Grant B., mail, 2 days)\
-3.  Ensure that clients (Help, Mail, PB) can cleanly write their own protocol handlers with API/SPI. (3163688, ? days)\
-\
-
-\f0\b Sample Code:
-\f1\b0 \
-1.  More complete example code. Our current sample code doesn't demonstrate all the delegate APIs. (5 days)\
-\
-
-\f0\b Documentation:
-\f1\b0 \
-1.  More complete documentation.  I gather that Peter Wilson (?) will  be our technical writer.  This task will include time spent meeting with Matt to 'brain dump' conceptual material and nitty gritty details. (ongoing)\
-\
-
-\f0\b Total Time To Complete:  
-\f1\b0 20 days}
+\f1\fs24 \cf0 \
++ remove 
+\f2\fs20 \CocoaLigature0 suggestedFileExtensionForMIMEType\
++ remove canShowFile\
++ put class methods from WebContentTypes back on WebController (WebView)\
+}

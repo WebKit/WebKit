@@ -91,7 +91,7 @@
 - (WebCoreBridge *)mainFrame
 {
     ASSERT(frame != nil);
-    return [[[frame controller] mainFrame] _bridge];
+    return [[[frame webView] mainFrame] _bridge];
 }
 
 - (WebCoreBridge *)findFrameNamed:(NSString *)name;
@@ -111,106 +111,106 @@
 	[request setReferrer:[self referrer]];
     }
 
-    WebController *currentController = [frame controller];
+    WebView *currentController = [frame webView];
     id wd = [currentController windowOperationsDelegate];
-    WebController *newController = nil;
+    WebView *newController = nil;
     
-    if ([wd respondsToSelector:@selector(controller:createWindowWithRequest:)])
-        newController = [wd controller:currentController createWindowWithRequest:request];
+    if ([wd respondsToSelector:@selector(webView:createWindowWithRequest:)])
+        newController = [wd webView:currentController createWindowWithRequest:request];
     else
-        newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:currentController createWindowWithRequest:request];
+        newController = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:currentController createWindowWithRequest:request];
     [newController _setTopLevelFrameName:name];
     return [[newController mainFrame] _bridge];
 }
 
 - (void)showWindow
 {
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controllerShowWindow: c];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webViewShowWindow: c];
 }
 
 - (BOOL)areToolbarsVisible
 {
     ASSERT(frame != nil);
-    WebController *c = [frame controller];
+    WebView *c = [frame webView];
     id wd = [c windowOperationsDelegate];
-    if ([wd respondsToSelector: @selector(controllerAreToolbarsVisible:)])
-        return [wd controllerAreToolbarsVisible: c];
-    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controllerAreToolbarsVisible:c];
+    if ([wd respondsToSelector: @selector(webViewAreToolbarsVisible:)])
+        return [wd webViewAreToolbarsVisible: c];
+    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webViewAreToolbarsVisible:c];
 }
 
 - (void)setToolbarsVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controller:c setToolbarsVisible:visible];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webView:c setToolbarsVisible:visible];
 }
 
 - (BOOL)areScrollbarsVisible
 {
     ASSERT(frame != nil);
-    return [[frame view] allowsScrolling];
+    return [[frame frameView] allowsScrolling];
 }
 
 - (void)setScrollbarsVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    return [[frame view] setAllowsScrolling:visible];
+    return [[frame frameView] setAllowsScrolling:visible];
 }
 
 - (BOOL)isStatusBarVisible
 {
     ASSERT(frame != nil);
-    WebController *c = [frame controller];
+    WebView *c = [frame webView];
     id wd = [c windowOperationsDelegate];
-    if ([wd respondsToSelector: @selector(controllerIsStatusBarVisible:)])
-        return [wd controllerIsStatusBarVisible:c];
-    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controllerIsStatusBarVisible:c];
+    if ([wd respondsToSelector: @selector(webViewIsStatusBarVisible:)])
+        return [wd webViewIsStatusBarVisible:c];
+    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webViewIsStatusBarVisible:c];
 }
 
 - (void)setStatusBarVisible:(BOOL)visible
 {
     ASSERT(frame != nil);
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controller:c setStatusBarVisible:visible];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webView:c setStatusBarVisible:visible];
 }
 
 - (void)setWindowFrame:(NSRect)frameRect
 {
     ASSERT(frame != nil);
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controller:c setFrame:frameRect];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webView:c setFrame:frameRect];
 }
 
 - (NSWindow *)window
 {
     ASSERT(frame != nil);
-    return [[frame view] window];
+    return [[frame frameView] window];
 }
 
 - (void)runJavaScriptAlertPanelWithMessage:(NSString *)message
 {
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controller:c runJavaScriptAlertPanelWithMessage:message];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webView:c runJavaScriptAlertPanelWithMessage:message];
 }
 
 - (BOOL)runJavaScriptConfirmPanelWithMessage:(NSString *)message
 {
-    WebController *c = [frame controller];
+    WebView *c = [frame webView];
     id wd = [c windowOperationsDelegate];
-    if ([wd respondsToSelector: @selector(controller:runJavaScriptConfirmPanelWithMessage:)])
-        return [wd controller:c runJavaScriptConfirmPanelWithMessage:message];
-    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:c runJavaScriptConfirmPanelWithMessage:message];
+    if ([wd respondsToSelector: @selector(webView:runJavaScriptConfirmPanelWithMessage:)])
+        return [wd webView:c runJavaScriptConfirmPanelWithMessage:message];
+    return [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:c runJavaScriptConfirmPanelWithMessage:message];
 }
 
 - (BOOL)runJavaScriptTextInputPanelWithPrompt:(NSString *)prompt defaultText:(NSString *)defaultText returningText:(NSString **)result
 {
-    WebController *c = [frame controller];
+    WebView *c = [frame webView];
     id wd = [c windowOperationsDelegate];
-    if ([wd respondsToSelector: @selector(controller:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
-        *result = [wd controller:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+    if ([wd respondsToSelector: @selector(webView:runJavaScriptTextInputPanelWithPrompt:defaultText:)])
+        *result = [wd webView:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     else
-        *result = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] controller:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
+        *result = [[WebDefaultWindowOperationsDelegate sharedWindowOperationsDelegate] webView:c runJavaScriptTextInputPanelWithPrompt:prompt defaultText:defaultText];
     return *result != nil;
 }
 
@@ -221,8 +221,8 @@
 
 - (void)runOpenPanelForFileButtonWithResultListener:(id<WebOpenPanelResultListener>)resultListener
 {
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controller:c runOpenPanelForFileButtonWithResultListener:resultListener];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webView:c runOpenPanelForFileButtonWithResultListener:resultListener];
 }
 
 
@@ -245,8 +245,8 @@
 - (void)setStatusText:(NSString *)status
 {
     ASSERT(frame != nil);
-    WebController *c = [frame controller];
-    [[c _windowOperationsDelegateForwarder] controller:c setStatusText:status];
+    WebView *c = [frame webView];
+    [[c _windowOperationsDelegateForwarder] webView:c setStatusText:status];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
@@ -282,21 +282,21 @@
     ASSERT(response != nil);
 
     WebRequest *request = [[WebRequest alloc] initWithURL:[NSURL _web_URLWithString:URL]];
-    WebController *c = [frame controller];
+    WebView *c = [frame webView];
     id delegate = [c resourceLoadDelegate];
     id _delegate = [c _resourceLoadDelegateForwarder];
     id identifier;
     
     // No chance for delegate to modify request, so we don't send a willSendRequest: message.
-    if ([delegate respondsToSelector:@selector(controller:identifierForInitialRequest:fromDataSource:)])
-        identifier = [delegate controller:c identifierForInitialRequest: request fromDataSource: [self dataSource]];
+    if ([delegate respondsToSelector:@selector(webView:identifierForInitialRequest:fromDataSource:)])
+        identifier = [delegate webView:c identifierForInitialRequest: request fromDataSource: [self dataSource]];
     else
-        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] controller:c identifierForInitialRequest:request fromDataSource:[self dataSource]];
-    [_delegate controller:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
-    [_delegate controller:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
-    [_delegate controller:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
+        identifier = [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:c identifierForInitialRequest:request fromDataSource:[self dataSource]];
+    [_delegate webView:c resource: identifier didReceiveResponse: response fromDataSource: [self dataSource]];
+    [_delegate webView:c resource: identifier didReceiveContentLength: bytes fromDataSource: [self dataSource]];
+    [_delegate webView:c resource: identifier didFinishLoadingFromDataSource: [self dataSource]];
     
-    [[frame controller] _finishedLoadingResourceFromDataSource:[self dataSource]];
+    [[frame webView] _finishedLoadingResourceFromDataSource:[self dataSource]];
     [request release];
 }
 
@@ -322,7 +322,7 @@
     if (frame == nil) {
 	// Non-retained because data source owns representation owns bridge
 	frame = webFrame;
-        [self setTextSizeMultiplier:[[frame controller] textSizeMultiplier]];
+        [self setTextSizeMultiplier:[[frame webView] textSizeMultiplier]];
     } else {
 	ASSERT(frame == webFrame);
     }
@@ -373,15 +373,15 @@
     allowsScrolling:(BOOL)allowsScrolling marginWidth:(int)width marginHeight:(int)height
 {
     ASSERT(frame != nil);
-    WebFrame *newFrame = [[frame controller] _createFrameNamed:frameName inParent:frame allowsScrolling:allowsScrolling];
+    WebFrame *newFrame = [[frame webView] _createFrameNamed:frameName inParent:frame allowsScrolling:allowsScrolling];
     if (newFrame == nil) {
         return nil;
     }
     
     [[newFrame _bridge] setRenderPart:childRenderPart];
 
-    [[newFrame view] _setMarginWidth:width];
-    [[newFrame view] _setMarginHeight:height];
+    [[newFrame frameView] _setMarginWidth:width];
+    [[newFrame frameView] _setMarginHeight:height];
 
     [frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
 
@@ -418,32 +418,32 @@
 
 - (NSString *)userAgentForURL:(NSString *)URL
 {
-    return [[frame controller] userAgentForURL:[NSURL _web_URLWithString:URL]];
+    return [[frame webView] userAgentForURL:[NSURL _web_URLWithString:URL]];
 }
 
 - (NSView *)nextKeyViewOutsideWebFrameViews
 {
-    return [[[[frame controller] mainFrame] view] nextKeyView];
+    return [[[[frame webView] mainFrame] frameView] nextKeyView];
 }
 
 - (NSView *)previousKeyViewOutsideWebFrameViews
 {
-    return [[[[frame controller] mainFrame] view] previousKeyView];
+    return [[[[frame webView] mainFrame] frameView] previousKeyView];
 }
 
 - (BOOL)defersLoading
 {
-    return [[frame controller] defersCallbacks];
+    return [[frame webView] defersCallbacks];
 }
 
 - (void)setDefersLoading:(BOOL)defers
 {
-    [[frame controller] setDefersCallbacks:defers];
+    [[frame webView] setDefersCallbacks:defers];
 }
 
 - (void)setNeedsReapplyStyles
 {
-    NSView <WebDocumentView> *view = [[frame view] documentView];
+    NSView <WebDocumentView> *view = [[frame frameView] documentView];
     if ([view isKindOfClass:[WebHTMLView class]]) {
         [(WebHTMLView *)view setNeedsToApplyStyles:YES];
         [view setNeedsLayout:YES];
@@ -453,7 +453,7 @@
 
 - (void)setNeedsLayout
 {
-    NSView <WebDocumentView> *view = [[frame view] documentView];
+    NSView <WebDocumentView> *view = [[frame frameView] documentView];
     [view setNeedsLayout:YES];
     [view setNeedsDisplay:YES];
 }
@@ -472,7 +472,7 @@
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
     
@@ -668,7 +668,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)handleMouseDragged:(NSEvent *)event
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -677,7 +677,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -686,7 +686,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event
 {
-    WebHTMLView *docView = (WebHTMLView *)[[frame view] documentView];
+    WebHTMLView *docView = (WebHTMLView *)[[frame frameView] documentView];
 
     ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
 
@@ -695,7 +695,7 @@ static BOOL loggedObjectCacheSize = NO;
 
 - (int)historyLength
 {
-    return [[[frame controller] backForwardList] backListCount];
+    return [[[frame webView] backForwardList] backListCount];
 }
 
 - (void)goBackOrForward:(int)distance
@@ -703,7 +703,7 @@ static BOOL loggedObjectCacheSize = NO;
     if (distance == 0) {
         return;
     }
-    WebController *controller = [frame controller];
+    WebView *controller = [frame webView];
     WebBackForwardList *list = [controller backForwardList];
     WebHistoryItem *item = [list entryAtIndex:distance];
     if (!item) {
@@ -727,7 +727,7 @@ static BOOL loggedObjectCacheSize = NO;
 static id <WebFormDelegate> formDelegate(WebBridge *self)
 {
     ASSERT(self->frame != nil);
-    return [[self->frame controller] _formDelegate];
+    return [[self->frame webView] _formDelegate];
 }
 
 - (void)controlTextDidBeginEditing:(NSNotification *)obj

@@ -48,10 +48,10 @@ static NSImage *image = nil;
         didSendError = YES;
         WebFrameView *view = (WebFrameView *)[self _web_superviewOfClass:[WebFrameView class]];
         WebFrame *webFrame = [view webFrame];
-        WebController *controller = [webFrame controller];
+        WebView *webView = [webFrame webView];
         WebDataSource *dataSource = [webFrame dataSource];
         
-        [[controller _resourceLoadDelegateForwarder] controller:controller pluginFailedWithError:error dataSource:dataSource];
+        [[webView _resourceLoadDelegateForwarder] webView:webView pluginFailedWithError:error dataSource:dataSource];
     }
 }
 

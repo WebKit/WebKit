@@ -30,10 +30,10 @@
 
 - init
 {
-    return [self initWithName: nil webFrameView: nil controller: nil];
+    return [self initWithName: nil webFrameView: nil webView: nil];
 }
 
-- initWithName: (NSString *)n webFrameView: (WebFrameView *)v controller: (WebController *)c
+- initWithName: (NSString *)n webFrameView: (WebFrameView *)v webView: (WebView *)c
 {
     [super init];
 
@@ -50,7 +50,7 @@
     
     if (v) {
         [_private setWebFrameView: v];
-        [v _setController: [self controller]];
+        [v _setController: [self webView]];
     }
     
     ++WebFrameCount;
@@ -72,12 +72,12 @@
     return [_private name];
 }
 
-- (WebFrameView *)view
+- (WebFrameView *)frameView
 {
     return [_private webFrameView];
 }
 
-- (WebController *)controller
+- (WebView *)webView
 {
     return [_private controller];
 }
@@ -161,7 +161,7 @@
     }
     
     if ([name isEqualToString:@"_top"]) {
-        return [[self controller] mainFrame];
+        return [[self webView] mainFrame];
     }
     
     if ([name isEqualToString:@"_parent"]) {
@@ -178,7 +178,7 @@
 
     if(!frame){
         // Search in this controller then in other controllers.
-        frame = [[self controller] _findFrameNamed:name];
+        frame = [[self webView] _findFrameNamed:name];
     }
 
     return frame;
@@ -199,7 +199,5 @@
     [[WebFrameView _viewTypes] setObject:viewClass forKey:MIMEType];
     [[WebDataSource _repTypes] setObject:representationClass forKey:MIMEType];
 }
-
-
 
 @end

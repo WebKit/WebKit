@@ -85,22 +85,22 @@ enum {
 
 - (void)setAllowsScrolling: (BOOL)flag
 {
-    [(WebDynamicScrollBarsView *)[self frameScrollView] setAllowsScrolling: flag];
+    [(WebDynamicScrollBarsView *)[self scrollView] setAllowsScrolling: flag];
 }
 
 - (BOOL)allowsScrolling
 {
-    return [(WebDynamicScrollBarsView *)[self frameScrollView] allowsScrolling];
+    return [(WebDynamicScrollBarsView *)[self scrollView] allowsScrolling];
 }
 
-- (NSScrollView *)frameScrollView
+- (NSScrollView *)scrollView
 {
     return _private->frameScrollView;
 }   
 
 - documentView
 {
-    return [[self frameScrollView] documentView];
+    return [[self scrollView] documentView];
 }
 
 - (BOOL)isDocumentHTML
@@ -164,7 +164,7 @@ enum {
         NSRectFill(rect);
     } else {
 #ifndef NDEBUG
-        if ([_private->frameScrollView drawsBackground]) {
+        if ([[self scrollView] drawsBackground]) {
             [[NSColor cyanColor] set];
             NSRectFill(rect);
         }
@@ -175,7 +175,7 @@ enum {
 - (void)setFrameSize:(NSSize)size
 {
     if (!NSEqualSizes(size, [self frame].size)) {
-        [_private->frameScrollView setDrawsBackground:YES];
+        [[self scrollView] setDrawsBackground:YES];
     }
     [super setFrameSize:size];
 }

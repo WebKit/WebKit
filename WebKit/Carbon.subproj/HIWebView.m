@@ -220,26 +220,26 @@ HIWebFrameViewGetNSView( HIViewRef inView )
 // HIWebFrameViewGetController
 //----------------------------------------------------------------------------------
 //
-WebController*
+WebView*
 HIWebFrameViewGetController( HIViewRef inControl )
 {
 	HIWebFrameView* 			view = (HIWebFrameView*)HIObjectDynamicCast( (HIObjectRef)inControl, kHIWebFrameViewClassID );
-	WebController*		result = NULL;
+	WebView*		result = NULL;
 	
 	if ( view )
-		result = [[view->fWebFrameView webFrame] controller];
+		result = [[view->fWebFrameView webFrame] webView];
 	
 	return result;
 }
 
-extern WebController*
+extern WebView*
 WebControllerCreateWithHIView( HIViewRef inView, CFStringRef inName )
 {
 	NSView*			view = HIWebFrameViewGetNSView( inView );
-	WebController*	result = NULL;
+	WebView*	result = NULL;
 	
 	if ( view )
-		result = [[WebController alloc] initWithView: (WebFrameView*)view frameName:nil groupName:(NSString*)inName];
+		result = [[WebView alloc] initWithView: (WebFrameView*)view frameName:nil groupName:(NSString*)inName];
 
 	return result;
 }

@@ -88,8 +88,8 @@
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];
         
-        WebController *c = [[theDataSource webFrame] controller];
-        [[c _resourceLoadDelegateForwarder] controller:c pluginFailedWithError:error dataSource:theDataSource];
+        WebView *c = [[theDataSource webFrame] webView];
+        [[c _resourceLoadDelegateForwarder] webView:c pluginFailedWithError:error dataSource:theDataSource];
         
         return;
     }
