@@ -10,7 +10,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
 				OPTIMIZATION_CFLAGS = "-O0";
@@ -22,6 +21,7 @@
 			buildRules = (
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -119,7 +119,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				DEBUGGING_SYMBOLS = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -7699,7 +7698,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
 				OPTIMIZATION_CFLAGS = "-O";

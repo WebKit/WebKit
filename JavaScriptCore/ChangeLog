@@ -1,3 +1,12 @@
+2002-12-20  Trey Matteson  <trey@apple.com>
+
+	We now build with symbols the B&I.  Deployment builds are without symbols,
+	so it is easy to generate a non-huge app as a one-off.
+
+        Reviewed by Darin
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+
 === Alexander-42 ===
 
 === Alexander-41 ===

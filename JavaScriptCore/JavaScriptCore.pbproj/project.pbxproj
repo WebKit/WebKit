@@ -10,7 +10,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				OPTIMIZATION_CFLAGS = "-O0";
 			};
@@ -21,6 +20,7 @@
 			buildRules = (
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -65,6 +65,7 @@
 				F58C8A1D025BD408018635CA,
 				F531DDEB02F0C2DD018635CA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 0867D691FE84028FC02AAC07;
 			productRefGroup = 034768DFFF38A50411DB9C8B;
@@ -111,7 +112,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				DEBUGGING_SYMBOLS = NO;
 				DEBUG_CFLAGS = "-DNDEBUG";
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -174,7 +174,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		0867D69DFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
@@ -828,7 +827,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
 				OPTIMIZATION_CFLAGS = "-O";
 			};
