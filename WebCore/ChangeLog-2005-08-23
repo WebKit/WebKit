@@ -1,3 +1,32 @@
+2003-10-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave,
+
+	- fixed 3379725 - for <a> elements with both onclick and href, Web Kit's behavior does not match other browsers
+
+	The fix for this was to make cancelBubble only prevent bubbling,
+	but not stop propagation or prevent default. While I was at it, I
+	made returnValue work right too.
+	
+        * khtml/ecma/kjs_events.cpp:
+        (DOMEvent::getValueProperty): Implement cancelBubble and returnValue properties properly.
+        (DOMEvent::putValue): Ditto.
+        * khtml/dom/dom2_events.cpp:
+        (Event::setCancelBubble): Call impl.
+        (Event::setDefaultPrevented): Ditto.
+        (Event::getCancelBubble): Ditto.
+        (Event::defaultPrevented): Ditto.
+        * khtml/dom/dom2_events.h:
+        * khtml/xml/dom2_eventsimpl.h:
+        (DOM::EventImpl::propagationStopped): Made this a const method.
+        (DOM::EventImpl::defaultPrevented): Ditto.
+        (DOM::EventImpl::setCancelBubble): Implemented by setting a new field.
+        (DOM::EventImpl::getCancelBubble): Corresponding getter.
+        (DOM::EventImpl::setDefaultPrevented): Set the already existing field for this.
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchGenericEvent): Check getCancelBubble() when bubbling. Do not
+	check bubbles() before default handling.
+
 2003-10-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3464472>: REGRESSION: New CSS cursor support breaks style="cursor:default

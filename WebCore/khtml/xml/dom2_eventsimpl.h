@@ -119,14 +119,18 @@ public:
     virtual bool isKeyboardEvent() { return false; }
     virtual DOMString eventModuleName() { return ""; }
 
-    virtual bool propagationStopped() { return m_propagationStopped; }
-    virtual bool defaultPrevented() { return m_defaultPrevented; }
+    virtual bool propagationStopped() const { return m_propagationStopped; }
+    virtual bool defaultPrevented() const { return m_defaultPrevented; }
 
     static EventId typeToId(DOMString type);
     static DOMString idToType(EventId id);
 
     virtual void setDefaultHandled();
     bool defaultHandled() const { return m_defaultHandled; }
+
+    void setCancelBubble(bool cancel) { m_cancelBubble = cancel; }
+    void setDefaultPrevented(bool defaultPrevented) { m_defaultPrevented = defaultPrevented; }
+    bool getCancelBubble() const { return m_cancelBubble; }
 
 protected:
     DOMStringImpl *m_type;
@@ -136,6 +140,8 @@ protected:
     bool m_propagationStopped;
     bool m_defaultPrevented;
     bool m_defaultHandled;
+    bool m_cancelBubble;
+
     EventId m_id;
     NodeImpl *m_currentTarget; // ref > 0 maintained externally
     unsigned short m_eventPhase;
@@ -164,6 +170,7 @@ public:
 		     long detailArg);
     virtual bool isUIEvent() { return true; }
     virtual DOMString eventModuleName() { return "UIEvents"; }
+
 protected:
     AbstractViewImpl *m_view;
     long m_detail;

@@ -177,6 +177,38 @@ DOMString Event::eventModuleName()
     return impl->eventModuleName();
 }
 
+void Event::setCancelBubble(bool cancel)
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    impl->setCancelBubble(cancel);
+}
+
+void Event::setDefaultPrevented(bool defaultPrevented)
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    impl->setDefaultPrevented(defaultPrevented);
+}
+ 
+bool Event::getCancelBubble() const
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+
+    return impl->getCancelBubble();
+}
+
+bool Event::defaultPrevented() const
+{
+    if (!impl)
+	throw DOMException(DOMException::INVALID_STATE_ERR);
+    
+    return impl->defaultPrevented();
+}
+
 // -----------------------------------------------------------------------------
 
 #ifndef SAVE_SPACE

@@ -237,8 +237,11 @@ Value DOMEvent::getValueProperty(ExecState *exec, int token) const
   case EventPhase:
     return Number((unsigned int)event.eventPhase());
   case Bubbles:
-  case CancelBubble: // MSIE extension. not sure if readable. and returnValue ?
     return Boolean(event.bubbles());
+  case CancelBubble:
+    return Boolean(event.getCancelBubble());
+  case ReturnValue:
+    return Boolean(!event.defaultPrevented());
   case Cancelable:
     return Boolean(event.cancelable());
   case TimeStamp:
@@ -260,12 +263,10 @@ void DOMEvent::putValue(ExecState *exec, int token, const Value& value, int)
 {
   switch (token) {
   case ReturnValue:
-    if (value.toBoolean(exec))
-      event.preventDefault();
+    event.setDefaultPrevented(!value.toBoolean(exec));
     break;
   case CancelBubble:
-    if (value.toBoolean(exec))
-      event.stopPropagation();
+    event.setCancelBubble(value.toBoolean(exec));
     break;
   default:
     break;

@@ -215,7 +215,6 @@ public:
      */
     void preventDefault();
 
-
     /**
      * The initEvent method is used to initialize the value of an Event created
      * through the DocumentEvent interface. This method may only be called
@@ -258,6 +257,12 @@ public:
      * Document::createEvent() (e.g. UIEvents)
      */
     DOMString eventModuleName();
+
+    /* Nonstandard extensions needed to support widely used JS event properties */
+    void setCancelBubble(bool cancel);
+    void setDefaultPrevented(bool returnValue);
+    bool getCancelBubble() const;
+    bool defaultPrevented() const;
 
 protected:
     Event(EventImpl *i);
