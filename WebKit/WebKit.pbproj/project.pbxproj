@@ -1476,7 +1476,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "ditto ${SYMROOT}/WebKit.framework ${DSTROOT}/AppleInternal/Library/Frameworks/WebKit.framework";
+			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework/Versions/A/WebKit\" \"${SYMROOT}/WebKit.framework/Versions/A/WebKit\" ;\n    ditto \"${SYMROOT}/WebKit.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebKit.framework/Versions/A/WebKit\";\nelse\n    ditto \"${SYMROOT}/WebKit.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebKit.framework\"\nfi";
 		};
 		657D8FA10366687600FA1ED0 = {
 			fileRef = 513D422E034CF55A00CA2ACD;

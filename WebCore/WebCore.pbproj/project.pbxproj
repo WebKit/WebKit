@@ -906,7 +906,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
-			shellScript = "ditto ${SYMROOT}/WebCore.framework ${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework";
+			shellScript = "if [ \"x$RC_RELEASE\" = \"xPanther\" ]; then\n    install_name_tool -id \"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\" \"${SYMROOT}/WebCore.framework/Versions/A/WebCore\" ;\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework\" ;\n    strip -S ${DSTROOT}/\"${SYSTEM_LIBRARY_DIR}/PrivateFrameworks/WebCore.framework/Versions/A/WebCore\";\nelse\n    ditto \"${SYMROOT}/WebCore.framework\" \"${DSTROOT}/AppleInternal/Library/Frameworks/WebCore.framework\"\nfi";
 		};
 //650
 //651

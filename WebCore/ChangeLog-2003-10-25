@@ -1,3 +1,10 @@
+2003-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * WebCore.pbproj/project.pbxproj: Updated to build the framework
+	standalone instead of embedded when doing a B&I build for Panther.
+
 2003-02-04  David Hyatt  <hyatt@apple.com>
 
 	Patch #1: Compacts are supposed to use their maximum intrinsic width

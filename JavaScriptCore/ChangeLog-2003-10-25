@@ -1,3 +1,10 @@
+2003-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+        * JavaScriptCore.pbproj/project.pbxproj: Updated to build the framework
+	standalone instead of embedded when doing a B&I build for Panther.
+
 === Safari-55 ===
 
 2003-01-29  Darin Adler  <darin@apple.com>
