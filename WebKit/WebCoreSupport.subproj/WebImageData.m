@@ -165,6 +165,13 @@ static CFDictionaryRef imageSourceOptions;
     float w = CGImageGetWidth(image);
     float h = CGImageGetHeight(image);
 
+    // Is the amount of available bands less than what we need to draw?  If so,
+    // clip.
+    if (h < fr.size.height) {
+	fr.size.height = h;
+	ir.size.height = h;
+    }
+    
     // Flip the coords.
     CGContextSetCompositeOperation (aContext, op);
     CGContextTranslateCTM (aContext, ir.origin.x, ir.origin.y);
@@ -281,12 +288,25 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
 - (CGSize)size
 {
     float w = 0.f, h = 0.f;
-    CGImageRef image = [self imageAtIndex:0];
-    if (image) {
-        h = CGImageGetHeight(image);
-        w = CGImageGetWidth(image);
+
+    if (!haveSize) {
+	CFDictionaryRef properties = CGImageSourceGetPropertiesAtIndex (imageSource, 0, 0);
+	if (properties) {
+	    CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
+	    if (num)
+		CFNumberGetValue (num, kCFNumberFloat32Type, &w);
+	    num = CFDictionaryGetValue (properties, kCGImagePropertyPixelHeight);
+	    if (num)
+		CFNumberGetValue (num, kCFNumberFloat32Type, &h);
+
+	    size.width = w;
+	    size.height = h;
+	    
+	    haveSize = YES;
+	}
     }
-    return CGSizeMake(w,h);
+    
+    return size;
 }
 
 #define MINIMUM_DURATION (1.0/30.0)

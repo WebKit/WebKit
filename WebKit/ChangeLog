@@ -1,3 +1,14 @@
+2004-11-11  Richard Williamson   <rjw@apple.com>
+
+        Report actual size (not partial size) but use partial size
+        when drawing.
+
+        Reviewed by Maciej.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData size]):
+
 2004-11-11  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
