@@ -430,8 +430,12 @@ using khtml::RenderPart;
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point
 {
+    RenderObject *renderer = part->impl->renderer();
+    if (!renderer) {
+        return nil;
+    }
     RenderObject::NodeInfo nodeInfo(true, true);
-    part->impl->renderer()->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
+    renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     
     NSMutableDictionary *elementInfo = [NSMutableDictionary dictionary];
 

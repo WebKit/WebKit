@@ -1,3 +1,15 @@
+2002-10-20  Darin Adler  <darin@apple.com>
+
+	- fixed 3079864 -- REGRESSION: assertion failure on any page with a form element
+
+        * khtml/html/html_formimpl.cpp: (HTMLGenericFormElementImpl::attach):
+	Roll back the parent call to use NodeBaseImpl::attach. Not sure why I changed that
+	at the last minute before my last checkin, but it was *bad*.
+
+	- fixed a crash I observed when clicking on an about:blank page
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge elementAtPoint:]): Check for nil renderer.
+
 2002-10-19  Darin Adler  <darin@apple.com>
 
 	- fixed 3075032 -- textarea contents sometimes aren't shown

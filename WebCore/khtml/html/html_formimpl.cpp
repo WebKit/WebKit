@@ -564,7 +564,7 @@ void HTMLGenericFormElementImpl::attach()
         parentNode()->renderer()->addChild(m_render, nextRenderer());
     }
 
-    HTMLElementImpl::attach();
+    NodeBaseImpl::attach();
 
     // The call to updateFromElement() needs to go after the call through
     // to the base class's attach() because that can sometimes do a close
