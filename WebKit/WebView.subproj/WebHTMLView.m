@@ -772,7 +772,7 @@ static WebHTMLView *lastHitView = nil;
     return dragImage;
 }
 
-- (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc event:(NSEvent *)mouseDraggedEvent
+- (BOOL)_startDraggingImage:(NSImage *)wcDragImage at:(NSPoint)wcDragLoc operation:(NSDragOperation)op event:(NSEvent *)mouseDraggedEvent
 {
     // Once we start a drag session we may not get a mouseup, so clear this out here as well as mouseUp:
     _private->firstMouseDownEvent = nil;
@@ -788,6 +788,7 @@ static WebHTMLView *lastHitView = nil;
     _private->draggingImageURL = nil;
 
     NSPoint mouseDraggedPoint = [self convertPoint:[mouseDraggedEvent locationInWindow] fromView:nil];
+    _private->webCoreDragOp = op;     // will be DragNone if WebCore doesn't care
     NSImage *dragImage = nil;
     
     if (imageURL) {
@@ -1727,16 +1728,20 @@ static WebHTMLView *lastHitView = nil;
         // Handle the drag directly instead of getting callbacks from WebCore.
         // FIXME - how does this play with DHTML dragging?
         if ([self _mayStartDragWithMouseDragged:event]) {
-            [self _startDraggingImage:nil at:NSZeroPoint event:event];
+            [self _startDraggingImage:nil at:NSZeroPoint operation:NSDragOperationNone event:event];
         }
     } else if (!_private->ignoringMouseDraggedEvents) {
         [[self _bridge] mouseDragged:event];
     }
 }
 
-- (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
-    return (NSDragOperationGeneric | NSDragOperationCopy);
+    if (_private->webCoreDragOp == NSDragOperationNone) {
+        return (NSDragOperationGeneric | NSDragOperationCopy);
+    } else {
+        return _private->webCoreDragOp;
+    }
 }
 
 - (void)draggedImage:(NSImage *)image movedTo:(NSPoint)screenLoc

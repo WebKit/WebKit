@@ -43,26 +43,6 @@ bool KWQClipboard::isForDragging() const
     return m_forDragging;
 }
 
-DOM::DOMString KWQClipboard::dropEffect() const
-{
-    return m_dropEffect;
-}
-
-void KWQClipboard::setDropEffect(const DOM::DOMString &s)
-{
-    m_dropEffect = s;
-}
-
-DOM::DOMString KWQClipboard::dropAllowed() const
-{
-    return m_dropAllowed;
-}
-
-void KWQClipboard::setDropAllowed(const DOM::DOMString &s)
-{
-    m_dropAllowed = s;
-}
-
 // FIXME hardwired for now, will use UTI
 static NSString *cocoaTypeFromMIMEType(const DOMString &type) {
     QString qType = type.string();
@@ -247,4 +227,100 @@ void KWQClipboard::setDragImage(const QPixmap &pm)
 NSImage *KWQClipboard::dragNSImage()
 {
     return m_dragImage.image();
+}
+
+DOM::DOMString KWQClipboard::dropEffect() const
+{
+    return m_dropEffect;
+}
+
+void KWQClipboard::setDropEffect(const DOM::DOMString &s)
+{
+    m_dropEffect = s;
+}
+
+DOM::DOMString KWQClipboard::effectAllowed() const
+{
+    return m_effectAllowed;
+}
+
+void KWQClipboard::setEffectAllowed(const DOM::DOMString &s)
+{
+    m_effectAllowed = s;
+}
+
+static NSDragOperation cocoaOpFromIEOp(const DOMString &op) {
+    // yep, it's really just this fixed set
+    if (op == "none") {
+        return NSDragOperationNone;
+    } else if (op == "copy") {
+        return NSDragOperationCopy;
+    } else if (op == "link") {
+        return NSDragOperationLink;
+    } else if (op == "move") {
+        return NSDragOperationGeneric;
+    } else if (op == "copyLink") {
+        return NSDragOperationCopy | NSDragOperationLink;
+    } else if (op == "copyMove") {
+        return NSDragOperationCopy | NSDragOperationGeneric | NSDragOperationMove;
+    } else if (op == "linkMove") {
+        return NSDragOperationLink | NSDragOperationGeneric | NSDragOperationMove;
+    } else if (op == "all") {
+        return NSDragOperationEvery;
+    } else {
+        return NSDragOperationPrivate;  // really a marker for "no conversion"
+    }
+}
+
+static const DOMString IEOpFromCocoaOp(NSDragOperation op) {
+    bool moveSet = ((NSDragOperationGeneric | NSDragOperationMove) & op) != 0;
+    
+    if ((moveSet && (op & NSDragOperationCopy) && (op & NSDragOperationLink))
+        || (op == NSDragOperationEvery)) {
+        return "all";
+    } else if (moveSet && (op & NSDragOperationCopy)) {
+        return "copyMove";
+    } else if (moveSet && (op & NSDragOperationLink)) {
+        return "linkMove";
+    } else if ((op & NSDragOperationCopy) && (op & NSDragOperationLink)) {
+        return "copyLink";
+    } else if (moveSet) {
+        return "move";
+    } else if (op & NSDragOperationCopy) {
+        return "copy";
+    } else if (op & NSDragOperationLink) {
+        return "link";
+    } else {
+        return "none";
+    }
+}
+
+bool KWQClipboard::sourceOperation(NSDragOperation *op) const
+{
+    if (m_effectAllowed.isNull()) {
+        return false;
+    } else {
+        *op = cocoaOpFromIEOp(m_effectAllowed);
+        return true;
+    }
+}
+
+bool KWQClipboard::destinationOperation(NSDragOperation *op) const
+{
+    if (m_dropEffect.isNull()) {
+        return false;
+    } else {
+        *op = cocoaOpFromIEOp(m_dropEffect);
+        return true;
+    }
+}
+
+void KWQClipboard::setSourceOperation(NSDragOperation op)
+{
+    m_effectAllowed = IEOpFromCocoaOp(op);
+}
+
+void KWQClipboard::setDestinationOperation(NSDragOperation op)
+{
+    m_dropEffect = IEOpFromCocoaOp(op);
 }

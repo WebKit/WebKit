@@ -987,11 +987,11 @@ static BOOL loggedObjectCacheSize = NO;
     return [type length] == 0 ? @"application/octet-stream" : type;
 }
 
-- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc event:(NSEvent *)event
+- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event
 {
     WebHTMLView *docView = (WebHTMLView *)[[_frame frameView] documentView];
     ASSERT([docView isKindOfClass:[WebHTMLView class]]);
-    return [docView _startDraggingImage:dragImage at:dragLoc event:event];
+    return [docView _startDraggingImage:dragImage at:dragLoc operation:op event:event];
 }
 
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;

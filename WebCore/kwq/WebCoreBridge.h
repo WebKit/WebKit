@@ -428,7 +428,7 @@ typedef enum {
 
 - (NSString *)MIMETypeForPath:(NSString *)path;
 
-- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc event:(NSEvent *)event;
+- (BOOL)startDraggingImage:(NSImage *)dragImage at:(NSPoint)dragLoc operation:(NSDragOperation)op event:(NSEvent *)event;
 - (void)handleAutoscrollForMouseDragged:(NSEvent *)event;
 - (BOOL)mayStartDragWithMouseDragged:(NSEvent *)event;
 

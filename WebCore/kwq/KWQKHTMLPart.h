@@ -327,7 +327,7 @@ private:
     static NSView *documentViewForNode(DOM::NodeImpl *);
     
     bool dragHysteresisExceeded(float dragLocationX, float dragLocationY) const;
-    bool dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc) const;
+    bool dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc, unsigned *op) const;
 
     WebCoreBridge *_bridge;
     

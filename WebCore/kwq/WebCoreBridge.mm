@@ -1577,6 +1577,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
 
 - (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)info
 {
+    NSDragOperation op = NSDragOperationNone;
     if (_part) {
         KHTMLView *v = _part->view();
         if (v) {
@@ -1585,18 +1586,36 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
             
             KWQClipboard *clipboard = new KWQClipboard(true, [info draggingPasteboard]);
             clipboard->ref();
-
-            // FIXME - massage result into NSDragOperation
-            //  consult event.stopped and event.dataTransfer.dropEffect
-            //  perhaps put that smarts in KWQClipboard 
-            NSDragOperation op = v->updateDragAndDrop(QPoint([info draggingLocation]), clipboard) ? NSDragOperationCopy : NSDragOperationNone;
-
+            NSDragOperation srcOp = [info draggingSourceOperationMask];
+            clipboard->setSourceOperation(srcOp);
+            
+            if (v->updateDragAndDrop(QPoint([info draggingLocation]), clipboard)) {
+                // *op unchanged if no source op was set
+                if (!clipboard->destinationOperation(&op)) {
+                    // The element accepted but they didn't pick an operation, so we pick one for them
+                    // (as does WinIE).
+                    if (srcOp & NSDragOperationCopy) {
+                        op = NSDragOperationCopy;
+                    } else if (srcOp & NSDragOperationMove || srcOp & NSDragOperationGeneric) {
+                        op = NSDragOperationMove;
+                    } else if (srcOp & NSDragOperationLink) {
+                        op = NSDragOperationLink;
+                    } else {
+                        op = NSDragOperationGeneric;
+                    }
+                } else if (!(op & srcOp)) {
+                    // make sure WC picked an op that was offered.  Cocoa doesn't seem to enforce this,
+                    // but IE does.
+                    op = NSDragOperationNone;
+                }
+            }
+            
             clipboard->deref();
             v->deref();
             return op;
         }
     }
-    return NSDragOperationNone;
+    return op;
 }
 
 - (void)dragExitedWithDraggingInfo:(id <NSDraggingInfo>)info

@@ -1,3 +1,44 @@
+2004-06-03  Trey Matteson  <trey@apple.com>
+
+	DHTML dragging uses the Cocoa NSDragOperation on both the source and dest ends.
+
+	In addition, I caught a prime gaffe where I had used "dropAllowed" instead of "effectAllowed"
+	for that particular WinIE property.  That is renamed throughout.
+
+        Reviewed by rjw
+
+        * khtml/ecma/kjs_events.cpp:
+        (stringOrUndefined):  New little helper.
+        (Clipboard::getValueProperty):  Return Undefined if dropEffect or effectAllowed are not set.
+        (Clipboard::putValue):  Rename.
+        * khtml/ecma/kjs_events.h:
+        (KJS::Clipboard::):  Rename.
+        * khtml/ecma/kjs_events.lut.h:
+        * khtml/xml/dom2_eventsimpl.h:  Rename.
+        * kwq/KWQClipboard.h: Rename, add access to Cocoa drag op.
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::dropEffect):   These 4 just moved in the file.
+        (KWQClipboard::setDropEffect):
+        (KWQClipboard::effectAllowed):
+        (KWQClipboard::setEffectAllowed):
+        (cocoaOpFromIEOp):  Convert from an IE operation string to a Cocoa DragOp
+        (IEOpFromCocoaOp):  and vice-versa
+        (KWQClipboard::sourceOperation):  Return effectAllowed, converted to a NSDragOp
+        (KWQClipboard::destinationOperation):  Return dropEffect, converted to a NSDragOp
+        (KWQClipboard::setSourceOperation):  Set effectAllowed, using a Cocoa value
+        (KWQClipboard::setDestinationOperation):  Set dropEffect, using a Cocoa value
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::dispatchDragSrcEvent):  Return the drag op specified by the source element.
+        (KWQKHTMLPart::khtmlMouseMoveEvent):  Pass our drag op up to WebKit.
+        (KWQKHTMLPart::dragSourceMovedTo):  Pass NULL for new arg.
+        (KWQKHTMLPart::dragSourceEndedAt):  Ditto
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge dragOperationForDraggingInfo:]):  Set the incoming dragOp onto the clipboard
+	so DHTML can access it.  In addition, validate whatever op DHTML returns so we play well
+	with Cocoa.
+
 2004-06-04  David Hyatt  <hyatt@apple.com>
 
 	Add support for auto values in flex transitions.  Add support for mapping the back end values to
@@ -342,7 +383,6 @@
         * khtml/rendering/render_canvasimage.cpp:
         (RenderCanvasImage::createDrawingContext):
 
->>>>>>> 1.2855
 2004-06-01  Trey Matteson  <trey@apple.com>
 
 	First cut at the source side of DHTML dragging.  Following IE, new events are added:

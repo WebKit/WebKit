@@ -384,8 +384,8 @@ public:
 
     virtual DOMString dropEffect() const = 0;
     virtual void setDropEffect(const DOMString &s) = 0;
-    virtual DOMString dropAllowed() const = 0;
-    virtual void setDropAllowed(const DOMString &s) = 0;
+    virtual DOMString effectAllowed() const = 0;
+    virtual void setEffectAllowed(const DOMString &s) = 0;
     
     virtual void clearData(const DOMString &type) = 0;
     virtual void clearAllData() = 0;

@@ -41,8 +41,8 @@ public:
     
     DOM::DOMString dropEffect() const;
     void setDropEffect(const DOM::DOMString &s);
-    DOM::DOMString dropAllowed() const;
-    void setDropAllowed(const DOM::DOMString &s);
+    DOM::DOMString effectAllowed() const;
+    void setEffectAllowed(const DOM::DOMString &s);
     
     void clearData(const DOM::DOMString &type);
     void clearAllData();
@@ -58,13 +58,19 @@ public:
     void setDragLocation(const QPoint &);
     QPixmap dragImage() const;
     void setDragImage(const QPixmap &);
+
+    // Methods for getting info in Cocoa's type system
     NSImage *dragNSImage();
+    bool sourceOperation(NSDragOperation *op) const;
+    bool destinationOperation(NSDragOperation *op) const;
+    void setSourceOperation(NSDragOperation op);
+    void setDestinationOperation(NSDragOperation op);
 
 private:
     NSPasteboard *m_pasteboard;
     bool m_forDragging;
     DOM::DOMString m_dropEffect;
-    DOM::DOMString m_dropAllowed;
+    DOM::DOMString m_effectAllowed;
     QPoint m_dragLoc;
     QPixmap m_dragImage;
 };

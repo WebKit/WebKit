@@ -1907,7 +1907,7 @@ bool KWQKHTMLPart::dragHysteresisExceeded(float dragLocationX, float dragLocatio
 }
 
 // returns if we should continue "default processing", i.e., whether eventhandler canceled
-bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc) const
+bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool declareTypes, NSImage **dragImage, NSPoint *dragLoc, NSDragOperation *op) const
 {
     NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
     if (declareTypes) {
@@ -1931,6 +1931,11 @@ bool KWQKHTMLPart::dispatchDragSrcEvent(int eventId, const QPoint &loc, bool dec
                 dragLoc->y = [*dragImage size].height - dragLoc->y;
             }
         }
+    }
+
+    if (op) {
+        // *op unchanged if no source op was set
+        clipboard->sourceOperation(op);
     }
 
     clipboard->deref();
@@ -1978,13 +1983,14 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
             if (dragHysteresisExceeded(dragLocation.x, dragLocation.y)) {
                 NSImage *dragImage = nil;
                 NSPoint dragLoc = NSZeroPoint;
-                if (dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation), true, &dragImage, &dragLoc)) {
-                    if ([_bridge startDraggingImage:dragImage at:dragLoc event:_currentEvent]) {
+                NSDragOperation srcOp = NSDragOperationNone;
+                if (dispatchDragSrcEvent(EventImpl::DRAGSTART_EVENT, QPoint(dragLocation), true, &dragImage, &dragLoc, &srcOp)) {
+                    if ([_bridge startDraggingImage:dragImage at:dragLoc operation:srcOp event:_currentEvent]) {
                         // Prevent click handling from taking place once we start dragging.
                         d->m_view->invalidateClick();
                     } else {
                         // WebKit canned the drag at the last minute - we owe _dragSrc a DRAGEND event
-                        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation), false, NULL, NULL);
+                        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, QPoint(dragLocation), false, NULL, NULL, NULL);
                     }
                 } else {
                     _mouseDownMayStartDrag = false;
@@ -2019,14 +2025,18 @@ void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 
 void KWQKHTMLPart::dragSourceMovedTo(const QPoint &loc)
 {
-    // for now we don't care if event handler cancels default behavior, since there is none
-    dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, false, NULL, NULL);
+    if (!_dragSrc.isNull()) {
+        // for now we don't care if event handler cancels default behavior, since there is none
+        dispatchDragSrcEvent(EventImpl::DRAG_EVENT, loc, false, NULL, NULL, NULL);
+    }
 }
 
 void KWQKHTMLPart::dragSourceEndedAt(const QPoint &loc)
 {
-    // for now we don't care if event handler cancels default behavior, since there is none
-    dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc, false, NULL, NULL);
+    if (!_dragSrc.isNull()) {
+        // for now we don't care if event handler cancels default behavior, since there is none
+        dispatchDragSrcEvent(EventImpl::DRAGEND_EVENT, loc, false, NULL, NULL, NULL);
+    }
 }
 
 void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
@@ -2885,7 +2895,6 @@ QRect KWQKHTMLPart::selectionRect() const
     RenderCanvas *root = static_cast<RenderCanvas *>(xmlDocImpl()->renderer());
     if (!root) {
         return QRect();
-
     }
 
     return root->selectionRect();

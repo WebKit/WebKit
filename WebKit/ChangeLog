@@ -1,3 +1,20 @@
+2004-06-03  Trey Matteson  <trey@apple.com>
+
+	DHTML dragging uses the Cocoa NSDragOperation on both the source and dest ends.
+	Most of the real work is in WebCore.
+
+        Reviewed by rjw
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge startDraggingImage:at:operation:event:]):  Pass the drag op along.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _startDraggingImage:at:operation:event:]):  Remember drag op from WC.
+        (-[WebHTMLView mouseDragged:]):  Pass None for the op (alternate code path that will
+	be going away).
+        (-[WebHTMLView draggingSourceOperationMaskForLocal:]):  Use the WC drag op.
+        * WebView.subproj/WebHTMLViewInternal.h:
+        * WebView.subproj/WebHTMLViewPrivate.h:
+
 === Safari-143 ===
 
 2004-06-04  Chris Blumenberg  <cblu@apple.com>
