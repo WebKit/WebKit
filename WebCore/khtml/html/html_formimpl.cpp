@@ -1785,6 +1785,8 @@ bool HTMLInputElementImpl::appendFormData(FormDataList &encoding, bool multipart
             {
                 encoding.appendData(name().isEmpty() ? QString::fromLatin1("x") : (name().string() + ".x"), clickX());
                 encoding.appendData(name().isEmpty() ? QString::fromLatin1("y") : (name().string() + ".y"), clickY());
+                if (!name().isEmpty() && !value().isEmpty())
+                    encoding.appendData(name(), value());
                 return true;
             }
             break;

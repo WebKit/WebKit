@@ -2,6 +2,16 @@
 
         Reviewed by John.
 
+        - fixed <rdar://problem/3977000> form data set posted for <input type="image" ...> omits name/value pair
+
+        * khtml/html/html_formimpl.cpp:
+        (DOM::HTMLInputElementImpl::appendFormData): Append a name/value pair for type IMAGE in addition to the X/Y
+        coordinates.
+
+2005-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed <rdar://problem/3974246> REGRESSION (125-180): popup menus are missing item text on Harmony Remote web site
 
         * khtml/html/html_formimpl.cpp: (DOM::HTMLOptionElementImpl::text): Change this function to traverse the entire tree
