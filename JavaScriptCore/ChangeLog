@@ -1,5 +1,10 @@
 2004-08-02  Darin Adler  <darin@apple.com>
 
+        * tests/mozilla/.cvsignore: Added.
+        * tests/mozilla/expected.html: Update results.
+
+2004-08-02  Darin Adler  <darin@apple.com>
+
         Reviewed by Ken.
 
         - fixed RegExp.toString so 3 more Mozilla regexp tests pass
