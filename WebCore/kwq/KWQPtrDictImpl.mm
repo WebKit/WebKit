@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,43 +25,60 @@
 
 #include <KWQPtrDictImpl.h>
 
-#ifndef USING_BORROWED_QPTRDICT
-
 #include <new>
 
 typedef void (* DeleteFunction) (void *);
 
-class KWQPtrDictImpl::KWQPtrDictPrivate
+class KWQPtrDictPrivate
 {
 public:
     KWQPtrDictPrivate(int size, DeleteFunction, const CFDictionaryKeyCallBacks *cfdkcb);
-    KWQPtrDictPrivate(KWQPtrDictPrivate &dp);
+    KWQPtrDictPrivate(const KWQPtrDictPrivate &dp);
     ~KWQPtrDictPrivate();
     
     CFMutableDictionaryRef cfdict;
     DeleteFunction del;
+    KWQPtrDictIteratorPrivate *iterators;
 };
 
-KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate(int size, DeleteFunction deleteFunc, const CFDictionaryKeyCallBacks *cfdkcb) :
+class KWQPtrDictIteratorPrivate
+{
+public:
+    KWQPtrDictIteratorPrivate(KWQPtrDictPrivate *);
+    ~KWQPtrDictIteratorPrivate();
+    
+    void remove(void *key);
+    void dictDestroyed();
+    
+    uint count;
+    uint pos;
+    void **keys;
+    void **values;
+    KWQPtrDictPrivate *dict;
+    KWQPtrDictIteratorPrivate *next;
+    KWQPtrDictIteratorPrivate *prev;
+};
+
+
+KWQPtrDictPrivate::KWQPtrDictPrivate(int size, DeleteFunction deleteFunc, const CFDictionaryKeyCallBacks *cfdkcb) :
     cfdict(CFDictionaryCreateMutable(NULL, 0, cfdkcb, NULL)),
-    del(deleteFunc)
+    del(deleteFunc),
+    iterators(0)
 {
-    if (cfdict == NULL) {
-	throw std::bad_alloc();
-    }
 }
 
-KWQPtrDictImpl::KWQPtrDictPrivate::KWQPtrDictPrivate(KWQPtrDictPrivate &dp) :     
+KWQPtrDictPrivate::KWQPtrDictPrivate(const KWQPtrDictPrivate &dp) :     
     cfdict(CFDictionaryCreateMutableCopy(NULL, 0, dp.cfdict)),
-    del(dp.del)
+    del(dp.del),
+    iterators(0)
 {
-    if (cfdict == NULL) {
-	throw std::bad_alloc();
-    }
 }
 
-KWQPtrDictImpl::KWQPtrDictPrivate::~KWQPtrDictPrivate()
+KWQPtrDictPrivate::~KWQPtrDictPrivate()
 {
+    for (KWQPtrDictIteratorPrivate *it = d->iterators; it; it = it->next) {
+        it->dictDestroyed();
+    }
     CFRelease(cfdict);
 }
 
@@ -105,21 +122,24 @@ uint KWQPtrDictImpl::count() const
 void KWQPtrDictImpl::insert(void *key, const void *value)
 {
     CFDictionarySetValue(d->cfdict, key, value);
-
 }
 
 bool KWQPtrDictImpl::remove(void *key, bool deleteItem)
 {
-    void *value = (void *)CFDictionaryGetValue(d->cfdict, key);
+    void *value = find(key);
 
-    if (value == nil) {
+    if (!value) {
 	return false;
     }
 
     CFDictionaryRemoveValue(d->cfdict, key);
-	
+    
     if (deleteItem) {
 	d->del(value);
+    }
+    
+    for (KWQPtrDictIteratorPrivate *it = d->iterators; it; it = it->next) {
+        it->remove(key);
     }
 
     return true;
@@ -164,36 +184,40 @@ void *KWQPtrDictImpl::take(void *key)
 
 
 
-class KWQPtrDictIteratorImpl::KWQPtrDictIteratorPrivate
-{
-public:
-    KWQPtrDictIteratorPrivate(CFMutableDictionaryRef cfdict);
-    ~KWQPtrDictIteratorPrivate();
-    uint count;
-    uint pos;
-    void **keys;
-    void **values;
-};
-
-
-KWQPtrDictIteratorImpl::KWQPtrDictIteratorPrivate::KWQPtrDictIteratorPrivate(CFMutableDictionaryRef cfdict) :
-    count(CFDictionaryGetCount(cfdict)),
+KWQPtrDictIteratorPrivate::KWQPtrDictIteratorPrivate(KWQPtrDictPrivate *d) :
+    count(CFDictionaryGetCount(d->cfdict)),
     pos(0),
-    keys(new void*[count]),
-    values(new void*[count])
+    keys(new void * [count]),
+    values(new void * [count]),
+    dict(d),
+    next(d->iterators),
+    prev(0)
 {
-    CFDictionaryGetKeysAndValues(cfdict, (const void **)keys, (const void **)values);
+    d->iterators = this;
+    if (next) {
+        next->prev = this;
+    }
+    
+    CFDictionaryGetKeysAndValues(d->cfdict, (const void **)keys, (const void **)values);
 }
 
-KWQPtrDictIteratorImpl::KWQPtrDictIteratorPrivate::~KWQPtrDictIteratorPrivate()
+KWQPtrDictIteratorPrivate::~KWQPtrDictIteratorPrivate()
 {
-    delete keys;
-    delete values;
+    if (prev) {
+        prev->next = next;
+    } else if (dict) {
+        dict->iterators = next;
+    }
+    if (next) {
+        next->prev = prev;
+    }
+    
+    delete [] keys;
+    delete [] values;
 }
-
 
 KWQPtrDictIteratorImpl::KWQPtrDictIteratorImpl(const KWQPtrDictImpl &di) : 
-    d(new KWQPtrDictIteratorImpl::KWQPtrDictIteratorPrivate(di.d->cfdict))
+    d(new KWQPtrDictIteratorPrivate(di.d))
 {
 }
 
@@ -215,7 +239,7 @@ void *KWQPtrDictIteratorImpl::current() const
     return d->values[d->pos];
 }
 
-void * KWQPtrDictIteratorImpl::currentKey() const
+void *KWQPtrDictIteratorImpl::currentKey() const
 {
     if (d->pos >= d->count) {
 	return NULL;
@@ -231,8 +255,28 @@ void *KWQPtrDictIteratorImpl::toFirst()
 
 void *KWQPtrDictIteratorImpl::operator++()
 {
-    ++(d->pos);
+    ++d->pos;
     return current();
 }
 
-#endif
+void KWQPtrDictIteratorPrivate::remove(void *key)
+{
+    for (uint i = 0; i < count; ) {
+        if (keys[i] != key) {
+            ++i;
+        } else {
+            --count;
+            if (pos > i) {
+                --pos;
+            }
+            memmove(&keys[i], &keys[i+1], sizeof(keys[i]) * (count - i));
+            memmove(&values[i], &values[i+1], sizeof(values[i]) * (count - i));
+        }
+    }
+}
+
+void KWQPtrDictIteratorPrivate::dictDestroyed()
+{
+    count = 0;
+    dict = 0;
+}

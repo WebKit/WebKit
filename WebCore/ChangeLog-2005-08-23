@@ -1,5 +1,28 @@
 2002-05-31  Darin Adler  <darin@apple.com>
 
+	Fix infinite loop while cancelling bug that was caused by dictionary
+	iterators not getting updated when keys are removed.
+
+	* kwq/KWQPtrDictImpl.mm:
+	(KWQPtrDictPrivate::KWQPtrDictPrivate): Set iterators list to 0.
+	(KWQPtrDictPrivate::~KWQPtrDictPrivate): Tell iterators dict is gone.
+	(KWQPtrDictImpl::remove): Tell each iterator that the item was removed.
+	(KWQPtrDictIteratorPrivate::KWQPtrDictIteratorPrivate): Insert the
+	iterator into a list with a head stored in the dict.
+	(KWQPtrDictIteratorPrivate::~KWQPtrDictIteratorPrivate): Remove the
+	iterator from the list.
+	(KWQPtrDictIteratorPrivate::remove): Remove the key from the iterator's
+	private storage.
+	(KWQPtrDictIteratorPrivate::dictDestroyed): Clear out the dict pointer
+	and set the count to 0.
+
+	* kwq/KWQPtrDictImpl.h: Move private classes out so they can get at each
+	other without being friends of each other.
+
+	* kwq/qt/qptrdict.h: Simplify a bit.
+
+2002-05-31  Darin Adler  <darin@apple.com>
+
 	* khtml/khtmlview.h: Add KWQKHTMLPartImpl as friend class, remove khtml_part.h
 	include that we added inside APPLE_CHANGES.
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,15 +26,14 @@
 #ifndef KWQ_PTRDICT_IMPL_H
 #define KWQ_PTRDICT_IMPL_H
 
-#include <config.h>
 #include <KWQDef.h>
-
-#ifndef USING_BORROWED_PTRQDICT
 
 #include <stddef.h>
 
 #include <CoreFoundation/CFDictionary.h>
 
+class KWQPtrDictPrivate;
+    
 class KWQPtrDictImpl
 {
  public:
@@ -51,17 +50,18 @@ class KWQPtrDictImpl
     void *find(void *key) const;
 
     KWQPtrDictImpl &assign(const KWQPtrDictImpl &pdi, bool deleteItems);
- private:
-    void KWQPtrDictImpl::swap(KWQPtrDictImpl &di);
-
-    class KWQPtrDictPrivate;
     
-    KWQPtrDictPrivate *d;
+ private:
+    void swap(KWQPtrDictImpl &di);
 
+    KWQPtrDictPrivate *d;
+    
     friend class KWQPtrDictIteratorImpl;
 };
 
 
+class KWQPtrDictIteratorPrivate;
+    
 class KWQPtrDictIteratorImpl {
  public:
     KWQPtrDictIteratorImpl(const KWQPtrDictImpl &pdi);
@@ -70,16 +70,12 @@ class KWQPtrDictIteratorImpl {
     uint count() const;
     void *current() const;
     void *currentKey() const;
-    void *KWQPtrDictIteratorImpl::toFirst();
+    void *toFirst();
 
     void *operator++();
- private:
-    class KWQPtrDictIteratorPrivate;
     
+ private:
     KWQPtrDictIteratorPrivate *d;
 };
-
-
-#endif
 
 #endif
