@@ -214,7 +214,13 @@ enum {
     for (index = 0; index < count; ++index) {
         switch ([characters characterAtIndex:index]) {
             case NSDeleteCharacter:
-                [self _goBack];
+                // This odd behavior matches some existing browsers,
+                // including Windows IE
+                if ([event modifierFlags] & NSShiftKeyMask) {
+                    [self _goForward];
+                } else {
+                    [self _goBack];
+                }
                 callSuper = NO;
                 break;
             case SpaceKey:
