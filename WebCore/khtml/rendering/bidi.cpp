@@ -27,8 +27,6 @@
 #include "render_arena.h"
 #include "xml/dom_docimpl.h"
 
-using namespace khtml;
-
 #include "kdebug.h"
 #include "qdatetime.h"
 #include "qfontmetrics.h"
@@ -36,7 +34,8 @@ using namespace khtml;
 #define BIDI_DEBUG 0
 //#define DEBUG_LINEBREAKS
 
-
+namespace khtml {
+    
 static BidiIterator sor;
 static BidiIterator eor;
 static BidiIterator last;
@@ -54,6 +53,43 @@ static int numSpaces;
 
 static void embed( QChar::Direction d );
 static void appendRun();
+
+static int getBPMWidth(int childValue, Length cssUnit)
+{
+    if (cssUnit.type != Variable)
+        return (cssUnit.type == Fixed ? cssUnit.value : childValue);
+    return 0;
+}
+
+static int getBorderPaddingMargin(RenderObject* child, bool endOfInline)
+{
+    RenderStyle* cstyle = child->style();
+    int result = 0;
+    bool leftSide = (cstyle->direction() == LTR) ? !endOfInline : endOfInline;
+    result += getBPMWidth((leftSide ? child->marginLeft() : child->marginRight()),
+                          (leftSide ? cstyle->marginLeft() :
+                           cstyle->marginRight()));
+    result += getBPMWidth((leftSide ? child->paddingLeft() : child->paddingRight()),
+                          (leftSide ? cstyle->paddingLeft() :
+                           cstyle->paddingRight()));
+    result += leftSide ? child->borderLeft() : child->borderRight();
+    return result;
+}
+
+static int inlineWidth(RenderObject* child, bool start = true, bool end = true)
+{
+    int extraWidth = 0;
+    RenderObject* parent = child->parent();
+    while (parent->isInline()) {
+        if (start && parent->firstChild() == child)
+            extraWidth += getBorderPaddingMargin(parent, false);
+        if (end && parent->lastChild() == child)
+            extraWidth += getBorderPaddingMargin(parent, true);
+        child = parent;
+        parent = child->parent();
+    }
+    return extraWidth;
+}
 
 #ifndef NDEBUG
 static bool inBidiIteratorDetach;
@@ -84,6 +120,51 @@ void BidiIterator::operator delete(void* ptr, size_t sz)
 
     // Stash size where detach can find it.
     *(size_t*)ptr = sz;
+}
+
+#ifndef NDEBUG
+static bool inBidiRunDetach;
+#endif
+
+void BidiRun::detach(RenderArena* renderArena)
+{
+#ifndef NDEBUG
+    inBidiRunDetach = true;
+#endif
+    delete this;
+#ifndef NDEBUG
+    inBidiRunDetach = false;
+#endif
+
+    // Recover the size left there for us by operator delete and free the memory.
+    renderArena->free(*(size_t *)this, this);
+}
+
+void* BidiRun::operator new(size_t sz, RenderArena* renderArena) throw()
+{
+    return renderArena->allocate(sz);
+}
+
+void BidiRun::operator delete(void* ptr, size_t sz)
+{
+    assert(inBidiRunDetach);
+
+    // Stash size where detach can find it.
+    *(size_t*)ptr = sz;
+}
+
+static void deleteBidiRuns(RenderArena* arena)
+{
+    if (!sruns)
+        return;
+
+    unsigned int len = sruns->count();
+    for(unsigned int i=0; i < len; i++) {
+        BidiRun* s = sruns->at(i);
+        if (s)
+            s->detach(arena);
+    }
+    sruns->clear();
 }
 
 // ---------------------------------------------------------------------
@@ -136,52 +217,79 @@ inline bool operator!=( const BidiIterator &it1, const BidiIterator &it2 )
     return false;
 }
 
-static inline RenderObject *Bidinext(RenderObject *par, RenderObject *current)
+static inline RenderObject *Bidinext(RenderObject *par, RenderObject *current,
+                                     bool skipInlines = true, bool* endOfInline = 0)
 {
     RenderObject *next = 0;
+    bool oldEndOfInline = endOfInline ? *endOfInline : false;
+    if (endOfInline)
+        *endOfInline = false;
+
     while(current != 0)
     {
         //kdDebug( 6040 ) << "current = " << current << endl;
-	if(!current->isFloating() && !current->isReplaced() && !current->isPositioned()) {
-	    next = current->firstChild();
-	    if ( next && adjustEmbeddding ) {
-		EUnicodeBidi ub = next->style()->unicodeBidi();
-		if ( ub != UBNormal && !emptyRun ) {
-		    EDirection dir = next->style()->direction();
-		    QChar::Direction d = ( ub == Embed ? ( dir == RTL ? QChar::DirRLE : QChar::DirLRE )
-					   : ( dir == RTL ? QChar::DirRLO : QChar::DirLRO ) );
-		    embed( d );
-		}
-	    }
-	}
-	if(!next) {
-	    while(current && current != par) {
-		next = current->nextSibling();
-		if(next) break;
-		if ( adjustEmbeddding && current->style()->unicodeBidi() != UBNormal && !emptyRun ) {
-		    embed( QChar::DirPDF );
-		}
-		current = current->parent();
-	    }
-	}
+        if (!oldEndOfInline && !current->isFloating() && !current->isReplaced() && !current->isPositioned()) {
+            next = current->firstChild();
+            if ( next && adjustEmbeddding ) {
+                EUnicodeBidi ub = next->style()->unicodeBidi();
+                if ( ub != UBNormal && !emptyRun ) {
+                    EDirection dir = next->style()->direction();
+QChar::Direction d = ( ub == Embed ? ( dir == RTL ? QChar::DirRLE : QChar::DirLRE )
+                                   : ( dir == RTL ? QChar::DirRLO : QChar::DirLRO ) );
+                    embed( d );
+                }
+            }
+        }
+        if (!next) {
+            if (!skipInlines && !oldEndOfInline && current->isInlineFlow())
+            {
+                next = current;
+                if (endOfInline)
+                    *endOfInline = true;
+                break;
+            }
 
-        if(!next) break;
+            while (current && current != par) {
+                next = current->nextSibling();
+                if (next) break;
+                if ( adjustEmbeddding && current->style()->unicodeBidi() != UBNormal && !emptyRun ) {
+                    embed( QChar::DirPDF );
+                }
+                current = current->parent();
+                if (!skipInlines && current && current != par && current->isInlineFlow()) {
+                    next = current;
+                    if (endOfInline)
+                        *endOfInline = true;
+                    break;
+                }
+            }
+        }
 
-        if(next->isText() || next->isBR() || next->isFloating() || next->isReplaced() || next->isPositioned())
+        if (!next) break;
+
+        if (next->isText() || next->isBR() || next->isFloating() || next->isReplaced() || next->isPositioned()
+            || ((!skipInlines || !next->firstChild()) // Always return EMPTY inlines.
+                && next->isInlineFlow()))
             break;
         current = next;
     }
     return next;
 }
 
-static RenderObject *first( RenderObject *par )
+static RenderObject *first( RenderObject *par, bool skipInlines = true )
 {
     if(!par->firstChild()) return 0;
     RenderObject *o = par->firstChild();
 
-    if(!o->isText() && !o->isBR() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
-        o = Bidinext( par, o );
-
+    if (o->isInlineFlow()) {
+        if (skipInlines && o->firstChild())
+            o = Bidinext( par, o, skipInlines );
+        else
+            return o; // Never skip empty inlines.
+    }
+        
+    if (!o->isText() && !o->isBR() && !o->isReplaced() && !o->isFloating() && !o->isPositioned())
+        o = Bidinext( par, o, skipInlines );
     return o;
 }
 
@@ -282,14 +390,15 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
     }
     else {
         if (!smidpoints || !nextMidpoint || (obj != nextMidpoint->obj)) {
-            sruns->append( new BidiRun(start, end, obj, context, dir) );
+            sruns->append( new (obj->renderArena()) BidiRun(start, end, obj, context, dir) );
             return;
         }
         
         // An end midpoint has been encounted within our object.  We
         // need to go ahead and append a run with our endpoint.
         if (int(nextMidpoint->pos+1) <= end) {
-            sruns->append( new BidiRun(start, nextMidpoint->pos+1, obj, context, dir) );
+            sruns->append( new (obj->renderArena())
+                                BidiRun(start, nextMidpoint->pos+1, obj, context, dir) );
             betweenMidpoints = true;
             int nextPos = nextMidpoint->pos+1;
             smidpoints->removeFirst();
@@ -297,7 +406,7 @@ static void appendRunsForObject(int start, int end, RenderObject* obj)
             return appendRunsForObject(nextPos, end, obj);
         }
         else
-            sruns->append( new BidiRun(start, end, obj, context, dir) );
+            sruns->append( new (obj->renderArena()) BidiRun(start, end, obj, context, dir) );
     }
 }
 
@@ -398,6 +507,172 @@ static void embed( QChar::Direction d )
     adjustEmbeddding = b;
 }
 
+InlineFlowBox* RenderBlock::createLineBoxes(RenderObject* obj)
+{
+    // See if we have an unconstructed line box for this object that is also
+    // the last item on the line.
+    KHTMLAssert(obj->isInlineFlow() || obj == this);
+    RenderFlow* flow = static_cast<RenderFlow*>(obj);
+
+    // Get the last box we made for this render object.
+    InlineFlowBox* box = flow->lastLineBox();
+
+    // If this box is constructed then it is from a previous line, and we need
+    // to make a new box for our line.  If this box is unconstructed but it has
+    // something following it on the line, then we know we have to make a new box
+    // as well.  In this situation our inline has actually been split in two on
+    // the same line (this can happen with very fancy language mixtures).
+    if (!box || box->isConstructed() || box->nextOnLine()) {
+        // We need to make a new box for this render object.  Once
+        // made, we need to place it at the end of the current line.
+        InlineBox* newBox = obj->createInlineBox();
+        KHTMLAssert(newBox->isInlineFlowBox());
+        box = static_cast<InlineFlowBox*>(newBox);
+        box->setFirstLineStyleBit(m_firstLine);
+        
+        // We have a new box. Append it to the inline box we get by constructing our
+        // parent.  If we have hit the block itself, then |box| represents the root
+        // inline box for the line, and it doesn't have to be appended to any parent
+        // inline.
+        if (obj != this) {
+            InlineFlowBox* parentBox = createLineBoxes(obj->parent());
+            parentBox->addToLine(box);
+        }
+    }
+
+    return box;
+}
+
+InlineFlowBox* RenderBlock::constructLine(QPtrList<BidiRun>& runs,
+                                          const BidiIterator &start, const BidiIterator &end)
+{
+    BidiRun *r = runs.first();
+    if (!r)
+        return 0; // We had no runs. Don't make a root inline box at all. The line is empty.
+
+    InlineFlowBox* parentBox = 0;
+    while (r) {
+        // Create a box for our object.
+        r->box = r->obj->createInlineBox();
+        
+        // If we have no parent box yet, or if the run is not simply a sibling,
+        // then we need to construct inline boxes as necessary to properly enclose the
+        // run's inline box.
+        if (!parentBox || (parentBox->object() != r->obj->parent()))
+            // Create new inline boxes all the way back to the appropriate insertion point.
+            parentBox = createLineBoxes(r->obj->parent());
+
+        // Append the inline box to this line.
+        parentBox->addToLine(r->box);
+
+        // Advance to the next run.
+        r = runs.next();
+    }
+
+    // We should have a root inline box.  It should be unconstructed and
+    // be the last continuation of our line list.
+    KHTMLAssert(lastLineBox() && !lastLineBox()->isConstructed());
+
+    // Set bits on our inline flow boxes that indicate which sides should
+    // paint borders/margins/padding.  This knowledge will ultimately be used when
+    // we determine the horizontal positions and widths of all the inline boxes on
+    // the line.
+    RenderObject* endObject = 0;
+    bool lastLine = !end.obj;
+    if (end.obj && end.pos == 0)
+        endObject = end.obj;
+    lastLineBox()->determineSpacingForFlowBoxes(lastLine, endObject);
+
+    // Now mark the line boxes as being constructed.
+    lastLineBox()->setConstructed();
+
+    // Return the last line.
+    return lastLineBox();
+}
+
+void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs,
+                                                    BidiContext* endEmbed)
+{
+    // First determine our total width.
+    int totWidth = lineBox->getFlowSpacingWidth();
+    BidiRun* r = runs.first();
+    while (r) {
+        if (r->obj->isText())
+            r->box->setWidth(static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine));
+        else if (!r->obj->isInlineFlow()) {
+            r->obj->calcWidth();
+            r->box->setWidth(r->obj->width());
+            totWidth += r->obj->marginLeft() + r->obj->marginRight();
+        }
+        totWidth += r->box->width();
+        r = runs.next();
+    }
+
+    // Armed with the total width of the line (without justification),
+    // we now examine our text-align property in order to determine where to position the
+    // objects horizontally.  The total width of the line can be increased if we end up
+    // justifying text.
+    int x = leftOffset(m_height);
+    int availableWidth = lineWidth(m_height);
+    switch(style()->textAlign()) {
+        case LEFT:
+            numSpaces = 0;
+            break;
+        case JUSTIFY:
+            if (numSpaces != 0 && !current.atEnd() && !current.obj->isBR() )
+                break;
+            // fall through
+        case TAAUTO:
+            numSpaces = 0;
+            // for right to left fall through to right aligned
+            if (endEmbed->basicDir == QChar::DirL)
+                break;
+        case RIGHT:
+            x += availableWidth - totWidth;
+            numSpaces = 0;
+            break;
+        case CENTER:
+        case KONQ_CENTER:
+            int xd = (availableWidth - totWidth)/2;
+            x += xd >0 ? xd : 0;
+            numSpaces = 0;
+            break;
+    }
+
+    r = runs.first();
+    while (r) {
+        int spaceAdd = 0;
+        if (numSpaces > 0 && r->obj->isText()) {
+            // get the number of spaces in the run
+            int spaces = 0;
+            for ( int i = r->start; i < r->stop; i++ )
+                if ( static_cast<RenderText *>(r->obj)->text()[i].direction() == QChar::DirWS )
+                    spaces++;
+            KHTMLAssert(spaces <= numSpaces);
+            spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
+            numSpaces -= spaces;
+            totWidth += spaceAdd;
+            static_cast<TextRun*>(r->box)->setSpaceAdd(spaceAdd);
+        }
+        r = runs.next();
+    }
+
+    // The widths of all runs are now known.  We can now place every inline box (and
+    // compute accurate widths for the inline flow boxes).
+    lineBox->placeBoxesHorizontally(x);
+}
+
+void RenderBlock::computeVerticalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs)
+{
+    lineBox->verticallyAlignBoxes(m_height);
+
+    // Now make sure we place replaced render objects correctly.
+    BidiRun* r = runs.first();
+    while (r) {
+        r->obj->position(r->box, r->box->yPos(), r->start, r->stop - r->start, r->level%2);
+        r = runs.next();
+    }    
+}
 
 // collects one line of the paragraph and transforms it to visual order
 void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator &end)
@@ -408,12 +683,13 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
         }
         return;
     }
+
 #if BIDI_DEBUG > 1
     kdDebug(6041) << "reordering Line from " << start.obj << "/" << start.pos << " to " << end.obj << "/" << end.pos << endl;
 #endif
 
     QPtrList<BidiRun> runs;
-    runs.setAutoDelete(true);
+    runs.setAutoDelete(false);
     sruns = &runs;
 
     //    context->ref();
@@ -856,147 +1132,20 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
     }
 #endif
 
-    int maxPositionTop = 0;
-    int maxPositionBottom = 0;
-    int maxAscent = 0;
-    int maxDescent = 0;
-    r = runs.first();
-    while ( r ) {
-        r->height = r->obj->lineHeight( m_firstLine );
-	r->baseline = r->obj->baselinePosition( m_firstLine );
-// 	if ( r->baseline > r->height )
-// 	    r->baseline = r->height;
-        r->vertical = r->obj->verticalPositionHint( m_firstLine );
-        //kdDebug(6041) << "object="<< r->obj << " height="<<r->height<<" baseline="<< r->baseline << " vertical=" << r->vertical <<endl;
-        //int ascent;
-        if ( r->vertical == PositionTop ) {
-            if ( maxPositionTop < r->height ) maxPositionTop = r->height;
-        }
-        else if ( r->vertical == PositionBottom ) {
-            if ( maxPositionBottom < r->height ) maxPositionBottom = r->height;
-        }
-        else {
-            int ascent = r->baseline - r->vertical;
-            int descent = r->height - ascent;
-            if(maxAscent < ascent) maxAscent = ascent;
-            if(maxDescent < descent) maxDescent = descent;
-        }
-        r = runs.next();
-    }
-    if ( maxAscent+maxDescent < QMAX( maxPositionTop, maxPositionBottom ) ) {
-        // now the computed lineheight needs to be extended for the
-        // positioned elements
-        // see khtmltests/rendering/html_align.html
-        // ### only iterate over the positioned ones!
-        for ( r = runs.first(); r; r = runs.next() ) {
-            if ( r->vertical == PositionTop ) {
-                if ( maxAscent + maxDescent < r->height )
-                    maxDescent = r->height - maxAscent;
-            }
-            else if ( r->vertical == PositionBottom ) {
-                if ( maxAscent + maxDescent < r->height )
-                    maxAscent = r->height - maxDescent;
-            }
-            else
-                continue;
+    // Now that the runs have been ordered, we create the line boxes.
+    // At the same time we figure out where border/padding/margin should be applied for
+    // inline flow boxes.
+    InlineFlowBox* lineBox = constructLine(runs, start, end);
+    if (!lineBox)
+        return;
 
-            if ( maxAscent + maxDescent >= QMAX( maxPositionTop, maxPositionBottom ) )
-                break;
+    // Now we position all of our text runs horizontally.
+    computeHorizontalPositionsForLine(lineBox, runs, endEmbed);
 
-        }
-    }
-    int maxHeight = maxAscent + maxDescent;
-    // CSS2: 10.8.1: line-height on the block level element specifies the *minimum*
-    // height of the generated line box
-    r = runs.first();
-    // ### we have no reliable way of detecting empty lineboxes - which
-    // are not allowed to have any height. sigh.(Dirk)
-//     if ( r ) {
-//         int blockHeight = lineHeight( firstLine );
-//         if ( blockHeight > maxHeight )
-//             maxHeight = blockHeight;
-//     }
-    int totWidth = 0;
-#if BIDI_DEBUG > 0
-    kdDebug( 6040 ) << "starting run.." << endl;
-#endif
-    while ( r ) {
-        if(r->vertical == PositionTop)
-            r->vertical = m_height;
-        else if(r->vertical == PositionBottom)
-            r->vertical = m_height + maxHeight - r->height;
-        else
-            r->vertical += m_height + maxAscent - r->baseline;
-
-#if BIDI_DEBUG > 0
-	kdDebug(6040) << "object="<< r->obj << " placing at vertical=" << r->vertical <<endl;
-#endif
-        if(r->obj->isText())
-            r->width = static_cast<RenderText *>(r->obj)->width(r->start, r->stop-r->start, m_firstLine);
-        else {
-            r->obj->calcWidth();
-            r->width = r->obj->width()+r->obj->marginLeft()+r->obj->marginRight();
-        }
-        totWidth += r->width;
-        r = runs.next();
-    }
-    //kdDebug(6040) << "yPos of line=" << m_height << "  lineBoxHeight=" << maxHeight << endl;
-
-    // now construct the reordered string out of the runs...
-
-    r = runs.first();
-    int x = leftOffset(m_height);
-    int availableWidth = lineWidth(m_height);
-    switch(style()->textAlign()) {
-    case LEFT:
-	numSpaces = 0;
-        break;
-    case JUSTIFY:
-        if(numSpaces != 0 && !current.atEnd() && !current.obj->isBR() )
-            break;
-	// fall through
-    case TAAUTO:
-	numSpaces = 0;
-        // for right to left fall through to right aligned
-	if ( endEmbed->basicDir == QChar::DirL )
-	    break;
-    case RIGHT:
-        x += availableWidth - totWidth;
-	numSpaces = 0;
-        break;
-    case CENTER:
-    case KONQ_CENTER:
-        int xd = (availableWidth - totWidth)/2;
-        x += xd>0?xd:0;
-	numSpaces = 0;
-        break;
-    }
-    while ( r ) {
-#if BIDI_DEBUG > 1
-        kdDebug(6040) << "positioning " << r->obj << " start=" << r->start << " stop=" << r->stop << " yPos=" << r->vertical << endl;
-#endif
-	int spaceAdd = 0;
-	if ( numSpaces > 0 ) {
-	    if ( r->obj->isText() ) {
-		// get number of spaces in run
-		int spaces = 0;
-		for ( int i = r->start; i < r->stop; i++ )
-		    if ( static_cast<RenderText *>(r->obj)->text()[i].direction() == QChar::DirWS )
-			spaces++;
-		if ( spaces > numSpaces ) // should never happen...
-		    spaces = numSpaces;
-		spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
-		numSpaces -= spaces;
-		totWidth += spaceAdd;
-	    }
-	}
-        r->obj->position(x, r->vertical, r->start, r->stop - r->start, r->width, r->level%2, m_firstLine, spaceAdd);
-        x += r->width + spaceAdd;
-        r = runs.next();
-    }
-
-    m_height += maxHeight;
-
+    // Now position our text runs vertically.
+    computeVerticalPositionsForLine(lineBox, runs);
+    
+    deleteBidiRuns(renderArena());
     sruns = 0;
 }
 
@@ -1033,10 +1182,14 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
 
     m_height += paddingTop();
     toAdd += paddingBottom();
+
+    // Clear out our line boxes.
+    deleteLineBoxes();
     
-    if(firstChild()) {
+    if (firstChild()) {
         // layout replaced elements
-        RenderObject *o = first( this );
+        bool endOfInline = false;
+        RenderObject *o = first( this, false );
         while ( o ) {
             if(o->isReplaced() || o->isFloating() || o->isPositioned()) {
                 //kdDebug(6041) << "layouting replaced or floating child" << endl;
@@ -1047,9 +1200,11 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                 if(o->isPositioned())
                     o->containingBlock()->insertSpecialObject(o);
             }
-            else if(o->isText())
+            else if(o->isText()) // FIXME: Should be able to combine deleteLineBoxes/Runs
                 static_cast<RenderText *>(o)->deleteRuns();
-            o = Bidinext( this, o );
+            else if (o->isInlineFlow() && !endOfInline)
+                static_cast<RenderFlow*>(o)->deleteLineBoxes();
+            o = Bidinext( this, o, false, &endOfInline);
         }
 
         BidiContext *startEmbed;
@@ -1224,6 +1379,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
             } else if(o->isPositioned()) {
                 o->containingBlock()->insertSpecialObject(o);
             }
+        } else if (o->isInlineFlow()) {
+            // Only empty inlines matter.  We treat those similarly to replaced elements.
+            KHTMLAssert(!o->firstChild());
+            tmpW += o->marginLeft()+o->borderLeft()+o->paddingLeft()+
+                    o->marginRight()+o->borderRight()+o->paddingRight();
         } else if ( o->isReplaced() ) {
             if (o->style()->whiteSpace() != NOWRAP || last->style()->whiteSpace() != NOWRAP) {
                 w += tmpW;
@@ -1232,7 +1392,7 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
                 lBreak.pos = 0;
             }
 
-            tmpW += o->width()+o->marginLeft()+o->marginRight();
+            tmpW += o->width()+o->marginLeft()+o->marginRight()+inlineWidth(o);
             if (ignoringSpaces) {
                 BidiIterator* startMid = new (o->renderArena()) BidiIterator();
                 startMid->obj = o;
@@ -1275,9 +1435,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
             int lastSpace = pos;
             bool isPre = o->style()->whiteSpace() == PRE;
             int wordSpacing = o->style()->wordSpacing();
-            
-            //QChar space[1]; space[0] = ' ';
-            //int spaceWidth = f->width(space, 1, 0);
+
+            bool appliedStartWidth = pos > 0; // If the span originated on a previous line,
+                                              // then assume the start width has been applied.
+            bool appliedEndWidth = false;
+
             while(len) {
                 //XXXdwh This is wrong. Still mutating the DOM
                 // string for newlines... will fix in second stage.
@@ -1314,6 +1476,11 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
                     if (currentCharacterIsSpace && !previousCharacterIsSpace)
                         lastSpacePos = pos;
                     tmpW += t->width(lastSpace, pos - lastSpace, f);
+                    if (!appliedStartWidth) {
+                        tmpW += inlineWidth(o, true, false);
+                        appliedStartWidth = true;
+                    }
+                    
                     applyWordSpacing = (wordSpacing && currentCharacterIsSpace && !previousCharacterIsSpace &&
                         t->containsOnlyWhitespace(pos+1, strlen-(pos+1)));
 
@@ -1406,6 +1573,10 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
             // IMPORTANT: pos is > length here!
             if (!ignoringSpaces)
                 tmpW += t->width(lastSpace, pos - lastSpace, f);
+            if (!appliedStartWidth)
+                tmpW += inlineWidth(o, true, false);
+            if (!appliedEndWidth)
+                tmpW += inlineWidth(o, false, true);
         } else
             KHTMLAssert( false );
 
@@ -1561,3 +1732,5 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, QPtrList<BidiIt
 #undef BIDI_DEBUG
 #undef DEBUG_LINEBREAKS
 #undef DEBUG_LAYOUT
+
+}

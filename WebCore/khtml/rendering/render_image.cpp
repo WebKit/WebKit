@@ -204,7 +204,8 @@ void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
                 //qDebug("qDrawShadePanel %d/%d/%d/%d", _tx + leftBorder, _ty + topBorder, cWidth, cHeight);
                 p->setPen (Qt::lightGray);
                 p->setBrush (Qt::NoBrush);
-                p->drawRect (_tx, _ty, cWidth, cHeight);
+                p->drawRect (_tx + leftBorder + leftPad, _ty + topBorder + topPad,
+                             cWidth, cHeight);
 	    }
 #else /* not APPLE_CHANGES */
             if ( !berrorPic ) {

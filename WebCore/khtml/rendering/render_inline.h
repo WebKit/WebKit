@@ -63,7 +63,7 @@ public:
     virtual short offsetWidth() const;
     virtual int offsetHeight() const;
     virtual int offsetLeft() const;
-    virtual int offsetTop() const;    
+    virtual int offsetTop() const;
 };
 
 }; // namespace

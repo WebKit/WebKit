@@ -1382,3 +1382,9 @@ void RenderObject::scheduleRelayout(RenderObject* clippedObj)
 void RenderObject::removeLeftoverAnonymousBoxes()
 {
 }
+
+InlineBox* RenderObject::createInlineBox()
+{
+    return new (renderArena()) InlineBox(this);
+}
+

@@ -90,9 +90,16 @@ public:
     void layoutInlineChildren( bool relayoutChildren );
     void layoutSpecialObjects( bool relayoutChildren );
 
-    // the implementation of the following two functions is in bidi.cpp
+    // the implementation of the following functions is in bidi.cpp
     void bidiReorderLine(const BidiIterator &start, const BidiIterator &end);
     BidiIterator findNextLineBreak(BidiIterator &start, QPtrList<BidiIterator>& midpoints);
+    InlineFlowBox* constructLine(QPtrList<BidiRun>& runs, const BidiIterator& start,
+                             const BidiIterator& end);
+    InlineFlowBox* createLineBoxes(RenderObject* obj);
+    void computeHorizontalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs,
+                                           BidiContext* endEmbed);
+    void computeVerticalPositionsForLine(InlineFlowBox* lineBox, QPtrList<BidiRun>& runs);
+    // end bidi.cpp functions
     
     virtual void paint(QPainter *, int x, int y, int w, int h,
                        int tx, int ty, PaintAction paintAction);

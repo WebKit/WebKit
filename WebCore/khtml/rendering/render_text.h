@@ -28,6 +28,7 @@
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_textimpl.h"
 #include "rendering/render_object.h"
+#include "rendering/render_flow.h"
 
 #include <qptrvector.h>
 #include <assert.h>
@@ -40,22 +41,17 @@ namespace khtml
     class RenderText;
     class RenderStyle;
 
-class TextRun
+class TextRun : public InlineBox
 {
 public:
-    TextRun(int x, int y, int start, int len,
-	      int baseline, int width,
-              bool reversed = false, int toAdd = 0, bool firstLine = false)
+    TextRun(RenderObject* obj)
+    :InlineBox(obj)
     {
-        m_x = x;
-        m_y = y;
-        m_start = start;
-        m_len = len;
-        m_baseline = baseline;
-        m_width = width;
-        m_reversed = reversed;
-        m_firstLine = firstLine;
-        m_toAdd = toAdd;
+        m_start = 0;
+        m_len = 0;
+        m_baseline = 0;
+        m_reversed = false;
+        m_toAdd = 0;
     }
     
     void detach(RenderArena* renderArena);
@@ -72,7 +68,11 @@ private:
     void* operator new(size_t sz) throw();
 
 public:
+    void setSpaceAdd(int add) { m_width -= m_toAdd; m_toAdd = add; m_width += m_toAdd; }
+    int spaceAdd() { return m_toAdd; }
 
+    virtual bool isTextRun() { return true; }
+    
 #ifdef APPLE_CHANGES
     void paintDecoration( QPainter *pt, const Font *, RenderText* p,
                           int _tx, int _ty, int decoration, bool begin, bool end, int from=-1, int to=-1);
@@ -94,18 +94,15 @@ public:
     { if((_ty + m_y > _y + _h) || (_ty + m_y + m_baseline + height < _y)) return false; return true; }
 
     int m_start;
-    int m_y;
     unsigned short m_len;
-    short m_x;
     unsigned short m_baseline;
-    unsigned short m_width;
-
+    
     bool m_reversed : 1;
-    bool m_firstLine : 1;
     int m_toAdd : 14; // for justified text
 private:
     // this is just for QVector::bsearch. Don't use it otherwise
     TextRun(int _x, int _y)
+        :InlineBox(0)
     {
         m_x = _x;
         m_y = _y;
@@ -148,6 +145,8 @@ public:
     DOM::DOMString data() const { return str; }
     DOM::DOMStringImpl *string() const { return str; }
 
+    virtual InlineBox* createInlineBox();
+    
     virtual void layout() {assert(false);}
 
     virtual bool nodeAtPoint(NodeInfo& info, int x, int y, int tx, int ty, bool inside = false);
@@ -159,7 +158,7 @@ public:
     unsigned int length() const { return str->l; }
     QChar *text() const { return str->s; }
     unsigned int stringLength() const { return str->l; } // non virtual implementation of length()
-    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int spaceAdd);
+    virtual void position(InlineBox* box, int y, int from, int len, bool reverse);
 
     virtual unsigned int width(unsigned int from, unsigned int len, const Font *f) const;
     virtual unsigned int width(unsigned int from, unsigned int len, bool firstLine = false) const;

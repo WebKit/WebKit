@@ -36,6 +36,8 @@
 #include "html/html_formimpl.h"
 #include "render_inline.h"
 #include "render_block.h"
+#include "render_arena.h"
+#include "render_line.h"
 
 #include "khtmlview.h"
 #include "htmltags.h"
@@ -125,5 +127,41 @@ void RenderFlow::addChild(RenderObject *newChild, RenderObject *beforeChild)
     if (continuation())
         return addChildWithContinuation(newChild, beforeChild);
     return addChildToFlow(newChild, beforeChild);
+}
+
+void RenderFlow::deleteLineBoxes(RenderArena* arena)
+{
+    if (m_firstLineBox) {
+        if (!arena)
+            arena = renderArena();
+        InlineRunBox *curr=m_firstLineBox, *next=0;
+        while (curr) {
+            next = curr->nextLineBox();
+            curr->detach(arena);
+            curr = next;
+        }
+        m_firstLineBox = 0;
+        m_lastLineBox = 0;
+    }
+}
+
+void RenderFlow::detach(RenderArena* renderArena)
+{
+    deleteLineBoxes(renderArena);
+    RenderBox::detach(renderArena);
+}
+
+InlineBox* RenderFlow::createInlineBox()
+{
+    InlineFlowBox* flowBox = new (renderArena()) InlineFlowBox(this);
+    if (!m_firstLineBox)
+        m_firstLineBox = m_lastLineBox = flowBox;
+    else {
+        m_lastLineBox->setNextLineBox(flowBox);
+        flowBox->setPreviousLineBox(m_lastLineBox);
+        m_lastLineBox = flowBox;
+    }
+
+    return flowBox;
 }
 

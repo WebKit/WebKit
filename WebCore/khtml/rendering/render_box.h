@@ -83,7 +83,7 @@ public:
     // shifted. -dwh
     void calcHorizontalMargins(const Length& ml, const Length& mr, int cw);
 
-    virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int);
+    virtual void position(InlineBox* box, int y, int from, int len, bool reverse);
     
     virtual int lowestPosition() const;
     virtual int rightmostPosition() const;

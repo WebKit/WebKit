@@ -26,6 +26,7 @@
 
 #include "render_box.h"
 #include "bidi.h"
+#include "render_line.h"
 
 namespace khtml {
 
@@ -43,7 +44,7 @@ class RenderFlow : public RenderBox
 public:
     RenderFlow(DOM::NodeImpl* node)
       : RenderBox(node)
-      { m_continuation = 0; }
+    { m_continuation = 0; m_firstLineBox = 0; m_lastLineBox = 0; }
     
     virtual RenderFlow* continuation() const { return m_continuation; }
     void setContinuation(RenderFlow* c) { m_continuation = c; }
@@ -55,12 +56,26 @@ public:
 
     static RenderFlow* createFlow(DOM::NodeImpl* node, RenderStyle* style, RenderArena* arena);
 
+    void deleteLineBoxes(RenderArena* arena=0);
+    virtual void detach(RenderArena* arena);
+
+    InlineFlowBox* firstLineBox() { return m_firstLineBox; }
+    InlineFlowBox* lastLineBox() { return m_lastLineBox; }
+
+    virtual InlineBox* createInlineBox();
+    
 protected:
     // An inline can be split with blocks occurring in between the inline content.
     // When this occurs we need a pointer to our next object.  We can basically be
     // split into a sequence of inlines and blocks.  The continuation will either be
     // an anonymous block (that houses other blocks) or it will be an inline flow.
     RenderFlow* m_continuation;
+
+    // For block flows, each box represents the root inline box for a line in the
+    // paragraph.
+    // For inline flows, each box represents a portion of that inline.
+    InlineFlowBox* m_firstLineBox;
+    InlineFlowBox* m_lastLineBox;
 };
 
     

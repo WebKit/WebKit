@@ -99,13 +99,6 @@ void RenderTable::setStyle(RenderStyle *_style)
     }
 }
 
-void RenderTable::position(int x, int y, int, int, int, bool, bool, int)
-{
-    //for inline tables only
-    m_x = x + marginLeft();
-    m_y = y + marginTop();
-}
-
 short RenderTable::lineHeight(bool b) const
 {
     // Inline tables are replaced elements. Otherwise, just pass off to
@@ -1173,6 +1166,7 @@ void RenderTableSection::paint( QPainter *p, int x, int y, int w, int h,
 		break;
 	}
     }
+    
     if ( startcol < endcol ) {
 	// draw the cells
 	for ( unsigned int r = startrow; r < endrow; r++ ) {
@@ -1435,8 +1429,7 @@ void RenderTableCell::close()
 
 void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
-    y += _topExtra;
-    RenderBlock::repaintRectangle(x, y, w, h, immediate, f);
+    RenderBlock::repaintRectangle(x, y, w, h+_topExtra+_bottomExtra, immediate, f);
 }
 
 bool RenderTableCell::absolutePosition(int &xPos, int &yPos, bool f)
@@ -1505,7 +1498,7 @@ void RenderTableCell::paint(QPainter *p, int _x, int _y,
 
     // check if we need to do anything at all...
     if(!overhangingContents() && ((_ty-_topExtra > _y + _h)
-        || (_ty + m_height+_topExtra+_bottomExtra < _y))) return;
+        || (_ty + m_height + _bottomExtra < _y))) return;
 
     paintObject(p, _x, _y, _w, _h, _tx, _ty, paintAction);
 

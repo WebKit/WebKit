@@ -1,3 +1,75 @@
+2003-02-10  David Hyatt  <hyatt@apple.com>
+
+	Inline box model landing, stage 1.  Doesn't really change
+	much of anything visually yet.  Just builds a bunch of boxes
+	and positions them, but those boxes aren't used yet.
+
+	Also fixing repaint() to understand not to dirty outside
+	overflow:hidden clipped ancestors.
+
+	Fixed two table bugs in table painting as well.
+	
+        Reviewed by kocienda
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/bidi.h:
+        * khtml/rendering/render_block.cpp:
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::position):
+        (RenderBox::repaintRectangle):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::addChild):
+        (RenderFlow::deleteLineBoxes):
+        (RenderFlow::detach):
+        (RenderFlow::createInlineBox):
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject):
+        * khtml/rendering/render_inline.cpp:
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_line.cpp: Added.
+        (InlineBox::detach):
+        (throw):
+        (InlineBox::operator delete):
+        (InlineFlowBox::marginLeft):
+        (InlineFlowBox::marginRight):
+        (InlineFlowBox::marginBorderPaddingLeft):
+        (InlineFlowBox::marginBorderPaddingRight):
+        (InlineFlowBox::getFlowSpacingWidth):
+        (InlineFlowBox::nextOnLineExists):
+        (InlineFlowBox::prevOnLineExists):
+        (InlineFlowBox::onEndChain):
+        (InlineFlowBox::determineSpacingForFlowBoxes):
+        (InlineFlowBox::placeBoxesHorizontally):
+        (InlineFlowBox::verticallyAlignBoxes):
+        (InlineFlowBox::adjustMaxAscentAndDescent):
+        (InlineFlowBox::computeLogicalBoxHeights):
+        (InlineFlowBox::placeBoxesVertically):
+        * khtml/rendering/render_line.h: Added.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createInlineBox):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        * khtml/rendering/render_replaced.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTableSection::paint):
+        (RenderTableCell::repaintRectangle):
+        (RenderTableCell::paint):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::nodeAtPoint):
+        (RenderText::paintObject):
+        (RenderText::height):
+        (RenderText::createInlineBox):
+        (RenderText::position):
+        (RenderText::width):
+        (RenderText::metrics):
+        * khtml/rendering/render_text.h:
+        * khtml/xml/dom_docimpl.h:
+
 2003-02-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

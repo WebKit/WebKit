@@ -437,12 +437,10 @@ bool RenderBox::absolutePosition(int &xPos, int &yPos, bool f)
     }
 }
 
-void RenderBox::position(int x, int y, int, int, int, bool, bool, int)
+void RenderBox::position(InlineBox* box, int y, int from, int len, bool reverse)
 {
-    m_x = x + marginLeft();
-    m_y = y;
-    // ### paddings
-    //m_width = width;
+    m_x = box->xPos();
+    m_y = y + marginTop();
 }
 
 void RenderBox::repaint(bool immediate)
@@ -454,6 +452,19 @@ void RenderBox::repaint(bool immediate)
 
 void RenderBox::repaintRectangle(int x, int y, int w, int h, bool immediate, bool f)
 {
+    if (style()->overflow() == OHIDDEN) {
+        int ow = style() ? style()->outlineWidth() : 0;
+        QRect boxRect(-ow, -ow, overflowWidth()+ow*2, overflowHeight()+ow*2);
+        QRect repaintRect(x, y, w, h);
+        if (!repaintRect.intersects(boxRect))
+            return;
+        repaintRect = repaintRect.intersect(boxRect);
+        x = repaintRect.x();
+        y = repaintRect.y();
+        w = repaintRect.width();
+        h = repaintRect.height();
+    }
+        
     x += m_x;
     y += m_y;
     
