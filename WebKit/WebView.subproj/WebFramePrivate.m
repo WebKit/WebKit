@@ -132,6 +132,27 @@ static const char * const stateNames[] = {
 
 @implementation WebFrame (WebPrivate)
 
+- (WebFrame *)_descendantFrameNamed:(NSString *)name
+{
+    if ([[self name] isEqualToString: name]){
+        return self;
+    }
+
+    NSArray *children = [self children];
+    WebFrame *frame;
+    unsigned i;
+
+    for (i = 0; i < [children count]; i++){
+        frame = [children objectAtIndex: i];
+        frame = [frame _descendantFrameNamed:name];
+        if (frame){
+            return frame;
+        }
+    }
+
+    return nil;
+}
+
 - (void)_controllerWillBeDeallocated
 {
     [self _detachFromParent];
@@ -830,7 +851,7 @@ static const char * const stateNames[] = {
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];   
 }
 
-- (WebPluginController *)pluginController
+- (WebPluginController *)_pluginController
 {
     if(!_private->pluginController){
         _private->pluginController = [[WebPluginController alloc] initWithWebFrame:self];

@@ -112,14 +112,7 @@ WebCoreBridge *KWQKHTMLPartImpl::bridgeForFrameName(const QString &frameName)
             frame = _bridge;
         }
     } else {
-        frame = [_bridge descendantFrameNamed:frameName.getNSString()];
-	if (frame == nil) {
-	    frame = [_bridge frameNamed:frameName.getNSString()];
-	}
-        if (frame == nil) {
-	    frame = [_bridge createWindowWithURL:nil frameName:frameName.getNSString()];
-            [frame showWindow];
-        }
+        frame = [_bridge findOrCreateFramedNamed:frameName.getNSString()];
     }
     
     return frame;

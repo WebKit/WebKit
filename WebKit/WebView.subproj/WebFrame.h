@@ -119,15 +119,26 @@
 - (void)reload;
 
 /*!
-    @method frameNamed:
-    @discussion This method returns a frame with the given name. frameNamed returns self 
+    @method findFrameNamed:
+    @discussion This method returns a frame with the given name. findFrameNamed returns self 
     for _self and _current, the parent frame for _parent and the main frame for _top. 
-    frameNamed returns self for _parent and _top if the receiver it is the mainFrame. 
-    nil is returned if a frame with the given name is not found.
+    findFrameNamed returns self for _parent and _top if the receiver it is the mainFrame.
+    findFrameNamed first searches from the current frame to all descending frames then the
+    rest of the frames in the controller. If still not found, findFrameNamed searches the
+    frames of the other controllers.
     @param name The name of the frame to find.
-    @result The frame matching the provided name.
+    @result The frame matching the provided name. nil if the frame is not found.
 */
-- (WebFrame *)frameNamed:(NSString *)name;
+- (WebFrame *)findFrameNamed:(NSString *)name;
+
+/*!
+     @method findOrCreateFramedNamed:
+     @discussion This method calls findFrameNamed but if no frame is found, a new window is opened
+     and the main frame of the new window is named with the given name.
+     @param name The name of the frame to find.
+     @result The frame matching the provided name. Won't be nil.
+*/
+- (WebFrame *)findOrCreateFramedNamed:(NSString *)name;
 
 /*!
     @method parent
@@ -141,5 +152,6 @@
     @result Returns an array of WebFrame.
 */
 - (NSArray *)children;
+
 
 @end

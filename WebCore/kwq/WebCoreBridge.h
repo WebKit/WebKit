@@ -170,10 +170,9 @@ enum FrameBorderStyle {
 @protocol WebCoreBridge
 
 - (NSArray *)childFrames; // WebCoreBridge objects
-- (WebCoreBridge *)descendantFrameNamed:(NSString *)name;
-
 - (WebCoreBridge *)mainFrame;
-- (WebCoreBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
+- (WebCoreBridge *)findFramedNamed:(NSString *)name;
+- (WebCoreBridge *)findOrCreateFramedNamed:(NSString *)name;
 
 - (void)loadURL:(NSURL *)URL;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType;

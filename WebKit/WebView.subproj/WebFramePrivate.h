@@ -78,10 +78,9 @@ typedef enum {
 @end
 
 @interface WebFrame (WebPrivate)
-
+- (WebFrame *)_descendantFrameNamed:(NSString *)name;
 - (void)_controllerWillBeDeallocated;
 - (void)_detachFromParent;
-
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
 - (void)_transitionToCommitted;
@@ -110,6 +109,6 @@ typedef enum {
 
 - (void)_addChild:(WebFrame *)child;
 
-- (WebPluginController *)pluginController;
+- (WebPluginController *)_pluginController;
 
 @end

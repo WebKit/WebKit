@@ -66,7 +66,7 @@ void KHTMLPartBrowserExtension::createNewWindow(const KURL &url,
     WebCoreBridge *bridge;
 
     if (frameName != nil) {
-	bridge = [m_part->impl->bridge() frameNamed:frameName];
+	bridge = [m_part->impl->bridge() findFramedNamed:frameName];
 	if (bridge != nil) {
 	    if (!url.isEmpty()) {
 		[bridge openURL:url.getNSURL()];

@@ -224,7 +224,7 @@
     if ([_private->topLevelFrameName isEqualToString:name]) {
 	return [self mainFrame];
     } else {
-	return [[self mainFrame] frameNamed:name];
+	return [[self mainFrame] _descendantFrameNamed:name];
     }
 }
 

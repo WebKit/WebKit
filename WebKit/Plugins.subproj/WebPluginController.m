@@ -97,11 +97,7 @@
         return;
     }
 
-    WebFrame *otherFrame = [frame frameNamed:target];
-    if(!otherFrame){
-        // FIXME: Open new window instead of return.
-        return;
-    }
+    WebFrame *otherFrame = [frame findOrCreateFramedNamed:target];
 
     WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:[WebResourceRequest requestWithURL:URL]];
     if(!dataSource){

@@ -1,3 +1,13 @@
+2002-10-25  Chris Blumenberg  <cblu@apple.com>
+
+	Cleaned up the frame searching shenanigans. Things are much cleaner and clearer now.
+
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        (KHTMLPartBrowserExtension::createNewWindow): call findFrameNamed
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::bridgeForFrameName): call findOrCreateFramedNamed
+        * kwq/WebCoreBridge.h:
+
 2002-10-25  Maciej Stachowiak  <mjs@apple.com>
 
 	- fixed 3065638 - "undefined" output to screen on empty document.write()

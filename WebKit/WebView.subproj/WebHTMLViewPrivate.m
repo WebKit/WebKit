@@ -149,8 +149,8 @@ BOOL _modifierTrackingEnabled = FALSE;
     NSString *frameName = [elementInfoWC objectForKey:WebCoreElementLinkTarget];
     if ([frameName length] == 0) {
         [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
-    } else if (![frameName isEqualToString:@"_blank"]) {
-        [elementInfo _web_setObjectIfNotNil:[webFrame frameNamed:frameName] forKey:WebElementLinkTargetFrameKey];
+    } else {
+        [elementInfo _web_setObjectIfNotNil:[webFrame findFrameNamed:frameName] forKey:WebElementLinkTargetFrameKey];
     }
 
     [elementInfo setObject:webFrame forKey:WebElementFrameKey];

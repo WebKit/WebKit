@@ -199,33 +199,7 @@
     [newDataSource release];
 }
 
-
-+ _frameNamed:(NSString *)name fromFrame: (WebFrame *)aFrame
-{
-    int i, count;
-    WebFrame *foundFrame;
-    NSArray *children;
-
-    if ([[aFrame name] isEqualToString: name])
-        return aFrame;
-
-    children = [aFrame children];
-    count = [children count];
-    for (i = 0; i < count; i++){
-        aFrame = [children objectAtIndex: i];
-        foundFrame = [WebFrame _frameNamed: name fromFrame: aFrame];
-        if (foundFrame)
-            return foundFrame;
-    }
-    
-    // FIXME:  Need to look in other controller's frame namespaces.
-
-    // FIXME:  What do we do if a frame name isn't found?  create a new window
-    
-    return nil;
-}
-
-- (WebFrame *)frameNamed:(NSString *)name
+- (WebFrame *)findFrameNamed:(NSString *)name
 {
     // First, deal with 'special' names.
     if ([name isEqualToString:@"_self"] || [name isEqualToString:@"_current"]){
@@ -242,11 +216,40 @@
     }
     
     if ([name isEqualToString:@"_blank"]) {
-        return [[[self controller] _openNewWindowWithURL:nil referrer:nil behind:NO] mainFrame];
+        return nil;
     }
+
+    // Search from this frame down.
+    WebFrame *frame = [self _descendantFrameNamed:name];
+
+    if(!frame){
+        // Search in this controller and other controllers.
+        frame = [[self controller] frameNamed:name];
+    }
+
+    return frame;
+}
+
+- (WebFrame *)findOrCreateFramedNamed:(NSString *)name
+{
+    WebFrame *frame = [self findFrameNamed:name];
+
+    if(!frame){
+        WebController *controller = [[[self controller] windowOperationsDelegate]
+                                        createWindowWithURL:nil referrer:[[self _bridge] referrer]];
+        
+        if(![name isEqualToString:@"_blank"]){
+            [controller _setTopLevelFrameName:name];
+        }
+        
+        [[controller windowOperationsDelegate] showWindow];
+        
+        frame = [controller mainFrame];
+    }
+
+    ASSERT(frame);
     
-    // Now search the name space associated with this frame's controller.
-    return [WebFrame _frameNamed:name fromFrame:[[self controller] mainFrame]];
+    return frame;
 }
 
 - (WebFrame *)parent

@@ -791,35 +791,26 @@
             return NPERR_INVALID_URL;
         }
     }else{
-        WebFrame *frame = [[self webFrame] frameNamed:target];
-        if(!frame){
-            // FIXME: Why is it OK to just discard all the attributes in this case?
-            // FIXME: Do we need a referrer here?
-            [[self controller] _openNewWindowWithURL:URL referrer:nil behind:NO];
-            // FIXME: Need to send NPP_URLNotify at the right time.
-            // FIXME: Need to name new frame
-            if(notifyData){
-                NPP_URLNotify(instance, [[URL absoluteString] cString], NPRES_DONE, notifyData);
+        WebFrame *frame = [[self webFrame] findOrCreateFramedNamed:target];
+
+        if(notifyData){
+            if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] && 
+                ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
+
+                [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
+                [[NSNotificationCenter defaultCenter] addObserver:self 
+                    selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
             }
-        }else{
-            if(notifyData){
-                if(![target isEqualToString:@"_self"] && ![target isEqualToString:@"_current"] && 
-                    ![target isEqualToString:@"_parent"] && ![target isEqualToString:@"_top"]){
-    
-                    [notificationData setObject:[NSValue valueWithPointer:notifyData] forKey:URL];
-                    [[NSNotificationCenter defaultCenter] addObserver:self 
-                        selector:@selector(frameStateChanged:) name:WebFrameStateChangedNotification object:frame];
-                }
-                // Plug-in docs say to return NPERR_INVALID_PARAM here
-                // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
-                // so we have to allow this as well. Needed for iTools.
-            }
-            WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
-            if ([frame setProvisionalDataSource:dataSource]) {
-                [frame startLoading];
-            }
-            [dataSource release];
+            // Plug-in docs say to return NPERR_INVALID_PARAM here
+            // but IE allows an NPP_*URLNotify when the target is _self, _current, _parent or _top
+            // so we have to allow this as well. Needed for iTools.
         }
+        
+        WebDataSource *dataSource = [[WebDataSource alloc] initWithRequest:request];
+        if ([frame setProvisionalDataSource:dataSource]) {
+            [frame startLoading];
+        }
+        [dataSource release];
     }
     
     return NPERR_NO_ERROR;

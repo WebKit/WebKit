@@ -1,3 +1,31 @@
+2002-10-25  Chris Blumenberg  <cblu@apple.com>
+
+	Cleaned up the frame searching shenanigans. Things are much cleaner and clearer now.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): call findOrCreateFramedNamed
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController showURL:inFrame:]): call findOrCreateFramedNamed
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge childFrames]): moved
+        (-[WebBridge mainFrame]): moved
+        (-[WebBridge findOrCreateFramedNamed:]): call findOrCreateFramedNamed on the frame
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]): call _pluginController
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _frameInThisWindowNamed:]): call _descendantFrameNamed
+        * WebView.subproj/WebFrame.h:
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame findFrameNamed:]): was frameNamed. First checks special-case frame names, descendant frames, then the whole controller, then other controllers.
+        (-[WebFrame findOrCreateFramedNamed:]): calls findFrameNamed, opens new window if necessary 
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _descendantFrameNamed:]): searches children, children's children etc.
+        (-[WebFrame _pluginController]): this method needed an "_"
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView addSubview:]): call _pluginController
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _elementAtPoint:]): no need to special case for "_blank" since findFrameNamed will return nil for that name
+
 2002-10-25  Trey Matteson  <trey@apple.com>
 	
 	2919039 - Implement limit on back/forward history list

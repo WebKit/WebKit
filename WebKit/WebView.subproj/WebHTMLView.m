@@ -239,7 +239,7 @@
     [super addSubview:view];
 
     if([view conformsToProtocol:@protocol(WebPlugin)]){
-        [[[self _frame] pluginController] didAddPluginView:view];
+        [[[self _frame] _pluginController] didAddPluginView:view];
     }
 }
 

@@ -62,6 +62,7 @@
 
 - (NSArray *)childFrames
 {
+    ASSERT(frame != nil);
     NSArray *frames = [frame children];
     NSEnumerator *e = [frames objectEnumerator];
     NSMutableArray *frameBridges = [NSMutableArray arrayWithCapacity:[frames count]];
@@ -74,10 +75,22 @@
     return frameBridges;
 }
 
-- (WebCoreBridge *)descendantFrameNamed:(NSString *)name
+- (WebCoreBridge *)mainFrame
 {
     ASSERT(frame != nil);
-    return [[frame frameNamed:name] _bridge];
+    return [[[frame controller] mainFrame] _bridge];
+}
+
+- (WebCoreBridge *)findFramedNamed:(NSString *)name;
+{
+    ASSERT(frame != nil);
+    return [[frame findFrameNamed:name] _bridge];
+}
+
+- (WebCoreBridge *)findOrCreateFramedNamed:(NSString *)name
+{
+    ASSERT(frame != nil);
+    return [[frame findOrCreateFramedNamed:name] _bridge];
 }
 
 - (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name
@@ -151,18 +164,6 @@
 {
     ASSERT(frame != nil);
     [[[frame controller] windowOperationsDelegate] setStatusText:status];
-}
-
-- (WebCoreBridge *)mainFrame
-{
-    ASSERT(frame != nil);
-    return [[[frame controller] mainFrame] _bridge];
-}
-
-- (WebCoreBridge *)frameNamed:(NSString *)name
-{
-    ASSERT(frame != nil);
-    return [[[frame controller] frameNamed:name] _bridge];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
@@ -429,7 +430,7 @@
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL
 {
-    WebPluginController *pluginController = [frame pluginController];
+    WebPluginController *pluginController = [frame _pluginController];
     
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
         baseURL, WebPluginBaseURLKey,
