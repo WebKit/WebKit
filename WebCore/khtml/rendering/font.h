@@ -100,11 +100,11 @@ class Font
 public:
 #if APPLE_CHANGES
     Font() : letterSpacing(0), wordSpacing(0) {}
-    Font(const FontDef &fd) : fontDef(fd), letterSpacing(0), wordSpacing(0) {}
+    Font(const FontDef &fd, int l, int w) : fontDef(fd), letterSpacing(l), wordSpacing(w) {}
 #else
     Font() : fontDef(), f(), fm( f ), scFont( 0 ), letterSpacing( 0 ), wordSpacing( 0 ) {}
-    Font( const FontDef &fd )
-        :  fontDef( fd ), f(), fm( f ), scFont( 0 ), letterSpacing( 0 ), wordSpacing( 0 )
+    Font( const FontDef &fd, int l, int w )
+        :  fontDef( fd ), f(), fm( f ), scFont( 0 ), letterSpacing( l ), wordSpacing( w )
         {}
 #endif
 

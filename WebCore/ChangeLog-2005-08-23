@@ -1,5 +1,16 @@
 2003-11-09  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3478317, letter/word-spacing don't inherit properly through italic/bold elements.
+	
+        Reviewed by darin
+
+        * khtml/rendering/font.h:
+        (khtml::Font::Font):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::setFontDef):
+
+2003-11-09  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3478309, make sure backgrounds paint in the border box and not just in the padding box.
 	
         Reviewed by darin
