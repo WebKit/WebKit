@@ -1,5 +1,39 @@
 2002-11-08  Darin Adler  <darin@apple.com>
 
+	- changed persistent dictionaries to use NSString instead of NSURL
+	because of impact on memory footprint
+
+	Also changed WebIconDatabase code to verify what it reads from disk,
+	and ignore it if it can't verify the format.
+
+        * Misc.subproj/WebIconDatabase.m:
+        (-[WebIconDatabase iconForSiteURL:withSize:cache:]):
+        (-[WebIconDatabase retainIconForSiteURL:]):
+        (-[WebIconDatabase releaseIconForSiteURL:]):
+        (-[WebIconDatabase _iconDictionariesAreGood]):
+        (-[WebIconDatabase _loadIconDictionaries]):
+        (-[WebIconDatabase _updateFileDatabase]):
+        (-[WebIconDatabase _hasIconForSiteURL:]):
+        (-[WebIconDatabase _iconsForIconURLString:]):
+        (-[WebIconDatabase _setIcon:forIconURL:]):
+        (-[WebIconDatabase _setIconURL:forSiteURL:]):
+        (-[WebIconDatabase _setBuiltInIconAtPath:forHost:]):
+        (-[WebIconDatabase _retainIconForIconURLString:]):
+        (-[WebIconDatabase _releaseIconForIconURLString:]):
+        (-[WebIconDatabase _retainFutureIconForSiteURL:]):
+        (-[WebIconDatabase _releaseFutureIconForSiteURL:]):
+        (-[WebIconDatabase _retainOriginalIconsOnDisk]):
+        (-[WebIconDatabase _releaseOriginalIconsOnDisk]):
+        (-[NSEnumerator _web_isAllStrings]):
+        * Panels.subproj/WebStandardPanels.m:
+        (-[WebStandardPanels didStartLoadingURL:inWindow:]):
+        (-[WebStandardPanels didStopLoadingURL:inWindow:]):
+        (-[WebStandardPanels _didStartLoadingURL:inController:]):
+        (-[WebStandardPanels _didStopLoadingURL:inController:]):
+        (-[WebStandardPanels frontmostWindowLoadingURL:]):
+
+2002-11-08  Darin Adler  <darin@apple.com>
+
 	- fixed crash on boot that Don was seeing
 
         * History.subproj/WebHistoryItem.m:

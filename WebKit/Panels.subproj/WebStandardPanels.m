@@ -109,11 +109,13 @@ static void initSharedStandardPanels(void)
     ASSERT_ARG(URL, URL);
     ASSERT_ARG(window, window);
     
-    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+    NSString *URLString = [URL absoluteString];
+    
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URLString];
 
     if (set == nil) {
 	set = [NSCountedSet set];
-	[_privatePanels->URLContainers setObject:set forKey:URL];
+	[_privatePanels->URLContainers setObject:set forKey:URLString];
     }
 
     [set addObject:window];
@@ -124,7 +126,9 @@ static void initSharedStandardPanels(void)
     ASSERT_ARG(URL, URL);
     ASSERT_ARG(window, window);
     
-    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+    NSString *URLString = [URL absoluteString];
+    
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URLString];
 
     ASSERT([set containsObject:window]);
 
@@ -135,7 +139,7 @@ static void initSharedStandardPanels(void)
     [set removeObject:window];
     
     if ([set count] == 0) {
-	[_privatePanels->URLContainers removeObjectForKey:URL];
+	[_privatePanels->URLContainers removeObjectForKey:URLString];
     }
 }
 
@@ -144,11 +148,13 @@ static void initSharedStandardPanels(void)
     ASSERT_ARG(URL, URL);
     ASSERT_ARG(controller, controller);
     
-    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+    NSString *URLString = [URL absoluteString];
+    
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URLString];
 
     if (set == nil) {
 	set = [NSCountedSet set];
-	[_privatePanels->URLContainers setObject:set forKey:URL];
+	[_privatePanels->URLContainers setObject:set forKey:URLString];
     }
 
     [set addObject:controller];
@@ -159,7 +165,9 @@ static void initSharedStandardPanels(void)
     ASSERT_ARG(URL, URL);
     ASSERT_ARG(controller, controller);
     
-    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+    NSString *URLString = [URL absoluteString];
+    
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URLString];
 
     ASSERT([set containsObject:controller]);
 
@@ -170,7 +178,7 @@ static void initSharedStandardPanels(void)
     [set removeObject:controller];
     
     if ([set count] == 0) {
-	[_privatePanels->URLContainers removeObjectForKey:URL];
+	[_privatePanels->URLContainers removeObjectForKey:URLString];
     }
 }
 
@@ -190,7 +198,9 @@ static BOOL WindowInFront(NSWindow *a, NSWindow *b)
 
 -(NSWindow *)frontmostWindowLoadingURL:(NSURL *)URL
 {
-    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URL];
+    NSString *URLString = [URL absoluteString];
+    
+    NSCountedSet *set = [_privatePanels->URLContainers objectForKey:URLString];
 
     if (set == nil) {
 	return nil;
