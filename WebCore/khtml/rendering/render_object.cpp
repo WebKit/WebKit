@@ -1372,10 +1372,14 @@ bool RenderObject::shouldSelect() const
 {
     const RenderObject* curr = this;
     DOM::NodeImpl *node = 0;
+    bool forcedOn = false;
 
     while (curr) {
-        if (!curr->style()->userSelect())
+        if (curr->style()->userSelect() == SELECT_TEXT)
+	    forcedOn = true;
+        if (!forcedOn && curr->style()->userSelect() == SELECT_NONE)
             return false;
+
 	if (!node)
 	    node = curr->element();
         curr = curr->parent();

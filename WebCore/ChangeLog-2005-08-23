@@ -1,3 +1,21 @@
+2004-06-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	<rdar://problem/3695907>: (can't enable selection inside parent where it is disabled via CSS)
+
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseValue): 
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::applyProperty):
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::shouldSelect):
+        * khtml/rendering/render_style.h:
+        (khtml::):
+        (khtml::RenderStyle::userSelect):
+        (khtml::RenderStyle::setUserSelect):
+        (khtml::RenderStyle::initialUserSelect):
+
 2004-06-15  David Hyatt  <hyatt@apple.com>
 
 	Initial impl of the EllipsisBox.  This code just gets the box created and gets it placed vertically.  The next
