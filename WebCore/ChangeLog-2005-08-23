@@ -1,3 +1,23 @@
+2004-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	<rdar://problem/3721428> REGRESSION (125.8-146): external javascript statements produce extra garbage character (sina.com)
+        
+	* khtml/misc/stringit.h:
+        (khtml::TokenizerSubstring::TokenizerSubstring): For the apple branch, use the new
+	stableUnicode() method to get the unicode pointer.
+        * kwq/KWQString.h:
+        * kwq/KWQString.mm:
+        (QString::detachIfInternal): Reorganize this to be a bit less wacky about refcounts.
+	It does not leave around a zombie internal data handle but rather destroys it right away,
+	and leaves the object pointing to the new handle (which it can then deref). This makes
+	the code more clear.
+        (QString::~QString): Simplify.
+        (QString::stableUnicode): New method that detaches a copy of the KWQStringData if it
+	is internal to a string besides this one. This guarantees that if you get the unicode()
+	pointer, it won't go bad so long as this string is still alive.
+
 2004-07-19  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3715117, crash from a bug in removeChildren.  Clean up node removal and fix an n-squared removal

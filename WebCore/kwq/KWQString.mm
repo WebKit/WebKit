@@ -809,48 +809,51 @@ NSString *QString::getNSString() const
     return nil;
 }
 
-inline void QString::detachInternal()
-{
-    KWQStringData *oldData = *dataHandle;
-    KWQStringData *newData = new KWQStringData(*oldData);
-    newData->_isHeapAllocated = 1;
-    newData->refCount = oldData->refCount - 1;
-    oldData->refCount = 1;
-    *dataHandle = newData;    
-}
-
 inline void QString::detachIfInternal()
 {
     KWQStringData *oldData = *dataHandle;
     if (oldData->refCount > 1 && oldData == &internalData) {
-        detachInternal();
+	KWQStringData *newData = new KWQStringData(*oldData);
+	newData->_isHeapAllocated = 1;
+	newData->refCount = oldData->refCount;
+	oldData->refCount = 1;
+	oldData->deref();
+	*dataHandle = newData;    
     }
 }
 
+const QChar *QString::stableUnicode()
+{
+    // if we're using the internal data of another string, detach now
+    if (!dataHandle[0]->_isHeapAllocated && *dataHandle != &internalData) {
+	detach();
+    }
+    return unicode();
+}
+
+
 QString::~QString()
 {
-    KWQStringData **oldHandle = dataHandle;
-    KWQStringData *oldData = *oldHandle;
-    
-    ASSERT(oldHandle);
-    ASSERT(oldData->refCount != 0);
+    ASSERT(dataHandle);
+    ASSERT(dataHandle[0]->refCount != 0);
 
     // Only free the handle if no other string has a reference to the
     // data.  The handle will be freed by the string that has the
     // last reference to data.
-    bool needToFreeHandle = oldData->refCount == 1 && oldData != shared_null;
+    bool needToFreeHandle = dataHandle[0]->refCount == 1 && *dataHandle != shared_null;
 
     // Copy our internal data if necessary, other strings still need it.
     detachIfInternal();
     
     // Remove our reference. This should always be the last reference
-    // if *dataHandle points to our internal KWQStringData.
-    oldData->deref();
+    // if *dataHandle points to our internal KWQStringData. If we just detached,
+    // this will remove the extra ref from the new handle.
+    dataHandle[0]->deref();
 
-    ASSERT(oldData != &internalData || oldData->refCount == 0);
+    ASSERT(*dataHandle != &internalData || dataHandle[0]->refCount == 0);
     
     if (needToFreeHandle)
-        freeHandle(oldHandle);
+        freeHandle(dataHandle);
 
     dataHandle = 0;
 }
