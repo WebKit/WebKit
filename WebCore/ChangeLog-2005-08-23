@@ -1,3 +1,14 @@
+2004-12-05  Darin Adler  <darin@apple.com>
+
+        - fixed small problem in my check-in from yesterday
+
+        * kwq/KWQEvent.mm:
+        (positionForEvent): Get location from event without raising exception if it's the wrong type.
+        (clickCountForEvent): Same, for clickCount.
+        (QMouseEvent::QMouseEvent): Use the new helper functions so this can be constructed even with
+        the wrong type of NSEvent. Required for cases where a keyboard event causes a "click" and we need
+        to synthesize a QMouseEvent for KHTML internal use, using the key down NSEvent.
+
 2004-12-04  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

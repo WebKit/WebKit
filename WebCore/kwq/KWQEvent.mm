@@ -746,6 +746,42 @@ static int nonMouseButtonsForEvent(NSEvent *event)
     return buttons;
 }
 
+static QPoint positionForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+            return QPoint([event locationInWindow]);
+        default:
+            return QPoint();
+    }
+}
+
+static int clickCountForEvent(NSEvent *event)
+{
+    switch ([event type]) {
+        case NSLeftMouseDown:
+        case NSLeftMouseUp:
+        case NSLeftMouseDragged:
+        case NSRightMouseDown:
+        case NSRightMouseUp:
+        case NSRightMouseDragged:
+        case NSOtherMouseDown:
+        case NSOtherMouseUp:
+        case NSOtherMouseDragged:
+            return [event clickCount];
+        default:
+            return 0;
+    }
+}
+
 // ======== 
 
 QEvent::~QEvent()
@@ -762,10 +798,10 @@ QMouseEvent::QMouseEvent(Type type, const QPoint &position, int button, int stat
 
 QMouseEvent::QMouseEvent(Type type, NSEvent *event)
     : QEvent(type)
-    , _position([event locationInWindow])
+    , _position(positionForEvent(event))
     , _button(mouseButtonForEvent(event))
     , _state(nonMouseButtonsForEvent(event))
-    , _clickCount([event clickCount])
+    , _clickCount(clickCountForEvent(event))
 {
     fixState();
 }
@@ -775,10 +811,10 @@ QMouseEvent::QMouseEvent(Type type)
 {
     NSEvent *event = [NSApp currentEvent];
     if (event) {
-        _position = QPoint([event locationInWindow]);
+        _position = positionForEvent(event);
         _button = mouseButtonForEvent(event);
         _state = nonMouseButtonsForEvent(event);
-        _clickCount = [event clickCount];
+        _clickCount = clickCountForEvent(event);
     }
     fixState();
 }
