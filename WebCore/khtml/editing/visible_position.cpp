@@ -544,10 +544,10 @@ bool isFirstVisiblePositionInBlock(const VisiblePosition &pos)
         case NoBlockRelationship:
         case SameBlockRelationship:
         case AncestorBlockRelationship:
+        case OtherBlockRelationship:
             return false;
         case PeerBlockRelationship:
         case DescendantBlockRelationship:
-        case OtherBlockRelationship:
             return true;
     }
     ASSERT_NOT_REACHED();
@@ -584,11 +584,11 @@ bool isLastVisiblePositionInBlock(const VisiblePosition &pos)
     switch (blockRelationship(pos, next)) {
         case NoBlockRelationship:
         case SameBlockRelationship:
+        case AncestorBlockRelationship:
         case DescendantBlockRelationship:
+        case OtherBlockRelationship:
             return false;
         case PeerBlockRelationship:
-        case AncestorBlockRelationship:
-        case OtherBlockRelationship:
             return true;
     }
     ASSERT_NOT_REACHED();

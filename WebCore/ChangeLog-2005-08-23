@@ -1,5 +1,41 @@
 2004-12-16  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+        
+        Fix for this bug:
+        
+        <rdar://problem/3918351> REGRESSION (Mail, 173-175+): Return before first char of line leaves insertion point in wrong place
+        
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertParagraphSeparatorCommand::doApply): Basically, did a rewrite of this function
+        to do a better job than it was doing before. Added several test cases to prove I am on a 
+        better track.
+        * khtml/editing/visible_position.cpp:
+        (khtml::isFirstVisiblePositionInBlock): Tweaked the rules a bit to fix an issue very similar to the
+        leaving-the-bar-node case problem I just fixed in a recent checkin (relevant markup: <p>foo</p>bar).
+        This function was returning true for the first position in "bar". Wrong. Also tightened up other 
+        rule: Should not report true when relationship between blocks cannot be determined.
+        (khtml::isLastVisiblePositionInBlock): Tightened up rule as above: Should not report true 
+        when relationship between blocks cannot be determined.
+        * layout-tests/editing/inserting/insert-div-010-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-010.html: Added.
+        * layout-tests/editing/inserting/insert-div-011-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-011.html: Added.
+        * layout-tests/editing/inserting/insert-div-012-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-012.html: Added.
+        * layout-tests/editing/inserting/insert-div-013-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-013.html: Added.
+        * layout-tests/editing/inserting/insert-div-014-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-014.html: Added.
+        * layout-tests/editing/inserting/insert-div-015-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-015.html: Added.
+        * layout-tests/editing/inserting/insert-div-016-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-016.html: Added.
+        * layout-tests/editing/inserting/insert-div-017-expected.txt: Added.
+        * layout-tests/editing/inserting/insert-div-017.html: Added.
+            
+2004-12-16  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
         
         Added a layout test based on my last checkin.

@@ -2217,14 +2217,73 @@ void InsertParagraphSeparatorCommand::doApply()
             rebalanceWhitespace();
             return;
         }
-        pos = endingSelection().start().upstream();
+        pos = endingSelection().start();
     }
-    
+
     // Find the start block.
     NodeImpl *startNode = pos.node();
     NodeImpl *startBlock = startNode->enclosingBlockFlowElement();
     if (!startBlock || !startBlock->parentNode())
         return;
+
+    VisiblePosition visiblePos(pos);
+    bool isFirstInBlock = isFirstVisiblePositionInBlock(visiblePos);
+    bool isLastInBlock = isLastVisiblePositionInBlock(visiblePos);
+    bool startBlockIsRoot = startBlock == startBlock->rootEditableElement();
+
+    // This is the block that is going to be inserted.
+    NodeImpl *blockToInsert = startBlockIsRoot ? createParagraphElement() : startBlock->cloneNode(false);
+    
+    //---------------------------------------------------------------------
+    // Handle empty block case.
+    if (isFirstInBlock && isLastInBlock) {
+        LOG(Editing, "insert paragraph separator: empty block case");
+        if (startBlockIsRoot) {
+            NodeImpl *extraBlock = createParagraphElement();
+            appendNode(extraBlock, startBlock);
+            insertBlockPlaceholderIfNeeded(extraBlock);
+            appendNode(blockToInsert, startBlock);
+        }
+        else {
+            insertNodeAfter(blockToInsert, startBlock);
+        }
+        insertBlockPlaceholderIfNeeded(blockToInsert);
+        setEndingSelection(Position(blockToInsert, 0));
+        return;
+    }
+
+    //---------------------------------------------------------------------
+    // Handle case when position is in the first visible position in its block.
+    // and similar case where upstream position is in another block.
+    bool upstreamInDifferentBlock = startBlock != pos.upstream(DoNotStayInBlock).node()->enclosingBlockFlowElement();
+    if (upstreamInDifferentBlock || isFirstInBlock) {
+        LOG(Editing, "insert paragraph separator: first in block case");
+        pos = pos.downstream(StayInBlock);
+        insertNodeBefore(blockToInsert, startBlockIsRoot ? pos.node() : startBlock);
+        insertBlockPlaceholderIfNeeded(blockToInsert);
+        setEndingSelection(pos);
+        return;
+    }
+
+    //---------------------------------------------------------------------
+    // Handle case when position is in the last visible position in its block, 
+    // and similar case where downstream position is in another block.
+    bool downstreamInDifferentBlock = startBlock != pos.downstream(DoNotStayInBlock).node()->enclosingBlockFlowElement();
+    if (downstreamInDifferentBlock || isLastInBlock) {
+        LOG(Editing, "insert paragraph separator: last in block case");
+        insertNodeAfter(blockToInsert, startBlockIsRoot ? pos.node() : startBlock);
+        insertBlockPlaceholderIfNeeded(blockToInsert);
+        setEndingSelection(Position(blockToInsert, 0));
+        return;
+    }
+
+    //---------------------------------------------------------------------
+    // Handle the (more complicated) general case,
+
+    LOG(Editing, "insert paragraph separator: general case");
+
+    // Put the added block in the tree.
+    insertNodeAfter(blockToInsert, startBlockIsRoot ? pos.node() : startBlock);
 
     // Build up list of ancestors in between the start node and the start block.
     if (startNode != startBlock) {
@@ -2232,94 +2291,65 @@ void InsertParagraphSeparatorCommand::doApply()
             ancestors.prepend(n);
     }
 
-    // Make new block to represent the newline.
-    // If the start block is the body, just make a P tag, otherwise, make a shallow clone
-    // of the the start block.
-    NodeImpl *addedBlock = 0;
-    if (startBlock == startBlock->rootEditableElement()) {
-        if (startBlock->renderer() && !startBlock->renderer()->firstChild()) {
-            // No rendered kids in the root editable element.
-            // Just inserting a <p> in this situation is not enough, since this operation
-            // is supposed to add an additional user-visible line to the content.
-            // So, insert an extra <p> to make the one we insert right appear as the second
-            // line in the root editable element.
-            NodeImpl *extraBlock = createParagraphElement();
-            appendNode(extraBlock, startBlock);
-            insertBlockPlaceholderIfNeeded(extraBlock);
+    // Split at pos if in the middle of a text node.
+    if (startNode->isTextNode()) {
+        TextImpl *textNode = static_cast<TextImpl *>(startNode);
+        bool atEnd = (unsigned long)pos.offset() >= textNode->length();
+        if (pos.offset() > 0 && !atEnd) {
+            SplitTextNodeCommand *splitCommand = new SplitTextNodeCommand(document(), textNode, pos.offset());
+            EditCommandPtr cmd(splitCommand);
+            applyCommandToComposite(cmd);
+            startNode = splitCommand->node();
+            pos = Position(startNode, 0);
         }
-        addedBlock = createParagraphElement();
-        appendNode(addedBlock, startBlock);
-    }
-    else {
-        addedBlock = startBlock->cloneNode(false);
-        insertNodeAfter(addedBlock, startBlock);
-    }
-    addedBlock->ref();
-    insertBlockPlaceholderIfNeeded(addedBlock);
-    clonedNodes.append(addedBlock);
-
-    if (!isLastVisiblePositionInNode(VisiblePosition(pos), startBlock)) {
-        // Split at pos if in the middle of a text node.
-        if (startNode->isTextNode()) {
-            TextImpl *textNode = static_cast<TextImpl *>(startNode);
-            bool atEnd = (unsigned long)pos.offset() >= textNode->length();
-            if (pos.offset() > 0 && !atEnd) {
-                SplitTextNodeCommand *splitCommand = new SplitTextNodeCommand(document(), textNode, pos.offset());
-                EditCommandPtr cmd(splitCommand);
-                applyCommandToComposite(cmd);
-                startNode = splitCommand->node();
-                pos = Position(startNode, 0);
-            }
-            else if (atEnd) {
-                startNode = startNode->traverseNextNode();
-                ASSERT(startNode);
-            }
-        }
-        else if (pos.offset() > 0) {
+        else if (atEnd) {
             startNode = startNode->traverseNextNode();
             ASSERT(startNode);
         }
-
-        // Make clones of ancestors in between the start node and the start block.
-        NodeImpl *parent = addedBlock;
-        for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
-            NodeImpl *child = it.current()->cloneNode(false); // shallow clone
-            child->ref();
-            clonedNodes.append(child);
-            appendNode(child, parent);
-            parent = child;
-        }
-
-        // Move the start node and the siblings of the start node.
-        if (startNode != startBlock) {
-            NodeImpl *n = startNode;
-            if (n->id() == ID_BR)
-                n = n->nextSibling();
-            while (n && n != addedBlock) {
-                NodeImpl *next = n->nextSibling();
-                removeNode(n);
-                appendNode(n, parent);
-                n = next;
-            }
-        }            
-
-        // Move everything after the start node.
-        NodeImpl *leftParent = ancestors.last();
-        while (leftParent && leftParent != startBlock) {
-            parent = parent->parentNode();
-            NodeImpl *n = leftParent->nextSibling();
-            while (n) {
-                NodeImpl *next = n->nextSibling();
-                removeNode(n);
-                appendNode(n, parent);
-                n = next;
-            }
-            leftParent = leftParent->parentNode();
-        }
     }
-    
-    // Put the selection right at the start of the added block.
-    setEndingSelection(Position(addedBlock, 0));
+    else if (pos.offset() > 0) {
+        startNode = startNode->traverseNextNode();
+        ASSERT(startNode);
+    }
+
+    // Make clones of ancestors in between the start node and the start block.
+    NodeImpl *parent = blockToInsert;
+    for (QPtrListIterator<NodeImpl> it(ancestors); it.current(); ++it) {
+        NodeImpl *child = it.current()->cloneNode(false); // shallow clone
+        child->ref();
+        clonedNodes.append(child);
+        appendNode(child, parent);
+        parent = child;
+    }
+
+    // Move the start node and the siblings of the start node.
+    if (startNode != startBlock) {
+        NodeImpl *n = startNode;
+        if (n->id() == ID_BR)
+            n = n->nextSibling();
+        while (n && n != blockToInsert) {
+            NodeImpl *next = n->nextSibling();
+            removeNode(n);
+            appendNode(n, parent);
+            n = next;
+        }
+    }            
+
+    // Move everything after the start node.
+    NodeImpl *leftParent = ancestors.last();
+    while (leftParent && leftParent != startBlock) {
+        parent = parent->parentNode();
+        NodeImpl *n = leftParent->nextSibling();
+        while (n) {
+            NodeImpl *next = n->nextSibling();
+            removeNode(n);
+            appendNode(n, parent);
+            n = next;
+        }
+        leftParent = leftParent->parentNode();
+    }
+
+    setEndingSelection(Position(blockToInsert, 0));
     rebalanceWhitespace();
 }
 
