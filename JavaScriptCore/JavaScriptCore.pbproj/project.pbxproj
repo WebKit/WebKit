@@ -205,7 +205,6 @@
 				F692A8CC02555BA201FF60F7,
 				F692A8CD02555BA201FF60F7,
 				F68EBB8E0255D4C601FF60F7,
-				F68EBB8F0255D4C601FF60F7,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -360,7 +359,6 @@
 				F692A8870255597D01FF60F7,
 				F692A8880255597D01FF60F7,
 				F68EBB8C0255D4C601FF60F7,
-				F68EBB8D0255D4C601FF60F7,
 			);
 			isa = PBXGroup;
 			name = Classes;
@@ -421,23 +419,8 @@
 			path = kjs/config.h;
 			refType = 4;
 		};
-		F68EBB8D0255D4C601FF60F7 = {
-			isa = PBXFileReference;
-			name = KWQDef.h;
-			path = kjs/KWQDef.h;
-			refType = 4;
-		};
 		F68EBB8E0255D4C601FF60F7 = {
 			fileRef = F68EBB8C0255D4C601FF60F7;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Public,
-				);
-			};
-		};
-		F68EBB8F0255D4C601FF60F7 = {
-			fileRef = F68EBB8D0255D4C601FF60F7;
 			isa = PBXBuildFile;
 			settings = {
 				ATTRIBUTES = (

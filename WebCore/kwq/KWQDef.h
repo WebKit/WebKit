@@ -30,10 +30,13 @@
 #include <config.h>
 #endif
 
+#ifndef KWQ_UNSIGNED_TYPES_DEFINED
+#define KWQ_UNSIGNED_TYPES_DEFINED
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned uint;
 typedef unsigned long ulong;
+#endif
 
 typedef char Q_INT8;
 typedef short Q_INT16;  

@@ -1,3 +1,12 @@
+2002-04-01  Darin Adler  <darin@apple.com>
+
+        Got rid of KWQDef.h because it's dangerous to have two files with
+        the same name and different contents.
+
+	* JavaScriptCore.pbproj/project.pbxproj:
+	* kjs/KWQDef.h: Removed.
+	* kjs/ustring.h: Defines unsigned int types inline now.
+
 2002-03-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed Radar 2891272 (JavaScript crashes loading quicktime.com and

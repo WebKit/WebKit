@@ -1,5 +1,10 @@
 2002-04-01  Darin Adler  <darin@apple.com>
 
+	* src/kwq/KWQDef.h: Use KWQ_UNSIGNED_TYPES_DEFINED for compatibility with code
+        in JavaScriptCore that has to do the same thing.
+
+2002-04-01  Darin Adler  <darin@apple.com>
+
 	* src/kdelibs/khtml/khtmlview.cpp: (KHTMLView::restoreScrollBar): Disable code
         that checks if the scroll bar is visible, because it currently doesn't do us
         any good. We may want to turn it back on if we ever implement setVScrollBarMode.
