@@ -10,16 +10,16 @@
 
 #import <WebFoundation/WebError.h>
 
-@class WebPluginErrorPrivate;
+@class WebPlugInErrorPrivate;
 
 /*!
-    @class WebPluginError
-    @discussion WebPluginError is a subclass of WebError that is specific to plug-in related errors.
+    @class WebPlugInError
+    @discussion WebPlugInError is a subclass of WebError that is specific to plug-in related errors.
 */
-@interface WebPluginError : WebError
+@interface WebPlugInError : WebError
 {
 @private
-    WebPluginErrorPrivate *_private;
+    WebPlugInErrorPrivate *_private;
 }
 
 /*!
@@ -27,16 +27,19 @@
     @result The URL of the data that caused the error
 */
 - (NSString *)contentURL;
+
 /*!
-    @method pluginPageURL
+    @method plugInPageURL
     @result Description forthcoming
 */
-- (NSString *)pluginPageURL;
+- (NSString *)plugInPageURL;
+
 /*!
-    @method pluginName
+    @method pluInName
     @result The name of plugin that experienced the error
 */
-- (NSString *)pluginName;
+- (NSString *)plugInName;
+
 /*!
     @method MIMEType
     @result The MIME type of the data that caused the error

@@ -147,13 +147,13 @@ extern NSString *WebPreferencesChangedNotification;
     @method userStyleSheetLocation
     @discussion The user style sheet is stored as a URL string, e.g. "file://<etc>"
 */
-- (NSString *)userStyleSheetLocation;
+- (NSURL *)userStyleSheetLocation;
 
 /*!
     @method setUserStyleSheetLocation:
     @param string
 */
-- (void)setUserStyleSheetLocation:(NSString *)string;
+- (void)setUserStyleSheetLocation:(NSURL *)string;
 
 /*!
     @method JavaEnabled

@@ -82,14 +82,14 @@
     if (![thePlugin load]){
         // FIXME: It would be nice to stop the load here.
 
-        WebPluginError *error = [WebPluginError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
+        WebPlugInError *error = [WebPlugInError pluginErrorWithCode:WebKitErrorCannotLoadPlugin
                                                          contentURL:[[[theDataSource request] URL] absoluteString]
                                                       pluginPageURL:nil
                                                          pluginName:[thePlugin name]
                                                            MIMEType:MIME];
         
         WebView *c = [[theDataSource webFrame] webView];
-        [[c _resourceLoadDelegateForwarder] webView:c pluginFailedWithError:error dataSource:theDataSource];
+        [[c _resourceLoadDelegateForwarder] webView:c plugInFailedWithError:error dataSource:theDataSource];
         
         return;
     }

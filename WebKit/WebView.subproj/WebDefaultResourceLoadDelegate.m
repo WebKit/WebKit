@@ -54,7 +54,7 @@ static WebDefaultResourceLoadDelegate *sharedDelegate = nil;
 {
 }
 
-- (void)webView: (WebView *)wv pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource
+- (void)webView: (WebView *)wv plugInFailedWithError:(WebPlugInError *)error dataSource:(WebDataSource *)dataSource
 {
 }
 

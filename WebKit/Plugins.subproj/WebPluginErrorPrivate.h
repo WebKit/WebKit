@@ -9,9 +9,9 @@
 
 #import <WebKit/WebPluginError.h>
 
-@interface WebPluginError (WebPrivate)
+@interface WebPlugInError (WebPrivate)
 
-+ (WebPluginError *)pluginErrorWithCode:(int)code
++ (WebPlugInError *)pluginErrorWithCode:(int)code
                              contentURL:(NSString *)contentURL
                           pluginPageURL:(NSString *)URL
                              pluginName:(NSString *)pluginName

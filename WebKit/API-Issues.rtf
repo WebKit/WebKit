@@ -3,7 +3,7 @@
 }
 {\colortbl;\red255\green255\blue255;\red0\green0\blue221;\red0\green99\blue18;\red118\green15\blue80;
 \red84\green0\blue0;\red35\green110\blue37;}
-\margl1440\margr1440\vieww16540\viewh12180\viewkind0
+\margl1440\margr1440\vieww15360\viewh16060\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \f0\b\fs24 \cf0 API Cleanup:
@@ -20,31 +20,10 @@
 \f1\fs24 \cf0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f2\fs20 \cf0 \CocoaLigature0 + put class methods from WebContentTypes back on WebController (WebView)\
-move isDocumentHTML off WebFrameView and WebDataSource\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\f2\fs20 \cf0 \CocoaLigature0 + move isDocumentHTML off WebFrameView and WebDataSource\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f1\fs24 \cf2 \CocoaLigature1 Why are these class methods? Global per-program settings seem wrong for these. They needs to be settable per-controller.\
-\
-+ (void)setUsesPageCache: (BOOL)flag;\
-+ (BOOL)usesPageCache;\
-+ (void)setPageCacheSize: (unsigned)size;\
-+ (unsigned)pageCacheSize;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Yes, good point.\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 Is it an entry or an item? Let's pick one of Item or Entry and stick to it, in both class names and method names.\
-\
-- (void)addEntry:(WebHistoryItem *)entry;\
-- (void)goToEntry:(WebHistoryItem *)entry;\
-- (WebHistoryItem *)currentEntry;\
-- (WebHistoryItem *)forwardEntry;\
-- (BOOL)containsEntry:(WebHistoryItem *)entry;\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 We will standardize on Item.\
-\
+\f1\fs24 \cf0 \CocoaLigature1 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 \
 It seems non-parallel that WebHistory has change notifications but WebBackForwardList doesn't.\
@@ -52,16 +31,6 @@ It seems non-parallel that WebHistory has change notifications but WebBackForwar
 \cf0 Yes, this is not good.  It's an artifact of implementation, not intentional design.\
 \
 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-\cf2 + (WebHistory *)createSharedHistoryWithFile: (NSString*)file;\
-\
-how about this (seems closer to existing Cocoa practice):\
-\
-+(void)setSharedHistory:(WebHistory *)history\
-\
-Same issue about entry vs. item for history.\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Good suggestion.\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 WebHistoryPrivate.h (not included, but I looked) includes WebHistory methods with no leading underscore. Private methods should start with an underscore.\
@@ -108,17 +77,6 @@ The direction in new APIs has been to use URL instead of file names where applic
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 \
-Seems like a whole lot of convenience; why not just\
-\
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
-
-\f2\fs20 \cf2 - (void)addEntries:(NSArray *)newEntries;\
-- (void)removeEntries:(NSArray *)entries;
-\f1\fs24 \cf2 \
-\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
-\cf0 Yes, this suggestion is reasonable.  Add removeAll.\
-\
-\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li400\ql\qnatural
 
 \f2\fs20 \cf3 - (NSArray *)orderedLastVisitedDays;\
@@ -266,4 +224,53 @@ loadsImagesAutomatically, ... ?\
 Thanks!\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
 \cf2 Ali\
+\
+\
+Add loadWithData:baseURL: to WebFrame\
+\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Looking over the 3/19 headers you sent, I noticed that some of the WebView delegate methods don't follow the Cocoa naming conventions for delegate (and notification) methods--specifically, not all of them use the keywords "will", and "did" consistently. For example, the WebLocationChangeDelegate informal protocol has a webView:willCloseLocationForDataSource: method but all of the other method names do not conform to this style. On the other hand, most of the methods in WebResourceLoadDelegate conform to this style except one. Also, some of the names use "forDataSource", and others use "fromDataSource" (which seems confusing since the sender is now a WebView).\
+\
+Here's some suggestions for renaming the methods that don't conform to this style:\
+\
+\
+WebLocationChangeDelegate\
+\
+- webView:willChangeLocationForDataSource:\
+- webView:didRedirectServer:forDataSource:\
+- webView:didCommitLocationChangeForDataSource:\
+- webView:didReceivePageTitle:forDataSource:\
+- webView:didReceivePageIcon:forDataSource:\
+- webView:didFinishLocationChangeWithError:ForDataSource:\
+\
+Actually, perhaps -webView:didStartLocationChangeForDataSource: is more accurate. - Nancy\
+\
+\
+WebResourceLoadDelegate\
+\
+- webView:plugInDidFailWithError:forDataSource:\
+\
+** For consistency, all the "fromDataSource" text should be replaced with "forDataSource"?\
+*** Also, replace "plugin" with "plugIn".\
+\
+\
+- Nancy\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li200\ql\qnatural
+\cf2 \
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 Richard,\
+\
+Shouldn't the WebHistory -addItems: and -removeItems: methods be named:\
+\
+- addItemsFromArray:\
+- removeItemsInArray:\
+\
+See NSArray, NSMutableArray, NSBundle, and NSSet for similar method names.\
+\
+- Nancy\
+\
+P.S. The WebHistory.h file you dropped a few days ago doesn't contain the file->URL changes you mentioned. Can't write the method descriptions for this class until I get the new headers.\cf2 \
 }

@@ -374,7 +374,7 @@
     [_private->settings setWillLoadImagesAutomatically:[preferences willLoadImagesAutomatically]];
 
     if ([preferences userStyleSheetEnabled]) {
-        [_private->settings setUserStyleSheetLocation:[preferences userStyleSheetLocation]];
+        [_private->settings setUserStyleSheetLocation:[[preferences userStyleSheetLocation] absoluteString]];
     } else {
         [_private->settings setUserStyleSheetLocation:@""];
     }

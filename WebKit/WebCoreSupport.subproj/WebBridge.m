@@ -587,7 +587,7 @@
     }
 
     if(errorCode){
-        WebPluginError *error = [WebPluginError pluginErrorWithCode:errorCode
+        WebPlugInError *error = [WebPlugInError pluginErrorWithCode:errorCode
                                                          contentURL:URL
                                                       pluginPageURL:[attributes objectForKey:@"pluginspage"]
                                                          pluginName:[pluginPackage name]
@@ -634,7 +634,7 @@
     }
 
     if(!view){
-        WebPluginError *error = [WebPluginError pluginErrorWithCode:WebKitErrorJavaUnavailable
+        WebPlugInError *error = [WebPlugInError pluginErrorWithCode:WebKitErrorJavaUnavailable
                                                          contentURL:nil
                                                       pluginPageURL:nil
                                                          pluginName:[pluginPackage name]

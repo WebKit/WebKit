@@ -1,3 +1,39 @@
+2003-03-25  Richard Williamson   <rjw@apple.com>
+
+        Changed use of plugin to plugIn in our public API
+        as instructed by those that must be obeyed.
+        
+        Reviewed by Trey.
+
+        Changed userStyleSheetLocation to take/pass an NSURL.
+        
+        Reviewed by Chris
+        
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]):
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebNullPluginView.m:
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins.subproj/WebPluginError.h:
+        * Plugins.subproj/WebPluginError.m:
+        (-[WebPlugInError plugInPageURL]):
+        (-[WebPlugInError plugInName]):
+        * Plugins.subproj/WebPluginErrorPrivate.h:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]):
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:plugInFailedWithError:dataSource:]):
+        * WebView.subproj/WebPreferences.h:
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences userStyleSheetLocation]):
+        (-[WebPreferences setUserStyleSheetLocation:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _updateWebCoreSettingsFromPreferences:]):
+
+        * API-Issues.rtf:  notes to self
+
 2003-03-25  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3135385 - many file types don't work with the QuickTime plugin in Safari

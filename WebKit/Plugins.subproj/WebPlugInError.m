@@ -1,5 +1,5 @@
 //
-//  WebPluginError.m
+//  WebPlugInError.m
 //  WebKit
 //
 //  Created by Chris Blumenberg on Fri Nov 01 2002.
@@ -7,10 +7,10 @@
 //
 
 #import <WebKit/WebKitErrors.h>
-#import <WebKit/WebPluginErrorPrivate.h>
+#import <WebKit/WebPlugInErrorPrivate.h>
 
 
-@interface WebPluginErrorPrivate : NSObject
+@interface WebPlugInErrorPrivate : NSObject
 {
 @public
     NSString *contentURL;
@@ -21,7 +21,7 @@
 
 @end
 
-@implementation WebPluginErrorPrivate
+@implementation WebPlugInErrorPrivate
 
 - (void)dealloc
 {
@@ -34,7 +34,7 @@
 
 @end
 
-@implementation WebPluginError
+@implementation WebPlugInError
 
 - (void)dealloc
 {
@@ -47,12 +47,12 @@
     return _private->contentURL;
 }
 
-- (NSString *)pluginPageURL
+- (NSString *)plugInPageURL
 {
     return _private->pluginPageURL;
 }
 
-- (NSString *)pluginName
+- (NSString *)plugInName
 {
     return _private->pluginName;
 }
@@ -64,15 +64,15 @@
 
 @end
 
-@implementation WebPluginError (WebPrivate)
+@implementation WebPlugInError (WebPrivate)
 
-+ (WebPluginError *)pluginErrorWithCode:(int)code
++ (WebPlugInError *)pluginErrorWithCode:(int)code
                              contentURL:(NSString *)contentURL
                           pluginPageURL:(NSString *)pluginPageURL
                              pluginName:(NSString *)pluginName
                                MIMEType:(NSString *)MIMEType;
 {
-    WebPluginError *error = [[WebPluginError alloc] initWithErrorWithCode:code
+    WebPlugInError *error = [[WebPlugInError alloc] initWithErrorWithCode:code
                                                                contentURL:contentURL
                                                             pluginPageURL:pluginPageURL
                                                                pluginName:pluginName
@@ -88,7 +88,7 @@
 {
     [super initWithErrorCode:code inDomain:WebErrorDomainWebKit failingURL:contentURL];
 
-    _private = [[WebPluginErrorPrivate alloc] init];
+    _private = [[WebPlugInErrorPrivate alloc] init];
     _private->contentURL = [contentURL retain];
     _private->pluginPageURL = [pluginPageURL retain];
     _private->pluginName = [pluginName retain];

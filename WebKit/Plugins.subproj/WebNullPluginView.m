@@ -18,7 +18,7 @@ static NSImage *image = nil;
 
 @implementation WebNullPluginView
 
-- initWithFrame:(NSRect)frame error:(WebPluginError *)pluginError;
+- initWithFrame:(NSRect)frame error:(WebPlugInError *)pluginError;
 {    
     self = [super initWithFrame:frame];
     if (self) {
@@ -51,7 +51,7 @@ static NSImage *image = nil;
         WebView *webView = [webFrame webView];
         WebDataSource *dataSource = [webFrame dataSource];
         
-        [[webView _resourceLoadDelegateForwarder] webView:webView pluginFailedWithError:error dataSource:dataSource];
+        [[webView _resourceLoadDelegateForwarder] webView:webView plugInFailedWithError:error dataSource:dataSource];
     }
 }
 

@@ -258,14 +258,14 @@ NSString *WebPreferencesChangedNotification = @"WebPreferencesChangedNotificatio
     [self _setBoolValue: flag forKey: WebKitUserStyleSheetEnabledPreferenceKey];
 }
 
-- (NSString *)userStyleSheetLocation
+- (NSURL *)userStyleSheetLocation
 {
-    return [self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey];
+    return [NSURL URLWithString:[self _stringValueForKey: WebKitUserStyleSheetLocationPreferenceKey]];
 }
 
-- (void)setUserStyleSheetLocation:(NSString *)string
+- (void)setUserStyleSheetLocation:(NSURL *)URL
 {
-    [self _setStringValue: string forKey: WebKitUserStyleSheetLocationPreferenceKey];
+    [self _setStringValue: [URL absoluteString] forKey: WebKitUserStyleSheetLocationPreferenceKey];
 }
 
 - (BOOL)JavaEnabled
