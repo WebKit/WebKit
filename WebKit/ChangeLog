@@ -4,6 +4,12 @@
 
         * WebKit.pbproj/project.pbxproj:
 
+2003-12-12  Vicki Murley  <vicki@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * WebKit.pbproj/project.pbxproj:
+
 2003-12-11  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
