@@ -60,8 +60,8 @@ template <class K, class V> class QMapNode : private KWQMapNodeImpl
 
     ~QMapNode()
     {
-	delete left();
-	delete right();
+	delete (QMapNode<K,V> *)left();
+	delete (QMapNode<K,V> *)right();
     }
 
     K key;

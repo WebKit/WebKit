@@ -1,3 +1,9 @@
+2002-04-05  Maciej Stachowiak  <mjs@apple.com>
+
+	* src/kwq/qt/qmap.h (QMapNode::~QMapNode): Cast left() and right()
+	to the right type to fix a leak detected by the automated leak
+	checking on Jersey.
+
 2002-04-04  Richard Williamson  <rjw@apple.com>
 
         Extra bulletproofing to prevent script execution when in partially
