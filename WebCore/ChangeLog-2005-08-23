@@ -1,3 +1,21 @@
+2004-09-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3812091> REGRESSION (Mail): double-clicked word is not smart inserted on drag
+
+        Reviewed by john.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::MoveSelectionCommand::MoveSelectionCommand): take smartMove arg
+        * khtml/editing/htmlediting.h:
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::deleteSelection): take smartDelete arg
+        (khtml::MoveSelectionCommandImpl::MoveSelectionCommandImpl): take smartMove arg
+        (khtml::MoveSelectionCommandImpl::doApply): pass smartMove for smartDelete and smartReplace
+        * khtml/editing/htmlediting_impl.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge moveSelectionToDragCaret:smartMove:]): take smartMove arg
+
 2004-09-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

@@ -318,7 +318,7 @@ typedef enum {
 - (void)insertNewline;
 
 - (void)setSelectionToDragCaret;
-- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment;
+- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove;
 - (void)moveDragCaretToPoint:(NSPoint)point;
 - (void)removeDragCaret;
 - (DOMRange *)dragCaretDOMRange;

@@ -273,7 +273,7 @@ private:
 class MoveSelectionCommand : public CompositeEditCommand
 {
 public:
-    MoveSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position);
+    MoveSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position, bool smartMove=false);
     
 private:
     MoveSelectionCommandImpl *impl() const;

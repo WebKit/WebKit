@@ -1551,10 +1551,10 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     _part->setSelection(_part->dragCaret());
 }
 
-- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment
+- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment smartMove:(BOOL)smartMove
 {
     Position base = _part->dragCaret().base();
-    MoveSelectionCommand cmd(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base);
+    MoveSelectionCommand cmd(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base, smartMove);
     cmd.apply();
 }
 

@@ -1,5 +1,14 @@
 2004-09-22  Chris Blumenberg  <cblu@apple.com>
 
+	<rdar://problem/3812091> REGRESSION (Mail): double-clicked word is not smart inserted on drag
+
+        Reviewed by john.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView concludeDragForDraggingInfo:actionMask:]): pass value for smartMove
+
+2004-09-22  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed:
 	<rdar://problem/3667301> Frequent crashes in Mail when viewing HTML messages (CFURLGetByteRangeForComponent)
 	<rdar://problem/3810354> WebResourceLoadDelegate can't refuse requests by returning nil; code asserts/crashes instead
