@@ -81,17 +81,28 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 - (NSString *)stringForStringListID:(SInt16)stringListID andIndex:(SInt16)index
 {
-    Str255 pString;
-    char cString[256];
-        
-    GetIndString(pString, stringListID, index);
-    if (pString[0] == 0) {
+    // Get resource, and dereference the handle.
+    Handle stringHandle = Get1Resource('STR#', stringListID);
+    if (stringHandle == NULL) {
         return nil;
     }
-
-    CopyPascalStringToC(pString, cString);
+    unsigned char *p = (unsigned char *)*stringHandle;
+    if (p == NULL) {
+        return nil;
+    }
     
-    return [NSString stringWithCString:cString];
+    // Check the index against the length of the string list, then skip the length.
+    if (index < 1 || index > *(SInt16 *)p) {
+        return nil;
+    }
+    p += sizeof(SInt16);
+    
+    // Skip any strings that come before the one we are looking for.
+    while (--index)
+        p += 1 + *p;
+    
+    // Convert the one we found into an NSString.
+    return [[[NSString alloc] initWithBytes:(p + 1) length:*p encoding:NSMacOSRomanStringEncoding] autorelease];
 }
 
 - (BOOL)getPluginInfoFromResources

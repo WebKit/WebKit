@@ -1,3 +1,16 @@
+2003-12-09  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3504907>: REGRESSION (100-116): 
+        Clicking QuickTime-requiring link twice crashes (wholenote.com)
+
+        I found the bug; Darin wrote the fix; I reviewed and tested.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage stringForStringListID:andIndex:]):
+        Rewrote this method to not use GetIndString, because GetIndString looks
+        at all open resource files and in this case was reading information from
+        the wrong plugin file.
+
 2003-12-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3234676>: Support for KEYGEN tag (ie 509 email certificates from www.thawte.com)
