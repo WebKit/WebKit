@@ -1,5 +1,14 @@
 2002-03-24  Richard Williamson  <rjw@apple.com>
 
+        Cached available families from NSFontManager.  
+        http://www.gamespy.com/gdc2002/okamoto went from 4.8 seconds
+        to 0.7 seconds. [Do we need to worry about updating the cache if
+        the available fonts change?]
+        
+	* src/kwq/KWQKHTMLSettings.mm: (KHTMLSettings::availableFamilies):
+
+2002-03-24  Richard Williamson  <rjw@apple.com>
+
         Fixed big leak in QString assignment operator.
         Updated comments.  Removed old fprintfs.
         Added some frame debugging logs.

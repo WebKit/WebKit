@@ -104,10 +104,13 @@ int KHTMLSettings::minFontSize() const
 }
 
 
+static QString *_availableFamiles = 0;
 QString KHTMLSettings::availableFamilies()
 {
-    return NSSTRING_TO_QSTRING([[[NSFontManager sharedFontManager]
-				availableFontFamilies] componentsJoinedByString:@","]);
+    if (_availableFamiles == 0)
+        _availableFamiles = new QString(NSSTRING_TO_QSTRING([[[NSFontManager sharedFontManager]
+				availableFontFamilies] componentsJoinedByString:@","]));
+    return *_availableFamiles;
 }
 
 
