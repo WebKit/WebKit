@@ -183,7 +183,7 @@ NS_ENDHANDLER
         @"Apple Chancery",              WebKitCursiveFontPreferenceKey,
         @"Papyrus",                     WebKitFantasyFontPreferenceKey,
         @"1",                           WebKitMinimumFontSizePreferenceKey,
-    @"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
+        @"9",                           WebKitMinimumLogicalFontSizePreferenceKey, 
         @"16",                          WebKitDefaultFontSizePreferenceKey,
         @"13",                          WebKitDefaultFixedFontSizePreferenceKey,
         @"ISO-8859-1",                  WebKitDefaultTextEncodingNamePreferenceKey,
