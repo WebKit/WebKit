@@ -1,3 +1,30 @@
+2004-10-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3838934> Safari stops loading pages after rangeOfCharacterFromSet nil argument exception
+        - fixed <rdar://problem/3843951> REGRESSION (166-167): Safari crashes in widthForNextCharacter (belkin.com, at startup for others)
+        - fixed <rdar://problem/3841049> REGRESSION (109-110): control characters render as square boxes
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (isSpace): Merged in isAlternateSpace, never used.
+        (setupRoundingHackCharacterTable): Fixed size of table, was 1 entry too short. Got rid of unneeded call to bzero,
+        since globals start out zeroed automatically.
+        (isRoundingHackCharacter): Fixed backwards logic causing the crash in widthForNextCharacter.
+        Also removed explicit compare with 1; check for non-zero is just fine.
+        (fontContainsString): Change code so we'll just skip the font if the covered character set returns nil rather than
+        throwing an exception like the old version did. This should make bug 3838934 go away, although perhaps covering up
+        the underlying problem.
+        (-[WebTextRenderer _convertCharacters:length:toGlyphs:]): Removed unused skipControlCharacters: parameter and also
+        the unnecessary code to copy the buffer to change newline characters and non-break spaces to spaces.
+        (-[WebTextRenderer _convertUnicodeCharacters:length:toGlyphs:]): Removed unused local.
+        (-[WebTextRenderer _extendCharacterToGlyphMapToInclude:]): Added code to set up special cases for control characters,
+        \n and non-break spaces.
+        (-[WebTextRenderer _createATSUTextLayoutForRun:]): Added comment about the cases this code does not handle that
+        are handled by the CG case.
+        (widthForNextCharacter): Call isSpace instead of checking specifically for the space character here. The old code
+        would not handle cases with '\n' coming across from WebCore properly.
+
 2004-10-18  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3840916> GC: -[WebNetscapePluginPackage initWithPath:] leaks an NSURL

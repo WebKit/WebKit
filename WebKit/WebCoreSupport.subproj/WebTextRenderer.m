@@ -25,8 +25,28 @@
 
 #import <unicode/uchar.h>
 
+// FIXME: FATAL_ALWAYS seems like a bad idea; lets stop using it.
+
+// SPI from other frameworks.
+
+@interface NSLanguage : NSObject 
++ (NSLanguage *)defaultLanguage;
+@end
+
+@interface NSFont (WebPrivate)
+- (ATSUFontID)_atsFontID;
+- (CGFontRef)_backingCGSFont;
+// Private method to find a font for a character.
++ (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
++ (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
+- (NSGlyph)_defaultGlyphForChar:(unichar)uu;
+- (BOOL)_isFakeFixedPitch;
+@end
+
 // Macros
 #define SPACE 0x0020
+#define NO_BREAK_SPACE 0x00A0
+#define ZERO_WIDTH_SPACE 0x200B
 
 #define ROUND_TO_INT(x) (int)((x)+.5)
 
@@ -105,26 +125,6 @@ struct CharacterWidthIterator
     int padPerSpace;
 };
 
-
-// SPI from other frameworks.
-@interface NSLanguage : NSObject 
-{}
-+ (NSLanguage *)defaultLanguage;
-@end
-
-@interface NSFont (WebPrivate)
-- (ATSUFontID)_atsFontID;
-- (CGFontRef)_backingCGSFont;
-// Private method to find a font for a character.
-+ (NSFont *) findFontLike:(NSFont *)aFont forCharacter:(UInt32)c inLanguage:(NSLanguage *) language;
-+ (NSFont *) findFontLike:(NSFont *)aFont forString:(NSString *)string withRange:(NSRange)range inLanguage:(NSLanguage *) language;
-- (NSGlyph)_defaultGlyphForChar:(unichar)uu;
-- (BOOL)_canDrawOutsideLineHeight;
-- (BOOL)_isSystemFont;
-- (BOOL)_isFakeFixedPitch;
-@end
-
-
 // Internal API
 @interface WebTextRenderer (WebInternal)
 
@@ -166,27 +166,16 @@ struct CharacterWidthIterator
 
 // Character property functions.
 
-static inline BOOL isControlCharacter(UniChar c)
-{
-    return c < 0x0020 || c == 0x007F;
-}
-
-static inline BOOL isAlternateSpace(UniChar c)
-{
-    return c == '\n' || c == 0xA0;
-}
-
 static inline BOOL isSpace(UniChar c)
 {
-    return c == SPACE || isAlternateSpace(c);
+    return c == SPACE || c == '\n' || c == NO_BREAK_SPACE;
 }
 
-static bool isRoundingHackCharacterTable[0xff];
+static char isRoundingHackCharacterTable[0x100];
 
-static void setupRoundingHackCharacterTable()
+static void setupRoundingHackCharacterTable(void)
 {
-    bzero (isRoundingHackCharacterTable, 0xff);
-    isRoundingHackCharacterTable[0xA0] = 1;
+    isRoundingHackCharacterTable[NO_BREAK_SPACE] = 1;
     isRoundingHackCharacterTable['\n'] = 1;
     isRoundingHackCharacterTable[SPACE] = 1;
     isRoundingHackCharacterTable['-'] = 1;
@@ -195,9 +184,8 @@ static void setupRoundingHackCharacterTable()
 
 static inline BOOL isRoundingHackCharacter(UniChar c)
 {
-    return (c & 0xFF00) != 0 && isRoundingHackCharacterTable[c] == 1;
+    return (c & ~0xFF) == 0 && isRoundingHackCharacterTable[c];
 }
-
 
 // Map utility functions
 static void freeWidthMap(WidthMap *map);
@@ -386,7 +374,7 @@ static BOOL alwaysUseATSU = NO;
     lineSpacing =  ascent + descent + lineGap;
 
 #ifdef COMPARE_APPKIT_CG_METRICS
-    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f, _canDrawOutsideLineHeight %d, _isSystemFont %d\n", [[font displayName] cString], [font pointSize], lineGap, adjustment, (int)[font _canDrawOutsideLineHeight], (int)[font _isSystemFont]);
+    printf ("\nCG/Appkit metrics for font %s, %f, lineGap %f, adjustment %f\n", [[font displayName] cString], [font pointSize], lineGap, adjustment);
     if (ROUND_TO_INT([font ascender]) != ascent ||
         ROUND_TO_INT(-[font descender]) != descent ||
         ROUND_TO_INT([font defaultLineHeightForFont]) != lineSpacing){
@@ -654,7 +642,8 @@ static BOOL alwaysUseATSU = NO;
 
 static inline BOOL fontContainsString(NSFont *font, NSString *string)
 {
-    return [string rangeOfCharacterFromSet:[[font coveredCharacterSet] invertedSet]].location == NSNotFound;
+    NSCharacterSet *set = [[font coveredCharacterSet] invertedSet];
+    return set && [string rangeOfCharacterFromSet:set].location == NSNotFound;
 }
 
 - (NSFont *)_substituteFontForString: (NSString *)string families: (NSString **)families
@@ -692,55 +681,17 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     return substituteFont;
 }
 
-
 - (NSFont *)_substituteFontForCharacters: (const unichar *)characters length: (int)numCharacters families: (NSString **)families
 {
-    NSFont *substituteFont;
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:(unichar *)characters length: numCharacters freeWhenDone: NO];
-
-    substituteFont = [self _substituteFontForString: string families: families];
-
+    NSFont *substituteFont = [self _substituteFontForString: string families: families];
     [string release];
-    
     return substituteFont;
 }
 
-
-/* Convert newlines and non-breaking spaces into spaces, and skip control characters. */
-- (void)_convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs skipControlCharacters:(BOOL)skipControlCharacters
+- (void)_convertCharacters: (const UniChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
 {
-    unsigned i, numCharactersInBuffer;
-    UniChar localBuffer[LOCAL_BUFFER_SIZE];
-    UniChar *buffer = localBuffer;
-    OSStatus status;
-    
-    for (i = 0; i < numCharacters; i++) {
-        UniChar c = characters[i];
-        if ((skipControlCharacters && isControlCharacter(c)) || isAlternateSpace(c)) {
-            break;
-        }
-    }
-    
-    if (i < numCharacters) {
-        if (numCharacters > LOCAL_BUFFER_SIZE) {
-            buffer = (UniChar *)malloc(sizeof(UniChar) * numCharacters);
-        }
-        
-        numCharactersInBuffer = 0;
-        for (i = 0; i < numCharacters; i++) {
-            UniChar c = characters[i];
-            if (isAlternateSpace(c)) {
-                buffer[numCharactersInBuffer++] = SPACE;
-            } else if (!(skipControlCharacters && isControlCharacter(c))) {
-                buffer[numCharactersInBuffer++] = characters[i];
-            }
-        }
-        
-        characters = buffer;
-        numCharacters = numCharactersInBuffer;
-    }
-    
-    status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
+    OSStatus status = ATSUConvertCharToGlyphs(styleGroup, characters, 0, numCharacters, 0, glyphs);
     if (status != noErr){
         FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
     }
@@ -758,25 +709,18 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
     }
     printf ("For %s found %d glyphs in range 0x%04x to 0x%04x\n", [[font displayName] cString], foundGlyphs, characters[0], characters[numCharacters-1]);
 #endif
-    if (buffer != localBuffer) {
-        free(buffer);
-    }
 }
-
 
 - (void)_convertUnicodeCharacters: (const UnicodeChar *)characters length: (unsigned)numCharacters toGlyphs: (ATSGlyphVector *)glyphs
 {
-    unsigned numCharactersInBuffer;
     UniChar localBuffer[LOCAL_BUFFER_SIZE];
     UniChar *buffer = localBuffer;
-    OSStatus status;
     unsigned i, bufPos = 0;
     
     if (numCharacters*2 > LOCAL_BUFFER_SIZE) {
         buffer = (UniChar *)malloc(sizeof(UniChar) * numCharacters * 2);
     }
     
-    numCharactersInBuffer = 0;
     for (i = 0; i < numCharacters; i++) {
         UnicodeChar c = characters[i];
         UniChar h = HighSurrogatePair(c);
@@ -785,7 +729,7 @@ static inline BOOL fontContainsString(NSFont *font, NSString *string)
         buffer[bufPos++] = l;
     }
         
-    status = ATSUConvertCharToGlyphs(styleGroup, buffer, 0, numCharacters*2, 0, glyphs);
+    OSStatus status = ATSUConvertCharToGlyphs(styleGroup, buffer, 0, numCharacters*2, 0, glyphs);
     if (status != noErr){
         FATAL_ALWAYS ("unable to get glyphsfor %@ %f error = (%d)", self, [font displayName], [font pointSize], status);
     }
@@ -1242,19 +1186,30 @@ static const char *joiningNames[] = {
     unsigned i, count = end - start + 1;
     short unsigned buffer[INCREMENTAL_BLOCK_SIZE+2];
     
-    for (i = 0; i < count; i++){
+    for (i = 0; i < count; i++) {
         buffer[i] = i+start;
     }
 
+    if (start == 0) {
+        // Control characters must not render at all.
+        for (i = 0; i < 0x20; ++i)
+            buffer[i] = ZERO_WIDTH_SPACE;
+        buffer[0x7F] = ZERO_WIDTH_SPACE;
+
+        // But both \n and nonbreaking space must render as a space.
+        buffer['\n'] = ' ';
+        buffer[NO_BREAK_SPACE] = ' ';
+    }
+
     OSStatus status = ATSInitializeGlyphVector(count, 0, &glyphVector);
-    if (status != noErr){
+    if (status != noErr) {
         // This should never happen, perhaps indicates a bad font!  If it does the
         // font substitution code will find an alternate font.
         free(map);
         return 0;
     }
 
-    [self _convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector skipControlCharacters: NO];
+    [self _convertCharacters: &buffer[0] length: count toGlyphs: &glyphVector];
     unsigned numGlyphs = glyphVector.numGlyphs;
     if (numGlyphs != count){
         // This should never happen, perhaps indicates a bad font!  If it does the
@@ -1391,6 +1346,10 @@ static const char *joiningNames[] = {
     
     [self _initializeATSUStyle];
     
+    // FIXME: This is missing the following features that the CoreGraphics code path has:
+    // - Both \n and nonbreaking space render as a space.
+    // - All other control characters must not render at all (other code path uses zero-width spaces).
+
     runLength = run->to - run->from;
     status = ATSUCreateTextLayoutWithTextPtr(
             run->characters,
@@ -1413,7 +1372,6 @@ static const char *joiningNames[] = {
     status = ATSUSetLayoutControls(layout, 2, tags, sizes, values);
     if(status != noErr)
         FATAL_ALWAYS ("ATSUSetLayoutControls failed(%d)", status);
-
 
     status = ATSUSetTransientFontMatching (layout, YES);
     if(status != noErr)
@@ -2006,8 +1964,8 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 
     // Account for padding.  khtml uses space padding to justify text.  We
     // distribute the specified padding over the available spaces in the run.
-    if (c == SPACE) {
-        if (iterator->padding > 0){
+    if (isSpace(c)) {
+        if (iterator->padding > 0) {
             // Only use left over padding if note evenly divisible by 
             // number of spaces.
             if (iterator->padding < iterator->padPerSpace){
@@ -2054,7 +2012,7 @@ static float widthForNextCharacter(CharacterWidthIterator *iterator, ATSGlyphRef
 static BOOL fillStyleWithAttributes(ATSUStyle style, NSFont *theFont)
 {
     if (theFont) {
-        ATSUFontID fontId = (ATSUFontID)[theFont _atsFontID];
+        ATSUFontID fontId = [theFont _atsFontID];
         LOG (FontCache, "fillStyleWithAttributes:  font = %p,%@, _atsFontID = %x\n", theFont, theFont, (unsigned)fontId);
         ATSUAttributeTag tag = kATSUFontTag;
         ByteCount size = sizeof(ATSUFontID);
