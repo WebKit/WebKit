@@ -260,23 +260,29 @@
     [[self nextResponder] keyUp:event];
 }
 
-- (NSMenu *)menuForEvent:(NSEvent *)event
-{    
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    WebView *webView = [webFrameView _webView];
-    WebFrame *frame = [webFrameView webFrame];
-
+- (NSDictionary *)_elementAtWindowPoint:(NSPoint)windowPoint
+{
+    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
     ASSERT(frame);
-    ASSERT(webView);
-
-    NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
-    BOOL isPointSelected = NSLocationInRange([self characterIndexForPoint:point], [self selectedRange]);
     
-    NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
+    NSPoint screenPoint = [[self window] convertBaseToScreen:windowPoint];
+    BOOL isPointSelected = NSLocationInRange([self characterIndexForPoint:screenPoint], [self selectedRange]);
+    return [NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithBool:isPointSelected], WebElementIsSelectedKey,
         frame, WebElementFrameKey, nil];
+}
 
-    return [webView _menuForElement:element];
+- (NSDictionary *)elementAtPoint:(NSPoint)point
+{
+    return [self _elementAtWindowPoint:[self convertPoint:point toView:nil]];
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)event
+{    
+    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    ASSERT(webView);
+
+    return [webView _menuForElement:[self _elementAtWindowPoint:[event locationInWindow]]];
 }
 
 - (NSArray *)pasteboardTypesForSelection

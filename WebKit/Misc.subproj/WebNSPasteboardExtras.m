@@ -189,10 +189,10 @@ NSString *WebURLNamePboardType = nil;
         if ([types containsObject:NSRTFDPboardType]) {
             // This image data is either the only subresource of an archive (HTML image case)
             // or the main resource (standalone image case).
-            WebResource *resource = [[archive subresources] objectAtIndex:0];
-            if (resource == nil) {
-                resource = [archive mainResource];
-            }
+            NSArray *subresources = [archive subresources];
+            WebResource *resource = [subresources count] > 0 ? [subresources objectAtIndex:0] : [archive mainResource];
+            ASSERT(resource != nil);
+            
             ASSERT([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:[resource MIMEType]]);
             [self _web_writeFileWrapperAsRTFDAttachment:[resource _fileWrapperRepresentation]];
         }

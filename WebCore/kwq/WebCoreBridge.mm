@@ -420,26 +420,19 @@ static bool initializedKJS = FALSE;
 	return startNode ? startNode->isContentEditable() : NO;
 }
 
-- (BOOL)moveCaretToPoint:(NSPoint)point
+- (void)moveDragCaretToPoint:(NSPoint)point
 {
     RenderObject *renderer = _part->renderer();
     if (!renderer) {
-        return NO;
+        return;
     }
     
     RenderObject::NodeInfo nodeInfo(true, true);
     renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
     NodeImpl *node = nodeInfo.innerNode();
-
-    // FIXME: You should be move the caret to non-text nodes.
-    if (!node->isTextNode()) {
-        return NO;
-    }
         
     Selection selection(node->positionForCoordinates((int)point.x, (int)point.y));
     _part->setSelection(selection);
-    
-    return YES;
 }
 
 - (BOOL)haveSelection

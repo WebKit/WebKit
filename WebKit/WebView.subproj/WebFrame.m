@@ -1417,7 +1417,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             }
             if (viewContainingPoint != nil) {
                 NSPoint point = [viewContainingPoint convertPoint:[event locationInWindow] fromView:nil];
-                NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint _elementAtPoint:point];
+                NSDictionary *elementInfo = [(WebHTMLView *)viewContainingPoint elementAtPoint:point];
         
                 return [NSDictionary dictionaryWithObjectsAndKeys:
                     [NSNumber numberWithInt:navigationType], WebActionNavigationTypeKey,

@@ -3,16 +3,20 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebDocumentPrivate.h>
+#import <WebKit/WebDocument.h>
 
 @class WebDataSource;
 @class WebHTMLViewPrivate;
+
+@protocol WebDocumentDragging;
+@protocol WebDocumentElement;
+@protocol WebDocumentSelection;
 
 /*!
     @class WebHTMLView
     @discussion A document view of WebFrameView that displays HTML content.
 */
-@interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText, WebDocumentSelection>
+@interface WebHTMLView : NSView <WebDocumentView, WebDocumentSearching, WebDocumentText, WebDocumentDragging, WebDocumentElement, WebDocumentSelection>
 {
 @private
     WebHTMLViewPrivate *_private;

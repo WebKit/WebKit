@@ -91,9 +91,9 @@ extern NSString *_WebMainFrameURLKey;
     
     void *observationInfo;
     
-    NSArray *draggedTypes;
     BOOL drawsBackground;
     BOOL editable;
+    BOOL initiatedDrag;
     
     NSString *mediaStyle;
 }
@@ -211,7 +211,7 @@ Could be worth adding to the API.
 
 - (void)_closeWindow;
 
-- (void)_registerDraggedTypes;
+- (void)_setInitiatedDrag:(BOOL)initiatedDrag;
 
 - (void)_close;
 

@@ -3,12 +3,12 @@
     Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebDocumentPrivate.h>
+#import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebSearchableTextView.h>
 
 @class WebDataSource;
 
-@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentSelection>
+@interface WebTextView : WebSearchableTextView <WebDocumentView, WebDocumentText, WebDocumentElement, WebDocumentSelection>
 {
     float _textSizeMultiplier;
 }

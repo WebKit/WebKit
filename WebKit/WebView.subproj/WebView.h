@@ -141,7 +141,7 @@ extern NSString *WebViewProgressFinishedNotification;
     @discussion This method returns a title that refers a URL on the pasteboard. An example of this is the link label
     which is the text inside the anchor tag.
 */
-+ (NSURL *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard;
++ (NSString *)URLTitleFromPasteboard:(NSPasteboard *)pasteboard;
 
 /*!
     @method initWithFrame:frameName:groupName:

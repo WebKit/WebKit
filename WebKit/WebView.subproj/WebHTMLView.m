@@ -209,37 +209,6 @@ static BOOL forceRealHitTest = NO;
     [self performSelector:selector withObject:nil afterDelay:0];
 }
 
-- (NSDictionary *)_elementAtPoint:(NSPoint)point
-{
-    NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
-    NSMutableDictionary *elementInfo = [elementInfoWC mutableCopy];
-
-    // Convert URL strings to NSURLs
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
-    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
-    
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    ASSERT(webFrameView);
-    WebFrame *webFrame = [webFrameView webFrame];
-    
-    if (webFrame) {
-        NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];
-        if ([frameName length] == 0) {
-            [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
-        } else {
-            WebFrame *wf = [webFrame findFrameNamed:frameName];
-            if (wf != nil)
-                [elementInfo setObject:wf forKey:WebElementLinkTargetFrameKey];
-            else
-                [elementInfo removeObjectForKey:WebElementLinkTargetFrameKey];
-        }
-    
-        [elementInfo setObject:webFrame forKey:WebElementFrameKey];
-    }
-    
-    return [elementInfo autorelease];
-}
-
 - (void)_setAsideSubviews
 {
     ASSERT(!_private->subviewsSetAside);
@@ -512,7 +481,7 @@ static WebHTMLView *lastHitView = nil;
         [[view _bridge] mouseMoved:event];
 
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        element = [view _elementAtPoint:point];
+        element = [view elementAtPoint:point];
     }
 
     // Have the web view send a message to the delegate so it can do status bar display.
@@ -520,6 +489,17 @@ static WebHTMLView *lastHitView = nil;
 
     // Set a tool tip; it won't show up right away but will if the user pauses.
     [self _setToolTip:[element objectForKey:WebCoreElementTitleKey]];
+}
+
++ (NSArray *)_insertablePasteboardTypes
+{
+    static NSArray *types = nil;
+    if (!types) {
+        types = [[NSArray alloc] initWithObjects:WebArchivePboardType, NSHTMLPboardType,
+            NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
+            NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil];
+    }
+    return types;
 }
 
 + (NSArray *)_selectionPasteboardTypes
@@ -700,10 +680,10 @@ static WebHTMLView *lastHitView = nil;
     return dragImage;
 }
 
-- (void)_handleMouseDragged:(NSEvent *)event
+- (void)_handleMouseDragged:(NSEvent *)mouseDraggedEvent
 {
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
-    NSDictionary *element = [self _elementAtPoint:mouseDownPoint];
+    NSDictionary *element = [self elementAtPoint:mouseDownPoint];
 
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
@@ -716,7 +696,7 @@ static WebHTMLView *lastHitView = nil;
     ASSERT((imageURL && [[WebPreferences standardPreferences] loadsImagesAutomatically]) ||
            (!imageURL && linkURL) || isSelected); 
 
-    NSPoint mouseDraggedPoint = [self convertPoint:[event locationInWindow] fromView:nil];
+    NSPoint mouseDraggedPoint = [self convertPoint:[mouseDraggedEvent locationInWindow] fromView:nil];
     float deltaX = ABS(mouseDraggedPoint.x - mouseDownPoint.x);
     float deltaY = ABS(mouseDraggedPoint.y - mouseDownPoint.y);
     
@@ -725,6 +705,31 @@ static WebHTMLView *lastHitView = nil;
         (linkURL && deltaX < LinkDragHysteresis && deltaY < LinkDragHysteresis) ||
         (isSelected && deltaX < TextDragHysteresis && deltaY < TextDragHysteresis)) {
         return;
+    }
+    
+    NSImage *dragImage = nil;
+    
+    if (imageURL) {
+        dragImage = [[[element objectForKey:WebElementImageKey] copy] autorelease];
+        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+    } else if (linkURL) {
+        dragImage = [self _dragImageForLinkElement:element];
+    } else if (isSelected) {
+        dragImage = [[self _bridge] selectionImage];
+        [dragImage _web_dissolveToFraction:WebDragImageAlpha];
+    } else {
+        ASSERT_NOT_REACHED();
+    }
+    
+    ASSERT(dragImage != nil);
+    
+    WebView *webView = [self _webView];
+    if (![[webView _UIDelegateForwarder] webView:webView
+                       shouldBeginDragForElement:element 
+                                       dragImage:dragImage 
+                                  mouseDownEvent:_private->mouseDownEvent 
+                               mouseDraggedEvent:mouseDraggedEvent]) {
+        return;   
     }
     
     if (imageURL) {
@@ -743,12 +748,11 @@ static WebHTMLView *lastHitView = nil;
         NSArray *types = [NSPasteboard _web_writableTypesForURL];
         [pasteboard declareTypes:types owner:self];
         [pasteboard _web_writeURL:linkURL andTitle:[element objectForKey:WebElementLinkLabelKey] types:types];
-        NSImage *dragImage = [self _dragImageForLinkElement:element];
         NSSize offset = NSMakeSize([dragImage size].width / 2, -DRAG_LABEL_BORDER_Y);
         [self dragImage:dragImage
                      at:NSMakePoint(mouseDraggedPoint.x - offset.width, mouseDraggedPoint.y - offset.height)
                  offset:offset
-                  event:event
+                  event:mouseDraggedEvent
              pasteboard:pasteboard
                  source:self
               slideBack:NO];
@@ -756,10 +760,8 @@ static WebHTMLView *lastHitView = nil;
     } else if (isSelected) {
         NSPasteboard *pasteboard = [NSPasteboard pasteboardWithName:NSDragPboard];
         [self _writeSelectionToPasteboard:pasteboard];
-        NSImage *selectionImage = [[self _bridge] selectionImage];
-        [selectionImage _web_dissolveToFraction:WebDragImageAlpha];
         NSRect visibleSelectionRect = [[self _bridge] visibleSelectionRect];
-        [self dragImage:selectionImage
+        [self dragImage:dragImage
                      at:NSMakePoint(NSMinX(visibleSelectionRect), NSMaxY(visibleSelectionRect))
                  offset:NSMakeSize(mouseDraggedPoint.x - mouseDownPoint.x, mouseDraggedPoint.y - mouseDownPoint.y)
                   event:_private->mouseDownEvent
@@ -767,7 +769,7 @@ static WebHTMLView *lastHitView = nil;
                  source:self
               slideBack:YES];
     } else {
-        ERROR("Attempt to drag unknown element");
+        ASSERT_NOT_REACHED();
     }
 }
 
@@ -780,7 +782,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_mayStartDragWithMouseDragged:(NSEvent *)mouseDraggedEvent
 {
     NSPoint mouseDownPoint = [self convertPoint:[_private->mouseDownEvent locationInWindow] fromView:nil];
-    NSDictionary *mouseDownElement = [self _elementAtPoint:mouseDownPoint];
+    NSDictionary *mouseDownElement = [self elementAtPoint:mouseDownPoint];
 
     NSURL *imageURL = [mouseDownElement objectForKey: WebElementImageURLKey];
 
@@ -985,10 +987,6 @@ static WebHTMLView *lastHitView = nil;
 
     _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
     _private->needsLayout = YES;
-
-    [self registerForDraggedTypes:[NSArray arrayWithObjects:WebArchivePboardType, NSHTMLPboardType,
-        NSTIFFPboardType, NSPICTPboardType, NSURLPboardType, 
-        NSRTFDPboardType, NSRTFPboardType, NSStringPboardType, nil]];
 
     return self;
 }
@@ -1392,7 +1390,7 @@ static WebHTMLView *lastHitView = nil;
         return nil;
     }
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    NSDictionary *element = [self _elementAtPoint:point];
+    NSDictionary *element = [self elementAtPoint:point];
     return [[self _webView] _menuForElement:element];
 }
 
@@ -1595,7 +1593,7 @@ static WebHTMLView *lastHitView = nil;
 - (BOOL)_isSelectionEvent:(NSEvent *)event
 {
     NSPoint point = [self convertPoint:[event locationInWindow] fromView:nil];
-    return [[[self _elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
+    return [[[self elementAtPoint:point] objectForKey:WebElementIsSelectedKey] boolValue];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)event
@@ -1638,12 +1636,10 @@ static WebHTMLView *lastHitView = nil;
            source:(id)source
         slideBack:(BOOL)slideBack
 {   
-    _private->isDragging = YES;
-    
     [self _stopAutoscrollTimer];
-
-    // Don't allow drags to be accepted by this WebFrameView.
-    [[self _webView] unregisterDraggedTypes];
+    
+    _private->initiatedDrag = YES;
+    [[self _webView] _setInitiatedDrag:YES];
     
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -1660,12 +1656,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (unsigned)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
-    return (NSDragOperationGeneric|NSDragOperationCopy);
+    return (NSDragOperationGeneric | NSDragOperationCopy);
 }
 
 - (void)draggedImage:(NSImage *)anImage endedAt:(NSPoint)aPoint operation:(NSDragOperation)operation
 {
-    _private->isDragging = NO;
+    _private->initiatedDrag = NO;
+    [[self _webView] _setInitiatedDrag:NO];
     
     // Prevent queued mouseDragged events from coming after the drag and fake mouseUp event.
     _private->ignoringMouseDraggedEvents = YES;
@@ -1680,9 +1677,6 @@ static WebHTMLView *lastHitView = nil;
                                              context:[[NSApp currentEvent] context]
                                          eventNumber:0 clickCount:0 pressure:0];
     [self mouseUp:fakeEvent]; // This will also update the mouseover state.
-
-    // Reregister for drag types because they were unregistered before the drag.
-    [[self _webView] _registerDraggedTypes];
     
     // Balance the previous retain from when the drag started.
     [self release];
@@ -1705,55 +1699,75 @@ static WebHTMLView *lastHitView = nil;
     return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
-- (NSDragOperation)_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
+- (BOOL)_canProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    NSPoint point = [self convertPoint:[sender draggingLocation] fromView:nil];
-    NSDictionary *element = [self _elementAtPoint:point];
-    if ([[element objectForKey:WebElementDOMNodeKey] isContentEditable] && [[self _bridge] moveCaretToPoint:point]) {
-        if (_private->isDragging) {
-            if ([[element objectForKey:WebElementIsSelectedKey] boolValue]) {
-                return NSDragOperationMove;
+    if ([[draggingInfo draggingPasteboard] availableTypeFromArray:[WebHTMLView _insertablePasteboardTypes]] != nil) {
+        NSPoint point = [self convertPoint:[draggingInfo draggingLocation] fromView:nil];
+        NSDictionary *element = [self elementAtPoint:point];
+        if ([[self _webView] isEditable] || [[element objectForKey:WebElementDOMNodeKey] isContentEditable]) {
+            if (_private->initiatedDrag && [[element objectForKey:WebElementIsSelectedKey] boolValue]) {
+                // Can't drag onto the selection being dragged.
+                return NO;
             }
-        } else {
-            return NSDragOperationCopy;
+            return YES;
         }
+    }
+    return NO;
+}
+
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+        return _private->initiatedDrag ? NSDragOperationMove : NSDragOperationCopy;
     }
     return NSDragOperationNone;
 }
 
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+- (void)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
-    // If we're not handling the drag, forward this message to the WebView since it may want to handle it.
-    NSDragOperation dragOperation = [self _dragOperationForDraggingInfo:sender];
-    return dragOperation != NSDragOperationNone ? dragOperation : [[self _webView] draggingEntered:sender];
-}
-
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
-{
-    // If we're not handling the drag, forward this message to the WebView since it may want to handle it.
-    NSDragOperation dragOperation = [self _dragOperationForDraggingInfo:sender];
-    return dragOperation != NSDragOperationNone ? dragOperation : [[self _webView] draggingUpdated:sender];
-}
-
-- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
-{
-    return YES;
-}
-
-- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
-{
-    return YES;
-}
-
-- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
-{
-    if ([self _dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
-        // FIXME: We should delete the original selection if we're doing a move.
-        [self _pasteFromPasteboard:[sender draggingPasteboard]];
-    } else {
-        // Since we're not handling the drag, forward this message to the WebView since it may want to handle it.
-        [[self _webView] concludeDragOperation:sender];
+    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+        [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
     }
+}
+
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
+        [self _pasteFromPasteboard:[draggingInfo draggingPasteboard]];
+        return YES;
+    }
+    return NO;
+}
+
+- (NSDictionary *)elementAtPoint:(NSPoint)point
+{
+    NSDictionary *elementInfoWC = [[self _bridge] elementAtPoint:point];
+    NSMutableDictionary *elementInfo = [elementInfoWC mutableCopy];
+    
+    // Convert URL strings to NSURLs
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementLinkURLKey]] forKey:WebElementLinkURLKey];
+    [elementInfo _web_setObjectIfNotNil:[NSURL _web_URLWithDataAsString:[elementInfoWC objectForKey:WebElementImageURLKey]] forKey:WebElementImageURLKey];
+    
+    WebFrameView *webFrameView = [self _web_parentWebFrameView];
+    ASSERT(webFrameView);
+    WebFrame *webFrame = [webFrameView webFrame];
+    
+    if (webFrame) {
+        NSString *frameName = [elementInfoWC objectForKey:WebElementLinkTargetFrameKey];
+        if ([frameName length] == 0) {
+            [elementInfo setObject:webFrame forKey:WebElementLinkTargetFrameKey];
+        } else {
+            WebFrame *wf = [webFrame findFrameNamed:frameName];
+            if (wf != nil)
+                [elementInfo setObject:wf forKey:WebElementLinkTargetFrameKey];
+            else
+                [elementInfo removeObjectForKey:WebElementLinkTargetFrameKey];
+        }
+        
+        [elementInfo setObject:webFrame forKey:WebElementFrameKey];
+    }
+    
+    return [elementInfo autorelease];
 }
 
 - (void)mouseUp:(NSEvent *)event

@@ -1,3 +1,62 @@
+2004-05-19  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3462627>: (API: Need a way to disable/customize dragging)
+
+        Reviewed by john.
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_writeImage:URL:title:archive:types:]): fixed bug that caused exception
+        * WebView.subproj/WebDefaultUIDelegate.m:
+        (-[WebDefaultUIDelegate webView:shouldBeginDragForElement:dragImage:mouseDownEvent:mouseDraggedEvent:]): new, returns YES
+        (-[WebDefaultUIDelegate webView:dragOperationForDraggingInfo:overElement:]): new, returns [WebView dragOperationForDraggingInfo:]
+        (-[WebDefaultUIDelegate webView:shouldProcessDragWithDraggingInfo:overElement:]): new, returns YES
+        * WebView.subproj/WebDocumentInternal.h: added WebDocumentDragging and WebDocumentElement for document dragging
+        * WebView.subproj/WebDocumentPrivate.h: moved WebDocumentSelection to WebDocumentInternal.h
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _actionInformationForNavigationType:event:originalURL:]): 
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (+[WebHTMLView _insertablePasteboardTypes]): new 
+        (-[WebHTMLView _handleMouseDragged:]): call shouldBeginDragForElement:::: delegate API
+        (-[WebHTMLView _mayStartDragWithMouseDragged:]): call renamed elementAtPoint SPI
+        (-[WebHTMLView initWithFrame:]): don't register for drag types since this is handled at the WebView
+        (-[WebHTMLView menuForEvent:]): call renamed elementAtPoint SPI
+        (-[WebHTMLView _isSelectionEvent:]): call renamed elementAtPoint SPI
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): rather than unregistering drag types on the WebView, just tell it that we're dragging
+        (-[WebHTMLView draggedImage:endedAt:operation:]): ditto
+        (-[WebHTMLView _canProcessDragWithDraggingInfo:]): new
+        (-[WebHTMLView dragOperationForDraggingInfo:]): new WebDocumentDragging SPI
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:]): ditto
+        (-[WebHTMLView concludeDragForDraggingInfo:]): ditto
+        (-[WebHTMLView elementAtPoint:]): renamed from _elementAtPoint since this is part of the WebDocumentElement SPI
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebImageView.h:
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView elementAtPoint:]): new
+        (-[WebImageView menuForEvent:]): call elementAtPoint
+        (-[WebImageView mouseDragged:]): rather than unregistering drag types on the WebView, just tell it that we're dragging
+        (-[WebImageView draggedImage:endedAt:operation:]): ditto
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView _elementAtWindowPoint:]): new
+        (-[WebTextView elementAtPoint:]): new
+        (-[WebTextView menuForEvent:]): call _elementAtWindowPoint
+        * WebView.subproj/WebView.h:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]): removed draggedTypes ivar
+        (+[WebView URLFromPasteboard:]): implemented
+        (+[WebView URLTitleFromPasteboard:]): implemented
+        (-[WebView _registerDraggedTypes]): moved
+        (-[WebView _frameViewAtWindowPoint:]): new
+        (-[WebView _draggingDocumentViewAtWindowPoint:]): new
+        (-[WebView _elementAtWindowPoint:]): new
+        (-[WebView dragOperationForDraggingInfo:]): updated this API to handle subviews that may want to handle drags
+        (-[WebView _dragOperationForDraggingInfo:]): new, handles UI delegate for drag control
+        (-[WebView draggingEntered:]): call _dragOperationForDraggingInfo:
+        (-[WebView draggingUpdated:]): ditto
+        (-[WebView concludeDragOperation:]): work with the UI delegate and the subview to handle what happens
+        * WebView.subproj/WebViewPrivate.h:
+
 2004-05-19  Richard Williamson   <rjw@apple.com>
 
         Removed extraneous tabs that were added (by XCode?).

@@ -168,4 +168,19 @@ static WebDefaultUIDelegate *sharedDelegate = nil;
 {
 }
 
+- (BOOL)webView:(WebView *)webView shouldBeginDragForElement:(NSDictionary *)element dragImage:(NSImage *)dragImage mouseDownEvent:(NSEvent *)mouseDownEvent mouseDraggedEvent:(NSEvent *)mouseDraggedEvent
+{
+    return YES;
+}
+
+- (NSDragOperation)webView:(WebView *)webView dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo overElement:(NSDictionary *)element
+{
+    return [webView dragOperationForDraggingInfo:draggingInfo];
+}
+
+- (BOOL)webView:(WebView *)webView shouldProcessDragWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo overElement:(NSDictionary *)element
+{
+    return YES;
+}
+
 @end

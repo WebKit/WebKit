@@ -17,3 +17,19 @@
 */
 - (void)_web_textSizeMultiplierChanged;
 @end
+
+@protocol WebDocumentDragging <NSObject>
+- (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (void)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+- (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo;
+@end
+
+@protocol WebDocumentElement <NSObject>
+- (NSDictionary *)elementAtPoint:(NSPoint)point;
+@end
+
+@protocol WebDocumentSelection <NSObject>
+- (NSArray *)pasteboardTypesForSelection;
+- (void)writeSelectionWithPasteboardTypes:(NSArray *)types toPasteboard:(NSPasteboard *)pasteboard;
+@end
+

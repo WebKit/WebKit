@@ -233,7 +233,7 @@ typedef enum {
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset;
 
 - (BOOL)isSelectionEditable;
-- (BOOL)moveCaretToPoint:(NSPoint)point;
+- (void)moveDragCaretToPoint:(NSPoint)point;
 
 - (BOOL)haveSelection;
 

@@ -44,6 +44,7 @@
 {
     [[rep image] stopAnimation];
     [rep release];
+    [mouseDownEvent release];
     
     [super dealloc];
 }
@@ -194,39 +195,49 @@
     return [self writeImageToPasteboard:pasteboard types:types];
 }
 
-- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+- (NSDictionary *)elementAtPoint:(NSPoint)point
 {
-    WebFrameView *webFrameView = [self _web_parentWebFrameView];
-    WebView *webView = [webFrameView _webView];
-    WebFrame *frame = [webFrameView webFrame];
-
+    WebFrame *frame = [[self _web_parentWebFrameView] webFrame];
     ASSERT(frame);
-    ASSERT(webView);
     
-    NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
+    return [NSDictionary dictionaryWithObjectsAndKeys:
         [rep image],                            WebElementImageKey,
         [NSValue valueWithRect:[self bounds]], 	WebElementImageRectKey,
         [rep URL],                              WebElementImageURLKey,
         [NSNumber numberWithBool:NO], 		WebElementIsSelectedKey,
         frame, 					WebElementFrameKey, nil];
-        
-    return [webView _menuForElement:element];
+}
+
+- (NSMenu *)menuForEvent:(NSEvent *)theEvent
+{
+    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    ASSERT(webView);
+    return [webView _menuForElement:[self elementAtPoint:NSZeroPoint]];
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
-    ignoringMouseDraggedEvents = NO;
+    [mouseDownEvent release];
+    mouseDownEvent = [event retain];
     [super mouseDown:event];
 }
 
-- (void)mouseDragged:(NSEvent *)event
+- (void)mouseDragged:(NSEvent *)mouseDraggedEvent
 {
     if (ignoringMouseDraggedEvents || ![self haveCompleteImage]) {
         return;
     }
     
-    // Don't allow drags to be accepted by this WebFrameView.
-    [[[self _web_parentWebFrameView] _webView] unregisterDraggedTypes];
+    WebView *webView = [[self _web_parentWebFrameView] _webView];
+    if (![[webView _UIDelegateForwarder] webView:webView
+                       shouldBeginDragForElement:[self elementAtPoint:NSZeroPoint] 
+                                       dragImage:[rep image] 
+                                  mouseDownEvent:mouseDownEvent 
+                               mouseDraggedEvent:mouseDraggedEvent]) {
+        return;   
+    }
+    
+    [[[self _web_parentWebFrameView] _webView] _setInitiatedDrag:YES];
 
     // Retain this view during the drag because it may be released before the drag ends.
     [self retain];
@@ -236,7 +247,7 @@
                     rect:[self drawingRect]
                      URL:[rep URL]
                    title:nil
-                   event:event];
+                   event:mouseDraggedEvent];
 }
 
 - (NSArray *)namesOfPromisedFilesDroppedAtDestination:(NSURL *)dropDestination
@@ -253,8 +264,7 @@
     // Prevent queued mouseDragged events from coming after the drag which can cause a double drag.
     ignoringMouseDraggedEvents = YES;
     
-    // Reregister for drag types because they were unregistered before the drag.
-    [[[self _web_parentWebFrameView] _webView] _registerDraggedTypes];
+    [[[self _web_parentWebFrameView] _webView] _setInitiatedDrag:NO];
 
     // Balance the previous retain from when the drag started.
     [self release];
