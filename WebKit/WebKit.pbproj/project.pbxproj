@@ -302,6 +302,7 @@
 				83413E8F0375BCD3004719BE,
 				9316400E0379832D008635CE,
 				658CF8C103851FB5008C2A4B,
+				7082F571038EADAA00A80180,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -413,6 +414,7 @@
 				83413E900375BCD3004719BE,
 				9316400F0379832D008635CE,
 				BED907790389380000CA289C,
+				7082F572038EADAA00A80180,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -506,6 +508,8 @@
 				517FA6A903709FCE00CA2D3A,
 				517FA6AA03709FCE00CA2D3A,
 				517FA6AB03709FCE00CA2D3A,
+				7082F56F038EADAA00A80180,
+				7082F570038EADAA00A80180,
 			);
 			isa = PBXGroup;
 			name = Misc;
@@ -1494,6 +1498,43 @@
 //652
 //653
 //654
+//700
+//701
+//702
+//703
+//704
+		7082F56F038EADAA00A80180 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebKitNSStringExtras.h;
+			refType = 4;
+		};
+		7082F570038EADAA00A80180 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebKitNSStringExtras.m;
+			refType = 4;
+		};
+		7082F571038EADAA00A80180 = {
+			fileRef = 7082F56F038EADAA00A80180;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Private,
+				);
+			};
+		};
+		7082F572038EADAA00A80180 = {
+			fileRef = 7082F570038EADAA00A80180;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//700
+//701
+//702
+//703
+//704
 //830
 //831
 //832

@@ -1,3 +1,12 @@
+2002-11-22  Richard Williamson   <rjw@apple.com>
+
+        Simplified drawing and measuring SPI for use by Alex.
+
+        * Misc.subproj/WebKitNSStringExtras.h: Added.
+        * Misc.subproj/WebKitNSStringExtras.m: Added.
+        (-[NSString widthForString:font:]):
+        * WebKit.pbproj/project.pbxproj:
+
 2002-11-21  Chris Blumenberg  <cblu@apple.com>
 
 	Removed workaround for: 3093170 - Handle clients receive data with length 0
