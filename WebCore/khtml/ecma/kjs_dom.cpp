@@ -1531,6 +1531,28 @@ Value DOMNamedNodesCollection::tryGet(ExecState *exec, const Identifier &propert
     DOM::Node node = m_nodes[u];
     return getDOMNode(exec,node);
   }
+  // For IE compatibility, we need to be able to look up elements in a
+  // document.formName.name result by id as well as be index.
+
+  if (!ok) {
+    for (QValueListConstIterator<DOM::Node> it = m_nodes.begin(); it != m_nodes.end(); it++) {
+      DOM::Node node = *it;
+      DOM::NamedNodeMap attributes = node.attributes();
+      if (attributes.isNull()) {
+	continue;
+      }
+
+      DOM::Node idAttr = attributes.getNamedItem("id");
+      if (idAttr.isNull()) {
+	continue;
+      }
+
+      if (idAttr.nodeValue() == propertyName.string()) {
+	return getDOMNode(exec,node);
+      }
+    }
+  }
+
   return DOMObject::tryGet(exec,propertyName);
 }
 

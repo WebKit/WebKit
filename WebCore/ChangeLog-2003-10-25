@@ -1,3 +1,13 @@
+2003-03-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3169064 - can't search at lonelyplanet.com; onSubmit handler fails due to problem addressing radio button
+	
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNamedNodesCollection::tryGet): Allow lookup by id as well as
+	by integer index.
+
 2003-03-29  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.
