@@ -546,7 +546,7 @@ Position Position::previousLinePosition(int x) const
         while (n) {
             if (!n->inSameRootEditableElement(node()))
                 break;
-            Position pos(n, n->caretMaxOffset());
+            Position pos(n, n->caretMinOffset());
             if (pos.inRenderedContent()) {
                 ASSERT(n->renderer());
                 box = n->renderer()->inlineBox(n->caretMaxOffset());

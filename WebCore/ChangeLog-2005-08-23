@@ -4,6 +4,18 @@
 
         Fix for this bug:
         
+        <rdar://problem/3780245> REGRESSION (Mail): some lines are skipped when doing arrow navigation
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::previousLinePosition): One-line fix. Make sure that BRs at the end of blocks
+        are not skipped.
+
+2004-09-17  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+        
         <rdar://problem/3805594> REGRESSION (Mail): Second return key stroke does not work when first was in blockquote
 
         * khtml/xml/dom_selection.cpp:
