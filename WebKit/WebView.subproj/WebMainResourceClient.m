@@ -85,7 +85,8 @@
 -(void)cancelWithError:(WebError *)error
 {
     [self cancelContentPolicy];
-    [super cancelWithError:error];
+    [resource cancel];
+    [self receivedError:error];
 }
 
 - (WebError *)interruptForPolicyChangeError

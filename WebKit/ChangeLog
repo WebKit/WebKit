@@ -1,3 +1,12 @@
+2003-03-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3198961 - REGRESSION: Stopping load of plug-in content is not reflected in UI
+
+        Reviewed by mjs.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient cancelWithError:]): call receivedError so [dataSource _receivedError:error complete:YES] is called
+
 2003-03-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Don.
