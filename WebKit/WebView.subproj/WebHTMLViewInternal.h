@@ -23,6 +23,7 @@
     BOOL subviewsSetAside;
 
     NSEvent *mouseDownEvent; // Kept after handling the event.
+    BOOL handlingMouseDownEvent;
     NSEvent *keyDownEvent; // Kept only during handling of the event.
 
     NSURL *draggingImageURL;

@@ -1,3 +1,40 @@
+2004-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3878329> REGRESSION (169-170): colors are wrong for my.yahoo.com due to CSS background parsing changes
+
+        * khtml/css/cssparser.cpp: (CSSParser::parseBackgroundShorthand): Changed function so it doesn't rely on the position
+        attribute being at the end of the array and then moved position attribute before color attribute so it takes precedence.
+        Since "0" can be both the X coordinate of a position and a legal color (meaning black), we need to do position first.
+
+        - fixed <rdar://problem/3760869> click events for input type=button or type=checkbox don't have flags like shiftKey set
+
+        * khtml/rendering/render_form.h: Remove unused RenderFormElement fields.
+        * khtml/rendering/render_form.cpp:
+        (RenderFormElement::RenderFormElement): Take out code to set a bunch of unused fields.
+        (RenderFormElement::slotClicked): Change to create the QMouseEvent from the actual mouse event rather than
+        creating it with all the flags set to 0, using the new QMouseEvent constructor that does so.
+
+        * kwq/KWQEvent.h: Added constructor that takes no parameters which uses the current event from AppKit.
+        Made the click count getter const and added an isDoubleClick that matches the logic used elsewhere.
+        Added a fixState helper method so the constructors can save code.
+        * kwq/KWQEvent.mm:
+        (QMouseEvent::QMouseEvent): Factored out the state-fixing code that was in the two existing constructors
+        and added a third constructor that uses the "current event" from AppKit (used above).
+        (QMouseEvent::fixState): Compute state and click count based on event type.
+
+        - fixed first symptom of <rdar://problem/3830936> REGRESSION (125-165): crash due to null font family, hang at changeforamerica.com
+
+        * kwq/KWQFontFamily.mm: (KWQFontFamily::getNSFamily): Handle empty strings specially so we don't run into trouble when
+        the family name is a null string. This prevents the crash, but there are still other problems that may have the same
+        underlying cause in CSS.
+
+        - fixed <rdar://problem/3829808> Safari crashes when adding a DOM node that was removed from an XMLHTTP request result
+
+        * khtml/html/html_baseimpl.cpp: (HTMLBodyElementImpl::insertedIntoDocument):
+        Added nil check before calling scheduleRelayout. This is new code so the nil-dereference is a recent regression.
+
 2004-12-03  Chris Blumenberg  <cblu@apple.com>
 
 	New fixes for:
@@ -3008,7 +3045,7 @@
 
         * khtml/rendering/bidi.cpp:
         (khtml::RenderBlock::findNextLineBreak): I did not get my fix for 3848343 and 3848224
-	    yesterday quite right: words that should have been placed on the next line were instead
+        yesterday quite right: words that should have been placed on the next line were instead
         appearing on the line before, beyond the right margin. This was a one-word only error
         based on moving the line break object when it should have stayed put. Here is the rule:
         The line break object only moves to after the whitespace on the end of a line if that 

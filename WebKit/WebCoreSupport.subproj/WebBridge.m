@@ -490,21 +490,22 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
     if (error == nil) {
         *finalURL = [response URL];
         if ([response isKindOfClass:[NSHTTPURLResponse class]]) {
-                NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
-                *responseHeaderDict = [httpResponse allHeaderFields];
-                *statusCode = [httpResponse statusCode];
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)response; 
+            *responseHeaderDict = [httpResponse allHeaderFields];
+            *statusCode = [httpResponse statusCode];
         } else {
             *responseHeaderDict = [NSDictionary dictionary];
             *statusCode = 200;
         }
+
+        // notify the delegates
+        // FIXME: Bridge method name "loaded from cache" doesn't make any sense here.
+        [self objectLoadedFromCacheWithURL:URL response:response data:result];
     } else {
         *finalURL = URL;
         *responseHeaderDict = [NSDictionary dictionary];
         *statusCode = 404;
     }
-
-    // notify the delegates
-    [self objectLoadedFromCacheWithURL:URL response:response data:result];
 
     return result;
 }

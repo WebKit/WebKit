@@ -116,18 +116,18 @@ NSString *WebPageCacheDocumentViewKey = @"WebPageCacheDocumentViewKey";
 {
     unsigned count = [self count];
     if (0 == count)
-	return;
+        return;
 
     if (count > 128) {
-	[[self copy] makeObjectsPerformSelector:aSelector];
-	return;
+        [[self copy] makeObjectsPerformSelector:aSelector];
+        return;
     }
  
     id batch[128];
     [self getObjects:batch range:NSMakeRange(0, count)];
     unsigned i;
     for (i = 0; i < count; i++) {
-	objc_msgSend(batch[i], aSelector);
+        objc_msgSend(batch[i], aSelector);
     }
 }
 
@@ -942,26 +942,26 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             && ![[self dataSource] isLoading]
             && ![[self dataSource] _isStopping])
         {
-	    if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
-		if (![item pageCache]){
+            if ([[[self dataSource] representation] isKindOfClass: [WebHTMLRepresentation class]]) {
+                if (![item pageCache]){
 
-		    // Add the items to this page's cache.
-		    if ([self _createPageCacheForItem:item]) {
-			LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
+                    // Add the items to this page's cache.
+                    if ([self _createPageCacheForItem:item]) {
+                        LOG(PageCache, "Saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
 
-			// See if any page caches need to be purged after the addition of this
-			// new page cache.
-			[self _purgePageCache];
-		    }
-		    else {
-			LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
-		    }
-		}
-	    }
-	    else {
-		// Put the document into a null state, so it can be restored correctly.
-		[_private->bridge clear];
-	    }
+                        // See if any page caches need to be purged after the addition of this
+                        // new page cache.
+                        [self _purgePageCache];
+                    }
+                    else {
+                        LOG(PageCache, "NOT saving page to back/forward cache, unable to create items, %@\n", [[self dataSource] _URL]);
+                    }
+                }
+            }
+            else {
+                // Put the document into a null state, so it can be restored correctly.
+                [_private->bridge clear];
+            }
         }
         else {
             LOG(PageCache, "NOT saving page to back/forward cache, %@\n", [[self dataSource] _URL]);
@@ -2091,35 +2091,35 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     if (_private->children == nil)
         _private->children = [[NSMutableArray alloc] init];
     [_private->children addObject:child];
-	
+
     child->_private->parent = self;
     [[child _bridge] setParent:_private->bridge];
     [[child dataSource] _setOverrideEncoding:[[self dataSource] _overrideEncoding]];  
-	 
+ 
     unsigned currentIndex = [_private->children count] - 1;
     // we keep track of sibling pointers to avoid the overhead of a lookup in the children array
     
     if (currentIndex > 0) {
         WebFrame *previousFrame = [[self childFrames] objectAtIndex: currentIndex - 1];
-        previousFrame->_nextSibling = child;
-        child->_previousSibling = previousFrame;
-        ASSERT(child->_nextSibling == nil);
+        previousFrame->_private->nextSibling = child;
+        child->_private->previousSibling = previousFrame;
+        ASSERT(child->_private->nextSibling == nil);
     }
     
 }
 
 - (void)_removeChild:(WebFrame *)child
 {
-	// move corresponding previous and next WebFrame sibling pointers to their new positions
-	// when we remove a child we may have to reattach the previous frame's next frame and visa versa
-	if (child->_previousSibling) {
-            child->_previousSibling->_nextSibling = child->_nextSibling;
-	}
-	
-	if (child->_nextSibling) { 
-            child->_nextSibling->_previousSibling = child->_previousSibling; 
-	}
-	
+    // move corresponding previous and next WebFrame sibling pointers to their new positions
+    // when we remove a child we may have to reattach the previous frame's next frame and visa versa
+    if (child->_private->previousSibling) {
+        child->_private->previousSibling->_private->nextSibling = child->_private->nextSibling;
+    }
+    
+    if (child->_private->nextSibling) { 
+        child->_private->nextSibling->_private->previousSibling = child->_private->previousSibling; 
+    }
+
     [_private->children removeObject:child];
     child->_private->parent = nil;
 }
@@ -2362,18 +2362,6 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _checkNewWindowPolicyForRequest:request action:(NSDictionary *)action frameName:frameName formState:nil andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
 }
 
-// Returns the next frame in our parent's children array
-- (WebFrame *)_nextSibling
-{
-    return _nextSibling;
-}
-
-// Returns the previous frame in our parent's children array, or nil
-- (WebFrame *)_previousSibling
-{
-    return _previousSibling;
-}
-
 // Returns the last child of us and any children, or nil
 - (WebFrame *)_lastChild
 {
@@ -2393,7 +2381,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     } else if (_private->parent) {
         WebFrame *frame;
         for (frame = self; frame->_private->parent; frame = frame->_private->parent) {
-            WebFrame *nextSibling = [frame _nextSibling];
+            WebFrame *nextSibling = frame->_private->nextSibling;
             if (nextSibling) {
                 return nextSibling;
             }
@@ -2407,7 +2395,7 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 // Return previous frame to be traversed, exact reverse order of _nextFrame
 - (WebFrame *)_previousFrameWithWrap:(BOOL)wrapFlag
 {
-    WebFrame *prevSibling = [self _previousSibling];
+    WebFrame *prevSibling = _private->previousSibling;
     if (prevSibling) {
         WebFrame *prevSiblingLastChild = [prevSibling _lastChild];
         return prevSiblingLastChild ? prevSiblingLastChild : prevSibling;

@@ -56,13 +56,7 @@ using namespace DOM;
 RenderFormElement::RenderFormElement(HTMLGenericFormElementImpl *element)
     : RenderWidget(element)
 {
-    // init RenderObject attributes
-    setInline(true);   // our object is Inline
-
-    m_clickCount = 0;
-    m_state = 0;
-    m_button = 0;
-    m_isDoubleClick = false;
+    setInline(true);
 }
 
 RenderFormElement::~RenderFormElement()
@@ -190,9 +184,6 @@ void RenderFormElement::layout()
 void RenderFormElement::slotClicked()
 {
     RenderArena *arena = ref();
-    QMouseEvent e2( QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
-
-    element()->dispatchMouseEvent(&e2, EventImpl::CLICK_EVENT, m_clickCount);
 
     // We also send the KHTML_CLICK or KHTML_DBLCLICK event for
     // CLICK. This is not part of the DOM specs, but is used for
@@ -200,9 +191,17 @@ void RenderFormElement::slotClicked()
     // attributes, as there is no way to tell the difference between
     // single & double clicks using DOM (only the click count is
     // stored, which is not necessarily the same)
-    element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
 
-    m_isDoubleClick = false;
+#if APPLE_CHANGES
+    QMouseEvent event(QEvent::MouseButtonRelease); // gets "current event"
+    element()->dispatchMouseEvent(&event, EventImpl::CLICK_EVENT, event.clickCount());
+    element()->dispatchMouseEvent(&event, event.isDoubleClick() ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, event.clickCount());
+#else
+    QMouseEvent e2(QEvent::MouseButtonRelease, m_mousePos, m_button, m_state);
+    element()->dispatchMouseEvent(&e2, EventImpl::CLICK_EVENT, m_clickCount);
+    element()->dispatchMouseEvent(&e2, m_isDoubleClick ? EventImpl::KHTML_DBLCLICK_EVENT : EventImpl::KHTML_CLICK_EVENT, m_clickCount);
+#endif
+
     deref(arena);
 }
 

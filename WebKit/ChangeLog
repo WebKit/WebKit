@@ -1,3 +1,39 @@
+2004-12-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3846079> assertion failure in WebHTMLView(WebPrivate) removeTrackingRect at boots.com
+        - fixed <rdar://problem/3857737> REGRESSION (165-166): clicking in a text field that's scrolled to the right causes it to scroll all the way left
+        - fixed <rdar://problem/3861952> REGRESSION (165-166): selection is cleared when you start to scroll a frame
+
+        * WebView.subproj/WebHTMLViewInternal.h: Added handlingMouseDown flag.
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _addTrackingRect:owner:userData:assumeInside:useTrackingNum:]): Allow passing in a
+        tracking number of 0, which means no existing tracking number.
+        (-[WebHTMLView _addTrackingRects:owner:userDataList:assumeInsideList:trackingNums:count:]): Ditto.
+        (-[WebHTMLView removeTrackingRect:]): Allow removing a tracking number of 0, which is a no-op.
+        (-[WebHTMLView _removeTrackingRects:count:]): Ditto.
+        (-[WebHTMLView acceptsFirstResponder]): Changed check to use handlingMouseDown flag instead of mouseDownEvent
+        field since that field is set up too early in the mouse down event handling process.
+        (-[WebHTMLView mouseDown:]): Added code to set handlingMouseDown flag.
+
+        - fixed part of <rdar://problem/3829808> Safari crashes when adding a DOM node that was removed from an XMLHTTP request result
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        Changed code around so that it won't try to create a WebResource when the load fails.
+
+        - moved next/previous links into private structure with the rest of WebFrame fields
+          (We have a rule against putting new fields into obejcts that are part of our public API.)
+
+        * WebView.subproj/WebFrame.h: Remove _nextSibling and _previousSibling.
+        * WebView.subproj/WebFramePrivate.h: Added nextSibling and previousSibling fields to private class.
+        * WebView.subproj/WebFrame.m: Got rid of some tabs in this file.
+        (-[WebFrame _addChild:]): Changed code to use fields inside _private.
+        (-[WebFrame _removeChild:]): Ditto.
+        (-[WebFrame _nextFrameWithWrap:]): Ditto.
+        (-[WebFrame _previousFrameWithWrap:]): Ditto.
+
 2004-12-04  Chris Blumenberg  <cblu@apple.com>
 
 	New fixes for:

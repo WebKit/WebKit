@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -74,15 +74,19 @@ const CFDictionaryKeyCallBacks CFDictionaryFamilyKeyCallBacks = { 0, retainDOMSt
 NSString *KWQFontFamily::getNSFamily() const
 {
     if (!_NSFamily) {
-        // Use an immutable copy of the name, but keep a set of
-        // all family names so we don't end up with too many objects.
-        static CFMutableDictionaryRef families;
-        if (families == NULL)
-            families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        _NSFamily = (NSString *)CFDictionaryGetValue(families, _family.implementation());
-        if (!_NSFamily) {
-            _NSFamily = [NSString stringWithCharacters:(const unichar *)_family.unicode() length:_family.length()];
-            CFDictionarySetValue(families, _family.implementation(), _NSFamily);
+        if (_family.isEmpty())
+            _NSFamily = @"";
+        else {
+            // Use an immutable copy of the name, but keep a set of
+            // all family names so we don't end up with too many objects.
+            static CFMutableDictionaryRef families;
+            if (families == NULL)
+                families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+            _NSFamily = (NSString *)CFDictionaryGetValue(families, _family.implementation());
+            if (!_NSFamily) {
+                _NSFamily = [NSString stringWithCharacters:(const unichar *)_family.unicode() length:_family.length()];
+                CFDictionarySetValue(families, _family.implementation(), _NSFamily);
+            }
         }
     }
     return _NSFamily;

@@ -676,24 +676,27 @@ static WebHTMLView *lastHitView = nil;
 
 - (NSTrackingRectTag)_addTrackingRect:(NSRect)rect owner:(id)owner userData:(void *)data assumeInside:(BOOL)assumeInside useTrackingNum:(int)tag
 {
-    ASSERT(tag == TRACKING_RECT_TAG);
+    ASSERT(tag == 0 || tag == TRACKING_RECT_TAG);
     ASSERT(_private->trackingRectOwner == nil);
     _private->trackingRectOwner = owner;
     _private->trackingRectUserData = data;
-    return tag;
+    return TRACKING_RECT_TAG;
 }
 
 - (void)_addTrackingRects:(NSRect *)rects owner:(id)owner userDataList:(void **)userDataList assumeInsideList:(BOOL *)assumeInsideList trackingNums:(NSTrackingRectTag *)trackingNums count:(int)count
 {
     ASSERT(count == 1);
-    ASSERT(trackingNums[0] == TRACKING_RECT_TAG);
+    ASSERT(trackingNums[0] == 0 || trackingNums[0] == TRACKING_RECT_TAG);
     ASSERT(_private->trackingRectOwner == nil);
     _private->trackingRectOwner = owner;
     _private->trackingRectUserData = userDataList[0];
+    trackingNums[0] = TRACKING_RECT_TAG;
 }
 
 - (void)removeTrackingRect:(NSTrackingRectTag)tag
 {
+    if (tag == 0)
+        return;
     ASSERT(tag == TRACKING_RECT_TAG);
     if (_private != nil) {
         _private->trackingRectOwner = nil;
@@ -702,11 +705,16 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)_removeTrackingRects:(NSTrackingRectTag *)tags count:(int)count
 {
-    ASSERT(count == 1);
-    ASSERT(tags[0] == TRACKING_RECT_TAG);
-    if (count == 0)
-        return;
-    [self removeTrackingRect:TRACKING_RECT_TAG];
+    int i;
+    for (i = 0; i < count; ++i) {
+        int tag = tags[i];
+        if (tag == 0)
+            continue;
+        ASSERT(tag == TRACKING_RECT_TAG);
+        if (_private != nil) {
+            _private->trackingRectOwner = nil;
+        }
+    }
 }
 
 - (void)_sendToolTipMouseExited
@@ -1579,8 +1587,9 @@ static WebHTMLView *lastHitView = nil;
     // Do accept first responder at any other time, for example from keyboard events,
     // or from calls back from WebCore once we begin mouse-down event handling.
     NSEvent *event = [NSApp currentEvent];
-    if ([event type] == NSLeftMouseDown && event != _private->mouseDownEvent && 
-        NSPointInRect([event locationInWindow], [self convertRect:[self visibleRect] toView:nil])) {
+    if ([event type] == NSLeftMouseDown
+            && !_private->handlingMouseDownEvent
+            && NSPointInRect([event locationInWindow], [self convertRect:[self visibleRect] toView:nil])) {
         return NO;
     }
     return YES;
@@ -2187,7 +2196,9 @@ static WebHTMLView *lastHitView = nil;
 }
 
 - (void)mouseDown:(NSEvent *)event
-{   
+{
+    _private->handlingMouseDownEvent = YES;
+
     // Record the mouse down position so we can determine drag hysteresis.
     [self _setMouseDownEvent:event];
 
@@ -2214,6 +2225,8 @@ static WebHTMLView *lastHitView = nil;
 
     [_private->firstResponderAtMouseDownTime release];
     _private->firstResponderAtMouseDownTime = nil;
+
+    _private->handlingMouseDownEvent = NO;
 }
 
 - (void)dragImage:(NSImage *)dragImage

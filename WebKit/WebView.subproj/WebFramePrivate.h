@@ -59,6 +59,9 @@ extern NSString *WebPageCacheDocumentViewKey;
 @interface WebFramePrivate : NSObject
 {
 @public
+    WebFrame *nextSibling;
+    WebFrame *previousSibling;
+
     NSString *name;
     WebFrameView *webFrameView;
     WebDataSource *dataSource;

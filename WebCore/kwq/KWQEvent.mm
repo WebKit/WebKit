@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -755,44 +755,52 @@ QEvent::~QEvent()
 // ======== 
 
 QMouseEvent::QMouseEvent(Type type, const QPoint &position, int button, int state)
-    : QEvent(type), _position(position)
+    : QEvent(type), _position(position), _button(button), _state(state), _clickCount(1)
 {
-    _button = button;
-    if (type == MouseMove) {
-        _clickCount = 0;
-        _state = state | button;
-        _stateAfter = state | button;
-    } else {
-        _clickCount = 1;
-        if (type == MouseButtonRelease) {
-            _state = state | button;
-            _stateAfter = state & ~button;
-        } else {
-            _state = state & ~button;
-            _stateAfter = state | button;
-        }
-    }
+    fixState();
 }
 
 QMouseEvent::QMouseEvent(Type type, NSEvent *event)
-    : QEvent(type), _position([event locationInWindow])
+    : QEvent(type)
+    , _position([event locationInWindow])
+    , _button(mouseButtonForEvent(event))
+    , _state(nonMouseButtonsForEvent(event))
+    , _clickCount([event clickCount])
 {
-    int button = mouseButtonForEvent(event);
-    int state = nonMouseButtonsForEvent(event);
-    _button = button;
-    if (type == MouseMove) {
-        _clickCount = 0;
-        _state = state | button;
-        _stateAfter = state | button;
-    } else {
+    fixState();
+}
+
+QMouseEvent::QMouseEvent(Type type)
+    : QEvent(type), _button(0), _state(0), _clickCount(0)
+{
+    NSEvent *event = [NSApp currentEvent];
+    if (event) {
+        _position = QPoint([event locationInWindow]);
+        _button = mouseButtonForEvent(event);
+        _state = nonMouseButtonsForEvent(event);
         _clickCount = [event clickCount];
-        if (type == MouseButtonRelease) {
+    }
+    fixState();
+}
+
+void QMouseEvent::fixState()
+{
+    int button = _button;
+    int state = _state;
+    switch (type()) {
+        case MouseMove:
+            _clickCount = 0;
+            _state = state | button;
+            _stateAfter = state | button;
+            break;
+        case MouseButtonRelease:
             _state = state | button;
             _stateAfter = state & ~button;
-        } else {
+            break;
+        default:
             _state = state & ~button;
             _stateAfter = state | button;
-        }
+            break;
     }
 }
 
