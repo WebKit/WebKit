@@ -52,7 +52,7 @@ using khtml::EditCommand;
 {
     if (m_impl)
         m_impl->deref();
-    [super dealloc];
+    [super finalize];
 }
 
 + (KWQEditCommand *)commandWithEditCommandImpl:(EditCommand *)impl

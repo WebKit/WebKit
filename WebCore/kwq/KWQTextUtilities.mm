@@ -28,6 +28,18 @@
 #import "KWQString.h"
 #import <AppKit/NSAttributedString.h>
 
+void KWQFindWordBoundary(const QChar *chars, int len, int position, int *start, int *end)
+{
+    NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar *>(reinterpret_cast<const unichar *>(chars))
+        length:len freeWhenDone:NO];
+    NSAttributedString *attr = [[NSAttributedString alloc] initWithString:string];
+    NSRange range = [attr doubleClickAtIndex:(position >= len) ? len - 1 : position];
+    [attr release];
+    [string release];
+    *start = range.location;
+    *end = range.location + range.length;
+}
+
 int KWQFindNextWordFromIndex(const QChar *chars, int len, int position, bool forward)
 {   
     NSString *string = [[NSString alloc] initWithCharactersNoCopy:const_cast<unichar *>(reinterpret_cast<const unichar *>(chars))

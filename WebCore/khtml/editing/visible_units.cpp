@@ -132,7 +132,7 @@ static VisiblePosition nextWordBoundary(const VisiblePosition &c, unsigned (*sea
     QString string;
     unsigned next = 0;
     while (!it.atEnd() && it.length() > 0) {
-        // Keep asking the iterator for chunks until the findWordBoundary() function
+        // Keep asking the iterator for chunks until the search function
         // returns an end value not equal to the length of the string passed to it.
         string.append(it.characters(), it.length());
         next = searchFunction(string.unicode(), string.length());

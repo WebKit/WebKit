@@ -809,7 +809,6 @@
 				BE91FC8E06133666005E3790,
 				832556E7061DF161007B8054,
 				BC86FB90061F5C23006BB822,
-				BE8BD8F406359F6000D3F20B,
 				842F72DD06405FDF00CC271B,
 				931D722B065FC40800C966E1,
 				51F6A3D70663BF04004D2919,
@@ -3246,14 +3245,6 @@
 			settings = {
 			};
 		};
-		BE8BD8F206359F6000D3F20B = {
-			fileEncoding = 30;
-			isa = PBXFileReference;
-			lastKnownFileType = sourcecode.cpp.cpp;
-			path = KWQTextUtilities.cpp;
-			refType = 4;
-			sourceTree = "<group>";
-		};
 		BE8BD8F306359F6000D3F20B = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -3261,12 +3252,6 @@
 			path = KWQTextUtilities.h;
 			refType = 4;
 			sourceTree = "<group>";
-		};
-		BE8BD8F406359F6000D3F20B = {
-			fileRef = BE8BD8F206359F6000D3F20B;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		BE8BD8F506359F6000D3F20B = {
 			fileRef = BE8BD8F306359F6000D3F20B;
@@ -3631,7 +3616,6 @@
 				93386B90037045B3008635CE,
 				93386B91037045B3008635CE,
 				F587852F02DE375901EA4122,
-				BE8BD8F206359F6000D3F20B,
 				BE8BD8F306359F6000D3F20B,
 				BE1A407106CA8A33005B28CF,
 				F587853502DE375901EA4122,

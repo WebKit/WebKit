@@ -1,3 +1,23 @@
+2004-10-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3800667> REGRESSION (Mail): double-clicking multiple spaces only selects two spaces
+
+        * kwq/KWQTextUtilities.mm: (KWQFindWordBoundary): Moved here from the .cpp file. Changed to use the
+        doubleClickAtIndex: method from NSAttributedString rather than using Unicode Utilities.
+        * kwq/KWQTextUtilities.cpp: Removed.
+        * WebCore.pbproj/project.pbxproj: Removed KWQTextUtilities.cpp.
+
+        - fixed a problem that would show up using HTML editing under garbage collection
+
+        * kwq/KWQEditCommand.mm: (-[KWQEditCommand finalize]): Fixed a [super dealloc] that should have been a
+        [super finalize].
+
+        - another small change
+
+        * khtml/editing/visible_units.cpp: (khtml::nextWordBoundary): Tweaked a comment.
+
 2004-10-01  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken (or arguably done by Ken, reviewed by Darin).
