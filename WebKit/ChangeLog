@@ -1,3 +1,14 @@
+=== WebKit-37u2 ===
+
+2002-12-15  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed likely B&I build problem.
+
+        * WebKit.pbproj/project.pbxproj: Get at other frameworks in B&I
+	build. Bump version to 37u2.
+
 2002-12-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.
