@@ -1,5 +1,13 @@
 2003-03-07  David Hyatt  <hyatt@apple.com>
 
+	Whoops. Fix regression causedb y previous checkin.
+	
+        Reviewed by darin
+
+        * khtml/css/cssstyleselector.cpp:
+
+2003-03-07  David Hyatt  <hyatt@apple.com>
+
 	Make the :hover:active behavior much more sophisticated
 	(and make it match WinIE, since that buggy browser is what
 	necessitates this hack).
