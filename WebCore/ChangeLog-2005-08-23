@@ -1,5 +1,28 @@
 2004-09-22  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        * khtml/css/css_computedstyle.cpp:
+        (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue): New overloaded 
+	version of this function, one that takes a flag to determine whether to
+	perform a document updateLayout() call before querying the style system.
+        * khtml/css/css_computedstyle.h:
+        (DOM::EUpdateLayout): Give a symbolic constant to true/false for the 
+	purpose of the new call to getPropertyCSSValue.
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::StyleChange::currentlyHasStyle): Pass DoNotUpdateLayout to call to
+	getPropertyCSSValue.
+        (khtml::CompositeEditCommandImpl::applyTypingStyle): Add in top-level calls
+	to updateLayout before doing style changes that now do not update styles
+	themselves.
+        (khtml::ApplyStyleCommandImpl::doApply): Ditto.
+        (khtml::ApplyStyleCommandImpl::removeCSSStyle): Pass DoNotUpdateLayout to call to
+        getPropertyCSSValue.
+        (khtml::DeleteSelectionCommandImpl::computeTypingStyle): Remove this dead code.
+        * khtml/editing/htmlediting_impl.h: Ditto.
+
+2004-09-22  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Darin
 
         * WebCore.pbproj/project.pbxproj: New files added.

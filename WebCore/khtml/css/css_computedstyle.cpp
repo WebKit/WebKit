@@ -213,9 +213,14 @@ static QString numberAsString(double n)
 
 CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID) const
 {
+    return getPropertyCSSValue(propertyID, UpdateLayout);
+}
+
+CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyID, bool updateLayout) const
+{
     // Make sure our layout is up to date before we allow a query on these attributes.
     DocumentImpl* docimpl = node()->getDocument();
-    if (docimpl)
+    if (docimpl && updateLayout)
         docimpl->updateLayout();
 
     if (!m_renderer)
