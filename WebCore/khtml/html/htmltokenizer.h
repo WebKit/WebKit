@@ -352,6 +352,7 @@ protected:
 
     // The timer for continued processing.
     int timerId;
+    bool allowYield;
 
     bool includesCommentsInDOM;
 

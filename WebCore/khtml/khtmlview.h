@@ -215,6 +215,11 @@ public:
     bool isTransparent() const;
     void setTransparent(bool isTransparent);
     
+    void scheduleRelayout();
+    void unscheduleRelayout();
+    bool haveDelayedLayoutScheduled();
+    bool layoutPending();
+
 #if APPLE_CHANGES
     QWidget *topLevelWidget() const;
     QPoint mapToGlobal(const QPoint &) const;
@@ -237,10 +242,6 @@ private:
 
     void resetCursor();
     void invalidateClick();
-
-    void scheduleRelayout();
-    void unscheduleRelayout();
-    bool haveDelayedLayoutScheduled();
 
     /**
      * Paints the HTML document to a QPainter.

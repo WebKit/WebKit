@@ -87,10 +87,13 @@ int QDateTime::secsTo(const QDateTime &b) const
 
 bool KWQUIEventTime::uiEventPending() const
 {
+    return false;
+/*
     unsigned int mask = NSAnyEventMask & 
       ~(NSFlagsChangedMask | NSAppKitDefinedMask | NSSystemDefinedMask | NSApplicationDefinedMask | NSPeriodicMask | NSCursorUpdateMask);
-    return [[NSApplication sharedApplication] nextEventMatchingMask:mask untilDate:[NSDate distantPast] 
+    return [[NSApplication sharedApplication] nextEventMatchingMask:mask untilDate:nil
                                               inMode:NSEventTrackingRunLoopMode dequeue:NO] != nil;
+*/
 }
 
 #ifdef _KWQ_IOSTREAM_

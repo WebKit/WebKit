@@ -54,13 +54,6 @@ class RenderArena;
 class KWQAccObjectCache;
 #endif
 
-// This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
-const int cLayoutScheduleThreshold = 250;
-
-// This is the amount of time we will delay doing a layout whenever we are either still parsing, or 
-// when the minimum amount of time according to the |cLayoutScheduleThreshold| has not yet elapsed.
-const int cLayoutTimerDelay = 1000;
-
 namespace khtml {
     class CSSStyleSelector;
     class DocLoader;
@@ -371,7 +364,6 @@ public:
 
     void setParsing(bool b);
     bool parsing() const { return m_bParsing; }
-    bool allDataReceived() const { return m_bAllDataReceived; }
     int minimumLayoutDelay();
     bool shouldScheduleLayout();
     int elapsedTime() const;
