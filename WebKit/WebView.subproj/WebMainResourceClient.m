@@ -5,7 +5,7 @@
 
 #import <WebKit/WebMainResourceClient.h>
 
-#import <WebFoundation/WebCookieConstants.h>
+#import <WebFoundation/NSHTTPCookie.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
 #import <WebFoundation/WebFileTypeMappings.h>

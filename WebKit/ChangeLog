@@ -1,3 +1,16 @@
+2003-04-30  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Changed file names for these classes. The contents
+	of the files themselves remain unchanged.
+
+        WebCookie -> NSHTTPCookie.
+        WebCookieManager -> NSHTTPCookieStorage.
+
+        * WebCoreSupport.subproj/WebCookieAdapter.m:
+        * WebView.subproj/WebMainResourceClient.m:
+
 2003-04-30  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
