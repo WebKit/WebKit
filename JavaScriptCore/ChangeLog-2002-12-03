@@ -1,5 +1,13 @@
 2002-11-20  Darin Adler  <darin@apple.com>
 
+	- added a feature for Richard to use in his back/forward cache
+
+        * kjs/object.h: Added save/restoreProperties.
+        * kjs/property_map.h: Here too.
+        * kjs/property_map.cpp: Here too.
+
+2002-11-20  Darin Adler  <darin@apple.com>
+
 	- created argument list objects only on demand for a 7.5% speedup
 
         * kjs/function.h: Change ActivationImp around.

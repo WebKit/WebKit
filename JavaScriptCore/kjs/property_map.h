@@ -31,6 +31,22 @@ namespace KJS {
     class ReferenceList;
     class ValueImp;
     
+    class SavedProperty;
+    
+    class SavedProperties {
+    friend class PropertyMap;
+    public:
+        SavedProperties() : _count(0), _properties(0) { }
+        ~SavedProperties();
+        
+    private:
+        int _count;
+        SavedProperty *_properties;
+        
+        SavedProperties(const SavedProperties&);
+        SavedProperties& operator=(const SavedProperties&);
+    };
+    
     struct PropertyMapHashTableEntry
     {
         PropertyMapHashTableEntry() : key(0) { }
@@ -53,6 +69,9 @@ namespace KJS {
 
         void mark() const;
         void addEnumerablesToReferenceList(ReferenceList &, const Object &) const;
+
+        void save(SavedProperties &) const;
+        void restore(const SavedProperties &p);
 
     private:
         int hash(const UString::Rep *) const;

@@ -80,7 +80,7 @@ namespace KJS {
      */
     void *dummy;
   };
-
+  
   /**
    * Represents an Object. This is a wrapper for ObjectImp
    */
@@ -357,6 +357,9 @@ namespace KJS {
      * @param v The new internal value
      */
     void setInternalValue(const Value &v);
+
+    void saveProperties(SavedProperties &p) const;
+    void restoreProperties(const SavedProperties &p);
   };
 
   inline Object Value::toObject(ExecState *exec) const { return rep->dispatchToObject(exec); }
@@ -589,6 +592,9 @@ namespace KJS {
         { return _prop.get(propertyName); }
     void putDirect(const Identifier &propertyName, ValueImp *value, int attr = 0);
     void putDirect(const Identifier &propertyName, int value, int attr = 0);
+    
+    void saveProperties(SavedProperties &p) const { _prop.save(p); }
+    void restoreProperties(const SavedProperties &p) { _prop.restore(p); }
 
   private:
     const HashEntry* findPropertyHashEntry( const Identifier& propertyName ) const;
@@ -712,6 +718,11 @@ namespace KJS {
 
   inline void Object::setInternalValue(const Value &v)
     { imp()->setInternalValue(v); }
+
+  inline void Object::saveProperties(SavedProperties &p) const
+    { imp()->saveProperties(p); }
+  inline void Object::restoreProperties(const SavedProperties &p)
+    { imp()->restoreProperties(p); }
 
 }; // namespace
 

@@ -25,10 +25,16 @@
 #include "object.h"
 #include "reference_list.h"
 
-// At the time I added this, the optimization still gave a 1.5% performance boost.
+// At the time I added this switch, the optimization still gave a 1.5% performance boost so I couldn't remove it.
 #define USE_SINGLE_ENTRY 1
 
 namespace KJS {
+
+class SavedProperty {
+public:
+    Identifier key;
+    Value value;
+};
 
 // Algorithm concepts from Algorithms in C++, Sedgewick.
 
@@ -279,6 +285,47 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
         if (key && !(_table[i].attributes & DontEnum))
             list.append(Reference(base, Identifier(key)));
     }
+}
+
+void PropertyMap::save(SavedProperties &p) const
+{
+    int count = 0;
+
+#if USE_SINGLE_ENTRY
+    if (_singleEntry.key)
+        ++count;
+#endif
+    for (int i = 0; i != _tableSize; ++i)
+        if (_table[i].key && _table[i].attributes == 0)
+            ++count;
+
+    delete [] p._properties;
+    if (count == 0) {
+        p._properties = 0;
+        return;
+    }
+    p._properties = new SavedProperty [count];
+    
+    SavedProperty *prop = p._properties;
+    
+#if USE_SINGLE_ENTRY
+    if (_singleEntry.key) {
+        prop->key = Identifier(_singleEntry.key);
+        prop->value = Value(_singleEntry.value);
+        ++prop;
+    }
+#endif
+    for (int i = 0; i != _tableSize; ++i)
+        if (_table[i].key && _table[i].attributes == 0) {
+            prop->key = Identifier(_table[i].key);
+            prop->value = Value(_table[i].value);
+        }
+}
+
+void PropertyMap::restore(const SavedProperties &p)
+{
+    for (int i = 0; i != p._count; ++i)
+        put(p._properties[i].key, p._properties[i].value.imp(), 0);
 }
 
 } // namespace KJS
