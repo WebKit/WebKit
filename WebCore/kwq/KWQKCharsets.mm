@@ -24,16 +24,17 @@
  */
 
 #import "KWQKCharsets.h"
+
 #import "KWQTextCodec.h"
 
-QTextCodec *KCharsets::codecForName(const QString &qs) const
+QTextCodec *KCharsets::codecForName(const char *s) const
 {
-    return QTextCodec::codecForName(qs.latin1());
+    return QTextCodec::codecForName(s);
 }
 
-QTextCodec *KCharsets::codecForName(const QString &qs, bool &ok) const
+QTextCodec *KCharsets::codecForName(const char *s, bool &ok) const
 {
-    QTextCodec *codec = QTextCodec::codecForName(qs.latin1());
+    QTextCodec *codec = QTextCodec::codecForName(s);
     if (codec == NULL) {
         ok = false;
         codec = QTextCodec::codecForName("latin1");
@@ -41,4 +42,14 @@ QTextCodec *KCharsets::codecForName(const QString &qs, bool &ok) const
         ok = true;
     }
     return codec;
+}
+
+QTextCodec *KCharsets::codecForName(const QCString &qs, bool &ok) const
+{
+    return codecForName(qs.data(), ok);
+}
+
+QTextCodec *KCharsets::codecForName(const QString &qs, bool &ok) const
+{
+    return codecForName(qs.latin1(), ok);
 }

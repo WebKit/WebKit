@@ -23,17 +23,18 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef KCHARSETS_H_
-#define KCHARSETS_H_
+#ifndef KWQKCHARSETS_H_
+#define KWQKCHARSETS_H_
 
-#include "KWQFont.h"
-#include "KWQString.h"
-
+class QCString;
+class QString;
 class QTextCodec;
 
 class KCharsets {
 public:
-    QTextCodec *codecForName(const QString &) const;
+    QTextCodec *codecForName(const char *) const;
+    QTextCodec *codecForName(const char *, bool &) const;
+    QTextCodec *codecForName(const QCString &, bool &) const;
     QTextCodec *codecForName(const QString &, bool &) const;
 };
 

@@ -1,3 +1,44 @@
+2003-01-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3129556 -- can't search on japanese string at yahoo.co.jp
+
+	The key to fixing this was to look up character sets in a way that does not
+	pay attention to punctuation. Only alphanumeric characters count. Also did
+	a little belt tightening and speeding up while I was at it.
+
+        * kwq/KWQCharsets.h: Use const char * instead of CFStringRef.
+        * kwq/KWQCharsets.mm:
+        (buildDictionaries): Store const char * in the dictionaries instead of CFStringRef,
+	and use the key compare and hash functions that obey only alphanumeric characters.
+        (KWQCFStringEncodingFromIANACharsetName): Use const char * directly.
+        (KWQCFStringEncodingFromMIB): Tweak code a bit.
+        (KWQCFStringEncodingToIANACharsetName): Use const char * directly.
+        (KWQCFStringEncodingToMIB): Tweak code a bit.
+        (encodingNamesEqual): Added. Compares two names, ignoring non-alphanumeric characters.
+        (encodingNameHash): Added.
+
+        * kwq/KWQKCharsets.h: Take a const char * instead of a QString. Also overload for QCString.
+	This fixes conversion back and forth from QString that was happening before.
+        * kwq/KWQKCharsets.mm: (KCharsets::codecForName): Update for above parameter change.
+
+        * kwq/KWQTextCodec.mm:
+        (codecForCFStringEncoding): Add check for kCFStringEncodingInvalidId.
+        (QTextCodec::codecForMib): Simplify because of above check.
+        (QTextCodec::codecForName): Simplify because we don't need to make a CFStringRef, and
+	because of above check.
+        (QTextCodec::name): No need to convert the CFStringRef back to a const char * now.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge textEncoding]): Convert character set name to a const char * to pass in.
+        (+[WebCoreBridge stringWithData:textEncodingName:]): Ditto.
+        * kwq/WebCoreEncodings.mm:
+        (+[WebCoreEncodings charsetNameForEncoding:]): Convert character set name to an NSString
+	to use as a return value.
+        (+[WebCoreEncodings encodingForCharsetName:]): Convert character set name to a const char *
+	to pass in.
+
 2003-01-23  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed a divide by zero problem.
@@ -32,7 +73,6 @@
 	prevent default if this is an html event handler, rather than one
 	set with addEventListener or the like.
 
->>>>>>> 1.1299
 2003-01-23  Chris Blumenberg  <cblu@apple.com>
 
 	Replaced the paint phase constants with the PaintAction enum. Added PaintActionSelection as a paint action. This will eventually allow us to only paint selected objects. This is needed for the text dragging image.

@@ -30,12 +30,12 @@
 
 + (NSString *)charsetNameForEncoding:(CFStringEncoding)encoding
 {
-    return (NSString *)KWQCFStringEncodingToIANACharsetName(encoding);
+    return [NSString stringWithCString:KWQCFStringEncodingToIANACharsetName(encoding)];
 }
 
 + (CFStringEncoding)encodingForCharsetName:(NSString *)charsetName
 {
-    return KWQCFStringEncodingFromIANACharsetName((CFStringRef)charsetName);
+    return KWQCFStringEncodingFromIANACharsetName([charsetName lossyCString]);
 }
 
 @end

@@ -31,50 +31,31 @@ static CFMutableDictionaryRef encodingToCodec = NULL;
 
 static QTextCodec *codecForCFStringEncoding(CFStringEncoding encoding)
 {
-    const void *value;
-    QTextCodec *codec;
-
+    if (encoding == kCFStringEncodingInvalidId) {
+        return NULL;
+    }
+    
     if (encodingToCodec == NULL) {
         encodingToCodec = CFDictionaryCreateMutable(NULL, 0, NULL, NULL);
     }
     
+    const void *value;
     if (CFDictionaryGetValueIfPresent(encodingToCodec, (void *)encoding, &value)) {
         return (QTextCodec *)value;
-    } else {
-        codec = new QTextCodec(encoding);
-	CFDictionarySetValue(encodingToCodec, (void *)encoding, codec);
-	return codec;
     }
+    QTextCodec *codec = new QTextCodec(encoding);
+    CFDictionarySetValue(encodingToCodec, (void *)encoding, codec);
+    return codec;
 }
 
 QTextCodec *QTextCodec::codecForMib(int mib)
 {
-    CFStringEncoding encoding;
-
-    encoding = KWQCFStringEncodingFromMIB(mib);
-
-    if (encoding == kCFStringEncodingInvalidId) {
-        return NULL;
-    } else {
-        return codecForCFStringEncoding(encoding);
-    }
+    return codecForCFStringEncoding(KWQCFStringEncodingFromMIB(mib));
 }
 
 QTextCodec *QTextCodec::codecForName(const char *name)
 {
-    CFStringRef cfname;
-    CFStringEncoding encoding;
-    
-    cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
-
-    encoding = KWQCFStringEncodingFromIANACharsetName(cfname);
-    CFRelease(cfname);
-
-    if (encoding == kCFStringEncodingInvalidId) {
-        return NULL;
-    } else {
-        return codecForCFStringEncoding(encoding);
-    }
+    return codecForCFStringEncoding(KWQCFStringEncodingFromIANACharsetName(name));
 }
 
 QTextCodec *QTextCodec::codecForLocale()
@@ -84,7 +65,7 @@ QTextCodec *QTextCodec::codecForLocale()
 
 const char *QTextCodec::name() const
 {
-    return [(NSString *)KWQCFStringEncodingToIANACharsetName(encoding) cString];
+    return KWQCFStringEncodingToIANACharsetName(encoding);
 }
 
 int QTextCodec::mibEnum() const

@@ -28,11 +28,10 @@
 
 #include <CoreFoundation/CoreFoundation.h>
 
-CFStringEncoding KWQCFStringEncodingFromIANACharsetName(CFStringRef charsetName);
-CFStringEncoding KWQCFStringEncodingFromMIB(int mib);
+CFStringEncoding KWQCFStringEncodingFromIANACharsetName(const char *);
+const char *KWQCFStringEncodingToIANACharsetName(CFStringEncoding);
 
-CFStringRef KWQCFStringEncodingToIANACharsetName(CFStringEncoding encoding);
-int KWQCFStringEncodingToMIB(CFStringEncoding encoding);
+CFStringEncoding KWQCFStringEncodingFromMIB(int mib);
+int KWQCFStringEncodingToMIB(CFStringEncoding);
 
 #endif /* KWQCHARSETS_H_ */
-

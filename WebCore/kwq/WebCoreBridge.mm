@@ -534,7 +534,7 @@ static bool initializedObjectCacheSize = FALSE;
 
 - (CFStringEncoding)textEncoding
 {
-    return KWQCFStringEncodingFromIANACharsetName(_part->encoding().getCFString());
+    return KWQCFStringEncodingFromIANACharsetName(_part->encoding().latin1());
 }
 
 - (NSView *)nextKeyView
@@ -646,7 +646,7 @@ static bool initializedObjectCacheSize = FALSE;
 
 + (NSString *)stringWithData:(NSData *)data textEncodingName:(NSString *)textEncodingName
 {
-    CFStringEncoding textEncoding = KWQCFStringEncodingFromIANACharsetName((CFStringRef)textEncodingName);
+    CFStringEncoding textEncoding = KWQCFStringEncodingFromIANACharsetName([textEncodingName lossyCString]);
     return [WebCoreBridge stringWithData:data textEncoding:textEncoding];
 }
 
