@@ -26,5 +26,11 @@
 #import <WebKit/DOMRange.h>
 
 @interface DOMRange (WebPrivate)
-- (NSString *)_text; // uses same algorithm as innerText
+// uses same algorithm as innerText
+- (NSString *)_text;
+@end
+
+@interface DOMRGBColor (WebPrivate)
+// fast and easy way of getting an NSColor for a DOMRGBColor
+- (NSColor *)_color;
 @end

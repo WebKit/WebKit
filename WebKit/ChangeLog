@@ -1,3 +1,7 @@
+2004-10-18  Chris Blumenberg  <cblu@apple.com>
+
+        * DOM.subproj/DOMPrivate.h: change to copied header that was never committed
+
 2004-10-18  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ken.
