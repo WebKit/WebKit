@@ -14,70 +14,53 @@
     Typical usage of a WKWebView.
     
     NSURL *url = [NSURL URLWithString: @"http://www.apple.com"];
-    ...
     WKWebDataSource *dataSource = [[WKWebDataSource alloc] initWithURL: url];
     WKWebView *view = [[WKWebView alloc] initWithFrame: myFrame];
-    [view setDataSource: dataSource];
-    [[view dataSource] startLoading];
-    ...
-    or
-    ...
-    WKWebDataSource *dataSource = [[WKWebDataSource alloc] initWithURL: url];
-    WKWebView *view = [[WKWebView alloc] initWithFrame: myFrame DataSource: url];
-    [[view dataSource] startLoading];
-    ...
-    or
-    ...
-    WKWebView *view = [[WKWebView alloc] initWithFrame: myFrame url: url];
-    [[view dataSource] startLoading];
-    
-    What is the behaviour of the view after it has been initialized and -startLoading is called?
-    
-        1.  When the data source is set (i.e. -setDataSource:) -locationWillChange will be sent
-            to the view's controller.  It may veto by returning NO.  Note that if the convenience initializers
-            are used no controller will have been set, and thus no chance to veto will be provided.
-            
-        2.  The view will do nothing until receipt of its first -receivedDataForURL: message
-            from its data source.  Thus the view will not change its content before users have
-            a chance to cancel slow URLs.  
-                        
-            During this time, if -stopLoading is called on the data source, loading will 
-            abort.  If the loading is stopped the contents of the window will be unchanged.
-            [This implies that the data source should revert to the previous data source.
-            Will that be problematic?.]  The controller will receive a -loadingCancelled message
-            if the load is aborted during this period.
-            
-            Controllers should initiate progress indicators at this point (how?).
-        
-        3.  After receipt of it first -receivedDataForURL: it will clear its contents
-            and perform its first layout.  At this point a loadingStarted message will
-            be sent to the client.
-            
-        4.  Upon every subsequent receipts of -finishedReceivingDataForURL: messages it
-            will perform additional layouts.  Note that these may be coalesced, depending
-            on the interval the messages are received.  During this time the load may
-            be stopped.  The layout may be incomplete if the load is stopped before all
-            the referenced documents are loaded.  If the layout is stopped during this
-            period the controller will received a -loadingStopped message.
-            
-        5.  When -documentReceived is received the loading and initial layout is complete.
-            Controllers should terminate progress indicators at this point.  At this point
-            controller will receive a -loadingFinished message.
+    WKConcreteWebController *controller = [[WKConcreteWebController alloc] initWithView: view dataSource: dataSource];
 
-    What is the behavior of the view when a link is clicked?
+    [[[view controller] dataSource] startLoading];
+
+    ...
+
+    or
+
+    ...
     
-        See above.  The behavior is exactly as above.  
+    WKWebView *view = [[WKWebView alloc] initWithFrame: myFrame url: url];
+    [[[view controller] dataSource] startLoading];
+
+    
+    What is the behaviour of the view after it has been initialized and 
+    startLoading: is called?
+    
+        1.  No WKLocationChangedHandler messages will be sent until 
+            startLoading: is called.  After startLoading is called a loadingStarted
+            message will be sent to the controller.  The view will remain unchanged 
+            until the controller receives a receivedDataForLocation: message 
+            from the data source.  
+                                    
+            If stopLoading is called before receipt of a receivedDataForLocation:, loading will 
+            abort, the view will be unchanged, and the controller will receive a loadingCancelled 
+            message.
+            
+            Controllers should initiate progress indicators upon receipt of loadingStarted,
+            and terminate when either a loadingCancelled or loadingStopped is received.
         
-        
-   ***
-  
-   The control behavior and view/model interdependencies of WK are manifested by several 
-   protocols (so far: WKLoadHandler, WKScriptContextHandler, WKFrameSetHandler).  This 
-   behavior is encapsulated in a WKWebController class.  Behavior that may be extended/overriden 
-   is described with several protocols:  WKLocationChangeHandler and WKContextMenuHandler.
-   WKWebController also implements these protocols.
-   
-   ***   
+        2.  After the controller receives it's first receivedDataForLocation: the contents of
+            the view will be cleared and layout may begin.
+            
+        3.  Upon subsequent receipt of receivedDataForLocation: messages the controller
+            may trigger a document layout.  Note that layouts may be coalesced.  If stopLoading
+            is called before the document has fully loaded, the layout will be incomplete, and a
+            loadingStopped message will be sent to the controller
+            
+        4.  When the controller receives a receivedDataForLocation: with a WKLoadProgress that 
+            contains bytesSoFar==totalToLoad the location specified is completely loaded.  Clients
+            may display the location string to indicate completion of a loaded resource.
+            When the controller receives a loadingFinished message the main document and all it
+            resources have been loaded.  Controllers should terminate progress indicators at 
+            this point.
+                    
 */
 @interface WKWebView : NSView
 {
@@ -86,21 +69,30 @@
 }
 
 - initWithFrame: (NSRect)frame;
-- initWithFrame: (NSRect)frame dataSource: (NSWebPageDataSource *)dataSource;
+
+// Convenience method.  initWithFrame:url: will create a controller and data source.
 - initWithFrame: (NSRect)frame url: (NSURL *)url;
 
-- (NSWebPageDataSource *)dataSource;
-- (void)setDataSource: (NSWebPageDataSource *)ds;
 
-// Either creates a new datasource or reuses the same datasource for
-// URLs that are qualified, i.e. URLs with an anchor target.
-- (BOOL)setURL: (NSURL *)url;
+// Set and get the delegate.
+- (void)setDelegate: (id <WKWebViewDelegate>)delegate;
+- (id <WKWebViewDelegate>)delegate;
+
+ 
+// Set and get the controller.  Note that the controller is not retained.
+// Perhaps setController: should be private?
+- (void)setController: (id <WKWebController>)controller;
+- (id <WKWebController>)controller;
+
 
 // This method should not be public until we have a more completely
 // understood way to subclass WKWebView.
 - (void)layout;
 
+
+// Stop animating animated GIFs, etc.
 - (void)stopAnimations;
+
 
 // Font API
 - (void)setFontSizes: (NSArray *)sizes;
@@ -111,32 +103,40 @@
 - (void)setFixedFont: (NSSFont *)font;
 - (NSFont *)fixedFont;
 
+
 // Drag and drop links and images.  Others?
-- (void)setDragFromEnabled: (BOOL)flag;
-- (BOOL)dragFromEnabled;
+- (void)setCanDragFrom: (BOOL)flag;
+- (BOOL)canDragFrom;
+- (void)setCanDragTo: (BOOL)flag;
+- (BOOL)canDragTo;
 
-- (void)setDragToEnabled: (BOOL)flag;
-- (BOOL)dragToEnabled;
 
-#ifdef HAVE_WKCONTROLLER
-- (void)setController: (WKWebController *)controller;
-#else
-- (void)setLocationChangeHandler: (WKLocationChangeHandler *)client;
-- (void)setContextMenuHandler: (WKContextMenuHandler *)handler;
-#endif
-
+// Returns an array of built-in context menu items for this node.
+// Generally called by WKContextMenuHandlers from contextMenuItemsForNode:
+- (NSArray *)defaultContextMenuItemsForNode: (WKDOMNode *);
 - (void)setEnableContextMenus: (BOOL)flag;
 - (BOOL)contextMenusEnabled;
-- (void)setDefaultContextMenu: (NSMenu *)menu;
-- (NSMenu *)defaultContextMenu;
 
-// MCJ thinks we need high level find API.
+
+// Most folks want selection API on the view.  Don suggested we mirror the
+// NSText API.  NSText represents selection as a range.  What does this mean
+// in the context of an HTML page?  What is the selection range in a table?
+// What can you do with the selection range?  I'm not sure if can get away
+// with this simplistic API.  We may have to use something similar to the
+// DOM selection API.  I'm also still uncomfortable putting this API on the
+// view.
+- (void)setSelectedRange:(NSRange)aRange;
+- (NSRange)selectedRange;
+
+
+// MCJ thinks we need high level find API on view.
+
 @end
 
 
 
 /*
-    Other areas still to consider:
+    Areas still to consider:
 
         ALT image text and link URLs
             Should this be built-in?  or able to be overriden?

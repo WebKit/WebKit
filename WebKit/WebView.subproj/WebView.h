@@ -6,27 +6,108 @@
 */
 #import <Cocoa/Cocoa.h>
 
-@interface WKWebController : NSObject <WKLoadHandler, WKScriptContextHandler, WKFrameSetHandler, WKCredentialsHandler, WKLocationChangeHandler, WKContextMenuHandler>
+#ifdef READY_FOR_PRIMETIME
+
+/*
+    WKWebController manages the interaction between WKWebView and WKWebDataSource.
+    Intances of WKWebController retain their view and data source.
+    
+    [As in the appkit classes NSWindow and NSWindowController, it will be necessary 
+     to have non-retained back pointers from WKWebView and WKWebDataSource to their
+     controller.  Not retaining the controller will prevent cycles.  Of course, not
+     retaining is bad, as it can lead to dangling references.  We could invert the reference
+     graph and add ...inView: and ...inDataSource: to the API, but that's ugly.  If it's
+     good enough for the appkit, it's good enough for us.  Ugh.]
+     
+                                 .--(p)WKWebController --.
+                                 |      .    .           |
+                                 |     .      .          |
+                                \|/   .        .        \|/
+    (p)WKWebViewDelegate <-- (c)WKWebView     (c)WKWebDataSource --> (p)WKWebDataSourceDelegate
+    
+    (c) indicates a class, (p) indicates a protocol.  The solid lines indicate an 
+    retain reference.  The dotted lines indicate a non-retained reference.
+    
+    The WKWebController implements required behavior.  WKWebView and WKWebDataSource
+    cannot function without a controller.  
+    
+    Delegates implement optional behavior.  WKWebView doesn't require a WKWebViewDelegate,
+    nor does WKWebDataSource require a WKWebDataSourceDelegate.
+    
+    It it expected that alternate implementations of WKWebController will be written for
+    alternate views of the web page described by WKWebDataSource.  For example, a 
+    view that draws the DOM tree would require both a subclass of NSView and an
+    implementation of WKWebController.  It is also possible that a web crawler
+    may implement a WKWebController with no corresponding view.
+    
+    WKConcreteWebController may be subclassed to modify the behavior of the standard
+    WKWebView and WKWebDataSource.
+*/
+
+
+/*
+    WKWebController implements all the behavior that ties together WKWebView
+    and WKWebDataSource.  See each inherited protocol for a more complete
+    description.
+    
+    [Don and I both agree that all these little protocols are useful to cleanly
+     describe snippets of behavior, but do we explicity reference them anywhere,
+     or do we just use the umbrella protocol?]
+*/
+@protocol WKWebController <WKLoadHandler, WKScriptContextHandler, WKFrameSetHandler, WKCredentialsHandler, WKLocationChangeHandler>
+
+- (void)setDataSource: (WKWebDataSource *)dataSource;
+- (WKWebDataSource *)dataSource
+
+- (void)setView: (WKWebView *)view;
+- (WKWebView *)view;
+
 @end
+
+
+/*
+    WKWebViewDelegates implement protocols that modify the behavior of
+    WKWebViews.  A WKWebView does not require a delegate.
+*/
+@protocol WKWebViewDelegate <WKContextMenuHandler>
+@end
+
+
+/*
+    WKWebDataSourceDelegate implement protocols that modify the behavior of
+    WKWebDataSources.  A WKWebDataSources does not require a delegate.
+*/
+@protocol WKWebDataSourceDelegate <?>
+@end
+
+
+// Is WKConcreteWebController the right name?  The name fits with the
+// scheme used by Foundation, although Foundation's concrete classes
+// typically aren't public.
+@interface WKConcreteWebController : NSObject <WKWebController>
+- initWithView: (WKWebView *) dataSource: (WKWebDataSource *)dataSource;
+@end
+
 
 // See the comments in WKWebPageView above for more description about this protocol.
 @protocol WKLocationChangeHandler
-- (BOOL)locationWillChange;
+
+- (void)loadingStarted;
 - (void)loadingCancelled;
 - (void)loadingStopped;
 - (void)loadingFinished;
-- (void)loadingStarted;
+
+- (void)loadedPageTitle: (NSString *)title;
+
 @end
 
 
 
 @protocol WKContextMenuHandler
-/*
-    We decided to implement this in terms of a fixed set of types rather
-    than per node.
-    
-    What items should be supported in the default context menus?
-*/
+// Returns the array of menu items for this node that will be displayed in the context menu.
+// Typically this would be implemented by returning the results of WKWebView defaultContextMenuItemsForNode:
+// after making any desired changes or additions.
+- (NSArray *)contextMenuItemsForNode: (WKDOMNode *);
 @end
 
 /*
@@ -56,7 +137,9 @@
     typically for non-base URLs this should be done after a URL (i.e. image)
     has been completely downloaded.
 */
-- (void)receivedDataForLocation: (WKLoadProgress *)progress;
+- (void)receivedProgress: (WKLoadProgress *)progress forLocation: (NSString *)lcoation;
+
+- (void)timeoutForLocation: (NSString *)location partialProgress: (WKLoadProgress *)progress;
 
 @end
 
@@ -69,13 +152,32 @@
 @interface WKLoadProgress 
 {
     int bytesSoFar;	// 0 if this is the start of load
-    int totalLoaded;	// -1 if this is not known.
+    int totalToLoad;	// -1 if this is not known.
                         // bytesSoFar == totalLoaded when complete
-    NSString *location; // Needs to be a string, not URL.
-    LOAD_TYPES type;	// load types, either image, css, jscript, or html
+    WK_LOAD_TYPES type;	// load types, either image, css, jscript, or html
 }
 @end
 
+/*
+   Error handling:
+        error conditions:
+            timeout
+            unrecognized/handled mime-type
+            javascript errors
+            invalid url
+            parsing errors
+            
+*/
+@interface WKError
+{
+    NSString *description;
+    int code;
+}
+@end
+
+@protocol WKWebDataSourceErrorHandler
+- error: (WKError *)error;
+@end
 
 
 /*
@@ -85,6 +187,7 @@
 */
 @protocol WKScriptContextHandler
 
+// setStatusText and statusText are used by Javascript's status bar text methods.
 - (void)setStatusText: (NSString *)text;
 - (NSString *)statusText;
 
@@ -99,11 +202,10 @@
 */
 @protocol WKFrameSetHandler
 - (NSArray *)frameNames;
-- (WKFrame *)findFrameNamed: (NSString *)name;
+- (id <WKFrame>) findFrameNamed: (NSString *)name;
 - (BOOL)frameExists: (NSString *)name;
-- (BOOL)openURLInFrame: (WKFrame *)aFrame url: (NSURL *)url;
+- (void)openURL: (NSURL *)url inFrame: (id <WKFrame>) frame;
 @end
 
-@protocol WKFrame
-//
-@end
+#endif
+

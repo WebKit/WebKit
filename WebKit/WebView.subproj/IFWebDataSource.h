@@ -17,19 +17,9 @@
     Typical usage of a WKWebDataSource.
     
     WKWebDataSource *dataSource = [[WKWebDataSource alloc] initWithURL: url];
-    
-    [dataSource setFrameSetHandler: (WKFrameSetHandler *)myManager];
-    [dataSource setScriptContextHandler: (WKScriptContextHandler *)myContext];
-    [dataSource setLoadHandler: (WKLoadHandler *)myLoadHandler];
-    [dataSource setCredentialsHandler: (WKCredentialsHandler *)myCredentialsHandler];
-    ...
-    or
-    ...
-    [dataSource setController: (WKWebController *)myController];
+    id <WKWebController>myController = [[MyControllerClass alloc] init];
+    [myController setDataSource: dataSource];
         
-    Questions:  
-        Multiple protocols or controller?
-        Should we use CF XML data types, or our own?
 */
 
 #ifdef READY_FOR_PRIMETIME
@@ -41,40 +31,60 @@
 }
 
 
-// Can these init methods return nil? e.g. if URL is invalid, or should they
-// throw exceptions?
-- initWithURL: (NSURL *)url;
+// Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
+- initWithURL: (NSURL *)inputUrl;
+
 - initWithData: (NSData *)data;
 - initWithString: (NSString *)string;
 
-// ?? How do you create subclasses of WKURILoader, how is this
-// expected to be used?
+// Ken, need some help with one.
 - initWithLoader: (WKURILoader *)loader;
 
-// ?? We don't have a NS streams API!!
-- initWithStream: (NSStream *)stream
+
+// Set the controller for this data source.  NOTE:  The controller is not retained by the
+// data source.
+// Perhaps setController: should be private?
+- (void)setController: (id <WKWebController>)controller;
+- (id <WKWebController>)controller;
+
 
 // May return nil if not initialized with a URL.
-- (NSURL *)url;
+- (NSURL *)inputURL;
 
-// Start actually getting (if initialized with a URL) and parsing data.
-- (void)startLoading;
 
-// Cancel any pending loads.
-- (BOOL)stopLoading;
+// The inputURL may resolve to a different URL as a result of
+// either a client side refresh <META HTTP-EQUIV="refresh" ...> or
+// a DNS redirect.  Both of these implicit actions should not
+// require a new data source.  The resolvedURL is the URL that is
+// ultimately used to fetch page data.
+// [We need more brain cells applied to this issue.]  
+- (NSURL *)resolvedURL;
+
+
+// Start actually getting (if initialized with a URL) and parsing data. If the data source
+// is still performing a previous load it will be stopped.
+// If forceRefresh is YES the document will load from the net, not the cache.
+- (void)startLoading: (BOOL)forceRefresh;
+
+
+// Cancels any pending loads.  A data source is conceptually only ever loading
+// one document at a time, although one document may have many related
+// resources.  stopLoading will stop all loads related to the data source.
+// Returns NO if the data source is not currently loading.
+- (void)stopLoading;
+
+
+// Returns YES if there are any pending loads.
+- (BOOL)isLoading;
+
 
 // Get DOM access to the document.
 - (WKDOMDocument *)document;
 
+
 // Get the actual source of the docment.
 - (NSString *)documentText;
 
-// Get a 'pretty' version of the document, created by traversal of the DOM.
-- (NSString *)formattedDocumentText;
-
-// Get the currently focused node.  Is this appropriate for the model, or
-// should this be handled by the view?
-- (WKDOMNode *)activeNode;
 
 // URL reference point, these should probably not be public for 1.0.
 - setBase: (NSURL *)url;
@@ -82,81 +92,33 @@
 - setBaseTarget: (NSURL *)url;
 - (NSURL *)baseTarget;
 
+
 - (NSString *)encoding;
+
 
 // Style sheet
 - (void)setUserStyleSheet: (NSURL *)url;
 - (void)setUserStyleSheet: (NSString *)sheet;
 
+
 // Searching, to support find in clients.  regular expressions?
-- (WKSearchState *)findTextBegin;
-- (NSString *)findTextNext: (WKRegularExpression *)exp direction: (BOOL)forward state: (WKSearchState *)state;
-- (NSString *)findTextNext: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)case state: (WKSearchState *)state;
-
-// Selection
-- (NSString *)selectedText;
-- (WKDOMRange *)selectedRange;
-- (void)setSelection: (WKDOMRange *range);
-- (BOOL)hasSelection;
-- (void)selectAll;
-
-#ifdef HAVE_WKCONTROLLER
-- (void)setController: (WKWebController *)controller;
-#else
-- (void)setLoadHandler: (WKLoadHandler *)fmanager;
-- (void)setFrameSetHandler: (WKFrameSetHandler *)fmanager;
-- (void)setScriptContextHandler: (WKScriptContextHandler *)context;
-#endif
-
-- executeScript: (NSString *)string;
-// Same as above except uses the node as 'this' value
-- executeScript: (NSString *)string withNode: (WKDOMNode *)node;
-
-// This API reflects the KDE API, but is it sufficient?
-- (BOOL)scheduleScript: (NSString *)string withNode: (WKDOMNode *)node 
-- executeScheduledScript;
+- (WKSearchState *)beginSearch;
+- (NSString *)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)case state: (WKSearchState *)state;
 
 
 // a.k.a shortcut icons, http://msdn.microsoft.com/workshop/Author/dhtml/howto/ShortcutIcon.asp.
-// This may be removed to a category to prevent unnecessary linkage to the AppKit.  Note, however
-// that this means WebCore, specifically KWQ, also doesn't have dependencies on the AppKit.
+// This method may be moved to a category to prevent unnecessary linkage to the AppKit.  Note, however
+// that WebCore also has dependencies on the appkit.
 - (NSImage *)icon;
 
+
 // Is page secure, e.g. https, ftps
-// Should this perhaps be on the URL?
-// This would the be implemented like this
-// return [[self url] isSecure];
 - (BOOL)isPageSecure;
 
-// ---------------------- Convenience methods ----------------------
+
+// Returns nil or the page title.
 - (NSString *)pageTitle;
-// ---------------------------------------------------------------
 
-
-/*
-    Notifications?
-        In general, how often should we notify?  We should use notifications
-        if we anticipate multiple clients, no return types, and generally
-        asynchronous or indirect behaviour.
-        
-        notifications:
-            WKSelectionChangedNotification
-            WKNodeActivatedNotification
-            WKDocumentChangedNotification
-    
-    Error handling:
-        exceptions?
-        nil returns?
-        errors by notification?
-        
-        error conditions:
-            timeout
-            unrecognized/handled mime-type
-            javascript errors
-            invalid url
-            parsing errors
-            
-*/
 @end
 
 
