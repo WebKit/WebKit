@@ -56,7 +56,7 @@ HTMLCollectionImpl::HTMLCollectionImpl(NodeImpl *_base, int _type)
     base->ref();
     type = _type;
     idsDone = false;
-    info = base->isDocumentNode() ? static_cast<HTMLDocumentImpl*>(base->getDocument())->collectionInfo(type) : 0;
+    info = base->isDocumentNode() && base->getDocument()->isHTMLDocument() ? static_cast<HTMLDocumentImpl*>(base->getDocument())->collectionInfo(type) : 0;
 }
 
 HTMLCollectionImpl::~HTMLCollectionImpl()

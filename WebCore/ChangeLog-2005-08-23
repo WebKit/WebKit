@@ -1,3 +1,13 @@
+2005-01-25  David Harrison  <harrison@apple.com>
+
+        Reviewed by Maciej and Richard.
+
+        <rdar://problem/3963731> AX VO: Changing window sizes causes a crash using with Voice Over - KWQPtrDictImpl::clear
+
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::HTMLCollectionImpl):
+        Ensure that isHTMLDocument before calling HTMLDocument-only method.
+
 2005-01-25  Richard Williamson   <rjw@apple.com>
 
 	Part one of fix for <rdar://problem/3757712> REGRESSION (Mail): WebCore does not allow Devanagari ligature input
