@@ -3408,10 +3408,13 @@ void ReplaceSelectionCommand::doApply()
     bool startAtBlockBoundary = startAtStartOfBlock || startAtEndOfBlock;
     NodeImpl *startBlock = selection.start().node()->enclosingBlockFlowElement();
     NodeImpl *endBlock = selection.end().node()->enclosingBlockFlowElement();
-
     bool mergeStart = false;
     bool mergeEnd = false;
-    if (startBlock == endBlock && startAtStartOfBlock && startAtEndOfBlock) {
+    if (startBlock == startBlock->rootEditableElement() && startAtStartOfBlock && startAtEndOfBlock) {
+        // Empty document. Merge neither start nor end.
+        mergeStart = mergeEnd = false;
+    }
+    else if (startBlock == endBlock && startAtStartOfBlock && startAtEndOfBlock) {
         // Merge start only if insertion point is in an empty block.
         mergeStart = true;
     }
@@ -3542,8 +3545,14 @@ void ReplaceSelectionCommand::doApply()
                 node = next;
             }
         }
-        if (insertionNode)
-            insertionPos = Position(insertionNode, insertionNode->caretMaxOffset());
+        if (insertionNode) {
+            if (insertionNode->isTextNode())
+                insertionPos = Position(insertionNode, insertionNode->caretMaxOffset());
+            else if (insertionNode->childNodeCount() > 0)
+                insertionPos = Position(insertionNode, insertionNode->childNodeCount());
+            else
+                insertionPos = Position(insertionNode->parentNode(), insertionNode->nodeIndex() + 1);
+        }
         insertBlocksBefore = false;
     }
 

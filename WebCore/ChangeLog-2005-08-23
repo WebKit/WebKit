@@ -1,3 +1,19 @@
+2005-01-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for these two bugs:
+        
+        <rdar://problem/3938935> REGRESSION (Mail): Pasting into an empty document mangles content
+        <rdar://problem/3939148> REGRESSION (Mail): Pasting mistakenly reverses lines
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): For 3938935, add one more case to handle an empty document; merge
+        neither start nor end. For 3939148, improve the code which adjusts the insertion point during 
+        the process of pasting. It formerly handled only one of the possible cases.
+        * layout-tests/editing/pasteboard/paste-text-015-expected.txt: Added.
+        * layout-tests/editing/pasteboard/paste-text-015.html: Added.
+
 2005-01-04  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3936571, placeholder attribute should work for normal inputs for Dashboard.
