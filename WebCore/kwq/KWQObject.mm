@@ -153,7 +153,7 @@ int QObject::startTimer(int milliseconds)
           target:target
         selector:@selector(timerFired)
         userInfo:target
-         repeats:NO];
+         repeats:YES];
     [target release];
     [timers setObject:timer forKey:timerId];
     

@@ -1,3 +1,11 @@
+2002-10-30  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3049853 - Javascript: setInterval incorrectly acts as single shot
+	
+        * kwq/KWQObject.mm:
+        (QObject::startTimer): Set a recurring timer instead of
+	single-shot, to match QObject semantics.
+
 2002-10-30  Richard Williamson  <rjw@apple.com>
 
         More work on bidi and contextual forms.
