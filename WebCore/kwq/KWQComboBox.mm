@@ -62,7 +62,10 @@ enum {
 @interface KWQPopUpButton : NSPopUpButton <KWQWidgetHolder>
 {
     BOOL inNextValidKeyView;
+    BOOL populatingMenu;
 }
+- (void)setPopulatingMenu:(BOOL)populating;
+
 @end
 
 QComboBox::QComboBox()
@@ -345,6 +348,7 @@ void QComboBox::populateMenu()
         KWQ_BLOCK_EXCEPTIONS;
 
         KWQPopUpButton *button = getView();
+	[button setPopulatingMenu:YES];
         [button removeAllItems];
         QValueListConstIterator<KWQListBoxItem> i = const_cast<const QValueList<KWQListBoxItem> &>(_items).begin();
         QValueListConstIterator<KWQListBoxItem> e = const_cast<const QValueList<KWQListBoxItem> &>(_items).end();
@@ -356,6 +360,7 @@ void QComboBox::populateMenu()
             setTitle(menuItem, *i);
         }
         [button selectItemAtIndex:_currentItem];
+	[button setPopulatingMenu:NO];
 
         KWQ_UNBLOCK_EXCEPTIONS;
 
@@ -506,6 +511,18 @@ void QComboBox::populate()
     NSView *view = [super previousValidKeyView];
     inNextValidKeyView = NO;
     return view;
+}
+
+- (void)setPopulatingMenu:(BOOL)populating
+{
+    populatingMenu = populating;
+}
+
+- (void)setNeedsDisplayInRect:(NSRect)rect
+{
+    if (!populatingMenu) {
+	[super setNeedsDisplayInRect:rect];
+    }
 }
 
 @end

@@ -1,5 +1,16 @@
 2004-05-14  Darin Adler  <darin@apple.com>
 
+        Reviewed by Darin, coded by Maciej.
+
+        - fixed extra repaints when doing auto-fill checks on all pages that have pop-up buttons
+
+        * kwq/KWQComboBox.mm:
+        (QComboBox::populateMenu): Set the populating-menu flag and clear it when done.
+        (-[KWQPopUpButton setPopulatingMenu:]): Added. Sets flag.
+        (-[KWQPopUpButton setNeedsDisplayInRect:]): Do nothing if the flag is set.
+
+2004-05-14  Darin Adler  <darin@apple.com>
+
         Reviewed by Dave.
 
         - fixed <rdar://problem/3650026>: "background property doesn't work right on webdevtips.com due to background:inherit"
