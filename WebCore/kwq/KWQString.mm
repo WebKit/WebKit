@@ -52,10 +52,34 @@ QString QString::fromLatin1(const char *chs)
 }
 
 #ifdef USING_BORROWED_KURL
-QString QString::fromLocal8Bit(const char *, int)
+QString QString::fromLocal8Bit(const char *chs, int len)
 {
-    // FIXME: not yet implemented
-    return QString();
+    QString qs;
+    if (chs && *chs) {
+        qs.s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+        if (qs.s) {
+            if (len < 0) {
+                // FIXME: is MacRoman the correct encoding?
+                CFStringAppendCString(qs.s, chs, kCFStringEncodingMacRoman);
+            } else {
+                const int capacity = 64;
+                UniChar buf[capacity];
+                int fill = 0;
+                for (uint i = 0; (i < len) && chs[i]; i++) {
+                    buf[fill] = chs[i];
+                    fill++;
+                    if (fill == capacity) {
+                        CFStringAppendCharacters(qs.s, buf, fill);
+                        fill = 0;
+                    }
+                }
+                if (fill) {
+                    CFStringAppendCharacters(qs.s, buf, fill);
+                }
+            }
+        }
+    }
+    return qs;
 }
 #endif // USING_BORROWED_KURL
 
@@ -293,7 +317,6 @@ QCString QString::utf8() const
 
 QCString QString::local8Bit() const
 {
-    // FIXME: not yet implemented
     uint len = length();
     if (len) {
         char *chs = CFAllocatorAllocate(kCFAllocatorDefault, len + 1, 0);
@@ -323,23 +346,38 @@ bool QString::isEmpty() const
 }
 
 #ifdef USING_BORROWED_KURL
-QChar QString::at(uint) const
+QChar QString::at(uint i) const
 {
-    // FIXME: not yet implemented
+    uint len = length();
+    if (len && (i < len)) {
+        CFStringInlineBuffer buf;
+        CFStringInitInlineBuffer(s, &buf, CFRangeMake(0, i));
+        return QChar(CFStringGetCharacterFromInlineBuffer(&buf, i));
+    }
     return QChar(0);
 }
 #endif // USING_BORROWED_KURL
 
-bool QString::startsWith(const QString &) const
+bool QString::startsWith(const QString &qs) const
 {
-    // FIXME: not yet implemented
+    if (s && qs.s) {
+        return CFStringHasPrefix(s, qs.s);
+    }
     return FALSE;
 }
 
-int QString::compare(const QString &) const
+int QString::compare(const QString &qs) const
 {
-    // FIXME: not yet implemented
-    return 0;
+    if (s == qs.s) {
+        return kCFCompareEqualTo;
+    }
+    if (!s) {
+        return kCFCompareLessThan;
+    }
+    if (!qs.s) {
+        return kCFCompareGreaterThan;
+    }
+    return CFStringCompare(s, qs.s, 0);
 }
 
 int QString::contains(const char *, bool) const
@@ -811,19 +849,11 @@ bool operator==(const QString &, QChar)
     return FALSE;
 }
 
-bool operator==(const QString &, const QString &)
+bool operator==(const QString &qs1, const QString &qs2)
 {
-#if 0
-    CFComparisonResult cmp;
-    int flags;
-
-    flags = 0;
-
-    cmp = CFStringCompare(s1.s, s2.s, flags);
-    
-    return (cmp == kCFCompareEqualTo);
-#endif
-    // FIXME: not yet implemented
+    if (qs1.s && qs2.s) {
+        return CFStringCompare(qs1.s, qs2.s, 0) == kCFCompareEqualTo;
+    }
     return FALSE;
 }
 
@@ -845,21 +875,12 @@ bool operator!=(const QString &s, QChar c)
     return FALSE;
 }
 
-bool operator!=(const QString &, const QString &)
+bool operator!=(const QString &qs1, const QString &qs2)
 {
-#if 0
-    // FIXME: awaiting real implementation
-    CFComparisonResult cmp;
-    int flags;
-
-    flags = 0;
-
-    cmp = CFStringCompare(s1.s, s2.s, flags);
-    
-    return (cmp != kCFCompareEqualTo);
-#endif
-    // FIXME: not yet implemented
-    return FALSE;
+    if (qs1.s && qs2.s) {
+        return CFStringCompare(qs1.s, qs2.s, 0) != kCFCompareEqualTo;
+    }
+    return TRUE;
 }
 
 bool operator!=(const QString &, const char *)
