@@ -8,11 +8,14 @@
 #import <WebKit/WebViewPrivate.h>
 
 @class NSError;
-@class WebView;
-@class WebDataSource;
 @class NSURLConnection;
+@class NSURLConnectionAuthenticationChallenge;
+@class NSURLCredential;
 @class NSURLRequest;
 @class NSURLResponse;
+@class WebAuthenticationChallenge;
+@class WebDataSource;
+@class WebView;
 
 @interface WebBaseResourceHandleDelegate : NSObject
 {
@@ -26,6 +29,8 @@
     id identifier;
     id resourceLoadDelegate;
     id downloadDelegate;
+    NSURLConnectionAuthenticationChallenge *currentConnectionChallenge;
+    WebAuthenticationChallenge *currentWebChallenge;
     BOOL reachedTerminalState;
     BOOL defersCallbacks;
     WebResourceDelegateImplementationCache implementations;
@@ -48,5 +53,9 @@
 - (NSError *)cancelledError;
 
 - (void)setIdentifier: ident;
+
+-(void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(WebAuthenticationChallenge *)challenge;
+
+-(void)continueWithoutCredentialForAuthenticationChallenge:(WebAuthenticationChallenge *)challenge;
 
 @end

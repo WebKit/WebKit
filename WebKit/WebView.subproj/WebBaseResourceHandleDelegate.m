@@ -6,6 +6,7 @@
 #import <WebKit/WebBaseResourceHandleDelegate.h>
 
 #import <WebFoundation/NSURLConnection.h>
+#import <WebFoundation/NSURLConnectionAuthenticationChallenge.h>
 #import <WebFoundation/NSURLConnectionPrivate.h>
 #import <WebFoundation/NSURLRequest.h>
 #import <WebFoundation/NSURLRequestPrivate.h>
@@ -14,6 +15,8 @@
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSErrorExtras.h>
 
+#import <WebKit/WebAuthenticationChallenge.h>
+#import <WebKit/WebAuthenticationChallengeInternal.h>
 #import <WebKit/WebDataProtocol.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
@@ -183,10 +186,17 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
-    if (implementations.delegateImplementsDidReceiveAuthenticationChallenge)
-        [resourceLoadDelegate webView:controller resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveAuthenticationChallenge:challenge fromDataSource:dataSource];
+    ASSERT(!currentConnectionChallenge);
+    ASSERT(!currentWebChallenge);
+
+    currentConnectionChallenge = [challenge retain];;
+    currentWebChallenge = [[WebAuthenticationChallenge alloc] _initWithAuthenticationChallenge:challenge delegate:self];
+
+    if (implementations.delegateImplementsDidReceiveAuthenticationChallenge) {
+        [resourceLoadDelegate webView:controller resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+    } else {
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didReceiveAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+    }
 }
 
 -(void)connection:(NSURLConnection *)con didCancelAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge
@@ -194,10 +204,46 @@
     ASSERT(con == connection);
     ASSERT(!reachedTerminalState);
 
-    if (implementations.delegateImplementsDidCancelAuthenticationChallenge)
-        [resourceLoadDelegate webView:controller resource:identifier didCancelAuthenticationChallenge:challenge fromDataSource:dataSource];
-    else
-        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didCancelAuthenticationChallenge:challenge fromDataSource:dataSource];
+    ASSERT(currentConnectionChallenge);
+    ASSERT(currentWebChallenge);
+    ASSERT(currentConnectionChallenge = challenge);
+
+    if (implementations.delegateImplementsDidCancelAuthenticationChallenge) {
+        [resourceLoadDelegate webView:controller resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+    } else {
+        [[WebDefaultResourceLoadDelegate sharedResourceLoadDelegate] webView:controller resource:identifier didCancelAuthenticationChallenge:currentWebChallenge fromDataSource:dataSource];
+    }
+}
+
+
+-(void)useCredential:(NSURLCredential *)credential forAuthenticationChallenge:(WebAuthenticationChallenge *)challenge
+{
+    if (challenge == nil || challenge != currentWebChallenge) {
+	return;
+    }
+
+    [[currentConnectionChallenge connection] useCredential:credential forAuthenticationChallenge:currentConnectionChallenge];
+
+    [currentConnectionChallenge release];
+    currentConnectionChallenge = nil;
+    
+    [currentWebChallenge release];
+    currentWebChallenge = nil;
+}
+
+-(void)continueWithoutCredentialForAuthenticationChallenge:(WebAuthenticationChallenge *)challenge
+{
+    if (challenge == nil || challenge != currentWebChallenge) {
+	return;
+    }
+
+    [[currentConnectionChallenge connection] continueWithoutCredentialForAuthenticationChallenge:currentConnectionChallenge];
+
+    [currentConnectionChallenge release];
+    currentConnectionChallenge = nil;
+    
+    [currentWebChallenge release];
+    currentWebChallenge = nil;
 }
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
@@ -265,6 +311,12 @@
 {
     ASSERT(!reachedTerminalState);
 
+    [currentConnectionChallenge release];
+    currentConnectionChallenge = nil;
+    
+    [currentWebChallenge release];
+    currentWebChallenge = nil;
+
     [connection cancel];
     
     if (error) {
@@ -295,5 +347,6 @@
         identifier = [ident retain];
     }
 }
+
 
 @end

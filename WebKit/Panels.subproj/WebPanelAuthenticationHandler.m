@@ -6,10 +6,10 @@
 
 
 #import <WebKit/WebPanelAuthenticationHandler.h>
+#import <WebKit/WebAuthenticationChallenge.h>
 #import <WebKit/WebAuthenticationPanel.h>
 #import <WebFoundation/WebAssertions.h>
 #import <WebFoundation/WebNSDictionaryExtras.h>
-#import <WebFoundation/NSURLConnectionAuthenticationChallenge.h>
 #import <WebFoundation/NSURLDownloadAuthenticationChallenge.h>
 
 static NSString *WebModalDialogPretendWindow = @"WebModalDialogPretendWindow";
@@ -46,7 +46,7 @@ WebPanelAuthenticationHandler *sharedHandler;
 
 -(void)startAuthentication:(NSURLAuthenticationChallenge *)challenge window:(NSWindow *)w
 {
-    ASSERT([challenge isKindOfClass:[NSURLConnectionAuthenticationChallenge class]] ||
+    ASSERT([challenge isKindOfClass:[WebAuthenticationChallenge class]] ||
 	   [challenge isKindOfClass:[NSURLDownloadAuthenticationChallenge class]]);
 
     if ([w attachedSheet] != nil) {
@@ -56,9 +56,9 @@ WebPanelAuthenticationHandler *sharedHandler;
     id window = w ? (id)w : (id)WebModalDialogPretendWindow;
 
     if ([windowToPanel objectForKey:window] != nil) {
-	if ([challenge isKindOfClass:[NSURLConnectionAuthenticationChallenge class]]) {
-	    NSURLConnectionAuthenticationChallenge *connectionChallenge = (NSURLConnectionAuthenticationChallenge *)challenge;
-	    [[connectionChallenge connection] cancel];
+	if ([challenge isKindOfClass:[WebAuthenticationChallenge class]]) {
+	    WebAuthenticationChallenge *webChallenge = (WebAuthenticationChallenge *)challenge;
+	    [webChallenge cancel];
 	} else if ([challenge isKindOfClass:[NSURLDownloadAuthenticationChallenge class]]) {
 	    NSURLDownloadAuthenticationChallenge *downloadChallenge = (NSURLDownloadAuthenticationChallenge *)challenge;
 	    [[downloadChallenge download] cancel];
@@ -89,7 +89,7 @@ WebPanelAuthenticationHandler *sharedHandler;
     }
 }
 
--(void)_authenticationDoneWithChallenge:(NSURLConnectionAuthenticationChallenge *)challenge result:(NSURLCredential *)credential
+-(void)_authenticationDoneWithChallenge:(NSURLAuthenticationChallenge *)challenge result:(NSURLCredential *)credential
 {
     id window = [challengeToWindow objectForKey:challenge];
     if (window != nil) {
@@ -97,13 +97,13 @@ WebPanelAuthenticationHandler *sharedHandler;
         [challengeToWindow removeObjectForKey:challenge];
     }
 
-    if ([challenge isKindOfClass:[NSURLConnectionAuthenticationChallenge class]]) {
-	NSURLConnectionAuthenticationChallenge *connectionChallenge = (NSURLConnectionAuthenticationChallenge *)challenge;
+    if ([challenge isKindOfClass:[WebAuthenticationChallenge class]]) {
+	WebAuthenticationChallenge *webChallenge = (WebAuthenticationChallenge *)challenge;
 
 	if (credential == nil) {
-	    [[connectionChallenge connection] cancel];
+	    [webChallenge cancel];
 	} else {
-	    [[connectionChallenge connection] useCredential:credential forAuthenticationChallenge:connectionChallenge];
+	    [webChallenge useCredential:credential];
 	}
     } else if ([challenge isKindOfClass:[NSURLDownloadAuthenticationChallenge class]]) {
 	NSURLDownloadAuthenticationChallenge *downloadChallenge = (NSURLDownloadAuthenticationChallenge *)challenge;

@@ -1,6 +1,40 @@
 2003-04-30  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
+
+	Changed things to use WebAuthenticationChallenge for
+	WebResoureceLoadDelegate auth callbacks.
+
+        * Panels.subproj/WebPanelAuthenticationHandler.m:
+        (-[WebPanelAuthenticationHandler startAuthentication:window:]):
+        (-[WebPanelAuthenticationHandler _authenticationDoneWithChallenge:result:]):
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebAuthenticationChallenge.h: Added.
+        * WebView.subproj/WebAuthenticationChallenge.m: Added.
+        (-[WebAuthenticationChallengeInternal initWithDelegate:]):
+        (-[WebAuthenticationChallengeInternal dealloc]):
+        (-[WebAuthenticationChallenge _initWithAuthenticationChallenge:delegate:]):
+        (-[WebAuthenticationChallenge dealloc]):
+        (-[WebAuthenticationChallenge useCredential:]):
+        (-[WebAuthenticationChallenge cancel]):
+        (-[WebAuthenticationChallenge continueWithoutCredential]):
+        * WebView.subproj/WebAuthenticationChallengeInternal.h: Added.
+        * WebView.subproj/WebBaseResourceHandleDelegate.h:
+        * WebView.subproj/WebBaseResourceHandleDelegate.m:
+        (-[WebBaseResourceHandleDelegate connection:didReceiveAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate connection:didCancelAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate useCredential:forAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate continueWithoutCredentialForAuthenticationChallenge:]):
+        (-[WebBaseResourceHandleDelegate cancelWithError:]):
+        * WebView.subproj/WebDefaultResourceLoadDelegate.m:
+        (-[WebDefaultResourceLoadDelegate webView:resource:didReceiveAuthenticationChallenge:fromDataSource:]):
+        (-[WebDefaultResourceLoadDelegate webView:resource:didCancelAuthenticationChallenge:fromDataSource:]):
+        * WebView.subproj/WebResourceLoadDelegate.h:
+
+2003-04-30  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
 	
 	Converted download code to use an
 	NSURLDownloadAuthenticationChallenge rather than a vanilla

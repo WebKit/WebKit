@@ -293,6 +293,7 @@
 				515E27D10458CA4B00CA2D3A,
 				65840820045E752600000128,
 				6578F5E0045F817400000128,
+				650EFE54045FCE6C00000128,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -404,6 +405,7 @@
 				70ECD6CF043B727400A80181,
 				515E27D20458CA4B00CA2D3A,
 				6578F5E1045F817400000128,
+				65FB4D49045FCD7F00000128,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1384,6 +1386,18 @@
 //652
 //653
 //654
+		650EFE53045FCE6C00000128 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebAuthenticationChallengeInternal.h;
+			refType = 4;
+		};
+		650EFE54045FCE6C00000128 = {
+			fileRef = 650EFE53045FCE6C00000128;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		6523FACF032DA06B005EFCFF = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -1599,6 +1613,21 @@
 		};
 		65840820045E752600000128 = {
 			fileRef = 6584081F045E752600000128;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		65FB4D47045FCD7F00000128 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = WebAuthenticationChallenge.m;
+			refType = 4;
+		};
+		65FB4D49045FCD7F00000128 = {
+			fileRef = 65FB4D47045FCD7F00000128;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2258,6 +2287,7 @@
 				9CF0E24A021361B00ECA16EA,
 				51A8B52E04282B5900CA2D3A,
 				51A8B52F04282B5900CA2D3A,
+				650EFE53045FCE6C00000128,
 				51A8B53204282BD200CA2D3A,
 				51A8B53304282BD200CA2D3A,
 				F5D538E802441F2601A80181,
@@ -2275,6 +2305,7 @@
 				51A8B57D0428353A00CA2D3A,
 				51A8B57E0428353A00CA2D3A,
 				6584081F045E752600000128,
+				65FB4D47045FCD7F00000128,
 			);
 			isa = PBXGroup;
 			name = WebView;

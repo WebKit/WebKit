@@ -8,7 +8,7 @@
 @class WebDataSource;
 @class NSURLResponse;
 @class NSURLRequest;
-@class NSURLConnectionAuthenticationChallenge;
+@class WebAuthenticationChallenge;
 
 /*!
     @category  WebResourceLoadDelegate
@@ -63,14 +63,14 @@
     @discussion If you do not implement this delegate method, WebKit will handle authentication
     automatically by prompting with a sheet on the window that the WebView is associated with.
 */
-- (void)webView:(WebView *)sender resource:(id)identifier didReceiveAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didReceiveAuthenticationChallenge:(WebAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method webView:resource:didCancelAuthenticationChallenge:fromDataSource:
     @abstract Cancel authentication for a given request
     @param challenge The WebAuthenticationChallenge to cancel authentication for
 */
-- (void)webView:(WebView *)sender resource:(id)identifier didCancelAuthenticationChallenge:(NSURLConnectionAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
+- (void)webView:(WebView *)sender resource:(id)identifier didCancelAuthenticationChallenge:(WebAuthenticationChallenge *)challenge fromDataSource:(WebDataSource *)dataSource;
 
 /*!
     @method resource:didReceiveResponse:fromDataSource:
