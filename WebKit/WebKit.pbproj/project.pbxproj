@@ -12,7 +12,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-				EXPORTED_SYMBOLS_FILE = "WebKit-combined.exp";
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O0";
@@ -2377,7 +2376,6 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUGGING_SYMBOLS = YES;
 				DEBUG_CFLAGS = "";
-				EXPORTED_SYMBOLS_FILE = "WebKit-combined.exp";
 				FRAMEWORK_SEARCH_PATHS = "\U0001@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				OPTIMIZATION_CFLAGS = "-O";

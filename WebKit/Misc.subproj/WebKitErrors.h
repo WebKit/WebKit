@@ -8,9 +8,10 @@
 // WebFoundation error codes < 10000
 // WebKit error codes >= 10000
 
+extern NSString *WebErrorDomainWebKit;
+
 /*!
-    @enum WebErrorCode
-    @constant WebErrorNoError
+    @enum
     @constant WebErrorCannotFindFile
     @constant WebErrorCannotCreateFile
     @constant WebErrorCannotOpenFile
@@ -24,8 +25,7 @@
     @constant WebErrorCannotShowURL
     @constant WebErrorCannotNotFindApplicationForURL
 */
-typedef enum {
-    WebErrorNoError = 0,
+enum {
     WebErrorCannotFindFile = 10000,
     WebErrorCannotCreateFile = 10001,
     WebErrorCannotOpenFile = 10002,
@@ -38,8 +38,4 @@ typedef enum {
     WebErrorCannotShowMIMEType = 10009,
     WebErrorCannotShowURL = 10010,
     WebErrorCannotNotFindApplicationForURL = 10011
-} WebErrorCode;
-
-
-
-
+};

@@ -1,3 +1,16 @@
+2002-10-18  Darin Adler  <darin@apple.com>
+
+	Update for WebFoundation error domain changes.
+
+        * Misc.subproj/WebKitErrors.h: Put WebErrorDomainWebKit in here.
+	Also remove WebErrorNoError and the WebErrorCode name for the enum.
+        * WebKit.exp: Export the WebErrorDomainWebKit constant.
+        * WebView.subproj/WebView.m: Define the WebErrorDomainWebKit.
+
+        * WebKit.pbproj/project.pbxproj: Always use WebKit.exp.
+        * Makefile.am: Don't generate WebKit-combined.exp any more.
+        * WebKit-tests.exp: Removed.
+
 2002-10-17  Darin Adler  <darin@apple.com>
 
 	- fixed 3078644 -- Odd clipping in frame

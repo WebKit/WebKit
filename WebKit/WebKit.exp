@@ -4,8 +4,8 @@
 .objc_class_name_WebContentPolicy
 .objc_class_name_WebController
 .objc_class_name_WebCoreStatistics
-.objc_class_name_WebDebugDOMNode
 .objc_class_name_WebDataSource
+.objc_class_name_WebDebugDOMNode
 .objc_class_name_WebDefaultContextMenuDelegate
 .objc_class_name_WebDefaultPolicyDelegate
 .objc_class_name_WebFileURLPolicy
@@ -34,6 +34,7 @@ _WebElementLinkLabelKey
 _WebElementLinkTargetFrameKey
 _WebElementLinkURLKey
 _WebElementStringKey
+_WebErrorDomainWebKit
 _WebHistoryEntriesChangedNotification
 _WebIconDidChangeNotification
 _WebIconLargeSize

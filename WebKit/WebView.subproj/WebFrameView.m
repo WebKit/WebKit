@@ -34,6 +34,8 @@ enum {
     SpaceKey = 0x0020
 };
 
+NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
+
 @implementation WebView
 
 #define WebErrorDescriptionCannotFindFile UI_STRING("Cannot find file", "WebErrorCannotFindFile description")
