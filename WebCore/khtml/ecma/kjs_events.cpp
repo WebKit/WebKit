@@ -84,6 +84,16 @@ void JSEventListener::handleEvent(DOM::Event &evt)
       }
     }
 
+#ifdef KWQ_DEBUG_JS
+	fprintf (stdout, "handleEvent() thisObj = %s\n", thisObj.toString(exec).qstring().latin1());
+	{
+		int i;
+		
+		for (i = 0; i < args.size(); i++)
+			fprintf (stdout, "handleEvent() args[%d] = %s\n", i, args.at(i).toString(exec).qstring().latin1());
+	}
+#endif
+
     Window *window = static_cast<Window*>(win.imp());
     // Set the event we're handling in the Window object
     window->setCurrentEvent( &evt );

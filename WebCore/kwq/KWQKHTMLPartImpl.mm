@@ -151,7 +151,11 @@ public:
     QString m_referrer;
     QString m_documentSource;
 
-    bool m_bMousePressed;
+	QString m_redirectURL;
+	int m_delayRedirect;
+	int m_redirectionTimer;
+	
+	bool m_bMousePressed;
     DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
     DOM::Node m_selectionStart;
     long m_startOffset;
@@ -201,6 +205,9 @@ public:
         m_decodingStarted = 0;
         
         m_dataSource = 0;
+        
+        m_redirectURL = QString::null;
+        m_delayRedirect = 0;
     }
 
     ~KHTMLPartPrivate()
@@ -254,6 +261,8 @@ KHTMLPart::KHTMLPart( QWidget *, const char *, QObject *, const char *, GUIProfi
 
 KHTMLPart::~KHTMLPart()
 {
+	killTimers();
+	
     if ( d->m_doc != NULL ) {
         d->m_doc->detach();
 
@@ -711,8 +720,52 @@ KURL KHTMLPart::completeURL(const QString &url)
 
 void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool )
 {
-    _logNeverImplemented();
+	if( d->m_redirectURL.isEmpty() || delay < d->m_delayRedirect )
+	{
+		d->m_delayRedirect = delay;
+		d->m_redirectURL = url;
+		killTimer(d->m_redirectionTimer);
+		d->m_redirectionTimer = startTimer( 1000 * d->m_delayRedirect);
+	}
 }
+
+void KHTMLPart::timerEvent ( QTimerEvent *e )
+{
+    if (e->timerId()==d->m_redirectionTimer)
+    {
+    	redirectJS();
+    	return;
+    }
+}
+
+void KHTMLPart::redirectJS()
+{
+  QString u = d->m_redirectURL;
+  d->m_delayRedirect = 0;
+  d->m_redirectURL = QString::null;
+  if ( u.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
+  {
+    QString script = KURL::decode_string( u.right( u.length() - 11 ) );
+    //kdDebug( 6050 ) << "KHTMLPart::slotRedirect script=" << script << endl;
+    QVariant res = executeScript( script );
+    if ( res.type() == QVariant::String ) {
+      begin( url() );
+      write( res.asString() );
+      end();
+    }
+    return;
+  }
+
+  KParts::URLArgs args;
+#ifndef APPLE_CHANGES
+  if ( urlcmp( u, m_url.url(), true, true ) )
+    args.reload = true;
+
+  args.setLockHistory( true );
+#endif
+  urlSelected( u, 0, 0, QString::null, args );
+}
+
 
 
 bool KHTMLPart::setEncoding( const QString &name, bool override )
@@ -831,7 +884,33 @@ void KHTMLPart::setSelection( const DOM::Range & )
 
 void KHTMLPart::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
-    _logNeverImplemented();
+	IFWebDataSource *oldDataSource, *newDataSource;
+	KURL clickedURL(completeURL( url));
+	IFWebFrame *frame;
+	KURL refLess(clickedURL);
+	
+	d->m_url.setRef ("");
+	refLess.setRef ("");
+	if (refLess.url() == d->m_url.url()){
+		d->m_url = clickedURL;
+		gotoAnchor (clickedURL.ref());
+		return;
+	}
+	
+	if (_target.isEmpty()){
+		oldDataSource = getDataSource();
+		frame = [oldDataSource webFrame];
+	}
+	else {
+		frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(_target)];
+		oldDataSource = [frame dataSource];
+	}
+	
+	newDataSource = WCIFWebDataSourceMake(clickedURL.getNSURL(), nil, 0);
+	[newDataSource _setParent: [oldDataSource parent]];
+	
+	[frame setProvisionalDataSource: newDataSource];
+	[frame startLoading];
 }
 
 bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, const QString &frameName,
@@ -1378,34 +1457,7 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-        IFWebDataSource *oldDataSource, *newDataSource;
-        QString target = event->target().string();
-        KURL clickedURL(completeURL( d->m_strSelectedURL));
-        IFWebFrame *frame;
-        KURL refLess(clickedURL);
-        
-        d->m_url.setRef ("");
-        refLess.setRef ("");
-        if (refLess.url() == d->m_url.url()){
-            d->m_url = clickedURL;
-            gotoAnchor (clickedURL.ref());
-            return;
-        }
-        
-        if (target.isEmpty()){
-            oldDataSource = getDataSource();
-            frame = [oldDataSource webFrame];
-        }
-        else {
-            frame = [[getDataSource() controller] frameNamed: QSTRING_TO_NSSTRING(target)];
-            oldDataSource = [frame dataSource];
-        }
-        
-        newDataSource = WCIFWebDataSourceMake(clickedURL.getNSURL(), nil, 0);
-        [newDataSource _setParent: [oldDataSource parent]];
-        
-        [frame setProvisionalDataSource: newDataSource];
-        [frame startLoading];
+      	urlSelected(d->m_strSelectedURL, 0,0, event->target().string());
     }
     
 #ifndef _KWQ_
@@ -1517,6 +1569,8 @@ DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
   if (!proxy)
     return 0;
 
+  //fprintf (stdout, "Creating event listener w/ code %s\n", code.latin1());
+  
   return proxy->createHTMLEventHandler( d->m_url.url(), code );
 }
 

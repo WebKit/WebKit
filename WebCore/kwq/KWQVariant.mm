@@ -141,6 +141,12 @@ uint QVariant::toUInt() const
 }
 
 
+QString QVariant::asString() const
+{    
+    return *((QString *)d->value.p);
+}
+
+
 QVariant &QVariant::operator=(const QVariant &other)
 {
     d = other.d;

@@ -1099,6 +1099,9 @@ private:
 
 #ifdef APPLE_CHANGES
 public:
+	void redirectJS();
+    void timerEvent ( QTimerEvent * );
+
     // In the original KDE, these come from superclasses.
     void ref() { _ref++; }
     void deref() { if(_ref) _ref--; if(!_ref) delete this; }

@@ -1,3 +1,18 @@
+2002-05-20  Richard J. Williamson  <rjw@apple.com>
+
+	* khtml/ecma/kjs_events.cpp:
+	(JSEventListener::handleEvent):
+	* khtml/khtml_part.h:
+	* kwq/KWQKHTMLPart.mm:
+	(KHTMLPart::~KHTMLPart):
+	(KHTMLPart::scheduleRedirection):
+	(KHTMLPart::timerEvent):
+	(KHTMLPart::redirectJS):
+	(KHTMLPart::urlSelected):
+	* kwq/KWQVariant.mm:
+	(QVariant::asString):
+	* kwq/qt/qvariant.h:
+
 2002-05-20  Kenneth Kocienda  <kocienda@apple.com>
 
 	* kwq/kwqdebug.h: Now includes <sys/time.h> to prevent possible
