@@ -1,6 +1,6 @@
 2004-12-07  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by John
 
         * khtml/editing/htmlediting.cpp:
         (khtml::InsertParagraphSeparatorInQuotedContentCommand::doApply): Fix a problem with my
