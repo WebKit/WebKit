@@ -1,3 +1,16 @@
+2004-11-09  Richard Williamson   <rjw@apple.com>
+
+        Fixed <rdar://problem/3870964> 8A300: Safari not recognizing a PDF link (it displays raw data)
+
+	Add "text/pdf" as an acceptable PDF MIME type.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebDataSource.m:
+        (+[WebDataSource _repTypesAllowImageTypeOmission:]):
+        * WebView.subproj/WebFrameView.m:
+        (+[WebFrameView _viewTypesAllowImageTypeOmission:]):
+
 2004-11-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3783904> Return key behavior is confusingly different between popup menus and autofill menus

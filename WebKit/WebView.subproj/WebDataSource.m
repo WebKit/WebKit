@@ -668,6 +668,7 @@
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
 #ifndef OMIT_TIGER_FEATURES
+            [WebPDFRepresentation class], @"text/pdf",
             [WebPDFRepresentation class], @"application/pdf",
 #endif
             nil];

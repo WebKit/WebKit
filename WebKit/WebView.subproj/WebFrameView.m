@@ -231,6 +231,7 @@ static NSMutableDictionary *viewTypes;
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
 #ifndef OMIT_TIGER_FEATURES
+            [WebPDFView class], @"text/pdf",
             [WebPDFView class], @"application/pdf",
 #endif
             nil];
