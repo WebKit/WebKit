@@ -21,15 +21,6 @@
 -(NSString *)responseHeaderForKey:(NSString *)key;
 @end
 
-@protocol WCMutableData
--(NSArray *)byteBlocksForRange:(NSRange)range;
-@end
-
-@protocol WCByteBlock
--(const void *)bytes;
--(unsigned)byteLength;
-@end
-
 #if defined(__cplusplus)
 extern "C" {
 #endif

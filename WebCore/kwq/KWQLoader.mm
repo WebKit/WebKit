@@ -943,35 +943,15 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
 
 - (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData
 {
-    NSArray *byteBlocks;
     char *bytes;
-    int byteBlockCount;
-    id object;
-    id <WCByteBlock> byteBlock;
 
     if (!m_data) {
         m_data = [data retain];
     }
 
     KIO::Job *job = static_cast<KIO::Job *>(userData);
-    
-    byteBlocks = nil;
-    if ([data respondsToSelector:@selector(byteBlocksForRange:)]) {
-        object = data;
-        byteBlocks = [object byteBlocksForRange:NSMakeRange(offset, length)];  
-    }
-    if (byteBlocks) {
-        byteBlockCount = [byteBlocks count];
-        for (int i = 0; i < byteBlockCount; i++) {
-            byteBlock = [byteBlocks objectAtIndex:i];
-            m_loader->slotData(job, (const char *)[byteBlock bytes], [byteBlock byteLength]);
-        }
-    }
-    else {
-        bytes = ((char *)[data bytes]) + offset;    
-        m_loader->slotData(job, (const char *)bytes, length);
-    }
-    
+    bytes = ((char *)[data bytes]) + offset;    
+    m_loader->slotData(job, (const char *)bytes, length);    
 }
 
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData

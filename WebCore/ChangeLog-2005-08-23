@@ -1,3 +1,13 @@
+2002-02-01  Kenneth Kocienda  <kocienda@apple.com>
+
+        Made some cleanups to the no-copy NSData API, and those changes
+        make the use of the no-copy functionality in this client code
+        much cleaner.
+        
+	* include/WCURLHandle.h:
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:offset:length:userData:]):
+
 2002-01-31  Richard Williamson  <rjw@apple.com>
 
     Added QString constructor, fixed javascript at head of document bug.
