@@ -1,3 +1,8 @@
+2002-06-18  Darin Adler  <darin@apple.com>
+
+	* kwq/KWQKHTMLPart.mm: (KWQKHTMLPartImpl::~KWQKHTMLPartImpl):
+	Remove an NSLog I left in by accident.
+
 2002-06-17  Richard Williamson  <rjw@apple.com>
 
     Fixed window.open regression.
