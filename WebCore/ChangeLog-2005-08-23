@@ -1,5 +1,20 @@
 2003-05-08  Darin Adler  <darin@apple.com>
 
+        Reviewed by Dave.
+
+        - fixed regression caused by my last check-in; need to use the KHTMLView layout function
+
+        * kwq/KWQWidget.mm: (QWidget::setFocus): Use KHTMLView's layout instead of RenderCanvas's.
+
+	- fixed 3251913 -- when form field has focus, dragging across text elsewhere does not select it
+
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::setSelection): Remove setFocusNode(0) call. Apparently not needed these days.
+        I tested and everything works fine without it, and its side effect was the bug above.
+        (DocumentImpl::setFocusNode): Remove clearSelection() call for similar reasons.
+
+2003-05-08  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
 	- fixed 3251985 -- REGRESSION: tabbing doesn't scroll text fields into view any more

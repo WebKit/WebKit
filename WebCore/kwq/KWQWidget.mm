@@ -195,7 +195,9 @@ void QWidget::setFocus()
     RenderWidget *renderWidget = dynamic_cast<RenderWidget *>(const_cast<QObject *>(eventFilterObject()));
     int x, y;
     if (renderWidget) {
-        renderWidget->canvas()->layoutIfNeeded();
+        if (renderWidget->canvas()->needsLayout()) {
+            renderWidget->view()->layout();
+        }
         if (renderWidget->absolutePosition(x, y)) {
             renderWidget->view()->addChild(this, x, y);
         }

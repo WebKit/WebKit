@@ -1071,10 +1071,6 @@ void DocumentImpl::setVisuallyOrdered()
 
 void DocumentImpl::setSelection(NodeImpl* s, int sp, NodeImpl* e, int ep)
 {
-#if APPLE_CHANGES
-    // With Macintosh UI, you can't have both a selection and a focused node.
-    setFocusNode(0);
-#endif
     if ( m_render )
         static_cast<RenderCanvas*>(m_render)->setSelection(s->renderer(),sp,e->renderer(),ep);
 }
@@ -2049,10 +2045,6 @@ void DocumentImpl::setFocusNode(NodeImpl *newFocusNode)
                 else if (static_cast<RenderWidget*>(m_focusNode->renderer())->widget())
                     static_cast<RenderWidget*>(m_focusNode->renderer())->widget()->setFocus();
             }
-#if APPLE_CHANGES
-            // With Macintosh UI, you can't have both a selection and a focused node.
-            clearSelection();
-#endif
         }
 
         updateRendering();
