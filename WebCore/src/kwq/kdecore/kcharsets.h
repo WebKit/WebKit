@@ -35,6 +35,7 @@ class KCharsets {
 public:
     QTextCodec *codecForName(const QString &) const;
     QTextCodec *codecForName(const QString &, bool &) const;
+    void setQFont(QFont &, QFont::CharSet charset = QFont::Unicode) const;
     void setQFont(QFont &, QString) const;
     QString name(QFont::CharSet);
     QString xCharsetName(QFont::CharSet) const;

@@ -31,7 +31,7 @@ class QString;
 class QFont {
 public:
 
-    enum CharSet { Latin1 };
+    enum CharSet { Latin1, Unicode };
     enum Weight { Normal = 50, Bold = 63 };
     
     int pixelSize() const;

@@ -25,6 +25,7 @@ SUBDIRS = \
 	src/kdelibs/khtml/ecma \
 	src/kdelibs/khtml/xml \
 	src/kdelibs/khtml/java \
+	src/kdelibs/khtml/html \
 	$(NULL)
 
 #----------------------------------------------------------------------
