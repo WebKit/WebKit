@@ -3787,37 +3787,29 @@ bool KHTMLPart::canRedo() const
     return [[KWQ(this)->_bridge undoManager] canRedo];
 }
 
-void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
+void KWQKHTMLPart::markMisspellingsInAdjacentWords(const VisiblePosition &p)
 {
-    // No work to do if there is no selection or continuous spell check is off.
-    if (selection.isNone() || ![_bridge isContinuousSpellCheckingEnabled])
+    if (![_bridge isContinuousSpellCheckingEnabled])
+        return;
+    markMisspellings(Selection(startOfWord(p, LeftWordIfOnBoundary), endOfWord(p, RightWordIfOnBoundary)));
+}
+
+void KWQKHTMLPart::markMisspellings(const Selection &selection)
+{
+    // This function is called with a selection already expanded to word boundaries.
+    // Might be nice to assert that here.
+
+    if (![_bridge isContinuousSpellCheckingEnabled])
         return;
 
-    // Expand selection to word boundaries so that complete words wind up being passed to the spell checker.
-    //
-    // FIXME: It seems that NSSpellChecker is too slow to handle finding multiple misspellings in an
-    // arbitrarily large selection.
-    // So, for now, the idea is to mimic AppKit behavior and limit the selection to the first word 
-    // of the selection passed in.
-    // This is not ideal by any means, but this is the convention.
-    VisiblePosition start(selection.start());
-    Selection s(startOfWord(start, LeftWordIfOnBoundary), endOfWord(start, RightWordIfOnBoundary));
-    if (!s.isRange())
+    Range searchRange(selection.toRange());
+    if (searchRange.isNull() || searchRange.isDetached())
         return;
-    // Change to this someday to spell check the entire selection.
-    // The rest of this function is prepared to handle finding multiple misspellings in a 
-    // more-than-one-word selection.
-
-    Range searchRange(s.toRange());
     
     // If we're not in an editable node, bail.
     NodeImpl *editableNodeImpl = searchRange.startContainer().handle();
     if (!editableNodeImpl->isContentEditable())
         return;
-    
-    if (searchRange.collapsed())
-        // nothing to search in
-        return;       
     
     NSSpellChecker *checker = [NSSpellChecker sharedSpellChecker];
     WordAwareIterator it(searchRange);
@@ -3855,26 +3847,39 @@ void KWQKHTMLPart::markMisspellingsInSelection(const Selection &selection)
     }
 }
 
-void KWQKHTMLPart::updateSpellChecking()
+void KWQKHTMLPart::respondToChangedSelection(const Selection &oldSelection, bool closeTyping)
 {
     if (xmlDocImpl()) {
         if ([_bridge isContinuousSpellCheckingEnabled]) {
-            // This only erases a marker in the first word of the selection.  Perhaps peculiar, but it
-            // matches AppKit.
-            VisiblePosition start(selection().start());
-            Selection s(startOfWord(start, LeftWordIfOnBoundary), endOfWord(start, RightWordIfOnBoundary));
-            xmlDocImpl()->removeMarker(s.toRange(), DocumentMarker::Spelling);
-        }
-        else {
+            VisiblePosition oldStart(oldSelection.start());
+            Selection oldAdjacentWords(startOfWord(oldStart, LeftWordIfOnBoundary), endOfWord(oldStart, RightWordIfOnBoundary));
+
+            VisiblePosition newStart(selection().start());
+            Selection newAdjacentWords(startOfWord(newStart, LeftWordIfOnBoundary), endOfWord(newStart, RightWordIfOnBoundary));
+
+            if (oldAdjacentWords != newAdjacentWords) {
+                // Mark misspellings in the portion that was previously unmarked because of
+                // the proximity of the start of the selection. We only spell check words in
+                // the vicinity of the start of the old selection because the spelling checker
+                // is not fast enough to do a lot of spelling checking implicitly. This matches
+                // AppKit. This function is really the only code that knows that rule. The
+                // markMisspellings function is prepared to handler larger ranges.
+
+                // When typing we check spelling elsewhere, so don't redo it here.
+                if (closeTyping) {
+                    markMisspellings(oldAdjacentWords);
+                }
+
+                // This only erases a marker in the first word of the selection.
+                // Perhaps peculiar, but it matches AppKit.
+                xmlDocImpl()->removeMarker(newAdjacentWords.toRange(), DocumentMarker::Spelling);
+            }
+        } else {
             // When continuous spell checking is off, no markers appear after the selection changes.
             xmlDocImpl()->removeAllMarkers();
         }
     }
-}
 
-void KWQKHTMLPart::respondToChangedSelection()
-{
-    updateSpellChecking();
     [_bridge respondToChangedSelection];
 }
 

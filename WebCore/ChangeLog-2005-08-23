@@ -1,3 +1,47 @@
+2004-09-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - improve spell checking so it doesn't unmark and remark as you move the cursor with the arrow
+
+        * khtml/editing/htmlediting.h: Remove obsolete markMisspellingsInSelection private function.
+        * khtml/editing/htmlediting.cpp:
+        (khtml::EditCommand::EditCommand): Blow away the selection when starting an edit command.
+        (khtml::EditCommand::apply): Remove code to mark misspellings because that's now done as part
+        of blowing away the selection.
+        (khtml::EditCommand::unapply): Blow away the selection instead of marking mispellings.
+        (khtml::EditCommand::reapply): Ditto.
+        (khtml::ReplaceSelectionCommand::doApply): Removed incorrect code that does spell checking
+        on inserted text; this doesn't match NSText behavior.
+        (khtml::TypingCommand::markMisspellingsAfterTyping): Use markMisspellingsInAdjacentWords
+        function for greater clarity on what this actually does.
+
+        * khtml/khtml_part.h: Replaced setSelection's "unmarkOldSelection" boolean parameter with a
+        "keepTypingStyle" boolean parameter. Removed notifySelectionChanged.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::setSelection): Replaced the "unmarkOldSelection" boolean with a new "keepTypingStyle"
+        boolean. This is a step on the way to simplifying how this works. Moved the code from the
+        notifySelectionChanged function here, since there was no clear line between the two functions.
+        (KHTMLPart::clearSelection): Call setSelection rather that having special case code here for
+        the case of an empty selection.
+        (KHTMLPart::appliedEditing): Remove the explicit "false" for "unmarkOldSelection".
+        (KHTMLPart::unappliedEditing): Ditto.
+        (KHTMLPart::reappliedEditing): Ditto.
+
+        * kwq/KWQKHTMLPart.h: Replaced markMisspellingsInSelection and updateSpellChecking with
+        markMisspellings and markMisspellingsInAdjacentWords. Added parameters to respondToChangedSelection.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::markMisspellingsInAdjacentWords): Added.
+        (KWQKHTMLPart::markMisspellings): New name for markMisspellingsInSelection. Simplified logic a
+        bit and made it the caller's responsibility to expand the selection passed in to word boundaries.
+        (KWQKHTMLPart::respondToChangedSelection): Added parameter that identifies the old selection,
+        and changed logic so it won't mark mispellings in a word if the selection still starts in that word.
+
+        - implemented empty-cells property in computed style
+
+        * khtml/css/css_computedstyle.cpp: (DOM::CSSComputedStyleDeclarationImpl::getPropertyCSSValue):
+        Added code for CSS_PROP_EMPTY_CELLS. I think the HTML converter in AppKit uses this.
+
 2004-09-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed n-squared issues with appending to KWQValueListImpl. This fixes the hang in 3794799.

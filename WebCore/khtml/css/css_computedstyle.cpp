@@ -418,8 +418,14 @@ CSSValueImpl *CSSComputedStyleDeclarationImpl::getPropertyCSSValue(int propertyI
         ASSERT_NOT_REACHED();
         return 0;
     case CSS_PROP_EMPTY_CELLS:
-        // FIXME: unimplemented
-        break;
+        switch (style->emptyCells()) {
+            case khtml::SHOW:
+                return new CSSPrimitiveValueImpl(CSS_VAL_SHOW);
+            case khtml::HIDE:
+                return new CSSPrimitiveValueImpl(CSS_VAL_HIDE);
+        }
+        ASSERT_NOT_REACHED();
+        return 0;
     case CSS_PROP_FLOAT:
         switch (style->floating()) {
             case khtml::FNONE:

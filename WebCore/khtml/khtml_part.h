@@ -589,7 +589,7 @@ public:
   /**
    * Sets the current selection.
    */
-  void setSelection(const khtml::Selection &, bool closeTyping = true, bool unmarkOldSelection = true);
+  void setSelection(const khtml::Selection &, bool closeTyping = true, bool keepTypingStyle = false);
 
   /**
    * Returns a mark, to be used as emacs uses it.
@@ -1191,11 +1191,6 @@ private:
    * @internal
    */
   void selectionLayoutChanged();
-
-  /**
-   * @internal
-   */
-  void notifySelectionChanged(bool closeTyping=true);
 
   /**
    * @internal

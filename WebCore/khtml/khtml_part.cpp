@@ -2341,22 +2341,39 @@ void KHTMLPart::setMark(const Selection &s)
     d->m_mark = s;
 }
 
-void KHTMLPart::setSelection(const Selection &s, bool closeTyping, bool unmarkOldSelection)
+void KHTMLPart::setSelection(const Selection &s, bool closeTyping, bool keepTypingStyle)
 {
-    if (d->m_selection != s) {
-        clearCaretRectIfNeeded(); 
-#if APPLE_CHANGES
-        // Mark misspellings in the soon-to-be previous selection.  When typing we check spelling
-        // elsewhere, so don't redo it here
-        if (unmarkOldSelection) {
-            KWQ(this)->markMisspellingsInSelection(d->m_selection);
-        }
-#endif
-        d->m_selection = s;
-        if (!s.isNone())
-            setFocusNodeIfNeeded();
-        notifySelectionChanged(closeTyping);
+    if (d->m_selection == s) {
+        return;
     }
+    
+    clearCaretRectIfNeeded();
+
+#if APPLE_CHANGES
+    Selection oldSelection = d->m_selection;
+#endif
+
+    d->m_selection = s;
+    if (!s.isNone())
+        setFocusNodeIfNeeded();
+
+    selectionLayoutChanged();
+
+    // Always clear the x position used for vertical arrow navigation.
+    // It will be restored by the vertical arrow navigation code if necessary.
+    d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
+
+    if (closeTyping)
+        TypingCommand::closeTyping(lastEditCommand());
+
+    if (!keepTypingStyle)
+        clearTypingStyle();
+    
+#if APPLE_CHANGES
+    KWQ(this)->respondToChangedSelection(oldSelection, closeTyping);
+#endif
+
+    emitSelectionChanged();
 }
 
 void KHTMLPart::setDragCaret(const Selection &dragCaret)
@@ -2370,11 +2387,7 @@ void KHTMLPart::setDragCaret(const Selection &dragCaret)
 
 void KHTMLPart::clearSelection()
 {
-    clearCaretRectIfNeeded();
-    bool hadSelection = hasSelection();
-    d->m_selection.clear();
-    if (hadSelection)
-        notifySelectionChanged();
+    setSelection(Selection());
 }
 
 void KHTMLPart::invalidateSelection()
@@ -2455,26 +2468,6 @@ void KHTMLPart::selectionLayoutChanged()
 
     if (d->m_doc)
         d->m_doc->updateSelection();
-}
-
-void KHTMLPart::notifySelectionChanged(bool closeTyping)
-{
-    selectionLayoutChanged();
-
-    // Always clear the x position used for vertical arrow navigation.
-    // It will be restored by the vertical arrow navigation code if necessary.
-    d->m_xPosForVerticalArrowNavigation = NoXPosForVerticalArrowNavigation;
-
-    if (closeTyping)
-        TypingCommand::closeTyping(lastEditCommand());
-
-    clearTypingStyle();
-    
-    emitSelectionChanged();
-    
-#if APPLE_CHANGES
-    KWQ(this)->respondToChangedSelection();
-#endif
 }
 
 void KHTMLPart::setXPosForVerticalArrowNavigation(int x)
@@ -4971,7 +4964,7 @@ EditCommandPtr KHTMLPart::lastEditCommand()
 
 void KHTMLPart::appliedEditing(EditCommandPtr &cmd)
 {
-    setSelection(cmd.endingSelection(), false, false);
+    setSelection(cmd.endingSelection(), false);
 
     // Now set the typing style from the command. Clear it when done.
     // This helps make the case work where you completely delete a piece
@@ -5003,7 +4996,7 @@ void KHTMLPart::appliedEditing(EditCommandPtr &cmd)
 
 void KHTMLPart::unappliedEditing(EditCommandPtr &cmd)
 {
-    setSelection(cmd.startingSelection(), true, false);
+    setSelection(cmd.startingSelection(), true);
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForRedo(cmd);
     KWQ(this)->respondToChangedContents();
@@ -5013,7 +5006,7 @@ void KHTMLPart::unappliedEditing(EditCommandPtr &cmd)
 
 void KHTMLPart::reappliedEditing(EditCommandPtr &cmd)
 {
-    setSelection(cmd.endingSelection(), true, false);
+    setSelection(cmd.endingSelection(), true);
 #if APPLE_CHANGES
     KWQ(this)->registerCommandForUndo(cmd);
     KWQ(this)->respondToChangedContents();
