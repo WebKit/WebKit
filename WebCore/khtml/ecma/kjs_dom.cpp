@@ -949,17 +949,18 @@ Value DOMDocumentProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List
   case DOMDocument::GetElementById:
 #if APPLE_CHANGES
     {
-	DOM::Element node = doc.getElementById(args[0].toString(exec).string());
-	if (!node.isNull()) {
-	    Value domValue = getDOMNode(exec, node);
-	    ObjectImp *imp = static_cast<ObjectImp *>(domValue.imp());
-	    if (!imp->forwardingScriptMessage() && (node.handle()->id() == ID_APPLET || node.handle()->id() == ID_EMBED || node.handle()->id() == ID_OBJECT)) {
-		Value v = getRuntimeObject(exec,node,domValue);
-		if (!v.isNull())
-		    return v;
-	    }
-	    return domValue;
-	}
+        DOM::Element node = doc.getElementById(args[0].toString(exec).string());
+        if (!node.isNull()) {
+            Value domValue = getDOMNode(exec, node);
+            ObjectImp *imp = static_cast<ObjectImp *>(domValue.imp());
+            if (!imp->forwardingScriptMessage() && (node.handle()->id() == ID_APPLET || node.handle()->id() == ID_EMBED || node.handle()->id() == ID_OBJECT)) {
+                Value v = getRuntimeObject(exec,node,domValue);
+                if (!v.isNull())
+                    return v;
+            }
+            return domValue;
+        }
+        return getDOMNode(exec,node);
     }
 #else  
     return getDOMNode(exec,doc.getElementById(args[0].toString(exec).string()));

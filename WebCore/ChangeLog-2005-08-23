@@ -1,3 +1,14 @@
+2005-01-21  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3966998> REGRESSION(179-TOT) clicking on gmail message brings me to blank screen
+
+	getElementById() sometimes returns Undefined() instead of Null().
+
+        Reviewed by Hyatt.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMDocumentProtoFunc::tryCall):
+
 2005-01-21  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3773809, make sure that overflow regions never end up at an invalid scroll offset because of a layout change.
