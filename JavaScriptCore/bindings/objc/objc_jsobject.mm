@@ -82,9 +82,8 @@ windowJavaScriptObject(root));
 @implementation JavaScriptObjectPrivate
 @end
 
-@interface JavaScriptObject (Private)
-- _initWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root;
-- (id)_convertValueToObjcValue:(KJS::Value)value;
+@interface JavaScriptObject (ReallyPrivate)
+- initWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root;
 @end
 
 @implementation JavaScriptObject
@@ -96,7 +95,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     
     for (i = 0; i < numObjects; i++) {
         id anObject = [array objectAtIndex:i];
-        aList.append (convertObjcValueToValue(exec, anObject, ObjcObjectType));
+        aList.append (convertObjcValueToValue(exec, &anObject, ObjcObjectType));
     }
     return aList;
 }
@@ -104,7 +103,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
 - initWithObjectImp:(KJS::ObjectImp *)imp root:(const Bindings::RootObject *)root
 {
     assert (imp != 0);
-    assert (root != 0);
+    //assert (root != 0);
 
     self = [super init];
 
@@ -124,7 +123,12 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     [super dealloc];
 }
 
-- (id)_convertValueToObjcValue:(KJS::Value)value
+- (KJS::ObjectImp *)imp
+{
+    return _private->imp;
+}
+
++ (id)_convertValueToObjcValue:(KJS::Value)value root:(const Bindings::RootObject *)root
 {
     id result = 0;
    
@@ -139,7 +143,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         }
         // Convert to a JavaScriptObject
         else {
-            result = [[[JavaScriptObject alloc] _initWithObjectImp:objectImp root:_private->root] autorelease];
+            result = [[[JavaScriptObject alloc] initWithObjectImp:objectImp root:root] autorelease];
         }
     }
     
@@ -186,7 +190,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     Interpreter::unlock();
 
     // Convert and return the result of the function call.
-    return [self _convertValueToObjcValue:result];
+    return [JavaScriptObject _convertValueToObjcValue:result root:_private->root];
 }
 
 - (id)evaluate:(NSString *)script
@@ -197,7 +201,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     Value v = convertObjcValueToValue(exec, &script, ObjcObjectType);
     KJS::Value result = _private->root->interpreter()->evaluate(v.toString(exec)).value();
     Interpreter::unlock();
-    return [self _convertValueToObjcValue:result];
+    return [JavaScriptObject _convertValueToObjcValue:result root:_private->root];
 }
 
 - (id)getMember:(NSString *)name
@@ -207,7 +211,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     Value v = convertObjcValueToValue(exec, &name, ObjcObjectType);
     Value result = _private->imp->get (exec, Identifier (v.toString(exec)));
     Interpreter::unlock();
-    return [self _convertValueToObjcValue:result];
+    return [JavaScriptObject _convertValueToObjcValue:result root:_private->root];
 }
 
 - (void)setMember:(NSString *)name value:(id)value
@@ -248,7 +252,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     Value result = _private->imp->get (exec, (unsigned)index);
     Interpreter::unlock();
 
-    return [self _convertValueToObjcValue:result];
+    return [JavaScriptObject _convertValueToObjcValue:result root:_private->root];
 }
 
 - (void)setSlot:(unsigned int)index value:(id)value

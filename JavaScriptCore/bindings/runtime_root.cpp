@@ -126,17 +126,44 @@ const Bindings::RootObject *KJS::Bindings::rootForImp (ObjectImp *imp)
     return rootObject;
 }
 
+const Bindings::RootObject *KJS::Bindings::rootForInterpreter (KJS::Interpreter *interpreter)
+{
+    CFMutableDictionaryRef refsByRoot = getReferencesByRootDictionary ();
+    
+    if (refsByRoot) {
+        const void **allValues = 0;
+        const void **allKeys = 0;
+        CFIndex count, i;
+        
+        count = CFDictionaryGetCount(refsByRoot);
+        allKeys = (const void **)malloc (sizeof(void *) * count);
+        allValues = (const void **)malloc (sizeof(void *) * count);
+        CFDictionaryGetKeysAndValues (refsByRoot, allKeys, allValues);
+        for(i = 0; i < count; i++) {
+            const Bindings::RootObject *aRootObject = (const Bindings::RootObject *)allKeys[i];
+            if (aRootObject->interpreter() == interpreter)
+                return aRootObject;
+        }
+        
+        free ((void *)allKeys);
+        free ((void *)allValues);
+    }
+    return 0;
+}
+
 void KJS::Bindings::addNativeReference (const Bindings::RootObject *root, ObjectImp *imp)
 {
-    CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (root);
-    
-    unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
-    if (numReferences == 0) {
-        imp->ref();
-        CFDictionaryAddValue (referencesDictionary, imp,  (const void *)1);
-    }
-    else {
-        CFDictionaryReplaceValue (referencesDictionary, imp, (const void *)(numReferences+1));
+    if (root) {
+        CFMutableDictionaryRef referencesDictionary = getReferencesDictionary (root);
+        
+        unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
+        if (numReferences == 0) {
+            imp->ref();
+            CFDictionaryAddValue (referencesDictionary, imp,  (const void *)1);
+        }
+        else {
+            CFDictionaryReplaceValue (referencesDictionary, imp, (const void *)(numReferences+1));
+        }
     }
 }
 
@@ -144,13 +171,15 @@ void KJS::Bindings::removeNativeReference (ObjectImp *imp)
 {
     CFMutableDictionaryRef referencesDictionary = findReferenceDictionary (imp);
     
-    unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
-    if (numReferences == 1) {
-        imp->deref();
-        CFDictionaryRemoveValue (referencesDictionary, imp);
-    }
-    else {
-        CFDictionaryReplaceValue (referencesDictionary, imp, (const void *)(numReferences-1));
+    if (referencesDictionary) {
+        unsigned int numReferences = (unsigned int)CFDictionaryGetValue (referencesDictionary, imp);
+        if (numReferences == 1) {
+            imp->deref();
+            CFDictionaryRemoveValue (referencesDictionary, imp);
+        }
+        else {
+            CFDictionaryReplaceValue (referencesDictionary, imp, (const void *)(numReferences-1));
+        }
     }
 }
 

@@ -28,6 +28,7 @@
 #include <JavaScriptCore/internal.h>
 
 #include <objc_instance.h>
+#include <objc_jsobject.h>
 
 #include <runtime_array.h>
 #include <runtime_object.h>
@@ -92,8 +93,14 @@ Value ObjcField::valueFromInstance(KJS::ExecState *exec, const Instance *instanc
         
         case ObjcObjectType: {
             ObjectStructPtr obj = *(ObjectStructPtr *)(ivarValuePtr);
-            Instance *anInstance = Instance::createBindingForLanguageInstance (Instance::ObjectiveCLanguage, (void *)obj);
-            aValue = Object(new RuntimeObjectImp(anInstance,true));
+            if ([obj isKindOfClass:[JavaScriptObject class]]) {
+                JavaScriptObject *jsobject = (JavaScriptObject *)obj;
+                aValue = Object([jsobject imp]);
+            }
+            else {
+                Instance *anInstance = Instance::createBindingForLanguageInstance (Instance::ObjectiveCLanguage, (void *)obj);
+                aValue = Object(new RuntimeObjectImp(anInstance,true));
+            }
         }
         break;
         
@@ -158,7 +165,12 @@ void ObjcField::setValueToInstance(KJS::ExecState *exec, const Instance *instanc
             // First see if we have an ObjC instance.
             if (aValue.type() == KJS::ObjectType){
                 ObjcValue result = convertValueToObjcValue(exec, aValue, objcValueTypeForType(_ivar->ivar_type));
-                *(ObjectStructPtr *)(ivarValuePtr) = result.objectValue;
+                
+                // Release the previous value.
+                [*(ObjectStructPtr *)(ivarValuePtr) autorelease];
+                
+                // Retain the new value.
+                *(ObjectStructPtr *)(ivarValuePtr) = [result.objectValue retain];
             }
             
             // FIXME.  Deal with numbers.

@@ -39,6 +39,7 @@ typedef RootObject *(*FindRootObjectForNativeHandleFunctionPtr)(void *);
 
 extern CFMutableDictionaryRef findReferenceDictionary(ObjectImp *imp);
 extern const Bindings::RootObject *rootForImp (ObjectImp *imp);
+extern const Bindings::RootObject *KJS::Bindings::rootForInterpreter (KJS::Interpreter *interpreter);
 extern void addNativeReference (const Bindings::RootObject *root, ObjectImp *imp);
 extern void removeNativeReference (ObjectImp *imp);
 

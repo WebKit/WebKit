@@ -32,6 +32,18 @@
 #include "runtime.h"
 #include "runtime_object.h"
 
+@interface JavaScriptObject : NSObject
+
+- (id)call:(NSString *)methodName arguments:(NSArray *)args;
+- (id)evaluate:(NSString *)script;
+- (id)getMember:(NSString *)name;
+- (void)setMember:(NSString *)name value:(id)value;
+- (void)removeMember:(NSString *)name;
+- (NSString *)toString;
+- (id)getSlot:(unsigned int)index;
+- (void)setSlot:(unsigned int)index value:(id)value;
+
+@end
 
 #define LOG(formatAndArgs...) { \
     fprintf (stderr, "%s:  ", __PRETTY_FUNCTION__); \
@@ -62,13 +74,14 @@
 {
 	int myInt;
 	MySecondInterface *mySecondInterface;
+	id jsobject;
 }
 
 - (int)getInt;
 - (void)setInt: (int)anInt;
 - (MySecondInterface *)getMySecondInterface;
 - (void)logMessage:(NSString *)message;
-
+- (void)setJSObject:(id)jsobject;
 @end
 
 @implementation MyFirstInterface
@@ -120,6 +133,18 @@
 - (void)logMessage:(NSString *)message
 {
     printf ("%s\n", [message lossyCString]);
+}
+
+- (void)setJSObject:(id)jso
+{
+    [jsobject autorelease];
+    jsobject = [jso retain];
+}
+
+- (void)callJSObject:(int)arg1 :(int)arg2
+{
+    id foo = [jsobject call:@"call" arguments:[NSArray arrayWithObjects:jsobject, [NSNumber numberWithInt:arg1], [NSNumber numberWithInt:arg2], nil]];
+    printf ("foo = %s\n", [[foo description] lossyCString] );
 }
 
 @end

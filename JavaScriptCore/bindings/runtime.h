@@ -37,6 +37,7 @@ namespace Bindings
 
 class Instance;
 class Method;
+class RootObject;
 
 // For now just use Java style type descriptors.
 typedef const char * RuntimeType;

@@ -1,3 +1,36 @@
+2004-04-29  Richard Williamson   <rjw@apple.com>
+
+	Fixed several bad problems with the ObjC bindings.  In particular, conversion
+	to/from JavaScriptObject (soon to be WebScriptObject) was completely broken.
+
+        Reviewed by Chris.
+
+        * bindings/objc/objc_jsobject.h:
+        * bindings/objc/objc_jsobject.mm:
+        (-[JavaScriptObject initWithObjectImp:KJS::root:Bindings::]):
+        (-[JavaScriptObject KJS::]):
+        (+[JavaScriptObject _convertValueToObjcValue:KJS::root:Bindings::]):
+        (-[JavaScriptObject call:arguments:]):
+        (-[JavaScriptObject evaluate:]):
+        (-[JavaScriptObject getMember:]):
+        (-[JavaScriptObject getSlot:]):
+        * bindings/objc/objc_runtime.mm:
+        (ObjcField::valueFromInstance):
+        (ObjcField::setValueToInstance):
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertValueToObjcValue):
+        (KJS::Bindings::convertObjcValueToValue):
+        * bindings/runtime.h:
+        * bindings/runtime_root.cpp:
+        (KJS::Bindings::rootForInterpreter):
+        (KJS::Bindings::addNativeReference):
+        (KJS::Bindings::removeNativeReference):
+        * bindings/runtime_root.h:
+        * bindings/testbindings.mm:
+        (-[MyFirstInterface logMessage:]):
+        (-[MyFirstInterface setJSObject:]):
+        (-[MyFirstInterface callJSObject::]):
+
 2004-04-24  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

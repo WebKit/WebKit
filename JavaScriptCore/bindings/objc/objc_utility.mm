@@ -29,6 +29,7 @@
 #include <runtime_array.h>
 #include <runtime_object.h>
 #include <objc_instance.h>
+#include <objc_jsobject.h>
 #include <objc_utility.h>
 
 
@@ -98,33 +99,13 @@ ObjcValue KJS::Bindings::convertValueToObjcValue (KJS::ExecState *exec, const KJ
     d = value.toNumber(exec);
     switch (type){
         case ObjcObjectType: {
-            result.objectValue = 0;
-            
-            // First see if we have a ObjC instance.
-            if (value.type() == KJS::ObjectType){
-                ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());
-                if (strcmp(objectImp->classInfo()->className, "RuntimeObject") == 0) {
-                    RuntimeObjectImp *imp = static_cast<RuntimeObjectImp *>(value.imp());
-                    ObjcInstance *instance = static_cast<ObjcInstance*>(imp->getInternalInstance());
-                    if (instance)
-                        result.objectValue = instance->getObject();
-                }
+            const Bindings::RootObject *root = rootForInterpreter(exec->interpreter());
+            if (!root) {
+                Bindings::RootObject *newRoot = new KJS::Bindings::RootObject(0);
+                newRoot->setInterpreter (exec->interpreter());
+                root = newRoot;
             }
-            
-            // Convert JavaScript String value to NSString?
-            else if (value.type() == KJS::StringType) {
-                StringImp *s = static_cast<KJS::StringImp*>(value.imp());
-                UString u = s->value();
-                
-                NSString *string = [NSString stringWithCharacters:(const unichar*)u.data() length:u.size()];
-                result.objectValue = string;
-            }
-            
-            // Convert JavaScript Number value to NSNumber?
-            else if (value.type() == KJS::NumberType) {
-                Number n = Number::dynamicCast(value);
-                result.objectValue = [NSNumber numberWithDouble:n.value()];
-            }
+            result.objectValue = [JavaScriptObject _convertValueToObjcValue:value root:root];
         }
         break;
         
@@ -222,6 +203,10 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                 }
                 else if ([*obj isKindOfClass:[NSArray class]]) {
                     aValue = Object(new RuntimeArrayImp(new ObjcArray (*obj)));
+                }
+                else if ([*obj isKindOfClass:[JavaScriptObject class]]) {
+                    JavaScriptObject *jsobject = (JavaScriptObject *)*obj;
+                    aValue = Object([jsobject imp]);
                 }
                 else {
                     aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));

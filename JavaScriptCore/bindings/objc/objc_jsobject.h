@@ -29,6 +29,8 @@
 
 #include <value.h>
 
+#include <runtime_root.h>
+
 /*
     ObjC      to    JavaScript
     char            Number
@@ -75,17 +77,12 @@
 - (NSString *)toString;
 - (id)getSlot:(unsigned int)index;
 - (void)setSlot:(unsigned int)index value:(id)value;
+
 @end
 
-// This is intended to be an SPI, as it exposes KJS::Value.
-@interface JavaScriptValueConverter
-
-+ (void)registerConverter:(JavaScriptValueConverter *)aConverter;
-+ (void)unregisterConverter:(JavaScriptValueConverter *)aConverter;
-+ (NSArray *)converters;
-
-- (id)objectForValue:(KJS::Value)aValue;
-
+@interface JavaScriptObject (Private)
++ (id)_convertValueToObjcValue:(KJS::Value)value root:(const KJS::Bindings::RootObject *)root;
+- (KJS::ObjectImp *)imp;
 @end
 
 #endif
