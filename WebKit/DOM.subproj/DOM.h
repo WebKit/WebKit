@@ -78,12 +78,12 @@ enum {
     DOM_BAD_BOUNDARYPOINTS_ERR        = 1,
     DOM_INVALID_NODE_TYPE_ERR         = 2,
     //
-    // DOM range exception codes
+    // DOM Range comparison codes
     //
-    DOMCompareStartToStart = 0,
-    DOMCompareStartToEnd   = 1,
-    DOMCompareEndToEnd     = 2,
-    DOMCompareEndToStart   = 3,
+    DOM_START_TO_START                = 0,
+    DOM_START_TO_END                  = 1,
+    DOM_END_TO_END                    = 2,
+    DOM_END_TO_START                  = 3,
 };
 
 extern NSString * const DOMException;
