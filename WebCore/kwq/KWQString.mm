@@ -942,13 +942,16 @@ QString::QString(const char *chs)
 #ifdef QSTRING_DEBUG_ALLOCATIONS
     countInstance (&dataHandle);
 #endif
-    dataHandle = (QStringData **)allocateHandle();
-    *dataHandle = &internalData;
 
-    if (chs)
+    if (chs) {
         internalData.initialize(chs,strlen(chs));
-    else
-        internalData.initialize();
+	dataHandle = (QStringData **)allocateHandle();
+	*dataHandle = &internalData;
+    } else {
+	internalData.deref();
+	dataHandle = makeSharedNullHandle();
+	dataHandle[0]->ref();
+    }
 }
 
 QString::QString(const char *chs, int len)
@@ -1110,7 +1113,7 @@ QCString QString::local8Bit() const
 
 bool QString::isNull() const
 {
-    return dataHandle[0]->_length == 0;
+    return dataHandle == shared_null_handle;
 }
 
 int QString::find(QChar qc, int index) const

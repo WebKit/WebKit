@@ -1,3 +1,14 @@
+2002-10-25  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed 3048031 - innerHTML is incorrectly null
+	
+        * kwq/KWQString.mm:
+        (QString::isNull): Check for NULL by comparing to
+	shared_null_handle instead of checking for 0 length, so
+	garden-variety empty strings don't show as NULL.
+        (QString::QString): Make sure that string created with a NULL char
+	* uses the shared null handle, so it's properly NULL.
+
 2002-10-24  Richard Williamson   <rjw@apple.com>
 
         Updated to reflect new calling parameter semantic of floatCharacterWidths(),
