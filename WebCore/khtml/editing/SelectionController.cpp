@@ -874,9 +874,12 @@ void Selection::validate(ETextGranularity granularity)
             break;
         case WORD:
             if (m_baseIsStart) {
-                m_end = endOfWord(VisiblePosition(m_extent)).deepEquivalent();
-                // If at the end of the document, expand to the left.
-                EWordSide side = (m_end == m_extent) ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
+                VisiblePosition wordEnd = endOfWord(VisiblePosition(m_extent));
+                m_end = wordEnd.deepEquivalent();
+                
+                // when double-clicking at end of document, select the last word
+                EWordSide side = (isCaret() && wordEnd.next().isNull()) ? LeftWordIfOnBoundary : RightWordIfOnBoundary;
+                
                 m_start = startOfWord(VisiblePosition(m_base), side).deepEquivalent();
             } else {
                 m_start = startOfWord(VisiblePosition(m_extent)).deepEquivalent();
