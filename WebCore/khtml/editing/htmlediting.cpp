@@ -492,26 +492,37 @@ TextImpl *JoinTextNodesCommand::secondNode() const
 }
 
 //------------------------------------------------------------------------------------------
-// PasteMarkupCommand
+// ReplaceSelectionCommand
 
-PasteMarkupCommand::PasteMarkupCommand(DocumentImpl *document, const DOMString &markupString, const DOM::DOMString &baseURL) 
-    : CompositeEditCommand(new PasteMarkupCommandImpl(document, markupString, baseURL))
+ReplaceSelectionCommand::ReplaceSelectionCommand(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement) 
+    : CompositeEditCommand(new ReplaceSelectionCommandImpl(document, fragment, selectReplacement))
 {
 }
 
-PasteMarkupCommand::~PasteMarkupCommand() 
+ReplaceSelectionCommand::~ReplaceSelectionCommand() 
 {
 }
 
-PasteMarkupCommandImpl *PasteMarkupCommand::impl() const
+ReplaceSelectionCommandImpl *ReplaceSelectionCommand::impl() const
 {
-    return static_cast<PasteMarkupCommandImpl *>(get());
+    return static_cast<ReplaceSelectionCommandImpl *>(get());
 }
 
-DOMString PasteMarkupCommand::markupString() const
+//------------------------------------------------------------------------------------------
+// MoveSelectionCommand
+
+MoveSelectionCommand::MoveSelectionCommand(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position) 
+: CompositeEditCommand(new MoveSelectionCommandImpl(document, fragment, position))
 {
-    IF_IMPL_NULL_RETURN_ARG(DOMString());
-    return impl()->markupString();
+}
+
+MoveSelectionCommand::~MoveSelectionCommand() 
+{
+}
+
+MoveSelectionCommandImpl *MoveSelectionCommand::impl() const
+{
+    return static_cast<MoveSelectionCommandImpl *>(get());
 }
 
 //------------------------------------------------------------------------------------------

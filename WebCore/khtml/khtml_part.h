@@ -570,10 +570,20 @@ public:
   const DOM::Selection &selection() const;
 
   /**
+   * Returns the drag caret of the HTML.
+   */
+  const DOM::Selection &dragCaret() const;
+
+  /**
    * Sets the current selection.
    */
   void setSelection(const DOM::Selection &, bool closeTyping=true);
 
+  /**
+      * Sets the current drag cart.
+   */
+  void setDragCaret(const DOM::Selection &);
+  
   /**
    * Clears the current selection.
    */
@@ -593,6 +603,11 @@ public:
    * Paints the caret.
    */
   void paintCaret(QPainter *p, const QRect &rect) const;
+  
+ /**
+   * Paints the drag caret.
+   */
+  void paintDragCaret(QPainter *p, const QRect &rect) const;
 
   /**
    * Set info for vertical arrow navigation.
@@ -1112,6 +1127,11 @@ private:
    * @internal
    */
   void notifySelectionChanged(bool closeTyping=true);
+  
+  /**
+   * @internal
+   */
+  void notifyDragCaretChanged();
 
   /**
    * @internal

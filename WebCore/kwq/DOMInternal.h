@@ -28,6 +28,7 @@
 namespace DOM {
     class CSSStyleDeclarationImpl;
     class CSSStyleSheetImpl;
+    class DocumentFragmentImpl;
     class DocumentImpl;
     class ElementImpl;
     class NodeFilterImpl;
@@ -57,6 +58,11 @@ namespace DOM {
 + (DOMDocument *)_documentWithImpl:(DOM::DocumentImpl *)impl;
 - (DOM::DocumentImpl *)_documentImpl;
 - (DOMElement *)_ownerElement;
+@end
+
+@interface DOMDocumentFragment (WebCoreInternal)
++ (DOMDocumentFragment *)_documentFragmentWithImpl:(DOM::DocumentFragmentImpl *)impl;
+- (DOM::DocumentFragmentImpl *)_fragmentImpl;
 @end
 
 @interface DOMRange (WebCoreInternal)

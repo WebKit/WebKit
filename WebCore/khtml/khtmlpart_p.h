@@ -352,6 +352,7 @@ public:
 #endif
 
   DOM::Selection m_selection;
+  DOM::Selection m_dragCaret;
   int m_caretBlinkTimer;
 
   bool m_caretVisible:1;

@@ -400,23 +400,39 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// PasteMarkupCommandImpl
+// ReplaceSelectionCommandImpl
 
-class PasteMarkupCommandImpl : public CompositeEditCommandImpl
+class ReplaceSelectionCommandImpl : public CompositeEditCommandImpl
 {
 public:
-    PasteMarkupCommandImpl(DOM::DocumentImpl *document, const DOM::DOMString &markupString, const DOM::DOMString &baseURL);
-    virtual ~PasteMarkupCommandImpl();
+    ReplaceSelectionCommandImpl(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true);
+    virtual ~ReplaceSelectionCommandImpl();
     
     virtual int commandID() const;
 
     virtual void doApply();
 
-    DOM::DOMString markupString() const { return m_markupString; }
-
 private:
-    DOM::DOMString m_markupString;
-    DOM::DOMString m_baseURL;
+    DOM::DocumentFragmentImpl *m_fragment;
+    bool m_selectReplacement;
+};
+
+//------------------------------------------------------------------------------------------
+// MoveSelectionCommandImpl
+
+class MoveSelectionCommandImpl : public CompositeEditCommandImpl
+{
+public:
+    MoveSelectionCommandImpl(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position);
+    virtual ~MoveSelectionCommandImpl();
+    
+    virtual int commandID() const;
+    
+    virtual void doApply();
+    
+private:
+    DOM::DocumentFragmentImpl *m_fragment;
+    DOM::Position m_position;
 };
 
 //------------------------------------------------------------------------------------------

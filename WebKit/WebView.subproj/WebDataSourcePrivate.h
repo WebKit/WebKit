@@ -8,6 +8,8 @@
 
 #import <WebKit/WebDataSource.h>
 
+@class DOMDocumentFragment;
+@class DOMRange;
 @class NSError;
 @class NSURLRequest;
 @class NSURLResponse;
@@ -126,9 +128,9 @@
 - (void)_addSubframeArchives:(NSArray *)subframeArchives;
 - (WebArchive *)_popSubframeArchiveWithName:(NSString *)frameName;
 
-- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL;
-- (BOOL)_replaceSelectionWithArchive:(WebArchive *)archive;
-- (void)_replaceSelectionWithImageResource:(WebResource *)resource;
+- (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource;
+- (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive;
+- (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement;
 
 - (NSError *)_mainDocumentError;
 - (NSString *)_stringWithData:(NSData *)data;

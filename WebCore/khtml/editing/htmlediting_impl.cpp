@@ -1918,35 +1918,27 @@ void JoinTextNodesCommandImpl::doUnapply()
 }
 
 //------------------------------------------------------------------------------------------
-// PasteMarkupCommandImpl
+// ReplaceSelectionCommandImpl
 
-PasteMarkupCommandImpl::PasteMarkupCommandImpl(DocumentImpl *document, const DOMString &markupString, const DOMString &baseURL) 
-    : CompositeEditCommandImpl(document), m_markupString(markupString), m_baseURL(baseURL)
-{
-    ASSERT(!m_markupString.isEmpty());
-}
-
-PasteMarkupCommandImpl::~PasteMarkupCommandImpl()
+ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement) 
+    : CompositeEditCommandImpl(document), m_fragment(fragment), m_selectReplacement(selectReplacement)
 {
 }
 
-int PasteMarkupCommandImpl::commandID() const
+ReplaceSelectionCommandImpl::~ReplaceSelectionCommandImpl()
 {
-    return PasteMarkupCommandID;
 }
 
-void PasteMarkupCommandImpl::doApply()
+int ReplaceSelectionCommandImpl::commandID() const
 {
-    DocumentFragmentImpl *root = static_cast<HTMLElementImpl *>(document()->documentElement())->createContextualFragment(m_markupString);
-    ASSERT(root);
-    
-    if (!m_baseURL.isEmpty() && m_baseURL != document()->baseURL()) {
-        root->recursive_completeURLs(m_baseURL.string());
-    }
-    
-    NodeImpl *firstChild = root->firstChild();
-    NodeImpl *lastChild = root->lastChild();
-    
+    return ReplaceSelectionCommandID;
+}
+
+void ReplaceSelectionCommandImpl::doApply()
+{
+    NodeImpl *firstChild = m_fragment->firstChild();
+    NodeImpl *lastChild = m_fragment->lastChild();
+
     Selection selection = endingSelection();
 
     // Delete the current selection, or collapse whitespace, as needed
@@ -1963,7 +1955,11 @@ void PasteMarkupCommandImpl::doApply()
         ASSERT(!lastChild);
     } else if (firstChild == lastChild && firstChild->isTextNode()) {
         // Simple text paste. Treat as if the text were typed.
+        Position base = selection.base();
         inputText(static_cast<TextImpl *>(firstChild)->data());
+        if (m_selectReplacement) {
+            setEndingSelection(Selection(base, endingSelection().extent()));
+        }
     } 
     else {
         // HTML fragment paste.
@@ -1980,19 +1976,65 @@ void PasteMarkupCommandImpl::doApply()
             node = next;
         }
         ASSERT(beforeNode);
-		
-		// Find the last leaf and place the caret after it.
-        NodeImpl *leaf = lastChild;
+	
+        // Find the last leaf.
+        NodeImpl *lastLeaf = lastChild;
         while (1) {
-            NodeImpl *nextChild = leaf->lastChild();
+            NodeImpl *nextChild = lastLeaf->lastChild();
             if (!nextChild)
                 break;
-            leaf = nextChild;
+            lastLeaf = nextChild;
         }
         
-        setEndingSelection(Position(leaf, leaf->caretMaxOffset()));
+	if (m_selectReplacement) {            
+            // Find the first leaf.
+            NodeImpl *firstLeaf = firstChild;
+            while (1) {
+                NodeImpl *nextChild = firstLeaf->firstChild();
+                if (!nextChild)
+                    break;
+                firstLeaf = nextChild;
+            }
+            // Select what was inserted.
+            setEndingSelection(Selection(Position(firstLeaf, firstLeaf->caretMinOffset()), Position(lastLeaf, lastLeaf->caretMaxOffset())));
+        } else {
+            // Place the cursor after what was inserted.
+            setEndingSelection(Position(lastLeaf, lastLeaf->caretMaxOffset()));
+        }
     }
 }
+
+//------------------------------------------------------------------------------------------
+// MoveSelectionCommandImpl
+
+MoveSelectionCommandImpl::MoveSelectionCommandImpl(DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position) 
+: CompositeEditCommandImpl(document), m_fragment(fragment), m_position(position)
+{
+}
+
+MoveSelectionCommandImpl::~MoveSelectionCommandImpl()
+{
+}
+
+int MoveSelectionCommandImpl::commandID() const
+{
+    return MoveSelectionCommandID;
+}
+
+void MoveSelectionCommandImpl::doApply()
+{
+    Selection originalSelection = endingSelection();
+    ASSERT(originalSelection.state() == Selection::RANGE);
+
+    // FIXME: Inserting the fragment by calling ReplaceSelectionCommand is not working for some reason.
+    /*
+    setEndingSelection(m_position);
+    ReplaceSelectionCommand cmd(document(), m_fragment, true);
+    applyCommandToComposite(cmd);
+    */
+    // FIXME: Need to delete the selection here.
+}
+
 
 //------------------------------------------------------------------------------------------
 // RemoveCSSPropertyCommandImpl

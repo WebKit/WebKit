@@ -34,6 +34,7 @@
 
 namespace DOM {
     class CSSStyleDeclarationImpl;
+    class DocumentFragmentImpl;
     class DocumentImpl;
     class DOMString;
     class ElementImpl;
@@ -58,7 +59,8 @@ class InputTextCommandImpl;
 class InsertNodeBeforeCommandImpl;
 class InsertTextCommandImpl;
 class JoinTextNodesCommandImpl;
-class PasteMarkupCommandImpl;
+class MoveSelectionCommandImpl;
+class ReplaceSelectionCommandImpl;
 class RemoveCSSPropertyCommandImpl;
 class RemoveNodeAttributeCommandImpl;
 class RemoveNodeCommandImpl;
@@ -84,7 +86,8 @@ enum ECommandID {
     InsertNodeBeforeCommandID,
     InsertTextCommandID,
     JoinTextNodesCommandID,
-    PasteMarkupCommandID,
+    MoveSelectionCommandID,
+    ReplaceSelectionCommandID,
     RemoveCSSPropertyCommandID,
     RemoveNodeAttributeCommandID,
     RemoveNodeCommandID,
@@ -338,18 +341,29 @@ private:
 };
 
 //------------------------------------------------------------------------------------------
-// PasteMarkupCommand
+// ReplaceSelectionCommand
 
-class PasteMarkupCommand : public CompositeEditCommand
+class ReplaceSelectionCommand : public CompositeEditCommand
 {
 public:
-    PasteMarkupCommand(DOM::DocumentImpl *document, const DOM::DOMString &markupString, const DOM::DOMString &baseURL);
-    virtual ~PasteMarkupCommand();
-
-    DOM::DOMString markupString() const;
+    ReplaceSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, bool selectReplacement=true);
+    virtual ~ReplaceSelectionCommand();
 
 private:
-    inline PasteMarkupCommandImpl *impl() const;
+    inline ReplaceSelectionCommandImpl *impl() const;
+};
+
+//------------------------------------------------------------------------------------------
+// MoveSelectionCommand
+
+class MoveSelectionCommand : public CompositeEditCommand
+{
+public:
+    MoveSelectionCommand(DOM::DocumentImpl *document, DOM::DocumentFragmentImpl *fragment, DOM::Position &position);
+    virtual ~MoveSelectionCommand();
+    
+private:
+        inline MoveSelectionCommandImpl *impl() const;
 };
 
 //------------------------------------------------------------------------------------------

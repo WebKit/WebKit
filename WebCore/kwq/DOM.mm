@@ -91,10 +91,6 @@ using DOM::TreeWalkerImpl;
 - (AttrImpl *)_attrImpl;
 @end
 
-@interface DOMDocumentFragment (WebCoreInternal)
-+ (DOMDocumentFragment *)_documentFragmentWithImpl:(DocumentFragmentImpl *)impl;
-@end
-
 @interface DOMImplementation (WebCoreInternal)
 + (DOMImplementation *)_DOMImplementationWithImpl:(DOMImplementationImpl *)impl;
 - (DOMImplementationImpl *)_DOMImplementationImpl;
@@ -911,6 +907,11 @@ inline Document DocumentImpl::createInstance(DocumentImpl *impl)
 + (DOMDocumentFragment *)_documentFragmentWithImpl:(DocumentFragmentImpl *)impl
 {
     return static_cast<DOMDocumentFragment *>([DOMNode _nodeWithImpl:impl]);
+}
+
+- (DocumentFragmentImpl *)_fragmentImpl
+{
+    return static_cast<DocumentFragmentImpl *>(DOM_cast<NodeImpl *>(_internal));
 }
 
 @end

@@ -544,22 +544,17 @@ static WebHTMLView *lastHitView = nil;
     return [[self _bridge] isSelectionEditable];
 }
 
-- (void)_replaceSelectionWithMarkupString:(NSString *)markupString
-{
-    [[self _dataSource] _replaceSelectionWithMarkupString:markupString baseURL:nil];
-}
-
-- (void)_pasteFromPasteboard:(NSPasteboard *)pasteboard
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard
 {
     NSArray *types = [pasteboard types];
 
     if ([types containsObject:WebArchivePboardType]) {
         WebArchive *archive = [[WebArchive alloc] initWithData:[pasteboard dataForType:WebArchivePboardType]];
         if (archive) {
-            BOOL didPaste = [[self _dataSource] _replaceSelectionWithArchive:archive];
+            DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithArchive:archive];
             [archive release];
-            if (didPaste) {
-                return;
+            if (fragment) {
+                return fragment;
             }
         }
     }
@@ -567,23 +562,25 @@ static WebHTMLView *lastHitView = nil;
     NSURL *URL;
     
     if ([types containsObject:NSHTMLPboardType]) {
-        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSHTMLPboardType]];
+        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSHTMLPboardType] baseURLString:nil];
     } else if ([types containsObject:NSTIFFPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSTIFFPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.tiff"]
                                                          MIMEType:@"image/tiff" 
                                                  textEncodingName:nil
                                                         frameName:nil];
-        [[self _dataSource] _replaceSelectionWithImageResource:resource];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
         [resource release];
+        return fragment;
     } else if ([types containsObject:NSPICTPboardType]) {
         WebResource *resource = [[WebResource alloc] initWithData:[pasteboard dataForType:NSPICTPboardType]
                                                               URL:[NSURL _web_uniqueWebDataURLWithRelativeString:@"/image.pict"]
                                                          MIMEType:@"image/pict" 
                                                  textEncodingName:nil
                                                         frameName:nil];
-        [[self _dataSource] _replaceSelectionWithImageResource:resource];
+        DOMDocumentFragment *fragment = [[self _dataSource] _documentFragmentWithImageResource:resource];
         [resource release];
+        return fragment;
     } else if ((URL = [pasteboard _web_bestURL])) {
         NSString *URLString = [URL _web_originalDataAsString];
         NSString *linkLabel = [pasteboard stringForType:WebURLNamePboardType];
@@ -592,17 +589,27 @@ static WebHTMLView *lastHitView = nil;
         // An even better solution would be to make a DOM node with the DOM API rather than creating
         // a markup string here.
         NSString *markupString = [NSString stringWithFormat:@"<A HREF=\"%@\">%@</A>", URLString, linkLabel];
-        [self _replaceSelectionWithMarkupString:markupString];
+        return [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:nil];
     } else if ([types containsObject:NSRTFDPboardType]) {
         // FIXME: Support RTFD to HTML (or DOM) conversion.
         ERROR("RTFD to HTML conversion not yet supported.");
-        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]]; 
+        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
     } else if ([types containsObject:NSRTFPboardType]) {
         // FIXME: Support RTF to HTML (or DOM) conversion.
         ERROR("RTF to HTML conversion not yet supported.");
-        [self _replaceSelectionWithMarkupString:[pasteboard stringForType:NSStringPboardType]];      
+        return [[self _bridge] documentFragmentWithMarkupString:[pasteboard stringForType:NSStringPboardType] baseURLString:nil];
     } else if ([types containsObject:NSStringPboardType]) {
-        [[self _bridge] replaceSelectionWithText:[pasteboard stringForType:NSStringPboardType]];
+        return [[self _bridge] documentFragmentWithText:[pasteboard stringForType:NSStringPboardType]];
+    }
+    
+    return nil;
+}
+
+- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement
+{
+    DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:pasteboard];
+    if (fragment) {
+        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
     }
 }
 
@@ -915,7 +922,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)paste:(id)sender
 {
-    [self _pasteFromPasteboard:[NSPasteboard generalPasteboard]];
+    [self _replaceSelectionWithPasteboard:[NSPasteboard generalPasteboard] selectReplacement:NO];
 }
 
 @end
@@ -1718,25 +1725,41 @@ static WebHTMLView *lastHitView = nil;
 - (NSDragOperation)dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        return _private->initiatedDrag ? NSDragOperationMove : NSDragOperationCopy;
+        return (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) ? NSDragOperationMove : NSDragOperationCopy;
     }
     return NSDragOperationNone;
+}
+
+- (void)draggingCancelledWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
+{
+    [[self _bridge] removeDragCaret];
 }
 
 - (void)draggingUpdatedWithDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
         [[self _bridge] moveDragCaretToPoint:[self convertPoint:[draggingInfo draggingLocation] fromView:nil]];
+    } else {
+        [[self _bridge] removeDragCaret];
     }
 }
 
 - (BOOL)concludeDragForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
+    WebBridge *bridge = [self _bridge];
+    BOOL didInsert = NO;
     if ([self _canProcessDragWithDraggingInfo:draggingInfo]) {
-        [self _pasteFromPasteboard:[draggingInfo draggingPasteboard]];
-        return YES;
+        if (_private->initiatedDrag && [[self _bridge] isSelectionEditable]) {
+            DOMDocumentFragment *fragment = [self _documentFragmentFromPasteboard:[draggingInfo draggingPasteboard]];
+            [bridge moveSelectionToDragCaret:fragment];
+        } else {
+            [bridge setSelectionToDragCaret];
+            [self _replaceSelectionWithPasteboard:[draggingInfo draggingPasteboard] selectReplacement:YES];
+        }
+        didInsert = YES;
     }
-    return NO;
+    [bridge removeDragCaret];
+    return didInsert;
 }
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point

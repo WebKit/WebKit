@@ -1,3 +1,39 @@
+2004-05-24  Chris Blumenberg  <cblu@apple.com>
+
+	Improved editing via drag
+ 
+       	Reviewed by kocienda.
+
+        * WebView.subproj/WebDataSource.m: 
+        (-[WebDataSource _documentFragmentWithImageResource:]): made this method return a fragment instead of replace the selection so that the caller do other things with the fragment
+        (-[WebDataSource _documentFragmentWithArchive:]): ditto
+        (-[WebDataSource _replaceSelectionWithArchive:selectReplacement:]): call renamed methods
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDocumentInternal.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:]): made this method return a fragment instead of replace the selection so that the caller do other things with the fragment
+        (-[WebHTMLView _replaceSelectionWithPasteboard:selectReplacement:]): new
+        (-[WebHTMLView paste:]): call _replaceSelectionWithPasteboard:selectReplacement:
+        (-[WebHTMLView dragOperationForDraggingInfo:]): handle the case where the destination is editable, but the source is not
+        (-[WebHTMLView draggingCancelledWithDraggingInfo:]): new, removes drag caret
+        (-[WebHTMLView draggingUpdatedWithDraggingInfo:]): remove drag caret when we can't handle the drag
+        (-[WebHTMLView concludeDragForDraggingInfo:]): instead of calling paste, move the selection when doing a move and replace the drag caret when doing a copy
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]):
+        (-[WebView _setDraggingDocumentView:]): new
+        (-[WebView _dragOperationForDraggingInfo:]): if the current dragging document view changes, tell the previous dragging document view that dragging cancelled 
+        (-[WebView draggingExited:]): new, tell the previous dragging document view that dragging cancelled
+        (-[WebView concludeDragOperation:]): release the dragging document view
+        (-[WebView replaceSelectionWithNode:]): pass the selectReplacement BOOL to the bridge
+        (-[WebView replaceSelectionWithText:]): ditto
+        (-[WebView replaceSelectionWithMarkupString:]): ditto
+        (-[WebView replaceSelectionWithArchive:]): ditto
+        (-[WebView pasteAsPlainText:]): ditto
+        (-[WebView insertTab:]): ditto
+        (-[WebView insertText:]): ditto
+        * WebView.subproj/WebViewPrivate.h: 
+
 2004-05-24  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Dave.

@@ -6,6 +6,8 @@
 
 #import <WebKit/WebHTMLView.h>
 
+@class DOMDocumentFragment;
+@class DOMRange;
 @class WebArchive;
 @class WebBridge;
 @class WebView;
@@ -71,12 +73,13 @@
 + (NSArray *)_insertablePasteboardTypes;
 + (NSArray *)_selectionPasteboardTypes;
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard;
+- (DOMDocumentFragment *)_documentFragmentFromPasteboard:(NSPasteboard *)pasteboard;
 - (WebArchive *)_selectedArchive:(NSString **)markupString;
 - (NSData *)_selectedRTFData;
 - (BOOL)_canDelete;
 - (BOOL)_canPaste;
 - (BOOL)_haveSelection;
-- (void)_pasteFromPasteboard:(NSPasteboard *)pasteboard;
+- (void)_replaceSelectionWithPasteboard:(NSPasteboard *)pasteboard selectReplacement:(BOOL)selectReplacement;
 
 - (void)_frameOrBoundsChanged;
 
@@ -92,8 +95,9 @@
 - (void)_startAutoscrollTimer:(NSEvent *)event;
 - (void)_stopAutoscrollTimer;
 
-- (void)cut:(id)sender;
 - (void)copy:(id)sender;
+- (void)cut:(id)sender;
+- (void)delete:(id)sender;
 - (void)paste:(id)sender;
 - (void)delete:(id)sender;
 

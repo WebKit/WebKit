@@ -1,3 +1,55 @@
+2004-05-24  Chris Blumenberg  <cblu@apple.com>
+
+	Improved editing via drag.
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp: Renamed PasteMarkupCommand to ReplaceSelectionCommand
+        (khtml::ReplaceSelectionCommand::ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::~ReplaceSelectionCommand):
+        (khtml::ReplaceSelectionCommand::impl):
+        (khtml::MoveSelectionCommand::MoveSelectionCommand):
+        (khtml::MoveSelectionCommand::~MoveSelectionCommand):
+        (khtml::MoveSelectionCommand::impl):
+        * khtml/editing/htmlediting.h:
+        (khtml::):
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::ReplaceSelectionCommandImpl::ReplaceSelectionCommandImpl):
+        (khtml::ReplaceSelectionCommandImpl::~ReplaceSelectionCommandImpl):
+        (khtml::ReplaceSelectionCommandImpl::commandID):
+        (khtml::ReplaceSelectionCommandImpl::doApply):
+        (khtml::MoveSelectionCommandImpl::MoveSelectionCommandImpl): new command
+        (khtml::MoveSelectionCommandImpl::~MoveSelectionCommandImpl):
+        (khtml::MoveSelectionCommandImpl::commandID):
+        (khtml::MoveSelectionCommandImpl::doApply):
+        * khtml/editing/htmlediting_impl.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::dragCaret): new
+        (KHTMLPart::setDragCaret): new
+        (KHTMLPart::notifyDragCaretChanged): new
+        (KHTMLPart::paintDragCaret): new
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject): paint the drag caret
+        * kwq/DOM.mm:
+        (+[DOMDocumentFragment _documentFragmentWithImpl:]): made internally available
+        (-[DOMDocumentFragment _fragmentImpl]):
+        * kwq/DOMInternal.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithMarkupString:baseURLString:]): new
+        (-[WebCoreBridge documentFragmentWithText:]): new
+        (-[WebCoreBridge replaceSelectionWithFragment:selectReplacement:]): new
+        (-[WebCoreBridge replaceSelectionWithNode:selectReplacement:]): renamed to take the selectReplacement BOOL
+        (-[WebCoreBridge replaceSelectionWithMarkupString:baseURLString:selectReplacement:]): ditto
+        (-[WebCoreBridge replaceSelectionWithText:selectReplacement:]): ditto
+        (-[WebCoreBridge replaceSelectionWithNewline]): moved
+        (-[WebCoreBridge setSelectionToDragCaret]): new
+        (-[WebCoreBridge moveSelectionToDragCaret:]): new
+        (-[WebCoreBridge moveDragCaretToPoint:]): set the drag caret, not the selection
+        (-[WebCoreBridge removeDragCaret]): new
+
 2004-05-24  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

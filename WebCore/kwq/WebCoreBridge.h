@@ -53,6 +53,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 @class DOMCSSStyleDeclaration;
 @class DOMDocument;
+@class DOMDocumentFragment;
 @class DOMElement;
 @class DOMHTMLElement;
 @class DOMNode;
@@ -233,7 +234,6 @@ typedef enum {
 - (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset;
 
 - (BOOL)isSelectionEditable;
-- (void)moveDragCaretToPoint:(NSPoint)point;
 
 - (BOOL)haveSelection;
 
@@ -287,10 +287,21 @@ typedef enum {
 - (void)redoEditing:(id)arg;
 - (DOMRange *)rangeByAlteringCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
 - (void)alterCurrentSelection:(WebSelectionAlteration)alteration direction:(WebSelectionDirection)direction granularity:(WebSelectionGranularity)granularity;
-- (void)replaceSelectionWithText:(NSString *)text;
-- (void)replaceSelectionWithNode:(DOMNode *)node;
-- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
+
+- (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString;
+- (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text;
+
+- (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement;
+- (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement;
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement;
+- (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement;
 - (void)replaceSelectionWithNewline;
+
+- (void)setSelectionToDragCaret;
+- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment;
+- (void)moveDragCaretToPoint:(NSPoint)point;
+- (void)removeDragCaret;
+
 - (void)deleteSelection;
 - (void)deleteKeyPressed;
 - (void)applyStyle:(DOMCSSStyleDeclaration *)style;

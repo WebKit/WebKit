@@ -3,7 +3,6 @@
     Copyright 2001, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/WebPolicyDelegate.h>
 #import <WebKit/WebView.h>
 #import <WebKit/WebFramePrivate.h>
 
@@ -12,6 +11,8 @@
 @class WebFrame;
 @class WebPreferences;
 @class WebCoreSettings;
+
+@protocol WebDocumentDragging;
 @protocol WebFormDelegate;
 
 #define NUM_LOCATION_CHANGE_DELEGATE_SELECTORS	10
@@ -94,8 +95,10 @@ extern NSString *_WebMainFrameURLKey;
     BOOL drawsBackground;
     BOOL editable;
     BOOL initiatedDrag;
-    
+        
     NSString *mediaStyle;
+    
+    NSView <WebDocumentDragging> *draggingDocumentView;
 }
 @end
 

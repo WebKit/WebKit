@@ -79,11 +79,13 @@
 #import <AppKit/NSView.h>
 
 using DOM::AtomicString;
+using DOM::DocumentFragmentImpl;
 using DOM::DocumentImpl;
 using DOM::DocumentTypeImpl;
 using DOM::DOMString;
 using DOM::Element;
 using DOM::ElementImpl;
+using DOM::HTMLElementImpl;
 using DOM::HTMLFormElementImpl;
 using DOM::HTMLGenericFormElementImpl;
 using DOM::HTMLImageElementImpl;
@@ -98,7 +100,8 @@ using khtml::Decoder;
 using khtml::DeleteSelectionCommand;
 using khtml::EditCommand;
 using khtml::EditCommandImpl;
-using khtml::PasteMarkupCommand;
+using khtml::MoveSelectionCommand;
+using khtml::ReplaceSelectionCommand;
 using khtml::parseURL;
 using khtml::ApplyStyleCommand;
 using khtml::RenderCanvas;
@@ -420,29 +423,9 @@ static bool initializedKJS = FALSE;
 	return startNode ? startNode->isContentEditable() : NO;
 }
 
-- (void)moveDragCaretToPoint:(NSPoint)point
-{
-    RenderObject *renderer = _part->renderer();
-    if (!renderer) {
-        return;
-    }
-    
-    RenderObject::NodeInfo nodeInfo(true, true);
-    renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
-    NodeImpl *node = nodeInfo.innerNode();
-        
-    Selection selection(node->positionForCoordinates((int)point.x, (int)point.y));
-    _part->setSelection(selection);
-}
-
 - (BOOL)haveSelection
 {
     return _part->selection().state() == Selection::RANGE;
-}
-
-- (DOMRange *)selectedRange
-{
-    return [DOMRange _rangeWithImpl:_part->selection().toRange().handle()];
 }
 
 - (NSString *)_documentTypeString
@@ -1413,27 +1396,53 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return static_cast<NSSelectionAffinity>(_part->selection().affinity());
 }
 
-- (void)replaceSelectionWithNode:(DOMNode *)node
+- (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 
 {
-    ERROR("unimplemented");
+    DOM::DocumentImpl *document = _part->xmlDocImpl();
+    DOM::DocumentFragmentImpl *fragment = static_cast<HTMLElementImpl *>(document->documentElement())->createContextualFragment(markupString);
+    ASSERT(fragment);
+    
+    if ([baseURLString length] > 0) {
+        DOM::DOMString baseURL = baseURLString;
+        if (baseURL != document->baseURL()) {
+            fragment->recursive_completeURLs(baseURL.string());
+        }
+    }
+    return [DOMDocumentFragment _documentFragmentWithImpl:fragment];
 }
 
-- (void)replaceSelectionWithText:(NSString *)text
+- (DOMDocumentFragment *)documentFragmentWithText:(NSString *)text
 {
-    if (!_part || !_part->xmlDocImpl())
-        return;
-    
-    DOMString s(text);
-    TypingCommand::insertText(_part->xmlDocImpl(), s);
+    DOMDocument *document = [self DOMDocument];
+    DOMDocumentFragment *fragment = [document createDocumentFragment];
+    [fragment appendChild:[document createTextNode:text]];
+    return fragment;
 }
-
-- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString
+- (void)replaceSelectionWithFragment:(DOMDocumentFragment *)fragment selectReplacement:(BOOL)selectReplacement
 {
-    if (!_part || !_part->xmlDocImpl() || !markupString)
+    if (!_part || !_part->xmlDocImpl() || !fragment)
         return;
     
-    PasteMarkupCommand cmd(_part->xmlDocImpl(), markupString, baseURLString ? baseURLString : @"");
+    ReplaceSelectionCommand cmd(_part->xmlDocImpl(), [fragment _fragmentImpl], selectReplacement);
     cmd.apply();
+}
+
+- (void)replaceSelectionWithNode:(DOMNode *)node selectReplacement:(BOOL)selectReplacement
+{
+    DOMDocumentFragment *fragment = [[self DOMDocument] createDocumentFragment];
+    [fragment appendChild:node];
+    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+}
+
+- (void)replaceSelectionWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString selectReplacement:(BOOL)selectReplacement
+{
+    DOMDocumentFragment *fragment = [self documentFragmentWithMarkupString:markupString baseURLString:baseURLString];
+    [self replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+}
+
+- (void)replaceSelectionWithText:(NSString *)text selectReplacement:(BOOL)selectReplacement
+{
+    [self replaceSelectionWithFragment:[self documentFragmentWithText:text] selectReplacement:selectReplacement];
 }
 
 - (void)replaceSelectionWithNewline
@@ -1442,6 +1451,38 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
         return;
     
     TypingCommand::insertNewline(_part->xmlDocImpl());
+}
+
+- (void)setSelectionToDragCaret
+{
+    _part->setSelection(_part->dragCaret());
+}
+
+- (void)moveSelectionToDragCaret:(DOMDocumentFragment *)selectionFragment
+{
+    Position base = _part->dragCaret().base();
+    MoveSelectionCommand cmd(_part->xmlDocImpl(), [selectionFragment _fragmentImpl], base);
+    cmd.apply();
+}
+
+- (void)moveDragCaretToPoint:(NSPoint)point
+{
+    RenderObject *renderer = _part->renderer();
+    if (!renderer) {
+        return;
+    }
+    
+    RenderObject::NodeInfo nodeInfo(true, true);
+    renderer->layer()->nodeAtPoint(nodeInfo, (int)point.x, (int)point.y);
+    NodeImpl *node = nodeInfo.innerNode();
+    
+    Selection dragCaret(node->positionForCoordinates((int)point.x, (int)point.y));
+    _part->setDragCaret(dragCaret);
+}
+
+- (void)removeDragCaret
+{
+    _part->setDragCaret(Selection());
 }
 
 - (void)deleteSelection

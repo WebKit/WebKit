@@ -136,7 +136,8 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 
 - (void)dealloc
 {
-    ASSERT(!mainFrame);
+    ASSERT(mainFrame == nil);
+    ASSERT(draggingDocumentView == nil);
     
     [backForwardList release];
     [applicationNameForUserAgent release];
@@ -1708,14 +1709,30 @@ NS_ENDHANDLER
     return NSDragOperationNone;
 }
 
+- (void)_setDraggingDocumentView:(NSView <WebDocumentDragging> *)newDraggingView
+{
+    if (_private->draggingDocumentView != newDraggingView) {
+        [_private->draggingDocumentView release];
+        _private->draggingDocumentView = [newDraggingView retain];
+    }
+}
+
 - (NSDragOperation)_dragOperationForDraggingInfo:(id <NSDraggingInfo>)draggingInfo
 {
     NSPoint windowPoint = [draggingInfo draggingLocation];
+    NSView <WebDocumentDragging> *newDraggingView = [self _draggingDocumentViewAtWindowPoint:windowPoint];
+    if (_private->draggingDocumentView != newDraggingView) {
+        [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
+        [self _setDraggingDocumentView:newDraggingView];
+    }
+    
     NSDragOperation operation = [[self _UIDelegateForwarder] webView:self 
                                         dragOperationForDraggingInfo:draggingInfo 
                                                          overElement:[self _elementAtWindowPoint:windowPoint]];
-    if (operation != NSDragOperationNone) {
-        [[self _draggingDocumentViewAtWindowPoint:windowPoint] draggingUpdatedWithDraggingInfo:draggingInfo];
+    if (operation == NSDragOperationNone) {
+        [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
+    } else {
+        [_private->draggingDocumentView draggingUpdatedWithDraggingInfo:draggingInfo];
     }
     return operation;
 }
@@ -1728,6 +1745,12 @@ NS_ENDHANDLER
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)draggingInfo
 {
     return [self _dragOperationForDraggingInfo:draggingInfo];
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)draggingInfo
+{
+    [_private->draggingDocumentView draggingCancelledWithDraggingInfo:draggingInfo];
+    [self _setDraggingDocumentView:nil];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)draggingInfo
@@ -1743,15 +1766,21 @@ NS_ENDHANDLER
 - (void)concludeDragOperation:(id <NSDraggingInfo>)draggingInfo
 {
     NSPoint windowPoint = [draggingInfo draggingLocation];
+    ASSERT(_private->draggingDocumentView == [self _draggingDocumentViewAtWindowPoint:windowPoint]);
+    
     if (![[self _UIDelegateForwarder] webView:self 
             shouldProcessDragWithDraggingInfo:draggingInfo 
                                   overElement:[self _elementAtWindowPoint:windowPoint]]) {
+        [self _setDraggingDocumentView:nil];
         return;
     }
     
-    if ([[self _draggingDocumentViewAtWindowPoint:windowPoint] concludeDragForDraggingInfo:draggingInfo]) {
+    if ([_private->draggingDocumentView concludeDragForDraggingInfo:draggingInfo]) {
+        [self _setDraggingDocumentView:nil];
         return;
     }
+    
+    [self _setDraggingDocumentView:nil];
     
     if (!_private->editable && !_private->initiatedDrag) {
         NSURL *URL = [[self class] URLFromPasteboard:[draggingInfo draggingPasteboard]];
@@ -2530,23 +2559,22 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
 
 - (void)replaceSelectionWithNode:(DOMNode *)node
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithNode:node];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithNode:node selectReplacement:YES];
 }    
 
 - (void)replaceSelectionWithText:(NSString *)text
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithText:text];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithText:text selectReplacement:YES];
 }
 
 - (void)replaceSelectionWithMarkupString:(NSString *)markupString
 {
-    [[self _bridgeForCurrentSelection] replaceSelectionWithMarkupString:markupString baseURLString:nil];
+    [[self _bridgeForCurrentSelection] replaceSelectionWithMarkupString:markupString baseURLString:nil selectReplacement:YES];
 }
 
 - (void)replaceSelectionWithArchive:(WebArchive *)archive
 {
-    WebBridge *bridge = [self _bridgeForCurrentSelection];
-    [[[bridge webFrame] dataSource] _replaceSelectionWithArchive:archive];
+    [[[[self _bridgeForCurrentSelection] webFrame] dataSource] _replaceSelectionWithArchive:archive selectReplacement:YES];
 }
 
 - (void)deleteSelection
@@ -2984,7 +3012,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
         if ([view isKindOfClass:[WebHTMLView class]]) {
             NSString *text = [[NSPasteboard generalPasteboard] stringForType:NSStringPboardType];
             if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
-                [[self _bridgeForCurrentSelection] replaceSelectionWithText:text];
+                [[self _bridgeForCurrentSelection] replaceSelectionWithText:text selectReplacement:NO];
             }
         }
         return;
@@ -3100,7 +3128,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
         id <WebDocumentView> view = [[[self mainFrame] frameView] documentView];
         if ([view isKindOfClass:[WebHTMLView class]]) {
             if ([[self _editingDelegateForwarder] webView:self shouldInsertText:@"\t" replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionPasted]) {
-                [[self _bridgeForCurrentSelection] replaceSelectionWithText:@"\t"];
+                [[self _bridgeForCurrentSelection] replaceSelectionWithText:@"\t" selectReplacement:NO];
             }
         }
         return;
@@ -3340,7 +3368,7 @@ static NSFont *_fontFromStyle(DOMCSSStyleDeclaration *style)
     if ([self _currentSelectionIsEditable]) {
         if ([[self _editingDelegateForwarder] webView:self shouldInsertText:text replacingDOMRange:[self selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
             WebBridge *bridge = [self _bridgeForCurrentSelection];
-            [bridge replaceSelectionWithText:text];
+            [bridge replaceSelectionWithText:text selectReplacement:NO];
             [bridge ensureCaretVisible];
         }
         return;

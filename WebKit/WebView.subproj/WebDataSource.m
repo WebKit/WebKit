@@ -200,19 +200,15 @@
     return archive;
 }
 
-- (void)_replaceSelectionWithMarkupString:(NSString *)markupString baseURL:(NSURL *)baseURL
-{
-    [[self _bridge] replaceSelectionWithMarkupString:markupString baseURLString:[baseURL _web_originalDataAsString]];
-}
-
-- (void)_replaceSelectionWithImageResource:(WebResource *)resource
+- (DOMDocumentFragment *)_documentFragmentWithImageResource:(WebResource *)resource
 {
     ASSERT(resource);
     [self addSubresource:resource];
-    [self _replaceSelectionWithMarkupString:[NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]] baseURL:nil];
+    NSString *markupString = [NSString stringWithFormat:@"<IMG SRC=\"%@\">", [[resource URL] _web_originalDataAsString]];
+    return [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:nil];
 }
 
-- (BOOL)_replaceSelectionWithArchive:(WebArchive *)archive
+- (DOMDocumentFragment *)_documentFragmentWithArchive:(WebArchive *)archive
 {
     ASSERT(archive);
     WebResource *mainResource = [archive mainResource];
@@ -222,15 +218,23 @@
             NSString *markupString = [[NSString alloc] initWithData:[mainResource data] encoding:NSUTF8StringEncoding];
             [self _addSubresources:[archive subresources]];
             [self _addSubframeArchives:[archive subframeArchives]];
-            [self _replaceSelectionWithMarkupString:markupString baseURL:[mainResource URL]];
+            DOMDocumentFragment *fragment = [[self _bridge] documentFragmentWithMarkupString:markupString baseURLString:[[mainResource URL] _web_originalDataAsString]];
             [markupString release];
-            return YES;
+            return fragment;
         } else if ([[[WebImageRendererFactory sharedFactory] supportedMIMETypes] containsObject:MIMEType]) {
-            [self _replaceSelectionWithImageResource:mainResource];
-            return YES;
+            return [self _documentFragmentWithImageResource:mainResource];
+
         }
     }
-    return NO;
+    return nil;
+}
+
+- (void)_replaceSelectionWithArchive:(WebArchive *)archive selectReplacement:(BOOL)selectReplacement
+{
+    DOMDocumentFragment *fragment = [self _documentFragmentWithArchive:archive];
+    if (fragment) {
+        [[self _bridge] replaceSelectionWithFragment:fragment selectReplacement:selectReplacement];
+    }
 }
 
 - (WebView *)_webView
