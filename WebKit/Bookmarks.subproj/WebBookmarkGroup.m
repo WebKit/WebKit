@@ -184,11 +184,10 @@
 
     dictionary = [NSDictionary dictionaryWithContentsOfFile: path];
     if (dictionary == nil) {
-        if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-            ERROR("no bookmarks file found at %@", path);
-        } else {
+        if ([[NSFileManager defaultManager] fileExistsAtPath: path]) {
             ERROR("attempt to read bookmarks from %@ failed; perhaps contents are corrupted", path);
         }
+        // else file doesn't exist, which is normal the first time
         return NO;
     }
 
