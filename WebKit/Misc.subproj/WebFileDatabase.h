@@ -5,11 +5,10 @@
 #import <Foundation/Foundation.h>
 
 #import "WebDatabase.h"
-#import "WebLRUFileList.h"
 
 @interface WebFileDatabase : WebDatabase 
 {
-    WebLRUFileList *lru;
+    struct WebLRUFileList *lru;
     NSMutableArray *ops;
     NSMutableDictionary *setCache;
     NSMutableSet *removeCache;
