@@ -2129,10 +2129,10 @@ struct ListItemInfo {
 
 NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
 {
-    NSFileWrapper *wrapper = nil;
-
     KWQ_BLOCK_EXCEPTIONS;
     
+    NSFileWrapper *wrapper = nil;
+
     DOMString attr = e->getAttribute(ATTR_SRC);
     if (!attr.isEmpty()) {
         NSURL *URL = completeURL(attr.string()).getNSURL();
@@ -2146,10 +2146,12 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
         [wrapper setPreferredFilename:@"image.tiff"];
         [wrapper autorelease];
     }
+
+    return wrapper;
     
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return wrapper;
+    return nil;
 }
 
 static ElementImpl *listParent(ElementImpl *item)
