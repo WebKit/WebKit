@@ -300,6 +300,7 @@
 "http"
 "https"
 "image/pict"
+"image/pjpeg"
 "image/tiff"
 "img"
 "isLoading"

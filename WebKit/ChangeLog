@@ -1,3 +1,12 @@
+2004-08-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3572737> Images not resizing at www.bmx-test.com (spoof nofix)
+
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebImageRendererFactory.m:
+        (-[WebImageRendererFactory supportedMIMETypes]): hard code image/pjpeg to the list of image mime types that we can handle
+
 2004-08-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -203,6 +203,10 @@ struct CompositeOperator CGCompositeOperations[NUM_COMPOSITE_OPERATORS] = {
             }
         }
 
+        // image/pjpeg is the MIME type for progressive jpeg. These files have the jpg file extension.
+        // This is workaround of NSURLFileTypeMappings's limitation of only providing 1 MIME type for an extension.
+        [mimes addObject:@"image/pjpeg"];
+        
         imageMIMETypes = [[mimes allObjects] retain];
     }
 
