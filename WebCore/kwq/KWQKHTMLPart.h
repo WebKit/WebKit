@@ -126,6 +126,8 @@ public:
     void forceLayout();
     void paint(QPainter *, const QRect &);
 
+    void createDummyDocument();
+
     // Used internally, but need to be public because they are used by non-member functions.
 
     void redirectionTimerStartedOrStopped();

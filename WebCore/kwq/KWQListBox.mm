@@ -27,154 +27,116 @@
 
 #import "KWQAssertions.h"
 
-// FIXME: We have to switch to NSTableView instead of NSBrowser.
-
-#define BORDER_TOTAL_WIDTH 3
-#define BORDER_TOTAL_HEIGHT 2
-
-@interface NSBrowser (KWQNSBrowserSecrets)
-- (void)_setScrollerSize:(NSControlSize)scrollerSize;
+@interface KWQListBoxScrollView : NSScrollView
+{
+}
 @end
 
-@interface KWQBrowserDelegate : NSObject
+@interface KWQListBoxTableViewDelegate : NSObject
 {
-    QListBox *box;
+    QListBox *_box;
+    NSArray *_items;
 }
-- initWithListBox:(QListBox *)b;
-@end
-
-@implementation KWQBrowserDelegate
-
-- initWithListBox:(QListBox *)b
-{
-    [super init];
-    box = b;
-    return self;
-}
-
-- (int)browser:(NSBrowser *)sender numberOfRowsInColumn:(int)column
-{
-    return box->count();
-}
-
-- (void)browser:(NSBrowser *)sender willDisplayCell:(id)cell atRow:(int)row column:(int)column
-{
-    int count = 0;
-    for (QListBoxItem *item = box->firstItem(); item; item = item->next()) {
-        if (count == row) {
-            [cell setEnabled:!item->text().isEmpty()];
-            [cell setLeaf:YES];
-            [cell setStringValue:item->text().getNSString()];
-            break;
-        }
-        count++;
-    }
-}
-
-- (IBAction)browserSingleClick:(id)browser
-{
-    box->selectionChanged();
-    box->clicked();
-}
-
+- initWithListBox:(QListBox *)b items:(NSArray *)items;
 @end
 
 QListBox::QListBox(QWidget *parent)
-    : QScrollView(parent), _head(0), _insertingItems(false)
+    : QScrollView(parent)
+    , _items([[NSMutableArray alloc] init])
+    , _insertingItems(false)
+    , _widthGood(false)
     , _clicked(this, SIGNAL(clicked(QListBoxItem *)))
     , _selectionChanged(this, SIGNAL(selectionChanged()))
 {
-    NSBrowser *browser = [[NSBrowser alloc] init];
-    KWQBrowserDelegate *delegate = [[KWQBrowserDelegate alloc] initWithListBox:this];
+    NSScrollView *scrollView = [[KWQListBoxScrollView alloc] init];
+    
+    [scrollView setBorderType:NSBezelBorder];
+    [scrollView setHasVerticalScroller:YES];
+    [[scrollView verticalScroller] setControlSize:NSSmallControlSize];
+    
+    NSTableView *tableView = [[NSTableView alloc] init];
+    KWQListBoxTableViewDelegate *delegate = [[KWQListBoxTableViewDelegate alloc] initWithListBox:this items:_items];
 
-    // FIXME: Need to configure browser's scroll view to use a scroller that
-    // has no up/down buttons. Typically the browser is very small and won't
-    // have enough space to draw the up/down buttons and the scroll knob.
-    [browser setTitled:NO];
-    [browser setDelegate:delegate];
-    [browser setTarget:delegate];
-    [browser setAction:@selector(browserSingleClick:)];
-    [browser addColumn];
-    [browser setMaxVisibleColumns:1];
-    [browser _setScrollerSize:NSSmallControlSize];
+    NSTableColumn *column = [[NSTableColumn alloc] initWithIdentifier:nil];
+
+    [column setEditable:NO];
+    [[column dataCell] setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
+
+    [tableView addTableColumn:column];
+
+    [column release];
     
-    setView(browser);
+    [tableView setAllowsMultipleSelection:NO];
+    [tableView setHeaderView:nil];
+    [tableView setIntercellSpacing:NSMakeSize(0, 0)];
+    [tableView setRowHeight:ceil([[column dataCell] cellSize].height)];
     
-    [browser release];
+    [tableView setDataSource:delegate];
+    [tableView setDelegate:delegate];
+
+    [scrollView setDocumentView:tableView];
+    [scrollView setVerticalLineScroll:[tableView rowHeight]];
+    
+    [tableView release];
+    
+    setView(scrollView);
+    
+    [scrollView release];
 }
 
 QListBox::~QListBox()
 {
-    NSBrowser *browser = (NSBrowser *)getView();
-    KWQBrowserDelegate *delegate = [browser delegate];
-    [browser setDelegate:nil];
+    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    KWQListBoxTableViewDelegate *delegate = [tableView delegate];
+    [tableView setDelegate:nil];
+    [tableView setDataSource:nil];
     [delegate release];
-    deleteItems();
+    [_items release];
 }
 
 uint QListBox::count() const
 {
-    int count = 0;
-    for (QListBoxItem *item = _head; item; item = item->next()) {
-        count++;
-    }
-    return count;
-}
-
-void QListBox::deleteItems()
-{
-    QListBoxItem *next;
-    for (QListBoxItem *item = _head; item; item = next) {
-        next = item->next();
-        delete item;
-    }
-    _head = 0;
+    return [_items count];
 }
 
 void QListBox::clear()
 {
-    deleteItems();
-    NSBrowser *browser = (NSBrowser *)getView();
-    [browser loadColumnZero];
+    [_items removeAllObjects];
+    if (!_insertingItems) {
+        NSTableView *tableView = [(NSScrollView *)getView() documentView];
+        [tableView reloadData];
+    }
+    _widthGood = NO;
 }
 
 void QListBox::setSelectionMode(SelectionMode mode)
 {
-    NSBrowser *browser = (NSBrowser *)getView();
-    [browser setAllowsMultipleSelection:mode != Single];
+    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    [tableView setAllowsMultipleSelection:mode != Single];
 }
 
 void QListBox::insertItem(const QString &text, unsigned index)
 {
-    insertItem(new QListBoxItem(text), index);
-}
-
-void QListBox::insertItem(QListBoxItem *item, unsigned index)
-{
-    if (!item)
-        return;
-
-    if (index > count())
-        index = count();
-
-    if (!_head || index == 0) {
-        item->_next = _head;
-        _head = item;
+    unsigned c = count();
+    NSString *s = text.getNSString();
+    if (index >= c) {
+        [_items addObject:s];
     } else {
-        QListBoxItem *i = _head;
-        while (i->_next && index > 1) {
-            i = i->_next;
-            index--;
-        }
-        item->_next = i->_next;
-        i->_next = item;
+        [_items replaceObjectAtIndex:index withObject:s];
     }
 
     if (!_insertingItems) {
-        NSBrowser *browser = (NSBrowser *)getView();
-        [browser loadColumnZero];
-        [browser tile];
+        NSTableView *tableView = [(NSScrollView *)getView() documentView];
+        [tableView reloadData];
     }
+    _widthGood = NO;
+}
+
+void QListBox::insertGroupLabel(const QString &text, unsigned index)
+{
+    // FIXME: This should be a non-selectable item, I think.
+    // Not sure how to do this in HTML.
+    insertItem(text, index);
 }
 
 void QListBox::beginBatchInsert()
@@ -187,47 +149,97 @@ void QListBox::endBatchInsert()
 {
     ASSERT(_insertingItems);
     _insertingItems = false;
-    NSBrowser *browser = (NSBrowser *)getView();
-    [browser loadColumnZero];
-    [browser tile];
+    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    [tableView reloadData];
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
     ASSERT(!_insertingItems);
+    NSTableView *tableView = [(NSScrollView *)getView() documentView];
     if (selectIt) {
-        NSBrowser *browser = (NSBrowser *)getView();
-        [browser selectRow:index inColumn:0];
+        [tableView selectRow:index byExtendingSelection:[tableView allowsMultipleSelection]];
     } else {
-        // FIXME: What can we do here?
+        [tableView deselectRow:index];
     }
 }
 
 bool QListBox::isSelected(int index) const
 {
     ASSERT(!_insertingItems);
-    NSBrowser *browser = (NSBrowser *)getView();
-    return [[browser loadedCellAtRow:index column:0] state] != NSOffState; 
+    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    return [tableView isRowSelected:index]; 
 }
 
 QSize QListBox::sizeForNumberOfLines(int lines) const
 {
-    NSBrowser *browser = (NSBrowser *)getView();
-    int rows = [[browser delegate] browser:browser numberOfRowsInColumn:0];
-    float rowHeight = 0;
-    float width = 0;
-    for (int row = 0; row < rows; row++) {
-        NSSize size = [[browser loadedCellAtRow:row column:0] cellSize];
-        width = MAX(width, size.width);
-        rowHeight = MAX(rowHeight, size.height);
+    ASSERT(!_insertingItems);
+
+    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    
+    float width;
+    if (_widthGood) {
+        width = _width;
+    } else {
+        width = 0;
+        NSCell *cell = [[[tableView tableColumns] objectAtIndex:0] dataCell];
+        NSEnumerator *e = [_items objectEnumerator];
+        NSString *text;
+        while ((text = [e nextObject])) {
+            [cell setStringValue:text];
+            NSSize size = [cell cellSize];
+            width = MAX(width, size.width);
+        }
+        _width = width;
+        _widthGood = YES;
     }
-    // FIXME: Add scroll bar width.
-    return QSize((int)ceil(width + BORDER_TOTAL_WIDTH
-        + [NSScroller scrollerWidthForControlSize:NSSmallControlSize]),
-        (int)ceil(rowHeight * lines + BORDER_TOTAL_HEIGHT));
+    
+    NSSize contentSize;
+    contentSize.width = ceil(width);
+    contentSize.height = ceil(([tableView rowHeight] + [tableView intercellSpacing].height) * lines);
+    NSSize size = [NSScrollView frameSizeForContentSize:contentSize
+        hasHorizontalScroller:NO hasVerticalScroller:YES borderType:NSBezelBorder];
+
+    return QSize(size);
 }
 
-QListBoxItem::QListBoxItem(const QString &text)
-    : _text(text), _next(0)
+@implementation KWQListBoxScrollView
+
+- (void)setFrameSize:(NSSize)size
 {
+    [super setFrameSize:size];
+    NSTableColumn *column = [[[self documentView] tableColumns] objectAtIndex:0];
+    [column setWidth:[self contentSize].width];
+    [column setMinWidth:[self contentSize].width];
+    [column setMaxWidth:[self contentSize].width];
 }
+
+@end
+
+@implementation KWQListBoxTableViewDelegate
+
+- initWithListBox:(QListBox *)b items:(NSArray *)i
+{
+    [super init];
+    _box = b;
+    _items = i;
+    return self;
+}
+
+- (int)numberOfRowsInTableView:(NSTableView *)tableView
+{
+    return [_items count];
+}
+
+- (id)tableView:(NSTableView *)tableView objectValueForTableColumn:(NSTableColumn *)column row:(int)row
+{
+    return [_items objectAtIndex:row];
+}
+
+- (void)tableViewSelectionDidChange:(NSNotification *)notification
+{
+    _box->selectionChanged();
+    _box->clicked();
+}
+
+@end

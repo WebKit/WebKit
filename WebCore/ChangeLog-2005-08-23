@@ -1,3 +1,78 @@
+2002-10-30  Darin Adler  <darin@apple.com>
+
+	- fixed 3086564 -- REGRESSION: meta-refresh to the same page doesn't refresh
+
+	The key is to get args.reload passed through to the bridge.
+
+        * kwq/WebCoreBridge.h: Add reload parameter to loadURL:.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::openURL): Pass NO for reload.
+        (KWQKHTMLPart::openURLRequest): Pass args.reload for reload.
+        (KWQKHTMLPart::urlSelected): Pass args.reload for reload.
+        (KWQKHTMLPart::submitForm): Pass args.reload for reload.
+        
+	- fixed a memory problem with the use of NSBrowser in KWQListBox
+        - fixed 2863040 -- multiple default items in select list not selected
+
+	Switched to use NSTableView instead of NSBrowser. This should also create
+	a measurable speedup due to other changes to this class.
+
+        * kwq/KWQListBox.h: Remove firstItem(), the insertItem() that takes a QListBoxItem
+	parameter, and deleteItems(). Add _items, _width, and _widthGood. Removed _head.
+	Removed the QListBoxItem and QListBoxText classes.
+        * kwq/KWQListBox.mm:
+        (QListBox::QListBox): Create a KWQListBoxScrollView and put an NSTableView
+	inside it. Also create an NSMutableArray to hold the items.
+        (QListBox::~QListBox): Disconnect the table view from the delegate before
+	releasing it. Also release the items array.
+        (QListBox::count): Return the array count.
+        (QListBox::clear): Do a reloadData here instead of loadColumnZero.
+        (QListBox::setSelectionMode): Update for table view.
+        (QListBox::insertItem): Update for table view.
+        (QListBox::insertGroupLabel): Just calls insertItem for now.
+        (QListBox::endBatchInsert): Update for table view.
+        (QListBox::setSelected): Update for table view, including support for multiple
+	selection.
+        (QListBox::isSelected): Update for table view.
+        (QListBox::sizeForNumberOfLines): Use the table view cell for width, and
+	cache it so we don't have to measure all the strings over and over again.
+        (-[KWQListBoxScrollView setFrameSize:]): Resize the table view column whenever
+	the entire scroll view is resized.
+        (-[KWQListBoxTableViewDelegate initWithListBox:]): Store box pointer and
+        pointer to items array.
+        (-[KWQListBoxTableViewDelegate numberOfRowsInTableView:]): Return count.
+        (-[KWQListBoxTableViewDelegate tableView:objectValueForTableColumn:row:]):
+	Get the data from the items array.
+        (-[KWQListBoxTableViewDelegate tableViewSelectionDidChange:]): Call both the
+	selection-changed signal and the clicked signal.
+
+        * khtml/rendering/render_form.cpp: (RenderSelect::updateFromElement):
+	Get rid of the one place here that gets at a list box item by calling a KWQ
+	function insertGroupLabel instead of making a QListBoxText. Also call
+        beginBatchInsert() before clear() for a slight additional speed boost.
+
+	- fixed 3067572 -- javascript: URLs typed into page address field or
+	bookmarks don't work in empty window
+
+	We needed a document for DOM, so we make a dummy one. This works for an empty
+	window, and also for a window with non-HTML content.
+
+        * kwq/KWQKHTMLPart.h: Added createDummyDocument().
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::createDummyDocument): Create an empty
+	DOM document if there isn't one already.
+
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stringByEvaluatingJavaScriptFromString:]): Call the new
+	createDummyDocument() instead of checking and doing nothing if there is no
+	document present when this is called.
+
+	- other stuff
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge DOMDocument]): Removed a stray printf.
+
+        * kwq/KWQTextArea.mm: Tweaked code a little.
+
 2002-10-28  Darin Adler  <darin@apple.com>
 
         * khtml/khtml_part.cpp: (KHTMLPart::checkCompleted):

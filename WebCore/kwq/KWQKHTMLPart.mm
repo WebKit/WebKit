@@ -127,7 +127,10 @@ void KWQKHTMLPart::openURL(const KURL &url)
     if (cocoaURL == nil) {
         // FIXME: We need to report this error to someone.
     } else {
-        [_bridge loadURL:cocoaURL];
+        // FIXME: The lack of args here to get the reload flag from
+        // indicates a problem in KHTMLPart::processObjectRequest,
+        // where we are opening the URL before the args are set up.
+        [_bridge loadURL:cocoaURL reload:NO];
     }
 }
 
@@ -137,7 +140,7 @@ void KWQKHTMLPart::openURLRequest(const KURL &url, const URLArgs &args)
     if (cocoaURL == nil) {
         // FIXME: We need to report this error to someone.
     } else {
-        [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
+        [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload];
     }
 }
 
@@ -167,7 +170,7 @@ void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URL
         return;
     }
     
-    [bridgeForFrameName(args.frameName) loadURL:cocoaURL];
+    [bridgeForFrameName(args.frameName) loadURL:cocoaURL reload:args.reload];
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -209,7 +212,7 @@ ReadOnlyPart *KWQKHTMLPart::createPart(const ChildFrame &child, const KURL &url,
 void KWQKHTMLPart::submitForm(const KURL &u, const URLArgs &args)
 {
     if (!args.doPost()) {
-	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL()];
+	[bridgeForFrameName(args.frameName) loadURL:u.getNSURL() reload:args.reload];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
@@ -510,4 +513,13 @@ bool KWQKHTMLPart::runJavaScriptPrompt(const QString &prompt, const QString &def
     if (ok)
         result = QString::fromNSString(returnedText);
     return ok;
+}
+
+void KWQKHTMLPart::createDummyDocument()
+{
+    if (d->m_doc) {
+        return;
+    }
+    d->m_doc = DOMImplementationImpl::instance()->createHTMLDocument(d->m_view);
+    d->m_doc->ref();
 }

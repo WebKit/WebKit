@@ -1,3 +1,17 @@
+2002-10-30  Darin Adler  <darin@apple.com>
+
+	- fixed 3086564 -- REGRESSION: meta-refresh to the same page doesn't refresh
+
+	The key is to respect the new reload: parameter from the bridge.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge loadURL:reload:]): Don't ever treat a reload as a redirect.
+	Set the cache policy to WebRequestCachePolicyLoadFromOrigin if it's a reload.
+
+	- fixed 3087214 -- REGRESSION: <WebKit/WebKit.h> contains #import of non-existent header
+
+        * Misc.subproj/WebKit.h: Removed import of WebControllerSets.h, which is private.
+
 2002-10-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Another step towards the policy API change - add request argument
@@ -54,6 +68,7 @@
         * Misc.subproj/WebDownloadHandler.m: Removed.
         * WebKit.pbproj/project.pbxproj:
 
+>>>>>>> 1.1051
 2002-10-28  Darin Adler  <darin@apple.com>
 
 	- fixed crash I just introduced

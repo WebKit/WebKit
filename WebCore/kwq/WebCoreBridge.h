@@ -177,7 +177,7 @@ enum FrameBorderStyle {
 - (WebCoreBridge *)findFramedNamed:(NSString *)name;
 - (WebCoreBridge *)findOrCreateFramedNamed:(NSString *)name;
 
-- (void)loadURL:(NSURL *)URL;
+- (void)loadURL:(NSURL *)URL reload:(BOOL)reload;
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType;
 
 - (WebCoreBridge *)createWindowWithURL:(NSURL *)URL frameName:(NSString *)name;

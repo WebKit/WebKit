@@ -6,7 +6,6 @@
 #import <WebKit/WebContextMenuDelegate.h>
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPolicyDelegate.h>
-#import <WebKit/WebControllerSets.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDefaultPolicyDelegate.h>
 #import <WebKit/WebDocument.h>

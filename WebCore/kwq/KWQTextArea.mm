@@ -82,7 +82,7 @@ const float LargeNumberForText = 1.0e7;
     // If WRAP=OFF we reset many of these attributes.
     [style setLineBreakMode:NSLineBreakByWordWrapping];
     [style setAlignment:NSLeftTextAlignment];
-    attr = [NSDictionary dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil];
+    attr = [NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName];
     [textView setTypingAttributes:attr];
     [textView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
@@ -155,7 +155,7 @@ const float LargeNumberForText = 1.0e7;
     }
     
     [style setAlignment:NSLeftTextAlignment];
-    attr = [NSDictionary dictionaryWithObjectsAndKeys:style, NSParagraphStyleAttributeName, nil];
+    attr = [NSDictionary dictionaryWithObject:style forKey:NSParagraphStyleAttributeName];
     
     [textView setMaxSize:NSMakeSize(LargeNumberForText, LargeNumberForText)];
     [textView setTypingAttributes:attr];

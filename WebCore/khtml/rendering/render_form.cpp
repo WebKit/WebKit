@@ -805,16 +805,15 @@ void RenderSelect::updateFromElement()
         int listIndex;
 
         if(m_useListBox) {
+#if APPLE_CHANGES
+            static_cast<KListBox*>(m_widget)->beginBatchInsert();
+#endif
             static_cast<KListBox*>(m_widget)->clear();
         }
 
         else
             static_cast<KComboBox*>(m_widget)->clear();
 
-#if APPLE_CHANGES
-        if (m_useListBox)
-            static_cast<KListBox*>(m_widget)->beginBatchInsert();
-#endif
         for (listIndex = 0; listIndex < int(listItems.size()); listIndex++) {
             if (listItems[listIndex]->id() == ID_OPTGROUP) {
                 DOMString text = listItems[listIndex]->getAttribute(ATTR_LABEL);
@@ -822,10 +821,15 @@ void RenderSelect::updateFromElement()
                     text = "";
 
                 if(m_useListBox) {
+#if APPLE_CHANGES
+                    static_cast<KListBox*>(m_widget)
+                        ->insertGroupLabel(QString(text.implementation()->s, text.implementation()->l), listIndex);
+#else
                     QListBoxText *item = new QListBoxText(QString(text.implementation()->s, text.implementation()->l));
                     static_cast<KListBox*>(m_widget)
                         ->insertItem(item, listIndex);
                     item->setSelectable(false);
+#endif
                 }
                 else
                     static_cast<KComboBox*>(m_widget)

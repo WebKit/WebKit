@@ -546,27 +546,19 @@ using khtml::RenderPart;
 
 - (NSString *)stringByEvaluatingJavaScriptFromString:(NSString *)string
 {
-    // FIXME: We want to execute it even without a document, no?
-    if (!part->kwq->document()) {
-        return nil;
-    }
+    part->kwq->createDummyDocument();
     return part->executeScript(QString::fromNSString(string)).asString().getNSString();
 }
 
 - (id<WebDOMDocument>)DOMDocument
 {
-    DocumentImpl *doc = part->kwq->document();
-    printf ("(id<WebDOMDocument>)DOMDocument doc = %p, lastChild = %p\n", doc, doc->lastChild());
-    return [WebCoreDOMDocument documentWithImpl:doc];
+    return [WebCoreDOMDocument documentWithImpl:part->kwq->document()];
 }
 
 - (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset
 {
-    DocumentImpl *doc = part->kwq->document();
-    
-    doc->setSelection ([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
+    part->kwq->document()->setSelection([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
 }
-
 
 static NSAttributedString *attributedString(DOM::NodeImpl *_startNode, int startOffset, DOM::NodeImpl *endNode, int endOffset)
 {

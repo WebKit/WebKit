@@ -208,7 +208,7 @@
 
 - (BOOL)isReloading
 {
-    return ([[[self dataSource] request] requestCachePolicy] == WebRequestCachePolicyLoadFromOrigin);
+    return [[[self dataSource] request] requestCachePolicy] == WebRequestCachePolicyLoadFromOrigin;
 }
 
 - (void)reportClientRedirectTo:(NSURL *)URL delay:(NSTimeInterval)seconds fireDate:(NSDate *)date
@@ -286,11 +286,11 @@
     [newDataSource release];
 }
 
-- (void)loadURL:(NSURL *)URL
+- (void)loadURL:(NSURL *)URL reload:(BOOL)reload
 {
     // FIXME: This logic doesn't exactly match what KHTML does in openURL, so it's possible
     // this will screw up in some cases involving framesets.
-    if ([[URL _web_URLByRemovingFragment] isEqual:[[self URL] _web_URLByRemovingFragment]]) {
+    if (!reload && [[URL _web_URLByRemovingFragment] isEqual:[[self URL] _web_URLByRemovingFragment]]) {
         [self openURL:URL];
 
         WebDataSource *dataSource = [frame dataSource];
@@ -306,14 +306,17 @@
     } else {
         WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
         [request setReferrer:[self referrer]];
-        [self loadRequest:request];
+        if (reload) {
+            [request setRequestCachePolicy:WebRequestCachePolicyLoadFromOrigin];
+        }
         if (_doingInternalLoad) {
             // client side redirects shouldn't be treated like user navigations
             [frame _setLoadType:WebFrameLoadTypeInternal];
-            _doingInternalLoad = NO;
         }
+        [self loadRequest:request];
         [request release];
     }
+    _doingInternalLoad = NO;
 }
 
 - (void)postWithURL:(NSURL *)URL data:(NSData *)data contentType:(NSString *)contentType
