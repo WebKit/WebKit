@@ -1,1 +1,13 @@
+2003-10-26  Darin Adler  <darin@apple.com>
+
+        - rolled in some CString changes Harri Porten did on the KDE side
+
+        * kjs/ustring.cpp:
+        (KJS::CString::CString): Use memcpy instead of strcpy for speed. Fix an off by one error
+        in the copy constructor.
+        (KJS::CString::operator=): Use memcpy instead of strcpy for speed.
+
+        * JavaScriptCorePrefix.h: Add a definition of NULL here that matches the one in Merlot.
+        This makes us see warnings that otherwise would be Merlot-only warnings.
+
 == Rolled over to ChangeLog-2003-10-25 ==

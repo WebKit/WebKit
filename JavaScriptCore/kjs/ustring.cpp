@@ -50,7 +50,7 @@ CString::CString(const char *c)
 {
   length = strlen(c);
   data = new char[length+1];
-  strcpy(data, c);
+  memcpy(data, c, length + 1);
 }
 
 CString::CString(const char *c, int len)
@@ -65,7 +65,7 @@ CString::CString(const CString &b)
 {
   length = b.length;
   data = new char[length+1];
-  memcpy(data, b.data, length);
+  memcpy(data, b.data, length + 1);
 }
 
 CString::~CString()
@@ -96,7 +96,7 @@ CString &CString::operator=(const char *c)
     delete [] data;
   length = strlen(c);
   data = new char[length+1];
-  strcpy(data, c);
+  memcpy(data, c, length + 1);
 
   return *this;
 }
