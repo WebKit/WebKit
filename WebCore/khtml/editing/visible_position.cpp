@@ -208,7 +208,7 @@ Position VisiblePosition::previousPosition(const Position &pos)
     Position result;
 
     if (pos.offset() <= 0) {
-        NodeImpl *prevNode = pos.node()->previousLeafNode();
+        NodeImpl *prevNode = pos.node()->traversePreviousNode();
         if (prevNode)
             result = Position(prevNode, prevNode->maxOffset());
     }
@@ -227,7 +227,7 @@ Position VisiblePosition::nextPosition(const Position &pos)
     Position result;
 
     if (pos.offset() >= pos.node()->maxOffset()) {
-        NodeImpl *nextNode = pos.node()->nextLeafNode();
+        NodeImpl *nextNode = pos.node()->traverseNextNode();
         if (nextNode)
             result = Position(nextNode, 0);
     }
@@ -299,7 +299,7 @@ bool VisiblePosition::isCandidate(const Position &pos)
         }
     }
     
-    if (renderer->isBlockFlow() && !renderer->firstChild() && renderer->height())
+    if (renderer->isBlockFlow() && !renderer->firstChild() && (renderer->height() || pos.node()->id() == ID_BODY))
         // return true for offset 0 into rendered blocks that are empty of rendered kids, but have a height
         return pos.offset() == 0;
     

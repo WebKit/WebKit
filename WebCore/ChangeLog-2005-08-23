@@ -1,3 +1,20 @@
+2004-10-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3825289> REGRESSION (Mail): Crash in fontForSelection in empty window
+
+        * khtml/editing/visible_position.cpp:
+        (khtml::VisiblePosition::previousPosition): Switch to node iteration instead "leaf"
+        iteration. I have been wanting to make this change for a long time, but couldn't
+        since other code relied on the leaf behavior. That is no longer true. Plus, the
+        bug fix requires the new behavior.
+        (khtml::VisiblePosition::nextPosition): Ditto.
+        (khtml::VisiblePosition::isCandidate): Empty blocks needed a height to be a candidate,
+        but we make a special case for the body element. This fixes the bug.
+
 2004-10-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
