@@ -1,5 +1,11 @@
 2002-09-18  Richard Williamson  <rjw@apple.com>
 
+        Added documentation keywords to header.
+        
+        * WebView.subproj/WebDocument.h:
+
+2002-09-18  Richard Williamson  <rjw@apple.com>
+
         Added documentation keywords to headers.
         Made reset a private method.
         
