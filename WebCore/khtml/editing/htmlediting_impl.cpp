@@ -691,7 +691,7 @@ void ApplyStyleCommandImpl::doApply()
         return;
 
     // adjust to the positions we want to use for applying style
-    Position start(endingSelection().start().downstream().equivalentRangeCompliantPosition());
+    Position start(endingSelection().start().downstream().equivalentShallowPosition().equivalentRangeCompliantPosition());
     Position end(endingSelection().end().upstream(StayInBlock));
 
     // Remove style from the selection.

@@ -70,6 +70,8 @@ public:
     virtual long caretMinOffset() const;
     virtual long caretMaxOffset() const;
     virtual unsigned long caretMaxRenderedOffset() const;
+
+    virtual bool rendererIsNeeded(khtml::RenderStyle *);
     
 #ifndef NDEBUG
     virtual void dump(QTextStream *stream, QString ind = "") const;

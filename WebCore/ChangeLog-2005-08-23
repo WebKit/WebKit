@@ -1,3 +1,27 @@
+2004-08-24  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+        Fix for this bug:
+        
+        <rdar://problem/3765535> paste of text with newlines into text with newlines results in broken doc, crash
+        
+        This is a "belt and suspenders" fix. The issue is with the paste code path which was creating
+        zero-length DOM text nodes when a selection being pasted ended with a newline. The normal
+        code path for parsing HTML does not allow this, but the code to convert newlines to BR's 
+        during paste was creating such nodes. This will no longer happen.
+        
+        In the case where someone inserts such zero-length nodes using the DOM API, the render tree
+        will no longer create render objects for these nodes, and it was these empty render text 
+        nodes that was confusing the code doing editing navigation.
+
+        * khtml/xml/dom_textimpl.cpp:
+        (CharacterDataImpl::rendererIsNeeded): Do not create renderers for zero-length DOM text nodes.
+        * khtml/xml/dom_textimpl.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge documentFragmentWithText:]): Do not insert zero-length DOM text nodes as part
+        of converting line-end sequences to BR's.
+
 2004-08-23  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

@@ -1483,7 +1483,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     for (i = 0; i < count; i++) {
         if (i != 0)
             [fragment appendChild:[document createElement:@"BR"]];
-        [fragment appendChild:[document createTextNode:[array objectAtIndex:i]]];
+        NSString *component = (NSString *)[array objectAtIndex:i];
+        if ([component length] > 0)
+            [fragment appendChild:[document createTextNode:component]];
     }
     return fragment;
 }
