@@ -10,19 +10,12 @@
 
 @implementation IFDynamicScrollBarsView
 
-- initWithFrame:(NSRect)frame
-{
-    [super initWithFrame:frame];
-    allowsScrolling = YES;
-    return self;
-}
-
 - (void)updateScrollers
 {
     BOOL scrollsVertically;
     BOOL scrollsHorizontally;
 
-    if (!allowsScrolling) {
+    if (disallowsScrolling) {
         scrollsVertically = NO;
         scrollsHorizontally = NO;
     } else {
@@ -105,13 +98,13 @@
 
 - (void)setAllowsScrolling:(BOOL)flag
 {
-    allowsScrolling = flag;
+    disallowsScrolling = !flag;
     [self updateScrollers];
 }
 
 - (BOOL)allowsScrolling
 {
-    return allowsScrolling;
+    return !disallowsScrolling;
 }
 
 @end

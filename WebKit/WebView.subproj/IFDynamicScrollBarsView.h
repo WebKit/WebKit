@@ -16,7 +16,7 @@
 @interface IFDynamicScrollBarsView : NSScrollView <WebCoreFrameView>
 {
     NSCursor *cursor;
-    BOOL allowsScrolling;
+    BOOL disallowsScrolling;
 }
 
 - (void)setAllowsScrolling:(BOOL)flag;

@@ -1,3 +1,18 @@
+2002-07-11  John Sullivan   <sullivan@apple.com>
+
+	- fixed 2980779 -- no scroll bar in history window
+
+        * WebKit.pbproj/project.pbxproj: Removed nonexistent .h file from project list (IFGrabBag.h)
+
+        * WebView.subproj/IFDynamicScrollBarsView.h: Renamed field allowsScrolling to disallowsScrolling
+        * WebView.subproj/IFDynamicScrollBarsView.m:
+        (-[IFDynamicScrollBarsView updateScrollers]):
+        (-[IFDynamicScrollBarsView setAllowsScrolling:]):
+        (-[IFDynamicScrollBarsView allowsScrolling]):
+	Removed initWithFrame override, whose only purpose was to set allowsScrolling to the "default"	
+	value (but not good enough for load-from-nib case). Changed all users of allowsScrolling to
+	!disallowsScrolling instead.
+
 2002-07-11  Chris Blumenberg  <cblu@apple.com>
 
         * Plugins.subproj/IFPluginNullEventSender.h:
