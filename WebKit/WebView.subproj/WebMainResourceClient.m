@@ -106,17 +106,18 @@
     // if we remove the data source from the frame, we can't get back to the frame any more.
     [self receivedError:interruptError complete:!keepLoading];
 
+    [[dataSource webFrame] _clearProvisionalDataSource];
+    
     // Deliver the error to the location change delegate.
     // We have to do this explicitly because since we are still loading, WebFrame
-    // won't do it for us. There's probably a better way to do this, but this should
-    // do for now.
+    // won't do it for us. Also, we have to do this after the provisional data source
+    // is cleared so the delegate will get false if they ask the frame if it's loading.
+    // There's probably a better way to do this, but this should do for now.
     if (keepLoading) {
         [[[dataSource controller] locationChangeDelegate]
             locationChangeDone:interruptError forDataSource:dataSource];
     }
 	
-    [[dataSource webFrame] _clearProvisionalDataSource];
-    
     [self notifyDelegatesOfInterruptionByPolicyChange];
 }
 

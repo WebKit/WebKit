@@ -72,7 +72,7 @@ QWidget::QWidget(NSView *view)
 
 QWidget::~QWidget() 
 {
-    KWQKHTMLPart::widgetWillReleaseView(getOuterView());
+    KWQKHTMLPart::widgetWillReleaseView(data->view);
     [data->view release];
     delete data;
 }
@@ -164,7 +164,7 @@ int QWidget::baselinePosition() const
 QWidget *QWidget::topLevelWidget() const 
 {
     NSWindow *window = nil;
-    NSView *view = getView();
+    NSView *view = data->view;
 
     window = [view window];
     while (window == nil && view != nil) { 
@@ -197,7 +197,7 @@ void QWidget::setFocus()
         renderWidget->view()->addChild(this, x, y);
     }
     
-    [[getView() window] makeFirstResponder:getView()];
+    [[data->view window] makeFirstResponder:data->view];
 }
 
 void QWidget::clearFocus()
@@ -210,7 +210,7 @@ QWidget::FocusPolicy QWidget::focusPolicy() const
     // This is the AppKit rule for what can be tabbed to.
     // An NSControl that accepts first responder, and has an editable, enabled cell.
     
-    NSView *view = getView();
+    NSView *view = data->view;
     if (![view acceptsFirstResponder] || ![view isKindOfClass:[NSControl class]]) {
         return NoFocus;
     }
@@ -370,22 +370,22 @@ NSView *QWidget::getOuterView() const
 
 void QWidget::lockDrawingFocus()
 {
-    [getView() lockFocus];
+    [data->view lockFocus];
 }
 
 void QWidget::unlockDrawingFocus()
 {
-    [getView() unlockFocus];
+    [data->view unlockFocus];
 }
 
 void QWidget::disableFlushDrawing()
 {
-    [[getView() window] disableFlushWindow];
+    [[data->view window] disableFlushWindow];
 }
 
 void QWidget::enableFlushDrawing()
 {
-    NSWindow *window = [getView() window];
+    NSWindow *window = [data->view window];
     [window enableFlushWindow];
     [window flushWindow];
 }

@@ -33,7 +33,6 @@
 #import "khtmlpart_p.h"
 #import "khtmlview.h"
 #import "kjs_window.h"
-#import <kjs/property_map.h>
 
 #import "WebCoreBridge.h"
 #import "WebCoreBridgePrivate.h"
@@ -44,6 +43,8 @@
 #import "KWQLogging.h"
 
 #import "xml/dom2_eventsimpl.h"
+
+#import <JavaScriptCore/property_map.h>
 
 #undef _KWQ_TIMING
 
@@ -71,7 +72,7 @@ using KJS::Window;
 using KParts::ReadOnlyPart;
 using KParts::URLArgs;
 
-unsigned KHTMLPartPrivate::m_frameNameId = 0;
+NSEvent *KWQKHTMLPart::_currentEvent = nil;
 
 void KHTMLPart::completed()
 {
@@ -178,13 +179,13 @@ void KWQKHTMLPart::submitForm(const KURL &url, const URLArgs &args)
 {
     if (!args.doPost()) {
         [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
-            triggeringEvent:[NSApp currentEvent] isFormSubmission:YES];
+            triggeringEvent:_currentEvent isFormSubmission:YES];
     } else {
         QString contentType = args.contentType();
         ASSERT(contentType.startsWith("Content-Type: "));
         [bridgeForFrameName(args.frameName) postWithURL:url.url().getNSString()
             data:[NSData dataWithBytes:args.postData.data() length:args.postData.size()]
-            contentType:contentType.mid(14).getNSString() triggeringEvent:[NSApp currentEvent]];
+            contentType:contentType.mid(14).getNSString() triggeringEvent:_currentEvent];
     }
 }
 
@@ -209,7 +210,7 @@ void KWQKHTMLPart::slotData(NSString *encoding, bool forceEncoding, const char *
 void KWQKHTMLPart::urlSelected(const KURL &url, int button, int state, const URLArgs &args)
 {
     [bridgeForFrameName(args.frameName) loadURL:url.url().getNSString() reload:args.reload
-        triggeringEvent:[NSApp currentEvent] isFormSubmission:NO];
+        triggeringEvent:_currentEvent isFormSubmission:NO];
 }
 
 class KWQPluginPart : public ReadOnlyPart
@@ -311,8 +312,13 @@ void KWQKHTMLPart::redirectionTimerStartedOrStopped()
 void KWQKHTMLPart::paint(QPainter *p, const QRect &rect)
 {
 #ifndef NDEBUG
-    [[NSColor redColor] set];
-    [NSBezierPath fillRect:[view()->getView() visibleRect]];
+    NSView *v = view()->getView();
+    if (v) {
+        [v lockFocus];
+        [[NSColor redColor] set];
+        NSRectFill(rect);
+        [v unlockFocus];
+    }
 #endif
 
     if (renderer()) {
@@ -661,17 +667,7 @@ void KWQKHTMLPart::addMetaData(const QString &key, const QString &value)
 bool KWQKHTMLPart::keyEvent(NSEvent *event)
 {
     ASSERT([event type] == NSKeyDown || [event type] == NSKeyUp);
-
-    const char *characters = [[event characters] lossyCString];
-    int ascii = (characters != nil && strlen(characters) == 1) ? characters[0] : 0;
-
-
-    QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
-		     [event keyCode],
-		     ascii,
-		     [_bridge stateForEvent:event],
-		     QString::fromNSString([event characters]),
-		     [event isARepeat]);
+    ASSERT(!_currentEvent);
 
     // Check for cases where we are too early for events -- possible unmatched key up
     // from pressing return in the location bar.
@@ -683,6 +679,18 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
     if (!node) {
 	return false;
     }
+    
+    _currentEvent = event;
+
+    const char *characters = [[event characters] lossyCString];
+    int ascii = (characters != nil && strlen(characters) == 1) ? characters[0] : 0;
+
+    QKeyEvent qEvent([event type] == NSKeyDown ? QEvent::KeyPress : QEvent::KeyRelease,
+		     [event keyCode],
+		     ascii,
+		     [_bridge stateForEvent:event],
+		     QString::fromNSString([event characters]),
+		     [event isARepeat]);
 
     bool result = node->dispatchKeyEvent(&qEvent);
 
@@ -697,6 +705,8 @@ bool KWQKHTMLPart::keyEvent(NSEvent *event)
 	
 	result = result && node->dispatchKeyEvent(&qEvent);
     }
+
+    _currentEvent = nil;
 
     return result;
 }
@@ -743,24 +753,24 @@ bool KWQKHTMLPart::handleMouseDownEventForWidget(khtml::MouseEvent *event)
     
     // Figure out which view to send the event to.
     RenderObject *target = event->innerNode().handle()->renderer();
-    if (!target->isWidget()) {
+    if (!target || !target->isWidget()) {
         return false;
     }
-    NSView *outerView = static_cast<RenderWidget *>(target)->widget()->getOuterView();
-    ASSERT(outerView);
-    ASSERT([outerView superview]);
-    NSView *topView = outerView;
+    NSView *nodeView = static_cast<RenderWidget *>(target)->widget()->getView();
+    ASSERT(nodeView);
+    ASSERT([nodeView superview]);
+    NSView *topView = nodeView;
     NSView *superview;
     while ((superview = [topView superview])) {
         topView = superview;
     }
-    NSView *view = [outerView hitTest:[[outerView superview] convertPoint:[[NSApp currentEvent] locationInWindow] fromView:topView]];
+    NSView *view = [nodeView hitTest:[[nodeView superview] convertPoint:[_currentEvent locationInWindow] fromView:topView]];
     if (view == nil) {
         ERROR("KHTML says we hit a RenderWidget, but AppKit doesn't agree we hit the corresponding NSView");
         return false;
     }
     
-    [view mouseDown:[NSApp currentEvent]];
+    [view mouseDown:_currentEvent];
     
     // Remember which view we sent the event to, so we can direct the release event properly.
     _mouseDownView = view;
@@ -775,7 +785,7 @@ void KWQKHTMLPart::khtmlMouseReleaseEvent(MouseReleaseEvent *event)
         return;
     }
     
-    [_mouseDownView mouseUp:[NSApp currentEvent]];
+    [_mouseDownView mouseUp:_currentEvent];
     _mouseDownView = nil;
 }
 
@@ -788,5 +798,13 @@ void KWQKHTMLPart::widgetWillReleaseView(NSView *view)
         if ([it.current()->_mouseDownView isDescendantOf:view]) {
             it.current()->_mouseDownView = nil;
         }
+    }
+}
+
+void KWQKHTMLPart::clearTimers()
+{
+    if (view()) {
+        view()->unscheduleRelayout();
+        view()->unscheduleRepaint();
     }
 }

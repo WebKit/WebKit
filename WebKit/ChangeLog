@@ -1,3 +1,15 @@
+2002-12-10  Darin Adler  <darin@apple.com>
+
+	- fixed fix for 3124081 -- REGRESSION: partial progress is left in address field after download
+
+        Reviewed by Chris.
+
+	Need to move it down one line so the data source is clear before callback.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeAndKeepLoading:]):
+	Do the _clearProvisionalDataSource before the locationChangeDone: callback.
+
 2002-12-10  John Sullivan  <sullivan@apple.com>
 
 	Fixed more "Alexander"s that were lurking in places I forgot 
