@@ -2,10 +2,6 @@
 
 #import <WebKit/WebFramePrivate.h>
 
-#define WebFrameDidFinishLoadingNotification @"WebFrameDidFinishLoadingNotification"
-
-#define WebFrameLoadError @"WebFrameLoadError"
-
 @interface WebFrame (WebInternal)
 
 - (void)_updateDrawsBackground;

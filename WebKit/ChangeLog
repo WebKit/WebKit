@@ -1,5 +1,9 @@
 2004-10-04  Chris Blumenberg  <cblu@apple.com>
 
+        * WebView.subproj/WebFrameInternal.h: removed constant declarations that I committed by mistake
+
+2004-10-04  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: <rdar://problem/3798948> NPP_URLNotify is not called if plug-in calls NPN_*URLNotfy
 	Fixed a number of FIXME's related to notifying plug-ins of loaded pages.
 
