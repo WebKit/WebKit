@@ -436,8 +436,11 @@ void MouseEventImpl::computeLayerPos()
     }
 
     node->renderer()->enclosingLayer()->updateLayerPosition();
-    m_layerX -= node->renderer()->enclosingLayer()->xPos();
-    m_layerY -= node->renderer()->enclosingLayer()->yPos();
+    
+    for (khtml::RenderLayer *layer = node->renderer()->enclosingLayer(); layer != NULL; layer = layer->parent()) {
+	m_layerX -= layer->xPos();
+	m_layerY -= layer->yPos();
+    }
 }
 
 MouseEventImpl::~MouseEventImpl()

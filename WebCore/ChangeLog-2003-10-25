@@ -1,5 +1,18 @@
 2003-01-21  Maciej Stachowiak  <mjs@apple.com>
 
+        Reviewed by Trey.
+
+ 	- fixed 3145317 - Unable to add or remove menu items on Site Menu page using Safari Beta
+
+	This turned out to be a problem with event.layerX / event.layerY.
+	
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (MouseEventImpl::computeLayerPos): Since layer position is
+	relative to parent layer, go up the layer tree adjusting for layer
+	offset to compute true layer position.
+ 
+2003-01-21  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	- fixed 3151982 - missing content at debka.com after iframe is written using document.write
