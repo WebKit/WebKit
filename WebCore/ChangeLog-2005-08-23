@@ -1,5 +1,14 @@
 2005-02-18  Jens Alfke  <jens@apple.com>
 
+        Reviewed by Hyatt.
+
+	Fixed build: Whoops, setNeedsLayout's parameter is NOT optional.
+
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::setAllParamsAvailable):
+
+2005-02-18  Jens Alfke  <jens@apple.com>
+
         Reviewed by cblu, hyatt.
 
 	Fixes <rdar://problem/3603191> "REGRESSION: Applets not receiving all of the Applet Parameters in Java 1.4.1/1.4.2"
