@@ -4870,8 +4870,8 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
             && d->m_dragStartPos.y() == event->qmouseEvent()->y()
             && d->m_selection.isRange()) {
         Selection selection;
-        NodeImpl *node = d->m_selection.base().node();
-        if (node->isContentEditable() && node->renderer()) {
+        NodeImpl *node = event->innerNode().handle();
+        if (node && node->isContentEditable() && node->renderer()) {
             VisiblePosition pos = node->renderer()->positionForCoordinates(event->x(), event->y());
             selection.moveTo(pos);
         }

@@ -1,3 +1,19 @@
+2005-03-14  David Harrison  <harrison@apple.com>
+
+        Reviewed by Darin, Maciej.
+
+        <rdar://problem/4046103> REGRESSION (Mail): clicking after style change sets insertion point incorrectly
+        
+        Also fixes crash by adding nil check.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::MoveSelectionCommand::doApply):
+        Check the node for nil.
+        
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::khtmlMouseReleaseEvent):
+        Use the node from the event rather than from the selection.
+
 2005-03-14  Darin Adler  <darin@apple.com>
 
         Reviewed by Harrison.
