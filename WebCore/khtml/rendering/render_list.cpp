@@ -306,7 +306,7 @@ void RenderListMarker::printObject(QPainter *p, int, int _y,
     p->setFont(style()->font());
     const QFontMetrics fm = p->fontMetrics();
     int offset = fm.ascent()*2/3;
-    
+
     bool isPrinting = (p->device()->devType() == QInternal::Printer);
     if (isPrinting)
     {
@@ -370,6 +370,8 @@ void RenderListMarker::printObject(QPainter *p, int, int _y,
             // For some inexplicable reason, this works in Konqueror.  I'm not sure why.
             // - dwh
        	    _ty += fm.ascent();
+#else
+       	    //_ty += fm.ascent() - fm.height()/2 + 1;
 #endif
             if(style()->listStylePosition() == INSIDE) {
             	if(style()->direction() == LTR)

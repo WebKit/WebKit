@@ -1,4 +1,9 @@
-2002-08-26  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-26  Darin Adler  <darin@apple.com>
+
+        * khtml/rendering/render_list.cpp:
+	Make file match the original KDE more closely (no substantive change).
+
+2002-08-26  Richard Williamson  <rjw@apple.com>
 
         * WebCore.exp:
 
@@ -170,7 +175,7 @@
 	
         * khtml/css/html4.css:
 
-2002-08-22  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-22  Richard Williamson  <rjw@apple.com>
 
         New faster char * append (actually insert) for mjs.
         
@@ -1425,7 +1430,7 @@
         * kwq/WebCoreBridge.h: createChildFrameNamed method now returns
 	the bridge for the child frame.
 
-2002-08-08  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-08  Richard Williamson  <rjw@apple.com>
 
         Move stuff out of core into kit.
         
@@ -1468,7 +1473,7 @@
         * WebCore.exp: Export the new class.
         * WebCore.pbproj/project.pbxproj: Add new files.
 
-2002-08-08  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-08  Richard Williamson  <rjw@apple.com>
 
         Changes to coalesce all drawing calls of the same text
         style and color into one call to CG.  Significantly
@@ -1526,7 +1531,7 @@
         * kwq/KWQKURL.mm: (operator==): Just compare the strings.
 	Faster and safer.
 
-2002-08-07  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-07  Richard Williamson  <rjw@apple.com>
         
         Removed debug log.
         
@@ -1540,7 +1545,7 @@
         * kwq/KWQKURL.mm: (KURL::KWQKURLPrivate::decompose): Use CFURLCopyPath
 	instead calling _NSParseStringToGenericURLComponents.
 
-2002-08-07  Richard Williamson (Home)  <rjw@apple.com>
+2002-08-07  Richard Williamson  <rjw@apple.com>
 
         Turned off temporary debugging I accidentally checked in.
         
@@ -2012,7 +2017,7 @@
         (KWQKHTMLPartImpl::frames): Ditto.
         (KWQKHTMLPartImpl::setBaseURL): Removed.
 
-2002-08-01  Richard Williamson (Local)  <rjw@apple.com>
+2002-08-01  Richard Williamson  <rjw@apple.com>
 
         Added method to allow WebKit to direct khtml to
         goto to an anchor point.  Need for back/forward.
@@ -2108,7 +2113,7 @@
 	the decoder does that internally.
         * kwq/WebCoreBridge.h, kwq/WebCoreBridge.mm: Remove setURL: method.
 
-2002-07-30  Richard Williamson (local)  <rjw@apple.com>
+2002-07-30  Richard Williamson  <rjw@apple.com>
 
         Don't create unnecessary unicode string.  Of the 
         95695 unnecessary unicode allocations we do loading
@@ -2152,7 +2157,7 @@
         (RenderTable::calcMinMaxWidth):
         * khtml/rendering/render_table.h:
 
-2002-07-30  Richard Williamson (local)  <rjw@apple.com>
+2002-07-30  Richard Williamson  <rjw@apple.com>
 
         Inline critical function.
         
@@ -2456,7 +2461,7 @@
 
         * WebCore.pbproj/project.pbxproj: Rearrange some of the files.
 
-2002-07-24  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-24  Richard Williamson  <rjw@apple.com>
 
         Support for find in HTML.
 
@@ -2571,7 +2576,7 @@
         (-[WebCoreBridge _URLForDOMString:]): added
         (-[WebCoreBridge _elementInfoForMouseEvent:]): added
 
-2002-07-23  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-23  Richard Williamson  <rjw@apple.com>
 
         Turn on find related code in part in preparation for
         implementing find in WebKit.
@@ -3113,7 +3118,7 @@
 	tracking is enabled.
         * kwq/WebCoreBridge.h: Prototype modifierTrackingEnabled method.
 
-2002-07-16  Richard Williamson (Local)  <rjw@apple.com>
+2002-07-16  Richard Williamson  <rjw@apple.com>
 
         Fixed field length test.  We were testing >= instead of >.
         * kwq/KWQNSTextField.mm:
@@ -3158,7 +3163,7 @@
         (-[WebCoreBridge mouseDown:]): Use stateForEvent:.
         (-[WebCoreBridge mouseMoved:]): Use stateForEvent:.
 
-2002-07-15  Richard Williamson (Home)  <rjw@apple.com>
+2002-07-15  Richard Williamson  <rjw@apple.com>
 
         Added isFrameSet method.
         
@@ -3414,7 +3419,7 @@
         * kwq/KWQPaintDeviceMetrics.mm: Remove unneeded import.
         * kwq/qt/qbutton.h: Remove unneeded destructor.
 
-2002-07-13  Richard Williamson (Home)  <rjw@apple.com>
+2002-07-13  Richard Williamson  <rjw@apple.com>
 
         * kwq/KWQPainter.mm:
         Added disable drawing mode.
@@ -4143,7 +4148,7 @@
 
 === Alexander-9 ===
 
-2002-06-19  Richard Williamson (local)  <rjw@apple.com>
+2002-06-19  Richard Williamson  <rjw@apple.com>
 
 	* kwq/KWQScrollView.mm:
 	(QScrollView::addChild):
@@ -4154,7 +4159,7 @@
 	    Fixed regression from fix to 2956444.  Wrong view was being checked
 	    for conformance to WebCoreFrameView.
 
-2002-06-19  Richard Williamson (local)  <rjw@apple.com>
+2002-06-19  Richard Williamson  <rjw@apple.com>
 
 	* khtml/khtmlview.cpp: (KHTMLView::~KHTMLView): 
 	    Tweak
