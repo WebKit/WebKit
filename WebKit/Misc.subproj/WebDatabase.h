@@ -14,6 +14,7 @@
 
 -(void)setObject:(id)object forKey:(id)key;
 -(void)removeObjectForKey:(id)key;
+-(void)removeAllObjects;
 -(id)objectForKey:(id)key;
 -(NSEnumerator *)keys;
 -(unsigned)count;

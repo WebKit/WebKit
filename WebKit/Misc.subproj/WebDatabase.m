@@ -19,6 +19,10 @@
     NSRequestConcreteImplementation(self, _cmd, [IFDatabase class]);
 }
 
+-(void)removeAllObjects
+{
+}
+
 -(id)objectForKey:(id)key
 {
     NSRequestConcreteImplementation(self, _cmd, [IFDatabase class]);
