@@ -432,3 +432,8 @@ void QPainter::setPaintingDisabled(bool f)
 {
     data->state.paintingDisabled = f;
 }
+
+bool QPainter::paintingDisabled() const
+{
+    return data->state.paintingDisabled;
+}

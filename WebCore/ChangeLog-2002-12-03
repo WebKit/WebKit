@@ -1,3 +1,19 @@
+2002-09-23  Darin Adler  <darin@apple.com>
+
+	More refinement of the AppKit hackery.
+
+        * khtml/rendering/render_replaced.cpp:
+        (RenderWidget::printObject): Pass in the painter and rect.
+
+        * kwq/qt/qwidget.h: Take a painter and rect parameter.
+        * kwq/KWQWidget.mm: (QWidget::paint): Use painter; not working yet to use rect.
+
+        * kwq/KWQFileButton.h: Change paint to take painter and rect.
+        * kwq/KWQFileButton.mm: (KWQFileButton::paint): Use painter.
+
+        * kwq/qt/qpainter.h: Added paintingDisabled() function.
+        * kwq/KWQPainter.mm: (QPainter::paintingDisabled): Added.
+
 2002-09-22  Darin Adler  <darin@apple.com>
 
 	Change code that moves NSViews out of the way to run inside drawRect

@@ -157,8 +157,7 @@ QRect QWidget::frameGeometry() const
     if ([view conformsToProtocol:@protocol(WebCoreFrameView)]) {
         view = [view superview];
     }
-    NSRect vFrame = [view frame];
-    return QRect((int)vFrame.origin.x, (int)vFrame.origin.y, (int)vFrame.size.width, (int)vFrame.size.height);
+    return QRect([view frame]);
 }
 
 int QWidget::baselinePosition() const
@@ -379,8 +378,9 @@ void QWidget::disableFlushDrawing()
 
 void QWidget::enableFlushDrawing()
 {
-    [[getView() window] enableFlushWindow];
-    [[getView() window] flushWindowIfNeeded];
+    NSWindow *window = [getView() window];
+    [window enableFlushWindow];
+    [window flushWindowIfNeeded];
 }
 
 void QWidget::setDrawingAlpha(float alpha)
@@ -388,8 +388,15 @@ void QWidget::setDrawingAlpha(float alpha)
     CGContextSetAlpha((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort], alpha);
 }
 
-void QWidget::paint()
+void QWidget::paint(QPainter *p, const QRect &r)
 {
-    // FIXME: Should pass in a rectangle and display less.
-    [getView() displayRectIgnoringOpacity:[getView() bounds]];
+    if (p->paintingDisabled()) {
+        return;
+    }
+    NSView *view = getView();
+#if 0
+    NSRect rect = NSIntersectionRect([view convertRect:r fromView:[view superview]], [view bounds]);
+    NSLog(@"%@, rect is %@, bounds rect is %@", view, NSStringFromRect(rect), NSStringFromRect([view bounds]));
+#endif
+    [view displayRectIgnoringOpacity:[view bounds]];
 }

@@ -219,7 +219,11 @@ void RenderWidget::setStyle(RenderStyle *_style)
     setSpecialObjects(false);
 }
 
+#if APPLE_CHANGES
+void RenderWidget::printObject(QPainter *p, int x, int y, int width, int height, int _tx, int _ty)
+#else
 void RenderWidget::printObject(QPainter* /*p*/, int, int, int, int, int _tx, int _ty)
+#endif
 {
     if (!m_widget || !m_view)
 	return;
@@ -268,10 +272,10 @@ void RenderWidget::printObject(QPainter* /*p*/, int, int, int, int, int _tx, int
     m_view->addChild(m_widget, xPos, yPos );
     m_widget->show();
     
-#ifdef APPLE_CHANGES
+#if APPLE_CHANGES
     // Tell the widget to paint now.  This is the only time the widget is allowed
     // to paint itself.  That way it will composite properly with z-indexed layers.
-    m_widget->paint();
+    m_widget->paint(p, QRect(x, y, width, height));
 #endif
 }
 

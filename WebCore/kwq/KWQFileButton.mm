@@ -124,9 +124,13 @@ int KWQFileButton::baselinePosition() const
     return QPushButton::baselinePosition();
 }
 
-void KWQFileButton::paint()
+void KWQFileButton::paint(QPainter *p, const QRect &r)
 {
-    QPushButton::paint();
+    if (p->paintingDisabled()) {
+        return;
+    }
+    
+    QPushButton::paint(p, r);
     
     QString text = _filename;
     if (text.isEmpty()) {
@@ -149,15 +153,14 @@ void KWQFileButton::paint()
 
     // FIXME: Use same font as button, don't hardcode Lucida Grande.
     // FIXME: Ellipsize the text to fit in the box.
-    QPainter painter;
     QFont font;
     font.setFamily(FONT_FAMILY);
     font.setPixelSize([NSFont smallSystemFontSize]);
-    painter.save(); // wouldn't be needed in real Qt, but we need it
-    painter.addClip(frameGeometry());
-    painter.setFont(font);
-    painter.drawText(left, y() + baselinePosition(), 0, 0, 0, text);
-    painter.restore(); // wouldn't be needed in real Qt, but we need it
+    p->save();
+    p->addClip(frameGeometry());
+    p->setFont(font);
+    p->drawText(left, y() + baselinePosition(), 0, 0, 0, text);
+    p->restore();
 }
 
 @implementation KWQFileButtonAdapter
