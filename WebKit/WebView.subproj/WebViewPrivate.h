@@ -34,7 +34,8 @@ extern NSString *_WebMainFrameURLKey;
 typedef enum {
 	WebDashboardBehaviorAlwaysSendMouseEventsToAllWindows,
 	WebDashboardBehaviorAlwaysSendActiveNullEventsToPlugIns,
-	WebDashboardBehaviorAlwaysAcceptsFirstMouse
+	WebDashboardBehaviorAlwaysAcceptsFirstMouse,
+	WebDashboardBehaviorAllowWheelScrolling
 } WebDashboardBehavior;
 
 

@@ -1,3 +1,22 @@
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4007262> Seed: Flight tracker scrolling moves to the left
+
+	Added SPI for dashboard to disable wheel scrolling of the WebClipView.
+
+        Reviewed by Ken.
+
+        * ChangeLog:
+        * WebView.subproj/WebClipView.m:
+        (-[WebClipView _focusRingVisibleRect]):
+        (-[WebClipView scrollWheel:]):
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate init]):
+        (-[WebView drawRect:]):
+        (-[WebView _dashboardBehavior:]):
+        * WebView.subproj/WebViewInternal.h:
+        * WebView.subproj/WebViewPrivate.h:
+
 === Safari-187 ===
 
 2005-02-17  Vicki Murley <vicki@apple.com>

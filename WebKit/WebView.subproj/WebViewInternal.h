@@ -84,6 +84,7 @@
     BOOL dashboardBehaviorAlwaysSendMouseEventsToAllWindows;
     BOOL dashboardBehaviorAlwaysSendActiveNullEventsToPlugIns;
     BOOL dashboardBehaviorAlwaysAcceptsFirstMouse;
+    BOOL dashboardBehaviorAllowWheelScrolling;
     
     BOOL shouldUseFontSmoothing;
     BOOL selectWordBeforeMenuEvent;

@@ -233,6 +233,7 @@ static BOOL shouldUseFontSmoothing = YES;
     progressNotificationInterval = 0.02;
     progressNotificationTimeInterval = 0.1;
     settings = [[WebCoreSettings alloc] init];
+    dashboardBehaviorAllowWheelScrolling = YES;
 
     return self;
 }
@@ -269,7 +270,7 @@ static BOOL shouldUseFontSmoothing = YES;
 @implementation WebView (WebPrivate)
 
 #ifdef DEBUG_WIDGET_DRAWING
-static bool debugWidget = false;
+static bool debugWidget = true;
 - (void)drawRect:(NSRect)rect
 {
     [[NSColor blueColor] set];
@@ -278,8 +279,7 @@ static bool debugWidget = false;
     NSRect htmlViewRect = [[[[self mainFrame] frameView] documentView] frame];
 
     if (debugWidget) {
-	bool flag = false;
-	while (flag) {
+	while (debugWidget) {
 	    sleep (1);
 	}
     }
@@ -1311,6 +1311,10 @@ static bool debugWidget = false;
             _private->dashboardBehaviorAlwaysAcceptsFirstMouse = flag;
             break;
         }
+        case WebDashboardBehaviorAllowWheelScrolling: {
+            _private->dashboardBehaviorAllowWheelScrolling = flag;
+	    break;
+        }
     }
 }
 
@@ -1325,6 +1329,9 @@ static bool debugWidget = false;
         }
         case WebDashboardBehaviorAlwaysAcceptsFirstMouse: {
             return _private->dashboardBehaviorAlwaysAcceptsFirstMouse;
+        }
+        case WebDashboardBehaviorAllowWheelScrolling: {
+            return _private->dashboardBehaviorAllowWheelScrolling;
         }
     }
     return NO;
