@@ -1,3 +1,18 @@
+2003-07-03  John Sullivan  <sullivan@apple.com>
+
+	- fixed 3167770 -- visited and unvisited link colors are too 
+	close in default stylesheet
+	- fixed 3315344 -- default active link color should be red as
+	in other browsers
+
+        Reviewed by Hyatt
+
+        * khtml/css/html4.css:
+	Changed a:link and a:visited colors to match Mozilla
+	(a slightly lighter blue for link, and a purpley shade instead
+	of navy for visited). Also changed a:link:active and 
+	a:visited:active to be red instead of black.
+
 2003-07-03  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

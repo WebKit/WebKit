@@ -440,12 +440,13 @@ acronym {
 }
 
 :focus          { outline: 1px dotted invert }
-a:link          { color: blue; text-decoration: underline; }
-a:link:active          { color: black; outline: gray 1px dotted; }
-a:visited              { color: navy; text-decoration: underline; }
-a:visited:active       { color: black; outline: gray 1px dotted; }
+a:link          { color: #0000EE; text-decoration: underline; }
+a:link:active          { color: red; outline: gray 1px dotted; }
+a:visited              { color: #551A8B; text-decoration: underline; }
+a:visited:active       { color: red; outline: gray 1px dotted; }
 
-/* ### :before is not supported at the moment
+/* ### :before is now supported, but we haven't tried reinstating this
+   ### rule that was comment out long ago.
       BR:before       { content: "\n" }
 */
 
