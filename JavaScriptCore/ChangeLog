@@ -1,3 +1,15 @@
+2002-11-13  Darin Adler  <darin@apple.com>
+
+        - fixed 3073230 -- JavaScript time calls do I/O by lstat()ing /etc/localtime
+
+        * kjs/date_object.cpp:
+        (formatDate): Added.
+        (formatTime): Added.
+        (formatLocaleDate): Added.
+        (formatLocaleTime): Added.
+        (DateProtoFuncImp::call): Changed to use the above functions instead of
+	using strftime.
+
 2002-11-08  Darin Adler  <darin@apple.com>
 
         * kjs/date_object.cpp:

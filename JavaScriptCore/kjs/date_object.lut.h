@@ -58,11 +58,11 @@ const struct HashEntry dateTableEntries[] = {
    { "getYear", DateProtoFuncImp::GetYear, DontEnum|Function, 0, 0 },
    { "valueOf", DateProtoFuncImp::ValueOf, DontEnum|Function, 0, 0 },
    { 0, 0, 0, 0, 0 },
-   { "toGMTString", DateProtoFuncImp::ToGMTString, DontEnum|Function, 0, &dateTableEntries[66] },
+   { "toGMTString", -DateProtoFuncImp::ToGMTString, DontEnum|Function, 0, &dateTableEntries[66] },
    { 0, 0, 0, 0, 0 },
    { "getUTCSeconds", -DateProtoFuncImp::GetSeconds, DontEnum|Function, 0, 0 },
    { "getHours", DateProtoFuncImp::GetHours, DontEnum|Function, 0, 0 },
-   { "toUTCString", DateProtoFuncImp::ToUTCString, DontEnum|Function, 0, &dateTableEntries[62] },
+   { "toUTCString", -DateProtoFuncImp::ToUTCString, DontEnum|Function, 0, &dateTableEntries[62] },
    { 0, 0, 0, 0, 0 },
    { 0, 0, 0, 0, 0 },
    { "setTime", DateProtoFuncImp::SetTime, DontEnum|Function, 1, &dateTableEntries[67] },
@@ -71,13 +71,12 @@ const struct HashEntry dateTableEntries[] = {
    { "getUTCHours", -DateProtoFuncImp::GetHours, DontEnum|Function, 0, 0 },
    { "getSeconds", DateProtoFuncImp::GetSeconds, DontEnum|Function, 0, 0 },
    { "getMilliseconds", DateProtoFuncImp::GetMilliSeconds, DontEnum|Function, 0, &dateTableEntries[69] },
-   { "setUTCMilliseconds", -DateProtoFuncImp::SetMilliSeconds, DontEnum|Function, 1, &dateTableEntries[70] },
+   { "setUTCMilliseconds", -DateProtoFuncImp::SetMilliSeconds, DontEnum|Function, 1, 0 },
    { "setUTCHours", -DateProtoFuncImp::SetHours, DontEnum|Function, 4, 0 },
    { "setMonth", DateProtoFuncImp::SetMonth, DontEnum|Function, 2, 0 },
-   { "setUTCMonth", -DateProtoFuncImp::SetMonth, DontEnum|Function, 2, 0 },
-   { "toGMTString", DateProtoFuncImp::ToGMTString, DontEnum|Function, 0, 0 }
+   { "setUTCMonth", -DateProtoFuncImp::SetMonth, DontEnum|Function, 2, 0 }
 };
 
-const struct HashTable dateTable = { 2, 71, dateTableEntries, 61 };
+const struct HashTable dateTable = { 2, 70, dateTableEntries, 61 };
 
 }; // namespace

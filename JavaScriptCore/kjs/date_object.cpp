@@ -59,18 +59,26 @@
 
 #if APPLE_CHANGES
 
-// Since gmtime and localtime hit the disk, we substitute our own implementation
-// that uses Core Foundation.
+// Since lots of the time call implementions on OS X hit the disk to get at the localtime file,
+// we substitute our own implementation that uses Core Foundation.
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <Carbon/Carbon.h>
 
-#define ctime(x) ctimeUsingCF(x)
+using KJS::UString;
+
 #define gmtime(x) gmtimeUsingCF(x)
 #define localtime(x) localtimeUsingCF(x)
 #define mktime(x) mktimeUsingCF(x)
-//#define strftime(a, b, c, d) notAllowedToCall()
+#define time(x) timeUsingCF(x)
 
-struct tm *tmUsingCF(time_t clock, CFTimeZoneRef timeZone)
+#define ctime(x) NotAllowedToCallThis()
+#define strftime(a, b, c, d) NotAllowedToCallThis()
+
+static const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+static const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+    
+static struct tm *tmUsingCF(time_t clock, CFTimeZoneRef timeZone)
 {
     static struct tm result;
     static char timeZoneCString[128];
@@ -97,34 +105,13 @@ struct tm *tmUsingCF(time_t clock, CFTimeZoneRef timeZone)
     return &result;
 }
 
-char *ctimeUsingCF(const time_t *clock)
-{
-    static char result[26];
-    
-    CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
-
-    CFAbsoluteTime absoluteTime = *clock - kCFAbsoluteTimeIntervalSince1970;
-    CFGregorianDate date = CFAbsoluteTimeGetGregorianDate(absoluteTime, timeZone);
-    
-    const char * const weekdayName[7] = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-    const char * const monthName[12] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
-    
-    sprintf(result, "%s %s %02d %02d:%02d:%02.f %04ld\n",
-        weekdayName[CFAbsoluteTimeGetDayOfWeek(absoluteTime, timeZone) - 1],
-        monthName[date.month - 1], date.day, date.hour, date.minute, date.second, date.year);
-    
-    CFRelease(timeZone);
-    
-    return result;
-}
-
-struct tm *gmtimeUsingCF(const time_t *clock)
+static struct tm *gmtimeUsingCF(const time_t *clock)
 {
     static CFTimeZoneRef timeZoneUTC = CFTimeZoneCreateWithName(NULL, CFSTR("UTC"), TRUE);
     return tmUsingCF(*clock, timeZoneUTC);
 }
 
-struct tm *localtimeUsingCF(const time_t *clock)
+static struct tm *localtimeUsingCF(const time_t *clock)
 {
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
     struct tm *result = tmUsingCF(*clock, timeZone);
@@ -132,7 +119,7 @@ struct tm *localtimeUsingCF(const time_t *clock)
     return result;
 }
 
-time_t mktimeUsingCF(struct tm *tm)
+static time_t mktimeUsingCF(struct tm *tm)
 {
     CFTimeZoneRef timeZone = CFTimeZoneCopyDefault();
 
@@ -151,13 +138,61 @@ time_t mktimeUsingCF(struct tm *tm)
     return (time_t)(absoluteTime + kCFAbsoluteTimeIntervalSince1970);
 }
 
-time_t timeUsingCF(time_t *clock)
+static time_t timeUsingCF(time_t *clock)
 {
     time_t result = (time_t)(CFAbsoluteTimeGetCurrent() + kCFAbsoluteTimeIntervalSince1970);
     if (clock) {
         *clock = result;
     }
     return result;
+}
+
+static UString formatDate(struct tm &tm, bool includeComma = false)
+{
+    char buffer[100];
+    snprintf(buffer, sizeof(buffer), "%s%s %s %02d %04d",
+        weekdayName[(tm.tm_wday + 6) % 7], includeComma ? "," : "",
+        monthName[tm.tm_mon], tm.tm_mday, tm.tm_year + 1900);
+    return buffer;
+}
+
+static UString formatTime(struct tm &tm)
+{
+    char buffer[100];
+    if (tm.tm_gmtoff == 0) {
+        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT", tm.tm_hour, tm.tm_min, tm.tm_sec);
+    } else {
+        int offset = tm.tm_gmtoff;
+        if (offset < 0) {
+            offset = -offset;
+        }
+        snprintf(buffer, sizeof(buffer), "%02d:%02d:%02d GMT%c%02d%02d",
+            tm.tm_hour, tm.tm_min, tm.tm_sec,
+            tm.tm_gmtoff < 0 ? '-' : '+', offset / (60*60), (offset / 60) % 60);
+    }
+    return UString(buffer);
+}
+
+static UString formatLocaleDate(time_t tv)
+{
+    LongDateTime longDateTime;
+    UCConvertCFAbsoluteTimeToLongDateTime(tv - kCFAbsoluteTimeIntervalSince1970, &longDateTime);
+
+    unsigned char string[257];
+    LongDateString(&longDateTime, longDate, string, 0);
+    string[string[0] + 1] = '\0';
+    return (char *)&string[1];
+}
+
+static UString formatLocaleTime(time_t tv)
+{
+    LongDateTime longDateTime;
+    UCConvertCFAbsoluteTimeToLongDateTime(tv - kCFAbsoluteTimeIntervalSince1970, &longDateTime);
+
+    unsigned char string[257];
+    LongTimeString(&longDateTime, true, string, 0);
+    string[string[0] + 1] = '\0';
+    return (char *)&string[1];
 }
 
 #endif // APPLE_CHANGES
@@ -181,7 +216,7 @@ const ClassInfo DatePrototypeImp::info = {"Date", 0, &dateTable, 0};
    We use a negative ID to denote the "UTC" variant.
 @begin dateTable 61
   toString		DateProtoFuncImp::ToString		DontEnum|Function	0
-  toUTCString		DateProtoFuncImp::ToUTCString		DontEnum|Function	0
+  toUTCString		-DateProtoFuncImp::ToUTCString		DontEnum|Function	0
   toDateString		DateProtoFuncImp::ToDateString		DontEnum|Function	0
   toTimeString		DateProtoFuncImp::ToTimeString		DontEnum|Function	0
   toLocaleString	DateProtoFuncImp::ToLocaleString	DontEnum|Function	0
@@ -191,7 +226,7 @@ const ClassInfo DatePrototypeImp::info = {"Date", 0, &dateTable, 0};
   getTime		DateProtoFuncImp::GetTime		DontEnum|Function	0
   getFullYear		DateProtoFuncImp::GetFullYear		DontEnum|Function	0
   getUTCFullYear	-DateProtoFuncImp::GetFullYear		DontEnum|Function	0
-  toGMTString		DateProtoFuncImp::ToGMTString		DontEnum|Function	0
+  toGMTString		-DateProtoFuncImp::ToGMTString		DontEnum|Function	0
   getMonth		DateProtoFuncImp::GetMonth		DontEnum|Function	0
   getUTCMonth		-DateProtoFuncImp::GetMonth		DontEnum|Function	0
   getDate		DateProtoFuncImp::GetDate		DontEnum|Function	0
@@ -224,7 +259,6 @@ const ClassInfo DatePrototypeImp::info = {"Date", 0, &dateTable, 0};
   setUTCFullYear	-DateProtoFuncImp::SetFullYear		DontEnum|Function	3
   setYear		DateProtoFuncImp::SetYear		DontEnum|Function	1
   getYear		DateProtoFuncImp::GetYear		DontEnum|Function	0
-  toGMTString		DateProtoFuncImp::ToGMTString		DontEnum|Function	0
 @end
 */
 // ECMA 15.9.4
@@ -276,14 +310,16 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
 
   Value result;
   UString s;
+#if !APPLE_CHANGES
   const int bufsize=100;
   char timebuffer[bufsize];
   CString oldlocale = setlocale(LC_TIME,NULL);
   if (!oldlocale.c_str())
     oldlocale = setlocale(LC_ALL, NULL);
+#endif
   Value v = thisObj.internalValue();
   double milli = v.toNumber(exec);
-  time_t tv = (time_t) floor(milli / 1000.0);
+  time_t tv = (time_t)(milli / 1000.0);
   int ms = int(milli - tv * 1000.0);
 
   struct tm *t;
@@ -293,6 +329,33 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     t = localtime(&tv);
 
   switch (id) {
+#if APPLE_CHANGES
+  case ToString:
+    result = String(formatDate(*t) + " " + formatTime(*t));
+    break;
+  case ToDateString:
+    result = String(formatDate(*t));
+    break;
+  case ToTimeString:
+    result = String(formatTime(*t));
+    break;
+  case ToGMTString:
+  case ToUTCString:
+    // FIXME: In other browsers, toUTCString seems to do toLocaleTimeString,
+    // instead of what hte specification says. Do we need to do that to be
+    // bug-compatible? Just in quirks mode?
+    result = String(formatDate(*t, true) + " " + formatTime(*t));
+    break;
+  case ToLocaleString:
+    result = String(formatLocaleDate(tv) + " " + formatLocaleTime(tv));
+    break;
+  case ToLocaleDateString:
+    result = String(formatLocaleDate(tv));
+    break;
+  case ToLocaleTimeString:
+    result = String(formatLocaleTime(tv));
+    break;
+#else
   case ToString:
     s = ctime(&tv);
     result = String(s.substr(0, s.size() - 1));
@@ -307,7 +370,6 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     } else if (id == DateProtoFuncImp::ToTimeString) {
       strftime(timebuffer, bufsize, "%X",t);
     } else { // toGMTString & toUTCString
-      t = gmtime(&tv);
       strftime(timebuffer, bufsize, "%a, %d %b %Y %H:%M:%S %Z", t);
     }
     setlocale(LC_TIME,oldlocale.c_str());
@@ -325,6 +387,7 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
     strftime(timebuffer, bufsize, "%X", t);
     result = String(timebuffer);
     break;
+#endif
   case ValueOf:
     result = Number(milli);
     break;
@@ -508,10 +571,15 @@ Value DateObjectImp::call(ExecState */*exec*/, Object &/*thisObj*/, const List &
   fprintf(stderr,"DateObjectImp::call - current time\n");
 #endif
   time_t t = time(0L);
+#if APPLE_CHANGES
+  struct tm *tm = localtime(&t);
+  return String(formatDate(*tm) + " " + formatTime(*tm));
+#else
   UString s(ctime(&t));
 
   // return formatted string minus trailing \n
   return String(s.substr(0, s.size() - 1));
+#endif
 }
 
 // ------------------------------ DateObjectFuncImp ----------------------------
