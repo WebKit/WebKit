@@ -1,3 +1,13 @@
+2005-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken and John.
+
+        - fixed <rdar://problem/4059123> REGRESSION (402-403): deleteWordForward: and deleteWordBackward: start deleting single characters after the first delete
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView _deleteWithDirection:granularity:killRing:isTypingAction:]):
+        Fixed backwards logic in here and added missing check. Set action to one of the two typing actions only
+        if isTypingAction is YES.
+
 2005-03-19  David Harrison  <harrison@apple.com>
 
         Reviewed by me (written by Patti Yeh).

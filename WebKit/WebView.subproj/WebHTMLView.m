@@ -4266,19 +4266,21 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     if ([self _hasSelection]) {
         range = [self _selectedRange];
-        deletionAction = isTypingAction ? deleteSelectionAction : deleteKeyAction;
+        if (isTypingAction)
+            deletionAction = deleteKeyAction;
     } else {
         range = [[self _bridge] rangeByAlteringCurrentSelection:WebSelectByExtending direction:direction granularity:granularity];
-        switch (direction) {
-            case WebSelectForward:
-            case WebSelectRight:
-                deletionAction = forwardDeleteKeyAction;
-                break;
-            case WebSelectBackward:
-            case WebSelectLeft:
-                deletionAction = deleteKeyAction;
-                break;
-        }
+        if (isTypingAction)
+            switch (direction) {
+                case WebSelectForward:
+                case WebSelectRight:
+                    deletionAction = forwardDeleteKeyAction;
+                    break;
+                case WebSelectBackward:
+                case WebSelectLeft:
+                    deletionAction = deleteKeyAction;
+                    break;
+            }
     }
 
     if (range == nil || [range collapsed] || ![self _shouldDeleteRange:range])
