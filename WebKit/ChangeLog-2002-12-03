@@ -1,3 +1,9 @@
+2002-03-22  Richard Williamson  <rjw@apple.com>
+
+        Fixed reapplyStyles to use new KDE3 recalcStyle function.
+        
+	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles])
+
 2002-03-21  John Sullivan  <sullivan@apple.com>
 
 	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]):
