@@ -526,7 +526,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             case WebFrameLoadTypeSame:
             {
                 WebHistoryItem *currItem = [_private currentItem];
-                printf ("Clearing back/forward cache, %s\n", [[[currItem URL] absoluteString] cString]);
+                LOG(PageCache, "Clearing back/forward cache, %s\n", [[[currItem URL] absoluteString] cString]);
                 [currItem setHasPageCache:NO];
                 if (loadType == WebFrameLoadTypeReload) {
                     [self _saveScrollPositionToItem:currItem];
@@ -624,7 +624,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
     }
     
     if (pagesCached > sizeLimit){
-        printf ("Purging back/forward cache, %s\n", [[[oldestItem URL] absoluteString] cString]);
+        LOG(PageCache, "Purging back/forward cache, %s\n", [[[oldestItem URL] absoluteString] cString]);
         [oldestItem setHasPageCache: NO];
     }
 }
@@ -673,7 +673,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
             && ![[self dataSource] isLoading])
         {
             if (![item pageCache]){
-                printf ("Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
+                LOG(PageCache, "Saving page to back/forward cache, %s\n", [[[[self dataSource] URL] absoluteString] cString]);
                 [item setHasPageCache: YES];
                 [[self dataSource] _setStoredInPageCache: YES];
                 [[item pageCache] setObject: [self dataSource] forKey: @"WebKitDataSource"];
@@ -1579,7 +1579,7 @@ Repeat load of the same URL (by any other means of navigation other than the rel
         loadType == WebFrameLoadTypeBack ||
         loadType == WebFrameLoadTypeIndexedBackForward) &&
         [[_private provisionalItem] hasPageCache]){
-        printf ("Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
+        LOG(PageCache, "Restoring page from back/forward cache, %s\n", [[[[_private provisionalItem] URL] absoluteString] cString]);
         [_private->provisionalDataSource _startLoading: [[_private provisionalItem] pageCache]];
     }
     else 

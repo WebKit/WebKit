@@ -1,5 +1,17 @@
 2002-12-06  Trey Matteson  <trey@apple.com>
 
+	Clean up some printfs.  Use WebKitLogPageCache for page cache info.
+
+        Reviewed by: rjw
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _transitionToCommitted:]):
+        (-[WebFrame _purgePageCache]):
+        (-[WebFrame _setState:]):
+        (-[WebFrame _continueLoadRequestAfterNavigationPolicy:request:]):
+
+2002-12-06  Trey Matteson  <trey@apple.com>
+
 	3118584 - implement desired behavior for load - reload - b/f
 	3119241 - page cache needs to be refreshed after reload
 	3118096 - isTargetItem:NO saved to disk with every bookmark
