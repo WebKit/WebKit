@@ -13,6 +13,7 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
+#import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFileButton.h>
 #import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebFramePrivate.h>

@@ -1,3 +1,17 @@
+2004-05-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Kevin
+
+        Move WebKit editing APIs to public API files.
+
+        * WebCoreSupport.subproj/WebBridge.m: Add WebEditingDelegate include.
+        * WebKit.pbproj/project.pbxproj: Go Xcode!
+        * WebView.subproj/WebDefaultEditingDelegate.m: Remove WebViewPrivate include; add WebEditingDelegate include.
+        * WebView.subproj/WebEditingDelegate.h: Added. New file.
+        * WebView.subproj/WebView.h: Move API-approved interfaces to this file.
+        * WebView.subproj/WebView.m: Add WebEditingDelegate include.
+        * WebView.subproj/WebViewPrivate.h: Move API-approved interfaces from this file.
+
 2004-05-12  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 

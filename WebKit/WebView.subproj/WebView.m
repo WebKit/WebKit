@@ -23,6 +23,7 @@
 #import <WebKit/WebDocumentInternal.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebDownload.h>
+#import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFormDelegatePrivate.h>
 #import <WebKit/WebFrameInternal.h>

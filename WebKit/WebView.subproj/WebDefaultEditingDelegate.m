@@ -7,8 +7,8 @@
 #import <WebKit/WebDefaultEditingDelegate.h>
 
 #import <WebKit/DOM.h>
+#import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebView.h>
-#import <WebKit/WebViewPrivate.h>
 
 @implementation WebDefaultEditingDelegate
 
