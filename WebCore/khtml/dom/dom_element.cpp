@@ -175,8 +175,10 @@ Attr Element::removeAttributeNode( const Attr &oldAttr )
     if (impl->getDocument() != oldAttr.handle()->getDocument())
         throw DOMException(DOMException::WRONG_DOCUMENT_ERR);
 
+    NodeImpl::Id attrName = static_cast<AttrImpl*>(oldAttr.handle())->attrImpl()->id();
+
     int exceptioncode = 0;
-    Attr r = static_cast<ElementImpl*>(impl)->attributes(true)->removeNamedItem(oldAttr.handle()->id(), exceptioncode);
+    Attr r = static_cast<ElementImpl*>(impl)->attributes(true)->removeNamedItem(attrName, exceptioncode);
     if ( exceptioncode )
         throw DOMException( exceptioncode );
     return r;
@@ -219,6 +221,7 @@ void Element::setAttributeNS( const DOMString &namespaceURI,
         localName.remove(0, colonpos+1);
         // ### extract and set new prefix
     }
+    if (!DocumentImpl::isValidName(localName)) throw DOMException(DOMException::INVALID_CHARACTER_ERR);
     NodeImpl::Id id = impl->getDocument()->attrId(namespaceURI.implementation(),
                                                     localName.implementation(), false /* allocate */);
     int exceptioncode = 0;
@@ -257,12 +260,8 @@ Attr Element::getAttributeNodeNS( const DOMString &namespaceURI,
 
 Attr Element::setAttributeNodeNS( const Attr &newAttr )
 {
-    if (!impl || newAttr.isNull())
+    if (!impl)
         throw DOMException(DOMException::NOT_FOUND_ERR);
-    if (impl->getDocument() != newAttr.handle()->getDocument())
-        throw DOMException(DOMException::WRONG_DOCUMENT_ERR);
-    if (!newAttr.ownerElement().isNull())
-        throw DOMException(DOMException::INUSE_ATTRIBUTE_ERR);
 
     int exceptioncode = 0;
     Attr r = static_cast<ElementImpl*>(impl)->attributes(false)->setNamedItem(newAttr.handle(), exceptioncode);

@@ -595,16 +595,16 @@ Node NamedAttrMapImpl::setNamedItem ( NodeImpl* arg, int &exceptioncode )
     }
     AttrImpl *attr = static_cast<AttrImpl*>(arg);
 
+    AttributeImpl* a = attr->attrImpl();
+    AttributeImpl* old = getAttributeItem(a->id());
+    if (old == a) return arg; // we know about it already
+
     // INUSE_ATTRIBUTE_ERR: Raised if arg is an Attr that is already an attribute of another Element object.
     // The DOM user must explicitly clone Attr nodes to re-use them in other elements.
     if (attr->ownerElement()) {
         exceptioncode = DOMException::INUSE_ATTRIBUTE_ERR;
         return 0;
     }
-
-    AttributeImpl* a = attr->attrImpl();
-    AttributeImpl* old = getAttributeItem(a->id());
-    if (old == a) return arg; // we know about it already
 
     // ### slightly inefficient - resizes attribute array twice.
     Node r;
@@ -725,7 +725,7 @@ NamedAttrMapImpl& NamedAttrMapImpl::operator=(const NamedAttrMapImpl& other)
 
 void NamedAttrMapImpl::addAttribute(AttributeImpl *attr)
 {
-    // Add the attribute tot he list
+    // Add the attribute to the list
     AttributeImpl **newAttrs = new AttributeImpl* [len+1];
     if (attrs) {
       for (uint i = 0; i < len; i++)
@@ -735,6 +735,10 @@ void NamedAttrMapImpl::addAttribute(AttributeImpl *attr)
     attrs = newAttrs;
     attrs[len++] = attr;
     attr->ref();
+
+    AttrImpl * const attrImpl = attr->_impl;
+    if (attrImpl)
+        attrImpl->m_element = element;
 
     // Notify the element that the attribute has been added, and dispatch appropriate mutation events
     // Note that element may be null here if we are called from insertAttr() during parsing
