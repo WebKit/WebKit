@@ -745,8 +745,11 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
     if (style()->visibility() != VISIBLE || !firstTextBox())
         return;
     
-    if (ty + firstTextBox()->yPos() > i.r.y() + i.r.height()) return;
-    if (ty + lastTextBox()->yPos() + lastTextBox()->height() < i.r.y()) return;
+    if (ty + firstTextBox()->yPos() > i.r.y() + i.r.height()) 
+        return;
+
+    if (ty + lastTextBox()->yPos() + lastTextBox()->height() < i.r.y()) 
+        return;
     
     QPainter* p = i.p;
     RenderStyle* pseudoStyle = style(true);
@@ -780,37 +783,63 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
     const Font *font = &style()->htmlFont();
 
 #if APPLE_CHANGES
-    // Do one pass for the selection, then another for the rest.
+    // We will iterate over the text boxes in two passes. First we
+    // paint all the backgrounds, then the foregrounds.
+
+    InlineTextBox* startBox = s;
+
+    // Pass 1: paint backgrounds for slection or marked text, if we have any
+
     bool haveSelection = startPos != endPos && !isPrinting && selectionState() != SelectionNone;
     if (!haveSelection && i.phase == PaintActionSelection) {
         // When only painting the selection, don't bother to paint if there is none.
         return;
     }
 
-    InlineTextBox* startBox = s;
-    QValueList<DocumentMarker> markers = document()->markersForNode(node());
-    QValueListIterator <DocumentMarker> markerIt = markers.begin();
     Range markedTextRange = KWQ(document()->part())->markedRange();
     bool haveMarkedText = markedTextRange.handle() != 0 && markedTextRange.startContainer() == node();
 
-    for (int pass = 0; pass < (haveSelection || haveMarkedText ? 2 : 1); pass++) {
+    if ((haveSelection || haveMarkedText) && i.phase != PaintActionSelection && !isPrinting) {
         s = startBox;
-        bool drawSelectionBackground = haveSelection && pass == 0 && i.phase != PaintActionSelection;
-        bool drawMarkedTextBackground = haveMarkedText && pass == 0 && i.phase != PaintActionSelection;
-        bool drawText = !(haveSelection || haveMarkedText) || pass == 1;
 
-    // run until we find one that is outside the range, then we
-    // know we can stop
+        // run until we find a text box that is outside the range, then we know we can stop
+        do {
+            if (s->m_truncation == cFullTruncation)
+                continue;
+
+            RenderStyle* _style = pseudoStyle && s->m_firstLine ? pseudoStyle : style();
+
+            if (_style->font() != p->font())
+                p->setFont(_style->font());
+
+            font = &_style->htmlFont(); // Always update, since smallCaps is not stored in the QFont.
+
+            if (haveMarkedText)
+                s->paintMarkedTextBackground(font, this, p, _style, tx, ty, markedTextRange.startOffset(), markedTextRange.endOffset());
+
+            if (haveSelection)
+                s->paintSelection(font, this, p, _style, tx, ty, startPos, endPos);
+
+        } while (((s = s->nextTextBox()) != 0) && s->checkVerticalPoint(i.r.y(), ty, i.r.height()));
+    }
+
+
+    // Pass 2: now paint the foreground, including text and decorations
+
+    QValueList<DocumentMarker> markers = document()->markersForNode(node());
+    QValueListIterator <DocumentMarker> markerIt = markers.begin();
+
+    s = startBox;
+
+    // run until we find a text box that is outside the range, then we know we can stop
     do {
-        if (isPrinting)
-        {
-            if (ty+s->m_y+s->height() > i.r.y() + i.r.height())
-            {
-               RenderCanvas* canvasObj = canvas();
-               if (ty+s->m_y < canvasObj->truncatedAt())
-                   canvasObj->setBestTruncatedAt(ty+s->m_y, this);
-               // Let's stop here.
-               break;
+        if (isPrinting) {
+            if (ty+s->m_y+s->height() > i.r.y() + i.r.height()) {
+                RenderCanvas* canvasObj = canvas();
+                if (ty+s->m_y < canvasObj->truncatedAt())
+                    canvasObj->setBestTruncatedAt(ty+s->m_y, this);
+                // Let's stop here.
+                break;
             }
         }
 
@@ -824,8 +853,6 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
 
         font = &_style->htmlFont(); // Always update, since smallCaps is not stored in the QFont.
 
-        if (drawText) {
-        
         QColor textColor = _style->color();
         if (_style->shouldCorrectTextColor()) {
             textColor = correctedTextColor(textColor, _style->backgroundColor());
@@ -847,7 +874,7 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
         if (s->m_len > 0) {
             bool paintSelectedTextOnly = (i.phase == PaintActionSelection);
             bool paintSelectedTextSeparately = false; // Whether or not we have to do multiple paints.  Only
-                                           // necessary when a custom ::selection foreground color is applied.
+            // necessary when a custom ::selection foreground color is applied.
             QColor selectionColor = p->pen().color();
             ShadowData* selectionTextShadow = 0;
             if (haveSelection) {
@@ -863,8 +890,10 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
                     }
                 }
             }
-            
+
             if (!paintSelectedTextOnly && !paintSelectedTextSeparately) {
+                // paint all the text
+
                 // FIXME: Handle RTL direction, handle reversed strings.  For now truncation can only be turned on
                 // for non-reversed LTR strings.
                 int endPoint = s->m_len;
@@ -873,32 +902,36 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
                 font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline,
                                str->s, str->l, s->m_start, endPoint,
                                s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered());
-            }
-            else {
+            } else {
                 int offset = s->m_start;
                 int sPos = QMAX( startPos - offset, 0 );
                 int ePos = QMIN( endPos - offset, s->m_len );
                 if (paintSelectedTextSeparately) {
-                    if (sPos >= ePos)
+                    // paint only the text that is not selected
+
+                    if (sPos >= ePos) {
                         font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline,
                                        str->s, str->l, s->m_start, s->m_len,
                                        s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered());
-                    else {
-                        if (sPos-1 >= 0)
+                    } else {
+                        if (sPos-1 >= 0) {
                             font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s,
-                                        str->l, s->m_start, s->m_len,
-                                        s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered(), 0, sPos);
-                        if (ePos < s->m_start+s->m_len)
+                                           str->l, s->m_start, s->m_len,
+                                           s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered(), 0, sPos);
+                        }
+                        if (ePos < s->m_start+s->m_len) {
                             font->drawText(p, s->m_x + tx, s->m_y + ty + s->m_baseline, str->s,
-                                        str->l, s->m_start, s->m_len,
-                                        s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered(), ePos, -1);
+                                           str->l, s->m_start, s->m_len,
+                                           s->m_toAdd, s->m_reversed ? QPainter::RTL : QPainter::LTR, style()->visuallyOrdered(), ePos, -1);
+                        }
                     }
                 }
                 
                 if ( sPos < ePos ) {
+                    // paint only the text that is selected
                     if (selectionColor != p->pen().color())
                         p->setPen(selectionColor);
-
+                    
                     if (selectionTextShadow)
                         p->setShadow(selectionTextShadow->x,
                                      selectionTextShadow->y,
@@ -912,8 +945,10 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
                 }
             } 
         }
-        
-        if (d != TDNONE && i.phase == PaintActionForeground &&
+
+        // paint decorations
+
+        if (d != TDNONE && i.phase != PaintActionSelection &&
             style()->htmlHacks()) {
             p->setPen(_style->color());
             s->paintDecoration(p, tx, ty, d);
@@ -949,30 +984,17 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
         if (setShadow)
             p->clearShadow();
         
-        } // drawText
-
-        if (drawMarkedTextBackground && !isPrinting)
-	    s->paintMarkedTextBackground(font, this, p, _style, tx, ty, markedTextRange.startOffset(), markedTextRange.endOffset());
-
-        if (drawSelectionBackground)
-        if (!isPrinting && (selectionState() != SelectionNone))
-            s->paintSelection(font, this, p, _style, tx, ty, startPos, endPos);
-
-
 #ifdef BIDI_DEBUG
         {
             int h = lineHeight( false ) + paddingTop() + paddingBottom() + borderTop() + borderBottom();
             QColor c2 = QColor("#0000ff");
             drawBorder(p, tx, ty, tx+1, ty + h,
-                          RenderObject::BSLeft, c2, c2, SOLID, 1, 1);
+                       RenderObject::BSLeft, c2, c2, SOLID, 1, 1);
             drawBorder(p, tx + s->m_width, ty, tx + s->m_width + 1, ty + h,
-                          RenderObject::BSRight, c2, c2, SOLID, 1, 1);
+                       RenderObject::BSRight, c2, c2, SOLID, 1, 1);
         }
 #endif
-
     } while (((s = s->nextTextBox()) != 0) && s->checkVerticalPoint(i.r.y(), ty, i.r.height()));
-
-    } // end of for loop
 #else
 #error This file no longer works without Apple changes
 #endif
