@@ -700,7 +700,5 @@ QString KURL::htmlRef() const
 
 bool operator==(const KURL &a, const KURL &b)
 {
-    a.parse();
-    b.parse();
-    return CFEqual(a.d->urlRef, b.d->urlRef);
+    return a.urlString == b.urlString;
 }
