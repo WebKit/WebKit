@@ -49,6 +49,7 @@ using khtml::RenderObject;
 using khtml::RenderWidget;
 using khtml::RenderCanvas;
 using khtml::RenderText;
+using khtml::RenderBlock;
 
 // FIXME: This will eventually need to really localize.
 #define UI_STRING(string, comment) ((NSString *)[NSString stringWithUTF8String:(string)])
@@ -190,7 +191,7 @@ using khtml::RenderText;
         return NSAccessibilityStaticTextRole;
     if (m_renderer->isImage())
        return NSAccessibilityImageRole;
-    if (m_renderer->isCanvas())
+    if (m_renderer->isBlockFlow())
         return NSAccessibilityGroupRole;
     
     return NSAccessibilityUnknownRole;
@@ -351,10 +352,13 @@ static QRect boundingBoxRect(RenderObject* obj)
         return YES;
 
     if (m_renderer->isText())
-        return !static_cast<RenderText*>(m_renderer)->firstTextBox();
+        return !m_renderer->isBR() && !static_cast<RenderText*>(m_renderer)->firstTextBox();
     
     if (m_renderer->element() && m_renderer->element()->hasAnchor())
         return NO;
+
+    if (m_renderer->isBlockFlow() && m_renderer->childrenInline())
+        return !static_cast<RenderBlock*>(m_renderer)->firstLineBox();
 
     return (!m_renderer->isCanvas() && 
             !m_renderer->isImage() &&
