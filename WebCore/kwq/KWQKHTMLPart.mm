@@ -259,7 +259,7 @@ void KWQKHTMLPartImpl::write( const char *str, int len )
     if (m_decodingStarted)
         decoded = d->m_decoder->decode( str, len );
     else    
-        decoded = d->m_decoder->decode( m_documentSource, m_documentSource.length() );
+        decoded = d->m_decoder->decode( m_documentSource.latin1(), m_documentSource.length() );
 
     if(decoded.isEmpty()){
         // Check flag to tell whether the load has completed.
@@ -320,13 +320,13 @@ bool KWQKHTMLPartImpl::gotoBaseAnchor()
 }
 
 // FIXME: Need to remerge this with code in khtml_part.cpp?
+// Specifically, it seems that if we implement QTimer, including
+// some sort of special case to make connect work, we could use
+// KHTMLPart::scheduleRedirection as-is.
 void KWQKHTMLPartImpl::scheduleRedirection(int delay, const QString &url)
 {
     if( d->m_redirectURL.isEmpty() || delay < d->m_delayRedirect )
     {
-        if (delay < 1) {
-            delay = 1;
-        }
         d->m_delayRedirect = delay;
         d->m_redirectURL = url;
         killTimer(m_redirectionTimer);
@@ -336,42 +336,8 @@ void KWQKHTMLPartImpl::scheduleRedirection(int delay, const QString &url)
 
 void KWQKHTMLPartImpl::timerEvent(QTimerEvent *e)
 {
-    if (e->timerId()==m_redirectionTimer)
-    {
-    	redirectURL();
-    	return;
-    }
+    part->slotRedirect();
 }
-
-void KWQKHTMLPartImpl::redirectURL()
-{
-  QString u = d->m_redirectURL;
-  d->m_delayRedirect = 0;
-  d->m_redirectURL = QString::null;
-  if ( u.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
-  {
-    QString script = KURL::decode_string( u.right( u.length() - 11 ) );
-    //kdDebug( 6050 ) << "KHTMLPart::slotRedirect script=" << script << endl;
-    QVariant res = part->executeScript( script );
-    if ( res.type() == QVariant::String ) {
-      part->begin( part->url() );
-      part->write( res.asString() );
-      part->end();
-    }
-    return;
-  }
-
-  KParts::URLArgs args;
-#if 0
-  if ( urlcmp( u, m_url.url(), true, true ) )
-    args.reload = true;
-
-  args.setLockHistory( true );
-#endif
-  part->urlSelected( u, 0, 0, QString::null, args );
-}
-
-
 
 void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
@@ -379,7 +345,7 @@ void KWQKHTMLPartImpl::urlSelected( const QString &url, int button, int state, c
     KURL refLess(clickedURL);
     WebCoreBridge *frame;
 	
-    if ( url.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 )
+    if ( url.find( "javascript:", 0, false ) == 0 )
     {
         part->executeScript( url.right( url.length() - 11) );
         return;
@@ -500,7 +466,7 @@ void KWQKHTMLPartImpl::submitForm( const char *action, const QString &url, const
 
   QString urlstring = u.url();
 
-  if ( urlstring.find( QString::fromLatin1( "javascript:" ), 0, false ) == 0 ) {
+  if ( urlstring.find( "javascript:", 0, false ) == 0 ) {
     urlstring = KURL::decode_string(urlstring);
     part->executeScript( urlstring.right( urlstring.length() - 11) );
     return;

@@ -1760,22 +1760,20 @@ void KHTMLPart::slotRedirect()
     //kdDebug( 6050 ) << "KHTMLPart::slotRedirect script=" << script << endl;
     QVariant res = executeScript( script );
     if ( res.type() == QVariant::String ) {
-#ifndef APPLE_CHANGES
       begin( url() );
       write( res.asString() );
       end();
-#endif
     }
     return;
   }
-#ifndef APPLE_CHANGES
   KParts::URLArgs args;
+#ifndef APPLE_CHANGES
   if ( urlcmp( u, m_url.url(), true, true ) )
     args.reload = true;
 
   args.setLockHistory( d->m_redirectLockHistory );
-  urlSelected( u, 0, 0, "_self", args );
 #endif
+  urlSelected( u, 0, 0, "_self", args );
 }
 
 void KHTMLPart::slotRedirection(KIO::Job*, const KURL& url)
@@ -2109,12 +2107,6 @@ QString KHTMLPart::selectedText() const
        
     return text.mid(start, end-start);
 }
-
-void KHTMLPart::jumpToSelection()
-{
-    impl->jumpToSelection();
-}
-
 
 bool KHTMLPart::hasSelection() const
 {

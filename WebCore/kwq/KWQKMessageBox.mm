@@ -58,7 +58,8 @@ int KMessageBox::warningYesNo(QWidget *, const QString &message,
 int KMessageBox::questionYesNo(QWidget *, const QString &message, 
     const QString &caption, 
     const QString &buttonYes, 
-    const QString &buttonNo, bool notify)
+    const QString &buttonNo,
+    const QString &dontAskAgain)
 {
     NSString *yes = buttonYes.isNull() ? nil : @"OK";
     NSString *no = buttonNo.isNull() ? nil : @"Cancel";

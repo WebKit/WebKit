@@ -30,11 +30,6 @@ sub emit_output
 {
     my ($canonical_name, $mib_enum, @aliases) = @_;
     
-    # Bug in the August 23 version of IANA's character-sets document
-    if ($canonical_name eq "ISO-10646-J-1" && ! $mib_enum) {
-	$mib_enum = "1004";
-    }
-
     my $mac_string_encoding = $invalid_encoding;
 
     foreach my $name ($canonical_name, @aliases) {

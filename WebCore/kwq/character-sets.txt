@@ -3,7 +3,8 @@
 CHARACTER SETS
 
 (last updated 2001 August 23)
-(Apple Changes: added x-sjis alias for Shift JIS 2002 July 10) 
+(Apple Changes: added x-sjis alias for Shift JIS, 2002 July 10) 
+(Apple Changes: added MIBenum: 1004 for ISO-10646-J-1, 2002 July 26) 
 
 These are the official names for character sets that may be used in
 the Internet and may be referred to in Internet documentation.  These
@@ -1414,6 +1415,7 @@ Alias: csUnicodeLatin1
 Alias: ISO-10646
 
 Name: ISO-10646-J-1
+MIBenum: 1004
 Source: ISO 10646 Japanese, see RFC 1815.
 
 Name: ISO-Unicode-IBM-1261

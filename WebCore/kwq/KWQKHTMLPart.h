@@ -75,7 +75,6 @@ public:
     void slotData(NSString *, const char *bytes, int length, bool complete = false);
 
     void scheduleRedirection(int delay, const QString &url);
-    void redirectURL();
     virtual void timerEvent(QTimerEvent *);
 
     bool gotoBaseAnchor();

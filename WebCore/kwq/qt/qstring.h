@@ -311,17 +311,18 @@ public:
 
     bool startsWith(const QString &) const;
 
-    int find(QChar, int) const;
     int find(char, int index=0) const;
-    int find(const QString &, int index=0) const;
-    int find(const char *, int index=0, bool cs=TRUE) const;
+    int find(QChar, int index=0) const;
+    int find(const char *, int index=0, bool cs=true) const;
+    int find(const QString &, int index=0, bool cs=true) const;
     int find(const QRegExp &, int index=0) const;
 
     int findRev(char, int index=-1) const;
     int findRev(const char *, int index=-1) const;
 
     int contains(char) const;
-    int contains(const char *, bool cs=TRUE) const;
+    int contains(const char *, bool cs=true) const;
+    int contains(const QString &, bool cs=true) const;
 
     bool endsWith(const QString &) const;
 
@@ -395,8 +396,6 @@ public:
     NSString *getNSString() const;
 
     bool operator!() const;
-
-    operator const char *() const;
 
     const QChar operator[](int) const;
 
@@ -503,11 +502,6 @@ inline bool QString::operator!() const
 inline const QChar QString::operator[](int index) const
 {
     return at(index);
-}
-
-inline QString::operator const char *() const
-{
-    return latin1();
 }
 
 inline CFMutableStringRef QString::getCFMutableString() const

@@ -442,15 +442,14 @@ using namespace khtml;
     return elementInfo;
 }
 
-
-- (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
+- (BOOL)searchFor:(NSString *)string direction:(BOOL)forward caseSensitive:(BOOL)caseFlag
 {
-    return part->findTextNext (QString::fromCFString((CFStringRef)string), forward, caseFlag, FALSE);
+    return part->findTextNext(QString::fromNSString(string), forward, caseFlag, FALSE);
 }
 
 - (void)jumpToSelection
 {
-    part->jumpToSelection();
+    part->impl->jumpToSelection();
 }
 
 @end

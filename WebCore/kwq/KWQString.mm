@@ -348,7 +348,7 @@ int QString::find(char ch, int index) const
     return find(QChar(ch), index);
 }
 
-int QString::find(const QString &qs, int index) const
+int QString::find(const QString &qs, int index, bool caseSensitive) const
 {
     CFIndex len = CFStringGetLength(s);
     if (index < 0)
@@ -356,7 +356,7 @@ int QString::find(const QString &qs, int index) const
     if (len && (index >= 0) && (index < len)) {
         CFRange r;
         CFRange start = CFRangeMake(index, len - index); 
-        if (CFStringFindWithOptions(s, qs.s, start, 0, &r))
+        if (CFStringFindWithOptions(s, qs.s, start, caseSensitive ? 0 : kCFCompareCaseInsensitive, &r))
             return r.location;
     }
     return -1;
@@ -548,6 +548,25 @@ int QString::contains(const char *chs, bool cs) const
             pos += r.location + 1;
         }
         CFRelease(tmp);
+    }
+    return c;
+}
+
+int QString::contains(const QString &cfs, bool cs) const
+{
+    int c = 0;
+    CFIndex pos = 0;
+    CFIndex len = CFStringGetLength(s);
+    while (pos < len) {
+        CFRange r;
+        if (!CFStringFindWithOptions(s, cfs.s,
+                CFRangeMake(pos, len - pos),
+                cs ? 0 : kCFCompareCaseInsensitive, &r)) {
+            break;
+        }
+        c++;
+        // move to next possible overlapping match
+        pos += r.location + 1;
     }
     return c;
 }

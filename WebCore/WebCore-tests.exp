@@ -260,6 +260,7 @@ __ZNK7QString3argEti
 __ZNK7QString3midEjj
 __ZNK7QString4findEPKcib
 __ZNK7QString4findERK7QRegExpi
+__ZNK7QString4findERKS_ib
 __ZNK7QString4leftEj
 __ZNK7QString5lowerEv
 __ZNK7QString5rightEj

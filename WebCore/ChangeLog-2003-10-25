@@ -1,3 +1,46 @@
+2002-07-29  Darin Adler  <darin@apple.com>
+
+	- fixed 3010875 -- Find only works for latin characters
+	- dealt with part of 2948387 -- stop button flashes to "go" twice while loading citibank.com
+
+        * force-clean-timestamp: Make everyone do a make clean because dependencies won't do
+	the right thing.
+
+        * khtml/khtml_part.h:
+        * khtml/khtml_part.cpp: (KHTMLPart::slotRedirect): Changed the APPLE_CHANGES ifdefs around
+	in this function so we can start using it again.
+	(KHTMLPart::jumpToSelection): Removed. The bridge goes straight to the impl. 
+
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge jumpToSelection]): Go straight to the impl.
+
+        * WebCore-tests.exp: One new export needed for tests with change to qstring.h.
+
+        * kwq/qt/qevent.h:
+        * kwq/KWQEvent.mm: Removed unused stuff.
+
+        * kwq/KWQKHTMLPartImpl.h: Removed redirectURL(); we now use KHTMLPart::slotRedirect().
+
+        * kwq/KWQKHTMLPartImpl.mm:
+        (KWQKHTMLPartImpl::write): Call latin1() explicitly in here for m_documentSource. It was being
+	done implicitly before.
+        (KWQKHTMLPartImpl::scheduleRedirection): Get rid of 1-second minimum delay for meta refresh.
+        (KWQKHTMLPartImpl::timerEvent): Call KHTMLPart::slotRedirect() instead of redirectURL(), because
+	they were identical, so we don't need our own copy.
+
+        * kwq/kdeui/kmessagebox.h:
+        * kwq/KWQKMessageBox.mm: (KMessageBox::questionYesNo): Added dontAskAgain string parameter.
+	Before, it was being turned into a bool!
+
+        * kwq/KWQKProtocolManager.mm: Tweak and add FIXME.
+
+        * kwq/qt/qstring.h: Remove implicit conversion to const char *, which causes only pain.
+        * kwq/KWQString.mm:
+        (QString::find): Add caseSensitive parameter to the QString overload of this.
+        (QString::contains): Add a QString version of this.
+
+        * kwq/character-sets.txt: Add the MIB number for ISO-10646-J-1.
+        * kwq/make-charset-table.pl: Remove special case for ISO-10646-J-1 MIB number.
+
 2002-07-29  Richard Williamson  <rjw@apple.com>
 
         Fixed 3009074.  Added KHTMLPart::jumpToSelection and related scaffolding (part impl, bridge, etc.)
@@ -31,12 +74,6 @@
 	be Mac MSIE, since Mac MSIE incorrectly computes the containing
 	block and sites have to correct for that.
 	
-        * ChangeLog:
-        * kwq/KWQKProtocolManager.mm:
-        (KProtocolManager::userAgentForHost):
-
-2002-07-26  David Hyatt  <hyatt@apple.com>
-
         * kwq/KWQKProtocolManager.mm:
         (KProtocolManager::userAgentForHost):
 

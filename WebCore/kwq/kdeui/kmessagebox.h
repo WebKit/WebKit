@@ -45,7 +45,8 @@ public:
     static int questionYesNo(QWidget *, const QString &, 
         const QString &caption=QString::null, 
         const QString &buttonYes=QString::null, 
-        const QString &buttonNo=QString::null, bool notify=true);
+        const QString &buttonNo=QString::null,
+        const QString &dontAskAgainName=QString::null);
    
     static void sorry(QWidget *, const QString &, 
         const QString &caption=QString::null, bool notify=true);

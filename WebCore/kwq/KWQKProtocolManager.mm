@@ -27,8 +27,9 @@
 
 #import <qstring.h>
 
-QString KProtocolManager::userAgentForHost( const QString& )
+QString KProtocolManager::userAgentForHost(const QString &)
 {
-    // make us look like msie for now
-    return QString("Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715");
+    // FIXME: Should get this from WebFoundation so that we don't have two copies of the
+    // user agent string that we need to keep in sync.
+    return "Mozilla/5.0 (Macintosh; U; PPC Mac OS X; en-US; rv:1.0.0) Gecko/20020715";
 }
