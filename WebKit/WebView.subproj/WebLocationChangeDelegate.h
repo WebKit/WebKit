@@ -46,11 +46,6 @@ typedef enum {
 
 @protocol IFLocationChangeHandler
 
-// DEPRECATED
-- (BOOL)locationWillChangeTo: (NSURL *)url;
-// DEPRECATED 
-- (void) downloadingWithHandler:(IFDownloadHandler *)downloadHandler;
-
 - (void)locationChangeStarted;
 
 // Sent after locationChangeStarted.

@@ -113,10 +113,7 @@
     }
     
     locationChangeHandler = [[self controller] provideLocationChangeHandlerForFrame: self];
-    if (newDataSource != nil && locationChangeHandler != nil){
-        if (![locationChangeHandler locationWillChangeTo: [newDataSource inputURL]])
-            return NO;
-    }
+
     [newDataSource _setLocationChangeHandler: locationChangeHandler];
 
     oldDataSource = [self dataSource];

@@ -1,5 +1,20 @@
 2002-04-23  Chris Blumenberg  <cblu@apple.com>
 
+	* WebKit.pbproj/project.pbxproj:
+
+	Took IFDownloadHandler.h out of the public headers.
+
+	* WebView.subproj/IFLocationChangeHandler.h:
+
+	Removed deprecated methods.
+
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame setProvisionalDataSource:]):
+
+	Don't call locationChangeStarted anymore.
+
+2002-04-23  Chris Blumenberg  <cblu@apple.com>
+
 	* MIME.subproj/IFDownloadHandler.h:
 	* MIME.subproj/IFDownloadHandler.m: Removed.
 	* MIME.subproj/IFDownloadHandler.mm: Added.
