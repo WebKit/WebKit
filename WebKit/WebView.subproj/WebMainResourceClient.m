@@ -69,7 +69,7 @@
     NSString *contentType = [sender contentType];
     if(![contentType isEqualToString:@"text/html"] && contentType != nil){
         [sender cancelLoadInBackground];
-        IFError *error = [[IFError alloc] initWithErrorCode: IFURLHandleResultUnsupportedMediaType failingURL: [sender url]];
+        IFError *error = [[IFError alloc] initWithErrorCode: IFNonHTMLContentNotSupportedError failingURL: [sender url]];
         [[dataSource controller] _mainReceivedError: error forResource: [[sender url] absoluteString] partialProgress:nil fromDataSource: dataSource];
         [error release];
         return;

@@ -1,3 +1,14 @@
+2002-04-04  Chris Blumenberg  <cblu@apple.com>
+
+	* English.lproj/IFError.strings:
+	* Misc.subproj/IFError.h:
+	* Misc.subproj/IFError.m: (+[IFError initialize]):
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFMainURLHandleClient.mm: (-[IFMainURLHandleClient
+	IFURLHandle:resourceDataDidBecomeAvailable:]):
+
+	Added the IFNonHTMLContentNotSupportedError to IFError.
+
 2002-04-04  Richard Williamson  <rjw@apple.com>
 
         Tuned and re-enabled resource layouts.

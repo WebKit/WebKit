@@ -6,6 +6,14 @@
 */
 #import <Foundation/Foundation.h>
 
+
+// WebFoundation error codes < 10000
+// WebKit error codes >= 10000
+
+typedef enum {
+    IFNonHTMLContentNotSupportedError = 10000
+} IFErrorCode;
+
 @interface IFError : NSObject
 {
     int errorCode;

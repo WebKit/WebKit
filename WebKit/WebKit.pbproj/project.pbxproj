@@ -1136,7 +1136,7 @@
 				DEBUG_CFLAGS = "";
 				FRAMEWORK_SEARCH_PATHS = "@executable_path/../Frameworks";
 				INSTALL_PATH = "@executable_path/../Frameworks";
-				OPTIMIZATION_CFLAGS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
 				SKIP_INSTALL = YES;
 			};
 			isa = PBXBuildStyle;

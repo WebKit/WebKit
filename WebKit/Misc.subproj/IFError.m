@@ -108,6 +108,9 @@ static id IFErrorMake(int code)
         [NSNumber numberWithInt: IFURLHandleResultGatewayTimeOut],
         NSLocalizedStringFromTable (@"HTTP version not supported", @"IFError", @"IFURLHandleResultHTTPVersionNotSupported description"),
         [NSNumber numberWithInt: IFURLHandleResultHTTPVersionNotSupported],
+        
+        NSLocalizedStringFromTable (@"non-HTML content not currently supported", @"IFError", @"IFNonHTMLContentNotSupportedError description"),
+        [NSNumber numberWithInt: IFNonHTMLContentNotSupportedError],
         nil];
 
     if (descriptions == nil) {
