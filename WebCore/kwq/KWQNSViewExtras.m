@@ -49,7 +49,7 @@
 - (void)_KWQ_scrollRectToVisible:(NSRect)rect inView:(NSView *)view
 {
     NSRect exposeRect = [self convertRect:rect fromView:view];
-    NSRect visibleRect = [self visibleRect];
+    NSRect visibleRect = [self bounds];
     
     if (!NSContainsRect(visibleRect, exposeRect)) {
         // Make an expose rectangle that will end up centering the passed-in rectangle horizontally.
