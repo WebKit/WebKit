@@ -568,6 +568,26 @@ Position Position::equivalentShallowPosition() const
     return pos;
 }
 
+Position Position::equivalentDeepPosition() const
+{
+    if (isEmpty() || !node()->hasChildNodes())
+        return *this;
+
+    NodeImpl *child = 0;
+    if (offset() >= (int)node()->childNodeCount())
+        child = node()->lastChild();
+    else
+        child = node()->childNode(offset());
+    ASSERT(child);
+    Position pos(child, 0);
+    while (pos.node()->hasChildNodes()) {
+        child = pos.node()->firstChild();
+        ASSERT(child);
+        pos = Position(child, 0);
+    }
+    return pos;
+}
+
 Position Position::closestRenderedPosition(EAffinity affinity) const
 {
     if (isEmpty() || inRenderedContent())

@@ -68,6 +68,7 @@ public:
     Position equivalentDownstreamPosition() const;
     Position equivalentRangeCompliantPosition() const;
     Position equivalentShallowPosition() const;
+    Position equivalentDeepPosition() const;
     Position closestRenderedPosition(EAffinity) const;
     bool atStartOfContainingEditableBlock() const;
     bool atStartOfRootEditableElement() const;

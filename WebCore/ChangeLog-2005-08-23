@@ -1,5 +1,14 @@
 2004-07-14  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by John
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::equivalentDeepPosition): New helper function to improve selection handling.
+        Soon, I plan to land some changes that use this new function.
+        * khtml/xml/dom_position.h:
+
+2004-07-14  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Vicki
 
         * WebCore-combined.exp: Added QString.at symbol to tests exports to facilitate debugging
