@@ -6,8 +6,6 @@
 	objectVersion = 39;
 	objects = {
 		014CEA440018CDF011CA2923 = {
-			buildRules = (
-			);
 			buildSettings = {
 				DEBUG_CFLAGS = "";
 				EXPORTED_SYMBOLS_FILE = "WebCore-combined.exp";
@@ -25,8 +23,6 @@
 			name = Development;
 		};
 		014CEA450018CDF011CA2923 = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
@@ -10313,8 +10309,6 @@
 			sourceTree = "<group>";
 		};
 		F58C8A07025BD3BC018635CA = {
-			buildRules = (
-			);
 			buildSettings = {
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				INSTALL_PATH = "@executable_path/../Frameworks";
