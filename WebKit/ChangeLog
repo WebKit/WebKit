@@ -1,5 +1,13 @@
 2002-04-29  Richard Williamson  <rjw@apple.com>
 
+        Fix to 2915688.  I wasn't checking if the main document error had an error, only
+        the resource errors.
+        
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFrame _isLoadComplete]):
+
+2002-04-29  Richard Williamson  <rjw@apple.com>
+
         Restored file, line, and function to log messages.
         
 	* Misc.subproj/WebKitDebug.m:

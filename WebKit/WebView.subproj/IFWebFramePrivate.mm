@@ -290,7 +290,7 @@ static const char * const stateNames[6] = {
             WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete in IFWEBFRAMESTATE_PROVISIONAL\n", [[self name] cString]);
             // If we've received any errors we may be stuck in the provisional state and actually
             // complete.
-            if ([[pd errors] count] != 0) {
+            if ([[pd errors] count] != 0 || [pd mainDocumentError]) {
                 // Check all children first.
                 WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "%s:  checking complete, current state IFWEBFRAMESTATE_PROVISIONAL, %d errors\n", [[self name] cString], [[pd errors] count]);
                 if (![pd isLoading]) {
