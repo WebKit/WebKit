@@ -39,6 +39,8 @@ class HTMLElement;
 
 namespace KJS {
 
+  class JSAbstractEventListener;
+
   class HTMLDocument : public DOMDocument {
   public:
     HTMLDocument(ExecState *exec, const DOM::HTMLDocument &d) : DOMDocument(exec, d) { }
@@ -241,7 +243,7 @@ namespace KJS {
     UString src;
     QGuardedPtr<DOM::DocumentImpl> doc;
     khtml::CachedImage* img;
-    JSEventListener *onLoadListener;
+    JSAbstractEventListener *onLoadListener;
     bool widthSet;
     bool heightSet;
     int width;

@@ -28,7 +28,7 @@
 
 namespace KJS {
 
-  class JSEventListener;
+  class JSUnprotectedEventListener;
   class XMLHttpRequestQObject;
 
   // these exact numeric values are important because JS expects them
@@ -58,6 +58,8 @@ namespace KJS {
     virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
     void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
     virtual bool toBoolean(ExecState *) const { return true; }
+    virtual void mark();
+
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Onload, Onreadystatechange, ReadyState, ResponseText, ResponseXML, Status,
@@ -105,8 +107,8 @@ namespace KJS {
     KIO::TransferJob * job;
 
     XMLHttpRequestState state;
-    JSEventListener *onReadyStateChangeListener;
-    JSEventListener *onLoadListener;
+    JSUnprotectedEventListener *onReadyStateChangeListener;
+    JSUnprotectedEventListener *onLoadListener;
 
     khtml::Decoder *decoder;
     QString encoding;

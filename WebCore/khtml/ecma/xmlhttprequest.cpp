@@ -204,17 +204,29 @@ void XMLHttpRequest::putValue(ExecState *exec, int token, const Value& value, in
 {
   switch(token) {
   case Onreadystatechange:
-    onReadyStateChangeListener = Window::retrieveActive(exec)->getJSEventListener(value, true);
+    onReadyStateChangeListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
     if (onReadyStateChangeListener) onReadyStateChangeListener->ref();
     break;
   case Onload:
-    onLoadListener = Window::retrieveActive(exec)->getJSEventListener(value, true);
+    onLoadListener = Window::retrieveActive(exec)->getJSUnprotectedEventListener(value, true);
     if (onLoadListener) onLoadListener->ref();
     break;
   default:
     kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
   }
 }
+
+void XMLHttpRequest::mark()
+{
+  DOMObject::mark();
+
+  if (onReadyStateChangeListener)
+    onReadyStateChangeListener->mark();
+
+  if (onLoadListener)
+    onLoadListener->mark();
+}
+
 
 XMLHttpRequest::XMLHttpRequest(ExecState *exec, const DOM::Document &d)
   : DOMObject(XMLHttpRequestProto::self(exec)),

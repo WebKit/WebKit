@@ -43,6 +43,7 @@ namespace KJS {
   class History;
   class FrameArray;
   class JSEventListener;
+  class JSUnprotectedEventListener;
   class JSLazyEventListener;
 
   class Screen : public ObjectImp {
@@ -115,6 +116,7 @@ namespace KJS {
     BarInfo *statusbar(ExecState *exec) const;
     BarInfo *toolbar(ExecState *exec) const;
     JSEventListener *getJSEventListener(const Value &val, bool html = false);
+    JSUnprotectedEventListener *getJSUnprotectedEventListener(const Value &val, bool html = false);
     JSLazyEventListener *getJSLazyEventListener(const QString &code, DOM::NodeImpl *node, int lineno = 0);
     void clear( ExecState *exec );
     virtual UString toString(ExecState *exec) const;
@@ -123,6 +125,7 @@ namespace KJS {
     void setCurrentEvent( DOM::Event *evt );
 
     QPtrDict<JSEventListener> jsEventListeners;
+    QPtrDict<JSUnprotectedEventListener> jsUnprotectedEventListeners;
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
     enum { Closed, Crypto, DefaultStatus, Status, Document, Node, EventCtor, Range,

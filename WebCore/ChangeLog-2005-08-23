@@ -1,3 +1,40 @@
+2005-03-09  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Richard.
+
+	<rdar://problem/4040776> Dashboard (Weather widget) is a memory hog
+        
+	Change things around so the event listeners for XMLHttpRequest
+	mark their JS listener objects instead of holding a hard
+	reference, to avoid an unbreakable reference cycle.
+
+	* khtml/ecma/kjs_events.cpp:
+        (JSAbstractEventListener::JSAbstractEventListener):
+        (JSAbstractEventListener::~JSAbstractEventListener):
+        (JSAbstractEventListener::handleEvent):
+        (JSAbstractEventListener::eventListenerType):
+        (JSUnprotectedEventListener::JSUnprotectedEventListener):
+        (JSUnprotectedEventListener::~JSUnprotectedEventListener):
+        (JSUnprotectedEventListener::listenerObj):
+        (JSUnprotectedEventListener::windowObj):
+        (JSUnprotectedEventListener::mark):
+        (JSEventListener::JSEventListener):
+        (JSEventListener::~JSEventListener):
+        (JSEventListener::listenerObj):
+        (JSEventListener::windowObj):
+        (JSLazyEventListener::JSLazyEventListener):
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_html.h:
+        * khtml/ecma/kjs_window.cpp:
+        (Window::getJSEventListener):
+        (Window::getJSUnprotectedEventListener):
+        * khtml/ecma/kjs_window.h:
+        * khtml/ecma/xmlhttprequest.cpp:
+        (KJS::XMLHttpRequest::putValue):
+        (KJS::XMLHttpRequest::mark):
+        * khtml/ecma/xmlhttprequest.h:
+        * khtml/khtml_part.h:
+
 2005-03-06  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
