@@ -1425,8 +1425,12 @@ void Cache::init()
         nullPixmap = new QPixmap;
 
     if ( !brokenPixmap )
+#ifdef APPLE_CHANGES
+        brokenPixmap = new QPixmap;
+#else
 //        brokenPixmap = new QPixmap(KHTMLFactory::instance()->iconLoader()->loadIcon("file_broken", KIcon::FileSystem, 16, KIcon::DisabledState));
         brokenPixmap = new QPixmap(KHTMLFactory::instance()->iconLoader()->loadIcon("file_broken", KIcon::Desktop, 16, KIcon::DisabledState));
+#endif
 
     if ( !m_loader )
         m_loader = new Loader();
@@ -1809,6 +1813,14 @@ void Cache::setCacheDisabled(bool disabled)
     cacheDisabled = disabled;
     if (disabled)
         flushAll();
+}
+
+void Cache::preloadScript(const QString &, const QString &)
+{
+}
+
+void Cache::preloadStyleSheet(const QString &, const QString &)
+{
 }
 
 #endif

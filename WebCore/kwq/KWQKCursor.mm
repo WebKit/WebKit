@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,10 +25,13 @@
 
 #include <kcursor.h>
 
+const QCursor &waitCursor = KCursor::waitCursor();
+
 void KCursor::setAutoHideCursor(QWidget *w, bool enable) {}
 
 QCursor KCursor::arrowCursor() { return QCursor(); }
 QCursor KCursor::crossCursor() { return QCursor(); }
+QCursor KCursor::handCursor() { return QCursor(); }
 QCursor KCursor::sizeAllCursor() { return QCursor(); }
 QCursor KCursor::sizeHorCursor() { return QCursor(); }
 QCursor KCursor::sizeVerCursor() { return QCursor(); }
@@ -37,9 +40,3 @@ QCursor KCursor::sizeFDiagCursor() { return QCursor(); }
 QCursor KCursor::ibeamCursor() { return QCursor(); }
 QCursor KCursor::waitCursor() { return QCursor(); }
 QCursor KCursor::whatsThisCursor() { return QCursor(); }
-
-
-KCursor::KCursor()
-{
-}
-

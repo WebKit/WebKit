@@ -26,10 +26,7 @@
 #ifndef PART_H_
 #define PART_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
+#include <kinstance.h>
 #include <kurl.h>
 #include <qobject.h>
 #include <qvariant.h>
@@ -37,146 +34,37 @@
 #include <qstringlist.h>
 #include <qvaluelist.h>
 
-namespace KIO {
-class Job;
-} // namespace KIO
- 
 class QWidget;
-class QCursor;
-class QDataStream;
-class QPainter;
+
+namespace KIO {
+    class Job;
+}
 
 namespace KParts {
 
-// class Part ==================================================================
-
 class Part : public QObject {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    Part();
-    virtual ~Part();
-
-    // member functions --------------------------------------------------------
-
-    QWidget *widget();
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
+    Part() : m_widget(0) { }
+    QWidget *widget() const { return m_widget; }
+    void setWidget(QWidget *widget) { m_widget = widget; }
 private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    Part(const Part &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    Part &operator=(const Part &);
-#endif
-
-}; // class Part ===============================================================
-
-
-// class ReadOnlyPart ==========================================================
+    QWidget *m_widget;
+};
 
 class ReadOnlyPart : public Part {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+    ReadOnlyPart(QObject * = 0, const char * = 0) { }
     
-    // constructors, copy constructors, and destructors ------------------------
-
-    ReadOnlyPart();
-    virtual ~ReadOnlyPart();
-
-    // member functions --------------------------------------------------------
-
-    virtual const KURL &url() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    ReadOnlyPart(const ReadOnlyPart &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    ReadOnlyPart &operator=(const ReadOnlyPart &);
-#endif
-
-}; // class ReadOnlyPart =======================================================
-
-
-// class GUIActivateEvent ======================================================
-
-class GUIActivateEvent {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
+    KURL url() const { return m_url; }
+    KURL m_url;
     
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    GUIActivateEvent() {}
-#endif
+    void setXMLFile(const char *) { }
+    QObject *parent() const { return 0; }
+    void setInstance(KInstance *, bool) { }
+    void setStatusBarText(const QString &) { }
+};
 
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~GUIActivateEvent() {}
-#endif
-        
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    GUIActivateEvent(const GUIActivateEvent &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    GUIActivateEvent &operator=(const GUIActivateEvent &);
-#endif
-
-}; // class GUIActivateEvent ===================================================
-
+class GUIActivateEvent { };
 
 } // namespace KParts
 

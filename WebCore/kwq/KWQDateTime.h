@@ -26,38 +26,12 @@
 #ifndef QDATETIME_H_
 #define QDATETIME_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QDATETIME ====================================================
-
-#ifdef USING_BORROWED_QDATETIME
-#include <_qdatetime.h>
-#else
-
 #include <iostream>
-
-// class QTime =================================================================
 
 class QTime {
 public:
-
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
     QTime();
     QTime(int, int);
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QTime() {}
-#endif
-
-    // member functions --------------------------------------------------------
 
     bool isNull() const;
     int hour() const;
@@ -69,52 +43,22 @@ public:
     int restart();
     int secsTo( const QTime & ) const;
     
-    // operators ---------------------------------------------------------------
-
-    //QTime &operator=(const QTime &);
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
-    
     uint getCurrentTime();
     void setCurrentTime();
+    
     uint timeMS;  // time is stored in milliseconds 
     
     friend class QDateTime;
     friend std::ostream &operator<<( std::ostream &, const QTime & );
     
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QTime(const QTime &);
-#endif
-    
-}; // class QTime ==============================================================
-
-
-// class QDate =================================================================
+};
 
 class QDate {
 public:
 
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
     QDate();
     QDate(int, int, int);
-
-    
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QDate() {}
-#endif
-
-    // member functions --------------------------------------------------------
         
     int	   year() const;
     int	   month() const;
@@ -122,13 +66,6 @@ public:
     
     int daysTo( const QDate & ) const;
     
-    // operators ---------------------------------------------------------------
-
-   //QDate &operator=(const QDate &);
-    
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 protected:
     uint greg2jul( int, int, int ) const;
     void jul2greg( uint jd, int &y, int &m, int &d ) const;
@@ -141,62 +78,26 @@ private:
     
     friend class QDateTime;
     friend std::ostream &operator<<( std::ostream &, const QDate & );
-    
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    QDate(const QDate &);
-#endif
 
-}; // class QDate ==============================================================
-
-
-// class QDateTime =============================================================
+};
 
 class QDateTime {
 public:
 
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
     static QDateTime currentDateTime();
 
-    // constructors, copy constructors, and destructors ------------------------
-
     QDateTime();
-    QDateTime(const QDateTime &);
     QDateTime(const QDate &, const QTime &);
     
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~QDateTime() {}
-#endif
-
-    // member functions --------------------------------------------------------
-
     int secsTo(const QDateTime &) const;
     QTime time() const;
     void   setTime_t( uint );
     
-    // operators ---------------------------------------------------------------
-
-    // this is not declared in the code, although assignment of this type
-    // is used in the code... i guess a pointer copy is what they want
-    //
-    //QDateTime &operator=(const QDateTime &);
-    //
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
 private:
     QTime timeDT;
     QDate dateDT;
 
-
     friend std::ostream &operator<<( std::ostream &, const QDateTime & );
-}; // class QDateTime ==========================================================
-
-#endif // USING_BORROWED_QDATETIME
+};
 
 #endif

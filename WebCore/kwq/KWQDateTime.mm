@@ -27,8 +27,6 @@
 #include <qdatetime.h>
 #include <time.h>
 
-#ifndef USING_BORROWED_QDATETIME
-
 // QTime class ===============================================================
 
 // constructors, copy constructors, and destructors ----------------------------
@@ -42,12 +40,6 @@ QTime::QTime(int hours, int minutes)
 {
     timeMS = (hours*3600 + minutes*60)*1000; 
 }
-
-QTime::QTime(const QTime &newTime)
-{
-    timeMS = newTime.timeMS;
-}
-
 
 // member functions --------------------------------------------------------
 
@@ -279,13 +271,6 @@ QDateTime::QDateTime(const QDate &newDate, const QTime &newTime)
     timeDT = newTime;
 }
 
-QDateTime::QDateTime(const QDateTime &newDateTime)
-{
-    dateDT = newDateTime.dateDT;
-    timeDT = newDateTime.timeDT;
-}
-
-
 // member functions --------------------------------------------------------
 
 int QDateTime::secsTo( const QDateTime &newerDateTime ) const
@@ -298,9 +283,9 @@ QTime QDateTime::time() const
     return timeDT;
 }
 
-//FIX ME: this looks too much like qt's setTime_t
+// FIXME: Use Apple stuff? This is too much like qt's setTime_t.
 
-void QDateTime::setTime_t( uint secsSince1Jan1970UTC )
+void QDateTime::setTime_t(uint secsSince1Jan1970UTC)
 {
     time_t myTime = (time_t) secsSince1Jan1970UTC;
     tm *localTime;
@@ -364,5 +349,3 @@ std::ostream &operator<<(std::ostream &o, const QDateTime &dateTime)
         dateTime.timeDT.msec() <<
         ']';
 }
-
-#endif // USING_BORROWED_QDATETIME

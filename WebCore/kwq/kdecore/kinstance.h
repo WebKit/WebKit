@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,49 +26,6 @@
 #ifndef KINSTANCE_H_
 #define KINSTANCE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <qcstring.h>
-
-class KIconLoader;
-
-// class KInstance =============================================================
-
-class KInstance {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
-    KInstance(const QCString &);
-    virtual ~KInstance();
-
-    // member functions --------------------------------------------------------
-
-    KIconLoader *iconLoader() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying
-    // note that this is "standard" (no pendantic stuff needed)
-    KInstance(const KInstance &);
-    
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KInstance &operator=(const KInstance &);
-#endif
-
-}; // class KInstance ==========================================================
+class KInstance { };
 
 #endif

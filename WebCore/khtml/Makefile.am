@@ -17,6 +17,7 @@ libkhtml_o_AR = $(OBJCXXLD) $(AM_OBJCXXFLAGS) $(OBJCXXFLAGS) $(AM_LDFLAGS) $(LDF
 
 libkhtml_o_SOURCES = \
 	khtml_events.cpp \
+	khtml_part.cpp \
 	khtmlview.cpp \
 	$(NULL)
 

@@ -74,6 +74,8 @@ public:
     QString ref() const;
     QString query() const;
     QString path() const;
+    QString htmlRef() const;
+    QString encodedHtmlRef() const;
 
     void setProtocol(const QString &);
     void setHost(const QString &);

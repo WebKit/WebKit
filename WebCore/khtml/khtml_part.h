@@ -794,12 +794,12 @@ protected:
    * Internal reimplementation of KParts::Part::guiActivateEvent .
    */
   virtual void guiActivateEvent( KParts::GUIActivateEvent *event );
+#endif
 
   /**
    * Internal empty reimplementation of @ref KParts::ReadOnlyPart::openFile .
    */
   virtual bool openFile();
-#endif
 
   virtual void urlSelected( const QString &url, int button, int state,
                             const QString &_target, KParts::URLArgs args = KParts::URLArgs());
@@ -838,8 +838,6 @@ public slots:
   void stopAnimations();
 
   QCString dcopObjectId() const;
-
-#ifndef APPLE_CHANGES
 
 private slots:
 
@@ -880,6 +878,7 @@ private slots:
    * @internal
    */
   void slotDebugRenderTree();
+#ifndef APPLE_CHANGES
   /**
    * @internal
    */
@@ -917,6 +916,7 @@ private slots:
   virtual void slotFind();
   virtual void slotFindDone();
   virtual void slotFindDialogDestroyed();
+#endif
 
   void slotIncZoom();
   void slotDecZoom();
@@ -998,8 +998,6 @@ private slots:
    * @internal
    */
   void slotClearSelection();
-
-#endif
 
 private:
 
@@ -1118,9 +1116,6 @@ public:
     void setBaseURL(const KURL &);
 
     QString documentSource() const;
-
-    QString sheetUsed() const;
-    void setSheetUsed(const QString &);
 
     void setTitle(const DOM::DOMString &);
     

@@ -192,7 +192,6 @@ __ZN8QCStringC1Ev
 __ZN8QCStringpLEPKc
 __ZN8QCStringpLEc
 __ZN9QDateTimeC1ERK5QDateRK5QTime
-__ZN9QDateTimeC1ERKS_
 __ZN9QDateTimeC1Ev
 __ZNK10KWQMapImpl11endInternalEv
 __ZNK10KWQMapImpl12findInternalEP14KWQMapNodeImpl

@@ -26,42 +26,15 @@
 #ifndef QTIMER_H_
 #define QTIMER_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qobject.h"
-
-// class QTimer ================================================================
+#include <qobject.h>
 
 class QTimer : public QObject {
 public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
-
     static void singleShot(int, QObject *, const char *);
-
-    // constructors, copy constructors, and destructors ------------------------
     
-    QTimer();
-    ~QTimer();
-     
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QTimer(const QTimer &);
-    QTimer &operator=(const QTimer &);
-
-}; // class QTimer =============================================================
+    bool isActive() const;
+    void start(int msec, bool singleShot = false);
+    void stop();
+};
 
 #endif

@@ -743,3 +743,15 @@ NSURL *KURL::getNSURL() const
     parse();
     return [[(NSURL *)d->urlRef retain] autorelease];
 }
+
+QString KURL::encodedHtmlRef() const
+{
+    _logNotYetImplemented();
+    return 0;
+}
+
+QString KURL::htmlRef() const
+{
+    _logNotYetImplemented();
+    return 0;
+}

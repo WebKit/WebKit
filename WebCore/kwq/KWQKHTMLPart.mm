@@ -1,30 +1,6 @@
 // -*- c-basic-offset: 2 -*-
-/* This file is part of the KDE project
- *
- * Copyright (C) 1998, 1999 Torben Weis <weis@kde.org>
- *                     1999 Lars Knoll <knoll@kde.org>
- *                     1999 Antti Koivisto <koivisto@kde.org>
- *                     2000 Simon Hausmann <hausmann@kde.org>
- *                     2000 Stefan Schimanski <1Stein@gmx.de>
- *                     2001 George Staikos <staikos@kde.org>
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public License
- * along with this library; see the file COPYING.LIB.  If not, write to
- * the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- */
 /*
- * Copyright (C) 2001-2002 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -79,7 +55,9 @@
 #include <kurl.h>
 #include <khtmlview.h>
 
+#include <qdatetime.h>
 #include <khtml_part.h>
+#include <khtmlpart_p.h>
 #include <khtml_events.h>
 
 #import <WCPluginWidget.h>
@@ -92,13 +70,13 @@
 
 #include <external.h>
 
+#undef _KWQ_TIMING
+
 WCIFWebDataSourceMakeFunc WCIFWebDataSourceMake;
 void WCSetIFWebDataSourceMakeFunc(WCIFWebDataSourceMakeFunc func)
 {
     WCIFWebDataSourceMake = func;
 }
-
-static bool cache_init = false;
 
 static void recursive(const DOM::Node &pNode, const DOM::Node &node)
 {
@@ -112,116 +90,6 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
         cur_child = cur_child.previousSibling();
     }
 }
-
-
-// Class KHTMLPartPrivate ================================================================================
-
-class KHTMLPartPrivate
-{
-public:
-    KHTMLView *m_view;
-    
-    DOM::DocumentImpl *m_doc;
-    khtml::Decoder *m_decoder;
-
-    QString m_encoding;
-    QFont::CharSet m_charset;
-    KHTMLSettings *m_settings;
-    
-    KURL m_workingURL;
-    KURL m_url;
-    KURL m_baseURL;
-    
-    KHTMLPart *m_part;
-    id m_handle;
-
-    bool m_bFirstData:1;
-    bool m_haveEncoding:1;
-    bool m_haveCharset:1;
-    bool m_onlyLocalReferences:1;
-    bool m_startBeforeEnd:1;
-    
-    bool m_decodingStarted:1;
-
-    KJSProxy *m_jscript;
-    int m_runningScripts;
-
-    QString m_strSelectedURL;
-    QString m_strSelectedURLTarget;
-    QString m_referrer;
-    QString m_documentSource;
-
-	QString m_redirectURL;
-	int m_delayRedirect;
-	int m_redirectionTimer;
-	
-	bool m_bMousePressed;
-    DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
-    DOM::Node m_selectionStart;
-    long m_startOffset;
-    DOM::Node m_selectionEnd;
-    long m_endOffset;
-    QString m_overURL;
-   
-    QPoint m_dragStartPos;
-#ifdef KHTML_NO_SELECTION
-    QPoint m_dragLastPos;
-#endif
-
-#ifdef _KWQ_TIMING        
-    double totalWriteTime;
-#endif
-
-    QString m_sheetUsed;
-    
-    QValueList<QString> plugins;
-    
-    IFWebDataSource *m_dataSource;
-
-    KHTMLPartPrivate(KHTMLPart *part)
-    {
-        if (!cache_init) {
-            khtml::Cache::init();
-            cache_init = true;
-        }
-        m_part = part;
-        m_view = 0L;
-        
-        // Why is this allocated here?
-        m_doc = NULL;
-        
-        m_decoder = 0L;
-        m_bFirstData = true;
-        //m_settings = new KHTMLSettings(*KHTMLFactory::defaultHTMLSettings());
-        m_settings = new KHTMLSettings();
-        m_haveEncoding = false;
-        m_handle = nil;
-        
-        m_jscript = 0L;
-        m_runningScripts = 0;
-        m_onlyLocalReferences = 0;
-        
-        m_documentSource = "";
-        m_decodingStarted = 0;
-        
-        m_dataSource = 0;
-        
-        m_redirectURL = QString::null;
-        m_delayRedirect = 0;
-    }
-
-    ~KHTMLPartPrivate()
-    {
-        delete m_settings;
-        if (m_decoder)
-            delete m_decoder;
-	if (m_jscript != 0) {
-	    delete m_jscript;
-	    KJS::Collector::collect();
-	}
-    }
-
-};
 
 #if 0
 static QString splitUrlTarget(const QString &url, QString *target=0)
@@ -253,183 +121,21 @@ static QString splitUrlTarget(const QString &url, QString *target=0)
 }
 #endif
 
-KHTMLPart::KHTMLPart( QWidget *, const char *, QObject *, const char *, GUIProfile )
+KHTMLPart::KHTMLPart(QWidget *, const char *, QObject *, const char *, GUIProfile prof)
 {
-    d = new KHTMLPartPrivate(this);
     _ref = 1;
-}
-
-KHTMLPart::~KHTMLPart()
-{
-	killTimers();
-	
-    if ( d->m_doc != NULL ) {
-        d->m_doc->detach();
-
-	d->m_doc->deref();
-    }
-
-    d->m_doc = 0;
-
-    delete d;
+    init(0, prof);
 }
 
 bool KHTMLPart::openURL( const KURL &url )
 {
     d->m_workingURL = url;
-    d->m_url = url;
+    m_url = url;
 
     d->m_documentSource = "";
     d->m_decodingStarted = 0;
     
     return true;
-}
-
-bool KHTMLPart::closeURL()
-{
-    // Reset the the current working URL to the default URL.
-    d->m_workingURL = KURL();
-
-    //d->m_doc = 0;
-    
-    return true;
-}
-
-DOM::HTMLDocument KHTMLPart::htmlDocument() const
-{
-  if (d->m_doc && d->m_doc->isHTMLDocument())
-    return static_cast<HTMLDocumentImpl*>(d->m_doc);
-  else
-    return static_cast<HTMLDocumentImpl*>(0);
-}
-
-DOM::Document KHTMLPart::document() const
-{
-    return d->m_doc;
-}
-
-KParts::BrowserExtension *KHTMLPart::browserExtension() const
-{
-    _logNeverImplemented();
-    return 0L;
-}
-
-KHTMLView *KHTMLPart::view() const
-{
-  return d->m_view;
-}
-
-bool KHTMLPart::jScriptEnabled() const
-{
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJScriptEnabled"] boolValue];
-}
-
-bool KHTMLPart::metaRefreshEnabled() const
-{
-    _logNotYetImplemented();
-    return TRUE;
-}
-
-extern "C" { KJSProxy *kjs_html_init(KHTMLPart *khtmlpart); }
-
-KJSProxy *KHTMLPart::jScript()
-{
-  if (!jScriptEnabled()) return 0;
-
-  if ( !d->m_jscript )
-  {
-    d->m_jscript = kjs_html_init(this);
-  }
-
-  return d->m_jscript;
-}
-
-QVariant KHTMLPart::executeScript( const QString &script )
-{
-// DUBIOUS, rather than executing the script this document should be
-// passed to the interpreter.
-    return executeScript( DOM::Node(), script );
-}
-
-QVariant KHTMLPart::executeScript( const DOM::Node &n, const QString &script )
-{
-    return executeScript(QString::null, 0, n, script);
-}
-
-QVariant KHTMLPart::executeScript(QString filename, int baseLine, const DOM::Node &n, const QString &script)
-{
-// DUBIOUS, rather than executing the script this document should be
-// passed to the interpreter.
-    KJSProxy *proxy = jScript();
-    
-    if (!proxy || proxy->paused())
-      return QVariant();
-    d->m_runningScripts++;
-    QVariant ret = proxy->evaluate( filename, baseLine, script, n );
-    d->m_runningScripts--;
-
-    // FIXME: implement
-#ifndef APPLE_CHANGES
-    if (!d->m_runningScripts && d->m_doc && !d->m_doc->parsing() && d->m_submitForm )
-	submitFormAgain();
-#endif /* not APPLE_CHANGES */
-    
-    DocumentImpl::updateDocumentsRendering();
-    
-    //kdDebug(6050) << "KHTMLPart::executeScript - done" << endl;
-    return ret;
-}
-
-QVariant KHTMLPart::executeScheduledScript()
-{
-    _logNeverImplemented();
-    return QVariant();
-}
-
-bool KHTMLPart::javaEnabled() const
-{
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
-}
-
-KJavaAppletContext *KHTMLPart::javaContext()
-{
-    _logNotYetImplemented();
-    return 0L;
-}
-
-KJavaAppletContext *KHTMLPart::createJavaContext()
-{
-    _logNotYetImplemented();
-    return 0L;
-}
-
-bool KHTMLPart::pluginsEnabled() const
-{
-    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
-}
-
-void KHTMLPart::setAutoloadImages( bool enable )
-{
-    _logNeverImplemented();
-}
-
-bool KHTMLPart::autoloadImages() const
-{
-    _logNeverImplemented();
-    return FALSE;
-}
-
-DOM::HTMLDocumentImpl *KHTMLPart::docImpl() const
-{
-    _logPartiallyImplemented();
-    return dynamic_cast<DOM::HTMLDocumentImpl *>(d->m_doc);
-}
-
-DOM::DocumentImpl *KHTMLPart::xmlDocImpl() const
-{
-    if ( d )
-        return d->m_doc;
-    return 0;
 }
 
 void KHTMLPart::slotData(NSString *encoding, const char *bytes, int length)
@@ -453,7 +159,7 @@ void KHTMLPart::slotData(NSString *encoding, const char *bytes, int length)
     // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
     // purposes only.
     if (d->m_doc == 0){
-        fprintf (stderr, "ERROR:  KHTMLPart::slotData m_doc == 0 IGNORING DATA, url = %s\n", d->m_url.url().latin1());
+        fprintf (stderr, "ERROR:  KHTMLPart::slotData m_doc == 0 IGNORING DATA, url = %s\n", m_url.url().latin1());
         return;
     }
 
@@ -471,7 +177,7 @@ void KHTMLPart::begin( const KURL &url, int xOffset, int yOffset )
 #endif
 
   // d->m_referrer = url.url();
-  d->m_url = url;
+  m_url = url;
   KURL baseurl;
 
   // ### not sure if XHTML documents served as text/xml should use DocumentImpl or HTMLDocumentImpl
@@ -612,7 +318,7 @@ void KHTMLPart::write( const char *str, int len )
     // end lines added in lieu of big fixme
     
     if (jScript())
-	jScript()->appendSourceFile(d->m_url.url(),decoded);
+	jScript()->appendSourceFile(m_url.url(),decoded);
     Tokenizer* t = d->m_doc->tokenizer();
     if(t)
         t->write( decoded, true );
@@ -620,31 +326,8 @@ void KHTMLPart::write( const char *str, int len )
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     d->totalWriteTime += thisTime;
-    KWQDEBUGLEVEL (0x200, "%s bytes = %d, seconds = %f, total = %f\n", d->m_url.url().latin1(), len, thisTime, d->totalWriteTime);
+    KWQDEBUGLEVEL (0x200, "%s bytes = %d, seconds = %f, total = %f\n", m_url.url().latin1(), len, thisTime, d->totalWriteTime);
 #endif
-}
-
-void KHTMLPart::write( const QString &str )
-{
-    // FIXME [rjw]:  Remove this log eventually.  Should never happen.  For debugging
-    // purposes only.
-    if (d->m_doc == 0){
-        fprintf (stderr, "WARNING:  KHTMLPart::write  m_doc == 0\n");
-    }
-
-  if ( str.isNull() )
-    return;
-
-  if(d->m_bFirstData) {
-      // determine the parse mode
-      d->m_doc->setParseMode( DocumentImpl::Strict );
-      d->m_bFirstData = false;
-  }
-  if (jScript())
-    jScript()->appendSourceFile(d->m_url.url(),str);
-  Tokenizer* t = d->m_doc->tokenizer();
-  if(t)
-    t->write( str, true );
 }
 
 void KHTMLPart::end()
@@ -656,14 +339,6 @@ void KHTMLPart::end()
         return;
     }
 
-#ifndef APPLE_CHANGES
-    KWQDEBUG ("0x%08x end(): for url %s\n", (unsigned int)this, d->m_url.url().latin1());
-    // make sure nothing's left in there...
-    if(d->m_decoder)
-        write(d->m_decoder->flush());
-    d->m_doc->finishParsing();
-#endif /* not APPLE_CHANGES */
-
     d->m_doc->setParsing(false);
 
     d->m_doc->close();
@@ -674,48 +349,9 @@ void KHTMLPart::end()
 
 bool KHTMLPart::gotoBaseAnchor()
 {
-    if ( !d->m_url.ref().isEmpty() )
-        return gotoAnchor( d->m_url.ref() );
+    if ( !m_url.ref().isEmpty() )
+        return gotoAnchor( m_url.ref() );
     return false;
-}
-
-bool KHTMLPart::gotoAnchor( const QString &name )
-{
-    if (!d->m_doc)
-        return false;
-    
-    HTMLCollectionImpl *anchors =
-        new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
-    anchors->ref();
-    NodeImpl *n = anchors->namedItem(name);
-    anchors->deref();
-    
-    if(!n) {
-        //kdDebug(6050) << "KHTMLPart::gotoAnchor node '" << name << "' not found" << endl;
-        return false;
-    }
-    
-    int x = 0, y = 0;
-    HTMLElementImpl *a = static_cast<HTMLElementImpl *>(n);
-    a->getUpperLeftCorner(x, y);
-    d->m_view->setContentsPos(x, y);
-    
-    return true;
-}
-
-const KHTMLSettings *KHTMLPart::settings() const
-{
-  return d->m_settings;
-}
-
-KURL KHTMLPart::completeURL(const QString &url)
-{
-  if ( !d->m_doc ) return url;
-
-  if (d->m_decoder)
-    return KURL(d->m_doc->completeURL(url), d->m_decoder->codec()->mibEnum());
-
-  return KURL( d->m_doc->completeURL( url ) );
 }
 
 void KHTMLPart::scheduleRedirection( int delay, const QString &url, bool )
@@ -768,120 +404,6 @@ void KHTMLPart::redirectJS()
 
 
 
-bool KHTMLPart::setEncoding( const QString &name, bool override )
-{
-    d->m_encoding = name;
-    d->m_haveEncoding = override;
-
-    _logPartiallyImplemented();
-    return false;
-#ifndef APPLE_CHANGES
-/* FIXME: do we need any of these bits? */
-//    setCharset( name, override );
-     d->m_charset = KGlobal::charsets()->charsetForEncoding(name);
-     d->m_settings->setCharset( d->m_charset );
-     // the script should not be unicode. We need to know the document is eg. arabic to be
-     // able to choose a unicode font that contains arabic glyphs.
-     d->m_settings->setScript( KGlobal::charsets()->charsetForEncoding( name, true ) );
-
-    if( !m_url.isEmpty() ) {
-        // reload document
-        closeURL();
-        KURL url = m_url;
-        m_url = 0;
-        openURL(url);
-    }
-
-    return true;
-#endif /* not APPLE_CHANGES */
-}
-
-QString KHTMLPart::encoding() const
-{
-    _logNeverImplemented();
-    return d->m_settings->encoding();
-}
-
-void KHTMLPart::setUserStyleSheet(const KURL &url)
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::setUserStyleSheet(const QString &styleSheet)
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::setStandardFont( const QString &name )
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::setFixedFont( const QString &name )
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::setURLCursor( const QCursor &c )
-{
-    _logNeverImplemented();
-}
-
-// FIXME: this should be removed
-static const QCursor *staticURLCursor = NULL;
-
-QCursor KHTMLPart::urlCursor() const
-{
-    _logNeverImplemented();
-    if (staticURLCursor == NULL) {
-        staticURLCursor = new QCursor();
-    }
-    return *staticURLCursor;
-}
-
-bool KHTMLPart::onlyLocalReferences() const
-{
-  return d->m_onlyLocalReferences;
-}
-
-void KHTMLPart::setOnlyLocalReferences(bool enable)
-{
-  d->m_onlyLocalReferences = enable;
-}
-
-void KHTMLPart::findTextBegin()
-{
-// DUBIOUS, perhaps searching should be handled externally
-    _logNeverImplemented();
-}
-
-QString KHTMLPart::selectedText() const
-{
-// DUBIOUS, perhaps selection should be managed externally
-    _logNeverImplemented();
-    return QString();
-}
-
-bool KHTMLPart::hasSelection() const
-{
-// DUBIOUS, perhaps selection should be managed externally
-    _logNeverImplemented();
-    return FALSE;
-}
-
-DOM::Range KHTMLPart::selection() const
-{
-// DUBIOUS, perhaps selection should be managed externally
-    _logNeverImplemented();
-    return DOM::Range();
-}
-
-void KHTMLPart::setSelection( const DOM::Range & )
-{
-// DUBIOUS, perhaps selection should be managed externally
-    _logNeverImplemented();
-}
-
 void KHTMLPart::urlSelected( const QString &url, int button, int state, const QString &_target, KParts::URLArgs )
 {
 	IFWebDataSource *oldDataSource, *newDataSource;
@@ -889,10 +411,10 @@ void KHTMLPart::urlSelected( const QString &url, int button, int state, const QS
 	IFWebFrame *frame;
 	KURL refLess(clickedURL);
 	
-	d->m_url.setRef ("");
+	m_url.setRef ("");
 	refLess.setRef ("");
-	if (refLess.url() == d->m_url.url()){
-		d->m_url = clickedURL;
+	if (refLess.url() == m_url.url()){
+		m_url = clickedURL;
 		gotoAnchor (clickedURL.ref());
 		return;
 	}
@@ -984,25 +506,14 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
     return true;
 }
 
-static int frameNameId = 1;
-
-QString KHTMLPart::requestFrameName()
-{
-    return QString::fromLatin1("<!--frame %1-->").arg(frameNameId++);
-}
-
 bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, const QString &serviceType,
 			       const QStringList &args )
 {
-  if(url.isEmpty()){
-    return FALSE;
+  if (url.isEmpty()) {
+    return false;
   }
-  // requestObject can be called multiple times for a single plug-in.
-  // The plugins array is an attempt to avoid multiple creations of the same plug-in.
-  // FIXME: Can't have multiple plug-ins with the same URL on a page
-  if(!d->plugins.contains(url)) {
+  if (!frame->widget()) {
     frame->setWidget(IFPluginWidgetCreate(completeURL(url).url(), serviceType, args, d->m_baseURL.url()));
-    d->plugins.append(url);
   }
   return true;
 }
@@ -1012,7 +523,6 @@ bool KHTMLPart::requestObject( khtml::ChildFrame *frame, const KURL &url, const 
   _logNotYetImplemented();
   return false;
 }
-
 
 void KHTMLPart::submitForm( const char *action, const QString &url, const QByteArray &formData, const QString &_target, const QString& contentType, const QString& boundary )
 {
@@ -1128,48 +638,7 @@ bool KHTMLPart::frameExists( const QString &frameName )
     return [getDataSource() frameExists: (NSString *)frameName.getCFMutableString()];
 }
 
-KHTMLPart *KHTMLPart::parentPart()
-{
-    _logNeverImplemented();
-    return 0L;
-}
-
-void KHTMLPart::setJSStatusBarText( const QString &text )
-{
-    _logNeverImplemented();
-}
-
-void KHTMLPart::setJSDefaultStatusBarText( const QString &text )
-{
-    _logNeverImplemented();
-}
-
-QString KHTMLPart::referrer() const
-{
-     _logNeverImplemented();
-     return QString();
-}
-
-QString KHTMLPart::lastModified() const
-{
-     _logNeverImplemented();
-     return QString();
-}
-
-QString KHTMLPart::jsStatusBarText() const
-{
-    _logNeverImplemented();
-    return QString();
-}
-
-QString KHTMLPart::jsDefaultStatusBarText() const
-{
-    _logNeverImplemented();
-    return QString();
-}
-
 QPtrList<KParts::ReadOnlyPart> KHTMLPart::frames() const
-
 {
     _logNeverImplemented();
     return QPtrList<KParts::ReadOnlyPart>(); 
@@ -1556,46 +1025,6 @@ void KHTMLPart::khtmlDrawContentsEvent( khtml::DrawContentsEvent * )
 {
 }
 
-void KHTMLPart::selectAll()
-{
-// DUBIOUS, perhaps selection should be managed externally
-    _logNeverImplemented();
-}
-
-DOM::EventListener *KHTMLPart::createHTMLEventListener( QString code )
-{
-  KJSProxy *proxy = jScript();
-
-  if (!proxy)
-    return 0;
-
-  //fprintf (stdout, "Creating event listener w/ code %s\n", code.latin1());
-  
-  return proxy->createHTMLEventHandler( d->m_url.url(), code );
-}
-
-KHTMLPart *KHTMLPart::opener()
-{
-    _logNeverImplemented();
-    return 0L;
-}
-
-void KHTMLPart::setOpener(KHTMLPart *_opener)
-{
-    _logNeverImplemented();
-}
-
-bool KHTMLPart::openedByJS()
-{
-    _logNeverImplemented();
-    return FALSE;
-}
-
-void KHTMLPart::setOpenedByJS(bool _openedByJS)
-{
-    _logNeverImplemented();
-}
-
 QString KHTMLPart::documentSource() const
 {
     return d->m_documentSource;
@@ -1613,14 +1042,6 @@ void KHTMLPart::setBaseURL(const KURL &url)
     }
 }
 
-KURL KHTMLPart::baseURL() const
-{
-    if (d->m_baseURL.isEmpty()) {
-        return d->m_workingURL;
-    }
-    return d->m_baseURL;
-}
-
 void KHTMLPart::setView(KHTMLView *view)
 {
     d->m_view = view;
@@ -1631,29 +1052,9 @@ void KHTMLPart::nodeActivated(const DOM::Node &aNode)
     KWQDEBUG ("name %s = %s\n", (const char *)aNode.nodeName().string(), (const char *)aNode.nodeValue().string());
 }
 
-void KHTMLPart::stopAutoScroll()
-{
-    _logNeverImplemented();
-}
-
 void KHTMLPart::setTitle(const DOMString &title)
 {
     [getDataSource() _setTitle:(NSString *)title.string().getCFMutableString()];
-}
-
-QString KHTMLPart::sheetUsed() const
-{
-    return d->m_sheetUsed;
-}
-
-void KHTMLPart::setSheetUsed(const QString &qs)
-{
-    d->m_sheetUsed = qs;
-}
-
-int KHTMLPart::zoomFactor(void) const
-{
-    return 100;
 }
 
 void KHTMLPart::setDataSource(IFWebDataSource *dataSource)
@@ -1663,5 +1064,5 @@ void KHTMLPart::setDataSource(IFWebDataSource *dataSource)
 
 IFWebDataSource *KHTMLPart::getDataSource()
 {
-    return d->m_dataSource;
+    return (IFWebDataSource *)d->m_dataSource;
 }

@@ -1731,19 +1731,10 @@ void DocumentImpl::recalcStyleSelector()
                 if (!l->sheet() || l->isLoading())
                     title = QString::null;
             }
-#ifdef APPLE_CHANGES
-            QString sheetUsed = view()->part()->sheetUsed();
-#else
             QString sheetUsed = view()->part()->d->m_sheetUsed;
-#endif
             if ( !title.isEmpty() ) {
                 if ( sheetUsed.isEmpty() )
-#ifdef APPLE_CHANGES
-                    sheetUsed = title;
-                    view()->part()->setSheetUsed(sheetUsed);
-#else
                     sheetUsed = view()->part()->d->m_sheetUsed = title;
-#endif
                 if ( !m_availableSheets.contains( title ) )
                     m_availableSheets.append( title );
             }

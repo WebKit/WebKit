@@ -26,10 +26,6 @@
 #ifndef BROWSEREXTENSION_H_
 #define BROWSEREXTENSION_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
 #include <qpoint.h>
 #include <qevent.h>
 #include <KWQDataStream.h>
@@ -39,48 +35,9 @@
 #include "part.h"
 #include "browserinterface.h"
 
-// class KXMLGUIClient =========================================================
-
-class KXMLGUIClient {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    KXMLGUIClient();
-    ~KXMLGUIClient();
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KXMLGUIClient(const KXMLGUIClient &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KXMLGUIClient &operator=(const KXMLGUIClient &);
-#endif
-
-}; // class KXMLGUIClient ======================================================
-
+class KXMLGUIClient { };
 
 namespace KParts {
-
-// struct URLArgs ==============================================================
 
 struct URLArgs {
 
@@ -89,15 +46,9 @@ struct URLArgs {
     int xOffset;
     int yOffset;
 
-    URLArgs();
-    URLArgs( const URLArgs &);
-    URLArgs &operator=(const URLArgs &);    
-    virtual ~URLArgs();
+    URLArgs() : xOffset(0), yOffset(0) { }
 
-}; // struct URLArgs ===========================================================
-
-
-// struct WindowArgs ===========================================================
+};
 
 struct WindowArgs {
 
@@ -111,109 +62,33 @@ struct WindowArgs {
     bool resizable;
     bool fullscreen;
 
-    WindowArgs();
-    WindowArgs(const WindowArgs &);
-    WindowArgs &operator=(const WindowArgs &);
+    WindowArgs() : x(0), y(0), width(0), height(0), menuBarVisible(false), statusBarVisible(false), toolBarsVisible(false), resizable(false), fullscreen(false) { }
 
-}; // struct WindowArgs ========================================================
-
-
-// class BrowserExtension ======================================================
+};
 
 class BrowserExtension : public QObject {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-// add no-arg constructor
-#ifdef _KWQ_PEDANTIC_
-    BrowserExtension() {}
-#endif
-
-    virtual ~BrowserExtension();
-    
-    // member functions --------------------------------------------------------
-
-     BrowserInterface *browserInterface() const;
+     BrowserInterface *browserInterface() const { return 0; }
      
-     void openURLRequest(const KURL &, 
-        const KParts::URLArgs &args=KParts::URLArgs());
+     void openURLRequest(const KURL &) { }
+     void openURLRequest(const KURL &, const KParts::URLArgs &args) { }
      
-     void createNewWindow(const KURL &);
-     
+     void createNewWindow(const KURL &) { }
+     void createNewWindow(const KURL &, const KParts::URLArgs &) { }
      void createNewWindow(const KURL &, const KParts::URLArgs &, 
-        const KParts::WindowArgs &, KParts::ReadOnlyPart *&);
+        const KParts::WindowArgs &, KParts::ReadOnlyPart *&) { }
 
-     void setIconURL(const KURL &);
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
+     void setIconURL(const KURL &) { }
+     
+     void setURLArgs(const KParts::URLArgs &args) { m_args = args; }
+     KParts::URLArgs urlArgs() const { return m_args; }
 
 private:
+    KParts::URLArgs m_args;
+};
 
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    BrowserExtension(const BrowserExtension &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    BrowserExtension &operator=(const BrowserExtension &);
-#endif
-
-}; // class BrowserExtension ===================================================
-
-
-// class BrowserHostExtension ==================================================
-
-class BrowserHostExtension : public QObject {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-    
-    BrowserHostExtension();
-    virtual ~BrowserHostExtension();
-    
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    BrowserHostExtension(const BrowserHostExtension &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    BrowserHostExtension &operator=(const BrowserHostExtension &);
-#endif
-
-}; // class BrowserHostExtension ===============================================
+class BrowserHostExtension : public QObject { };
 
 } // namespace KParts
 
 #endif
-
-

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,31 +26,16 @@
 #ifndef KCURSOR_H_
 #define KCURSOR_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <qwidget.h>
-
-static const QCursor &arrowCursor = QCursor();
-static const QCursor &waitCursor = QCursor();
-
-// class KCursor ===============================================================
+#include <qcursor.h>
 
 class KCursor {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-
-    // static member functions -------------------------------------------------
 
     static void setAutoHideCursor(QWidget *w, bool enable);
 
     static QCursor arrowCursor();
     static QCursor crossCursor();
+    static QCursor handCursor();
     static QCursor sizeAllCursor();
     static QCursor sizeHorCursor();
     static QCursor sizeVerCursor();
@@ -60,35 +45,8 @@ public:
     static QCursor waitCursor();
     static QCursor whatsThisCursor();
 
-    // constructors, copy constructors, and destructors ------------------------
+};
 
-    KCursor();
-
-// add no-op destructor
-#ifdef _KWQ_PEDANTIC_
-    ~KCursor() {}
-#endif
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KCursor(const KCursor &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KCursor &operator=(const KCursor &);
-#endif
-
-}; // class KCursor ============================================================
+extern const QCursor &waitCursor;
 
 #endif

@@ -120,3 +120,44 @@ int KHTMLSettings::maxFormCompletionItems() const
     _logNotYetImplemented();
     return 0;
 }
+
+bool KHTMLSettings::isJavaEnabled(QString const&) const
+{
+    return isJavaEnabled();
+}
+
+bool KHTMLSettings::isJavaEnabled() const
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJavaEnabled"] boolValue];
+}
+
+bool KHTMLSettings::autoLoadImages() const
+{
+    _logNotYetImplemented();
+    return true;
+}
+
+bool KHTMLSettings::isPluginsEnabled(QString const&) const
+{
+    return isPluginsEnabled();
+}
+
+bool KHTMLSettings::isPluginsEnabled() const
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitPluginsEnabled"] boolValue];
+}
+
+bool KHTMLSettings::isJavaScriptEnabled(QString const&) const
+{
+    return isJavaScriptEnabled();
+}
+
+bool KHTMLSettings::isJavaScriptEnabled() const
+{
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitJScriptEnabled"] boolValue];
+}
+
+bool KHTMLSettings::isJavaScriptDebugEnabled() const
+{
+    return false;
+}

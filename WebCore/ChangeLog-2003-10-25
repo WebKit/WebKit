@@ -1,3 +1,104 @@
+2002-05-20  Darin Adler  <darin@apple.com>
+
+	Use more of the original khtml_part.cpp; a step in the direction of factoring
+	our code out so more of it can go in WebKit and we don't need external.h.
+
+	* khtml/Makefile.am:
+	* khtml/khtml_part.cpp:
+	* khtml/khtml_part.h:
+	* khtml/khtmlpart_p.h:
+	Start compiling khtml_part.cpp and using khtmlpart_p.h again.
+
+	* kwq/KWQKHTMLPart.mm:
+	Remove code that was identical to khtml_part.cpp. We aren't going to use the
+	"copy and hack our copy" approach on this class for the long termk, and this
+	is the first step in cleaning things up.
+
+	* khtml/khtml_ext.h: Removed.
+	* khtml/khtml_factory.h: Removed.
+
+	* khtml/misc/loader.h:
+	* khtml/xml/dom_docimpl.cpp:
+	(DocumentImpl::recalcStyleSelector):
+	Remove some APPLE_CHANGES ifdefs we don't need any more.
+
+	* kwq/KWQDateTime.mm:
+	Simplify things like copy constructors.
+
+	* kwq/kdeui/kcursor.h:
+	* kwq/KWQKCursor.mm:
+	Add handCursor.
+
+	* kwq/KWQKHTMLFactory.mm:
+	Put in real implementations, not just placeholders.
+
+	* kwq/KWQKHTMLPartBrowserExtension.mm:
+	* kwq/KWQKInstance.mm:
+	* kwq/KWQPart.mm:
+	* kwq/KWQbrowserextension.mm:
+	Empty these files out, nothing in them is needed any more.
+
+	* kwq/khtml/khtml_settings.h:
+	* kwq/KWQKHTMLSettings.mm:
+	(KHTMLSettings::isJavaEnabled):
+	(KHTMLSettings::autoLoadImages):
+	(KHTMLSettings::isPluginsEnabled):
+	(KHTMLSettings::isJavaScriptEnabled):
+	(KHTMLSettings::isJavaScriptDebugEnabled):
+	Moved settings here from KWQKHTMLPart.mm
+
+	* kwq/kdecore/kurl.h:
+	* kwq/KWQKURL.mm:
+	(KURL::encodedHtmlRef):
+	(KURL::htmlRef):
+	Placeholders for these two, called in KHTMLPart, but maybe not really needed.
+
+	* kwq/KWQKloader.mm:
+	(Cache::preloadScript):
+	(Cache::preloadStyleSheet):
+	Empty functions for these, called in KHTMLPart but no implementation needed.
+
+	* kwq/qt/qtimer.h:
+	* kwq/KWQTimer.mm:
+	(QTimer::isActive):
+	(QTimer::start):
+	(QTimer::stop):
+	More timer functions.
+
+	* kwq/qt/qscrollview.h: Add one more function.
+
+	* kwq/kdecore/kinstance.h: Simplify.
+	* kwq/kdeui/kaction.h: Simplify.
+	* kwq/khtml/khtml_factory.h: Simplify.
+	* kwq/kparts/browserextension.h: Simplify.
+	* kwq/kparts/part.h: Simplify.
+	* kwq/qt/qdatetime.h: Simplify.
+
+	* kwq/kdecore/klibloader.h: Added.
+	* kwq/khtml/khtml_ext.h: Added.
+	* kwq/kparts/partmanager.h: Added.
+	Nearly-empty files with just simple placeholders so we can compile more.
+
+	* kwq/dcop/kdatastream.h: Added.
+	* kwq/kdecore/kmultipledrag.h: Added.
+	* kwq/kdecore/ktempfile.h: Added.
+	* kwq/kdecore/kurldrag.h: Added.
+	* kwq/kdeui/kstdaction.h: Added.
+	* kwq/kdeui/kxmlguifactory.h: Added.
+	* kwq/khtml/khtml_find.h: Added.
+	* kwq/khtml/khtml_iface.h: Added.
+	* kwq/khtml/khtml_pagecache.h: Added.
+	* kwq/khtml/khtml_run.h: Added.
+	* kwq/kio/kssl/ksslcertchain.h: Added.
+	* kwq/kio/kssl/ksslinfodlg.h: Added.
+	* kwq/kio/ktrader.h: Added.
+	* kwq/qt/private/qucomextra_p.h: Added.
+	* kwq/qt/qclipboard.h: Added.
+	* kwq/qt/qmetaobject.h: Added.
+	Empty files just so includes of these names will compile.
+
+	* libwebcoretests.exp: Remove one export that's no longer needed.
+
 2002-05-20  Richard J. Williamson  <rjw@apple.com>
 
 	* khtml/ecma/kjs_events.cpp:
