@@ -1,3 +1,15 @@
+2002-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+	Fixed the vexing and long-standing:
+
+	Radar 2894699 - Crash at: http://cb.apple.com/jsplugins.html
+	
+	* khtml/ecma/kjs_navigator.cpp: This crash was caused by Plugin
+	and MimeType objects referring to data that was held and
+	refcounted by PluginBase, without holding a ref. I fixed it by
+	making these individual items participate in the refcounting as
+	well.
+
 2002-05-26  Maciej Stachowiak  <mjs@apple.com>
 
 	Webcore part of fix for:
