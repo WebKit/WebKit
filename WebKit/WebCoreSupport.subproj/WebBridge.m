@@ -157,16 +157,8 @@
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)withDataSource
 {
-    if (dataSource == nil) {
-        [self setDataSource:withDataSource];
-        [self openURL:[dataSource inputURL]];
-        if ([dataSource redirectedURL]) {
-            [self setURL:[dataSource redirectedURL]];
-        }
-    } else {
-        WEBKIT_ASSERT(dataSource == withDataSource);
-    }
-    
+    WEBKIT_ASSERT(dataSource != nil);
+
     [self addData:data withEncoding:[dataSource encoding]];
 }
 
@@ -189,8 +181,17 @@
 
 - (void)setDataSource: (WebDataSource *)ds
 {
-    // FIXME: non-retained because data source owns representation owns bridge
-    dataSource = ds;
+    if (dataSource == nil) {
+	// FIXME: non-retained because data source owns representation owns bridge
+	dataSource = ds;
+        [self openURL:[dataSource inputURL]];
+        if ([dataSource redirectedURL]) {
+            [self setURL:[dataSource redirectedURL]];
+        }
+    } else {
+        WEBKIT_ASSERT(dataSource == ds);
+    }
+
 }
 
 - (BOOL)openedByScript

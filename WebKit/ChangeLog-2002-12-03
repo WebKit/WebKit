@@ -1,3 +1,20 @@
+2002-07-19  Maciej Stachowiak  <mjs@apple.com>
+
+        Fix a regression caused by a previous commit that broke frames.
+
+	* WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge receivedData:withDataSource:]): Instead setting the data source
+	implicitly here, and doing other special first-time init, simply assert that
+	we have a data source.
+        (-[WebBridge setDataSource:]): Do the extra work when setting the data
+	source here instead.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]): After making the
+	representation, set the data source, because we no longer pass the
+	first data chunk _before_ transitioning to committed, instead we
+	do it right after, so the logic in WebBridge to do it implicitly
+	was not going to cut it.
+
 2002-07-18  Maciej Stachowiak  <mjs@apple.com>
 
 	More refactoring: Simplify a bit more by moving more logic into
