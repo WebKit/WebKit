@@ -16,8 +16,8 @@ my %Files = (
 my $WebCorePath = '';
 my $WebKitPath = '';
 
-AssertInWebKit();
-AssertWebCoreFound();
+CheckInWebKit();
+CheckWebCoreFound();
 CopyFilesIfNeeded();
 
 #=======================================================================================
@@ -34,30 +34,27 @@ sub Say {
     print STDERR $say, "\n";
 }
 
-sub AssertInWebKit {
+sub CheckInWebKit {
 	if (cwd() =~ /WebKit$/) {
 		# ok...we're in WebCore
 		$WebKitPath = cwd();
 	}
 	else {
-		Fail("not being run from WebKit directory. exiting...");
+		Say("*** $ProgramName: not being run from WebKit directory. Cannot copy, exiting...");
+        exit(0);
 	}
 }
 
-sub AssertWebCoreFound {
+sub CheckWebCoreFound {
 	my $path = cwd();
-	my $localpath = dirname($path) . '/WebCore';
-	my $builditpath = dirname(dirname($path)) . '/WebCore.roots/WebCore';
-	if (-d $localpath) {
+	$path = dirname($path) . '/WebCore';
+	if (-d $path) {
 		# ok...WebCore is where we expect it
-		$WebCorePath = $localpath;
-	}
-	elsif (-d $builditpath) {
-		# ok...WebCore is where we expect it
-		$WebCorePath = $builditpath;
+		$WebCorePath = $path;
 	}
 	else {
-		Fail("WebCore is not a sibling directory to WebKit. exiting...");
+		Say("*** $ProgramName: WebCore is not a sibling directory to WebKit. Cannot copy, exiting...");
+        exit(0);
 	}
 }
 

@@ -1,6 +1,16 @@
+2004-03-03  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * copy-webcore-files-to-webkit: Fixed up this script so that
+	it does not fail if it is running "non-locally", like for
+	B&I. The idiom is to check these files into WebKit after
+	copying them from WebCore, hence this script is merely
+	a convenience to keep the files in sync.
+
 2004-03-02  Ken Kocienda  <kocienda@apple.com>
 
-        Reviewed by NOBODY (OOPS!).
+        Reviewed by me
 
         * DOM.subproj/DOM.h: Checked in header copied over
         from WebCore.
