@@ -716,8 +716,8 @@ static BOOL alwaysUseATSU = NO;
 - (NSFont *)_smallCapsFont
 {
     if (!smallCapsFont)
-        smallCapsFont = [[NSFontManager sharedFontManager] convertFont:font toSize:([font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER)];
-    return smallCapsFont;
+        smallCapsFont = [[[NSFontManager sharedFontManager] convertFont:font toSize:([font pointSize] * SMALLCAPS_FONTSIZE_MULTIPLIER)] screenFont];
+    return usingPrinterFont ? [smallCapsFont printerFont] : smallCapsFont;
 }
 
 static inline BOOL fontContainsString(NSFont *font, NSString *string)

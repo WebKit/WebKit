@@ -1,3 +1,12 @@
+2005-02-09  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/4000073> non-screen font error on www.worldofwarcraft.com
+
+        Reviewed by John Sullivan.
+
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _smallCapsFont]):
+
 === Safari-185 ===
 
 2005-02-07  Chris Blumenberg  <cblu@apple.com>
