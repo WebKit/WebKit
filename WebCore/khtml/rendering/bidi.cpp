@@ -1048,7 +1048,7 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren)
                     o->containingBlock()->insertSpecialObject(o);
             }
             else if(o->isText())
-                static_cast<RenderText *>(o)->deleteSlaves();
+                static_cast<RenderText *>(o)->deleteRuns();
             o = Bidinext( this, o );
         }
 

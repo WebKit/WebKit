@@ -40,10 +40,10 @@ namespace khtml
     class RenderText;
     class RenderStyle;
 
-class TextSlave
+class TextRun
 {
 public:
-    TextSlave(int x, int y, int start, int len,
+    TextRun(int x, int y, int start, int len,
 	      int baseline, int width,
               bool reversed = false, int toAdd = 0, bool firstLine = false)
     {
@@ -86,7 +86,7 @@ public:
     FindSelectionResult checkSelectionPoint(int _x, int _y, int _tx, int _ty, const Font *f, RenderText *text, int & offset, short lineheight);
 
     /**
-     * if this textslave was rendered @ref _ty pixels below the upper edge
+     * if this text run was rendered @ref _ty pixels below the upper edge
      * of a view, would the @ref _y -coordinate be inside the vertical range
      * of this object's representation?
      */
@@ -105,7 +105,7 @@ public:
     int m_toAdd : 14; // for justified text
 private:
     // this is just for QVector::bsearch. Don't use it otherwise
-    TextSlave(int _x, int _y)
+    TextRun(int _x, int _y)
     {
         m_x = _x;
         m_y = _y;
@@ -114,12 +114,12 @@ private:
     friend class RenderText;
 };
 
-class TextSlaveArray : public QPtrVector<TextSlave>
+class TextRunArray : public QPtrVector<TextRun>
 {
 public:
-    TextSlaveArray();
+    TextRunArray();
 
-    TextSlave* first();
+    TextRun* first();
 
     int	  findFirstMatching( Item ) const;
     virtual int compareItems( Item, Item );
@@ -127,7 +127,7 @@ public:
 
 class RenderText : public RenderObject
 {
-    friend class TextSlave;
+    friend class TextRun;
 
 public:
     RenderText(DOM::NodeImpl* node, DOM::DOMStringImpl *_str);
@@ -142,7 +142,7 @@ public:
     virtual void paintObject(QPainter *, int x, int y, int w, int h,
                              int tx, int ty, PaintAction paintAction);
 
-    void deleteSlaves(RenderArena *renderArena = 0);
+    void deleteRuns(RenderArena *renderArena = 0);
     virtual void detach(RenderArena* renderArena);
     
     DOM::DOMString data() const { return str; }
@@ -182,7 +182,7 @@ public:
     
     bool containsOnlyWhitespace(unsigned int from, unsigned int len) const;
     
-    // returns the minimum x position of all slaves relative to the parent.
+    // returns the minimum x position of all runs relative to the parent.
     // defaults to 0.
     int minXPos() const;
 
@@ -216,7 +216,7 @@ public:
     { return static_cast<DOM::TextImpl*>(RenderObject::element()); }
 
 #if APPLE_CHANGES
-    TextSlaveArray textSlaves() const { return m_lines; }
+    TextRunArray textRuns() const { return m_lines; }
     int widthFromCache(const Font *, int start, int len) const;
     bool shouldUseMonospaceCache(const Font *) const;
     void cacheWidths();
@@ -228,10 +228,10 @@ protected:
 #if APPLE_CHANGES
 public:
 #endif
-    TextSlave * findTextSlave( int offset, int &pos );
+    TextRun * findTextRun( int offset, int &pos );
 
 protected: // members
-    TextSlaveArray m_lines;
+    TextRunArray m_lines;
     DOM::DOMStringImpl *str; //
 
     short m_lineHeight;

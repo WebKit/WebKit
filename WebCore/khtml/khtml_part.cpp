@@ -97,7 +97,7 @@ using namespace DOM;
 #endif
 
 using khtml::RenderText;
-using khtml::TextSlaveArray;
+using khtml::TextRunArray;
 
 namespace khtml {
     class PartStyleSheetLoader : public CachedObjectClient
@@ -3977,22 +3977,22 @@ void KHTMLPart::customEvent( QCustomEvent *event )
 
 #if APPLE_CHANGES
 
-static bool firstSlaveAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset)
+static bool firstRunAt(RenderObject *renderNode, int y, NodeImpl *&startNode, long &startOffset)
 {
     for (RenderObject *n = renderNode; n; n = n->nextSibling()) {
         if (n->isText()) {
             RenderText *textRenderer = static_cast<khtml::RenderText *>(n);
-            TextSlaveArray slaves = textRenderer->textSlaves();
-            for (unsigned i = 0; i != slaves.count(); i++) {
-                if (slaves[i]->m_y == y) {
+            TextRunArray runs = textRenderer->textRuns();
+            for (unsigned i = 0; i != runs.count(); i++) {
+                if (runs[i]->m_y == y) {
                     startNode = textRenderer->element();
-                    startOffset = slaves[i]->m_start;
+                    startOffset = runs[i]->m_start;
                     return true;
                 }
             }
         }
         
-        if (firstSlaveAt(n->firstChild(), y, startNode, startOffset)) {
+        if (firstRunAt(n->firstChild(), y, startNode, startOffset)) {
             return true;
         }
     }
@@ -4000,7 +4000,7 @@ static bool firstSlaveAt(RenderObject *renderNode, int y, NodeImpl *&startNode, 
     return false;
 }
 
-static bool lastSlaveAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset)
+static bool lastRunAt(RenderObject *renderNode, int y, NodeImpl *&endNode, long &endOffset)
 {
     RenderObject *n = renderNode;
     if (!n) {
@@ -4012,17 +4012,17 @@ static bool lastSlaveAt(RenderObject *renderNode, int y, NodeImpl *&endNode, lon
     }
     
     while (1) {
-        if (lastSlaveAt(n->firstChild(), y, endNode, endOffset)) {
+        if (lastRunAt(n->firstChild(), y, endNode, endOffset)) {
             return true;
         }
     
         if (n->isText()) {
             RenderText *textRenderer =  static_cast<khtml::RenderText *>(n);
-            TextSlaveArray slaves = textRenderer->textSlaves();
-            for (int i = (int)slaves.count()-1; i >= 0; i--) {
-                if (slaves[i]->m_y == y) {
+            TextRunArray runs = textRenderer->textRuns();
+            for (int i = (int)runs.count()-1; i >= 0; i--) {
+                if (runs[i]->m_y == y) {
                     endNode = textRenderer->element();
-                    endOffset = slaves[i]->m_start + slaves[i]->m_len;
+                    endOffset = runs[i]->m_start + runs[i]->m_len;
                     return true;
                 }
             }
@@ -4042,15 +4042,15 @@ static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, 
         int pos;
         int selectionPointY;
         khtml::RenderText *renderer = static_cast<khtml::RenderText *>(node->renderer());
-        khtml::TextSlave * slave = renderer->findTextSlave( offset, pos );
+        khtml::TextRun * run = renderer->findTextRun( offset, pos );
         DOMString t = node->nodeValue();
         DOM::NodeImpl* startNode;
         DOM::NodeImpl* endNode;
         
-        if (!slave)
+        if (!run)
             return false;
             
-        selectionPointY = slave->m_y;
+        selectionPointY = run->m_y;
         
         // Go up to first non-inline element.
         khtml::RenderObject *renderNode = renderer;
@@ -4061,12 +4061,12 @@ static bool startAndEndLineNodesIncludingNode (DOM::NodeImpl *node, int offset, 
         
         // Look for all the first child in the block that is on the same line
         // as the selection point.
-        if (!firstSlaveAt (renderNode, selectionPointY, startNode, startOffset))
+        if (!firstRunAt (renderNode, selectionPointY, startNode, startOffset))
             return false;
     
         // Look for all the last child in the block that is on the same line
         // as the selection point.
-        if (!lastSlaveAt (renderNode, selectionPointY, endNode, endOffset))
+        if (!lastRunAt (renderNode, selectionPointY, endNode, endOffset))
             return false;
         
         _startNode = startNode;

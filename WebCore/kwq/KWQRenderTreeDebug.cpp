@@ -41,8 +41,8 @@ using khtml::RenderObject;
 using khtml::RenderTableCell;
 using khtml::RenderWidget;
 using khtml::RenderText;
-using khtml::TextSlave;
-using khtml::TextSlaveArray;
+using khtml::TextRun;
+using khtml::TextRunArray;
 
 typedef khtml::RenderLayer::RenderLayerElement RenderLayerElement;
 typedef khtml::RenderLayer::RenderZTreeNode RenderZTreeNode;
@@ -112,10 +112,10 @@ static QString quoteAndEscapeNonPrintables(const QString &s)
     return result;
 }
 
-static void writeTextSlave(QTextStream &ts, const RenderText &o, const TextSlave &slave)
+static void writeTextRun(QTextStream &ts, const RenderText &o, const TextRun &run)
 {
-    ts << "text run at (" << slave.m_x << "," << slave.m_y << ") width " << slave.m_width << ": "
-    	<< quoteAndEscapeNonPrintables(o.data().string().mid(slave.m_start, slave.m_len))
+    ts << "text run at (" << run.m_x << "," << run.m_y << ") width " << run.m_width << ": "
+    	<< quoteAndEscapeNonPrintables(o.data().string().mid(run.m_start, run.m_len))
     	<< "\n"; 
 }
 
@@ -127,10 +127,10 @@ static void write(QTextStream &ts, const RenderObject &o, int indent = 0)
     
     if (o.isText()) {
         const RenderText &text = static_cast<const RenderText &>(o);
-        TextSlaveArray slaves = text.textSlaves();
-        for (unsigned int i = 0; i < slaves.count(); i++) {
+        TextRunArray runs = text.textRuns();
+        for (unsigned int i = 0; i < runs.count(); i++) {
             writeIndent(ts, indent+1);
-            writeTextSlave(ts, text, *slaves[i]);
+            writeTextRun(ts, text, *runs[i]);
         }
     }
 

@@ -1,5 +1,43 @@
 2003-02-03  David Hyatt  <hyatt@apple.com>
 
+	Rename TextSlave to TextRun.
+	
+        Reviewed by darin
+
+        * khtml/khtml_part.cpp:
+        (firstRunAt):
+        (lastRunAt):
+        (startAndEndLineNodesIncludingNode):
+        * khtml/rendering/bidi.cpp:
+        (RenderBlock::layoutInlineChildren):
+        * khtml/rendering/render_text.cpp:
+        (TextRun::detach):
+        (throw):
+        (TextRun::operator delete):
+        (TextRun::paintSelection):
+        (TextRun::paintDecoration):
+        (TextRun::paintBoxDecorations):
+        (TextRun::checkSelectionPoint):
+        (TextRunArray::TextRunArray):
+        (TextRunArray::compareItems):
+        (TextRunArray::findFirstMatching):
+        (RenderText::detach):
+        (RenderText::deleteRuns):
+        (RenderText::findTextRun):
+        (RenderText::nodeAtPoint):
+        (RenderText::checkSelectionPoint):
+        (RenderText::cursorPos):
+        (RenderText::posOfChar):
+        (RenderText::paintObject):
+        (RenderText::position):
+        (RenderText::width):
+        * khtml/rendering/render_text.h:
+        * kwq/KWQRenderTreeDebug.cpp:
+        (writeTextRun):
+        (write):
+
+2003-02-03  David Hyatt  <hyatt@apple.com>
+
 	Fix for assertion on nasdaq.com.  Patch containingBlock
 	to return 0 when it can't find a containingBlock at all (e.g.,
 	when the object is orphaned).
