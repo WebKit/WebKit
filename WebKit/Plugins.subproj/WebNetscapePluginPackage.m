@@ -263,7 +263,8 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
         [executableURL release];
         NSData *data = [executableFile readDataOfLength:8];
         [executableFile closeFile];
-        if (!data) {
+        // Check the length of the data before calling memcmp. We think this fixes 3782543.
+        if (data == nil || [data length] < 8) {
             [self release];
             return nil;
         }

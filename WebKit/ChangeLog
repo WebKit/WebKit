@@ -1,4 +1,13 @@
 2004-09-03  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3782543> CrashTracer: ...87 crashes at com.apple.WebKit: -[WebNetscapePluginPackage initWithPath:] + 0x18c
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage initWithPath:]): make sure the file is at least 8 bytes long before calling memcmp
+
+2004-09-03  Chris Blumenberg  <cblu@apple.com>
 	
 	Fixed:
 	<rdar://problem/3788328> assertion failure when moving an image
