@@ -41,7 +41,7 @@
 
     // The handle client for the main document associated with the
     // datasource.
-    WebMainResourceClient *mainResourceHandleClient;
+    WebMainResourceClient *mainHandleClient;
     
     // Active WebResourceHandles for resources associated with the
     // datasource.

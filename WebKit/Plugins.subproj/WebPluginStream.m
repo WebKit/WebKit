@@ -232,11 +232,7 @@
     [self finishedLoadingWithData:[dataSource data]];
 }
 
-@end
-
 #pragma mark WebResourceHandle
-
-@implementation WebPluginStream (WebResourceClient)
 
 - (void)WebResourceHandleDidBeginLoading:(WebResourceHandle *)handle
 {

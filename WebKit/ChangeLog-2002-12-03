@@ -1,5 +1,14 @@
 2002-08-16  Darin Adler  <darin@apple.com>
 
+	Oops. Forgot to save in Project Builder before committing.
+
+        * Plugins.subproj/WebPluginStream.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+
+2002-08-16  Darin Adler  <darin@apple.com>
+
 	Update for change to the WebResourceHandle API where the client is
 	passed in at init time.
 

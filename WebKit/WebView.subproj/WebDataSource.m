@@ -43,8 +43,8 @@
     _private->inputURL = [URL retain];
     _private->flags = theFlags;
     _private->attributes = [theAttributes retain];
-    _private->mainResourceHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
-    _private->mainHandle = [[WebResourceHandle alloc] initWithClient:_private->mainResourceHandleClient URL:_private->inputURL attributes:theAttributes flags:theFlags];
+    _private->mainHandleClient = [[WebMainResourceClient alloc] initWithDataSource: self];
+    _private->mainHandle = [[WebResourceHandle alloc] initWithClient:_private->mainHandleClient URL:_private->inputURL attributes:theAttributes flags:theFlags];
     
     ++WebDataSourceCount;
     

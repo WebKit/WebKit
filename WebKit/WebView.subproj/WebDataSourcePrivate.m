@@ -72,7 +72,7 @@
     [finalURL release];
     [frames release];
     [mainHandle release];
-    [mainResourceHandleClient release];
+    [mainHandleClient release];
     [resourceHandles release];
     [pageTitle release];
     [encoding release];
@@ -155,8 +155,8 @@
 	// there's no callback for that.
         [self _loadIcon];
 
-        [_private->mainResourceHandleClient release];
-        _private->mainResourceHandleClient = 0; 
+        [_private->mainHandleClient release];
+        _private->mainHandleClient = 0; 
         [_private->mainHandle release];
         _private->mainHandle = 0;
         [self _updateLoading];
@@ -210,7 +210,7 @@
 
     // Stop download here because we can't rely on WebResourceHandleDidCancelLoading
     // as it isn't sent when the app quits.
-    [[_private->mainResourceHandleClient downloadHandler] cancel];
+    [[_private->mainHandleClient downloadHandler] cancel];
 
     if (!_private->loading) {
 	return;
