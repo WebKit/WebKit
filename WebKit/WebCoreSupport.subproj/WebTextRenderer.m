@@ -747,7 +747,7 @@ static const char *joiningNames[] = {
             if (c == SPACE && applyRounding) {
                 float delta = CEIL_TO_INT(totalWidth) - totalWidth;
                 totalWidth += delta;
-                if (widthBuffer)
+                if (widthBuffer && numGlyphs > 0)
                     widthBuffer[numGlyphs - 1] += delta;
             }
             break;
@@ -844,9 +844,11 @@ static const char *joiningNames[] = {
                 // should have zero width.
                 if (widthBuffer){
                     int ng = numGlyphs-1;
-                    while (ng && widthBuffer[ng] == 0)
-                        ng--;
-                    widthBuffer[ng] += wordSpacing;
+                    if (ng >= 0){
+                        while (ng && widthBuffer[ng] == 0)
+                            ng--;
+                        widthBuffer[ng] += wordSpacing;
+                    }
                 }
                 totalWidth += wordSpacing;
             }
@@ -863,12 +865,13 @@ static const char *joiningNames[] = {
         totalWidth += lastWidth;       
     }
 
-    // Don't ever apply rounding for single character.  Single character measurement
-    // intra word needs to be non-ceiled.
+    // Ceil the last glyph, but only if
+    // 1) The string is longer than one character
+    // 2) or the entire stringLength is one character
     if ((len > 1 || stringLength == 1) && applyRounding){
         float delta = CEIL_TO_INT(totalWidth) - totalWidth;
         totalWidth += delta;
-        if (widthBuffer)
+        if (widthBuffer && numGlyphs > 0)
             widthBuffer[numGlyphs-1] += delta;
     }
 

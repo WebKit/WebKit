@@ -1,3 +1,11 @@
+2002-11-12  Richard Williamson  <rjw@apple.com>
+
+        Fixed likely cause of 3099047 (and others).  Width buffer could underrun in
+        some situations.
+        
+        * WebCoreSupport.subproj/WebTextRenderer.m:
+        (-[WebTextRenderer _floatWidthForCharacters:stringLength:fromCharacterPosition:numberOfCharacters:withPadding:applyRounding:attemptFontSubstitution:widths:fonts:glyphs:numGlyphs:letterSpacing:wordSpacing:]):
+
 2002-11-12  John Sullivan  <sullivan@apple.com>
 
         * Misc.subproj/WebNSViewExtras.h:
