@@ -6,6 +6,7 @@
 #import <WebKit/WebBaseNetscapePluginStream.h>
 
 #import <WebKit/WebBaseNetscapePluginView.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebNSObjectExtras.h>
@@ -18,14 +19,41 @@
 
 static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
+#define WEB_REASON_NONE -1
+
 @implementation WebBaseNetscapePluginStream
 
 + (NPReason)reasonForError:(NSError *)error
 {
+    if (error == nil) {
+        return NPRES_DONE;
+    }
     if ([[error domain] isEqualToString:NSURLErrorDomain] && [error code] == NSURLErrorCancelled) {
         return NPRES_USER_BREAK;
     }
     return NPRES_NETWORK_ERR;
+}
+
+- (NSError *)_pluginCancelledConnectionError
+{
+    return [[[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
+                                           contentURL:responseURL != nil ? responseURL : requestURL
+                                        pluginPageURL:nil
+                                           pluginName:[plugin name]
+                                             MIMEType:MIMEType] autorelease];
+}
+
+- (NSError *)errorForReason:(NPReason)theReason
+{
+    if (theReason == NPRES_DONE) {
+        return nil;
+    }
+    if (theReason == NPRES_USER_BREAK) {
+        return [NSError _webKitErrorWithDomain:NSURLErrorDomain
+                                          code:NSURLErrorCancelled 
+                                           URL:responseURL != nil ? responseURL : requestURL];
+    }
+    return [self _pluginCancelledConnectionError];
 }
 
 - (id)initWithRequestURL:(NSURL *)theRequestURL
@@ -67,6 +95,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
     [requestURL release];
     [responseURL release];
+    [MIMEType release];
     [plugin release];
     [deliveryData release];
     
@@ -125,10 +154,17 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     NPP_URLNotify = 	[plugin NPP_URLNotify];
 }
 
+- (void)setMIMEType:(NSString *)theMIMEType
+{
+    [theMIMEType retain];
+    [MIMEType release];
+    MIMEType = theMIMEType;
+}
+
 - (void)startStreamResponseURL:(NSURL *)URL
          expectedContentLength:(long long)expectedContentLength
               lastModifiedDate:(NSDate *)lastModifiedDate
-                      MIMEType:(NSString *)MIMEType
+                      MIMEType:(NSString *)theMIMEType
 {
     ASSERT(!isTerminated);
     
@@ -137,6 +173,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     }
     
     [self setResponseURL:URL];
+    [self setMIMEType:theMIMEType];
     
     free((void *)stream.url);
     stream.url = strdup([responseURL _web_URLCString]);
@@ -148,7 +185,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     
     transferMode = NP_NORMAL;
     offset = 0;
-    reason = WEB_REASON_PLUGIN_CANCELLED;
+    reason = WEB_REASON_NONE;
 
     // FIXME: Need a way to check if stream is seekable
 
@@ -157,8 +194,8 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
 
     if (npErr != NPERR_NO_ERROR) {
         ERROR("NPP_NewStream failed with error: %d responseURL: %@", npErr, responseURL);
-        // Calling cancelWithReason with WEB_REASON_PLUGIN_CANCELLED cancels the load, but doesn't call NPP_DestroyStream.
-        [self cancelWithReason:WEB_REASON_PLUGIN_CANCELLED];
+        // Calling cancelLoadWithError: cancels the load, but doesn't call NPP_DestroyStream.
+        [self cancelLoadWithError:[self _pluginCancelledConnectionError]];
         return;
     }
 
@@ -174,7 +211,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             break;
         case NP_SEEK:
             ERROR("Stream type: NP_SEEK not yet supported");
-            [self cancelWithReason:NPRES_NETWORK_ERR];
+            [self cancelLoadAndDestroyStreamWithError:[self _pluginCancelledConnectionError]];
             break;
         default:
             ERROR("unknown stream type");
@@ -189,11 +226,14 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
                         MIMEType:[r MIMEType]];
 }
 
-- (void)destroyStream
+- (void)_destroyStream
 {
-    if (isTerminated || ![plugin isLoaded] || [deliveryData length] > 0 || reason == WEB_REASON_PLUGIN_CANCELLED) {
+    if (isTerminated || ![plugin isLoaded]) {
         return;
     }
+    
+    ASSERT(reason != WEB_REASON_NONE);
+    ASSERT([deliveryData length] == 0);
     
     if (stream.ndata != NULL) {
         if (reason == NPRES_DONE && (transferMode == NP_ASFILE || transferMode == NP_ASFILEONLY)) {
@@ -220,29 +260,35 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
     isTerminated = YES;
 }
 
-- (void)destroyStreamWithReason:(NPReason)theReason
+- (void)_destroyStreamWithReason:(NPReason)theReason
 {
     reason = theReason;
-    [self destroyStream];
+    if (reason != NPRES_DONE) {
+        // Stop any pending data from being streamed.
+        [deliveryData setLength:0];
+    } else if ([deliveryData length] > 0) {
+        // There is more data to be streamed, don't destroy the stream now.
+        return;
+    }
+    [self _destroyStream];
+    ASSERT(stream.ndata == nil);
 }
 
-- (void)destroyStreamWithFailingReason:(NPReason)theReason
+- (void)cancelLoadWithError:(NSError *)error
 {
-    ASSERT(theReason != NPRES_DONE);
-    // Stop any pending data from being streamed.
-    [deliveryData setLength:0];
-    [self destroyStreamWithReason:theReason];
-    stream.ndata = nil;
+    // Overridden by subclasses.
+    ASSERT_NOT_REACHED();
 }
 
-- (void)receivedError:(NSError *)error
+- (void)destroyStreamWithError:(NSError *)error
 {
-    [self destroyStreamWithFailingReason:[[self class] reasonForError:error]];
+    [self _destroyStreamWithReason:[[self class] reasonForError:error]];
 }
 
-- (void)cancelWithReason:(NPReason)theReason
+- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error
 {
-    [self destroyStreamWithFailingReason:theReason];
+    [self cancelLoadWithError:error];
+    [self destroyStreamWithError:error];
 }
 
 - (void)finishedLoadingWithData:(NSData *)data
@@ -258,7 +304,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             // This should almost never happen.
             ERROR("can't make temporary file, almost certainly a problem with /tmp");
             // This is not a network error, but the only error codes are "network error" and "user break".
-            [self destroyStreamWithFailingReason:NPRES_NETWORK_ERR];
+            [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
             free(path);
             path = NULL;
             return;
@@ -271,7 +317,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
                 ERROR("error writing to temporary file, errno %d", errno);
                 close(fd);
                 // This is not a network error, but the only error codes are "network error" and "user break".
-                [self destroyStreamWithFailingReason:NPRES_NETWORK_ERR];
+                [self _destroyStreamWithReason:NPRES_NETWORK_ERR];
                 free(path);
                 path = NULL;
                 return;
@@ -280,10 +326,10 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
         close(fd);
     }
 
-    [self destroyStreamWithReason:NPRES_DONE];
+    [self _destroyStreamWithReason:NPRES_DONE];
 }
 
-- (void)deliverData
+- (void)_deliverData
 {
     if (![plugin isLoaded] || !stream.ndata || [deliveryData length] == 0) {
         return;
@@ -298,12 +344,17 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
         
         if (deliveryBytes <= 0) {
             // Plug-in can't receive anymore data right now. Send it later.
-            [self performSelector:@selector(deliverData) withObject:nil afterDelay:0];
+            [self performSelector:@selector(_deliverData) withObject:nil afterDelay:0];
             break;
         } else {
             deliveryBytes = MIN(deliveryBytes, totalBytes - totalBytesDelivered);
             NSData *subdata = [deliveryData subdataWithRange:NSMakeRange(totalBytesDelivered, deliveryBytes)];
             deliveryBytes = NPP_Write(instance, &stream, offset, [subdata length], (void *)[subdata bytes]);
+            if (deliveryBytes < 0) {
+                // Netscape documentation says that a negative result from NPP_Write means cancel the load.
+                [self cancelLoadAndDestroyStreamWithError:[self _pluginCancelledConnectionError]];
+                return;
+            }
             deliveryBytes = MIN((unsigned)deliveryBytes, [subdata length]);
             offset += deliveryBytes;
             totalBytesDelivered += deliveryBytes;
@@ -319,7 +370,9 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             deliveryData = newDeliveryData;
         } else {
             [deliveryData setLength:0];
-            [self destroyStream];
+            if (reason != WEB_REASON_NONE) {
+                [self _destroyStream];
+            }
         }
     }
 }
@@ -333,7 +386,7 @@ static const char *CarbonPathFromPOSIXPath(const char *posixPath);
             deliveryData = [[NSMutableData alloc] initWithCapacity:[data length]];
         }
         [deliveryData appendData:data];
-        [self deliverData];
+        [self _deliverData];
     }
 }
 

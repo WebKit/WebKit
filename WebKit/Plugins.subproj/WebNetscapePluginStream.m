@@ -24,6 +24,7 @@
     WebBaseNetscapePluginView *view;
 }
 - initWithStream:(WebNetscapePluginStream *)theStream view:(WebBaseNetscapePluginView *)theView;
+- (BOOL)isDone;
 @end
 
 @implementation WebNetscapePluginStream
@@ -78,26 +79,16 @@
     }
 }
 
-- (void)cancelWithReason:(NPReason)theReason
+- (void)cancelLoadWithError:(NSError *)error
 {
-    if (theReason == WEB_REASON_PLUGIN_CANCELLED) {
-        NSURLResponse *response = [_loader response];
-        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
-                                                        contentURL:[response URL]
-                                                     pluginPageURL:nil
-                                                        pluginName:[plugin name]
-                                                          MIMEType:[response MIMEType]];
+    if (![_loader isDone]) {
         [_loader cancelWithError:error];
-        [error release];
-    } else {
-        [_loader cancel];
     }
-    [super cancelWithReason:theReason];
 }
 
 - (void)stop
 {
-    [self cancelWithReason:NPRES_USER_BREAK];
+    [self cancelLoadAndDestroyStreamWithError:[_loader cancelledError]];
 }
 
 @end
@@ -110,6 +101,11 @@
     stream = [theStream retain];
     view = [theView retain];
     return self;
+}
+
+- (BOOL)isDone
+{
+    return stream == nil;
 }
 
 - (void)releaseResources
@@ -137,8 +133,7 @@
                 NSError *error = [NSError _webKitErrorWithDomain:NSURLErrorDomain
                                                             code:NSURLErrorFileDoesNotExist
                                                             URL:[theResponse URL]];
-                [stream receivedError:error];
-                [self cancelWithError:error];
+                [stream cancelLoadAndDestroyStreamWithError:error];
             }
         }
     }
@@ -177,7 +172,7 @@
 
     [[self dataSource] _removePlugInStreamClient:self];
     [[view webView] _receivedError:error fromDataSource:[self dataSource]];
-    [stream receivedError:error];
+    [stream destroyStreamWithError:error];
     [super didFailWithError:error];
 
     [self release];

@@ -1,3 +1,36 @@
+2004-12-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3879870> Flash Player unable to stop data stream from continuing to download by returning -1 from NPP_Write
+	Also improved and cleaned-up the plug-in stream termination code.
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.h:
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (+[WebBaseNetscapePluginStream reasonForError:]): return NPRES_DONE for a nil error
+        (-[WebBaseNetscapePluginStream _pluginCancelledConnectionError]): new, factored out from other methods
+        (-[WebBaseNetscapePluginStream errorForReason:]): new
+        (-[WebBaseNetscapePluginStream dealloc]): release MIME type
+        (-[WebBaseNetscapePluginStream setMIMEType:]): new
+        (-[WebBaseNetscapePluginStream startStreamResponseURL:expectedContentLength:lastModifiedDate:MIMEType:]): call setMIMEType so we can use it in _pluginCancelledConnectionError, call renamed methods
+        (-[WebBaseNetscapePluginStream _destroyStream]): prepended underscore, replaced some early returns with asserts as the callers are now smarter
+        (-[WebBaseNetscapePluginStream _destroyStreamWithReason:]): prepended underscore, only call _destroyStream if there is an error or if the load is complete and there is no more data to be streamed
+        (-[WebBaseNetscapePluginStream cancelLoadWithError:]): new, overridden by subclasses to cancel the actual NSURLConnection
+        (-[WebBaseNetscapePluginStream destroyStreamWithError:]): new, calls _destroyStreamWithReason
+        (-[WebBaseNetscapePluginStream finishedLoadingWithData:]): call renamed methods
+        (-[WebBaseNetscapePluginStream _deliverData]): prepended underscore, call cancelLoadAndDestroyStreamWithError if NPP_Write returns a negative number
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView destroyStream:reason:]): call cancelLoadAndDestroyStreamWithError
+        * Plugins.subproj/WebNetscapePluginRepresentation.m:
+        (-[WebNetscapePluginRepresentation receivedError:withDataSource:]): call destroyStreamWithError
+        (-[WebNetscapePluginRepresentation cancelLoadWithError:]): new, override method, tell the data source to stop loading
+        * Plugins.subproj/WebNetscapePluginStream.m:
+        (-[WebNetscapePluginStream cancelLoadWithError:]): new, override method, tell the loader to stop
+        (-[WebNetscapePluginStream stop]): call cancelLoadAndDestroyStreamWithError
+        (-[WebNetscapePluginConnectionDelegate isDone]): new
+        (-[WebNetscapePluginConnectionDelegate didReceiveResponse:]): call cancelLoadAndDestroyStreamWithError
+        (-[WebNetscapePluginConnectionDelegate didFailWithError:]): call destroyStreamWithError
+
 2004-12-01  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Harrison.

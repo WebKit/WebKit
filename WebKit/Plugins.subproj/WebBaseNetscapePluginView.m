@@ -1647,7 +1647,8 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     if (!stream->ndata) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
-    [(WebBaseNetscapePluginStream *)stream->ndata cancelWithReason:reason];
+    WebBaseNetscapePluginStream *browserStream = (WebBaseNetscapePluginStream *)stream->ndata;
+    [browserStream cancelLoadAndDestroyStreamWithError:[browserStream errorForReason:reason]];
     return NPERR_NO_ERROR;
 }
 

@@ -9,7 +9,6 @@
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebFrameView.h>
-#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 
@@ -67,23 +66,12 @@
         return;
     }
     
-    [self receivedError:error];
+    [self destroyStreamWithError:error];
 }
 
-- (void)cancelWithReason:(NPReason)theReason
+- (void)cancelLoadWithError:(NSError *)error
 {
-    if (theReason == WEB_REASON_PLUGIN_CANCELLED) {
-        NSError *error = [[NSError alloc] _initWithPluginErrorCode:WebKitErrorPlugInCancelledConnection
-                                                        contentURL:[[_dataSource request] URL]
-                                                     pluginPageURL:nil
-                                                        pluginName:[plugin name]
-                                                          MIMEType:[[_dataSource response] MIMEType]];
-        [_dataSource _stopLoadingWithError:error];
-        [error release];
-    } else {
-        [[_dataSource webFrame] stopLoading];
-    }
-    [super cancelWithReason:theReason];
+    [_dataSource _stopLoadingWithError:error];
 }
 
 - (void)finishedLoadingWithDataSource:(WebDataSource *)ds

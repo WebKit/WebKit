@@ -10,13 +10,13 @@
 @class WebNetscapePluginPackage;
 @class NSURLResponse;
 
-#define WEB_REASON_PLUGIN_CANCELLED -1
-
 @interface WebBaseNetscapePluginStream : NSObject
 {
     NSMutableData *deliveryData;
     NSURL *requestURL;
     NSURL *responseURL;
+    NSString *MIMEType;
+    
     NPP instance;
     uint16 transferMode;
     int32 offset;
@@ -37,6 +37,7 @@
 }
 
 + (NPReason)reasonForError:(NSError *)error;
+- (NSError *)errorForReason:(NPReason)theReason;
 
 - (id)initWithRequestURL:(NSURL *)theRequestURL
            pluginPointer:(NPP)thePluginPointer
@@ -47,15 +48,25 @@
 - (void)setResponseURL:(NSURL *)theResponseURL;
 - (void)setPluginPointer:(NPP)pluginPointer;
 
+- (uint16)transferMode;
+
 - (void)startStreamResponseURL:(NSURL *)theResponseURL
          expectedContentLength:(long long)expectedContentLength
               lastModifiedDate:(NSDate *)lastModifiedDate
                       MIMEType:(NSString *)MIMEType;
 - (void)startStreamWithResponse:(NSURLResponse *)r;
+
+// cancelLoadWithError cancels the NSURLConnection and informs WebKit of the load error.
+// This method is overriden by subclasses.
+- (void)cancelLoadWithError:(NSError *)error;
+
+// destroyStreamWithError tells the plug-in that the load is completed (error == nil) or ended in error.
+- (void)destroyStreamWithError:(NSError *)error;
+
+// cancelLoadAndDestoryStreamWithError calls cancelLoadWithError: then destroyStreamWithError:.
+- (void)cancelLoadAndDestroyStreamWithError:(NSError *)error;
+
 - (void)receivedData:(NSData *)data;
 - (void)finishedLoadingWithData:(NSData *)data;
-- (void)receivedError:(NSError *)error;
-- (void)cancelWithReason:(NPReason)theReason;
-- (uint16)transferMode;
 
 @end
