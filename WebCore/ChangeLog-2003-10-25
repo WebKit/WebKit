@@ -1,3 +1,9 @@
+2002-07-17  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQKHTMLPartImpl.mm: (KWQKHTMLPartImpl::requestFrame):
+	Take out bogus check for nil path -- a URL with a nil path is OK, for example "about:blank".
+	Also improved log message.
+
 2002-07-16  Maciej Stachowiak  <mjs@apple.com>
 
         Moved URL mouseover status to KWQKHTMLPartImpl, and made it
