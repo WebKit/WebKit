@@ -9,7 +9,7 @@
 #import <WebKit/WebControllerPolicyHandler.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultControllerPolicyHandler.h>
+#import <WebKit/WebDefaultPolicyHandler.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
@@ -146,7 +146,7 @@
 - (id<WebControllerPolicyHandler>)policyHandler
 {
     if (!_private->policyHandler)
-        _private->policyHandler = [[WebDefaultControllerPolicyHandler alloc] initWithWebController: self];
+        _private->policyHandler = [[WebDefaultPolicyHandler alloc] initWithWebController: self];
     return _private->policyHandler;
 }
 

@@ -1,5 +1,14 @@
 2002-07-24  Chris Blumenberg  <cblu@apple.com>
 
+	More renaming for WebDefaultPolicyHandler.
+
+        * WebView.subproj/WebController.m:
+        (-[WebController policyHandler]):
+        * WebView.subproj/WebDefaultPolicyHandler.h:
+        * WebView.subproj/WebDefaultPolicyHandler.m:
+
+2002-07-24  Chris Blumenberg  <cblu@apple.com>
+
 	Renamed WebDefaultControllerPolicyHandler to WebDefaultPolicyHandler.
 
         * WebKit.pbproj/project.pbxproj:
