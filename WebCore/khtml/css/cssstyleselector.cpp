@@ -335,6 +335,7 @@ RenderStyle *CSSStyleSelector::styleForElement(ElementImpl *e)
     parentNode = e->parentNode();
     parentStyle = ( parentNode && parentNode->renderer()) ? parentNode->renderer()->style() : 0;
     view = element->getDocument()->view();
+    isXMLDoc = !element->getDocument()->isHTMLDocument();
     part = view->part();
     settings = part->settings();
     paintDeviceMetrics = element->getDocument()->paintDeviceMetrics();
@@ -768,8 +769,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
         {
         case CSSSelector::Exact:
         case CSSSelector::Id:
-	    if( (strictParsing && strcmp(sel->value, value) ) ||
-                (!strictParsing && strcasecmp(sel->value, value)))
+	    if( (isXMLDoc && strcmp(sel->value, value) ) ||
+                (!isXMLDoc && strcasecmp(sel->value, value)))
                 return false;
             break;
         case CSSSelector::Set:
@@ -781,8 +782,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 // There is no list, just a single item.  We can avoid
                 // allocing QStrings and just treat this as an exact
                 // match check.
-                if( (strictParsing && strcmp(sel->value, value) ) ||
-                     (!strictParsing && strcasecmp(sel->value, value)))
+                if( (isXMLDoc && strcmp(sel->value, value) ) ||
+                     (!isXMLDoc && strcasecmp(sel->value, value)))
                     return false;
                 break;
             }
@@ -794,7 +795,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             
             QString str = value.string();
             QString selStr = sel->value.string();
-            int pos = str.find(selStr, 0, strictParsing);
+            int pos = str.find(selStr, 0, isXMLDoc);
             if(pos == -1) return false;
             if(pos && str[pos-1] != ' ') return false;
             pos += selStr.length();
@@ -806,7 +807,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             //kdDebug( 6080 ) << "checking for contains match" << endl;
             QString str = value.string();
             QString selStr = sel->value.string();
-            int pos = str.find(selStr, 0, strictParsing);
+            int pos = str.find(selStr, 0, isXMLDoc);
             if(pos == -1) return false;
             break;
         }
@@ -815,7 +816,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             //kdDebug( 6080 ) << "checking for beginswith match" << endl;
             QString str = value.string();
             QString selStr = sel->value.string();
-            int pos = str.find(selStr, 0, strictParsing);
+            int pos = str.find(selStr, 0, isXMLDoc);
             if(pos != 0) return false;
             break;
         }
@@ -824,8 +825,8 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             //kdDebug( 6080 ) << "checking for endswith match" << endl;
             QString str = value.string();
             QString selStr = sel->value.string();
-	    if (strictParsing && !str.endsWith(selStr)) return false;
-	    if (!strictParsing) {
+	    if (isXMLDoc && !str.endsWith(selStr)) return false;
+	    if (!isXMLDoc) {
 	        int pos = str.length() - selStr.length();
 		if (pos < 0 || pos != str.find(selStr, pos, false) )
 		    return false;
@@ -839,7 +840,7 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
             QString selStr = sel->value.string();
             if(str.length() < selStr.length()) return false;
             // Check if str begins with selStr:
-            if(str.find(selStr, 0, strictParsing) != 0) return false;
+            if(str.find(selStr, 0, isXMLDoc) != 0) return false;
             // It does. Check for exact match or following '-':
             if(str.length() != selStr.length()
                 && str[selStr.length()] != '-') return false;

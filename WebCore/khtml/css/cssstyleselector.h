@@ -228,7 +228,8 @@ public:
 	QValueList<int>     m_fixedFontSizes;
 
 	bool fontDirty;
-	
+        bool isXMLDoc;
+        
 	void applyRule(int id, DOM::CSSValueImpl *value);
     };
 

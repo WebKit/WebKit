@@ -1,3 +1,20 @@
+2003-05-21  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3257990, attributes in HTML should always be case-insensitive
+	when matching CSS attribute selectors.  Instead of relying on 
+	the strict mode check, I patched the code to use an isXMLDoc
+	bool instead.
+
+	Also fixing a problem where <pre>s are mistakenly justifying their
+	text when text-align: justify is set.
+	
+        Reviewed by kocienda
+
+        * ChangeLog:
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssstyleselector.h:
+        * khtml/rendering/bidi.cpp:
+
 2003-05-21  Vicki Murley  <vicki@apple.com>
 
         Reviewed by john 

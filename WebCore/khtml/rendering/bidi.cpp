@@ -676,11 +676,16 @@ void RenderBlock::computeHorizontalPositionsForLine(InlineFlowBox* lineBox, Bidi
                 for ( int i = r->start; i < r->stop; i++ )
                     if ( static_cast<RenderText *>(r->obj)->text()[i].direction() == QChar::DirWS )
                         spaces++;
+
                 KHTMLAssert(spaces <= numSpaces);
-                spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
+
+                // Only justify text with white-space: normal.
+                if (r->obj->style()->whiteSpace() != PRE) {
+                    spaceAdd = (availableWidth - totWidth)*spaces/numSpaces;
+                    static_cast<TextRun*>(r->box)->setSpaceAdd(spaceAdd);
+                    totWidth += spaceAdd;
+                }
                 numSpaces -= spaces;
-                totWidth += spaceAdd;
-                static_cast<TextRun*>(r->box)->setSpaceAdd(spaceAdd);
             }
         }
     }
