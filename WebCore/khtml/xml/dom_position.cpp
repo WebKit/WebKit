@@ -440,15 +440,20 @@ Position Position::downstream(EStayInBlock stayInBlock) const
 
         if (currentNode != startNode && renderer->isBlockFlow()) {
             if (it.current().offset() == 0) {
-                NodeImpl *node = currentNode;
-                while (NodeImpl *firstChild = node->firstChild()) {
-                    if (node->renderer()->style()->visibility() == VISIBLE && node->renderer()->isBlockFlow())
-                        node = firstChild;
+                // If no first child, or first visible child is a not a block, return; otherwise continue.
+                if (!currentNode->firstChild())
+                    return Position(currentNode, 0);
+                for (NodeImpl *child = currentNode->firstChild(); child; child = child->nextSibling()) {
+                    RenderObject *r = child->renderer();
+                    if (r && r->style()->visibility() == VISIBLE) {
+                         if (r->isBlockFlow())
+                            break; // break causes continue code below to run.
+                         else
+                            return Position(child, 0);
+                    }
                 }
-                return Position(node, 0);
-            }
-            else
                 continue;
+            }
         }
 
         if (renderer->isReplaced() || renderer->isBR()) {

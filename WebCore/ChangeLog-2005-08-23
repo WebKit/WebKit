@@ -1,3 +1,32 @@
+2004-12-06  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Maciej
+
+        Fix for this bug:
+        
+        <rdar://problem/3890955> 8A314: Forward delete sometimes fails to delete the selected quoted text
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::handleSpecialCaseBRDelete): Fixed bonehead coding mistake in the
+        check for one of the special cases being checked for in this function. The specific case 
+        intends to check for a selection that is only a <br> after a block ends (as in </div><br>). If it
+        sees such markup, it deletes only the <br> and bails. However, this code would run in *any*
+        case where a selection ended in a <br> after a block and would not delete any part of the
+        selection preceding the <br>. Bad. I have tightened the check to see that only a <br> is
+        selected.
+
+        Fixing the bug above was accomplished with an additional call to DOM::Position::downstream. This
+        new use of the function exposed this bug:
+        
+        <rdar://problem/3907666> Incorrectly coded loop in Position::downstream can lead to infinite loop
+
+        * khtml/xml/dom_position.cpp:
+        (DOM::Position::downstream): I am ashamed of my first cut at this. Rewrote the loop so it does 
+        not have this fatal flaw. It is a much better design as well.
+        
+        * layout-tests/editing/deleting/delete-3800834-fix-expected.txt: Changes made this test
+        have what I consider to be a better result. Going with it.
+
 2004-12-06  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3871718> REGRESSION (125-168): text marked bold with font that does not have bold variant copies as non-bold
