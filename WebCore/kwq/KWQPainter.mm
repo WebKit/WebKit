@@ -463,12 +463,14 @@ struct CompositeOperator compositeOperators[NUM_COMPOSITE_OPERATORS] = {
 
 static NSCompositingOperation compositeOperatorFromString (QString aString)
 {
-    const char *operatorString = aString.ascii();
-    int i;
-    
-    for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
-        if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
-            return compositeOperators[i].value;
+    if (aString.length()) {
+        const char *operatorString = aString.ascii();
+        int i;
+        
+        for (i = 0; i < NUM_COMPOSITE_OPERATORS; i++) {
+            if (strcasecmp (operatorString, compositeOperators[i].name) == 0) {
+                return compositeOperators[i].value;
+            }
         }
     }
     return NSCompositeSourceOver;

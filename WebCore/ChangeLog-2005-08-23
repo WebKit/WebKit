@@ -1,3 +1,13 @@
+2004-04-27  Richard Williamson   <rjw@apple.com>
+
+	Don't do unnecessary string comparisons when no composite operator is
+	specified.  
+
+        Reviewed by Hyatt.
+
+        * kwq/KWQPainter.mm:
+        (compositeOperatorFromString):
+
 2004-04-27  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.
