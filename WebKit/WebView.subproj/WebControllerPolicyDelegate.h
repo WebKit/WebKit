@@ -34,19 +34,19 @@ typedef enum {
 } WebFileAction;
 
 typedef enum {
-    WebContentPolicyNone,
-    WebContentPolicyShow,
-    WebContentPolicySave,
-    WebContentPolicySaveAndOpenExternally,
-    WebContentPolicyIgnore
+    WebContentPolicyNone = WebPolicyNone,
+    WebContentPolicyShow = WebPolicyUse,
+    WebContentPolicySave = WebPolicySave,
+    WebContentPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
+    WebContentPolicyIgnore = WebPolicyIgnore
 } WebContentAction;
 
 typedef enum {
     WebClickPolicyNone = WebPolicyNone,
-    WebClickPolicyShow,
-    WebClickPolicySave,
-    WebClickPolicySaveAndOpenExternally,
-    WebClickPolicyIgnore
+    WebClickPolicyShow = WebPolicyUse,
+    WebClickPolicySave = WebPolicySave,
+    WebClickPolicySaveAndOpenExternally = WebPolicySaveAndOpen,
+    WebClickPolicyIgnore = WebPolicyIgnore
 } WebClickAction;
 
 @interface WebPolicy : NSObject

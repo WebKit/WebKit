@@ -1,5 +1,14 @@
 2002-07-25  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed crasher caused by not retaining the content policy.
+
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient WebResourceHandle:dataDidBecomeAvailable:]):
+
+2002-07-25  Chris Blumenberg  <cblu@apple.com>
+
 	Made policy APIs return a WebPolicy object.
 	Added click policy.
 

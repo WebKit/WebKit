@@ -9,7 +9,6 @@
 #import <WebKit/WebLocationChangeHandler.h>
 #import <WebKit/WebMainResourceClient.h>
 #import <WebKit/WebController.h>
-#import <WebKit/WebControllerPolicyHandler.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDataSourcePrivate.h>
@@ -191,13 +190,14 @@
 
         if([[dataSource contentPolicy] policyAction] == WebContentPolicyNone){
             contentPolicy = [[controller policyHandler] contentPolicyForMIMEType: contentType dataSource: dataSource];
+            policyAction = [contentPolicy policyAction];
             [dataSource _setContentPolicy:contentPolicy];
         }
         
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", DEBUG_OBJECT(contentType));
     }
 
-    switch ([contentPolicy policyAction]) {
+    switch (policyAction) {
     case WebContentPolicyShow:
         [dataSource _receivedData:data];
         break;
