@@ -1,5 +1,11 @@
 2002-02-18  Kenneth Kocienda  <kocienda@apple.com>
 
+	Fixed breakge that came up when project file merged.
+
+	* WebKit.pbproj/project.pbxproj:
+
+2002-02-18  Kenneth Kocienda  <kocienda@apple.com>
+
         Changes to support building standalone Alexander with Frameworks
         and libraries contained inside the app package.
 

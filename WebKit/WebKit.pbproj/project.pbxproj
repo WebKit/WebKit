@@ -222,7 +222,6 @@
 				F5EBC45902134BC301CA1520,
 				F5EBC45A02134BC301CA1520,
 				9CF0E24C021361B10ECA16EA,
-				F584CFE70221BDB601A80181,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -938,7 +937,6 @@
 				39446079020F50ED0ECA1767,
 				9CF0E249021361B00ECA16EA,
 				9CF0E24A021361B00ECA16EA,
-				F584CFE60221BDB601A80181,
 			);
 			isa = PBXGroup;
 			name = WebView;
@@ -978,18 +976,6 @@
 //F52
 //F53
 //F54
-		F584CFE60221BDB601A80181 = {
-			isa = PBXFileReference;
-			name = IFWebFrame.mm;
-			path = WebView.subproj/IFWebFrame.mm;
-			refType = 2;
-		};
-		F584CFE70221BDB601A80181 = {
-			fileRef = F584CFE60221BDB601A80181;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F5EBC45202134BB601CA1520 = {
 			children = (
 				F5EBC45302134BC301CA1520,
