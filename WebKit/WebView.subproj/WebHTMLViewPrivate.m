@@ -734,13 +734,19 @@ static BOOL inNSTextViewDrawRect;
     [super sendEvent:event];
 }
 
+#if MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_2
+
 // Workaround for bug 3245425 - nextEventMatchingMask:NSScrollWheelMask allows any kind of event.
-// Better to just not return any events (and not coalesce scroll wheel events) than to consume and
-// return other types of events.
 - (NSEvent *)nextEventMatchingMask:(unsigned int)mask untilDate:(NSDate *)expiration inMode:(NSString *)mode dequeue:(BOOL)deqFlag
 {
     if (mask == NSScrollWheelMask) {
-        return nil;
+        NSEvent *event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:NO];
+        if (event == nil || [event type] != NSScrollWheel) {
+            return nil;
+        }
+        if (!deqFlag) {
+            return event;
+        }
     }
 
     NSEvent *event = [super nextEventMatchingMask:mask untilDate:expiration inMode:mode dequeue:deqFlag];
@@ -751,6 +757,8 @@ static BOOL inNSTextViewDrawRect;
 
     return event;
 }
+
+#endif // version <= 10.2
 
 @end
 

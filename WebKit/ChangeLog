@@ -1,3 +1,24 @@
+2003-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3277675 -- REGRESSION: mouse wheel events not coalesced
+
+        * WebView.subproj/WebHTMLViewPrivate.m: (-[WebNSWindow nextEventMatchingMask:untilDate:inMode:dequeue:]):
+        When the mask is scroll wheel mask, instead of getting no events, do some tricks to get the next
+        event if it is a scroll wheel event, and nothing otherwise. Also ifdef the fix so we don't compile
+        it on Panther, since the underlying bug was fixed on Panther.
+    
+        - other changes
+
+        * WebCoreSupport.subproj/WebImageRenderer.m: (-[WebImageRenderer copyWithZone:]):
+        Remove unneeded line of code. The super function copies all simple fields for us.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView setMIMEType:]): Use copy instead of retain, do it in the right order
+        to avoid "same object release/retain" disease.
+        (-[WebBaseNetscapePluginView setBaseURL:]): Do retain before release (same reason as above).
+
 2003-06-03  Chris Blumenberg  <cblu@apple.com>
 
         Fixed: 3278496 - <rdar://problem/3278496>:	NSURLDownload: initWithSource and source should be renamed to initWithRequest and request

@@ -141,7 +141,6 @@ static NSMutableArray *activeImageRenderers;
     copy->frameView = nil;
     copy->patternColor = nil;
     copy->MIMEType = [MIMEType copy];
-    copy->isNull = isNull;
         
     return copy;
 }

@@ -902,14 +902,16 @@ typedef struct {
 
 - (void)setMIMEType:(NSString *)theMIMEType
 {
+    NSString *type = [theMIMEType copy];
     [MIMEType release];
-    MIMEType = [theMIMEType retain];
+    MIMEType = type;
 }
 
 - (void)setBaseURL:(NSURL *)theBaseURL
 {
+    [theBaseURL retain];
     [baseURL release];
-    baseURL = [theBaseURL retain];
+    baseURL = theBaseURL;
 }
 
 - (void)setAttributeKeys:(NSArray *)keys andValues:(NSArray *)values;
