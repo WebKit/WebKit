@@ -1,8 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2002 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,22 +19,37 @@
  *
  */
 
-#include "value.h"
-#include "object.h"
-#include "types.h"
-#include "interpreter.h"
-
-#include <assert.h>
-#include <math.h>
-#include <stdio.h>
+#include "list.h"
 
 #include "internal.h"
-#include "collector.h"
-#include "operations.h"
-#include "error_object.h"
-#include "nodes.h"
 
 #define DUMP_STATISTICS 0
+
+namespace KJS {
+
+// tunable parameters
+const int poolSize = 16; // must be a power of 2
+const int inlineValuesSize = 4;
+
+// derived constants
+const int poolSizeMask = poolSize - 1;
+
+enum ListImpState { unusedInPool = 0, usedInPool, usedOnHeap, immortal };
+
+struct ListImp : ListImpBase
+{
+    ListImpState state;
+    ValueImp *values[inlineValuesSize];
+    int capacity;
+    ValueImp **overflow;
+
+#if DUMP_STATISTICS
+    int sizeHighWaterMark;
+#endif
+};
+
+static ListImp pool[poolSize];
+static int poolCursor;
 
 #if DUMP_STATISTICS
 
@@ -48,9 +61,6 @@ static int listSizeHighWaterMark;
 static int numListsDestroyed;
 static int numListsBiggerThan[17];
 
-static int numNodesAllocated;
-static int numNodesWouldNeedToBeCopied;
-
 struct ListStatisticsExitLogger { ~ListStatisticsExitLogger(); };
 
 static ListStatisticsExitLogger logger;
@@ -60,371 +70,171 @@ ListStatisticsExitLogger::~ListStatisticsExitLogger()
     printf("\nKJS::List statistics:\n\n");
     printf("%d lists were allocated\n", numLists);
     printf("%d lists was the high water mark\n", numListsHighWaterMark);
-    printf("largest list had %d elements\n\n", listSizeHighWaterMark);
-    printf("%d nodes were allocated\n", numNodesAllocated);
-    printf("%d node copies would have been necessary if lists didn't share\n\n", numNodesWouldNeedToBeCopied);
-    for (int i = 0; i < 17; i++) {
-        printf("%.1f%% of the lists (%d) had more than %d element%s\n",
-            100.0 * numListsBiggerThan[i] / numListsDestroyed,
-            numListsBiggerThan[i],
-            i, i == 1 ? "" : "s");
+    printf("largest list had %d elements\n", listSizeHighWaterMark);
+    if (numListsDestroyed) {
+        putc('\n', stdout);
+        for (int i = 0; i < 17; i++) {
+            printf("%.1f%% of the lists (%d) had more than %d element%s\n",
+                100.0 * numListsBiggerThan[i] / numListsDestroyed,
+                numListsBiggerThan[i],
+                i, i == 1 ? "" : "s");
+        }
+        putc('\n', stdout);
     }
 }
 
 #endif
 
-namespace KJS {
-
-  struct ListNode {
-    ListNode(const Value &val, ListNode *p, ListNode *n)
-      : member(val.imp()), prev(p), next(n) { }
-    ListNode(ValueImp *val, ListNode *p, ListNode *n)
-      : member(val), prev(p), next(n) { }
-    ValueImp *member;
-    ListNode *prev, *next;
-  };
-
-  struct ListHookNode : public ListNode {
-    ListHookNode() : ListNode(0, this, this), listRefCount(1), nodesRefCount(1)
-#if DUMP_STATISTICS
-        , sizeHighWaterMark(0)
-#endif
-        { }
+static inline ListImp *allocateListImp()
+{
+    // Find a free one in the pool.
+    int c = poolCursor;
+    int i = c;
+    do {
+        ListImp *imp = &pool[i];
+        ListImpState s = imp->state;
+        i = (i + 1) & poolSizeMask;
+        if (s == unusedInPool) {
+            poolCursor = i;
+            imp->state = usedInPool;
+            return imp;
+        }
+    } while (i != c);
     
-    int listRefCount;
-    int nodesRefCount;
+    ListImp *imp = new ListImp;
+    imp->state = usedOnHeap;
+    return imp;
+}
+
+static inline void deallocateListImp(ListImp *imp)
+{
+    if (imp->state == usedInPool)
+        imp->state = unusedInPool;
+    else
+        delete imp;
+}
+
+List::List() : _impBase(allocateListImp())
+{
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    imp->size = 0;
+    imp->refCount = 1;
+    imp->capacity = 0;
+    imp->overflow = 0;
 
 #if DUMP_STATISTICS
-    int sizeHighWaterMark;
-#endif
-  };
-
-// ------------------------------ ListIterator ---------------------------------
-
-ValueImp* ListIterator::operator->() const
-{
-  return node->member;
-}
-
-Value ListIterator::operator*() const
-{
-  return Value(node->member);
-}
-
-Value ListIterator::operator++()
-{
-  node = node->next;
-  return Value(node->member);
-}
-
-Value ListIterator::operator++(int)
-{
-  const ListNode *n = node;
-  ++*this;
-  return Value(n->member);
-}
-
-Value ListIterator::operator--()
-{
-  node = node->prev;
-  return Value(node->member);
-}
-
-Value ListIterator::operator--(int)
-{
-  const ListNode *n = node;
-  --*this;
-  return Value(n->member);
-}
-
-// ------------------------------ List -----------------------------------------
-
-List::List() : hook(new ListHookNode)
-{
-#if DUMP_STATISTICS
-  if (++numLists > numListsHighWaterMark)
-    numListsHighWaterMark = numLists;
+    if (++numLists > numListsHighWaterMark)
+        numListsHighWaterMark = numLists;
+    imp->sizeHighWaterMark = 0;
 #endif
 }
 
-List::List(const List& l) : hook(l.hook)
+inline void List::derefValues()
 {
-#if DUMP_STATISTICS
-  if (++numLists > numListsHighWaterMark)
-    numListsHighWaterMark = numLists;
-  numNodesWouldNeedToBeCopied += size();
-#endif
-
-  ++hook->listRefCount;
-  if (hook->nodesRefCount++ == 0)
-    refAll();
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    
+    int size = imp->size;
+    
+    int inlineSize = MIN(size, inlineValuesSize);
+    for (int i = 0; i != inlineSize; ++i)
+        imp->values[i]->deref();
+    
+    int overflowSize = size - inlineSize;
+    ValueImp **overflow = imp->overflow;
+    for (int i = 0; i != overflowSize; ++i)
+        overflow[i]->deref();
 }
 
-List& List::operator=(const List& l)
+void List::release()
 {
-  List(l).swap(*this);
-  return *this;
-}
-
-List::~List()
-{
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    
 #if DUMP_STATISTICS
-  --numLists;
-#endif
-
-  if (--hook->nodesRefCount == 0)
-    derefAll();
-  
-  if (--hook->listRefCount == 0) {
-#if DUMP_STATISTICS
+    --numLists;
     ++numListsDestroyed;
     for (int i = 0; i < 17; i++)
-      if (hook->sizeHighWaterMark > i)
-        ++numListsBiggerThan[i];
+        if (imp->sizeHighWaterMark > i)
+            ++numListsBiggerThan[i];
 #endif
 
-    assert(hook->nodesRefCount == 0);
-    clearInternal();
-    delete hook;
-  }
+    derefValues();
+    delete [] imp->overflow;
+    deallocateListImp(imp);
 }
 
-void List::append(const Value& val)
+ValueImp *List::impAt(int i) const
 {
-  ListNode *n = new ListNode(val, hook->prev, hook);
-  if (hook->nodesRefCount)
-    n->member->ref();
-  hook->prev->next = n;
-  hook->prev = n;
-
-#if DUMP_STATISTICS
-  ++numNodesAllocated;
-  int s = size();
-  if (s > hook->sizeHighWaterMark) {
-    hook->sizeHighWaterMark = s;
-    if (s > listSizeHighWaterMark)
-     listSizeHighWaterMark = s;
-  }
-#endif
+    ListImp *imp = static_cast<ListImp *>(_impBase);
+    if ((unsigned)i >= (unsigned)imp->size)
+        return UndefinedImp::staticUndefined;
+    if (i < inlineValuesSize)
+        return imp->values[i];
+    return imp->overflow[i - inlineValuesSize];
 }
-
-void List::append(ValueImp *val)
-{
-  ListNode *n = new ListNode(val, hook->prev, hook);
-  if (hook->nodesRefCount)
-    val->ref();
-  hook->prev->next = n;
-  hook->prev = n;
-
-#if DUMP_STATISTICS
-  ++numNodesAllocated;
-  int s = size();
-  if (s > hook->sizeHighWaterMark) {
-    hook->sizeHighWaterMark = s;
-    if (s > listSizeHighWaterMark)
-     listSizeHighWaterMark = s;
-  }
-#endif
-}
-
-#if 0
-
-void List::prepend(const Value& val)
-{
-  ListNode *n = new ListNode(val, hook, hook->next);
-  if (hook->nodesRefCount)
-    n->member->ref();
-  hook->next->prev = n;
-  hook->next = n;
-
-#if DUMP_STATISTICS
-  ++numNodesAllocated;
-  int s = size();
-  if (s > hook->sizeHighWaterMark) {
-    hook->sizeHighWaterMark = s;
-    if (s > listSizeHighWaterMark)
-     listSizeHighWaterMark = s;
-  }
-#endif
-}
-
-#endif
-
-void List::prepend(ValueImp *val)
-{
-  ListNode *n = new ListNode(val, hook, hook->next);
-  if (hook->nodesRefCount)
-    val->ref();
-  hook->next->prev = n;
-  hook->next = n;
-
-#if DUMP_STATISTICS
-  ++numNodesAllocated;
-  int s = size();
-  if (s > hook->sizeHighWaterMark) {
-    hook->sizeHighWaterMark = s;
-    if (s > listSizeHighWaterMark)
-     listSizeHighWaterMark = s;
-  }
-#endif
-}
-
-void List::prependList(const List& lst)
-{
-  ListNode *otherHook = lst.hook;
-  ListNode *n = otherHook->prev;
-  while (n != otherHook) {
-    prepend(n->member);
-    n = n->prev;
-  }
-}
-
-void List::removeFirst()
-{
-  erase(hook->next);
-}
-
-#if 0
-
-void List::removeLast()
-{
-  erase(hook->prev);
-}
-
-void List::remove(const Value &val)
-{
-  if (val.isNull())
-    return;
-  for (ListNode *n = hook->next; n != hook; n = n->next)
-    if (n->member == val.imp()) {
-      erase(n);
-      return;
-    }
-}
-
-#endif
 
 void List::clear()
 {
-  if (hook->nodesRefCount)
-    derefAll();
-  clearInternal();
+    derefValues();
+    _impBase->size = 0;
 }
 
-void List::clearInternal()
+void List::append(ValueImp *v)
 {
-  ListNode *n = hook->next;
-  while (n != hook) {
-    n = n->next;
-    delete n->prev;
-  }
+    ListImp *imp = static_cast<ListImp *>(_impBase);
 
-  hook->next = hook;
-  hook->prev = hook;
+    int i = imp->size++;
+
+#if DUMP_STATISTICS
+    if (imp->size > listSizeHighWaterMark)
+        listSizeHighWaterMark = imp->size;
+#endif
+
+    v->ref();
+    
+    if (i < inlineValuesSize) {
+        imp->values[i] = v;
+        return;
+    }
+    
+    if (i >= imp->capacity) {
+        int newCapacity = i * 2;
+        ValueImp **newOverflow = new ValueImp * [newCapacity - inlineValuesSize];
+        ValueImp **oldOverflow = imp->overflow;
+        int oldOverflowSize = i - inlineValuesSize;
+        for (int j = 0; j != oldOverflowSize; j++)
+            newOverflow[j] = oldOverflow[j];
+        delete [] oldOverflow;
+        imp->overflow = newOverflow;
+        imp->capacity = newCapacity;
+    }
+    
+    imp->overflow[i - inlineValuesSize] = v;
 }
 
-List List::copy() const
+List List::copyTail() const
 {
-  List newList;
-  newList.prependList(*this);
-  return newList;
-}
+    List copy;
 
-ListIterator List::begin() const
-{
-  return ListIterator(hook->next);
-}
+    ListImp *imp = static_cast<ListImp *>(_impBase);
 
-ListIterator List::end() const
-{
-  return ListIterator(hook);
-}
+    int size = imp->size;
 
-bool List::isEmpty() const
-{
-  return hook->prev == hook;
-}
+    int inlineSize = MIN(size, inlineValuesSize);
+    for (int i = 0; i != inlineSize; ++i)
+        copy.append(imp->values[i]);
 
-int List::size() const
-{
-  int s = 0;
-  for (ListNode *n = hook->next; n != hook; n = n->next)
-    s++;
-  return s;
-}
+    ValueImp **overflow = imp->overflow;
+    int overflowSize = size - inlineSize;
+    for (int i = 0; i != overflowSize; ++i)
+        copy.append(overflow[i]);
 
-Value List::at(int i) const
-{
-  if (i < 0 || i >= size())
-    return Undefined();
-
-  ListIterator it = begin();
-  int j = 0;
-  while ((j++ < i))
-    it++;
-
-  return *it;
-}
-
-Value List::operator[](int i) const
-{
-  return at(i);
+    return copy;
 }
 
 const List &List::empty()
 {
-  static List l;
-  return l;
-}
-
-void List::erase(ListNode *n)
-{
-  if (n != hook) {
-    if (hook->nodesRefCount)
-      n->member->deref();
-    n->next->prev = n->prev;
-    n->prev->next = n->next;
-    delete n;
-  }
-}
-
-void List::refAll()
-{
-  for (ListNode *n = hook->next; n != hook; n = n->next)
-    n->member->ref();
-}
-
-void List::derefAll()
-{
-  for (ListNode *n = hook->next; n != hook; n = n->next)
-    n->member->deref();
-}
-
-void List::swap(List &other)
-{
-  ListHookNode *tmp = hook;
-  hook = other.hook;
-  other.hook = tmp;
-}
-
-void List::replaceFirst(ValueImp *v)
-{
-  ListNode *n = hook->next;
-  if (hook->nodesRefCount) {
-    v->ref();
-    n->member->deref();
-  }
-  n->member = v;
-}
-
-void List::replaceLast(ValueImp *v)
-{
-  ListNode *n = hook->prev;
-  if (hook->nodesRefCount) {
-    v->ref();
-    n->member->deref();
-  }
-  n->member = v;
+    static List emptyList;
+    return emptyList;
 }
 
 } // namespace KJS

@@ -1,5 +1,21 @@
 2002-11-22  Darin Adler  <darin@apple.com>
 
+	- replaced List class with a vector rather than a linked list, changed it
+	to use a pool of instances instead of all the nodes allocated off of the
+	heap; gives 10% gain on iBench
+
+        * kjs/list.h: Complete rewrite.
+        * kjs/list.cpp: Ditto.
+
+        * kjs/array_object.cpp: (compareWithCompareFunctionForQSort): Go back to
+	doing a clear and two appends here. Fast with the new list implementation.
+
+        * kjs/collector.h: Remove _COLLECTOR hack and just make rootObjectClasses
+	return a const void *.
+        * kjs/collector.cpp: Remove _COLLECTOR hack, and various other minor tweaks.
+
+2002-11-22  Darin Adler  <darin@apple.com>
+
 	- prepare to reimplement KJS::List; move to its own file, add statistics
 
         * kjs/function_object.cpp: (FunctionProtoFuncImp::call): Use new copyTail()

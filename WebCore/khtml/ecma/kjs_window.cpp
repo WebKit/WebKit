@@ -35,7 +35,6 @@
 
 #if APPLE_CHANGES
 #include "KWQLogging.h"
-#define _COLLECTOR
 #endif
 #include <kjs/collector.h>
 #include "kjs_proxy.h"

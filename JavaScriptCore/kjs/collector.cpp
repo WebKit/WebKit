@@ -1,8 +1,7 @@
 // -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2002 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -20,17 +19,17 @@
  *
  */
 
+#include "collector.h"
+
+#include "value.h"
+#include "internal.h"
+
 #if APPLE_CHANGES
-#define _COLLECTOR
 #include <CoreFoundation/CoreFoundation.h>
 #include <cxxabi.h>
 #endif
 
-#include <collector.h>
-#include <value.h>
-#include <internal.h>
-
-using namespace KJS;
+namespace KJS {
 
 // tunable parameters
 static const int CELL_SIZE = 56;
@@ -359,8 +358,7 @@ int Collector::numReferencedObjects()
   return count;
 }
 
-// FIXME: Rename. Root object classes are more useful than live object classes.
-CFSetRef Collector::liveObjectClasses()
+const void *Collector::rootObjectClasses()
 {
   CFMutableSetRef classes = CFSetCreateMutable(NULL, 0, &kCFTypeSetCallBacks);
 
@@ -404,3 +402,5 @@ CFSetRef Collector::liveObjectClasses()
 }
 
 #endif // APPLE_CHANGES
+
+} // namespace KJS

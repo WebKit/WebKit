@@ -267,8 +267,9 @@ static int compareWithCompareFunctionForQSort(const void *a, const void *b)
 {
     CompareWithCompareFunctionArguments *args = compareWithCompareFunctionArguments;
     
-    args->arguments.replaceFirst(*(ValueImp **)a);
-    args->arguments.replaceLast(*(ValueImp **)b);
+    args->arguments.clear();
+    args->arguments.append(*(ValueImp **)a);
+    args->arguments.append(*(ValueImp **)b);
     return args->compareFunction->call(args->exec, args->globalObject, args->arguments)
         .toInt32(args->exec);
 }

@@ -1,3 +1,14 @@
+2002-11-22  Darin Adler  <darin@apple.com>
+
+        * khtml/ecma/kjs_window.cpp: Remove _COLLECTOR hack.
+
+        * kwq/WebCoreJavaScript.h:
+        * kwq/WebCoreJavaScript.mm:
+        (+[WebCoreJavaScript rootObjectClasses]):
+	Update for name change -- root object classes, not all live object classes.
+
+        * force-js-clean-timestamp: Make sure we don't have more build problems.
+
 2002-11-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3107658, text doubling problem caused by layers being

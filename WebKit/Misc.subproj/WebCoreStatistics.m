@@ -48,9 +48,9 @@
     return [WebCoreJavaScript referencedObjectCount];
 }
 
-+ (NSSet *)javaScriptLiveObjectClasses
++ (NSSet *)javaScriptRootObjectClasses
 {
-    return [WebCoreJavaScript liveObjectClasses];
+    return [WebCoreJavaScript rootObjectClasses];
 }
 
 + (void)garbageCollectJavaScriptObjects

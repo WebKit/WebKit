@@ -1,3 +1,10 @@
+2002-11-22  Darin Adler  <darin@apple.com>
+
+        * Misc.subproj/WebCoreStatistics.h:
+        * Misc.subproj/WebCoreStatistics.m:
+        (+[WebCoreStatistics javaScriptRootObjectClasses]):
+	Update for name change -- root object classes, not all live object classes.
+
 2002-11-22  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed assertion while loading local files.

@@ -1,7 +1,7 @@
 /*
  *  This file is part of the KDE libraries
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2002 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -27,149 +27,158 @@
 
 namespace KJS {
 
-  class List;
-  class ListIterator;
-  class ListNode;
-  class ListHookNode;
-
-  /**
-   * @short Iterator for @ref KJS::List objects.
-   */
-  class ListIterator {
-    friend class List;
-    ListIterator() : node(0) { }
-    ListIterator(ListNode *n) : node(n) { }
-  public:
-    /**
-     * Construct an iterator that points to the first element of the list.
-     * @param l The list the iterator will operate on.
-     */
-    ListIterator(const List &l);
-    /**
-     * Dereference the iterator.
-     * @return A pointer to the element the iterator operates on.
-     */
-    ValueImp* operator->() const;
-    Value operator*() const;
-    /**
-     * Postfix increment operator.
-     * @return The element after the increment.
-     */
-    Value operator++();
-    /**
-     * Prefix increment operator.
-     */
-    Value operator++(int);
-    /**
-     * Postfix decrement operator.
-     */
-    Value operator--();
-    /**
-     * Prefix decrement operator.
-     */
-    Value operator--(int);
-    /**
-     * Compare the iterator with another one.
-     * @return True if the two iterators operate on the same list element.
-     * False otherwise.
-     */
-    bool operator==(const ListIterator &it) const { return node == it.node; }
-    /**
-     * Check for inequality with another iterator.
-     * @return True if the two iterators operate on different list elements.
-     */
-    bool operator!=(const ListIterator &it) const { return node != it.node; }
-  private:
-    ListNode *node;
-  };
-
-  /**
-   * @short Native list type.
-   *
-   * List is a native ECMAScript type. List values are only used for
-   * intermediate results of expression evaluation and cannot be stored
-   * as properties of objects.
-   *
-   * The list is explicitly shared. Note that while copy() returns a
-   * copy of the list the referenced objects are still shared.
-   */
-  class List {
-    friend class ListIterator;
-  public:
-    List();
-    List(const List& l);
-    List &operator=(const List& l);
-      
-    ~List();
-
-    List copyTail() const { List result = copy(); result.removeFirst(); return result; }
+    struct ListImpBase {
+        int size;
+        int refCount;
+    };
+    
+    class ListIterator;
 
     /**
-     * Append an object to the end of the list.
+     * @short Native list type.
      *
-     * @param val Pointer to object.
-     */
-    void append(const Value& val);
-    void append(ValueImp *val);
-    /**
-     * Remove all elements from the list.
-     */
-    void clear();
-
-    /**
-     * @return A @ref KJS::ListIterator pointing to the first element.
-     */
-    ListIterator begin() const;
-    /**
-     * @return A @ref KJS::ListIterator pointing to the last element.
-     */
-    ListIterator end() const;
-    /**
-     * @return true if the list is empty. false otherwise.
-     */
-    bool isEmpty() const;
-    /**
-     * @return the current size of the list.
-     */
-    int size() const;
-    /**
-     * Retrieve an element at an indexed position. If you want to iterate
-     * trough the whole list using @ref KJS::ListIterator will be faster.
+     * List is a native ECMAScript type. List values are only used for
+     * intermediate results of expression evaluation and cannot be stored
+     * as properties of objects.
      *
-     * @param i List index.
-     * @return Return the element at position i. @ref KJS::Undefined if the
-     * index is out of range.
+     * The list is explicitly shared. Note that while copyTail() returns a
+     * copy of the list the referenced objects are still shared.
      */
-    Value at(int i) const;
-    /**
-     * Equivalent to @ref at.
-     */
-    Value operator[](int i) const;
+    class List {
+    public:
+        List();
+        ~List() { deref(); }
 
-    /**
-     * Returns a pointer to a static instance of an empty list. Useful if a
-     * function has a @ref KJS::List parameter.
-     */
-    static const List &empty();
-    
-    void replaceFirst(ValueImp *);
-    void replaceLast(ValueImp *);
-    
-  private:
+        List(const List &b) : _impBase(b._impBase) { ++_impBase->refCount; }
+        List &operator=(const List &);
 
-    void removeFirst();
-    List copy() const;
-    void prepend(ValueImp *val);
-    void prependList(const List& lst);
-    void erase(ListNode *n);
-    void clearInternal();
-    void refAll();
-    void derefAll();
-    void swap(List &other);
+        /**
+         * Append an object to the end of the list.
+         *
+         * @param val Pointer to object.
+         */
+        void append(const Value& val) { append(val.imp()); }
+        void append(ValueImp *val);
+        /**
+         * Remove all elements from the list.
+         */
+        void clear();
+        /**
+         * Make a copy of the list, omitting the first element.
+         */
+        List copyTail() const;
     
-    ListHookNode *hook;
-  };
+        /**
+         * @return true if the list is empty. false otherwise.
+         */
+        bool isEmpty() const { return _impBase->size == 0; }
+        /**
+         * @return the current size of the list.
+         */
+        int size() const { return _impBase->size; }
+        /**
+         * @return A @ref KJS::ListIterator pointing to the first element.
+         */
+        ListIterator begin() const;
+        /**
+         * @return A @ref KJS::ListIterator pointing to the last element.
+         */
+        ListIterator end() const;
+        
+        /**
+         * Retrieve an element at an indexed position. If you want to iterate
+         * trough the whole list using @ref KJS::ListIterator will be faster.
+         *
+         * @param i List index.
+         * @return Return the element at position i. @ref KJS::Undefined if the
+         * index is out of range.
+         */
+        Value at(int i) const { return Value(impAt(i)); }
+        /**
+         * Equivalent to @ref at.
+         */
+        Value operator[](int i) const { return Value(impAt(i)); }
+        
+        ValueImp *impAt(int i) const;
+    
+        /**
+         * Returns a pointer to a static instance of an empty list. Useful if a
+         * function has a @ref KJS::List parameter.
+         */
+        static const List &empty();
+        
+    private:
+        ListImpBase *_impBase;
+        
+        void deref() { if (--_impBase->refCount == 0) release(); }
+
+        void release();
+        void derefValues();
+    };
   
-}; // namespace KJS
+    /**
+     * @short Iterator for @ref KJS::List objects.
+     */
+    class ListIterator {
+    public:
+        /**
+         * Construct an iterator that points to the first element of the list.
+         * @param l The list the iterator will operate on.
+         */
+        ListIterator(const List &l) : _list(&l), _i(0) { }
+        ListIterator(const List &l, int index) : _list(&l), _i(index) { }
+        /**
+         * Dereference the iterator.
+         * @return A pointer to the element the iterator operates on.
+         */
+        ValueImp *operator->() const { return _list->impAt(_i); }
+        Value operator*() const { return Value(_list->impAt(_i)); }
+        /**
+         * Prefix increment operator.
+         * @return The element after the increment.
+         */
+        Value operator++() { return Value(_list->impAt(++_i)); }
+        /**
+         * Postfix increment operator.
+         */
+        Value operator++(int) { return Value(_list->impAt(_i++)); }
+        /**
+         * Prefix decrement operator.
+         */
+        Value operator--() { return Value(_list->impAt(--_i)); }
+        /**
+         * Postfix decrement operator.
+         */
+        Value operator--(int) { return Value(_list->impAt(_i--)); }
+        /**
+         * Compare the iterator with another one.
+         * @return True if the two iterators operate on the same list element.
+         * False otherwise.
+         */
+        bool operator==(const ListIterator &it) const { return _i == it._i; }
+        /**
+         * Check for inequality with another iterator.
+         * @return True if the two iterators operate on different list elements.
+         */
+        bool operator!=(const ListIterator &it) const { return _i != it._i; }
+
+    private:
+        const List *_list;
+        int _i;
+    };
+
+    inline ListIterator List::begin() const { return ListIterator(*this); }
+    inline ListIterator List::end() const { return ListIterator(*this, size()); }
+ 
+    inline List &List::operator=(const List &b)
+    {
+        ListImpBase *bImpBase = b._impBase;
+        ++bImpBase->refCount;
+        deref();
+        _impBase = bImpBase;
+        return *this;
+    }
+
+ }; // namespace KJS
 
 #endif // KJS_LIST_H
