@@ -2,6 +2,16 @@
 
         Reviewed by Hyatt
 
+        * khtml/rendering/bidi.cpp:
+        (khtml::RenderBlock::layoutInlineChildren): Only add additional line height
+        in for root editable elements. This helps to keep layout from deviating too
+        much from the intended page layout, but still gives an empty document a line
+        in which it can blink the caret.
+
+2004-06-04  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
         Made some progress on this set of related bugs:
         
         <rdar://problem/3675867>: "Make execCommand work as specified in the Javascript execCommand Compatibility Plan"
