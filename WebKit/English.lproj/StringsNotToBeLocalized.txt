@@ -307,6 +307,7 @@ WebView.subproj/WebDataSourcePrivate.m:"Refresh"
 WebView.subproj/WebFrame.m:"utf-16"
 WebView.subproj/WebPreferences.m:"Identifier"
 WebView.subproj/WebPreferences.m:"Values"
+WebView.subproj/WebPreferences.m:"WebPreferences%d"
 WebView.subproj/WebRenderNode.m
 WebView.subproj/WebView.m:"Preferences"
 WebView.subproj/WebViewPrivate.m:"canGoBack"

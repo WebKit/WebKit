@@ -80,7 +80,17 @@ enum { WebPreferencesVersion = 1 };
 
 - init
 {
-    return [self initWithIdentifier:nil];
+    // Create fake identifier
+    static int instanceCount = 1;
+    NSString *fakeIdentifier;
+    
+    // At least ensure that identifier hasn't been already used.  
+    fakeIdentifier = [NSString stringWithFormat:@"WebPreferences%d", instanceCount++];
+    while ([[self class] _getInstanceForIdentifier:fakeIdentifier]){
+        fakeIdentifier = [NSString stringWithFormat:@"WebPreferences%d", instanceCount++];
+    }
+    
+    return [self initWithIdentifier:fakeIdentifier];
 }
 
 static WebPreferences *_standardPreferences = nil;
@@ -173,7 +183,7 @@ NS_ENDHANDLER
 + (WebPreferences *)standardPreferences
 {
     if (_standardPreferences == nil) {
-        _standardPreferences = [[WebPreferences alloc] init];
+        _standardPreferences = [[WebPreferences alloc] initWithIdentifier:nil];
         [_standardPreferences setAutosaves:YES];
         [_standardPreferences _postPreferencesChangesNotification];
     }

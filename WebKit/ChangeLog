@@ -1,3 +1,15 @@
+2003-10-03  Richard Williamson (Home0  <rjw@apple.com>
+
+	Fix part of 3438071.  Creating an instance of WebPreferences using init
+	will do the expected thing:  that is, create a new instance!  We used to
+	always return standardPreferences.
+
+        Reviewed by Chris.
+
+        * WebView.subproj/WebPreferences.m:
+        (-[WebPreferences init]):
+        (+[WebPreferences standardPreferences]):
+
 2003-10-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for numerous regressions caused by an inadvertent renaming of the recursiveDisplay
