@@ -378,10 +378,6 @@ using khtml::RenderPart;
             QMouseEvent doubleClickEvent(QEvent::MouseButtonDblClick, QPoint(p), button, state, clickCount);
             part->impl->view()->viewportMouseDoubleClickEvent(&doubleClickEvent);
         }
-        else if (clickCount > 0 && clickCount % 3 == 0) {
-            QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
-            part->impl->view()->viewportMouseTripleClickEvent(&releaseEvent);
-        }
         else {
             QMouseEvent releaseEvent(QEvent::MouseButtonRelease, QPoint(p), button, state, clickCount);
             part->impl->view()->viewportMouseReleaseEvent(&releaseEvent);

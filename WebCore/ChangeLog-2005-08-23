@@ -1,3 +1,30 @@
+2002-09-20  Richard Williamson   <rjw@apple.com>
+
+        Made double and triple click selection behave like
+        like other selection in OS X.  That is, selection happens
+        on mouse down, not mouse up, and can be extended by
+        further dragging.  Triple click followed by dragging extends
+        the selection a line at a time.
+        
+        * khtml/khtml_events.cpp:
+        * khtml/khtml_events.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::customEvent):
+        (firstSlaveAt):
+        (lastSlaveAt):
+        (startAndEndLineNodesIncludingNode):
+        (KHTMLPart::khtmlMousePressEvent):
+        (KHTMLPart::khtmlMouseDoubleClickEvent):
+        (KHTMLPart::khtmlMouseMoveEvent):
+        * khtml/khtml_part.h:
+        * khtml/khtmlpart_p.h:
+        * khtml/khtmlview.cpp:
+        * khtml/khtmlview.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::setAttribute):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge mouseUp:]):
+
 2002-09-20  Darin Adler  <darin@apple.com>
 
         * kwq/KWQFileButton.h: Add an icon.

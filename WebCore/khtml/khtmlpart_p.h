@@ -317,6 +317,14 @@ public:
   bool m_bMousePressed;
   DOM::Node m_mousePressNode; //node under the mouse when the mouse was pressed (set in the mouse handler)
 
+#ifdef APPLE_CHANGES
+    DOM::Node m_initialSelectionStart;
+    long m_initialSelectionStartOffset;
+    DOM::Node m_initialSelectionEnd;
+    long m_initialSelectionEndOffset;
+    bool m_selectionInitiatedWithDoubleClick:1;
+    bool m_selectionInitiatedWithTripleClick:1;
+#endif
   DOM::Node m_selectionStart;
   long m_startOffset;
   DOM::Node m_selectionEnd;

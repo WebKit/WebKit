@@ -166,9 +166,6 @@ public:
     virtual void viewportMousePressEvent( QMouseEvent * );
     virtual void focusOutEvent( QFocusEvent * );
     virtual void viewportMouseDoubleClickEvent( QMouseEvent * );
-#ifdef APPLE_CHANGES
-    virtual void viewportMouseTripleClickEvent( QMouseEvent * );
-#endif
     virtual void viewportMouseMoveEvent(QMouseEvent *);
     virtual void viewportMouseReleaseEvent(QMouseEvent *);
 #ifndef QT_NO_WHEELEVENT

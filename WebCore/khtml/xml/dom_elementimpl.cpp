@@ -223,6 +223,8 @@ void ElementImpl::setAttribute(NodeImpl::Id id, DOMStringImpl* value, int &excep
         return;
     }
 
+    printf ("setAttribute %s\n", (char *)value);
+    
     if (old && !value)
         namedAttrMap->removeAttribute(id);
     else if (!old && value)
