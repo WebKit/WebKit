@@ -139,6 +139,8 @@ protected:
     void setNodeAttribute(DOM::ElementImpl *, int attribute, const DOM::DOMString &);
     void splitTextNode(DOM::TextImpl *text, long offset);
 
+    DOM::ElementImpl *createTypingStyleElement() const;
+
     QValueList<EditCommand> m_cmds;
 };
 
@@ -333,7 +335,6 @@ private:
     void execute(const DOM::DOMString &text);
     void insertSpace(DOM::TextImpl *textNode, unsigned long offset);
 
-    DOM::TextImpl *m_insertedTextNode;
     unsigned long m_charactersAdded;
 };
 

@@ -1550,8 +1550,20 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (!_part || !_part->xmlDocImpl() || !style)
         return;
     
-    ApplyStyleCommand cmd(_part->xmlDocImpl(), [style _styleDeclarationImpl]);
-    cmd.apply();
+    Selection selection(_part->selection());
+    switch (selection.state()) {
+        case Selection::NONE:
+            // do nothing
+            break;
+        case Selection::CARET:
+            _part->setTypingStyle([style _styleDeclarationImpl]);
+            break;
+        case Selection::RANGE: {
+            ApplyStyleCommand cmd(_part->xmlDocImpl(), [style _styleDeclarationImpl]);
+            cmd.apply();
+            break;
+        }
+    }
 }
 
 - (NSFont *)fontForCurrentPosition

@@ -1,3 +1,40 @@
+2004-06-07  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3682354>: "Typing style does not work yet"
+        
+        Did the final hook-up of support that has landed in the tree in the
+        recent past as part of ongoing style-application work.
+        
+        For the most part, this patch modifies the InputNewlineCommandImpl and
+        InputTextCommandImpl commands to insert a styling span when there is
+        a typing style active. 
+
+        * khtml/editing/htmlediting_impl.cpp:
+        (khtml::CompositeEditCommandImpl::createTypingStyleElement): Helper
+        shared by the two commands modified.
+        (khtml::InputNewlineCommandImpl::doApply): Create a styling span if the
+        part has a typing style. Maintain a nodeToInsert local variable, which is
+        either the break to insert or a styling span containing the break. Also,
+        remove some utterly bogus derefs. They are just plain wrong.
+        (khtml::InputTextCommandImpl::InputTextCommandImpl): Don't need to keep
+        m_insertedTextNode. The composite commands this command uses will keep
+        track of that object's lifetime. We do not need to do that here.
+        (khtml::InputTextCommandImpl::~InputTextCommandImpl): No longer need 
+        to deref obsolete m_insertedTextNode.
+        (khtml::InputTextCommandImpl::prepareForTextInsertion): Handle the case
+        where a styling span needs to be added.
+        (khtml::TypingCommandImpl::insertText): Create a new InputTextCommand when
+        there is an active typping style.
+        * khtml/editing/htmlediting_impl.h: Declare createTypingStyleElement helper.
+        Remove m_insertedTextNode from InputTextCommandImpl.
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge applyStyle:]): Swicth on the state of the selection, calling
+        setTypingStyle when a caret and ApplyStyleCommand when a range.
+
 2004-06-07  Darin Adler  <darin@apple.com>
 
         Reviewed by Ken.

@@ -531,6 +531,21 @@ void CompositeEditCommandImpl::setNodeAttribute(ElementImpl *element, int attrib
     applyCommandToComposite(cmd);
 }
 
+ElementImpl *CompositeEditCommandImpl::createTypingStyleElement() const
+{
+    int exceptionCode = 0;
+    ElementImpl *styleElement = document()->createHTMLElement("SPAN", exceptionCode);
+    ASSERT(exceptionCode == 0);
+    
+    styleElement->setAttribute(ATTR_STYLE, document()->part()->typingStyle()->cssText().implementation(), exceptionCode);
+    ASSERT(exceptionCode == 0);
+
+    styleElement->setAttribute(ATTR_CLASS, styleSpanClassString());
+    ASSERT(exceptionCode == 0);
+
+    return styleElement;
+}
+
 //==========================================================================================
 // Concrete commands
 //------------------------------------------------------------------------------------------
@@ -1610,6 +1625,17 @@ void InputNewlineCommandImpl::doApply()
     ElementImpl *breakNode = document()->createHTMLElement("BR", exceptionCode);
     ASSERT(exceptionCode == 0);
 
+    NodeImpl *nodeToInsert = breakNode;
+    
+    // Handle the case where there is a typing style.
+    if (document()->part()->typingStyle()) {
+        int exceptionCode = 0;
+        ElementImpl *styleElement = createTypingStyleElement();
+        styleElement->appendChild(breakNode, exceptionCode);
+        ASSERT(exceptionCode == 0);
+        nodeToInsert = styleElement;
+    }
+    
     Position pos(selection.start().equivalentDownstreamPosition());
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
@@ -1618,7 +1644,7 @@ void InputNewlineCommandImpl::doApply()
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");
         NodeImpl *cb = pos.node()->enclosingBlockFlowElement();
-        appendNode(cb, breakNode);
+        appendNode(cb, nodeToInsert);
         
         // Insert an "extra" BR at the end of the block. This makes the "real" BR we want
         // to insert appear in the rendering without any significant side effects (and no
@@ -1631,12 +1657,12 @@ void InputNewlineCommandImpl::doApply()
     }
     else if (atEnd) {
         LOG(Editing, "input newline case 2");
-        insertNodeAfter(breakNode, pos.node());
+        insertNodeAfter(nodeToInsert, pos.node());
         setEndingSelection(Position(breakNode, 0));
     }
     else if (atStart) {
         LOG(Editing, "input newline case 3");
-        insertNodeAt(breakNode, pos.node(), 0);
+        insertNodeAt(nodeToInsert, pos.node(), 0);
         setEndingSelection(Position(pos.node(), 0));
     }
     else {
@@ -1646,26 +1672,21 @@ void InputNewlineCommandImpl::doApply()
         TextImpl *textBeforeNode = document()->createTextNode(textNode->substringData(0, selection.start().offset(), exceptionCode));
         deleteText(textNode, 0, selection.start().offset());
         insertNodeBefore(textBeforeNode, textNode);
-        insertNodeBefore(breakNode, textNode);
-        textBeforeNode->deref();
+        insertNodeBefore(nodeToInsert, textNode);
         setEndingSelection(Position(textNode, 0));
     }
-        
-    breakNode->deref();
 }
 
 //------------------------------------------------------------------------------------------
 // InputTextCommandImpl
 
 InputTextCommandImpl::InputTextCommandImpl(DocumentImpl *document) 
-    : CompositeEditCommandImpl(document), m_insertedTextNode(0), m_charactersAdded(0)
+    : CompositeEditCommandImpl(document), m_charactersAdded(0)
 {
 }
 
 InputTextCommandImpl::~InputTextCommandImpl() 
 {
-    if (m_insertedTextNode)
-        m_insertedTextNode->deref();
 }
 
 int InputTextCommandImpl::commandID() const
@@ -1717,33 +1738,64 @@ Position InputTextCommandImpl::prepareForTextInsertion(bool adjustDownstream)
         pos = pos.equivalentUpstreamPosition();
     
     if (!pos.node()->isTextNode()) {
-        if (!m_insertedTextNode) {
-            m_insertedTextNode = document()->createEditingTextNode("");
-            m_insertedTextNode->ref();
+        NodeImpl *textNode = document()->createEditingTextNode("");
+        NodeImpl *nodeToInsert = textNode;
+        if (document()->part()->typingStyle()) {
+            int exceptionCode = 0;
+            ElementImpl *styleElement = createTypingStyleElement();
+            styleElement->appendChild(textNode, exceptionCode);
+            ASSERT(exceptionCode == 0);
+            nodeToInsert = styleElement;
         }
         
+        // Now insert the node in the right place
         if (pos.node()->isEditableBlock()) {
             LOG(Editing, "prepareForTextInsertion case 1");
-            appendNode(pos.node(), m_insertedTextNode);
+            appendNode(pos.node(), nodeToInsert);
         }
         else if (pos.node()->id() == ID_BR && pos.offset() == 1) {
             LOG(Editing, "prepareForTextInsertion case 2");
-            insertNodeBefore(m_insertedTextNode, pos.node());
+            insertNodeBefore(nodeToInsert, pos.node());
         }
         else if (pos.node()->caretMinOffset() == pos.offset()) {
             LOG(Editing, "prepareForTextInsertion case 3");
-            insertNodeBefore(m_insertedTextNode, pos.node());
+            insertNodeBefore(nodeToInsert, pos.node());
         }
         else if (pos.node()->caretMaxOffset() == pos.offset()) {
             LOG(Editing, "prepareForTextInsertion case 4");
-            insertNodeAfter(m_insertedTextNode, pos.node());
+            insertNodeAfter(nodeToInsert, pos.node());
         }
         else
             ASSERT_NOT_REACHED();
         
-        pos = Position(m_insertedTextNode, 0);
+        pos = Position(textNode, 0);
     }
-    
+    else {
+        // Handle the case where there is a typing style.
+        if (document()->part()->typingStyle()) {
+            if (pos.node()->isTextNode() && pos.offset() > pos.node()->caretMinOffset() && pos.offset() < pos.node()->caretMaxOffset()) {
+                // Need to split current text node in order to insert a span.
+                TextImpl *text = static_cast<TextImpl *>(pos.node());
+                SplitTextNodeCommand cmd(document(), text, pos.offset());
+                applyCommandToComposite(cmd);
+                setEndingSelection(Position(cmd.node(), 0));
+            }
+            
+            int exceptionCode = 0;
+            TextImpl *editingTextNode = document()->createEditingTextNode("");
+
+            ElementImpl *styleElement = createTypingStyleElement();
+            styleElement->appendChild(editingTextNode, exceptionCode);
+            ASSERT(exceptionCode == 0);
+
+            NodeImpl *node = endingSelection().start().node();
+            if (endingSelection().start().isLastRenderedPositionOnLine())
+                insertNodeAfter(styleElement, node);
+            else
+                insertNodeBefore(styleElement, node);
+            pos = Position(editingTextNode, 0);
+        }
+    }
     return pos;
 }
 
@@ -2478,7 +2530,7 @@ void TypingCommandImpl::typingAddedToOpenCommand()
 
 void TypingCommandImpl::insertText(const DOMString &text)
 {
-    if (m_cmds.count() == 0) {
+    if (document()->part()->typingStyle() || m_cmds.count() == 0) {
         InputTextCommand cmd(document());
         applyCommandToComposite(cmd);
         cmd.input(text);
