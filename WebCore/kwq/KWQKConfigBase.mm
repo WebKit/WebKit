@@ -23,78 +23,66 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#include <kwqdebug.h>
-#include <kconfig.h>
+#import <kconfig.h>
+
+#import <kwqdebug.h>
+#import <qcolor.h>
+#import <qstringlist.h>
 #import <WCPlugin.h>
 #import <WCPluginDatabase.h>
 
-enum files{
-    pluginsinfo
+class KWQKConfigImpl
+{
+public:
+    bool isPluginInfo;
+    int pluginIndex;
 };
 
-int file;
-unsigned group;
-
-//FIX ME:
-static QString *tempQString = NULL;
-static QColor *tempQColor = NULL;
-static QStringList *tempQStringList = NULL;
-
-
-KConfigBase::KConfigBase()
+KConfig::KConfig(const QString &n, bool bReadOnly, bool bUseKDEGlobals)
 {
-    _logNotYetImplemented();
+    impl = new KWQKConfigImpl;
+    impl->isPluginInfo = n.contains("pluginsinfo");
+    impl->pluginIndex = 0;
 }
 
-
-KConfigBase::~KConfigBase()
+KConfig::~KConfig()
 {
-    _logNotYetImplemented();
+    delete impl;
 }
 
-
-void KConfigBase::setGroup(const QString &pGroup)
+void KConfig::setGroup(const QString &pGroup)
 {
-    _logPartiallyImplemented();
-    
-    if(file == pluginsinfo){
-        group = pGroup.toUInt();
+    if (impl->isPluginInfo) {
+        impl->pluginIndex = pGroup.toUInt();
     }
 }
 
-
-void KConfigBase::writeEntry(const QString &pKey, const QStringList &rValue, 
+void KConfig::writeEntry(const QString &pKey, const QStringList &rValue, 
     char sep=',', bool bPersistent=true, bool bGlobal=false, 
     bool bNLS=false)
 {
     _logNotYetImplemented();
 }
 
-
-
-QString KConfigBase::readEntry(const char *pKey, 
-    const QString& aDefault=QString::null) const
+QString KConfig::readEntry(const char *pKey, const QString& aDefault=QString::null) const
 {
-    _logPartiallyImplemented();
-    
-    if(file == pluginsinfo){
+    if (impl->isPluginInfo) {
         WCPlugin *plugin;
         NSArray *mimeTypes;
         NSMutableString *bigMimeString;
-        NSString *bigMimeString2;
         uint i;
         
-        plugin = [[[WCPluginDatabase installedPlugins] plugins] objectAtIndex:group];
-        if(strcmp(pKey, "name") == 0){
+        plugin = [[[WCPluginDatabase installedPlugins] plugins] objectAtIndex:impl->pluginIndex];
+        if (strcmp(pKey, "name") == 0) {
             return NSSTRING_TO_QSTRING([plugin name]);
-        }else if(strcmp(pKey, "file") == 0){
+        } else if (strcmp(pKey, "file") == 0) {
             return NSSTRING_TO_QSTRING([plugin filename]);
-        }else if(strcmp(pKey, "description") == 0){
+        } else if (strcmp(pKey, "description") == 0) {
             return NSSTRING_TO_QSTRING([plugin pluginDescription]);
-        }else if(strcmp(pKey, "mime") == 0){
+        } else if (strcmp(pKey, "mime") == 0) {
             mimeTypes = [plugin mimeTypes];
-            bigMimeString = [NSMutableString stringWithCapacity:1000];
-            for(i=0; i<[mimeTypes count]; i++){
+            bigMimeString = [NSMutableString string];
+            for(i = 0; i < [mimeTypes count]; i++) {
                 [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:0]]; // mime type
                 [bigMimeString appendString:@":"];
                 [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:1]]; // mime's extension
@@ -102,78 +90,46 @@ QString KConfigBase::readEntry(const char *pKey,
                 [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:2]]; // mime's description
                 [bigMimeString appendString:@";"];
             }
-            bigMimeString2 = [NSString stringWithString:bigMimeString];
-            [bigMimeString2 retain];
-            return NSSTRING_TO_QSTRING(bigMimeString2);
+            return NSSTRING_TO_QSTRING(bigMimeString);
         }
     }
-    if(tempQString == NULL) {
-        tempQString = new QString();
-    }
-    return *tempQString;
+    
+    _logNotYetImplemented();
+    return QString();
 }
 
-
-
-int KConfigBase::readNumEntry(const char *pKey, int nDefault=0) const
+int KConfig::readNumEntry(const char *pKey, int nDefault) const
 {
-    _logPartiallyImplemented();
-    
-    if(file == pluginsinfo){
+    if (impl->isPluginInfo) {
         return [[[WCPluginDatabase installedPlugins] plugins] count];
     }
-    return 0;
+    _logNotYetImplemented();
+    return nDefault;
 }
 
-
-
-unsigned int KConfigBase::readUnsignedNumEntry(const char *pKey, 
-    unsigned int nDefault=0) const
+unsigned int KConfig::readUnsignedNumEntry(const char *pKey, unsigned int nDefault) const
 {
     _logNotYetImplemented();
-    return 0;
+    return nDefault;
 }
 
 
-bool KConfigBase::readBoolEntry(const char *pKey, bool nDefault=0) const
+bool KConfig::readBoolEntry(const char *pKey, bool nDefault) const
 {
     _logNotYetImplemented();
-    return FALSE;
+    return nDefault;
 }
 
 
-QColor KConfigBase::readColorEntry(const char *pKey, const QColor *pDefault=0L) const
+QColor KConfig::readColorEntry(const char *pKey, const QColor *pDefault) const
 {
     _logNotYetImplemented();
-    if (tempQColor == NULL) {
-        tempQColor = new QColor(0,0,0);
-    }
-    return *tempQColor;
+    return pDefault ? *pDefault : QColor(0,0,0);
 }
 
 
-QStringList KConfigBase::readListEntry(const QString &pKey, char sep=',') const
+QStringList KConfig::readListEntry(const QString &pKey, char sep) const
 {
     _logNotYetImplemented();
-    if (tempQStringList == NULL) {
-        tempQStringList = new QStringList();
-    }
-    return *tempQStringList;
-}
-
-
-// class KConfig ===============================================================
-
-KConfig::KConfig(const QString &n, bool bReadOnly=false, bool bUseKDEGlobals = true)
-{
-    _logPartiallyImplemented();
-    if(n.contains(pluginsinfo)){
-        file = pluginsinfo;
-    }
-}
-
-
-KConfig::~KConfig()
-{
-    _logNotYetImplemented();
+    return QStringList();
 }

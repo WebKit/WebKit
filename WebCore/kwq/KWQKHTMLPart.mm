@@ -917,8 +917,7 @@ bool KHTMLPart::requestObject( khtml::RenderPart *frame, const QString &url, con
   // The plugins array is an attempt to avoid multiple creations of the same plug-in.
   // FIXME: Can't have multiple plug-ins with the same URL on a page
   if(!d->plugins.contains(url)) {
-    WCPluginWidget *pluginWidget = new WCPluginWidget(completeURL(url).url(), serviceType, args, d->m_baseURL.url());
-    frame->setWidget(pluginWidget);
+    frame->setWidget(IFPluginWidgetCreate(completeURL(url).url(), serviceType, args, d->m_baseURL.url()));
     d->plugins.append(url);
   }
   return true;

@@ -1,3 +1,36 @@
+:RU2002-04-25  Darin Adler  <darin@apple.com>
+
+	* khtml/rendering/render_applet.cpp:
+	(RenderApplet::RenderApplet): Create a widget for the applet using
+	the new simpler API.
+
+	* kwq/kdecore/kconfig.h:
+	* kwq/KWQKConfigBase.mm: Eliminate KConfigBase.
+	Set things up so we are poised to handle the other non-plugin
+	config keys easily in the future.
+
+	* kwq/KWQKHTMLPart.mm: (KHTMLPart::requestObject): Use the new simpler
+	IFPluginWidgetCreate API instead of the older WCPluginWidget one.
+
+	* kwq/qt/qstring.h: Add simpler conversions to/from NSString.
+	* kwq/KWQString.mm: (QString::fromNSString): New.
+
+	* kwq/WCPluginWidget.h: Made this API simpler both for the C++
+	side and the Objective-C side. There's now no class, and only one
+	function that needs to be supplied (normally by WebKit).
+	* kwq/WCJavaAppletWidget.h: Same thing for the Java case.
+
+	* kwq/WCJavaAppletWidget.mm:
+	(IFSetJavaAppletViewCreationFunction): New.
+	(IFJavaAppletWidgetCreate): New. Most of the code that was in here
+	is now moved into WebKit.
+	* kwq/WCPluginWidget.mm:
+	(IFSetPluginViewCreationFunction): New.
+	(IFPluginWidgetCreate): New. Most of the code that was in here
+	is now moved into WebKit.
+
+	* libwebcore.exp: Update for new function names.
+
 2002-04-24  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed [IFWebDataSource frame] to [IFWebDataSource webFrame]

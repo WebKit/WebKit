@@ -1,3 +1,18 @@
+2002-04-25  Darin Adler  <darin@apple.com>
+
+	Rework plugin code to prepare to move more of here from WebCore.
+
+	* Plugins.subproj/IFPluginView.mm:
+	(IFPluginViewCreate): New. Does all the work of creating an NSView
+	for a plug-in, including stuff previously done in WebCore.
+	(IFJavaAppletViewCreate): Same as above, for Java applets.
+	(+[IFPluginView load]): Set up the function pointers using the new
+	improved WebCore API.
+
+	* Plugins.subproj/IFNullPluginView.mm:
+	(-[IFNullPluginView load]): Remove this setup because now there's
+	no separate call to set up a null plug-in.
+
 2002-04-25  John Sullivan  <sullivan@apple.com>
 
 	Fixed 2911915 (Exception in -[IFWebView mouseMoved])

@@ -26,31 +26,6 @@
 #ifndef QSTRING_H_
 #define QSTRING_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-// USING_BORROWED_QSTRING ======================================================
-#ifdef USING_BORROWED_QSTRING
-
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-// These macros are TEMPORARY hacks to convert between NSString and QString.
-// They should be replaced with correct implementations.  They should only be
-// used for immutable strings.
-#define _FAST_QSTRING_TO_NSSTRING(aString) \
-    [NSString stringWithCString: aString.latin1()]
-#define QSTRING_TO_NSSTRING(aString) \
-    [NSString stringWithCString: aString.latin1()]
-#define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
-    [NSString stringWithCString: aString.latin1() length: l]
-#define NSSTRING_TO_QSTRING(aString) \
-    QString([aString cString])
-#endif
-
-#include <_qstring.h>
-
-#else
-
 #define Fixed MacFixed
 #define Rect MacRect
 #define Boolean MacBoolean
@@ -61,26 +36,19 @@
 
 #include "qcstring.h"
 
-#if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-
-// Use with extreme caution.  Only use _FAST_QSTRING_TO_NSSTRING if you 
-// understand the reference count of the QString's underlying CFString.
-// In cases where QSTRING_TO_NSSTRING is called many times consider using
-// _FAST_QSTRING_TO_NSSTRING to save on unnecessary autoreleasing.
-#define _FAST_QSTRING_TO_NSSTRING(aString) \
-    ((NSString *)(aString.getCFMutableString()))
-    
-#define QSTRING_TO_NSSTRING(aString) \
-    [[(NSString *)(aString.getCFMutableString()) retain] autorelease]
+#define _FAST_QSTRING_TO_NSSTRING(aString) (aString).getNSString()
+#define QSTRING_TO_NSSTRING(aString) (aString).getNSString()
 #define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
-    [[[(NSString *)(aString.getCFMutableString()) substringToIndex: l] retain] autorelease]
-#define NSSTRING_TO_QSTRING(aString) \
-    QString::fromCFMutableString((CFMutableStringRef)aString)
+    [[[(aString).getNSString() substringToIndex: l] retain] autorelease]
+#define NSSTRING_TO_QSTRING(aString) QString::fromNSString(aString)
 
-#endif
-
-class QString;
 class QRegExp;
+
+#ifdef __OBJC__
+@class NSString;
+#else
+typedef void NSString;
+#endif
 
 // QChar class =================================================================
 
@@ -349,12 +317,10 @@ public:
     static QString number(double);
 
     static QString fromLatin1(const char * /* NOTE: len NOT used */ );
-#ifdef USING_BORROWED_KURL
-    static QString fromLocal8Bit(const char *, int len=-1);
-#endif
     static QString fromStringWithEncoding(const char *, int, CFStringEncoding);
     static QString fromCFMutableString(CFMutableStringRef);
     static QString fromCFString(CFStringRef);
+    static QString fromNSString(NSString *);
     
     static QString gstring_toQString(CFMutableStringRef *ref, UniChar *uchars, int len);
     static CFMutableStringRef gstring_toCFString(CFMutableStringRef *ref, UniChar *uchars, int len);
@@ -367,7 +333,7 @@ public:
     QString(const QChar *, uint);
     QString(const char *);
     QString(const char *, int len);
-
+    
     QString(const QString &);
 
     ~QString();
@@ -475,6 +441,7 @@ public:
     QString visual();
 
     CFMutableStringRef getCFMutableString() const;
+    NSString *getNSString() const;
 
     // operators ---------------------------------------------------------------
 
@@ -611,8 +578,12 @@ inline QString::operator const char *() const
 
 inline CFMutableStringRef QString::getCFMutableString() const
 {
-    // not sure this is right, but if it is, it must be inline
     return s;
+}
+
+inline NSString *QString::getNSString() const
+{
+    return (NSString *)s;
 }
 
 inline bool operator==(const char *chs, const QString &qs)
@@ -704,7 +675,5 @@ public:
     const QString &string() const { return *this; }
 
 }; // class QConstString =======================================================
-
-#endif // USING_BORROWED_QSTRING
 
 #endif

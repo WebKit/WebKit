@@ -26,41 +26,22 @@
 #ifndef WCJavaAppletWidget_H_
 #define WCJavaAppletWidget_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#include <qmap.h>
+#include <qstring.h>
+
+class QWidget;
+
+#ifdef __OBJC__
+@class NSDictionary;
+@class NSView;
+#else
+typedef void NSDictionary;
+typedef void NSView;
 #endif
 
-#include "qwidget.h"
-#include "qstring.h"
-#include <qmap.h>
-    
-// class WCJavaAppletWidget ===============================================================
+QWidget *IFJavaAppletWidgetCreate(const QMap<QString, QString> &args);    
 
-class WCJavaAppletWidget : public QWidget {
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    WCJavaAppletWidget(QMap<QString, QString> args);
-    ~WCJavaAppletWidget();
-
-    // member functions --------------------------------------------------------
-    
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    WCJavaAppletWidget(const WCJavaAppletWidget &);
-    WCJavaAppletWidget &operator=(const WCJavaAppletWidget &);
-    
-
-}; // class WCJavaAppletWidget ============================================================
+typedef NSView *(*IFJavaAppletViewCreationFunction)(NSDictionary *arguments);
+void IFSetJavaAppletViewCreationFunction(IFJavaAppletViewCreationFunction);
 
 #endif

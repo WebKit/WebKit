@@ -23,42 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#import <Foundation/Foundation.h>
-#import <WCJavaAppletWidget.h>
-#import <WCPluginDatabase.h>
-#import <WCPlugin.h>
-#import <KWQView.h>
+#import "WCJavaAppletWidget.h"
+#import <qwidget.h>
 
-#include <kwqdebug.h>
-#include <WCPluginWidget.h>
+static IFJavaAppletViewCreationFunction creationFunction = NULL;
 
-
-WCJavaAppletWidget::WCJavaAppletWidget(QMap<QString, QString> args)
+void IFSetJavaAppletViewCreationFunction(IFJavaAppletViewCreationFunction f)
 {
-    NSMutableDictionary *arguments;
-    WCPlugin *plugin;
-    QMap<QString, QString>::Iterator it;
-    WCIFPluginMakeFunc WCIFPluginMake;
-    
-    WCIFPluginMake = WCIFPluginMakeFunction();
-
-    plugin = [[WCPluginDatabase installedPlugins] getPluginForFilename:@"Java.plugin"];
-    if(plugin == nil){
-        printf("Could not find Java plugin!\n");
-        return;
-    }
-    
-    arguments = [NSMutableDictionary dictionaryWithCapacity:10];
-    [arguments setObject:QSTRING_TO_NSSTRING(args["baseURL"]) forKey:@"DOCBASE"];
-    for( it = args.begin(); it != args.end(); ++it ){
-        if(it.key() != "baseURL")
-            [arguments setObject:QSTRING_TO_NSSTRING(it.data()) forKey:QSTRING_TO_NSSTRING(it.key())];
-    }
-    setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, nil, @"application/x-java-applet", arguments, NP_EMBED));
+    creationFunction = f;
 }
 
-WCJavaAppletWidget::~WCJavaAppletWidget()
+QWidget *IFJavaAppletWidgetCreate(const QMap<QString, QString> &args)
 {
-
+    NSMutableDictionary *argsDictionary = [NSMutableDictionary dictionaryWithCapacity:args.count()];
+    for (QMap<QString, QString>::ConstIterator it = args.begin(); it != args.end(); ++it) {
+        [argsDictionary setObject:it.data().getNSString() forKey:it.key().getNSString()];
+    }
+    QWidget *widget = new QWidget();
+    if (creationFunction) {
+        widget->setView(creationFunction(argsDictionary));
+    }
+    return widget;
 }
-

@@ -26,51 +26,17 @@
 #ifndef WCPluginWidget_H_
 #define WCPluginWidget_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+class QString;
+class QStringList;
+class QWidget;
 
-#include "qwidget.h"
-#include "qstring.h"
-#import <WCPlugin.h>
+@class NSArray;
+@class NSString;
+@class NSView;
 
-typedef id (*WCIFPluginMakeFunc)(NSRect rect, WCPlugin *plugin, NSString *url, NSString *mimeType, NSDictionary *arguments, uint16 mode);
-void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func);
+QWidget *IFPluginWidgetCreate(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL);    
 
-typedef id (*WCIFNullPluginMakeFunc)(NSRect rect, NSString *mimeType, NSDictionary *arguments);
-void WCSetIFNullPluginMakeFunc(WCIFNullPluginMakeFunc func);
-    
-// class WCPluginWidget ===============================================================
-
-class WCPluginWidget : public QWidget {
-public:
-
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    WCPluginWidget(const QString &url=0, const QString &serviceType=0, const QStringList &args=QStringList(), const QString &baseURL=0);
-    ~WCPluginWidget();
-
-    // member functions --------------------------------------------------------
-    
-    
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    WCPluginWidget(const WCPluginWidget &);
-    WCPluginWidget &operator=(const WCPluginWidget &);
-    
-
-}; // class WCPluginWidget ============================================================
-
-WCIFPluginMakeFunc WCIFPluginMakeFunction();
-WCIFNullPluginMakeFunc WCIFNullPluginMakeFunction();
+typedef NSView *(*IFPluginViewCreationFunction)(NSString *url, NSString *serviceType, NSArray *arguments, NSString *baseURL);
+void IFSetPluginViewCreationFunction(IFPluginViewCreationFunction);
 
 #endif

@@ -14,17 +14,8 @@ static NSImage *image = nil;
 
 @implementation IFNullPluginView
 
-static id IFNullPluginMake(NSRect rect, NSString *mimeType, NSDictionary *arguments) 
+- initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments
 {
-    return [[[IFNullPluginView alloc] initWithFrame:rect mimeType:mimeType arguments:arguments] autorelease];
-}
-
-+(void) load
-{
-    WCSetIFNullPluginMakeFunc(IFNullPluginMake);
-}
-
-- initWithFrame:(NSRect)frame mimeType:(NSString *)mime arguments:(NSDictionary *)arguments{
     NSBundle *bundle;
     NSString *imagePath, *pluginPageString;
     

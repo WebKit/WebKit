@@ -23,87 +23,25 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
  
-#import <Foundation/Foundation.h>
-#import <WCPluginWidget.h>
-#import <WCPluginDatabase.h>
-#import <KWQView.h>
-#include <kwqdebug.h>
+#import "WCPluginWidget.h"
+#import <qwidget.h>
 
-@interface IFPluginView : NSObject
-- initWithFrame: (NSRect) r plugin: (WCPlugin *)plug url: (NSString *)location mime:(NSString *)mime arguments:(NSDictionary *)arguments mode:(uint16)mode;
-@end
+static IFPluginViewCreationFunction creationFunction = 0;
 
-static WCIFPluginMakeFunc WCIFPluginMake = NULL;
-
-void WCSetIFPluginMakeFunc(WCIFPluginMakeFunc func)
+void IFSetPluginViewCreationFunction(IFPluginViewCreationFunction f)
 {
-    WCIFPluginMake = func;
+    creationFunction = f;
 }
 
-@interface IFNullPluginView : NSObject
-- initWithFrame: (NSRect) r mimeType:(NSString *)mime arguments:(NSDictionary *)arguments;
-@end
-
-static WCIFNullPluginMakeFunc WCIFNullPluginMake = NULL;
-
-void WCSetIFNullPluginMakeFunc(WCIFNullPluginMakeFunc func)
+QWidget *IFPluginWidgetCreate(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL)
 {
-    WCIFNullPluginMake = func;
-}
-
-
-
-WCPluginWidget::WCPluginWidget(const QString &url, const QString &serviceType, const QStringList &args, const QString &baseURL)
-{
-    NSMutableDictionary *arguments;
-    NSString *arg, *mime=nil, *URL;
-    NSRange r1, r2, r3;
-    WCPlugin *plugin;
-    uint i;
-    
-    URL = QSTRING_TO_NSSTRING(url);
-    arguments = [NSMutableDictionary dictionaryWithCapacity:10];
-    for(i=0; i<args.count(); i++){
-        if(!args[i].contains("__KHTML__")){
-            arg = QSTRING_TO_NSSTRING(args[i]);
-            r1 = [arg rangeOfString:@"="]; // parse out attributes and values
-            r2 = [arg rangeOfString:@"\""];
-            r3.location = r2.location + 1;
-            r3.length = [arg length] - r2.location - 2; // don't include quotes
-            [arguments setObject:[arg substringWithRange:r3] forKey:[arg substringToIndex:r1.location]];
-        }
+    NSMutableArray *argsArray = [NSMutableArray arrayWithCapacity:args.count()];
+    for (uint i = 0; i < args.count(); i++) {
+        [argsArray addObject:args[i].getNSString()];
     }
-    if(baseURL)
-        [arguments setObject:QSTRING_TO_NSSTRING(baseURL) forKey:@"WebKitBaseURL"];
-        
-    if(serviceType.isNull()){
-        plugin = [[WCPluginDatabase installedPlugins] getPluginForExtension:[URL pathExtension]];
-        if(plugin != nil){
-            mime = [plugin mimeTypeForURL:URL];
-        }
-    }else{
-        plugin = [[WCPluginDatabase installedPlugins] getPluginForMimeType:QSTRING_TO_NSSTRING(serviceType)];
-        mime = QSTRING_TO_NSSTRING(serviceType);
+    QWidget *widget = new QWidget();
+    if (creationFunction) {
+        widget->setView(creationFunction(url.getNSString(), serviceType.getNSString(), argsArray, baseURL.getNSString()));
     }
-    
-    if(plugin == nil){
-        setView(WCIFNullPluginMake(NSMakeRect(0,0,0,0), mime, arguments));
-    }else{
-        setView(WCIFPluginMake(NSMakeRect(0,0,0,0), plugin, URL, mime, arguments, NP_EMBED));
-    }
-}
-
-WCPluginWidget::~WCPluginWidget()
-{
-
-}
-
-WCIFPluginMakeFunc WCIFPluginMakeFunction()
-{
-    return WCIFPluginMake;
-}
-
-WCIFNullPluginMakeFunc WCIFNullPluginMakeFunction()
-{
-    return WCIFNullPluginMake;
+    return widget;
 }

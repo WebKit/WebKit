@@ -26,117 +26,43 @@
 #ifndef KCONFIG_H_
 #define KCONFIG_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <qt/qstring.h>
 
-#include <qobject.h>
-#include <qcolor.h>
-#include <qfont.h>
-#include <qdatetime.h>
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qvariant.h>
-#include <qmap.h>
-#include <qcolor.h>
-#include <KWQStrList.h>
+class QColor;
+class QStringList;
 
-// class KConfigBase ===========================================================
+class KWQKConfigImpl;
 
-class KConfigBase {
+class KConfig {
 public:
 
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    
-    // constructors, copy constructors, and destructors ------------------------
-
-    KConfigBase();
-    virtual ~KConfigBase();
-
-    // member functions --------------------------------------------------------
+    KConfig(const QString &n, bool bReadOnly=false, bool bUseKDEGlobals = true);
+    ~KConfig();
 
     void setGroup(const QString &pGroup);
     
-    void writeEntry(const QString &pKey, const QStringList &rValue, 
-        char sep=',', bool bPersistent=true, bool bGlobal=false, 
-        bool bNLS=false);
-
-    QString readEntry(const char *pKey, 
-        const QString& aDefault=QString::null) const;
+    QString readEntry(const char *pKey, const QString& aDefault=QString::null) const;
     
     int readNumEntry(const char *pKey, int nDefault=0) const;
-    
-    unsigned int readUnsignedNumEntry(const char *pKey, 
-        unsigned int nDefault=0) const;
+    unsigned int readUnsignedNumEntry(const char *pKey, unsigned int nDefault=0) const;
     
     bool readBoolEntry(const char *pKey, bool nDefault=0) const;
     
     QColor readColorEntry(const char *pKey, const QColor *pDefault=0L) const;
 
+    // used only for form completions
+    void writeEntry(const QString &pKey, const QStringList &rValue, 
+        char sep=',', bool bPersistent=true, bool bGlobal=false, 
+        bool bNLS=false);
     QStringList readListEntry(const QString &pKey, char sep=',') const;
 
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
 private:
 
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
-    KConfigBase(const KConfigBase &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
-    KConfigBase &operator=(const KConfigBase &);
-#endif
-
-}; // class KConfigBase ========================================================
-
-
-// class KConfig ===============================================================
-
-class KConfig : public KConfigBase {
-public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KConfig(const QString &n, bool bReadOnly=false, bool bUseKDEGlobals = true);
-    virtual ~KConfig();
-
-    // member functions --------------------------------------------------------
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-
-// add copy constructor
-// this private declaration prevents copying
-#ifdef _KWQ_PEDANTIC_
     KConfig(const KConfig &);
-#endif
-
-// add assignment operator 
-// this private declaration prevents assignment
-#ifdef _KWQ_PEDANTIC_
     KConfig &operator=(const KConfig &);
-#endif
+    
+    KWQKConfigImpl *impl;
 
-}; // class KConfig ============================================================
+};
 
 #endif

@@ -143,13 +143,17 @@ QString QString::fromCFMutableString(CFMutableStringRef cfs)
 
 QString QString::fromCFString(CFStringRef cfs)
 {
-    CFMutableStringRef ref;
     QString qs;
 
-    ref = CFStringCreateMutableCopy(NULL, 0, cfs);
-    qs = QString::fromCFMutableString(ref);
-    CFRelease(ref);
-    
+    qs.s = CFStringCreateMutableCopy(NULL, 0, cfs);
+    return qs;
+}
+
+QString QString::fromNSString(NSString *nss)
+{
+    QString qs;
+
+    qs.s = CFStringCreateMutableCopy(NULL, 0, (CFStringRef)nss);
     return qs;
 }
 
