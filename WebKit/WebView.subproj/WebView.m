@@ -431,15 +431,15 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     [[self mainFrame] _setName:name];
 }
 
-- (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name
+- (WebFrame *)_findFrameInThisWindowNamed:(NSString *)name sourceFrame:(WebFrame *)source
 {
-    return [[self mainFrame] _descendantFrameNamed:name];
+    return [[self mainFrame] _descendantFrameNamed:name sourceFrame:(WebFrame *)source];
 }
 
-- (WebFrame *)_findFrameNamed:(NSString *)name
+- (WebFrame *)_findFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source
 {
     // Try this WebView first.
-    WebFrame *frame = [self _findFrameInThisWindowNamed:name];
+    WebFrame *frame = [self _findFrameInThisWindowNamed:name sourceFrame:source];
 
     if (frame != nil) {
         return frame;
@@ -450,7 +450,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
         NSEnumerator *enumerator = [WebViewSets webViewsInSetNamed:_private->setName];
         WebView *webView;
         while ((webView = [enumerator nextObject]) != nil && frame == nil) {
-	    frame = [webView _findFrameInThisWindowNamed:name];
+	    frame = [webView _findFrameInThisWindowNamed:name sourceFrame:source];
         }
     }
 

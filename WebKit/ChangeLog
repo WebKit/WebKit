@@ -1,3 +1,25 @@
+2004-12-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3888931> frame naming allows malicious site to bring up a window when you click on a link in another
+
+        Implement a security check on name frame visbility. This is the
+	same rule as mozilla. You can only target frames by name if you
+	are in the same window, have the same domain as the frame or an
+	ancestor, or if it's a top level window have the same domain as
+	the opener.
+	
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _shouldAllowAccessFrom:]):
+        (-[WebFrame _descendantFrameNamed:sourceFrame:]):
+        (-[WebFrame findFrameNamed:]):
+        * WebView.subproj/WebFramePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebView _findFrameInThisWindowNamed:sourceFrame:]):
+        (-[WebView _findFrameNamed:sourceFrame:]):
+        * WebView.subproj/WebViewPrivate.h:
+
 === Safari-177 ===
 
 === Safari-176 ===

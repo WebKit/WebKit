@@ -1,6 +1,6 @@
 /*	
-    WebViewPrivate.m
-    Copyright 2001, Apple, Inc. All rights reserved.
+    WebViewPrivate.h
+    Copyright 2001 Apple, Inc. All rights reserved.
 */
 
 #import <WebKit/WebView.h>
@@ -113,8 +113,8 @@ typedef enum {
 - (void)setDefersCallbacks:(BOOL)defers;
 
 - (void)_setTopLevelFrameName:(NSString *)name;
-- (WebFrame *)_findFrameInThisWindowNamed: (NSString *)name;
-- (WebFrame *)_findFrameNamed: (NSString *)name;
+- (WebFrame *)_findFrameInThisWindowNamed:(NSString *)name sourceFrame:(WebFrame *)source;
+- (WebFrame *)_findFrameNamed:(NSString *)name sourceFrame:(WebFrame *)source;
 
 - (WebView *)_openNewWindowWithRequest:(NSURLRequest *)request;
 

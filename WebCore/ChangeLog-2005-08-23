@@ -1,3 +1,17 @@
+2004-12-21  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3888931> frame naming allows malicious site to bring up a window when you click on a link in another
+        
+	Added opener bridge method to help WebKit implement security check
+	for named frame visibility.
+	
+	* khtml/khtml_part.h:
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge opener]):
+
 2005-01-03  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

@@ -4330,6 +4330,15 @@ QPtrList<KParts::ReadOnlyPart> KHTMLPart::frames() const
   return res;
 }
 
+KHTMLPart *KHTMLPart::childFrameNamed(const QString &name) const
+{
+  FrameList::Iterator it = d->m_frames.find(name);
+  if (it != d->m_frames.end())
+    return static_cast<KHTMLPart *>(&*(*it).m_part);
+  return NULL;
+}
+
+
 #if !APPLE_CHANGES
 
 bool KHTMLPart::openURLInFrame( const KURL &url, const KParts::URLArgs &urlArgs )
