@@ -1,3 +1,13 @@
+2003-05-28  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3270576 - RealPlayer plug-in fails to load
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m:
+        (-[WebNetscapePluginPackage launchRealPlayer]): new
+        (-[WebNetscapePluginPackage load]): call launchRealPlayer to regenerate its broken plist file
+
 2003-05-28  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3165631 (and other similar).

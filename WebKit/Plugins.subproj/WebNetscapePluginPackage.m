@@ -26,6 +26,9 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #define MIMEDescriptionStringNumber		127
 #define MIMEListStringStringNumber 		128
 
+#define RealPlayerAppIndentifier		@"com.RealNetworks.RealOne Player"
+#define RealPlayerPluginFilename		@"RealPlayer Plugin"
+
 @implementation WebNetscapePluginPackage
 
 + (void)initialize
@@ -326,6 +329,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
     isLoaded = NO;
 }
 
+
+- (void)launchRealPlayer
+{
+    CFURLRef appURL = NULL;
+    OSStatus error = LSFindApplicationForInfo(kLSUnknownCreator, (CFStringRef)RealPlayerAppIndentifier, NULL, NULL, &appURL);
+    if (!error) {
+        LSLaunchURLSpec URLSpec;
+        bzero(&URLSpec, sizeof(URLSpec));
+        URLSpec.launchFlags = kLSLaunchDefaults | kLSLaunchDontSwitch;
+        URLSpec.appURL = appURL;
+        error = LSOpenFromURLSpec(&URLSpec, NULL);
+    }
+
+    CFRelease(appURL);
+}
+
 - (BOOL)load
 {    
     NP_GetEntryPointsFuncPtr NP_GetEntryPoints = NULL;
@@ -441,7 +460,12 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 #endif
         LOG(Plugins, "%f main timing started", mainStart);
         npErr = pluginMainFunc(&browserFuncs, &pluginFuncs, &NPP_Shutdown);
+        // Workaround for 3270576. The RealPlayer plug-in fails to load if its preference file is out of date.
+        // Launch the RealPlayer application to refresh the file.
         if (npErr != NPERR_NO_ERROR) {
+            if (npErr == NPERR_MODULE_LOAD_FAILED_ERROR && [[self filename] isEqualToString:RealPlayerPluginFilename]) {
+                [self launchRealPlayer];
+            }
             goto abort;
         }
 #if !LOG_DISABLED
