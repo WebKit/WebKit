@@ -460,7 +460,7 @@ static NSTimer *_pageCacheReleaseTimer = nil;
 
 - (BOOL)hasPageCache;
 {
-    return pageCache != nil;
+    return pageCache != nil && [pageCache objectForKey:@"WebCorePageState"] != nil;
 }
 
 + (void)_invalidateReleaseTimer

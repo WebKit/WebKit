@@ -1,3 +1,13 @@
+2003-01-01  Richard Williamson   <rjw@apple.com>
+
+        Don't attempt to restore page from page cache if the cache
+        doesn't contain valid page state.  This may happen after a
+        redirect.  Fixes 3137430.
+        
+        Reviewed by kocienda.
+
+        * History.subproj/WebHistoryItem.m:
+
 2002-12-31  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.
