@@ -1,3 +1,14 @@
+2004-07-28  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by John.
+
+	- avoid triggering an assertion when using dead keys (like option-e)
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView insertText:]): Don't pass zero-length strings to
+	WebCore. Dead-key input seems to insert empty strings as a side
+	effect.
+
 2004-07-28  Trey Matteson  <trey@apple.com>
 
 	Spellchecking, Part I.  Basic spellcheck is working.  Spelling panel is hooked up.

@@ -3125,6 +3125,12 @@ static WebHTMLView *lastHitView = nil;
 - (void)insertText:(NSString *)text
 {
     WebBridge *bridge = [self _bridge];
+
+    // avoid entering empty strings because it confuses WebCore
+    if ([text length] == 0) {
+	return;
+    }
+
     if ([bridge isSelectionEditable]) {
         WebView *webView = [self _webView];
         if ([[webView _editingDelegateForwarder] webView:webView shouldInsertText:text replacingDOMRange:[bridge selectedDOMRange] givenAction:WebViewInsertActionTyped]) {
