@@ -1,3 +1,10 @@
+2002-11-19  Trey Matteson  <trey@apple.com>
+
+	Just a tweak to the description printout.
+
+        * History.subproj/WebHistoryItem.m:
+        (-[WebHistoryItem description]):
+
 2002-11-18  Chris Blumenberg  <cblu@apple.com>
 
 	Real fix for: 3104183 - Assert loading www.louisvuitton.com

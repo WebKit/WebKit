@@ -300,7 +300,10 @@
 
 - (NSString *)description
 {
-    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@ in \"%@\"", [super description], _URLString, _target];
+    NSMutableString *result = [NSMutableString stringWithFormat:@"%@ %@", [super description], _URLString];
+    if (_target) {
+        [result appendFormat:@" in \"%@\"", _target];
+    }
     if (_isTargetItem) {
         [result appendString:@" *target*"];
     }
