@@ -1,3 +1,40 @@
+2004-09-26  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin.
+
+        - fixed <rdar://problem/3812771> document.implementation.hasFeature returns false for a lot of features we implement
+
+        * khtml/xml/dom_docimpl.cpp: (DOMImplementationImpl::hasFeature): Added all the DOM features that we implemented
+        as part of the HTML editing work.
+
+        * khtml/dom/dom_node.cpp: (Node::isSupported): Changed this to call DOMImplementationImpl::hasFeature to share
+        code. Later this might need to be different per-node, but at the moment that does not seem to be so.
+
+        * khtml/ecma/kjs_dom.cpp:
+        (DOMNodeProtoFunc::tryCall): Pass a null string if the parameter is omitted, undefined, or null. This is better than
+        having a special case for the string "null" in the DOM implementation.
+        (DOMDOMImplementationProtoFunc::tryCall): Ditto.
+
+        - fixed <rdar://problem/3814605> REGRESSION: fast/table/039 layout test is failing due to extra trailing whitespace in innerText        
+
+        * khtml/editing/visible_text.cpp: (khtml::TextIterator::advance): Check for the case where we are at the end of
+        iteration, and don't call exitNode in that case. This prevents us from getting some unwanted trailing \n characters.
+
+        - fixed <rdar://problem/3813253> method cloneNode() does not clone dynamically-set style attributes correctly
+
+        * khtml/html/html_elementimpl.h: Added cloneNode override.
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::cloneNode): Added. Copies m_inlineStyleDecl.
+        (HTMLElementImpl::parseHTMLAttribute): Changed to use getInlineStyleDecl().
+        (HTMLElementImpl::innerText): Changed to do the same thing with fewer lines of code.
+        (HTMLElementImpl::outerText): Tweaked comment.
+
+        - other cleanup
+
+        * khtml/xml/dom_elementimpl.cpp:
+        (ElementImpl::cloneNode): Removed an uneeded type cast.
+        (XMLElementImpl::cloneNode): Ditto.
+
 2004-09-24  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Maciej.

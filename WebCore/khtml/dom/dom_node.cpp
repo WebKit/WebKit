@@ -2,6 +2,7 @@
  * This file is part of the DOM implementation for KDE.
  *
  * (C) 1999 Lars Knoll (knoll@kde.org)
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -318,13 +319,9 @@ void Node::normalize (  )
     impl->normalize();
 }
 
-bool Node::isSupported( const DOMString &feature,
-                        const DOMString &version ) const
+bool Node::isSupported( const DOMString &feature, const DOMString &version ) const
 {
-    DOMString upFeature = feature.upper();
-    return (upFeature == "HTML" ||
-            upFeature == "XML" ||
-            upFeature == "CORE");
+    return DOMImplementationImpl::instance()->hasFeature(feature, version);
 }
 
 DOMString Node::namespaceURI(  ) const

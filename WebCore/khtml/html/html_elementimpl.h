@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -129,6 +130,8 @@ public:
     virtual void attributeChanged(AttributeImpl* attr, bool preserveDecls = false);
     virtual void parseHTMLAttribute(HTMLAttributeImpl* attr);
     virtual void createAttributeMap() const;
+
+    virtual NodeImpl *cloneNode(bool deep);
 
     virtual const AtomicStringList* getClassList() const;
 

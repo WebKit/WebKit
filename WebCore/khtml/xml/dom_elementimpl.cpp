@@ -5,6 +5,7 @@
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Peter Kelly (pmk@post.com)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -318,14 +319,14 @@ bool ElementImpl::hasAttributes() const
 
 NodeImpl *ElementImpl::cloneNode(bool deep)
 {
-    // ### we loose the namespace here ... FIXME
+    // ### we lose the namespace here ... FIXME
     int exceptioncode;
     ElementImpl *clone = getDocument()->createElement(tagName(), exceptioncode);
     if (!clone) return 0;
 
     // clone attributes
     if (namedAttrMap)
-        *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
+        *clone->attributes() = *namedAttrMap;
 
     if (deep)
         cloneChildNodes(clone);
@@ -696,8 +697,8 @@ NodeImpl *XMLElementImpl::cloneNode ( bool deep )
     clone->m_id = m_id;
 
     // clone attributes
-    if(namedAttrMap)
-        *(static_cast<NamedAttrMapImpl*>(clone->attributes())) = *namedAttrMap;
+    if (namedAttrMap)
+        *clone->attributes() = *namedAttrMap;
 
     if (deep)
         cloneChildNodes(clone);

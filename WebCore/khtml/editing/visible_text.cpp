@@ -169,15 +169,19 @@ void TextIterator::advance()
         m_offset = 0;
         if (!next) {
             next = m_node->nextSibling();
-            while (!next && m_node->parentNode()) {
-                m_node = m_node->parentNode();
-                exitNode();
-                if (m_positionNode) {
-                    m_handledNode = true;
-                    m_handledChildren = true;
-                    return;
+            if (!next) {
+                if (m_node->traverseNextNode() == m_pastEndNode)
+                    break;
+                while (!next && m_node->parentNode()) {
+                    m_node = m_node->parentNode();
+                    exitNode();
+                    if (m_positionNode) {
+                        m_handledNode = true;
+                        m_handledChildren = true;
+                        return;
+                    }
+                    next = m_node->nextSibling();
                 }
-                next = m_node->nextSibling();
             }
         }
 

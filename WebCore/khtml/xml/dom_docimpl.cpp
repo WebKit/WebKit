@@ -1,11 +1,10 @@
-
 /**
  * This file is part of the DOM implementation for KDE.
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -112,13 +111,22 @@ DOMImplementationImpl::~DOMImplementationImpl()
 
 bool DOMImplementationImpl::hasFeature ( const DOMString &feature, const DOMString &version )
 {
-    // ### update when we (fully) support the relevant features
     QString lower = feature.string().lower();
-    if ((lower == "html" || lower == "xml") &&
-        (version == "1.0" || version == "null" || version == "" || version.isNull()))
-        return true;
-    else
-        return false;
+    if (lower == "core" || lower == "html" || lower == "xml")
+        return version.isEmpty() || version == "1.0" || version == "2.0";
+    if (lower == "css"
+            || lower == "css2"
+            || lower == "events"
+            || lower == "htmlevents"
+            || lower == "mouseevents"
+            || lower == "mutationevents"
+            || lower == "range"
+            || lower == "stylesheets"
+            || lower == "traversal"
+            || lower == "uievents"
+            || lower == "views")
+        return version.isEmpty() || version == "2.0";
+    return false;
 }
 
 DocumentTypeImpl *DOMImplementationImpl::createDocumentType( const DOMString &qualifiedName, const DOMString &publicId,

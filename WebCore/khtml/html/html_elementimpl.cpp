@@ -3,7 +3,7 @@
  *
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
- * Copyright (C) 2003 Apple Computer, Inc.
+ * Copyright (C) 2004 Apple Computer, Inc.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -274,6 +274,15 @@ void HTMLElementImpl::createInlineStyleDecl()
     m_inlineStyleDecl->setStrictParsing(!getDocument()->inCompatMode());
 }
 
+NodeImpl *HTMLElementImpl::cloneNode(bool deep)
+{
+    HTMLElementImpl *n = static_cast<HTMLElementImpl *>(ElementImpl::cloneNode(deep));
+    if (n && m_inlineStyleDecl) {
+        *n->getInlineStyleDecl() = *m_inlineStyleDecl;
+    }
+    return n;
+}
+
 void HTMLElementImpl::attributeChanged(AttributeImpl* attr, bool preserveDecls)
 {
     HTMLAttributeImpl* htmlAttr = static_cast<HTMLAttributeImpl*>(attr);
@@ -377,8 +386,7 @@ void HTMLElementImpl::parseHTMLAttribute(HTMLAttributeImpl *attr)
         // ### the inline sheet ay contain more than 1 property!
         // stylesheet info
         setHasStyle();
-        if (!m_inlineStyleDecl) createInlineStyleDecl();
-        m_inlineStyleDecl->setProperty(attr->value());
+        getInlineStyleDecl()->setProperty(attr->value());
         setChanged();
         break;
     case ATTR_TABINDEX:
@@ -702,22 +710,10 @@ DOMString HTMLElementImpl::outerHTML() const
 
 DOMString HTMLElementImpl::innerText() const
 {
-    // We need to update layout, since innerText uses line boxes in the render tree.
+    // We need to update layout, since plainText uses line boxes in the render tree.
     getDocument()->updateLayout();
-    
-    Node startContainer(const_cast<HTMLElementImpl *>(this));
-    long startOffset = 0;
-    Node endContainer(const_cast<HTMLElementImpl *>(this));
-
-    long endOffset = 0;
-
-    for (NodeImpl *child = firstChild(); child; child = child->nextSibling()) {
-	endOffset++;
-    }
-
-    Range innerRange(startContainer, startOffset, endContainer, endOffset);
-
-    return plainText(innerRange);
+    return plainText(Range(const_cast<HTMLElementImpl *>(this), 0,
+        const_cast<HTMLElementImpl *>(this), childNodeCount()));
 }
 
 DOMString HTMLElementImpl::outerText() const
@@ -726,10 +722,9 @@ DOMString HTMLElementImpl::outerText() const
     // setting is different. You would think this should get the plain
     // text for the outer range, but this is wrong, <br> for instance
     // would return different values for inner and outer text by such
-    // a rule, but it doesn't.
+    // a rule, but it doesn't in WinIE, and we want to match that.
     return innerText();
 }
-
 
 DocumentFragmentImpl *HTMLElementImpl::createContextualFragment( const DOMString &html )
 {
