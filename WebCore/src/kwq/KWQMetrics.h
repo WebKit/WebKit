@@ -34,6 +34,7 @@
 }
 
 + (void)drawString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color;
++ (void)drawUnderlineForString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color;
 + (KWQLayoutInfo *)getMetricsForFont: (NSFont *)aFont;
 + (void)setMetric: (KWQLayoutInfo *)info forFont: (NSFont *)aFont;
 - initWithFont: (NSFont *)aFont;

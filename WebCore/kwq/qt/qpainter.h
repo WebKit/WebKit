@@ -174,6 +174,10 @@ public:
 
 // private ---------------------------------------------------------------------
 
+#ifdef _KWQ_
+    void drawUnderlineForText(int x, int y, const QString &, int len=-1);
+#endif
+
 private:
     // no copying or assignment
     // note that these are "standard" (no pendantic stuff needed)

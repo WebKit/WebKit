@@ -97,6 +97,20 @@ static NSMutableDictionary *metricsCache = nil;
     }
 }
 
++ (void)drawUnderlineForString: (NSString *)string atPoint: (NSPoint)p withFont: (NSFont *)font color: (NSColor *)color
+{
+    KWQLayoutInfo *metricsCache = [KWQLayoutInfo getMetricsForFont: font];
+    NSLayoutManager *layoutManager = [metricsCache layoutManagerForString: string];
+    if (layoutManager != nil){
+        unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
+        [metricsCache setColor: color];
+        [metricsCache setFont: font];
+        [KWQTextStorage setString: string attributes: [metricsCache attributes]];
+        NSRect lineRect = [layoutManager lineFragmentRectForGlyphAtIndex: 0 effectiveRange: 0];
+        [layoutManager underlineGlyphRange:NSMakeRange (0, numberOfGlyphs) underlineType:NSSingleUnderlineStyle lineFragmentRect:lineRect lineFragmentGlyphRange:NSMakeRange (0, numberOfGlyphs) containerOrigin:p];
+    }
+}
+
 
 + (KWQLayoutInfo *)getMetricsForFont: (NSFont *)aFont
 {

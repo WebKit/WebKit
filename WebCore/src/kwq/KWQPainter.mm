@@ -511,6 +511,27 @@ void QPainter::drawText(int x, int y, const QString &qstring, int len)
     _unlockFocus();
 }
 
+void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int len)
+{
+    NSString *string;
+    NSFont *font;
+    
+    _lockFocus();
+    
+    //font = data->qfont.data->font;    
+    font = data->qfont.font;    
+
+    if (len == -1)
+        string = QSTRING_TO_NSSTRING(qstring);
+    else
+        string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
+
+    y = y - (ROUND_TO_INT([font defaultLineHeightForFont]) - FLOOR_TO_INT(-[font descender]));
+    [KWQLayoutInfo drawUnderlineForString: string atPoint: NSMakePoint(x, y) withFont: font color: data->qpen.color().color];
+
+    _unlockFocus();
+}
+
 
 void QPainter::drawText(int x, int y, int w, int h, int flags, const QString&qstring, int len, 
     QRect *br, char **internal)

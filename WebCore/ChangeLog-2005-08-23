@@ -1,3 +1,14 @@
+2002-01-09  Richard Williamson  <rjw@apple.com>
+
+        Re-implemented underlining.  Now it REALLY works, honest.
+        
+	* src/kdelibs/khtml/rendering/render_text.cpp: (TextSlave::printDecoration):
+	* src/kwq/KWQFontMetrics.mm: (+[KWQLayoutInfo
+	drawUnderlineForString:atPoint:withFont:color:]):
+	* src/kwq/KWQMetrics.h:
+	* src/kwq/KWQPainter.mm: (QPainter::drawUnderlineForText):
+	* src/kwq/qt/qpainter.h:
+
 2001-12-20  Richard Williamson  <rjw@apple.com>
         
         More tweaks to text layout and underlining.

@@ -114,7 +114,7 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
 
 
 #ifdef _KWQ_
-    int underlineOffset = pt->fontMetrics().baselineOffset() + 2;
+    //int underlineOffset = pt->fontMetrics().baselineOffset() + 2;
 #else
     int underlineOffset = ( pt->fontMetrics().height() + m_baseline ) / 2;
     if(underlineOffset <= m_baseline) underlineOffset = m_baseline+1;
@@ -122,7 +122,12 @@ void TextSlave::printDecoration( QPainter *pt, RenderText* p, int _tx, int _ty, 
 
     if(deco & UNDERLINE){
         //fprintf (stderr, "UNDERLINE (%d, %d) to (%d, %d)\n", _tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
+#ifdef _KWQ_
+        QConstString s(m_text, m_len);
+        pt->drawUnderlineForText(_tx, _ty + m_baseline, s.string());
+#else
         pt->drawLine(_tx, _ty + underlineOffset, _tx + width, _ty + underlineOffset );
+#endif
         //pt->drawLine(_tx, _ty, _tx + width, _ty );
         //pt->drawLine(_tx, _ty + pt->fontMetrics().height(), _tx + width, _ty + pt->fontMetrics().height() );
     }
