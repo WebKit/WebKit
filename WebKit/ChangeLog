@@ -1,3 +1,11 @@
+=== WebKit-37u3 ===
+
+2002-12-16  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by no one but it's just a version bump.
+
+        * WebKit.pbproj/project.pbxproj: Bump version to 37u3
+
 2002-12-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
@@ -26,6 +34,8 @@
         * Downloads.subproj/WebMacBinaryDecoder.m:
         (-[WebMacBinaryDecoder decodeData:dataForkData:resourceForkData:]): save Finder bits
         (-[WebMacBinaryDecoder fileAttributes]): return Finder bits
+
+=== WebKit-37u2 ===
 
 2002-12-15  Maciej Stachowiak  <mjs@apple.com>
 
