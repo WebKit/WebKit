@@ -1,3 +1,16 @@
+2003-08-20  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3384609.  Objects that want to dodge floats should fill the line width instead
+	of the containing block width only if their widths are auto.  If widths are specified
+	explicitly, then ccontaining block width should be honored.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcWidth):
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::calcWidth):
+
 2003-08-20  Richard Williamson   <rjw@apple.com>
 
 	UCFindTextBreak will report false if we have a sequence of 0xa0 0x20 (nbsp, sp), so we explicity check for that case.  Filed 3386852 to track this problem, meanwhile added a work-around.  This problem was revealed after adding the fix for 3242508.

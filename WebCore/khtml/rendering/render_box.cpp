@@ -696,7 +696,8 @@ void RenderBox::calcWidth()
 
         int cw;
         RenderBlock *cb = containingBlock();
-        if (style()->hidesOverflow() || isFlexibleBox() || style()->flowAroundFloats())
+        if (style()->width().isVariable() &&
+            (style()->hidesOverflow() || isFlexibleBox() || style()->flowAroundFloats()))
             cw = cb->lineWidth( m_y );
         else
             cw = cb->contentWidth();

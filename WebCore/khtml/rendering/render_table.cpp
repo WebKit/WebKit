@@ -195,7 +195,7 @@ void RenderTable::calcWidth()
     }
 
     // restrict width to what we really have in case we flow around floats
-    if (style()->flowAroundFloats()) {
+    if (style()->width().isVariable() && style()->flowAroundFloats()) {
 	availableWidth = cb->lineWidth( m_y );
 	m_width = QMIN( availableWidth, m_width );
     }
