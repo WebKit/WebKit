@@ -44,6 +44,8 @@
 #include "khtmlview.h"
 #include "khtml_part.h"
 
+#include "html/dtd.h"
+
 #ifndef KHTML_NO_XBL
 #include "xbl/xbl_binding_manager.h"
 #endif
@@ -332,7 +334,8 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, con
                     str.remove(0, range->startOffset(exceptionCode));
                 }
             }
-			me += escapeHTML(str.string());
+            Id parentID = parentNode()->id();
+            me += (parentID == ID_SCRIPT || parentID == ID_TEXTAREA) ? str.string() : escapeHTML(str.string());
 		} else {
 			// If I am an element, not a text
 			me += QChar('<') + nodeName().string();
@@ -357,17 +360,15 @@ QString NodeImpl::recursive_toHTMLWithOptions(bool start, bool completeURLs, con
                     }
                 }
             }
-            if (isHTMLElement()) {
-                me += ">";
-            } else {
-                me += "/>";
-            }
+            me += isHTMLElement() ? ">" : "/>";
 		}
 	}
 	
-    if ((n = firstChild())) {
+    if (!isHTMLElement() || endTag[ident] != FORBIDDEN) {
         // print firstChild
-        me += n->recursive_toHTMLWithOptions(false, completeURLs, range, subresourceURLs);
+        if ((n = firstChild())) {
+            me += n->recursive_toHTMLWithOptions(false, completeURLs, range, subresourceURLs);
+        }
         // Print my ending tag
         if (isNodeIncluded && nodeType() != Node::TEXT_NODE) {
 			me += "</" + nodeName().string() + ">";

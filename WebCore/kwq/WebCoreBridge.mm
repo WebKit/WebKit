@@ -439,18 +439,34 @@ static bool initializedKJS = FALSE;
     if (subresourceURLStrings) {
         subresourceURLs = new QStringList();
     }
+    NSString *docTypeString = nil;
     NSString *HTMLString = nil;
     DOM::DocumentImpl *doc = _part->xmlDocImpl();
     if (doc) {
-        HTMLString = doc->recursive_toHTMLWithOptions(true, false, NULL, subresourceURLs).getNSString();
-        if (subresourceURLStrings) {
-            *subresourceURLStrings = [NSMutableArray array];
-            for (QStringList::Iterator it = subresourceURLs->begin(); it != subresourceURLs->end(); ++it) {
-                [(NSMutableArray *)*subresourceURLStrings addObject:(*it).getNSString()];
+        DocumentTypeImpl *doctype = doc->doctype();
+        if (doctype) {
+            docTypeString = doctype->toString().string().getNSString();
+        }
+        ElementImpl *documentElement = doc->documentElement();
+        if (documentElement) {
+            HTMLString = documentElement->recursive_toHTMLWithOptions(true, false, NULL, subresourceURLs).getNSString();
+            if (subresourceURLStrings) {
+                *subresourceURLStrings = [NSMutableArray array];
+                for (QStringList::Iterator it = subresourceURLs->begin(); it != subresourceURLs->end(); ++it) {
+                    [(NSMutableArray *)*subresourceURLStrings addObject:(*it).getNSString()];
+                }
             }
         }
     }
-    return HTMLString ? HTMLString : @"";
+    if (docTypeString && HTMLString) {
+        return [NSString stringWithFormat:@"%@\n%@", docTypeString, HTMLString];
+    } else if (docTypeString) {
+        return docTypeString;
+    } else if (HTMLString) {
+        return HTMLString;
+    } else {
+        return @"";
+    }
 }
 
 - (NSString *)selectedString

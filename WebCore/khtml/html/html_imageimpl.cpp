@@ -507,7 +507,7 @@ QRegion HTMLAreaElementImpl::getRegion(int width_, int height_) const
     return region;
 }
 
-bool HTMLAreaElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+bool HTMLAreaElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return attr->id() == ATTR_HREF;
 }

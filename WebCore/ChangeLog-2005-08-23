@@ -1,3 +1,21 @@
+2004-02-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed a few problems I found with reconstructed source while on my way to implementing "Mail Page".
+
+        Reviewed by hyatt.
+
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::isSubresourceURLAttribute): only true for stylesheet and icon
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLAreaElementImpl::isURLAttribute): implement isURLAttribute not isSubresourceURLAttribute
+        * khtml/html/html_imageimpl.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::dirtyLineBoxes): crasher fix that I found using libgmalloc
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::recursive_toHTMLWithOptions): don't escape SCRIPT and TEXTAREA text, write close tags for tags that need them instead of relying on the children check 
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge HTMLString:]): call recursive_toHTMLWithOptions on the first child of the document so <#document /> isn't part of the source
+
 2004-02-26  David Hyatt  <hyatt@apple.com>
 
 	Convert render object widths from short to int.  There was a bug on this, but I can't find it in Radar.

@@ -298,9 +298,23 @@ void HTMLLinkElementImpl::sheetLoaded()
         getDocument()->stylesheetLoaded();
 }
 
-bool HTMLLinkElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+bool HTMLLinkElementImpl::isURLAttribute(AttributeImpl *attr) const
 {
     return attr->id() == ATTR_HREF;
+}
+
+bool HTMLLinkElementImpl::isSubresourceURLAttribute(AttributeImpl *attr) const
+{
+    if (attr->id() == ATTR_HREF) {
+        AttributeImpl *attr = attributes()->getAttributeItem(ATTR_REL);
+        if (attr) {
+            QString value = attr->value().string().lower();
+            if (value.contains("stylesheet") || value.contains("icon")) {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------------
