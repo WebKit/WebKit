@@ -1,3 +1,8 @@
+2002-10-31  Darin Adler  <darin@apple.com>
+
+        * WebView.subproj/WebFrame.m: (-[WebFrame setController:]): Add an assert,
+	hoping to catch a reported bug earlier or disprove one theory.
+
 2002-10-31  Trey Matteson  <trey@apple.com>
 
 	Added API to support 3072505 - SnapBack for user-entered page address
@@ -46,7 +51,7 @@
         * WebCoreSupport.subproj/WebTextRenderer.m:
         (+[WebTextRenderer initialize]):
 
-=== 30 ===
+=== Alexander-30 ===
 
 2002-10-30  Richard Williamson  <rjw@apple.com>
 
