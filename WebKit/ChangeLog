@@ -1,3 +1,18 @@
+2004-09-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed:
+	<rdar://problem/3080103> Need to pass cmd-modified keys to plug-ins
+	<rdar://problem/3751509> can't use safari edit menu to copy and paste with Vantage Learning's My Access
+
+        Reviewed by NOBODY (OOPS!).
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m: fake up command-key events for cut, copy, paste and select all so these menu items work for plug-ins
+        (-[WebBaseNetscapePluginView sendModifierEventWithKeyCode:character:]):
+        (-[WebBaseNetscapePluginView cut:]):
+        (-[WebBaseNetscapePluginView copy:]):
+        (-[WebBaseNetscapePluginView paste:]):
+        (-[WebBaseNetscapePluginView selectAll:]):
+
 2004-09-07  Darin Adler  <darin@apple.com>
 
         - fixed deployment build

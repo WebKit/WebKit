@@ -77,7 +77,7 @@
     count = [URLStrings count];
     URLs = [NSMutableArray arrayWithCapacity:count];
     for (index = 0; index < count; ++index) {
-        [URLs addObject:[NSURL _web_URLWithDataAsString:[URLStrings objectAtIndex:index]]];
+        [URLs addObject:[NSURL _web_URLWithUserTypedString:[URLStrings objectAtIndex:index]]];
     }
 
     return URLs;

@@ -678,6 +678,37 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
     return noErr;
 }
 
+// Fake up command-modified events so cut, copy, paste and select all menus work.
+- (void)sendModifierEventWithKeyCode:(int)keyCode character:(char)character
+{
+    EventRecord event;
+    [self getCarbonEvent:&event];
+    event.what = keyDown;
+    event.modifiers |= cmdKey;
+    event.message = keyCode << 8 | character;
+    [self sendEvent:&event];
+}
+
+- (void)cut:(id)sender
+{
+    [self sendModifierEventWithKeyCode:7 character:'x'];
+}
+
+- (void)copy:(id)sender
+{
+    [self sendModifierEventWithKeyCode:8 character:'c'];
+}
+
+- (void)paste:(id)sender
+{
+    [self sendModifierEventWithKeyCode:9 character:'v'];
+}
+
+- (void)selectAll:(id)sender
+{
+    [self sendModifierEventWithKeyCode:0 character:'a'];
+}
+
 #pragma mark WEB_NETSCAPE_PLUGIN
 
 - (BOOL)isNewWindowEqualToOldWindow
