@@ -1,3 +1,17 @@
+2002-12-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3098293 -- Shockwave plug-in doesn't work
+
+	The problem is that the Shockwave plug-in depends on being able to do LMGetCurApRefNum
+	and then do a PBGetFCBInfoSync on the result, and if it gets an error it will refuse
+	to initialize.
+
+        * Plugins.subproj/WebNetscapePluginPackage.m: (+[WebNetscapePluginPackage initialize]):
+	Supply a bogus CurApRefNum. Do it only if CurApRefNum is -1, so we don't screw things
+	up if we are used in a Carbon application.
+
 2002-12-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Trey.

@@ -14,6 +14,22 @@ static TransitionVector tVectorForFunctionPointer(FunctionPointer);
 
 @implementation WebNetscapePluginPackage
 
++ (void)initialize
+{
+    // The Shockwave plugin requires a valid file in CurApRefNum.
+    // But it doesn't seem to matter what file it is.
+    // If we're called inside a Cocoa application which won't have a
+    // CurApRefNum, we set it to point to the system resource file.
+    if (LMGetCurApRefNum() == -1) {
+        // To get the refNum for the system resource file, we have to do
+        // UseResFile(kSystemResFile) and then look at CurResFile().
+        short savedCurResFile = CurResFile();
+        UseResFile(kSystemResFile);
+        LMSetCurApRefNum(CurResFile());
+        UseResFile(savedCurResFile);
+    }
+}
+
 - (SInt16)openResourceFile
 {
     FSRef fref;
