@@ -1,3 +1,11 @@
+2002-11-07  Maciej Stachowiak  <mjs@apple.com>
+
+	- partial fix to 3073230 - JavaScript time calls do I/O by
+	lastat()ing /etc/localtime
+	
+        * kjs/date_object.cpp:
+        (mktimeUsingCF): Implementation of mktime using CF.
+
 === Alexander-31 ===
 
 2002-11-01  Darin Adler  <darin@apple.com>
