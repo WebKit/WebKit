@@ -1,3 +1,24 @@
+2004-11-15  Richard Williamson   <rjw@apple.com>
+
+	Cache image properties and frame durations.
+	Create NSImage and TIFF representations from CGImage, lazily, as needed for
+	dragging and element info dictionary.
+
+        Reviewed by John.
+
+        * WebCoreSupport.subproj/WebImageData.h:
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData dealloc]):
+        (-[WebImageData size]):
+        (-[WebImageData propertiesAtIndex:]):
+        (-[WebImageData _frameDurationAt:]):
+        (-[WebImageData _frameDuration]):
+        * WebCoreSupport.subproj/WebImageRenderer.h:
+        * WebCoreSupport.subproj/WebImageRenderer.m:
+        (-[WebImageRenderer dealloc]):
+        (-[WebImageRenderer TIFFRepresentation]):
+        (-[WebImageRenderer image]):
+
 2004-11-14  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by John.

@@ -66,6 +66,8 @@
 {
     [MIMEType release];
     [imageData release];
+    [nsimage release];
+    [TIFFData release];
     [super dealloc];
 }
 
@@ -205,29 +207,36 @@
 
 - (NSData *)TIFFRepresentation
 {
-    CGImageRef image = [imageData imageAtIndex:0];
-    if (!image)
-        return 0;
+    if (!TIFFData) {
+        CGImageRef image = [imageData imageAtIndex:0];
+        if (!image)
+            return 0;
+            
+        CFMutableDataRef data = 0;
+        CGImageDestinationRef destination = 0;
         
-    CFMutableDataRef data = 0;
-    CGImageDestinationRef destination = 0;
-    
-    data = CFDataCreateMutable(NULL, 0);
-    // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
-    destination = CGImageDestinationCreateWithData (data, CFSTR("public.tiff"), 1, NULL);
-    if (destination) {
-        CGImageDestinationAddImage (destination, image, NULL);
-        CGImageDestinationFinalize (destination);
-        CFRelease (destination);
-    }
+        data = CFDataCreateMutable(NULL, 0);
+        // FIXME:  Use type kCGImageTypeIdentifierTIFF constant once is becomes available in the API
+        destination = CGImageDestinationCreateWithData (data, CFSTR("public.tiff"), 1, NULL);
+        if (destination) {
+            CGImageDestinationAddImage (destination, image, NULL);
+            if (!CGImageDestinationFinalize (destination)) {
+                ERROR ("Unable to create image\n");
+            }
+            CFRelease (destination);
+        }
 
-    return [(NSData *)data autorelease];
+        TIFFData = (NSData *)data;
+    }
+    
+    return TIFFData;
 }
 
 - (NSImage *)image
 {
-    // FIXME:  Implement
-    return nil;
+    if (!nsimage)
+        nsimage = [[NSImage alloc] initWithData:[self TIFFRepresentation]];
+    return nsimage;
 }
 
 @end

@@ -45,8 +45,18 @@ static CFDictionaryRef imageSourceOptions;
 
 - (void)dealloc
 {
-    [self _commonTermination];
+    size_t i, num;
+    
+    num = [self numberOfImages];
+    for (i = 0; i < num; i++) {
+        CFRelease (imageProperties[i]);
+    }
+    free (imageProperties);
+    
+    free (frameDurations);
 
+    [self _commonTermination];
+    
     [super dealloc];
 }
 
@@ -290,73 +300,104 @@ CGPatternCallbacks patternCallbacks = { 0, drawPattern, NULL };
     float w = 0.f, h = 0.f;
 
     if (!haveSize) {
-	CFDictionaryRef properties = CGImageSourceGetPropertiesAtIndex (imageSource, 0, 0);
-	if (properties) {
-	    CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
-	    if (num)
-		CFNumberGetValue (num, kCFNumberFloat32Type, &w);
-	    num = CFDictionaryGetValue (properties, kCGImagePropertyPixelHeight);
-	    if (num)
-		CFNumberGetValue (num, kCFNumberFloat32Type, &h);
+        CFDictionaryRef properties = [self propertiesAtIndex:0];
+        if (properties) {
+            CFNumberRef num = CFDictionaryGetValue (properties, kCGImagePropertyPixelWidth);
+            if (num)
+                CFNumberGetValue (num, kCFNumberFloat32Type, &w);
+            num = CFDictionaryGetValue (properties, kCGImagePropertyPixelHeight);
+            if (num)
+                CFNumberGetValue (num, kCFNumberFloat32Type, &h);
 
-	    size.width = w;
-	    size.height = h;
-	    
-	    haveSize = YES;
-	}
+            size.width = w;
+            size.height = h;
+            
+            haveSize = YES;
+        }
     }
     
     return size;
 }
 
+- (CFDictionaryRef)propertiesAtIndex:(size_t)index
+{
+    size_t num = [self numberOfImages];
+    
+    if (imageProperties == 0 && num) {
+        imageProperties = (CFDictionaryRef *)malloc (num * sizeof(CFDictionaryRef));
+        size_t i;
+        for (i = 0; i < num; i++) {
+            imageProperties[i] = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
+        }
+    }
+    
+    if (index < num) {
+        // If image properties are nil, try to get them again.  May have attempted to
+        // get them before enough data was available in the header.
+        if (imageProperties[index] == 0) {
+            imageProperties[index] = CGImageSourceGetPropertiesAtIndex (imageSource, index, 0);
+        }
+        
+        return imageProperties[index];
+    }
+        
+    return 0;
+}
+
 #define MINIMUM_DURATION (1.0/30.0)
+
+- (float)_frameDurationAt:(size_t)i
+{
+    CFDictionaryRef properties = [self propertiesAtIndex:i];
+    if (!properties) {
+        return 0.f;
+    }
+    
+    // FIXME:  Use constant instead of {GIF}
+    CFDictionaryRef GIFProperties = CFDictionaryGetValue (properties, @"{GIF}");
+    if (!GIFProperties) {
+        return 0.f;
+    }
+    
+    // FIXME:  Use constant instead of DelayTime
+    CFNumberRef num = CFDictionaryGetValue (GIFProperties, @"DelayTime");
+    if (!num) {
+        return 0.f;
+    }
+    
+    float duration = 0.f;
+    CFNumberGetValue (num, kCFNumberFloat32Type, &duration);
+    if (duration < MINIMUM_DURATION) {
+        /*
+            Many annoying ads specify a 0 duration to make an image flash
+            as quickly as possible.  However a zero duration is faster than
+            the refresh rate.  We need to pick a minimum duration.
+            
+            Browsers handle the minimum time case differently.  IE seems to use something
+            close to 1/30th of a second.  Konqueror uses 0.  The ImageMagick library
+            uses 1/100th.  The units in the GIF specification are 1/100th of second.
+            We will use 1/30th of second as the minimum time.
+        */
+        duration = MINIMUM_DURATION;
+    }
+    
+    return duration;
+}
 
 - (float)_frameDuration
 {
     if (!frameDurations) {
-	frameDurations = (float *)malloc (sizeof(float) * [self numberOfImages]);
-	
-	size_t i;
-	for (i = 0; i < [self numberOfImages]; i++) {
-	    CFDictionaryRef properties = CGImageSourceGetPropertiesAtIndex (imageSource, i, 0);
-	    if (!properties) {
-		frameDurations[i] = 0.f;
-		continue;
-	    }
-		
-	    // FIXME:  Use constant instead of {GIF}
-	    CFDictionaryRef GIFProperties = CFDictionaryGetValue (properties, @"{GIF}");
-	    if (!GIFProperties) {
-		frameDurations[i] = 0.f;
-		continue;
-	    }
-	    
-	    // FIXME:  Use constant instead of DelayTime
-	    CFNumberRef num = CFDictionaryGetValue (GIFProperties, @"DelayTime");
-	    if (!num) {
-		frameDurations[i] = 0.f;
-		continue;
-	    }
-	    
-	    float duration = 0.f;
-	    CFNumberGetValue (num, kCFNumberFloat32Type, &duration);
-	    if (duration < MINIMUM_DURATION) {
-		/*
-		    Many annoying ads specify a 0 duration to make an image flash
-		    as quickly as possible.  However a zero duration is faster than
-		    the refresh rate.  We need to pick a minimum duration.
-		    
-		    Browsers handle the minimum time case differently.  IE seems to use something
-		    close to 1/30th of a second.  Konqueror uses 0.  The ImageMagick library
-		    uses 1/100th.  The units in the GIF specification are 1/100th of second.
-		    We will use 1/30th of second as the minimum time.
-		*/
-		duration = MINIMUM_DURATION;
-	    }
-	    frameDurations[i] = duration;
-	}
+        size_t i, num = [self numberOfImages];
+
+        frameDurations = (float *)malloc (sizeof(float) * num);
+        for (i = 0; i < num; i++) {
+            frameDurations[i] = [self _frameDurationAt:i];
+        }
     }
-    
+    else if (frameDurations[currentFrame] == 0.f) {
+            frameDurations[currentFrame] = [self _frameDurationAt:currentFrame];
+    }
+
     return frameDurations[currentFrame];
 }
 

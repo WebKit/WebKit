@@ -15,9 +15,15 @@
     CGImageRef *images;
     CGImageSourceRef imageSource;
 
+    CGSize size;
+    BOOL haveSize;
+    
     CFMutableDictionaryRef animatingRenderers;
     NSTimer *frameTimer;
     float *frameDurations;
+    
+    CFDictionaryRef *imageProperties;
+
     size_t currentFrame;
     int repetitionsComplete;
     BOOL animationFinished;
@@ -36,6 +42,7 @@
 - (void)removeAnimatingRenderer:(WebImageRenderer *)self;
 - (BOOL)isAnimationFinished;
 - (size_t)currentFrame;
+- (CFDictionaryRef)propertiesAtIndex:(size_t)index;
 
 @end
 
