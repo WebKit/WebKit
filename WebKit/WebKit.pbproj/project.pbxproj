@@ -94,6 +94,7 @@
 				F5065217027F555001C1A526,
 				F52CA6C002DF9D78018635CA,
 				F57D194A034E732C01A80180,
+				832E269E036F952E005E2B4F,
 				25A8176801B5474B0ECA149E,
 				254DC334016E1D3F0ECA149E,
 				F8CA15B4029A399401000122,
@@ -208,7 +209,6 @@
 				F5B92B840223191D01C1A525,
 				F5E0A77002B8FEE401C1A525,
 				F59EAE400253C7EE018635CA,
-				F5FBAB9102B88CBF01FF6074,
 				39446094020F50ED0ECA1767,
 				F528E3EC031E91AD01CA2ACA,
 				F528E3EE031E91AD01CA2ACA,
@@ -295,6 +295,8 @@
 				933D659B03413FF2008635CE,
 				9311022A03667CF1008635CE,
 				8467275E0367158500CA2ACA,
+				832E26A2036F95CA005E2B4F,
+				832E26A5036F9614005E2B4F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -361,7 +363,6 @@
 				35081DAB02B6D4E40ACA2ACA,
 				35081DAD02B6D4E40ACA2ACA,
 				F508946C02B71D59018A9CD4,
-				F5FBAB9202B88CBF01FF6074,
 				F5AFB46102B94DC8018635CA,
 				F5E0A77102B8FEE401C1A525,
 				F5E0E10B02BC45F8018635CA,
@@ -400,6 +401,7 @@
 				83E4AF4E036659440000E506,
 				9311022B03667CF1008635CE,
 				8467275F0367158500CA2ACA,
+				832E26A6036F9614005E2B4F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -465,8 +467,6 @@
 //254
 		254DC334016E1D3F0ECA149E = {
 			children = (
-				F5FBAB8F02B88CBF01FF6074,
-				F5FBAB9002B88CBF01FF6074,
 				3944607A020F50ED0ECA1767,
 				3944607B020F50ED0ECA1767,
 				F528E3E9031E91AD01CA2ACA,
@@ -1447,6 +1447,55 @@
 //832
 //833
 //834
+		832E269E036F952E005E2B4F = {
+			children = (
+				832E26A1036F95CA005E2B4F,
+				832E26A3036F9614005E2B4F,
+				832E26A4036F9614005E2B4F,
+			);
+			isa = PBXGroup;
+			name = Downloads;
+			refType = 4;
+		};
+		832E26A1036F95CA005E2B4F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebDownloadDecoder.h;
+			path = Downloads.subproj/WebDownloadDecoder.h;
+			refType = 4;
+		};
+		832E26A2036F95CA005E2B4F = {
+			fileRef = 832E26A1036F95CA005E2B4F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		832E26A3036F9614005E2B4F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebDownloadHandler.h;
+			path = Downloads.subproj/WebDownloadHandler.h;
+			refType = 4;
+		};
+		832E26A4036F9614005E2B4F = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			name = WebDownloadHandler.m;
+			path = Downloads.subproj/WebDownloadHandler.m;
+			refType = 4;
+		};
+		832E26A5036F9614005E2B4F = {
+			fileRef = 832E26A3036F9614005E2B4F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		832E26A6036F9614005E2B4F = {
+			fileRef = 832E26A4036F9614005E2B4F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		83402EF6035A588900BE770A = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -3327,30 +3376,6 @@
 		};
 		F5F81C3C02B67C26018635CA = {
 			fileRef = F5F81C3A02B67C26018635CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5FBAB8F02B88CBF01FF6074 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebDownloadHandler.h;
-			refType = 4;
-		};
-		F5FBAB9002B88CBF01FF6074 = {
-			fileEncoding = 4;
-			isa = PBXFileReference;
-			path = WebDownloadHandler.m;
-			refType = 4;
-		};
-		F5FBAB9102B88CBF01FF6074 = {
-			fileRef = F5FBAB8F02B88CBF01FF6074;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5FBAB9202B88CBF01FF6074 = {
-			fileRef = F5FBAB9002B88CBF01FF6074;
 			isa = PBXBuildFile;
 			settings = {
 			};

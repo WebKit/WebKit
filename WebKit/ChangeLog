@@ -1,3 +1,21 @@
+2002-10-29  Chris Blumenberg  <cblu@apple.com>
+
+	Created Downloads.subproj to hold the to-be-implemented download decoders.
+
+        * Downloads.subproj/WebDownloadDecoder.h: Added.
+        * Downloads.subproj/WebDownloadHandler.h: Added.
+        * Downloads.subproj/WebDownloadHandler.m: Added.
+        (-[WebDownloadHandler initWithDataSource:]):
+        (-[WebDownloadHandler dealloc]):
+        (-[WebDownloadHandler errorWithCode:]):
+        (-[WebDownloadHandler receivedResponse:]):
+        (-[WebDownloadHandler receivedData:]):
+        (-[WebDownloadHandler finishedLoading]):
+        (-[WebDownloadHandler cancel]):
+        * Misc.subproj/WebDownloadHandler.h: Removed.
+        * Misc.subproj/WebDownloadHandler.m: Removed.
+        * WebKit.pbproj/project.pbxproj:
+
 2002-10-28  Darin Adler  <darin@apple.com>
 
 	- fixed crash I just introduced
