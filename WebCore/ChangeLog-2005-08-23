@@ -1,5 +1,11 @@
 2003-10-08  Maciej Stachowiak  <mjs@apple.com>
 
+	Fix development build.
+	
+        * kwq/KWQExceptions.h: Correct assertion args.
+
+2003-10-08  Maciej Stachowiak  <mjs@apple.com>
+
         Reviewed by Ken.
 
 	Start on blocking Cocoa exceptions when calling ObjC from C++ to

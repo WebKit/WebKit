@@ -32,7 +32,7 @@
      if (ASSERT_DISABLED) { \
      NSLog(@"Uncaught exception - %@\n", localException); \
      } else { \
-     ASSERT_WITH_MESSAGE(@"Uncaught exception - %@", localException); \
+     ASSERT_WITH_MESSAGE(0, "Uncaught exception - %@", localException); \
      } \
 NS_ENDHANDLER
 
