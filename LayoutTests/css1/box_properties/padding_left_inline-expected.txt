@@ -25,8 +25,7 @@ layer at (0,0) size 800x600
               text run at (711,2) width 24: "one"
         RenderText {TEXT} at (735,0) size 778x36
           text run at (735,0) width 43: " which"
-          text run at (0,18) width 121: "should result in 25-"
-          text run at (121,18) width 406: "pixel left padding (which should also be a light blue) only in the "
+          text run at (0,18) width 527: "should result in 25-pixel left padding (which should also be a light blue) only in the "
         RenderInline {STRONG} at (0,0) size 27x18
           RenderText {TEXT} at (527,18) size 27x18
             text run at (527,18) width 27: "first"
@@ -75,8 +74,7 @@ layer at (0,0) size 800x600
                     RenderText {TEXT} at (711,2) size 24x15
                       text run at (711,2) width 24: "one"
                 RenderText {TEXT} at (0,18) size 570x18
-                  text run at (0,18) width 164: "which should result in 25-"
-                  text run at (164,18) width 406: "pixel left padding (which should also be a light blue) only in the "
+                  text run at (0,18) width 570: "which should result in 25-pixel left padding (which should also be a light blue) only in the "
                 RenderInline {STRONG} at (0,0) size 27x18
                   RenderText {TEXT} at (570,18) size 27x18
                     text run at (570,18) width 27: "first"

@@ -1,8 +1,8 @@
-layer at (0,0) size 800x2957
+layer at (0,0) size 800x2993
   RenderCanvas at (0,0) size 800x600
-layer at (0,0) size 800x2957
-  RenderBlock {HTML} at (0,0) size 800x2957
-    RenderBody {BODY} at (8,21) size 784x2920 [bgcolor=#FFFFFF]
+layer at (0,0) size 800x2993
+  RenderBlock {HTML} at (0,0) size 800x2993
+    RenderBody {BODY} at (8,21) size 784x2956 [bgcolor=#FFFFFF]
       RenderBlock {H1} at (0,0) size 784x37
         RenderText {TEXT} at (0,0) size 431x37
           text run at (0,0) width 431: "Tests for text-transform in CSS"
@@ -349,58 +349,60 @@ layer at (0,0) size 800x2957
       RenderBlock {P} at (0,2028) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 621x18
           text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
-      RenderBlock {P} at (0,2062) size 784x36
-        RenderText {TEXT} at (0,0) size 776x36
-          text run at (0,0) width 72: "| \x{531} \x{531} | \x{532} \x{532} "
-          text run at (72,0) width 214: "| \x{533} \x{533} | \x{534} \x{534} | \x{535} \x{535} | \x{536} \x{536} | \x{537} \x{537} | \x{538} \x{538} "
-          text run at (286,0) width 216: "| \x{539} \x{539} | \x{53A} \x{53A} | \x{53B} \x{53B} | \x{53C} \x{53C} | \x{53D} \x{53D} | \x{53E} \x{53E} "
-          text run at (502,0) width 218: "| \x{53F} \x{53F} | \x{540} \x{540} | \x{541} \x{541} | \x{542} \x{542} | \x{543} \x{543} | \x{544} \x{544} "
-          text run at (720,0) width 56: "| \x{545} \x{545} | \x{546} "
-          text run at (0,18) width 156: "\x{546} | \x{547} \x{547} | \x{548} \x{548} | \x{549} \x{549} | \x{54A} \x{54A} "
-          text run at (156,18) width 212: "| \x{54B} \x{54B} | \x{54C} \x{54C} | \x{54D} \x{54D} | \x{54E} \x{54E} | \x{54F} \x{54F} | \x{550} \x{550} "
-          text run at (368,18) width 210: "| \x{551} \x{551} | \x{552} \x{552} | \x{553} \x{553} | \x{554} \x{554} | \x{555} \x{555} | \x{556} \x{556} "
-          text run at (578,18) width 3: "|"
-      RenderBlock {P} at (0,2114) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2062) size 784x54
+        RenderText {TEXT} at (0,0) size 783x54
+          text run at (0,0) width 102: "| \x{531} \x{531} | \x{532} \x{532} "
+          text run at (102,0) width 306: "| \x{533} \x{533} | \x{534} \x{534} | \x{535} \x{535} | \x{536} \x{536} | \x{537} \x{537} | \x{538} \x{538} "
+          text run at (408,0) width 306: "| \x{539} \x{539} | \x{53A} \x{53A} | \x{53B} \x{53B} | \x{53C} \x{53C} | \x{53D} \x{53D} | \x{53E} \x{53E} "
+          text run at (714,0) width 58: "| \x{53F} \x{53F} | "
+          text run at (0,18) width 248: "\x{540} \x{540} | \x{541} \x{541} | \x{542} \x{542} | \x{543} \x{543} | \x{544} \x{544} "
+          text run at (248,18) width 306: "| \x{545} \x{545} | \x{546} \x{546} | \x{547} \x{547} | \x{548} \x{548} | \x{549} \x{549} | \x{54A} \x{54A} "
+          text run at (554,18) width 229: "| \x{54B} \x{54B} | \x{54C} \x{54C} | \x{54D} \x{54D} | \x{54E} \x{54E} | \x{54F}"
+          text run at (0,36) width 73: "\x{54F} | \x{550} \x{550} "
+          text run at (73,36) width 306: "| \x{551} \x{551} | \x{552} \x{552} | \x{553} \x{553} | \x{554} \x{554} | \x{555} \x{555} | \x{556} \x{556} "
+          text run at (379,36) width 3: "|"
+      RenderBlock {P} at (0,2132) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 620x18
           text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
-      RenderBlock {P} at (0,2148) size 784x36
-        RenderText {TEXT} at (0,0) size 784x36
-          text run at (0,0) width 140: "| \x{561} \x{561} | \x{562} \x{562} | \x{563} \x{563} | \x{564} \x{564} "
-          text run at (140,0) width 190: "| \x{565} \x{565} | \x{566} \x{566} | \x{567} \x{567} | \x{568} \x{568} | \x{569} \x{569} | \x{56A} \x{56A} "
-          text run at (330,0) width 186: "| \x{56B} \x{56B} | \x{56C} \x{56C} | \x{56D} \x{56D} | \x{56E} \x{56E} | \x{56F} \x{56F} | \x{570} \x{570} "
-          text run at (516,0) width 176: "| \x{571} \x{571} | \x{572} \x{572} | \x{573} \x{573} | \x{574} \x{574} | \x{575} \x{575} | \x{576} \x{576} "
-          text run at (692,0) width 92: "| \x{577} \x{577} | \x{578} \x{578} | \x{579} \x{579} |"
-          text run at (0,18) width 96: "\x{57A} \x{57A} | \x{57B} \x{57B} | \x{57C} \x{57C} "
-          text run at (96,18) width 190: "| \x{57D} \x{57D} | \x{57E} \x{57E} | \x{57F} \x{57F} | \x{580} \x{580} | \x{581} \x{581} | \x{582} \x{582} "
-          text run at (286,18) width 141: "| \x{583} \x{583} | \x{584} \x{584} | \x{585} \x{585} | \x{586} \x{586} |"
-      RenderBlock {HR} at (0,2200) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,2221) size 784x28 [color=#808080]
+      RenderBlock {P} at (0,2166) size 784x54
+        RenderText {TEXT} at (0,0) size 783x54
+          text run at (0,0) width 204: "| \x{561} \x{561} | \x{562} \x{562} | \x{563} \x{563} | \x{564} \x{564} "
+          text run at (204,0) width 306: "| \x{565} \x{565} | \x{566} \x{566} | \x{567} \x{567} | \x{568} \x{568} | \x{569} \x{569} | \x{56A} \x{56A} "
+          text run at (510,0) width 262: "| \x{56B} \x{56B} | \x{56C} \x{56C} | \x{56D} \x{56D} | \x{56E} \x{56E} | \x{56F} \x{56F} | "
+          text run at (0,18) width 44: "\x{570} \x{570} "
+          text run at (44,18) width 306: "| \x{571} \x{571} | \x{572} \x{572} | \x{573} \x{573} | \x{574} \x{574} | \x{575} \x{575} | \x{576} \x{576} "
+          text run at (350,18) width 306: "| \x{577} \x{577} | \x{578} \x{578} | \x{579} \x{579} | \x{57A} \x{57A} | \x{57B} \x{57B} | \x{57C} \x{57C} "
+          text run at (656,18) width 127: "| \x{57D} \x{57D} | \x{57E} \x{57E} | \x{57F}"
+          text run at (0,36) width 175: "\x{57F} | \x{580} \x{580} | \x{581} \x{581} | \x{582} \x{582} "
+          text run at (175,36) width 207: "| \x{583} \x{583} | \x{584} \x{584} | \x{585} \x{585} | \x{586} \x{586} |"
+      RenderBlock {HR} at (0,2236) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,2257) size 784x28 [color=#808080]
         RenderText {TEXT} at (0,0) size 215x28
           text run at (0,0) width 215: "General case: Roman"
-      RenderBlock {P} at (0,2268) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2304) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 621x18
           text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
-      RenderBlock {P} at (0,2302) size 784x18
+      RenderBlock {P} at (0,2338) size 784x18
         RenderText {TEXT} at (0,0) size 667x18
           text run at (0,0) width 177: "| \x{2160} \x{2160} | \x{2161} \x{2161} | \x{2162} \x{2162} | \x{2163} \x{2163} | \x{2164} \x{2164} "
           text run at (177,0) width 282: "| \x{2165} \x{2165} | \x{2166} \x{2166} | \x{2167} \x{2167} | \x{2168} \x{2168} | \x{2169} \x{2169} | \x{216A} \x{216A} "
           text run at (459,0) width 208: "| \x{216B} \x{216B} | \x{216C} \x{216C} | \x{216D} \x{216D} | \x{216E} \x{216E} | \x{216F} \x{216F} |"
-      RenderBlock {P} at (0,2336) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2372) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 620x18
           text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
-      RenderBlock {P} at (0,2370) size 784x18
+      RenderBlock {P} at (0,2406) size 784x18
         RenderText {TEXT} at (0,0) size 615x18
           text run at (0,0) width 167: "| \x{2170} \x{2170} | \x{2171} \x{2171} | \x{2172} \x{2172} | \x{2173} \x{2173} | \x{2174} \x{2174} "
           text run at (167,0) width 258: "| \x{2175} \x{2175} | \x{2176} \x{2176} | \x{2177} \x{2177} | \x{2178} \x{2178} | \x{2179} \x{2179} | \x{217A} \x{217A} "
           text run at (425,0) width 190: "| \x{217B} \x{217B} | \x{217C} \x{217C} | \x{217D} \x{217D} | \x{217E} \x{217E} | \x{217F} \x{217F} |"
-      RenderBlock {HR} at (0,2404) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,2425) size 784x28 [color=#808080]
+      RenderBlock {HR} at (0,2440) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,2461) size 784x28 [color=#808080]
         RenderText {TEXT} at (0,0) size 276x28
           text run at (0,0) width 276: "General case: Circled Latin"
-      RenderBlock {P} at (0,2472) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2508) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 621x18
           text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
-      RenderBlock {P} at (0,2506) size 784x36
+      RenderBlock {P} at (0,2542) size 784x36
         RenderText {TEXT} at (0,0) size 775x36
           text run at (0,0) width 141: "| \x{24B6} \x{24B6} | \x{24B7} \x{24B7} | \x{24B8} \x{24B8} "
           text run at (141,0) width 282: "| \x{24B9} \x{24B9} | \x{24BA} \x{24BA} | \x{24BB} \x{24BB} | \x{24BC} \x{24BC} | \x{24BD} \x{24BD} | \x{24BE} \x{24BE} "
@@ -408,10 +410,10 @@ layer at (0,0) size 800x2957
           text run at (705,0) width 70: "| \x{24C5} \x{24C5} | \x{24C6} "
           text run at (0,18) width 208: "\x{24C6} | \x{24C7} \x{24C7} | \x{24C8} \x{24C8} | \x{24C9} \x{24C9} | \x{24CA} \x{24CA} "
           text run at (208,18) width 238: "| \x{24CB} \x{24CB} | \x{24CC} \x{24CC} | \x{24CD} \x{24CD} | \x{24CE} \x{24CE} | \x{24CF} \x{24CF} |"
-      RenderBlock {P} at (0,2558) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2594) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 620x18
           text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
-      RenderBlock {P} at (0,2592) size 784x36
+      RenderBlock {P} at (0,2628) size 784x36
         RenderText {TEXT} at (0,0) size 779x36
           text run at (0,0) width 235: "| \x{24D0} \x{24D0} | \x{24D1} \x{24D1} | \x{24D2} \x{24D2} | \x{24D3} \x{24D3} | \x{24D4} \x{24D4} "
           text run at (235,0) width 282: "| \x{24D5} \x{24D5} | \x{24D6} \x{24D6} | \x{24D7} \x{24D7} | \x{24D8} \x{24D8} | \x{24D9} \x{24D9} | \x{24DA} \x{24DA} "
@@ -419,14 +421,14 @@ layer at (0,0) size 800x2957
           text run at (0,18) width 20: "\x{24E0} "
           text run at (20,18) width 282: "| \x{24E1} \x{24E1} | \x{24E2} \x{24E2} | \x{24E3} \x{24E3} | \x{24E4} \x{24E4} | \x{24E5} \x{24E5} | \x{24E6} \x{24E6} "
           text run at (302,18) width 144: "| \x{24E7} \x{24E7} | \x{24E8} \x{24E8} | \x{24E9} \x{24E9} |"
-      RenderBlock {HR} at (0,2644) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {H2} at (0,2665) size 784x28 [color=#808080]
+      RenderBlock {HR} at (0,2680) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {H2} at (0,2701) size 784x28 [color=#808080]
         RenderText {TEXT} at (0,0) size 301x28
           text run at (0,0) width 301: "General case: Fullwidth Latin"
-      RenderBlock {P} at (0,2712) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2748) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 621x18
           text run at (0,0) width 621: "The css says: text-transform: uppercase. The right-hand character should match the left-hand one."
-      RenderBlock {P} at (0,2746) size 784x36
+      RenderBlock {P} at (0,2782) size 784x36
         RenderText {TEXT} at (0,0) size 779x36
           text run at (0,0) width 282: "| \x{FF21} \x{FF21} | \x{FF22} \x{FF22} | \x{FF23} \x{FF23} | \x{FF24} \x{FF24} | \x{FF25} \x{FF25} | \x{FF26} \x{FF26} "
           text run at (282,0) width 282: "| \x{FF27} \x{FF27} | \x{FF28} \x{FF28} | \x{FF29} \x{FF29} | \x{FF2A} \x{FF2A} | \x{FF2B} \x{FF2B} | \x{FF2C} \x{FF2C} "
@@ -434,10 +436,10 @@ layer at (0,0) size 800x2957
           text run at (0,18) width 67: "\x{FF31} | \x{FF32} \x{FF32} "
           text run at (67,18) width 282: "| \x{FF33} \x{FF33} | \x{FF34} \x{FF34} | \x{FF35} \x{FF35} | \x{FF36} \x{FF36} | \x{FF37} \x{FF37} | \x{FF38} \x{FF38} "
           text run at (349,18) width 97: "| \x{FF39} \x{FF39} | \x{FF3A} \x{FF3A} |"
-      RenderBlock {P} at (0,2798) size 784x18 [color=#808080]
+      RenderBlock {P} at (0,2834) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 620x18
           text run at (0,0) width 620: "The css says: text-transform: lowercase. The left-hand character should match the right-hand one."
-      RenderBlock {P} at (0,2832) size 784x36
+      RenderBlock {P} at (0,2868) size 784x36
         RenderText {TEXT} at (0,0) size 779x36
           text run at (0,0) width 94: "| \x{FF41} \x{FF41} | \x{FF42} \x{FF42} "
           text run at (94,0) width 282: "| \x{FF43} \x{FF43} | \x{FF44} \x{FF44} | \x{FF45} \x{FF45} | \x{FF46} \x{FF46} | \x{FF47} \x{FF47} | \x{FF48} \x{FF48} "
@@ -446,7 +448,7 @@ layer at (0,0) size 800x2957
           text run at (0,18) width 161: "\x{FF51} | \x{FF52} \x{FF52} | \x{FF53} \x{FF53} | \x{FF54} \x{FF54} "
           text run at (161,18) width 282: "| \x{FF55} \x{FF55} | \x{FF56} \x{FF56} | \x{FF57} \x{FF57} | \x{FF58} \x{FF58} | \x{FF59} \x{FF59} | \x{FF5A} \x{FF5A} "
           text run at (443,18) width 3: "|"
-      RenderBlock {HR} at (0,2884) size 784x2 [border: (1px inset #000000)]
-      RenderBlock {P} at (0,2902) size 784x18 [color=#808080]
+      RenderBlock {HR} at (0,2920) size 784x2 [border: (1px inset #000000)]
+      RenderBlock {P} at (0,2938) size 784x18 [color=#808080]
         RenderText {TEXT} at (0,0) size 416x18
           text run at (0,0) width 416: "Thanks to John Cowan for assistance in developing this test page."

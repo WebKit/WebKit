@@ -20,8 +20,7 @@ layer at (0,0) size 800x600
             text run at (666,0) width 57: "class one"
         RenderText {TEXT} at (723,0) size 770x36
           text run at (723,0) width 47: ", which"
-          text run at (0,18) width 112: "should have a 10-"
-          text run at (112,18) width 226: "pixel purple double top border; and "
+          text run at (0,18) width 338: "should have a 10-pixel purple double top border; and "
         RenderInline {SPAN} at (0,0) size 58x19 [border: (1px solid #800080) none]
           RenderText {TEXT} at (338,18) size 58x18
             text run at (338,18) width 58: "class two"
@@ -49,8 +48,7 @@ layer at (0,0) size 800x600
                     text run at (666,0) width 57: "class one"
                 RenderText {TEXT} at (723,0) size 727x36
                   text run at (723,0) width 4: ","
-                  text run at (0,18) width 155: "which should have a 10-"
-                  text run at (155,18) width 226: "pixel purple double top border; and "
+                  text run at (0,18) width 381: "which should have a 10-pixel purple double top border; and "
                 RenderInline {SPAN} at (0,0) size 58x19 [border: (1px solid #800080) none]
                   RenderText {TEXT} at (381,18) size 58x18
                     text run at (381,18) width 58: "class two"

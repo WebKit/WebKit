@@ -132,14 +132,12 @@ layer at (0,0) size 800x4403
         RenderText {TEXT} at (111,36) size 750x36
           text run at (111,36) width 286: " in this sentence should have a font-size of 12"
           text run at (397,36) width 162: "px and a line-height of 16"
-          text run at (559,36) width 141: "px; they are also 50%-"
-          text run at (700,36) width 50: "aligned,"
+          text run at (559,36) width 191: "px; they are also 50%-aligned,"
           text run at (0,54) width 165: "which should raise them 8"
           text run at (165,54) width 211: "px relative to the natural baseline."
       RenderBlock {P} at (0,1388) size 784x36
         RenderText {TEXT} at (0,0) size 742x36
-          text run at (0,0) width 498: "In the following paragraph, all images should be aligned with the top of the 14-"
-          text run at (498,0) width 244: "point text, which is identical to the first"
+          text run at (0,0) width 742: "In the following paragraph, all images should be aligned with the top of the 14-point text, which is identical to the first"
           text run at (0,18) width 661: "section of text, whereas any size text should be aligned with the text baseline (which is the default value)."
       RenderBlock {P} at (0,1442) size 784x324
         RenderText {TEXT} at (0,25) size 120x22
@@ -263,8 +261,7 @@ layer at (0,0) size 800x4403
             text run at (411,89) width 17: "a "
           RenderInline {SPAN} at (0,0) size 204x69
             RenderText {TEXT} at (428,57) size 204x69
-              text run at (428,57) width 80: "14-"
-              text run at (508,57) width 124: "point"
+              text run at (428,57) width 204: "14-point"
           RenderText {TEXT} at (632,89) size 127x28
             text run at (632,89) width 127: " text element"
         RenderText {TEXT} at (759,97) size 4x18
@@ -480,14 +477,12 @@ layer at (0,0) size 800x4403
                 RenderText {TEXT} at (111,36) size 750x36
                   text run at (111,36) width 286: " in this sentence should have a font-size of 12"
                   text run at (397,36) width 162: "px and a line-height of 16"
-                  text run at (559,36) width 141: "px; they are also 50%-"
-                  text run at (700,36) width 50: "aligned,"
+                  text run at (559,36) width 191: "px; they are also 50%-aligned,"
                   text run at (0,54) width 165: "which should raise them 8"
                   text run at (165,54) width 211: "px relative to the natural baseline."
               RenderBlock {P} at (4,1057) size 762x36
                 RenderText {TEXT} at (0,0) size 742x36
-                  text run at (0,0) width 498: "In the following paragraph, all images should be aligned with the top of the 14-"
-                  text run at (498,0) width 244: "point text, which is identical to the first"
+                  text run at (0,0) width 742: "In the following paragraph, all images should be aligned with the top of the 14-point text, which is identical to the first"
                   text run at (0,18) width 661: "section of text, whereas any size text should be aligned with the text baseline (which is the default value)."
               RenderBlock {P} at (4,1111) size 762x324
                 RenderText {TEXT} at (0,25) size 120x22
@@ -610,8 +605,7 @@ layer at (0,0) size 800x4403
                     text run at (454,89) width 17: "a "
                   RenderInline {SPAN} at (0,0) size 204x69
                     RenderText {TEXT} at (471,57) size 204x69
-                      text run at (471,57) width 80: "14-"
-                      text run at (551,57) width 124: "point"
+                      text run at (471,57) width 204: "14-point"
                   RenderText {TEXT} at (675,89) size 718x106
                     text run at (675,89) width 43: " text"
                     text run at (0,167) width 78: "element"

@@ -22,8 +22,7 @@ layer at (0,0) size 800x959
           text run at (0,18) width 317: "only to the cells, not the rows which contain them."
       RenderBlock {P} at (0,177) size 784x28 [border: (10px double #800080) none]
         RenderText {TEXT} at (0,10) size 414x18
-          text run at (0,10) width 310: "This paragraph should have a purple, double, 10-"
-          text run at (310,10) width 104: "pixel top border."
+          text run at (0,10) width 414: "This paragraph should have a purple, double, 10-pixel top border."
       RenderBlock {P} at (0,221) size 784x19 [border: (1px solid #800080) none]
         RenderText {TEXT} at (0,1) size 331x18
           text run at (0,1) width 331: "This paragraph should have a thin purple top border."
@@ -32,8 +31,7 @@ layer at (0,0) size 800x959
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (5,5) size 772x41 [border: (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
               RenderText {TEXT} at (2,3) size 735x36
-                text run at (2,3) width 248: "Every cell in this table should have a 2-"
-                text run at (250,3) width 181: "pixel solid green top border. "
+                text run at (2,3) width 429: "Every cell in this table should have a 2-pixel solid green top border. "
                 text run at (431,3) width 306: "This is also true of the table-testing section in the"
                 text run at (2,21) width 175: "second half of the test page."
           RenderTableRow {TR} at (0,0) size 0x0
@@ -96,8 +94,7 @@ layer at (0,0) size 800x959
                   text run at (0,18) width 317: "only to the cells, not the rows which contain them."
               RenderBlock {P} at (4,57) size 762x28 [border: (10px double #800080) none]
                 RenderText {TEXT} at (0,10) size 414x18
-                  text run at (0,10) width 310: "This paragraph should have a purple, double, 10-"
-                  text run at (310,10) width 104: "pixel top border."
+                  text run at (0,10) width 414: "This paragraph should have a purple, double, 10-pixel top border."
               RenderBlock {P} at (4,101) size 762x19 [border: (1px solid #800080) none]
                 RenderText {TEXT} at (0,1) size 331x18
                   text run at (0,1) width 331: "This paragraph should have a thin purple top border."
@@ -106,8 +103,7 @@ layer at (0,0) size 800x959
                   RenderTableRow {TR} at (0,0) size 0x0
                     RenderTableCell {TD} at (5,5) size 750x41 [border: (2px solid #008000) (1px inset #808080)] [r=0 c=0 rs=1 cs=2]
                       RenderText {TEXT} at (2,3) size 735x36
-                        text run at (2,3) width 248: "Every cell in this table should have a 2-"
-                        text run at (250,3) width 181: "pixel solid green top border. "
+                        text run at (2,3) width 429: "Every cell in this table should have a 2-pixel solid green top border. "
                         text run at (431,3) width 306: "This is also true of the table-testing section in the"
                         text run at (2,21) width 175: "second half of the test page."
                   RenderTableRow {TR} at (0,0) size 0x0

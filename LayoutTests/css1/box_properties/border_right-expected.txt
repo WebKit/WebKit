@@ -16,15 +16,13 @@ layer at (0,0) size 800x600
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 764x54 [bgcolor=#C0C0C0]
         RenderText {TEXT} at (0,0) size 752x36
-          text run at (0,0) width 364: "This paragraph has a background color of silver and a 20-"
-          text run at (364,0) width 388: "pixel right margin, and it contains inline elements with classes"
+          text run at (0,0) width 752: "This paragraph has a background color of silver and a 20-pixel right margin, and it contains inline elements with classes"
           text run at (0,18) width 17: "of "
         RenderInline {SPAN} at (0,0) size 67x18 [border: (10px double #800080) none]
           RenderText {TEXT} at (17,18) size 57x18
             text run at (17,18) width 57: "class one"
         RenderText {TEXT} at (84,18) size 398x18
-          text run at (84,18) width 163: ", which should have a 10-"
-          text run at (247,18) width 235: "pixel purple double right border; and "
+          text run at (84,18) width 398: ", which should have a 10-pixel purple double right border; and "
         RenderInline {SPAN} at (0,0) size 59x18 [border: (1px solid #800080) none]
           RenderText {TEXT} at (482,18) size 58x18
             text run at (482,18) width 58: "class two"
@@ -46,15 +44,13 @@ layer at (0,0) size 800x600
             RenderTableCell {TD} at (12,26) size 770x62 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 742x54 [bgcolor=#C0C0C0]
                 RenderText {TEXT} at (0,0) size 705x36
-                  text run at (0,0) width 364: "This paragraph has a background color of silver and a 20-"
-                  text run at (364,0) width 341: "pixel right margin, and it contains inline elements with"
+                  text run at (0,0) width 705: "This paragraph has a background color of silver and a 20-pixel right margin, and it contains inline elements with"
                   text run at (0,18) width 64: "classes of "
                 RenderInline {SPAN} at (0,0) size 67x18 [border: (10px double #800080) none]
                   RenderText {TEXT} at (64,18) size 57x18
                     text run at (64,18) width 57: "class one"
                 RenderText {TEXT} at (131,18) size 398x18
-                  text run at (131,18) width 163: ", which should have a 10-"
-                  text run at (294,18) width 235: "pixel purple double right border; and "
+                  text run at (131,18) width 398: ", which should have a 10-pixel purple double right border; and "
                 RenderInline {SPAN} at (0,0) size 59x18 [border: (1px solid #800080) none]
                   RenderText {TEXT} at (529,18) size 58x18
                     text run at (529,18) width 58: "class two"

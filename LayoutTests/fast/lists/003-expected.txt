@@ -43,14 +43,12 @@ layer at (0,0) size 800x334
               RenderListMarker at (0,0) size 0x14
               RenderText {TEXT} at (0,0) size 402x36
                 text run at (0,0) width 159: "New larger PowerBook. "
-                text run at (159,0) width 168: "Still 1 GHz, but with a 17-"
-                text run at (327,0) width 75: "inch screen."
+                text run at (159,0) width 243: "Still 1 GHz, but with a 17-inch screen."
                 text run at (0,18) width 44: "$3299."
             RenderListItem {LI} at (40,36) size 430x18
               RenderListMarker at (0,0) size 0x14
               RenderText {TEXT} at (0,0) size 355x18
-                text run at (0,0) width 232: "New smaller PowerBook, with a 12-"
-                text run at (232,0) width 79: "inch screen. "
+                text run at (0,0) width 311: "New smaller PowerBook, with a 12-inch screen. "
                 text run at (311,0) width 44: "$1799."
             RenderListItem {LI} at (40,54) size 430x54
               RenderListMarker at (0,0) size 0x14

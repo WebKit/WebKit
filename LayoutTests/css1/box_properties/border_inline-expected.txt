@@ -21,14 +21,12 @@ layer at (0,0) size 800x600
             text run at (687,0) width 57: "class one"
         RenderText {TEXT} at (754,0) size 758x36
           text run at (754,0) width 4: ","
-          text run at (0,18) width 175: "which should result in a 10-"
-          text run at (175,18) width 178: "pixel outset teal border; and "
+          text run at (0,18) width 353: "which should result in a 10-pixel outset teal border; and "
         RenderInline {SPAN} at (0,0) size 78x38 [border: (10px inset #808000)]
           RenderText {TEXT} at (363,18) size 58x18
             text run at (363,18) width 58: "class two"
         RenderText {TEXT} at (431,18) size 762x36
-          text run at (431,18) width 183: ", which should result in a 10-"
-          text run at (614,18) width 148: "pixel inset olive border."
+          text run at (431,18) width 331: ", which should result in a 10-pixel inset olive border."
           text run at (0,36) width 429: "The line-height of the parent element should not change on any line."
       RenderTable {TABLE} at (0,180) size 784x90 [border: (1px outset #808080)]
         RenderTableSection {TBODY} at (1,1) size 0x88
@@ -50,12 +48,10 @@ layer at (0,0) size 800x600
                     text run at (687,0) width 57: "class one"
                 RenderText {TEXT} at (754,0) size 758x36
                   text run at (754,0) width 4: ","
-                  text run at (0,18) width 175: "which should result in a 10-"
-                  text run at (175,18) width 178: "pixel outset teal border; and "
+                  text run at (0,18) width 353: "which should result in a 10-pixel outset teal border; and "
                 RenderInline {SPAN} at (0,0) size 78x38 [border: (10px inset #808000)]
                   RenderText {TEXT} at (363,18) size 58x18
                     text run at (363,18) width 58: "class two"
                 RenderText {TEXT} at (431,18) size 762x36
-                  text run at (431,18) width 183: ", which should result in a 10-"
-                  text run at (614,18) width 148: "pixel inset olive border."
+                  text run at (431,18) width 331: ", which should result in a 10-pixel inset olive border."
                   text run at (0,36) width 429: "The line-height of the parent element should not change on any line."

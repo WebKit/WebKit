@@ -25,8 +25,7 @@ layer at (0,0) size 800x600
               text run at (686,2) width 24: "one"
         RenderText {TEXT} at (735,0) size 782x36
           text run at (735,0) width 47: ", which"
-          text run at (0,18) width 121: "should result in 25-"
-          text run at (121,18) width 187: "pixel right margin only in the "
+          text run at (0,18) width 308: "should result in 25-pixel right margin only in the "
         RenderInline {STRONG} at (0,0) size 23x18
           RenderText {TEXT} at (308,18) size 23x18
             text run at (308,18) width 23: "last"
@@ -75,8 +74,7 @@ layer at (0,0) size 800x600
                       text run at (686,2) width 24: "one"
                 RenderText {TEXT} at (735,0) size 739x36
                   text run at (735,0) width 4: ","
-                  text run at (0,18) width 164: "which should result in 25-"
-                  text run at (164,18) width 187: "pixel right margin only in the "
+                  text run at (0,18) width 351: "which should result in 25-pixel right margin only in the "
                 RenderInline {STRONG} at (0,0) size 23x18
                   RenderText {TEXT} at (351,18) size 23x18
                     text run at (351,18) width 23: "last"

@@ -74,8 +74,7 @@ layer at (0,0) size 800x1378
           RenderTableRow {TR} at (0,0) size 0x0
             RenderTableCell {TD} at (5,5) size 772x42 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
               RenderText {TEXT} at (3,3) size 759x36
-                text run at (3,3) width 248: "Every cell in this table should have a 2-"
-                text run at (251,3) width 157: "pixel solid green border. "
+                text run at (3,3) width 405: "Every cell in this table should have a 2-pixel solid green border. "
                 text run at (408,3) width 354: "This is also true of the table-testing section in the second"
                 text run at (3,21) width 127: "half of the test page."
           RenderTableRow {TR} at (0,0) size 0x0
@@ -160,8 +159,7 @@ layer at (0,0) size 800x1378
                   RenderTableRow {TR} at (0,0) size 0x0
                     RenderTableCell {TD} at (5,5) size 746x42 [border: (2px solid #008000)] [r=0 c=0 rs=1 cs=2]
                       RenderText {TEXT} at (3,3) size 711x36
-                        text run at (3,3) width 248: "Every cell in this table should have a 2-"
-                        text run at (251,3) width 157: "pixel solid green border. "
+                        text run at (3,3) width 405: "Every cell in this table should have a 2-pixel solid green border. "
                         text run at (408,3) width 306: "This is also true of the table-testing section in the"
                         text run at (3,21) width 175: "second half of the test page."
                   RenderTableRow {TR} at (0,0) size 0x0

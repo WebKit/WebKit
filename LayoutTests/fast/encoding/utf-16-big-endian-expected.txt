@@ -482,9 +482,7 @@ layer at (28,204) size 529x52
             text run at (2,2) width 41: "(LAX)"
         RenderTableCell {TD} at (146,26) size 379x22 [border: (1px inset #808080)] [r=2 c=2 rs=1 cs=1]
           RenderText {TEXT} at (2,2) size 375x18
-            text run at (2,2) width 141: "RQ0/818 990-4053-"
-            text run at (143,2) width 210: "PLAZA TRAVEL - 05838276-"
-            text run at (353,2) width 24: "RC"
+            text run at (2,2) width 375: "RQ0/818 990-4053-PLAZA TRAVEL - 05838276-RC"
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0
       RenderTableRow {TR} at (0,0) size 0x0

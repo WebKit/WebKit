@@ -56,8 +56,7 @@ layer at (0,0) size 800x420
         RenderText {TEXT} at (0,0) size 0x0
       RenderBlock {P} at (5,320) size 480x65 [color=#000000]
         RenderText {TEXT} at (0,0) size 480x39
-          text run at (0,0) width 385: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-"
-          text run at (385,0) width 88: "conformant CSS1"
+          text run at (0,0) width 473: "This is a nonsensical document, but syntactically valid HTML 4.0. All 100%-conformant CSS1"
           text run at (0,13) width 480: "agents should be able to render the document elements above this paragraph indistinguishably"
           text run at (0,26) width 122: "(to the pixel) from this "
         RenderInline {A} at (0,0) size 102x12 [color=#0000EE]
