@@ -23,8 +23,6 @@
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebMainResourceClient.h>
-#import <WebKit/WebNetscapePluginStream.h>
-#import <WebKit/WebPluginController.h>
 #import <WebKit/WebSubresourceClient.h>
 #import <WebKit/WebTextRepresentation.h>
 #import <WebKit/WebViewPrivate.h>
@@ -47,8 +45,6 @@
     // retained while loading, so no need to release here
     ASSERT(!loading);
     
-    [pluginController dataSourceWillBeDeallocated];
-
     // FIXME: We don't know why this is needed, but without it we leak icon loaders.
     [iconLoader stopLoading];
 
@@ -68,7 +64,6 @@
     [triggeringAction release];
     [lastCheckedRequest release];
     [downloadPath release];
-    [pluginController release];
 
     [super dealloc];
 }
@@ -674,14 +669,6 @@
 - (BOOL)_loadingFromPageCache
 {
     return _private->loadingFromPageCache;
-}
-
-- (WebPluginController *)_pluginController
-{
-    if (!_private->pluginController) {
-        _private->pluginController = [[WebPluginController alloc] initWithDataSource:self];
-    }
-    return _private->pluginController;
 }
 
 @end

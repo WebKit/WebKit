@@ -1,3 +1,37 @@
+2003-01-22  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed problem where we weren't stopping the Java plug-in. This problem was introduced on Jan. 1 when the ownership of the WebPluginController was moved from WebFrame to WebDataSource. This change moves the WebPluginController to the WebHTMLView. Why this change?
+
+	- The state of the plug-ins (currently only the Java plug-in) completely relies on the state of the WebHTMLView, not on the state of the WebDataSource.
+
+	- WebHTMLView and WebDataSource are usually coupled via WebView and WebFrame, but not always. In a transitional state, the WebHTMLView may not be up to date with the WebDataSource.
+
+	- WebPluginController controls an array of views. It makes more sense for this object to be owned by a view (WebHTMLView) not a model.
+
+        Reviewed by darin.
+
+        * Plugins.subproj/WebPluginController.h:
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController initWithHTMLView:]): renamed, take the HTML view
+        (-[WebPluginController addPlugin:]): use the HTML view
+        (-[WebPluginController HTMLViewWillBeDeallocated]): renamed
+        (-[WebPluginController showURL:inFrame:]): use the HTML view
+        (-[WebPluginController showStatus:]): use the HTML view
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge pluginViewWithPackage:attributes:baseURL:]): get the plug-in controller from the HTML view
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSourcePrivate dealloc]): removed calls to plug-in controller 
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView initWithFrame:]): create plug-in controller
+        (-[WebHTMLView viewWillMoveToWindow:]): get plug-in controller from self, data source won't be accessible here since we don't have a superview
+        (-[WebHTMLView viewDidMoveToWindow]): get plug-in controller from self
+        (-[WebHTMLView addSubview:]): get plug-in controller from self
+        * WebView.subproj/WebHTMLViewPrivate.h:
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLViewPrivate dealloc]): release plug-in controller
+        (-[WebHTMLView _pluginController]): added
+
 2003-01-22  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3152427 -- Need unique IDs for bookmarks, for 

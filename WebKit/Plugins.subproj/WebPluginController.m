@@ -9,8 +9,9 @@
 #import <WebKit/WebPluginController.h>
 
 #import <WebKit/WebController.h>
-#import <WebKit/WebDataSource.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebHTMLView.h>
+#import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebPlugin.h>
 #import <WebKit/WebPluginContainer.h>
@@ -21,10 +22,10 @@
 
 @implementation WebPluginController
 
-- initWithDataSource:(WebDataSource *)dataSource
+- initWithHTMLView:(WebHTMLView *)HTMLView
 {
     [super init];
-    _dataSource = dataSource;
+    _HTMLView = HTMLView;
     _views = [[NSMutableArray alloc] init];
     return self;
 }
@@ -55,7 +56,7 @@
 
 - (void)addPlugin:(NSView <WebPlugin> *)view
 {
-    if (!_dataSource) {
+    if (!_HTMLView) {
         ERROR("can't add a plug-in to a defunct WebPluginController");
         return;
     }
@@ -73,7 +74,7 @@
     }
 }
 
-- (void)dataSourceWillBeDeallocated
+- (void)HTMLViewWillBeDeallocated
 {
     LOG(Plugins, "destroying all plug-ins");
     
@@ -83,7 +84,7 @@
     [_views release];
     _views = nil;
 
-    _dataSource = nil;
+    _HTMLView = nil;
 }
 
 - (void)showURL:(NSURL *)URL inFrame:(NSString *)target
@@ -92,11 +93,11 @@
         ERROR("nil URL passed");
         return;
     }
-    if (!_dataSource) {
+    if (!_HTMLView) {
         ERROR("could not load URL %@ because plug-in has already been destroyed", URL);
         return;
     }
-    WebFrame *frame = [_dataSource webFrame];
+    WebFrame *frame = [_HTMLView _frame];
     if (!frame) {
         ERROR("could not load URL %@ because plug-in has already been stopped", URL);
         return;
@@ -114,11 +115,11 @@
     if (!message) {
         message = @"";
     }
-    if (!_dataSource) {
+    if (!_HTMLView) {
         ERROR("could not show status message (%@) because plug-in has already been destroyed", message);
         return;
     }
-    [[[_dataSource controller] windowOperationsDelegate] setStatusText:message];
+    [[[_HTMLView _controller] windowOperationsDelegate] setStatusText:message];
 }
 
 @end

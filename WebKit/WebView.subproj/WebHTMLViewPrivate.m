@@ -25,6 +25,7 @@
 #import <WebKit/WebNSPasteboardExtras.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
+#import <WebKit/WebPluginController.h>
 #import <WebKit/WebPreferences.h>
 #import <WebKit/WebStringTruncator.h>
 #import <WebKit/WebViewPrivate.h>
@@ -87,9 +88,13 @@ static BOOL forceRealHitTest = NO;
 
 - (void)dealloc
 {
+    [pluginController HTMLViewWillBeDeallocated];
+
     [mouseDownEvent release];
     [dragElement release];
     [draggingImageURL release];
+    [pluginController release];
+    
     [super dealloc];
 }
 
@@ -558,6 +563,11 @@ static BOOL forceRealHitTest = NO;
     }
 
     return NO;
+}
+
+- (WebPluginController *)_pluginController
+{
+    return _private->pluginController;
 }
 
 @end

@@ -43,6 +43,8 @@
     
     _private = [[WebHTMLViewPrivate alloc] init];
 
+    _private->pluginController = [[WebPluginController alloc] initWithHTMLView:self];
+
     _private->needsLayout = YES;
 
     _private->canDragTo = YES;
@@ -218,12 +220,13 @@
 
 - (void)viewWillMoveToWindow:(NSWindow *)window
 {
+    // FIXME: Some of these calls may not work because this view may be already removed from it's superview.
     [self removeMouseMovedObserver];
     [self removeWindowObservers];
     [self removeSuperviewObservers];
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(_updateMouseoverWithFakeEvent) object:nil];
 
-    [[[[self _frame] dataSource] _pluginController] stopAllPlugins];
+    [[self _pluginController] stopAllPlugins];
 }
 
 - (void)viewDidMoveToWindow
@@ -233,7 +236,7 @@
         [self addSuperviewObservers];
         [self addMouseMovedObserver];
 
-        [[[[self _frame] dataSource] _pluginController] startAllPlugins];
+        [[self _pluginController] startAllPlugins];
 
         _private->inWindow = YES;
     } else {
@@ -251,7 +254,7 @@
 - (void)addSubview:(NSView *)view
 {
     if ([view conformsToProtocol:@protocol(WebPlugin)]) {
-        [[[[self _frame] dataSource] _pluginController] addPlugin:view];
+        [[self _pluginController] addPlugin:view];
     }
 
     [super addSubview:view];

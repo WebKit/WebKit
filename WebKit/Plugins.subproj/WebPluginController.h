@@ -8,20 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
-@class WebDataSource;
+@class WebHTMLView;
 
 @protocol WebPlugin;
 @protocol WebPluginContainer;
 
 @interface WebPluginController : NSObject <WebPluginContainer>
 {
-    WebDataSource *_dataSource;
+    WebHTMLView *_HTMLView;
     NSMutableArray *_views;
     BOOL _started;
 }
 
-- (id)initWithDataSource:(WebDataSource *)dataSource;
-- (void)dataSourceWillBeDeallocated;
+- (id)initWithHTMLView:(WebHTMLView *)HTMLView;
+- (void)HTMLViewWillBeDeallocated;
 
 - (void)addPlugin:(NSView <WebPlugin> *)view;
 

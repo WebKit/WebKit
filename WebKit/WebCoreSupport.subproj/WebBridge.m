@@ -394,7 +394,11 @@
                                    attributes:(NSDictionary *)attributes
                                       baseURL:(NSURL *)baseURL
 {
-    WebPluginController *pluginController = [[self dataSource] _pluginController];
+    WebHTMLView *docView = (WebHTMLView *)[[frame webView] documentView];
+
+    ASSERT ([docView isKindOfClass:[WebHTMLView class]]);
+    
+    WebPluginController *pluginController = [docView _pluginController];
     
     NSDictionary *arguments = [NSDictionary dictionaryWithObjectsAndKeys:
         baseURL, WebPluginBaseURLKey,
