@@ -9,8 +9,11 @@ with #if APPLE_CHANGES. Other changes to improve performance and web
 page compatibility are intended for integration into future versions of
 the KJS library.
 
-To build the WebCore framework tarball, you'll need Mac OS X 10.2,
-including the development tools.
+To build the JavaScriptCore framework, you'll need Mac OS X 10.2,
+including the development tools, and the following commands:
 
-Build the JavaScriptCore project using either the Project Builder user
-interface or using the command "pbxbuild" from the command line.
+    % cd JavaScriptCore
+    % pbxbuild install
+
+The framework will be installed in /WebCore/Library/Frameworks,
+which is where the WebCore project looks for it.
