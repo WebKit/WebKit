@@ -1,3 +1,15 @@
+2002-11-22  Darin Adler  <darin@apple.com>
+
+        * khtml/ecma/kjs_dom.cpp: (DOMNode::pushEventHandlerScope): Change to push handlers
+	on an existing scope chain rather than returning one. Name change too.
+        * khtml/ecma/kjs_dom.h: More of the same.
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLElement::pushEventHandlerScope): And here.
+        * khtml/ecma/kjs_html.h: And here.
+
+        * khtml/ecma/kjs_events.cpp: (JSEventListener::handleEvent): Use the pushEventHandlerScope
+	function, and also don't worry about optimizing the "no change" case, because that already
+	works pretty efficiently.
+
 2002-11-22  David Hyatt  <hyatt@apple.com>
 
 	Fix for the weather.com, slate and espn malformations that

@@ -377,25 +377,25 @@ ContextImp::ContextImp(Object &glob, InterpreterImp *interpreter, Object &thisV,
   switch(type) {
     case EvalCode:
       if (_callingContext) {
-	scope = _callingContext->scopeChain().copy();
+	scope = _callingContext->scopeChain();
 	variable = _callingContext->variableObject();
 	thisVal = _callingContext->thisValue();
 	break;
       } // else same as GlobalCode
     case GlobalCode:
-      scope = ScopeChain();
-      scope.prepend(glob);
+      scope.clear();
+      scope.push(glob.imp());
       thisVal = Object(static_cast<ObjectImp*>(glob.imp()));
       break;
     case FunctionCode:
     case AnonymousCode:
       if (type == FunctionCode) {
-	scope = func->scope().copy();
-	scope.prepend(activation);
+	scope = func->scope();
+	scope.push(activation.imp());
       } else {
-	scope = ScopeChain();
-	scope.prepend(glob);
-	scope.prepend(activation);
+	scope.clear();
+	scope.push(glob.imp());
+	scope.push(activation.imp());
       }
       variable = activation; // TODO: DontDelete ? (ECMA 10.2.3)
       thisVal = thisV;
@@ -408,16 +408,6 @@ ContextImp::ContextImp(Object &glob, InterpreterImp *interpreter, Object &thisV,
 ContextImp::~ContextImp()
 {
   _interpreter->setContext(_callingContext);
-}
-
-void ContextImp::pushScope(const Object &s)
-{
-  scope.prepend(s);
-}
-
-void ContextImp::popScope()
-{
-  scope.removeFirst();
 }
 
 void ContextImp::mark()

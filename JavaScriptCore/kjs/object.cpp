@@ -53,19 +53,18 @@ Object Object::dynamicCast(const Value &v)
 // ------------------------------ ObjectImp ------------------------------------
 
 ObjectImp::ObjectImp(const Object &proto)
-  : _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L), _scope(true)
+  : _proto(static_cast<ObjectImp*>(proto.imp())), _internalValue(0L)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
 }
 
 ObjectImp::ObjectImp(ObjectImp *proto)
-  : _proto(proto), _internalValue(0L), _scope(true)
+  : _proto(proto), _internalValue(0L)
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
 }
 
-ObjectImp::ObjectImp() :
-  _scope(true)
+ObjectImp::ObjectImp()
 {
   //fprintf(stderr,"ObjectImp::ObjectImp %p\n",(void*)this);
   _proto = NullImp::staticNull;

@@ -1,8 +1,6 @@
-// -*- c-basic-offset: 2 -*-
 /*
  *  This file is part of the KDE libraries
- *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
- *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
+ *  Copyright (C) 2002 Apple Computer, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -23,209 +21,113 @@
 
 #include "scope_chain.h"
 
+#include "object.h"
+
 namespace KJS {
 
-  struct ScopeChainNode {
-    ScopeChainNode(const Value &val, ScopeChainNode *p, ScopeChainNode *n)
-      : member(val.imp()), prev(p), next(n) { }
-    ScopeChainNode(ValueImp *val, ScopeChainNode *p, ScopeChainNode *n)
-      : member(val), prev(p), next(n) { }
-    ValueImp *member;
-    ScopeChainNode *prev, *next;
-  };
-
-  struct ScopeChainHookNode : public ScopeChainNode {
-    ScopeChainHookNode(bool needsMarking) : ScopeChainNode(Value(), this, this),
-        listRefCount(1), nodesRefCount(needsMarking ? 0 : 1) { }
-    int listRefCount;
-    int nodesRefCount;
-  };
-
-// ------------------------------ ScopeChainIterator ---------------------------------
-
-ValueImp* ScopeChainIterator::operator->() const
+ScopeChainNode::ScopeChainNode(ScopeChainNode *n, ObjectImp *o)
+    : next(n), object(o), nodeAndObjectRefCount(1), nodeOnlyRefCount(0)
 {
-  return node->member;
+    o->ref();
 }
 
-Value ScopeChainIterator::operator*() const
+inline void ScopeChain::ref() const
 {
-  return Value(node->member);
+    for (ScopeChainNode *n = _node; n; n = n->next) {
+        if (n->nodeAndObjectRefCount++ != 0)
+            break;
+        n->object->ref();
+    }
 }
 
-Value ScopeChainIterator::operator++()
+ScopeChain::ScopeChain(const NoRefScopeChain &c)
+    : _node(c._node)
 {
-  node = node->next;
-  return Value(node->member);
+    ref();
 }
 
-Value ScopeChainIterator::operator++(int)
+ScopeChain &ScopeChain::operator=(const ScopeChain &c)
 {
-  const ScopeChainNode *n = node;
-  ++*this;
-  return Value(n->member);
+    c.ref();
+    deref();
+    _node = c._node;
+    return *this;
 }
 
-// ------------------------------ ScopeChain -----------------------------------------
-
-ScopeChain::ScopeChain(bool needsMarking) : hook(new ScopeChainHookNode(needsMarking)), m_needsMarking(needsMarking)
+void ScopeChain::push(ObjectImp *o)
 {
+    _node = new ScopeChainNode(_node, o);
 }
 
-ScopeChain::ScopeChain(const ScopeChain& l) : hook(l.hook), m_needsMarking(false)
+void ScopeChain::pop()
 {
-  ++hook->listRefCount;
-  if (hook->nodesRefCount++ == 0)
-    refAll();
+    ScopeChainNode *oldNode = _node;
+    assert(oldNode);
+    ScopeChainNode *newNode = oldNode->next;
+    _node = newNode;
+    
+    // Three cases:
+    //   1) This was not the last reference of the old node.
+    //      In this case we move our ref from the old to the new node.
+    //   2) This was the last reference of the old node, but there are garbage collected references.
+    //      In this case, the new node doesn't get any new ref, and the object is deref'd.
+    //   3) This was the last reference of the old node.
+    //      In this case the object is deref'd and the entire node goes.
+    if (--oldNode->nodeAndObjectRefCount != 0) {
+        if (newNode)
+            ++newNode->nodeAndObjectRefCount;
+    } else {
+        oldNode->object->deref();
+        if (oldNode->nodeOnlyRefCount == 0)
+            delete oldNode;
+    }
 }
 
-ScopeChain& ScopeChain::operator=(const ScopeChain& l)
+void ScopeChain::release()
 {
-  ScopeChain(l).swap(*this);
-  return *this;
+    ScopeChainNode *n = _node;
+    do {
+        ScopeChainNode *next = n->next;
+        n->object->deref();
+        if (n->nodeOnlyRefCount == 0)
+            delete n;
+        n = next;
+    } while (n && --n->nodeAndObjectRefCount == 0);
 }
 
-ScopeChain::~ScopeChain()
+inline void NoRefScopeChain::ref() const
 {
-  if (!m_needsMarking)
-    if (--hook->nodesRefCount == 0)
-      derefAll();
-  
-  if (--hook->listRefCount == 0) {
-    assert(hook->nodesRefCount == 0);
-    clearInternal();
-    delete hook;
-  }
+    for (ScopeChainNode *n = _node; n; n = n->next)
+        if (n->nodeOnlyRefCount++ != 0)
+            break;
 }
 
-void ScopeChain::mark() const
+NoRefScopeChain &NoRefScopeChain::operator=(const ScopeChain &c)
 {
-  ScopeChainNode *n = hook->next;
-  while (n != hook) {
-    if (!n->member->marked())
-      n->member->mark();
-    n = n->next;
-  }
+    c.ref();
+    deref();
+    _node = c._node;
+    return *this;
 }
 
-void ScopeChain::append(const Value& val)
+void NoRefScopeChain::mark()
 {
-  ScopeChainNode *n = new ScopeChainNode(val, hook->prev, hook);
-  if (hook->nodesRefCount)
-    n->member->ref();
-  hook->prev->next = n;
-  hook->prev = n;
+    for (ScopeChainNode *n = _node; n; n = n->next) {
+        ObjectImp *o = n->object;
+        if (!o->marked())
+            o->mark();
+    }
 }
 
-void ScopeChain::prepend(const Value& val)
+void NoRefScopeChain::release()
 {
-  ScopeChainNode *n = new ScopeChainNode(val, hook, hook->next);
-  if (hook->nodesRefCount)
-    n->member->ref();
-  hook->next->prev = n;
-  hook->next = n;
-}
-
-void ScopeChain::prepend(ValueImp *val)
-{
-  ScopeChainNode *n = new ScopeChainNode(val, hook, hook->next);
-  if (hook->nodesRefCount)
-    n->member->ref();
-  hook->next->prev = n;
-  hook->next = n;
-}
-
-void ScopeChain::prependList(const ScopeChain& lst)
-{
-  ScopeChainNode *otherHook = lst.hook;
-  ScopeChainNode *n = otherHook->prev;
-  while (n != otherHook) {
-    prepend(n->member);
-    n = n->prev;
-  }
-}
-
-void ScopeChain::removeFirst()
-{
-  erase(hook->next);
-}
-
-void ScopeChain::clearInternal()
-{
-  ScopeChainNode *n = hook->next;
-  while (n != hook) {
-    n = n->next;
-    delete n->prev;
-  }
-
-  hook->next = hook;
-  hook->prev = hook;
-}
-
-ScopeChain ScopeChain::copy() const
-{
-  ScopeChain newScopeChain;
-  newScopeChain.prependList(*this);
-  return newScopeChain;
-}
-
-ScopeChainIterator ScopeChain::begin() const
-{
-  return ScopeChainIterator(hook->next);
-}
-
-ScopeChainIterator ScopeChain::end() const
-{
-  return ScopeChainIterator(hook);
-}
-
-void ScopeChain::erase(ScopeChainNode *n)
-{
-  if (n != hook) {
-    if (hook->nodesRefCount)
-      n->member->deref();
-    n->next->prev = n->prev;
-    n->prev->next = n->next;
-    delete n;
-  }
-}
-
-void ScopeChain::refAll() const
-{
-  for (ScopeChainNode *n = hook->next; n != hook; n = n->next)
-    n->member->ref();
-}
-
-void ScopeChain::derefAll() const
-{
-  for (ScopeChainNode *n = hook->next; n != hook; n = n->next)
-    n->member->deref();
-}
-
-void ScopeChain::swap(ScopeChain &other)
-{
-  if (!m_needsMarking)
-    if (other.hook->nodesRefCount++ == 0)
-      other.refAll();
-  if (!other.m_needsMarking)
-    if (hook->nodesRefCount++ == 0)
-      refAll();
-
-  if (!m_needsMarking)
-    if (--hook->nodesRefCount == 0)
-      derefAll();
-  if (!other.m_needsMarking)
-    if (--other.hook->nodesRefCount == 0)
-      other.derefAll();
-
-  ScopeChainHookNode *tmp = hook;
-  hook = other.hook;
-  other.hook = tmp;
-}
-
-bool ScopeChain::isEmpty() const
-{
-    return hook->next == hook;
+    ScopeChainNode *n = _node;
+    do {
+        ScopeChainNode *next = n->next;
+        if (n->nodeAndObjectRefCount == 0)
+            delete n;
+        n = next;
+    } while (n && --n->nodeOnlyRefCount == 0);
 }
 
 } // namespace KJS

@@ -1,3 +1,23 @@
+2002-11-22  Darin Adler  <darin@apple.com>
+
+	- change ScopeChain to be a singly linked list shares tails, gives 11% gain on iBench
+
+        * kjs/context.h:
+        (ContextImp::pushScope): Make inline, use push instead of prepend, and pass imp pointer.
+        (ContextImp::popScope): Make inline, use pop instead of removeFirst.
+        * kjs/function.cpp: (DeclaredFunctionImp::DeclaredFunctionImp): No need to copy.
+        * kjs/function_object.cpp: (FunctionObjectImp::construct): Use push instead of
+	prepend, and pass imp pointer.
+        * kjs/internal.cpp: (ContextImp::ContextImp): Use clear, push instead of prepend,
+	and pass imp pointers.
+        * kjs/nodes.cpp: (ResolveNode::evaluateReference): Use isEmpty, pop, and top instead
+	of ScopeChainIterator.
+        * kjs/object.h: Change _scope to be a NoRefScopeChain.
+        * kjs/object.cpp: No need to initialize _scope any more, since it's not a NoRefScopeChain.
+
+        * kjs/scope_chain.h: Rewrite, different implementation and interface.
+        * kjs/scope_chain.cpp: More of the same.
+
 2002-11-22  Maciej Stachowiak  <mjs@apple.com>
 
 	- a simple change for .5% gain on ibench - instead of unmarking

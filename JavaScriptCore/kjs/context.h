@@ -46,8 +46,8 @@ namespace KJS  {
     FunctionImp *function() const { return _function; }
     const List *arguments() const { return _arguments; }
 
-    void pushScope(const Object &s);
-    void popScope();
+    void pushScope(const Object &s) { scope.push(s.imp()); }
+    void popScope() { scope.pop(); }
     LabelStack *seenLabels() { return &ls; }
     
     void mark();

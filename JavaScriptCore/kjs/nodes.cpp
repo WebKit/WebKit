@@ -218,11 +218,10 @@ Value ResolveNode::evaluate(ExecState *exec)
 
 Reference ResolveNode::evaluateReference(ExecState *exec)
 {
-  const ScopeChain chain = exec->context().scopeChain();
-  ScopeChainIterator scope = chain.begin();
+  ScopeChain chain = exec->context().scopeChain();
 
-  while (scope != chain.end()) {
-    ObjectImp *o = static_cast<ObjectImp*>((*scope).imp());
+  while (!chain.isEmpty()) {
+    ObjectImp *o = chain.top();
 
     //cout << "Resolve: looking at '" << ident.ascii() << "'"
     //     << " in " << (void*)o << " " << o->classInfo()->className << endl;
@@ -231,7 +230,8 @@ Reference ResolveNode::evaluateReference(ExecState *exec)
       //     << " in " << (void*)o << " " << o->classInfo()->className << endl;
       return Reference(o, ident);
     }
-    scope++;
+    
+    chain.pop();
   }
 
   // identifier not found

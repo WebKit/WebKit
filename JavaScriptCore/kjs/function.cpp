@@ -260,7 +260,7 @@ DeclaredFunctionImp::DeclaredFunctionImp(ExecState *exec, const Identifier &n,
 {
   Value protect(this);
   body->ref();
-  setScope(sc.copy());
+  setScope(sc);
 }
 
 DeclaredFunctionImp::~DeclaredFunctionImp()

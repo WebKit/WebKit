@@ -1739,23 +1739,22 @@ UString KJS::HTMLElement::toString(ExecState *exec) const
     return DOMElement::toString(exec);
 }
 
-ScopeChain KJS::HTMLElement::eventHandlerScope(ExecState *exec) const
+void KJS::HTMLElement::pushEventHandlerScope(ExecState *exec, ScopeChain &scope) const
 {
   DOM::HTMLElement element = static_cast<DOM::HTMLElement>(node);
 
-  ScopeChain scope;
-  // The element is the first one, so that it is the most prioritary
-  scope.append(getDOMNode(exec,element));
+  // The document is put on first, fall back to searching it only after the element and form.
+  scope.push(static_cast<ObjectImp *>(getDOMNode(exec, element.ownerDocument()).imp()));
 
+  // The form is next, searched before the document, but after the element itself.
   DOM::Node form = element.parentNode();
   while (!form.isNull() && form.elementId() != ID_FORM)
     form = form.parentNode();
   if (!form.isNull())
-    scope.append(getDOMNode(exec,form));
+    scope.push(static_cast<ObjectImp *>(getDOMNode(exec, form).imp()));
 
-  // The document is the last one, so that it is the least prioritary
-  scope.append(getDOMNode(exec,element.ownerDocument()));
-  return scope;
+  // The element is on top, searched first.
+  scope.push(static_cast<ObjectImp *>(getDOMNode(exec, element).imp()));
 }
 
 HTMLElementFunction::HTMLElementFunction(ExecState *exec, int i, int len)
