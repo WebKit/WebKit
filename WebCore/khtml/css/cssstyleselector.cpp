@@ -2332,11 +2332,22 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
         } else {
             int type = primitiveValue->primitiveType();
+#ifndef APPLE_CHANGES
             if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
                 size = primitiveValue->computeLengthFloat(parentStyle, paintDeviceMetrics);
                 if (!khtml::printpainter && element && element->getDocument()->view())
                     size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
-            } else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            } 
+#else
+            // OS X will always provide device independent font size, so we don't want to adjust
+            // the device indepent sizes.
+            if(type > CSSPrimitiveValue::CSS_PERCENTAGE && type < CSSPrimitiveValue::CSS_DEG) {
+                size = primitiveValue->computePointFloat(parentStyle, paintDeviceMetrics);
+                if (!khtml::printpainter && element && element->getDocument()->view())
+                    size *= element->getDocument()->view()->part()->zoomFactor() / 100.0;
+            }
+#endif
+            else if(type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 size = (primitiveValue->getFloatValue(CSSPrimitiveValue::CSS_PERCENTAGE)
                         * parentStyle->font().pixelSize()) / 100;
             else

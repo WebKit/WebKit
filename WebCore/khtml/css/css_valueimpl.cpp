@@ -384,56 +384,106 @@ int CSSPrimitiveValueImpl::computeLength( khtml::RenderStyle *style, QPaintDevic
     return ( int ) computeLengthFloat( style, devMetrics );
 }
 
-float CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics )
+float CSSPrimitiveValueImpl::computeLengthFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics)
 {
     unsigned short type = primitiveType();
 
     float dpiY = 72.; // fallback
     if ( devMetrics )
         dpiY = devMetrics->logicalDpiY();
-    if ( !khtml::printpainter && dpiY < 96 )
-        dpiY = 96.;
+    if ( !khtml::printpainter && dpiY < 72 )
+        dpiY = 72.;
 
     float factor = 1.;
     switch(type)
     {
-    case CSSPrimitiveValue::CSS_EMS:
-       	factor = style->font().pixelSize();
-		break;
-    case CSSPrimitiveValue::CSS_EXS:
-	{
-        QFontMetrics fm = style->fontMetrics();
+        case CSSPrimitiveValue::CSS_EMS:
+            factor = style->font().pixelSize();
+            break;
+        case CSSPrimitiveValue::CSS_EXS:
+        {
+            QFontMetrics fm = style->fontMetrics();
 #if APPLE_CHANGES
-        factor = fm.xHeight();
+            factor = fm.xHeight();
 #else
-        QRect b = fm.boundingRect('x');
-        factor = b.height();
+            QRect b = fm.boundingRect('x');
+            factor = b.height();
 #endif
-        break;
-	}
-    case CSSPrimitiveValue::CSS_PX:
-        break;
-    case CSSPrimitiveValue::CSS_CM:
-	factor = dpiY/2.54; //72dpi/(2.54 cm/in)
-        break;
-    case CSSPrimitiveValue::CSS_MM:
-	factor = dpiY/25.4;
-        break;
-    case CSSPrimitiveValue::CSS_IN:
+            break;
+        }
+        case CSSPrimitiveValue::CSS_PX:
+            break;
+        case CSSPrimitiveValue::CSS_CM:
+            factor = dpiY/2.54; //72dpi/(2.54 cm/in)
+            break;
+        case CSSPrimitiveValue::CSS_MM:
+            factor = dpiY/25.4;
+            break;
+        case CSSPrimitiveValue::CSS_IN:
             factor = dpiY;
-        break;
-    case CSSPrimitiveValue::CSS_PT:
+            break;
+        case CSSPrimitiveValue::CSS_PT:
             factor = dpiY/72.;
-        break;
-    case CSSPrimitiveValue::CSS_PC:
+            break;
+        case CSSPrimitiveValue::CSS_PC:
         // 1 pc == 12 pt
             factor = dpiY*12./72.;
-        break;
-    default:
-        return -1;
+            break;
+        default:
+            return -1;
     }
     return getFloatValue(type)*factor;
 }
+
+#ifdef APPLE_CHANGES
+// Compute point equivalent size for each unit type.  OS X fonts are all specified in 
+// device independent point size, so don't apply DPI corrections.
+float CSSPrimitiveValueImpl::computePointFloat( khtml::RenderStyle *style, QPaintDeviceMetrics *devMetrics)
+{
+    unsigned short type = primitiveType();
+
+    float dpiY = 72.; // fallback
+    if ( devMetrics )
+        dpiY = devMetrics->logicalDpiY();
+    if ( !khtml::printpainter && dpiY < 72 )
+        dpiY = 72.;
+
+    float factor = 1.;
+    switch(type)
+    {
+        case CSSPrimitiveValue::CSS_EMS:
+            factor = style->font().pixelSize();
+            break;
+        case CSSPrimitiveValue::CSS_EXS:
+        {
+            QFontMetrics fm = style->fontMetrics();
+            factor = fm.xHeight();
+            break;
+        }
+        case CSSPrimitiveValue::CSS_PX:
+            factor = 72./dpiY;
+            break;
+        case CSSPrimitiveValue::CSS_CM:
+            factor = 72./2.54; //(2.54 cm/in)
+            break;
+        case CSSPrimitiveValue::CSS_MM:
+            factor = 72./25.4; //(25.4 cm/in)
+            break;
+        case CSSPrimitiveValue::CSS_IN:
+            factor = 72.;
+            break;
+        case CSSPrimitiveValue::CSS_PT:
+            break;
+        case CSSPrimitiveValue::CSS_PC:
+        // 1 pc == 12 pt
+            factor = 12.;
+            break;
+        default:
+            return -1;
+    }
+    return getFloatValue(type)*factor;
+}
+#endif
 
 void CSSPrimitiveValueImpl::setFloatValue( unsigned short unitType, float floatValue, int &exceptioncode )
 {

@@ -1,3 +1,23 @@
+2002-12-05  Richard Williamson   <rjw@apple.com>
+
+        Fixed two issues relating to font sizes.  Fixes any page
+        that specifies font size in device independent units, i.e.
+        www.abcnews.com.
+         
+        1.  Change dpi to 72.  Mac OS X does appear to assume 72, not 96!
+        2.  Don't appply DPI adjustments to font selections, instead
+        normalize values to points.  OS X takes care of device scaling.
+        
+        Reviewed by: gramps
+
+        * khtml/css/css_valueimpl.cpp:
+        (CSSPrimitiveValueImpl::computeLengthFloat):
+        (CSSPrimitiveValueImpl::computePointFloat):
+        * khtml/css/css_valueimpl.h:
+        * khtml/css/cssstyleselector.cpp:
+        * kwq/KWQPaintDeviceMetrics.mm:
+        (QPaintDeviceMetrics::logicalDpiY):
+
 2002-12-05  David Hyatt  <hyatt@apple.com>
 
 	Make sure that blocks with block children compute their

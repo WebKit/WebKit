@@ -33,7 +33,7 @@ QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 
 int QPaintDeviceMetrics::logicalDpiY() const 
 {
-    return 96;
+    return 72;
 }
 
 int QPaintDeviceMetrics::depth() const
