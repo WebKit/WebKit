@@ -38,9 +38,9 @@ typedef khtml::RenderPart KHTMLRenderPart;
 
 #else
 
-typedef struct KHTMLPart KHTMLPart;
-typedef struct KHTMLView KHTMLView;
-typedef struct KHTMLRenderPart KHTMLRenderPart;
+@class KHTMLPart;
+@class KHTMLView;
+@class KHTMLRenderPart;
 
 #endif
 
@@ -49,17 +49,17 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 
 @class WebCoreBridge;
 
-@protocol WebCoreResourceLoader <NSObject>
+@protocol WebCoreFrame;
+@protocol WebCoreResourceLoader;
 
-- (void)addData:(NSData *)data;
+// WebCoreBridge objects are used by WebCore to abstract away operations that need
+// to be implemented by library clients, for example WebKit. The objects are also
+// used in the opposite direction, for simple access to WebCore functions without dealing
+// directly with the KHTML C++ classes.
 
-// Either cancel or finish will be called before the loader is released, but never both.
-- (void)cancel;
-- (void)finish;
+// A WebCoreBridge creates and holds a reference to a KHTMLPart.
 
-@end
-
-// The WebCoreBridge class contains methods for use by the non-WebCore side of the bridge.
+// The WebCoreBridge interface contains methods for use by the non-WebCore side of the bridge.
 
 @interface WebCoreBridge : NSObject
 {
@@ -89,18 +89,17 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 
 @protocol WebCoreBridge
 
-- (WebCoreBridge *)parentFrame;
-- (NSArray *)childFrames; // WebCoreBridge objects
-- (WebCoreBridge *)childFrameNamed:(NSString *)name;
-- (WebCoreBridge *)descendantFrameNamed:(NSString *)name;
+- (WebCoreBridge *)parent;
 
-- (WebCoreBridge *)mainFrame;
-- (WebCoreBridge *)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
+- (id <WebCoreFrame>)frame;
+- (NSArray *)childFrames; // WebCoreFrame objects
+- (id <WebCoreFrame>)childFrameNamed:(NSString *)name;
+- (id <WebCoreFrame>)descendantFrameNamed:(NSString *)name;
+
+- (id <WebCoreFrame>)mainFrame;
+- (id <WebCoreFrame>)frameNamed:(NSString *)name; // searches entire hierarchy starting with mainFrame
 
 - (void)setTitle:(NSString *)title;
-
-- (void)loadURL:(NSURL *)URL;
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data;
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
     withURL:(NSURL *)URL renderPart:(KHTMLRenderPart *)renderPart
@@ -108,11 +107,13 @@ typedef struct KHTMLRenderPart KHTMLRenderPart;
 
 - (void)openNewWindowWithURL:(NSURL *)URL;
 
-- (KHTMLView *)widget;
-
-- (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)resourceLoader withURL:(NSURL *)URL;
+- (IFURLHandle *)startLoadingResource:(id <WebCoreResourceLoader>)loader withURL:(NSURL *)URL;
 
 @end
+
+// This interface definition allows those who hold a WebCoreBridge * to call all the methods
+// in the WebCoreBridge protocol without requiring the base implementation to supply the methods.
+// This idiom is appropriate because WebCoreBridge is an abstract class.
 
 @interface WebCoreBridge (SubclassResponsibility) <WebCoreBridge>
 @end

@@ -1,5 +1,33 @@
 2002-06-16  Darin Adler  <darin@apple.com>
 
+	Add a separate WebCoreFrame alongside WebCoreBridge to facilitate
+	handling of frames with no HTML content in them. This probably fixes
+	frames named "_blank".
+
+	Also fixed the build, because a clean build failed.
+
+	* kwq/KWQKHTMLPart.mm:
+	(KWQKHTMLPartImpl::openURLInFrame):
+	(KWQKHTMLPartImpl::urlSelected):
+	(KWQKHTMLPartImpl::requestFrame):
+	(KWQKHTMLPartImpl::submitForm):
+	(KWQKHTMLPartImpl::parentPart):
+	Work with WebCoreFrame objects instead of WebCoreBridge objects when dealing with
+	frame operations -- loading new URLs mainly.
+
+	* kwq/WebCoreBridge.h: Removed frame-related operations, now they are on WebCoreFrame.
+	Broke out WebCoreResourceLoader into its own file. Added comments.
+
+	* kwq/WebCoreFrame.h: Added.
+
+	* kwq/WebCoreResourceLoader.h: Added.
+	* kwq/KWQKloader.mm: Include WebCoreResourceLoader.h now that it's broken out.
+
+	* WebCore-tests.exp: Tests still need QString::latin1(), although we don't need
+	to export it for WebKit any more.
+
+2002-06-16  Darin Adler  <darin@apple.com>
+
 	Moved the IFURLHandleClient subclass to WebKit, so it can some day be merged
 	with the one for the frames themselves; this one is for resources.
 

@@ -10,13 +10,14 @@
 
 #import <WebFoundation/IFError.h>
 #import <WebFoundation/IFURLHandle.h>
+
+#import <WebCoreResourceLoader.h>
+
 #import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFWebControllerPrivate.h>
 #import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/WebKitDebug.h>
-
-#import <WebCoreBridge.h>
 
 @implementation IFResourceURLHandleClient
 

@@ -10,6 +10,7 @@
 #import <WebKit/IFPreferencesPrivate.h>
 #import <WebKit/IFWebController.h>
 #import <WebKit/IFWebCoreBridge.h>
+#import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
@@ -45,6 +46,8 @@ static const char * const stateNames[6] = {
     [provisionalDataSource autorelease];
     if (renderFramePart)
         renderFramePart->deref();
+    [bridgeFrame release];
+    
     [super dealloc];
 }
 
@@ -439,5 +442,9 @@ static const char * const stateNames[6] = {
     [IFWebFrame _recursiveCheckCompleteFromFrame: [[self controller] mainFrame]];
 }
 
+- (IFWebCoreFrame *)_bridgeFrame
+{
+    return _private->bridgeFrame;
+}
 
 @end

@@ -255,6 +255,7 @@
 				F5E0A77002B8FEE401C1A525,
 				F5A55DC802BAA2E8018635CC,
 				F5E0E10A02BC45F8018635CA,
+				F5A7B11B02BC8413018635CA,
 			);
 			isa = PBXHeadersBuildPhase;
 		};
@@ -332,6 +333,7 @@
 				F5AFB46102B94DC8018635CA,
 				F5E0A77102B8FEE401C1A525,
 				F5E0E10B02BC45F8018635CA,
+				F5A7B11C02BC8413018635CA,
 			);
 			isa = PBXSourcesBuildPhase;
 		};
@@ -1664,6 +1666,30 @@
 			settings = {
 			};
 		};
+		F5A7B11902BC8413018635CA = {
+			isa = PBXFileReference;
+			name = IFWebCoreFrame.h;
+			path = WebCoreSupport.subproj/IFWebCoreFrame.h;
+			refType = 4;
+		};
+		F5A7B11A02BC8413018635CA = {
+			isa = PBXFileReference;
+			name = IFWebCoreFrame.m;
+			path = WebCoreSupport.subproj/IFWebCoreFrame.m;
+			refType = 4;
+		};
+		F5A7B11B02BC8413018635CA = {
+			fileRef = F5A7B11902BC8413018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A7B11C02BC8413018635CA = {
+			fileRef = F5A7B11A02BC8413018635CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5AEBB3D024A527601C1A526 = {
 			isa = PBXFileReference;
 			name = IFPreferences.mm;
@@ -1716,6 +1742,8 @@
 				F5AFB45F02B94DC8018635CA,
 				F5E0E10802BC45F8018635CA,
 				F5E0E10902BC45F8018635CA,
+				F5A7B11902BC8413018635CA,
+				F5A7B11A02BC8413018635CA,
 			);
 			isa = PBXGroup;
 			name = "WebCore Support";

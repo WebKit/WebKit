@@ -5,22 +5,14 @@
 
 #import <WebKit/IFWebCoreBridge.h>
 
-#import <WebKit/IFHTMLRepresentation.h>
-#import <WebKit/IFHTMLViewPrivate.h>
-#import <WebKit/IFLoadProgress.h>
 #import <WebKit/IFResourceURLHandleClient.h>
 #import <WebKit/IFWebControllerPrivate.h>
+#import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
-#import <WebFoundation/IFURLCacheLoaderConstants.h>
-#import <WebFoundation/IFURLHandle.h>
 
 #import <WebKit/WebKitDebug.h>
-
-@interface IFWebFrame (IFWebCoreBridge)
-- (IFWebCoreBridge *)_bridge;
-@end
 
 @implementation IFWebDataSource (IFWebCoreBridge)
 
@@ -28,20 +20,6 @@
 {
     id representation = [self representation];
     return [representation respondsToSelector:@selector(_bridge)] ? [representation _bridge] : nil;
-}
-
-@end
-
-@implementation IFWebFrame (IFWebCoreBridge)
-
-- (IFWebCoreBridge *)_bridge
-{
-    IFWebCoreBridge *bridge;
-    
-    bridge = [[self provisionalDataSource] _bridge];
-    if (!bridge)
-        bridge = [[self dataSource] _bridge];
-    return bridge;
 }
 
 @end
@@ -55,23 +33,12 @@
     [super dealloc];
 }
 
-- (IFWebFrame *)frame
+- (id <WebCoreFrame>)frame
 {
-    WEBKIT_ASSERT(dataSource);
-    return [dataSource webFrame];
+    return [[dataSource webFrame] _bridgeFrame];
 }
 
-- (IFWebView *)view
-{
-    return [[self frame] webView];
-}
-
-- (IFHTMLView *)HTMLView
-{
-    return [[self view] documentView];
-}
-
-- (WebCoreBridge *)parentFrame
+- (WebCoreBridge *)parent
 {
     WEBKIT_ASSERT(dataSource);
     return [[dataSource parent] _bridge];
@@ -82,53 +49,24 @@
     WEBKIT_ASSERT(dataSource);
     NSArray *frames = [dataSource children];
     NSEnumerator *e = [frames objectEnumerator];
-    NSMutableArray *bridges = [NSMutableArray arrayWithCapacity:[frames count]];
+    NSMutableArray *bridgeFrames = [NSMutableArray arrayWithCapacity:[frames count]];
     IFWebFrame *frame;
     while ((frame = [e nextObject])) {
-        IFWebCoreBridge *bridge = [frame _bridge];
-        if (bridge)
-            [bridges addObject:bridge];
+        id bridgeFrame = [frame _bridgeFrame];
+        if (bridgeFrame)
+            [bridgeFrames addObject:bridgeFrame];
     }
-    return bridges;
+    return bridgeFrames;
 }
 
-- (WebCoreBridge *)childFrameNamed:(NSString *)name
+- (id <WebCoreFrame>)childFrameNamed:(NSString *)name
 {
-    return [[dataSource frameNamed:name] _bridge];
+    return [[dataSource frameNamed:name] _bridgeFrame];
 }
 
-- (WebCoreBridge *)descendantFrameNamed:(NSString *)name
+- (id <WebCoreFrame>)descendantFrameNamed:(NSString *)name
 {
-    return [[[self frame] frameNamed:name] _bridge];
-}
-
-- (void)loadURL:(NSURL *)URL attributes:(NSDictionary *)attributes flags:(unsigned)flags inFrame:(IFWebFrame *)frame withParent:(WebCoreBridge *)parent
-{
-    IFWebDataSource *newDataSource = [[IFWebDataSource alloc] initWithURL:URL attributes:attributes flags:flags];
-    IFWebCoreBridge *parentPrivate = (IFWebCoreBridge *)parent;
-    [newDataSource _setParent:parent ? parentPrivate->dataSource : nil];
-    [frame setProvisionalDataSource:newDataSource];
-    [newDataSource release];
-    [frame startLoading];
-}
-
-- (void)loadURL:(NSURL *)URL
-{
-    [self loadURL:URL attributes:nil flags:0 inFrame:[self frame] withParent:[self parentFrame]];
-}
-
-- (void)postWithURL:(NSURL *)URL data:(NSData *)data
-{
-    // When posting, use the IFURLHandleFlagLoadFromOrigin load flag. 
-    // This prevents a potential bug which may cause a page
-    // with a form that uses itself as an action to be returned 
-    // from the cache without submitting.
-    NSDictionary *attributes = [[NSDictionary alloc] initWithObjectsAndKeys:
-        data, IFHTTPURLHandleRequestData,
-        @"POST", IFHTTPURLHandleRequestMethod,
-        nil];
-    [self loadURL:URL attributes:attributes flags:IFURLHandleFlagLoadFromOrigin inFrame:[self frame] withParent:[self parentFrame]];
-    [attributes release];
+    return [[[dataSource webFrame] frameNamed:name] _bridgeFrame];
 }
 
 - (BOOL)createChildFrameNamed:(NSString *)frameName
@@ -147,7 +85,7 @@
     [[frame webView] _setMarginWidth:width];
     [[frame webView] _setMarginHeight:height];
 
-    [self loadURL:URL attributes:nil flags:0 inFrame:frame withParent:self];
+    [[frame _bridgeFrame] loadURL:URL attributes:nil flags:0 withParent:dataSource];
     
     return YES;
 }
@@ -163,24 +101,14 @@
     [dataSource _setTitle:title];
 }
 
-- (WebCoreBridge *)mainFrame
+- (id <WebCoreFrame>)mainFrame
 {
-    return [[[dataSource controller] mainFrame] _bridge];
+    return [[[dataSource controller] mainFrame] _bridgeFrame];
 }
 
-- (WebCoreBridge *)frameNamed:(NSString *)name
+- (id <WebCoreFrame>)frameNamed:(NSString *)name
 {
-    return [[[dataSource controller] frameNamed:name] _bridge];
-}
-
-- (KHTMLView *)widget
-{
-    WEBKIT_ASSERT([self HTMLView]);
-    KHTMLView *widget = [[self HTMLView] _provisionalWidget];
-    if (widget) {
-        return widget;
-    }
-    return [[self HTMLView] _widget];
+    return [[[dataSource controller] frameNamed:name] _bridgeFrame];
 }
 
 - (void)receivedData:(NSData *)data withDataSource:(IFWebDataSource *)withDataSource

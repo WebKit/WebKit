@@ -1,5 +1,37 @@
 2002-06-16  Darin Adler  <darin@apple.com>
 
+	Add a separate WebCoreFrame alongside WebCoreBridge to facilitate
+	handling of frames with no HTML content in them. This probably fixes
+	frames named "_blank".
+
+	* WebCoreSupport.subproj/IFResourceURLHandleClient.m:
+	* WebCoreSupport.subproj/IFWebCoreBridge.mm:
+	(-[IFWebCoreBridge frame]): Added.
+	(-[IFWebCoreBridge parent]): Changed name from parentFrame, to emphasize that this gives a WebCoreBridge.
+	(-[IFWebCoreBridge childFrames]): Return IFWebCoreFrame objects.
+	(-[IFWebCoreBridge childFrameNamed:]): Return IFWebCoreFrame object.
+	(-[IFWebCoreBridge descendantFrameNamed:]): Return IFWebCoreFrame object.
+	(-[IFWebCoreBridge createChildFrameNamed:withURL:renderPart:khtml::allowsScrolling:marginWidth:marginHeight:]):
+	Use the loadURL operation in IFWebCoreFrame.
+	(-[IFWebCoreBridge mainFrame]): Return IFWebCoreFrame object.
+	(-[IFWebCoreBridge frameNamed:]): Return IFWebCoreFrame object.
+
+	* WebCoreSupport.subproj/IFWebCoreFrame.h: Added.
+	* WebCoreSupport.subproj/IFWebCoreFrame.m: Added.
+	* WebKit.pbproj/project.pbxproj: Update for added files.
+
+	* WebView.subproj/IFHTMLViewPrivate.h: Made this includable from plain Objective C.
+
+	* WebView.subproj/IFWebFrame.mm:
+	(-[IFWebFrame initWithName:webView:provisionalDataSource:controller:]): Create the IFWebCoreFrame.
+
+	* WebView.subproj/IFWebFramePrivate.h: Add _bridgeFrame method for getting IFWebCoreFrame.
+	* WebView.subproj/IFWebFramePrivate.mm:
+	(-[IFWebFramePrivate dealloc]): Release the IFWebCoreFrame.
+	(-[IFWebFrame _bridgeFrame]): Added.
+
+2002-06-16  Darin Adler  <darin@apple.com>
+
 	Moved the IFURLHandleClient subclass here from WebCore, so it can some day be merged
 	with the one for the frames themselves; this one is for resources.
 

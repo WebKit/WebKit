@@ -3,9 +3,12 @@
 	    
 	    Copyright 2001, Apple, Inc. All rights reserved.
 */
-#import <Cocoa/Cocoa.h>
 
 #import <WebKit/IFWebFrame.h>
+
+#import <Cocoa/Cocoa.h>
+
+#import <WebKit/IFWebCoreFrame.h>
 #import <WebKit/IFWebFramePrivate.h>
 #import <WebKit/IFWebViewPrivate.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
@@ -32,7 +35,8 @@
 {
     [super init];
 
-    _private = [[IFWebFramePrivate alloc] init];   
+    _private = [[IFWebFramePrivate alloc] init];
+    _private->bridgeFrame = [[IFWebCoreFrame alloc] initWithWebFrame:self];
 
     [self _setState: IFWEBFRAMESTATE_UNINITIALIZED];    
 

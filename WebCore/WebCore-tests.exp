@@ -58,8 +58,8 @@ __ZN14KWQPtrDictImpl6assignERKS_b
 __ZN14KWQPtrDictImpl6insertEPvPKv
 __ZN14KWQPtrDictImpl6removeEPvb
 __ZN14KWQPtrDictImplC1ERKS_
-__ZN14KWQPtrDictImplC2ERKS_
 __ZN14KWQPtrDictImplC1EiPFvPvEPK24CFDictionaryKeyCallBacks
+__ZN14KWQPtrDictImplC2ERKS_
 __ZN14KWQPtrDictImplD1Ev
 __ZN14KWQPtrDictImplD2Ev
 __ZN14QPtrCollectionD2Ev
@@ -262,6 +262,7 @@ __ZNK7QString5lowerEv
 __ZNK7QString5rightEj
 __ZNK7QString5toIntEPbi
 __ZNK7QString6isNullEv
+__ZNK7QString6latin1Ev
 __ZNK7QString6toLongEPbi
 __ZNK7QString6toUIntEPbi
 __ZNK7QString7findRevEPKci

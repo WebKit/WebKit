@@ -28,11 +28,11 @@
 #import <kio/jobclasses.h>
 #import <misc/loader.h>
 
-#import <WebFoundation/IFError.h>
-#import <WebFoundation/IFURLHandle.h>
-
 #import <KWQKHTMLPartImpl.h>
+
 #import <WebCoreBridge.h>
+#import <WebCoreResourceLoader.h>
+
 #import <kwqdebug.h>
 
 using khtml::DocLoader;
