@@ -527,9 +527,9 @@ static bool hasMissingGlyphs(ATSGlyphVector *glyphs)
 
 #ifdef DRAW_WITHOUT_ADVANCES
     CGContextSetCharacterSpacing(cgContext, 0.0);
-    CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - 1, (CGGlyph *)usedGlyphBuffer, numGlyphs);
+    CGContextShowGlyphsAtPoint (cgContext, point.x, point.y + [font defaultLineHeightForFont] - [self descent] + 1, (CGGlyph *)usedGlyphBuffer, numGlyphs);
 #else      
-    CGContextSetTextPosition (cgContext, point.x, point.y);
+    CGContextSetTextPosition (cgContext, point.x, point.y - [self descent] + 1);
     //CGContextShowGlyphsWithAdvances (cgContext, (CGGlyph *)usedGlyphBuffer, advances, numGlyphs);
     CGContextShowGlyphsWithDeviceAdvances (cgContext, (CGGlyph *)usedGlyphBuffer, advances, numGlyphs);
 #endif
@@ -567,8 +567,8 @@ cleanup:
         lineWidth = size.width;
     }
     CGContextSetLineWidth(cgContext, lineWidth);
-    CGContextMoveToPoint(cgContext, point.x, point.y + [font defaultLineHeightForFont] + 0.5);
-    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [font defaultLineHeightForFont] + 0.5);
+    CGContextMoveToPoint(cgContext, point.x, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent]);
+    CGContextAddLineToPoint(cgContext, point.x + width, point.y + [font defaultLineHeightForFont] + 1.5 - [self descent]);
     CGContextStrokePath(cgContext);
 
     [graphicsContext setShouldAntialias: flag];

@@ -1,5 +1,14 @@
 2002-05-21  Richard J. Williamson  <rjw@apple.com>
 
+    Fixed baseline regression.  Obvious of sites that have tables w/ backgrounds,
+    i.e. www.slashdot.org.
+    
+	* WebCoreSupport.subproj/IFTextRenderer.m:
+	(-[IFTextRenderer drawCharacters:length:atPoint:withColor:]):
+	(-[IFTextRenderer drawUnderlineForString:atPoint:withColor:]):
+
+2002-05-21  Richard J. Williamson  <rjw@apple.com>
+
     Changes to support additional DHTML events.
     
 	* WebView.subproj/IFWebView.mm:
