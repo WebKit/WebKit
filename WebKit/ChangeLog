@@ -1,3 +1,12 @@
+2005-01-11  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3934749> assertion failure in WebBaseNetscapePluginView loading movie
+
+        Reviewed by john.
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView start]): call canStart before asserting about the webView
+
 2005-01-11  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

@@ -890,8 +890,13 @@ static OSStatus TSMEventHandler(EventHandlerCallRef inHandlerRef, EventRef inEve
         return YES;
     }
 
+    if (![self canStart]) {
+        return NO;
+    }
+    
     ASSERT([self webView]);
-    if (![[[self webView] preferences] arePlugInsEnabled] || ![self canStart]) {
+    
+    if (![[[self webView] preferences] arePlugInsEnabled]) {
         return NO;
     }
 
