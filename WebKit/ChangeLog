@@ -1,3 +1,15 @@
+2002-04-01  Richard Williamson  <rjw@apple.com>
+
+        Logging changes.
+        Changes to support correct i/frame behavior.
+    
+	* WebView.subproj/IFBaseWebController.mm: (-[IFBaseWebController
+	createFrameNamed:for:inParent:inScrollView:]):
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebFramePrivate.mm: (-[IFWebFrame _timedLayout:]):
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebViewPrivate dealloc]),
+	(-[IFWebView _setupScrollers]):
+
 2002-04-01  John Sullivan  <sullivan@apple.com>
 
 	Added method for updating url, title, and/or displayTitle

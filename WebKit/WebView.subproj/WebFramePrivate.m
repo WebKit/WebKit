@@ -237,7 +237,7 @@ char *stateNames[6] = {
         [[self view] setNeedsDisplay: YES];
     }
     else {
-        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout, %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
+        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "%s:  NOT performing timed layout (not needed), %f seconds since start of document load\n", [[self name] cString], CFAbsoluteTimeGetCurrent() - [[[[self controller] mainFrame] dataSource] _loadingStartedTime]);
     }
 }
 

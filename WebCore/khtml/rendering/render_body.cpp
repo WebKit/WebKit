@@ -90,15 +90,15 @@ void RenderBody::layout()
 {
     RenderFlow::layout();
 
+#ifndef APPLE_CHANGES
     if (!scrollbarsStyled)
     {
         if (root()->view())
         {
-#ifndef APPLE_CHANGES
             root()->view()->horizontalScrollBar()->setPalette(style()->palette());
             root()->view()->verticalScrollBar()->setPalette(style()->palette());
-#endif /* APPLE_CHANGES not defined */
         }
         scrollbarsStyled=true;
     }
+#endif /* APPLE_CHANGES not defined */
 }

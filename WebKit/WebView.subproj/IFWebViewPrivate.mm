@@ -34,8 +34,8 @@
 
     [frameScrollView release];
 
-    if (widget)
-        delete widget;
+    //if (widget)
+    //    delete widget;
 
     [super dealloc];
 }
@@ -161,11 +161,13 @@
     BOOL scrollsVertically;
     BOOL scrollsHorizontally;
 
-    scrollsVertically = [self bounds].size.height > [[self _frameScrollView] frame].size.height;
-    scrollsHorizontally = [self bounds].size.width > [[self _frameScrollView] frame].size.width;
-
-    [[self _frameScrollView] setHasVerticalScroller: scrollsVertically];
-    [[self _frameScrollView] setHasHorizontalScroller: scrollsHorizontally];
+    if ([self _frameScrollView]){
+        scrollsVertically = [self bounds].size.height > [[self _frameScrollView] frame].size.height;
+        scrollsHorizontally = [self bounds].size.width > [[self _frameScrollView] frame].size.width;
+    
+        [[self _frameScrollView] setHasVerticalScroller: scrollsVertically];
+        [[self _frameScrollView] setHasHorizontalScroller: scrollsHorizontally];
+    }
 }
 
 

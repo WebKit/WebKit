@@ -865,7 +865,8 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         IFWebFrame *newFrame;
         id <IFWebController> controller;
         NSString *urlString;
-        
+        HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(frame->element());
+                
         urlString = QSTRING_TO_NSSTRING (completeURL( url ).url() );
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
         
@@ -876,7 +877,7 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         
         oldDataSource = getDataSource();
         controller = [oldDataSource controller];
-        newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource];
+        newFrame = [controller createFrameNamed: nsframeName for: nil inParent: oldDataSource inScrollView: o->scrollingMode() == QScrollView::AlwaysOff ? NO : YES];
         if (newFrame == nil){
             // Controller return NO to location change, now what?
             return false;
@@ -887,6 +888,10 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         [newDataSource _setParent: oldDataSource];
         [newFrame setProvisionalDataSource: newDataSource];
     
+        KHTMLView *view = (KHTMLView *)[[newFrame view] _provisionalWidget];
+        view->setMarginWidth (o->getMarginWidth());
+        view->setMarginHeight (o->getMarginWidth());
+        
         [newFrame startLoading];
     }
 

@@ -110,7 +110,7 @@
 }
 
 
-- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource
+- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource inScrollView: (BOOL)inScrollView
 {
     IFWebView *childView;
     IFWebFrame *newFrame;
@@ -125,10 +125,12 @@
     [childView _setController: self];
     [childDataSource _setController: self];
 
-    scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
-    [scrollView setHasVerticalScroller: NO];
-    [scrollView setHasHorizontalScroller: NO];
-    [childView _setFrameScrollView: scrollView];
+    if (inScrollView == YES){
+        scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+        [scrollView setHasVerticalScroller: NO];
+        [scrollView setHasHorizontalScroller: NO];
+        [childView _setFrameScrollView: scrollView];
+    }
         
     return newFrame;
 }

@@ -1,3 +1,13 @@
+2002-04-01  Richard Williamson  <rjw@apple.com>
+
+        Changes to support correct behavior is i/frame margins and
+        scroll views.
+        
+	* src/kdelibs/khtml/html/html_baseimpl.h:
+	* src/kdelibs/khtml/rendering/render_body.cpp: (RenderBody::layout):
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::requestFrame):
+	* src/kwq/external.h:
+
 2002-04-01  Kenneth Kocienda  <kocienda@apple.com>
 
         The guts of the fix for this bug:
