@@ -48,6 +48,14 @@ static void registerErrors(void);
     pthread_once(&registerErrorsControl, registerErrors);
 }
 
++ (WebError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL
+{
+    [self _registerWebKitErrors];
+
+    return [self errorWithCode:code inDomain:WebErrorDomainWebKit failingURL:URL];
+}
+
+
 @end
 
 static void registerErrors()

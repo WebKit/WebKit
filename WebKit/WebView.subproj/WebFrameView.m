@@ -36,11 +36,6 @@ enum {
 
 @implementation WebFrameView
 
-+ (void)initialize
-{
-    [WebError _registerWebKitErrors];
-}
-
 - initWithFrame: (NSRect) frame
 {
     [super initWithFrame: frame];

@@ -23,6 +23,7 @@
 #import <WebKit/WebHTMLViewPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
 #import <WebKit/WebPreferencesPrivate.h>
@@ -1042,9 +1043,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 
 - (void)_handleUnimplementablePolicyWithErrorCode:(int)code forURL:(NSURL *)URL
 {
-    WebError *error = [WebError errorWithCode:code
-                                     inDomain:WebErrorDomainWebKit
-                                   failingURL:[URL absoluteString]];
+    WebError *error = [WebError _webKitErrorWithCode:code
+				          failingURL:[URL absoluteString]];
     WebView *c = [self webView];
     [[c _policyDelegateForwarder] webView:c unableToImplementPolicyWithError:error inFrame:self];    
 }
@@ -1095,6 +1095,9 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     // match our current frame structure, or they might not have the right content.  We could
     // check for all that as an additional optimization.
     // We also do not do anchor-style navigation if we're posting a form.
+    
+    // FIXME: These checks don't match the ones in _loadURL:referrer:loadType:target:triggeringEvent:isFormSubmission:
+    // Perhaps they should.
     
     if (!formData && ![self _shouldReloadForCurrent:itemURL andDestination:currentURL] )
     {

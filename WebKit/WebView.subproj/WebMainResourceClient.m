@@ -25,6 +25,7 @@
 #import <WebKit/WebFrameView.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebKitErrors.h>
+#import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebKitLogging.h>
 #import <WebKit/WebLocationChangeDelegate.h>
 #import <WebKit/WebPolicyDelegatePrivate.h>
@@ -84,9 +85,8 @@
 
 - (WebError *)interruptForPolicyChangeError
 {
-    return [WebError errorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
-                          inDomain:WebErrorDomainWebKit
-                        failingURL:[[request URL] absoluteString]];
+    return [WebError _webKitErrorWithCode:WebKitErrorLocationChangeInterruptedByPolicyChange
+		               failingURL:[[request URL] absoluteString]];
 }
 
 -(void)stopLoadingForPolicyChange

@@ -1,3 +1,26 @@
+2003-04-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	Another launch time speedup - don't load the WebKit WebError
+	strings until we actually make a WebKit error. This prevents the
+	WebKit localized strings file from being loaded during normal startup.
+
+        * Downloads.subproj/WebDownload.m:
+        (+[WebDownloadPrivate initialize]): Don't register WebKit errors.
+        (-[WebDownload _errorWithCode:]): Use _webKitErrorWithCode:failingURL:
+        * Misc.subproj/WebKitErrors.m:
+        (+[WebError _webKitErrorWithCode:failingURL:]): Wrapper that registers the
+	WebKit error codes first.
+        * Misc.subproj/WebKitErrorsPrivate.h:
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _handleUnimplementablePolicyWithErrorCode:forURL:]):  Use 
+	_webKitErrorWithCode:failingURL:
+        (-[WebFrame _loadItem:withLoadType:]):  Use _webKitErrorWithCode:failingURL:
+        * WebView.subproj/WebFrameView.m:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient interruptForPolicyChangeError]):  Use _webKitErrorWithCode:failingURL:
+
 2003-04-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: 3222896 - REGRESSION: sound plays after closing a window with a RealPlayer plug-in in it

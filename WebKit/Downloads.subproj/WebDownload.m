@@ -125,8 +125,6 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 + (void)initialize
 {
-    [WebError _registerWebKitErrors];
-    
     decoderClasses = [[NSArray arrayWithObjects:
         [WebBinHexDecoder class],
         [WebMacBinaryDecoder class],
@@ -886,9 +884,8 @@ static void DeleteCompletionCallback(ParmBlkPtr paramBlock);
 
 - (WebError *)_errorWithCode:(int)code
 {
-    return [WebError errorWithCode:code
-                          inDomain:WebErrorDomainWebKit
-                        failingURL:[[_private->request URL] absoluteString]];
+    return [WebError _webKitErrorWithCode:code
+                               failingURL:[[_private->request URL] absoluteString]];
 }
 
 - (SInt16)_dataForkReferenceNumber

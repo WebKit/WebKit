@@ -10,6 +10,6 @@
 #import <WebFoundation/WebError.h>
 
 @interface WebError (WebExtras)
-+ (void)_registerWebKitErrors;
++ (WebError *)_webKitErrorWithCode:(int)code failingURL:(NSString *)URL;
 @end
 
