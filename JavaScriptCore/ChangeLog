@@ -1,3 +1,20 @@
+2003-12-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed regression in JavaScript tests reported by the KDE guys
+        - fixed 3506345: REGRESSION (115-116): VIP: chordfind.com no longer displays chords
+
+        * kjs/ustring.h: Add tolerateEmptyString parameter to toDouble and toULong.
+        * kjs/ustring.cpp:
+        (KJS::UString::toDouble): Separate the "tolerant" parameter into two separate ones:
+        tolerateTrailingJunk and tolerateEmptyString. Add new overloads; better for code size
+        and binary compatibility than default parameter values.
+        (KJS::UString::toULong): Pass tolerateEmptyString down to toDouble. Add new overload.
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Pass false for the new
+        "tolerate empty string" parameter.
+
 2003-12-10  Richard Williamson   <rjw@apple.com>
 
 	Added code to manage reference counting of JavaScript

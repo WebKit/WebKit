@@ -391,13 +391,18 @@ namespace KJS {
      * the algorithm will recognize hexadecimal representations (as
      * indicated by a 0x or 0X prefix) and +/- Infinity.
      * Returns NaN if the conversion failed.
-     * @param tolerant if true, toDouble can tolerate garbage after the number.
+     * @param tolerateTrailingJunk if true, toDouble can tolerate garbage after the number.
+     * @param tolerateEmptyString if false, toDouble will turn an empty string into NaN rather than 0.
      */
-    double toDouble(bool tolerant=false) const;
+    double toDouble(bool tolerateTrailingJunk, bool tolerateEmptyString) const;
+    double toDouble(bool tolerateTrailingJunk) const;
+    double toDouble() const;
     /**
      * Attempts an conversion to an unsigned long integer. ok will be set
      * according to the success.
+     * @param tolerateEmptyString if false, toULong will return false for *ok for an empty string.
      */
+    unsigned long toULong(bool *ok, bool tolerateEmptyString) const;
     unsigned long toULong(bool *ok = 0) const;
 
     uint32_t toUInt32(bool *ok = 0) const;
