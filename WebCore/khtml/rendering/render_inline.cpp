@@ -60,8 +60,8 @@ void RenderInline::setStyle(RenderStyle* _style)
     }
 
     // Update pseudos for :before and :after now.
-    insertPseudoChild(RenderStyle::BEFORE, firstChild());
-    insertPseudoChild(RenderStyle::AFTER, lastChild());
+    updatePseudoChild(RenderStyle::BEFORE, firstChild());
+    updatePseudoChild(RenderStyle::AFTER, lastChild());
 }
 
 void RenderInline::addChildToFlow(RenderObject* newChild, RenderObject* beforeChild)

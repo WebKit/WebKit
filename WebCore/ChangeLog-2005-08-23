@@ -1,5 +1,22 @@
 2003-06-11  David Hyatt  <hyatt@apple.com>
 
+	Fix for 3288875, :after/:before content not getting destroyed
+	after printing on alistapart.com.  Make the update method for
+	pseudos smart enough to destroy generated content when it is
+	no longer needed.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+	(RenderBlock::setStyle);
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::updatePseudoChild):
+        * khtml/rendering/render_container.h:
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::setStyle):
+
+2003-06-11  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3288035, the wrong value was being filled in for
 	textfields.  Fixed a bug in QString's assignment operator
 	that made empty strings become null strings upon assignment.

@@ -201,18 +201,21 @@ void RenderContainer::removeChild(RenderObject *oldChild)
     setNeedsLayout(true);
 }
 
-void RenderContainer::insertPseudoChild(RenderStyle::PseudoId type, RenderObject* child)
+void RenderContainer::updatePseudoChild(RenderStyle::PseudoId type, RenderObject* child)
 {
-    // FIXME: This method should really be renamed to "updatePseudoChild" and be capable of
-    // detecting that before/after children need to be deleted as well.
-    
-    if (child && child->style()->styleType() == type)
-        return; // Generated content is already added.  No need to add more.
-    
     RenderStyle* pseudo = style()->getPseudoStyle(type);
-    if (!pseudo || pseudo->display() == NONE)
+    if (!pseudo || pseudo->display() == NONE) {
+        if (child && child->style()->styleType() == type)
+            // The child needs to be removed.
+            removeChild(child);
         return; // If we have no pseudo-style or if the pseudo's display type is NONE, then we
                 // have no generated content.
+    }
+
+    // FIXME: need to detect when :before/:after content has changed, in addition
+    // to detecting addition/removal.
+    if (child && child->style()->styleType() == type)
+        return; // Generated content is already added.  No need to add more.
     
     RenderObject* insertBefore = (type == RenderStyle::BEFORE) ? child : 0;
         
