@@ -22,6 +22,7 @@ typedef struct _StreamData{
 @interface IFPluginViewNullEventSender : NSObject{
     NPP instance;
     NPP_HandleEventProcPtr NPP_HandleEvent;
+    bool shouldStop;
 }
 
 -(id)initializeWithNPP:(NPP)pluginInstance functionPointer:(NPP_HandleEventProcPtr)HandleEventFunction;

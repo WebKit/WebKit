@@ -30,6 +30,7 @@ extern "C" {
 {
     instance = pluginInstance;
     NPP_HandleEvent = HandleEventFunction;
+    shouldStop = FALSE;
     return self;
 }
 
@@ -39,16 +40,20 @@ extern "C" {
     bool acceptedEvent;
     UnsignedWide msecs;
     
-    event.what = nullEvent;
-    Microseconds(&msecs);
-    event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
-    acceptedEvent = NPP_HandleEvent(instance, &event);
-    //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u\n", acceptedEvent, (unsigned)event.when);
-    [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
+    if(!shouldStop){
+        event.what = nullEvent;
+        Microseconds(&msecs);
+        event.when = (uint32)((double)UnsignedWideToUInt64(msecs) / 1000000 * 60); // microseconds to ticks
+        acceptedEvent = NPP_HandleEvent(instance, &event);
+        //KWQDebug("NPP_HandleEvent(nullEvent): %d  when: %u %d\n", acceptedEvent, (unsigned)event.when, shouldStop);
+        [self performSelector:@selector(sendNullEvents) withObject:nil afterDelay:.1];
+    }
 }
 
 -(void) stop
 {
+    KWQDebug("Stopping null events\n");
+    shouldStop = TRUE;
     [NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(sendNullEvents) object:nil];
 }
 
@@ -132,9 +137,11 @@ extern "C" {
 - (void)drawRect:(NSRect)rect
 {
     if(!transferred){
+        NSNotificationCenter *notificationCenter;
         [self setWindow];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
+        notificationCenter = [NSNotificationCenter defaultCenter];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSViewBoundsDidChangeNotification" object:[self findSuperview:@"NSClipView"]];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) name:@"NSWindowDidResizeNotification" object:[self window]];
         [self sendActivateEvent];
         [self newStream:URL mimeType:mime notifyData:NULL];
         transferred = TRUE;
@@ -309,14 +316,12 @@ extern "C" {
         NPP_URLNotify(instance, streamData->stream->url, NPRES_DONE, streamData->stream->notifyData);
         KWQDebug("NPP_URLNotify\n");
     }
-    [self setNeedsDisplay:YES];
     free(streamData);
     [activeURLHandles removeObject:sender];
 }
 
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData
 {
-    [self setNeedsDisplay:YES];
 }
 
 - (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData
@@ -499,6 +504,7 @@ extern "C" {
         webController = [webView controller];
         [webController setMainDataSource:dataSource];
         [dataSource startLoading: YES];
+        NPP_URLNotify(instance, url, NPRES_DONE, notifyData);
     }else if(!strcmp(target, "_blank") || !strcmp(target, "_new")){
         printf("Error: No API to open new browser window\n");
     }
