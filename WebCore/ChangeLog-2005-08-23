@@ -1,3 +1,41 @@
+2004-05-11  David Hyatt  <hyatt@apple.com>
+
+	Fix makeChildrenNonInline so that it does not wrap floats unless an inline is actually found.
+
+        Fix block minmaxwidth to add together contiguous runs of floats.
+
+	Fix the content image loader to not destroy the image when removed from the document.
+
+        Reviewed by darin
+	
+        * ChangeLog:
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageLoader::~HTMLImageLoader):
+        (HTMLImageElementImpl::detach):
+        * khtml/html/html_imageimpl.h:
+        (DOM::):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLObjectElementImpl::createRenderer):
+        * khtml/html/html_objectimpl.h:
+        * khtml/rendering/render_block.cpp:
+        (khtml::getInlineRun):
+        (khtml::RenderBlock::calcInlineMinMaxWidth):
+        (khtml::RenderBlock::calcBlockMinMaxWidth):
+
+2004-05-06  David Hyatt  <hyatt@apple.com>
+
+	Fix makeChildrenNonInline so that it does not wrap floats unless an inline is actually found.
+
+	Fix block minmaxwidth to add together contiguous runs of floats.
+
+	Fix the content image loader to not destroy the image when removed from the document.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::getInlineRun):
+        (khtml::RenderBlock::calcBlockMinMaxWidth):
+
 2004-05-11  Vicki Murley  <vicki@apple.com>
 
         Reviewed by Vicki (fixed by Darin).
@@ -100,7 +138,6 @@
         building with a case sensitive file system. I could have changed this to "qcstring.h",
         but it seemed better to use the header's real name since we're inside KWQ here.
 
->>>>>>> 1.2754
 2004-05-07  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Dave.

@@ -208,11 +208,19 @@ static void getInlineRun(RenderObject* start, RenderObject* stop,
 
     inlineRunStart = inlineRunEnd = curr;
 
+    bool sawInline = curr->isInline();
+    
     curr = curr->nextSibling();
     while (curr && (curr->isInline() || curr->isFloatingOrPositioned()) && (curr != stop)) {
         inlineRunEnd = curr;
+        if (curr->isInline())
+            sawInline = true;
         curr = curr->nextSibling();
     }
+    
+    // Need to really see an inline in order to do any work.
+    if (!sawInline)
+        inlineRunStart = inlineRunEnd = 0;
 }
 
 void RenderBlock::makeChildrenNonInline(RenderObject *insertionPoint)
@@ -2309,12 +2317,12 @@ void RenderBlock::calcInlineMinMaxWidth()
 
     InlineMinMaxIterator childIterator(this, this);
     bool addedTextIndent = false; // Only gets added in once.
+    RenderObject* prevFloat = 0;
     while (RenderObject* child = childIterator.next())
     {
         normal = child->style()->whiteSpace() == NORMAL;
 
-        if( !child->isBR() )
-        {
+        if (!child->isBR()) {
             // Step One: determine whether or not we need to go ahead and
             // terminate our current line.  Each discrete chunk can become
             // the new min-width, if it is the widest chunk seen so far, and
@@ -2392,6 +2400,18 @@ void RenderBlock::calcInlineMinMaxWidth()
                     inlineMin = 0;
                 }
 
+                // Check our "clear" setting.  If we're supposed to clear the previous float, then
+                // go ahead and terminate maxwidth as well.
+                if (child->isFloating()) {
+                    if (prevFloat &&
+                        ((prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT)) ||
+                         (prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT)))) {
+                        m_maxWidth = kMax(inlineMax, m_maxWidth);
+                        inlineMax = 0;
+                    }
+                    prevFloat = child;
+                }
+                
                 // Add in text-indent.  This is added in only once.
                 int ti = 0;
                 if (!addedTextIndent) {
@@ -2530,12 +2550,20 @@ void RenderBlock::calcBlockMinMaxWidth()
     bool nowrap = style()->whiteSpace() == NOWRAP;
 
     RenderObject *child = firstChild();
-    while(child != 0)
-    {
+    RenderObject* prevFloat = 0;
+    int floatWidths = 0;
+    while (child) {
         // Positioned children don't affect the min/max width
         if (child->isPositioned()) {
             child = child->nextSibling();
             continue;
+        }
+
+        if (prevFloat && (!child->isFloating() || 
+                          (prevFloat->style()->floating() == FLEFT && (child->style()->clear() & CLEFT)) ||
+                          (prevFloat->style()->floating() == FRIGHT && (child->style()->clear() & CRIGHT)))) {
+            m_maxWidth = kMax(floatWidths, m_maxWidth);
+            floatWidths = 0;
         }
 
         Length ml = child->style()->marginLeft();
@@ -2567,14 +2595,17 @@ void RenderBlock::calcBlockMinMaxWidth()
         if (margin < 0) margin = 0;
 
         int w = child->minWidth() + margin;
-        if(m_minWidth < w) m_minWidth = w;
+        if (m_minWidth < w) m_minWidth = w;
         // IE ignores tables for calculation of nowrap. Makes some sense.
-        if ( nowrap && !child->isTable() && m_maxWidth < w )
+        if (nowrap && !child->isTable() && m_maxWidth < w)
             m_maxWidth = w;
 
         w = child->maxWidth() + margin;
 
-        if(m_maxWidth < w) m_maxWidth = w;
+        if (child->isFloating())
+            floatWidths += w;
+        else if (m_maxWidth < w)
+            m_maxWidth = w;
 
         // A very specific WinIE quirk.
         // Example:
@@ -2598,8 +2629,12 @@ void RenderBlock::calcBlockMinMaxWidth()
                 m_maxWidth = BLOCK_MAX_WIDTH;
         }
         
+        if (child->isFloating())
+            prevFloat = child;
         child = child->nextSibling();
     }
+    
+    m_maxWidth = kMax(floatWidths, m_maxWidth);
 }
 
 short RenderBlock::lineHeight(bool b, bool isRootLineBox) const
