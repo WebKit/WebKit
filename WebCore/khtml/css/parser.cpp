@@ -1919,8 +1919,8 @@ case 134:
 #line 896 "parser.y"
 {
       yyval.value.id = 0;
-    yyval.value.unit = Value::Function;
-    yyval.value.function = 0;
+      yyval.value.unit = Value::Function;
+      yyval.value.function = 0;
   ;
     break;}
 case 135:

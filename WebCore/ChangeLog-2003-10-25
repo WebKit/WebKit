@@ -1,5 +1,15 @@
 2003-03-24  David Hyatt  <hyatt@apple.com>
 
+	ignore the float property on first-letter styles.
+	The bug # is 3186044.
+	
+        Reviewed by darin
+
+        * khtml/css/parser.cpp:
+        * khtml/rendering/render_block.cpp:
+
+2003-03-24  David Hyatt  <hyatt@apple.com>
+
 	Add error-handling case to deal with a common CSS malformation:
 
 	clip: rect( )
