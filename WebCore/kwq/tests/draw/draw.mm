@@ -31,7 +31,7 @@
  * Classes tested (and needed to link):
  *	QApplication
  *	QBrush
- *	QByteArray
+ *	QByteArray 
  *	QColor
  *	QFont
  *	QFontMetrics
