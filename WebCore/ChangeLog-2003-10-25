@@ -1,3 +1,23 @@
+2003-07-31  Dave Hyatt  <hyatt@apple.com>
+
+	Fix for "The Matrix" stylesheet on meyerweb.com and for 26(!) of the
+	layout tests.  Basically when laying out a line, you have a beginning, and end,
+	and midpoints in between that tell you what whitespace to skip over.  It was
+	possible to end up with the last midpoint being a start point that was past the
+	end of the line, and in that case, we would sometimes not strip off the trailing
+	space at the end of the line like we should.
+
+	This patch adds a simple function to check for this condition.  It strips off the
+	out-of-bounds midpoint, and then shaves off the trailing space from the previous
+	midpoint if it's necessary to do so.
+
+	Also fix the way spaces are counted so that we don't add in spaces for text that 
+	is not part of any bidi runs.
+	
+        Reviewed by john
+
+        * khtml/rendering/bidi.cpp:
+
 2003-07-30  Richard Williamson   <rjw@apple.com>
 
 	Preparation for 3095376.

@@ -333,6 +333,14 @@ static void addRun(BidiRun* bidiRun)
     }
     sBidiRunCount++;
     bidiRun->compact = sBuildingCompactRuns;
+
+    // Compute the number of spaces in this run,
+    if (bidiRun->obj && bidiRun->obj->isText()) {
+        RenderText* text = static_cast<RenderText*>(bidiRun->obj);
+        for (int i = bidiRun->start; i < bidiRun->stop; i++)
+            if (text->text()[i].direction() == QChar::DirWS)
+                numSpaces++;
+    }
 }
 
 static void reverseRuns(int start, int end)
@@ -382,6 +390,27 @@ static void reverseRuns(int start, int end)
     startRun->nextRun = afterEnd;
     if (!afterEnd)
         sLastBidiRun = startRun;
+}
+
+static void checkMidpoints(BidiIterator& lBreak)
+{
+    // Check to see if our last midpoint is a start point beyond the line break.  If so,
+    // shave it off the list, and shave off a trailing space if the previous end point isn't
+    // white-space: pre.
+    if (lBreak.obj && sNumMidpoints && sNumMidpoints%2 == 0) {
+        BidiIterator* midpoints = smidpoints->data();
+        BidiIterator& endpoint = midpoints[sNumMidpoints-2];
+        const BidiIterator& startpoint = midpoints[sNumMidpoints-1];
+        BidiIterator currpoint = endpoint;
+        while (!currpoint.atEnd() && currpoint != startpoint && currpoint != lBreak)
+            ++currpoint;
+        if (currpoint == lBreak) {
+            // We hit the line break before the start point.  Shave off the start point.
+            sNumMidpoints--;
+            if (endpoint.obj->style()->whiteSpace() != PRE)
+                endpoint.pos--;
+        }
+    }    
 }
 
 static void addMidpoint(const BidiIterator& midpoint)
@@ -1023,7 +1052,7 @@ void RenderBlock::bidiReorderLine(const BidiIterator &start, const BidiIterator 
             // ### implement rule L1
             break;
         case QChar::DirWS:
-	    numSpaces++;
+            break;
         case QChar::DirON:
             break;
         default:
@@ -1829,6 +1858,9 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start)
     kdDebug(6041) << "regular break sol: " << start.obj << " " << start.pos << "   end: " << lBreak.obj << " " << lBreak.pos << "   width=" << w << endl;
 #endif
 
+    // Sanity check our midpoints.
+    checkMidpoints(lBreak);
+        
     if (trailingSpaceObject) {
         // This object is either going to be part of the last midpoint, or it is going
         // to be the actual endpoint.  In both cases we just decrease our pos by 1 level to
