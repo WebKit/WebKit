@@ -1,3 +1,8 @@
+2002-03-22  John Sullivan  <sullivan@apple.com>
+
+	* WebView.subproj/IFWebView.mm: (-[IFWebView reapplyStyles]):
+	Removed stale FIXME.
+
 2002-03-22  Richard Williamson  <rjw@apple.com>
 
         Fixed reapplyStyles to use new KDE3 recalcStyle function.

@@ -1,3 +1,17 @@
+2002-03-22  John Sullivan  <sullivan@apple.com>
+
+	Made changing font sizes work immediately (other than an
+	unrelated crash).
+
+	* src/kwq/KWQKHTMLSettings.mm: 
+	(KHTMLSettings::KHTMLSettings),
+	(KHTMLSettings::fontSizes): Moved defaults-fetching code from
+	constructor to accessor, so it doesn't get out of synch with
+	preference changes.
+
+	* src/kwq/khtml/khtml_settings.h: Added "mutable" keyword
+	to declaration of m_fontSizes, so the other change would compile.
+
 2002-03-22  Kenneth Kocienda  <kocienda@apple.com>
 
         Moved KWQKloader to the new thread-safe API for accessing handle attributes.

@@ -30,16 +30,6 @@ static const QString *DEFAULT_ENCODING = NULL;
 
 KHTMLSettings::KHTMLSettings()
 {    
-    // set available font families...ask the system
-    unsigned int i;
-    NSArray *fontSizeArray;
-        
-    m_fontSizes.clear();
-    fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitFontSizes"];
-    for(i=0; i<[fontSizeArray count]; i++){
-        m_fontSizes << [[fontSizeArray objectAtIndex:i] intValue];
-    }
-    
     m_charSet = QFont::Latin1;
 }
 
@@ -135,7 +125,18 @@ void KHTMLSettings::setScript(QFont::CharSet c)
 
 const QValueList<int> &KHTMLSettings::fontSizes() const
 {
-    //may want to re-fetch font sizes from defaults here
+    unsigned int i;
+    NSArray *fontSizeArray;
+
+    // fetch sizes from defaults, since they might have changed. This may turn out to
+    // be a performance problem, in which case we'll need to add API for refetching
+    // the sizes, which would be called when we reapply styles.
+    m_fontSizes.clear();
+    fontSizeArray = [[NSUserDefaults standardUserDefaults] arrayForKey:@"WebKitFontSizes"];
+    for(i=0; i<[fontSizeArray count]; i++){
+        m_fontSizes << [[fontSizeArray objectAtIndex:i] intValue];
+    }
+
     return m_fontSizes;
 }
 

@@ -72,7 +72,7 @@ public:
     int maxFormCompletionItems() const;
 
 private:
-    QValueList<int> m_fontSizes;
+    mutable QValueList<int> m_fontSizes;
     QString m_fontFamilies;
     QFont::CharSet m_charSet;
 };

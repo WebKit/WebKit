@@ -133,15 +133,7 @@
         if (((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles){
             WEBKITDEBUGLEVEL (WEBKIT_LOG_VIEW, "doing layout\n");
             //double start = CFAbsoluteTimeGetCurrent();
-
-
-// FIXME: This is commented out because it fails to  compile with KDE3 merge.
-// We need to replace it with whatever the new equivalent is.
-
             widget->part()->xmlDocImpl()->recalcStyle(DOM::NodeImpl::Force);
-
-
-
             //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "apply style time %e\n", CFAbsoluteTimeGetCurrent() - start);
             ((IFWebViewPrivate *)_viewPrivate)->needsToApplyStyles = NO;
         }
