@@ -2,6 +2,23 @@
 
         Reviewed by Dave.
 
+	- minor cleanup of plug-in-related classes in ECMA directory
+
+        * khtml/ecma/kjs_navigator.cpp: Remove unneeded PluginBase member functions
+	ref() and deref(). Instead just make Plugin and MimeType both derive from
+	PluginBase and remove APPLE_CHANGES.
+        (Navigator::getValueProperty): Don't use "Konqueror" for the fallback.
+	Just return Undefined() for that case since we will never reach it anyway.
+
+	- simplify the logic in khtmlMoveMouseEvent so it's easier to decipher
+
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::khtmlMouseMoveEvent): By merging two
+	identical if statements, the logic of this function becomes much clearer.
+
+2003-01-12  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
 	- fixed a bunch of places where KHTML did !x == y instead of !(x == y) or x != y.
 
         * khtml/css/cssstyleselector.cpp: (CSSStyleSelector::applyRule):

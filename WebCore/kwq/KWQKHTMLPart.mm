@@ -894,21 +894,16 @@ NSView *KWQKHTMLPart::mouseDownViewIfStillGood()
 
 void KWQKHTMLPart::khtmlMouseMoveEvent(MouseMoveEvent *event)
 {
-    NSView *view;
-    if ([_currentEvent type] != NSLeftMouseDragged) {
-        view = nil;
-    } else {
-    	view = mouseDownViewIfStillGood();
-    }
-
-    if (view) {
-	_sendingEventToSubview = true;
-	[view mouseDragged:_currentEvent];
-	_sendingEventToSubview = false;
-	return;
-    }
-
     if ([_currentEvent type] == NSLeftMouseDragged) {
+    	NSView *view = mouseDownViewIfStillGood();
+
+        if (view) {
+            _sendingEventToSubview = true;
+            [view mouseDragged:_currentEvent];
+            _sendingEventToSubview = false;
+            return;
+        }
+
 	if (_mouseDownMayStartDrag) {
 	    [_bridge handleMouseDragged:_currentEvent];
 	    return;

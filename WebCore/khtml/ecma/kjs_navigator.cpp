@@ -66,10 +66,6 @@ namespace KJS {
 
         static QPtrList<PluginInfo> *plugins;
         static QPtrList<MimeClassInfo> *mimes;
-#if APPLE_CHANGES
-        static void ref();
-        static void unref();
-#endif
 
     private:
         static int m_refCount;
@@ -98,44 +94,26 @@ namespace KJS {
     const ClassInfo MimeTypes::info = { "MimeTypeArray", 0, 0, 0 };
 
 
-    class Plugin : public ObjectImp {
+    class Plugin : public PluginBase {
     public:
-#if APPLE_CHANGES
-        Plugin( ExecState *exec, PluginBase::PluginInfo *info )
-          : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
-        { m_info = info; PluginBase::ref(); };
-        virtual ~Plugin() { PluginBase::unref(); }
-#else
-        Plugin( ExecState *exec, PluginBase::PluginInfo *info )
-          : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
-        { m_info = info; };
-#endif
+        Plugin( ExecState *exec, PluginInfo *info ) : PluginBase(exec), m_info(info) { }
         virtual Value get(ExecState *exec, const Identifier &propertyName) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     private:
-        PluginBase::PluginInfo *m_info;
+        PluginInfo *m_info;
     };
     const ClassInfo Plugin::info = { "Plugin", 0, 0, 0 };
 
 
-    class MimeType : public ObjectImp {
+    class MimeType : public PluginBase {
     public:
-#if APPLE_CHANGES
-        MimeType( ExecState *exec, PluginBase::MimeClassInfo *info )
-          : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
-        { m_info = info; PluginBase::ref(); };
-        virtual ~MimeType() { PluginBase::unref(); }
-#else
-        MimeType( ExecState *exec, PluginBase::MimeClassInfo *info )
-          : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
-        { m_info = info; };
-#endif
+        MimeType( ExecState *exec, MimeClassInfo *info ) : PluginBase(exec), m_info(info) { }
         virtual Value get(ExecState *exec, const Identifier &propertyName) const;
         virtual const ClassInfo* classInfo() const { return &info; }
         static const ClassInfo info;
     private:
-        PluginBase::MimeClassInfo *m_info;
+        MimeClassInfo *m_info;
     };
     const ClassInfo MimeType::info = { "MimeType", 0, 0, 0 };
 
@@ -158,7 +136,7 @@ const ClassInfo Navigator::info = { "Navigator", 0, &NavigatorTable, 0 };
   plugins	Navigator::_Plugins	DontDelete|ReadOnly
   mimeTypes	Navigator::_MimeTypes	DontDelete|ReadOnly
   product	Navigator::Product	DontDelete|ReadOnly
-  productSub Navigator::ProductSub DontDelete|ReadOnly
+  productSub	Navigator::ProductSub	DontDelete|ReadOnly
   vendor	Navigator::Vendor	DontDelete|ReadOnly
   cookieEnabled	Navigator::CookieEnabled DontDelete|ReadOnly
   javaEnabled	Navigator::JavaEnabled	DontDelete|Function 0
@@ -203,8 +181,8 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
       return String("Microsoft Internet Explorer");
     }
 #if APPLE_CHANGES
-    // FIXME: Define a fallback result here besides "Konqueror".
-    return String("Konqueror");
+    // FIXME: Should we define a fallback result here besides "Konqueror"?
+    return Undefined();
 #else
     //kdDebug() << "appName -> Konqueror" << endl;
     return String("Konqueror");
@@ -215,9 +193,7 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
   case Product:
 #if APPLE_CHANGES
     // If we find "Mozilla/5.0" but not "(compatible, ...)" we are a modern Netscape
-    if (userAgent.find(QString::fromLatin1("Mozilla/5.0")) >= 0 &&
-        userAgent.find(QString::fromLatin1("compatible")) == -1)
-    {
+    if (userAgent.find("Mozilla/5.0") >= 0 && userAgent.find("compatible") == -1) {
         return String("Gecko");
     }
     // FIXME: Should we define a fallback result here besides "Konqueror/khtml"?
@@ -229,10 +205,10 @@ Value Navigator::getValueProperty(ExecState *exec, int token) const
     return String("20021225");
   case Vendor:
 #if APPLE_CHANGES
-      // FIXME: Should we define a fallback result here besides "KDE"?  Perhaps "Apple"?
-      return Undefined();
+    // FIXME: Should we define a fallback result here besides "KDE"?  Perhaps "Apple"?
+    return Undefined();
 #else
-      return String("KDE");
+    return String("KDE");
 #endif
   case Language:
     return String(KGlobal::locale()->language() == "C" ?
@@ -346,26 +322,6 @@ PluginBase::~PluginBase()
     }
 }
 
-#if APPLE_CHANGES
-
-void PluginBase::ref()
-{
-  m_refCount++;
-}
-
-void PluginBase::unref()
-{
-    m_refCount--;
-    if ( m_refCount==0 ) {
-        delete plugins;
-        delete mimes;
-        plugins = 0;
-        mimes = 0;
-    }
-}
-
-#endif
-
 
 /*******************************************************************/
 IMPLEMENT_PROTOFUNC(PluginsFunc)
@@ -455,7 +411,7 @@ Value Plugin::get(ExecState *exec, const Identifier &propertyName) const
         }
 
         // plugin["name"]
-        for ( PluginBase::MimeClassInfo *m=m_info->mimes.first();
+        for ( MimeClassInfo *m=m_info->mimes.first();
               m!=0; m=m_info->mimes.next() ) {
             if ( m->type==propertyName.string() )
                 return Value(new MimeType(exec, m));
