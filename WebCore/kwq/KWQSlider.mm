@@ -23,17 +23,19 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "KWQButton.h"
 #import "KWQSlider.h"
 
+#import "KWQButton.h"
 #import "KWQExceptions.h"
+#import "KWQView.h"
 
-@interface KWQSlider : NSSlider
+@interface KWQSlider : NSSlider <KWQWidgetHolder>
 {
     QSlider* slider;
 }
 
 - (id)initWithQSlider:(QSlider*)s;
+- (void)detachQSlider;
 
 @end
 
@@ -41,29 +43,47 @@
 
 - (id)initWithQSlider:(QSlider*)s
 {
+    self = [self init];
+
     slider = s;
 
-    id result = [self init];
     [self setTarget:self];
     [self setAction:@selector(slide:)];
-    [self setContinuous: YES]; // Our sliders are always continuous by default.
-    [self setMinValue: 0.0];
-    [self setMaxValue: 100.0];
-    [self setDoubleValue: 50.0];
-    return result;
+    [self setContinuous:YES]; // Our sliders are always continuous by default.
+    [self setMinValue:0.0];
+    [self setMaxValue:100.0];
+    [self setDoubleValue:50.0];
+
+    return self;
+}
+
+- (void)detachQSlider
+{
+    [self setTarget:nil];
+    slider = 0;
 }
 
 - (void)mouseDown:(NSEvent *)event
 {
+    QWidget::beforeMouseDown(self);
     [super mouseDown:event];
-    slider->sendConsumedMouseUp();
-    slider->clicked();
+    QWidget::afterMouseDown(self);
+    if (slider) {
+        slider->sendConsumedMouseUp();
+        slider->clicked();
+    }
 }
 
--(IBAction)slide:(NSSlider*)sender
+- (IBAction)slide:(NSSlider*)sender
 {
     slider->sliderValueChanged();
 }
+
+- (QWidget *)widget
+{
+    return slider;
+}
+
 @end
 
 enum {
@@ -82,6 +102,12 @@ QSlider::QSlider()
     setView(slider);
     [slider release];
     KWQ_UNBLOCK_EXCEPTIONS;
+}
+
+QSlider::~QSlider()
+{
+    KWQSlider* slider = (KWQSlider*)getView();
+    [slider detachQSlider];
 }
 
 void QSlider::setFont(const QFont &f)
@@ -158,9 +184,9 @@ const int* QSlider::dimensions() const
     // We empirically determined these dimensions.
     // It would be better to get this info from AppKit somehow.
     static const int w[3][2] = {
-    { 129, 21 },
-    { 129, 15 },
-    { 129, 12 },
+        { 129, 21 },
+        { 129, 15 },
+        { 129, 12 },
     };
     NSControl * const slider = static_cast<NSControl *>(getView());
     

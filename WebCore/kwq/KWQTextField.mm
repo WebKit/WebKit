@@ -97,9 +97,9 @@
     return self;
 }
 
-- (void)invalidate
+- (void)detachQLineEdit
 {
-    widget = NULL;
+    widget = 0;
 }
 
 - (void)action:(id)sender

@@ -151,6 +151,12 @@ const float LargeNumberForText = 1.0e7;
     return self;
 }
 
+- (void)detachQTextEdit
+{
+    widget = 0;
+    [textView setWidget:0];
+}
+
 - (void)dealloc
 {
     [textView release];
@@ -161,7 +167,8 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)textDidChange:(NSNotification *)aNotification
 {
-    widget->textChanged();
+    if (widget)
+        widget->textChanged();
 }
 
 - (void)setWordWrap:(BOOL)f
@@ -381,20 +388,21 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 
 - (BOOL)becomeFirstResponder
 {
-    [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:textView];
+    if (widget)
+        [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:textView];
     return YES;
 }
 
 - (NSView *)nextKeyView
 {
-    return inNextValidKeyView
+    return inNextValidKeyView && widget
         ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingNext)
         : [super nextKeyView];
 }
 
 - (NSView *)previousKeyView
 {
-   return inNextValidKeyView
+   return inNextValidKeyView && widget
         ? KWQKHTMLPart::nextKeyViewForWidget(widget, KWQSelectingPrevious)
         : [super previousKeyView];
 }
@@ -424,6 +432,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
 - (void)drawRect:(NSRect)rect
 {
     [super drawRect:rect];
+
     if (![textView isEnabled]) {
         // draw a disabled bezel border
         [[NSColor controlColor] set];
@@ -437,7 +446,7 @@ static NSRange RangeOfParagraph(NSString *text, int paragraph)
         [[NSColor textBackgroundColor] set];
         NSRectFill(rect);
     }
-    else if ([KWQKHTMLPart::bridgeForWidget(widget) firstResponder] == textView) {
+    else if (widget && [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] == textView) {
         NSSetFocusRingStyle(NSFocusRingOnly);
         NSRectFill([self bounds]);
     }
@@ -578,7 +587,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 - (void)insertTab:(id)sender
 {
     NSView *view = [[self delegate] nextValidKeyView];
-    if (view && view != self && view != [self delegate]) {
+    if (view && view != self && view != [self delegate] && widget) {
         [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:view];
     }
 }
@@ -586,7 +595,7 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 - (void)insertBacktab:(id)sender
 {
     NSView *view = [[self delegate] previousValidKeyView];
-    if (view && view != self && view != [self delegate]) {
+    if (view && view != self && view != [self delegate] && widget) {
         [KWQKHTMLPart::bridgeForWidget(widget) makeFirstResponder:view];
     }
 }
@@ -630,12 +639,14 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (BOOL)shouldDrawInsertionPoint
 {
-    return self == [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] && [super shouldDrawInsertionPoint];
+    return widget && self == [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] && [super shouldDrawInsertionPoint];
 }
 
 - (NSDictionary *)selectedTextAttributes
 {
-    return self == [KWQKHTMLPart::bridgeForWidget(widget) firstResponder] ? [super selectedTextAttributes] : nil;
+    if (widget && self != [KWQKHTMLPart::bridgeForWidget(widget) firstResponder])
+        return nil;
+    return [super selectedTextAttributes];
 }
 
 - (void)scrollPageUp:(id)sender
@@ -668,13 +679,15 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
     if (disabled)
         return;
     [super mouseDown:event];
-    widget->sendConsumedMouseUp();
-    widget->clicked();
+    if (widget) {
+        widget->sendConsumedMouseUp();
+        widget->clicked();
+    }
 }
 
 - (void)keyDown:(NSEvent *)event
 {
-    if (disabled) {
+    if (disabled || !widget) {
         return;
     }
     
@@ -700,8 +713,9 @@ static NSString *WebContinuousSpellCheckingEnabled = @"WebContinuousSpellCheckin
 
 - (void)keyUp:(NSEvent *)event
 {
-    if (disabled)
+    if (disabled || !widget)
         return;
+
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     if (![[NSInputManager currentInputManager] hasMarkedText]) {
 	[bridge interceptKeyEvent:event toView:self];

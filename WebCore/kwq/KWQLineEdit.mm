@@ -71,7 +71,7 @@ QLineEdit::QLineEdit(Type type)
 QLineEdit::~QLineEdit()
 {
     KWQ_BLOCK_EXCEPTIONS;
-    [m_controller invalidate];
+    [m_controller detachQLineEdit];
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 

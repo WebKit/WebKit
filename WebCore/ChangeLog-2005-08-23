@@ -1,3 +1,113 @@
+2004-11-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - rolled in a KDE fix for a problem that may underlie a number of crashes
+
+        * khtml/xml/dom2_rangeimpl.cpp: (RangeImpl::compareBoundaryPoints): Rolled in a change from
+        the KDE guys to fix a subtle problem. Code said "n = n =".
+
+        - rolled in a KDE fix for a containingBlock crash
+
+        * khtml/rendering/render_object.cpp: Roll in a change from KDE that adds frameset to the list of
+        elements that can not be a containingBlock. They said this fixes a crash, although I did not look
+        into that further.
+
+        - fixed <rdar://problem/3884660> 8A305: Repro crash in QScrollBar::setValue (affects Safari RSS)
+
+        * kwq/KWQButton.mm:
+        (-[KWQButton initWithQButton:]): Set up target and action here instead of in caller.
+        (-[KWQButton detachQButton]): Added.
+        (-[KWQButton sendConsumedMouseUpIfNeeded]): Check button for nil instead of checking target.
+        (-[KWQButton mouseDown:]): Add calls to QWidget::beforeMouseDown/afterMouseDown.
+        (-[KWQButton widget]): Added.
+        (-[KWQButton becomeFirstResponder]): Added check to handle when button is 0.
+        (-[KWQButton resignFirstResponder]): Ditto.
+        (-[KWQButton canBecomeKeyView]): Ditto.
+        (QButton::QButton): Remove target and action setup; handled in KWQButton now.
+        (QButton::~QButton): Call detachQButton instead of setTarget:nil.
+
+        * kwq/KWQComboBox.mm:
+        (QComboBox::~QComboBox): Call detachQComboBox.
+        (-[KWQPopUpButtonCell detachQComboBox]): Added.
+        (-[KWQPopUpButtonCell trackMouse:inRect:ofView:untilMouseUp:]): Handle case where box is 0.
+        (-[KWQPopUpButtonCell setHighlighted:]): Ditto.
+        (-[KWQPopUpButton action:]): Ditto.
+        (-[KWQPopUpButton widget]): Tweaked.
+        (-[KWQPopUpButton mouseDown:]): Added. Calls QWidget::beforeMouseDown/afterMouseDown.
+        (-[KWQPopUpButton becomeFirstResponder]): Handle case where widget is 0.
+        (-[KWQPopUpButton resignFirstResponder]): Ditto.
+        (-[KWQPopUpButton canBecomeKeyView]): Ditto.
+
+        * kwq/KWQLineEdit.mm: (QLineEdit::~QLineEdit): Updated to use new detachQLineEdit name.
+
+        * kwq/KWQListBox.mm:
+        (-[KWQTableView mouseDown:]): Added. Calls QWidget::beforeMouseDown/afterMouseDown.
+
+        * kwq/KWQScrollBar.h: Removed m_scroller field.
+        * kwq/KWQScrollBar.mm:
+        (-[KWQScrollBar initWithQScrollBar:]): Rearranged a little bit.
+        (-[KWQScrollBar detachQScrollBar]): Added.
+        (-[KWQScrollBar widget]): Added.
+        (-[KWQScrollBar mouseDown:]): Added.  Calls QWidget::beforeMouseDown and afterMouseDown.
+        (QScrollBar::QScrollBar): Changed to no longer set m_scroller.
+        (QScrollBar::~QScrollBar): Changed to call detachQScrollBar. No longer calls removeFromSuperview.
+        (QScrollBar::setValue): Chagned to use getView instad of m_scrollBar.
+        (QScrollBar::setKnobProportion): Ditto.
+        (QScrollBar::scrollbarHit): Ditto.
+
+        * kwq/KWQScrollView.mm:
+        (QScrollView::addChild): Changed to call QWidget to add to superview to accomodate the
+        hack where we don't remove right away when doing mouse tracking.
+        (QScrollView::removeChild): Changed to call QWidget to remove from superview to accomodate
+        the hack where we don't add right away when doing mouse tracking.
+
+        * kwq/KWQSlider.h: Added destructor.
+        * kwq/KWQSlider.mm:
+        (-[KWQSlider initWithQSlider:]): Tweaked a little.
+        (-[KWQSlider detachQSlider]): Added.
+        (-[KWQSlider mouseDown:]): Added call to QWidget::beforeMouseDown/afterMouseDown.
+        (-[KWQSlider widget]): Added.
+        (QSlider::~QSlider): Added. Calls detachQSlider.
+
+        * kwq/KWQTextArea.h: Added detachQTextEdit method.
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea detachQTextEdit]): Added.
+        (-[KWQTextArea textDidChange:]): Added check for widget of 0.
+        (-[KWQTextArea becomeFirstResponder]): Ditto.
+        (-[KWQTextArea nextKeyView]): Ditto.
+        (-[KWQTextArea previousKeyView]): Ditto.
+        (-[KWQTextArea drawRect:]): Ditto.
+        (-[KWQTextAreaTextView insertTab:]): Ditto.
+        (-[KWQTextAreaTextView insertBacktab:]): Ditto.
+        (-[KWQTextAreaTextView shouldDrawInsertionPoint]): Ditto.
+        (-[KWQTextAreaTextView selectedTextAttributes]): Ditto.
+        (-[KWQTextAreaTextView mouseDown:]): Ditto.
+        (-[KWQTextAreaTextView keyDown:]): Ditto.
+        (-[KWQTextAreaTextView keyUp:]): Ditto.
+
+        * kwq/KWQTextEdit.h: Added ~QTextEdit.
+        * kwq/KWQTextEdit.mm: (QTextEdit::~QTextEdit): Added. Calls detachQTextEdit.
+
+        * kwq/KWQTextField.h: Changed invalidate to detachQLineEdit.
+        * kwq/KWQTextField.mm: (-[KWQTextFieldController detachQLineEdit]): Changed.
+
+        * kwq/KWQWidget.h: Added addToSuperview/removeFromSuperview for use from QScrollView.
+        Added beforeMouseDown and afterMouseDown for use in widget implementations.
+        Removed unused hasMouseTracking function.
+        * kwq/KWQWidget.mm:
+        (QWidget::QWidget): Initialize two new fields.
+        (QWidget::~QWidget): Added code to remove view when widget is destroyed.
+        (QWidget::getOuterView): Remove unneeded exception blocking since we're just caling superview.
+        (QWidget::addToSuperview): Added.
+        (QWidget::removeFromSuperview): Added.
+        (QWidget::beforeMouseDown): Added.
+        (QWidget::afterMouseDown): Added.
+
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::setHasHorizontalScrollbar): Remove parent parameter; let addChild call addSubview:.
+        (RenderLayer::setHasVerticalScrollbar): Ditto.
+
 2004-11-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
@@ -580,8 +690,8 @@
 
         Reviewed by Darin.
         
-        Back out Darin's fix for <rdar://problem/3885729>, because the new exception gets triggered by Mail.app.
-        Filed <rdar://problem/3886832> against Mail.app.
+        Back out part of Darin's fix for <rdar://problem/3885729>, because the new exception gets triggered
+        by Mail.app. Filed <rdar://problem/3886832> against Mail.app.
 
         * kwq/DOM-CSS.mm:
         (-[DOMCSSStyleDeclaration setProperty:::]):

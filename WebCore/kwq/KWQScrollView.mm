@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -300,35 +300,21 @@ void QScrollView::addChild(QWidget* child, int x, int y)
     if (x != -500000)
 	child->move(x, y);
 
-    KWQ_BLOCK_EXCEPTIONS;
-
-    NSView * thisView;
-    NSView *thisDocView, *subview;
-    
-    thisView = getView();
-    thisDocView = getDocumentView();
+    NSView *thisView = getView();
+    NSView *thisDocView = getDocumentView();
     if (thisDocView)
         thisView = thisDocView;
 
-    subview = child->getOuterView();
-    ASSERT(subview != thisView);
+    NSView *subview = child->getOuterView();
 
-    if ([subview superview] != thisView) {
-	[subview removeFromSuperview];
-	
-	LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
-	    [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
-	
-	[thisView addSubview:subview];
-    }
-    KWQ_UNBLOCK_EXCEPTIONS;
+    LOG(Frames, "Adding %p %@ at (%d,%d) w %d h %d\n", subview,
+        [(id)[subview class] className], x, y, (int)[subview frame].size.width, (int)[subview frame].size.height);
+    child->addToSuperview(thisView);
 }
 
 void QScrollView::removeChild(QWidget* child)
 {
-    KWQ_BLOCK_EXCEPTIONS;
-    [child->getOuterView() removeFromSuperview];
-    KWQ_UNBLOCK_EXCEPTIONS;
+    child->removeFromSuperview();
 }
 
 void QScrollView::resizeContents(int w, int h)

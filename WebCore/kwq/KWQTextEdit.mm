@@ -41,6 +41,12 @@ QTextEdit::QTextEdit(QWidget *parent)
     KWQ_UNBLOCK_EXCEPTIONS;
 }
 
+QTextEdit::~QTextEdit()
+{
+    KWQTextArea *textArea = (KWQTextArea *)getView();
+    [textArea detachQTextEdit]; 
+}
+
 void QTextEdit::setText(const QString &string)
 {
     KWQTextArea *textView = (KWQTextArea *)getView();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2003 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -42,7 +42,7 @@ class QLineEdit;
     NSWritingDirection baseWritingDirection;
 }
 
-- (void)invalidate;
+- (void)detachQLineEdit;
 
 - (void)setHasFocus:(BOOL)hasFocus;
 

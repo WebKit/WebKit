@@ -403,9 +403,11 @@ void QListBox::clearCachedTextRenderers()
 
 - (void)mouseDown:(NSEvent *)event
 {
-    processingMouseEvent = TRUE;
+    processingMouseEvent = YES;
+    QWidget::beforeMouseDown(self);
     [super mouseDown:event];
-    processingMouseEvent = FALSE;
+    QWidget::afterMouseDown(self);
+    processingMouseEvent = NO;
 
     if (clickedDuringMouseEvent) {
 	clickedDuringMouseEvent = false;

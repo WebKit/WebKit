@@ -122,7 +122,6 @@ public:
     QCursor cursor();
     void unsetCursor();
     bool event(QEvent *);
-    bool hasMouseTracking() const;
 
     void show();
     void hide();
@@ -155,6 +154,12 @@ public:
     void sendConsumedMouseUp();
     
     void setIsSelected(bool isSelected);
+
+    static void beforeMouseDown(NSView *);
+    static void afterMouseDown(NSView *);
+
+    void addToSuperview(NSView *superview);
+    void removeFromSuperview();
 
 private:
     KWQWidgetPrivate *data;

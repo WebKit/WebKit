@@ -56,6 +56,7 @@ enum {
     NSWritingDirection baseWritingDirection;
 }
 - (id)initWithQComboBox:(QComboBox *)b;
+- (void)detachQComboBox;
 - (void)setBaseWritingDirection:(NSWritingDirection)direction;
 - (NSWritingDirection)baseWritingDirection;
 @end
@@ -106,6 +107,7 @@ QComboBox::~QComboBox()
 
     KWQPopUpButton *button = (KWQPopUpButton *)getView();
     [button setTarget:nil];
+    [[button cell] detachQComboBox];
     KWQRelease(_labelFont);
 
     KWQ_UNBLOCK_EXCEPTIONS;
@@ -387,11 +389,16 @@ void QComboBox::populate()
     return [super init];
 }
 
+- (void)detachQComboBox
+{
+    box = 0;
+}
+
 - (BOOL)trackMouse:(NSEvent *)event inRect:(NSRect)rect ofView:(NSView *)view untilMouseUp:(BOOL)flag
 {
-    WebCoreBridge *bridge = [KWQKHTMLPart::bridgeForWidget(box) retain];
+    WebCoreBridge *bridge = box ? [KWQKHTMLPart::bridgeForWidget(box) retain] : nil;
     BOOL result = [super trackMouse:event inRect:rect ofView:view untilMouseUp:flag];
-    if (result) {
+    if (result && bridge) {
         // Give KHTML a chance to fix up its event state, since the popup eats all the
         // events during tracking.  [NSApp currentEvent] is still the original mouseDown
         // at this point!
@@ -432,7 +439,7 @@ void QComboBox::populate()
 
 - (void)setHighlighted:(BOOL)highlighted
 {
-    if (highlighted) {
+    if (highlighted && box) {
         box->populateMenu();
     }
     [super setHighlighted:highlighted];
@@ -444,12 +451,22 @@ void QComboBox::populate()
 
 - (void)action:(id)sender
 {
-    static_cast<QComboBox *>([self widget])->itemSelected();
+    QComboBox *box = static_cast<QComboBox *>([self widget]);
+    if (box) {
+        box->itemSelected();
+    }
 }
 
 - (QWidget *)widget
 {
-    return [(KWQPopUpButtonCell *)[self cell] widget];
+    return [[self cell] widget];
+}
+
+- (void)mouseDown:(NSEvent *)event
+{
+    QWidget::beforeMouseDown(self);
+    [super mouseDown:event];
+    QWidget::afterMouseDown(self);
 }
 
 - (BOOL)becomeFirstResponder
@@ -457,11 +474,13 @@ void QComboBox::populate()
     BOOL become = [super becomeFirstResponder];
     if (become) {
         QWidget *widget = [self widget];
-        if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
-            [self _KWQ_scrollFrameToVisible];
+        if (widget) {
+            if (!KWQKHTMLPart::currentEventIsMouseDownInWidget(widget)) {
+                [self _KWQ_scrollFrameToVisible];
+            }
+            QFocusEvent event(QEvent::FocusIn);
+            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
         }
-        QFocusEvent event(QEvent::FocusIn);
-        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
     }
     return become;
 }
@@ -471,16 +490,20 @@ void QComboBox::populate()
     BOOL resign = [super resignFirstResponder];
     if (resign) {
         QWidget *widget = [self widget];
-        QFocusEvent event(QEvent::FocusOut);
-        const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        if (widget) {
+            QFocusEvent event(QEvent::FocusOut);
+            const_cast<QObject *>(widget->eventFilterObject())->eventFilter(widget, &event);
+        }
     }
     return resign;
 }
 
-- (BOOL)canBecomeKeyView {
+- (BOOL)canBecomeKeyView
+{
     // Simplified method from NSView; overridden to replace NSView's way of checking
     // for full keyboard access with ours.
-    if (!KWQKHTMLPart::partForWidget([self widget])->tabsToAllControls()) {
+    QWidget *widget = [self widget];
+    if (widget && !KWQKHTMLPart::partForWidget([self widget])->tabsToAllControls()) {
         return NO;
     }
     
