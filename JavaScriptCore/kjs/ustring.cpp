@@ -244,26 +244,53 @@ UString::UString(const UString &a, const UString &b)
 
 UString UString::from(int i)
 {
-  char buf[40];
-  sprintf(buf, "%d", i);
-
-  return UString(buf);
+  return from((long)i);
 }
 
 UString UString::from(unsigned int u)
 {
-  char buf[40];
-  sprintf(buf, "%u", u);
-
-  return UString(buf);
+  UChar buf[20];
+  UChar *p = buf + sizeof(buf);
+  
+  if (u == 0) {
+    *--p = '0';
+  } else {
+    while (u) {
+      *--p = (unsigned short)((u % 10) + '0');
+      u /= 10;
+    }
+  }
+  
+  return UString(p, buf + sizeof(buf) - p);
 }
 
 UString UString::from(long l)
 {
-  char buf[40];
-  sprintf(buf, "%ld", l);
-
-  return UString(buf);
+  UChar buf[20];
+  UChar *p = buf + sizeof(buf);
+  
+  if (l == 0) {
+    *--p = '0';
+  } else if (l == LONG_MIN) {
+    char minBuf[20];
+    sprintf(minBuf, "%ld", LONG_MIN);
+    return UString(minBuf);
+  } else {
+    bool negative = false;
+    if (l < 0) {
+      negative = true;
+      l = -l;
+    }
+    while (l) {
+      *--p = (unsigned short)((l % 10) + '0');
+      l /= 10;
+    }
+    if (negative) {
+      *--p = '-';
+    }
+  }
+  
+  return UString(p, buf + sizeof(buf) - p);
 }
 
 UString UString::from(double d)
