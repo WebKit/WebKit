@@ -1,5 +1,16 @@
 2005-02-17  Richard Williamson   <rjw@apple.com>
 
+	Fixed <rdar://problem/3959304> PDF in img tag is not rendered correctly anymore
+
+	We were incorrectly adding image position when flipping coordinates.
+
+        Reviewed by David Harrison.
+
+        * WebCoreSupport.subproj/WebImageData.m:
+        (-[WebImageData _PDFDrawFromRect:toRect:operation:alpha:flipped:context:]):
+
+2005-02-17  Richard Williamson   <rjw@apple.com>
+
 	Fixed <rdar://problem/4007262> Seed: Flight tracker scrolling moves to the left
 
 	Added SPI for dashboard to disable wheel scrolling of the WebClipView.

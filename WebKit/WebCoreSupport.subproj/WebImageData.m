@@ -917,7 +917,7 @@ static NSMutableSet *activeAnimations;
     // Reverse if flipped image.
     if (flipped) {
         CGContextScaleCTM(context, 1, -1);
-        CGContextTranslateCTM (context, 0, -(dstRect.origin.y + dstRect.size.height));
+        CGContextTranslateCTM (context, 0, -dstRect.size.height);
     }
 
     // Clip to destination in case we are imaging part of the source only
