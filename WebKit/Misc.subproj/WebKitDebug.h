@@ -3,6 +3,7 @@
 */
 
 #import <Foundation/Foundation.h>
+#import <Foundation/NSStringPrivate.h>
 
 #ifdef NDEBUG
 
@@ -64,7 +65,7 @@ void WebKitLog(unsigned int level, const char *file, int line, const char *funct
 }
 #endif
 
-#define DEBUG_OBJECT(object) [[object description] lossyCString]
+#define DEBUG_OBJECT(object) [[[object description] displayableString] lossyCString]
 
 #define WEBKITDEBUGLEVEL(level, format...) \
     WebKitLog(level, __FILE__, __LINE__, __PRETTY_FUNCTION__, format)

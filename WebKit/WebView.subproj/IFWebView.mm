@@ -564,12 +564,11 @@
 
 - (void)keyDown: (NSEvent *)event
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", [[event description] cString]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyDown: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
     [self _addModifiers:[event modifierFlags] toState:&state];
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
-
     
     KHTMLView *widget = _private->widget;
     if (widget != 0l)
@@ -579,12 +578,11 @@
 
 - (void)keyUp: (NSEvent *)event
 {
-    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s\n", [[event description] cString]);
+    WEBKITDEBUGLEVEL(WEBKIT_LOG_EVENTS, "keyUp: %s\n", DEBUG_OBJECT(event));
     int state = 0;
     
     [self _addModifiers:[event modifierFlags] toState:&state];
     QKeyEvent kEvent(QEvent::KeyPress, 0, 0, state, NSSTRING_TO_QSTRING([event characters]), [event isARepeat], 1);
-
     
     KHTMLView *widget = _private->widget;
     if (widget != 0l)

@@ -1,3 +1,14 @@
+2002-05-31  Darin Adler  <darin@apple.com>
+
+	* Misc.subproj/WebKitDebug.h: Use displayableString in DEBUG_OBJECT
+	for nicer logging.
+
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView keyDown:]):
+	(-[IFWebView keyUp:]):
+	Use DEBUG_OBJECT so we don't get exceptions when the key characters
+	are not simple ASCII characters.
+
 2002-05-30  Richard Williamson  <rjw@apple.com>
 
     API and comment cleanup.
