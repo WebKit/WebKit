@@ -41,6 +41,12 @@
     return result;
 }
 
+- (void)dealloc
+{
+    [_title release];
+    [super dealloc];
+}
+
 - (NSDictionary *)dictionaryRepresentation
 {
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithCapacity:2];

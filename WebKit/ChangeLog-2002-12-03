@@ -1,3 +1,15 @@
+2002-10-27  Darin Adler  <darin@apple.com>
+
+        * Bookmarks.subproj/WebBookmarkProxy.m: (-[WebBookmarkProxy dealloc]):
+	Added, so we don't leak the title.
+
+        * Bookmarks.subproj/WebBookmarkGroup.m: (-[WebBookmarkGroup removeBookmark:]):
+        * Bookmarks.subproj/WebBookmarkList.m: (-[WebBookmarkList removeChild:]):
+	Added retain/release pairs so we don't use an object after it's deallocated.
+	In practice this doesn't happen the way these are used by Alex since they are
+	in an array, but they have windows of vulnerability depending on exactly how
+	they are used.
+
 2002-10-26  Darin Adler  <darin@apple.com>
 
         * WebCoreSupport.subproj/WebViewFactory.m:

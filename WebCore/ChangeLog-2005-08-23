@@ -1,3 +1,8 @@
+2002-10-27  Darin Adler  <darin@apple.com>
+
+        * kwq/KWQLoader.mm: (KWQServeRequest): Add a missing "delete job" for one
+	particular failure case.
+
 2002-10-26  Darin Adler  <darin@apple.com>
 
 	- fixed a bug in the WebCore cache that caused it to not cache very much after

@@ -116,6 +116,7 @@ bool KWQServeRequest(Loader *loader, Request *request, TransferJob *job)
     [resourceLoader release];
 
     if (handle == nil) {
+        delete job;
         return false;
     }
     

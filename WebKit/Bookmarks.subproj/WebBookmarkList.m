@@ -188,8 +188,10 @@
     ASSERT_ARG(bookmark, [bookmark parent] == self);
     ASSERT_ARG(bookmark, [_list containsObject:bookmark]);
     
+    [bookmark retain];
     [_list removeObject:bookmark];
     [bookmark _setParent:nil];
+    [bookmark release];
 
     [[self group] _bookmarkChildrenDidChange:self]; 
 }

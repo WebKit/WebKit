@@ -116,8 +116,10 @@
     if (bookmark == _topBookmark) {
         [self _setTopBookmark:nil];
     } else {
+        [bookmark retain];
         [[bookmark parent] removeChild:bookmark];
         [bookmark _setGroup:nil];
+        [bookmark release];
     }
 }
 
