@@ -704,8 +704,7 @@ RenderStyle* CSSStyleSelector::styleForElement(ElementImpl* e, RenderStyle* defa
     }
     
     initElementAndPseudoState(e);
-    //if (allowSharing) {
-    if (false) {
+    if (allowSharing) {
         style = locateSharedStyle();
 #ifdef STYLE_SHARING_STATS
         fraction += style != 0;
