@@ -1,3 +1,14 @@
+2003-02-11  Trey Matteson  <trey@apple.com>
+
+	Set -seg1addr in our build styles, but not for the B&I build.
+	This makes our SYMROOTS from B&I usable to determine symbols from crash
+	logs from the field.
+	Also nuked DeploymentFat build style.
+
+        Reviewed by Ken.
+
+        * WebKit.pbproj/project.pbxproj:
+
 2003-02-10  Chris Blumenberg  <cblu@apple.com>
 
 	Added HeaderDoc comments for WebDownload and WebPluginError.

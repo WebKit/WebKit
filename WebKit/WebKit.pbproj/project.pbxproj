@@ -12,6 +12,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Development;
@@ -21,6 +22,7 @@
 			);
 			buildSettings = {
 				DEBUGGING_SYMBOLS = NO;
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -63,7 +65,6 @@
 				014CEA440018CDF011CA2923,
 				014CEA450018CDF011CA2923,
 				F58C8A07025BD3BC018635CA,
-				F531DDFF02F0C36F018635CA,
 			);
 			hasScannedForEncodings = 1;
 			isa = PBXProject;
@@ -98,7 +99,6 @@
 				9C7CABBB0190A37C0ECA16EA,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
-				2D386AD203F822B500A80166,
 			);
 			isa = PBXGroup;
 			name = WebKit;
@@ -139,10 +139,11 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "@executable_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "";
+				LOCAL_SEG1_ADDR = 0x7000000;
 				MACOSX_DEPLOYMENT_TARGET = 10.2;
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit";
-				OTHER_LDFLAGS = "-seg1addr 0x7000000 -no-c++filt";
+				OTHER_LDFLAGS = "-no-c++filt";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;
 				PRODUCT_NAME = WebKit;
@@ -596,8 +597,7 @@
 		2D386AD203F822B500A80166 = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
-			name = WebDefaultPolicyDelegatePrivate.h;
-			path = WebView.subproj/WebDefaultPolicyDelegatePrivate.h;
+			path = WebDefaultPolicyDelegatePrivate.h;
 			refType = 4;
 		};
 		2D386AD303F822B500A80166 = {
@@ -2402,6 +2402,7 @@
 				39446073020F50ED0ECA1767,
 				5152FADD033FC50400CA2ACD,
 				5152FADE033FC50400CA2ACD,
+				2D386AD203F822B500A80166,
 				5152FADF033FC50400CA2ACD,
 				5152FAE0033FC50400CA2ACD,
 				35081DAE02B6D4F50ACA2ACA,
@@ -2943,16 +2944,6 @@
 			path = Misc.subproj;
 			refType = 2;
 		};
-		F531DDFF02F0C36F018635CA = {
-			buildRules = (
-			);
-			buildSettings = {
-				i386 = YES;
-				ppc = YES;
-			};
-			isa = PBXBuildStyle;
-			name = DeploymentFat;
-		};
 		F53444CE02E87CBA018635CA = {
 			fileEncoding = 4;
 			isa = PBXFileReference;
@@ -3179,6 +3170,7 @@
 				COPY_PHASE_STRIP = NO;
 				DEBUG_CFLAGS = "";
 				OPTIMIZATION_CFLAGS = "-O";
+				OTHER_LDFLAGS = "-seg1addr $(LOCAL_SEG1_ADDR)";
 			};
 			isa = PBXBuildStyle;
 			name = Mixed;
