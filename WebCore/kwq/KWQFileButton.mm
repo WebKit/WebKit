@@ -123,11 +123,12 @@ void KWQFileButton::filenameChanged()
     NSView <WebCoreFileButton> *button = getView();
 
     QString filename;
+
     KWQ_BLOCK_EXCEPTIONS;
     filename = QString::fromNSString([button filename]);
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    _textChanged.call();
+    _textChanged.call(filename);
 }
 
 void KWQFileButton::clicked()

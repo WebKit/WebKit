@@ -2,6 +2,15 @@
 
         Reviewed by John.
 
+        - fixed 3468870 -- REGRESSION (108-109): cannot upload files (<input type=file> is broken)
+
+        * kwq/KWQFileButton.mm: (KWQFileButton::filenameChanged): Pass the filename to
+        the textChanged signal. The one without a parameter is a different signal.
+
+2003-11-01  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
         - fixed 3466714 -- page with <object> tag with text subtype and no URL causes hang
 
         * khtml/khtml_part.cpp: (KHTMLPart::requestObject): Added a check so that an empty
