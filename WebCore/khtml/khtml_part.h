@@ -579,6 +579,8 @@ public:
    */
   const DOM::Selection &selection() const;
 
+  DOM::Selection::ETextGranularity selectionGranularity() const;
+  
   /**
    * Returns the drag caret of the HTML.
    */
@@ -948,6 +950,8 @@ protected:
    * Eventhandler for the khtml::DrawContentsEvent.
    */
   virtual void khtmlDrawContentsEvent( khtml::DrawContentsEvent * );
+  
+  void selectClosetWordFromMouseEvent(QMouseEvent *mouse, DOM::Node &innerNode, int x, int y);
 
 #if !APPLE_CHANGES
   /**

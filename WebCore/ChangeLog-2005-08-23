@@ -1,3 +1,17 @@
+2004-09-14  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3783595> REGRESSION (Mail): control-click does not select closest word
+
+        Reviewed by kocienda.
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::selectionGranularity): new getter, need this for an upcoming patch
+        (KHTMLPart::selectClosetWordFromMouseEvent): new, factored from handleMousePressEventDoubleClick
+        (KHTMLPart::handleMousePressEventDoubleClick): call selectClosetWordFromMouseEvent
+        * khtml/khtml_part.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::sendContextMenuEvent): call selectClosetWordFromMouseEvent if nothing swallows the event
+
 2004-09-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John

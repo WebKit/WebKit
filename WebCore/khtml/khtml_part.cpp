@@ -2317,6 +2317,11 @@ const Selection &KHTMLPart::selection() const
     return d->m_selection;
 }
 
+DOM::Selection::ETextGranularity KHTMLPart::selectionGranularity() const
+{
+    return d->m_selectionGranularity;
+}
+
 const Selection &KHTMLPart::dragCaret() const
 {
     return d->m_dragCaret;
@@ -4391,16 +4396,12 @@ bool KHTMLPart::isPointInsideSelection(int x, int y)
    return false;
 }
 
-void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
+void KHTMLPart::selectClosetWordFromMouseEvent(QMouseEvent *mouse, DOM::Node &innerNode, int x, int y)
 {
-    QMouseEvent *mouse = event->qmouseEvent();
-    DOM::Node innerNode = event->innerNode();
-
     Selection selection;
 
-    if (mouse->button() == LeftButton && !innerNode.isNull() && innerNode.handle()->renderer() &&
-        innerNode.handle()->renderer()->shouldSelect()) {
-        Position pos(innerNode.handle()->positionForCoordinates(event->x(), event->y()));
+    if (!innerNode.isNull() && innerNode.handle()->renderer() && innerNode.handle()->renderer()->shouldSelect()) {
+        Position pos(innerNode.handle()->positionForCoordinates(x, y));
         if (pos.notEmpty()) {
             selection.moveTo(pos);
             selection.expandUsingGranularity(Selection::WORD);
@@ -4414,6 +4415,14 @@ void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
     
     setSelection(selection);
     startAutoScroll();
+}
+
+void KHTMLPart::handleMousePressEventDoubleClick(khtml::MousePressEvent *event)
+{
+    if (event->qmouseEvent()->button() == LeftButton) {
+        DOM::Node node = event->innerNode();
+        selectClosetWordFromMouseEvent(event->qmouseEvent(), node, event->x(), event->y());
+    }
 }
 
 void KHTMLPart::handleMousePressEventTripleClick(khtml::MousePressEvent *event)
