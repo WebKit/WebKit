@@ -340,9 +340,9 @@ void QColor::setNamedColor(const QString &name)
     else {
         NSString *hexString;
         
-        hexString = [getNamedColors() objectForKey:[QSTRING_TO_NSSTRING(name) lowercaseString]];
+        hexString = [getNamedColors() objectForKey:[name.getNSString() lowercaseString]];
         
-        if (hexString && decodeColorFromHexColorString(NSSTRING_TO_QSTRING(hexString), &r, &g, &b)) {
+        if (hexString && decodeColorFromHexColorString(QString::fromNSString(hexString), &r, &g, &b)) {
             setRgb(r, g, b);
         }
         else {

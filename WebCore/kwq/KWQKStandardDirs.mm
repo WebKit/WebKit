@@ -25,9 +25,14 @@
 
 #import <kstandarddirs.h>
 
-QString locate(const char *type, const QString& filename, const KInstance* instance)
+@interface KWQKStandardDirsBundleDummy : NSObject { }
+@end
+@implementation KWQKStandardDirsBundleDummy
+@end
+
+QString locate(const char *type, const QString &filename, const KInstance *instance)
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+    NSBundle *bundle = [NSBundle bundleForClass:[KWQKStandardDirsBundleDummy class]];
     return QString::fromNSString([bundle pathForResource:@"html4" ofType:@"css"]);
 }
 

@@ -33,12 +33,6 @@
 // Make htmltokenizer.cpp happy
 #define QT_VERSION 300
 
-#define _FAST_QSTRING_TO_NSSTRING(aString) (aString).getNSString()
-#define QSTRING_TO_NSSTRING(aString) [[(aString).getNSString() retain] autorelease]
-#define QSTRING_TO_NSSTRING_LENGTH(aString,l) \
-    [[[(aString).getNSString() substringToIndex: l] retain] autorelease]
-#define NSSTRING_TO_QSTRING(aString) QString::fromNSString(aString)
-
 class QRegExp;
 
 #ifdef __OBJC__

@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <khtml/khtml_ext.h>
+#import <khtml_ext.h>
 #import <khtml_part.h>
 #import <WebCoreBridge.h>
 #import <KWQKHTMLPartImpl.h>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,34 +26,15 @@
 #ifndef QLINEEDIT_H_
 #define QLINEEDIT_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include "qwidget.h"
-#include "qevent.h"
-#include "qstring.h"
-
-// class QLineEdit =============================================================
+#include <qwidget.h>
+#include <qevent.h>
+#include <qstring.h>
 
 class QLineEdit : public QWidget {
 public:
+    enum EchoMode { Normal, Password };
 
-    // typedefs ----------------------------------------------------------------
-
-    // enums -------------------------------------------------------------------
-
-    enum EchoMode { Normal, NoEcho, Password };
-
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-    // constructors, copy constructors, and destructors ------------------------
-
-    QLineEdit(QWidget *parent=0, const char *name=0);
-
-    virtual ~QLineEdit();
-    
-    // member functions --------------------------------------------------------
+    QLineEdit(QWidget *parent);
 
     virtual void setEchoMode(EchoMode);
     virtual void setCursorPosition(int);
@@ -63,26 +44,12 @@ public:
 
     bool isReadOnly() const;
     void setReadOnly(bool);
-    bool event(QEvent *);
     bool frame() const;
     int cursorPosition() const;
     int maxLength() const;
     void selectAll();
     bool edited() const;
     void setEdited(bool);
-
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    QLineEdit(const QLineEdit &);
-    QLineEdit &operator=(const QLineEdit &);
-
-}; // class QLineEdit ==========================================================
+};
 
 #endif

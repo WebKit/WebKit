@@ -31,7 +31,7 @@
 #import <qwidget.h>
 #import <qpainter.h>
 #import <qevent.h>
-#import <html/html_documentimpl.h>
+#import <html_documentimpl.h>
 
 
 

@@ -27,8 +27,8 @@
 #define __khtml_factory_h__
 
 #include <khtml_part.h>
-#include <kparts/factory.h>
-#include <kparts/historyprovider.h>
+#include <factory.h>
+#include <historyprovider.h>
 
 class KInstance;
 class KHTMLPart;

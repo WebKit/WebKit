@@ -32,37 +32,37 @@ KHTMLSettings::KHTMLSettings()
 
 QString KHTMLSettings::stdFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitStandardFont"]);
+    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitStandardFont"]);
 }
 
 
 QString KHTMLSettings::fixedFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFixedFont"]);
+    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFixedFont"]);
 }
 
 
 QString KHTMLSettings::serifFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSerifFont"]);
+    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSerifFont"]);
 }
 
 
 QString KHTMLSettings::sansSerifFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSansSerifFont"]);
+    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitSansSerifFont"]);
 }
 
 
 QString KHTMLSettings::cursiveFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCursiveFont"]);
+    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitCursiveFont"]);
 }
 
 
 QString KHTMLSettings::fantasyFontName() const
 {
-    return NSSTRING_TO_QSTRING([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFantasyFont"]);
+    return QString::fromNSString([[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitFantasyFont"]);
 }
 
 
@@ -78,7 +78,7 @@ const QString &KHTMLSettings::encoding() const
     static const QString *DEFAULT_ENCODING = NULL;
     _logNotYetImplemented();
     if (DEFAULT_ENCODING == NULL) {
-        DEFAULT_ENCODING = new QString(NSSTRING_TO_QSTRING(@"NSISOLatin1StringEncoding"));
+        DEFAULT_ENCODING = new QString(QString::fromNSString(@"NSISOLatin1StringEncoding"));
     }
     return *DEFAULT_ENCODING;
 }

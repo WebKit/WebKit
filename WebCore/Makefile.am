@@ -11,6 +11,3 @@ WebCore-combined.exp: WebCore.exp WebCore-tests.exp
 noinst_DATA = WebCore-combined.exp
 BUILT_SOURCES = $(noinst_DATA)
 CLEANFILES = $(BUILT_SOURCES)
-
-FRAMEWORK_NAME = WebCore
-include $(top_srcdir)/embed.am

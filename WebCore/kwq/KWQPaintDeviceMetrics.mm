@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,13 +27,9 @@
 
 #import <kwqdebug.h>
 
-#import <ApplicationServices/ApplicationServices.h>
-
-
 QPaintDeviceMetrics::QPaintDeviceMetrics(const QPaintDevice *)
 {
 }
-
 
 int QPaintDeviceMetrics::logicalDpiY() const 
 {
@@ -41,12 +37,10 @@ int QPaintDeviceMetrics::logicalDpiY() const
     return 96;
 }
 
-
 int QPaintDeviceMetrics::depth() const
 {
     return CGDisplayBitsPerPixel(kCGDirectMainDisplay);
 }
-
 
 int QPaintDeviceMetrics::width() const
 {
@@ -54,10 +48,8 @@ int QPaintDeviceMetrics::width() const
     return 800;
 }
 
-
 int QPaintDeviceMetrics::height() const
 {
     _logPartiallyImplemented();
     return 800;
 }
-

@@ -27,7 +27,7 @@
 
 #import <KWQKHTMLPartImpl.h>
 #import <khtmlview.h>
-#import <xml/dom_docimpl.h>
+#import <dom_docimpl.h>
 #import <render_object.h>
 
 @implementation WebCoreBridge
@@ -117,8 +117,7 @@
 
 - (NSString *)selectedText
 {
-    QString st = part->selectedText();
-    return QSTRING_TO_NSSTRING(st);
+    return [[part->selectedText().getNSString() copy] autorelease];
 }
 
 - (void)selectAll

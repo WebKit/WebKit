@@ -23,7 +23,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#import <java/kjavaappletwidget.h>
+#import <kjavaappletwidget.h>
 #import <WebCoreViewFactory.h>
 #import <WebFoundation/IFNSURLExtensions.h>
 

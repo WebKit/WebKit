@@ -102,8 +102,7 @@ namespace KJS {
         Plugin( ExecState *exec, PluginBase::PluginInfo *info )
           : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
         { m_info = info; PluginBase::ref(); };
-        virtual ~Plugin()
-        { PluginBase::unref(); }
+        virtual ~Plugin() { PluginBase::unref(); }
 #else
         Plugin( ExecState *exec, PluginBase::PluginInfo *info )
           : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
@@ -124,8 +123,7 @@ namespace KJS {
         MimeType( ExecState *exec, PluginBase::MimeClassInfo *info )
           : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
         { m_info = info; PluginBase::ref(); };
-        virtual ~MimeType()
-        { PluginBase::unref(); }
+        virtual ~MimeType() { PluginBase::unref(); }
 #else
         MimeType( ExecState *exec, PluginBase::MimeClassInfo *info )
           : ObjectImp(exec->interpreter()->builtinObjectPrototype() )
@@ -333,6 +331,7 @@ PluginBase::~PluginBase()
 }
 
 #ifdef APPLE_CHANGES
+
 void PluginBase::ref()
 {
   m_refCount++;

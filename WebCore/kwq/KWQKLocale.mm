@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,21 +22,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
+#import <klocale.h>
 #import <kwqdebug.h>
 #import <qstring.h>
-#import <klocale.h>
 
-QString i18n(const char* text)
+@interface KWQKLocaleBundleDummy : NSObject { }
+@end
+@implementation KWQKLocaleBundleDummy
+@end
+
+QString i18n(const char *text)
 {
-    NSBundle *bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebCore"];
+    NSBundle *bundle = [NSBundle bundleForClass:[KWQKLocaleBundleDummy class]];
     NSString *locString = [bundle localizedStringForKey:[NSString stringWithCString:text] value:nil table:nil];
-    return NSSTRING_TO_QSTRING(locString);
+    return QString::fromNSString(locString);
 }
 
 QString KLocale::language() const
 {
     _logNotYetImplemented();
-    static QString language("en_US");
-    return language;
+    return "en_US";
 }
 
+QStringList KLocale::languageList() const
+{
+    _logNotYetImplemented();
+    return QStringList::split(",", "us");
+}

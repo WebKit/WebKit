@@ -25,8 +25,6 @@
 
 #import <klineedit.h>
 
-#import <kwqdebug.h>
-
 KLineEdit::KLineEdit(QWidget *parent)
     : QLineEdit(parent)
 {
@@ -38,6 +36,5 @@ void KLineEdit::setContextMenuEnabled(bool showMenu)
 
 KCompletionBox *KLineEdit::completionBox(bool create)
 {
-    _logNotYetImplemented();
     return 0;
 }

@@ -131,10 +131,9 @@ int QFontMetrics::width(const QString &qstring, int len) const
 {
     NSString *string;
 
+    string = qstring.getNSString();
     if (len != -1)
-        string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
-    else
-        string = _FAST_QSTRING_TO_NSSTRING (qstring);
+        string = [string substringToIndex:len];
     return [data->getRenderer() widthForString:string];
 }
 

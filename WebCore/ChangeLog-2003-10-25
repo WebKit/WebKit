@@ -1,3 +1,82 @@
+2002-07-13  Darin Adler  <darin@apple.com>
+
+        * ForwardingHeaders/*: Added. New approach to headers to try to
+	make Project Builder's header dependency support work even for
+	includes like #include <render/render_object.h>.
+        * kwq/kjs/*: Removed. Now part of ForwardingHeaders.
+
+        * Makefile.am: Remove embed.am support.
+
+        * WebCore.pbproj/project.pbxproj: Remove other search paths, and
+	add ForwardingHeaders directory as a search path. Add qucomextra_p.h.
+	
+        * khtml/ecma/kjs_navigator.cpp: Made gratuitous changes to touch this
+	file to make things build without requiring clean rebuild.
+
+        * khtml/rendering/render_form.cpp: Removed many unneeded QObject::
+	qualifiers from inside APPLE_CHANGES to touch this file to make things
+	build without requiring clean rebuild.
+
+        * kwq/KWQButton.mm: (QButton::setText), (QButton::text):
+        * kwq/KWQColor.mm: (QColor::setNamedColor):
+	* kwq/KWQKConfigBase.mm: (KConfig::readEntry):
+        * kwq/KWQKHTMLSettings.mm: (KHTMLSettings::stdFontName), (KHTMLSettings::fixedFontName):
+        (KHTMLSettings::serifFontName), (KHTMLSettings::sansSerifFontName),
+	(KHTMLSettings::cursiveFontName), (KHTMLSettings::fantasyFontName), (KHTMLSettings::encoding):
+        * kwq/KWQKLocale.mm: (i18n):
+        * kwq/KWQKMessageBox.mm: (KMessageBox::error), (KMessageBox::warningYesNo):
+        (KMessageBox::questionYesNo), (KMessageBox::sorry):
+        * kwq/KWQListBox.mm: (-[KWQBrowserDelegate browser:willDisplayCell:atRow:column:]):
+        * kwq/WebCoreBridge.mm: (-[WebCoreBridge selectedText]):
+        Wean from QSTRING_TO_NSSTRING and NSSTRING_TO_QSTRING.
+
+        * kwq/KWQComboBox.mm:
+        (QComboBox::insertItem): Wean from QSTRING_TO_NSSTRING. Note that this
+	now stores a copy of the string in the array. The old version was unsafe
+	if anyone later modified the QString that was passed in.
+
+        * kwq/KWQFontMetrics.mm: (QFontMetrics::width):
+        * kwq/KWQPainter.mm: (QPainter::drawUnderlineForText), (QPainter::drawText):
+	Wean from QSTRING_TO_NSSTRING_LENGTH and _FAST_QSTRING_TO_NSSTRING. We still have
+	speed as high as before, in the "length" case slightly faster.
+
+        * kwq/qt/qstring.h: Remove QSTRING_TO_NSSTRING family of macros.
+
+        * kwq/KWQInvisibleButton.mm:
+        * kwq/KWQKHTMLPart.mm:
+        * kwq/KWQKHTMLPartBrowserExtension.mm:
+        * kwq/KWQKJavaAppletWidget.mm:
+        * kwq/KWQKloader.mm:
+        * kwq/KWQView.mm:
+        * kwq/KWQsignals.mm:
+        * kwq/WebCoreBridge.mm:
+        * kwq/kdecore/kconfig.h:
+        * kwq/kdecore/klibloader.h:
+        * kwq/kdecore/klocale.h:
+        * kwq/khtml/khtml_ext.h:
+        * kwq/khtml/khtml_factory.h:
+        * kwq/kio/kmimetype.h:
+	Remove subdirectory prefix from imports to match Project Builder include scheme.
+
+        * kwq/KWQKCursor.mm: (+[NSCursor _WebCore_linkCursor]):
+        * kwq/KWQKLocale.mm: (i18n):
+        * kwq/KWQKstddirs.mm: (locate):
+	Use bundleForClass instead of bundleWithIdentifier to avoid any potential problems
+	with multiple versions of the framework installed on the same system.
+
+        * kwq/KWQKLineEdit.mm:
+        (KLineEdit::completionBox): Remove _logNotYetImplemented, since this is implemented
+	well enough for our needs now, and if we need to implement it later, it will become
+	clear from the application behavior. This should be the destiny of most of these.
+
+        * kwq/kdecore/kglobal.h: Simplify.
+        * kwq/KWQKGlobal.mm: Simplify.
+        * kwq/qt/qlineedit.h: Simplify.
+        * kwq/KWQLineEdit.mm: Simplify.
+
+        * kwq/KWQPaintDeviceMetrics.mm: Remove unneeded import.
+        * kwq/qt/qbutton.h: Remove unneeded destructor.
+
 2002-07-13  Richard Williamson (Home)  <rjw@apple.com>
 
         * kwq/KWQPainter.mm:

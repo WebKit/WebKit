@@ -25,8 +25,8 @@
 
 #import <KWQLoaderImpl.h>
 
-#import <kio/jobclasses.h>
-#import <misc/loader.h>
+#import <jobclasses.h>
+#import <loader.h>
 
 #import <KWQKHTMLPartImpl.h>
 

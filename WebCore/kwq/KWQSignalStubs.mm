@@ -24,7 +24,7 @@
  */
  
 #import <khtmlview.h>
-#import <misc/loader.h>
+#import <loader.h>
 
 void KHTMLView::cleared()
 {

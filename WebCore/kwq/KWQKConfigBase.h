@@ -26,7 +26,7 @@
 #ifndef KCONFIG_H_
 #define KCONFIG_H_
 
-#include <qt/qstring.h>
+#include <qstring.h>
 
 class QColor;
 class QStringList;

@@ -25,12 +25,16 @@
 
 #import <kcursor.h>
 
+@interface KWQKCursorBundleDummy : NSObject { }
+@end
+@implementation KWQKCursorBundleDummy
+@end
 
-@interface NSCursor (_WebCoreCursorAdditions)
+@interface NSCursor (WebCoreCursorAdditions)
 + (NSCursor *)_WebCore_linkCursor;
 @end
 
-@implementation NSCursor (_WebCoreCursorAdditions)
+@implementation NSCursor (WebCoreCursorAdditions)
 
 + (NSCursor *)_WebCore_linkCursor
 {
@@ -38,7 +42,8 @@
     
     if (linkCursor == nil) {
 	NSImage *linkCursorImage = [[NSImage alloc] initWithContentsOfFile:
-            [[NSBundle bundleWithIdentifier:@"com.apple.WebCore"] pathForResource:@"linkCursor" ofType:@"tiff"]];
+            [[NSBundle bundleForClass:[KWQKCursorBundleDummy class]]
+            pathForResource:@"linkCursor" ofType:@"tiff"]];
         linkCursor = [[NSCursor alloc] initWithImage:linkCursorImage hotSpot:NSMakePoint(6.0,1.0)];
 	[linkCursorImage release];
     }

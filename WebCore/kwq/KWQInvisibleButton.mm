@@ -28,8 +28,8 @@
 #import <kwqdebug.h>
 #import <qevent.h>
 #import <khtmlview.h>
-#import <rendering/render_form.h>
-#import <xml/dom2_eventsimpl.h>
+#import <render_form.h>
+#import <dom2_eventsimpl.h>
 
 @interface InvisibleButtonView : NSView
 {

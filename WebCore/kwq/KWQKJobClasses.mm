@@ -101,6 +101,8 @@ QString TransferJob::queryMetaData(const QString &key) const
  
 void TransferJob::addMetaData(const QString &key, const QString &value)
 {
+    // When putting strings into dictionaries, we should use an immutable copy.
+    // That's not necessary for keys, because they are copied.
     NSString *immutableValue = [value.getNSString() copy];
     [d->metaData setObject:immutableValue forKey:key.getNSString()];
     [immutableValue release];

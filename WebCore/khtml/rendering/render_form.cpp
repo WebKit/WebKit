@@ -181,12 +181,12 @@ void RenderFormElement::layout()
 }
 
 #ifdef APPLE_CHANGES
-void RenderFormElement::performAction(QObject::Actions action)
+void RenderFormElement::performAction(Actions action)
 {
     if (m_widget)
         m_widget->endEditing();
         
-    if (action == QObject::ACTION_BUTTON_CLICKED)
+    if (action == ACTION_BUTTON_CLICKED)
         slotClicked();
 }
 #endif /* APPLE_CHANGES */
@@ -248,11 +248,11 @@ void RenderCheckBox::updateFromElement()
 }
 
 #ifdef APPLE_CHANGES
-void RenderCheckBox::performAction(QObject::Actions action)
+void RenderCheckBox::performAction(Actions action)
 {
     QCheckBox* cb = static_cast<QCheckBox*>( m_widget );
 
-    if (action == QObject::ACTION_CHECKBOX_CLICKED)
+    if (action == ACTION_CHECKBOX_CLICKED)
         slotStateChanged(cb->isChecked() ? 2 : 0);
 }
 #endif /* APPLE_CHANGES */
@@ -317,9 +317,9 @@ RenderSubmitButton::RenderSubmitButton(HTMLInputElementImpl *element)
     connect(p, SIGNAL(clicked()), this, SLOT(slotClicked()));
 #ifdef APPLE_CHANGES
     // Need to store a reference to this object and then invoke slotClicked on it.
-    //p->setAction (&RenderFormElement::slotClicked);
-    //p->setRenderObject (this);
-    p->setTarget (this);
+    //p->setAction(&RenderFormElement::slotClicked);
+    //p->setRenderObject(this);
+    p->setTarget(this);
 #endif
 }
 
@@ -576,13 +576,13 @@ void RenderLineEdit::updateFromElement()
 }
 
 #ifdef APPLE_CHANGES
-void RenderLineEdit::performAction(QObject::Actions action)
+void RenderLineEdit::performAction(Actions action)
 {
     KLineEdit *edit = static_cast<KLineEdit*>(m_widget);
 
-    if (action == QObject::ACTION_TEXT_FIELD_END_EDITING)
+    if (action == ACTION_TEXT_FIELD_END_EDITING)
         slotTextChanged(edit->text());
-    else if (action == QObject::ACTION_TEXT_FIELD)
+    else if (action == ACTION_TEXT_FIELD)
         slotReturnPressed();
 }
 #endif /* APPLE_CHANGES */
@@ -1024,11 +1024,11 @@ void RenderSelect::slotSelected(int index)
 
 
 #ifdef APPLE_CHANGES
-void RenderSelect::performAction(QObject::Actions action)
+void RenderSelect::performAction(Actions action)
 {
-    if (action == QObject::ACTION_LISTBOX_CLICKED)
+    if (action == ACTION_LISTBOX_CLICKED)
         slotSelectionChanged();
-    else if (action == QObject::ACTION_COMBOBOX_CLICKED){
+    else if (action == ACTION_COMBOBOX_CLICKED){
         ComboBoxWidget *combo = static_cast<ComboBoxWidget*>(m_widget);
 
         slotSelected(combo->indexOfCurrentItem());
@@ -1265,9 +1265,9 @@ QString RenderTextArea::text()
 }
 
 #ifdef APPLE_CHANGES
-void RenderTextArea::performAction(QObject::Actions action)
+void RenderTextArea::performAction(Actions action)
 {
-    if (action == QObject::ACTION_TEXT_AREA_END_EDITING)
+    if (action == ACTION_TEXT_AREA_END_EDITING)
         slotTextChanged();
 }
 #endif /* APPLE_CHANGES */

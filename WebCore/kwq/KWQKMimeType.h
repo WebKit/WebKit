@@ -26,9 +26,9 @@
 #ifndef KMIMETYPE_H_
 #define KMIMETYPE_H_
 
-#include <kdecore/kglobal.h>
+#include <kglobal.h>
 
-#include <kdecore/kurl.h>
+#include <kurl.h>
 #include <sys/types.h>
 #include <qstring.h>
 

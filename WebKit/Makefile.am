@@ -5,6 +5,3 @@ clean-am:
 
 previous-clean-timestamp: force-clean-timestamp
 	make clean && touch $@
-
-FRAMEWORK_NAME = WebKit
-include $(top_srcdir)/embed.am

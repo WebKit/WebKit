@@ -66,7 +66,7 @@
             else
                 [cell setEnabled: YES];
             [cell setLeaf: YES];
-            [cell setStringValue: QSTRING_TO_NSSTRING(item->text)];
+            [cell setStringValue: item->text.getNSString()];
             return;
         }
         item = item->nextItem;

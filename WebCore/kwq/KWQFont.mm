@@ -58,7 +58,7 @@ QString QFont::family() const
 
 void QFont::setFamily(const QString &qfamilyName)
 {
-    // Uset an immutable copy of the name, but keep a set of
+    // Use an immutable copy of the name, but keep a set of
     // all family names so we don't end up with too many objects.
     static NSMutableSet *families;
     if (families == nil) {

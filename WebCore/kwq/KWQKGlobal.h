@@ -33,28 +33,21 @@ class KCharsets;
 class KLocale;
 class KStandardDirs;
 class KConfig;
-class KWQStaticStringDict;
 
 #define kMin(a, b) ((a) < (b) ? (a) : (b))
 #define kMax(a, b) ((a) > (b) ? (a) : (b))
 
 class KGlobal {
 public:
-    static KWQStaticStringDict *staticStringDict;
-
-    static KInstance *instance();
-    static KCharsets *charsets();
-    static KLocale *locale();
-    static KStandardDirs *dirs();
+    static KInstance *instance() { return 0; }
+    static KCharsets *charsets() { return 0; }
+    static KLocale *locale() { return 0; }
+    static KStandardDirs *dirs() { return 0; }
     static KConfig *config();
 
     static const QString &staticQString(const QString &);
 
 private:
-    static KWQStaticStringDict *_stringDict;
-    static KInstance *_instance;
-    static KLocale *_locale;
-    static KCharsets *_charsets;
 };
 
 #endif

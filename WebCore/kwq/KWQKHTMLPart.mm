@@ -25,9 +25,9 @@
 
 #import <KWQKHTMLPartImpl.h>
 
-#import <html/htmltokenizer.h>
-#import <html/html_documentimpl.h>
-#import <rendering/render_frames.h>
+#import <htmltokenizer.h>
+#import <html_documentimpl.h>
+#import <render_frames.h>
 #import <khtmlpart_p.h>
 #import <khtmlview.h>
 

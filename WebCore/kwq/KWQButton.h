@@ -32,11 +32,9 @@
 class QButton : public QWidget {
 public:
     QButton(QWidget *parent = 0);
-    ~QButton();
 
     virtual void setText(const QString &);
     QString text() const;
-
 };
 
 #endif

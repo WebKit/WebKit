@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,28 +26,18 @@
 #import <qbutton.h>
 
 #import <KWQView.h>
-#import <kwqdebug.h>
 
 QButton::QButton(QWidget *parent)
 {
     setView ([[[KWQNSButton alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease]);
 }
 
-
-QButton::~QButton()
-{
-}
-
-
 void QButton::setText(const QString &s)
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
-    [button setTitle: QSTRING_TO_NSSTRING (s)];
+    [(KWQNSButton *)getView() setTitle:s.getNSString()];
 }
-
 
 QString QButton::text() const
 {
-    KWQNSButton *button = (KWQNSButton *)getView();
-    return NSSTRING_TO_QSTRING([button title]);
+    return QString::fromNSString([(KWQNSButton *)getView() title]);
 }

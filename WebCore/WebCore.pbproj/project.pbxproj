@@ -131,8 +131,8 @@
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
-				HEADER_SEARCH_PATHS = "kwq kwq/khtml kwq/qt khtml ..";
-				INSTALL_PATH = "";
+				HEADER_SEARCH_PATHS = ForwardingHeaders;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
@@ -151,7 +151,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = WebCore;
-			productInstallPath = "";
+			productInstallPath = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -484,6 +484,7 @@
 				F523D31E02DE4476018635CA,
 				F523D32002DE4476018635CA,
 				F523D32202DE4476018635CA,
+				F505847602E0934D018635CE,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -775,7 +776,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "make embed";
+			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 //250
 //251
@@ -787,6 +788,26 @@
 //F52
 //F53
 //F54
+		F505847502E0934D018635CE = {
+			isa = PBXFileReference;
+			name = qucomextra_p.h;
+			path = kwq/qt/private/qucomextra_p.h;
+			refType = 4;
+		};
+		F505847602E0934D018635CE = {
+			fileRef = F505847502E0934D018635CE;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F505847702E09351018635CE = {
+			children = (
+				F505847502E0934D018635CE,
+			);
+			isa = PBXGroup;
+			name = private;
+			refType = 4;
+		};
 		F523D15002DE4271018635CA = {
 			children = (
 				F58784D802DE375901EA4122,
@@ -7470,6 +7491,7 @@
 		};
 		F587871802DE3B8801EA4122 = {
 			children = (
+				F505847702E09351018635CE,
 				F587867602DE3B8601EA4122,
 				F587867702DE3B8601EA4122,
 				F58784C502DE375801EA4122,

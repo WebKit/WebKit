@@ -109,7 +109,6 @@
 				0867D69EFE84028FC02AAC07,
 				0867D69FFE84028FC02AAC07,
 				0867D6A0FE84028FC02AAC07,
-				0867D6A2FE84028FC02AAC07,
 				F692A8D8025563E401FF60F7,
 			);
 			buildSettings = {
@@ -120,8 +119,9 @@
 				DYLIB_CURRENT_VERSION = 1;
 				FRAMEWORK_SEARCH_PATHS = "";
 				FRAMEWORK_VERSION = A;
+				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = /System/Library/PrivateFrameworks;
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
@@ -138,7 +138,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = JavaScriptCore;
-			productInstallPath = /System/Library/PrivateFrameworks;
+			productInstallPath = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 			productName = JavaScriptCore;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -224,7 +224,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				089C1668FE841158C02AAC07,
-				F692A8900255597D01FF60F7,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -269,13 +268,6 @@
 				1058C7B3FEA5585E11CA2CBB,
 			);
 			isa = PBXFrameworksBuildPhase;
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0867D6A2FE84028FC02AAC07 = {
-			buildActionMask = 2147483647;
-			files = (
-			);
-			isa = PBXRezBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0867D6A5FE840307C02AAC07 = {
@@ -895,12 +887,6 @@
 				);
 			};
 		};
-		F692A8900255597D01FF60F7 = {
-			fileRef = F692A8540255597D01FF60F7;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F692A8910255597D01FF60F7 = {
 			fileRef = F692A8550255597D01FF60F7;
 			isa = PBXBuildFile;
@@ -1293,7 +1279,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [ -f ../configure.in ]; then make embed; fi";
+			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 	};
 	rootObject = 0867D690FE84028FC02AAC07;

@@ -1,3 +1,20 @@
+2002-07-13  Darin Adler  <darin@apple.com>
+
+        * History.subproj/IFURIEntry.m: (-[IFURIEntry image]):
+	Use [IFURIEntry class] instead of [self class] so we get the
+	icon from the WebKit bundle even if someone subclasses IFURIEntry.
+        * Plugins.subproj/IFNullPluginView.mm:
+        (-[IFNullPluginView initWithFrame:mimeType:arguments:]): Use
+	bundleForClass instead of bundleWithIdentifier so things work even
+	if we have two copies of WebKit installed on the same machine.
+
+        * Makefile.am: Remove include of embed.am.
+
+        * WebKit.pbproj/project.pbxproj: Use embed-into-alex instead of make embed.
+	Also change bundle identifier to com.apple.WebKit instead of com.apple.webkit
+	to match standard used by our other frameworks. (Checked that we no longer have
+	any hard-coding of the bundle identifier anywhere in our code.)
+
 2002-07-13  Richard Williamson (Home)  <rjw@apple.com>
 
         Fixed 2981849 - frames don't always draw correctly.

@@ -500,10 +500,10 @@ void QPainter::drawUnderlineForText(int x, int y, const QString &qstring, int le
     
     _lockFocus();
     
-    if (len == -1)
-        string = QSTRING_TO_NSSTRING(qstring);
-    else
-        string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
+    string = qstring.getNSString();
+    if (len != -1) {
+        string = [string substringToIndex:len];
+    }
 
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]
@@ -522,27 +522,26 @@ void QPainter::drawText(int x, int y, int w, int h, int flags, const QString &qs
     NSString *string;
     NSMutableParagraphStyle *style = [[[NSMutableParagraphStyle alloc] init] autorelease];
     
-    _lockFocus();
-    
-    if (len == -1)
-        string = QSTRING_TO_NSSTRING(qstring);
-    else
-        string = QSTRING_TO_NSSTRING_LENGTH(qstring,len);
-
-    if (flags & Qt::WordBreak){
-        [style setLineBreakMode: NSLineBreakByWordWrapping];
+    string = qstring.getNSString();
+    if (len != -1) {
+        string = [string substringToIndex:len];
     }
-    else {
+
+    if (flags & Qt::WordBreak) {
+        [style setLineBreakMode: NSLineBreakByWordWrapping];
+    } else {
         [style setLineBreakMode: NSLineBreakByClipping];
     }
     
-    if (flags & Qt::AlignRight){
+    if (flags & Qt::AlignRight) {
         [style setAlignment: NSRightTextAlignment];
     }
     
-    if (flags & Qt::AlignLeft){
+    if (flags & Qt::AlignLeft) {
         [style setAlignment: NSLeftTextAlignment];
     }
+    
+    _lockFocus();
     
     [[[WebCoreTextRendererFactory sharedFactory]
         rendererWithFamily:data->state.font.getNSFamily() traits:data->state.font.getNSTraits() size:data->state.font.getNSSize()]

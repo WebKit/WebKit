@@ -74,11 +74,11 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
         
         plugin = [[[WebCoreViewFactory sharedFactory] pluginsInfo] objectAtIndex:impl->pluginIndex];
         if (strcmp(pKey, "name") == 0) {
-            return NSSTRING_TO_QSTRING([plugin name]);
+            return QString::fromNSString([plugin name]);
         } else if (strcmp(pKey, "file") == 0) {
-            return NSSTRING_TO_QSTRING([plugin filename]);
+            return QString::fromNSString([plugin filename]);
         } else if (strcmp(pKey, "description") == 0) {
-            return NSSTRING_TO_QSTRING([plugin pluginDescription]);
+            return QString::fromNSString([plugin pluginDescription]);
         } else if (strcmp(pKey, "mime") == 0) {
             mimeTypes = [plugin mimeTypes];
             bigMimeString = [NSMutableString string];
@@ -90,7 +90,7 @@ QString KConfig::readEntry(const char *pKey, const QString& aDefault) const
                 [bigMimeString appendString:[[mimeTypes objectAtIndex:i] objectAtIndex:2]]; // mime's description
                 [bigMimeString appendString:@";"];
             }
-            return NSSTRING_TO_QSTRING(bigMimeString);
+            return QString::fromNSString(bigMimeString);
         }
     }
     

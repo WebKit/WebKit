@@ -90,16 +90,20 @@ bool QComboBox::eventFilter(QObject *object, QEvent *event)
 
 void QComboBox::insertItem(const QString &text, int index)
 {
+    NSString *string;
     int numItems = [items count];
-    if (index < 0 || index == numItems)
-        [items addObject:QSTRING_TO_NSSTRING(text)];
-    else {
+    
+    string = [text.getNSString() copy];
+    if (index < 0 || index == numItems) {
+        [items addObject:string];
+    } else {
         while (index >= numItems) {
             [items addObject: @""];
             ++numItems;
         }
-        [items replaceObjectAtIndex:index withObject:QSTRING_TO_NSSTRING(text)];
+        [items replaceObjectAtIndex:index withObject:string];
     }
+    [string release];
 }
 
 

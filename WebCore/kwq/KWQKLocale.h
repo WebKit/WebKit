@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,46 +26,14 @@
 #ifndef KLOCALE_H_
 #define KLOCALE_H_
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <qt/qstringlist.h>
+#include <qstringlist.h>
 
 QString i18n(const char* text);
 
-// class KLocale ===============================================================
-
 class KLocale {
 public:
-
-    // structs -----------------------------------------------------------------
-    // typedefs ----------------------------------------------------------------
-    // enums -------------------------------------------------------------------
-    // constants ---------------------------------------------------------------
-    // static member functions -------------------------------------------------
-
-    // constructors, copy constructors, and destructors ------------------------
-
-    KLocale();
-    ~KLocale();
-
-    // member functions --------------------------------------------------------
-
     QString language() const;
     QStringList languageList() const;
-
-    // operators ---------------------------------------------------------------
-
-// protected -------------------------------------------------------------------
-// private ---------------------------------------------------------------------
-
-private:
-    // no copying or assignment
-    // note that these are "standard" (no pendantic stuff needed)
-    KLocale(const KLocale &);
-    KLocale &operator=(const KLocale &);
-
-}; // class KLocale ============================================================
+};
 
 #endif

@@ -30,11 +30,10 @@ void KMessageBox::error(QWidget *, const QString &message,
     const QString &caption, bool notify)
 {
     if (caption.isNull())
-        NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), nil, nil, nil);
+        NSRunAlertPanel(nil, message.getNSString(), nil, nil, nil);
     else
-        NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), nil, nil, nil);
+        NSRunAlertPanel(caption.getNSString(), message.getNSString(), nil, nil, nil);
 }
-
 
 int KMessageBox::warningYesNo(QWidget *, const QString &message, 
     const QString &caption, 
@@ -47,15 +46,14 @@ int KMessageBox::warningYesNo(QWidget *, const QString &message,
     int result;
     
     if (caption.isNull())
-        result = NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), yes, no, nil);
+        result = NSRunAlertPanel(nil, message.getNSString(), yes, no, nil);
     else
-        result = NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), yes, no, nil);
+        result = NSRunAlertPanel(caption.getNSString(), message.getNSString(), yes, no, nil);
 
     if (result == NSAlertDefaultReturn)
         return 1;
     return 0;
 }
-
 
 int KMessageBox::questionYesNo(QWidget *, const QString &message, 
     const QString &caption, 
@@ -67,25 +65,20 @@ int KMessageBox::questionYesNo(QWidget *, const QString &message,
     int result;
     
     if (caption.isNull())
-        result = NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), yes, no, nil);
+        result = NSRunAlertPanel(nil, message.getNSString(), yes, no, nil);
     else
-        result = NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), yes, no, nil);
+        result = NSRunAlertPanel(caption.getNSString(), message.getNSString(), yes, no, nil);
 
     if (result == NSAlertDefaultReturn)
         return 1;
     return 0;
 }
 
-
 void KMessageBox::sorry(QWidget *, const QString &message, 
     const QString &caption, bool notify)
 {
     if (caption.isNull())
-        NSRunAlertPanel (nil, QSTRING_TO_NSSTRING(message), nil, nil, nil);
+        NSRunAlertPanel(nil, message.getNSString(), nil, nil, nil);
     else
-        NSRunAlertPanel (QSTRING_TO_NSSTRING(caption), QSTRING_TO_NSSTRING(message), nil, nil, nil);
+        NSRunAlertPanel(caption.getNSString(), message.getNSString(), nil, nil, nil);
 }
-
-
-
-

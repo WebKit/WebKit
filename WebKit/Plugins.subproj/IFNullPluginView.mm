@@ -24,7 +24,7 @@ static NSImage *image = nil;
     if (self) {
         // Set the view's image to the null plugin icon
         if (!image) {
-            bundle = [NSBundle bundleWithIdentifier:@"com.apple.webkit"];
+            bundle = [NSBundle bundleForClass:[IFNullPluginView class]];
             imagePath = [bundle pathForResource:@"nullplugin" ofType:@"tiff"];
             image = [[NSImage alloc] initWithContentsOfFile:imagePath];
         }

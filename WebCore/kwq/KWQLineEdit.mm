@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2001 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2001, 2002 Apple Computer, Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,29 +22,22 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
+
 #import <qlineedit.h>
 
 #import <KWQNSTextField.h>
-
 #import <kwqdebug.h>
 
-QLineEdit::QLineEdit(QWidget *parent, const char *name)
+QLineEdit::QLineEdit(QWidget *parent)
 {
-    setView ([[[KWQNSTextField alloc] initWithFrame: NSMakeRect (0,0,0,0) widget: this] autorelease]);
+    NSView *view = [[KWQNSTextField alloc] initWithFrame:NSMakeRect(0,0,0,0) widget:this];
+    setView(view);
+    [view release];
 }
 
-QLineEdit::~QLineEdit()
-{
-}
-    
 void QLineEdit::setEchoMode(EchoMode mode)
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    if (mode == QLineEdit::Password)
-        [field setPasswordMode: YES];
-    else
-        [field setPasswordMode: NO];
+    [(KWQNSTextField *)getView() setPasswordMode:mode == Password];
 }
 
 void QLineEdit::setCursorPosition(int)
@@ -52,60 +45,36 @@ void QLineEdit::setCursorPosition(int)
     // Don't do anything here.
 }
 
-
 int QLineEdit::cursorPosition() const
 {
     // Not needed.  We ignore setCursorPosition().
     return 0;
 }
 
-
 void QLineEdit::setText(const QString &s)
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    [field setStringValue: QSTRING_TO_NSSTRING(s)];
+    [(KWQNSTextField *)getView() setStringValue:s.getNSString()];
 }
-
 
 QString QLineEdit::text()
 {
-    KWQNSTextField *textView = (KWQNSTextField *)getView();
-    
-    return NSSTRING_TO_QSTRING ([textView stringValue]);
+    return QString::fromNSString([(KWQNSTextField *)getView() stringValue]);
 }
-
 
 void QLineEdit::setMaxLength(int len)
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    [field setMaximumLength: len];
+    [(KWQNSTextField *)getView() setMaximumLength:len];
 }
-
 
 bool QLineEdit::isReadOnly() const
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    return [field isEditable];
+    return ![(KWQNSTextField *)getView() isEditable];
 }
-
 
 void QLineEdit::setReadOnly(bool flag)
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    return [field setEditable: flag?NO:YES];
+    return [(KWQNSTextField *)getView() setEditable:!flag];
 }
-
-
-bool QLineEdit::event(QEvent *)
-{
-    _logNotYetImplemented();
-    return FALSE;
-}
-
 
 bool QLineEdit::frame() const
 {
@@ -113,34 +82,22 @@ bool QLineEdit::frame() const
     return FALSE;
 }
 
-
 int QLineEdit::maxLength() const
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    return [field maximumLength];
+    return [(KWQNSTextField *)getView() maximumLength];
 }
-
 
 void QLineEdit::selectAll()
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    return [field selectText: field];
+    return [(KWQNSTextField *)getView() selectText:nil];
 }
-
 
 bool QLineEdit::edited() const
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    return [field edited];
+    return [(KWQNSTextField *)getView() edited];
 }
-
 
 void QLineEdit::setEdited(bool flag)
 {
-    KWQNSTextField *field = (KWQNSTextField *)getView();
-    
-    return [field setEdited:flag];
+    return [(KWQNSTextField *)getView() setEdited:flag];
 }

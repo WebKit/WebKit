@@ -14,6 +14,3 @@ JavaScriptCore-stamp: kjs/*.cpp kjs/*.h
 clean-am:
 	pbxbuild clean
 CLEANFILES = JavaScriptCore-stamp
-
-FRAMEWORK_NAME = JavaScriptCore
-include $(top_srcdir)/embed.am

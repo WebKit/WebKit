@@ -136,7 +136,7 @@
 				FRAMEWORK_VERSION = A;
 				GCC_TREAT_WARNINGS_AS_ERRORS = YES;
 				HEADER_SEARCH_PATHS = ".. ../JavaScriptCore ../WebCore/khtml ../WebCore/kwq ../WebCore/kwq/kdecore ../WebCore/kwq/khtml ../WebCore/kwq/kparts ../WebCore/kwq/qt";
-				INSTALL_PATH = "";
+				INSTALL_PATH = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 				LIBRARY_SEARCH_PATHS = "";
 				OPTIMIZATION_CFLAGS = "-Os";
 				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DAPPLE_CHANGES -DHAVE_CONFIG_H";
@@ -155,7 +155,7 @@
 			);
 			isa = PBXFrameworkTarget;
 			name = WebKit;
-			productInstallPath = "";
+			productInstallPath = "$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks";
 			productName = WebKit;
 			productReference = 034768E0FF38A50411DB9C8B;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -169,7 +169,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>com.apple.webkit</string>
+	<string>com.apple.WebKit</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -432,7 +432,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "make embed";
+			shellScript = "if [ -f ../Tools/Scripts/embed-into-alex ]; then sh ../Tools/Scripts/embed-into-alex; fi";
 		};
 		2568C72C0174912D0ECA149E = {
 			isa = PBXFileReference;

@@ -1,0 +1,1 @@
+#include <browserextension.h>
