@@ -1,3 +1,19 @@
+2003-05-08  David Hyatt  <hyatt@apple.com>
+
+	Fix for a problem where positioned/floating children with
+	percentage width tables inside them  don't expand to fill 
+	the width of their containing block.  
+
+	The way to solve this is to detect this
+	case and treat the block as though it has an infinite maxwidth.
+
+	Note that this is a quirk only, since doing this for real would
+	be crazy.  We're basically just matching broken WinIE behavior.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+
 === Safari-78 ===
 
 2003-05-08  Darin Adler  <darin@apple.com>

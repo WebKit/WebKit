@@ -2190,6 +2190,9 @@ void RenderBlock::calcInlineMinMaxWidth()
     // 			<< " m_maxWidth=" << m_maxWidth << endl;
 }
 
+// Use a very large value (in effect infinite).
+#define BLOCK_MAX_WIDTH 15000
+
 void RenderBlock::calcBlockMinMaxWidth()
 {
     bool nowrap = style()->whiteSpace() == NOWRAP;
@@ -2250,7 +2253,31 @@ void RenderBlock::calcBlockMinMaxWidth()
             m_maxWidth = w;
 
         w = child->maxWidth() + margin;
+
         if(m_maxWidth < w) m_maxWidth = w;
+
+        // A very specific WinIE quirk.
+        // Example:
+        /*
+           <div style="position:absolute; width:100px; top:50px;">
+              <div style="position:absolute;left:0px;top:50px;height:50px;background-color:green">
+                <table style="width:100%"><tr><td></table>
+              </div>
+           </div>
+        */
+        // In the above example, the inner absolute positioned block should have a computed width
+        // of 100px because of the table.
+        // We can achieve this effect by making the maxwidth of blocks that contain tables
+        // with percentage widths be infinite (as long as they are not inside a table cell).
+        if (style()->htmlHacks() && child->style()->width().type == Percent &&
+            !isTableCell() && child->isTable() && m_maxWidth < BLOCK_MAX_WIDTH) {
+            RenderBlock* cb = containingBlock();
+            while (!cb->isCanvas() && !cb->isTableCell())
+                cb = cb->containingBlock();
+            if (!cb->isTableCell())
+                m_maxWidth = BLOCK_MAX_WIDTH;
+        }
+        
         child = child->nextSibling();
     }
 }
