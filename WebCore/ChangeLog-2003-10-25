@@ -1,3 +1,27 @@
+2003-08-27  Richard Williamson   <rjw@apple.com>
+
+	Fixed 3359408.  DON'T treat unicode whitespace as whitespace when collapsing spaces.
+
+        Reviewed by David Hyatt.
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::containsOnlyWhitespace):
+        * khtml/xml/dom_stringimpl.cpp:
+
+2003-08-27  Richard Williamson   <rjw@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+        * khtml/rendering/bidi.cpp:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::trimmedMinMaxWidth):
+        (RenderText::calcMinMaxWidth):
+        (RenderText::containsOnlyWhitespace):
+        * khtml/xml/dom_stringimpl.cpp:
+
 2003-08-27  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3396962, hang on quote.com.  Fieldsets with display:inline should be treated

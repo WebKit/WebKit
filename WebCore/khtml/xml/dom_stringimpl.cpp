@@ -139,10 +139,9 @@ bool DOMStringImpl::containsOnlyWhitespace() const
         if (c.unicode() <= 0x7F) {
             if (!isspace(c.unicode()))
                 return false;
-        } else {
-            if (c.direction() != QChar::DirWS)
-                return false;
-        }
+        } 
+        else
+            return false;
     }
     return true;
 }
