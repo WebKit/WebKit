@@ -1,5 +1,12 @@
 2004-09-26  Darin Adler  <darin@apple.com>
 
+        - refine charAt/charCodeAt fix slightly
+
+        * kjs/string_object.cpp: (StringProtoFuncImp::call): Treat undefined the same was as an
+        omitted parameter, as we do everywhere else, and as other browsers do here.
+
+2004-09-26  Darin Adler  <darin@apple.com>
+
         Reviewed by Kevin.
 
         - fixed <rdar://problem/3816097> REGRESSION: mailblocks, and presumably many other pages, failing because variable not found

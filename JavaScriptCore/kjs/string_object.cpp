@@ -362,9 +362,9 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     // handled above
     break;
   case CharAt:
-    // WinIE treats omitted parameter as 0 rather than NaN.
+    // Other browsers treat an omitted parameter as 0 rather than NaN.
     // That doesn't match the ECMA standard, but is needed for site compatibility.
-    dpos = args.size() == 0 ? 0 : a0.toInteger(exec);
+    dpos = a0.isA(UndefinedType) ? 0 : a0.toInteger(exec);
     if (dpos >= 0 && dpos < len) // false for NaN
       u = s.substr(static_cast<int>(dpos), 1);
     else
@@ -372,9 +372,9 @@ Value StringProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &arg
     result = String(u);
     break;
   case CharCodeAt:
-    // WinIE treats omitted parameter as 0 rather than NaN.
+    // Other browsers treat an omitted parameter as 0 rather than NaN.
     // That doesn't match the ECMA standard, but is needed for site compatibility.
-    dpos = args.size() == 0 ? 0 : a0.toInteger(exec);
+    dpos = a0.isA(UndefinedType) ? 0 : a0.toInteger(exec);
     if (dpos >= 0 && dpos < len) { // false for NaN
       UChar c = s[static_cast<int>(dpos)];
       d = (c.high() << 8) + c.low();
