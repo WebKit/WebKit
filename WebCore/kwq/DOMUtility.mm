@@ -22,63 +22,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _BINDINGS_OBJC_UTILITY_H_
-#define _BINDINGS_OBJC_UTILITY_H_
 
-#include <CoreFoundation/CoreFoundation.h>
+#import "kjs_binding.h"
+#import "kjs_dom.h"
+#import "DOM.h"
+#import "DOMInternal.h"
 
-#include <value.h>
+#import <JavaScriptCore/WebScriptObjectPrivate.h>
 
-#include <objc_header.h>
+// This file makes use of the ObjC DOM API, and the C++ DOM API, so we need to be careful about what
+// headers are included to avoid naming conflicts.
 
-#ifdef __OBJC__
-@class NSString;
-#else
-class NSString;
-#endif
-
-namespace KJS
+void *KJS::ScriptInterpreter::createObjcInstanceForValue (ExecState *exec, const Object &value, const KJS::Bindings::RootObject *origin, const KJS::Bindings::RootObject *current)
 {
+    if (value.inherits(&KJS::DOMNode::info)) {
+	KJS::DOMNode *imp = static_cast<KJS::DOMNode *>(value.imp());
+	DOM::Node node = imp->toNode();
 
-namespace Bindings 
-{
+	id newObjcNode = [DOMNode _nodeWithImpl:node.handle()];
+	KJS::ObjectImp *scriptImp = static_cast<KJS::ObjectImp *>(KJS::getDOMNode (exec, node).imp());
 
-typedef union {
-    ObjectStructPtr objectValue;
-    bool booleanValue;
-    char charValue;
-    short shortValue;
-    int intValue;
-    long longValue;
-    float floatValue;
-    double doubleValue;
-} ObjcValue;
+	[newObjcNode _initializeWithObjectImp:scriptImp originExecutionContext:origin executionContext:current];
+	
+	return newObjcNode;
+    }
+    return 0;
+}
 
-typedef enum {
-    ObjcVoidType,
-    ObjcObjectType,
-    ObjcCharType,
-    ObjcShortType,
-    ObjcIntType,
-    ObjcLongType,
-    ObjcFloatType,
-    ObjcDoubleType,
-    ObjcInvalidType
-} ObjcValueType;
-
-class RootObject;
-
-ObjcValue convertValueToObjcValue (KJS::ExecState *exec, const KJS::Value &value, ObjcValueType type);
-Value convertNSStringToString(NSString *nsstring);
-Value convertObjcValueToValue (KJS::ExecState *exec, void *buffer, ObjcValueType type);
-ObjcValueType objcValueTypeForType (const char *type);
-
-void JSMethodNameToObjCMethodName(const char *name, char *name, unsigned int length);
-
-void *createObjcInstanceForValue (const Object &value, const RootObject *origin, const RootObject *current);
-
-} // namespace Bindings
-
-} // namespace KJS
-
-#endif

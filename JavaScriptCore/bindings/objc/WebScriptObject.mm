@@ -103,6 +103,12 @@ static void _didExecute(WebScriptObject *obj)
     return _private->executionContext;
 }
 
+- (void)_setExecutionContext:(const KJS::Bindings::RootObject *)context
+{
+    _private->executionContext = context;
+}
+
+
 - (const KJS::Bindings::RootObject *)_originExecutionContext
 {
     return _private->originExecutionContext;
@@ -405,16 +411,18 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
     exec->setException (err);
 }
 
-+ (id)_convertValueToObjcValue:(KJS::Value)value originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)root
++ (id)_convertValueToObjcValue:(KJS::Value)value originExecutionContext:(const Bindings::RootObject *)originExecutionContext executionContext:(const Bindings::RootObject *)executionContext
 {
     id result = 0;
 
     // First see if we have a ObjC instance.
     if (value.type() == KJS::ObjectType){
         ObjectImp *objectImp = static_cast<ObjectImp*>(value.imp());
+	Interpreter *intepreter = executionContext->interpreter();
+	ExecState *exec = intepreter->globalExec();
 
 	if (objectImp->classInfo() != &KJS::RuntimeObjectImp::info) {
-	    Value runtimeObject = objectImp->get(root->interpreter()->globalExec(), "__apple_runtime_object");
+	    Value runtimeObject = objectImp->get(exec, "__apple_runtime_object");
 	    if (!runtimeObject.isNull() && runtimeObject.type() == KJS::ObjectType)
 		objectImp = static_cast<RuntimeObjectImp*>(runtimeObject.imp());
 	}
@@ -427,7 +435,7 @@ static KJS::List listFromNSArray(ExecState *exec, NSArray *array)
         }
         // Convert to a WebScriptObject
         else {
-            result = [[[WebScriptObject alloc] _initWithObjectImp:objectImp originExecutionContext:originExecutionContext executionContext:root] autorelease];
+	    result = (id)intepreter->createLanguageInstanceForValue (exec, Instance::ObjectiveCLanguage, value.toObject(exec), originExecutionContext, executionContext);
         }
     }
     

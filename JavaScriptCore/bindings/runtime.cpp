@@ -29,6 +29,8 @@
 #include <jni_instance.h>
 #include <objc_instance.h>
 #include <c_instance.h>
+#include <NP_jsobject.h>
+#include <jni_jsobject.h>
 
 using namespace KJS;
 using namespace KJS::Bindings;
@@ -97,28 +99,72 @@ void Instance::setValueOfField (KJS::ExecState *exec, const Field *aField, const
     aField->setValueToInstance (exec, this, aValue);
 }
 
-Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *instance)
+Instance *Instance::createBindingForLanguageInstance (BindingLanguage language, void *nativeInstance, const RootObject *executionContext)
 {
-    if (language == Instance::JavaLanguage)
-        return new Bindings::JavaInstance ((jobject)instance, 0);
-    else if (language == Instance::ObjectiveCLanguage)
-        return new Bindings::ObjcInstance ((struct objc_object *)instance);
+    Instance *newInstance = 0;
+    
+    switch (language) {
+	case Instance::JavaLanguage: {
+	    newInstance = new Bindings::JavaInstance ((jobject)nativeInstance, executionContext);
+	    break;
+	}
+	case Instance::ObjectiveCLanguage: {
+	    newInstance = new Bindings::ObjcInstance ((struct objc_object *)nativeInstance);
+	    break;
+	}
+	case Instance::CLanguage: {
+	    newInstance = new Bindings::CInstance ((NPObject *)nativeInstance);
+	    break;
+	}
+	default:
+	    break;
+    }
 
-    else if (language == Instance::CLanguage)
-        return new Bindings::CInstance ((NPObject *)instance);
-
-    return 0;
+    if (newInstance)
+	newInstance->setExecutionContext (executionContext);
+	
+    return newInstance;
 }
 
-Object Instance::createRuntimeObject (BindingLanguage language, void *myInterface)
+Object Instance::createRuntimeObject (BindingLanguage language, void *nativeInstance, const RootObject *executionContext)
 {
-    Instance *interfaceObject = Instance::createBindingForLanguageInstance (language, (void *)myInterface);
+    Instance *interfaceObject = Instance::createBindingForLanguageInstance (language, (void *)nativeInstance, executionContext);
     
     Interpreter::lock();
     Object theObject(new RuntimeObjectImp(interfaceObject,true));
     Interpreter::unlock();
     
     return theObject;
+}
+
+void *Instance::createLanguageInstanceForValue (ExecState *exec, BindingLanguage language, const Object &value, const RootObject *origin, const RootObject *current)
+{
+    void *result = 0;
+    
+    if (value.type() != ObjectType)
+	return 0;
+
+    ObjectImp *imp = static_cast<ObjectImp*>(value.imp());
+    
+    switch (language) {
+	case Instance::ObjectiveCLanguage: {
+	    result = createObjcInstanceForValue (value, origin, current);
+	    break;
+	}
+	case Instance::CLanguage: {
+	    result = _NPN_CreateScriptObject (0, imp, origin, current);
+	    break;
+	}
+	case Instance::JavaLanguage: {
+	    // FIXME:  factor creation of jni_jsobjects, also remove unnecessary thread
+	    // invocation code.
+	    break;
+	}
+	default:
+	    break;
+    }
+    
+    return result;
 }
 
 Instance::Instance (const Instance &other) 

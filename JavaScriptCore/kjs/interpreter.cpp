@@ -335,6 +335,13 @@ void Interpreter::setShouldPrintExceptions(bool print)
 {
   printExceptions = print;
 }
+
+
+void *Interpreter::createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+{
+    return Bindings::Instance::createLanguageInstanceForValue (exec, language, value, origin, current);
+}
+
 #endif
 
 void Interpreter::saveBuiltins (SavedBuiltins &builtins) const

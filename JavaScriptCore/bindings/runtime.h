@@ -136,9 +136,9 @@ public:
     static void setDidExecuteFunction (KJSDidExecuteFunctionPtr func);
     static KJSDidExecuteFunctionPtr didExecuteFunction ();
     
-    static Instance *createBindingForLanguageInstance (BindingLanguage language, void *instance);
-
-    static Object createRuntimeObject (BindingLanguage language, void *myInterface);
+    static Instance *createBindingForLanguageInstance (BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
+    static void *createLanguageInstanceForValue (ExecState *exec, BindingLanguage language, const Object &value, const RootObject *origin, const RootObject *current);
+    static Object createRuntimeObject (BindingLanguage language, void *nativeInstance, const RootObject *r = 0);
 
     Instance () : _executionContext(0) {};
     
@@ -171,7 +171,7 @@ public:
     const RootObject *executionContext() const { return _executionContext; }
     
     virtual ~Instance() {};
-    
+
 protected:
     const RootObject *_executionContext;
 };

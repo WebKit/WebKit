@@ -297,6 +297,20 @@ Interpreter *ScriptInterpreter::interpreterForGlobalObject (const ValueImp *imp)
     const KJS::Window *win = static_cast<const KJS::Window *>(imp);
     return win->interpreter();
 }
+
+void *ScriptInterpreter::createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current)
+{
+    void *result = 0;
+    
+    if (language == Bindings::Instance::ObjectiveCLanguage)
+	result = createObjcInstanceForValue (exec, value, origin, current);
+    
+    if (!result)
+	result = Interpreter::createLanguageInstanceForValue (exec, language, value, origin, current);
+	
+    return result;
+}
+
 #endif
 
 //////

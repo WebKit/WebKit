@@ -120,7 +120,7 @@ void convertValueToNPVariant (KJS::ExecState *exec, const KJS::Value &value, NPV
                 executionContext = newExecutionContext;
             }
     
-	    NPObject *obj = _NPN_CreateScriptObject (0, objectImp, originExecutionContext, executionContext);
+	    NPObject *obj = (NPObject *)exec->interpreter()->createLanguageInstanceForValue (exec, Instance::CLanguage, value.toObject(exec), originExecutionContext, executionContext);
 	    NPN_InitializeVariantWithObject (result, obj);
 	    _NPN_ReleaseObject (obj);
 	}

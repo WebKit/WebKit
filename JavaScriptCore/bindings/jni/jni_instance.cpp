@@ -246,7 +246,7 @@ Value JavaInstance::invokeMethod (KJS::ExecState *exec, const MethodList &method
                     resultValue = JavaArray::convertJObjectToArray (exec, result.l, arrayType, executionContext());
                 }
                 else {
-                    resultValue = Object(new RuntimeObjectImp(new JavaInstance (result.l, executionContext())));
+                    resultValue = Instance::createRuntimeObject(Instance::JavaLanguage, result.l, executionContext());
                 }
             }
             else {

@@ -234,7 +234,7 @@ Value KJS::Bindings::convertObjcValueToValue (KJS::ExecState *exec, void *buffer
                     return Undefined();
                 }
                 else {
-                    aValue = Object(new RuntimeObjectImp(new ObjcInstance (*obj)));
+		    aValue = Instance::createRuntimeObject(Instance::ObjectiveCLanguage, (void *)*obj);
                 }
             }
             break;
@@ -332,3 +332,12 @@ ObjcValueType KJS::Bindings::objcValueTypeForType (const char *type)
 }
 
 
+void *KJS::Bindings::createObjcInstanceForValue (const Object &value, const RootObject *origin, const RootObject *current)
+{
+    if (value.type() != ObjectType)
+	return 0;
+
+    ObjectImp *imp = static_cast<ObjectImp*>(value.imp());
+    
+    return [[[WebScriptObject alloc] _initWithObjectImp:imp originExecutionContext:origin executionContext:current] autorelease];
+}

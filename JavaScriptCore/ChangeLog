@@ -1,3 +1,39 @@
+2005-02-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3985118> DOM objects not being marshaled on JS->native calls
+
+	Re-factored how 'native' wrappers for JS objects are created.  The interpreter now
+	creates these wrappers.  The WebCore subclass of the interpreter now overrides
+	createLanguageInstanceForValue() and creates a DOM ObjC wrapper for DOM objects.
+
+        Reviewed by Ken.
+
+        * bindings/c/c_utility.cpp:
+        (convertValueToNPVariant):
+        * bindings/jni/jni_instance.cpp:
+        (JavaInstance::invokeMethod):
+        * bindings/jni/jni_objc.mm:
+        (KJS::Bindings::dispatchJNICall):
+        * bindings/jni/jni_runtime.cpp:
+        (JavaField::valueFromInstance):
+        (JavaArray::valueAt):
+        * bindings/objc/WebScriptObject.mm:
+        (-[WebScriptObject _setExecutionContext:KJS::Bindings::]):
+        (+[WebScriptObject _convertValueToObjcValue:KJS::originExecutionContext:Bindings::executionContext:Bindings::]):
+        * bindings/objc/WebScriptObjectPrivate.h:
+        * bindings/objc/objc_utility.h:
+        * bindings/objc/objc_utility.mm:
+        (KJS::Bindings::convertObjcValueToValue):
+        (KJS::Bindings::createObjcInstanceForValue):
+        * bindings/runtime.cpp:
+        (Instance::createBindingForLanguageInstance):
+        (Instance::createRuntimeObject):
+        (Instance::createLanguageInstanceForValue):
+        * bindings/runtime.h:
+        * kjs/interpreter.cpp:
+        (Interpreter::createLanguageInstanceForValue):
+        * kjs/interpreter.h:
+
 === Safari-186 ===
 
 2005-02-10  Darin Adler  <darin@apple.com>

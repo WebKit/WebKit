@@ -831,6 +831,7 @@
 				939FF8EE0702B1B100979E5E,
 				BEA5DBDB075CEDA00098A432,
 				9378D9FB07640A46004B97BF,
+				51111AC107BD812C00B7162C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -945,6 +946,20 @@
 //512
 //513
 //514
+		51111AC007BD812C00B7162C = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.cpp.objcpp;
+			path = DOMUtility.mm;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		51111AC107BD812C00B7162C = {
+			fileRef = 51111AC007BD812C00B7162C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		5150C2A10702629000AF642C = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -7068,6 +7083,7 @@
 				9321274F0606724900B62302,
 				932127510606724900B62302,
 				932127530606724900B62302,
+				51111AC007BD812C00B7162C,
 				932127540606724900B62302,
 				931D7224065FC25900C966E1,
 				931D722A065FC40800C966E1,

@@ -30,6 +30,12 @@
 #include "types.h"
 #include "protect.h"
 
+#if APPLE_CHANGES
+
+#include "runtime.h"
+
+#endif
+
 namespace KJS {
 
   class ContextImp;
@@ -388,6 +394,8 @@ namespace KJS {
      * not allowed unless isSafeScript returns true.
      */
     virtual bool isSafeScript (const Interpreter *target) { return true; }
+    
+    virtual void *createLanguageInstanceForValue (ExecState *exec, Bindings::Instance::BindingLanguage language, const Object &value, const Bindings::RootObject *origin, const Bindings::RootObject *current);
 #endif
     
   private:

@@ -3817,11 +3817,8 @@ KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
     if (applet) {
         // Wrap the Java instance in a language neutral binding and hand
         // off ownership to the APPLET element.
-        KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::JavaLanguage, applet);
-
-        KJS::Bindings::RootObject *root = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
-        instance->setExecutionContext (root);
-        
+        KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
+        KJS::Bindings::Instance *instance = KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::JavaLanguage, applet, executionContext);        
         return instance;
     }
     
@@ -3833,34 +3830,33 @@ KJS::Bindings::Instance *KWQKHTMLPart::getAppletInstanceForView (NSView *aView)
 - (void *)pluginScriptableObject;
 @end
 
-KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
+static KJS::Bindings::Instance *getInstanceForView(NSView *aView)
 {
     if ([aView respondsToSelector:@selector(objectForWebScript)]){
         id object = [aView objectForWebScript];
-        if (object)
-            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object);
+        if (object) {
+	    KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
+            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object, executionContext);
+	}
     }
     else if ([aView respondsToSelector:@selector(pluginScriptableObject)]){
         void *object = [aView pluginScriptableObject];
-        if (object)
-            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object);
+        if (object) {
+	    KJS::Bindings::RootObject *executionContext = KJS::Bindings::RootObject::findRootObjectForNativeHandleFunction ()(aView);
+            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object, executionContext);
+	}
     }
     return 0;
 }
 
+KJS::Bindings::Instance *KWQKHTMLPart::getEmbedInstanceForView (NSView *aView)
+{
+    return getInstanceForView(aView);
+}
+
 KJS::Bindings::Instance *KWQKHTMLPart::getObjectInstanceForView (NSView *aView)
 {
-    if ([aView respondsToSelector:@selector(objectForWebScript)]){
-        id object = [aView objectForWebScript];
-        if (object)
-            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::ObjectiveCLanguage, object);
-    }
-    else if ([aView respondsToSelector:@selector(pluginScriptableObject)]){
-        void *object = [aView pluginScriptableObject];
-        if (object)
-            return KJS::Bindings::Instance::createBindingForLanguageInstance (KJS::Bindings::Instance::CLanguage, object);
-    }
-    return 0;
+    return getInstanceForView(aView);
 }
 
 void KWQKHTMLPart::addPluginRootObject(const KJS::Bindings::RootObject *root)

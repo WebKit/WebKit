@@ -1,3 +1,23 @@
+2005-02-11  Richard Williamson   <rjw@apple.com>
+
+	Fixed <rdar://problem/3985118> DOM objects not being marshaled on JS->native calls
+
+	Re-factored how 'native' wrappers for JS objects are created.  The interpreter now
+	creates these wrappers.  The WebCore subclass of the interpreter now overrides
+	createLanguageInstanceForValue() and creates a DOM ObjC wrapper for DOM objects.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/ecma/kjs_binding.cpp:
+        (ScriptInterpreter::createLanguageInstanceForValue):
+        * khtml/ecma/kjs_binding.h:
+        * kwq/DOMUtility.mm: Added.
+        (KJS::ScriptInterpreter::createObjcInstanceForValue):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::getAppletInstanceForView):
+        (getInstanceForView):
+        (KWQKHTMLPart::getEmbedInstanceForView):
+        (KWQKHTMLPart::getObjectInstanceForView):
+
 2005-02-11  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3937352> Quote level not maintained when copied and pasted within a Mail message
