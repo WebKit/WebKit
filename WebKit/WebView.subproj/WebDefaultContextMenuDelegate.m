@@ -2,10 +2,13 @@
       WebDefaultContextMenuDelegate.m
       Copyright 2002, Apple, Inc. All rights reserved.
 */
+
+#import <WebKit/WebDefaultContextMenuDelegate.h>
+
+#import <WebKit/WebAssertions.h>
 #import <WebKit/DOM.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
-#import <WebKit/WebDefaultContextMenuDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebFramePrivate.h>
 #import <WebKit/WebLocalizableStrings.h>
@@ -209,12 +212,12 @@
     NSDictionary *element = [sender representedObject];
     NSURL *linkURL = [element objectForKey:WebElementLinkURLKey];
     NSURL *imageURL = [element objectForKey:WebElementImageURLKey];
-    WebView *webView = [[element objectForKey:WebElementFrameKey] webView];
-    
+    NSFileWrapper *wrapper = [[[element objectForKey:WebElementFrameKey] dataSource] _fileWrapperForURL:imageURL];
+    ASSERT(wrapper);
     [[NSPasteboard generalPasteboard] _web_writeImage:[element objectForKey:WebElementImageKey] 
                                                   URL:linkURL ? linkURL : imageURL
                                                 title:[element objectForKey:WebElementImageAltStringKey] 
-                                          fileWrapper:[webView _fileWrapperForURL:imageURL]
+                                          fileWrapper:wrapper
                                            HTMLString:[[element objectForKey:WebCoreElementDOMNodeKey] HTMLString]];
 }
 

@@ -7,6 +7,7 @@
 #import <WebKit/WebNSURLExtras.h>
 
 #import <Foundation/NSDictionary_NSURLExtras.h>
+#import <Foundation/NSURL_NSURLExtras.h>
 
 NSString *WebHTMLPboardType =               @"Apple Web Kit pasteboard type";
 NSString *WebMainResourceKey =              @"WebMainResource";
@@ -150,6 +151,13 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
              textEncodingName:[response textEncodingName]];
 }
 
+- (NSFileWrapper *)_fileWrapperRepresentation
+{
+    NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:_private->data] autorelease];
+    [wrapper setPreferredFilename:[_private->URL _web_suggestedFilenameWithMIMEType:_private->MIMEType]];
+    return wrapper;
+}
+
 - (id)_propertyListRepresentation
 {
     NSMutableDictionary *propertyList = [NSMutableDictionary dictionary];
@@ -168,11 +176,6 @@ NSString *WebSubresourcesKey =              @"WebSubresources";
                                       MIMEType:_private->MIMEType 
                          expectedContentLength:[_private->data length]
                               textEncodingName:_private->textEncodingName] autorelease];
-}
-
-- (NSCachedURLResponse *)_cachedResponseRepresentation
-{
-    return [[[NSCachedURLResponse alloc] initWithResponse:[self _response] data:_private->data] autorelease];
 }
 
 @end

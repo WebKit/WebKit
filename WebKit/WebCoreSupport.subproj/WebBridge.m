@@ -1131,7 +1131,7 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
 
 - (NSFileWrapper *)fileWrapperForURL:(NSURL *)URL
 {
-    return [[_frame webView] _fileWrapperForURL:URL];
+    return [[_frame dataSource] _fileWrapperForURL:URL];
 }
 
 - (void)print

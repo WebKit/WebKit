@@ -122,6 +122,8 @@
 - (void)addSubresources:(NSArray *)subresources;
 - (id)propertyList;
 
+- (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
+
 - (id)_propertyListWithData:(NSData *)data subresourceURLStrings:(NSArray *)subresourceURLStrings;
 
 - (NSError *)_mainDocumentError;

@@ -705,8 +705,10 @@ static WebHTMLView *lastHitView = nil;
         _private->draggingImageURL = [imageURL retain];
         WebImageRenderer *image = [element objectForKey:WebElementImageKey];
         ASSERT([image isKindOfClass:[WebImageRenderer class]]);
+        NSFileWrapper *fileWrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
+        ASSERT(fileWrapper);
         [self _web_dragImage:image
-                 fileWrapper:[[self _webView] _fileWrapperForURL:imageURL]
+                 fileWrapper:fileWrapper
                         rect:[[element objectForKey:WebElementImageRectKey] rectValue]
                          URL:linkURL ? linkURL : imageURL
                        title:[element objectForKey:WebElementImageAltStringKey]
@@ -1593,35 +1595,20 @@ static WebHTMLView *lastHitView = nil;
 {
     ASSERT(_private->draggingImageURL);
     
-    WebView *webView = [self _webView];
-    NSFileWrapper *wrapper = [webView _fileWrapperForURL:_private->draggingImageURL];
-    NSString *filename;
+    NSFileWrapper *wrapper = [[self _dataSource] _fileWrapperForURL:_private->draggingImageURL];
+    ASSERT(wrapper);    
     
-    if (wrapper) {
-        // FIXME: Report an error if we fail to create a file.
-        NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
-        path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
-        if (![wrapper writeToFile:path atomically:NO updateFilenames:YES]) {
-            ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
-        }
-        filename = [path lastPathComponent];
-    } else {
-        // FIXME: The file is supposed to be created at this point so the Finder places the file
-        // where the drag ended. Since we can't create the file until the download starts,
-        // this fails.
-        [webView _downloadURL:_private->draggingImageURL toDirectory:[dropDestination path]];
-        filename = [_private->draggingImageURL _web_suggestedFilenameWithMIMEType:nil];
+    // FIXME: Report an error if we fail to create a file.
+    NSString *path = [[dropDestination path] stringByAppendingPathComponent:[wrapper preferredFilename]];
+    path = [[NSFileManager defaultManager] _web_pathWithUniqueFilenameForPath:path];
+    if (![wrapper writeToFile:path atomically:NO updateFilenames:YES]) {
+        ERROR("Failed to create image file via -[NSFileWrapper writeToFile:atomically:updateFilenames:]");
     }
     
-    return [NSArray arrayWithObject:filename];
+    return [NSArray arrayWithObject:[path lastPathComponent]];
 }
 
-- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
-{
-	return _private->isDragging ? NSDragOperationMove : NSDragOperationCopy;
-}
-
-- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+- (NSDragOperation)_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
 {
     NSPoint point = [self convertPoint:[sender draggingLocation] fromView:nil];
     NSDictionary *element = [self _elementAtPoint:point];
@@ -1634,8 +1621,21 @@ static WebHTMLView *lastHitView = nil;
             return NSDragOperationCopy;
         }
     }
-    // Since we're not handling the drag, forward this message to the WebView since it may want to handle it.
-    return [[self _webView] draggingUpdated:sender];
+    return NSDragOperationNone;
+}
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    // If we're not handling the drag, forward this message to the WebView since it may want to handle it.
+    NSDragOperation dragOperation = [self _dragOperationForDraggingInfo:sender];
+    return dragOperation != NSDragOperationNone ? dragOperation : [[self _webView] draggingEntered:sender];
+}
+
+- (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
+{
+    // If we're not handling the drag, forward this message to the WebView since it may want to handle it.
+    NSDragOperation dragOperation = [self _dragOperationForDraggingInfo:sender];
+    return dragOperation != NSDragOperationNone ? dragOperation : [[self _webView] draggingUpdated:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
@@ -1650,8 +1650,7 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    NSPoint point = [self convertPoint:[sender draggingLocation] fromView:nil];
-    if ([[[self _elementAtPoint:point] objectForKey:WebElementIsEditableKey] boolValue] && [[self _bridge] moveCaretToPoint:point]) {
+    if ([self _dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
         // FIXME: We should delete the original selection if we're doing a move.
         [self _pasteHTMLFromPasteboard:[sender draggingPasteboard]];
     } else {

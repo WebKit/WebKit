@@ -87,6 +87,8 @@ extern NSString *_WebMainFrameURLKey;
     NSMutableDictionary *progressItems;
     
     void *observationInfo;
+    
+    NSArray *draggedTypes;
 }
 @end
 
@@ -257,7 +259,6 @@ Could be worth adding to the API.
 + (void)_setAlwaysUseATSU:(BOOL)f;
 
 - (NSCachedURLResponse *)_cachedResponseForURL:(NSURL *)URL;
-- (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL;
 
 @end
 

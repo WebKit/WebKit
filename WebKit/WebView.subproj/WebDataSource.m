@@ -141,6 +141,28 @@
     return [self _propertyListWithData:data subresourceURLStrings:[_private->subresources allKeys]];
 }
 
+- (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
+{
+    if ([URL isFileURL]) {
+        NSString *path = [[URL path] stringByResolvingSymlinksInPath];
+        return [[[NSFileWrapper alloc] initWithPath:path] autorelease];
+    }
+    
+    WebResource *resource = [self subresourceForURL:URL];
+    if (resource) {
+        return [resource _fileWrapperRepresentation];
+    }
+        
+    NSCachedURLResponse *cachedResponse = [_private->webView _cachedResponseForURL:URL];
+    if (cachedResponse) {
+        NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
+        [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
+        return wrapper;
+    }
+    
+    return nil;
+}
+
 - (WebView *)_webView
 {
     return _private->webView;

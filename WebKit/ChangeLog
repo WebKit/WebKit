@@ -1,3 +1,39 @@
+2004-03-04  Chris Blumenberg  <cblu@apple.com>
+
+	- Made image dragging and copying always work without needing to re-download by using the data source's WebResource of the image instead of relying on the Foundation cache.
+	- Fixed a "drag to self" problem I introduced in my last check-in. You could drag a URL from a WebHTMLView and drop it on its own WebView which we shouldn't allow.
+
+        Reviewed by rjw.
+
+        * ChangeLog:
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge fileWrapperForURL:]): call _fileWrapperForURL on WebDataSource
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _fileWrapperForURL:]): moved from WebView, creates a wrapper from a WebResource
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDefaultContextMenuDelegate.m:
+        (-[WebDefaultUIDelegate copyImageToClipboard:]): call [WebDataSource _fileWrapperForURL:]
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _handleMouseDragged:]): call [WebDataSource _fileWrapperForURL:]
+        (-[WebHTMLView namesOfPromisedFilesDroppedAtDestination:]): call [WebDataSource _fileWrapperForURL:]
+        (-[WebHTMLView _dragOperationForDraggingInfo:]): new, factored out from draggingUpdated:
+        (-[WebHTMLView draggingEntered:]): call _dragOperationForDraggingInfo:, if NSDragOperationNone, forward to WebView to it can handle the drag
+        (-[WebHTMLView draggingUpdated:]): ditto
+        (-[WebHTMLView concludeDragOperation:]): ditto
+        * WebView.subproj/WebResource.m:
+        (-[WebResource _fileWrapperRepresentation]): new
+        * WebView.subproj/WebResourcePrivate.h:
+        * WebView.subproj/WebView.m:
+        (-[WebViewPrivate dealloc]): release draggedTypes, a new ivar that keeps track of drag types that we're currently registered for
+        (-[WebView _setDraggedTypes:]): new
+        (-[WebView unregisterDraggedTypes]): new, calls _setDraggedTypes then super
+        (-[WebView registerForDraggedTypes:]): ditto 
+        (-[WebView _dragOperationForDraggingInfo:]): new, compares the types on the pasteboard against the types we are currently registered for. Normally the AppKit handles this for us, but since these messages can be forwarded from WebHTMLView, we need to do this comparison ourselves. 
+        (-[WebView draggingEntered:]): calls _dragOperationForDraggingInfo:
+        (-[WebView draggingUpdated:]): ditto
+        (-[WebView concludeDragOperation:]): ditto
+        * WebView.subproj/WebViewPrivate.h: define new draggedTypes ivar
+
 2004-03-03  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed a typo.

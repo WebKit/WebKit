@@ -127,6 +127,8 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     
     [progressItems release];
     
+    [draggedTypes release];
+    
     [super dealloc];
 }
 
@@ -689,6 +691,25 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     return [self _frameForView: aView fromFrame: frame];
 }
 
+- (void)_setDraggedTypes:(NSArray *)draggedTypes
+{
+    [draggedTypes retain];
+    [_private->draggedTypes release];
+    _private->draggedTypes = draggedTypes;
+}
+
+- (void)unregisterDraggedTypes
+{
+    [self _setDraggedTypes:nil];
+    [super unregisterDraggedTypes];
+}
+
+- (void)registerForDraggedTypes:(NSArray *)draggedTypes
+{
+    [self _setDraggedTypes:draggedTypes];
+    [super registerForDraggedTypes:draggedTypes];
+}
+
 - (void)_registerDraggedTypes
 {
     [self registerForDraggedTypes:[NSPasteboard _web_dragTypesForURL]];
@@ -1043,22 +1064,6 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     NSCachedURLResponse *cachedResponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:request];
     [request release];
     return cachedResponse;
-}
-
-- (NSFileWrapper *)_fileWrapperForURL:(NSURL *)URL
-{
-    if ([URL isFileURL]) {
-        NSString *path = [[URL path] stringByResolvingSymlinksInPath];
-        return [[[NSFileWrapper alloc] initWithPath:path] autorelease];
-    } else {
-        NSCachedURLResponse *cachedResponse = [self _cachedResponseForURL:URL];
-        if (cachedResponse) {
-            NSFileWrapper *wrapper = [[[NSFileWrapper alloc] initRegularFileWithContents:[cachedResponse data]] autorelease];
-            [wrapper setPreferredFilename:[[cachedResponse response] suggestedFilename]];
-            return wrapper;
-        }
-    }
-    return nil;
 }
 
 @end
@@ -1535,10 +1540,19 @@ NS_ENDHANDLER
     return _private->hostWindow;
 }
 
+- (NSDragOperation)_dragOperationForDraggingInfo:(id <NSDraggingInfo>)sender
+{
+    // Even though we may not be registered for any drag types, we may still get drag messages forwarded from WebHTMLView,
+    // so compare the types on the pasteboard against the types we're currently registered for.
+    if ([_private->draggedTypes count] > 0 && [[sender draggingPasteboard] availableTypeFromArray:_private->draggedTypes] != nil) {
+        return  [self _web_dragOperationForDraggingInfo:sender];
+    }
+    return NSDragOperationNone;
+}
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
-    return [self _web_dragOperationForDraggingInfo:sender];
+    return [self _dragOperationForDraggingInfo:sender];
 }
 
 - (NSDragOperation)draggingUpdated:(id <NSDraggingInfo>)sender
@@ -1547,7 +1561,7 @@ NS_ENDHANDLER
     if ([[self hitTest:point] isKindOfClass:[WebBaseNetscapePluginView class]]) {
         return NSDragOperationNone;
     }
-    return [self _web_dragOperationForDraggingInfo:sender];
+    return [self _dragOperationForDraggingInfo:sender];
 }
 
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
@@ -1562,12 +1576,13 @@ NS_ENDHANDLER
 
 - (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
-    NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
-
-    if (URL) {
-        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
-        [[self mainFrame] loadRequest:request];
-        [request release];
+    if ([self _dragOperationForDraggingInfo:sender] != NSDragOperationNone) {
+        NSURL *URL = [[sender draggingPasteboard] _web_bestURL];
+        if (URL) {
+            NSURLRequest *request = [[NSURLRequest alloc] initWithURL:URL];
+            [[self mainFrame] loadRequest:request];
+            [request release];
+        }
     }
 }
 
