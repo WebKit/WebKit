@@ -1,3 +1,13 @@
+2004-04-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3608445, garbage characters rendered after doing delete.  Delta was unsigned when it was supposed to
+	be signed, since deletion involves a negative delta.  Also had an off-by-one error in the line break end check.
+	
+        Reviewed by john
+
+        * khtml/rendering/render_text.cpp:
+        (RenderText::setTextWithOffset):
+
 2004-04-09  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me
