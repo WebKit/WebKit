@@ -26,9 +26,11 @@
 #ifndef KGLOBAL_H_
 #define KGLOBAL_H_
 
+class KCharsets;
+
 class KGlobal {
 public:
-	static KCharsets *charsets();
+    static KCharsets *charsets();
 };
 
 #endif
