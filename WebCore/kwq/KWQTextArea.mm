@@ -37,11 +37,9 @@
               OFF - Text is not wrapped.  It is kept to single line, although if
                     the user enters a return the line IS broken.  This emulates
                     Mac IE 5.1.
-     SOFT|VIRUTAL - Text is wrapped, but not actually broken.  [text] sends text
-                    as typed by user.
-    HARD|PHYSICAL - Text is wrapped, and text is broken into seperate lines.  [text]
-                    returns broken text.
-                    
+     SOFT|VIRUTAL - Text is wrapped, but not actually broken.  
+    HARD|PHYSICAL - Text is wrapped, and text is broken into seperate lines.
+                         
     kde expects a line based widget.  It uses a line API to convert text into multiple lines
     when wrapping is set to HARD.  To support kde with implement [textLine] and [numLines].
 */
