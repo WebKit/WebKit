@@ -74,6 +74,11 @@
 }
 
 
+- (id<WebDOMDocument>)DOMDocument
+{
+    return [_private->bridge DOMDocument];
+}
+
 - (NSString *)reconstructedDocumentSource
 {
     // FIXME implement

@@ -52,6 +52,7 @@ typedef khtml::RenderPart KHTMLRenderPart;
 @protocol WebCoreRenderTreeCopier;
 @protocol WebCoreResourceHandle;
 @protocol WebCoreResourceLoader;
+@protocol WebDOMDocument;
 
 #define WebCoreElementLinkURL  		@"WebCoreElementLinkURL"
 #define WebCoreElementLinkTarget  	@"WebCoreElementLinkTarget"
@@ -133,6 +134,8 @@ typedef khtml::RenderPart KHTMLRenderPart;
 - (CFStringEncoding)textEncoding;
 
 - (void)executeJavaScriptFromString:(NSString *)string;
+
+- (id<WebDOMDocument>)DOMDocument;
 
 @end
 

@@ -4,28 +4,12 @@
 */
 #import <Foundation/Foundation.h>
 
-#ifdef __cplusplus
-
 namespace DOM {
     class DOMImplementationImpl;
     class NodeImpl;
     class NodeListImpl;
     class NamedNodeMapImpl;
 }
-
-typedef DOM::DOMImplementationImpl DOMImplementationImpl;
-typedef DOM::NodeImpl NodeImpl;
-typedef DOM::NodeListImpl NodeListImpl;
-typedef DOM::NamedNodeMapImpl NamedNodeMapImpl;
-
-#else
-
-@class DOMImplementationImpl;
-@class NodeImpl;
-@class NodeListImpl;
-@class NamedNodeMapImpl;
-
-#endif
 
 @protocol WebDOMAttr;
 @protocol WebDOMCharacterData;
@@ -45,25 +29,25 @@ typedef DOM::NamedNodeMapImpl NamedNodeMapImpl;
 
 @interface WebCoreDOMNode : NSObject <WebDOMNode>
 {
-    NodeImpl *impl;
+    DOM::NodeImpl *impl;
 }
 @end
 
 @interface WebCoreDOMNamedNodeMap : NSObject <WebDOMNamedNodeMap>
 {
-    NamedNodeMapImpl *impl;
+    DOM::NamedNodeMapImpl *impl;
 }
 @end
 
 @interface WebCoreDOMNodeList : NSObject <WebDOMNodeList>
 {
-    NodeListImpl *impl;
+    DOM::NodeListImpl *impl;
 }
 @end
 
 @interface WebCoreDOMImplementation : NSObject <WebDOMImplementation>
 {
-    DOMImplementationImpl *impl;
+    DOM::DOMImplementationImpl *impl;
 }
 @end
 

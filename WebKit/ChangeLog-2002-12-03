@@ -1,5 +1,14 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        Add accessor for DOM document.
+        
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebHTMLRepresentation.h:
+        * WebView.subproj/WebHTMLRepresentation.m:
+        (-[WebHTMLRepresentation DOMDocument]):
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         Made getAttributeNodeNamed match spec, changed
         to getAttributeNode.
          

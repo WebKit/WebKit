@@ -1,5 +1,14 @@
 2002-10-08  Richard Williamson   <rjw@apple.com>
 
+        Added bridge method to get the DOM document.
+        
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge DOMDocument]):
+        * kwq/WebCoreDOM.h:
+
+2002-10-08  Richard Williamson   <rjw@apple.com>
+
         More DOM implementation.
         
         * khtml/dom/dom_text.h:

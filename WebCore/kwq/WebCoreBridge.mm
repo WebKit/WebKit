@@ -43,8 +43,9 @@
 #import <WebCoreTextRendererFactory.h>
 #import <KWQCharsets.h>
 
+#import <WebCoreDOMPrivate.h>
+
 using DOM::DocumentImpl;
-using DOM::NodeImpl;
 
 using khtml::parseURL;
 using khtml::RenderImage;
@@ -539,5 +540,12 @@ using khtml::RenderPart;
         part->executeScript(QString::fromNSString(string));
     }
 }
+
+- (id<WebDOMDocument>)DOMDocument
+{
+    DocumentImpl *doc = part->impl->document();
+    return [WebCoreDOMDocument documentWithImpl:doc];
+}
+
 
 @end

@@ -2183,6 +2183,9 @@
 			fileRef = F57D194B034E734901A80180;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F57D1954034E734901A80180 = {
@@ -2195,6 +2198,9 @@
 			fileRef = F57D194D034E734901A80180;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F57D1956034E734901A80180 = {
@@ -2207,6 +2213,9 @@
 			fileRef = F57D1951034E734901A80180;
 			isa = PBXBuildFile;
 			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
 			};
 		};
 		F57D195A034E734901A80180 = {
