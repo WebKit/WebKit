@@ -31,8 +31,6 @@
         return nil;
     }
 
-    _bookmarksByID = [[NSMutableDictionary alloc] init];
-
     _file = [file copy];
     [self _setTopBookmark:nil];
 
@@ -46,7 +44,6 @@
 {
     [_file release];
     [_topBookmark release];
-    [_bookmarksByID release];
     [super dealloc];
 }
 
@@ -106,21 +103,6 @@
     ASSERT_ARG(bookmark, [bookmark bookmarkType] == WebBookmarkTypeList);
     
     [self _sendChangeNotificationForBookmark:bookmark childrenChanged:YES];
-}
-
-- (void)removeBookmark:(WebBookmark *)bookmark
-{
-    ASSERT_ARG(bookmark, [bookmark group] == self);
-    ASSERT_ARG(bookmark, [bookmark parent] != nil || bookmark == _topBookmark);
-
-    if (bookmark == _topBookmark) {
-        [self _setTopBookmark:nil];
-    } else {
-        [bookmark retain];
-        [[bookmark parent] removeChild:bookmark];
-        [bookmark _setGroup:nil];
-        [bookmark release];
-    }
 }
 
 - (WebBookmark *)addNewBookmarkToBookmark:(WebBookmark *)parent

@@ -21,8 +21,8 @@
 @implementation WebBookmark
 
 - (void)dealloc
-{
-    ASSERT(_group == nil);
+{    
+    [_group release];
     [_identifier release];
     
     [super dealloc];

@@ -1,3 +1,22 @@
+2002-11-01  John Sullivan  <sullivan@apple.com>
+
+	- some weaning of WebBookmark API from WebBookmarkGroup
+
+        * Bookmarks.subproj/WebBookmark.m:
+        (-[WebBookmark dealloc]):
+	set group to nil instead of asserting that it's non-nil
+
+        * Bookmarks.subproj/WebBookmarkGroup.h:
+	removed obsolete ivar _bookmarksByID
+        * Bookmarks.subproj/WebBookmarkGroup.m:
+        (-[WebBookmarkGroup initWithFile:]):
+	removed obsolete ivar _bookmarksByID
+        (-[WebBookmarkGroup dealloc]):
+	removed obsolete ivar _bookmarksByID
+        (-[WebBookmarkGroup removeBookmark:]):
+	removed this unnecessary method; callers need to use
+	[[bookmark parent] removeChild:bookmark] instead
+
 2002-11-01  Trey Matteson  <trey@apple.com>
 
 	Moved involved code for loading URLs from WebBridge up to WebFrame, with a little
