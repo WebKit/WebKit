@@ -2,6 +2,20 @@
 
         Reviewed by Don.
 
+	- fixed 3103287 -- body of page not rendered (page uses JavaScript trick to be both a frameset and a frame)
+
+	Our self-reference checks prevented this page from working.
+	I just removed the WebKit one, since it was really just working around a problem with the WebCore
+	one that I fixed (didn't ignore #xxx suffixes).
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge createChildFrameNamed:withURL:renderPart:allowsScrolling:marginWidth:marginHeight:]):
+	Remove self-reference check.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
 	- fixed 3136801 -- scrolling a page that contains a QuickTime movie leaves garbage behind
 
         * Plugins.subproj/WebBaseNetscapePluginView.m:

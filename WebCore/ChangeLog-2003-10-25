@@ -2,6 +2,31 @@
 
         Reviewed by Don.
 
+	- fixed 3103287 -- body of page not rendered (page uses JavaScript trick to be both a frameset and a frame)
+
+	Our self-reference protection prevented this page from working.
+	To fix the bug, I did three things:
+
+   	    1) fixed the hole in the WebCore self-reference protection, so we could remove the WebKit one
+               (the hole was that it didn't ignore #xxx suffixes)
+ 	    2) moved the self-reference protection into a single function so it wasn't copied and pasted all over
+	    3) allowed one level of self-reference; still enough to prevent infinite recursion
+
+	Then I tested with the site from bug 3103287 and the one from bug 3083732 to make sure that was still OK.
+
+        * khtml/html/html_baseimpl.h: Added isURLAllowed().
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLFrameElementImpl::isURLAllowed): Added. Does the self-reference check and the "local only" check.
+	This logic was repeated in three different places before. Note that since we don't use the "local only"
+        feature, it's not too risky to slightly change how it works.
+        (HTMLFrameElementImpl::updateForNewURL): Use isURLAllowed.
+        (HTMLFrameElementImpl::attach): Ditto.
+        (HTMLIFrameElementImpl::attach): Ditto.
+
+2002-12-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Don.
+
 	- fixed 3130566 -- REGRESSION: list item numbers are overlapping the text of the list items
 
 	Moved the hack that handles list items that are not in lists out of the parser and into

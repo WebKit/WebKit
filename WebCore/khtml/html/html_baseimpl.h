@@ -101,6 +101,8 @@ public:
 #endif
 
 protected:
+    bool isURLAllowed(const DOMString &) const;
+
     DOMString url;
     DOMString name;
 

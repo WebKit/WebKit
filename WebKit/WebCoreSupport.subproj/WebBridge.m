@@ -302,11 +302,7 @@
     [[newFrame webView] _setMarginWidth:width];
     [[newFrame webView] _setMarginHeight:height];
 
-    // We must avoid loading the document itself as a subframe, like
-    // other browsers do, otherwise bugs like Radar 3083732 occur.
-    if (![[[[NSURL _web_URLWithString:URL] _web_URLByRemovingFragment] absoluteURL] isEqual:[[[frame dataSource] URL] absoluteURL]]) {
-	[frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
-    }
+    [frame _loadURL:[NSURL _web_URLWithString:URL] intoChild:newFrame];
 
     return [newFrame _bridge];
 }

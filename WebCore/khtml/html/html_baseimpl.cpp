@@ -226,43 +226,61 @@ NodeImpl::Id HTMLFrameElementImpl::id() const
     return ID_FRAME;
 }
 
+bool HTMLFrameElementImpl::isURLAllowed(const DOMString &URLString) const
+{
+    KHTMLView *w = getDocument()->view();
+
+    KURL newURL(getDocument()->completeURL(URLString.string()));
+    newURL.setRef(QString::null);
+
+    // Prohibit non-file URLs if we are asked to.
+    if (w->part()->onlyLocalReferences() && newURL.protocol().lower() != "file") {
+        return false;
+    }
+
+    // We allow one level of self-reference because some sites depend on that.
+    // But we don't allow more than one.
+    bool foundSelfReference = false;
+    for (KHTMLPart *part = w->part(); part; part = part->parentPart()) {
+        KURL partURL = part->url();
+        partURL.setRef(QString::null);
+        if (partURL == newURL) {
+            if (foundSelfReference) {
+                return false;
+            }
+            foundSelfReference = true;
+        }
+    }
+    
+    return true;
+}
+
 // FIXME: Why is this different from setLocation?
 void HTMLFrameElementImpl::updateForNewURL()
 {
-    if (attached()) {
-        // Handle the common case where we decided not to make a frame the first time.
-        // Detach and the let attach() decide again whether to make the frame for this URL.
-        if (!m_render) {
-            detach();
-            attach();
-            return;
-        }
+    if (!attached()) {
+        return;
+    }
+    
+    // Handle the common case where we decided not to make a frame the first time.
+    // Detach and the let attach() decide again whether to make the frame for this URL.
+    if (!m_render) {
+        detach();
+        attach();
+        return;
+    }
 
-        // The following is repeated logic from attach(). We should share the code instead.
-        
-	KHTMLView* w = getDocument()->view();
-        
-	// avoid endless recursion
-	KURL u;
-	if (!url.isEmpty()) u = getDocument()->completeURL( url.string() );
-	bool selfreference = false;
-	for (KHTMLPart* part = w->part(); part; part = part->parentPart())
-	    if (part->url() == u) {
-		selfreference = true;
-		break;
-	    }
-        if (selfreference)
-            return;
+    if (!isURLAllowed(url)) {
+        return;
+    }
 
-	// load the frame contents
-	if ( !url.isEmpty() && !(w->part()->onlyLocalReferences() && u.protocol() != "file")) {
-	    KHTMLPart *part = w->part()->findFrame( name.string() );
-	    if (part) {
-                part->openURL(u);
-            } else {
-                w->part()->requestFrame(static_cast<RenderFrame*>(m_render), url.string(), name.string());
-            }
-	}
+    // load the frame contents
+    KHTMLView *w = getDocument()->view();
+    KHTMLPart *part = w->part()->findFrame( name.string() );
+    if (part) {
+        part->openURL(getDocument()->completeURL(url.string()));
+    } else {
+        w->part()->requestFrame(static_cast<RenderFrame*>(m_render), url.string(), name.string());
     }
 }
 
@@ -349,17 +367,7 @@ void HTMLFrameElementImpl::attach()
     
     // ignore display: none for this element!
     KHTMLView* w = getDocument()->view();
-    // avoid endless recursion
-    KURL u;
-    if (!url.isEmpty()) u = getDocument()->completeURL( url.string() );
-    bool selfreference = false;
-    for (KHTMLPart* part = w->part(); part; part = part->parentPart())
-        if (part->url() == u) {
-            selfreference = true;
-            break;
-        }
-
-    if (!selfreference && parentNode()->renderer())  {
+    if (isURLAllowed(url) && parentNode()->renderer())  {
         m_render = new (getDocument()->renderArena()) RenderFrame(this);
         m_render->setStyle(getDocument()->styleSelector()->styleForElement(this));
         parentNode()->renderer()->addChild(m_render, nextRenderer());
@@ -375,8 +383,7 @@ void HTMLFrameElementImpl::attach()
       name = DOMString(w->part()->requestFrameName());
 
     // load the frame contents
-    if ( !url.isEmpty() && !(w->part()->onlyLocalReferences() && u.protocol() != "file"))
-        w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
+    w->part()->requestFrame( static_cast<RenderFrame*>(m_render), url.string(), name.string() );
 }
 
 // FIXME: Why is this different from updateForNewURL?
@@ -655,24 +662,9 @@ void HTMLIFrameElementImpl::attach()
     assert(!m_render);
     assert(parentNode());
 
-    // FIXME: This self-reference check is the same as the code in the base class attach.
-    // We should refactor so we can share the code.
-    
-    KHTMLView* w = getDocument()->view();
-    // avoid endless recursion
-    KURL u;
-    if (!url.isEmpty()) u = getDocument()->completeURL( url.string() );
-    bool selfreference = false;
-    for (KHTMLPart* part = w->part(); part; part = part->parentPart())
-        if (part->url() == u) {
-            selfreference = true;
-            break;
-        }
-
     RenderStyle* _style = getDocument()->styleSelector()->styleForElement(this);
     _style->ref();
-    if (!selfreference && !(w->part()->onlyLocalReferences() && u.protocol() != "file") &&
-        parentNode()->renderer() && _style->display() != NONE) {
+    if (isURLAllowed(url) && parentNode()->renderer() && _style->display() != NONE) {
         m_render = new (getDocument()->renderArena()) RenderPartObject(this);
         m_render->setStyle(_style);
         parentNode()->renderer()->addChild(m_render, nextRenderer());
