@@ -1,3 +1,23 @@
+2003-09-25  David Hyatt  <hyatt@apple.com>
+
+	Change layout so that it is called from the private _recursive functions instead of
+	inside drawRect.
+	
+        Reviewed by kocienda
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView layoutToPageWidth:adjustingViewSize:]):
+        (-[WebHTMLView drawRect:]):
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _recursiveDisplayRectIfNeededIgnoringOpacity:isVisibleRect:rectIsVisibleRectForView:testDirtyRect:]):
+        (-[WebHTMLView _recursiveDisplayAllDirtyWithLockFocus:visRect:]):
+        (-[WebHTMLView _web_setPrintingModeRecursive]):
+        (-[WebHTMLView _web_clearPrintingModeRecursive]):
+        (-[WebHTMLView _web_layoutIfNeededRecursive:testDirtyRect:]):
+        (-[NSView _web_setPrintingModeRecursive]):
+        (-[NSView _web_clearPrintingModeRecursive]):
+        (-[NSView _web_layoutIfNeededRecursive:testDirtyRect:]):
+
 2003-09-25  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3433802.  Written by Ed.  Carbon WebView doesn't detach native view when removed.

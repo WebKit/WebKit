@@ -368,8 +368,6 @@
 	_private->lastLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
         _private->lastLayoutFrameSize = newLayoutFrameSize;
     }
-    
-    [self setNeedsDisplay:YES];
 
 #ifdef _KWQ_TIMING        
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
@@ -468,39 +466,6 @@
         [self _restoreSubviews];
     }
 
-    // This helps when we print as part of a larger print process.
-    // If the WebHTMLView itself is what we're printing, then we will never have to do this.
-    BOOL wasInPrintingMode = _private->printing;
-    BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
-    if (wasInPrintingMode != isPrinting) {
-        [self _setPrinting:isPrinting pageWidth:0 adjustViewSize:NO];
-    }
-    
-    if ([[self _bridge] needsLayout]) {
-        _private->needsLayout = YES;
-    }
-    BOOL didReapplyStylesOrLayout = _private->needsToApplyStyles || _private->needsLayout;
-
-    [self layout];
-
-    if (didReapplyStylesOrLayout) {
-        // If we reapplied styles or did layout, we would like to draw as much as possible right now.
-        // If we can draw the entire view, then we don't need to come back and display, even though
-        // layout will have called setNeedsDisplay:YES to make that happen.
-        NSRect visibleRect = [self visibleRect];
-        CGRect clipBoundingBoxCG = CGContextGetClipBoundingBox((CGContextRef)[[NSGraphicsContext currentContext] graphicsPort]);
-        NSRect clipBoundingBox = NSMakeRect(clipBoundingBoxCG.origin.x, clipBoundingBoxCG.origin.y,
-            clipBoundingBoxCG.size.width, clipBoundingBoxCG.size.height);
-        // If the clip is such that we can draw the entire view instead of just the requested bit,
-        // then we will do just that. Note that this works only for rectangular clip, because we
-        // are only checking if the clip's bounding box contains the rect; we would prefer to check
-        // if the clip contained it, but that's not possible.
-        if (NSContainsRect(clipBoundingBox, visibleRect)) {
-            rect = visibleRect;
-            [self setNeedsDisplay:NO];
-        }
-    }
-    
 #ifdef _KWQ_TIMING
     double start = CFAbsoluteTimeGetCurrent();
 #endif
@@ -559,10 +524,6 @@
     double thisTime = CFAbsoluteTimeGetCurrent() - start;
     LOG(Timing, "%s draw seconds = %f", widget->part()->baseURL().URL().latin1(), thisTime);
 #endif
-
-    if (wasInPrintingMode != isPrinting) {
-        [self _setPrinting:wasInPrintingMode pageWidth:0 adjustViewSize:NO];
-    }
 
     if (subviewsWereSetAside) {
         [self _setAsideSubviews];

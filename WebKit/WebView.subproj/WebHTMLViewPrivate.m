@@ -41,19 +41,26 @@
 #define DRAG_LINK_LABEL_FONT_SIZE   11.0
 #define DRAG_LINK_URL_FONT_SIZE   10.0
 
+static BOOL forceRealHitTest = NO;
+
+@interface WebHTMLView (WebHTMLViewPrivate)
+- (void)_setPrinting:(BOOL)printing pageWidth:(float)pageWidth adjustViewSize:(BOOL)adjustViewSize;
+@end
+
 // Any non-zero value will do, but using somethign recognizable might help us debug some day.
 #define TRACKING_RECT_TAG 0xBADFACE
 
-static BOOL forceRealHitTest = NO;
 
 @interface NSView (AppKitSecretsIKnowAbout)
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView;
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView testDirtyRect:(BOOL)testDirtyRect;
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect;
 - (NSRect)_dirtyRect;
 @end
 
 @interface NSView (WebHTMLViewPrivate)
-- (void)_web_propagateDirtyRectToAncestor;
+- (void)_web_setPrintingModeRecursive;
+- (void)_web_clearPrintingModeRecursive;
+- (void)_web_layoutIfNeededRecursive:(NSRect)rect testDirtyRect:(bool)testDirtyRect;
 @end
 
 @interface NSMutableDictionary (WebHTMLViewPrivate)
@@ -203,36 +210,71 @@ static BOOL forceRealHitTest = NO;
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
-- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView topView:(BOOL)topView
+- (void)_recursiveDisplayRectIfNeededIgnoringOpacity:(NSRect)rect isVisibleRect:(BOOL)isVisibleRect rectIsVisibleRectForView:(NSView *)visibleView testDirtyRect:(BOOL)testDirtyRect
 {
-    // The _setDrawsDescendants: mechanism now takes care of this for us.
-    // But only in AppKit-722 and newer.
-    if (NSAppKitVersionNumber < 722) {
-        [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+    // This helps when we print as part of a larger print process.
+    // If the WebHTMLView itself is what we're printing, then we will never have to do this.
+    BOOL wasInPrintingMode = _private->printing;
+    BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
+    if (wasInPrintingMode != isPrinting) {
+        if (isPrinting) {
+            [self _web_setPrintingModeRecursive];
+        } else {
+            [self _web_clearPrintingModeRecursive];
+        }
     }
+
+    [self _web_layoutIfNeededRecursive: rect testDirtyRect:YES];
+
     [self _setAsideSubviews];
     [super _recursiveDisplayRectIfNeededIgnoringOpacity:rect isVisibleRect:isVisibleRect
-        rectIsVisibleRectForView:visibleView topView:topView];
+        rectIsVisibleRectForView:visibleView testDirtyRect:testDirtyRect];
     [self _restoreSubviews];
+
+    if (wasInPrintingMode != isPrinting) {
+        if (wasInPrintingMode) {
+            [self _web_setPrintingModeRecursive];
+        } else {
+            [self _web_clearPrintingModeRecursive];
+        }
+    }
 }
 
 // Don't let AppKit even draw subviews. We take care of that.
 - (void)_recursiveDisplayAllDirtyWithLockFocus:(BOOL)needsLockFocus visRect:(NSRect)visRect
 {
     BOOL needToSetAsideSubviews = !_private->subviewsSetAside;
-    
+
+    BOOL wasInPrintingMode = _private->printing;
+    BOOL isPrinting = ![NSGraphicsContext currentContextDrawingToScreen];
+
     if (needToSetAsideSubviews) {
-        // The _setDrawsDescendants: mechanism now takes care of this for us.
-        // But only in AppKit-722 and newer.
-        if (NSAppKitVersionNumber < 722) {
-            [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
+        // This helps when we print as part of a larger print process.
+        // If the WebHTMLView itself is what we're printing, then we will never have to do this.
+        if (wasInPrintingMode != isPrinting) {
+            if (isPrinting) {
+                [self _web_setPrintingModeRecursive];
+            } else {
+                [self _web_clearPrintingModeRecursive];
+            }
         }
+
+        [self _web_layoutIfNeededRecursive: visRect testDirtyRect:NO];
+
         [self _setAsideSubviews];
     }
     
     [super _recursiveDisplayAllDirtyWithLockFocus:needsLockFocus visRect:visRect];
     
     if (needToSetAsideSubviews) {
+        if (wasInPrintingMode != isPrinting) {
+            if (wasInPrintingMode) {
+                [self _web_setPrintingModeRecursive];
+            } else {
+                [self _web_clearPrintingModeRecursive];
+            }
+        }
+
         [self _restoreSubviews];
     }
 }
@@ -650,6 +692,39 @@ static WebHTMLView *lastHitView = nil;
     return _private->pluginController;
 }
 
+- (void)_web_setPrintingModeRecursive
+{
+    [self _setPrinting:YES pageWidth:0 adjustViewSize:NO];
+    [super _web_setPrintingModeRecursive];
+}
+
+- (void)_web_clearPrintingModeRecursive
+{
+    [self _setPrinting:NO pageWidth:0 adjustViewSize:NO];
+    [super _web_clearPrintingModeRecursive];
+}
+
+- (void)_web_layoutIfNeededRecursive:(NSRect)displayRect testDirtyRect:(bool)testDirtyRect
+{
+    ASSERT(!_private->subviewsSetAside);
+    displayRect = NSIntersectionRect(displayRect, [self bounds]);
+
+    if (!testDirtyRect || [self needsDisplay]) {
+        if (testDirtyRect) {
+            NSRect dirtyRect = [self _dirtyRect];
+            displayRect = NSIntersectionRect(displayRect, dirtyRect);
+        }
+        if (!NSIsEmptyRect(displayRect)) {
+            if ([[self _bridge] needsLayout])
+                _private->needsLayout = YES;
+            if (_private->needsToApplyStyles || _private->needsLayout)
+                [self layout];
+        }
+    }
+
+    [super _web_layoutIfNeededRecursive: displayRect testDirtyRect: NO];
+}
+
 - (NSRect)_selectionRect
 {
     return [[self _bridge] selectionRect];
@@ -692,11 +767,23 @@ static WebHTMLView *lastHitView = nil;
 
 @implementation NSView (WebHTMLViewPrivate)
 
-- (void)_web_propagateDirtyRectToAncestor
+- (void)_web_setPrintingModeRecursive
 {
-    [_subviews makeObjectsPerformSelector:@selector(_web_propagateDirtyRectToAncestor)];
-    if ([self needsDisplay]) {
-        [[self superview] setNeedsDisplayInRect:[self convertRect:[self _dirtyRect] toView:[self superview]]];
+    [_subviews makeObjectsPerformSelector:@selector(_web_setPrintingModeRecursive)];
+}
+
+- (void)_web_clearPrintingModeRecursive
+{
+    [_subviews makeObjectsPerformSelector:@selector(_web_clearPrintingModeRecursive)];
+}
+
+- (void)_web_layoutIfNeededRecursive: (NSRect)rect testDirtyRect:(bool)testDirtyRect
+{
+    unsigned index, count;
+    for (index = 0, count = [_subviews count]; index < count; index++) {
+        NSView *subview = [_subviews objectAtIndex:index];
+        NSRect dirtiedSubviewRect = [subview convertRect: rect fromView: self];
+        [subview _web_layoutIfNeededRecursive: dirtiedSubviewRect testDirtyRect:testDirtyRect];
     }
 }
 
