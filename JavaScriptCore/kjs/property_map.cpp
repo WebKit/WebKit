@@ -29,13 +29,24 @@
 #define DUMP_STATISTICS 0
 #define USE_SINGLE_ENTRY 1
 
-// At the time I added USE_SINGLE_ENTRY, the optimization still gave a 1.5% performance boost so I couldn't remove it.
+// At the time I added USE_SINGLE_ENTRY, the optimization still gave a 1.5%
+// performance boost to the iBench JavaScript benchmark so I didn't remove it.
 
 #if !DO_CONSISTENCY_CHECK
 #define checkConsistency() ((void)0)
 #endif
 
 namespace KJS {
+
+// Choose a number for the following so that most property maps are smaller,
+// but it's not going to blow out the stack to allocate this number of pointers.
+const int smallMapThreshold = 1024;
+
+// Ever-increasing index used to identify the order items were inserted into
+// the property map. It's vital that addEnumerablesToReferenceList return
+// the properties in the order they were added for compatibility with other
+// browsers' JavaScript implementations.
+static int lastIndexUsed;
 
 #if DUMP_STATISTICS
 
@@ -251,6 +262,7 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
             _singleEntry.key = rep;
             _singleEntry.value = value;
             _singleEntry.attributes = attributes;
+            _singleEntry.index = ++lastIndexUsed;
             checkConsistency();
             return;
         }
@@ -292,12 +304,13 @@ void PropertyMap::put(const Identifier &name, ValueImp *value, int attributes)
     _table->entries[i].key = rep;
     _table->entries[i].value = value;
     _table->entries[i].attributes = attributes;
+    _table->entries[i].index = ++lastIndexUsed;
     ++_table->keyCount;
 
     checkConsistency();
 }
 
-void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes)
+void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes, int index)
 {
     assert(_table);
 
@@ -321,6 +334,7 @@ void PropertyMap::insert(UString::Rep *key, ValueImp *value, int attributes)
     _table->entries[i].key = key;
     _table->entries[i].value = value;
     _table->entries[i].attributes = attributes;
+    _table->entries[i].index = index;
 }
 
 void PropertyMap::expand()
@@ -340,7 +354,7 @@ void PropertyMap::expand()
 #if USE_SINGLE_ENTRY
     UString::Rep *key = _singleEntry.key;
     if (key) {
-        insert(key, _singleEntry.value, _singleEntry.attributes);
+        insert(key, _singleEntry.value, _singleEntry.attributes, _singleEntry.index);
         _singleEntry.key = 0;
 	// update the count, because single entries don't count towards
 	// the table key count
@@ -356,7 +370,8 @@ void PropertyMap::expand()
             if (key == &UString::Rep::null)
                 key->deref();
             else
-                insert(key, oldTable->entries[i].value, oldTable->entries[i].attributes);
+                insert(key, oldTable->entries[i].value,
+                    oldTable->entries[i].attributes, oldTable->entries[i].index);
         }
     }
 
@@ -449,6 +464,17 @@ void PropertyMap::mark() const
     }
 }
 
+static int comparePropertyMapEntryIndices(const void *a, const void *b)
+{
+    int ia = static_cast<PropertyMapHashTableEntry * const *>(a)[0]->index;
+    int ib = static_cast<PropertyMapHashTableEntry * const *>(b)[0]->index;
+    if (ia < ib)
+        return -1;
+    if (ia > ib)
+        return +1;
+    return 0;
+}
+
 void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Object &base) const
 {
     if (!_table) {
@@ -460,11 +486,33 @@ void PropertyMap::addEnumerablesToReferenceList(ReferenceList &list, const Objec
         return;
     }
 
+    // Allocate a buffer to use to sort the keys.
+    Entry *fixedSizeBuffer[smallMapThreshold];
+    Entry **sortedEnumerables;
+    if (_table->keyCount <= smallMapThreshold)
+        sortedEnumerables = fixedSizeBuffer;
+    else
+        sortedEnumerables = new Entry *[_table->keyCount];
+
+    // Get pointers to the enumerable entries in the buffer.
+    Entry **p = sortedEnumerables;
     for (int i = 0; i != _table->size; ++i) {
-        UString::Rep *key = _table->entries[i].key;
-        if (key && !(_table->entries[i].attributes & DontEnum))
-            list.append(Reference(base, Identifier(key)));
+        Entry *e = &_table->entries[i];
+        if (e->key && !(e->attributes & DontEnum))
+            *p++ = e;
     }
+
+    // Sort the entries by index.
+    qsort(sortedEnumerables, p - sortedEnumerables, sizeof(sortedEnumerables[0]), comparePropertyMapEntryIndices);
+
+    // Put the keys of the sorted entries into the reference list.
+    Entry **q = sortedEnumerables;
+    while (q != p)
+        list.append(Reference(base, Identifier((*q++)->key)));
+
+    // Deallocate the buffer.
+    if (sortedEnumerables != fixedSizeBuffer)
+        delete [] sortedEnumerables;
 }
 
 void PropertyMap::addSparseArrayPropertiesToReferenceList(ReferenceList &list, const Object &base) const

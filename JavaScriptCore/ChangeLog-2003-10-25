@@ -1,3 +1,19 @@
+2003-06-13  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3178438 -- return elements in order of addition in for..in loop (other browsers seem to)
+	- fixed 3292067 -- REGRESSION (64-65): albertsons.com "Shop A to Z" menus are not sorted alphabetically
+
+        * kjs/property_map.h: Add index field to hash table entry and index parameter to insert function.
+        * kjs/property_map.cpp:
+        (PropertyMap::put): Set an index for new map entries to an ever-increasing number based on a global.
+        (PropertyMap::insert): Take an index parameter.
+        (PropertyMap::expand): Preserve the indices as we rehash the table.
+        (comparePropertyMapEntryIndices): Added. Compares two property map entries by index.
+        (PropertyMap::addEnumerablesToReferenceList): Sort the proprty map entries by index before adding
+        them to the reference list.
+
 === Safari-84 ===
 
 2003-06-10  Vicki Murley  <vicki@apple.com>
