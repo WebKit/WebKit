@@ -66,19 +66,8 @@
     WebView *_webView = [source _webView];
     [newRequest setMainDocumentURL:[[[[_webView mainFrame] dataSource] request] URL]];
     [newRequest setHTTPUserAgent:[_webView userAgentForURL:[newRequest URL]]];
-    
-    BOOL succeeded = [client loadWithRequest:newRequest];
-        
-    if (!succeeded) {
-        [source _removeSubresourceClient:client];
-
-        [rLoader reportError];
-
-        NSError *badURLError = [[NSError alloc] _webKitErrorWithDomain:NSURLErrorDomain 
-                                                                  code:NSURLErrorBadURL
-                                                                   URL:[newRequest URL]];
-        [_webView _receivedError:badURLError fromDataSource:source];
-        [badURLError release];
+            
+    if (![client loadWithRequest:newRequest]) {
         client = nil;
     }
     
@@ -131,7 +120,7 @@
     NSURL *oldURL = [request URL];
     NSURLRequest *clientRequest = [super willSendRequest:newRequest redirectResponse:redirectResponse];
     
-    if (![oldURL isEqual:[clientRequest URL]]) {
+    if (clientRequest != nil && ![oldURL isEqual:[clientRequest URL]]) {
 	[loader redirectedToURL:[clientRequest URL]];
     }
 

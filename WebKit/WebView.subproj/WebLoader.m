@@ -186,7 +186,15 @@
     deliveredResource = NO;
     waitingToDeliverResource = NO;
 
-    r = [self connection:connection willSendRequest:r redirectResponse:nil];
+    NSURLRequest *clientRequest = [self willSendRequest:r redirectResponse:nil];
+    if (clientRequest == nil) {
+        NSError *badURLError = [NSError _webKitErrorWithDomain:NSURLErrorDomain 
+                                                          code:NSURLErrorCancelled
+                                                           URL:[r URL]];
+        [self didFailWithError:badURLError];
+        return NO;
+    }
+    r = clientRequest;
     
     if ([[r URL] isEqual:originalURL] && [self _canUseResourceForRequest:r]) {
         resource = [dataSource subresourceForURL:originalURL];
