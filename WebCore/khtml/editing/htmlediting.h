@@ -211,8 +211,6 @@ protected:
     void insertBlockPlaceholderIfNeeded(DOM::NodeImpl *);
     bool removeBlockPlaceholderIfNeeded(DOM::NodeImpl *);
 
-    bool isLastVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *) const;
-
     QValueList<EditCommandPtr> m_cmds;
 };
 

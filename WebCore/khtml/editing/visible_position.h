@@ -32,6 +32,7 @@
 #include "text_affinity.h"
 
 namespace DOM {
+    class NodeImpl;
     class Range;
     class RangeImpl;
 }
@@ -117,9 +118,12 @@ VisiblePosition startVisiblePosition(const DOM::RangeImpl *);
 VisiblePosition endVisiblePosition(const DOM::Range &);
 VisiblePosition endVisiblePosition(const DOM::RangeImpl *);
 
-bool visiblePositionsOnSameLine(const VisiblePosition &, const VisiblePosition &);
+bool visiblePositionsOnDifferentLines(const VisiblePosition &, const VisiblePosition &);
+bool visiblePositionsInDifferentBlocks(const VisiblePosition &, const VisiblePosition &);
 bool isFirstVisiblePositionOnLine(const VisiblePosition &);
 bool isLastVisiblePositionOnLine(const VisiblePosition &);
+bool isLastVisiblePositionInBlock(const VisiblePosition &);
+bool isLastVisiblePositionInNode(const VisiblePosition &, const DOM::NodeImpl *);
 
 } // namespace khtml
 

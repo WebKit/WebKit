@@ -1,5 +1,20 @@
 2004-11-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Maciej
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::InsertLineBreakCommand::doApply): Use new isLastVisiblePositionInBlock() helper instead
+        of old isLastInBlock() member function on VisiblePosition. This is a cosmetic change in keeping
+        with the prevailing style for the VisiblePosition class.
+        * khtml/editing/htmlediting.h: Move isLastVisiblePositionInNode() function to visible_position.[cpp|h] files. 
+        * khtml/editing/visible_position.cpp: Removed isLastInBlock() helper. Renamed to isLastVisiblePositionInBlock().
+        (khtml::visiblePositionsInDifferentBlocks): New helper method.
+        (khtml::isLastVisiblePositionInBlock): Ditto.
+        (khtml::isLastVisiblePositionInNode): Ditto.
+        * khtml/editing/visible_position.h: Add declarations for new functions.
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Hyatt
 
         * khtml/editing/htmlediting.cpp:

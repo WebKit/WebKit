@@ -915,15 +915,6 @@ bool CompositeEditCommand::removeBlockPlaceholderIfNeeded(NodeImpl *node)
     return false;
 }
 
-bool CompositeEditCommand::isLastVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node) const
-{
-    if (pos.isNull())
-        return false;
-        
-    VisiblePosition next = pos.next();
-    return next.isNull() || !next.deepEquivalent().node()->isAncestor(node);
-}
-
 //==========================================================================================
 // Concrete commands
 //------------------------------------------------------------------------------------------
@@ -1977,7 +1968,7 @@ void InsertLineBreakCommand::doApply()
     Position pos(selection.start().upstream(StayInBlock));
     bool atStart = pos.offset() <= pos.node()->caretMinOffset();
     bool atEnd = pos.offset() >= pos.node()->caretMaxOffset();
-    bool atEndOfBlock = VisiblePosition(pos).isLastInBlock();
+    bool atEndOfBlock = isLastVisiblePositionInBlock(VisiblePosition(pos));
     
     if (atEndOfBlock) {
         LOG(Editing, "input newline case 1");

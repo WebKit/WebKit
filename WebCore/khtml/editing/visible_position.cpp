@@ -30,6 +30,7 @@
 #include "rendering/render_object.h"
 #include "rendering/render_text.h"
 #include "xml/dom2_rangeimpl.h"
+#include "xml/dom_nodeimpl.h"
 #include "xml/dom_textimpl.h"
 
 #if APPLE_CHANGES
@@ -41,6 +42,7 @@
 #endif
 
 using DOM::CharacterDataImpl;
+using DOM::NodeImpl;
 using DOM::offsetInCharacters;
 using DOM::Position;
 using DOM::Range;
@@ -142,15 +144,6 @@ void VisiblePosition::initDownstream(const Position &pos)
                 m_deepPosition = previous;
         }
     }
-}
-
-bool VisiblePosition::isLastInBlock() const
-{
-    if (isNull())
-        return false;
-        
-    VisiblePosition n = next();
-    return n.isNull() || (n.deepEquivalent().node()->enclosingBlockFlowElement() != m_deepPosition.node()->enclosingBlockFlowElement());
 }
 
 VisiblePosition VisiblePosition::next() const
@@ -478,6 +471,20 @@ bool visiblePositionsOnDifferentLines(const VisiblePosition &pos1, const Visible
     return (b1 && b2 && b1->root() != b2->root());
 }
 
+bool visiblePositionsInDifferentBlocks(const VisiblePosition &pos1, const VisiblePosition &pos2)
+{
+    if (pos1.isNull() || pos2.isNull())
+        return false;
+    if (pos1 == pos2)
+        return false;
+
+    Position p1 = pos1.deepEquivalent();
+    Position p2 = pos2.deepEquivalent();
+    NodeImpl *b1 = p1.node()->enclosingBlockFlowElement();
+    NodeImpl *b2 = p2.node()->enclosingBlockFlowElement();
+    return (b1 != b2);
+}
+
 bool isFirstVisiblePositionOnLine(const VisiblePosition &pos)
 {
     if (pos.isNull())
@@ -496,5 +503,22 @@ bool isLastVisiblePositionOnLine(const VisiblePosition &pos)
     return next.isNull() || visiblePositionsOnDifferentLines(pos, next);
 }
 
+bool isLastVisiblePositionInBlock(const VisiblePosition &pos)
+{
+    if (pos.isNull())
+        return false;
+        
+    VisiblePosition next = pos.next();
+    return next.isNull() || visiblePositionsInDifferentBlocks(pos, next);
+}
+
+bool isLastVisiblePositionInNode(const VisiblePosition &pos, const NodeImpl *node)
+{
+    if (pos.isNull())
+        return false;
+        
+    VisiblePosition next = pos.next();
+    return next.isNull() || !next.deepEquivalent().node()->isAncestor(node);
+}
 
 }  // namespace DOM
