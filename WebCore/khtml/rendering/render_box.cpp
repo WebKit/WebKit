@@ -995,7 +995,17 @@ int RenderBox::calcHeightUsing(const Length& h)
 int RenderBox::calcPercentageHeight(const Length& height)
 {
     int result = -1;
+    bool includeBorderPadding = isTable();
     RenderBlock* cb = containingBlock();
+    if (style()->htmlHacks()) {
+        // In quirks mode, blocks with auto height are skipped, and we keep looking for an enclosing
+        // block that may have a specified height and then use it.  In strict mode, this violates the
+        // specification, which states that percentage heights just revert to auto if the containing
+        // block has an auto height.
+        for ( ; !cb->isCanvas() && !cb->isBody() && !cb->isTableCell() && !cb->isPositioned() &&
+                cb->style()->height().isVariable(); cb = cb->containingBlock());
+    }
+
     // Table cells violate what the CSS spec says to do with heights.  Basically we
     // don't care if the cell specified a height or not.  We just always make ourselves
     // be a percentage of the cell's current content height.
@@ -1003,11 +1013,7 @@ int RenderBox::calcPercentageHeight(const Length& height)
         result = cb->overrideSize();
         if (result == -1)
             return -1;
-        // It is necessary to use the border-box to match WinIE's broken
-        // box model.  This is essential for sizing inside
-        // table cells using percentage heights.
-        result -= (borderTop() + paddingTop() + borderBottom() + paddingBottom());
-        result = kMax(0, result);
+        includeBorderPadding = true;
     }
 
     // Otherwise we only use our percentage height if our containing block had a specified
@@ -1025,8 +1031,16 @@ int RenderBox::calcPercentageHeight(const Length& height)
         result = cb->contentHeight();
         cb->setHeight(oldHeight);
     }
-    if (result != -1)
+    if (result != -1) {
         result = height.width(result);
+        if (includeBorderPadding) {
+            // It is necessary to use the border-box to match WinIE's broken
+            // box model.  This is essential for sizing inside
+            // table cells using percentage heights.
+            result -= (borderTop() + paddingTop() + borderBottom() + paddingBottom());
+            result = kMax(0, result);
+        }
+    }
     return result;
 }
 

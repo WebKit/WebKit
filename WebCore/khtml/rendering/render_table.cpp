@@ -287,39 +287,13 @@ void RenderTable::layout()
     m_height = oldHeight;
 
     Length h = style()->height();
-    int th = -(bpTop + bpBottom); // Tables size as though CSS height includes border/padding.
+    int th = 0;
     if (isPositioned())
         th = newHeight; // FIXME: Leave this alone for now but investigate later.
     else if (h.isFixed())
-        th += h.value;
+        th = h.value - (bpTop + bpBottom);  // Tables size as though CSS height includes border/padding.
     else if (h.isPercent())
-    {
-        RenderObject* c = containingBlock();
-        for ( ; 
-	     !c->isCanvas() && !c->isBody() && !c->isTableCell() && !c->isPositioned() && !c->isFloating(); 
-             c = c->containingBlock()) {
-            Length ch = c->style()->height();
-            if (ch.isFixed()) {
-                th += h.width(ch.value);
-                break;
-            }
-        }
-
-        if (c->isTableCell()) {
-            int cellHeight = c->overrideSize();
-            if (cellHeight != -1)
-                th += h.width(cellHeight);
-        }
-        else  {
-            Length ch = c->style()->height();
-            if (ch.isFixed())
-                th += h.width(ch.value);
-            else if (style()->htmlHacks())
-                // In quirks mode, we always expand to fill the viewRect.
-                // We need to substract out the margins of this block. -dwh
-                th += h.width(viewRect().height() - c->marginBottom() - c->marginTop());
-        }
-    }
+        th = calcPercentageHeight(h);
     th = kMax(0, th);
 
     // layout rows
