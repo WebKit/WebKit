@@ -72,6 +72,7 @@
 		};
 		0867D691FE84028FC02AAC07 = {
 			children = (
+				9C7CABBB0190A37C0ECA16EA,
 				254DC334016E1D3F0ECA149E,
 				2568C71E017490290ECA149E,
 				089C1665FE841158C02AAC07,
@@ -166,6 +167,8 @@
 				25BECC9B017E0A0D0ECA149E,
 				25BECC9C017E0A0D0ECA149E,
 				25BECC9D017E0A0D0ECA149E,
+				9C7CABC00190A3E10ECA16EA,
+				9C7CABC10190A3E10ECA16EA,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -187,6 +190,8 @@
 				25BECC9E017E0A0D0ECA149E,
 				25BECC9F017E0A0D0ECA149E,
 				25BECCA0017E0A0D0ECA149E,
+				9C7CABC20190A3E10ECA16EA,
+				9C7CABC30190A3E10ECA16EA,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -497,6 +502,75 @@
 		};
 		25C29827016E29620ECA149E = {
 			fileRef = 25C29825016E29620ECA149E;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//250
+//251
+//252
+//253
+//254
+//9C0
+//9C1
+//9C2
+//9C3
+//9C4
+		9C7CABBB0190A37C0ECA16EA = {
+			children = (
+				9C7CABBC0190A3E10ECA16EA,
+				9C7CABBD0190A3E10ECA16EA,
+				9C7CABBE0190A3E10ECA16EA,
+				9C7CABBF0190A3E10ECA16EA,
+			);
+			isa = PBXGroup;
+			name = WebView;
+			refType = 4;
+		};
+		9C7CABBC0190A3E10ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageDataSource.h;
+			path = WebView.subproj/NSWebPageDataSource.h;
+			refType = 2;
+		};
+		9C7CABBD0190A3E10ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageDataSource.m;
+			path = WebView.subproj/NSWebPageDataSource.m;
+			refType = 2;
+		};
+		9C7CABBE0190A3E10ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageView.h;
+			path = WebView.subproj/NSWebPageView.h;
+			refType = 2;
+		};
+		9C7CABBF0190A3E10ECA16EA = {
+			isa = PBXFileReference;
+			name = NSWebPageView.m;
+			path = WebView.subproj/NSWebPageView.m;
+			refType = 2;
+		};
+		9C7CABC00190A3E10ECA16EA = {
+			fileRef = 9C7CABBC0190A3E10ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C7CABC10190A3E10ECA16EA = {
+			fileRef = 9C7CABBE0190A3E10ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C7CABC20190A3E10ECA16EA = {
+			fileRef = 9C7CABBD0190A3E10ECA16EA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		9C7CABC30190A3E10ECA16EA = {
+			fileRef = 9C7CABBF0190A3E10ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
 			};
