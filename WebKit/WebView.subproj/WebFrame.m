@@ -119,6 +119,9 @@
     } else {
         loadType = WebFrameLoadTypeStandard;
     }
+
+    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+
     [self _loadDataSource:newDataSource withLoadType:loadType];
     [newDataSource release];
 }

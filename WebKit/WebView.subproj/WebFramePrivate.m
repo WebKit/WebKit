@@ -1144,7 +1144,11 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
 {
     WebDataSource *newDataSource = [[WebDataSource alloc] initWithRequest:request];
     [newDataSource _setTriggeringAction:action];
+
+    [newDataSource _setOverrideEncoding:[[self dataSource] _overrideEncoding]];
+
     [self _loadDataSource:newDataSource withLoadType:loadType];
+
     [newDataSource release];
 }
 

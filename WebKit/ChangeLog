@@ -1,3 +1,13 @@
+2002-12-23  Darin Adler  <darin@apple.com>
+
+        Reviewed by John and Don.
+
+	- fixed 3134282 -- REGRESSION: text encoding setting reverts when you go to a new location
+
+        * WebView.subproj/WebFrame.m: (-[WebFrame loadRequest:]): Propagate an override encoding if there
+	was an existing data source and it had an override encoding.
+        * WebView.subproj/WebFramePrivate.m: (-[WebFrame _loadRequest:triggeringAction:loadType:]): Ditto.
+
 === Alexander-44 ===
 
 2002-12-20  Trey Matteson  <trey@apple.com>
