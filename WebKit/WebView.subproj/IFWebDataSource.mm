@@ -4,8 +4,10 @@
 */
 
 #import <WebKit/IFDocument.h>
+#import <WebKit/IFDownloadHandler.h>
 #import <WebKit/IFException.h>
 #import <WebKit/IFHTMLRepresentation.h>
+#import <WebKit/IFMainURLHandleClient.h>
 #import <WebKit/IFWebCoreBridge.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFWebController.h>
@@ -190,6 +192,9 @@
 // method will also stop loads that may be loading in child frames.
 - (void)stopLoading
 {
+    // stop download here because we can't rely on IFURLHandleResourceDidCancelLoading
+    // as it isn't sent when the app quits
+    [[_private->mainURLHandleClient downloadHandler] cancel];
     [self _recursiveStopLoading];
 }
 

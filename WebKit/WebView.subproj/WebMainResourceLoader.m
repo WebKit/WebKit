@@ -50,6 +50,11 @@
     [super dealloc];
 }
 
+- (IFDownloadHandler *) downloadHandler
+{
+    return downloadHandler;
+}
+
 - (void)IFURLHandleResourceDidBeginLoading:(IFURLHandle *)sender
 {
     WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "url = %s\n", DEBUG_OBJECT([sender url]));
@@ -79,7 +84,6 @@
     [url release];
     url = nil;
     
-    [downloadHandler cancel];
     [downloadHandler release];
     downloadHandler = nil;
 }

@@ -23,6 +23,6 @@
     IFDownloadHandler *downloadHandler;
 }
 - initWithDataSource: (IFWebDataSource *)ds;
-
+- (IFDownloadHandler *) downloadHandler;
 @end
 

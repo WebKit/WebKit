@@ -1,3 +1,12 @@
+2002-06-28  Chris Blumenberg  <cblu@apple.com>
+
+        * WebView.subproj/IFMainURLHandleClient.h:
+        * WebView.subproj/IFMainURLHandleClient.mm:
+        (-[IFMainURLHandleClient downloadHandler]): added
+        (-[IFMainURLHandleClient IFURLHandleResourceDidCancelLoading:]): removed [downloadHandler cancel]
+        * WebView.subproj/IFWebDataSource.mm:
+        (-[IFWebDataSource stopLoading]): call [downloadHandler cancel] here so clean up is done immediately.
+
 2002-06-27  Richard Williamson (local)  <rjw@apple.com>
 
         Fixed tiling of progressively loaded images.
