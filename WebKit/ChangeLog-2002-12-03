@@ -1,11 +1,22 @@
 2002-04-16  Darin Adler  <darin@apple.com>
 
+	Change default font to "Times New Roman 11" rather than
+	"Georgia 12" to be more like Macintosh Internet Explorer.
+
+	* WebView.subproj/IFPreferences.mm:
+
+	A little simplifying of private pointers.
+
+	* MIME.subproj/IFDownloadHandler.h:
+	* MIME.subproj/IFDownloadHandler.m:
+
+2002-04-16  Darin Adler  <darin@apple.com>
+
 	A little simplifying of private pointers.
 
 	* MIME.subproj/IFDownloadHandler.m:
 	* MIME.subproj/IFDownloadHandlerPrivate.m:
 	* WebView.subproj/IFBaseWebController.mm:
-	* WebView.subproj/IFPreferences.mm:
 	* WebView.subproj/IFWebDataSource.h:
 	* WebView.subproj/IFWebDataSource.mm:
 	* WebView.subproj/IFWebDataSourcePrivate.mm:

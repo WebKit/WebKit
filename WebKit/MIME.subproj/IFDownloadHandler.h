@@ -14,7 +14,7 @@
 
 @interface IFDownloadHandler : NSObject {
 @private
-    IFDownloadHandlerPrivate *_downloadHandlerPrivate;
+    IFDownloadHandlerPrivate *_private;
 }
 
 - (NSURL *) url;
