@@ -461,8 +461,16 @@ static void checkMidpoints(BidiIterator& lBreak, BidiState &bidi)
         if (currpoint == lBreak) {
             // We hit the line break before the start point.  Shave off the start point.
             sNumMidpoints--;
-            if (endpoint.obj->style()->whiteSpace() != PRE)
+            if (endpoint.obj->style()->whiteSpace() != PRE) {
+                if (endpoint.obj->isText()) {
+                    // Don't shave a character off the endpoint if it was from a soft hyphen.
+                    RenderText* textObj = static_cast<RenderText*>(endpoint.obj);
+                    if (endpoint.pos+1 < textObj->length() &&
+                        textObj->text()[endpoint.pos+1].unicode() == SOFT_HYPHEN)
+                        return;
+                }
                 endpoint.pos--;
+            }
         }
     }    
 }

@@ -1,5 +1,15 @@
 2004-03-29  David Hyatt  <hyatt@apple.com>
 
+	Followup fix.  Handle the case where a hard line break occurs right after a soft hyphen.  In this
+	case we were losing a letter of the word in addition to not rendering the soft hyphen.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::checkMidpoints):
+
+2004-03-29  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3604154, support soft hyphens when rendering.  This patch implements soft hyphen support that
 	matches IE6 on Windows and Opera 7.  Soft hyphens that don't break lines end up getting collapsed away.
 	Only if the hyphen breaks a line does it render.
