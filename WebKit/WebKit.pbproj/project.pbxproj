@@ -298,6 +298,7 @@
 				832E26A2036F95CA005E2B4F,
 				832E26A5036F9614005E2B4F,
 				517FA6AC03709FCE00CA2D3A,
+				830A567403731461000C720C,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -405,6 +406,7 @@
 				832E26A6036F9614005E2B4F,
 				517FA6AD03709FCE00CA2D3A,
 				517FA6AE03709FCE00CA2D3A,
+				830A567503731461000C720C,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1489,6 +1491,33 @@
 //832
 //833
 //834
+		830A567203731461000C720C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebPluginError.h;
+			refType = 4;
+		};
+		830A567303731461000C720C = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = WebPluginError.m;
+			refType = 4;
+		};
+		830A567403731461000C720C = {
+			fileRef = 830A567203731461000C720C;
+			isa = PBXBuildFile;
+			settings = {
+				ATTRIBUTES = (
+					Public,
+				);
+			};
+		};
+		830A567503731461000C720C = {
+			fileRef = 830A567303731461000C720C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		832E269E036F952E005E2B4F = {
 			children = (
 				832E26A1036F95CA005E2B4F,
@@ -3245,6 +3274,8 @@
 				F5883BE1025E5E9D01000102,
 				F5F717200288493C018635CA,
 				F5F717210288493C018635CA,
+				830A567203731461000C720C,
+				830A567303731461000C720C,
 			);
 			isa = PBXGroup;
 			name = Plugins;

@@ -50,6 +50,9 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
 #define WebErrorDescriptionCannotShowMIMEType UI_STRING("Cannot show content with specified mime type", "WebErrorCannotShowMIMEType description")
 #define WebErrorDescriptionCannotShowURL UI_STRING("Cannot show URL", "WebErrorCannotShowURL description")
 #define WebErrorDescriptionCannotFindApplicationForURL UI_STRING("Cannot find application for URL", "WebErrorCannotNotFindApplicationForURL description")
+#define WebErrorDescriptionWebErrorCannotFindPlugin UI_STRING("Cannot find plug-in", "WebErrorCannotFindPlugin description")
+#define WebErrorDescriptionWebErrorCannotLoadPlugin UI_STRING("Cannot load plug-in", "WebErrorCannotLoadPlugin description")
+#define WebErrorDescriptionWebErrorJavaUnavailable UI_STRING("Java is unavailable", "WebErrorJavaUnavailable description")
 
 + (void)initialize
 {
@@ -66,6 +69,9 @@ NSString *WebErrorDomainWebKit = @"WebErrorDomainWebKit";
     WebErrorDescriptionCannotShowMIMEType, 		[NSNumber numberWithInt: WebErrorCannotShowMIMEType],
     WebErrorDescriptionCannotShowURL, 			[NSNumber numberWithInt: WebErrorCannotShowURL],
     WebErrorDescriptionCannotFindApplicationForURL, 	[NSNumber numberWithInt: WebErrorCannotNotFindApplicationForURL],
+    WebErrorDescriptionWebErrorCannotFindPlugin,	[NSNumber numberWithInt: WebErrorCannotFindPlugin],
+    WebErrorDescriptionWebErrorCannotLoadPlugin,	[NSNumber numberWithInt: WebErrorCannotLoadPlugin],
+    WebErrorDescriptionWebErrorJavaUnavailable,		[NSNumber numberWithInt: WebErrorJavaUnavailable],
     nil];
 
     [WebError addErrorsWithCodesAndDescriptions:dict inDomain:WebErrorDomainWebKit];

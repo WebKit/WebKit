@@ -5,6 +5,7 @@
         Public header file.
 */
 @class WebDataSource;
+@class WebPluginError;
 @class WebResourceResponse;
 @class WebResourceRequest;
 
@@ -84,8 +85,16 @@
 	@param dataSource The dataSource that initiated the load.
 */
 -(void)resource:identifier didFailLoadingWithError:(WebError *)error fromDataSource:(WebDataSource *)dataSource;
-@end
 
+/*!
+     @method pluginFailedWithError:dataSource:
+     @discussion Called when a plug-in is not found, fails to load or is not available for some reason.
+     @param error The plug-in error.
+     @param dataSource The dataSource that contains the plug-in.
+*/
+- (void)pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource;
+
+@end
 
 /*!
     @class WebResourceLoadDelegate

@@ -1,3 +1,38 @@
+2002-11-01  Chris Blumenberg  <cblu@apple.com>
+
+	- Moved plug-in error handling to WebResourceLoadDelegate
+	- Report plug-in load failure, java load failure, and plug-in not found errors.
+	- Added WebPluginError, subclass of WebError.
+	- Attempted fix: 3090675 - Standalone WMP (Window Media Player) content crashes Alexander
+
+        * English.lproj/Localizable.strings:
+        * Misc.subproj/WebKitErrors.h:
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView sendEvent:]): don't send event to null function
+        * Plugins.subproj/WebNetscapePluginDocumentView.m:
+        (-[WebNetscapePluginDocumentView setDataSource:]): report plug-in load failure
+        * Plugins.subproj/WebNullPluginView.h:
+        * Plugins.subproj/WebNullPluginView.m: take a WebPluginError
+        (-[WebNullPluginView dealloc]):
+        (-[WebNullPluginView viewDidMoveToWindow]):
+        * Plugins.subproj/WebPluginError.h: Added.
+        * Plugins.subproj/WebPluginError.m: Added.
+        (-[WebPluginErrorPrivate dealloc]):
+        (-[WebPluginError dealloc]):
+        (-[WebPluginError pluginPageURL]):
+        (-[WebPluginError pluginName]):
+        (-[WebPluginError MIMEType]):
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge viewForPluginWithURL:attributes:baseURL:MIMEType:]): report plug-in load failure
+        (-[WebBridge viewForJavaAppletWithFrame:attributes:baseURL:]): report plug-in load failure
+        * WebKit.pbproj/project.pbxproj:
+        * WebView.subproj/WebController.m:
+        (-[WebResourceLoadDelegate pluginFailedWithError:dataSource:]): added, does nothing
+        * WebView.subproj/WebControllerPolicyDelegate.h:
+        * WebView.subproj/WebResourceLoadDelegate.h:
+        * WebView.subproj/WebView.m:
+        (+[WebView initialize]): added new error strings
+
 2002-11-01  John Sullivan  <sullivan@apple.com>
 
 	- some weaning of WebBookmark API from WebBookmarkGroup

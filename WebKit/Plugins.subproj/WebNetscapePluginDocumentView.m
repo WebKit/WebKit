@@ -7,10 +7,13 @@
 #import <WebKit/WebDataSource.h>
 #import <WebKit/WebDocument.h>
 #import <WebKit/WebFrame.h>
+#import <WebKit/WebKitErrors.h>
 #import <WebKit/WebNetscapePluginDocumentView.h>
 #import <WebKit/WebNSViewExtras.h>
 #import <WebKit/WebNetscapePluginPackage.h>
 #import <WebKit/WebPluginDatabase.h>
+#import <WebKit/WebPluginError.h>
+#import <WebKit/WebResourceLoadDelegate.h>
 #import <WebKit/WebView.h>
 
 #import <WebFoundation/WebResourceResponse.h>
@@ -64,6 +67,13 @@
     thePlugin = (WebNetscapePluginPackage *)[[WebPluginDatabase installedPlugins] pluginForMIMEType:MIME];
 
     if (![thePlugin load]){
+        WebPluginError *error = [WebPluginError pluginErrorWithCode:WebErrorCannotLoadPlugin
+                                                                URL:[theDataSource URL]
+                                                      pluginPageURL:nil
+                                                         pluginName:[thePlugin name]
+                                                           MIMEType:MIME];
+        
+        [[[theDataSource controller] resourceLoadDelegate] pluginFailedWithError:error dataSource:theDataSource];
         return;
     }
 

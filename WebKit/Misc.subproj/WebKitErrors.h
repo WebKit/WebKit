@@ -40,5 +40,8 @@ enum {
     WebErrorCannotShowURL = 10010,
     WebErrorCannotNotFindApplicationForURL = 10011,
     WebErrorLocationChangeInterruptedByPolicyChange = 10012,
-    WebErrorResourceLoadInterruptedByPolicyChange = 10013
+    WebErrorResourceLoadInterruptedByPolicyChange = 10013,
+    WebErrorCannotFindPlugin = 10014,
+    WebErrorCannotLoadPlugin = 10015,
+    WebErrorJavaUnavailable = 10016
 };

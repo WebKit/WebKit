@@ -475,5 +475,9 @@ NSString *WebElementFrameKey = @"WebElementFrame";
 {
 }
 
+- (void)pluginFailedWithError:(WebPluginError *)error dataSource:(WebDataSource *)dataSource
+{
+}
+
 
 @end
