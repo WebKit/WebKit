@@ -21,7 +21,6 @@
     
     NSArray *draggingTypes;
     
-    BOOL inNextValidKeyView;
     BOOL hasBorder;
 }
 

@@ -467,31 +467,33 @@ static NSMutableDictionary *viewTypes;
 
 - (BOOL)acceptsFirstResponder
 {
-    return [[self _scrollView] acceptsFirstResponder];
+    // We always accept first responder; this matches OS X 10.2 WebKit
+    // behavior (see 3469791).
+    return YES;
 }
 
 - (BOOL)becomeFirstResponder
 {
     // This works together with setNextKeyView to splice the WebFrameView into
     // the key loop similar to the way NSScrollView does this. Note that
-    // WebView has very similar code.
-    NSWindow *window = [self window];    
-    if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
-        NSView *previousValidKeyView = [self previousValidKeyView];
-        if ((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView])) {
-            [window makeFirstResponder:previousValidKeyView];
-            return YES;
-        } else {
-            return NO;
-        }
-    }
+    // WebView has similar code.
     
+    // If the scrollView won't accept first-responderness now, then we just become
+    // the first responder ourself like a normal view. This lets us be the first 
+    // responder in cases where no page has yet been loaded (see 3469791).
     if ([[self _scrollView] acceptsFirstResponder]) {
-        [window makeFirstResponder:[self _scrollView]];
-        return YES;
-    } else {
-        return NO;
-    }
+        NSWindow *window = [self window];
+        if ([window keyViewSelectionDirection] == NSSelectingPrevious) {
+            NSView *previousValidKeyView = [self previousValidKeyView];
+            if ((previousValidKeyView != self) && (previousValidKeyView != [self _scrollView])) {
+                [window makeFirstResponder:previousValidKeyView];
+            }
+        } else {
+            [window makeFirstResponder:[self _scrollView]];
+        }
+    }    
+    
+    return YES;
 }
 
 - (void)setNextKeyView:(NSView *)aView
@@ -700,46 +702,6 @@ static NSMutableDictionary *viewTypes;
         // if we did something useful, get the cursor out of the way
         [NSCursor setHiddenUntilMouseMoves:YES];
     }
-}
-
-- (NSView *)nextKeyView
-{
-    if (_private != nil && _private->inNextValidKeyView) {
-        WebFrame *webFrame = [self webFrame];
-        WebView *webView = [[self webFrame] webView];
-        if (webFrame == [webView mainFrame]) {
-            return [webView nextKeyView];
-        }
-    }
-    return [super nextKeyView];
-}
-
-- (NSView *)previousKeyView
-{
-    if (_private != nil && _private->inNextValidKeyView) {
-        WebFrame *webFrame = [self webFrame];
-        WebView *webView = [[self webFrame] webView];
-        if (webFrame == [webView mainFrame]) {
-            return [webView previousKeyView];
-        }
-    }
-    return [super previousKeyView];
-}
-
-- (NSView *)nextValidKeyView
-{
-    _private->inNextValidKeyView = YES;
-    NSView *view = [super nextValidKeyView];
-    _private->inNextValidKeyView = NO;
-    return view;
-}
-
-- (NSView *)previousValidKeyView
-{
-    _private->inNextValidKeyView = YES;
-    NSView *view = [super previousValidKeyView];
-    _private->inNextValidKeyView = NO;
-    return view;
 }
 
 @end

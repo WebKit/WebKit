@@ -1,3 +1,26 @@
+2003-11-05  John Sullivan  <sullivan@apple.com>
+
+	- fixed <rdar://problem/3469791>: Bigger/Smaller commands are 
+	disabled for HTML Mail in separate window (w/WebKit-111)
+
+        Reviewed by Darin.
+
+        * WebView.subproj/WebFrameView.m:
+        (-[WebFrameView acceptsFirstResponder]):
+	always be willing to become first responder, even if no page
+	has yet been loaded.
+        (-[WebFrameView becomeFirstResponder]):
+	if no page has yet been loaded (so our scrollview refuses
+	first responder-ness), don't do any special becoming-first-
+	responder shenanigans.
+
+	Also removed obsolete overrides for nextKeyView, nextValidKeyView,
+	previousKeyView, and previousValidKeyView that are no longer
+	required now that we handle the key loop more like NSScrollView.
+
+        * WebView.subproj/WebFrameViewPrivate.h:
+	removed now-unused ivar inNextValidKeyView
+
 2003-11-05  Richard Williamson   <rjw@apple.com>
 
 	Fixed 3029966.  Animated backgrounds specified in <BODY> don't animate
