@@ -320,9 +320,10 @@ QWidget::FocusPolicy QButton::focusPolicy() const
     // Add an additional check here.
     // For now, buttons are only focused when full
     // keyboard access is turned on.
-    if (![KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] == WebCoreFullKeyboardAccess)
+    unsigned keyboardUIMode = [KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode];
+    if ((keyboardUIMode & WebCoreKeyboardAccessFull) == 0)
         return NoFocus;
-
+    
     KWQ_UNBLOCK_EXCEPTIONS;
 
     return QWidget::focusPolicy();

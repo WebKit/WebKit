@@ -950,7 +950,7 @@ NSView *KWQKHTMLPart::nextKeyViewInFrame(NodeImpl *node, KWQSelectionDirection d
                 }
             }
         }
-        else if ([_bridge keyboardUIMode] == WebCoreFullKeyboardAccess) {
+        else if (tabsToLinks()) {
             doc->setFocusNode(node);
             if (view()) {
                 QRect rect = node->getRect();
@@ -1034,12 +1034,45 @@ bool KWQKHTMLPart::currentEventIsMouseDownInWidget(QWidget *candidate)
             return NO;
     }
     KWQ_UNBLOCK_EXCEPTIONS;
-
+    
     NodeImpl *node = nodeForWidget(candidate);
     ASSERT(node);
     return partForNode(node)->nodeUnderMouse() == node;
 }
 
+bool KWQKHTMLPart::currentEventIsKeyboardOptionTab()
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    NSEvent *evt = [NSApp currentEvent];
+    if ([evt type] != NSKeyDown) {
+        return NO;
+    }
+
+    if (([evt modifierFlags] & NSAlternateKeyMask) == 0) {
+        return NO;
+    }
+    
+    NSString *chars = [evt charactersIgnoringModifiers];
+    if ([chars length] != 1)
+        return NO;
+    
+    const unichar tabKey = 0x0009;
+    const unichar shiftTabKey = 0x0019;
+    unichar c = [chars characterAtIndex:0];
+    if (c != tabKey && c != shiftTabKey)
+        return NO;
+    
+    KWQ_UNBLOCK_EXCEPTIONS;
+    return YES;
+}
+
+bool KWQKHTMLPart::tabsToLinks()
+{
+    if ([_bridge keyboardUIMode] & WebCoreKeyboardAccessTabsToLinks)
+        return !KWQKHTMLPart::currentEventIsKeyboardOptionTab();
+    else
+        return KWQKHTMLPart::currentEventIsKeyboardOptionTab();
+}
 
 QMap<int, ScheduledAction*> *KWQKHTMLPart::pauseActions(const void *key)
 {
@@ -2684,7 +2717,7 @@ WebCoreKeyboardUIMode KWQKHTMLPart::keyboardUIMode() const
     return [_bridge keyboardUIMode];
     KWQ_UNBLOCK_EXCEPTIONS;
 
-    return WebCoreDefaultKeyboardAccess;
+    return WebCoreKeyboardAccessDefault;
 }
 
 void KWQKHTMLPart::setName(const QString &name)

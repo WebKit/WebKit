@@ -91,6 +91,8 @@
     if (_keyboardUIModeAccessed) {
         [[NSDistributedNotificationCenter defaultCenter] 
             removeObserver:self name:KeyboardUIModeDidChangeNotification object:nil];
+        [[NSNotificationCenter defaultCenter] 
+            removeObserver:self name:WebPreferencesChangedNotification object:nil];
     }
     
     --WebBridgeCount;
@@ -998,7 +1000,12 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
     // I do not know that we would ever get one bit on and the other off since
     // checking the checkbox in system preferences which is marked as "Turn on full keyboard access"
     // turns on both bits.
-    _keyboardUIMode = (mode & 0x2) ? WebCoreFullKeyboardAccess : WebCoreDefaultKeyboardAccess;
+    _keyboardUIMode = (mode & 0x2) ? WebCoreKeyboardAccessFull : WebCoreKeyboardAccessDefault;
+    
+    // check for tabbing to links
+    if ([[WebPreferences standardPreferences] tabsToLinks]) {
+        _keyboardUIMode |= WebCoreKeyboardAccessTabsToLinks;
+    }
 }
 
 - (WebCoreKeyboardUIMode)keyboardUIMode
@@ -1010,6 +1017,10 @@ static id <WebFormDelegate> formDelegate(WebBridge *self)
         [[NSDistributedNotificationCenter defaultCenter] 
             addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
             name:KeyboardUIModeDidChangeNotification object:nil];
+
+        [[NSNotificationCenter defaultCenter] 
+            addObserver:self selector:@selector(_retrieveKeyboardUIModeFromPreferences:) 
+                   name:WebPreferencesChangedNotification object:nil];
     }
     return _keyboardUIMode;
 }

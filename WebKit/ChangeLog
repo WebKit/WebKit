@@ -4,6 +4,22 @@
 
 	Fix for this bug:
 
+	<rdar://problem/3483284>: Tabbing to links needs to honor new 
+	WebKit tab-to-links preference
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge dealloc]): Remove self from notification center.
+        (-[WebBridge _retrieveKeyboardUIModeFromPreferences:]): Now
+	checks for WebCoreKeyboardAccessTabsToLinks preference.
+        (-[WebBridge keyboardUIMode]): Adds self to notification center
+	to pick up changes to WebPreferences.
+
+2003-11-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+
+	Fix for this bug:
+
 	<rdar://problem/3481719>: WebKit needs preference for tabbing to links
 
         * WebView.subproj/WebPreferences.m:

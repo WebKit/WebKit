@@ -1,3 +1,44 @@
+2003-11-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by John
+	
+	Fix for this bug:
+
+	<rdar://problem/3483284>: Tabbing to links needs to honor new 
+	WebKit tab-to-links preference
+
+	In addition to fixing the bug, I also did a bit of cleanup
+	in the code which helps to determine tab order.
+
+	Biggest change is to modify the keyboard UI mode function so
+	that it is a set of flags, rather than a straight-up value.
+
+	I also tweaked the names on the keyboard UI mode constants
+	to make them read better.
+
+        * kwq/KWQButton.mm:
+        (QButton::focusPolicy): Tweaks to make more readable and use 
+	new model for keyboard UI mode.
+        * kwq/KWQComboBox.mm:
+        (QComboBox::focusPolicy): Ditto. Plus, this function was not
+	blocking exceptions.
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::focusPolicy): Tweaks to make more readable and use 
+        new model for keyboard UI mode.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewInFrame): Now checks new tabsToLinks
+	function to determine if links can be tabbed to.
+        (KWQKHTMLPart::currentEventIsKeyboardOptionTab): New function
+	checks for option-tab keyboard event.
+        (KWQKHTMLPart::tabsToLinks): New helper to take keyboard UI mode
+	and option-tab into account.
+        (KWQKHTMLPart::keyboardUIMode): Name tweak.
+        * kwq/KWQListBox.mm: Tweaks to make more readable and use 
+        new model for keyboard UI mode.
+        (QListBox::focusPolicy):
+        * kwq/WebCoreKeyboardAccess.h: Tweaked names. Added WebCoreKeyboardAccessTabsToLinks.
+
 2003-11-13  David Hyatt  <hyatt@apple.com>
 
 	Implement a custom unfurl marquee style.

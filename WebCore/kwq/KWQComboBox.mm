@@ -279,12 +279,17 @@ const int *QComboBox::dimensions() const
 
 QWidget::FocusPolicy QComboBox::focusPolicy() const
 {
+    KWQ_BLOCK_EXCEPTIONS;
+    
     // Add an additional check here.
     // For now, selects are only focused when full
     // keyboard access is turned on.
-    if ([KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode] != WebCoreFullKeyboardAccess)
+    unsigned keyboardUIMode = [KWQKHTMLPart::bridgeForWidget(this) keyboardUIMode];
+    if ((keyboardUIMode & WebCoreKeyboardAccessFull) == 0)
         return NoFocus;
-
+    
+    KWQ_UNBLOCK_EXCEPTIONS;
+    
     return QWidget::focusPolicy();
 }
 

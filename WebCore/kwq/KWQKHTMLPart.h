@@ -147,6 +147,8 @@ public:
     NSView *nextKeyView(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     NSView *nextKeyViewInFrameHierarchy(DOM::NodeImpl *startingPoint, KWQSelectionDirection);
     static NSView *nextKeyViewForWidget(QWidget *startingPoint, KWQSelectionDirection);
+    static bool currentEventIsKeyboardOptionTab();
+    bool tabsToLinks();
     
     static bool currentEventIsMouseDownInWidget(QWidget *candidate);
     
