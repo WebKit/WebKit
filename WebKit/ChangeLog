@@ -1,5 +1,12 @@
 2004-08-26  Chris Blumenberg  <cblu@apple.com>
 
+	Tweak to last check-in.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView _documentFragmentFromPasteboard:allowPlainText:]):
+
+2004-08-26  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 
 	<rdar://problem/3546412> support for pasting and drag and dropping of RTF and RTFD to editable WebViews
 	<rdar://problem/3745345> use AppKit for converting from DOM to RTF

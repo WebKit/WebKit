@@ -292,8 +292,8 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
         return fragment;
     }
     
-    NSAttributedString *string = nil;
     if ([NSAttributedString instancesRespondToSelector:@selector(_documentFromRange:document:documentAttributes:subresources:)]) {
+        NSAttributedString *string = nil;
         if ([types containsObject:NSRTFDPboardType]) {
             string = [[NSAttributedString alloc] initWithRTFD:[pasteboard dataForType:NSRTFDPboardType] documentAttributes:NULL];
         }
@@ -304,9 +304,8 @@ static WebElementOrTextFilter *elementOrTextFilterInstance = nil;
             NSArray *elements = [[NSArray alloc] initWithObjects:@"style", nil];
             NSDictionary *documentAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:elements, NSExcludedElementsDocumentAttribute, nil];
             [elements release];
-            NSRange range = NSMakeRange(0, [string length]);
             NSArray *subresources;
-            DOMDocumentFragment *fragment = [string _documentFromRange:range 
+            DOMDocumentFragment *fragment = [string _documentFromRange:NSMakeRange(0, [string length]) 
                                                               document:[[self _bridge] DOMDocument] 
                                                     documentAttributes:documentAttributes
                                                           subresources:&subresources];
