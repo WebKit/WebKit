@@ -34,6 +34,7 @@
 -(void)setTitle:(NSString *)title;
 -(void)setDisplayTitle:(NSString *)displayTitle;
 -(void)setImage:(NSImage *)image;
+-(void)setLastVisitedDate:(NSCalendarDate *)date;
 
 -(unsigned)hash;
 -(BOOL)isEqual:(id)anObject;

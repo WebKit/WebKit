@@ -1,5 +1,11 @@
 2002-05-14  John Sullivan  <sullivan@apple.com>
 
+	* History.subproj/IFURIEntry.h:
+	Oops, deleted the prototype for setLastVisitedDate
+	accidentally, which made Jersey sad.
+
+2002-05-14  John Sullivan  <sullivan@apple.com>
+
 	Fixed 2919027 -- Need to remove unused code in WebKit/History.subproj
 
 	* History.subproj/IFAttributedURL.h: Removed.
