@@ -222,8 +222,6 @@ void ElementImpl::setAttribute(NodeImpl::Id id, DOMStringImpl* value, int &excep
         exceptioncode = DOMException::NO_MODIFICATION_ALLOWED_ERR;
         return;
     }
-
-    printf ("setAttribute %s\n", (char *)value);
     
     if (old && !value)
         namedAttrMap->removeAttribute(id);
