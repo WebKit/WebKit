@@ -26,8 +26,51 @@
 #ifndef KEDITCL_H_
 #define KEDITCL_H_
 
-#include <qmultilineedit.h>
 #include <qwidget.h>
+#include <qframe.h>
+#include <qscrollbar.h>
+#include <qstring.h>
+
+class QTableView : public QFrame {
+public:
+    QScrollBar *verticalScrollBar() const;
+    QScrollBar *horizontalScrollBar() const;
+
+    virtual void setTableFlags(uint);
+    void clearTableFlags(uint f = ~0);
+};
+
+const uint Tbl_vScrollBar       = 0x00000001;
+const uint Tbl_hScrollBar       = 0x00000002;
+const uint Tbl_autoVScrollBar   = 0x00000004;
+const uint Tbl_autoHScrollBar   = 0x00000008;
+const uint Tbl_autoScrollBars   = 0x0000000C;
+
+
+class QMultiLineEdit : public QTableView {
+public:
+
+    enum WordWrap {
+        NoWrap,
+        WidgetWidth,
+        FixedPixelWidth,
+        FixedColumnWidth
+    };    
+
+    void setWordWrap(WordWrap);
+    WordWrap wordWrap() const;
+    bool hasMarkedText() const;
+    bool isReadOnly() const;
+    virtual void setReadOnly(bool);
+    virtual void setCursorPosition(int line, int col, bool mark = FALSE);
+    void getCursorPosition(int *line, int *col) const;
+    virtual void setText(const QString &);
+    QString text();
+    QString textLine(int line) const;
+    int numLines() const;
+    void selectAll();
+};
+
 
 class KEdit : public QMultiLineEdit {
 public:
