@@ -428,9 +428,9 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 
     // Whether or not we can collapse our own margins with our children.  We don't do this
     // if we had any border/padding (obviously), if we're the root or HTML elements, or if
-    // we're positioned, floating, a table cell, or a block that has split an inline.
+    // we're positioned, floating, a table cell.
     bool canCollapseWithChildren = !isRoot() && !isHtml() && !isPositioned() && 
-      !isFloating() && !isTableCell() && !continuation() && (m_height == 0);
+      !isFloating() && !isTableCell() && (m_height == 0);
     
     // Whether or not we are a quirky container, i.e., do we collapse away top and bottom
     // margins in our container.
@@ -545,9 +545,6 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 
         // Now determine the correct ypos based off examination of collapsing margin
         // values.
-        // Don't allow the collapsing of a block
-        // with a continuation, since it has inlines on either side of it.
-        shouldCollapseChild = !child->continuation();
         if (shouldCollapseChild) {
             // Get our max pos and neg top margins.
             int posTop = child->maxTopMargin(true);
@@ -636,8 +633,6 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 
                 if (prevPosMargin-prevNegMargin) {
                     bottomChildQuirk = child->isBottomMarginQuirk();
-                    if (child->continuation()) // We split an inline. Don't apply the quirk in this case.
-                        bottomChildQuirk = false;
                 }
             }
             child->setPos(child->xPos(), ypos);

@@ -1,3 +1,17 @@
+2002-12-02  David Hyatt  <hyatt@apple.com>
+
+	Undo my changes to margin collapsing for blocks inside inlines.
+	Although they may be correct in a strict mode, they don't
+	work with the real-world Web.  For now, I'm just backing out
+	the code.  The CSS WG hasn't decided how this should work yet
+	anyway, so I'll just let the quirk behavior be our behavior
+	in both modes.
+
+	This fixes aintitcool.com.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
 2002-12-01  David Hyatt  <hyatt@apple.com>
 
 	Convert the WebCore cache from LRU to size-adjusted and
