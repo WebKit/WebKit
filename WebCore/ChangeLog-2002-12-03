@@ -1,3 +1,10 @@
+2002-03-18  Darin Adler  <darin@apple.com>
+
+	* src/kwq/KWQFontMetrics.mm: (QFontMetricsPrivate::getInfo),
+	(QFontMetrics::width), (QFontMetrics::_width), (QFontMetrics::boundingRect),
+	(QFontMetrics::size): Don't make the info object right away, in case the
+	metrics object is only used to compute ascent and descent.
+
 2002-03-17  Richard Williamson  <rjw@apple.com>
 
         Implementation of replacement code for NSLayoutManager.  Huge

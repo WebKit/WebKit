@@ -673,8 +673,8 @@ struct QFontMetricsPrivate {
     QFontMetricsPrivate(NSFont *aFont)
     {
         refCount = 0;
-        font = [aFont retain];	
-        info = [[KWQLayoutInfo getMetricsForFont: aFont] retain];
+        font = [aFont retain];
+        info = nil;
         spaceWidth = -1;
         xWidth = -1;
         ascent = -1;
@@ -685,14 +685,23 @@ struct QFontMetricsPrivate {
         [info release];
         [font release];
     }
+    KWQLayoutInfo *getInfo();
     int refCount;
-    KWQLayoutInfo *info;
     NSFont *font;
     int spaceWidth;
     int xWidth;
     int ascent;
     int descent;
+private:
+    KWQLayoutInfo *info;
 };
+
+KWQLayoutInfo *QFontMetricsPrivate::getInfo()
+{
+    if (!info)
+        info = [[KWQLayoutInfo getMetricsForFont:font] retain];
+    return info;
+}
 
 QFontMetrics::QFontMetrics()
 {
@@ -761,15 +770,13 @@ int QFontMetrics::width(QChar qc) const
             return data->xWidth;
     }
     NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
-    int stringWidth = ROUND_TO_INT([data->info rectForString: string].size.width);
-    return stringWidth;
+    return ROUND_TO_INT([data->getInfo() rectForString: string].size.width);
 }
 
 int QFontMetrics::width(char c) const
 {
     NSString *string = [NSString stringWithCString: &c length: 1];
-    int stringWidth = ROUND_TO_INT([data->info rectForString: string].size.width);
-    return stringWidth;
+    return ROUND_TO_INT([data->getInfo() rectForString: string].size.width);
 }
 
 int QFontMetrics::width(const QString &qstring, int len) const
@@ -780,20 +787,18 @@ int QFontMetrics::width(const QString &qstring, int len) const
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
         string = _FAST_QSTRING_TO_NSSTRING (qstring);
-    int stringWidth = ROUND_TO_INT([data->info rectForString: string].size.width);
-    return stringWidth;
+    return ROUND_TO_INT([data->getInfo() rectForString: string].size.width);
 }
 
 int QFontMetrics::_width(const UniChar *uchars, int len) const
 {
-    int stringWidth = ROUND_TO_INT(_rectForString(data->info, uchars, len).size.width);
-    return stringWidth;
+    return ROUND_TO_INT(_rectForString(data->getInfo(), uchars, len).size.width);
 }
 
 
 int QFontMetrics::_width(CFStringRef string) const
 {
-    return ROUND_TO_INT([data->info rectForString: (NSString *)string].size.width);
+    return ROUND_TO_INT([data->getInfo() rectForString: (NSString *)string].size.width);
 }
 
 QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
@@ -804,7 +809,7 @@ QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
         string = _FAST_QSTRING_TO_NSSTRING (qstring);
-    NSRect rect = [data->info rectForString: string];
+    NSRect rect = [data->getInfo() rectForString: string];
 
     return QRect(ROUND_TO_INT(rect.origin.x),
             ROUND_TO_INT(rect.origin.y),
@@ -814,9 +819,9 @@ QRect QFontMetrics::boundingRect(const QString &qstring, int len) const
 
 QRect QFontMetrics::boundingRect(QChar qc) const
 {
-    ushort c = qc.unicode();
-    NSString *string = [NSString stringWithCharacters: (const unichar *)&c length: 1];
-    NSRect rect = [data->info rectForString: string];
+    unichar c = qc.unicode();
+    NSString *string = [NSString stringWithCharacters: &c length: 1];
+    NSRect rect = [data->getInfo() rectForString: string];
 
     return QRect(ROUND_TO_INT(rect.origin.x),
             ROUND_TO_INT(rect.origin.y),
@@ -838,7 +843,7 @@ QSize QFontMetrics::size(int, const QString &qstring, int len, int tabstops,
         string = QSTRING_TO_NSSTRING_LENGTH (qstring, len);
     else
         string = _FAST_QSTRING_TO_NSSTRING (qstring);
-    NSRect rect = [data->info rectForString: string];
+    NSRect rect = [data->getInfo() rectForString: string];
 
     return QSize (ROUND_TO_INT(rect.size.width),ROUND_TO_INT(rect.size.height));
 }
