@@ -560,7 +560,7 @@ Value DateProtoFuncImp::call(ExecState *exec, Object &thisObj, const List &args)
   if (id == SetYear || id == SetMilliSeconds || id == SetSeconds ||
       id == SetMinutes || id == SetHours || id == SetDate ||
       id == SetMonth || id == SetFullYear ) {
-    time_t mktimeResult = mktime(t);
+    time_t mktimeResult = utc ? timegm(t) : mktime(t);
     if (mktimeResult == invalidDate)
       result = Number(NaN);
     else

@@ -1,3 +1,12 @@
+2004-03-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed problem with methods like setUTCHour
+
+        * kjs/date_object.cpp: (DateProtoFuncImp::call): Fix conversion back to time_t to use the appropriate
+        GMT vs. local time function based on the utc flag.
+
 2004-03-17  Richard Williamson   <rjw@apple.com>
 
 	Added a context parameter to result callbacks use by JavaScriptObject functions.  This was a change requested by Eric Carlson on the QT plugin team.
