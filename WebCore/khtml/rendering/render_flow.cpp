@@ -453,7 +453,17 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                 child->layout();
         } else if ( child->isFloating() ) {
             insertSpecialObject( child );
+            
+            // The float should be positioned taking into account the bottom margin
+            // of the previous flow.  We add that margin into the height, get the
+            // float positioned properly, and then subtract the margin out of the
+            // height again. -dwh
+            if (prevFlow)
+                m_height += prevFlow->collapsedMarginBottom();
             positionNewFloats();
+            if (prevFlow)
+                m_height -= prevFlow->collapsedMarginBottom();
+                
             //kdDebug() << "RenderFlow::layoutBlockChildren inserting float at "<< m_height <<" prevMargin="<<prevMargin << endl;
             child = child->nextSibling();
             continue;
@@ -463,15 +473,23 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 
         //kdDebug(0) << "margin = " << margin << " yPos = " << m_height << endl;
 
-        if(prevFlow)
+        // Try to guess our correct y position.  In most cases this guess will
+        // be correct.  Only if we're wrong (when we compute the real y position)
+        // will we have to relayout.
+        int yPosEstimate = m_height;
+        if (prevFlow)
         {
-            if (prevFlow->yPos()+prevFlow->floatBottom() > m_height)
+            yPosEstimate += QMAX(prevFlow->collapsedMarginBottom(), child->marginTop());
+            if (prevFlow->yPos()+prevFlow->floatBottom() > yPosEstimate)
                 child->setLayouted(false);
             else
                 prevFlow=0;
         }
+        else if (!canCollapseWithChildren || !topMarginContributor)
+            yPosEstimate += child->marginTop();
 
-        child->setPos(child->xPos(), m_height);
+        // Go ahead and position the child as though it didn't collapse with the top.
+        child->setPos(child->xPos(), yPosEstimate);
         if ( !child->layouted() )
             child->layout();
 
@@ -555,6 +573,13 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
                     bottomChildQuirk = child->isBottomMarginQuirk();
             }
             child->setPos(child->xPos(), ypos);
+            if (ypos != yPosEstimate) {
+                // Our guess was wrong. Make the child lay itself out again.
+                // XXXdwh some debugging code for this.
+                // printf("WE WERE WRONG for object %d (%d, %d)!\n", (int)child, yPosEstimate, ypos);
+                child->setLayouted(false);
+                child->layout();
+            }
         }
 
         // Now check for clear.

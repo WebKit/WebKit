@@ -1,5 +1,13 @@
 2002-11-13  David Hyatt  <hyatt@apple.com>
 
+	Fix for floats. Force relayout if collapsing margins
+	have to adjust the position of an object.
+	
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+
+2002-11-13  David Hyatt  <hyatt@apple.com>
+
 	Rewrite cellpadding to not use the style system at all and
 	to make table cells just get the padding from the table
 	itself (overriding style).
