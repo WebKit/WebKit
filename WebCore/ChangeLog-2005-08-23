@@ -1,3 +1,47 @@
+2004-11-09  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3873234, Safari UI is unresponsive when parsing multiple HTML docs and 3873233, Safari hangs when
+        loading large local files.
+	
+        Reviewed by mjs
+
+        * khtml/html/htmltokenizer.cpp:
+        (khtml::HTMLTokenizer::HTMLTokenizer):
+        (khtml::HTMLTokenizer::reset):
+        (khtml::HTMLTokenizer::write):
+        (khtml::HTMLTokenizer::stopped):
+        (khtml::HTMLTokenizer::processingData):
+        (khtml::HTMLTokenizer::continueProcessing):
+        (khtml::HTMLTokenizer::timerEvent):
+        (khtml::HTMLTokenizer::allDataProcessed):
+        (khtml::HTMLTokenizer::end):
+        (khtml::HTMLTokenizer::finish):
+        (khtml::HTMLTokenizer::notifyFinished):
+        * khtml/html/htmltokenizer.h:
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::slotFinished):
+        (KHTMLPart::end):
+        (KHTMLPart::stop):
+        * khtml/khtml_part.h:
+        (KHTMLPart::tokenizerProcessedData):
+        * khtml/khtmlview.cpp:
+        * khtml/xml/dom_docimpl.cpp:
+        * khtml/xml/xml_tokenizer.h:
+        (khtml::Tokenizer::stopped):
+        (khtml::Tokenizer::processingData):
+        * kwq/KWQDateTime.h:
+        * kwq/KWQDateTime.mm:
+        (QDateTime::secsTo):
+        (KWQUIEventTime::uiEventPending):
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::tokenizerProcessedData):
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge stop]):
+        (-[WebCoreBridge numPendingOrLoadingRequests]):
+        (-[WebCoreBridge doneProcessingData]):
+
 2004-11-09  David Harrison  <harrison@apple.com>
 
         Reviewed by Ken Kocienda.

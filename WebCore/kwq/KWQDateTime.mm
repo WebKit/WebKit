@@ -26,6 +26,7 @@
 #import <Foundation/Foundation.h>
 #import "KWQDateTime.h"
 #import <time.h>
+#import "WebCoreGraphicsBridge.h"
 
 static CFTimeZoneRef systemTimeZone()
 {
@@ -82,6 +83,14 @@ QDateTime::QDateTime(const QDate &d, const QTime &t)
 int QDateTime::secsTo(const QDateTime &b) const
 {
     return (int)(b.dateInSeconds - dateInSeconds);
+}
+
+bool KWQUIEventTime::uiEventPending() const
+{
+    unsigned int mask = NSAnyEventMask & 
+      ~(NSFlagsChangedMask | NSAppKitDefinedMask | NSSystemDefinedMask | NSApplicationDefinedMask | NSPeriodicMask | NSCursorUpdateMask);
+    return [[NSApplication sharedApplication] nextEventMatchingMask:mask untilDate:[NSDate distantPast] 
+                                              inMode:NSEventTrackingRunLoopMode dequeue:NO] != nil;
 }
 
 #ifdef _KWQ_IOSTREAM_

@@ -1431,7 +1431,7 @@ void KHTMLPart::slotFinished( KIO::Job * job )
   d->m_job = 0L;
 
   if (d->m_doc->parsing())
-    end(); //will emit completed()
+      end(); //will emit completed()
 }
 
 #if APPLE_CHANGES
@@ -1656,8 +1656,24 @@ void KHTMLPart::write( const QString &str )
 void KHTMLPart::end()
 {
     // make sure nothing's left in there...
-    if(d->m_decoder)
+    if (d->m_decoder)
         write(d->m_decoder->flush());
+    if (d->m_doc)
+	d->m_doc->finishParsing();
+    else
+        // WebKit partially uses WebCore when loading non-HTML docs.  In these cases doc==nil, but
+        // WebCore is enough involved that we need to checkCompleted() in order for m_bComplete to
+        // become true.  An example is when a subframe is a pure text doc, and that subframe is the
+        // last one to complete.
+        checkCompleted();
+}
+
+void KHTMLPart::stop()
+{
+    // make sure nothing's left in there...
+    Tokenizer* t = d->m_doc ? d->m_doc->tokenizer() : 0;
+    if (t)
+        t->stopped();
     if (d->m_doc)
 	d->m_doc->finishParsing();
     else

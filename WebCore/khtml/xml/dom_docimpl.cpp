@@ -98,7 +98,7 @@ using XBL::XBLBindingManager;
 using namespace DOM;
 using namespace khtml;
 
-//#define INSTRUMENT_LAYOUT_SCHEDULING 1
+// #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 DOMImplementationImpl *DOMImplementationImpl::m_instance = 0;
 

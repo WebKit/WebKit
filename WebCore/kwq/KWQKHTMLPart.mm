@@ -3588,6 +3588,12 @@ KWQWindowWidget *KWQKHTMLPart::topLevelWidget()
     return _windowWidget;
 }
 
+void KWQKHTMLPart::tokenizerProcessedData()
+{
+    checkCompleted();
+    [_bridge tokenizerProcessedData];
+}
+
 int KWQKHTMLPart::selectionStartOffset() const
 {
     return d->m_selection.start().offset();

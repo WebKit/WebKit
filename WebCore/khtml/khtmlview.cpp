@@ -69,7 +69,7 @@
 
 #define PAINT_BUFFER_HEIGHT 128
 
-//#define INSTRUMENT_LAYOUT_SCHEDULING 1
+// #define INSTRUMENT_LAYOUT_SCHEDULING 1
 
 using namespace DOM;
 using namespace khtml;

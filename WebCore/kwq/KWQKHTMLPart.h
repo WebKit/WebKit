@@ -296,6 +296,8 @@ public:
 
     KWQWindowWidget *topLevelWidget();
     
+    void tokenizerProcessedData();
+
     QString overrideMediaType() const;
     
     void setMediaType(const QString &);

@@ -52,6 +52,7 @@
 #import "render_style.h"
 #import "selection.h"
 #import "visible_position.h"
+#import "xml_tokenizer.h"
 
 #import <JavaScriptCore/npruntime.h>
 #import <JavaScriptCore/jni_jsobject.h>
@@ -116,6 +117,7 @@ using khtml::RenderStyle;
 using khtml::RenderWidget;
 using khtml::ReplaceSelectionCommand;
 using khtml::Selection;
+using khtml::Tokenizer;
 using khtml::TypingCommand;
 using khtml::UPSTREAM;
 using khtml::VisiblePosition;
@@ -443,6 +445,11 @@ static bool initializedKJS = FALSE;
 - (void)end
 {
     _part->end();
+}
+
+- (void)stop
+{
+    _part->stop();
 }
 
 - (void)createKHTMLViewWithNSView:(NSView *)view marginWidth:(int)mw marginHeight:(int)mh
@@ -1327,6 +1334,17 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     if (doc)
         return KWQNumberOfPendingOrLoadingRequests (doc->docLoader());
     return 0;
+}
+
+- (BOOL)doneProcessingData
+{
+    DocumentImpl *doc = _part->xmlDocImpl();
+    if (doc) {
+        Tokenizer* tok = doc->tokenizer();
+        if (tok)
+            return !tok->processingData();
+    }
+    return YES;
 }
 
 - (NSColor *)bodyBackgroundColor

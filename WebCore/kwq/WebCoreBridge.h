@@ -179,6 +179,7 @@ typedef enum {
 - (BOOL)saveDocumentToPageCache;
 
 - (void)end;
+- (void)stop;
 
 - (NSURL *)URL;
 - (NSString *)referrer;
@@ -304,6 +305,7 @@ typedef enum {
 - (BOOL)shouldCreateRenderers;
 
 - (int)numPendingOrLoadingRequests;
+- (BOOL)doneProcessingData;
 
 - (void)setDrawsBackground:(BOOL)drawsBackround;
 
@@ -460,6 +462,8 @@ typedef enum {
 - (NSArray *)documentState;
 
 - (void)setNeedsReapplyStyles;
+
+- (void)tokenizerProcessedData;
 
 // OK to be an NSString rather than an NSURL.
 // This URL is only used for coloring visited links.
