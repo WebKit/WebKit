@@ -22,7 +22,10 @@
 + (void)initialize
 {
     [[NSUserDefaults standardUserDefaults] registerDefaults:
-        [NSDictionary dictionaryWithObject: @"1000" forKey: @"WebKitHistoryItemLimit"]];    
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            @"1000", @"WebKitHistoryItemLimit",
+            @"7", @"WebKitHistoryAgeInDaysLimit",
+            nil]];    
 }
 
 - (id)initWithFile: (NSString *)file
@@ -247,21 +250,44 @@
 
 #pragma mark ARCHIVING/UNARCHIVING
 
+// Return a date that marks the age limit for history entries saved to or
+// loaded from disk. Any entry on this day or older should be rejected,
+// as tested with -[NSCalendarDate compareDay:]
+- (NSCalendarDate *)_ageLimitDate
+{
+    int ageInDaysLimit;
+
+    ageInDaysLimit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryAgeInDaysLimit"];
+    return [[NSCalendarDate calendarDate] dateByAddingYears:0 months:0 days:-ageInDaysLimit
+                                                      hours:0 minutes:0 seconds:0];
+}
+
+// Return a flat array of IFURIEntries. Leaves out entries older than the age limit.
+// Stops filling array when item count limit is reached, even if there are currently
+// more entries than that.
 - (NSArray *)arrayRepresentation
 {
     int dateCount, dateIndex;
-    int limit, totalSoFar;
+    int limit;
+    int totalSoFar;
     NSMutableArray *arrayRep;
+    NSCalendarDate *ageLimitDate;
 
     arrayRep = [NSMutableArray array];
 
     limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+    ageLimitDate = [self _ageLimitDate];
     totalSoFar = 0;
     
     dateCount = [_entriesByDate count];
     for (dateIndex = 0; dateIndex < dateCount; ++dateIndex) {
         int entryCount, entryIndex;
         NSArray *entries;
+
+        // skip remaining days if they are older than the age limit
+        if ([[_datesWithEntries objectAtIndex:dateIndex] compareDay:ageLimitDate] != NSOrderedDescending) {
+            break;
+        }
 
         entries = [_entriesByDate objectAtIndex:dateIndex];
         entryCount = [entries count];
@@ -281,80 +307,121 @@
     return _file;
 }
 
-- (BOOL)loadHistory
+- (BOOL)_loadHistoryGuts: (int *)numberOfItemsLoaded
 {
     NSString *path;
     NSArray *array;
-    int index, count;
+    NSEnumerator *enumerator;
+    NSObject *object;
+    int index;
     int limit;
-    double start, duration;
-    BOOL result;
+    NSCalendarDate *ageLimitDate;
+    BOOL ageLimitPassed;
 
-    start = CFAbsoluteTimeGetCurrent();
-    result = YES;
+    *numberOfItemsLoaded = 0;
 
     path = [self file];
     if (path == nil) {
         WEBKITDEBUG("couldn't load history; couldn't find or create directory to store it in\n");
-        result = NO;
-    } else {
-        array = [NSArray arrayWithContentsOfFile: path];
-        if (array == nil) {
-            if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
-                WEBKITDEBUG1("no history file found at %s\n",
-                             DEBUG_OBJECT(path));
-            } else {
-                WEBKITDEBUG1("attempt to read history from %s failed; perhaps contents are corrupted\n",
-                             DEBUG_OBJECT(path));
-            }
-            result = NO;
+        return NO;
+    }
+
+    array = [NSArray arrayWithContentsOfFile: path];
+    if (array == nil) {
+        if (![[NSFileManager defaultManager] fileExistsAtPath: path]) {
+            WEBKITDEBUG1("no history file found at %s\n",
+                            DEBUG_OBJECT(path));
         } else {
-            count = [array count];
-            limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
-            count = MIN(count, limit);
-            for (index = 0; index < count; ++index) {
-                IFURIEntry *entry = [[IFURIEntry alloc] initFromDictionaryRepresentation:
-                    [array objectAtIndex: index]];
-                [self addEntry: entry];
+            WEBKITDEBUG1("attempt to read history from %s failed; perhaps contents are corrupted\n",
+                            DEBUG_OBJECT(path));
+        }
+        return NO;
+    }
+
+    limit = [[NSUserDefaults standardUserDefaults] integerForKey: @"WebKitHistoryItemLimit"];
+    ageLimitDate = [self _ageLimitDate];
+    index = 0;
+    // reverse dates so you're loading the oldest first, to minimize the number of comparisons
+    enumerator = [array reverseObjectEnumerator];
+    ageLimitPassed = NO;
+
+    while ((object = [enumerator nextObject]) != nil) {
+        IFURIEntry *entry;
+
+        entry = [[IFURIEntry alloc] initFromDictionaryRepresentation: (NSDictionary *)object];
+
+        // test against date limit
+        if (!ageLimitPassed) {
+            if ([[entry lastVisitedDate] compareDay:ageLimitDate] != NSOrderedDescending) {
+                continue;
+            } else {
+                ageLimitPassed = YES;
             }
+        }
+        
+        [self addEntry: entry];
+        if (++index >= limit) {
+            break;
         }
     }
 
+    *numberOfItemsLoaded = MIN(index, limit);
+    return YES;    
+}
+
+- (BOOL)loadHistory
+{
+    int numberOfItems;
+    double start, duration;
+    BOOL result;
+
+    start = CFAbsoluteTimeGetCurrent();
+    result = [self _loadHistoryGuts: &numberOfItems];
+
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "loading history from %s took %f seconds\n",
-                           DEBUG_OBJECT([self file]), duration);
+        WEBKITDEBUGLEVEL3 (WEBKIT_LOG_TIMING, "loading %d history entries from %s took %f seconds\n",
+                           numberOfItems, DEBUG_OBJECT([self file]), duration);
     }
 
     return result;
 }
 
-- (BOOL)saveHistory
+- (BOOL)_saveHistoryGuts: (int *)numberOfItemsSaved
 {
     NSString *path;
     NSArray *array;
+    *numberOfItemsSaved = 0;
+
+    path = [self file];
+    if (path == nil) {
+        WEBKITDEBUG("couldn't save history; couldn't find or create directory to store it in\n");
+        return NO;
+    }
+
+    array = [self arrayRepresentation];
+    if (![array writeToFile:path atomically:YES]) {
+        WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
+        return NO;
+    }
+    
+    *numberOfItemsSaved = [array count];
+    return YES;
+}
+
+- (BOOL)saveHistory
+{
+    int numberOfItems;
     double start, duration;
     BOOL result;
 
     start = CFAbsoluteTimeGetCurrent();
-    result = YES;
-    
-    path = [self file];
-    if (path == nil) {
-        WEBKITDEBUG("couldn't save history; couldn't find or create directory to store it in\n");
-        result = NO;
-    } else {
-        array = [self arrayRepresentation];
-        if (![array writeToFile:path atomically:YES]) {
-            WEBKITDEBUG2("attempt to save %s to %s failed\n", DEBUG_OBJECT(array), DEBUG_OBJECT(path));
-            result = NO;
-        }
-    }
+    result = [self _saveHistoryGuts: &numberOfItems];
 
     if (result == YES) {
         duration = CFAbsoluteTimeGetCurrent() - start;
-        WEBKITDEBUGLEVEL2 (WEBKIT_LOG_TIMING, "saving history to %s took %f seconds\n",
-                           DEBUG_OBJECT([self file]), duration);
+        WEBKITDEBUGLEVEL3 (WEBKIT_LOG_TIMING, "saving %d history entries to %s took %f seconds\n",
+                           numberOfItems, DEBUG_OBJECT([self file]), duration);
     }
 
     return result;

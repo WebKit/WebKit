@@ -1,3 +1,20 @@
+2002-03-18  John Sullivan  <sullivan@apple.com>
+
+	Imposed age limit on history items saved to/loaded from disk.
+	Sped up history loading by reversing list before processing entries.
+
+	* History.subproj/IFWebHistoryPrivate.m: 
+	(+[IFWebHistoryPrivate initialize]): Register default for age limit.
+	(-[IFWebHistoryPrivate _ageLimitDate]): New convenience method, returns a date older
+	than any history entry that should be stored/loaded.
+	(-[IFWebHistoryPrivate arrayRepresentation]): skip too-old dates.
+	(-[IFWebHistoryPrivate _loadHistoryGuts:]), (-[IFWebHistoryPrivate _saveHistoryGuts:]): 
+	Broke into separate methods to make timing wrapper less messy. Respect age limit.
+	Report number of items saved/loaded in timing message.
+	(-[IFWebHistoryPrivate loadHistory]), (-[IFWebHistoryPrivate saveHistory]):
+	use broken-out _guts methods.
+	* WebKit.pbproj/project.pbxproj: version wars
+
 2002-03-16  Richard Williamson  <rjw@apple.com>
 
         Fixed scroll bar flash.  Add provisional view to go along with
