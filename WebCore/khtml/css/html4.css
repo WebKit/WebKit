@@ -396,7 +396,7 @@ INPUT[type="hidden"] {
 }
 
 INPUT[type="radio"], INPUT[type="checkbox"] {
-        margin: 0 0.5ex;
+        margin: 3px 0.5ex;
 }
 
 OPTION, 
