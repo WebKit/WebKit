@@ -76,24 +76,6 @@ short RenderFormElement::baselinePosition( bool f ) const
 #endif
 }
 
-short RenderFormElement::calcReplacedWidth(bool*) const
-{
-    Length w = style()->width();
-    if ( w.isVariable() )
-        return intrinsicWidth();
-    else
-        return RenderReplaced::calcReplacedWidth();
-}
-
-int RenderFormElement::calcReplacedHeight() const
-{
-    Length h = style()->height();
-    if ( h.isVariable() )
-        return intrinsicHeight();
-    else
-        return RenderReplaced::calcReplacedHeight();
-}
-
 void RenderFormElement::updateFromElement()
 {
     m_widget->setEnabled(!element()->disabled());

@@ -50,9 +50,9 @@ RenderRoot::RenderRoot(DOM::NodeImpl* node, KHTMLView *view)
     m_width = m_minWidth;
     m_maxWidth = m_minWidth;
 
-    m_rootWidth=0;
-    m_rootHeight=0;
-
+    m_rootWidth = m_rootHeight = 0;
+    m_viewportWidth = m_viewportHeight = 0;
+    
     setPositioned(true); // to 0,0 :)
 
     m_printingMode = false;
@@ -122,13 +122,11 @@ void RenderRoot::calcMinMaxWidth()
 
 void RenderRoot::layout()
 {
-    //kdDebug(6040) << "RenderRoot::layout()" << endl;
     if (m_printingMode)
        m_minWidth = m_width;
 
-    if(firstChild()) {
+    if(firstChild())
         firstChild()->setLayouted(false);
-    }
 
 #ifdef SPEED_DEBUG
     QTime qt;
@@ -138,40 +136,42 @@ void RenderRoot::layout()
 	recalcMinMaxWidths();
 #ifdef SPEED_DEBUG
     kdDebug() << "RenderRoot::calcMinMax time used=" << qt.elapsed() << endl;
-    // this fixes frameset resizing
     qt.start();
 #endif
 
-    RenderFlow::layout();
 #ifdef SPEED_DEBUG
     kdDebug() << "RenderRoot::layout time used=" << qt.elapsed() << endl;
     qt.start();
 #endif
-    // have to do that before layoutSpecialObjects() to get fixed positioned objects at the right place
-    if (m_view) m_view->resizeContents(docWidth(), docHeight());
-
-    if (!m_printingMode && m_view)
-    {
-        m_height = m_view->visibleHeight();
-        m_width = m_view->visibleWidth();
+    if (!m_printingMode) {
+        m_viewportWidth = m_width = m_view->visibleWidth();
+        m_viewportHeight = m_height = m_view->visibleHeight();
     }
-    else if (!m_view)
-    {
-        m_height = m_rootHeight;
+    else {
         m_width = m_rootWidth;
+        m_height = m_rootHeight;
     }
-    
+
+    RenderFlow::layout();
+
+    if (!m_printingMode) {
+        m_view->resizeContents(docWidth(), docHeight());
+        setWidth( m_viewportWidth = m_view->visibleWidth() );
+        setHeight(  m_viewportHeight = m_view->visibleHeight() );
+    }
+
+
     // ### we could maybe do the call below better and only pass true if the docsize changed.
     layoutSpecialObjects( true );
+
 #ifdef SPEED_DEBUG
     kdDebug() << "RenderRoot::end time used=" << qt.elapsed() << endl;
 #endif
 
     layer()->setHeight(m_height);
     layer()->setWidth(m_width);
-    
+
     setLayouted();
-    //kdDebug(0) << "root: height = " << m_height << endl;
 }
 
 bool RenderRoot::absolutePosition(int &xPos, int &yPos, bool f)
@@ -211,12 +211,17 @@ void RenderRoot::paintObject(QPainter *p, int _x, int _y,
         child = child->nextSibling();
     }
 
-#ifdef BOX_DEBUG
     if (m_view)
     {
         _tx += m_view->contentsX();
         _ty += m_view->contentsY();
     }
+    
+    // 3. paint floats.
+    if (paintPhase == FLOAT_PHASE)
+        paintFloats(p, _x, _y, _w, _h, _tx, _ty);
+        
+#ifdef BOX_DEBUG
     outlineBox(p, _tx, _ty);
 #endif
 

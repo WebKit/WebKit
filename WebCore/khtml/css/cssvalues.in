@@ -258,6 +258,7 @@ static-position
 thick
 thin
 underline
+-konq-nowrap
 # CSS_PROP__KONQ_FLOW_MODE
 -konq-normal
 -konq-around-floats

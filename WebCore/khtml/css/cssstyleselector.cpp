@@ -1743,6 +1743,9 @@ void CSSStyleSelector::applyRule( DOM::CSSProperty *prop )
 
         EWhiteSpace s;
         switch(primitiveValue->getIdent()) {
+        case CSS_VAL__KONQ_NOWRAP:
+            s = KONQ_NOWRAP;
+            break;
         case CSS_VAL_NOWRAP:
             s = NOWRAP;
             break;

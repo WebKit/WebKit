@@ -763,7 +763,7 @@ ElementImpl *DocumentImpl::createHTMLElement( const DOMString &name )
     case ID_THEAD:
     case ID_TBODY:
     case ID_TFOOT:
-        n = new HTMLTableSectionElementImpl(docPtr(), id);
+        n = new HTMLTableSectionElementImpl(docPtr(), id, false);
         break;
 
 // inline elements

@@ -187,9 +187,10 @@ DOM::DOMString getValueName(unsigned short id);
 #define CSS_VAL_THICK 176
 #define CSS_VAL_THIN 177
 #define CSS_VAL_UNDERLINE 178
-#define CSS_VAL__KONQ_NORMAL 179
-#define CSS_VAL__KONQ_AROUND_FLOATS 180
+#define CSS_VAL__KONQ_NOWRAP 179
+#define CSS_VAL__KONQ_NORMAL 180
+#define CSS_VAL__KONQ_AROUND_FLOATS 181
 
-#define CSS_VAL_TOTAL 181
+#define CSS_VAL_TOTAL 182
 #endif
 

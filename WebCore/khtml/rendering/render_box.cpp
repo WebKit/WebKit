@@ -107,8 +107,7 @@ void RenderBox::detach(RenderArena* renderArena)
 short RenderBox::contentWidth() const
 {
     short w = m_width - borderLeft() - borderRight();
-    if (hasPadding())
-        w -= paddingLeft() + paddingRight();
+    w -= paddingLeft() + paddingRight();
 
     //kdDebug( 6040 ) << "RenderBox::contentWidth(2) = " << w << endl;
     return w;
@@ -117,8 +116,7 @@ short RenderBox::contentWidth() const
 int RenderBox::contentHeight() const
 {
     int h = m_height - borderTop() - borderBottom();
-    if (hasPadding())
-        h -= paddingTop() + paddingBottom();
+    h -= paddingTop() + paddingBottom();
 
     return h;
 }
@@ -715,108 +713,80 @@ void RenderBox::calcHeight()
     }
 }
 
-short RenderBox::calcReplacedWidth(bool* ieHack) const
+short RenderBox::calcReplacedWidth() const
 {
-    Length w = style()->width();
-    short width;
-    if ( ieHack )
-        *ieHack = style()->height().isPercent() || w.isPercent();
+   Length w = style()->width();
 
-    switch( w.type ) {
-    case Variable:
-    {
-        Length h = style()->height();
-        int ih = intrinsicHeight();
-        if ( ih > 0 && ( h.isPercent() || h.isFixed() ) )
-            width = ( ( h.isPercent() ? calcReplacedHeight() : h.value )*intrinsicWidth() ) / ih;
-        else
-            width = intrinsicWidth();
-        break;
-    }
+   switch( w.type ) {
+    case Fixed:
+        return w.value;
     case Percent:
     {
-        //RenderObject* p = parent();
-        int cw = containingBlockWidth();
-        if ( cw ) {
-            width = w.minWidth( cw );
-#if APPLE_CHANGES
-            // Aqua form controls have margins.  In order to make this work out well,
-            // subtract our margins out.
+        const int cw = containingBlockWidth();
+        if (cw > 0) {
+            int result = w.minWidth(cw);
+#ifdef APPLE_CHANGES
+            // Because we put margins on our form controls, for percentage widths, it's best to subtract
+            // them out so the controls fit snugly and don't overflow.  This is gross.  Technically we
+            // should probably stop using margins and build the spacing into the form controls ourselves, but
+            // then how would the author override? -dwh
             if (isFormElement())
-                width -= (marginLeft() + marginRight());
+                result -= (marginLeft() + marginRight());
 #endif
+            return result;
         }
-        else
-            width = intrinsicWidth();
-        break;
     }
-    case Fixed:
-        width = w.value;
-        break;
+    // fall through
     default:
-        width = intrinsicWidth();
-        break;
-    };
-
-    return width;
+        return intrinsicWidth();
+    }
 }
 
 int RenderBox::calcReplacedHeight() const
 {
-    Length h = style()->height();
-    short height;
+    const Length& h = style()->height();
     switch( h.type ) {
-    case Variable:
-    {
-        Length w = style()->width();
-        int iw = intrinsicWidth();
-        if( iw > 0 && ( w.isFixed() || w.isPercent() ))
-            height = (( w.isPercent() ? calcReplacedWidth() : w.value ) * intrinsicHeight()) / iw;
-        else
-            height = intrinsicHeight();
-    }
-    break;
-    case Percent:
-    {
-        RenderObject* p = parent();
-        while (p && !p->isTableCell()) p = p->parent();
-        bool doIEHack = !p;
-        RenderObject* cb = containingBlock();
-        if ( !cb->isTableCell() && doIEHack)
-            height = h.minWidth( cb->root()->view()->visibleHeight() );
-        else {
-	    if (cb->isTableCell()) {
-	        RenderTableCell* tableCell = static_cast<RenderTableCell*>(cb);
-	        if (tableCell->style()->height().isPercent() && tableCell->getCellPercentageHeight()) {
-                height = h.minWidth(tableCell->getCellPercentageHeight());
-#if APPLE_CHANGES
-                // Aqua form controls have margins.  In order to make this work out well,
-                // subtract our margins out.
-                if (isFormElement())
-                    height -= (marginTop() + marginBottom());
+    case Percent: {
+        int ah = availableHeight();
+#ifdef APPLE_CHANGES
+        // Because we put margins on our form controls, for percentage heights, it's best to subtract
+        // them out so the controls fit snugly and don't overflow.  This is gross.  Technically we
+        // should probably stop using margins and build the spacing into the form controls ourselves,
+        // but then how would the author override? -dwh
+        if (isFormElement())
+            ah -= (marginTop() + marginBottom());
 #endif
-                    break;
-                }
-            }
-            
-            if (!doIEHack)
-                cb = cb->containingBlock();
-            
-            if ( cb->style()->height().isFixed() )
-                height = h.minWidth( cb->style()->height().value );
-            else
-                height = intrinsicHeight();
-        }
+        return ah;
     }
-    break;
     case Fixed:
-        height = h.value;
-        break;
+        return h.value;
     default:
-        height = intrinsicHeight();
+        return intrinsicHeight();
     };
+}
 
-    return height;
+int RenderBox::availableHeight() const
+{
+    Length h = style()->height();
+
+    if (h.isFixed())
+        return h.value;
+
+    if (isRoot())
+        return static_cast<const RenderRoot*>(this)->viewportHeight();
+
+    // We need to stop here, since we don't want to increase the height of the table
+    // artificially.  We're going to rely on this cell getting expanded to some new
+    // height, and then when we lay out again we'll use the calculation below.
+    if (isTableCell() && (h.isVariable() || h.isPercent())) {
+        const RenderTableCell* tableCell = static_cast<const RenderTableCell*>(this);
+        return tableCell->getCellPercentageHeight() - (borderLeft()+borderRight()+paddingLeft()+paddingRight());
+    }
+    
+    if (h.isPercent())
+       return h.width(containingBlock()->availableHeight());
+       
+    return containingBlock()->availableHeight();
 }
 
 void RenderBox::calcVerticalMargins()
@@ -1015,6 +985,8 @@ void RenderBox::calcAbsoluteVertical()
     if (hl.isFixed())
         ch = hl.value + cb->paddingTop()
              + cb->paddingBottom();
+    else if (cb->isHtml())
+        ch = cb->availableHeight();
     else
         ch = cb->height();
 
@@ -1022,7 +994,11 @@ void RenderBox::calcAbsoluteVertical()
         t = style()->top().width(ch) + cb->borderTop();
     if(!style()->bottom().isVariable())
         b = style()->bottom().width(ch) + cb->borderBottom();
-    if(!style()->height().isVariable())
+    if (isTable() && style()->height().isVariable())
+        // Height is never unsolved for tables. "auto" means shrink to fit.  Use our
+        // height instead.
+        h = m_height - pab;
+    else if(!style()->height().isVariable())
     {
         h = style()->height().width(ch);
         

@@ -68,6 +68,7 @@ NodeImpl::NodeImpl(DocumentPtr *doc)
       m_focused( false ),
       m_active( false ),
       m_styleElement( false ),
+      m_implicit( false ),
       m_rendererNeedsClose( false )
 {
     if (document)
@@ -900,6 +901,7 @@ void NodeImpl::dump(QTextStream *stream, QString ind) const
     if (m_focused) { *stream << " focused"; }
     if (m_active) { *stream << " active"; }
     if (m_styleElement) { *stream << " styleElement"; }
+    if (m_implicit) { *stream << " implicit"; }
 
     *stream << " tabIndex=" << m_tabIndex;
     if (m_regdListeners)

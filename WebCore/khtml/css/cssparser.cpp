@@ -1198,7 +1198,7 @@ bool StyleBaseImpl::parseValue( const QChar *curP, const QChar *endP, int propId
 	//    [<color> || <length> <length> <length>?] | inherit
 
       case CSS_PROP_UNICODE_BIDI:         // normal | embed | bidi-override | inherit
-      case CSS_PROP_WHITE_SPACE:          // normal | pre | nowrap | inherit
+      case CSS_PROP_WHITE_SPACE:          // normal | pre | nowrap | -konq-nowrap | inherit
       case CSS_PROP_FONT_STRETCH:
         // normal | wider | narrower | ultra-condensed | extra-condensed | condensed |
         // semi-condensed |  semi-expanded | expanded | extra-expanded | ultra-expanded |

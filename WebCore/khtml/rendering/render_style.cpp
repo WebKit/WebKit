@@ -31,7 +31,7 @@
 using namespace khtml;
 
 StyleSurroundData::StyleSurroundData()
-    : margin( Fixed ), padding( Fixed )
+    : margin( Fixed ), padding( Variable )
 {
 }
 

@@ -108,7 +108,7 @@ RenderObject *RenderObject::createObject(DOM::NodeImpl* node,  RenderStyle* styl
         o = new (arena) RenderTableCell(node);
         break;
     case TABLE_CAPTION:
-        o = new (arena) RenderTableCaption(node);
+        o = new (arena) RenderFlow(node);
         break;
     }
     if(o) o->setStyle(style);
@@ -868,34 +868,50 @@ void RenderObject::cursorPos(int /*offset*/, int &_x, int &_y, int &height)
 
 int RenderObject::paddingTop() const
 {
-    int cw=0;
-    if (style()->paddingTop().isPercent())
-        cw = containingBlock()->contentWidth();
-    return m_style->paddingTop().minWidth(cw);
+    int w = 0;
+    Length padding = m_style->paddingTop();
+    if (padding.isPercent())
+        w = containingBlock()->contentWidth();
+    w = padding.minWidth(w);
+    if ( isTableCell() && padding.isVariable() )
+	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
+    return w;
 }
 
 int RenderObject::paddingBottom() const
 {
-    int cw=0;
-    if (style()->paddingBottom().isPercent())
-        cw = containingBlock()->contentWidth();
-    return m_style->paddingBottom().minWidth(cw);
+    int w = 0;
+    Length padding = style()->paddingBottom();
+    if (padding.isPercent())
+        w = containingBlock()->contentWidth();
+    w = padding.minWidth(w);
+    if ( isTableCell() && padding.isVariable() )
+	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
+    return w;
 }
 
 int RenderObject::paddingLeft() const
 {
-    int cw=0;
-    if (style()->paddingLeft().isPercent())
-        cw = containingBlock()->contentWidth();
-    return m_style->paddingLeft().minWidth(cw);
+    int w = 0;
+    Length padding = style()->paddingLeft();
+    if (padding.isPercent())
+        w = containingBlock()->contentWidth();
+    w = padding.minWidth(w);
+    if ( isTableCell() && padding.isVariable() )
+	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
+    return w;
 }
 
 int RenderObject::paddingRight() const
 {
-    int cw=0;
-    if (style()->paddingRight().isPercent())
-        cw = containingBlock()->contentWidth();
-    return m_style->paddingRight().minWidth(cw);
+    int w = 0;
+    Length padding = style()->paddingRight();
+    if (padding.isPercent())
+        w = containingBlock()->contentWidth();
+    w = padding.minWidth(w);
+    if ( isTableCell() && padding.isVariable() )
+	w = static_cast<const RenderTableCell *>(this)->table()->cellPadding();
+    return w;
 }
 
 RenderRoot* RenderObject::root() const

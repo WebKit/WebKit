@@ -101,9 +101,11 @@ public:
 
     int calcWidthUsing(WidthType widthType, int cw, LengthType& lengthType);
     
-    virtual short calcReplacedWidth(bool* ieHack=0) const;
+    virtual short calcReplacedWidth() const;
     virtual int   calcReplacedHeight() const;
 
+    virtual int availableHeight() const;
+    
     void calcVerticalMargins();
 
     void relativePositionOffset(int &tx, int &ty);

@@ -667,7 +667,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 if ( current->id() == ID_TR )
                     e = new HTMLTableCellElementImpl(document, ID_TD);
                 else if ( current->id() == ID_TABLE )
-                    e = new HTMLTableSectionElementImpl( document, ID_TBODY );
+                    e = new HTMLTableSectionElementImpl( document, ID_TBODY, true /* implicit */ );
                 else
                     e = new HTMLTableRowElementImpl( document );
                 
@@ -1037,7 +1037,7 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         popBlock( ID_THEAD );
         popBlock( ID_TBODY );
         popBlock( ID_TFOOT );
-        n = new HTMLTableSectionElementImpl(document, t->id);
+        n = new HTMLTableSectionElementImpl(document, t->id, false);
         break;
 
 // inline elements

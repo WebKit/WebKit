@@ -187,8 +187,7 @@ TABLE {
 	text-align: -konq-auto;
 	border-spacing: 2px;
 	border-color: gray;
-	padding: 1px;
-        -konq-flow-mode: -konq-around-floats;
+    -konq-flow-mode: -konq-around-floats;
 }
 
 TD[align=left] > TABLE {
@@ -207,19 +206,19 @@ TABLE[align="center"] {
 THEAD { 
 	display: table-header-group; 
     vertical-align: middle;
-	border: inherit;
+    border-color: inherit;
 }
       
 TBODY { 
 	display: table-row-group;
     vertical-align: middle; 
-    border: inherit;
+    border-color: inherit;
 }
       
 TFOOT { 
 	display: table-footer-group; 
     vertical-align: middle;
-	border: inherit; 
+    border-color: inherit;
 }
 
 COL { 

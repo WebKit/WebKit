@@ -74,8 +74,6 @@ public:
 
     virtual Id id() const;
 
-    virtual void attach();
-    
     HTMLTableCaptionElementImpl *caption() const { return tCaption; }
     NodeImpl *setCaption( HTMLTableCaptionElementImpl * );
 
@@ -93,31 +91,29 @@ public:
     void deleteTFoot (  );
     HTMLElementImpl *createCaption (  );
     void deleteCaption (  );
-    HTMLElementImpl *insertRow ( long index );
-    void deleteRow ( long index );
+    HTMLElementImpl *insertRow ( long index, int &exceptioncode );
+    void deleteRow ( long index, int &exceptioncode );
 
     // overrides
     virtual NodeImpl *addChild(NodeImpl *child);
     virtual void parseAttribute(AttributeImpl *attr);
+    virtual void attach();
 
-    virtual void init();
-
-    int cellPadding() { return m_cellPadding; }
-    
 protected:
     HTMLTableSectionElementImpl *head;
     HTMLTableSectionElementImpl *foot;
     HTMLTableSectionElementImpl *firstBody;
     HTMLTableCaptionElementImpl *tCaption;
 
+#if 0
     Frame frame;
     Rules rules;
+#endif
 
-    int m_cellPadding;
-    
-    bool incremental : 1;
-    bool m_noBorder  : 1;
-    bool m_solid     : 1;
+    bool m_noBorder     : 1;
+    bool m_solid        : 1;
+    uint unused		: 14;
+    ushort padding	: 16;
     friend class HTMLTableCellElementImpl;
 };
 
@@ -128,13 +124,10 @@ class HTMLTablePartElementImpl : public HTMLElementImpl
 {
 public:
     HTMLTablePartElementImpl(DocumentPtr *doc)
-        : HTMLElementImpl(doc), m_solid(false)
+        : HTMLElementImpl(doc)
         { }
 
     virtual void parseAttribute(AttributeImpl *attr);
-
-protected:
-    bool m_solid : 1;
 };
 
 // -------------------------------------------------------------------------
@@ -142,7 +135,7 @@ protected:
 class HTMLTableSectionElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableSectionElementImpl(DocumentPtr *doc, ushort tagid);
+    HTMLTableSectionElementImpl(DocumentPtr *doc, ushort tagid, bool implicit);
 
     ~HTMLTableSectionElementImpl();
 
@@ -150,14 +143,13 @@ public:
 
     virtual NodeImpl *addChild(NodeImpl *child);
     
-    HTMLElementImpl *insertRow ( long index );
-    void deleteRow ( long index );
+    HTMLElementImpl *insertRow ( long index, int& exceptioncode );
+    void deleteRow ( long index, int& exceptioncode );
 
-    int numRows() const { return nrows; }
+    int numRows() const;
 
 protected:
     ushort _id;
-    int nrows;
 };
 
 // -------------------------------------------------------------------------
@@ -165,9 +157,8 @@ protected:
 class HTMLTableRowElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableRowElementImpl(DocumentPtr *doc);
-
-    ~HTMLTableRowElementImpl();
+    HTMLTableRowElementImpl(DocumentPtr *doc)
+        : HTMLTablePartElementImpl(doc) {}
 
     virtual Id id() const;
 
@@ -176,8 +167,8 @@ public:
     long rowIndex() const;
     long sectionRowIndex() const;
 
-    HTMLElementImpl *insertCell ( long index );
-    void deleteCell ( long index );
+    HTMLElementImpl *insertCell ( long index, int &exceptioncode );
+    void deleteCell ( long index, int &exceptioncode );
 
 protected:
     int ncols;
@@ -198,14 +189,13 @@ public:
     void setCol(int col) { _col = col; }
     int row() const { return _row; }
     void setRow(int r) { _row = r; }
-    
+
     int colSpan() const { return cSpan; }
     int rowSpan() const { return rSpan; }
-    bool noWrap() const { return m_nowrap; }
-
+    
     virtual Id id() const { return _id; }
     virtual void parseAttribute(AttributeImpl *attr);
-    virtual void init();
+    virtual void attach();
 
 protected:
     int _row;
@@ -214,28 +204,23 @@ protected:
     int cSpan;
     int _id;
     int rowHeight;
-
-    bool m_nowrap : 1;
+    bool m_solid        : 1;
 };
 
 // -------------------------------------------------------------------------
 
-class HTMLTableColElementImpl : public HTMLElementImpl
+class HTMLTableColElementImpl : public HTMLTablePartElementImpl
 {
 public:
     HTMLTableColElementImpl(DocumentPtr *doc, ushort i);
-
-    ~HTMLTableColElementImpl();
 
     virtual Id id() const;
 
     void setTable(HTMLTableElementImpl *t) { table = t; }
 
-    virtual NodeImpl *addChild(NodeImpl *child);
-
     // overrides
     virtual void parseAttribute(AttributeImpl *attr);
-    
+
     int span() const { return _span; }
 
 protected:
@@ -252,12 +237,10 @@ protected:
 class HTMLTableCaptionElementImpl : public HTMLTablePartElementImpl
 {
 public:
-    HTMLTableCaptionElementImpl(DocumentPtr *doc);
-
-    ~HTMLTableCaptionElementImpl();
+    HTMLTableCaptionElementImpl(DocumentPtr *doc)
+        : HTMLTablePartElementImpl(doc) {}
 
     virtual Id id() const;
-
     virtual void parseAttribute(AttributeImpl *attr);
 };
 

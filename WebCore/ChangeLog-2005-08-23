@@ -1,3 +1,177 @@
+2003-01-17  David Hyatt  <hyatt@apple.com>
+
+	The new table code from Lars.  Also includes bug fixes for
+	percentage height children in table cells, for positioning
+	of tables, and for width distribution of percentage width
+	cells.
+	
+        Reviewed by darin
+
+        * ForwardingHeaders/rendering/table_layout.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/cssparser.cpp:
+        (StyleBaseImpl::parseValue):
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/css/cssvalues.c:
+        (findValue):
+        * khtml/css/cssvalues.h:
+        * khtml/css/cssvalues.in:
+        * khtml/css/html4.css:
+        * khtml/dom/html_table.cpp:
+        (HTMLTableElement::insertRow):
+        (HTMLTableElement::deleteRow):
+        (HTMLTableRowElement::insertCell):
+        (HTMLTableRowElement::deleteCell):
+        (HTMLTableSectionElement::insertRow):
+        (HTMLTableSectionElement::deleteRow):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::HTMLTableElementImpl):
+        (HTMLTableElementImpl::setTFoot):
+        (HTMLTableElementImpl::setTBody):
+        (HTMLTableElementImpl::createTHead):
+        (HTMLTableElementImpl::createTFoot):
+        (HTMLTableElementImpl::insertRow):
+        (HTMLTableElementImpl::deleteRow):
+        (HTMLTableElementImpl::addChild):
+        (HTMLTableElementImpl::parseAttribute):
+        (HTMLTableElementImpl::attach):
+        (HTMLTablePartElementImpl::parseAttribute):
+        (HTMLTableSectionElementImpl::HTMLTableSectionElementImpl):
+        (HTMLTableSectionElementImpl::~HTMLTableSectionElementImpl):
+        (HTMLTableSectionElementImpl::insertRow):
+        (HTMLTableSectionElementImpl::deleteRow):
+        (HTMLTableSectionElementImpl::numRows):
+        (HTMLTableRowElementImpl::rowIndex):
+        (HTMLTableRowElementImpl::insertCell):
+        (HTMLTableRowElementImpl::deleteCell):
+        (HTMLTableCellElementImpl::HTMLTableCellElementImpl):
+        (HTMLTableCellElementImpl::parseAttribute):
+        (HTMLTableCellElementImpl::attach):
+        (HTMLTableColElementImpl::HTMLTableColElementImpl):
+        (HTMLTableColElementImpl::parseAttribute):
+        * khtml/html/html_tableimpl.h:
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        (KHTMLParser::getElement):
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::layoutInlineChildren):
+        * khtml/rendering/render_body.cpp:
+        (RenderBody::availableHeight):
+        * khtml/rendering/render_body.h:
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::contentWidth):
+        (RenderBox::contentHeight):
+        (RenderBox::calcReplacedWidth):
+        (RenderBox::calcReplacedHeight):
+        (RenderBox::availableHeight):
+        (RenderBox::calcAbsoluteVertical):
+        * khtml/rendering/render_box.h:
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::leftOffset):
+        (RenderFlow::rightOffset):
+        (RenderFlow::addOverHangingFloats):
+        (RenderFlow::calcBlockMinMaxWidth):
+        (RenderFlow::calcMinMaxWidth):
+        * khtml/rendering/render_form.cpp:
+        * khtml/rendering/render_form.h:
+        * khtml/rendering/render_frames.cpp:
+        * khtml/rendering/render_frames.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::createObject):
+        (RenderObject::paddingTop):
+        (RenderObject::paddingBottom):
+        (RenderObject::paddingLeft):
+        (RenderObject::paddingRight):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::calcMinMaxWidth):
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::RenderRoot):
+        (RenderRoot::layout):
+        (RenderRoot::paintObject):
+        * khtml/rendering/render_root.h:
+        * khtml/rendering/render_style.cpp:
+        (StyleSurroundData::StyleSurroundData):
+        * khtml/rendering/render_style.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTable::~RenderTable):
+        (RenderTable::setStyle):
+        (RenderTable::position):
+        (RenderTable::addChild):
+        (RenderTable::calcWidth):
+        (RenderTable::layout):
+        (RenderTable::setCellWidths):
+        (RenderTable::paint):
+        (RenderTable::calcMinMaxWidth):
+        (RenderTable::splitColumn):
+        (RenderTable::appendColumn):
+        (RenderTable::colElement):
+        (RenderTable::recalcSections):
+        (RenderTable::removeChildNode):
+        (RenderTable::dump):
+        (RenderTableSection::RenderTableSection):
+        (RenderTableSection::~RenderTableSection):
+        (RenderTableSection::detach):
+        (RenderTableSection::setStyle):
+        (RenderTableSection::addChild):
+        (RenderTableSection::ensureRows):
+        (RenderTableSection::addCell):
+        (RenderTableSection::setCellWidths):
+        (RenderTableSection::calcRowHeight):
+        (RenderTableSection::layoutRows):
+        (RenderTableSection::paint):
+        (RenderTableSection::recalcCells):
+        (RenderTableSection::clearGrid):
+        (RenderTableSection::removeChildNode):
+        (RenderTableSection::dump):
+        (RenderTableRow::RenderTableRow):
+        (RenderTableRow::detach):
+        (RenderTableRow::setStyle):
+        (RenderTableRow::addChild):
+        (RenderTableRow::removeChildNode):
+        (RenderTableRow::dump):
+        (RenderTableRow::layout):
+        (RenderTableCell::RenderTableCell):
+        (RenderTableCell::detach):
+        (RenderTableCell::updateFromElement):
+        (RenderTableCell::getCellPercentageHeight):
+        (RenderTableCell::setCellPercentageHeight):
+        (RenderTableCell::calcMinMaxWidth):
+        (RenderTableCell::baselinePosition):
+        (RenderTableCell::setStyle):
+        (RenderTableCell::paint):
+        (RenderTableCell::paintBoxDecorations):
+        (RenderTableCell::dump):
+        (RenderTableCol::RenderTableCol):
+        (RenderTableCol::updateFromElement):
+        (RenderTableCol::addChild):
+        (RenderTableCol::dump):
+        * khtml/rendering/render_table.h:
+        * khtml/rendering/table_layout.cpp: Added.
+        (FixedTableLayout::FixedTableLayout):
+        (FixedTableLayout::~FixedTableLayout):
+        (FixedTableLayout::calcWidthArray):
+        (FixedTableLayout::calcMinMaxWidth):
+        (FixedTableLayout::layout):
+        (AutoTableLayout::AutoTableLayout):
+        (AutoTableLayout::~AutoTableLayout):
+        (AutoTableLayout::recalcColumn):
+        (AutoTableLayout::fullRecalc):
+        (AutoTableLayout::calcMinMaxWidth):
+        (AutoTableLayout::calcEffectiveWidth):
+        (AutoTableLayout::insertSpanCell):
+        (AutoTableLayout::layout):
+        (AutoTableLayout::calcPercentages):
+        * khtml/rendering/table_layout.h: Added.
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::createHTMLElement):
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::NodeImpl):
+        (NodeImpl::dump):
+        * khtml/xml/dom_nodeimpl.h:
+
 2003-01-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

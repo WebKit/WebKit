@@ -42,11 +42,11 @@ public:
     virtual const char *renderName() const { return "RenderBody"; }
     virtual void repaint(bool immediate=false);
 
-
     virtual void layout();
-
     virtual void setStyle(RenderStyle* style);
 
+    virtual int availableHeight() const;
+    
 protected:
     virtual void paintBoxDecorations(QPainter *p,int _x, int _y,
                                      int _w, int _h, int _tx, int _ty);

@@ -1032,11 +1032,8 @@ void RenderFlow::layoutInlineChildren(bool relayoutChildren)
     int toAdd = style()->borderBottomWidth();
     m_height = style()->borderTopWidth();
 
-    if(hasPadding())
-    {
-        m_height += paddingTop();
-        toAdd += paddingBottom();
-    }
+    m_height += paddingTop();
+    toAdd += paddingBottom();
     
     if(firstChild()) {
         // layout replaced elements

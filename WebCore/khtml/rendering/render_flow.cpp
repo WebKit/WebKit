@@ -416,19 +416,10 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
 
     m_height = 0;
 
-    if(style()->hasBorder())
-    {
-        xPos += borderLeft();
-        m_height += borderTop();
-        toAdd += borderBottom();
-    }
-    if (hasPadding())
-    {
-        xPos += paddingLeft();
-        m_height += paddingTop();
-        toAdd += paddingBottom();
-    }
-
+    xPos += borderLeft() + paddingLeft();
+    m_height += borderTop() + paddingTop();
+    toAdd += borderBottom() + paddingBottom();
+   
     int minHeight = m_height + toAdd;
     m_overflowHeight = m_height;
     
@@ -1003,10 +994,7 @@ RenderFlow::leftOffset() const
 {
     int left = 0;
 
-    if (style()->hasBorder())
-        left += borderLeft();
-    if (hasPadding())
-        left += paddingLeft();
+    left += borderLeft() + paddingLeft();
 
     if ( firstLine && style()->direction() == LTR ) {
         int cw=0;
@@ -1047,10 +1035,7 @@ RenderFlow::rightOffset() const
 {
     int right = m_width;
 
-    if (style()->hasBorder())
-        right -= borderRight();
-    if (hasPadding())
-        right -= paddingRight();
+    right -= borderRight() + paddingRight();
 
     if ( firstLine && style()->direction() == RTL ) {
         int cw=0;
@@ -1300,7 +1285,7 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << (void *)this << ": adding overhanging floats xoff=" << xoff << "  offset=" << offset << " child=" << child << endl;
 #endif
-    if ( !flow->specialObjects )
+    if ( !flow->specialObjects || (child && flow->layer()) )
         return;
 
     // we have overhanging floats
@@ -1316,7 +1301,7 @@ void RenderFlow::addOverHangingFloats( RenderFlow *flow, int xoff, int offset, b
             ( ( !child && r->endY > offset ) ||
             ( child && flow->yPos() + r->endY > height() ) ) ) {
             
-            if ( child )
+            if (child)
                 r->noPaint = true;
                 
             SpecialObject* f = 0;
@@ -1619,6 +1604,8 @@ void RenderFlow::calcInlineMinMaxWidth()
 
 void RenderFlow::calcBlockMinMaxWidth()
 {
+    bool nowrap = style()->whiteSpace() == NOWRAP; 
+           
     RenderObject *child = firstChild();
     while(child != 0)
     {
@@ -1670,6 +1657,10 @@ void RenderFlow::calcBlockMinMaxWidth()
 
         int w = child->minWidth() + margin;
         if(m_minWidth < w) m_minWidth = w;
+        // IE ignores tables for calculation of nowrap. Makes some sense.
+	    if ( nowrap && !child->isTable() && m_maxWidth < w )
+            m_maxWidth = w;
+        
         w = child->maxWidth() + margin;
         if(m_maxWidth < w) m_maxWidth = w;
         child = child->nextSibling();
@@ -1693,6 +1684,7 @@ void RenderFlow::calcMinMaxWidth()
         return;
     }
 
+    bool preOrNowrap = style()->whiteSpace() != NORMAL;          
     if (childrenInline())
         calcInlineMinMaxWidth();
     else
@@ -1700,17 +1692,14 @@ void RenderFlow::calcMinMaxWidth()
         
     if(m_maxWidth < m_minWidth) m_maxWidth = m_minWidth;
 
-    if (style()->width().isFixed())
-        m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
-
-    if ( style()->whiteSpace() != NORMAL )
+    if (preOrNowrap && childrenInline())
         m_minWidth = m_maxWidth;
-
+        
+    if (style()->width().isFixed() && style()->width().value > 0)
+        m_maxWidth = KMAX(m_minWidth,short(style()->width().value));
+    
     int toAdd = 0;
-    if(style()->hasBorder())
-        toAdd = borderLeft() + borderRight();
-    if (hasPadding())
-        toAdd += paddingLeft() + paddingRight();
+    toAdd = borderLeft() + borderRight() + paddingLeft() + paddingRight();
 
     m_minWidth += toAdd;
     m_maxWidth += toAdd;
