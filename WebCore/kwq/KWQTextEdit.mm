@@ -137,5 +137,6 @@ void QTextEdit::clicked()
 void QTextEdit::setAlignment(AlignmentFlags alignment)
 {
     ASSERT(alignment == AlignLeft || alignment == AlignRight);
-    [(KWQTextArea *)getView() setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
+    KWQTextArea *textArea = getView();
+    [textArea setAlignment:(alignment == AlignRight ? NSRightTextAlignment : NSLeftTextAlignment)];
 }

@@ -1,3 +1,61 @@
+2003-07-01  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+	A host of changes to work around a compiler bug which issues
+	warnings when making objective-c method calls on objects that have 
+	been typecast for the purpose of the call.
+
+        * WebCore.pbproj/project.pbxproj:
+        * kwq/KWQFileButton.mm:
+        (KWQFileButton::setFilename):
+        (KWQFileButton::sizeForCharacterWidth):
+        (KWQFileButton::frameGeometry):
+        (KWQFileButton::setFrameGeometry):
+        (KWQFileButton::baselinePosition):
+        (KWQFileButton::filenameChanged):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::passWidgetMouseDownEventToWidget):
+        * kwq/KWQLineEdit.mm:
+        (QLineEdit::setAlignment):
+        * kwq/KWQListBox.mm:
+        (QListBox::~QListBox):
+        (QListBox::clear):
+        (QListBox::setSelectionMode):
+        (QListBox::insertItem):
+        (QListBox::endBatchInsert):
+        (QListBox::setSelected):
+        (QListBox::isSelected):
+        (QListBox::sizeForNumberOfLines):
+        * kwq/KWQTextEdit.mm:
+        (QTextEdit::setAlignment):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementForView:]):
+        (-[WebCoreBridge setSelectionFrom:startOffset:to:endOffset:]):
+        (-[WebCoreBridge attributedStringFrom:startOffset:to:endOffset:]):
+        * kwq/WebCoreDOMDocument.mm:
+        (+[WebCoreDOMDocumentType documentTypeWithImpl:DOM::]):
+        (+[WebCoreDOMImplementation implementionatWithImpl:DOM::]):
+        (+[WebCoreDOMDocument documentWithImpl:DOM::]):
+        (-[WebCoreDOMDocument importNode::]):
+        * kwq/WebCoreDOMNode.mm:
+        (+[WebCoreDOMNode nodeWithImpl:DOM::]):
+        (-[WebCoreDOMNode insert:before:]):
+        (-[WebCoreDOMNode replace:child:]):
+        (-[WebCoreDOMNode removeChild:]):
+        (+[WebCoreDOMNodeList nodeListWithImpl:DOM::]):
+        (+[WebCoreDOMNamedNodeMap namedNodeMapWithImpl:DOM::]):
+        (-[WebCoreDOMNamedNodeMap setNamedItem:]):
+        (+[WebCoreDOMAttr attrWithImpl:DOM::]):
+        (+[WebCoreDOMDocumentFragment documentFragmentWithImpl:DOM::]):
+        (+[WebCoreDOMElement elementWithImpl:DOM::]):
+        (+[WebCoreDOMEntityReference entityReferenceWithImpl:DOM::]):
+        (+[WebCoreDOMCharacterData commentWithImpl:DOM::]):
+        (+[WebCoreDOMComment commentWithImpl:DOM::]):
+        (+[WebCoreDOMText textWithImpl:DOM::]):
+        (+[WebCoreDOMCDATASection CDATASectionWithImpl:DOM::]):
+        (+[WebCoreDOMProcessingInstruction processingInstructionWithImpl:DOM::]):
+
 2003-06-30  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3310066>: All images use wrong map if page has image map of name ""

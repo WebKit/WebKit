@@ -520,7 +520,8 @@ static BOOL nowPrinting(WebCoreBridge *self)
 {
     // FIXME: implemetented currently for only a subset of the KWQ widgets
     if ([view conformsToProtocol:@protocol(KWQWidgetHolder)]) {
-        QWidget *widget = [(NSView <KWQWidgetHolder> *)view widget];
+        NSView <KWQWidgetHolder> *widgetHolder = view;
+        QWidget *widget = [widgetHolder widget];
         NodeImpl *node = static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
         return [WebCoreDOMElement elementWithImpl:static_cast<ElementImpl *>(node)];
     } else {
@@ -795,7 +796,9 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
 
 - (void)setSelectionFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int) endOffset
 {
-    _part->xmlDocImpl()->setSelection([(WebCoreDOMNode *)start impl], startOffset, [(WebCoreDOMNode *)end impl], endOffset);
+    WebCoreDOMNode *startNode = start;
+    WebCoreDOMNode *endNode = end;
+    _part->xmlDocImpl()->setSelection([startNode impl], startOffset, [endNode impl], endOffset);
 }
 
 - (NSAttributedString *)selectedAttributedString
@@ -803,9 +806,11 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return KWQKHTMLPart::attributedString(_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
 }
 
-- (NSAttributedString *)attributedStringFrom:(id<WebDOMNode>)startNode startOffset:(int)startOffset to:(id<WebDOMNode>)endNode endOffset:(int)endOffset
+- (NSAttributedString *)attributedStringFrom:(id<WebDOMNode>)start startOffset:(int)startOffset to:(id<WebDOMNode>)end endOffset:(int)endOffset
 {
-    return KWQKHTMLPart::attributedString([(WebCoreDOMNode *)startNode impl], startOffset, [(WebCoreDOMNode *)endNode impl], endOffset);
+    WebCoreDOMNode *startNode = start;
+    WebCoreDOMNode *endNode = end;
+    return KWQKHTMLPart::attributedString([startNode impl], startOffset, [endNode impl], endOffset);
 }
 
 - (id<WebDOMNode>)selectionStart

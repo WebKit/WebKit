@@ -132,7 +132,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
     if (!_impl) {
         return nil;
     }
-    return [[(WebCoreDOMNode *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMNode *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 
 - initWithImpl:(DOM::NodeImpl *)_impl
@@ -248,8 +249,10 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (id<WebDOMNode>)insert:(id<WebDOMNode>)newChild before:(id<WebDOMNode>)refChild
 {
     DOM::Node instance([self impl]);
-    DOM::Node _newChild([(WebCoreDOMNode *)newChild impl]);
-    DOM::Node _refChild([(WebCoreDOMNode *)refChild impl]);
+    WebCoreDOMNode *newChildNode = newChild;
+    WebCoreDOMNode *refChildNode = refChild;
+    DOM::Node _newChild([newChildNode impl]);
+    DOM::Node _refChild([refChildNode impl]);
     DOM::Node ret;
     
     ret = instance.insertBefore (_newChild, _refChild);
@@ -259,8 +262,10 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (id<WebDOMNode>)replace:(id<WebDOMNode>)newChild child:(id<WebDOMNode>)oldChild
 {
     DOM::Node instance([self impl]);
-    DOM::Node _newChild([(WebCoreDOMNode *)newChild impl]);
-    DOM::Node _oldChild([(WebCoreDOMNode *)oldChild impl]);
+    WebCoreDOMNode *newChildNode = newChild;
+    WebCoreDOMNode *oldChildNode = oldChild;
+    DOM::Node _newChild([newChildNode impl]);
+    DOM::Node _oldChild([oldChildNode impl]);
     DOM::Node ret;
     
     ret = instance.replaceChild (_newChild, _oldChild);
@@ -270,7 +275,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (id<WebDOMNode>)removeChild:(id<WebDOMNode>)oldChild
 {
     DOM::Node instance([self impl]);
-    DOM::Node _oldChild([(WebCoreDOMNode *)oldChild impl]);
+    WebCoreDOMNode *oldChildNode = oldChild;
+    DOM::Node _oldChild([oldChildNode impl]);
     DOM::Node ret;
     
     ret = instance.removeChild (_oldChild);
@@ -280,7 +286,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (id<WebDOMNode>)appendChild:(id<WebDOMNode>)newChild;
 {
     DOM::Node instance([self impl]);
-    DOM::Node _newChild([(WebCoreDOMNode *)newChild impl]);
+    WebCoreDOMNode *newChildNode = newChild;
+    DOM::Node _newChild([newChildNode impl]);
     DOM::Node ret;
     
     ret = instance.appendChild (_newChild);
@@ -350,7 +357,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMNodeList *)nodeListWithImpl: (DOM::NodeListImpl *)_impl
 {
-    return [[(WebCoreDOMNodeList *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMNodeList *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 
 - initWithImpl:(DOM::NodeListImpl *)_impl
@@ -387,7 +395,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMNamedNodeMap *)namedNodeMapWithImpl: (DOM::NamedNodeMapImpl *)_impl
 {
-    return [[(WebCoreDOMNamedNodeMap *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMNamedNodeMap *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 
 - initWithImpl:(DOM::NamedNodeMapImpl *)_impl
@@ -420,7 +429,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (id<WebDOMNode>)setNamedItem:(id<WebDOMNode>)arg
 {
     DOM::NamedNodeMap instance = DOM::NamedNodeMapImpl::createInstance([self impl]);
-    DOM::Node _arg ([(WebCoreDOMNode *)arg impl]);
+    WebCoreDOMNode *node = arg;
+    DOM::Node _arg ([node impl]);
     
     return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)instance.setNamedItem(_arg).handle()];
 }
@@ -448,7 +458,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 - (id<WebDOMNode>)setNamedItemNS:(id<WebDOMNode>)arg;
 {
     DOM::NamedNodeMap instance = DOM::NamedNodeMapImpl::createInstance([self impl]);
-    DOM::Node _arg ([(WebCoreDOMNode *)arg impl]);
+    WebCoreDOMNode *node = arg;
+    DOM::Node _arg ([node impl]);
     
     return [WebCoreDOMNode nodeWithImpl: (DOM::NodeImpl *)instance.setNamedItemNS(_arg).handle()];
 }
@@ -466,7 +477,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMAttr *)attrWithImpl: (DOM::AttrImpl *)_impl
 {
-    return [[(WebCoreDOMAttr *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMAttr *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 
 - (DOM::AttrImpl *)attrImpl
@@ -512,8 +524,9 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMDocumentFragment
 
 + (WebCoreDOMDocumentFragment *)documentFragmentWithImpl: (DOM::DocumentFragmentImpl *)_impl 
-{ 
-    return [[(WebCoreDOMDocumentFragment *)[[self class] alloc] initWithImpl: _impl] autorelease]; 
+{
+    WebCoreDOMDocumentFragment *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
 }
 - (DOM::DocumentFragmentImpl *)documentFragmentImpl { return static_cast<DOM::DocumentFragmentImpl *>(impl); }
 
@@ -522,7 +535,11 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 @implementation WebCoreDOMElement
 
-+ (WebCoreDOMElement *)elementWithImpl: (DOM::ElementImpl *)_impl { return [[(WebCoreDOMElement *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
++ (WebCoreDOMElement *)elementWithImpl: (DOM::ElementImpl *)_impl {
+    WebCoreDOMElement *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
+}
+
 - (DOM::ElementImpl *)elementImpl { return static_cast<DOM::ElementImpl *>(impl); }
 
 - (NSString *)tagName
@@ -651,14 +668,22 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 @implementation WebCoreDOMEntityReference
 
-+ (WebCoreDOMEntityReference *)entityReferenceWithImpl: (DOM::EntityReferenceImpl *)_impl { return [[(WebCoreDOMEntityReference *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
++ (WebCoreDOMEntityReference *)entityReferenceWithImpl: (DOM::EntityReferenceImpl *)_impl {
+    WebCoreDOMEntityReference *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
+}
+
 - (DOM::EntityReferenceImpl *)entityReferenceImpl { return static_cast<DOM::EntityReferenceImpl *>(impl); }
 
 @end
 
 @implementation WebCoreDOMCharacterData
 
-+ (WebCoreDOMCharacterData *)commentWithImpl: (DOM::CharacterDataImpl *)_impl { return [[(WebCoreDOMCharacterData *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
++ (WebCoreDOMCharacterData *)commentWithImpl: (DOM::CharacterDataImpl *)_impl {
+    WebCoreDOMCharacterData *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
+}
+
 - (DOM::CharacterDataImpl *)characterDataImpl { return static_cast<DOM::CharacterDataImpl *>(impl); }
 
 - (NSString *)data
@@ -715,7 +740,11 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 @implementation WebCoreDOMComment
 
-+ (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl { return [[(WebCoreDOMComment *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
++ (WebCoreDOMComment *)commentWithImpl: (DOM::CommentImpl *)_impl {
+    WebCoreDOMComment *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
+}
+
 - (DOM::CommentImpl *)commentImpl { return static_cast<DOM::CommentImpl *>(impl); }
 
 // No additional methods.
@@ -724,7 +753,11 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 @implementation WebCoreDOMText
 
-+ (WebCoreDOMText *)textWithImpl: (DOM::TextImpl *)_impl { return [[(WebCoreDOMText *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
++ (WebCoreDOMText *)textWithImpl: (DOM::TextImpl *)_impl {
+    WebCoreDOMText *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
+}
+
 - (DOM::TextImpl *)textImpl { return static_cast<DOM::TextImpl *>(impl); }
 
 - (id<WebDOMText>)splitText: (unsigned long)offset
@@ -739,7 +772,8 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 
 + (WebCoreDOMCDATASection *)CDATASectionWithImpl: (DOM::CDATASectionImpl *)_impl
 {
-    return [[(WebCoreDOMCDATASection *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMCDATASection *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 - (DOM::CDATASectionImpl *)CDATASectionImpl { return static_cast<DOM::CDATASectionImpl *>(impl); }
 
@@ -749,7 +783,11 @@ DOM::ProcessingInstruction DOM::ProcessingInstructionImpl::createInstance(Proces
 @implementation WebCoreDOMProcessingInstruction
 
 + (WebCoreDOMProcessingInstruction *)processingInstructionWithImpl: (DOM::ProcessingInstructionImpl *)_impl
-{ return [[(WebCoreDOMProcessingInstruction *)[[self class] alloc] initWithImpl: _impl] autorelease]; }
+{
+    WebCoreDOMProcessingInstruction *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease]; 
+}
+
 - (DOM::ProcessingInstructionImpl *)processingInstructionImpl { return static_cast<DOM::ProcessingInstructionImpl *>(impl); }
 
 - (NSString *)target;

@@ -59,7 +59,8 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 + (WebCoreDOMDocumentType *)documentTypeWithImpl: (DOM::DocumentTypeImpl *)_impl
 {
-    return [[(WebCoreDOMDocumentType *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMDocumentType *obj = [[self class] alloc];
+    return [[obj initWithImpl:_impl] autorelease];
 }
 
 - (DOM::DocumentTypeImpl *)documentTypeImpl
@@ -107,7 +108,8 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 + (WebCoreDOMImplementation *)implementionatWithImpl: (DOM::DOMImplementationImpl *)_impl
 {
-    return [[(WebCoreDOMImplementation *)[[self class] alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMImplementation *obj = [[self class] alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 
 - (void)dealloc
@@ -159,7 +161,8 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 + (WebCoreDOMDocument *)documentWithImpl: (DOM::DocumentImpl *)_impl
 {
-    return [[(WebCoreDOMDocument *)[WebCoreDOMDocument alloc] initWithImpl: _impl] autorelease];
+    WebCoreDOMDocument *obj = [WebCoreDOMDocument alloc];
+    return [[obj initWithImpl: _impl] autorelease];
 }
 
 - (DOM::DocumentImpl *)documentImpl
@@ -273,7 +276,8 @@ DOM::DOMString NSStringToDOMString(NSString *aString)
 
 - (id<WebDOMNode>)importNode:importedNode :(BOOL)deep
 {
-    DOM::Node importNode([(WebCoreDOMNode *)importedNode impl]);
+    WebCoreDOMNode *node = importedNode;
+    DOM::Node importNode([node impl]);
     DOM::Document instance = DOM::DocumentImpl::createInstance([self documentImpl]);
     DOM::Node ret;
     

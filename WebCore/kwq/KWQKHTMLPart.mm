@@ -1386,7 +1386,8 @@ bool KWQKHTMLPart::passWidgetMouseDownEventToWidget(QWidget* widget)
                 superview = [superview superview];
                 ASSERT(superview);
                 if ([superview isKindOfClass:[NSControl class]]) {
-                    if ([(NSControl *)superview currentEditor] == view) {
+                    NSControl *control = superview;
+                    if ([control currentEditor] == view) {
                         view = superview;
                     }
                     break;

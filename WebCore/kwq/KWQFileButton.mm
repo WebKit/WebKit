@@ -58,34 +58,39 @@ KWQFileButton::~KWQFileButton()
     
 void KWQFileButton::setFilename(const QString &f)
 {
-    [(NSView <WebCoreFileButton> *)getView() setFilename:f.getNSString()];
+    NSView <WebCoreFileButton> *button = getView();
+    [button setFilename:f.getNSString()];
 }
 
 QSize KWQFileButton::sizeForCharacterWidth(int characters) const
 {
     ASSERT(characters > 0);
-    return QSize([(NSView <WebCoreFileButton> *)getView() bestVisualFrameSizeForCharacterCount:characters]);
+    NSView <WebCoreFileButton> *button = getView();
+    return QSize([button bestVisualFrameSizeForCharacterCount:characters]);
 }
 
 QRect KWQFileButton::frameGeometry() const
 {
-    return QRect([(NSView <WebCoreFileButton> *)getView() visualFrame]);
+    NSView <WebCoreFileButton> *button = getView();
+    return QRect([button visualFrame]);
 }
 
 void KWQFileButton::setFrameGeometry(const QRect &rect)
 {
-    [(NSView <WebCoreFileButton> *)getView() setVisualFrame:rect];
+    NSView <WebCoreFileButton> *button = getView();
+    [button setVisualFrame:rect];
 }
 
 int KWQFileButton::baselinePosition() const
 {
-    NSView <WebCoreFileButton> *button = (NSView <WebCoreFileButton> *)getView();
+    NSView <WebCoreFileButton> *button = getView();
     return (int)(NSMaxY([button frame]) - [button baseline] - [button visualFrame].origin.y);
 }
 
 void KWQFileButton::filenameChanged()
 {
-    _textChanged.call(QString::fromNSString([(NSView <WebCoreFileButton> *)getView() filename]));
+    NSView <WebCoreFileButton> *button = getView();
+    _textChanged.call(QString::fromNSString([button filename]));
 }
 
 void KWQFileButton::clicked()

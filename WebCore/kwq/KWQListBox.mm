@@ -76,7 +76,8 @@ QListBox::QListBox(QWidget *parent)
 
 QListBox::~QListBox()
 {
-    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    NSScrollView *scrollView = getView();
+    NSTableView *tableView = [scrollView documentView];
     [tableView setDelegate:nil];
     [tableView setDataSource:nil];
     [_items release];
@@ -91,7 +92,8 @@ void QListBox::clear()
 {
     [_items removeAllObjects];
     if (!_insertingItems) {
-        NSTableView *tableView = [(NSScrollView *)getView() documentView];
+        NSScrollView *scrollView = getView();
+        NSTableView *tableView = [scrollView documentView];
         [tableView reloadData];
     }
     _widthGood = NO;
@@ -99,7 +101,8 @@ void QListBox::clear()
 
 void QListBox::setSelectionMode(SelectionMode mode)
 {
-    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    NSScrollView *scrollView = getView();
+    NSTableView *tableView = [scrollView documentView];
     [tableView setAllowsMultipleSelection:mode != Single];
 }
 
@@ -113,7 +116,8 @@ void QListBox::insertItem(NSObject *o, unsigned index)
     }
 
     if (!_insertingItems) {
-        NSTableView *tableView = [(NSScrollView *)getView() documentView];
+        NSScrollView *scrollView = getView();
+        NSTableView *tableView = [scrollView documentView];
         [tableView reloadData];
     }
     _widthGood = NO;
@@ -148,14 +152,16 @@ void QListBox::endBatchInsert()
 {
     ASSERT(_insertingItems);
     _insertingItems = false;
-    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    NSScrollView *scrollView = getView();
+    NSTableView *tableView = [scrollView documentView];
     [tableView reloadData];
 }
 
 void QListBox::setSelected(int index, bool selectIt)
 {
     ASSERT(!_insertingItems);
-    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    NSScrollView *scrollView = getView();
+    NSTableView *tableView = [scrollView documentView];
     _changingSelection = true;
     if (selectIt) {
         [tableView selectRow:index byExtendingSelection:[tableView allowsMultipleSelection]];
@@ -168,7 +174,8 @@ void QListBox::setSelected(int index, bool selectIt)
 bool QListBox::isSelected(int index) const
 {
     ASSERT(!_insertingItems);
-    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    NSScrollView *scrollView = getView();
+    NSTableView *tableView = [scrollView documentView];
     return [tableView isRowSelected:index]; 
 }
 
@@ -189,7 +196,8 @@ QSize QListBox::sizeForNumberOfLines(int lines) const
 {
     ASSERT(!_insertingItems);
 
-    NSTableView *tableView = [(NSScrollView *)getView() documentView];
+    NSScrollView *scrollView = getView();
+    NSTableView *tableView = [scrollView documentView];
     
     float width;
     if (_widthGood) {
