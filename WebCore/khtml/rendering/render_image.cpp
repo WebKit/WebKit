@@ -194,6 +194,9 @@ void RenderImage::setPixmap( const QPixmap &p, const QRect& r, CachedImage *o)
 
 void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, int /*_h*/, int _tx, int _ty, PaintAction paintAction)
 {
+    if (paintAction == PaintActionOutline && style()->outlineWidth() && style()->visibility() == VISIBLE)
+        paintOutline(p, _tx, _ty, width(), height(), style());
+    
     if (paintAction != PaintActionForeground)
         return;
         
@@ -350,8 +353,6 @@ void RenderImage::paintObject(QPainter *p, int /*_x*/, int /*_y*/, int /*_w*/, i
 
         }
     }
-    if(style()->outlineWidth() && style()->visibility() == VISIBLE)
-        paintOutline(p, _tx, _ty, width(), height(), style());
 }
 
 void RenderImage::layout()

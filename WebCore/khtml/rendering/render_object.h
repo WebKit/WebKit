@@ -71,6 +71,7 @@ typedef enum {
     PaintActionChildBackgrounds,
     PaintActionFloat,
     PaintActionForeground,
+    PaintActionOutline,
     PaintActionSelection,
     PaintActionCollapsedTableBorders
 } PaintAction;

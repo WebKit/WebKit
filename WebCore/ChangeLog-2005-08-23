@@ -1,3 +1,20 @@
+2003-10-30  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3468916, outline needs its own paint action so that focus rings don't draw under other content.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::paintObject):
+        (khtml::RenderBlock::paintFloats):
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paintObject):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::paintObject):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::paintLayer):
+        * khtml/rendering/render_object.h:
+
 2003-10-30  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed Dave's fix to my fix to my fix:
