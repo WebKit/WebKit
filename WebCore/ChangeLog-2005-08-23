@@ -1,3 +1,15 @@
+2004-08-17  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	<rdar://problem/3703768> CrashTracer: ...50 crashes at com.apple.WebCore: KHTMLPart::xmlDocImpl const + 0
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::viewportMouseMoveEvent): Add a nil check and an
+	assertion for m_part being null. It seems impossible for this to
+	happen, so we want to debug it ourselves, but in the meantime,
+	let's try to avoid causing crashes for our users.
+
 2004-08-17  David Hyatt  <hyatt@apple.com>
 
 	Fix the line truncation function for Emerson so that at the far left setting of the slider, only the header

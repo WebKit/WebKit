@@ -832,7 +832,12 @@ static bool isSubmitImage(DOM::NodeImpl *node)
 
 void KHTMLView::viewportMouseMoveEvent( QMouseEvent * _mouse )
 {
-    if(!m_part->xmlDocImpl()) return;
+    // in Radar 3703768 we saw frequent crashes apparently due to the
+    // part being null here, which seems impossible, so check for nil
+    // but also assert so that we can try to figure this out in debug
+    // builds, if it happens.
+    assert(m_part);
+    if(!m_part || !m_part->xmlDocImpl()) return;
 
     int xm, ym;
     viewportToContents(_mouse->x(), _mouse->y(), xm, ym);
