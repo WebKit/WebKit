@@ -223,7 +223,8 @@ bool StyleCSS3InheritedData::shadowDataEquivalent(const StyleCSS3InheritedData& 
 StyleInheritedData::StyleInheritedData()
     : indent( Fixed ), line_height( -100, Percent ), style_image( 0 ),
       cursor_image( 0 ), font(), color( Qt::black ), 
-      horizontal_border_spacing( 0 ), vertical_border_spacing( 0 )
+      horizontal_border_spacing( 0 ), vertical_border_spacing( 0 ), widows( 2 ), orphans( 2 ),
+      page_break_inside(PBAUTO)
 {
 }
 
@@ -237,7 +238,8 @@ StyleInheritedData::StyleInheritedData(const StyleInheritedData& o )
       cursor_image( o.cursor_image ), font( o.font ),
       color( o.color ),
       horizontal_border_spacing( o.horizontal_border_spacing ),
-      vertical_border_spacing( o.vertical_border_spacing )
+      vertical_border_spacing( o.vertical_border_spacing ),
+      widows(o.widows), orphans(o.orphans), page_break_inside(o.page_break_inside)
 {
 }
 
@@ -251,10 +253,10 @@ bool StyleInheritedData::operator==(const StyleInheritedData& o) const
 	font == o.font &&
 	color == o.color &&
         horizontal_border_spacing == o.horizontal_border_spacing &&
-        vertical_border_spacing == o.vertical_border_spacing;
-
-    // doesn't work because structs are not packed
-    //return memcmp(this, &o, sizeof(*this))==0;
+        vertical_border_spacing == o.vertical_border_spacing &&
+        widows == o.widows &&
+        orphans == o.orphans &&
+        page_break_inside == o.page_break_inside;
 }
 
 RenderStyle::RenderStyle()
