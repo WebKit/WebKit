@@ -172,8 +172,9 @@ public:
     // some helper functions...
     virtual bool isRenderBlock() const { return false; }
     virtual bool isRenderInline() const { return false; }
-    virtual bool isInlineFlow() const { return isInline() && !isReplaced() &&
-                                               (isRenderInline() || isRenderBlock()); }
+    virtual bool isInlineFlow() const { return false; }
+    virtual bool isBlockFlow() const { return false; }
+    virtual bool isInlineBlockOrInlineTable() const { return false; }
     virtual bool childrenInline() const { return false; }
     virtual void setChildrenInline(bool b) { };
     virtual RenderFlow* continuation() const { return 0; }

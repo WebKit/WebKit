@@ -1,3 +1,18 @@
+2003-03-24  David Hyatt  <hyatt@apple.com>
+
+	Clean up isInlineFlow.  Add a couple of new methods that I'll
+	be converting code over to use (carefully) piece by piece in
+	future patches.
+	
+        Reviewed by gramps
+
+        * khtml/rendering/render_block.h:
+        * khtml/rendering/render_flow.h:
+        * khtml/rendering/render_inline.h:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        * khtml/rendering/render_object.h:
+
 2003-03-24  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
