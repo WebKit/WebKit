@@ -27,6 +27,7 @@
 #define QNAMESPACE_H_
 
 class QColor;
+class QCursor;
 
 class Qt {
 public:
@@ -72,6 +73,10 @@ public:
 
     static const QColor &black;
     static const QColor &darkGray;
+
+    static const QCursor &sizeAllCursor;
+    static const QCursor &splitHCursor;
+    static const QCursor &splitVCursor;
 };
 
 #endif
