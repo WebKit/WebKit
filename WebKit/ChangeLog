@@ -1,3 +1,16 @@
+2005-01-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3965265> Safari displays HTML as source when default encoding is Hebrew (due to direction overrides added by encoding converter)
+
+        * WebView.subproj/WebPreferencesPrivate.h: Added _systemCFStringEncoding, and changed
+        _setInitialDefaultTextEncodingToSystemEncoding to be a class method.
+        * WebView.subproj/WebPreferences.m:
+        (+[WebPreferences _systemCFStringEncoding]): Added. New SPI to be used by Safari. Broken out of
+        _setInitialDefaultTextEncodingToSystemEncoding, but also added cases for MacArabic and MacHebrew.
+        (+[WebPreferences _setInitialDefaultTextEncodingToSystemEncoding]): Refactor to use _systemCFStringEncoding.
+
 2005-01-28  Jens Alfke  <jens@apple.com>
 
         Reviewed by Richard.

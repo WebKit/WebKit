@@ -22,6 +22,7 @@
 + (void)_setInstance:(WebPreferences *)instance forIdentifier:(NSString *)identifier;
 + (void)_removeReferenceForIdentifier:(NSString *)identifier;
 - (NSTimeInterval)_backForwardCacheExpirationInterval;
-- (void)_setInitialDefaultTextEncodingToSystemEncoding;
++ (CFStringEncoding)_systemCFStringEncoding;
++ (void)_setInitialDefaultTextEncodingToSystemEncoding;
 + (void)_setIBCreatorID:(NSString *)string;
 @end

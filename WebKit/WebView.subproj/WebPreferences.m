@@ -609,24 +609,38 @@ static NSMutableDictionary *webPreferencesInstances = nil;
                     userInfo:nil];
 }
 
-- (void)_setInitialDefaultTextEncodingToSystemEncoding
++ (CFStringEncoding)_systemCFStringEncoding
 {
     CFStringEncoding encoding = CFStringGetSystemEncoding();
-    
-    // MacRoman is a special case; maybe we will learn that there should be other special cases later.
-    if (encoding == kCFStringEncodingMacRoman) {
-        encoding = kCFStringEncodingISOLatin1;
+
+    // Map from system encodings to the appropriate default web encoding.
+    // Web pages that are not labeled will be decoded assuming this encoding,
+    // so it's important that this be the most likely encoding to encounter
+    // on a web page. MacArabic, MacHebrew, and MacRoman are not common on
+    // the web, so instead we map to the most common similar encoding actually used.
+    switch (encoding) {
+        case kCFStringEncodingMacArabic:
+            encoding = kCFStringEncodingDOSArabic;
+            break;
+        case kCFStringEncodingMacHebrew:
+            encoding = kCFStringEncodingDOSHebrew;
+            break;
+        case kCFStringEncodingMacRoman:
+            encoding = kCFStringEncodingISOLatin1;
+            break;
     }
-    
-    NSString *name = (NSString *)CFStringConvertEncodingToIANACharSetName(encoding);
-    
-    // fall back to latin1 if necessary
-    if (name == nil) {
-        name = (NSString *)CFStringConvertEncodingToIANACharSetName(kCFStringEncodingISOLatin1);
-    }
-    
+
+    // We must not use any encoding that has no IANA character set name.
+    if (CFStringConvertEncodingToIANACharSetName(encoding) == NULL)
+        return kCFStringEncodingISOLatin1;
+
+    return encoding;
+}
+
++ (void)_setInitialDefaultTextEncodingToSystemEncoding
+{
     [[NSUserDefaults standardUserDefaults] registerDefaults:
-        [NSDictionary dictionaryWithObject:name
+        [NSDictionary dictionaryWithObject:(NSString *)CFStringConvertEncodingToIANACharSetName([self _systemCFStringEncoding])
                                     forKey:WebKitDefaultTextEncodingNamePreferenceKey]];
 }
 
