@@ -270,10 +270,12 @@ khtml::Length* DOMString::toLengthArray(int& len) const
     return impl ? impl->toLengthArray(len) : 0;
 }
 
+#ifndef NDEBUG
 const char *DOMString::ascii() const
 {
     return impl ? impl->ascii() : "(null impl)";
 }
+#endif
 
 //-----------------------------------------------------------------------------
 

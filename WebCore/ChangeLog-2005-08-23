@@ -1,3 +1,12 @@
+2004-09-24  Maciej Stachowiak  <mjs@apple.com>
+
+	- fixed deployment build
+
+        Reviewed by Ken.
+
+        * khtml/dom/dom_string.cpp: put implementation of ascii() in #ifdef !NDEBUG
+	to match prototype.
+
 2004-09-24  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3800316, test 37 for tables is failing on the layout tests.  Make sure we don't incorrectly match
