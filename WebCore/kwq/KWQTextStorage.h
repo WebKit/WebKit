@@ -45,4 +45,8 @@
 
 - (void)setString: (NSString *)dString;
 
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (NSDictionary *)fragmentCache;
+#endif
+
 @end

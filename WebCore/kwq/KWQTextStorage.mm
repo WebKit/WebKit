@@ -105,6 +105,10 @@
     [super dealloc];
 }
 
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (NSDictionary *)fragmentCache { return fragmentCache; }
+#endif
+
 - (void)addLayoutManager:(id)obj {
     _layoutManager = [obj retain];
     [obj setTextStorage:self];

@@ -53,6 +53,9 @@
 {
     NSSize boundingRectSize;
     unsigned short glyphRangeLength;  // Is location always zero?  Only need length.
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    int accessCount;
+#endif
 }
 
 
@@ -60,6 +63,10 @@
 - (NSRange)glyphRange;
 - (void)setBoundingRectSize: (NSSize)s;
 - (NSRect)boundingRect;
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+- (int)accessCount;
+#endif
 
 @end
 

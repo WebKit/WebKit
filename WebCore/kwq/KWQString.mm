@@ -546,7 +546,8 @@ int QString::find(const char *chs, int index, bool caseSensitive) const
         if (index < 0) {
             index += len;
         }
-        if (internalBuffer == 0){
+        //if (internalBuffer == 0){
+        if (1){
 #ifdef DEBUG_FIND_COUNTER
             findExpensiveCount++;
             if (findCount % 500 == 0)

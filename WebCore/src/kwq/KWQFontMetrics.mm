@@ -67,15 +67,23 @@ const float LargeNumberForText = 1.0e7;
     boundingRect.origin.y = 0;
     boundingRect.size = boundingRectSize;
     
+#ifdef _DEBUG_LAYOUT_FRAGMENT
+    accessCount++;
+#endif
+
     return boundingRect;
 }
 
 #ifdef _DEBUG_LAYOUT_FRAGMENT
+- (int)accessCount { return accessCount; }
+#endif
+
+#ifdef _DEBUG_LAYOUT_FRAGMENT
 - (NSComparisonResult)compare: (id)val
 {
-    if ([val _accessCount] > _accessCount)
+    if ([val accessCount] > accessCount)
         return NSOrderedDescending;
-    else if ([val _accessCount] < _accessCount)
+    else if ([val accessCount] < accessCount)
         return NSOrderedAscending;
     return NSOrderedSame;
 }
@@ -146,7 +154,7 @@ static NSMutableDictionary *metricsCache = nil;
     for (i = 0; i < count; i++){
         string = [stringKeys objectAtIndex: i];
         fragment = [fragCache objectForKey: [stringKeys objectAtIndex: i]];
-        fprintf (stdout, "  %06d \"%s\"\n", [fragment _accessCount], [string cString]);
+        fprintf (stdout, "  %06d \"%s\"\n", [fragment accessCount], [string cString]);
     }
 }
 
@@ -163,9 +171,9 @@ static NSMutableDictionary *metricsCache = nil;
     for (i = 0; i < count; i++){
         font = [fontKeys objectAtIndex: i];
         layoutInfo = [metricsCache objectForKey: [fontKeys objectAtIndex: i]];
-        fprintf (stdout, "Cache information for font %s %f (%d objects)\n", [[font displayName] cString],[font pointSize], [[layoutInfo _fragmentCache] count]);
-        [KWQLayoutInfo _dumpLayoutCache: [layoutInfo _fragmentCache]];
-        totalObjects += [[layoutInfo _fragmentCache] count];
+        fprintf (stdout, "Cache information for font %s %f (%d objects)\n", [[font displayName] cString],[font pointSize], [[[layoutInfo textStorage] fragmentCache] count]);
+        [KWQLayoutInfo _dumpLayoutCache: [[layoutInfo textStorage] fragmentCache]];
+        totalObjects += [[[layoutInfo textStorage] fragmentCache] count];
     }
     fprintf (stdout, "Total cached objects %d\n", totalObjects);
 }
@@ -192,9 +200,6 @@ static NSMutableDictionary *metricsCache = nil;
     [metricsCache setObject: info forKey: aFont];
 }
 
-#ifdef _DEBUG_LAYOUT_FRAGMENT
-- (NSDictionary *)_fragmentCache { return fragmentCache; }
-#endif
 
 - initWithFont: (NSFont *)aFont
 {
