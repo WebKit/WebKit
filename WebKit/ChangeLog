@@ -1,3 +1,18 @@
+2003-04-08  Trey Matteson  <trey@apple.com>
+
+	3220349 - assertion failure in [WebFrame _recursiveGoToItem:...] hitting Back while loading movie
+
+	The problem was that when we go back we call stopLoading on the top frame, but
+	that has a bogus optimization to not do any work if state=Completed.  That is a
+	bogus test if a subframe is doing a load.  The fix is to just always tell the
+	dataSources to stopLoading.  They already bail quickly when they are not loading,
+	so there is no significant additional cost.
+
+        Reviewed by Richard.
+
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame stopLoading]):
+
 === Safari-73 ===
 
 2003-04-10  Richard Williamson   <rjw@apple.com>
