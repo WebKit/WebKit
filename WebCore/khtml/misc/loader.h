@@ -99,12 +99,12 @@ namespace khtml
 	    Uncacheable   // to big to be cached,
 	};  	          // will be destroyed as soon as possible
 
-	CachedObject(const DOM::DOMString &url, Type type, KIO::CacheControl _cachePolicy, time_t _expireDate)
+	CachedObject(const DOM::DOMString &url, Type type, KIO::CacheControl _cachePolicy, time_t _expireDate, int size = 0)
 	{
 	    m_url = url;
 	    m_type = type;
 	    m_status = Pending;
-	    m_size = 0;
+	    m_size = size;
 	    m_free = false;
 	    m_cachePolicy = _cachePolicy;
 	    m_request = 0;
@@ -172,6 +172,8 @@ namespace khtml
         void setAccept(const QString &_accept) { m_accept = _accept; }
 
     protected:
+        void setSize(int size);
+        
         QPtrList<CachedObjectClient> m_clients;
 
 	DOM::DOMString m_url;
@@ -182,7 +184,9 @@ namespace khtml
 #endif
 	Type m_type;
 	Status m_status;
+    private:
 	int m_size;
+    protected:
 	time_t m_expireDate;
 	KIO::CacheControl m_cachePolicy;
         bool m_free : 1;
@@ -533,6 +537,9 @@ namespace khtml
 
         static void insertInLRUList(CachedObject *);
         static void removeFromLRUList(CachedObject *);
+        static void adjustSize(CachedObject *, int sizeDelta);
+        
+        static void checkLRUAndUncacheableListIntegrity();
 
         protected:
 	static QDict<CachedObject> *cache;

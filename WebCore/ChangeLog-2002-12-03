@@ -1,5 +1,42 @@
 2002-10-26  Darin Adler  <darin@apple.com>
 
+	- fixed a bug in the WebCore cache that caused it to not cache very much after
+        a while, and also caused a crash I saw twice on my machine
+
+	Adjust total size of items in the LRU list, when the size of one of the
+	items that's in the list is changed.
+
+        * khtml/misc/loader.h: Added a size parameter (default 0) to the CachedObject
+	constructor. Added a protected CachedObject::setSize() and made m_size private.
+	Added Cache::adjustSize() and Cache::checkLRUAndUncacheableListIntegrity().
+        * khtml/misc/loader.cpp:
+        (CachedObject::setSize): Added. This is now the only legal way to change
+	the size of a cached object, and it calls Cache::adjustSize.
+        (CachedCSSStyleSheet::CachedCSSStyleSheet): Pass the length into the base
+	class's constructor instead of setting m_size.
+        (CachedCSSStyleSheet::data): Call setSize() instead of setting m_size.
+	Also get the size back with size() rather than m_size.
+        (CachedScript::CachedScript): Pass the length into the base class's
+	constructor instead of setting m_size.
+        (CachedScript::data): Call setSize() instead of setting m_size. Also get
+	the size back with size() rather than m_size.
+        (CachedImage::CachedImage): Don't set m_size to 0, since the base class's
+	constructor does that already.
+        (CachedImage::clear): Use setSize() to set the size to 0 instead of setting
+	m_size directly.
+        (CachedImage::data): Use setSize() instead of setting m_size directly.
+        (Cache::checkLRUAndUncacheableListIntegrity): Useful debugging function.
+	Left in but ifdef'd out.
+        (Cache::adjustSize): Added. Changes the "total LRU list size" by the
+	passed-in delta, but only if the passed-in object is in the LRU list.
+
+        * kwq/KWQLineEdit.mm:
+        * kwq/KWQTextField.h:
+        * kwq/KWQTextField.mm:
+	Renamed the Objective C class KWQNSTextField to KWQTextField.
+
+2002-10-26  Darin Adler  <darin@apple.com>
+
 	- removed forwarding headers that are not actually needed
 
         * ForwardingHeaders/kcmdlineargs.h: Removed.

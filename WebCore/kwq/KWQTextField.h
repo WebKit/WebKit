@@ -28,7 +28,7 @@
 class QLineEdit;
 @class KWQTextFieldFormatter;
 
-@interface KWQNSTextField : NSTextField
+@interface KWQTextField : NSTextField
 {
 @private
     QLineEdit *widget;

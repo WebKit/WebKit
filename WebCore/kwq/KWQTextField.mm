@@ -56,7 +56,7 @@
 
 @end
 
-@implementation KWQNSTextField
+@implementation KWQTextField
 
 - (void)setUpTextField:(NSTextField *)field
 {

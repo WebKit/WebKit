@@ -36,14 +36,14 @@ QLineEdit::QLineEdit()
     : m_returnPressed(this, SIGNAL(returnPressed()))
     , m_textChanged(this, SIGNAL(textChanged(const QString &)))
 {
-    NSView *view = [[KWQNSTextField alloc] initWithQLineEdit:this];
+    NSView *view = [[KWQTextField alloc] initWithQLineEdit:this];
     setView(view);
     [view release];
 }
 
 void QLineEdit::setEchoMode(EchoMode mode)
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     [textField setPasswordMode:mode == Password];
 }
 
@@ -61,19 +61,19 @@ int QLineEdit::cursorPosition() const
 void QLineEdit::setFont(const QFont &font)
 {
     QWidget::setFont(font);
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     [textField setFont:font.getNSFont()];
 }
 
 void QLineEdit::setText(const QString &s)
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     [textField setStringValue:s.getNSString()];
 }
 
 QString QLineEdit::text()
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     NSMutableString *text = [[[textField stringValue] mutableCopy] autorelease];
     [text replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
     [text replaceOccurrencesOfString:@"\r" withString:@"\n" options:NSLiteralSearch range:NSMakeRange(0, [text length])];
@@ -82,19 +82,19 @@ QString QLineEdit::text()
 
 void QLineEdit::setMaxLength(int len)
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     [textField setMaximumLength:len];
 }
 
 bool QLineEdit::isReadOnly() const
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     return ![textField isEditable];
 }
 
 void QLineEdit::setReadOnly(bool flag)
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     return [textField setEditable:!flag];
 }
 
@@ -106,25 +106,25 @@ bool QLineEdit::frame() const
 
 int QLineEdit::maxLength() const
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     return [textField maximumLength];
 }
 
 void QLineEdit::selectAll()
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     return [textField selectText:nil];
 }
 
 bool QLineEdit::edited() const
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     return [textField edited];
 }
 
 void QLineEdit::setEdited(bool flag)
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     return [textField setEdited:flag];
 }
 
@@ -135,7 +135,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
         [nominalWidthString appendString:@"x"];
     }
         
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     NSString *value = [textField stringValue];
     [textField setStringValue:nominalWidthString];
     NSSize size = [[textField cell] cellSize];
@@ -146,7 +146,7 @@ QSize QLineEdit::sizeForCharacterWidth(int numCharacters) const
 
 int QLineEdit::baselinePosition() const
 {
-    KWQNSTextField *textField = (KWQNSTextField *)getView();
+    KWQTextField *textField = (KWQTextField *)getView();
     NSRect bounds = [textField bounds];
     NSFont *font = [textField font];
     return (int)ceil([[textField cell] drawingRectForBounds:bounds].origin.y - bounds.origin.y
