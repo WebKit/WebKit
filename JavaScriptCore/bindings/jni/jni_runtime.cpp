@@ -93,20 +93,22 @@ JavaClass::JavaClass (JNIEnv *env, const char *className)
 
     // Get the fields
     jarray fields = (jarray)callJNIObjectMethod (aClass, "getFields", "()[Ljava/lang/reflect/Field;");
-    _numFields = env->GetArrayLength (fields);    
-    _fields = new JavaField[_numFields];
-    for (i = 0; i < _numFields; i++) {
-        jobject aField = env->GetObjectArrayElement ((jobjectArray)fields, i);
-        _fields[i] = JavaField (env, aField);
+    long numFields = env->GetArrayLength (fields);    
+    _fields = CFDictionaryCreateMutable(NULL, numFields, NULL, NULL);
+    for (i = 0; i < numFields; i++) {
+        jobject aJField = env->GetObjectArrayElement ((jobjectArray)fields, i);
+        Field *aField = new JavaField (env, aJField);
+        CFDictionaryAddValue ((CFMutableDictionaryRef)_fields, aField->name(), aField);
     }
     
     // Get the methods
     jarray methods = (jarray)callJNIObjectMethod (aClass, "getMethods", "()[Ljava/lang/reflect/Method;");
-    _numMethods = env->GetArrayLength (methods);    
-    _methods = new JavaMethod[_numMethods];
-    for (i = 0; i < _numMethods; i++) {
-        jobject aMethod = env->GetObjectArrayElement ((jobjectArray)methods, i);
-        _methods[i] = JavaMethod (env, aMethod);
+    long numMethods = env->GetArrayLength (methods);    
+    _methods = CFDictionaryCreateMutable(NULL, numMethods, NULL, NULL);
+    for (i = 0; i < numMethods; i++) {
+        jobject aJMethod = env->GetObjectArrayElement ((jobjectArray)methods, i);
+        Method *aMethod = new JavaMethod (env, aJMethod);
+        CFDictionaryAddValue ((CFMutableDictionaryRef)_methods, aMethod->name(), aMethod);
     }
 
     // Get the constructors
@@ -118,3 +120,23 @@ JavaClass::JavaClass (JNIEnv *env, const char *className)
         _constructors[i] = JavaConstructor (env, aConstructor);
     }
 }
+
+JavaInstance::JavaInstance (JNIEnv *env, jobject instance, JavaClass *aClass) {
+    // Classes are cached, not need to retain.
+    _class = aClass;
+    
+    _env = env;
+    
+    _instance = env->NewGlobalRef (instance);
+    env->DeleteLocalRef (instance);
+    
+    if  (_instance == NULL) {
+        fprintf (stderr, "%s:  out of memory!\n", __PRETTY_FUNCTION__);
+    }
+};
+
+JavaInstance::~JavaInstance () {
+    _env->DeleteGlobalRef (_instance);
+}
+
+

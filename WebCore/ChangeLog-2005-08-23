@@ -1,3 +1,17 @@
+2003-11-18  Richard Williamson   <rjw@apple.com>
+
+	More live connect stuff.  We're getting close.
+
+        Reviewed by Chris.
+
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElement::tryGet):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLAppletElementImpl::parseAttribute):
+        (HTMLAppletElementImpl::getAppletInstance):
+        * khtml/html/html_objectimpl.h:
+
 2003-11-18  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3478122, crash using first-letter and zooming, and also the fix for 3478078, generated content

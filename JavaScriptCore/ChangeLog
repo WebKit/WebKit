@@ -1,3 +1,45 @@
+2003-11-18  Richard Williamson   <rjw@apple.com>
+
+	More live connect stubs.  We're getting close.
+
+        Reviewed by Chris.
+
+        * JavaScriptCore.pbproj/project.pbxproj:
+        * bindings/jni/jni_runtime.cpp:
+        (JavaClass::JavaClass):
+        (JavaInstance::JavaInstance):
+        (JavaInstance::~JavaInstance):
+        * bindings/jni/jni_runtime.h:
+        (Bindings::JavaConstructor::value):
+        (Bindings::JavaField::value):
+        (Bindings::JavaMethod::value):
+        (Bindings::JavaClass::_commonDelete):
+        (Bindings::JavaClass::_commonCopy):
+        (Bindings::JavaClass::methodNamed):
+        (Bindings::JavaClass::fieldNamed):
+        (Bindings::JavaInstance::getClass):
+        * bindings/runtime.cpp: Added.
+        * bindings/runtime.h:
+        (Bindings::Instance::~Instance):
+        * bindings/runtime_object.cpp: Added.
+        (RuntimeObjectImp::classInfo):
+        (RuntimeObjectImp::RuntimeObjectImp):
+        (RuntimeObjectImp::get):
+        (RuntimeObjectImp::put):
+        (RuntimeObjectImp::canPut):
+        (RuntimeObjectImp::hasProperty):
+        (RuntimeObjectImp::deleteProperty):
+        (RuntimeObjectImp::defaultValue):
+        (RuntimeObjectImp::_initializeClassInfoFromInstance):
+        * bindings/runtime_object.h: Added.
+        (KJS::RuntimeObjectImp::setInternalInstance):
+        (KJS::RuntimeObjectImp::getInternalInstance):
+        * kjs/object.cpp:
+        (KJS::ObjectImp::get):
+        (KJS::ObjectImp::hasProperty):
+        * kjs/value.h:
+        (KJS::):
+
 2003-11-17  Maciej Stachowiak  <mjs@apple.com>
 
         Patch from Harri, reviewed by me.

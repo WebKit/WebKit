@@ -158,6 +158,17 @@ bool HTMLAppletElementImpl::callMember(const QString & name, const QStringList &
 #endif
 #endif
 }
+
+#if APPLE_CHANGES
+Bindings::Instance *HTMLAppletElementImpl::getAppletInstance() const
+{
+    // Actually get instance point for corresponding jobject and create
+    // a Instance with it.
+    printf ("%s: NOT YET IMPLEMENTED return fake reference\n", __PRETTY_FUNCTION__);
+    return (Bindings::Instance *)0xfeadface;
+}
+#endif
+
 // -------------------------------------------------------------------------
 
 HTMLEmbedElementImpl::HTMLEmbedElementImpl(DocumentPtr *doc)

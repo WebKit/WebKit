@@ -21,6 +21,10 @@
 #import <Foundation/NSURL_NSURLExtras.h>
 #import <Foundation/NSURLRequest.h>
 
+@interface NSView (WebInternal)
+- (void *)getApplet;
+@end
+
 @implementation WebPluginController
 
 - initWithHTMLView:(WebHTMLView *)HTMLView
@@ -75,8 +79,18 @@
         if (_started) {
             LOG(Plugins, "starting plug-in %@", view);
             [view pluginStart];
+
+            [self performSelector:@selector(_delayedGetApplet:) withObject:view afterDelay: 4.0];
         }
     }
+}
+
+// Temporary hack until we add notification from plugin that applet has been
+// activated.
+- (void)_delayedGetApplet: (NSView *)view
+{
+    if ([view respondsToSelector: @selector(getApplet)])
+        NSLog (@"%@ getApplet = %p\n", view, [view getApplet]);
 }
 
 - (void)destroyAllPlugins

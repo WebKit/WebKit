@@ -1,3 +1,15 @@
+2003-11-18  Richard Williamson   <rjw@apple.com>
+
+	More live connect stubs.  We're getting close.
+
+        Reviewed by Chris.
+
+        * Plugins.subproj/WebPluginController.m:
+        (-[WebPluginController addPlugin:]):
+        (-[WebPluginController _delayedGetApplet:]):
+        * WebView.subproj/WebView.m:
+        (-[WebView _goToItem:withLoadType:]):
+
 2003-11-17  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

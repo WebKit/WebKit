@@ -33,6 +33,7 @@
 // ### HACK
 #include "html/html_baseimpl.h"
 #include "html/html_documentimpl.h"
+#include "html/html_objectimpl.h"
 
 #include "khtml_part.h"
 #include "khtmlview.h"
@@ -48,6 +49,10 @@
 #include "rendering/render_object.h"
 
 #include <kdebug.h>
+
+#if APPLE_CHANGES
+#include <JavaScriptCore/runtime_object.h>
+#endif
 
 using namespace KJS;
 
@@ -1092,23 +1097,31 @@ Value KJS::HTMLElement::tryGet(ExecState *exec, const Identifier &propertyName) 
         return getDOMNode(exec,select.options().item(u)); // not specified by DOM(?) but supported in netscape/IE
     }
       break;
-  case ID_FRAME:
-  case ID_IFRAME: {
-      DOM::DocumentImpl* doc = static_cast<DOM::HTMLFrameElementImpl *>(element.handle())->contentDocument();
-      if ( doc && doc->view() ) {
-        KHTMLPart* part = doc->view()->part();
-        if ( part ) {
-          Object globalObject = Object::dynamicCast( Window::retrieve( part ) );
-          // Calling hasProperty on a Window object doesn't work, it always says true.
-          // Hence we need to use getDirect instead.
-          if ( !globalObject.isNull() && static_cast<ObjectImp *>(globalObject.imp())->getDirect( propertyName ) )
-            return globalObject.get( exec, propertyName );
+    case ID_FRAME:
+    case ID_IFRAME: {
+        DOM::DocumentImpl* doc = static_cast<DOM::HTMLFrameElementImpl *>(element.handle())->contentDocument();
+        if ( doc && doc->view() ) {
+            KHTMLPart* part = doc->view()->part();
+            if ( part ) {
+            Object globalObject = Object::dynamicCast( Window::retrieve( part ) );
+            // Calling hasProperty on a Window object doesn't work, it always says true.
+            // Hence we need to use getDirect instead.
+            if ( !globalObject.isNull() && static_cast<ObjectImp *>(globalObject.imp())->getDirect( propertyName ) )
+                return globalObject.get( exec, propertyName );
+            }
         }
-      }
-  }
-  default:
-    break;
-  }
+    }
+      break;
+    case ID_APPLET: {
+        DOM::HTMLAppletElementImpl *appletElement = static_cast<DOM::HTMLAppletElementImpl *>(element.handle());
+        RuntimeObjectImp valueForApplet(appletElement->getAppletInstance());
+        printf ("%s:  ID_APPLET %p, propertyName %s\n", __PRETTY_FUNCTION__, appletElement->getAppletInstance(), propertyName.ascii());
+        return valueForApplet.get(exec,propertyName);
+    }
+      break;
+    default:
+        break;
+    }
 
   const HashTable* table = classInfo()->propHashTable; // get the right hashtable
   const HashEntry* entry = Lookup::findEntry(table, propertyName);

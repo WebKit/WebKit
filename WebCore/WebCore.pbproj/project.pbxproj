@@ -127,6 +127,7 @@
 				F5C2869502846DCD018635CA,
 				F8216299029F4FB501000131,
 				93F1D31A0558CC5C00821BC0,
+				704FD2FE056972FA003DBED9,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -793,6 +794,7 @@
 				F5C287BD02846DCD018635CA,
 				F82162D7029F4FB501000131,
 				93F1D31B0558CC5C00821BC0,
+				704FD2FF056972FA003DBED9,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1111,6 +1113,30 @@
 //652
 //653
 //654
+//700
+//701
+//702
+//703
+//704
+		704FD2FE056972FA003DBED9 = {
+			expectedFileType = wrapper.framework;
+			isa = PBXFileReference;
+			name = JavaVM.framework;
+			path = /System/Library/Frameworks/JavaVM.framework;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		704FD2FF056972FA003DBED9 = {
+			fileRef = 704FD2FE056972FA003DBED9;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//700
+//701
+//702
+//703
+//704
 //840
 //841
 //842

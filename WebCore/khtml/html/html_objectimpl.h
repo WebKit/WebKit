@@ -29,6 +29,11 @@
 
 #include <qstringlist.h>
 
+#if APPLE_CHANGES
+#include <JavaVM/jni.h>
+#include <JavaScriptCore/runtime.h>
+#endif
+
 class KHTMLView;
 
 // -------------------------------------------------------------------------
@@ -52,8 +57,16 @@ public:
 
     bool getMember(const QString &, JType &, QString &);
     bool callMember(const QString &, const QStringList &, JType &, QString &);
+    
+#if APPLE_CHANGES
+    Bindings::Instance *getAppletInstance() const;
+#endif
+
 protected:
     khtml::VAlign valign;
+#if APPLE_CHANGES
+    //jobject _appletInstance;
+#endif
 };
 
 // -------------------------------------------------------------------------

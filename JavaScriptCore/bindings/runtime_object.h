@@ -22,81 +22,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
-#ifndef _RUNTIME_H_
-#define _RUNTIME_H_
+#ifndef _RUNTIME_OBJECT_H_
+#define _RUNTIME_OBJECT_H_
 
-#include "value.h"
+#include <JavaVM/jni.h>
 
-namespace Bindings
-{
+#include "runtime.h"
+#include "object.h"
 
-// For now just use Java style type descriptors.
-typedef const char * RuntimeType;
+namespace KJS {
 
-class Parameter
-{
+class RuntimeObjectImp : public ObjectImp {
 public:
-    virtual RuntimeType type() const = 0;
-    virtual ~Parameter() {};
-};
-
-class Constructor
-{
-public:
-    virtual Parameter *parameterAt(long i) const = 0;
-    virtual long numParameters() const = 0;
-
-    virtual KJS::Value value() const = 0;
-
-    virtual ~Constructor() {};
-};
-
-class Field
-{
-public:
-    virtual const char *name() const = 0;
-    virtual RuntimeType type() const = 0;
-
-    virtual KJS::Value value() const = 0;
-
-    virtual ~Field() {};
-};
-
-class Method
-{
-public:
-    virtual const char *name() const = 0;
-    virtual RuntimeType returnType() const = 0;
-    virtual Parameter *parameterAt(long i) const = 0;
-    virtual long numParameters() const = 0;
+    RuntimeObjectImp(ObjectImp *proto);
     
-    virtual KJS::Value value() const = 0;
-    
-    virtual ~Method() {};
-};
+    RuntimeObjectImp(Bindings::Instance *i);
 
-class Class
-{
-public:
-    virtual const char *name() const = 0;
-    
-    virtual Method *methodNamed(const char *name) const = 0;
-    
-    virtual Constructor *constructorAt(long i) const = 0;
-    virtual long numConstructors() const = 0;
-    
-    virtual Field *fieldNamed(const char *name) const = 0;
+    const ClassInfo *classInfo() const;
 
-    virtual ~Class() {};
-};
+    virtual Value get(ExecState *exec, const Identifier &propertyName) const;
 
-class Instance
-{
-public:
-    virtual Class *getClass() const = 0;
-    virtual ~Instance() {};
-};
+    virtual void put(ExecState *exec, const Identifier &propertyName,
+                     const Value &value, int attr = None);
 
+    virtual bool canPut(ExecState *exec, const Identifier &propertyName) const;
+
+    virtual bool hasProperty(ExecState *exec,
+			     const Identifier &propertyName) const;
+
+
+    virtual bool deleteProperty(ExecState *exec,
+                                const Identifier &propertyName);
+
+    virtual Value defaultValue(ExecState *exec, Type hint) const;
+
+    void setInternalInstance (Bindings::Instance *i) { instance = i; }
+    Bindings::Instance *getInternalInstance() const { return instance; }
+
+private:
+    void _initializeClassInfoFromInstance();
+    
+    ClassInfo _classInfo;
+    Bindings::Instance *instance;
 };
+    
+}; // namespace
 
 #endif

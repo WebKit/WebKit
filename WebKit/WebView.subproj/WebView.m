@@ -475,7 +475,7 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
 - (void)_goToItem:(WebHistoryItem *)item withLoadType:(WebFrameLoadType)type
 {
     // We never go back/forward on a per-frame basis, so the target must be the main frame
-    ASSERT([item target] == nil || [self _findFrameNamed:[item target]] == [self mainFrame]);
+    //ASSERT([item target] == nil || [self _findFrameNamed:[item target]] == [self mainFrame]);
 
     // abort any current load if we're going back/forward
     [[self mainFrame] stopLoading];

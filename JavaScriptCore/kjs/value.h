@@ -70,13 +70,13 @@ namespace KJS {
    * Primitive types
    */
   enum Type {
-    UnspecifiedType = 0,
-    UndefinedType   = 1,
-    NullType        = 2,
-    BooleanType     = 3,
-    StringType      = 4,
-    NumberType      = 5,
-    ObjectType      = 6
+    UnspecifiedType   = 0,
+    UndefinedType     = 1,
+    NullType          = 2,
+    BooleanType       = 3,
+    StringType        = 4,
+    NumberType        = 5,
+    ObjectType        = 6
   };
 
   /**

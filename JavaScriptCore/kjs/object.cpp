@@ -146,8 +146,9 @@ Value ObjectImp::get(ExecState *exec, const Identifier &propertyName) const
   if (propertyName == specialPrototypePropertyName)
     return Value(_proto);
 
-  if (_proto->dispatchType() != ObjectType)
+  if (_proto->dispatchType() != ObjectType) {
     return Undefined();
+  }
 
   return static_cast<ObjectImp *>(_proto)->get(exec, propertyName);
 }
@@ -222,8 +223,9 @@ bool ObjectImp::hasProperty(ExecState *exec, const Identifier &propertyName) con
   if (propertyName == specialPrototypePropertyName)
     return true;
 
-  if (_proto->dispatchType() != ObjectType)
+  if (_proto->dispatchType() != ObjectType) {
     return false;
+  }
 
   // Look in the prototype
   return static_cast<ObjectImp *>(_proto)->hasProperty(exec, propertyName);
