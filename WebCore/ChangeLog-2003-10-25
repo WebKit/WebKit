@@ -1,3 +1,10 @@
+2002-09-27  Darin Adler  <darin@apple.com>
+
+	- fixed 3060487 -- error connecting member slot to signal (KWQObject)
+
+        * kwq/KWQObject.mm: (QObject::connect): Add slotShowDocument to the list of slots that
+	we don't care about hooking up.
+
 2002-09-26  Darin Adler  <darin@apple.com>
 
 	- fixed 2953256 -- JavaScript window.moveTo() and window.moveBy() methods do not work

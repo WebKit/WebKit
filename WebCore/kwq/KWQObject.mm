@@ -78,6 +78,7 @@ void QObject::connect(const QObject *sender, const char *signalName, const QObje
             && !KWQNamesMatch(member, SLOT(slotLoaderRequestStarted(khtml::DocLoader *, khtml::CachedObject *)))
             && !KWQNamesMatch(member, SLOT(slotRedirection(KIO::Job *, const KURL &)))
             && !KWQNamesMatch(member, SLOT(slotScrollBarMoved()))
+            && !KWQNamesMatch(member, SLOT(slotShowDocument(const QString &, const QString &)))
             && !KWQNamesMatch(member, SLOT(slotViewCleared()))
             && !KWQNamesMatch(member, SLOT(slotWidgetDestructed()))
             )
