@@ -9,8 +9,7 @@
 @class WebError;
 
 @protocol WebDocumentView <NSObject>
-- (void)provisionalDataSourceChanged: (WebDataSource *)dataSource;
-- (void)provisionalDataSourceCommitted: (WebDataSource *)dataSource;
+- (void)setDataSource: (WebDataSource *)dataSource;
 - (void)dataSourceUpdated: (WebDataSource *)dataSource;
 - (void)layout;
 @end

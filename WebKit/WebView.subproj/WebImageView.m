@@ -40,11 +40,7 @@
     [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
 }
 
-- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
-{
-}
-
-- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
+- (void)setDataSource:(WebDataSource *)dataSource
 {
     representation = [[dataSource representation] retain];
 }

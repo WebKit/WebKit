@@ -1,3 +1,23 @@
+2002-09-11  Maciej Stachowiak  <mjs@apple.com>
+
+	Combined provisionalDataSourceChanged: and
+	provisionalDataSourceCommitted: methods into a single
+	setDataSource:, since they are always called one immediately after
+	the other.
+	
+        * Plugins.subproj/WebPluginView.m:
+        (-[WebNetscapePluginView setDataSource:]):
+        (-[WebNetscapePluginView loadRequest:inTarget:withNotifyData:]):
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setDataSource:]):
+        * WebView.subproj/WebImageView.m:
+        (-[WebImageView setDataSource:]):
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView setDataSource:]):
+        * WebView.subproj/WebViewPrivate.m:
+        (-[WebView _makeDocumentViewForDataSource:]):
+
 2002-09-11  Richard Williamson  <rjw@apple.com>
 
         Better fix for previous problem.

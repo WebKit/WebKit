@@ -73,8 +73,7 @@
     [self _setDocumentView:(id<WebDocumentView>)documentView];
     [documentView release];
 
-    [[self documentView] provisionalDataSourceChanged:dataSource];
-    [[self documentView] provisionalDataSourceCommitted:dataSource];
+    [[self documentView] setDataSource:dataSource];
 }
 
 - (void)_setController: (WebController *)controller

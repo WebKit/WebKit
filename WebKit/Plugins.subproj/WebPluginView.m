@@ -653,7 +653,7 @@
     return self;
 }
 
-- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
+- (void)setDataSource:(WebDataSource *)dataSource
 {
     WebNetscapePlugin *plugin;
     
@@ -679,10 +679,6 @@
     NPP_Print = 	[plugin NPP_Print];
     
     [self start];
-}
-
-- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
-{
 }
 
 - (void)dataSourceUpdated:(WebDataSource *)dataSource
@@ -863,6 +859,9 @@
     NSURL *URL;
     
     URL = [request URL];
+    
+    if(!URL)
+        return NPERR_INVALID_URL;
     
     if(!target){
         stream = [[WebNetscapePluginStream alloc] initWithURL:URL pluginPointer:instance notifyData:notifyData];

@@ -700,17 +700,12 @@
 //------------------------------------------------------------------------------------
 // WebDocumentView protocol
 //------------------------------------------------------------------------------------
-- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource 
+- (void)setDataSource:(WebDataSource *)dataSource 
 {
     [[dataSource _bridge]
         createKHTMLViewWithNSView:self
         marginWidth:[[[dataSource webFrame] webView] _marginWidth]
         marginHeight:[[[dataSource webFrame] webView] _marginHeight]];
-}
-
-
-- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource 
-{
     [[self _bridge] installInFrame:[[self _web_parentWebView] frameScrollView]];
 }
 

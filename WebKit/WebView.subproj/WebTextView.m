@@ -41,11 +41,7 @@
     [self setFont:font];
 }
 
-- (void)provisionalDataSourceChanged:(WebDataSource *)dataSource
-{
-}
-
-- (void)provisionalDataSourceCommitted:(WebDataSource *)dataSource
+- (void)setDataSource:(WebDataSource *)dataSource
 {
 }
 
