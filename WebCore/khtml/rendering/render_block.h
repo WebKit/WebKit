@@ -375,7 +375,8 @@ protected:
     void adjustPositionedBlock(RenderObject* child, const MarginInfo& marginInfo);
     void adjustFloatingBlock(const MarginInfo& marginInfo);
     RenderObject* handleSpecialChild(RenderObject* child, const MarginInfo& marginInfo, CompactInfo& compactInfo, bool& handled);
-    RenderObject* handleFloatingOrPositionedChild(RenderObject* child, const MarginInfo& marginInfo, bool& handled);
+    RenderObject* handleFloatingChild(RenderObject* child, const MarginInfo& marginInfo, bool& handled);
+    RenderObject* handlePositionedChild(RenderObject* child, const MarginInfo& marginInfo, bool& handled);
     RenderObject* handleCompactChild(RenderObject* child, CompactInfo& compactInfo, bool& handled);
     RenderObject* handleRunInChild(RenderObject* child, bool& handled);
     void collapseMargins(RenderObject* child, MarginInfo& marginInfo, int yPosEstimate);
