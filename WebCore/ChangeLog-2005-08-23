@@ -85,8 +85,6 @@
         (DOM::Selection::validate): A selection is in caret state if the start and end are equal *or* equivalent.
         The equivalence case is new, and fixes 3723359.
 
-
->>>>>>> 1.2967
 2004-07-09  Kevin Decker  <kdecker@apple.com>
 
         Reviewed by Hyatt.
