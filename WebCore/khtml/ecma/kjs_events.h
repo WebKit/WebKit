@@ -107,7 +107,7 @@ namespace KJS {
     // no put - all read-only
     virtual const ClassInfo* classInfo() const { return &info; }
     static const ClassInfo info;
-    enum { View, Detail, KeyCode, PageX, PageY, InitUIEvent };
+    enum { View, Detail, KeyCode, LayerX, LayerY, PageX, PageY, InitUIEvent };
     DOM::UIEvent toUIEvent() const { return static_cast<DOM::UIEvent>(event); }
   };
 

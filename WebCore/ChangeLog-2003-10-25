@@ -1,3 +1,25 @@
+2002-12-13  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Don.
+
+        * khtml/dom/dom2_events.cpp:
+        (UIEvent::layerX): Added to support nonstandard Mozilla
+	event.layerX property.
+	(UIEvent::layerY): Added to support nonstandard Mozilla
+	event.layerY property.
+        * khtml/dom/dom2_events.h:
+        * khtml/ecma/kjs_events.cpp:
+        (DOMUIEvent::getValueProperty): Implemented layerX and layerY
+        * khtml/ecma/kjs_events.h:
+        * khtml/ecma/kjs_events.lut.h:
+        * khtml/xml/dom2_eventsimpl.cpp:
+        (MouseEventImpl::MouseEventImpl): Added call to computeLayerPos.
+        (MouseEventImpl::computeLayerPos): Compute layer position.
+        (MouseEventImpl::layerX): Added.
+        (MouseEventImpl::layerY): Added.
+        (MouseEventImpl::initMouseEvent): Added call to computeLayerPos.
+        * khtml/xml/dom2_eventsimpl.h:
+
 2002-12-13  David Hyatt  <hyatt@apple.com>
 
 	Fix for 314799, image at wired.com doesn't show up.  Block

@@ -25,6 +25,9 @@
 #include "xml/dom2_eventsimpl.h"
 #include "xml/dom_stringimpl.h"
 #include "xml/dom_nodeimpl.h"
+#include "xml/dom_docimpl.h"
+#include "rendering/render_object.h"
+#include "rendering/render_layer.h"
 
 #include <kdebug.h>
 
@@ -405,6 +408,35 @@ MouseEventImpl::MouseEventImpl(EventId _id,
     m_relatedTarget = relatedTargetArg;
     if (m_relatedTarget)
 	m_relatedTarget->ref();
+    computeLayerPos();
+}
+
+void MouseEventImpl::computeLayerPos()
+{
+    m_layerX = m_clientX;
+    m_layerY = m_clientY;
+
+    DocumentImpl *doc = view()->document();
+
+    if (!doc) {
+	return;
+    }
+
+    khtml::RenderObject::NodeInfo renderInfo(true, false);
+    doc->renderer()->layer()->nodeAtPoint(renderInfo, m_clientX, m_clientY);
+
+    NodeImpl *node = renderInfo.innerNonSharedNode();
+    while (node && !node->renderer()) {
+	node = node->parent();
+    }
+
+    if (!node) {
+	return;
+    }
+
+    node->renderer()->enclosingLayer()->updateLayerPosition();
+    m_layerX -= node->renderer()->enclosingLayer()->xPos();
+    m_layerY -= node->renderer()->enclosingLayer()->yPos();
 }
 
 MouseEventImpl::~MouseEventImpl()
@@ -431,6 +463,16 @@ long MouseEventImpl::clientX() const
 long MouseEventImpl::clientY() const
 {
     return m_clientY;
+}
+
+long MouseEventImpl::layerX() const
+{
+    return m_layerX;
+}
+
+long MouseEventImpl::layerY() const
+{
+    return m_layerY;
 }
 
 bool MouseEventImpl::ctrlKey() const
@@ -496,6 +538,7 @@ void MouseEventImpl::initMouseEvent(const DOMString &typeArg,
     m_relatedTarget = relatedTargetArg.handle();
     if (m_relatedTarget)
 	m_relatedTarget->ref();
+    computeLayerPos();
 }
 
 //---------------------------------------------------------------------------------------------

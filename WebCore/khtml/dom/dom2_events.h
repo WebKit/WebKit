@@ -328,11 +328,18 @@ public:
     int keyCode() const;
 
     /**
-     * Non-standard extensions to support Netscape-style pageX and pageY event property.
+     * Non-standard extensions to support Netscape-style pageX and pageY event properties.
      *
      */
     int pageX() const;
     int pageY() const;
+
+    /**
+     * Non-standard extensions to support Netscape-style layerX and layerY event properties.
+     *
+     */
+    int layerX() const;
+    int layerY() const;
 
     /**
      * The initUIEvent method is used to initialize the value of a UIEvent

@@ -343,6 +343,8 @@ const ClassInfo DOMUIEvent::info = { "UIEvent", &DOMEvent::info, &DOMUIEventTabl
   view		DOMUIEvent::View	DontDelete|ReadOnly
   detail	DOMUIEvent::Detail	DontDelete|ReadOnly
   keyCode	DOMUIEvent::KeyCode	DontDelete|ReadOnly
+  layerX	DOMUIEvent::LayerX	DontDelete|ReadOnly
+  layerY	DOMUIEvent::LayerY	DontDelete|ReadOnly
   pageX		DOMUIEvent::PageX	DontDelete|ReadOnly
   pageY		DOMUIEvent::PageY	DontDelete|ReadOnly
 @end
@@ -372,6 +374,10 @@ Value DOMUIEvent::getValueProperty(ExecState *exec, int token) const
     return Number(static_cast<DOM::UIEvent>(event).detail());
   case KeyCode:
     return Number(static_cast<DOM::UIEvent>(event).keyCode());
+  case LayerX:
+    return Number(static_cast<DOM::UIEvent>(event).layerX());
+  case LayerY:
+    return Number(static_cast<DOM::UIEvent>(event).layerY());
   case PageX:
     return Number(static_cast<DOM::UIEvent>(event).pageX());
   case PageY:

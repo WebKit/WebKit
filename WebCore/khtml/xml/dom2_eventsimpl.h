@@ -192,6 +192,8 @@ public:
     long screenY() const;
     long clientX() const;
     long clientY() const;
+    long layerX() const;
+    long layerY() const;
     bool ctrlKey() const;
     bool shiftKey() const;
     bool altKey() const;
@@ -220,12 +222,16 @@ protected:
     long m_screenY;
     long m_clientX;
     long m_clientY;
+    long m_layerX;
+    long m_layerY;
     bool m_ctrlKey;
     bool m_altKey;
     bool m_shiftKey;
     bool m_metaKey;
     unsigned short m_button;
     NodeImpl *m_relatedTarget;
+ private:
+    void computeLayerPos();
 };
 
 
