@@ -335,12 +335,14 @@ extern NSString *WebElementFrameKey;
     The text encoding automatically goes back to the default when the top level frame
     changes to a new location.
     @param encoding
+    // FIXME Resolve whether to use NSStringEncoding
 */
 - (void)setCustomTextEncoding:(CFStringEncoding)encoding;
 
 /*!
     @method customTextEncoding
     @result Returns the custom text encoding.
+    // FIXME Resolve whether to use NSStringEncoding
 */
 - (CFStringEncoding)customTextEncoding;
 
