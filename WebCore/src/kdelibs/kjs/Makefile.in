@@ -73,7 +73,9 @@ CXXOBJECTS = \
 
 PROGRAM = testkjs
 
-OBJECTS = $(CXXYACCOBJECTS) $(CXXOBJECTS) 
+OBJECTS = $(CXXOBJECTS) 
+EXPORT_OBJECTS = $(CXXOBJECTS) 
+EXPORT_OBJECTS_DIR = $(TOPSRCDIR)/lib/kjs
 
 LIBRARY = libkjs.a
 
@@ -94,7 +96,7 @@ YACCFLAGS = -d --output-file=grammar.cpp --name-prefix=kjsyy
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY) $(PROGRAM)
+all: $(CXXYACCOBJECTS) $(OBJECTS) $(LIBRARY) $(PROGRAM) export-objects
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

@@ -25,6 +25,7 @@ SKIPOBJECTS = javaembed.o
 CXXOBJECTS = $(filter-out $(SKIPOBJECTS),$(ALLOBJECTS))
 
 OBJECTS = $(CXXOBJECTS) 
+EXPORT_OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtmljava.a
 
@@ -55,7 +56,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: $(OBJECTS) export-objects
 
 $(LIBRARY): $(CXXOBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

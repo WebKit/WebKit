@@ -10,3 +10,4 @@ htmltags.gperf
 htmlattrs.c
 htmlattrs.h
 htmlattrs.gperf
+export-objects

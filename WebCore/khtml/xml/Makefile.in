@@ -36,6 +36,7 @@ CXXOBJECTS = \
 	$(NULL)
 
 OBJECTS = $(CXXOBJECTS) 
+EXPORT_OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtmlxml.a
 
@@ -72,7 +73,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: $(OBJECTS) export-objects
 
 dom_docimpl.cpp: dom_docimpl.moc
 dom_docimpl.moc:

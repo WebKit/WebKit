@@ -29,4 +29,6 @@ KCompletionBox::KCompletionBox()
 {
 }
 
-
+KCompletionBox::~KCompletionBox() 
+{
+}

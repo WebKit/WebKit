@@ -10,3 +10,4 @@ grammar.cpp.h
 grammar.h
 *.kde
 *.dep
+export-objects

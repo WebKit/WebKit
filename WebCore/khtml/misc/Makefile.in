@@ -37,6 +37,7 @@ ATTRSFILES = \
 CFILES = $(TAGFILES) $(ATTRSFILES)
 
 OBJECTS = khtmldata.h $(CFILES) $(CXXOBJECTS)
+EXPORT_OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtmlmisc.a
 
@@ -69,7 +70,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(CFILES) $(OBJECTS) $(LIBRARY)
+all: $(CFILES) $(OBJECTS) export-objects
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

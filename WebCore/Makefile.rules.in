@@ -49,6 +49,21 @@ $(filter %.o,$(CXXOBJECTS)): %.o: %.cpp
 #----------------------------------------------------------------------
 # Standard subdir targets
 
+export-objects: $(EXPORT_OBJECTS)
+	if [ ! -d "$(EXPORT_OBJECTS_DIR)" ]; then \
+		rm -f $(EXPORT_OBJECTS_DIR); \
+		mkdir -p $(EXPORT_OBJECTS_DIR); \
+	fi
+	for OBJECT in $?; do \
+		ln -f $$OBJECT $(EXPORT_OBJECTS_DIR)/$$OBJECT; \
+	done
+	touch $@
+
+lib:
+	@$(MAKE) && \
+        (cd $(TOPSRCDIR)/lib || mkdir $(TOPSRCDIR)/lib) && \
+	$(MAKE)
+
 setup:
 	@if (test -f "./MakeSystemChanges.sh"); then \
 		./MakeSystemChanges.sh; \
@@ -58,7 +73,7 @@ depend:
 	$(CC) -MM $(DEPFLAGS) $(SOURCES) > Makefile.dep
 
 clean:
-	rm -f ${CLEAN_FILES} core
+	rm -rf ${CLEAN_FILES} core
 
 distclean:
 	${MAKE} clean

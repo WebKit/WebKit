@@ -31,6 +31,7 @@ SUBDIRS = \
 	src/kwq/ \
 	src/kwq/qt \
 	src/kwq/kde \
+	lib \
 	src/kwq/tests \
 	src/kwq/tests/qt \
 	$(NULL)
@@ -63,8 +64,6 @@ test:
 	./harness
 
 local-all:
-	./makelibkde
-
 local-dep:
 local-install:
 local-setup:

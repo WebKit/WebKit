@@ -125,6 +125,7 @@ MOBJECTS = \
 	$(NULL)
 
 OBJECTS = $(MMOBJECTS) $(MOBJECTS)
+EXPORT_OBJECTS = $(OBJECTS)
 
 LIBRARY = libkwq.a
 
@@ -175,7 +176,7 @@ DEPFLAGS = $(CMFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: $(OBJECTS) export-objects
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(OBJECTS)

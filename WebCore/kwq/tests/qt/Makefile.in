@@ -62,15 +62,11 @@ CMMFLAGS = $(BASECMMFLAGS)
 
 LIBS = objc-dummy.o \
     -framework Cocoa \
-    -lkwq \
-    -l_qt \
-    -lkwq \
-    -l_qt \
+    -lwebcore \
     $(NULL)
 
 LDFLAGS = $(BASELDFLAGS) \
-    -L../.. \
-    -L../../qt \
+    -L$(TOPSRCDIR)/lib \
     $(NULL)
 
 DEPFLAGS = $(CXXFLAGS)

@@ -23,6 +23,7 @@ CXXOBJECTS = \
     $(NULL)
 
 OBJECTS = $(CXXOBJECTS)
+EXPORT_OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtml.a
 
@@ -60,7 +61,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: $(OBJECTS) export-objects
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

@@ -4,3 +4,4 @@ Makefile.in
 *.kde
 *.dep
 *.moc
+export-objects

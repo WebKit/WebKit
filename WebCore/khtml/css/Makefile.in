@@ -43,6 +43,7 @@ PROPFILES = \
 CFILES = $(VALUEFILES) $(PROPFILES)
 
 OBJECTS = $(CXXOBJECTS)
+EXPORT_OBJECTS = $(CXXOBJECTS)
 
 LIBRARY = libkhtmlcss.a
 
@@ -78,7 +79,7 @@ DEPFLAGS = $(CXXFLAGS)
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(CFILES) $(OBJECTS) $(LIBRARY)
+all: $(CFILES) $(OBJECTS) export-objects
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)

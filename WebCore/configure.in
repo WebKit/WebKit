@@ -59,10 +59,12 @@ if test -z "$ac_cv_prog_CXX"; then
 	$CONFIG_ERR c++
 	exit 1
 fi
-CFLAGS="-g -fno-coalesce-static-vtables -DHAVE_CONFIG_H"
+CFLAGS="-DHAVE_CONFIG_H -g -fno-common"
 AC_SUBST(CFLAGS) 
-CXXFLAGS=$CFLAGS
+CXXFLAGS="$CFLAGS -fno-coalesce-static-vtables"
 AC_SUBST(CXXFLAGS) 
+DYLIBFLAGS="-dynamiclib"
+AC_SUBST(DYLIBFLAGS) 
 
 AC_DECL_YYTEXT
 AC_CHECK_PROGS(LEX, flex lex)
@@ -725,5 +727,6 @@ AC_OUTPUT(
 	src/kwq/kde/Makefile
 	src/kwq/tests/Makefile
 	src/kwq/tests/qt/Makefile
+	lib/Makefile
 )
 
