@@ -1,3 +1,13 @@
+2002-09-18  Richard Williamson  <rjw@apple.com>
+
+        Added documentation keywords to header.
+        
+        * WebView.subproj/WebControllerPolicyHandler.h:
+        
+        Made WebDynamicScrollBarsView private
+        
+        * WebKit.pbproj/project.pbxproj:
+
 2002-09-18  Darin Adler  <darin@apple.com>
 
 	- fixed 3053155 -- REGRESSION: Activity Window thinks 0-byte
