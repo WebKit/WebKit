@@ -1,5 +1,12 @@
 2004-11-11  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Adele
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::DeleteSelectionCommand::initializePositionData): Add some comments and a new piece of debugging output.
+
+2004-11-11  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by John
 
         Fix for these bugs:
