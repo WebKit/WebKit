@@ -1,3 +1,10 @@
+2002-10-24  John Sullivan  <sullivan@apple.com>
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge objectLoadedFromCache:response:size:]):
+	added ASSERT(response != nil), leftover from debugging
+	session on Tuesday, seems worth leaving in.
+
 2002-10-24  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Update for recent changes.

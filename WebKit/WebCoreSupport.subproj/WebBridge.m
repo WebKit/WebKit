@@ -188,6 +188,7 @@
 - (void)objectLoadedFromCache:(NSURL *)URL response: response size:(unsigned)bytes
 {
     ASSERT(frame != nil);
+    ASSERT(response != nil);
 
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     id <WebResourceLoadDelegate> delegate = [[frame controller] resourceLoadDelegate];
