@@ -30,8 +30,6 @@
 
     NSDictionary *draggingImageElement;
     
-    BOOL lastMouseOverElementWasNotNil;
-    
     NSSize lastLayoutSize;
 }
 @end
@@ -45,11 +43,9 @@
 - (void)_adjustFrames;
 
 // Modifier (flagsChanged) tracking SPI
-+ (void)_setModifierTrackingEnabled:(BOOL)enabled;
-+ (BOOL)_modifierTrackingEnabled;
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent;
+
 - (NSDictionary *)_elementAtPoint:(NSPoint)point;
-- (void)_mouseOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned)modifierFlags;
 
 - (void)_setAsideSubviews;
 - (void)_restoreSubviews;

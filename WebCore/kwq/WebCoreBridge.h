@@ -215,8 +215,6 @@ enum FrameBorderStyle {
 
 - (void)unfocusWindow;
 
-- (BOOL)modifierTrackingEnabled;
-
 - (NSView *)nextKeyViewOutsideWebViews;
 - (NSView *)previousKeyViewOutsideWebViews;
 

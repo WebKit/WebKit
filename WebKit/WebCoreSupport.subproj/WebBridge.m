@@ -266,11 +266,6 @@
     }
 }
 
-- (BOOL)modifierTrackingEnabled
-{
-    return [WebHTMLView _modifierTrackingEnabled];
-}
-
 - (void)setIconURL:(NSURL *)URL
 {
     [[self dataSource] _setIconURL:URL];

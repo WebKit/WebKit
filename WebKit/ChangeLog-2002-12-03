@@ -1,3 +1,37 @@
+2002-11-11  Darin Adler  <darin@apple.com>
+
+	- made some improvements to cursor setting for greater speed and correctness
+
+        * WebView.subproj/WebDynamicScrollBarsView.m:
+        (-[WebDynamicScrollBarsView setCursor:]): Just use setDocumentCursor: instead of
+	our own logic. This allows us to remove code and may fix some bugs or anomalies as well.
+        (-[WebDynamicScrollBarsView dealloc]): Release the cursor. I think we were leaking before.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView viewWillMoveToSuperview:]): Use _frameOrBoundsChanged: method now, which
+	has been moved into the private file.
+        (-[WebHTMLView dragImage:at:offset:event:pasteboard:source:slideBack:]): Don't bother finding
+	topmost WebHTMLView to call _updateMouseoverWithEvent: on; now it works fine no matter
+	which level it's called at.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _frameOrBoundsChanged:]): Moved the code here that was formerly in the
+	_setNeedsLayoutIfSizeChanged method, also added code that does _updateMouseoverWithEvent:
+	so that we get properly updated cursor when we scroll.
+        (-[WebHTMLView _updateMouseoverWithEvent:]): Remove unneeded assert. This method works
+	equally well no matter which WebHTMLView calls it; everything is done at the window and
+	controller level.
+
+        * WebView.subproj/WebControllerPrivate.h: Added lastElementWasNotNil field and
+	_mouseDidMoveOverElement:modifierFlags: method.
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _mouseDidMoveOverElement:modifierFlags:]): Call through to the delegate,
+	but don't do multiple calls if they are all nil.
+
+        * WebCoreSupport.subproj/WebBridge.m: Remove unused modifierTrackingEnabled method.
+        * WebView.subproj/WebHTMLViewPrivate.h: Remove unused _setModifierTrackingEnabled and
+	_modifierTrackingEnabled methods.
+
 2002-11-10  Darin Adler  <darin@apple.com>
 
         * English.lproj/StringsNotToBeLocalized.txt: Updated for recent changes.

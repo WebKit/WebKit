@@ -289,4 +289,16 @@
     return menu;
 }
 
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(unsigned)modifierFlags
+{
+    // When the mouse isn't over this view at all, we'll get called with a dictionary of nil over
+    // and over again. So it's a good idea to catch that here and not send multiple calls to the delegate
+    // for that case.
+    
+    if (dictionary && _private->lastElementWasNonNil) {
+        [[self windowOperationsDelegate] mouseDidMoveOverElement:dictionary modifierFlags:modifierFlags];
+    }
+    _private->lastElementWasNonNil = dictionary != nil;
+}
+
 @end

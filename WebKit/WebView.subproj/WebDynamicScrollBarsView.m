@@ -77,8 +77,6 @@
 
 - (void)setCursor:(NSCursor *)cur
 {
-    // Do nothing for cases where the cursor isn't changing.
-    // Also turn arrowCursor into nil.
     if (!cur) {
         if (!cursor) {
             return;
@@ -94,25 +92,7 @@
     [cursor release];
     cursor = [cur retain];
 
-    // We have to make both of these calls, because:
-    // - Just setting a cursor rect will have no effect, if the mouse cursor is already
-    //   inside the area of the rect.
-    // - Just calling invalidateCursorRectsForView will not call resetCursorRects if
-    //   there is no cursor rect set currently and the view has no subviews.
-    // Therefore we have to call resetCursorRects to ensure that a cursor rect is set
-    // at all, if we are going to want one, and then invalidateCursorRectsForView: to
-    // call resetCursorRects from the proper context that will actually result in
-    // updating the cursor.
-    [self resetCursorRects];
-    [[self window] invalidateCursorRectsForView:self];
-}
-
-- (void)resetCursorRects
-{
-    [self discardCursorRects];
-    if (cursor) {
-        [self addCursorRect:[self visibleRect] cursor:cursor];
-    }
+    [self setDocumentCursor:cursor];
 }
 
 - (void)setAllowsScrolling:(BOOL)flag
@@ -124,6 +104,12 @@
 - (BOOL)allowsScrolling
 {
     return !disallowsScrolling;
+}
+
+- (void)dealloc
+{
+    [cursor release];
+    [super dealloc];
 }
 
 @end

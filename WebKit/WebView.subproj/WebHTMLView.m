@@ -158,17 +158,9 @@
 
 - (void)removeMouseMovedObserver
 {
-    [self _mouseOverElement:nil modifierFlags:0];
+    [[self _controller] _mouseDidMoveOverElement:nil modifierFlags:0];
     [[NSNotificationCenter defaultCenter] removeObserver:self
         name:NSMouseMovedNotification object:nil];
-}
-
-- (void)_setNeedsLayoutIfSizeChanged:(NSNotification *)notification
-{
-    if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
-        [self setNeedsLayout:YES];
-        [self setNeedsDisplay:YES];
-    }
 }
 
 - (void)viewWillMoveToSuperview:(NSView *)newSuperview
@@ -190,9 +182,9 @@
     }
 
     if (newSuperview) {
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutIfSizeChanged:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged:) 
             name:NSViewFrameDidChangeNotification object:newSuperview];
-        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_setNeedsLayoutIfSizeChanged:) 
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_frameOrBoundsChanged:) 
             name:NSViewBoundsDidChangeNotification object:newSuperview];
     }
 }
@@ -583,7 +575,7 @@
            source:(id)sourceObject
         slideBack:(BOOL)slideBack
 {
-    if(_private->draggingImageElement){
+    if (_private->draggingImageElement) {
         // Subclassing dragImage for image drags let's us change aspects of the drag that the
         // promised file API doesn't provide such as a different drag image, other pboard types etc.
 
@@ -606,15 +598,8 @@
            slideBack:slideBack];
     
     // During a drag, we don't get any mouseMoved or flagsChanged events.
-    // So after the drag we need to explicity update the mouseover state.
-    WebHTMLView *viewForMouseover = self;
-    NSView *view = self;
-    while ((view = [view superview])) {
-        if ([view isKindOfClass:[WebHTMLView class]]) {
-            viewForMouseover = (WebHTMLView *)view;
-        }
-    }
-    [viewForMouseover _updateMouseoverWithEvent:[NSApp currentEvent]];
+    // So after the drag we need to explicitly update the mouseover state.
+    [self _updateMouseoverWithEvent:[NSApp currentEvent]];
 }
 
 - (void)mouseDragged:(NSEvent *)event

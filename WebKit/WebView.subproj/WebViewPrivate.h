@@ -36,6 +36,8 @@
 
     NSString *controllerSetName;
     NSString *topLevelFrameName;
+    
+    BOOL lastElementWasNonNil;
 }
 @end
 
@@ -61,4 +63,7 @@
 - (WebController *)_openNewWindowWithRequest:(WebResourceRequest *)request behind:(BOOL)behind;
 
 - (NSMenu *)_menuForElement:(NSDictionary *)element;
+
+- (void)_mouseDidMoveOverElement:(NSDictionary *)dictionary modifierFlags:(unsigned)modifierFlags;
+
 @end

@@ -109,24 +109,38 @@
     return [[self _frame] _bridge];
 }
 
-BOOL _modifierTrackingEnabled = FALSE;
-
-+ (void)_setModifierTrackingEnabled:(BOOL)enabled
-{
-    _modifierTrackingEnabled = enabled;
-}
-
-+ (BOOL)_modifierTrackingEnabled
-{
-    return _modifierTrackingEnabled;
-}
-
 + (void)_postFlagsChangedEvent:(NSEvent *)flagsChangedEvent
 {
-    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]] modifierFlags:[flagsChangedEvent modifierFlags] timestamp:[flagsChangedEvent timestamp] windowNumber:[flagsChangedEvent windowNumber] context:[flagsChangedEvent context] eventNumber:0 clickCount:0 pressure:0];
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
+        location:[[flagsChangedEvent window] convertScreenToBase:[NSEvent mouseLocation]]
+        modifierFlags:[flagsChangedEvent modifierFlags]
+        timestamp:[flagsChangedEvent timestamp]
+        windowNumber:[flagsChangedEvent windowNumber]
+        context:[flagsChangedEvent context]
+        eventNumber:0 clickCount:0 pressure:0];
 
-    // pretend it's a mouse move
-    [[NSNotificationCenter defaultCenter] postNotificationName:NSMouseMovedNotification object:self userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
+    // Pretend it's a mouse move.
+    [[NSNotificationCenter defaultCenter]
+        postNotificationName:NSMouseMovedNotification object:self
+        userInfo:[NSDictionary dictionaryWithObject:fakeEvent forKey:@"NSEvent"]];
+}
+
+- (void)_frameOrBoundsChanged:(NSNotification *)notification
+{
+    if (!NSEqualSizes(_private->lastLayoutSize, [(NSClipView *)[self superview] documentVisibleRect].size)) {
+        [self setNeedsLayout:YES];
+        [self setNeedsDisplay:YES];
+    }
+    
+    NSEvent *fakeEvent = [NSEvent mouseEventWithType:NSMouseMoved
+        location:[[self window] convertScreenToBase:[NSEvent mouseLocation]]
+        modifierFlags:[[NSApp currentEvent] modifierFlags]
+        timestamp:[NSDate timeIntervalSinceReferenceDate]
+        windowNumber:[[self window] windowNumber]
+        context:[[NSApp currentEvent] context]
+        eventNumber:0 clickCount:0 pressure:0];
+    
+    [self _updateMouseoverWithEvent:fakeEvent];
 }
 
 - (NSDictionary *)_elementAtPoint:(NSPoint)point
@@ -203,15 +217,6 @@ BOOL _modifierTrackingEnabled = FALSE;
     }
 }
 
-- (void)_mouseOverElement:(NSDictionary *)elementInformation modifierFlags:(unsigned)modifierFlags;
-{
-    if (elementInformation != nil || _private->lastMouseOverElementWasNotNil) {
-        [[[self _controller] windowOperationsDelegate]
-            mouseDidMoveOverElement:elementInformation modifierFlags:modifierFlags];
-    }
-    _private->lastMouseOverElementWasNotNil = elementInformation != nil;
-}
-
 - (BOOL)_insideAnotherHTMLView
 {
     NSView *view = self;
@@ -248,8 +253,6 @@ BOOL _modifierTrackingEnabled = FALSE;
 
 - (void)_updateMouseoverWithEvent:(NSEvent *)event
 {
-    ASSERT(![self _insideAnotherHTMLView]);
-
     WebHTMLView *view = nil;
     if ([event window] == [self window]) {
         NSView *hitView = [[[self window] contentView] hitTest:[event locationInWindow]];
@@ -263,11 +266,11 @@ BOOL _modifierTrackingEnabled = FALSE;
     }
     
     if (view == nil) {
-        [self _mouseOverElement:nil modifierFlags:0];
+        [[self _controller] _mouseDidMoveOverElement:nil modifierFlags:0];
     } else {
         [[view _bridge] mouseMoved:event];
         NSPoint point = [view convertPoint:[event locationInWindow] fromView:nil];
-        [self _mouseOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
+        [[self _controller] _mouseDidMoveOverElement:[view _elementAtPoint:point] modifierFlags:[event modifierFlags]];
     }
 }
 
