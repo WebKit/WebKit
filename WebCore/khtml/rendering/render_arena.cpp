@@ -37,6 +37,7 @@
 #ifndef NDEBUG
 
 const int signature = 0xDBA00AEA;
+const int signatureDead = 0xDBA00AED;
 
 typedef struct {
     RenderArena *arena;
@@ -65,6 +66,7 @@ void* RenderArena::allocate(size_t size)
 {
 #ifndef NDEBUG
     // Use standard malloc so that memory debugging tools work.
+    assert(this);
     void *block = ::malloc(sizeof(RenderArenaDebugHeader) + size);
     RenderArenaDebugHeader *header = (RenderArenaDebugHeader *)block;
     header->arena = this;
@@ -106,6 +108,7 @@ void RenderArena::free(size_t size, void* ptr)
     assert(header->signature == signature);
     assert(header->size == size);
     assert(header->arena == this);
+    header->signature = signatureDead;
     ::free(header);
 #else
     // Ensure we have correct alignment for pointers.  Important for Tru64

@@ -1,3 +1,10 @@
+2003-01-29  Darin Adler  <darin@apple.com>
+
+        - add new assertion that Dave can use to debug bug 3155954 tomorrow
+
+        * khtml/rendering/render_arena.cpp: (RenderArena::allocate): Assert that the arena is not 0.
+        (RenderArena::free): Change signature so we will detect double-frees even more simply.
+
 2003-01-29  David Hyatt  <hyatt@apple.com>
 
 	Margins were being lost on documents inside iframes
