@@ -1,5 +1,21 @@
 2002-12-30  Trey Matteson  <trey@apple.com>
 
+	3137110 - REGRESSION: calls from 2nd and subsequent instances of Java 1.4.1 plug-in seem to be ignored
+
+	We had previously made changes to "numb" a plugin controller after its frame
+	was tossed or changed content.  We now finish the job by making sure a new
+	controller is created when we go to a new page with plugins.  To so this we
+	release the old controller whenever we flush the plugins from a page.
+
+        Reviewed by Maciej.
+
+        * WebView.subproj/WebFramePrivate.m:
+        (-[WebFrame _detachFromParent]):  Call newly factored code.
+        (-[WebFrame _transitionToCommitted:]):  Call newly factored code.
+        (-[WebFrame _destroyPluginController]):  New method to tear down plugins.
+
+2002-12-30  Trey Matteson  <trey@apple.com>
+
 	3135025 - Assertion failure in _transitionToCommitted on espn nba scoreboard
 
 	For blank pages we decided that there would be no b/f entry.  This means that
