@@ -220,6 +220,7 @@
     if (!viewTypes) {
         viewTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLView class], @"text/html",
+	    [WebHTMLView class], @"text/xml",
             [WebTextView class], @"text/",
             [WebTextView class], @"application/x-javascript",
             [WebImageView class], @"image/jpeg",

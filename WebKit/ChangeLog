@@ -1,3 +1,14 @@
+2002-09-12  David Hyatt  <hyatt@apple.com>
+
+	Add text/xml to our list of MIME types that should use the
+	Web view.  With this fix we now render XML and XHTML
+	correctly!
+	
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (+[WebDataSource _repTypes]):
+        * WebView.subproj/WebViewPrivate.m:
+        (+[WebView _viewTypes]):
+
 2002-09-12  Ken Kocienda  <kocienda@apple.com>
 
         Removed load flags as a design concept. Replaced with new "caching policy" concept 

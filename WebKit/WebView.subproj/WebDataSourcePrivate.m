@@ -364,6 +364,7 @@
     if (!repTypes) {
         repTypes = [[NSMutableDictionary alloc] initWithObjectsAndKeys:
             [WebHTMLRepresentation class], @"text/html",
+	    [WebHTMLRepresentation class], @"text/xml",
             [WebTextRepresentation class], @"text/",
             [WebTextRepresentation class], @"application/x-javascript",
             [WebImageRepresentation class], @"image/jpeg",
