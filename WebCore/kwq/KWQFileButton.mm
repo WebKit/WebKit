@@ -179,25 +179,26 @@ void KWQFileButton::clicked()
     return self;
 }
 
-- (void)dealloc
-{
-    [super dealloc];
-}
-
 - (void)filenameChanged:(NSString *)filename
 {
-    button->filenameChanged(QString::fromNSString(filename));
+    if (button) {
+        button->filenameChanged(QString::fromNSString(filename));
+    }
 }
 
 - (void)focusChanged:(BOOL)nowHasFocus
 {
-    button->focusChanged(nowHasFocus);
+    if (button) {
+        button->focusChanged(nowHasFocus);
+    }
 }
 
 -(void)clicked
 {
-    button->sendConsumedMouseUp();
-    button->clicked();
+    if (button) {
+        button->sendConsumedMouseUp();
+        button->clicked();
+    }
 }
 
 @end
