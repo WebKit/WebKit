@@ -84,10 +84,11 @@ public:
     
     DOM::HTMLMapElementImpl* imageMap();
 
+    QColor selectionTintColor(QPainter *p) const;
+
 private:
     bool isWidthSpecified() const;
     bool isHeightSpecified() const;
-    QColor selectionTintColor(QPainter *p) const;
 
     /*
      * Pointer to the image

@@ -693,6 +693,11 @@ bool QPainter::paintingDisabled() const
     return data->state.paintingDisabled;
 }
 
+CGContextRef QPainter::currentContext()
+{
+    return (CGContextRef)([[NSGraphicsContext currentContext] graphicsPort]);
+}
+
 void QPainter::beginTransparencyLayer(float opacity)
 {
     [NSGraphicsContext saveGraphicsState];

@@ -1033,3 +1033,42 @@ const struct HashEntry ImageTableEntries[] = {
 const struct HashTable ImageTable = { 2, 4, ImageTableEntries, 3 };
 
 } // namespace
+
+namespace KJS {
+
+const struct HashEntry Context2DTableEntries[] = {
+   { "scale", Context2D::Scale, DontDelete|Function, 2, &Context2DTableEntries[24] },
+   { "strokePath", Context2D::StrokePath, DontDelete|Function, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "setLineJoin", Context2D::SetLineJoin, DontDelete|Function, 1, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "addLineToPoint", Context2D::AddLineToPoint, DontDelete|Function, 2, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "save", Context2D::Save, DontDelete|Function, 0, &Context2DTableEntries[21] },
+   { "restore", Context2D::Restore, DontDelete|Function, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "translate", Context2D::Translate, DontDelete|Function, 1, &Context2DTableEntries[20] },
+   { "rotate", Context2D::Rotate, DontDelete|Function, 2, &Context2DTableEntries[22] },
+   { "setLineWidth", Context2D::SetLineWidth, DontDelete|Function, 1, &Context2DTableEntries[25] },
+   { "addQuadraticCurveToPoint", Context2D::AddQuadraticCurveToPoint, DontDelete|Function, 4, &Context2DTableEntries[29] },
+   { 0, 0, 0, 0, 0 },
+   { 0, 0, 0, 0, 0 },
+   { "beginPath", Context2D::BeginPath, DontDelete|Function, 0, &Context2DTableEntries[23] },
+   { "closePath", Context2D::ClosePath, DontDelete|Function, 0, 0 },
+   { "setStrokeColor", Context2D::SetStrokeColor, DontDelete|Function, 1, 0 },
+   { "setFillColor", Context2D::SetFillColor, DontDelete|Function, 1, 0 },
+   { "setLineCap", Context2D::SetLineCap, DontDelete|Function, 1, &Context2DTableEntries[26] },
+   { "setMiterLimit", Context2D::SetMiterLimit, DontDelete|Function, 1, &Context2DTableEntries[27] },
+   { "fillPath", Context2D::FillPath, DontDelete|Function, 0, &Context2DTableEntries[28] },
+   { "moveToPoint", Context2D::MoveToPoint, DontDelete|Function, 2, 0 },
+   { "addBezierCurveToPoint", Context2D::AddBezierCurveToPoint, DontDelete|Function, 6, 0 },
+   { "clearRect", Context2D::ClearRect, DontDelete|Function, 4, 0 }
+};
+
+const struct HashTable Context2DTable = { 2, 30, Context2DTableEntries, 20 };
+
+} // namespace

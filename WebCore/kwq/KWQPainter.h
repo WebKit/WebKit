@@ -37,6 +37,8 @@
 #include "KWQString.h"
 #include "KWQFontMetrics.h"
 
+#include <ApplicationServices/ApplicationServices.h>
+
 class QFont;
 class QPixmap;
 class QWidget;
@@ -122,6 +124,8 @@ public:
     void drawFocusRing();
     void clearFocusRing();
     void setDrawsFocusRing(bool flag) { _drawsFocusRing = flag; }
+    
+    CGContextRef currentContext();
     
 private:
     // no copying or assignment

@@ -234,6 +234,33 @@ namespace KJS {
     JSEventListener *onLoadListener;
   };
 
+  ////////////////////// Context2D Object ////////////////////////
+
+  class Context2D : public DOMObject {
+  public:
+    Context2D(const DOM::HTMLElement &e);
+    ~Context2D();
+    virtual Value tryGet(ExecState *exec, const Identifier &propertyName) const;
+    Value getValueProperty(ExecState *exec, int token) const;
+    virtual void tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr = None);
+    void putValue(ExecState *exec, int token, const Value& value, int /*attr*/);
+    virtual bool toBoolean(ExecState *) const { return true; }
+    virtual const ClassInfo* classInfo() const { return &info; }
+    static const ClassInfo info;
+
+    enum { 
+        Save, Restore,
+        Scale, Rotate, Translate,
+        BeginPath, ClosePath, 
+        SetStrokeColor, SetFillColor, SetLineWidth, SetLineCap, SetLineJoin, SetMiterLimit, 
+        FillPath, StrokePath, 
+        MoveToPoint, AddLineToPoint, AddQuadraticCurveToPoint, AddBezierCurveToPoint,
+        ClearRect,
+        drawImage, drawImageFromRect };
+
+    DOM::HTMLElementImpl *_element;
+  };
+
   Value getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c);
   Value getSelectHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c, const DOM::HTMLSelectElement &e);
 

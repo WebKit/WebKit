@@ -46,10 +46,15 @@
 
 #include "misc/htmltags.h"
 
+#include "rendering/render_canvasimage.h"
 #include "rendering/render_object.h"
 #include "rendering/render_layer.h"
 
 #include <kdebug.h>
+
+#include "qcolor.h"
+
+#include <ApplicationServices/ApplicationServices.h>
 
 
 using namespace KJS;
@@ -2136,9 +2141,8 @@ Value KJS::HTMLElementFunction::tryCall(ExecState *exec, Object &thisObj, const 
     }
     case ID_CANVAS: {
         if (id == KJS::HTMLElement::GetContext) {
-            if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "2d-context")) {
-                // FIXME:  Implement canvas.
-                printf ("%s:%d: %s  create 2D context\n", __FILE__, __LINE__, __FUNCTION__);
+            if (args.size() == 0 || (args.size() == 1 && args[0].toString(exec).qstring().lower() == "context-2d")) {
+                return Object(new Context2D(element));
             }
             return Undefined();
         }
@@ -3323,6 +3327,355 @@ Image::~Image()
   if ( img ) img->deref(this);
   if ( onLoadListener ) onLoadListener->deref();
 }
+
+
+////////////////////// Context2D Object ////////////////////////
+
+IMPLEMENT_PROTOFUNC(Context2DFunction)
+
+Value KJS::Context2DFunction::tryCall(ExecState *exec, Object &thisObj, const List &args)
+{
+    if (!thisObj.inherits(&Context2D::info)) {
+        Object err = Error::create(exec,TypeError);
+        exec->setException(err);
+        return err;
+    }
+
+    Context2D *contextObject = static_cast<KJS::Context2D *>(thisObj.imp());
+    khtml::RenderCanvasImage *renderer = static_cast<khtml::RenderCanvasImage*>(contextObject->_element->renderer());
+    CGContextRef drawingContext = renderer->drawingContext();
+
+    switch (id) {
+        case Context2D::Save: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextSaveGState(drawingContext);
+            break;
+        }
+        case Context2D::Restore: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextRestoreGState(drawingContext);
+            break;
+        }
+        case Context2D::BeginPath: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextBeginPath(drawingContext);
+            break;
+        }
+        case Context2D::ClosePath: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextClosePath(drawingContext);
+            break;
+        }
+        case Context2D::SetStrokeColor: {
+            if (args.size() < 1 || args.size() > 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            QColor color;
+            if (args.size() > 0)
+                color = QColor(args[0].toString(exec).ascii());
+            float alpha;
+            if (args.size() > 1)
+                alpha = (float)args[1].toNumber(exec);
+            else
+                alpha = 1.;
+            CGContextSetRGBStrokeColor(drawingContext, color.red(), color.green(), color.blue(), alpha);
+            break;
+        }
+        case Context2D::SetFillColor: {
+            if (args.size() < 1 || args.size() > 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            QColor color;
+            if (args.size() > 0)
+                color = QColor(args[0].toString(exec).ascii());
+            float alpha;
+            if (args.size() > 1)
+                alpha = (float)args[1].toNumber(exec);
+            else
+                alpha = 1.;
+            CGContextSetRGBFillColor(drawingContext, color.red(), color.green(), color.blue(), alpha);
+            break;
+        }
+        case Context2D::SetLineWidth: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float w = (float)args[0].toNumber(exec);
+            CGContextSetLineWidth (drawingContext, w);
+            break;
+        }
+        case Context2D::SetLineCap: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGLineCap cap = kCGLineCapButt;
+            QString capString = args[0].toString(exec).qstring().lower();
+            if (capString == "round")
+                cap = kCGLineCapRound;
+            else if (capString == "square")
+                cap = kCGLineCapSquare;
+            CGContextSetLineCap (drawingContext, cap);
+            break;
+        }
+        case Context2D::SetLineJoin: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGLineJoin join = kCGLineJoinMiter;
+            QString joinString = args[0].toString(exec).qstring().lower();
+            if (joinString == "round")
+                join = kCGLineJoinRound;
+            else if (joinString == "bevel")
+                join = kCGLineJoinBevel;
+            CGContextSetLineJoin (drawingContext, join);
+            break;
+        }
+        case Context2D::SetMiterLimit: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float l = (float)args[0].toNumber(exec);
+            CGContextSetMiterLimit (drawingContext, l);
+            break;
+        }
+        case Context2D::FillPath: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextFillPath (drawingContext);
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::StrokePath: {
+            if (args.size() != 0) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            CGContextStrokePath (drawingContext);
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::Scale: {
+            if (args.size() != 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float sx = (float)args[0].toNumber(exec);
+            float sy = (float)args[1].toNumber(exec);
+            CGContextScaleCTM (drawingContext, sx, sy);
+            break;
+        }
+        case Context2D::Rotate: {
+            if (args.size() != 1) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float angle = (float)args[0].toNumber(exec);
+            CGContextRotateCTM (drawingContext, angle);
+            break;
+        }
+        case Context2D::Translate: {
+            if (args.size() != 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float tx = (float)args[0].toNumber(exec);
+            float ty = (float)args[1].toNumber(exec);
+            CGContextTranslateCTM (drawingContext, tx, ty);
+            break;
+        }
+        case Context2D::MoveToPoint: {
+            if (args.size() != 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x = (float)args[0].toNumber(exec);
+            float y = (float)args[1].toNumber(exec);
+            CGContextMoveToPoint (drawingContext, x, y);
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::AddLineToPoint: {
+            if (args.size() != 2) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x = (float)args[0].toNumber(exec);
+            float y = (float)args[1].toNumber(exec);
+            CGContextAddLineToPoint (drawingContext, x, y);
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::AddQuadraticCurveToPoint: {
+            if (args.size() != 4) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float cpx = (float)args[0].toNumber(exec);
+            float cpy = (float)args[1].toNumber(exec);
+            float x = (float)args[2].toNumber(exec);
+            float y = (float)args[3].toNumber(exec);
+            CGContextAddQuadCurveToPoint (drawingContext, cpx, cpy, x, y);
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::AddBezierCurveToPoint: {
+            if (args.size() != 6) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float cp1x = (float)args[0].toNumber(exec);
+            float cp1y = (float)args[1].toNumber(exec);
+            float cp2x = (float)args[2].toNumber(exec);
+            float cp2y = (float)args[3].toNumber(exec);
+            float x = (float)args[2].toNumber(exec);
+            float y = (float)args[3].toNumber(exec);
+            CGContextAddCurveToPoint (drawingContext, cp1x, cp1y, cp2x, cp2y, x, y);
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::ClearRect: {
+            if (args.size() != 4) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            float x = (float)args[0].toNumber(exec);
+            float y = (float)args[1].toNumber(exec);
+            float w = (float)args[2].toNumber(exec);
+            float h = (float)args[3].toNumber(exec);
+            CGContextClearRect (drawingContext, CGRectMake(x,y,w,h));
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::DrawImage: {
+            if (args.size() != 6) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+        case Context2D::DrawImageFromRect: {
+            if (args.size() != 10) {
+                Object err = Error::create(exec,SyntaxError);
+                exec->setException(err);
+                return err;
+            }
+            renderer->setNeedsImageUpdate();
+            break;
+        }
+    }
+
+    return Undefined();
+}
+
+const ClassInfo KJS::Context2D::info = { "Context2D", 0, &Context2DTable, 0 };
+
+/* Source for Context2DTable. Use "make hashtables" to regenerate.
+@begin Context2DTable 20
+  save                     Context2D::Save                        DontDelete|Function 0
+  restore                  Context2D::Restore                     DontDelete|Function 0
+  scale                    Context2D::Scale                       DontDelete|Function 2
+  rotate                   Context2D::Rotate                      DontDelete|Function 2
+  translate                Context2D::Translate                   DontDelete|Function 1
+  beginPath                Context2D::BeginPath                   DontDelete|Function 0
+  closePath                Context2D::ClosePath                   DontDelete|Function 0
+  setStrokeColor           Context2D::SetStrokeColor              DontDelete|Function 1
+  setFillColor             Context2D::SetFillColor                DontDelete|Function 1
+  setLineWidth             Context2D::SetLineWidth                DontDelete|Function 1
+  setLineCap               Context2D::SetLineCap                  DontDelete|Function 1
+  setLineJoin              Context2D::SetLineJoin                 DontDelete|Function 1
+  setMiterLimit            Context2D::SetMiterLimit               DontDelete|Function 1
+  fillPath                 Context2D::FillPath                    DontDelete|Function 0
+  strokePath               Context2D::StrokePath                  DontDelete|Function 0
+  moveToPoint              Context2D::MoveToPoint                 DontDelete|Function 2
+  addLineToPoint           Context2D::AddLineToPoint              DontDelete|Function 2
+  addQuadraticCurveToPoint Context2D::AddQuadraticCurveToPoint    DontDelete|Function 4
+  addBezierCurveToPoint    Context2D::AddBezierCurveToPoint       DontDelete|Function 6
+  clearRect                Context2D::ClearRect                   DontDelete|Function 4
+  drawImage                Context2D::DrawImge                    DontDelete|Function 6
+  drawImageFromRect        Context2D::DrawImageFromRect           DontDelete|Function 10
+@end
+*/
+
+Value Context2D::tryGet(ExecState *exec, const Identifier &propertyName) const
+{
+    const HashTable* table = classInfo()->propHashTable; // get the right hashtable
+    const HashEntry* entry = Lookup::findEntry(table, propertyName);
+    if (entry) {
+        if (entry->attr & Function)
+            return lookupOrCreateFunction<KJS::Context2DFunction>(exec, propertyName, this, entry->value, entry->params, entry->attr);
+        return getValueProperty(exec, entry->value);
+    }
+
+    return DOMObjectLookupGetValue<Context2D,DOMObject>(exec, propertyName, &Context2DTable, this);
+}
+
+Value Context2D::getValueProperty(ExecState *, int token) const
+{
+    return Undefined();
+}
+
+void Context2D::tryPut(ExecState *exec, const Identifier &propertyName, const Value& value, int attr)
+{
+    DOMObjectLookupPut<Context2D,DOMObject>(exec, propertyName, value, attr, &ImageTable, this );
+}
+
+void Context2D::putValue(ExecState *exec, int token, const Value& value, int /*attr*/)
+{
+}
+
+Context2D::Context2D(const DOM::HTMLElement &e)
+  : _element(static_cast<DOM::HTMLElementImpl*>(e.handle()))
+{
+}
+
+Context2D::~Context2D()
+{
+}
+
+////////////////////////////////////////////////////////////////
+                     
 
 Value KJS::getHTMLCollection(ExecState *exec, const DOM::HTMLCollection &c)
 {

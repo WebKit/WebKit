@@ -1,3 +1,68 @@
+2004-05-26  Richard Williamson   <rjw@apple.com>
+
+	Part 2 of the new <CANVAS> tag implementation.  This adds the 
+	basic machinery and draw operations for the <CANVAS> tag.  Pretty cool.  
+
+        function drawLine() {
+	    var canvas1 = document.getElementById ("canvas1");
+	    var context = canvas1.getContext("context-2d");
+
+	    context.setStrokeColor ("red");
+	    context.setLineWidth (10);
+	    context.beginPath();
+	    context.moveToPoint (0,0);
+	    context.addLineToPoint (400,400);
+	    context.strokePath();
+        }
+
+        ...
+
+        <canvas id="canvas1" width="400" height="400">
+
+	More to come.
+
+        Reviewed by Dave.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLElementFunction::tryCall):
+        (KJS::Context2DFunction::tryCall):
+        (Context2D::tryGet):
+        (Context2D::getValueProperty):
+        (Context2D::tryPut):
+        (Context2D::putValue):
+        (Context2D::Context2D):
+        (Context2D::~Context2D):
+        * khtml/ecma/kjs_html.h:
+        (KJS::Context2D::toBoolean):
+        (KJS::Context2D::classInfo):
+        (KJS::Context2D::):
+        * khtml/ecma/kjs_html.lut.h:
+        (KJS::):
+        * khtml/html/html_canvasimpl.cpp:
+        (HTMLCanvasElementImpl::HTMLCanvasElementImpl):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::getElement):
+        * khtml/rendering/render_canvasimage.cpp:
+        (RenderCanvasImage::RenderCanvasImage):
+        (RenderCanvasImage::~RenderCanvasImage):
+        (RenderCanvasImage::createDrawingContext):
+        (RenderCanvasImage::drawingContext):
+        (RenderCanvasImage::setNeedsImageUpdate):
+        (RenderCanvasImage::updateDrawnImage):
+        (RenderCanvasImage::drawnImage):
+        (RenderCanvasImage::paint):
+        (RenderCanvasImage::layout):
+        * khtml/rendering/render_canvasimage.h:
+        * khtml/rendering/render_image.cpp:
+        (RenderImage::paint):
+        * khtml/rendering/render_image.h:
+        * khtml/rendering/render_replaced.cpp:
+        (RenderReplaced::shouldPaint):
+        (RenderWidget::paint):
+        * kwq/KWQPainter.h:
+        * kwq/KWQPainter.mm:
+        (QPainter::currentContext):
+
 2004-05-26  Darin Adler  <darin@apple.com>
 
         - fixed warning that prevents Deployment build from compiling

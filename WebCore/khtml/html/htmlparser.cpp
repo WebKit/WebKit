@@ -949,12 +949,10 @@ NodeImpl *KHTMLParser::getElement(Token* t)
         n = new HTMLAnchorElementImpl(document);
         break;
 
-#if APPLE_CHANGES
 // canvas
     case ID_CANVAS:
         n = new HTMLCanvasElementImpl(document);
         break;
-#endif
 
 // images
     case ID_IMG:

@@ -34,6 +34,8 @@
 #include <qmap.h>
 #include <qpixmap.h>
 
+#include <ApplicationServices/ApplicationServices.h>
+
 namespace khtml {
 
 class DocLoader;
@@ -50,9 +52,24 @@ public:
 
     virtual void layout();
 
+    void setNeedsImageUpdate();
+    
     // don't even think about making this method virtual!
     DOM::HTMLElementImpl* element() const
     { return static_cast<DOM::HTMLElementImpl*>(RenderObject::element()); }
+    
+    void updateDrawnImage();
+    CGContextRef drawingContext();
+    
+private:
+    void createDrawingContext();
+    CGImageRef drawnImage();
+
+    CGContextRef _drawingContext;
+    void *_drawingContextData;
+    CGImageRef _drawnImage;
+    
+    unsigned _needsImageUpdate:1;
 };
 
 

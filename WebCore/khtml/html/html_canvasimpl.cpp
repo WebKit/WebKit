@@ -57,7 +57,6 @@ using namespace khtml;
 HTMLCanvasElementImpl::HTMLCanvasElementImpl(DocumentPtr *doc)
     : HTMLImageElementImpl(doc)
 {
-    printf ("%s:%d: %s\n", __FILE__, __LINE__, __FUNCTION__);
 }
 
 HTMLCanvasElementImpl::~HTMLCanvasElementImpl()

@@ -223,7 +223,10 @@ QColor RenderImage::selectionTintColor(QPainter *p) const
 void RenderImage::paint(PaintInfo& i, int _tx, int _ty)
 {
     if (!shouldPaint(i, _tx, _ty)) return;
-    
+
+    _tx += m_x;
+    _ty += m_y;
+        
     if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
         paintBoxDecorations(i, _tx, _ty);
 

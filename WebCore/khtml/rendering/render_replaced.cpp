@@ -63,14 +63,14 @@ bool RenderReplaced::shouldPaint(PaintInfo& i, int& _tx, int& _ty)
     // if we're invisible or haven't received a layout yet, then just bail.
     if (style()->visibility() != VISIBLE || m_y <=  -500000)  return false;
 
-    _tx += m_x;
-    _ty += m_y;
+    int tx = _tx + m_x;
+    int ty = _ty + m_y;
 
     // Early exit if the element touches the edges.
     int os = 2*maximalOutlineSize(i.phase);
-    if ((_tx >= i.r.x() + i.r.width() + os) || (_tx + m_width <= i.r.x() - os))
+    if ((tx >= i.r.x() + i.r.width() + os) || (tx + m_width <= i.r.x() - os))
         return false;
-    if ((_ty >= i.r.y() + i.r.height() + os) || (_ty + m_height <= i.r.y() - os))
+    if ((ty >= i.r.y() + i.r.height() + os) || (ty + m_height <= i.r.y() - os))
         return false;
 
     return true;
@@ -313,6 +313,9 @@ void RenderWidget::paint(PaintInfo& i, int _tx, int _ty)
 {
     if (!shouldPaint(i, _tx, _ty)) return;
 
+    _tx += m_x;
+    _ty += m_y;
+    
     if (shouldPaintBackgroundOrBorder() && i.phase != PaintActionOutline) 
         paintBoxDecorations(i, _tx, _ty);
 
