@@ -14,6 +14,7 @@
 #import <WebKit/WebDefaultResourceLoadDelegate.h>
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebDocumentInternal.h>
+#import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrameLoadDelegate.h>
 #import <WebKit/WebFrameViewInternal.h>
 #import <WebKit/WebHistoryPrivate.h>
@@ -1376,12 +1377,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
             if (formData) {
                 [request setHTTPMethod:@"POST"];
                 [request setHTTPReferrer:[item formReferrer]];
-
-                // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
-                if ([formData count] == 1 && [[formData objectAtIndex:0] isKindOfClass:[NSData class]]) {
-                    [request setHTTPBody:(NSData *)[formData objectAtIndex:0]];
-                    [request setHTTPContentType:[item formContentType]];
-                }
+                webSetHTTPBody(request, formData);
+                [request setHTTPContentType:[item formContentType]];
 
                 // Slight hack to test if the WF cache contains the page we're going to.  We want
                 // to know this before talking to the policy delegate, since it affects whether we
@@ -1995,12 +1992,8 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     [self _addExtraFieldsToRequest:request alwaysFromRequest:YES];
     [request setHTTPReferrer:referrer];
     [request setHTTPMethod:@"POST"];
-
-    // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
-    if ([postData count] == 1 && [[postData objectAtIndex:0] isKindOfClass:[NSData class]]) {
-        [request setHTTPBody:(NSData *)[postData objectAtIndex:0]];
-        [request setHTTPContentType:contentType];
-    }
+    webSetHTTPBody(request, postData);
+    [request setHTTPContentType:contentType];
 
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = nil;

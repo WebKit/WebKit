@@ -1,13 +1,9 @@
-/* Copyright 2004, Apple Computer, Inc. */
+/*
+    WebFormDataStream.h
+    Copyright 2005 Apple Computer, Inc.
+*/
 
-#import <Foundation/Foundation.h>
+@class NSArray;
+@class NSMutableURLRequest;
 
-@interface WebFormDataStream : NSInputStream
-{
-    NSArray *_formDataArray;
-}
-
-- (id)initWithFormDataArray:(NSArray *)array;
-- (NSArray *)formDataArray;
-
-@end
+void webSetHTTPBody(NSMutableURLRequest *request, NSArray *formData);

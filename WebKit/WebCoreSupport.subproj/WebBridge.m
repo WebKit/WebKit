@@ -14,6 +14,7 @@
 #import <WebKit/WebDefaultUIDelegate.h>
 #import <WebKit/WebEditingDelegate.h>
 #import <WebKit/WebFileButton.h>
+#import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFormDelegate.h>
 #import <WebKit/WebFrameInternal.h>
 #import <WebKit/WebFrameLoadDelegate.h>
@@ -465,11 +466,7 @@ NSString *WebPluginContainerKey =   @"WebPluginContainer";
 
     if (postData) {
         [newRequest setHTTPMethod:@"POST"];
-        
-        // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
-        if ([postData count] == 1 && [[postData objectAtIndex:0] isKindOfClass:[NSData class]]) {
-            [newRequest setHTTPBody:(NSData *)[postData objectAtIndex:0]];
-        }
+        webSetHTTPBody(newRequest, postData);
     }
 
     NSEnumerator *e = [requestHeaders keyEnumerator];

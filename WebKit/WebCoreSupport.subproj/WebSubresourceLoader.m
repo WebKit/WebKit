@@ -8,6 +8,7 @@
 #import <WebKit/WebAssertions.h>
 #import <WebKit/WebBridge.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebFormDataStream.h>
 #import <WebKit/WebFrame.h>
 #import <WebKit/WebKitErrorsPrivate.h>
 #import <WebKit/WebViewPrivate.h>
@@ -97,11 +98,7 @@
     NSMutableURLRequest *newRequest = [[NSMutableURLRequest alloc] initWithURL:URL];
 
     [newRequest setHTTPMethod:@"POST"];
-
-    // FIXME: This will have to be expanded to handle filenames and arrays with more than one element to fix file uploading.
-    if ([postData count] == 1 && [[postData objectAtIndex:0] isKindOfClass:[NSData class]]) {
-        [newRequest setHTTPBody:(NSData *)[postData objectAtIndex:0]];
-    }
+    webSetHTTPBody(newRequest, postData);
 
     WebSubresourceClient *client = [self startLoadingResource:rLoader withRequest:newRequest customHeaders:customHeaders referrer:referrer forDataSource:source];
     [newRequest release];

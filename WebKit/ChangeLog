@@ -1,3 +1,25 @@
+2005-02-14  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed <rdar://problem/3686434> Safari uses too much RAM on file upload, leading to malloc errors and crashes (HP printers)
+
+        * WebView.subproj/WebFormDataStream.h: Added webSetHTTPBody, which creates and connects an appropriate
+        stream to an NSMutableURLRequest.
+        * WebView.subproj/WebFormDataStream.m: Added implementation here.
+
+        * WebCoreSupport.subproj/WebBridge.m:
+        (-[WebBridge syncLoadResourceWithURL:customHeaders:postData:finalURL:responseHeaders:statusCode:]):
+        Use webSetHTTPBody.
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (+[WebSubresourceClient startLoadingResource:withURL:customHeaders:postData:referrer:forDataSource:]):
+        Use webSetHTTPBody.
+        * WebView.subproj/WebFrame.m:
+        (-[WebFrame _loadItem:withLoadType:]): Use webSetHTTPBody.
+        (-[WebFrame _postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:]): Ditto.
+
+        * English.lproj/StringsNotToBeLocalized.txt: Updated for this change and other recent changes.
+
 2005-02-11  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4002505> 8A378: Endlessly animating gif's on http://www.entropy.ch
