@@ -13,12 +13,13 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebKitLogging.h>
 
-#import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebError.h>
+//#import <WebFoundation/WebAssertions.h>
+//#import <WebFoundation/WebError.h>
+#import <WebFoundation/WebFoundation.h>
 #import <WebFoundation/WebNSFileManagerExtras.h>
-#import <WebFoundation/WebResourceHandle.h>
-#import <WebFoundation/WebResourceRequest.h>
-#import <WebFoundation/WebResourceResponse.h>
+//#import <WebFoundation/WebResourceHandle.h>
+//#import <WebFoundation/WebResourceRequest.h>
+//#import <WebFoundation/WebResourceResponse.h>
 
 @interface WebNetscapePluginStream (ClassInternal)
 - (void)receivedData:(NSData *)data withHandle:(WebResourceHandle *)handle;
@@ -61,13 +62,17 @@
 - initWithURL:(NSURL *)theURL pluginPointer:(NPP)thePluginPointer notifyData:(void *)theNotifyData
 {
     [super init];
-    
-    if(!theURL)
-        return nil;
-    
-    if(!thePluginPointer)
+
+    if(!theURL || !thePluginPointer){
        return nil;
-    
+    }
+
+    request = [[WebResourceRequest alloc] initWithURL:theURL];
+    if(![WebResourceHandle canInitWithRequest:request]){
+        [request release];
+        return nil;
+    }
+       
     view = [(WebNetscapePluginView *)thePluginPointer->ndata retain];
     ASSERT(view);
     URL = [theURL retain];
@@ -94,14 +99,13 @@
     free((void *)npStream.URL);
     [URL release];
     [resourceData release];
+    [request release];
     [super dealloc];
 }
 
 - (void)startLoad
 {
-    WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     resource = [[WebResourceHandle alloc] initWithRequest:request delegate:self];
-    [request release];
     [[view webController] _didStartLoading:[resource URL]];
 }
 
