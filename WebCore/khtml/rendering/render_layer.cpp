@@ -182,9 +182,44 @@ void RenderLayer::updateLayerPosition()
     }
     
     // Subtract our parent's scroll offset.
-    if (m_object->isPositioned())
+    if (m_object->isPositioned()) {
+        RenderLayer* positionedParent = enclosingPositionedAncestor();
+
         // For positioned layers, we subtract out the enclosing positioned layer's scroll offset.
-        enclosingPositionedAncestor()->subtractScrollOffset(x, y);
+        positionedParent->subtractScrollOffset(x, y);
+        
+        if (m_object->isPositioned() && positionedParent->renderer()->isRelPositioned() &&
+            positionedParent->renderer()->isInlineFlow()) {
+            // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
+            // box from the rest of the content, but only in the cases where we know we're positioned
+            // relative to the inline itself.
+            RenderFlow* flow = static_cast<RenderFlow*>(positionedParent->renderer());
+            int sx = 0, sy = 0;
+            if (flow->firstLineBox()) {
+                sx = flow->firstLineBox()->xPos();
+                sy = flow->firstLineBox()->yPos();
+            }
+            else {
+                sx = flow->staticX();
+                sy = flow->staticY();
+            }
+            bool isInlineType = m_object->style()->isOriginalDisplayInlineType();
+            
+            if (!m_object->hasStaticX())
+                x += sx;
+            
+            // This is not terribly intuitive, but we have to match other browsers.  Despite being a block display type inside
+            // an inline, we still keep our x locked to the left of the relative positioned inline.  Arguably the correct
+            // behavior would be to go flush left to the block that contains the inline, but that isn't what other browsers
+            // do.
+            if (m_object->hasStaticX() && !isInlineType)
+                // Avoid adding in the left border/padding of the containing block twice.  Subtract it out.
+                x += sx - (m_object->containingBlock()->borderLeft() + m_object->containingBlock()->paddingLeft());
+            
+            if (!m_object->hasStaticY())
+                y += sy;
+        }
+    }
     else
         parent()->subtractScrollOffset(x, y);
     
@@ -398,21 +433,6 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int&
     
     parentLayer->convertToLayerCoords(ancestorLayer, x, y);
 
-    if (m_object->style()->position() == ABSOLUTE && parentLayer->renderer()->style()->position() == RELATIVE &&
-        parentLayer->renderer()->isInline() && !parentLayer->renderer()->isReplaced()) {
-        // When we have an enclosing relpositioned inline, we need to add in the offset of the first line
-        // box from the rest of the content, but only in the cases where we know we're positioned
-        // relative to the inline itself.
-        RenderFlow* flow = static_cast<RenderFlow*>(parentLayer->renderer());
-        if (flow->firstLineBox()) {
-            bool isInlineType = m_object->style()->isOriginalDisplayInlineType();
-            if (!m_object->hasStaticX() || (m_object->hasStaticX() && !isInlineType))
-                x += flow->firstLineBox()->xPos();
-            if (!m_object->hasStaticY())
-                y += flow->firstLineBox()->yPos();
-        }
-    }
-    
     x += xPos();
     y += yPos();
 }

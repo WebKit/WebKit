@@ -499,7 +499,7 @@ static void addMidpoint(const BidiIterator& midpoint)
 static void appendRunsForObject(int start, int end, RenderObject* obj, BidiState &bidi)
 {
     if (start > end || obj->isFloating() ||
-        (obj->isPositioned() && !obj->hasStaticX() && !obj->hasStaticY()))
+        (obj->isPositioned() && !obj->hasStaticX() && !obj->hasStaticY() && !obj->container()->isInlineFlow()))
         return;
 
     bool haveNextMidpoint = (smidpoints && sCurrMidpoint < sNumMidpoints);
@@ -1755,7 +1755,11 @@ inline bool RenderBlock::skipNonBreakingSpace(BidiIterator &it)
 
 int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
 {
-    int width = lineWidth(m_height);
+    // FIXME: The entire concept of the skipWhitespace function is flawed, since we really need to be building
+    // line boxes even for containers that may ultimately collapse away.  Otherwise we'll never get positioned
+    // elements quite right.  In other words, we need to build this function's work into the normal line
+    // object iteration process.
+    int w = lineWidth(m_height);
     while (!it.atEnd() && (it.obj->isInlineFlow() || (it.obj->style()->whiteSpace() != PRE && !it.obj->isBR() &&
           (it.current() == ' ' || it.current() == '\n' || 
            skipNonBreakingSpace(it) || it.obj->isFloatingOrPositioned())))) {
@@ -1765,13 +1769,32 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
             if (o->isFloating()) {
                 insertFloatingObject(o);
                 positionNewFloats();
-                width = lineWidth(m_height);
+                w = lineWidth(m_height);
             }
             else if (o->isPositioned()) {
-                if (o->hasStaticX())
-                    o->setStaticX(style()->direction() == LTR ?
-                                  borderLeft()+paddingLeft() :
-                                  borderRight()+paddingRight());
+                // FIXME: The math here is actually not really right.  It's a best-guess approximation that
+                // will work for the common cases
+                RenderObject* c = o->container();
+                if (c->isInlineFlow()) {
+                    // A relative positioned inline encloses us.  In this case, we also have to determine our
+                    // position as though we were an inline.  Set |staticX| and |staticY| on the relative positioned
+                    // inline so that we can obtain the value later.
+                    c->setStaticX(style()->direction() == LTR ?
+                                  leftOffset(m_height) : rightOffset(m_height));
+                    c->setStaticY(m_height);
+                }
+                
+                if (o->hasStaticX()) {
+                    bool wasInline = o->style()->isOriginalDisplayInlineType();
+                    if (wasInline)
+                        o->setStaticX(style()->direction() == LTR ?
+                                      leftOffset(m_height) :
+                                      width() - rightOffset(m_height));
+                    else
+                        o->setStaticX(style()->direction() == LTR ?
+                                      borderLeft() + paddingLeft() :
+                                      borderRight() + paddingRight());
+                }
                 if (o->hasStaticY())
                     o->setStaticY(m_height);
             }
@@ -1781,7 +1804,7 @@ int RenderBlock::skipWhitespace(BidiIterator &it, BidiState &bidi)
         it.increment(bidi);
         adjustEmbedding = false;
     }
-    return width;
+    return w;
 }
 
 BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi)
@@ -1796,10 +1819,8 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
 
     // eliminate spaces at beginning of line
     width = skipWhitespace(start, bidi);
-    
-    if ( start.atEnd() ){
+    if (start.atEnd())
         return start;
-    }
 
     // This variable is used only if whitespace isn't set to PRE, and it tells us whether
     // or not we are currently ignoring whitespace.
@@ -1882,9 +1903,14 @@ BidiIterator RenderBlock::findNextLineBreak(BidiIterator &start, BidiState &bidi
                     needToSetStaticY = false;
                 }
                 
+                bool needToCreateLineBox = needToSetStaticX || needToSetStaticY;
+                RenderObject* c = o->container();
+                if (c->isInlineFlow() && (!needToSetStaticX || !needToSetStaticY))
+                    needToCreateLineBox = true;
+
                 // If we're ignoring spaces, we have to stop and include this object and
                 // then start ignoring spaces again.
-                if (needToSetStaticX || needToSetStaticY) {
+                if (needToCreateLineBox) {
                     trailingSpaceObject = 0;
                     ignoreStart.obj = o;
                     ignoreStart.pos = 0;

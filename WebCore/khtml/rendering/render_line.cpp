@@ -452,15 +452,11 @@ int InlineFlowBox::placeBoxesHorizontally(int x)
             if (curr->object()->isPositioned()) {
                 if (curr->object()->parent()->style()->direction() == LTR)
                     curr->setXPos(x);
-                else {
+                else
                     // Our offset that we cache needs to be from the edge of the right border box and
                     // not the left border box.  We have to subtract |x| from the width of the block
-                    // (which can be obtained by walking up to the root line box).
-                    InlineBox* root = this;
-                    while (!root->isRootInlineBox())
-                        root = root->parent();
-                    curr->setXPos(root->object()->width()-x);
-                }
+                    // (which can be obtained from the root line box).
+                    curr->setXPos(root()->object()->width()-x);
                 continue; // The positioned object has no effect on the width.
             }
             if (curr->object()->isInlineFlow()) {

@@ -1,5 +1,40 @@
 2004-11-04  David Hyatt  <hyatt@apple.com>
 
+	Fix for relpositioned inlines.  This was reviewed a long time ago, but I can't recall who reviewed it (either
+	darin or ken).
+	
+        Reviewed by darin or ken
+
+        * khtml/rendering/bidi.cpp:
+        (khtml::appendRunsForObject):
+        (khtml::RenderBlock::skipWhitespace):
+        (khtml::RenderBlock::findNextLineBreak):
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::lowestPosition):
+        (khtml::RenderBlock::rightmostPosition):
+        (khtml::RenderBlock::leftmostPosition):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::position):
+        * khtml/rendering/render_box.h:
+        (khtml::RenderBox::staticX):
+        (khtml::RenderBox::staticY):
+        * khtml/rendering/render_layer.cpp:
+        (RenderLayer::updateLayerPosition):
+        (RenderLayer::convertToLayerCoords):
+        * khtml/rendering/render_line.cpp:
+        (khtml::InlineFlowBox::placeBoxesHorizontally):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::staticX):
+        (khtml::RenderObject::staticY):
+
+	Finish turning on XSLT.  Make sure child stylesheets can load.
+	
+        * khtml/xsl/xslt_processorimpl.cpp:
+        (DOM::stylesheetLoadFunc):
+        (DOM::XSLTProcessorImpl::transformDocument):
+
+2004-11-04  David Hyatt  <hyatt@apple.com>
+
 	Implement CSS3 support for multiple backgrounds.  Also fix a bug with background propagation so that it only
 	happens (from the <body> to the root) for HTML documents.  Fixed background-position to handle a mixture of
 	keyword and length values.
