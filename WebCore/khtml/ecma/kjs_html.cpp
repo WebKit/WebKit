@@ -280,12 +280,13 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
   case Title:
     doc.setTitle(value.toString(exec).string());
     break;
-  case Body:
-    DOMNode node = new DOMNode(exec, KJS::toNode(value));
+  case Body: {
+    DOMNode *node = new DOMNode(exec, KJS::toNode(value));
     // This is required to avoid leaking the node.
     Value nodeValue(node);
-    doc.setBody(()->toNode());
+    doc.setBody(node->toNode());
     break;
+  }
   case Domain: { // not part of the DOM
     DOM::HTMLDocumentImpl* docimpl = static_cast<DOM::HTMLDocumentImpl*>(doc.handle());
     if (docimpl)

@@ -1,3 +1,16 @@
+2002-08-14  Darin Adler  <darin@apple.com>
+
+	Fix the build.
+
+        * khtml/ecma/kjs_html.cpp: (KJS::HTMLDocument::putValue):
+	Add braces and fix a syntax error.
+
+        * kwq/mac-encodings.txt: Add comments. Make utf-16 be a synonym for
+	utf-8 rather than having it actually try to treat things as 16-bit.
+	We will have to revisit this, but for now it makes zingermans.com work again.
+
+        * kwq/make-charset-table.pl: Allow comments.
+
 2002-08-14  Maciej Stachowiak  <mjs@apple.com>
 
 	Fixed a JavaScript object leak that was plaguing ign.com and

@@ -44,6 +44,8 @@ sub process_mac_encodings
     
     while (<MAC_ENCODINGS>) {
         chomp;
+        s/\#.*$//;
+        s/\s+$//;
 	if (my ($MacName, $IANANames) = /(.*): (.*)/) {
             my %aliases;
             

@@ -1,10 +1,19 @@
+# The items on the left are names of CFStringEncoding values (without the leading kCFStringEncoding).
+# The items on the right are IANA character set names. Names listed in character-sets.txt are not
+# repeated here; mentioning any one character set from a group in there pulls in all the aliases in
+# that group.
+
 MacRoman: macintosh
 WindowsLatin1: windows-1252, x-ansi
 ISOLatin1: iso-8859-1, iso8859-1
 NextStepLatin: x-nextstep
 ASCII: us-ascii, iso-ir-6us
-Unicode: utf-16be, unicodeFFFE, unicode, utf-16
-UTF8: utf-8, unicode-1-1-utf-8, unicode-2-0-utf-8, x-unicode-2-0-utf-8
+Unicode # utf-16be, unicodeFFFE, unicode? (would this help us?)
+  # Note the bogus entry to make UTF-16 mean UTF-8.
+  # We do this because Internet Explorere does, and because web pages say UTF-16 and mean UTF-8.
+  # See bug 2969378 and http://zingermans.com/ for a concrete example.
+  # It's not clear what to do about 16-bit encodings in general.
+UTF8: utf-8, unicode-1-1-utf-8, unicode-2-0-utf-8, x-unicode-2-0-utf-8, utf-16
 NonLossyASCII
 
 MacJapanese: x-mac-japanese
@@ -60,6 +69,8 @@ ISOLatin4: iso-8859-4
 ISOLatinCyrillic: iso-8859-5
 ISOLatinArabic: iso-8859-6
 ISOLatinGreek: iso-8859-7
+  # This includes both logical and visual variants of Hebrew.
+  # That's probably not going to work in the real thing.
 ISOLatinHebrew: iso-8859-8, iso-8859-8-i, iso-8859-8-e, DOS-862, logical, visual
 ISOLatin5: iso-8859-9
 ISOLatin6: iso-8859-10
@@ -137,4 +148,6 @@ Big5_HKSCS_1999: big5-hkscs
 EBCDIC_US
 EBCDIC_CP037: cp037
 
+  # There doesn't seem to be a kCFStringEncoding constant for this one.
+  # In fact, I got this value from Mail source code, and I'm not sure how it works.
 0xAFE: japanese-autodetect
