@@ -83,7 +83,8 @@ public:
 #ifdef _KWQ_
     void _initialize();
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    void _initializeWithData(QFontMetricsPrivate *);
+    //void _initializeWithData(QFontMetricsPrivate *);
+    void _initializeWithFont (NSFont *font);
     NSRect _rectOfString(NSString *) const;
 #else
     void _initializeWithData(void *);
