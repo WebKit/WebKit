@@ -20,7 +20,7 @@ class KHTMLPart;
 {
     id dataSource;
     KHTMLPart *part;
-    BOOL sentFakeDocForNonHTMLContentType, examinedInitialData, downloadStarted, loadFinished, sentInitialData;
+    BOOL sentFakeDocForNonHTMLContentType, processedBufferedData, downloadStarted, loadFinished, examinedInitialData;
     IFMIMEHandler *mimeHandler;
     IFMIMEHandlerType handlerType;
     IFDownloadHandler *downloadHandler;

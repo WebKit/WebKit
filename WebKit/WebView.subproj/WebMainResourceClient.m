@@ -35,10 +35,10 @@
         part = p;
         part->ref();
         sentFakeDocForNonHTMLContentType = NO;
-        examinedInitialData = NO;
         downloadStarted = NO;
         loadFinished    = NO;
-        sentInitialData = NO;
+        examinedInitialData = NO;
+        processedBufferedData = NO;
         contentPolicy = IFContentPolicyNone;
         return self;
     }
@@ -118,7 +118,6 @@
     WEBKITDEBUGLEVEL(WEBKIT_LOG_LOADING, "url = %s, data = %p, length %d\n", [[[sender url] absoluteString] cString], data, [data length]);
     
     // Check the mime type and ask the client for the content policy.
-    // This only happens once.
     if(!examinedInitialData){
         WEBKITDEBUGLEVEL(WEBKIT_LOG_DOWNLOAD, "main content type: %s", [[sender contentType] cString]);
         [[dataSource _locationChangeHandler] requestContentPolicyForMIMEType:[sender contentType]];
@@ -133,13 +132,10 @@
     }
     
     if(contentPolicy != IFContentPolicyNone && contentPolicy != IFContentPolicyIgnore){
-        if(!sentInitialData){
-            // process all data that has been received 
-            //[self processData:[sender resourceData] isComplete:NO];
-            
-            //FIXME: Need we still depend on the content policy being set immediately because of 2925907.
-            [self processData:data isComplete:NO]; 
-            sentInitialData = YES;
+        if(!processedBufferedData){
+            // process all data that has been received now that we have a content policy
+            [self processData:[sender resourceData] isComplete:NO];
+            processedBufferedData = YES;
         }else{
             [self processData:data isComplete:NO];
         }

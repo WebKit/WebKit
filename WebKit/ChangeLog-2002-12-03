@@ -1,5 +1,14 @@
 2002-05-21  Chris Blumenberg  <cblu@apple.com>
 
+	Content policy can now be sent at a later time to avoid blocking.
+
+	* WebView.subproj/IFMainURLHandleClient.h:
+	* WebView.subproj/IFMainURLHandleClient.mm:
+	(-[IFMainURLHandleClient initWithDataSource:part:]):
+	(-[IFMainURLHandleClient IFURLHandle:resourceDataDidBecomeAvailable:]):
+
+2002-05-21  Chris Blumenberg  <cblu@apple.com>
+
 	Move the tracking rect after the view has moved.
 
 	* Plugins.subproj/IFPluginView.mm:
