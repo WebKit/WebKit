@@ -1,3 +1,10 @@
+2004-02-02  Darin Adler  <darin@apple.com>
+
+        - fixed build failure on Merlot
+
+        * Misc.subproj/WebNSPasteboardExtras.m: Import just CoreTranslationFlavorTypeNames.h rather than all of
+        ApplicationServicesPriv.h; should compile faster and avoid build failure.
+
 2004-02-02  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3546379>: support for editing via drag & drop

@@ -14,7 +14,7 @@
 #import <WebKit/WebAssertions.h>
 #import <Foundation/NSString_NSURLExtras.h>
 
-#import <ApplicationServices/ApplicationServicesPriv.h>
+#import <HIServices/CoreTranslationFlavorTypeNames.h>
 
 NSString *WebURLPboardType = nil;
 NSString *WebURLNamePboardType = nil;
