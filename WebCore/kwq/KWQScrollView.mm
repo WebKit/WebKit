@@ -294,9 +294,11 @@ void QScrollView::viewportToContents(int vx, int vy, int& x, int& y)
     y = (int)np.y;
 }
 
-void QScrollView::setStaticBackground(bool)
+void QScrollView::setStaticBackground(bool b)
 {
-    LOG(NotYetImplemented, "not yet implemented");
+    NSScrollView *view = (NSScrollView *)getView();
+    if ([view _KWQ_isScrollView])
+        [[view contentView] setCopiesOnScroll: !b];
 }
 
 void QScrollView::resizeEvent(QResizeEvent *)

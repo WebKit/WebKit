@@ -1,5 +1,13 @@
 2002-09-12  David Hyatt  <hyatt@apple.com>
 
+	Make fixed positioned elements work when you scroll.  We were
+	just missing the implementation of a QScrollView method.
+	
+        * kwq/KWQScrollView.mm:
+        (QScrollView::setStaticBackground):
+
+2002-09-12  David Hyatt  <hyatt@apple.com>
+
 	Fix a bug in KHTML that leads it to claim cached @imported stylesheets
 	are not loaded (when in fact they are).
 
