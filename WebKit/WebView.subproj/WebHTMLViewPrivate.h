@@ -22,7 +22,6 @@
     BOOL inNextValidKeyView;
     BOOL ignoringMouseDraggedEvents;
     BOOL printing;
-    BOOL laidOutAtLeastOnce;
     
     id savedSubviews;
     BOOL subviewsSetAside;
@@ -31,6 +30,7 @@
 
     NSURL *draggingImageURL;
     
+    NSTimeInterval firstLayoutEventTime;
     NSSize lastLayoutSize;
     
     WebPluginController *pluginController;

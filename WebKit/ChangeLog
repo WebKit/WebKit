@@ -1,5 +1,18 @@
 2003-05-10  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3254473 - REGRESSION: reload loop due to onresize handler (fortune.com, flipdog.com, stanford.edu)
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView layoutToPageWidth:]): Don't send out a resize event any
+        time during the first event that results in a layout. The old check was merely for the first layout,
+        but we need to ignore any number of layouts that are all part of handling a first event. Some day we
+        may need to refine this rule even further, but this fixes the present bug.
+        
+        * WebView.subproj/WebHTMLViewPrivate.h: Goodbye laidOutAtLeastOnce, hello firstLayoutEventTime.
+
+2003-05-10  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
 	- fixed 3250119 -- REGRESSION: WebFrame leaked after showing pop-up menu

@@ -331,11 +331,13 @@
     
     if (!_private->printing) {
 	NSSize newLayoutSize = [(NSClipView *)[self superview] documentVisibleRect].size;
-	if (_private->laidOutAtLeastOnce && !NSEqualSizes(_private->lastLayoutSize, newLayoutSize)) {
+	NSTimeInterval currentEventTime = [[NSApp currentEvent] timestamp];
+        if (_private->firstLayoutEventTime == 0) {
+            _private->firstLayoutEventTime = currentEventTime;
+        } else if (_private->firstLayoutEventTime != currentEventTime && !NSEqualSizes(_private->lastLayoutSize, newLayoutSize)) {
 	    [[self _bridge] sendResizeEvent];
 	}
 	_private->lastLayoutSize = newLayoutSize;
-	_private->laidOutAtLeastOnce = YES;
     }
     
     [self setNeedsDisplay:YES];
