@@ -1,5 +1,10 @@
 2003-07-13  Darin Adler  <darin@apple.com>
 
+        * WebKit.pbproj/project.pbxproj: Add command to prevent build from failing if symlink
+        creation fails.
+
+2003-07-13  Darin Adler  <darin@apple.com>
+
         Fixed symbolic link path as Matt Reda suggested.
 
         * WebKit.pbproj/project.pbxproj: Changed paths in both of Maciej's new build phases
