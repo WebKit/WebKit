@@ -157,6 +157,8 @@
         
         [_private setProvisionalDataSource: newDataSource];
         
+        ASSERT([newDataSource webFrame] == self);
+        
         // We tell the documentView provisionalDataSourceChanged:
         // once it has been created by the controller.
             

@@ -34,6 +34,8 @@
 
 - (void) getFunctionPointersFromPluginView:(WebNetscapePluginView *)pluginView
 {
+    ASSERT(pluginView);
+    
     NPP_NewStream = 	[pluginView NPP_NewStream];
     NPP_WriteReady = 	[pluginView NPP_WriteReady];
     NPP_Write = 	[pluginView NPP_Write];
@@ -67,6 +69,7 @@
        return nil;
     
     view = [(WebNetscapePluginView *)thePluginPointer->ndata retain];
+    ASSERT(view);
     URL = [theURL retain];
     instance = thePluginPointer;
     notifyData = theNotifyData;
@@ -96,7 +99,6 @@
 
 - (void)startLoad
 {
-    ASSERT([view webDataSource]);
     WebResourceRequest *request = [[WebResourceRequest alloc] initWithURL:URL];
     resource = [[WebResourceHandle alloc] initWithRequest:request client:self];
     [resource loadInBackground];
@@ -235,6 +237,12 @@
 
 - (void)receivedData:(NSData *)data withDataSource:(WebDataSource *)dataSource
 {
+    ASSERT(dataSource);
+    ASSERT([dataSource webFrame]);
+    ASSERT([[dataSource webFrame] webView]);
+    ASSERT([[[dataSource webFrame] webView] documentView]);
+    ASSERT([(WebNetscapePluginView *)[[[dataSource webFrame] webView] documentView] pluginInstance]);
+    
     if(isFirstChunk){
         WebFrame *frame = [dataSource webFrame];
         WebView *webView = [frame webView];

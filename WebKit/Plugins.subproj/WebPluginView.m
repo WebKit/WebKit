@@ -577,6 +577,7 @@
     WebView *webView = (WebView *)[self _web_superviewOfClass:[WebView class]];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
+    webDataSource = [[webFrame dataSource] retain];
     
     if(srcURL){
         stream = [[WebNetscapePluginStream alloc] initWithURL:srcURL pluginPointer:instance];

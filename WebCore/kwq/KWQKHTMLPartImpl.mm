@@ -194,53 +194,44 @@ void KWQKHTMLPartImpl::urlSelected(const KURL &url, int button, int state, const
     [targetBridge loadURL:cocoaURL referrer:referrer(args)];
 }
 
+class KWQPluginPart : public ReadOnlyPart
+{
+    virtual bool openURL(const KURL &) { return true; }
+    virtual bool closeURL() { return true; }
+};
+
 ReadOnlyPart *KWQKHTMLPartImpl::createPart(const ChildFrame &child, const KURL &url, const QString &mimeType)
 {
-    LOG(Frames, "name %s", child.m_name.ascii());
-    
     NSURL *childURL = url.getNSURL();
     if (childURL == nil) {
         // FIXME: Do we need to report an error to someone?
         return 0;
     }
     
-    HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
-    WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
-        withURL:childURL referrer:referrer(child.m_args)
-        renderPart:child.m_frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
-        marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
-    return [childBridge part];
+    if (child.m_type == ChildFrame::Object) {
+        NSMutableArray *paramsArray = [NSMutableArray arrayWithCapacity:child.m_params.count()];
+        for (uint i = 0; i < child.m_params.count(); i++) {
+            [paramsArray addObject:child.m_params[i].getNSString()];
+        }
+        
+        KWQPluginPart *newPart = new KWQPluginPart;
+        newPart->setWidget(new QWidget([[WebCoreViewFactory sharedFactory]
+            viewForPluginWithURL:childURL
+                     serviceType:child.m_args.serviceType.getNSString()
+                       arguments:paramsArray
+                         baseURL:KURL(d->m_doc->baseURL()).getNSURL()]));
+        return newPart;
+    } else {
+        LOG(Frames, "name %s", child.m_name.ascii());
+        HTMLIFrameElementImpl *o = static_cast<HTMLIFrameElementImpl *>(child.m_frame->element());
+        WebCoreBridge *childBridge = [_bridge createChildFrameNamed:child.m_name.getNSString()
+            withURL:childURL referrer:referrer(child.m_args)
+            renderPart:child.m_frame allowsScrolling:o->scrollingMode() != QScrollView::AlwaysOff
+            marginWidth:o->getMarginWidth() marginHeight:o->getMarginHeight()];
+        return [childBridge part];
+    }
 }
-
-bool KWQKHTMLPartImpl::requestObject(RenderPart *frame, const QString &url, const QString &serviceType, const QStringList &args)
-{
-    if (url.isEmpty()) {
-        return false;
-    }
-    NSURL *cocoaURL = part->completeURL(url).getNSURL();
-    if (cocoaURL == nil) {
-        // FIXME: We need to report an error to someone.
-        return false;
-    }
-
-    if (frame->widget()) {
-        return true;
-    }
     
-    NSMutableArray *argsArray = [NSMutableArray arrayWithCapacity:args.count()];
-    for (uint i = 0; i < args.count(); i++) {
-        [argsArray addObject:args[i].getNSString()];
-    }
-    
-    QWidget *widget = new QWidget([[WebCoreViewFactory sharedFactory]
-        viewForPluginWithURL:cocoaURL
-                 serviceType:serviceType.getNSString()
-                   arguments:argsArray
-                     baseURL:KURL(d->m_doc->baseURL()).getNSURL()]);
-    frame->setWidget(widget);
-    return true;
-}
-
 void KWQKHTMLPartImpl::submitForm(const KURL &u, const URLArgs &args)
 {
     if (!args.doPost()) {

@@ -1,5 +1,19 @@
 2002-09-13  Darin Adler  <darin@apple.com>
 
+	Added assertions, and dealt with some breakage I created while
+	trying to fix, here, what I broke in WebCore.
+
+        * Plugins.subproj/WebPluginView.m: (-[WebNetscapePluginView start]):
+	Do get the dataSource from our parent when we are being used as an
+	object in a view rather than a document view.
+
+        * Plugins.subproj/WebPluginStream.m:
+        * WebView.subproj/WebDataSource.m:
+        * WebView.subproj/WebFrame.m:
+	Leave in the assertions I used to debug.
+
+2002-09-13  Darin Adler  <darin@apple.com>
+
 	- fixed 3031685 -- The text encoding setting is not propagated to subframes
 
         * WebView.subproj/WebDocument.h: Remove old WebDocumentTextEncoding methods,
