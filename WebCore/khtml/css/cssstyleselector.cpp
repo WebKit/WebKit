@@ -805,16 +805,21 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 if ( pseudoState == PseudoVisited )
                     return true;
                 break;
-            case CSSSelector::PseudoHover:
-                if (element == e)
-                    style->setAffectedByHoverRules(true);
-                if (e->renderer()) {
-                    if (element != e)
-                        e->renderer()->style()->setAffectedByHoverRules(true);
-                    if (e->renderer()->mouseInside())
-                        return true;
+            case CSSSelector::PseudoHover: {
+                // If we're in quirks mode, then hover should never match anchors with no
+                // href.  This is important for sites like wsj.com.
+                if (strictParsing || e->id() != ID_A || e->hasAnchor()) {
+                    if (element == e)
+                        style->setAffectedByHoverRules(true);
+                    if (e->renderer()) {
+                        if (element != e)
+                            e->renderer()->style()->setAffectedByHoverRules(true);
+                        if (e->renderer()->mouseInside())
+                            return true;
+                    }
                 }
                 break;
+            }
             case CSSSelector::PseudoFocus:
                 if (e && e->focused()) {
                     return true;

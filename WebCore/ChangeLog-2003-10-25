@@ -1,3 +1,15 @@
+2003-01-20  David Hyatt  <hyatt@apple.com>
+
+	Fix :hover performance regression on wsj.com.  Moving my
+	<a name="foo"> quirk down into the :hover rule  matching code,
+	so that we'll know never to apply :hover to anchorless <a>s.
+	
+        Reviewed by gramps
+
+        * khtml/css/cssstyleselector.cpp:
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setHoverAndActive):
+
 2003-01-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Trey.

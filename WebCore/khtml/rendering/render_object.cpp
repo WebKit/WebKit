@@ -1136,15 +1136,12 @@ void RenderObject::setHoverAndActive(NodeInfo& info, bool oldinside, bool inside
 {
     DOM::NodeImpl* elt = element();
     if (elt) {
-        bool strictMode = (elt->getDocument()->parseMode() == DocumentImpl::Strict);
-        if (strictMode || elt->id() != ID_A || elt->hasAnchor()) {
-            bool oldactive = elt->active();
-            if (oldactive != (inside && info.active() && elt == info.innerNode()))
-                elt->setActive(inside && info.active() && elt == info.innerNode());
-            if ((oldinside != mouseInside() && style()->affectedByHoverRules()) ||
-                (oldactive != elt->active() && style()->affectedByActiveRules()))
-                elt->setChanged();
-        }
+        bool oldactive = elt->active();
+        if (oldactive != (inside && info.active() && elt == info.innerNode()))
+            elt->setActive(inside && info.active() && elt == info.innerNode());
+        if ((oldinside != mouseInside() && style()->affectedByHoverRules()) ||
+            (oldactive != elt->active() && style()->affectedByActiveRules()))
+            elt->setChanged();
     }
 }
 
