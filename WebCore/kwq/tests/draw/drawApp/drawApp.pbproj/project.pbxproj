@@ -162,7 +162,6 @@
 				9C00349401627E910ECA16EA,
 				9C00349501627E910ECA16EA,
 				9C00349601627E910ECA16EA,
-				9C6566C8016406D90ECA16EA,
 			);
 			isa = PBXGroup;
 			name = Resources;
@@ -274,7 +273,6 @@
 				9C00349701627E910ECA16EA,
 				9C00349801627E910ECA16EA,
 				9C00349901627E910ECA16EA,
-				9C6566C9016406D90ECA16EA,
 			);
 			isa = PBXResourcesBuildPhase;
 			name = "Bundle Resources";
@@ -378,18 +376,6 @@
 		};
 		9C00349901627E910ECA16EA = {
 			fileRef = 9C00349601627E910ECA16EA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		9C6566C8016406D90ECA16EA = {
-			isa = PBXFileReference;
-			name = foo;
-			path = /tmp/foo;
-			refType = 0;
-		};
-		9C6566C9016406D90ECA16EA = {
-			fileRef = 9C6566C8016406D90ECA16EA;
 			isa = PBXBuildFile;
 			settings = {
 			};
