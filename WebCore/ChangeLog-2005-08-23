@@ -1,3 +1,14 @@
+2004-07-16  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3726471, need to ensure that it's safe to do updateRendering from within layout, since isContentEditable
+	relies on it.  The fix is to just recalcStyle up front before beginning the layout, so that all of our renderobjects
+	will be up-to-date.
+	
+        Reviewed by john
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::layout):
+
 2004-07-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

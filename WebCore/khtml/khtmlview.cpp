@@ -579,6 +579,11 @@ void KHTMLView::layout()
         return;
     }
 
+    // Always ensure our style info is up-to-date.  This can happen in situations where
+    // the layout beats any sort of style recalc update that needs to occur.
+    if (document->hasChangedChild())
+        document->recalcStyle();
+
     khtml::RenderCanvas* root = static_cast<khtml::RenderCanvas*>(document->renderer());
     if (!root) {
         // FIXME: Do we need to set _width or _height here?
