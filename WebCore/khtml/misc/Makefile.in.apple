@@ -66,7 +66,7 @@ CXXFLAGS = $(BASECXXFLAGS) \
 #----------------------------------------------------------------------
 # Set targets for this directory
 
-all: $(OBJECTS) $(LIBRARY)
+all: $(CFILES) $(OBJECTS) $(LIBRARY)
 
 $(LIBRARY): $(OBJECTS)
 	$(AR) $(ARFLAGS) $(LIBRARY) $(CXXOBJECTS)
