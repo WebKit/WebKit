@@ -1498,17 +1498,33 @@ void RenderObject::setStyle(RenderStyle *style)
 
         d = m_style->diff(style);
 
+        // If we have no layer(), just treat a RepaintLayer hint as a normal Repaint.
+        if (d == RenderStyle::RepaintLayer && !layer())
+            d = RenderStyle::Repaint;
+        
         // The background of the root element or the body element could propagate up to
         // the canvas.  Just dirty the entire canvas when our style changes substantially.
-        if (d >= RenderStyle::Visible && element() &&
+        if (d >= RenderStyle::Repaint && element() &&
             (element()->id() == ID_HTML || element()->id() == ID_BODY))
             canvas()->repaint();
-        else if (m_parent && d == RenderStyle::Visible && !isText())
+        else if (m_parent && !isText()) {
             // Do a repaint with the old style first, e.g., for example if we go from
             // having an outline to not having an outline.
-            repaint();
+            if (d == RenderStyle::RepaintLayer)
+                layer()->repaintIncludingDescendants();
+            else if (d == RenderStyle::Repaint)
+                repaint();
+        }
 
-        if (m_style->position() != style->position() && layer())
+        // When a layout hint happens, we go ahead and do a repaint of the layer, since the layer could
+        // end up being destroyed.
+        if (d == RenderStyle::Layout && layer() &&
+            (m_style->position() != style->position() ||
+             m_style->zIndex() != style->zIndex() ||
+             m_style->hasAutoZIndex() != style->hasAutoZIndex() ||
+             !(m_style->clip() == style->clip()) ||
+             m_style->hasClip() != style->hasClip() ||
+             m_style->opacity() != style->opacity()))
             layer()->repaintIncludingDescendants();
 
         if (isFloating() && (m_style->floating() != style->floating()))
@@ -1561,9 +1577,11 @@ void RenderObject::setStyle(RenderStyle *style)
     
     // No need to ever schedule repaints from a style change of a text run, since
     // we already did this for the parent of the text run.
-    if (d >= RenderStyle::Position && m_parent)
+    if (d == RenderStyle::Layout && m_parent)
         setNeedsLayoutAndMinMaxRecalc();
-    else if (d == RenderStyle::Visible && !isText() && m_parent)
+    else if (m_parent && !isText() && (d == RenderStyle::RepaintLayer || d == RenderStyle::Repaint))
+        // Do a repaint with the new style now, e.g., for example if we go from
+        // not having an outline to having an outline.
         repaint();
 }
 

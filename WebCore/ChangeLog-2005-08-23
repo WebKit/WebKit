@@ -1,3 +1,17 @@
+2004-09-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3601920, CSS "tabs" not switching properly on zen garden design.  Improve the repainting to account
+	for layer changes of z-index that necessitate an invalidation.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::setStyle):
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::diff):
+        * khtml/rendering/render_style.h:
+        (khtml::RenderStyle::):
+
 2004-09-24  Chris Blumenberg  <cblu@apple.com>
 
 	Made markup copying 5 times faster. Unfortunately, this still doesn't fix:

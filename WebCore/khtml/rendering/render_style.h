@@ -1040,6 +1040,7 @@ public:
     Length clipRight() const { return visual->clip.right; }
     Length clipTop() const { return visual->clip.top; }
     Length clipBottom() const { return visual->clip.bottom; }
+    LengthBox clip() const { return visual->clip; }
     bool hasClip() const { return visual->hasClip; }
     
     EUnicodeBidi unicodeBidi() const { return noninherited_flags._unicodeBidi; }
@@ -1360,7 +1361,12 @@ public:
 
     bool inheritedNotEqual( RenderStyle *other ) const;
 
-    enum Diff { Equal, NonVisible = Equal, Visible, Position, Layout, CbLayout };
+    // The difference between two styles.  The following values are used:
+    // (1) Equal - The two styles are identical
+    // (2) Repaint - The object just needs to be repainted.
+    // (3) RepaintLayer - The layer and its descendant layers needs to be repainted.
+    // (4) Layout - A layout is required.
+    enum Diff { Equal, Repaint, RepaintLayer, Layout };
     Diff diff( const RenderStyle *other ) const;
 
     bool isDisplayReplacedType() {
