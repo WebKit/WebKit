@@ -162,7 +162,7 @@ static const char * const stateNames[6] = {
 }
 
 
-- (void)_transitionProvisionalToLayoutAcceptable
+- (void)_transitionToLayoutAcceptable
 {
     switch ([self _state]) {
     	case WebFrameStateCommittedPage:
@@ -211,7 +211,7 @@ static const char * const stateNames[6] = {
 }
 
 
-- (void)_transitionProvisionalToCommitted
+- (void)_transitionToCommitted
 {
     WEBKIT_ASSERT ([self controller] != nil);
     NSView <WebDocumentView> *documentView = [[self webView] documentView];

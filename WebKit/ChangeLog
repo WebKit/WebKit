@@ -1,5 +1,26 @@
 2002-07-18  Maciej Stachowiak  <mjs@apple.com>
 
+        Rename some methods for clarity. These two methods are defined by
+	the end state, not the start state (in fact,
+	transitionToLayoutAcceptable does most of it's work when it starts
+	in the cimmitted state, not provisional).
+
+	* WebView.subproj/WebFramePrivate.h, WebView.subproj/WebFramePrivate.m:
+	(-[WebFrame _transitionToLayoutAcceptable]): Renamed from
+	_transitionProvisionalToLayoutAcceptable.
+        (-[WebFrame _transitionToCommitted]): Renamed from
+	_transitionProvisionalToLayoutAcceptable.
+
+	And adjust all the calls to them:
+	
+        * WebView.subproj/WebControllerPrivate.m:
+        (-[WebController _receivedProgress:forResourceHandle:fromDataSource:complete:]):
+        (-[WebController _mainReceivedProgress:forResourceHandle:fromDataSource:complete:]):
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady]):
+
+2002-07-18  Maciej Stachowiak  <mjs@apple.com>
+
 	Even more exciting refactoring. Change the rules for committing
 	the data source and creating the representation so that both
 	happen when the first byte has been received _and_ the content

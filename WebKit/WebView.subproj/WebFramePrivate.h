@@ -63,8 +63,8 @@ typedef enum {
 - (void)_parentDataSourceWillBeDeallocated;
 - (void)_setController: (WebController *)controller;
 - (void)_setDataSource: (WebDataSource *)d;
-- (void)_transitionProvisionalToCommitted;
-- (void)_transitionProvisionalToLayoutAcceptable;
+- (void)_transitionToCommitted;
+- (void)_transitionToLayoutAcceptable;
 - (WebFrameState)_state;
 - (void)_setState: (WebFrameState)newState;
 + (void)_recursiveCheckCompleteFromFrame: (WebFrame *)fromFrame;

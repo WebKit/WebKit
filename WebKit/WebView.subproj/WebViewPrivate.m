@@ -75,7 +75,7 @@
     // This resource has completed, so check if the load is complete for all frames.
     if (isComplete) {
         if (frame != nil) {
-            [frame _transitionProvisionalToLayoutAcceptable];
+            [frame _transitionToLayoutAcceptable];
             [frame _checkLoadComplete];
         }
     }
@@ -107,7 +107,7 @@
         // just indicates that an early layout can be performed.
         int timedLayoutSize = [[WebPreferences standardPreferences] _initialTimedLayoutSize];
         if ([progress bytesSoFar] > timedLayoutSize)
-            [frame _transitionProvisionalToLayoutAcceptable];
+            [frame _transitionToLayoutAcceptable];
     }
 }
 

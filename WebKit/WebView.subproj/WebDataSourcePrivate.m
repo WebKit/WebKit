@@ -418,7 +418,7 @@
         WEBKITDEBUGLEVEL (WEBKIT_LOG_LOADING, "committed resource = %s\n", [[[self inputURL] absoluteString] cString]);
 	_private->committed = TRUE;
 	[self _makeRepresentation];
-        [[self webFrame] _transitionProvisionalToCommitted];
+        [[self webFrame] _transitionToCommitted];
     }
 }
 
