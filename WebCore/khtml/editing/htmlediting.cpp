@@ -1463,7 +1463,7 @@ void DeleteSelectionCommand::saveTypingStyleState()
     // Figure out the typing style in effect before the delete is done.
     // FIXME: Improve typing style.
     // See this bug: <rdar://problem/3769899> Implementation of typing style needs improvement
-    CSSComputedStyleDeclarationImpl *computedStyle = m_downstreamStart.computedStyle();
+    CSSComputedStyleDeclarationImpl *computedStyle = m_selectionToDelete.start().computedStyle();
     computedStyle->ref();
     m_typingStyle = computedStyle->copyInheritableProperties();
     m_typingStyle->ref();
