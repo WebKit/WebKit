@@ -164,6 +164,7 @@ enum FrameBorderStyle {
 - (NSString *)renderTreeAsExternalRepresentation;
 
 - (NSDictionary *)elementAtPoint:(NSPoint)point;
+- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form;
 - (id <WebDOMElement>)elementForView:(NSView *)view;
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
 - (BOOL)elementIsPassword:(id <WebDOMElement>)element;

@@ -1,3 +1,16 @@
+2003-04-10  Trey Matteson  <trey@apple.com>
+
+	3224973 - Safari sometimes stores data for AUTOCOMPLETE=OFF fields and password fields
+
+	New WC support function.
+
+        Reviewed by Darin.
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementWithName:inForm:]):  Run through the form's elements
+	looking for a matching name.
+
 === Safari-72 ===
 
 2003-04-10  Maciej Stachowiak  <mjs@apple.com>

@@ -506,6 +506,23 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     return nil;
 }
 
+- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form
+{
+    HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
+    if (formElement) {
+        QPtrList<HTMLGenericFormElementImpl> elements = formElement->formElements;
+        QString targetName = QString::fromNSString(name);
+        for (unsigned int i = 0; i < elements.count(); i++) {
+            HTMLGenericFormElementImpl *elt = elements.at(i);
+            // Skip option elements, other duds
+            if (elt->name() == targetName) {
+                return [WebCoreDOMElement elementWithImpl:elt];
+            }
+        }
+    }
+    return nil;
+}
+
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element
 {
     HTMLInputElementImpl *inputElement = inputElementFromDOMElement(element);
@@ -545,8 +562,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     HTMLFormElementImpl *formElement = formElementFromDOMElement(form);
     if (formElement) {
         QPtrList<HTMLGenericFormElementImpl> elements = formElement->formElements;
-        unsigned int i;
-        for (i = 0; i < elements.count(); i++) {
+        for (unsigned int i = 0; i < elements.count(); i++) {
             if (elements.at(i)->isEnumeratable()) {		// Skip option elements, other duds
                 NSView *view = viewForElement(elements.at(i));
                 if (view) {

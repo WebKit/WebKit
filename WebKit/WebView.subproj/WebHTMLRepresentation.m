@@ -113,6 +113,11 @@
     return [_private->bridge attributedStringFrom: startNode startOffset: startOffset to: endNode endOffset: endOffset];
 }
 
+- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form
+{
+    return [_private->bridge elementWithName:name inForm:form];
+}
+
 - (id <WebDOMElement>)elementForView:(NSView *)view
 {
     return [_private->bridge elementForView:view];

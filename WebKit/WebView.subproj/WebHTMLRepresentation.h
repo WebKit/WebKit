@@ -51,6 +51,7 @@
 
 - (NSAttributedString *)attributedStringFrom: (id<WebDOMNode>)startNode startOffset: (int)startOffset to: (id<WebDOMNode>)endNode endOffset: (int)endOffset;
 
+- (id <WebDOMElement>)elementWithName:(NSString *)name inForm:(id <WebDOMElement>)form;
 - (id <WebDOMElement>)elementForView:(NSView *)view;
 - (BOOL)elementDoesAutoComplete:(id <WebDOMElement>)element;
 - (BOOL)elementIsPassword:(id <WebDOMElement>)element;
