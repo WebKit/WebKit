@@ -1,3 +1,24 @@
+2003-03-17  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3199951 - Standalone plug-in content that is cancelled doesn't restart when switching tabs
+
+	Instead of creating and managing resourceData in WebMainResourceClient then passing the ownership to WebDataSource, just manage it in WebDataSource. We had the prior behavior because we didn't buffer downloads. Now, we always buffer. The fix for the bug is to retain the incomplete data even though the load ends in error.
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebDataSource.h: updated headerdoc for the data method
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource data]): just return resourceData
+        * WebView.subproj/WebDataSourcePrivate.h:
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _receivedData:]): create resourceData if necessary, append data to it.
+        * WebView.subproj/WebMainResourceClient.h:
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient initWithDataSource:]): don't work with resourceData
+        (-[WebMainResourceClient dealloc]): don't work with resourceData
+        (-[WebMainResourceClient resource:didReceiveData:]): don't work with resourceData
+        (-[WebMainResourceClient resourceDidFinishLoading:]): don't work with resourceData
+
 2003-03-16  Trey Matteson  <trey@apple.com>
 
 	3198135 - need to fix our projects so SYMROOT is not stripped

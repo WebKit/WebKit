@@ -41,7 +41,6 @@
     self = [super init];
     
     if (self) {
-        resourceData = [[NSMutableData alloc] init];
         [self setDataSource:ds];
         proxy = [[WebResourceDelegateProxy alloc] init];
         [proxy setDelegate:self];
@@ -52,16 +51,10 @@
 
 - (void)dealloc
 {
-    [resourceData release];
     [proxy setDelegate:nil];
     [proxy release];
     
     [super dealloc];
-}
-
-- (NSData *)resourceData
-{
-    return resourceData;
 }
 
 - (void)receivedError:(WebError *)error
@@ -233,11 +226,10 @@
  
     LOG(Loading, "URL = %@, data = %p, length %d", [dataSource _URL], data, [data length]);
 
-    [resourceData appendData:data];
     [dataSource _receivedData:data];
-    [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
-                                        fromDataSource:dataSource
-                                            complete:NO];
+    [[dataSource _controller] _mainReceivedBytesSoFar:[[dataSource data] length]
+                                       fromDataSource:dataSource
+                                             complete:NO];
 
     [super resource:h didReceiveData:data];
     _bytesReceived += [data length];
@@ -256,11 +248,10 @@
     // Calls in this method will most likely result in a call to release, so we must retain.
     [self retain];
 
-    [dataSource _setResourceData:resourceData];
     [dataSource _finishedLoading];
-    [[dataSource _controller] _mainReceivedBytesSoFar:[resourceData length]
-                                        fromDataSource:dataSource
-                                            complete:YES];
+    [[dataSource _controller] _mainReceivedBytesSoFar:[[dataSource data] length]
+                                       fromDataSource:dataSource
+                                             complete:YES];
     [super resourceDidFinishLoading:h];
     
     [self release];

@@ -22,7 +22,6 @@
 
 @interface WebMainResourceClient : WebBaseResourceHandleDelegate
 {
-    NSMutableData *resourceData;
     int _contentLength; // for logging only
     int _bytesReceived; // for logging only
     WebPolicyDecisionListener *listener;
@@ -31,6 +30,5 @@
 }
 
 - initWithDataSource:(WebDataSource *)dataSource;
-- (NSData *)resourceData;
 
 @end

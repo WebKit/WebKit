@@ -51,11 +51,7 @@
 
 - (NSData *)data
 {
-    if(!_private->resourceData){
-        return [_private->mainClient resourceData];
-    }else{
-        return _private->resourceData;
-    }
+    return _private->resourceData;
 }
 
 - (id <WebDocumentRepresentation>) representation

@@ -40,10 +40,9 @@
 
 /*!
     @method data
-    @discussion The data associated with a datasource will not be valid until
-    a datasource has completely loaded.  
-    @result Returns the raw data associated with this datasource.  Returns nil
-    if the datasource hasn't loaded.
+    @discussion The data will be incomplete until the datasource has completely loaded.  
+    @result Returns the raw data associated with the datasource.  Returns nil
+    if the datasource hasn't loaded any data.
 */
 - (NSData *)data;
 

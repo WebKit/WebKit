@@ -83,12 +83,6 @@
     return _private->controller;
 }
 
-- (void)_setResourceData:(NSData *)data
-{
-    [_private->resourceData release];
-    _private->resourceData = [data retain];
-}
-
 - (void)_setRepresentation: (id<WebDocumentRepresentation>)representation
 {
     [_private->representation release];
@@ -534,6 +528,11 @@
 
 -(void)_receivedData:(NSData *)data
 {
+    if (!_private->resourceData) {
+        _private->resourceData = [[NSMutableData alloc] init];
+    }
+    [_private->resourceData appendData:data];
+    
     _private->gotFirstByte = YES;
     [self _commitIfReady];
 

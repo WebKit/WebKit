@@ -21,7 +21,7 @@
 @interface WebDataSourcePrivate : NSObject
 {
 @public
-    NSData *resourceData;
+    NSMutableData *resourceData;
 
     id <WebDocumentRepresentation> representation;
     
@@ -119,7 +119,6 @@
 - (void)_stopLoading;
 - (NSURL *)_URL;
 - (WebController *)_controller;
-- (void)_setResourceData:(NSData *)data;
 - (Class)_representationClass;
 - (void)_setRepresentation:(id<WebDocumentRepresentation>)representation;
 - (void)_setController:(WebController *)controller;
