@@ -1,3 +1,13 @@
+2003-06-10  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3270813, crash in the code for the CSS content property.
+	When copying a DOMString, I missed a required ref.
+	
+        Reviewed by darin
+
+        * khtml/rendering/render_style.cpp:
+        (RenderStyle::setContent):
+
 2003-06-10  Darin Adler  <darin@apple.com>
 
         Reviewed by John.

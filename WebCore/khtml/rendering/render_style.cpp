@@ -505,6 +505,7 @@ void RenderStyle::setContent(DOMStringImpl* s, bool add)
             // We can augment the existing string and share this ContentData node.
             DOMStringImpl* oldStr = lastContent->_content.text;
             DOMStringImpl* newStr = oldStr->copy();
+            newStr->ref();
             oldStr->deref();
             newStr->append(s);
             lastContent->_content.text = newStr;
