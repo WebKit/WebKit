@@ -2069,8 +2069,8 @@
 		93F1D31A0558CC5C00821BC0 = {
 			isa = PBXFileReference;
 			lastKnownFileType = "compiled.mach-o.dylib";
-			name = libicucore.A.dylib;
-			path = /usr/lib/libicucore.A.dylib;
+			name = libicucore.dylib;
+			path = /usr/lib/libicucore.dylib;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};

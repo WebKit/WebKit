@@ -46,12 +46,10 @@ KJavaAppletWidget::KJavaAppletWidget(const QSize &size, KJavaAppletContext *c, c
         ++it;
     }
     
-    KHTMLPart *part = c->part();
-    KURL baseURL = baseURLString.isNull() ? part->baseURL() : KURL(baseURLString);
-    
-    setView([KWQ(part)->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
-                                                 attributes:attributes
-                                                    baseURL:baseURL.getNSURL()]);
+    KWQKHTMLPart *part = KWQ(c->part());    
+    setView([part->bridge() viewForJavaAppletWithFrame:NSMakeRect(0, 0, size.width(), size.height())
+                                            attributes:attributes
+                                               baseURL:part->completeURL(baseURLString).getNSURL()]);
     [attributes release];
     part->view()->addChild(this);
     

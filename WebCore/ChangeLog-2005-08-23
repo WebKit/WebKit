@@ -1,3 +1,34 @@
+2004-08-17  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3689700> crash loading page; stoxx.com (works in IE and Firefox)
+
+        * khtml/khtml_part.h: Make completeURL public.
+        * kwq/KWQKJavaAppletWidget.mm: (KJavaAppletWidget::KJavaAppletWidget): Complete the base URL
+        before passing it across the bridge. This sidesteps the crashing bug in CFURL, filed as
+        '<rdar://problem/3764632> CFURLCreateAbsoluteURLWithBytes crashes if passed the string "../.."'
+        and also is obviously correct behavior that may fix other sites too.
+
+        - fixed <rdar://problem/3547725> Crashes at csuohio.edu, list box vs. mouse event problem (Spoof No Fix)
+
+        * kwq/KWQListBox.mm:
+        (QListBox::~QListBox): Nil out the pointer from the KWQTableView back to the widget by calling
+        a new detach method.
+        (-[KWQTableView detach]): Set the pointer to the QListBox to 0. Also set the delegate and data
+        source to nil, so we don't need nil checks in delegate and data source methods.
+        (-[KWQTableView mouseDown:]): Add nil check.
+        (-[KWQTableView keyDown:]): Add nil check.
+        (-[KWQTableView keyUp:]): Add nil check.
+        (-[KWQTableView becomeFirstResponder]): Add nil check.
+        (-[KWQTableView resignFirstResponder]): Add nil check.
+        (-[KWQTableView canBecomeKeyView]): Add nil check.
+        (-[KWQTableView tableViewSelectionDidChange:]): Add nil checks, even though this is a delegate
+        callback, to handle cases where calls to JavaScript result in the QListBox going away partway
+        through.
+        (-[KWQTableView drawRow:clipRect:]): Add nil check.
+        (-[KWQTableView _accessibilityTableCell:tableColumn:]): Add nil check.
+
 2004-08-17  Trey Matteson  <trey@apple.com>
 
 	Fix ASSERT in spelling marker management.
