@@ -1,7 +1,4 @@
 .objc_class_name_WebBackForwardList
-.objc_class_name_WebBookmark
-.objc_class_name_WebBookmarkGroup
-.objc_class_name_WebBookmarkImporter
 .objc_class_name_WebContentTypes
 .objc_class_name_WebController
 .objc_class_name_WebCoreStatistics
@@ -36,13 +33,6 @@ _WebActionModifierFlagsKey
 _WebActionNavigationTypeKey
 _WebActionNavigationTypeKey
 _WebActionOriginalURLKey
-_WebBookmarkChildrenKey
-_WebBookmarkDidChangeNotification
-_WebBookmarkWillChangeNotification
-_WebBookmarksWereAddedNotification
-_WebBookmarksWereRemovedNotification
-_WebBookmarksWereReloadedNotification
-_WebBookmarksWillBeReloadedNotification
 _WebElementFrameKey
 _WebElementImageKey
 _WebElementImageRectKey
@@ -62,7 +52,6 @@ _WebIconLargeSize
 _WebIconMediumSize
 _WebIconNotificationUserInfoURLKey
 _WebIconSmallSize
-_WebModifiedBookmarkKey
 _WebURLNamePboardType
 _WebURLPboardType
 

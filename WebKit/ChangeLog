@@ -1,3 +1,29 @@
+2003-03-13  John Sullivan  <sullivan@apple.com>
+
+	Removed all the bookmarks code from WebKit; put it
+	in WebBrowser instead.
+
+        Reviewed by Darin
+
+        * Bookmarks.subproj/WebBookmark.h: Removed.
+        * Bookmarks.subproj/WebBookmark.m: Removed.
+        * Bookmarks.subproj/WebBookmarkGroup.h: Removed.
+        * Bookmarks.subproj/WebBookmarkGroup.m: Removed.
+        * Bookmarks.subproj/WebBookmarkGroupPrivate.h: Removed.
+        * Bookmarks.subproj/WebBookmarkImporter.h: Removed.
+        * Bookmarks.subproj/WebBookmarkImporter.m: Removed.
+        * Bookmarks.subproj/WebBookmarkLeaf.h: Removed.
+        * Bookmarks.subproj/WebBookmarkLeaf.m: Removed.
+        * Bookmarks.subproj/WebBookmarkList.h: Removed.
+        * Bookmarks.subproj/WebBookmarkList.m: Removed.
+        * Bookmarks.subproj/WebBookmarkPrivate.h: Removed.
+        * Bookmarks.subproj/WebBookmarkProxy.h: Removed.
+        * Bookmarks.subproj/WebBookmarkProxy.m: Removed.
+        * WebKit.exp:
+	removed all bookmark-related symbols
+        * WebKit.pbproj/project.pbxproj:
+	updated for removed files
+
 === Safari-67 ===
 
 2003-03-12  Chris Blumenberg  <cblu@apple.com>
