@@ -278,9 +278,9 @@
 
 - (void)connection:(NSURLConnection *)con didReceiveResponse:(NSURLResponse *)r
 {
-    ASSERT(![con defersCallbacks]);
-    ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _webView] defersCallbacks]);
+    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![con defersCallbacks]);
+    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
+    ASSERT([[r URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "main content type: %@", [r MIMEType]);
 
@@ -330,9 +330,9 @@
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)con
 {
-    ASSERT(![con defersCallbacks]);
-    ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _webView] defersCallbacks]);
+    ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![con defersCallbacks]);
+    ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![self defersCallbacks]);
+    ASSERT([[dataSource _URL] _webkit_shouldLoadAsEmptyDocument] || ![[dataSource _webView] defersCallbacks]);
 
     LOG(Loading, "URL = %@", [dataSource _URL]);
         
@@ -359,19 +359,25 @@
     [self receivedError:error];
 }
 
-- (void)loadWithRequestNow:(NSURLRequest *)r
+- (NSURLRequest *)loadWithRequestNow:(NSURLRequest *)r
 {
+    BOOL shouldLoadEmptyBeforeRedirect = [[r URL] _webkit_shouldLoadAsEmptyDocument];
+
     ASSERT(connection == nil);
-    ASSERT(![self defersCallbacks]);
-    ASSERT(![[dataSource _webView] defersCallbacks]);
-    
+    ASSERT(shouldLoadEmptyBeforeRedirect || ![self defersCallbacks]);
+    ASSERT(shouldLoadEmptyBeforeRedirect || ![[dataSource _webView] defersCallbacks]);
+
     // Send this synthetic delegate callback since clients expect it, and
     // we no longer send the callback from within NSURLConnection for
     // initial requests.
     r = [self connection:nil willSendRequest:r redirectResponse:nil];
-
     NSURL *URL = [r URL];
     BOOL shouldLoadEmpty = [URL _webkit_shouldLoadAsEmptyDocument];
+
+    if (shouldLoadEmptyBeforeRedirect && !shouldLoadEmpty && [self defersCallbacks]) {
+        return r;
+    }
+
     if (shouldLoadEmpty || [WebView _representationExistsForURLScheme:[URL scheme]]) {
         NSString *MIMEType;
         if (shouldLoadEmpty) {
@@ -387,15 +393,31 @@
     } else {
         connection = [[NSURLConnection alloc] initWithRequest:r delegate:proxy];
     }
+
+    return nil;
 }
 
 - (BOOL)loadWithRequest:(NSURLRequest *)r
 {
     ASSERT(connection == nil);
-    
-    if (![self defersCallbacks]) {
-        [self loadWithRequestNow:r];
-    } else {
+
+    BOOL defer = [self defersCallbacks];
+    if (defer) {
+        NSURL *URL = [r URL];
+        BOOL shouldLoadEmpty = [URL _webkit_shouldLoadAsEmptyDocument];
+        if (shouldLoadEmpty) {
+            defer = NO;
+        }
+    }
+    if (!defer) {
+        r = [self loadWithRequestNow:r];
+        if (r != nil) {
+            // Started as an empty document, but was redirected to something non-empty.
+            ASSERT([self defersCallbacks]);
+            defer = YES;
+        }
+    }
+    if (defer) {
         NSURLRequest *copy = [r copy];
         [_initialRequest release];
         _initialRequest = copy;

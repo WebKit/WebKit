@@ -1,5 +1,25 @@
 2004-09-23  Darin Adler  <darin@apple.com>
 
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3811584> REGRESSION (85-125): iframe.document undefined in function called from button onclick; works from img onclick
+
+        The fix is to not let "defers callbacks" have any effect on loading "about:blank".
+        I also had to fix one bug in WebCore that could then be reproduced by going to "about:blank"
+        while using a button.
+
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient connection:didReceiveResponse:]): Loosen asserts to allow this callback
+        for the specific case of "about:blank" even if the defers callbacks flag is true.
+        (-[WebMainResourceClient connectionDidFinishLoading:]): Ditto.
+        (-[WebMainResourceClient loadWithRequestNow:]): Added NSURLRequest return value. Loosened asserts
+        as above. Changed code to return a new request if we get a new request back that is not empty
+        when the defers callbacks flag is true.
+        (-[WebMainResourceClient loadWithRequest:]): If the defers callbacks flag is set, but the
+        URL is one that gives us an empty document, then do the work right away, don't defer it.
+
+2004-09-23  Darin Adler  <darin@apple.com>
+
         - fixed B&I builds by checking in generated file
 
         * WebCoreSupport.subproj/WebDashboardRegion.h: Added.
