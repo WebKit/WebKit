@@ -91,7 +91,7 @@ static NSMutableDictionary *metricsCache = nil;
         unsigned numberOfGlyphs = [layoutManager numberOfGlyphs];
         [metricsCache setColor: color];
         [metricsCache setFont: font];
-        [KWQTextStorage setString: string attributes: attributes];
+        [KWQTextStorage setString: string attributes: [metricsCache attributes]];
         [layoutManager drawGlyphsForGlyphRange:NSMakeRange (0, numberOfGlyphs) atPoint:p];
     }
 }
@@ -170,6 +170,11 @@ static NSMutableDictionary *metricsCache = nil;
 - (void)setFont: (NSFont *)aFont
 {
     [attributes setObject: aFont forKey: NSFontAttributeName];
+}
+
+- (NSDictionary *)attributes
+{
+    return attributes;
 }
 
 - (void)dealloc
