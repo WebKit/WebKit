@@ -995,12 +995,32 @@ void TextIterator::setRangeFromLocationAndLength (const Range &range, Range &res
 
     for (TextIterator it(range); !it.atEnd(); it.advance()) {
         long len = it.length();
-        if (rangeLocation >= docTextPosition && rangeLocation < docTextPosition + len) {
-            resultRange.setStart(it.m_node, rangeLocation - docTextPosition);
+        if (rangeLocation >= docTextPosition && rangeLocation <= docTextPosition + len) {
+            Range textRunRange = it.range();
+            if (textRunRange.startContainer().handle()->isTextNode()) {
+                long offset = rangeLocation - docTextPosition;
+                resultRange.setStart(textRunRange.startContainer(), offset + textRunRange.startOffset());
+            } else {
+                if (rangeLocation == docTextPosition) {
+                    resultRange.setStart(textRunRange.startContainer(), textRunRange.startOffset());
+                } else {
+                    resultRange.setStart(textRunRange.endContainer(), textRunRange.endOffset());
+                }
+            }
         }
         if (rangeEnd >= docTextPosition && rangeEnd <= docTextPosition + len) {
+            Range textRunRange = it.range();
+            if (textRunRange.startContainer().handle()->isTextNode()) {
+                long offset = rangeEnd - docTextPosition;
+                resultRange.setEnd(textRunRange.startContainer(), offset + textRunRange.startOffset());
+            } else {
+                if (rangeEnd == docTextPosition) {
+                    resultRange.setEnd(textRunRange.startContainer(), textRunRange.startOffset());
+                } else {
+                    resultRange.setEnd(textRunRange.endContainer(), textRunRange.endOffset());
+                }
+            }
             if ( !(rangeLength == 0 && rangeEnd == docTextPosition + len) ) {
-                resultRange.setEnd(it.m_node, rangeEnd - docTextPosition);
                 break;
             }
         }

@@ -1,3 +1,15 @@
+2005-03-23  Darin Adler   <darin@apple.com>
+
+	Further fix for 4053515.
+
+	Covered cases where text position doesn't lie inside a
+	text node.	
+
+        Reviewed by Richard.
+
+        * khtml/editing/visible_text.cpp:
+        (khtml::TextIterator::setRangeFromLocationAndLength):
+
 2005-03-23  Richard Williamson   <rjw@apple.com>
 
 	Fixed <rdar://problem/4053515> REGRESSION (Mail): Kotoeri input method reconversion does not work in WebViews
