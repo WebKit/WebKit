@@ -2,6 +2,17 @@
 
         Reviewed by John.
 
+	- fixed null view and hang part of 3153612 -- REGRESSION: null view and hang loading cycleworld.com
+
+        * khtml/xml/xml_tokenizer.cpp: (XMLHandler::XMLHandler): Initialize the line number
+        to 0 so we can detect the case where we didn't get a fatal error callback.
+        (XMLTokenizer::finish): Construct an error page without an XML excerpt if the line
+        number if 0.
+
+2003-01-24  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
 	- fixed 3140945 -- crash viewing www.nextthing.org
 
         * khtml/rendering/render_container.cpp: (RenderContainer::removeLeftoverAnonymousBoxes):

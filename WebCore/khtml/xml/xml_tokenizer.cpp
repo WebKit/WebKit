@@ -41,6 +41,7 @@ using namespace DOM;
 using namespace khtml;
 
 XMLHandler::XMLHandler(DocumentPtr *_doc, KHTMLView *_view)
+    : errorLine(0)
 {
     m_doc = _doc;
     if ( m_doc ) m_doc->ref();
@@ -341,17 +342,18 @@ void XMLTokenizer::finish()
         while (m_doc->document()->hasChildNodes())
             static_cast<NodeImpl*>(m_doc->document())->removeChild(m_doc->document()->firstChild(),exceptioncode);
 
-        QTextIStream stream(&m_xmlCode);
-        unsigned long lineno;
-        for (lineno = 0; lineno < handler.errorLine-1; lineno++)
-          stream.readLine();
-        QString line = stream.readLine();
-
-        unsigned long colno;
-        QString errorLocPtr = "";
-        for (colno = 0; colno < handler.errorCol-1; colno++)
-            errorLocPtr += " ";
-        errorLocPtr += "^";
+        QString line;
+        QString errorLocPtr;
+        if (handler.errorLine) {
+            QTextIStream stream(&m_xmlCode);
+            for (unsigned long lineno = 0; lineno < handler.errorLine-1; lineno++)
+                stream.readLine();
+            line = stream.readLine();
+    
+            for (unsigned long colno = 0; colno < handler.errorCol-1; colno++)
+                errorLocPtr += " ";
+            errorLocPtr += "^";
+        }
 
         // Create elements for display
         DocumentImpl *doc = m_doc->document();
@@ -365,10 +367,16 @@ void XMLTokenizer::finish()
         NodeImpl       *headingText = doc->createTextNode(i18n("XML parsing error"));
 #endif
         NodeImpl     *errorText = doc->createTextNode(handler.errorProtocol());
-        NodeImpl     *hr = doc->createElementNS(XHTML_NAMESPACE,"hr");
-        NodeImpl     *pre = doc->createElementNS(XHTML_NAMESPACE,"pre");
-        NodeImpl       *lineText = doc->createTextNode(line+"\n");
-        NodeImpl       *errorLocText = doc->createTextNode(errorLocPtr);
+        NodeImpl     *hr = 0;
+        NodeImpl     *pre = 0;
+        NodeImpl       *lineText = 0;
+        NodeImpl       *errorLocText = 0;
+        if (!line.isNull()) {
+                      hr = doc->createElementNS(XHTML_NAMESPACE,"hr");
+                      pre = doc->createElementNS(XHTML_NAMESPACE,"pre");
+                        lineText = doc->createTextNode(line+"\n");
+                        errorLocText = doc->createTextNode(errorLocPtr);
+        }
 
         // Construct DOM tree. We ignore exceptions as we assume they will not be thrown here (due to the
         // fact we are using a known tag set)
@@ -377,15 +385,19 @@ void XMLTokenizer::finish()
         body->appendChild(h1,exceptioncode);
         h1->appendChild(headingText,exceptioncode);
         body->appendChild(errorText,exceptioncode);
-        body->appendChild(hr,exceptioncode);
-        body->appendChild(pre,exceptioncode);
-        pre->appendChild(lineText,exceptioncode);
-        pre->appendChild(errorLocText,exceptioncode);
+        if (hr)
+            body->appendChild(hr,exceptioncode);
+        if (pre) {
+            body->appendChild(pre,exceptioncode);
+            pre->appendChild(lineText,exceptioncode);
+            pre->appendChild(errorLocText,exceptioncode);
+        }
 
         // Close the renderers so that they update their display correctly
         // ### this should not be necessary, but requires changes in the rendering code...
         h1->closeRenderer();
-        pre->closeRenderer();
+        if (pre)
+            pre->closeRenderer();
         body->closeRenderer();
 
         m_doc->document()->recalcStyle( NodeImpl::Inherit );
