@@ -253,11 +253,8 @@
     [[self nextResponder] keyUp:event];
 }
 
-- (NSMenu *)menuForEvent:(NSEvent *)theEvent
-{
-    // Calling super causes unselected clicked text to be selected.
-    [super menuForEvent:theEvent];
-    
+- (NSMenu *)menuForEvent:(NSEvent *)event
+{    
     WebFrameView *webFrameView = [self _web_parentWebFrameView];
     WebView *webView = [webFrameView _webView];
     WebFrame *frame = [webFrameView webFrame];
@@ -265,9 +262,11 @@
     ASSERT(frame);
     ASSERT(webView);
 
-    BOOL hasSelection = ([self selectedRange].location != NSNotFound && [self selectedRange].length > 0);
+    NSPoint point = [[event window] convertBaseToScreen:[event locationInWindow]];
+    BOOL isPointSelected = NSLocationInRange([self characterIndexForPoint:point], [self selectedRange]);
+    
     NSDictionary *element = [NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithBool:hasSelection], WebElementIsSelectedKey,
+        [NSNumber numberWithBool:isPointSelected], WebElementIsSelectedKey,
         frame, WebElementFrameKey, nil];
 
     return [webView _menuForElement:element];

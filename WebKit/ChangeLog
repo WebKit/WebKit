@@ -1,3 +1,12 @@
+2003-11-07  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3240778>: add "save" menu item to contextual menu for text pages
+
+        Reviewed by darin.
+
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView menuForEvent:]): Made WebTextView's context menu behavior like WebHTMLView's context menu behavior with regards to selection. If the control-click was on a selection, show menu options for the selection like copy. If it was not on a selection, show menu options such as save and print. Don't select anything when control-clicking.
+
 2003-11-08  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3478022>: assertion failure while loading WMP content
