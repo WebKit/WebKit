@@ -1,3 +1,14 @@
+2002-12-16  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3128843, horked layout on weather.com.  Ensure that
+	overflow: hidden elements bounds-check their minwidth and maxwidth
+	values to ensure that you don't grow the clipped element.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::calcWidth):
+
 2002-12-16  Trey Matteson  <trey@apple.com>
 
 	3129175 - we're doing needless GETs when using b/f cache

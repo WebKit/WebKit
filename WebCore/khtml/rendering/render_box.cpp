@@ -572,6 +572,12 @@ void RenderBox::calcWidth()
         }
     }
 
+    // Scrolling marquees like to use this trick:
+    // <div style="overflow:hidden; width:300px"><nobr>.....[lots of text].....</nobr></div>
+    // We need to sanity-check our m_minWidth, and not let it exceed our clipped boundary. -dwh
+    if (style()->overflow() == OHIDDEN && m_minWidth > m_width)
+        m_minWidth = m_width;
+      
 #ifdef DEBUG_LAYOUT
     kdDebug( 6040 ) << "RenderBox::calcWidth(): m_width=" << m_width << " containingBlockWidth()=" << containingBlockWidth() << endl;
     kdDebug( 6040 ) << "m_marginLeft=" << m_marginLeft << " m_marginRight=" << m_marginRight << endl;
