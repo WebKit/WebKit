@@ -1,3 +1,21 @@
+2003-08-13  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Darin
+
+        Fix for this bug:
+
+        <rdar://problem/3374487>: URLs with UTF-8 escape sequences can't be accessed         
+	when typed in the Safari location bar
+
+        * Misc.subproj/WebNSPasteboardExtras.m:
+        (-[NSPasteboard _web_bestURL]): Call _web_URLWithUserTypedString: to make a
+	URL from this type of string.
+        * Misc.subproj/WebNSURLExtras.h:
+        * Misc.subproj/WebNSURLExtras.m:
+        (hexDigit): Added.
+        (+[NSURL _web_URLWithUserTypedString:]): Added. Creates a URL from a string
+	that is typed in a user, for example, in the Safari location bar.
+
 2003-08-12  John Sullivan  <sullivan@apple.com>
 
 	- fixed 3369505 -- leaks of NSCFTimer after running through the 

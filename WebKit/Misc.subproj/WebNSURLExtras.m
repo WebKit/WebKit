@@ -22,7 +22,59 @@ static inline void ReleaseIfNotNULL(CFTypeRef object)
     }
 }
 
+static char hexDigit(int i) {
+    if (i < 0 || i > 16) {
+        ERROR("illegal hex value");
+        return '0';
+    }
+    int h = i;
+    if (h >= 10) {
+        h = h - 10 + 'a'; 
+    }
+    else {
+        h += '0';
+    }
+    return h;
+}
+
 @implementation NSURL (WebNSURLExtras)
+
++ (NSURL *)_web_URLWithUserTypedString:(NSString *)string
+{
+    if (string == nil) {
+        return nil;
+    }
+    string = [string _web_stringByTrimmingWhitespace];
+    NSData *userTypedData = [string dataUsingEncoding:NSUTF8StringEncoding];
+    ASSERT(userTypedData);
+        
+    const UInt8 *inBytes = [userTypedData bytes];
+    int inLength = [userTypedData length];
+    if (inLength == 0) {
+        return [NSURL URLWithString:@""];
+    }
+    
+    char *outBytes = malloc(inLength * 3); // large enough to %-escape every character
+    char *p = outBytes;
+    int outLength = 0;
+    int i;
+    for (i = 0; i < inLength; i++) {
+        UInt8 c = inBytes[i];
+        if (c <= 0x20 || c >= 0x7f) {
+            *p++ = '%';
+            *p++ = hexDigit(c >> 4);
+            *p++ = hexDigit(c & 0xf);
+            outLength += 3;
+        }
+        else {
+            *p++ = c;
+            outLength++;
+        }
+    }
+ 
+    NSData *data = [NSData dataWithBytesNoCopy:outBytes length:outLength]; // adopts outBytes
+    return [self _web_URLWithData:data relativeToURL:nil];
+}
 
 + (NSURL *)_web_URLWithDataAsString:(NSString *)string
 {
