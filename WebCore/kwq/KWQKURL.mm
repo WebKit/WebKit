@@ -1015,26 +1015,40 @@ void KURL::parse(const char *url, const QString *originalString)
 	
     int pathStart = portEnd;
     int pathEnd = pathStart;
-    while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
-        pathEnd++;
-    }
+    int queryStart;
+    int queryEnd;
+    int fragmentStart;
+    int fragmentEnd;
 
-    int queryStart = pathEnd;
-    int queryEnd = queryStart;
-    if (url[queryStart] == '?') {
-        while (url[queryEnd] != '\0' && url[queryEnd] != '#') {
-            queryEnd++;
+    if (!hierarchical) {
+        while (url[pathEnd] != '\0') {
+            pathEnd++;
         }
+    	queryStart = queryEnd = pathEnd;
+    	fragmentStart = fragmentEnd = pathEnd;
     }
-
-    int fragmentStart = queryEnd;
-    int fragmentEnd = fragmentStart;
-    if (url[fragmentStart] == '#') {
-	fragmentStart++;
-	fragmentEnd = fragmentStart;
-	while(url[fragmentEnd] != '\0') {
-	    fragmentEnd++;
-	}
+    else {
+        while (url[pathEnd] != '\0' && url[pathEnd] != '?' && url[pathEnd] != '#') {
+            pathEnd++;
+        }
+    
+        queryStart = pathEnd;
+        queryEnd = queryStart;
+        if (url[queryStart] == '?') {
+            while (url[queryEnd] != '\0' && url[queryEnd] != '#') {
+                queryEnd++;
+            }
+        }
+        
+        fragmentStart = queryEnd;
+        fragmentEnd = fragmentStart;
+        if (url[fragmentStart] == '#') {
+            fragmentStart++;
+            fragmentEnd = fragmentStart;
+            while(url[fragmentEnd] != '\0') {
+                fragmentEnd++;
+            }
+        }
     }
 
     // assemble it all, remembering the real ranges
@@ -1164,7 +1178,7 @@ void KURL::parse(const char *url, const QString *originalString)
        
     // add path, escaping bad characters
     
-    if (strstr(url, "/.") || strstr(url, "..")) {
+    if (hierarchical && (strstr(url, "/.") || strstr(url, ".."))) {
         char static_path_buffer[4096];
         char *path_buffer;
         uint pathBufferLength = pathEnd - pathStart + 1;

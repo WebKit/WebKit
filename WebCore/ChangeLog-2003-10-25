@@ -1,5 +1,23 @@
 2003-08-07  Ken Kocienda  <kocienda@apple.com>
 
+       Reviewed by Darin
+
+       Fix for this bug:
+
+       <rdar://problem/3367434>: newly-added KURL assertion failing reproducibly for JavaScript URL (www.thai.com)
+
+       The assertion is correct. The issue was in calling the function
+       with bad input. Non-hierarchical URLs should not have their "path"
+       elements submitted to a function that will replace dots.
+
+       The fix is to avoid calling this function with such non-hierarchical
+       URLs.
+
+         * kwq/KWQKURL.mm:
+         (KURL::parse)
+
+2003-08-07  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by Maciej
 
 	There was a bug in this code that caused a relative URL that was
