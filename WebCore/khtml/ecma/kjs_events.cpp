@@ -940,8 +940,6 @@ static Value stringOrUndefined(const DOM::DOMString &str)
     }
 }
 
-// FIXME lookups of dropEffect and effectAllowed should fail if !clipboard->isForDragging
-
 Value Clipboard::tryGet(ExecState *exec, const Identifier &propertyName) const
 {
     return DOMObjectLookupGetValue<Clipboard,DOMObject>(exec, propertyName, &ClipboardTable, this);
@@ -951,8 +949,10 @@ Value Clipboard::getValueProperty(ExecState *exec, int token) const
 {
     switch (token) {
         case DropEffect:
+            assert(clipboard->isForDragging() || clipboard->dropEffect().isNull());
             return stringOrUndefined(clipboard->dropEffect());
         case EffectAllowed:
+            assert(clipboard->isForDragging() || clipboard->effectAllowed().isNull());
             return stringOrUndefined(clipboard->effectAllowed());
         case Types:
         {
@@ -982,10 +982,14 @@ void Clipboard::putValue(ExecState *exec, int token, const Value& value, int /*a
 {
     switch (token) {
         case DropEffect:
-            clipboard->setDropEffect(value.toString(exec).string());
+            // can never set this when not for dragging, thus getting always returns NULL string
+            if (clipboard->isForDragging())
+                clipboard->setDropEffect(value.toString(exec).string());
             break;
         case EffectAllowed:
-            clipboard->setEffectAllowed(value.toString(exec).string());
+            // can never set this when not for dragging, thus getting always returns NULL string
+            if (clipboard->isForDragging())
+                clipboard->setEffectAllowed(value.toString(exec).string());
             break;
         default:
             kdWarning() << "Clipboard::putValue unhandled token " << token << endl;
@@ -1040,6 +1044,10 @@ Value ClipboardProtoFunc::tryCall(ExecState *exec, Object &thisObj, const List &
             }
         case Clipboard::SetDragImage:
         {
+            if (!cb->clipboard->isForDragging()) {
+                return Undefined();
+            }
+
             if (args.size() != 3) {
                 Object err = Error::create(exec, SyntaxError,"setDragImage: Invalid number of arguments");
                 exec->setException(err);

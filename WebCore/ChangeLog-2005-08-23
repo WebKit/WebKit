@@ -1,5 +1,21 @@
 2004-06-29  Trey Matteson  <trey@apple.com>
 
+	Need to tighten up JS error checking for requesting drag props
+	in the wrong cases.
+
+        Reviewed by John.
+
+        * khtml/ecma/kjs_events.cpp:
+        (Clipboard::getValueProperty):  Assert if someone somehow set
+	dropEffect or effectAllowed and it's a copy/paste clipboard
+	instead of a dragging clipboard.
+        (Clipboard::putValue):  Don't let anyone set dropEffect or
+	effectAllowed on a copy/paste clipboard.
+        (ClipboardProtoFunc::tryCall):  Disallow setting dragImage on
+	a copy/paste clipboard.
+
+2004-06-29  Trey Matteson  <trey@apple.com>
+
 	DHTML dragging - source should have access to the operation chosen
 	by the destination.
 
