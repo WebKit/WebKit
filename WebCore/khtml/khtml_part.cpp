@@ -1951,11 +1951,14 @@ bool KHTMLPart::gotoAnchor( const QString &name )
   if (!d->m_doc)
     return false;
 
-  HTMLCollectionImpl *anchors =
-      new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
-  anchors->ref();
-  NodeImpl *n = anchors->namedItem(name, !d->m_doc->inQuirksMode());
-  anchors->deref();
+  NodeImpl *n = d->m_doc->getElementById(name);
+  if (!n) {
+    HTMLCollectionImpl *anchors =
+        new HTMLCollectionImpl( d->m_doc, HTMLCollectionImpl::DOC_ANCHORS);
+    anchors->ref();
+    n = anchors->namedItem(name, !d->m_doc->inQuirksMode());
+    anchors->deref();
+  }
 
   d->m_doc->setCSSTarget(n); // Setting to null will clear the current target.
   

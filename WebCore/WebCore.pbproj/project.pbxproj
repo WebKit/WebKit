@@ -1048,6 +1048,12 @@
 			settings = {
 			};
 		};
+		934E43780414294A008635CE = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			path = parser.y;
+			refType = 4;
+		};
 		9377FB55032C235C008635CE = {
 			fileEncoding = 30;
 			isa = PBXFileReference;
@@ -2045,6 +2051,7 @@
 			children = (
 				BC8F61850405949900A80004,
 				BC8F61860405949900A80004,
+				934E43780414294A008635CE,
 				BC8F61870405949900A80004,
 				BC8F618B040594BA00A80004,
 				BC8F618C040594BA00A80004,

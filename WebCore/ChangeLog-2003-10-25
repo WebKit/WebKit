@@ -1,3 +1,19 @@
+2003-03-03  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dave.
+
+        - fixed 3187518 -- REGRESSION: w3c css sample page crashes in cssyyparse
+
+        * khtml/css/parser.y: (selector): Added code to handle the case where simple_selector is 0.
+        * khtml/css/parser.cpp: Regenerated.
+        
+        - fixed regression I introduced earlier today where ID anchors wouldn't work
+        
+        * khtml/khtml_part.cpp: (KHTMLPart::gotoAnchor):
+        Check by ID first explicitly before using DOC_ANCHORS.
+
+        * WebCore.pbproj/project.pbxproj: Add parser.y to the project to make it easier to open it.
+
 2003-03-03  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3185852, crash when dynamically inserting rules because
