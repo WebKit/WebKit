@@ -241,7 +241,7 @@ void RenderFlow::dirtyLinesFromChangedChild(RenderObject* child, bool adding)
             break;
     }
     if (!box)
-        box = lastLineBox()->root();
+        box = firstLineBox()->root();
 
     // If we found a line box, then dirty it.
     if (box) {

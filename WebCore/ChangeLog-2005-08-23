@@ -1,3 +1,13 @@
+2004-07-23  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3735084 and 3737209, when you can find no line boxes in your previous sibling, the line box to dirty
+	should be the *first* line box and not the last.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLinesFromChangedChild):
+
 2004-07-23  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
