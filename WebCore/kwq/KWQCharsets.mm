@@ -36,6 +36,7 @@ struct CharsetEntry {
 #define kCFStringEncodingBig5_DOSVariant (kTextEncodingBig5 | (kBig5_DOSVariant << 16))
 #define kCFStringEncodingEUC_CN_DOSVariant (kTextEncodingEUC_CN | (kEUC_CN_DOSVariant << 16))
 #define kCFStringEncodingEUC_KR_DOSVariant (kTextEncodingEUC_KR | (kEUC_KR_DOSVariant << 16))
+#define kCFStringEncodingISOLatin10 kTextEncodingISOLatin10
 #define kCFStringEncodingKOI8_U kTextEncodingKOI8_U
 #define kCFStringEncodingShiftJIS_DOSVariant (kTextEncodingShiftJIS | (kShiftJIS_DOSVariant << 16))
 

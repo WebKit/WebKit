@@ -75,6 +75,7 @@ ISOLatinThai: ISO-8859-11
 ISOLatin7: ISO-8859-13
 ISOLatin8: ISO-8859-14
 ISOLatin9: ISO-8859-15, csisolatin9, l9
+ISOLatin10: ISO-8859-16
 
 DOSLatinUS: cp437
 DOSGreek: cp737, ibm737

@@ -1,3 +1,14 @@
+2003-08-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed 3248069 -- Safari does not support ISO Latin 10 (ISO-8859-16, romanian) coding.
+
+        * kwq/mac-encodings.txt: Added ISO-8859-16, which maps to ISO Latin-10.
+        * kwq/KWQCharsetData.c: Regenerated.
+        * kwq/KWQCharsets.mm: Add definition of kCFStringEncodingISOLatin10, since this encoding
+        is currently only in TextCommon.h, not in CFStringEncodingExt.h.
+
 2003-08-20  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.
