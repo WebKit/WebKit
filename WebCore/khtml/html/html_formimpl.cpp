@@ -709,8 +709,6 @@ template<class T> static void removeFromVector(QPtrVector<T> &vec, T *item)
     int pos = vec.findRef(item);
     int count = vec.count();
 
-    printf("item: 0x%x; pos: %d; vec[0]: 0x%x\n", (unsigned)item, pos, count ? (unsigned)vec[0] : 0);
-
     if (pos < 0)
         return;
 
