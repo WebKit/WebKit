@@ -48,7 +48,7 @@ struct URLArgs {
     int xOffset;
     int yOffset;
 
-    URLArgs() : xOffset(0), yOffset(0), m_doPost(false) { }
+    URLArgs() : reload(false), xOffset(0), yOffset(0), m_doPost(false) { }
     
     QString contentType() const { return m_contentType; }
     void setContentType(const QString &t) { m_contentType = t; }
