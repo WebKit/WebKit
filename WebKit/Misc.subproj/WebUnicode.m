@@ -219,7 +219,6 @@ static inline bool format(QChar::Decomposition tag, QString & str,
 	return (!right && !left);
     }
 } // format()
-#endif
 
 /*
   QString::compose() and visual() were developed by Gordon Tisher
