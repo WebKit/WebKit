@@ -1655,19 +1655,21 @@ static CFAbsoluteTime _timeOfLastCompletedLoad;
     NSDictionary *action = [self _actionInformationForLoadType:WebFrameLoadTypeStandard isFormSubmission:YES event:event originalURL:URL];
     WebFormState *formState = [[WebFormState alloc] initWithForm:form values:values];
 
-    WebFrame *targetFrame = self;
-
     if (target != nil) {
 	WebFrame *targetFrame = [self findFrameNamed:target];
-	if (targetFrame == nil) {
-	    [self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
-	    [request release];
-	    [formState release];
+
+	if (targetFrame != nil) {
+	    [targetFrame _postWithURL:URL referrer:referrer target:nil data:data contentType:contentType triggeringEvent:event form:form formValues:values];
 	    return;
 	}
+
+	[self _checkNewWindowPolicyForRequest:request action:action frameName:target formState:formState andCall:self withSelector:@selector(_continueLoadRequestAfterNewWindowPolicy:frameName:formState:)];
+	[request release];
+	[formState release];
+	return;
     }
 
-    [targetFrame _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
+    [self _loadRequest:request triggeringAction:action loadType:WebFrameLoadTypeStandard formState:formState];
 
     [request release];
     [formState release];

@@ -1,3 +1,13 @@
+2003-03-10  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Dave.
+
+	- fixed 3194221 - REGRESSION: search results loaded in wrong frame at directory.apple.com
+
+        * WebView.subproj/WebFramePrivate.m:
+        (_postWithURL:referrer:target:data:contentType:triggeringEvent:form:formValues:):
+	Deliver targetted form posts correctly.
+	
 2003-03-10  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.
