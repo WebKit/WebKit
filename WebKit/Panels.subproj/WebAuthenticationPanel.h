@@ -5,7 +5,7 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <WebFoundation/WebAuthenticationManager.h>
+#import <WebFoundation/NSURLCredentialStorage.h>
 
 @interface WebAuthenticationPanel : NSObject
 {

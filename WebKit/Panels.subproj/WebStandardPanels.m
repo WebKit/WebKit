@@ -12,7 +12,7 @@
 #import <WebKit/WebStandardPanelsPrivate.h>
 
 #import <WebFoundation/WebAssertions.h>
-#import <WebFoundation/WebAuthenticationManager.h>
+#import <WebFoundation/NSURLCredentialStorage.h>
 
 #import <Carbon/Carbon.h>
 
