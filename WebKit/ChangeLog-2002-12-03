@@ -1,3 +1,20 @@
+2002-07-02  Darin Adler  <darin@apple.com>
+
+	- fixed 2975790 - Ads on salon.com scribble all over page
+
+        * Plugins.subproj/IFPluginView.mm:
+        (-[IFPluginView setUpWindowAndPort]): New, sets up the window, but does not
+	call NPP_SetWindow again.
+        (-[IFPluginView setWindow]): Call [setUpWindowAndPort] then call NPP_SetWindow.
+        (-[IFPluginView start]): Register for changes to the bounds or frame of any of
+	our superviews, not just one particular one. Also, don't bother to register for
+	notification when the window resizes. Finally, use the constants for the names
+	of the notifications, not literal strings.
+        (-[IFPluginView layout]): Just use [setUpWindowAndPort]; no need for a new call
+	to NPP_SetWindow.
+        (-[IFPluginView viewHasMoved:]): Just use [setUpWindowAndPort]; no need for a new
+	call to NPP_SetWindow.
+
 2002-07-01  Maciej Stachowiak  <mjs@apple.com>
 
         * WebView.subproj/IFWebView.mm:

@@ -352,41 +352,41 @@ static char *newCString(NSString *string)
     [super dealloc];
 }
 
-- (void) setWindow
-{    
+- (void)setUpWindowAndPort
+{
     CGrafPtr port = GetWindowPort([[self window] _windowRef]);
     NSRect windowFrame = [[self window] frame];
     NSRect contentViewFrame = [[[self window] contentView] frame];
-    NSRect frameInWindow = [self convertRect:[self bounds] toView:nil];
+    NSRect boundsInWindow = [self convertRect:[self bounds] toView:nil];
     NSRect visibleRectInWindow = [self convertRect:[self visibleRect] toView:nil];
     float windowContentFrameHeight, toolbarHeight;
-    NPError npErr;
         
-    if([mime isEqualToString:@"application/x-java-applet"]){
+    if ([mime isEqualToString:@"application/x-java-applet"]) {
         // The java plug-in assumes that the port is positioned 22 pixels down from the top-left corner of the window.
         // This is incorrect if the window has a toolbar. Here's the workaround. 2973586
         toolbarHeight = windowFrame.size.height - contentViewFrame.size.height - contentViewFrame.origin.y - 22;
         windowContentFrameHeight = contentViewFrame.size.height + toolbarHeight;
-    }else{
+    } else {
         windowContentFrameHeight = contentViewFrame.size.height;
     }
     
     // flip Y coordinates
-    frameInWindow.origin.y =  windowContentFrameHeight - frameInWindow.origin.y - frameInWindow.size.height; 
-    visibleRectInWindow.origin.y =  windowContentFrameHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
+    boundsInWindow.origin.y = windowContentFrameHeight - boundsInWindow.origin.y - boundsInWindow.size.height; 
+    visibleRectInWindow.origin.y = windowContentFrameHeight - visibleRectInWindow.origin.y - visibleRectInWindow.size.height;
     
     nPort.port = port;
     
     // FIXME: Are these values correct? Without them, Flash freaks.
-    nPort.portx = -(int32)frameInWindow.origin.x;
-    nPort.porty = -(int32)frameInWindow.origin.y;   
+    nPort.portx = -(int32)boundsInWindow.origin.x;
+    nPort.porty = -(int32)boundsInWindow.origin.y;
+    
     window.window = &nPort;
     
-    window.x = (int32)frameInWindow.origin.x; 
-    window.y = (int32)frameInWindow.origin.y;
+    window.x = (int32)boundsInWindow.origin.x; 
+    window.y = (int32)boundsInWindow.origin.y;
 
-    window.width = (uint32)frameInWindow.size.width;
-    window.height = (uint32)frameInWindow.size.height;
+    window.width = (uint32)boundsInWindow.size.width;
+    window.height = (uint32)boundsInWindow.size.height;
 
     window.clipRect.top = (uint16)visibleRectInWindow.origin.y;
     window.clipRect.left = (uint16)visibleRectInWindow.origin.x;
@@ -394,14 +394,18 @@ static char *newCString(NSString *string)
     window.clipRect.right = (uint16)(visibleRectInWindow.origin.x + visibleRectInWindow.size.width);
     
     window.type = NPWindowTypeWindow;
-    
-    npErr = NPP_SetWindow(instance, &window);
+}
+
+- (void) setWindow
+{
+    [self setUpWindowAndPort];
+
+    NPError npErr = NPP_SetWindow(instance, &window);
     WEBKITDEBUGLEVEL(WEBKIT_LOG_PLUGINS, "NPP_SetWindow: %d, port=0x%08x\n", npErr, (int)nPort.port);
 
-    // Draw test    
 #if 0
+    // Draw test    
     Rect portRect;
-
     GetPortBounds(port, &portRect);
     SetPort(port);
     MoveTo(0,0);
@@ -431,23 +435,25 @@ static char *newCString(NSString *string)
     
     theWindow = [self window];
     notificationCenter = [NSNotificationCenter defaultCenter];
-    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
-        name:@"NSViewBoundsDidChangeNotification" object:[self _IF_superviewWithName:@"NSClipView"]];
-    [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
-        name:@"NSWindowDidResizeNotification" object:theWindow];
+    for (NSView *view = self; view; view = [view superview]) {
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
+            name:NSViewFrameDidChangeNotification object:view];
+        [notificationCenter addObserver:self selector:@selector(viewHasMoved:) 
+            name:NSViewBoundsDidChangeNotification object:view];
+    }
     [notificationCenter addObserver:self selector:@selector(windowWillClose:) 
-        name:@"NSWindowWillCloseNotification" object:theWindow];
+        name:NSWindowWillCloseNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowBecameKey:) 
-        name:@"NSWindowDidBecomeKeyNotification" object:theWindow];
+        name:NSWindowDidBecomeKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(windowResignedKey:) 
-        name:@"NSWindowDidResignKeyNotification" object:theWindow];
+        name:NSWindowDidResignKeyNotification object:theWindow];
     [notificationCenter addObserver:self selector:@selector(defaultsHaveChanged:) 
-        name:@"NSUserDefaultsDidChangeNotification" object:nil];
+        name:NSUserDefaultsDidChangeNotification object:nil];
     
     if ([theWindow isKeyWindow])
         [self sendActivateEvent:YES];
     
-    id webView = [self _IF_superviewWithName:@"IFWebView"];
+    IFWebView *webView = [self _IF_superviewWithName:@"IFWebView"];
     webController = [[webView controller] retain];
     webFrame = 	    [[webController frameForView:webView] retain];
     webDataSource = [[webFrame dataSource] retain];
@@ -475,7 +481,7 @@ static char *newCString(NSString *string)
     isStarted = NO;
 
     [self removeTrackingRect:trackingTag];
-            
+    
     // Stop any active streams
     [streams makeObjectsPerformSelector:@selector(stop)];
     
@@ -574,7 +580,7 @@ static char *newCString(NSString *string)
     
     [self setFrame:NSMakeRect(0, 0, superFrame.size.width, superFrame.size.height)];
     [self setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
-    [self setWindow];
+    [self setUpWindowAndPort];
 }
 
 
@@ -603,10 +609,9 @@ static char *newCString(NSString *string)
 
 #pragma mark NOTIFICATIONS
 
--(void) viewHasMoved:(NSNotification *)notification
+-(void)viewHasMoved:(NSNotification *)notification
 {
-    [self sendUpdateEvent]; 
-    [self setWindow];
+    [self setUpWindowAndPort];
 
     // reset the tracking rect
     [self removeTrackingRect:trackingTag];
