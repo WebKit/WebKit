@@ -27,6 +27,7 @@
 
 #import "KWQExceptions.h"
 #import "KWQLogging.h"
+#import "KWQNSViewExtras.h"
 #import "WebCoreFrameView.h"
 
 /*
@@ -441,6 +442,13 @@ void QScrollView::setStaticBackground(bool b)
 
 void QScrollView::resizeEvent(QResizeEvent *)
 {
+}
+
+void QScrollView::setContentsPosRecursive(int x, int y)
+{
+    KWQ_BLOCK_EXCEPTIONS;
+    [getDocumentView() _KWQ_scrollPointRecursive:NSMakePoint(x, y)];
+    KWQ_UNBLOCK_EXCEPTIONS;
 }
 
 void QScrollView::ensureVisible(int x, int y)

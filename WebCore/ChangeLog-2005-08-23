@@ -1,3 +1,29 @@
+2003-12-10  John Sullivan  <sullivan@apple.com>
+
+        - WebCore part of fix for:
+        <rdar://problem/3505231>: REGRESSION (100-114): Some sites autoscroll to bottom of page when loading
+
+        Reviewed by Darin.
+
+        * kwq/KWQNSViewExtras.h:
+        * kwq/KWQNSViewExtras.m:
+        (-[NSView _KWQ_scrollPointRecursive:]):
+        (-[NSView _KWQ_scrollPointRecursive:inView:]):
+        new methods, similar to existing scrollRect methods
+        except that the preferred position for the point is
+        the top-left corner rather than centered in the visible area
+        
+        * kwq/KWQScrollView.h:
+        * kwq/KWQScrollView.mm:
+        (QScrollView::setContentsPosRecursive):
+        new method, calls _KWQ_scrollPointRecursive:
+
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::gotoAnchor):
+        call setContentsPosRecursive instead of setContentsPos; also remove
+        the 50 pixel offset that upset Hyatt so.
+        
+
 2003-12-10  Chris Blumenberg  <cblu@apple.com>
 
         * kwq/KWQKSSLKeyGen.mm:

@@ -42,6 +42,18 @@
     [[self superview] _KWQ_scrollRectToVisible:rect inView:view];
 }
 
+- (void)_KWQ_scrollPointRecursive:(NSPoint)p
+{
+    [self _KWQ_scrollPointRecursive:p inView:self];
+}
+
+- (void)_KWQ_scrollPointRecursive:(NSPoint)p inView:(NSView *)view
+{
+    p = [self convertPoint: p fromView:view];
+    [self scrollPoint: p];
+    [[self superview] _KWQ_scrollPointRecursive:p inView:self];
+}
+
 @end
 
 @implementation NSClipView (KWQNSViewExtras)
@@ -77,5 +89,6 @@
 
     [super _KWQ_scrollRectToVisible:rect inView:view];
 }
+
 
 @end

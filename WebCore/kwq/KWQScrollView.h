@@ -50,6 +50,7 @@ public:
     void scrollBy(int dx, int dy);
 
     void setContentsPos(int x, int y);
+    void setContentsPosRecursive(int,int);
 
     virtual void setVScrollBarMode(ScrollBarMode vMode);
     virtual void setHScrollBarMode(ScrollBarMode hMode);
@@ -90,7 +91,7 @@ public:
 
     void ensureVisible(int,int);
     void ensureVisible(int,int,int,int);
-    
+        
     NSView *getDocumentView() const;
 };
 

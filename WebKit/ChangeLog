@@ -1,3 +1,18 @@
+2003-12-10  John Sullivan  <sullivan@apple.com>
+
+        - WebKit part of fix for:
+        <rdar://problem/3505231>: REGRESSION (100-114): Some sites autoscroll to bottom of page when loading
+
+        Reviewed by Darin
+
+        * Misc.subproj/WebNSViewExtras.h:
+        * Misc.subproj/WebNSViewExtras.m:
+        removed _web_scrollPointToVisible:fromView:
+        
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView scrollPoint:]):
+        removed call to _web_scrollPointToVisible:fromView:
+
 2003-12-10  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3505537>: certificates downloaded from Verisign are multipart/mixed, must be parsed out

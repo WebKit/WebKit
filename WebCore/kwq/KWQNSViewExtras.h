@@ -31,4 +31,6 @@
 - (void)_KWQ_scrollRectToVisible:(NSRect)rect;
 - (void)_KWQ_scrollRectToVisible:(NSRect)rect inView:(NSView *)view;
 
+- (void)_KWQ_scrollPointRecursive:(NSPoint)p;
+- (void)_KWQ_scrollPointRecursive:(NSPoint)p inView:(NSView *)view;
 @end

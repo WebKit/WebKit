@@ -343,7 +343,6 @@ static BOOL forceRealHitTest = NO;
     }
     
     [super scrollPoint:point];
-    [[self superview] _web_scrollPointToVisible:point fromView: self];
 }
 
 - (NSView *)hitTest:(NSPoint)point
