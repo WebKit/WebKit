@@ -1323,6 +1323,11 @@ ElementImpl *NodeImpl::enclosingInlineElement() const
         p = n->parentNode();
         if (!p || p->isBlockFlow() || p->id() == ID_BODY)
             return static_cast<ElementImpl *>(n);
+        // Also stop if any previous sibling is a block
+        for (NodeImpl *sibling = n->previousSibling(); sibling; sibling = sibling->previousSibling()) {
+            if (sibling->isBlockFlow())
+                return static_cast<ElementImpl *>(n);
+        }
         n = p;
     }
     ASSERT_NOT_REACHED();

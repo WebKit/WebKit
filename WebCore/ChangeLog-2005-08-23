@@ -1,3 +1,17 @@
+2004-12-16  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
+
+        Fix for this bug:
+        
+        <rdar://problem/3924291> REGRESSION (Mail): Crash deleting content following a <p> element
+
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::enclosingInlineElement): Fixed problem in this function where recursive search for
+        parent that is not an inline would skip past previous siblings of nodes which were blocks. Now
+        it stops looking in this situation. This problem eventually caused the delete code to try to 
+        merge a node under a descendent.
+
 2004-12-16  Adele Amchan  <adele@apple.com>
 
         Change by Richard, reviewed by me.
