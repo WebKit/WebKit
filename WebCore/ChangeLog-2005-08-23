@@ -1,5 +1,18 @@
 2004-10-04  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+        - fixed <rdar://problem/3824393> REGRESSION (165-TOT): Crash in KHTMLParser::popOneBlock closing window (bose.com)
+
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::~KHTMLParser): Move call to setCurrent(0) after the call to freeBlock, since freeBlock doesn't
+        work well when current is 0, and there's no reason we need to reset the current block first.
+        (KHTMLParser::setCurrent): Don't ever hold a reference to the document. This prevents a situation where there
+        would be a reference cycle. In the test case from the bug above, this cycle actually happened and resulted
+        in a double-delete of the document, tokenizer, and parser.
+
+2004-10-04  Darin Adler  <darin@apple.com>
+
         Reviewed by Maciej.
 
         - fixed <rdar://problem/3825429> onclick handler called when mouse down on another element (affects Dashboard Movies widget, test case enclosed)
