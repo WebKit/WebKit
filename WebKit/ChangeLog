@@ -1,3 +1,13 @@
+2003-04-17  Richard Williamson   <rjw@apple.com>
+
+        Drop down yet one more level to avoid intialization horkage.
+        Call objc_getClass() instead of NSClassFromString().
+        
+        Reviewed by darin.
+
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (+[WebHTMLView load]):
+
 2003-04-17  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
