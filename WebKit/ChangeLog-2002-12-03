@@ -1,3 +1,15 @@
+2002-04-25  John Sullivan  <sullivan@apple.com>
+
+	Fixed 2911915 (Exception in -[IFWebView mouseMoved])
+
+	* WebView.subproj/IFWebView.mm:
+	(-[IFWebView mouseDown:]): Changed "mouseUp" to "mouseDown"
+	in exception message.
+
+	(-[IFWebView mouseMoved:]): Removed bogus event-type checking
+	that caused this method to (always?) throw an exception when
+	invoked.
+
 2002-04-24  Chris Blumenberg  <cblu@apple.com>
 
 	Renamed [IFWebDataSource frame] to [IFWebDataSource webFrame]

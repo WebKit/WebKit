@@ -422,7 +422,7 @@
         state = Qt::MidButton;
     }
     else {
-        [NSException raise:IFRuntimeError format:@"IFWebView::mouseUp: unknown button type"];
+        [NSException raise:IFRuntimeError format:@"IFWebView::mouseDown: unknown button type"];
         button = 0; state = 0; // Shutup the compiler.
     }
     NSPoint p = [event locationInWindow];
@@ -436,27 +436,9 @@
 
 - (void)mouseMoved: (NSEvent *)event
 {
-    int button, state;
-     
-    if ([event type] == NSLeftMouseDown){
-        button = Qt::LeftButton;
-        state = Qt::LeftButton;
-    }
-    else if ([event type] == NSRightMouseDown){
-        button = Qt::RightButton;
-        state = Qt::RightButton;
-    }
-    else if ([event type] == NSOtherMouseDown){
-        button = Qt::MidButton;
-        state = Qt::MidButton;
-    }
-    else {
-        [NSException raise:IFRuntimeError format:@"IFWebView::mouseUp: unknown button type"];
-        button = 0; state = 0; // Shutup the compiler.
-    }
     NSPoint p = [event locationInWindow];
     
-    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), button, state);
+    QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint((int)p.x, (int)p.y), 0, 0);
     KHTMLView *widget = _private->widget;
     if (widget != 0l) {
         widget->viewportMouseMoveEvent(kEvent);
