@@ -1,3 +1,12 @@
+2002-11-26  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: 3061174 - javascript: URLs sent by plugins don't work
+
+	For "Javascript:" URLs. 
+
+        * Plugins.subproj/WebBaseNetscapePluginView.m:
+        (-[WebBaseNetscapePluginView loadRequest:inTarget:withNotifyData:]): lowercase the scheme
+
 2002-11-26  Richard Williamson   <rjw@apple.com>
 
         More work on back/forward cache.  It's ready for
