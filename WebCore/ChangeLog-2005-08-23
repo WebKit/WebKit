@@ -1,3 +1,14 @@
+2004-06-05  Trey Matteson  <trey@apple.com>
+
+	As agreed with Hyatt and Louch, do not post incoming dragging events
+	to text nodes.
+
+        Reviewed by Maciej
+
+        * khtml/khtmlview.cpp:
+        (KHTMLView::updateDragAndDrop):  For any drag target that is a text node,
+	use its parent instead.
+
 2004-06-03  Trey Matteson  <trey@apple.com>
 
 	DHTML dragging uses the Cocoa NSDragOperation on both the source and dest ends.
