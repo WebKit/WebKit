@@ -1078,6 +1078,20 @@ static BOOL loggedObjectCacheSize = NO;
     return [[[_frame webView] backForwardList] backListCount] + 1;
 }
 
+- (BOOL)canGoBackOrForward:(int)distance
+{
+    if (distance == 0)
+        return TRUE;
+
+    if (distance > 0 && distance <= [[[_frame webView] backForwardList] forwardListCount])
+        return TRUE;
+
+    if (distance < 0 && -distance <= [[[_frame webView] backForwardList] backListCount])
+        return TRUE;
+    
+    return FALSE;
+}
+
 - (void)goBackOrForward:(int)distance
 {
     if (distance == 0) {
