@@ -1,5 +1,15 @@
 2002-06-26  Darin Adler  <darin@apple.com>
 
+	- fixed 2969378 -- "A with hat" characters (Unicode 00C2) showing up at Zingermans.com
+
+        * kwq/KWQCharsets.mm: (buildDictionaries): Put UTF-16 in the dictionary, but pointing
+	at the string encoding for UTF-8. This mimics what Internet Explorer does.
+
+        * kwq/KWQtextcodec.mm: (QTextCodec::fromUnicode): Fix implementation so it will convert
+	the specified encoding instead of always Latin-1.
+
+2002-06-26  Darin Adler  <darin@apple.com>
+
 	Fixed (or at least worked around) a crash I saw where KWQKHTMLPartImpl::end was
         making calls after the KHTMLView was gone. This is specific to our APPLE_CHANGES
         code; it's handled differently in KDE.

@@ -65,7 +65,7 @@ QTextCodec *QTextCodec::codecForName(const char *name, int accuracy)
 {
     CFStringRef cfname;
     CFStringEncoding encoding;
-
+    
     cfname = CFStringCreateWithCString(NULL, name, kCFStringEncodingASCII);
 
     encoding = KWQCFStringEncodingFromIANACharsetName(cfname);
@@ -90,7 +90,7 @@ const char *QTextCodec::name() const
 
 int QTextCodec::mibEnum() const
 {
-  return KWQCFStringEncodingToMIB(encoding);
+    return KWQCFStringEncodingToMIB(encoding);
 }
 
 QTextDecoder *QTextCodec::makeDecoder() const
@@ -100,7 +100,14 @@ QTextDecoder *QTextCodec::makeDecoder() const
 
 QCString QTextCodec::fromUnicode(const QString &qcs) const
 {
-    return QCString(qcs.latin1());
+    CFStringRef cfs = qcs.getCFMutableString();
+    CFRange range = CFRangeMake(0, CFStringGetLength(cfs));
+    CFIndex bufferLength;
+    CFStringGetBytes(cfs, range, encoding, '?', false, NULL, 0x7FFFFFFF, &bufferLength);
+    QCString result(bufferLength + 1);
+    CFStringGetBytes(cfs, range, encoding, '?', false, (UInt8 *)result.data(), bufferLength, &bufferLength);
+    result[bufferLength] = 0;
+    return result;
 }
 
 QString QTextCodec::toUnicode(const char *chs, int len) const
