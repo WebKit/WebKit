@@ -1,3 +1,9 @@
+2001-12-18  Kenneth Kocienda  <kocienda@apple.com>
+
+        Deleted one little word
+
+	* Documentation/WebKit-White-Paper/WebKit-White-Paper.html:
+
 2001-12-18  Richard Williamson  <rjw@apple.com>
 
         Restructing of headers in prepartion for implementation.  Added new WK*
