@@ -4,9 +4,9 @@ YACC=bison
 
 EXTRA_DIST = parser.y
 
-parser: $(srcdir)/parser.y
+parser.cpp: $(srcdir)/parser.y
 	cd $(srcdir); \
-	$(YACC) -d -p cssyy parser.y && mv parser.tab.c parser.cpp; \
+	$(YACC) -d -p cssyy parser.y && mv parser.tab.c $<; \
 	if test -f parser.tab.h; then \
 	if cmp -s parser.tab.h parser.h; then rm -f parser.tab.h; \
 	else mv parser.tab.h parser.h; fi \
@@ -15,7 +15,7 @@ parser: $(srcdir)/parser.y
 noinst_HEADERS = \
 	cssproperties.c \
 	cssvalues.c \
-	parser \
+	parser.cpp \
 	$(NULL)
 
 VALUEFILES = \

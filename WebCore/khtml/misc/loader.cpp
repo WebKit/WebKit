@@ -517,8 +517,8 @@ CachedImage::CachedImage(DocLoader* dl, const DOMString &url, KIO::CacheControl 
     p = 0;
     pixPart = 0;
     bg = 0;
-    bgColor = qRgba( 0, 0, 0, 0xFF );
 #if !APPLE_CHANGES
+    bgColor = qRgba( 0, 0, 0, 0xFF );
     typeChecked = false;
 #endif
     isFullyTransparent = false;
@@ -842,7 +842,9 @@ void CachedImage::clear()
     delete m;   m = 0;
     delete p;   p = 0;
     delete bg;  bg = 0;
+#if !APPLE_CHANGES
     bgColor = qRgba( 0, 0, 0, 0xff );
+#endif
     delete pixPart; pixPart = 0;
 
     formatType = 0;

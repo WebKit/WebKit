@@ -1,3 +1,32 @@
+2003-03-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by John.
+
+        - fixed build rules for parser.cpp so we don't rebuild it every time
+
+        * khtml/css/Makefile.am: Changed target to parser.cpp, not parser.
+
+        - some QColor cleanup
+
+        * kwq/KWQColor.h: Removed the qRgba function, the unused KWQColor constructor
+        that takes a QString parameter, and made the KWQColor constructor that takes a
+        const char * parameter explicit.
+        * kwq/KWQColor.mm:
+        (QColor::QColor): Use findColor directly so we don't create and then destroy a QString.
+        (QColor::setNamedColor): Eliminated the unnecessary special case for empty string.
+        Get rid of the call to lower(), which is now handled by the caller. Got rid of the
+        "can't decipher this color" ERROR, which makes little sense now that non-named colors
+        (like hex ones) are handled at the KHTML level. Don't use setRgb to set the color,
+        since the RGB value in the gperf table is already in the correct format to just be
+        stored in QColor::color.
+
+        * khtml/misc/helper.h: Removed now-unused setNamedColor function. I'm sure this
+        same change exists on the KHTML trunk (since the CSS parser rewrite).
+        * khtml/misc/helper.cpp: More of the same.
+        
+        * khtml/misc/loader.cpp: #if !APPLE_CHANGES the places that use qRgba to set
+        bgColor, which we don't use anyway.
+
 2003-03-03  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Richard.

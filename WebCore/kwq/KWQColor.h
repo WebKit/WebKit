@@ -37,17 +37,15 @@ class NSColor;
 typedef unsigned int QRgb;			// RGB triplet
 
 QRgb qRgb(int r, int g, int b);
-QRgb qRgba(int r, int g, int b, int a);
 
 const QRgb KWQInvalidColor = 0x40000000;
 
 class QColor {
 public:
     QColor() : color(KWQInvalidColor) { }
-    QColor(QRgb col) :color(col) {}
+    QColor(QRgb col) : color(col) { }
     QColor(int r, int g, int b) : color(qRgb(r, g, b)) { }
-    explicit QColor(const QString &);
-    QColor(const char *); // can't be explicit because of helper.cpp
+    explicit QColor(const char *);
     
     QString name() const;
     void setNamedColor(const QString&);

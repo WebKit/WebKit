@@ -34,8 +34,6 @@ namespace khtml
     const QRgb invertedColor    = 0x00000002;
     const QRgb defaultTextColor = 0x00000003;
     
-    void setNamedColor(QColor &color, const QString &name);
-
     extern QPainter *printpainter;
     void setPrintPainter( QPainter *printer );
 

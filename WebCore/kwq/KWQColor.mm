@@ -49,22 +49,16 @@ const QColor Qt::yellow   (0xFF, 0xFF, 0x00);
 
 QRgb qRgb(int r, int g, int b)
 {
+    ASSERT(r >= 0 && r <= 0xFF);
+    ASSERT(g >= 0 && g <= 0xFF);
+    ASSERT(b >= 0 && b <= 0xFF);
     return r << 16 | g << 8 | b;
-}
-
-QRgb qRgba(int r, int g, int b, int a)
-{
-    return a << 24 | r << 16 | g << 8 | b;
-}
-
-QColor::QColor(const QString &name)
-{
-    setNamedColor(name);
 }
 
 QColor::QColor(const char *name)
 {
-    setNamedColor(name);
+    const Color *foundColor = findColor(name, strlen(name));
+    color = foundColor ? foundColor->RGBValue : KWQInvalidColor;
 }
 
 QString QColor::name() const
@@ -76,30 +70,8 @@ QString QColor::name() const
 
 void QColor::setNamedColor(const QString &name)
 {
-    // FIXME: The combination of this code with the code that
-    // is in khtml/misc/helper.cpp makes setting colors by
-    // name a real crock. We need to look at the process
-    // of mapping names to colors and figure out something
-    // better.
-    // 
-    // [kocienda: 2001-11-08]: I've made some improvements
-    // but it's still a crock.
-    
-    if (name.isEmpty()) {
-        color = KWQInvalidColor;
-        return;
-    } 
-    
-    QString lowerName = name.lower();
-    const Color *foundColor = findColor(name.latin1(), name.length());
-    if (foundColor) {
-        int RGBValue = foundColor->RGBValue;
-        setRgb((RGBValue >> 16) & 0xFF, (RGBValue >> 8) & 0xFF, RGBValue & 0xFF);
-        return;
-    }
-
-    ERROR("couldn't create color using name %s", name.ascii());
-    color = KWQInvalidColor;
+    const Color *foundColor = name.isAllASCII() ? findColor(name.latin1(), name.length()) : 0;
+    color = foundColor ? foundColor->RGBValue : KWQInvalidColor;
 }
 
 void QColor::hsv(int *h, int *s, int *v) const
