@@ -78,6 +78,8 @@ RenderTable::RenderTable(DOM::NodeImpl* node)
     rules = None;
     frame = Void;
 
+    m_cellPadding = -1;
+    
     row = 0;
     col = 0;
 
@@ -2138,6 +2140,33 @@ void RenderTableCell::close()
 #endif
 }
 
+int RenderTableCell::paddingTop() const
+{
+    if (m_table && m_table->cellPadding() != -1)
+        return m_table->cellPadding();
+    return RenderFlow::paddingTop();
+}
+
+int RenderTableCell::paddingBottom() const
+{
+    if (m_table && m_table->cellPadding() != -1)
+        return m_table->cellPadding();
+    return RenderFlow::paddingBottom();
+}
+
+int RenderTableCell::paddingLeft() const
+{
+    if (m_table && m_table->cellPadding() != -1)
+        return m_table->cellPadding();
+    return RenderFlow::paddingLeft();
+}
+
+int RenderTableCell::paddingRight() const
+{
+    if (m_table && m_table->cellPadding() != -1)
+        return m_table->cellPadding();
+    return RenderFlow::paddingRight();
+}
 
 void RenderTableCell::repaintRectangle(int x, int y, int w, int h, bool f)
 {

@@ -407,11 +407,13 @@ public:
     virtual short marginLeft() const { return 0; }
     virtual short marginRight() const { return 0; }
 
-    int paddingTop() const;
-    int paddingBottom() const;
-    int paddingLeft() const;
-    int paddingRight() const;
-
+    // Virtual since table cells override 
+    virtual int paddingTop() const;
+    virtual int paddingBottom() const;
+    virtual int paddingLeft() const;
+    virtual int paddingRight() const;
+    virtual bool hasPadding() const { return style()->hasPadding(); }
+    
     int borderTop() const { return style()->borderTopWidth(); }
     int borderBottom() const { return style()->borderBottomWidth(); }
     int borderLeft() const { return style()->borderLeftWidth(); }

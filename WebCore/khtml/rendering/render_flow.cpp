@@ -361,7 +361,7 @@ void RenderFlow::layoutBlockChildren( bool relayoutChildren )
         m_height += borderTop();
         toAdd += borderBottom();
     }
-    if(style()->hasPadding())
+    if (hasPadding())
     {
         xPos += paddingLeft();
         m_height += paddingTop();
@@ -881,9 +881,9 @@ RenderFlow::leftOffset() const
 {
     int left = 0;
 
-    if(style()->hasBorder())
+    if (style()->hasBorder())
         left += borderLeft();
-    if(style()->hasPadding())
+    if (hasPadding())
         left += paddingLeft();
 
     if ( firstLine && style()->direction() == LTR ) {
@@ -925,9 +925,9 @@ RenderFlow::rightOffset() const
 {
     int right = m_width;
 
-    if(style()->hasBorder())
+    if (style()->hasBorder())
         right -= borderRight();
-    if(style()->hasPadding())
+    if (hasPadding())
         right -= paddingRight();
 
     if ( firstLine && style()->direction() == RTL ) {
@@ -1563,7 +1563,7 @@ void RenderFlow::calcMinMaxWidth()
     int toAdd = 0;
     if(style()->hasBorder())
         toAdd = borderLeft() + borderRight();
-    if(style()->hasPadding())
+    if (hasPadding())
         toAdd += paddingLeft() + paddingRight();
 
     m_minWidth += toAdd;

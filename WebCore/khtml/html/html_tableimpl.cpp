@@ -56,6 +56,8 @@ HTMLTableElementImpl::HTMLTableElementImpl(DocumentPtr *doc)
     rules = None;
     frame = Void;
 
+    m_cellPadding = -1;
+    
     incremental = false;
     m_noBorder = true;
     m_solid = false;
@@ -84,7 +86,12 @@ void HTMLTableElementImpl::attach()
         }
     }
 
-    return HTMLElementImpl::attach();
+    HTMLElementImpl::attach();
+    
+    if (m_render && m_render->isTable()) {
+        RenderTable* table = static_cast<RenderTable*>(m_render);
+        table->setCellPadding(m_cellPadding);
+    }
 }
 
 NodeImpl* HTMLTableElementImpl::setCaption( HTMLTableCaptionElementImpl *c )
@@ -415,9 +422,13 @@ void HTMLTableElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_CELLPADDING:
         if (!attr->value().isEmpty())
-            cellPadding = attr->value();
-        else // XXXdwh Need to update all cells to remove the padding property.
-            cellPadding = "";
+            m_cellPadding = attr->value().toInt();
+        else 
+            m_cellPadding = -1;
+        if (m_render && m_render->isTable()) {
+            RenderTable* table = static_cast<RenderTable*>(m_render);
+            table->setCellPadding(m_cellPadding);
+        }
         break;
     case ATTR_COLS:
     {
@@ -743,13 +754,6 @@ void HTMLTableCellElementImpl::init()
 
             if (!m_solid)
                 addCSSProperty(CSS_PROP_BORDER_COLOR, "inherit");
-        }
-        
-        if (!table->cellPadding.isEmpty()) {
-            addCSSLength(CSS_PROP_PADDING_TOP, table->cellPadding);
-            addCSSLength(CSS_PROP_PADDING_LEFT, table->cellPadding);
-            addCSSLength(CSS_PROP_PADDING_BOTTOM, table->cellPadding);
-            addCSSLength(CSS_PROP_PADDING_RIGHT, table->cellPadding);
         }
     }
 }

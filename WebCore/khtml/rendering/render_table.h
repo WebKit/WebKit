@@ -114,6 +114,9 @@ public:
 
     virtual void setCellWidths( );
 
+    int cellPadding() { return m_cellPadding; }
+    void setCellPadding(int cellPadding) { m_cellPadding = cellPadding; }
+    
     int getBaseline(int row) {return rowInfo[row].baseline;}
 
     virtual void position(int x, int y, int from, int len, int width, bool reverse, bool firstLine, int);
@@ -253,6 +256,8 @@ protected:
     Frame frame;
     Rules rules;
 
+    int m_cellPadding;
+    
     RenderTableCol *_oldColElem;
     int _currentCol; // keeps track of current col for col/colgroup stuff
     int spacing;
@@ -375,7 +380,17 @@ public:
     virtual void setWidth( int width );
     virtual void setStyle( RenderStyle *style );
     virtual void repaint();
-
+    
+    virtual int paddingTop() const;
+    virtual int paddingBottom() const;
+    virtual int paddingLeft() const;
+    virtual int paddingRight() const;
+    virtual bool hasPadding() const { 
+        if (m_table && m_table->cellPadding() != -1)
+            return true;
+        return style()->hasPadding();
+    }
+    
     virtual void updateFromElement();
 
     void setRowHeight(int h) { rowHeight = h; }

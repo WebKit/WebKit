@@ -1,3 +1,34 @@
+2002-11-13  David Hyatt  <hyatt@apple.com>
+
+	Rewrite cellpadding to not use the style system at all and
+	to make table cells just get the padding from the table
+	itself (overriding style).
+	
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::HTMLTableElementImpl):
+        (HTMLTableElementImpl::attach):
+        (HTMLTableElementImpl::parseAttribute):
+        (HTMLTableCellElementImpl::init):
+        * khtml/html/html_tableimpl.h:
+        * khtml/rendering/bidi.cpp:
+        (RenderFlow::layoutInlineChildren):
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::contentWidth):
+        (RenderBox::contentHeight):
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::layoutBlockChildren):
+        (RenderFlow::leftOffset):
+        (RenderFlow::rightOffset):
+        (RenderFlow::calcMinMaxWidth):
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_table.cpp:
+        (RenderTable::RenderTable):
+        (RenderTableCell::paddingTop):
+        (RenderTableCell::paddingBottom):
+        (RenderTableCell::paddingLeft):
+        (RenderTableCell::paddingRight):
+        * khtml/rendering/render_table.h:
+
 2002-11-13  Ken Kocienda  <kocienda@apple.com>
 
 	Bump WebCore cache to 4 MB (was 1 MB).
