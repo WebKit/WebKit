@@ -268,15 +268,17 @@ NodeImpl *NodeIteratorImpl::nextNode(int &exceptioncode)
     }
 
     NodeImpl *result = 0;
-    if (pointerBeforeReferenceNode() && acceptNode(referenceNode()) == NodeFilter::FILTER_ACCEPT)
-        result = referenceNode();
-    else {
-        result = findNextNode(referenceNode());
-        if (result)
-            setReferenceNode(result);
-    }
+    NodeImpl *refNode = referenceNode() ? referenceNode() : root();
 
+    if (pointerBeforeReferenceNode() && acceptNode(refNode) == NodeFilter::FILTER_ACCEPT)
+        result = refNode;
+    else
+        result = findNextNode(refNode);
+
+    if (result)
+        setReferenceNode(result);
     setPointerBeforeReferenceNode(false);
+
     return result;
 }
 
@@ -288,15 +290,17 @@ NodeImpl *NodeIteratorImpl::previousNode(int &exceptioncode)
     }
 
     NodeImpl *result = 0;
-    if (!pointerBeforeReferenceNode() && acceptNode(referenceNode()) == NodeFilter::FILTER_ACCEPT)
-        result = referenceNode();
-    else {
-        result = findPreviousNode(referenceNode());
-        if (result)
-            setReferenceNode(result);
-    }
+    NodeImpl *refNode = referenceNode() ? referenceNode() : root();
 
+    if (!pointerBeforeReferenceNode() && acceptNode(refNode) == NodeFilter::FILTER_ACCEPT)
+        result = refNode;
+    else
+        result = findPreviousNode(refNode);
+
+    if (result)
+        setReferenceNode(result);
     setPointerBeforeReferenceNode();
+
     return result;
 }
 

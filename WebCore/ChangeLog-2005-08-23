@@ -1,5 +1,14 @@
 2004-05-04  Ken Kocienda  <kocienda@apple.com>
 
+        Reviewed by Hyatt
+
+        * khtml/xml/dom2_traversalimpl.cpp:
+        (DOM::NodeIteratorImpl::nextNode): Change to make NodeIterators behave like the spec in that
+        reference node is null until you iterate the first time. 
+        (DOM::NodeIteratorImpl::previousNode): Ditto.
+
+2004-05-04  Ken Kocienda  <kocienda@apple.com>
+
         Reviewed by me
 
         * WebCore.pbproj/project.pbxproj: Backed out unintentional
