@@ -1824,15 +1824,10 @@ void KHTMLView::scheduleRelayout()
     if (!d->layoutSchedulingEnabled)
         return;
 
-    if (d->layoutTimerId)
+    if (d->layoutTimerId || (m_part->xmlDocImpl() && !m_part->xmlDocImpl()->shouldScheduleLayout()))
         return;
 
-    bool parsing = false;
-    if( m_part->xmlDocImpl() ) {
-        parsing = m_part->xmlDocImpl()->parsing();
-    }
-
-    d->layoutTimerId = startTimer( parsing ? 1000 : 0 );
+    d->layoutTimerId = startTimer(m_part->xmlDocImpl() ? m_part->xmlDocImpl()->minimumLayoutDelay() : 0);
 }
 
 void KHTMLView::unscheduleRelayout()

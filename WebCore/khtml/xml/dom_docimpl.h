@@ -55,6 +55,13 @@ class RenderArena;
 class KWQAccObjectCache;
 #endif
 
+// This amount of time must have elapsed before we will even consider scheduling a layout without a delay.
+const int cLayoutScheduleThreshold = 250;
+
+// This is the amount of time we will delay doing a layout whenever we are either still parsing, or 
+// when the minimum amount of time according to the |cLayoutScheduleThreshold| has not yet elapsed.
+const int cLayoutTimerDelay = 1000;
+
 namespace khtml {
     class CSSStyleSelector;
     class DocLoader;
@@ -340,6 +347,8 @@ public:
 
     void setParsing(bool b);
     bool parsing() const { return m_bParsing; }
+    int minimumLayoutDelay();
+    bool shouldScheduleLayout();
 
     void setTextColor( QColor color ) { m_textColor = color; }
     QColor textColor() const { return m_textColor; }
@@ -610,7 +619,8 @@ protected:
     
     bool m_processingLoadEvent;
     QTime m_startTime;
-
+    bool m_overMinimumLayoutThreshold;
+    
 #ifndef KHTML_NO_XBL
     XBL::XBLBindingManager* m_bindingManager; // The access point through which documents and elements communicate with XBL.
 #endif

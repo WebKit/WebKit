@@ -668,13 +668,6 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
     do {
         if (isPrinting)
         {
-            // FIXME: Need to understand what this section is doing.
-            if (ty+s->m_y < i.r.y())
-            {
-               // This has been printed already we suppose.
-               continue;
-            }
-
             if (ty+s->m_y+s->height() > i.r.y() + i.r.height())
             {
                RenderCanvas* canvasObj = canvas();

@@ -998,7 +998,7 @@ void RenderPart::updateWidgetPositions()
         
         QScrollView *view = static_cast<QScrollView *>(m_widget);
         if (view && view->inherits("KHTMLView"))
-            static_cast<KHTMLView*>(view)->scheduleRelayout();
+            static_cast<KHTMLView*>(view)->layout();
     }
 }
 #endif

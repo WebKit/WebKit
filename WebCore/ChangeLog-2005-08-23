@@ -1,3 +1,21 @@
+2004-05-12  David Hyatt  <hyatt@apple.com>
+
+	Improve layout scheduling.  Make sure no layouts can be scheduled until over a minimum delay threshold.
+	
+        * khtml/khtmlview.cpp:
+        (KHTMLView::scheduleRelayout):
+        * khtml/rendering/render_frames.cpp:
+        (RenderPart::updateWidgetPositions):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::paint):
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl):
+        (DocumentImpl::close):
+        (DocumentImpl::setParsing):
+        (DocumentImpl::shouldScheduleLayout):
+        (DocumentImpl::minimumLayoutDelay):
+        * khtml/xml/dom_docimpl.h:
+
 2004-05-11  Chris Blumenberg  <cblu@apple.com>
 
 	Support for: <rdar://problem/3616471>: (API: provide way to get from WebFrame to DOMDocument and vice versa)
