@@ -1,3 +1,12 @@
+2005-02-02  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3986013> Assertion failure going back after page load error (no apparent problem in nondebug build)
+
+        Reviewed by rjw.
+
+        * WebView.subproj/WebDataSource.m:
+        (-[WebDataSource _setPrimaryLoadComplete:]): don't set the data source data when the main client is nil
+
 2005-02-02  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin

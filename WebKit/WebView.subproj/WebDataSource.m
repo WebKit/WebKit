@@ -319,9 +319,12 @@
 	// there's no callback for that.
         [self _loadIcon];
 
-        [self _setData:[_private->mainClient resourceData]];
-        [_private->mainClient release];
-        _private->mainClient = 0; 
+        if (_private->mainClient != nil) {
+            [self _setData:[_private->mainClient resourceData]];
+            [_private->mainClient release];
+            _private->mainClient = nil;
+        }
+        
         [self _updateLoading];
     }
 }
