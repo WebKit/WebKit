@@ -44,7 +44,7 @@ typedef enum {
 } IFContentPolicy;
 
 
-@protocol IFLocationChangeHandler
+@protocol IFLocationChangeHandler <NSObject>
 
 - (void)locationChangeStarted;
 
@@ -64,6 +64,5 @@ typedef enum {
 // Sent when errors are encountered with an un-implementable policy, i.e.
 // file i/o failure, launch services failure, type mismatches, etc.
 - (void)unableToImplementContentPolicy: (IFError *)error;
-
 
 @end

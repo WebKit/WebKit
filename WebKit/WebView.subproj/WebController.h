@@ -46,7 +46,7 @@
    ============================================================================= 
 */
 
-@protocol  IFResourceProgressHandler
+@protocol IFResourceProgressHandler <NSObject>
 
 /*
     A new chunk of data has been received.  This could be a partial load
@@ -68,7 +68,7 @@
     
    ============================================================================= 
 */
-@protocol IFScriptContextHandler
+@protocol IFScriptContextHandler <NSObject>
 
 // setStatusText and statusText are used by Javascript's status bar text methods.
 - (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource;
@@ -97,7 +97,7 @@ typedef enum {
     IFURLPolicyIgnore
 } IFURLPolicy;
 
-@protocol IFWebController <IFResourceProgressHandler, IFScriptContextHandler>
+@protocol IFWebController <NSObject, IFResourceProgressHandler, IFScriptContextHandler>
 
 // Called when a data source needs to create a frame.  This method encapsulates the
 // specifics of creating and initializaing a view of the appropriate class.

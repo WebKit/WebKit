@@ -13,12 +13,13 @@
 // Includes from KDE
 #import <khtmlview.h>
 #import <html/html_documentimpl.h>
+#import "IFWebController.h"
 
 @implementation IFWebViewPrivate
 
 - (void)dealloc
 {
-    [(NSObject *)controller release];
+    [controller release];
     [frameScrollView release];
 
     //if (widget)

@@ -15,6 +15,7 @@
 #import <WebFoundation/IFError.h>
 #import <WebKit/IFLocationChangeHandler.h>
 #import <khtml_part.h>
+#import "IFWebController.h"
 
 @implementation IFWebDataSourcePrivate 
 
@@ -53,7 +54,7 @@
     [mainHandle release];
     [mainURLHandleClient release];
     [pageTitle autorelease];
-    [(NSObject *)locationChangeHandler release];
+    [locationChangeHandler release];
  
     [errors release];
     [mainDocumentError release];
@@ -77,9 +78,9 @@
     
     if (loading) {
         [self retain];
-        [(NSObject *)_private->controller retain];
+        [_private->controller retain];
     } else {
-        [(NSObject *)_private->controller release];
+        [_private->controller release];
         [self release];
     }
 }
@@ -94,8 +95,8 @@
     WEBKIT_ASSERT(_private->part != nil);
     
     if (_private->loading) {
-        [(NSObject *)controller retain];
-        [(NSObject *)_private->controller release];
+        [controller retain];
+        [_private->controller release];
     }
     _private->controller = controller;
     _private->part->setDataSource(self);
@@ -265,8 +266,8 @@
 
 - (void)_setLocationChangeHandler: (id <IFLocationChangeHandler>)l
 {
-    [(NSObject *)l retain];
-    [(NSObject *)_private->locationChangeHandler release];
+    [l retain];
+    [_private->locationChangeHandler release];
     _private->locationChangeHandler = l;
 }
 

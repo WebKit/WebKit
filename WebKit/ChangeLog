@@ -1,3 +1,23 @@
+2002-04-25  Darin Adler  <darin@apple.com>
+
+	* History.subproj/IFWebHistoryPrivate.m:
+	(-[IFWebHistoryPrivate _loadHistoryGuts:]): Use NSDictionary instead
+	of NSObject to avoid a cast.
+
+	* WebView.subproj/IFLocationChangeHandler.h: Add NSObject as a required
+	protocol so we can retain and release.
+	* WebView.subproj/IFWebController.h: Add NSObject as a required protocol
+	so we can retain and release.
+
+	* WebView.subproj/IFWebDataSourcePrivate.mm:
+	(-[IFWebDataSourcePrivate dealloc]):
+	(-[IFWebDataSource _setLoading:]):
+	(-[IFWebDataSource _setController:]):
+	(-[IFWebDataSource _setLocationChangeHandler:]):
+	* WebView.subproj/IFWebViewPrivate.mm:
+	(-[IFWebViewPrivate dealloc]):
+	Removed NSObject * casts that were used to work around the problem fixed above.
+
 2002-04-25  Chris Blumenberg  <set EMAIL_ADDRESS environment variable>
 
 	* MIME.subproj/IFDownloadHandler.h:

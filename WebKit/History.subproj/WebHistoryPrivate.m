@@ -346,7 +346,7 @@
     NSString *path;
     NSArray *array;
     NSEnumerator *enumerator;
-    NSObject *object;
+    NSDictionary *dictionary;
     int index;
     int limit;
     NSCalendarDate *ageLimitDate;
@@ -379,10 +379,10 @@
     enumerator = [array reverseObjectEnumerator];
     ageLimitPassed = NO;
 
-    while ((object = [enumerator nextObject]) != nil) {
+    while ((dictionary = [enumerator nextObject]) != nil) {
         IFURIEntry *entry;
 
-        entry = [[IFURIEntry alloc] initFromDictionaryRepresentation: (NSDictionary *)object];
+        entry = [[IFURIEntry alloc] initFromDictionaryRepresentation: dictionary];
 
         if ([entry url] == nil) {
             // entry without url is useless; data on disk must have been bad; ignore this one
