@@ -399,7 +399,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
 		    for (unsigned long l = 0; map && l < map->length(); ++l) {
 			AttributeImpl* it = map->attributeItem(l);
 			changed = !bmap->getAttributeItem(it->id());
-			bmap->insertAttribute(new AttributeImpl(it->id(), it->val()));
+			bmap->insertAttribute(new AttributeImpl(it->id(), it->value()));
 		    }
 		    if ( changed )
 			doc()->recalcStyle( NodeImpl::Inherit );
@@ -445,7 +445,7 @@ bool KHTMLParser::insertNode(NodeImpl *n, bool flat)
                 for (unsigned long l = 0; map && l < map->length(); ++l) {
                     AttributeImpl* it = map->attributeItem(l);
                     changed = !bmap->getAttributeItem(it->id());
-                    bmap->insertAttribute(new AttributeImpl(it->id(), it->val()));
+                    bmap->insertAttribute(new AttributeImpl(it->id(), it->value()));
                 }
                 if ( changed )
                     doc()->recalcStyle( NodeImpl::Inherit );
@@ -1601,7 +1601,7 @@ NodeImpl *KHTMLParser::handleIsindex( Token *t )
     DOMString text = i18n("This is a searchable index. Enter search keywords: ");
 #endif
     if (a)
-        text = a->value() + " ";
+        text = DOMString(a->value()) + " ";
     child = new TextImpl(document, text);
     n->addChild( child );
     child = new HTMLIsIndexElementImpl(document, myform);

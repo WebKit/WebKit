@@ -60,39 +60,31 @@ class AttributeImpl : public khtml::Shared<AttributeImpl>
 
 public:
     // null value is forbidden !
-    AttributeImpl(NodeImpl::Id id, DOMStringImpl* value)
-        : m_id(id), _prefix(0), _value(value), _impl(0)
-        { _value->ref(); };
-    ~AttributeImpl() {
-        if (_prefix) _prefix->deref();
-        if (_value) _value->deref();
-        // assert : _impl == 0
-    }
+    AttributeImpl(NodeImpl::Id id, const AtomicString& value)
+        : m_id(id), _value(value), _impl(0)
+        { };
 
-    DOMString value() const { return _value; }
-    DOMStringImpl* val() const { return _value; }
-    DOMStringImpl* prefix() const { return _prefix; }
+    const AtomicString& value() const { return _value; }
+    const AtomicString& prefix() const { return _prefix; }
     NodeImpl::Id id() const { return m_id; }
     AttrImpl* attrImpl() const { return _impl; }
 
+    bool isNull() const { return _value.isNull(); }
+    bool isEmpty() const { return _value.isEmpty(); }
+    
 private:
-    // null pointers can never happen here
-    void setValue(DOMStringImpl* value) {
-        _value->deref();
+    void setValue(const AtomicString& value) {
         _value = value;
-        _value->ref();
     }
-    void setPrefix(DOMStringImpl* prefix) {
-        if (_prefix) _prefix->deref();
+    void setPrefix(const AtomicString& prefix) {
         _prefix = prefix;
-        if (_prefix) _prefix->ref();
     }
     void allocateImpl(ElementImpl* e);
 
 protected:
     NodeImpl::Id m_id;
-    DOMStringImpl *_prefix;
-    DOMStringImpl *_value;
+    AtomicString _prefix;
+    AtomicString _value;
     AttrImpl* _impl;
 };
 
@@ -164,10 +156,10 @@ public:
     // Used to quickly determine whether or not an element has a given CSS class.
     virtual bool matchesCSSClass(const AtomicString& c, bool caseSensitive) const;
     
-    DOMString getAttribute( NodeImpl::Id id ) const;
-    DOMString getAttribute(const DOMString& localName) const { return getAttributeNS(QString::null, localName); }
-    DOMString getAttributeNS(const DOMString &namespaceURI,
-                             const DOMString &localName) const;
+    const AtomicString& getAttribute( NodeImpl::Id id ) const;
+    const AtomicString& getAttribute(const DOMString& localName) const { return getAttributeNS(QString::null, localName); }
+    const AtomicString& getAttributeNS(const DOMString &namespaceURI,
+                                       const DOMString &localName) const;
     void setAttribute( NodeImpl::Id id, DOMStringImpl* value, int &exceptioncode );
     void removeAttribute( NodeImpl::Id id, int &exceptioncode );
 
@@ -238,12 +230,7 @@ protected:
     DOMString openTagStartToString() const;
 
 private:
-    // map of default attributes. derived element classes are responsible
-    // for setting this according to the corresponding element description
-    // in the DTD
-    virtual NamedAttrMapImpl* defaultMap() const;
-
-    void updateId(DOMStringImpl* oldId, DOMStringImpl* newId);
+    void updateId(const AtomicString& oldId, const AtomicString& newId);
 
 protected: // member variables
     mutable NamedAttrMapImpl *namedAttrMap;

@@ -398,12 +398,12 @@ void HTMLTableElementImpl::parseAttribute(AttributeImpl *attr)
         int border;
         // ### this needs more work, as the border value is not only
         //     the border of the box, but also between the cells
-        if(!attr->val())
+        if (attr->isNull())
             border = 0;
-        else if(attr->val()->l == 0)
+        else if(attr->isEmpty())
             border = 1;
         else
-            border = attr->val()->toInt();
+            border = attr->value().toInt();
 #ifdef DEBUG_DRAW_BORDER
         border=1;
 #endif
@@ -559,7 +559,7 @@ void HTMLTablePartElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_BGCOLOR:
-        if (attr->val())
+        if (!attr->isNull())
             addHTMLColor(CSS_PROP_BACKGROUND_COLOR, attr->value() );
         else
             removeCSSProperty(CSS_PROP_BACKGROUND_COLOR);
@@ -848,25 +848,25 @@ void HTMLTableCellElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_ROWSPAN:
         // ###
-        rSpan = attr->val() ? attr->val()->toInt() : 1;
+        rSpan = !attr->isNull() ? attr->value().toInt() : 1;
         // limit this to something not causing an overflow with short int
         if(rSpan < 1 || rSpan > 1024) rSpan = 1;
         break;
     case ATTR_COLSPAN:
         // ###
-        cSpan = attr->val() ? attr->val()->toInt() : 1;
+        cSpan = !attr->isNull() ? attr->value().toInt() : 1;
         // limit this to something not causing an overflow with short int
         if(cSpan < 1 || cSpan > 1024) cSpan = 1;
         break;
     case ATTR_NOWRAP:
-        if (attr->val() != 0)
+        if (!attr->isNull())
             addCSSProperty(CSS_PROP_WHITE_SPACE, CSS_VAL__KHTML_NOWRAP);
         else
             removeCSSProperty(CSS_PROP_WHITE_SPACE);
         break;
     case ATTR_WIDTH:
         if (!attr->value().isEmpty()) {
-            int widthInt = attr->val()->toInt();
+            int widthInt = attr->value().toInt();
             if (widthInt > 0) // width="0" is ignored for compatibility with WinIE.
                 addCSSLength( CSS_PROP_WIDTH, attr->value() );
         }
@@ -875,7 +875,7 @@ void HTMLTableCellElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_HEIGHT:
         if (!attr->value().isEmpty()) {
-            int heightInt = attr->val()->toInt();
+            int heightInt = attr->value().toInt();
             if (heightInt > 0) // height="0" is ignored for compatibility with WinIE.
                 addCSSLength( CSS_PROP_HEIGHT, attr->value() );
         }
@@ -938,7 +938,7 @@ void HTMLTableColElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_SPAN:
-        _span = attr->val() ? attr->val()->toInt() : 1;
+        _span = !attr->isNull() ? attr->value().toInt() : 1;
         break;
     case ATTR_WIDTH:
         if (!attr->value().isEmpty())

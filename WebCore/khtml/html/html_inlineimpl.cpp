@@ -215,10 +215,10 @@ void HTMLAnchorElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_HREF:
-        m_hasAnchor = attr->val() != 0;
+        m_hasAnchor = !attr->isNull();
         break;
     case ATTR_TARGET:
-        m_hasTarget = attr->val() != 0;
+        m_hasTarget = !attr->isNull();
         break;
     case ATTR_NAME:
     case ATTR_TITLE:

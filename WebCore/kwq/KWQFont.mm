@@ -65,7 +65,7 @@ QFont &QFont::operator=(const QFont &other)
 
 QString QFont::family() const
 {
-    return _family.family();
+    return _family.family().string();
 }
 
 void QFont::setFamily(const QString &qfamilyName)

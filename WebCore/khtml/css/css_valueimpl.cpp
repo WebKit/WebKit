@@ -886,7 +886,7 @@ khtml::CachedImage* CSSImageValueImpl::image()
 // ------------------------------------------------------------------------
 
 FontFamilyValueImpl::FontFamilyValueImpl( const QString &string)
-: CSSPrimitiveValueImpl( DOMString(string), CSSPrimitiveValue::CSS_STRING)
+: CSSPrimitiveValueImpl( DOMString(), CSSPrimitiveValue::CSS_STRING)
 {
     static const QRegExp parenReg(" \\(.*\\)$");
     static const QRegExp braceReg(" \\[.*\\]$");

@@ -2155,7 +2155,7 @@ NSFileWrapper *KWQKHTMLPart::fileWrapperForElement(ElementImpl *e)
     
     NSFileWrapper *wrapper = nil;
 
-    DOMString attr = e->getAttribute(ATTR_SRC);
+    AtomicString attr = e->getAttribute(ATTR_SRC);
     if (!attr.isEmpty()) {
         NSURL *URL = completeURL(attr.string()).getNSURL();
         wrapper = [_bridge fileWrapperForURL:URL];

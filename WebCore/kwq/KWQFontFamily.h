@@ -24,6 +24,7 @@
  */
 
 #include "KWQString.h"
+#include "dom_atomicstring.h"
 
 #ifdef __OBJC__
 @class NSString;
@@ -39,8 +40,8 @@ public:
     KWQFontFamily(const KWQFontFamily &);    
     KWQFontFamily &operator=(const KWQFontFamily &);
         
-    void setFamily(const QString &);
-    QString family() const { return _family; }
+    void setFamily(const DOM::AtomicString &);
+    const DOM::AtomicString& family() const { return _family; }
     bool familyIsEmpty() const { return _family.isEmpty(); }
     
     NSString *getNSFamily() const;
@@ -64,7 +65,7 @@ public:
     void deref() { _refCnt--; if (_refCnt == 0) delete this; }
     
 private:
-    QString _family;
+    DOM::AtomicString _family;
     KWQFontFamily *_next;
     int _refCnt;
     mutable NSString *_NSFamily;

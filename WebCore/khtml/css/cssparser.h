@@ -25,7 +25,7 @@
 
 #include <qstring.h>
 #include <dom/dom_string.h>
-#include "dom_nameimpl.h"
+#include "xml/dom_atomicstring.h"
 
 namespace DOM {
     class StyleListImpl;

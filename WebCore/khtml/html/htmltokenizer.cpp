@@ -1080,8 +1080,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         attrNamePresent = false;
                     }
                     else {
-                        DOMString v("");
-                        currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
+                        currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, emptyAtom);
                         dest = buffer;
                         tag = SearchAttribute;
                     }
@@ -1131,7 +1130,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     // unmatched quotes among attributes that have names. -dwh
                     while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
                         dest--; // remove trailing newlines
-                    DOMString v(buffer+1, dest-buffer-1);
+                    AtomicString v(buffer+1, dest-buffer-1);
                     attrName.setUnicode(buffer+1,dest-buffer-1); 
                     currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
                     tag = SearchAttribute;
@@ -1154,7 +1153,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                         // some <input type=hidden> rely on trailing spaces. argh
                         while(dest > buffer+1 && (*(dest-1) == '\n' || *(dest-1) == '\r'))
                             dest--; // remove trailing newlines
-                        DOMString v(buffer+1, dest-buffer-1);
+                        AtomicString v(buffer+1, dest-buffer-1);
                         if (!attrNamePresent)
                             attrName.setUnicode(buffer+1,dest-buffer-1); 
                         currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
@@ -1194,7 +1193,7 @@ void HTMLTokenizer::parseTag(DOMStringIt &src)
                     // '/' does not delimit in IE!
                     if ( curchar <= ' ' || curchar == '>' )
                     {
-                        DOMString v(buffer+1, dest-buffer-1);
+                        AtomicString v(buffer+1, dest-buffer-1);
                         currToken.addAttribute(parser->docPtr()->document(), buffer, attrName, v);
                         dest = buffer;
                         tag = SearchAttribute;

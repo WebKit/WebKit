@@ -28,7 +28,7 @@
 #include <kdebug.h>
 
 #include <string.h>
-#include "dom_nameimpl.h"
+#include "dom_atomicstring.h"
 
 using namespace khtml;
 

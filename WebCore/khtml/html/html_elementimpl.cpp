@@ -171,7 +171,7 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
     switch( attr->id() )
     {
     case ATTR_ALIGN:
-        if (attr->val()) {
+        if (!attr->isNull()) {
             if ( strcasecmp(attr->value(), "middle" ) == 0 )
                 addCSSProperty( CSS_PROP_TEXT_ALIGN, "center" );
             else
@@ -183,19 +183,18 @@ void HTMLElementImpl::parseAttribute(AttributeImpl *attr)
 // the core attributes...
     case ATTR_ID:
         // unique id
-        setHasID(attr->val());
+        setHasID(!attr->isNull());
         setChanged();
         break;
     case ATTR_CLASS:
         // class
-        setHasClass(attr->val());
+        setHasClass(!attr->isNull());
         if (namedAttrMap) static_cast<HTMLNamedAttrMapImpl*>(namedAttrMap)->parseClassAttribute(attr->value());
         setChanged();
         break;
     case ATTR_CONTENTEDITABLE:
-        if (attr->val()) {
+        if (attr->isNull())
             setContentEditable(attr->value());
-        }
         else
             removeCSSProperty(CSS_PROP__KHTML_USER_MODIFY);
         break;
@@ -320,6 +319,8 @@ void HTMLElementImpl::addCSSImageProperty(int id, const DOMString &URL)
 
 void HTMLElementImpl::addCSSLength(int id, const DOMString &value)
 {
+    // FIXME: This function should not spin up the CSS parser, but should instead just figure out the correct
+    // length unit and make the appropriate parsed value.
     if(!m_styleDecls) createDecl();
 
     // strip attribute garbage..
@@ -624,7 +625,7 @@ DOMString HTMLElementImpl::namespaceURI() const
         return XHTML_NAMESPACE;
 }
 
-void HTMLElementImpl::addHTMLAlignment( DOMString alignment )
+void HTMLElementImpl::addHTMLAlignment( const DOMString& alignment )
 {
     //qDebug("alignment is %s", alignment.string().latin1() );
     // vertical alignment with respect to the current baseline of the text

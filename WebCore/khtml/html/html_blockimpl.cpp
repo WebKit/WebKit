@@ -125,11 +125,11 @@ void HTMLHRElementImpl::parseAttribute(AttributeImpl *attr)
     }
     case ATTR_WIDTH:
     {
-        if(!attr->val()) break;
+        if (attr->isNull()) break;
         // cheap hack to cause linebreaks
         // khtmltests/html/strange_hr.html
         bool ok;
-        int v = attr->val()->toInt(&ok);
+        int v = attr->value().implementation()->toInt(&ok);
         if(ok && !v)
             addCSSLength(CSS_PROP_WIDTH, "1");
         else
@@ -146,10 +146,9 @@ void HTMLHRElementImpl::attach()
 {
     if (attributes(true /* readonly */)) {
         // there are some attributes, lets check
-        DOMString color = getAttribute(ATTR_COLOR);
+        const AtomicString& color = getAttribute(ATTR_COLOR);
         DOMStringImpl* si = getAttribute(ATTR_SIZE).implementation();
         int _s =  si ? si->toInt() : -1;
-        DOMString n("1");
         if (!color.isNull()) {
             addCSSProperty(CSS_PROP_BORDER_TOP_STYLE, CSS_VAL_SOLID);
             addCSSProperty(CSS_PROP_BORDER_RIGHT_STYLE, CSS_VAL_SOLID);
@@ -161,6 +160,7 @@ void HTMLHRElementImpl::attach()
         }
         else {
             if (_s > 1 && getAttribute(ATTR_NOSHADE).isNull()) {
+                DOMString n("1");
                 addCSSProperty(CSS_PROP_BORDER_BOTTOM_WIDTH, n);
                 addCSSProperty(CSS_PROP_BORDER_TOP_WIDTH, n);
                 addCSSProperty(CSS_PROP_BORDER_LEFT_WIDTH, n);
@@ -173,7 +173,7 @@ void HTMLHRElementImpl::attach()
             }
         }
         if (_s == 0)
-            addCSSProperty(CSS_PROP_MARGIN_BOTTOM, n);
+            addCSSProperty(CSS_PROP_MARGIN_BOTTOM, DOMString("1"));
     }
 
     HTMLElementImpl::attach();
@@ -331,7 +331,7 @@ void HTMLMarqueeElementImpl::parseAttribute(AttributeImpl *attr)
                 removeCSSProperty(CSS_PROP__KHTML_MARQUEE_DIRECTION);
             break;
         case ATTR_TRUESPEED:
-            m_minimumDelay = attr->val() ? 0 : defaultMinimumDelay;
+            m_minimumDelay = !attr->isNull() ? 0 : defaultMinimumDelay;
             break;
         default:
             HTMLElementImpl::parseAttribute(attr);

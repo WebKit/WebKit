@@ -83,14 +83,14 @@ namespace khtml {
             if(attrs) attrs->deref();
             if(text) text->deref();
         }
-        void addAttribute(DOM::DocumentImpl* doc, QChar* buffer, const QString& attrName, const DOM::DOMString& v)
+        void addAttribute(DOM::DocumentImpl* doc, QChar* buffer, const QString& attrName, const DOM::AtomicString& v)
         {
             DOM::AttributeImpl* a = 0;
             if(buffer->unicode())
-                a = new DOM::AttributeImpl(buffer->unicode(), v.implementation());
+                a = new DOM::AttributeImpl(buffer->unicode(), v);
             else if ( !attrName.isEmpty() && attrName != "/" )
                 a = new DOM::AttributeImpl(doc->attrId(0, DOM::DOMString(attrName).implementation(), false),
-                                           v.implementation());
+                                           v);
 
             if (a) {
                 if(!attrs) {

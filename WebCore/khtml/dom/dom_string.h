@@ -24,6 +24,10 @@
 
 #include <qstring.h>
 
+namespace khtml {
+    class Length;
+}
+
 namespace DOM {
 
 class DOMStringImpl;
@@ -41,6 +45,7 @@ class DOMString
 {
     friend class CharacterDataImpl;
     friend bool operator==( const DOMString &a, const char *b );
+    friend bool operator==( const DOMString &a, const DOMString &b );
 public:
     /**
      * default constructor. Gives an empty DOMString
@@ -97,6 +102,7 @@ public:
     QString string() const;
 
     int toInt() const;
+    khtml::Length* toLengthArray(int& len) const;
     bool percentage(int &_percentage) const;
 
     DOMString copy() const;
@@ -114,12 +120,15 @@ protected:
     DOMStringImpl *impl;
 };
 
-bool operator==( const DOMString &a, const DOMString &b );
 bool operator==( const DOMString &a, const QString &b );
 bool operator==( const DOMString &a, const char *b );
-inline bool operator!=( const DOMString &a, const DOMString &b ) { return !(a==b); };
-inline bool operator!=( const DOMString &a, const QString &b ) { return !(a==b); };
-inline bool operator!=( const DOMString &a, const char *b )  { return !(a==b); };
+inline bool operator==( const QString &b, const DOMString &a ) { return a == b; }
+inline bool operator==( const char *b, const DOMString &a ) { return a == b; }
+inline bool operator!=( const DOMString &a, const DOMString &b ) { return !(a==b); }
+inline bool operator!=( const DOMString &a, const QString &b ) { return !(a==b); }
+inline bool operator!=( const DOMString &a, const char *b )  { return !(a==b); }
+inline bool operator!=( const QString &b, const DOMString &a ) { return !(a==b); }
+inline bool operator!=( const char *b, const DOMString &a )  { return !(a==b); }
 inline bool strcmp( const DOMString &a, const DOMString &b ) { return a != b; }
 
 // returns false when equal, true otherwise (ignoring case)

@@ -1610,7 +1610,7 @@ CSSValueListImpl *CSSParser::parseFontFamily()
             else if (nextValBreaksFont || !nextValIsFontName)
                 list->append(new CSSPrimitiveValueImpl(value->id));
             else
-                list->append(currFamily = new FontFamilyValueImpl(qString( value->string)));
+                list->append(currFamily = new FontFamilyValueImpl(qString(value->string)));
         }
         else if (value->unit == CSSPrimitiveValue::CSS_STRING) {
             // Strings never share in a family name.

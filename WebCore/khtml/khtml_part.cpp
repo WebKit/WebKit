@@ -172,6 +172,7 @@ KHTMLPart::KHTMLPart( KHTMLView *view, QObject *parent, const char *name, GUIPro
 
 void KHTMLPart::init( KHTMLView *view, GUIProfile prof )
 {
+  AtomicString::init();
   if ( prof == DefaultGUI )
     setXMLFile( "khtml.rc" );
   else if ( prof == BrowserViewGUI )

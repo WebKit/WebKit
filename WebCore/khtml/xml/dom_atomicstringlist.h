@@ -19,38 +19,32 @@
  * Boston, MA 02111-1307, USA.
  *
  */
-#ifndef _DOM_NameImpl_h_
-#define _DOM_NameImpl_h_
+#ifndef _DOM_AtomicStringList_h_
+#define _DOM_AtomicStringList_h_
 
-#include "dom/dom_atomicstring.h"
+#include "dom/dom_string.h"
+#include "dom_atomicstring.h"
 
 namespace DOM {
 
-class Name {
+class AtomicStringList {
 public:
-    Name() {};
-    Name(const AtomicString& namespaceURI, const AtomicString& localName)
-        :m_namespaceURI(namespaceURI), m_localName(localName) {}
-
-    const AtomicString& namespaceURI() const { return m_namespaceURI; }
-    const AtomicString& localName() const { return m_localName; }
-
-private:
-    AtomicString m_namespaceURI;
-    AtomicString m_localName;
+    AtomicStringList() :m_next(0) {}
+    AtomicStringList(const AtomicString& str, AtomicStringList* n = 0) :m_string(str), m_next(n) {}
+    ~AtomicStringList() { delete m_next; }
     
-    friend bool operator==(const Name& a, const Name& b);
+    AtomicStringList* next() const { return m_next; }
+    void setNext(AtomicStringList* n) { m_next = n; }
+    const AtomicString& string() const { return m_string; }
+    void setString(const AtomicString& str) { m_string = str; }
+
+    AtomicStringList* clone() { return new AtomicStringList(m_string, m_next ? m_next->clone() : 0); }
+    void clear() { m_string = nullAtom; delete m_next; m_next = 0; }
+    
+private:
+    AtomicString m_string;
+    AtomicStringList* m_next;
 };
-
-inline bool operator==(const Name& a, const Name& b)
-{
-    return a.m_namespaceURI == b.m_namespaceURI && a.m_localName == b.m_localName;
-}
-
-inline bool operator!=(const Name& a, const Name& b)
-{
-    return !(a == b);
-}
 
 }
 #endif

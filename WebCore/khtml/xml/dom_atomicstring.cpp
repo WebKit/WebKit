@@ -20,28 +20,25 @@
  *
  */
 
-#include "dom/dom_string.h"
-#include "xml/dom_stringimpl.h"
-#include "dom_nameimpl.h"
-
-namespace DOM {
-
 // For KHTML we need to avoid having static constructors.
 // Our strategy is to declare the global objects with a different type (initialized to 0)
 // and then use placement new to initialize the global objects later. This is not completely
 // portable, and it would be good to figure out a 100% clean way that still avoids code that
 // runs at init time.
-    
+
 #if APPLE_CHANGES
 #define AVOID_STATIC_CONSTRUCTORS 1
 #endif
-    
+
 #if AVOID_STATIC_CONSTRUCTORS
 #define KHTML_ATOMICSTRING_HIDE_GLOBALS 1
 #endif
-    
-#include "dom_nameimpl.h"
-    
+
+#include "dom_atomicstring.h"
+#include "xml/dom_stringimpl.h"
+
+namespace DOM {
+   
 #define DUMP_STATISTICS 0
 
 #if DUMP_STATISTICS
@@ -303,22 +300,22 @@ void AtomicString::rehash(int newTableSize)
     free(oldTable);
 }
 
-const AtomicString &AtomicString::null()
-{
-    static AtomicString null;
-    return null;
-}
-
 // Global constants for property name strings.
 
 #if !AVOID_STATIC_CONSTRUCTORS
     // Define an AtomicString in the normal way.
-    #define DEFINE_GLOBAL(name, string) extern const AtomicString name ## PropertyName(string);
+    #define DEFINE_GLOBAL(name, string) extern const AtomicString name ## Atom(string);
+
+    extern const AtomicString nullAtom;
+    extern const AtomicString emptyAtom;
 #else
     // Define an AtomicString-sized array of pointers to avoid static initialization.
     // Use an array of pointers instead of an array of char in case there is some alignment issue.
     #define DEFINE_GLOBAL(name, string) \
-        void * name ## PropertyName[(sizeof(AtomicString) + sizeof(void *) - 1) / sizeof(void *)];
+        void * name ## Atom[(sizeof(AtomicString) + sizeof(void *) - 1) / sizeof(void *)];
+
+    DEFINE_GLOBAL(null, ignored)
+    DEFINE_GLOBAL(empty, ignored)
 #endif
 
 #define CALL_DEFINE_GLOBAL(name) DEFINE_GLOBAL(name, #name)
@@ -330,6 +327,9 @@ void AtomicString::init()
     static bool initialized;
     if (!initialized) {
         // Use placement new to initialize the globals.
+        new (&nullAtom) AtomicString;
+        new (&emptyAtom) AtomicString("");
+        
         #define PLACEMENT_NEW_GLOBAL(name, string) new (&name ## PropertyName) AtomicString(string);
         #define CALL_PLACEMENT_NEW_GLOBAL(name) PLACEMENT_NEW_GLOBAL(name, #name)
         KHTML_ATOMICSTRING_EACH_GLOBAL(CALL_PLACEMENT_NEW_GLOBAL)
@@ -338,20 +338,15 @@ void AtomicString::init()
 #endif
 }
 
-AtomicStringList* AtomicStringList::clone()
-{
-    return new AtomicStringList(m_string, m_next ? m_next->clone() : 0);
-}
-
 bool operator==(const AtomicString &a, const DOMString &b)
 {
-    return a.string() == b;    
+    return a.domString() == b;    
 }
    
 bool equalsIgnoreCase(const AtomicString &as, const DOMString &bs)
 {
     // returns true when equal, false otherwise (ignoring case)
-    return !strcasecmp(as.string(), bs);
+    return !strcasecmp(as.domString(), bs);
 }
 
 bool equalsIgnoreCase(const AtomicString &as, const AtomicString &bs)
@@ -359,7 +354,7 @@ bool equalsIgnoreCase(const AtomicString &as, const AtomicString &bs)
     // returns true when equal, false otherwise (ignoring case)
     if (as == bs)
         return true;
-    return !strcasecmp(as.string(), bs.string());
+    return !strcasecmp(as.domString(), bs.domString());
 }
 
 }

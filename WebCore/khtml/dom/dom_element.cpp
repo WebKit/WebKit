@@ -203,7 +203,7 @@ DOMString Element::getAttributeNS( const DOMString &namespaceURI,
                                    const DOMString &localName)
 {
     if (!impl) throw DOMException(DOMException::NOT_FOUND_ERR);
-    return static_cast<ElementImpl*>(impl)->getAttributeNS(namespaceURI, localName);
+    return static_cast<ElementImpl*>(impl)->getAttributeNS(namespaceURI, localName).domString();
 }
 
 void Element::setAttributeNS( const DOMString &namespaceURI,

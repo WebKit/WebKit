@@ -102,11 +102,11 @@ public:
 #endif
 
 protected:
-    bool isURLAllowed(const DOMString &) const;
+    bool isURLAllowed(const AtomicString &) const;
     virtual void openURL();
 
-    DOMString url;
-    DOMString name;
+    AtomicString url;
+    AtomicString name;
 
     int marginWidth;
     int marginHeight;

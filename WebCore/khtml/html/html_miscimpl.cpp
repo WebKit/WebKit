@@ -347,7 +347,7 @@ NodeImpl *HTMLCollectionImpl::getNamedItem( NodeImpl *current, int attr_id,
                 if (caseSensitive)
                     found = e->getAttribute(attr_id) == name;
                 else
-                    found = e->getAttribute(attr_id).lower() == name.lower();
+                    found = e->getAttribute(attr_id).domString().lower() == name.lower();
                 if (found) {
                     //kdDebug( 6030 ) << "found node: " << e << " " << current << " " << e->id() << " " << e->tagName().string() << endl;
                     return current;
@@ -505,7 +505,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedFormItem(int attr_id, const DOMString&
                     if (caseSensitive)
                         found = e->getAttribute(attr_id) == name;
                     else
-                        found = e->getAttribute(attr_id).lower() == name.lower();
+                        found = e->getAttribute(attr_id).domString().lower() == name.lower();
                     if (found) {
                         if (!duplicateNumber)
                             return e;
@@ -534,7 +534,7 @@ NodeImpl* HTMLFormCollectionImpl::getNamedImgItem(NodeImpl* current, int attr_id
                 if (caseSensitive)
                     found = e->getAttribute(attr_id) == name;
                 else
-                    found = e->getAttribute(attr_id).lower() == name.lower();
+                    found = e->getAttribute(attr_id).domString().lower() == name.lower();
                 if (found)
                 {
                     if (!duplicateNumber)

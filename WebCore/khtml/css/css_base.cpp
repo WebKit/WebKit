@@ -123,7 +123,7 @@ StyleListImpl::~StyleListImpl()
 void CSSSelector::print(void)
 {
     kdDebug( 6080 ) << "[Selector: tag = " <<       tag << ", attr = \"" << attr << "\", match = \"" << match
-		    << "\" value = \"" << value.qstring().latin1() << "\" relation = " << (int)relation
+		    << "\" value = \"" << value.string().latin1() << "\" relation = " << (int)relation
 		    << "]" << endl;
     if ( tagHistory )
         tagHistory->print();
@@ -222,7 +222,7 @@ void CSSSelector::extractPseudoType() const
     else if (value == visited)
         _pseudoType = PseudoVisited;
     
-    value = AtomicString::null();
+    value = nullAtom;
 }
 
 
@@ -256,17 +256,17 @@ DOMString CSSSelector::selectorText() const
     if ( tag == anyLocalName && cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
     {
         str = "#";
-        str += cs->value.qstring();
+        str += cs->value.string();
     }
     else if ( tag == anyLocalName && cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
     {
         str = ".";
-        str += cs->value.qstring();
+        str += cs->value.string();
     }
     else if ( tag == anyLocalName && cs->match == CSSSelector::Pseudo )
     {
         str = ":";
-        str += cs->value.qstring();
+        str += cs->value.string();
     }
     else
     {
@@ -277,17 +277,17 @@ DOMString CSSSelector::selectorText() const
         if ( cs->attr == ATTR_ID && cs->match == CSSSelector::Exact )
         {
             str += "#";
-            str += cs->value.qstring();
+            str += cs->value.string();
         }
         else if ( cs->attr == ATTR_CLASS && cs->match == CSSSelector::List )
         {
             str += ".";
-            str += cs->value.qstring();
+            str += cs->value.string();
         }
         else if ( cs->match == CSSSelector::Pseudo )
         {
             str += ":";
-            str += cs->value.qstring();
+            str += cs->value.string();
         }
         // optional attribute
         if ( cs->attr ) {
@@ -320,7 +320,7 @@ DOMString CSSSelector::selectorText() const
                 kdWarning(6080) << "Unhandled case in CSSStyleRuleImpl::selectorText : match=" << cs->match << endl;
             }
             str += "\"";
-            str += cs->value.qstring();
+            str += cs->value.string();
             str += "\"]";
         }
     }

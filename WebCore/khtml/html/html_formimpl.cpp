@@ -725,12 +725,12 @@ void HTMLGenericFormElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_NAME:
         break;
     case ATTR_DISABLED:
-        setDisabled( attr->val() != 0 );
+        setDisabled( !attr->isNull() );
         break;
     case ATTR_READONLY:
     {
         bool m_oldreadOnly = m_readOnly;
-        m_readOnly = attr->val() != 0;
+        m_readOnly = !attr->isNull();
         if (m_oldreadOnly != m_readOnly) setChanged();
         break;
     }
@@ -1373,16 +1373,16 @@ void HTMLInputElementImpl::parseAttribute(AttributeImpl *attr)
             setChanged();     // at the default value right now.
         break;
     case ATTR_CHECKED:
-        m_defaultChecked = attr->val();
+        m_defaultChecked = !attr->isNull();
         if (m_useDefaultChecked)   // We only need to setChanged if the form is looking
             setChanged();          // at the default checked state right now.
         break;
     case ATTR_MAXLENGTH:
-        m_maxLen = attr->val() ? attr->val()->toInt() : -1;
+        m_maxLen = !attr->isNull() ? attr->value().toInt() : -1;
         setChanged();
         break;
     case ATTR_SIZE:
-        m_size = attr->val() ? attr->val()->toInt() : 20;
+        m_size = !attr->isNull() ? attr->value().toInt() : 20;
         break;
     case ATTR_ALT:
     case ATTR_SRC:
@@ -1493,7 +1493,7 @@ void HTMLInputElementImpl::attach()
                 setAttribute(ATTR_VALUE, nvalue);
         }
 
-        m_defaultChecked = (getAttribute(ATTR_CHECKED) != 0);
+        m_defaultChecked = (!getAttribute(ATTR_CHECKED).isNull());
         
         m_inited = true;
     }
@@ -2176,13 +2176,13 @@ void HTMLSelectElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_SIZE:
-        m_size = QMAX( attr->val()->toInt(), 1 );
+        m_size = QMAX( attr->value().toInt(), 1 );
         break;
     case ATTR_WIDTH:
-        m_minwidth = QMAX( attr->val()->toInt(), 0 );
+        m_minwidth = QMAX( attr->value().toInt(), 0 );
         break;
     case ATTR_MULTIPLE:
-        m_multiple = (attr->val() != 0);
+        m_multiple = (!attr->isNull());
         break;
     case ATTR_ACCESSKEY:
         // ### ignore for the moment
@@ -2415,10 +2415,10 @@ void HTMLKeygenElementImpl::parseAttribute(AttributeImpl* attr)
     switch(attr->id())
     {
     case ATTR_CHALLENGE:
-        m_challenge = attr->val();
+        m_challenge = attr->value();
         break;
     case ATTR_KEYTYPE:
-        m_keyType = attr->val();
+        m_keyType = attr->value();
         break;
     default:
         // skip HTMLSelectElementImpl parsing!
@@ -2433,7 +2433,7 @@ bool HTMLKeygenElementImpl::encoding(const QTextCodec* codec, khtml::encodingLis
 
 #if APPLE_CHANGES
     // Only RSA is supported at this time.
-    if (!m_keyType.isNull() && m_keyType.lower() != "rsa") {
+    if (!m_keyType.isNull() && !strcasecmp(m_keyType, "rsa")) {
         return false;
     }
     QString value = KSSLKeyGen::signedPublicKeyAndChallengeString((unsigned)selectedIndex(), m_challenge.string(), getDocument()->part()->baseURL());
@@ -2616,7 +2616,7 @@ void HTMLOptionElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_SELECTED:
-        m_selected = (attr->val() != 0);
+        m_selected = (!attr->isNull());
         break;
     case ATTR_VALUE:
         m_value = attr->value();
@@ -2717,10 +2717,10 @@ void HTMLTextAreaElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_ROWS:
-        m_rows = attr->val() ? attr->val()->toInt() : 3;
+        m_rows = !attr->isNull() ? attr->value().toInt() : 3;
         break;
     case ATTR_COLS:
-        m_cols = attr->val() ? attr->val()->toInt() : 60;
+        m_cols = !attr->isNull() ? attr->value().toInt() : 60;
         break;
     case ATTR_WRAP:
         // virtual / physical is Netscape extension of HTML 3.0, now deprecated

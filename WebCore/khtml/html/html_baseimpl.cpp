@@ -97,11 +97,11 @@ void HTMLBodyElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_BGCOLOR:
         addHTMLColor(CSS_PROP_BACKGROUND_COLOR, attr->value());
-        m_bgSet = !attr->value().isNull();
+        m_bgSet = !attr->isNull();
         break;
     case ATTR_TEXT:
         addHTMLColor(CSS_PROP_COLOR, attr->value());
-        m_fgSet = !attr->value().isNull();
+        m_fgSet = !attr->isNull();
         break;
     case ATTR_BGPROPERTIES:
         if ( strcasecmp( attr->value(), "fixed" ) == 0)
@@ -204,7 +204,7 @@ NodeImpl::Id HTMLFrameElementImpl::id() const
     return ID_FRAME;
 }
 
-bool HTMLFrameElementImpl::isURLAllowed(const DOMString &URLString) const
+bool HTMLFrameElementImpl::isURLAllowed(const AtomicString &URLString) const
 {
     if (URLString.isEmpty()) {
         return true;
@@ -281,7 +281,7 @@ void HTMLFrameElementImpl::openURL()
         return;
     }
     
-    DOMString relativeURL = url;
+    AtomicString relativeURL = url;
     if (relativeURL.isEmpty()) {
         relativeURL = "about:blank";
     }
@@ -302,7 +302,7 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_SRC:
-        setLocation(khtml::parseURL(attr->val()));
+        setLocation(khtml::parseURL(attr->value()));
         break;
     case ATTR_ID:
     case ATTR_NAME:
@@ -314,16 +314,16 @@ void HTMLFrameElementImpl::parseAttribute(AttributeImpl *attr)
     case ATTR_FRAMEBORDER:
     {
         frameBorder = attr->value().toInt();
-        frameBorderSet = ( attr->val() != 0 );
+        frameBorderSet = !attr->isNull();
         // FIXME: If we are already attached, this has no effect.
     }
     break;
     case ATTR_MARGINWIDTH:
-        marginWidth = attr->val()->toInt();
+        marginWidth = attr->value().toInt();
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_MARGINHEIGHT:
-        marginHeight = attr->val()->toInt();
+        marginHeight = attr->value().toInt();
         // FIXME: If we are already attached, this has no effect.
         break;
     case ATTR_NORESIZE:
@@ -399,14 +399,14 @@ void HTMLFrameElementImpl::attach()
 
     part->incrementFrameCount();
     
-    DOMString relativeURL = url;
+    AtomicString relativeURL = url;
     if (relativeURL.isEmpty()) {
         relativeURL = "about:blank";
     }
 
     // we need a unique name for every frame in the frameset. Hope that's unique enough.
-    if(name.isEmpty() || part->frameExists( name.string() ) )
-      name = DOMString(part->requestFrameName());
+    if (name.isEmpty() || part->frameExists( name.string() ) )
+      name = AtomicString(part->requestFrameName());
 
     // load the frame contents
     part->requestFrame( static_cast<RenderFrame*>(m_render), relativeURL.string(), name.string() );
@@ -429,7 +429,7 @@ void HTMLFrameElementImpl::detach()
 void HTMLFrameElementImpl::setLocation( const DOMString& str )
 {
     if (url == str) return;
-    url = str;
+    url = AtomicString(str);
     updateForNewURL();
 }
 
@@ -501,15 +501,15 @@ void HTMLFrameSetElementImpl::parseAttribute(AttributeImpl *attr)
     switch(attr->id())
     {
     case ATTR_ROWS:
-        if (!attr->val()) break;
+        if (attr->isNull()) break;
         if (m_rows) delete [] m_rows;
-        m_rows = attr->val()->toLengthArray(m_totalRows);
+        m_rows = attr->value().toLengthArray(m_totalRows);
         setChanged();
     break;
     case ATTR_COLS:
-        if (!attr->val()) break;
+        if (attr->isNull()) break;
         delete [] m_cols;
-        m_cols = attr->val()->toLengthArray(m_totalCols);
+        m_cols = attr->value().toLengthArray(m_totalCols);
         setChanged();
     break;
     case ATTR_FRAMEBORDER:
@@ -524,7 +524,7 @@ void HTMLFrameSetElementImpl::parseAttribute(AttributeImpl *attr)
         noresize = true;
         break;
     case ATTR_BORDER:
-        m_border = attr->val()->toInt();
+        m_border = attr->value().toInt();
         if(!m_border)
             frameborder = false;
         break;
@@ -690,7 +690,7 @@ void HTMLIFrameElementImpl::attach()
         // we need a unique name for every frame in the frameset. Hope that's unique enough.
 	part->incrementFrameCount();
         if(name.isEmpty() || part->frameExists( name.string() ))
-            name = DOMString(part->requestFrameName());
+            name = AtomicString(part->requestFrameName());
 
         static_cast<RenderPartObject*>(m_render)->updateWidget();
         needWidgetUpdate = false;

@@ -795,7 +795,7 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     // For <area> tags in image maps, walk the tree for the <area>, not the <img> using it.
     for (NodeImpl *titleNode = nodeInfo.innerNode(); titleNode; titleNode = titleNode->parentNode()) {
         if (titleNode->isElementNode()) {
-            const DOMString title = static_cast<ElementImpl *>(titleNode)->getAttribute(ATTR_TITLE);
+            const AtomicString& title = static_cast<ElementImpl *>(titleNode)->getAttribute(ATTR_TITLE);
             if (!title.isNull()) {
                 // We found a node with a title.
                 QString titleText = title.string();
@@ -810,14 +810,14 @@ static HTMLFormElementImpl *formElementFromDOMElement(id <WebDOMElement>element)
     if (URLNode) {
         ElementImpl *e = static_cast<ElementImpl *>(URLNode);
         
-        DOMString title = e->getAttribute(ATTR_TITLE);
+        const AtomicString& title = e->getAttribute(ATTR_TITLE);
         if (!title.isEmpty()) {
             QString titleText = title.string();
             titleText.replace('\\', _part->backslashAsCurrencySymbol());
             [element setObject:titleText.getNSString() forKey:WebCoreElementLinkTitleKey];
         }
         
-        DOMString link = e->getAttribute(ATTR_HREF);
+        const AtomicString& link = e->getAttribute(ATTR_HREF);
         if (!link.isNull()) {
             if (e->firstChild()) {
                 Range r(_part->document());

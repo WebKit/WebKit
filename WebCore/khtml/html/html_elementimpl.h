@@ -24,6 +24,7 @@
 #define HTML_ELEMENTIMPL_H
 
 #include "xml/dom_elementimpl.h"
+#include "dom_atomicstringlist.h"
 
 namespace DOM {
 
@@ -66,7 +67,7 @@ public:
 
     virtual bool matchesCSSClass(const AtomicString& c, bool caseSensitive) const;
 
-    void addCSSLength(int id, const DOMString &value); // value will be parsed by the CSS parser
+    void addCSSLength(int id, const DOMString &value); // FIXME: value will be parsed by the CSS parser
     void addCSSProperty(int id, const DOMString &value); // value will be parsed by the CSS parser
     void addCSSProperty(int id, int value);
     void addCSSStringProperty(int id, const DOMString &value, DOM::CSSPrimitiveValue::UnitTypes = DOM::CSSPrimitiveValue::CSS_STRING);
@@ -97,7 +98,7 @@ public:
 
 protected:
     // for IMG, OBJECT and APPLET
-    void addHTMLAlignment( DOMString alignment );
+    void addHTMLAlignment( const DOMString& alignment );
 };
 
 class HTMLGenericElementImpl : public HTMLElementImpl

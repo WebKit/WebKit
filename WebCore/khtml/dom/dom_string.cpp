@@ -225,7 +225,7 @@ int DOMString::toInt() const
 {
     if(!impl) return 0;
 
-    return QConstString(impl->s, impl->l).string().toInt();
+    return impl->toInt();
 }
 
 DOMString DOMString::copy() const
@@ -272,10 +272,18 @@ bool DOMString::isEmpty() const
     return (!impl || impl->l == 0);
 }
 
+khtml::Length* DOMString::toLengthArray(int& len) const 
+{ 
+    return impl ? impl->toLengthArray(len) : 0;
+}
+
 //-----------------------------------------------------------------------------
 
 bool DOM::operator==( const DOMString &a, const DOMString &b )
 {
+    if (a.impl == b.impl)
+        return true;
+    
     unsigned int l = a.length();
 
     if( l != b.length() ) return false;

@@ -24,6 +24,10 @@
  */
 
 #include "KWQFontFamily.h"
+#include "xml/dom_stringimpl.h"
+
+using DOM::AtomicString;
+using DOM::DOMStringImpl;
 
 KWQFontFamily::KWQFontFamily()
     : _next(0)
@@ -54,29 +58,38 @@ KWQFontFamily& KWQFontFamily::operator=(const KWQFontFamily& other)
     return *this;
 }
 
+const void *retainDOMStringImpl(CFAllocatorRef allocator, const void *value)
+{
+    ((DOMStringImpl*)value)->ref();
+    return value;
+}
+
+void releaseDOMStringImpl(CFAllocatorRef allocator, const void *value)
+{
+    ((DOMStringImpl*)value)->deref();
+}
+
+const CFDictionaryKeyCallBacks CFDictionaryFamilyKeyCallBacks = { 0, retainDOMStringImpl, releaseDOMStringImpl, 0, 0, 0 };
+
 NSString *KWQFontFamily::getNSFamily() const
 {
     if (!_NSFamily) {
         // Use an immutable copy of the name, but keep a set of
         // all family names so we don't end up with too many objects.
         static CFMutableDictionaryRef families;
-        if (families == NULL) {
-            families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryQStringKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
-        }
-        _NSFamily = (NSString *)CFDictionaryGetValue(families, &_family);
+        if (families == NULL)
+            families = CFDictionaryCreateMutable(NULL, 0, &CFDictionaryFamilyKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+        _NSFamily = (NSString *)CFDictionaryGetValue(families, _family.implementation());
         if (!_NSFamily) {
-            _NSFamily = _family.getNSString();
-            CFDictionarySetValue(families, &_family, _NSFamily);
+            _NSFamily = [NSString stringWithCharacters:(const unichar *)_family.unicode() length:_family.length()];
+            CFDictionarySetValue(families, _family.implementation(), _NSFamily);
         }
     }
     return _NSFamily;
 }
 
-void KWQFontFamily::setFamily(const QString &family)
+void KWQFontFamily::setFamily(const AtomicString &family)
 {
-    if (family == _family) {
-        return;
-    }
     _family = family;
     _NSFamily = nil;
 }
@@ -88,5 +101,5 @@ bool KWQFontFamily::operator==(const KWQFontFamily &compareFontFamily) const
         ((_next && compareFontFamily._next) && (*_next != *(compareFontFamily._next))))
         return false;
     
-    return getNSFamily() == compareFontFamily.getNSFamily();
+    return _family == compareFontFamily._family;
 }

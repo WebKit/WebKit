@@ -357,7 +357,7 @@ Value Plugins::get(ExecState *exec, const Identifier &propertyName) const
 
         // plugin[name]
         for ( PluginInfo *pl = plugins->first(); pl!=0; pl = plugins->next() ) {
-            if ( pl->name==propertyName.string() )
+            if ( pl->name==propertyName.qstring() )
                 return Value( new Plugin( exec, pl ) );
         }
     }
@@ -386,7 +386,7 @@ Value MimeTypes::get(ExecState *exec, const Identifier &propertyName) const
         //kdDebug(6070) << "MimeTypes[" << propertyName.ascii() << "]" << endl;
         for ( MimeClassInfo *m=mimes->first(); m!=0; m=mimes->next() ) {
             //kdDebug(6070) << "m->type=" << m->type.ascii() << endl;
-            if ( m->type == propertyName.string() )
+            if ( m->type == propertyName.qstring() )
                 return Value( new MimeType( exec, m ) );
         }
     }
@@ -425,7 +425,7 @@ Value Plugin::get(ExecState *exec, const Identifier &propertyName) const
         // plugin["name"]
         for ( MimeClassInfo *m=m_info->mimes.first();
               m!=0; m=m_info->mimes.next() ) {
-            if ( m->type==propertyName.string() )
+            if ( m->type==propertyName.qstring() )
                 return Value(new MimeType(exec, m));
         }
 

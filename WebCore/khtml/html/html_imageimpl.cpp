@@ -109,7 +109,7 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
 	addCSSProperty(CSS_PROP_VERTICAL_ALIGN, attr->value());
         break;
     case ATTR_USEMAP:
-        if ( attr->value()[0] == '#' )
+        if ( attr->value().domString()[0] == '#' )
             usemap = attr->value();
         else {
             QString url = getDocument()->completeURL( khtml::parseURL( attr->value() ).string() );
@@ -117,7 +117,7 @@ void HTMLImageElementImpl::parseAttribute(AttributeImpl *attr)
             // the map is on the same html page....
             usemap = url;
         }
-        m_hasAnchor = attr->val() != 0;
+        m_hasAnchor = !attr->isNull();
     case ATTR_ISMAP:
         ismap = true;
         break;
@@ -392,13 +392,13 @@ void HTMLAreaElementImpl::parseAttribute(AttributeImpl *attr)
         break;
     case ATTR_COORDS:
         if (m_coords) delete [] m_coords;
-        m_coords = attr->val()->toLengthArray(m_coordsLen);
+        m_coords = attr->value().toLengthArray(m_coordsLen);
         break;
     case ATTR_NOHREF:
-        nohref = attr->val() != 0;
+        nohref = !attr->isNull();
         break;
     case ATTR_TARGET:
-        m_hasTarget = attr->val() != 0;
+        m_hasTarget = !attr->isNull();
         break;
     case ATTR_ALT:
         break;

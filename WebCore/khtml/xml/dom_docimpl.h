@@ -157,7 +157,7 @@ public:
     DocumentTypeImpl *doctype() const;
 
     DOMImplementationImpl *implementation() const;
-    ElementImpl *documentElement() const;
+    virtual ElementImpl *documentElement() const;
     virtual ElementImpl *createElement ( const DOMString &tagName, int &exceptioncode );
     DocumentFragmentImpl *createDocumentFragment ();
     TextImpl *createTextNode ( const DOMString &data );

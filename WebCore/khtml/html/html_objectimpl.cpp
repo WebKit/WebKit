@@ -216,10 +216,8 @@ NodeImpl::Id HTMLEmbedElementImpl::id() const
 
 void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
 {
-  DOM::DOMStringImpl *stringImpl = attr->val();
-  QConstString cval(stringImpl->s, stringImpl->l);
-  QString val = cval.string();
-
+  QString val = attr->value().string();
+  
   int pos;
   switch ( attr->id() )
   {
@@ -231,7 +229,7 @@ void HTMLEmbedElementImpl::parseAttribute(AttributeImpl *attr)
         break;
      case ATTR_CODE:
      case ATTR_SRC:
-         url = khtml::parseURL(attr->val()).string();
+         url = khtml::parseURL(attr->value()).string();
          break;
      case ATTR_WIDTH:
         addCSSLength( CSS_PROP_WIDTH, attr->value() );
@@ -326,8 +324,7 @@ HTMLFormElementImpl *HTMLObjectElementImpl::form() const
 
 void HTMLObjectElementImpl::parseAttribute(AttributeImpl *attr)
 {
-  DOM::DOMStringImpl *stringImpl = attr->val();
-  QString val = QConstString( stringImpl->s, stringImpl->l ).string();
+  QString val = attr->value().string();
   int pos;
   switch ( attr->id() )
   {
@@ -448,14 +445,10 @@ void HTMLObjectElementImpl::recalcStyle( StyleChange ch )
 HTMLParamElementImpl::HTMLParamElementImpl(DocumentPtr *doc)
     : HTMLElementImpl(doc)
 {
-    m_name = 0;
-    m_value = 0;
 }
 
 HTMLParamElementImpl::~HTMLParamElementImpl()
 {
-    if(m_name) m_name->deref();
-    if(m_value) m_value->deref();
 }
 
 NodeImpl::Id HTMLParamElementImpl::id() const
@@ -471,12 +464,10 @@ void HTMLParamElementImpl::parseAttribute(AttributeImpl *attr)
         if (getDocument()->htmlMode() != DocumentImpl::XHtml) break;
         // fall through
     case ATTR_NAME:
-        m_name = attr->val();
-        if (m_name) m_name->ref();
+        m_name = attr->value();
         break;
     case ATTR_VALUE:
-        m_value = attr->val();
-        if (m_value) m_value->ref();
+        m_value = attr->value();
         break;
     }
 }

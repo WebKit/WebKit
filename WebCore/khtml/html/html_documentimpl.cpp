@@ -128,6 +128,11 @@ HTMLDocumentImpl::~HTMLDocumentImpl()
 {
 }
 
+ElementImpl* HTMLDocumentImpl::documentElement() const
+{
+    return static_cast<ElementImpl*>(_first);
+}
+
 DOMString HTMLDocumentImpl::referrer() const
 {
     if ( part() )

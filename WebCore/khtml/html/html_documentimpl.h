@@ -54,6 +54,7 @@ public:
     ~HTMLDocumentImpl();
 
     virtual bool isHTMLDocument() const { return true; }
+    virtual ElementImpl *documentElement() const;
 
     DOMString referrer() const;
     DOMString lastModified() const;

@@ -1,3 +1,199 @@
+2004-01-29  David Hyatt  <hyatt@apple.com>
+
+	Atomize font families (KWQFontFamily) and all attribute values.  Move atomic string into separate files.
+
+	In my testing, this patch yields the same score as Safari-125 in tests and recovers all lost performance
+	(mostly from excess copying of AtomicStrings where DOMStringImpl* used to be returned).
+	
+        Reviewed by darin
+
+        * ForwardingHeaders/xml/dom_atomicstring.h: Added.
+        * WebCore.pbproj/project.pbxproj:
+        * khtml/css/css_base.cpp:
+        (CSSSelector::print):
+        (CSSSelector::extractPseudoType):
+        (CSSSelector::selectorText):
+        * khtml/css/css_valueimpl.cpp:
+        (FontFamilyValueImpl::FontFamilyValueImpl):
+        * khtml/css/cssparser.cpp:
+        (CSSParser::parseFontFamily):
+        * khtml/css/cssparser.h:
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::checkPseudoState):
+        (khtml::CSSStyleSelector::checkOneSelector):
+        (khtml::CSSStyleSelector::applyRule):
+        * khtml/dom/dom_element.cpp:
+        (Element::getAttributeNS):
+        * khtml/dom/dom_string.cpp:
+        (DOMString::toInt):
+        (DOMString::toLengthArray):
+        (DOM::operator==):
+        * khtml/dom/dom_string.h:
+        (DOM::operator==):
+        (DOM::operator!=):
+        * khtml/ecma/kjs_navigator.cpp:
+        (Plugins::get):
+        (MimeTypes::get):
+        (Plugin::get):
+        * khtml/html/html_baseimpl.cpp:
+        (HTMLBodyElementImpl::parseAttribute):
+        (HTMLFrameElementImpl::isURLAllowed):
+        (HTMLFrameElementImpl::openURL):
+        (HTMLFrameElementImpl::parseAttribute):
+        (HTMLFrameElementImpl::attach):
+        (HTMLFrameElementImpl::setLocation):
+        (HTMLFrameSetElementImpl::parseAttribute):
+        (HTMLIFrameElementImpl::attach):
+        * khtml/html/html_baseimpl.h:
+        * khtml/html/html_blockimpl.cpp:
+        (HTMLHRElementImpl::parseAttribute):
+        (HTMLHRElementImpl::attach):
+        (HTMLMarqueeElementImpl::parseAttribute):
+        * khtml/html/html_documentimpl.cpp:
+        (HTMLDocumentImpl::documentElement):
+        * khtml/html/html_documentimpl.h:
+        * khtml/html/html_elementimpl.cpp:
+        (HTMLElementImpl::parseAttribute):
+        (HTMLElementImpl::addCSSLength):
+        (HTMLElementImpl::addHTMLAlignment):
+        * khtml/html/html_elementimpl.h:
+        * khtml/html/html_formimpl.cpp:
+        (HTMLGenericFormElementImpl::parseAttribute):
+        (HTMLInputElementImpl::parseAttribute):
+        (HTMLInputElementImpl::attach):
+        (HTMLSelectElementImpl::parseAttribute):
+        (HTMLKeygenElementImpl::parseAttribute):
+        (HTMLKeygenElementImpl::encoding):
+        (HTMLOptionElementImpl::parseAttribute):
+        (HTMLTextAreaElementImpl::parseAttribute):
+        * khtml/html/html_formimpl.h:
+        * khtml/html/html_headimpl.cpp:
+        (HTMLLinkElementImpl::parseAttribute):
+        (HTMLStyleElementImpl::parseAttribute):
+        * khtml/html/html_imageimpl.cpp:
+        (HTMLImageElementImpl::parseAttribute):
+        (HTMLAreaElementImpl::parseAttribute):
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::parseAttribute):
+        * khtml/html/html_listimpl.cpp:
+        (HTMLOListElementImpl::parseAttribute):
+        (HTMLLIElementImpl::parseAttribute):
+        * khtml/html/html_miscimpl.cpp:
+        (HTMLCollectionImpl::getNamedItem):
+        (HTMLFormCollectionImpl::getNamedFormItem):
+        (HTMLFormCollectionImpl::getNamedImgItem):
+        * khtml/html/html_objectimpl.cpp:
+        (HTMLEmbedElementImpl::parseAttribute):
+        (HTMLObjectElementImpl::parseAttribute):
+        (HTMLParamElementImpl::HTMLParamElementImpl):
+        (HTMLParamElementImpl::~HTMLParamElementImpl):
+        (HTMLParamElementImpl::parseAttribute):
+        * khtml/html/html_objectimpl.h:
+        (DOM::HTMLParamElementImpl::name):
+        (DOM::HTMLParamElementImpl::value):
+        * khtml/html/html_tableimpl.cpp:
+        (HTMLTableElementImpl::parseAttribute):
+        (HTMLTablePartElementImpl::parseAttribute):
+        (HTMLTableCellElementImpl::parseAttribute):
+        (HTMLTableColElementImpl::parseAttribute):
+        * khtml/html/htmlparser.cpp:
+        (KHTMLParser::insertNode):
+        (KHTMLParser::handleIsindex):
+        * khtml/html/htmltokenizer.cpp:
+        (HTMLTokenizer::parseTag):
+        * khtml/html/htmltokenizer.h:
+        (khtml::Token::addAttribute):
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::init):
+        * khtml/khtmlview.cpp:
+        (KHTMLToolTip::maybeTip):
+        * khtml/xml/dom_atomicstring.cpp: Added.
+        (DOM::AtomicStringStatisticsExitLogger::~AtomicStringStatisticsExitLogger):
+        (DOM::AtomicString::equal):
+        (DOM::AtomicString::add):
+        (DOM::AtomicString::insert):
+        (DOM::AtomicString::remove):
+        (DOM::AtomicString::expand):
+        (DOM::AtomicString::shrink):
+        (DOM::AtomicString::rehash):
+        (DOM::AtomicString::init):
+        (DOM::operator==):
+        (DOM::equalsIgnoreCase):
+        * khtml/xml/dom_atomicstring.h: Added.
+        (DOM::AtomicString::AtomicString):
+        (DOM::AtomicString:::m_string):
+        (DOM::AtomicString::operator const DOMString&):
+        (DOM::AtomicString::domString):
+        (DOM::AtomicString::string):
+        (DOM::AtomicString::implementation):
+        (DOM::AtomicString::unicode):
+        (DOM::AtomicString::length):
+        (DOM::AtomicString::ascii):
+        (DOM::AtomicString::find):
+        (DOM::AtomicString::toInt):
+        (DOM::AtomicString::percentage):
+        (DOM::AtomicString::toLengthArray):
+        (DOM::AtomicString::isNull):
+        (DOM::AtomicString::isEmpty):
+        (DOM::AtomicString::equal):
+        (DOM::operator==):
+        (DOM::operator!=):
+        * khtml/xml/dom_atomicstringlist.h: Added.
+        (DOM::AtomicStringList:::m_next):
+        (DOM::AtomicStringList::m_next):
+        (DOM::AtomicStringList::~AtomicStringList):
+        (DOM::AtomicStringList::next):
+        (DOM::AtomicStringList::setNext):
+        (DOM::AtomicStringList::string):
+        (DOM::AtomicStringList::setString):
+        (DOM::AtomicStringList::clone):
+        (DOM::AtomicStringList::clear):
+        * khtml/xml/dom_docimpl.h:
+        * khtml/xml/dom_elementimpl.cpp:
+        (AttrImpl::nodeValue):
+        (AttrImpl::cloneNode):
+        (ElementImpl::getAttribute):
+        (ElementImpl::getAttributeNS):
+        (ElementImpl::setAttribute):
+        (ElementImpl::setAttributeMap):
+        (ElementImpl::attach):
+        (ElementImpl::detach):
+        (ElementImpl::updateId):
+        (NamedAttrMapImpl::setNamedItem):
+        (NamedAttrMapImpl::removeNamedItem):
+        (NamedAttrMapImpl::getAttributeItem):
+        (NamedAttrMapImpl::operator=):
+        (NamedAttrMapImpl::removeAttribute):
+        * khtml/xml/dom_elementimpl.h:
+        (DOM::AttributeImpl::AttributeImpl):
+        (DOM::AttributeImpl::value):
+        (DOM::AttributeImpl::prefix):
+        (DOM::AttributeImpl::isNull):
+        (DOM::AttributeImpl::isEmpty):
+        (DOM::AttributeImpl::setValue):
+        (DOM::AttributeImpl::setPrefix):
+        (DOM::ElementImpl::getAttribute):
+        * khtml/xml/dom_nameimpl.cpp: Removed.
+        * khtml/xml/dom_nameimpl.h:
+        (DOM::Name::namespaceURI):
+        (DOM::Name::localName):
+        * khtml/xml/dom_nodeimpl.h:
+        * khtml/xml/dom_stringimpl.cpp:
+        * kwq/KWQFont.mm:
+        (QFont::family):
+        * kwq/KWQFontFamily.h:
+        (KWQFontFamily::family):
+        * kwq/KWQFontFamily.mm:
+        (retainDOMStringImpl):
+        (releaseDOMStringImpl):
+        (KWQFontFamily::getNSFamily):
+        (KWQFontFamily::setFamily):
+        (KWQFontFamily::operator==):
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::fileWrapperForElement):
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge elementAtPoint:]):
+
 2004-01-29  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3543619>: copied HTML is strangely formatted, random whitespace and return characters
