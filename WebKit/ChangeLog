@@ -1,5 +1,16 @@
 2003-01-30  Chris Blumenberg  <cblu@apple.com>
 
+	Fixed: 3161102 - Avoid retain cycles by destroying plug-ins in the page cache before dealloc
+
+        Reviewed by rjw.
+
+        * History.subproj/WebHistoryItem.m:
+        (+[WebHistoryItem _releaseAllPendingPageCaches]): iterate over all of the plug-ins and call destroy
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView windowWillClose:]): clear page cache
+
+2003-01-30  Chris Blumenberg  <cblu@apple.com>
+
 	Fixed: 3160464 - Slideback sometimes happens twice
 
 	Because we start drags in mouseDragged (which AppKit says we shouldn't), we get mouseDragged events after a drag (image, link, text etc) has ended. We also get mouseDragged events after we've sent the fake mouseUp to WebCore. That is probably bad for unknown reasons.
