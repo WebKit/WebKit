@@ -95,7 +95,7 @@ void JSEventListener::handleEvent(DOM::Event &evt)
     interpreter->setCurrentEvent( 0 );
     if ( exec->hadException() )
         exec->clearException();
-    else
+    else if (html)
     {
         QVariant ret = ValueToVariant(exec, retval);
         if (ret.type() == QVariant::Bool && ret.toBool() == false)

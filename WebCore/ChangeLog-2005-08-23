@@ -1,3 +1,14 @@
+2003-01-23  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Trey.
+
+	- fixed 3151442 - mac.com homepage editing - selection and clicking with mouse don't work
+	
+        * khtml/ecma/kjs_events.cpp:
+        (JSEventListener::handleEvent): Only allow a false return value to
+	prevent default if this is an html event handler, rather than one
+	set with addEventListener or the like.
+
 2003-01-23  Chris Blumenberg  <cblu@apple.com>
 
 	Replaced the paint phase constants with the PaintAction enum. Added PaintActionSelection as a paint action. This will eventually allow us to only paint selected objects. This is needed for the text dragging image.
