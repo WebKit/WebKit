@@ -1,3 +1,16 @@
+2002-05-21  Kenneth Kocienda  <kocienda@apple.com>
+
+        Merged these four include files into the precompiled header.
+        These are used for the enhanced assertion/debuggin support I
+        added yesterday.
+
+        <signal.h>
+        <sys/types.h>
+        <sys/time.h>
+        <sys/resource.h>
+
+	* WebKitPrefix.h
+
 2002-05-20  Chris Blumenberg  <cblu@apple.com>
 
 	Added support for plug-ins to send URL requests to certain targets.

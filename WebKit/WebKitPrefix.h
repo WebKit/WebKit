@@ -5,6 +5,10 @@
 #import <fcntl.h>
 #import <errno.h>
 #import <unistd.h>
+#import <signal.h>
+#import <sys/types.h>
+#import <sys/time.h>
+#import <sys/resource.h>
 
 #import <pthread.h>
 
