@@ -59,8 +59,8 @@ public:
     ElementImpl *element() const;
     CSSComputedStyleDeclarationImpl *computedStyle() const;
 
-    Position leadingWhitespacePosition(khtml::EAffinity affinity) const;
-    Position trailingWhitespacePosition(khtml::EAffinity affinity) const;
+    Position leadingWhitespacePosition(khtml::EAffinity affinity, bool treatNBSPAsWhiteSpace=false) const;
+    Position trailingWhitespacePosition(khtml::EAffinity affinity, bool treatNBSPAsWhiteSpace=false) const;
 
     // These functions only consider leaf nodes, and if stayInBlock is true, blocks.
     // Hence, the results from these functions are idiosyncratic, and until you

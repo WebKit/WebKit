@@ -4539,14 +4539,14 @@ void ReplaceSelectionCommand::doApply()
     if (m_smartReplace) {
         VisiblePosition visiblePos = VisiblePosition(startPos, VP_DEFAULT_AFFINITY);
         assert(visiblePos.isNotNull());
-        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY).isNull() && !isFirstVisiblePositionOnLine(visiblePos);
+        addLeadingSpace = startPos.leadingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isFirstVisiblePositionOnLine(visiblePos);
         if (addLeadingSpace) {
             QChar previousChar = visiblePos.previous().character();
             if (!previousChar.isNull()) {
                 addLeadingSpace = !part->isCharacterSmartReplaceExempt(previousChar, true);
             }
         }
-        addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY).isNull() && !isLastVisiblePositionOnLine(visiblePos);
+        addTrailingSpace = startPos.trailingWhitespacePosition(VP_DEFAULT_AFFINITY, true).isNull() && !isLastVisiblePositionOnLine(visiblePos);
         if (addTrailingSpace) {
             QChar thisChar = visiblePos.character();
             if (!thisChar.isNull()) {

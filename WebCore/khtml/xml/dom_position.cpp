@@ -609,13 +609,13 @@ bool Position::rendersInDifferentPosition(const Position &pos) const
     return true;
 }
 
-static inline bool isWS(const QChar &c)
+static inline bool isWS(const QChar &c, bool treatNBSPAsWhiteSpace)
 {
     const char nonBreakingSpace = 0xA0;
-    return c.isSpace() && c != nonBreakingSpace;
+    return (c.isSpace() && c != nonBreakingSpace) || (treatNBSPAsWhiteSpace && c == nonBreakingSpace);
 }
 
-Position Position::leadingWhitespacePosition(EAffinity affinity) const
+Position Position::leadingWhitespacePosition(EAffinity affinity, bool treatNBSPAsWhiteSpace) const
 {
     if (isNull())
         return Position();
@@ -626,14 +626,14 @@ Position Position::leadingWhitespacePosition(EAffinity affinity) const
     Position prev = previousCharacterPosition(affinity);
     if (prev != *this && prev.node()->inSameContainingBlockFlowElement(node()) && prev.node()->isTextNode()) {
         DOMString string = static_cast<TextImpl *>(prev.node())->data();
-        if (isWS(string[prev.offset()]))
+        if (isWS(string[prev.offset()], treatNBSPAsWhiteSpace))
             return prev;
     }
 
     return Position();
 }
 
-Position Position::trailingWhitespacePosition(EAffinity affinity) const
+Position Position::trailingWhitespacePosition(EAffinity affinity, bool treatNBSPAsWhiteSpace) const
 {
     if (isNull())
         return Position();
@@ -642,7 +642,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity) const
         TextImpl *textNode = static_cast<TextImpl *>(node());
         if (offset() < (long)textNode->length()) {
             DOMString string = static_cast<TextImpl *>(node())->data();
-            if (isWS(string[offset()]))
+            if (isWS(string[offset()], treatNBSPAsWhiteSpace))
                 return *this;
             return Position();
         }
@@ -654,7 +654,7 @@ Position Position::trailingWhitespacePosition(EAffinity affinity) const
     Position next = nextCharacterPosition(affinity);
     if (next != *this && next.node()->inSameContainingBlockFlowElement(node()) && next.node()->isTextNode()) {
         DOMString string = static_cast<TextImpl *>(next.node())->data();
-        if (isWS(string[0]))
+        if (isWS(string[0], treatNBSPAsWhiteSpace))
             return next;
     }
 

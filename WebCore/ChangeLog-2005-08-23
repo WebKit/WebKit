@@ -1,3 +1,17 @@
+2005-03-01  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/4029934> smart paste with plain text can add too many spaces
+
+        Reviewed by kocienda.
+
+        * khtml/editing/htmlediting.cpp:
+        (khtml::ReplaceSelectionCommand::doApply): pass true for treatNBSPAsWhitespace to leadingWhitespacePosition and trailingWhitespacePosition
+        * khtml/xml/dom_position.cpp:
+        (DOM::isWS): take treatNBSPAsWhitespace param
+        (DOM::Position::leadingWhitespacePosition): ditto
+        (DOM::Position::trailingWhitespacePosition): ditto
+        * khtml/xml/dom_position.h:
+
 2005-03-01  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by John
