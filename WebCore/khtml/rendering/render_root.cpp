@@ -593,18 +593,20 @@ int RenderRoot::docHeight() const
     else
         h = m_view->visibleHeight();
 
+    int lowestPos = lowestPosition();
+    if( lowestPos > h )
+        h = lowestPos;
+
     // FIXME: This doesn't do any margin collapsing.
     // Instead of this dh computation we should keep the result
     // when we call RenderBlock::layout.
     int dh = 0;
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
         dh += c->height() + c->marginTop() + c->marginBottom();
-        int lowestPos = c->lowestPosition();
-        if( lowestPos > h )
-            h = lowestPos;
     }
     if( dh > h )
         h = dh;
+
     return h;
 }
 
@@ -616,13 +618,14 @@ int RenderRoot::docWidth() const
     else
         w = m_view->visibleWidth();
 
+    int rightmostPos = rightmostPosition();
+    if( rightmostPos > w )
+        w = rightmostPos;
+
     for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
         int dw = c->width() + c->marginLeft() + c->marginRight();
         if( dw > w )
             w = dw;
-        int rightmostPos = c->rightmostPosition();
-        if( rightmostPos > w )
-            w = rightmostPos;
     }
     return w;
 }

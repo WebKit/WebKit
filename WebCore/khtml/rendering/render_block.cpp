@@ -1472,31 +1472,37 @@ RenderBlock::floatBottom() const
 int
 RenderBlock::lowestPosition() const
 {
+    // We don't make any attempt to have this be correct for
+    // any single object, since this is only done for the entire
+    // render tree as a whole. Instead the focus is on visiting
+    // each object once. If we visit an object more than once,
+    // then this becomes an exponential algorithm.
+    
+    // FIXME: Maybe we can use m_overflowHeight instead?
+
     int bottom = RenderBox::lowestPosition();
-    //kdDebug(0) << renderName() << "("<<this<<") lowest = " << bottom << endl;
-    int lp = 0;
-    RenderObject *last = 0;
-    if ( !m_childrenInline ) {
-        last = lastChild();
-        while (last && last->isFloatingOrPositioned())
-            last = last->previousSibling();
-        if( last )
-            lp = last->yPos() + last->lowestPosition();
+
+    // FIXME: Used to do nothing here in the m_childrenInline case,
+    // but that demonstrably didn't work (layout tests failed).
+    // FIXME: Is it still OK to look only at the last non-floating
+    // non-positioned child? Testing indicates it is, but is the concept
+    // 100% right?
+    for (RenderObject *c = lastChild(); c; c = c->previousSibling()) {
+        if (!c->isFloatingOrPositioned()) {
+            int lp = c->yPos() + c->lowestPosition();
+            bottom = QMAX(bottom, lp);
+            break;
+        }
     }
-
-    if(  lp > bottom )
-        bottom = lp;
-
-    //kdDebug(0) << "     bottom = " << bottom << endl;
 
     if (m_floatingObjects) {
         FloatingObject* r;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            lp = r->startY + r->node->lowestPosition();
-            //kdDebug(0) << r->node->renderName() << " lp = " << lp << "startY=" << r->startY << endl;
-            if( lp > bottom)
-                bottom = lp;
+            if (!r->noPaint) {
+                int lp = r->startY + r->node->lowestPosition();
+                bottom = QMAX(bottom, lp);
+            }
         }
     }
 
@@ -1504,47 +1510,41 @@ RenderBlock::lowestPosition() const
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            lp = r->yPos()+ r->lowestPosition();
-            if( lp > bottom)
-                bottom = lp;
-        }
-    }
-    
-    if ( overhangingContents() ) {
-        RenderObject *child = firstChild();
-        while( child ) {
-            if ( child != last && child->overhangingContents() ) {
-                int lp = child->yPos() + child->lowestPosition();
-                if ( lp > bottom ) bottom = lp;
-            }
-            child = child->nextSibling();
+            int lp = r->yPos() + r->lowestPosition();
+            bottom = QMAX(bottom, lp);
         }
     }
 
-    //kdDebug(0) << renderName() << "      bottom final = " << bottom << endl;
     return bottom;
 }
 
 int RenderBlock::rightmostPosition() const
 {
+    // We don't make any attempt to have this be correct for
+    // any single object, since this is only done for the entire
+    // render tree as a whole. Instead the focus is on visiting
+    // each object once. If we visit an object more than once,
+    // then this becomes an exponential algorithm.
+    
+    // FIXME: Maybe we can use m_overflowWidth instead?
+
     int right = RenderBox::rightmostPosition();
 
-    RenderObject *c;
-    for (c = firstChild(); c; c = c->nextSibling()) {
-        if (!c->isPositioned() && !c->isFloating()) {
-            int childRight = c->xPos() + c->rightmostPosition();
-            if (childRight > right)
-                right = childRight;
-        }
+    for (RenderObject *c = firstChild(); c; c = c->nextSibling()) {
+        if (!c->isFloatingOrPositioned()) {
+            int rp = c->xPos() + c->rightmostPosition();
+            right = QMAX(right, rp);
+	}
     }
 
     if (m_floatingObjects) {
         FloatingObject* r;
         QPtrListIterator<FloatingObject> it(*m_floatingObjects);
         for ( ; (r = it.current()); ++it ) {
-            int specialRight = r->left + r->node->rightmostPosition();
-            if (specialRight > right)
-                right = specialRight;
+            if (!r->noPaint) {
+                int rp = r->left + r->node->rightmostPosition();
+           	right = QMAX(right, rp);
+            }
         }
     }
 
@@ -1552,20 +1552,8 @@ int RenderBlock::rightmostPosition() const
         RenderObject* r;
         QPtrListIterator<RenderObject> it(*m_positionedObjects);
         for ( ; (r = it.current()); ++it ) {
-            int specialRight = r->xPos()+ r->rightmostPosition();
-            if (specialRight > right)
-                right = specialRight;
-        }
-    }
-    
-    if ( overhangingContents() ) {
-        RenderObject *child = firstChild();
-        while( child ) {
-            if ( (child->isPositioned() || child->isFloating()) && child->overhangingContents() ) {
-                int r = child->xPos() + child->rightmostPosition();
-                if ( r > right ) right = r;
-            }
-            child = child->nextSibling();
+            int rp = r->yPos() + r->rightmostPosition();
+            right = QMAX(right, rp);
         }
     }
 

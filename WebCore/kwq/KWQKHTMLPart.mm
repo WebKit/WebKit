@@ -723,6 +723,7 @@ NSView *KWQKHTMLPart::nextKeyViewForWidget(QWidget *startingWidget, KWQSelection
     // Use the event filter object to figure out which RenderWidget owns this QWidget and get to the DOM.
     // Then get the next key view in the order determined by the DOM.
     NodeImpl *node = nodeForWidget(startingWidget);
+    ASSERT(node);
     return partForNode(node)->nextKeyView(node, direction);
 }
 
@@ -872,28 +873,42 @@ void KWQKHTMLPart::openURLFromPageCache(KWQPageState *state)
 
 WebCoreBridge *KWQKHTMLPart::bridgeForWidget(const QWidget *widget)
 {
-    return partForNode(nodeForWidget(widget))->bridge();
+    ASSERT_ARG(widget, widget);
+    NodeImpl *node = nodeForWidget(widget);
+    return node ? partForNode(node)->bridge() : 0;
 }
 
 KWQKHTMLPart *KWQKHTMLPart::partForNode(NodeImpl *node)
 {
+    ASSERT_ARG(node, node);
     return KWQ(node->getDocument()->view()->part());
 }
 
 NodeImpl *KWQKHTMLPart::nodeForWidget(const QWidget *widget)
 {
-    return static_cast<const RenderWidget *>(widget->eventFilterObject())->element();
+    ASSERT_ARG(widget, widget);
+    const QObject *o = widget->eventFilterObject();
+    return o ? static_cast<const RenderWidget *>(o)->element() : 0;
 }
 
 void KWQKHTMLPart::setDocumentFocus(QWidget *widget)
 {
     NodeImpl *node = nodeForWidget(widget);
-    node->getDocument()->setFocusNode(node);
+    if (node) {
+        node->getDocument()->setFocusNode(node);
+    } else {
+        ERROR("unable to clear focus because widget had no corresponding node");
+    }
 }
 
 void KWQKHTMLPart::clearDocumentFocus(QWidget *widget)
 {
-    nodeForWidget(widget)->getDocument()->setFocusNode(0);
+    NodeImpl *node = nodeForWidget(widget);
+    if (node) {
+    	node->getDocument()->setFocusNode(0);
+    } else {
+        ERROR("unable to clear focus because widget had no corresponding node");
+    }
 }
 
 void KWQKHTMLPart::saveDocumentState()

@@ -1,3 +1,44 @@
+2003-03-28  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed 3191163 -- hang in QPtrListIterator at www.phiffer.com
+        - fixed 3183520 -- XML page has no vertical scrollbar
+
+        The hang was due to an exponential algorithm in lowest/rightmostPosition.
+        Fixed by making some simplifications to these functions, used only to determine the size
+        of the entire web page. While doing that I cleared some things up that made the XML
+        scroll bar problem go away too.
+        
+        Note that www.phiffer.com still does not render right.
+
+        * khtml/rendering/render_block.cpp:
+        (RenderBlock::lowestPosition): Since this is always called on the whole tree, don't worry
+        about which parent deals with which child. Just make sure that every object is visited
+        exactly once.
+        (RenderBlock::rightmostPosition): Ditto.
+        * khtml/rendering/render_html.cpp: (RenderHtml::layout): Use the result from calling
+        lowestPosition on the root, since some floating/positioned objects hang off there, rather
+        than here. This seems consistent with the long term approach of doing more work in the root
+        and less in RenderHtml, since XML documents don't have a RenderHtml.
+        * khtml/rendering/render_root.cpp:
+        (RenderRoot::docHeight): Call lowestPosition() on self rather than on children. Now that
+        I understand the method, it's clear this is the correct way to do things.
+        (RenderRoot::docWidth): Ditto, but rightmostPosition().
+
+	- fixed 3211289 -- REGRESSION: nil-deref in bridgeForWidget
+
+        Maciej may have some ideas about how to fix this even better, but this
+        is better than just rolling his change out.
+
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::nextKeyViewForWidget): Added an assertion.
+        (KWQKHTMLPart::bridgeForWidget): Handle case where node is 0 by returning 0.
+        (KWQKHTMLPart::partForNode): Added an assertion.
+        (KWQKHTMLPart::nodeForWidget): Handle case where eventFilterObject is 0 by returning 0.
+        (KWQKHTMLPart::setDocumentFocus): Quietly do nothing if the node is 0.
+        (KWQKHTMLPart::clearDocumentFocus): Quietly do nothing if the node is 0.
+
 2003-03-27  David Hyatt  <hyatt@apple.com>
 
 	A collection of fixes for tables.
