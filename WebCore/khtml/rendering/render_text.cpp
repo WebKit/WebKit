@@ -327,11 +327,11 @@ RenderText::~RenderText()
 void RenderText::detach()
 {
     if (!documentBeingDestroyed()) {
-        if (parent() && isBR())
-            parent()->dirtyLinesFromChangedChild(this);
         if (firstTextBox())
             for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
                 box->remove();
+        else if (parent() && isBR())
+            parent()->dirtyLinesFromChangedChild(this);
     }
     deleteTextBoxes();
     RenderObject::detach();

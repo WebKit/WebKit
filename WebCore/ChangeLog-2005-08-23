@@ -1,5 +1,16 @@
 2004-05-20  David Hyatt  <hyatt@apple.com>
 
+	Revise the patch for incorrect caret positions when brs get deleted.  It can be even simpler.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_flow.cpp:
+        (RenderFlow::dirtyLinesFromChangedChild):
+        * khtml/rendering/render_text.cpp:
+        (RenderText::detach):
+
+2004-05-20  David Hyatt  <hyatt@apple.com>
+
 	Fix for 3629816, caret in wrong position when deleting <br>s on lines by themselves or when moving <br>s
 	on lines by themselves.
 	
