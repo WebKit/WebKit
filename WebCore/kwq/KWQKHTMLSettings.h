@@ -43,58 +43,58 @@ public:
     KHTMLSettings() {};
     
     // Font settings
-    const QString &stdFontName() const;
-    const QString &fixedFontName() const;
-    const QString &serifFontName() const;
-    const QString &sansSerifFontName() const;
-    const QString &cursiveFontName() const;
-    const QString &fantasyFontName() const;
+    const QString &stdFontName() const { return _stdFontName; }
+    const QString &fixedFontName() const { return _fixedFontName; }
+    const QString &serifFontName() const { return _serifFontName; }
+    const QString &sansSerifFontName() const { return _sansSerifFontName; }
+    const QString &cursiveFontName() const { return _cursiveFontName; }
+    const QString &fantasyFontName() const { return _fantasyFontName; }
     
     static const QString &settingsToCSS() { return QString::null; }
 
     static const QString &encoding();
 
-    int minFontSize() const;
-    int mediumFontSize() const;
-    int mediumFixedFontSize() const;
+    int minFontSize() const { return _minimumFontSize; }
+    int mediumFontSize() const { return _defaultFontSize; }
+    int mediumFixedFontSize() const { return _defaultFixedFontSize; }
 
     static bool changeCursor() { return true; }
 
     static bool isFormCompletionEnabled() { return false; }
     static int maxFormCompletionItems() { return 0; }
 
-    bool autoLoadImages() const;
+    bool autoLoadImages() const { return _willLoadImagesAutomatically; }
     static KAnimationAdvice showAnimations() { return KAnimationEnabled; }
 
-    bool isJavaScriptEnabled() const;
-    bool JavaScriptCanOpenWindowsAutomatically() const;
-    bool isJavaScriptEnabled(const QString &host) const { return isJavaScriptEnabled(); }
+    bool isJavaScriptEnabled() const { return _JavaScriptEnabled; }
+    bool JavaScriptCanOpenWindowsAutomatically() const { return _JavaScriptCanOpenWindowsAutomatically; }
+    bool isJavaScriptEnabled(const QString &host) const { return _JavaScriptEnabled; }
     bool isJavaScriptDebugEnabled() const { return false; }
-    bool isJavaEnabled() const;
-    bool isJavaEnabled(const QString &host) const { return isJavaEnabled(); }
-    bool isPluginsEnabled() const;
-    bool isPluginsEnabled(const QString &host) const { return isPluginsEnabled(); }
+    bool isJavaEnabled() const { return _JavaEnabled; }
+    bool isJavaEnabled(const QString &host) const { return _JavaEnabled; }
+    bool isPluginsEnabled() const { return _pluginsEnabled; }
+    bool isPluginsEnabled(const QString &host) const { return _pluginsEnabled; }
     
-    const QString &userStyleSheet();
+    const QString &userStyleSheet() { return _userStyleSheetLocation; }
 
-    void setStdFontName(const QString &);
-    void setFixedFontName(const QString &);
-    void setSerifFontName(const QString &);
-    void setSansSerifFontName(const QString &);
-    void setCursiveFontName(const QString &);
-    void setFantasyFontName(const QString &);
+    void setStdFontName(const QString &s) { _stdFontName = s; }
+    void setFixedFontName(const QString &s) { _fixedFontName = s; }
+    void setSerifFontName(const QString &s) { _serifFontName = s; }
+    void setSansSerifFontName(const QString &s) { _sansSerifFontName = s; }
+    void setCursiveFontName(const QString &s) { _cursiveFontName = s; }
+    void setFantasyFontName(const QString &s) { _fantasyFontName = s; }
     
-    void setMinFontSize(int);
-    void setMediumFontSize(int);
-    void setMediumFixedFontSize(int);
+    void setMinFontSize(int s) { _minimumFontSize = s; }
+    void setMediumFontSize(int s) { _defaultFontSize = s; }
+    void setMediumFixedFontSize(int s) { _defaultFixedFontSize = s; }
     
-    void setAutoLoadImages(bool);
-    void setIsJavaScriptEnabled(bool);
-    void setIsJavaEnabled(bool);
-    void setArePluginsEnabled(bool);
-    void setJavaScriptCanOpenWindowsAutomatically(bool);
+    void setAutoLoadImages(bool f) { _willLoadImagesAutomatically = f; }
+    void setIsJavaScriptEnabled(bool f) { _JavaScriptEnabled = f; }
+    void setIsJavaEnabled(bool f) { _JavaEnabled = f; }
+    void setArePluginsEnabled(bool f) { _pluginsEnabled = f; }
+    void setJavaScriptCanOpenWindowsAutomatically(bool f) { _JavaScriptCanOpenWindowsAutomatically = f; }
 
-    void setUserStyleSheet(const QString &);
+    void setUserStyleSheet(const QString &s) { _userStyleSheetLocation = s; }
 
 private:
     QString _stdFontName;

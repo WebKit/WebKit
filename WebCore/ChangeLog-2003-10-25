@@ -1,3 +1,16 @@
+2003-02-20  Darin Adler  <darin@apple.com>
+
+        Reviewed by Trey.
+
+        - fixed 3177310 -- REGRESSION: "serif" mapped to "fixed"
+        
+        Fixed a typo where the serif method was returning the fixed font name.
+        Also made this class use inlining for almost everything -- yields a miniscule
+        improvement in code size and speed, and increases brevity.
+
+        * kwq/KWQKHTMLSettings.h: Moved almost everything here.
+        * kwq/KWQKHTMLSettings.mm: Moved almost everything out of here.
+
 2003-02-19  David Hyatt  <hyatt@apple.com>
 
 	Update layers to not fix their positions during setLayouted.
