@@ -1,3 +1,45 @@
+2004-02-11  David Hyatt  <hyatt@apple.com>
+
+	Fix for 3556037, regression where display:block generated content didn't work.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::setStyle):
+        (khtml::RenderBlock::addChildToFlow):
+        (khtml::RenderBlock::removeChild):
+        (khtml::RenderBlock::renderName):
+        * khtml/rendering/render_container.cpp:
+        (RenderContainer::insertChildNode):
+        (RenderContainer::removeLeftoverAnonymousBoxes):
+        * khtml/rendering/render_inline.cpp:
+        (RenderInline::splitFlow):
+        (RenderInline::renderName):
+        * khtml/rendering/render_list.cpp:
+        (RenderListItem::updateMarkerLocation):
+        * khtml/rendering/render_object.h:
+        (khtml::RenderObject::isAnonymousBlock):
+        * layout-tests/css1/pseudo/firstletter-expected.txt:
+        * layout-tests/css1/pseudo/multiple_pseudo_elements-expected.txt:
+        * layout-tests/fast/css-generated-content/002-expected.txt:
+        * layout-tests/fast/css-generated-content/004-expected.txt:
+        * layout-tests/fast/css-generated-content/005-expected.txt:
+        * layout-tests/fast/css-generated-content/006-expected.txt:
+        * layout-tests/fast/css-generated-content/007-expected.txt:
+        * layout-tests/fast/css-generated-content/009-expected.txt:
+        * layout-tests/fast/css-generated-content/010-expected.txt:
+        * layout-tests/fast/selectors/039-expected.txt:
+        * layout-tests/fast/selectors/039b-expected.txt:
+        * layout-tests/fast/selectors/041-expected.txt:
+        * layout-tests/fast/selectors/042-expected.txt:
+        * layout-tests/fast/selectors/166a-expected.txt:
+        * layout-tests/fast/selectors/168-expected.txt:
+        * layout-tests/fast/selectors/168a-expected.txt:
+        * layout-tests/fast/selectors/169-expected.txt:
+        * layout-tests/fast/selectors/169a-expected.txt:
+        * layout-tests/fast/text/firstline/002-expected.txt:
+        * layout-tests/fast/text/firstline/003-expected.txt:
+
 2004-02-11  Darin Adler   <darin@apple.com>
 
         Reviewed by Richard.

@@ -4,7 +4,7 @@ layer at (0,0) size 800x711
   RenderBlock {HTML} at (0,0) size 800x711
     RenderBody {BODY} at (8,8) size 784x695 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline (anonymous) at (0,0) size 10x18 [color=#800000]
+        RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText {TEXT} at (0,0) size 10x18
             text run at (0,0) width 10: "T"
         RenderText {TEXT} at (10,0) size 345x18
@@ -16,7 +16,7 @@ layer at (0,0) size 800x711
           text run at (0,30) width 312: "P.three:first-letter {font-size: 350%;}"
       RenderBlock {HR} at (0,107) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,125) size 784x54
-        RenderInline (anonymous) at (0,0) size 10x18 [color=#800000]
+        RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText {TEXT} at (0,0) size 10x18
             text run at (0,0) width 10: "T"
         RenderText {TEXT} at (10,0) size 764x54
@@ -26,7 +26,7 @@ layer at (0,0) size 800x711
           text run at (187,18) width 574: "Remember that in order to ensure a complete test, the paragraph must be displayed on more"
           text run at (0,36) width 85: "than one line."
       RenderBlock {P} at (0,195) size 784x73
-        RenderInline (anonymous) at (0,0) size 20x37 [color=#800000]
+        RenderInline (generated) at (0,0) size 20x37 [color=#800000]
           RenderText {TEXT} at (0,0) size 20x37
             text run at (0,0) width 20: "T"
         RenderText {TEXT} at (20,15) size 757x58
@@ -36,7 +36,7 @@ layer at (0,0) size 800x711
           text run at (423,37) width 334: "Remember that in order to ensure a complete test, the"
           text run at (0,55) width 325: "paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,284) size 784x100
-        RenderInline (anonymous) at (0,0) size 76x64 [color=#800000]
+        RenderInline (generated) at (0,0) size 76x64 [color=#800000]
           RenderText {TEXT} at (0,0) size 76x64
             text run at (0,0) width 76: "\"W"
         RenderText {TEXT} at (76,36) size 760x64
@@ -58,7 +58,7 @@ layer at (0,0) size 800x711
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x267 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x54
-                RenderInline (anonymous) at (0,0) size 10x18 [color=#800000]
+                RenderInline (generated) at (0,0) size 10x18 [color=#800000]
                   RenderText {TEXT} at (0,0) size 10x18
                     text run at (0,0) width 10: "T"
                 RenderText {TEXT} at (10,0) size 748x54
@@ -68,7 +68,7 @@ layer at (0,0) size 800x711
                   text run at (210,18) width 538: "Remember that in order to ensure a complete test, the paragraph must be displayed on"
                   text run at (0,36) width 121: "more than one line."
               RenderBlock {P} at (4,74) size 762x73
-                RenderInline (anonymous) at (0,0) size 20x37 [color=#800000]
+                RenderInline (generated) at (0,0) size 20x37 [color=#800000]
                   RenderText {TEXT} at (0,0) size 20x37
                     text run at (0,0) width 20: "T"
                 RenderText {TEXT} at (20,15) size 757x58
@@ -78,7 +78,7 @@ layer at (0,0) size 800x711
                   text run at (423,37) width 334: "Remember that in order to ensure a complete test, the"
                   text run at (0,55) width 325: "paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,163) size 762x100
-                RenderInline (anonymous) at (0,0) size 76x64 [color=#800000]
+                RenderInline (generated) at (0,0) size 76x64 [color=#800000]
                   RenderText {TEXT} at (0,0) size 76x64
                     text run at (0,0) width 76: "\"W"
                 RenderText {TEXT} at (76,36) size 760x64

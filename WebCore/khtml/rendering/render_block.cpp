@@ -80,7 +80,7 @@ void RenderBlock::setStyle(RenderStyle* _style)
     RenderObject *child = firstChild();
     while (child != 0)
     {
-        if (child->isAnonymous() && child->style()->styleType() == RenderStyle::NOPSEUDO && !child->isListMarker())
+        if (child->isAnonymousBlock())
         {
             RenderStyle* newStyle = new (renderArena()) RenderStyle();
             newStyle->inheritFrom(style());
@@ -111,7 +111,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
     if (beforeChild && beforeChild->parent() != this) {
 
         KHTMLAssert(beforeChild->parent());
-        KHTMLAssert(beforeChild->parent()->isAnonymous());
+        KHTMLAssert(beforeChild->parent()->isAnonymousBlock());
 
         if (newChild->isInline()) {
             beforeChild->parent()->addChild(newChild,beforeChild);
@@ -142,7 +142,7 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
         
         if (beforeChild && beforeChild->parent() != this) {
             beforeChild = beforeChild->parent();
-            KHTMLAssert(beforeChild->isAnonymous());
+            KHTMLAssert(beforeChild->isAnonymousBlock());
             KHTMLAssert(beforeChild->parent() == this);
         }
     }
@@ -153,13 +153,13 @@ void RenderBlock::addChildToFlow(RenderObject* newChild, RenderObject* beforeChi
         // a new one is created and inserted into our list of children in the appropriate position.
         if (newChild->isInline()) {
             if (beforeChild) {
-                if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymous()) {
+                if (beforeChild->previousSibling() && beforeChild->previousSibling()->isAnonymousBlock()) {
                     beforeChild->previousSibling()->addChild(newChild);
                     return;
                 }
             }
             else {
-                if (m_last && m_last->isAnonymous()) {
+                if (m_last && m_last->isAnonymousBlock()) {
                     m_last->addChild(newChild);
                     return;
                 }
@@ -264,8 +264,8 @@ void RenderBlock::removeChild(RenderObject *oldChild)
     RenderObject* next = oldChild->nextSibling();
     bool mergedBlocks = false;
     if (!documentBeingDestroyed() && !isInline() && !oldChild->isInline() && !oldChild->continuation() &&
-        prev && prev->isAnonymous() && prev->childrenInline() &&
-        next && next->isAnonymous() && next->childrenInline()) {
+        prev && prev->isAnonymousBlock() && prev->childrenInline() &&
+        next && next->isAnonymousBlock() && next->childrenInline()) {
         // Take all the children out of the |next| block and put them in
         // the |prev| block.
         RenderObject* o = next->firstChild();
@@ -2622,8 +2622,10 @@ const char *RenderBlock::renderName() const
         return "RenderBlock (floating)";
     if (isPositioned())
         return "RenderBlock (positioned)";
-    if (isAnonymous())
+    if (isAnonymousBlock())
         return "RenderBlock (anonymous)";
+    else if (isAnonymous())
+        return "RenderBlock (generated)";
     if (isRelPositioned())
         return "RenderBlock (relative positioned)";
     if (isCompact())

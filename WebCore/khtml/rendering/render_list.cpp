@@ -234,7 +234,7 @@ void RenderListItem::updateMarkerLocation()
             // then we are the only item in that anonymous box (since no line box
             // parent was found).  It's ok to just leave the marker where it is
             // in this case.
-            if (markerPar && markerPar->isAnonymous())
+            if (markerPar && markerPar->isAnonymousBlock())
                 lineBoxParent = markerPar;
             else
                 lineBoxParent = this;

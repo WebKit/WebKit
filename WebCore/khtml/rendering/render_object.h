@@ -246,6 +246,10 @@ public:
     
     bool isAnonymous() const { return m_isAnonymous; }
     void setIsAnonymous(bool b) { m_isAnonymous = b; }
+    bool isAnonymousBlock() const { return m_isAnonymous && 
+                                           style()->display() == BLOCK && 
+                                           style()->styleType() == RenderStyle::NOPSEUDO &&
+                                           !isListMarker(); }
     
     bool isFloating() const { return m_floating; }
     bool isPositioned() const { return m_positioned; } // absolute or fixed positioning

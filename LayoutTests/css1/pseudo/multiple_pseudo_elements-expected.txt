@@ -4,7 +4,7 @@ layer at (0,0) size 800x1012
   RenderBlock {HTML} at (0,0) size 800x1012
     RenderBody {BODY} at (8,8) size 784x996 [bgcolor=#CCCCCC]
       RenderBlock {P} at (0,0) size 784x18
-        RenderInline (anonymous) at (0,0) size 10x18 [color=#800000]
+        RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText {TEXT} at (0,0) size 10x18
             text run at (0,0) width 10: "T"
         RenderText {TEXT} at (10,0) size 345x18
@@ -19,7 +19,7 @@ layer at (0,0) size 800x1012
           text run at (0,75) width 368: "P.three:first-line {font-variant: small-caps;}"
       RenderBlock {HR} at (0,152) size 784x2 [border: (1px inset #000000)]
       RenderBlock {P} at (0,170) size 784x54
-        RenderInline (anonymous) at (0,0) size 10x18 [color=#800000]
+        RenderInline (generated) at (0,0) size 10x18 [color=#800000]
           RenderText {TEXT} at (0,0) size 10x18
             text run at (0,0) width 10: "T"
         RenderText {TEXT} at (10,0) size 784x54
@@ -29,7 +29,7 @@ layer at (0,0) size 800x1012
           text run at (497,18) width 282: "Remember that in order to ensure a complete"
           text run at (0,36) width 377: "test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,240) size 784x183
-        RenderInline (anonymous) at (0,0) size 68x129 [color=#800000]
+        RenderInline (generated) at (0,0) size 68x129 [color=#800000]
           RenderText {TEXT} at (0,0) size 68x129
             text run at (0,0) width 68: "T"
         RenderText {TEXT} at (68,72) size 782x111
@@ -39,7 +39,7 @@ layer at (0,0) size 800x1012
           text run at (253,147) width 507: "If this precise combination does not occur, then the user agent has failed this test."
           text run at (0,165) width 663: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
       RenderBlock {P} at (0,439) size 784x118
-        RenderInline (anonymous) at (0,0) size 76x64 [color=#800000]
+        RenderInline (generated) at (0,0) size 76x64 [color=#800000]
           RenderText {TEXT} at (0,0) size 76x64
             text run at (0,0) width 76: "\"W"
         RenderText {TEXT} at (76,36) size 782x82
@@ -63,7 +63,7 @@ layer at (0,0) size 800x1012
                 text run at (4,4) width 4: " "
             RenderTableCell {TD} at (12,26) size 770x395 [border: (1px inset #808080)] [r=1 c=1 rs=1 cs=1]
               RenderBlock {P} at (4,4) size 762x54
-                RenderInline (anonymous) at (0,0) size 10x18 [color=#800000]
+                RenderInline (generated) at (0,0) size 10x18 [color=#800000]
                   RenderText {TEXT} at (0,0) size 10x18
                     text run at (0,0) width 10: "T"
                 RenderText {TEXT} at (10,0) size 727x54
@@ -73,7 +73,7 @@ layer at (0,0) size 800x1012
                   text run at (554,18) width 165: "Remember that in order to"
                   text run at (0,36) width 494: "ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,74) size 762x183
-                RenderInline (anonymous) at (0,0) size 68x129 [color=#800000]
+                RenderInline (generated) at (0,0) size 68x129 [color=#800000]
                   RenderText {TEXT} at (0,0) size 68x129
                     text run at (0,0) width 68: "T"
                 RenderText {TEXT} at (68,72) size 751x111
@@ -84,7 +84,7 @@ layer at (0,0) size 800x1012
                   text run at (0,165) width 55: "this test. "
                   text run at (55,165) width 663: "Remember that in order to ensure a complete test, the paragraph must be displayed on more than one line."
               RenderBlock {P} at (4,273) size 762x118
-                RenderInline (anonymous) at (0,0) size 76x64 [color=#800000]
+                RenderInline (generated) at (0,0) size 76x64 [color=#800000]
                   RenderText {TEXT} at (0,0) size 76x64
                     text run at (0,0) width 76: "\"W"
                 RenderText {TEXT} at (76,36) size 762x82

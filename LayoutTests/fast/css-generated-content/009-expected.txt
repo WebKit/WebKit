@@ -18,7 +18,7 @@ layer at (0,0) size 800x173
             text run at (0,0) width 373: "All of this text should be green. The bullet should be black."
       RenderBlock {DIV} at (0,68) size 784x55 [color=#FF0000]
         RenderInline {SPAN} at (0,0) size 429x18 [color=#008000]
-          RenderInline (anonymous) at (0,0) size 35x55
+          RenderInline (generated) at (0,0) size 35x55
             RenderText {TEXT} at (0,0) size 35x55
               text run at (0,0) width 35: "A"
           RenderText {TEXT} at (35,29) size 394x18
