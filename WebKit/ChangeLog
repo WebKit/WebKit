@@ -1,3 +1,20 @@
+2003-12-09  Chris Blumenberg  <cblu@apple.com>
+
+	Fixed: <rdar://problem/3504237>: add downloaded certificates to keychain
+
+        Reviewed by darin.
+
+        * WebCoreSupport.subproj/WebKeyGeneration.cpp:
+        (signedPublicKeyAndChallengeString):
+        (addCertificateToKeyChainFromData): new
+        (addCertificateToKeyChainFromFile): new
+        * WebCoreSupport.subproj/WebKeyGeneration.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.h:
+        * WebCoreSupport.subproj/WebKeyGenerator.m:
+        (-[WebKeyGenerator addCertificateToKeyChainFromFileAtPath:]): new
+        * WebKit.exp:
+        * WebKit.pbproj/project.pbxproj: made WebKeyGenerator.h private
+
 2003-12-09  John Sullivan  <sullivan@apple.com>
 
         - fixed <rdar://problem/3504907>: REGRESSION (100-116): 

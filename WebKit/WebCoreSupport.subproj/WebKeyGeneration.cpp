@@ -1,11 +1,10 @@
 /*
- * parseNetscapeCerts - parse a blob containing one or more
- * downloaded netscape certificates. 
+ *  WebKeyGeneration.cpp
+ *  WebKit
  *
- * Requires Apple-private API in libCdsaUtils.a and libnssasn1.a.
- * NOT FOR USE OUTSIDE OF APPLE COMTPUTER.
+ *  Created by Chris Blumenberg on Mon Dec 08 2003.
+ *  Copyright (c) 2003 Apple Computer. All rights reserved.
  *
- * Created 12/4/03 by dmitch
  */
 
 #import <WebKit/WebKeyGeneration.h>
@@ -385,4 +384,96 @@ errOut:
         CFRelease(privKey);
     }
     return spkcB64;
-}	
+}
+
+/* 
+* Per-cert processing, called for each cert we extract from the 
+ * incoming blob.
+ */
+bool addCertificateToKeyChainFromData(const unsigned char *certData,
+                                      unsigned certDataLen,
+                                      unsigned certNum)
+{
+    CSSM_DATA cert = {certDataLen, (uint8 *)certData};
+    SecCertificateRef certRef;
+    
+    /* Make a SecCertificateRef */
+    OSStatus ortn = SecCertificateCreateFromData(&cert, 
+                                                 CSSM_CERT_X_509v3,
+                                                 CSSM_CERT_ENCODING_DER,
+                                                 &certRef);
+    if (ortn) {
+        ERROR("SecCertificateCreateFromData returned %d", (int)ortn);
+        return false;
+    }
+    
+    /* 
+        * Add it to default keychain.
+        * Many people will be surprised that this op works without
+        * the user having to unlock the keychain. 
+        */
+    ortn = SecCertificateAddToKeychain(certRef, nil);
+    
+    /* Free the cert in any case */
+    CFRelease(certRef);
+    switch(ortn) {
+        case noErr:
+            break;
+        case errSecDuplicateItem:
+            /* Not uncommon, definitely not an error */
+            ERROR("cert %u already present in keychain", certNum);
+            break;
+        default:
+            ERROR("SecCertificateAddToKeychain returned %d", (int)ortn);
+            return false;
+    }
+
+    return true;
+}
+
+bool addCertificateToKeyChainFromFile(const char *path)
+{   
+    bool result = false;
+    
+    /* read inFile */
+    unsigned char *inFile = NULL;
+    unsigned inFileLen = 0;
+    if (readFile(path, &inFile, &inFileLen)) {
+        return false;
+    }
+    
+    /* DER-decode, first as NetscapeCertSequence */
+    SecNssCoder coder;
+    NetscapeCertSequence certSeq;
+    
+    memset(&certSeq, 0, sizeof(certSeq));
+    PRErrorCode perr = coder.decode(inFile, inFileLen, NetscapeCertSequenceTemplate, &certSeq);
+    if (perr == 0) {
+        /*
+         * Probably should verify (contentType == netscape-cert-sequence)
+         */
+        /*
+         * Last cert is a root, which we do NOT want to add
+         * to the user's keychain.
+         */
+        unsigned numCerts = nssArraySize((const void **)certSeq.certs) - 1;
+        for (unsigned i=0; i<numCerts; i++) {
+            CSSM_DATA *cert = certSeq.certs[i];
+            result = addCertificateToKeyChainFromData(cert->Data, cert->Length, i);
+            if (!result) {
+                break;
+            }
+        } 
+    } else {
+        /*
+         * Didn't appear to be a NetscapeCertSequence; assume it's just 
+         * a cert. FIXME: Netscape spec says the blob might also be PKCS7
+         * format, which we're not handling here.
+         */
+        result = addCertificateToKeyChainFromData(inFile, inFileLen, 0); 
+    }
+    
+    /* this was mallocd by readFile() */
+    free(inFile);
+    return result;
+}

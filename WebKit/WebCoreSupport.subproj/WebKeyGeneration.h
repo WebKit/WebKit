@@ -3,7 +3,7 @@
  *  WebKit
  *
  *  Created by Chris Blumenberg on Mon Dec 08 2003.
- *  Copyright (c) 2003 __MyCompanyName__. All rights reserved.
+ *  Copyright (c) 2003 Apple Computer. All rights reserved.
  *
  */
 
@@ -68,6 +68,7 @@ extern "C" {
     extern const SEC_ASN1Template SignedPublicKeyAndChallengeTemplate[];
 
     char *signedPublicKeyAndChallengeString(unsigned keySize, const char *challenge);
+    bool addCertificateToKeyChainFromFile(const char *path);
     
 #ifdef __cplusplus
 }

@@ -1,5 +1,5 @@
 //
-//  WebKeyGenerationFactory.m
+//  WebKeyGenerator.m
 //  WebKit
 //
 //  Created by Chris Blumenberg on Thu Nov 20 2003.
@@ -62,6 +62,11 @@
     free(key);
     
     return result;
+}
+
+- (BOOL)addCertificateToKeyChainFromFileAtPath:(NSString *)path
+{
+    return addCertificateToKeyChainFromFile([path fileSystemRepresentation]);
 }
 
 @end
