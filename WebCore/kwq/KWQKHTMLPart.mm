@@ -1066,6 +1066,20 @@ bool KWQKHTMLPart::currentEventIsKeyboardOptionTab()
     return YES;
 }
 
+bool KWQKHTMLPart::handleKeyboardOptionTabInView(NSView *view)
+{
+    if (KWQKHTMLPart::currentEventIsKeyboardOptionTab()) {
+        if (([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask) != 0) {
+            [[view window] selectKeyViewPrecedingView:view];
+        } else {
+            [[view window] selectKeyViewFollowingView:view];
+        }
+        return YES;
+    }
+    
+    return NO;
+}
+
 bool KWQKHTMLPart::tabsToLinks()
 {
     if ([_bridge keyboardUIMode] & WebCoreKeyboardAccessTabsToLinks)

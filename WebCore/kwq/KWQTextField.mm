@@ -281,10 +281,14 @@
     if (!widget) {
 	return;
     }
+    
+    if (KWQKHTMLPart::handleKeyboardOptionTabInView(self)) {
+        return;
+    }
 
     WebCoreBridge *bridge = KWQKHTMLPart::bridgeForWidget(widget);
     [bridge controlTextDidChange:notification];
-
+    
     edited = YES;
     widget->textChanged();
 }

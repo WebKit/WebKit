@@ -1,3 +1,24 @@
+2003-11-14  John Sullivan  <sullivan@apple.com>
+
+        - fixed <rdar://problem/3483585>: Option-tab in a text field inputs 
+        a character rather than tabbing to the next widget
+
+        Reviewed by Ken.
+
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::handleKeyboardOptionTabInView):
+        New method. If current event is option-tab or option-shift-tab, do
+        keyboard navigation and return YES.
+        
+        * kwq/KWQTextArea.mm:
+        (-[KWQTextArea textDidChange:]):
+        Bail out if KWQKHTMLPart::handleKeyboardOptionTabInView returns YES.
+        
+        * kwq/KWQTextField.mm:
+        (-[KWQTextField controlTextDidChange:]):
+        Bail out if KWQKHTMLPart::handleKeyboardOptionTabInView returns YES.
+
 2003-11-13  Darin Adler  <darin@apple.com>
 
         Reviewed by Dave.

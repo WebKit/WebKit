@@ -162,7 +162,9 @@ const float LargeNumberForText = 1.0e7;
 
 - (void)textDidChange:(NSNotification *)aNotification
 {
-    widget->textChanged();
+    if (!KWQKHTMLPart::handleKeyboardOptionTabInView(self)) {
+        widget->textChanged();
+    }
 }
 
 - (void)setWordWrap:(BOOL)f
