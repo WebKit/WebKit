@@ -87,8 +87,10 @@
     part->impl->setView(kview);
 
     kview->setView(view);
-    kview->setMarginWidth(mw);
-    kview->setMarginHeight(mh);
+    if (mw >= 0)
+        kview->setMarginWidth(mw);
+    if (mh >= 0)
+        kview->setMarginHeight(mh);
     kview->resize(width, height);
     
     return kview;

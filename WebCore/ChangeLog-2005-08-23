@@ -1,5 +1,11 @@
 2002-06-15  Darin Adler  <darin@apple.com>
 
+	* kwq/WebCoreBridge.mm:
+	(-[WebCoreBridge createKHTMLViewWithNSView:width:height:marginWidth:marginHeight:]):
+	Implement the rule where a negative number means "don't set the margin".
+
+2002-06-15  Darin Adler  <darin@apple.com>
+
 	* kwq/kio/jobclasses.h: Removed import of WebFoundation.h.
 	* kwq/KWQKjobclasses.mm: Added import of IFURLHandle.h.
 	* kwq/KWQKloader.mm: Added import of IFError.h and IFURLHandle.h.
