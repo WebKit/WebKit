@@ -2142,6 +2142,57 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 
 @implementation WebView (WebViewEditing)
 
+- (NSDictionary *)_textAttributesFromStyle:(DOMCSSStyleDeclaration *)style
+{
+    // FIXME: this should probably be a method of DOMCSSStyleDeclaration
+    ERROR("unimplemented");
+    return nil;
+}
+
+- (void)_updateFontPanel
+{
+    // FIXME: can we bail out if [NSFontManager fontPanel:NO] returns nil? (Will we somehow be notified or asked
+    // to provide a font when the font panel first comes into existence?)
+    // FIXME: NSTextView bails out if becoming or resigning first responder, for which it has ivar flags. Not
+    // sure if we need to do something similar.
+    
+    if (![self _currentSelectionIsEditable]) {
+        return;
+    }
+    
+    NSWindow *window = [self window];
+    // FIXME: is this first-responder check correct? What happens if a subframe is editable and is first responder?
+    if ([NSApp keyWindow] != window || [window firstResponder] != [[[self mainFrame] frameView] documentView]) {
+        return;
+    }
+    
+    NSFont *font = nil;
+    BOOL onlyOneFontInSelection = YES;
+    BOOL attributesIdenticalThroughoutSelection = YES;
+    NSDictionary *textAttributes = nil;
+    DOMCSSStyleDeclaration *style = nil;
+    NSFontManager *fm = [NSFontManager sharedFontManager];
+    
+    if ([[self _bridgeForCurrentSelection] haveSelection]) {
+        // FIXME: get first element in selection, get style, get attributes
+        // and font from style. Then walk through other elements to see whether 
+        // any other styles/attributes are in selection, to update
+        // onlyOneFontInSelection and attributesIdenticalThroughoutSelection. But how to get elements in selection?
+        // FIXME: For now, return some bogus font to test the rest of the code path.
+        font = [NSFont menuFontOfSize:23];
+    } else {
+        style = [self typingStyle];
+        // FIXME: get font from style somehow. For now, return some bogus font to test the rest of the code path.
+        font = [NSFont toolTipsFontOfSize:17];
+        textAttributes = [self _textAttributesFromStyle:style];
+    }
+    
+    if (font != nil) {
+        [fm setSelectedFont:font isMultiple:!onlyOneFontInSelection];
+    }
+    [fm setSelectedAttributes:textAttributes isMultiple:!attributesIdenticalThroughoutSelection];
+}
+
 - (void)_editingKeyDown:(NSEvent *)event
 {   
     // Work around this bug:
@@ -2155,6 +2206,12 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity
 {
     [[self _bridgeForCurrentSelection] setSelectedDOMRange:range affinity:selectionAffinity];
+
+    // FIXME: this doesn't catch the cases where the selection is changed on the other side
+    // of the bridge. Eventually we need to notice all such changes and call _updateFontPanel,
+    // but this is not yet implemented. (The bottlenecks that send the notifications like
+    // webViewDidChangeSelection and friends will also need to call _updateFontPanel).
+    [self _updateFontPanel];
 }
 
 - (DOMRange *)selectedDOMRange

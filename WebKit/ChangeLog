@@ -1,3 +1,19 @@
+2004-04-28  John Sullivan  <sullivan@apple.com>
+
+        Initial plumbing to get the font panel to be updated from an editable
+        WebView.
+
+        Reviewed by Ken.
+
+        * WebView.subproj/WebView.m:
+        (-[WebView _textAttributesFromStyle:]):
+        new dummy method, will need implementation
+        (-[WebView _updateFontPanel]):
+        new method, sets the font shown in the font panel from the current
+        selection. Lots of placeholder stuff.
+        (-[WebView setSelectedDOMRange:affinity:]):
+        call _updateFontPanel here for now.
+
 2004-04-28  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
