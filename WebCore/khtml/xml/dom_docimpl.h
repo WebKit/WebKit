@@ -556,6 +556,20 @@ public:
     void removeAllMarkers();
     void shiftMarkers(NodeImpl *node, ulong startOffset, long delta);
     QValueList<DocumentMarker> markersForNode(NodeImpl *node);
+    
+   /**
+    * designMode support
+   */
+    enum InheritedBool {
+        off=false,
+        on=true,
+        inherit
+    };
+    
+    void setDesignMode(InheritedBool value);
+    InheritedBool getDesignMode() const;
+    bool inDesignMode();
+    DocumentImpl *parentDocument() const;
 
 #ifdef KHTML_XSLT
     void applyXSLTransform(ProcessingInstructionImpl* pi);
@@ -736,6 +750,8 @@ private:
     bool m_accessKeyDictValid;
  
     bool m_createRenderers;
+    
+    InheritedBool m_designMode;
     
     QValueList<khtml::DashboardRegionValue> m_dashboardRegions;
     bool m_hasDashboardRegions;

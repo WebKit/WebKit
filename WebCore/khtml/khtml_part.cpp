@@ -4964,7 +4964,9 @@ bool KHTMLPart::shouldEndEditing(const Range &range) const
 
 bool KHTMLPart::isContentEditable() const 
 {
-    return false;
+    if (!d->m_doc)
+        return false;
+    return d->m_doc->inDesignMode();
 }
 
 EditCommandPtr KHTMLPart::lastEditCommand()

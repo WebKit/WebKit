@@ -41,11 +41,12 @@ const struct HashEntry HTMLDocumentTableEntries[] = {
    { "fgColor", HTMLDocument::FgColor, DontDelete, 0, 0 },
    { "linkColor", HTMLDocument::LinkColor, DontDelete, 0, 0 },
    { "vlinkColor", HTMLDocument::VlinkColor, DontDelete, 0, 0 },
-   { "height", HTMLDocument::Height, DontDelete|ReadOnly, 0, 0 },
-   { "width", HTMLDocument::Width, DontDelete|ReadOnly, 0, 0 }
+   { "height", HTMLDocument::Height, DontDelete|ReadOnly, 0, &HTMLDocumentTableEntries[40] },
+   { "width", HTMLDocument::Width, DontDelete|ReadOnly, 0, 0 },
+   { "designMode", HTMLDocument::DesignMode, DontDelete, 0, 0 }
 };
 
-const struct HashTable HTMLDocumentTable = { 2, 40, HTMLDocumentTableEntries, 30 };
+const struct HashTable HTMLDocumentTable = { 2, 41, HTMLDocumentTableEntries, 30 };
 
 } // namespace
 

@@ -1,3 +1,27 @@
+2004-10-25  Adele Amchan  <adele@apple.com>
+
+        Reviewed by Darin.
+ 
+        Fix for <rdar://problem/3619890> Feature request: designMode        
+
+        This change implements the designMode property of a document.  This is an IE property that is also supported by Mozilla.  
+        This will enable more JS editing compatibility.
+
+        * khtml/ecma/kjs_html.cpp:
+        (KJS::HTMLDocument::tryGet): added case for designMode
+        (KJS::HTMLDocument::putValue): added case for designMode
+        * khtml/ecma/kjs_html.lut.h: (KJS::): regenerated
+        * khtml/khtml_part.cpp: (KHTMLPart::isContentEditable): Now returns designMode value
+        * khtml/xml/dom_docimpl.cpp:
+        (DocumentImpl::DocumentImpl): initialize m_designMode member variable
+        (DocumentImpl::setDesignMode): added function to assign m_designMode value
+        (DocumentImpl::getDesignMode): return m_designMode value
+        (DocumentImpl::inDesignMode): if designMode is inherited, this will find the appropriate parent document designMode and return that value. 
+            Otherwise, it will just return the m_designMode value.
+        (DocumentImpl::parentDocument):
+        * khtml/xml/dom_docimpl.h: (DOM::DocumentImpl::): added InheritedBool enum, prototypes, and m_designMode member variable.
+        * kwq/KWQKHTMLPart.mm: (KWQKHTMLPart::isContentEditable): added check for isContentEditable function in KHTMLPart
+
 2004-10-22  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt

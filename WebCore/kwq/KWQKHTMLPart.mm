@@ -4074,7 +4074,7 @@ void KWQKHTMLPart::respondToChangedContents()
 
 bool KWQKHTMLPart::isContentEditable() const
 {
-    return [_bridge isEditable];
+    return KHTMLPart::isContentEditable() || [_bridge isEditable];
 }
 
 bool KWQKHTMLPart::shouldBeginEditing(const Range &range) const

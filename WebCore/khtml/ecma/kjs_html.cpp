@@ -65,6 +65,8 @@
 
 using namespace KJS;
 
+using DOM::DocumentImpl;
+using DOM::DOMString;
 using DOM::HTMLFrameElementImpl;
 using DOM::HTMLIFrameElementImpl;
 
@@ -174,6 +176,7 @@ const ClassInfo KJS::HTMLDocument::info =
   height		HTMLDocument::Height		DontDelete|ReadOnly
   width			HTMLDocument::Width		DontDelete|ReadOnly
   dir			HTMLDocument::Dir		DontDelete
+  designMode            HTMLDocument::DesignMode        DontDelete
 #potentially obsolete array properties
 # layers
 # plugins
@@ -291,6 +294,13 @@ Value KJS::HTMLDocument::tryGet(ExecState *exec, const Identifier &propertyName)
       return Number(view ? view->contentsWidth() : 0);
     case Dir:
       return String(body.dir());
+    case DesignMode:
+    {
+      DocumentImpl *docimpl = static_cast<DocumentImpl *>(doc.handle());
+      if (!docimpl)
+        return Undefined();
+      return String(docimpl->inDesignMode() ? "on" : "off");  
+    }
     }
   }
 
@@ -447,6 +457,22 @@ void KJS::HTMLDocument::putValue(ExecState *exec, int token, const Value& value,
     break;
   case Dir:
     body.setDir(value.toString(exec).string());
+    break;
+  case DesignMode:
+    {
+      DocumentImpl *docimpl = static_cast<DocumentImpl *>(doc.handle());
+      if (!docimpl)
+        break;
+      DOMString modeString = value.toString(exec).string();
+      DocumentImpl::InheritedBool mode;
+      if (!strcasecmp(modeString, "on"))
+        mode = DocumentImpl::on;
+      else if (!strcasecmp(modeString, "off"))
+        mode = DocumentImpl::off;
+      else
+        mode = DocumentImpl::inherit;
+      docimpl->setDesignMode(mode);
+     }
     break;
   default:
     kdWarning() << "HTMLDocument::putValue unhandled token " << token << endl;
