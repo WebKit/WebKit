@@ -1,5 +1,10 @@
 2002-08-12  Darin Adler  <darin@apple.com>
 
+        * khtml/misc/loader.cpp: (Cache::insertInLRUList):
+	Add missing piece of the last check-in.
+
+2002-08-12  Darin Adler  <darin@apple.com>
+
 	At Ken's urging, fixed the loader cache to be more efficient.
 	Gives 1% on the cvs-base test.
 

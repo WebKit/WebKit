@@ -1745,6 +1745,9 @@ void Cache::insertInLRUList(CachedObject *object)
 {
     removeFromLRUList(object);
     
+    if (!object->allowInLRUList())
+        return;
+    
     bool uncacheable = object->status() == CachedObject::Uncacheable;
     CachedObject *&head = uncacheable ? m_headOfUncacheableList : m_headOfLRUList;
 
