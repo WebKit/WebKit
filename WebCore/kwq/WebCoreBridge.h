@@ -236,8 +236,6 @@ typedef enum {
 - (DOMDocument *)DOMDocument;
 - (DOMHTMLElement *)frameElement;
 
-- (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset;
-
 - (BOOL)isSelectionEditable;
 - (WebSelectionState)selectionState;
 
@@ -260,17 +258,17 @@ typedef enum {
 - (NSImage *)selectionImage;
 - (NSRect)caretRectAtNode:(DOMNode *)node offset:(int)offset;
 
-- (DOMNode *)selectionStart;
-- (int)selectionStartOffset;
-- (DOMNode *)selectionEnd;
-- (int)selectionEndOffset;
 - (void)setSelectedDOMRange:(DOMRange *)range affinity:(NSSelectionAffinity)selectionAffinity;
 - (DOMRange *)selectedDOMRange;
 - (NSSelectionAffinity)selectionAffinity;
 
-- (void)setMarkedDOMRange:(DOMRange *)range;
-- (DOMRange *)markedDOMRange;
-- (void)clearMarkedDOMRange;
+// Emacs-style-editing "mark"
+- (void)setMarkDOMRange:(DOMRange *)range;
+- (DOMRange *)markDOMRange;
+
+// spelling-checking "marked text"
+- (void)setMarkedTextDOMRange:(DOMRange *)range;
+- (DOMRange *)markedTextDOMRange;
 
 - (NSAttributedString *)attributedStringFrom:(DOMNode *)startNode startOffset:(int)startOffset to:(DOMNode *)endNode endOffset:(int)endOffset;
 

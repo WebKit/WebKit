@@ -1,3 +1,44 @@
+2004-09-06  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3790526> mark-related methods not implemented (needed for people with them in their key bindings files)
+
+        * khtml/khtml_part.h: Added mark and setMark.
+        * khtml/khtmlpart_p.h: Added m_mark.
+        * khtml/khtml_part.cpp:
+        (KHTMLPart::mark): Added.
+        (KHTMLPart::setMark): Added.
+
+        * kwq/KWQKHTMLPart.h: Change name of markedRange to markedTextRange to decrease
+        the change it will be confused with the mark.
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::clear): Update for name change.
+        (KWQKHTMLPart::markedTextRange): Ditto.
+        (KWQKHTMLPart::setMarkedTextRange): Ditto.
+
+        * khtml/rendering/render_text.cpp: (RenderText::paint): Update for name change.
+
+        * kwq/WebCoreBridge.h: Remove setSelectionFrom, selectionStart, selectionStartOffset,
+        selectionEnd, selectionEndOffset, and clearMarkedDOMRange. Renamed setMarkedDOMRange
+        to setMarkedTextDOMRange and markedDOMRange to markedTextDOMRange. Added setMarkDOMRange
+        and markDOMRange for the Emacs "mark".
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge setMarkDOMRange:]): Added.
+        (-[WebCoreBridge markDOMRange]): Added.
+        (-[WebCoreBridge setMarkedTextDOMRange:]): Renamed.
+        (-[WebCoreBridge markedTextDOMRange]): Renamed.
+
+        * khtml/xml/dom_selection.cpp: (DOM::Selection::validate): Make paragraph positions
+        canonical by using deep rendered positions. Maybe someday this won't be an ad hoc
+        decision any more.
+
+        * khtml/xml/dom_nodeimpl.cpp: (NodeBaseImpl::removeChildren): Use ref and deref
+        rather than the unconventional check for 0 refCount. This makes us a bit more
+        robust against a node going away partway through the removal process.
+
+        * WebCore.pbproj/project.pbxproj: Update MACOSX_DEPLOYMENT_TARGET to 10.3.
+
 2004-09-08  Maciej Stachowiak  <mjs@apple.com>
 
         - fixed deployment build problems noticed by Grant

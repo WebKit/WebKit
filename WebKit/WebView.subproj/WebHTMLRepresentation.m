@@ -160,10 +160,6 @@
     return [_private->bridge DOMDocument];
 }
 
-- (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
-{
-}
-
 - (NSAttributedString *)attributedText
 {
     // FIXME:  Implement

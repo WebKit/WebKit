@@ -1,3 +1,35 @@
+2004-09-09  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fixed <rdar://problem/3790526> mark-related methods not implemented (needed for people with them in their key bindings files)
+
+        * WebKit.pbproj/project.pbxproj: Update MACOSX_DEPLOYMENT_TARGET to 10.3 and add -fobjc-exceptions
+        so we can use new exceptions.
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView setMark:]): Added.
+        (unionDOMRanges): Added.
+        (-[WebHTMLView deleteToMark:]): Added.
+        (-[WebHTMLView selectToMark:]): Added.
+        (-[WebHTMLView swapWithMark:]): Added.
+        (-[WebHTMLView markedRange]): Updated for change to bridge method names.
+        (-[WebHTMLView hasMarkedText]): Ditto.
+        (-[WebHTMLView unmarkText]): Ditto.
+        (-[WebHTMLView _selectMarkedText]): Ditto.
+        (-[WebHTMLView _selectRangeInMarkedText:]): Ditto.
+        (-[WebHTMLView setMarkedText:selectedRange:]): Ditto.
+        (-[WebHTMLView _insertText:selectInsertedText:]): Removed check for empty string. An empty string
+        should not be filtered out here. We need to allow inserting an empty string.
+        (-[WebHTMLView _selectionIsInsideMarkedText]): Updated for change to bridge method names.
+        (-[WebHTMLView _updateSelectionForInputManager]): Ditto.
+
+        * WebView.subproj/WebView.m: (-[WebView searchFor:direction:caseSensitive:wrap:]):
+        Changed to use selectionDOMRange instead of selectionStart.
+
+        * WebView.subproj/WebHTMLRepresentation.h: Removed unused setSelectionFrom method.
+        * WebView.subproj/WebHTMLRepresentation.m: Ditto.
+
 2004-09-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin.

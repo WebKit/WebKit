@@ -154,9 +154,9 @@
 				INSTALL_PATH = /System/Library/Frameworks;
 				LIBRARY_SEARCH_PATHS = "";
 				LOCAL_SEG1_ADDR = 0x7000000;
-				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				MACOSX_DEPLOYMENT_TARGET = 10.3;
 				OPTIMIZATION_CFLAGS = "-Os";
-				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit";
+				OTHER_CFLAGS = "$(DEBUG_CFLAGS) -DFRAMEWORK_NAME=WebKit -fobjc-exceptions";
 				OTHER_LDFLAGS = "$(COMMON_LDFLAGS) -sub_umbrella WebCore -sub_umbrella JavaScriptCore";
 				PRECOMPILE_PREFIX_HEADER = YES;
 				PREFIX_HEADER = WebKitPrefix.h;

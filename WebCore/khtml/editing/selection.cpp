@@ -698,11 +698,11 @@ void Selection::validate(ETextGranularity granularity)
         }
         case PARAGRAPH:
             if (m_baseIsStart) {
-                assignStart(base().startParagraphBoundary());
-                assignEnd(extent().endParagraphBoundary(IncludeLineBreak));
+                assignStart(base().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
+                assignEnd(extent().endParagraphBoundary(IncludeLineBreak).equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
             } else {
-                assignStart(extent().startParagraphBoundary());
-                assignEnd(base().endParagraphBoundary(IncludeLineBreak));
+                assignStart(extent().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
+                assignEnd(base().endParagraphBoundary(IncludeLineBreak).equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
             }
             break;
         case DOCUMENT: {
@@ -713,11 +713,11 @@ void Selection::validate(ETextGranularity granularity)
         }
         case PARAGRAPH_BOUNDARY:
             if (m_baseIsStart) {
-                assignStart(base().startParagraphBoundary());
-                assignEnd(extent().endParagraphBoundary());
+                assignStart(base().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
+                assignEnd(extent().endParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
             } else {
-                assignStart(extent().startParagraphBoundary());
-                assignEnd(base().endParagraphBoundary());
+                assignStart(extent().startParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(DOWNSTREAM));
+                assignEnd(base().endParagraphBoundary().equivalentDeepPosition().closestRenderedPosition(UPSTREAM));
             }
             break;
     }

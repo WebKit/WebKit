@@ -1151,13 +1151,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return (DOMHTMLElement *)[[self DOMDocument] _ownerElement];
 }
 
-- (void)setSelectionFrom:(DOMNode *)start startOffset:(int)startOffset to:(DOMNode *)end endOffset:(int) endOffset
-{
-    Position s([start _nodeImpl], startOffset);
-    Position e([end _nodeImpl], endOffset);
-    _part->setSelection(Selection(s, e));
-}
-
 - (NSAttributedString *)selectedAttributedString
 {
     return _part->attributedString(_part->selectionStart(), _part->selectionStartOffset(), _part->selectionEnd(), _part->selectionEndOffset());
@@ -1168,26 +1161,6 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     DOMNode *startNode = start;
     DOMNode *endNode = end;
     return _part->attributedString([startNode _nodeImpl], startOffset, [endNode _nodeImpl], endOffset);
-}
-
-- (DOMNode *)selectionStart
-{
-    return [DOMNode _nodeWithImpl:_part->selectionStart()];
-}
-
-- (int)selectionStartOffset
-{
-    return _part->selectionStartOffset();
-}
-
-- (DOMNode *)selectionEnd
-{
-    return [DOMNode _nodeWithImpl:_part->selectionEnd()];
-}
-
-- (int)selectionEndOffset
-{
-    return _part->selectionEndOffset();
 }
 
 - (NSRect)selectionRect
@@ -1437,20 +1410,24 @@ static HTMLFormElementImpl *formElementFromDOMElement(DOMElement *element)
     return static_cast<NSSelectionAffinity>(_part->selection().affinity());
 }
 
-- (void)setMarkedDOMRange:(DOMRange *)range
+- (void)setMarkDOMRange:(DOMRange *)range
 {
-    _part->setMarkedRange([range _rangeImpl]);
+    _part->setMark(Selection([range _rangeImpl]));
 }
 
-- (DOMRange *)markedDOMRange
+- (DOMRange *)markDOMRange
 {
-    DOM::RangeImpl *range = _part->markedRange().handle();
-    return range ? [DOMRange _rangeWithImpl:range] : nil;
+    return [DOMRange _rangeWithImpl:_part->mark().toRange().handle()];
 }
 
-- (void)clearMarkedDOMRange
+- (void)setMarkedTextDOMRange:(DOMRange *)range
 {
-    _part->setMarkedRange(Range(0));
+    _part->setMarkedTextRange([range _rangeImpl]);
+}
+
+- (DOMRange *)markedTextDOMRange
+{
+    return [DOMRange _rangeWithImpl:_part->markedTextRange().handle()];
 }
 
 - (DOMDocumentFragment *)documentFragmentWithMarkupString:(NSString *)markupString baseURLString:(NSString *)baseURLString 

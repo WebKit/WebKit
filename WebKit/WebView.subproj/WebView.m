@@ -1905,7 +1905,7 @@ static WebFrame *incrementFrame(WebFrame *curr, BOOL forward, BOOL wrapFlag)
                 // Remember if start even has a selection, to know if we need to search more later
                 if ([searchView isKindOfClass:[WebHTMLView class]]) {
                     // optimization for the common case, to avoid making giant string for selection
-                    startHasSelection = [[startFrame _bridge] selectionStart] != nil;
+                    startHasSelection = [[startFrame _bridge] selectedDOMRange] != nil;
                 } else if ([searchView conformsToProtocol:@protocol(WebDocumentText)]) {
                     startHasSelection = [(id <WebDocumentText>)searchView selectedString] != nil;
                 }

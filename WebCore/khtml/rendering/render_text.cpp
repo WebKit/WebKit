@@ -801,7 +801,7 @@ void RenderText::paint(PaintInfo& i, int tx, int ty)
         return;
     }
 
-    Range markedTextRange = KWQ(document()->part())->markedRange();
+    Range markedTextRange = KWQ(document()->part())->markedTextRange();
     bool haveMarkedText = markedTextRange.handle() != 0 && markedTextRange.startContainer() == node();
 
     if ((haveSelection || haveMarkedText) && i.phase != PaintActionSelection && !isPrinting) {

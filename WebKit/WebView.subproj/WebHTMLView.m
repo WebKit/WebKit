@@ -3552,6 +3552,75 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     _NSSetKillRingToYankedState();
 }
 
+- (void)setMark:(id)sender
+{
+    [[self _bridge] setMarkDOMRange:[self _selectedRange]];
+}
+
+static DOMRange *unionDOMRanges(DOMRange *a, DOMRange *b)
+{
+    ASSERT(a);
+    ASSERT(b);
+    DOMRange *s = [a compareBoundaryPoints:DOM_START_TO_START :b] <= 0 ? a : b;
+    DOMRange *e = [a compareBoundaryPoints:DOM_END_TO_END :b] <= 0 ? b : a;
+    DOMRange *r = [[[a startContainer] ownerDocument] createRange];
+    [r setStart:[s startContainer] :[s startOffset]];
+    [r setEnd:[e endContainer] :[e endOffset]];
+    return r;
+}
+
+- (void)deleteToMark:(id)sender
+{
+    DOMRange *mark = [[self _bridge] markDOMRange];
+    if (mark == nil) {
+        [self delete:sender];
+    } else {
+        DOMRange *selection = [self _selectedRange];
+        DOMRange *r;
+        @try {
+            r = unionDOMRanges(mark, selection);
+        } @catch (NSException *exception) {
+            r = selection;
+        }
+        [self _deleteRange:r preflight:YES killRing:YES prepend:YES];
+    }
+    [self setMark:sender];
+}
+
+- (void)selectToMark:(id)sender
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *mark = [bridge markDOMRange];
+    if (mark == nil) {
+        NSBeep();
+        return;
+    }
+    DOMRange *selection = [self _selectedRange];
+    @try {
+        [bridge setSelectedDOMRange:unionDOMRanges(mark, selection) affinity:NSSelectionAffinityUpstream];
+    } @catch (NSException *exception) {
+        NSBeep();
+    }
+}
+
+- (void)swapWithMark:(id)sender
+{
+    WebBridge *bridge = [self _bridge];
+    DOMRange *mark = [bridge markDOMRange];
+    if (mark == nil) {
+        NSBeep();
+        return;
+    }
+    DOMRange *selection = [self _selectedRange];
+    @try {
+        [bridge setSelectedDOMRange:mark affinity:NSSelectionAffinityUpstream];
+    } @catch (NSException *exception) {
+        NSBeep();
+        return;
+    }
+    [bridge setMarkDOMRange:selection];
+}
+
 #if 0
 
 // CSS does not have a way to specify an outline font, which may make this difficult to implement.
@@ -3577,14 +3646,6 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 - (void)pageDownAndModifySelection:(id)sender;
 
 // === key binding methods that NSTextView has that don't have standard key bindings
-
-// Implementing these four requires implementing a mark.
-// We can't just keep a DOM range on the WebKit side because the mark needs
-// to stay in the document as the document is edited.
-- (void)setMark:(id)sender;
-- (void)deleteToMark:(id)sender;
-- (void)selectToMark:(id)sender;
-- (void)swapWithMark:(id)sender;
 
 // These could be important.
 - (void)toggleBaseWritingDirection:(id)sender;
@@ -3789,10 +3850,10 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 	return NSMakeRange(NSNotFound,0);
     }
 
-    DOMRange *markedDOMRange = [[self _bridge] markedDOMRange];
+    DOMRange *markedTextDOMRange = [[self _bridge] markedTextDOMRange];
 
-    unsigned rangeLocation = [markedDOMRange startOffset];
-    unsigned rangeLength = [markedDOMRange endOffset] - rangeLocation;
+    unsigned rangeLocation = [markedTextDOMRange startOffset];
+    unsigned rangeLength = [markedTextDOMRange endOffset] - rangeLocation;
 
     return NSMakeRange(rangeLocation, rangeLength);
 }
@@ -3810,19 +3871,19 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (BOOL)hasMarkedText
 {
-    return [[self _bridge] markedDOMRange] != nil;
+    return [[self _bridge] markedTextDOMRange] != nil;
 }
 
 - (void)unmarkText
 {
-    [[self _bridge] clearMarkedDOMRange];
+    [[self _bridge] setMarkedTextDOMRange:nil];
 }
 
 - (void)_selectMarkedText
 {
     if ([self hasMarkedText]) {
 	WebBridge *bridge = [self _bridge];
-	DOMRange *markedTextRange = [bridge markedDOMRange];
+	DOMRange *markedTextRange = [bridge markedTextDOMRange];
 	[bridge setSelectedDOMRange:markedTextRange affinity:NSSelectionAffinityUpstream];
     }
 }
@@ -3833,15 +3894,15 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     WebBridge *bridge = [self _bridge];
     DOMRange *selectedRange = [[bridge DOMDocument] createRange];
-    DOMRange *markedRange = [bridge markedDOMRange];
+    DOMRange *markedTextRange = [bridge markedTextDOMRange];
     
-    ASSERT([markedRange startContainer] == [markedRange endContainer]);
+    ASSERT([markedTextRange startContainer] == [markedTextRange endContainer]);
 
-    unsigned selectionStart = [markedRange startOffset] + range.location;
+    unsigned selectionStart = [markedTextRange startOffset] + range.location;
     unsigned selectionEnd = selectionStart + range.length;
 
-    [selectedRange setStart:[markedRange startContainer] :selectionStart];
-    [selectedRange setEnd:[markedRange startContainer] :selectionEnd];
+    [selectedRange setStart:[markedTextRange startContainer] :selectionStart];
+    [selectedRange setEnd:[markedTextRange startContainer] :selectionEnd];
 
     [bridge setSelectedDOMRange:selectedRange affinity:NSSelectionAffinityUpstream];
 }
@@ -3868,7 +3929,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
     }
 
     [bridge replaceSelectionWithText:text selectReplacement:YES];
-    [bridge setMarkedDOMRange:[self _selectedRange]];
+    [bridge setMarkedTextDOMRange:[self _selectedRange]];
     [self _selectRangeInMarkedText:newSelRange];
 
     _private->ignoreMarkedTextSelectionChange = NO;
@@ -3896,7 +3957,7 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
 - (void)_insertText:(NSString *)text selectInsertedText:(BOOL)selectText
 {
-    if (text == nil || [text length] == 0) {
+    if (text == nil) {
         return;
     }
 
@@ -3940,20 +4001,20 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 {
     WebBridge *bridge = [self _bridge];
     DOMRange *selection = [self _selectedRange];
-    DOMRange *markedRange = [bridge markedDOMRange];
+    DOMRange *markedTextRange = [bridge markedTextDOMRange];
 
-    ASSERT([markedRange startContainer] == [markedRange endContainer]);
+    ASSERT([markedTextRange startContainer] == [markedTextRange endContainer]);
 
-    if ([selection startContainer] != [markedRange startContainer]) 
+    if ([selection startContainer] != [markedTextRange startContainer]) 
 	return NO;
 
-    if ([selection endContainer] != [markedRange startContainer])
+    if ([selection endContainer] != [markedTextRange startContainer])
 	return NO;
 
-    if ([selection startOffset] < [markedRange startOffset])
+    if ([selection startOffset] < [markedTextRange startOffset])
 	return NO;
 
-    if ([selection endOffset] > [markedRange endOffset])
+    if ([selection endOffset] > [markedTextRange endOffset])
 	return NO;
 
     return YES;
@@ -3966,9 +4027,9 @@ NSStrokeColorAttributeName        /* NSColor, default nil: same as foreground co
 
     if ([self _selectionIsInsideMarkedText]) {
 	DOMRange *selection = [self _selectedRange];
-	DOMRange *markedDOMRange = [[self _bridge] markedDOMRange];
+	DOMRange *markedTextDOMRange = [[self _bridge] markedTextDOMRange];
 
-	unsigned markedSelectionStart = [selection startOffset] - [markedDOMRange startOffset];
+	unsigned markedSelectionStart = [selection startOffset] - [markedTextDOMRange startOffset];
 	unsigned markedSelectionLength = [selection endOffset] - [selection startOffset];
 	NSRange newSelectionRange = NSMakeRange(markedSelectionStart, markedSelectionLength);
 	
