@@ -1,3 +1,15 @@
+2003-11-01  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by Darin.
+
+	- fixed 3469262 - REGRESSION (110-112): logitech page is very slow to load (due to style sheet updates?)
+	
+        * khtml/xml/dom_nodeimpl.cpp:
+        (NodeImpl::dispatchGenericEvent): Don't do default handling for
+	events that don't bubble. Not 100% sure why this caused the big
+	slowdown but it was a somewhat arbitrary change in my earlier
+	patch.
+
 2003-11-01  Darin Adler  <darin@apple.com>
 
         Reviewed by John.
