@@ -17,6 +17,7 @@
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
 #import <WebKit/WebFramePrivate.h>
+#import <WebKit/WebHTMLView.h>
 #import <WebKit/WebImageRenderer.h>
 #import <WebKit/WebNetscapePluginEmbeddedView.h>
 #import <WebKit/WebNSViewExtras.h>
@@ -300,19 +301,12 @@
 
 - (void)_writeSelectionToPasteboard:(NSPasteboard *)pasteboard
 {
-    NSAttributedString *attributedString;
-    NSData *attributedData;
-    WebBridge *b = [self _bridge];
-
     [pasteboard declareTypes:[[self class] _pasteboardTypes] owner:nil];
-    [pasteboard setString:[b selectedText] forType:NSStringPboardType];
+    [pasteboard setString:[self selectedString] forType:NSStringPboardType];
 
     // Put attributed string on the pasteboard.
-    attributedString = [b attributedStringFrom:[b selectionStart]
-                                   startOffset:[b selectionStartOffset]
-                                            to:[b selectionEnd]
-                                     endOffset:[b selectionEndOffset]];
-    attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
+    NSAttributedString *attributedString = [self selectedAttributedString];
+    NSData *attributedData = [attributedString RTFFromRange:NSMakeRange(0, [attributedString length]) documentAttributes:nil];
     [pasteboard setData:attributedData forType:NSRTFPboardType];
 
 #if SUPPORT_HTML_PBOARD

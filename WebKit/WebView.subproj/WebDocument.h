@@ -99,12 +99,51 @@
     @protocol WebDocumentTextEncoding
     @discussion Optional protocol for supporting text encoding.
 */
-@protocol WebDocumentTextEncoding <NSObject>
+@protocol WebDocumentText <NSObject>
+
 /*!
     @method supportsTextEncoding
     @result YES if the document view support text encoding, NO if it doesn't.
 */
 - (BOOL)supportsTextEncoding;
+
+/*!
+    @method string
+    @result String that represents the entire document.
+*/
+- (NSString *)string;
+
+/*!
+    @method attributedString
+    @result Attributed string that represents the entire document.
+*/
+- (NSAttributedString *)attributedString;
+
+/*!
+    @method selectedString
+    @result String that represents the current selection.
+*/
+- (NSString *)selectedString;
+
+/*!
+    @method selectedAttributedString
+    @result Attributed string that represents the current selection.
+*/
+- (NSAttributedString *)selectedAttributedString;
+
+
+/*!
+    @method selectAll
+    @abstract Selects all the text in the document.
+*/
+- (void)selectAll;
+
+/*!
+    @method deselectText
+    @abstract Causes a text selection to lose its selection.
+*/
+- (void)deselectAll;
+
 @end
 
 

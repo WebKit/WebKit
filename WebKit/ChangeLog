@@ -1,3 +1,34 @@
+2002-12-05  Chris Blumenberg  <cblu@apple.com>
+
+	Added WebDocumentText protocol. Made WebHTMLView and WebTextView implement it.
+
+        Reviewed by: rjw
+
+        * WebView.subproj/WebController.m:
+        (-[WebController supportsTextEncoding]): check if protocol is WebDocumentText
+        * WebView.subproj/WebDocument.h:
+        * WebView.subproj/WebHTMLView.h:
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView hasSelection]): call selectedString
+        (-[WebHTMLView takeFindStringFromSelection:]): call selectedString
+        (-[WebHTMLView selectAll:]): call selectAll
+        (-[WebHTMLView string]): part of WebDocumentText protocol
+        (-[WebHTMLView attributedString]): part of WebDocumentText protocol
+        (-[WebHTMLView selectedString]): part of WebDocumentText protocol
+        (-[WebHTMLView selectedAttributedString]): part of WebDocumentText protocol
+        (-[WebHTMLView selectAll]): part of WebDocumentText protocol
+        (-[WebHTMLView deselectAll]): part of WebDocumentText protocol
+        * WebView.subproj/WebHTMLViewPrivate.m:
+        (-[WebHTMLView _writeSelectionToPasteboard:]): call selectedAttributedString
+        * WebView.subproj/WebTextView.h:
+        * WebView.subproj/WebTextView.m:
+        (-[WebTextView string]): part of WebDocumentText protocol
+        (-[WebTextView attributedString]): part of WebDocumentText protocol
+        (-[WebTextView selectedString]): part of WebDocumentText protocol
+        (-[WebTextView selectedAttributedString]): part of WebDocumentText protocol
+        (-[WebTextView selectAll]): part of WebDocumentText protocol
+        (-[WebTextView deselectAll]): part of WebDocumentText protocol
+
 2002-12-05  Darin Adler  <darin@apple.com>
 
         Reviewed by Richard.

@@ -267,7 +267,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     _part->gotoAnchor(QString::fromNSString(a));
 }
 
-- (NSString *)selectedText
+- (NSString *)selectedString
 {
     return [[_part->selectedText().getNSString() copy] autorelease];
 }
@@ -275,6 +275,11 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
 - (void)selectAll
 {
     _part->selectAll();
+}
+
+- (void)deselectAll
+{
+    _part->kwq->document()->clearSelection();
 }
 
 - (BOOL)isFrameSet
@@ -588,7 +593,7 @@ NSString *WebCoreElementStringKey = 		@"WebElementString";
     }
 
     if (_part->hasSelection()) {
-        [element setObject:[self selectedText] forKey:WebCoreElementStringKey];
+        [element setObject:[self selectedString] forKey:WebCoreElementStringKey];
     }
     
     return element;

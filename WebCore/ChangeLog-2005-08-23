@@ -1,3 +1,13 @@
+2002-12-05  Chris Blumenberg  <cblu@apple.com>
+
+        Reviewed by: rjw
+
+        * kwq/WebCoreBridge.h:
+        * kwq/WebCoreBridge.mm:
+        (-[WebCoreBridge selectedString]): renamed to reflect WebDocument API change
+        (-[WebCoreBridge deselectAll]): added
+        (-[WebCoreBridge elementAtPoint:]): call selectedString
+
 2002-12-05  David Hyatt  <hyatt@apple.com>
 
 	Fix relative positioned elements to add in the right offset

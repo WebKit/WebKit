@@ -11,6 +11,7 @@
 #import <WebKit/WebController.h>
 #import <WebKit/WebControllerPrivate.h>
 #import <WebKit/WebDataSourcePrivate.h>
+#import <WebKit/WebDOMDocument.h>
 #import <WebKit/WebDynamicScrollBarsView.h>
 #import <WebKit/WebException.h>
 #import <WebKit/WebFrame.h>
@@ -79,7 +80,7 @@
 
 - (BOOL)hasSelection
 {
-    return [[[self _bridge] selectedText] length] != 0;
+    return [[self selectedString] length] != 0;
 }
 
 - (IBAction)takeFindStringFromSelection:(id)sender
@@ -95,7 +96,7 @@
     // it doesn't declare the types to the pasteboard and thus doesn't bump the change count.
     findPasteboard = [NSPasteboard pasteboardWithName:NSFindPboard];
     [findPasteboard declareTypes:[NSArray arrayWithObject:NSStringPboardType] owner:self];
-    [findPasteboard setString:[[self _bridge] selectedText] forType:NSStringPboardType];
+    [findPasteboard setString:[self selectedString] forType:NSStringPboardType];
 }
 
 - (void)copy:(id)sender
@@ -109,9 +110,9 @@
     return YES;
 }
 
-- (void)selectAll: sender
+- (void)selectAll:(id)sender
 {
-    [[self _bridge] selectAll];
+    [self selectAll];
 }
 
 - (void)jumpToSelection: sender
@@ -343,26 +344,6 @@
     return [[self _controller] _menuForElement:element];
 }
 
-- (void)setContextMenusEnabled: (BOOL)flag
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebView::setContextMenusEnabled: is not implemented"];
-}
-
-
-- (BOOL)contextMenusEnabled;
-{
-    return NO;
-}
-
-
-// Remove the selection.
-- (void)deselectText
-{
-    [NSException raise:WebMethodNotYetImplemented format:@"WebView::deselectText: is not implemented"];
-}
-
-
-
 // Search from the end of the currently selected location, or from the beginning of the document if nothing
 // is selected.
 - (BOOL)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
@@ -370,33 +351,52 @@
     return [[self _bridge] searchFor: string direction: forward caseSensitive: caseFlag];
 }
 
+- (NSString *)string
+{
+    return [[self attributedString] string];
+}
+
+- (NSAttributedString *)attributedString
+{
+    WebBridge *b = [self _bridge];
+    return [b attributedStringFrom:[b DOMDocument]
+                       startOffset:0
+                                to:nil
+                         endOffset:0];
+}
+
+- (NSString *)selectedString
+{
+    return [[self _bridge] selectedString];
+}
 
 // Get an attributed string that represents the current selection.
-- (NSAttributedString *)selectedAttributedText
+- (NSAttributedString *)selectedAttributedString
 {
-    [NSException raise:WebMethodNotYetImplemented format:@"WebView::selectedText is not implemented"];
-    return nil;
+    return [[self _bridge] selectedAttributedString];
 }
 
-
-- (NSString *)selectedText
+- (void)selectAll
 {
-    return [[self _bridge] selectedText];
+    [[self _bridge] selectAll];
 }
 
+// Remove the selection.
+- (void)deselectAll
+{
+    [[self _bridge] deselectAll];
+}
 
 - (BOOL)isOpaque
 {
     return YES;
 }
 
-
 - (void)setNeedsDisplay:(BOOL)flag
 {
     LOG(View, "%@ flag = %d", self, (int)flag);
     [super setNeedsDisplay: flag];
 }
-
 
 - (void)setNeedsLayout: (BOOL)flag
 {

@@ -377,7 +377,7 @@ NSString *WebElementStringKey = 		@"WebElementString";
 - (BOOL)supportsTextEncoding
 {
     id documentView = [[[self mainFrame] webView] documentView];
-    return [documentView conformsToProtocol:@protocol(WebDocumentTextEncoding)]
+    return [documentView conformsToProtocol:@protocol(WebDocumentText)]
         && [documentView supportsTextEncoding];
 }
 
