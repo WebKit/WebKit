@@ -1,3 +1,16 @@
+2002-12-30  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+	- fixed 3135642 -- ad frames are missing at channels.netscape.com
+
+        * khtml/rendering/render_frames.cpp: (RenderPartObject::updateWidget): Updated to use the
+	same rule as Mozilla: Empty URL for an iframe means "about:blank".
+
+        * khtml/ecma/kjs_window.cpp: (Window::isSafeScript): Loosen things so that it's safe for
+	a frame to manipulate an empty child frame, as well as an empty opened window. Also remove
+	the useless check for an empty document -- it never happens in practice.
+
 2002-12-30  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin and Gramps

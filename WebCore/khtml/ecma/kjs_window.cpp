@@ -916,15 +916,11 @@ bool Window::isSafeScript(ExecState *exec) const
   if ( activePart == m_part ) // Not calling from another frame, no problem.
     return true;
 
-  if ( m_part->document().isNull() )
-    return true; // allow to access a window that was just created (e.g. with window.open("about:blank"))
-
-  if ( activePart == m_part->opener() && 
-       shouldLoadAsEmptyDocument(KURL(m_part->document().completeURL("").string())) ) {
-    return true; // allow access from the window opened this one if it
-		 // made an initially empty document.
+  // allow access from the window that opened this one if it made an initially empty document
+  if ( ( activePart == m_part->opener() || activePart == m_part->parentPart() ) && 
+       shouldLoadAsEmptyDocument(m_part->url()) ) {
+    return true;
   }
-
 
   DOM::HTMLDocument thisDocument = m_part->htmlDocument();
   if ( thisDocument.isNull() ) {
