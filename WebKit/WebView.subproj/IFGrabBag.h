@@ -13,11 +13,11 @@
 /*
    ============================================================================= 
 */
-@protocol WKContextMenuHandler
+@protocol IFContextMenuHandler
 // Returns the array of menu items for this node that will be displayed in the context menu.
-// Typically this would be implemented by returning the results of WKWebView defaultContextMenuItemsForNode:
+// Typically this would be implemented by returning the results of IFWebView defaultContextMenuItemsForNode:
 // after making any desired changes or additions.
-- (NSArray *)contextMenuItemsForNode: (WKDOMNode *);
+- (NSArray *)contextMenuItemsForNode: (IFDOMNode *);
 @end
 
 

@@ -15,21 +15,21 @@ class QWidget;
 class KHTMLPart;
 class KHTMLView;
 
-@interface WKWebViewPrivate : NSObject
+@interface IFWebViewPrivate : NSObject
 {
-    id <WKWebController>controller;
+    id <IFWebController>controller;
     KHTMLView *widget;
-    WKDynamicScrollBarsView *frameScrollView;
+    IFDynamicScrollBarsView *frameScrollView;
     bool isFlipped;
     bool needsLayout;
 }
 
 @end
 
-@interface WKWebView (WKPrivate)
-- (void)_setController: (id <WKWebController>)controller;
+@interface IFWebView (IFPrivate)
+- (void)_setController: (id <IFWebController>)controller;
 - (void)_resetView;
 - (KHTMLView *)_widget;
-- (void)_setFrameScrollView: (WKDynamicScrollBarsView *)sv;
-- (WKDynamicScrollBarsView *)_frameScrollView;
+- (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv;
+- (IFDynamicScrollBarsView *)_frameScrollView;
 @end

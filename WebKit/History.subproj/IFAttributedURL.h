@@ -8,12 +8,12 @@
 //
 // IFAttributedURL.h
 //
-// WKAttributedURL is the class that is used to store a "reference" to a URL
+// IFAttributedURL is the class that is used to store a "reference" to a URL
 // in the various history and bookmark mechanisms. It provides some attributes
 // that clients can use to "decorate" a URL with data that a user might find 
 // useful in organizing their internet and browsing experience.
 // 
-@interface WKAttributedURL : NSObject
+@interface IFAttributedURL : NSObject
 {
     // The URL that serves as the "anchor" for the accompanying attributes.
     NSURL *url;
@@ -43,14 +43,14 @@
 }
 
 //
-// Initializes a WKAttributedURL object, setting the URL to the given
+// Initializes a IFAttributedURL object, setting the URL to the given
 // object, the creation and modification dates to "now" and all other 
 // fields to empty values (nil or zero).
 //
 -(id)initWithURL:(NSURL *)url;
 
 //
-// Initializes a WKAttributedURL object, setting the URL and title to 
+// Initializes a IFAttributedURL object, setting the URL and title to 
 // the given objects, the creation and modification dates to "now" and 
 // all other fields to empty values (nil or zero).
 //
@@ -144,7 +144,7 @@
 
 //
 // Returns YES if the receiver is equal to the given object, no otherwise. 
-// Two WKAttributedURL objects are equal if and only if they have the 
+// Two IFAttributedURL objects are equal if and only if they have the 
 // equal URLs and creation dates.
 //
 -(BOOL)isEqual:(id)anObject;

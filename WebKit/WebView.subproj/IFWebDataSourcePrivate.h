@@ -12,11 +12,11 @@
 // includes from kde
 #include <khtmlview.h>
 
-@interface WKWebDataSourcePrivate : NSObject
+@interface IFWebDataSourcePrivate : NSObject
 {
-    WKWebDataSource *parent;
+    IFWebDataSource *parent;
     NSMutableArray *children;
-    id <WKWebController>controller;
+    id <IFWebController>controller;
     NSURL *inputURL;
     KHTMLPart *part;
     NSString *frameName;
@@ -28,8 +28,8 @@
 
 @end
 
-@interface WKWebDataSource (WKPrivate)
-- (void)_setController: (id <WKWebController>)controller;
+@interface IFWebDataSource (IFPrivate)
+- (void)_setController: (id <IFWebController>)controller;
 - (KHTMLPart *)_part;
 - (void)_setFrameName: (NSString *)fName;
 @end

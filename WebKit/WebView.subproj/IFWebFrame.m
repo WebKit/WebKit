@@ -10,9 +10,9 @@
 #import <WebKit/IFWebFrame.h>
 #import <WebKit/IFWebDataSource.h>
 
-@implementation WKWebFrame
+@implementation IFWebFrame
 
-- initWithName: (NSString *)n view: v dataSource: (WKWebDataSource *)d
+- initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d
 {
     [super init];
     name = [n retain];
@@ -47,7 +47,7 @@
 }
 
 
-- (WKWebDataSource *)dataSource
+- (IFWebDataSource *)dataSource
 {
     return dataSource;
 }

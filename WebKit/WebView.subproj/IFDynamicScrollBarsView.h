@@ -8,7 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 
-@interface WKDynamicScrollBarsView : NSScrollView {
+@interface IFDynamicScrollBarsView : NSScrollView {
 }
 
 @end

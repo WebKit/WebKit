@@ -24,5 +24,5 @@
  */
 #import <Cocoa/Cocoa.h>
 
-NSString * const WKMethodNotYetImplemented = @"WKMethodNotYetImplemented";
-NSString * const WKRuntimeError = @"WKRuntimeError";
+NSString * const IFMethodNotYetImplemented = @"IFMethodNotYetImplemented";
+NSString * const IFRuntimeError = @"IFRuntimeError";

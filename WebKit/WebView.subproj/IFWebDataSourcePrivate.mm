@@ -11,7 +11,7 @@
 
 
 
-@implementation WKWebDataSourcePrivate 
+@implementation IFWebDataSourcePrivate 
 
 - init
 {
@@ -27,7 +27,7 @@
 
 - (void)dealloc
 {
-    // controller is not retained!  WKWebControllers maintain
+    // controller is not retained!  IFWebControllers maintain
     // a reference to their view and main data source.
     [parent release];
     [frames release];
@@ -37,24 +37,24 @@
 
 @end
 
-@implementation WKWebDataSource (WKPrivate)
-- (void)_setController: (id <WKWebController>)controller
+@implementation IFWebDataSource (IFPrivate)
+- (void)_setController: (id <IFWebController>)controller
 {
-    if (((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
-        [NSException raise:WKRuntimeError format:@"WKWebDataSource::_setController: called not called on main data source."];
-    ((WKWebDataSourcePrivate *)_dataSourcePrivate)->controller = controller;
-    ((WKWebDataSourcePrivate *)_dataSourcePrivate)->part->setDataSource (self);
+    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
+        [NSException raise:IFRuntimeError format:@"IFWebDataSource::_setController: called not called on main data source."];
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->controller = controller;
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part->setDataSource (self);
 }
 
 
 - (KHTMLPart *)_part
 {
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->part;
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->part;
 }
 
 - (void)_setFrameName: (NSString *)fname
 {
-    ((WKWebDataSourcePrivate *)_dataSourcePrivate)->frameName = [fname retain];
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frameName = [fname retain];
 }
 
 @end

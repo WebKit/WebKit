@@ -1,5 +1,96 @@
 2002-02-04  Maciej Stachowiak  <mjs@apple.com>
 
+	Rename all classes from WK prefix to IF prefix.
+
+	* Cache.subproj/IFLoadChunk.h:
+	* Cache.subproj/IFWebCache.h:
+	* Cache.subproj/IFWebCacheClient.h:
+	* Cache.subproj/IFWebContentType.h:
+	* History.subproj/IFAttributedURL.h:
+	* History.subproj/IFBackForwardList.h:
+	* History.subproj/IFBackForwardList.m: (-[IFBackForwardList init]),
+	(-[IFBackForwardList addEntry:]), (-[IFBackForwardList back]),
+	(-[IFBackForwardList currentEntry]), (-[IFBackForwardList forward]),
+	(-[IFBackForwardList description]):
+	* History.subproj/IFURIEntry.h:
+	* History.subproj/IFURIEntry.m: (WCCreateURIEntry), (-[IFURIEntry isEqual:]),
+	(-[IFURIEntry description]):
+	* History.subproj/IFURIList.h:
+	* History.subproj/IFURIList.m: (newURIListNode), (freeNode), (-[IFURIList
+	dealloc]), (-[IFURIList addEntry:]), (-[IFURIList removeURL:]), (-[IFURIList
+	removeEntry:]), (-[IFURIList entryForURL:]), (-[IFURIList entryAtIndex:]),
+	(-[IFURIList removeEntryAtIndex:]), (-[IFURIList removeEntriesToIndex:]):
+	* Misc.subproj/IFException.h:
+	* Misc.subproj/IFException.m:
+	* WebKit.pbproj/project.pbxproj:
+	* WebView.subproj/IFBaseWebController.h:
+	* WebView.subproj/IFBaseWebController.mm: (+[IFObjectHolder holderWithObject:]),
+	(-[IFBaseWebController init]), (-[IFBaseWebController initWithView:dataSource:]),
+	(-[IFBaseWebController setDirectsAllLinksToSystemBrowser:]),
+	(-[IFBaseWebController directsAllLinksToSystemBrowser]), (-[IFBaseWebController
+	setView:andDataSource:]), (-[IFBaseWebController
+	createFrameNamed:for:inParent:]), (-[IFBaseWebController viewForDataSource:]),
+	(-[IFBaseWebController dataSourceForView:]), (-[IFBaseWebController mainView]),
+	(-[IFBaseWebController mainDataSource]), (-[IFBaseWebController
+	setStatusText:forDataSource:]), (-[IFBaseWebController
+	statusTextForDataSource:]), (-[IFBaseWebController authenticate:]),
+	(-[IFBaseWebController receivedProgress:forResource:fromDataSource:]),
+	(-[IFBaseWebController
+	receivedError:forResource:partialProgress:fromDataSource:]),
+	(-[IFBaseWebController locationWillChangeTo:]), (-[IFBaseWebController
+	locationChangeStartedForDataSource:]), (-[IFBaseWebController
+	locationChangeInProgressForDataSource:]), (-[IFBaseWebController
+	locationChangeDone:forDataSource:]), (-[IFBaseWebController
+	receivedPageTitle:forDataSource:]), (-[IFBaseWebController
+	serverRedirectTo:forDataSource:]):
+	* WebView.subproj/IFBaseWebControllerPrivate.h:
+	* WebView.subproj/IFBaseWebControllerPrivate.mm:
+	* WebView.subproj/IFDynamicScrollBarsView.h:
+	* WebView.subproj/IFDynamicScrollBarsView.m:
+	* WebView.subproj/IFGrabBag.h:
+	* WebView.subproj/IFPreferences.h:
+	* WebView.subproj/IFWebController.h:
+	* WebView.subproj/IFWebDataSource.h:
+	* WebView.subproj/IFWebDataSource.mm: (-[IFWebDataSource _commonInitialization]),
+	(-[IFWebDataSource initWithURL:]), (-[IFWebDataSource frameName]),
+	(-[IFWebDataSource isMainDocument]), (-[IFWebDataSource parent]),
+	(-[IFWebDataSource children]), (-[IFWebDataSource addFrame:]), (-[IFWebDataSource
+	frameNamed:]), (-[IFWebDataSource frameNames]), (-[IFWebDataSource
+	findDataSourceForFrameNamed:]), (-[IFWebDataSource frameExists:]),
+	(-[IFWebDataSource openURL:inFrameNamed:]), (-[IFWebDataSource
+	openURL:inIFrame:]), (-[IFWebDataSource controller]), (-[IFWebDataSource
+	inputURL]), (-[IFWebDataSource finalURL]), (-[IFWebDataSource wasRedirected]),
+	(-[IFWebDataSource stopLoading]), (-[IFWebDataSource isLoading]),
+	(-[IFWebDataSource base]), (-[IFWebDataSource baseTarget]), (-[IFWebDataSource
+	encoding]), (-[IFWebDataSource setUserStyleSheetFromURL:]), (-[IFWebDataSource
+	setUserStyleSheetFromString:]), (-[IFWebDataSource icon]), (-[IFWebDataSource
+	isPageSecure]), (-[IFWebDataSource pageTitle]):
+	* WebView.subproj/IFWebDataSourcePrivate.h:
+	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSourcePrivate dealloc]),
+	(-[IFWebDataSource _setController:]), (-[IFWebDataSource _part]),
+	(-[IFWebDataSource _setFrameName:]):
+	* WebView.subproj/IFWebFrame.h:
+	* WebView.subproj/IFWebFrame.m: (-[IFWebFrame initWithName:view:dataSource:]),
+	(-[IFWebFrame dataSource]):
+	* WebView.subproj/IFWebView.h:
+	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]), (-[IFWebView
+	controller]), (-[IFWebView dataSourceChanged]), (-[IFWebView layout]),
+	(-[IFWebView stopAnimations]), (-[IFWebView setFontSizes:]), (-[IFWebView
+	fontSizes]), (-[IFWebView resetFontSizes]), (-[IFWebView setStandardFont:]),
+	(-[IFWebView standardFont]), (-[IFWebView setFixedFont:]), (-[IFWebView
+	fixedFont]), (-[IFWebView setCanDragFrom:]), (-[IFWebView setCanDragTo:]),
+	(-[IFWebView defaultContextMenuItemsForNode:]), (-[IFWebView
+	setContextMenusEnabled:]), (-[IFWebView deselectText]), (-[IFWebView
+	searchFor:direction:caseSensitive:]), (-[IFWebView selectedText]), (-[IFWebView
+	setNeedsLayout:]), (-[IFWebView drawRect:]), (-[IFWebView setIsFlipped:]),
+	(-[IFWebView isFlipped]), (-[IFWebView mouseUp:]), (-[IFWebView mouseDown:]):
+	* WebView.subproj/IFWebViewPrivate.h:
+	* WebView.subproj/IFWebViewPrivate.mm: (-[IFWebViewPrivate dealloc]),
+	(-[IFWebView _setController:]), (-[IFWebView _widget]), (-[IFWebView
+	_setFrameScrollView:]), (-[IFWebView _frameScrollView]):
+
+2002-02-04  Maciej Stachowiak  <mjs@apple.com>
+
 	Rename all WK files to IF (classes not renamed yet).
 
 	* Cache.subproj/IFLoadChunk.h:

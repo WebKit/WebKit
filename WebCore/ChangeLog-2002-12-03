@@ -1,3 +1,11 @@
+2002-02-04  Maciej Stachowiak  <mjs@apple.com>
+
+	Fix everything for WK --> IF rename.
+
+	* src/kwq/KWQKHTMLPart.h:
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::khtmlMouseReleaseEvent),
+	(KHTMLPart::requestFrame), (KHTMLPart::checkCompleted):
+
 2002-02-01  Kenneth Kocienda  <kocienda@apple.com>
 
 	More cleanups to the no-copy NSData API.

@@ -47,7 +47,7 @@ class KJSProxy;
 class KHTMLPartPrivate;
 
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-@class WKWebDataSource;
+@class IFWebDataSource;
 #endif
 
 namespace DOM
@@ -597,8 +597,8 @@ public:
 #ifdef _KWQ_
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     // Not retained.
-    void setDataSource(WKWebDataSource *d) { dataSource = d; }
-    WKWebDataSource *getDataSource() { return dataSource; }
+    void setDataSource(IFWebDataSource *d) { dataSource = d; }
+    IFWebDataSource *getDataSource() { return dataSource; }
 #else
     void setDataSource(void *d) { dataSource = d; }
     void *getDataSource() { return dataSource; }
@@ -613,7 +613,7 @@ private:
 
 #ifdef _KWQ_
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
-    WKWebDataSource *dataSource;
+    IFWebDataSource *dataSource;
 #else    
     void *dataSource;
 #endif

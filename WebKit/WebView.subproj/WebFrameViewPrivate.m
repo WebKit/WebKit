@@ -10,7 +10,7 @@
 // Includes from KDE
 #include <khtmlview.h>
 
-@implementation WKWebViewPrivate
+@implementation IFWebViewPrivate
 
 - init
 {
@@ -25,7 +25,7 @@
 
 - (void)dealloc
 {
-    // controller is not retained!  WKWebControllers maintain
+    // controller is not retained!  IFWebControllers maintain
     // a reference to their view and main data source.
 
     [frameScrollView release];
@@ -39,7 +39,7 @@
 @end
 
 
-@implementation WKWebView  (WKPrivate)
+@implementation IFWebView  (IFPrivate)
 
 - (void)_resetView 
 {
@@ -55,27 +55,27 @@
 }
 
 
-- (void)_setController: (id <WKWebController>)controller
+- (void)_setController: (id <IFWebController>)controller
 {
     // Not retained.
-    ((WKWebViewPrivate *)_viewPrivate)->controller = controller;    
+    ((IFWebViewPrivate *)_viewPrivate)->controller = controller;    
 }
 
 - (KHTMLView *)_widget
 {
-    return ((WKWebViewPrivate *)_viewPrivate)->widget;    
+    return ((IFWebViewPrivate *)_viewPrivate)->widget;    
 }
 
-- (void)_setFrameScrollView: (WKDynamicScrollBarsView *)sv
+- (void)_setFrameScrollView: (IFDynamicScrollBarsView *)sv
 {
-    ((WKWebViewPrivate *)_viewPrivate)->frameScrollView = [sv retain];    
+    ((IFWebViewPrivate *)_viewPrivate)->frameScrollView = [sv retain];    
     [self setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
     [sv setDocumentView: self];
 }
 
-- (WKDynamicScrollBarsView *)_frameScrollView
+- (IFDynamicScrollBarsView *)_frameScrollView
 {
-    return ((WKWebViewPrivate *)_viewPrivate)->frameScrollView;    
+    return ((IFWebViewPrivate *)_viewPrivate)->frameScrollView;    
 }
 
 @end

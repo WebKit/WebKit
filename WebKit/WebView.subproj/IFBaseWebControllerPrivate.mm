@@ -7,7 +7,7 @@
 #import <WebKit/IFWebView.h>
 
 
-@implementation WKDefaultWebControllerPrivate
+@implementation IFBaseWebControllerPrivate
 
 - init 
 {

@@ -8,7 +8,7 @@
 
 #import <WebKit/IFDynamicScrollBarsView.h>
 
-@implementation WKDynamicScrollBarsView
+@implementation IFDynamicScrollBarsView
 
 // make the horizontal and vertical scroll bars come and go as needed
 - (void) reflectScrolledClipView: (NSClipView*)clipView

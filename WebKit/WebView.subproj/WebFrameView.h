@@ -12,12 +12,12 @@
 /*
    ============================================================================= 
 
-    Typical usage of a WKWebView.
+    Typical usage of a IFWebView.
     
     NSURL *url = [NSURL URLWithString: @"http://www.apple.com"];
-    WKWebDataSource *dataSource = [[WKWebDataSource alloc] initWithURL: url];
-    WKWebView *view = [[WKWebView alloc] initWithFrame: myFrame];
-    WKDefaultWebController *controller = [[WKDefaultWebController alloc] initWithView: view dataSource: dataSource];
+    IFWebDataSource *dataSource = [[IFWebDataSource alloc] initWithURL: url];
+    IFWebView *view = [[IFWebView alloc] initWithFrame: myFrame];
+    IFDefaultWebController *controller = [[IFDefaultWebController alloc] initWithView: view dataSource: dataSource];
 
     [[[view controller] dataSource] startLoading];
 
@@ -27,7 +27,7 @@
     What is the behaviour of the view after it has been initialized and 
     startLoading: is called?
     
-        1.  No WKLocationChangedHandler messages will be sent until 
+        1.  No IFLocationChangedHandler messages will be sent until 
             startLoading: is called.  After startLoading is called a loadingStarted
             message will be sent to the controller.  The view will remain unchanged 
             until the controller receives a receivedDataForLocation: message 
@@ -48,7 +48,7 @@
             is called before the document has fully loaded, the layout will be incomplete, and a
             loadingStopped message will be sent to the controller
             
-        4.  When the controller receives a receivedDataForLocation: with a WKLoadProgress that 
+        4.  When the controller receives a receivedDataForLocation: with a IFLoadProgress that 
             contains bytesSoFar==totalToLoad the location specified is completely loaded.  Clients
             may display the location string to indicate completion of a loaded resource.
             When the controller receives a loadingFinished message the main document and all it
@@ -73,7 +73,7 @@
         the selected text.
         
 */
-@interface WKWebView : NSView
+@interface IFWebView : NSView
 {
 @private
     id _viewPrivate;
@@ -84,14 +84,14 @@
 
 #ifdef TENTATIVE_API
 // Set and get the delegate.
-- (void)setDelegate: (id <WKWebViewDelegate>)delegate;
-- (id <WKWebViewDelegate>)delegate;
+- (void)setDelegate: (id <IFWebViewDelegate>)delegate;
+- (id <IFWebViewDelegate>)delegate;
 #endif
 
  
 // Set and get the controller.  Note that the controller is not retained.
 // Perhaps setController: should be private?
-- (id <WKWebController>)controller;
+- (id <IFWebController>)controller;
 
 
 // This method is typically called by the view's controller when
@@ -102,7 +102,7 @@
 
 
 // This method should not be public until we have a more completely
-// understood way to subclass WKWebView.
+// understood way to subclass IFWebView.
 - (void)layout;
 
 
@@ -128,9 +128,9 @@
 
 
 // Returns an array of built-in context menu items for this node.
-// Generally called by WKContextMenuHandlers from contextMenuItemsForNode:
+// Generally called by IFContextMenuHandlers from contextMenuItemsForNode:
 #ifdef TENTATIVE_API
-- (NSArray *)defaultContextMenuItemsForNode: (WKDOMNode *);
+- (NSArray *)defaultContextMenuItemsForNode: (IFDOMNode *);
 #endif
 - (void)setContextMenusEnabled: (BOOL)flag;
 - (BOOL)contextMenusEnabled;
@@ -166,7 +166,7 @@
             Selection on data source is reflected in view.
             Does the view also need a cover selection API?
             
-        subclassing of WKWebView
+        subclassing of IFWebView
 */
 
 

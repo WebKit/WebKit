@@ -10,112 +10,112 @@
 /*
    ============================================================================= 
 
-    WKWebController manages the interaction between WKWebView(s) and WKWebDataSource(s).
+    IFWebController manages the interaction between IFWebView(s) and IFWebDataSource(s).
 
-    The WKWebController implements required behavior.  WKWebView and WKWebDataSource
+    The IFWebController implements required behavior.  IFWebView and IFWebDataSource
     cannot function without a controller.  
     
-    It it expected that alternate implementations of WKWebController will be written for
-    alternate views of the web pages described by WKWebDataSources.  For example, a web
-    crawler may implement a WKWebController with no corresponding view.
+    It it expected that alternate implementations of IFWebController will be written for
+    alternate views of the web pages described by IFWebDataSources.  For example, a web
+    crawler may implement a IFWebController with no corresponding view.
     
-    WKDefaultWebController may be subclassed to modify the behavior of the standard
-    WKWebView and WKWebDataSource.
+    IFDefaultWebController may be subclassed to modify the behavior of the standard
+    IFWebView and IFWebDataSource.
 
    ============================================================================= 
     
     Changes: 
     
     2001-12-12
-        Changed WKConcreteWebController to WKDefaultWebController.
+        Changed IFConcreteWebController to IFDefaultWebController.
         
-        Changed WKLocationChangedHandler naming, replace "loadingXXX" with
+        Changed IFLocationChangedHandler naming, replace "loadingXXX" with
         "locationChangeXXX".
 
-        Changed loadingStopped in WKLocationChangedHandler to locationChangeStopped:(WKError *).
+        Changed loadingStopped in IFLocationChangedHandler to locationChangeStopped:(IFError *).
 
-        Changed loadingCancelled in WKLocationChangedHandler to locationChangeCancelled:(WKError *).
+        Changed loadingCancelled in IFLocationChangedHandler to locationChangeCancelled:(IFError *).
         
-        Changed loadedPageTitle in WKLocationChangedHandler to receivedPageTitle:.
+        Changed loadedPageTitle in IFLocationChangedHandler to receivedPageTitle:.
 
-        Added inputURL:(NSURL *) resolvedTo: (NSURL *) to WKLocationChangedHandler.
+        Added inputURL:(NSURL *) resolvedTo: (NSURL *) to IFLocationChangedHandler.
         
-        Added the following two methods to WKLocationChangedHandler:
+        Added the following two methods to IFLocationChangedHandler:
         
             - (void)inputURL: (NSURL *)inputURL resolvedTo: (NSURL *)resolvedURL;
             - (void)serverRedirectTo: (NSURL *)url;
        
-        Put locationWillChangeTo: back on WKLocationChangedHandler.
+        Put locationWillChangeTo: back on IFLocationChangedHandler.
         
-        Changed XXXforLocation in WKLoadHandler to XXXforResource.
+        Changed XXXforLocation in IFLoadHandler to XXXforResource.
         
-        Changed timeoutForLocation: in WKLoadHandler to receivedError:forResource:partialProgress:
+        Changed timeoutForLocation: in IFLoadHandler to receivedError:forResource:partialProgress:
         
-        Added the following two methods to WKDefaultWebController:
+        Added the following two methods to IFDefaultWebController:
         
             - setDirectsAllLinksToSystemBrowser: (BOOL)flag
             - (BOOL)directsAllLinksToSystemBrowser;
             
-        Removed WKError.  This will be described in WKError.h.
+        Removed IFError.  This will be described in IFError.h.
   
   2001-12-13
   
-        Removed WKFrameSetHandler, placed that functionality on WKWebDataSource.
+        Removed IFFrameSetHandler, placed that functionality on IFWebDataSource.
         
-        Changed WKLocationChangeHandler to add a parameter specifying the data source
+        Changed IFLocationChangeHandler to add a parameter specifying the data source
         that sent the message.
 
   2001-12-14
 
         Removed inputURL:resolvedTo: methods, per discussion with Don.
 
-        Remove WKContextMenuHandler for want of a better way to describe the
-        not-yet-existing WKDOMNode.  We can't think of any initial clients that want
-        to override the default behavior anyway.  Put it in WKGrabBag.h for now.
+        Remove IFContextMenuHandler for want of a better way to describe the
+        not-yet-existing IFDOMNode.  We can't think of any initial clients that want
+        to override the default behavior anyway.  Put it in IFGrabBag.h for now.
 
-        Simplified WKLocationChangeHandler and updated
-	WKAuthenticationHandler to use interfaces instead of structs..
+        Simplified IFLocationChangeHandler and updated
+	IFAuthenticationHandler to use interfaces instead of structs..
 */
 
 
-@class WKWebDataSource;
-@class WKError;
-@class WKWebView;
-@class WKWebFrame;
+@class IFWebDataSource;
+@class IFError;
+@class IFWebView;
+@class IFWebFrame;
 
 #ifdef TENTATIVE_API
 /*
    ============================================================================= 
 
-    WKWebViewDelegates implement protocols that modify the behavior of
-    WKWebViews.  A WKWebView does not require a delegate.
+    IFWebViewDelegates implement protocols that modify the behavior of
+    IFWebViews.  A IFWebView does not require a delegate.
 */
-@protocol WKWebViewDelegate <?>
+@protocol IFWebViewDelegate <?>
 @end
 
 
 /*
    ============================================================================= 
 
-    WKWebDataSourceDelegate implement protocols that modify the behavior of
-    WKWebDataSources.  A WKWebDataSources does not require a delegate.
+    IFWebDataSourceDelegate implement protocols that modify the behavior of
+    IFWebDataSources.  A IFWebDataSources does not require a delegate.
 */
-@protocol WKWebDataSourceDelegate <?>
+@protocol IFWebDataSourceDelegate <?>
 @end
 
 
 /*
    ============================================================================= 
 
-    See the comments in WKWebPageView above for more description about this protocol.
+    See the comments in IFWebPageView above for more description about this protocol.
 */
-@protocol WKLocationChangeHandler
+@protocol IFLocationChangeHandler
 
 - (BOOL)locationWillChangeTo: (NSURL *)url;
 
 - (void)locationChangeStarted;
 - (void)locationChangeInProgress;
-- (void)locationChangeDone: (WKError *)error;
+- (void)locationChangeDone: (IFError *)error;
 
 - (void)receivedPageTitle: (NSString *)title;
 
@@ -128,11 +128,11 @@
 /*
    ============================================================================= 
 
-    A frame-aware version of the the WKLocationChangeHandler
+    A frame-aware version of the the IFLocationChangeHandler
 
-    See the comments in WKWebPageView above for more description about this protocol.
+    See the comments in IFWebPageView above for more description about this protocol.
 */
-@protocol WKLocationChangeHandler
+@protocol IFLocationChangeHandler
 
 // locationWillChangeTo: is required, but will it be sent by the dataSource?  More
 // likely the controller will receive a change request from the view.  That argues for
@@ -140,13 +140,13 @@
 // handshake.
 - (BOOL)locationWillChangeTo: (NSURL *)url;
 
-- (void)locationChangeStartedForDataSource: (WKWebDataSource *)dataSource;
-- (void)locationChangeInProgressForDataSource: (WKWebDataSource *)dataSource;
-- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
+- (void)locationChangeStartedForDataSource: (IFWebDataSource *)dataSource;
+- (void)locationChangeInProgressForDataSource: (IFWebDataSource *)dataSource;
+- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 
-- (void)receivedPageTitle: (NSString *)title forDataSource: (WKWebDataSource *)dataSource;
+- (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource;
 
-- (void)serverRedirectTo: (NSURL *)url forDataSource: (WKWebDataSource *)dataSource;
+- (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource;
 
 @end
 
@@ -154,16 +154,16 @@
 /*
    ============================================================================= 
 
-    A WKLoadProgress capture the state associated with a load progress
+    A IFLoadProgress capture the state associated with a load progress
     indication.  Should we use a struct?
 */
-@interface WKLoadProgress 
+@interface IFLoadProgress 
 {
     int bytesSoFar;	// 0 if this is the start of load
     int totalToLoad;	// -1 if this is not known.
                         // bytesSoFar == totalLoaded when complete
 #ifdef TENTATIVE_API
-    WK_LOAD_TYPES type;	// load types, either image, css, jscript, or html
+    IF_LOAD_TYPES type;	// load types, either image, css, jscript, or html
 #endif
 }
 @end
@@ -178,7 +178,7 @@
     The methods in this protocol will be called even if the data source
     is initialized with something other than a URL.
 */
-@protocol  WKLoadHandler
+@protocol  IFLoadHandler
 
 /*
     A new chunk of data has been received.  This could be a partial load
@@ -186,9 +186,9 @@
     typically for non-base URLs this should be done after a URL (i.e. image)
     has been completely downloaded.
 */
-- (void)receivedProgress: (WKLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (WKWebDataSource *)dataSource;
+- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource;
 
-- (void)receivedError: (WKError *)error forResource: (NSString *)resourceDescription partialProgress: (WKLoadProgress *)progress fromDataSource: (WKWebDataSource *)dataSource;
+- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource;
 
 @end
 
@@ -199,7 +199,7 @@
 
 */
 
-@interface WKSimpleAuthenticationResult 
+@interface IFSimpleAuthenticationResult 
 {
     NSString *username;
     NSString *password;
@@ -209,7 +209,7 @@
 }
 @end
 
-@interface WKSimpleAuthenticationRequest 
+@interface IFSimpleAuthenticationRequest 
 {
     NSURL *url;         // nil if for something non-URI based
     NSString *domain;   // http authentication domain or some representation of 
@@ -225,10 +225,10 @@
 @end
 
 
-@protocol WKAuthenticationHandler
+@protocol IFAuthenticationHandler
 // Can we make this work without blocking the UI, or do we need to make it explicitly async
 // somehow?
-- (WKSimpleAuthenticationResult *) authenticate: (WKSimpleAuthenticationRequest *)request;
+- (IFSimpleAuthenticationResult *) authenticate: (IFSimpleAuthenticationRequest *)request;
 
 // do we need anything for fancier authentication schemes like kerberos or GSSAPI?
 
@@ -240,23 +240,23 @@
    ============================================================================= 
 
 */
-@protocol WKWebDataSourceErrorHandler
-- receivedError: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
+@protocol IFWebDataSourceErrorHandler
+- receivedError: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 @end
 
 
 /*
    ============================================================================= 
 
-    A class that implements WKScriptContextHandler provides all the state information
+    A class that implements IFScriptContextHandler provides all the state information
     that may be used by Javascript (AppleScript?).
     
 */
-@protocol WKScriptContextHandler
+@protocol IFScriptContextHandler
 
 // setStatusText and statusText are used by Javascript's status bar text methods.
-- (void)setStatusText: (NSString *)text forDataSource: (WKWebDataSource *)dataSource;
-- (NSString *)statusTextForDataSource: (WKWebDataSource *)dataSource;
+- (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource;
+- (NSString *)statusTextForDataSource: (IFWebDataSource *)dataSource;
 
 // Need API for things like window size and position, window ids,
 // screen goemetry.  Essentially all the 'view' items that are
@@ -271,20 +271,20 @@
 /*
    ============================================================================= 
 
-    WKWebController implements all the behavior that ties together WKWebView
-    and WKWebDataSource.  See each inherited protocol for a more complete
+    IFWebController implements all the behavior that ties together IFWebView
+    and IFWebDataSource.  See each inherited protocol for a more complete
     description.
     
     [Don and I both agree that all these little protocols are useful to cleanly
      describe snippets of behavior, but do we explicity reference them anywhere,
      or do we just use the umbrella protocol?]
 */
-@protocol WKWebController <WKLoadHandler, WKScriptContextHandler, WKAuthenticationHandler, WKLocationChangeHandler>
+@protocol IFWebController <IFLoadHandler, IFScriptContextHandler, IFAuthenticationHandler, IFLocationChangeHandler>
 
 
 // Called when a data source needs to create a frame.  This method encapsulates the
 // specifics of creating and initializaing a view of the appropriate class.
-- (WKWebFrame *)createFrameNamed: (NSString *)fname for: (WKWebDataSource *)child inParent: (WKWebDataSource *)parent;
+- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)child inParent: (IFWebDataSource *)parent;
 
 @end
 

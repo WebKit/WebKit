@@ -10,8 +10,8 @@
 #import <AppKit/AppKit.h>
 //#import <WCURIEntry.h>
 
-//@interface WKURIEntry : NSObject <WCURIEntry>
-@interface WKURIEntry : NSObject
+//@interface IFURIEntry : NSObject <WCURIEntry>
+@interface IFURIEntry : NSObject
 {
     NSURL *_url;
     NSString *_title;

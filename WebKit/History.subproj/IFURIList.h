@@ -6,12 +6,12 @@
 
 #import "IFURIEntry.h"
 
-typedef struct WKURIListNode WKURIListNode;
+typedef struct IFURIListNode IFURIListNode;
 
-@interface WKURIList : NSObject 
+@interface IFURIList : NSObject 
 {
-    WKURIListNode *_head;
-    WKURIListNode *_tail;
+    IFURIListNode *_head;
+    IFURIListNode *_tail;
     int _count;
     BOOL _allowsDuplicates;
     int _maximumSize;
@@ -27,14 +27,14 @@ typedef struct WKURIListNode WKURIListNode;
 -(int)maximumSize;
 -(void)setMaximumSize:(int)size;
 
--(WKURIEntry *)addURL:(NSURL *)url withTitle:(NSString *)title;
--(void)addEntry:(WKURIEntry *)entry;
--(WKURIEntry *)removeURL:(NSURL *)url;
--(BOOL)removeEntry:(WKURIEntry *)entry;
+-(IFURIEntry *)addURL:(NSURL *)url withTitle:(NSString *)title;
+-(void)addEntry:(IFURIEntry *)entry;
+-(IFURIEntry *)removeURL:(NSURL *)url;
+-(BOOL)removeEntry:(IFURIEntry *)entry;
 
--(WKURIEntry *)entryForURL:(NSURL *)url;
--(WKURIEntry *)entryAtIndex:(int)index;
--(WKURIEntry *)removeEntryAtIndex:(int)index;
+-(IFURIEntry *)entryForURL:(NSURL *)url;
+-(IFURIEntry *)entryAtIndex:(int)index;
+-(IFURIEntry *)removeEntryAtIndex:(int)index;
 -(void)removeEntriesToIndex:(int)index;
 
 @end

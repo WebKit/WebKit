@@ -1,5 +1,5 @@
 /*	
-    IFDefaultWebController.mm
+    IFBaseWebController.mm
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFBaseWebController.h>
@@ -10,9 +10,9 @@
 #import <WebKit/IFException.h>
 
 
-// WKObjectHolder holds objects as keys in dictionaries without
+// IFObjectHolder holds objects as keys in dictionaries without
 // copying.
-@interface WKObjectHolder : NSObject
+@interface IFObjectHolder : NSObject
 {
     id object;
 }
@@ -24,11 +24,11 @@
 
 @end
 
-@implementation WKObjectHolder
+@implementation IFObjectHolder
 
 + holderWithObject: o
 {
-    return [[[WKObjectHolder alloc] initWithObject: o] autorelease];
+    return [[[IFObjectHolder alloc] initWithObject: o] autorelease];
 }
 
 - initWithObject: o
@@ -66,20 +66,20 @@
 @end
 
 
-@implementation WKDefaultWebController
+@implementation IFBaseWebController
 
 - init
 {
     [super init];
-    _controllerPrivate = [[WKDefaultWebControllerPrivate alloc] init];
+    _controllerPrivate = [[IFBaseWebControllerPrivate alloc] init];
     return self;
 }
 
 
-- initWithView: (WKWebView *)view dataSource: (WKWebDataSource *)dataSource
+- initWithView: (IFWebView *)view dataSource: (IFWebDataSource *)dataSource
 {
     [super init];
-    _controllerPrivate = [[WKDefaultWebControllerPrivate alloc] init];
+    _controllerPrivate = [[IFBaseWebControllerPrivate alloc] init];
     [self setView: view andDataSource: dataSource];
     return self;   
 }
@@ -92,21 +92,21 @@
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::setDirectsAllLinksToSystemBrowser: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::setDirectsAllLinksToSystemBrowser: is not implemented"];
 }
 
 
 - (BOOL)directsAllLinksToSystemBrowser
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::directsAllLinksToSystemBrowser is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::directsAllLinksToSystemBrowser is not implemented"];
     return NO;
 }
 
 
-- (void)setView: (WKWebView *)view andDataSource: (WKWebDataSource *)dataSource
+- (void)setView: (IFWebView *)view andDataSource: (IFWebDataSource *)dataSource
 {
-    // FIXME:  this needs to be implemented in terms of WKWebFrame.
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    // FIXME:  this needs to be implemented in terms of IFWebFrame.
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
 
     [data->viewMap autorelease];
     data->viewMap = [[NSMutableDictionary alloc] init];
@@ -123,35 +123,35 @@
     [dataSource _setController: self];
 
     if (dataSource != nil && view != nil){
-        [data->viewMap setObject: view forKey: [WKObjectHolder holderWithObject:dataSource]];
+        [data->viewMap setObject: view forKey: [IFObjectHolder holderWithObject:dataSource]];
 
-        [data->dataSourceMap setObject: dataSource forKey: [WKObjectHolder holderWithObject:view]];
+        [data->dataSourceMap setObject: dataSource forKey: [IFObjectHolder holderWithObject:view]];
     }
     
     if (dataSource != nil)
         [view dataSourceChanged];
 }
 
-- (WKWebFrame *)createFrameNamed: (NSString *)fname for: (WKWebDataSource *)childDataSource inParent: (WKWebDataSource *)parentDataSource
+- (IFWebFrame *)createFrameNamed: (NSString *)fname for: (IFWebDataSource *)childDataSource inParent: (IFWebDataSource *)parentDataSource
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
-    WKWebView *childView;
-    WKWebFrame *newFrame;
-    //WKDynamicScrollBarsView *scrollView;
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
+    IFWebView *childView;
+    IFWebFrame *newFrame;
+    //IFDynamicScrollBarsView *scrollView;
 
-    childView = [[WKWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
+    childView = [[IFWebView alloc] initWithFrame: NSMakeRect (0,0,0,0)];
 
-    newFrame = [[[WKWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource] autorelease];
+    newFrame = [[[IFWebFrame alloc] initWithName: fname view: childView dataSource: childDataSource] autorelease];
 
     [parentDataSource addFrame: newFrame];
 
-    [data->viewMap setObject: childView forKey: [WKObjectHolder holderWithObject:childDataSource]];
+    [data->viewMap setObject: childView forKey: [IFObjectHolder holderWithObject:childDataSource]];
     [childView _setController: self];
-    [data->dataSourceMap setObject: childDataSource forKey: [WKObjectHolder holderWithObject:childView]];
+    [data->dataSourceMap setObject: childDataSource forKey: [IFObjectHolder holderWithObject:childView]];
     [childDataSource _setController: self];
 
     
-    //scrollView  = [[[WKDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
+    //scrollView  = [[[IFDynamicScrollBarsView alloc] initWithFrame: NSMakeRect(0,0,0,0)] autorelease];
     //[childView _setFrameScrollView: scrollView];
         
     [childView dataSourceChanged];
@@ -160,42 +160,42 @@
 }
 
 
-- (WKWebView *)viewForDataSource: (WKWebDataSource *)dataSource
+- (IFWebView *)viewForDataSource: (IFWebDataSource *)dataSource
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
-    return [data->viewMap objectForKey: [WKObjectHolder holderWithObject:dataSource]];
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
+    return [data->viewMap objectForKey: [IFObjectHolder holderWithObject:dataSource]];
 }
 
 
-- (WKWebDataSource *)dataSourceForView: (WKWebView *)view
+- (IFWebDataSource *)dataSourceForView: (IFWebView *)view
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
-    return [data->dataSourceMap objectForKey: [WKObjectHolder holderWithObject:view]];
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
+    return [data->dataSourceMap objectForKey: [IFObjectHolder holderWithObject:view]];
 }
 
-- (void)setMainView: (WKWebView *)m;
+- (void)setMainView: (IFWebView *)m;
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     [self setView: m andDataSource: data->mainDataSource];
 }
 
 
-- (WKWebView *)mainView
+- (IFWebView *)mainView
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     return data->mainView;
 }
 
 
-- (void)setMainDataSource: (WKWebDataSource *)dataSource;
+- (void)setMainDataSource: (IFWebDataSource *)dataSource;
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     [self setView: data->mainView andDataSource: dataSource];
 }
 
-- (WKWebDataSource *)mainDataSource
+- (IFWebDataSource *)mainDataSource
 {
-    WKDefaultWebControllerPrivate *data = ((WKDefaultWebControllerPrivate *)_controllerPrivate);
+    IFBaseWebControllerPrivate *data = ((IFBaseWebControllerPrivate *)_controllerPrivate);
     return data->mainDataSource;
 }
 
@@ -204,86 +204,86 @@
 
 
 // ---------------------------------------------------------------------
-// WKScriptContextHandler
+// IFScriptContextHandler
 // ---------------------------------------------------------------------
-- (void)setStatusText: (NSString *)text forDataSource: (WKWebDataSource *)dataSource
+- (void)setStatusText: (NSString *)text forDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::setStatusText:forDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::setStatusText:forDataSource: is not implemented"];
 }
 
 
-- (NSString *)statusTextForDataSource: (WKWebDataSource *)dataSource
+- (NSString *)statusTextForDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::statusTextForDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::statusTextForDataSource: is not implemented"];
     return nil;
 }
 
 
 // ---------------------------------------------------------------------
-// WKAuthenticationHandler
+// IFAuthenticationHandler
 // ---------------------------------------------------------------------
-- (WKSimpleAuthenticationResult *) authenticate: (WKSimpleAuthenticationRequest *)request
+- (IFSimpleAuthenticationResult *) authenticate: (IFSimpleAuthenticationRequest *)request
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::authenticate: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::authenticate: is not implemented"];
     return nil;
 }
 
 
 // ---------------------------------------------------------------------
-// WKLoadHandler
+// IFLoadHandler
 // ---------------------------------------------------------------------
-- (void)receivedProgress: (WKLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (WKWebDataSource *)dataSource
+- (void)receivedProgress: (IFLoadProgress *)progress forResource: (NSString *)resourceDescription fromDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::receivedProgress:forResource:fromDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::receivedProgress:forResource:fromDataSource: is not implemented"];
 }
 
 
-- (void)receivedError: (WKError *)error forResource: (NSString *)resourceDescription partialProgress: (WKLoadProgress *)progress fromDataSource: (WKWebDataSource *)dataSource
+- (void)receivedError: (IFError *)error forResource: (NSString *)resourceDescription partialProgress: (IFLoadProgress *)progress fromDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::receivedError:forResource:partialProgress:fromDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::receivedError:forResource:partialProgress:fromDataSource: is not implemented"];
 }
 
 
 // ---------------------------------------------------------------------
-// WKLocationChangeHandler
+// IFLocationChangeHandler
 // ---------------------------------------------------------------------
 - (BOOL)locationWillChangeTo: (NSURL *)url
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::locationWillChangeTo: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationWillChangeTo: is not implemented"];
     return NO;
 }
 
 
-- (void)locationChangeStartedForDataSource: (WKWebDataSource *)dataSource
+- (void)locationChangeStartedForDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::locationWillChangeTo: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationWillChangeTo: is not implemented"];
 }
 
 
-- (void)locationChangeInProgressForDataSource: (WKWebDataSource *)dataSource
+- (void)locationChangeInProgressForDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::locationChangeInProgressForDataSource:forDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::locationChangeInProgressForDataSource:forDataSource: is not implemented"];
 }
 
 
-- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource
+- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource
 {
-    WKWebView *view;
+    IFWebView *view;
     
     view = [self viewForDataSource: dataSource];
     [view setNeedsLayout: YES];
     [view setNeedsDisplay: YES];
 }
 
-- (void)receivedPageTitle: (NSString *)title forDataSource: (WKWebDataSource *)dataSource
+- (void)receivedPageTitle: (NSString *)title forDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::receivedPageTitle:forDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::receivedPageTitle:forDataSource: is not implemented"];
 }
 
 
-- (void)serverRedirectTo: (NSURL *)url forDataSource: (WKWebDataSource *)dataSource
+- (void)serverRedirectTo: (NSURL *)url forDataSource: (IFWebDataSource *)dataSource
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKDefaultWebController::serverRedirectTo:forDataSource: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFBaseWebController::serverRedirectTo:forDataSource: is not implemented"];
 }
 
 

@@ -80,10 +80,10 @@
 		};
 		0867D691FE84028FC02AAC07 = {
 			children = (
+				394460AB020F75D90ECA1767,
 				9C7CABBB0190A37C0ECA16EA,
 				254DC334016E1D3F0ECA149E,
 				25A8176801B5474B0ECA149E,
-				2568C71E017490290ECA149E,
 				089C1665FE841158C02AAC07,
 				0867D69AFE84028FC02AAC07,
 				034768DFFF38A50411DB9C8B,
@@ -170,13 +170,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				25C29827016E29620ECA149E,
-				2568C723017490290ECA149E,
-				2568C724017490290ECA149E,
 				2568C72D0174912D0ECA149E,
-				25BECC9A017E0A0D0ECA149E,
-				25BECC9B017E0A0D0ECA149E,
-				25BECC9D017E0A0D0ECA149E,
-				251E877A01A1EE570ECA149E,
 				25A5593301A5996D0ECA149E,
 				39446087020F50ED0ECA1767,
 				39446088020F50ED0ECA1767,
@@ -194,10 +188,12 @@
 				39446096020F50ED0ECA1767,
 				39446097020F50ED0ECA1767,
 				39446098020F50ED0ECA1767,
-				39446099020F50ED0ECA1767,
-				3944609A020F50ED0ECA1767,
-				3944609B020F50ED0ECA1767,
-				3944609C020F50ED0ECA1767,
+				394460AE020F75D90ECA1767,
+				394460B4020F77090ECA1767,
+				394460B5020F77090ECA1767,
+				394460BA020F788C0ECA1767,
+				394460BD020F792B0ECA1767,
+				394460C0020F793F0ECA1767,
 			);
 			isa = PBXHeadersBuildPhase;
 			name = Headers;
@@ -215,11 +211,6 @@
 		0867D69FFE84028FC02AAC07 = {
 			buildActionMask = 2147483647;
 			files = (
-				2568C725017490290ECA149E,
-				2568C72A017490CF0ECA149E,
-				25BECC9E017E0A0D0ECA149E,
-				25BECC9F017E0A0D0ECA149E,
-				251E877B01A1EE570ECA149E,
 				25A5593401A5996D0ECA149E,
 				3944609D020F50ED0ECA1767,
 				3944609E020F50ED0ECA1767,
@@ -233,6 +224,11 @@
 				394460A8020F50ED0ECA1767,
 				394460A9020F50ED0ECA1767,
 				394460AA020F50ED0ECA1767,
+				394460AF020F75D90ECA1767,
+				394460B6020F77090ECA1767,
+				394460B7020F77090ECA1767,
+				394460BB020F788C0ECA1767,
+				394460C1020F793F0ECA1767,
 			);
 			isa = PBXSourcesBuildPhase;
 			name = Sources;
@@ -344,117 +340,19 @@
 //252
 //253
 //254
-		251E877801A1EE570ECA149E = {
-			isa = PBXFileReference;
-			path = _NSURICacheQueue.h;
-			refType = 4;
-		};
-		251E877901A1EE570ECA149E = {
-			isa = PBXFileReference;
-			path = _NSURICacheQueue.m;
-			refType = 4;
-		};
-		251E877A01A1EE570ECA149E = {
-			fileRef = 251E877801A1EE570ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		251E877B01A1EE570ECA149E = {
-			fileRef = 251E877901A1EE570ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		254DC334016E1D3F0ECA149E = {
 			children = (
 				3944607A020F50ED0ECA1767,
 				3944607B020F50ED0ECA1767,
 				2568C72C0174912D0ECA149E,
 				25C29825016E29620ECA149E,
-				2568C729017490CF0ECA149E,
-				2568C72B017491070ECA149E,
 				25A5593101A5996D0ECA149E,
 				25A5593201A5996D0ECA149E,
+				394460B8020F788C0ECA1767,
+				394460B9020F788C0ECA1767,
 			);
 			isa = PBXGroup;
 			name = Misc;
-			refType = 4;
-		};
-		2568C71E017490290ECA149E = {
-			children = (
-				39446083020F50ED0ECA1767,
-				39446084020F50ED0ECA1767,
-				39446085020F50ED0ECA1767,
-				39446086020F50ED0ECA1767,
-				25BECC93017E0A0D0ECA149E,
-				25BECC94017E0A0D0ECA149E,
-				25BECC95017E0A0D0ECA149E,
-				25BECC96017E0A0D0ECA149E,
-				25BECC99017E0A0D0ECA149E,
-				2568C722017490290ECA149E,
-				2568C720017490290ECA149E,
-				2568C71F017490290ECA149E,
-				251E877801A1EE570ECA149E,
-				251E877901A1EE570ECA149E,
-			);
-			isa = PBXGroup;
-			name = Cache;
-			path = Cache.subproj;
-			refType = 4;
-		};
-		2568C71F017490290ECA149E = {
-			isa = PBXFileReference;
-			path = NSURILoad.h;
-			refType = 4;
-		};
-		2568C720017490290ECA149E = {
-			isa = PBXFileReference;
-			path = NSURILoad.m;
-			refType = 4;
-		};
-		2568C722017490290ECA149E = {
-			isa = PBXFileReference;
-			path = NSURILoadReallyPrivate.h;
-			refType = 4;
-		};
-		2568C723017490290ECA149E = {
-			fileRef = 2568C71F017490290ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-				ATTRIBUTES = (
-					Private,
-				);
-			};
-		};
-		2568C724017490290ECA149E = {
-			fileRef = 2568C722017490290ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2568C725017490290ECA149E = {
-			fileRef = 2568C720017490290ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2568C729017490CF0ECA149E = {
-			isa = PBXFileReference;
-			name = _NSMonitor.m;
-			path = Misc.subproj/_NSMonitor.m;
-			refType = 4;
-		};
-		2568C72A017490CF0ECA149E = {
-			fileRef = 2568C729017490CF0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		2568C72B017491070ECA149E = {
-			isa = PBXFileReference;
-			name = _NSMonitor.h;
-			path = Misc.subproj/_NSMonitor.h;
 			refType = 4;
 		};
 		2568C72C0174912D0ECA149E = {
@@ -513,61 +411,6 @@
 			name = History;
 			path = History.subproj;
 			refType = 4;
-		};
-		25BECC93017E0A0D0ECA149E = {
-			isa = PBXFileReference;
-			path = NSURICache.h;
-			refType = 4;
-		};
-		25BECC94017E0A0D0ECA149E = {
-			isa = PBXFileReference;
-			path = NSURICache.m;
-			refType = 4;
-		};
-		25BECC95017E0A0D0ECA149E = {
-			isa = PBXFileReference;
-			path = NSURICacheData.h;
-			refType = 4;
-		};
-		25BECC96017E0A0D0ECA149E = {
-			isa = PBXFileReference;
-			path = NSURICacheData.m;
-			refType = 4;
-		};
-		25BECC99017E0A0D0ECA149E = {
-			isa = PBXFileReference;
-			path = NSURILoadReallyPrivate.h;
-			refType = 4;
-		};
-		25BECC9A017E0A0D0ECA149E = {
-			fileRef = 25BECC93017E0A0D0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25BECC9B017E0A0D0ECA149E = {
-			fileRef = 25BECC95017E0A0D0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25BECC9D017E0A0D0ECA149E = {
-			fileRef = 25BECC99017E0A0D0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25BECC9E017E0A0D0ECA149E = {
-			fileRef = 25BECC94017E0A0D0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		25BECC9F017E0A0D0ECA149E = {
-			fileRef = 25BECC96017E0A0D0ECA149E;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		25C29825016E29620ECA149E = {
 			isa = PBXFileReference;
@@ -873,26 +716,6 @@
 			path = IFURIList.m;
 			refType = 4;
 		};
-		39446083020F50ED0ECA1767 = {
-			isa = PBXFileReference;
-			path = IFLoadChunk.h;
-			refType = 4;
-		};
-		39446084020F50ED0ECA1767 = {
-			isa = PBXFileReference;
-			path = IFWebCache.h;
-			refType = 4;
-		};
-		39446085020F50ED0ECA1767 = {
-			isa = PBXFileReference;
-			path = IFWebCacheClient.h;
-			refType = 4;
-		};
-		39446086020F50ED0ECA1767 = {
-			isa = PBXFileReference;
-			path = IFWebContentType.h;
-			refType = 4;
-		};
 		39446087020F50ED0ECA1767 = {
 			fileRef = 39446063020F50ED0ECA1767;
 			isa = PBXBuildFile;
@@ -1019,30 +842,6 @@
 				);
 			};
 		};
-		39446099020F50ED0ECA1767 = {
-			fileRef = 39446083020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		3944609A020F50ED0ECA1767 = {
-			fileRef = 39446084020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		3944609B020F50ED0ECA1767 = {
-			fileRef = 39446085020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		3944609C020F50ED0ECA1767 = {
-			fileRef = 39446086020F50ED0ECA1767;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		3944609D020F50ED0ECA1767 = {
 			fileRef = 39446064020F50ED0ECA1767;
 			isa = PBXBuildFile;
@@ -1111,6 +910,155 @@
 		};
 		394460AA020F50ED0ECA1767 = {
 			fileRef = 39446082020F50ED0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460AB020F75D90ECA1767 = {
+			children = (
+				394460AC020F75D90ECA1767,
+				394460AD020F75D90ECA1767,
+				394460B0020F77090ECA1767,
+				394460B1020F77090ECA1767,
+				394460B2020F77090ECA1767,
+				394460B3020F77090ECA1767,
+				394460BC020F792B0ECA1767,
+				394460BE020F793F0ECA1767,
+				394460BF020F793F0ECA1767,
+			);
+			isa = PBXGroup;
+			name = Cache;
+			path = "";
+			refType = 4;
+		};
+		394460AC020F75D90ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURICache.h;
+			path = Cache.subproj/NSURICache.h;
+			refType = 4;
+		};
+		394460AD020F75D90ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURICache.m;
+			path = Cache.subproj/NSURICache.m;
+			refType = 4;
+		};
+		394460AE020F75D90ECA1767 = {
+			fileRef = 394460AC020F75D90ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460AF020F75D90ECA1767 = {
+			fileRef = 394460AD020F75D90ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460B0020F77090ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURICacheData.h;
+			path = Cache.subproj/NSURICacheData.h;
+			refType = 4;
+		};
+		394460B1020F77090ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURICacheData.m;
+			path = Cache.subproj/NSURICacheData.m;
+			refType = 4;
+		};
+		394460B2020F77090ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURILoad.h;
+			path = Cache.subproj/NSURILoad.h;
+			refType = 4;
+		};
+		394460B3020F77090ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURILoad.m;
+			path = Cache.subproj/NSURILoad.m;
+			refType = 4;
+		};
+		394460B4020F77090ECA1767 = {
+			fileRef = 394460B0020F77090ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460B5020F77090ECA1767 = {
+			fileRef = 394460B2020F77090ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460B6020F77090ECA1767 = {
+			fileRef = 394460B1020F77090ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460B7020F77090ECA1767 = {
+			fileRef = 394460B3020F77090ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460B8020F788C0ECA1767 = {
+			isa = PBXFileReference;
+			name = _NSMonitor.h;
+			path = Misc.subproj/_NSMonitor.h;
+			refType = 4;
+		};
+		394460B9020F788C0ECA1767 = {
+			isa = PBXFileReference;
+			name = _NSMonitor.m;
+			path = Misc.subproj/_NSMonitor.m;
+			refType = 4;
+		};
+		394460BA020F788C0ECA1767 = {
+			fileRef = 394460B8020F788C0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460BB020F788C0ECA1767 = {
+			fileRef = 394460B9020F788C0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460BC020F792B0ECA1767 = {
+			isa = PBXFileReference;
+			name = NSURILoadReallyPrivate.h;
+			path = Cache.subproj/NSURILoadReallyPrivate.h;
+			refType = 4;
+		};
+		394460BD020F792B0ECA1767 = {
+			fileRef = 394460BC020F792B0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460BE020F793F0ECA1767 = {
+			isa = PBXFileReference;
+			name = _NSURICacheQueue.h;
+			path = Cache.subproj/_NSURICacheQueue.h;
+			refType = 4;
+		};
+		394460BF020F793F0ECA1767 = {
+			isa = PBXFileReference;
+			name = _NSURICacheQueue.m;
+			path = Cache.subproj/_NSURICacheQueue.m;
+			refType = 4;
+		};
+		394460C0020F793F0ECA1767 = {
+			fileRef = 394460BE020F793F0ECA1767;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		394460C1020F793F0ECA1767 = {
+			fileRef = 394460BF020F793F0ECA1767;
 			isa = PBXBuildFile;
 			settings = {
 			};

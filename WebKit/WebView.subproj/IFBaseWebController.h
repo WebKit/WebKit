@@ -1,5 +1,5 @@
 /*	
-    IFDefaultWebController.mm
+    IFBaseWebController.mm
 	Copyright 2001, 2002 Apple, Inc. All rights reserved.
 */
 #import <WebKit/IFWebController.h>
@@ -8,7 +8,7 @@
 
 /*
 */
-@interface WKDefaultWebController : NSObject <WKWebController>
+@interface IFBaseWebController : NSObject <IFWebController>
 {
 @private
     id _controllerPrivate;
@@ -17,24 +17,24 @@
 
 - init;
 
-- initWithView: (WKWebView *)view dataSource: (WKWebDataSource *)dataSource;
+- initWithView: (IFWebView *)view dataSource: (IFWebDataSource *)dataSource;
 
 - (void)setDirectsAllLinksToSystemBrowser: (BOOL)flag;
 - (BOOL)directsAllLinksToSystemBrowser;
 
 // Sets the mainView and the mainDataSource.
-- (void)setView: (WKWebView *)view andDataSource: (WKWebDataSource *)dataSource;
+- (void)setView: (IFWebView *)view andDataSource: (IFWebDataSource *)dataSource;
 
 // Find the view for the specified data source.
-- (WKWebView *)viewForDataSource: (WKWebDataSource *)dataSource;
+- (IFWebView *)viewForDataSource: (IFWebDataSource *)dataSource;
 
 // Find the data source for the specified view.
-- (WKWebDataSource *)dataSourceForView: (WKWebView *)view;
+- (IFWebDataSource *)dataSourceForView: (IFWebView *)view;
 
-- (void)setMainView: (WKWebView *)view;
-- (WKWebView *)mainView;
+- (void)setMainView: (IFWebView *)view;
+- (IFWebView *)mainView;
 
-- (void)setMainDataSource: (WKWebDataSource *)dataSource;
-- (WKWebDataSource *)mainDataSource;
+- (void)setMainDataSource: (IFWebDataSource *)dataSource;
+- (IFWebDataSource *)mainDataSource;
 
 @end

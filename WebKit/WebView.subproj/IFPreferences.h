@@ -16,7 +16,7 @@
 
     This class provides a cover for URL-based preference items. 
 */
-@interface WKPreferences
+@interface IFPreferences
 + getPreferencesForURL: (NSURL *)url;
 
 // Encoding that will be used in none specified on page? or in header?

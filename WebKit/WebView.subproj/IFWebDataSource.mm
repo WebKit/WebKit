@@ -9,7 +9,7 @@
 
 #include <xml/dom_docimpl.h>
 
-@implementation WKWebDataSource
+@implementation IFWebDataSource
 
 + (void)initialize {
 
@@ -37,7 +37,7 @@
 
 - (void)_commonInitialization
 {
-    ((WKWebDataSourcePrivate *)_dataSourcePrivate) = [[WKWebDataSourcePrivate alloc] init];
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate) = [[IFWebDataSourcePrivate alloc] init];
 }
 
 // Returns nil if object cannot be initialized due to a malformed URL (RFC 1808).
@@ -45,7 +45,7 @@
 {
     [super init];
     [self _commonInitialization];
-    ((WKWebDataSourcePrivate *)_dataSourcePrivate)->inputURL = inputURL;
+    ((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL = inputURL;
     return self;
 }
 
@@ -57,7 +57,7 @@
 #ifdef TENTATIVE_API
 - initWithData: (NSData *)data 
 - initWithString: (NSString *)string;
-- initWithLoader: (WKLoader *)loader;
+- initWithLoader: (IFLoader *)loader;
 #endif
 
 
@@ -65,7 +65,7 @@
 // if the data source is not in a frame set.
 - (NSString *)frameName 
 {
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->frameName;    
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->frameName;    
 }
 
 
@@ -73,7 +73,7 @@
 // document, typically either a frameset or a normal HTML document.
 - (BOOL)isMainDocument
 {
-    if (((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent == nil)
+    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent == nil)
         return YES;
     return NO;
 }
@@ -81,23 +81,23 @@
 
 // Returns nil if this data source represents the main document.  Otherwise
 // returns the parent data source.
-- (WKWebDataSource *)parent 
+- (IFWebDataSource *)parent 
 {
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent;
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent;
 }
 
 
-// Returns an array of WKWebDataSource.  The data sources in the array are
+// Returns an array of IFWebDataSource.  The data sources in the array are
 // the data source assoicated with a frame set or iframe.  If the main document
 // is not a frameset, or has not iframes children will return nil.
 - (NSArray *)children
 {
-    return [((WKWebDataSourcePrivate *)_dataSourcePrivate)->frames allValues];
+    return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->frames allValues];
 }
 
-- (void)addFrame: (WKWebFrame *)frame
+- (void)addFrame: (IFWebFrame *)frame
 {
-    WKWebDataSourcePrivate *data = (WKWebDataSourcePrivate *)_dataSourcePrivate;
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
 
     if (data->frames == nil)
         data->frames = [[NSMutableDictionary alloc] init];
@@ -105,11 +105,11 @@
 }
 
  
-- (WKWebFrame *)frameNamed: (NSString *)frameName
+- (IFWebFrame *)frameNamed: (NSString *)frameName
 {
-    WKWebDataSourcePrivate *data = (WKWebDataSourcePrivate *)_dataSourcePrivate;
+    IFWebDataSourcePrivate *data = (IFWebDataSourcePrivate *)_dataSourcePrivate;
 
-    return (WKWebFrame *)[data->frames objectForKey: frameName];
+    return (IFWebFrame *)[data->frames objectForKey: frameName];
 }
 
 
@@ -119,63 +119,63 @@
 // frames then frameNames will return nil.
 - (NSArray *)frameNames
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::frameNames is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::frameNames is not implemented"];
     return nil;
 }
 
 
 // findDataSourceForFrameNamed: returns the child data source associated with
 // the frame named 'name', or nil. 
-- (WKWebDataSource *) findDataSourceForFrameNamed: (NSString *)name
+- (IFWebDataSource *) findDataSourceForFrameNamed: (NSString *)name
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::findDataSourceForFrameNamed: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::findDataSourceForFrameNamed: is not implemented"];
     return nil;
 }
 
 
 - (BOOL)frameExists: (NSString *)name
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::frameExists: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::frameExists: is not implemented"];
     return NO;
 }
 
 
 - (void)openURL: (NSURL *)url inFrameNamed: (NSString *)frameName
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::openURL:inFrameNamed: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::openURL:inFrameNamed: is not implemented"];
 }
 
 
 - (void)openURL: (NSURL *)url inIFrame: (id)iFrameIdentifier
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::openURL:inIFrame: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::openURL:inIFrame: is not implemented"];
 }
 
 
-- (id <WKWebController>)controller
+- (id <IFWebController>)controller
 {
     // All data source from a document (frameset) share the same
     // controller.
-    if (((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
-        return [((WKWebDataSourcePrivate *)_dataSourcePrivate)->parent controller];
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->controller;
+    if (((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent != nil)
+        return [((IFWebDataSourcePrivate *)_dataSourcePrivate)->parent controller];
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->controller;
 }
 
 
 // May return nil if not initialized with a URL.
 - (NSURL *)inputURL
 {
-    return ((WKWebDataSourcePrivate *)_dataSourcePrivate)->inputURL;
+    return ((IFWebDataSourcePrivate *)_dataSourcePrivate)->inputURL;
 }
 
 
 // finalURL returns the URL that was actually used.  The final URL
 // may be different than the inputURL if the server redirects.
-// <WKLocationChangedHandler> includes a message that is sent when
+// <IFLocationChangedHandler> includes a message that is sent when
 // a redirect is processed
 - (NSURL *)finalURL
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::finalURL is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::finalURL is not implemented"];
     return nil;
 }
 
@@ -184,7 +184,7 @@
 // i.e. inputURL != finalURL.
 - (BOOL)wasRedirected
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::wasRedirected is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::wasRedirected is not implemented"];
     return NO;
 }
 
@@ -207,21 +207,21 @@
 // Returns NO if the data source is not currently loading.
 - (void)stopLoading
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::stopLoading is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::stopLoading is not implemented"];
 }
 
 
 // Returns YES if there are any pending loads.
 - (BOOL)isLoading
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::isLoading is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::isLoading is not implemented"];
     return NO;
 }
 
 
 #ifdef TENTATIVE_API
 // Get DOM access to the document.
-- (WKDOMDocument *)document;
+- (IFDOMDocument *)document;
 #endif
 
 // Get the actual source of the docment.
@@ -259,21 +259,21 @@
 // URL reference point, these should probably not be public for 1.0.
 - (NSURL *)base
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::base is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::base is not implemented"];
     return nil;
 }
 
 
 - (NSString *)baseTarget
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::baseTarget is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::baseTarget is not implemented"];
     return nil;
 }
 
 
 - (NSString *)encoding
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::encoding is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::encoding is not implemented"];
     return nil;
 }
 
@@ -281,13 +281,13 @@
 // Style sheet
 - (void)setUserStyleSheetFromURL: (NSURL *)url
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::setUserStyleSheetFromURL: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::setUserStyleSheetFromURL: is not implemented"];
 }
 
 
 - (void)setUserStyleSheetFromString: (NSString *)sheet
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::setUserStyleSheetFromString: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::setUserStyleSheetFromString: is not implemented"];
 }
 
 
@@ -296,7 +296,7 @@
 // that WebCore also has dependencies on the appkit.
 - (NSImage *)icon
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::setUserStyleSheetFromString: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::setUserStyleSheetFromString: is not implemented"];
     return nil;
 }
 
@@ -304,7 +304,7 @@
 // Is page secure, e.g. https, ftps
 - (BOOL)isPageSecure
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::isPageSecure is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::isPageSecure is not implemented"];
     return NO;
 }
 
@@ -312,7 +312,7 @@
 // Returns nil or the page title.
 - (NSString *)pageTitle
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebDataSource::pageTitle is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebDataSource::pageTitle is not implemented"];
     return nil;
 }
 

@@ -5,21 +5,21 @@
 #import "IFURIList.h"
 #import "WebKitReallyPrivate.h"
 
-struct WKURIListNode
+struct IFURIListNode
 {
     unsigned hash;
-    WKURIEntry *entry;
-    WKURIListNode *prev;
-    WKURIListNode *next;
+    IFURIEntry *entry;
+    IFURIListNode *prev;
+    IFURIListNode *next;
 };
 
-static WKURIListNode *newURIListNode(WKURIEntry *entry)
+static IFURIListNode *newURIListNode(IFURIEntry *entry)
 {
-    WKURIListNode *node;
+    IFURIListNode *node;
 
     [entry retain];
     
-    node = malloc(sizeof(WKURIListNode));
+    node = malloc(sizeof(IFURIListNode));
     node->hash = [entry hash];
     node->entry = entry;
     node->prev = nil;
@@ -28,7 +28,7 @@ static WKURIListNode *newURIListNode(WKURIEntry *entry)
     return node;    
 }
 
-static void freeNode(WKURIListNode *node)
+static void freeNode(IFURIListNode *node)
 {
     // it is important to autorelase here rather than using 
     // a straight release since we often return an entry
@@ -39,7 +39,7 @@ static void freeNode(WKURIListNode *node)
 }
 
 
-@implementation WKURIList
+@implementation IFURIList
 
 -(id)init
 {
@@ -58,8 +58,8 @@ static void freeNode(WKURIListNode *node)
 
 -(void)dealloc
 {
-    WKURIListNode *curNode;
-    WKURIListNode *delNode;
+    IFURIListNode *curNode;
+    IFURIListNode *delNode;
 
     curNode = _head;
 
@@ -98,19 +98,19 @@ static void freeNode(WKURIListNode *node)
 
 
 
--(WKURIEntry *)addURL:(NSURL *)url withTitle:(NSString *)title;
+-(IFURIEntry *)addURL:(NSURL *)url withTitle:(NSString *)title;
 {
-    WKURIEntry *result;
+    IFURIEntry *result;
     
-    result = [[WKURIEntry alloc] initWithURL:url title:title];
+    result = [[IFURIEntry alloc] initWithURL:url title:title];
     [self addEntry:result];
     
     return result;
 }
 
--(void)addEntry:(WKURIEntry *)entry
+-(void)addEntry:(IFURIEntry *)entry
 {
-    WKURIListNode *node;
+    IFURIListNode *node;
     unsigned hash;
 
     if (!_allowsDuplicates) {
@@ -162,10 +162,10 @@ static void freeNode(WKURIListNode *node)
     }
 }
 
--(WKURIEntry *)removeURL:(NSURL *)url
+-(IFURIEntry *)removeURL:(NSURL *)url
 {
-    WKURIEntry *removedEntry;
-    WKURIListNode *node;
+    IFURIEntry *removedEntry;
+    IFURIListNode *node;
     unsigned hash;
     
     removedEntry = nil;
@@ -199,10 +199,10 @@ static void freeNode(WKURIListNode *node)
     return removedEntry;
 }
 
--(BOOL)removeEntry:(WKURIEntry *)entry
+-(BOOL)removeEntry:(IFURIEntry *)entry
 {
     BOOL removed;
-    WKURIListNode *node;
+    IFURIListNode *node;
     unsigned hash;
     
     removed = NO;
@@ -236,10 +236,10 @@ static void freeNode(WKURIListNode *node)
     return removed;
 }
 
--(WKURIEntry *)entryForURL:(NSURL *)url
+-(IFURIEntry *)entryForURL:(NSURL *)url
 {
-    WKURIEntry *foundEntry;
-    WKURIListNode *node;
+    IFURIEntry *foundEntry;
+    IFURIListNode *node;
     unsigned hash;
     
     foundEntry = nil;
@@ -255,10 +255,10 @@ static void freeNode(WKURIListNode *node)
     return foundEntry;
 }
 
--(WKURIEntry *)entryAtIndex:(int)index
+-(IFURIEntry *)entryAtIndex:(int)index
 {
     int i;
-    WKURIListNode *node;
+    IFURIListNode *node;
 
     WEBKIT_ASSERT(index >= 0 && index < _count);
 
@@ -271,10 +271,10 @@ static void freeNode(WKURIListNode *node)
     return node->entry;    
 }
 
--(WKURIEntry *)removeEntryAtIndex:(int)index
+-(IFURIEntry *)removeEntryAtIndex:(int)index
 {
-    WKURIEntry *removedEntry;
-    WKURIListNode *node;
+    IFURIEntry *removedEntry;
+    IFURIListNode *node;
     int i;
 
     WEBKIT_ASSERT(index > 0 && index < _count);
@@ -310,8 +310,8 @@ static void freeNode(WKURIListNode *node)
 
 -(void)removeEntriesToIndex:(int)index
 {
-    WKURIListNode *node;
-    WKURIListNode *delNode;
+    IFURIListNode *node;
+    IFURIListNode *delNode;
     int i;
 
     WEBKIT_ASSERT(index > 0 && index < _count);

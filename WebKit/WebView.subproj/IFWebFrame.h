@@ -7,17 +7,17 @@
 */
 #import <Cocoa/Cocoa.h>
 
-@class WKWebDataSource;
+@class IFWebDataSource;
 
-@interface WKWebFrame : NSObject
+@interface IFWebFrame : NSObject
 {
     NSString *name;
     id view;
-    WKWebDataSource *dataSource;
+    IFWebDataSource *dataSource;
 }
-- initWithName: (NSString *)name view: view dataSource: (WKWebDataSource *)dataSource;
+- initWithName: (NSString *)name view: view dataSource: (IFWebDataSource *)dataSource;
 - (NSString *)name;
 - (void)setView: view;
 - view;
-- (WKWebDataSource *)dataSource;
+- (IFWebDataSource *)dataSource;
 @end

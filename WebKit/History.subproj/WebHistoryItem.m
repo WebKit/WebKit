@@ -16,11 +16,11 @@
 
 id <WCURIEntry> WCCreateURIEntry(void)
 {
-    return [[WKURIEntry alloc] init];
+    return [[IFURIEntry alloc] init];
 }
 #endif
 
-@implementation WKURIEntry
+@implementation IFURIEntry
 
 -(id)init
 {
@@ -149,8 +149,8 @@ id <WCURIEntry> WCCreateURIEntry(void)
     
     result = NO;
 
-    if ([anObject isMemberOfClass:[WKURIEntry class]]) {
-        result = [_url isEqual:[((WKURIEntry *)anObject) url]];
+    if ([anObject isMemberOfClass:[IFURIEntry class]]) {
+        result = [_url isEqual:[((IFURIEntry *)anObject) url]];
     }
     
     return result;
@@ -158,7 +158,7 @@ id <WCURIEntry> WCCreateURIEntry(void)
 
 -(NSString *)description
 {
-    return [NSString stringWithFormat:@"WKURIEntry %@", _url];
+    return [NSString stringWithFormat:@"IFURIEntry %@", _url];
 }
     
 @end

@@ -8,7 +8,7 @@
 
 #import "IFBackForwardList.h"
 
-@implementation WKBackForwardList
+@implementation IFBackForwardList
 
 -(id)init
 {
@@ -17,7 +17,7 @@
         return nil;
     }
     
-    uriList = [[WKURIList alloc] init];
+    uriList = [[IFURIList alloc] init];
     [uriList setAllowsDuplicates:YES];
     index = 0;
     mutex = [[NSLock alloc] init];
@@ -33,7 +33,7 @@
     [super dealloc];
 }
 
--(void)addEntry:(WKURIEntry *)entry
+-(void)addEntry:(IFURIEntry *)entry
 {
     [mutex lock];
     if (index > 0) {
@@ -44,9 +44,9 @@
     [mutex unlock];
 }
 
--(WKURIEntry *)back
+-(IFURIEntry *)back
 {
-    WKURIEntry *result;
+    IFURIEntry *result;
     
     [mutex lock];
     index++;
@@ -56,14 +56,14 @@
     return result;
 }
 
--(WKURIEntry *)currentEntry
+-(IFURIEntry *)currentEntry
 {
     return [uriList entryAtIndex:index];
 }
 
--(WKURIEntry *)forward
+-(IFURIEntry *)forward
 {
-    WKURIEntry *result;
+    IFURIEntry *result;
 
     [mutex lock];
     index--;
@@ -119,7 +119,7 @@
     result = [NSMutableString stringWithCapacity:512];
     
     [result appendString:@"\n--------------------------------------------\n"];    
-    [result appendString:@"WKBackForwardList:\n"];
+    [result appendString:@"IFBackForwardList:\n"];
     
     for (i = 0; i < [uriList count]; i++) {
         if (i == index) {

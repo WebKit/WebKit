@@ -56,38 +56,38 @@
 
 #import <KWQView.h>
 
-@class WKWebDataSource;
-@class WKWebView;
-@class WKWebFrame;
-@class WKError;
+@class IFWebDataSource;
+@class IFWebView;
+@class IFWebFrame;
+@class IFError;
 
-@protocol WKWebController
-- (WKWebFrame *)createFrameNamed: (NSString *)name for: (WKWebDataSource *)dataSource inParent: (WKWebDataSource *)dataSource;
-- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
+@protocol IFWebController
+- (IFWebFrame *)createFrameNamed: (NSString *)name for: (IFWebDataSource *)dataSource inParent: (IFWebDataSource *)dataSource;
+- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 @end
 
-@protocol WKLocationChangeHandler
-- (void)locationChangeDone: (WKError *)error forDataSource: (WKWebDataSource *)dataSource;
+@protocol IFLocationChangeHandler
+- (void)locationChangeDone: (IFError *)error forDataSource: (IFWebDataSource *)dataSource;
 @end
 
-@interface WKWebDataSource : NSObject
+@interface IFWebDataSource : NSObject
 - initWithURL: (NSURL *)url;
 - (void)_setFrameName: (NSString *)fName;
-- (id <WKWebController>)controller;
+- (id <IFWebController>)controller;
 - (void)startLoading: (BOOL)forceRefresh;
 - frameNamed: (NSString *)f;
 @end
 
 // This should not be allowed here.  data source should not reference view
 // API.
-@interface WKWebView: NSObject
+@interface IFWebView: NSObject
 - (QWidget *)_widget;
 - (void)_resetView;
 - documentView;
 @end
 
-@interface WKWebFrame: NSObject
-- initWithName: (NSString *)n view: v dataSource: (WKWebDataSource *)d;
+@interface IFWebFrame: NSObject
+- initWithName: (NSString *)n view: v dataSource: (IFWebDataSource *)d;
 - view;
 @end
 
@@ -1284,9 +1284,9 @@ void KHTMLPart::khtmlMouseReleaseEvent( khtml::MouseReleaseEvent *event )
 
     // HACK!  FIXME!
     if (d->m_strSelectedURL != QString::null) {
-        id nsview = ((WKWebView *)((QWidget *)view())->getView());
+        id nsview = ((IFWebView *)((QWidget *)view())->getView());
         
-        if ([nsview isKindOfClass: NSClassFromString(@"WKDynamicScrollBarsView")])
+        if ([nsview isKindOfClass: NSClassFromString(@"IFDynamicScrollBarsView")])
             nsview = [nsview documentView];
         [nsview _resetView];
         KURL clickedURL(completeURL( splitUrlTarget(d->m_strSelectedURL)));
@@ -1522,8 +1522,8 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
                     const QStringList &params, bool isIFrame)
 {
     NSString *nsframeName = QSTRING_TO_NSSTRING(frameName);
-    WKWebFrame *aFrame;
-    WKWebDataSource *dataSource;
+    IFWebFrame *aFrame;
+    IFWebDataSource *dataSource;
     
     fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x, name = %s, url = %s\n", (unsigned int)this, (unsigned int)frame, frameName.latin1(), url.latin1());    
     dataSource = getDataSource();
@@ -1535,14 +1535,14 @@ bool KHTMLPart::requestFrame( khtml::RenderPart *frame, const QString &url, cons
         frame->setWidget ([[aFrame view] _widget]);
     }
     else {        
-        WKWebDataSource *childDataSource, *dataSource;
+        IFWebDataSource *childDataSource, *dataSource;
         NSURL *childURL;
-        WKWebFrame *newFrame;
-        id <WKWebController> controller;
+        IFWebFrame *newFrame;
+        id <IFWebController> controller;
 
         fprintf (stdout, "0x%08x requestFrame():  part = 0x%08x creating frame\n", (unsigned int)this, (unsigned int)frame);    
         childURL = [NSURL URLWithString: QSTRING_TO_NSSTRING (completeURL( url ).url() )];
-        childDataSource = [[WKWebDataSource alloc] initWithURL: childURL];
+        childDataSource = [[IFWebDataSource alloc] initWithURL: childURL];
         [childDataSource _setFrameName: nsframeName];
         
         dataSource = getDataSource();
@@ -1661,8 +1661,8 @@ void KHTMLPart::checkCompleted()
         // tell anyone who's interested that we're done
         [[NSNotificationCenter defaultCenter] postNotificationName:@"uri-done" object:urlString];
 
-        WKWebDataSource *dataSource;
-        id <WKWebController> controller;
+        IFWebDataSource *dataSource;
+        id <IFWebController> controller;
         
         dataSource = getDataSource();
         controller = [dataSource controller];

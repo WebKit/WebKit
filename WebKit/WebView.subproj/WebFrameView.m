@@ -18,16 +18,16 @@
 #include <html/html_documentimpl.h>
 
 
-@implementation WKWebView
+@implementation IFWebView
 
 - initWithFrame: (NSRect) frame
 {
     [super initWithFrame: frame];
 
-    _viewPrivate = [[WKWebViewPrivate alloc] init];
+    _viewPrivate = [[IFWebViewPrivate alloc] init];
 
-    ((WKWebViewPrivate *)_viewPrivate)->isFlipped = YES;
-    ((WKWebViewPrivate *)_viewPrivate)->needsLayout = YES;
+    ((IFWebViewPrivate *)_viewPrivate)->isFlipped = YES;
+    ((IFWebViewPrivate *)_viewPrivate)->needsLayout = YES;
 
     return self;
 }
@@ -41,9 +41,9 @@
  
 // Set and get the controller.  Note that the controller is not retained.
 // Perhaps setController: should be private?
-- (id <WKWebController>)controller
+- (id <IFWebController>)controller
 {
-    return ((WKWebViewPrivate *)_viewPrivate)->controller;
+    return ((IFWebViewPrivate *)_viewPrivate)->controller;
 }
 
 
@@ -52,7 +52,7 @@
 // the data source is changed.
 - (void)dataSourceChanged 
 {
-    WKWebViewPrivate *data = ((WKWebViewPrivate *)_viewPrivate);
+    IFWebViewPrivate *data = ((IFWebViewPrivate *)_viewPrivate);
     NSRect r = [self frame];
     
     if (data->widget)
@@ -80,17 +80,17 @@
 
 
 // This method should not be public until we have a more completely
-// understood way to subclass WKWebView.
+// understood way to subclass IFWebView.
 - (void)layout
 {
-    KHTMLView *widget = ((WKWebViewPrivate *)_viewPrivate)->widget;
+    KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
     if (widget->part()->xmlDocImpl() && 
         widget->part()->xmlDocImpl()->renderer()){
-        if (((WKWebViewPrivate *)_viewPrivate)->needsLayout){
+        if (((IFWebViewPrivate *)_viewPrivate)->needsLayout){
             //double start = CFAbsoluteTimeGetCurrent();
             widget->layout(TRUE);
             //WebKitDebugAtLevel (0x200, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
-            ((WKWebViewPrivate *)_viewPrivate)->needsLayout = NO;
+            ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
         }
     }
 }
@@ -99,20 +99,20 @@
 // Stop animating animated GIFs, etc.
 - (void)stopAnimations
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::stopAnimations is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::stopAnimations is not implemented"];
 }
 
 
 // Font API
 - (void)setFontSizes: (NSArray *)sizes
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::setFontSizes: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setFontSizes: is not implemented"];
 }
 
 
 - (NSArray *)fontSizes
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::fontSizes is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::fontSizes is not implemented"];
     return nil;
 }
 
@@ -120,32 +120,32 @@
 
 - (void)resetFontSizes
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::resetFontSizes is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::resetFontSizes is not implemented"];
 }
 
 
 - (void)setStandardFont: (NSFont *)font
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::setStandardFont: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setStandardFont: is not implemented"];
 }
 
 
 - (NSFont *)standardFont
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::standardFont is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::standardFont is not implemented"];
     return nil;
 }
 
 
 - (void)setFixedFont: (NSFont *)font
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::setFixedFont: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setFixedFont: is not implemented"];
 }
 
 
 - (NSFont *)fixedFont
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::fixedFont is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::fixedFont is not implemented"];
     return nil;
 }
 
@@ -153,7 +153,7 @@
 // Drag and drop links and images.  Others?
 - (void)setCanDragFrom: (BOOL)flag
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::setCanDragFrom: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setCanDragFrom: is not implemented"];
 }
 
 - (BOOL)canDragFrom
@@ -163,7 +163,7 @@
 
 - (void)setCanDragTo: (BOOL)flag
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::setCanDragTo: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setCanDragTo: is not implemented"];
 }
 
 - (BOOL)canDragTo
@@ -173,18 +173,18 @@
 
 
 // Returns an array of built-in context menu items for this node.
-// Generally called by WKContextMenuHandlers from contextMenuItemsForNode:
+// Generally called by IFContextMenuHandlers from contextMenuItemsForNode:
 #ifdef TENTATIVE_API
-- (NSArray *)defaultContextMenuItemsForNode: (WKDOMNode *)
+- (NSArray *)defaultContextMenuItemsForNode: (IFDOMNode *)
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::defaultContextMenuItemsForNode: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::defaultContextMenuItemsForNode: is not implemented"];
     return nil;
 }
 #endif
 
 - (void)setContextMenusEnabled: (BOOL)flag
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::setContextMenusEnabled: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::setContextMenusEnabled: is not implemented"];
 }
 
 
@@ -197,7 +197,7 @@
 // Remove the selection.
 - (void)deselectText
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::deselectText: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::deselectText: is not implemented"];
 }
 
 
@@ -206,14 +206,14 @@
 // is selected.
 - (void)searchFor: (NSString *)string direction: (BOOL)forward caseSensitive: (BOOL)caseFlag
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::searchFor:direction:caseSensitive: is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::searchFor:direction:caseSensitive: is not implemented"];
 }
 
 
 // Get an attributed string that represents the current selection.
 - (NSAttributedString *)selectedText
 {
-    [NSException raise:WKMethodNotYetImplemented format:@"WKWebView::selectedText is not implemented"];
+    [NSException raise:IFMethodNotYetImplemented format:@"IFWebView::selectedText is not implemented"];
     return nil;
 }
 
@@ -248,13 +248,13 @@
 
 - (void)setNeedsLayout: (bool)flag
 {
-    ((WKWebViewPrivate *)_viewPrivate)->needsLayout = flag;
+    ((IFWebViewPrivate *)_viewPrivate)->needsLayout = flag;
 }
 
 
 // This should eventually be removed.
 - (void)drawRect:(NSRect)rect {
-    KHTMLView *widget = ((WKWebViewPrivate *)_viewPrivate)->widget;
+    KHTMLView *widget = ((IFWebViewPrivate *)_viewPrivate)->widget;
 
     if (widget != 0l){        
         [self layout];
@@ -294,13 +294,13 @@
 
 - (void)setIsFlipped: (bool)flag
 {
-    ((WKWebViewPrivate *)_viewPrivate)->isFlipped = flag;
+    ((IFWebViewPrivate *)_viewPrivate)->isFlipped = flag;
 }
 
 
 - (BOOL)isFlipped 
 {
-    return ((WKWebViewPrivate *)_viewPrivate)->isFlipped;
+    return ((IFWebViewPrivate *)_viewPrivate)->isFlipped;
 }
 
 
@@ -330,13 +330,13 @@
         state = Qt::MidButton;
     }
     else {
-        [NSException raise:WKRuntimeError format:@"WKWebView::mouseUp: unknown button type"];
+        [NSException raise:IFRuntimeError format:@"IFWebView::mouseUp: unknown button type"];
         button = 0; state = 0; // Shutup the compiler.
     }
     NSPoint p = [event locationInWindow];
     
     QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
-    ((WKWebViewPrivate *)_viewPrivate)->widget->viewportMouseReleaseEvent(kEvent);
+    ((IFWebViewPrivate *)_viewPrivate)->widget->viewportMouseReleaseEvent(kEvent);
 }
 
 - (void)mouseDown: (NSEvent *)event
@@ -356,13 +356,13 @@
         state = Qt::MidButton;
     }
     else {
-        [NSException raise:WKRuntimeError format:@"WKWebView::mouseUp: unknown button type"];
+        [NSException raise:IFRuntimeError format:@"IFWebView::mouseUp: unknown button type"];
         button = 0; state = 0; // Shutup the compiler.
     }
     NSPoint p = [event locationInWindow];
     
     QMouseEvent *kEvent = new QMouseEvent(QEvent::MouseButtonPress, QPoint(p.x, p.y), button, state);
-    ((WKWebViewPrivate *)_viewPrivate)->widget->viewportMousePressEvent(kEvent);
+    ((IFWebViewPrivate *)_viewPrivate)->widget->viewportMousePressEvent(kEvent);
 }
 
 - (void)mouseDragged: (NSEvent *)event

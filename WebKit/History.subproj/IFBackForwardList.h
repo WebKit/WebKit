@@ -6,8 +6,8 @@
 #import <WebKit/IFURIList.h>
 #import <WebKit/IFURIEntry.h>
 
-@interface WKBackForwardList : NSObject {
-    WKURIList *uriList;
+@interface IFBackForwardList : NSObject {
+    IFURIList *uriList;
     int index;
     NSLock *mutex;
     int state;
@@ -15,12 +15,12 @@
 
 -(id)init;
 
--(void)addEntry:(WKURIEntry *)entry;
+-(void)addEntry:(IFURIEntry *)entry;
 
--(WKURIEntry *)back;
--(WKURIEntry *)forward;
+-(IFURIEntry *)back;
+-(IFURIEntry *)forward;
 
--(WKURIEntry *)currentEntry;
+-(IFURIEntry *)currentEntry;
 
 -(NSArray *)backList;
 -(NSArray *)forwardList;
@@ -35,22 +35,22 @@
 
 //=============================================================================
 //
-// WKBackForwardList.h
+// IFBackForwardList.h
 //
 // It provides the list that enables the "Back" and "Forward" buttons to
 // work correctly. As such, it is merely a user convenience that aids in
 // basic navigation in ways that users have come to expect.
 //
 
-@interface WKBackForwardList
+@interface IFBackForwardList
 {
 
 -(id)init;
 
--(void)addAttributedURL:(WKAttributedURL *)url;
+-(void)addAttributedURL:(IFAttributedURL *)url;
 
--(WKAttributedURL *)back;
--(WKAttributedURL *)forward;
+-(IFAttributedURL *)back;
+-(IFAttributedURL *)forward;
 
 -(NSArray *)backList;
 -(NSArray *)forwardList;
