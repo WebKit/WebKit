@@ -167,6 +167,7 @@ void CSSSelector::extractPseudoType() const
     static AtomicString after("after");
     static AtomicString anyLink("-khtml-any-link");
     static AtomicString before("before");
+    static AtomicString drag("drag");
     static AtomicString empty("empty");
     static AtomicString firstChild("first-child");
     static AtomicString firstLetter("first-letter");
@@ -192,6 +193,8 @@ void CSSSelector::extractPseudoType() const
         _pseudoType = PseudoAnyLink;
     else if (value == before)
         _pseudoType = PseudoBefore;
+    else if (value == drag)
+        _pseudoType = PseudoDrag;
     else if (value == empty)
         _pseudoType = PseudoEmpty;
     else if (value == firstChild)

@@ -2991,18 +2991,22 @@ NSImage *KWQKHTMLPart::selectionImage() const
     return result;
 }
 
-NSImage *KWQKHTMLPart::elementImage(DOM::Node node, NSRect *imageRect, NSRect *elementRect) const
+NSImage *KWQKHTMLPart::snapshotDragImage(DOM::Node node, NSRect *imageRect, NSRect *elementRect) const
 {
     RenderObject *renderer = node.handle()->renderer();
     if (!renderer) {
         return nil;
     }
     
-    d->m_doc->updateRendering();
+    renderer->updateDragState(true);    // mark dragged nodes (so they pick up the right CSS)
+    d->m_doc->updateRendering();        // forces style recalc - needed since changing the drag state might
+                                        // imply new styles, plus JS could have changed other things
     QRect topLevelRect;
     NSRect paintingRect = renderer->paintingRootRect(topLevelRect);
-    _elementToDraw = node;  // invoke special drawing mode
+
+    _elementToDraw = node;              // invoke special sub-tree drawing mode
     NSImage *result = imageFromRect(paintingRect);
+    renderer->updateDragState(false);
     _elementToDraw = 0;
 
     if (elementRect) {

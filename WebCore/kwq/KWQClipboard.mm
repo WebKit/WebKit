@@ -307,7 +307,7 @@ NSImage *KWQClipboard::dragNSImage(NSPoint *loc)
         if (m_part) {
             NSRect imageRect;
             NSRect elementRect;
-            result = m_part->elementImage(m_dragImageElement, &imageRect, &elementRect);
+            result = m_part->snapshotDragImage(m_dragImageElement, &imageRect, &elementRect);
             if (loc) {
                 // Client specifies point relative to element, not the whole image, which may include child
                 // layers spread out all over the place.

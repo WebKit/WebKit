@@ -76,7 +76,8 @@ namespace khtml
 	    None = 0x00,
 	    Hover = 0x01,
 	    Focus = 0x02,
-	    Active = 0x04
+	    Active = 0x04,
+	    Drag = 0x08
 	};
     };
 

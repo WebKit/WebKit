@@ -1243,6 +1243,17 @@ bool CSSStyleSelector::checkOneSelector(DOM::CSSSelector *sel, DOM::ElementImpl 
                 }
                 break;
             }
+            case CSSSelector::PseudoDrag: {
+                if (element == e && style)
+                    style->setAffectedByDragRules(true);
+                if (e->renderer()) {
+                    if (element != e)
+                        e->renderer()->style()->setAffectedByDragRules(true);
+                    if (e->renderer()->isDragging())
+                        return true;
+                }
+                break;
+            }
             case CSSSelector::PseudoFocus:
                 if (e && e->focused()) {
                     return true;

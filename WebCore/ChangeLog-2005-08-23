@@ -1,3 +1,36 @@
+2004-06-14  Trey Matteson  <trey@apple.com>
+
+	A new CSS pseudo-class ".drag" is added.  Analogous to the "hover" class,
+	this class determines styles used while an element is generating a drag
+	image.
+
+        Reviewed by hyatt.
+
+        * khtml/css/css_base.cpp:
+        (CSSSelector::extractPseudoType):  Boilerplate for adding new class.
+        * khtml/css/css_base.h:  Boilerplate for adding new class.
+        * khtml/css/cssstyleselector.cpp:
+        (khtml::CSSStyleSelector::checkOneSelector):  Match new class against
+	elements being dragged.
+        * khtml/css/cssstyleselector.h:
+        (khtml::StyleSelector::):  Boilerplate for adding new class.
+        * khtml/rendering/render_object.cpp:
+        (RenderObject::RenderObject):  Init new member.
+        (RenderObject::isDragging):  Return whether this object is being dragged.
+        (RenderObject::updateDragState):  Paint us an all children with a new dragged state.
+        * khtml/rendering/render_object.h:
+        * khtml/rendering/render_style.h: Boilerplate for adding new class.
+        (khtml::RenderStyle::NonInheritedFlags::operator==):
+        (khtml::RenderStyle::setBitDefaults):
+        (khtml::RenderStyle::affectedByDragRules):
+        (khtml::RenderStyle::setAffectedByDragRules):
+        * kwq/KWQClipboard.mm:
+        (KWQClipboard::dragNSImage):  Method rename.
+        * kwq/KWQKHTMLPart.h:
+        * kwq/KWQKHTMLPart.mm:
+        (KWQKHTMLPart::snapshotDragImage):  Mark the element as being dragged before
+	we snapshot it, so new style class will apply.
+
 2004-06-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by me

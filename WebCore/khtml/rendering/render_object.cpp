@@ -149,6 +149,7 @@ m_inline( true ),
 
 m_replaced( false ),
 m_mouseInside( false ),
+m_isDragging( false ),
 m_isSelectionBorder( false ),
 m_hasOverflowClip(false)
 {
@@ -1777,6 +1778,23 @@ bool RenderObject::mouseInside() const
     if (!m_mouseInside && continuation()) 
         return continuation()->mouseInside();
     return m_mouseInside; 
+}
+
+bool RenderObject::isDragging() const
+{ 
+    return m_isDragging; 
+}
+
+void RenderObject::updateDragState(bool dragOn)
+{
+    bool valueChanged = (dragOn != m_isDragging);
+    m_isDragging = dragOn;
+    if (valueChanged && style()->affectedByDragRules())
+        element()->setChanged();
+    for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling())
+        curr->updateDragState(dragOn);
+    if (continuation())
+        continuation()->updateDragState(dragOn);
 }
 
 bool RenderObject::nodeAtPoint(NodeInfo& info, int _x, int _y, int _tx, int _ty,

@@ -265,6 +265,7 @@ public:
     bool isCompact() const { return style()->display() == COMPACT; } // compact object
     bool isRunIn() const { return style()->display() == RUN_IN; } // run-in object
     bool mouseInside() const;
+    bool isDragging() const;
     bool isReplaced() const { return m_replaced; } // a "replaced" element (see CSS)
     bool shouldPaintBackgroundOrBorder() const { return m_paintBackground; }
     bool needsLayout() const   { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout; }
@@ -285,6 +286,8 @@ public:
 
     RenderStyle* getPseudoStyle(RenderStyle::PseudoId pseudo, RenderStyle* parentStyle = 0) const;
     
+    void updateDragState(bool dragOn);
+
     RenderCanvas* canvas() const;
 
     // don't even think about making this method virtual!
@@ -803,6 +806,7 @@ private:
     bool m_inline                    : 1;
     bool m_replaced                  : 1;
     bool m_mouseInside               : 1;
+    bool m_isDragging                : 1;
     bool m_isSelectionBorder         : 1;
 
     bool m_hasOverflowClip           : 1;
