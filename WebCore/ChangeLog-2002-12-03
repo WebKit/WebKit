@@ -1,3 +1,19 @@
+2002-02-01  Kenneth Kocienda  <kocienda@apple.com>
+
+	More cleanups to the no-copy NSData API.
+	This time the callback from the cache/loader has been
+	simplified from:
+	- (void)WKURLHandle:(WKURLHandle *)sender resourceDataDidBecomeAvailable:(UInt8 *)bytes offset:(unsigned)offset length:(unsigned)length;
+	to:
+	- (void)WKURLHandle:(WKURLHandle *)sender resourceDataDidBecomeAvailable:(NSData *)data;
+	This was made possible by some rearrangement in the private API.
+
+	* include/WCURLHandle.h:
+	* src/kwq/KWQKHTMLPart.mm: (-[KHTMLPartLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:userData:]):
+	* src/kwq/KWQKloader.mm: (-[URLLoadClient
+	WCURLHandle:resourceDataDidBecomeAvailable:userData:]):
+
 2002-02-01  Richard Williamson  <rjw@apple.com>
 
     Added support for dynamic scrolling frames.  Also added first callback for

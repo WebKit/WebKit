@@ -143,17 +143,12 @@ static void recursive(const DOM::Node &pNode, const DOM::Node &node)
     m_part->closeURL();
 }
 
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData
+- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
 {
-    char *bytes;
-
     if (!m_data) {
         m_data = [data retain];
     }
-    
-    bytes = ((char *)[data bytes]) + offset;    
-    
-    m_part->slotData(sender, (const char *)bytes, length);
+    m_part->slotData(sender, (const char *)[data bytes], [data length]);
 }
 
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData

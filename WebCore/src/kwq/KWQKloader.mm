@@ -941,17 +941,14 @@ void DocLoader::removeCachedObject( CachedObject* o ) const
     m_loader->slotFinished(job);
 }
 
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData
+- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData
 {
-    char *bytes;
-
     if (!m_data) {
         m_data = [data retain];
     }
 
     KIO::Job *job = static_cast<KIO::Job *>(userData);
-    bytes = ((char *)[data bytes]) + offset;    
-    m_loader->slotData(job, (const char *)bytes, length);    
+    m_loader->slotData(job, (const char *)[data bytes], [data length]);    
 }
 
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData

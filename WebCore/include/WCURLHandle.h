@@ -12,7 +12,7 @@
 - (void)WCURLHandleResourceDidBeginLoading:(id)sender userData:(void *)userData;
 - (void)WCURLHandleResourceDidCancelLoading:(id)sender userData:(void *)userData;
 - (void)WCURLHandleResourceDidFinishLoading:(id)sender userData:(void *)userData;
-- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data offset:(int)offset length:(int)length userData:(void *)userData;
+- (void)WCURLHandle:(id)sender resourceDataDidBecomeAvailable:(NSData *)data userData:(void *)userData;
 - (void)WCURLHandle:(id)sender resourceDidFailLoadingWithResult:(int)result userData:(void *)userData;
 
 @end
