@@ -1,3 +1,13 @@
+2003-04-28  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Chris
+
+        * Plugins.subproj/WebBaseNetscapePluginStream.m:
+        (-[WebBaseNetscapePluginStream setResponse:]): _lastModifiedDate on
+	NSURLResponse is now SPI.
+        * WebView.subproj/WebDataSourcePrivate.m:
+        (-[WebDataSource _commitIfReady:]): Ditto.
+
 2003-04-27  Chris Blumenberg  <cblu@apple.com>
 
 	Improved headerdoc comments.	

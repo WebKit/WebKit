@@ -531,7 +531,7 @@
                          reload:reload 
                     contentType:[_private->response MIMEType]
                         refresh:[headers objectForKey:@"Refresh"]
-                   lastModified:(pageCache ? nil : [_private->response lastModifiedDate])
+                   lastModified:(pageCache ? nil : [_private->response _lastModifiedDate])
                       pageCache:pageCache];
 
         [frame _opened];

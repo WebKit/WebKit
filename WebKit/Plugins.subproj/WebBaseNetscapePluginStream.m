@@ -63,7 +63,7 @@
     stream.ndata = self;
     stream.URL = cURL;
     stream.end = [r expectedContentLength];
-    stream.lastmodified = [[r lastModifiedDate] timeIntervalSince1970];
+    stream.lastmodified = [[r _lastModifiedDate] timeIntervalSince1970];
     stream.notifyData = notifyData;
 
     offset = 0;
