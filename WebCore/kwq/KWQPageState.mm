@@ -77,6 +77,8 @@ using KJS::SavedProperties;
     if (document) {
         KHTMLView *view = document->view();
 
+        ASSERT (view);
+        
         KWQKHTMLPart::clearTimers(view);
 
         document->setInPageCache(NO);
