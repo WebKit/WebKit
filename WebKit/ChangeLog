@@ -1,3 +1,13 @@
+2003-05-27  Maciej Stachowiak  <mjs@apple.com>
+
+	Rolled in fix from Safari-80~1-branch
+	
+    2003-05-27  Maciej Stachowiak  <mjs@apple.com>
+        
+	Reviewed by Darin.
+
+        * WebKit.pbproj/project.pbxproj: Removed no longer needed and harmful flag.
+
 2003-05-27  Richard Williamson   <rjw@apple.com>
 
 	Fix for IB.
