@@ -1,5 +1,14 @@
 2002-01-31  Richard Williamson  <rjw@apple.com>
 
+    Added QString constructor, fixed javascript at head of document bug.
+    
+	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::openURL), (KHTMLPart::closeURL),
+	(KHTMLPart::write):
+	* src/kwq/KWQString.mm: (QString::QString):
+	* src/kwq/qt/qstring.h:
+
+2002-01-31  Richard Williamson  <rjw@apple.com>
+
 	* src/kdelibs/khtml/html/html_headimpl.cpp: (HTMLStyleElementImpl::detach):
 	* src/kwq/KWQKHTMLPart.mm: (KHTMLPart::write):
 

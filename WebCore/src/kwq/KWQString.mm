@@ -282,6 +282,24 @@ QString::QString(const char *chs)
     cacheType = CacheInvalid;
 }
 
+QString::QString(const char *chs, int len)
+{
+    
+    if (len > 0) {
+        CFStringRef tmp;
+        tmp = CFStringCreateWithBytes (kCFAllocatorDefault, (const UInt8 *)chs, len, kCFStringEncodingISOLatin1, false);
+        s = CFStringCreateMutable(kCFAllocatorDefault, 0);
+        if (s) {
+            CFStringAppend(s, tmp);
+        }
+        CFRelease (tmp);
+    } else {
+        s = NULL;
+    }
+    cache = NULL;
+    cacheType = CacheInvalid;
+}
+
 QString::QString(const QString &qs)
 {
     // shared copy

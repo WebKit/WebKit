@@ -342,6 +342,9 @@ bool KHTMLPart::openURL( const KURL &url )
     d->m_workingURL = url;
     d->m_url = url;
 
+    d->m_documentSource = "";
+    d->m_decodingStarted = 0;
+    
     NSString *urlString;
     NSURL *theURL;
     
@@ -380,7 +383,7 @@ bool KHTMLPart::closeURL()
     
     // Reset the the current working URL to the default URL.
     d->m_workingURL = KURL();
-    
+
     //d->m_doc = 0;
     
     return true;
@@ -624,7 +627,8 @@ void KHTMLPart::write(const char *str, int len)
     double start = CFAbsoluteTimeGetCurrent();
 #endif
     
-    d->m_documentSource += str;
+    // FIX ME:  This is very expensive.
+    d->m_documentSource += QString(str, len);
 
     QString decoded;
     if (d->m_decodingStarted)
