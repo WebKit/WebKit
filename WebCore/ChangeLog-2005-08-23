@@ -1,3 +1,19 @@
+2003-11-20  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by David
+
+	Fix for this bug:
+
+	<rdar://problem/3487421>: crash/exception when tabbing to a link without text
+
+        * khtml/html/html_inlineimpl.cpp:
+        (HTMLAnchorElementImpl::isFocusable): A link is also not focusable 
+	if it has zero width or height, if it has no children, or if it is 
+	is not a continuation.
+        * kwq/KWQPainter.mm:
+        (QPainter::drawFocusRing): Put in a guard against trying to draw a focus
+        ring with no control points. Log this as an error.
+
 2003-11-19  David Hyatt  <hyatt@apple.com>
 
 	Fix for 3486963, crash because generated content was referencing a deleted object.  Fix is to update the

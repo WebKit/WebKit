@@ -57,7 +57,9 @@ bool HTMLAnchorElementImpl::isFocusable() const
 {
     return m_hasAnchor && 
         m_render && 
-        m_render->style() && m_render->style()->visibility() == VISIBLE;
+        m_render->style() && m_render->style()->visibility() == VISIBLE &&
+        (m_render->width() > 0 && m_render->height() > 0) && 
+        (m_render->firstChild() || m_render->continuation());
 }
 
 bool HTMLAnchorElementImpl::isMouseFocusable() const

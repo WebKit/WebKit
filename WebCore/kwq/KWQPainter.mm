@@ -720,6 +720,11 @@ void QPainter::drawFocusRing()
     if (data->state.paintingDisabled)
         return;
 
+    if ([data->focusRingPath elementCount] == 0) {
+        ERROR("Request to draw focus ring with no control points");
+        return;
+    }
+    
     NSRect bounds = [data->focusRingPath bounds];
     if (!NSIsEmptyRect(bounds)) {
         int radius = (data->focusRingWidth-1)/2;
