@@ -1,3 +1,13 @@
+2004-11-11  Darin Adler  <darin@apple.com>
+
+        Reviewed by Maciej.
+
+        - fixed <rdar://problem/3605906> Flash scrolled off the top and bottom cause CPU spin when combined with something dirty on the visible part of the page
+
+        * WebView.subproj/WebHTMLView.m: (-[WebHTMLView drawRect:]):
+        Work around AppKit bug by using rectangles from getRectsBeingDrawn:count: instead of
+        using the passed-in rectangle.
+
 2004-11-11  Richard Williamson   <rjw@apple.com>
 
         Work-arounds to make new ImageIO code work correctly.  Still

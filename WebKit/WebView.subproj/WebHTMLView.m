@@ -1981,6 +1981,21 @@ static WebHTMLView *lastHitView = nil;
 {
     LOG(View, "%@ drawing", self);
     
+    // Work around AppKit bug <rdar://problem/3875305> rect passed to drawRect: is too large.
+    // Ignore the passed-in rect and instead union in the rectangles from getRectsBeingDrawn.
+    // This does a better job of clipping out rects that are entirely outside the visible area.
+    const NSRect *rects;
+    int count;
+    [self getRectsBeingDrawn:&rects count:&count];
+    rect = NSZeroRect;
+    int i;
+    for (i = 0; i < count; ++i) {
+        rect = NSUnionRect(rect, rects[i]);
+    }
+    if (rect.size.height == 0 || rect.size.width == 0) {
+        return;
+    }
+
     BOOL subviewsWereSetAside = _private->subviewsSetAside;
     if (subviewsWereSetAside) {
         [self _restoreSubviews];
