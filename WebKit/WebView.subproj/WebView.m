@@ -156,10 +156,11 @@ NSString *_WebMainFrameURLKey =         @"mainFrameURL";
     NSArray *MIMETypes = [self _supportedMIMETypes];
     NSEnumerator *enumerator = [MIMETypes objectEnumerator];
     NSString *MIMEType;
+    NSURLFileTypeMappings *mappings = [NSURLFileTypeMappings sharedMappings];
     while ((MIMEType = [enumerator nextObject]) != nil) {
-        NSString *extension = [self suggestedFileExtensionForMIMEType:MIMEType];
-        if (extension) {
-            [extensions addObject:extension];
+        NSArray *extensionsForType = [mappings extensionsForMIMEType:MIMEType];
+        if (extensionsForType) {
+            [extensions addObjectsFromArray:extensionsForType];
         }
     }
     NSArray *uniqueExtensions = [extensions allObjects];

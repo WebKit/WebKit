@@ -1,3 +1,12 @@
+2003-12-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Richard.
+
+        - finished fix to 3109132: can't open movie file via open panel
+
+        * WebView.subproj/WebView.m: (+[WebView _supportedFileExtensions]):
+        Include all the extensions for each MIME type, not jus the preferred one.
+
 2003-12-16  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Darin
