@@ -25,16 +25,65 @@
 
 #include <kwqdebug.h>
 
-int KWQ_LOG_NONE = 0;
-int KWQ_LOG_ALL = 0x7f;
-
-int KWQ_LOG_NEVER_IMPLEMENTED = 0x1;
-int KWQ_LOG_PARTIALLY_IMPLEMENTED = 0x2;
-int KWQ_LOG_NOT_YET_IMPLEMENTED = 0x4;
-
-int KWQ_LOG_LEVEL = KWQ_LOG_ALL;
+unsigned int KWQ_LOG_LEVEL = KWQ_LOG_ALL;
 
 
 void KWQSetLogLevel(int mask) {
     KWQ_LOG_LEVEL = mask;    
 }
+
+bool checkedDefault = 0;
+
+unsigned int KWQGetLogLevel(){
+    if (!checkedDefault){
+        NSString *logLevelString = [[NSUserDefaults standardUserDefaults] objectForKey:@"WebKitLogLevel"];
+        if (logLevelString != nil){
+            if (![[NSScanner scannerWithString: logLevelString] scanHexInt: &KWQ_LOG_LEVEL]){
+                NSLog (@"Unable to scan hex value for WebKitLogLevel, default to value of %d", KWQ_LOG_LEVEL);
+            }
+        }
+        checkedDefault = 1; 
+    }
+    return KWQ_LOG_LEVEL;
+}
+
+
+void KWQLog(NSString *format, ...) {    
+    if (KWQGetLogLevel() & KWQ_LOG_ERROR){
+        va_list args;
+        va_start(args, format); 
+        NSLogv(format, args);
+        va_end(args);
+    }
+}
+
+
+void KWQLogAtLevel(unsigned int level, NSString *format, ...) {    
+    if (KWQGetLogLevel() & level){
+        va_list args;
+        va_start(args, format); 
+        NSLogv(format, args);
+        va_end(args);
+    }
+}
+
+
+void KWQDebug(const char *format, ...) {    
+    if (KWQGetLogLevel() & KWQ_LOG_DEBUG){
+        va_list args;
+        va_start(args, format); 
+        vfprintf(stderr, format, args);
+        va_end(args);
+    }
+}
+
+
+void KWQDebugAtLevel(unsigned int level, const char *format, ...) {    
+    if (KWQGetLogLevel() & level){
+        va_list args;
+        va_start(args, format); 
+        vfprintf(stderr, format, args);
+        va_end(args);
+    }
+}
+

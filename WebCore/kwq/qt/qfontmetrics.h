@@ -85,17 +85,13 @@ public:
 #if (defined(__APPLE__) && defined(__OBJC__) && defined(__cplusplus))
     //void _initializeWithData(QFontMetricsPrivate *);
     void _initializeWithFont (NSFont *font);
-    NSRect _rectOfString(NSString *) const;
 #else
-    void _initializeWithData(void *);
-//    int _rectOfString(void *) const;
+    void _initializeWithFont(void *);
 #endif
     void _free();
     
     QFontMetricsPrivate *data;
 #endif
-
-    void _freeWithData(struct KWQFontMetricsData *);
 
 }; // class QFontMetrics =======================================================
 

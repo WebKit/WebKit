@@ -34,32 +34,72 @@
 #undef Rect
 #undef Boolean
 
-extern int KWQ_LOG_LEVEL;
-extern int KWQ_LOG_NEVER_IMPLEMENTED;
-extern int KWQ_LOG_PARTIALLY_IMPLEMENTED;
-extern int KWQ_LOG_NOT_YET_IMPLEMENTED;
+#define KWQ_LOG_NEVER_IMPLEMENTED	0x1
+#define KWQ_LOG_PARTIALLY_IMPLEMENTED	0x2
+#define KWQ_LOG_NOT_YET_IMPLEMENTED	0x4
+#define KWQ_LOG_DEBUG			0x8
+#define KWQ_LOG_ERROR			0x10
 
-#define _logNeverImplemented() \
-    do { \
-        if (KWQ_LOG_LEVEL & KWQ_LOG_NEVER_IMPLEMENTED) { \
-            NSLog(@"ERROR %s:%d  %s (NOT IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__); \
-        } \
-    } while (0)
-
-#define _logPartiallyImplemented() \
-    do { \
-        if (KWQ_LOG_LEVEL & KWQ_LOG_PARTIALLY_IMPLEMENTED) { \
-            NSLog(@"WARNING %s:%d  %s (PARTIALLY IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__); \
-        } \
-    } while (0)
-
-#define _logNotYetImplemented() \
-    do { \
-        if (KWQ_LOG_LEVEL & KWQ_LOG_NOT_YET_IMPLEMENTED) { \
-            NSLog (@"WARNING %s:%d  %s (NOT YET IMPLEMENTED)\n", __FILE__, __LINE__, __FUNCTION__); \
-        } \
-    } while (0)
-
-#endif
+#define KWQ_LOG_NONE			0
+#define KWQ_LOG_ALL			0xffffffff
 
 void KWQSetLogLevel(int mask);
+unsigned int KWQGetLogLevel();
+void KWQDebug(const char *format, ...);
+void KWQDebugAtLevel(unsigned int level, const char *format, ...);
+void KWQLog(NSString *format, ...);
+void KWQLogAtLevel(unsigned int level, NSString *format, ...);
+
+
+#define _logNeverImplemented() \
+   KWQDEBUGLEVEL(KWQ_LOG_NEVER_IMPLEMENTED, "ERROR (NOT IMPLEMENTED)\n")
+
+#define _logPartiallyImplemented() \
+   KWQDEBUGLEVEL(KWQ_LOG_PARTIALLY_IMPLEMENTED, "WARNING (PARTIALLY IMPLEMENTED)\n")
+
+#define _logNotYetImplemented() \
+   KWQDEBUGLEVEL (KWQ_LOG_NOT_YET_IMPLEMENTED, "WARNING (NOT YET IMPLEMENTED)\n")
+
+
+#define KWQDEBUG(format) KWQDEBUGLEVEL(KWQ_LOG_DEBUG,format)
+#define KWQDEBUG1(format,arg1) KWQDEBUGLEVEL1(KWQ_LOG_DEBUG,format,arg1)
+#define KWQDEBUG2(format,arg1,arg2) KWQDEBUGLEVEL2(KWQ_LOG_DEBUG,format,arg1,arg2)
+#define KWQDEBUG3(format,arg1,arg2,arg3) KWQDEBUGLEVEL3(KWQ_LOG_DEBUG,format,arg1,arg2,arg3)
+#define KWQDEBUG4(format,arg1,arg2,arg3,arg4) KWQDEBUGLEVEL4(KWQ_LOG_DEBUG,format,arg1,arg2,arg3,arg4)
+#define KWQDEBUG5(format,arg1,arg2,arg3,arg4,arg5) KWQDEBUGLEVEL5(KWQ_LOG_DEBUG,format,arg1,arg2,arg3,arg4,arg5)
+#define KWQDEBUG6(format,arg1,arg2,arg3,arg4,arg5,arg6) KWQDEBUGLEVEL6(KWQ_LOG_DEBUG,format,arg1,arg2,arg3,arg4,arg5,arg6)
+
+#define KWQDEBUGLEVEL(level,format) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__, format);\
+   KWQDebugAtLevel (level,format);
+            
+#define KWQDEBUGLEVEL1(level,format,arg1) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1);
+            
+#define KWQDEBUGLEVEL2(level,format,arg1,arg2) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1,arg2);
+            
+#define KWQDEBUGLEVEL3(level,format,arg1,arg2,arg3) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1,arg2,arg3);
+            
+#define KWQDEBUGLEVEL4(level,format,arg1,arg2,arg3,arg4) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4);
+            
+#define KWQDEBUGLEVEL5(level,format,arg1,arg2,arg3,arg4,arg5) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5);
+            
+#define KWQDEBUGLEVEL6(level,format,arg1,arg2,arg3,arg4,arg5,arg6) \
+   KWQDebugAtLevel (level,"[%s:%d  %s] ",  __FILE__, __LINE__, __FUNCTION__);\
+   KWQDebugAtLevel (level,format,arg1,arg2,arg3,arg4,arg5,arg6);
+            
+#define DEBUG_OBJECT(object) [[object description] cString]
+
+
+
+#endif KWQDEBUG_H_
+

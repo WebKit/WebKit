@@ -24,6 +24,8 @@
  */
 #import "KWQView.h"
 
+#import "kwqdebug.h"
+
 #include <khtmlview.h>
 #include <qwidget.h>
 #include <qpainter.h>
@@ -208,17 +210,18 @@
 
 - (void)mouseUp: (NSEvent *)event
 {
-    NSLog (@"mouseUp %@", event);
+    KWQDEBUGLEVEL1 (0x100, "mouseUp %s\n", DEBUG_OBJECT(event));
 }
 
 - (void)mouseDown: (NSEvent *)event
 {
-    NSLog (@"mouseDown %@", event);
+    KWQDEBUGLEVEL1 (0x100, "mouseDown %s\n", DEBUG_OBJECT(event));
 }
 
 - (void)mouseDragged: (NSEvent *)event
 {
-    NSLog (@"mouseDragged %@", event);
+    NSPoint p = [event locationInWindow];
+    KWQDEBUG2 ("mouseDragged %f, %f\n", p.x, p.y);
 }
 
 

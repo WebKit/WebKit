@@ -12,6 +12,7 @@
     NSArray *fontSizeArray = [NSArray arrayWithObjects:@"6", @"8", @"10", @"12", @"14", @"16", @"18", @"20", nil];
     
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:
+        @"0x8", 		@"WebKitLogLevel",
         @"Arial", 		@"WebKitStandardFont",
         @"Courier",  		@"WebKitFixedFont",
         @"Times-Roman", 	@"WebKitSerifFont",
