@@ -3,18 +3,17 @@
 	Copyright 2002, Apple, Inc. All rights reserved.
 */
 
-#import <WebKit/IFDocument.h>
-#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFImageView.h>
+
+#import <WebKit/IFDocument.h>
 #import <WebKit/IFImageRenderer.h>
 #import <WebKit/IFImageRepresentation.h>
-#import <WebKit/IFNSViewExtras.h>
 #import <WebKit/IFWebDataSource.h>
 
 @implementation IFImageView
 
-- (id)initWithFrame:(NSRect)frame {
-    
+- (id)initWithFrame:(NSRect)frame
+{    
     self = [super initWithFrame:frame];
     if (self) {
         canDragFrom = YES;
@@ -38,13 +37,9 @@
 }
 
 
-- (void)drawRect:(NSRect)rect {
-    IFImageRenderer *image;
-    
-    image = [representation image];
-    if(image){
-        [image beginAnimationInView:self inRect:[self frame] fromRect:[self frame]];
-    }
+- (void)drawRect:(NSRect)rect
+{
+    [[representation image] beginAnimationInRect:[self frame] fromRect:[self frame]];
 }
 
 
@@ -71,9 +66,7 @@
     IFImageRenderer *image = [representation image];
     
     if(image){
-        NSSize imageSize = [image size];
-
-        [self setFrameSize:imageSize];
+        [self setFrameSize:[image size]];
         [image setFlipped:YES];
     }
 

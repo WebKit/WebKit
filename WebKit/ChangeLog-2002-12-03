@@ -1,5 +1,23 @@
 2002-06-21  Darin Adler  <darin@apple.com>
 
+	Cache the patterns we make for tiled images for added speed.
+
+        * WebCoreSupport.subproj/IFImageRenderer.h: Removed declarations of
+	methods inherited from WebCoreImageRenderer. Added patternColor field.
+
+        * WebCoreSupport.subproj/IFImageRenderer.m:
+        (-[IFImageRenderer dealloc]): Release patternColor.
+        (-[IFImageRenderer beginAnimationInRect:fromRect:]): Get the view with
+	[NSView focusView] rather than taking a parameter that's used only for
+	the animating case.
+        (-[IFImageRenderer tileInRect:fromPoint:]): New. Caches the pattern in
+	the patternColor field.
+
+        * WebView.subproj/IFImageView.m: (-[IFImageView drawRect:]): No need to
+	pass view to image renderer any more.
+
+2002-06-21  Darin Adler  <darin@apple.com>
+
 	Fix rendering of non-opaque animated images.
 
 	* WebCoreSupport.subproj/IFImageRenderer.m:

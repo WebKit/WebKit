@@ -47,8 +47,6 @@ QFont::~QFont()
     [_family release];
 }
 
-// member functions --------------------------------------------------------
-
 int QFont::pixelSize() const
 {
     return (int)_size;
@@ -56,13 +54,13 @@ int QFont::pixelSize() const
 
 QString QFont::family() const
 {
-    return NSSTRING_TO_QSTRING(_family);
+    return QString::fromNSString(_family);
 }
 
 void QFont::setFamily(const QString &qfamilyName)
 {
     [_family release];
-    _family = [_FAST_QSTRING_TO_NSSTRING(qfamilyName) retain];
+    _family = [qfamilyName.getNSString() copy];
 }
 
 void QFont::setPixelSize(int sz)

@@ -1,5 +1,19 @@
 2002-06-21  Darin Adler  <darin@apple.com>
 
+        * kwq/KWQFont.mm: Made it store a copy of the family name instead of
+	storing a reference to the mutable CFString.
+
+        * kwq/KWQPainter.mm:
+        (QPainter::drawPixmap): Simplified.
+        (QPainter::drawTiledPixmap): Used the new [tileInRect:].
+
+        * kwq/WebCoreImageRenderer.h: Added [tileInRect:], removed [drawInRect:],
+	and also removed view parameter from [beginAnimation].
+	
+        * kwq/qt/qpixmap.h: Removed unneeded getImageRenderer().
+
+2002-06-21  Darin Adler  <darin@apple.com>
+
         - fixed 2964718 -- crash in KWQCheckCacheObjectStatus
 
 	* kwq/KWQKloader.mm: (KWQCheckCacheObjectStatus):

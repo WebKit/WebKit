@@ -410,95 +410,22 @@ void QPainter::drawPixmap( int x, int y, const QPixmap &pixmap,
 {
     _lockFocus();
 
-    id <WebCoreImageRenderer>imageRenderer = pixmap.getImageRenderer();
+    if (sw == -1)
+        sw = pixmap.width();
+    if (sh == -1)
+        sh = pixmap.height();
     
-    if (imageRenderer != nil) {
-        if (sw == -1)
-            sw = (int)[imageRenderer size].width;
-        if (sh == -1)
-            sh = (int)[imageRenderer size].height;
-        NSRect ir = NSMakeRect(x, y, sw, sh);
-        NSRect fr = NSMakeRect(sx, sy, sw, sh);
-        
-        [imageRenderer beginAnimationInView: [NSView focusView]
-                                     inRect: ir
-                                   fromRect: fr];
-    }
+    [pixmap.imageRenderer beginAnimationInRect:NSMakeRect(x, y, sw, sh)
+                                      fromRect:NSMakeRect(sx, sy, sw, sh)];
     
     _unlockFocus();
 }
 
-#define USE_COLOR_TILING
-#ifdef USE_COLOR_TILING
-extern "C" {
-CG_EXTERN void CGContextSetPatternPhase(CGContextRef c, CGSize phase);
-}
-
-void QPainter::drawTiledPixmap( int x, int y, int w, int h,
-				const QPixmap &pixmap, int sx, int sy )
-{    
-    NSColor *patternColor;
-    int sw = pixmap.width();
-    int sh = pixmap.height();
-    NSPoint p = [[NSView focusView] convertPoint: NSMakePoint (x, y) toView: nil];
-    CGContextRef cgContext;
-
-    [NSGraphicsContext saveGraphicsState];
-
-    cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
-    CGSize phase = { (float)(((int)p.x) % sw), (float)(((int)p.y) % sh) };
-    CGContextSetPatternPhase(cgContext, phase);
-    patternColor = [NSColor colorWithPatternImage: (NSImage *)pixmap.getImageRenderer()];
-    [patternColor set];
-    [NSBezierPath fillRect:NSMakeRect(x, y, w, h)];
-
-    [NSGraphicsContext restoreGraphicsState];
-}
-#else
-static void drawTile( QPainter *p, int x, int y, int w, int h,
-		      const QPixmap &pixmap, int xOffset, int yOffset )
-{
-    int yPos, xPos, drawH, drawW, yOff, xOff;
-    yPos = y;
-    yOff = yOffset;
-    while( yPos < y + h ) {
-	drawH = pixmap.height() - yOff;    // Cropping first row
-	if ( yPos + drawH > y + h )	   // Cropping last row
-	    drawH = y + h - yPos;
-	xPos = x;
-	xOff = xOffset;
-	while( xPos < x + w ) {
-	    drawW = pixmap.width() - xOff; // Cropping first column
-	    if ( xPos + drawW > x + w )	   // Cropping last column
-		drawW = x + w - xPos;
-	    p->drawPixmap( xPos, yPos, pixmap, xOff, yOff, drawW, drawH );
-	    xPos += drawW;
-	    xOff = 0;
-	}
-	yPos += drawH;
-	yOff = 0;
-    }
-}
-
 void QPainter::drawTiledPixmap( int x, int y, int w, int h,
 				const QPixmap &pixmap, int sx, int sy )
 {
-    int sw = pixmap.width();
-    int sh = pixmap.height();
-    if (!sw || !sh )
-	return;
-    if ( sx < 0 )
-	sx = sw - -sx % sw;
-    else
-	sx = sx % sw;
-    if ( sy < 0 )
-	sy = sh - -sy % sh;
-    else
-	sy = sy % sh;
-
-    drawTile( this, x, y, w, h, pixmap, sx, sy );
+    [pixmap.imageRenderer tileInRect:NSMakeRect(x, y, w, h) fromPoint:NSMakePoint(sx, sy)];
 }
-#endif
 
 // y is the baseline
 void QPainter::drawText(int x, int y, const QString &qstring, int len)

@@ -17,7 +17,7 @@ static NSMutableArray *activeImageRenderers;
     count = [activeImageRenderers count];
     for (i = count-1; i >= 0; i--){
         IFImageRenderer *renderer = [activeImageRenderers objectAtIndex: i];
-        if ([renderer frameView] == aView){
+        if (renderer->frameView == aView){
             [renderer stopAnimation];
         }
     }
@@ -80,6 +80,7 @@ static NSMutableArray *activeImageRenderers;
 - (void)dealloc
 {
     [self stopAnimation];
+    [patternColor release];
     [super dealloc];
 }
 
@@ -165,7 +166,7 @@ static NSMutableArray *activeImageRenderers;
 #endif
 }
 
-- (void)beginAnimationInView: (NSView *)view inRect: (NSRect)ir fromRect: (NSRect)fr
+- (void)beginAnimationInRect: (NSRect)ir fromRect: (NSRect)fr
 {
     // The previous, if any, frameView, is released in stopAnimation.
     [self stopAnimation];
@@ -173,7 +174,7 @@ static NSMutableArray *activeImageRenderers;
     if ([self frameCount] > 1) {
         imageRect = fr;
         targetRect = ir;
-        frameView = [view retain];
+        frameView = [[NSView focusView] retain];
         frameTimer = [[NSTimer scheduledTimerWithTimeInterval:[self frameDuration]
                                                        target:self
                                                      selector:@selector(nextFrame:)
@@ -189,11 +190,6 @@ static NSMutableArray *activeImageRenderers;
             fromRect: fr
            operation: NSCompositeSourceOver	// Renders transparency correctly
             fraction: 1.0];
-}
-
-- (NSView *)frameView
-{
-    return frameView;
 }
 
 - (void)stopAnimation
@@ -214,16 +210,35 @@ static NSMutableArray *activeImageRenderers;
     [self setSize: s];
 }
 
+- (void)tileInRect:(NSRect)rect fromPoint:(NSPoint)point
+{
+    if (!patternColor)
+        patternColor = [[NSColor colorWithPatternImage:self] retain];
+    
+    // FIXME: This doesn't use the passed in point to determine the pattern phase.
+    // It might be OK to do what we're doing, but I'm not 100% sure.
+    // This code uses the coordinate system of whatever converting toView:nil
+    // does, which may be OK.
+    NSPoint p = [[NSView focusView] convertPoint:rect.origin toView:nil];
+    NSSize size = [self size];
+    CGSize phase = { (int)p.x % (int)size.width, (int)p.y % (int)size.height };
+
+    [NSGraphicsContext saveGraphicsState];
+
+    CGContextRef cgContext = (CGContextRef)[[NSGraphicsContext currentContext] graphicsPort];
+    CGContextSetPatternPhase(cgContext, phase);
+    [patternColor set];
+    
+    [NSBezierPath fillRect:rect];
+
+    [NSGraphicsContext restoreGraphicsState];
+}
+
 // required by protocol -- apparently inherited methods don't count
 
 - (NSSize)size
 {
     return [super size];
-}
-
-- (void)drawInRect:(NSRect)dstRect fromRect:(NSRect)srcRect operation:(NSCompositingOperation)op fraction:(float)delta
-{
-    [super drawInRect:dstRect fromRect:srcRect operation:op fraction:delta];
 }
 
 @end
