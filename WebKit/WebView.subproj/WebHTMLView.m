@@ -2381,12 +2381,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToBeginningOfDocument:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByDocument];
 }
 
 - (void)moveToBeginningOfDocumentAndModifySelection:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByDocument];
 }
 
 - (void)moveToBeginningOfLine:(id)sender
@@ -2401,22 +2401,22 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToBeginningOfParagraph:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectLeft granularity:WebSelectByParagraph];
 }
 
 - (void)moveToBeginningOfParagraphAndModifySelection:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectLeft granularity:WebSelectByParagraph];
 }
 
 - (void)moveToEndOfDocument:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByDocument];
 }
 
 - (void)moveToEndOfDocumentAndModifySelection:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByDocument];
 }
 
 - (void)moveToEndOfLine:(id)sender
@@ -2431,12 +2431,12 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)moveToEndOfParagraph:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByMoving direction:WebSelectRight granularity:WebSelectByParagraph];
 }
 
 - (void)moveToEndOfParagraphAndModifySelection:(id)sender
 {
-    ERROR("unimplemented");
+    [self _alterCurrentSelection:WebSelectByExtending direction:WebSelectRight granularity:WebSelectByParagraph];
 }
 
 - (void)moveUp:(id)sender
@@ -2491,11 +2491,13 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)pageDown:(id)sender
 {
+    // FIXME: This should to scroll page down, then move the caret to the top left.
     ERROR("unimplemented");
 }
 
 - (void)pageUp:(id)sender
 {
+    // FIXME: This should to scroll page up, then move the caret to the top left.
     ERROR("unimplemented");
 }
 
@@ -2573,11 +2575,16 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)copyFont:(id)sender
 {
+    // Font is RTF with a single character in it.
+    // NSTextView uses the first character in the selection, or a space if there are no characters.
     ERROR("unimplemented");
 }
 
 - (void)pasteFont:(id)sender
 {
+    // FIXME: Support RTF to HTML (or DOM) conversion.
+    // Font is RTF. Call fontAttributesInRange to extract the attributes to apply.
+    // Then convert the RTF into CSS.
     ERROR("unimplemented");
 }
 
@@ -2653,6 +2660,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)changeAttributes:(id)sender
 {
+    // Used for various fancy stuff from the font panel.
+    // Turn the attributes into CSS and then call applyStyle.
     ERROR("unimplemented");
 }
 
@@ -2746,6 +2755,8 @@ static WebHTMLView *lastHitView = nil;
 
 - (void)indent:(id)sender
 {
+    // Figure out current indent level.
+    // Turn new indent level into CSS, then call applyStyle:.
     ERROR("unimplemented");
 }
 

@@ -1,3 +1,26 @@
+2004-07-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Ken.
+
+        - fill in some unimplemented methods
+
+        * WebView.subproj/WebHTMLView.m:
+        (-[WebHTMLView moveToBeginningOfDocument:]): Implement, using new document granularity.
+        (-[WebHTMLView moveToBeginningOfDocumentAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToBeginningOfParagraph:]): Implement, even though the underlying WebCore
+        code is not yet implemented.
+        (-[WebHTMLView moveToBeginningOfParagraphAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToEndOfDocument:]): More of the same.
+        (-[WebHTMLView moveToEndOfDocumentAndModifySelection:]): Ditto.
+        (-[WebHTMLView moveToEndOfParagraph:]): More of the same.
+        (-[WebHTMLView moveToEndOfParagraphAndModifySelection:]): Ditto.
+        (-[WebHTMLView pageDown:]): Added comment describing desired behavior.
+        (-[WebHTMLView pageUp:]): Ditto.
+        (-[WebHTMLView copyFont:]): Ditto.
+        (-[WebHTMLView pasteFont:]): Ditto.
+        (-[WebHTMLView changeAttributes:]): Ditto.
+        (-[WebHTMLView indent:]): Ditto.
+
 2004-07-28  Chris Blumenberg  <cblu@apple.com>
 
 	Fixed: <rdar://problem/3737864> Can not download image from web by using drag and drop
