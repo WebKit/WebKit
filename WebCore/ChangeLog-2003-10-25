@@ -1,5 +1,15 @@
 2002-12-20  Darin Adler  <darin@apple.com>
 
+        Reviewed by John.
+
+	- fixed 3131449 -- crash in DOMNamedNodesCollection::tryGet opening a new window from JavaScript
+
+        * khtml/ecma/kjs_dom.cpp: (DOMNamedNodesCollection::tryGet):
+	Add range checking. If the index is out of range fall back to the parent tryGet,
+	which will eventually just return Undefined().
+
+2002-12-20  Darin Adler  <darin@apple.com>
+
         Reviewed by Richard and John.
 
 	- fixed 3133207 -- crash in HTMLFrameElementImpl updateForNewURL at home.real.com
