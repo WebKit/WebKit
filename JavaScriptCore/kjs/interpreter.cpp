@@ -111,7 +111,16 @@ bool Interpreter::checkSyntax(const UString &code)
 
 Completion Interpreter::evaluate(const UString &code, const Value &thisV)
 {
-  return rep->evaluate(code,thisV);
+  Completion comp = rep->evaluate(code,thisV);
+#if !NDEBUG
+  if (comp.complType() == Throw) {
+    lock();
+    ExecState *exec = rep->globalExec();
+    printf("Uncaught exception: %s\n", comp.value().toObject(exec).toString(exec).ascii());
+    unlock();
+  }
+#endif
+  return comp;
 }
 
 InterpreterImp *Interpreter::imp()

@@ -1,3 +1,23 @@
+2002-12-11  Maciej Stachowiak  <mjs@apple.com>
+
+        Reviewed by NOBODY (OOPS!).
+
+	- Add kjsprint global function in Development build for ease of	debugging.
+	- Print uncaught JavaScript exceptions to the console in Development.
+	- Improve wording of exception error messages.
+	
+        * kjs/function.cpp:
+        (GlobalFuncImp::call):
+        * kjs/function.h:
+        * kjs/internal.cpp:
+        (InterpreterImp::initGlobalObject):
+        * kjs/interpreter.cpp:
+        (Interpreter::evaluate):
+        * kjs/nodes.cpp:
+        (NewExprNode::evaluate):
+        (FunctionCallNode::evaluate):
+        (RelationalNode::evaluate):
+
 2002-12-10  John Sullivan  <sullivan@apple.com>
 
 	Fixed more "Alexander"s that were lurking in places I forgot 
