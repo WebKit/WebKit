@@ -1047,8 +1047,7 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren)
         
         // If an element might be affected by the presence of floats, then always mark it for
         // layout.
-        bool affectedByFloats = !child->avoidsFloats() || (child->style()->width().isPercent() && child->usesLineWidth());
-        if (affectedByFloats) {
+        if (!child->avoidsFloats() || child->usesLineWidth()) {
             int fb = floatBottom();
             if (fb > m_height || fb > yPosEstimate)
                 child->setChildNeedsLayout(true);

@@ -1,3 +1,13 @@
+2005-02-10  David Hyatt  <hyatt@apple.com>
+
+	Fix  for 3992440, text not wrapping correctly on half moon bay web site.  Refine an incorrect optimization I
+	added to be less restrictive.
+	
+        Reviewed by mjs
+
+        * khtml/rendering/render_block.cpp:
+        (khtml::RenderBlock::layoutBlockChildren):
+
 2005-02-08  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Darin.
