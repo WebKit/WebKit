@@ -1,3 +1,16 @@
+2002-05-08  Chris Blumenberg  <cblu@apple.com>
+
+	Cleaned up mach-o plug-in support.
+	
+	Changed the init method in IFPlugin to initWithPath.
+
+	* Plugins.subproj/IFPlugin.h:
+	* Plugins.subproj/IFPlugin.m:
+	(-[IFPlugin initWithPath:]):
+	(-[IFPlugin load]):
+	* Plugins.subproj/IFPluginDatabase.m:
+	(findPlugins):
+
 2002-05-08  Darin Adler  <darin@apple.com>
 
 	* WebView.subproj/IFWebDataSourcePrivate.mm: (-[IFWebDataSource _setTitle:]):

@@ -167,7 +167,7 @@ NSArray *findPlugins(void)
     
     for(i=0; i<[pluginPaths count]; i++){
         plugin = [IFPlugin alloc];
-        if([plugin initializeWithPath:[pluginPaths objectAtIndex:i]]){
+        if([plugin initWithPath:[pluginPaths objectAtIndex:i]]){
             [plugin retain];
             [pluginArray addObject:plugin];
             WEBKITDEBUG("Found plugin: %s\n", [[plugin name] lossyCString]);

@@ -29,7 +29,7 @@
 
 @implementation IFPlugin
 
-- (BOOL)initializeWithPath:(NSString *)pluginPath
+- initWithPath:(NSString *)pluginPath
 {
     NSFileManager *fileManager;
     NSDictionary *fileInfo;
@@ -46,16 +46,16 @@
             err = FSPathMakeRef((UInt8 *)[pluginPath cString], &fref, NULL);
             if(err != noErr){
                 WEBKITDEBUG("IFPlugin: FSPathMakeRef failed. Error=%d\n", err);
-                return FALSE;
+                return nil;
             }
             resRef = FSOpenResFile(&fref, fsRdPerm);
             if(resRef <= noErr){
                 WEBKITDEBUG("IFPlugin: FSOpenResFile failed. Can't open resource file: %s, Error=%d\n", [pluginPath lossyCString], err);
-                return FALSE;
+                return nil;
             }
             [self getPluginInfoForResourceFile:resRef];
             isBundle = FALSE;
-        }else return FALSE;
+        }else return nil;
         
     }else if([[fileInfo objectForKey:@"NSFileType"] isEqualToString:@"NSFileTypeDirectory"]){ //bundle plug-in
         pluginURL = CFURLCreateWithFileSystemPath(NULL, (CFStringRef)pluginPath, kCFURLPOSIXPathStyle, TRUE);
@@ -66,11 +66,11 @@
             [self getPluginInfoForResourceFile:resRef];
             isBundle = TRUE;
         }else{
-            return FALSE;
+            return nil;
         }
         CFRelease(pluginURL);
     }else{
-        return FALSE;
+        return nil;
     }
     
     filename = [pluginPath lastPathComponent];
@@ -78,7 +78,7 @@
     [path retain];
     [filename retain];
     isLoaded = FALSE;
-    return TRUE;
+    return self;
 }
 
 - (void)getPluginInfoForResourceFile:(SInt16)resRef
@@ -135,8 +135,8 @@
     FSSpec spec;
     FSRef fref; 
     mainFuncPtr pluginMainFunc;
-    initializeFuncPtr NPP_Initialize = NULL;
-    getEntryPointsFuncPtr NPP_GetEntryPoints = NULL;
+    initializeFuncPtr NP_Initialize = NULL;
+    getEntryPointsFuncPtr NP_GetEntryPoints = NULL;
     NPError npErr;
     Boolean didLoad;
     NSBundle *tempBundle;
@@ -167,9 +167,9 @@
         if(isCFM){
             pluginMainFunc = (mainFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("main") );
         }else{
-            NPP_Initialize = (initializeFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Initialize") );
-            NPP_GetEntryPoints = (getEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_GetEntryPoints") );
-            NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NPP_Shutdown") );
+            NP_Initialize = (initializeFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Initialize") );
+            NP_GetEntryPoints = (getEntryPointsFuncPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_GetEntryPoints") );
+            NPP_Shutdown = (NPP_ShutdownProcPtr)CFBundleGetFunctionPointerForName(bundle, CFSTR("NP_Shutdown") );
         }
     }else{ // single CFM file
         err = FSPathMakeRef((UInt8 *)[path cString], &fref, NULL);
@@ -259,8 +259,8 @@
         browserFuncs.getJavaEnv = NPN_GetJavaEnv;
         browserFuncs.getJavaPeer = NPN_GetJavaPeer;
         
-        NPP_Initialize(&browserFuncs);
-        NPP_GetEntryPoints(&pluginFuncs);
+        NP_Initialize(&browserFuncs);
+        NP_GetEntryPoints(&pluginFuncs);
         
         pluginSize = pluginFuncs.size;
         pluginVersion = pluginFuncs.version;
