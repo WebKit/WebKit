@@ -1,3 +1,19 @@
+2004-01-27  David Hyatt  <hyatt@apple.com>
+
+	Make a change suggested by kocienda to add a remove() method to InlineBoxes.
+	
+        Reviewed by kocienda
+
+        * khtml/rendering/render_box.cpp:
+        (RenderBox::detach):
+        (RenderBox::position):
+        * khtml/rendering/render_line.cpp:
+        (InlineBox::remove):
+        * khtml/rendering/render_line.h:
+        * khtml/rendering/render_text.cpp:
+        (RenderText::detach):
+        (RenderText::position):
+
 2004-01-26  Darin Adler  <darin@apple.com>
 
         Reviewed by Maciej.

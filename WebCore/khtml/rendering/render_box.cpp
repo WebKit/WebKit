@@ -126,7 +126,7 @@ void RenderBox::detach()
     
     if (m_inlineBoxWrapper) {
         if (!documentBeingDestroyed())
-            m_inlineBoxWrapper->parent()->removeChild(m_inlineBoxWrapper);
+            m_inlineBoxWrapper->remove();
         m_inlineBoxWrapper->detach(arena);
     }
 
@@ -569,7 +569,7 @@ void RenderBox::position(InlineBox* box, int from, int len, bool reverse)
             m_staticY = box->yPos();
 
         // Nuke the box.
-        box->parent()->removeChild(box);
+        box->remove();
         box->detach(renderArena());
     }
     else if (isReplaced()) {

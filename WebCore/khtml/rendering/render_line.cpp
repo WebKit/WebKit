@@ -46,6 +46,12 @@ using namespace khtml;
 static bool inInlineBoxDetach;
 #endif
 
+void InlineBox::remove()
+{ 
+    if (parent())
+        parent()->removeChild(this);
+}
+
 void InlineBox::detach(RenderArena* renderArena)
 {
 #ifndef NDEBUG
