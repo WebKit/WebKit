@@ -1992,6 +1992,18 @@ void HTMLSelectElementImpl::parseAttribute(AttributeImpl *attr)
         setHTMLEventListener(EventImpl::CHANGE_EVENT,
             getDocument()->createHTMLEventListener(attr->value().string()));
         break;
+#if APPLE_CHANGES
+    case ATTR_STYLE:
+        // Super-hack for livepage.apple.com.
+        // Ignore this particular style string altogether on select elements.
+        // Even though this is for only one site, no need to check the URL because:
+        //    1) we'd never get a better result by respecting this particular style
+        //    2) due to the misspelling it's unlikely to show up anywhere else
+        if (attr->value().string() != "width:110px;font-family:arial,helevitca,sans-serif; font-size:10px;") {
+            HTMLGenericFormElementImpl::parseAttribute(attr);
+        }
+        break;
+#endif
     default:
         HTMLGenericFormElementImpl::parseAttribute(attr);
     }

@@ -924,7 +924,9 @@ void DocumentImpl::recalcStyle( StyleChange change )
                 fontDef.family.setFamily(stdfont);
                 fontDef.family.appendFamily(0);
             }
-            fontDef.size = m_styleSelector->fontSizes()[3];
+            if (m_styleSelector) {
+                fontDef.size = m_styleSelector->fontSizes()[3];
+            }
         }
 
         //kdDebug() << "DocumentImpl::attach: setting to charset " << settings->charset() << endl;
@@ -1090,6 +1092,9 @@ Tokenizer *DocumentImpl::createTokenizer()
 
 void DocumentImpl::setPaintDevice( QPaintDevice *dev )
 {
+    if (m_paintDevice == dev) {
+        return;
+    }
     m_paintDevice = dev;
     delete m_paintDeviceMetrics;
     m_paintDeviceMetrics = new QPaintDeviceMetrics( dev );
