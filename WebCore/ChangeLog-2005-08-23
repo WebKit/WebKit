@@ -1,6 +1,18 @@
 2004-07-14  Ken Kocienda  <kocienda@apple.com>
 
         Reviewed by Hyatt
+        
+        Updated these layout tests as a result of the last patch.
+        These results are better.
+
+        * layout-tests/editing/execCommand/selectAll-expected.txt
+        * layout-tests/editing/selection/extend-by-character-006-expected.txt
+        * layout-tests/editing/selection/unrendered-001-expected.txt
+        * layout-tests/editing/selection/unrendered-003-expected.txt
+
+2004-07-14  Ken Kocienda  <kocienda@apple.com>
+
+        Reviewed by Hyatt
 
         * khtml/rendering/render_block.cpp: 
         (khtml::RenderBlock::paintObject): Change back to start() from caretPosition().
