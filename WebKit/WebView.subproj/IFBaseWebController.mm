@@ -47,6 +47,7 @@
 - (void)dealloc
 {
     [object release];
+    [super dealloc];
 }
 
 - (id)copyWithZone:(NSZone *)zone

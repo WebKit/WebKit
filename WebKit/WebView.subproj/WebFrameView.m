@@ -6,6 +6,7 @@
 #import <WebKit/IFWebDataSource.h>
 #import <WebKit/IFWebDataSourcePrivate.h>
 #import <WebKit/IFBaseWebController.h>
+#import <WebKit/IFDynamicScrollBarsView.h>
 #import <WebKit/IFException.h>
 #import <WebKit/WebKitDebug.h>
 
@@ -36,6 +37,7 @@
 
 - (void)dealloc 
 {
+    [[NSNotificationCenter defaultCenter] removeObserver: self];
     [_viewPrivate release];
     [super dealloc];
 }
@@ -117,8 +119,6 @@
             widget->layout(TRUE);
             //WebKitDebugAtLevel (WEBKIT_LOG_TIMING, "layout time %e\n", CFAbsoluteTimeGetCurrent() - start);
             ((IFWebViewPrivate *)_viewPrivate)->needsLayout = NO;
-            if ([self _frameScrollView])
-                [self _setupScrollers];
         }
     }
 

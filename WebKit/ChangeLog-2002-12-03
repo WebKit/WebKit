@@ -1,3 +1,30 @@
+2002-03-13  Richard Williamson  <rjw@apple.com>
+
+        Fixed open window w/ no open windows crasher.
+        
+	* ChangeLog:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFObjectHolder dealloc]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView dealloc]), (-[IFWebView layout]):
+
+2002-03-13  Richard Williamson  <rjw@apple.com>
+
+	* ChangeLog:
+	* WebView.subproj/IFBaseWebController.mm: (-[IFObjectHolder dealloc]):
+	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]), (-[IFWebView
+	dealloc]), (-[IFWebView provisionalDataSourceChanged:]), (-[IFWebView
+	dataSourceChanged:]), (-[IFWebView layout]), (-[IFWebView isOpaque]),
+	(-[IFWebView setNeedsDisplay:]), (-[IFWebView setNeedsLayout:]), (-[IFWebView
+	drawRect:]), (-[IFWebView setFrame:]), (-[IFWebView windowResized:]),
+	(-[IFWebView mouseDragged:]):
+
+2002-03-12  Richard Williamson  <rjw@apple.com>
+
+	* WebView.subproj/IFWebView.mm: (-[IFWebView initWithFrame:]), (-[IFWebView
+	provisionalDataSourceChanged:]), (-[IFWebView dataSourceChanged:]), (-[IFWebView
+	layout]), (-[IFWebView isOpaque]), (-[IFWebView setNeedsDisplay:]), (-[IFWebView
+	setNeedsLayout:]), (-[IFWebView drawRect:]), (-[IFWebView setFrame:]),
+	(-[IFWebView windowResized:]), (-[IFWebView mouseDragged:]):
+
 2002-03-12  John Sullivan  <sullivan@apple.com>
 
 	Added support for persistent history. Following in the grand footsteps of
