@@ -105,9 +105,9 @@
     }
 }
 
--(void)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
+-(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
 {
-    // no-op
+    return request;
 }
 
 -(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse

@@ -282,13 +282,15 @@
 
 @implementation WebNetscapePluginStream (WebResourceHandleDelegate)
 
--(void)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)theRequest
+-(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)theRequest
 {
     WebController *webController = [view controller];
     
     [webController _didStopLoading:URL];
     // FIXME: This next line is not sufficient. We don't do anything to remember the new URL.
     [webController _didStartLoading:[theRequest URL]];
+    
+    return theRequest;
 }
 
 - (void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse

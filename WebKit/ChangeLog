@@ -1,5 +1,19 @@
 2002-10-02  Darin Adler  <darin@apple.com>
 
+	Add return value to willSendRequest callback.
+
+        * Misc.subproj/WebIconLoader.m:
+        (-[WebIconLoader handle:willSendRequest:]):
+        * Plugins.subproj/WebPluginStream.m:
+        (-[WebNetscapePluginStream handle:willSendRequest:]):
+        * WebCoreSupport.subproj/WebSubresourceClient.m:
+        (-[WebSubresourceClient handle:willSendRequest:]):
+        * WebView.subproj/WebMainResourceClient.m:
+        (-[WebMainResourceClient handle:willSendRequest:]):
+	Update to return the request.
+
+2002-10-02  Darin Adler  <darin@apple.com>
+
 	Use the text encoding name from the response and got rid of
 	[WebDataSource encoding]. Also remove the "first chunk" logic since we
 	now get a separate callback for the response.

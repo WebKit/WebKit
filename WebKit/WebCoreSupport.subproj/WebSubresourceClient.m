@@ -109,7 +109,7 @@
         partialProgress:[WebLoadProgress progressWithResourceHandle:handle] fromDataSource:dataSource];
 }
 
--(void)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)request
+-(WebResourceRequest *)handle:(WebResourceHandle *)h willSendRequest:(WebResourceRequest *)request
 {
     ASSERT(handle == h);
 
@@ -131,6 +131,8 @@
 
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];
+    
+    return request;
 }
 
 -(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)theResponse

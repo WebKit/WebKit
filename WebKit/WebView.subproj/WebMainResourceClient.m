@@ -193,7 +193,7 @@
     [self release];
 }
 
--(void)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
+-(WebResourceRequest *)handle:(WebResourceHandle *)handle willSendRequest:(WebResourceRequest *)request
 {
     WebController *controller = [dataSource controller];
     NSURL *URL = [request URL];
@@ -208,6 +208,8 @@
 
     [self didStopLoading];
     [self didStartLoadingWithURL:URL];
+    
+    return request;
 }
 
 -(void)handle:(WebResourceHandle *)handle didReceiveResponse:(WebResourceResponse *)response
